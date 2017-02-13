@@ -11,7 +11,7 @@ class TicketFilterValidation < FilterValidation
   # Unless add_watcher feature is enabled, a user cannot be allowed to get tickets that he/she is "watching"
   validate :watcher_filter, if: -> { filter }
   validates :updated_since, date_time: true
-  validates :order_by, custom_inclusion: { in: ApiTicketConstants::ORDER_BY }
+  validates :order_by, custom_inclusion: { in: proc { |x| x.sort_field_options } }
   validates :order_type, custom_inclusion: { in: ApiTicketConstants::ORDER_TYPE }
   validates :status, array: { custom_inclusion: { in: proc { |x| x.account_statuses }, ignore_string: :allow_string_param, detect_type: true } }
   validate :verify_cf_data_type, if: -> { cf.present? }
@@ -21,6 +21,9 @@ class TicketFilterValidation < FilterValidation
   validate :validate_include, if: -> { errors[:include].blank? && include }
   validate :validate_filter_param, if: -> { errors[:filter].blank? && filter.present? && private_API? }
   validate :validate_query_hash, if: -> { errors.blank? && query_hash.present? }
+  validates :ids, data_type: { rules: Array, allow_nil: false }, 
+            array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false, ignore_string: :allow_string_param} },
+            custom_length: { maximum: ApiConstants::MAX_ITEMS_FOR_BULK_ACTION, message_options: { element_type: :values } }
 
   def initialize(request_params, item = nil, allow_string_param = true)
     @email = request_params.delete('email') if request_params.key?('email') # deleting email and replacing it with requester_id
@@ -32,6 +35,7 @@ class TicketFilterValidation < FilterValidation
     filter_name = fetch_filter(request_params)
     @conditions = @conditions - ['filter'] + [filter_name].compact
     self.skip_hash_params_set = true
+    request_params[:ids] = request_params[:ids].split(',') if request_params.key?(:ids)
     super(request_params, item, allow_string_param)
     @status = status.to_s.split(',') if request_params.key?('status')
     @version = request_params[:version]
@@ -113,6 +117,10 @@ class TicketFilterValidation < FilterValidation
       errors[:filter] << :require_feature
       error_options.merge!(filter: { feature: 'Add Watcher', code: :access_denied })
     end
+  end
+
+  def sort_field_options
+    TicketsFilter::api_sort_fields_options.map(&:first).map(&:to_s) - ['priority']
   end
 
   private

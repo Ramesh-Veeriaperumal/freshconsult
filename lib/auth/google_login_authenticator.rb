@@ -27,7 +27,10 @@ class Auth::GoogleLoginAuthenticator < Auth::Authenticator
       Integrations::OAUTH_CONFIG_HASH["google_oauth2"]["consumer_token"],
       Integrations::OAUTH_CONFIG_HASH["google_oauth2"]["consumer_secret"],
       :setup => lambda { |env|
-        env['omniauth.strategy'].options[:state] = construct_state_params(env) unless env["PATH_INFO"].split("/")[3] == "callback"
+        unless env["PATH_INFO"].split("/")[3] == "callback"
+          raise "Google Signin Feature is not enabled for this account." unless google_signin_enabled?(env["HTTP_HOST"])
+          env['omniauth.strategy'].options[:state] = construct_state_params(env) 
+        end
       },
       :scope => "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
       :access_type => "online",
@@ -36,6 +39,16 @@ class Auth::GoogleLoginAuthenticator < Auth::Authenticator
   end
 
   private
+
+    def google_signin_enabled?(full_domain)
+        flag = false
+        Sharding.select_shard_of(full_domain) do
+          account =  Account.find_by_full_domain(full_domain) || Portal.find_by_portal_url(full_domain).account
+          account.make_current
+          flag = account.features?(:google_signin)
+        end
+        flag
+    end
     def construct_state_params env
       env['rack.session']["_csrf_token"] ||= SecureRandom.base64(32)
       csrf_token = Base64.encode64(env['rack.session']["_csrf_token"])

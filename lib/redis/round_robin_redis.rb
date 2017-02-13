@@ -12,8 +12,8 @@ module Redis::RoundRobinRedis
     $redis_round_robin.perform_redis_op("exists", key)
   end
 
-  def del_round_robin_redis key
-    $redis_round_robin.perform_redis_op("del", key)
+  def del_round_robin_redis *key
+    $redis_round_robin.perform_redis_op("del", *key)
   end
 
   def incr_round_robin_redis key
@@ -52,6 +52,10 @@ module Redis::RoundRobinRedis
     $redis_round_robin.perform_redis_op("lrem", key, count, value)
   end
 
+  def lrange_round_robin_redis key, start_index, end_index
+    $redis_round_robin.perform_redis_op("lrange", key, start_index, end_index)
+  end
+
   def zadd_round_robin_redis key, score, value
     $redis_round_robin.perform_redis_op("zadd", key, score, value)
   end
@@ -80,4 +84,5 @@ module Redis::RoundRobinRedis
   def exec_round_robin_redis
     $redis_round_robin.perform_redis_op("exec")
   end
+
 end

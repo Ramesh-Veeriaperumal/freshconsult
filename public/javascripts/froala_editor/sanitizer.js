@@ -22,7 +22,7 @@ window.Sanitizer = window.Sanitizer || {};
   	},
 
    	onPasteFromWord: function (html) {
-      // Replace whitespace character with space
+      // hack to solve concatenation issue while paste from msWord in Windows OS
       html = html.replace(/[\n]/gi, ' ');
 
       // Remove comments

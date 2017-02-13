@@ -35,6 +35,7 @@ run "ln -nfs #{shared_path}/config/custom_dalli.yml #{node[:rel_path]}/config/cu
 run "ln -nfs #{shared_path}/config/statsd.yml #{node[:rel_path]}/config/statsd.yml"
 run "ln -nfs #{shared_path}/config/redis_display_id.yml #{node[:rel_path]}/config/redis_display_id.yml"
 run "ln -nfs #{shared_path}/config/chat.yml #{node[:rel_path]}/config/chat.yml"
+run "ln -nfs #{shared_path}/config/collab.yml #{node[:rel_path]}/config/collab.yml"
 run "ln -nfs #{shared_path}/config/email.yml #{node[:rel_path]}/config/email.yml"
 run "ln -nfs #{shared_path}/config/pod_info.yml #{node[:rel_path]}/config/pod_info.yml"
 run "ln -nfs #{shared_path}/config/infra_layer.yml #{node[:rel_path]}/config/infra_layer.yml"
@@ -60,6 +61,9 @@ run "ln -nfs #{shared_path}/config/ml_app.yml #{node[:rel_path]}/config/ml_app.y
 run "ln -nfs #{shared_path}/config/sendgrid_webhook_api.yml #{node[:rel_path]}/config/sendgrid_webhook_api.yml"
 run "ln -nfs #{shared_path}/config/ehawk_api.yml #{node[:rel_path]}/config/ehawk_api.yml"
 run "ln -nfs #{shared_path}/config/sds.yml #{node[:rel_path]}/config/sds.yml"
+run "ln -nfs #{shared_path}/config/clamav.yml #{node[:rel_path]}/config/clamav.yml"
+run "ln -nfs #{shared_path}/config/iris_notifications.yml #{node[:rel_path]}/config/iris_notifications.yml"
+run "ln -nfs #{shared_path}/config/archive_queue.yml #{node[:rel_path]}/config/archive_queue.yml"
 
 #supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"

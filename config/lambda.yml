@@ -2,23 +2,27 @@ common: &common
   access_key_id: dummy
   secret_access_key: dummy
   region: 'us-east-1'
-  resources: ['tickets', 'notes', 'accounts', 'archive_tickets']
+  resources: ['tickets', 'notes', 'accounts', 'archive_tickets', 'users']
 
 development:
   <<: *common
   tickets_interchange: arn:aws:lambda:us-east-1:213293927234:function:ticketInterchange-development
+  users_interchange: arn:aws:lambda:us-east-1:213293927234:function:userInterchange-development
   accounts_interchange: arn:aws:lambda:us-east-1:213293927234:function:accountInterchange-development
   notes_interchange: arn:aws:lambda:us-east-1:213293927234:function:noteInterchange-development
   archive_tickets_interchange: arn:aws:lambda:us-east-1:213293927234:function:archieveTicketInterchange-development
 staging:
   <<: *common
+  
   tickets_interchange: arn:aws:lambda:us-east-1:213293927234:function:ticketInterchange-staging
+  users_interchange: arn:aws:lambda:us-east-1:213293927234:function:userInterchange-staging
   accounts_interchange: arn:aws:lambda:us-east-1:213293927234:function:accountInterchange-staging
   notes_interchange: arn:aws:lambda:us-east-1:213293927234:function:noteInterchange-staging
   archive_tickets_interchange: arn:aws:lambda:us-east-1:213293927234:function:archieveTicketInterchange-staging
 production:
   <<: *common
   tickets_interchange: arn:aws:lambda:us-east-1:213293927234:function:ticketInterchange-production
+  users_interchange: arn:aws:lambda:us-east-1:213293927234:function:userInterchange-production
   accounts_interchange: arn:aws:lambda:us-east-1:213293927234:function:accountInterchange-production
   notes_interchange: arn:aws:lambda:us-east-1:213293927234:function:noteInterchange-production
   archive_tickets_interchange: arn:aws:lambda:us-east-1:213293927234:function:archieveTicketInterchange-production

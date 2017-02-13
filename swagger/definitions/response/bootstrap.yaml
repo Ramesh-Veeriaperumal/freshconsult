@@ -89,6 +89,26 @@ properties:
                 type: boolean
               include_survey_manually:
                 type: boolean
+          agents:
+            type: object
+            properties:
+              id:
+                type: number
+              name:
+                type: string
+              email:
+                type: string
+              group_ids:
+                type: array
+          groups:
+            type: object
+            properties:
+              id:
+                type: number
+              name:
+                type: string
+              agent_ids:
+                type: array
   meta:
     type: object
     properties:

@@ -1,4 +1,5 @@
 require_relative 'api_privileges'
+require_relative 'pipe_privileges'
 
 Authority::Authorization::PrivilegeList.build do
 
@@ -65,6 +66,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/service_proxy", :only => [:fetch]
     resource :"integrations/slack_v2", :only => [:add_slack_agent]
     resource :"integrations/data_pipe"
+    resource :"integrations/cloud_elements/crm", :only => [:fetch]
 
     #Freshfone
     resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
@@ -110,6 +112,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/survey"
     resource :"admin/data_export" , :only => [:download]
     resource :"notification/product_notification", :only => [:index]
+    resource :"notification/user_notification"
     resource :"helpdesk/common", :only => [:fetch_company_by_name, :status_groups]
 
     # ticket_templates
@@ -463,7 +466,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_availability do
-    resource :group, :only => [:index, :show, :edit, :update, :toggle_roundrobin]
+    resource :group, :only => [:index, :show, :edit, :update, :toggle_roundrobin, :user_skill_exists]
     resource :"helpdesk/dashboard",:only => [:agent_status]
   end
 
@@ -509,6 +512,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/contact_field"
     resource :"admin/company_field"
     resource :"admin/role"
+    resource :"admin/skill"
     resource :"admin/product"
     resource :"admin/portal"
     resource :"admin/security"
@@ -562,6 +566,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/ecommerce/ebay_account"
     resource :"freshfone/dashboard", :only => [:index]
     resource :"integrations/marketplace_app"
+    resource :"integrations/cloud_elements/crm", :only => [:instances, :edit, :update, :settings, :create]
 
     # Used by API V2
     resource :api_ticket_field, :only => [:index]
@@ -587,10 +592,15 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/zen_import"
     # new item day passes && getting started
     resource :"admin/day_pass"
+    resource :"admin/dkim_configuration"
     resource :"admin/freshfone/credit"
     resource :"admin/onboarding"
     resource :"admin/getting_started"
     resource :"agent", :only => [:api_key]
+  end
+
+  assign_agent do
+    resource :"admin/user_skill"
   end
 
   client_manager do

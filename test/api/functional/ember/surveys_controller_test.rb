@@ -31,4 +31,13 @@ class Ember::SurveysControllerTest < ActionController::TestCase
     assert JSON.parse(response.body).count > 0
     match_json(index_survey_pattern(@account.custom_surveys.undeleted, true))
   end
+
+  def test_index_without_manage_tickets
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false)
+    get :index, controller_params(version: 'private')
+    assert_response 403
+    match_json(request_error_pattern(:access_denied))
+  ensure
+    User.any_instance.unstub(:privilege?)
+  end
 end

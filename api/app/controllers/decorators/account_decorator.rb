@@ -1,5 +1,4 @@
 class AccountDecorator < ApiDecorator
-
   def to_hash
     {
       full_domain: record.full_domain,
@@ -10,7 +9,9 @@ class AccountDecorator < ApiDecorator
       features: features_list,
       launched: launch_party_features,
       subscription: subscription_hash,
-      settings: settings_hash
+      settings: settings_hash,
+      agents: agents_hash,
+      groups: groups_hash
     }
   end
 
@@ -45,6 +46,24 @@ class AccountDecorator < ApiDecorator
         compose_email_enabled: record.compose_email_enabled?,
         include_survey_manually: include_survey_manually?
       }
+    end
+
+    def agents_hash
+      agents = record.agents_details_from_cache
+      agents.map do |agent|
+        AgentDecorator.new(agent, agent_groups: agent_groups).to_restricted_hash
+      end
+    end
+
+    def groups_hash
+      groups = record.groups_from_cache
+      groups.map do |group|
+        GroupDecorator.new(group, agent_groups: agent_groups).to_restricted_hash
+      end
+    end
+
+    def agent_groups
+      record.agent_groups_from_cache
     end
 
     def include_survey_manually?

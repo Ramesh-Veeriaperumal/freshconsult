@@ -371,7 +371,8 @@ vi:
   preview: "Xem trước"
   no_agents_in_selected_group: "không có chuyên viên trong nhóm đã chọn"
   send_feedback: "Gửi phản hồi"
-  sidebar_help: "Hổ trợ"
+  sidebar_help: "Hỗ trợ"
+  support_title: "Hỗ trợ"
   ticket_form:
     your_email_address: Email
     your_name: "tên của bạn"
@@ -444,7 +445,7 @@ vi:
   signup: "<b>Đăng ký</b>"
   signup_title: "Đăng ký để %{current_portal}"
   signup_up_with_us: "Đăng ký với chúng tôi"
-  signup_help_information: "Khi bạn đăng ký, bạn sẽ được kết nối với cộng đồng khách hàng của HoaXpress.com. Bạn có thể báo với chúng tôi những vấn đề đăng gặp và theo dõi cái phiếu yêu cầu của các bạn."
+  signup_help_information: "Khi bạn đăng ký, bạn sẽ có toàn quyền truy cập vào cổng thông tin tự phục vụ của chúng tôi. Bạn cũng có thể sử dụng tài khoản của mình để đưa ra các ticket hỗ trợ và theo dõi tình trạng của chúng."
   trial_expired_on: "Lưu ý! Thời gian dùng thử đã hết hạng!"
   delete_reminder: "Xóa To-Do này?"
   trial_will_expire_in: "Thử nghiệm của bạn sẽ hết hạn trong <b>%{no_of_days}</b>"
@@ -1129,7 +1130,7 @@ vi:
         forgot: "Quên mật khẩu?"
         sign_in_using: "Đăng nhập"
         sign_in_using_google: "Đăng nhập với tài khoản Google sẵn có"
-        help: "Hổ trợ"
+        help: "Hỗ trợ"
     shared:
       attachment_form:
         feedback_widgets_screenshot: "chụp màn hình"
@@ -1245,6 +1246,9 @@ vi:
       ticket_list: "User tickets"
       ticket_view: "chi tiết ticket"
       my_topics: "Các chủ đề của tôi"
+  portal_meta:
+    titles:
+      portal_home: "Hỗ trợ"
   admin:
     portal_settings:
       flash:
@@ -1751,7 +1755,7 @@ vi:
       scroll:
         scroll_to: "kéo để"
         tickets: ticket
-        solutions: "Các giải pháp"
+        solutions: "Giải pháp"
         forums: "Diễn đàn"
         customers: "Các khách hàng"
         reports: "Các báo cáo"
@@ -3983,10 +3987,10 @@ vi:
     new_support_ticket: "ticket hỗ trợ mới"
     submit_new_ticket: "...hoặc gửi một ticket mới"
     login: "Đăng nhập"
-    login_portal: "Đăng nhập vào hệ thống hổ trợ."
-    login_details: "Xin vui lòng nhập vào thông tin đăng nhập bạn đã dùng khi đăng ký với khu vực hổ trợ."
+    login_portal: "Đăng nhập vào hệ thống hỗ trợ"
+    login_details: "Xin vui lòng nhập vào thông tin đăng nhập bạn đã dùng khi đăng ký với khu vực hỗ trợ."
     login_options: "...hoặc đăng nhập với"
-    reset_password: "Xin vui lòng cung ấp email đã đăng ký, hệ thống sẽ gửi mail thiết lập lại password cho bạn."
+    reset_password: "Hãy cung cấp địa chỉ email của bạn, và chúng tôi sẽ gửi cho bạn một email hướng dẫn thiếp lập lại mật khẩu."
     signup: "Đăng ký"
     or_signup: "hoặc mở một tài khoản %{signup} "
     to_post_comment: " để đăng một bình luận "
@@ -4005,7 +4009,7 @@ vi:
     showing_recently_popular_topics: "Đang xem nhứng topic hot"
     showing_my_topics: "Chủ đề bạn theo dõi đang được hiển thị"
     community_forums: "Forum dành cho cộng đồng"
-    knowledge_base: "Thông tin hổ trợ"
+    knowledge_base: "Thông tin hỗ trợ"
     showing_recent_updates: "Xem cập nhật mới"
     no_articles_info_1: "Xin lỗi, chúng tôi chưa có thông tin cần đăng trong phần này.\n"
     no_articles_info_2: "Xin vui lòng trở lại sau.\n"
@@ -4108,7 +4112,7 @@ vi:
     add: "Thêm Giải Pháp"
     info10: "Cá nhân (Chỉ Chuyên viên thấy được)"
     add_new_solution: "Thêm giải pháp"
-    title: "Các giải pháp"
+    title: "Giải pháp"
     title_singular: "Giải Pháp"
     info2: "Các giải pháp có thể được <b> công </b> hoặc <b> tin </b>. Giải pháp nào có thể nhìn thấy trong các dịch vụ Portal tự và cũng xuất hiện trong kết quả tìm kiếm"
     info3: "Các giải pháp tư nhân là giải pháp đại lý chỉ được sử dụng để chia sẻ kiến thức nội bộ"
@@ -4234,7 +4238,7 @@ vi:
       customers: "Các khách hàng"
       admin: Admin
       checkstatus: "Kiểm tra trạng thái ticket của bạn"
-      solutions: "Các giải pháp"
+      solutions: "Giải pháp"
       forums: Forum
       tickets: Tickets
       home: Home

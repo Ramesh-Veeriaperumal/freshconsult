@@ -96,12 +96,13 @@ module Ember
     def reply_forward_template
       @agent_signature = signature
       @content = template_content
-      @quoted_text = quoted_text(@ticket, (action_name.to_sym == :forward_template))
+      @quoted_text = quoted_text(@item || @ticket, [:forward_template, :note_forward_template].include?(action_name.to_sym))
       render action: :template
     end
 
     alias reply_template reply_forward_template
     alias forward_template reply_forward_template
+    alias note_forward_template reply_forward_template
 
     private
 
@@ -275,9 +276,13 @@ module Ember
 
       def template_content
         parse_liquid(current_account.email_notifications
-          .find_by_notification_type("EmailNotification::DEFAULT_#{action_name.upcase}".constantize)
-          .try(:"get_#{action_name}", @ticket.requester).to_s
+          .find_by_notification_type("EmailNotification::DEFAULT_#{notification_template.to_s.upcase}".constantize)
+          .try(:"get_#{notification_template.to_s}", @ticket.requester).to_s
           .gsub('{{ticket.satisfaction_survey}}', ''))
+      end
+
+      def notification_template
+        action_name.to_sym == :note_forward_template ? :forward_template : action_name.to_sym
       end
 
       def parse_liquid(liquid_content)

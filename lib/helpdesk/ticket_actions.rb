@@ -281,32 +281,38 @@ module Helpdesk::TicketActions
   end
 
   def full_paginate
-    unless current_account.features_included?(:no_list_view_count_query)
+
+    if collab_filter_enabled_for?(filter)
       total_entries = params[:total_entries]
-      if(total_entries.blank? || total_entries.to_i == 0)
-        load_cached_ticket_filters
-        load_ticket_filter
-        db_type = get_db_type(params)
-        Sharding.send(db_type) do
-          @ticket_filter.deserialize_from_params(params)
-          if current_account.count_es_enabled? and non_indexed_columns_query?
-            total_entries = Search::Tickets::Docs.new(@ticket_filter.query_hash).count(Helpdesk::Ticket)
-          else
-            joins = @ticket_filter.get_joins(@ticket_filter.sql_conditions)
-            joins[0].concat(@ticket_filter.states_join) if @ticket_filter.sql_conditions[0].include?("helpdesk_ticket_states")
-            options = { :joins => joins, :conditions => @ticket_filter.sql_conditions}
-            if @ticket_filter.sql_conditions[0].include?("helpdesk_tags.name")
-              options[:distinct] = true 
-              options[:select] = :id
+      @ticket_count = Collaboration::Ticket.fetch_count
+    else
+      unless current_account.features_included?(:no_list_view_count_query)
+        total_entries = params[:total_entries]
+        if(total_entries.blank? || total_entries.to_i == 0)
+          load_cached_ticket_filters
+          load_ticket_filter
+          db_type = get_db_type(params)
+          Sharding.send(db_type) do
+            @ticket_filter.deserialize_from_params(params)
+            if current_account.count_es_enabled? and non_indexed_columns_query?
+              total_entries = Search::Tickets::Docs.new(@ticket_filter.query_hash).count(Helpdesk::Ticket)
+            else
+              joins = @ticket_filter.get_joins(@ticket_filter.sql_conditions)
+              joins[0].concat(@ticket_filter.states_join) if @ticket_filter.sql_conditions[0].include?("helpdesk_ticket_states")
+              options = { :joins => joins, :conditions => @ticket_filter.sql_conditions}
+              if @ticket_filter.sql_conditions[0].include?("helpdesk_tags.name")
+                options[:distinct] = true 
+                options[:select] = :id
+              end
+              total_entries = current_account.tickets.permissible(current_user).count(options)
             end
-            total_entries = current_account.tickets.permissible(current_user).count(options)
           end
         end
+        @ticket_count = total_entries.to_i
+      else
+        load_cached_ticket_filters
+        render 'no_paginate' 
       end
-      @ticket_count = total_entries.to_i
-    else
-      load_cached_ticket_filters
-      render 'no_paginate' 
     end
   end
 

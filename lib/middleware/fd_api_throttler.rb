@@ -88,7 +88,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def increment_redis_key(used)
-      @count = increment_redis(key, used).to_i
+      @count = increment_redis(key, used.to_i).to_i
     end
 
     def allowed?

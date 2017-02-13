@@ -465,7 +465,8 @@ body .redactor_toolbar li a.redactor_btn_removeFormat 		{ background-position: -
 	position: relative;
     @include text-align(center);    
     width: 99%;
-    padding: 45px 0;
+    /*padding: 45px 0;*/
+    padding: 20px 0px 35px 0px;
     border: 2px dashed #bbb;
 }
 .redactor_droparea .redactor_dropareabox, .redactor_dropalternative {
@@ -511,15 +512,8 @@ body .redactor_toolbar li a.redactor_btn_removeFormat 		{ background-position: -
 div.custom-file-upload {
   position: relative;
   width:100%;
-  border:1px solid #ddd;
-  @include border-radius(5px);
-  background:#f6f6f6;
   @include text-align(center);
-  margin-bottom: 20px;
   font-size: 14px;
-  &:hover{
-    background: #efefef;
-  }
   input[type='file']{
     z-index: 999999;
     @include border-radius(5px);
@@ -540,8 +534,8 @@ div.custom-file-upload {
       font-weight:bold;
     }
   }
-}
 
+}
 .redactor_editor img {
 	cursor: nw-resize;
 }

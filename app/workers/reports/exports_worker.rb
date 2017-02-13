@@ -33,10 +33,12 @@ module Reports
     def perform(args)
       args = JSON.parse(args).symbolize_keys!
       options = args[:options].symbolize_keys
-      run_on_account_scope(options[:account_id]) { set_current_account_and_user(options[:account_id], options[:user_id]) }
-      ticket_data = CSVBridge.generate do |csv|
-        csv << args[:headers]
-        fetch_tickets_data(csv, args[:keys], args[:tkts], args[:type])
+      ticket_data = nil
+      run_on_account_scope(options[:account_id], options[:user_id]) do 
+        ticket_data = CSVBridge.generate do |csv|
+          csv << args[:headers]
+          fetch_tickets_data(csv, args[:keys], args[:tkts], args[:type])
+        end
       end
       if args[:complete_export]
         ticket_data << I18n.t('helpdesk_reports.export_exceeds_row_limit_msg', :row_max_limit => options[:csv_row_limit]) if options[:exceeds_limit]
@@ -53,8 +55,9 @@ module Reports
       args.symbolize_keys!
       if args[:merge_required]
         options = args[:options].symbolize_keys
-        run_on_account_scope(options[:account_id]) { set_current_account_and_user(options[:account_id], options[:user_id]) }
-        merge_batch_files_and_email(args[:headers], options)
+        run_on_account_scope(options[:account_id], options[:user_id]) do 
+          merge_batch_files_and_email(args[:headers], options)
+        end
       else
         return
       end
@@ -62,16 +65,16 @@ module Reports
 
     private
 
-    def run_on_account_scope(account_id)
+    def run_on_account_scope(account_id, user_id = nil)
       Sharding.select_shard_of(account_id) do
-        yield if block_given?
+        Sharding.run_on_slave do
+          Account.find(account_id).make_current
+          Account.current.all_users.find(user_id).make_current if user_id.present?
+          yield if block_given?
+        end
       end
     end
 
-    def set_current_account_and_user(account_id, user_id)
-      Account.find(account_id).make_current
-      Account.current.all_users.find(user_id).make_current
-    end
 
     def merge_batch_files_and_email(headers, options={})
       batch_id = 1
@@ -131,6 +134,10 @@ module Reports
     def fetch_tickets_data(tickets = [], headers, ticket_ids, type)
       tickets_data = (type == 'non_archive' ? non_archive_tickets(ticket_ids) : archive_tickets(ticket_ids))
       generate_ticket_data(tickets, headers, tickets_data, (type != 'non_archive'))
+    end
+
+    def user_download_url(file_name, export_type)
+      "#{Account.current.full_url}/reports/v2/download_file/#{export_type}/#{DateTime.now.utc.strftime('%d-%m-%Y')}/#{file_name}"
     end
 
 	end

@@ -11,7 +11,7 @@ module SubscriptionSystem
 
   def requires_forums_feature
     return if feature?(:forums)
-    error_view = current_account.subscription.non_sprout_plan? ? "forums_disabled" : "non_covered_feature"
+    error_view = current_account.subscription.forum_available_plan? ? "forums_disabled" : "non_covered_feature"
     render is_native_mobile? ? { :json => { :requires_feature => false } } : { :template => "/errors/#{error_view}.html", :locals => {:feature => :forums} }
   end
   

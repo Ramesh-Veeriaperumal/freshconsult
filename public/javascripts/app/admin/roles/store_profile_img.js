@@ -11,9 +11,14 @@ var ProfileImage = ProfileImage || (function(){
 
 	var profileimg = {};
 	profileimg.imageArray = [];
-	profileimg.fetch = function(){
+	profileimg.fetch = function(cb){
 		_getImage().success(function(data){
-			profileimg.imageArray = data;
+			if (Array.isArray(data)) {
+				profileimg.imageArray = data;
+			} else {
+				profileimg.error = data;
+			}
+			if(typeof cb === "function") cb(data);
 		}).error(function(){
 			
 		})

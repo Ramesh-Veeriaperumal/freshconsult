@@ -107,6 +107,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :check_ml_feature, :only => [:suggest_tickets]
   before_filter :load_parent_template, :only => [:show_children, :bulk_child_tkt_create]
   before_filter :load_associated_tickets, :only => [:associated_tickets]
+  before_filter :outbound_email_allowed? , :only => [:create]
   before_filter :requester_widget_filter_params, :only => [:update_requester]
   before_filter :check_custom_view_feature, :only => [:custom_view_save]
 
@@ -207,10 +208,10 @@ class Helpdesk::TicketsController < ApplicationController
       ticket_ids =  @items.map(&:id)
 
       sentiment_sql_array = ["select notable_id,int_nc04 from helpdesk_notes n inner join helpdesk_schema_less_notes sn
-                    on n.id=sn.note_id where n.account_id = %s and n.notable_id in (%s) 
-                    and sn.int_nc04 is not null 
+                    on n.id=sn.note_id and n.account_id=sn.account_id 
+                    where n.account_id = %s and n.notable_type = '%s' and n.notable_id in (%s) and sn.int_nc04 is not null 
                     order by n.created_at;",
-                    Account.current.id, ticket_ids.join(',')]
+                    Account.current.id, 'Helpdesk::Ticket', ticket_ids.join(',')]
       
       sentiment_sql = ActiveRecord::Base.send(:sanitize_sql_array, sentiment_sql_array)
 
@@ -429,7 +430,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def custom_search
     params[:html_format] = true
-    @items = fetch_tickets
+    @items = collab_filter_enabled_for?(filter) ? fetch_collab_tickets : fetch_tickets
 
     #Changes for customer sentiment - Beta feature
     if Account.current.customer_sentiment_ui_enabled? && @items.size > 0
@@ -439,6 +440,15 @@ class Helpdesk::TicketsController < ApplicationController
 
     @current_view = view_context.current_filter
     render :partial => "custom_search"
+  end
+
+  # Generating custom data hash
+  # Since this is the only filter when data_hash will update for every pagination request
+  def fetch_collab_tickets
+    convo_id_arr = Collaboration::Ticket.fetch_tickets
+    params["data_hash"] = Helpdesk::Filters::CustomTicketFilter.collab_filter_condition(convo_id_arr).to_json
+    
+    current_account.tickets.preload({requester: [:avatar]}, :company).permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
   end
 
   def show
@@ -619,7 +629,7 @@ class Helpdesk::TicketsController < ApplicationController
         set_company_validatable_custom_fields
         company_save_success = @company.save
         check_domain_exists
-        @filtered_contact_params[:customer_id] = @company.id if company_save_success && @requester.company.blank?
+        @filtered_contact_params[:customer_id] = @company.id if company_save_success && @requester.company.blank? && !@unassociated_company
         flash[:notice] = (@company.errors) if !company_save_success && @existing_company.blank?
     end
     if company_save_success
@@ -1431,6 +1441,11 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   private
+
+    def outbound_email_allowed?
+      return unless params[:helpdesk_ticket].present?
+      access_denied if (!current_account.verified? && params[:helpdesk_ticket][:source].to_i == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email])
+    end
 
     def set_trashed_column
       sql_array = ["update helpdesk_schema_less_tickets st inner join helpdesk_tickets t on

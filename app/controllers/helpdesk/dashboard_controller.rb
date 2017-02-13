@@ -112,8 +112,10 @@ class Helpdesk::DashboardController < ApplicationController
   end
 
   def sales_manager 
-    @details = current_account.fresh_sales_manager_from_cache if (Rails.env.production? or Rails.env.staging?)
-    render :partial => "sales_manager"
+    @sales_manager = current_account.fresh_sales_manager_from_cache if (Rails.env.production? or Rails.env.staging?)
+    render :text => I18n.t('accounts.setup.sales_manager_intro', 
+      :user_name => current_user.first_name,
+      :sales_manager_name => @sales_manager ? @sales_manager[:display_name] : "Bobby")
   end
 
   def agent_status

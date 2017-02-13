@@ -1,4 +1,6 @@
 class Subscription < ActiveRecord::Base
+  include Redis::RedisKeys
+  include Redis::OthersRedis
   
   self.primary_key = :id
   SUBSCRIPTION_TYPES = ["active", "trial", "free", "suspended"]
@@ -50,7 +52,7 @@ class Subscription < ActiveRecord::Base
 
   after_update :add_to_crm
   after_update :update_reseller_subscription
-  after_commit :update_social_subscription, :add_free_freshfone_credit, :update_crm, on: :update
+  after_commit :update_social_subscription, :add_free_freshfone_credit, :update_crm, :dkim_category_change, on: :update
   after_commit :clear_account_susbcription_cache
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
@@ -84,7 +86,7 @@ class Subscription < ActiveRecord::Base
   # validate_on_create :card_storage
   validates_inclusion_of :state, :in => SUBSCRIPTION_TYPES
   # validates_numericality_of :amount, :if => :free?, :equal_to => 0.00, :message => I18n.t('not_eligible_for_free_plan')
-  validates_numericality_of :agent_limit, :if => :free?, :less_than_or_equal_to => AGENTS_FOR_FREE_PLAN, :message => I18n.t('not_eligible_for_free_plan')
+  validates_numericality_of :agent_limit, :if => Proc.new { |a| (a.free? && a.non_new_sprout?) }, :less_than_or_equal_to => AGENTS_FOR_FREE_PLAN, :message => I18n.t('not_eligible_for_free_plan')
 
   def self.customer_count
    count(:conditions => [ " state IN ('active','free') "])
@@ -204,6 +206,10 @@ class Subscription < ActiveRecord::Base
   def free?
     state == 'free'
   end
+  
+  def non_new_sprout?
+    !new_sprout?
+  end
 
   def sprout?
     subscription_plan.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout]
@@ -211,6 +217,14 @@ class Subscription < ActiveRecord::Base
   
   def sprout_classic?
     subscription_plan.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout_classic]
+  end
+
+  def new_sprout?
+    subscription_plan.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout_jan_17]
+  end
+
+  def new_blossom?
+    subscription_plan.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:blossom_jan_17]
   end
   
   def blossom?
@@ -231,7 +245,7 @@ class Subscription < ActiveRecord::Base
 
   def convert_to_free
     self.state = FREE if card_number.blank?
-    self.agent_limit = AGENTS_FOR_FREE_PLAN
+    self.agent_limit = subscription_plan.free_agents
     self.renewal_period = 1
     self.day_pass_amount = subscription_plan.day_pass_amount
     self.free_agents = subscription_plan.free_agents
@@ -366,15 +380,15 @@ class Subscription < ActiveRecord::Base
   end
   
   def non_sprout_plan?
-    !(sprout? || sprout_classic?) 
+    !(sprout? || sprout_classic? || new_sprout?) 
+  end
+
+  def forum_available_plan?
+    non_sprout_plan? && !new_blossom?
   end
   
   protected
   
-    def non_social_plans
-      sprout? || sprout_classic? 
-    end
-    
     def set_renewal_at
       return if self.subscription_plan.nil? || self.next_renewal_at
       self.next_renewal_at = Time.now.advance(:months => self.renewal_period)
@@ -395,7 +409,7 @@ class Subscription < ActiveRecord::Base
     # If the discount is changed, set the amount to the discounted
     # plan amount with the new discount.
     def update_amount
-      if self.amount.blank? or Rails.env.test?
+      if self.amount.blank? or Rails.env.test? or Rails.env.development?
         self.amount = subscription_plan.amount
       else
         response = Billing::Subscription.new.calculate_update_subscription_estimate(self, addons)
@@ -493,6 +507,12 @@ class Subscription < ActiveRecord::Base
       end
     end
 
+    def dkim_category_change
+      if self.account.dkim_enabled? and subscription_state_changed?
+        set_others_redis_lpush(DKIM_CATEGORY_KEY, self.account_id)
+      end
+    end
+
     def update_reseller_subscription
       if state_changed? or (active? and amount_changed?) or subscription_currency_id_changed? or next_renewal_at_changed?
         Subscription::UpdatePartnersSubscription.perform_async({ :account_id => account_id, 
@@ -521,6 +541,10 @@ class Subscription < ActiveRecord::Base
         return true if self.send(field) != @old_subscription.send(field)
       end
       return nil
+    end
+
+    def subscription_state_changed?
+      @old_subscription.state.eql?(TRIAL) and self.state.eql?(ACTIVE)
     end
 
  end

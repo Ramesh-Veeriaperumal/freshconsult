@@ -6,6 +6,7 @@ class Support::Discussions::TopicsController < SupportController
   include CloudFilesHelper
   include Community::Voting
 
+  before_filter :check_account_activation, :only => [:create,:new]
   before_filter :load_topic, :only => [:show, :edit, :update, :like, :unlike, :toggle_monitor,
                                       :users_voted, :destroy, :toggle_solution, :hit]
   before_filter :require_user, :except => [:index, :show, :hit]

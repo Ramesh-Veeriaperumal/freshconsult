@@ -63,6 +63,7 @@ begin
     SQS[:search_etl_queue]            => AwsWrapper::SqsV2.queue_url(SQS[:search_etl_queue]),
     SQS[:count_etl_queue]             => AwsWrapper::SqsV2.queue_url(SQS[:count_etl_queue]),
     SQS[:reports_etl_msg_queue]       => AwsWrapper::SqsV2.queue_url(SQS[:reports_etl_msg_queue]),
+    SQS[:iris_etl_msg_queue]          => AwsWrapper::SqsV2.queue_url(SQS[:iris_etl_msg_queue]),
     SQS[:activity_queue]              => AwsWrapper::SqsV2.queue_url(SQS[:activity_queue]),
     SQS[:sqs_es_index_queue]          => AwsWrapper::SqsV2.queue_url(SQS[:sqs_es_index_queue]),
     SQS[:cti_screen_pop]              => AwsWrapper::SqsV2.queue_url(SQS[:cti_screen_pop]),
@@ -76,6 +77,8 @@ begin
     SQS[:default_email_queue]         => AwsWrapper::SqsV2.queue_url(SQS[:default_email_queue]),
     SQS[:email_dead_letter_queue]     => AwsWrapper::SqsV2.queue_url(SQS[:email_dead_letter_queue]),
     SQS[:agent_collision_queue] => AwsWrapper::SqsV2.queue_url(SQS[:agent_collision_queue]),
+    SQS[:collab_agent_update_queue] => AwsWrapper::SqsV2.queue_url(SQS[:collab_agent_update_queue]),
+    SQS[:collab_ticket_update_queue] => AwsWrapper::SqsV2.queue_url(SQS[:collab_ticket_update_queue])
   }
 
 rescue => e

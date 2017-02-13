@@ -45,8 +45,10 @@ class CustomNumericalityValidator < ApiValidator
     def error_code
       if required_attribute_not_defined?
         :missing_field
+      elsif datatype_mismatch?
+        :datatype_mismatch
       else
-        :invalid_value unless datatype_mismatch?
+        :invalid_value
       end
     end
 

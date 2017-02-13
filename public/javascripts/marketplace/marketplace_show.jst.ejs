@@ -21,7 +21,7 @@
           <input id="query" name="query" class="search-query" required type="text" placeholder="<%= search_placeholder %>" value="<% if(search_term) { %><%- search_term %><% } %>" data-url="<%= auto_suggest_url %>">
           <i class="ficon-search search-apps"></i>
           <div class="sloading loading-small search-loader" style="display:none;"></div>
-          <button class="remove-query" style="display:none;" type="reset"><span class="ficon-cross fsize-16"></span></button>
+          <button class="remove-query" type="reset"><span class="ficon-cross fsize-16"></span></button>
           <input style="display:none" type="submit" id="search-btn">
         </div>
       </form>
@@ -36,7 +36,15 @@
         </div>
       </div>
       <ul class="app-info">
-        <li> <%= install_btn %> </li>
+
+        <li class="buy-and-install">
+          <div class="overlay hide">
+            <div class="overlay-content">
+            </div>
+          </div>
+          <div class="install-button"><%= install_btn %></div>
+        </li>
+
         <% if (typeof app_version != 'undefined') { %>
           <li class="version"><%= translate.get('marketplace_ver') %> <%= app_version %></li>
         <% } %>
@@ -99,13 +107,11 @@
 
       <div class="tabbable">
         <ul class="nav nav-tabs app-tab" id="app-tabs">
-          <li class="active"><a href="#app-description" data-toggle="tab"><%= translate.get('description') %></a></li>
-          <% if (instructions) { %>
-            <li><a href="#app-instructions" data-toggle="tab"><%= translate.get('instructions') %></a></li>
-          <% } %> 
+          <li class="active"><a href="#app-overview" data-toggle="tab"><%= translate.get('overview') %></a></li>
+          <li><a href="#app-installation" data-toggle="tab"><%= translate.get('installation') %></a></li>
         </ul>
         <div class="tab-content">
-          <div class="tab-pane active" id="app-description">
+          <div class="tab-pane active" id="app-overview">
             <pre class="descript pre-wrap"><%- description %></pre>
             <% if(screenshots.length >0){ %>
               <div class="screenshots">
@@ -139,7 +145,7 @@
               </div>
             <% } %>
           </div>
-          <div class="tab-pane" id="app-instructions">
+          <div class="tab-pane" id="app-installation">
             <% if (instructions) { %>
               <pre class="pre-wrap"><%- instructions %></pre>
             <% } %>

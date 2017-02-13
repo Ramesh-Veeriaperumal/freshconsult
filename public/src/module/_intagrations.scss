@@ -1477,13 +1477,15 @@ span.beta {
 	  position: absolute;
 	  background-color: rgba(245, 245, 245, 0.66);
 	  z-index: 10;
-	  border-radius: 5px;
+	  //border-radius: 5px;
+	  @include margin-left(-5px);
   }
   .sf-title-wrapper{
 	  color: #333;
 	  font-weight: 500;
 	  font-size: 15px;
 	  padding-bottom: 10px;
+	  float: right;
 	  label{
 		  display: inline-block;
 		  vertical-align: middle;
@@ -1493,12 +1495,19 @@ span.beta {
   }
   .radio-btn-wrapper{
   	border-left: 1px solid #D5D5D5;
+  	@include margin-left(0px);
+  	@include padding-left(10px);
   }
- 
+	.pad{
+		padding-bottom: 5px;
+	}
   .radio-btn-title{
-	  font-weight: 500;
-	  margin-bottom: 10px;
-	  line-height: 1;
+	&.setting-description{
+		@include padding-left(10px);
+		margin-bottom: 12px;
+	}
+	font-weight: 500;
+	line-height: 1;
   }
   .radio-btn {
 	  color: #888;
@@ -1514,6 +1523,30 @@ span.beta {
 	  	color: 888;
 	  }
   }
+	.closable-widget{
+		&.triangle-left{
+			height: 0;
+			border-top: 4px solid transparent;
+			border-left: 8px solid #100f0f;
+			border-bottom: 4px solid transparent;
+			margin: 0px -5px -10px;
+		}
+		&.triangle-down {
+			width: 0;
+			height: 0;
+			border-left: 4px solid transparent;
+			border-right: 4px solid transparent;
+			border-top: 8px solid #100f0f;
+			margin: 0px -5px -10px;
+		}
+	}
+	.setting-description{
+		&:hover{
+			cursor: pointer; 
+		}
+		color: #096bcd;
+		font-size: 14px;
+	}
   .center-icon i{
   	font-size: 20px;
   }
@@ -1541,19 +1574,24 @@ span.beta {
 	  	padding-left: 6%;
 	  }
   }
-  .nav-flat{
-	  a{
-	  	font-size: 15px;
-	  }
+  	.nav-flat{
+		  a{
+		  	font-size: 14px;
+		  }
+    }
+ }
+ .master-block-container{
+ 	.blocks{
+    	display:inline;
   }
  }
-sf-title-wrapper, .switch-right{
- 	position: absolute;
- 	padding-top: 15px;
- 	padding-left: 625px;
-}
-
-#inline-ul{
+	.pad-left{
+		@include padding-left(10px);
+	}
+ 	.pad-bottom{
+ 		padding-bottom: 15px;
+ 	}
+  #inline-ul{
     display: inline-block;
 }
 

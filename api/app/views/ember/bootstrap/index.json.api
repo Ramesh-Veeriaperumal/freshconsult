@@ -1,4 +1,4 @@
 JSON.generate({
-  agent: AgentDecorator.new(current_user.agent).to_full_hash,
+  agent: AgentDecorator.new(current_user.agent, {}).to_full_hash,
   account: AccountDecorator.new(current_account).to_hash
 })

@@ -34,7 +34,7 @@ module RabbitMq::Subscribers::Tickets::Count
     model_message["subscriber_properties"].merge!({ 'count' => self.mq_count_subscriber_properties(action) })
     
     RabbitMq::Utils.manual_publish_to_xchg(
-      model_uuid, model_exchange, model_message.to_json, RabbitMq::Constants.const_get("RMQ_COUNT_#{model_exchange.upcase}_KEY")
+      model_uuid, model_exchange, model_message.to_json, RabbitMq::Constants.const_get("RMQ_COUNT_#{model_exchange.upcase}_KEY"), true
     )
   end
 

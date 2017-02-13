@@ -1,0 +1,43 @@
+response_hash = {
+  active: @item.active,
+  address: @item.address,
+  company_id: @item.company_id,
+  view_all_tickets: @item.client_manager,
+  description: @item.description,
+  email: @item.email,
+  id: @item.id,
+  job_title: @item.job_title,
+  language: @item.language,
+  mobile: @item.mobile,
+  name: @item.name,
+  phone: @item.phone,
+  time_zone: @item.time_zone,
+  twitter_id: @item.twitter_id,
+  custom_fields: @item.custom_fields,
+  tags: @item.tags,
+  other_emails: @item.other_emails,
+  created_at: @item.created_at.try(:utc),
+  updated_at: @item.updated_at.try(:utc)
+}
+
+response_hash.merge!(
+  other_companies: @item.other_companies
+) if @item.multiple_user_companies_enabled?
+response_hash.merge!(deleted: @item.deleted) if @item.deleted
+
+if @item.avatar
+  avatar_hash = {
+    avatar_url: @item.avatar.attachment_url_for_api,
+    content_type: @item.avatar.content_content_type,
+    id: @item.avatar.id,
+    name: @item.avatar.content_file_name,
+    size: @item.avatar.content_file_size,
+    created_at: @item.avatar.created_at.try(:utc),
+    updated_at: @item.avatar.updated_at.try(:utc)
+  }
+  response_hash.merge!(avatar: avatar_hash)
+else
+  response_hash.merge!(avatar: nil)
+end
+
+JSON.generate(response_hash)

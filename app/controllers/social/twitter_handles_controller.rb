@@ -2,7 +2,7 @@ class Social::TwitterHandlesController < ApplicationController
 
   include ErrorHandle
 
-  before_filter { |c| c.requires_feature :twitter }
+  before_filter { access_denied unless current_account.basic_twitter_enabled? }
 
   prepend_before_filter :load_product, :only => [:signin, :authdone]
   before_filter :build_item, :only => [:signin, :authdone]

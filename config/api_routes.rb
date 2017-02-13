@@ -150,6 +150,8 @@ Helpkit::Application.routes.draw do
 
   ember_routes = proc do
     resources :ticket_fields, controller: 'ember/ticket_fields', only: [:index, :update]
+    resources :groups, controller: 'ember/groups', only: [:index, :show]
+    resources :email_configs, controller: 'ember/email_configs', only: [:index, :show]
     resources :bootstrap, controller: 'ember/bootstrap', only: :index
     resources :tickets, controller: 'ember/tickets', only: [:index, :create, :update, :show] do
       collection do
@@ -209,6 +211,7 @@ Helpkit::Application.routes.draw do
     resources :conversations, controller: 'ember/conversations', only: [:update] do
       member do
         get :full_text
+        get :forward_template, to: 'ember/conversations#note_forward_template'
       end
     end
 
@@ -264,6 +267,15 @@ Helpkit::Application.routes.draw do
     post '/search/solutions/',    to: 'ember/search/solutions#results'
   end
 
+  pipe_routes = proc do 
+    resources :tickets, controller: 'pipe/tickets', only: [:create] do
+      member do
+        post :reply, to: 'pipe/conversations#reply'
+        post :notes, to: 'pipe/conversations#create'
+      end
+    end
+  end
+
   match '/api/v2/_search/tickets' => 'tickets#search', :defaults => { format: 'json' }, :as => :tickets_search, via: :get
 
   scope '/api', defaults: { version: 'v2', format: 'json' }, constraints: { format: /(json|$^)/ } do
@@ -272,9 +284,12 @@ Helpkit::Application.routes.draw do
       scope '', &ember_routes # "/api/v2/.."
       scope '', &api_routes # "/api/v2/.."
     end
+    scope '/pipe', defaults: { version: 'private', format: 'json' }, constraints: { format: /(json|$^)/ } do
+      scope '', &pipe_routes # "/api/v2/.."
+      scope '', &api_routes # "/api/v2/.."
+    end
     constraints ApiConstraints.new(version: 2), &api_routes # "/api/.." with Accept Header
     scope '', &api_routes
-
     match '*route_not_found.:format', to: 'api_application#route_not_found'
     match '*route_not_found',         to: 'api_application#route_not_found'
   end

@@ -95,6 +95,13 @@ module Cache::Memcache::Account
     end
   end
 
+  def agent_groups_from_cache
+    @agent_groups_from_cache ||= begin
+      key = agent_groups_memcache_key
+      MemcacheKeys.fetch(key) { agent_groups.select('user_id,group_id').all }
+    end
+  end
+
   def products_from_cache
     key = ACCOUNT_PRODUCTS % { :account_id => self.id }
     MemcacheKeys.fetch(key) { self.products.find(:all, :order => 'name') }
@@ -189,6 +196,24 @@ module Cache::Memcache::Account
     key = ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING % { account_id: self.id }
     MemcacheKeys.fetch(key) do
       section_fields_with_field_values_mapping.all
+    end
+  end
+
+  def skills_trimmed_version_from_cache
+    @skills_trimmed_version_from_cache ||= begin
+      key = ACCOUNT_SKILLS_TRIMMED % { :account_id => self.id }
+      MemcacheKeys.fetch(key) do
+        skills.trimmed.find(:all)
+      end
+    end
+  end
+
+  def skills_from_cache
+    @skills_from_cache ||= begin
+      key = ACCOUNT_SKILLS % { :account_id => self.id }
+      MemcacheKeys.fetch(key) do
+        skills.find(:all)
+      end
     end
   end
 
@@ -408,6 +433,10 @@ module Cache::Memcache::Account
 
     def groups_memcache_key
       ACCOUNT_GROUPS % { :account_id => self.id }
+    end
+
+    def agent_groups_memcache_key
+      ACCOUNT_AGENT_GROUPS % { account_id: id }
     end
 
     def tags_memcache_key

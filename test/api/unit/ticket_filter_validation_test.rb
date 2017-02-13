@@ -49,12 +49,19 @@ class TicketFilterValidationTest < ActionView::TestCase
     assert error.include?('Company datatype_mismatch')
     assert error.include?('Order by not_included')
     assert error.include?('Order type not_included')
-    assert_equal({ company_id: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null'  },
-                   email: { expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'  },
-                   filter: { list: 'new_and_my_open,watching,spam,deleted' },
-                   updated_since: { accepted: :'combined date and time ISO8601' },
-                   order_by: { list: 'due_by,created_at,updated_at,status' },
-                   order_type: { list: 'asc,desc' } }, ticket_filter.error_options)
+    assert_equal({
+      company_id: {
+        expected_data_type: :'Positive Integer', prepend_msg: :input_received,
+        given_data_type: 'Null', code: :datatype_mismatch
+      },
+      email: {
+        expected_data_type: String, prepend_msg: :input_received,
+        given_data_type: 'Null'
+      },
+      filter: { list: 'new_and_my_open,watching,spam,deleted' },
+      updated_since: { accepted: :'combined date and time ISO8601' },
+      order_by: { list: 'due_by,created_at,updated_at,status' },
+      order_type: { list: 'asc,desc' } }, ticket_filter.error_options)
   end
 
   def test_valid_case_for_private_API
@@ -103,5 +110,16 @@ class TicketFilterValidationTest < ActionView::TestCase
     refute ticket_filter.valid?
     errors = ticket_filter.errors.full_messages
     assert errors.include?('Filter only_query_hash_or_filter')
+  end
+
+  def test_filtering_based_on_ids
+    Account.stubs(:current).returns(Account.new)
+    ticket_filter = TicketFilterValidation.new(ids: 'Invalid_id', version: 'private')
+    refute ticket_filter.valid?
+    errors = ticket_filter.errors.full_messages
+    assert errors.include?('Ids array_datatype_mismatch')
+
+    ticket_filter = TicketFilterValidation.new(ids: '10,20,30,40,50', version: 'private')
+    assert ticket_filter.valid?
   end
 end

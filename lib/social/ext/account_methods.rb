@@ -15,4 +15,9 @@ module Social::Ext::AccountMethods
   def random_twitter_handle
     twitter_handles.sample
   end
+
+  def all_custom_twitter_streams
+    self.twitter_streams.select{ |stream| stream if stream.social_id.nil? }    
+  end
+
 end

@@ -19,7 +19,7 @@
       },
       :"twitter"                       =>   {
         :url                           =>   "/admin/social/streams",
-        :privilege                     =>   feature?(:twitter) && privilege?(:admin_tasks)
+        :privilege                     =>   current_account.basic_twitter_enabled? && privilege?(:admin_tasks)
       },
       :"facebook-setting"              =>   facebook_settings,
       
@@ -78,6 +78,11 @@
       :tags                            =>   {
         :url                           =>   "/helpdesk/tags",
         :privilege                     =>   privilege?(:manage_tags)
+      },
+      :skills                          =>   {
+        :url                           =>   privilege?(:admin_tasks) ? "/admin/skills" : "/admin/agent_skills",
+        :privilege                     =>   current_account.skill_based_round_robin_enabled? && 
+                                              (privilege?(:admin_tasks) || privilege?(:assign_agent))
       },
       :dispatcher                      =>   {
         :url                           =>   "/admin/va_rules",
@@ -199,7 +204,7 @@
 
     ADMIN_GROUP = {
       :"support-channels"       =>    ["email", "portals", "livechat", "phone-channel", "twitter", "facebook-setting", "feedback", "mobihelp", "ecommerce"],
-      :"general-settings"       =>    ["helpdesk-settings", "ticket-fields", "customer-fields", "agent", "group", "role", "security", "sla",
+      :"general-settings"       =>    ["helpdesk-settings", "ticket-fields", "customer-fields", "agent", "group", "skills", "role", "security", "sla",
                                           "business-hours", "multi-product", "tags"],
       :"helpdesk-productivity"  =>    ["dispatcher", "supervisor", "observer", "scenario", "ticket_template", "email-notifications", "canned-response",
                                           "survey-settings", "gamification-settings", "email_commands_setting", "integrations", "apps"],
@@ -435,7 +440,7 @@ HTML
   private
   
   def facebook_settings
-    fb_feature = current_account.features?(:facebook) && privilege?(:admin_tasks)
+    fb_feature = current_account.basic_facebook_enabled? && privilege?(:admin_tasks)
     url = (fb_feature && current_account.features?(:social_revamp)) ? "/admin/social/facebook_streams" : "/social/facebook"
     {
       :url        => url,

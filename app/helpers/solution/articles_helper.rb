@@ -42,7 +42,7 @@ module Solution::ArticlesHelper
     link_to(  t('solutions.drafts.publish'), 
               solution_draft_publish_path(@article.parent_id, @article.language_id),
               :method => 'post', 
-              :class => 'draft-btn') if (@article.draft.present? || @article.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
+              :class => 'draft-btn draft-btn-publish') if (current_account.verified? && (@article.draft.present? || @article.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]))
   end
   
   def form_data_attrs
@@ -114,7 +114,7 @@ module Solution::ArticlesHelper
       output << submit_tag(t('cancel'), :class => "btn cancel-button", :id => "edit-cancel-button")
     end
     output << submit_tag(t('save'), :name => "save_as_draft", :class => "btn", :id => save_btn || "save-as-draft-btn", :"data-target-btn" => "#save-as-draft-btn")
-    output << submit_tag(t('solution.articles.publish'), :name => "publish", :class => "btn btn-primary", :id => publish_btn || "article-publish-btn", :"data-target-btn" => "#article-publish-btn")
+    output << submit_tag(t('solution.articles.publish'), :name => "publish", :class => "btn btn-primary", :id => publish_btn || "article-publish-btn", :"data-target-btn" => "#article-publish-btn", :disabled => !current_account.verified?)
     output.join(' ').html_safe
   end
 

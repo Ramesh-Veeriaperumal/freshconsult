@@ -19,6 +19,7 @@ class SubscriptionPlan < ActiveRecord::Base
   validates_presence_of :name
   
   attr_accessor :discount
+  OLD_PLANS = ["Sprout", "Blossom", "Garden", "Estate", "Forest"]
   
   scope :current, :conditions => { :classic => false }, :order => 'amount asc'
   
@@ -35,7 +36,12 @@ class SubscriptionPlan < ActiveRecord::Base
     :blossom => "Blossom",
     :garden => "Garden",
     :estate => "Estate",
-    :forest => "Forest"
+    :forest => "Forest",
+    :sprout_jan_17 => "Sprout Jan 17",
+    :blossom_jan_17 => "Blossom Jan 17",
+    :garden_jan_17 => "Garden Jan 17",
+    :estate_jan_17 => "Estate Jan 17",
+    :forest_jan_17 => "Forest Jan 17"
   }
   
   BILLING_CYCLE = [
@@ -109,6 +115,10 @@ class SubscriptionPlan < ActiveRecord::Base
   
   def self.get_free_plan_id
     find(:all, :select => :id , :conditions => {:name => SUBSCRIPTION_PLANS[:free]})
+  end
+  
+  def self.previous_plans
+    where(name: OLD_PLANS)
   end
   
   def free_plan?

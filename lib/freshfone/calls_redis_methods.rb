@@ -166,7 +166,7 @@ module Freshfone::CallsRedisMethods
   end
 
   def get_and_clear_redis_meta(call)
-    $redis_integrations.pipelined do
+    $redis_integrations.multi do
       get_redis_meta(call.account_id, call.id)
       remove_value_from_set(pinged_agents_key(call.id,
         call.account), call.call_sid)

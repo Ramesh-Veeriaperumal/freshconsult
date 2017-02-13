@@ -14,6 +14,7 @@ Sidekiq.configure_client do |config|
       "FreshopsToolsWorker",
       "Social::TwitterReplyStreamWorker",
       "RabbitmqWorker",
+      "ManualPublishWorker",
       "Tickets::SelectAll::BatcherWorker",
       "Sidekiq::Batch::Callback",
       "Freshfone::CallQueueWorker",
@@ -41,6 +42,8 @@ Sidekiq.configure_client do |config|
       "DelayedJobs::TrialAccountJob",
       "DelayedJobs::PremiumAccountJob",
       "DelayedJobs::DelayedAccountJob",
+      "DkimRecordVerificationWorker",
+      "DkimSwitchCategoryWorker",
       "DelayedJobs::MailboxJob",
       "Email::S3RetryWorker"
     ]
@@ -80,6 +83,7 @@ Sidekiq.configure_server do |config|
       "FreshopsToolsWorker",
       "Social::TwitterReplyStreamWorker",
       "RabbitmqWorker",
+      "ManualPublishWorker",
       "Tickets::SelectAll::BatcherWorker",
       "Sidekiq::Batch::Callback",
       "Freshfone::CallQueueWorker",
@@ -107,6 +111,8 @@ Sidekiq.configure_server do |config|
       "DelayedJobs::TrialAccountJob",
       "DelayedJobs::PremiumAccountJob",
       "DelayedJobs::DelayedAccountJob",
+      "DkimRecordVerificationWorker",
+      "DkimSwitchCategoryWorker",
       "DelayedJobs::MailboxJob",
       "Email::S3RetryWorker"
     ]
@@ -137,6 +143,7 @@ Sidekiq.configure_server do |config|
       "FreshopsToolsWorker",
       "Social::TwitterReplyStreamWorker",
       "RabbitmqWorker",
+      "ManualPublishWorker",
       "Tickets::SelectAll::BatcherWorker",
       "Sidekiq::Batch::Callback",
       "Freshfone::CallQueueWorker",
@@ -163,6 +170,8 @@ Sidekiq.configure_server do |config|
       "DelayedJobs::TrialAccountJob",
       "DelayedJobs::PremiumAccountJob",
       "DelayedJobs::DelayedAccountJob",
+      "DkimRecordVerificationWorker",
+      "DkimSwitchCategoryWorker",
       "DelayedJobs::MailboxJob",
       "Email::S3RetryWorker"
     ]

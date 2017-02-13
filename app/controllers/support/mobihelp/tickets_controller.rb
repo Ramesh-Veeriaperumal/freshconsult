@@ -80,8 +80,6 @@ class Support::Mobihelp::TicketsController < SupportController
         else
           @assoc_device.tickets.includes(:notes =>  [:note_old_body, :attachments,:schema_less_note])
         end
-      else # fallback to mobihelp filter
-        @tickets = current_user.tickets.find_by_source( TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobihelp] )
       end
       @tickets ||= []
     end
@@ -131,6 +129,10 @@ class Support::Mobihelp::TicketsController < SupportController
 
     def check_ticket_permissions
       render_json({ :access_denied => true }) unless @ticket and current_user.has_customer_ticket_permission? @ticket
+      if params[:device_uuid] or uuid?(params[:k])
+        key = params[:device_uuid] || params[:k]
+        render_json({ :access_denied => true }) unless current_user.mobihelp_devices.find_by_device_uuid(key)
+      end
     end
 
     def validate_user

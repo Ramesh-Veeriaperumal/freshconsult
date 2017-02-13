@@ -1,0 +1,18 @@
+type: object
+properties:
+  id:
+    type: number
+  profile_id:
+    type: number
+  page_id:
+    type: number
+  page_name:
+    type: string
+  page_image_url:
+    type: string
+  page_link:
+    type: string
+  enable_page:
+    type: boolean
+  product_id:
+    type: number

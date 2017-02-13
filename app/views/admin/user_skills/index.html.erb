@@ -1,0 +1,138 @@
+<% content_for :helpcard do %>
+  <%= render :partial => "/admin/skills/helpnote" %>
+<% end %>
+<div id="cust-list" class="list-page">
+  <div class="list-page-header" >
+    <div class="row-fluid">
+      <div class="span6"><h3 class="lead">
+      <% if @is_admin %>
+        <%=t('admin.skills.index.skills')%></h3></div>
+      <% else %>
+       <%=t('admin.skills.index.agent_skills')%></h3></div>
+      <% end %>
+
+       <div class="span6 pull-right pagination-right header_buttons align-right" >
+       <% if @is_admin %>
+        <%= (link_to t('admin.skills.index.new'), new_admin_skill_path, :class => "btn btn-primary") %>
+        <% end %>
+      </div>
+      </div>
+  
+  <% if @is_admin %>
+  <ul class="nav skills nav-tabs">
+  <li><a href=<%= admin_skills_path %>><%= t('admin.skills.index.nav_skill_list_text') %></a></li>
+  <li class="active"><a href='#'><%= t('admin.skills.index.nav_agent_skill_text') %></a></li>
+  </ul> 
+  <% end %>      
+  </div>
+
+ <% if ((@users.present?) || (@filtered_group.present?)) && (@skills.size != 0) %> <!-- Hidden for Supervisors without no groups -->
+
+        <div id="group_selector_block"  <% if @filtered_group && !@filtered_group.skill_based_round_robin_enabled? %>style="margin-top: 17px;"<% end %>>
+            <span class="muted"><%= t('.groups') %>:</span> <span id="group_selector"><div id="filter_by_group">
+            <%if(@filtered_group)%> <%=  @filtered_group.name%> <%else%> Any <% end %> &nbsp;
+            </div><span><%= font_icon "caret-down"%></span></span>
+        </div>
+    <% if(@is_admin)%>
+        <span class="vertical-alignment muted"><%= t('.admin_info_help').html_safe %></span><br/>
+    <% else %>
+        <span class="vertical-alignment muted"><%= t('.supervisor_info_help').html_safe %></span><br/>
+    <% end %>
+          
+          <% if @filtered_group && !@filtered_group.skill_based_round_robin_enabled? %>
+                    <span class="vertical-alignment" style="color:#A90329"> 
+                    <%= t('.sbrr_disabled_admin').html_safe%>
+                    <%= (link_to t('.turn_on'), "/groups/#{@filtered_group.id}/edit") %>
+                    </span>
+                    <br/>
+          <% end%>
+
+<% end %>
+
+<ul class="dropdown-menu user_skill_dropdown">
+  <%if(@filtered_group)%> 
+      <% if @is_admin %>
+      <li><a href="/admin/agent_skills"><%= t('.any') %></a></li>
+      <% end %>
+  <%else%> 
+      <li><a style="font-weight: 600;" href="/admin/agent_skills"><%= t('.any') %></a></li>
+      <i class="ficon-tick"></i>
+  <% end %>
+  <% (@groups).each do |group| %>
+    <% if ((@filtered_group.present?)&&(group.id == @filtered_group.id)) %>
+      <li>
+          <a style="font-weight: 600;" href="/admin/agent_skills?group_id=<%= (group.id) %>">
+              <%= (group.name) %>
+          </a>
+          <i class="ficon-tick"></i>
+      </li>
+    <% else %>
+      <li>
+          <a href="/admin/agent_skills?group_id=<%= (group.id) %>">
+              <%= (group.name) %>
+          </a>
+      </li>
+    <% end %>
+  <% end %>
+</ul>
+
+        <% if (@skills.size != 0) %> <!-- total skills present in acc. -->
+                <% if(@users.present?) %><!-- agent(s) present for current group selection -->
+                          <div class="list-page-body va_rule-index" style="margin-top: 5px;" id="va_rules_list">
+                            <table class="table table-striped"> 
+                              <% (@users).each do |user| %>
+                                <tr id=<%= dom_id(user) %>>
+                                  <td class="tdSkill">
+                                      <span><%= h(user.name) %></span>
+                                  </td>
+
+                                  <td id= "<%= (user.id) %>" class="agentSkillList">
+                                    <span class="muted">
+                                       <%= user.skills[0..4].map(&:name).join('&nbsp;&nbsp;|&nbsp;&nbsp;').html_safe %>
+                                        <% if (user.skills.size > 5) %> 
+                                        <% user_skills_rem = (user.skills.size - 5) %>&nbsp;|&nbsp;&nbsp;<%= link_to "#{user_skills_rem} #{t('.more')}", 'javascript:void(0);', :class => "manageSkills", :data => { :userId => (user.id), :userName => (user.name), :skillCount => (user.skills.length) } %>
+                                        <% end %>
+                                    </span>
+                                  </td>
+
+                                  <td >
+                                  <% if (user.skills.size == 0) %> 
+                                      <div align="right">
+                                      <% if(@is_admin) %>
+                                              <%= link_to(t('.add_skills'), 'javascript:void(0);', :class => "manageSkills skillsModalLink", :data => { :userId => (user.id), :userName => (user.name), :skillCount => (user.skills.length) }) %>
+                                      <% else %>
+                                               <p class="muted">No skills</p>
+                                      <% end %>
+                                      </div>
+                                  <% else %>
+                                      <div align="right">
+                                          <%= link_to(t('.manage_skills'), 'javascript:void(0)', :class => "manageSkills skillsModalLink", :data => { :userId => (user.id), :userName => (user.name), :skillCount => (user.skills.length) }) %>
+                                      </div>
+                                  <% end %>
+                                  </td>
+                                </tr>
+                              <% end %>
+                            </table>  
+                          </div>
+                <% else %><!-- no agents present for current group selection -->
+                  <% if (@filtered_group.present?) %>
+                      <!-- applies when NO agents are present for group (happens for ADMIN)-->
+                    <div style="margin-top: 5px;" class="list-page-body emptyContainerAlign va_rule-index va_rule_no_skills align_center" id="va_rules_list">
+                    <div class="text-new-skills muted">    <%= t('admin.skills.index.no_agents_info') %> 
+                    <%= (link_to t('admin.skills.index.add_agents'), "/groups/#{@filtered_group.id}/edit") %></div></div>
+
+                  <% else %>
+                      <!-- applies when NO groups are present for supervisor or he doesn't have permission to view -->
+                    <div style="margin-top: -10px;" class="list-page-body emptyContainerAlign va_rule-index va_rule_no_skills align_center" id="va_rules_list">
+                    <div class="text-new-skills muted">    <%= t('admin.skills.index.not_in_any_groups_info') %></div></div>
+                                
+                  <% end %>
+              <% end %>
+
+      <% else %><!-- Zero Skill present in account -->
+       <div style="margin-top: -10px;" class="list-page-body va_rule-index va_rule_no_skills align_center" id="va_rules_list">
+                     <div class="text-new-skills muted"> <%= t('admin.skills.index.no_skill_info_1') %> <br> <%= t('admin.skills.index.no_skill_info_2') %></div></div>
+      <% end %>
+
+</div>
+<%= render :partial => 'admin/skills/popup' %>

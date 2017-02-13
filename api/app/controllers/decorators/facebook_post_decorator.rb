@@ -1,10 +1,6 @@
 class FacebookPostDecorator < ApiDecorator
   delegate :id, :post_id, :msg_type, :post_attributes, to: :record
 
-  def initialize(record, options = {})
-    super(record)
-  end
-
   def to_hash
     fb_post_hash = {
       id: id,
@@ -13,9 +9,13 @@ class FacebookPostDecorator < ApiDecorator
       created_at: record.created_at.try(:utc),
       updated_at: record.updated_at.try(:utc)
     }
-    fb_post_hash.merge!(page_name: record.facebook_page.page_name) if ['Helpdesk::Ticket'].include?(record.postable_type)
+    fb_post_hash.merge!(fb_page: fb_page_info) if ['Helpdesk::Ticket'].include?(record.postable_type)
     fb_post_hash.merge!(post_type: post_attributes[:post_type], can_comment?: record.can_comment?) if record.post?
     fb_post_hash
+  end
+
+  def fb_page_info
+    FacebookPageDecorator.new(record.facebook_page).to_hash
   end
 
 end

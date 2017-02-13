@@ -24,7 +24,7 @@ var SurveyDetail = {
 			if(choices[i].value.trim().length == 0){
 				formattedChoices[i].value = choices[i].placeholder;
 			}else{
-				formattedChoices[i].value = choices[i].value;
+				formattedChoices[i].value = choices[i].value != '' ? choices[i].value : choices[i].attr('placeholder');
 			}
 			formattedChoices[i].face_value = jQuery(choices[i]).data('face-value');
 			formattedChoices[i].position = jQuery(choices[i]).data('position') || (i+1);

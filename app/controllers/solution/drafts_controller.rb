@@ -6,6 +6,7 @@ class Solution::DraftsController < ApplicationController
   include Solution::FlashHelper
   include Solution::LanguageControllerMethods
 
+  before_filter :check_account_activation, :only => :publish
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :set_selected_tab, :only => [:index]
   before_filter :page_title, :only => [:index]

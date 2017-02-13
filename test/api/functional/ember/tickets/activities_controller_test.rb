@@ -12,27 +12,29 @@ module Ember
         before_all
       end
 
-      @@before_all_run = false
+      @before_all_run = false
 
       def before_all
         @account.sections.map(&:destroy)
         @agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
         @ticket = create_ticket(responder_id: @agent.id)
-        @note   = create_private_note(@ticket)
+        @target_ticket = create_ticket(responder_id: @agent.id)
+        @note = create_private_note(@ticket)
         @timesheet = create_timesheet
-        return if @@before_all_run
+        @rule = @account.account_va_rules.first
+        return if @before_all_run
         @account.ticket_fields.custom_fields.each(&:destroy)
-        @@ticket_fields = []
-        @@custom_field_labels = []
-        @@ticket_fields << create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
-        @@ticket_fields << create_custom_field_dropdown('test_custom_dropdown', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
-        @@choices_custom_field_labels = @@ticket_fields.map(&:label)
+        @ticket_fields = []
+        @custom_field_labels = []
+        @ticket_fields << create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
+        @ticket_fields << create_custom_field_dropdown('test_custom_dropdown', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
+        @choices_custom_field_labels = @ticket_fields.map(&:label)
         CUSTOM_FIELDS.each do |custom_field|
           next if %w(dropdown country state city).include?(custom_field)
-          @@ticket_fields << create_custom_field("test_custom_#{custom_field}", custom_field)
-          @@custom_field_labels << @@ticket_fields.last.label
+          @ticket_fields << create_custom_field("test_custom_#{custom_field}", custom_field)
+          @custom_field_labels << @ticket_fields.last.label
         end
-        @@before_all_run = true
+        @before_all_run = true
       end
 
       def wrap_cname(params)
@@ -141,10 +143,15 @@ module Ember
         @controller.unstub(:fetch_activities)
       end
 
-      # def test_archive_ticket_activity
-      # ensure
-      #   @controller.unstub(:fetch_activities)
-      # end
+      def test_archive_ticket_activity
+        stub_data = archive_ticket_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        match_json(archive_activity_pattern(stub_data))
+        assert_response 200
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
 
       def test_add_watcher_activity
         stub_data = watcher_activity(true)
@@ -176,60 +183,115 @@ module Ember
         @controller.unstub(:fetch_activities)
       end
 
-      # def test_add_cc_activity
-      #   stub_data = add_cc_activity
-      #   @controller.stubs(:fetch_activities).returns(stub_data)
-      #   get :index, controller_params(version: 'private', ticket_id: @ticket.id)
-      #   match_json(add_cc_activity_pattern(stub_data))
-      #   assert_response 200
-      # ensure
-      #   @controller.unstub(:fetch_activities)
-      # end
+      def test_add_cc_activity
+        stub_data = add_cc_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        match_json(add_cc_activity_pattern(stub_data))
+        assert_response 200
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
 
-      # def test_delete_status_activity
-      #   ticket = create_ticket
-      #   @controller.stubs(:fetch_activities).returns(ticket_import_activity(ticket))
-      #   get :index, controller_params(version: 'private', ticket_id: @ticket.id)
-      #   assert_response 200
-      # ensure
-      #   @controller.unstub(:fetch_activities)
-      # end
+      def test_email_to_group_activity
+        stub_data = email_to_group_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        match_json(email_to_activity_pattern(stub_data, :email_to_group))
+        assert_response 200
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
 
-      # def test_ticket_merge_activity
-      #   ticket = create_ticket
-      #   @controller.stubs(:fetch_activities).returns(ticket_merge_activity(ticket))
-      #   get :index, controller_params(version: 'private', ticket_id: @ticket.id)
-      #   assert_response 200
-      # ensure
-      #   @controller.unstub(:fetch_activities)
-      # end
+      def test_email_to_requester_activity
+        stub_data = email_to_requester_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        match_json(email_to_activity_pattern(stub_data, :email_to_requester))
+        assert_response 200
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
 
-      # def test_ticket_split_activity
-      #   ticket = create_ticket
-      #   @controller.stubs(:fetch_activities).returns(ticket_split_activity)
-      #   get :index, controller_params(version: 'private', ticket_id: @ticket.id)
-      #   assert_response 200
-      # ensure
-      #   @controller.unstub(:fetch_activities)
-      # end
+      def test_email_to_agent_activity
+        stub_data = email_to_agent_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        match_json(email_to_activity_pattern(stub_data, :email_to_agent))
+        assert_response 200
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
 
-      # def test_ticket_import_activity
-      #   ticket = create_ticket
-      #   @controller.stubs(:fetch_activities).returns(ticket_import_activity(ticket))
-      #   get :index, controller_params(version: 'private', ticket_id: @ticket.id)
-      #   assert_response 200
-      # ensure
-      #   @controller.unstub(:fetch_activities)
-      # end
+      def test_delete_status_activity
+        stub_data = delete_status_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        match_json(delete_status_activity_pattern(stub_data))
+        assert_response 200
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
 
-      # def test_rules_email_to_activity
-      #   ticket = create_ticket
-      #   @controller.stubs(:fetch_activities).returns(rules_email_to_activity(ticket))
-      #   get :index, controller_params(version: 'private', ticket_id: @ticket.id)
-      #   assert_response 200
-      # ensure
-      #   @controller.unstub(:fetch_activities)
-      # end
+      def test_ticket_merge_target_activity
+        stub_data = ticket_merge_target_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @target_ticket.id)
+        match_json(ticket_merge_activity_pattern(stub_data, :ticket_merge_target))
+        assert_response 200
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_ticket_merge_source_activity
+        stub_data = ticket_merge_source_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        match_json(ticket_merge_activity_pattern(stub_data, :ticket_merge_source))
+        assert_response 200
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_ticket_split_target_activity
+        stub_data = ticket_split_target_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @target_ticket.id)
+        match_json(ticket_split_activity_pattern(stub_data, :ticket_split_target))
+        assert_response 200
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_ticket_split_source_activity
+        stub_data = ticket_split_source_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        match_json(ticket_split_activity_pattern(stub_data, :ticket_split_source))
+        assert_response 200
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_ticket_import_activity
+        stub_data = ticket_import_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        match_json(ticket_import_activity_pattern(stub_data))
+        assert_response 200
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_round_robin_activity
+        stub_data = round_robin_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        match_json(round_robin_activity_pattern(stub_data))
+        assert_response 200
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
 
       def test_timesheet_create_activity
         ticket = create_ticket

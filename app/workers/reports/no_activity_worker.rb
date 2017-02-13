@@ -4,6 +4,7 @@ class Reports::NoActivityWorker < BaseWorker
   
 
   def perform params
+    params.symbolize_keys!
     HelpdeskReports::Logger.log("No-Activity batch #{params[:batch]} started")
     Sharding.run_on_shard(params[:shard_name]) do
       Sharding.run_on_slave do

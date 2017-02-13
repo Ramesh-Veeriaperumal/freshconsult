@@ -24,5 +24,11 @@ class ValidationHelper
       @default_validator_class_mapping ||= {}
       @default_validator_class_mapping[key] = "ActiveModel::Validations::#{key.to_s.camelize}Validator".constantize
     end
+
+    # compute the size of attachments associated with the record.
+    def attachment_size(item)
+      item.try(:attachments).try(:sum, &:content_file_size).to_i
+    end
+
   end
 end

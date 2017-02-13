@@ -20,6 +20,7 @@ class PortalObserver < ActiveRecord::Observer
     end
      
     def after_destroy(portal)
+      clear_sitemap(portal)
       remove_domain_mapping(portal)
       notify_custom_ssl_removal(portal)
       remove_custom_domain_from_global(portal) if Fdadmin::APICalls.non_global_pods?
@@ -89,6 +90,10 @@ class PortalObserver < ActiveRecord::Observer
     def remove_domain_mapping(portal)
       domain_mapping = DomainMapping.find_by_portal_id_and_account_id(portal.id,portal.account_id)
       domain_mapping.destroy if domain_mapping
+    end
+
+    def clear_sitemap(portal)
+      Community::ClearSitemap.perform_async(portal.account_id, portal.id)
     end
 
     def update_users_language(portal)

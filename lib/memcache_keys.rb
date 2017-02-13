@@ -20,6 +20,8 @@ module MemcacheKeys
 
   ACCOUNT_GROUPS = "v2/ACCOUNT_GROUPS:%{account_id}"
 
+  ACCOUNT_AGENT_GROUPS = "v4/ACCOUNT_AGENT_GROUPS:%{account_id}"
+
   ACCOUNT_PRODUCTS = "v1/ACCOUNT_PRODUCTS:%{account_id}"
 
   ACCOUNT_TAGS = "v1/ACCOUNT_TAGS:%{account_id}"
@@ -34,11 +36,11 @@ module MemcacheKeys
 
   ACCOUNT_STATUS_GROUPS = "v1/ACCOUNT_STATUS_GROUPS:%{account_id}"
 
-  PORTAL_BY_URL = "v2/PORTAL_BY_URL:%{portal_url}"
+  PORTAL_BY_URL = "v3/PORTAL_BY_URL:%{portal_url}"
 
-  ACCOUNT_BY_FULL_DOMAIN = "v4/ACCOUNT_BY_FULL_DOMAIN:%{full_domain}"
+  ACCOUNT_BY_FULL_DOMAIN = "v5/ACCOUNT_BY_FULL_DOMAIN:%{full_domain}"
 
-  ACCOUNT_MAIN_PORTAL = "v3/ACCOUNT_MAIN_PORTAL:%{account_id}"
+  ACCOUNT_MAIN_PORTAL = "v4/ACCOUNT_MAIN_PORTAL:%{account_id}"
 
   ACCOUNT_CUSTOM_DROPDOWN_FIELDS = "v2/ACCOUNT_CUSTOM_DROPDOWN_FIELDS:%{account_id}"
 
@@ -54,6 +56,10 @@ module MemcacheKeys
 
   ACCOUNT_OBSERVER_RULES = "v1/ACCOUNT_OBSERVER_RULES:%{account_id}"
 
+  ACCOUNT_SKILLS = "v1/ACCOUNT_SKILLS:%{account_id}"
+
+  ACCOUNT_SKILLS_TRIMMED = "v1/ACCOUNT_SKILLS_TRIMMED:%{account_id}"
+  
   ACCOUNT_TWITTER_HANDLES = "v2/ACCOUNT_TWITTER_HANDLES:%{account_id}"
 
   FORUM_CATEGORIES = "v1/FORUM_CATEGORIES:%{account_id}"
@@ -83,9 +89,9 @@ module MemcacheKeys
 
   FEATURES_LIST = "v4/FEATURES_LIST:%{account_id}"
 
-  SHARD_BY_DOMAIN = "v4/SHARD_BY_DOMAIN:%{domain}"
+  SHARD_BY_DOMAIN = "v5/SHARD_BY_DOMAIN:%{domain}"
 
-  SHARD_BY_ACCOUNT_ID = "v4/SHARD_BY_ACCOUNT_ID:%{account_id}"
+  SHARD_BY_ACCOUNT_ID = "v5/SHARD_BY_ACCOUNT_ID:%{account_id}"
 
   DEFAULT_BUSINESS_CALENDAR = "v1/DEFAULT_BUSINESS_CALENDAR:%{account_id}"
 
@@ -119,7 +125,7 @@ module MemcacheKeys
 
   PRODUCT_NOTIFICATION = "v3/%{language}/PRODUCT_NOTIFICATION"
 
-  POD_SHARD_ACCOUNT_MAPPING = "v2/POD_SHARD_ACCOUNT_MAPPING:%{pod_info}:%{shard_name}"
+  POD_SHARD_ACCOUNT_MAPPING = "v3/POD_SHARD_ACCOUNT_MAPPING:%{pod_info}:%{shard_name}"
 
   ACCOUNT_ADDITIONAL_SETTINGS = "v3/ACCOUNT_ADDITIONAL_SETTINGS:%{account_id}"
 
@@ -135,7 +141,11 @@ module MemcacheKeys
 
   EXTENSION_DETAILS = "v2/FA:EXTENSION:%{extension_id}:%{locale_id}"
 
+  VERSION_DETAILS = "v1/FA:VERSION:%{version_id}"
+
   CONFIGURATION_DETAILS = "v1/FA:CONFIGURATIONS:%{version_id}:%{locale_id}"
+
+  IFRAME_SETTINGS = "v1/FA:IFRAME_SETTINGS:%{version_id}"
 
   INSTALLED_CTI_APP = "v1/INSTALLED_CTI_APP:%{account_id}"
 
@@ -158,6 +168,8 @@ module MemcacheKeys
   TKT_TEMPLATES_COUNT = "v1/TKT_TEMPLATES_COUNT:%{account_id}"
 
   ACCOUNT_WEBHOOK_KEY = "ACCOUNT_WEBHOOK_KEY:%{account_id}:%{vendor_id}"
+
+  SITEMAP_KEY = "SITEMAP:%{account_id}:%{portal_id}"
 
   MOST_VIEWED_ARTICLES = "MOST_VIEWED_ARTICLES:%{account_id}:%{language_id}:%{cache_version}"
 

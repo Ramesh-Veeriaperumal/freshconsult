@@ -1,23 +1,26 @@
 class ContactDelegator < BaseDelegator
   include ActiveRecord::Validations
 
-  validates_associated :default_user_company, if: -> { company_id }
   validates :custom_field, custom_field: { custom_field: {
     validatable_custom_fields: proc { Account.current.contact_form.custom_drop_down_fields },
     drop_down_choices: proc { Account.current.contact_form.custom_dropdown_field_choices },
     required_attribute: :required_for_agent
   }
   }
-
   validate :user_emails_validation, if: -> { @other_emails }
   validate :validate_user_activation, on: :send_invite
   validate :validate_avatar_ext, if: -> { self.avatar && errors[:attachment_ids].blank? }
+  validate :default_company_presence, if: -> { @default_company }
 
   def initialize(record, options = {})
     if options[:email_objects]
       @other_emails = options[:email_objects][:old_email_objects]
       @primary_email = options[:email_objects][:primary_email]
+    else
+      @other_emails = options[:other_emails]
+      @primary_email = options[:primary_email]
     end
+    @default_company = options[:default_company]
     @user_id = record.id
     check_params_set(options[:custom_fields]) if options[:custom_fields].is_a?(Hash)
     options[:attachment_ids] = Array.wrap(options[:avatar_id].to_i) if options[:avatar_id]
@@ -51,6 +54,12 @@ class ContactDelegator < BaseDelegator
     unless valid_extension
       errors[:avatar_id] << :upload_jpg_or_png_file
       error_options[:avatar_id] = { current_extension: extension }
+    end
+  end
+
+  def default_company_presence
+    unless Account.current.companies_from_cache.detect { |x| x.id == @default_company}
+      errors[:company_id] << :"can't be blank"
     end
   end
 

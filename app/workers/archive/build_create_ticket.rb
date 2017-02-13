@@ -1,11 +1,12 @@
 module Archive
   class BuildCreateTicket < BaseWorker
-    sidekiq_options :queue => :archive_build_create_ticket, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => ::ArchiveSikdekiqConfig["archive_build_create_ticket"], :retry => 0, :backtrace => true, :failures => :exhausted
 
     def perform(args)
       begin
         @account = Account.current
         @ticket = @account.tickets.find(args["ticket_id"])
+        return if @ticket && !@ticket.closed?
         @ticket.reset_associations if @ticket.association_type
         archive_ticket = @account.archive_tickets.find_by_ticket_id_and_progress(args["ticket_id"],true)
         archvie_core_base = Archive::Core::Base.new

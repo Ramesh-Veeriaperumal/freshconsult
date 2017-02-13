@@ -56,15 +56,6 @@ module Integrations::OauthHelper
       @config = File.join(Rails.root, 'config', 'oauth_config.yml')
       key_hash = (YAML::load_file @config)[Rails.env]
 
-      #### Facebook OAuth Keys ####
-      config = File.join(Rails.root, 'config', 'facebook.yml')
-      tokens = (YAML::load_file config)[Rails.env]
-      consumer_key = tokens['app_id']
-      consumer_secret = tokens['secret_key']
-      key_hash[:facebook] = {}
-      key_hash[:facebook] = {"consumer_token" => consumer_key, "consumer_secret" => consumer_secret}
-      #key_hash.merge({:facebook => {:consumer_key => consumer_key, :consumer_secret => consumer_secret}})
-
       #### Twitter OAuth Keys ####
       config = File.join(Rails.root, 'config', 'twitter.yml')
       tokens = (YAML::load_file config)

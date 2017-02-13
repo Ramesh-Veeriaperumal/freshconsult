@@ -112,12 +112,38 @@
   //URL Validator without protocol
   $.validator.addMethod("url_without_protocol", function(value, element) {
       var domain_name = (element && $(element).data('domain')) || 'freshdesk.com',
-      domian_restricted_regex = new RegExp("^(?!.*\\."+domain_name+"$)[/\\w\\.-]+$");
+      domian_restricted_regex = new RegExp("^(?!.*\\."+domain_name+"$)[/\\w\\.-]+$"),
+      COLON_AND_SLASHES = "://";
       value = trim(value)
+      if($(element).data('source') === 'portal' && value.indexOf(COLON_AND_SLASHES) !== -1){
+        value = value.substring(value.indexOf(COLON_AND_SLASHES) + COLON_AND_SLASHES.length)
+      }
       return this.optional(element) || (/^((https?|ftp):\/\/)?(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(value) && domian_restricted_regex.test(value));
   }, "Please enter a valid URL");
   $.validator.addClassRules({
       url_without_protocol : { url_without_protocol : true }
+  });
+
+  
+   //domain name validator
+  $.validator.addMethod("domain_name_validator", function(value, element) {
+    var COLON_AND_SLASHES = "://";
+    if($(element).data('source') === 'portal' && value.indexOf(COLON_AND_SLASHES) !== -1){
+      value = value.substring(value.indexOf(COLON_AND_SLASHES) + COLON_AND_SLASHES.length)
+    }
+    return (value.indexOf('/') === -1)
+  }, "Please enter a valid URL without '/'");
+  $.validator.addClassRules({
+      domain_name_validator : { domain_name_validator : true }
+  });
+
+  //validating linkback url to avoid xss content
+  $.validator.addMethod("linkback_url_valid", function(value, element) {
+      value = trim(value)
+      return this.optional(element) || /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/i.test(value); 
+    }, "Please enter a valid linkback URL");
+  $.validator.addClassRules({
+      linkback_url_valid : { linkback_url_valid : true }
   });
 
   function requesterValidate(value, element) {

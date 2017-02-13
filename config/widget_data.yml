@@ -461,3 +461,19 @@
   id: 27
   description: integrations.fullcontact.desc
   application_type: fullcontact
+
+- options: 
+    display_in_pages: 
+    - contacts_show_page_side_bar
+
+  script: |-
+          <script type="text/javascript">
+            var salesforceV2Bundle={domain:"{{salesforce_v2.instance_url}}", ticket_id:"{{ticket.raw_id}}", ticket_company:"{{ticket.company.name | make_vaild_javascript}}", reqEmail:"{{requester.email}}", contactFields:"{{salesforce_v2.contact_fields}}", opportunityFields:"{{salesforce_v2.opportunity_fields}}", opportunityLabels:"{{salesforce_v2.opportunity_labels}}", leadFields:"{{salesforce_v2.lead_fields}}", contactLabels:"{{salesforce_v2.contact_labels}}", leadLabels:"{{salesforce_v2.lead_labels}}", reqName:"{{requester.name | make_vaild_javascript}}" , accountLabels:"{{salesforce_v2.account_labels}}", accountFields:"{{salesforce_v2.account_fields}}" , reqCompany : "{{requester.company_name | make_vaild_javascript}}", reqEmails: "{{requester.all_emails}}", opportunityView: "{{salesforce_v2.opportunity_view}}", agentSettings: "{{salesforce_v2.agent_settings}}", opportunity_stage: {{installed_app.configs_opportunity_stage_choices}}, contractLabels: "{{salesforce_v2.contract_labels}}", contractFields: "{{salesforce_v2.contract_fields}}", contractView: "{{salesforce_v2.contract_view}}", orderLabels: "{{salesforce_v2.order_labels}}", orderFields: "{{salesforce_v2.order_fields}}", orderView: "{{salesforce_v2.order_view}}"};
+            Fjax.Assets.integration('salesforce_v2', function () {
+              new SalesforceV2Widget(salesforceV2Bundle);
+            });
+          </script>
+  name: salesforce_v2_widget
+  id: 28
+  description: integrations.salesforce_v2.desc
+  application_type: salesforce_v2

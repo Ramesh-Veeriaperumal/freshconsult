@@ -30,8 +30,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save  :update_ticket_related_changes, :update_company_id, :set_sla_policy
 
-  before_save :check_and_reset_company_id, :if => :company_id_changed?
-
   before_update :update_sender_email
 
   before_update :stop_recording_timestamps, :unless => :model_changes?
@@ -68,6 +66,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :set_links, :on => :create, :if => :tracker_ticket?
   after_commit :add_links, :on => :update, :if => :linked_now?
   after_commit :remove_links, :on => :update, :if => :unlinked_now?
+  after_commit :enqueue_skill_based_round_robin, :on => :update, :if => :enqueue_sbrr_job?
   after_commit :save_sentiment, on: :create 
   after_commit :update_spam_detection_service, :if => :model_changes?
   
@@ -123,7 +122,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_states.created_at          = ticket_states.created_at || created_at
     ticket_states.account_id          = account_id
     ticket_states.assigned_at         = ticket_states.first_assigned_at = time_zone_now if responder_id
-    ticket_states.pending_since       = Time.zone.now if (status == PENDING)
+    ticket_states.pending_since       ||= Time.zone.now if (status == PENDING)
 
     ticket_states.set_resolved_at_state(created_at) if ((status == RESOLVED) and ticket_states.resolved_at.nil?)
     ticket_states.resolved_at ||= ticket_states.set_closed_at_state(created_at) if (status == CLOSED)
@@ -266,6 +265,27 @@ class Helpdesk::Ticket < ActiveRecord::Base
         self.meta_data.merge!(meta_info)
       end
     end
+  end
+
+  def ticket_was _changes = nil, _schema_less_ticket_changes = _changes
+    ticket_was = account.tickets.new #dup creates problems
+    attributes.each do |_attribute, value| #to work around protected attributes
+      next if SKIPPED_TICKET_WAS_ATTRIBUTES.include? _attribute.to_sym #skipping deprecation warning
+      ticket_was.send("#{_attribute}=", value)
+    end
+    _changes ||= begin 
+      temp_changes = changes #calling changes builds a hash everytime
+      temp_changes.present? ? temp_changes : previous_changes
+    end
+    _changes.each do |_attribute, change|
+      if ticket_was.respond_to?(_attribute) && (change.size == 2) #Hack for tags in model_changes
+        ticket_was.send("#{_attribute}=", change.first)
+      end
+    end
+
+    ticket_was.schema_less_ticket = 
+      schema_less_ticket.schema_less_ticket_was(_schema_less_ticket_changes)
+    ticket_was
   end
 
   def pass_thro_biz_rules
@@ -609,11 +629,6 @@ private
                                                   self.requester.company_ids.length < 2)
   end
 
-  def check_and_reset_company_id
-    self.owner_id = owner_id_was if self.owner_id.present? &&
-                                    !requester.company_ids.include?(self.owner_id)
-  end
-
   def populate_requester
     return if requester
     self.requester_id = nil
@@ -784,9 +799,13 @@ private
   end
 
   def previous_state_was_sla_stop_state?
-    Helpdesk::TicketStatus.status_objects_from_cache(account).find {|x| x.status_id == @model_changes[:status][0] }.stop_sla_timer?
+    previous_ticket_status.stop_sla_timer? 
   end
 
+  def previous_ticket_status
+    Helpdesk::TicketStatus.status_objects_from_cache(account).find{|x| x.status_id == @model_changes[:status][0]}
+  end
+    
   def update_ticket_state_sla_timer
     ticket_states.sla_timer_stopped_at = time_zone_now
     ticket_states.save
@@ -856,6 +875,7 @@ private
   end
 
   def execute_observer?
+    SBRR.log "Ticket ##{self.display_id} save done. Model_changes #{@model_changes.inspect}"
     user_present? and !disable_observer_rule
   end
 
@@ -898,6 +918,15 @@ private
 
   def new_outbound_email?
     outbound_email? && new_record?
+  end
+
+  def stop_sla_timer_changed?
+    @stop_sla_timer_changed ||= @model_changes.key?(:status) && 
+      (previous_ticket_status.stop_sla_timer != ticket_status.stop_sla_timer)
+  end
+
+  def visibility_changed?
+    @model_changes.key?(:deleted) || @model_changes.key?(:spam)
   end
 
   def check_due_by_change

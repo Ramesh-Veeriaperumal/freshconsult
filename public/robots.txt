@@ -12,3 +12,4 @@ Disallow: /login/normal/
 Allow: /helpdesk/attachments
 Disallow: /helpdesk/
 Disallow: /public/tickets/
+#Sitemap: /support/sitemap.xml

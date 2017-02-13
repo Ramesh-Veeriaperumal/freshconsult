@@ -16,7 +16,11 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/todo"
     resource :"ember/twitter_handles", only: [:index, :check_following]
 
-    # Search
+    resource :"ember/agent", only: [:index, :me]
+    resource :"ember/group", only: [:index]
+    resource :"ember/survey", only: [:index]
+    resource :"ember/email_config", only: [:index]
+
     resource :"ember/search/ticket", only: [:results]
   end
 
@@ -26,7 +30,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   forward_ticket do
-    resource :"ember/conversation", only: [:forward, :forward_template]
+    resource :"ember/conversation", only: [:forward, :forward_template, :note_forward_template]
   end
 
   merge_or_split_ticket do
@@ -56,7 +60,11 @@ Authority::Authorization::PrivilegeList.build do
 
   manage_users do
     resource :"ember/contact", only: [:make_agent, :send_invite, :bulk_send_invite]
-    resource :"ember/agent", only: [:show, :index]
+    resource :"ember/agent", only: [:show]
+  end
+
+  manage_availability do
+    resource :"ember/group", :only => [:show]
   end
 
 	delete_ticket do
@@ -65,7 +73,6 @@ Authority::Authorization::PrivilegeList.build do
 
   admin_tasks do
     resource :"ember/contact", only: [:update_password]
-    resource :"ember/survey", only: [:index]
   end
 
   edit_ticket_properties do

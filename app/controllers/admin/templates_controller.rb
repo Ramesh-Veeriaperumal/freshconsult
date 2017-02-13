@@ -4,8 +4,6 @@ class Admin::TemplatesController < Admin::AdminController
   before_filter :build_objects,  :only => [:show, :update, :soft_reset, :restore_default, :publish]
   before_filter :clear_preview_session, :default_liquids , :only => :show
   before_filter :clear_preview_session, :only => :clear_preview
-  before_filter { |c| c.requires_admin_feature :rebranding }
-
   
   before_filter(:only => :update) do |c| #validating the syntax before persisting.
     custom_css = c.request.params[:portal_template][:custom_css]
