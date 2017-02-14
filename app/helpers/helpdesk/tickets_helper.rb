@@ -321,7 +321,7 @@ module Helpdesk::TicketsHelper
   def user_details_for_note item
     sup_emails = item.account.support_emails.map(&:downcase)
     prev_note_sender = parse_email item.from_email
-    if sup_emails.include?(prev_note_sender[:email].downcase)
+    if prev_note_sender[:email] && sup_emails.include?(prev_note_sender[:email].downcase)
       user = { "name" => prev_note_sender[:name], "email" => prev_note_sender[:email] }
     elsif item.user.customer?
       user = item.user
