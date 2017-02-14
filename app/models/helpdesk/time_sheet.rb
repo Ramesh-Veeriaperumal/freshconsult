@@ -129,6 +129,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       :priority_name => I18n.t('helpdesk.time_sheets.priority'),
       :status_name => I18n.t('helpdesk.time_sheets.status'),
       :group_by_day_criteria =>I18n.t('helpdesk.time_sheets.executed_at'),
+      :note => I18n.t('helpdesk.time_sheets.note'),
       :hours => I18n.t('helpdesk.time_sheets.hours') ,
       :product_name => I18n.t('helpdesk.time_sheets.product'),
       :group_name => I18n.t('helpdesk.time_sheets.group') }

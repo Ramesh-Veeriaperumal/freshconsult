@@ -126,7 +126,7 @@ class Account < ActiveRecord::Base
     :tags_filter_reporting => false,
     :saml_unspecified_nameid => false, :euc_hide_agent_metrics => false,
     :single_session_per_user => false, :link_tickets => false, :parent_child_tickets => false,
-    :marketplace_app => false, :custom_timesheet => false, :sandbox_account => false, :collaboration => false
+    :marketplace_app => false, :sandbox_account => false, :collaboration => false
   }
 
 
@@ -175,7 +175,8 @@ class Account < ActiveRecord::Base
     :round_robin_capping => false, :shared_ownership => false, :sidekiq_dispatchr_feature => false,
     :solutions_meta_read => false, :supervisor_dashboard => false, :support_new_ticket_cache => false,
     :synchronous_apps => false, :ticket_list_page_filters_cache => false, :translate_solutions => false,
-    :spam_detection_service => false, :skip_hidden_tkt_identifier => false, :spam_blacklist_feature => false
+    :spam_detection_service => false, :skip_hidden_tkt_identifier => false, :spam_blacklist_feature => false,
+    :custom_timesheet => false
   }
 
 end

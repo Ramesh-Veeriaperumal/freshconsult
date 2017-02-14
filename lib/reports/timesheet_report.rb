@@ -34,7 +34,6 @@ module Reports::TimesheetReport
   }
 
   OPTIONAL_COLUMN_CONFIG = {
-    :note => I18n.t('helpdesk.time_sheets.note'),
     :requester_name => I18n.t('helpdesk.time_sheets.requester_name'),
     :ticket_type => I18n.t('helpdesk.time_sheets.ticket_type')
   }
@@ -53,18 +52,20 @@ module Reports::TimesheetReport
 
   def construct_csv_headers_hash
     default_colset = {
-      I18n.t('helpdesk.time_sheets.agent')=>:agent_name,
       I18n.t('helpdesk.time_sheets.hours')=> :hours,
       I18n.t('helpdesk.time_sheets.date') =>:executed_at ,
       I18n.t('helpdesk.time_sheets.ticket')=>:ticket_display,
-      I18n.t('helpdesk.time_sheets.product')=>:product_name ,
       I18n.t('helpdesk.time_sheets.group')=>:group_name ,
       I18n.t('helpdesk.time_sheets.note')=>:note,
       I18n.t('helpdesk.time_sheets.customer') => :customer_name ,
       I18n.t('helpdesk.time_sheets.billalblenonbillable') => :billable_type,
       I18n.t('helpdesk.time_sheets.priority')=>:priority_name,
       I18n.t('helpdesk.time_sheets.status')=>:status_name,
-    I18n.t('helpdesk.time_sheets.createdAt') => :created_at}
+    I18n.t('helpdesk.time_sheets.createdAt') => :created_at }
+
+    default_colset[I18n.t('helpdesk.time_sheets.agent')] = :agent_name unless  Account.current.hide_agent_metrics_feature?
+    default_colset[I18n.t('helpdesk.time_sheets.product')] = :product_name if Account.current.products.any?
+
     selected_colset = transform_selected_columns
 
     default_colset.merge(selected_colset)
@@ -261,7 +262,7 @@ module Reports::TimesheetReport
   #************************** Archive methods start here *****************************#
 
   def archive_scoper(start_date,end_date)
-    Account.current.archive_time_sheets.archive_for_companies(@customer_id).by_agent(nullify(user_id)).archive_by_group(nullify(@group_id)).created_at_inside(start_date,end_date).hour_billable(@billable).archive_for_products(nullify(@products_id))
+    Account.current.archive_time_sheets.archive_for_companies(@customer_id).by_agent(nullify(@user_id)).archive_by_group(nullify(@group_id)).created_at_inside(start_date,end_date).hour_billable(@billable).archive_for_products(nullify(@products_id))
   end
 
   def archive_filter_with_groupby(start_date,end_date)
@@ -294,7 +295,7 @@ module Reports::TimesheetReport
       if key == :product_name
         report_columns_arr.push({name:value, id: key, default: true, is_custom: false})  if Account.current.products.any?
       elsif key== [:agent_name]
-        report_columns_arr.push({name:value, id: key, default: true , is_custom: false})  if Account.current.hide_agent_metrics_feature?
+        report_columns_arr.push({name:value, id: key, default: true , is_custom: false})  unless Account.current.hide_agent_metrics_feature?
       else
         report_columns_arr.push({name:value,id: key, default: true, is_custom: false})
       end
@@ -401,7 +402,7 @@ module Reports::TimesheetReport
   end
 
   def custom_filters_enabled?
-    return Account.current.features?(:custom_timesheet)
+    return Account.current.launched?(:custom_timesheet)
   end
 
   def select_flexiconditions
