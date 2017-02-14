@@ -59,4 +59,3 @@
     :inherits: 
       - :estate_jan_17
     :exclude: []
-:selectable_features: []
