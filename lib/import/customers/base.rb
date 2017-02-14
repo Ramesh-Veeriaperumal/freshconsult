@@ -201,34 +201,35 @@ class Import::Customers::Base
       end
     end
 
+    import_companies_case_mapping = import_companies.keys.map{|c| [c.downcase, c]}.to_h
+
     user_companies = @item.companies.preload(:user_companies).
                       select(['user_companies.client_manager', 'user_companies.default',
                               'customers.id', 'customers.name']).
                       inject({}) do |res, u|
-                        res[u.name] = {
+                        res[u.name.downcase] = {
                                         :id => u.id, 
                                         :client_manager => u.client_manager,
                                         :default => u.default
                                       }
                         res
                       end
-    edited = import_companies.keys & user_companies.keys
-    added = import_companies.keys - edited
-    removed_companies = user_companies.keys - edited
+    edited_case_map = (import_companies_case_mapping.keys & user_companies.keys)
+    edited = edited_case_map.map{|c| import_companies_case_mapping[c]}
+
+    added = (import_companies_case_mapping.keys - edited_case_map).map{|c| import_companies_case_mapping[c]}
+    removed_companies = (user_companies.keys - edited_case_map)
 
     added_companies = added.inject([]) do |res, comp|
       res << create_company_details(comp, import_companies[comp],
-                                comp == @params_hash[:user][:first_company_name])
+                                    comp == @params_hash[:user][:first_company_name])
     end
 
     edited_companies = edited.inject([]) do |res, comp|
       default_value = (comp == @params_hash[:user][:first_company_name]) ? 1 : 0
-      res << create_company_details(comp, import_companies[comp], default_value, user_companies[comp][:id]) unless
-                        import_companies[comp] == user_companies[comp][:client_manager] &&
-                        default_value == user_companies[comp][:default] && removed_companies.empty?
-      res
+      res << create_company_details(comp, import_companies[comp], default_value,
+                                    user_companies[comp.downcase][:id]) 
     end
-
     @params_hash[:user][:added_companies] = added_companies.to_json
     @params_hash[:user][:removed_companies] = removed_companies.to_json
     @params_hash[:user][:edited_companies] = edited_companies.to_json
