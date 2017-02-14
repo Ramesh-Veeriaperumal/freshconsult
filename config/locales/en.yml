@@ -7709,9 +7709,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         no_event: "No Events for Today"
         no_data_found: "No Data Found"
     dynamics_v2:
-      label: "Dynamics V2"
+      label: "Dynamics Plus"
       desc: "You can sync contact and account information between Dynamics crm and Freshdesk."
-      helptext: "<h4>Dynamics V2</h4><p><br/>Select the list of fields need to be synced between Freshdesk and Dynamics. You can select to a max of 10 fields.</p><p><strong>Note:</strong><br/>First four fields are the default fields and cannot be removed.</p>"
+      helptext: "<h4>Dynamics Plus</h4><p><br/>For Dynamics Sync configuration setting instructions and guidelines, refer <a href='https://support.freshdesk.com/solution/articles/224667-the-dynamics-crm-v2-app' target='_blank'>The Dynamics Plus App</a> article. </p>"
       no_feature: "This app can only be installed for accounts with Dynamics Plus enabled."
       form:
         dynamics_v2_info: ""
