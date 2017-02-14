@@ -6,7 +6,7 @@ module RabbitMq::Subscribers::Tickets::Iris
                              :priority, :ticket_type, :source,
                              :status, :product_id, :owner_id,
                              :isescalated, :fr_escalated, :spam, :deleted,
-                             :long_tc01, :long_tc02, :long_tc03, :long_tc04,
+                             :long_tc01, :long_tc02, :internal_group_id, :internal_agent_id,
                              :int_tc03
                            ]
 
@@ -45,12 +45,8 @@ module RabbitMq::Subscribers::Tickets::Iris
   
   def iris_valid_changes
     changes = @model_changes.select{|k,v| PROPERTIES_TO_CONSIDER.include?(k) }
-    #Replacing :long_tc03, :long_tc04 to internal_agent_id & internal_group_id
-    internal_agent_column = Helpdesk::SchemaLessTicket.internal_agent_column.to_sym
-    internal_group_column = Helpdesk::SchemaLessTicket.internal_group_column.to_sym
+    #Replacing :int_tc03 to association_type
     association_type_column = Helpdesk::SchemaLessTicket.association_type_column.to_sym
-    changes[:internal_agent_id] = changes.delete(internal_agent_column) if changes.keys.include?(internal_agent_column)
-    changes[:internal_group_id] = changes.delete(internal_group_column) if changes.keys.include?(internal_group_column)
     changes[:association_type] = changes.delete(association_type_column) if changes.keys.include?(association_type_column)
     changes
   end

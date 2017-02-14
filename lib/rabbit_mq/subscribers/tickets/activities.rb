@@ -8,12 +8,12 @@ module RabbitMq::Subscribers::Tickets::Activities
 
   PROPERTIES_TO_CONSIDER      = [:requester_id, :responder_id, :group_id, :priority, :ticket_type, :subject,
                                  :source, :status, :product_id, :spam, :deleted, :parent_ticket, :due_by,
-                                 :int_tc03, :long_tc03, :long_tc04]
+                                 :int_tc03, :internal_group_id, :internal_agent_id]
   PROPERTIES_TO_CONVERT       = [:group_id, :product_id, :status, :int_tc03, :internal_group_id]
   PROPERTIES_AS_ARRAY         = [:add_tag, :add_watcher, :rule, :add_a_cc, :add_comment, :email_to_requester,
                                  :email_to_group, :email_to_agent, :int_tc03]
-  PROPERTIES_RENAME_MAP       = {:long_tc03 => :internal_group_id, :long_tc04 => :internal_agent_id}
-  SHARED_OWNERSHIP_PROPERTIES = [:long_tc03, :long_tc04]
+  PROPERTIES_RENAME_MAP       = {}
+  SHARED_OWNERSHIP_PROPERTIES = [:internal_group_id, :internal_agent_id]
 
   def mq_activities_ticket_properties(action)
     self.to_rmq_json(activities_keys,action) 
@@ -178,9 +178,8 @@ module RabbitMq::Subscribers::Tickets::Activities
   def shared_ownership_reset_changes
     reset_changes = {}
     SHARED_OWNERSHIP_PROPERTIES.each do |key|
-      renamed_key = PROPERTIES_RENAME_MAP[key]
-      reset_changes[renamed_key] = @model_changes[key] if (@model_changes.present? and @model_changes[key].present? and @model_changes[key][1].nil?) and
-      no_reset_actions_in_system_changes?(renamed_key)
+      reset_changes[key] = @model_changes[key] if (@model_changes.present? and @model_changes[key].present? and @model_changes[key][1].nil?) and
+      no_reset_actions_in_system_changes?(key)
     end
     if reset_changes.present?
       reset_changes[:type] = "shared_ownership_reset"

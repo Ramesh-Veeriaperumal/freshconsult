@@ -32,8 +32,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed",
                             "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email", 
                             "parent_ticket", "reports_hash","sla_response_reminded","sla_resolution_reminded", "dirty_attributes",
-                            "internal_group_id", "internal_group", "internal_agent_id", "internal_agent","association_type", 
-                            "associates_rdb", "sentiment", "spam_score", "sds_spam", "skill", "skill_id"]
+                            "association_type", "associates_rdb", "sentiment", "spam_score", "sds_spam", "skill", "skill_id"]
 
   TICKET_STATE_ATTRIBUTES = ["opened_at", "pending_since", "resolved_at", "closed_at", "first_assigned_at", "assigned_at",
                              "first_response_time", "requester_responded_at", "agent_responded_at", "group_escalated",
@@ -1153,7 +1152,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def send_agent_assigned_notification?(internal_notification = false)
       doer_id = Thread.current[:observer_doer_id]
-      agent_changed, agent = internal_notification ? [@model_changes.key?(Helpdesk::SchemaLessTicket.internal_agent_column), internal_agent] :
+      agent_changed, agent = internal_notification ? [@model_changes.key?(:internal_agent_id), internal_agent] :
           [@model_changes.key?(:responder_id), responder]
 
       agent_changed && agent && agent.id != doer_id && agent != User.current
@@ -1175,32 +1174,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
       internal_group_id_changed? or internal_agent_id_changed?
     end
 
-    def internal_group_id_changed?
-      internal_group_column = Helpdesk::SchemaLessTicket.internal_group_column
-      schema_less_ticket.changes.symbolize_keys.key?(internal_group_column)
-    end
-
-    def internal_agent_id_changed?
-      internal_agent_column = Helpdesk::SchemaLessTicket.internal_agent_column
-      schema_less_ticket.changes.symbolize_keys.key?(internal_agent_column)
-    end
-
-    def internal_group_id_changes
-      internal_group_column = Helpdesk::SchemaLessTicket.internal_group_column
-      schema_less_ticket.changes.symbolize_keys[internal_group_column]
-    end
-
-    def internal_agent_id_changes
-      internal_agent_column = Helpdesk::SchemaLessTicket.internal_agent_column
-      schema_less_ticket.changes.symbolize_keys[internal_agent_column]
-    end
-
-    def valid_internal_group?(ig_id = schema_less_ticket.internal_group_id)
+    def valid_internal_group?(ig_id = internal_group_id)
       return true if ig_id.blank?
       ticket_status.group_ids.include?(ig_id)
     end
 
-    def valid_internal_agent?(ia_id = schema_less_ticket.internal_agent_id)
+    def valid_internal_agent?(ia_id = internal_agent_id)
       return true if ia_id.blank?
       valid_internal_group? && (internal_group.try(:agent_ids) || []).include?(ia_id)
     end

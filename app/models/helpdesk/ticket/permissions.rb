@@ -6,32 +6,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   class << self
 
-    def responder_id_with_table
-      "#{Helpdesk::Ticket.table_name}.responder_id"
-    end
-
-    def internal_agent_id_with_table
-      "#{Helpdesk::SchemaLessTicket.table_name}.#{Helpdesk::SchemaLessTicket.internal_agent_column}"
-    end
-
-    def group_id_with_table
-      "#{Helpdesk::Ticket.table_name}.group_id"
-    end
-
-    def internal_group_id_with_table
-      "#{Helpdesk::SchemaLessTicket.table_name}.#{Helpdesk::SchemaLessTicket.internal_group_column}"
-    end
-
     def permissible_query_hash(user)
       if user.agent?
         query_hash = {:conditions => permissible_condition(user)}
-        query_hash[:joins] = permissible_join(user)
         query_hash
       end
-    end
-
-    def permissible_join(user)
-      " INNER JOIN helpdesk_schema_less_tickets on helpdesk_tickets.account_id = helpdesk_schema_less_tickets.account_id AND helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id " if !user.all_tickets_permission? && Account.current.features?(:shared_ownership)
     end
 
     def permissible_condition user
@@ -46,18 +25,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def agent_condition user
       if Account.current.features?(:shared_ownership)
-        ["(#{responder_id_with_table} = ? OR #{internal_agent_id_with_table} = ?)", user.id, user.id]
+        ["(responder_id = ? OR internal_agent_id = ?)", user.id, user.id]
       else
-        ["#{responder_id_with_table} = ?", user.id]
+        ["responder_id = ?", user.id]
       end
     end
 
     def group_condition user
       group_ids = user.associated_group_ids
       if Account.current.features?(:shared_ownership)
-        ["(#{group_id_with_table} IN (?) OR #{responder_id_with_table} = ? OR #{internal_group_id_with_table} IN (?) OR #{internal_agent_id_with_table} = ?)", group_ids, user.id, group_ids, user.id]
+        ["(group_id IN (?) OR responder_id = ? OR internal_group_id IN (?) OR internal_agent_id = ?)", group_ids, user.id, group_ids, user.id]
       else
-        ["(#{group_id_with_table} IN (?) OR #{responder_id_with_table} = ?)", group_ids, user.id]
+        ["(group_id IN (?) OR responder_id = ?)", group_ids, user.id]
       end
     end
 
@@ -68,7 +47,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       query_hash[:conditions][0] += " AND display_id IN (?)"
       query_hash[:conditions] << ids
 
-      query_hash[:joins] = permissible_join(user)
       query_hash
     end
 
@@ -79,7 +57,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       query_hash[:conditions][0] += " AND display_id IN (?)"
       query_hash[:conditions] << ids
 
-      query_hash[:joins] = permissible_join(user)
       query_hash
     end
 

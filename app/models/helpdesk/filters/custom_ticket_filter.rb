@@ -98,12 +98,13 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                       "my_article_feedback" => [spam_condition(false), deleted_condition(false)]
                    }
 
-  USER_COLUMNS = ["responder_id", "helpdesk_subscriptions.user_id", "helpdesk_schema_less_tickets.long_tc04"]
-  GROUP_COLUMNS = ["group_id", "helpdesk_schema_less_tickets.long_tc03"]
-  SCHEMA_LESS_COLUMNS = ["helpdesk_schema_less_tickets.boolean_tc02", "helpdesk_schema_less_tickets.product_id", 
-      "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}",
-      "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.internal_group_column}",
-      "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.internal_agent_column}"]
+  USER_COLUMNS = ["responder_id", "helpdesk_subscriptions.user_id", "internal_agent_id"]
+  GROUP_COLUMNS = ["group_id", "internal_group_id"]
+  SCHEMA_LESS_COLUMNS = [
+      "helpdesk_schema_less_tickets.boolean_tc02",
+      "helpdesk_schema_less_tickets.product_id", 
+      "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}"
+    ]
 
   after_create :create_accesible
   after_update :save_accessible
@@ -485,7 +486,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   private
 
   def join_schema_less? all_conditions
-    SCHEMA_LESS_COLUMNS.any?{|col| all_conditions[0].include?(col)} && (!Account.current.features?(:shared_ownership) || User.current.all_tickets_permission?)
+    SCHEMA_LESS_COLUMNS.any?{|col| all_conditions[0].include?(col)}
   end
 
   def handle_special_values(condition, user_types = USER_COLUMNS, group_types = GROUP_COLUMNS)
