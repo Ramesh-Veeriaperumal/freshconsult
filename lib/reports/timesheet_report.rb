@@ -88,7 +88,7 @@ module Reports::TimesheetReport
 
   def list_view_items
     view_headers = [:workable , :customer_name , :priority_name, :status_name , :group_by_day_criteria , :agent_name,
-                    :group_name ]
+                    :group_name, :note ]
 
     view_headers -= [:agent_name] if Account.current.hide_agent_metrics_feature?
     view_headers.push(:product_name) if Account.current.products.any?
