@@ -5463,6 +5463,7 @@ en:
       remove_fail: DKIM configuration could not be removed. Please try again later.
       verify_fail: DNS settings can take upto 48 hours to propagate
       new_dkim: You haven't created a support email with a custom domain yet!
+      limit_exceeded: You cannot configure more than two DKIM signatures on this plan.
   step2: Step 2
   import_users_contacts: Users &rarr; Contacts
   linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo

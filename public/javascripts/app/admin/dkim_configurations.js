@@ -22,11 +22,18 @@ window.App.Admin = window.App.Admin || {};
 					methodType = 'GET';
 				}
 				
+				var self = this;
 				$.ajax({
-					dataType: 'script',
+					dataType: 'json',
 					method: methodType,
-					url: $(this).data('url'),
-					success: function () {}
+					url: $(self).data('url'),
+					success: function (response) {
+						if(response['status'] == 403){	
+							jQuery("#noticeajax").html(response['err_msg']).show();
+							closeableFlash('#noticeajax');
+							jQuery(self).removeAttr('disabled').text(response['btn_name']);
+						}
+					}
 				})
 			})
 

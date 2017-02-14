@@ -34,6 +34,7 @@ class OutgoingEmailDomainCategory < ActiveRecord::Base
 
 
   INVALID_DOMAINS = ["freshdesk.com", "freshdesk-dev.com", "freshpo.com"]
+  MAX_DKIM_ALLOWED = 2
 
   def domain_name
     self.errors[:base] << "Invalid domain." if INVALID_DOMAINS.include?(self.email_domain)

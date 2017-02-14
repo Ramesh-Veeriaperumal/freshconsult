@@ -16,8 +16,8 @@
   <div class="lead-desc"><%=t('email_configs.info11')%></div>
 </div>
 <div class="pull-right email-settings-bcc">
-	<% if current_account.dkim_enabled?%>
-  <%= link_to "#{t('email_configs.dkim.config')} #{t('email_configs.dkim.name')}", admin_dkim_configurations_path, :class => 'pr10 config-btn' %>
+	<% if has_feature_and_privilege?%>
+  	<%= link_to "#{t('email_configs.dkim.config')} #{t('email_configs.dkim.name')}", admin_dkim_configurations_path, :class => 'pr10 config-btn' %>
 	<%end%>
   <div class="pull-right ml10">
   <%= content_tag :label, "#{I18n.t('email_configs.bcc_text')}: #{truncate(current_account.bcc_email, :length => 20, :omission => '...')}", :class=> 'floatl', :title => current_account.bcc_email unless current_account.bcc_email.blank?%>

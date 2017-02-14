@@ -64,5 +64,7 @@
       :branding: 59
       :toggle_branding: 60
       :freshfone_vm_transcription: 61
+      :basic_dkim: 62
+      :advanced_dkim: 63
 :selectable_features:
   :branding: true

@@ -4,6 +4,7 @@
     :features:
       - :basic_twitter
       - :basic_facebook
+      - :basic_dkim
     :inherits: []
     :exclude: []
   :blossom_jan_17:
@@ -47,7 +48,8 @@
     :exclude: []
   :estate_jan_17:
     :name: Estate
-    :features: []
+    :features:
+      - :advanced_dkim
     :inherits: 
       - :garden_jan_17
     :exclude: []
