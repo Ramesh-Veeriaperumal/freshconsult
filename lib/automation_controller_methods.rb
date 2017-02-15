@@ -172,7 +172,7 @@ module AutomationControllerMethods
   end
 
   def multi_product_account?
-    current_account.features?(:multi_product)
+    current_account.multi_product_enabled?
   end
 
   def survey_active_account?
@@ -180,7 +180,7 @@ module AutomationControllerMethods
   end
 
   def multi_timezone_account?
-    current_account.features?(:multi_timezone)
+    current_account.multi_timezone_enabled?
   end
 
   def multi_language_account?

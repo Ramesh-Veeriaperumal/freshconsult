@@ -87,7 +87,7 @@ class Account < ActiveRecord::Base
     
     :blossom_jan_17 => {
       :features => [ :gamification, :auto_refresh, :twitter, :facebook, :surveys , :scoreboard, :timesheets, 
-        :custom_domain, :multiple_emails, :advanced_reporting, :default_survey, :requester_widget, :sitemap ],
+        :custom_domain, :multiple_emails, :advanced_reporting, :default_survey, :sitemap, :requester_widget ],
       :inherits => [ :sprout_jan_17 ]
     },
     
@@ -175,7 +175,11 @@ class Account < ActiveRecord::Base
     :round_robin_capping => false, :shared_ownership => false, :sidekiq_dispatchr_feature => false,
     :solutions_meta_read => false, :supervisor_dashboard => false, :support_new_ticket_cache => false,
     :synchronous_apps => false, :ticket_list_page_filters_cache => false, :translate_solutions => false,
-    :spam_detection_service => false, :skip_hidden_tkt_identifier => false, :spam_blacklist_feature => false,
+    :spam_detection_service => false, :skip_hidden_tkt_identifier => false, :agent_collision_alb => false, :auto_refresh_alb => false, 
+    :countv2_template_read => false, :customer_sentiment_ui => false, :portal_solution_cache_fetch => false, :activity_ui => false, 
+    :customer_sentiment => false, :countv2_template_write => false, :logout_logs => false, :gnip_2_0 => false, :froala_editor => false,
+    :es_v2_splqueries => false, :suggest_tickets => false, :"Freshfone New Notifications" => false, :feedback_widget_captcha => false, 
+    :es_multilang_solutions => false, :requester_widget => false, :spam_blacklist_feature => false,
     :custom_timesheet => false
   }
 

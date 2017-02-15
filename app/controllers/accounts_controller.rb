@@ -262,7 +262,7 @@ class AccountsController < ApplicationController
     end   
 
     def validate_custom_domain_feature
-      unless @account.features?(:custom_domain)
+      unless @account.custom_domain_enabled?
         params[:account][:main_portal_attributes][:portal_url] = nil
       end
     end

@@ -7,7 +7,7 @@ class Admin::PortalController < Admin::AdminController
   before_filter :load_other_objects, :only => [:edit, :enable, :update]
 
   def index
-    main_portal_edit unless current_account.features_included?(:multi_product)
+    main_portal_edit unless current_account.multi_product_enabled?
     @products = current_account.products.all(:include => :portal).select{ |p| !p.portal_enabled? }
   end
   

@@ -1,10 +1,6 @@
 class ApiBusinessHoursController < ApiApplicationController
   private
 
-    def feature_name
-      FeatureConstants::BUSINESS_HOUR
-    end
-
     def load_objects
       items = multiple_business_hours_enabled? ? scoper.order(:name) : [Group.default_business_calendar]
       super(items)
@@ -31,6 +27,6 @@ class ApiBusinessHoursController < ApiApplicationController
     end
 
     def multiple_business_hours_enabled?
-      Account.current.features?(:multiple_business_hours)
+      Account.current.multiple_business_hours_enabled?
     end
 end

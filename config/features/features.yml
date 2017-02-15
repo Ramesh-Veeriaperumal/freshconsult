@@ -66,5 +66,7 @@
       :freshfone_vm_transcription: 61
       :basic_dkim: 62
       :advanced_dkim: 63
+      :shared_ownership_toggle: 64
 :selectable_features:
-  :branding: true
+      :branding: true
+      :gamification_enable: false

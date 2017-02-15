@@ -190,7 +190,7 @@
 							<label class="control-label"><%= t("admin.products.portal.portal_settings") %></label>
 							<div class="controls">
 								<%= link_to t("admin.products.portal.edit_portal"), 
-													current_account.features_included?(:multi_product) ? edit_admin_portal_path(@account.main_portal) : admin_portal_index_path, 
+													current_account.multi_product_enabled? ? edit_admin_portal_path(@account.main_portal) : admin_portal_index_path, 
 													:class => "btn btn-bold", :id => 'edit-portal' %>
 							</div>
 						</div>

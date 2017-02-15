@@ -4,7 +4,7 @@
   <div class="report-link-block pull-right">
       <a class="report-link" href="<%=reports_url%>"><%= t('helpdesk_reports.view_new_reports')%> <span class="view-all-arrow"></span></a>
   </div>
-  <% if feature?(:advanced_reporting) %>
+  <% if current_account.advanced_reporting_enabled? %>
   <div class="report-separation ataglance">
       <div class="report-home-header">
         <h3 class="title">

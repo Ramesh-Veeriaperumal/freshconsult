@@ -4,7 +4,7 @@ class SAAS::SubscriptionEventActions
 
   DROP_DATA_FEATURES_V2 = [:create_observer, :supervisor, :add_watcher, :custom_ticket_views, :custom_apps, :custom_ticket_fields, 
                             :custom_company_fields, :custom_contact_fields, :occasional_agent, :basic_twitter, :basic_facebook,
-                            :rebranding]
+                            :rebranding, :customer_slas, :multiple_business_hours, :multi_product, :multiple_emails ]
 
   ####################################################################################################################
   #ideally we need to initialize this class with account object, old subscription object and addons 
@@ -22,8 +22,7 @@ class SAAS::SubscriptionEventActions
     if plan_changed?
       plan_features = ::PLANS[:subscription_plans][new_plan.subscription_plan.canon_name.to_sym][:features]
       account.features_list.each do |feature|
-        account.reset_feature(feature) unless plan_features.include?(feature) || account_add_ons.include?(feature) ||
-        account.selectable_features_list.include?(feature)
+        account.reset_feature(feature) unless plan_features.include?(feature) || account_add_ons.include?(feature) || account.selectable_features_list.include?(feature)
       end
       account.save
       #remove_chat_feature

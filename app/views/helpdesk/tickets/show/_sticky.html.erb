@@ -141,7 +141,7 @@
 					</div>
 				</li>
 
-			  	<% if feature?(:timesheets) && privilege?(:view_time_entries) %>
+			  	<% if current_account.timesheets_enabled? && privilege?(:view_time_entries) %>
 			  	<li class = "collapse_on_default">
 			  		<%= link_to t('ticket.add_time'), "#", :rel => "triggerAddTimer", "data-keybinding" => shortcut('ticket_detail.add_time') %>
 			  	</li>

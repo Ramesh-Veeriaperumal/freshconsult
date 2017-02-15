@@ -82,7 +82,7 @@ class ContactForm < ActiveRecord::Base
     end
 
     def contact_field_conditions
-      { 'time_zone' => Account.current.features?(:multi_timezone), 
+      { 'time_zone' => Account.current.multi_timezone_enabled?, 
         'language' => Account.current.features?(:multi_language),
         'client_manager' => !Account.current.features?(:multiple_user_companies) }
     end

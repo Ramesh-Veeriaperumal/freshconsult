@@ -3,6 +3,7 @@ class SAAS::AccountDataCleanup
   include Marketplace::ApiMethods
   include Cache::Memcache::ContactField
   include Cache::Memcache::CompanyField
+  include Cache::FragmentCache::Base
   include MemcacheKeys
 
   attr_accessor :account, :features_to_drop
@@ -14,15 +15,17 @@ class SAAS::AccountDataCleanup
   end
 
   def perform_cleanup
-   features_to_drop.each do |feature|
-    method = "handle_#{feature}_data"
-    begin
-      send(method) if respond_to?(method)
-    rescue Exception => e
-      NewRelic::Agent.notice_error(e)
+    features_to_drop.each do |feature|
+      method = "handle_#{feature}_data"
+      begin
+        send(method) if respond_to?(method)
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
+      end
     end
-   end
+    clear_fragment_caches
   end
+
 
   def handle_create_observer_data
     account.all_observer_rules.find_each do |rule|
@@ -33,17 +36,17 @@ class SAAS::AccountDataCleanup
     Fixtures::DefaultObserver.create_rule
   end
 
-  def handle_supervisor_data
-    account.all_supervisor_rules.destroy_all
-  end 
+def handle_supervisor_data
+  account.all_supervisor_rules.destroy_all
+end 
 
-  def handle_add_watcher_data
-    account.ticket_subscriptions.find_each do |ts|
-      ts.destroy
-    end
+def handle_add_watcher_data
+  account.ticket_subscriptions.find_each do |ts|
+    ts.destroy
   end
+end
 
-  def handle_basic_twitter_data
+def handle_basic_twitter_data
     #we need to keep one twitter page. So removing everything except the oldest one.
     twitter_count = 0
     account.twitter_handles.order("created_at asc").find_each do |twitter|
@@ -51,33 +54,33 @@ class SAAS::AccountDataCleanup
       twitter.destroy
       twitter_count+=1
     end
-  end
+end
 
-  def handle_basic_facebook_data
-    #we need to keep one fb page. So removing everything except the oldest one.
-    fb_count = 0
-    account.facebook_pages.order("created_at asc").find_each do |fb|
-      next if fb_count < 1
-      fb.destroy
-      fb_count+=1
-    end
+def handle_basic_facebook_data
+  #we need to keep one fb page. So removing everything except the oldest one.
+  fb_count = 0
+  account.facebook_pages.order("created_at asc").find_each do |fb|
+    next if fb_count < 1
+    fb.destroy
+    fb_count+=1
   end
+end
 
-  def handle_occasional_agent_data
-    #marking all occasional agents as full time.
-    account.agents.where(occasional:true).find_each do |agent|
-      agent.occasional = false
-      agent.save
-    end
+def handle_occasional_agent_data
+  #marking all occasional agents as full time.
+  account.agents.where(occasional:true).find_each do |agent|
+    agent.occasional = false
+    agent.save
   end
+end
 
-  def handle_custom_status_data
-    account.ticket_statuses.where(is_default:false).find_each do |status|
-      status.deleted = true
-      status.save
-      ModifyTicketStatus.perform_async({ :status_id => status.status_id, :status_name => status.name })
-    end
+def handle_custom_status_data
+  account.ticket_statuses.where(is_default:false).find_each do |status|
+    status.deleted = true
+    status.save
+    ModifyTicketStatus.perform_async({ :status_id => status.status_id, :status_name => status.name })
   end
+end
 
   def handle_custom_ticket_fields_data
     account.ticket_fields.where(default:false).destroy_all
@@ -133,10 +136,10 @@ class SAAS::AccountDataCleanup
       end
 
       installed_apps_payload = account_payload(
-                                Marketplace::ApiEndpoint::ENDPOINT_URL[:installed_extensions] % 
-                                { :product_id => Marketplace::Constants::PRODUCT_ID, :account_id => account.id},
-                                {}, {:type => Marketplace::Constants::EXTENSION_TYPE[:plug]}
-                               )
+        Marketplace::ApiEndpoint::ENDPOINT_URL[:installed_extensions] % 
+        { :product_id => Marketplace::Constants::PRODUCT_ID, :account_id => account.id},
+        {}, {:type => Marketplace::Constants::EXTENSION_TYPE[:plug]}
+        )
       installed_apps_response = get_api(installed_apps_payload, MarketplaceConfig::ACC_API_TIMEOUT)
       if error_status?(installed_apps_response)
         Rails.logger.info  "Error in fetching installed custom apps from Account API"
@@ -162,15 +165,73 @@ class SAAS::AccountDataCleanup
     end
   end
 
-  def default_portal_preferences
-    HashWithIndifferentAccess.new(
-        {
-          :bg_color => "#efefef",
-          :header_color => "#252525",
-          :tab_color => "#006063",
-          :personalized_articles => true
-        }
-      )
+
+  def handle_customer_slas_data
+    account.sla_policies.where(is_default:false).destroy_all
+    update_all_in_batches({ :sla_policy_id => account.sla_policies.default.first.id }) { |cond|
+      account.companies.where(@conditions).limit(@batch_size).update_all(cond)
+    }
+    #account.sla_details.update_all(:override_bhrs => true) #this too didn't work.
+    update_all_in_batches({ :override_bhrs => true }){ |cond| 
+      account.sla_policies.default.first.sla_details.where(@conditions).limit(@batch_size).update_all(cond)
+    }
   end
 
+  def handle_multiple_business_hours_data
+    update_all_in_batches({ :time_zone => account.time_zone }){ |cond| 
+      records = account.all_users.where(@conditions).limit(@batch_size)
+      count   = records.update_all(cond)
+      records.map(&:sqs_manual_publish)
+      count
+    }
+  end
+
+  def handle_multiple_emails_data
+    account.global_email_configs.where(primary_role:false).each do |ec|
+      ec.destroy
+    end
+  end
+
+  def handle_multi_product_data
+    account.products.destroy_all
+  end
+
+  private
+
+  def default_portal_preferences
+    HashWithIndifferentAccess.new(
+    {
+      :bg_color => "#efefef",
+      :header_color => "#252525",
+      :tab_color => "#006063",
+      :personalized_articles => true
+    }
+    )
+  end
+
+
+  def update_all_in_batches(change_hash)
+    change_hash.symbolize_keys!
+    frame_conditions(change_hash)
+    begin
+      updated_count = yield(change_hash)
+    end while updated_count == @batch_size
+    nil
+  end
+
+  def frame_conditions(change_hash)
+    # Excluding created_at, updated_at as != is bad check
+    @conditions = [[]]
+    @batch_size = change_hash.delete(:batch_size) || 500
+    change_hash.except(:created_at, :updated_at).each do |key ,value|
+      if value.nil?
+        @conditions[0] << "`#{key}` is not null"
+      else
+        @conditions[0] << "`#{key}` != ?"
+        @conditions << value
+      end
+    end
+    @conditions[0] = @conditions[0].join(" and ")
+    nil
+  end
 end

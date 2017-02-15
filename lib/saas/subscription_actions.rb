@@ -1,7 +1,7 @@
 class SAAS::SubscriptionActions
 
-  DROP_DATA_FEATURES  = [ :customer_slas, :multiple_business_hours, :multi_product, 
-    :facebook, :twitter, :custom_domain, :multiple_emails, :css_customization, 
+  DROP_DATA_FEATURES  = [
+    :facebook, :twitter, :custom_domain, :css_customization, 
     :custom_roles, :dynamic_content, :mailbox, :dynamic_sections, :custom_survey, 
     :round_robin, :multi_language, :helpdesk_restriction_toggle, :ticket_templates, 
     :multiple_companies_toggle, :round_robin_load_balancing ]

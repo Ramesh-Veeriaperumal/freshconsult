@@ -2,7 +2,7 @@
 	<%= render :partial => "helpnote" %>	
 <% end %>
 <div id="emailconfig-list" class="email-settings-header">
-  <% if feature?(:multiple_emails) %>
+  <% if current_account.multiple_emails_enabled? %>
     <%= link_to t('email_configs.new_support_email'), new_admin_email_config_path, :class => "pull-right btn btn-primary"%>
   <% else %>
     <%= link_to "#", :class => "pull-right btn tooltip", "data-placement" => 'below', :title => t('non_covered_feature_error') do %>
@@ -40,7 +40,7 @@
           <%= render(:partial => "email_config", :object =>  email_config) %>      
         <% end %>
     </table>
-    <% if feature?(:multi_product) %>
+    <% if current_account.multi_product_enabled? %>
       <% @products.each do |product| %>
         </div>
         <br/>

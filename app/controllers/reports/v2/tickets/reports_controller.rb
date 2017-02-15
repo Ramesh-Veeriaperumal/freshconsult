@@ -293,7 +293,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
       return false
     elsif enterprise_reporting?
       ENTERPRISE_REPORTS.include?(report_type)
-    elsif current_account.features_included?(:advanced_reporting)
+    elsif current_account.advanced_reporting_enabled?
       ADVANCED_REPORTS.include?(report_type)
     else
       DEFAULT_REPORTS.include?(report_type)

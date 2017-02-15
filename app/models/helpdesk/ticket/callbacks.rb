@@ -599,7 +599,7 @@ private
   end
 
   def auto_refresh_allowed?
-    Account.current.features?(:auto_refresh)
+    Account.current.auto_refresh_enabled?
   end
 
   #RAILS3 Hack. TODO - @model_changes is a HashWithIndifferentAccess so we dont need symbolize_keys!,

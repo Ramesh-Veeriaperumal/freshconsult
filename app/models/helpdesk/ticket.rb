@@ -537,7 +537,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def set_time_zone
-    return set_account_time_zone unless account.features?(:multiple_business_hours)
+    return set_account_time_zone unless account.multiple_business_hours_enabled?
     if self.group.nil? || self.group.business_calendar.nil?
       set_account_time_zone
     else
