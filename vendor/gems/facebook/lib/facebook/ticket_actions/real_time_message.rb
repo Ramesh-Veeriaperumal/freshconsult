@@ -32,10 +32,7 @@ module Facebook
 			  message[:message] = tokenize(message[:message])
 			  
 			  @note = ticket.notes.build(
-			    :note_body_attributes => {
-			      :body_html => html_content_from_message(message)
-			    },
-			    :private    =>  true ,
+			    :private    =>  true,
 			    :incoming   =>  true,
 			    :source     =>  Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"],
 			    :account_id =>  @fan_page.account_id,
@@ -49,6 +46,10 @@ module Facebook
 			      :thread_id        =>  thread_id
 			    }
 			  )
+        body_html = html_content_from_message(message, @note)
+			  @note.note_body_attributes = {
+          :body_html => body_html
+        }
 
 			  begin
 			    user.make_current
@@ -82,11 +83,12 @@ module Facebook
 			      :account_id         =>  @account.id,
 			      :msg_type           =>  'dm',
 			      :thread_id          =>  thread_id
-			    },
-			    :ticket_body_attributes => {
-			      :description_html => html_content_from_message(message)
 			    }
 			  )
+        description_html = html_content_from_message(message, @ticket)
+        @ticket.ticket_body_attributes = {
+          :description_html => description_html
+        }
 
 			  if @ticket.save_ticket
 			  	Rails.logger.debug "ticket successfully saved"
