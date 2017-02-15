@@ -33,7 +33,6 @@ class HelpdeskReports::Export::TimesheetReports < HelpdeskReports::Export::Repor
 
     params[:report_filters].each { |f_h| f_h.symbolize_keys! }
     build_item
-
     if @pdf_export
       build_master_column_header_hash
       time_sheet_list_pdf
@@ -44,6 +43,7 @@ class HelpdeskReports::Export::TimesheetReports < HelpdeskReports::Export::Repor
       build_file(file, file_format, report_type, PDF_EXPORT_TYPE)
     else
       time_sheet_for_export
+      return nil if @time_sheets.blank?
       build_file(construct_csv_string, file_format, report_type, CSV_EXPORT_TYPE)
     end
 
