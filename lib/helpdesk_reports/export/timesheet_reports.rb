@@ -6,13 +6,21 @@ class HelpdeskReports::Export::TimesheetReports < HelpdeskReports::Export::Repor
   def initialize(args, scheduled_report = false)
     args.symbolize_keys!
     args = old_report_params(args)
-    @pdf_export = true
+    args[:columns] = args[:data_hash][:columns] if args[:data_hash].present?
+
+    columns =  args[:columns] || []
+    columns_length = columns.length + ( Account.current.products.any? ? 7 : 6 ) #default columns
+    if(columns_length > 10)
+      args[:file_format] = TYPES[:csv]
+      @pdf_export = false
+    else
+      args[:file_format] = TYPES[:pdf]
+      @pdf_export = true
+    end
     super
   end
 
   def build_export
-    params[:columns] = params[:data_hash][:columns] if (params[:data_hash].present?)
-
     if(params[:group_by_field].present?)
       params[:group_by] = params[:group_by_field]
       params.delete(:group_by_field)
@@ -24,17 +32,21 @@ class HelpdeskReports::Export::TimesheetReports < HelpdeskReports::Export::Repor
     # params.each { |key,value| params[key] = value.to_s.split(",") if ARRAY_METRICS.include?(key.to_sym) && value }
 
     params[:report_filters].each { |f_h| f_h.symbolize_keys! }
-
-    build_master_column_header_hash
     build_item
-    time_sheet_list_pdf
 
-    #skip other process when there is no data. Return filepath as nil.
-    return nil if no_data?(@metric_data)
+    if @pdf_export
+      build_master_column_header_hash
+      time_sheet_list_pdf
+      #skip other process when there is no data. Return filepath as nil.
+      return nil if no_data?(@metric_data)
+      @layout = 'layouts/report/timesheet_reports_pdf.html.erb'
+      file = build_pdf
+      build_file(file, file_format, report_type, PDF_EXPORT_TYPE)
+    else
+      time_sheet_for_export
+      build_file(construct_csv_string, file_format, report_type, CSV_EXPORT_TYPE)
+    end
 
-    @layout = "layouts/report/timesheet_reports_pdf.html.erb"
-    file = build_pdf
-    build_file(file, file_format, report_type, PDF_EXPORT_TYPE)
   end
 
   def locals_option

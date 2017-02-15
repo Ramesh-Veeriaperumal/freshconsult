@@ -357,7 +357,6 @@ module Reports::TimesheetReport
                 times_spent: @group_count,
                 totaltime: @group_count.values.sum,
                 group_header: @ajax_params[:group_header],
-                group_by: @ajax_params[:group_by],
                 load_time: @load_time
                 } ,
       headers: @headers
@@ -621,6 +620,40 @@ module Reports::TimesheetReport
       end
     end
   end
+
+
+  def construct_csv_string
+    date_fields = [ I18n.t('helpdesk.time_sheets.createdAt'), I18n.t('helpdesk.time_sheets.date')]
+    workable_fields = [I18n.t('export_data.fields.requester_name'), I18n.t('helpdesk.time_sheets.ticket_type')]
+    csv_row_limit = HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:export][:csv]
+    csv_hash = construct_csv_headers_hash
+    csv_size = @time_sheets.size
+    if (csv_size > csv_row_limit)
+      @time_sheets.slice!(csv_row_limit..(csv_size - 1))
+      exceeds_row_limit = true
+    end
+    csv_string = CSVBridge.generate do |csv|
+      headers = csv_hash.keys.sort
+      csv << headers
+      @time_sheets.each do |record|
+        record[:time_spent] += record[:timer_running]==true ? (@load_time - record[:start_time]).to_i : 0
+        csv_data = []
+        headers.each do |val|
+          if date_fields.include?(val)
+            csv_data << parse_date(record.send(csv_hash[val]))
+          elsif workable_fields.include?(val)
+            csv_data << strip_equal(record.workable.send(csv_hash[val]))
+          else
+            csv_data << strip_equal(record.send(csv_hash[val]))
+          end
+        end
+        csv << csv_data
+      end
+      csv << t('helpdesk_reports.export_exceeds_row_limit_msg', :row_max_limit => csv_row_limit) if exceeds_row_limit
+    end
+    csv_string
+  end
+
 
   def shift_merge_sorted_arrays(array1,array2)
     output = []

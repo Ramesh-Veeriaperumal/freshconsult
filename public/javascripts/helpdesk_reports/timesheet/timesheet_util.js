@@ -598,7 +598,7 @@ Helpkit.TimesheetUtil = {
                 jQuery('#filter_validation_errors .error-msg').text('Filtering by custom fields will exclude archive tickets');
             } else {
                 jQuery('#filter_validation_errors .error-msg').text('');
-            }  
+            }
         }
     },
     getPdfParams :function() {
@@ -616,7 +616,7 @@ Helpkit.TimesheetUtil = {
               { "condition":"group_by","value":"customer_name"}
             ]
         }
-        
+
         params.data_hash.select_hash = Helpkit.locals.select_hash;
         if(savedReportUtil.last_applied_saved_report_index != -1){
           params.filter_name = Helpkit.report_filter_data[parseInt(savedReportUtil.last_applied_saved_report_index)].report_filter.filter_name;
@@ -1049,12 +1049,7 @@ var savedReportUtil = (function() {
                   _this.save_util.showReportDropdown();
                   if(index != -1) {
                       _this.save_util.controls.showDeleteAndEditOptions();
-                      var columns_condition = Helpkit.TimesheetUtil.COLUMN_LIMIT_FOR_PDF >= (Helpkit.locals.colspan + 1);
-                      if(is_preset_selected && columns_condition ){
-                        _this.save_util.controls.showScheduleOptions(false);
-                      } else{
-                        _this.save_util.controls.hideScheduleOptions();
-                      }
+
                       //Repopulate the filters because of bad code
                       //Full markup is replaced on every generate
                       //populate the filters from report filter data
@@ -1092,14 +1087,6 @@ var savedReportUtil = (function() {
 
               _this.save_util.saveHelper(opts);
 
-              //Timesheet specific
-              var columns_condition = Helpkit.TimesheetUtil.COLUMN_LIMIT_FOR_PDF >= (Helpkit.locals.colspan + 1);
-              if(columns_condition){
-                _this.save_util.controls.showScheduleOptions(false);
-              } else {
-                _this.save_util.controls.hideScheduleOptions();
-              }
-
         },
         getParams : function() {
           var params = {};
@@ -1125,7 +1112,7 @@ var savedReportUtil = (function() {
               params.data_hash.date.period = 'last_30';
           }
 
-          params.data_hash.report_filters = Helpkit.locals.local_hash;
+          params.data_hash.report_filters = Helpkit.locals.local_hash != undefined ? Helpkit.locals.local_hash : [];
           var group_by = {
               condition : 'group_by',
               value : Helpkit.locals.current_group_by == undefined ? 'customer_name' : Helpkit.locals.current_group_by
