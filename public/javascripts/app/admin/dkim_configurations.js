@@ -24,16 +24,10 @@ window.App.Admin = window.App.Admin || {};
 				
 				var self = this;
 				$.ajax({
-					dataType: 'json',
+					dataType: 'script',
 					method: methodType,
 					url: $(self).data('url'),
-					success: function (response) {
-						if(response['status'] == 403){	
-							jQuery("#noticeajax").html(response['err_msg']).show();
-							closeableFlash('#noticeajax');
-							jQuery(self).removeAttr('disabled').text(response['btn_name']);
-						}
-					}
+					success: function (response) {}
 				})
 			})
 

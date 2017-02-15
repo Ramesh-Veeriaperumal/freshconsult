@@ -78,8 +78,8 @@ class Admin::DkimConfigurationsController < Admin::AdminController
       return if current_account.advanced_dkim_enabled? and current_account.subscription.state != "trial"
       
       return if @dkim_count < OutgoingEmailDomainCategory::MAX_DKIM_ALLOWED and (current_account.basic_dkim_enabled? or current_account.dkim_enabled?)
-      
-      render :json => { :status => 403, :err_msg => t('email_configs.dkim.limit_exceeded'),
-        :btn_name => t('email_configs.dkim.config') }
+      flash[:notice] = t('email_configs.dkim.limit_exceeded')
+      @button_name = t('email_configs.dkim.config')
+      render :action => :create
     end
 end
