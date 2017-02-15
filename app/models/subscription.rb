@@ -409,7 +409,7 @@ class Subscription < ActiveRecord::Base
     # If the discount is changed, set the amount to the discounted
     # plan amount with the new discount.
     def update_amount
-      if self.amount.blank? or Rails.env.test? or Rails.env.development?
+      if self.amount.blank? || Rails.env.test? #|| Rails.env.development?
         self.amount = subscription_plan.amount
       else
         response = Billing::Subscription.new.calculate_update_subscription_estimate(self, addons)
