@@ -46,7 +46,7 @@ module Search::V2::AbstractController
           types:        searchable_types,
           es_params:    construct_es_params,
           locale:       @es_locale
-        }).query_results
+        }).query_results.compact
       end
 
       # Types corresponding to the model classes

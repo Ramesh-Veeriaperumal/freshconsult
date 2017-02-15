@@ -33,7 +33,8 @@ module ApiConstants
                        ApiTicketConstants::LOAD_OBJECT_EXCEPT +
                        DraftConstants::LOAD_OBJECT_EXCEPT +
                        SubscriptionConstants::LOAD_OBJECT_EXCEPT +
-                       SpotlightConstants::LOAD_OBJECT_EXCEPT
+                       SpotlightConstants::LOAD_OBJECT_EXCEPT +
+                       AutocompleteConstants::LOAD_OBJECT_EXCEPT
 
   NO_CONTENT_TYPE_REQUIRED = ApiTicketConstants::NO_CONTENT_TYPE_REQUIRED +
                              ContactConstants::NO_CONTENT_TYPE_REQUIRED +

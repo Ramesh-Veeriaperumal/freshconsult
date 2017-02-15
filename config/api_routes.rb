@@ -265,6 +265,11 @@ Helpkit::Application.routes.draw do
     post '/search/customers/',    to: 'ember/search/customers#results'
     post '/search/topics/',       to: 'ember/search/topics#results'
     post '/search/solutions/',    to: 'ember/search/solutions#results'
+    
+    post '/search/autocomplete/requesters/',    to: 'ember/search/autocomplete#requesters'
+    post '/search/autocomplete/agents/',        to: 'ember/search/autocomplete#agents'
+    post '/search/autocomplete/companies/',     to: 'ember/search/autocomplete#companies'
+    post '/search/autocomplete/tags/',          to: 'ember/search/autocomplete#tags'
   end
 
   pipe_routes = proc do 

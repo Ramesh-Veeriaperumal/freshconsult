@@ -22,6 +22,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/email_config", only: [:index]
 
     resource :"ember/search/ticket", only: [:results]
+    resource :"ember/search/autocomplete", :only => [:requesters, :agents, :companies, :tags]
   end
 
   reply_ticket do
@@ -56,6 +57,8 @@ Authority::Authorization::PrivilegeList.build do
   manage_contacts do
     resource :"ember/contact", only: [:create, :update, :activities]
     resource :"ember/contacts/merge", only: [:merge]
+
+    resource :"ember/search/autocomplete", :only => [:companies]
   end
 
   manage_users do
