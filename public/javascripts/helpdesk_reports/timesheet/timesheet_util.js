@@ -1161,6 +1161,11 @@ var savedReportUtil = (function() {
                         params.data_hash.date.date_range = dateRange;
                         params.data_hash.date.presetRange = false;
                       }
+                      if(Helpkit.presetRangesSelected == undefined) {
+                            params.data_hash.date.date_range = _this.save_util.dateRangeDiff(dateRange);
+                            params.data_hash.date.presetRange = true;
+                            params.data_hash.date.period = 'last_30';
+                      }
                   }
               }
               params.id = Helpkit.report_filter_data[current_selected_index].report_filter.id;
