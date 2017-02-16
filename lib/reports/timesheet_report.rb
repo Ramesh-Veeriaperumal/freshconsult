@@ -305,21 +305,36 @@ module Reports::TimesheetReport
     OPTIONAL_COLUMN_CONFIG.each do |key,value|
       report_columns_arr.push({name:value, id:key, default: false, is_custom: false})
     end
-    Account.current.flexifield_def_entries.includes(:ticket_field).drop_down_fields.each do | flexifieldDefEntry|
-      if flexifieldDefEntry.ticket_field
-        report_columns_arr.push({name: flexifieldDefEntry.ticket_field.label_in_portal, id:flexifieldDefEntry.flexifield_name, default: false, is_custom: true})
-      end
+
+
+
+    Account.current.custom_dropdown_fields_from_cache.each do |col|
+      report_columns_arr.push({name: col.label_in_portal, id:col.flexifield_def_entry.flexifield_name, default: false, is_custom: true})
     end
+
+    Account.current.nested_fields_from_cache.each do |col|
+      col.nested_ticket_fields(:include => :flexifield_def_entry).each do |nested_col|
+        report_columns_arr.push({name: nested_col.label_in_portal, id:nested_col.flexifield_def_entry.flexifield_name, default: false, is_custom: true})
+      end
+      report_columns_arr.push({name: col.label_in_portal, id:col.flexifield_def_entry.flexifield_name, default: false, is_custom: true})
+    end
+
     @report_columns = report_columns_arr
   end
 
 
   def custom_column_master_hash
     flexifields_hash = {}
-    Account.current.flexifield_def_entries.includes(:ticket_field).drop_down_fields.each do | flexifieldDefEntry|
-      if flexifieldDefEntry.ticket_field
-        flexifields_hash[flexifieldDefEntry.flexifield_name.to_sym] = flexifieldDefEntry.ticket_field.label_in_portal
+
+    Account.current.custom_dropdown_fields_from_cache.each do |col|
+     flexifields_hash[col.flexifield_def_entry.flexifield_name.to_sym] = col.label_in_portal
+    end
+
+    Account.current.nested_fields_from_cache.each do |col|
+      col.nested_ticket_fields(:include => :flexifield_def_entry).each do |nested_col|
+         flexifields_hash[nested_col.flexifield_def_entry.flexifield_name.to_sym] = nested_col.label_in_portal
       end
+      flexifields_hash[col.flexifield_def_entry.flexifield_name.to_sym] = col.label_in_portal
     end
     flexifields_hash
   end
