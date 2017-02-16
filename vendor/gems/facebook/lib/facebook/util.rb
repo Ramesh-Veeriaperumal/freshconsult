@@ -117,8 +117,8 @@ module Facebook
               attached_url, attachment = create_attachment_and_get_url(url, item, i)
               inline_attachments.push(attachment) if attachment_present?(attachment)                 
 
-              key = "MESSAGE_#{type.to_s.upcase}"
-              html_content = Object.const_get(key) % {:html_content => html_content, :url => attached_url, :preview_url => preview_url, :name => name, :height => "" }
+              key = "Facebook::Constants::MESSAGE_#{type.to_s.upcase}".constantize
+              html_content = key % {:html_content => html_content, :url => attached_url, :preview_url => preview_url, :name => name, :height => "" }
             end
           end
           html_content = "#{html_content} </p></div>"
