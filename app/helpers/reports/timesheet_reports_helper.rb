@@ -55,6 +55,13 @@ module Reports::TimesheetReportsHelper
               html_content += "<span class='non-billable-block' title='non-billable'>&nbsp;</span>#{get_time_in_hours(content)}"
             end
           html_content += "</td>"
+        elsif (item.eql?(:note))
+          if( content.blank? || content.match(/^No +/) )
+            content = "-"
+          else
+            content = content.length > 73 ? content.slice(0,73) + '...' : content
+          end
+          html_content = content_tag(:td,h(content),:class => item)
         else
           if( content.blank? || content.match(/^No +/) )
             content = "-"

@@ -6,7 +6,7 @@ Helpkit.TimesheetInitializer = (function () {
 			"agent_name" : 5,
 			"group_name" : 6,
 			"product_name" : 7,
-			"workable" : 0,
+			"workable" : 1,
 			"group_by_day_criteria" : 4,
 		},
 		COLUMN_LIMIT_FOR_PDF : 10,
@@ -40,6 +40,7 @@ Helpkit.TimesheetInitializer = (function () {
 			        "aoColumnDefs": [
 			          {"aTargets" : 0 , 'width' : '180px'},
 			          {"aTargets" : ['priority_name','status_name'] , 'width' : '60px'},
+			          {"aTargets" : 'note','width' : '180px'},
 			          {"aTargets": '_all', "width": "120px"}
 			        ],
 			        "oLanguage": {
@@ -49,7 +50,7 @@ Helpkit.TimesheetInitializer = (function () {
 			            }
 			        },
 			        "pageLength": 30,
-			        "scrollDistance" : 1000,
+			        "scrollDistance" : 500,
 			        "serverSide": true,
 			        "ajax" : function( data, callback, settings ) {
 			        	self.final_params['scroll_position'] = data['start'] / 30;
@@ -71,20 +72,28 @@ Helpkit.TimesheetInitializer = (function () {
 									      	var row = el;
 									      	row['workable_id'] = el["display_id"];
 									      	row['workable_desc'] = el['subject'];
-									      	row['workable'] = '<a href="/helpdesk/tickets/' + el["display_id"] + '" target="_blank">' + el['subject'] + ' (#' + el['display_id'] +')</a>';
-									      	row['product_name'] = el['product_name'] == undefined ? '' : el['product_name'];
+									      	var subject = el['subject'];
+									      	if(subject.length > 73){
+									      		subject = subject.substr(0,73) + '...';
+									      	}
+									      	row['workable'] = '<a href="/helpdesk/tickets/' + el["display_id"] + '" target="_blank">' + subject + ' (#' + el['display_id'] +')</a>';
 									      	row['priority_name'] =  el["priority_name"];
 									      	row['status_name'] = el["status_name"];
 									      	row['group_by_day_criteria'] = (new moment(el["executed_at"])).format("ddd, Do MMM,YYYY");
-									      	row['group_name'] = el["group_name"] != undefined ? el["group_name"] : '-';
+									      	row['group_name'] = el["group_name"] != null ? el["group_name"] : '-';
 									      	row['hours'] = self.hour_markup(row);
 									      	row['ticket'] = el['subject'];
-
+									      	row['product_name'] = el['product_id'] != null ? el['product_name'] : '-';
+									      	var note = el['note'];
+									      	if(note != null && note.length > 73) {
+									      		note = note.substr(0,73) + '...'
+									      	}
+									      	row['note'] = el['note'] != null ? note : '-';
 									      	//loop through headers array and check for custom columns
 									      	var custom_columns = Helpkit.locals.columns;
 
 											jQuery.each(custom_columns,function(idx,col) {
-												row[col] = el[col];
+												row[col] = el[col] == null ? '-' : el[col];
 											});
 									      	return row;
 									    });
@@ -137,8 +146,8 @@ Helpkit.TimesheetInitializer = (function () {
 			                	}
 
 			                	if(current_group_by == "workable") {
-			                		var fr_group_count = parseFloat(Math.round(group_count[row.attr('data-workable-id')] * 100) / 100).toFixed(2);
-			                		var mkup = '<tr class="group" data-group="' + row.attr('data-workable-desc') +'"><td colspan="' + (Helpkit.locals.colspan) +'" >'+'</td><td class="hours"><strong>'+ fr_group_count +'</strong></td></tr>';
+			                		var fr_group_count = group_count[row.attr('data-workable-id')];
+			                		var mkup = '<tr class="group" data-group="' + row.attr('data-workable-desc') +'"><td colspan="' + (Helpkit.locals.colspan + 1) +'" >'+'</td><td class="hours"><strong>'+ fr_group_count +'</strong></td></tr>';
 			                		row.before(mkup);
 			                	} else {
 			                		var fr_group_count = group_count[group_id];
@@ -165,8 +174,9 @@ Helpkit.TimesheetInitializer = (function () {
 			//Hide current groupby column
 			var current_group_by = Helpkit.locals.current_group_by == undefined ? "customer_name" : Helpkit.locals.current_group_by;
 			var hide_row = { "aTargets":  self.group_columns[current_group_by] , "visible" : false }
-			config.aoColumnDefs.push(hide_row);
-
+			if(current_group_by != "workable"){
+				config.aoColumnDefs.push(hide_row);	
+			}
 			var headers = Helpkit.locals.headers;
 
 			jQuery.each(headers,function(idx,col) {
