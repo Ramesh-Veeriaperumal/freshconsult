@@ -249,12 +249,12 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
      self.save
   end
 
-   def as_json(options = {}, deep=true)
+   def as_json(options = {time_format:'h'}, deep=true)
     if deep
       hash = {}
       hash['ticket_id'] = self.workable.display_id
       hash['agent_name'] = self.agent_name
-      hash['timespent'] = sprintf( "%0.02f", self.time_spent.to_f/3600) # converting to hours as in UI
+      hash['timespent'] = ( options[:time_format] =='hm' ? get_time_in_hours_and_minutes(self.time_spent.to_i) : sprintf( "%0.02f", self.time_spent.to_f/3600) ) # converting to hours as in UI / Timesheet need it in secs
       hash['agent_email'] = user.email
       hash['customer_name'] = self.customer_name
       hash['contact_email'] = workable.requester.email
@@ -365,6 +365,12 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       "executed_at"     =>  executed_at,
       "account_id"      =>  account_id
     }
+  end
+
+  def get_time_in_hours_and_minutes(seconds)
+    hh = (seconds/3600).to_i
+    mm = ((seconds % 3600)/60.to_f).round
+    hh.to_s.rjust(2,'0') + ":" + mm.to_s.rjust(2,'0')
   end
 
 end
