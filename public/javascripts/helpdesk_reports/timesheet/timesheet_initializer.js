@@ -38,8 +38,9 @@ Helpkit.TimesheetInitializer = (function () {
 			        "sScrollX": "100%",
 			        "sScrollXInner": "200%",
 			        "aoColumnDefs": [
-			          {"aTargets": '_all', "width": "120px"},
-			          {"aTargets": 0, "width": "350px" },
+			          {"aTargets" : 0 , 'width' : '180px'},
+			          {"aTargets" : ['priority_name','status_name'] , 'width' : '60px'},
+			          {"aTargets": '_all', "width": "120px"}
 			        ],
 			        "oLanguage": {
 			            "oPaginate": {
