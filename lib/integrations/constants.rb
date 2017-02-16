@@ -49,7 +49,7 @@ module Integrations::Constants
   APPS_DISPLAY_MAPPING = {
     APP_NAMES[:jira] => [DISPLAY_IN_PAGES["ticket_show"]],
     APP_NAMES[:zohocrm] => [DISPLAY_IN_PAGES["ticket_show"],DISPLAY_IN_PAGES["contact_show"]],
-    APP_NAMES[:mailchimp] => [DISPLAY_IN_PAGES["contact_show"]],
+    APP_NAMES[:mailchimp].downcase => [DISPLAY_IN_PAGES["contact_show"]],
     APP_NAMES[:salesforce_v2] => [DISPLAY_IN_PAGES["ticket_show"],DISPLAY_IN_PAGES["contact_show"]],
     APP_NAMES[:harvest] => [DISPLAY_IN_PAGES["time_sheet_show"]]
   }
