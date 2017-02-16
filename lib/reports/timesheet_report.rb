@@ -305,7 +305,9 @@ module Reports::TimesheetReport
       report_columns_arr.push({name:value, id:key, default: false, is_custom: false})
     end
     Account.current.flexifield_def_entries.includes(:ticket_field).drop_down_fields.each do | flexifieldDefEntry|
-      report_columns_arr.push({name: flexifieldDefEntry.ticket_field.label_in_portal, id:flexifieldDefEntry.flexifield_name, default: false, is_custom: true})
+      if flexifieldDefEntry.ticket_field
+        report_columns_arr.push({name: flexifieldDefEntry.ticket_field.label_in_portal, id:flexifieldDefEntry.flexifield_name, default: false, is_custom: true})
+      end
     end
     @report_columns = report_columns_arr
   end
@@ -314,7 +316,9 @@ module Reports::TimesheetReport
   def custom_column_master_hash
     flexifields_hash = {}
     Account.current.flexifield_def_entries.includes(:ticket_field).drop_down_fields.each do | flexifieldDefEntry|
-      flexifields_hash[flexifieldDefEntry.flexifield_name.to_sym] = flexifieldDefEntry.ticket_field.label_in_portal
+      if flexifieldDefEntry.ticket_field
+        flexifields_hash[flexifieldDefEntry.flexifield_name.to_sym] = flexifieldDefEntry.ticket_field.label_in_portal
+      end
     end
     flexifields_hash
   end
