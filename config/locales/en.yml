@@ -7948,6 +7948,12 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         domain_absent: "No domains associated to this company"
         backend_issue: "Unknown error. Please contact support@freshdesk.com"
         company_exists: "Company with name \"%{name}\" already exists"
+    office365:
+      label: "Office 365"
+      desc: "The Office 365 app for Freshdesk allows you to perform ticket actions from inside Outlook that include priority change, agent assignment, status change etc"
+      helptext: "<h4>Office 365</h4>"
+      message:
+        push_to_outlook: "Push to Outlook"
     slack:
       label: "Slack"
       desc: "Stay up to date about Freshdesk tickets in Slack"

@@ -995,6 +995,13 @@ Helpkit::Application.routes.draw do
       post :update
     end
 
+    namespace :office365 do
+      post :note
+      post :priority
+      post :status
+      post :agent
+    end
+
     namespace :sugarcrm do
       post :settings_update
       get :edit

@@ -1084,4 +1084,14 @@ if Integrations::Application.count == 0
     s.application_type = "dynamics_v2"
   end
 
+  office365 = Integrations::Application.seed(:name) do |s|
+    s.name = "office365"
+    s.display_name = "integrations.office365.label"
+    s.description = "integrations.office365.desc" 
+    s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
+    s.listing_order = 47
+    s.options = {:direct_install => true}
+    s.application_type = "office365"
+  end
+
 end

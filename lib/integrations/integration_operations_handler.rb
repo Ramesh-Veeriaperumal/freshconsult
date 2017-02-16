@@ -24,6 +24,20 @@ module Integrations
       end
     end
 
+    def office365 options
+      act_hash = options[:act_hash].symbolize_keys
+      installed_app = Account.current.installed_applications.with_name("office365").first
+      if installed_app.present?
+        triggered_event = options[:triggered_event]
+        act_obj = options[:act_on_class].constantize.find(options[:act_on_id])
+        payload = { :act_on_object => act_obj, :act_hash => act_hash, :triggered_event => triggered_event }
+        service_obj = ::IntegrationServices::Services::Office365Service.new(installed_app, payload)
+        service_obj.receive('send_email')
+      else
+        raise StandardError, "IntegrationOperationsHandler else block raise error! Account id is #{Account.current.id} "
+      end
+    end
+
     def call_service_object(installed_app, payload, method)
       service_obj = ::IntegrationServices::Services::SlackService.new(installed_app, payload)
       service_obj.receive(method)

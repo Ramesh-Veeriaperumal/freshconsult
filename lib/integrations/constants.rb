@@ -42,7 +42,8 @@ module Integrations::Constants
     :cti => "cti",
     :outlook_contacts => "outlook_contacts",
     :salesforce_v2 => "salesforce_v2",
-    :dynamics_v2 => "dynamics_v2"
+    :dynamics_v2 => "dynamics_v2",
+    :office365 => "office365"
   }
 
   DISPLAY_IN_PAGES = { "ticket_show" => 2, "contact_show" => 1, "company_show" => 0 }
