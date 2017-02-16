@@ -328,11 +328,11 @@ module Reports::TimesheetReport
     result_time_sheets = {}
     str_header_keys_time_entry = @headers.map(&:to_s)
     str_header_keys_time_entry +=  ["timespent","billable","user_id","ticket_id","customer_id","product_id","group_id","display_id","subject","executed_at"]
-
+    options = {time_format:'hm'}
     @time_sheets.each do | group_by_key, group_by_value|
       result_arr = []
       group_by_value.each do |time_entry|
-        result_hash = time_entry.as_json[:time_entry].slice(*str_header_keys_time_entry)
+        result_hash = time_entry.as_json(options)[:time_entry].slice(*str_header_keys_time_entry)
         ticket_json =time_entry.workable.as_json["helpdesk_ticket"].stringify_keys.slice(*str_header_keys_time_entry)
         ticket_json[:group_name] = time_entry.workable.group.name if time_entry.workable.group.present?
         result_hash.merge!(ticket_json)
@@ -521,7 +521,7 @@ module Reports::TimesheetReport
     @current_params = {
       :start_date  => start_date,
       :end_date    => end_date,
-      :customer_id => @filter_conditions[:customers] ? @filter_conditions[:customers] : [],
+      :customer_id => (@filter_conditions[:company_id] ||  []),
       :user_id     => (Account.current.hide_agent_metrics_feature? ? [] : (@filter_conditions[:user_id] || [])),
       :headers     => list_view_items,
       :billable    => billable_and_non? ? [true, false] : @filter_conditions[:billable].map {|val| val.to_bool},
