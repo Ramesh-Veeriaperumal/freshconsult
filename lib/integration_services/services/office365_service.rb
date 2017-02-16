@@ -37,7 +37,7 @@ module IntegrationServices::Services
           :recipient => email_id, 
           :reply_email => ticket.reply_email, 
           :subject => title_for_message_card,
-          :html => (EMAIL_HTML % { :actionable_content => email_head.to_json, 
+          :html => (EMAIL_HTML % { :actionable_content => email_head.to_json.html_safe, 
                                    :hidden_ticket_identifier => hidden_ticket_identifier(ticket)
                                  })
         }
