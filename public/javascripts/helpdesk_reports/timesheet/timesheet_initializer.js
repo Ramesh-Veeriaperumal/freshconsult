@@ -5,7 +5,7 @@ Helpkit.TimesheetInitializer = (function () {
 			"customer_name" : 1,
 			"agent_name" : 5,
 			"group_name" : 6,
-			"product_name" : 7,
+			"product_name" : 8,
 			"workable" : 1,
 			"group_by_day_criteria" : 4,
 		},
@@ -88,7 +88,7 @@ Helpkit.TimesheetInitializer = (function () {
 									      	if(note != null && note.length > 73) {
 									      		note = note.substr(0,73) + '...'
 									      	}
-									      	row['note'] = el['note'] != null ? note : '-';
+									      	row['note'] = el['note'] != null && el['note'] != "" ? note : '-';
 									      	//loop through headers array and check for custom columns
 									      	var custom_columns = Helpkit.locals.columns;
 
