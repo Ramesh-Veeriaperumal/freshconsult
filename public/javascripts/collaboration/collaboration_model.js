@@ -459,6 +459,19 @@ App.CollaborationModel = (function ($) {
                 });
             }
         },
+
+        sendMail: function(mail_content) {
+            var mail_data = {
+                "toAddress": mail_content.toAddressList,
+                "fromAddress": "support@" + window.location.hostname,
+                "html_data": mail_content.html_data,
+                "co_id": Collab.currentConversation.co_id
+            };
+            _COLLAB_PVT.ChatApi.notificationMail({
+                "token": Collab.currentConversation.token,
+                "mail_data": mail_data
+            });
+        },
         
         init: function() {
             var config = App.CollaborationUi.parseJson($("#collab-model-data").attr("data-model-payload"));

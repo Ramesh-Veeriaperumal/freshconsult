@@ -6213,8 +6213,8 @@ en:
   export_to_CSV: Export to CSV
   back_to_reports: "&larr; Back to reports"
   helpdesk:
-    collab: Collaboration
-    start_collab: Start Collaboration
+    collab: Discussion
+    start_collab: Start Discussion
     add_requester: Add Requester
     surveys:
       invalid_rating: Rating value "%{rating}" is invalid. Please rate with the correct rating value.
@@ -10885,7 +10885,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     discussion: "Discussion"
     discuss: "Discuss"
     collaborators: "Collaborators"
-    view_all_collaborations: "View all collaborations"
+    view_all_collaborations: "View all discussions"
     view_discussion: "View Discussion"
     open_discussions: "My Open Discussions"
     type_message: "Type message"
