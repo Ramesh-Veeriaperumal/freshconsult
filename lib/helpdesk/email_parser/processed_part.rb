@@ -79,6 +79,7 @@ class Helpdesk::EmailParser::ProcessedPart
 
 	def fetch_text_from_part
 		self.text_charset = valid_charset(part) #workaround - to handle case with no proper encoding information
+		self.text_charset = detect_encoding_from_content(part.body.decoded) if text_charset.blank?
 		self.text = encode_data(part.body.decoded, text_charset)
 	rescue => e
 		email_parsing_log "Error in fetch_text_from_part , message: #{e.message} - #{e.backtrace}"
@@ -89,6 +90,7 @@ class Helpdesk::EmailParser::ProcessedPart
 	def fetch_html_from_part
 		self.text_charset = valid_charset(part) #workaround - to handle case with no proper encoding information
 		self.text_charset = get_charset_from_html_content if text_charset.blank?
+		self.text_charset = detect_encoding_from_content(part.body.decoded) if text_charset.blank?
 		self.html = encode_data(part.body.decoded, text_charset)
 		#self.text_charset = get_charset_from_html_content if text_charset.blank?
 	rescue => e

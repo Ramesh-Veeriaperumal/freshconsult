@@ -7,8 +7,18 @@ module Helpdesk::EmailParser::MailProcessingUtil
     if mail_content.try(:charset) # check whether else condition is required if no charset is available
     		return ENCODING_MAPPING[mail_content.charset.upcase] if ENCODING_MAPPING[mail_content.charset.upcase]
     		return mail_content.charset if is_default_charset(mail_content.charset)
-    		"UTF-8"
   	end
+    return nil
+  end
+
+  def detect_encoding_from_content(string_content)
+    detection = CharlockHolmes::EncodingDetector.detect(string_content)
+    if detection.nil?
+      email_parsing_log "Unable to detect encoding type in detect_encoding_from_content"
+      return "UTF-8" 
+    end
+    detected_encoding = detection[:encoding]
+    return detected_encoding
   end
 
   def is_default_charset(charset)
