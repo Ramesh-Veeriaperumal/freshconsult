@@ -51,11 +51,10 @@ module Marketplace::HelperMethods
   end
 
   def app_units_count
-    if per_agent_plan? && !Account.current.subscription.agent_limit.nil?
+    if per_agent_plan?
       return Account.current.subscription.new_sprout? ? 
              Account.current.full_time_agents.count : Account.current.subscription.agent_limit
     else
-      # Addon unit is set to 1 if the agent limit in NIL (trial accounts)
       return Marketplace::Constants::ACCOUNT_ADDON_APP_UNITS
     end
   end
