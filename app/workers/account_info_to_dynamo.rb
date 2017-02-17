@@ -36,7 +36,7 @@ class AccountInfoToDynamo < BaseWorker
     end
 
     def add_account_info_to_dynamo email, account_id, time_stamp
-      AdminEmail::AssociatedAccounts.new email, account_id, time_stamp
+      AdminEmail::AssociatedAccounts.update email, account_id, time_stamp
     end
 
     def check_associated_account_count email

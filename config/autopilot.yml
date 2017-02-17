@@ -4,11 +4,6 @@ autopilot:
     contact_url: "https://api2.autopilothq.com/v1/contact"
     trigger_url: "https://api2.autopilothq.com/v1/trigger/%{trigger_code}/contact/%{person_id}"
     contact_with_trigger_url: "https://api2.autopilothq.com/v1/trigger/%{trigger_code}/contact"
-  production: 
-    <<: *common
-    access_key: "68eee57364d64f5a8cad615fcd20d78a"
-    trigger_code: "0008"
-    ui_token: "2c290bf83da74f158a97e0b64e65df3e234444a92a18430c982f592f1bd7ce80"
   staging: 
     <<: *common
     access_key: "9a0e8aa4369f4103b0bbe9ce8ef19ee5"
