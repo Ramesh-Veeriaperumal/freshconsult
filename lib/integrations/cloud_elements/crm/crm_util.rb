@@ -511,7 +511,7 @@ module Integrations::CloudElements::Crm::CrmUtil
   end
 
   def check_feature
-    unless current_account.features?(FEATURE[element])
+    if FEATURE[element] && !current_account.features?(FEATURE[element])
       flash[:error] = t(:'flash.application.install.no_feature_error')
       redirect_to integrations_applications_path and return
     end 

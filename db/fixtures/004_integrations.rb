@@ -1059,8 +1059,6 @@ if Integrations::Application.count == 0
     s.listing_order = 45
     s.options = {
       :direct_install => true,
-      :install => {:require_feature => {:feature_name => :salesforce_v2}},
-      :edit => {:require_feature => {:feature_name => :salesforce_v2}},
       :oauth_url => "/auth/salesforce_v2?origin=id%3D{{account_id}}", 
       :edit_url => "/integrations/sync/crm/edit?state=salesforce_v2&method=put",
       :after_commit_on_destroy => { :clazz => "IntegrationServices::Services::CloudElementsService", :method => "uninstall" }}
