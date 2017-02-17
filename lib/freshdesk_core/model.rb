@@ -258,7 +258,7 @@ module FreshdeskCore::Model
     end
     
     def delete_dkim_r53_entries(account)
-      account.outgoing_email_domain_categories.dkim_configured_domains.each do |domain_category|
+      account.outgoing_email_domain_categories.dkim_configured_domains.order('status ASC').each do |domain_category|
         domain_category.status = OutgoingEmailDomainCategory::STATUS['delete']
         domain_category.save
         Dkim::RemoveDkimConfig.new(domain_category).remove_records
