@@ -11,7 +11,7 @@ module Integrations
     end
 
     def office365 installed_app, condition
-      { :name => "Integrations::RuleActionHandler", :value => "#{I18n.t('integrations.office365.message.push_to_outlook')}", :domtype => 'office365', :condition => condition[:dispatcher] || condition[:observer] 
+      { :name => "Integrations::RuleActionHandler::Office365", :value => "#{I18n.t('integrations.office365.message.push_to_outlook')}", :domtype => 'office365', :condition => condition[:dispatcher] || condition[:observer] 
       }
     end
 
