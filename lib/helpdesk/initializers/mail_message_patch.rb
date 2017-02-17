@@ -112,6 +112,23 @@ module Mail
         str.dup.force_encoding("utf-8")
     end
 
+    def Ruby19.q_value_decode(str)
+      match = str.match(/\=\?(.+)?\?[Qq]\?(.+)?\?\=/m)
+      if match
+        charset = match[1]
+        string = match[2].gsub(/_/, '=20')
+        # Remove trailing = if it exists in a Q encoding
+        string = string.sub(/\=$/, '')
+        str = Encodings::QuotedPrintable.decode(string)
+        str.force_encoding(pick_encoding(charset))
+      end
+      decoded = str.encode("utf-8", :invalid => :replace, :replace => "")
+      decoded.valid_encoding? ? decoded : decoded.encode("utf-16le", :invalid => :replace, :replace => "").encode("utf-8")
+    rescue Encoding::UndefinedConversionError, Encoding::ConverterNotFoundError => e
+      Rails.logger.info "Encoding conversion failed : #{e.message} - #{e.backtrace}"
+      str.dup.force_encoding("utf-8")
+    end
+
     def Ruby19.pick_encoding(charset)
       case charset
 
