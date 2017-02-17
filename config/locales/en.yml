@@ -7266,6 +7266,7 @@ en:
     search: "Search for apps"
     search_language_warning: "Search available in English only"
     buy_app: Buy App
+    paid_apps_trial_info: "Paid Apps are not available for trial at this point of time. Please contact <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> for further information."
     app_price: %{price} / %{addon_type} / month
     no_payment_info: We do not have your payment details on file. Please update them to proceed further. <br>
     update_payment_info: Update payment info
