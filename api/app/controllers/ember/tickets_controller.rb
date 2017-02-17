@@ -5,10 +5,11 @@ module Ember
     include SplitNoteHelper
     include AttachmentConcern
     include Helpdesk::ToggleEmailNotification
+    decorate_views(decorate_object: [:update_properties], decorate_objects: [:index, :search])
 
     INDEX_PRELOAD_OPTIONS = [:tags, :ticket_old_body, :schema_less_ticket, :flexifield, { requester: [:avatar, :flexifield, :default_user_company] }].freeze
     DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
-    SINGULAR_RESPONSE_FOR = %w(show create update split_note).freeze
+    SINGULAR_RESPONSE_FOR = %w(show create update split_note update_properties).freeze
 
     before_filter :ticket_permission?, only: [:latest_note, :split_note]
     before_filter :load_note, only: [:split_note]
@@ -82,7 +83,11 @@ module Ember
       assign_ticket_status
       @item.assign_attributes(validatable_delegator_attributes)
       return unless validate_delegator(@item, ticket_fields: @ticket_fields)
-      @item.update_ticket_attributes(cname_params) ? (head 204) : render_errors(@item.errors)
+      if @item.update_ticket_attributes(cname_params)
+        render 'ember/tickets/show'
+      else
+        render_errors(@item.errors)
+      end
     end
 
     private

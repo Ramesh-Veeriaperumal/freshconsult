@@ -543,8 +543,8 @@ module Ember
       tags = [Faker::Lorem.word, Faker::Lorem.word]
       params_hash = { due_by: dt, responder_id: agent.id, status: 2, priority: 4, group_id: update_group.id, tags: tags }
       put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
-      assert_response 204
-      ticket.reload
+      assert_response 200
+      match_json(ticket_show_pattern(ticket.reload))
       assert_equal dt, ticket.due_by.to_time.iso8601
       assert_equal agent.id, ticket.responder_id
       assert_equal 2, ticket.status
@@ -584,8 +584,8 @@ module Ember
       Helpdesk::Ticket.any_instance.stubs(:association_type).returns(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:assoc_parent])
       params_hash = { status: 4 }
       put :update_properties, construct_params({ version: 'private', id: parent_ticket.display_id }, params_hash)
-      assert_response 204
-      parent_ticket.reload
+      assert_response 200
+      match_json(ticket_show_pattern(parent_ticket.reload))
       assert_equal 4, parent_ticket.status
     end
 
@@ -593,8 +593,8 @@ module Ember
       ticket = create_ticket
       params_hash = { status: 5, skip_close_notification: true }
       put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
-      assert_response 204
-      ticket.reload
+      assert_response 200
+      match_json(ticket_show_pattern(ticket.reload))
       assert_equal 5, ticket.status
     end
 
