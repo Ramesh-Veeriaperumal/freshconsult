@@ -67,6 +67,7 @@ class ContactDecorator < ApiDecorator
         active: active,
         address: address,
         company_id: company_id,
+        view_all_tickets: client_manager,
         description: description,
         email: email,
         job_title: job_title,
@@ -84,6 +85,7 @@ class ContactDecorator < ApiDecorator
         avatar: avatar_hash
       }
       response_hash.merge!(deleted: true) if record.deleted
+      response_hash.merge!(other_companies: other_companies) if multiple_user_companies_enabled?
       response_hash
     end
 

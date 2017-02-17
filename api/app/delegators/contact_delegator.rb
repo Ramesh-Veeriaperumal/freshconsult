@@ -13,13 +13,8 @@ class ContactDelegator < BaseDelegator
   validate :default_company_presence, if: -> { @default_company }
 
   def initialize(record, options = {})
-    if options[:email_objects]
-      @other_emails = options[:email_objects][:old_email_objects]
-      @primary_email = options[:email_objects][:primary_email]
-    else
-      @other_emails = options[:other_emails]
-      @primary_email = options[:primary_email]
-    end
+    @other_emails = options[:other_emails]
+    @primary_email = options[:primary_email]
     @default_company = options[:default_company]
     @user_id = record.id
     check_params_set(options[:custom_fields]) if options[:custom_fields].is_a?(Hash)

@@ -2,8 +2,11 @@ JSON.generate(@items.map do |item|
   response_hash = item.to_hash
   stats_hash = item.stats
   requester_info = item.requester
+  company_hash = item.company
+  requester_info = item.requester
   response_hash.merge!(deleted: item.deleted) if item.deleted
   response_hash.merge!(stats: stats_hash) if stats_hash
   response_hash.merge!(requester: requester_info) if requester_info
+  response_hash.merge!(company: company_hash) if company_hash
   response_hash
 end)

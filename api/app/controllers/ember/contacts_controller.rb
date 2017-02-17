@@ -8,10 +8,17 @@ module Ember
 
     def create
       assign_protected
-      return unless validate_delegator(@item, email_objects: @email_objects, custom_fields: params[cname][:custom_field],
-                                              avatar_id: params[cname][:avatar_id])
+      delegator_params = {
+        other_emails: @email_objects[:old_email_objects],
+        primary_email: @email_objects[:primary_email],
+        custom_fields: params[cname][:custom_field],
+        default_company: @company_id,
+        avatar_id: params[cname][:avatar_id]
+      }
+      return unless validate_delegator(@item, delegator_params)
       build_user_emails_attributes if @email_objects.any?
-      if @item.create_contact!
+      build_other_companies if @all_companies
+      if @item.create_contact!(params[cname][:active])
         render :show, location: api_contact_url(@item.id), status: 201
       else
         render_custom_errors

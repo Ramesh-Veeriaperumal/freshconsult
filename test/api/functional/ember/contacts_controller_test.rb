@@ -7,7 +7,24 @@ module Ember
 
     def setup
       super
+      initial_setup
+    end
+
+    @@initial_setup_run = false
+
+    def initial_setup
       @private_api = true
+      return if @@initial_setup_run
+      
+      @account.features.multiple_user_companies.create
+      @account.reload
+
+      20.times do
+        @account.companies.build(name: Faker::Name.name)
+      end
+      @account.save
+
+      @@initial_setup_run = true
     end
 
     def wrap_cname(params)
@@ -86,6 +103,26 @@ module Ember
       match_json(contact_pattern(User.last))
       match_json(contact_pattern(User.last))
       assert User.last.avatar.id == avatar_id
+    end
+
+    def test_create_contact_with_other_companies
+      company_ids = Company.first(2).map(&:id)
+      post :create, construct_params({version: 'private'},  name: Faker::Lorem.characters(10),
+                                          email: Faker::Internet.email,
+                                          company_id: company_ids[0],
+                                          view_all_tickets: true,
+                                          other_companies: [
+                                              {
+                                                company_id: company_ids[1],
+                                                view_all_tickets: true
+                                              }
+                                            ])
+      assert_response 201
+      match_json(contact_pattern(User.last))
+      assert User.last.user_companies.find_by_default(true).company_id == company_ids[0]
+      assert User.last.user_companies.find_by_default(true).client_manager == true
+      assert User.last.user_companies.find_by_default(false).company_id == company_ids[1]
+      assert User.last.user_companies.find_by_default(false).client_manager == true
     end
 
     # Show User

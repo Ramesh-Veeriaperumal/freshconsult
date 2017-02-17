@@ -47,6 +47,40 @@ module Ember
       { ticket: params }
     end
 
+    def get_user_with_multiple_companies
+      user_company = @account.user_companies.group(:user_id).having(
+        'count(user_id) > 1 '
+      ).last
+      if user_company.present?
+        user_company.user
+      else
+        new_user = add_new_user(@account)
+        new_user.user_companies.create(:company_id => get_company.id, :default => true)
+        other_company = create_company
+        new_user.user_companies.create(:company_id => other_company.id)
+        new_user.reload
+      end
+    end
+
+    def get_user_with_default_company
+      user_company = @account.user_companies.group(:user_id).having('count(*) = 1 ').last
+      if user_company.present?
+        user_company.user
+      else
+        new_user = add_new_user(@account)
+        new_user.user_companies.create(:company_id => get_company.id, :default => true)
+        new_user.reload
+      end
+    end
+
+    def get_company
+      company = Company.first
+      return company if company
+      company = Company.create(name: Faker::Name.name, account_id: @account.id)
+      company.save
+      company
+    end
+
     def ticket_params_hash
       cc_emails = [Faker::Internet.email, Faker::Internet.email]
       subject = Faker::Lorem.words(10).join(' ')
@@ -177,6 +211,12 @@ module Ember
       get :index, controller_params(version: 'private', include: 'requester')
       assert_response 200
       match_json(private_api_ticket_index_pattern)
+    end
+
+    def test_index_with_company_side_load
+      get :index, controller_params(version: 'private', include: 'company')
+      assert_response 200
+      match_json(private_api_ticket_index_pattern({}, false, false, true))
     end
 
     def test_show_with_survey_result
@@ -357,6 +397,63 @@ module Ember
       match_json(create_ticket_pattern({}, Helpdesk::Ticket.last))
       assert Helpdesk::Ticket.last.attachments.count == 3
       assert Helpdesk::Ticket.last.cloud_files.count == 1
+    end
+
+    def test_create_without_company_id
+      sample_requester = get_user_with_default_company
+      params = {
+        requester_id: sample_requester.id,
+        status: 2, priority: 2,
+        subject: Faker::Name.name, description: Faker::Lorem.paragraph
+      }
+      post :create, construct_params({version: 'private'}, params)
+      t = Helpdesk::Ticket.last
+      match_json(create_ticket_pattern(params, t))
+      match_json(create_ticket_pattern({}, t))
+      assert_equal t.owner_id, sample_requester.company_id
+      assert_response 201
+    end
+
+    def test_create_with_company_id
+      Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
+      company = get_company
+      sample_requester = add_new_user(@account)
+      sample_requester.company_id = company.id
+      sample_requester.save!
+      params = {
+        requester_id: sample_requester.id,
+        company_id: company.id, status: 2,
+        priority: 2, subject: Faker::Name.name,
+        description: Faker::Lorem.paragraph
+      }
+      post :create, construct_params({version: 'private'}, params)
+      t = Helpdesk::Ticket.last
+      match_json(create_ticket_pattern(params, t))
+      match_json(create_ticket_pattern({}, t))
+      assert_equal t.owner_id, company.id
+      assert_response 201
+    ensure
+      Account.any_instance.unstub(:multiple_user_companies_enabled?)
+    end
+
+    def test_create_with_other_company_id_of_requester
+      Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
+      sample_requester = get_user_with_multiple_companies
+      company_id = (sample_requester.company_ids - [sample_requester.company_id]).sample
+      params = {
+        requester_id: sample_requester.id,
+        company_id: company_id, status: 2,
+        priority: 2, subject: Faker::Name.name,
+        description: Faker::Lorem.paragraph
+      }
+      post :create, construct_params({version: 'private'}, params)
+      t = Helpdesk::Ticket.last
+      match_json(create_ticket_pattern(params, t))
+      match_json(create_ticket_pattern({}, t))
+      assert_equal t.owner_id, company_id
+      assert_response 201
+    ensure
+      Account.any_instance.unstub(:multiple_user_companies_enabled?)
     end
     
     def test_execute_scenario_without_params
@@ -704,6 +801,22 @@ module Ember
       t = Helpdesk::Ticket.last
       match_json(ticket_show_pattern(t))
       assert ticket.attachments.count == 1
+    end
+
+    def test_update_with_company_id
+      Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
+      t = ticket
+      sample_requester = get_user_with_multiple_companies
+      t.update_attributes(:requester => sample_requester)
+      company_id = sample_requester.user_companies.where(:default => false).first.company.id
+      params = { company_id: company_id }
+      put :update, construct_params({ version: 'private', id: t.display_id }, params)
+      t.reload
+      assert t.owner_id == company_id
+      match_json(ticket_show_pattern(t))
+      assert_response 200
+    ensure
+      Account.any_instance.unstub(:multiple_user_companies_enabled?)
     end
   end
 end
