@@ -28,7 +28,7 @@ module Reports::TimesheetReportsHelper
   def construct_timesheet_entry_row(headers, time_entry, load_time, is_pdf=false, group_by = [])
     entry = ""
     headers.each do |item|
-      next if group_by.include?(item)
+      next if ( item !=:workable ) && group_by.include?(item)
       content = timesheet_formatted_date(time_entry.executed_at, {:format => :short_day_with_week, :include_year => true}) if item.eql?(:group_by_day_criteria)
       if(item.eql?(:hours))
         content ||= (time_entry.time_spent || 0) + (time_entry.timer_running ? (load_time - time_entry.start_time) : 0)
@@ -44,7 +44,9 @@ module Reports::TimesheetReportsHelper
         if !is_pdf
           html_content = content_tag(:td, reports_ticket_link(content), :class => item)
         else
-          html_content = "<td class=#{item}><div> #{h(content)} </div></td>"
+          txt = h(content.subject)
+          txt = (txt.length > 73 ? txt.slice(0,73) + '...' : txt) + " (##{content.display_id})"
+          html_content = "<td class=#{item}><div> #{txt} </div></td>"
         end
       else
         if(item.eql?(:hours))
