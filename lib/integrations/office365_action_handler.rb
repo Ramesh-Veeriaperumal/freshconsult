@@ -1,7 +1,7 @@
 module Integrations
-  class RuleActionHandler
+  class Office365ActionHandler
 
-    def slack_trigger act_on, act_hash
+    def office365_trigger act_on, act_hash
       if act_hash.present?
         va_rule = act_hash.delete(:va_rule)
         options = {
@@ -9,8 +9,7 @@ module Integrations
           :act_on_id => act_on.id,
           :act_on_class => act_on.class.name,
           :triggered_event => va_rule.triggered_event,
-          :operation_event => "execute_rule",
-          :operation_name => "slack",
+          :operation_name => "office365",
         }
         act_on.va_rules_after_save_actions << {klass: "Integrations::IntegrationsWorker", method: :perform_async, args: options}
       end
