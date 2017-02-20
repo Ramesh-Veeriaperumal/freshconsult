@@ -22,8 +22,7 @@ module Ember
       return unless validate_delegator(nil, params)
       assign_filter_params
       super
-      response.api_meta = { count: @items_count }
-      # TODO-EMBERAPI Optimize the way we fetch the count
+      response.api_meta = { count: @items_count } if count_included?
     end
 
     def create
@@ -130,6 +129,16 @@ module Ember
       def assign_attributes_for_update
         @item.assign_attributes(validatable_delegator_attributes)
         @item.assign_description_html(cname_params[:ticket_body_attributes]) if cname_params[:ticket_body_attributes]
+      end
+
+      def load_objects
+        items = tickets_filter.preload(conditional_preload_options)
+        @items_count = items.count if count_included?
+        @items = paginate_items(items)
+      end
+
+      def count_included?
+        @ticket_filter.include_array && @ticket_filter.include_array.include?('count')
       end
 
       def shared_attachments

@@ -128,6 +128,7 @@ module Ember
       ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| create_ticket }
       get :index, controller_params(version: 'private')
       assert_response 200
+      refute response.api_meta.present?
       match_json(private_api_ticket_index_pattern)
     end
 
@@ -217,6 +218,13 @@ module Ember
       get :index, controller_params(version: 'private', include: 'company')
       assert_response 200
       match_json(private_api_ticket_index_pattern({}, false, false, true))
+    end
+
+    def test_index_with_count_included
+      get :index, controller_params(version: 'private', include: 'count')
+      assert_response 200
+      assert response.api_meta[:count] == Account.current.tickets.count
+      match_json(private_api_ticket_index_pattern)
     end
 
     def test_show_with_survey_result

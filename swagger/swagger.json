@@ -69,7 +69,8 @@
               "requester",
               "stats",
               "survey",
-              "company"
+              "company",
+              "count"
             ]
           },
           {

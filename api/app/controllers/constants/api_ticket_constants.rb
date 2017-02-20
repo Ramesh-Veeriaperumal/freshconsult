@@ -20,7 +20,7 @@ module ApiTicketConstants
   UPDATE_PROPERTIES_FIELDS = %w(due_by responder_id group_id status priority tags  skip_close_notification).freeze
   
   ALLOWED_INCLUDE_PARAMS = %w(conversations requester company stats survey).freeze
-  SIDE_LOADING = %w(requester stats company survey).freeze
+  SIDE_LOADING = %w(requester stats company survey count).freeze
   INCLUDE_PRELOAD_MAPPING = { 'stats' => :ticket_states }.freeze
   BULK_DELETE_PRELOAD_OPTIONS = [:tags, :schema_less_ticket].freeze
   ORDER_TYPE = TicketsFilter::SORT_ORDER_FIELDS.map(&:first).map(&:to_s).freeze
