@@ -27,6 +27,7 @@ module FreshdeskCore::Model
                         "day_pass_configs",
                         "day_pass_usages",
                         "email_configs",
+                        "dkim_category_change_activities",
                         "email_notification_agents",
                         "email_notifications",
                         "dynamic_notification_templates",
@@ -217,6 +218,7 @@ module FreshdeskCore::Model
 
   def perform_destroy(account)
     delete_gnip_twitter_rules(account)
+    delete_dkim_r53_entries(account)
     delete_social_redis_keys(account)
     delete_facebook_subscription(account)
     delete_jira_webhooks(account)
@@ -252,6 +254,14 @@ module FreshdeskCore::Model
           args = default_stream.construct_unsubscribe_args(nil)
           Social::Gnip::RuleWorker.perform_async(args)
         end
+      end
+    end
+    
+    def delete_dkim_r53_entries(account)
+      account.outgoing_email_domain_categories.dkim_configured_domains.order('status ASC').each do |domain_category|
+        domain_category.status = OutgoingEmailDomainCategory::STATUS['delete']
+        domain_category.save
+        Dkim::RemoveDkimConfig.new(domain_category).remove_records
       end
     end
 
@@ -363,6 +373,7 @@ module FreshdeskCore::Model
       objects.each do |object| 
         object.delete
       end
+      Rails.logger.info ":::::: Sitemap is deleted (redis, cache & S3) for account #{account.id} ::::::"
     end
 
     def remove_round_robin_redis_info(account)

@@ -28,6 +28,7 @@ development:
   trial_customer_email_queue: trial_customer_email_queue_dev
   default_email_queue: default_email_queue_dev
   email_dead_letter_queue: failed_emails_queue_dev
+  email_events_queue: fd_email_spam
 staging:
   twitter_realtime_queue: social_gnip_2_0_tweet_staging
   facebook_realtime_queue: social_fb_feed_staging

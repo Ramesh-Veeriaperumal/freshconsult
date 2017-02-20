@@ -16,7 +16,7 @@
 			<%= content_tag(:span, t("integrations.#{app_name}.form.invoice_option"), :class => 'checkbox_label') %>
 		</div>
 	</div>
-  <% if feature?(:timesheets) %>
+  <% if current_account.timesheets_enabled? %>
 	<span class="seperator"></span>
 
 	<div class="field mb15 mt15">

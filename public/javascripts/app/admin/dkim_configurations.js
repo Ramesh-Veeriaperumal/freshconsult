@@ -22,11 +22,12 @@ window.App.Admin = window.App.Admin || {};
 					methodType = 'GET';
 				}
 				
+				var self = this;
 				$.ajax({
 					dataType: 'script',
 					method: methodType,
-					url: $(this).data('url'),
-					success: function () {}
+					url: $(self).data('url'),
+					success: function (response) {}
 				})
 			})
 

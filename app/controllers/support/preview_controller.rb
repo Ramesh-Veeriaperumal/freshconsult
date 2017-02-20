@@ -1,6 +1,6 @@
 class Support::PreviewController < SupportController
   
-  before_filter(:only => [:index]) { |c| c.requires_admin_feature :rebranding }  
+  before_filter(:only => [:index]) { |c| c.requires_this_feature :rebranding }  
   before_filter :check_privilege
 	before_filter :preview_url, :only => :index
   include Redis::RedisKeys

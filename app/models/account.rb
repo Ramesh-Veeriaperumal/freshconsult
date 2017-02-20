@@ -526,7 +526,11 @@ class Account < ActiveRecord::Base
   def ehawk_spam?
     ehawk_reputation_score >= 4 
   end
-  
+
+  def copy_right_enabled?
+    subscription.sprout_plan? || subscription.trial? || (branding_enabled?)
+  end
+
   protected
   
     def external_url_is_valid?(url) 

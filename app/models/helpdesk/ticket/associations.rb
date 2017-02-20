@@ -26,8 +26,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
 	has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
 
   belongs_to :email_config
+
   belongs_to :group
+  belongs_to :internal_group, :class_name => "Group"
   belongs_to :responder, :class_name => 'User', :conditions => 'users.helpdesk_agent = true'
+  belongs_to :internal_agent, :class_name => "User", :conditions => {:helpdesk_agent => true}
 
   belongs_to :requester, :class_name => 'User'
 

@@ -11,8 +11,6 @@ module Search::Filters::QueryHelper
       'helpdesk_tags.name'                        =>  'tag_names',
       'helpdesk_subscriptions.user_id'            =>  'watchers',
       'helpdesk_schema_less_tickets.product_id'   =>  'product_id',
-      "helpdesk_schema_less_tickets.long_tc04"    =>  'long_tc04',
-      "helpdesk_schema_less_tickets.long_tc03"    =>  'long_tc03',
       'helpdesk_schema_less_tickets.int_tc03'     =>  'int_tc03'
     }
 
@@ -61,13 +59,13 @@ module Search::Filters::QueryHelper
       ({
         :group_tickets    => bool_filter(:should => [
                                                     group_id_es_filter('group_id', ['0']),
-                                                    group_id_es_filter('long_tc03', ['0']),
+                                                    group_id_es_filter('internal_group_id', ['0']),
                                                     term_filter('responder_id', User.current.id.to_s),
-                                                    term_filter('long_tc04', User.current.id.to_s)
+                                                    term_filter('internal_agent_id', User.current.id.to_s)
                                                     ]),
         :assigned_tickets => bool_filter(:should => [
                                                     term_filter('responder_id', User.current.id.to_s),
-                                                    term_filter('long_tc04', User.current.id.to_s)
+                                                    term_filter('internal_agent_id', User.current.id.to_s)
                                                     ])
         })[Agent::PERMISSION_TOKENS_BY_KEY[User.current.agent.ticket_permission]]
     end
@@ -139,7 +137,7 @@ module Search::Filters::QueryHelper
     end
 
     # For handling internal agent with hacks
-    def long_tc04_es_filter(field_name, values)
+    def internal_agent_id_es_filter(field_name, values)
       if values.include?('0')
         values.delete('0')
         values.push(User.current.id.to_s)
@@ -149,7 +147,7 @@ module Search::Filters::QueryHelper
     end
 
     # For handling internal group with hacks
-    def long_tc03_es_filter(field_name, values)
+    def internal_group_id_es_filter(field_name, values)
       if values.include?('0')
         values.delete('0')
         values.concat(User.current.agent_groups.select(:group_id).map(&:group_id).map(&:to_s))
@@ -167,7 +165,7 @@ module Search::Filters::QueryHelper
         values.delete('-1')
         bool_filter(:should => [
             missing_filter('responder_id'),
-            missing_filter('long_tc04'),
+            missing_filter('internal_agent_id'),
             *terms_filter_any_agent(values)
           ])
       else
@@ -199,17 +197,17 @@ module Search::Filters::QueryHelper
           terms_filter('group_id', group_values.uniq)
         ]),
         bool_filter(:must => [
-          missing_filter('long_tc04'),
-          terms_filter('long_tc03', group_values.uniq)
+          missing_filter('internal_agent_id'),
+          terms_filter('internal_group_id', group_values.uniq)
         ]),
         bool_filter(:must => [
           bool_filter(:should => [
             terms_filter('responder_id', field_values.uniq),
-            terms_filter('long_tc04', field_values.uniq)
+            terms_filter('internal_agent_id', field_values.uniq)
           ]),
           bool_filter(:should => [
             terms_filter('group_id', group_values.uniq),
-            terms_filter('long_tc03', group_values.uniq)
+            terms_filter('internal_group_id', group_values.uniq)
           ])
         ]),
       ])
@@ -349,11 +347,11 @@ module Search::Filters::QueryHelper
     end
 
     def terms_filter_any_agent(values)
-      ["responder_id","long_tc04"].map {|field_name| terms_filter(field_name, values)}
+      ["responder_id","internal_agent_id"].map {|field_name| terms_filter(field_name, values)}
     end
 
     def terms_filter_any_group(values)
-      ["group_id","long_tc03"].map {|field_name| terms_filter(field_name, values)}
+      ["group_id","internal_group_id"].map {|field_name| terms_filter(field_name, values)}
     end
 
     def filtered_query(query_part={}, filter_part={})

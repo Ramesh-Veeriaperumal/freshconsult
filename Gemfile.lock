@@ -205,15 +205,15 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/freshdesk-features.git
-  revision: f4716ab01bfb137326e18ec9262b0b1ce5494618
+  revision: 9d530cbf51b0c813dba47e73c986ca863ca12066
   branch: freshdesk
   specs:
-    freshdesk_features (0.0.1)
+    freshdesk_features (0.0.2)
 
 GIT
   remote: git@github.com:freshdesk/launch-party.git
-  revision: 2615d8f5b00c69d025d14eef2cf662a472b382ba
-  tag: v0.1.3
+  revision: edbb362ebaf1c84e2745270435cf4a93bbeb3149
+  tag: v0.1.4
   specs:
     launchparty (0.1.1)
       newrelic_rpm (>= 3.17.2.327)

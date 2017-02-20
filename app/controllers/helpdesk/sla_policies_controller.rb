@@ -5,7 +5,7 @@ class Helpdesk::SlaPoliciesController < Admin::AdminController
   include APIHelperMethods
   
   before_filter :only => [:new, :create] do |c|
-    c.requires_feature :customer_slas
+    c.requires_this_feature :customer_slas
   end
   before_filter :load_sla_policy, :only => [ :update, :destroy, :activate ]
   before_filter :load_item, :validate_params, :only => [:company_sla]

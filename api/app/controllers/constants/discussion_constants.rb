@@ -27,6 +27,10 @@ module DiscussionConstants
   FOLLOW_FIELDS = UNFOLLOW_FIELDS = ['user_id'].freeze
   FOLLOWED_BY_FIELDS = FOLLOW_FIELDS + ApiConstants::PAGINATE_FIELDS
 
+  # Pipe constants
+  PIPE_CREATE_COMMENT_FIELDS = { all: CREATE_COMMENT_FIELDS[:all] | %w(created_at updated_at user_id)}.freeze
+  PIPE_CREATE_TOPIC_FIELDS = { all: CREATE_TOPIC_FIELDS[:all] | %w(created_at updated_at user_id)}.freeze
+
   # ValidationConstants
   FORUM_VISIBILITY_KEYS_BY_TOKEN = Forum::VISIBILITY_KEYS_BY_TOKEN
   FORUM_VISIBILITY = Forum::VISIBILITY_KEYS_BY_TOKEN.values

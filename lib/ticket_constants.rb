@@ -100,9 +100,9 @@ module TicketConstants
     :ticket_type, :source, "helpdesk_tags.name", "users.customer_id", :owner_id,
     :requester_id, :product_id, "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}" ]
 
-  INTERNAL_AGENT_ID = "helpdesk_schema_less_tickets.long_tc04"
+  INTERNAL_AGENT_ID = "internal_agent_id"
   ANY_AGENT_ID      = "any_agent_id"
-  INTERNAL_GROUP_ID = "helpdesk_schema_less_tickets.long_tc03"
+  INTERNAL_GROUP_ID = "internal_group_id"
   ANY_GROUP_ID      = "any_group_id"
 
   SHARED_AGENT_COLUMNS_ORDER = [INTERNAL_AGENT_ID, ANY_AGENT_ID]
@@ -152,13 +152,13 @@ module TicketConstants
   FILTER_MODES = {:primary => 0, :internal => 1, :any => 2}
 
   SHARED_AGENT_COLUMNS = [
-    ["helpdesk_schema_less_tickets.long_tc04",  :dropdown,          FILTER_MODES[:internal] ],
-    ["any_agent_id",                            :special_responder, FILTER_MODES[:any] ]
+    ["internal_agent_id",   :dropdown,          FILTER_MODES[:internal] ],
+    ["any_agent_id",        :special_responder, FILTER_MODES[:any] ]
   ]
 
   SHARED_GROUP_COLUMNS = [
-    ["helpdesk_schema_less_tickets.long_tc03",  :dropdown,          FILTER_MODES[:internal] ],
-    ["any_group_id",                            :special_responder, FILTER_MODES[:any] ]
+    ["internal_group_id",   :dropdown,          FILTER_MODES[:internal] ],
+    ["any_group_id",        :special_responder, FILTER_MODES[:any] ]
   ]
 
   SHARED_AGENT_COLUMNS_KEYS_BY_TOKEN       = Hash[*SHARED_AGENT_COLUMNS.map { |i| [i[0], i[1]] }.flatten]

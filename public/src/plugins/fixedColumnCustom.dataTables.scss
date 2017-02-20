@@ -16,6 +16,14 @@
     .dataTable td,.dataTable th{
     	border-right : 1px solid #e5e4e4;
     }
+
+    table{
+        table-layout : fixed;
+        .fixedWidth , .workable{
+            width : 180px;
+            word-break: break-word;
+        }
+    }
 }
 
 html[dir="rtl"] .left_wrapper{

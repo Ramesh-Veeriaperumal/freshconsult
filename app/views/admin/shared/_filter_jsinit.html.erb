@@ -375,6 +375,9 @@
         <% if current_account.installed_applications.with_name("slack_v2").present? %>
           <%= render :partial => "integrations/va_actions/slack", :formats => [:js] %>
         <% end %>
+        <% if current_account.installed_applications.with_name("office365").present? %>
+          <%= render :partial => "integrations/va_actions/office365", :formats => [:js] %>
+        <% end %>
 
         default:
         c_dom = "";

@@ -543,8 +543,10 @@ $('.btn-collapse').livequery(
 	// default value should be given in VALUE attribute
 	//
 	$('[rel=remote-tag]').livequery(function() {
-		var hash_val = []
-		var _this = $(this);
+		var hash_val = [],
+			_this = $(this),
+			cacheResults = [],
+			ajaxFlag = true;
 		_this.val().split(",").each(function(item, i){ hash_val.push({ id: item, text: item }); });
 		var select_init_data = {
 			multiple: true,
@@ -565,6 +567,8 @@ $('.btn-collapse').livequery(
 			          	var result = escapeHtml(item.value);
 			            results.push({ id: result, text: result });
 			          });
+			          cacheResults = results;
+			          ajaxFlag = false;
 			          return { results: results }
 			        }
 			},
@@ -597,10 +601,24 @@ $('.btn-collapse').livequery(
 
 		if(_this.data('allowCreate') != false){
 			select_init_data.createSearchChoice = function(term, data) {
-		  	//Check if not already existing & then return
-			        if ($(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0)
-			        		var item = term.toLowerCase().trim();
-				        return { id: item, text: item, flag:true };
+		  		//Check if not already existing & then return
+		  		var trimmed_term = term.toLowerCase().trim(),
+		  			searchData = [], matchedData= [],
+		  			createChoice = $(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0;
+
+		  		_this.val().split(',').each(function(item){item = item.trim(); if(item != '')searchData.push({id: item, text: item})});
+		  		searchData = $(searchData).filter(function() {return this.text.toLowerCase().trim().localeCompare(trimmed_term)===0; });
+		  		matchedData = $(cacheResults).filter(function() {return this.text.toLowerCase().trim().localeCompare(trimmed_term)===0; });
+
+		  		createChoice = createChoice && searchData.length===0 ;
+		  		if(ajaxFlag && createChoice  && matchedData.length != 0) {
+		  			return matchedData[0];
+		  		}
+		  		createChoice =  createChoice && matchedData.length===0
+				ajaxFlag = true;
+				if(createChoice){
+					return { id: term, text: term, flag:true };
+				}        	
 			};
 		}
 		_this.select2(select_init_data);

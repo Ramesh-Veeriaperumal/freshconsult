@@ -149,10 +149,23 @@ Helpkit::Application.routes.draw do
   end
 
   pipe_routes = proc do 
-    resources :tickets, controller: 'pipe/tickets', only: [:create] do
+    resources :tickets, controller: 'pipe/tickets', only: [:create, :update] do
       member do
         post :reply, to: 'pipe/conversations#reply'
         post :notes, to: 'pipe/conversations#create'
+      end
+    end
+
+    namespace :api_discussions, path: 'discussions' do
+      resources :topics, controller: 'pipe/topics', only: [:create] do
+        member do
+          post :comments, to: 'pipe/api_comments#create'
+        end
+      end
+      resources :forums, only: [:create] do
+        member do
+          post :topics, to: 'pipe/topics#create'
+        end
       end
     end
   end

@@ -310,7 +310,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                 "_iso-2022-jp$esc" => "ISO-2022-JP",
                 "charset=us-ascii" => "us-ascii",
                 "iso-8859-8-i" => "iso-8859-8",
-                "unicode" => "utf-8"
+                "unicode" => "utf-8",
+                "cp-850" => "CP850"
               }
               if mapping_encoding[charset_encoding.downcase]
                 params[t_format] = Iconv.new('utf-8//IGNORE', mapping_encoding[charset_encoding.downcase]).iconv(params[t_format])
@@ -334,9 +335,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         subject = $1.strip
         unless subject =~ /=\?(.+)\?[BQ]?(.+)\?=/
           detected_encoding = CharlockHolmes::EncodingDetector.detect(subject)
-          detected_encoding = "UTF-8" if detected_encoding.nil?
+          detected_encoding = {:encoding => "UTF-8"} if detected_encoding.nil?
           begin
-            decoded_subject = subject.force_encoding(detected_encoding).encode(Encoding::UTF_8, :undef => :replace, 
+            decoded_subject = subject.force_encoding(detected_encoding[:encoding]).encode(Encoding::UTF_8, :undef => :replace, 
                                                                               :invalid => :replace, 
                                                                               :replace => '')
           rescue Exception => e
@@ -803,7 +804,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         rescue UserCreationError => e
           NewRelic::Agent.notice_error(e)
           Account.reset_current_account
-          email_processing_log "Email Processing Failed: Couldn't create new user!",to_email[:email]
+          email_processing_log "Email Processing Failed: Couldn't create new user!"
           raise e
         end
         if params[:text]

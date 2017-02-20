@@ -34,7 +34,6 @@ module Reports::TimesheetReport
   }
 
   OPTIONAL_COLUMN_CONFIG = {
-    :note => I18n.t('helpdesk.time_sheets.note'),
     :requester_name => I18n.t('helpdesk.time_sheets.requester_name'),
     :ticket_type => I18n.t('helpdesk.time_sheets.ticket_type')
   }
@@ -53,18 +52,20 @@ module Reports::TimesheetReport
 
   def construct_csv_headers_hash
     default_colset = {
-      I18n.t('helpdesk.time_sheets.agent')=>:agent_name,
       I18n.t('helpdesk.time_sheets.hours')=> :hours,
       I18n.t('helpdesk.time_sheets.date') =>:executed_at ,
       I18n.t('helpdesk.time_sheets.ticket')=>:ticket_display,
-      I18n.t('helpdesk.time_sheets.product')=>:product_name ,
       I18n.t('helpdesk.time_sheets.group')=>:group_name ,
       I18n.t('helpdesk.time_sheets.note')=>:note,
       I18n.t('helpdesk.time_sheets.customer') => :customer_name ,
       I18n.t('helpdesk.time_sheets.billalblenonbillable') => :billable_type,
       I18n.t('helpdesk.time_sheets.priority')=>:priority_name,
       I18n.t('helpdesk.time_sheets.status')=>:status_name,
-    I18n.t('helpdesk.time_sheets.createdAt') => :created_at}
+    I18n.t('helpdesk.time_sheets.createdAt') => :created_at }
+
+    default_colset[I18n.t('helpdesk.time_sheets.agent')] = :agent_name unless  Account.current.hide_agent_metrics_feature?
+    default_colset[I18n.t('helpdesk.time_sheets.product')] = :product_name if Account.current.products.any?
+
     selected_colset = transform_selected_columns
 
     default_colset.merge(selected_colset)
@@ -87,7 +88,7 @@ module Reports::TimesheetReport
 
   def list_view_items
     view_headers = [:workable , :customer_name , :priority_name, :status_name , :group_by_day_criteria , :agent_name,
-                    :group_name ]
+                    :group_name, :note ]
 
     view_headers -= [:agent_name] if Account.current.hide_agent_metrics_feature?
     view_headers.push(:product_name) if Account.current.products.any?
@@ -109,7 +110,7 @@ module Reports::TimesheetReport
   end
 
   def scoper(start_date,end_date)
-    scope = Account.current.time_sheets.for_companies(@customer_id).by_agent(@user_id).by_group(@group_id).created_at_inside(start_date,end_date).hour_billable(@billable).for_products(@products_id)
+    scope = Account.current.time_sheets.for_companies(@customer_id).by_agent(nullify(@user_id)).by_group(nullify(@group_id)).created_at_inside(start_date,end_date).hour_billable(@billable).for_products(nullify(@products_id))
     # Joining with schema_less_tickets only when requested for 'group by product'
     scope = scope.joins('INNER JOIN helpdesk_schema_less_tickets on  helpdesk_schema_less_tickets.ticket_id = helpdesk_time_sheets.workable_id and helpdesk_schema_less_tickets.account_id = helpdesk_time_sheets.account_id  ') if group_by_caluse == :product_name && @products_id.blank?
 
@@ -261,7 +262,7 @@ module Reports::TimesheetReport
   #************************** Archive methods start here *****************************#
 
   def archive_scoper(start_date,end_date)
-    Account.current.archive_time_sheets.archive_for_companies(@customer_id).by_agent(@user_id).archive_by_group(@group_id).created_at_inside(start_date,end_date).hour_billable(@billable).archive_for_products(@products_id)
+    Account.current.archive_time_sheets.archive_for_companies(@customer_id).by_agent(nullify(@user_id)).archive_by_group(nullify(@group_id)).created_at_inside(start_date,end_date).hour_billable(@billable).archive_for_products(nullify(@products_id))
   end
 
   def archive_filter_with_groupby(start_date,end_date)
@@ -279,7 +280,7 @@ module Reports::TimesheetReport
 
   def archive_select_conditions
     conditions = {}
-    conditions[:ticket_type] = @ticket_type unless @ticket_type.empty?
+    conditions[:ticket_type] = nullify(@ticket_type) unless @ticket_type.empty?
     conditions[:priority] = @priority unless @priority.empty?
     conditions[:status] = @status unless @status.empty?
     conditions[:source] = @source unless @source.empty?
@@ -294,7 +295,7 @@ module Reports::TimesheetReport
       if key == :product_name
         report_columns_arr.push({name:value, id: key, default: true, is_custom: false})  if Account.current.products.any?
       elsif key== [:agent_name]
-        report_columns_arr.push({name:value, id: key, default: true , is_custom: false})  if Account.current.hide_agent_metrics_feature?
+        report_columns_arr.push({name:value, id: key, default: true , is_custom: false})  unless Account.current.hide_agent_metrics_feature?
       else
         report_columns_arr.push({name:value,id: key, default: true, is_custom: false})
       end
@@ -304,21 +305,33 @@ module Reports::TimesheetReport
     OPTIONAL_COLUMN_CONFIG.each do |key,value|
       report_columns_arr.push({name:value, id:key, default: false, is_custom: false})
     end
-    Account.current.flexifield_def_entries.includes(:ticket_field).drop_down_fields.each do | flexifieldDefEntry|
-      if flexifieldDefEntry.ticket_field
-        report_columns_arr.push({name: flexifieldDefEntry.ticket_field.label_in_portal, id:flexifieldDefEntry.flexifield_name, default: false, is_custom: true})
-      end
+    Account.current.custom_dropdown_fields_from_cache.each do |col|
+      report_columns_arr.push({name: col.label_in_portal, id:col.flexifield_def_entry.flexifield_name, default: false, is_custom: true})
     end
+
+    Account.current.nested_fields_from_cache.each do |col|
+      col.nested_ticket_fields(:include => :flexifield_def_entry).each do |nested_col|
+        report_columns_arr.push({name: nested_col.label_in_portal, id:nested_col.flexifield_def_entry.flexifield_name, default: false, is_custom: true})
+      end
+      report_columns_arr.push({name: col.label_in_portal, id:col.flexifield_def_entry.flexifield_name, default: false, is_custom: true})
+    end
+
     @report_columns = report_columns_arr
   end
 
 
   def custom_column_master_hash
     flexifields_hash = {}
-    Account.current.flexifield_def_entries.includes(:ticket_field).drop_down_fields.each do | flexifieldDefEntry|
-      if flexifieldDefEntry.ticket_field
-        flexifields_hash[flexifieldDefEntry.flexifield_name.to_sym] = flexifieldDefEntry.ticket_field.label_in_portal
+
+    Account.current.custom_dropdown_fields_from_cache.each do |col|
+     flexifields_hash[col.flexifield_def_entry.flexifield_name.to_sym] = col.label_in_portal
+    end
+
+    Account.current.nested_fields_from_cache.each do |col|
+      col.nested_ticket_fields(:include => :flexifield_def_entry).each do |nested_col|
+         flexifields_hash[nested_col.flexifield_def_entry.flexifield_name.to_sym] = nested_col.label_in_portal
       end
+      flexifields_hash[col.flexifield_def_entry.flexifield_name.to_sym] = col.label_in_portal
     end
     flexifields_hash
   end
@@ -360,7 +373,6 @@ module Reports::TimesheetReport
                 times_spent: @group_count,
                 totaltime: @group_count.values.sum,
                 group_header: @ajax_params[:group_header],
-                group_by: @ajax_params[:group_by],
                 load_time: @load_time
                 } ,
       headers: @headers
@@ -405,7 +417,7 @@ module Reports::TimesheetReport
   end
 
   def custom_filters_enabled?
-    return Account.current.features?(:custom_timesheet)
+    return Account.current.launched?(:custom_timesheet)
   end
 
   def select_flexiconditions
@@ -422,7 +434,7 @@ module Reports::TimesheetReport
 
   def select_conditions
     conditions = {}
-    conditions[:ticket_type] = @ticket_type unless @ticket_type.empty?
+    conditions[:ticket_type] = nullify(@ticket_type) unless @ticket_type.empty?
     conditions[:priority] = @priority unless @priority.empty?
     conditions[:status] = @status unless @status.empty?
     conditions[:source] = @source unless @source.empty?
@@ -451,7 +463,7 @@ module Reports::TimesheetReport
 
   def construct_csv_params
     filters = params["filters"].to_s
-    filters_hash = JSON.parse filters.gsub('=>', ':')
+    filters_hash = JSON.parse filters
     data_hash = filters_hash["data_hash"]
     params[:report_filters] = data_hash["report_filters"]
     params[:columns] = data_hash["columns"]
@@ -464,10 +476,10 @@ module Reports::TimesheetReport
     params[:data_hash][:report_filters].each do |filter|
       condition = filter['condition'] || filter['name']
       if((condition.to_s.start_with?('ffs') || condition.to_s == "ticket_type") && params[:version].present?)
-        params[:"#{condition}"] = filter['label']
+        params[condition.to_sym] = filter['label']
       else
-        params[:"#{condition}"] = filter['value']
-        params[:"#{condition}"] = params[:"#{condition}"].split(',') if filter['value'].is_a? Array
+        params[condition.to_sym] = filter['value']
+        params[condition.to_sym] = params[condition.to_sym].split(',') if filter['value'].is_a? Array
       end
     end
     params[:select_hash] = params[:data_hash][:select_hash]
@@ -491,6 +503,7 @@ module Reports::TimesheetReport
                                 :active=>false
                                 }
     @show_options.delete(:historic_status)
+
     @show_options.map { |filter| (@custom_filter ||= []) << filter[1][:condition].to_s if filter[0].to_s.start_with?('ffs') }
     @label_hash = column_id_label_hash
     @filter_conditions = {}
@@ -527,7 +540,7 @@ module Reports::TimesheetReport
       :billable    => billable_and_non? ? [true, false] : @filter_conditions[:billable].map {|val| val.to_bool},
       :group_id    => @filter_conditions[:group_id] || [],
       :ticket_type => @filter_conditions[:ticket_type_label] || @filter_conditions[:ticket_type] || [],
-      :products_id => @filter_conditions[:product_id]|| [],
+      :products_id => @filter_conditions[:product_id]|| @filter_conditions[:products_id] || [],
       :priority    => @filter_conditions[:priority] || [],
       :status      => @filter_conditions[:status] || [],
       :source      => @filter_conditions[:source] || [],
@@ -578,8 +591,13 @@ module Reports::TimesheetReport
   end
 
   def stacked_chart_data
-    barchart_data = [{:name=>"non_billable",:data=>[@metric_data[:current][:non_billable]],:color=>'#bbbbbb'},{:name=>"billable",:data=>[@metric_data[:current][:billable]],:color=>'#679d46'}]
+    barchart_data = [{:name=>"non_billable",:data=>[in_hours(@metric_data[:current][:non_billable])],:color=>'#bbbbbb'},{:name=>"billable",:data=>[in_hours(@metric_data[:current][:billable])],:color=>'#679d46'}]
     @activity_data_hash={'barchart_data'=>barchart_data}
+  end
+
+  def in_hours(hhnmm)
+    hh,mm = hhnmm.split(':')
+    hh.to_f + (mm.to_f/60)
   end
 
   def parse_date(date_time)
@@ -619,6 +637,40 @@ module Reports::TimesheetReport
     end
   end
 
+
+  def construct_csv_string
+    date_fields = [ I18n.t('helpdesk.time_sheets.createdAt'), I18n.t('helpdesk.time_sheets.date')]
+    workable_fields = [I18n.t('export_data.fields.requester_name'), I18n.t('helpdesk.time_sheets.ticket_type')]
+    csv_row_limit = HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:export][:csv]
+    csv_hash = construct_csv_headers_hash
+    csv_size = @time_sheets.size
+    if (csv_size > csv_row_limit)
+      @time_sheets.slice!(csv_row_limit..(csv_size - 1))
+      exceeds_row_limit = true
+    end
+    csv_string = CSVBridge.generate do |csv|
+      headers = csv_hash.keys.sort
+      csv << headers
+      @time_sheets.each do |record|
+        record[:time_spent] += record[:timer_running]==true ? (@load_time - record[:start_time]).to_i : 0
+        csv_data = []
+        headers.each do |val|
+          if date_fields.include?(val)
+            csv_data << parse_date(record.send(csv_hash[val]))
+          elsif workable_fields.include?(val)
+            csv_data << strip_equal(record.workable.send(csv_hash[val]))
+          else
+            csv_data << strip_equal(record.send(csv_hash[val]))
+          end
+        end
+        csv << csv_data
+      end
+      csv << t('helpdesk_reports.export_exceeds_row_limit_msg', :row_max_limit => csv_row_limit) if exceeds_row_limit
+    end
+    csv_string
+  end
+
+
   def shift_merge_sorted_arrays(array1,array2)
     output = []
     loop do
@@ -655,8 +707,8 @@ module Reports::TimesheetReport
       end
     end
     [:total_time, :billable, :non_billable].each do |type|
-      @metric_data[:previous][type] /= 3600.0
-      @metric_data[:current][type] /= 3600.0
+      @metric_data[:previous][type] = get_time_in_hours(@metric_data[:previous][type])
+      @metric_data[:current][type] = get_time_in_hours( @metric_data[:current][type])
     end
     @latest_timesheet_id = @summary.flatten.collect{ |entry| entry.max_timesheet_id if entry.current == 1}.compact.max
     total_time = 0
@@ -714,6 +766,10 @@ module Reports::TimesheetReport
 
   def validate_chosen_custom_fields(cols)
     @request_custom_fields_columns =  cols & custom_column_master_hash.stringify_keys.keys
+  end
+
+  def nullify(arr)
+    arr.map { |x| x.to_i == -1 ? nil : x }
   end
 
 end

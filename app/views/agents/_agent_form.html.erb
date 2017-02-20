@@ -104,7 +104,7 @@
     					</div>
     				</li>
     			<% end %>
-    			<% if feature?(:multi_timezone) %>
+    			<% if current_account.multi_timezone_enabled? %>
     				<li class="control-group">
     					<%= label(:user , :time_zone, t('account.time_zone'), :class => "control-label") %>			
     					<div class="controls margin-bottom">

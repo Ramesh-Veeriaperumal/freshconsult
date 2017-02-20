@@ -9,7 +9,7 @@ class Admin::EmailConfigsController < Admin::AdminController
   include Redis::OthersRedis
 
   before_filter :only => [:new] do |c|
-    c.requires_feature :multiple_emails
+    c.requires_this_feature :multiple_emails
   end
   
   def index

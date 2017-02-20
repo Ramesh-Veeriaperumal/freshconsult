@@ -40,13 +40,21 @@ module IntegrationServices::Services
         account_response
       end
 
-      def get_selected_fields fields, value
+      def get_selected_fields fields, value, app_name
         return { FRONTEND_OBJECTS[:totalSize] => 0, FRONTEND_OBJECTS[:done] => true, FRONTEND_OBJECTS[:records] => [] } if value[:company].blank? && (value[:email].present? && value[:query].blank?)
-        query = (value[:email].present?) ? (URI.encode "#{value[:query]}") : (URI.encode "Name='#{value[:company]}'")
+        query = build_query(value, app_name)
         request_url = "#{cloud_elements_api_url}/hubs/crm/#{@service.meta_data[:object]}?where=#{query}"
         response = http_get request_url
         send("#{@service.meta_data[:app_name]}_selected_fields", fields, response, [200], "Account") do |account|
           return account
+        end
+      end
+
+      def build_query value, app_name
+        if value[:email].present?
+          URI.encode "#{value[:query]}"
+        else
+          URI.encode OBJECT_QUERIES[:account_resource][app_name] % {:company => value[:company]}
         end
       end
        

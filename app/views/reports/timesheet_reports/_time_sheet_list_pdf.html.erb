@@ -52,11 +52,13 @@
         <table class = "table-print-pdf" width="100%">
           <thead>
             <tr style="text-align:left">
-              <%colspan = headers.length-1%>
+              <%colspan = ( grp_data.include?(:workable)? headers.length-1 : headers.length-2 ) %>
                 <% master_header_hash = master_column_header_hash %>
-              <% headers.each do |header| %>
-                <% concat content_tag :th, h(master_header_hash[header]), :class => header %>
-              <% end %>
+              <% headers.each do |header|
+                unless(grp_data.include?(header) && header !=:workable )
+                  concat content_tag :th, h(master_header_hash[header]), :class => header
+                end
+              end %>
             </tr>
           </thead>
           <% if time_sheets.size > 0 %>

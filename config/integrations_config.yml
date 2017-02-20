@@ -12,14 +12,18 @@ app:
       auth_header: "User y31G0E60L6Zs/nZx7x0MJtRKCyhsJACUaAaDYU67S78=,Organization 3abb0215cd97f5f346f29a860e1e5982"
       crm_formula_template_id:
         salesforce_v2:  "4345"
+        dynamics_v2: "5975"
       fd_formula_template_id:
         salesforce_v2: "4346"
+        dynamics_v2: "5976"
     test:
       auth_header: "User y31G0E60L6Zs/nZx7x0MJtRKCyhsJACUaAaDYU67S78=,Organization 3abb0215cd97f5f346f29a860e1e5982"
       crm_formula_template_id:
         salesforce_v2:  "4345"
+        dynamics_v2: "5975"
       fd_formula_template_id:
         salesforce_v2: "4346"
+        dynamics_v2: "5976"
 marketplace_landing_paths:
   github: "/integrations/github/oauth_install"
   quickbooks: "/integrations/marketplace/quickbooks_sso/landing"

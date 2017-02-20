@@ -92,8 +92,6 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     :reports_hash => "text_tc02",
     :sender_email => "string_tc03",
     :trashed      => 'boolean_tc02',
-    :internal_agent_id => "long_tc04",
-    :internal_group_id => "long_tc03",
     :product_id   => 'product_id'
   }
   NON_TEXT_FIELDS = ["custom_text", "custom_paragraph"]

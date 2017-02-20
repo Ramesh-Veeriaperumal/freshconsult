@@ -499,7 +499,9 @@ App.CollaborationUi = (function ($) {
                     "m_type": CONST.MSG_TYPE_CLIENT
                 }, CONST.TYPE_SENT);
                 // TODO (mayank): expect a response with notify | send_message | add_member data
-                collabModel.sendMessage(msg, currentConvo.co_id);
+                collabModel.sendMessage(msg, currentConvo.co_id, function() {
+                    _COLLAB_PVT.sendMailWorker(msg.body, msg.metadata.notify);
+                });
                 _COLLAB_PVT.scrollToBottom();
                 $msgBox.focus();
                 if(!!msg.metadata && !!msg.metadata.annotations) {
@@ -1154,6 +1156,50 @@ App.CollaborationUi = (function ($) {
 
         getUserInfo: function(uid, cb) {
             App.CollaborationModel.getUserInfo(uid, cb);
+        },
+        showCollaboratorsWithLogo: function() {
+            var collabModel = App.CollaborationModel;
+            var image_class = "convo-started-icon";
+            $("#collab-btn ."+ image_class +"").remove();
+            if(!!collabModel.currentConversation){
+                var convo_data = collabModel.conversationsMap[collabModel.currentConversation.co_id];
+                if(!!convo_data) {
+                    var co_members = Object.keys(convo_data.members);
+                    var my_id = collabModel.currentUser.uid;
+                    var avatar_html;
+                    if(co_members[0] === my_id && !!co_members[1]) {
+                        avatar_html = _COLLAB_PVT.getAvatarHtml(co_members[1], image_class);
+                    } else {
+                        avatar_html = _COLLAB_PVT.getAvatarHtml(co_members[0], image_class);
+                    }
+                    $("#collab-btn").prepend(avatar_html);
+                }
+            }
+        },
+
+        sendMailWorker: function(message_body, recipient_ids) {
+            recipient_ids = recipient_ids || Object.keys(App.CollaborationModel.conversationsMap[App.CollaborationModel.currentConversation.co_id].members);
+            var collab_model = App.CollaborationModel;
+            var requestor = collab_model.usersMap[collab_model.currentConversation.requester_id];
+
+            for(var idx = 0; idx < recipient_ids.length; idx++) {
+                var co_id = collab_model.currentConversation.co_id;
+                var current_convo = collab_model.conversationsMap[co_id];
+                var is_invite = current_convo ? !current_convo.members[recipient_ids[idx]] : true;
+                
+                Collab.sendMail({
+                    recipient_name: collab_model.usersMap[recipient_ids[idx]].name,
+                    sender_name: collab_model.usersMap[collab_model.currentUser.uid].name,
+                    co_id: co_id,
+                    co_name: collab_model.currentConversation.name,
+                    requestor_name: requestor.name,
+                    requestor_email: requestor.email,
+                    toAddressList: [collab_model.usersMap[recipient_ids[idx]].email],
+                    invite: is_invite,
+                    message_body: message_body,
+                    ticket_link: window.location.origin + window.location.pathname + "?collab=true"
+                });
+            }
         }
     };
 
@@ -1273,7 +1319,8 @@ App.CollaborationUi = (function ($) {
 	            "co_id": config.currentConversationId,
                 "owned_by": config.ownedBy,
                 "is_closed": config.isClosed,
-                "token": config.convoToken
+                "token": config.convoToken,
+                "requester_id": config.requester_id
 	        }
 
             /*
@@ -1310,6 +1357,7 @@ App.CollaborationUi = (function ($) {
                     }
                 }
                 if(typeof cb === "function") cb(response);
+                _COLLAB_PVT.showCollaboratorsWithLogo();
             });
         },
 
@@ -1559,6 +1607,12 @@ App.CollaborationUi = (function ($) {
         },
         dpLoadComplete: function(elem) {
             $(elem).removeClass("hide");
+        },
+        sendMail: function(params) {
+            var mail_data = {
+                "html_data": params
+            };
+            App.CollaborationModel.sendMail(mail_data);
         }
     };
     return Collab;

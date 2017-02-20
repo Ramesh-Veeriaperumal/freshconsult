@@ -57,8 +57,9 @@ class Reports::NoActivityWorker < BaseWorker
       account.tickets.where(spam:false,deleted:false).unresolved
     end
   end
-  
-  def conditions(date)
+
+  def conditions(date_in_str)
+    date = Time.parse(date_in_str)
     dates = []
     (0..6).each{ |d| dates << (date - d.days) }
 

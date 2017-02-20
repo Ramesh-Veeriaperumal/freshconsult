@@ -8,7 +8,7 @@
       <%= render :partial => "helpdesk/archive_tickets/show/ticket_fields", :locals => { :ticket => @ticket } %>
   </div>
 
-  <% if feature?(:timesheets) && privilege?(:view_time_entries) %>
+  <% if current_account.timesheets_enabled? && privilege?(:view_time_entries) %>
     <div class="widget time-tracked inactive" id="TimesheetTab">
       <h3 class="title">
         <%= t('helpdesk.time_sheets.sidebar_title') %>

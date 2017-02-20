@@ -20,7 +20,7 @@ class Admin::SupervisorRulesController < Admin::VaRulesController
     end
 
     def check_supervisor_feature
-      non_covered_admin_feature unless current_account.has_feature?(:supervisor)
+      non_covered_admin_feature unless current_account.supervisor_enabled?
     end
 
 end

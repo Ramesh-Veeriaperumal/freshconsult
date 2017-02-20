@@ -48,6 +48,7 @@
         CONVERSATION_MESSAGES_HISTORY_ROUTE = CHAT_API_SERVER + "/conversations.messages.history";
         CONVERSATION_OWNER_SET_ROUTE = CHAT_API_SERVER + "/conversations.owner.set";
         CONVERSATION_GET_ATTACHMENT_URL = CHAT_API_SERVER + "/conversations.attachments.geturl";
+        NOTIFICATION_MAIL_URL = CHAT_API_SERVER + "/helpkit/notification.mail";
     }
 
     /*
@@ -741,7 +742,20 @@
                 if(typeof cb === "function"){cb(response);}
             }
         }, self.clientId, self.authToken);
-    }    
+    },
+
+    ChatApi.prototype.notificationMail = function(convo, cb){
+        var self = this;
+        collabHttpAjax({
+            method: "POST",
+            url: NOTIFICATION_MAIL_URL,
+            data: convo.mail_data,
+            success: function(response){
+                if(typeof response === "string"){response = JSON.parse(response);};
+                if(typeof cb === "function"){cb(response);}
+            }
+        }, self.clientId, getAuthToken(self.authToken, convo.token));
+    }
 
     return ChatApi;
 });

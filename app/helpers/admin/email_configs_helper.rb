@@ -13,4 +13,12 @@ module Admin::EmailConfigsHelper
     selected_profile = MailboxConstants::MAILBOX_SERVER_PROFILES.select {|server| server_name && (server_name.casecmp("imap.#{server[4]}") == 0 || server_name.casecmp("smtp.#{server[4]}") == 0)}
     selected_profile.first.nil? ?  "other" : selected_profile.first[0].to_s
   end
+  
+  def has_feature_and_privilege?
+    has_feature? and privilege?(:manage_email_settings)
+  end
+  
+  def has_feature?
+    current_account.dkim_enabled? or current_account.basic_dkim_enabled? or current_account.advanced_dkim_enabled?
+  end
 end
