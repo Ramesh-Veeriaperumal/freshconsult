@@ -5,7 +5,6 @@ class Social::FacebookPage < ActiveRecord::Base
   include Facebook::RedisMethods
   include Cache::Memcache::Facebook
   include Facebook::RedisMethods
-  include Facebook::Oauth::Constants
 
   self.table_name  =  "social_facebook_pages"
   self.primary_key = :id
@@ -32,10 +31,6 @@ class Social::FacebookPage < ActiveRecord::Base
               :joins      => "INNER JOIN `subscriptions` ON subscriptions.account_id = social_facebook_pages.account_id"
 
   #account_id is removed from validation check.
-
-  def page_image_url
-    PAGE_IMG_URL % {page_id: page_id}
-  end
 
   def valid_page?
     !self.reauth_required and self.enable_page
