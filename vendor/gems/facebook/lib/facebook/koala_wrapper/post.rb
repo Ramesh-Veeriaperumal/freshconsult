@@ -9,7 +9,6 @@ module Facebook
       alias_attribute :post_id, :feed_id
       
       FIELDS = "#{POST_FIELDS}, comments.fields(#{COMMENT_FIELDS}, comments.fields(#{COMMENT_FIELDS}))"
-      POST   = "feed"
 
       def initialize(fan_page)
         super(fan_page)
@@ -25,6 +24,7 @@ module Facebook
       def parse
         super
         @feed_type         =  @feed[:type]
+        @description_html  =  html_content_from_feed(@feed)
         @shares            =  @feed[:shares][:count] if @feed[:shares]
         @likes             =  @feed[:likes][:data].count if @feed[:likes]
         @object_link       =  @feed[:picture] 
@@ -37,10 +37,6 @@ module Facebook
         define_method("#{object}?") do
           @feed[:type] == POST_TYPE["#{object}".to_sym]
         end
-      end
-
-      def type
-        POST
       end
       
       def fetch_post_from_db(post_id)

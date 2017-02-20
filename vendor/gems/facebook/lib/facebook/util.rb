@@ -1,8 +1,6 @@
 module Facebook
   module Util
-
-    include Facebook::Constants
-
+  
     def truncate_subject(subject, count)
       (subject.length > count) ? "#{subject[0..(count - 1)]}..." : subject
     end
@@ -49,27 +47,27 @@ module Facebook
     end
     
     #Parse the feed content from facebook post
-    def html_content_from_feed(feed, item)
+    def html_content_from_feed(feed)
       html_content =  CGI.escapeHTML(feed[:message]) if feed[:message]
+
       if "video".eql?(feed[:type])
         desc = feed[:description] || ""
-        thumbnail, inline_attachment = create_attachment_and_get_url(feed[:picture], item, 0)
-        html_content = FEED_VIDEO % { :target_url => feed[:link], :thumbnail => thumbnail, :att_url => feed[:link], :name => feed[:name], :html_content => html_content, :desc => desc }
-
+        html_content =  "<div class=\"facebook_post\"><a class=\"thumbnail\" href=\"#{feed[:link]}\" target=\"_blank\"><img src=\"#{feed[:picture]}\"></a>
+          <div><p><a href=\"#{feed[:link]}\" target=\"_blank\"> #{feed[:name]}</a></p>
+          <p><strong>#{html_content}</strong></p>
+          <p>#{desc}</p></div></div>"
       elsif "photo".eql?(feed[:type])
-        photo_url, inline_attachment = create_attachment_and_get_url(feed[:picture], item, 0)
-        html_content = FEED_IMAGE % { :html_content => html_content, :link => feed[:link], :photo_url => photo_url, :height => "" }
+        html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p><a href=\"#{feed[:link]}\" target=\"_blank\"><img src=\"#{feed[:picture]}\"></a></p></div>"
       elsif "link".eql?(feed[:type])
-        link_story   = "<a href=\"#{feed[:link]}\">#{feed[:name]}</a>" if feed[:name]
-        html_content = FEED_LINK % {:html_content => html_content, :link_story => link_story}
+        link_story   = "<a href=\"#{feed[:link]}\">#{feed[:story]}</a>" if feed[:story]
+        html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p><#{link_story}</p></div>"
       end
-      inline_attachment = nil unless attachment_present?(inline_attachment)
-      item.inline_attachments = [inline_attachment].compact
+      
       html_content
     end
     
     #Parse the feed content from facebook comment
-    def html_content_from_comment(feed, item)
+    def html_content_from_comment(feed)
       html_content =  CGI.escapeHTML(feed[:message]) if feed[:message] 
       return html_content unless feed[:attachment]        
       
@@ -77,48 +75,33 @@ module Facebook
         attachment = feed[:attachment].symbolize_keys!     
         if "share".eql?(attachment[:type])
           desc = feed[:description] || ""
-          link_story   = "<a href=\"#{attachment[:url]}\">#{attachment[:title]}</a>" if attachment[:title]
-          html_content = COMMENT_LINK % {:html_content => html_content, :link_story => link_story}
-        elsif ["photo","sticker"].include?(attachment[:type])
-          height = attachment[:type] == "sticker" ? "200px" : ""
-          photo_url, inline_attachment = create_attachment_and_get_url(attachment[:media][:image][:src], item, 0)
-          html_content = COMMENT_IMAGE % { :html_content => html_content, :link => attachment[:target][:url], :photo_url => photo_url, :height => height
-          }
-        end
+          html_content =  "<div class=\"facebook_post\"><a class=\"thumbnail\" href=\"#{attachment[:target][:url]}\" target=\"_blank\"><img src=\"#{attachment[:media][:image][:src]}\"></a>
+            <div><p><a href=\"#{attachment[:url]}\" target=\"_blank\"> #{attachment[:description]}</a></p>
+            <p><strong>#{html_content}</strong></p>
+            <p>#{desc}</p></div></div>"
+        elsif "photo".eql?(attachment[:type])
+          html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p><a href=\"#{attachment[:target][:url]}\" target=\"_blank\"><img src=\"#{attachment[:media][:image][:src]}\"></a></p></div>"
+        end  
       rescue => e
         Rails.logger.debug("Error while parsing attachment in comment:: #{feed[:id]} :: #{feed[:attachment]}")
-      end
-      inline_attachment = nil unless attachment_present?(inline_attachment)
-      item.inline_attachments = [inline_attachment].compact   
+      end    
+      
       html_content
     end
     
     #Parse the feed content from facebook message
-    def html_content_from_message(message, item)
+    def html_content_from_message(message)
       message = HashWithIndifferentAccess.new(message)
       html_content =  CGI.escapeHTML(message[:message]) if message[:message]
-      inline_attachments = []
       if message[:attachments]
         if message[:attachments][:data]
           html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p>"
-          message[:attachments][:data].each_with_index do |attachment, i|
-
-            type = attachment_type(attachment)
-            if type.present?
-              if [:image,:video].include? type
-                url = attachment[URL_PATHS[:message][type]][:preview_url]
-                preview_url, attachment_preview = create_attachment_and_get_url(url, item, i)
-                inline_attachments.push(attachment_preview) if attachment_present?(attachment_preview)
-              else
-                name = attachment[:name]
-              end
-
-              url = attachment[URL_PATHS[:message][type]].present? ? attachment[URL_PATHS[:message][type]][:url] : attachment[:file_url]
-              attached_url, attachment = create_attachment_and_get_url(url, item, i)
-              inline_attachments.push(attachment) if attachment_present?(attachment)                 
-
-              key = "Facebook::Constants::MESSAGE_#{type.to_s.upcase}".constantize
-              html_content = key % {:html_content => html_content, :url => attached_url, :preview_url => preview_url, :name => name, :height => "" }
+          message[:attachments][:data].each do |attachment|
+            if attachment[:image_data] && attachment[:image_data][:preview_url] && attachment[:image_data][:url]
+              html_content = "#{html_content} <a href=\"#{attachment[:image_data][:url]}\" target=\"_blank\">
+                                  <img src=\"#{attachment[:image_data][:preview_url]}\"></a>"
+            elsif attachment[:file_url] && attachment[:name] ### for file attachments
+              html_content = "#{html_content} <a href=\"#{attachment[:file_url]}\" target=\"_blank\"> #{attachment[:name]}</a>"
             end
           end
           html_content = "#{html_content} </p></div>"
@@ -126,59 +109,15 @@ module Facebook
       elsif message[:shares] #### for stickers 
         if message[:shares][:data]
           html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p>"
-          message[:shares][:data].each_with_index do |share, i|
+          message[:shares][:data].each do |share|
             if share[:link]
-              url = share[:link]
-              stickers_url, inline_attachment = create_attachment_and_get_url(url, item, i)
-              inline_attachments.push(inline_attachment) if attachment_present?(inline_attachment)
-              
-              html_content = MESSAGE_STICKER % {:html_content => html_content, :url => stickers_url, :preview_url => stickers_url, :height => "200px"}
+              html_content = "#{html_content} <a href=\"#{share[:link]}\" target=\"_blank\"> #{share[:link]} </a>"
             end
           end
           html_content = "#{html_content} </p></div>"
         end
       end
-      item.inline_attachments = inline_attachments.compact
       html_content
-    end
-
-    def create_attachment_and_get_url url, item, i
-      inline_attachment = create_attachment(url, item, i)
-      attached_url = attachment_url inline_attachment, url
-      return attached_url, inline_attachment
-    end
-
-    def attachment_present? attachment
-      attachment.present? and attachment.id.present?
-    end
-
-    def attachment_type attachment
-      if attachment[:image_data] and attachment[:image_data][:preview_url] and attachment[:image_data][:url]
-        :image
-      elsif attachment[:video_data] and attachment[:video_data][:preview_url] and attachment[:video_data][:url]
-        :video
-      elsif attachment[:file_url] and attachment[:name]
-        :file
-      else
-        nil  
-      end
-    end
-
-    def create_attachment(url, item, i)
-      file = open(url)
-      file_name = url.split(URL_DELIMITER).first[url.rindex(URL_PATH_DELIMITER)+1, url.length]
-      content_type = file_name.split(FILENAME_DELIMITER).last
-      options = {
-        :file_content => file,
-        :filename => file_name,
-        :content_type => content_type,
-        :content_size => file.size
-      }
-      Helpdesk::Attachment.create_for_3rd_party(Account.current, item, options, i, 1, false, false)
-    end
-
-    def attachment_url attachment, default_url
-      (attachment_present?(attachment) ? (Account.current.features_included?(:inline_images_with_one_hop) ? attachment.inline_url : attachment.content.url) : default_url)
     end
 
     def new_data_set(data_set)
