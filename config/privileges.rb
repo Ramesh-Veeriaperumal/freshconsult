@@ -483,6 +483,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_email_settings do
+    resource :"admin/dkim_configuration"
     resource :"admin/email_config"
     resource :"admin/email_notification"
     resource :"admin/dynamic_notification_template"
@@ -591,7 +592,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/zen_import"
     # new item day passes && getting started
     resource :"admin/day_pass"
-    resource :"admin/dkim_configuration"
     resource :"admin/freshfone/credit"
     resource :"admin/onboarding"
     resource :"admin/getting_started"
