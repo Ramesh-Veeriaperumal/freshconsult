@@ -1485,6 +1485,7 @@ Helpkit::Application.routes.draw do
 
   end
 
+  match '/robots', :controller => 'admin/pages', :action => 'robots', :format => "txt", :method => :get
   match '/ecommerce/ebay_notifications', :controller => 'admin/ecommerce/ebay_accounts', :action => 'notify', :method => :post
 
   namespace :search do
