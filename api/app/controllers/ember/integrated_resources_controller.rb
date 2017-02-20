@@ -8,7 +8,12 @@ class IntegratedResourcesController < ApiApplicationController
 	private
 
 	def load_objects()
-  	@items =  Integrations::IntegratedResource.where(:installed_application_id => params[:installed_application_id], :local_integratable_id => params[:local_integratable_id])
+    if params[:local_integratable_type] == 'ticket'
+      ticket = current_account.tickets.find_by_display_id(params[:local_integratable_id])
+  	   @items =  Integrations::IntegratedResource.where(:installed_application_id => params[:installed_application_id], :local_integratable_id => ticket.id)
+    else
+       @items =  Integrations::IntegratedResource.where(:installed_application_id => params[:installed_application_id], :local_integratable_id => params[:local_integratable_id])
+    end
   end
 
   def validate_filter_params
