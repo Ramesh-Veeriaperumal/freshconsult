@@ -14,7 +14,7 @@ config = YAML::load_file(File.join(Rails.root, 'config', 'redis.yml'))[Rails.env
 
 if config
 	Resque.redis = Redis.new(:host => config["host"], :port => config["port"])
-  Resque.redis.namespace = config["namespace"]
+  #Resque.redis.namespace = config["namespace"]
 end
 
 Resque::Server.use Rack::Auth::Basic do |username, password|
@@ -35,7 +35,7 @@ Resque::Plugins::Status::Hash.expire_in = (7 * 24 * 60 * 60) # 1 week in seconds
 Resque.before_first_fork do
   if defined?(Resque)
     Resque.redis = Redis.new(:host => config["host"], :port => config["port"])
-    Resque.redis.namespace = config["namespace"]
+    #Resque.redis.namespace = config["namespace"]
   end
   Sharding.all_shards.each do |shard|  
     Sharding.run_on_shard(shard) do

@@ -305,7 +305,9 @@ module Reports::TimesheetReport
       report_columns_arr.push({name:value, id:key, default: false, is_custom: false})
     end
     Account.current.flexifield_def_entries.includes(:ticket_field).drop_down_fields.each do | flexifieldDefEntry|
-      report_columns_arr.push({name: flexifieldDefEntry.ticket_field.label_in_portal, id:flexifieldDefEntry.flexifield_name, default: false, is_custom: true})
+      if flexifieldDefEntry.ticket_field
+        report_columns_arr.push({name: flexifieldDefEntry.ticket_field.label_in_portal, id:flexifieldDefEntry.flexifield_name, default: false, is_custom: true})
+      end
     end
     @report_columns = report_columns_arr
   end
@@ -314,7 +316,9 @@ module Reports::TimesheetReport
   def custom_column_master_hash
     flexifields_hash = {}
     Account.current.flexifield_def_entries.includes(:ticket_field).drop_down_fields.each do | flexifieldDefEntry|
-      flexifields_hash[flexifieldDefEntry.flexifield_name.to_sym] = flexifieldDefEntry.ticket_field.label_in_portal
+      if flexifieldDefEntry.ticket_field
+        flexifields_hash[flexifieldDefEntry.flexifield_name.to_sym] = flexifieldDefEntry.ticket_field.label_in_portal
+      end
     end
     flexifields_hash
   end
@@ -324,11 +328,11 @@ module Reports::TimesheetReport
     result_time_sheets = {}
     str_header_keys_time_entry = @headers.map(&:to_s)
     str_header_keys_time_entry +=  ["timespent","billable","user_id","ticket_id","customer_id","product_id","group_id","display_id","subject","executed_at"]
-
+    options = {time_format:'hm'}
     @time_sheets.each do | group_by_key, group_by_value|
       result_arr = []
       group_by_value.each do |time_entry|
-        result_hash = time_entry.as_json[:time_entry].slice(*str_header_keys_time_entry)
+        result_hash = time_entry.as_json(options)[:time_entry].slice(*str_header_keys_time_entry)
         ticket_json =time_entry.workable.as_json["helpdesk_ticket"].stringify_keys.slice(*str_header_keys_time_entry)
         ticket_json[:group_name] = time_entry.workable.group.name if time_entry.workable.group.present?
         result_hash.merge!(ticket_json)
@@ -517,7 +521,7 @@ module Reports::TimesheetReport
     @current_params = {
       :start_date  => start_date,
       :end_date    => end_date,
-      :customer_id => @filter_conditions[:customers] ? @filter_conditions[:customers] : [],
+      :customer_id => (@filter_conditions[:company_id] ||  []),
       :user_id     => (Account.current.hide_agent_metrics_feature? ? [] : (@filter_conditions[:user_id] || [])),
       :headers     => list_view_items,
       :billable    => billable_and_non? ? [true, false] : @filter_conditions[:billable].map {|val| val.to_bool},

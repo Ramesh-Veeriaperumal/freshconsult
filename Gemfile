@@ -103,7 +103,7 @@ gem "twilio-ruby", :git => "git://github.com/freshdesk/twilio-ruby.git", :branch
 gem "carmen", :git => "git://github.com/jim/carmen.git", :tag => "ruby-18"
 gem 'postoffice', :git => "git://github.com/chrisbutcher/postoffice.git", :branch => "master"
 
-gem "ruby-saml", "0.8.1"
+gem "ruby-saml", "1.4.2"
 
 gem 'xeroizer', :git => "git@github.com:freshdesk/xeroizer.git"
 gem "rubyzip", "0.9.4" , :require => "zip/zip"

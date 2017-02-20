@@ -17,8 +17,9 @@ class HelpdeskReports::Export::TimesheetReports < HelpdeskReports::Export::Repor
       params[:group_by] = params[:group_by_field]
       params.delete(:group_by_field)
     end
+
     if(params[:customers_filter].present?)
-      params[:customers] = params[:customers_filter]
+      params[:company_id] = params[:customers_filter]
       params.delete(:customers_filter)
     end
     # params.each { |key,value| params[key] = value.to_s.split(",") if ARRAY_METRICS.include?(key.to_sym) && value }
