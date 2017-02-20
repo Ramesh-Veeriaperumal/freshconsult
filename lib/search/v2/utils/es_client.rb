@@ -163,7 +163,13 @@ module Search
                                 @cluster,
                                 @search_type,
                                 response_from_es.code,
-                                response_from_es.total_time*1000, 
+                                (response_from_es.total_time * 1000),
+                                (response_from_es.starttransfer_time * 1000),
+                                (response_from_es.appconnect_time * 1000),
+                                (response_from_es.pretransfer_time * 1000),
+                                (response_from_es.connect_time * 1000),
+                                (response_from_es.namelookup_time * 1000),
+                                (response_from_es.redirect_time * 1000),
                                 @es_response_time
                               )
               

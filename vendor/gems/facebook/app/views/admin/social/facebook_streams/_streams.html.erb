@@ -11,7 +11,7 @@
           <% stream  = fb_page[:stream] %>
           <tr>
             <td class="text-left">
-              <span class="adm-uimg"> <%= image_tag(page.page_img_url, size: "25x25") %> </span>
+              <span class="adm-uimg"> <%= image_tag(page.page_image_url, size: "25x25") %> </span>
             </td>
             <td class="text-left">
               <%= link_to stream.name, edit_admin_social_facebook_stream_url(stream) %>

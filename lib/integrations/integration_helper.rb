@@ -34,7 +34,7 @@ module Integrations::IntegrationHelper
   end
 
   def append_integration_actions action_hash
-    integration_list = ["slack_v2"]
+    integration_list = ["slack_v2", "office365"]
     integration_actions = fetch_integration_actions(integration_list)
     if integration_actions.present?
       action_hash.push(integration_actions)

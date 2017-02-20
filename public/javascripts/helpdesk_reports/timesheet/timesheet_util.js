@@ -156,8 +156,7 @@ Helpkit.TimesheetUtil = {
                 hash.label = label;
                 locals.query_hash.push(hash);
                 //local_hash is filters stored in localStorage for populating on load.
-                var local_hash = _this.getLocalHash(condition, container, operator, value,searchData);
-                //local_hash.label = label;
+                var local_hash = _this.getLocalHash(condition, container, operator, value,searchData,label);
                 if(!jQuery.isEmptyObject(local_hash)){
                    locals.local_hash.push(local_hash);
                 }
@@ -331,7 +330,7 @@ Helpkit.TimesheetUtil = {
             };
         return config;
     },
-    getLocalHash: function (condition, container, operator, value,searchData) {
+    getLocalHash: function (condition, container, operator, value,searchData,label) {
         var locals =  Helpkit.locals;
         var hash = {};
         if (container === 'nested_field' && locals.custom_field_hash.hasOwnProperty(condition)) {
@@ -353,7 +352,8 @@ Helpkit.TimesheetUtil = {
             hash = {
                 condition: condition,
                 operator: operator,
-                value: value.toString()
+                value: value.toString(),
+                label : label
             };
         }
 
@@ -474,6 +474,7 @@ Helpkit.TimesheetUtil = {
 
         jQuery(document).on("presetRangesSelected", function(event,data) {
             Helpkit.presetRangesSelected = data.status;
+            Helpkit.presetRangesPeriod = data.period;
             is_preset_selected = data.status;
         });
 
@@ -557,13 +558,14 @@ Helpkit.TimesheetUtil = {
         $document.on('click.helpdesk_reports','[data-action=select-column]',function(){
              var no_of_selections = jQuery("[data-action=select-column] input:checked").length;
              if(no_of_selections <= _this.MAX_COLUMN_LIMIT ) {
-                jQuery('.picker .message').addClass("hide");
+                jQuery('.picker .limit-error').addClass("hide");
                 //jQuery('[data-action=submit-column-selection]').removeClass('disabled');
              } else {
-                jQuery('.picker .message').removeClass("hide");
+                jQuery('.picker .limit-error').removeClass("hide");
                 //jQuery('[data-action=submit-column-selection]').addClass('disabled');
                 return false;
              }
+             _this.toggleArchiveMessage();
         });
 
         _this.onInitialLoad();
@@ -573,6 +575,31 @@ Helpkit.TimesheetUtil = {
         _this.actions.customFieldHash();
         _this.actions.generateReportFiltersMenu();
         //_this.actions.scrollTop();
+    },
+    toggleArchiveMessage : function() {
+        //Check if custom column is selected
+        if(Helpkit.locals.archive_enabled) {
+            var is_custom_column_selected = jQuery("[data-action=select-column] input:checked[data-custom-column=true]").length > 0 ? true : false;
+            if(is_custom_column_selected) {
+                jQuery('.picker .limit-error').addClass('hide');
+                jQuery('.picker .archive-error').removeClass('hide');
+            } else {
+                jQuery('.picker .archive-error').addClass('hide');
+            }
+
+            var active_filters = jQuery("#active-report-filters .filter-field");
+            var is_custom_filter_used =  false;
+            jQuery.each(active_filters,function(i,el){
+                if(jQuery.inArray(jQuery(el).attr('condition') , Helpkit.locals.custom_filter) != -1){
+                    is_custom_filter_used = true;
+                }
+            });
+            if(is_custom_filter_used) {
+                jQuery('#filter_validation_errors .error-msg').text('Filtering by custom fields will exclude archive tickets');
+            } else {
+                jQuery('#filter_validation_errors .error-msg').text('');
+            }
+        }
     },
     getPdfParams :function() {
         var remove = [];
@@ -589,7 +616,7 @@ Helpkit.TimesheetUtil = {
               { "condition":"group_by","value":"customer_name"}
             ]
         }
-        
+
         params.data_hash.select_hash = Helpkit.locals.select_hash;
         if(savedReportUtil.last_applied_saved_report_index != -1){
           params.filter_name = Helpkit.report_filter_data[parseInt(savedReportUtil.last_applied_saved_report_index)].report_filter.filter_name;
@@ -672,6 +699,9 @@ Helpkit.TimesheetUtil = {
             jQuery(query).attr('checked','checked');
         });
 
+        //Add Divider
+        jQuery('[data-custom-column="true"]:first').parent().addClass('divider');
+        self.toggleArchiveMessage();
     },
     actions : {
         closeFilterMenu: function () {
@@ -714,6 +744,7 @@ Helpkit.TimesheetUtil = {
             var _this = this;
             var field = jQuery(active).closest("[data-type='filter-field']");
             _this.removeReportField(field.attr('condition'), field.attr('data-label'));
+            Helpkit.TimesheetUtil.toggleArchiveMessage();
         },
         disableKeyPress: function (ev) {
             ev.preventDefault();
@@ -786,6 +817,7 @@ Helpkit.TimesheetUtil = {
                 }
                 _this.removeFieldFromMenu(field);
             }
+            Helpkit.TimesheetUtil.toggleArchiveMessage();
             _this.hideFilterMenu();
             _this.toggleMoreButton();
         },
@@ -815,7 +847,7 @@ Helpkit.TimesheetUtil = {
             }
             jQuery("#" + field_hash.condition + ".filter_item").select2(config);
             if (val.length) {
-                jQuery("#" + field_hash.condition).select2('val', val.split(','));
+                jQuery("#" + field_hash.condition + ".filter_item").select2('val', val.split(','));
             }
         },
         nestedFieldInitValues: function (val) {
@@ -1017,16 +1049,12 @@ var savedReportUtil = (function() {
                   _this.save_util.showReportDropdown();
                   if(index != -1) {
                       _this.save_util.controls.showDeleteAndEditOptions();
-                      var columns_condition = Helpkit.TimesheetUtil.COLUMN_LIMIT_FOR_PDF >= (Helpkit.locals.colspan + 1);
-                      if(is_preset_selected && columns_condition ){
-                        _this.save_util.controls.showScheduleOptions(false);
-                      } else{
-                        _this.save_util.controls.hideScheduleOptions();
-                      }
+
                       //Repopulate the filters because of bad code
                       //Full markup is replaced on every generate
                       //populate the filters from report filter data
                       _this.addFiltersToMenu(false);
+                      Helpkit.TimesheetUtil.toggleArchiveMessage();
                   }
                   var result = Helpkit.ScheduleUtil.isScheduled(
                               _this.last_applied_saved_report_index,
@@ -1059,14 +1087,6 @@ var savedReportUtil = (function() {
 
               _this.save_util.saveHelper(opts);
 
-              //Timesheet specific
-              var columns_condition = Helpkit.TimesheetUtil.COLUMN_LIMIT_FOR_PDF >= (Helpkit.locals.colspan + 1);
-              if(columns_condition){
-                _this.save_util.controls.showScheduleOptions(false);
-              } else {
-                _this.save_util.controls.hideScheduleOptions();
-              }
-
         },
         getParams : function() {
           var params = {};
@@ -1092,7 +1112,7 @@ var savedReportUtil = (function() {
               params.data_hash.date.period = 'last_30';
           }
 
-          params.data_hash.report_filters = Helpkit.locals.local_hash;
+          params.data_hash.report_filters = Helpkit.locals.local_hash != undefined ? Helpkit.locals.local_hash : [];
           var group_by = {
               condition : 'group_by',
               value : Helpkit.locals.current_group_by == undefined ? 'customer_name' : Helpkit.locals.current_group_by
@@ -1140,6 +1160,11 @@ var savedReportUtil = (function() {
                       } else {
                         params.data_hash.date.date_range = dateRange;
                         params.data_hash.date.presetRange = false;
+                      }
+                      if(Helpkit.presetRangesSelected == undefined) {
+                            params.data_hash.date.date_range = _this.save_util.dateRangeDiff(dateRange);
+                            params.data_hash.date.presetRange = true;
+                            params.data_hash.date.period = 'last_30';
                       }
                   }
               }

@@ -40,9 +40,6 @@ module Facebook
           message[:message] = tokenize(message[:message])
           
           @note = ticket.notes.build(
-            :note_body_attributes => {
-              :body_html => html_content_from_message(message)
-            },
             :private    =>  true ,
             :incoming   =>  true,
             :source     =>  Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"],
@@ -57,6 +54,11 @@ module Facebook
               :thread_id        =>  thread_id
             }
           )
+          body_html = html_content_from_message(message, @note)
+          @note.note_body_attributes = {
+            :body_html => body_html
+          }
+          #@note.inline_attachments = inline_attachments
 
           begin
             user.make_current
@@ -94,11 +96,13 @@ module Facebook
             :account_id         =>  @account.id,
             :msg_type           =>  'dm',
             :thread_id          =>  thread[:id]
-          },
-          :ticket_body_attributes => {
-            :description_html => html_content_from_message(message)
           }
         )
+        description_html = html_content_from_message(message, @ticket)
+        @ticket.ticket_body_attributes = {
+          :description_html => description_html
+        }
+        #@ticket.inline_attachments = inline_attachments
 
         if @ticket.save_ticket
           add_as_note(thread, @ticket) if messages.size > 1

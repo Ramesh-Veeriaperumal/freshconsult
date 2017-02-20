@@ -120,7 +120,19 @@ module Dkim::Methods
   end
 
   def previous_category
-    Rails.logger.debug("previous_category :: #{scoper.dkim_configured_domains.first.try(:category)}")
-    OutgoingEmailDomainCategory::SMTP_CATEGORIES.key(scoper.dkim_configured_domains.first.try(:category))
+    prev_cat = scoper.dkim_activated_domains.first.try(:category) # already activated domains
+    return retrieve_category_name(prev_cat) if prev_cat.present?
+    
+    prev_email_domain = scoper.dkim_configured_domains.first  # configured domains list
+    return nil if prev_email_domain.blank? # first dkim configure
+    
+    custom_dkim_records = prev_email_domain.dkim_records.custom_records #using custom_records category id
+    return retrieve_category_name(custom_dkim_records.pluck(:sg_category_id).first) if custom_dkim_records
+    
+  end
+  
+  def retrieve_category_name(cat_id)
+    Rails.logger.debug("previous_category :: #{cat_id}")
+    OutgoingEmailDomainCategory::SMTP_CATEGORIES.key(cat_id)
   end
 end

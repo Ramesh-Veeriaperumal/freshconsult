@@ -5,20 +5,20 @@
 <div class="metrics">
   <div class="metric">
     <label><%=t('reports.time_sheets.total_time')%></label>
-    <h1 class='total_time_metric'><%=sprintf("%0.02f", @metric_data[:current][:total_time]) %></h1>
-    <% metric_obj = percentage_change(@metric_data[:previous][:total_time], @metric_data[:current][:total_time], :hours_tracked)%>
+    <h1 class='total_time_metric'><%=@metric_data[:current][:total_time] %></h1>
+    <% metric_obj = percentage_change(in_hours(@metric_data[:previous][:total_time]), in_hours(@metric_data[:current][:total_time]), :hours_tracked)%>
       <span class="<%=metric_obj[:class]%>"></span><%=metric_obj[:val]%>
   </div>
   <div class="metric">
-    <label><%=t('reports.time_sheets.billable')%></label> 
-    <h1 class='billable_time'><%=sprintf("%0.02f", @metric_data[:current][:billable]) %></h1>
-    <% metric_obj = percentage_change(@metric_data[:previous][:billable], @metric_data[:current][:billable], :billable_hours)%>
+    <label><%=t('reports.time_sheets.billable')%></label>
+    <h1 class='billable_time'><%= @metric_data[:current][:billable] %></h1>
+    <% metric_obj = percentage_change(in_hours(@metric_data[:previous][:billable]), in_hours(@metric_data[:current][:billable]), :billable_hours)%>
       <span class="<%=metric_obj[:class]%>"></span><%=metric_obj[:val]%>
   </div>
   <div class="metric">
-    <label><%=t('reports.time_sheets.non_billable')%></label> 
-    <h1 class='nonbillable_time'><%=sprintf("%0.02f",@metric_data[:current][:non_billable])%></h1>
-    <% metric_obj = percentage_change(@metric_data[:previous][:non_billable], @metric_data[:current][:non_billable], :non_billable_hours) %>
+    <label><%=t('reports.time_sheets.non_billable')%></label>
+    <h1 class='nonbillable_time'><%=@metric_data[:current][:non_billable]%></h1>
+    <% metric_obj = percentage_change(in_hours(@metric_data[:previous][:non_billable]), in_hours(@metric_data[:current][:non_billable]), :non_billable_hours) %>
     <span class="<%=metric_obj[:class]%>"></span><%=metric_obj[:val]%>
   </div>
   <div class="metric no-border">
@@ -40,4 +40,4 @@
   Helpkit.locals.metric_hash['non_billable_hours']= '<%= @metric_data[:current][:non_billable] %>';
   Helpkit.locals.metric_hash['barchart_data'] = <%=@activity_data_hash['barchart_data'].to_json.html_safe%>;
 </script>
-  
+

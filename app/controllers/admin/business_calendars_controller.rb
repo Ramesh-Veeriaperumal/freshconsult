@@ -1,6 +1,5 @@
 class Admin::BusinessCalendarsController <  Admin::AdminController
   
-  before_filter { |c| c.requires_feature :business_hours }
   before_filter :load_object, :only => [:update, :destroy, :edit]
 
   def load_object
@@ -8,7 +7,7 @@ class Admin::BusinessCalendarsController <  Admin::AdminController
   end
    
   def index
-    if feature?(:multiple_business_hours)
+    if current_account.multiple_business_hours_enabled?
       @business_calendars = current_account.business_calendar.find(:all, :order =>'name')
 
       respond_to do |format|
@@ -22,7 +21,7 @@ class Admin::BusinessCalendarsController <  Admin::AdminController
   end
 
   def new
-    if feature?(:multiple_business_hours)
+    if current_account.multiple_business_hours_enabled?
       @business_calendar = current_account.business_calendar.new    
       respond_to do |format|
         format.html # new.html.erb

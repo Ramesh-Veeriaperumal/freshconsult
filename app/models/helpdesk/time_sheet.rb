@@ -129,6 +129,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       :priority_name => I18n.t('helpdesk.time_sheets.priority'),
       :status_name => I18n.t('helpdesk.time_sheets.status'),
       :group_by_day_criteria =>I18n.t('helpdesk.time_sheets.executed_at'),
+      :note => I18n.t('helpdesk.time_sheets.note'),
       :hours => I18n.t('helpdesk.time_sheets.hours') ,
       :product_name => I18n.t('helpdesk.time_sheets.product'),
       :group_name => I18n.t('helpdesk.time_sheets.group') }
@@ -137,7 +138,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   # Used by API v2
   def self.filter(filter_options=FILTER_OPTIONS, user=User.current)
     query_hash = permissible_query_hash(user)
-    relation = scoped.where(query_hash[:conditions]).joins(query_hash[:joins])
+    relation = scoped.where(query_hash[:conditions])
     filter_options.each_pair do |key, value|
       clause = filter_conditions(filter_options)[key.to_sym] || {}
       relation = relation.where(clause[:conditions]).joins(clause[:joins]) # where & join chaining
@@ -172,23 +173,20 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
 
   # Used by API v2
   def self.permissible_query_hash user
-    schema_less_ticket_table, ticket_table, timesheet_table = Helpdesk::SchemaLessTicket.table_name, Helpdesk::Ticket.table_name, Helpdesk::TimeSheet.table_name
+    ticket_table, timesheet_table = Helpdesk::Ticket.table_name, Helpdesk::TimeSheet.table_name
     ticket_model = Helpdesk::Ticket.model_name
-
     query_hash = {}
     conditions = []
     spam_condition = "#{ticket_table}.spam = 0"
 
-    if !user.all_tickets_permission?
+    if user.agent?
       conditions = Helpdesk::Ticket.permissible_condition(user)
-      ticket_join_table = "INNER JOIN #{schema_less_ticket_table} ON #{ticket_table}.id = #{schema_less_ticket_table}.ticket_id AND #{ticket_table}.account_id = #{schema_less_ticket_table}.account_id" if Account.current.features?(:shared_ownership)
-    elsif user.customer?
+    else
       conditions = ["#{ticket_table}.requester_id = ?", user.id ]
     end
 
     conditions[0] = (conditions.blank? ? spam_condition : "#{conditions[0]} AND #{spam_condition}")
     query_hash[:conditions] = conditions
-    query_hash[:joins] = ticket_join_table
     query_hash
   end
 
@@ -251,12 +249,12 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
      self.save
   end
 
-   def as_json(options = {}, deep=true)
+   def as_json(options = {time_format:'h'}, deep=true)
     if deep
       hash = {}
       hash['ticket_id'] = self.workable.display_id
       hash['agent_name'] = self.agent_name
-      hash['timespent'] = sprintf( "%0.02f", self.time_spent.to_f/3600) # converting to hours as in UI
+      hash['timespent'] = ( options[:time_format] =='hm' ? get_time_in_hours_and_minutes(self.time_spent.to_i) : sprintf( "%0.02f", self.time_spent.to_f/3600) ) # converting to hours as in UI / Timesheet need it in secs
       hash['agent_email'] = user.email
       hash['customer_name'] = self.customer_name
       hash['contact_email'] = workable.requester.email
@@ -367,6 +365,12 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       "executed_at"     =>  executed_at,
       "account_id"      =>  account_id
     }
+  end
+
+  def get_time_in_hours_and_minutes(seconds)
+    hh = (seconds/3600).to_i
+    mm = ((seconds % 3600)/60.to_f).round
+    hh.to_s.rjust(2,'0') + ":" + mm.to_s.rjust(2,'0')
   end
 
 end

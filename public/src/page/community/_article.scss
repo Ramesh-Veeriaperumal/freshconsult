@@ -378,6 +378,10 @@
   .folder-warning-msg {
     color: brown;
   }
+
+  .article-tags.select2-container-active .select2-choices{
+    border-bottom: none;
+  }
 }
 //------------- End of  Solution Articles Page Properties Section Styles ----------------------------------------//
 

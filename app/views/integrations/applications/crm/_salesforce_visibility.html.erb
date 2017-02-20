@@ -9,7 +9,7 @@
     <% agent_settings = installed_agent_settings.to_bool if installed_agent_settings.present? %>
   <%end%>
   <div id="opportunity-info" data-child="opportunity-settings">
-    <%=content_tag(:h3, t("integrations.#{@element_config["element"]}.form.opportunity"), :class => 'opportunity-header') %>
+    <%=content_tag(:h3, t("integrations.cloud_elements.form.opportunity"), :class => 'opportunity-header') %>
     <%= check_box(:opportunity_view, "value", :checked => opportunity_view) %>
     <% hide =  opportunity_view ? "" : "hide" %>
     <% disabled = !opportunity_view %>
@@ -37,6 +37,8 @@
           opportunity_fields_list.push([opportunity_fields[field],field]) if not opportunity_default_fields.include?(field); 
         }
       %>
+      <%=hidden_field_tag :opportunity_stage_choices %>
+      <%=hidden_field_tag :opportunity_stage_choices_ids %>
       <%=hidden_field_tag :opportunity_labels %>
       <%= select_tag :opportunities, 
               options_for_select(opportunity_fields_list,data.split(",")), { :multiple => true, :class => "select2-fields salesforce-int-select","data-placeholder" => " "} %> <!-- space in placeholder to add an empty option -->
@@ -44,7 +46,7 @@
   </div>
   <div class="opportunity-settings mt8 <%= hide %>" id="agent_settings">
     <%= check_box(:agent_settings, "value", :checked => agent_settings, :disabled => disabled) %>
-    <%= content_tag(:span, t("integrations.#{@element_config["element"]}.form.opportunity_settings"), :class => 'checkbox_label') %>
+    <%= content_tag(:span, t("integrations.cloud_elements.form.opportunity_settings"), :class => 'checkbox_label') %>
   </div>
 </div>
 <%end%>
@@ -57,7 +59,7 @@
     <% contract_view = installed_contract_view.to_bool if installed_contract_view.present? %>
   <%end%>
   <div id="contract-info" data-child="contract-settings">
-    <%=content_tag(:h3, t("integrations.#{@element_config["element"]}.form.contract"), :class => 'contract-header') %>
+    <%=content_tag(:h3, t("integrations.cloud_elements.form.contract"), :class => 'contract-header') %>
     <%= check_box(:contract_view, "value", :checked => contract_view) %>
     <% hide =  contract_view ? "" : "hide" %>
     <% disabled = !contract_view %>
@@ -101,7 +103,7 @@
     <% order_view = installed_order_view.to_bool if installed_order_view.present? %>
   <%end%>
   <div id="order-info" data-child="order-settings">
-    <%=content_tag(:h3, t("integrations.#{@element_config["element"]}.form.order"), :class => 'order-header') %>
+    <%=content_tag(:h3, t("integrations.cloud_elements.form.order"), :class => 'order-header') %>
     <%= check_box(:order_view, "value", :checked => order_view) %>
     <% hide =  order_view ? "" : "hide" %>
     <% disabled = !order_view %>
@@ -137,13 +139,15 @@
 </div>
 <%end%>
 <script type="text/javascript">
+  var default_labels = <%= raw @element_config["default_labels"].to_json %>;
   <%if @element_config["objects"].include? "opportunity"%>
+    var opportunity_default =  default_labels["opportunity"];
     jQuery("#opportunity_view_value").itoggle({buttonClass:"toggle-button toggle_opportunity_on_click"});
     jQuery("#opportunities").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
     //setting Name, Stage and Close Date as default opportunity fields(can't be removed.)
     jQuery("#sfopportunities ul .select2-search-choice div").each(function(index,element){
       value = jQuery(element).text();
-      if(value =="Name" || value == "Stage" || value == "Close Date"){
+      if(opportunity_default.indexOf(value) !== -1){
         jQuery(element).next("a").remove();
       }
     });
@@ -157,12 +161,13 @@
   <%end%>
 
   <%if @element_config["objects"].include? "contract"%>
+    var contract_default =  default_labels["contract"];
     jQuery("#contract_view_value").itoggle({buttonClass:"toggle-button toggle_contract_on_click"});
     jQuery("#contracts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
     //setting "Contract Start Date", "Contract Term", "Status" as default contract fields(can't be removed.)
     jQuery("#sfcontracts ul .select2-search-choice div").each(function(index,element){
       value = jQuery(element).text();
-      if(value =="Contract Start Date" || value == "Contract Term" || value == "Status" || value == "Contract Number"){
+      if(contract_default.indexOf(value) !== -1){
         jQuery(element).next("a").remove();
       }
     });
@@ -175,12 +180,13 @@
   <%end%>
 
   <%if @element_config["objects"].include? "order"%>
+    var order_default =  default_labels["order"];
     jQuery("#order_view_value").itoggle({buttonClass:"toggle-button toggle_order_on_click"});
     jQuery("#orders").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
     //setting "Order Start Date", "Status" as default order fields(can't be removed.)
     jQuery("#sforders ul .select2-search-choice div").each(function(index,element){
       value = jQuery(element).text();
-      if(value =="Order Start Date" || value == "Order Number" || value == "Order Amount"){
+      if(order_default.indexOf(value) !== -1){
         jQuery(element).next("a").remove();
       }
     });

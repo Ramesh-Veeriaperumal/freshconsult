@@ -14,7 +14,7 @@ class Support::TicketsController < SupportController
   before_filter :clean_params, :only => [:update]
 
   skip_before_filter :verify_authenticity_token
-  before_filter :verify_authenticity_token, :unless => :public_request?
+  before_filter :verify_authenticity_token, :unless => :public_request?, :except => :check_email
   
   before_filter :require_user, :only => [:show, :index, :filter, :close, :update, :add_people]
   before_filter :load_item, :only => [:show, :update, :close, :add_people]
@@ -27,6 +27,7 @@ class Support::TicketsController < SupportController
   before_filter :set_date_filter, :only => [:export_csv]  
 
   before_filter :check_ticket_permission, :only => [:create]
+  skip_before_filter :set_language,:redirect_to_locale, :only => [:check_email]
 
   def show
     return access_denied unless can_access_support_ticket? && visible_ticket?

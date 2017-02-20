@@ -7,8 +7,18 @@ module Helpdesk::EmailParser::MailProcessingUtil
     if mail_content.try(:charset) # check whether else condition is required if no charset is available
     		return ENCODING_MAPPING[mail_content.charset.upcase] if ENCODING_MAPPING[mail_content.charset.upcase]
     		return mail_content.charset if is_default_charset(mail_content.charset)
-    		"UTF-8"
   	end
+    return nil
+  end
+
+  def detect_encoding_from_content(string_content)
+    detection = CharlockHolmes::EncodingDetector.detect(string_content)
+    if detection.nil?
+      email_parsing_log "Unable to detect encoding type in detect_encoding_from_content"
+      return "UTF-8" 
+    end
+    detected_encoding = detection[:encoding]
+    return detected_encoding
   end
 
   def is_default_charset(charset)
@@ -27,6 +37,27 @@ module Helpdesk::EmailParser::MailProcessingUtil
   	 email_parsing_log "Encoding error : #{e.class}, #{e.message}, #{e.backtrace}"
   	 # presence of undefined characters in mail_data causes encode("UTF-8") to fail
   	 handle_undefined_characters(mail_data, detected_encoding)
+  end
+
+  def encode_header_data(mail_data, detected_encoding="us-ascii")
+    if detected_encoding.present?
+      res = mail_data.force_encoding(detected_encoding).encode("UTF-8")
+    else
+      detection = CharlockHolmes::EncodingDetector.detect(mail_data)
+      email_parsing_log "Unable to detect encoding type" if detection.nil?
+      detected_encoding = detection.nil? ? "us-ascii" : detection[:encoding]
+      res = mail_data.force_encoding(detected_encoding).encode("UTF-8")
+    end
+    if !res.valid_encoding?
+      email_parsing_log "Detected invalid encoding characters in header data!!"
+      res = handle_undefined_characters(mail_data, detected_encoding)
+    end
+    return res
+    rescue Exception => e
+      #proper info required
+     email_parsing_log "Encoding error : #{e.class}, #{e.message}, #{e.backtrace}"
+     # presence of undefined characters in mail_data causes encode("UTF-8") to fail
+     handle_undefined_characters(mail_data, detected_encoding)
   end
 
   def handle_undefined_characters(mail_data, detected_encoding)

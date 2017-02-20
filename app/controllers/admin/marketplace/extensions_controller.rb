@@ -54,11 +54,12 @@ class Admin::Marketplace::ExtensionsController <  Admin::AdminController
   end
 
   def payment_info
-    addon_details = @extension['addon']['metadata'].find { |data| data['currency_code'] == current_account.currency_name }
+    @addon_details = @extension['addon']['metadata'].find { |data| data['currency_code'] == current_account.currency_name }
     render :json => { 
-      :message => I18n.t(addon_details['trial_period'].blank? ? 'marketplace.payment_ok' : 'marketplace.payment_trial_info',
-      :trial_period => addon_details['trial_period'],
-      :price => format_amount(addon_details['price'], addon_details['currency_code']),
+      :message => I18n.t(@addon_details['trial_period'].blank? ? 'marketplace.payment_ok' : 'marketplace.payment_trial_info',
+      :trial_period => @addon_details['trial_period'],
+      :price => format_amount(@addon_details['price'], @addon_details['currency_code']),
+      :estimate => estimate_addon_price,
       :addon_type => addon_type,
       :payment_ok_btn => render_to_string( :inline => is_ni? ? "<%= link_to t('ok'), params['install_url'],
         :class => 'btn btn-default btn-primary payment-btn nativeapp', :method => :post %>"
@@ -78,5 +79,10 @@ class Admin::Marketplace::ExtensionsController <  Admin::AdminController
         msg << %(</a>)
         render :json => { :message =>  msg }
       end
+    end
+
+    def estimate_addon_price
+      estimate_price = @addon_details['price'].to_f * current_account.subscription.renewal_period * app_units_count
+      return format_amount(estimate_price, @addon_details['currency_code'])
     end
 end

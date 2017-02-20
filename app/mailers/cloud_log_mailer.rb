@@ -10,6 +10,7 @@ class CloudLogMailer < ActionMailer::Base
       :bcc      => options[:bcc_recipients]
     }
     @size = options[:size]
+    @subdomain = options[:subdomain]
     @failure_reasons = options[:failure_reasons]
     mail(headers) do |part|
       part.html { render "logger_email" }

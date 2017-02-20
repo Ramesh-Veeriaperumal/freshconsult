@@ -1,0 +1,21 @@
+case 'office365':
+
+  var uri_textarea = FactoryUI.paragraph("", "office365_text", initFeed['office365_text'], "required text uri insert-placeholder-target")
+                        .data("ignorePlaceholders", 'ticket_satisfaction_survey,ticket_suverymonkey_survey');
+
+  <% # Hidden values are used as part of action hash of va_rule by the workers at rule execution %>
+  var method_name = "<div> <input type='hidden' name='value' value='office365_trigger'> </div>";
+  var rule = "<div> <input type='hidden' name='include_va_rule' value='true'></div>";
+  setTimeout(function(ev){
+    uri_textarea.autosize();
+  }, 500);
+  var placeholder1 = jQuery("<span class='placeholder_div'> <a class='l_placeholder btn btn-mini'><%= t('canned_folders.insert_placeholder') %> &raquo;</a> </span>")
+  var message = jQuery('<div class="row-fluid"/>').append(jQuery('<span class="span2"/>')
+              .append(FactoryUI.label('Message', 'required_label')).append('<b class="required_star">*</b>'))
+              .append(placeholder1)
+              .append(uri_textarea)
+              .append(rule)
+              .append(method_name)
+
+  c_dom = jQuery('<div class="integrations webhook"/>').append(message);
+  break;

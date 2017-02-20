@@ -157,7 +157,10 @@ module SsoUtil
 
     response = OneLogin::RubySaml::Response.new(saml_xml, :allowed_clock_drift => SSO_CLOCK_DRIFT)
     response.settings = get_saml_settings(acc)
-    if response.is_valid?
+    response.settings.issuer = nil
+    valid_response = response.is_valid?
+
+    if valid_response
       user_email_id = response.name_id
       user_name = response.attributes[:username] # default user name is actually just the part before @ in the email
 
@@ -173,15 +176,15 @@ module SsoUtil
     else
       begin
         Rails.logger.debug("Got an invalid response from SAML Provider #{response.document}")
-        response.validate! # force validation to get exact error
-        error_message = "Login Rejected"
+        Rails.logger.error("SAML Validation Error : #{response.errors}")
+        error_message = " Validation Failed :  #{response.errors}"
       rescue Exception => e
         Rails.logger.error("SAML Validation Error : #{e.message}")
         NewRelic::Agent.notice_error(e, {:custom_params => {:error_message => e.message, :account_id => current_account.id}})
         error_message = " Validation Failed :  #{e.message}"
       end
     end
-    SAMLResponse.new(response.is_valid?, user_name, user_email_id, phone, company, title, external_id, error_message)
+    SAMLResponse.new(valid_response, user_name, user_email_id, phone, company, title, external_id, error_message)
   end
 
   def generate_sso_url url

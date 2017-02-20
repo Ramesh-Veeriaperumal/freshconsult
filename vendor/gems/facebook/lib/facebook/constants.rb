@@ -64,7 +64,40 @@ module Facebook
     FB_MESSAGE_PREFIX           = "m_"
 
     REALTIME_MESSSAGING_CHARACTER_LIMIT = 640
-    
+
+    URL_DELIMITER               = "?"
+
+    FILENAME_DELIMITER          = "."
+
+    URL_PATH_DELIMITER          = "/"
+
+    URL_PATHS = {
+      :message => {
+        :image => :image_data,
+        :video => :video_data
+      }
+    }
+
+    FEED_VIDEO      = "<div class=\"facebook_post\"><a class=\"thumbnail\" href=\"%{target_url}\" target=\"_blank\"><img src=\"%{thumbnail}\"></a><div><p><a href=\"%{att_url}}\" target=\"_blank\"> %{name}</a></p><p><strong>%{html_content}</strong></p><p>%{desc}</p></div></div>"
+
+    FEED_IMAGE      = "<div class=\"facebook_post\"><p> %{html_content}</p><p><a href=\"%{link}\" target=\"_blank\"><img height=\"%{height}\" src=\"%{photo_url}\"></a></p></div>"
+
+    FEED_LINK       = "<div class=\"facebook_post\"><p> %{html_content}</p><p>%{link_story}</p></div>"
+
+    COMMENT_LINK    = FEED_LINK
+
+    COMMENT_IMAGE   = FEED_IMAGE
+
+    COMMENT_STICKER = FEED_IMAGE
+
+    MESSAGE_IMAGE   = "%{html_content} <a href=\"%{url}\" target=\"_blank\"><img src=\"%{preview_url}\" height=\"%{height}\"></a>"
+
+    MESSAGE_VIDEO   = MESSAGE_IMAGE
+
+    MESSAGE_FILE    = "%{html_content} <a href=\"%{url}\" target=\"_blank\"> %{name}</a>"
+
+    MESSAGE_STICKER = MESSAGE_IMAGE#{}"%{html_content} <a href=\"%{url}\" target=\"_blank\"> %{name} </a>"
+
   end
 end
   

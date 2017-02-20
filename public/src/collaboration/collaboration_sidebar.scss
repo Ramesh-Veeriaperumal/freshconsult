@@ -361,6 +361,22 @@ $disabled_border_color: #e0e0e0;
 
 .collab-btn {
     box-sizing: border-box;
+
+    .convo-started-icon {
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
+        line-height: 20px;
+        @include margin(2px);
+        @include margin-left(0);
+        @include margin-right(6px);
+
+        .thumb_img {
+            position: absolute;
+            top: -2px;
+            @include left(0);
+        }
+    }
 }
 
 .collab-hovercard-cover {

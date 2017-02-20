@@ -31,6 +31,8 @@ module Facebook
 
       DEFAULT_PAGE_IMG_URL = "http://profile.ak.fbcdn.net/static-ak/rsrc.php/v1/yG/r/2lIfT16jRCO.jpg"
 
+      PAGE_IMG_URL         = "https://graph.facebook.com/%{page_id}/picture?width=100&height=100"
+
     end
   end
 end

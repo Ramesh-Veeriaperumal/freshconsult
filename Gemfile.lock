@@ -205,15 +205,15 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/freshdesk-features.git
-  revision: f4716ab01bfb137326e18ec9262b0b1ce5494618
+  revision: 9d530cbf51b0c813dba47e73c986ca863ca12066
   branch: freshdesk
   specs:
-    freshdesk_features (0.0.1)
+    freshdesk_features (0.0.2)
 
 GIT
   remote: git@github.com:freshdesk/launch-party.git
-  revision: 2615d8f5b00c69d025d14eef2cf662a472b382ba
-  tag: v0.1.3
+  revision: edbb362ebaf1c84e2745270435cf4a93bbeb3149
+  tag: v0.1.4
   specs:
     launchparty (0.1.1)
       newrelic_rpm (>= 3.17.2.327)
@@ -874,8 +874,6 @@ GEM
       rb-inotify (>= 0.9)
       rb-kqueue (>= 0.2)
     lockfile (1.4.3)
-    macaddr (1.7.1)
-      systemu (~> 2.6.2)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
@@ -1106,9 +1104,8 @@ GEM
     ruby-openid-apps-discovery (1.2.0)
       ruby-openid (>= 2.1.7)
     ruby-progressbar (1.8.1)
-    ruby-saml (0.8.1)
-      nokogiri (>= 1.5.0)
-      uuid (~> 2.3)
+    ruby-saml (1.4.2)
+      nokogiri (>= 1.5.10)
     rubytree (0.9.7)
       json (~> 1.8)
       structured_warnings (~> 0.2)
@@ -1192,7 +1189,6 @@ GEM
     syck (1.0.5)
     sys-uname (1.0.2)
       ffi (>= 1.0.0)
-    systemu (2.6.5)
     test-unit (3.1.7)
       power_assert
     test-unit-minitest (0.9.1)
@@ -1237,8 +1233,6 @@ GEM
     unicode-display_width (1.1.0)
     uniform_notifier (1.10.0)
     useragent (0.16.7)
-    uuid (2.3.8)
-      macaddr (~> 1.0)
     uuidtools (2.1.5)
     vegas (0.1.11)
       rack (>= 1.0.0)
@@ -1434,7 +1428,7 @@ DEPENDENCIES
   rubocop-checkstyle_formatter
   ruby-openid!
   ruby-openid-apps-discovery (= 1.2.0)
-  ruby-saml (= 0.8.1)
+  ruby-saml (= 1.4.2)
   rubytree
   rubyzip (= 0.9.4)
   rugged

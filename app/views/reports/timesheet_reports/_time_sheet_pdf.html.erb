@@ -16,7 +16,7 @@
   <%time_entrys = time_entrys.take(row_max_limit-(row_count-time_entrys.size)) if (row_count > row_max_limit) %>
   <%time_entrys.each do |time_entry| %>
     <tr class="odd">
-      <%= construct_timesheet_entry_row(headers, time_entry, load_time, true) %>
+      <%= construct_timesheet_entry_row(headers, time_entry, load_time, true,group_by) %>
     </tr>
   <% end %>
 <% end %>

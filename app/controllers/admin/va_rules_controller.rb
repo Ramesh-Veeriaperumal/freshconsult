@@ -388,7 +388,7 @@ class Admin::VaRulesController < Admin::AdminController
 
     def business_hours_for_account
       bhrs = []
-      if current_account.features_included?(:multiple_business_hours)
+      if current_account.multiple_business_hours_enabled?
         account_bhs = current_account.business_calendar.map{|bc| [bc.id,bc.name]}
         bhrs = account_bhs if account_bhs.size > 1
       end

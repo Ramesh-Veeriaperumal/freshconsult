@@ -576,6 +576,7 @@ Helpkit::Application.routes.draw do
       collection do
         post :quit_voicemail
         post :initiate
+        post :transcribe
       end
     end
 
@@ -992,6 +993,13 @@ Helpkit::Application.routes.draw do
       get :new
       get :edit
       post :update
+    end
+
+    namespace :office365 do
+      post :note
+      post :priority
+      post :status
+      post :agent
     end
 
     namespace :sugarcrm do
@@ -2187,7 +2195,7 @@ Helpkit::Application.routes.draw do
     end
 
     match 'commons/group_agents/(:id)'    => "commons#group_agents"
-    match 'commons/user_companies'        => "commons#user_companies"
+    match 'commons/user_companies'        => "commons#user_companies", via: :post
     match "commons/fetch_company_by_name" => "commons#fetch_company_by_name"
     match 'commons/status_groups'         => "commons#status_groups"
 
@@ -2638,7 +2646,7 @@ Helpkit::Application.routes.draw do
 
     resources :tickets do
       collection do
-        get :check_email
+        post :check_email
         get :configure_export
         get :filter
         post :export_csv
@@ -2882,6 +2890,7 @@ Helpkit::Application.routes.draw do
           get :check_contact_import
           put :reset_login_count
           post :contact_import_destroy
+          post :select_all_feature
         end
       end
 

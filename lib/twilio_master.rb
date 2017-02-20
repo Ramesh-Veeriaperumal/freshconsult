@@ -18,7 +18,7 @@ module TwilioMaster
 			:transfer_outgoing_to_group, :transfer_incoming_to_external, :transfer_outgoing_to_external],
 		:device => [:record],
 		:queue => [:enqueue, :dequeue, :trigger_voicemail, :trigger_non_availability, :hangup, :quit_queue_on_voicemail, :redirect_to_queue],
-		:voicemail => [:initiate, :quit_voicemail],
+	:voicemail => [:initiate, :quit_voicemail, :transcribe],
 		:usage_triggers => [:notify],
 		:ops_notification => [:voice_notification, :status]
 	}

@@ -49,8 +49,11 @@
 
 			if(ticket_email.isValidEmail()){				
 				$this.addClass("loading-right")
-
-				$.ajax({ url: email_path+"?v="+encodeURIComponent(ticket_email),
+				$.ajax({ 
+					type: 'POST',
+					datatype: 'json',
+					data: { v :  ticket_email},
+					url: email_path,
 				  	success: function(data){
 					    $this.removeClass("loading-right")
 					    toggle_name(!data.user_exists)

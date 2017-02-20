@@ -31,7 +31,7 @@ module Helpdesk::Email::OutgoingCategory
   CATEGORY_BY_TYPE = Hash[*CATEGORIES.flatten]
   MAILGUN_CATEGORY_BY_TYPE = Hash[*MAILGUN_CATEGORIES.flatten]
   CATEGORY_SET = CATEGORIES.map{|a| a[0]}
-  MAILGUN_PROVIDERS = MAILGUN_CATEGORY_BY_TYPE.values
+  MAILGUN_PROVIDERS = MAILGUN_CATEGORY_BY_TYPE.values.select do |value| value > 10 end 
 
   
   def get_subscription
@@ -47,9 +47,8 @@ module Helpdesk::Email::OutgoingCategory
   def get_category_id(use_mailgun = false)
     key = get_subscription
     if !account_whitelisted?
-      if((key == "trial") && 
-            ( ismember?(BLACKLISTED_SPAM_ACCOUNTS, Account.current.id) || Freemail.free_or_disposable?(Account.current.admin_email))
-            )
+      if ((key == "trial") && (Account.current.launched?(:spam_blacklist_feature) ||
+                 Freemail.free_or_disposable?(Account.current.admin_email)))
         key = "spam"
       elsif( account_created_recently?)
         key = "trial"

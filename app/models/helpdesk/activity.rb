@@ -67,18 +67,16 @@ class Helpdesk::Activity < ActiveRecord::Base
 
   def self.permissible_query_hash user
     query_hash = {}
-    schema_less_ticket_table, ticket_table, activity_table = Helpdesk::SchemaLessTicket.table_name, Helpdesk::Ticket.table_name, Helpdesk::Activity.table_name 
+    ticket_table, activity_table = Helpdesk::Ticket.table_name, Helpdesk::Activity.table_name 
     ticket_model = Helpdesk::Ticket.model_name
-    ticket_join_table = ticket_table
 
     if user.agent? and !user.all_tickets_permission?
       query_hash[:conditions] = Helpdesk::Ticket.permissible_condition(user)
       query_hash[:conditions][0] += " OR (#{activity_table}.notable_type != ?)"
       query_hash[:conditions] << ticket_model
-      ticket_join_table = "(#{ticket_table} INNER JOIN #{schema_less_ticket_table} ON #{ticket_table}.id = #{schema_less_ticket_table}.ticket_id AND #{ticket_table}.account_id = #{schema_less_ticket_table}.account_id)" if Account.current.features?(:shared_ownership)
     end
 
-    query_hash[:joins] = "LEFT JOIN #{ticket_join_table} ON #{activity_table}.notable_id = #{ticket_table}.id AND #{activity_table}.account_id = #{ticket_table}.account_id AND notable_type = '#{ticket_model}'"
+    query_hash[:joins] = "LEFT JOIN #{ticket_table} ON #{activity_table}.notable_id = #{ticket_table}.id AND #{activity_table}.account_id = #{ticket_table}.account_id AND notable_type = '#{ticket_model}'"
     query_hash
   end
 

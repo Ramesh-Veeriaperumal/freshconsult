@@ -111,6 +111,9 @@ curl -XPUT "172.16.210.126:9101/es_filters_count" -d'
         "responder_id": {
           "type": "long"
         },
+        "internal_agent_id": {
+          "type": "long"
+        },
         "status": {
           "type": "long"
         },
@@ -142,6 +145,9 @@ curl -XPUT "172.16.210.126:9101/es_filters_count" -d'
           "type": "long"
         },
         "group_id": {
+          "type": "long"
+        },
+        "internal_group_id": {
           "type": "long"
         },
         "due_by": {
@@ -252,12 +258,6 @@ curl -XPUT "172.16.210.126:9101/es_filters_count" -d'
           "type": "long"
         },
         "st_survey_rating": {
-          "type": "long"
-        },
-        "internal_group_id": {
-          "type": "long"
-        },
-         "internal_agent_id": {
           "type": "long"
         },
         "association_type": {

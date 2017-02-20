@@ -23,8 +23,6 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
     :boolean_tc04     =>    :sla_response_reminded,
     :boolean_tc05     =>    :sla_resolution_reminded,
     :text_tc03        =>    :dirty_attributes,
-    :long_tc03        =>    :internal_group_id,
-    :long_tc04        =>    :internal_agent_id,
     :int_tc03         =>    :association_type,
     :long_tc05        =>    :associates_rdb
   }
@@ -41,9 +39,6 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 
 	belongs_to :sla_policy, :class_name => "Helpdesk::SlaPolicy", :foreign_key => "long_tc01"
 	belongs_to :parent, :class_name => 'Helpdesk::Ticket', :foreign_key => 'long_tc02'
-  belongs_to :internal_group, :class_name => "Group", :foreign_key => "long_tc03"
-  belongs_to :internal_agent, :class_name => "User", :conditions => {:helpdesk_agent => true},
-    :foreign_key => "long_tc04"
   belongs_to :skill, :class_name => 'Admin::Skill', :foreign_key => 'long_tc06'
 
 
@@ -66,8 +61,6 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :sla_response_reminded, :boolean_tc04
 	alias_attribute :sla_resolution_reminded, :boolean_tc05
 	alias_attribute :dirty_attributes, :text_tc03
-	alias_attribute :internal_group_id, :long_tc03
-	alias_attribute :internal_agent_id, :long_tc04
 	alias_attribute :association_type, :int_tc03
 	alias_attribute :associates_rdb, :long_tc05
 	alias_attribute :skill_id, :long_tc06
@@ -103,14 +96,6 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	def self.associates_rdb_column
 		:long_tc05
 	end
-
-  def self.internal_group_column
-    :long_tc03
-  end
-
-  def self.internal_agent_column
-    :long_tc04
-  end
 
   def self.skill_id_column
   	:long_tc06

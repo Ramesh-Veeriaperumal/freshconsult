@@ -23,7 +23,7 @@ module Pipe
 
       def assign_protected
         super
-        assign_pending_since if @item[:status] == PENDING && create?
+        assign_pending_since if @item[:status] == PENDING
       end
 
       def assign_pending_since

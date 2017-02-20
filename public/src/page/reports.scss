@@ -199,6 +199,7 @@ $Customer_hover_color:#866aa0;
 		td,th {
 			text-align : left;
 			word-wrap: normal;
+			word-break: break-word;
 		}
 		
 		.dataTables_paginate {
@@ -225,7 +226,7 @@ $Customer_hover_color:#866aa0;
 	}
 	.hours{
 		vertical-align: middle;
-		text-align : right;
+		text-align : right !important;
 	}
 }
 
@@ -305,7 +306,7 @@ $Customer_hover_color:#866aa0;
 .column-options {
 	position : relative;
 	i {
-		color : #e2e2e2;
+		color : #989898;
 	}
 	.picker {
 		position : absolute;
@@ -331,6 +332,11 @@ $Customer_hover_color:#866aa0;
 			    	cursor : pointer;
 			    }
 			    cursor : auto;
+
+			    &.divider{
+			    	border-top : 1px solid #e1e1e1;
+			    	padding-top: 10px;
+			    }
 			}
 		}
 		.footer{

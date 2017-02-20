@@ -33,7 +33,7 @@ class ThirdCRM
     }
 
     SUBSCRIPTION_INFO = {
-      'custom' => {'string--Plan' => :plan_name, 'float--Monthly--Revenue' => :amount, 'integer--Agent--Count' => :agent_limit, 
+      'custom' => {'string--Plan' => :plan_name, 'float--Monthly--Revenue' => :cmrr, 'integer--Agent--Count' => :agent_limit,
         'string--Customer--Status' => :state, 'string--Contact--Status' => :state, 'integer--Renewal--Period' => :renewal_period}
     }
 
@@ -53,6 +53,16 @@ class ThirdCRM
   end
 
   def lead_info(account)
+
+    # Fetch list of associated accounts from dynamodb for the given email id
+    associated_accounts = AdminEmail::AssociatedAccounts.find account.admin_email
+
+    # Creating comma separated account ids
+
+    if associated_accounts.present?
+        @associated_account_id_list = associated_accounts.map(&:id).join(', ')
+    end
+
     account_info = user_info(account)
     subscription_info = subscription_info(account.subscription)
     misc = account.conversion_metric ? signup_info(account.conversion_metric) : {'default' => {}, 'custom' => {}}
@@ -76,7 +86,8 @@ class ThirdCRM
     def user_info(account)
       {
         "default" => LEAD_INFO["default"].inject({}) { |h, (k, v)| h[k] = account.send(v); h },
-        "custom" => LEAD_INFO["custom"].inject({}) { |h, (k, v)| h[k] = account.send(v); h } 
+        "custom" => LEAD_INFO["custom"].inject({}) { |h, (k, v)| h[k] = account.send(v); h }.merge(
+          {'string--Associated--Accounts' => @associated_account_id_list })
       }
     end
 

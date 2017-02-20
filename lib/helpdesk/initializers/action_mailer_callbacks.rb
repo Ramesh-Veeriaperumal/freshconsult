@@ -57,7 +57,7 @@ module ActionMailerCallbacks
         mail.delivery_method(:smtp, read_smtp_settings(category_id))
         set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email)
       else
-        category_id = get_notification_category_id(mail_type)
+        category_id = get_notification_category_id(mail_type) || check_spam_category(mail, mail_type)
         if category_id.blank?
           mailgun_traffic = get_mailgun_percentage
           if mailgun_traffic > 0 && Random::DEFAULT.rand(100) < mailgun_traffic
@@ -92,12 +92,14 @@ module ActionMailerCallbacks
     def set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email)
       if Helpdesk::Email::OutgoingCategory::MAILGUN_PROVIDERS.include?(category_id.to_i)
         Rails.logger.debug "Sending email via mailgun"
-        message_id = encrypt_custom_variables(account_id, ticket_id, note_id, mail_type, from_email)
+        message_id = encrypt_custom_variables(account_id, ticket_id, note_id, mail_type, from_email, category_id)
         mail.header['X-Mailgun-Variables'] = "{\"message_id\": \"#{message_id}\"}"
       else
         Rails.logger.debug "Sending email via sendgrid"
-        mail.header['X-SMTPAPI'] = get_unique_args(from_email, account_id, ticket_id, note_id, mail_type)
+        mail.header['X-SMTPAPI'] = get_unique_args(from_email, account_id, ticket_id, note_id, mail_type, category_id)
       end
+    rescue => e
+      Rails.logger.debug "Error while setting custom headers - #{e.message} - #{e.backtrace}"
     end   
         
     def read_smtp_settings(category_id)
@@ -112,13 +114,14 @@ module ActionMailerCallbacks
       mail.header["X-FD-Email-Category"].to_s.to_i if mail.present? and mail.header["X-FD-Email-Category"].present?
     end
 
-    def encrypt_custom_variables(account_id, ticket_id, note_id, type, from_email)
+    def encrypt_custom_variables(account_id, ticket_id, note_id, type, from_email, category_id)
       type = (is_num?(type)) ? type : get_notification_type_id(type)
       account_id = (account_id == -1) ? 0 : account_id
       ticket_id = (ticket_id == -1) ? 0 : ticket_id
       note_id = (note_id == -1) ? 0 : note_id
-      from_email[from_email.rindex("@")] = "="
-      "#{account_id}.#{ticket_id}.#{note_id}.#{type}+#{from_email}@freshdesk.com"
+      category_id = (category_id == -1) ? 0 : category_id
+      from_email[from_email.rindex("@")] = "=" if from_email.present?
+      "#{account_id}.#{ticket_id}.#{note_id}.#{type}.#{category_id}+#{from_email}@freshdesk.com"
     end
 
     def decrypt_to_custom_variables(text)
@@ -134,6 +137,7 @@ module ActionMailerCallbacks
         :ticket_id => (custom_variables[1] == "0") ? -1 : custom_variables[1],
         :note_id => (custom_variables[2] == "0") ? -1 : custom_variables[2],
         :email_type => type.nil? ?  custom_variables[3] : type,
+        :category_id => (custom_variables[4].present? && custom_variables[4] == "0") ? -1 : custom_variables[4],
         :from_email => from_email
       }
     end
@@ -152,12 +156,13 @@ module ActionMailerCallbacks
        false
     end
 
-    def get_unique_args(from_email, account_id = -1, ticket_id = -1, note_id = -1, mail_type = "")
+    def get_unique_args(from_email, account_id = -1, ticket_id = -1, note_id = -1, mail_type = "", category_id = -1)
       note_id_str = note_id != -1 ? "\"note_id\": #{note_id}," : ""
       "{\"unique_args\":{\"account_id\": #{account_id},\"ticket_id\":#{ticket_id}," \
         "#{note_id_str}" \
-        "\"email_type\":\"#{mail_type}\",\"from_email\":\"#{from_email}\"}}"
+        "\"email_type\":\"#{mail_type}\",\"from_email\":\"#{from_email}\",\"category_id\":\"#{category_id}\"}}"
     end
+
 
     def get_notification_category_id(type)
       category_id = get_category_header(mail)
@@ -168,6 +173,17 @@ module ActionMailerCallbacks
         key = (state == "active" || state == "premium") ? 'paid' : 'free'
         return Helpdesk::Email::OutgoingCategory::CATEGORY_BY_TYPE["#{key}_email_notification".to_sym]
       end
+    end
+
+    def check_spam_category(mail, type)
+      category = nil
+      notification_type = is_num?(type) ? type : get_notification_type_id(type) 
+      if account_created_recently? && EmailNotificationConstants::SPAM_FILTERED_NOTIFICATIONS.include?(notification_type)
+        response = FdSpamDetectionService::Service.new(Helpdesk::EMAIL[:outgoing_spam_account], mail.to_s).check_spam
+        category = Helpdesk::Email::OutgoingCategory::CATEGORY_BY_TYPE[:spam] if response.spam?
+        Rails.logger.info "Spam check response for outgoing email: #{response.spam?}"
+      end
+      return category
     end
   end
 end

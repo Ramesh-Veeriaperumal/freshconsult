@@ -1,3 +1,4 @@
+<% gamification_enabled = current_account.gamification_enable_enabled? %>
 <div class="pull-right">
 	<a href='#all-agents-gamification-reset' 
         id="scoreboard_start_over"
@@ -8,10 +9,10 @@
         data-close-on-submit="true"
         data-close-label="<%= t('cancel') %>"
         data-destroy-on-close="true"
-        <% unless feature?(:gamification_enable) %>style="display:none"<% end %> >
+        <% unless gamification_enabled %>style="display:none"<% end %> >
         	<%=t('.start_over')%>
 	</a>
-	<%= check_box_tag :gamification_enable, 1, feature?(:gamification_enable), 
+	<%= check_box_tag :gamification_enable, 1, gamification_enabled, 
 			:rel => "toggle", 
 			"data-checked-label" => "enabled", 
 			"data-unchecked-label" => "disabled", 
@@ -21,7 +22,7 @@
 
 <h3 class="lead"><%=t('.title')%></h3>
 
-<div id="scoreboard_elements" <% unless feature?(:gamification_enable) %>style="display:none"<%end%> >
+<div id="scoreboard_elements" <% unless gamification_enabled %>style="display:none"<%end%> >
 	<ul data-tabs="tabs" class="tabs nav-tabs">
 		<li class="active first">
 			<a id="points-tab" href="#points"><%= t('admin.gamification.points') %></a>
@@ -41,7 +42,7 @@
 	</div>
 </div>
 
-<div class="clearfix" id="gamification-intro" <% if feature?(:gamification_enable) %>style="display:none"<%end%>>	
+<div class="clearfix" id="gamification-intro" <% if gamification_enabled %>style="display:none"<%end%>>	
 	<div class="aracde-content">
 		<div class="aligncenter">
 			<%= image_tag "#{asset_host_url}/assets/helpimages/arcade-admin-page.png", :alt => t('admin.help_image_alt.helpdesk_arcarde')  %>

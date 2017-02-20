@@ -62,6 +62,12 @@ module Freshfone::TicketActions
 		@ticket = current_call.notable
 	end
 
+	def transcribed_note(args)
+		@ticket = current_account.tickets.find(args[:ticket])
+		build_note(args).save
+		reset_notable
+	end
+
 	private
 		def build_ticket(args)
 			current_call.notable = Account.current.tickets.build
@@ -106,5 +112,10 @@ module Freshfone::TicketActions
 
     def validate_ticket_creation
       return render json: { status: :error } if current_call.blank?
+    end
+
+    def reset_notable
+      current_call.notable = @ticket
+      current_call.save
     end
 end

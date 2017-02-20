@@ -196,7 +196,7 @@ class BusinessCalendar < ActiveRecord::Base
 
     def self.multiple_business_hours_enabled?
       @business_hour_caller = Thread.current[TicketConstants::BUSINESS_HOUR_CALLER_THREAD]
-      Account.current.features?(:multiple_business_hours) &&
+      Account.current.multiple_business_hours_enabled? &&
        @business_hour_caller && 
        @business_hour_caller.business_calendar
     end

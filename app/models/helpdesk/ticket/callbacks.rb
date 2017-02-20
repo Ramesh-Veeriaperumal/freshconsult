@@ -24,7 +24,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save  :assign_outbound_agent,  :if => :new_outbound_email?
 
-  before_save :reset_internal_group_agent
+  before_save :reset_internal_group_agent, :update_schema_less_ticket_so_fields
 
   before_save :reset_assoc_parent_tkt_status, :if => :assoc_parent_ticket?
 
@@ -182,11 +182,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
       schema_less_ticket.set_group_assigned_flag
     end
     #for internal_agent_id
-    if @model_changes.key?(:long_tc04)
+    if @model_changes.key?(:internal_agent_id)
       schema_less_ticket.set_internal_agent_assigned_flag
       schema_less_ticket.set_internal_agent_first_assign_bhrs(self.created_at, time_zone_now, self.group) if (self.reports_hash["internal_agent_assigned_flag"]==true )
     end
-    schema_less_ticket.set_internal_group_assigned_flag if @model_changes.key?(:long_tc03)
+    schema_less_ticket.set_internal_group_assigned_flag if @model_changes.key?(:internal_group_id)
   end
 
   def process_status_changes
@@ -215,25 +215,34 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   #Shared onwership Validations
   def reset_internal_group_agent
-    (schema_less_ticket.internal_agent_id = schema_less_ticket.internal_group_id = nil) or return unless Account.current.features?(:shared_ownership)
+    (self.internal_agent_id = self.internal_group_id = nil) or return unless Account.current.features?(:shared_ownership)
     return unless (status_changed? || shared_ownership_fields_changed?)
 
     #Nullify internal group when the status(without the particular group mapped) is changed.
     #If the new status has the same group mapped to it, preserve internal group and internal agent.
     if !valid_internal_group?
-      previous_ig_id = internal_group_id_changed? ? internal_group_id_changes[0] : schema_less_ticket.internal_group_id
-      schema_less_ticket.internal_group_id = (valid_internal_group?(previous_ig_id) ? previous_ig_id : nil)
+      internal_group_id_changes = self.changes.symbolize_keys[:internal_group_id]
+      previous_ig_id = internal_group_id_changed? ? internal_group_id_changes[0] : internal_group_id
+      self.internal_group_id = (valid_internal_group?(previous_ig_id) ? previous_ig_id : nil)
     end
 
     #Nullify internal agent when the status or internal group(without the particular agent mapped) is changed.
     #If the new group has the same agent mapped to it, preserve internal agent.
     if !valid_internal_agent?
-      previous_ia_id = internal_agent_id_changed? ? internal_agent_id_changes[0] : schema_less_ticket.internal_agent_id
-      schema_less_ticket.internal_agent_id = (valid_internal_agent?(previous_ia_id) ? previous_ia_id : nil)
+      internal_agent_id_changes = self.changes.symbolize_keys[:internal_agent_id]
+      previous_ia_id = internal_agent_id_changed? ? internal_agent_id_changes[0] : internal_agent_id
+      self.internal_agent_id = (valid_internal_agent?(previous_ia_id) ? previous_ia_id : nil)
     end
   end
 
   #Shared onwership Validations ends here
+
+  def update_schema_less_ticket_so_fields
+    return if !Account.current.features?(:shared_ownership) || !redis_key_exists?(SO_FIELDS_MIGRATION) ||
+      (schema_less_ticket.long_tc03 == internal_group_id && schema_less_ticket.long_tc04 == internal_agent_id)
+    schema_less_ticket.long_tc03 = self.internal_group_id
+    schema_less_ticket.long_tc04 = self.internal_agent_id
+  end
 
   def refresh_display_id #by Shan temp
       self.display_id = Helpdesk::Ticket.select(:display_id).where(id: id).first.display_id  if display_id.nil? #by Shan hack need to revisit about self as well.
@@ -590,7 +599,7 @@ private
   end
 
   def auto_refresh_allowed?
-    Account.current.features?(:auto_refresh)
+    Account.current.auto_refresh_enabled?
   end
 
   #RAILS3 Hack. TODO - @model_changes is a HashWithIndifferentAccess so we dont need symbolize_keys!,

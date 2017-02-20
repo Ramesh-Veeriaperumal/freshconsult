@@ -1,7 +1,7 @@
 class Admin::ProductsController < Admin::AdminController
 	include ModelControllerMethods
   
-  before_filter { |c| c.requires_feature :multi_product }
+  before_filter { |c| c.requires_this_feature :multi_product }
   before_filter :build_object, :only => [:new, :create]
   before_filter :load_other_objects, :only => [:new, :edit]
   

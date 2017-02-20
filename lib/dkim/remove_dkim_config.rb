@@ -10,6 +10,7 @@ class Dkim::RemoveDkimConfig
 
   def remove_records
     Rails.logger.debug("Remove dkim for #{domain_category.inspect}")
+    domain_category.category = set_sendgrid_category_id if domain_category.category.blank?
     if delete_mail_server_records and delete_aws_records and update_email_configs and delete_dkim_records
       domain_category.category = nil
       domain_category.status = OutgoingEmailDomainCategory::STATUS['disabled']
@@ -48,5 +49,11 @@ class Dkim::RemoveDkimConfig
     
     def delete_dkim_records
       domain_category.dkim_records.destroy_all
+    end
+    
+    def set_sendgrid_category_id
+      id_list = domain_category.dkim_records.custom_records.pluck(:sg_category_id)
+      Rails.logger.debug("Sendgrid Category id_list :: #{id_list.inspect}")
+      id_list.first
     end
 end
