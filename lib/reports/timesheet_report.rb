@@ -305,9 +305,6 @@ module Reports::TimesheetReport
     OPTIONAL_COLUMN_CONFIG.each do |key,value|
       report_columns_arr.push({name:value, id:key, default: false, is_custom: false})
     end
-
-
-
     Account.current.custom_dropdown_fields_from_cache.each do |col|
       report_columns_arr.push({name: col.label_in_portal, id:col.flexifield_def_entry.flexifield_name, default: false, is_custom: true})
     end

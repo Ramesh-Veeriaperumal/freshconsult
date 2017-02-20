@@ -98,6 +98,8 @@ module ActionMailerCallbacks
         Rails.logger.debug "Sending email via sendgrid"
         mail.header['X-SMTPAPI'] = get_unique_args(from_email, account_id, ticket_id, note_id, mail_type, category_id)
       end
+    rescue => e
+      Rails.logger.debug "Error while setting custom headers - #{e.message} - #{e.backtrace}"
     end   
         
     def read_smtp_settings(category_id)
@@ -118,7 +120,7 @@ module ActionMailerCallbacks
       ticket_id = (ticket_id == -1) ? 0 : ticket_id
       note_id = (note_id == -1) ? 0 : note_id
       category_id = (category_id == -1) ? 0 : category_id
-      from_email[from_email.rindex("@")] = "="
+      from_email[from_email.rindex("@")] = "=" if from_email.present?
       "#{account_id}.#{ticket_id}.#{note_id}.#{type}.#{category_id}+#{from_email}@freshdesk.com"
     end
 
