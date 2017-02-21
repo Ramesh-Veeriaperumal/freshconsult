@@ -12,12 +12,12 @@ class ThirdCRM
 
   LEAD_INFO = { 
       'default' => {
-        'LastName' => :admin_first_name, 'FirstName' => :admin_last_name,
+        'LastName' => :admin_last_name, 'FirstName' => :admin_first_name,
         'Email' => :admin_email, 'Phone' => :admin_phone, 'Company' => :name
       },
       'custom' => {
-        'integer--Freshdesk--Account--ID' => :id, 
-        'string--Freshdesk--Domain--Name' => :full_domain 
+        'integer--Account--ID' => :id,
+        'string--Account--URL' => :full_domain
       }
     }
 
@@ -34,7 +34,7 @@ class ThirdCRM
 
     SUBSCRIPTION_INFO = {
       'custom' => {'string--Plan' => :plan_name, 'float--Monthly--Revenue' => :cmrr, 'integer--Agent--Count' => :agent_limit,
-        'string--Customer--Status' => :state, 'string--Contact--Status' => :state, 'integer--Renewal--Period' => :renewal_period}
+        'string--Customer--Status' => :state, 'integer--Renewal--Period' => :renewal_period}
     }
 
   def add_signup_data(account, options = {})
@@ -94,9 +94,8 @@ class ThirdCRM
     def subscription_info(subscription)
       {
         'custom' => SUBSCRIPTION_INFO["custom"].inject({}) { |h, (k, v)| h[k] = AUTOPILOT_STATES[subscription.send(v).to_s] || subscription.send(v).to_s; h }.merge(
-          {"string--Product" => PRODUCT_NAME, 
-            'date--Signup--Date' => subscription.created_at.strftime("%Y-%m-%d"), 
-            'date--Next--Renewal--Date' => subscription.next_renewal_at.strftime("%Y-%m-%d")})
+          {  'date--Signup--Date' => subscription.created_at.strftime("%Y-%m-%d"),
+            'date--Renewal--Date' => subscription.next_renewal_at.strftime("%Y-%m-%d")})
       }
     end
 
