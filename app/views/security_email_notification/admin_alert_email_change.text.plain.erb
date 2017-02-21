@@ -1,0 +1,10 @@
+Hi <%= @doer.name %>,
+
+You have changed the email address associated with <%= @model.name %> on <%= @time %>.
+
+Please note that <%= @model.name %> may not be able to access the <%= @model.account.name %> account anymore.
+
+If this change has been made without your authorization, contact your helpdesk Administrator or Freshdesk support immediately.
+
+Regards,
+<%= @model.account.name %>
