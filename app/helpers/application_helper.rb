@@ -24,8 +24,12 @@ module ApplicationHelper
   include StoreHelper
   include Redis::IntegrationsRedis
   include JsonEscape
+  include Concerns::AppConfigurationConcern
 
   require "twitter"
+
+  # Methods: get_app_config, is_application_installed?, get_app_details, installed_apps - moved to Concerns::AppConfigurationConcern
+  # Methods: formated_date - moved to Concerns::ApplicationViewConcern
 
   ASSETIMAGE = { :help => "/assets/helpimages" }
   ASSET_MANIFEST = {}
@@ -946,28 +950,10 @@ module ApplicationHelper
   time_sheets.collect{|t| t.running_time}.sum
  end
 
-  def get_app_config(app_name)
-    installed_app = get_app_details(app_name)
-    return installed_app.configs[:inputs] unless installed_app.blank?
-  end
-
-  def is_application_installed?(app_name)
-    get_app_details(app_name).present?
-  end
-
-  def get_app_details(app_name)
-    installed_app = installed_apps[app_name.to_sym]
-    return installed_app
-  end
-
   #This one checks for installed apps in account
   def dropbox_app_key
     app = installed_apps[:dropbox]
     app.configs[:inputs]['app_key']  unless (app.blank?)
-  end
-
-  def installed_apps
-    @installed_apps ||= current_account.installed_apps_hash
   end
 
   def cloud_files_installed?

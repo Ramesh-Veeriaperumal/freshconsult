@@ -87,8 +87,8 @@ class TicketUpdatePropertyValidation < ApiValidation
   def default_field_validations
     { 
       status: { custom_inclusion: { in: proc { |x| x.status_ids }, ignore_string: :allow_string_param, detect_type: true } },
-      group: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
-      agent: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
+      group: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param } },
+      agent: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param } },
       priority: { custom_inclusion: { in: ApiTicketConstants::PRIORITIES, ignore_string: :allow_string_param, detect_type: true } }
     }
   end

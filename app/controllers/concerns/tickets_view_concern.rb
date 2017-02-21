@@ -109,5 +109,9 @@ module Concerns
           doc.at_css('body').inner_html
         end
       end
+
+      def reply_cc_emails(ticket)
+        ticket.notes.visible.public.exists? ? ticket.reply_to_all_emails : ticket.current_cc_emails
+      end
   end
 end

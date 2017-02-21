@@ -37,7 +37,7 @@ class TicketValidation < ApiValidation
 
   validates :source, custom_inclusion: { in: proc { |x| x.sources }, ignore_string: :allow_string_param, detect_type: true }, if: :update_or_update_multiple?
   validates :source, custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :allow_string_param, detect_type: true, allow_nil: true }, on: :create
-  validates :requester_id, :email_config_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param, greater_than: 0  }
+  validates :requester_id, :email_config_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param  }
 
   validates :company_id, custom_absence: {
     message: :require_feature_for_attribute,
@@ -52,8 +52,7 @@ class TicketValidation < ApiValidation
     only_integer: true,
     greater_than: 0,
     allow_nil: true,
-    ignore_string: :allow_string_param,
-    greater_than: 0
+    ignore_string: :allow_string_param
   }
 
   validate :requester_detail_missing, if: -> { create_or_update? && requester_id_mandatory? }
@@ -224,9 +223,9 @@ class TicketValidation < ApiValidation
       status: { custom_inclusion: { in: proc { |x| x.status_ids }, ignore_string: :allow_string_param, detect_type: true } },
       priority: { custom_inclusion: { in: ApiTicketConstants::PRIORITIES, ignore_string: :allow_string_param, detect_type: true } },
       ticket_type: { custom_inclusion: { in: proc { TicketsValidationHelper.ticket_type_values } } },
-      group: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
-      agent: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
-      product: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
+      group: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param } },
+      agent: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param } },
+      product: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param } },
       subject: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
       description: { data_type: { rules: String } }
     }

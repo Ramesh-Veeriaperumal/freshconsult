@@ -1,5 +1,9 @@
-JSON.generate({ 
-  template: @content,
-  signature: @agent_signature,
-  quoted_text: @quoted_text
-})
+ret_hash = {
+	template: @content,
+	signature: @agent_signature,
+	quoted_text: @quoted_text
+}
+ret_hash.merge!(cc_emails: @cc_emails) if @cc_emails
+ret_hash.merge!(bcc_emails: @bcc_emails) if @bcc_emails
+
+JSON.generate(ret_hash)

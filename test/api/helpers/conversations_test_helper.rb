@@ -101,7 +101,7 @@ module ConversationsTestHelper
     { body:  Faker::Lorem.paragraph, to_emails: [Faker::Internet.email, Faker::Internet.email], cc_emails: [Faker::Internet.email, Faker::Internet.email], bcc_emails: [Faker::Internet.email, Faker::Internet.email] }.to_json
   end
 
-  def reply_template_pattern(expected_output)
+  def conversation_template_pattern(expected_output)
     {
       template: expected_output[:template],
       signature: expected_output[:signature],
@@ -109,6 +109,9 @@ module ConversationsTestHelper
     }
   end
 
+  def reply_template_pattern(expected_output)
+    conversation_template_pattern(expected_output).merge(cc_emails: Array, bcc_emails: Array)
+  end
 
   def full_text_pattern(note)
     {
