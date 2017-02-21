@@ -33,7 +33,7 @@ module Search
           # _Note_: If Typhoeus is not a preferred client, can change here alone.
           #
           def es_request
-            request_to_es = Typhoeus::Request.new(@path, method: @method, body: @payload, headers: { 'X-Request-Id' => @uuid, 'Connection' => 'keep-alive' })
+            request_to_es = Typhoeus::Request.new(@path, method: @method, body: @payload, headers: { 'User-Agent' => "V2Client #{@uuid}", 'X-Request-Id' => @uuid, 'Connection' => 'keep-alive' })
             attach_callbacks(request_to_es)
 
             logger.log_request(
