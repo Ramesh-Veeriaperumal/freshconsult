@@ -31,7 +31,6 @@ var ManageAgents = ManageAgents || (function($){
 	function _showModal(id, name, agentcount, isaccadmin){
 
 		// initial set of loading here 
-		var agent_url = jQuery("#group_agents_list_url").val() || jQuery("#edit_group_agents_list_url").val();
 		_appendContent(name, agentcount, _initmodal);
 		_resetPopup();
 		var $agentSelectBox = jQuery('#manage-agents-content .add-agent-box, #manage-agents-content .button-container');
@@ -46,25 +45,18 @@ var ManageAgents = ManageAgents || (function($){
 				_getDataFromStore();
 				jQuery("#manage-agents .agent-list-wrapper").removeClass('sloading');
 			}else{
-				var admin_role_url = "/admin/roles/users_list";
-				_getAgentDetails(id,admin_role_url).success(function(data){
+				_getAgentDetails(id).success(function(data){
 					var constructedData = _constructObject(data, _select2Data);
 					if(isaccadmin && jQuery("#is-accadmin").val() === "false"){
 						constructedData['admin'] = true;
 					}else{
 						constructedData['admin'] = false;
 					}
-
-					var agentGroupData = JST["app/admin/roles/templates/group_user_list"]({
-						data: constructedData
-					});
-					
 					var agentData = JST["app/admin/roles/templates/user_list"]({
 						data: constructedData
 					});
-
 					_populateSelect2(constructedData.select2data);
-					agent_url ? jQuery("#manage-agents .agent-list-wrapper").html(agentGroupData) : jQuery("#manage-agents .agent-list-wrapper").html(agentData);
+					jQuery("#manage-agents .agent-list-wrapper").html(agentData);
 					jQuery("#manage-agents .agent-list-wrapper").removeClass('sloading');
 					Select2Handler.updateCount( constructedData.user.length );
 				});
@@ -84,19 +76,12 @@ var ManageAgents = ManageAgents || (function($){
 	}
 
 	function _getDataFromStore(){
-		var agent_url = jQuery("#group_agents_list_url").val() || jQuery("#edit_group_agents_list_url").val();
-        console.log(agent_url);
 		SubmitHandler.data.local = true;
 		var localAgent = JST["app/admin/roles/templates/user_list"]({
 			data: SubmitHandler.data
 		});
-
-		var localGroupAgent = JST["app/admin/roles/templates/group_user_list"]({
-			data: SubmitHandler.data
-		});
-
 		_populateSelect2(SubmitHandler.data.select2);
-		agent_url? jQuery("#manage-agents .agent-list-wrapper").html(localGroupAgent) : jQuery("#manage-agents .agent-list-wrapper").html(localAgent);
+		jQuery("#manage-agents .agent-list-wrapper").html(localAgent);
 		Select2Handler.updateCount( SubmitHandler.data.user.length );
 	}
 
@@ -158,7 +143,7 @@ var ManageAgents = ManageAgents || (function($){
 		var users_temp = [];
 		while(len--) {
 			if(data[len].user_id){
-				rolesObj[data[len].user_id] =  data[len].role_ids? data[len].role_ids : data[len].group_ids;
+				rolesObj[data[len].user_id] =  data[len].role_ids;
 				users_temp.push(data[len].user_id + '');
 			}
 		}
@@ -202,12 +187,9 @@ var ManageAgents = ManageAgents || (function($){
 		cb();
 	}
 
-	function _getAgentDetails(id , admin_role_url){
-			// pass the url dynamically depending on whether its coming from roles or groups page
-       		var agent_url = jQuery("#group_agents_list_url").val() || jQuery("#edit_group_agents_list_url").val();
-       		var url = agent_url? agent_url : admin_role_url;
+	function _getAgentDetails(id){
 		return $.ajax({
-			url: url,
+			url: "/admin/roles/users_list",
 			type: "GET",
 			data: {'id' : id}
 		});
@@ -215,7 +197,7 @@ var ManageAgents = ManageAgents || (function($){
 
 	function _initmodal(name, agentcount){
 		var titleTemplate = '';
-		if(App.namespace === 'admin/roles/index' || App.namespace === 'groups/index'){
+		if(App.namespace === 'admin/roles/index'){
 			titleTemplate = '<p class="modal-title modal-roles-title muted"></p>'
 		}
 		var params =  {

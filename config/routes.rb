@@ -364,7 +364,6 @@ Helpkit::Application.routes.draw do
     collection do
       get  :index
       get  :enable_roundrobin_v2
-      get :users_list
     end
     member do
       get :user_skill_exists
