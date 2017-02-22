@@ -1,0 +1,11 @@
+Hi <%= @doer.name %>,
+<br><br>
+You have changed the email address associated with <%= @model.name %> on <%= @time %>.
+<br><br>
+Please note that <%= @model.name %> may not be able to access the <%= @model.account.name %> account anymore.
+<br><br>
+If this change has been made without your authorization, contact your helpdesk Administrator immediately.
+<br>
+
+Regards,
+<%= @model.account.name %>
