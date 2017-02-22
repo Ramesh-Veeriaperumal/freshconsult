@@ -6,6 +6,17 @@ module HelpdeskReports::Helper::ControllerMethods
   def report_filter_data_hash
     rep_filters = pre_load_report_filters_with_schedule
     rep_filters.each do |rep_filter|
+      if(rep_filter["data_hash"]["version"].blank? && @report_type == :timesheet_reports)
+        rep_filter[:data_hash]["report_filters"].each do |filter|
+          filter["condition"] = filter.delete("name")
+          filter["condition"] = "product_id"  if filter["condition"] == "products_id"
+          if(filter["condition"] == "agent_id" || filter["condition"] == "user_id")
+            filter["condition"] = "agent_id"
+            values = filter["value"].split(",")
+            filter["source"] = User.select([:id, :name]).where(id: values).collect{|a| {a[:id] => a[:name]}}
+          end
+        end
+      end
     	rep_filter[:data_hash]["schedule_config"] = schedule_config_json(rep_filter)
     end
     @report_filter_data = rep_filters
@@ -47,7 +58,7 @@ module HelpdeskReports::Helper::ControllerMethods
   def common_delete_reports_filter
     id = params[:id].to_i
     report_filter = current_user.report_filters.find(id)
-    report_filter.destroy 
+    report_filter.destroy
     render json: "success", status: :ok
   end
 
@@ -58,7 +69,7 @@ module HelpdeskReports::Helper::ControllerMethods
         @data_map[:schedule_config] = {enabled: true}
         result = save_scheduled_report report_filter
         status = result.delete(:status)
-      else 
+      else
         delete_scheduled_report(report_filter)
       end
     end
@@ -126,12 +137,12 @@ module HelpdeskReports::Helper::ControllerMethods
   end
 
   def get_chat_table_headers
-    { 
+    {
       :agent_name      => I18n.t('reports.livechat.agent'),
       :answered_chats  => I18n.t('reports.livechat.answered_chats'),
       :avg_handle_time => I18n.t('reports.livechat.avg_handle_time'),
       :total_duration  => I18n.t('reports.livechat.total_duration')
     }
   end
-  
+
 end

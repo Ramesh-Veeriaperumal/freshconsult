@@ -15,13 +15,13 @@ class Community::Sitemap
   SOLUTION = ['category', 'folder', 'article']
   FORUM = ['category', 'forum', 'topic']
   CHANGE_FREQ = "always"
-  ATTRIBUTES = { :xmlns => "http://www.sitemaps.org/schemas/sitemap/0.9" , "xmlns:xhtml" => "http://www.w3.org/1999/xhtm1-strict.xsd" }
+  ATTRIBUTES = { :xmlns => "http://www.sitemaps.org/schemas/sitemap/0.9" , "xmlns:xhtml" => "http://www.w3.org/1999/xhtml" }
 
   def initialize(portal)
     @portal = portal
     @domain = "#{portal.url_protocol}://#{portal.host}"
     @portal_languages = @portal.account.all_portal_languages
-    @lastmod = Time.now.utc.strftime("%Y-%m-%dT%H:%M:%S")
+    @lastmod = Time.now.utc.strftime("%Y-%m-%dT%H:%M:%S%:z")
     @urls = []
   end
 
@@ -121,7 +121,7 @@ class Community::Sitemap
         priority = level(SOLUTION.index(type) + 1)
         versions.each do |item|
           loc = static_url_for(URL_STRUCTURE[("solution_"+type).to_sym], item.language_code, item.to_param)
-          lastmod = type == "article" ? item.modified_at.strftime("%Y-%m-%dT%H:%M:%S") : @lastmod
+          lastmod = type == "article" ? item.modified_at.strftime("%Y-%m-%dT%H:%M:%S%:z") : @lastmod
           alternates = versions.size > 1 ? find_alternates(versions, ("solution_"+type).to_sym) : []
 
           @urls.push(Community::Sitemap::Url.new(
@@ -171,7 +171,7 @@ class Community::Sitemap
       structure_key = URL_STRUCTURE[("discussion_" + type).to_sym]
       priority = level(FORUM.index(type) + 1)
       objs.each do |obj|
-        lastmod = type == "topic" ? obj.replied_at.strftime("%Y-%m-%dT%H:%M:%S") : @lastmod
+        lastmod = type == "topic" ? obj.replied_at.strftime("%Y-%m-%dT%H:%M:%S%:z") : @lastmod
         @urls.push(Community::Sitemap::Url.new(
           url_opt(static_url_for(structure_key, nil, obj.id.to_s), priority, lastmod))
         )

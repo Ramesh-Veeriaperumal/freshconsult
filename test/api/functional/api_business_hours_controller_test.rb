@@ -37,14 +37,6 @@ class ApiBusinessHoursControllerTest < ActionController::TestCase
     assert_equal ' ', response.body
   end
 
-  def test_show_business_hour_with_feature_disabled
-    business_hour = create_business_calendar
-    @account.class.any_instance.stubs(:features?).returns(false)
-    get :show, construct_params(id: business_hour.id)
-    @account.class.any_instance.unstub(:features?)
-    assert_response 403
-  end
-
   def test_index_without_privilege
     business_hour = create_business_calendar
     User.any_instance.stubs(:privilege?).returns(false).once

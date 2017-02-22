@@ -101,15 +101,15 @@ module TicketsFilter
   end
 
   AGENT_SORT_FIELDS = [
-    [ :responder_id , "filter_options.responder_id" , FILTER_MODES[:primary]],
-    [ "helpdesk_schema_less_tickets.long_tc04" , "filter_options.internal_agent" , FILTER_MODES[:internal]],
-    [ :any_agent_id , "filter_options.any_agent" , FILTER_MODES[:any]]
+    [ :responder_id,      "filter_options.responder_id" ,   FILTER_MODES[:primary]],
+    [ :internal_agent_id, "filter_options.internal_agent" , FILTER_MODES[:internal]],
+    [ :any_agent_id,      "filter_options.any_agent" ,      FILTER_MODES[:any]]
   ]
 
   GROUP_SORT_FIELDS = [
-    [ :group_id , "filter_options.group_id" , FILTER_MODES[:primary]],
-    [ "helpdesk_schema_less_tickets.long_tc03" , "filter_options.internal_group" , FILTER_MODES[:internal]],
-    [ :any_group_id , "filter_options.any_group" , FILTER_MODES[:any]]
+    [ :group_id ,           "filter_options.group_id" ,       FILTER_MODES[:primary]],
+    [ :internal_group_id ,  "filter_options.internal_group" , FILTER_MODES[:internal]],
+    [ :any_group_id ,       "filter_options.any_group" ,      FILTER_MODES[:any]]
   ]
 
   def self.sort_fields_options

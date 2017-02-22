@@ -178,7 +178,7 @@ class ContactValidation < ApiValidation
     end
 
     def multi_timezone_enabled?
-      Account.current.features?(:multi_timezone)
+      Account.current.multi_timezone_enabled?
     end
 
     def attributes_to_be_stripped

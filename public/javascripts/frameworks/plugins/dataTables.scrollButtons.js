@@ -192,7 +192,7 @@
         this.datatable_body = jQuery(".dataTables_scrollBody");
         this.left_nav_btn = jQuery(".details-prev");
         this.right_nav_btn = jQuery(".details-next");
-        this.fixed_column_elements = jQuery(".DTFC_LeftBodyWrapper,.DTFC_LeftHeadWrapper");
+        this.fixed_column_elements = jQuery(".DTFC_LeftBodyWrapper,.DTFC_LeftHeadWrapper,.left_wrapper");
         this.scrollers = jQuery(".scrollers");
     },
     cFeature: 'S'

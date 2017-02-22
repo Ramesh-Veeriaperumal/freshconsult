@@ -38,7 +38,7 @@ App.CollaborationModel = (function ($) {
                 });
 
                 if(Collab.usersMap && !!Object.keys(Collab.usersMap).length) {
-                    Collab.getNotifications();
+                    // Collab.getNotifications();
                 }
             });
 
@@ -328,7 +328,8 @@ App.CollaborationModel = (function ($) {
                 "members": c.members,
                 "co_id": c.co_id,
                 "owned_by": c.owned_by,
-                "token": Collab.currentConversation.token
+                "token": Collab.currentConversation.token,
+                "name": Collab.currentConversation.name
             };
             _COLLAB_PVT.ChatApi.createConversation(convo, cb);
         },
@@ -422,7 +423,8 @@ App.CollaborationModel = (function ($) {
         setConvoOwner: function(co_id, uid, cb) {
             var convo = {
                 "co_id": co_id,
-                "token": Collab.currentConversation.token
+                "token": Collab.currentConversation.token,
+                "name": Collab.currentConversation.name
             }
             _COLLAB_PVT.ChatApi.setConvoOwner(convo, uid, cb);
         },
@@ -436,7 +438,7 @@ App.CollaborationModel = (function ($) {
             jQuery(document).on("click.collab_head", "#bell-icon-link", function() {
                 if(jQuery("#collab-notification-dd").hasClass("hide")) {
                     if(Collab.usersMap && !!Object.keys(Collab.usersMap).length) {
-                        Collab.getNotifications();
+                        // Collab.getNotifications();
                     }
                 }
                 jQuery("#collab-notification-dd").toggleClass("hide");
@@ -448,7 +450,29 @@ App.CollaborationModel = (function ($) {
             });
             App.CollaborationUi.activateBellListeners();
         },
+        markNotiReadForCollabOpen: function(noti) {
+            var notiForCurrentCollab = (!!Collab.currentConversation && Collab.currentConversation.co_id === noti.ticket_id);
+            if(notiForCurrentCollab && App.CollaborationUi.isCollabOpen()) {
+                var noti_elem = jQuery('.notifications-list a[data-unread-ids="'+noti.noti_id+'"]');
+                App.UserNotification.markNotificationRead(noti_elem, function(){
+                    console.log("READ: ", arguments);
+                });
+            }
+        },
 
+        sendMail: function(mail_content) {
+            var mail_data = {
+                "toAddress": mail_content.toAddressList,
+                "fromAddress": "support@" + window.location.hostname,
+                "html_data": mail_content.html_data,
+                "co_id": Collab.currentConversation.co_id
+            };
+            _COLLAB_PVT.ChatApi.notificationMail({
+                "token": Collab.currentConversation.token,
+                "mail_data": mail_data
+            });
+        },
+        
         init: function() {
             var config = App.CollaborationUi.parseJson($("#collab-model-data").attr("data-model-payload"));
             // TODO(aravind): Add all fields.

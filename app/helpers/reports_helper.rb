@@ -36,10 +36,12 @@ module ReportsHelper
   end
 
   def reports_ticket_link(content)
+    trimmed_content = h(content).length > 73 ? (h(content).slice(0,73) + '...') : content
     if content.is_a?(Helpdesk::ArchiveTicket)
-      content_tag(:a,h(content),:href => helpdesk_archive_ticket_path(content.display_id),:target => "_blank")
+      content_tag(:a,trimmed_content,:href => helpdesk_archive_ticket_path(content.display_id),:target => "_blank")
     else
-      content_tag(:a,h(content),:href => helpdesk_ticket_path(content.display_id),:target => "_blank")
+
+      content_tag(:a,trimmed_content,:href => helpdesk_ticket_path(content.display_id),:target => "_blank")
     end
   end
   

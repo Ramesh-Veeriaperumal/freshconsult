@@ -1,9 +1,11 @@
 class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   include Fdadmin::AccountsControllerMethods
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   before_filter :check_domain_exists, :only => :change_url , :if => :non_global_pods?
-  around_filter :select_slave_shard , :only => [:show, :features, :agents, :tickets, :portal, :user_info,:check_contact_import,:latest_solution_articles]
+  around_filter :select_slave_shard , :only => [:select_all_feature,:show, :features, :agents, :tickets, :portal, :user_info,:check_contact_import,:latest_solution_articles]
   around_filter :select_master_shard , :only => [:add_day_passes, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name, :change_api_limit, :reset_login_count,:contact_import_destroy]
   before_filter :validate_params, :only => [ :change_api_limit ]
   before_filter :load_account, :only => [:user_info, :reset_login_count]
@@ -216,10 +218,25 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end
   end
 
+  def select_all_feature
+    enabled = false
+    account = Account.find(params[:account_id]).make_current
+    if params[:operation] == "launch"
+      enabled = account.launch(:select_all).include?(:select_all)
+    elsif params[:operation] == "rollback"
+      enabled = account.rollback(:select_all).include?(:select_all)
+    elsif params[:operation] == "check"
+      enabled = account.launched?(:select_all)
+    end
+    Account.reset_current_account
+    render :json => {:status => enabled}
+  end
+
   def change_account_name
     account = Account.find(params[:account_id])
     result = { :account_id => account.id , :account_name => account.name }
     account.name = params[:account_name]
+    account.helpdesk_name = params[:account_name]
     if account.save
       result[:status] = "success"
     else
@@ -248,6 +265,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       Account.reset_current_account
     end
     $spam_watcher.perform_redis_op("set", "#{params[:account_id]}-", "true")
+    remove_member_from_redis_set(SPAM_EMAIL_ACCOUNTS, params[:account_id])
+    remove_member_from_redis_set(BLACKLISTED_SPAM_ACCOUNTS, params[:account_id])
     respond_to do |format|
       format.json do
         render :json => result

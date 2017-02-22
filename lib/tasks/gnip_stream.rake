@@ -130,6 +130,7 @@ namespace :gnip_stream do
           gnip_msg.process
         rescue Exception => e
           Rails.logger.debug "Exception in processing tweet"
+          Rails.logger.debug "#{e.class} #{e.message} #{e.backtrace}"
           Rails.logger.debug tweet.inspect
           NewRelic::Agent.notice_error(e, 
             { :custom_params => { :description => "JSON Parse error in gnip feed",

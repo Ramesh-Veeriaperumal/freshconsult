@@ -48,7 +48,7 @@ module Mobile::Actions::Account
   end
 
   def timesheets_feature
-    features?(:timesheets)
+    Account.current.timesheets_enabled?
   end
 
   def freshfone_feature

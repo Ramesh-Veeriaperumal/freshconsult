@@ -82,15 +82,11 @@ module IntegrationServices::Services
     end
 
     def receive_get_contact_account_id
-      contact_resource.get_selected_fields([], @payload[:email])
-    end
-
-    def receive_opportunity_field_properties
-     opportunity_resource.get_field_properties
+      contact_resource.get_selected_fields([], @payload[:email], @meta_data[:app_name])
     end
 
     def receive_fetch_user_selected_fields
-      send("#{@payload[:type]}_resource").get_selected_fields(@installed_app.send("configs_#{@payload[:type]}_fields"), @payload[:value])
+      send("#{@payload[:type]}_resource").get_selected_fields(@installed_app.send("configs_#{@payload[:type]}_fields"), @payload[:value], @meta_data[:app_name])
     end
 
     def receive_integrated_resource
@@ -104,7 +100,7 @@ module IntegrationServices::Services
         return { :error => "Link failed.This ticket is already linked to an opportunity", :remote_id => integrated_local_resource["remote_integratable_id"] } unless integrated_local_resource.blank?
         @payload.delete(:type)
         @payload.delete(:ticket_id)
-        opportunity_resource.create @payload
+        opportunity_resource.create @payload, @meta_data[:app_name]
       rescue RemoteError => e
         return error(e.to_s, { :exception => e.status_code })
       end

@@ -88,9 +88,7 @@ module Freshfone::Disconnect
       !current_call.transferred_leg? &&
         current_number.round_robin? &&
         current_call.meta.simple_or_group_hunt? &&
-        !current_call.meta.all_agents_missed? &&
-        no_response_present? &&
-        current_call.user_id.blank?
+        !current_call.meta.all_agents_missed?
     end
 
     def canceled_call?

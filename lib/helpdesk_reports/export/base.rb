@@ -67,11 +67,15 @@ module HelpdeskReports
 
       private
         def user_download_url file_name, export_type
-          "#{Account.current.full_url}/reports/v2/download_file/#{export_type}/#{@today}/#{file_name}"
+          "#{Account.current.full_url}/reports/download_file/#{export_type}/#{@today}/#{file_name}"
         end
 
         def default_file_format
           [:agent_summary, :group_summary, :satisfaction_survey].include?(report_type) ? 'csv' : 'pdf'
+        end
+
+        def current_account
+          Account.current
         end
         
     end

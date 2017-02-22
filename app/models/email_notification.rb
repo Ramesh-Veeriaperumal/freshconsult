@@ -112,6 +112,8 @@ class EmailNotification < ActiveRecord::Base
 
   BCC_DISABLED_NOTIFICATIONS = [NOTIFY_COMMENT, PUBLIC_NOTE_CC, NEW_TICKET_CC]
 
+  CUSTOM_CATEGORY_ID_ENABLED_NOTIFICATIONS = [NEW_TICKET, NEW_TICKET_CC]
+
   scope :response_sla_reminder, :conditions => { :notification_type => RESPONSE_SLA_REMINDER } 
   scope :resolution_sla_reminder, :conditions => { :notification_type => RESOLUTION_SLA_REMINDER }
   scope :non_sla_notifications, :conditions => ["notification_type not in (?)", [TICKET_UNATTENDED_IN_GROUP,FIRST_RESPONSE_SLA_VIOLATION,RESOLUTION_TIME_SLA_VIOLATION,RESPONSE_SLA_REMINDER,RESOLUTION_SLA_REMINDER]]

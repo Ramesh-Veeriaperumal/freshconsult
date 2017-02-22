@@ -1,0 +1,4 @@
+<% for (var i in data) { %>
+			<% field = I18n.t(data[i].name.toLowerCase(),{scope: 'helpdesk_reports', defaultValue: data[i].name } ) %>
+    	<li data-position='<%= data[i].position %>' data-action='pop-field' data-menu='<%= data[i].condition %>'> <%= escapeHtml(field) %> </li>
+<% } %>

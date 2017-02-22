@@ -10,6 +10,12 @@ class Admin::PagesController < Admin::AdminController
 
   layout false
 
+  def robots
+    @crawl_sitemap = current_account.active? && current_account.features?(:sitemap)
+    @url = "#{current_portal.url_protocol}://#{current_portal.host}"
+    render 'robots.txt.erb'
+  end
+
   def update
     @portal_page.attributes = params[:portal_page]
 

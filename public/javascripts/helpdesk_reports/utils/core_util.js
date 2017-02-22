@@ -6,7 +6,7 @@ HelpdeskReports.CoreUtil = {
     FILTER_LIMIT: 10,
     FILTER_LIMIT_MSG: I18n.t('helpdesk_reports.filter_error_msg'),
     CONST: {
-        base_url    : "/reports/v2/",
+        base_url    : "/reports/",
         metrics_url : "/fetch_metrics",
         tickets_url : "/fetch_ticket_list",
         configure_export_url : "/configure_export",

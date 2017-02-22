@@ -1,5 +1,5 @@
 module Reports::TimesheetReportsHelper
-	
+
 	include Reports::GlanceReportsHelper
 
 	def generate_pdf_action?
@@ -18,19 +18,24 @@ module Reports::TimesheetReportsHelper
     unless options[:include_year]
       time_format = time_format.gsub(/,\s.\b[%Yy]\b/, "") if (date_time.year == Time.now.year)
     end
-    
+
     unless options[:include_weekday]
       time_format = time_format.gsub(/\A(%a|A),\s/, "")
     end
     final_date = options[:translate] ? (I18n.l date_time , :format => time_format) : (date_time.strftime(time_format))
   end
 
-  def construct_timesheet_entry_row(headers, time_entry, load_time, is_pdf=false)
+  def construct_timesheet_entry_row(headers, time_entry, load_time, is_pdf=false, group_by = [])
     entry = ""
     headers.each do |item|
+      next if ( item !=:workable ) && group_by.include?(item)
       content = timesheet_formatted_date(time_entry.executed_at, {:format => :short_day_with_week, :include_year => true}) if item.eql?(:group_by_day_criteria)
       if(item.eql?(:hours))
         content ||= (time_entry.time_spent || 0) + (time_entry.timer_running ? (load_time - time_entry.start_time) : 0)
+      elsif(item.eql?(:requester_name) || item.eql?(:ticket_type))
+        content ||= time_entry.workable.send(item)
+      elsif(item.eql?(:ticket))
+        content ||= time_entry.workable.send(:subject)
       else
         content ||= time_entry.send(item)
       end
@@ -39,7 +44,9 @@ module Reports::TimesheetReportsHelper
         if !is_pdf
           html_content = content_tag(:td, reports_ticket_link(content), :class => item)
         else
-          html_content = "<td class=#{item}><div> #{h(content)} </div></td>"
+          txt = h(content.subject)
+          txt = (txt.length > 73 ? txt.slice(0,73) + '...' : txt) + " (##{content.display_id})"
+          html_content = "<td class=#{item}><div> #{txt} </div></td>"
         end
       else
         if(item.eql?(:hours))
@@ -50,6 +57,13 @@ module Reports::TimesheetReportsHelper
               html_content += "<span class='non-billable-block' title='non-billable'>&nbsp;</span>#{get_time_in_hours(content)}"
             end
           html_content += "</td>"
+        elsif (item.eql?(:note))
+          if(content.blank?)
+            content = "-"
+          else
+            content = content.length > 73 ? content.slice(0,73) + '...' : content
+          end
+          html_content = content_tag(:td,h(content),:class => item)
         else
           if( content.blank? || content.match(/^No +/) )
             content = "-"

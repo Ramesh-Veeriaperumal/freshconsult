@@ -23,7 +23,7 @@ module Helpdesk::TicketsHelper
   def ticket_sidebar
     tabs = [["TicketProperties", t('ticket.properties').html_safe,         "ticket"],
             ["RelatedSolutions", t('ticket.suggest_solutions').html_safe,  "related_solutions", privilege?(:view_solutions)],
-            ["Scenario",         t('ticket.execute_scenario').html_safe,   "scenarios",       feature?(:scenario_automations)],
+            ["Scenario",         t('ticket.execute_scenario').html_safe,   "scenarios",       true],
             ["RequesterInfo",    t('ticket.requestor_info').html_safe,     "requesterinfo"],
             ["Reminder",         t('to_do').html_safe,                     "todo"],
             ["Tags",             t('tag.title').html_safe,                 "tags"],
@@ -54,7 +54,7 @@ module Helpdesk::TicketsHelper
             ['Pages',     t(".conversation").html_safe, @ticket_notes.total_entries],
             ['Timesheet', t(".timesheet").html_safe,    timesheets_size,
                 helpdesk_ticket_time_sheets_path(@ticket),
-                feature?(:timesheets) && privilege?(:view_time_entries)
+                current_account.timesheets_enabled? && privilege?(:view_time_entries)
             ]
            ]
 
@@ -312,10 +312,23 @@ module Helpdesk::TicketsHelper
         user = item.requester 
       end
     else
-      user = ((item.user.customer?) ? item.user : { "name" => item.notable.reply_name, "email" => item.notable.reply_email })
+      user = user_details_for_note item
     end
 
     %( #{h(user['name'])} &lt;#{h(user['email'])}&gt; )
+  end
+
+  def user_details_for_note item
+    sup_emails = item.account.support_emails.map(&:downcase)
+    prev_note_sender = parse_email item.from_email
+    if prev_note_sender[:email] && sup_emails.include?(prev_note_sender[:email].downcase)
+      user = { "name" => prev_note_sender[:name], "email" => prev_note_sender[:email] }
+    elsif item.user.customer?
+      user = item.user
+    else
+      user = { "name" => item.notable.reply_name, "email" => item.notable.reply_email }
+    end
+    user
   end
 
   def extract_quote_from_note(note)

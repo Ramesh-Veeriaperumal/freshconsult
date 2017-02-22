@@ -1,9 +1,11 @@
 class Admin::DkimConfigurationsController < Admin::AdminController
   
   include Dkim::Methods
-  
-  before_filter :check_feature
+    
+  before_filter :access_denied,              :unless => :require_feature_and_privilege
+  before_filter :load_dkim_configured_count, :only => [:index, :create]
   before_filter :load_domain_category, :check_account_state, :except => [:index]
+  before_filter :check_advanced_feature, :only => [:create]
 
   DEFAULT_MINUTES = 15.minutes
   MAX_CAP = 6.hours
@@ -14,7 +16,7 @@ class Admin::DkimConfigurationsController < Admin::AdminController
 
   def create
     if @domain_category
-      result = Dkim::ConfigureDkimRecord.new(@domain_category).build_records
+      Dkim::ConfigureDkimRecord.new(@domain_category).build_records
     end
     flash[:notice] = t('email_configs.dkim.config_fail') unless @domain_category.status == OutgoingEmailDomainCategory::STATUS['unverified']
     render :action => :verify_email_domain
@@ -60,7 +62,24 @@ class Admin::DkimConfigurationsController < Admin::AdminController
       @domain_category.status == OutgoingEmailDomainCategory::STATUS['unverified'] and @domain_category.last_verified_at > MAX_CAP.ago
     end
     
-    def check_feature
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless current_account.dkim_enabled?
+    def require_feature_and_privilege
+      has_feature? and privilege?(:manage_email_settings)
+    end
+    
+    def has_feature?
+      current_account.dkim_enabled? or current_account.basic_dkim_enabled? or current_account.advanced_dkim_enabled?
+    end
+    
+    def load_dkim_configured_count
+      @dkim_count = scoper.dkim_configured_domains.count
+    end
+    
+    def check_advanced_feature
+      return if current_account.advanced_dkim_enabled? and current_account.subscription.state != "trial"
+      
+      return if @dkim_count < OutgoingEmailDomainCategory::MAX_DKIM_ALLOWED and (current_account.basic_dkim_enabled? or current_account.dkim_enabled?)
+      flash[:notice] = t('email_configs.dkim.limit_exceeded')
+      @button_name = t('email_configs.dkim.config')
+      render :action => :create
     end
 end
