@@ -13,6 +13,8 @@ class User < ActiveRecord::Base
 
   before_update :backup_user_changes, :clear_redis_for_agent
 
+  after_update  :send_alert_email, :if => :email_changed?
+
   before_save :set_time_zone, :set_default_company
   before_save :set_language, :unless => :created_from_email
   before_save :set_contact_name, :update_user_related_changes
@@ -198,5 +200,16 @@ class User < ActiveRecord::Base
 
   def remove_white_space
     self.name.squish! unless self.name.nil?
+  end
+
+  def send_alert_email
+    changed_attributes_names = ["primary email "]
+    subject = "System notification: Agent email address changed"
+    SecurityEmailNotification.send_later(:deliver_agent_email_change, self, self.email_was,subject,
+      changed_attributes_names,User.current,"agent_email_change")
+    if User.current.email !=self.email_was
+        SecurityEmailNotification.send_later(:deliver_agent_email_change, self,User.current.email ,subject,
+        changed_attributes_names,User.current,"admin_alert_email_change")
+    end
   end
 end
