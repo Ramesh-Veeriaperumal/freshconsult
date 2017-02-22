@@ -163,6 +163,10 @@
       <%= f.submit t('save'), :class => "btn btn-primary", "data-loading-text" => t('saving') %>
 
     </div>
+
+     <input type="hidden" id="modify_agent_list" value="" name="group[agent_list]">
+    <input type="hidden" value="<%= @group.id %>" id="roleid">
+
   <% end %>
 
 <style>

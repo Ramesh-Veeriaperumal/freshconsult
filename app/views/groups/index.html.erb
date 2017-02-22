@@ -20,7 +20,7 @@
     </div>
   </div>
 <%end %>
-<div class="list-page group-management">
+<div class="list-page">
   <div class="list-page-header row-fluid"> 
     <h3 class="lead span6"><%=t('group.title')%></h3>
     <span class="span6"><%= link_to(t('group.new'), new_group_path, :class => "btn btn-primary pull-right ") if admin_user %></span>
@@ -36,16 +36,38 @@
         <% end %>
 
     <% else %>
-    <div class="list-page-body"> 
+    <div class="list-page-body agent-roles-list"> 
         <table class="table table-striped">
           <% @groups.each do |group| %>
           <tr>
             <td>
-              <%= link_to(h(group.name) + " (#{group.agents.count})", edit_group_path(group), :class => "item_info") %>
-              <div class="muted"><%=h(group.description)%></div>
+               <p class="text-info">
+            <strong><%= link_to(h(group.name), edit_group_path(group), :class => "item_info") %></strong>
+            <br/><div class="muted"><%=h(group.description)%></div>
+            </p>
+
             </td>
 
-            <td class="text-right">
+            
+              <!-- starting of group enhancement !-->
+         <td class="manage-agent">
+         <div>
+         <% if  group.agents.count !=0 %>
+              <a class="popup" data-agentcount="<%= group.agents.count %>" data-title="<%= group.name %>" data-changecount="<%= group.id %>" data-roleid="<%= group.id  %>" data-url="/groups/users_list" href="javascript:void(0)" >
+                  <%= pluralize(group.agents.count, t('admin.roles.agent_label'), t('admin.roles.agents_label')) %>
+                </a>
+                <% else %>
+                <div class="no-agent">
+                  <span class="muted info"><%= t('admin.roles.no_agent_label')%></span>
+                   <a class="popup hide" data-agentcount="<%= group.agents.count %>" data-title="<%= group.name %>" data-changecount="<%= group.id %>" data-roleid="<%= group.id  %>" href="javascript:void(0)">
+                    <%= t('admin.roles.add_agent_label')%>
+                    </a>
+               </div>
+               <% end %>
+         </div>
+         </td>
+        <!-- ending of group enhancement !-->
+        <td>
               <%= link_to(t('edit'), edit_group_path(group), :class => "btn btn-mini") if admin_user %>
               <%= link_to("<i class='icon-trash'></i>".html_safe, group, :confirm => "#{t('group.info5')}", :method => :delete, :class => "btn btn-mini") if admin_user%>
             </td>
@@ -60,6 +82,15 @@
 <div id="enable_rr_msg" class="hide">
   <div><%=t('group.rr_v2_confimation_message')%></div>
 </div>
+
+<input type="hidden" value="" id="roleid">
+<input type="hidden" value="/groups/update_group" id="group_agents_update_list_url">
+<input type="hidden" value="/groups/users_list" id="group_agents_list_url">
+<%= render :partial => 'popup' %>
+
+
+<%=  javascript_include_tag :'cdn/app/group_enhancement' %>
+
 
 <%= javascript_tag do %>
   jQuery('body').on('click','#enable_rr_msg-submit',function(){
