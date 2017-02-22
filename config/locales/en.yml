@@ -10692,6 +10692,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     load_more: "Load More"
   user_notifications:
     header: "Notifications"
+    mark_all_as_read: "Mark All As Read"
     actor_text_2: "%{actor_name_1} and %{actor_name_2}"
     actor_text_multi: "%{actor_name_1} and %{more_actors_count} more"
     private_note_created: "sent you a private note on ticket %{object}"
@@ -10883,6 +10884,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     help: What's this?
     feed_back_survery: Help us with some feedback?
   collaboration:
+    my_open_discussions: "My Open Discussions"
     notifications: "Notifications"
     no_notifications: "No new notifications"
     discussion: "Discussion"

@@ -35,9 +35,9 @@ window.App = window.App || {};
         },
         seenAll: function(){
             var self = this;
-            this.iris.seenAll(function(){
-                self.setSeenIndicator(true);
-            })
+            if($("#user-notification-icon").hasClass("unseen") && this.iris){
+                this.iris.seenAll(function(){ self.setSeenIndicator(true);});
+            }
         },
         setSeenIndicator: function(bool){
             if(bool){
@@ -104,10 +104,12 @@ window.App = window.App || {};
             }
         },
         bindDocumentClick: function () {
+            var self = this;
             $(document).on("click.usernotification", function (ev) {
                 var parent_check = $(ev.target).parents("#user-notifications-popover");
                 if (!parent_check.get(0)) {
                     $("#user-notifications-popover").addClass("hide");
+                    self.unbindScroll();
                 }
             });
         },
@@ -116,7 +118,10 @@ window.App = window.App || {};
             $(document).on("click.usernotification","#user-notification-icon",function(ev){
                 ev.stopPropagation();
                 $("#user-notifications-popover").toggleClass('hide');
-                self.seenAll();
+                if(!$("#user-notifications-popover").hasClass('hide')){
+                    self.bindScroll();
+                    self.seenAll();
+                }
             })
         },
         bindReadAll: function () {
@@ -124,11 +129,14 @@ window.App = window.App || {};
             $(document).on("click.usernotification",".user-notifications-read-all",function(ev){
                 ev.preventDefault();
                 ev.stopPropagation();
-                self.iris.readAll(function(err,result){
-                    if(!err){
-                        $('#user-notifications-popover .notifications-list a').addClass("read").data("unreadIds","");
-                    }
-                }); 
+                if(self.iris){
+                    self.iris.readAll(function(err,result){
+                        if(!err){
+                            $('#user-notifications-popover .notifications-list a').removeClass('unread').addClass("read").data("unreadIds","");
+                        }
+                        self.readAllButtonCheck();
+                    }); 
+                }
                 self.seenAll();
             })
         },
@@ -137,9 +145,11 @@ window.App = window.App || {};
             if(!elem.hasClass('read')){
                 var unreadIds = elem.data('unreadIds');
                 unreadIds = (typeof unreadIds == "number") ? [unreadIds+""] : unreadIds.split(",");
-                self.iris.readNotification(unreadIds, function(err,result){
-                    elem.addClass("read").removeClass("unread");
-                }); 
+                if(self.iris){
+                    self.iris.readNotification(unreadIds, function(err,result){
+                        elem.addClass("read").removeClass("unread");
+                    }); 
+                }
                 self.readAllButtonCheck();
             }
         },
@@ -159,13 +169,32 @@ window.App = window.App || {};
             $(document).on("click.usernotification","#load-more-notifications",function(ev){
                 ev.stopPropagation();
                 $("#load-more-notifications").addClass("loading");
+                var curScrollTop = notifList[0].scrollTop;
                 // Load more notifications
                 self.fetchNotifications(self.numResultsToFetch, true, function(){
                     // Remove the spinner
-                    notifList.animate({scrollTop: notifList[0].scrollHeight}, 1000)
+                    notifList.animate({scrollTop: curScrollTop + 300}, 1000);
+                    self.bindScroll();
                     $("#load-more-notifications").removeClass("loading");
                 });
             })
+        },
+        bindScroll: function(){
+            // Making sure we don't duplicate the bindings.
+            this.unbindScroll();
+
+            var notifList = $(".notifications-list");
+            var scrollHeight = notifList.get(0).scrollHeight;
+            var height = notifList.height();
+            $(document).on('mousewheel.usernotification', '.notifications-list', function(e, d) {
+                if((this.scrollTop === (scrollHeight - height) && d < 0) || (this.scrollTop === 0 && d > 0)) {
+                  e.preventDefault();
+                }
+            });
+
+        },
+        unbindScroll: function(){
+            $(document).off('mousewheel.usernotification');
         },
         hideLoadMoreButton: function(){
             $("#load-more-notifications").css('display','none');
@@ -205,10 +234,11 @@ window.App = window.App || {};
                 var ngroup = collapsed[key].nArray;
                 var actors = collapsed[key].actor_names;
                 var last = ngroup[0];
+                var oldest = ngroup[0];
                 
                 var unread_notifications = ngroup.filter(function(n) {return !(n.read_at)});
                 if(unread_notifications.length) {
-                    last = unread_notifications.sort(function(a, b) {
+                    oldest = unread_notifications.sort(function(a, b) {
                         return new Date(a.created_at) - new Date(b.created_at)
                     })[0];
                 }
@@ -235,7 +265,7 @@ window.App = window.App || {};
                     created_at: new Date(last.created_at),
                     notification_type: last.notification_type.replace(/_/g,' '),
                     unreadIds: collapsed[key].unreadIds.join(','),
-                    action_url: last.extra.action_url,
+                    action_url: oldest.extra.action_url,
                     actor_text: actor_text,
                     actor_id: last.extra.actor_id
                 });
