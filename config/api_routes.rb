@@ -149,6 +149,7 @@ Helpkit::Application.routes.draw do
   end
 
   pipe_routes = proc do 
+    resources :contacts, controller: 'pipe/api_contacts', only: [:create, :update]
     resources :tickets, controller: 'pipe/tickets', only: [:create, :update] do
       member do
         post :reply, to: 'pipe/conversations#reply'
