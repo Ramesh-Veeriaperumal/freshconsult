@@ -8,7 +8,6 @@ Helpkit.TimesheetUtil = {
     FILTER_LIMIT_MSG: I18n.t('helpdesk_reports.filter_error_msg'),
     reports_specific_disabled_filter:{},
     MAX_COLUMN_LIMIT : 10,
-    COLUMN_LIMIT_FOR_PDF : 10,
     global_disabled_filter: [],
     default_available_filter : [],
     filter_remote : ["agent_id","company_id"],

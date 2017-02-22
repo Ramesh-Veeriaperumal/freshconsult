@@ -44,9 +44,7 @@ module Reports::TimesheetReportsHelper
         if !is_pdf
           html_content = content_tag(:td, reports_ticket_link(content), :class => item)
         else
-          txt = h(content.subject)
-          txt = (txt.length > 73 ? txt.slice(0,73) + '...' : txt) + " (##{content.display_id})"
-          html_content = "<td class=#{item}><div> #{txt} </div></td>"
+          html_content = "<td class=#{item}><div> #{h(content)} </div></td>"
         end
       else
         if(item.eql?(:hours))
@@ -60,7 +58,7 @@ module Reports::TimesheetReportsHelper
         elsif (item.eql?(:note))
           if( content.blank? || content.match(/^No +/) )
             content = "-"
-          else
+          elsif !is_pdf
             content = content.length > 73 ? content.slice(0,73) + '...' : content
           end
           html_content = content_tag(:td,h(content),:class => item)

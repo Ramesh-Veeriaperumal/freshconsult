@@ -1245,6 +1245,9 @@ p.visibility {
     thead { display:table-header-group }
 	}
 }
+.grid-pdf table{
+	table-layout : fixed;
+}
 
 .export-exceeds-row-limit{
 	text-align: center;

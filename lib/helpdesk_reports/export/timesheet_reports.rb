@@ -2,6 +2,8 @@ class HelpdeskReports::Export::TimesheetReports < HelpdeskReports::Export::Repor
   include Reports::TimesheetReport
 
   ARRAY_METRICS = [:user_id, :group_id, :ticket_type, :products_id, :priority, :customers_filter]
+  CSV_BREAK_COLUMN_LIMIT = 12
+  PDF_ORIENTATION_BREAK_LIMIT = 8
 
   def initialize(args, scheduled_report = false)
     args.symbolize_keys!
@@ -9,8 +11,8 @@ class HelpdeskReports::Export::TimesheetReports < HelpdeskReports::Export::Repor
     args[:columns] = args[:data_hash][:columns] if args[:data_hash].present?
 
     columns =  args[:columns] || []
-    columns_length = columns.length + ( Account.current.products.any? ? 7 : 6 ) #default columns
-    if(columns_length > 10)
+    @columns_length = columns.length + ( Account.current.products.any? ? 7 : 6 ) #default columns
+    if(@columns_length > CSV_BREAK_COLUMN_LIMIT)
       args[:file_format] = TYPES[:csv]
       @pdf_export = false
     else
@@ -40,7 +42,7 @@ class HelpdeskReports::Export::TimesheetReports < HelpdeskReports::Export::Repor
       #skip other process when there is no data. Return filepath as nil.
       return nil if no_data?(@metric_data)
       @layout = 'layouts/report/timesheet_reports_pdf.html.erb'
-      file = build_pdf
+      file = build_pdf( @columns_length > PDF_ORIENTATION_BREAK_LIMIT )
       build_file(file, file_format, report_type, PDF_EXPORT_TYPE)
     else
       time_sheet_for_export
