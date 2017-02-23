@@ -1848,6 +1848,7 @@ en:
         internal_group_actions: "Only applicable if the selected group is mapped to the ticket status as an internal group at the time of rule execution."
         internal_agent_actions: "Only applicable if the selected agent is mapped to the internal group at the time of rule execution."
     va_rules:
+      disabled: "To turn on, Please activate your account."
       webhook:
         custom_headers_limit_error: "You cannot set more than %{limit} custom headers"
         custom_headers_pair_mismatch: "Kindly ensure that all headers have values"

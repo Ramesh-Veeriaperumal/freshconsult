@@ -1,5 +1,6 @@
 class Va::Action
   
+  include Va::Action::Restrictions
   include Va::Webhook::Trigger
   include ParserUtil
 
@@ -254,6 +255,10 @@ class Va::Action
     record_action(act_on)
   end
 
+  def contains? action_string
+    action_key.include? action_string
+  end
+  
   private
     def get_group(act_on) # this (g == 0) is kind of hack, same goes for agents also.
       begin

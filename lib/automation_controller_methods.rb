@@ -89,7 +89,7 @@ module AutomationControllerMethods
     @agents = [[0, t('admin.observer_rules.assigned_agent')]]
     @agents.concat get_event_performer
     @agents.concat [['', t('none')]] + current_account_agents
-    watcher_agents = current_account_agents
+    @watcher_agents = current_account_agents
 
     @groups = [[0, t('admin.observer_rules.assigned_group')], ['', t('none')]]
     @groups.concat current_account.groups.find(:all, :order=>'name' ).collect { |g| [g.id, g.name]}
@@ -103,56 +103,12 @@ module AutomationControllerMethods
 
     # IMPORTANT - If an action requires a privilege to be executed, then add it
     # in ACTION_PRIVILEGE in Va::Action class
-    action_hash = [
-      { :name => -1, :value => t('click_to_select_action') },
-      { :name => "priority", :value => t('set_priority_as'), :domtype => "dropdown",
-        :choices => TicketConstants.priority_list.sort, :unique_action => true },
-      { :name => "ticket_type", :value => t('set_type_as'), :domtype => "dropdown",
-        :choices => ticket_type_values_with_none,
-        :unique_action => true },
-      { :name => "status", :value => t('set_status_as'), :domtype => "dropdown",
-        :choices => Helpdesk::TicketStatus.status_names(current_account),
-        :unique_action => true },
-      { :name => -1, :value => "-----------------------" },
-      { :name => "add_comment", :value => t('add_note'), :domtype => 'comment',
-        :condition => automations_controller? },
-      { :name => "add_tag", :value => t('add_tags'), :domtype => "autocomplete_tags", 
-          :data_url => tags_search_autocomplete_index_path, :unique_action => true },
-      { :name => "add_a_cc", :value => t('add_a_cc'), :domtype => 'single_email',
-        :condition => va_rules_controller? },
-      { :name => "add_watcher", :value => t('dispatch.add_watcher'), :domtype => 'multiple_select',
-        :choices => watcher_agents, :unique_action => true, :condition => current_account.add_watcher_enabled? },
-      { :name => "trigger_webhook", :value => t('trigger_webhook'), :domtype => 'webhook',
-        :unique_action => true,
-        :condition => (va_rules_controller? || observer_rules_controller?) },
-      { :name => -1, :value => "-----------------------" },
-      { :name => "responder_id", :value => t('ticket.assign_to_agent'),
-        :domtype => 'dropdown', :choices => @agents[1..-1], :unique_action => true  },
-      { :name => "group_id", :value => t('email_configs.info9'), :domtype => 'dropdown',
-        :choices => @groups[1..-1], :unique_action => true  },
-      { :name => "product_id", :value => t('admin.products.assign_product'),
-        :domtype => 'dropdown', :choices => [['', t('none')]]+@products,
-        :condition => multi_product_account? },
-      { :name => -1, :value => "-----------------------" },
-      { :name => "send_email_to_group", :value => t('send_email_to_group'),
-        :domtype => 'email_select', :choices => @groups-[@groups[1]] },
-      { :name => "send_email_to_agent", :value => t('send_email_to_agent'),
-        :domtype => 'email_select',
-        :choices => get_event_performer.empty? ? @agents-[@agents[1]] : @agents-[@agents[2]] },
-      { :name => "send_email_to_requester", :value => t('send_email_to_requester'),
-        :domtype => 'email' },
-      { :name => -1, :value => "-----------------------" },
-      { :name => "delete_ticket", :value => t('delete_the_ticket'), :unique_action => true },
-      { :name => "mark_as_spam", :value => t('mark_as_spam'), :unique_action => true },
-      { :name => "skip_notification", :value => t('dispatch.skip_notifications'),
-        :condition => va_rules_controller? },
-      { :name => -1, :value => "-----------------------" }
-    ]
-    add_shared_ownership_actions(action_hash) if Account.current.features?(:shared_ownership) and automations_controller?
-    append_integration_actions action_hash
-    action_hash = action_hash.select{ |action| action.fetch(:condition, true) }
-    add_custom_actions action_hash
-    @action_defs = ActiveSupport::JSON.encode action_hash
+    actions = get_actions
+    add_shared_ownership_actions(actions) if Account.current.features?(:shared_ownership) and automations_controller?
+    append_integration_actions actions
+    actions = actions.select{ |action| action.fetch(:condition, true) }
+    add_custom_actions actions
+    @action_defs = ActiveSupport::JSON.encode actions
   end
 
   def automations_controller?
@@ -238,5 +194,67 @@ module AutomationControllerMethods
         EmailNotificationConstants::EMAIL_TO_REQUESTOR) if action['name'] == 'send_email_to_requester'
     end
   end
-  
+
+  def get_actions
+      set_actions = [
+        { :name => -1, :value => t('click_to_select_action') },
+        { :name => "priority", :value => t('set_priority_as'), :domtype => "dropdown",
+          :choices => TicketConstants.priority_list.sort, :unique_action => true },
+        { :name => "ticket_type", :value => t('set_type_as'), :domtype => "dropdown",
+          :choices => current_account.ticket_type_values.collect { |c| [ c.value, c.value ] },
+          :unique_action => true },
+        { :name => "status", :value => t('set_status_as'), :domtype => "dropdown",
+          :choices => Helpdesk::TicketStatus.status_names(current_account),
+          :unique_action => true }
+  ]
+
+  add_actions = [
+        { :name => -1, :value => "-----------------------" },
+        { :name => "add_comment", :value => t('add_note'), :domtype => 'comment',
+          :condition => automations_controller? },
+        { :name => "add_tag", :value => t('add_tags'), :domtype => "autocomplete_tags", 
+            :data_url => tags_search_autocomplete_index_path, :unique_action => true },
+        { :name => "add_a_cc", :value => t('add_a_cc'), :domtype => 'single_email',
+          :condition => va_rules_controller? },
+        { :name => "add_watcher", :value => t('dispatch.add_watcher'), :domtype => 'multiple_select',
+          :choices => @watcher_agents, :unique_action => true, :condition => current_account.add_watcher_enabled? },
+        { :name => "trigger_webhook", :value => t('trigger_webhook'), :domtype => 'webhook',
+          :unique_action => true,
+          :condition => (va_rules_controller? || observer_rules_controller?) }
+  ]
+
+  assign_actions = [
+        { :name => -1, :value => "-----------------------" },
+        { :name => "responder_id", :value => t('ticket.assign_to_agent'),
+          :domtype => 'dropdown', :choices => @agents[1..-1], :unique_action => true  },
+        { :name => "group_id", :value => t('email_configs.info9'), :domtype => 'dropdown',
+          :choices => @groups[1..-1], :unique_action => true  },
+        { :name => "product_id", :value => t('admin.products.assign_product'),
+          :domtype => 'dropdown', :choices => [['', t('none')]]+@products,
+          :condition => multi_product_account? }
+  ]
+
+  email_actions = [
+        { :name => -1, :value => "-----------------------" },
+        { :name => "send_email_to_group", :value => t('send_email_to_group'),
+          :domtype => 'email_select', :choices => @groups-[@groups[1]] },
+        { :name => "send_email_to_agent", :value => t('send_email_to_agent'),
+          :domtype => 'email_select',
+          :choices => get_event_performer.empty? ? @agents-[@agents[1]] : @agents-[@agents[2]] },
+        { :name => "send_email_to_requester", :value => t('send_email_to_requester'),
+          :domtype => 'email' }
+  ]
+
+  other_actions = [
+        { :name => -1, :value => "-----------------------" },
+        { :name => "delete_ticket", :value => t('delete_the_ticket'), :unique_action => true },
+        { :name => "mark_as_spam", :value => t('mark_as_spam'), :unique_action => true },
+        { :name => "skip_notification", :value => t('dispatch.skip_notifications'),
+          :condition => va_rules_controller? },
+        { :name => -1, :value => "-----------------------" }
+  ]
+    actions =  set_actions + add_actions + assign_actions
+    actions += email_actions if current_account.verified?
+    actions += other_actions
+  end
 end
