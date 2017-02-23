@@ -242,7 +242,7 @@ module Ember
       end
 
       def notification_not_required?
-        cname_params.present? && cname_params[:skip_close_notification].try(:to_s) == 'true'
+        @skip_notification ||= cname_params.try(:[], :skip_close_notification)
       end
 
       def validate_url_params
