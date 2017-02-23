@@ -1931,6 +1931,7 @@ en:
         saml_logout_url_info: "Optional logout URL to which users will be sent to when they logout of freshdesk."
         saml_cert_fingerprint: "Security Certificate Fingerprint"
         saml_cert_fingerprint_info: "Fingerprint (SHA1)  of the SAML certificate provided by your SAML Provider. This will be used for encryption / validation"
+        saml_cert_fingerprint_info_sha256: "Fingerprint (SHA256)  of the SAML certificate provided by your SAML Provider. This will be used for encryption / validation"
         click_to_enable: Click to enable SSL
         click_to_disable: Click to disable SSL
         security_title: Security
