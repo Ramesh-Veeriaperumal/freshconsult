@@ -9,7 +9,7 @@ module ActionMailerCallbacks
   end
 
   module ClassMethods
-
+  include ParserUtil
 
     def set_smtp_settings(mail)
       account_id_field = mail.header["X-FD-Account-Id"]
@@ -30,7 +30,7 @@ module ActionMailerCallbacks
       if (!mail.header[:from].nil? && !mail.header[:from].value.nil?)
         from_email = mail.header[:from].value
         from_email = from_email.kind_of?(Array) ? from_email.first : from_email
-        from_email = from_email[/.*<([^>]*)/, 1] # fetching the from email inside < >.
+        from_email = parse_email(from_email)[:email]
       else
         from_email = ""
       end 

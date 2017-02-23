@@ -1,4 +1,5 @@
 class RemoveRequireFeatureFromSalesforcePlus < ActiveRecord::Migration
+  shard :all
   def up
     application = Integrations::Application.find_by_name("salesforce_v2")
     application.options = {

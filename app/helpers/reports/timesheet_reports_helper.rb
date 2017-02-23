@@ -56,7 +56,7 @@ module Reports::TimesheetReportsHelper
             end
           html_content += "</td>"
         elsif (item.eql?(:note))
-          if( content.blank? || content.match(/^No +/) )
+          if(content.blank?)
             content = "-"
           elsif !is_pdf
             content = content.length > 73 ? content.slice(0,73) + '...' : content
