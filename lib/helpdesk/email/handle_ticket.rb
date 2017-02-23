@@ -129,9 +129,9 @@ class Helpdesk::Email::HandleTicket
           if content_id
             content_id_hash[att.content_file_name+"#{inline_count}"] = cid(i)
             inline_count+=1
-            inline_attachments.push att unless virus_attachment?(email[:attached_items]["attachment#{i+1}"], account)
+            inline_attachments.push att unless virus_attachment?(email[:attached_items]["attachment-#{i+1}"], account)
           else
-            attachments.push att unless virus_attachment?(email[:attached_items]["attachment#{i+1}"], account)
+            attachments.push att unless virus_attachment?(email[:attached_items]["attachment-#{i+1}"], account)
           end
         end
       rescue HelpdeskExceptions::AttachmentLimitException => ex
