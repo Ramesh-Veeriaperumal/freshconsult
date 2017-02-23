@@ -69,7 +69,7 @@ class AccountsController < ApplicationController
   def new_signup_free
    @signup = Signup.new(params[:signup])
    if @signup.save
-    @signup.account.agents.first.user.reset_perishable_token! 
+    @signup.user.reset_perishable_token! 
       save_account_sign_up_params(@signup.account.id, params[:signup])
       add_account_info_to_dynamo
       set_account_onboarding_pending
@@ -78,17 +78,17 @@ class AccountsController < ApplicationController
       respond_to do |format|
         format.html {
           render :json => { :success => true,
-                            :url => signup_complete_url(:token => @signup.account.agents.first.user.perishable_token, :host => @signup.account.full_domain),
+                            :url => signup_complete_url(:token => @signup.user.perishable_token, :host => @signup.account.full_domain),
                             :account_id => @signup.account.id  },
                             :callback => params[:callback],
                             :content_type=> 'application/javascript'
         }
         format.nmobile {
 
-          @signup.account.agents.first.user.deliver_admin_activation
+          @signup.user.deliver_admin_activation
           render :json => { :success => true, :host => @signup.account.full_domain,
-                            :t => @signup.account.agents.first.user.single_access_token,
-                            :support_email => @signup.account.agents.first.user.email
+                            :t => @signup.user.single_access_token,
+                            :support_email => @signup.user.email
                           }
         }
       end
