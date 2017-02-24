@@ -4,13 +4,15 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
   include ParserUtil
   include HelpdeskControllerMethods
   include Helpdesk::TagMethods
+  include Helpdesk::BulkActionMethods
 
   before_filter :filter_params_ids, :validate_params, :scoper_bulk_actions, :only => :update_multiple
-  before_filter :load_items, :sort_items, :only => :update_multiple
+  before_filter :load_items, :only => :update_multiple
 
   def update_multiple             
     failed_tickets = []
     
+    @items = sort_items(@items, params[nscname]["group_id"])
     @items.each do |ticket|
       params[nscname].each do |key, value|
         #handling unassign for agent and group. from ui, -1 will be sent for unassigned case
@@ -126,7 +128,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
       args = { :action => action_name, :helpdesk_ticket => params[:helpdesk_ticket] }
       args.merge!(params_for_bulk_action)
       args[:tags] = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
-      Tickets::BulkTicketActions.perform_async(args) if args[:helpdesk_ticket].present? or args[:tags].present?
+      ::Tickets::BulkTicketActions.perform_async(args) if args[:helpdesk_ticket].present? or args[:tags].present?
       queue_replies
       respond_to do |format|
         format.html {
@@ -134,12 +136,5 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
           redirect_to helpdesk_tickets_path
         }
       end
-    end
-
-    def sort_items
-      @items.sort_by{ |item| 
-        item.responder_id.to_i 
-      } if params[:helpdesk_ticket][:group_id].present? && 
-           Account.current.round_robin_capping_enabled?
     end
 end
