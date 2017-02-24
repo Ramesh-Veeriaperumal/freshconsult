@@ -217,9 +217,9 @@ class Admin::VaRulesController < Admin::AdminController
         { :name => "group_id", :value => I18n.t('ticket.group'), :domtype => dropdown_domtype,
           :operatortype => "object_id", :choices => @groups },
         { :name => "internal_agent_id", :value => I18n.t('ticket.internal_agent'), :domtype => dropdown_domtype,
-          :operatortype => "object_id", :choices => @internal_agents, :condition => !supervisor_rules_controller? },
+          :operatortype => "object_id", :choices => @internal_agents, :condition => allow_shared_ownership_fields? },
         { :name => "internal_group_id", :value => I18n.t('ticket.internal_group'), :domtype => dropdown_domtype,
-          :operatortype => "object_id", :choices => @internal_groups, :condition => !supervisor_rules_controller? },
+          :operatortype => "object_id", :choices => @internal_groups, :condition => allow_shared_ownership_fields? },
         { :name => "tag_ids", :value => t('ticket.tag_condition'), :domtype => "autocomplete_multiple_with_id", 
           :data_url => tags_search_autocomplete_index_path, :operatortype => "object_id_array",
           :condition => !supervisor_rules_controller?, :autocomplete_choices => @tag_hash }
