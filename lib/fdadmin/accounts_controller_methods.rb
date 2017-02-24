@@ -128,4 +128,23 @@ module Fdadmin::AccountsControllerMethods
 	def freshfone_active?(ff_account)
 	  ff_account.present? && ff_account.active?
 	end
+	
+	def validate_new_currency
+		subscription = Account.current.subscription
+		return false if subscription.currency_name == params[:new_currency]
+		subscription.currency = Subscription::Currency.find_by_name(params[:new_currency])
+		result = subscription.billing.retrieve_subscription(subscription.account_id)
+		result.subscription.status.include?("trial")
+	rescue	
+	end
+	
+	def switch_currency
+		account = Account.current
+		subscription = account.subscription.reload
+		result = Billing::Subscription.new.cancel_subscription(account)
+		if result.subscription.status == "cancelled"
+			subscription.currency = Subscription::Currency.find_by_name(params[:new_currency])
+			subscription.save!
+		end
+	end
 end

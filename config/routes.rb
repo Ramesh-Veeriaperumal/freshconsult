@@ -2891,6 +2891,7 @@ Helpkit::Application.routes.draw do
           put :reset_login_count
           post :contact_import_destroy
           post :select_all_feature
+          put :change_currency
         end
       end
 
