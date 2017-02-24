@@ -75,7 +75,6 @@ window.App = window.App || {};
                     self.renderOneNotification(notification);
                     self.setSeenIndicator(false);
                     self.readAllButtonCheck();
-                    self.bindScroll();
 
                     if(data.notification_type === "discussion") {
                         var collab_event = new CustomEvent('collabNoti', { 'detail': {
@@ -143,15 +142,15 @@ window.App = window.App || {};
         },
         markNotificationRead: function(elem) {
             var self = this;
-            if(!elem.hasClass('read')){
+            if(elem.hasClass('unread') && !!elem.data('unreadIds')){
                 var unreadIds = elem.data('unreadIds');
                 unreadIds = (typeof unreadIds == "number") ? [unreadIds+""] : unreadIds.split(",");
                 if(self.iris){
                     self.iris.readNotification(unreadIds, function(err,result){
                         elem.addClass("read").removeClass("unread");
+                        self.readAllButtonCheck();
                     }); 
                 }
-                self.readAllButtonCheck();
             }
         },
         bindNotificationClick: function(){
@@ -175,7 +174,6 @@ window.App = window.App || {};
                 self.fetchNotifications(self.numResultsToFetch, true, function(){
                     // Remove the spinner
                     notifList.animate({scrollTop: curScrollTop + 300}, 1000);
-                    self.bindScroll();
                     $("#load-more-notifications").removeClass("loading");
                 });
             })
@@ -183,11 +181,10 @@ window.App = window.App || {};
         bindScroll: function(){
             // Making sure we don't duplicate the bindings.
             this.unbindScroll();
-
-            var notifList = $(".notifications-list");
-            var scrollHeight = notifList.get(0).scrollHeight;
-            var height = notifList.height();
             $(document).on('mousewheel.usernotification', '.notifications-list', function(e, d) {
+                var notifList = $(".notifications-list");
+                var scrollHeight = notifList.get(0).scrollHeight;
+                var height = notifList.height();
                 if((this.scrollTop === (scrollHeight - height) && d < 0) || (this.scrollTop === 0 && d > 0)) {
                   e.preventDefault();
                 }
@@ -285,7 +282,6 @@ window.App = window.App || {};
                 for (var i = groupedNotifications.length - 1; i >= 0; i--) {
                     this.renderOneNotification(groupedNotifications[i]);
                 }
-                this.bindScroll();
             }
 
             this.next_page ? this.showLoadMoreButton() : this.hideLoadMoreButton();
