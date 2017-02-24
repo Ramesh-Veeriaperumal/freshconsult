@@ -26,7 +26,7 @@ module SslRequirement
     class_attribute :ssl_allowed_actions
     
     before_filter :ensure_proper_protocol
-    before_filter :ensure_proper_sts_header
+    #before_filter :ensure_proper_sts_header
   end
   
   module ClassMethods
