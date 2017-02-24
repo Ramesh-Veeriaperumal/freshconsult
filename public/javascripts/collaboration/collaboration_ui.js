@@ -1181,23 +1181,25 @@ App.CollaborationUi = (function ($) {
             recipient_ids = recipient_ids || Object.keys(App.CollaborationModel.conversationsMap[App.CollaborationModel.currentConversation.co_id].members);
             var collab_model = App.CollaborationModel;
             var my_id = App.CollaborationModel.currentUser.uid;
-            for(var idx = 0; idx < recipient_ids.length && recipient_ids[idx] !== my_id; idx++) {
-                var co_id = collab_model.currentConversation.co_id;
-                var current_convo = collab_model.conversationsMap[co_id];
-                var is_invite = current_convo ? !current_convo.members[recipient_ids[idx]] : true;
-                
-                Collab.sendMail({
-                    recipient_name: collab_model.usersMap[recipient_ids[idx]].name,
-                    sender_name: collab_model.usersMap[collab_model.currentUser.uid].name,
-                    co_id: co_id,
-                    co_name: collab_model.currentConversation.name,
-                    requestor_name: collab_model.currentConversation.requester_name,
-                    requestor_email: collab_model.currentConversation.requester_email,
-                    toAddressList: [collab_model.usersMap[recipient_ids[idx]].email],
-                    invite: is_invite,
-                    message_body: message_body,
-                    ticket_link: window.location.origin + window.location.pathname + "?collab=true"
-                });
+            for(var idx = 0; idx < recipient_ids.length; idx++) {
+                if(recipient_ids[idx] !== my_id) {
+                    var co_id = collab_model.currentConversation.co_id;
+                    var current_convo = collab_model.conversationsMap[co_id];
+                    var is_invite = current_convo ? !current_convo.members[recipient_ids[idx]] : true;
+                    
+                    Collab.sendMail({
+                        recipient_name: collab_model.usersMap[recipient_ids[idx]].name,
+                        sender_name: collab_model.usersMap[collab_model.currentUser.uid].name,
+                        co_id: co_id,
+                        co_name: collab_model.currentConversation.name,
+                        requestor_name: collab_model.currentConversation.requester_name,
+                        requestor_email: collab_model.currentConversation.requester_email,
+                        toAddressList: [collab_model.usersMap[recipient_ids[idx]].email],
+                        invite: is_invite,
+                        message_body: message_body,
+                        ticket_link: window.location.origin + window.location.pathname + "?collab=true"
+                    });
+                }
             }
         }
     };
