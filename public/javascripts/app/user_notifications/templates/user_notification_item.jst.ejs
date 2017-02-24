@@ -12,6 +12,6 @@
     <div class="notification-inner">
       <div class="notification-type"><%= notification_type %></div>
       <div class="notification-content"><%= content %></div>
-      <div class="notification-time" data-livestamp="<%= moment() %>"><%= moment(created_at).fromNow() %></div>
+      <div class="notification-time" data-livestamp="<%= created_at %>"><%= moment(created_at).fromNow() %></div>
     </div>
 </a>
