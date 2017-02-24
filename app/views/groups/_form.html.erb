@@ -244,7 +244,7 @@
      var data = {id: "<%=@group.business_calendar && @group.business_calendar.id%>", text: "<%=@groupbusiness_calendar && @group.business_calendar.name%>"};    
      }   
  });   
- jQuery("#business_calendar").select2("val","<%= @group.business_calendar.id%>");   
+ jQuery("#business_calendar").select2("val","<%=@group.business_calendar && @group.business_calendar.id%>").trigger("change");   
      
  <% end %>   
      
