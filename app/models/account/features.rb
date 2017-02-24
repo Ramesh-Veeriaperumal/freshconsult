@@ -1,8 +1,7 @@
 class Account < ActiveRecord::Base
 
   LP_FEATURES   = [:link_tickets, :select_all, :round_robin_capping, :suggest_tickets, :customer_sentiment_ui, :dkim]
-  DB_FEATURES   = [:custom_survey, :requester_widget, :collaboration]
-  BOTH_FEATURES = [:shared_ownership]
+  DB_FEATURES   = [:shared_ownership, :custom_survey, :requester_widget, :collaboration, :archive_tickets]
   BITMAP_FEATURES = [:split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management, 
     :email_commands, :assume_identity, :rebranding, :custom_apps, :custom_ticket_fields, :custom_company_fields, 
     :custom_contact_fields, :occasional_agent, :allow_auto_suggest_solutions, :basic_twitter, :basic_facebook,
@@ -18,12 +17,6 @@ class Account < ActiveRecord::Base
   DB_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
       features?(item)   
-    end
-  end
-
-  BOTH_FEATURES.each do |item|
-    define_method "#{item.to_s}_enabled?" do
-      has_both_feature?(item)
     end
   end
 

@@ -174,7 +174,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   end
 
   def self.default_field_order
-    Account.current.features?(:shared_ownership) ? 
+    Account.current.shared_ownership_enabled? ? 
       TicketConstants::SHARED_DEFAULT_FIELDS_ORDER : TicketConstants::DEFAULT_FIELDS_ORDER
   end
 
@@ -552,7 +552,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
     end
 
     def set_internal_field_values
-      if (self.name == "internal_agent" or self.name == "internal_group") and Account.current.features?(:shared_ownership)
+      if (self.name == "internal_agent" or self.name == "internal_group") and Account.current.shared_ownership_enabled?
         self.visible_in_portal = false
         self.editable_in_portal = false
         self.required_in_portal = false

@@ -327,7 +327,7 @@ class Helpdesk::TicketsController < ApplicationController
     @show_options = show_options
     @is_default_filter = (!is_num?(view_context.current_filter))
     @current_view = @ticket_filter.id || @ticket_filter.name if is_custom_filter_ticket?
-    render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter , :shared_ownership_enabled => current_account.features?(:shared_ownership)}
+    render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter , :shared_ownership_enabled => current_account.shared_ownership_enabled?}
   end
 
   def filter_conditions
@@ -1730,7 +1730,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def set_modes(conditions)
-      return unless current_account.features?(:shared_ownership)
+      return unless current_account.shared_ownership_enabled?
       @agent_mode = TicketConstants::FILTER_MODES[:primary]
       @group_mode = TicketConstants::FILTER_MODES[:primary]
       conditions.each do |condition|

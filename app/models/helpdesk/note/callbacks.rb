@@ -142,7 +142,7 @@ class Helpdesk::Note < ActiveRecord::Base
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::REPLIED_BY_REQUESTER)
         if e_notification.agent_notification? && replied_by_customer?
           send_requester_replied_notification if notable.responder
-          send_requester_replied_notification(true) if Account.current.features?(:shared_ownership) and notable.internal_agent
+          send_requester_replied_notification(true) if Account.current.shared_ownership_enabled? and notable.internal_agent
         end
 
         if public_note? and performed_by_client_manager?

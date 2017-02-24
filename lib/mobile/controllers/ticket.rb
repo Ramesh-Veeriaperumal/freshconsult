@@ -17,7 +17,7 @@ module Mobile::Controllers::Ticket
         field[:agent_groups] = agent_group_map if field.field_type == "default_agent"
 
         #For shared ownership
-        field[:status_groups] = status_group_map if field.field_type == "default_status" and current_account.features?(:shared_ownership)
+        field[:status_groups] = status_group_map if field.field_type == "default_status" and current_account.shared_ownership_enabled?
 
         #Dynamic Sections  
         # field[:has_sections] = field.has_section? ? true : false

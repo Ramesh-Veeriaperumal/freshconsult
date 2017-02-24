@@ -5902,6 +5902,8 @@ en:
     status: Status
     source: Source
     tag_condition: Tag
+    internal_group: Internal Group
+    internal_agent: Internal Agent
     verify_human: To verify you are human, please type the given scrambled letters
     edit_btn: Edit
     requester: Requester

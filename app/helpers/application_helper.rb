@@ -569,7 +569,7 @@ module ApplicationHelper
     }
 
     #Shared ownership placeholders
-    if current_account.features?(:shared_ownership)
+    if current_account.shared_ownership_enabled?
       place_holders[:tickets] += 
         [['{{ticket.internal_group.name}}',      'Internal Group name',       "",         'ticket_group_name'],
         ['{{ticket.internal_agent.name}}',       'Internal Agent name',       "",         'ticket_agent_name'],
