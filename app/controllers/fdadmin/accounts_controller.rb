@@ -16,6 +16,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account = Account.find_by_id(params[:account_id])
     shard_info = ShardMapping.find(params[:account_id])
     account_summary[:account_info] = fetch_account_info(account) 
+    account_summary[:reputation] = account.reputation
     account_summary[:passes] = account.day_pass_config.available_passes
     account_summary[:contact_details] = { email: account.admin_email , phone: account.admin_phone }
     account_summary[:currency_details] = fetch_currency_details(account)

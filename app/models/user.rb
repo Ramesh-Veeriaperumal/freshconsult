@@ -479,7 +479,11 @@ class User < ActiveRecord::Base
       portal = nil
       force_notification = false
       args = [ portal, force_notification ]
-      Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), nil, 2.minutes.from_now)
+      if Thread.current["notifications_#{account_id}"].nil?
+        Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), nil, 2.minutes.from_now)
+      else
+        deliver_activation_instructions!(*args)
+      end
     end
     true
   end

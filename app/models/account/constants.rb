@@ -19,7 +19,7 @@ class Account < ActiveRecord::Base
 
     :pro => {
       :features => [ :gamification, :scenario_automations, :customer_slas, :business_hours, :forums,
-        :surveys, :scoreboard, :facebook, :timesheets, :css_customization, :advanced_reporting ],
+        :surveys, :scoreboard, :facebook, :timesheets, :css_customization, :advanced_reporting, :sitemap ],
       :inherits => [ :basic ]
     },
 
@@ -63,7 +63,7 @@ class Account < ActiveRecord::Base
 
     :blossom_classic => {
       :features => [ :gamification, :auto_refresh, :twitter, :facebook, :forums, :surveys,
-        :scoreboard, :timesheets, :advanced_reporting ],
+        :scoreboard, :timesheets, :advanced_reporting, :sitemap ],
       :inherits => [ :sprout_classic ]
     },
 
@@ -180,7 +180,7 @@ class Account < ActiveRecord::Base
     :customer_sentiment => false, :countv2_template_write => false, :logout_logs => false, :gnip_2_0 => false, :froala_editor => false,
     :es_v2_splqueries => false, :suggest_tickets => false, :"Freshfone New Notifications" => false, :feedback_widget_captcha => false, 
     :es_multilang_solutions => false, :requester_widget => false, :spam_blacklist_feature => false,
-    :custom_timesheet => false
+    :custom_timesheet => false, :hide_api_key => false
   }
 
 end
