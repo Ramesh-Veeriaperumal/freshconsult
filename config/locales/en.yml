@@ -10692,7 +10692,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     load_more: "Load More"
   user_notifications:
     header: "Notifications"
-    mark_all_as_read: "Mark All As Read"
+    mark_all_as_read: "Mark all as read"
     actor_text_2: "%{actor_name_1} and %{actor_name_2}"
     actor_text_multi: "%{actor_name_1} and %{more_actors_count} more"
     private_note_created: "sent you a private note on ticket %{object}"

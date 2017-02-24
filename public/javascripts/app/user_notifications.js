@@ -75,6 +75,7 @@ window.App = window.App || {};
                     self.renderOneNotification(notification);
                     self.setSeenIndicator(false);
                     self.readAllButtonCheck();
+                    self.bindScroll();
 
                     if(data.notification_type === "discussion") {
                         var collab_event = new CustomEvent('collabNoti', { 'detail': {
@@ -133,8 +134,8 @@ window.App = window.App || {};
                     self.iris.readAll(function(err,result){
                         if(!err){
                             $('#user-notifications-popover .notifications-list a').removeClass('unread').addClass("read").data("unreadIds","");
+                            self.readAllButtonCheck();
                         }
-                        self.readAllButtonCheck();
                     }); 
                 }
                 self.seenAll();
@@ -284,6 +285,7 @@ window.App = window.App || {};
                 for (var i = groupedNotifications.length - 1; i >= 0; i--) {
                     this.renderOneNotification(groupedNotifications[i]);
                 }
+                this.bindScroll();
             }
 
             this.next_page ? this.showLoadMoreButton() : this.hideLoadMoreButton();
@@ -295,7 +297,7 @@ window.App = window.App || {};
             $(nItem).prependTo("#user-notifications-popover .notifications-list");
         },
         readAllButtonCheck: function(){
-            if(!$("#user-notifications-popover .notifications-list .unread").length){
+            if(!$("#wrap #user-notifications-popover .notifications-list .unread").length){
                 $(".user-notifications-read-all").addClass("hide");
             } else {
                 $(".user-notifications-read-all").removeClass("hide");
