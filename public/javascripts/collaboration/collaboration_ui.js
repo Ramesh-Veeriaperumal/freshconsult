@@ -500,7 +500,9 @@ App.CollaborationUi = (function ($) {
                 }, CONST.TYPE_SENT);
                 // TODO (mayank): expect a response with notify | send_message | add_member data
                 collabModel.sendMessage(msg, currentConvo.co_id, function() {
-                    _COLLAB_PVT.sendMailWorker(msg.body, msg.metadata.notify);
+                    if(!!msg.metadata && (msg.metadata.notify || msg.metadata.notify_all)) {
+                        _COLLAB_PVT.sendMailWorker(msg.body, msg.metadata.notify);
+                    }
                 });
                 _COLLAB_PVT.scrollToBottom();
                 $msgBox.focus();
