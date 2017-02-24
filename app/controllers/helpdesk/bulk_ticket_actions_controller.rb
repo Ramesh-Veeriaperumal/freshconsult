@@ -6,7 +6,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
   include Helpdesk::TagMethods
 
   before_filter :filter_params_ids, :validate_params, :scoper_bulk_actions, :only => :update_multiple
-  before_filter :load_items, :only => :update_multiple
+  before_filter :load_items, :sort_items, :only => :update_multiple
 
   def update_multiple             
     failed_tickets = []
@@ -134,5 +134,12 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
           redirect_to helpdesk_tickets_path
         }
       end
+    end
+
+    def sort_items
+      @items.sort_by{ |item| 
+        item.responder_id.to_i 
+      } if params[:helpdesk_ticket][:group_id].present? && 
+           Account.current.round_robin_capping_enabled?
     end
 end
