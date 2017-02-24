@@ -1165,15 +1165,15 @@ App.CollaborationUi = (function ($) {
             $("#collab-btn ."+ image_class +"").remove();
             if(!!collabModel.currentConversation){
                 var convo_data = collabModel.conversationsMap[collabModel.currentConversation.co_id];
+                var chosen_member_id;
                 if(!!convo_data) {
-                    var co_members = Object.keys(convo_data.members);
-                    var my_id = collabModel.currentUser.uid;
-                    var avatar_html;
-                    if(co_members[0] === my_id && !!co_members[1]) {
-                        avatar_html = _COLLAB_PVT.getAvatarHtml(co_members[1], image_class);
-                    } else {
-                        avatar_html = _COLLAB_PVT.getAvatarHtml(co_members[0], image_class);
+                    for(var i=0; i<convo_data.msgs.length; i++) {
+                        if(convo_data.msgs[i].s_id) {
+                            chosen_member_id = convo_data.msgs[i].s_id
+                            break;
+                        }
                     }
+                    avatar_html = _COLLAB_PVT.getAvatarHtml(chosen_member_id, image_class);
                     $("#collab-btn").prepend(avatar_html);
                 }
             }
