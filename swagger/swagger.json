@@ -68,7 +68,9 @@
             "enum": [
               "requester",
               "stats",
-              "survey"
+              "survey",
+              "company",
+              "count"
             ]
           },
           {
@@ -4361,6 +4363,23 @@
         },
         "custom_fields": {
           "$ref": "#/definitions/custom_field"
+        },
+        "view_all_tickets": {
+          "type": "boolean"
+        },
+        "other_companies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "company_id": {
+                "type": "number"
+              },
+              "view_all_tickets": {
+                "type": "boolean"
+              }
+            }
+          }
         }
       }
     },
@@ -5029,7 +5048,7 @@
                   "type": "string",
                   "format": "date-time"
                 },
-                "last_edited_by": {
+                "last_edited_user_id": {
                   "type": "number"
                 },
                 "attachments": {
@@ -5264,6 +5283,17 @@
                   },
                   "requester": {
                     "type": "object"
+                  },
+                  "company": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "number"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
                   }
                 }
               }

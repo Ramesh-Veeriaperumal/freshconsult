@@ -31,7 +31,7 @@ class ConversationDecorator < ApiDecorator
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc),
       last_edited_at: last_modified_timestamp.try(:utc),
-      last_edited_by: last_modified_user_id.try(:to_i),
+      last_edited_user_id: last_modified_user_id.try(:to_i),
       attachments: attachments_hash,
       cloud_files: cloud_files_hash,
       has_quoted_text: has_quoted_text?

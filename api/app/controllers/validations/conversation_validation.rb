@@ -11,7 +11,7 @@ class ConversationValidation < ApiValidation
   validates :body, required: true, if: -> { include_quoted_text.to_s == 'false' || full_text.present? }, on: :forward
   validates :full_text, data_type: { rules: String }
   
-  validates :user_id, :agent_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param, greater_than: 0 }
+  validates :user_id, :agent_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }
   validates :private, :incoming, :include_quoted_text, :include_original_attachments, :send_survey, data_type: { rules: 'Boolean', ignore_string: :allow_string_param }
   validates :from_email, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, accepted: :'valid email address' } 
   validates :notify_emails, :to_emails, :attachments, :cc_emails, :bcc_emails, data_type: { rules: Array }
