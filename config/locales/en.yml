@@ -5448,6 +5448,7 @@ en:
       configuring: Configuring...
       verify: Verify
       verified: Verified
+      dkim_remove_message: Are you sure you want to remove DKIM configuration for
       verification_sent: Verification Sent
       unverified: Unverified
       last_verified: Last Verified
