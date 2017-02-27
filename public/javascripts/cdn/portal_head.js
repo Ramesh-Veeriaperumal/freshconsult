@@ -7,5 +7,3 @@
 //= require lib/nestedtree.js
 //= require frameworks/plugins/jquery.nested_select_tag.js
 //= require portal/fresh_suggest.js
-//= require i18n
-//= require i18n/translations
