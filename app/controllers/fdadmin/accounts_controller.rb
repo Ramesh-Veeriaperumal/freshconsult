@@ -180,6 +180,26 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       end
     end 
   end
+  
+  def change_currency
+    account = Account.find_by_id(params[:account_id]).make_current
+    result = {:account_id => account.id , :account_name => account.name }
+    begin
+      if validate_new_currency
+        result[:status] = (switch_currency ? "success" : "notice")
+      else
+        result[:status] = "error"
+      end
+    rescue Exception => e
+      result[:status] = "notice"
+    end
+    Account.reset_current_account
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end 
+  end
 
 
   def change_url
@@ -397,6 +417,12 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       Account.reset_current_account
     end
     render :json => {:status => result[:status] }
+  end
+
+  def check_domain
+    result = {}
+    result[:domain_exist] = (params[:domain] && DomainMapping.find_by_domain(params[:domain])) ? true : false
+    render :json => result
   end
 
   private 

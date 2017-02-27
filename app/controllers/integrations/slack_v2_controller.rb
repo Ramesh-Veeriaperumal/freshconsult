@@ -1,12 +1,12 @@
 class Integrations::SlackV2Controller < Admin::AdminController
 
   ssl_required :create_ticket, :tkt_create_v3
-  skip_filter :select_shard, :only => :tkt_create_v3
-  prepend_around_filter :select_shard_slack, :only => :tkt_create_v3
-  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:create_ticket, :tkt_create_v3]
+  skip_filter :select_shard, :only => [:tkt_create_v3, :help]
+  prepend_around_filter :select_shard_slack, :only => [:tkt_create_v3, :help]
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:create_ticket, :tkt_create_v3, :help]
   before_filter :check_slack_v1, :only => [:oauth, :new]
   before_filter :load_app, :only => [:new, :install]
-  before_filter :load_installed_app, :only => [:edit, :update, :create_ticket, :tkt_create_v3,:add_slack_agent]
+  before_filter :load_installed_app, :only => [:edit, :update, :create_ticket, :tkt_create_v3,:add_slack_agent,:help]
   before_filter :check_slash_token, :check_direct_channel, :check_remote_user, :only => [:create_ticket]
   before_filter :check_slash_token_v3,:check_user_credentials, :only => [:tkt_create_v3]
   before_filter :init_slack_obj, :only => [:edit, :update]
@@ -111,6 +111,10 @@ class Integrations::SlackV2Controller < Admin::AdminController
     render_response
   end
 
+  def help
+    render :json => { :text => "#{t('integrations.slack_v2.message.help_command')}"}
+  end
+
   private
 
   def slack_params(operation_event)
@@ -159,7 +163,7 @@ class Integrations::SlackV2Controller < Admin::AdminController
       @installing_application = Integrations::Application.available_apps(current_account.id).find_by_name(APP_NAME)
       @installed_app = current_account.installed_applications.find_by_application_id(@installing_application)
       if @installed_app.blank?
-        if action == :create_ticket
+        if action == :create_ticket || action == :help
           render :json => { :text => "#{t('integrations.slack_v2.message.not_installed')}"} and return
         elsif action == :add_slack_agent
           flash[:notice] = "#{t('integrations.slack_v2.message.no_app_found')}"

@@ -12,6 +12,7 @@ class Account < ActiveRecord::Base
   include Redis::OthersRedis
   include ErrorHandle
   include AccountConstants
+  include Helpdesk::SharedOwnershipMigrationMethods
   include Onboarding::OnboardingRedisMethods
   include FreshdeskFeatures::Feature
 
@@ -23,7 +24,7 @@ class Account < ActiveRecord::Base
   
   is_a_launch_target
   
-  concerned_with :associations, :constants, :features, :validations, :callbacks, :solution_associations, :multilingual
+  concerned_with :associations, :constants, :validations, :callbacks, :features, :solution_associations, :multilingual
 
   include CustomerDeprecationMethods
   

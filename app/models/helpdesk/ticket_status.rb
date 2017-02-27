@@ -48,7 +48,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
 
   def self.statuses_list(account)
     statuses = account.ticket_status_values_from_cache
-    status_group_info = group_ids_with_names(statuses) if Account.current.features?(:shared_ownership)
+    status_group_info = group_ids_with_names(statuses) if Account.current.shared_ownership_enabled?
 
     statuses.map{|status| 
       status_hash = {
@@ -58,7 +58,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
         :stop_sla_timer => status.stop_sla_timer,
         :deleted => status.deleted
       }
-      status_hash[:group_ids] = status_group_info[status.status_id] if Account.current.features?(:shared_ownership)
+      status_hash[:group_ids] = status_group_info[status.status_id] if Account.current.shared_ownership_enabled?
       status_hash
     }
   end
@@ -118,7 +118,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   end
 
   def group_ids=(g_ids=nil)
-    return if self.is_default or !Account.current.features?(:shared_ownership)
+    return if self.is_default or !Account.current.shared_ownership_enabled?
     @group_ids_array = g_ids.blank? ? [] : g_ids.map(&:to_i)
     existing_group_ids = status_groups_from_cache.map(&:group_id)
 
@@ -155,7 +155,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   end
 
   def mark_status_groups_for_destruction
-    return unless Account.current.features?(:shared_ownership)
+    return unless Account.current.shared_ownership_enabled?
 
     status_groups_array = []
     status_groups_from_cache.each {|status_group|

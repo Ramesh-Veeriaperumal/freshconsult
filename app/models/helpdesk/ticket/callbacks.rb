@@ -215,7 +215,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   #Shared onwership Validations
   def reset_internal_group_agent
-    (self.internal_agent_id = self.internal_group_id = nil) or return unless Account.current.features?(:shared_ownership)
+    (self.internal_agent_id = self.internal_group_id = nil) or return unless Account.current.shared_ownership_enabled?
     return unless (status_changed? || shared_ownership_fields_changed?)
 
     #Nullify internal group when the status(without the particular group mapped) is changed.

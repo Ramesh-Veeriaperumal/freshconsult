@@ -21,7 +21,7 @@ class ApiTicketFieldsController < ApiApplicationController
     end
 
     def allowed_field_types
-      current_account.features?(:shared_ownership) ? 
+      current_account.shared_ownership_enabled? ? 
           ApiTicketConstants::FIELD_TYPES :
           ApiTicketConstants::FIELD_TYPES - ["default_internal_group", "default_internal_agent"]
     end

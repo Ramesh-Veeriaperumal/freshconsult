@@ -65,7 +65,7 @@ class TicketDelegator < BaseDelegator
   end
 
   def company_presence
-    company = Account.current.companies_from_cache.detect { |x| company_id == x.id }
+    company = Account.current.companies.find_by_id(company_id)
     if company.nil?
       errors[:company_id] << :invalid_company_id
       @error_options[:company_id] = { company_id: company_id }

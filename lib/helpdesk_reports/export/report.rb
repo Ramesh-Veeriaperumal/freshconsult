@@ -97,7 +97,7 @@ class HelpdeskReports::Export::Report < HelpdeskReports::Export::Base
       build_file(file, file_format, report_type, PDF_EXPORT_TYPE)
     end
 
-    def build_pdf
+    def build_pdf(is_landscape=false)
       av = ActionView::Base.new()
       av.view_paths = ActionController::Base.view_paths
       av.view_paths << "app/views"
@@ -107,14 +107,14 @@ class HelpdeskReports::Export::Report < HelpdeskReports::Export::Base
           include Object.const_get file
         end
       end
-
+      orientation = is_landscape ? 'Landscape' : 'Portrait'
       pdf_html = av.render :layout => @layout,
                            :template => 'sections/generate_report_pdf',
                            :locals => locals_option,
                            :handlers => [:erb],
                            :formats => [:html]
 
-      pdf = WickedPdf.new.pdf_from_string(pdf_html, :pdf => report_type, :page_size => "A3", :javascript_delay => 1000)
+      pdf = WickedPdf.new.pdf_from_string(pdf_html, :pdf => report_type, :page_size => "A3", :javascript_delay => 1000, :orientation => orientation)
     end
 
     # def modify_time_trend_condition query

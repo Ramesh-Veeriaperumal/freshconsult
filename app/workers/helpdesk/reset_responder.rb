@@ -20,7 +20,7 @@ class Helpdesk::ResetResponder < BaseWorker
       # Reset agent and internal agent for tickets
       account.tickets.where(responder_id: user.id).update_all_with_publish({ responder_id: nil }, {}, options)
 
-      if account.features?(:shared_ownership)
+      if account.shared_ownership_enabled?
         reason[:delete_internal_agent]  = reason.delete(:delete_agent)
         options                         = {:reason => reason, :manual_publish => true}
         updates_hash                    = {:internal_agent_id => nil}
