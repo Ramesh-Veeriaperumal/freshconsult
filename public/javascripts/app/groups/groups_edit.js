@@ -228,7 +228,6 @@ window.App.Groups = window.App.Groups || {};
       sessionStorage.setItem('cap_value', bCappingChanged);
 
       $bodySelector.on('change.groups', '#group_form :input', function() {
-        debugger;
         bCappingChanged = ($('#group_form').serialize() != origForm) ? "true" : "false";
         // Storing current form state if changed, in session var
         sessionStorage.setItem('cap_value', bCappingChanged);
