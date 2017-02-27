@@ -1,5 +1,6 @@
 <% readonly = !global_access? %>
 
+<span class="group_form">
 <h3 class="lead"><%=title%></h3> <br/>
 	<%= form_for(@group, :html => {:id => "group_form"}) do |f| %>
 	  <%= f.error_messages %>
@@ -14,7 +15,7 @@
 		 		<li class="row-fluid">
 		 			 <%= f.label :description, "<b> #{t('description')} </b>".html_safe, :class => "control-label span2" %>
 					  <div class="span10">
-						 <%= f.text_area :description , :class => "text required smallpara span12", :placeholder => t('group.description').html_safe, :disabled => readonly %>
+						 <%= f.text_area :description , :class => "text smallpara span12", :placeholder => t('group.description').html_safe, :disabled => readonly %>
 					  </div>
 		 		</li>
 		 		<% if current_account.multiple_business_hours_enabled? %>
@@ -79,7 +80,7 @@
               <%= f.check_box :ticket_assign_type, :value => '1', :checked => @group.ticket_assign_type == Group::     TICKET_ASSIGN_TYPE[:round_robin],:rel => "toggle"  %>
             </div>
             <div class="span11">
-              <h5 class="lead small-lead"><%= t('group.ticket_assignment') %></h5>   
+              <h5 class="lead title small-lead"><%= t('group.ticket_assignment') %></h5>   
               <p class="muted lead-desc" rel="process_desc"> <%= t('group.auto_assignment_description') %></p>
               <p class="muted lead-desc ui-helper-hidden only_round" rel="only_round"> <%= t('group.only_round_robin_description').html_safe %></p>
             </div>
@@ -212,6 +213,21 @@
 
     </div>
   <% end %>
+  <a class="vertical-alignment left-border "
+  id="popupTrigger"
+  href="#alert_content"
+  rel="freshdialog"
+  data-backdrop="static"
+  data-show-close="true"
+  id="save-report"
+  data-destroy-on-close="false"
+  data-title="Wait up!"
+  data-submit-label="Proceed"
+  data-close-label="Cancel"></a>
+
+  <div id="alert_content" class="hide"><%= t('group.alert_content').html_safe %><br><br>
+  <strong><%= t('group.alert_content_2').html_safe %></strong></div>
+</span>
 
 
 <script type="text/javascript">   
@@ -251,26 +267,3 @@
  });   
      
  </script>
-
-
-
-<style>
-    #toggle_method {
-        margin-left: 70px;
-        border-left: 1px solid #e6e6e6;
-        padding-left: 15px;
-    }
-    #toggle_availability_container{
-        margin: 15px 0 0 70px;
-    }
-    .inline-box{
-      float : left;
-    }
-    .lead-desc.only_round {
-      margin-bottom: 0px;
-    } 
-
-    .select2-container.capping-limit {
-        width: 100px;
-    }
-</style>
