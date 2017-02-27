@@ -99,7 +99,7 @@
 
  jQuery(document).ready(function(){
  	SurveyAdmin.fullSurvey = <%= !@account.default_survey_enabled? %>;
- 	SurveyAdmin.hasLayoutCustomization = <%= @account.features?(:layout_customization) %>;
+ 	SurveyAdmin.hasLayoutCustomization = <%= @account.layout_customization_enabled? %>;
  	SurveyAdmin.surveyChoiceGoodToBad = <%= @layout_params[:order] %>;
  });
 

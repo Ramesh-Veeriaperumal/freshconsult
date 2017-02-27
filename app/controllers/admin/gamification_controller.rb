@@ -1,6 +1,6 @@
 class Admin::GamificationController < Admin::AdminController
   
-  before_filter { |c| c.requires_feature :gamification }
+  before_filter { |c| c.requires_this_feature :gamification }
 
   def index
     @scoreboard_ratings = current_account.scoreboard_ratings
@@ -9,10 +9,12 @@ class Admin::GamificationController < Admin::AdminController
   end
   
   def toggle
-    if feature?(:gamification_enable)
+    if current_account.gamification_enable_enabled?
       current_account.features.gamification_enable.destroy
+      current_account.revoke_feature(:gamification_enable)
     else
       current_account.features.gamification_enable.create
+      current_account.add_feature(:gamification_enable)
     end
     current_account.reload
     render :nothing => true

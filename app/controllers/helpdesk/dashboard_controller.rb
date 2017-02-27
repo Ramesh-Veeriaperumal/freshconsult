@@ -15,7 +15,7 @@ class Helpdesk::DashboardController < ApplicationController
 
 
   UNRESOLVED_COLUMN_KEY_MAPPING = {:group_id => "group_id", :responder_id => "responder_id", :status => "status", 
-      :internal_agent_id => "helpdesk_schema_less_tickets.long_tc04", :internal_group_id => "helpdesk_schema_less_tickets.long_tc03"}
+      :internal_group_id => "internal_group_id", :internal_agent_id => "internal_agent_id"}
 
   UNRESOLVED_FILTER_HEADERS = {
       UNRESOLVED_COLUMN_KEY_MAPPING[:responder_id]      => "agent_label", 
@@ -301,8 +301,6 @@ class Helpdesk::DashboardController < ApplicationController
   def fetch_unresolved_tickets
     es_enabled = current_account.count_es_enabled?
     #Send only column names to ES for aggregation since column names are used as keys
-    #Ex: Change helpdesk_schema_less_tickets.long_tc04 to long_tc04
-    @group_by = @group_by.sub('helpdesk_schema_less_tickets.',"") if es_enabled && @group_by.include?("helpdesk_schema_less_tickets")
     options = {:group_by => [@group_by, "status"], :filter_condition => @filter_condition, :cache_data => false, :include_missing => true}
     ticket_counts = Dashboard::DataLayer.new(es_enabled,options).aggregated_data
     map_id_to_names(ticket_counts)

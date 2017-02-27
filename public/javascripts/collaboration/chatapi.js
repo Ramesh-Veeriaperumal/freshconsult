@@ -48,6 +48,7 @@
         CONVERSATION_MESSAGES_HISTORY_ROUTE = CHAT_API_SERVER + "/conversations.messages.history";
         CONVERSATION_OWNER_SET_ROUTE = CHAT_API_SERVER + "/conversations.owner.set";
         CONVERSATION_GET_ATTACHMENT_URL = CHAT_API_SERVER + "/conversations.attachments.geturl";
+        NOTIFICATION_MAIL_URL = CHAT_API_SERVER + "/helpkit/notification.mail";
     }
 
     /*
@@ -380,6 +381,7 @@
 
         var conversationObj = {
             "members": convo.members,
+            "co_name": convo.name,
             "co_id": convo.co_id,
             "owned_by": convo.owned_by
         };
@@ -432,6 +434,7 @@
             "rts_aid" : self.rtsAccountId,
             "c_aid" : self.clientId, 
             "s_id": self.userId,
+            "cid": self.clientAccountId,
             "metadata": stringify(msg.metadata),
             "m_type": msg.m_type,
             "al": msg.attachment_link
@@ -684,7 +687,7 @@
         collabHttpAjax({
             method: "POST",
             url: CONVERSATION_OWNER_SET_ROUTE,
-            data: {"co_id": convo.co_id, "uid": uid},
+            data: {"co_id": convo.co_id, "uid": uid, "co_name": convo.name},
             success: function(response){
                 if(typeof response === "string"){response = JSON.parse(response);};
                 if(typeof cb === "function"){cb(response);}
@@ -739,7 +742,20 @@
                 if(typeof cb === "function"){cb(response);}
             }
         }, self.clientId, self.authToken);
-    }    
+    },
+
+    ChatApi.prototype.notificationMail = function(convo, cb){
+        var self = this;
+        collabHttpAjax({
+            method: "POST",
+            url: NOTIFICATION_MAIL_URL,
+            data: convo.mail_data,
+            success: function(response){
+                if(typeof response === "string"){response = JSON.parse(response);};
+                if(typeof cb === "function"){cb(response);}
+            }
+        }, self.clientId, getAuthToken(self.authToken, convo.token));
+    }
 
     return ChatApi;
 });

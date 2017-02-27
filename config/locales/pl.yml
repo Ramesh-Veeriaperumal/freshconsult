@@ -4099,6 +4099,7 @@ pl:
   last_renewed_on: "Ostatnie odnowienie"
   update_and_log_in: "Zaktualizuj i zaloguj"
   activate_and_log_in: "Aktywuj i zaloguj"
+  activate_and_log_in_long: "Aktywuj i Zaloguj się"
   password: Hasło
   enter_payment: "Przejdź do płatności"
   downgrade_confirm: "<span class=\"label label-important\">Ważne</span>  Możesz w tej chwili zmienić wersję planu <b>%{from}</b> na niższą <b>%{to}</b>. Pamiętaj, że wszystkie dane i konfiguracje powiązane z funkcjami dostępnymi w planie %{from} zostaną trwale utracone.<br /><br /> Aby zobaczyć pełną listę planów i funkcji, wejdź do sekcji <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Plany i ceny</a>. <br />Nie wiesz, co zrobić? <a href = \"mailto:support@freshdesk.com\" >Pozwól, że pomożemy ci się zdecydować</a>"
@@ -4543,6 +4544,8 @@ pl:
   no_topics_text: "Brak wątków"
   send_email_to_group: "Wyślij e-mail do grupy"
   activate_account: "Aktywuj swoje konto"
+  activations:
+    activate_freshdesk_account: "Aktywuj swoje konto Freshdesk"
   enter_message: "Wprowadź tutaj swoją wiadomość"
   not_selected: "Nie wybrano"
   enter_billing_for_free: "Wprowadź dane swojej karty kredytowej przed wybraniem płatnego planu"

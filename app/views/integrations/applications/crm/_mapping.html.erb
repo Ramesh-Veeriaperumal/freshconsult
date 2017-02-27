@@ -42,7 +42,7 @@
         <div class="radio-btn">
           <input type="radio" class="sync-radio-btn" id="crm_sync_type_3" name="crm_sync_type"  value="FD_AND_CRM"> 
           <a class="sync-icon"><%= font_icon "both-direction", { :size => 12 } %></a> 
-          <label for="crm_sync_type_3"><%=t("integrations.#{@element_config["element"]}.form.two_way")%></label> 
+          <label for="crm_sync_type_3"><%=t("integrations.cloud_elements.form.two_way")%></label> 
         </div>
         <div class="master-block-container">
           <div class="radio-btn-title blocks"> <%=t("integrations.cloud_elements.form.sync_frequency")%> &nbsp;</div>
@@ -75,11 +75,11 @@
         <div class="tab-pane active" id="contact-mapping-tab">
           <div class="contact-wrapper">
             <div class="contact-tabel-head">
-              <div class="contact-tabel-data field-1"> <span class="field-1-text"> Freshdesk Fields </span> </div>
+              <div class="contact-tabel-data field-1"> <span class="field-1-text"> Freshdesk Contact Fields </span> </div>
               <div class="contact-tabel-data field-2"> 
                 <a class="center-icon"><%= font_icon "both-direction", { :size => 20 } %></a>
               </div>
-              <div class="contact-tabel-data field-3"> <span> <%= @element_config["element"].capitalize%> Contact Fields </span> </div>
+              <div class="contact-tabel-data field-3"> <span> <%= @element_config["element_name"].capitalize%> Contact Fields </span> </div>
             </div>
             <div rel="construct_contact_rules" id="construct_contact_rule" class="rules_wrapper" data-render-template = '.construct_contact' ></div>
           </div>
@@ -87,11 +87,11 @@
         <div class="tab-pane" id="company-mapping-tab">
           <div class="contact-wrapper">
             <div class="contact-tabel-head">
-              <div class="contact-tabel-data field-1"> <span class="field-1-text"> Freshdesk Fields </span> </div>
+              <div class="contact-tabel-data field-1"> <span class="field-1-text"> Freshdesk Company Fields </span> </div>
               <div class="contact-tabel-data field-2">
                 <a class="center-icon"><%= font_icon "both-direction", { :size => 20 } %></a>
               </div>
-              <div class="contact-tabel-data field-3"> <span> <%= @element_config["element"].capitalize%> Account Fields </span> </div>
+              <div class="contact-tabel-data field-3"> <span> <%= @element_config["element_name"].capitalize%> Account Fields </span> </div>
             </div>
             <div rel="construct_company_rules" id="construct_company_rule" class="rules_wrapper" data-render-template = '.construct_company' ></div>
           </div>

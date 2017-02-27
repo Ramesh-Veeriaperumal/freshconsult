@@ -20,7 +20,7 @@
           <% end %>
         <%= render :partial => "helpdesk/tickets/components/company_info", 
                    :locals => { :company => defined?(company) ? company : user.company } %>
-        <% if feature?(:gamification) and feature?(:gamification_enable) and user.agent? %>
+        <% if current_account.gamification_enabled? and current_account.gamification_enable_enabled? and user.agent? %>
           <%= content_tag :div, h(user.agent.level.name) unless user.agent.level.blank? %>
         <% end %>
       </div>

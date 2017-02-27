@@ -1,5 +1,5 @@
 <div class="footer-content-centre">
-	<% unless(current_account.subscription.paid_account?) %>
+	<% if current_account.copy_right_enabled? %>
 	  <%= link_to(t('footer.helpdesk_software'), AppConfig['app_website'], :target => "_blank") %>
 	  <%= t('footer.by_freshdesk') %>
 	  <span class="muted"> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; </span>

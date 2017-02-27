@@ -34,12 +34,13 @@ gem "rack-cache", "~> 1.2"
 gem "statsd-ruby", :git => 'git://github.com/sumakumardey/statsd-ruby', :branch =>'custom_stats', :require => 'statsd'
 
 gem 'sneaky-save', :git => 'git://github.com/partyearth/sneaky-save.git'
-gem 'fresh_request', :git => 'git@github.com:freshdesk/fresh_request.git', :branch => 'v10'
+gem 'fresh_request', :git => 'git@github.com:freshdesk/fresh_request.git', :branch => 'v20'
 
 #for ruby ~> 2.1.0 upgrade
 gem 'iconv', '~> 1.0.4'
 gem 'thrift', '~> 0.9.2.0'
 gem 'charlock_holmes', "0.7.3"
+gem "tnef", "1.0.2"
 
 
 group :development, :test do
@@ -103,7 +104,7 @@ gem "twilio-ruby", :git => "git://github.com/freshdesk/twilio-ruby.git", :branch
 gem "carmen", :git => "git://github.com/jim/carmen.git", :tag => "ruby-18"
 gem 'postoffice', :git => "git://github.com/chrisbutcher/postoffice.git", :branch => "master"
 
-gem "ruby-saml", "0.8.1"
+gem "ruby-saml", "1.4.2"
 
 gem 'xeroizer', :git => "git@github.com:freshdesk/xeroizer.git"
 gem "rubyzip", "0.9.4" , :require => "zip/zip"
@@ -131,7 +132,7 @@ gem "sax-machine", "~> 0.1.0"
 
 gem "insensitive_hash", "0.2.3"
 
-gem "redis","3.0.7"
+gem "redis","3.3.1"
 gem "resque","~> 1.24.0"
 gem "resque-status", "0.4.1"
 gem 'resque-scheduler', "2.2.0", :require => 'resque_scheduler'
@@ -187,7 +188,7 @@ gem "premailer", "~> 1.8.0"
 gem 'html_to_plain_text', '1.0.5'
 gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 gem 'freshdesk_features', :git => 'git@github.com:freshdesk/freshdesk-features.git', :branch => "freshdesk", :require => true
-gem 'launchparty', :git => 'git@github.com:freshdesk/launch-party.git', :tag => 'v0.1.3'
+gem 'launchparty', :git => 'git@github.com:freshdesk/launch-party.git', :tag => 'v0.1.4'
 gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branch => 'not_a_model_column'
 
 

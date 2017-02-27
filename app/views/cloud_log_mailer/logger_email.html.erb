@@ -1,3 +1,5 @@
+Account: <%=@subdomain%>
+<br/>
 <% if @size == Integrations::CloudElements::Constant::LOG_PAGE_SIZE %>
 <%= t('integrations.cloud_elements.mail.page_full', {:size => @size}).html_safe %>
 <% elsif @size > 0  %>
@@ -20,7 +22,7 @@
       <th style="border: 1px solid black;">Execution Id</th>
       <th style="border: 1px solid black;">Reason</th>
     </tr>
-    <%@failure_reasons.keys.each_with_index do  |key, index| %>
+    <%@failure_reasons.keys.each.with_index(1) do  |key, index| %>
     <tr>
       <td style="border: 1px solid black;"><%=index%></td>
       <td style="border: 1px solid black;"><%=key%></td>

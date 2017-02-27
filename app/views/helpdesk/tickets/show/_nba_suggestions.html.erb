@@ -4,7 +4,8 @@
           <div id = "sas-hd-result">
             <span class="beta-tag sas-hidden">Beta</span>
             <span class = "sas-cnt">8</span><%=t('ml.similat_tickets_found')%> 
-            <a class="help" id="help" href="#"><span><%=t('ml.help')%></span></a>
+            <!-- <a class="help" id="help" href="#"><span><%=t('ml.help')%></span></a> -->
+            <a class="help tooltip" id="help" href="https://support.freshdesk.com/support/solutions/articles/224039-similar-tickets-suggester" target="_blank" data-placement="above" data-original-title="What's this?"><i class="ficon-help fsize-14" size="14"></i></a>
             <a class="toggle" id = "show" href="#"><span><%=t('ml.show')%></span><i class="ficon-caret-right"></i></a>
           </div>
           <div id = "sas-hd-no-result" class = "sas-hidden"><span class="sas-hd"><%=t('ml.no_suggestions')%></span></div>
@@ -25,7 +26,7 @@
                 <a id = "nxt" class="nxt dbl" href="#"  title="Next"><i class="ficon-arrow-right-2"></i></a>
             </div>
           </div>
-        	<div class="sas-fdbk"><%=t('ml.feed_back')%> <i class="ficon-like fsize-18"  title="Thumbs up"></i> <i class="ficon-dislike fsize-18" title="Thumbs down"></i></div>
+        	<div class="sas-fdbk"> <a id='sas_survey' target='_blank' href='https://freshdesk.typeform.com/to/QjdFnL'><%=t('ml.feed_back_survery')%></a></div>
           <div id = "thanksID" class = "sas-fdbk sas-hidden"><%=t('ml.feed_back_thanks')%></div>
           <div id = "textthanksID" class = "sas-fdbk sas-hidden"><%=t('ml.feed_back_thanks_text')%></div>
           <div class="sas-fdbk-txt sas-hidden"><input placeholder = "<%=t('ml.suggestion_text')%>"  id="sas-fdbk-txt" type="text"/> <a id="fdbk-button" class="btn" href=""><%=t('ml.submit')%></a></div>

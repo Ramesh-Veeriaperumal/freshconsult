@@ -8,12 +8,7 @@ class Middleware::SecurityResponseHeader
   req_path = env['PATH_INFO']
   status, headers, response    = @app.call(env)
   headers["X-XSS-Protection"] = "1; mode=block"
-  headers["X-Content-Type-Options"]  = "nosniff"
-
-  # if request.host.end_with?("freshdesk.com")
-  #   headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
-  # end
-   
+  #headers["X-Content-Type-Options"]  = "nosniff"
    if req_path.include? 'login'
         headers["Content-Security-Policy"] = "frame-ancestors 'none'"
    end

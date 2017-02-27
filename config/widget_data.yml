@@ -477,3 +477,20 @@
   id: 28
   description: integrations.salesforce_v2.desc
   application_type: salesforce_v2
+
+- options: 
+    display_in_pages: 
+    - contacts_show_page_side_bar
+
+  script: |-
+          <script type="text/javascript">
+            var dynamicsV2Bundle={domain:"{{dynamics_v2.domain}}",ticket_id:"{{ticket.raw_id}}", ticket_company:"{{ticket.company.name | make_vaild_javascript}}", reqEmail:"{{requester.email}}", contactFields:"{{dynamics_v2.contact_fields}}", opportunityFields:"{{dynamics_v2.opportunity_fields}}", opportunityLabels:"{{dynamics_v2.opportunity_labels}}", leadFields:"{{dynamics_v2.lead_fields}}", contactLabels:"{{dynamics_v2.contact_labels}}", leadLabels:"{{dynamics_v2.lead_labels}}", reqName:"{{requester.name | make_vaild_javascript}}" , accountLabels:"{{dynamics_v2.account_labels}}", accountFields:"{{dynamics_v2.account_fields}}" , reqCompany : "{{requester.company_name | make_vaild_javascript}}", reqEmails: "{{requester.all_emails}}", opportunityView: "{{dynamics_v2.opportunity_view}}", agentSettings: "{{dynamics_v2.agent_settings}}", opportunity_stage: {{installed_app.configs_opportunity_stage_choices}}, contractLabels: "{{dynamics_v2.contract_labels}}", contractFields: "{{dynamics_v2.contract_fields}}", contractView: "{{dynamics_v2.contract_view}}", orderLabels: "{{dynamics_v2.order_labels}}", orderFields: "{{dynamics_v2.order_fields}}", orderView: "{{dynamics_v2.order_view}}"};
+            Fjax.Assets.integration('dynamics_v2', function () {
+              new DynamicsV2Widget(dynamicsV2Bundle);
+            });
+          </script>
+  name: dynamics_v2_widget
+  id: 29
+  description: integrations.dynamics_v2.desc
+  application_type: dynamics_v2
+

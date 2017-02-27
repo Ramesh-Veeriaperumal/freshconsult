@@ -39,6 +39,6 @@ class AgentValidation < ApiValidation
   end
 
   def multi_timezone_enabled?
-    Account.current.features?(:multi_timezone)
+    Account.current.multi_timezone_enabled?
   end
 end

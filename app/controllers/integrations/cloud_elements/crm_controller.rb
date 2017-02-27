@@ -1,28 +1,41 @@
 class Integrations::CloudElements::CrmController < Integrations::CloudElementsController
-  include Integrations::CloudElements::Crm::Constant
-  include Integrations::CloudElements::Constant
   include Integrations::CloudElements::Crm::CrmUtil
 
   before_filter :check_feature, :verify_authenticity
-  before_filter :build_installed_app, :check_element_instances, :only => [:instances, :create]
+  before_filter :build_installed_app, :only => [:instances, :create]
   before_filter :load_installed_app, :only => [:edit, :update, :fetch]
+  before_filter :check_element_instances, :only => [:instances, :create, :edit]
   before_filter :migrate_integrated_resources, :only => [:update], :if => :element_is_salesforce?
   before_filter :update_obj_transformation, :only => [:update]
   before_filter :update_formula_inst, :only => [:update]
   
   def settings
-    build_setting_configs "settings"
+    build_setting_configs
     render :template => "integrations/applications/crm_settings"
   end
 
   def create
-    el_response = create_element_instance( crm_payload, @metadata ) #what will happen If the user closes the window at this stage??
-    redirect_to "#{request.protocol}#{request.host_with_port}#{integrations_cloud_elements_crm_instances_path}?state=#{params[:state]}&method=post&id=#{el_response['id']}&token=#{CGI::escape(el_response['token'])}"
+    el_response = create_element_instance( crm_payload, @metadata )
+    #storing the installed app, To save the information if user closes the window.
+    config_hash = Hash.new
+    config_hash['element_instance_id'] = el_response['id']
+    config_hash['element_token'] = el_response['token']
+    #Need to pass the domain for the Link generation in the Front End.
+    config_hash['domain'] = "#{params["domain_label"]}" if params["domain_label"].present?
+    @installed_app.configs[:inputs].merge!(config_hash)
+    @installed_app.save!
+    redirect_to "#{request.protocol}#{request.host_with_port}#{integrations_cloud_elements_crm_instances_path}?state=#{element}&method=post&id=#{el_response['id']}&token=#{CGI::escape(el_response['token'])}"
   rescue => e
+    #delete if the element instance is found and the installed app is not saved delete the element instance.
+    if @installed_app.new_record? && el_response.present? && el_response['id'].present?
+      options = {:object => NOTATIONS[:element], :app_id => @installed_app.application_id, :metadata => {:id => el_response['id']}}
+      Integrations::CloudElementsDeleteWorker.perform_async(options)
+    end
+    Rails.logger.debug "Error inside crm_controller::create Message: #{e}"
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Error inside crm_controller::create Message: #{e}", :account_id => current_account.id}})
-    hash = build_setting_configs "create"
+    build_setting_configs
     flash[:error] = t(:'flash.application.install.cloud_element_settings_failure')
-    render :template => "integrations/applications/crm_settings", :locals => {:configs => hash}
+    redirect_to "#{request.protocol}#{request.host_with_port}#{integrations_cloud_elements_crm_settings_path}?state=#{element}"
   end
 
   def instances
@@ -45,21 +58,24 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     flash[:notice] = t(:'flash.application.install.cloud_element_success')
     render_settings
   rescue => e
-    Rails.logger.error "Error inside crm_controller::instances Message: #{e}"
-    NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application: #{e.message}", :account_id => current_account.id}})
+    Rails.logger.error "Error inside cloud_elements/crm_controller::instances Message: #{e}"
+    NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Error inside cloud_elements/crm_controller::instances Message: #{e.message}", :account_id => current_account.id}})
     if crm_formula_resp.present? and crm_formula_resp['id'].present?
       formula_template_id = Integrations::CRM_TO_HELPDESK_FORMULA_ID[element]
       options = {:object => NOTATIONS[:formula], :app_id => @installed_app.application_id, :metadata => {:formula_template_id => formula_template_id, :id => crm_formula_resp['id']}}
-      Integrations::CloudElementsDeleteWorker.perform_async(options)
+      Integrations::CloudElementsDeleteWorker.new.perform(options)
     end
     if fd_formula_resp.present? and fd_formula_resp['id'].present?
       formula_template_id = Integrations::HELPDESK_TO_CRM_FORMULA_ID[element]
       options = {:object => NOTATIONS[:formula], :app_id => @installed_app.application_id, :metadata => {:formula_template_id => formula_template_id, :id => fd_formula_resp['id']}}
-      Integrations::CloudElementsDeleteWorker.perform_async(options)
+      Integrations::CloudElementsDeleteWorker.new.perform(options)
     end
-    if el_response.present? and el_response_id.present?
-      options = {:object => NOTATIONS[:element], :app_id => @installed_app.application_id, :metadata => {:id => el_response_id}}
-      Integrations::CloudElementsDeleteWorker.perform_async(options)
+    if @installed_app.new_record? #will return false if installed_app is actually saved. For Dynamics
+      # We won't delete the dynamics instances once it's created.
+      if el_response.present? and el_response_id.present?
+        options = {:object => NOTATIONS[:element], :app_id => @installed_app.application_id, :metadata => {:id => el_response_id}}
+        Integrations::CloudElementsDeleteWorker.perform_async(options)
+      end
     end
     if fd_response.present? and fd_response['id'].present?
       options = {:object => NOTATIONS[:element], :app_id => @installed_app.application_id, :metadata => {:id => fd_response['id']}}
@@ -78,7 +94,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     render_settings
   rescue => e
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application: #{e.message}", :account_id => current_account.id}})
-    flash[:error] = t(:'flash.application.update.error')
+    flash[:error] = t(:'flash.application.update.cloud_elements_fetch_error')
     redirect_to integrations_applications_path
   end
 
@@ -100,8 +116,10 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     metadata = @metadata.merge({:element_token => @installed_app.configs_element_token, :object => constant_file['objects'][payload[:type]], :object_id => constant_file['Id']}) unless NO_METADATA_EVENTS.include? params[:event] 
     if payload[:type] == "contact"
       response = service_obj( payload, metadata).receive("#{params[:event]}".to_sym)
-      metadata[:account_object] = constant_file['objects']['account']
-      response = get_contact_account_name response, metadata
+      if @installed_app.configs_contact_fields.include? "AccountName" #get this only if in AccountName is selected in the list of view fields
+        metadata[:account_object] = constant_file['objects']['account']
+        response = get_contact_account_name response, metadata
+      end
     elsif payload[:type] == "account" && payload[:value][:email].present?
       response = get_contact_account_ids payload[:value][:email], metadata
       accIds = Array.new
@@ -112,6 +130,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       payload[:value][:query] = query
       response = get_contact_accounts payload
     else
+      #params[:event] is the fetch_user_selected_fields for Contract, Order, Leads and Opportunities.
       response = service_obj( payload, metadata).receive("#{params[:event]}".to_sym)
     end
     web_meta = @cloud_elements_obj.web_meta
@@ -148,6 +167,8 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     sync_frequency_change = params['sync_frequency'] != @installed_app.configs_sync_frequency
     element_object_transformation sync_hash, @installed_app.configs_element_instance_id, "crm", sync_frequency_change
     element_object_transformation sync_hash, @installed_app.configs_fd_instance_id, "fd", sync_frequency_change
+    @installed_app.configs_update_action = "true"
+    @installed_app.save! #saving the installed app so that even if it errors out after this update_action will be true and the future edit requests wont fail.
   rescue => e
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in updating the application: #{e.message}", :account_id => current_account.id}})
     flash[:error] = t(:'flash.application.update.error')

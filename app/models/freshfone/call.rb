@@ -403,7 +403,7 @@ class Freshfone::Call < ActiveRecord::Base
       :incoming => true,
       :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"],
       :user => params[:agent],
-      :private => private_recording_note?
+      :private => private_note?
     }
     self.notable.build_note_and_sanitize
     self
@@ -699,13 +699,15 @@ class Freshfone::Call < ActiveRecord::Base
       elsif ivr_direct_dial?
         i18n_label = "freshfone.ticket.dial_a_number"
         i18n_params.merge!({:direct_dial_number => params[:direct_dial_number]})
+      elsif transcript_note?
+        i18n_label = "freshfone.ticket.transcribed_note_desc"
       else
         i18n_label = "freshfone.ticket.ticket_desc"
         i18n_params.merge!({:agent => params[:agent].name,:agent_number => freshfone_number.number})
       end
-      i18n_label += valid_customer_name? ? "_with_name" : "_with_out_name"
+      i18n_label += valid_customer_name? ? "_with_name" : "_with_out_name" unless transcript_note?
       desc = I18n.t(i18n_label, i18n_params)
-      desc << "#{params[:call_log]}" unless is_ticket && private_recording_note?
+      desc << "#{params[:call_log]}" unless is_ticket && private_note?
       desc.html_safe
     end
 
@@ -725,6 +727,10 @@ class Freshfone::Call < ActiveRecord::Base
     
     def voicemail_ticket?
       params[:voicemail]
+    end
+
+    def transcript_note?
+      params[:transcript_note]
     end
     
     def params_requester_name
@@ -774,8 +780,12 @@ class Freshfone::Call < ActiveRecord::Base
       account.users.technicians.visible
     end
 
+    def private_note?
+      private_recording_note? || transcript_note?
+    end
+
     def private_recording_note?
-      freshfone_number.private_recording? && freshfone_number.record?
+      freshfone_number.private_recording_note?
     end
 
     def build_recording_delete_params(user_id)

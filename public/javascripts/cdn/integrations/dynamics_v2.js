@@ -1,0 +1,1 @@
+//=require integrations/dynamics_v2

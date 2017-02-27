@@ -20,5 +20,9 @@ module Helpdesk::EmailParser::Constants
   DEFAULT_CHARSET = "UTF-8"
 
   DEFAULT_ENCODING_FORMATS = Encoding.name_list.uniq.map(&:upcase)
+
+  HTML_CONTENT_CHARSET_PATTERN1 = /charset= *"(\S*?)"/i
+  HTML_CONTENT_CHARSET_PATTERN2 = /charset= *(\S*?)\\*"/i
+
 end
 

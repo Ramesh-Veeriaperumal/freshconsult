@@ -33,8 +33,8 @@ module Wf
       TEXT_DELIMITER = ","
 
         ANY_COLUMNS = {
-          :any_group_id => ["helpdesk_tickets.group_id", "helpdesk_schema_less_tickets.long_tc03"],
-          :any_agent_id => ["helpdesk_tickets.responder_id", "helpdesk_schema_less_tickets.long_tc04"]
+          :any_group_id => ["helpdesk_tickets.group_id", "internal_group_id"],
+          :any_agent_id => ["helpdesk_tickets.responder_id", "internal_agent_id"]
         }
 
 

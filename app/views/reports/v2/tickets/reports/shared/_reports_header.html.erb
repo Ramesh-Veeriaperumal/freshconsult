@@ -33,7 +33,7 @@
 	<% end %>
 </div>
 <div class="reports-filter span12">
-		<% if current_account.subscription.non_sprout_plan? || feature?(:advanced_reporting) %>
+		<% if current_account.subscription.non_sprout_plan? || current_account.advanced_reporting_enabled? %>
 			<div class="edit-filter span1">
 				<button class="btn btn-primary" id="metric-edit" data-action="open-filter-menu"><%=t('helpdesk_reports.edit_filter') %></button> 
 			</div>

@@ -1,4 +1,6 @@
 class Integrations::CloudElementsController < ApplicationController
+  include Integrations::CloudElements::Crm::Constant
+  include Integrations::CloudElements::Constant
 
   private
 
@@ -39,7 +41,23 @@ class Integrations::CloudElementsController < ApplicationController
 
   def check_element_instances
     #If element Instance Ids present then redirect to the edit route rather than the create routes.
-    redirect_to "#{request.protocol}#{request.host_with_port}#{integrations_cloud_elements_crm_edit_path}?state=#{params[:state]}&method=put" and return if @installed_app.configs_element_instance_id.present?
+    element_id =  @installed_app.configs_element_instance_id
+    freshdesk_id =  @installed_app.configs_fd_instance_id
+    edit_url = "#{request.protocol}#{request.host_with_port}#{integrations_cloud_elements_crm_edit_path}?state=#{params[:state]}&method=put"
+    if action_name != "edit" && (OAUTH_ELEMENTS.include? element) #salesforce_v2
+      redirect_to edit_url and return if element_id.present?
+    else #dynamics_v2
+      if action_name != "create" && element_id.blank?
+        #settings page.
+        settings_url = "#{request.protocol}#{request.host_with_port}#{integrations_cloud_elements_crm_settings_path}?state=#{element}" 
+        redirect_to settings_url
+      elsif action_name != "instances" && element_id.present? and freshdesk_id.blank? #instances
+        redirect_to_instances_url = "#{request.protocol}#{request.host_with_port}#{integrations_cloud_elements_crm_instances_path}?state=#{element}&method=post&id=#{element_id}&token=#{CGI::escape(@installed_app.configs_element_token)}"
+        redirect_to redirect_to_instances_url and return 
+      elsif action_name != "edit" && element_id.present? and freshdesk_id.present? #edit
+        redirect_to edit_url and return
+      end
+    end
   end
 
   def instance_object_definition payload, metadata
