@@ -421,8 +421,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   def check_domain
     result = {}
-    result[:status] = (params[:domain] && DomainMapping.find_by_domain(params[:domain])) ? true : false
-    render :json => {:domain_exist => result[:status] }
+    result[:domain_exist] = (params[:domain] && DomainMapping.find_by_domain(params[:domain])) ? true : false
+    render :json => result
   end
 
   private 
