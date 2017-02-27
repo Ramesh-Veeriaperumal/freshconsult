@@ -1,3 +1,1 @@
-JSON.generate({
-  results: @items.map(&:to_search_hash)
-})
+JSON.generate(@items.map(&:to_search_hash))
