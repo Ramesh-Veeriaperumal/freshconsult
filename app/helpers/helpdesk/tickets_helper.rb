@@ -21,6 +21,9 @@ module Helpdesk::TicketsHelper
   include Cache::FragmentCache::Base # Methods for fragment caching
   include Helpdesk::SpamAccountConstants
 
+  # Methods: bind_last_reply, bind_last_conv, parsed_reply_template, quoted_text, user_details_template, 
+  # extract_quote_from_note - moved to Concerns::TicketsViewConcern
+
   def ticket_sidebar
     tabs = [["TicketProperties", t('ticket.properties').html_safe,         "ticket"],
             ["RelatedSolutions", t('ticket.suggest_solutions').html_safe,  "related_solutions", privilege?(:view_solutions)],

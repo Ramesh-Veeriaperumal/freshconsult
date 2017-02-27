@@ -2,6 +2,7 @@ module Ember
   class ConversationsController < ::ConversationsController
     include Concerns::ApplicationViewConcern
     include Concerns::TicketsViewConcern
+    include Concerns::AppConfigurationConcern
     include Facebook::TicketActions::Util
     include Conversations::Twitter
     include HelperConcern
@@ -97,6 +98,7 @@ module Ember
       @agent_signature = signature
       @content = template_content
       @quoted_text = quoted_text(@item || @ticket, [:forward_template, :note_forward_template].include?(action_name.to_sym))
+      fetch_cc_bcc_emails
       render action: :template
     end
 
@@ -283,6 +285,12 @@ module Ember
 
       def notification_template
         action_name.to_sym == :note_forward_template ? :forward_template : action_name.to_sym
+      end
+
+      def fetch_cc_bcc_emails
+        return unless [:reply_template].include?(action_name.to_sym)
+        @cc_emails = reply_cc_emails(@ticket)
+        @bcc_emails = bcc_drop_box_email
       end
 
       def parse_liquid(liquid_content)

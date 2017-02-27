@@ -47,6 +47,40 @@ module Ember
       { ticket: params }
     end
 
+    def get_user_with_multiple_companies
+      user_company = @account.user_companies.group(:user_id).having(
+        'count(user_id) > 1 '
+      ).last
+      if user_company.present?
+        user_company.user
+      else
+        new_user = add_new_user(@account)
+        new_user.user_companies.create(:company_id => get_company.id, :default => true)
+        other_company = create_company
+        new_user.user_companies.create(:company_id => other_company.id)
+        new_user.reload
+      end
+    end
+
+    def get_user_with_default_company
+      user_company = @account.user_companies.group(:user_id).having('count(*) = 1 ').last
+      if user_company.present?
+        user_company.user
+      else
+        new_user = add_new_user(@account)
+        new_user.user_companies.create(:company_id => get_company.id, :default => true)
+        new_user.reload
+      end
+    end
+
+    def get_company
+      company = Company.first
+      return company if company
+      company = Company.create(name: Faker::Name.name, account_id: @account.id)
+      company.save
+      company
+    end
+
     def ticket_params_hash
       cc_emails = [Faker::Internet.email, Faker::Internet.email]
       subject = Faker::Lorem.words(10).join(' ')
@@ -94,6 +128,7 @@ module Ember
       ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| create_ticket }
       get :index, controller_params(version: 'private')
       assert_response 200
+      refute response.api_meta.present?
       match_json(private_api_ticket_index_pattern)
     end
 
@@ -176,6 +211,19 @@ module Ember
       ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| create_ticket(requester_id: add_test_agent(@account, role: Role.find_by_name('Agent').id).id) }
       get :index, controller_params(version: 'private', include: 'requester')
       assert_response 200
+      match_json(private_api_ticket_index_pattern)
+    end
+
+    def test_index_with_company_side_load
+      get :index, controller_params(version: 'private', include: 'company')
+      assert_response 200
+      match_json(private_api_ticket_index_pattern({}, false, false, true))
+    end
+
+    def test_index_with_count_included
+      get :index, controller_params(version: 'private', include: 'count')
+      assert_response 200
+      assert response.api_meta[:count] == Account.current.tickets.count
       match_json(private_api_ticket_index_pattern)
     end
 
@@ -357,6 +405,63 @@ module Ember
       match_json(create_ticket_pattern({}, Helpdesk::Ticket.last))
       assert Helpdesk::Ticket.last.attachments.count == 3
       assert Helpdesk::Ticket.last.cloud_files.count == 1
+    end
+
+    def test_create_without_company_id
+      sample_requester = get_user_with_default_company
+      params = {
+        requester_id: sample_requester.id,
+        status: 2, priority: 2,
+        subject: Faker::Name.name, description: Faker::Lorem.paragraph
+      }
+      post :create, construct_params({version: 'private'}, params)
+      t = Helpdesk::Ticket.last
+      match_json(create_ticket_pattern(params, t))
+      match_json(create_ticket_pattern({}, t))
+      assert_equal t.owner_id, sample_requester.company_id
+      assert_response 201
+    end
+
+    def test_create_with_company_id
+      Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
+      company = get_company
+      sample_requester = add_new_user(@account)
+      sample_requester.company_id = company.id
+      sample_requester.save!
+      params = {
+        requester_id: sample_requester.id,
+        company_id: company.id, status: 2,
+        priority: 2, subject: Faker::Name.name,
+        description: Faker::Lorem.paragraph
+      }
+      post :create, construct_params({version: 'private'}, params)
+      t = Helpdesk::Ticket.last
+      match_json(create_ticket_pattern(params, t))
+      match_json(create_ticket_pattern({}, t))
+      assert_equal t.owner_id, company.id
+      assert_response 201
+    ensure
+      Account.any_instance.unstub(:multiple_user_companies_enabled?)
+    end
+
+    def test_create_with_other_company_id_of_requester
+      Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
+      sample_requester = get_user_with_multiple_companies
+      company_id = (sample_requester.company_ids - [sample_requester.company_id]).sample
+      params = {
+        requester_id: sample_requester.id,
+        company_id: company_id, status: 2,
+        priority: 2, subject: Faker::Name.name,
+        description: Faker::Lorem.paragraph
+      }
+      post :create, construct_params({version: 'private'}, params)
+      t = Helpdesk::Ticket.last
+      match_json(create_ticket_pattern(params, t))
+      match_json(create_ticket_pattern({}, t))
+      assert_equal t.owner_id, company_id
+      assert_response 201
+    ensure
+      Account.any_instance.unstub(:multiple_user_companies_enabled?)
     end
     
     def test_execute_scenario_without_params
@@ -543,8 +648,8 @@ module Ember
       tags = [Faker::Lorem.word, Faker::Lorem.word]
       params_hash = { due_by: dt, responder_id: agent.id, status: 2, priority: 4, group_id: update_group.id, tags: tags }
       put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
-      assert_response 204
-      ticket.reload
+      assert_response 200
+      match_json(ticket_show_pattern(ticket.reload))
       assert_equal dt, ticket.due_by.to_time.iso8601
       assert_equal agent.id, ticket.responder_id
       assert_equal 2, ticket.status
@@ -584,8 +689,8 @@ module Ember
       Helpdesk::Ticket.any_instance.stubs(:association_type).returns(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:assoc_parent])
       params_hash = { status: 4 }
       put :update_properties, construct_params({ version: 'private', id: parent_ticket.display_id }, params_hash)
-      assert_response 204
-      parent_ticket.reload
+      assert_response 200
+      match_json(ticket_show_pattern(parent_ticket.reload))
       assert_equal 4, parent_ticket.status
     end
 
@@ -593,8 +698,8 @@ module Ember
       ticket = create_ticket
       params_hash = { status: 5, skip_close_notification: true }
       put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
-      assert_response 204
-      ticket.reload
+      assert_response 200
+      match_json(ticket_show_pattern(ticket.reload))
       assert_equal 5, ticket.status
     end
 
@@ -704,6 +809,22 @@ module Ember
       t = Helpdesk::Ticket.last
       match_json(ticket_show_pattern(t))
       assert ticket.attachments.count == 1
+    end
+
+    def test_update_with_company_id
+      Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
+      t = ticket
+      sample_requester = get_user_with_multiple_companies
+      t.update_attributes(:requester => sample_requester)
+      company_id = sample_requester.user_companies.where(:default => false).first.company.id
+      params = { company_id: company_id }
+      put :update, construct_params({ version: 'private', id: t.display_id }, params)
+      t.reload
+      assert t.owner_id == company_id
+      match_json(ticket_show_pattern(t))
+      assert_response 200
+    ensure
+      Account.any_instance.unstub(:multiple_user_companies_enabled?)
     end
   end
 end

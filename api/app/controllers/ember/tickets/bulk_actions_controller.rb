@@ -180,7 +180,7 @@ module Ember
         end
 
         def notification_not_required?
-          !cname_params.blank? && cname_params[:skip_close_notification].try(:to_s) == 'true'
+          @skip_notification ||= cname_params.try(:[], :properties).try(:[], :skip_close_notification)
         end
 
         def queue_replies(tickets)

@@ -3,7 +3,7 @@ class TicketFilterValidation < FilterValidation
                 :order_by, :order_type, :conditions, :requester, :status, :cf, :include, 
                 :include_array, :query_hash
 
-  validates :company_id, :requester_id, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 }
+  validates :company_id, :requester_id, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param }
   validate :verify_requester, if: -> { errors[:requester_id].blank? && (requester_id || email) }
   validate :verify_company, if: -> { errors[:company_id].blank? && company_id }
   validates :email, data_type: { rules: String }

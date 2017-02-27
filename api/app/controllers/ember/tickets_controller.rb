@@ -5,10 +5,11 @@ module Ember
     include SplitNoteHelper
     include AttachmentConcern
     include Helpdesk::ToggleEmailNotification
+    decorate_views(decorate_object: [:update_properties], decorate_objects: [:index, :search])
 
     INDEX_PRELOAD_OPTIONS = [:tags, :ticket_old_body, :schema_less_ticket, :flexifield, { requester: [:avatar, :flexifield, :default_user_company] }].freeze
     DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
-    SINGULAR_RESPONSE_FOR = %w(show create update split_note).freeze
+    SINGULAR_RESPONSE_FOR = %w(show create update split_note update_properties).freeze
 
     before_filter :ticket_permission?, only: [:latest_note, :split_note]
     before_filter :load_note, only: [:split_note]
@@ -21,8 +22,7 @@ module Ember
       return unless validate_delegator(nil, params)
       assign_filter_params
       super
-      response.api_meta = { count: @items_count }
-      # TODO-EMBERAPI Optimize the way we fetch the count
+      response.api_meta = { count: @items_count } if count_included?
     end
 
     def create
@@ -82,7 +82,11 @@ module Ember
       assign_ticket_status
       @item.assign_attributes(validatable_delegator_attributes)
       return unless validate_delegator(@item, ticket_fields: @ticket_fields)
-      @item.update_ticket_attributes(cname_params) ? (head 204) : render_errors(@item.errors)
+      if @item.update_ticket_attributes(cname_params)
+        render 'ember/tickets/show'
+      else
+        render_errors(@item.errors)
+      end
     end
 
     private
@@ -125,6 +129,16 @@ module Ember
       def assign_attributes_for_update
         @item.assign_attributes(validatable_delegator_attributes)
         @item.assign_description_html(cname_params[:ticket_body_attributes]) if cname_params[:ticket_body_attributes]
+      end
+
+      def load_objects
+        items = tickets_filter.preload(conditional_preload_options)
+        @items_count = items.count if count_included?
+        @items = paginate_items(items)
+      end
+
+      def count_included?
+        @ticket_filter.include_array && @ticket_filter.include_array.include?('count')
       end
 
       def shared_attachments
@@ -228,7 +242,7 @@ module Ember
       end
 
       def notification_not_required?
-        cname_params.present? && cname_params[:skip_close_notification].try(:to_s) == 'true'
+        @skip_notification ||= cname_params.try(:[], :skip_close_notification)
       end
 
       def validate_url_params

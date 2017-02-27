@@ -30,7 +30,6 @@ class BadRequestError < BaseError
     ticket_id: :ticket,
     responder_phone: :agent,
     application_id: :application,
-    from_email: :"active email_config",
     note_id: :note,
     filter: :ticket_filter
   }
