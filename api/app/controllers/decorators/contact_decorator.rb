@@ -1,10 +1,10 @@
 class ContactDecorator < ApiDecorator
   include Helpdesk::RequesterWidgetHelper
 
-  delegate  :id, :active, :address, :deleted, :description,
+  delegate  :id, :active, :address, :company_name, :deleted, :description,
             :customer_id, :email, :job_title, :language, :mobile,
             :name, :phone, :time_zone, :twitter_id, :avatar, to: :record
-  delegate :company_id, :company_name, :client_manager, to: :default_company, allow_nil: true
+  delegate :company_id, :client_manager, to: :default_company, allow_nil: true
   delegate :multiple_user_companies_enabled?, to: 'Account.current'
 
   def initialize(record, options)
