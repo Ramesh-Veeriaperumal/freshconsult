@@ -496,13 +496,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def linked_now?
-    tracker_ticket_id && related_ticket? && @model_changes.key?(Helpdesk::SchemaLessTicket.association_type_column) &&
-      @model_changes[Helpdesk::SchemaLessTicket.association_type_column][0].nil?
+    tracker_ticket_id && related_ticket? && @model_changes.key?(:association_type) &&
+      @model_changes[:association_type][0].nil?
   end
 
   def unlinked_now?
-    tracker_ticket_id && !related_ticket? && @model_changes.key?(Helpdesk::SchemaLessTicket.association_type_column) &&
-      @model_changes[Helpdesk::SchemaLessTicket.association_type_column][0] == TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]
+    tracker_ticket_id && !related_ticket? && @model_changes.key?(:association_type) &&
+      @model_changes[:association_type][0] == TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]
   end
 
   def add_links

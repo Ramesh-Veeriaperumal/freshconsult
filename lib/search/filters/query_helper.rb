@@ -11,7 +11,6 @@ module Search::Filters::QueryHelper
       'helpdesk_tags.name'                        =>  'tag_names',
       'helpdesk_subscriptions.user_id'            =>  'watchers',
       'helpdesk_schema_less_tickets.product_id'   =>  'product_id',
-      'helpdesk_schema_less_tickets.int_tc03'     =>  'int_tc03'
     }
 
     private

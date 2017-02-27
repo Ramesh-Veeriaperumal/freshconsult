@@ -110,8 +110,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #
   def search_fields_updated?
     attribute_fields = ["subject", "description", "responder_id", "group_id", "requester_id", "product_id",
-                       "status", "spam", "deleted", "source", "priority", "due_by", "to_emails", "cc_email"]
-    include_fields = es_flexifield_columns | ['int_tc03']
+                       "status", "spam", "deleted", "source", "priority", "due_by", "to_emails", "cc_email", "association_type"]
+    include_fields = es_flexifield_columns
     all_fields = attribute_fields | include_fields
     (@model_changes.keys.map(&:to_s) & all_fields).any?
   end
