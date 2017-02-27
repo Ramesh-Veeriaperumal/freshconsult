@@ -51,7 +51,7 @@
     // Localizing ticket fields js elements
     customFields = <%= @ticket_field_json.to_json.html_safe %>;
     customSection = <%= @section_data_json.to_json.html_safe %>;
-    shared_ownership_enabled = <%= Account.current.features?(:shared_ownership).to_json.html_safe %>;
+    shared_ownership_enabled = <%= Account.current.shared_ownership_enabled?.to_json.html_safe %>;
     custom_ticket_fields_enabled = <%= current_account.custom_ticket_fields_enabled? %>
     sharedGroups = <%= @groups.to_json.html_safe %>;
 

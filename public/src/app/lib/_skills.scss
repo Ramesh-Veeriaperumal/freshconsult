@@ -5,6 +5,11 @@
     display: inline-block;
 }
 
+.help_note_skills{
+float: left;
+margin-top: -4px;
+}
+
 .va_rule_no_skills {
     min-height: 130px;
     .muted {
@@ -116,7 +121,7 @@
     padding: 0 0 2px 0!important;
 }
 
-.group_form .helpNoteAnchor {
+.helpNoteAnchor {
     cursor: pointer;
 }
 

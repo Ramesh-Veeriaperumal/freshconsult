@@ -16,6 +16,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account = Account.find_by_id(params[:account_id])
     shard_info = ShardMapping.find(params[:account_id])
     account_summary[:account_info] = fetch_account_info(account) 
+    account_summary[:reputation] = account.reputation
     account_summary[:passes] = account.day_pass_config.available_passes
     account_summary[:contact_details] = { email: account.admin_email , phone: account.admin_phone }
     account_summary[:currency_details] = fetch_currency_details(account)
@@ -173,6 +174,26 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       rescue Exception => e
         result[:error] = "error"
     end
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end 
+  end
+  
+  def change_currency
+    account = Account.find_by_id(params[:account_id]).make_current
+    result = {:account_id => account.id , :account_name => account.name }
+    begin
+      if validate_new_currency
+        result[:status] = (switch_currency ? "success" : "notice")
+      else
+        result[:status] = "error"
+      end
+    rescue Exception => e
+      result[:status] = "notice"
+    end
+    Account.reset_current_account
     respond_to do |format|
       format.json do
         render :json => result

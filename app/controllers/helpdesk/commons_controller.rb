@@ -59,9 +59,9 @@ class Helpdesk::CommonsController < ApplicationController
   end
 
   def status_groups
-    if params[:status_id] and current_account.features?(:shared_ownership) 
+    if params[:status_id] && current_account.shared_ownership_enabled?
       assigned_group_id = params[:group_id]
-      status = current_account.ticket_status_values_from_cache.find{|s| s.status_id == params[:status_id].to_i and !s.is_default}
+      status = current_account.ticket_status_values_from_cache.find{|s| s.status_id == params[:status_id].to_i && !s.is_default}
       group_ids = status.try(:group_ids)
       @groups = current_account.groups_from_cache.select { |g| group_ids.include?(g.id) } if group_ids.present?
     end

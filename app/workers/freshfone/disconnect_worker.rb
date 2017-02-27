@@ -49,8 +49,7 @@ module Freshfone
 
     private
       def ringing_calls
-        return current_account.freshfone_calls.calls_with_ids(params[:call_ids]) if params[:call_ids].present?
-        current_account.freshfone_calls.ringing_calls
+        current_account.freshfone_calls.calls_with_ids(params[:call_ids])
       end
 
       def log_worker_info

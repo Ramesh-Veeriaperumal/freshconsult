@@ -41,7 +41,7 @@ module RabbitMq::Subscribers::Tickets::Activities
 
     # Adding shared ownership reset changes. if shared ownership attributes present in model changes and not in system changes.
     # When status is changed, resetting shared ownership fields should be captured.
-    self.activity_type = shared_ownership_reset_changes if va_rule_changes? and self.activity_type.nil? and Account.current.features?(:shared_ownership)
+    self.activity_type = shared_ownership_reset_changes if va_rule_changes? and self.activity_type.nil? and Account.current.shared_ownership_enabled?
 
     # Add activity type info to ticket changes if any
     if activity_type?

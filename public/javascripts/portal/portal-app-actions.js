@@ -252,20 +252,39 @@
   $(document).on("select2-selecting","#user_filter", function(e) {
     var requested_by_company = $("#company-list-dropdown .dropdown-toggle").data("company-id");
     var user_id = e.object.id;
-    filter_tickets(requested_by_company, user_id)
+    if(requested_by_company) {
+	    filter_tickets(requested_by_company, user_id)
+    }
+	  else {
+	    filter_user_tickets(user_id)
+	  }
   });
 
   $(document).on("select2-removed", "#user_filter", function(e) {
     var requested_by_company = $("#company-list-dropdown .dropdown-toggle").data("company-id");
     var user_id = 0;
-    filter_tickets(requested_by_company, user_id)
+    if(requested_by_company) {
+	    filter_tickets(requested_by_company, user_id)
+    }
+	  else {
+      filter_user_tickets(user_id)
+	  }
   });
 
   function filter_tickets(requested_by_company, user_id) {
   	$.ajax({
       url: "/support/tickets/filter?requested_by_company="+requested_by_company+"&requested_by="+user_id,
       success: function(resp){
-        $('#ticket-list').html('').html(resp);
+        $('#ticket-list').html(resp);
+      }
+    });
+  }
+
+  function filter_user_tickets(user_id) {
+    $.ajax({
+      url: "/support/tickets/filter?requested_by="+user_id,
+      success: function(resp){
+        $('#ticket-list').html(resp);
       }
     });
   }

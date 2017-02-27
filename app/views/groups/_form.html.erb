@@ -75,7 +75,7 @@
         <% if feature?(:round_robin) %>
           <span class ="seperator"></span>
           <div class="row-fluid mt20">
-            <div class="span1">
+            <div class="span1 ticketAssignmentCheck">
               <%= f.check_box :ticket_assign_type, :value => '1', :checked => @group.ticket_assign_type == Group::     TICKET_ASSIGN_TYPE[:round_robin],:rel => "toggle"  %>
             </div>
             <div class="span11">
@@ -88,12 +88,12 @@
           <div class="row-fluid ui-helper-hidden" id="toggle_method">
               <!-- Default -->
               <div class="row-fluid">
-                <div class="inline-box">
+                <div class="inline-box  groups-form">
                   <%= f.radio_button :capping_enabled, 
                                   '0'
                                    %>
                 </div>
-                <div class="inline-box ml8">
+                <div class="inline-box ml8  groups-form">
                   <label for="group_capping_enabled_0">
                       <h5 class="mini-lead floatl mb2 mr7">
                         <%= t('group.round_robin_defalut') %>
@@ -107,12 +107,12 @@
               <% if current_account.round_robin_capping_enabled? %>
                 <!-- Cap -->
                 <div class="row-fluid">
-                  <div class="inline-box">
+                  <div class="inline-box groups-form">
                     <%= f.radio_button :capping_enabled, 
                                        '1'
                                      %>
                   </div>
-                  <div class="inline-box ml8 custom-select2">
+                  <div class="inline-box ml8 custom-select2  groups-form">
                     <label for="group_capping_enabled_1">
                       <h5 class="mini-lead floatl mb2 mr7">
                          <%= t('group.round_robin_capping') %>
@@ -121,27 +121,76 @@
                     <p class="muted lead-desc clear">
                       <%=t('group.round_robin_capping_info').html_safe%>
                     </p>
-                    <p class="limit ui-helper-hidden">
+                    <p class="load_based limit ui-helper-hidden">
                       Maximum 
                       <%= f.select :capping_limit, Group::CAPPING_LIMIT_OPTIONS,
                                                   { :selected => @group.capping_limit || 5 },
-                                                  { :class => "select2 capping-limit #{'hide' unless @group.capping_enabled?}",
-                                                    :id => "capping_count" } %>
+                                                  { :class => "select_load select2 capping-limit #{'hide' unless @group.capping_enabled?}",
+                                                    :id => "capping_count_load" } %>
                                                     per agent
                       </p>
                   </div>
                 </div>
-              <% end %>
+
+              
+               <% end %>    
+                 <% if current_account.skill_based_round_robin_enabled? %>   
+                 <!-- Skill based -->    
+                 <div class="row-fluid">   
+                   <div class="inline-box groups-form">    
+                     <%= f.radio_button :capping_enabled,    
+                                        '2'    
+                                      %>   
+                   </div>    
+                   <div class="inline-box groups-form ml8 custom-select2">   
+                     <label for="group_capping_enabled_2">   
+                       <h5 class="mini-lead floatl mb2 mr7">   
+                            <%= t('group.round_robin_skill_based') %>    
+                       </h5>   
+     
+ </label>    
+     
+     
+ <span id="linkContainer" class="help_note_skills"><span class="placeholderForRules"></span></span>    
+     
+ <input type="hidden" id="setFlagforRedirect" value="false" name="redirect_to_skills">   
+     
+     
+     
+     
+     
+     
+                     <p class="muted lead-desc clear">   
+                       <%=t('group.round_robin_skill_based_info').html_safe%>    
+                     </p>    
+                     <p class="limit skill_based ui-helper-hidden">    
+                       Maximum   
+                       <%= f.select :capping_limit, Group::CAPPING_LIMIT_OPTIONS,    
+                                                   { :selected => @group.capping_limit || 5 },   
+                                                   { :class => "select2 select_skill capping-limit #{'hide' unless @group.capping_enabled?}",    
+                                                     :id => "capping_count_skill" } %>   
+                                                     per agent   
+     
+                  <br>   
+                 <span class="muted"> <%=t('group.round_robin_skill_based_tooltip').html_safe%><br></span>   
+     
+                       </p>    
+                   </div>    
+                 </div>    
+                <% end %>
+
+
+
           </div>
           <div class="row-fluid ui-helper-hidden" id="toggle_availability_container">
               <div class="span12">
-                 <div class="inline-box">
+                 <div class="inline-box groups-form">
                     <%= f.check_box :toggle_availability, :value => '1', :checked => @group.new_record? ? true : @group.toggle_availability?
                      %>  
                  </div>
-                  <div class="inline-box ml8">
+                  <div class="inline-box ml8 groups-form">
                       <label for="group_toggle_availability">
-                        <h5 class="lead small-lead"><%= t('group.toggle_availability_for_rr') %></h5>
+                        <h5 class="lead small-lead toggle_title"><%= t('group.toggle_availability_for_rr') %></h5>
                       </label>
                       <div class="toggle_enabled">    
                         <p class="muted lead-desc"> 
@@ -153,7 +202,6 @@
             </div>
         <% end %>
         <br />
-      </ul>
      </div>
      <br />
     <div class="button-container">
@@ -164,6 +212,47 @@
 
     </div>
   <% end %>
+
+
+<script type="text/javascript">   
+        
+ jQuery(document).ready(function() {   
+
+     
+ <%  if current_account.multiple_business_hours_enabled? %>    
+ <%    
+   calendar = []   
+   current_account.business_calendar.each do |bc|    
+     calendar << "{id: '#{bc.id}',   
+                   value: '#{escape_javascript(bc.name)}',   
+                   text: '#{escape_javascript(bc.name)}'}"   
+   end   
+     
+   selected_bc = []    
+   if @group.business_calendar   
+     selected_bc << "{id: '#{@group.business_calendar.id}',    
+                   value: '#{escape_javascript(@group.business_calendar.name)}',   
+                   text: '#{escape_javascript(@group.business_calendar.name)}'}"   
+     end   
+     
+ %>      
+ jQuery('#business_calendar').select2({    
+   multiple: false,    
+   minimumResultsForSearch: 1000, //Keep high search value to shut off search box. Couldnt find a better way.    
+   data: [<%=calendar.join(",").html_safe%>],    
+   initSelection : function (element, callback) {    
+     var data = {id: "<%=@group.business_calendar && @group.business_calendar.id%>", text: "<%=@groupbusiness_calendar && @group.business_calendar.name%>"};    
+     }   
+ });   
+ jQuery("#business_calendar").select2("val","<%=@group.business_calendar && @group.business_calendar.id%>").trigger("change");   
+     
+ <% end %>   
+     
+ });   
+     
+ </script>
+
+
 
 <style>
     #toggle_method {

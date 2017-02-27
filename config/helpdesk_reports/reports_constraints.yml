@@ -2,17 +2,22 @@
   sprout:
     - Sprout
     - Sprout Classic
+    - Sprout Jan 17
   blossom:
     - Blossom
     - Blossom Classic
+    - Blossom Jan 17
   garden:
     - Garden
     - Garden Classic
+    - Garden Jan 17
   estate:
     - Estate
     - Estate Classic
+    - Estate Jan 17
   forest:
     - Forest
+    - Forest Jan 17
 
 :max_limits:
   :save_report:

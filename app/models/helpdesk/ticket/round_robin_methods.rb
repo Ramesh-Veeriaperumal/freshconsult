@@ -51,13 +51,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     if round_robin_conditions(ticket_changes)
       ticket_changes[:group_id][1].present? ? assign_agent_via_round_robin : decr_agent_capping_limit
-      if ticket_changes[:group_id][0].present?
-        old_group = account.groups.find_by_id(ticket_changes[:group_id][0])
-        if old_group.present? && old_group.round_robin_capping_enabled?
-          old_group.lrem_from_rr_capping_queue(self.display_id)
-          change_agents_ticket_count(old_group, responder_id, "decr")
-        end
-      end
       return
     end
     return if self.round_robin_assignment
@@ -224,20 +217,28 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def round_robin_conditions(ticket_changes)
+    to_ret = false
     #return if no change was made to the group
     return if !ticket_changes.has_key?(:group_id)
-    return true if self.responder_id.nil?
+    to_ret = true if self.responder_id.nil?
     #skip if agent is assigned in the transaction
-    if ticket_changes.has_key?(:responder_id)
+    if !to_ret && ticket_changes.has_key?(:responder_id)
       balance_agent_capping(ticket_changes)
       self.round_robin_assignment = true
       return
     end
     #skip if the existing agent also belongs to the new group
-    if agent_in_new_group?
+    if !to_ret && agent_in_new_group?
       balance_agent_capping(ticket_changes.merge(:responder_id => [responder_id, responder_id]))
       self.round_robin_assignment = true
       return
+    end
+    if ticket_changes[:group_id][0].present?
+      old_group = account.groups.find_by_id(ticket_changes[:group_id][0])
+      if old_group.present? && old_group.round_robin_capping_enabled?
+        old_group.lrem_from_rr_capping_queue(self.display_id)
+        change_agents_ticket_count(old_group, responder_id, "decr")
+      end
     end
     true
   end
@@ -248,7 +249,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def update_old_group_capping
     if @model_changes.present? && @model_changes.key?(:group_id) && 
-                                  @model_changes[:group_id][1].nil?
+       (@model_changes[:group_id][1].nil? || !self.group.round_robin_enabled?)
       old_group = Account.current.groups.find_by_id(@model_changes[:group_id][0])
       return unless old_group.present? && old_group.round_robin_capping_enabled?
       if responder_id.present?

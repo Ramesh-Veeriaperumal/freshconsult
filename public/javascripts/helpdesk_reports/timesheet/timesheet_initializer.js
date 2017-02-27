@@ -9,7 +9,7 @@ Helpkit.TimesheetInitializer = (function () {
 			"workable" : 1,
 			"group_by_day_criteria" : 4,
 		},
-		COLUMN_LIMIT_FOR_PDF : 10,
+		COLUMN_LIMIT_FOR_PDF : 12,
 		initDataTable : function() {
 
 			 var self = this;

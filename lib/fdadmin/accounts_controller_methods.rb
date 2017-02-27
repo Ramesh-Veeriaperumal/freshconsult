@@ -21,6 +21,8 @@ module Fdadmin::AccountsControllerMethods
 			agent_hash[:email] = agent.user.email
 			agent_hash[:active] = agent.user.active
 			agent_hash[:occasional] = agent.occasional
+			agent_hash[:created_at] = agent.created_at
+			agent_hash[:last_active] = agent.last_active_at
 			agent_array << agent_hash
 		end
 		return {  free_agents: account.subscription.free_agents,
@@ -127,5 +129,24 @@ module Fdadmin::AccountsControllerMethods
 
 	def freshfone_active?(ff_account)
 	  ff_account.present? && ff_account.active?
+	end
+	
+	def validate_new_currency
+		subscription = Account.current.subscription
+		return false if subscription.currency_name == params[:new_currency]
+		subscription.currency = Subscription::Currency.find_by_name(params[:new_currency])
+		result = subscription.billing.retrieve_subscription(subscription.account_id)
+		result.subscription.status.include?("trial")
+	rescue	
+	end
+	
+	def switch_currency
+		account = Account.current
+		subscription = account.subscription.reload
+		result = Billing::Subscription.new.cancel_subscription(account)
+		if result.subscription.status == "cancelled"
+			subscription.currency = Subscription::Currency.find_by_name(params[:new_currency])
+			subscription.save!
+		end
 	end
 end

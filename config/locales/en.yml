@@ -1931,6 +1931,7 @@ en:
         saml_logout_url_info: "Optional logout URL to which users will be sent to when they logout of freshdesk."
         saml_cert_fingerprint: "Security Certificate Fingerprint"
         saml_cert_fingerprint_info: "Fingerprint (SHA1)  of the SAML certificate provided by your SAML Provider. This will be used for encryption / validation"
+        saml_cert_fingerprint_info_sha256: "Fingerprint (SHA256)  of the SAML certificate provided by your SAML Provider. This will be used for encryption / validation"
         click_to_enable: Click to enable SSL
         click_to_disable: Click to disable SSL
         security_title: Security
@@ -5901,6 +5902,8 @@ en:
     status: Status
     source: Source
     tag_condition: Tag
+    internal_group: Internal Group
+    internal_agent: Internal Agent
     verify_human: To verify you are human, please type the given scrambled letters
     edit_btn: Edit
     requester: Requester
@@ -10689,6 +10692,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     load_more: "Load More"
   user_notifications:
     header: "Notifications"
+    mark_all_as_read: "Mark all as read"
     actor_text_2: "%{actor_name_1} and %{actor_name_2}"
     actor_text_multi: "%{actor_name_1} and %{more_actors_count} more"
     private_note_created: "sent you a private note on ticket %{object}"
@@ -10880,6 +10884,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     help: What's this?
     feed_back_survery: Help us with some feedback?
   collaboration:
+    my_open_discussions: "My Open Discussions"
     notifications: "Notifications"
     no_notifications: "No new notifications"
     discussion: "Discussion"

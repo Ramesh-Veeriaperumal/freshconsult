@@ -8,6 +8,7 @@
     </div>
   <% else %>
     <div class="dkim-verify-dtn "> 
+      <%= link_to t('email_configs.dkim.remove'), remove_dkim_config_admin_dkim_configuration_path(domain_category.id), :class => "btn-white ml5", :id =>"remove-dkim", method: :post, :data => {:confirm => 'Are you sure?'}%>
       <button data-url="<%= verify_email_domain_admin_dkim_configuration_path(domain_category.id) %>" class="btn-white verify-dkim" data-alt-text="<%= t('email_configs.dkim.verification_sent') %> "/> <%= t('email_configs.dkim.verify') %> </button>
     </div>
   <% end %>

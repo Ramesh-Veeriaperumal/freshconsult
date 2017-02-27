@@ -62,8 +62,12 @@ class Search::AutocompleteController < ApplicationController
   def company_users
     begin
       requesters = { :results => [] }
-      @customer_id = params[:customer_id].to_i
-      if params[:customer_id].present? and current_user.company_ids.include?(@customer_id)
+      if params[:customer_id].present? and current_user.company_ids.include?(params[:customer_id].to_i)
+        @customer_id = params[:customer_id].to_i
+      elsif current_user.client_manager
+        @customer_id = current_user.company.try(:id)
+      end
+      if @customer_id.present?
         search_results = search_users
         search_results.results.each do |document|
          requesters[:results].push(*document.search_data)
@@ -179,7 +183,7 @@ class Search::AutocompleteController < ApplicationController
 
     def requester_conditions
       if @customer_id
-        ["(name like ? or email like ? or phone like ?) and customer_id = ?","%#{params[:q]}%","%#{params[:q]}%","%#{params[:q]}%", params[:customer_id]]
+        ["(name like ? or email like ? or phone like ?) and customer_id = ?","%#{params[:q]}%","%#{params[:q]}%","%#{params[:q]}%", @customer_id]
       else
         ["name like ? or email like ? or phone like ?","%#{params[:q]}%","%#{params[:q]}%","%#{params[:q]}%"]
       end

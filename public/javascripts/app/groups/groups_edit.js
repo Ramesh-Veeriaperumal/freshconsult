@@ -184,6 +184,11 @@ window.App.Groups = window.App.Groups || {};
       //Listeners
       
       $bodySelector.ready(function() {
+        
+        var business_cal_opts = jQuery('#business_calendar').data('select2').opts.data;
+        var cur_option = business_cal_opts.filter(function(e) {return e.id == jQuery('#business_calendar').select2('val');});
+        jQuery("#business_calendar").select2('data',cur_option[0]);     
+
          if($('#group_capping_enabled_2').is(':checked')){
           _this.check_conditions_sbrr();
          }

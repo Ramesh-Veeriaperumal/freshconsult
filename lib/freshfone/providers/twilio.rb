@@ -192,7 +192,7 @@ class Freshfone::Providers::Twilio
   
   def redirect_call(sid, hook, account)
     call = account.freshfone_subaccount.calls.get(sid)
-    call.update(:url => hook) # Need to handle if that api call was ended.
+    call.update(:url => hook) unless call.status == 'completed'
   end
 
   def mute_participants(conference, customer_sid)
