@@ -152,7 +152,7 @@ class Support::TicketsController < SupportController
         @requested_company = @companies.find { |c| c.id == @requested_by_company.to_i } if @requested_by_company != 0
       elsif current_user.company_client_manager?
         @company = current_user.company.presence
-        @users_presence = @company && @company.users.size > 1
+        @filter_users = current_user.company.users if @company && @company.users.size > 1
       end
 
       @requested_by = current_requested_by
