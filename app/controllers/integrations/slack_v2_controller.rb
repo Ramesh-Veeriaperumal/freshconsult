@@ -2,7 +2,7 @@ class Integrations::SlackV2Controller < Admin::AdminController
 
   ssl_required :create_ticket, :tkt_create_v3
   skip_filter :select_shard, :only => [:tkt_create_v3, :help]
-  prepend_around_filter :select_shard_slack, :only => :tkt_create_v3
+  prepend_around_filter :select_shard_slack, :only => [:tkt_create_v3, :help]
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:create_ticket, :tkt_create_v3, :help]
   before_filter :check_slack_v1, :only => [:oauth, :new]
   before_filter :load_app, :only => [:new, :install]
