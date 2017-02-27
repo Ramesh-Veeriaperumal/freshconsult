@@ -2893,6 +2893,7 @@ Helpkit::Application.routes.draw do
           post :contact_import_destroy
           post :select_all_feature
           put :change_currency
+          get :check_domain
         end
       end
 
