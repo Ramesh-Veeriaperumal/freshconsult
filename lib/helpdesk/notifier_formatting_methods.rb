@@ -35,7 +35,7 @@ module Helpdesk::NotifierFormattingMethods
       # The case when the forward template exists
       subject_template = template.get_requester_template(ticket.requester).first
       subject = Liquid::Template.parse(subject_template).render('ticket' => ticket,
-                'helpdesk_name' => ticket.account.portal_name ).html_safe
+                'helpdesk_name' => ticket.account.helpdesk_name ).html_safe
       subject.blank? ? default_reply_subject(ticket) : subject
     end
   end
@@ -44,7 +44,7 @@ module Helpdesk::NotifierFormattingMethods
     template = ticket.account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_REPLY_TEMPLATE)
     subject_template = reply ? template.get_requester_template(ticket.requester).first : template.requester_subject_template
     subject = Liquid::Template.parse(subject_template).render('ticket' => ticket,
-                'helpdesk_name' => ticket.account.portal_name ).html_safe
+                'helpdesk_name' => ticket.account.helpdesk_name ).html_safe
     subject.blank? ? default_reply_subject(ticket) : subject
   end
 

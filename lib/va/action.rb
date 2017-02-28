@@ -295,7 +295,7 @@ class Va::Action
       content = act_hash[content_key].to_s
       content = RedCloth.new(content).to_html unless content_key == :email_subject
       Liquid::Template.parse(content).render( 'event_performer' => doer,
-                'ticket' => act_on, 'helpdesk_name' => act_on.account.portal_name, 'comment' => act_on.notes.visible.exclude_source('meta').last)
+                'ticket' => act_on, 'helpdesk_name' => act_on.account.helpdesk_name, 'comment' => act_on.notes.visible.exclude_source('meta').last)
     end
 
     def assign_custom_field act_on, field, value
