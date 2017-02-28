@@ -51,14 +51,13 @@ class ApiContactFieldsControllerTest < ActionController::TestCase
     create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'Area', editable_in_signup: 'true'))
     create_contact_field(cf_params(type: 'boolean', field_type: 'custom_checkbox', label: 'Metropolitian City', editable_in_signup: 'true'))
     create_contact_field(cf_params(type: 'date', field_type: 'custom_date', label: 'Joining date', editable_in_signup: 'true'))
-
     create_contact_field(cf_params(type: 'text', field_type: 'custom_dropdown', label: 'MCQ', editable_in_signup: 'true'))
     ContactFieldChoice.create(value: 'Choice 1', position: 1)
     ContactFieldChoice.create(value: 'Choice 2', position: 2)
     ContactFieldChoice.create(value: 'Choice 3', position: 3)
     ContactFieldChoice.update_all(account_id: @account.id)
     ContactFieldChoice.update_all(contact_field_id: ContactField.find_by_name('cf_mcq').id)
-
+    @account.reload
     get :index, controller_params
     assert_response 200
     contact_fields = @account.reload.contact_form.contact_fields

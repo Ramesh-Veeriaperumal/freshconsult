@@ -131,7 +131,7 @@ class FakeControllerTest < ActionController::TestCase
   end
 
   def test_verify_ticket_permission_with_group_ticket_permission_valid
-    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
     User.any_instance.stubs(:group_ticket_permission).returns(true).at_most_once
     Helpdesk::Ticket.any_instance.stubs(:responder_id).returns(nil)
     Helpdesk::Ticket.any_instance.stubs(:requester_id).returns(nil)
