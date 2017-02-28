@@ -83,7 +83,7 @@ Helpkit.TimesheetInitializer = (function () {
 									      	row['group_name'] = el["group_name"] != null ? el["group_name"] : '-';
 									      	row['hours'] = self.hour_markup(row);
 									      	row['ticket'] = el['subject'];
-									      	row['product_name'] = el['product_id'] != null ? el['product_name'] : '-';
+									      	row['product_name'] = el['product_id'] != null ? el['product']['name'] : '-';
 									      	var note = el['note'];
 									      	if(note != null && note.length > 73) {
 									      		note = note.substr(0,73) + '...'
