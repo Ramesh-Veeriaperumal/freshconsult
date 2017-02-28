@@ -52,7 +52,9 @@ class ConversationDelegator < BaseDelegator
   end
 
   def validate_send_survey
-    errors[:send_survey] << :should_be_blank unless Account.current.new_survey_enabled? && Account.current.survey.try(:can_send?, notable, Survey::SPECIFIC_EMAIL_RESPONSE)
+    unless Account.current.new_survey_enabled? && Account.current.active_custom_survey_from_cache.try(:can_send?, notable, Survey::SPECIFIC_EMAIL_RESPONSE)
+      errors[:send_survey] << :should_be_blank
+    end
     self.send_survey = self.send_survey ? "1" : "0"
   end
 
