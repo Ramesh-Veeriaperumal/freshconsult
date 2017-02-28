@@ -5,14 +5,9 @@ class PlanChangeWorker
 
   def perform(args)
     account = Account.current
-    if args.is_a?(Array)
-      features = args
-      action = "drop"
-    else
-      args.symbolize_keys!
-      features = args[:features]
-      action = args[:action]
-    end
+    args.symbolize_keys!
+    features  = args[:features]
+    action    = args[:action]
 
     features.each do |feature|
       method = "#{action}_#{feature}_data"
@@ -27,12 +22,12 @@ class PlanChangeWorker
     end
   end
 
-  def drop_round_robin_data(account)
-    Role.remove_manage_availability_privilege account
-  end
-
   def add_round_robin_data(account)
     Role.add_manage_availability_privilege account
+  end
+
+  def drop_round_robin_data(account)
+    Role.remove_manage_availability_privilege account
   end
 
   def drop_facebook_data(account)

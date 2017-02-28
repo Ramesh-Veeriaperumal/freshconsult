@@ -1932,6 +1932,7 @@ en:
         saml_logout_url_info: "Optional logout URL to which users will be sent to when they logout of freshdesk."
         saml_cert_fingerprint: "Security Certificate Fingerprint"
         saml_cert_fingerprint_info: "Fingerprint (SHA1)  of the SAML certificate provided by your SAML Provider. This will be used for encryption / validation"
+        saml_cert_fingerprint_info_sha256: "Fingerprint (SHA256)  of the SAML certificate provided by your SAML Provider. This will be used for encryption / validation"
         click_to_enable: Click to enable SSL
         click_to_disable: Click to disable SSL
         security_title: Security
@@ -4054,7 +4055,7 @@ en:
     rr_v2_confimation_message: This action cannot be undone. Are you sure you want to proceed?
     tour: Help me create a new agent group
     helptext: You can organize your agents into specific Groups like “Support” and “Sales”. This lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that an agent can be a member of multiple groups.
-    automatic_assignment: <b>To each group</b><br/>Once you’ve created your groups, you can set up rules in dispatch’r to automatically route tickets to each group. <a href="https://support.freshdesk.com/support/solutions/articles/77157" target="_blank">Learn more</a><br/><br/><b> To agents within each group</b><br/>You can also auto-assign tickets to online agents within a group by three methods:<br>1. Round robin - Assign tickets to agents in a circular fashion<br>2. Load balanced - Set a limit on the number of tickets that are assigned to each agent<br>3. Skill based  - Assign tickets to agents based on their expertise <br/> <a href="https://support.freshdesk.com/support/solutions/articles/196581" target="_blank">Read more</a>
+    automatic_assignment: <b>To each group</b><br/>Once you’ve created your groups, you can set up rules in dispatch’r to automatically route tickets to each group. <a href="https://support.freshdesk.com/support/solutions/articles/77157" target="_blank">Learn more</a><br/><br/><b> To agents within each group</b><br/>You can also auto-assign tickets to online agents within a group by three methods:<br>1. Round robin - Assign tickets to agents in a circular fashion<br>2. Load balanced - Set a limit on the number of tickets that are assigned to each agent
     automatic_assignment_header: Auto-ticket Assignment
     working_hours_header: Business Hours
     working_hours: You can associate different business hours to each of these groups based on their working hours. You can group agents by shifts and assign different business hours to each group, or create separate groups for each location that your agents work from.
@@ -5448,6 +5449,7 @@ en:
       configuring: Configuring...
       verify: Verify
       verified: Verified
+      dkim_remove_message: Are you sure you want to remove DKIM configuration for
       verification_sent: Verification Sent
       unverified: Unverified
       last_verified: Last Verified
@@ -5902,6 +5904,8 @@ en:
     status: Status
     source: Source
     tag_condition: Tag
+    internal_group: Internal Group
+    internal_agent: Internal Agent
     verify_human: To verify you are human, please type the given scrambled letters
     edit_btn: Edit
     requester: Requester
@@ -7991,6 +7995,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         invalid_channel: "Slash command to create a ticket works only on Direct Messages."
         push_to_slack: "Push to Slack"
         no_agent: "No Agent"
+        help_command: "1. /create_fd_ticket  - This command will use the last 200 chat messages to create a ticket on Freshdesk.\n 2. freshdeskbot - You will receive Freshdesk notification from this Bot."
       subject:
         chat: "Chat Conversation with"
         default_chat: "Chat Conversation of"
@@ -8109,7 +8114,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     dropbox:
       label: "DropBox"
       desc: "Attach and Share your data/files from DropBox."
-      helptext: "<h4>Dropbox integration help</h4><br/><p>The Dropbox Integration lets agents and users browse for files from their Dropbox folder and share them when submitting or replying to a ticket in Freshdesk. A direct link to the file is shared in the ticket, removing the need for attachments and email size restrictions.</p><p>Before you setup the integration, go to the <strong><a href='https://www.dropbox.com/developers/apps' target='_blank' alt='developers'>Dropbox Developers page</a></strong>.</p><p>1. From the My Apps section, click on the 'Create an App'.</p><p>2. Select the app type as 'Chooser'.</p><p>3. Enter a name and description.</p><p>4. Type in your support URL under Domains <i>(for eg. yourcompany.freshdesk.com)</i></p><p>5. Click on the Create button.</p><p>Finally, copy paste the Application Key of the new app into this page, and Save changes. Your Dropbox Chooser should now be ready. You can check it out in the New Ticket form.</p>"
+      helptext: "<h4>Dropbox integration help</h4><br/><p>The Dropbox Integration lets agents and users browse for files from their Dropbox folder and share them when submitting or replying to a ticket in Freshdesk. A direct link to the file is shared in the ticket, removing the need for attachments and email size restrictions.</p><p>Before you setup the integration, go to the <a target='_blank' href='https://dropbox.com/developers'><b>Dropbox Developers page</b></a>.</p><p>1. Select <b>Create Your App</b> in the <b>API v2</b> section.</p><p>2. Under <b>Choose an API</b>, select <a>Dropbox API</a>.</p><p>3. For type of Access, select <b>Full Dropbox</b>.</p><p>4. Provide your app name and click <b>Create App</b>.</p><p>5. In your app page, under <b>Settings</b> tab, for <b>Chooser/Saver domains</b>, add your helpdesk URL without https or www, example: <a>sauls.freshdesk.com</a>.</p><p>Finally, copy paste the Application Key of the new app into this page, and Save changes. Your Dropbox Chooser should now be ready. You can check it out in the New Ticket form.</p>"
       form:
         app_key: "Registered Application key for your domain"
         app_key_info: "Create an App in the dropbox and provide the app key here."
@@ -10690,6 +10695,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     load_more: "Load More"
   user_notifications:
     header: "Notifications"
+    mark_all_as_read: "Mark all as read"
     actor_text_2: "%{actor_name_1} and %{actor_name_2}"
     actor_text_multi: "%{actor_name_1} and %{more_actors_count} more"
     private_note_created: "sent you a private note on ticket %{object}"
@@ -10881,6 +10887,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     help: What's this?
     feed_back_survery: Help us with some feedback?
   collaboration:
+    my_open_discussions: "My Open Discussions"
     notifications: "Notifications"
     no_notifications: "No new notifications"
     discussion: "Discussion"

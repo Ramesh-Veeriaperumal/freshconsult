@@ -158,9 +158,12 @@ module ActionMailerCallbacks
 
     def get_unique_args(from_email, account_id = -1, ticket_id = -1, note_id = -1, mail_type = "", category_id = -1)
       note_id_str = note_id != -1 ? "\"note_id\": #{note_id}," : ""
+      shard = ShardMapping.fetch_by_account_id(account_id)
+      shard_name = shard.nil? ? "" : "\"shard_info\":\"#{shard.shard_name}\""
       "{\"unique_args\":{\"account_id\": #{account_id},\"ticket_id\":#{ticket_id}," \
         "#{note_id_str}" \
-        "\"email_type\":\"#{mail_type}\",\"from_email\":\"#{from_email}\",\"category_id\":\"#{category_id}\"}}"
+        "\"email_type\":\"#{mail_type}\",\"from_email\":\"#{from_email}\",\"category_id\":\"#{category_id}\"," \
+        "\"pod_info\":\"#{PodConfig['CURRENT_POD']}\",#{shard_name} }}"
     end
 
 

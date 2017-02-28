@@ -139,14 +139,10 @@ class Admin::VaRulesController < Admin::AdminController
     def load_config
       super
       
-      @agents = current_account.users.technicians.inject([["", I18n.t('ticket.none')]]) do |agents, au|
-                agents << [au.id, au.name]
-                agents
-              end
-      @groups  = current_account.groups.find(:all, :order=>'name').inject([["", I18n.t('ticket.none')]]) do |groups, ag|
-                groups << [ag.id, CGI.escapeHTML(ag.name)]
-                groups
-              end
+      @agents = none_option + agents_list
+      @groups = none_option + groups_list_from_cache
+      load_internal_group_agents if allow_shared_ownership_fields? 
+
       tag_ids = []
       @va_rule.filter_array.each do |f|
         f.symbolize_keys!
@@ -211,7 +207,7 @@ class Admin::VaRulesController < Admin::AdminController
         { :name => "source", :value => t('ticket.source'), :domtype => dropdown_domtype, 
           :choices => TicketConstants.source_list.sort, :operatortype => "choicelist" },
         { :name => "product_id", :value => t('admin.products.product_label_msg'), :domtype => dropdown_domtype, 
-          :choices => [['', t('none')]]+@products, :operatortype => "choicelist",
+          :choices => none_option+@products, :operatortype => "choicelist",
           :condition => multi_product_account? },
         { :name=> "created_at", :value => t('ticket.created_during.title'), :domtype => "business_hours_dropdown",
           :operatortype => "date_time", :choices => VAConfig::CREATED_DURING_NAMES_BY_KEY.sort, :business_hours_choices => business_hours_for_account,
@@ -220,6 +216,10 @@ class Admin::VaRulesController < Admin::AdminController
           :operatortype => "object_id", :choices => @agents },
         { :name => "group_id", :value => I18n.t('ticket.group'), :domtype => dropdown_domtype,
           :operatortype => "object_id", :choices => @groups },
+        { :name => "internal_agent_id", :value => I18n.t('ticket.internal_agent'), :domtype => dropdown_domtype,
+          :operatortype => "object_id", :choices => @internal_agents, :condition => allow_shared_ownership_fields? },
+        { :name => "internal_group_id", :value => I18n.t('ticket.internal_group'), :domtype => dropdown_domtype,
+          :operatortype => "object_id", :choices => @internal_groups, :condition => allow_shared_ownership_fields? },
         { :name => "tag_ids", :value => t('ticket.tag_condition'), :domtype => "autocomplete_multiple_with_id", 
           :data_url => tags_search_autocomplete_index_path, :operatortype => "object_id_array",
           :condition => !supervisor_rules_controller?, :autocomplete_choices => @tag_hash }
@@ -305,7 +305,6 @@ class Admin::VaRulesController < Admin::AdminController
 
 
     def add_custom_filters filter_hash
-      special_case = [['', t('none')]]
       nested_special_case = [['--', t('any_val.any_value')], ['', t('none')]]
       cf = current_account.ticket_fields.custom_fields
       unless cf.blank?
@@ -320,7 +319,7 @@ class Admin::VaRulesController < Admin::AdminController
                              :field_type => field.field_type,
                              :domtype => (field.field_type == "nested_field") ? "nested_field" : 
                                     field.flexifield_def_entry.flexifield_coltype == "dropdown" ? dropdown_domtype : field.flexifield_def_entry.flexifield_coltype,
-                             :choices =>  (field.field_type == "nested_field") ? (field.nested_choices_with_special_case nested_special_case) : special_case+field.picklist_values.collect { |c| [c.value, c.value ] },
+                             :choices =>  (field.field_type == "nested_field") ? (field.nested_choices_with_special_case nested_special_case) : none_option+field.picklist_values.collect { |c| [c.value, c.value ] },
                              :action => "set_custom_field",
                              :operatortype => CF_OPERATOR_TYPES.fetch(field.field_type, "text"),
                              :nested_fields => nested_fields(field)
@@ -360,7 +359,6 @@ class Admin::VaRulesController < Admin::AdminController
     end
 
     def add_customer_custom_fields filter_hash, type
-      special_case = [['', t('none')]]
       cf = current_account.send("#{type}_form").send("custom_#{type}_fields")
       unless cf.blank? 
         filter_hash.push({ :name => -1,
@@ -373,7 +371,7 @@ class Admin::VaRulesController < Admin::AdminController
             :value => field.label,
             :field_type => field.field_type,
             :domtype => (field.dom_type == :dropdown_blank) ? dropdown_domtype : field.dom_type,
-            :choices => special_case+field.custom_field_choices.collect { |c| [c.value, c.value ] },
+            :choices => none_option+field.custom_field_choices.collect { |c| [c.value, c.value ] },
             :action => "set_custom_field",
             :operatortype => CF_CUSTOMER_TYPES.fetch(field.field_type.to_s, "text"),
             :nested_fields => nested_fields(field)

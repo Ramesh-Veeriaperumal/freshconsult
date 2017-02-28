@@ -21,9 +21,12 @@ class CRM::FreshsalesUtility
   
   DEAL_TYPES              = { new_business: 'New Business', upgrade: 'Existing Business-Upgrade', 
                               downgrade: 'Existing Business-Downgrade', 
-                              renewal: 'Existing Business-Renewal' }
+                              renewal: 'Existing Business-Renewal',
+                              free: 'Free' }
   
   OFFLINE                 = 'off'
+  
+  NONE                    = 'None'
   
   ZERO                    = 0
 
@@ -332,7 +335,9 @@ class CRM::FreshsalesUtility
         sales_account_id: options[:sales_account_id],
         owner_id: options[:owner_id],
         deal_type_id: deal_type_id,
-        custom_field: attributes[:custom_field].merge({ cf_account_id: @account.id, cf_customer_status: options[:customer_status] })
+        custom_field: attributes[:custom_field].merge({ cf_account_id: @account.id, 
+                                                        cf_customer_status: options[:customer_status],
+                                                        cf_presales_contact: NONE})
       })
 
       attributes.merge!({ contacts_added_list: [options[:contact_id]] }) if options[:contact_id]
@@ -386,6 +391,7 @@ class CRM::FreshsalesUtility
         attributes.merge!({ deal_type_id: deal_type_id })
       end
       attributes[:custom_field].merge!({ cf_customer_status: options[:customer_status] }) if options[:customer_status].present?
+      attributes[:custom_field].merge!({ cf_presales_contact: NONE }) if open_deal[:custom_field][:cf_presales_contact].blank?
 
       attributes.merge!({ amount: options[:amount] }) if options[:amount].present?
 

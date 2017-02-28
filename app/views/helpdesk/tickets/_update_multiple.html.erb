@@ -12,7 +12,7 @@
     <div class="content clearfix scrollbar">
     <% helpdesk_submit_options = []
       ticket_fields = current_portal.ticket_fields
-      if current_account.features?(:shared_ownership)
+      if current_account.shared_ownership_enabled?
         default_field_order = TicketConstants::SHARED_DEFAULT_FIELDS_ORDER
         default_fields  = ticket_fields.select{|tf| default_field_order.include?(tf.field_type)}
         other_fields    = ticket_fields - default_fields
@@ -115,7 +115,7 @@
   var agentToGroupText = "<%= I18n.t('internal_agent_actions') %>";
   var MAX_TAG_LENGTH_MSG = "<%= I18n.t('helpdesk.tickets.show.max_tag_length_msg') %>";
   var enableDropDowns = false;
-  var sharedOwnershipEnabled = <%= current_account.features?(:shared_ownership) %>;
+  var sharedOwnershipEnabled = <%= current_account.shared_ownership_enabled? %>;
 
   jQuery('#ticket_cancel_multiple_button').off('click')
   jQuery('#ticket_cancel_multiple_button').on('click', function(){

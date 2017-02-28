@@ -34,7 +34,7 @@ module Search::Filters::QueryHelper
 
       # Hack for handling permissible as used in tickets
       #with_permissible will be false when queried from admin->tag as we dont need permisible there.
-      if Account.current.features?(:shared_ownership)
+      if Account.current.shared_ownership_enabled?
         condition_block[:must].push(shared_ownership_permissible_filter) if with_permissible and User.current.agent? and User.current.restricted?
         construct_conditions_shared_ownership(condition_block[:must], conditions)
       else

@@ -74,7 +74,7 @@ class AgentGroup < ActiveRecord::Base
 
     def reset_internal_agent
       #Reset internal agent only if an agent is removed from a group.
-      if Account.current.features?(:shared_ownership) and agent_removed_from_group?
+      if Account.current.shared_ownership_enabled? and agent_removed_from_group?
         reason = {:remove_agent => [self.user_id, self.group.name]}
         Helpdesk::ResetInternalAgent.perform_async({:internal_group_id => self.group_id, :internal_agent_id => self.user_id, :reason => reason})
       end

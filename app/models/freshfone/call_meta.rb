@@ -204,6 +204,13 @@ class Freshfone::CallMeta < ActiveRecord::Base
     direct_dial? || external_transfer? || available_on_phone?
   end
 
+  def agent_pinged?(user_id)
+    pinged_agents.each do |agent|
+      return true if agent[:id] == user_id
+    end
+    false
+  end
+
   private
 
     def on_device?(agent, device)

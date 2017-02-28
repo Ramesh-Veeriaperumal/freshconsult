@@ -129,9 +129,9 @@ class Helpdesk::Email::HandleTicket
           if content_id
             content_id_hash[att.content_file_name+"#{inline_count}"] = cid(i)
             inline_count+=1
-            inline_attachments.push att
+            inline_attachments.push att unless virus_attachment?(email[:attached_items]["attachment-#{i+1}"], account)
           else
-            attachments.push att
+            attachments.push att unless virus_attachment?(email[:attached_items]["attachment-#{i+1}"], account)
           end
         end
       rescue HelpdeskExceptions::AttachmentLimitException => ex
@@ -153,20 +153,20 @@ class Helpdesk::Email::HandleTicket
 	end
   
   def virus_attachment? attachment, account
-    if VIRUS_CHECK_ENABLED && account.subscription.trial?
-        begin
-          file_attachment = (attached.is_a? StringIO) ? attached : File.open(attached.tempfile)
-          result = Email::AntiVirus.scan(io: file_attachment) 
-          if result && result[0] == "virus"
-            @total_virus_attachment = 0 unless @total_virus_attachment
-            @total_virus_attachment += 1  
-            return true
-          end
-        rescue => e
-         Rails.logger.info "Error While checking attachment for virus in account #{account.id}"
-        end 
-      end
-      return false
+    if account.launched?(:antivirus_service)
+      begin
+        file_attachment = (attachment.is_a? StringIO) ? attachment : File.open(attachment.tempfile)
+        result = Email::AntiVirus.scan(io: file_attachment) 
+        if result && result[0] == "virus"
+          @total_virus_attachment = 0 unless @total_virus_attachment
+          @total_virus_attachment += 1  
+          return true
+        end
+      rescue => e
+       Rails.logger.info "Error While checking attachment for virus in account #{account.id}"
+      end 
+    end
+    return false
   end
 
   # Content-id for inline attachments
