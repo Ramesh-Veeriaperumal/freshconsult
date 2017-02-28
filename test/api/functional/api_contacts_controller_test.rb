@@ -10,6 +10,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   @@initial_setup_run = false
 
   def initial_setup
+    @account.reload
     return if @@initial_setup_run
     @account.features.multiple_user_companies.create
     @account.reload
@@ -26,46 +27,20 @@ class ApiContactsControllerTest < ActionController::TestCase
     { api_contact: params }
   end
 
-  def get_user
-    @account.all_contacts.where(deleted: false, blocked: false).first
-  end
-
-  def get_user_with_email
-    @account.all_contacts.where('email is not null and deleted is false').first
-  end
-
-  def get_user_with_other_emails
-    @account.user_emails.group(:user_id).having('count(user_id) > 1').first.user
-  end
-
-  def get_user_with_single_email
-    @account.user_emails.group(:user_id).having('count(user_id) = 1').last.user
-  end
-
   def get_user_with_multiple_companies
-    user_company = @account.user_companies.group(:user_id).having('count(user_id) > 1 ').first
-    if user_company.present?
-      user_company.user
-    else
-      new_user = add_new_user(@account)
-      company_ids = Company.all.map(&:id)
-      new_user.user_companies.create(:company_id => company_ids.first, :default => true)
-      new_user.user_companies.create(:company_id => company_ids.second)
-      new_user.save!
-      new_user.reload
-    end
+    new_user = add_new_user(@account)
+    company_ids = Company.all.map(&:id)
+    new_user.user_companies.create(:company_id => company_ids.first, :default => true)
+    new_user.user_companies.create(:company_id => company_ids.second)
+    new_user.save!
+    new_user.reload
   end
 
   def get_user_with_default_company
-    user_company = @account.user_companies.group(:user_id).having('count(*) = 1 ').first
-    if user_company.present?
-      user_company.user
-    else
-      new_user = add_new_user(@account)
-      new_user.user_companies.create(:company_id => get_company.id, :default => true)
-      new_user.save!
-      new_user.reload
-    end
+    new_user = add_new_user(@account)
+    new_user.user_companies.create(:company_id => get_company.id, :default => true)
+    new_user.save!
+    new_user.reload
   end
 
   def get_company
@@ -78,7 +53,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   # Show User
   def test_show_a_contact
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     get :show, construct_params(id: sample_user.id)
     match_json(contact_pattern(sample_user.reload))
     assert_response 200
@@ -86,7 +61,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_show_a_contact_with_avatar
     file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     sample_user.build_avatar(content_content_type: file.content_type, content_file_name: file.original_filename)
     get :show, construct_params(id: sample_user.id)
     match_json(contact_pattern(sample_user.reload))
@@ -94,7 +69,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_show_a_non_existing_contact
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     get :show, construct_params(id: 0)
     assert_response :missing
   end
@@ -469,7 +444,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   # Update user
   def test_update_user_with_blank_name
     params_hash  = { name: '' }
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     sample_user.update_attribute(:phone, '1234567890')
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response 400
@@ -478,14 +453,14 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_update_contact_tags_with_comma
     params_hash = { tags: ['test,,,,comma', 'test'] }
-    put :update, construct_params({ id: get_user.id }, params_hash)
+    put :update, construct_params({ id: add_new_user(@account).id }, params_hash)
     match_json([bad_request_error_pattern('tags', :special_chars_present, chars: ',')])
     assert_response 400
   end
 
   def test_update_user_without_any_contact_detail
     params_hash = { phone: '', mobile: '', twitter_id: '' }
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     email = sample_user.email
     sample_user.update_attribute(:fb_profile_id, nil)
     sample_user.update_attribute(:email, nil)
@@ -518,7 +493,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_update_contact_with_valid_company_id_and_client_manager
     comp = get_company
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     params_hash = { company_id: comp.id, view_all_tickets: true }
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response 200
@@ -528,7 +503,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_client_manager_with_negative_company_id
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     params_hash = { company_id: -1 }
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response 400
@@ -539,7 +514,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_client_manager_with_invalid_company_id
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     sample_user.user_companies.each { |ua| ua.destroy }
     sample_user.reload
     comp = get_company
@@ -555,7 +530,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_contact_with_valid_company_id_again
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     comp = get_company
     params_hash = { company_id: comp.id, view_all_tickets: true, phone: '1234567890' }
     sample_user.update_attributes(params_hash)
@@ -570,7 +545,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_client_manager_with_unavailable_company_id
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     sample_user.update_attribute(:client_manager, false)
     sample_user.update_attribute(:company_id, nil)
     params_hash = { company_id: 10_000 }
@@ -581,7 +556,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_client_manager_with_unavailable_company_id_with_existing_company_id
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     sample_user.update_attribute(:client_manager, false)
     sample_user.update_attribute(:company_id, Company.first.id)
     params_hash = { company_id: 10_000 }
@@ -591,7 +566,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_email_when_email_is_not_nil
-    sample_user = get_user_with_email
+    sample_user = add_new_user(@account)
     email = 'sample_' + Time.zone.now.to_i.to_s + '@sampledomain.com'
     params_hash = { email: email }
     put :update, construct_params({ id: sample_user.id }, params_hash)
@@ -601,7 +576,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_email_when_email_is_nil
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     email = sample_user.email
     sample_user.update_attribute(:email, nil)
     email = Faker::Internet.email
@@ -613,7 +588,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_the_email_of_a_contact_with_user_email
-    user1 = get_user_with_email
+    user1 = add_new_user(@account)
     user2 = add_new_user_without_email(@account)
     email = user1.email
     put :update, construct_params({ id: user2.id }, email: email)
@@ -622,7 +597,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_length_invalid
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     email = sample_user.email
     sample_user.update_attribute(:email, nil)
     put :update, construct_params({ id: sample_user.id }, name: Faker::Lorem.characters(300), job_title: Faker::Lorem.characters(300), mobile: Faker::Lorem.characters(300), address: Faker::Lorem.characters(300), email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(300)}.com", twitter_id: Faker::Lorem.characters(300), phone: Faker::Lorem.characters(300), tags: [Faker::Lorem.characters(34)])
@@ -639,7 +614,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_contact_with_language_and_timezone_without_feature
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     Account.any_instance.stubs(:features?).with(:multi_timezone).returns(false)
     Account.any_instance.stubs(:features?).with(:multi_language).returns(false)
     Account.any_instance.stubs(:features?).with(:multiple_user_companies).returns(false)
@@ -654,7 +629,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_length_valid_with_trailing_space
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     email = sample_user.email
     sample_user.update_attribute(:email, nil)
     params = { name: Faker::Lorem.characters(20) + white_space, job_title: Faker::Lorem.characters(20) + white_space, mobile: Faker::Lorem.characters(20) + white_space, address: Faker::Lorem.characters(20) + white_space, email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(20)}.com" + white_space, twitter_id: Faker::Lorem.characters(20) + white_space, phone: Faker::Lorem.characters(20) + white_space, tags: [Faker::Lorem.characters(20) + white_space] }
@@ -665,7 +640,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_user_created_with_fb_id
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     params_hash = { mobile: '', email: '', phone: '', twitter_id: '', fb_profile_id: 'profile_id_1' }
     sample_user.update_attributes(params_hash)
     email = Faker::Internet.email
@@ -676,7 +651,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_user_active
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     email = Faker::Internet.email
     params_hash = { name: 'New Name', email: email }
     sample_user.update_attributes(params_hash)
@@ -688,7 +663,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_user_active_false
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     email = Faker::Internet.email
     params_hash = { name: 'New Name', email: email }
     sample_user.update_attributes(params_hash)
@@ -699,7 +674,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_user_active_string
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     email = Faker::Internet.email
     params_hash = { name: 'New Name', email: email }
     sample_user.update_attributes(params_hash)
@@ -709,7 +684,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_deleted_user_active
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     email = Faker::Internet.email
     params_hash = { name: 'New Name', email: email, deleted: 1 }
     sample_user.update_attributes(params_hash)
@@ -718,7 +693,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_blocked_user_active
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     email = Faker::Internet.email
     params_hash = { name: 'New Name', email: email}
     sample_user.update_attributes(params_hash)
@@ -730,7 +705,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   # Delete user
   def test_delete_contact
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     sample_user.update_column(:deleted, false)
     delete :destroy, construct_params(id: sample_user.id)
     assert_response 204
@@ -738,7 +713,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_delete_a_deleted_contact
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     sample_user.update_column(:deleted, true)
     delete :destroy, construct_params(id: sample_user.id)
     assert_response 405
@@ -749,7 +724,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_delete_a_blocked_contact
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     sample_user.update_column(:blocked, true)
     delete :destroy, construct_params(id: sample_user.id)
     assert_response 405
@@ -760,7 +735,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_a_deleted_contact
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     sample_user.update_column(:deleted, true)
     params_hash = { language: 'cs' }
     put :update, construct_params({ id: sample_user.id }, params_hash)
@@ -772,7 +747,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_a_blocked_contact
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     sample_user.update_column(:blocked, true)
     params_hash = { language: 'cs' }
     put :update, construct_params({ id: sample_user.id }, params_hash)
@@ -784,7 +759,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_show_a_deleted_contact
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     sample_user.update_column(:deleted, true)
     get :show, construct_params(id: sample_user.id)
     match_json(deleted_contact_pattern(sample_user.reload))
@@ -944,13 +919,13 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_contact_filter_updated_at
-    @account.all_contacts.update_all(updated_at: nil)
-    @account.all_contacts.first.update_column(:updated_at, '2016-10-11T12:47:25z')
-    get :index, controller_params(_updated_since: '2016-10-11T12:47:25z')
+    update_timestamp = Time.now.utc.iso8601
+    @account.all_contacts.first.update_column(:updated_at, update_timestamp)
+    get :index, controller_params(_updated_since: update_timestamp)
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
-    users = @account.all_contacts.order('users.name').select { |x|  x.updated_at == '2016-10-11T12:47:25z' }
+    users = @account.all_contacts.order('users.name').select { |x|  x.updated_at == update_timestamp }
     pattern = users.map { |user| index_contact_pattern(user) }
     match_json(pattern.ordered!)
   end
@@ -986,15 +961,12 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_contact_filter_invalid_updated_at
-    @account.all_contacts.update_all(updated_at: nil)
-    @account.all_contacts.first.update_column(:updated_at, 'Invalid String')
     get :index, controller_params(_updated_since: 'Invalid String')
     assert_response 400
     match_json [bad_request_error_pattern('_updated_since', :invalid_date, accepted: 'combined date and time ISO8601')]
   end
 
   def test_contact_filter_invalid_nil_updated_at
-    @account.all_contacts.update_all(updated_at: nil)
     get :index, controller_params(_updated_since: nil)
     assert_response 400
     match_json [bad_request_error_pattern('_updated_since', :invalid_date, accepted: 'combined date and time ISO8601')]
@@ -1005,7 +977,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     current_agent_timezone = @agent.time_zone
     Time.zone = 'Astana'
     @agent.time_zone = 'Astana'
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     sample_user.update_attribute(:blocked, true)
     sample_user.update_attribute(:blocked_at, Time.zone.now + 5.days + 3.hours)
     sample_user.update_attribute(:whitelisted, false)
@@ -1037,7 +1009,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   # Make agent out of a user
   def test_make_agent
     assert_difference 'Agent.count', 1 do
-      sample_user = get_user_with_email
+      sample_user = add_new_user(@account)
       put :make_agent, construct_params(id: sample_user.id)
       assert_response 200
       assert sample_user.reload.helpdesk_agent == true
@@ -1048,7 +1020,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_make_agent_with_params
     assert_difference 'Agent.count', 1 do
-      sample_user = get_user_with_email
+      sample_user = add_new_user(@account)
       role_ids = Role.limit(2).pluck(:id)
       group_ids = [create_group(@account).id]
       params = { occasional: false, signature: Faker::Lorem.paragraph, ticket_scope: 2, role_ids: role_ids, group_ids: group_ids }
@@ -1063,7 +1035,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_make_agent_with_invalid_params
-    sample_user = get_user_with_email
+    sample_user = add_new_user(@account)
     put :make_agent, construct_params({ id: sample_user.id }, job_title: 'Employee')
     assert_response 400
     match_json([bad_request_error_pattern(:job_title, :invalid_field)])
@@ -1077,7 +1049,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_make_agent_with_array_fields_invalid
-    sample_user = get_user_with_email
+    sample_user = add_new_user(@account)
     params = { role_ids: '1,2', group_ids: '34,4' }
     put :make_agent, construct_params({ id: sample_user.id }, params)
     match_json([bad_request_error_pattern(:role_ids, :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String),
@@ -1086,7 +1058,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_make_agent_with_array_fields_invalid_model
-    sample_user = get_user_with_email
+    sample_user = add_new_user(@account)
     params = { role_ids: [123, 567], group_ids: [466, 566] }
     put :make_agent, construct_params({ id: sample_user.id }, params)
     match_json([bad_request_error_pattern(:role_ids, :invalid_list, list: params[:role_ids].join(', ')),
@@ -1095,7 +1067,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_make_agent_without_any_groups
-    sample_user = get_user_with_email
+    sample_user = add_new_user(@account)
     params = { group_ids: [] }
     put :make_agent, construct_params({ id: sample_user.id }, params)
     assert_response 200
@@ -1103,7 +1075,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_make_agent_with_only_role_ids
-    sample_user = get_user_with_email
+    sample_user = add_new_user(@account)
     roles = Role.limit(2)
     params = { role_ids: roles.map(&:id) }
     put :make_agent, construct_params({ id: sample_user.id }, params)
@@ -1113,7 +1085,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_make_agent_with_string_enumerators_for_level_and_scope
-    sample_user = get_user_with_email
+    sample_user = add_new_user(@account)
     params = { ticket_scope: '2' }
     put :make_agent, construct_params({ id: sample_user.id }, params)
     match_json([bad_request_error_pattern(:ticket_scope, :not_included, code: :datatype_mismatch, list: Agent::PERMISSION_TOKENS_BY_KEY.keys.join(','), prepend_msg: :input_received, given_data_type: String)])
@@ -1121,7 +1093,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_make_agent_with_agent_limit_reached_invalid
-    sample_user = get_user_with_email
+    sample_user = add_new_user(@account)
     role_ids = Role.limit(2).pluck(:id)
     group_ids = [create_group(@account).id]
     Subscription.any_instance.stubs(:agent_limit).returns(@account.full_time_agents.count - 1)
@@ -1137,7 +1109,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_make_agent_with_occasional_valid
     assert_difference 'Agent.count', 1 do
-      sample_user = get_user_with_email
+      sample_user = add_new_user(@account)
       put :make_agent, construct_params({ id: sample_user.id }, occasional: true)
       assert_response 200
       assert sample_user.reload.helpdesk_agent == true
@@ -1147,7 +1119,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_make_agent_with_occasional_invalid
-    sample_user = get_user_with_email
+    sample_user = add_new_user(@account)
     put :make_agent, construct_params({ id: sample_user.id }, occasional: 'true')
     assert_response 400
     match_json([bad_request_error_pattern(:occasional, :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
@@ -1155,7 +1127,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_make_agent_out_of_a_user_without_email
     @account.subscription.update_column(:agent_limit, nil)
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     email = sample_user.email
     sample_user.update_attribute(:email, nil)
     put :make_agent, construct_params(id: sample_user.id)
@@ -1167,7 +1139,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_make_agent_with_invalid_params_out_of_a_user_without_email
     @account.subscription.update_column(:agent_limit, nil)
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     email = sample_user.email
     sample_user.update_attribute(:email, nil)
     params = { occasional: 'false', signature: Faker::Lorem.paragraph, ticket_scope: '2', role_ids: [1234], group_ids: [2_344_234] }
@@ -1180,7 +1152,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_make_agent_out_of_a_user_beyond_agent_limit
     @account.subscription.update_column(:agent_limit, 1)
-    sample_user = get_user_with_email
+    sample_user = add_new_user(@account)
     put :make_agent, construct_params(id: sample_user.id)
     assert_response 403
     match_json(request_error_pattern(:max_agents_reached, max_count: 1))
@@ -1188,7 +1160,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_make_agent_out_of_a_user_without_email_and_beyond_agent_limit
     @account.subscription.update_column(:agent_limit, 1)
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     email = sample_user.email
     sample_user.update_attribute(:email, nil)
     put :make_agent, construct_params(id: sample_user.id)
@@ -1201,7 +1173,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_make_occasional_agent_out_of_a_user_beyond_agent_limit
     assert_difference 'Agent.count', 1 do
       @account.subscription.update_column(:agent_limit, 1)
-      sample_user = get_user_with_email
+      sample_user = add_new_user(@account)
       put :make_agent, construct_params({ id: sample_user.id }, occasional: true)
       assert_response 200
       assert sample_user.reload.helpdesk_agent == true
@@ -1212,8 +1184,8 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_make_agent_fails_in_user_validation
     assert_no_difference 'Agent.count' do
-      sample_user = get_user
-      last_user = User.last
+      sample_user = add_new_user(@account)
+      last_user = add_new_user(@account)
       twitter_handle = Faker::Internet.email
       last_user.update_attribute(:twitter_id, twitter_handle)
       sample_user.update_column(:twitter_id, twitter_handle)
@@ -1225,7 +1197,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   # Misc
   def test_demosite_delete
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     sample_user.update_column(:deleted, false)
 
     stub_const(ApiConstants, 'DEMOSITE_URL', @account.full_domain) do
@@ -1236,7 +1208,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_demosite_update
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     sample_user.update_column(:deleted, false)
 
     stub_const(ApiConstants, 'DEMOSITE_URL', @account.full_domain) do
@@ -1257,7 +1229,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_array_field_with_empty_array
-    sample_user = get_user_with_email
+    sample_user = add_new_user(@account)
     put :update, construct_params({ id: sample_user.id }, tags: [])
     match_json(deleted_contact_pattern(sample_user.reload))
     assert_response 200
@@ -1265,7 +1237,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_update_array_fields_with_compacting_array
     tag = Faker::Name.name
-    sample_user = get_user_with_email
+    sample_user = add_new_user(@account)
     put :update, construct_params({ id: sample_user.id }, tags: [tag, '', ''])
     match_json(deleted_contact_pattern({ tags: [tag] }, sample_user.reload))
     assert_response 200
@@ -1312,7 +1284,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_update_contact_with_nil_custom_fields
     params = { custom_fields: {} }
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     sample_user.update_column(:deleted, false)
     put :update, construct_params({ id: sample_user.reload.id }, params)
     match_json(deleted_contact_pattern(sample_user))
@@ -1320,7 +1292,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_invalid_format_custom_field
-    sample_user = get_user_with_email
+    sample_user = add_new_user(@account)
     put :update, construct_params({ id: sample_user.id }, custom_fields: [1, 2])
     match_json([bad_request_error_pattern(:custom_fields, :datatype_mismatch, expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: Array)])
     assert_response 400
@@ -1403,7 +1375,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_update_with_all_default_fields_required_invalid
     default_non_required_fiels = ContactField.where(required_for_agent: false,  column_name: 'default')
     default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     put :update, construct_params({ id: sample_user.id },  email: nil,
                                                            view_all_tickets: nil,
                                                            company_id: nil,
@@ -1461,12 +1433,15 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_other_emails_max_count_validation
-    email_array = [Faker::Internet.email, Faker::Internet.email, Faker::Internet.email, Faker::Internet.email, Faker::Internet.email]
+    email_array = []
+    (ContactConstants::MAX_OTHER_EMAILS_COUNT + 10).times do
+      email_array << Faker::Internet.email
+    end
     post :create, construct_params({},  name: Faker::Lorem.characters(10),
                                         email: Faker::Internet.email,
                                         other_emails: email_array)
     assert_response 400
-    match_json([bad_request_error_pattern('other_emails', :too_long, element_type: :values, max_count: "#{ContactConstants::MAX_OTHER_EMAILS_COUNT}", current_count: 5)])
+    match_json([bad_request_error_pattern('other_emails', :too_long, element_type: :values, max_count: "#{ContactConstants::MAX_OTHER_EMAILS_COUNT}", current_count: email_array.size)])
   end
 
   def test_create_with_other_emails_max_length_validation
@@ -1516,8 +1491,8 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_contact_with_emails_associated_with_other_users_in_other_emails
-    sample_user = get_user_with_email
-    email = User.last.email
+    sample_user = add_new_user(@account)
+    email = add_new_user(@account).email
     put :update, construct_params({ id: sample_user.id }, other_emails: [email])
     match_json([bad_request_error_pattern('other_emails', :email_already_taken, invalid_emails: [email])])
     assert_response 409
@@ -1531,7 +1506,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_contact_with_email_and_other_emails
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     params_hash = { email: nil, phone: '1234567890' }
     sample_user.update_attributes(params_hash)
     sample_user.user_emails = []
@@ -1546,7 +1521,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   # Existing { a }     Update { [y,z] }     Result  { a, [y,z] }
   def test_update_contact_with_other_emails
     add_new_user(@account, name: Faker::Lorem.characters(15), email: 'sample_a_' + Time.zone.now.to_i.to_s + '@sampledomain.com')
-    sample_user = User.last
+    sample_user = add_new_user(@account)
     email_array = [Faker::Internet.email, Faker::Internet.email, Faker::Internet.email, Faker::Internet.email]
     put :update, construct_params({ id: sample_user.id }, other_emails: email_array)
     assert_response 200
@@ -1646,7 +1621,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_contact_filter_email_array
-    email = get_user_with_email.email
+    email = add_new_user(@account).email
     get :index, controller_params({ email: [email] }, false)
     assert_response 400
     match_json([bad_request_error_pattern('email', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Array)])
@@ -1662,7 +1637,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_contact_with_invalid_custom_url_and_custom_date
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     put :update, construct_params({ id: sample_user.id },   name: Faker::Lorem.characters(15),
                                                             email: Faker::Internet.email,
                                                             custom_fields: { 'sample_url' => 'aaaa', 'sample_date' => '2015-09-09T08:00' })
@@ -1685,7 +1660,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_update_contact_with_invalid_custom_fields
     comp = get_company
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     put :update, construct_params({ id: sample_user.id }, name: Faker::Lorem.characters(15),
                                                           email: Faker::Internet.email,
                                                           view_all_tickets: true,
@@ -1699,7 +1674,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_update_contact_with_invalid_dropdown_field
     comp = get_company
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     put :update, construct_params({ id: sample_user.id },  name: Faker::Lorem.characters(15),
                                                            email: Faker::Internet.email,
                                                            view_all_tickets: true,
@@ -1711,7 +1686,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_create_contact_with_email_and_other_emails_of_another_contact
-    sample_user = get_user_with_other_emails
+    sample_user = add_user_with_multiple_emails(@account, 2)
     email = sample_user.email
     email_array = sample_user.user_emails.map(&:email) - [email]
     post :create, construct_params({},  name: Faker::Lorem.characters(10),
@@ -1723,11 +1698,11 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_contact_with_email_and_other_emails_of_another_contact
-    sample_user = get_user_with_other_emails
+    sample_user = add_user_with_multiple_emails(@account, 2)
     email = sample_user.email
     email_array = sample_user.user_emails.map(&:email) - [email]
 
-    sample_contact = get_user_with_single_email
+    sample_contact = add_new_user(@account)
     put :update, construct_params({ id: sample_contact.id }, email: email, other_emails: email_array)
     match_json([bad_request_error_pattern('email', :'Email has already been taken'),
                 bad_request_error_pattern('other_emails', :email_already_taken, invalid_emails: email_array.sort.join(', '))])
@@ -1767,7 +1742,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_contact_having_email_in_uppercase
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     email = Faker::Internet.email
     sample_user.email = email.upcase
     sample_user.save
@@ -1781,7 +1756,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     email = Faker::Internet.email.upcase
     contact_a = add_new_user(@account, name: Faker::Lorem.characters(15), email: email)
     assert contact_a.reload.email == email
-    contact_b = get_user
+    contact_b = add_new_user(@account)
     put :update, construct_params({ id: contact_b.id }, email: email.downcase)
     match_json([bad_request_error_pattern('email', :'Email has already been taken')])
     assert_response 409
@@ -1798,7 +1773,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_email_and_pass_other_emails_without_change
-    sample_user = get_user_with_email
+    sample_user = add_new_user(@account)
     sample_user.user_emails.build(email: Faker::Internet.email, primary_role: false)
     sample_user.user_emails.build(email: Faker::Internet.email, primary_role: false)
     sample_user.save
@@ -1987,7 +1962,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_contact_with_other_companies_without_default_company
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     sample_user.companies = []
     sample_user.save
     other_companies = [{company_id: Company.first.id, view_all_tickets: false}]
@@ -2010,6 +1985,7 @@ class ApiContactsControllerTest < ActionController::TestCase
       other_companies: other_companies
     )
     assert_response 200
+    sample_user.reload
     assert sample_user.user_companies.find_by_default(true).company_id == company_ids[0]
     assert sample_user.user_companies.find_by_default(true).client_manager == true
     assert sample_user.user_companies.find_by_default(false).company_id == company_ids[1]
@@ -2023,6 +1999,7 @@ class ApiContactsControllerTest < ActionController::TestCase
       other_companies: [{company_id: company_ids[0], view_all_tickets: false}]
     )
     assert_response 200
+    sample_user.reload
     assert sample_user.user_companies.find_by_default(false).company_id == company_ids[0]
     assert sample_user.user_companies.find_by_default(false).client_manager == false
   end
@@ -2292,7 +2269,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_restore_extra_params
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     sample_user.update_column(:deleted, true)
     put :restore, construct_params({ id: sample_user.id }, test: 1)
     assert_response 400
@@ -2314,7 +2291,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_restore_with_permission
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     sample_user.update_column(:deleted, true)
     put :restore, construct_params({ id: sample_user.id })
     assert_response 204
@@ -2322,7 +2299,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_restore_with_merged_source_contact
-    sample_user = get_user
+    sample_user = add_new_user(@account)
     sample_user.deleted = true
     sample_user.parent_id = 999
     sample_user.save

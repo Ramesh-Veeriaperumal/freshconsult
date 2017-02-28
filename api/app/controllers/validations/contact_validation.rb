@@ -9,7 +9,7 @@ class ContactValidation < ApiValidation
     twitter_id: { data_type: { rules: String },  custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
     email: { data_type: { rules: String }, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, accepted: :'valid email address' }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
     description: { data_type: { rules: String } },
-    company_id: {
+    company_name: {
       custom_numericality: {
         ignore_string: :allow_string_param,
         greater_than: 0,
@@ -24,15 +24,18 @@ class ContactValidation < ApiValidation
                             ).freeze
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
 
-  attr_accessor :active, :avatar, :avatar_id, :view_all_tickets, :custom_fields, :company_id,
+  attr_accessor :active, :avatar, :avatar_id, :view_all_tickets, :custom_fields, :company_name,
                 :email, :fb_profile_id, :job_title, :language, :mobile,
                 :name, :other_emails, :other_companies, :phone, :tags,
                 :time_zone, :twitter_id, :address, :description, :password
 
+  alias_attribute :company_id, :company_name
+  alias_attribute :customer_id, :company_name
+
   # Default fields validation
   validates :language, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field,  message_options: { attribute: 'language', feature: :multi_language } }, unless: :multi_language_enabled?
   validates :time_zone, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field, message_options: { attribute: 'time_zone', feature: :multi_timezone } }, unless: :multi_timezone_enabled?
-  validates :email, :phone, :mobile, :company_id, :address, :job_title, :twitter_id, :language, :time_zone, :description, :other_emails, default_field:
+  validates :email, :phone, :mobile, :company_name, :address, :job_title, :twitter_id, :language, :time_zone, :description, :other_emails, default_field:
                               {
                                 required_fields: proc { |x| x.required_default_fields },
                                 field_validations: DEFAULT_FIELD_VALIDATIONS
@@ -56,7 +59,7 @@ class ContactValidation < ApiValidation
   validate :check_contact_for_email_before_adding_other_emails, if: -> { other_emails }
   validate :check_other_emails_for_primary_email, if: -> { other_emails }, on: :update
 
-  validates :company_id, required: {
+  validates :company_name, required: {
     allow_nil: false,
     message: :company_id_required
   }, if: -> { view_all_tickets.to_s == 'true' }
