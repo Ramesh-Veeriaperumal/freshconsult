@@ -906,6 +906,17 @@ module Ember
       assert_equal 6, response.size
     end
 
+    def test_ticket_conversations_with_requester
+      t = create_ticket
+      create_private_note(t)
+      create_reply_note(t)
+      create_forward_note(t)
+      create_feedback_note(t)
+      get :ticket_conversations, controller_params(version: 'private', id: t.display_id, include: 'requester')
+      assert_response 200
+      match_json(conversations_pattern(ticket, true))
+    end
+
     def test_update_without_ticket_access
       User.any_instance.stubs(:has_ticket_permission?).returns(false)
       t = create_ticket

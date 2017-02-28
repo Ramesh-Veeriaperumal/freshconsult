@@ -416,9 +416,11 @@ module TicketsTestHelper
     @call.save
   end
 
-  def conversations_pattern(ticket, limit = false)
+  def conversations_pattern(ticket, requester = false, limit = false)
     notes_pattern = ticket.notes.visible.exclude_source('meta').order(:created_at).map do |n|
-      note_pattern_index(n)
+      note_pattern = note_pattern_index(n)
+      note_pattern.merge!(requester: Hash) if requester
+      note_pattern
     end
     limit ? notes_pattern.take(limit) : notes_pattern
   end

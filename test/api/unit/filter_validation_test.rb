@@ -7,12 +7,16 @@ class FilterValidationTest < ActionView::TestCase
   end
 
   def test_nil
-    filter = FilterValidation.new(page: nil, per_page: nil)
+    filter = FilterValidation.new(page: nil, per_page: nil, order_type: nil)
     refute filter.valid?
     error = filter.errors.full_messages
     assert error.include?('Page datatype_mismatch')
     assert error.include?('Per page per_page_invalid')
-    assert_equal({ page: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null'  },
-                   per_page: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null', max_value: 100 } }, filter.error_options)
+    assert error.include?('Order type not_included')
+    assert_equal({
+      page: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null' },
+      per_page: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null', max_value: 100 },
+      order_type: { list: 'asc,desc' }
+    }, filter.error_options)
   end
 end
