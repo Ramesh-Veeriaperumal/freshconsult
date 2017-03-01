@@ -31,6 +31,7 @@ class TicketBulkUpdateValidationTest < ActionView::TestCase
 
   def test_property_update
     User.stubs(:current).returns(User.first)
+    Account.stubs(:current).returns(Account.first)
     controller_params = { ids: [1, 2, 3], properties: { priority: 100 }, ticket_fields: [], statuses: statuses }
     ticket_validation = TicketBulkUpdateValidation.new(controller_params)
     refute ticket_validation.valid?
@@ -41,6 +42,7 @@ class TicketBulkUpdateValidationTest < ActionView::TestCase
     ticket_validation = TicketBulkUpdateValidation.new(controller_params)
     assert ticket_validation.valid?
     User.unstub(:current)
+    Account.unstub(:current)
   end
 
   def test_reply
@@ -71,9 +73,11 @@ class TicketBulkUpdateValidationTest < ActionView::TestCase
 
   def test_property_update_and_reply
     User.stubs(:current).returns(User.first)
+    Account.stubs(:current).returns(Account.first)
     controller_params = { ids: [1, 2, 3], properties: { status: 4 }, reply: { body: Faker::Lorem.paragraph }, ticket_fields: [], statuses: statuses }
     ticket_validation = TicketBulkUpdateValidation.new(controller_params)
     assert ticket_validation.valid?
     User.unstub(:current)
+    Account.unstub(:current)
   end
 end

@@ -60,7 +60,7 @@ class TicketFilterValidationTest < ActionView::TestCase
       },
       filter: { list: 'new_and_my_open,watching,spam,deleted' },
       updated_since: { accepted: :'combined date and time ISO8601' },
-      order_by: { list: 'due_by,created_at,updated_at,status' },
+      order_by: { list: (TicketsFilter::api_sort_fields_options.map(&:first).map(&:to_s) - ['priority']).join(',') },
       order_type: { list: 'asc,desc' } }, ticket_filter.error_options)
   end
 

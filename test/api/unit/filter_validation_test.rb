@@ -14,8 +14,8 @@ class FilterValidationTest < ActionView::TestCase
     assert error.include?('Per page per_page_invalid')
     assert error.include?('Order type not_included')
     assert_equal({
-      page: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null' },
-      per_page: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null', max_value: 100 },
+      page: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null', code: :datatype_mismatch },
+      per_page: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null', max_value: 100, code: :datatype_mismatch },
       order_type: { list: 'asc,desc' }
     }, filter.error_options)
   end

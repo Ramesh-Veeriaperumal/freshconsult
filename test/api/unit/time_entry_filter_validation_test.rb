@@ -39,7 +39,7 @@ class TimeEntryFilterValidationTest < ActionView::TestCase
     assert_equal({ billable: { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null'  },
                    executed_after: { accepted: :'combined date and time ISO8601' },
                    executed_before: { accepted: :'combined date and time ISO8601' },
-                   agent_id: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null'  },
-                   company_id: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null'  } }, time_entry_filter.error_options)
+                   agent_id: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null', code: :datatype_mismatch  },
+                   company_id: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null', code: :datatype_mismatch  } }, time_entry_filter.error_options)
   end
 end
