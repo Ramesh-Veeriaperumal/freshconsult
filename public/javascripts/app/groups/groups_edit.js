@@ -178,6 +178,29 @@ window.App.Groups = window.App.Groups || {};
               });
     },
 
+    disableSelect: function(){
+      // disable capping selector for other option
+       var current_selection = $("[name='group[capping_enabled]']:checked").val(),
+        loadBased = 1,
+        skillBased = 2,
+        $selectSkill = $('.select_skill'),
+        $selectLoad = $('.select_load');
+
+       if(current_selection == loadBased){
+          $selectSkill.prop('disabled', true);
+          $selectLoad.prop('disabled', false);
+       }
+       else if(current_selection == skillBased){
+          $selectSkill.prop('disabled', false);
+          $selectLoad.prop('disabled', true);
+       }
+       else{
+          $selectSkill.prop('disabled', true);
+          $selectLoad.prop('disabled', true);
+       }
+
+    },
+
     bindHandlers: function() {
       var _this = this;
       var $bodySelector = $("body");
@@ -198,9 +221,22 @@ window.App.Groups = window.App.Groups || {};
           _this.check_conditions_sbrr();
          }
       });
+      _this.disableSelect();
+
+      var origForm = $('#group_form').serialize();
+      var bCappingChanged = "false";
+      sessionStorage.setItem('cap_value', bCappingChanged);
+
+      $bodySelector.on('change.groups', '#group_form :input', function() {
+        bCappingChanged = ($('#group_form').serialize() != origForm) ? "true" : "false";
+        // Storing current form state if changed, in session var
+        sessionStorage.setItem('cap_value', bCappingChanged);
+      });
 
 
       });
+
+
 
 
       $bodySelector.on('change.groups', "#group_ticket_assign_type", function(event) {
@@ -232,16 +268,6 @@ window.App.Groups = window.App.Groups || {};
         }
       });
 
-
-      var origForm = $('#group_form').serialize();
-      var bCappingChanged = "false";
-      sessionStorage.setItem('cap_value', bCappingChanged);
-
-      $bodySelector.on('change.groups', '#group_form :input', function() {
-        bCappingChanged = ($('#group_form').serialize() != origForm) ? "true" : "false";
-        // Storing current form state if changed, in session var
-        sessionStorage.setItem('cap_value', bCappingChanged);
-      });
 
       $bodySelector.on('shown.groups', '.modal', function() {
         var change_check = sessionStorage.getItem('cap_value');
@@ -286,8 +312,6 @@ window.App.Groups = window.App.Groups || {};
           $(".limit.load_based").removeClass('ui-helper-hidden');
           $(".limit.skill_based").addClass('ui-helper-hidden');
           $("[name='group[ticket_assign_type]']").val(1);
-          $('.select_skill').prop('disabled', true);
-          $('.select_load').prop('disabled', false);
           $('.help_note_skills').hide();
 
         } else if (this.value == '2') {
@@ -297,8 +321,6 @@ window.App.Groups = window.App.Groups || {};
           $(".limit.skill_based").removeClass('ui-helper-hidden');
           $(".limit.load_based").addClass('ui-helper-hidden');
           $("[name='group[ticket_assign_type]']").val(2);
-          $('.select_load').prop('disabled', true);
-          $('.select_skill').prop('disabled', false);
           $('.help_note_skills').show();
 
         } else {
@@ -309,6 +331,7 @@ window.App.Groups = window.App.Groups || {};
           $('p.limit.skill_based').addClass("ui-helper-hidden");
 
         }
+         _this.disableSelect();
       }).trigger("change.groups");
     },
 

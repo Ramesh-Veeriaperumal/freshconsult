@@ -12,7 +12,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
   def update_multiple             
     failed_tickets = []
     
-    @items = sort_items(@items, params[nscname]["group_id"])
+    @items = sort_items(@items, params[nscname]["group_id"]) if params[nscname].present?
     @items.each do |ticket|
       params[nscname].each do |key, value|
         #handling unassign for agent and group. from ui, -1 will be sent for unassigned case

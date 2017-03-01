@@ -13,15 +13,13 @@
         <i class="caret"></i>
       </a>
     </span>
-    <% if @users_presence %>
-      <span id="user-list-filter">
-        <%= I18n.t("tickets_filter.raised_by") %>  :
-        <div class="company-users-filter">
-          <%= render_autocomplete({ :selected_values => nil,
-                                    :max_limit => 1,
-                                    :type => :company_users,
-                                    :include_none => true }) %>
-        </div>
+    <% if @filter_users.present? %>
+      <span class="dropdown" id="user-list-dropdown">  
+        <a class="dropdown-toggle help-text" data-toggle="dropdown" href="#">
+          <%= I18n.t("tickets_filter.raised_by") %> <b><%= raised_by %></b>
+          <i class="caret"></i>
+        </a>
+        <%= user_list %>      
       </span>
     <% end %>
 

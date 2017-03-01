@@ -419,6 +419,12 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     render :json => {:status => result[:status] }
   end
 
+  def check_domain
+    result = {}
+    result[:domain_exist] = (params[:domain] && DomainMapping.find_by_domain(params[:domain])) ? true : false
+    render :json => result
+  end
+
   private 
     def validate_params
       render :json => {:status => "error"} and return unless /^[0-9]/.match(params[:new_limit])

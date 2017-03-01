@@ -802,6 +802,7 @@ Helpkit::Application.routes.draw do
       get :edit
       get :add_slack_agent
       put :update
+      post :help
       post :create_ticket
       post :tkt_create_v3
     end
@@ -2892,6 +2893,7 @@ Helpkit::Application.routes.draw do
           post :contact_import_destroy
           post :select_all_feature
           put :change_currency
+          get :check_domain
         end
       end
 

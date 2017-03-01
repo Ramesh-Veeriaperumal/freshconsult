@@ -8,8 +8,10 @@ class Tickets::BulkTicketActions < BaseWorker
     SBRR.logger.debug "BulkTicketActions #{params["ids"].inspect}"
     @account = Account.current
     items    = Helpdesk::Ticket.find_all_by_param(params["ids"])
-    items    = sort_items(items, params["helpdesk_ticket"]["group_id"])
-    disable_notification(@account) if params["disable_notification"].present? && params["disable_notification"].to_bool
+    items    = sort_items(items, 
+                params["helpdesk_ticket"]["group_id"]) if params["helpdesk_ticket"].present?
+    disable_notification(@account) if params["disable_notification"].present? && 
+                                      params["disable_notification"].to_bool
     items.each do |ticket|
       bulk_action_handler = Helpdesk::TicketBulkActions.new(params)
       bulk_action_handler.perform(ticket)

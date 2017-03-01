@@ -73,7 +73,6 @@ class Search::Utils
     company_autocomplete:             'companyAutocomplete',
     company_autocomplete_exact:       'companyAutocompleteExact',
     tag_autocomplete:                 'tagAutocomplete',
-    portal_company_users:             'portalCompanyUsers',
     agent_insert_solution:            'agentInsertSolution',
     agent_insert_solution_exact:      'agentInsertSolutionExact',
     agent_spotlight_global:           'agentSpotlightGlobal',

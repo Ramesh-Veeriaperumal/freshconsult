@@ -6,9 +6,6 @@ class Search::V2::AutocompleteController < ApplicationController
 
   attr_accessor :search_results
 
-  skip_before_filter :check_privilege, :only => [:company_users]
-  before_filter :access_denied, :unless => :logged_in?
-
   def requesters
     @klasses        = ['User']
     @search_context = :requester_autocomplete
@@ -50,25 +47,11 @@ class Search::V2::AutocompleteController < ApplicationController
     end
   end
 
+  # Temporary
+  #
   def company_users
-    @klasses        = ['User']
-    @search_context = :portal_company_users
-
-    if params[:customer_id].present? and current_user.company_ids.include?(params[:customer_id].to_i)
-      @customer_id = params[:customer_id].to_i
-    elsif current_user.client_manager
-      @customer_id = current_user.company.try(:id)
-    end
-
-    search(esv2_autocomplete_models) do |results|
-      results.each do |result|
-        self.search_results[:results].push(*[{
-          id: result.id,
-          value: result.name,
-          email: result.email
-        }])
-      end
-    end
+    self.search_results[:results] = []
+    handle_rendering
   end
 
   def tags
@@ -87,9 +70,7 @@ class Search::V2::AutocompleteController < ApplicationController
   private
 
     def construct_es_params
-      super.tap do |es_params|
-        es_params[:company_ids] = [@customer_id]
-      end.merge(ES_V2_BOOST_VALUES[@search_context] || {})
+      super.merge(ES_V2_BOOST_VALUES[@search_context] || {})
     end
 
     def handle_rendering

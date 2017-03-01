@@ -21,7 +21,7 @@
 
 .widget{ margin-bottom: 20px; }
 
-#company-list-dropdown {
+#user-list-dropdown, #company-list-dropdown { 
 	@include margin-left(20px);
 	@include margin-right(20px);
 	.dropdown-menu {
@@ -29,12 +29,6 @@
 		overflow: auto;
 	}
 }
-
-#user-list-filter {
-	@include margin-left(20px);
-	@include margin-right(20px);
-}
-
 .name_label{ font-weight: bold; margin-top: 4px; }
 .value_label{ margin-bottom: 10px; }
 
