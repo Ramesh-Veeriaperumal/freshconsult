@@ -108,6 +108,10 @@ module Ember
 
     private
 
+      def index?
+        @index ||= (current_action?('index') || current_action?('ticket_conversations'))
+      end
+
       def decorator_options
         options = {}
         options[:sideload_options] = sideload_options

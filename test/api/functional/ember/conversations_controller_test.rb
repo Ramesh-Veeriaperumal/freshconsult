@@ -917,6 +917,25 @@ module Ember
       match_json(conversations_pattern(ticket, true))
     end
 
+    def test_ticket_conversations_with_pagination
+      t = create_ticket
+      3.times do
+        create_private_note(t)
+      end
+      get :ticket_conversations, controller_params(version: 'private', id: t.display_id, per_page: 1)
+      assert_response 200
+      assert JSON.parse(response.body).count == 1
+      get :ticket_conversations, controller_params(version: 'private', id: t.display_id, per_page: 1, page: 2)
+      assert_response 200
+      assert JSON.parse(response.body).count == 1
+    end
+
+    def test_ticket_conversations_with_pagination_exceeds_limit
+      get :ticket_conversations, controller_params(version: 'private', id: ticket.display_id, per_page: 101)
+      assert_response 400
+      match_json([bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
+    end
+
     def test_update_without_ticket_access
       User.any_instance.stubs(:has_ticket_permission?).returns(false)
       t = create_ticket
