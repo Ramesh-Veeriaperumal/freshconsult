@@ -50,7 +50,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_create :set_parent_child_assn, :if => :child_ticket?
   after_save :check_child_tkt_status, :if => :child_ticket?
 
-  after_commit :create_initial_activity, :pass_thro_biz_rules, on: :create
+  after_commit :create_initial_activity, on: :create
+  after_commit :pass_thro_biz_rules, on: :create, :unless => :skip_dispatcher?
   after_commit :send_outbound_email, :update_capping_on_create, on: :create, :if => :outbound_email?
 
   after_commit :filter_observer_events, on: :update, :if => :execute_observer?
@@ -297,14 +298,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_was
   end
 
+  def skip_dispatcher?
+    import_id || outbound_email? || !requester.valid_user?
+  end
+  
   def pass_thro_biz_rules
     return if Account.current.skip_dispatcher?
     #Remove redis check if no issues after deployment
     if Account.current.launched?(:delayed_dispatchr_feature)
-      send_later(:delayed_rule_check, User.current, freshdesk_webhook?) unless (import_id or outbound_email?)
+      send_later(:delayed_rule_check, User.current, freshdesk_webhook?)
     else
       # This queue includes dispatcher_rules, auto_reply, round_robin.
-      Helpdesk::Dispatcher.enqueue(self.id, (User.current.blank? ? nil : User.current.id), freshdesk_webhook?) unless (import_id or outbound_email?)
+      Helpdesk::Dispatcher.enqueue(self.id, (User.current.blank? ? nil : User.current.id), freshdesk_webhook?)
     end
   end
 
