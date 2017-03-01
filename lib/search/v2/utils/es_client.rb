@@ -173,10 +173,8 @@ module Search
                                 (response_from_es.redirect_time * 1000),
                                 @es_response_time
                               )
-              
-             end
 
-             logger.track_hits(
+              logger.track_hits(
                                 @account_id,
                                 @cluster,
                                 @search_type,
@@ -185,6 +183,7 @@ module Search
                                 (response_code == 504 ? "-1" : @response["hits"]["total"]),
                                 response_from_es.request.original_options[:body]
                               )
+            end
           end
 
           # Log payload in development and in other 
