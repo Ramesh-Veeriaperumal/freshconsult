@@ -206,7 +206,7 @@ module AutomationControllerMethods
   end
 
   def validate_email_template
-    action_data = (ActiveSupport::JSON.decode params[:action_data])
+    action_data = (ActiveSupport::JSON.decode params[:action_data]) if params[:action_data].present?
     action_data.each do |action|
       validate_template_content(action['email_subject'], action['email_body'], 
         EmailNotificationConstants::EMAIL_TO_REQUESTOR) if action['name'] == 'send_email_to_requester'
