@@ -14,4 +14,8 @@ class ApiDecorator
     Rails.logger.error "API V2 Boolean convert error #{record.class} id #{record.id} with #{field_to_be_converted} is '#{value}'"
     value
   end
+
+  def private_api?
+    defined?($infra) && $infra['PRIVATE_API']
+  end
 end

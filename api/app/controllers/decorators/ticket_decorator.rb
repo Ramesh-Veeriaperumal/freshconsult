@@ -23,6 +23,23 @@ class TicketDecorator < ApiDecorator
   end
 
   def requester
+    private_api? ? privilege_based_requester_info : requester_v2
+  end
+
+  def requester_v2
+    if @sideload_options.include?('requester')
+      requester = record.requester
+      {
+        id: requester.id,
+        name: requester.name,
+        email: requester.email,
+        mobile: requester.mobile,
+        phone: requester.phone
+      }
+    end
+  end
+
+  def privilege_based_requester_info
     return unless @sideload_options.include?('requester') && record.requester.customer?
     contact_decorator = ContactDecorator.new(record.requester, name_mapping: @contact_name_mapping, company_name_mapping: @company_name_mapping)
     User.current.privilege?(:view_contacts) ? contact_decorator.full_requester_hash : contact_decorator.restricted_requester_hash

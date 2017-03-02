@@ -171,7 +171,7 @@ module Ember
       def decorator_options
         options = {}
         if (sideload_options || []).include?('requester')
-          options = { contact_name_mapping: contact_name_mapping, company_name_mapping: company_name_mapping}
+          options.merge(contact_name_mapping: contact_name_mapping, company_name_mapping: company_name_mapping)
         end
         super(options)
       end

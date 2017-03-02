@@ -2123,9 +2123,9 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_delete_has_ticket_permission_valid
     t = create_ticket(ticket_params_hash)
-    User.any_instance.stubs(:can_view_all_tickets?).returns(true).at_most_once
-    User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
-    User.any_instance.stubs(:assigned_ticket_permission).returns(false).at_most_once
+    User.any_instance.stubs(:can_view_all_tickets?).returns(true)
+    User.any_instance.stubs(:group_ticket_permission).returns(false)
+    User.any_instance.stubs(:assigned_ticket_permission).returns(false)
     delete :destroy, construct_params(id: t.display_id)
     User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
     assert_response 204
@@ -2144,10 +2144,10 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_delete_assigned_ticket_invalid_permission
-    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
-    User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
-    User.any_instance.stubs(:assigned_ticket_permission).returns(true).at_most_once
-    Helpdesk::Ticket.stubs(:assigned_tickets_permission).returns([]).at_most_once
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+    User.any_instance.stubs(:group_ticket_permission).returns(false)
+    User.any_instance.stubs(:assigned_ticket_permission).returns(true)
+    Helpdesk::Ticket.stubs(:assigned_tickets_permission).returns([])
     delete :destroy, construct_params(id: ticket.display_id)
     User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
     Helpdesk::Ticket.unstub(:assigned_tickets_permission)
@@ -2156,9 +2156,9 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_delete_group_ticket_permission_valid
-    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
-    User.any_instance.stubs(:group_ticket_permission).returns(true).at_most_once
-    User.any_instance.stubs(:assigned_ticket_permission).returns(false).at_most_once
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+    User.any_instance.stubs(:group_ticket_permission).returns(true)
+    User.any_instance.stubs(:assigned_ticket_permission).returns(false)
     group = create_group_with_agents(@account, agent_list: [@agent.id])
     t = create_ticket(ticket_params_hash.merge(group_id: group.id))
     delete :destroy, construct_params(id: t.display_id)
@@ -2167,9 +2167,9 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_delete_group_ticket_permission_internal_agent_valid
-    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
-    User.any_instance.stubs(:group_ticket_permission).returns(true).at_most_once
-    User.any_instance.stubs(:assigned_ticket_permission).returns(false).at_most_once
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+    User.any_instance.stubs(:group_ticket_permission).returns(true)
+    User.any_instance.stubs(:assigned_ticket_permission).returns(false)
     group = create_group_with_agents(@account, agent_list: [@agent.id])
     t = create_ticket(ticket_params_hash.merge(internal_group_id: group.id))
     Account.any_instance.stubs(:features?).with(:shared_ownership).returns(true)
@@ -2180,9 +2180,9 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_delete_assigned_ticket_permission_valid
-    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
-    User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
-    User.any_instance.stubs(:assigned_ticket_permission).returns(true).at_most_once
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+    User.any_instance.stubs(:group_ticket_permission).returns(false)
+    User.any_instance.stubs(:assigned_ticket_permission).returns(true)
     t = create_ticket(ticket_params_hash)
     Helpdesk::Ticket.any_instance.stubs(:responder_id).returns(@agent.id)
     delete :destroy, construct_params(id: t.display_id)
@@ -2192,9 +2192,9 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_delete_assigned_ticket_permission_internal_agent_valid
-    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
-    User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
-    User.any_instance.stubs(:assigned_ticket_permission).returns(true).at_most_once
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+    User.any_instance.stubs(:group_ticket_permission).returns(false)
+    User.any_instance.stubs(:assigned_ticket_permission).returns(true)
     t = create_ticket(ticket_params_hash)
     Helpdesk::Ticket.any_instance.stubs(:internal_agent_id).returns(@agent.id)
     Account.any_instance.stubs(:features?).with(:shared_ownership).returns(true)
@@ -2344,7 +2344,7 @@ class TicketsControllerTest < ActionController::TestCase
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id, include: '')
     assert_response 400
-    match_json([bad_request_error_pattern('include', :not_included, list: 'conversations, requester, company, stats')])
+    match_json([bad_request_error_pattern('include', :not_included, list: ApiTicketConstants::ALLOWED_INCLUDE_PARAMS.join(', '))])
   end
 
   def test_show_with_wrong_type_include
@@ -2358,7 +2358,7 @@ class TicketsControllerTest < ActionController::TestCase
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id, include: 'test')
     assert_response 400
-    match_json([bad_request_error_pattern('include', :not_included, list: 'conversations, requester, company, stats')])
+    match_json([bad_request_error_pattern('include', :not_included, list: ApiTicketConstants::ALLOWED_INCLUDE_PARAMS.join(', '))])
   end
 
   def test_show_with_invalid_params
@@ -2381,7 +2381,9 @@ class TicketsControllerTest < ActionController::TestCase
     get :index, controller_params(per_page: 50)
     assert_response 200
     response = parse_response @response.body
-    assert_equal Helpdesk::Ticket.where(deleted: 0, spam: 0).created_in(Helpdesk::Ticket.created_in_last_month).count, response.size
+    expected = Helpdesk::Ticket.where(deleted: 0, spam: 0).created_in(Helpdesk::Ticket.created_in_last_month)
+              .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).count
+    assert_equal expected, response.size
 
     Agent.any_instance.stubs(:ticket_permission).returns(3)
     get :index, controller_params
@@ -2389,7 +2391,8 @@ class TicketsControllerTest < ActionController::TestCase
     response = parse_response @response.body
     assert_equal 0, response.size
 
-    expected = Helpdesk::Ticket.where(deleted: 0, spam: 0).created_in(Helpdesk::Ticket.created_in_last_month).update_all(responder_id: @agent.id)
+    expected = Helpdesk::Ticket.where(deleted: 0, spam: 0).created_in(Helpdesk::Ticket.created_in_last_month)
+              .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).update_all(responder_id: @agent.id)
     get :index, controller_params
     assert_response 200
     Agent.any_instance.unstub(:ticket_permission)
@@ -2597,7 +2600,7 @@ class TicketsControllerTest < ActionController::TestCase
     get :index, controller_params(company_id: "#{company.id}")
     assert_response 200
 
-    tkts = Helpdesk::Ticket.where(requester_id: user.id)
+    tkts = Helpdesk::Ticket.where(requester_id: user.id).limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).order('created_at desc')
     pattern = tkts.map { |tkt| index_ticket_pattern(tkt) }
     match_json(pattern)
   end
@@ -2653,7 +2656,8 @@ class TicketsControllerTest < ActionController::TestCase
     sidekiq_inline { user1.update_attributes(company_id: company.id) }
     user1.reload
 
-    expected_size = @account.tickets.where(deleted: 0, spam: 0, requester_id: user1.id, owner_id: company.id).count
+    expected_size = @account.tickets.where(deleted: 0, spam: 0, requester_id: user1.id, owner_id: company.id)
+                    .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).count
     get :index, controller_params(company_id: company.id, requester_id: "#{user1.id}")
     assert_response 200
     response = parse_response @response.body
@@ -2727,6 +2731,8 @@ class TicketsControllerTest < ActionController::TestCase
     response = parse_response @response.body
     tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0)
                             .created_in(Helpdesk::Ticket.created_in_last_month)
+                            .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
+                            .order('created_at desc')
     assert_equal tkts.count, response.size
     pattern = tkts.map do |tkt|
       index_ticket_pattern_with_associations(tkt, true, false, false)
@@ -2740,6 +2746,8 @@ class TicketsControllerTest < ActionController::TestCase
     response = parse_response @response.body
     tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0)
                             .created_in(Helpdesk::Ticket.created_in_last_month)
+                            .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
+                            .order('created_at desc')
     assert_equal tkts.count, response.size
     pattern = tkts.map do |tkt|
       index_ticket_pattern_with_associations(tkt, false, true, false)
@@ -2751,8 +2759,10 @@ class TicketsControllerTest < ActionController::TestCase
     get :index, controller_params(include: 'company')
     assert_response 200
     response = parse_response @response.body
-    tkts =  Helpdesk::Ticket.where(['deleted = 0 AND spam = 0 AND owner_id IS NOT NULL'])
+    tkts =  Helpdesk::Ticket.where(['deleted = 0 AND spam = 0'])
                             .created_in(Helpdesk::Ticket.created_in_last_month)
+                            .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
+                            .order('created_at desc')
     assert_equal tkts.count, response.size
     pattern = tkts.map do |tkt|
       index_ticket_pattern_with_associations(tkt, false, false, true)
@@ -2765,7 +2775,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern(
       'include', :not_included,
-      list: 'requester, stats, company')]
+      list: ApiTicketConstants::SIDE_LOADING.join(', '))]
     )
   end
 
@@ -2780,7 +2790,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern(
       'include', :not_included,
-      list: 'requester, stats, company')]
+      list: ApiTicketConstants::SIDE_LOADING.join(', '))]
     )
   end
 
@@ -3138,8 +3148,8 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_compose_email_with_group_ticket_permission_valid
     Account.any_instance.stubs(:restricted_compose_enabled?).returns(:true)
-    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
-    User.any_instance.stubs(:group_ticket_permission).returns(true).at_most_once
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+    User.any_instance.stubs(:group_ticket_permission).returns(true)
     email_config = create_email_config(group_id: ticket_params_hash[:group_id])
     params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(custom_fields: {}, email_config_id: email_config.id)
     CUSTOM_FIELDS.each do |custom_field|
@@ -3157,8 +3167,8 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_compose_email_with_group_ticket_permission_invalid
     Account.any_instance.stubs(:restricted_compose_enabled?).returns(:true)
-    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
-    User.any_instance.stubs(:group_ticket_permission).returns(true).at_most_once
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+    User.any_instance.stubs(:group_ticket_permission).returns(true)
     email_config = create_email_config(group_id: create_group(@account).id)
     params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(custom_fields: {}, email_config_id: email_config.id)
     CUSTOM_FIELDS.each do |custom_field|
@@ -3176,9 +3186,9 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_compose_email_with_assign_ticket_permission_valid
     Account.any_instance.stubs(:restricted_compose_enabled?).returns(:true)
-    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
-    User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
-    User.any_instance.stubs(:assigned_ticket_permission).returns(true).at_most_once
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+    User.any_instance.stubs(:group_ticket_permission).returns(false)
+    User.any_instance.stubs(:assigned_ticket_permission).returns(true)
     email_config = create_email_config
     params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(custom_fields: {}, email_config_id: email_config.id)
     CUSTOM_FIELDS.each do |custom_field|
@@ -3197,9 +3207,9 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_compose_email_with_assign_ticket_permission_invalid
     Account.any_instance.stubs(:restricted_compose_enabled?).returns(:true)
-    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
-    User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
-    User.any_instance.stubs(:assigned_ticket_permission).returns(true).at_most_once
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+    User.any_instance.stubs(:group_ticket_permission).returns(false)
+    User.any_instance.stubs(:assigned_ticket_permission).returns(true)
     email_config = create_email_config(group_id: create_group(@account).id)
     params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(custom_fields: {}, email_config_id: email_config.id)
     CUSTOM_FIELDS.each do |custom_field|

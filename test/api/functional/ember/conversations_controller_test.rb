@@ -105,8 +105,8 @@ module Ember
       params_hash = create_note_params_hash.merge({attachment_ids: attachment_ids})
       post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
-      match_json(note_pattern(params_hash, Helpdesk::Note.last))
-      match_json(note_pattern({}, Helpdesk::Note.last))
+      match_json(private_note_pattern(params_hash, Helpdesk::Note.last))
+      match_json(private_note_pattern({}, Helpdesk::Note.last))
       assert Helpdesk::Note.last.attachments.size == attachment_ids.size
     end
 
@@ -121,8 +121,8 @@ module Ember
       post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
-      match_json(note_pattern(params_hash, Helpdesk::Note.last))
-      match_json(note_pattern({}, Helpdesk::Note.last))
+      match_json(private_note_pattern(params_hash, Helpdesk::Note.last))
+      match_json(private_note_pattern({}, Helpdesk::Note.last))
       assert Helpdesk::Note.last.attachments.size == (attachments.size + 1)
     end
 
@@ -133,8 +133,8 @@ module Ember
       post :create, construct_params({version: 'private', id: ticket.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(note_pattern(params, latest_note))
-      match_json(note_pattern({}, latest_note))
+      match_json(private_note_pattern(params, latest_note))
+      match_json(private_note_pattern({}, latest_note))
       assert latest_note.cloud_files.count == 2
     end
 
@@ -148,8 +148,8 @@ module Ember
       post :create, construct_params({version: 'private', id: create_ticket.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(note_pattern(params, latest_note))
-      match_json(note_pattern({}, latest_note))
+      match_json(private_note_pattern(params, latest_note))
+      match_json(private_note_pattern({}, latest_note))
       assert latest_note.attachments.count == 1
     end
 
@@ -158,8 +158,8 @@ module Ember
       post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(note_pattern(params_hash, latest_note))
-      match_json(note_pattern({}, latest_note))
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
     end
 
     def test_reply_with_invalid_attachment_ids
@@ -190,8 +190,8 @@ module Ember
       params_hash = reply_note_params_hash.merge({attachment_ids: attachment_ids, user_id: @agent.id})
       post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
-      match_json(note_pattern(params_hash, Helpdesk::Note.last))
-      match_json(note_pattern({}, Helpdesk::Note.last))
+      match_json(private_note_pattern(params_hash, Helpdesk::Note.last))
+      match_json(private_note_pattern({}, Helpdesk::Note.last))
       assert Helpdesk::Note.last.attachments.size == attachment_ids.size
     end
 
@@ -206,8 +206,8 @@ module Ember
       post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
-      match_json(note_pattern(params_hash, Helpdesk::Note.last))
-      match_json(note_pattern({}, Helpdesk::Note.last))
+      match_json(private_note_pattern(params_hash, Helpdesk::Note.last))
+      match_json(private_note_pattern({}, Helpdesk::Note.last))
       assert Helpdesk::Note.last.attachments.size == (attachments.size + 1)
     end
 
@@ -218,8 +218,8 @@ module Ember
       post :reply, construct_params({version: 'private', id: ticket.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(note_pattern(params, latest_note))
-      match_json(note_pattern({}, latest_note))
+      match_json(private_note_pattern(params, latest_note))
+      match_json(private_note_pattern({}, latest_note))
       assert latest_note.cloud_files.count == 2
     end
 
@@ -233,8 +233,8 @@ module Ember
       post :reply, construct_params({version: 'private', id: create_ticket.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(note_pattern(params, latest_note))
-      match_json(note_pattern({}, latest_note))
+      match_json(private_note_pattern(params, latest_note))
+      match_json(private_note_pattern({}, latest_note))
       assert latest_note.attachments.count == 1
     end
     
@@ -257,8 +257,8 @@ module Ember
       params_hash = reply_note_params_hash.merge(send_survey: false)
       post :reply, construct_params({version: 'private', id: t.display_id }, params_hash)
       assert_response 201
-      match_json(note_pattern(params_hash, Helpdesk::Note.last))
-      match_json(note_pattern({}, Helpdesk::Note.last))
+      match_json(private_note_pattern(params_hash, Helpdesk::Note.last))
+      match_json(private_note_pattern({}, Helpdesk::Note.last))
     end
 
     def test_reply_with_survey_link
@@ -269,8 +269,8 @@ module Ember
       params_hash = reply_note_params_hash.merge(send_survey: true)
       post :reply, construct_params({version: 'private', id: t.display_id }, params_hash)
       assert_response 201
-      match_json(note_pattern(params_hash, Helpdesk::Note.last))
-      match_json(note_pattern({}, Helpdesk::Note.last))
+      match_json(private_note_pattern(params_hash, Helpdesk::Note.last))
+      match_json(private_note_pattern({}, Helpdesk::Note.last))
     end
 
     def test_forward_with_invalid_cc_emails_count
@@ -307,8 +307,8 @@ module Ember
       params_hash = forward_note_params_hash
       post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
-      match_json(note_pattern(params_hash, Helpdesk::Note.last))
-      match_json(note_pattern({}, Helpdesk::Note.last))
+      match_json(private_note_pattern(params_hash, Helpdesk::Note.last))
+      match_json(private_note_pattern({}, Helpdesk::Note.last))
     end
 
     def test_forward_with_user_id_valid
@@ -317,8 +317,8 @@ module Ember
       post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(note_pattern(params_hash, latest_note))
-      match_json(note_pattern({}, latest_note))
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
     end
 
     def test_forward_with_user_id_invalid_privilege
@@ -384,8 +384,8 @@ module Ember
       assert_response 201
       note = Helpdesk::Note.last
       assert_equal email_config.id, note.email_config_id 
-      match_json(note_pattern(params_hash, note))
-      match_json(note_pattern({}, note))
+      match_json(private_note_pattern(params_hash, note))
+      match_json(private_note_pattern({}, note))
     end
 
     def test_forward_inactive_email_config
@@ -423,8 +423,8 @@ module Ember
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
       response_params = params.except(:attachments)
-      match_json(note_pattern(params, Helpdesk::Note.last))
-      match_json(note_pattern({}, Helpdesk::Note.last))
+      match_json(private_note_pattern(params, Helpdesk::Note.last))
+      match_json(private_note_pattern({}, Helpdesk::Note.last))
       assert Helpdesk::Note.last.attachments.count == 2
     end
 
@@ -433,8 +433,8 @@ module Ember
       params = forward_note_params_hash
       post :forward, construct_params({version: 'private', id: t.display_id }, params)
       assert_response 201
-      match_json(note_pattern(params, Helpdesk::Note.last))
-      match_json(note_pattern({}, Helpdesk::Note.last))
+      match_json(private_note_pattern(params, Helpdesk::Note.last))
+      match_json(private_note_pattern({}, Helpdesk::Note.last))
       assert Helpdesk::Note.last.attachments.count == 1
     end
 
@@ -443,8 +443,8 @@ module Ember
       params = forward_note_params_hash
       post :forward, construct_params({version: 'private', id: t.display_id }, params)
       assert_response 201
-      match_json(note_pattern(params, Helpdesk::Note.last))
-      match_json(note_pattern({}, Helpdesk::Note.last))
+      match_json(private_note_pattern(params, Helpdesk::Note.last))
+      match_json(private_note_pattern({}, Helpdesk::Note.last))
       assert Helpdesk::Note.last.cloud_files.count == 1
     end
 
@@ -488,8 +488,8 @@ module Ember
       post :forward, construct_params({version: 'private', id: ticket.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(note_pattern(params, latest_note))
-      match_json(note_pattern({}, latest_note))
+      match_json(private_note_pattern(params, latest_note))
+      match_json(private_note_pattern({}, latest_note))
     end
 
     def test_forward_with_full_text
@@ -497,8 +497,8 @@ module Ember
       post :forward, construct_params({version: 'private', id: ticket.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(note_pattern(params, latest_note))
-      match_json(note_pattern({}, latest_note))
+      match_json(private_note_pattern(params, latest_note))
+      match_json(private_note_pattern({}, latest_note))
     end
 
     def test_forward_with_invalid_draft_attachment_ids
@@ -520,8 +520,8 @@ module Ember
       post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(note_pattern(params_hash, latest_note))
-      match_json(note_pattern({}, latest_note))
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
       assert latest_note.attachments.size == attachment_ids.size
     end
 
@@ -531,8 +531,8 @@ module Ember
       post :forward, construct_params({version: 'private', id: t.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(note_pattern(params, latest_note))
-      match_json(note_pattern({}, latest_note))
+      match_json(private_note_pattern(params, latest_note))
+      match_json(private_note_pattern({}, latest_note))
       assert latest_note.attachments.count == 0
     end
 
@@ -542,8 +542,8 @@ module Ember
       post :forward, construct_params({version: 'private', id: t.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(note_pattern(params, latest_note))
-      match_json(note_pattern({}, latest_note))
+      match_json(private_note_pattern(params, latest_note))
+      match_json(private_note_pattern({}, latest_note))
       assert latest_note.attachments.count == 1
     end
 
@@ -555,8 +555,8 @@ module Ember
       post :forward, construct_params({version: 'private', id: t.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(note_pattern(params, latest_note))
-      match_json(note_pattern({}, latest_note))
+      match_json(private_note_pattern(params, latest_note))
+      match_json(private_note_pattern({}, latest_note))
       assert latest_note.attachments.count == 2
     end
 
@@ -573,8 +573,8 @@ module Ember
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(note_pattern(params_hash, latest_note))
-      match_json(note_pattern({}, latest_note))
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
       assert latest_note.attachments.size == (attachments.size + 1)
     end
 
@@ -601,8 +601,8 @@ module Ember
       post :forward, construct_params({version: 'private', id: t.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(note_pattern(params, latest_note))
-      match_json(note_pattern({}, latest_note))
+      match_json(private_note_pattern(params, latest_note))
+      match_json(private_note_pattern({}, latest_note))
       assert latest_note.cloud_files.count == 1
     end
 
@@ -621,8 +621,8 @@ module Ember
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(note_pattern(params, latest_note))
-      match_json(note_pattern({}, latest_note))
+      match_json(private_note_pattern(params, latest_note))
+      match_json(private_note_pattern({}, latest_note))
       assert latest_note.attachments.count == 5
       assert latest_note.cloud_files.count == 1
     end
@@ -635,8 +635,8 @@ module Ember
       post :forward, construct_params({version: 'private', id: t.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(note_pattern(params, latest_note))
-      match_json(note_pattern({}, latest_note))
+      match_json(private_note_pattern(params, latest_note))
+      match_json(private_note_pattern({}, latest_note))
       assert latest_note.cloud_files.count == 2
     end
 
@@ -657,8 +657,8 @@ module Ember
       post :forward, construct_params({version: 'private', id: t.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(note_pattern(params, latest_note))
-      match_json(note_pattern({}, latest_note))
+      match_json(private_note_pattern(params, latest_note))
+      match_json(private_note_pattern({}, latest_note))
       assert latest_note.cloud_files.count == 3
     end
 
@@ -672,8 +672,8 @@ module Ember
       post :forward, construct_params({version: 'private', id: create_ticket.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(note_pattern(params, latest_note))
-      match_json(note_pattern({}, latest_note))
+      match_json(private_note_pattern(params, latest_note))
+      match_json(private_note_pattern({}, latest_note))
       assert latest_note.attachments.count == 1
     end
 
@@ -723,7 +723,7 @@ module Ember
       Koala::Facebook::API.any_instance.unstub(:put_comment)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern(params_hash, latest_note))
     end
 
     def test_facebook_reply_to_fb_comment_note
@@ -737,7 +737,7 @@ module Ember
       Koala::Facebook::API.any_instance.unstub(:put_comment)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern(params_hash, latest_note))
     end
 
     def test_facebook_reply_to_fb_direct_message_ticket
@@ -749,7 +749,7 @@ module Ember
       Koala::Facebook::API.any_instance.unstub(:put_object)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern(params_hash, latest_note))
     end
 
     def test_facebook_reply_to_non_fb_post_note
@@ -789,8 +789,8 @@ module Ember
       Koala::Facebook::API.any_instance.unstub(:put_object)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(note_pattern(params_hash, latest_note))
-      match_json(note_pattern({}, latest_note))
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
     end
 
     def test_tweet_reply_without_params
@@ -837,7 +837,7 @@ module Ember
       post :tweet, construct_params({version: 'private', id: ticket.display_id}, params_hash)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern(params_hash, latest_note))
       
       Twitter::REST::Client.any_instance.unstub(:update)
       
@@ -881,7 +881,7 @@ module Ember
       post :tweet, construct_params({version: 'private', id: ticket.display_id}, params_hash)
       assert_response 201
       latest_note = Helpdesk::Note.last
-      match_json(note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern(params_hash, latest_note))
       
       Twitter::REST::Client.any_instance.unstub(:create_direct_message)
 
@@ -953,8 +953,8 @@ module Ember
       put :update, construct_params({ version: 'private', id: note.id }, params_hash)
       assert_response 200
       note = Helpdesk::Note.find(note.id)
-      match_json(update_note_pattern(params_hash, note))
-      match_json(update_note_pattern({}, note))
+      match_json(private_update_note_pattern(params_hash, note))
+      match_json(private_update_note_pattern({}, note))
     end
 
     def test_update_with_attachments
@@ -974,8 +974,8 @@ module Ember
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 200
       note = Helpdesk::Note.find(note.id)
-      match_json(update_note_pattern(params_hash, note))
-      match_json(update_note_pattern({}, note))
+      match_json(private_update_note_pattern(params_hash, note))
+      match_json(private_update_note_pattern({}, note))
       assert_equal 3, note.attachments.count
     end
 
@@ -987,8 +987,8 @@ module Ember
       put :update, construct_params({ version: 'private', id: note.id }, params_hash)
       assert_response 200
       note = Helpdesk::Note.find(note.id)
-      match_json(update_note_pattern(params_hash, note))
-      match_json(update_note_pattern({}, note))
+      match_json(private_update_note_pattern(params_hash, note))
+      match_json(private_update_note_pattern({}, note))
       assert_equal 1, note.cloud_files.count
     end
     

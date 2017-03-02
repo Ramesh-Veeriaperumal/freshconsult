@@ -138,16 +138,20 @@ module TicketsTestHelper
   end
 
   def create_ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
-    ticket_pattern(expected_output, ignore_extra_keys, ticket).merge(cloud_files: Array)
+    ticket_pattern(expected_output, ignore_extra_keys, ticket)
   end
 
   def update_ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
     description = expected_output[:description] || ticket.description_html
-    ticket_pattern(expected_output, ignore_extra_keys, ticket).merge(description: description, cloud_files: Array)
+    ticket_pattern(expected_output, ignore_extra_keys, ticket).merge(description: description)
+  end
+
+  def private_api_create_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
+    create_ticket_pattern(expected_output, ignore_extra_keys, ticket).merge(cloud_files: Array)
   end
 
   def latest_note_response_pattern(note)
-    pattern = note_pattern({}, note).merge!({ user: Hash })
+    pattern = private_note_pattern({}, note).merge!({ user: Hash })
     pattern.except(:user_id)
   end
 
@@ -432,7 +436,7 @@ module TicketsTestHelper
       bcc_emails: note.bcc_emails,
       source: note.source
     }
-    single_note = note_pattern({}, note)
+    single_note = private_note_pattern({}, note)
     single_note.merge!(index_note)
     single_note.merge!(freshfone_call: freshfone_call_pattern(note)) if freshfone_call_pattern(note)
     single_note
