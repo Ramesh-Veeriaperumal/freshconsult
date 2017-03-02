@@ -232,7 +232,11 @@ class ApiContactsController < ApiApplicationController
 
     def load_objects
       # preload(:flexifield) will avoid n + 1 query to contact field data.
-      super contacts_filter(scoper).preload(:flexifield, :default_user_company).order('users.name')
+      super contacts_filter(scoper).preload(preload_options).order('users.name')
+    end
+
+    def preload_options
+      [:flexifield, :default_user_company]
     end
 
     def contacts_filter(contacts)

@@ -1,5 +1,4 @@
 class AgentDecorator < ApiDecorator
-  CONTACT_FIELDS = [:active, :email, :job_title, :language, :mobile, :name, :phone, :time_zone, :avatar].freeze
 
   def initialize(record, options)
     super(record)
@@ -18,9 +17,9 @@ class AgentDecorator < ApiDecorator
       ticket_scope: record.ticket_permission,
       signature: record.signature_html,
       group_ids: group_ids,
-      role_ids:  record.user.role_ids,
+      role_ids:  record.user.user_roles.map(&:role_id),
       available_since: record.active_since.try(:utc),
-      contact: ContactDecorator.new(record.user, {}).to_hash.slice(*CONTACT_FIELDS),
+      contact: ContactDecorator.new(record.user, {}).to_hash,
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc)
     }
