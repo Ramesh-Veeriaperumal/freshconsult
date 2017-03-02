@@ -325,6 +325,24 @@ module TicketsTestHelper
     end
   end
 
+  def private_api_ticket_index_query_hash_pattern(query_hash)
+    per_page = ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
+    query_hash_params = {}
+    query_hash_params[:query_hash] = query_hash
+    query_hash_params[:wf_model] = 'Helpdesk::Ticket'
+    query_hash_params[:data_hash] = QueryHash.new(query_hash_params[:query_hash].values).to_system_format
+    pattern_array = Account.current.tickets.filter(params: query_hash_params, filter: 'Helpdesk::Filters::CustomTicketFilter').first(per_page).map do |ticket|
+      index_ticket_pattern(ticket, [:tags])
+    end
+  end
+
+  def private_api_ticket_index_filter_pattern(filter_data)
+    per_page = ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
+    pattern_array = Account.current.tickets.filter(params: filter_data, filter: 'Helpdesk::Filters::CustomTicketFilter').first(per_page).map do |ticket|
+      index_ticket_pattern(ticket, [:tags])
+    end
+  end
+
   def ticket_show_pattern(ticket, survey_result = nil, requester = false)
     pattern = ticket_pattern(ticket).merge(cloud_files: Array)
     ticket_topic = ticket_topic_pattern(ticket)
