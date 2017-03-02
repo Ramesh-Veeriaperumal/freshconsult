@@ -9,7 +9,6 @@ class WriteSharedOwnershipFieldsToTicketTable < ActiveRecord::Migration
   def up
     failed_accounts = []
     failed_tickets = {}
-    set_others_redis_key(SO_FIELDS_MIGRATION, true, nil) unless redis_key_exists?(SO_FIELDS_MIGRATION)
 
     Account.active_accounts.find_each do |account|
       begin
