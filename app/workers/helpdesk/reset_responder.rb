@@ -28,14 +28,6 @@ class Helpdesk::ResetResponder < BaseWorker
         tickets = account.tickets.where(:internal_agent_id => user.id)
         ticket_ids = tickets.map(&:id)
         tickets.update_all_with_publish(updates_hash, {}, options)
-
-        if redis_key_exists?(SO_FIELDS_MIGRATION)
-          internal_agent_col  = "long_tc04"
-          updates_hash        = {internal_agent_col => nil}
-
-          account.schema_less_tickets.where(:ticket_id => ticket_ids).update_all_with_publish(
-            updates_hash, {}, {})
-        end
       end
 
       account.tickets.preload(:group).assigned_to(user).find_each do |ticket|
