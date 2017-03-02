@@ -5,15 +5,15 @@ module Account::Setup
 	include Redis::RedisKeys
     include Redis::OthersRedis
 
-	INDEPENDENT_SETUP_KEYS = ["new_account", "account_admin_email", "agents", "support_email", "twitter", "automation", "data_import", "custom_app"]
+	ACCOUNT_SETUP_FEATURES_LIST = YAML::load_file(File.join(Rails.root, 'config', 'account_setup_keys.yml'))
 
-	FEATURE_BASED_SETUP_KEYS = {
-		:freshfone => "freshfone_number"
-	}
+	INDEPENDENT_SETUP_KEYS = ACCOUNT_SETUP_FEATURES_LIST[:independent_setup_keys]
 
-	SETUP_KEYS = INDEPENDENT_SETUP_KEYS + FEATURE_BASED_SETUP_KEYS.values
+	CONDITION_BASED_SETUP_KEYS = ACCOUNT_SETUP_FEATURES_LIST[:condition_based_setup_keys]
 
-	SETUP_KEYS_ORDER = ["new_account", "account_admin_email", "agents", "support_email", "freshfone_number", "twitter", "automation", "data_import", "custom_app"]
+	SETUP_KEYS = INDEPENDENT_SETUP_KEYS.merge(CONDITION_BASED_SETUP_KEYS).sort_by { |key,value| value }.to_h.keys
+
+	SETUP_KEYS_DISPLAY_ORDER = ACCOUNT_SETUP_FEATURES_LIST[:setup_keys_display_order]
 
 	SETUP_EXPIRY = 60.days
 
@@ -40,15 +40,27 @@ module Account::Setup
 	end
 
 	def current_setup_keys
-		@current_setup_keys ||= sort_setup_keys(INDEPENDENT_SETUP_KEYS + current_feature_based_keys)
+		@current_setup_keys ||= sort_setup_keys(INDEPENDENT_SETUP_KEYS.keys + current_condition_based_keys)
 	end
 
-	def current_feature_based_keys
-		FEATURE_BASED_SETUP_KEYS.slice(*(FEATURE_BASED_SETUP_KEYS.keys & (self.feature_from_cache + self.features_list))).values
+	# For each feature listed in CONDITION_BASED_SETUP_KEYS, add a method that has the corresponding 
+	# condition checks. The naming convention for the method would be "#{setup_key}_eligible?". 
+	# For eg., freshfone_number_eligible?
+
+	def current_condition_based_keys
+		CONDITION_BASED_SETUP_KEYS.keys.select { |setup_key| send("#{setup_key}_eligible?") }
+	end
+
+	def freshfone_number_eligible?
+	  self.features_included?(:freshfone)
+	end
+
+	def twitter_eligible?
+      self.account_additional_settings.additional_settings[:enable_social] == true
 	end
 
 	def sort_setup_keys(setup_keys)
-		setup_keys.sort_by { |setup_key| SETUP_KEYS_ORDER.index setup_key}
+		setup_keys.sort_by { |setup_key| SETUP_KEYS_DISPLAY_ORDER.index setup_key}
 	end
 
 	def current_in_setup
