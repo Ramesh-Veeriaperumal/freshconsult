@@ -123,10 +123,10 @@ class SendgridDomainUpdates < BaseWorker
       end
 
       if (account.full_domain =~ /support/i && (spam_score >= 4  || Freemail.free_or_disposable?(account.admin_email)))
-        sleep(5)
-        Account.current.subscription.update_attributes(:state => "suspended")
-        ShardMapping.find_by_account_id(Account.current.id).update_attributes(:status => 403)
-        notify_blocked_spam_account_detection(account, "Reason: Domain url contains support and signup using free or spam email domains")
+        # sleep(5)
+        # Account.current.subscription.update_attributes(:state => "suspended")
+        # ShardMapping.find_by_account_id(Account.current.id).update_attributes(:status => 403)
+        blacklist_spam_account(account, stop_sending, "Reason: Domain url contains support and signup using free or spam email domains")
       elsif spam_score >= 4
         blacklist_spam_account(account, stop_sending, reason)
       end
@@ -144,7 +144,7 @@ class SendgridDomainUpdates < BaseWorker
 
   def blacklist_spam_account(account, is_spam_email_account, additional_info )
     add_member_to_redis_set(SPAM_EMAIL_ACCOUNTS, account.id) if is_spam_email_account
-    add_member_to_redis_set(BLACKLISTED_SPAM_ACCOUNTS, account.id)
+    account.launch(:spam_blacklist_feature)
     notify_spam_account_detection(account, additional_info)
   end
 

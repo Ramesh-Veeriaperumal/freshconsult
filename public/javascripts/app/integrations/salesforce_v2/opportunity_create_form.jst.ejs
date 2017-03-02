@@ -1,14 +1,14 @@
-<div id="create_sf_opportunity_v2_<%=account_id%>" class="hide">
-<div id="salesforce-opportunity-validation-errors-v2" class="alert alert-error mt0 mb16 hide"></div> 
+<div id="create_sf_opportunity_<%=app_name%>_<%=account_id%>" class="hide">
+<div id="opportunity-validation-errors-<%=app_name%>" class="alert alert-error mt0 mb16 hide"></div> 
 <div class="salesforce-opportunity-custom-errors-v2 alert alert-error mt0 mb16 hide"></div> 
-  <form action="#" class="salesforceOpportunity form-horizontal" id="salesforce-opportunity-form-v2"> 
+  <form action="#" class="salesforceOpportunity form-horizontal" id="salesforce-opportunity-form-<%=app_name%>"> 
     <div class="opportunity-form-contents"> 
       <div class="row-fluid control-group"> 
         <label class="span2">
           Name<span class="required_star">*</span> 
         </label>
         <div class="span10"> 
-          <input class="input-block-level required" type="text" id="opportunity_name_v2"> 
+          <input class="input-block-level required" type="text" id="opportunity_name_<%=app_name%>"> 
         </div> 
       </div> 
       <div class="row-fluid control-group"> 
@@ -16,7 +16,7 @@
           Stage<span class="required_star">*</span> 
         </label>
         <div class="span10"> 
-          <select id="opportunity_stage_v2" class="select2 select2-offscreen"> 
+          <select id="opportunity_stage_<%=app_name%>" class="select2 select2-offscreen"> 
             <%=stage_options%>
           </select> 
         </div> 
@@ -27,7 +27,7 @@
               CloseDate<span class="required_star">*</span> 
             </label>
             <div class="datefield input-date-field span8"> 
-              <input id="opportunity_close_date_v2" class="date datepicker_popover hasDatePicker" data-date-format="d M, yy" readonly="readonly" type="text"/> 
+              <input id="opportunity_close_date_<%=app_name%>" class="date datepicker_popover hasDatePicker" data-date-format="d M, yy" readonly="readonly" type="text"/> 
               <button type="button" class="ui-datepicker-trigger"><i class="ficon-calendar"></i></button> 
             </div> 
           </div> 
@@ -36,13 +36,13 @@
               Amount 
             </label>
           <div class="span8"> 
-            <input id="opportunity_amount_v2" type="text"/> 
+            <input id="opportunity_amount_<%=app_name%>" type="text"/> 
           </div> 
           </div> 
       </div> 
       <div class="row-fluid control-group pull-right submit-buttons"> 
-        <input type="submit" id="opportunity-submit-v2-<%=account_id%>" class="btn btn-primary pull-right ml10" value="Create"> 
-        <input type="button" id="opportunity-cancel-v2-<%=account_id%>" class="btn pull-right" value="Cancel" > 
+        <input type="submit" id="opportunity-submit-<%=app_name%>-<%=account_id%>" class="btn btn-primary pull-right ml10" value="Create"> 
+        <input type="button" id="opportunity-cancel-<%=app_name%>-<%=account_id%>" class="btn pull-right" value="Cancel" > 
       </div>
     </div>
   </form>

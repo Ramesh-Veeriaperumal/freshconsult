@@ -49,7 +49,7 @@
         </div>
         <%if @element_config["objects"].include? "lead"%>
         <div class="sf-lead-fields sf-settings-widget">
-          <h3><%=t("integrations.#{@element_config["element"]}.form.lead")%></h3>   
+          <h3><%=t("integrations.cloud_elements.form.lead")%></h3>   
           <div id="sfleads">
             <span>
               <div id="leadslist">
@@ -111,7 +111,7 @@
             </span>
           </div>
         </div>
-        <%if @element_config['element'] === "salesforce_v2" %>
+        <%if @element_config['element'] === "salesforce_v2" || @element_config['element'] === "dynamics_v2" %>
             <%=render :partial => "/integrations/applications/crm/salesforce_visibility",
                    :locals => { :default_fields => @element_config['default_fields'] }%>
         <%end%>

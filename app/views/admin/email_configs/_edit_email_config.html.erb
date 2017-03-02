@@ -32,7 +32,7 @@
 				<div class="muted input-xxlarge"><%=t('email_configs.info10').html_safe%> </div>
 			</div>
 	</li> 
-	<% if feature?(:multi_product)  && !@products.empty?  && !@email_config.primary_role %> 
+	<% if current_account.multi_product_enabled?  && !@products.empty?  && !@email_config.primary_role %> 
 		<li class="control-group">
 			<label class="control-label" ><%=t('email_configs.assign_to_product_msg').html_safe%></label>
 			<div class="controls">

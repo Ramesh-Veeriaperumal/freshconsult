@@ -2,6 +2,7 @@ module Ember
   class ConversationsController < ::ConversationsController
     include Concerns::ApplicationViewConcern
     include Concerns::TicketsViewConcern
+    include Concerns::AppConfigurationConcern
     include Facebook::TicketActions::Util
     include Conversations::Twitter
     include HelperConcern
@@ -18,13 +19,13 @@ module Ember
     SINGULAR_RESPONSE_FOR = %w(reply forward create update tweet facebook_reply).freeze
 
     def ticket_conversations
-      return if validate_filter_params(%w(order_type))
+      validate_filter_params
+      return unless @conversation_filter.valid?
       order_type = params[:order_type]
       order_conditions = "created_at #{order_type}"
       ticket_conversations = @ticket.notes.visible.exclude_source('meta')
                                     .preload(conditional_preload_options)
                                     .order(order_conditions)
-      # @items = paginate_items(ticket_conversations)
       load_objects(ticket_conversations)
       response.api_meta = { count: @items_count }
     end
@@ -97,6 +98,7 @@ module Ember
       @agent_signature = signature
       @content = template_content
       @quoted_text = quoted_text(@item || @ticket, [:forward_template, :note_forward_template].include?(action_name.to_sym))
+      fetch_cc_bcc_emails
       render action: :template
     end
 
@@ -106,19 +108,35 @@ module Ember
 
     private
 
+      def index?
+        @index ||= (current_action?('index') || current_action?('ticket_conversations'))
+      end
+
+      def decorator_options
+        options = {}
+        options[:sideload_options] = sideload_options
+        super(options)
+      end
+
+      def sideload_options
+        @conversation_filter.try(:include_array) || []
+      end
+
       def sanitize_body_text
         @item.assign_element_html(cname_params[:note_body_attributes], 'body') if cname_params[:note_body_attributes]
         sanitize_body_hash(cname_params, :note_body_attributes, 'body', 'full_text') if cname_params
       end
 
       def conditional_preload_options
-        preload_options = [:schema_less_note, :note_old_body, :attachments, :freshfone_call, :cloud_files, :attachments_sharable,
+        preload_options = [:schema_less_note, :note_old_body, :attachments, :cloud_files, :attachments_sharable,
                            custom_survey_remark: { survey_result: { survey: { survey_questions: {} }, survey_result_data: {} } }]
         if @ticket.facebook?
           preload_options << :fb_post
         elsif @ticket.twitter?
           preload_options << :tweet
         end
+        preload_options << :freshfone_call if current_account.freshfone_enabled?
+        preload_options << :user if sideload_options.include?('requester')
         preload_options
       end
 
@@ -168,6 +186,13 @@ module Ember
 
       def sanitize_params
         sanitize_note_params
+      end
+
+      def validate_filter_params
+        @constants_klass = 'ConversationConstants'
+        @validation_klass = 'ConversationFilterValidation'
+        validate_query_params
+        @conversation_filter = @validator
       end
 
       def save_note
@@ -283,6 +308,12 @@ module Ember
 
       def notification_template
         action_name.to_sym == :note_forward_template ? :forward_template : action_name.to_sym
+      end
+
+      def fetch_cc_bcc_emails
+        return unless [:reply_template].include?(action_name.to_sym)
+        @cc_emails = reply_cc_emails(@ticket)
+        @bcc_emails = bcc_drop_box_email
       end
 
       def parse_liquid(liquid_content)

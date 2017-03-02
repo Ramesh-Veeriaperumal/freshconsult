@@ -8,7 +8,7 @@ module ErrorConstants
     incompatible_field: ['incompatible_field'],
     inaccessible_field: ['inaccessible_field'],
     inaccessible_value: ['inaccessible_value'],
-    unable_to_perform: [:unable_to_perform],
+    unable_to_perform: ['unable_to_perform'],
     access_denied: ['access_denied']
   }.freeze
 

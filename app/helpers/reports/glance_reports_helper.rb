@@ -38,6 +38,11 @@ module Reports::GlanceReportsHelper
 		comparison_hash
 	end
 
+	def in_hours (hhnmm)
+		hh,mm = hhnmm.split(':')
+		hh.to_f + (mm.to_f/60)
+	end
+
 	def in_hrs_mins(seconds)
 		return "00:00" if seconds.blank?
 		hours = seconds.to_i/3600.to_i

@@ -380,8 +380,17 @@ class Subscription < ActiveRecord::Base
   end
   
   def non_sprout_plan?
-    !(sprout? || sprout_classic? || new_sprout?) 
+    !(sprout? || sprout_classic? || new_sprout?)
   end
+
+  def sprout_plan?
+    !(non_sprout_plan?)
+  end
+
+  def trial_or_sprout_plan?
+    state == 'trial' || sprout_plan?
+  end
+
 
   def forum_available_plan?
     non_sprout_plan? && !new_blossom?
@@ -409,7 +418,7 @@ class Subscription < ActiveRecord::Base
     # If the discount is changed, set the amount to the discounted
     # plan amount with the new discount.
     def update_amount
-      if self.amount.blank? or Rails.env.test? or Rails.env.development?
+      if self.amount.blank? || Rails.env.test?
         self.amount = subscription_plan.amount
       else
         response = Billing::Subscription.new.calculate_update_subscription_estimate(self, addons)

@@ -906,6 +906,36 @@ module Ember
       assert_equal 6, response.size
     end
 
+    def test_ticket_conversations_with_requester
+      t = create_ticket
+      create_private_note(t)
+      create_reply_note(t)
+      create_forward_note(t)
+      create_feedback_note(t)
+      get :ticket_conversations, controller_params(version: 'private', id: t.display_id, include: 'requester')
+      assert_response 200
+      match_json(conversations_pattern(ticket, true))
+    end
+
+    def test_ticket_conversations_with_pagination
+      t = create_ticket
+      3.times do
+        create_private_note(t)
+      end
+      get :ticket_conversations, controller_params(version: 'private', id: t.display_id, per_page: 1)
+      assert_response 200
+      assert JSON.parse(response.body).count == 1
+      get :ticket_conversations, controller_params(version: 'private', id: t.display_id, per_page: 1, page: 2)
+      assert_response 200
+      assert JSON.parse(response.body).count == 1
+    end
+
+    def test_ticket_conversations_with_pagination_exceeds_limit
+      get :ticket_conversations, controller_params(version: 'private', id: ticket.display_id, per_page: 101)
+      assert_response 400
+      match_json([bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
+    end
+
     def test_update_without_ticket_access
       User.any_instance.stubs(:has_ticket_permission?).returns(false)
       t = create_ticket
@@ -1011,7 +1041,7 @@ module Ember
 
       get :forward_template, construct_params({ version: 'private', id: t.display_id }, false)
       assert_response 200
-      match_json(reply_template_pattern(template: '', signature: ''))
+      match_json(conversation_template_pattern(template: '', signature: ''))
 
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:present?)
@@ -1028,7 +1058,7 @@ module Ember
 
       get :forward_template, construct_params({ version: 'private', id: t.display_id }, false)
       assert_response 200
-      match_json(reply_template_pattern({
+      match_json(conversation_template_pattern({
         template: '',
         signature: "<div><p>Thanks</p><p>#{t.subject}</p></div>"
         }))
@@ -1048,7 +1078,7 @@ module Ember
 
       get :forward_template, construct_params({ version: 'private', id: t.display_id }, false)
       assert_response 200
-      match_json(reply_template_pattern({
+      match_json(conversation_template_pattern({
           template: "<div>#{t.display_id}</div>",
           signature: ''
         }))
@@ -1069,7 +1099,7 @@ module Ember
       get :forward_template, construct_params({ version: 'private', id: t.display_id }, false)
       assert_response 200
       
-      match_json(reply_template_pattern({
+      match_json(conversation_template_pattern({
           template: "<div>#{t.display_id}</div>",
           signature: "<div><p>Thanks</p><p>#{t.subject}</p></div>"
         }))
@@ -1086,7 +1116,7 @@ module Ember
       EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
       get :note_forward_template, controller_params(version: 'private', id: note.id)
       assert_response 200
-      match_json(reply_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: ''))
+      match_json(conversation_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: ''))
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_forward_template)
     end
@@ -1099,7 +1129,7 @@ module Ember
       EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
       get :note_forward_template, controller_params(version: 'private', id: note.id)
       assert_response 200
-      match_json(reply_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: "<div><p>Thanks</p><p>#{ticket.subject}</p></div>"))
+      match_json(conversation_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: "<div><p>Thanks</p><p>#{ticket.subject}</p></div>"))
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_forward_template)
     end

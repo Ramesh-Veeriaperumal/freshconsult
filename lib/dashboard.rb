@@ -75,13 +75,13 @@ class Dashboard
   REDSHIFT_TIME_FORMAT = "%-d %b, %Y"
 
   GROUP_BY_VALUES_MAPPING = {
-    "responder_id"  => "agent_list_from_cache",
-    "group_id"      => "group_list_from_cache",
-    "ticket_type"   => "ticket_type_list_from_cache",
-    "priority"      => "priority_list_from_cache",
-    "status"        => "status_list_from_cache",
-    "long_tc03"     => "group_list_from_cache",
-    "long_tc04"     => "agent_list_from_cache"
+    "responder_id"      => "agent_list_from_cache",
+    "group_id"          => "group_list_from_cache",
+    "ticket_type"       => "ticket_type_list_from_cache",
+    "priority"          => "priority_list_from_cache",
+    "status"            => "status_list_from_cache",
+    "internal_group_id" => "group_list_from_cache",
+    "internal_agent_id" => "agent_list_from_cache"
   }
 
   DEFAULT_ORDER_LIMIT = 50

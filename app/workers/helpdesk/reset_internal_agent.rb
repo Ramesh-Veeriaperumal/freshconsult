@@ -1,5 +1,8 @@
 class Helpdesk::ResetInternalAgent < BaseWorker 
 
+  include Redis::RedisKeys
+  include Redis::OthersRedis
+
   sidekiq_options :queue => :reset_internal_agent, :retry => 1, :backtrace => true, :failures => :exhausted
 
   def perform(args)
@@ -7,13 +10,21 @@ class Helpdesk::ResetInternalAgent < BaseWorker
     account             = Account.current
     internal_group_id   = args[:internal_group_id]
     internal_agent_id   = args[:internal_agent_id]
-    internal_group_col  = Helpdesk::SchemaLessTicket.internal_group_column
-    internal_agent_col  = Helpdesk::SchemaLessTicket.internal_agent_column
     options             = {:reason => args[:reason], :manual_publish => true}
 
-    updates_hash = {internal_agent_col => nil}
-    account.schema_less_tickets.where(internal_group_col => internal_group_id, 
-      internal_agent_col => internal_agent_id).update_all_with_publish(updates_hash, {}, options)
+    updates_hash = {:internal_agent_id => nil}
+    tickets = account.tickets.where(:internal_group_id => internal_group_id, 
+      :internal_agent_id => internal_agent_id)
+    ticket_ids = tickets.map(&:id)
+    tickets.update_all_with_publish(updates_hash, {}, options)
+    
+
+    if redis_key_exists?(SO_FIELDS_MIGRATION)
+      internal_group_col  = "long_tc03"
+      internal_agent_col  = "long_tc04"
+      updates_hash = {internal_agent_col => nil}
+      account.schema_less_tickets.where(:ticket_id => ticket_ids).update_all_with_publish(updates_hash, {}, {})
+    end
 
   rescue Exception => e
     puts e.inspect, args.inspect

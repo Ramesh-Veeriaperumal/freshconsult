@@ -40,3 +40,10 @@ allOf:
         $ref: '#/definitions/survey_result'
       requester:
         type: object
+      company:
+        type: object
+        properties:
+          id:
+            type: number
+          name:
+            type: string

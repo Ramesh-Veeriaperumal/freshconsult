@@ -17,7 +17,7 @@
       <div class="control-group">
         <%= content_tag(:label, (t('admin.products.portal.portal_url') + "#{"<span class='required_star'>*</span>" unless portal.main_portal}").html_safe, :class => "control-label") %>
         <div class="controls">
-          <% if portal.main_portal && !feature?(:custom_domain) %>
+          <% if portal.main_portal && !current_account.custom_domain_enabled? %>
             <div class="label-locked-feature pb5">
               <%= content_tag(:label, current_account.full_domain, :class => "control-label") %>
               <div class="help-block">

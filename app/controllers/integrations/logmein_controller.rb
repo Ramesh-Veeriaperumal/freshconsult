@@ -7,7 +7,7 @@ class Integrations::LogmeinController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token
 
   def rescue_session
-    tracking = params['Tracking0']
+    tracking = params["session"]["tracking0"]
     unless tracking.blank?
       redis_val = tracking.split(":")
       redis_key = tracking.gsub(/:\w*$/, "")
@@ -20,14 +20,14 @@ class Integrations::LogmeinController < ApplicationController
       unless acc_ticket.blank?
         if (acc_ticket["md5secret"] == secret)
           note_head = '<b>' + t("integrations.logmein.note.header") + ' </b> <br />'
-          chatlog = params['ChatLog'].gsub(/\n/, "<br />") unless params['ChatLog'].blank?
-          tech_notes =  params['Note'].gsub(/\n/, "<br />") unless params['Note'].blank?
-          note_body = t("integrations.logmein.note.session_id") + " : " + params["SessionID"] + "<br />"
-          note_body += t("integrations.logmein.note.tech_name") + " : " + params["TechName"] + "<br />"
-          note_body += t("integrations.logmein.note.tech_email") + " : " + params["TechEmail"] + "<br /><br />"
-          note_body += t("integrations.logmein.note.platform") + " : " + params["Platform"] + "<br />"
-          note_body += t("integrations.logmein.note.work_time") + " : " + params["WorkTime"] + "<br /><br />"
-          note_body += "<b>" + t("integrations.logmein.note.chatlog")+ "</b>" + ("<div class = 'logmein_chatlog'>" + chatlog + "</div>") unless params['ChatLog'].blank?
+          chatlog = params["session"]["chatlog"].gsub(/\n/, "<br />") unless params["session"]["chatlog"].blank?
+          tech_notes =  params["session"]["note"].gsub(/\n/, "<br />") unless params["session"]["note"].blank?
+          note_body = t("integrations.logmein.note.session_id") + " : " + params["session"]["sessionid"] + "<br />"
+          note_body += t("integrations.logmein.note.tech_name") + " : " + params["session"]["techname"] + "<br />"
+          note_body += t("integrations.logmein.note.tech_email") + " : " + params["session"]["techemail"] + "<br /><br />"
+          note_body += t("integrations.logmein.note.platform") + " : " + params["session"]["platform"] + "<br />"
+          note_body += t("integrations.logmein.note.work_time") + " : " + params["session"]["worktime"] + "<br /><br />"
+          note_body += "<b>" + t("integrations.logmein.note.chatlog")+ "</b>" + ("<div class = 'logmein_chatlog'>" + chatlog + "</div>") unless params["session"]["chatlog"].blank?
           note_body += ("<b>" +  t("integrations.logmein.note.tech_notes") + "</b>" + ("<div class = 'logmein_technotes'>" + tech_notes + "</div>")) unless tech_notes.blank?
           ticket = Helpdesk::Ticket.find_by_id_and_account_id(ticket_id, account_id)
           unless ticket.blank?
@@ -36,7 +36,7 @@ class Integrations::LogmeinController < ApplicationController
                 :private => true ,
                 :incoming => true,
                 :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"],
-                :account_id => acc_ticket["account_id"],
+                :account_id => account_id,
                 :user_id => acc_ticket["agent_id"] 
                )
                note.save_note!

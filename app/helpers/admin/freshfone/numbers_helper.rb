@@ -1,7 +1,7 @@
 module Admin::Freshfone::NumbersHelper
 
 	def multiple_hours_enabled?
-		feature?(:multiple_business_hours) and 
+		current_account.multiple_business_hours_enabled? and 
 			current_account.business_calendar.count > 1
 	end
 

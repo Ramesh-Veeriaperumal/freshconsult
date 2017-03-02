@@ -49,7 +49,7 @@ class ArrayValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ attributes: :array_datatype_mismatch }, errors)
-    assert_equal({ attributes: { expected_data_type: :Number } }, test.error_options)
+    assert_equal({ attributes: { expected_data_type: :Number, code: :datatype_mismatch } }, test.error_options)
   end
 
   def test_attribute_with_errors

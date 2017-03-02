@@ -42,6 +42,12 @@
 		.dependent .select2-container{ @include margin-left(3px); }
 		.expanded_select{
 			width: 298px;
+			margin: 1px 0;
+			.select2-choices{
+				margin: 0;
+				@include padding-right(0);
+			}
+			&.select2-container{ @include margin-left(6px); }
 		}
 	}
 

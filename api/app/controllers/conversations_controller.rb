@@ -60,8 +60,9 @@ class ConversationsController < ApiApplicationController
 
   private
 
-    def decorator_options
-      super({ ticket: @ticket })
+    def decorator_options(options = {})
+      options[:ticket] = @ticket
+      super(options)
     end
 
     def after_load_object

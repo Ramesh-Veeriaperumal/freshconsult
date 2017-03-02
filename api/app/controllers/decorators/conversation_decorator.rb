@@ -10,6 +10,7 @@ class ConversationDecorator < ApiDecorator
   def initialize(record, options)
     super(record)
     @ticket = options[:ticket]
+    @sideload_options = options[:sideload_options] || []
   end
 
   def construct_json
@@ -31,7 +32,7 @@ class ConversationDecorator < ApiDecorator
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc),
       last_edited_at: last_modified_timestamp.try(:utc),
-      last_edited_by: last_modified_user_id.try(:to_i),
+      last_edited_user_id: last_modified_user_id.try(:to_i),
       attachments: attachments_hash,
       cloud_files: cloud_files_hash,
       has_quoted_text: has_quoted_text?
@@ -39,7 +40,7 @@ class ConversationDecorator < ApiDecorator
   end
 
   def to_hash
-    [construct_json, freshfone_call, tweet_hash, facebook_hash, feedback_hash].inject(&:merge)
+    [construct_json, freshfone_call, tweet_hash, facebook_hash, feedback_hash, requester_hash].inject(&:merge)
   end
 
   def facebook_hash
@@ -50,15 +51,19 @@ class ConversationDecorator < ApiDecorator
   end
 
   def freshfone_call
-    call = record.freshfone_call
-    return {} unless call.present? && call.recording_url.present? && call.recording_audio
-    {
-      freshfone_call: {
-        id: call.id,
-        duration: call.call_duration,
-        recording: AttachmentDecorator.new(call.recording_audio).to_hash
+    if freshfone_enabled?
+      call = record.freshfone_call
+      return {} unless call.present? && call.recording_url.present? && call.recording_audio
+      {
+        freshfone_call: {
+          id: call.id,
+          duration: call.call_duration,
+          recording: AttachmentDecorator.new(call.recording_audio).to_hash
+        }
       }
-    }
+    else
+      {}
+    end
   end
 
   def tweet_hash
@@ -93,4 +98,17 @@ class ConversationDecorator < ApiDecorator
     full_text_html.length > body_html.length
   end
 
+  def requester_hash
+    return {} unless @sideload_options.include?('requester')
+    contact_decorator = ContactDecorator.new(record.user, {}).to_hash
+    {
+      requester: contact_decorator
+    }
+  end
+
+  private
+
+    def freshfone_enabled?
+      Account.current.freshfone_enabled?
+    end
 end

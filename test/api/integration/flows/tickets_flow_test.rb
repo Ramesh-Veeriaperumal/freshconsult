@@ -150,7 +150,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     previous_updated_at = parent_ticket.updated_at
     headers, params = encode_multipart(params_hash, 'attachments[]', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', true)
     skip_bullet do
-      post "/api/tickets/#{parent_ticket.display_id}/forward", params, @headers.merge(headers)
+      post "/api/_/tickets/#{parent_ticket.display_id}/forward", params, @headers.merge(headers)
     end
     assert_response 201
     assert_equal @agent.id, Helpdesk::Note.last.user_id
@@ -466,7 +466,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     skip_bullet do
       scenario_id = create_scn_automation_rule(scenario_automation_params).id
       ticket_id = create_ticket(ticket_params_hash).display_id
-      put "api/_/tickets/bulk_execute_scenario/#{scenario_id}", {ids: [ticket_id]}.to_json, @write_headers
+      post "api/_/tickets/bulk_execute_scenario", {ids: [ticket_id], scenario_id: scenario_id}.to_json, @write_headers
       assert_response 202
     end
   end
@@ -475,10 +475,10 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     skip_bullet do
       scenario_id = create_scn_automation_rule(scenario_automation_params).id
       ticket_id = create_ticket(ticket_params_hash).display_id
-      put "api/_/tickets/#{ticket_id}/execute_scenario/#{scenario_id}", nil, @write_headers
+      put "api/_/tickets/#{ticket_id}/execute_scenario", {scenario_id: scenario_id}.to_json, @write_headers
       assert_response 204
 
-      put "api/_/tickets/#{ticket_id + 20}/execute_scenario/#{scenario_id}", nil, @write_headers
+      put "api/_/tickets/#{ticket_id + 20}/execute_scenario", {scenario_id: scenario_id}.to_json, @write_headers
       assert_response 404
     end
   end

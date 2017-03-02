@@ -234,6 +234,7 @@ class TicketValidationTest < ActionView::TestCase
     TicketsValidationHelper.stubs(:data_type_validatable_custom_fields).returns(CustomFieldValidatorTestHelper.data_type_validatable_custom_fields)
     controller_params = {  'description' => Faker::Lorem.paragraph,  custom_fields: 'Incorrect_value' }
     ticket = TicketValidation.new(controller_params, nil)
+    ticket.skip_bulk_validations = true
     refute ticket.valid?(:bulk_update)
     errors = ticket.errors.full_messages
     assert errors.include?('Custom fields datatype_mismatch')
@@ -281,13 +282,13 @@ class TicketValidationTest < ActionView::TestCase
   def test_skip_notification_validation
     Account.stubs(:current).returns(Account.first)
     item = Helpdesk::Ticket.new(requester_id: 1, status: 2, priority: 3, source: 10)
-    controller_params = { status: 3, statuses: statuses, ticket_fields: [], skip_close_notification: true }
+    controller_params = { status: 3, statuses: statuses, ticket_fields: [], 'skip_close_notification' => true }
     ticket_validation = TicketUpdatePropertyValidation.new(controller_params, item)
     refute ticket_validation.valid?(:update)
     errors = ticket_validation.errors.full_messages
     assert errors.include?('Skip close notification cannot_set_skip_notification')
 
-    controller_params = { status: 5, statuses: statuses, ticket_fields: [], skip_close_notification: true }
+    controller_params = { status: 5, statuses: statuses, ticket_fields: [], 'skip_close_notification' => true }
     ticket_validation = TicketUpdatePropertyValidation.new(controller_params, item)
     assert ticket_validation.valid?(:update)
     Account.unstub(:current)

@@ -1157,7 +1157,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     workable.internal_agent_id = @agent.id
     workable.save
     expected = @account.time_sheets.where(:workable_id => 
-        @account.tickets.joins(:schema_less_ticket).where("helpdesk_schema_less_tickets.long_tc04" => @agent.id).pluck(:id)).count
+        @account.tickets.where(:internal_agent_id => @agent.id).pluck(:id)).count
     Account.any_instance.stubs(:features?).with(:shared_ownership).returns(true)
     Account.any_instance.stubs(:features?).with(:timesheets).returns(true)
     get :index, controller_params({})
@@ -1215,7 +1215,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     workable.internal_group_id = group.id
     workable.save
     expected = @account.time_sheets.where(:workable_id => 
-        @account.tickets.joins(:schema_less_ticket).where("helpdesk_schema_less_tickets.long_tc03" => group.id).pluck(:id)).count
+        @account.tickets.where(:internal_group_id => group.id).pluck(:id)).count
     Account.any_instance.stubs(:features?).with(:shared_ownership).returns(true)
     Account.any_instance.stubs(:features?).with(:timesheets).returns(true)
     get :index, controller_params({})
@@ -1276,7 +1276,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
       post :create, construct_params({ id: ticket.display_id }, { start_time: start_time,
                                                                   time_spent: ['03:00'] }.merge(params_hash))
       assert_response 400
-      match_json([bad_request_error_pattern('time_spent', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Array)])
+      match_json([bad_request_error_pattern('time_spent', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: Array)])
     end
   end
 

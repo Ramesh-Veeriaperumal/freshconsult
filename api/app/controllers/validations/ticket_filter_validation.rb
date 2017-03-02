@@ -1,9 +1,9 @@
 class TicketFilterValidation < FilterValidation
   attr_accessor :filter, :company_id, :requester_id, :email, :updated_since,
-                :order_by, :order_type, :conditions, :requester, :status, :cf, :include, 
+                :order_by, :conditions, :requester, :status, :cf, :include,
                 :include_array, :query_hash
 
-  validates :company_id, :requester_id, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 }
+  validates :company_id, :requester_id, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param }
   validate :verify_requester, if: -> { errors[:requester_id].blank? && (requester_id || email) }
   validate :verify_company, if: -> { errors[:company_id].blank? && company_id }
   validates :email, data_type: { rules: String }
@@ -12,7 +12,6 @@ class TicketFilterValidation < FilterValidation
   validate :watcher_filter, if: -> { filter }
   validates :updated_since, date_time: true
   validates :order_by, custom_inclusion: { in: proc { |x| x.sort_field_options } }
-  validates :order_type, custom_inclusion: { in: ApiTicketConstants::ORDER_TYPE }
   validates :status, array: { custom_inclusion: { in: proc { |x| x.account_statuses }, ignore_string: :allow_string_param, detect_type: true } }
   validate :verify_cf_data_type, if: -> { cf.present? }
   validates :include, data_type: { rules: String }

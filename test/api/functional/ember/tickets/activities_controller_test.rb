@@ -4,6 +4,8 @@ module Ember
     class ActivitiesControllerTest < ActionController::TestCase
       include TicketsTestHelper
       include TicketActivitiesTestHelper
+      include PrivilegesHelper
+      include UsersTestHelper
 
       CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date).freeze
 
@@ -46,8 +48,15 @@ module Ember
         assert_response 404
       end
 
+      def test_activity_without_privilege
+        remove_privilege(User.current, :manage_tickets)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        assert_response 403
+      ensure
+        add_privilege(User.current, :manage_tickets)
+      end
+
       def test_activity_thrift_failure
-        ticket = create_ticket
         @controller.stubs(:fetch_activities).returns(false)
         get :index, controller_params(version: 'private', ticket_id: @ticket.id)
         assert_response 500

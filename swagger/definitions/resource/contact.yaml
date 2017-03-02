@@ -33,3 +33,14 @@ properties:
       type: string
   custom_fields:
     $ref: '#/definitions/custom_field'
+  view_all_tickets:
+    type: boolean
+  other_companies:
+    type: array
+    items:
+      type: object
+      properties:
+        company_id:
+          type: number
+        view_all_tickets:
+          type: boolean

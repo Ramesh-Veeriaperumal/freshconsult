@@ -49,11 +49,11 @@ RealtimeDashboard.CoreUtil = RealtimeDashboard.CoreUtil || {};
             	self.controls.hideDashboardDetails();
 		    });
 		    jQuery(document).keyup(function(e) {
-		         if (e.keyCode == 27) { 
+		         if (e.keyCode == 27) {
 		            // escape key maps to keycode `27`
 		            	self.controls.hideDashboardDetails();
 		        }
-		    }); 
+		    });
 		    jQuery(document).on('mousemove.realtimeDashboard', '.dashboard-details-wrapper', function(event) {
 		        event.preventDefault();
 		        jQuery('body').addClass('preventscroll');
@@ -84,7 +84,7 @@ RealtimeDashboard.CoreUtil = RealtimeDashboard.CoreUtil || {};
 						} else {
 							jQuery(document).trigger('group_change',{ group_id : '-'});
 						}
-						
+
 					}
 				},self.intervalPeriod);
 			}
@@ -123,7 +123,7 @@ RealtimeDashboard.CoreUtil = RealtimeDashboard.CoreUtil || {};
 	            jQuery(".list_items").hide();
 	            jQuery('.setup-details-wrapper').removeClass("active");
 	            jQuery('#dashboard_details_wrapper').addClass('active').removeClass('hide').attr('chart_name',chart_id);
-	        	
+
 	        	if(!showPager){
 	        		jQuery('.report-pager').addClass('hide');
 	        	} else {
@@ -182,7 +182,7 @@ RealtimeDashboard.CoreUtil = RealtimeDashboard.CoreUtil || {};
 				var page_title = RealtimeDashboard.snapshot_label + " : " + unescapeHtml(RealtimeDashboard.helpdesk_name);
 				jQuery(document).attr('title',page_title);
 			}
-			
+
 			trigger_event("dashboard_visited",{ type : RealtimeDashboard.type });
 			$('#grid-stack').gridstack(options);
 			$(".widget-scroll").mCustomScrollbar();
@@ -208,7 +208,9 @@ RealtimeDashboard.CoreUtil = RealtimeDashboard.CoreUtil || {};
 		initWidgets : function() {
 			var Widgets = RealtimeDashboard.Widgets;
 			Widgets.Recent_activity.init();
-			Widgets.AccountSetup.init();
+			if(jQuery('.setup-widget-wrapper').get(0) !== undefined) {
+				Widgets.AccountSetup.init();
+			}
 		},
 		makeAjaxRequest: function (args) {
 	        args.url = args.url;
@@ -232,7 +234,7 @@ RealtimeDashboard.CoreUtil = RealtimeDashboard.CoreUtil || {};
     		} else {
     			jQuery('.' + container + ' .widget-content').html(mkup);
     		}
-    		
+
     	},
 		destroy: function () {
 			clearInterval(this.interval);
@@ -255,7 +257,7 @@ RealtimeDashboard.CoreUtil = RealtimeDashboard.CoreUtil || {};
 				var self = RealtimeDashboard.CoreUtil;
 				if(now-last_time > self.intervalPeriod ){
 					return true;
-				} 
+				}
 				return false;
 			}
 		},
@@ -301,7 +303,7 @@ RealtimeDashboard.CoreUtil = RealtimeDashboard.CoreUtil || {};
 				var self = RealtimeDashboard.CoreUtil;
 				if(typeof (_kmq) != 'undefined' ){
 					self.kissmetrics.recordIdentity();
-	    			_kmq.push(['record',event,property]);	
+	    			_kmq.push(['record',event,property]);
 				}
 			}
     	}

@@ -2,7 +2,7 @@ class Reports::GamificationReportsController < ApplicationController
 	
       include Reports::GamificationReport
 
-      before_filter { |c| c.requires_feature :gamification }
+      before_filter { |c| c.requires_this_feature :gamification }
        before_filter { redirect_to reports_path unless current_account.old_reports_enabled? }
       before_filter :set_selected_tab
 

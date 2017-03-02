@@ -23,7 +23,7 @@ class CustomNumericalityValidatorTest < ActionView::TestCase
     error_options = test.error_options.to_h
     assert_equal({ attribute2: :datatype_mismatch }, errors)
     assert_equal({ attribute2: {  expected_data_type: :'Positive Integer', prepend_msg: :input_received,
-                                  given_data_type: 'Null'  } }, error_options)
+                                  given_data_type: 'Null', code: :datatype_mismatch  } }, error_options)
   end
 
   def test_allow_nil
@@ -75,6 +75,6 @@ class CustomNumericalityValidatorTest < ActionView::TestCase
     errors = test.errors.to_h
     error_options = test.error_options.to_h
     assert_equal({ attribute2: :datatype_mismatch, attribute1: :datatype_mismatch, attribute3: :datatype_mismatch, attribute5: :datatype_mismatch }.sort.to_h, errors.sort.to_h)
-    assert_equal({ attribute2: {  expected_data_type: :'Positive Integer', code: :invalid_value }, attribute1: {  expected_data_type: :'Positive Integer', code: :invalid_value }, attribute3: {  expected_data_type: :Integer, prepend_msg: :input_received, given_data_type: String }, attribute5: {  expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: String } }.sort.to_h, error_options.sort.to_h)
+    assert_equal({ attribute2: {  expected_data_type: :'Positive Integer', code: :invalid_value }, attribute1: {  expected_data_type: :'Positive Integer', code: :invalid_value }, attribute3: {  expected_data_type: :Integer, prepend_msg: :input_received, given_data_type: String, code: :datatype_mismatch }, attribute5: {  expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: String, code: :datatype_mismatch } }.sort.to_h, error_options.sort.to_h)
   end
 end

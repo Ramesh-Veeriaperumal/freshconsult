@@ -60,6 +60,8 @@ module HelpdeskReports
 
       PDF_EXPORT_TYPE = "report_export/pdf"
 
+      CSV_EXPORT_TYPE = "report_export/csv"
+
       PDF_GROUP_BY_LIMIT = 11
   
       PDF_GROUP_BY_LIMITING_KEY = "-Others"

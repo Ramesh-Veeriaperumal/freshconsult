@@ -16,3 +16,4 @@ production:
 
 test:
   <<: *defaults
+  domain: "supreme.freshpo.com"

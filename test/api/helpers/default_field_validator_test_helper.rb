@@ -9,7 +9,6 @@ class DefaultFieldValidatorTestHelper
     def default_field_validations
       {
         status: { custom_inclusion: { in: [2, 3, 4, 5], ignore_string: :allow_string_param } },
-        source: { custom_inclusion: { in: [2, 3, 4, 5], ignore_string: :allow_string_param } },
         priority: { custom_inclusion: { in: ApiTicketConstants::PRIORITIES, ignore_string: :allow_string_param } },
         source: { custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :allow_string_param } },
         type: { custom_inclusion: { in: %w(Lead Question Problem Maintenance Breakage) } },

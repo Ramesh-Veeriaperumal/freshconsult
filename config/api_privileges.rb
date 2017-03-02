@@ -2,7 +2,7 @@ Authority::Authorization::PrivilegeList.build do
   manage_tickets do
     resource :"ember/bootstrap"
     resource :"ember/tickets/delete_spam", only: [:spam, :bulk_spam, :unspam, :bulk_unspam]
-    resource :"ember/ticket/activity"
+    resource :"ember/tickets/activity"
     resource :"ember/scenario_automation", only: [:index]
     resource :"ember/canned_response_folder", only: [:index, :show]
     resource :"ember/canned_response", only: [:show, :index]
@@ -19,6 +19,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/group", only: [:index]
     resource :"ember/survey", only: [:index]
     resource :"ember/email_config", only: [:index]
+    resource :"ember/contact_field", only: [:index]
     resource :"ember/installed_application"
     resource :"ember/integrated_resource"
     resource :"ember/integrated_user"

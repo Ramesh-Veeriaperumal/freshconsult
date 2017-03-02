@@ -17,7 +17,7 @@
 				<%= f.text_area :description, :class => 'text smallpara span9', :placeholder => t('business_hours.description_eg') %>
 			</div>
 		</li>
-		<%  if feature?(:multiple_business_hours) %>
+		<%  if current_account.multiple_business_hours_enabled? %>
 		<li class="row-fluid">
 			<div class="span3">
 				<%= t('business_hours.time_zone') %>
@@ -149,7 +149,7 @@
 	</div>
 <script type="text/javascript">
 jQuery(document).ready(function() {
-<% if feature?(:multiple_business_hours) && @business_calendar.is_default? %>
+<% if current_account.multiple_business_hours_enabled? && @business_calendar.is_default? %>
 	setTimeout(function(){
 		jQuery("#business_calenders_time_zone").data("select2").container.hide();
 	},1000);

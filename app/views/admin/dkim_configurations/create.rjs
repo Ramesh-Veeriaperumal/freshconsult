@@ -1,0 +1,2 @@
+show_ajax_flash page if flash[:notice].present?
+page << "jQuery('#dkim-list-#{@domain_category.id} button').removeAttr('disabled').text('#{@button_name}');"

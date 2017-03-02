@@ -26,4 +26,9 @@ class ApiTicketFieldsController < ApiApplicationController
           ApiTicketConstants::FIELD_TYPES :
           ApiTicketConstants::FIELD_TYPES - ["default_internal_group", "default_internal_agent"]
     end
+
+    def load_objects(items = scoper)
+      # This method has been overridden to avoid pagination.
+      @items = items
+    end
 end

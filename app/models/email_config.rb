@@ -84,6 +84,10 @@ class EmailConfig < ActiveRecord::Base
     end
   end
 
+  def reply_email_in_downcase
+    reply_email.downcase
+  end
+
   protected
     def blacklisted_domain?
       domain = self.reply_email.split("@").last.strip if self.reply_email.present?

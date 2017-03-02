@@ -69,11 +69,11 @@
       },
       :"business-hours"                =>   {
         :url                           =>   "/admin/business_calendars",
-        :privilege                     =>   feature?(:business_hours) && privilege?(:admin_tasks)
+        :privilege                     =>   privilege?(:admin_tasks)
       },
       :"multi-product"                 =>   {
         :url                           =>   "/admin/products",
-        :privilege                     =>   feature?(:multi_product) && privilege?(:admin_tasks)
+        :privilege                     =>   current_account.multi_product_enabled? && privilege?(:admin_tasks)
       },
       :tags                            =>   {
         :url                           =>   "/helpdesk/tags",
@@ -98,7 +98,7 @@
       },
       :scenario                        =>   {
         :url                           =>   "/helpdesk/scenario_automations",
-        :privilege                     =>   feature?(:scenario_automations) && (privilege?(:manage_scenario_automation_rules) || privilege?(:view_admin))
+        :privilege                     =>   privilege?(:manage_scenario_automation_rules) || privilege?(:view_admin)
       },
       :ticket_template                 =>   {
         :url                           =>   "/helpdesk/ticket_templates",
@@ -118,7 +118,7 @@
       },
       :"gamification-settings"         =>   {
         :url                           =>   "/admin/gamification",
-        :privilege                     =>   current_account.features?(:gamification) && privilege?(:admin_tasks)
+        :privilege                     =>   current_account.gamification_enabled? && privilege?(:admin_tasks)
       },
       :"email_commands_setting"        =>   {
         :url                           =>   "/admin/email_commands_settings",
@@ -149,28 +149,28 @@
         :privilege                     =>   privilege?(:manage_account) && current_account.occasional_agent_enabled?
       },
       :multiple_mailboxes              =>   {
-        :privilege                     =>   feature?(:multiple_emails)
+        :privilege                     =>   current_account.multiple_emails_enabled?
       },
       :layout_customization            =>   {
         :url                           =>   "/admin/portal/#{current_account.main_portal.id}/template#layout",
-        :privilege                     =>   feature?(:layout_customization)
+        :privilege                     =>   current_account.layout_customization_enabled?
       },
       :stylesheet_customization        =>   {
         :url                           =>   "/admin/portal/#{current_account.main_portal.id}/template#custom_css",
         :privilege                     =>   feature?(:css_customization)
       },
       :custom_domain_name              =>   {
-        :privilege                     =>   feature?(:custom_domain)
+        :privilege                     =>   current_account.custom_domain_enabled?
       },
       :automatic_ticket_assignment     =>   {
         :privilege                     =>   feature?(:round_robin)
       },
       :set_businesshour_group          =>   {
-        :privilege                     =>   feature?(:multiple_business_hours)
+        :privilege                     =>   current_account.multiple_business_hours_enabled?
       },
       :create_new_sla                  =>   {
         :url                           =>   "/helpdesk/sla_policies/new",
-        :privilege                     =>   feature?(:customer_slas)
+        :privilege                     =>   current_account.customer_slas_enabled?
       },
       :cancel_service                  =>   {
         :url                           =>   "/account/cancel"

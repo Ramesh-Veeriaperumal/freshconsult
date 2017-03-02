@@ -23,11 +23,11 @@ module TicketsTestHelper
     ticket_pattern(ticket).except(*([:attachments, :conversations, :tags] - exclude))
   end
 
-  def index_ticket_pattern_with_associations(ticket, requester = true, ticket_states = true, company = true)
+  def index_ticket_pattern_with_associations(ticket, requester = true, ticket_states = true, company = true, exclude = [])
     ticket_pattern_with_association(
       ticket, false, false, requester,
       company, ticket_states
-    ).except(:attachments, :conversations, :tags)
+    ).except(*([:attachments, :conversations, :tags] - exclude))
   end
 
   def index_deleted_ticket_pattern(ticket)
@@ -312,9 +312,9 @@ module TicketsTestHelper
     assert new_ticket.cloud_files.present?
   end
 
-  def private_api_ticket_index_pattern(survey_results = {}, requester = false)
+  def private_api_ticket_index_pattern(survey_results = {}, requester = false, ticket_states = false, company = false)
     pattern_array = Helpdesk::Ticket.last(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).map do |ticket|
-      pattern = index_ticket_pattern(ticket, [:tags])
+      pattern = index_ticket_pattern_with_associations(ticket, requester, ticket_states, company, [:tags])
       pattern.merge!(requester: Hash) if requester
       pattern.merge!(survey_result: feedback_pattern(survey_results[ticket.id])) if survey_results[ticket.id]
       pattern
@@ -416,9 +416,11 @@ module TicketsTestHelper
     @call.save
   end
 
-  def conversations_pattern(ticket, limit = false)
+  def conversations_pattern(ticket, requester = false, limit = false)
     notes_pattern = ticket.notes.visible.exclude_source('meta').order(:created_at).map do |n|
-      note_pattern_index(n)
+      note_pattern = note_pattern_index(n)
+      note_pattern.merge!(requester: Hash) if requester
+      note_pattern
     end
     limit ? notes_pattern.take(limit) : notes_pattern
   end

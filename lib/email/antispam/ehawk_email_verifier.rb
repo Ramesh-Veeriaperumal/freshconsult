@@ -63,7 +63,7 @@ module Email::Antispam
 
   		http_body[:apikey] = @api_key
       http_body[:ip] = @args["account_details"]["source_ip"]
-      http_body[:email] = @args["account_details"]["email"]
+      http_body[:email] = get_valid_email(@args["account_details"]["email"])
       http_body[:domain] = parsed_email[:domain]
       http_body[:phone] = @args["account_details"]["phone"] if @args["account_details"]["phone"].present?
       http_body[:city] = @args["account_details"]["city"] if @args["account_details"]["city"].present?
@@ -252,6 +252,13 @@ module Email::Antispam
 
     def remove_trailing_comma
       @api_response["reason"] = @api_response["reason"][0..(@api_response["reason"].size)-2]
+    end
+
+    def get_valid_email email
+      while (email =~ /(.*)\+(.*)\@(.*)/)
+        email = "#{$1}@#{$3}"
+      end
+      return email
     end
     end
   end

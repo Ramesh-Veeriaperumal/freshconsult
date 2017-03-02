@@ -261,6 +261,10 @@ class Freshfone::Number < ActiveRecord::Base
 		current_account.freshfone_account.twilio_subaccount.incoming_phone_numbers.get(number_sid)
 	end
 
+	def private_recording_note?
+		private_recording? && record?
+	end
+
 	private
 
 		def set_renewal_date

@@ -19,7 +19,7 @@ class ActivityFilterValidationTest < ActionView::TestCase
     assert error.include?('Limit datatype_mismatch')
     assert error.include?('Since datatype_mismatch')
     assert error.include?('Before datatype_mismatch')
-    assert_equal({ limit: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null' }, since_id: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null' }, before_id: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null' } }, activity_filter.error_options)
+    assert_equal({ limit: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null', code: :datatype_mismatch }, since_id: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null', code: :datatype_mismatch }, before_id: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null', code: :datatype_mismatch } }, activity_filter.error_options)
   end
 
   def test_negative_value

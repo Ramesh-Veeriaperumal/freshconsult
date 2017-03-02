@@ -35,7 +35,7 @@ allOf:
       last_edited_at:
         type: string
         format: date-time
-      last_edited_by:
+      last_edited_user_id:
         type: number
       attachments:
         type: array

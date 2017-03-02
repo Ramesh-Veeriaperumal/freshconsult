@@ -17,10 +17,10 @@ module ApiTicketConstants
   EXECUTE_SCENARIO_FIELDS = BULK_EXECUTE_SCENARIO_FIELDS = %w(scenario_id).freeze
   COMPOSE_EMAIL_FIELDS = (CREATE_FIELDS - %w(source product_id responder_id requester_id phone twitter_id facebook_id)).freeze
   SHOW_FIELDS = ['include'].freeze
-  UPDATE_PROPERTIES_FIELDS = %w(due_by responder_id group_id status priority tags  skip_close_notification).freeze
+  UPDATE_PROPERTIES_FIELDS = %w(due_by responder_id group_id status priority tags skip_close_notification).freeze
   
   ALLOWED_INCLUDE_PARAMS = %w(conversations requester company stats survey).freeze
-  SIDE_LOADING = %w(requester stats company survey).freeze
+  SIDE_LOADING = %w(requester stats company survey count).freeze
   INCLUDE_PRELOAD_MAPPING = { 'stats' => :ticket_states }.freeze
   BULK_DELETE_PRELOAD_OPTIONS = [:tags, :schema_less_ticket].freeze
   ORDER_TYPE = TicketsFilter::SORT_ORDER_FIELDS.map(&:first).map(&:to_s).freeze
@@ -34,6 +34,7 @@ module ApiTicketConstants
   SOURCES = TicketConstants::SOURCE_KEYS_BY_TOKEN.slice(:email, :portal, :phone, :chat, :mobihelp, :feedback_widget).values.freeze
 
   PIPE_CREATE_FIELDS = CREATE_FIELDS | %w( pending_since created_at updated_at )
+  PIPE_UPDATE_FIELDS = UPDATE_FIELDS | %w( pending_since created_at updated_at )
   
   SCOPE_BASED_ON_ACTION = {
     'update'  => { deleted: false, spam: false },

@@ -26,10 +26,11 @@ class TicketsDependencyTest < ActionView::TestCase
       :csv_date_range_in_days, :check_ticket_status, :handle_send_and_set,
       :validate_manual_dueby, :set_default_filter, :verify_permission, :load_email_params,
       :load_conversation_params, :load_reply_to_all_emails, :load_note_reply_cc,
-      :load_note_reply_from_email, :show_password_expiry_warning, :load_related_tickets,
+      :load_note_reply_from_email, :show_password_expiry_warning,
       :load_tracker_ticket, :set_adjacent_list, :fetch_item_attachments,
       :load_tkt_and_templates, :check_ml_feature, :load_assoc_parent,
-      :load_associated_tickets, :print_logs
+      :load_associated_tickets, :load_ticket_contact_data, :load_parent_template,
+      :outbound_email_allowed?, :requester_widget_filter_params, :check_custom_view_feature
     ]
 
     actual_filters = Helpdesk::TicketsController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact

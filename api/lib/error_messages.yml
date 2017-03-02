@@ -113,5 +113,6 @@ api_error_messages:
   duplicate_companies: "One or more duplicate company_ids found"
   cant_add_primary_resource_to_others: "Cannot add %{resource} to %{attribute} since it is %{status}"
   invalid_company_id: "There is no record matching the id %{company_id}"
+  unable_to_perform: "Unable to perform"
   installed_application_id_required: "Installed application id required"
   ticket_id_required: "Ticket id required"

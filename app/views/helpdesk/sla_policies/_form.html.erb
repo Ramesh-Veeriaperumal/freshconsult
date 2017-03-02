@@ -36,9 +36,7 @@
 	    		<th><%= t('ticket.priority').html_safe %></th>
 	    		<th><%= t('sla_policy.respond_within').html_safe %></th>
 	    		<th><%= t('sla_policy.resolve_within').html_safe %></th>	    		
-				<% if feature?(:business_hours) %>
-					<th><%= t('sla_policy.op_hrs').html_safe %></th>
-				<% end %>
+				<th><%= t('sla_policy.op_hrs').html_safe %></th>
 				<% if sla_enabled %>
 					<th><%= t('sla_policy.escalation_email').html_safe %></th>
 				<% end %>
@@ -67,8 +65,8 @@
 							<%= select "select[#{index}]",:resolution_time, options_for_select(sla_options, get_value(slas.resolution_time, true)),{},{:class =>'select2'} %>
 							<%= sla.text_field :resolution_time, {:class => 'only_digits sla_time', :style => 'display: none;'} %>
 						</td>
-						<% if feature?(:business_hours) %> <td><%= sla.select :override_bhrs, 
-							Helpdesk::SlaDetail::SLA_TIME_OPTIONS, {}, {:class =>'select2'} %></td> <% end %>
+						<td><%= sla.select :override_bhrs, 
+							Helpdesk::SlaDetail::SLA_TIME_OPTIONS, {}, {:class =>'select2'} %></td>
 						<% if sla_enabled %>
 							<td>
 								<%= sla.check_box :escalation_enabled, {:rel => "sla_checkbox"}, 1 , 0 %>

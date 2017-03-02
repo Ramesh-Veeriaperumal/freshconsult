@@ -7,7 +7,6 @@ module Ember
 
       decorate_views
 
-      skip_before_filter :check_privilege
       before_filter :ticket_permission?, :load_ticket
 
       def index
@@ -41,14 +40,13 @@ module Ember
           end
           query_hash = @collection.members.present? ? JSON.parse(@collection.members).symbolize_keys : {}
           @query_data_hash = parse_query_hash(query_hash, @ticket, false)
-          @query_data_hash[:ticket] = @ticket
           @items = @collection.ticket_data
           @items_count = @collection.total_count
           add_field_mappings
         end
 
         def decorator_options
-          super({ query_data_hash: @query_data_hash })
+          super({ query_data_hash: @query_data_hash, ticket: @ticket })
         end
 
         def add_field_mappings
