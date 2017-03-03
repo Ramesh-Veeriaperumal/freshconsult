@@ -864,7 +864,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           break
         rescue Exception => e
           Rails.logger.error("Error while adding item attachments for ::: #{e.message}")
-          break
+          raise e
         end
       end
       if @total_virus_attachment
@@ -876,9 +876,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def virus_attachment? attachment, account
-      if VIRUS_CHECK_ENABLED && account.subscription.trial?
+      if account.launched?(:antivirus_service)
         begin
-          file_attachment = (attached.is_a? StringIO) ? attached : File.open(attached.tempfile)
+          file_attachment = (attachment.is_a? StringIO) ? attachment : File.open(attachment.tempfile)
           result = Email::AntiVirus.scan(io: file_attachment) 
           if result && result[0] == "virus"
             @total_virus_attachment = 0 unless @total_virus_attachment
@@ -886,7 +886,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
             return true
           end
         rescue => e
-         Rails.logger.info "Error While checking attachment for virus in account #{account.id}"
+         Rails.logger.info "Error While checking attachment for virus in account #{account.id}, #{e.class}, #{e.message}, #{e.backtrace}"
         end 
       end
       return false

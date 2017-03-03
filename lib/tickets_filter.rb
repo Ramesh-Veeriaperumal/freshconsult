@@ -3,47 +3,51 @@ module TicketsFilter
   include Helpdesk::Ticketfields::TicketStatus
   
   DEFAULT_FILTER = "new_and_my_open"
+  DEFAULT_VISIBLE_FILTERS = %w( new_and_my_open ongoing_collab shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by archived spam deleted )
+  DEFAULT_FILTERS_FEATURES = {
+    :archived       => :archive_tickets,
+    :shared_by_me   => :shared_ownership,
+    :shared_with_me => :shared_ownership,
+    :ongoing_collab => :collaboration
+  }
 
   SELECTORS = [
-    [:new_and_my_open,  I18n.t('helpdesk.tickets.views.new_and_my_open'), [:visible]  ],
-    [:my_open,          I18n.t('helpdesk.tickets.views.my_open'), [:visible, :responded_by, :open]  ],
-    [:my_resolved,      I18n.t('helpdesk.tickets.views.my_resolved'), [:visible, :responded_by, :resolved] ],
-    [:my_closed,        I18n.t('helpdesk.tickets.views.my_closed'), [:visible, :responded_by, :closed]  ],
-    [:my_due_today,     I18n.t('helpdesk.tickets.views.my_due_today'), [:visible, :responded_by, :due_today]  ],
-    [:my_overdue,       I18n.t('helpdesk.tickets.views.my_overdue'), [:visible, :responded_by, :overdue]  ],
-    [:my_on_hold,       I18n.t('helpdesk.tickets.views.my_on_hold'), [:visible, :responded_by, :on_hold]  ],
-    [:monitored_by,     I18n.t('helpdesk.tickets.views.monitored_by'), [:visible]  ],
-    [:raised_by_me,     I18n.t('helpdesk.tickets.views.raised_by_me'), [:visible] ],
-    [:shared_by_me,     I18n.t('helpdesk.tickets.views.shared_by_me'), [:visible] ],
-    [:shared_with_me,   I18n.t('helpdesk.tickets.views.shared_with_me'), [:visible] ],
-    [:my_all,           I18n.t('helpdesk.tickets.views.my_all'), [:visible, :responded_by]  ],
-    [:article_feedback, I18n.t('helpdesk.tickets.views.article_feedback'), [:visible]  ],
-    [:my_article_feedback, I18n.t('helpdesk.tickets.views.my_article_feedback'), [:visible]  ],
+    [:new_and_my_open,      I18n.t('helpdesk.tickets.views.new_and_my_open'), [:visible]  ],
+    [:my_open,              I18n.t('helpdesk.tickets.views.my_open'), [:visible, :responded_by, :open]  ],
+    [:my_resolved,          I18n.t('helpdesk.tickets.views.my_resolved'), [:visible, :responded_by, :resolved] ],
+    [:my_closed,            I18n.t('helpdesk.tickets.views.my_closed'), [:visible, :responded_by, :closed]  ],
+    [:my_due_today,         I18n.t('helpdesk.tickets.views.my_due_today'), [:visible, :responded_by, :due_today]  ],
+    [:my_overdue,           I18n.t('helpdesk.tickets.views.my_overdue'), [:visible, :responded_by, :overdue]  ],
+    [:my_on_hold,           I18n.t('helpdesk.tickets.views.my_on_hold'), [:visible, :responded_by, :on_hold]  ],
+    [:monitored_by,         I18n.t('helpdesk.tickets.views.monitored_by'), [:visible]  ],
+    [:raised_by_me,         I18n.t('helpdesk.tickets.views.raised_by_me'), [:visible] ],
+    [:shared_by_me,         I18n.t('helpdesk.tickets.views.shared_by_me'), [:visible] ],
+    [:shared_with_me,       I18n.t('helpdesk.tickets.views.shared_with_me'), [:visible] ],
+    [:my_all,               I18n.t('helpdesk.tickets.views.my_all'), [:visible, :responded_by]  ],
+    [:article_feedback,     I18n.t('helpdesk.tickets.views.article_feedback'), [:visible]  ],
+    [:my_article_feedback,  I18n.t('helpdesk.tickets.views.my_article_feedback'), [:visible]  ],
+
+    [ :my_groups_open,      I18n.t('helpdesk.tickets.views.my_groups_open'), [:visible, :my_groups, :open] ],
+    [ :my_groups_new,       I18n.t('helpdesk.tickets.views.my_groups_new'), [:visible, :my_groups, :new] ],
+    [ :my_groups_pending,   I18n.t('helpdesk.tickets.views.my_groups_pending'), [:visible, :my_groups, :on_hold] ],
+    [ :my_groups_all,       I18n.t('helpdesk.tickets.views.my_groups_all'), [:visible, :my_groups] ],
     
-    [ :my_groups_open,    I18n.t('helpdesk.tickets.views.my_groups_open'), [:visible, :my_groups, :open] ],
-    [ :my_groups_new,     I18n.t('helpdesk.tickets.views.my_groups_new'), [:visible, :my_groups, :new] ],
-    [ :my_groups_pending, I18n.t('helpdesk.tickets.views.my_groups_pending'), [:visible, :my_groups, :on_hold] ],
-    [ :my_groups_all,     I18n.t('helpdesk.tickets.views.my_groups_all'), [:visible, :my_groups] ],
+    [:untitled_view,        I18n.t('tickets_filter.unsaved_view'), [:visible] ],
+    [:new,                  I18n.t('helpdesk.tickets.views.new'), [:visible]  ],
+    [:open,                 I18n.t('helpdesk.tickets.views.open'), [:visible]  ],
+    [:resolved,             I18n.t('helpdesk.tickets.views.resolved'), [:visible]  ],
+    [:closed,               I18n.t('helpdesk.tickets.views.closed'), [:visible]  ],
+    [:due_today,            I18n.t('helpdesk.tickets.views.due_today'), [:visible]  ],
+    [:overdue,              I18n.t('helpdesk.tickets.views.overdue'), [:visible]  ],
+    [:on_hold,              I18n.t('helpdesk.tickets.views.on_hold'), [:visible]  ],
+    [:all,                  I18n.t('helpdesk.tickets.views.all_tickets'), [:visible]  ],
     
-    [:untitled_view,    I18n.t('tickets_filter.unsaved_view'), [:visible] ],
-    [:new,              I18n.t('helpdesk.tickets.views.new'), [:visible]  ],
-    [:open,             I18n.t('helpdesk.tickets.views.open'), [:visible]  ],
-    #[:new_and_open,     "New & Open Tickets", [:visible]  ],
-    [:resolved,         I18n.t('helpdesk.tickets.views.resolved'), [:visible]  ],
-    [:closed,           I18n.t('helpdesk.tickets.views.closed'), [:visible]  ],
-    [:due_today,        I18n.t('helpdesk.tickets.views.due_today'), [:visible]  ],
-    [:overdue,          I18n.t('helpdesk.tickets.views.overdue'), [:visible]  ],
-    [:on_hold,          I18n.t('helpdesk.tickets.views.on_hold'), [:visible]  ],
-    [:all,              I18n.t('helpdesk.tickets.views.all_tickets'), [:visible]  ],
-    
-    [:unresolved,       I18n.t('helpdesk.tickets.views.unresolved'), [:visible]  ],
-    [:spam,             I18n.t('helpdesk.tickets.views.spam')  ],
-    [:deleted,          I18n.t('helpdesk.tickets.views.trash')  ],
-    [:tags  ,           I18n.t('helpdesk.tickets.views.tags') ],
-    [:twitter  ,        I18n.t('helpdesk.tickets.views.tickets_twitter')],
-    [:mobihelp  ,        I18n.t('helpdesk.tickets.views.mobihelp')],
-    
-    
+    [:unresolved,           I18n.t('helpdesk.tickets.views.unresolved'), [:visible]  ],
+    [:spam,                 I18n.t('helpdesk.tickets.views.spam')  ],
+    [:deleted,              I18n.t('helpdesk.tickets.views.trash')  ],
+    [:tags,                 I18n.t('helpdesk.tickets.views.tags') ],
+    [:twitter,              I18n.t('helpdesk.tickets.views.tickets_twitter')],
+    [:mobihelp,             I18n.t('helpdesk.tickets.views.mobihelp')],  
   ]
 
   JOINS = {
@@ -95,11 +99,6 @@ module TicketsFilter
     [ :created_at , "tickets_filter.sort_fields.date_created" ]
   ]
 
-  def self.collab_sort_field
-    sort_fields = COLLAB_SORT_FIELDS.clone
-    sort_fields.map { |i| [I18n.t(i[1]), i[0]] }  
-  end
-
   AGENT_SORT_FIELDS = [
     [ :responder_id,      "filter_options.responder_id" ,   FILTER_MODES[:primary]],
     [ :internal_agent_id, "filter_options.internal_agent" , FILTER_MODES[:internal]],
@@ -112,6 +111,17 @@ module TicketsFilter
     [ :any_group_id ,       "filter_options.any_group" ,      FILTER_MODES[:any]]
   ]
 
+  SORT_FIELD_OPTIONS = SORT_FIELDS.map { |i| [i[1], i[0]] }
+  SORT_SQL_BY_KEY    = Hash[*SORT_FIELDS.map { |i| [i[0], i[0]] }.flatten]
+
+  SORT_ORDER_FIELDS = [
+    [ :asc     , "tickets_filter.sort_fields.asc"   ],
+    [ :desc    , "tickets_filter.sort_fields.desc"  ]
+  ]
+
+  SORT_ORDER_FIELDS_OPTIONS = SORT_ORDER_FIELDS.map { |i| [i[1], i[0]] }
+  SORT_ORDER_FIELDS_BY_KEY  = Hash[*SORT_ORDER_FIELDS.map { |i| [i[0], i[0]] }.flatten]
+
   def self.sort_fields_options
     sort_fields = SORT_FIELDS.clone
     if Account.current && Account.current.features_included?(:sort_by_customer_response)
@@ -120,7 +130,11 @@ module TicketsFilter
     end
 
     sort_fields.insert(0, [ :due_by, "tickets_filter.sort_fields.due_by"]) if Account.current && Account.current.sla_management_enabled?
-    
+    sort_fields.map { |i| [I18n.t(i[1]), i[0]] }
+  end
+
+  def self.collab_sort_field
+    sort_fields = COLLAB_SORT_FIELDS.clone
     sort_fields.map { |i| [I18n.t(i[1]), i[0]] }
   end
 
@@ -140,29 +154,9 @@ module TicketsFilter
     sort_fields.map { |i| [I18n.t(i[1]), i[0], i[2]] }
   end
 
-  SORT_FIELD_OPTIONS = SORT_FIELDS.map { |i| [i[1], i[0]] }
-  SORT_SQL_BY_KEY    = Hash[*SORT_FIELDS.map { |i| [i[0], i[0]] }.flatten]
-
-  SORT_ORDER_FIELDS = [
-    [ :asc     , "tickets_filter.sort_fields.asc"   ],
-    [ :desc    , "tickets_filter.sort_fields.desc"  ]
-  ]
-
   def self.sort_order_fields_options
     SORT_ORDER_FIELDS.map { |i| [I18n.t(i[1]), i[0]] }
   end
-  SORT_ORDER_FIELDS_OPTIONS = SORT_ORDER_FIELDS.map { |i| [i[1], i[0]] }
-  SORT_ORDER_FIELDS_BY_KEY  = Hash[*SORT_ORDER_FIELDS.map { |i| [i[0], i[0]] }.flatten]
-
-  DEFAULT_VISIBLE_FILTERS = %w( new_and_my_open unresolved all_tickets raised_by_me monitored_by spam deleted )
-  SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS = %w( new_and_my_open shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by spam deleted )
-  DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE = %w( new_and_my_open unresolved all_tickets raised_by_me monitored_by archived spam deleted )
-  SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE = %w( new_and_my_open shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by archived spam deleted )
-  DEFAULT_VISIBLE_FILTERS_WITH_COLLABORATION = %w( new_and_my_open ongoing_collab unresolved all_tickets raised_by_me monitored_by spam deleted )
-  SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS_WITH_COLLABORATION = %w( new_and_my_open ongoing_collab shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by spam deleted )
-  DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE_AND_COLLABORATION = %w( new_and_my_open ongoing_collab unresolved all_tickets raised_by_me monitored_by archived spam deleted )
-  SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE_AND_COLLABORATION = %w( new_and_my_open ongoing_collab shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by archived spam deleted )
-
 
   def self.mobile_sort_fields_options
     sort_fields = self.sort_fields_options
@@ -182,21 +176,17 @@ module TicketsFilter
   end
 
   def self.default_views
-    @shared_ownership_on = Account.current.features?(:shared_ownership)
-    @collaboration_on = Account.current.features?(:collaboration)
-
-    filters = if Account.current && Account.current.features_included?(:archive_tickets)
-      @collaboration_on ? (@shared_ownership_on ? SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE_AND_COLLABORATION : DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE_AND_COLLABORATION) : ( @shared_ownership_on ? SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE : DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE)
-    elsif @collaboration_on
-      @shared_ownership_on ? SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS_WITH_COLLABORATION : DEFAULT_VISIBLE_FILTERS_WITH_COLLABORATION
-    else
-      @shared_ownership_on ? SHARED_OWNERSHIP_DEFAULT_VISIBLE_FILTERS : DEFAULT_VISIBLE_FILTERS
-    end
-    filters.map { |i| {
+    filters = DEFAULT_VISIBLE_FILTERS.select {|filter|
+      feature = DEFAULT_FILTERS_FEATURES[filter.to_sym]
+      Account.current && (feature.nil? or Account.current.send("#{feature}_enabled?"))
+    }
+    filters.map { |i| 
+      { 
         :id       =>  i, 
         :name     =>  I18n.t("helpdesk.tickets.views.#{i}"), 
         :default  =>  true 
-      } }
+      } 
+    }
   end
 
   def self.filter(filter, user = nil, scope = nil)

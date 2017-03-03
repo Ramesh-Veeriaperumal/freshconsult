@@ -176,14 +176,9 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     ticket_table, timesheet_table = Helpdesk::Ticket.table_name, Helpdesk::TimeSheet.table_name
     ticket_model = Helpdesk::Ticket.model_name
     query_hash = {}
-    conditions = []
     spam_condition = "#{ticket_table}.spam = 0"
 
-    if user.agent?
-      conditions = Helpdesk::Ticket.permissible_condition(user)
-    else
-      conditions = ["#{ticket_table}.requester_id = ?", user.id ]
-    end
+    conditions = user.agent? ? Helpdesk::Ticket.permissible_condition(user) : ["#{ticket_table}.requester_id = ?", user.id ]
 
     conditions[0] = (conditions.blank? ? spam_condition : "#{conditions[0]} AND #{spam_condition}")
     query_hash[:conditions] = conditions

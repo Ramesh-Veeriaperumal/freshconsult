@@ -1037,6 +1037,10 @@ Helpdesk = Helpdesk || {};
                 }
             },
             renderInlineAttachmentsTemplate: function($this) {
+                // check for redactor images
+                if($this.parents('.redactor_editor').length > 0) {
+                    return;
+                }
                 if($this.width() > 100 || $this.height() > 100) {
                      var parentDetected = $this.data('parent');
                     var parentEle = $this.parent();

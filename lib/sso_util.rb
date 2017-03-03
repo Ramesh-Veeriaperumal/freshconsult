@@ -79,6 +79,7 @@ module SsoUtil
     settings.idp_slo_target_url = acc.sso_logout_url unless acc.sso_logout_url.blank?
     settings.name_identifier_format = SAML_NAME_ID_FORMAT
     settings.name_identifier_format = SAML_NAME_ID_UNSPECIFIED if current_account.features?(:saml_unspecified_nameid)
+    settings.idp_cert_fingerprint_algorithm = XMLSecurity::Document::SHA256 if acc.launched? :sha256_enabled
     settings
   end
 
@@ -132,7 +133,7 @@ module SsoUtil
         cookies["fd_mobile_email"] = { :value => @current_user.email, :http_only => true } 
       end
       remove_old_filters  if @current_user.agent?
-      flash[:notice] = t(:'flash.login.success')
+      # flash[:notice] = t(:'flash.login.success')
       if grant_day_pass(true)
         unless relay_state_url.blank?
           redirect_to relay_state_url

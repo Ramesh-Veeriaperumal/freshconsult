@@ -1156,9 +1156,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
     workable = Helpdesk::TimeSheet.first.workable
     workable.internal_agent_id = @agent.id
     workable.save
-    expected = @account.time_sheets.where(:workable_id => 
-        @account.tickets.where(:internal_agent_id => @agent.id).pluck(:id)).count
-    Account.any_instance.stubs(:features?).with(:shared_ownership).returns(true)
+    expected = @account.time_sheets.where(:workable_id => @account.tickets.where(:internal_agent_id => @agent.id).pluck(:id)).count
+    Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
     Account.any_instance.stubs(:features?).with(:timesheets).returns(true)
     get :index, controller_params({})
     assert_response 200
@@ -1214,9 +1213,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
     workable = Helpdesk::TimeSheet.first.workable
     workable.internal_group_id = group.id
     workable.save
-    expected = @account.time_sheets.where(:workable_id => 
-        @account.tickets.where(:internal_group_id => group.id).pluck(:id)).count
-    Account.any_instance.stubs(:features?).with(:shared_ownership).returns(true)
+    expected = @account.time_sheets.where(:workable_id => @account.tickets.where(:internal_group_id => group.id).pluck(:id)).count
+    Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
     Account.any_instance.stubs(:features?).with(:timesheets).returns(true)
     get :index, controller_params({})
     assert_response 200

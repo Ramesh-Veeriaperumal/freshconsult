@@ -24,7 +24,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     def agent_condition user
-      if Account.current.features?(:shared_ownership)
+      if Account.current.shared_ownership_enabled?
         ["(responder_id = ? OR internal_agent_id = ?)", user.id, user.id]
       else
         ["responder_id = ?", user.id]
@@ -33,7 +33,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def group_condition user
       group_ids = user.associated_group_ids
-      if Account.current.features?(:shared_ownership)
+      if Account.current.shared_ownership_enabled?
         ["(group_id IN (?) OR responder_id = ? OR internal_group_id IN (?) OR internal_agent_id = ?)", group_ids, user.id, group_ids, user.id]
       else
         ["(group_id IN (?) OR responder_id = ?)", group_ids, user.id]

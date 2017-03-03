@@ -6,7 +6,7 @@ class SAAS::SubscriptionActions
     :round_robin, :multi_language, :helpdesk_restriction_toggle, :ticket_templates, 
     :multiple_companies_toggle, :round_robin_load_balancing ]
 
-  ADD_DATA_FEATURES   = [:round_robin]
+  ADD_DATA_FEATURES   = [ :round_robin ]
 
   DROP  = "drop"
   ADD   = "add"

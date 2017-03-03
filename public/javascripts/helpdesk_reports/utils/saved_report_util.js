@@ -405,7 +405,7 @@ HelpdeskReports.SavedReportUtil = (function() {
 
 	        if(index != -1) {
 	            var filter_hash = hash[index].report_filter;
-	            if(filter_hash.data_hash.active_custom_field != undefined){
+	            if(filter_hash.data_hash.active_custom_field != undefined && _.keys(HelpdeskReports.locals.custom_field_hash).indexOf(filter_hash.data_hash.active_custom_field) > -1){
 	                HelpdeskReports.locals.active_custom_field = filter_hash.data_hash.active_custom_field;
 	            }
 	            else{
