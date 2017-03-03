@@ -114,10 +114,10 @@ module Helpdesk::RequesterWidgetHelper
     count = get_user_default_fields_count(user, company)
     requester_widget_custom_fields.each do |field|
       obj = field.is_a?(ContactField) ? user : company
-      value = field_value(field, obj)
-      if value.present?
+      if field_value(field, obj).present?
         html << "<div class='widget-more-content hide'>" if count == CONTACT_WIDGET_MAX_DISPLAY_COUNT
         count=count+1
+        value = obj.send(field.name)
         value = format_field_value(field, value) || value
         html << "<div class='contact-append'>
           <span class='add-on field-label  #{ "long_text" if (field.label.length > MAX_LABEL_LENGTH) }'>
