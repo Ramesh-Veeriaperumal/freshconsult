@@ -162,7 +162,7 @@ Helpkit.TimesheetInitializer = (function () {
 	            		} else if( current_group_by == "group_name") {
 	            			 group_id = data['group_id'];
 	            		} else if( current_group_by == "product") {
-	            			 group_id = data['product_id'];
+	            			 group_id = data['product_id'] || -1;
 	            		}
 
 			        	jQuery(row).attr({
