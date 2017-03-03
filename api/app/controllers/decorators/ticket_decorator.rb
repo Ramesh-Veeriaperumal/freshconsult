@@ -2,7 +2,7 @@ class TicketDecorator < ApiDecorator
   delegate :ticket_body, :custom_field_via_mapping, :cc_email, :email_config_id, :fr_escalated, :group_id, :priority,
            :requester_id,  :responder_id, :source, :spam, :status, :subject, :display_id, :ticket_type,
            :schema_less_ticket, :deleted, :due_by, :frDueBy, :isescalated, :description,
-           :description_html, :tag_names, :attachments, :company_id, :cloud_files, to: :record
+           :description_html, :tag_names, :attachments, :company_id, :cloud_files, :ticket_states, to: :record
 
   def initialize(record, options)
     super(record)
@@ -58,17 +58,15 @@ class TicketDecorator < ApiDecorator
   end
 
   def stats
-    if @sideload_options.include?('stats')
-      ticket_states = record.ticket_states
-      {
-        agent_responded_at: ticket_states.agent_responded_at.try(:utc),
-        requester_responded_at: ticket_states.requester_responded_at.try(:utc),
-        resolved_at: ticket_states.resolved_at.try(:utc),
-        first_responded_at: ticket_states.first_response_time.try(:utc),
-        closed_at: ticket_states.closed_at.try(:utc),
-        status_updated_at: ticket_states.status_updated_at.try(:utc)
-      }
-    end
+    return unless private_api? || @sideload_options.include?('stats')
+    {
+      agent_responded_at: ticket_states.agent_responded_at.try(:utc),
+      requester_responded_at: ticket_states.requester_responded_at.try(:utc),
+      resolved_at: ticket_states.resolved_at.try(:utc),
+      first_responded_at: ticket_states.first_response_time.try(:utc),
+      closed_at: ticket_states.closed_at.try(:utc),
+      status_updated_at: ticket_states.status_updated_at.try(:utc)
+    }
   end
 
   def fb_post

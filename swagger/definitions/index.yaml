@@ -109,6 +109,8 @@
     $ref: ./resource/survey_question.yaml
   survey:
     $ref: ./resource/survey.yaml
+  ticket_stats:
+    $ref: ./resource/extension/ticket/stats.yaml
   extension_generic:
     $ref: ./resource/extension/generic.yaml
   extended_contact:
@@ -151,7 +153,7 @@
     items:
       allOf:
         - $ref: ./resource/extension/ticket/list.yaml
-        - $ref: ./resource/extension/ticket/stats.yaml
+        - $ref: '#/definitions/ticket_stats'
         - $ref: ./resource/extension/ticket.yaml
   ticket_show:
     allOf:

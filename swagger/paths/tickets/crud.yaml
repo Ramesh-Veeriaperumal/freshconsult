@@ -12,7 +12,7 @@
         in: query
         type: string
         description: Comma-separated values
-        enum: ["conversations", "requester", "company", "stats", "survey"]
+        enum: ["conversations", "requester", "company", "survey"]
     responses:
       200:
         description: Success

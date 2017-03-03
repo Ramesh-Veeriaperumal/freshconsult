@@ -150,7 +150,7 @@ module Ember
       def save_ticket_and_respond
         if create_ticket
           @ticket = @item # Dirty hack. Should revisit.
-          render_201_with_location(location_url: 'ticket_url', item_id: @item.display_id)
+          render 'ember/tickets/show', status: 201
           notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank? || compose_email?
         else
           render_errors(@item.errors)

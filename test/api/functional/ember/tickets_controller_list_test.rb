@@ -423,7 +423,7 @@ module Ember
     end
 
     def test_all_filters
-      data_hash = filter_data_hash.delete_if {|k, v| v.last.nil? }
+      data_hash = filter_data_hash.delete_if {|k, v| v[1].nil? }
       query_hash_params = {}
       counter = 1
       data_hash.each do |k, v|
