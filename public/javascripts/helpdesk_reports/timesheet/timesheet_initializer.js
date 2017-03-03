@@ -85,7 +85,6 @@ Helpkit.TimesheetInitializer = (function () {
 									      	row["user_id"] = el["user_id"] != null ? el["user_id"] : -1;
 									      	row['hours'] = self.hour_markup(row);
 									      	row['ticket'] = el['subject'];
-									      	row['product_id'] = el['product_id'] !=null ? el["product_id"] : -1;;
 									      	row['customer_id'] = el['customer_id'] != null ? el['customer_id'] : -1;
 									      	row['product_name'] = el['product_id'] != null ? el['product']['name'] : '-';
 									      	var note = el['note'];
@@ -120,7 +119,7 @@ Helpkit.TimesheetInitializer = (function () {
 			 			var group_count = Helpkit.locals.pagination['group_count'];
 			 			var group_names  = Helpkit.locals.pagination['group_names'];
 			            api.column(self.group_columns[current_group_by], {page:'current'} ).nodes().each( function ( td, i ) {
-			            	
+
 			            	var group_id,group_name;
 			            	var group_name = jQuery(td).html();
 			            	var row = jQuery(rows).eq(i);
@@ -132,7 +131,7 @@ Helpkit.TimesheetInitializer = (function () {
 		                	}
 
 			                if ( last !== group_id ) {
-			                	
+
 			                	if(current_group_by == "workable") {
 			                		var fr_group_count = group_count[row.attr('data-workable-id')];
 			                		var mkup = '<tr class="group" data-group="' + row.attr('data-workable-desc') +'"><td colspan="' + (Helpkit.locals.colspan + 1) +'" >'+'</td><td class="hours"><strong>'+ fr_group_count +'</strong></td></tr>';
@@ -175,7 +174,7 @@ Helpkit.TimesheetInitializer = (function () {
 			var current_group_by = Helpkit.locals.current_group_by == undefined ? "customer_name" : Helpkit.locals.current_group_by;
 			var hide_row = { "aTargets":  self.group_columns[current_group_by] , "visible" : false }
 			if(current_group_by != "workable"){
-				config.aoColumnDefs.push(hide_row);	
+				config.aoColumnDefs.push(hide_row);
 			}
 			var headers = Helpkit.locals.headers;
 
