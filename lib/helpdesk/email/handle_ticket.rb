@@ -141,7 +141,7 @@ class Helpdesk::Email::HandleTicket
         break
       rescue Exception => e
         Rails.logger.error("Error while adding item attachments for ::: #{e.message}")
-        break
+        raise e
       end
     end
     if @total_virus_attachment
