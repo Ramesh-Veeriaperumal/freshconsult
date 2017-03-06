@@ -46,14 +46,17 @@ module Integrations::Constants
     :office365 => "office365"
   }
 
-  DISPLAY_IN_PAGES = { "ticket_show" => 2, "contact_show" => 1, "company_show" => 0, "time_sheet_show" => 3 }
+  DISPLAY_IN_PAGES = { "ticket_show" => 2, "contact_show" => 1, "company_show" => 0, "time_sheet_show" => 3, "editor_show" => 4 }
 
+  # Need to check whether we need to update the DB or not 
   APPS_DISPLAY_MAPPING = {
-    APP_NAMES[:jira] => [DISPLAY_IN_PAGES["ticket_show"]],
-    APP_NAMES[:zohocrm] => [DISPLAY_IN_PAGES["ticket_show"],DISPLAY_IN_PAGES["contact_show"]],
-    APP_NAMES[:mailchimp].downcase => [DISPLAY_IN_PAGES["contact_show"]],
-    APP_NAMES[:salesforce_v2] => [DISPLAY_IN_PAGES["ticket_show"],DISPLAY_IN_PAGES["contact_show"]],
-    APP_NAMES[:harvest] => [DISPLAY_IN_PAGES["time_sheet_show"]]
+    APP_NAMES[:jira] => 4,
+    APP_NAMES[:zohocrm] => 6 ,
+    APP_NAMES[:mailchimp].downcase => 2,
+    APP_NAMES[:salesforce_v2] => 6,
+    APP_NAMES[:harvest] => 8,
+    APP_NAMES[:dropbox] => 16,
+    APP_NAMES[:surveymonkey] => 16
   }
 
   CRM_APPS= [:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm, :quickbooks, :freshbooks, :infusionsoft, :freshsales, :salesforce_v2, :dynamics_v2]

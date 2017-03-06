@@ -6,7 +6,6 @@ def to_hash
   inst_app_hash = {
   	id: record.id,
   	application_id: record.application_id,
-  	configs: record.configs[:inputs],
   	app_name: record.application.name,
     app_display_name: record.application.display_name,
     display_option: Integrations::Constants::APPS_DISPLAY_MAPPING[record.application.name]
