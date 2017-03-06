@@ -99,10 +99,8 @@ class FakeControllerTest < ActionController::TestCase
     t = Helpdesk::Ticket.new(email: Faker::Internet.email, :status => status.status_id, internal_group_id: group.id, internal_agent_id: @agent.id)
     t.save
 
-    # Temprory fix
-    Helpdesk::Ticket.any_instance.stubs(:internal_agent_id).returns(@agent.id).at_most_once
+    Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
 
-    Account.any_instance.stubs(:features?).with(:shared_ownership).returns(true)
     status.group_ids = [group.id]
     status.save
 
@@ -131,7 +129,7 @@ class FakeControllerTest < ActionController::TestCase
   end
 
   def test_verify_ticket_permission_with_group_ticket_permission_valid
-    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
     User.any_instance.stubs(:group_ticket_permission).returns(true).at_most_once
     Helpdesk::Ticket.any_instance.stubs(:responder_id).returns(nil)
     Helpdesk::Ticket.any_instance.stubs(:requester_id).returns(nil)
@@ -157,10 +155,8 @@ class FakeControllerTest < ActionController::TestCase
     t = Helpdesk::Ticket.new(email: Faker::Internet.email, :status => status.status_id, internal_group_id: group.id)
     t.save
 
-    # Temprory fix
-    Helpdesk::Ticket.any_instance.stubs(:internal_agent_id).returns(@agent.id).at_most_once
+    Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
 
-    Account.any_instance.stubs(:features?).with(:shared_ownership).returns(true)
     status.group_ids = [group.id]
     status.save
 

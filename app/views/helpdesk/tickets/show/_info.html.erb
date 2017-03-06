@@ -145,7 +145,7 @@
 										  </a>
 
 										  <ul class="dropdown-menu" id="reply_options" role="menu" aria-labelledby="dLabel">
-										  	<% if feature?(:timesheets) && privilege?(:view_time_entries) %>
+										  	<% if current_account.timesheets_enabled? && privilege?(:view_time_entries) %>
 										  	<li>
 										  		<a rel="triggerAddTimer" href="#"><%= t('ticket.add_time') %></a>
 										  	</li>

@@ -67,7 +67,6 @@
             "description": "Comma-separated values",
             "enum": [
               "requester",
-              "stats",
               "survey",
               "company",
               "count"
@@ -114,7 +113,7 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/extended_ticket"
+              "$ref": "#/definitions/ticket_show"
             }
           },
           "400": {
@@ -149,7 +148,6 @@
               "conversations",
               "requester",
               "company",
-              "stats",
               "survey"
             ]
           }
@@ -4917,6 +4915,40 @@
         }
       }
     },
+    "ticket_stats": {
+      "type": "object",
+      "properties": {
+        "stats": {
+          "type": "object",
+          "properties": {
+            "agent_responded_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "requester_responded_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "resolved_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "first_responded_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "closed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "status_updated_at": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        }
+      }
+    },
     "extension_generic": {
       "type": "object",
       "properties": {
@@ -5300,39 +5332,7 @@
             ]
           },
           {
-            "type": "object",
-            "properties": {
-              "stats": {
-                "type": "object",
-                "description": "Has to be sideloaded with ?include=stats",
-                "properties": {
-                  "agent_responded_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "requester_responded_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "resolved_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "first_responded_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "closed_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "status_updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  }
-                }
-              }
-            }
+            "$ref": "#/definitions/ticket_stats"
           },
           {
             "type": "object",
@@ -5424,6 +5424,9 @@
             },
             "ticket_topic": {
               "$ref": "#/definitions/ticket_topic"
+            },
+            "stats": {
+              "$ref": "#/definitions/ticket_stats"
             },
             "meta": {
               "type": "object",

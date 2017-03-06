@@ -15,6 +15,8 @@
       $ref: '#/definitions/survey_result'
     ticket_topic:
       $ref: '#/definitions/ticket_topic'
+    stats:
+      $ref: '#/definitions/ticket_stats'
     meta:
       type: object
       properties:

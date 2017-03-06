@@ -19,6 +19,7 @@
 						<%= hidden_field_tag "meta[referrer]", h(request.url) %>
 						<%= hidden_field_tag "helpdesk_ticket[source]", TicketConstants::SOURCE_KEYS_BY_TOKEN[:feedback_widget] %>
 						<%= hidden_field_tag "helpdesk_ticket[email]", current_user.email %>
+						<%= hidden_field_tag "helpdesk[tags]", "TrialWidget" %>
 						<div class="buttons-container pull-right">
 							<a class="btn" id="cancel-feedback"><%= t('cancel') %></a>
 							<%= f.submit t("send_feedback"), :id => "submit-feedback", :class => "btn btn-primary", 

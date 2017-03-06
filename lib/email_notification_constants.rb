@@ -181,4 +181,7 @@ module EmailNotificationConstants
     PHONE_TRIAL_NUMBER_DELETION_REMINDER =>  "phone_trial_number_deletion_reminder",
     PHONE_TRIAL_NUMBER_DELETION_REMINDER_LAST_DAY =>  "phone_trial_number_deletion_reminder_last_day" 
   }
+
+  SPAM_FILTERED_NOTIFICATIONS = [ REPLY, FORWARD]
+
 end

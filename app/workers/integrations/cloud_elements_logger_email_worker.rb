@@ -16,6 +16,9 @@ module Integrations
         installed_app.configs_crm_last_execution_id = write_log installed_app, "crm"
       end
       installed_app.save!
+    rescue => e
+      Rails.logger.debug "Error inside CloudElementsLoggerEmailWorker: #{e}"
+      NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Error inside CloudElementsLoggerEmailWorker Message: #{e}", :account_id => Account.current.id}})
     end
 
     def write_log installed_app, type
@@ -41,7 +44,7 @@ module Integrations
       failure_reasons ={}
       failure_reasons = get_failure_reason failure_ids, installed_app if failure_ids.size > 0
       send_email installed_app, type, failure_reasons, execution_size
-      (execution.first.present?) ? execution.first["id"] : nil 
+      (execution.first.nil?) ? nil : execution.first["id"]
     end
 
     def get_failure_reason failure_ids, installed_app
@@ -66,8 +69,9 @@ module Integrations
         admin.email
       }.join(",")
       bcc_recipients = [AppConfig['integrations_email']]
+      subdomain = Account.current.domain
       CloudLogMailer.cloud_log_email({
-        :subject => subject, :recipients => email_list, :size => size, :failure_reasons => failure_reasons, :bcc_recipients => bcc_recipients
+        :subject => subject, :recipients => email_list, :size => size, :failure_reasons => failure_reasons, :subdomain => subdomain, :bcc_recipients => bcc_recipients
       })
     end
   end

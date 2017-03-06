@@ -37,7 +37,7 @@ class CustomTicketFilterValidationTest < ActionView::TestCase
 
   def test_missing_attributes
     stub_account
-    (sample_params.keys - [:per_page]).each do |attribute|
+    (sample_params.keys - [:per_page, :visibility]).each do |attribute|
       filter = CustomTicketFilterValidation.new(sample_params.except(attribute))
       refute filter.valid?
     end
@@ -46,7 +46,7 @@ class CustomTicketFilterValidationTest < ActionView::TestCase
   def test_invalid_attributes
     stub_account
     filter = CustomTicketFilterValidation.new({})
-    refute filter.valid?
+    refute filter.valid?(:create)
     error = filter.errors.full_messages
     assert error.include?("Name missing_field")
     assert error.include?("Order missing_field")

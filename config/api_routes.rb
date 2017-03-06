@@ -273,12 +273,30 @@ Helpkit::Application.routes.draw do
   end
 
   pipe_routes = proc do 
-    resources :tickets, controller: 'pipe/tickets', only: [:create] do
+    resources :contacts, controller: 'pipe/api_contacts', only: [:create, :update]
+    resources :tickets, controller: 'pipe/tickets', only: [:create, :update] do
       member do
         post :reply, to: 'pipe/conversations#reply'
         post :notes, to: 'pipe/conversations#create'
       end
     end
+
+    namespace :api_discussions, path: 'discussions' do
+      resources :topics, controller: 'pipe/topics', only: [:create] do
+        member do
+          post :comments, to: 'pipe/api_comments#create'
+        end
+      end
+      resources :forums, only: [:create] do
+        member do
+          post :topics, to: 'pipe/topics#create'
+        end
+      end
+    end
+  end
+
+  channel_routes = proc do
+    resources :tickets, controller: 'channel/tickets', only: [:create]
   end
 
   match '/api/v2/_search/tickets' => 'tickets#search', :defaults => { format: 'json' }, :as => :tickets_search, via: :get
@@ -291,6 +309,10 @@ Helpkit::Application.routes.draw do
     end
     scope '/pipe', defaults: { version: 'private', format: 'json' }, constraints: { format: /(json|$^)/ } do
       scope '', &pipe_routes # "/api/v2/.."
+      scope '', &api_routes # "/api/v2/.."
+    end
+    scope '/channel', defaults: { version: 'private', format: 'json' }, constraints: { format: /(json|$^)/ } do
+      scope '', &channel_routes # "/api/v2/.."
       scope '', &api_routes # "/api/v2/.."
     end
     constraints ApiConstraints.new(version: 2), &api_routes # "/api/.." with Accept Header

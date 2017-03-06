@@ -50,17 +50,21 @@ module IntegrationServices::Services
         end
       end
     
-      def get_selected_fields fields, email
+      def get_selected_fields fields, email, app_name
         # get the Contact from Salesforce for the Given Email.
         # {"attributes" => {"type" => "Contact"}, "Name" => "contactName", "Email"=> "contactName@gmail.com"}
         return { FRONTEND_OBJECTS[:totalSize] => 0, FRONTEND_OBJECTS[:done] => true, FRONTEND_OBJECTS[:records] => [] } if email.blank?
-        query = "Email='#{email}'"
+        query = build_query email, app_name
         request_url = "#{cloud_elements_api_url}/hubs/crm/#{@service.meta_data[:object]}?where=#{query}"
         response = http_get request_url
         send("#{@service.meta_data[:app_name]}_selected_fields", fields, response, [200], "Contact") do |contact|
           return contact
         end
       end  
+
+      def build_query email, app_name
+        OBJECT_QUERIES[:contact_resource][app_name] % {:email => email}
+      end
 
     end
   end

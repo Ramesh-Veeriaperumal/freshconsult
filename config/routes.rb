@@ -582,6 +582,7 @@ Helpkit::Application.routes.draw do
       collection do
         post :quit_voicemail
         post :initiate
+        post :transcribe
       end
     end
 
@@ -720,7 +721,7 @@ Helpkit::Application.routes.draw do
       put :block
       get :assume_identity
       get :profile_image
-      get :profile_image_path
+      get :profile_image_no_blank
     end
   end
 
@@ -807,6 +808,7 @@ Helpkit::Application.routes.draw do
       get :edit
       get :add_slack_agent
       put :update
+      post :help
       post :create_ticket
       post :tkt_create_v3
     end
@@ -998,6 +1000,13 @@ Helpkit::Application.routes.draw do
       get :new
       get :edit
       post :update
+    end
+
+    namespace :office365 do
+      post :note
+      post :priority
+      post :status
+      post :agent
     end
 
     namespace :sugarcrm do
@@ -1591,22 +1600,6 @@ Helpkit::Application.routes.draw do
   match '/reports/custom_survey/delete_reports_filter' =>  'reports/custom_survey_reports#delete_reports_filter', :as => :custom_survey_delete_reports_filter
   match '/reports/custom_survey/export_csv' => 'reports/custom_survey_reports#export_csv'
 
-  # BEGIN Routes for new reports **/report/v2**
-  match "/reports/v2/:report_type/fetch_metrics",      :controller => 'reports/v2/tickets/reports', :action => 'fetch_metrics', :method => :post
-  match "/reports/v2/:report_type/fetch_active_metric", :controller => 'reports/v2/tickets/reports', :action => 'fetch_active_metric', :method => :post
-  match "/reports/v2/:report_type/fetch_ticket_list",  :controller => 'reports/v2/tickets/reports', :action => 'fetch_ticket_list', :method => :post
-  match "/reports/v2/:report_type",                    :controller => 'reports/v2/tickets/reports', :action => 'index', :method => :get
-  match "/reports/v2/:report_type/configure_export",  :controller => 'reports/v2/tickets/reports', :action => 'configure_export', :method => :get
-  match "/reports/v2/:report_type/export_tickets",    :controller => 'reports/v2/tickets/reports', :action => 'export_tickets', :method => :post
-  match "/reports/v2/:report_type/export_report",     :controller => 'reports/v2/tickets/reports', :action => 'export_report', :method => :post
-  match "/reports/v2/:report_type/email_reports",     :controller => 'reports/v2/tickets/reports', :action => 'email_reports', :method => :post
-  match "/reports/v2/:report_type/save_reports_filter",    :controller => 'reports/v2/tickets/reports', :action => 'save_reports_filter', :method => :post
-  match "/reports/v2/:report_type/delete_reports_filter",  :controller => 'reports/v2/tickets/reports', :action => 'delete_reports_filter', :method => :post
-  match "/reports/v2/:report_type/update_reports_filter",  :controller => 'reports/v2/tickets/reports', :action => 'update_reports_filter', :method => :post
-  match "/reports/v2/download_file/:report_export/:type/:date/:file_name", :controller => 'reports/v2/tickets/reports', :action => 'download_file', :method => :get
-  # END
-
-
   # Keep this below search to override contact_merge_search_path
   #
   resources :contact_merge do
@@ -1617,22 +1610,59 @@ Helpkit::Application.routes.draw do
       post :merge
     end
   end
-  get   'reports/:id'   => 'reports#show', constraints: { id: /[1-2]+/ }
-  match "/reports/:report_type",           :controller => 'reports/v2/tickets/reports', :action => 'index', :method => :get
+  
+  #to support old path for timesheet_reports
+  #old path : hostname/timesheet_reports
+  #new path structure : hostname/reports/timesheet
+  match "/timesheet_reports", :controller => 'reports/timesheet_reports', :action => 'index', :method => :get
 
+  #Routes related to Reports
   namespace :reports do
 
-    resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get,
-                                                :company_autocomplete => :get }
-
-    resources :report_filters do
-      member do
-        post :create
+    match '', action: :index, method: :get
+    
+    # 'timesheet' resource must be placed before new reports path, else it matches to v2/reports_controller
+    # timesheet report uses reports/timesheet_reports_controller
+    # both timesheet and new reports share the same path structure
+    # path : reports/timesheet
+    resource :timesheet, :controller => 'timesheet_reports' do
+      collection do
+        get  :index
+        post :report_filter
+        post :export_csv
+        post :generate_pdf
+        post :export_pdf
+        post :save_reports_filter
+        post :update_reports_filter
+        post :delete_reports_filter
+        post :time_entries_list
       end
     end
 
+    #must be placed after 'timesheet' resource, to avoid path mismatch for timesheet report
+    #both timesheet and new reports share the same path structure
+    #path : reports/:report_type
+    resource only: [], path: '(:ver)/:report_type', constraints: {ver: /v2/}, controller: 'v2/tickets/reports' do
+      collection do 
+        get  :index
+        get  :configure_export
+        post :fetch_metrics
+        post :fetch_active_metric
+        post :fetch_ticket_list
+        post :export_tickets
+        post :export_report
+        post :email_reports
+        post :save_reports_filter
+        post :delete_reports_filter
+        post :update_reports_filter
+        post :fetch
+      end
+    end
+
+    get :download_file, path: '(:ver)/download_file/:report_export/:type/:date/:file_name', constraints: {ver: /v2/}, controller: 'v2/tickets/reports'
+
     namespace :freshfone, :path => "phone" do
-      resources :summary_reports, :controller => 'summary_reports' do
+      resources :summary_reports, only: ['index'], :controller => 'summary_reports' do
         collection do
           post :generate
           post :export_csv
@@ -1645,7 +1675,7 @@ Helpkit::Application.routes.draw do
     end
 
     namespace :freshchat do
-      resources :summary_reports, :controller => 'summary_reports' do
+      resources :summary_reports, only: ['index'], :controller => 'summary_reports' do
         collection do
           post :generate
           post :save_reports_filter
@@ -1655,28 +1685,10 @@ Helpkit::Application.routes.draw do
         end
       end
     end
-  end
 
-  resources :reports #do
-  #   collection do
-  #     get :old
-  #   end
-  # end
+    #routes for v1 agent and group performance reports
+    match '/:id' , action: :show, method: :get, constraints: { id: /[1-2]+/ }
 
-  match 'reports/report_filters/destroy/:id(.:format)' => "reports/report_filters#destroy", :method => :post
-
-
-  resources :timesheet_reports , :controller => 'reports/timesheet_reports' do
-    collection do
-      post :report_filter
-      post :export_csv
-      post :generate_pdf
-      post :export_pdf
-      post :save_reports_filter
-      post :update_reports_filter
-      post :delete_reports_filter
-      post :time_entries_list
-    end
   end
 
   match '/activity_reports/customer' => 'reports/customer_reports#index', :as => :customer_activity
@@ -2190,7 +2202,7 @@ Helpkit::Application.routes.draw do
     end
 
     match 'commons/group_agents/(:id)'    => "commons#group_agents"
-    match 'commons/user_companies'        => "commons#user_companies"
+    match 'commons/user_companies'        => "commons#user_companies", via: :post
     match "commons/fetch_company_by_name" => "commons#fetch_company_by_name"
     match 'commons/status_groups'         => "commons#status_groups"
 
@@ -2642,7 +2654,7 @@ Helpkit::Application.routes.draw do
 
     resources :tickets do
       collection do
-        get :check_email
+        post :check_email
         get :configure_export
         get :filter
         post :export_csv
@@ -2886,6 +2898,9 @@ Helpkit::Application.routes.draw do
           get :check_contact_import
           put :reset_login_count
           post :contact_import_destroy
+          post :select_all_feature
+          put :change_currency
+          get :check_domain
         end
       end
 

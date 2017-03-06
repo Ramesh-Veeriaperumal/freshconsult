@@ -30,7 +30,7 @@ class Va::Handlers::DateTime < Va::RuleHandler
       end
 
       def fetch_business_hours
-        if Account.current.features_included?(:multiple_business_hours) and sub_value
+        if Account.current.multiple_business_hours_enabled? and sub_value
           Account.current.business_calendar.find_by_id(sub_value)
         end
       end

@@ -97,8 +97,7 @@ class SatisfactionRatingsControllerTest < ActionController::TestCase
   def test_create_with_invalid_custom_ratings_value
     post :create, construct_params({ id: ticket.display_id }, ratings: { 'default_question' => 103, 'question_3' => -102, 'question_2' => 110 }, feedback: 'Feedback given Surveys')
     assert_response 400
-    match_json([bad_request_error_pattern_with_nested_field('ratings', 'question_3', :not_included, list: @account.survey.survey_questions.first.face_values.join(',')),
-                bad_request_error_pattern_with_nested_field('ratings', 'question_2', :not_included, list: @account.survey.survey_questions.first.face_values.join(','))])
+    match_json([bad_request_error_pattern_with_nested_field('ratings', 'question_3', :not_included, list: @account.survey.survey_questions.first.face_values.join(','))])
   end
 
   def test_create_with_invalid_custom_ratings_data_type

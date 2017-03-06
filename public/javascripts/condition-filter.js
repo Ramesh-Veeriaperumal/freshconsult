@@ -383,7 +383,19 @@ rules_filter = function(_name, filter_data, parentDom, options){
 
                   jQuery.data(r_dom, "inner")
                      .append($filter_list_select)
-                     .append(inner);	
+                     .append(inner);
+
+                  //shared ownership changes
+                  if(parentDom == '#actionDOM'){
+                  	var icon = "<i class='ficon-notice-o ficon-rotate-180deg tooltip' data-html='true' data-placement='above' width='330'></i>";
+                  	if($filter_list_select.val() == 'internal_group_id'){
+                  		$filter_list_select.parent().append(icon);
+                  		$filter_list_select.parent().children('.ficon-notice-o').attr('title', '<div class="custom_twipsy">' + groupToStatusText + '</div>');
+                  	}else if($filter_list_select.val() == 'internal_agent_id'){
+                  		$filter_list_select.parent().append(icon);
+                  		$filter_list_select.parent().children('.ficon-notice-o').attr('title', '<div class="custom_twipsy">' + agentToGroupText + '</div>');
+                  	}
+                  }	
 
                   list_C = jQuery(parentDom).find(setting.rule_dom);
                   r_dom.appendTo(list_C);
@@ -627,13 +639,15 @@ rules_filter = function(_name, filter_data, parentDom, options){
                 	dom = conditional_dom(hg_item, data_id, name, default_value, "value", 'select2', {'minimumResultsForSearch':'10'} );
                   rule_drop.append(dom);
                   //shared ownership changes
-                  var icon = "<i class='ficon-notice-o ficon-rotate-180deg tooltip' data-html='true' data-placement='above' width='330'></i>";
-                  if($this.val() == 'internal_group_id'){
-                  	$this.parent().append(icon);
-                  	jQuery($this).parent().children('.ficon-notice-o').attr('title', '<div class="custom_twipsy">' + groupToStatusText + '</div>');
-                  }else if($this.val() == 'internal_agent_id'){
-                  	$this.parent().append(icon);
-                  	jQuery($this).parent().children('.ficon-notice-o').attr('title', '<div class="custom_twipsy">' + agentToGroupText + '</div>');
+                  if(name == 'action'){
+                  	var icon = "<i class='ficon-notice-o ficon-rotate-180deg tooltip' data-html='true' data-placement='above' width='330'></i>";
+                  	if($this.val() == 'internal_group_id'){
+                  		$this.parent().append(icon);
+                  		$this.parent().children('.ficon-notice-o').attr('title', '<div class="custom_twipsy">' + groupToStatusText + '</div>');
+                  	}else if($this.val() == 'internal_agent_id'){
+                  		$this.parent().append(icon);
+                  		$this.parent().children('.ficon-notice-o').attr('title', '<div class="custom_twipsy">' + agentToGroupText + '</div>');
+                  	}
                   }
                   //New Action
       			  		invokeRedactor("paragraph-redactor","cnt-fwd","class");

@@ -7,7 +7,7 @@
   section_container = ""
 %>
 <% current_portal.ticket_fields_including_nested_fields.each do |field| 
-  next if field.section_field?
+  next if field.section_field? || field.shared_ownership_field?
   if field.visible_in_view_form?
     if field.is_default_field?
       field_value = @ticket.send(field.field_name)

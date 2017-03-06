@@ -31,7 +31,7 @@
       Unassigned
     <% end %>  
   </span> 
-  <% if feature?(:multi_product) && @ticket.product %>
+  <% if current_account.multi_product_enabled? && @ticket.product %>
     <span>
       <b>Product</b>
       <%= h(@ticket.product.name) %>

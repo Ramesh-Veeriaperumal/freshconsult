@@ -109,6 +109,10 @@ module Ember
         super
       end
 
+      def preload_options
+        (super - [:default_user_company]) | [:user_emails, :tags, :avatar, :user_companies]
+      end
+
       def fetch_objects(items = scoper)
         @items = items.find_all_by_id(params[cname][:ids])
       end

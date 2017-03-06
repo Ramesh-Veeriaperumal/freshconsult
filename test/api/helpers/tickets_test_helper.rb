@@ -86,7 +86,10 @@ module TicketsTestHelper
     {
       closed_at: ticket_states.closed_at.try(:utc).try(:iso8601),
       resolved_at: ticket_states.resolved_at.try(:utc).try(:iso8601),
-      first_responded_at: ticket_states.first_response_time.try(:utc).try(:iso8601)
+      first_responded_at: ticket_states.first_response_time.try(:utc).try(:iso8601),
+      agent_responded_at: ticket_states.agent_responded_at.try(:utc).try(:iso8601),
+      requester_responded_at: ticket_states.requester_responded_at.try(:utc).try(:iso8601),
+      status_updated_at: ticket_states.status_updated_at.try(:utc).try(:iso8601)
     }
   end
 
@@ -138,16 +141,16 @@ module TicketsTestHelper
   end
 
   def create_ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
-    ticket_pattern(expected_output, ignore_extra_keys, ticket).merge(cloud_files: Array)
+    ticket_pattern(expected_output, ignore_extra_keys, ticket)
   end
 
   def update_ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
     description = expected_output[:description] || ticket.description_html
-    ticket_pattern(expected_output, ignore_extra_keys, ticket).merge(description: description, cloud_files: Array)
+    ticket_pattern(expected_output, ignore_extra_keys, ticket).merge(description: description)
   end
 
   def latest_note_response_pattern(note)
-    pattern = note_pattern({}, note).merge!({ user: Hash })
+    pattern = private_note_pattern({}, note).merge!({ user: Hash })
     pattern.except(:user_id)
   end
 
@@ -312,17 +315,35 @@ module TicketsTestHelper
     assert new_ticket.cloud_files.present?
   end
 
-  def private_api_ticket_index_pattern(survey_results = {}, requester = false, ticket_states = false, company = false)
+  def private_api_ticket_index_pattern(survey_results = {}, requester = false, company = false)
     pattern_array = Helpdesk::Ticket.last(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).map do |ticket|
-      pattern = index_ticket_pattern_with_associations(ticket, requester, ticket_states, company, [:tags])
+      pattern = index_ticket_pattern_with_associations(ticket, requester, true, company, [:tags])
       pattern.merge!(requester: Hash) if requester
       pattern.merge!(survey_result: feedback_pattern(survey_results[ticket.id])) if survey_results[ticket.id]
       pattern
     end
   end
 
+  def private_api_ticket_index_query_hash_pattern(query_hash)
+    per_page = ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
+    query_hash_params = {}
+    query_hash_params[:query_hash] = query_hash
+    query_hash_params[:wf_model] = 'Helpdesk::Ticket'
+    query_hash_params[:data_hash] = QueryHash.new(query_hash_params[:query_hash].values).to_system_format
+    pattern_array = Account.current.tickets.filter(params: query_hash_params, filter: 'Helpdesk::Filters::CustomTicketFilter').first(per_page).map do |ticket|
+      index_ticket_pattern_with_associations(ticket, false, true, false, [:tags])
+    end
+  end
+
+  def private_api_ticket_index_filter_pattern(filter_data)
+    per_page = ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
+    pattern_array = Account.current.tickets.filter(params: filter_data, filter: 'Helpdesk::Filters::CustomTicketFilter').first(per_page).map do |ticket|
+      index_ticket_pattern_with_associations(ticket, false, true, false, [:tags])
+    end
+  end
+
   def ticket_show_pattern(ticket, survey_result = nil, requester = false)
-    pattern = ticket_pattern(ticket).merge(cloud_files: Array)
+    pattern = ticket_pattern_with_association(ticket, false, false, false, false, true).merge(cloud_files: Array)
     ticket_topic = ticket_topic_pattern(ticket)
     pattern.merge!(freshfone_call: freshfone_call_pattern(ticket)) if freshfone_call_pattern(ticket).present?
     if Account.current.features?(:facebook) && ticket.facebook?
@@ -416,9 +437,11 @@ module TicketsTestHelper
     @call.save
   end
 
-  def conversations_pattern(ticket, limit = false)
+  def conversations_pattern(ticket, requester = false, limit = false)
     notes_pattern = ticket.notes.visible.exclude_source('meta').order(:created_at).map do |n|
-      note_pattern_index(n)
+      note_pattern = note_pattern_index(n)
+      note_pattern.merge!(requester: Hash) if requester
+      note_pattern
     end
     limit ? notes_pattern.take(limit) : notes_pattern
   end
@@ -430,7 +453,7 @@ module TicketsTestHelper
       bcc_emails: note.bcc_emails,
       source: note.source
     }
-    single_note = note_pattern({}, note)
+    single_note = private_note_pattern({}, note)
     single_note.merge!(index_note)
     single_note.merge!(freshfone_call: freshfone_call_pattern(note)) if freshfone_call_pattern(note)
     single_note

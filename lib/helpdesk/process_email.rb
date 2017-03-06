@@ -310,7 +310,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                 "_iso-2022-jp$esc" => "ISO-2022-JP",
                 "charset=us-ascii" => "us-ascii",
                 "iso-8859-8-i" => "iso-8859-8",
-                "unicode" => "utf-8"
+                "unicode" => "utf-8",
+                "cp-850" => "CP850"
               }
               if mapping_encoding[charset_encoding.downcase]
                 params[t_format] = Iconv.new('utf-8//IGNORE', mapping_encoding[charset_encoding.downcase]).iconv(params[t_format])
@@ -334,9 +335,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         subject = $1.strip
         unless subject =~ /=\?(.+)\?[BQ]?(.+)\?=/
           detected_encoding = CharlockHolmes::EncodingDetector.detect(subject)
-          detected_encoding = "UTF-8" if detected_encoding.nil?
+          detected_encoding = {:encoding => "UTF-8"} if detected_encoding.nil?
           begin
-            decoded_subject = subject.force_encoding(detected_encoding).encode(Encoding::UTF_8, :undef => :replace, 
+            decoded_subject = subject.force_encoding(detected_encoding[:encoding]).encode(Encoding::UTF_8, :undef => :replace, 
                                                                               :invalid => :replace, 
                                                                               :replace => '')
           rescue Exception => e
@@ -803,7 +804,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         rescue UserCreationError => e
           NewRelic::Agent.notice_error(e)
           Account.reset_current_account
-          email_processing_log "Email Processing Failed: Couldn't create new user!",to_email[:email]
+          email_processing_log "Email Processing Failed: Couldn't create new user!"
           raise e
         end
         if params[:text]
@@ -863,7 +864,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           break
         rescue Exception => e
           Rails.logger.error("Error while adding item attachments for ::: #{e.message}")
-          break
+          raise e
         end
       end
       if @total_virus_attachment
@@ -875,9 +876,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def virus_attachment? attachment, account
-      if VIRUS_CHECK_ENABLED && account.subscription.trial?
+      if account.launched?(:antivirus_service)
         begin
-          file_attachment = (attached.is_a? StringIO) ? attached : File.open(attached.tempfile)
+          file_attachment = (attachment.is_a? StringIO) ? attachment : File.open(attachment.tempfile)
           result = Email::AntiVirus.scan(io: file_attachment) 
           if result && result[0] == "virus"
             @total_virus_attachment = 0 unless @total_virus_attachment
@@ -885,7 +886,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
             return true
           end
         rescue => e
-         Rails.logger.info "Error While checking attachment for virus in account #{account.id}"
+         Rails.logger.info "Error While checking attachment for virus in account #{account.id}, #{e.class}, #{e.message}, #{e.backtrace}"
         end 
       end
       return false

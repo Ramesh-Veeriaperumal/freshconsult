@@ -5,14 +5,9 @@ class PlanChangeWorker
 
   def perform(args)
     account = Account.current
-    if args.is_a?(Array)
-      features = args
-      action = "drop"
-    else
-      args.symbolize_keys!
-      features = args[:features]
-      action = args[:action]
-    end
+    args.symbolize_keys!
+    features  = args[:features]
+    action    = args[:action]
 
     features.each do |feature|
       method = "#{action}_#{feature}_data"
@@ -27,40 +22,12 @@ class PlanChangeWorker
     end
   end
 
-  def drop_customer_slas_data(account)
-    #account.sla_policies.destroy_all(:is_default => false) #wasn't working..
-    Helpdesk::SlaPolicy.destroy_all(:account_id => account.id, :is_default => false)
-    update_all_in_batches({ :sla_policy_id => account.sla_policies.default.first.id }) { |cond|
-      account.companies.where(@conditions).limit(@batch_size).update_all(cond)
-    }
-    #account.sla_details.update_all(:override_bhrs => true) #this too didn't work.
-    update_all_in_batches({ :override_bhrs => true }){ |cond| 
-      account.sla_policies.default.first.sla_details.where(@conditions).limit(@batch_size).update_all(cond)
-    }
-  end
-
-  def drop_multiple_business_hours_data(account)
-    update_all_in_batches({ :time_zone => account.time_zone }){ |cond| 
-      records = account.all_users.where(@conditions).limit(@batch_size)
-      count   = records.update_all(cond)
-      records.map(&:sqs_manual_publish)
-      count
-    }
-  end
-
-  def drop_round_robin_data(account)
-    Role.remove_manage_availability_privilege account
-  end
-
   def add_round_robin_data(account)
     Role.add_manage_availability_privilege account
   end
 
-  def drop_multi_product_data(account)
-    account.products.destroy_all
-
-    #We are not updating the email_config_id or product_id in Tickets model knowingly.
-    #Tested, haven't faced any problem with stale email config ids or product ids.
+  def drop_round_robin_data(account)
+    Role.remove_manage_availability_privilege account
   end
 
   def drop_facebook_data(account)
@@ -85,10 +52,6 @@ class PlanChangeWorker
   def drop_custom_domain_data(account)
     account.main_portal.portal_url = nil
     account.save!
-  end
-
-  def drop_multiple_emails_data(account)
-    account.global_email_configs.find(:all, :conditions => {:primary_role => false}).each{|gec| gec.destroy}
   end
 
   def drop_layout_customization_data(account)

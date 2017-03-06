@@ -1,9 +1,11 @@
 class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   include Fdadmin::AccountsControllerMethods
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   before_filter :check_domain_exists, :only => :change_url , :if => :non_global_pods?
-  around_filter :select_slave_shard , :only => [:show, :features, :agents, :tickets, :portal, :user_info,:check_contact_import,:latest_solution_articles]
+  around_filter :select_slave_shard , :only => [:select_all_feature,:show, :features, :agents, :tickets, :portal, :user_info,:check_contact_import,:latest_solution_articles]
   around_filter :select_master_shard , :only => [:add_day_passes, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name, :change_api_limit, :reset_login_count,:contact_import_destroy]
   before_filter :validate_params, :only => [ :change_api_limit ]
   before_filter :load_account, :only => [:user_info, :reset_login_count]
@@ -14,6 +16,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account = Account.find_by_id(params[:account_id])
     shard_info = ShardMapping.find(params[:account_id])
     account_summary[:account_info] = fetch_account_info(account) 
+    account_summary[:reputation] = account.reputation
     account_summary[:passes] = account.day_pass_config.available_passes
     account_summary[:contact_details] = { email: account.admin_email , phone: account.admin_phone }
     account_summary[:currency_details] = fetch_currency_details(account)
@@ -177,6 +180,26 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       end
     end 
   end
+  
+  def change_currency
+    account = Account.find_by_id(params[:account_id]).make_current
+    result = {:account_id => account.id , :account_name => account.name }
+    begin
+      if validate_new_currency
+        result[:status] = (switch_currency ? "success" : "notice")
+      else
+        result[:status] = "error"
+      end
+    rescue Exception => e
+      result[:status] = "notice"
+    end
+    Account.reset_current_account
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end 
+  end
 
 
   def change_url
@@ -216,10 +239,25 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end
   end
 
+  def select_all_feature
+    enabled = false
+    account = Account.find(params[:account_id]).make_current
+    if params[:operation] == "launch"
+      enabled = account.launch(:select_all).include?(:select_all)
+    elsif params[:operation] == "rollback"
+      enabled = account.rollback(:select_all).include?(:select_all)
+    elsif params[:operation] == "check"
+      enabled = account.launched?(:select_all)
+    end
+    Account.reset_current_account
+    render :json => {:status => enabled}
+  end
+
   def change_account_name
     account = Account.find(params[:account_id])
     result = { :account_id => account.id , :account_name => account.name }
     account.name = params[:account_name]
+    account.helpdesk_name = params[:account_name]
     if account.save
       result[:status] = "success"
     else
@@ -248,6 +286,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       Account.reset_current_account
     end
     $spam_watcher.perform_redis_op("set", "#{params[:account_id]}-", "true")
+    remove_member_from_redis_set(SPAM_EMAIL_ACCOUNTS, params[:account_id])
+    remove_member_from_redis_set(BLACKLISTED_SPAM_ACCOUNTS, params[:account_id])
     respond_to do |format|
       format.json do
         render :json => result
@@ -377,6 +417,12 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       Account.reset_current_account
     end
     render :json => {:status => result[:status] }
+  end
+
+  def check_domain
+    result = {}
+    result[:domain_exist] = (params[:domain] && DomainMapping.find_by_domain(params[:domain])) ? true : false
+    render :json => result
   end
 
   private 

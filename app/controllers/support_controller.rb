@@ -172,7 +172,7 @@ class SupportController < ApplicationController
     def process_page_liquid(page_token)      
       partial = Portal::Page::PAGE_FILE_BY_TOKEN[ page_token ]
       dynamic_template = nil
-      dynamic_template = page_data(page_token) if feature?(:layout_customization)
+      dynamic_template = page_data(page_token) if current_account.layout_customization_enabled?
       _content = render_to_string :file => partial, :layout => false,
                   :locals => { :dynamic_template => dynamic_template } if dynamic_template.nil? || !dynamic_template.blank?
                   
@@ -207,7 +207,7 @@ class SupportController < ApplicationController
 
     def process_template_liquid
       Portal::Template::TEMPLATE_MAPPING_RAILS3.each do |t|
-        dynamic_template = template_data(t[0]) if feature?(:layout_customization)
+        dynamic_template = template_data(t[0]) if current_account.layout_customization_enabled?
         _content = render_to_string(:partial => t[1], :layout => false, :handlers => [t[2]],
                     :locals => { :dynamic_template => dynamic_template }) if dynamic_template.nil? || !dynamic_template.blank?
         instance_variable_set "@#{t[0]}", _content

@@ -27,7 +27,7 @@ module Middleware
               Sharding.select_shard_of(account_id) do
                 account = ::Account.find(account_id)
                 account.make_current
-                time_spent = Benchmark.realtime { yield }
+                yield
               end
             else
               yield

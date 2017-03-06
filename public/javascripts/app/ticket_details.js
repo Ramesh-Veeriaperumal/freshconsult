@@ -1469,14 +1469,15 @@ var scrollToError = function(){
         } else {
           lbl_val = $(this).val()
         }
-
-				data_hash[field_name] = {
-					value: lbl_val,
-					datatype: $(this).get(0).tagName.toLowerCase(),
-					type: field_name.match(/\[.*?\]/)[0] == "[custom_field]" ? "custom_field" : "default" ,
-					required: $(this).hasClass('required'),
-          name: $(this).find("option:selected").text()
-				};
+        if(typeof field_name != "undefined"){
+					data_hash[field_name] = {
+						value: lbl_val,
+						datatype: $(this).get(0).tagName.toLowerCase(),
+						type: field_name.match(/\[.*?\]/)[0] == "[custom_field]" ? "custom_field" : "default" ,
+						required: $(this).hasClass('required'),
+	          name: $(this).find("option:selected").text()
+					};
+        }
 			}
 		});
 		if (!$.isEmptyObject(data_hash)){

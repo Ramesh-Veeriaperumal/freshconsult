@@ -26,7 +26,7 @@ class ApiValidationTest < ActionView::TestCase
     api_validation = ApiValidation.new(controller_params)
     refute api_validation.valid?(BULK_ACTIONS.sample)
     assert api_validation.errors.full_messages.include?('Ids array_datatype_mismatch')
-    assert_equal({ ids: { expected_data_type: :'Positive Integer' } }, api_validation.error_options)
+    assert_equal({ ids: { expected_data_type: :'Positive Integer', code: :datatype_mismatch } }, api_validation.error_options)
 
     controller_params = { version: 'private', ids: (1..100).to_a }
     api_validation = ApiValidation.new(controller_params)

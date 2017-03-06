@@ -6,7 +6,7 @@
     </a>
     <div class="pull-right text-right verification-status">
       <% unless dkim_configured?(domain_category) %>
-        <button data-url="<%= admin_dkim_configuration_path(domain_category.id) %>" class="btn btn-mini config-dkim"  data-alt-text="<%= t('email_configs.dkim.configuring') %> "/> <%= t('email_configs.dkim.config') %> </button>
+        <button data-url="<%= admin_dkim_configuration_path(domain_category.id) %>" class="btn btn-mini config-dkim <%= dkim_limit_exceeded?%>"  data-alt-text="<%= t('email_configs.dkim.configuring') %> "/> <%= t('email_configs.dkim.config') %> </button>
       <% else %>
         <% if domain_category.status == OutgoingEmailDomainCategory::STATUS['active'] %>
           <span class="muted"> <%= t('email_configs.dkim.verified')%> </span>

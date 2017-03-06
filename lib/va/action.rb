@@ -2,6 +2,10 @@ class Va::Action
   
   include Va::Webhook::Trigger
   include ParserUtil
+
+  #including Redis keys for notify_cc - will be removed later
+  include Redis::RedisKeys
+  include Redis::OthersRedis
   
   EVENT_PERFORMER = -2
   ASSIGNED_AGENT = ASSIGNED_GROUP = 0
@@ -185,17 +189,16 @@ class Va::Action
       ticket_cc_emails = act_on.cc_email[:tkt_cc].collect { |email| (parse_email_text email.downcase)[:email] }
       reply_cc_emails  = act_on.cc_email[:reply_cc].collect { |email| (parse_email_text email.downcase)[:email] }
       cc_email_value   = value.downcase.strip
-      
+
       act_on.cc_email[:reply_cc]  << cc_email_value unless reply_cc_emails.include?(cc_email_value)
+      act_on.cc_email[:cc_emails] << cc_email_value unless cc_emails.include?(cc_email_value)
+      act_on.cc_email[:tkt_cc]    << cc_email_value unless ticket_cc_emails.include?(cc_email_value)
       
-      unless cc_emails.include?(cc_email_value)
-        act_on.cc_email[:cc_emails] << cc_email_value 
-        Helpdesk::TicketNotifier.send_later(:send_cc_email, act_on, nil, {:cc_emails => cc_email_value.to_a })
+      # send notify_cc_people unless redis key - will be removed later
+      unless get_others_redis_key("NOTIFY_CC_ADDED_VIA_DISPATCHER").present? || cc_emails.include?(cc_email_value)
+         Helpdesk::TicketNotifier.send_later(:send_cc_email, act_on, nil, {:cc_emails => cc_email_value.to_a })
       end
 
-      unless ticket_cc_emails.include?(cc_email_value)
-        act_on.cc_email[:tkt_cc] << cc_email_value 
-      end
       record_action(act_on)
     end
   end

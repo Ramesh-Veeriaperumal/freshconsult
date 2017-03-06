@@ -4,6 +4,7 @@
     :features:
       - :basic_twitter
       - :basic_facebook
+      - :basic_dkim
     :inherits: []
     :exclude: []
   :blossom_jan_17:
@@ -36,25 +37,57 @@
       - :multiple_emails
       - :advanced_reporting
       - :default_survey
+      - :sitemap
+      - :requester_widget
     :inherits: 
       - :sprout_jan_17
     :exclude: []
   :garden_jan_17:
     :name: Garden
-    :features: []
+    :features: 
+      - :forums
+      - :multi_language
+      - :css_customization
+      - :advanced_reporting
+      - :dynamic_content
+      - :chat
+      - :ticket_templates
+      - :custom_survey
     :inherits: 
       - :blossom_jan_17
     :exclude: []
   :estate_jan_17:
     :name: Estate
-    :features: []
+    :features:
+      - :multi_product
+      - :multiple_business_hours
+      - :multi_timezone
+      - :customer_slas
+      - :layout_customization
+      - :multi_product
+      - :collision
+      - :round_robin
+      - :enterprise_reporting
+      - :custom_ssl
+      - :custom_roles
+      - :facebook_page_tab
+      - :chat_routing
+      - :dynamic_sections
+      - :helpdesk_restriction_toggle
+      - :round_robin_load_balancing
+      - :multiple_user_companies
+      - :multiple_companies_toggle
+      - :round_robin_on_update 
+      - :shared_ownership_toggle
+      - :advanced_dkim
     :inherits: 
       - :garden_jan_17
     :exclude: []
   :forest_jan_17:
     :name: Forest
-    :features: []
+    :features:
+      - :mailbox
+      - :whitelisted_ips
     :inherits: 
       - :estate_jan_17
     :exclude: []
-:selectable_features: []

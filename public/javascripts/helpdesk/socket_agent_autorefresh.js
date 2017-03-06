@@ -124,12 +124,6 @@ var refreshCallBack = function (message, hashed_params, current_userid,updated_t
                 case "helpdesk_schema_less_tickets.product_id":
                   message_key = "product_id";
                   break;
-                case "helpdesk_schema_less_tickets.long_tc04":
-                  message_key = "internal_agent_id";
-                  break;
-                case "helpdesk_schema_less_tickets.long_tc03":
-                  message_key = "internal_group_id";
-                  break;
                 default:
                   message_key = filter_options[i].condition;
               }

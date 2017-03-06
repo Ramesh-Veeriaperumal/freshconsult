@@ -128,11 +128,11 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
           $("#user_companies [data-company-destroyed='true']").each(function(i, selected){ 
             var company_name = $(selected).find("p").text();
             if($.inArray(company_name, self.selected_companies) !== -1)
-              self.removedCompanies[i] = company_name;
+              self.removedCompanies.push(company_name);
           });
 
           $("#added_companies").val(self.addedCompanies.toJSON());
-          $("#removed_companies").val(String(self.removedCompanies));
+          $("#removed_companies").val(self.removedCompanies.toJSON());
           $("#edited_companies").val(self.editedCompanies.toJSON());
         }
       });

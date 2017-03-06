@@ -58,14 +58,21 @@ class Import::Customers::Base
   end
 
   def save_item row
-    unless @item.nil?
-      set_validatable_custom_fields
+    @item = current_account.send("#{@type.pluralize}").new if @item.blank?
+    set_validatable_custom_fields
+    construct_company_params if is_user? && Account.current.features?(:multiple_user_companies)
+    unless @item.new_record?
       @item.update_attributes(@params_hash[:"#{@type}"]) ? @updated+=1 : failed_item(row)
     else
-      @item = current_account.send("#{@type.pluralize}").new
-      set_validatable_custom_fields
       send("create_imported_#{@params[:type]}") ? @created+=1 : failed_item(row)
-    end      
+    end
+  end
+
+  def construct_company_params
+    construct_import_companies_params
+    @item.update_companies(@params_hash) unless @item.new_record?
+    @params_hash[:user].delete(:client_manager)
+    @params_hash[:user].delete(:company_name)
   end
 
   def set_current_user
@@ -179,5 +186,61 @@ class Import::Customers::Base
     AwsWrapper::S3Object.delete(@customer_params[:file_location], S3_CONFIG[:bucket])
   rescue => e
     NewRelic::Agent.notice_error(e, {:description => "Error while removing file from s3 :: account_id :: #{current_account.id}"})
+  end
+
+  def construct_import_companies_params
+    company_names = @params_hash[:user][:company_name].split(COMPANY_DELIMITER)
+    client_manager_values = @params_hash[:user][:client_manager].split(COMPANY_DELIMITER)
+
+    client_manager_values.map!(&->(c){VALID_CLIENT_MANAGER_VALUES.include?(c) ? 1 : 0})
+
+    import_companies = {}
+    company_names.each_with_index do |company, index|
+      unless import_companies.keys.include?(company) || company.blank?
+        import_companies[company] = client_manager_values[index]
+      end
+    end
+
+    import_companies_case_mapping = import_companies.keys.map{|c| [c.downcase, c]}.to_h
+
+    user_companies = @item.companies.preload(:user_companies).
+                      select(['user_companies.client_manager', 'user_companies.default',
+                              'customers.id', 'customers.name']).
+                      inject({}) do |res, u|
+                        res[u.name.downcase] = {
+                                        :id => u.id, 
+                                        :client_manager => u.client_manager,
+                                        :default => u.default
+                                      }
+                        res
+                      end
+    edited_case_map = (import_companies_case_mapping.keys & user_companies.keys)
+    edited = edited_case_map.map{|c| import_companies_case_mapping[c]}
+
+    added = (import_companies_case_mapping.keys - edited_case_map).map{|c| import_companies_case_mapping[c]}
+    removed_companies = (user_companies.keys - edited_case_map)
+
+    added_companies = added.inject([]) do |res, comp|
+      res << create_company_details(comp, import_companies[comp],
+                                    comp == @params_hash[:user][:first_company_name])
+    end
+
+    edited_companies = edited.inject([]) do |res, comp|
+      default_value = (comp == @params_hash[:user][:first_company_name]) ? 1 : 0
+      res << create_company_details(comp, import_companies[comp], default_value,
+                                    user_companies[comp.downcase][:id]) 
+    end
+    @params_hash[:user][:added_companies] = added_companies.to_json
+    @params_hash[:user][:removed_companies] = removed_companies.to_json
+    @params_hash[:user][:edited_companies] = edited_companies.to_json
+  end
+
+  def create_company_details(company_name, client_manager, default_value, company_id=nil)
+    {
+      "id" => company_id,
+      "company_name" => company_name,
+      "client_manager" => client_manager,
+      "default_company" => default_value
+    }
   end
 end

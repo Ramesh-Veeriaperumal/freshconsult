@@ -6,6 +6,9 @@ module ConversationConstants
   UPDATE_ARRAY_FIELDS = %w(attachments attachment_ids).freeze
   TWEET_ARRAY_FIELDS = [].freeze
 
+  TICKET_CONVERSATIONS_FIELDS = %w(include order_type).freeze
+  SIDE_LOADING = %w(requester).freeze
+
   REPLY_FIELDS = %w(body full_text user_id from_email send_survey).freeze | REPLY_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   FORWARD_FIELDS = %w(body full_text agent_id from_email include_quoted_text include_original_attachments).freeze | FORWARD_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   CREATE_FIELDS = %w(body private incoming user_id).freeze | CREATE_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS

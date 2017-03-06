@@ -118,11 +118,11 @@
 
       @font-face {
   font-family: "glyphs";
-  src: url("../../assets/glyphs_ebdb24a6ad0bd3262ccf82363a4697b6.eot");
-  src: url("../../assets/glyphs_ebdb24a6ad0bd3262ccf82363a4697b6.eot?#iefix") format("embedded-opentype"),
-       url("../../assets/glyphs_ebdb24a6ad0bd3262ccf82363a4697b6.woff") format("woff"),
-       url("../../assets/glyphs_ebdb24a6ad0bd3262ccf82363a4697b6.ttf") format("truetype"),
-       url("../../assets/glyphs_ebdb24a6ad0bd3262ccf82363a4697b6.svg#glyphs") format("svg");
+  src: url("../../assets/glyphs_f98e518c5ba7909b023600789cdfead0.eot");
+  src: url("../../assets/glyphs_f98e518c5ba7909b023600789cdfead0.eot?#iefix") format("embedded-opentype"),
+       url("../../assets/glyphs_f98e518c5ba7909b023600789cdfead0.woff") format("woff"),
+       url("../../assets/glyphs_f98e518c5ba7909b023600789cdfead0.ttf") format("truetype"),
+       url("../../assets/glyphs_f98e518c5ba7909b023600789cdfead0.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -130,7 +130,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: url("../../assets/glyphs_ebdb24a6ad0bd3262ccf82363a4697b6.svg#glyphs") format("svg");
+    src: url("../../assets/glyphs_f98e518c5ba7909b023600789cdfead0.svg#glyphs") format("svg");
   }
 }
 
@@ -379,6 +379,7 @@
 .ficon-no-network:before,
 .ficon-notice:before,
 .ficon-notice-o:before,
+.ficon-notification:before,
 .ficon-number:before,
 .ficon-observer:before,
 .ficon-onhold:before,
@@ -407,6 +408,7 @@
 .ficon-preserve-format:before,
 .ficon-pushpin:before,
 .ficon-puzzle:before,
+.ficon-read-all:before,
 .ficon-rearrange:before,
 .ficon-rebranding:before,
 .ficon-refresh:before,
@@ -743,6 +745,7 @@
 .ficon-no-network:before { content: "\f1b4"; }
 .ficon-notice:before { content: "\f172"; }
 .ficon-notice-o:before { content: "\f173"; }
+.ficon-notification:before { content: "\f270"; }
 .ficon-number:before { content: "\f174"; }
 .ficon-observer:before { content: "\f175"; }
 .ficon-onhold:before { content: "\f211"; }
@@ -771,6 +774,7 @@
 .ficon-preserve-format:before { content: "\f256"; }
 .ficon-pushpin:before { content: "\f180"; }
 .ficon-puzzle:before { content: "\f1d7"; }
+.ficon-read-all:before { content: "\f271"; }
 .ficon-rearrange:before { content: "\f181"; }
 .ficon-rebranding:before { content: "\f182"; }
 .ficon-refresh:before { content: "\f183"; }
@@ -865,7 +869,7 @@
 
   <body class="characters-off">
     <header>
-      <h1>Font Icons (350)</h1>
+      <h1>Font Icons (352)</h1>
       <p>We can use font icon classes or use helper method as follows <code>&lt;%= font_icon "icon-name", :size => 18 %&gt;</code>, which generates the Markup</p>
     </header>
     <div id="page" class="container">
@@ -3051,6 +3055,15 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-notification" class="ficon-notification"></i></span>
+        </div>
+        <div class="usage">
+          <span>notification</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-number" class="ficon-number"></i></span>
         </div>
         <div class="usage">
@@ -3298,6 +3311,15 @@
         </div>
         <div class="usage">
           <span>puzzle</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-read-all" class="ficon-read-all"></i></span>
+        </div>
+        <div class="usage">
+          <span>read-all</span>
         </div>
       </div>
       

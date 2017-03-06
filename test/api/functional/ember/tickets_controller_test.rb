@@ -114,7 +114,7 @@ module Ember
     def test_index_with_invalid_filter_names
       get :index, controller_params(version: 'private', filter: Faker::Lorem.word)
       assert_response 400
-      valid_filters = ["spam", "deleted", "overdue", "pending", "open", "due_today", "new", "new_and_my_open", "all_tickets", "unresolved", "article_feedback", "my_article_feedback", "watching", "on_hold", "raised_by_me"]
+      valid_filters = ["spam", "deleted", "overdue", "pending", "open", "due_today", "new", "monitored_by", "new_and_my_open", "all_tickets", "unresolved", "article_feedback", "my_article_feedback", "watching", "on_hold", "raised_by_me"]
       match_json([bad_request_error_pattern(:filter, :not_included, list: valid_filters.join(', '))])
     end
 
@@ -217,7 +217,7 @@ module Ember
     def test_index_with_company_side_load
       get :index, controller_params(version: 'private', include: 'company')
       assert_response 200
-      match_json(private_api_ticket_index_pattern({}, false, false, true))
+      match_json(private_api_ticket_index_pattern({}, false, true))
     end
 
     def test_index_with_count_included
@@ -326,8 +326,7 @@ module Ember
       params_hash = ticket_params_hash.merge({attachment_ids: attachment_ids})
       post :create, construct_params({version: 'private'}, params_hash)
       assert_response 201
-      match_json(create_ticket_pattern(params_hash, Helpdesk::Ticket.last))
-      match_json(create_ticket_pattern({}, Helpdesk::Ticket.last))
+      match_json(ticket_show_pattern(Helpdesk::Ticket.last))
       assert Helpdesk::Ticket.last.attachments.size == attachment_ids.size
     end
 
@@ -342,8 +341,7 @@ module Ember
       post :create, construct_params({version: 'private'}, params_hash)
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
-      match_json(create_ticket_pattern(params_hash, Helpdesk::Ticket.last))
-      match_json(create_ticket_pattern({}, Helpdesk::Ticket.last))
+      match_json(ticket_show_pattern(Helpdesk::Ticket.last))
       assert Helpdesk::Ticket.last.attachments.size == (attachments.size + 1)
     end
 
@@ -361,8 +359,7 @@ module Ember
       params_hash = ticket_params_hash.merge({cloud_files: cloud_file_params})
       post :create, construct_params({version: 'private'}, params_hash)
       assert_response 201
-      match_json(create_ticket_pattern(params_hash, Helpdesk::Ticket.last))
-      match_json(create_ticket_pattern({}, Helpdesk::Ticket.last))
+      match_json(ticket_show_pattern(Helpdesk::Ticket.last))
       assert Helpdesk::Ticket.last.cloud_files.count == 2
     end
 
@@ -375,8 +372,7 @@ module Ember
       params_hash = ticket_params_hash.merge({attachment_ids: canned_response.shared_attachments.map(&:attachment_id)})
       post :create, construct_params({version: 'private'}, params_hash)
       assert_response 201
-      match_json(create_ticket_pattern(params_hash, Helpdesk::Ticket.last))
-      match_json(create_ticket_pattern({}, Helpdesk::Ticket.last))
+      match_json(ticket_show_pattern(Helpdesk::Ticket.last))
       assert Helpdesk::Ticket.last.attachments.count == 1
     end
 
@@ -401,8 +397,7 @@ module Ember
       post :create, construct_params({version: 'private'}, params_hash)
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
-      match_json(create_ticket_pattern(params_hash, Helpdesk::Ticket.last))
-      match_json(create_ticket_pattern({}, Helpdesk::Ticket.last))
+      match_json(ticket_show_pattern(Helpdesk::Ticket.last))
       assert Helpdesk::Ticket.last.attachments.count == 3
       assert Helpdesk::Ticket.last.cloud_files.count == 1
     end
@@ -416,8 +411,7 @@ module Ember
       }
       post :create, construct_params({version: 'private'}, params)
       t = Helpdesk::Ticket.last
-      match_json(create_ticket_pattern(params, t))
-      match_json(create_ticket_pattern({}, t))
+      match_json(ticket_show_pattern(t))
       assert_equal t.owner_id, sample_requester.company_id
       assert_response 201
     end
@@ -436,8 +430,7 @@ module Ember
       }
       post :create, construct_params({version: 'private'}, params)
       t = Helpdesk::Ticket.last
-      match_json(create_ticket_pattern(params, t))
-      match_json(create_ticket_pattern({}, t))
+      match_json(ticket_show_pattern(t))
       assert_equal t.owner_id, company.id
       assert_response 201
     ensure
@@ -456,8 +449,7 @@ module Ember
       }
       post :create, construct_params({version: 'private'}, params)
       t = Helpdesk::Ticket.last
-      match_json(create_ticket_pattern(params, t))
-      match_json(create_ticket_pattern({}, t))
+      match_json(ticket_show_pattern(t))
       assert_equal t.owner_id, company_id
       assert_response 201
     ensure

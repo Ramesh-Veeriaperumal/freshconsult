@@ -53,7 +53,10 @@ App.CollaborationUi = (function ($) {
                     _COLLAB_PVT.updateNotiCount();
                     window.open(event.currentTarget.getAttribute("data-href"), "_self");
                 });
-            });            
+            });
+            jQuery(document).on("collabNoti", function(event){
+                App.CollaborationModel.markNotiReadForCollabOpen(event.detail);
+            });
         },
         events: function(){
             var $collabBtn = $("#sticky_header");
@@ -145,7 +148,7 @@ App.CollaborationUi = (function ($) {
                 if(!$(event.target).parents(".leftcontent .conversation:not(.activity)").length) {
                     _COLLAB_PVT.hideAnnotationOption();
                 }
-            })
+            });
         },
 
         showCollaboratorsListView: function() {
@@ -496,7 +499,11 @@ App.CollaborationUi = (function ($) {
                     "m_type": CONST.MSG_TYPE_CLIENT
                 }, CONST.TYPE_SENT);
                 // TODO (mayank): expect a response with notify | send_message | add_member data
-                collabModel.sendMessage(msg, currentConvo.co_id);
+                collabModel.sendMessage(msg, currentConvo.co_id, function() {
+                    if(!!msg.metadata && (msg.metadata.notify || msg.metadata.notify_all)) {
+                        _COLLAB_PVT.sendMailWorker(msg.body, msg.metadata.notify);
+                    }
+                });
                 _COLLAB_PVT.scrollToBottom();
                 $msgBox.focus();
                 if(!!msg.metadata && !!msg.metadata.annotations) {
@@ -937,27 +944,23 @@ App.CollaborationUi = (function ($) {
 
         showDiscussionDD: function(event) {
             if(!$(event.currentTarget).hasClass("collab-temp-annotation")) {
-                var selectionRectsForVp = event.currentTarget.getBoundingClientRect();
-                var lineHeightBuffer = selectionRectsForVp.bottom - selectionRectsForVp.top;
                 var $showDiscussionDD = $("#show-discussion-dd");
                 var dropDownWidth = $showDiscussionDD.width();
-                if(!!selectionRectsForVp) {
-                    var leftcontentRects = $("#Pagearea .leftcontent")[0].getBoundingClientRect();
-                    var dropDownPos = {
-                        left: selectionRectsForVp.left - leftcontentRects.left + selectionRectsForVp.width/2 - dropDownWidth/2,
-                        top: selectionRectsForVp.top - leftcontentRects.top + lineHeightBuffer
-                    };
-                    $showDiscussionDD.attr('data-message-id', event.currentTarget.getAttribute('data-message-id'));
+                var leftcontentRects = $("#Pagearea .leftcontent")[0].getBoundingClientRect();
+                var dropDownPos = {
+                    left: event.clientX - leftcontentRects.left - dropDownWidth/2,
+                    top: event.clientY - leftcontentRects.top
+                };
+                $showDiscussionDD.attr('data-message-id', event.currentTarget.getAttribute('data-message-id'));
 
-                    var $annotatorImage = $("#annotator-image");
-                    $annotatorImage.html(_COLLAB_PVT.getAvatarHtml(event.currentTarget.getAttribute('data-annotator-id'), "small"));
+                var $annotatorImage = $("#annotator-image");
+                $annotatorImage.html(_COLLAB_PVT.getAvatarHtml(event.currentTarget.getAttribute('data-annotator-id'), "small"));
 
-                    $showDiscussionDD.css({
-                        left: dropDownPos.left,
-                        top: dropDownPos.top,
-                        display: "block"
-                    });
-                }
+                $showDiscussionDD.css({
+                    left: dropDownPos.left,
+                    top: dropDownPos.top,
+                    display: "block"
+                });   
             }
         },
 
@@ -1156,11 +1159,50 @@ App.CollaborationUi = (function ($) {
         getUserInfo: function(uid, cb) {
             App.CollaborationModel.getUserInfo(uid, cb);
         },
+        showCollaboratorsWithLogo: function() {
+            var collabModel = App.CollaborationModel;
+            var image_class = "convo-started-icon";
+            $("#collab-btn ."+ image_class +"").remove();
+            if(!!collabModel.currentConversation){
+                var convo_data = collabModel.conversationsMap[collabModel.currentConversation.co_id];
+                var chosen_member_id;
+                if(!!convo_data) {
+                    for(var i=0; i<convo_data.msgs.length; i++) {
+                        if(convo_data.msgs[i].s_id) {
+                            chosen_member_id = convo_data.msgs[i].s_id
+                            break;
+                        }
+                    }
+                    avatar_html = _COLLAB_PVT.getAvatarHtml(chosen_member_id, image_class);
+                    $("#collab-btn").prepend(avatar_html);
+                }
+            }
+        },
 
-        updateDpCharToImage: function(elem, image_path) {
-            elem.removeClassName("hide");
-            elem.setAttribute("src", image_path);
-            App.CollaborationModel.profileImages[elem.getAttribute("data-user-id")] = {"path": image_path};
+        sendMailWorker: function(message_body, recipient_ids) {
+            recipient_ids = recipient_ids || Object.keys(App.CollaborationModel.conversationsMap[App.CollaborationModel.currentConversation.co_id].members);
+            var collab_model = App.CollaborationModel;
+            var my_id = App.CollaborationModel.currentUser.uid;
+            for(var idx = 0; idx < recipient_ids.length; idx++) {
+                if(recipient_ids[idx] !== my_id) {
+                    var co_id = collab_model.currentConversation.co_id;
+                    var current_convo = collab_model.conversationsMap[co_id];
+                    var is_invite = current_convo ? !current_convo.members[recipient_ids[idx]] : true;
+                    
+                    Collab.sendMail({
+                        recipient_name: collab_model.usersMap[recipient_ids[idx]].name,
+                        sender_name: collab_model.usersMap[collab_model.currentUser.uid].name,
+                        co_id: co_id,
+                        co_name: collab_model.currentConversation.name,
+                        requestor_name: collab_model.currentConversation.requester_name,
+                        requestor_email: collab_model.currentConversation.requester_email,
+                        toAddressList: [collab_model.usersMap[recipient_ids[idx]].email],
+                        invite: is_invite,
+                        message_body: message_body,
+                        ticket_link: window.location.origin + window.location.pathname + "?collab=true"
+                    });
+                }
+            }
         }
     };
 
@@ -1259,7 +1301,7 @@ App.CollaborationUi = (function ($) {
             // on connection init if config is pending; initUi will be called onModelInited
             config = config || Collab.parseJson($("#collab-ui-data").attr("data-ui-payload"));
             config.expandCollabOnLoad = !!Collab.getUrlParameter("collab");
-            config.scrollToMsgId = Collab.getUrlParameter("msg");
+            config.scrollToMsgId = Collab.getUrlParameter("message");
 
             if(!!App.CollaborationModel.initedWithData) {
                 Collab.initUi(config);
@@ -1280,7 +1322,9 @@ App.CollaborationUi = (function ($) {
 	            "co_id": config.currentConversationId,
                 "owned_by": config.ownedBy,
                 "is_closed": config.isClosed,
-                "token": config.convoToken
+                "token": config.convoToken,
+                "requester_name": config.requester_name,
+                "requester_email": config.requester_email
 	        }
 
             /*
@@ -1317,18 +1361,17 @@ App.CollaborationUi = (function ($) {
                     }
                 }
                 if(typeof cb === "function") cb(response);
+                _COLLAB_PVT.showCollaboratorsWithLogo();
             });
         },
 
 	    createConversation: function(cn, members, cb) {
 	    	var collabModel = App.CollaborationModel;
 	    	var currentConversation = collabModel.currentConversation;
-            cn = cn || currentConversation.co_id;
-            collabModel.currentConversation.name = cn;
             members = members || [];
 
             var conversationObj = {
-                "co_id": cn,
+                "co_id": currentConversation.co_id || cn,
                 "members": members,
                 "owned_by": currentConversation["owned_by"]
             }
@@ -1566,56 +1609,14 @@ App.CollaborationUi = (function ($) {
             }
             return display_name;
         },
-        dpLoadErr: function(elem) {
-            var uid = elem.getAttribute("data-user-id");
-
-            function pullProfileImage() {
-                // FETCH CASE
-                App.CollaborationModel.profileImages[uid] = {"fetching": true};
-                $.get("/users/" + uid + "/profile_image_path", function(response) {
-                    if(!!response.path){
-                        $("<img/>")
-                            .on('load', function() { 
-                                _COLLAB_PVT.updateDpCharToImage(elem, response.path); 
-                            })
-                            .on('error', function() { 
-                                delete App.CollaborationModel.profileImages[uid]; 
-                                Collab.dpLoadErr(elem);
-                            })
-                            .attr("src", response.path);
-                    }
-                    App.CollaborationModel.profileImages[uid].fetching = false;
-                });
-            }
-
-            if(uid) {
-                var profile_image_obj = App.CollaborationModel.profileImages[uid];
-                if(profile_image_obj) {
-                    // FETCHING CASE
-                    if(profile_image_obj.fetching) {
-                        setTimeout(function() {
-                            Collab.dpLoadErr(elem);
-                        }, CONST.RETRY_DELAY_FOR_PENDING_DP_REQ);
-                    } else if(profile_image_obj.path) {
-                        // CACHEC CASE
-                        $("<img/>")
-                            .on('load', function() { 
-                                _COLLAB_PVT.updateDpCharToImage(elem, profile_image_obj.path);
-                            })
-                            .on('error', function() { 
-                                delete App.CollaborationModel.profileImages[uid]; 
-                                Collab.dpLoadErr(elem);
-                            })
-                            .attr("src", profile_image_obj.path);
-                    } else {
-                        pullProfileImage();
-                    }
-                } else {
-                    pullProfileImage();
-                }
-            } else {
-                console.log("Something went wrong in setting DP image; uid not found in -data- attr;");
-            }
+        dpLoadComplete: function(elem) {
+            $(elem).removeClass("hide");
+        },
+        sendMail: function(params) {
+            var mail_data = {
+                "html_data": params
+            };
+            App.CollaborationModel.sendMail(mail_data);
         }
     };
     return Collab;

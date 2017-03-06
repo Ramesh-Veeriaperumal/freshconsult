@@ -23,8 +23,8 @@ class TopicValidationsTest < ActionView::TestCase
     assert error.include?('Stamp type datatype_mismatch')
     assert_equal({ title: { expected_data_type: String, code: :missing_field },
                    message: { expected_data_type: String, code: :missing_field },
-                   forum_id: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: String },
-                   stamp_type: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: String } }, topic.error_options)
+                   forum_id: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: String, code: :datatype_mismatch },
+                   stamp_type: { expected_data_type: :'Positive Integer', prepend_msg: :input_received, given_data_type: String, code: :datatype_mismatch } }, topic.error_options)
   end
 
   def test_datatype_params_invalid

@@ -11,15 +11,14 @@ module Helpdesk::TicketNotifications
       #dont send email if user creates ticket by "save and close"
       return if spam? || deleted? || self.skip_notification? || closed_at.present? 
       notify_by_email(EmailNotification::NEW_TICKET)
-      if Account.current.features?(:shared_ownership)
+      if Account.current.shared_ownership_enabled?
         notify_by_email_without_delay(EmailNotification::TICKET_ASSIGNED_TO_GROUP, true) if internal_group_id.present?
         notify_by_email_without_delay(EmailNotification::TICKET_ASSIGNED_TO_AGENT, true) if internal_agent_id.present?
       end
-
-      notify_by_email_without_delay(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if group_id and !group_id_changed?
-      notify_by_email_without_delay(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if responder_id and !responder_id_changed?
+      notify_by_email_without_delay(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if group_id and !@model_changes.key?(:group_id)
+      notify_by_email_without_delay(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if responder_id and !@model_changes.key?(:responder_id)
       
-      unless status_changed?
+      unless @model_changes.key?(:status)
         return notify_by_email_without_delay(EmailNotification::TICKET_RESOLVED) if resolved?
         return notify_by_email_without_delay(EmailNotification::TICKET_CLOSED) if closed?
       end
@@ -27,8 +26,8 @@ module Helpdesk::TicketNotifications
 
   def notify_on_update
     return if spam? || deleted?
-    if Account.current.features?(:shared_ownership)
-      notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP, true) if @model_changes.key?(Helpdesk::SchemaLessTicket.internal_group_column) && internal_group
+    if Account.current.shared_ownership_enabled?
+      notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP, true) if @model_changes.key?(:internal_group_id) && internal_group
       notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT, true) if send_agent_assigned_notification?(true)
     end
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if (@model_changes.key?(:group_id) && group)

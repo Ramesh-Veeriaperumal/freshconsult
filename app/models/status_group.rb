@@ -9,7 +9,7 @@ class StatusGroup < ActiveRecord::Base
   after_commit :clear_account_status_groups_cache
 
   def nullify_internal_group
-    return unless Account.current.features?(:shared_ownership) and Account.current.groups.exists?(group_id)
+    return unless Account.current.shared_ownership_enabled? and Account.current.groups.exists?(group_id)
 
     reason        = self.status.deleted ? {:remove_status => [self.status.name]} :
       {:remove_group => [self.group.name, self.status.name]}

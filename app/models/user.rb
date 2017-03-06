@@ -394,8 +394,8 @@ class User < ActiveRecord::Base
   def update_companies(params)
     if has_multiple_companies_feature?
       if params[:user][:removed_companies].present?
-        to_be_removed = params[:user][:removed_companies].split(",").uniq
-        remove_ids = to_be_removed.map{ |company_name| companies.find { |c| c.name == company_name}.id }
+        to_be_removed = JSON.parse params[:user][:removed_companies]
+        remove_ids = to_be_removed.map{ |company_name| companies.find { |c| c.name.downcase == company_name.downcase}.id }
         UserCompany.destroy_all(:account_id => account_id,
                                 :user_id => id,
                                 :company_id => remove_ids) if remove_ids.any?
@@ -479,7 +479,11 @@ class User < ActiveRecord::Base
       portal = nil
       force_notification = false
       args = [ portal, force_notification ]
-      Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), nil, 2.minutes.from_now)
+      if Thread.current["notifications_#{account_id}"].nil?
+        Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), nil, 2.minutes.from_now)
+      else
+        deliver_activation_instructions!(*args)
+      end
     end
     true
   end
@@ -693,7 +697,7 @@ class User < ActiveRecord::Base
 
   def group_ticket?(ticket)
     group_member?(ticket.group_id) or
-        (Account.current.features?(:shared_ownership) ? group_member?(ticket.internal_group_id) : false)
+        (Account.current.shared_ownership_enabled? ? group_member?(ticket.internal_group_id) : false)
   end
 
   def group_member?(group_id)
@@ -702,7 +706,7 @@ class User < ActiveRecord::Base
 
   
   def ticket_agent?(ticket)
-    ticket.responder_id == self.id || (Account.current.features?(:shared_ownership) ? ticket.internal_agent_id == self.id : false)
+    ticket.responder_id == self.id || (Account.current.shared_ownership_enabled? ? ticket.internal_agent_id == self.id : false)
   end
 
   def has_ticket_permission? ticket

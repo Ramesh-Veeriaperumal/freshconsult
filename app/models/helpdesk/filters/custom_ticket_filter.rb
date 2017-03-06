@@ -100,12 +100,13 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                       "my_article_feedback" => [spam_condition(false), deleted_condition(false)]
                    }
 
-  USER_COLUMNS = ["responder_id", "helpdesk_subscriptions.user_id", "helpdesk_schema_less_tickets.long_tc04"]
-  GROUP_COLUMNS = ["group_id", "helpdesk_schema_less_tickets.long_tc03"]
-  SCHEMA_LESS_COLUMNS = ["helpdesk_schema_less_tickets.boolean_tc02", "helpdesk_schema_less_tickets.product_id", 
-      "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}",
-      "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.internal_group_column}",
-      "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.internal_agent_column}"]
+  USER_COLUMNS = ["responder_id", "helpdesk_subscriptions.user_id", "internal_agent_id"]
+  GROUP_COLUMNS = ["group_id", "internal_group_id"]
+  SCHEMA_LESS_COLUMNS = [
+      "helpdesk_schema_less_tickets.boolean_tc02",
+      "helpdesk_schema_less_tickets.product_id", 
+      "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}"
+    ]
 
   after_create :create_accesible
   after_update :save_accessible
@@ -205,9 +206,9 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       collab_filter
     elsif (from_api && "all_tickets".eql?(filter_name))
      api_all_tickets_filter
-    elsif("shared_by_me" == filter_name and Account.current.features?(:shared_ownership))
+    elsif("shared_by_me" == filter_name and Account.current.shared_ownership_enabled?)
       shared_by_me_filter
-    elsif("shared_with_me" == filter_name and Account.current.features?(:shared_ownership))
+    elsif("shared_with_me" == filter_name and Account.current.shared_ownership_enabled?)
       shared_with_me_filter
     else
       DEFAULT_FILTERS.fetch(filter_name, DEFAULT_FILTERS[default_value]).dclone
@@ -299,7 +300,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   def remove_invalid_conditions action_hash
-    unless Account.current.features?(:shared_ownership)
+    unless Account.current.shared_ownership_enabled?
       reject_conditions = TicketConstants::SHARED_AGENT_COLUMNS_ORDER + TicketConstants::SHARED_GROUP_COLUMNS_ORDER
       action_hash.reject!{|condition_hash| reject_conditions.include?(condition_hash["condition"])}
     end
@@ -321,7 +322,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       else
         all_sql_conditions = [""]
         conditions_array = conditions
-        conditions_array = handle_any_mode(conditions_array) if Account.current.features?(:shared_ownership)
+        conditions_array = handle_any_mode(conditions_array) if Account.current.shared_ownership_enabled?
         conditions_array.each do |condition|
           handle_special_values(condition)
           sql_condition = condition.container.sql_condition
@@ -487,7 +488,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   private
 
   def join_schema_less? all_conditions
-    SCHEMA_LESS_COLUMNS.any?{|col| all_conditions[0].include?(col)} && (!Account.current.features?(:shared_ownership) || User.current.all_tickets_permission?)
+    SCHEMA_LESS_COLUMNS.any?{|col| all_conditions[0].include?(col)}
   end
 
   def handle_special_values(condition, user_types = USER_COLUMNS, group_types = GROUP_COLUMNS)

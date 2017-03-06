@@ -29,7 +29,7 @@ class ContactDecorator < ApiDecorator
   end
   
   def default_company
-    record.default_user_company
+    @default_user_company ||= record.user_companies.select{ |x| x.default }.first
   end
 
   def other_companies
@@ -59,7 +59,7 @@ class ContactDecorator < ApiDecorator
   end
 
   def full_requester_hash
-    req_hash = to_full_hash.except(:id, :company_id)
+    req_hash = to_full_hash.except(:company_id)
     req_hash[:company] = CompanyDecorator.new(record.company, name_mapping: @company_name_mapping).to_hash if record.company
     req_hash
   end
@@ -73,31 +73,7 @@ class ContactDecorator < ApiDecorator
   private
 
     def to_full_hash
-      response_hash = {
-        id: id,
-        active: active,
-        address: address,
-        company_id: company_id,
-        view_all_tickets: client_manager,
-        description: description,
-        email: email,
-        job_title: job_title,
-        language: language,
-        mobile: mobile,
-        name: name,
-        phone: phone,
-        time_zone: time_zone,
-        twitter_id: twitter_id,
-        custom_fields: custom_fields,
-        other_emails: other_emails,
-        tags: tags,
-        created_at: created_at.try(:utc),
-        updated_at: updated_at.try(:utc),
-        avatar: avatar_hash
-      }
-      response_hash.merge!(deleted: true) if record.deleted
-      response_hash.merge!(other_companies: other_companies) if multiple_user_companies_enabled?
-      response_hash
+      record.agent? ? agent_info : customer_info
     end
 
     def to_restricted_hash
@@ -106,6 +82,39 @@ class ContactDecorator < ApiDecorator
         name: name,
         avatar: avatar_hash
       }
+    end
+
+    def agent_info
+      {
+        active: active,
+        email: email,
+        job_title: job_title,
+        language: language,
+        mobile: mobile,
+        name: name,
+        phone: phone,
+        time_zone: time_zone,
+        avatar: avatar_hash
+      }
+    end
+
+    def customer_info
+      response_hash = agent_info.merge({
+        id: id,
+        address: address,
+        company_id: company_id,
+        view_all_tickets: client_manager,
+        description: description,
+        twitter_id: twitter_id,
+        custom_fields: custom_fields,
+        other_emails: other_emails,
+        tags: tags,
+        created_at: created_at.try(:utc),
+        updated_at: updated_at.try(:utc)
+      })
+      response_hash.merge!(deleted: true) if record.deleted
+      response_hash.merge!(other_companies: other_companies) if multiple_user_companies_enabled?
+      response_hash
     end
 
     def construct_hash(req_widget_fields, obj)

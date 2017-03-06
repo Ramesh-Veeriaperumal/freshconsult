@@ -2,6 +2,10 @@
 
     include RoundRobinCapping::Methods
     
+    #including Redis keys for notify_cc - will be removed later
+    include Redis::RedisKeys
+    include Redis::OthersRedis
+    
     def self.enqueue(ticket_id, user_id, freshdesk_webhook)
       #based on account subscription, enqueue into proper queue
       account = Account.current
@@ -29,10 +33,11 @@
     def execute
         Time.use_zone(@account.time_zone) {
         execute_rules unless @is_webhook
-        @ticket.autoreply
         round_robin unless @ticket.spam? || @ticket.deleted?
         @ticket.sbrr_fresh_ticket = true
         @ticket.save
+        notify_cc_recipients
+        @ticket.autoreply
         @ticket.va_rules_after_save_actions.each do |action|
           klass = action[:klass].constantize
           klass.send(action[:method], action[:args])
@@ -44,6 +49,12 @@
     end
 
     private
+
+    def notify_cc_recipients
+      if @ticket.cc_email_hash.present? && @ticket.cc_email_hash[:cc_emails].present? && get_others_redis_key("NOTIFY_CC_ADDED_VIA_DISPATCHER").present?
+        Helpdesk::TicketNotifier.send_later(:send_cc_email, @ticket, nil, {:cc_emails => @ticket.cc_email_hash[:cc_emails].to_a })
+      end
+    end
 
     def execute_rules
       evaluate_on = @ticket

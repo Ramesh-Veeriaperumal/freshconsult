@@ -55,5 +55,5 @@
 		status_filtered_array.push(["Total" , "Total"]);
 		status_filtered_array.push(["" , ""]);
 		status_filtered_array.unshift(["Agent" , "Agent"]);
-		shared_ownership_enabled = <%= current_account.features?(:shared_ownership) %>;
+		shared_ownership_enabled = <%= current_account.shared_ownership_enabled? %>;
 <% end %>

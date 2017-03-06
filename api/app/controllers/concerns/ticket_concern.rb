@@ -36,12 +36,12 @@ module TicketConcern
 
     def group_ticket_permission?(ids)
       # Check if current user has group ticket permission and if ticket also belongs to the same group.
-      api_current_user.group_ticket_permission && (tickets_scoper || scoper).group_tickets_permission(api_current_user, ids).present?
+      api_current_user.group_ticket_permission && scoper.group_tickets_permission(api_current_user, ids).present?
     end
 
     def assigned_ticket_permission?(ids)
       # Check if current user has restricted ticket permission and if ticket also assigned to the current user.
-      api_current_user.assigned_ticket_permission && (tickets_scoper || scoper).assigned_tickets_permission(api_current_user, ids).present?
+      api_current_user.assigned_ticket_permission && scoper.assigned_tickets_permission(api_current_user, ids).present?
     end
 
     def tickets_with_group_permission(ids)

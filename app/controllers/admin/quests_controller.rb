@@ -4,7 +4,7 @@ class Admin::QuestsController < Admin::AdminController
 	include Gamification::Quests::Constants
 	include Gamification::Quests::Badges
   
-  before_filter { |c| c.requires_feature :gamification }
+  before_filter { |c| c.requires_this_feature :gamification }
   before_filter :set_filter_data, :only => [ :create, :update ]
   before_filter :load_config, :only => [:new, :edit]
 

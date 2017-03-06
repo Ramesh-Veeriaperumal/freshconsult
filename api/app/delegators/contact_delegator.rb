@@ -53,7 +53,7 @@ class ContactDelegator < BaseDelegator
   end
 
   def default_company_presence
-    unless Account.current.companies_from_cache.detect { |x| x.id == @default_company}
+    unless Account.current.companies.find_by_id(@default_company)
       errors[:company_id] << :"can't be blank"
     end
   end

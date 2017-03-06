@@ -43,6 +43,7 @@ module Tickets
     def initialize(record, options)
       super(record)
       @query_data_hash = options[:query_data_hash]
+      @ticket = options[:ticket]
     end
 
     def to_hash
@@ -50,8 +51,11 @@ module Tickets
         id: published_time, # Just for the sake of giving an id
         performer: performer_hash,
         highlight: summary.nil? ? nil : summary.to_i,
+        ticket_id: @ticket.display_id,
         performed_at: parse_activity_time(published_time),
-        actions: send("#{performer_type}_actions")
+        actions: send("#{performer_type}_actions").reject do |action|
+          action[:content].nil?
+        end
       }
     end
 
@@ -70,8 +74,8 @@ module Tickets
           {
             id: user.id,
             name: user.name,
-            avatar_url: user.avatar.try(:attachment_url_for_api, [true, :thumb]),
-            agent: user.agent?,
+            avatar: avatar_hash(user.avatar),
+            is_agent: user.agent?,
             deleted: user.deleted
           }.merge(
             User.current.privilege?(:view_contacts) ? { email: user.email } : {}
@@ -96,6 +100,11 @@ module Tickets
             exists: true
           }
         end
+      end
+
+      def avatar_hash(avatar)
+        return nil unless avatar.present?
+        AttachmentDecorator.new(avatar).to_hash.merge(thumb_url: avatar.attachment_url_for_api(true, :thumb))
       end
 
       def performer_type
@@ -271,8 +280,7 @@ module Tickets
       def note(value)
         note_id = value[:id].to_i
         note = @query_data_hash[:notes][note_id]
-        ticket = @query_data_hash[:ticket]
-        ConversationDecorator.new(note, ticket: ticket).to_hash
+        ConversationDecorator.new(note, ticket: @ticket).to_hash
       end
 
       # Tags

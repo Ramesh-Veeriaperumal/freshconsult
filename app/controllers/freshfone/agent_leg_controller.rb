@@ -65,16 +65,15 @@ module Freshfone
 
       def load_ringing_calls
         unless params[:call_ids] # when comes from disconnect_browser_agent
-          params[:CallStatus] = 'busy' 
-          @current_user = current_account.users.technicians.visible.find(params[:agent]) 
+          params[:CallStatus] = 'busy'
+          @current_user = current_account.users.technicians.visible.find(params[:agent])
+          set_ringing_call_ids
         end
         move_to_disconnect_worker if ringing_calls.count > MAX_CALL_LIMIT
-        ringing_calls
       end
 
       def ringing_calls
-        return @ringing_calls ||= current_account.freshfone_calls.calls_with_ids(params[:call_ids]) if params[:call_ids].present?
-        @ringing_calls ||= current_account.freshfone_calls.ringing_calls
+        @ringing_calls ||= current_account.freshfone_calls.calls_with_ids(params[:call_ids])
       end
 
       def move_to_disconnect_worker
@@ -82,7 +81,15 @@ module Freshfone
         \n Moving Job to DisconnectWorker"
         jid = Freshfone::DisconnectWorker.perform_async(params)
         logger.info "Trigger Disconnect worker  JID :: #{jid}"
-        return render json: { status: :success }
+        render json: { status: :success }
+      end
+
+      def set_ringing_call_ids
+        call_ids = []
+        ringing_calls.each do |call|
+          call_ids.push(call.id) if call.meta.present? && call.meta.agent_pinged?(params[:agent])
+        end
+        params[:call_ids] = call_ids
       end
   end
 end

@@ -12,8 +12,8 @@ module HelpdeskReports::Helper::PlanConstraints
 
   def plan_group
     return @plan_group if defined?(@plan_group)
-    account_plan = Account.current.subscription.plan_name
-    @plan_group ||= PLAN_GROUP_MAPPING[account_plan] || :default
+    account_plan = Account.current.subscription.subscription_plan.display_name.downcase
+    @plan_group ||= account_plan || :default
     if enterprise_reporting? && FEATURE_BASE_PLAN[:enterprise_reporting].exclude?(plan_group)
       @plan_group = FEATURE_BASE_PLAN[:enterprise_reporting].first
     end

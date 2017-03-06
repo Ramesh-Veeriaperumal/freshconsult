@@ -47,7 +47,7 @@ module ChatHelper
   end
 
   def multiple_business_hours?
-    feature?(:multiple_business_hours) && 
+    current_account.multiple_business_hours_enabled? && 
       current_account.business_calendar.count > 1
   end
 

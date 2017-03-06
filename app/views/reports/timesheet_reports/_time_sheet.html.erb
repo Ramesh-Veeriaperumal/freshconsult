@@ -1,19 +1,6 @@
 <% time_sheet.each do |group_title, time_entrys| %>
-  <% if group_header != group_title %>
-    <tr class="even">
-      <% gt = "#{group_names[group_title]}" %>
-      <%unless group_by.include?(:workable) %>
-        <%gt = t("none") if gt.match(/^No +/) %>
-      <%end%>
-      <% gt = timesheet_formatted_date(Time.zone.parse("'#{group_title}'"),{:format => :short_day_with_week, :include_year => true}) if group_by.include?(:group_by_day_criteria)%>
-      <td colspan="<%=colspan%>"><strong><%= gt %></strong></td>
-      <td class="hours"><strong class="group_time"><%= get_time_in_hours(times_spent[group_title].round(2) * 3600) %></strong></td>
-    </tr>
-    <% group_header = group_title %>
-  <% end %>
-
   <% time_entrys.each do |time_entry| %>
-  <tr class="odd">
+  <tr class="odd" data-workable-id="<%= time_entry.workable.send(:display_id) %>" data-workable-desc="<%= time_entry.workable.send(:subject) %>" data-executed-at="<%= time_entry.send(:group_by_day_criteria) %>">
     <%= construct_timesheet_entry_row(@headers, time_entry, load_time) %>
   </tr>
   <% end %>

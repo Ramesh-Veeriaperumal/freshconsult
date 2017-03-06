@@ -12,6 +12,7 @@ class Account < ActiveRecord::Base
   include Redis::OthersRedis
   include ErrorHandle
   include AccountConstants
+  include Helpdesk::SharedOwnershipMigrationMethods
   include Onboarding::OnboardingRedisMethods
   include FreshdeskFeatures::Feature
 
@@ -23,7 +24,7 @@ class Account < ActiveRecord::Base
   
   is_a_launch_target
   
-  concerned_with :associations, :constants, :features, :validations, :callbacks, :solution_associations, :multilingual
+  concerned_with :associations, :constants, :validations, :callbacks, :features, :solution_associations, :multilingual
 
   include CustomerDeprecationMethods
   
@@ -337,6 +338,11 @@ class Account < ActiveRecord::Base
     to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret #to_email case will come, when none of the emails are active.. 
   end
 
+  def support_emails_in_downcase
+    to_ret = email_configs.collect(&:reply_email_in_downcase)
+    to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret 
+  end
+
   def portal_name #by Shan temp.
     main_portal.name
   end
@@ -521,7 +527,11 @@ class Account < ActiveRecord::Base
   def ehawk_spam?
     ehawk_reputation_score >= 4 
   end
-  
+
+  def copy_right_enabled?
+    subscription.sprout_plan? || subscription.trial? || (branding_enabled?)
+  end
+
   protected
   
     def external_url_is_valid?(url) 

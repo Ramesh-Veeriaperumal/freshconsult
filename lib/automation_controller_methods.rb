@@ -51,6 +51,10 @@ module AutomationControllerMethods
     @va_rule.name = "%s #{@va_rule.name}" % t('dispatch.copy_of')
   end
 
+  def ticket_type_values_with_none
+    [['', t('none')]]+current_account.ticket_types_from_cache.collect { |c| [ c.value, c.value ] }
+  end
+
   protected
 
   def reorder_scoper
@@ -81,19 +85,14 @@ module AutomationControllerMethods
   end
 
   def load_config
-    current_account_agents = current_account.users.technicians.collect { |au| [au.id, au.name] }
-    @agents = [[0, t('admin.observer_rules.assigned_agent')]]
-    @agents.concat get_event_performer
-    @agents.concat [['', t('none')]] + current_account_agents
-    watcher_agents = current_account_agents
+    @agents = [[0, t('admin.observer_rules.assigned_agent')]] + get_event_performer + none_option
+    @agents.concat agents_list
+    watcher_agents = agents_list
 
-    @groups = [[0, t('admin.observer_rules.assigned_group')], ['', t('none')]]
-    @groups.concat current_account.groups.find(:all, :order=>'name' ).collect { |g| [g.id, g.name]}
-
-    status_group_ids = Account.current.account_status_groups_from_cache.collect(&:group_id).uniq
-    @internal_groups = [['', t('none')]]
-    @internal_groups.concat current_account.groups_from_cache.sort_by(&:name).collect {|c| [c.id, CGI.escapeHTML(c.name)] if status_group_ids.include?(c.id)}.compact
-    @internal_agents = [['', t('none')]] + current_account_agents
+    @groups = [[0, t('admin.observer_rules.assigned_group')]] + none_option
+    @groups.concat groups_list_from_cache
+    
+    load_internal_group_agents if allow_shared_ownership_fields?
 
     @products = current_account.products.collect {|p| [p.id, p.name]}
 
@@ -104,7 +103,7 @@ module AutomationControllerMethods
       { :name => "priority", :value => t('set_priority_as'), :domtype => "dropdown",
         :choices => TicketConstants.priority_list.sort, :unique_action => true },
       { :name => "ticket_type", :value => t('set_type_as'), :domtype => "dropdown",
-        :choices => current_account.ticket_type_values.collect { |c| [ c.value, c.value ] },
+        :choices => ticket_type_values_with_none,
         :unique_action => true },
       { :name => "status", :value => t('set_status_as'), :domtype => "dropdown",
         :choices => Helpdesk::TicketStatus.status_names(current_account),
@@ -127,7 +126,7 @@ module AutomationControllerMethods
       { :name => "group_id", :value => t('email_configs.info9'), :domtype => 'dropdown',
         :choices => @groups[1..-1], :unique_action => true  },
       { :name => "product_id", :value => t('admin.products.assign_product'),
-        :domtype => 'dropdown', :choices => [['', t('none')]]+@products,
+        :domtype => 'dropdown', :choices => none_option+@products,
         :condition => multi_product_account? },
       { :name => -1, :value => "-----------------------" },
       { :name => "send_email_to_group", :value => t('send_email_to_group'),
@@ -144,7 +143,7 @@ module AutomationControllerMethods
         :condition => va_rules_controller? },
       { :name => -1, :value => "-----------------------" }
     ]
-    add_shared_ownership_actions(action_hash) if Account.current.features?(:shared_ownership) and automations_controller?
+    add_shared_ownership_actions(action_hash) if allow_shared_ownership_fields?
     append_integration_actions action_hash
     action_hash = action_hash.select{ |action| action.fetch(:condition, true) }
     add_custom_actions action_hash
@@ -168,7 +167,7 @@ module AutomationControllerMethods
   end
 
   def multi_product_account?
-    current_account.features?(:multi_product)
+    current_account.multi_product_enabled?
   end
 
   def survey_active_account?
@@ -176,7 +175,7 @@ module AutomationControllerMethods
   end
 
   def multi_timezone_account?
-    current_account.features?(:multi_timezone)
+    current_account.multi_timezone_enabled?
   end
 
   def multi_language_account?
@@ -184,7 +183,7 @@ module AutomationControllerMethods
   end
 
   def add_custom_actions action_hash
-    special_case = [['', t('none')]]
+    special_case = none_option
     current_account.ticket_fields.custom_fields.each do |field|
       action_hash.push({
                          :id => field.id,
@@ -225,6 +224,29 @@ module AutomationControllerMethods
   # For handling json escape inside hash data
   def escape_html_entities_in_json
     ActiveSupport::JSON::Encoding.escape_html_entities_in_json = true
+  end
+
+  def load_internal_group_agents
+    internal_group_ids  = current_account.account_status_groups_from_cache.collect(&:group_id).uniq
+    internal_agent_ids  = current_account.agent_groups.where(:group_id => internal_group_ids).pluck(:user_id).uniq
+    @internal_groups    = none_option + groups_list_from_cache.select {|g| internal_group_ids.include?(g[0])}.compact
+    @internal_agents    = none_option + agents_list.select {|a| internal_agent_ids.include?(a[0])}.compact
+  end
+
+  def allow_shared_ownership_fields?
+    current_account.shared_ownership_enabled? && !supervisor_rules_controller?
+  end
+
+  def groups_list_from_cache
+    @groups_list ||= current_account.groups_from_cache.sort_by(&:name).collect { |g| [g.id, CGI.escapeHTML(g.name)]}
+  end
+
+  def agents_list
+    @agents_list ||= current_account.users.technicians.collect { |au| [au.id, CGI.escapeHTML(au.name)] }
+  end
+
+  def none_option
+    [['', t('none')]]
   end
 
   def validate_email_template

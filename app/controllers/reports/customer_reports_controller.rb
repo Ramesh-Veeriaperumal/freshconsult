@@ -2,7 +2,7 @@ class Reports::CustomerReportsController < ApplicationController
   include ReadsToSlave
   include Reports::CompanyReport
    
-  before_filter { |c| c.requires_feature :advanced_reporting }
+  before_filter { |c| c.requires_this_feature :advanced_reporting }
   before_filter :check_accessibility
   before_filter :set_selected_tab
   before_filter :set_default_values
