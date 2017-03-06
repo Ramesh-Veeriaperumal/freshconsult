@@ -24,7 +24,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save  :assign_outbound_agent,  :if => :new_outbound_email?
 
-  before_save :reset_internal_group_agent, :update_schema_less_ticket_so_fields
+  before_save :reset_internal_group_agent
 
   before_save :reset_assoc_parent_tkt_status, :if => :assoc_parent_ticket?
 
@@ -237,13 +237,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   #Shared onwership Validations ends here
-
-  def update_schema_less_ticket_so_fields
-    return if !Account.current.features?(:shared_ownership) || !redis_key_exists?(SO_FIELDS_MIGRATION) ||
-      (schema_less_ticket.long_tc03 == internal_group_id && schema_less_ticket.long_tc04 == internal_agent_id)
-    schema_less_ticket.long_tc03 = self.internal_group_id
-    schema_less_ticket.long_tc04 = self.internal_agent_id
-  end
 
   def refresh_display_id #by Shan temp
       self.display_id = Helpdesk::Ticket.select(:display_id).where(id: id).first.display_id  if display_id.nil? #by Shan hack need to revisit about self as well.

@@ -27,21 +27,8 @@ App.CollaborationModel = (function ($) {
             Collab.MEMBER_PRESENCE_POLL_TIME = _COLLAB_PVT.ChatApi.memberPresencePollTime;
             // TODO(mayank): mergo updates DB with nil data
             // This is supposed to update latest self_info; Avoiding this temporarily; 
-            // _COLLAB_PVT.UpdateUser(Collab.currentUser.uid, Collab.currentUser.name, Collab.currentUser.email)
+            // _COLLAB_PVT.updateUser(Collab.currentUser.uid, Collab.currentUser.name, Collab.currentUser.email)
             
-
-            _COLLAB_PVT.ChatApi.getAllUsers(function(response) {
-                var users = response.users;
-                // TODO (ankit): manage response.start and futher fetching if(start != "")
-                users.forEach(function(user) {
-                    Collab.usersMap[user.uid] = jQuery.extend({"uid": user.uid}, user.info);
-                });
-
-                if(Collab.usersMap && !!Object.keys(Collab.usersMap).length) {
-                    // Collab.getNotifications();
-                }
-            });
-
             function uiIniter() {
                 Collab.initedWithData = true;
                 // call initUI if pending config found
@@ -51,8 +38,15 @@ App.CollaborationModel = (function ($) {
                 }
             }
 
-            // Removed store_profile_image dependency from here
-            uiIniter();
+            _COLLAB_PVT.ChatApi.getAllUsers(function(response) {
+                var users = response.users;
+                // TODO (ankit): manage response.start and futher fetching if(start != "")
+                users.forEach(function(user) {
+                    Collab.usersMap[user.uid] = jQuery.extend({"uid": user.uid}, user.info);
+                });
+                uiIniter();
+            });
+
         },
         disconnected: function(response) {
             App.CollaborationUi.onDisconnectHandler(response);

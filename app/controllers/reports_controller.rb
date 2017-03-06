@@ -11,9 +11,7 @@ class ReportsController < ApplicationController
   # include Reports::ActivityReport
   
   def show
-    if params[:id]
-      @current_report  = @t_reports[params[:id].to_i-1]       
-    end
+    @current_report  = @t_reports[params[:report_type].to_sym]       
     unless @current_report.nil?
    	  @current_object  = current_account.send(@current_report[:object])
       @report_data     = build_tkts_hash(@current_report[:name],params)
@@ -29,9 +27,10 @@ class ReportsController < ApplicationController
   end
   
   def report_list
-    @t_reports = [{ :name => "responder", :label => t('adv_reports.agent_ticket_summary'), :title => "Agent", :object => "agents" }, 
-                  { :name => "group"    , :label => t('adv_reports.group_ticket_summary'), :title => "Group", :object => "groups" }
-                 ]
+    @t_reports = {
+                  agent_summary: { :name => "responder", :label => t('adv_reports.agent_ticket_summary'), :title => "Agent", :object => "agents" }, 
+                  group_summary: { :name => "group"    , :label => t('adv_reports.group_ticket_summary'), :title => "Group", :object => "groups" }
+                 }
   end
   
   def get_current_object

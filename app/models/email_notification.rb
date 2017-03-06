@@ -5,6 +5,8 @@ class EmailNotification < ActiveRecord::Base
   attr_protected  :account_id
   before_create :set_default_version
 
+  include EmailNotificationConstants
+
   xss_sanitize  :only => [:requester_template, :agent_template, :requester_subject_template, :agent_subject_template], :decode_calm_sanitizer => [:requester_template, :agent_template, :requester_subject_template, :agent_subject_template]
 
   def set_requester_and_agent_template
@@ -112,7 +114,7 @@ class EmailNotification < ActiveRecord::Base
 
   BCC_DISABLED_NOTIFICATIONS = [NOTIFY_COMMENT, PUBLIC_NOTE_CC, NEW_TICKET_CC]
 
-  CUSTOM_CATEGORY_ID_ENABLED_NOTIFICATIONS = [NEW_TICKET, NEW_TICKET_CC]
+  CUSTOM_CATEGORY_ID_ENABLED_NOTIFICATIONS = [NEW_TICKET, NEW_TICKET_CC, USER_ACTIVATION, EMAIL_TO_REQUESTOR]
 
   scope :response_sla_reminder, :conditions => { :notification_type => RESPONSE_SLA_REMINDER } 
   scope :resolution_sla_reminder, :conditions => { :notification_type => RESOLUTION_SLA_REMINDER }

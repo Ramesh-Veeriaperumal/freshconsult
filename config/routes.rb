@@ -1633,6 +1633,11 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    #routes for v1 agent and group performance reports
+    # match '/:id' , action: :show, method: :get, constraints: { id: /[1-2]+/ }
+    match '/classic/:report_type', action: :show, method: :get
+    match '/classic/:report_type', action: :show, method: :get
+
     #must be placed after 'timesheet' resource, to avoid path mismatch for timesheet report
     #both timesheet and new reports share the same path structure
     #path : reports/:report_type
@@ -1679,9 +1684,6 @@ Helpkit::Application.routes.draw do
         end
       end
     end
-
-    #routes for v1 agent and group performance reports
-    match '/:id' , action: :show, method: :get, constraints: { id: /[1-2]+/ }
 
   end
 
