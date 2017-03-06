@@ -7,7 +7,7 @@ module RabbitMq::Subscribers::Tickets::Iris
                              :status, :product_id, :owner_id,
                              :isescalated, :fr_escalated, :spam, :deleted,
                              :long_tc01, :long_tc02, :internal_group_id, :internal_agent_id,
-                             :int_tc03
+                             :association_type
                            ]
 
   def mq_iris_ticket_properties(action)
@@ -45,9 +45,6 @@ module RabbitMq::Subscribers::Tickets::Iris
   
   def iris_valid_changes
     changes = @model_changes.select{|k,v| PROPERTIES_TO_CONSIDER.include?(k) }
-    #Replacing :int_tc03 to association_type
-    association_type_column = Helpdesk::SchemaLessTicket.association_type_column.to_sym
-    changes[:association_type] = changes.delete(association_type_column) if changes.keys.include?(association_type_column)
     changes
   end
 

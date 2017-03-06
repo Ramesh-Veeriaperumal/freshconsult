@@ -6,6 +6,7 @@
 	<h3 class="lead"><%=t("integrations.#{@element_config["element"]}.form.#{@element_config["element"]}_settings")%></h3>
   <%= form_tag("/integrations/sync/crm/update", :method => "post")  do %>
   <%= hidden_field_tag  'state', params[:state] %>
+  <%= hidden_field_tag  'element_configs[objects]', @element_config['objects'] %>
 
   <ul class="nav nav-pills">
     <li class="active">

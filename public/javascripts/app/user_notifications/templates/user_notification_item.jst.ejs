@@ -3,12 +3,14 @@
 <% }else{ %>
 <a class="unread" data-unread-ids="<%= unreadIds %>" href="<%= action_url %>">
 <% } %>
-    <div class="preview_pic circle avatar-text text-center thumb bg-<%= Math.abs(uniqueCodeGenerator(actor_text)) %>" > 
-      <span><%= actor_text[0] %></span>
-      <% if(actor_id>0){ %>
-      <img class="thumb_img thumb" src="/users/<%= actor_id %>/profile_image_no_blank" onerror="jQuery(this).addClass('hide')">
-      <% } %>
-    </div>
+      <div class="preview_pic circle avatar-text text-center thumb bg-<%= Math.abs(uniqueCodeGenerator(actor_text)) %>" > 
+        <span><%= actor_text[0] %></span>
+        <% if(actor_id>0){ %>
+          <img class="thumb_img thumb" src="/users/<%= actor_id %>/profile_image_no_blank" onerror="jQuery(this).addClass('hide')">
+        <% } else { %>
+          <img class="thumb_img thumb" src="/images/misc/profile_blank_thumb.jpg">
+        <% } %>
+      </div>
     <div class="notification-inner">
       <div class="notification-type"><%= notification_type %></div>
       <div class="notification-content"><%= content %></div>

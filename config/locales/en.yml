@@ -1848,6 +1848,7 @@ en:
         internal_group_actions: "Only applicable if the selected group is mapped to the ticket status as an internal group at the time of rule execution."
         internal_agent_actions: "Only applicable if the selected agent is mapped to the internal group at the time of rule execution."
     va_rules:
+      disabled: "To turn on, Please activate your account."
       webhook:
         custom_headers_limit_error: "You cannot set more than %{limit} custom headers"
         custom_headers_pair_mismatch: "Kindly ensure that all headers have values"
@@ -6258,6 +6259,7 @@ en:
       priority: Priority
       status: Status
       no_entry: No Time Entries
+      deleted_customer: Deleted Customer
       max_columns: Cannot add more than 10 columns
       archive_tickets_column_error: Archive tickets will be excluded
       archive_tickets_custom_fields_error: Filtering by custom fields will exclude archive tickets

@@ -74,7 +74,6 @@ USER_FACING_TITLE: FreshDesk
 #            password: <your password>
 #
 
-
 EMAIL: 
 
     # This will be the reply_to address in all outgoing email

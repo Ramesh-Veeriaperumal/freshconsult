@@ -36,6 +36,7 @@ module LinkTicketTests
       # link this to the tracker
       stub_ticket_associates(related_ticket_ids << ticket.display_id, tracker) do
         put :link, {:id => ticket.display_id, :tracker_id => tracker.display_id}
+        ticket.reload
         assert_related_ticket(tracker, ticket)
         assert_tracker(tracker, [ticket.display_id])
       end
