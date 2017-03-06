@@ -97,6 +97,7 @@ class Ember::AttachmentsControllerTest < ActionController::TestCase
 
   def test_create_inline_image_with_invalid_image
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    Helpdesk::Attachment.any_instance.stubs(:valid_image?).returns(false)
     post :create, construct_params({version: 'private'}, inline_attachment_params_hash)
     assert_response 400
     match_json([bad_request_error_pattern(:content, :incorrect_image_dimensions)])
@@ -134,6 +135,14 @@ class Ember::AttachmentsControllerTest < ActionController::TestCase
     assert_response 403
   end
 
+  def test_destroy_attachment_with_shared_attachments
+    ticket = create_ticket
+    create_shared_attachment(ticket)
+    attachment = ticket.attachments_sharable.first
+    delete :destroy, controller_params(version: 'private', id: attachment.id)
+    assert_response 403
+  end
+
   def test_destroy_user_draft_attachment
     attachment = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id)
     delete :destroy, controller_params(version: 'private', id: attachment.id)
@@ -145,5 +154,27 @@ class Ember::AttachmentsControllerTest < ActionController::TestCase
     attachment = create_attachment(attachable_type: 'Helpdesk::Ticket', attachable_id: ticket_id)
     delete :destroy, controller_params(version: 'private', id: attachment.id)
     assert_response 204
+  end
+
+  def test_unlink_attachment
+    @controller.request.env['CONTENT_TYPE'] = 'application/json; charset=UTF-8'
+    ticket = create_ticket
+    create_shared_attachment(ticket)
+    attachment = ticket.attachments_sharable.first
+    shared_attachment = ticket.shared_attachments.first
+    params_hash = { shared_attachment_id: shared_attachment.id }
+    put :unlink, construct_params({ version: 'private', id: attachment.id }, params_hash)
+    ticket.reload
+    refute ticket.shared_attachments.present?
+    assert_response 204
+  end
+
+  def test_unlink_attachment_with_invalid_id
+    @controller.request.env['CONTENT_TYPE'] = 'application/json; charset=UTF-8'
+    ticket_id = create_ticket.id
+    attachment = create_attachment(attachable_type: 'Helpdesk::Ticket', attachable_id: ticket_id)
+    params_hash = { shared_attachment_id: 10_000 }
+    put :unlink, construct_params({ version: 'private', id: attachment.id }, params_hash)
+    assert_response 404
   end
 end

@@ -87,4 +87,28 @@ class AttachmentValidationTest < ActionView::TestCase
     assert attachment_validation.valid?(:create)
     DataTypeValidator.any_instance.unstub(:valid_type?)
   end
+
+  def test_valid_unlink
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    controller_params = { 'shared_attachment_id' => 1 }
+    attachment_validation = AttachmentValidation.new(controller_params, nil)
+    assert attachment_validation.valid?(:unlink)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+  end
+
+  def test_invalid_unlink
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    controller_params = { }
+    attachment_validation = AttachmentValidation.new(controller_params, nil)
+    refute attachment_validation.valid?(:unlink)
+    errors = attachment_validation.errors.full_messages
+    assert errors.include?('Shared attachment missing_field')
+
+    controller_params = { 'shared_attachment_id' => -1 }
+    attachment_validation = AttachmentValidation.new(controller_params, nil)
+    refute attachment_validation.valid?(:unlink)
+    errors = attachment_validation.errors.full_messages
+    assert errors.include?('Shared attachment datatype_mismatch')
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+  end
 end

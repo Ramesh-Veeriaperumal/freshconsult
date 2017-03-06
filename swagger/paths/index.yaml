@@ -108,6 +108,8 @@
 
 /attachments:
   $ref: ./attachments/crud.yaml
+/attachments/{id}/unlink:
+  $ref: ./attachments/unlink.yaml
 
 # Ticket Filters
 /ticket_filters:

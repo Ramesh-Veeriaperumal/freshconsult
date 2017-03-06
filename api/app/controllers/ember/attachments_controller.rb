@@ -7,13 +7,19 @@ module Ember
 
     decorate_views
 
-    skip_before_filter :check_privilege, only: [:destroy]
+    skip_before_filter :check_privilege, only: [:destroy, :unlink]
     before_filter :can_send_user?, only: [:create]
-    before_filter :load_items, :check_destroy_permission, only: [:destroy]
+    before_filter :check_shared, :load_items, :check_destroy_permission, only: [:destroy]
+    before_filter :validate_body_params, :load_shared, :check_unlink_permission, only: [:unlink]
 
     def create
       return unless validate_delegator(@item, user: @user, api_user: api_current_user)
       create_attachment
+    end
+
+    def unlink
+      @item.destroy
+      head 204
     end
 
     def self.wrap_params
@@ -26,8 +32,17 @@ module Ember
         current_account.attachments
       end
 
+      def check_shared
+        access_denied unless @item.shared_attachments.count.zero?
+      end
+
       def load_items
         @items ||= Array.wrap(@item)
+      end
+
+      def load_shared
+        @item = Helpdesk::SharedAttachment.find_by_id(params[cname][:shared_attachment_id], :conditions=>["attachment_id=?", params[:id]])
+        log_and_render_404 unless @item
       end
 
       def validate_params
@@ -65,6 +80,17 @@ module Ember
         else
           render_custom_errors(@item)
         end
+      end
+
+      def check_unlink_permission
+        can_unlink = false
+        shared_attachable_type = @item.shared_attachable_type || nil
+        if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? shared_attachable_type
+          can_unlink = privilege?(:manage_tickets)
+        elsif ['Helpdesk::TicketTemplate'].include? shared_attachable_type
+          can_unlink = template_priv? @item.shared_attachable
+        end
+        access_denied unless can_unlink
       end
 
       def post_destroy_actions(item)
