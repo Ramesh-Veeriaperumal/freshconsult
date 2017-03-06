@@ -2,6 +2,7 @@ class HttpRequestProxyController < ApplicationController
 
   include Integrations::AppsUtil
   include Integrations::Constants
+  include Integrations::Mailchimp::Constant
   include Redis::IntegrationsRedis
 
   skip_before_filter :check_privilege
@@ -63,6 +64,10 @@ class HttpRequestProxyController < ApplicationController
         elsif params[:app_name] == APP_NAMES[:zohocrm]
           authKey = "#{installed_app.configs[:inputs]['api_key']}"
           params[:rest_url] += authKey unless params[:rest_url].include? authKey
+        elsif params[:app_name] == APP_NAMES[:mailchimp].downcase
+          authKey = "#{installed_app.configs[:inputs]['oauth_token']}"
+          params[:domain] = "#{installed_app.configs[:inputs]['api_endpoint']}"
+          params[:rest_url] += "#{MAILCHIMP_URL_SUFFIX}%s" %[authKey] unless params[:rest_url].include? authKey
         elsif params[:app_name] == "jira"
           params[:domain] = installed_app.configs_domain
           params[:password] = installed_app.configsdecrypt_password
