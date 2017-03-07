@@ -7,7 +7,7 @@ class Helpdesk::InlineAttachmentsController < ApplicationController
   skip_before_filter :redirect_to_mobile_url
   skip_before_filter :set_time_zone, :check_day_pass_usage 
   skip_before_filter :set_locale, :force_utf8_params
-  skip_before_filter :ensure_proper_protocol
+  skip_before_filter :ensure_proper_protocol, :ensure_proper_sts_header
   around_filter { |&block| Sharding.run_on_slave(&block) }
   before_filter :redirect_to_referer_host, :if => :global_host?
   before_filter :check_anonymous_user
