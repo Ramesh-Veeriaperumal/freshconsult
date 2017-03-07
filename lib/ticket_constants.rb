@@ -94,11 +94,11 @@ module TicketConstants
 
   DEFAULT_COLUMNS_ORDER = [ :responder_id, :group_id, :created_at, :due_by, :status, :priority,
     :ticket_type, :source, "helpdesk_tags.name", :owner_id,
-    :requester_id, "helpdesk_schema_less_tickets.product_id", "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}" ]
+    :requester_id, "helpdesk_schema_less_tickets.product_id", :association_type ]
   
   ARCHIVE_DEFAULT_COLUMNS_ORDER = [ :responder_id, :group_id, :created_at, :due_by, :status, :priority,
     :ticket_type, :source, "helpdesk_tags.name", "users.customer_id", :owner_id,
-    :requester_id, :product_id, "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}" ]
+    :requester_id, :product_id, :association_type ]
 
   INTERNAL_AGENT_ID = "internal_agent_id"
   ANY_AGENT_ID      = "any_agent_id"
@@ -121,7 +121,7 @@ module TicketConstants
     [ :created_at,          "created_at",       :created_at],
     [ :requester_id,        'requester',        :requester],
     [ "helpdesk_schema_less_tickets.product_id",'products', :dropdown],
-    [ "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}",  'association_type', :dropdown]
+    [ :association_type,    'association_type', :dropdown]
   ]
   ARCHIVE_DEFAULT_COLUMNS =  [
     [ :status,              'status',           :dropdown],
@@ -137,7 +137,7 @@ module TicketConstants
     [ :created_at,          "created_at",       :created_at],
     [ :requester_id,        'requester',        :requester],
     [ :product_id,          'products',         :dropdown],
-    [ "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}",  'association_type', :dropdown]
+    [ :association_type,    'association_type', :dropdown]
   ]
   
   

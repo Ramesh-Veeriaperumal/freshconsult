@@ -1166,7 +1166,7 @@ App.CollaborationUi = (function ($) {
             if(!!collabModel.currentConversation){
                 var convo_data = collabModel.conversationsMap[collabModel.currentConversation.co_id];
                 var chosen_member_id;
-                if(!!convo_data) {
+                if(!!convo_data && convo_data.msgs) {
                     for(var i=0; i<convo_data.msgs.length; i++) {
                         if(convo_data.msgs[i].s_id) {
                             chosen_member_id = convo_data.msgs[i].s_id

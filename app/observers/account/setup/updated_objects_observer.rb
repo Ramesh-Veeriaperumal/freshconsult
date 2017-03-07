@@ -34,6 +34,8 @@ class Account::Setup::UpdatedObjectsObserver < ActiveRecord::Observer
 	end
 
 	def additional_check_for_automation(va_rule)
-		true
+		on_activation_changes = ["active", "updated_at"]
+		va_rule.previous_changes.keys != on_activation_changes
 	end
+
 end

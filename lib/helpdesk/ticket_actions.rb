@@ -284,8 +284,8 @@ module Helpdesk::TicketActions
   end
 
   def full_paginate
-
-    if collab_filter_enabled_for?(filter)
+    
+    if collab_filter_enabled_for?(view_context.current_filter)
       total_entries = params[:total_entries]
       @ticket_count = Collaboration::Ticket.fetch_count
     else

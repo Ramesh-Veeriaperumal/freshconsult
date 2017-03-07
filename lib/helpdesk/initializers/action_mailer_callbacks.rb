@@ -171,7 +171,7 @@ module ActionMailerCallbacks
       category_id = get_category_header(mail)
       return category_id if category_id.present?
       notification_type = is_num?(type) ? type : get_notification_type_id(type)
-      if EmailNotification::CUSTOM_CATEGORY_ID_ENABLED_NOTIFICATIONS.include?(notification_type.to_i)
+      if custom_category_enabled_notifications.include?(notification_type.to_i)
         state = get_subscription
         key = (state == "active" || state == "premium") ? 'paid' : 'free'
         return Helpdesk::Email::OutgoingCategory::CATEGORY_BY_TYPE["#{key}_email_notification".to_sym]
@@ -181,7 +181,7 @@ module ActionMailerCallbacks
     def check_spam_category(mail, type)
       category = nil
       notification_type = is_num?(type) ? type : get_notification_type_id(type) 
-      if account_created_recently? && EmailNotificationConstants::SPAM_FILTERED_NOTIFICATIONS.include?(notification_type)
+      if account_created_recently? && spam_filtered_notifications.include?(notification_type)
         response = FdSpamDetectionService::Service.new(Helpdesk::EMAIL[:outgoing_spam_account], mail.to_s).check_spam
         category = Helpdesk::Email::OutgoingCategory::CATEGORY_BY_TYPE[:spam] if response.spam?
         Rails.logger.info "Spam check response for outgoing email: #{response.spam?}"

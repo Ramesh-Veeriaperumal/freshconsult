@@ -1,5 +1,6 @@
 class Va::Action
   
+  include Va::Action::Restrictions
   include Va::Webhook::Trigger
   include ParserUtil
 
@@ -254,6 +255,10 @@ class Va::Action
     record_action(act_on)
   end
 
+  def contains? action_string
+    action_key.include? action_string
+  end
+  
   private
     def get_group(act_on) # this (g == 0) is kind of hack, same goes for agents also.
       begin
@@ -295,7 +300,7 @@ class Va::Action
       content = act_hash[content_key].to_s
       content = RedCloth.new(content).to_html unless content_key == :email_subject
       Liquid::Template.parse(content).render( 'event_performer' => doer,
-                'ticket' => act_on, 'helpdesk_name' => act_on.account.portal_name, 'comment' => act_on.notes.visible.exclude_source('meta').last)
+                'ticket' => act_on, 'helpdesk_name' => act_on.account.helpdesk_name, 'comment' => act_on.notes.visible.exclude_source('meta').last)
     end
 
     def assign_custom_field act_on, field, value

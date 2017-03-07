@@ -102,8 +102,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   GROUP_COLUMNS = ["group_id", "internal_group_id"]
   SCHEMA_LESS_COLUMNS = [
       "helpdesk_schema_less_tickets.boolean_tc02",
-      "helpdesk_schema_less_tickets.product_id", 
-      "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}"
+      "helpdesk_schema_less_tickets.product_id"
     ]
 
   after_create :create_accesible
@@ -309,7 +308,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     "helpdesk_tickets.id,helpdesk_tickets.subject,helpdesk_tickets.requester_id,helpdesk_tickets.responder_id,
      helpdesk_tickets.status,helpdesk_tickets.priority,helpdesk_tickets.due_by,helpdesk_tickets.display_id,
      helpdesk_tickets.frDueBy,helpdesk_tickets.source,helpdesk_tickets.group_id,helpdesk_tickets.isescalated,
-     helpdesk_tickets.ticket_type,helpdesk_tickets.email_config_id,helpdesk_tickets.owner_id"
+     helpdesk_tickets.ticket_type,helpdesk_tickets.email_config_id,helpdesk_tickets.owner_id,
+     helpdesk_tickets.association_type"
   end
 
   def sql_conditions

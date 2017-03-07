@@ -283,11 +283,11 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       sub = account.subscription
       sub.state="trial"
       result[:status] = "success" if sub.save
+      account.rollback(:spam_blacklist_feature)
       Account.reset_current_account
     end
     $spam_watcher.perform_redis_op("set", "#{params[:account_id]}-", "true")
     remove_member_from_redis_set(SPAM_EMAIL_ACCOUNTS, params[:account_id])
-    remove_member_from_redis_set(BLACKLISTED_SPAM_ACCOUNTS, params[:account_id])
     respond_to do |format|
       format.json do
         render :json => result

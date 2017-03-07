@@ -294,7 +294,7 @@ include Mobile::Actions::Push_Notifier
     def check_sso_params
       time_in_utc = get_time_in_utc
       if ![:name, :email, :hash].all? {|key| params[key].present?}
-        flash[:notice] = t(:'flash.login.jwt_sso.expected_params')
+        flash[:notice] = t(:'flash.login.sso.expected_params')
         redirect_to login_normal_url
       elsif !params[:timestamp].blank? and !params[:timestamp].to_i.between?((time_in_utc - SSO_ALLOWED_IN_SECS),( time_in_utc + SSO_CLOCK_DRIFT ))
         flash[:notice] = t(:'flash.login.sso.invalid_time_entry')

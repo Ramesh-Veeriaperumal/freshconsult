@@ -9,8 +9,8 @@ class Admin::OnboardingController < Admin::AdminController
 
   def update_activation_email
     current_user.email = @user_email_config[:new_email]
+    current_user.keep_user_active = true
     if current_user.save
-      set_current_user_active
       update_account_config  
       add_to_crm
     end
@@ -33,11 +33,6 @@ class Admin::OnboardingController < Admin::AdminController
         old_email: current_user.email,
         new_email: params["admin_email_update"]["email"]
       }
-    end
-
-    def set_current_user_active
-      current_user.reload.active = true
-      current_user.save
     end
 
     def update_account_config 

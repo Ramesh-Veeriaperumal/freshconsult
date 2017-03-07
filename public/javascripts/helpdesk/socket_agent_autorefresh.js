@@ -101,7 +101,9 @@ var refreshCallBack = function (message, hashed_params, current_userid,updated_t
               count++;
             }
             else if (filter_options[i].condition == "created_at"){
-              var created_at = new Date(message['created_at']*1000);
+
+              var created_at = Array.isArray(message['created_at']) ? message['created_at'].pop() : message['created_at']*1000;
+              created_at = new Date(created_at);
               var created_at_filter = filter_options[i].value;
               if (!isNaN(created_at_filter) &&
                 (((Date.now() - created_at) / 60000) < ((filter_options[i].value) - ''))) {

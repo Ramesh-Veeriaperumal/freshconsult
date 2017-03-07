@@ -34,8 +34,8 @@ module Reports::TimesheetReportsHelper
         content ||= (time_entry.time_spent || 0) + (time_entry.timer_running ? (load_time - time_entry.start_time) : 0)
       elsif(item.eql?(:requester_name) || item.eql?(:ticket_type))
         content ||= time_entry.workable.send(item)
-      elsif(item.eql?(:ticket))
-        content ||= time_entry.workable.send(:subject)
+      elsif(item.eql?(:customer_name))
+        content ||= time_entry.customer_name_reports
       else
         content ||= time_entry.send(item)
       end

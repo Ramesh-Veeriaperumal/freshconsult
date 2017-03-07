@@ -226,6 +226,13 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     workable.company ? workable.company.name : workable.requester.name
   end
 
+  def customer_name_reports
+    if workable.owner_id
+      return workable.company ? workable.company.name : I18n.t('helpdesk.time_sheets.deleted_customer')
+    end
+    workable.requester.name
+  end
+
   def priority_name
     workable.priority_name
   end
@@ -244,14 +251,14 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
      self.save
   end
 
-   def as_json(options = {time_format:'h'}, deep=true)
+   def as_json(options = {time_format:'h', is_timesheet: false}, deep=true)
     if deep
       hash = {}
       hash['ticket_id'] = self.workable.display_id
       hash['agent_name'] = self.agent_name
       hash['timespent'] = ( options[:time_format] =='hm' ? get_time_in_hours_and_minutes(self.time_spent.to_i) : sprintf( "%0.02f", self.time_spent.to_f/3600) ) # converting to hours as in UI / Timesheet need it in secs
       hash['agent_email'] = user.email
-      hash['customer_name'] = self.customer_name
+      hash['customer_name'] = options[:is_timesheet]? self.customer_name_reports : self.customer_name
       hash['contact_email'] = workable.requester.email
       options[:except] = [:account_id,:workable_id,:time_spent]
       options[:root] =:time_entry
