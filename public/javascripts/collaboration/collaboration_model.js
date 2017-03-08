@@ -457,7 +457,7 @@ App.CollaborationModel = (function ($) {
         sendMail: function(mail_content) {
             var mail_data = {
                 "toAddress": mail_content.toAddressList,
-                "fromAddress": "support@" + window.location.hostname,
+                "fromAddress": Collab.currentConversation.ticket_config_email,
                 "html_data": mail_content.html_data,
                 "co_id": Collab.currentConversation.co_id
             };

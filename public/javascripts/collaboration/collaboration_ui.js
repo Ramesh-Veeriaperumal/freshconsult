@@ -1300,6 +1300,9 @@ App.CollaborationUi = (function ($) {
             // init UI if model is inited; or else save config
             // on connection init if config is pending; initUi will be called onModelInited
             config = config || Collab.parseJson($("#collab-ui-data").attr("data-ui-payload"));
+            // Conversation names may have special characters. Handling this case separately
+            config.currentConversationName = $("#collab-ui-data").attr("data-convo-name");
+            
             config.expandCollabOnLoad = !!Collab.getUrlParameter("collab");
             config.scrollToMsgId = Collab.getUrlParameter("message");
 
@@ -1324,7 +1327,8 @@ App.CollaborationUi = (function ($) {
                 "is_closed": config.isClosed,
                 "token": config.convoToken,
                 "requester_name": config.requester_name,
-                "requester_email": config.requester_email
+                "requester_email": config.requester_email,
+                "ticket_config_email": config.ticket_config_email
 	        }
 
             /*
@@ -1545,10 +1549,14 @@ App.CollaborationUi = (function ($) {
         },
 
         parseJson: function (data) {
-            if(typeof data === "string") {
-                return JSON.parse(data)
-            } else {
-                return data;
+            try {
+                if(typeof data === "string") {
+                    return JSON.parse(data)
+                } else {
+                    return data;
+                }
+            } catch(e) {
+                console.error("parse error: ", e, "\n\ntried to parse: ", data);
             }
         },
 
@@ -1588,6 +1596,8 @@ App.CollaborationUi = (function ($) {
         onReconnecthandler: function(response) {
             Collab.networkDisconnected = false;
             var config = $("#collab-ui-data").attr("data-ui-payload");
+            // Conversation names may have special characters. Handling this case separately
+            config.currentConversationName = $("#collab-ui-data").attr("data-convo-name");
             if(config) {
                 Collab.initingPostReconnect = true;
                 App.CollaborationUi.initUi(Collab.parseJson(config));
