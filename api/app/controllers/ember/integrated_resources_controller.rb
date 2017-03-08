@@ -27,6 +27,13 @@ class IntegratedResourcesController < ApiApplicationController
       end      
   end
 
+  def destroy
+    resource = { :integrated_resource => { "remote_integratable_id" => @item.remote_integratable_id, :account => @current_account}}
+    Integrations::IntegratedResource.delete_resource_by_remote_integratable_id(resource)
+    head 204
+  end
+
+
 	private
 
 	def load_objects()

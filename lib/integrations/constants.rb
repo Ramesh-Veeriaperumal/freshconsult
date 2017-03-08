@@ -121,4 +121,6 @@ module Integrations::Constants
     "dynamics_v2" => "dynamics_v2"
   }
 
+  EXCLUDE_FROM_APP_CONFIGS_HASH = [:username,:password,:auth_key,:api_key,:app_key,:oauth_token,:refresh_token,:element_token,:auth_token,:session_id,:secret,:cti_ctd_api].freeze
+
 end
