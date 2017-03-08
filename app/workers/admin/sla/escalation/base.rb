@@ -2,7 +2,7 @@ module Admin::Sla::Escalation
   class Base < BaseWorker
 
     
-    sidekiq_options :queue => :sla, :retry => 1, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :sla, :retry => 0, :backtrace => true, :failures => :exhausted
 
     def perform
       total_tickets = 0
