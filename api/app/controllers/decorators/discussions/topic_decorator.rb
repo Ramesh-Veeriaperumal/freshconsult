@@ -31,5 +31,7 @@ class Discussions::TopicDecorator < ApiDecorator
 	  }
   end
 
-  alias_method :to_search_hash, :to_hash
+  def to_search_hash
+  	to_hash.merge({replied_by: replied_by})
+  end
 end

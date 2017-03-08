@@ -4,6 +4,8 @@ module Ember
 
       def results
         if params[:context] == 'spotlight'
+          @search_sort = params[:search_sort].presence
+          @sort_direction = 'desc'
           @klasses = %w(User company)
           @search_context = :agent_spotlight_customer
           @items = esv2_query_results(esv2_agent_models)

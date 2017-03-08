@@ -7,6 +7,8 @@ module Ember
         @recent_tracker = params[:context] == 'recent_tracker'
 
         if params[:context] == 'spotlight'
+          @search_sort = params[:search_sort].presence
+          @sort_direction = 'desc'
           if filter_params?
             @filter_params = params[:filter_params]
             @search_context = :filteredTicketSearch

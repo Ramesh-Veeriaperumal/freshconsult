@@ -35,5 +35,18 @@ class CompanyDecorator < ApiDecorator
     }
   end
 
-  alias_method :to_search_hash, :to_hash
+  def to_search_hash
+    user_count = users.count
+    {
+      id: id,
+      name: name,
+      description: description,
+      note: note,
+      domains: domains,
+      created_at: created_at.try(:utc),
+      updated_at: updated_at.try(:utc),
+      custom_fields: custom_fields,
+      user_count: user_count
+    }
+  end
 end

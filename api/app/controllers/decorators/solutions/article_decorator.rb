@@ -1,6 +1,6 @@
 class Solutions::ArticleDecorator < ApiDecorator
   delegate :title, :description, :desc_un_html, :user_id, :status, :seo_data,
-           :parent, :parent_id, :draft, :attachments, to: :record
+           :parent, :parent_id, :draft, :attachments, :modified_at, :modified_by, to: :record
 
   def tags
     record.tags.map(&:name)
@@ -31,5 +31,20 @@ class Solutions::ArticleDecorator < ApiDecorator
 		}
   end
 
-  alias_method :to_search_hash, :to_hash
+  def to_search_hash
+  	{
+			id: parent_id,
+			title: title,
+			description_text: desc_un_html,
+			status: status,
+			agent_id: user_id,
+			type: parent.art_type,
+			category_id: parent.solution_category_meta.id,
+			folder_id: parent.solution_folder_meta.id,
+			created_at: created_at,
+			updated_at: updated_at,
+			modified_at: modified_at,
+			modified_by: modified_by
+		}
+  end
 end
