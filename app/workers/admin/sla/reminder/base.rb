@@ -1,7 +1,7 @@
 module Admin::Sla::Reminder
   class Base < BaseWorker
 
-    sidekiq_options :queue => :sla_reminders, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :sla_reminders, :retry => 1, :backtrace => true, :failures => :exhausted
 
     def perform
 
