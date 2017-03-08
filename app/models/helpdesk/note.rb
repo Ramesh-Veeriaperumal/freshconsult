@@ -23,7 +23,7 @@ class Helpdesk::Note < ActiveRecord::Base
   #zero_downtime_migration_methods :methods => {:remove_columns => ["body", "body_html"] } 
   
   attr_accessor :nscname, :disable_observer, :send_survey, :include_surveymonkey_link, :quoted_text, 
-                :skip_notification
+                :skip_notification, :disable_observer_rule
   attr_protected :attachments, :notable_id
 
   has_many :shared_attachments,
