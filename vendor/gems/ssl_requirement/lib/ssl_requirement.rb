@@ -90,9 +90,9 @@ module SslRequirement
 
     def ensure_proper_sts_header
       if main_portal_with_ssl? || cnamed_portal_with_ssl?
-         response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+         response.headers["Strict-Transport-Security"] = "max-age=31536000;"
       else
-         response.headers["Strict-Transport-Security"] = "max-age=0; includeSubDomains"
+         response.headers["Strict-Transport-Security"] = "max-age=0;"
       end
     end
 
