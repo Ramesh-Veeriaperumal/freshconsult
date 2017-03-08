@@ -131,7 +131,7 @@ module TicketConstants
     [ :source,              'source',           :dropdown],
     [ :priority,            'priority',         :dropdown],
     [ :due_by,              'due_by',           :due_by],
-    [ "helpdesk_tags.name", "tags",             :dropdown],
+    [ "helpdesk_tags.name", "tags",             :tags],
     [ "users.customer_id",  "customers",        :customer],
     [ :owner_id,            "customers",        :customer],
     [ :created_at,          "created_at",       :created_at],
