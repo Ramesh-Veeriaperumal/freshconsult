@@ -12,9 +12,9 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
   def update_multiple             
     failed_tickets = []
     
-    @items = sort_items(@items, params[nscname]["group_id"]) if params[nscname].present?
+    @items = sort_items(@items, @field_params["group_id"]) if @field_params.present?
     @items.each do |ticket|
-      params[nscname].each do |key, value|
+      @field_params.each do |key, value|
         #handling unassign for agent and group. from ui, -1 will be sent for unassigned case
         value = nil if value == '-1'
         ticket.send("#{key}=", value) if (value.nil? || value.present?) and ticket.respond_to?("#{key}=")
@@ -111,10 +111,13 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
     end
 
     def validate_params
+      #Removing invisible ticket fields
+      delete_invisible_fields
+
       #Removing invalid ticket types
       ticket_types = Account.current.ticket_types_from_cache.collect(&:value)
-      if params[:helpdesk_ticket] and !ticket_types.include?(params[:helpdesk_ticket][:ticket_type])
-        params[:helpdesk_ticket].delete(:ticket_type)
+      if @field_params and !ticket_types.include?(@field_params[:ticket_type])
+        @field_params.delete(:ticket_type)
       end
     end
 
@@ -125,7 +128,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
     end
 
     def update_multiple_background
-      args = { :action => action_name, :helpdesk_ticket => params[:helpdesk_ticket] }
+      args = { :action => action_name, :helpdesk_ticket => @field_params }
       args.merge!(params_for_bulk_action)
       args[:tags] = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
       ::Tickets::BulkTicketActions.perform_async(args) if args[:helpdesk_ticket].present? or args[:tags].present?
@@ -136,5 +139,26 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
           redirect_to helpdesk_tickets_path
         }
       end
+    end
+
+    def delete_invisible_fields
+      @field_params = params[:helpdesk_ticket] ? params[:helpdesk_ticket].dup : params[:helpdesk_ticket]
+      if @field_params.present? and current_account.bulk_security_enabled?
+        @field_params.keys.each do |key|
+          if key == "custom_field"
+            @field_params[key].delete_if {|key, value| !visible_custom_fields.include?(key)}
+          else
+            @field_params.delete(key) unless visible_default_fields.include?(key)
+          end
+        end
+      end
+    end
+
+    def visible_default_fields
+      @default ||= TicketConstants::SHARED_DEFAULT_FIELDS_ORDER.values
+    end
+
+    def visible_custom_fields
+      @custom ||= current_account.ticket_fields_with_nested_fields.nested_and_dropdown_fields.pluck(:name)
     end
 end

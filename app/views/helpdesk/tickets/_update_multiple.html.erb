@@ -13,7 +13,7 @@
     <% helpdesk_submit_options = []
       ticket_fields = current_portal.ticket_fields
       if current_account.shared_ownership_enabled?
-        default_field_order = TicketConstants::SHARED_DEFAULT_FIELDS_ORDER
+        default_field_order = TicketConstants::SHARED_DEFAULT_FIELDS_ORDER.keys
         default_fields  = ticket_fields.select{|tf| default_field_order.include?(tf.field_type)}
         other_fields    = ticket_fields - default_fields
         default_fields.sort! {|x,y| default_field_order.index(x.field_type).to_i <=> default_field_order.index(y.field_type).to_i }
