@@ -1327,8 +1327,7 @@ App.CollaborationUi = (function ($) {
                 "is_closed": config.isClosed,
                 "token": config.convoToken,
                 "requester_name": config.requester_name,
-                "requester_email": config.requester_email,
-                "ticket_config_email": config.ticket_config_email
+                "requester_email": config.requester_email
 	        }
 
             /*
