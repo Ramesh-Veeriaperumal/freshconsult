@@ -147,4 +147,9 @@ class Account < ActiveRecord::Base
   def selectable_features_list
     SELECTABLE_FEATURES_DATA || {}
   end
+
+  def one_hop_enabled?
+    features?(:inline_images_with_one_hop)
+  end
+
 end
