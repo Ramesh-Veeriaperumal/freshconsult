@@ -350,12 +350,17 @@ module Reports::TimesheetReport
         ticket_json[:group_name] = time_entry.workable.group.name if time_entry.workable.group.present?
         result_hash.merge!(ticket_json)
         if Account.current.products.any?
+          product_hash = nil
           if time_entry.workable.respond_to?(:schema_less_ticket)
             product_hash = time_entry.workable.schema_less_ticket.product.as_json
-            result_hash.merge!(product_hash) if product_hash.present?
           else
             product_hash = time_entry.workable.product.as_json
-            result_hash.merge!(product_hash) if product_hash.present?
+          end
+
+          if product_hash.present?
+            result_hash.merge!(product_hash)
+          else
+            result_hash["product_id"]=nil;
           end
         end
         result_arr.push(result_hash)
