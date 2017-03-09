@@ -16,4 +16,8 @@ module Admin::Marketplace::CommonHelper
       url_params[:category_id] = params['category_id'] if params['category_id']
     end.to_query
   end
+
+  def display_name
+    URI.decode(params['display_name']) if params['display_name']
+  end
 end

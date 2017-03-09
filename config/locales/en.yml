@@ -5065,7 +5065,7 @@ en:
     custom_mailbox: "Custom mail servers"
     ip_restriction: "Secure IP restriction"
     ticket_dispatch_automation: "Ticket dispatch automation"
-    app_gallery: "Access to App gallery"
+    app_gallery: "Access to Marketplace"
     basic_phone: "Basic phone and social channels"
     time_event_automation: "Time/event based automations"
     custom_ticket_fields_and_views: "Custom ticket fields/views"
@@ -7212,7 +7212,7 @@ en:
     reauthorize: "Reauthorize"
     app: app
     custom_app: custom app
-    app_gallery: App Gallery
+    app_gallery: Marketplace
     custom_app_gallery: Custom App Gallery
     app_description: "Apps allow you to integrate with other applications to make your Freshdesk experience more awesome. They also enable you to customize and personalize your Freshdesk portal."
     apps: Apps
@@ -7259,7 +7259,7 @@ en:
     no_apps_in_category: No Apps available in this category
     related_categories: "Apps from Related Categories:"
     similar_apps: "Similar Apps:"
-    no_connection: "The app gallery is currently unavailable. Please try again later. Please contact us, if the issue persists."
+    no_connection: "Marketplace is currently unavailable. Please try again later. Please contact us, if the issue persists."
     apps_unavailable: "Certain apps could not be rendered. Please try again later. Please contact us if the issue persists."
     installed_mkp_apps_unavailable: "The listing of installed apps is currently unavailable. Please try again later. Please contact us if the issue persists."
     api_error: "We could not process your request. Please try after sometime."
@@ -7274,6 +7274,7 @@ en:
     buy_app: Buy App
     paid_apps_trial_info: "Paid Apps are not available for trial at this point of time. Please contact <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> for further information."
     app_price: %{price} / %{addon_type} / month
+    paid_app: PAID
     no_payment_info: We do not have your payment details on file. Please update them to proceed further. <br>
     update_payment_info: Update payment info
     payment_trial_info: This is a paid app with a %{trial_period} day trial period. Once the trial period is over, you will be charged %{price} / %{addon_type} / month. Press Ok to install the app. <br>  %{payment_ok_btn}

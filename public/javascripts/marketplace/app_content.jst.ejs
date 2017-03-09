@@ -9,10 +9,15 @@
           <div class="app-name-box pull-left">
             <p><%= extensions[i].display_name %></p>
           </div>
+          <div class="app-pricing-box pull-left">
+            <% if (extensions[i].pricing) { %>
+              <p><%= translate.get('paid_app') %> </p>
+            <% } %>
+          </div>
         </div>   
         <figcaption class="caption slide-caption">
-          <%- extensions[i].description.substr(0, 100) %> 
-          <% if (extensions[i].description.length > 100) { %> 
+          <%- extensions[i].overview.substr(0, 100) %> 
+          <% if (extensions[i].overview.length > 100) { %> 
             ... <span class="view-more"><%= translate.get('view_more') %></span>
           <% } %>
         </figcaption> 

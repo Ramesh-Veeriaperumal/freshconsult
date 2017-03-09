@@ -168,4 +168,8 @@ module Admin::Marketplace::ExtensionsHelper
       app_gallery_params[:sort_by] = Marketplace::Constants::EXTENSION_SORT_TYPES
     end.to_query                                      
   end
+
+  def pricing_state(extension)
+    true if extension['pricing'] == "true"
+  end
 end
