@@ -341,7 +341,7 @@ module Reports::TimesheetReport
     result_time_sheets = {}
     str_header_keys_time_entry = @headers.map(&:to_s)
     str_header_keys_time_entry +=  ["timespent","billable","user_id","ticket_id","customer_id","product_id","group_id","display_id","subject","executed_at"]
-    options = {time_format:'hm' , is_timesheet: true}
+    options = {time_format:  Helpdesk::TimeSheet::TIME_FORMAT_HOURMINUTES , is_reports: true}
     @time_sheets.each do | group_by_key, group_by_value|
       result_arr = []
       group_by_value.each do |time_entry|
