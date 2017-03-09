@@ -102,6 +102,7 @@ class SendgridDomainUpdates < BaseWorker
         if signup_params["api_response"] && signup_params["api_response"]["status"] == 5
           spam_score = 5
           reason = "Outgoing will be blocked for Account ID: #{account.id} , Reason: #{signup_params["api_response"]["reason"]}"
+          reason << " IP: #{signup_params["account_details"]["source_ip"]}, Email: #{signup_params["account_details"]["email"]}, Spam Status: 5"
         elsif((account.helpdesk_name =~ spam_email_apprx_match_regex || account.full_domain =~ spam_email_apprx_match_regex) && Freemail.free?(account.admin_email)) 
           spam_score = 4 
           stop_sending = false
@@ -110,6 +111,7 @@ class SendgridDomainUpdates < BaseWorker
           spam_score = 4
           stop_sending = false
           reason = "Account credetials looks suspicious for Account ID: #{account.id} , Reason: #{signup_params["api_response"]["reason"]}"
+          reason << " IP: #{signup_params["account_details"]["source_ip"]}, Email: #{signup_params["account_details"]["email"]}, Spam Status: 4"
         elsif signup_params["api_response"] && signup_params["api_response"]["status"]
           spam_score = signup_params["api_response"]["status"] 
         else 

@@ -21,8 +21,7 @@ module Email::Antispam
     	  elsif !@args["account_details"]["email"].present? 
     	  	@api_response["error_message"] = "Ehawk Email is not been provided"
     	  else
-    		  @api_response = get_response account_id
-    		  check_status if @api_response["error_message"].empty?
+    		  get_response account_id
     		end
       rescue => e
         Rails.logger.info "Error occured in Ehawk Email Verifier #{e.class} :: #{e.message} :: #{e.backtrace}"
@@ -33,18 +32,42 @@ module Email::Antispam
     private
 
   	def get_response account_id
+      return if whitelisted_credentials?
+      return if blacklisted_credentials?
   		@parameters = construct_params
       begin
         Timeout.timeout(60) do 
           response = HTTParty.send('post', EhawkConfig::URL, :body => @parameters)
-          Rails.logger.info "Response from Ehawk for email #{@parameters[:email]}, account_id #{account_id} :#{response.body}"
-          @final_response = parse_response response.body
+          Rails.logger.info "Response from Ehawk for email #{@parameters[:email]}, account_id #{account_id} : #{response.body}"
+          @api_response = parse_response response.body
         end
       rescue Timeout::Error => e
         Rails.logger.info  "Timeout Error in Ehawk api for parameters #{@parameters.inspect} : #{e.message} - #{e.backtrace}"
       end
-  		return @final_response
+  		check_status if @api_response["error_message"].empty?
   	end
+
+       def whitelisted_credentials?
+      email = get_valid_email(@args["account_details"]["email"])
+      if ismember?("EHAWK_WHITELISTED_IP",@args["account_details"]["source_ip"]) || ismember?("EHAWK_WHITELISTED_EMAIL",email)
+        @api_response["status"] = -2
+        @api_response["reason"] = "Ip or Email is whitelised for signup"
+        Rails.logger.info "Ip or Email is whitelised for Ehawk api, Ip : #{@args["account_details"]["source_ip"]}  Email : #{@args["account_details"]["email"]}"
+        return true
+      end
+      false
+    end
+
+    def blacklisted_credentials?
+      email = get_valid_email(@args["account_details"]["email"])
+      if ismember?("EHAWK_BLACKLISTED_IP",@args["account_details"]["source_ip"]) || ismember?("EHAWK_BLACKLISTED_EMAIL",email)
+        @api_response["status"] = 5
+        @api_response["reason"] = "Ip or Email is Blacklisted for signup"
+        Rails.logger.info "Ip or Email is blacklisted for Ehawk api, Ip : #{@args["account_details"]["source_ip"]}  Email : #{@args["account_details"]["email"]}"
+        return true
+      end
+      false
+    end
 
     def check_status
       @api_response["status"] = 0   # no_risk = 0, some_risk = 1, medium_risk = 2, high_risk = 3, very_high = 4, spam = 5
@@ -109,11 +132,11 @@ module Email::Antispam
   	    response["country"] = parsed_data["details"]["ip"]["country"]
   	    response["timezone"] = parsed_data["details"]["ip"]["timezone"]
   	    response["ip_details"] = parsed_data["details"]["ip"]["score_details"].join(",") if parsed_data["details"]["ip"]["score_details"].present?
-  	    response["email_details"] = parsed_data["details"]["email"]["score_details"].join(",") if parsed_data["details"]["email"].present?
-  	    response["activity_details"] = parsed_data["details"]["activity"]["score_details"].join(",") if parsed_data["details"]["activity"].present?
-  	    response["community_details"] = parsed_data["details"]["community"]["score_details"].join(",") if parsed_data["details"]["community"].present?
-        response["geolocation_details"] = parsed_data["details"]["geo"]["score_details"].join(",") if parsed_data["details"]["geo"].present?
-  	  end
+  	    response["email_details"] = parsed_data["details"]["email"]["score_details"].join(",") if parsed_data["details"]["email"].present? && parsed_data["details"]["email"]["score_details"].present?
+        response["activity_details"] = parsed_data["details"]["activity"]["score_details"].join(",") if parsed_data["details"]["activity"].present? && parsed_data["details"]["activity"]["score_details"].present?
+        response["community_details"] = parsed_data["details"]["community"]["score_details"].join(",") if parsed_data["details"]["community"].present? && parsed_data["details"]["community"]["score_details"].present?
+        response["geolocation_details"] = parsed_data["details"]["geo"]["score_details"].join(",") if parsed_data["details"]["geo"].present? && parsed_data["details"]["geo"]["score_details"].present?
+      end
   	  return response
     end
 
