@@ -68,7 +68,7 @@ module TicketConcern
     end
 
     def verify_object_state
-      action_scopes = ApiTicketConstants::SCOPE_BASED_ON_ACTION[action_name] || {}
+      action_scopes = ApiTicketConstants::SCOPE_BASED_ON_ACTION[action_name] || ApiTicketConstants::CONDITIONS_FOR_TICKET_ACTIONS
       action_scopes.each_pair do |scope_attribute, value|
         item_value = @item.send(scope_attribute)
         next if item_value == value

@@ -1934,7 +1934,7 @@
         }
       }
     },
-    "/attachments/{id}/unlink_shared": {
+    "/attachments/{id}/unlink": {
       "put": {
         "tags": [
           "attachment"
@@ -3466,7 +3466,7 @@
                         "type": "number"
                       }
                     },
-                    "next_level": {
+                    "next_level_id": {
                       "type": "object"
                     },
                     "abilities": {
