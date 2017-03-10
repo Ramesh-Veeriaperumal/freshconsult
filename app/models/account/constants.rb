@@ -170,7 +170,7 @@ class Account < ActiveRecord::Base
     :freshfone_new_notifications => false, :freshfone_onboarding => false, :gamification_perf => false,
     :gamification_quest_perf => false, :lambda_exchange => false, :link_tickets => false,
     :list_page_new_cluster => false, :meta_read => false, :most_viewed_articles => false,
-    :multifile_attachments => false, :new_footer_feedback_box => false, :new_leaderboard => false,
+    :multifile_attachments => true, :new_footer_feedback_box => false, :new_leaderboard => false,
     :parent_child_tickets => false, :periodic_login_feature => false, :restricted_helpdesk => false,
     :round_robin_capping => false, :sidekiq_dispatchr_feature => false,
     :solutions_meta_read => false, :supervisor_dashboard => false, :support_new_ticket_cache => false,
