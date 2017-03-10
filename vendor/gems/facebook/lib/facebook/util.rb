@@ -2,7 +2,6 @@ module Facebook
   module Util
 
     include Facebook::Constants
-    include CloudFilesHelper
 
     def truncate_subject(subject, count)
       (subject.length > count) ? "#{subject[0..(count - 1)]}..." : subject
@@ -118,7 +117,7 @@ module Facebook
                  :height => "300px" }
               else
                 url = (attachment[:video_data].present?) ? attachment[:video_data][:url] : attachment[:file_url]
-                content_objects << get_options(url)
+                content_objects << get_options(url, attachment)
               end
             end
           end
@@ -168,9 +167,9 @@ module Facebook
       end
     end
 
-    def get_options(url)
+    def get_options(url, attachment_params = {})
       file = open(url)
-      file_name = url.split(URL_DELIMITER).first[url.rindex(URL_PATH_DELIMITER)+1, url.length]
+      file_name = attachment_params[:name] || url.split(URL_DELIMITER).first[url.rindex(URL_PATH_DELIMITER)+1, url.length]
       content_type = file_name.split(FILENAME_DELIMITER).last
       {
         :file_content => file,
@@ -179,6 +178,12 @@ module Facebook
         :content_size => file.size,
         :resource     => file
       }
+    end
+
+    def build_normal_attachments model, attachments
+      (attachments || []).each do |attach|
+        model.attachments.build({:content => attach[:resource], :description => attach[:description], :account_id => model.account_id, :content_file_name => attach[:filename]})
+      end
     end
 
     def create_attachment(item, i, options)
