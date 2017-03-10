@@ -6,7 +6,7 @@ module ApiConstants
     page: 1
   }.freeze
   ORDER_TYPE = %w(asc desc).freeze
-  
+
   # https://github.com/mislav/will_paginate/blob/master/lib/will_paginate/page_number.rb
   PAGE_MAX = WillPaginate::PageNumber::BIGINT
 
@@ -34,7 +34,8 @@ module ApiConstants
                        DraftConstants::LOAD_OBJECT_EXCEPT +
                        SubscriptionConstants::LOAD_OBJECT_EXCEPT +
                        SpotlightConstants::LOAD_OBJECT_EXCEPT +
-                       AutocompleteConstants::LOAD_OBJECT_EXCEPT
+                       AutocompleteConstants::LOAD_OBJECT_EXCEPT +
+                       AttachmentConstants::LOAD_OBJECT_EXCEPT
 
   NO_CONTENT_TYPE_REQUIRED = ApiTicketConstants::NO_CONTENT_TYPE_REQUIRED +
                              ContactConstants::NO_CONTENT_TYPE_REQUIRED +
@@ -67,7 +68,7 @@ module ApiConstants
                         ContactConstants::BULK_ACTION_METHODS +
                         SubscriptionConstants::BULK_ACTION_METHODS
   BULK_ACTION_ASYNC_METHODS = ApiTicketConstants::BULK_ACTION_ASYNC_METHODS
-  
+
   TWITTER_REPLY_TYPES = %w(mention dm).freeze
   TWEET_MAX_LENGTH = 140
   TWITTER_DM_MAX_LENGTH = 10000

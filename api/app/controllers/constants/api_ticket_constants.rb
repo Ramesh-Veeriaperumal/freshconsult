@@ -37,10 +37,13 @@ module ApiTicketConstants
   PIPE_UPDATE_FIELDS = UPDATE_FIELDS | %w( pending_since created_at updated_at )
   
   SCOPE_BASED_ON_ACTION = {
-    'update'  => { deleted: false, spam: false },
     'restore' => { deleted: true, spam: false },
-    'destroy' => { deleted: false, spam: false }
+    'unspam' => { deleted: false, spam: true },
+    'show' => {},
+    'latest_note' => {}
   }.freeze
+
+  CONDITIONS_FOR_TICKET_ACTIONS = { deleted: false, spam: false }.freeze
 
   # all_tickets is not included because it is the default filter applied.
   # monitored_by is renamed as 'watching'

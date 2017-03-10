@@ -1,5 +1,7 @@
 class AgentDecorator < ApiDecorator
 
+  include Gamification::GamificationUtil
+
   def initialize(record, options)
     super(record)
     @agent_groups = options[:agent_groups]
@@ -26,15 +28,7 @@ class AgentDecorator < ApiDecorator
   end
 
   def to_full_hash
-    agent_hash.merge({
-      last_active_at:       record.last_active_at.try(:utc),
-      points:               record.points,
-      scoreboard_level_id:  record.scoreboard_level_id,
-      assumable_agents:     record.assumable_agents.map(&:id),
-      next_level:           record.next_level,
-      abilities:            record.user.abilities,
-      preferences:          record.preferences
-    })
+    [agent_hash, additional_agent_info, gamification_options].inject(&:merge)
   end
 
   def to_restricted_hash
@@ -62,4 +56,24 @@ class AgentDecorator < ApiDecorator
       record.agent_groups.map(&:group_id)
     end
   end
+
+  private
+
+    def additional_agent_info
+      {
+        last_active_at:       record.last_active_at.try(:utc),
+        assumable_agents:     record.assumable_agents.map(&:id),
+        abilities:            record.user.abilities,
+        preferences:          record.preferences
+      }
+    end
+
+    def gamification_options
+      return {} unless gamification_feature?(Account.current)
+      {
+        points:               record.points,
+        scoreboard_level_id:  record.scoreboard_level_id,
+        next_level_id:        record.next_level.try(:id)
+      }
+    end
 end

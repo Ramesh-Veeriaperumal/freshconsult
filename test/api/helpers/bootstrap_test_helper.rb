@@ -9,15 +9,20 @@ module BootstrapTestHelper
   end
 
   def agent_info_pattern(agent)
-    private_api_agent_pattern({}, agent).merge({
+    ret_hash = private_api_agent_pattern({}, agent).merge({
       last_active_at: agent.last_active_at.try(:utc).try(:iso8601),
-      points: agent.points,
-      scoreboard_level_id: agent.scoreboard_level_id,
-      assumable_agents: agent.assumable_agents.map(&:id),
-      next_level: agent.next_level,
       abilities: agent.user.abilities,
+      assumable_agents: agent.assumable_agents.map(&:id),
       preferences: agent.preferences
     })
+    if Account.current.gamification_enabled? && Account.current.gamification_enable_enabled?
+      ret_hash.merge!({
+        points: agent.points,
+        scoreboard_level_id: agent.scoreboard_level_id,
+        next_level_id: agent.next_level.try(:id)
+      })
+    end
+    ret_hash
   end
 
   def account_info_pattern(account)

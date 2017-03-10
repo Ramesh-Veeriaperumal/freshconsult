@@ -58,7 +58,7 @@ class AgentGroup < ActiveRecord::Base
   end
 
   def clear_agent_groups_cache
-    MemcacheKeys.memcache_delete(ACCOUNT_AGENT_GROUPS % { account_id: Account.current.id })
+    MemcacheKeys.delete_from_cache(ACCOUNT_AGENT_GROUPS % { account_id: Account.current.id })
   end
 
   private

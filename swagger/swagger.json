@@ -1934,6 +1934,55 @@
         }
       }
     },
+    "/attachments/{id}/unlink": {
+      "put": {
+        "tags": [
+          "attachment"
+        ],
+        "summary": "Unlink Shared Attachment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "description": "ID of attachment",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "shared_attachment_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "ID of the shared attachment"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Attachment not found"
+          }
+        }
+      }
+    },
     "/ticket_filters": {
       "post": {
         "tags": [
@@ -3417,7 +3466,7 @@
                         "type": "number"
                       }
                     },
-                    "next_level": {
+                    "next_level_id": {
                       "type": "object"
                     },
                     "abilities": {

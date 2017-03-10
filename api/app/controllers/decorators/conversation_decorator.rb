@@ -93,7 +93,9 @@ class ConversationDecorator < ApiDecorator
   end
 
   def attachments_hash
-    (attachments | attachments_sharable).map { |a| AttachmentDecorator.new(a).to_hash }
+    (attachments | attachments_sharable).map do |a|
+      AttachmentDecorator.new(a, shared_attachable_id: id).to_hash
+    end
   end
 
   def cloud_files_hash
