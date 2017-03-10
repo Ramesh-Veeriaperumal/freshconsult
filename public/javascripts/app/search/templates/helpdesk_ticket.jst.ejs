@@ -1,5 +1,10 @@
 <li id="<%= id %>-tkt" rel="searched-tickets" data-id="<%= id %>">
 	<div class="search-list-wrap">
+		<% if (App.AdvancedSearch.has_bulk_action_privilege && App.AdvancedSearch.is_advanced_search_bulk_actions_feature_enabled && SEARCH_RESULTS_PAGE.is_tickets_page) { %>
+			<div class="selection pull-left tooltip" data-placement="right" data-original-title="" twipsy-content-set="true">
+				<input type="checkbox" name="ids[]" value="<%= ticket_display_id %>" data-ticket-status="<%= ticket_status_id %>">
+			</div>
+		<% } %>
 		<div class="avatar avatar-small pull-left">
 			<img alt="" onerror="imgerror(this)" size_type="thumb" src="<%= avatar_url %>">
 		</div> 

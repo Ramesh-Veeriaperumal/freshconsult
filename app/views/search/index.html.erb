@@ -1,5 +1,8 @@
+<div class="loading-box" id="loading-box" style="display: none"> 
+	<div class="reports-loading sloading loading-small loading-left repo generate-hd-reports">Searching</div> 
+</div>
 <% content_for :layoutType do %>search-page<% end %>
-<div id="sticky_header" class="search-sticky" rel="sticky" data-scroll-top="true" data-sticky-bottom="true">
+<div id="sticky_header" class="search-sticky" rel="sticky" data-scroll-top="true">
 	<%= form_tag("/search/#{current_filter}", {:method => :get, :class => "search-form"}) do %>
 		<span class="search-dark"></span>
 		<input class="search-input lead" value="<%= @search_key %>" 
@@ -15,10 +18,41 @@
 					<%= search_filter_tabs %>
 				</ul>
 			</div>
+			<div class="clear"></div>
 		</div>
+		<% if current_filter.eql?('tickets') && @search_results.present? %>
+			<% if current_account.features?(:advanced_search) %>
+				<div class="row-fluid search-controls">
+					<!-- Button for pane for filtered search for tickets -->
+						
+						<div class="search-filter-pane">
+							<div class="edit-filter span1">
+								<button class="btn btn-primary" id="metric-edit" data-action="open-filter-menu">
+									<%=t('helpdesk_search.edit_filter') %>
+								</button> 
+							</div>
+							<div class="filter-type span8">
+								<ul id="filter_text"></ul>
+							</div>
+						</div>
+						<div class="bulk-action-pane hide">
+							<div class="edit-filter span2">	
+								<a class="btn btn-cancel" href="/helpdesk/tickets/update_multiple_tickets?term=<%= @search_key %>" id="bulk_actions_btn" data-target="#bulk" rel="freshdialog" data-width="709px" title="Bulk Actions" 
+								 data-close-on-submit="true" data-submit-label="Update" data-submit-loading="Updating..." data-close-label="Cancel">Bulk Actions</a> 
+							</div>
+						</div>
+						<div class="clear"></div>
+				</div>
+			<% end %>
+		<% end %>
 	</div>
 </div>
 <% unless @search_results.blank? %>
+	<!-- Pane for filtered search for tickets -->
+	<% if current_filter.eql?('tickets') %>
+		<%= render :partial => '/search/filter_pane' %>
+	<% end %>
+
 	<div class="result-wrapper" id="result-wrapper">
 		<%= render :partial => '/search/result_wrapper' %>
 	</div>
@@ -32,14 +66,15 @@
 
 <script type="text/javascript">
 jQuery('body').one('assetLoaded.fjax', function() {
-	window.SEARCH_RESULTS_PAGE = {
+	App.AdvancedSearch = {};
+	SEARCH_RESULTS_PAGE = {
 		data : <%= @result_json.html_safe %>,
 		initializeSearchPageDefaults : function(){
 			window['search_page'] = new window.SearchResults();
 			window['search_page'].asyncRender();
 		}
 	}
-	window.SEARCH_RESULT_LANG = {
+	SEARCH_RESULT_LANG = {
 								agent : "<%= t('search.agent') %>",
 								status: "<%= t('search.status') %>",
 								by	: "<%= t('search.by') %>",
@@ -48,8 +83,15 @@ jQuery('body').one('assetLoaded.fjax', function() {
 								priority: "<%= t('filter_options.priority') %>:",
 								group: "<%= t('Group') %>:"
 							}
-	
+	SEARCH_RESULTS_PAGE.is_tickets_page = <%= current_filter.eql?('tickets') %>
+	App.AdvancedSearch.time_zone = '<%= @account_time_zone %>'; 
+	App.AdvancedSearch.is_adv_search_feature_enabled = <%= current_account.features_included?(:advanced_search) %>;
+	App.AdvancedSearch.is_advanced_search_bulk_actions_feature_enabled = <%= current_account.features_included?(:advanced_search_bulk_actions) %>;
+	App.AdvancedSearch.has_bulk_action_privilege = <%= privilege?(:edit_ticket_properties) || privilege?(:reply_ticket) %>
 	SEARCH_RESULTS_PAGE.initializeSearchPageDefaults();
-
+	<% if current_filter.eql?('tickets') %>
+		App.FilterOps.Filters.locals.search_fields_hash = <%= @filter_fields.to_json.html_safe %>;
+		App.FilterOps.Filters.bindSearchFilterEvents(window['search_page']);
+	<% end %>
 });
 </script>

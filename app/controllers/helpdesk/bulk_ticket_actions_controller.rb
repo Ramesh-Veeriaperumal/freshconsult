@@ -25,7 +25,11 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
     flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/bulk_actions_notice', 
                                       :locals => { :failed_tickets => failed_tickets, :get_updated_ticket_count => get_updated_ticket_count })
     queue_replies
-    redirect_to helpdesk_tickets_path
+    if params[:search_term].present? && !params[:search_term].nil?
+      redirect_to search_tickets_path(:term => params[:search_term])
+    else
+      redirect_to helpdesk_tickets_path
+    end
   end
 
   protected

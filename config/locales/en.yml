@@ -6825,8 +6825,10 @@ en:
     requester_placeholder: "Name or Email"
     user_placeholder: "Name or Email"
     cc_emails_placeholder: "Name or email of user from selected company"
+    agents_placeholder: ""
     tags_placeholder: ""
     customers_placeholder: ""
+    companies_placeholder: ""
     company_id_placeholder: ""
     raised_by: "Tickets created by"
     everyone_in_company: "Everyone in %{company_name}"
@@ -8893,6 +8895,23 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   activation_link: Activation link has been sent to %{email}
   activation_link_no_email: Successfully registered
   not_given: "Not given."
+  helpdesk_search:
+    filter_by: Filter by
+    edit_filter: Filter
+    generate: Search
+    add_fields: Add field
+    requester: Requester
+    agent: Agent
+    company: Company
+    tags: Tags
+    created_at: Created
+    due_by: Due by
+    status: Status
+    priority: Priority
+    group: Group
+    type: Type
+    source: Source
+    product: Product
   helpdesk_reports:
     helpdesk_analysis : Helpdesk Analysis
     productivity : Productivity
