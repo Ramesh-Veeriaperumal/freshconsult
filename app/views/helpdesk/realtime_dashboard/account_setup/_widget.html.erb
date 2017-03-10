@@ -66,12 +66,12 @@
 							<%= t("accounts.setup.trial_expired") %>
 						<% end %>
 					</span>
-					<% if trial_days <= 4 && current_user.privilege?(:manage_account) && 
+					<%# if trial_days <= 4 && current_user.privilege?(:manage_account) &&
 						!current_account.account_additional_settings.is_trial_extension_requested? %>
-							<a id="setup-request-trial-extension" class="pull-left" data-loading-text=" " data-complete-text="<%= t('accounts.setup.trial_extension_requested') %>">
-								<b><%= t('accounts.setup.request_for_extension') %></b>
-							</a>
-					<% end %>
+							<!--<a id="setup-request-trial-extension" class="pull-left" data-loading-text=" " data-complete-text="<%#= t('accounts.setup.trial_extension_requested') %>">-->
+								<!--<b><%#= t('accounts.setup.request_for_extension') %></b>-->
+							<!--</a>-->
+					<%# end %>
 				</span> 
 			</div>
 			<div class="links-container">
