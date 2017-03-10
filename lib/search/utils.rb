@@ -146,7 +146,7 @@ class Search::Utils
     
     # Load each type's results via its model
     #
-    es_results['hits']['hits'].group_by { |item| item['_type'] }.each do |type, items| 
+    (es_results['hits']['hits'].presence || {}).group_by { |item| item['_type'] }.each do |type, items| 
       if items.empty?
         records[type] = []
       else

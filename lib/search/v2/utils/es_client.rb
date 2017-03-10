@@ -133,8 +133,9 @@ module Search
               # BAD_GATEWAY
             # elsif response_from_es.code == 503
               # SERVICE_UNAVAILABLE
-            # elsif response_from_es.code == 504
+            elsif response_from_es.code == 504
               # GATEWAY_TIMEOUT
+              raise Errors::GatewayTimeoutException.new(response_from_es.body)
             # elsif response_from_es.code == 505
               # HTTP_VERSION_NOT_SUPPORTED
             # elsif response_from_es.code == 506
@@ -147,7 +148,7 @@ module Search
           # Makes request, prepares response and logs it
           #
           def es_response(response_from_es)
-            @response         = JSON.parse(response_from_es.body)
+            @response         = JSON.parse(response_from_es.body) rescue {}
             @es_response_time ||= @response["took"]
             response_code = response_from_es.code
             

@@ -61,7 +61,7 @@ module Search
           output << "cluster=#{cluster}"
           output << "search_type=#{search_type}"
           output << "response_code=#{response_code}"
-          output << "response_time=#{response_time} msec"
+          output << "response_time=#{response_time}"
           output << "hits=#{hits}"
           output << "request_payload=#{request_payload}"
 
