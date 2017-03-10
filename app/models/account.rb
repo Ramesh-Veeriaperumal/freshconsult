@@ -106,8 +106,10 @@ class Account < ActiveRecord::Base
   end
   
   # Feature check to prevent data from being sent to v1 conditionally
+  # V1 has been completely removed in production
   def esv1_enabled?
-    (ES_ENABLED && launched?(:es_v1_enabled))
+    false
+    # (ES_ENABLED && launched?(:es_v1_enabled))
   end
 
   def permissible_domains
