@@ -167,7 +167,7 @@ class Search::Utils
       end
 
       item['highlight'].keys.each do |field|
-        detected.send("highlight_#{field}=", item['highlight'][field].to_s) if detected.respond_to?("highlight_#{field}=")
+        detected.send("highlight_#{field}=", [*item['highlight'][field]].join(' ... ')) if detected.respond_to?("highlight_#{field}=")
       end if item['highlight'].present?
 
       detected
