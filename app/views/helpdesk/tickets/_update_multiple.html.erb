@@ -71,6 +71,7 @@
       </div>
     </div>
   </div>
+  <input type="hidden" value="<%= search_term %>" name="search_term">
 <% end %>
 </div>
 
@@ -290,7 +291,8 @@
     });
 
     //check for status of the tickets and disable internal dropdowns if status not equal
-    var ticketStatuses = jQuery('.tickets tbody tr .check :checkbox:checked');
+    var is_search_page = window.location.pathname.indexOf("search") > -1 ? true : false
+    var ticketStatuses = is_search_page ? jQuery("#search-page-results :checkbox:checked") : jQuery('.tickets tbody tr .check :checkbox:checked');
     function checkForTicketStatus(){
       if(ticketStatuses.length > 1){
         var size = ticketStatuses.length;

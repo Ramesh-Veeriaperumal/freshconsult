@@ -1,7 +1,16 @@
 //= require app/search.js
+//= require app/search/filters.js
+//= require app/ca_ticket_view.js
+//= require report/daterangepicker.jQuery.js
 //= require app/search/templates/customer
 //= require app/search/templates/helpdesk_note
 //= require app/search/templates/helpdesk_ticket
 //= require app/search/templates/solution_article
 //= require app/search/templates/topic
 //= require app/search/templates/user
+//= require app/search/templates/multi_select
+//= require app/search/templates/filter_data_template
+//= require app/search/templates/filter_menu_element
+//= require app/search/templates/nested_field_tmpl
+//= require app/search/templates/checkbox_field_tmpl
+//= require app/search/templates/date_field

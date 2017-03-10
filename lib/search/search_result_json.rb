@@ -50,6 +50,7 @@ module Search::SearchResultJson
 							:time_ago => 
 						time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state))),
 			:ticket_status => h(ticket.status_name),
+			:ticket_status_id => ticket.status,
 			:responder_id => (ticket.responder.id unless ticket.responder.blank?),
 			:responder_name => (ticket.responder.blank? ? '-' : ticket.responder.name)
 		}

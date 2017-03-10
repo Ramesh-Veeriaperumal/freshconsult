@@ -199,6 +199,8 @@ Helpkit::Application.routes.draw do
     match '/search/autocomplete/tags',         to: 'search/v2/autocomplete#tags',                via: :get
     match '/search/merge_topic',               to: 'search/v2/merge_topics#search_topics',       via: :post
     match '/contact_merge/search',             to: 'search/v2/merge_contacts#index',             via: :get
+    
+    match '/search/tickets', to: 'search/v2/spotlight#tickets', via: :post
 
     match '/search/related_solutions/ticket/:ticket', to: 'search/v2/solutions#related_solutions',  via: :get, constraints: { format: /(html|js)/ }
     match '/search/search_solutions/ticket/:ticket',  to: 'search/v2/solutions#search_solutions',   via: :get, constraints: { format: /(html|js)/ }
@@ -1573,6 +1575,7 @@ Helpkit::Application.routes.draw do
     match '/search_solutions/ticket/:ticket/' => 'solutions#search_solutions', :as => :ticket_search_solutions
   end
 
+  match '/search/tickets' => 'search/tickets#index', via: [:get, :post]
   match '/search/tickets/filter/:search_field' => 'search/tickets#index'
   match '/search/ticket_associations/filter/:search_field' => 'search/ticket_associations#index'
   match '/search/ticket_associations/recent_trackers' => 'search/ticket_associations#index', via: :post
