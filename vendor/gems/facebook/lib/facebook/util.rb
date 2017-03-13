@@ -2,6 +2,7 @@ module Facebook
   module Util
 
     include Facebook::Constants
+    include Facebook::Exception::Notifier
 
     def truncate_subject(subject, count)
       (subject.length > count) ? "#{subject[0..(count - 1)]}..." : subject
@@ -182,7 +183,13 @@ module Facebook
 
     def build_normal_attachments model, attachments
       (attachments || []).each do |attach|
-        model.attachments.build({:content => attach[:resource], :description => attach[:description], :account_id => model.account_id, :content_file_name => attach[:filename]})
+        begin
+          model.attachments.build(:content => attach[:resource], :description => attach[:description], :account_id => model.account_id, :content_file_name => attach[:filename])
+        rescue HelpdeskExceptions::AttachmentLimitException => e
+          Rails.logger.error e
+          error = {:error => "Facebook HelpdeskExceptions::AttachmentLimitException", :exception => "Exception #{e} Item #{model.inspect}, attachment #{attach.inspect}"}
+          raise_sns_notification(error[:error], error)
+        end
       end
     end
 
