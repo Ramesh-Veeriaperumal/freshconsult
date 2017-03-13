@@ -170,6 +170,6 @@ module Admin::Marketplace::ExtensionsHelper
   end
 
   def pricing_state(extension)
-    true if extension['pricing'] == "true"
+    extension['pricing'] == "true" ? true : false
   end
 end
