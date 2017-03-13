@@ -126,6 +126,7 @@ module Facebook
           end
           html_content = "#{html_content} </p></div>"
           html_content = build_normal_attachments(item, content_objects, html_content)
+          html_content
         end
       elsif message[:shares] #### for stickers 
         if message[:shares][:data]
@@ -197,6 +198,7 @@ module Facebook
           return html_content
         end
       end
+      html_content
     end
 
     def add_notification_text item, message, html_content
