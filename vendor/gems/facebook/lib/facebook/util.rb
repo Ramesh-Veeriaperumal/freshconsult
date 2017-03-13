@@ -186,7 +186,7 @@ module Facebook
     def build_normal_attachments model, attachments, html_content
       (attachments || []).each do |attach|
         begin
-          model.attachments.build(:content => attach[:resource], :description => attach[:description], :account_id => model.account_id, :content_file_name => attach[:filename])
+          model.attachments.build({:content => attach[:resource], :description => attach[:description], :account_id => model.account_id, :content_file_name => attach[:filename]}, {:attachment_limit => HelpdeskAttachable::FACEBOOK_ATTACHMENTS_SIZE})
         rescue HelpdeskExceptions::AttachmentLimitException => e
           Rails.logger.error e
           message = attachment_exceeded_message(HelpdeskAttachable::MAX_ATTACHMENT_SIZE)
