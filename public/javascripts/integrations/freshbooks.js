@@ -16,6 +16,7 @@ FreshbooksWidget.prototype = {
 		this.projectData = ""; init_reqs = []; this.executed_date = new Date(); this.projectResults = "";
 		this.staff_page = 0;
 		this.client_page = 0;
+		this.project_received = 0;
 		freshbooksBundle.freshbooksNote = jQuery('#freshbooks-note').html();
 		init_reqs = [null, {
 			body: Freshdesk.NativeIntegration.freshbooksWidget.STAFF_LIST_REQ.evaluate({page:1}),
@@ -145,6 +146,7 @@ FreshbooksWidget.prototype = {
 
 	loadProjectList:function(resData) {
 		tot_pages = this.fetchMultiPages(resData, "projects", this.PROJECT_LIST_REQ, this.loadProjectList)
+		this.project_received++;
 		if (tot_pages > 1){
 			this.mergePagedProjects(resData)
 		}
@@ -190,7 +192,7 @@ FreshbooksWidget.prototype = {
 			projResults = projResults.split("</projects>")[0];
 			this.projectResults += projResults;
 
-			if(this.curr_page == this.tot_pages){
+			if(this.project_received == this.tot_pages){
 				this.projectResults += "</projects>";
 				this.projectData = XmlUtil.loadXMLString(this.projectResults);
 				this.loadProjects();

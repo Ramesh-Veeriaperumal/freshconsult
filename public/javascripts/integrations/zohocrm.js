@@ -10,7 +10,7 @@ ZohoCrmWidget.prototype= {
     zohocrmBundle.widget_name = "zohocrm_contacts_widget";
     zohocrmBundle.url_token_key = "authtoken"
     zohocrmBundle.username = zohocrmBundle.k;
-    zohocrmBundle.domain = "https://crm.zoho.com"
+    zohocrmBundle.domain = zohocrmBundle.domain || "https://crm.zoho.com";
     this.zohocrmBundle = zohocrmBundle;
     freshdeskWidget = new Freshdesk.CRMWidget(zohocrmBundle, this);
   },
