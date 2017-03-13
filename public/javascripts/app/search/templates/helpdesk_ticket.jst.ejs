@@ -4,7 +4,9 @@
 			<div class="selection pull-left tooltip" data-placement="right" data-original-title="" twipsy-content-set="true">
 				<input type="checkbox" name="ids[]" value="<%= ticket_display_id %>" data-ticket-status="<%= ticket_status_id %>"
 				<% if(archive) {%>
-						disabled
+						disabled = "disabled" selectable = "false"
+				<% } else { %>
+						selectable = "true"
 				<% } %> >
 			</div>
 		<% } %>

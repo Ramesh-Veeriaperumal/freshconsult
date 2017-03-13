@@ -127,7 +127,7 @@
 
 			var checkboxStore = null;
 			jQuery(document).on('click', '.selection input[type="checkbox"]',function(e){
-				var $checkboxes = jQuery('.selection input[type="checkbox"]');
+				var $checkboxes = jQuery('.selection input[type="checkbox"][selectable="true"]');
 				
 				// Add selection border on click
 			    var index = jQuery(e.target).parent().parent().parent().index();
@@ -143,7 +143,7 @@
 					var selected_set = $checkboxes.slice(Math.min(start,end), Math.max(start,end));
 					$checkboxes.slice(Math.min(start,end), Math.max(start,end)+ 1).prop('checked', e.target.checked).change();
 					
-					var total_checked = jQuery('.selection input[type="checkbox"]:checked').length;
+					var total_checked = jQuery('.selection input[type="checkbox"][selectable="true"]:checked').length;
 					if(total_checked > _this.BULK_ACTION_LIMIT) {
 						$checkboxes.slice(Math.min(start,end), Math.max(start,end)+ 1).prop('checked', false).change();
 					}
@@ -154,8 +154,8 @@
 		},
 		verify_selection_limit : function() {
 
-			var $all_checked = jQuery('.selection input[type="checkbox"]:checked');
-			var $all_unchecked = jQuery('.selection input[type="checkbox"]:unchecked');
+			var $all_checked = jQuery('.selection input[type="checkbox"][selectable="true"]:checked');
+			var $all_unchecked = jQuery('.selection input[type="checkbox"][selectable="true"]:unchecked');
 
 			if($all_checked.length >= 1) {
 				jQuery('.bulk-action-pane').removeClass('hide');
