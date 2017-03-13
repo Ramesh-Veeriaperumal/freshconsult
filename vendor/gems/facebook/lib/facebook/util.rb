@@ -190,7 +190,7 @@ module Facebook
           model.attachments.build({:content => attach[:resource], :description => attach[:description], :account_id => model.account_id, :content_file_name => attach[:filename]}, {:attachment_limit => HelpdeskAttachable::FACEBOOK_ATTACHMENTS_SIZE})
         rescue HelpdeskExceptions::AttachmentLimitException => e
           Rails.logger.error e
-          message = attachment_exceeded_message(HelpdeskAttachable::MAX_ATTACHMENT_SIZE)
+          message = attachment_exceeded_message(HelpdeskAttachable::FACEBOOK_ATTACHMENTS_SIZE)
           add_notification_text model, message, html_content
           error = {:error => "Facebook HelpdeskExceptions::AttachmentLimitException", :exception => "Exception #{e} Item #{model.inspect}, attachment #{attach.inspect}"}
           raise_sns_notification(error[:error], error)
