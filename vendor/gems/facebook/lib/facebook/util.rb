@@ -3,6 +3,8 @@ module Facebook
 
     include Facebook::Constants
     include Facebook::Exception::Notifier
+    include EmailHelper
+    include ActionView::Helpers
 
     def truncate_subject(subject, count)
       (subject.length > count) ? "#{subject[0..(count - 1)]}..." : subject
@@ -122,8 +124,8 @@ module Facebook
               end
             end
           end
-          build_normal_attachments(item, content_objects)
           html_content = "#{html_content} </p></div>"
+          html_content = build_normal_attachments(item, content_objects, html_content)
         end
       elsif message[:shares] #### for stickers 
         if message[:shares][:data]
@@ -181,16 +183,26 @@ module Facebook
       }
     end
 
-    def build_normal_attachments model, attachments
+    def build_normal_attachments model, attachments, html_content
       (attachments || []).each do |attach|
         begin
           model.attachments.build(:content => attach[:resource], :description => attach[:description], :account_id => model.account_id, :content_file_name => attach[:filename])
         rescue HelpdeskExceptions::AttachmentLimitException => e
           Rails.logger.error e
+          message = attachment_exceeded_message(HelpdeskAttachable::MAX_ATTACHMENT_SIZE)
+          add_notification_text model, message, html_content
           error = {:error => "Facebook HelpdeskExceptions::AttachmentLimitException", :exception => "Exception #{e} Item #{model.inspect}, attachment #{attach.inspect}"}
           raise_sns_notification(error[:error], error)
+        ensure
+          return html_content
         end
       end
+    end
+
+    def add_notification_text item, message, html_content
+      notification_text_html = Helpdesk::HTMLSanitizer.clean(content_tag(:div, message, :class => "attach-error"))
+      html_content << notification_text_html if item.is_a?(Helpdesk::Ticket) || item.is_a?(Helpdesk::Note)
+      html_content
     end
 
     def create_attachment(item, i, options)
