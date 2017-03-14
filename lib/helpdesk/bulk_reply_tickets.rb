@@ -95,7 +95,7 @@ class Helpdesk::BulkReplyTickets
       {
         :body_html => Liquid::Template.parse(body_html).render(
           'ticket' => ticket, 
-          'helpdesk_name' => ticket.portal_name
+          'helpdesk_name' => ticket.account.helpdesk_name
       )}
     end
 

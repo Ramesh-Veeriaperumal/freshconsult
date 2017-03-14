@@ -11,7 +11,7 @@ class Helpdesk::QueueDispatcher
   def perform
     return error_message unless run_dispatcher?
     @ticket = @current_account.tickets.find_by_display_id(@ticket_id)
-    pass_through_biz_rules(@ticket) if valid_ticket?
+    pass_through_biz_rules(@ticket) if (valid_ticket? && !@ticket.skip_dispatcher?)
     rescue Exception => e
       args = { 
         :ticket_id => @ticket_token, 
@@ -42,9 +42,8 @@ class Helpdesk::QueueDispatcher
     def automation_params
       @automation_params ||= JSON.parse(get_automation_params_redis_key(params_key, @token))
     end
-
+    
     def pass_through_biz_rules ticket
-      return if (ticket.import_id or ticket.outbound_email?)
       Rails.logger.info "Queued dispatcher for the Account :: #{@current_account.id} ticket :: #{@ticket_id}"
 
       if @current_account.launched?(:delayed_dispatchr_feature)

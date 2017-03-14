@@ -22,9 +22,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
     :text_tc02        =>    :reports_hash,
     :boolean_tc04     =>    :sla_response_reminded,
     :boolean_tc05     =>    :sla_resolution_reminded,
-    :text_tc03        =>    :dirty_attributes,
-    :int_tc03         =>    :association_type,
-    :long_tc05        =>    :associates_rdb
+    :text_tc03        =>    :dirty_attributes
   }
 
   COLUMN_TO_ATTRIBUTE_MAPPING.keys.each do |key|
@@ -61,8 +59,6 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :sla_response_reminded, :boolean_tc04
 	alias_attribute :sla_resolution_reminded, :boolean_tc05
 	alias_attribute :dirty_attributes, :text_tc03
-	alias_attribute :association_type, :int_tc03
-	alias_attribute :associates_rdb, :long_tc05
 	alias_attribute :skill_id, :long_tc06
 	alias_attribute :spam_score, :string_tc04
 	alias_attribute :sds_spam, :int_tc05
@@ -77,10 +73,6 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	serialize :text_tc02, Hash
 	serialize :text_tc03, Hash
 
-	def self.association_type_column
-		:int_tc03
-	end
-
 	def self.trashed_column
 		:boolean_tc02
 	end
@@ -91,10 +83,6 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 
 	def self.survey_rating_updated_at_column
 		:datetime_tc01
-	end
-
-	def self.associates_rdb_column
-		:long_tc05
 	end
 
   def self.skill_id_column

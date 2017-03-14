@@ -15,7 +15,8 @@ class VaRule < ActiveRecord::Base
   validates_presence_of :name, :rule_type
   validates_uniqueness_of :name, :scope => [:account_id, :rule_type] , :unless => :automation_rule?
   validate :has_events?, :has_conditions?, :has_actions?
-  
+  validate :any_restricted_actions?
+
   before_save :set_encrypted_password
   after_commit :clear_observer_rules_cache, :if => :observer_rule?
   after_commit :clear_api_webhook_rules_from_cache, :if => :api_webhook_rule?
@@ -304,7 +305,20 @@ class VaRule < ActiveRecord::Base
     (observer_rule? || api_webhook_rule?) ? filter_data[:conditions] : filter_data
   end
 
+  def self.with_send_email_actions
+    select {|va_rule| va_rule.contains_send_email_action?}
+  end
+
+  def any_restricted_actions?
+    actions.any? {|action| action.restricted?}
+  end
+
+  def contains_send_email_action?
+    actions.any? {|action| action.contains? 'send_email'}
+  end
+
   private
+
     def has_events?
       return unless observer_rule? || api_webhook_rule?
       errors.add(:base,I18n.t("errors.events_empty")) if(filter_data[:events].blank?)

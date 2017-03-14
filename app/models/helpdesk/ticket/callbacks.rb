@@ -24,7 +24,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save  :assign_outbound_agent,  :if => :new_outbound_email?
 
-  before_save :reset_internal_group_agent, :update_schema_less_ticket_so_fields
+  before_save :reset_internal_group_agent
 
   before_save :reset_assoc_parent_tkt_status, :if => :assoc_parent_ticket?
 
@@ -42,7 +42,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save :update_dueby, :unless => :manual_sla?
 
-
+  before_save :update_schema_less_ticket_association_fields, :if => :association_type_changed?
   before_update :update_isescalated, :if => :check_due_by_change
   before_update :update_fr_escalated, :if => :check_frdue_by_change
 
@@ -50,7 +50,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_create :set_parent_child_assn, :if => :child_ticket?
   after_save :check_child_tkt_status, :if => :child_ticket?
 
-  after_commit :create_initial_activity, :pass_thro_biz_rules, on: :create
+  after_commit :create_initial_activity, on: :create
+  after_commit :pass_thro_biz_rules, on: :create, :unless => :skip_dispatcher?
   after_commit :send_outbound_email, :update_capping_on_create, on: :create, :if => :outbound_email?
 
   after_commit :filter_observer_events, on: :update, :if => :execute_observer?
@@ -75,6 +76,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher
 
+
+  def update_schema_less_ticket_association_fields   
+     return unless Account.current.parent_child_tkts_enabled? || Account.current.link_tickets_enabled?
+     schema_less_ticket.int_tc03 = self.association_type   
+     schema_less_ticket.long_tc05 = self.associates_rdb   
+  end
 
   def set_outbound_default_values
     if email_config
@@ -237,13 +244,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   #Shared onwership Validations ends here
 
-  def update_schema_less_ticket_so_fields
-    return if !Account.current.features?(:shared_ownership) || !redis_key_exists?(SO_FIELDS_MIGRATION) ||
-      (schema_less_ticket.long_tc03 == internal_group_id && schema_less_ticket.long_tc04 == internal_agent_id)
-    schema_less_ticket.long_tc03 = self.internal_group_id
-    schema_less_ticket.long_tc04 = self.internal_agent_id
-  end
-
   def refresh_display_id #by Shan temp
       self.display_id = Helpdesk::Ticket.select(:display_id).where(id: id).first.display_id  if display_id.nil? #by Shan hack need to revisit about self as well.
   end
@@ -297,14 +297,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_was
   end
 
+  def skip_dispatcher?
+    import_id || outbound_email? || !requester.valid_user?
+  end
+  
   def pass_thro_biz_rules
     return if Account.current.skip_dispatcher?
     #Remove redis check if no issues after deployment
     if Account.current.launched?(:delayed_dispatchr_feature)
-      send_later(:delayed_rule_check, User.current, freshdesk_webhook?) unless (import_id or outbound_email?)
+      send_later(:delayed_rule_check, User.current, freshdesk_webhook?)
     else
       # This queue includes dispatcher_rules, auto_reply, round_robin.
-      Helpdesk::Dispatcher.enqueue(self.id, (User.current.blank? ? nil : User.current.id), freshdesk_webhook?) unless (import_id or outbound_email?)
+      Helpdesk::Dispatcher.enqueue(self.id, (User.current.blank? ? nil : User.current.id), freshdesk_webhook?)
     end
   end
 
@@ -496,13 +500,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def linked_now?
-    tracker_ticket_id && related_ticket? && @model_changes.key?(Helpdesk::SchemaLessTicket.association_type_column) &&
-      @model_changes[Helpdesk::SchemaLessTicket.association_type_column][0].nil?
+    tracker_ticket_id && related_ticket? && @model_changes.key?(:association_type) &&
+      @model_changes[:association_type][0].nil?
   end
 
   def unlinked_now?
-    tracker_ticket_id && !related_ticket? && @model_changes.key?(Helpdesk::SchemaLessTicket.association_type_column) &&
-      @model_changes[Helpdesk::SchemaLessTicket.association_type_column][0] == TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]
+    tracker_ticket_id && !related_ticket? && @model_changes.key?(:association_type) &&
+      @model_changes[:association_type][0] == TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]
   end
 
   def add_links

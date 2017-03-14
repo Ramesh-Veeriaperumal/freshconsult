@@ -107,7 +107,8 @@
                         "onConnect" : function() {onconnect.call(self);},
                         "onReconnect" : function() {onreconnect.call(self);},
                         "onDisconnect" :  function() {ondisconnect.call(self);},
-                        "debug" : !!localStorage.debugCollab
+                        "debug" : !!localStorage.debugCollab,
+                        "token": self.rtsAuthToken
                     });
                     $rts = rts;
 

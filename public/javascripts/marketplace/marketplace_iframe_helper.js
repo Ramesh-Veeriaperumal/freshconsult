@@ -13,7 +13,8 @@ var MarketplaceIframeHelper = Class.create({
       type: 'html',
       capabilities: ['fd_iframe'],
       sandbox: {
-        allowSameOrigin: true
+        allowSameOrigin: true,
+        popups: true
       }
     });
     jQuery('#fa_iframe_wrapper').append(this.sandbox.el).find('iframe').height('100%').width('100%');

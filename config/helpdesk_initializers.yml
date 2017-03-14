@@ -94,3 +94,4 @@ helpdesk:
     - ehawk_config
     - sandbox
     - clamav_config
+    - inline_manual_config

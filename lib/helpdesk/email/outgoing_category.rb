@@ -76,4 +76,24 @@ module Helpdesk::Email::OutgoingCategory
     end
     return eval("$#{get_subscription}_mailgun_percentage")
   end
+
+  def custom_category_enabled_notifications
+    if ($custom_category_notifications.blank? || $notifications_checked_time.blank? || $notifications_checked_time < 5.minutes.ago)
+      notificatons_list = get_all_members_in_a_redis_set(CUSTOM_CATEGORY_NOTIFICATIONS).map { |e| e.to_i }
+      $custom_category_notifications = (notificatons_list.present? ? 
+                  notificatons_list : EmailNotification::CUSTOM_CATEGORY_ID_ENABLED_NOTIFICATIONS)
+      $notifications_checked_time = Time.now
+    end
+    return $custom_category_notifications
+  end
+
+  def spam_filtered_notifications
+    if ($spam_filtered_notifications.blank? || $spam_checked_time.blank? || $spam_checked_time < 5.minutes.ago)
+      notificatons_list = get_all_members_in_a_redis_set(SPAM_FILTERED_NOTIFICATIONS).map { |e| e.to_i }
+      $spam_filtered_notifications = (notificatons_list.present? ? 
+                  notificatons_list : EmailNotification::SPAM_FILTERED_NOTIFICATIONS)
+      $spam_checked_time = Time.now
+    end
+    return $spam_filtered_notifications
+  end
 end

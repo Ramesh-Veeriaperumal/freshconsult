@@ -32,7 +32,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed",
                             "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email", 
                             "parent_ticket", "reports_hash","sla_response_reminded","sla_resolution_reminded", "dirty_attributes",
-                            "association_type", "associates_rdb", "sentiment", "spam_score", "sds_spam", "skill", "skill_id"]
+                            "sentiment", "spam_score", "sds_spam", "skill", "skill_id"]
 
   TICKET_STATE_ATTRIBUTES = ["opened_at", "pending_since", "resolved_at", "closed_at", "first_assigned_at", "assigned_at",
                              "first_response_time", "requester_responded_at", "agent_responded_at", "group_escalated",
@@ -236,10 +236,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                             false, sla_rule_ids]
   }}
 
-  scope :not_associated,
-          :select => "helpdesk_tickets.*",
-          :joins => :schema_less_ticket,
-          :conditions => ["`helpdesk_schema_less_tickets`.#{Helpdesk::SchemaLessTicket.association_type_column} is null"]
+  scope :not_associated, :conditions => {:association_type => nil}
   scope :unassigned, :conditions => ["helpdesk_tickets.responder_id is NULL"]
   scope :sla_on_tickets, lambda { |status_ids|
     { :conditions => ["status IN (?)", status_ids] }
@@ -722,7 +719,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     begin
       super
     rescue NoMethodError, NameError => e
-      Rails.logger.debug "method_missing :: args is #{args.inspect} and method:: #{method} "
+      #Rails.logger.debug "method_missing :: args is #{args.inspect} and method:: #{method} "
       return schema_less_attributes(method, args) if SCHEMA_LESS_ATTRIBUTES.include?(method.to_s.chomp("=").chomp("?"))
       return ticket_states.send(method) if ticket_states.respond_to?(method)
       return custom_field_attribute(method, args) if self.ff_aliases.include?(method.to_s.chomp("=").chomp("?"))
