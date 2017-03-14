@@ -1,7 +1,13 @@
 <li id="<%= id %>-tkt" rel="searched-tickets" data-id="<%= id %>">
 	<div class="search-list-wrap">
 		<% if (App.AdvancedSearch.has_bulk_action_privilege && App.AdvancedSearch.is_advanced_search_bulk_actions_feature_enabled && SEARCH_RESULTS_PAGE.is_tickets_page) { %>
-			<div class="selection pull-left tooltip" data-placement="right" data-original-title="" twipsy-content-set="true">
+			<div class="selection pull-left tooltip" data-placement="right"  twipsy-content-set="true"
+				<% if(archive) {%>
+					data-original-title="Archived ticket cannot be modified"
+				<% } else { %>
+					data-original-title=""
+				<% } %>
+			>
 				<input type="checkbox" name="ids[]" value="<%= ticket_display_id %>" data-ticket-status="<%= ticket_status_id %>"
 				<% if(archive) {%>
 						disabled = "disabled" selectable = "false"

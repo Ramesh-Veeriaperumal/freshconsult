@@ -24,6 +24,7 @@
 			this.searchedTicketIds = []
 			this.container = jQuery('#search-page-results')
 			this.bindEvents()
+			this.stickyHeader();
 			NavSearchUtils.saveToLocalRecentSearches(jQuery('.search-input').val().trim());
 
 		},
@@ -150,7 +151,23 @@
 				}
 				checkboxStore = e.target;
 			});
-			
+		},
+		stickyHeader : function(){
+			var scroll_top = $("#sticky_header").data('scrollTop');
+			$("#sticky_header").sticky({
+				elm_bottom : true
+			});
+			$("#sticky_header").on("sticky_kit:stick", function(e){
+				if(scroll_top){
+					if(!$('#scroll-to-top').length){
+						$(this).append("<i id='scroll-to-top'></i>")
+					}
+					$('#scroll-to-top').addClass('visible');
+				}
+			})
+			.on("sticky_kit:unstick", function(e){
+				if(scroll_top){$('#scroll-to-top').removeClass('visible');}
+			});
 		},
 		verify_selection_limit : function() {
 
