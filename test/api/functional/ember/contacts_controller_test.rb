@@ -4,6 +4,7 @@ module Ember
     include UsersTestHelper
     include AttachmentsTestHelper
     include ContactFieldsHelper
+    include TicketsTestHelper
 
     def setup
       super

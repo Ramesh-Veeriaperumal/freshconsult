@@ -5,7 +5,6 @@ module UsersTestHelper
   include ContactFieldsHelper
   include AgentHelper
   include ForumHelper
-  include TicketsTestHelper
 
   # Patterns
   def contact_pattern(expected_output = {}, ignore_extra_keys = true, contact)

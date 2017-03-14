@@ -1,5 +1,4 @@
 module BootstrapTestHelper
-  include AgentsTestHelper
   
   def index_pattern(agent, account)
     {

@@ -1,6 +1,7 @@
 require_relative '../../test_helper'
 class Ember::BootstrapControllerTest < ActionController::TestCase
   include BootstrapTestHelper
+  include AgentsTestHelper
 
   def test_index
     get :index, controller_params(version: 'private')
