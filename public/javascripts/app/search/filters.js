@@ -366,6 +366,7 @@ window.App.FilterOps = window.App.FilterOps || {};
         jQuery('.search-fields-selector').show();
         jQuery('#search_fields_list').show();
       }
+      this.sortFilterMenu();
     },
 
     // Generate field with options in filter menu
@@ -417,6 +418,12 @@ window.App.FilterOps = window.App.FilterOps || {};
       parentField.remove();
 
       this.pushFilterField(accessor);
+    },
+    sortFilterMenu: function () {
+        var list = jQuery("[data-action='pop-field']");
+        var listItems = list.sort(function (a, b) {
+            return (jQuery(b).data('position')) < (jQuery(a).data('position')) ? 1 : -1;
+        }).appendTo('#search_fields_list ul');
     },
     getFilterDisplayData : function(){
        var _this = this;
