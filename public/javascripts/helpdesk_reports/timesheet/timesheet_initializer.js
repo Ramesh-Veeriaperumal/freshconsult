@@ -65,42 +65,45 @@ Helpkit.TimesheetInitializer = (function () {
 				            success: function(json) {
 				            		var array = [];
 								      for( key in json['time_sheets']) {
-								      	array = array.concat(json['time_sheets'][key]);
-								      }
-								      if(array.length != 0) {
-								         	array = array.map(function(el,i) {
-									      	var row = el;
-									      	row['workable_id'] = el["display_id"];
-									      	row['workable_desc'] = el['subject'];
-									      	var subject = el['subject'];
-									      	if(subject.length > 73){
-									      		subject = subject.substr(0,73) + '...';
-									      	}
-									      	row['workable'] = '<a href="/helpdesk/tickets/' + el["display_id"] + '" target="_blank">' + subject + ' (#' + el['display_id'] +')</a>';
-									      	row['priority_name'] =  el["priority_name"];
-									      	row['status_name'] = el["status_name"];
-									      	row['group_by_day_criteria'] = (new moment(el["executed_at"])).format("ddd, Do MMM,YYYY");
-									      	row['group_name'] = el["group_name"] != null ? el["group_name"] : '-';
-									      	row['group_id'] = el["group_id"] !=null ? el["group_id"] : -1;
-									      	row["user_id"] = el["user_id"] != null ? el["user_id"] : -1;
-									      	row['hours'] = self.hour_markup(row);
-									      	row['ticket'] = el['subject'];
-									      	row['customer_id'] = el['customer_id'] != null ? el['customer_id'] : -1;
-									      	row['product_name'] = el['product_id'] != null ? el['product']['name'] : '-';
-									      	var note = el['note'];
-									      	if(note != null && note.length > 73) {
-									      		note = note.substr(0,73) + '...'
-									      	}
-									      	row['note'] = el['note'] != null && el['note'] != "" ? note : '-';
-									      	//loop through headers array and check for custom columns
-									      	var custom_columns = Helpkit.locals.columns;
+								      	var temp_array = json['time_sheets'][key];
+								      	if(temp_array.length != 0) {
+								         	temp_array = temp_array.map(function(el,i) {
+										      	var row = el;
+										      	row['workable_id'] = el["display_id"];
+										      	row['workable_desc'] = el['subject'];
+										      	row['group_key'] = key;
+										      	var subject = el['subject'];
+										      	if(subject.length > 73){
+										      		subject = subject.substr(0,73) + '...';
+										      	}
+										      	row['workable'] = '<a href="/helpdesk/tickets/' + el["display_id"] + '" target="_blank">' + subject + ' (#' + el['display_id'] +')</a>';
+										      	row['priority_name'] =  el["priority_name"];
+										      	row['status_name'] = el["status_name"];
+										      	row['group_by_day_criteria'] = (new moment(el["executed_at"])).format("ddd, Do MMM,YYYY");
+										      	row['group_name'] = el["group_name"] != null ? el["group_name"] : '-';
+										      	row['group_id'] = el["group_id"] !=null ? el["group_id"] : -1;
+										      	row["user_id"] = el["user_id"] != null ? el["user_id"] : -1;
+										      	row['hours'] = self.hour_markup(row);
+										      	row['ticket'] = el['subject'];
+										      	row['customer_id'] = el['customer_id'] != null ? el['customer_id'] : -1;
+										      	row['product_name'] = el['product_id'] != null ? el['product']['name'] : '-';
+										      	var note = el['note'];
+										      	if(note != null && note.length > 73) {
+										      		note = note.substr(0,73) + '...'
+										      	}
+										      	row['note'] = el['note'] != null && el['note'] != "" ? note : '-';
+										      	//loop through headers array and check for custom columns
+										      	var custom_columns = Helpkit.locals.columns;
 
-											jQuery.each(custom_columns,function(idx,col) {
-												row[col] = el[col] == null ? '-' : el[col];
-											});
-									      	return row;
-									    });
+												jQuery.each(custom_columns,function(idx,col) {
+													row[col] = el[col] == null ? '-' : el[col];
+												});
+										      	return row;
+									    	});
+								      	}
+								      	array = array.concat(temp_array);
 								      }
+								      
 								      callback({
 							                recordsTotal: Helpkit.locals.pagination['total_row_count'],
 							                recordsFiltered: Helpkit.locals.pagination['total_row_count'],
@@ -151,7 +154,7 @@ Helpkit.TimesheetInitializer = (function () {
 			        "createdRow": function ( row, data, index ) {
 
 			        	if(current_group_by == "group_by_day_criteria") {
-	            			group_id = data['executed_at'];
+	            			group_id = data['group_key'];
 	            		} else if( current_group_by == "workable") {
 	            			group_id = data['workable_id'];
 	            		} else if( current_group_by == "agent_name") {
@@ -166,6 +169,7 @@ Helpkit.TimesheetInitializer = (function () {
 
 			        	jQuery(row).attr({
 		        			'data-workable-desc': data['workable_desc'],
+		        			'data-workable-id' : data['workable_id'],
 		        			'data-groupby-id' : group_id
 		        		});
 			        }
