@@ -85,6 +85,7 @@ Helpkit.TimesheetInitializer = (function () {
 										      	row["user_id"] = el["user_id"] != null ? el["user_id"] : -1;
 										      	row['hours'] = self.hour_markup(row);
 										      	row['ticket'] = el['subject'];
+												row['product_id'] = el['product_id'];
 										      	row['customer_id'] = el['customer_id'] != null ? el['customer_id'] : -1;
 										      	row['product_name'] = el['product_id'] != null ? el['product']['name'] : '-';
 										      	var note = el['note'];
@@ -152,26 +153,29 @@ Helpkit.TimesheetInitializer = (function () {
 			            fixedColumn.init({},"#timesheet_table");
 			        },
 			        "createdRow": function ( row, data, index ) {
+						var local_current_group_by = Helpkit.locals.current_group_by == undefined ? "customer_name" : Helpkit.locals.current_group_by;
 
-			        	if(current_group_by == "group_by_day_criteria") {
+			        	if(local_current_group_by == "group_by_day_criteria") {
 	            			group_id = data['group_key'];
-	            		} else if( current_group_by == "workable") {
+	            		} else if( local_current_group_by == "workable") {
 	            			group_id = data['workable_id'];
-	            		} else if( current_group_by == "agent_name") {
+	            		} else if( local_current_group_by == "agent_name") {
 	            			group_id = data['user_id'];
-	            		} else if( current_group_by == "customer_name") {
+	            		} else if( local_current_group_by == "customer_name") {
 	            			 group_id = data['customer_id'];
-	            		} else if( current_group_by == "group_name") {
+	            		} else if( local_current_group_by == "group_name") {
 	            			 group_id = data['group_id'];
-	            		} else if( current_group_by == "product") {
+	            		} else if( local_current_group_by == "product_name") {
 	            			 group_id = data['product_id'] || -1;
 	            		}
-
-			        	jQuery(row).attr({
-		        			'data-workable-desc': data['workable_desc'],
-		        			'data-workable-id' : data['workable_id'],
-		        			'data-groupby-id' : group_id
-		        		});
+						var is_first_page = jQuery(row).attr('data-first-page');
+			        	if(!is_first_page) {
+							jQuery(row).attr({
+								'data-workable-desc': data['workable_desc'],
+								'data-workable-id' : data['workable_id'],
+								'data-groupby-id' : group_id
+							});
+						}
 			        }
 			 };
 			//Hide current groupby column
