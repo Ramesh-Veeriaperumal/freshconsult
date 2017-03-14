@@ -186,7 +186,7 @@ module Reports::TimesheetReport
     entries = scoper(@start_date, @end_date).where("helpdesk_time_sheets.id <= #{@latest_timesheet_id}").select("helpdesk_time_sheets.*, #{construct_custom_column_select_statement}  #{group_to_column_map(group_by_caluse, false)}").reorder("#{ALIAS_GROUP_NAME[group_by_caluse]}, id asc").find(:all, :limit => row_limit, :offset => offset,:conditions => (select_conditions || {}),
                                                                                                                                                                                                                                                                                                     :include => [:user, :workable => [{:schema_less_ticket => :product}, :group, :ticket_status, :requester, :company]])
     if (archive_enabled? && entries.size < row_limit )
-      entries << archive_scoper(@start_date, @end_date).where("helpdesk_time_sheets.id <= #{@latest_timesheet_id}").select("helpdesk_time_sheets.*,  #{group_to_column_map(group_by_caluse, true)}").reorder("#{ALIAS_GROUP_NAME[group_by_caluse]}, id asc").find(:all, :limit => row_limit, :offset => offset,:conditions => (archive_select_conditions || {}),                                                                                                                                                                                                                                                                 :include => [:user, :workable => [:product, :group, :ticket_status, :requester, :company]])
+      entries << archive_scoper(@start_date, @end_date).where("helpdesk_time_sheets.id <= #{@latest_timesheet_id}").select("helpdesk_time_sheets.*,  #{group_to_column_map(group_by_caluse, true)}").reorder("#{ALIAS_GROUP_NAME[group_by_caluse]}, id asc").find(:all, :limit => row_limit - entries.size , :offset => offset,:conditions => (archive_select_conditions || {}),                                                                                                                                                                                                                                                                 :include => [:user, :workable => [:product, :group, :ticket_status, :requester, :company]])
     end
     entries.flatten
   end
@@ -346,7 +346,12 @@ module Reports::TimesheetReport
       result_arr = []
       group_by_value.each do |time_entry|
         result_hash = time_entry.as_json(options)[:time_entry].slice(*str_header_keys_time_entry)
-        ticket_json =time_entry.workable.as_json["helpdesk_ticket"].stringify_keys.slice(*str_header_keys_time_entry)
+        ticket_json = nil
+        if(time_entry.workable_type == "Helpdesk::Ticket")
+          ticket_json = time_entry.workable.as_json["helpdesk_ticket"].stringify_keys.slice(*str_header_keys_time_entry)
+        else
+          ticket_json = time_entry.workable.as_json["helpdesk_archive_ticket"].stringify_keys.slice(*str_header_keys_time_entry)
+        end
         ticket_json[:group_name] = time_entry.workable.group.name if time_entry.workable.group.present?
         result_hash.merge!(ticket_json)
         product_hash = nil
