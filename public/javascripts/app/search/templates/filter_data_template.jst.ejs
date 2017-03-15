@@ -1,0 +1,6 @@
+<% if (data && data.length) { %>
+	<li class='muted'><%= I18n.t('adv_reports.filtered_by') %>:</li>
+	<% for (i = 0; i < data.length; i++) { %>
+        <li> <%= escapeHtml(data[i].name) %> : <strong> <%= escapeHtml(data[i].value) %> </strong></li>
+    <% } %>
+<%  } %>

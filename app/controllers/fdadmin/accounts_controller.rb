@@ -6,7 +6,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   before_filter :check_domain_exists, :only => :change_url , :if => :non_global_pods?
   around_filter :select_slave_shard , :only => [:select_all_feature,:show, :features, :agents, :tickets, :portal, :user_info,:check_contact_import,:latest_solution_articles]
-  around_filter :select_master_shard , :only => [:add_day_passes, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name, :change_api_limit, :reset_login_count,:contact_import_destroy]
+  around_filter :select_master_shard , :only => [:add_day_passes, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name, :change_api_limit, :reset_login_count,:contact_import_destroy, :change_currency]
   before_filter :validate_params, :only => [ :change_api_limit ]
   before_filter :load_account, :only => [:user_info, :reset_login_count]
   before_filter :load_user_record, :only => [:user_info, :reset_login_count]
@@ -30,6 +30,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:shard] = shard_info.shard_name
     account_summary[:pod] = shard_info.pod_info
     account_summary[:freshfone_feature] = account.features?(:freshfone) || account.features?(:freshfone_onboarding)
+    account_summary[:spam_details] = ehawk_spam_details
     respond_to do |format|
       format.json do
         render :json => account_summary
@@ -270,6 +271,49 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end
   end
 
+  def unblock_outgoing_email
+    result = {}
+    Sharding.admin_select_shard_of(params[:account_id]) do 
+      account = Account.find(params[:account_id])
+      account.make_current
+      result[:account_id] = account.id
+      result[:account_name] = account.name
+      unless account.conversion_metric.nil?
+        account.conversion_metric.spam_score = -2
+        account.conversion_metric.save
+      end
+      ehawk_params = get_account_signup_params(params[:account_id])
+      ehawk_params["api_response"]["status"] = -2
+      ehawk_params["api_response"]["wl_details"] = params[:wl_details]
+      save_account_sign_up_params(params[:account_id], ehawk_params)
+      remove_outgoing_email_block(params[:account_id])
+      remove_spam_blacklist(account)
+      result[:status] = "success"
+      Account.reset_current_account
+    end
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end
+  end
+
+  def ehawk_spam_details
+    spam_details = {}
+    Sharding.admin_select_shard_of(params[:account_id]) do 
+      account = Account.find(params[:account_id])
+      account.make_current
+      spam_details[:account_blacklisted] = spam_blacklisted?(account)
+      spam_details[:outgoing_blocked] = outgoing_blocked?(params[:account_id])
+      spam_details[:status] = account.ehawk_reputation_score
+      signup_params = get_account_signup_params params[:account_id]
+      spam_details[:reason] = signup_params["api_response"]["reason"] 
+      spam_details[:wl_details] = signup_params["api_response"]["wl_details"] 
+      Account.reset_current_account
+    end
+    spam_details
+  end
+
   def ublock_account
     result = {}
     shard_mapping = ShardMapping.find(params[:account_id])
@@ -283,11 +327,11 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       sub = account.subscription
       sub.state="trial"
       result[:status] = "success" if sub.save
-      account.rollback(:spam_blacklist_feature)
+      remove_spam_blacklist account
       Account.reset_current_account
     end
     $spam_watcher.perform_redis_op("set", "#{params[:account_id]}-", "true")
-    remove_member_from_redis_set(SPAM_EMAIL_ACCOUNTS, params[:account_id])
+    remove_outgoing_email_block params[:account_id]
     respond_to do |format|
       format.json do
         render :json => result
@@ -476,6 +520,37 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     def freshfone_details_preconditions?(account)
       account.freshfone_account.present? || account.features?(:freshfone) ||
         freshfone_activation_requested?(account)
+    end
+
+    def spam_blacklisted? account
+      account.launched?(:spam_blacklist_feature)
+    end
+
+    def outgoing_blocked?(account_id)
+      ismember?(SPAM_EMAIL_ACCOUNTS,account_id)
+    end
+
+    def remove_spam_blacklist account
+      account.rollback(:spam_blacklist_feature)
+    end
+
+    def remove_outgoing_email_block account_id
+      remove_member_from_redis_set(SPAM_EMAIL_ACCOUNTS, account_id)
+    end
+
+    def get_account_signup_params account_id
+      key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => account_id}
+      json_response = get_others_redis_key(key)
+      if json_response.present?
+         parsed_response = JSON.parse(json_response)
+      end
+      parsed_response = {"api_response" => {}} unless parsed_response && parsed_response["api_response"]
+      parsed_response
+    end
+
+    def save_account_sign_up_params account_id, args = {}
+      key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => account_id}
+      set_others_redis_key(key,args.to_json,3888000)
     end
 
 end

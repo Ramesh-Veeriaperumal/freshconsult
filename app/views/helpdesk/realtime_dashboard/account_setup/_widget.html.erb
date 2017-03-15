@@ -19,7 +19,6 @@
 						<%= hidden_field_tag "meta[referrer]", h(request.url) %>
 						<%= hidden_field_tag "helpdesk_ticket[source]", TicketConstants::SOURCE_KEYS_BY_TOKEN[:feedback_widget] %>
 						<%= hidden_field_tag "helpdesk_ticket[email]", current_user.email %>
-						<%= hidden_field_tag "helpdesk[tags]", "TrialWidget" %>
 						<div class="buttons-container pull-right">
 							<a class="btn" id="cancel-feedback"><%= t('cancel') %></a>
 							<%= f.submit t("send_feedback"), :id => "submit-feedback", :class => "btn btn-primary", 
@@ -67,12 +66,12 @@
 							<%= t("accounts.setup.trial_expired") %>
 						<% end %>
 					</span>
-					<% if trial_days <= 4 && current_user.privilege?(:manage_account) && 
+					<%# if trial_days <= 4 && current_user.privilege?(:manage_account) &&
 						!current_account.account_additional_settings.is_trial_extension_requested? %>
-							<a id="setup-request-trial-extension" class="pull-left" data-loading-text=" " data-complete-text="<%= t('accounts.setup.trial_extension_requested') %>">
-								<b><%= t('accounts.setup.request_for_extension') %></b>
-							</a>
-					<% end %>
+							<!--<a id="setup-request-trial-extension" class="pull-left" data-loading-text=" " data-complete-text="<%#= t('accounts.setup.trial_extension_requested') %>">-->
+								<!--<b><%#= t('accounts.setup.request_for_extension') %></b>-->
+							<!--</a>-->
+					<%# end %>
 				</span> 
 			</div>
 			<div class="links-container">

@@ -24,8 +24,9 @@ class Search::V2::AutocompleteController < ApplicationController
     search(esv2_autocomplete_models) do |results|
       results.each do |result|
         self.search_results[:results].push(*[{
-          id: result.email,
+          id: result.id,
           value: result.name,
+          email: result.email,
           user_id: result.id,
           profile_img: result.avatar.nil? ? false : result.avatar.expiring_url(:thumb, 300)
         }])

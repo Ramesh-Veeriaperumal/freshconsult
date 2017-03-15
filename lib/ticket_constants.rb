@@ -131,7 +131,7 @@ module TicketConstants
     [ :source,              'source',           :dropdown],
     [ :priority,            'priority',         :dropdown],
     [ :due_by,              'due_by',           :due_by],
-    [ "helpdesk_tags.name", "tags",             :dropdown],
+    [ "helpdesk_tags.name", "tags",             :tags],
     [ "users.customer_id",  "customers",        :customer],
     [ :owner_id,            "customers",        :customer],
     [ :created_at,          "created_at",       :created_at],
@@ -281,13 +281,18 @@ module TicketConstants
     "default_product",  "default_company"
   ]
 
-  SHARED_DEFAULT_FIELDS_ORDER = [
-    "default_priority",       "default_status",
-    "default_group",          "default_agent", 
-    "default_internal_group", "default_internal_agent",
-    "default_source",         "default_ticket_type",
-    "default_product",        "default_company"
-  ]
+  SHARED_DEFAULT_FIELDS_ORDER = {
+    "default_priority"       => "priority",
+    "default_status"         => "status",
+    "default_group"          => "group_id",
+    "default_agent"          => "responder_id",
+    "default_internal_group" => "internal_group_id",
+    "default_internal_agent" => "internal_agent_id",
+    "default_source"         => "source",
+    "default_ticket_type"    => "ticket_type",
+    "default_product"        => "product_id",
+    "default_company"        => "company_id"
+  }
 
   # CC emails count
   MAX_EMAIL_COUNT = 50

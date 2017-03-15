@@ -30,7 +30,11 @@ class Helpdesk::MultiFileAttachment::AttachmentCleanup
       Sharding.select_shard_of account_id do
         account = Account.find_by_id(account_id).make_current
         account.attachments.find_each(:conditions => {:id => attachment_list}) do |attach|
+          attachment_list.delete(attach.id)
           destroy_attachment(attach, account_id)
+        end
+        attachment_list.each do |attachment_id|
+          remove_member_from_redis_set(@key, construct_set_value(attachment_id, account_id))
         end
       end
     rescue => e
@@ -41,7 +45,7 @@ class Helpdesk::MultiFileAttachment::AttachmentCleanup
     end
 
     def destroy_attachment attach, account_id
-      attach.destroy if attach.attachable_type = "UserDraft"
+      attach.destroy if attach.attachable_type == "UserDraft"
       remove_member_from_redis_set(@key, construct_set_value(attach.id, account_id))
     rescue => e
       puts "** Something went wrong when destroying stale attachment #{attach.inspect}. ** #{e.inspect} **"

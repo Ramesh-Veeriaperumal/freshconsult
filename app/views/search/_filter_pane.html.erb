@@ -1,0 +1,31 @@
+<%= stylesheet_link_tag_with_rtl :'cdn/ui_daterangepicker', :media => "screen" %> 
+
+<div class="search-filters-container animated hide">
+ <ul class="unstyled">
+   <li class="metric-header">
+       <h3>
+         <%=t('helpdesk_search.filter_by').html_safe %>
+         <span class="close" data-action="close-filter-menu"> <%= font_icon "cross", :size => 20 %> </span>
+       </h3>
+   </li>
+   <li>
+     <div id="FilterOptions" method="post" action='#' target="_blank" class="filter-form">
+      <!-- Created-at Field -->
+      <!-- Due-at Field -->
+       <div id="active-search-filters"></div>
+       <div class="search-fields-selector" data-action="add-filter">
+         <%= font_icon "plus-circle", :size => 16 %> <a href="javascript:void(0)"><%=t('helpdesk_search.add_fields') %></a>
+       </div>
+       <div class="search-fields-menu hide" id="search_fields_list">
+         <ul></ul>
+       </div>
+     </div>
+   </li>
+   <li class="generate-search">
+     <div class="filter-validations" id="filter_validation_errors">
+       <span class="error-msg"></span>
+     </div>
+     <a class="btn btn-primary" href="javascript:void(0)" data-action="search-submit"><%=t('helpdesk_search.search') %></a>
+   </li>
+ </ul>
+</div>

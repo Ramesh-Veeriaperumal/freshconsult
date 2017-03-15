@@ -68,6 +68,8 @@ module Integrations::Constants
 
   GOOGLE_CONTACTS = {"provider" => "google_contacts", "app_name" => "google_contacts"}
 
+  ZOHO_CRM_PODS = {:us => "https://crm.zoho.com", :eu => "https://crm.zoho.EU"}
+
   SUCCESS = "success"
   FAILURE = "failure"
 
