@@ -28,6 +28,11 @@ module Ember
     def show
     end
 
+    def update
+      super
+      render :show, location: api_contact_url(@item.id)
+    end
+
     def index
       super
       response.api_meta = { count: @items_count }

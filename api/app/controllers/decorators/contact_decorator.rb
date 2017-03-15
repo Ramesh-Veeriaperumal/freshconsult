@@ -3,7 +3,7 @@ class ContactDecorator < ApiDecorator
 
   delegate  :id, :active, :address, :company_name, :deleted, :description,
             :customer_id, :email, :job_title, :language, :mobile,
-            :name, :phone, :time_zone, :twitter_id, :avatar, to: :record
+            :name, :phone, :time_zone, :twitter_id, :avatar, :whitelisted, to: :record
   delegate :company_id, :client_manager, to: :default_company, allow_nil: true
   delegate :multiple_user_companies_enabled?, to: 'Account.current'
 
@@ -109,6 +109,7 @@ class ContactDecorator < ApiDecorator
         custom_fields: custom_fields,
         other_emails: other_emails,
         tags: tags,
+        whitelisted: whitelisted,
         created_at: created_at.try(:utc),
         updated_at: updated_at.try(:utc)
       })

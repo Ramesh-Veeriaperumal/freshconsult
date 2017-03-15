@@ -101,8 +101,8 @@ module Ember
       params_hash = contact_params_hash.merge({avatar_id: avatar_id})
       post :create, construct_params({version: 'private'}, params_hash)
       assert_response 201
-      match_json(contact_pattern(User.last))
-      match_json(contact_pattern(User.last))
+      match_json(private_api_contact_pattern(User.last))
+      match_json(private_api_contact_pattern(User.last))
       assert User.last.avatar.id == avatar_id
     end
 
@@ -119,7 +119,7 @@ module Ember
                                               }
                                             ])
       assert_response 201
-      match_json(contact_pattern(User.last))
+      match_json(private_api_contact_pattern(User.last))
       assert User.last.user_companies.find_by_default(true).company_id == company_ids[0]
       assert User.last.user_companies.find_by_default(true).client_manager == true
       assert User.last.user_companies.find_by_default(false).company_id == company_ids[1]
@@ -130,7 +130,7 @@ module Ember
     def test_show_a_contact
       sample_user = add_new_user(@account)
       get :show, construct_params({ version: 'private', id: sample_user.id })
-      match_json(contact_pattern(sample_user.reload))
+      match_json(private_api_contact_pattern(sample_user.reload))
       assert_response 200
     end
 
@@ -139,7 +139,7 @@ module Ember
       sample_user = add_new_user(@account)
       sample_user.build_avatar(content_content_type: file.content_type, content_file_name: file.original_filename)
       get :show, construct_params({ version: 'private', id: sample_user.id })
-      match_json(contact_pattern(sample_user.reload))
+      match_json(private_api_contact_pattern(sample_user.reload))
       assert_response 200
     end
 

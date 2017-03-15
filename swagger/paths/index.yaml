@@ -73,9 +73,9 @@
 
 
 /contacts:
-  $ref: ./contacts/crud.yaml
+  $ref: ./contacts/list_and_create.yaml
 /contacts/{id}:
-  $ref: ./contacts/delete.yaml
+  $ref: ./contacts/crud.yaml
 /contacts/{id}/restore:
   $ref: ./contacts/restore.yaml
 /contacts/{id}/send_invite:

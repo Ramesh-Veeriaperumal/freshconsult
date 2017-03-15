@@ -1327,7 +1327,6 @@
           "contact"
         ],
         "summary": "List all",
-        "description": "Work in Progress",
         "parameters": [
           {
             "name": "email",
@@ -1375,21 +1374,18 @@
           "200": {
             "description": "Success",
             "schema": {
-              "allOf": [
-                {
-                  "properties": {
-                    "contacts": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/definitions/extended_contact"
-                      }
-                    },
-                    "meta": {
-                      "$ref": "#/definitions/meta"
-                    }
+              "type": "object",
+              "properties": {
+                "contacts": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/extended_contact"
                   }
+                },
+                "meta": {
+                  "$ref": "#/definitions/meta"
                 }
-              ]
+              }
             }
           },
           "400": {
@@ -1432,6 +1428,34 @@
       }
     },
     "/contacts/{id}": {
+      "get": {
+        "tags": [
+          "contact"
+        ],
+        "summary": "Show contact",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/extended_contact"
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
       "delete": {
         "summary": "Delete Contact",
         "tags": [
@@ -1451,6 +1475,40 @@
           },
           "404": {
             "description": "User not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "contact"
+        ],
+        "description": "Update a contact",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/contact_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/extended_contact"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
           }
         }
       }
@@ -5073,6 +5131,9 @@
                   "type": "boolean"
                 },
                 "deleted": {
+                  "type": "boolean"
+                },
+                "whitelisted": {
                   "type": "boolean"
                 },
                 "avatar": {
