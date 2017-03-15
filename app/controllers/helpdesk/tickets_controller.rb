@@ -1016,7 +1016,7 @@ class Helpdesk::TicketsController < ApplicationController
     @item.email = params[:helpdesk_ticket][:email]
     @item.group = current_account.groups.find_by_id(params[:helpdesk_ticket][:group_id]) if params[:helpdesk_ticket][:group_id]
     @item.tag_names = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
-    if current_account.link_tkts_enabled? and params[:display_ids].present?
+    if current_account.link_tickets_enabled? and params[:display_ids].present?
       @item.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]
       @item.related_ticket_ids = params[:display_ids].split(',')
     end

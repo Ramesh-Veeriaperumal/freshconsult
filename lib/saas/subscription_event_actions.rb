@@ -4,13 +4,7 @@ class SAAS::SubscriptionEventActions
 
   DROP_DATA_FEATURES_V2 = [:create_observer, :supervisor, :add_watcher, :custom_ticket_views, :custom_apps, :custom_ticket_fields, 
                             :custom_company_fields, :custom_contact_fields, :occasional_agent, :basic_twitter, :basic_facebook,
-                            :rebranding, :customer_slas, :multiple_business_hours, :multi_product, :multiple_emails, :link_tickets_toggle,
-                            :parent_child_tickets_toggle, :shared_ownership_toggle]
-
-  ADD_DATA_FEATURES_V2  = [:link_tickets_toggle, :parent_child_tickets_toggle]
-
-  DROP  = "drop"
-  ADD   = "add"
+                            :rebranding, :customer_slas, :multiple_business_hours, :multi_product, :multiple_emails ]
 
   ####################################################################################################################
   #ideally we need to initialize this class with account object, old subscription object and addons 
@@ -50,11 +44,8 @@ class SAAS::SubscriptionEventActions
         account.revoke_feature(addon) unless account.has_feature?(addon) rescue nil
       end
     end
-
-    if plan_changed? || add_ons_changed?
-      handle_feature_drop_data
-      handle_feature_add_data
-    end
+    
+    handle_feature_drop_data if plan_changed? || add_ons_changed?
 
   end
 
@@ -63,18 +54,11 @@ class SAAS::SubscriptionEventActions
     def handle_feature_drop_data
       drop_data_features_v2 = DROP_DATA_FEATURES_V2.select { |feature| feature unless account.has_feature?(feature) }
       Rails.logger.info "Drop data feautres list:: #{drop_data_features_v2.inspect}"
-      handle_feature_data(drop_data_features_v2, DROP) if drop_data_features_v2.present?
+      handle_feature_data(drop_data_features_v2) if drop_data_features_v2.present?
     end
 
-    def handle_feature_add_data
-      add_data_features_v2 = ADD_DATA_FEATURES_V2.select { |feature| feature if account.has_feature?(feature) }
-      Rails.logger.info "Add data feautres list:: #{add_data_features_v2.inspect}"
-      handle_feature_data(add_data_features_v2, ADD) if add_data_features_v2.present?
-    end
-
-
-    def handle_feature_data(features_data, event)
-      NewPlanChangeWorker.perform_async({:features => features_data, :action => event})
+    def handle_feature_data(features_to_drop_data)
+      NewPlanChangeWorker.perform_async({:features => features_to_drop_data})
     end
 
     def remove_chat_feature

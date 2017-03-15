@@ -8152,17 +8152,6 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       api_key: "API Token"
       api_key_info: "API Token can be accessed from your Pivotal Tracker Profile Page - https://www.pivotaltracker.com/profile"
       pivotal_updates: "Select to get updates from Pivotal Tracker"
-    adv_features:
-      unavailable: "This feature is not available for your plan."
-    parent_child:
-      label: "Parent Child Ticketing"
-      desc: "Parent-child ticketing helps support agents resolve issues faster and efficiently by breaking down action items into child tickets that can be worked on independently by different teams simultaneously."
-    link_ticket:
-      label: "Linked Tickets"
-      desc: "Manage and track related tickets together to ensure updates are delivered in a fast, consistent and efficient manner."
-    shared_ownership:
-      label: "Shared Ownership"
-      desc: "Get improved agent visibility over tickets that require assistance from specialised teams with the ability to share tickets between agents."
     marketplace_login:
       associate_account:
         email: Email

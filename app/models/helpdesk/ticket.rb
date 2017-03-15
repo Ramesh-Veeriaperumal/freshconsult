@@ -237,11 +237,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   }}
 
   scope :not_associated, :conditions => {:association_type => nil}
-
-  scope :associated_tickets, lambda {|association_type| {
-          :conditions => ["association_type = ?", TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[association_type]]
-  }}
-
   scope :unassigned, :conditions => ["helpdesk_tickets.responder_id is NULL"]
   scope :sla_on_tickets, lambda { |status_ids|
     { :conditions => ["status IN (?)", status_ids] }

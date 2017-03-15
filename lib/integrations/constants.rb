@@ -43,10 +43,7 @@ module Integrations::Constants
     :outlook_contacts => "outlook_contacts",
     :salesforce_v2 => "salesforce_v2",
     :dynamics_v2 => "dynamics_v2",
-    :office365 => "office365",
-    :parent_child_tickets => "parent_child_tickets",
-    :link_tickets => "link_tickets",
-    :shared_ownership => "shared_ownership"
+    :office365 => "office365"
   }
 
   DISPLAY_IN_PAGES = { "ticket_show" => 2, "contact_show" => 1, "company_show" => 0 }

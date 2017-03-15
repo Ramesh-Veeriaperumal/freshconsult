@@ -15,7 +15,6 @@ class Account < ActiveRecord::Base
   include Helpdesk::SharedOwnershipMigrationMethods
   include Onboarding::OnboardingRedisMethods
   include FreshdeskFeatures::Feature
-  include Helpdesk::SharedOwnershipMigrationMethods
 
   has_many_attachments
   
@@ -180,6 +179,10 @@ class Account < ActiveRecord::Base
     default_in_op_fields[:company].flatten!
 
     default_in_op_fields.stringify_keys!
+  end
+
+  def parent_child_tkts_enabled?
+    @pc ||= launched?(:parent_child_tickets)
   end
 
   class << self # class methods
@@ -525,19 +528,6 @@ class Account < ActiveRecord::Base
 
   def ehawk_spam?
     ehawk_reputation_score >= 4 
-  end
-
-  def update_ticket_dynamo_shard
-    acct_additional_settings = self.account_additional_settings
-    if acct_additional_settings && acct_additional_settings.additional_settings.present?
-      acct_additional_settings.additional_settings[:tkt_dynamo_shard] = Helpdesk::Ticket::TICKET_DYNAMO_NEXT_SHARD
-      acct_additional_settings.save
-    else
-      additional_settings = {
-        :tkt_dynamo_shard => Helpdesk::Ticket::TICKET_DYNAMO_NEXT_SHARD
-      }
-      acct_additional_settings.update_attributes(:additional_settings => additional_settings)
-    end
   end
 
   def copy_right_enabled?

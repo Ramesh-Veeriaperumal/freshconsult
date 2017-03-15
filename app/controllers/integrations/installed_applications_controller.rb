@@ -46,8 +46,6 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       end
     rescue VersionDetectionError => e
       flash[:error] = t("integrations.batchbook.detect_error")
-    rescue PlanUpgradeError => e
-      flash[:error] = t(:'integrations.adv_features.unavailable')
     rescue => e
       Rails.logger.error "Problem in installing an application. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
       flash[:error] = t(:'flash.application.install.error')
