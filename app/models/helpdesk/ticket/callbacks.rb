@@ -77,10 +77,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include RabbitMq::Publisher
 
 
-  def update_schema_less_ticket_association_fields   
-     return unless Account.current.parent_child_tkts_enabled? || Account.current.link_tickets_enabled?
-     schema_less_ticket.int_tc03 = self.association_type   
-     schema_less_ticket.long_tc05 = self.associates_rdb   
+  def update_schema_less_ticket_association_fields
+     return unless Account.current.parent_child_tkts_enabled? || Account.current.link_tkts_enabled?
+     schema_less_ticket.int_tc03 = self.association_type
+     schema_less_ticket.long_tc05 = self.associates_rdb
   end
 
   def set_outbound_default_values

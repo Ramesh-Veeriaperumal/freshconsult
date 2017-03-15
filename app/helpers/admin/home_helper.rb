@@ -102,7 +102,7 @@
       },
       :ticket_template                 =>   {
         :url                           =>   "/helpdesk/ticket_templates",
-        :privilege                     =>   feature?(:ticket_templates) && privilege?(:manage_ticket_templates)
+        :privilege                     =>   current_account.tkt_templates_enabled? && privilege?(:manage_ticket_templates)
       },
       :"email-notifications"           =>   {
         :url                           =>   "/admin/email_notifications",
