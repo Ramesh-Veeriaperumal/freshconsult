@@ -315,8 +315,8 @@ module TicketsTestHelper
     assert new_ticket.cloud_files.present?
   end
 
-  def private_api_ticket_index_pattern(survey_results = {}, requester = false, company = false)
-    pattern_array = Helpdesk::Ticket.last(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).map do |ticket|
+  def private_api_ticket_index_pattern(survey_results = {}, requester = false, company = false, order_by = 'created_at', order_type = 'desc')
+    pattern_array = Helpdesk::Ticket.order("#{order_by} #{order_type}").limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).map do |ticket|
       pattern = index_ticket_pattern_with_associations(ticket, requester, true, company, [:tags])
       pattern.merge!(requester: Hash) if requester
       pattern.merge!(survey_result: feedback_pattern(survey_results[ticket.id])) if survey_results[ticket.id]

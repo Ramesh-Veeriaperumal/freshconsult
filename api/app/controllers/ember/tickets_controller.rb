@@ -215,7 +215,7 @@ module Ember
       def map_filter_params
         params[:filter] = 'monitored_by' if params[:filter] == 'watching'
         params[:wf_order] = params[:order_by]
-        params[:wf_order_type] = params[:order]
+        params[:wf_order_type] = params[:order_type]
       end
 
       def assign_filter_params

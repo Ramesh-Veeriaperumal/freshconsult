@@ -458,5 +458,12 @@ module Ember
       assert_response 200
       match_json(private_api_ticket_index_filter_pattern(custom_filter.data))
     end
+
+    def test_index_with_order_clauses
+      filter_params = { order_by: 'created_at', order_type: 'asc' }
+      get :index, controller_params({ version: 'private' }.merge(filter_params))
+      assert_response 200
+      match_json(private_api_ticket_index_pattern({}, false, false, filter_params[:order_by], filter_params[:order_type]))
+    end
   end
 end

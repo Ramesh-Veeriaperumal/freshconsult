@@ -77,6 +77,48 @@
             "in": "query",
             "type": "string",
             "description": "Comma-separated values"
+          },
+          {
+            "name": "company_id",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "requester_id",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "updated_since",
+            "in": "query",
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "type": "string",
+            "enum": [
+              "due_by",
+              "created_at",
+              "updated_at",
+              "priority",
+              "status"
+            ]
+          },
+          {
+            "name": "order_type",
+            "in": "query",
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ]
           }
         ],
         "responses": {
