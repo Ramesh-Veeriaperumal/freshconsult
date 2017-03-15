@@ -80,7 +80,7 @@ module Ember
         end
 
         def post_destroy_actions(item)
-          Search::RecentTickets.new(item.display_id).delete
+          ::Search::RecentTickets.new(item.display_id).delete
         end
     end
   end
