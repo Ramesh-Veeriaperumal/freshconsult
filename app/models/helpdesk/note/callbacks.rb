@@ -153,12 +153,12 @@ class Helpdesk::Note < ActiveRecord::Base
           additional_emails = [notable.requester.email] if !notable.included_in_cc?(notable.requester.email)
           # Using cc notification to send notification to requester about new comment by cc
           Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {:additional_emails => additional_emails,
-                                                                                   :ignore_emails => [user.email]})
+                                                                                   :ignore_emails => [user.email]}) unless notable.spam?
         end
         handle_notification_for_agent_as_req if ( !incoming && notable.agent_as_requester?(user.id))
 
         if notable.cc_email.present? && user.id == notable.requester_id && !self.private?
-          Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {})
+          Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {}) unless notable.spam?
         end
 
       else
@@ -168,7 +168,7 @@ class Helpdesk::Note < ActiveRecord::Base
         #notify the customer if it is public note
         if note? && !private && e_notification.requester_notification?
           Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT, notable, self)
-          Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {}) if notable.cc_email.present?
+          Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {}) if notable.cc_email.present? and !notable.spam?
         #handle the email conversion either fwd email or reply
         elsif email_conversation?
           send_reply_email
