@@ -202,7 +202,7 @@ class SendgridDomainUpdates < BaseWorker
 
   def save_account_sign_up_params account_id, args = {}
     key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => account_id}
-    set_others_redis_key(key,args.to_json,1296000)
+    set_others_redis_key(key,args.to_json,3888000)
     increment_portal_cache_version
   end
 

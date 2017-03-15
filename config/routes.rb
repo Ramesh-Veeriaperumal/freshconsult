@@ -2899,6 +2899,7 @@ Helpkit::Application.routes.draw do
           post :select_all_feature
           put :change_currency
           get :check_domain
+          put :unblock_outgoing_email
         end
       end
 
