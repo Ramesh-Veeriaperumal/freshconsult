@@ -166,6 +166,26 @@ module Ember
       match_json(private_api_ticket_index_pattern)
     end
 
+    def test_index_with_dates
+      get :index, controller_params({ version: 'private', updated_since: Time.zone.now.iso8601 }, false)
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 0, response.size
+
+      tkt = Helpdesk::Ticket.first
+      tkt.update_column(:created_at, 1.days.from_now)
+      get :index, controller_params({ version: 'private', updated_since: Time.zone.now.iso8601 }, false)
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 0, response.size
+
+      tkt.update_column(:updated_at, 1.days.from_now)
+      get :index, controller_params({ version: 'private', updated_since: Time.zone.now.iso8601 }, false)
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 1, response.size
+    end
+
     def test_index_with_survey_result
       ticket = create_ticket
       result = []
