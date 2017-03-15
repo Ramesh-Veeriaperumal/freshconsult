@@ -124,11 +124,15 @@ class SendgridDomainUpdates < BaseWorker
         account.conversion_metric.save
       end
 
-      if (account.full_domain =~ /support/i && (spam_score >= 4  || Freemail.free_or_disposable?(account.admin_email)))
-        # sleep(5)
-        # Account.current.subscription.update_attributes(:state => "suspended")
-        # ShardMapping.find_by_account_id(Account.current.id).update_attributes(:status => 403)
-        blacklist_spam_account(account, stop_sending, "Reason: Domain url contains support and signup using free or spam email domains")
+      if (account.full_domain =~ /support/i)
+        if spam_score >=4
+         sleep(5)
+         Account.current.subscription.update_attributes(:state => "suspended")
+         ShardMapping.find_by_account_id(Account.current.id).update_attributes(:status => 403)
+         notify_blocked_spam_account_detection(account, "Reason: Domain url contains support and spam score is > 3")
+        elsif Freemail.free_or_disposable?(account.admin_email)
+         blacklist_spam_account(account, stop_sending, "Reason: Domain url contains support and signup using free or spam email domains")
+        end
       elsif spam_score >= 4
         blacklist_spam_account(account, stop_sending, reason)
       end

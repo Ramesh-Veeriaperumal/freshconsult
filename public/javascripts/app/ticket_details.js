@@ -1338,7 +1338,11 @@ var scrollToError = function(){
 					_form.find('input[type=submit]').prop('disabled', false);
 
 					if (_form.data('panel')) {
-						$('#' + _form.data('panel')).unblock();
+						var panel = _form.data('panel');
+						var form_el = $('#' + panel);
+						form_el = _form.data("form") ? form_el.find(".commentbox") : form_el;
+						form_el.unblock();
+						
 					}
 					$('#file_size_alert_' + _form.data('cntId')).show();
 
