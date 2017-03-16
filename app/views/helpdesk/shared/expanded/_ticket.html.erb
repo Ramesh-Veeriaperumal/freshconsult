@@ -13,8 +13,8 @@
   <% unless user_page %>
 		<td class="userpic">
 			<div class="hideForList">
-				
-				<% if (Account.current.customer_sentiment_ui_enabled? && current_user.language=="en") %>
+				<% if sentiment_feature_and_lang_check && @sentiments[ticket.id]<0 %>
+				<%# only showing 'NEGETIVE' sentiment prediction for ticket list page  %>
 					<%= senti_user_avatar(ticket.requester, @sentiments[ticket.id], :thumb, 'preview_pic circle') %>
 				<% else %>
 				    <%= user_avatar(ticket.requester, :thumb, 'preview_pic circle') %>

@@ -1,13 +1,4 @@
-<% if (Account.current.customer_sentiment_ui_enabled? && current_user.language=="en") %>
-	<% survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results" %>
-	<% unless @ticket.send(survey_association).nil? || @ticket.send(survey_association).last.nil? %>
-		<%= link_to user_avatar(@ticket.requester, :thumb, 'preview_pic circle'), @ticket.requester, :class => 'avatar-wrap' %>
-	<% else %>
-		<%= link_to senti_user_avatar(@ticket.requester, @ticket.sentiment, :thumb, 'preview_pic circle', {:senti_hover=>'true'}), @ticket.requester, :class => 'avatar-wrap' %>
-	<% end %>
-<% else %>
-	<%= link_to user_avatar(@ticket.requester, :thumb, 'preview_pic circle'), @ticket.requester, :class => 'avatar-wrap' %>
-<% end %>
+<%= link_to user_avatar(@ticket.requester, :thumb, 'preview_pic circle'), @ticket.requester, :class => 'avatar-wrap' %>
 
 <% fb_message = @ticket.is_fb_message? %>
 <% twitter_dm = @ticket.twitter? && @ticket.tweet.is_dm? %>
@@ -163,5 +154,13 @@
 	<% end %>
 	</div>
 	<%= itil_ticket_tabs %>
-</div>
+	</div>
+	
+		<% if (Account.current.customer_sentiment_ui_enabled? && current_user.language=="en" && @ticket_notes_total!=0 ) %>
+				<div class="senti-top-margin senti-main-container disabled">
+		  			<div class="<%= get_senti_title(@ticket.sentiment) %>"></div>
+		  			<div class="senti_text"><%= get_senti_title(@ticket.sentiment) %></div>
+				</div>     
+				<a class='help senti-tooltip tooltip' id='help' href='https://support.freshdesk.com/support/solutions/articles/224040' target='_blank' data-placement='above' data-original-title="More about Sentiment Prediction"><i class='ficon-help fsize-16' size='16'></i></a>
+		<% end %>	
 </div>

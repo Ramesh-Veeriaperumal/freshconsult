@@ -1,0 +1,33 @@
+<!-- menu -->
+<div class="senti-top-margin">
+        <div class="change-prediction-box">
+                <!-- change sentiment prediction options || start -->
+                <div class="senti-option senti-option-left">
+                  <div class="HAPPY"></div><!-- class for senti-main-color-circle -->
+                  <div class="senti_text">HAPPY</div>
+                </div>
+
+                <div class="senti-option senti-option-center">
+                  <div class="NEUTRAL"></div><!-- class for senti-main-color-circle -->
+                  <div class="senti_text">NEUTRAL</div>
+                </div>
+
+                <div class="senti-option senti-option-right">
+                  <div class="SAD"></div><!-- class for senti-main-color-circle -->
+                  <div class="senti_text">SAD</div>
+                </div>
+        </div>
+        <!-- change sentiment prediction options || end -->
+
+
+        <!-- current predicted sentiment || start -->
+        <div class="senti-main-container senti-changable">
+          <div class="<%= color_name %>"></div><!-- class for senti-main-color-circle -->
+          <div class="senti_text">
+            <%= color_name %>
+          </div>
+        </div>
+        <a class='help senti-tooltip tooltip' id='help' href='https://support.freshdesk.com/support/solutions/articles/224040' target='_blank' data-placement='above' data-original-title="More about Sentiment Prediction"><i class='ficon-help fsize-16' size='16'></i></a>
+        <!-- current predicted sentiment || end -->
+
+</div>
