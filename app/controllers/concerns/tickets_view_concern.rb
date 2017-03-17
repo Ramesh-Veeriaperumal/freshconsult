@@ -43,7 +43,7 @@ module Concerns
         requester_template = current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_REPLY_TEMPLATE).get_reply_template(ticket.requester)
         unless requester_template.nil?
           requester_template.gsub!('{{ticket.satisfaction_survey}}', '')
-          reply_email_template = Liquid::Template.parse(requester_template).render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
+          reply_email_template = Liquid::Template.parse(requester_template).render('ticket' => ticket, 'helpdesk_name' => ticket.account.helpdesk_name)
           # Adding <p> tag for the IE9 text not shown issue
           default_reply = signature.blank? ? "<p/><div>#{reply_email_template}</div>" : "<p/><div>#{reply_email_template}<br/>#{signature}</div>"
         end
@@ -59,7 +59,7 @@ module Concerns
           requester_template = current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_FORWARD_TEMPLATE).get_forward_template(ticket.requester)
           if requester_template.present?
             requester_template.gsub!('{{ticket.satisfaction_survey}}', '')
-            forward_email_template = Liquid::Template.parse(requester_template).render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
+            forward_email_template = Liquid::Template.parse(requester_template).render('ticket' => ticket, 'helpdesk_name' => ticket.account.helpdesk_name)
             # Adding <p> tag for the IE9 text not shown issue
             default_forward = signature.blank? ? "<p/><div>#{forward_email_template}</div>" : "<p/><div>#{forward_email_template}<br/>#{signature}</div>"
           end

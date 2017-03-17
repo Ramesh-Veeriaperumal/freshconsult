@@ -18,7 +18,6 @@ class ConversationDecorator < ApiDecorator
       body: body_html,
       body_text: body,
       id: id,
-      deleted: deleted,
       incoming: incoming,
       private: private,
       user_id: user_id,
@@ -31,16 +30,23 @@ class ConversationDecorator < ApiDecorator
       bcc_emails: bcc_emails,
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc),
+      attachments: attachments.map { |att| AttachmentDecorator.new(att).to_hash }
+    }
+  end
+
+  def to_json
+    construct_json.merge({
+      deleted: deleted,
       last_edited_at: last_modified_timestamp.try(:utc),
       last_edited_user_id: last_modified_user_id.try(:to_i),
       attachments: attachments_hash,
       cloud_files: cloud_files_hash,
       has_quoted_text: has_quoted_text?
-    }
+    })
   end
 
   def to_hash
-    [construct_json, freshfone_call, tweet_hash, facebook_hash, feedback_hash, requester_hash].inject(&:merge)
+    [to_json, freshfone_call, tweet_hash, facebook_hash, feedback_hash, requester_hash].inject(&:merge)
   end
 
   def facebook_hash
@@ -87,7 +93,9 @@ class ConversationDecorator < ApiDecorator
   end
 
   def attachments_hash
-    (attachments | attachments_sharable).map { |a| AttachmentDecorator.new(a).to_hash }
+    (attachments | attachments_sharable).map do |a|
+      AttachmentDecorator.new(a, shared_attachable_id: id).to_hash
+    end
   end
 
   def cloud_files_hash

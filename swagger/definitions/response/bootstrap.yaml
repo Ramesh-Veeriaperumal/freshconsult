@@ -18,7 +18,7 @@ properties:
                 type: array
                 items:
                   type: number
-              next_level:
+              next_level_id:
                 type: object
               abilities:
                 type: array

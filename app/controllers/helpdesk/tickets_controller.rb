@@ -327,7 +327,7 @@ class Helpdesk::TicketsController < ApplicationController
     @show_options = show_options
     @is_default_filter = (!is_num?(view_context.current_filter))
     @current_view = @ticket_filter.id || @ticket_filter.name if is_custom_filter_ticket?
-    render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter , :shared_ownership_enabled => current_account.features?(:shared_ownership)}
+    render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter , :shared_ownership_enabled => current_account.shared_ownership_enabled?}
   end
 
   def filter_conditions
@@ -430,7 +430,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def custom_search
     params[:html_format] = true
-    @items = collab_filter_enabled_for?(filter) ? fetch_collab_tickets : fetch_tickets
+    @items = collab_filter_enabled_for?(view_context.current_filter) ? fetch_collab_tickets : fetch_tickets
 
     #Changes for customer sentiment - Beta feature
     if Account.current.customer_sentiment_ui_enabled? && @items.size > 0
@@ -1407,7 +1407,7 @@ class Helpdesk::TicketsController < ApplicationController
     @email_config = current_account.primary_email_config
     @reply_emails = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
     @ticket ||= current_account.tickets.find_by_display_id(params[:id])
-    @signature = current_user.agent.parsed_signature('ticket' => @ticket, 'helpdesk_name' => @ticket.account.portal_name)
+    @signature = current_user.agent.parsed_signature('ticket' => @ticket, 'helpdesk_name' => @ticket.account.helpdesk_name)
     @selected_reply_email = current_account.features?(:personalized_email_replies) ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
   end
 
@@ -1715,7 +1715,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def set_modes(conditions)
-      return unless current_account.features?(:shared_ownership)
+      return unless current_account.shared_ownership_enabled?
       @agent_mode = TicketConstants::FILTER_MODES[:primary]
       @group_mode = TicketConstants::FILTER_MODES[:primary]
       conditions.each do |condition|

@@ -5,4 +5,9 @@ allOf:
       canned_responses:
         type: array
         items:
-          $ref: '#/definitions/canned_response'
+          type: object
+          properties:
+            id:
+              type: number
+            title:
+              type: string

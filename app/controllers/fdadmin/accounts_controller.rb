@@ -180,6 +180,26 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       end
     end 
   end
+  
+  def change_currency
+    account = Account.find_by_id(params[:account_id]).make_current
+    result = {:account_id => account.id , :account_name => account.name }
+    begin
+      if validate_new_currency
+        result[:status] = (switch_currency ? "success" : "notice")
+      else
+        result[:status] = "error"
+      end
+    rescue Exception => e
+      result[:status] = "notice"
+    end
+    Account.reset_current_account
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end 
+  end
 
 
   def change_url
@@ -263,11 +283,11 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       sub = account.subscription
       sub.state="trial"
       result[:status] = "success" if sub.save
+      account.rollback(:spam_blacklist_feature)
       Account.reset_current_account
     end
     $spam_watcher.perform_redis_op("set", "#{params[:account_id]}-", "true")
     remove_member_from_redis_set(SPAM_EMAIL_ACCOUNTS, params[:account_id])
-    remove_member_from_redis_set(BLACKLISTED_SPAM_ACCOUNTS, params[:account_id])
     respond_to do |format|
       format.json do
         render :json => result
@@ -397,6 +417,12 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       Account.reset_current_account
     end
     render :json => {:status => result[:status] }
+  end
+
+  def check_domain
+    result = {}
+    result[:domain_exist] = (params[:domain] && DomainMapping.find_by_domain(params[:domain])) ? true : false
+    render :json => result
   end
 
   private 

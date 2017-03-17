@@ -1,4 +1,4 @@
-def self.plan_list(all_addons, estate_addons, garden_addons, blossom_addons)
+def self.plan_list(all_addons, estate_addons, garden_addons, blossom_addons, estate_17_addons, garden_17_addons, blossom_17_addons, sprout_17_addons)
 	[
     { :name => 'Sprout', :amount => 15, :free_agents => 3, :day_pass_amount => 1.00, 
     	:addons => all_addons, :price => plan_price[:sprout], :classic => true, :display_name => "Sprout" },
@@ -12,13 +12,13 @@ def self.plan_list(all_addons, estate_addons, garden_addons, blossom_addons)
     	:price => plan_price[:forest], :classic => true, :display_name => "Forest" },
 			
 		{ :name => "Sprout Jan 17", :amount => 0, :free_agents => 50000, :day_pass_amount => 0.00, 
-    	:price => plan_price[:sprout_jan_17], :classic => false, :display_name => "Sprout"},
+    	:addons => sprout_17_addons, :price => plan_price[:sprout_jan_17], :classic => false, :display_name => "Sprout"},
 		{ :name => "Blossom Jan 17", :amount => 25, :free_agents => 0, :day_pass_amount => 2.00, 
-	    :price => plan_price[:blossom_jan_17], :classic => false, :display_name => "Blossom"},
+	    :addons => blossom_17_addons, :price => plan_price[:blossom_jan_17], :classic => false, :display_name => "Blossom"},
 		{ :name => "Garden Jan 17", :amount => 44, :free_agents => 0, :day_pass_amount => 3.00, 
-	    :price => plan_price[:garden_jan_17], :classic => false, :display_name => "Garden"},
+	    :addons => garden_17_addons, :price => plan_price[:garden_jan_17], :classic => false, :display_name => "Garden"},
 		{ :name => "Estate Jan 17", :amount => 59, :free_agents => 0, :day_pass_amount => 4.00, 
-	    :price => plan_price[:estate_jan_17], :classic => false, :display_name => "Estate"},
+	    :addons => estate_17_addons, :price => plan_price[:estate_jan_17], :classic => false, :display_name => "Estate"},
 		{ :name => "Forest Jan 17", :amount => 99, :free_agents => 0, :day_pass_amount => 5.00, 
 	    :price => plan_price[:forest_jan_17], :classic => false, :display_name => "Forest"},	      	      	      
 	]
@@ -60,31 +60,36 @@ def self.plan_price
 			"EUR" => 0.0,
 			"INR" => 0.0,
 			"USD" => 0.0,
-			"ZAR" => 0.0
+			"ZAR" => 0.0,
+			"GBP" => 0.0
 		},
 		:blossom_jan_17 => {
 			"EUR" => 24.0,
 			"INR" => 1599.0,
 			"USD" => 25.0,
-			"ZAR" => 339.0
+			"ZAR" => 339.0,
+			"GBP" => 19.0
 		},
 		:garden_jan_17 => {
 			"EUR" => 42.0,
 			"INR" => 2699.0,
 			"USD" => 44.0,
-			"ZAR" => 599.0
+			"ZAR" => 599.0,
+			"GBP" => 35.0
 		},
 		:estate_jan_17 => {
 			"EUR" => 58.0,
 			"INR" => 3699.0,
 			"USD" => 59.0,
-			"ZAR" => 809.0
+			"ZAR" => 809.0,
+			"GBP" => 46.0
 		},
 		:forest_jan_17 => {
 			"EUR" => 96.0,
 			"INR" => 6299.0,
 			"USD" => 99.0,
-			"ZAR" => 1379.0
+			"ZAR" => 1379.0,
+			"GBP" => 79.0
 		}
 	}
 end
@@ -98,7 +103,9 @@ def self.currencies
 		{ :name => "USD", :billing_site => "freshpo-test", :exchange_rate => 1,
 			:billing_api_key => "fmjVVijvPTcP0RxwEwWV3aCkk1kxVg8e"}, 	
 		{ :name => "ZAR", :billing_site => "freshpo-zar-test", :exchange_rate => 0.095,
-			:billing_api_key => "test_HXf2ZGhes0Qbv8ckrXpxLVmuhhXSlZ51"}
+			:billing_api_key => "test_HXf2ZGhes0Qbv8ckrXpxLVmuhhXSlZ51"},
+		{ :name => "ZAR", :billing_site => "freshpo-gbp-test", :exchange_rate => 0.74,
+			:billing_api_key => "test_zsyEST93T9PuAcuNZ0Ehcd2cuCUU8FHgIup"}
 	]
 end
 
@@ -250,10 +257,16 @@ unless Account.current
 									custom_surveys, call_center_advanced, helpdesk_restriction,
 									ticket_templates, round_robin_load_balancing ]
 
-	estate_addons = [custom_mailbox, whitelisted_ips]
+	estate_addons = [custom_mailbox, whitelisted_ips, call_center_advanced]
 	garden_addons = all_addons - [ multiple_business_hours, custom_domain, custom_slas, custom_surveys, ticket_templates ]
 	blossom_addons = all_addons - [ custom_domain ]
-  SubscriptionPlan.seed_many(:name, plan_list(all_addons, estate_addons, garden_addons, blossom_addons))
+	
+	estate_17_addons = estate_addons
+	garden_17_addons = all_addons - [custom_domain, custom_surveys, ticket_templates]
+	blossom_17_addons = all_addons - [custom_domain]
+	sprout_17_addons = [custom_domain, call_center_advanced]
+	
+  SubscriptionPlan.seed_many(:name, plan_list(all_addons, estate_addons, garden_addons, blossom_addons, estate_17_addons, garden_17_addons, blossom_17_addons, sprout_17_addons))
 
   Subscription::Currency.seed_many(:name, currencies)
 end

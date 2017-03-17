@@ -34,11 +34,12 @@ class ApiApplicationController < MetalApiController
   before_filter :set_time_zone, :check_day_pass_usage_with_user_time_zone, :set_msg_id
   before_filter :force_utf8_params
   before_filter :set_cache_buster
+  before_filter :check_falcon, if: :private_api?
   include AuthenticationSystem
   include HelpdeskSystem
   include SubscriptionSystem
   include Mobile::MobileHelperMethods
-  
+
   # App specific Before filters Ends
 
   include DecoratorConcern
@@ -363,12 +364,12 @@ class ApiApplicationController < MetalApiController
     end
 
     # Using optional parameters for extensibility
-    def render_201_with_location(template_name: "#{controller_path.gsub('pipe/', '')}/#{action_name}", location_url: "#{nscname}_url", item_id: @item.id)
+    def render_201_with_location(template_name: "#{controller_path.gsub(/pipe\/|channel\//, '')}/#{action_name}", location_url: "#{nscname}_url", item_id: @item.id)
       render template_name, location: send(location_url, item_id), status: 201
     end
 
     def nscname # namespaced controller name
-      controller_path.gsub('pipe/', '').gsub('/', '_').singularize
+      controller_path.gsub(/pipe\/|channel\//, '').gsub('/', '_').singularize
     end
 
     def set_custom_errors(_item = @item)
@@ -712,8 +713,18 @@ class ApiApplicationController < MetalApiController
       @api_root_key ||=
         defined?(self.class::ROOT_KEY) ? self.class::ROOT_KEY.to_s : controller_name.gsub('api_', '')
     end
-  
+
     def request_host
       @request_host ||= request.host
+    end
+
+    def private_api?
+      @private_api ||= params[:version].to_sym == :private
+    end
+
+    def check_falcon
+      return if current_account.launched?(:falcon)
+      Rails.logger.debug "Private API attempted without enabling FalconUI. Domain: #{current_account.full_domain} | Controller: #{params[:controller]} | Action: #{params[:action]} "
+      head 404
     end
 end

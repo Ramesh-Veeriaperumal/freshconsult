@@ -36,12 +36,12 @@ module TicketConcern
 
     def group_ticket_permission?(ids)
       # Check if current user has group ticket permission and if ticket also belongs to the same group.
-      api_current_user.group_ticket_permission && (tickets_scoper || scoper).group_tickets_permission(api_current_user, ids).present?
+      api_current_user.group_ticket_permission && scoper.group_tickets_permission(api_current_user, ids).present?
     end
 
     def assigned_ticket_permission?(ids)
       # Check if current user has restricted ticket permission and if ticket also assigned to the current user.
-      api_current_user.assigned_ticket_permission && (tickets_scoper || scoper).assigned_tickets_permission(api_current_user, ids).present?
+      api_current_user.assigned_ticket_permission && scoper.assigned_tickets_permission(api_current_user, ids).present?
     end
 
     def tickets_with_group_permission(ids)
@@ -56,10 +56,10 @@ module TicketConcern
       ApiTicketConstants::PERMISSION_REQUIRED.include?(action_name.to_sym)
     end
 
-    def verify_ticket_state_and_permission
+    def verify_ticket_state_and_permission(user = api_current_user, ticket = @item)
       return false unless verify_object_state
       if ticket_permission_required?
-        return false unless verify_ticket_permission
+        return false unless verify_ticket_permission(user, ticket)
       end
 
       if ApiTicketConstants::NO_PARAM_ROUTES.include?(action_name) && cname_params.present?
@@ -68,7 +68,7 @@ module TicketConcern
     end
 
     def verify_object_state
-      action_scopes = ApiTicketConstants::SCOPE_BASED_ON_ACTION[action_name] || {}
+      action_scopes = ApiTicketConstants::SCOPE_BASED_ON_ACTION[action_name] || ApiTicketConstants::CONDITIONS_FOR_TICKET_ACTIONS
       action_scopes.each_pair do |scope_attribute, value|
         item_value = @item.send(scope_attribute)
         next if item_value == value

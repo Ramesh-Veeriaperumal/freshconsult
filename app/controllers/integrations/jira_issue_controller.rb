@@ -72,7 +72,7 @@ class Integrations::JiraIssueController < ApplicationController
     else
       jira_webhook = Integrations::JiraWebhook.new(params)
       if @installed_app.blank?
-        Rails.logger.info "Linked ticket not found for remote JIRA app with params #{params.inspect}"
+        Rails.logger.info "Linked ticket not found for remote JIRA app"
       else
         jira_webhook.update_local(@installed_app,@selected_key)
       end

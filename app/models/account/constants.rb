@@ -172,7 +172,7 @@ class Account < ActiveRecord::Base
     :list_page_new_cluster => false, :meta_read => false, :most_viewed_articles => false,
     :multifile_attachments => false, :new_footer_feedback_box => false, :new_leaderboard => false,
     :parent_child_tickets => false, :periodic_login_feature => false, :restricted_helpdesk => false,
-    :round_robin_capping => false, :shared_ownership => false, :sidekiq_dispatchr_feature => false,
+    :round_robin_capping => false, :sidekiq_dispatchr_feature => false,
     :solutions_meta_read => false, :supervisor_dashboard => false, :support_new_ticket_cache => false,
     :synchronous_apps => false, :ticket_list_page_filters_cache => false, :translate_solutions => false,
     :spam_detection_service => false, :skip_hidden_tkt_identifier => false, :agent_collision_alb => false, :auto_refresh_alb => false, 
@@ -180,7 +180,8 @@ class Account < ActiveRecord::Base
     :customer_sentiment => false, :countv2_template_write => false, :logout_logs => false, :gnip_2_0 => false, :froala_editor => false,
     :es_v2_splqueries => false, :suggest_tickets => false, :"Freshfone New Notifications" => false, :feedback_widget_captcha => false, 
     :es_multilang_solutions => false, :requester_widget => false, :spam_blacklist_feature => false,
-    :custom_timesheet => false, :hide_api_key => false
+    :custom_timesheet => false, :antivirus_service => false, :hide_api_key => false,
+    :falcon => false
   }
 
 end

@@ -1,7 +1,7 @@
 class TicketValidation < ApiValidation
   MANDATORY_FIELD_ARRAY = [:requester_id, :phone, :email, :twitter_id, :facebook_id].freeze
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
-  CHECK_PARAMS_SET_FIELDS = (MANDATORY_FIELD_ARRAY.map(&:to_s) + %w(fr_due_by due_by subject description custom_fields skip_close_notification)).freeze
+  CHECK_PARAMS_SET_FIELDS = (MANDATORY_FIELD_ARRAY.map(&:to_s) + %w(fr_due_by due_by subject description custom_fields skip_close_notification company_id)).freeze
 
   attr_accessor :id, :cc_emails, :description, :due_by, :email_config_id, :fr_due_by, :group, :priority, :email,
                 :phone, :twitter_id, :facebook_id, :requester_id, :name, :agent, :source, :status, :subject, :ticket_type,

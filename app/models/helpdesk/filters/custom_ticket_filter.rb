@@ -104,8 +104,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   GROUP_COLUMNS = ["group_id", "internal_group_id"]
   SCHEMA_LESS_COLUMNS = [
       "helpdesk_schema_less_tickets.boolean_tc02",
-      "helpdesk_schema_less_tickets.product_id", 
-      "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}"
+      "helpdesk_schema_less_tickets.product_id"
     ]
 
   after_create :create_accesible
@@ -206,9 +205,9 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       collab_filter
     elsif (from_api && "all_tickets".eql?(filter_name))
      api_all_tickets_filter
-    elsif("shared_by_me" == filter_name and Account.current.features?(:shared_ownership))
+    elsif("shared_by_me" == filter_name and Account.current.shared_ownership_enabled?)
       shared_by_me_filter
-    elsif("shared_with_me" == filter_name and Account.current.features?(:shared_ownership))
+    elsif("shared_with_me" == filter_name and Account.current.shared_ownership_enabled?)
       shared_with_me_filter
     else
       DEFAULT_FILTERS.fetch(filter_name, DEFAULT_FILTERS[default_value]).dclone
@@ -300,7 +299,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   def remove_invalid_conditions action_hash
-    unless Account.current.features?(:shared_ownership)
+    unless Account.current.shared_ownership_enabled?
       reject_conditions = TicketConstants::SHARED_AGENT_COLUMNS_ORDER + TicketConstants::SHARED_GROUP_COLUMNS_ORDER
       action_hash.reject!{|condition_hash| reject_conditions.include?(condition_hash["condition"])}
     end
@@ -311,7 +310,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     "helpdesk_tickets.id,helpdesk_tickets.subject,helpdesk_tickets.requester_id,helpdesk_tickets.responder_id,
      helpdesk_tickets.status,helpdesk_tickets.priority,helpdesk_tickets.due_by,helpdesk_tickets.display_id,
      helpdesk_tickets.frDueBy,helpdesk_tickets.source,helpdesk_tickets.group_id,helpdesk_tickets.isescalated,
-     helpdesk_tickets.ticket_type,helpdesk_tickets.email_config_id,helpdesk_tickets.owner_id"
+     helpdesk_tickets.ticket_type,helpdesk_tickets.email_config_id,helpdesk_tickets.owner_id,
+     helpdesk_tickets.association_type"
   end
 
   def sql_conditions
@@ -322,7 +322,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       else
         all_sql_conditions = [""]
         conditions_array = conditions
-        conditions_array = handle_any_mode(conditions_array) if Account.current.features?(:shared_ownership)
+        conditions_array = handle_any_mode(conditions_array) if Account.current.shared_ownership_enabled?
         conditions_array.each do |condition|
           handle_special_values(condition)
           sql_condition = condition.container.sql_condition

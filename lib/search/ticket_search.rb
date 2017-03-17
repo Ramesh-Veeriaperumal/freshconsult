@@ -202,7 +202,7 @@ module Search::TicketSearch
       return TicketConstants.created_within_list
     end
 
-    if criteria_key == "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}"
+    if criteria_key == :association_type
       return TicketConstants.association_type_filter_list
     end
 

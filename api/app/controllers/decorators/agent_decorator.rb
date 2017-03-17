@@ -1,5 +1,6 @@
 class AgentDecorator < ApiDecorator
-  CONTACT_FIELDS = [:active, :email, :job_title, :language, :mobile, :name, :phone, :time_zone, :avatar].freeze
+
+  include Gamification::GamificationUtil
 
   def initialize(record, options)
     super(record)
@@ -18,24 +19,16 @@ class AgentDecorator < ApiDecorator
       ticket_scope: record.ticket_permission,
       signature: record.signature_html,
       group_ids: group_ids,
-      role_ids:  record.user.role_ids,
+      role_ids:  record.user.user_roles.map(&:role_id),
       available_since: record.active_since.try(:utc),
-      contact: ContactDecorator.new(record.user, {}).to_hash.slice(*CONTACT_FIELDS),
+      contact: ContactDecorator.new(record.user, {}).to_hash,
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc)
     }
   end
 
   def to_full_hash
-    agent_hash.merge({
-      last_active_at:       record.last_active_at.try(:utc),
-      points:               record.points,
-      scoreboard_level_id:  record.scoreboard_level_id,
-      assumable_agents:     record.assumable_agents.map(&:id),
-      next_level:           record.next_level,
-      abilities:            record.user.abilities,
-      preferences:          record.preferences
-    })
+    [agent_hash, additional_agent_info, gamification_options].inject(&:merge)
   end
 
   def to_restricted_hash
@@ -63,4 +56,24 @@ class AgentDecorator < ApiDecorator
       record.agent_groups.map(&:group_id)
     end
   end
+
+  private
+
+    def additional_agent_info
+      {
+        last_active_at:       record.last_active_at.try(:utc),
+        assumable_agents:     record.assumable_agents.map(&:id),
+        abilities:            record.user.abilities,
+        preferences:          record.preferences
+      }
+    end
+
+    def gamification_options
+      return {} unless gamification_feature?(Account.current)
+      {
+        points:               record.points,
+        scoreboard_level_id:  record.scoreboard_level_id,
+        next_level_id:        record.next_level.try(:id)
+      }
+    end
 end

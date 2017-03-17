@@ -73,9 +73,9 @@
 
 
 /contacts:
-  $ref: ./contacts/crud.yaml
+  $ref: ./contacts/list_and_create.yaml
 /contacts/{id}:
-  $ref: ./contacts/delete.yaml
+  $ref: ./contacts/crud.yaml
 /contacts/{id}/restore:
   $ref: ./contacts/restore.yaml
 /contacts/{id}/send_invite:
@@ -108,6 +108,8 @@
 
 /attachments:
   $ref: ./attachments/crud.yaml
+/attachments/{id}/unlink:
+  $ref: ./attachments/unlink.yaml
 
 # Ticket Filters
 /ticket_filters:
@@ -136,6 +138,8 @@
   $ref: ./canned_responses/list.yaml
 /canned_responses/{id}:
   $ref: ./canned_responses/show.yaml
+/canned_responses/search:
+  $ref: ./canned_responses/search.yaml
 
 # Agents
 /agents:

@@ -5,7 +5,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/tickets/activity"
     resource :"ember/scenario_automation", only: [:index]
     resource :"ember/canned_response_folder", only: [:index, :show]
-    resource :"ember/canned_response", only: [:show, :index]
+    resource :"ember/canned_response", only: [:show, :index, :search]
     resource :"ember/ticket", only: [:index, :show, :create, :execute_scenario, :spam, :latest_note]
     resource :"ember/tickets/bulk_action", only: [:bulk_execute_scenario]
     resource :"ember/ticket_filter", only: [:index, :show, :create, :update, :destroy]
@@ -15,6 +15,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/ticket_field", only: [:index]
     resource :"ember/todo"
     resource :"ember/twitter_handles", only: [:index, :check_following]
+
     resource :"ember/agent", only: [:index, :me]
     resource :"ember/group", only: [:index]
     resource :"ember/survey", only: [:index]
@@ -24,6 +25,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/integrated_resource"
     resource :"ember/integrated_user"
 
+
+    resource :"ember/search/ticket", only: [:results]
+    resource :"ember/search/autocomplete", :only => [:requesters, :agents, :companies, :tags]
   end
 
   reply_ticket do
@@ -51,11 +55,15 @@ Authority::Authorization::PrivilegeList.build do
   view_contacts do
     resource :"ember/contact", only: [:index, :show]
     resource :"ember/company", only: [:index, :show, :activities]
+
+    resource :"ember/search/customer", only: [:results]
   end
 
   manage_contacts do
     resource :"ember/contact", only: [:create, :update, :activities]
     resource :"ember/contacts/merge", only: [:merge]
+
+    resource :"ember/search/autocomplete", :only => [:companies]
   end
 
   manage_users do
@@ -91,5 +99,13 @@ Authority::Authorization::PrivilegeList.build do
 
   export_customers do
     resource :"ember/contact", only: [:export_csv]
+  end
+
+  view_forums do
+    resource :"ember/search/topic", only: [:results]
+  end
+
+  view_solutions do
+    resource :"ember/search/solution", only: [:results]
   end
 end

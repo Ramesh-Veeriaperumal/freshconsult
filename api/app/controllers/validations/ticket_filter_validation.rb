@@ -119,7 +119,7 @@ class TicketFilterValidation < FilterValidation
   end
 
   def sort_field_options
-    TicketsFilter::api_sort_fields_options.map(&:first).map(&:to_s) - ['priority']
+    TicketsFilter::api_sort_fields_options.map(&:first).map(&:to_s)
   end
 
   private

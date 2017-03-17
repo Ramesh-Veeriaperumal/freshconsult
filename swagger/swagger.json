@@ -67,7 +67,6 @@
             "description": "Comma-separated values",
             "enum": [
               "requester",
-              "stats",
               "survey",
               "company",
               "count"
@@ -78,6 +77,48 @@
             "in": "query",
             "type": "string",
             "description": "Comma-separated values"
+          },
+          {
+            "name": "company_id",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "requester_id",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "updated_since",
+            "in": "query",
+            "type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "type": "string",
+            "enum": [
+              "due_by",
+              "created_at",
+              "updated_at",
+              "priority",
+              "status"
+            ]
+          },
+          {
+            "name": "order_type",
+            "in": "query",
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ]
           }
         ],
         "responses": {
@@ -114,7 +155,7 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/extended_ticket"
+              "$ref": "#/definitions/ticket_show"
             }
           },
           "400": {
@@ -149,7 +190,6 @@
               "conversations",
               "requester",
               "company",
-              "stats",
               "survey"
             ]
           }
@@ -1287,7 +1327,6 @@
           "contact"
         ],
         "summary": "List all",
-        "description": "Work in Progress",
         "parameters": [
           {
             "name": "email",
@@ -1335,21 +1374,18 @@
           "200": {
             "description": "Success",
             "schema": {
-              "allOf": [
-                {
-                  "properties": {
-                    "contacts": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/definitions/extended_contact"
-                      }
-                    },
-                    "meta": {
-                      "$ref": "#/definitions/meta"
-                    }
+              "type": "object",
+              "properties": {
+                "contacts": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/extended_contact"
                   }
+                },
+                "meta": {
+                  "$ref": "#/definitions/meta"
                 }
-              ]
+              }
             }
           },
           "400": {
@@ -1392,6 +1428,34 @@
       }
     },
     "/contacts/{id}": {
+      "get": {
+        "tags": [
+          "contact"
+        ],
+        "summary": "Show contact",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/extended_contact"
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
       "delete": {
         "summary": "Delete Contact",
         "tags": [
@@ -1411,6 +1475,40 @@
           },
           "404": {
             "description": "User not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "contact"
+        ],
+        "description": "Update a contact",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/contact_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/extended_contact"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
           }
         }
       }
@@ -1936,6 +2034,55 @@
         }
       }
     },
+    "/attachments/{id}/unlink": {
+      "put": {
+        "tags": [
+          "attachment"
+        ],
+        "summary": "Unlink Shared Attachment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "description": "ID of attachment",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "shared_attachment_id": {
+                  "type": "number",
+                  "required": true,
+                  "description": "ID of the shared attachment"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Attachment not found"
+          }
+        }
+      }
+    },
     "/ticket_filters": {
       "post": {
         "tags": [
@@ -2341,7 +2488,7 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/extended_canned_response"
+              "$ref": "#/definitions/canned_response_show"
             }
           },
           "403": {
@@ -2349,6 +2496,50 @@
           },
           "404": {
             "description": "Canned response not found"
+          }
+        }
+      }
+    },
+    "/canned_responses/search": {
+      "get": {
+        "summary": "Search",
+        "tags": [
+          "canned response"
+        ],
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "search_string",
+            "in": "query",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/canned_response"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Record not found"
           }
         }
       }
@@ -3419,7 +3610,7 @@
                         "type": "number"
                       }
                     },
-                    "next_level": {
+                    "next_level_id": {
                       "type": "object"
                     },
                     "abilities": {
@@ -4703,18 +4894,8 @@
         "title": {
           "type": "string"
         },
-        "content": {
-          "type": "string"
-        },
-        "content_html": {
-          "type": "string"
-        },
-        "attachments": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "format": "byte"
-          }
+        "folder_id": {
+          "type": "number"
         }
       }
     },
@@ -4917,6 +5098,40 @@
         }
       }
     },
+    "ticket_stats": {
+      "type": "object",
+      "properties": {
+        "stats": {
+          "type": "object",
+          "properties": {
+            "agent_responded_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "requester_responded_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "resolved_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "first_responded_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "closed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "status_updated_at": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        }
+      }
+    },
     "extension_generic": {
       "type": "object",
       "properties": {
@@ -4950,6 +5165,9 @@
                   "type": "boolean"
                 },
                 "deleted": {
+                  "type": "boolean"
+                },
+                "whitelisted": {
                   "type": "boolean"
                 },
                 "avatar": {
@@ -5165,12 +5383,18 @@
         },
         {
           "properties": {
-            "folder_id": {
-              "type": "integer"
+            "content": {
+              "type": "string"
             },
-            "evaluated_response": {
-              "type": "string",
-              "description": "Has to be sideloaded with ?include=evaluated_response"
+            "content_html": {
+              "type": "string"
+            },
+            "attachments": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "byte"
+              }
             }
           }
         }
@@ -5300,39 +5524,7 @@
             ]
           },
           {
-            "type": "object",
-            "properties": {
-              "stats": {
-                "type": "object",
-                "description": "Has to be sideloaded with ?include=stats",
-                "properties": {
-                  "agent_responded_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "requester_responded_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "resolved_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "first_responded_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "closed_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "status_updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  }
-                }
-              }
-            }
+            "$ref": "#/definitions/ticket_stats"
           },
           {
             "type": "object",
@@ -5425,6 +5617,9 @@
             "ticket_topic": {
               "$ref": "#/definitions/ticket_topic"
             },
+            "stats": {
+              "$ref": "#/definitions/ticket_stats"
+            },
             "meta": {
               "type": "object",
               "properties": {
@@ -5458,7 +5653,15 @@
             "canned_responses": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/canned_response"
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "number"
+                  },
+                  "title": {
+                    "type": "string"
+                  }
+                }
               }
             }
           }
@@ -5885,6 +6088,29 @@
           }
         }
       }
+    },
+    "canned_response_show": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/extended_canned_response"
+        },
+        {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/extended_canned_response"
+            },
+            {
+              "properties": {
+                "evaluated_response": {
+                  "type": "string",
+                  "description": "Has to be sideloaded with ?include=evaluated_response"
+                }
+              }
+            }
+          ]
+        }
+      ]
     },
     "search_generic": {
       "title": "data",

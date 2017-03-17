@@ -1,6 +1,7 @@
 module AttachmentConstants
   # Controller constants
   CREATE_FIELDS = %w(user_id content inline inline_type).freeze
+  UNLINK_FIELDS = %w(shared_attachment_id).freeze
 
   CLOUD_FILE_FIELDS = [cloud_files: [:url, :filename, :application_id]].freeze
 
@@ -20,11 +21,14 @@ module AttachmentConstants
   # Only xxx.jpg and xxx.png are allowed to upload
   INLINE_IMAGE_EXT = %w(.jpg .jpeg .jpe .png .gif .svg).freeze
 
+  LOAD_OBJECT_EXCEPT = %w(unlink).freeze
+
   # Wrap parameters args
   WRAP_PARAMS = [:attachment, exclude: [], format: [:json, :multipart_form]].freeze
 
   ALLOWED_CONTENT_TYPE_FOR_ACTION = {
-    create: [:multipart_form]
+    create: [:multipart_form],
+    unlink: [:json]
   }.freeze
 
   PARAMS_MAPPINGS = { user_id: :attachable_id }.freeze

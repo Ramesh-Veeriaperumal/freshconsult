@@ -31,23 +31,26 @@
       
       <% (@va_rules.active + @va_rules.inactive).each do |va_rule| %>
         <tr id=<%= dom_id(va_rule) %>>
-          <td>
+          <td <%= "class='va_rule_disabled custom-tip' data-tip-classes = 'va-rule-index-tooltip' title='#{t('admin.va_rules.disabled')}'".html_safe if va_rule.any_restricted_actions? %>>
             <%= form_for va_rule, :url => activate_deactivate_admin_observer_rule_path(va_rule) do |f| %>
-              <%= f.check_box :active, { :class => 'activate'}, true, false %>
+              <%= f.check_box :active, va_rule_checkbox_options(va_rule), true, false %>
             <% end %>
           </td>
           <td>
             <strong>
-              <%= link_to(h(va_rule.name), edit_admin_observer_rule_path(va_rule), :class => "item_info") %>
+              <%= link_to(h(va_rule.name), edit_admin_observer_rule_path(va_rule), va_rule_link_options(va_rule))%>
             </strong><br/>
             <span class="muted"><%= h va_rule.description %></span>
           </td>
           <td>
+          <% if !va_rule.any_restricted_actions? %>
             <div class="item_actions" align="right">
-                <%= link_to(t('clone'), clone_rule_admin_observer_rule_path(va_rule), :class => "btn btn-mini")%>
-                <%= link_to(t('edit'), edit_admin_observer_rule_path(va_rule), :class => "btn btn-mini") %>
-                <%= link_to "<i class='icon-trash'></i>".html_safe, admin_observer_rule_path(va_rule), :confirm => t('confirm_delete_message', :human_name => t('.human_name')), :method => :delete, :class => "btn btn-mini" %>
+              <%= link_to(t('clone'), clone_rule_admin_observer_rule_path(va_rule), :class => "btn btn-mini")%>
+              <%= link_to(t('edit'), edit_admin_observer_rule_path(va_rule), :class => "btn btn-mini") %>
+              <%= link_to "<i class='icon-trash'></i>".html_safe, admin_observer_rule_path(va_rule), :confirm => t('confirm_delete_message', :human_name => t('.human_name')), :method => :delete, :class => "btn btn-mini" %>
+
             </div>
+          <% end %>
           </td>
         </tr>
       <% end %>

@@ -58,7 +58,7 @@ class AgentGroup < ActiveRecord::Base
   end
 
   def clear_agent_groups_cache
-    MemcacheKeys.memcache_delete(ACCOUNT_AGENT_GROUPS % { account_id: Account.current.id })
+    MemcacheKeys.delete_from_cache(ACCOUNT_AGENT_GROUPS % { account_id: Account.current.id })
   end
 
   private
@@ -80,7 +80,7 @@ class AgentGroup < ActiveRecord::Base
 
     def reset_internal_agent
       #Reset internal agent only if an agent is removed from a group.
-      if Account.current.features?(:shared_ownership) and agent_removed_from_group?
+      if Account.current.shared_ownership_enabled? and agent_removed_from_group?
         reason = {:remove_agent => [self.user_id, self.group.name]}
         Helpdesk::ResetInternalAgent.perform_async({:internal_group_id => self.group_id, :internal_agent_id => self.user_id, :reason => reason})
       end

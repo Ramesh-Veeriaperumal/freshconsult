@@ -2,8 +2,12 @@ type: object
 allOf:
   - $ref: '#/definitions/canned_response'
   - properties:
-      folder_id:
-        type: integer
-      evaluated_response:
+      content:
         type: string
-        description: Has to be sideloaded with ?include=evaluated_response
+      content_html:
+        type: string
+      attachments:
+        type: array
+        items:
+          type: string
+          format: byte

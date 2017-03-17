@@ -8,7 +8,7 @@
 
 	<% unless Account.current.hide_agent_metrics_feature? %>
 		<div id="responder-box" class="filter-metric-widget">
-			<% if current_account.features?(:shared_ownership) %>
+			<% if current_account.shared_ownership_enabled? %>
 				<a class="title drop-right nav-trigger agent_text" href="#" value="" menuid="#agentSort">
 	          		
 	          	</a>
@@ -33,7 +33,7 @@
 		</div>
 	<% end %>
 	<div id="group-box" class="filter-metric-widget">
-		<% if current_account.features?(:shared_ownership) %>
+		<% if current_account.shared_ownership_enabled? %>
 	      	<a class="title drop-right nav-trigger group_text" href="#" value="" menuid="#groupSort">
 	      		
 	      	</a>

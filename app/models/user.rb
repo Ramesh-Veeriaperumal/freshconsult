@@ -697,7 +697,7 @@ class User < ActiveRecord::Base
 
   def group_ticket?(ticket)
     group_member?(ticket.group_id) or
-        (Account.current.features?(:shared_ownership) ? group_member?(ticket.internal_group_id) : false)
+        (Account.current.shared_ownership_enabled? ? group_member?(ticket.internal_group_id) : false)
   end
 
   def group_member?(group_id)
@@ -706,7 +706,7 @@ class User < ActiveRecord::Base
 
   
   def ticket_agent?(ticket)
-    ticket.responder_id == self.id || (Account.current.features?(:shared_ownership) ? ticket.internal_agent_id == self.id : false)
+    ticket.responder_id == self.id || (Account.current.shared_ownership_enabled? ? ticket.internal_agent_id == self.id : false)
   end
 
   def has_ticket_permission? ticket

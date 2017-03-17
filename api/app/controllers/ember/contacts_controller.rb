@@ -28,6 +28,11 @@ module Ember
     def show
     end
 
+    def update
+      super
+      render :show, location: api_contact_url(@item.id)
+    end
+
     def index
       super
       response.api_meta = { count: @items_count }
@@ -107,6 +112,10 @@ module Ember
           return (tag || Helpdesk::Tag.new).contacts
         end
         super
+      end
+
+      def preload_options
+        (super - [:default_user_company]) | [:user_emails, :tags, :avatar, :user_companies]
       end
 
       def fetch_objects(items = scoper)

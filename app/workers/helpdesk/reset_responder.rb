@@ -20,7 +20,7 @@ class Helpdesk::ResetResponder < BaseWorker
       # Reset agent and internal agent for tickets
       account.tickets.where(responder_id: user.id).update_all_with_publish({ responder_id: nil }, {}, options)
 
-      if account.features?(:shared_ownership)
+      if account.shared_ownership_enabled?
         reason[:delete_internal_agent]  = reason.delete(:delete_agent)
         options                         = {:reason => reason, :manual_publish => true}
         updates_hash                    = {:internal_agent_id => nil}
@@ -28,14 +28,6 @@ class Helpdesk::ResetResponder < BaseWorker
         tickets = account.tickets.where(:internal_agent_id => user.id)
         ticket_ids = tickets.map(&:id)
         tickets.update_all_with_publish(updates_hash, {}, options)
-
-        if redis_key_exists?(SO_FIELDS_MIGRATION)
-          internal_agent_col  = "long_tc04"
-          updates_hash        = {internal_agent_col => nil}
-
-          account.schema_less_tickets.where(:ticket_id => ticket_ids).update_all_with_publish(
-            updates_hash, {}, {})
-        end
       end
 
       account.tickets.preload(:group).assigned_to(user).find_each do |ticket|

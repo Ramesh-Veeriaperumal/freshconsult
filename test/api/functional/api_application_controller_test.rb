@@ -171,6 +171,7 @@ class ApiApplicationControllerTest < ActionController::TestCase
     params = { 'category' => { 'name' => 'test' } }
     @controller.params = params
     @controller.request = request
+    @controller.action_name = 'update'
     @controller.send(:validate_content_type)
     assert response.body.blank?
   end
@@ -184,6 +185,7 @@ class ApiApplicationControllerTest < ActionController::TestCase
     params = { 'category' => { 'name' => 'test' } }
     @controller.params = params
     @controller.request = request
+    @controller.action_name = 'update'
     actual = @controller.send(:validate_content_type)
     assert_equal response.status, 415
     assert_equal response.body, request_error_pattern(:invalid_content_type, content_type: 'application/xml').to_json

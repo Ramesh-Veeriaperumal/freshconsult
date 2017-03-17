@@ -11,7 +11,6 @@ module Search::Filters::QueryHelper
       'helpdesk_tags.name'                        =>  'tag_names',
       'helpdesk_subscriptions.user_id'            =>  'watchers',
       'helpdesk_schema_less_tickets.product_id'   =>  'product_id',
-      'helpdesk_schema_less_tickets.int_tc03'     =>  'int_tc03'
     }
 
     private
@@ -34,7 +33,7 @@ module Search::Filters::QueryHelper
 
       # Hack for handling permissible as used in tickets
       #with_permissible will be false when queried from admin->tag as we dont need permisible there.
-      if Account.current.features?(:shared_ownership)
+      if Account.current.shared_ownership_enabled?
         condition_block[:must].push(shared_ownership_permissible_filter) if with_permissible and User.current.agent? and User.current.restricted?
         construct_conditions_shared_ownership(condition_block[:must], conditions)
       else

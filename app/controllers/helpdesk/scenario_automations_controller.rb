@@ -2,6 +2,7 @@ class Helpdesk::ScenarioAutomationsController < ApplicationController
 
   include AutomationControllerMethods
   include SharedPersonalMethods
+  helper Admin::VaRulesHelper
 
   before_filter :escape_html_entities_in_json
   before_filter :load_config, :only => [:new, :edit, :clone]

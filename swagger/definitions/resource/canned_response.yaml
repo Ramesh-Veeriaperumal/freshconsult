@@ -5,12 +5,5 @@ properties:
     type: integer
   title:
     type: string
-  content:
-    type: string
-  content_html:
-    type: string
-  attachments:
-    type: array
-    items:
-      type: string
-      format: byte
+  folder_id:
+    type: number

@@ -5,7 +5,6 @@ module UsersTestHelper
   include ContactFieldsHelper
   include AgentHelper
   include ForumHelper
-  include TicketsTestHelper
 
   # Patterns
   def contact_pattern(expected_output = {}, ignore_extra_keys = true, contact)
@@ -45,6 +44,10 @@ module UsersTestHelper
     )
     result.merge!(deleted: true) if contact.deleted
     result
+  end
+
+  def private_api_contact_pattern(expected_output = {}, ignore_extra_keys = true, contact)
+    contact_pattern(expected_output, ignore_extra_keys, contact).merge(whitelisted: contact.whitelisted)
   end
 
   def get_contact_avatar(contact)
@@ -244,7 +247,7 @@ module UsersTestHelper
   def private_api_index_contact_pattern
     users = @account.all_contacts.order('users.name').select { |x| x.deleted == false && x.blocked == false }
     users.first(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).map do |contact|
-      contact_pattern(contact)
+      private_api_contact_pattern(contact)
     end
   end
 

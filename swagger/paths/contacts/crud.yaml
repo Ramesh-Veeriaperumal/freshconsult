@@ -1,55 +1,40 @@
 get:
   tags: [contact]
-  summary: List all
-  description: Work in Progress
+  summary: Show contact
   parameters:
+    - name: id
+      in: path
     - name: email
-      in: query
-      type: string
-    - name: mobile
-      in: query
-      type: string
-    - name: phone
-      in: query
-      type: string
-    - name: company_id
-      in: query
-      type: number
-    - name: state
-      in: query
-      type: string
-      enum:
-        - blocked
-        - deleted
-        - unverified
-        - verified
-    - name: tag
-      in: query
-      type: string
-    - name: letter
       in: query
       type: string
   responses:
     200:
       description: Success
       schema:
-        allOf:
-          - properties:
-              contacts:
-                type: array
-                items:
-                  $ref: '#/definitions/extended_contact'
-              meta:
-                $ref: '#/definitions/meta'
-    400:
-      description: Bad Request Error
-      schema:
-        $ref: '#/definitions/bad_request_error'
+        $ref: '#/definitions/extended_contact'
+    404:
+      description: User not found
 
-post:
+delete:
+  summary: Delete Contact
   tags: [contact]
-  description: Create a contact
   parameters:
+    - name: id
+      in: path
+      type: number
+      required: true
+  responses:
+    204:
+      description: Success
+    404:
+      description: User not found
+
+put:
+  tags: [contact]
+  description: Update a contact
+  parameters:
+    - name: id
+      in: path
     - name: data
       in: body
       required: true

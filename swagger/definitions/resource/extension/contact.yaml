@@ -7,5 +7,7 @@ allOf:
         type: boolean
       deleted:
         type: boolean
+      whitelisted:
+        type: boolean
       avatar:
         $ref: '#/definitions/avatar'

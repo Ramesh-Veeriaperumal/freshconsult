@@ -341,7 +341,7 @@ module Reports::TimesheetReport
     result_time_sheets = {}
     str_header_keys_time_entry = @headers.map(&:to_s)
     str_header_keys_time_entry +=  ["timespent","billable","user_id","ticket_id","customer_id","product_id","group_id","display_id","subject","executed_at"]
-    options = {time_format:'hm'}
+    options = {time_format:'hm' , is_timesheet: true}
     @time_sheets.each do | group_by_key, group_by_value|
       result_arr = []
       group_by_value.each do |time_entry|
@@ -371,7 +371,7 @@ module Reports::TimesheetReport
       locals: { colspan: @colspan,
                 group_by: @current_group,
                 times_spent: @group_count,
-                totaltime: @group_count.values.sum,
+                group_names: @group_names,
                 group_header: @ajax_params[:group_header],
                 load_time: @load_time
                 } ,
@@ -641,6 +641,7 @@ module Reports::TimesheetReport
   def construct_csv_string
     date_fields = [ I18n.t('helpdesk.time_sheets.createdAt'), I18n.t('helpdesk.time_sheets.date')]
     workable_fields = [I18n.t('export_data.fields.requester_name'), I18n.t('helpdesk.time_sheets.ticket_type')]
+    customer_name_key = I18n.t('helpdesk.time_sheets.customer')
     csv_row_limit = HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:export][:csv]
     csv_hash = construct_csv_headers_hash
     csv_size = @time_sheets.size
@@ -659,6 +660,8 @@ module Reports::TimesheetReport
             csv_data << parse_date(record.send(csv_hash[val]))
           elsif workable_fields.include?(val)
             csv_data << strip_equal(record.workable.send(csv_hash[val]))
+          elsif customer_name_key == val
+            csv_data << strip_equal(record.customer_name_reports)
           else
             csv_data << strip_equal(record.send(csv_hash[val]))
           end
@@ -700,6 +703,8 @@ module Reports::TimesheetReport
             @group_names[hash_key] = "#{entry.send(group_by_caluse).subject} (##{entry.send(group_by_caluse).display_id})".gsub(/`|"/, " ")
           elsif group_by_caluse == :group_by_day_criteria
             @group_names[hash_key] = hash_key
+          elsif group_by_caluse == :customer_name
+            @group_names[hash_key] = entry.customer_name_reports
           else
             @group_names[hash_key] = entry.send(group_by_caluse).gsub(/`|"/, " ")
           end

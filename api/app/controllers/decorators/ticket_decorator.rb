@@ -1,8 +1,8 @@
 class TicketDecorator < ApiDecorator
   delegate :ticket_body, :custom_field_via_mapping, :cc_email, :email_config_id, :fr_escalated, :group_id, :priority,
-           :requester_id,  :responder_id, :source, :spam, :status, :subject, :display_id, :ticket_type,
+           :requester_id, :responder, :responder_id, :source, :spam, :status, :subject, :display_id, :ticket_type,
            :schema_less_ticket, :deleted, :due_by, :frDueBy, :isescalated, :description,
-           :description_html, :tag_names, :attachments, :company_id, :cloud_files, to: :record
+           :description_html, :tag_names, :attachments, :company_id, :cloud_files, :ticket_states, to: :record
 
   def initialize(record, options)
     super(record)
@@ -23,6 +23,39 @@ class TicketDecorator < ApiDecorator
   end
 
   def requester
+    private_api? ? privilege_based_requester_info : requester_v2
+  end
+
+  def requester_v2
+    if @sideload_options.include?('requester')
+      requester = record.requester
+      {
+        id: requester.id,
+        name: requester.name,
+        email: requester.email,
+        mobile: requester.mobile,
+        phone: requester.phone
+      }
+    end
+  end
+
+  def privilege_based_requester_info
+    if @sideload_options.include?('requester') || @sideload_options.include?('falcon')
+      requester = record.requester
+        req_hash = {
+          id: requester.id,
+          name: requester.name,
+          email: requester.email,
+          mobile: requester.mobile,
+          phone: requester.phone
+        }
+      if @sideload_options.include?('falcon')
+        avatar_hash = requester.avatar ? AttachmentDecorator.new(requester.avatar).to_hash.merge(thumb_url: requester.avatar.attachment_url_for_api(true, :thumb)) : nil
+        req_hash.merge!({avatar: avatar_hash})
+      end
+      return req_hash
+    end
+    
     return unless @sideload_options.include?('requester') && record.requester.customer?
     contact_decorator = ContactDecorator.new(record.requester, name_mapping: @contact_name_mapping, company_name_mapping: @company_name_mapping)
     User.current.privilege?(:view_contacts) ? contact_decorator.full_requester_hash : contact_decorator.restricted_requester_hash
@@ -41,17 +74,15 @@ class TicketDecorator < ApiDecorator
   end
 
   def stats
-    if @sideload_options.include?('stats')
-      ticket_states = record.ticket_states
-      {
-        agent_responded_at: ticket_states.agent_responded_at.try(:utc),
-        requester_responded_at: ticket_states.requester_responded_at.try(:utc),
-        resolved_at: ticket_states.resolved_at.try(:utc),
-        first_responded_at: ticket_states.first_response_time.try(:utc),
-        closed_at: ticket_states.closed_at.try(:utc),
-        status_updated_at: ticket_states.status_updated_at.try(:utc)
-      }
-    end
+    return unless private_api? || @sideload_options.include?('stats')
+    {
+      agent_responded_at: ticket_states.agent_responded_at.try(:utc),
+      requester_responded_at: ticket_states.requester_responded_at.try(:utc),
+      resolved_at: ticket_states.resolved_at.try(:utc),
+      first_responded_at: ticket_states.first_response_time.try(:utc),
+      closed_at: ticket_states.closed_at.try(:utc),
+      status_updated_at: ticket_states.status_updated_at.try(:utc)
+    }
   end
 
   def fb_post
@@ -72,7 +103,7 @@ class TicketDecorator < ApiDecorator
   end
 
   def company
-    if @sideload_options.include?('company')
+    if @sideload_options.include?('company') || @sideload_options.include?('falcon')
       company = record.company
       company ? { id: company.id, name: company.name } : {}
     end
@@ -143,6 +174,21 @@ class TicketDecorator < ApiDecorator
       updated_at: updated_at.try(:utc)
     }
     [hash, feedback_hash].inject(&:merge)
+  end
+
+  def to_search_hash
+    company_name = company.key?(:name) ? company[:name] : nil
+    responder_name = responder.name if responder
+    {
+      id: display_id,
+      description: description,
+      requester_name: requester[:name],
+      requester_avatar: requester[:avatar],
+      company_name: company_name,
+      tags: tag_names,
+      responder_name: responder_name,
+      created_at: created_at.try(:utc),
+    }
   end
 
   class << self

@@ -7,14 +7,19 @@ class CannedResponseDecorator < ApiDecorator
     @ticket = options[:ticket]
   end
 
+  def to_full_hash
+    to_hash.merge({
+      content: content,
+      content_html: content_html,
+      attachments: attachments_hash
+    })
+  end
+
   def to_hash
     {
       id: id,
       title: title,
-      content: content,
-      content_html: content_html,
-      folder_id: folder_id,
-      attachments: attachments_hash
+      folder_id: folder_id
     }
   end
 
@@ -27,7 +32,7 @@ class CannedResponseDecorator < ApiDecorator
   end
 
   def attachments_hash
-    attachments.map { |a| AttachmentDecorator.new(a).to_hash }
+    attachments.map { |a| AttachmentDecorator.new(a, shared_attachable_id: id).to_hash }
   end
 
   private

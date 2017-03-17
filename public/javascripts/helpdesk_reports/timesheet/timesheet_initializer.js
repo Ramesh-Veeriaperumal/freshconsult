@@ -9,7 +9,7 @@ Helpkit.TimesheetInitializer = (function () {
 			"workable" : 1,
 			"group_by_day_criteria" : 4,
 		},
-		COLUMN_LIMIT_FOR_PDF : 10,
+		COLUMN_LIMIT_FOR_PDF : 12,
 		initDataTable : function() {
 
 			 var self = this;
@@ -81,9 +81,12 @@ Helpkit.TimesheetInitializer = (function () {
 									      	row['status_name'] = el["status_name"];
 									      	row['group_by_day_criteria'] = (new moment(el["executed_at"])).format("ddd, Do MMM,YYYY");
 									      	row['group_name'] = el["group_name"] != null ? el["group_name"] : '-';
+									      	row['group_id'] = el["group_id"] !=null ? el["group_id"] : -1;
+									      	row["user_id"] = el["user_id"] != null ? el["user_id"] : -1;
 									      	row['hours'] = self.hour_markup(row);
 									      	row['ticket'] = el['subject'];
-									      	row['product_name'] = el['product_id'] != null ? el['product_name'] : '-';
+									      	row['customer_id'] = el['customer_id'] != null ? el['customer_id'] : -1;
+									      	row['product_name'] = el['product_id'] != null ? el['product']['name'] : '-';
 									      	var note = el['note'];
 									      	if(note != null && note.length > 73) {
 									      		note = note.substr(0,73) + '...'
@@ -115,35 +118,19 @@ Helpkit.TimesheetInitializer = (function () {
 			 			var current_group_by = Helpkit.locals.current_group_by == undefined ? "customer_name" : Helpkit.locals.current_group_by;
 			 			var group_count = Helpkit.locals.pagination['group_count'];
 			 			var group_names  = Helpkit.locals.pagination['group_names'];
+			            api.column(self.group_columns[current_group_by], {page:'current'} ).nodes().each( function ( td, i ) {
 
-			            api.column(self.group_columns[current_group_by], {page:'current'} ).data().each( function ( group, i ) {
+			            	var group_id,group_name;
+			            	var group_name = jQuery(td).html();
+			            	var row = jQuery(rows).eq(i);
 
-			                if ( last !== group ) {
-			                	var group_id;
-			                	var row = jQuery(rows).eq(i);
+			            	if(group_name == '-') {
+			                	group_id = 0;
+		                	} else {
+		                		group_id = row.attr('data-groupby-id')
+		                	}
 
-			                	if(group == '-') {
-			                		group_id = 0;
-			                	} else {
-			                		jQuery.each(_.keys(group_names),function(idx,el) {
-					            		// For date and ticket title, we format before putting it to table
-					            		// So we apply same formatting and validate
-					            		if(current_group_by == "group_by_day_criteria") {
-					            			 var group_name  = el;
-					            			 //converting to date format
-					            			 var is_same = moment(group_name).isSame(row.attr('data-executed-at'),'day');
-					            			 if(is_same){
-					            			 	group_id = group_name;
-					            			 }
-					            		} else if( current_group_by == "workable") {
-					            			//ticket id will be fetched from dom
-					            		} else {
-					            			if(group_names[el] == group){
-						            			group_id = el;
-						            		}
-					            		}
-				            		});
-			                	}
+			                if ( last !== group_id ) {
 
 			                	if(current_group_by == "workable") {
 			                		var fr_group_count = group_count[row.attr('data-workable-id')];
@@ -152,22 +139,34 @@ Helpkit.TimesheetInitializer = (function () {
 			                	} else {
 			                		var fr_group_count = group_count[group_id];
 			                		jQuery(rows).eq( i ).before(
-			                      	  '<tr class="group" data-group="' + group +'"><td colspan="' + (Helpkit.locals.colspan) +'" >'+'</td><td class="hours"><strong>'+ fr_group_count +'</strong></td></tr>'
+			                      	  '<tr class="group" data-group="' + group_name +'"><td colspan="' + (Helpkit.locals.colspan) +'" >'+'</td><td class="hours"><strong>'+ fr_group_count +'</strong></td></tr>'
 			                    	);
 			                	}
 
-			                    last = group;
+			                    last = group_id;
 			                }
 			            });
 			            fixedColumn.init({},"#timesheet_table");
 			        },
 			        "createdRow": function ( row, data, index ) {
+
+			        	if(current_group_by == "group_by_day_criteria") {
+	            			group_id = data['executed_at'];
+	            		} else if( current_group_by == "workable") {
+	            			group_id = data['workable_id'];
+	            		} else if( current_group_by == "agent_name") {
+	            			group_id = data['user_id'];
+	            		} else if( current_group_by == "customer_name") {
+	            			 group_id = data['customer_id'];
+	            		} else if( current_group_by == "group_name") {
+	            			 group_id = data['group_id'];
+	            		} else if( current_group_by == "product") {
+	            			 group_id = data['product_id'] || -1;
+	            		}
+
 			        	jQuery(row).attr({
-		        			'data-workable-id': data['workable_id'],
 		        			'data-workable-desc': data['workable_desc'],
-		        			'data-group-id' : data['group_id'],
-		        			'data-user-id' : data['user_id'],
-		        			'data-executed-at' : data['executed_at']
+		        			'data-groupby-id' : group_id
 		        		});
 			        }
 			 };
@@ -175,7 +174,7 @@ Helpkit.TimesheetInitializer = (function () {
 			var current_group_by = Helpkit.locals.current_group_by == undefined ? "customer_name" : Helpkit.locals.current_group_by;
 			var hide_row = { "aTargets":  self.group_columns[current_group_by] , "visible" : false }
 			if(current_group_by != "workable"){
-				config.aoColumnDefs.push(hide_row);	
+				config.aoColumnDefs.push(hide_row);
 			}
 			var headers = Helpkit.locals.headers;
 
@@ -184,14 +183,14 @@ Helpkit.TimesheetInitializer = (function () {
 				config.aoColumnDefs.push(row);
 			});
 
-			var oTable = $table_container.dataTable(config);
+			 oTable = $table_container.dataTable(config);
 	        if($table_container.length == 1) {
-
+	        	/*
 				if (jQuery.browser.safari) {
 					setTimeout(function(){
 					 oTable.columns.adjust().draw();
 					}, 0 );
-	 			}
+	 			} */
 	        }
 		},
 		hour_markup : function(row) {

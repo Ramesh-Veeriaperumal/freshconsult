@@ -71,9 +71,9 @@ class SlaNotifier < ActionMailer::Base
   def get_email_content(e_notification, agent, ticket, i_notif=false)
     subject_template, message_template = i_notif ? e_notification.get_internal_agent_template(agent) : e_notification.get_agent_template(agent)
     email_subject = Liquid::Template.parse(subject_template).render(
-                                'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
+                                'ticket' => ticket, 'helpdesk_name' => ticket.account.helpdesk_name)
     email_body = Liquid::Template.parse(message_template).render(
-                                'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
+                                'ticket' => ticket, 'helpdesk_name' => ticket.account.helpdesk_name)
     [email_subject, email_body]
   end
 

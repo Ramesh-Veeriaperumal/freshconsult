@@ -6,7 +6,6 @@ get:
     200:
       description: Success
       schema:
-      schema:
         type: array
         items:
           $ref: '#/definitions/canned_response'

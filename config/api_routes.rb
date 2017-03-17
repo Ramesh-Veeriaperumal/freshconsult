@@ -250,12 +250,21 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :attachments, controller: 'ember/attachments', only: [:create, :destroy] do
+      member do
+        put :unlink
+      end
+    end
+
     resources :ticket_filters, controller: 'ember/ticket_filters', only: [:index, :show, :create, :update, :destroy]
     resources :contact_fields, controller: 'ember/contact_fields', only: :index
     resources :scenario_automations, controller: 'ember/scenario_automations', only: :index
-    resources :attachments, controller: 'ember/attachments', only: [:create, :destroy]
     resources :canned_response_folders, controller: 'ember/canned_response_folders', only: [:index, :show]
-    resources :canned_responses, controller: 'ember/canned_responses', only: [:show, :index]
+    resources :canned_responses, controller: 'ember/canned_responses', only: [:show, :index] do
+      collection do
+        get :search
+      end
+    end
     
     resources :twitter_handles, controller: 'ember/twitter_handles', only: [:index] do
       member do
@@ -268,6 +277,17 @@ Helpkit::Application.routes.draw do
         get :me
       end
     end
+
+    # Search routes
+    post '/search/tickets/',      to: 'ember/search/tickets#results'
+    post '/search/customers/',    to: 'ember/search/customers#results'
+    post '/search/topics/',       to: 'ember/search/topics#results'
+    post '/search/solutions/',    to: 'ember/search/solutions#results'
+    
+    post '/search/autocomplete/requesters/',    to: 'ember/search/autocomplete#requesters'
+    post '/search/autocomplete/agents/',        to: 'ember/search/autocomplete#agents'
+    post '/search/autocomplete/companies/',     to: 'ember/search/autocomplete#companies'
+    post '/search/autocomplete/tags/',          to: 'ember/search/autocomplete#tags'
   end
 
   pipe_routes = proc do 
@@ -293,6 +313,10 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  channel_routes = proc do
+    resources :tickets, controller: 'channel/tickets', only: [:create]
+  end
+
   match '/api/v2/_search/tickets' => 'tickets#search', :defaults => { format: 'json' }, :as => :tickets_search, via: :get
 
   scope '/api', defaults: { version: 'v2', format: 'json' }, constraints: { format: /(json|$^)/ } do
@@ -303,6 +327,10 @@ Helpkit::Application.routes.draw do
     end
     scope '/pipe', defaults: { version: 'private', format: 'json' }, constraints: { format: /(json|$^)/ } do
       scope '', &pipe_routes # "/api/v2/.."
+      scope '', &api_routes # "/api/v2/.."
+    end
+    scope '/channel', defaults: { version: 'private', format: 'json' }, constraints: { format: /(json|$^)/ } do
+      scope '', &channel_routes # "/api/v2/.."
       scope '', &api_routes # "/api/v2/.."
     end
     constraints ApiConstraints.new(version: 2), &api_routes # "/api/.." with Accept Header

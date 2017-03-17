@@ -150,7 +150,7 @@ module Ember
       def save_ticket_and_respond
         if create_ticket
           @ticket = @item # Dirty hack. Should revisit.
-          render_201_with_location(location_url: 'ticket_url', item_id: @item.display_id)
+          render 'ember/tickets/show', status: 201
           notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank? || compose_email?
         else
           render_errors(@item.errors)
@@ -171,7 +171,7 @@ module Ember
       def decorator_options
         options = {}
         if (sideload_options || []).include?('requester')
-          options = { contact_name_mapping: contact_name_mapping, company_name_mapping: company_name_mapping}
+          options.merge(contact_name_mapping: contact_name_mapping, company_name_mapping: company_name_mapping)
         end
         super(options)
       end
@@ -192,7 +192,8 @@ module Ember
 
       def tickets_filter
         filtered_tickets = current_account.tickets.permissible(api_current_user).filter(params: params.except(:ids), filter: 'Helpdesk::Filters::CustomTicketFilter')
-        params[:ids].present? ? filtered_tickets.where(display_id: params[:ids]) : filtered_tickets
+        filtered_tickets = params[:ids].present? ? filtered_tickets.where(display_id: params[:ids]) : filtered_tickets
+        params[:updated_since].present? ? filtered_tickets.where('helpdesk_tickets.updated_at >= ?', params[:updated_since]) : filtered_tickets
       end
 
       def validate_filter_params
@@ -215,7 +216,7 @@ module Ember
       def map_filter_params
         params[:filter] = 'monitored_by' if params[:filter] == 'watching'
         params[:wf_order] = params[:order_by]
-        params[:wf_order_type] = params[:order]
+        params[:wf_order_type] = params[:order_type]
       end
 
       def assign_filter_params
