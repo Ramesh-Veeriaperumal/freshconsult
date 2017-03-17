@@ -11,6 +11,11 @@ args = { :role_ids => account.roles.agent.first.id, :occasional => true }
 user.make_agent(args)
 agent = user
 
+requester = User.seed(:account_id, :email) do |s|
+  s.account_id = account.id
+  s.email      = Helpdesk::EMAIL[:default_requester_email]
+end
+
 description_html = I18n.t(:'default.ticket.email.body')
 description = Helpdesk::HTMLSanitizer.html_to_plain_text(description_html)
 
@@ -30,7 +35,7 @@ ticket = Helpdesk::Ticket.seed(:account_id, :subject) do |s|
 end
 
 #Activity gets called at the end of commit transaction(Whole seed transaction.) Hence added here explicitly.
-ticket.create_activity(agent, "activities.tickets.new_ticket.long", {}, "activities.tickets.new_ticket.short") 
+ticket.create_activity(requester, "activities.tickets.new_ticket.long", {}, "activities.tickets.new_ticket.short") 
 
 #Step 2 replying ticket
 note_body_html = I18n.t(:'default.ticket.email.reply')
