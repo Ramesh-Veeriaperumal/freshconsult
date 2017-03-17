@@ -1,0 +1,7 @@
+type: object
+allOf:
+  - $ref: '#/definitions/extended_canned_response'
+  - properties:
+      evaluated_response:
+        type: string
+        description: Has to be sideloaded with ?include=evaluated_response

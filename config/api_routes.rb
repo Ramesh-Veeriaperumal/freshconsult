@@ -251,7 +251,11 @@ Helpkit::Application.routes.draw do
     resources :contact_fields, controller: 'ember/contact_fields', only: :index
     resources :scenario_automations, controller: 'ember/scenario_automations', only: :index
     resources :canned_response_folders, controller: 'ember/canned_response_folders', only: [:index, :show]
-    resources :canned_responses, controller: 'ember/canned_responses', only: [:show, :index]
+    resources :canned_responses, controller: 'ember/canned_responses', only: [:show, :index] do
+      collection do
+        get :search
+      end
+    end
     
     resources :twitter_handles, controller: 'ember/twitter_handles', only: [:index] do
       member do

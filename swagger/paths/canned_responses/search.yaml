@@ -1,0 +1,27 @@
+
+get:
+  summary: Search
+  tags: ['canned response']
+  parameters:
+    - name: ticket_id
+      in: query
+      type: number
+    - name: search_string
+      in: query
+      type: string
+      required: true
+  responses:
+    200:
+      description: Success
+      schema:
+        type: array
+        items:
+          $ref: '#/definitions/canned_response'
+    403:
+      description: Access denied
+    404:
+      description: Record not found
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

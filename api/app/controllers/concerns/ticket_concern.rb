@@ -56,10 +56,10 @@ module TicketConcern
       ApiTicketConstants::PERMISSION_REQUIRED.include?(action_name.to_sym)
     end
 
-    def verify_ticket_state_and_permission
+    def verify_ticket_state_and_permission(user = api_current_user, ticket = @item)
       return false unless verify_object_state
       if ticket_permission_required?
-        return false unless verify_ticket_permission
+        return false unless verify_ticket_permission(user, ticket)
       end
 
       if ApiTicketConstants::NO_PARAM_ROUTES.include?(action_name) && cname_params.present?

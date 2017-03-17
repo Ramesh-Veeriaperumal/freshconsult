@@ -138,6 +138,8 @@
   $ref: ./canned_responses/list.yaml
 /canned_responses/{id}:
   $ref: ./canned_responses/show.yaml
+/canned_responses/search:
+  $ref: ./canned_responses/search.yaml
 
 # Agents
 /agents:

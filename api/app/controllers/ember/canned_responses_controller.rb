@@ -2,12 +2,22 @@ module Ember
   class CannedResponsesController < ApiApplicationController
     include HelperConcern
     include TicketConcern
-    decorate_views
+    include Helpdesk::Accessible::ElasticSearchMethods
+    decorate_views(decorate_objects: [:search])
 
-    before_filter :canned_response_permission?, :load_ticket, :ticket_permission?, only: [:show]
+    before_filter :canned_response_permission?, :load_ticket, only: [:show]
     before_filter :filter_ids, only: :index
 
     MAX_IDS_COUNT = 10
+
+    def search
+      return unless validate_url_params
+      load_ticket
+      @items = fetch_from_es("Admin::CannedResponses::Response", { load: Admin::CannedResponses::Response::INCLUDE_ASSOCIATIONS_BY_CLASS, size: 20 }, default_visiblity,"raw_title")
+      @items = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', ["`admin_canned_responses`.title like ?","%#{params[:search_string]}%"])) if @items.nil?
+      @items.compact! if @items.present?
+      render 'index'
+    end
 
     private
 
@@ -59,7 +69,7 @@ module Ember
       def load_ticket
         if params[:ticket_id]
           @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
-          log_and_render_404 unless @ticket.present?
+          @ticket ? verify_ticket_state_and_permission(api_current_user, @ticket) : log_and_render_404
         end
       end
 

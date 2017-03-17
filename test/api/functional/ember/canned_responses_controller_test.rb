@@ -237,5 +237,31 @@ module Ember
       end
       match_json(pattern)
     end
+
+    def test_search_with_invalid_ticket_id
+      invalid_id = create_ticket.display_id + 20
+      get :search, controller_params(version: 'private', ticket_id: invalid_id, search_string: 'Test')
+      assert_response 404
+    end
+
+    def test_search_without_search_string
+      get :search, controller_params(version: 'private', ticket_id: @sample_ticket.display_id)
+      assert_response 400
+      match_json([bad_request_error_pattern('search_string', :datatype_mismatch, code: :missing_field, expected_data_type: String)])
+    end
+
+    def test_search
+      ca_responses = Array.new(20) { create_response(
+          title: 'Test Canned Response search',
+          content_html: Faker::Lorem.paragraph,
+          visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]) }
+      get :search, controller_params(version: 'private', ticket_id: @sample_ticket.display_id, search_string: 'Canned Response')
+      assert_response 200
+      pattern = []
+      ca_responses.first(20).each do |ca|
+        pattern << ca_response_search_pattern(ca.id)
+      end
+      match_json(pattern)
+    end
   end
 end

@@ -192,6 +192,10 @@
     $ref: './resource/twitter_handle.yaml'
   ticket_activity:
     $ref: './response/tickets/activity.yaml'
+  canned_response_show:
+    allOf:
+      - $ref: '#/definitions/extended_canned_response'
+      - $ref: ./response/canned_response/show.yaml
 
     # Search
   search_generic:

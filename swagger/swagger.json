@@ -2488,7 +2488,7 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/extended_canned_response"
+              "$ref": "#/definitions/canned_response_show"
             }
           },
           "403": {
@@ -2496,6 +2496,50 @@
           },
           "404": {
             "description": "Canned response not found"
+          }
+        }
+      }
+    },
+    "/canned_responses/search": {
+      "get": {
+        "summary": "Search",
+        "tags": [
+          "canned response"
+        ],
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "search_string",
+            "in": "query",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/canned_response"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Record not found"
           }
         }
       }
@@ -4850,18 +4894,8 @@
         "title": {
           "type": "string"
         },
-        "content": {
-          "type": "string"
-        },
-        "content_html": {
-          "type": "string"
-        },
-        "attachments": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "format": "byte"
-          }
+        "folder_id": {
+          "type": "number"
         }
       }
     },
@@ -5349,12 +5383,18 @@
         },
         {
           "properties": {
-            "folder_id": {
-              "type": "integer"
+            "content": {
+              "type": "string"
             },
-            "evaluated_response": {
-              "type": "string",
-              "description": "Has to be sideloaded with ?include=evaluated_response"
+            "content_html": {
+              "type": "string"
+            },
+            "attachments": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "byte"
+              }
             }
           }
         }
@@ -5613,7 +5653,15 @@
             "canned_responses": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/canned_response"
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "number"
+                  },
+                  "title": {
+                    "type": "string"
+                  }
+                }
               }
             }
           }
@@ -6040,6 +6088,29 @@
           }
         }
       }
+    },
+    "canned_response_show": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/extended_canned_response"
+        },
+        {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/extended_canned_response"
+            },
+            {
+              "properties": {
+                "evaluated_response": {
+                  "type": "string",
+                  "description": "Has to be sideloaded with ?include=evaluated_response"
+                }
+              }
+            }
+          ]
+        }
+      ]
     },
     "search_generic": {
       "title": "data",
