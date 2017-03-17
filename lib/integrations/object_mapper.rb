@@ -2,7 +2,7 @@ class Integrations::ObjectMapper
   include Helpdesk::Ticketfields::TicketStatus
 
   def map_it(account_id, mapper_name, data, convertion_type=:theirs_to_ours, stages = [:fetch, :map, :update])
-    Rails.logger.debug "map_it #{mapper_name}, data #{data}, convertion_type: #{convertion_type}, stages: #{stages}"
+    Rails.logger.debug "map_it #{mapper_name}, convertion_type: #{convertion_type}, stages: #{stages}"
     mapper_config = Integrations::ObjectMapper::clone(MAPPER_CONFIGURATIONS[mapper_name.to_sym]) || {}
     if data.respond_to?(:account_id)
       data.account_id = account_id
@@ -13,7 +13,7 @@ class Integrations::ObjectMapper
     stages.each {|s|
       config = mapper_config[s]
       self.send(s, data_hash, config, convertion_type) unless config.blank?
-      Rails.logger.debug "=========== After #{s} for #{mapper_name}: data_hash #{data_hash.inspect} =========="
+      Rails.logger.debug "=========== After #{s} for #{mapper_name}: =========="
     }
     data_hash[:to_entity]
   end
