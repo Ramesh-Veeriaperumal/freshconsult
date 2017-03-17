@@ -51,6 +51,10 @@ class FlexifieldDef < ActiveRecord::Base
     flexifield_column_hash =  self.account.flexifields.columns_hash
     ff_alias_column_mapping.map { |key, value| key if flexifield_column_hash[value].type == :boolean }.compact
   end
+
+  def text_ff_aliases
+    flexifield_def_entries.nil? ? [] : text_fields.map(&:flexifield_alias)
+  end
   
   def non_text_ff_aliases
     flexifield_def_entries.nil? ? [] : non_text_fields.map(&:flexifield_alias)                                                   

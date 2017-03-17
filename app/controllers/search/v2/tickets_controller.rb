@@ -29,6 +29,11 @@ class Search::V2::TicketsController < ApplicationController
         if current_user.restricted?
           es_params[:restricted_responder_id] = current_user.id.to_i
           es_params[:restricted_group_id]     = current_user.agent_groups.map(&:group_id) if current_user.group_ticket_permission
+
+          if current_account.shared_ownership_enabled?
+            es_params[:restricted_internal_agent_id] = current_user.id.to_i
+            es_params[:restricted_internal_group_id] = current_user.agent_groups.map(&:group_id) if current_user.group_ticket_permission
+          end
         end
         
         es_params[:size]            = @size

@@ -174,8 +174,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
   end
 
   def self.default_field_order
-    Account.current.shared_ownership_enabled? ? 
-      TicketConstants::SHARED_DEFAULT_FIELDS_ORDER : TicketConstants::DEFAULT_FIELDS_ORDER
+    Account.current.shared_ownership_enabled? ?
+      TicketConstants::SHARED_DEFAULT_FIELDS_ORDER.keys : TicketConstants::DEFAULT_FIELDS_ORDER
   end
 
   # Used by API V2

@@ -11,6 +11,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   before_filter :check_application_installable, :only => [:install, :update]
   before_filter :set_auth_key, :only => [:install,:update]
   before_filter :check_jira_authenticity, :only => [:install, :update]
+  before_filter :populate_zoho_domain, :only => [:install, :update], :if => :application_is_zoho?
   before_filter :redirect_old_slack, :only => [:update], :if => :application_is_slack? #Remove this when slackv1 is obselete.
   before_filter :update_ratelimit, :only => [:update] #For security, prevent port scanning.
   after_filter  :destroy_all_slack_rule, :only => [:uninstall], :if =>  :application_is_slack? #Remove this when slackv1 is obselete.
@@ -180,6 +181,14 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
 
   def application_is_slack? #Remove when slackv1 is obselete
     @installing_application.present? && @installing_application.slack?
+  end
+
+  def application_is_zoho?
+    @installing_application.present? && @installing_application.zohocrm?
+  end
+
+  def populate_zoho_domain
+    @installed_application.configs_domain = get_zohocrm_pod @installed_application.configs_api_key
   end
 
   def update_ratelimit

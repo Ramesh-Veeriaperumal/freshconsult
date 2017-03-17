@@ -7,6 +7,7 @@ module ApplicationHelper
   include ActionView::Helpers::TextHelper
   include Gamification::GamificationUtil
   include ChatHelper
+  include Sanitize::FieldValues
 
   include AttachmentHelper
   include ConfirmDeleteHelper
@@ -175,7 +176,7 @@ module ApplicationHelper
     if tab_name.eql?(:tickets)
       options.merge!({:"data-parallel-url" => "/helpdesk/tickets/filter_options", :"data-parallel-placeholder" => "#ticket-leftFilter"})
     end
-    if tab_name.eql?(:reports) && ( request.fullpath.include?("reports/custom_survey") || request.fullpath.include?("timesheet_reports") || request.fullpath.include?("phone/summary_reports") || request.fullpath.include?("freshchat/summary_reports"))
+    if tab_name.eql?(:reports) && ( request.fullpath.include?("reports/custom_survey") || request.fullpath.include?("reports/timesheet") || request.fullpath.include?("phone/summary_reports") || request.fullpath.include?("freshchat/summary_reports"))
        options.delete(:"data-pjax") 
     end
     content_tag('li', link_to(strip_tags(title), url, options), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
@@ -1010,7 +1011,7 @@ module ApplicationHelper
       widget_script(installed_app, widget, liquid_objs)
     end
   end
-
+  
   def widget_script(installed_app, widget, liquid_objs)
     replace_objs = liquid_objs || {}
     replace_objs = replace_objs.merge({"current_user"=>current_user})

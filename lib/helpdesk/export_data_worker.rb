@@ -108,7 +108,7 @@ class Helpdesk::ExportDataWorker < Struct.new(:params)
 
   def export_archived_tickets_data
     i = 0 
-    @current_account.archive_tickets.find_in_batches(:batch_size => 300, :include => [:archive_notes,:attachments]) do |tkts|
+    @current_account.archive_tickets.find_in_batches(:batch_size => 300, :include => [:notes,:attachments]) do |tkts|
        xml_output = tkts.to_xml
        write_to_file("ArchivedTickets#{i}.xml",xml_output)
        i += 1

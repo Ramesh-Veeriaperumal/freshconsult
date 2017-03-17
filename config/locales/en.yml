@@ -5065,7 +5065,7 @@ en:
     custom_mailbox: "Custom mail servers"
     ip_restriction: "Secure IP restriction"
     ticket_dispatch_automation: "Ticket dispatch automation"
-    app_gallery: "Access to App gallery"
+    app_gallery: "Access to Marketplace"
     basic_phone: "Basic phone and social channels"
     time_event_automation: "Time/event based automations"
     custom_ticket_fields_and_views: "Custom ticket fields/views"
@@ -6825,8 +6825,10 @@ en:
     requester_placeholder: "Name or Email"
     user_placeholder: "Name or Email"
     cc_emails_placeholder: "Name or email of user from selected company"
+    agents_placeholder: ""
     tags_placeholder: ""
     customers_placeholder: ""
+    companies_placeholder: ""
     company_id_placeholder: ""
     raised_by: "Tickets created by"
     everyone_in_company: "Everyone in %{company_name}"
@@ -7212,7 +7214,7 @@ en:
     reauthorize: "Reauthorize"
     app: app
     custom_app: custom app
-    app_gallery: App Gallery
+    app_gallery: Marketplace
     custom_app_gallery: Custom App Gallery
     app_description: "Apps allow you to integrate with other applications to make your Freshdesk experience more awesome. They also enable you to customize and personalize your Freshdesk portal."
     apps: Apps
@@ -7259,7 +7261,7 @@ en:
     no_apps_in_category: No Apps available in this category
     related_categories: "Apps from Related Categories:"
     similar_apps: "Similar Apps:"
-    no_connection: "The app gallery is currently unavailable. Please try again later. Please contact us, if the issue persists."
+    no_connection: "Marketplace is currently unavailable. Please try again later. Please contact us, if the issue persists."
     apps_unavailable: "Certain apps could not be rendered. Please try again later. Please contact us if the issue persists."
     installed_mkp_apps_unavailable: "The listing of installed apps is currently unavailable. Please try again later. Please contact us if the issue persists."
     api_error: "We could not process your request. Please try after sometime."
@@ -7274,6 +7276,7 @@ en:
     buy_app: Buy App
     paid_apps_trial_info: "Paid Apps are not available for trial at this point of time. Please contact <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> for further information."
     app_price: %{price} / %{addon_type} / month
+    paid_app: PAID
     no_payment_info: We do not have your payment details on file. Please update them to proceed further. <br>
     update_payment_info: Update payment info
     payment_trial_info: This is a paid app with a %{trial_period} day trial period. Once the trial period is over, you will be charged %{price} / %{addon_type} / month. Press Ok to install the app. <br>  %{payment_ok_btn}
@@ -8892,6 +8895,23 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   activation_link: Activation link has been sent to %{email}
   activation_link_no_email: Successfully registered
   not_given: "Not given."
+  helpdesk_search:
+    filter_by: Filter by
+    edit_filter: Filter
+    generate: Search
+    add_fields: Add field
+    requester: Requester
+    agent: Agent
+    company: Company
+    tags: Tags
+    created_at: Created
+    due_by: Due by
+    status: Status
+    priority: Priority
+    group: Group
+    type: Type
+    source: Source
+    product: Product
   helpdesk_reports:
     helpdesk_analysis : Helpdesk Analysis
     productivity : Productivity
@@ -10913,3 +10933,10 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       wrong_file_format: "Unsupported file format!"
       unexpected: "Something went wrong!"
       highlight_missing: "Highlight missing"
+
+  default:
+    ticket:
+      email:
+        subject: You lost my cat!
+        body: "<p>Dear Customer Relations,</p><br /><p>I recently flew Upper Class from Heathrow to JFK and whilst some bits were great,one bit in particular was really really bad.I flew with my cat* and you froze** it and it died*** which made me sad****.</p><br /><br /><p>* I use the word 'cat' in the sense of 'suitcase'.\n<br />** I use the word 'froze' in the sense of 'lost'.\n<br />*** I use the word 'died' in the sense of 'didn't turn up for 2 days'.\n<br />**** I use the word 'sad' correctly.</p><br /><br /><p>We all lose things. I once went for a pint with the late Keith Floyd and he lost an entire week.Another time I worked out an equation for cold fusion and gave it to my cat on a memory stick,which she lost. Keith Floyd, me, my cat, and you are all only human, so these things happen.What separates humans from super humans is the way they deal with these hiccups.</p><br /><br /><p>I won't bore you with the details. The only question is how can we make it right?</p><br /><br /><p>Yours ever,\n<br />James Dean.</p><br /><br /><p><hr>\n</p>"
+        reply: "<p>Dear Mr James Dean (Like the Actor),</p><br /><p>Thank you for your email detailing your unfortunate events following the delay of your luggage. Please accept my sincerest apologies for this, and for the unexpected inconveniences caused as a result. I do hope that despite this, you had a pleasant trip.</p><br /><br /><p>Thankfully, the following morning, it was me that you spoke to,and I advised you that your cat hadbeen found and was on its way to you. On a serious note though James,I'm happy to give you a Tier Point. I hope you cherish it. Like it's Magic.I have also added the mileage and remaining tier points from your most recentflight with us, which means that you are now a Gold Member (not like the movie).</p><br /><br /><p>Please once again accept my sincerest apologies. This experience is not typical of us, and I hope it has not discouraged you from travelling with us again, as it would certainlybe a pleasure to welcome you back on board.</p><br /><br /><p>Yours sincerely,\n<br />The Lady in Red.\n<br />Baggage Services Advisor.</p>"
