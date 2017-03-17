@@ -60,7 +60,7 @@ class Helpdesk::TicketsController < ApplicationController
   skip_before_filter :load_item
   alias :load_ticket :load_item
 
-  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever,:change_due_by,:reply_to_forward, :save_draft, :clear_draft]
+  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever,:change_due_by,:reply_to_forward, :save_draft, :clear_draft, :assign]
   before_filter :verify_ticket_permission_by_id, :only => [:component]
 
   before_filter :load_ticket,
@@ -660,9 +660,10 @@ class Helpdesk::TicketsController < ApplicationController
     user = params[:responder_id] ? User.find(params[:responder_id]) : current_user
     assign_ticket user
 
+    flash_message = t("helpdesk.flash.assignedto", :tickets => get_updated_ticket_count,
+                                                :username => user.name )
     flash[:notice] = render_to_string(
-      :inline => t("helpdesk.flash.assignedto", :tickets => get_updated_ticket_count,
-                                                :username => user.name ))
+      :inline => flash_message)
 
 
     respond_to do |format|
@@ -675,6 +676,7 @@ class Helpdesk::TicketsController < ApplicationController
       }
       format.xml { render :xml => @items.to_xml({:basic=>true}) }
       format.json { render :json => @items.to_json({:basic=>true}) }
+      format.nmobile {render :json => {:message => flash_message}}
     end
 
   end
