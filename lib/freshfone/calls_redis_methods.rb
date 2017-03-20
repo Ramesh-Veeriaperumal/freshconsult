@@ -135,6 +135,10 @@ module Freshfone::CallsRedisMethods
     FRESHFONE_AGENT_INFO % { account_id: account_id, call_id: call_id }
   end
 
+  def voicemail_initiated_key(account_id, call_id)
+    FRESHFONE_VOICEMAIL_CALL % { account_id: account_id, call_id: call_id }
+  end
+
   def set_agent_response(account_id, call_id, agent_id, response)
     key = agent_response_key(account_id, call_id)
     $redis_integrations.perform_redis_op('hset', key, agent_id.to_s, response)
@@ -143,6 +147,16 @@ module Freshfone::CallsRedisMethods
   def set_all_agents_response(account_id, call_id, agent_responses)
     key = agent_response_key(account_id, call_id)
     $redis_integrations.perform_redis_op('hmset', key , agent_responses)
+  end
+
+  def set_voicemail_key(account_id, call_id)
+    key = voicemail_initiated_key(account_id, call_id)
+    set_key(key, '', 900)
+  end
+
+  def get_voicemail_key(account_id, call_id)
+    key = voicemail_initiated_key(account_id, call_id)
+    get_key(key)
   end
 
   def get_response_meta(account_id, call_id)
