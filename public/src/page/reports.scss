@@ -177,7 +177,7 @@ $Customer_hover_color:#866aa0;
 	.hours span{
 		height: 7px;
 		width: 7px;
-		@include margin-right(10px);
+		@include margin(0px 10px);
 		display: inline-block;
 		vertical-align: middle;
 		border-radius: 8px;
@@ -227,6 +227,14 @@ $Customer_hover_color:#866aa0;
 	.hours{
 		vertical-align: middle;
 		text-align : right !important;
+	}
+}
+
+html[dir="rtl"]{
+	.report-pdf-column-border table tr.odd td{
+		&:first-child{
+			border-left : 1px solid #e2e2e2;
+		}
 	}
 }
 
