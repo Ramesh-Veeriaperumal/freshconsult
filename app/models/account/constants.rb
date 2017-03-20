@@ -180,7 +180,7 @@ class Account < ActiveRecord::Base
     :customer_sentiment => false, :countv2_template_write => false, :logout_logs => false, :gnip_2_0 => false, :froala_editor => false,
     :es_v2_splqueries => false, :suggest_tickets => false, :"Freshfone New Notifications" => false, :feedback_widget_captcha => false, 
     :es_multilang_solutions => false, :requester_widget => false, :spam_blacklist_feature => false,
-    :custom_timesheet => false, :antivirus_service => false, :hide_api_key => false
+    :custom_timesheet => false, :antivirus_service => false, :hide_api_key => false, :new_sla_logic => false
   }
 
 end

@@ -32,7 +32,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     @resolved_time_was = self.resolved_at_was
     self.resolved_at = nil
     self.closed_at = nil
-    self.resolution_time_by_bhrs = nil
+    self.resolution_time_by_bhrs = nil unless Account.current.launched?(:new_sla_logic)
   end
 
   def resolved_time_was
@@ -41,11 +41,11 @@ class Helpdesk::TicketState <  ActiveRecord::Base
   
   def set_resolved_at_state(time=Time.zone.now)
     self.resolved_at = time 
-    set_resolution_time_by_bhrs
+    set_resolution_time_by_bhrs unless Account.current.launched?(:new_sla_logic)
   end
   
   def set_closed_at_state(time=Time.zone.now)
-    set_resolved_at_state if resolved_at.nil?
+    set_resolved_at_state(time) if resolved_at.nil?
     self.closed_at = time
   end
   
@@ -133,13 +133,28 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     }
   end
 
-  def set_resolution_time_by_bhrs
+  def set_resolution_time_by_bhrs # Remove this method after all accounts start using new sla logic
     return unless resolved_at
     time = created_at || Time.zone.now
     BusinessCalendar.execute(self.tickets) {
       default_group = tickets.group if tickets
       self.resolution_time_by_bhrs = calculate_time_in_bhrs(time, resolved_at, default_group)
     }
+  end
+  
+  def change_resolution_time_by_bhrs(from_time, to_time)
+    priority_for_sla_calculation = tickets.priority_changed? ? tickets.priority_was : tickets.priority
+    sla_policy = tickets.sla_policy || account.sla_policies.default.first
+    sla_detail = sla_policy.sla_details.where(:priority => priority_for_sla_calculation).first
+    if sla_detail.override_bhrs 
+      updated_time = (to_time - from_time).round()
+    else
+      BusinessCalendar.execute(self.tickets) {
+        default_group = tickets.group if tickets
+        updated_time = calculate_time_in_bhrs(from_time, to_time, default_group)
+      }
+    end
+    self.resolution_time_by_bhrs = self.resolution_time_by_bhrs.to_i + updated_time
   end
 
   def set_avg_response_time
