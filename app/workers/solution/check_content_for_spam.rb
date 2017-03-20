@@ -27,6 +27,12 @@ class Solution::CheckContentForSpam < BaseWorker
   end
    
   def increase_ehawk_spam_score_for_account(spam_score, article_id)
+    mail_recipients = ["mail-alerts@freshdesk.com"]
+    FreshdeskErrorsMailer.error_email(nil, {:domain_name => Account.current.full_domain}, nil, {
+              :subject => "Detected suspicious solution spam account :#{Account.current.id} ",
+              :recipients => mail_recipients,
+              :additional_info => {:info => "Suspicious article in Account ##{Account.current.id} with ehawk_reputation_score: #{Account.current.ehawk_reputation_score} , Article id : #{article_id}"}
+            })
     signup_params = (get_signup_params || {}).merge({"api_response" => {}})
     signup_params["api_response"]["status"] = spam_score
     set_others_redis_key(signup_params_key,signup_params.to_json)
