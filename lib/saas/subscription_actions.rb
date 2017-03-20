@@ -1,9 +1,9 @@
 class SAAS::SubscriptionActions
 
   DROP_DATA_FEATURES  = [
-    :facebook, :twitter, :custom_domain, :css_customization, 
-    :custom_roles, :dynamic_content, :mailbox, :dynamic_sections, :custom_survey, 
-    :round_robin, :multi_language, :helpdesk_restriction_toggle, :ticket_templates, 
+    :facebook, :twitter, :custom_domain, :css_customization,
+    :custom_roles, :dynamic_content, :mailbox, :dynamic_sections, :custom_survey,
+    :round_robin, :multi_language, :helpdesk_restriction_toggle, :ticket_templates,
     :multiple_companies_toggle, :round_robin_load_balancing ]
 
   ADD_DATA_FEATURES   = [ :round_robin ]

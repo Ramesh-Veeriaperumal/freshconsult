@@ -4,71 +4,70 @@
 		<div class="commentbox commentbox-dark">
 			<div id="TicketForms">
 				<div class="hide">
-		      <%= link_to( t(:'ticket.canned_responses.ca_response'), 
-		      							helpdesk_canned_responses_index_path(@ticket.display_id), 
-		      							"data-width" => "700", "data-template-footer" => '', :rel => 'freshdialog', 
+		      <%= link_to( t(:'ticket.canned_responses.ca_response'),
+		      							"data-width" => "700", "data-template-footer" => '', :rel => 'freshdialog',
 		      							:id => "canned_response_show", "data-target" => "#canned_responses",
 		      							'data-template-header' => "<div class='modal-header'><span><h3 class='modal-heading-with-button'>" + t('ticket.canned_responses.ca_responses') + "</h3></span><a href='/helpdesk/canned_responses/folders' target='_blank' class='pull-right modal-header-button'>" + t('ticket.create_new_ca') + "</a></div>") %>
-					<%= link_to( t('solution.title_singular'), 
-												"#related_solutions", 
+					<%= link_to( t('solution.title_singular'),
+												"#related_solutions",
 												:title => t(:'ticket.suggested_solutions.title'), :rel => 'freshdialog',
-												"data-target" => "#related_solutions", "data-template-footer" => '', 
+												"data-target" => "#related_solutions", "data-template-footer" => '',
 												:id => "suggested_solutions_show") %>
 					<%= render :partial => "/search/solutions/related_solutions" %>
 				</div>
         <% if privilege?(:reply_ticket) %>
-       		<%= render(	:partial => '/helpdesk/tickets/show/reply_form', 
-			  				:locals => { 	:id => 'send-email', 
-			  								:cntid => 'cnt-reply', 
-		  									:note => [@ticket, Helpdesk::Note.new(:private => false)], 
-		  									:conv_id => nil 
+       		<%= render(	:partial => '/helpdesk/tickets/show/reply_form',
+			  				:locals => { 	:id => 'send-email',
+			  								:cntid => 'cnt-reply',
+		  									:note => [@ticket, Helpdesk::Note.new(:private => false)],
+		  									:conv_id => nil
 		  								}) if !(@ticket.twitter? or @ticket.facebook? or @ticket.mobihelp? or @ticket.ecommerce?) and @item.from_email.present? %>
-  				<%= render(	:partial => '/helpdesk/tickets/show/tweet_form', 
-  							:locals => { 
-  										:id => 'send-tweet', 
-  										:cntid => 'cnt-reply', 
-  										:note => [@ticket, Helpdesk::Note.new(:private => true)] 
+  				<%= render(	:partial => '/helpdesk/tickets/show/tweet_form',
+  							:locals => {
+  										:id => 'send-tweet',
+  										:cntid => 'cnt-reply',
+  										:note => [@ticket, Helpdesk::Note.new(:private => true)]
   									})  if @ticket.twitter? %>
-  				<%= render(	:partial => '/helpdesk/tickets/show/facebook_form', 
-  							:locals => { 
-  										:id => 'send-fb-post', 
-  										:cntid => 'cnt-reply', 
-  										:note => [@ticket, Helpdesk::Note.new(:private => true)] 
+  				<%= render(	:partial => '/helpdesk/tickets/show/facebook_form',
+  							:locals => {
+  										:id => 'send-fb-post',
+  										:cntid => 'cnt-reply',
+  										:note => [@ticket, Helpdesk::Note.new(:private => true)]
   									}) if @ticket.facebook? %>
-  				<%= render(	:partial => '/helpdesk/tickets/show/mobihelp_reply_form', 
-  							:locals => { 
-  										:id => 'send-mobihelp-chat', 
-  										:cntid => 'cnt-reply', 
-  										:note => [@ticket, Helpdesk::Note.new(:private => true)] 
-  									}) if @ticket.mobihelp?%>				
-  				<%= render(	:partial => '/helpdesk/tickets/show/ecommerce_reply_form', 
-  							:locals => { 
-  										:id => 'send-ecommerce-post', 
-  										:cntid => 'cnt-reply', 
-  										:note => [@ticket, Helpdesk::Note.new(:private => true)] 
-  									}) if @ticket.ecommerce? %>						
+  				<%= render(	:partial => '/helpdesk/tickets/show/mobihelp_reply_form',
+  							:locals => {
+  										:id => 'send-mobihelp-chat',
+  										:cntid => 'cnt-reply',
+  										:note => [@ticket, Helpdesk::Note.new(:private => true)]
+  									}) if @ticket.mobihelp?%>
+  				<%= render(	:partial => '/helpdesk/tickets/show/ecommerce_reply_form',
+  							:locals => {
+  										:id => 'send-ecommerce-post',
+  										:cntid => 'cnt-reply',
+  										:note => [@ticket, Helpdesk::Note.new(:private => true)]
+  									}) if @ticket.ecommerce? %>
         <% end %>
 
 			  <% if privilege?(:forward_ticket) %>
   				<div class="request_panel hide" id="cnt-fwd">
-  				<%= render(:partial => '/helpdesk/tickets/show/forward_form', 
-  							:locals => { 
-  										:id => 'send-fwd-email', 
-  										:cntid => 'cnt-fwd', 
-  										:note => [@ticket, Helpdesk::Note.new(:private => true)], 
-  										:conv_id => nil 
+  				<%= render(:partial => '/helpdesk/tickets/show/forward_form',
+  							:locals => {
+  										:id => 'send-fwd-email',
+  										:cntid => 'cnt-fwd',
+  										:note => [@ticket, Helpdesk::Note.new(:private => true)],
+  										:conv_id => nil
   									}) %>
   				</div>
         <% end %>
 
-				<%= render(:partial => '/helpdesk/tickets/show/note_form', 
-							:locals => { 
-										:id => 'add-note',	
-										:cntid => "cnt-note", 
-										:note => [@ticket, Helpdesk::Note.new(:private => true)] 
+				<%= render(:partial => '/helpdesk/tickets/show/note_form',
+							:locals => {
+										:id => 'add-note',
+										:cntid => "cnt-note",
+										:note => [@ticket, Helpdesk::Note.new(:private => true)]
 									}) %>
 
-			<% if privilege?(:reply_ticket) && current_account.link_tickets_enabled? && @ticket.tracker_ticket? %>
+			<% if privilege?(:reply_ticket) && current_account.link_tkts_enabled? && @ticket.tracker_ticket? %>
 				<%= render(:partial => '/helpdesk/tickets/show/broadcast_form',
 				 :locals => {
 				 	  :id => 'broadcast-request',
@@ -86,21 +85,21 @@
 			  		<a href="" id="FwdButton" rel="note-button" data-note-type="fwd" data-domhelper-name="fwd-button"><%= t('fwd_to') %></a> /
     			<% end %>
 				<a href="#"  rel="note-button" data-note-type="note" data-domhelper-name="note-button"><%= t('ticket.add_note') %></a>
-				<% if privilege?(:reply_ticket) && current_account.link_tickets_enabled? && @ticket.tracker_ticket? && @ticket.related_tickets_count > 0 %>
+				<% if privilege?(:reply_ticket) && current_account.link_tkts_enabled? && @ticket.tracker_ticket? && @ticket.related_tickets_count > 0 %>
 					/ <a href="#" id="BroadcastBtn"  rel="note-button" data-note-type="broadcast" data-domhelper-name="broadcast-button"><%= t('ticket.broadcast') %></a>
 				<% end -%>
         <% if @ticket.mobihelp? %>
         	/ <%= link_to 'Request App review', "#", :id => "ReviewButton", :rel => "review-button" %>
-					<%= render(:partial => '/helpdesk/tickets/show/app_review_form', 
-						:locals => { 
-								:id => 'review-request',	
-								:cntid => "cnt-review-note", 
-								:note => [@ticket, Helpdesk::Note.new(:private => true)] 
+					<%= render(:partial => '/helpdesk/tickets/show/app_review_form',
+						:locals => {
+								:id => 'review-request',
+								:cntid => "cnt-review-note",
+								:note => [@ticket, Helpdesk::Note.new(:private => true)]
 							}) %>
 				<% end %>
 			</div>
 		</div>
 
 	</div>
-	<%= render :partial	=> "helpdesk/tickets/show/nba_suggestions" %> 
+	<%= render :partial	=> "helpdesk/tickets/show/nba_suggestions" %>
 </div>

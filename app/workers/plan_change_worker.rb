@@ -62,7 +62,7 @@ class PlanChangeWorker
   end
 
   def drop_css_customization_data(account)
-    update_all_in_batches({ :custom_css => nil, :updated_at => Time.now }){ |cond| 
+    update_all_in_batches({ :custom_css => nil, :updated_at => Time.now }){ |cond|
       account.portal_templates.where(@conditions).limit(@batch_size).update_all(cond)
     }
     drop_layout_customization_data(account)
@@ -102,7 +102,8 @@ class PlanChangeWorker
   end
 
   def drop_ticket_templates_data(account)
-    account.ticket_templates.destroy_all
+    account.ticket_templates.where(:association_type =>
+      Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:general]).destroy_all
   end
 
   def drop_custom_survey_data(account)
@@ -114,15 +115,15 @@ class PlanChangeWorker
   end
 
   def drop_dynamic_content_data(account)
-    # update_all_in_batches({ :language => account.language }){ |cond| 
-    #   account.all_users.where(@conditions).limit(@batch_size).update_all(cond) 
+    # update_all_in_batches({ :language => account.language }){ |cond|
+    #   account.all_users.where(@conditions).limit(@batch_size).update_all(cond)
     # }
     # Below line has been intentionally commented, as we want to make sure,
     # when the customer upgrades again, he'll have all the data and config as it was before. [Solution Multilingual Feature]
     #account.account_additional_settings.update_attributes(:supported_languages => [])
   end
 
-  def drop_mailbox_data(account)      
+  def drop_mailbox_data(account)
     account.imap_mailboxes.destroy_all
     account.smtp_mailboxes.destroy_all
   end
