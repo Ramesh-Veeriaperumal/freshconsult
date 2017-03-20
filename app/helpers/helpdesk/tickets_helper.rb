@@ -93,6 +93,7 @@ module Helpdesk::TicketsHelper
       label = label_tag(object_name+"_"+field.field_name+"_label",
                         (checkbox + field.label),
                         :rel => "inputcheckbox")
+      section_class = " dynamic_sections" if field.section_dropdown?
       if field.field_type == "nested_field"
         element = label + nested_field_tag(object_name,
                                  field.field_name,
@@ -116,7 +117,7 @@ module Helpdesk::TicketsHelper
                       field.html_unescaped_choices,
                       {:include_blank => t('select'),
                         :selected => t('select')},
-                      {:class => "#{dom_type} select2" ,
+                      {:class => "#{dom_type} #{section_class} select2" ,
                         :rel => "inputselectbox"})
       end
       content_tag :div, element.html_safe, attributes

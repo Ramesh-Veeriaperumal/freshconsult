@@ -695,6 +695,9 @@ window.App = window.App || {};
 	  },
 		bindEvents:function(){ //bind events
 			invokeRedactor('template_data_ticket_body_attributes_description_html', 'template');
+			$(document).ready(function(){
+				$('.dynamic_sections select.dropdown_blank').trigger('change');
+			})
 			$('body')
 		    .on("change.template_form",'#template_data_group_id', function(e){
 		      var select_agent = $('#template_data_responder_id')[0];
@@ -714,10 +717,15 @@ window.App = window.App || {};
 
 		  // Need to make the code generic to handle the custom dropdown fields sections.
 		  $("body")
-		    .on("change.template_form",'#template_data_ticket_type', function(e){
-		      var id = $("option:selected", this).data("id");
-		      $('ul.ticket_section').remove();
-		      var element = $('#picklist_section_'+id).parent();
+				.on("change.template_form",'.dynamic_sections', function(e){
+					var id;
+					var selected = jQuery(this).find(':selected');
+					if (selected.length > 0){
+					  id = selected.data().id;
+					}
+					var nextElement = jQuery(this.closest('li').next());
+					nextElement.find('ul.ticket_section').remove();
+					var element = $('#picklist_section_'+id).parent();
 		      if(element.length != 0) {
 		        element.append($('#picklist_section_'+id).val()
 		                .replace(new RegExp('&lt', 'g'), '<')

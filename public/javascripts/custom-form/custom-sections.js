@@ -7,6 +7,7 @@
 			sectionWrapper:			".section-wrapper",
 			new_btn:				".new-section",
 			newSectionDisabled:		"new-section-disabled",
+			addSectionDisabled:		"add-section-disabled",
 			formContainer:			'#custom-field-form',
 			customPropsModal:		'#CustomPropsModal',
 			dialogContainer:		'#CustomFieldsPropsDialog',
@@ -24,9 +25,12 @@
 			ui:						{},
 			selectedPicklistIds:	{},
 			parent_id:				'',
+			fieldLabel: '',
 			section_finder:			'li.section',
-			sortingConnectors:		[options.formContainer, '.section-body'].join(',')
+			sortingConnectors:		[options.formContainer, '.section-body'].join(','),
 		};
+		this.fieldIdsWithSections= {};
+		this.allFieldIdsWithSections = [];
 		this.options			= $.extend({}, defaults, options);
 		this.section_data		= {};
 		this.all_section_fields	= $A();
@@ -59,6 +63,7 @@
 			$(document).on('mouseover', this.options.sectionWrapper, function (e) {
 				var parent_field = $(this).parents('li.custom-field');
 				parent_field.find('.options-wrapper').first().hide();
+				parent_field.find('.add-section').first().hide();
 				parent_field.addClass('remove-select');
 			});
 
@@ -68,8 +73,11 @@
 
 			$(this.options.formContainer).on('click', this.options.new_btn, $.proxy(function (e) {
 				e.stopPropagation();
-				if (!$(this.options.new_btn).hasClass(this.options.newSectionDisabled)) {
-					this.options.parent_id = $(e.currentTarget).closest("li.custom-field").attr("data-id");
+				currElement = $(e.currentTarget).closest("li.custom-field");
+				newSectionElement = currElement.find('.new-section');
+				if (!newSectionElement.hasClass(this.options.newSectionDisabled)) {
+					this.options.parent_id = currElement.attr("data-id");
+					this.options.fieldLabel = this.options.builder_instance.data.get(this.options.parent_id).label;
 					this.showSectionDialogue();
 				}
 				return false;
@@ -170,10 +178,12 @@
 				} else {
 					var id	= $(ui.item).data('id');
 					if(id){
+						data = this.options.builder_instance.data.get(id);
 						var	def_check	= (/^default/.test(this.options.builder_instance.data.get(id).field_type)),
+								sec_check = data.field_options.section_present
 							target		= ev.target || ev.srcElement;
 						if(!target.hasClassName('field') && current_field.hasClass('section') )
-							(def_check) ? $(ui.sender).sortable('cancel') : this.formToSection(ui);
+							(def_check || sec_check) ? $(ui.sender).sortable('cancel') : this.formToSection(ui);
 					}
 				}
 			}, this));
@@ -185,7 +195,8 @@
 			if (isDefault && !isType) {
 				$('.default-error-wrap').show();
 			}
-			if (placeholder.closest('ul').hasClass('section-body') && isDefault) {
+			if ((placeholder.closest('ul').hasClass('section-body') && isDefault) ||
+					fieldData.field_options.section_present) {
 				placeholder.addClass('default-field-error');
 			} else {
 				placeholder.removeClass('default-field-error');
@@ -218,6 +229,7 @@
 				
 				var section 			= this.currentSection(e),
 						confirm_type 	= 'deleteSection';
+				this.options.parent_id = $(e.currentTarget).closest("li.custom-field").attr("data-id");
 						
 				if($("li[data-section-id="+section.id+"] .section-body").children('.custom-field:visible').length > 0) 
 					confirm_type = 'deleteError';
@@ -241,7 +253,21 @@
 				this.section_data[section_id].picklist_ids = [];
 				this.section_data[section_id].action = "delete";
 			}
-			this.disableNewSection();
+			if (multi_sections_enabled) {
+				data = this.options.builder_instance.data.get(this.options.parent_id);
+				this.removeFromFieldsWithSections(data.id);
+				this.setNewSection("delete");
+				numSections = this.getNumSections(data.id)
+				if (numSections <= 0){
+					data.field_options["section_present"] = false;
+					element = $(this.options.formContainer).find('li[data-id="'+this.options.parent_id + '"]');
+					$(element).html(JST['custom-form/template/dom_field'](data, multi_sections_enabled));
+				}
+				this.options.builder_instance.data.get(data.id).action = 'update';
+			} else {
+				this.disableNewSection();
+			}
+
 		},
 
 		deleteSecFieldsdialog: function (field, id) {
@@ -268,11 +294,13 @@
 				JST['custom-form/template/section_dialogue'](
 					{
 						obj:	sectionData,
-						types:	this.mergePicklistSelected(sectionData)
+						types:	this.mergePicklistSelected(sectionData),
+						dataLabel: this.options.fieldLabel
 					}
 				)
 			);
 			$(this.options.sectionPropertiesForm).validate(this.options.validateOptions);
+			$('.twipsy :visible').hide(); //tooltip fix
 			$(this.options.customPropsModal).modal('show');
 		},
 
@@ -317,6 +345,11 @@
     		sec_id			= $(this.options.dialogContainer+" input[name=section-id]").val(),
     		picklist_ids	=[];
 
+			if (multi_sections_enabled) {
+				data = this.options.builder_instance.data.get(this.options.parent_id);
+				if (!data.field_options["section_present"]) data.field_options["section_present"] = true;
+			}
+
 			for (i = 0; i < type.length; i++) {
 				picklist_value_ids = {};
 				picklist_value_ids['picklist_value_id'] = type[i];
@@ -334,12 +367,21 @@
 				new_data.id					= this.options.builder_instance.uniqId() 
 				new_data.section_fields 	= {};
 				this.newSectionData(new_data);
-			} else {
+
+				if (multi_sections_enabled) {
+					data.action = 'update';
+					numSections = this.getNumSections(data.id);
+					this.pushToFieldsWithSections(data.id, numSections);
+					this.setNewSection("add");
+				} 
+			}
+			else {
 				new_data.id = sec_id
 				this.editSectionData(new_data);
 			}
-			this.disableNewSection();
+			if (!multi_sections_enabled) this.disableNewSection();
 		},
+
 		disableNewSection: function () {
 			if (this.selectedPicklist(this.options.parent_id) < 1) {
 				$(this.options.new_btn).addClass(this.options.newSectionDisabled);
@@ -347,14 +389,100 @@
 				$(this.options.new_btn).removeClass(this.options.newSectionDisabled);
 			}
 		},
+
+		pushToAllFieldsWithSections: function(fieldId){
+			this.allFieldIdsWithSections.push(fieldId)
+		},
+
+		pushToFieldsWithSections: function(fieldId, sectionsCount){
+			this.fieldIdsWithSections[fieldId] = sectionsCount;
+		},
+
+		removeFromAllFieldsWithSections: function(fieldId){
+			if ((index = this.allFieldIdsWithSections.indexOf(fieldId)) > -1){
+				this.allFieldIdsWithSections.splice(index, 1);
+			}
+		},
+
+		removeFromFieldsWithSections: function(fieldId){
+			this.fieldIdsWithSections[fieldId] -= 1;
+			if (this.fieldIdsWithSections[fieldId] == 0) delete this.fieldIdsWithSections[fieldId];
+		},
+
+		setNewSection: function(type) {
+			if (Object.keys(this.fieldIdsWithSections).length >= sectionLimit){
+				$(this.allFieldIdsWithSections).each($.proxy(function(index, dataId){
+					this.disableNewSectionByType(dataId);
+				}, this));
+				Object.keys(this.fieldIdsWithSections).each($.proxy(function(dataId){
+					this.disableNewSectionByType(parseInt(dataId), "section");
+				}, this));
+			}
+			else if (type == "load" || type == "add"){
+				$(this.allFieldIdsWithSections).each($.proxy(function(index, dataId){
+					this.disableNewSectionByType(dataId, type);
+				}, this));
+			}
+			else if (type == "delete"){
+				if (Object.keys(this.fieldIdsWithSections).length < sectionLimit){
+					$(this.allFieldIdsWithSections).each($.proxy(function(index, dataId){
+						this.disableNewSectionByType(dataId, type);
+					}, this));
+				}
+			}
+		},
+
+		disableSection: function(element, id, disableClass){
+			if (this.selectedPicklist(id) < 1) {
+				$(element).addClass(disableClass);
+			}
+			else{
+				$(element).removeClass(disableClass);
+			}
+		},
+
+		disableNewSectionByType: function (dataId, type) {
+			newSectionElement = $(this.options.formContainer).find('li[data-id="'+dataId + '"]').find('.new-section');
+			addSectionElement = $(this.options.formContainer).find('li[data-id="'+dataId + '"]').find('.add-section');
+			switch (type){
+
+				case "delete":
+					newSectionElement.addClass(this.options.newSectionDisabled);
+					addSectionElement.addClass(this.options.addSectionDisabled);
+					this.disableSection(newSectionElement, dataId, this.options.newSectionDisabled);
+					this.disableSection(addSectionElement, dataId, this.options.addSectionDisabled);
+				break;
+
+				case "add":
+				case "load":
+				case "section":
+					this.disableSection(newSectionElement, dataId, this.options.newSectionDisabled);
+					this.disableSection(addSectionElement, dataId, this.options.addSectionDisabled);
+				break;
+
+				default:
+					newSectionElement.addClass(this.options.newSectionDisabled);
+					addSectionElement.addClass(this.options.addSectionDisabled);
+			}
+		},
+
+		getNumSections: function(dataId)
+		{
+			fieldElement = $(this.options.formContainer).find('li[data-id="'+dataId + '"]');
+			numSections = fieldElement.find('li[data-section-id]:visible').length;
+			return numSections;
+		},
+
 		newSectionData: function (new_data) {
 			var dom = this.constructSection(new_data);
 			this.section_data[new_data.id] = $.extend({}, new_data);
-			
-			$("[data-id='" + this.options.parent_id + "']")
-				.find(this.options.sectionContainer)
-				.prepend(dom);
-			
+
+			data = this.options.builder_instance.data.get(this.options.parent_id);
+			element = $(this.options.formContainer).find('li[data-id="'+this.options.parent_id + '"]');
+			secContainer = $(element).find(this.options.sectionContainer)
+			if (secContainer.length == 0) $(element).html(JST['custom-form/template/dom_field'](data, multi_sections_enabled));
+			$(element).find(this.options.sectionContainer).prepend(dom);
+
 			$(dom).attr("data-section-fresh",true);
 			this.initSectionSorting($(dom).find( ".section-body" ));
 		},
@@ -386,7 +514,8 @@
 
 			$(vElement).html(JST['custom-form/template/section_header']({
 					obj:	new_data,
-					types:	this.options.types[this.options.parent_id]
+					types:	this.options.types[this.options.parent_id],
+					dataLabel: this.options.fieldLabel
 				})
 			);
 			this.checkDeleteIcon(new_data.id);
@@ -396,8 +525,10 @@
 			this.options.ui	= ui;
 			var parent		= $(ui.item).closest('ul'),
 				id			= $(ui.item).data('id');
+			this.options.parent_id = $(ui.item).parents("li.custom-field").attr("data-id");
 			//position change
-			if ( parent.parents('li').data('section-id') != ui.sender.parents('li').data('section-id')) {
+			if ( (parent.parents('li').data('section-id') != ui.sender.parents('li').data('section-id'))
+						&& (parent.parents('li.custom-field').attr('data-id') == ui.sender.parents('li.custom-field').attr('data-id'))) {
 				if (ui.sender && ui.sender.hasClass('section-body') 
 						&& parent.find('li[data-id=' + id + ']:visible').length <= 1 ) {
 
@@ -412,9 +543,13 @@
 					}));
 					$(this.options.sectionConfirmModal).modal('show');
 				}
-			} else {
+			}
+			else if (parent.parents('li').data('section-id') == ui.sender.parents('li').data('section-id')){
 				$(this.options.copyHelper).remove();
 				this.options.copyHelper = null;
+			}
+			else {
+				$(ui.sender).sortable('cancel');
 			}
 		},
 
@@ -438,6 +573,7 @@
 				this.section_data[sec_to_move_id].section_fields[field_id] = $.extend(
 						{}, this.section_data[section_from].section_fields[field_id]
 					);
+				this.section_data[sec_to_move_id].section_fields[field_id].parent_ticket_field_id = this.options.parent_id;
 				delete this.section_data[sec_to_move_id].section_fields[field_id].id;
 			}
 			if (field_action == 'copy') {
@@ -472,7 +608,8 @@
 		formToSection: function (ui) {
 			this.options.ui		= ui;
 			var sec_to_move_id	= $(ui.item).parents('li').first().data('section-id'),
-				data			= this.options.builder_instance.data.get(ui.item.data('id')),
+				data			= this.options.builder_instance.data.get(ui.item.data('id'));
+				this.options.parent_id = $(ui.item).parents("li.custom-field").attr("data-id"),
 				new_data		= {
 									'ticket_field_id':			data.id, 
 									'ticket_field_name':		data.label,
@@ -491,6 +628,11 @@
 			this.section_data[sec_to_move_id].action = 'save';
 
 			this.checkDeleteIcon(sec_to_move_id);
+			if (data.has_section && multi_sections_enabled){
+				element = $(this.options.formContainer).find('li[data-id="'+data.id + '"]');
+				$(element).find('.add-section').remove()
+				this.removeFromAllFieldsWithSections(data.id);
+			}
 		},
 // ----------------------------- Delete Sections Fields ------------------------------------
 		deleteSecField: function (value) {
@@ -520,6 +662,13 @@
 					"update"
 				);
 			this.removeFromOtherSections(id, false);
+			dataItem = this.options.builder_instance.data.get(id)
+			if (dataItem.has_section && multi_sections_enabled){
+				element = $(this.options.formContainer).find('li[data-id="'+id + '"]');
+				$(element).html(JST['custom-form/template/dom_field'](dataItem, multi_sections_enabled));
+				this.pushToAllFieldsWithSections(id);
+				this.setNewSection("add");
+			}
 		},
 
 		removeFromOtherSections: function (id, fieldDelete) {
@@ -577,7 +726,6 @@
 		},
 		deleteSectionData: function (data) {
 			if (data.fresh_section) delete data.id;
-			delete data.parent_ticket_field_id;
 			delete data.fresh_section;
 		},
 		getSectionFields: function (sectionDom, data, sectionId) {
@@ -611,11 +759,12 @@
 			return this.section_data[id];
 		},
 
-		storedSectionData: function (parentFieldId,types,builderDom) {
+		storedSectionData: function (parentFieldId, types, fieldLabel, builderDom) {
 			var data_dom =	{},
 				self =		this;
 			this.options.types[parentFieldId] = types;
 			this.options.parent_id = parentFieldId;
+			this.options.fieldLabel = fieldLabel;
 
 			$.each(this.section_data, function(key, sec) {
 
@@ -676,13 +825,15 @@
 								{
 									obj:	data, 
 									types:	this.options.types[data.parent_ticket_field_id], 
+									dataLabel: this.options.fieldLabel
 								})
 							);
 			return container;
 		},
 		newSectionFields: function (data,element) { // function call from custom-form-bulder.js
+			this.options.parent_id = element.parents("li.custom-field").attr("data-id");
 			var id			= element.parents('li').data('section-id'),
-				new_data	= {
+			new_data	= {
 								'ticket_field_id':			data.id, 
 								'ticket_field_name':		data.label,
 								'parent_ticket_field_id':	this.options.parent_id,

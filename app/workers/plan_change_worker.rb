@@ -89,7 +89,10 @@ class PlanChangeWorker
   def drop_dynamic_sections_data(account)
     account.ticket_fields.each do |field|
       if field.section_field?
-        field.field_options["section"] = false
+        field.rollback_section_in_field_options
+      end
+      if field.section_dropdown? && field.has_sections?
+        field.field_options.delete("section_present")
         field.save
       end
     end

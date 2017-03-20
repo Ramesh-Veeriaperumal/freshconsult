@@ -1134,7 +1134,7 @@ module ApplicationHelper
                                                                  element_class).html_safe,
                                             :class => "controls input-date-field")
     end
-    element_class = (field.has_sections_feature? && (field.field_type == "default_ticket_type" || field.field_type == "default_source")) ? " dynamic_sections" : ""
+    element_class = (field.has_sections_feature? && (field.section_dropdown? || field.field_type == "default_source")) ? " dynamic_sections" : ""
     company_class = " hide" if field.field_type == "default_company" && @ticket.new_record?
     content_tag :li, element.html_safe, :class => "#{ dom_type } #{ field.field_type } field" + element_class + company_class.to_s
   end
@@ -1220,7 +1220,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
                                             :class => "controls input-date-field")
         
     end
-    element_class = (field.has_sections_feature? && (field.field_type == "default_ticket_type" || field.field_type == "default_source")) ? " dynamic_sections" : ""
+    element_class = (field.has_sections_feature? && (field.section_dropdown? || field.field_type == "default_source")) ? " dynamic_sections" : ""
     company_class = " hide" if field.field_type == "default_company" && (@ticket.new_record? || dropdown_choices.empty?)
     content_tag :li, element.html_safe, :class => "#{ dom_type } #{ field.field_type } field" + element_class + company_class.to_s
   end
@@ -1326,7 +1326,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
         
     end
     fd_class = "#{ dom_type } #{ field.field_type } field"
-    fd_class += " dynamic_sections" if (field.has_sections_feature? && (field.field_type == "default_ticket_type" || field.field_type == "default_source"))
+    fd_class += " dynamic_sections" if (field.has_sections_feature? && (field.section_dropdown? || field.field_type == "default_source"))
     fd_class += " hide" if field.field_type == "default_company" &&
                                                (@ticket.new_record? ||
                                                dropdown_choices.length <= 1)

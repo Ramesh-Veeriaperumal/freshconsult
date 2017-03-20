@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "f98e518c5ba7909b023600789cdfead04dc0730e1ce625698f32167aacf33d10",
-    "current": "f98e518c5ba7909b023600789cdfead04dc0730e1ce625698f32167aacf33d10"
+    "previous": "64437355faac225c7808937f9935a2f2fcc29909b60a19687937503ac6c29674",
+    "current": "64437355faac225c7808937f9935a2f2fcc29909b60a19687937503ac6c29674"
   },
   "fonts": [
-    "public/assets/glyphs_f98e518c5ba7909b023600789cdfead0.ttf",
-    "public/assets/glyphs_f98e518c5ba7909b023600789cdfead0.svg",
-    "public/assets/glyphs_f98e518c5ba7909b023600789cdfead0.woff",
-    "public/assets/glyphs_f98e518c5ba7909b023600789cdfead0.eot"
+    "public/assets/glyphs_64437355faac225c7808937f9935a2f2.ttf",
+    "public/assets/glyphs_64437355faac225c7808937f9935a2f2.svg",
+    "public/assets/glyphs_64437355faac225c7808937f9935a2f2.woff",
+    "public/assets/glyphs_64437355faac225c7808937f9935a2f2.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -29,6 +29,10 @@
     "add-people": {
       "codepoint": 62059,
       "source": "public/glyphs/vectors/add-people.svg"
+    },
+    "add-section": {
+      "codepoint": 62067,
+      "source": "public/glyphs/vectors/add-section.svg"
     },
     "agent": {
       "codepoint": 61697,
@@ -1438,7 +1442,6 @@
     },
     "preprocessor_path": "",
     "quiet": false,
-    "skip_first": false,
     "templates": [
       "scss",
       "_glyphs-variables.scss",

@@ -64,20 +64,26 @@
     // Getting from jsonData
     feedJsonForm: function (existingFields) {
       $(existingFields).each($.proxy(function(index, dataItem){
-          if (!dataItem.has_section) {
-            this.builder_data[dataItem.id] = this.domCreation(dataItem);  
-          } else {
-            this.builder_data[dataItem.id] = "";  
-          }
+
+        if ((multi_sections_enabled && dataItem.has_section &&
+                dataItem.field_options.section_present) || (dataItem.has_section && 
+                                                     !multi_sections_enabled)) {
+            this.builder_data[dataItem.id] = "";
+        }
+        else {
+          this.builder_data[dataItem.id] = this.domCreation(dataItem);
+        }
       }, this));
     },
 
     sectionJsonForm: function (existingFields) {
       $(existingFields).each($.proxy(function(index, dataItem){
 
-          if (dataItem.has_section) {
-            this.builder_data[dataItem.id] = this.domCreation(dataItem);  
-          }
+        if ((multi_sections_enabled && dataItem.has_section &&
+                dataItem.field_options.section_present) || (dataItem.has_section &&
+                                                     !multi_sections_enabled)) {
+          this.builder_data[dataItem.id] = this.domCreation(dataItem);
+        }
 
       }, this));
       
@@ -113,13 +119,14 @@
 
       this.setTypefield(dataItem);
       fieldContainer.html(
-          JST['custom-form/template/dom_field'](dataItem)
+          JST['custom-form/template/dom_field'](dataItem, multi_sections_enabled)
         ).addClass(dataItem.dom_type);
 
       if(dataItem.has_section){
         var section_dom =  this.section_instance
                             .storedSectionData(
-                                dataItem.id,dataItem.admin_choices,this.builder_data
+                                dataItem.id, dataItem.admin_choices,
+                                dataItem.label, this.builder_data
                             );
 
         $.each(section_dom, function(i, element) {
@@ -152,8 +159,18 @@
 
         if( !dataItem.field_options.section )
           $(this.settings.formContainer).append(this.builder_data[dataItem.id]);
-        if(dataItem.has_section) this.section_instance.disableNewSection();
+        if(dataItem.has_section && !multi_sections_enabled) {
+          this.section_instance.disableNewSection();
+        }
 
+        if(dataItem.has_section && multi_sections_enabled){
+          this.section_instance.pushToAllFieldsWithSections(dataItem.id);
+          if(dataItem.field_options.section_present){
+            numSections = this.section_instance.getNumSections(dataItem.id);
+            this.section_instance.pushToFieldsWithSections(dataItem.id,
+                                          numSections);
+          }
+        }
       }, this));
 
     },
@@ -202,7 +219,7 @@
           fieldtype = instance.getProperties()['field_type'];
 
       if ($.inArray(fieldtype, this.settings.nonEditableFields) == -1) {
-        if(id && this.data.get(id).has_section)
+        if(id && (this.data.get(id).has_section))
           selectedPicklistIds = this.section_instance.selectedPicklist(id);
 
         this.fieldDialog.show(element, instance.attachEvents, selectedPicklistIds);
@@ -266,6 +283,10 @@
       this.settings. deleteFieldId = id;
       this.settings.currentData = $H(this.data.get(id));
       if(/^default/.test(this.settings.currentData.get('field_type'))) {
+        return;
+      }
+
+      if(this.section_instance.getNumSections(id) > 0) {
         return;
       }
 
@@ -339,6 +360,11 @@
           
           this.data.get(id).canpush = true;
           if(data.has_section) save_section = true;
+
+          if(data.has_section && typeof data.field_options.section_present === 'undefined'){
+            sectionsLength = this.section_instance.getNumSections(id);
+            if (sectionsLength > 0) data.field_options["section_present"] = true;
+          }
 
           data = $.extend(true, data, {fresh_field: fresh_field})
           data = this.findFieldPosition(data, domLi);
@@ -431,14 +457,15 @@
 
     initialize: function () {
       // Populating fields
-      this.feedJsonForm(this.settings.existingFields);
       this.section_instance = new customSections({
         builder_instance:   this,
         formContainer:      this.settings.formContainer,
         secCurrentData:     this.settings.customSection
       });
+      this.feedJsonForm(this.settings.existingFields);
       this.sectionJsonForm(this.settings.existingFields);
       this.appendDom(this.settings.existingFields);
+      if (multi_sections_enabled) this.section_instance.setNewSection("load");
       this.initializeDragDropSortElements();
 
       //Adding New fields
@@ -448,12 +475,17 @@
       }, this) );
 
       $(this.settings.formContainer).on('mouseover', 'li.custom-field', $.proxy(function(e) {
-          if(!$(this.settings.formContainer).hasClass('sort-started'))
+          if(!$(this.settings.formContainer).hasClass('sort-started')){
+            if($(e.currentTarget).find('.add-section-disabled').length <= 0){
+              $(e.currentTarget).find('.add-section').first().show();
+            }
             $(e.currentTarget).find('.options-wrapper').first().show();
+          }
       }, this));
 
       $(this.settings.formContainer).on('mouseout', 'li.custom-field', function(e) {
           $( this ).find('.options-wrapper').first().hide();
+          $( this ).find('.add-section').first().hide();
       });
 
       $(this.settings.formContainer).on('click', '.custom-field', $.proxy(function(e) {
@@ -521,7 +553,8 @@
           } 
           this.builder_data[data.id] = this.constructFieldDom(data, vElement);
         }else{ //Edit Field
-          if(data.has_section || data.field_type == 'default_priority' || 
+          numSections = this.section_instance.getNumSections(data.id)
+          if((data.has_section && numSections > 0)|| data.field_type == 'default_priority' || 
                 data.field_type == "default_agent" || data.field_type == "default_group" || 
                 data.field_type == "default_product"){
               this.reConstructFieldDom(data);
