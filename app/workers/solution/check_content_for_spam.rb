@@ -10,6 +10,7 @@ class Solution::CheckContentForSpam < BaseWorker
   def perform(args)
     args.symbolize_keys!
     @account = Account.current
+    Rails.logger.info "Running CheckContentForSpam for Account : #{Account.current.id}, article_id: #{args[:article_id].to_s} "
     check_description_for_spam args[:article_id]
   end
 
