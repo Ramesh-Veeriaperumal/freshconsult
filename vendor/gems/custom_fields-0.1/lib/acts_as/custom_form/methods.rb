@@ -28,11 +28,7 @@ module ActAs
       def ff_aliases
         custom_fields_cache.nil? ? [] : custom_fields_cache.map(&:name)
       end
-
-      def text_ff_aliases
-        custom_fields_cache.nil? ? [] : text_fields.map(&:name)
-      end
-
+      
       def non_text_ff_aliases
         custom_fields_cache.nil? ? [] : non_text_fields.map(&:name)
       end
@@ -49,10 +45,6 @@ module ActAs
         custom_fields_cache.select{|field| !TEXT_FIELD_TYPES.include?(field.field_type)}
       end
       
-      #change this when the bug is fixed. #kark
-      def text_fields
-        custom_fields_cache.select{|field| [ :custom_text, :custom_paragraph].include?(field.field_type)}
-      end
     end
 
   end

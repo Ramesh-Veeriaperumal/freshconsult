@@ -7,7 +7,7 @@ module Stores
         belongs_to :custom_form, :foreign_key => args[:form_id], :class_name => args[:form_class] #, :include => :custom_fields -- Need to ensure
 
         delegate  :to_ff_alias, :to_ff_field, :custom_fields_cache,
-                  :ff_aliases, :non_text_ff_aliases, :text_ff_aliases,
+                  :ff_aliases, :non_text_ff_aliases,
                   :ff_fields, :non_text_ff_fields, :to => args[:custom_form_cache_method]
         after_commit :update_parent_updated_at, :on => :update if args[:touch_parent_on_update]
 

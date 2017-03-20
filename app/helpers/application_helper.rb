@@ -7,7 +7,6 @@ module ApplicationHelper
   include ActionView::Helpers::TextHelper
   include Gamification::GamificationUtil
   include ChatHelper
-  include Sanitize::FieldValues
 
   include AttachmentHelper
   include ConfirmDeleteHelper
@@ -1007,7 +1006,7 @@ module ApplicationHelper
       widget_script(installed_app, widget, liquid_objs)
     end
   end
-  
+
   def widget_script(installed_app, widget, liquid_objs)
     replace_objs = liquid_objs || {}
     replace_objs = replace_objs.merge({"current_user"=>current_user})
