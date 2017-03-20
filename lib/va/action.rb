@@ -103,7 +103,7 @@ class Va::Action
   def responder_id(act_on)
     r_id = value.to_i
     begin
-      responder = (r_id == EVENT_PERFORMER) ? (act_on.agent_performed?(doer) ? doer : nil) : act_on.account.technicians.find(value.to_i)
+      responder = (r_id == EVENT_PERFORMER) ? (act_on.agent_performed?(doer) ? doer : nil) : act_on.account.users.find(value.to_i)
     rescue ActiveRecord::RecordNotFound
     end
     act_on.responder = responder if responder || value.empty?
