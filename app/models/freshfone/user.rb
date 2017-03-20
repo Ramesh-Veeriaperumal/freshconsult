@@ -36,10 +36,10 @@ class Freshfone::User < ActiveRecord::Base
 
 	scope :agents_with_avatar, lambda { {
 							:include => [:user => [:avatar]]}}	
-	scope :online_agents, lambda { {:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)", PRESENCE[:online], PRESENCE[:offline], 1.hour.ago], :include => :user }}
-	scope :raw_online_agents, lambda { {:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)", PRESENCE[:online], PRESENCE[:offline], 1.hour.ago] }}
+	scope :online_agents, lambda { {:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)", PRESENCE[:online], PRESENCE[:offline], 20.minutes.ago], :include => :user }}
+	scope :raw_online_agents, lambda { {:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)", PRESENCE[:online], PRESENCE[:offline], 20.minutes.ago] }}
 	scope :online_agents_with_avatar, lambda { {
-							:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)", PRESENCE[:online], PRESENCE[:offline], 1.hour.ago],
+							:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)", PRESENCE[:online], PRESENCE[:offline], 20.minutes.ago],
 							:include => [:user => [:avatar]] }}
 	scope :busy_agents, lambda {
 		where(presence: [PRESENCE[:busy], PRESENCE[:acw]])
@@ -55,7 +55,7 @@ class Freshfone::User < ActiveRecord::Base
 		order_type = "ASC" if order_type.blank?
 		{:conditions => [ "freshfone_users.presence = ? or (freshfone_users.presence = ? and freshfone_users.mobile_token_refreshed_at > ?)
 			#{' AND `freshfone_users`.`available_on_phone` = false' if trial?}",
-		PRESENCE[:online], PRESENCE[:offline], 1.hour.ago], :include => :user, :order => "freshfone_users.last_call_at #{order_type}" } }
+		PRESENCE[:online], PRESENCE[:offline], 20.minutes.ago], :include => :user, :order => "freshfone_users.last_call_at #{order_type}" } }
 
 	def set_presence(status)
 		self.presence = status
@@ -89,7 +89,7 @@ class Freshfone::User < ActiveRecord::Base
 	PRESENCE.each_pair do |k, v|
 		define_method("#{k}?") do
 			if k.eql? :online
-				presence == v || (presence == PRESENCE[:offline] && mobile_token_refreshed_at.present? && mobile_token_refreshed_at > 1.hour.ago)
+				presence == v || (presence == PRESENCE[:offline] && mobile_token_refreshed_at.present? && mobile_token_refreshed_at > 20.minutes.ago)
 			else
 				presence == v
 			end
@@ -180,10 +180,6 @@ class Freshfone::User < ActiveRecord::Base
 			:token => cap_token, :type => self.incoming_preference,
 			:expiry => (Time.now + CAPABILITY_TOKEN_TTL.seconds - CAPABILITY_TTL_BUFFER.seconds).utc })
 		save
-	end
-
-	def mobile_refreshed_an_hour_ago?
-		self.mobile_token_refreshed_at.present? && self.mobile_token_refreshed_at > 1.hour.ago
 	end
 
 	def busy_or_acw?

@@ -3,10 +3,12 @@ class Freshfone::VoicemailController <  FreshfoneBaseController
   include Freshfone::FreshfoneUtil
   include Freshfone::CallHistory
   include Freshfone::TicketActions
+  include Freshfone::CallsRedisMethods
   
   before_filter :add_additional_params
   before_filter :validate_transcription, only: :transcribe, unless: :transcription_enabled?
   before_filter :validate_call, only: :transcribe
+  after_filter :set_voicemail_key_in_redis, only: :initiate
 
   def initiate #Used only in conference currently
     remove_notification_failure_recovery(current_account.id, current_call.id) if current_call.ringing?
@@ -85,5 +87,9 @@ class Freshfone::VoicemailController <  FreshfoneBaseController
         payload_url: payload_url,
         call: current_call.id
       }
+    end
+
+    def set_voicemail_key_in_redis
+      set_voicemail_key(current_account.id, current_call.id)
     end
 end
