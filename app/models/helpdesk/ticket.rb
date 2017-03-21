@@ -37,7 +37,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   TICKET_STATE_ATTRIBUTES = ["opened_at", "pending_since", "resolved_at", "closed_at", "first_assigned_at", "assigned_at",
                              "first_response_time", "requester_responded_at", "agent_responded_at", "group_escalated",
                              "inbound_count", "status_updated_at", "sla_timer_stopped_at", "outbound_count", "avg_response_time",
-                             "first_resp_time_by_bhrs", "resolution_time_by_bhrs", "avg_response_time_by_bhrs"]
+                             "first_resp_time_by_bhrs", "resolution_time_by_bhrs", "avg_response_time_by_bhrs", "resolution_time_updated_at"]
                             
   OBSERVER_ATTR = []
   self.table_name =  "helpdesk_tickets"
