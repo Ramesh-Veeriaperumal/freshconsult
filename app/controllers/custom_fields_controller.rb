@@ -38,8 +38,7 @@ class CustomFieldsController < Admin::AdminController
         # f_d.delete(:choices) unless("nested_field".eql?(f_d[:field_type]) || 
         #                             "custom_dropdown".eql?(f_d[:field_type]) || 
         #                             "default_ticket_type".eql?(f_d[:field_type]))
-        f_d[:field_options].delete("section_present") if current_account.multi_dynamic_sections_enabled? &&
-                                    !@fields_id_with_sections.include?(f_d[:id])
+        f_d[:field_options].delete("section_present") if delete_section_present_key? f_d
         send("#{action}_field", f_d)
       end
     end
@@ -74,6 +73,12 @@ class CustomFieldsController < Admin::AdminController
   end
 
   private
+
+    def delete_section_present_key? field
+      current_account.multi_dynamic_sections_enabled? && !@fields_id_with_sections.include?(field[:id]) &&
+      Helpdesk::TicketField::SECTION_DROPDOWNS.include?(field[:field_type]) &&
+      field[:field_options].present?
+    end
 
     def edit_field(field_details)
       #Length(current: 4) has to be updated if any default status is added or deleted
