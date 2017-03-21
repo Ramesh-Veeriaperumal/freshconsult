@@ -17,7 +17,7 @@ module Integrations
 
     # To be refactored
     def generate_mkp_update_button(extension, method = "get")
-      update_params = { "type" => "#{EXTENSION_TYPE[:plug]}", "installation_type" => "update", "display_name" => "#{ERB::Util.url_encode(extension['display_name'])}" } 
+      update_params = { "type" => "#{EXTENSION_TYPE[:plug]}", "installation_type" => "update", "display_name" => extension['display_name'] } 
       update_url = admin_marketplace_installed_extensions_new_configs_path(extension['extension_id'], extension['version_id'])
       update_button_class = "update"
       if is_oauth_app?(extension)
@@ -29,12 +29,14 @@ module Integrations
         method = "put"
       end   
       link_to t('update'), "#",
-          "data-method" => "#{method}", "data-url"=> "#{update_url}?#{update_params.to_query}", :class => "btn btn-mini btn-settings #{update_button_class}", "data-developedby"=> extension['account']
+        "data-url"=> "#{update_url}?#{update_params.to_query}", 
+        :class => "btn btn-mini btn-settings #{update_button_class}", "data-developedby"=> extension['account'],
+        "data-method" => (method.blank? ? nil : method)
     end
 
     def generate_mkp_edit_button(extension, installation_details)
       enable_settings = true
-      edit_params = { "type" => "#{EXTENSION_TYPE[:plug]}", "installation_type" => "settings", "display_name" => "#{ERB::Util.url_encode(extension['display_name'])}" } 
+      edit_params = { "type" => "#{EXTENSION_TYPE[:plug]}", "installation_type" => "settings", "display_name" => extension['display_name'] } 
       edit_url = admin_marketplace_installed_extensions_edit_configs_path(installation_details['extension_id'], installation_details['version_id'])
       edit_button_class = "update"
       if is_oauth_app?(extension)

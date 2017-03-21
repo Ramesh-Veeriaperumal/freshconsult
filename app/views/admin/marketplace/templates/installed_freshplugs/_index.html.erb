@@ -38,7 +38,7 @@
                 <% end %>
               <!-- To be decided for iframe apps with no configs-->
               <% elsif is_iframe_app?(extension_details)%>
-                <% edit_params = { "type" => "#{Marketplace::Constants::EXTENSION_TYPE[:plug]}", "installation_type" => "settings", "display_name" => "#{ERB::Util.url_encode(extension_details['display_name'])}" } %>
+                <% edit_params = { "type" => "#{Marketplace::Constants::EXTENSION_TYPE[:plug]}", "installation_type" => "settings", "display_name" => extension_details['display_name'] } %>
                 <%= link_to "<span class='#{font_class('settings1', 16)}'></span>".html_safe, "", 
                 "data-url"=> "#{admin_marketplace_installed_extensions_iframe_configs_path(installation_details['extension_id'], installation_details['version_id'])}?#{edit_params.to_query}",:class => "btn btn-mini btn-settings update-iframe-settings tooltip", "data-placement" => "below", "data-original-title" => t('application.tooltip.settings'), "data-developedby"=> extension_details['account'] %>
               <% end %>
