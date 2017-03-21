@@ -28,7 +28,6 @@
         <div class="billable"></div>
         <div class="billable_value"></div>
     </div>
-    <div id="timesheet_single_stacked_bar_chart_metric" class="example"></div>
   </div>
   <div class="clear"></div>
 </div>
@@ -41,6 +40,7 @@
     var rtl_locales = ['ar','he'];
     if(jQuery.inArray(I18n.locale,rtl_locales) > -1) {
         jQuery('html').attr('dir','rtl');
+        jQuery(".metric").removeClass('no-border');
     }
     <%unless @metric_data[:current][:total_time] == 0%>
       jQuery('#bar_chart_noinfo').hide();

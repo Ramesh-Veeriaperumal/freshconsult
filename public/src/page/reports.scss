@@ -240,6 +240,10 @@ html[dir="rtl"]{
 	.time-sheet-summary .grid_table td, .time-sheet-summary .grid_table th{
 		text-align: right;
 	}
+
+	.metrics .metric{
+		 float : right;
+	}
 }
 
 /* New TimeSheet Report */
