@@ -44,7 +44,7 @@ class ContactDecorator < ApiDecorator
   end
 
   def to_hash
-    User.current.privilege?(:view_contacts) ? to_full_hash : to_restricted_hash
+    (User.current.privilege?(:view_contacts) || User.current.id == id) ? to_full_hash : to_restricted_hash
   end
 
   def to_search_hash
