@@ -40,22 +40,6 @@ class TicketDecorator < ApiDecorator
   end
 
   def privilege_based_requester_info
-    if @sideload_options.include?('requester') || @sideload_options.include?('falcon')
-      requester = record.requester
-        req_hash = {
-          id: requester.id,
-          name: requester.name,
-          email: requester.email,
-          mobile: requester.mobile,
-          phone: requester.phone
-        }
-      if @sideload_options.include?('falcon')
-        avatar_hash = requester.avatar ? AttachmentDecorator.new(requester.avatar).to_hash.merge(thumb_url: requester.avatar.attachment_url_for_api(true, :thumb)) : nil
-        req_hash.merge!({avatar: avatar_hash})
-      end
-      return req_hash
-    end
-    
     return unless @sideload_options.include?('requester') && record.requester.customer?
     contact_decorator = ContactDecorator.new(record.requester, name_mapping: @contact_name_mapping, company_name_mapping: @company_name_mapping)
     User.current.privilege?(:view_contacts) ? contact_decorator.full_requester_hash : contact_decorator.restricted_requester_hash
@@ -103,7 +87,7 @@ class TicketDecorator < ApiDecorator
   end
 
   def company
-    if @sideload_options.include?('company') || @sideload_options.include?('falcon')
+    if @sideload_options.include?('company')
       company = record.company
       company ? { id: company.id, name: company.name } : {}
     end
@@ -177,18 +161,18 @@ class TicketDecorator < ApiDecorator
   end
 
   def to_search_hash
-    company_name = company.key?(:name) ? company[:name] : nil
-    responder_name = responder.name if responder
-    {
+    ret_hash = {
       id: display_id,
       description: description,
-      requester_name: requester[:name],
-      requester_avatar: requester[:avatar],
-      company_name: company_name,
+      requester_id: requester_id,
+      company_id: company_id,
       tags: tag_names,
-      responder_name: responder_name,
-      created_at: created_at.try(:utc),
+      responder_id: responder_id,
+      created_at: created_at.try(:utc)
     }
+    requester_hash = requester
+    ret_hash.merge!(requester: requester_hash) if requester_hash
+    ret_hash
   end
 
   class << self
