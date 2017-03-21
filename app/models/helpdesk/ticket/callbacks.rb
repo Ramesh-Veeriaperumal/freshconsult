@@ -40,8 +40,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   after_update :start_recording_timestamps, :unless => :model_changes?
 
-  before_save :update_resolution_time_by_bhrs, :if => Proc.new { new_sla_logic? && update_resolution_time? }
-
   before_save :update_dueby, :unless => :manual_sla?
 
   before_save :update_schema_less_ticket_association_fields, :if => :association_type_changed?
@@ -126,15 +124,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def save_ticket_states
-    self.ticket_states ||= Helpdesk::TicketState.new
+    self.ticket_states                = self.ticket_states || Helpdesk::TicketState.new
     ticket_states.tickets             = self
     ticket_states.created_at          = ticket_states.created_at || created_at
     ticket_states.account_id          = account_id
     ticket_states.assigned_at         = ticket_states.first_assigned_at = time_zone_now if responder_id
-    ticket_states.pending_since       ||= time_zone_now if (status == PENDING)
+    ticket_states.pending_since       ||= Time.zone.now if (status == PENDING)
 
-    ticket_states.set_resolved_at_state if ((status == RESOLVED) and ticket_states.resolved_at.nil?)
-    ticket_states.set_closed_at_state if (status == CLOSED)
+    ticket_states.set_resolved_at_state(created_at) if ((status == RESOLVED) and ticket_states.resolved_at.nil?)
+    ticket_states.resolved_at ||= ticket_states.set_closed_at_state(created_at) if (status == CLOSED)
 
     ticket_states.status_updated_at    = created_at || time_zone_now
     ticket_states.sla_timer_stopped_at = time_zone_now if (ticket_status.stop_sla_timer?)
@@ -203,8 +201,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     ticket_states.status_updated_at = time_zone_now
 
-    ticket_states.pending_since = (status == PENDING) ? time_zone_now : nil
-
+    ticket_states.pending_since = nil if @model_changes[:status][0] == PENDING
+    ticket_states.pending_since=time_zone_now if (status == PENDING)
     ticket_states.set_resolved_at_state if (status == RESOLVED)
     ticket_states.set_closed_at_state if closed?
 
@@ -405,15 +403,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   #shihab-- date format may need to handle later. methode will set both due_by and first_resp
   def set_sla_time(ticket_status_changed)
-    if new_sla_logic? && update_dueby?
-      sla_detail = self.sla_policy.sla_details.where(:priority => priority).first
-      set_dueby(sla_detail)
-      log_dueby(sla_detail.id)
-    elsif !new_sla_logic? && (self.new_record? || priority_changed? || changed_condition? || status_changed? || ticket_status_changed)
-      sla_detail = self.sla_policy.sla_details.where(:priority => priority).first
+    if self.new_record? || priority_changed? || changed_condition? || status_changed? || ticket_status_changed
+      sla_detail = self.sla_policy.sla_details.where(priority: priority).first
       set_dueby_on_priority_change(sla_detail) if (self.new_record? || priority_changed? || changed_condition?)
       set_dueby_on_status_change(sla_detail) if !self.new_record? && (status_changed? || ticket_status_changed)
-      log_dueby(sla_detail.id)
+      Rails.logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} "
     end
   end
 
@@ -787,27 +781,18 @@ private
     created_time = self.created_at.in_time_zone(Time.zone.name) || time_zone_now
     business_calendar = Group.default_business_calendar(group)
     self.due_by = sla_detail.calculate_due_by_time_on_priority_change(created_time, business_calendar)
-    self.frDueBy = sla_detail.calculate_frDue_by_time_on_priority_change(created_time, business_calendar) unless ticket_states && ticket_states.first_response_time.present?
+    self.frDueBy = sla_detail.calculate_frDue_by_time_on_priority_change(created_time, business_calendar)
   end
 
   def set_dueby_on_status_change(sla_detail)
     if calculate_dueby_and_frdueby?
       business_calendar = Group.default_business_calendar(group)
       self.due_by = sla_detail.calculate_due_by_time_on_status_change(self,business_calendar)
-      self.frDueBy = sla_detail.calculate_frDue_by_time_on_status_change(self,business_calendar) unless ticket_states && ticket_states.first_response_time.present?
+      self.frDueBy = sla_detail.calculate_frDue_by_time_on_status_change(self,business_calendar)
       if changed_to_closed_or_resolved?
         update_ticket_state_sla_timer
       end
     end
-  end
-
-  def set_dueby(sla_detail)
-    created_time = self.created_at || time_zone_now
-    total_time_worked = ticket_states.resolution_time_by_bhrs.to_i
-    business_calendar = Group.default_business_calendar(group)
-    self.due_by = sla_detail.calculate_due_by(created_time, total_time_worked, business_calendar)
-    self.frDueBy = sla_detail.calculate_frDue_by(created_time, total_time_worked, business_calendar) if self.ticket_states.first_response_time.nil?
-    update_ticket_state_sla_timer if status_changed? && changed_to_closed_or_resolved?
   end
 
   def calculate_dueby_and_frdueby?
@@ -996,33 +981,5 @@ private
   # Reason for moving it to BJ is for activites(to generate as a system activity)
   def reopen_tickets item
     ::Tickets::ReopenTickets.perform_async({:ticket_ids=>[item.display_id]})
-  end
-
-  def new_sla_logic?
-    self.account.launched?(:new_sla_logic) && (self.new_record? || self.ticket_states.resolution_time_updated_at.present?)
-  end
-
-  def common_updation_condition
-    self.new_record? || priority_changed? || group_id_changed? || self.schema_less_ticket.sla_policy_id_changed?
-  end
-
-  def update_resolution_time?
-    common_updation_condition || (status_changed? && stop_sla_timer_changed?)
-  end
-
-  def update_dueby?
-    common_updation_condition || (status_changed? && calculate_dueby_and_frdueby?)
-  end
-
-  def update_resolution_time_by_bhrs
-    self.ticket_states ||= Helpdesk::TicketState.new
-    self.ticket_states.resolution_time_updated_at = time_zone_now
-    if self.ticket_states.sla_timer_stopped_at.nil? && !self.new_record?
-      ticket_states.change_resolution_time_by_bhrs(ticket_states.resolution_time_updated_at_was, ticket_states.resolution_time_updated_at)
-    end
-  end
-
-  def log_dueby sla_detail_id
-    Rails.logger.debug "sla_detail_id :: #{sla_detail_id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} "
   end
 end

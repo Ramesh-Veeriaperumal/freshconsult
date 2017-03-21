@@ -110,31 +110,23 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
       on_status_change_bhrs(ticket, ticket.frDueBy,calendar)
   end
 
-  def calculate_due_by(created_time, total_time_worked, calendar)
-    calculate_due(created_time, resolution_time, total_time_worked, calendar)
-  end
-
-  def calculate_frDue_by(created_time, total_time_worked, calendar)
-    calculate_due(created_time, response_time.seconds, total_time_worked, calendar)
-  end
-
   def self.sla_options
     SLA_OPTIONS.map { |i| [I18n.t(i[1]), i[2]] }
   end
 
   private
 
-    def business_time(sla_time, from_time, calendar)
+    def business_time(sla_time, created_time, calendar)
       fact = sla_time.div(ONE_DAY_IN_SECONDS)
       
       if sla_time.modulo(ONE_DAY_IN_SECONDS).zero?
         business_days = fact.business_days
         business_days.business_calendar_config = calendar
-        business_days.after(from_time)
+        business_days.after(created_time)
       else
         business_minute = sla_time.div(60).business_minute
         business_minute.business_calendar_config = calendar
-        business_minute.after(from_time)
+        business_minute.after(created_time)
       end
     end
 
@@ -169,37 +161,6 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
     def check_sla_time
       self.response_time = response_time >= SECONDS_RANGE[:min_seconds] ? (response_time <= SECONDS_RANGE[:max_seconds_by_days] ? response_time : SECONDS_RANGE[:max_seconds_by_months]) : SECONDS_RANGE[:min_seconds]
       self.resolution_time = resolution_time >= SECONDS_RANGE[:min_seconds] ? (resolution_time <= SECONDS_RANGE[:max_seconds_by_days] ? resolution_time : SECONDS_RANGE[:max_seconds_by_months]) : SECONDS_RANGE[:min_seconds]
-    end
-
-    def calculate_due(created_time, resolution_time_in_seconds, total_time_worked, calendar)
-      if override_bhrs
-       total_time_worked > resolution_time_in_seconds ? (created_time + resolution_time_in_seconds) : (Time.zone.now + (resolution_time_in_seconds - total_time_worked))
-      else
-        business_seconds = convert_to_business_seconds(resolution_time_in_seconds,calendar)
-        if total_time_worked > business_seconds 
-          business_time(resolution_time_in_seconds, created_time, calendar)
-        else
-          due_date = business_time(resolution_time_in_seconds, Time.zone.now, calendar)
-          if total_time_worked > 60 # 1 minute
-            business_minute = total_time_worked.div(60).business_minute
-            business_minute.business_calendar_config = calendar
-            due_date = business_minute.before(due_date)
-          end
-          due_date
-        end
-      end
-    end
-
-    def convert_to_business_seconds(resolution_time_in_seconds, calendar)
-      if resolution_time_in_seconds.modulo(ONE_DAY_IN_SECONDS).zero?
-        fact = resolution_time_in_seconds.div(ONE_DAY_IN_SECONDS)
-        business_days = fact.business_days
-        business_days.business_calendar_config = calendar
-        current_time = Time.zone.now
-        business_time_from_now = business_days.after(current_time)
-        resolution_time_in_seconds = (current_time.business_time_until(business_time_from_now)).ceil
-      end
-      resolution_time_in_seconds
     end
     
 end
