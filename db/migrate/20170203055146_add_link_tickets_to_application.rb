@@ -5,7 +5,7 @@ class AddLinkTicketsToApplication < ActiveRecord::Migration
       :name => "link_tickets",
       :display_name => "integrations.link_ticket.label",
       :description => "integrations.link_ticket.desc",
-      :listing_order => 47,
+      :listing_order => 49,
       :options => {
         :direct_install => true,
         :user_specific_auth => true,

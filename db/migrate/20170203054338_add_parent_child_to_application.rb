@@ -5,7 +5,7 @@ class AddParentChildToApplication < ActiveRecord::Migration
       :name => "parent_child_tickets",
       :display_name => "integrations.parent_child.label",
       :description => "integrations.parent_child.desc",
-      :listing_order => 46,
+      :listing_order => 48,
       :options => {
         :direct_install => true,
         :user_specific_auth => true,
