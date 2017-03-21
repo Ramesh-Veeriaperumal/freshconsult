@@ -10732,6 +10732,10 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   user_notifications:
     header: "Notifications"
     mark_all_as_read: "Mark all as read"
+    preferences: "Preferences"
+    notification_preferences: "Notification Preferences"
+    notify_when: Notify when...
+    checking_your_preferences: Checking your preferences...
     actor_text_2: "%{actor_name_1} and %{actor_name_2}"
     actor_text_multi: "%{actor_name_1} and %{more_actors_count} more"
     private_note_created: "sent you a private note on ticket %{object}"
@@ -10740,13 +10744,41 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     public_note_created_multi: "added %{count} notes on ticket %{object}"
     customer_responded: "responded to ticket %{object}"
     customer_responded_multi: "responded to ticket %{object}"
-    ticket_status_update: "updated the ticket status of %{object} to %{current_status}"
-    ticket_status_update_multi: "updated the ticket status of %{object} to %{current_status}"
-    ticket_assigned: "assigned the ticket %{object} to you."
+    ticket_status_update: "updated the ticket status of %{object} to <b>%{current_status}</b>"
+    ticket_status_update_multi: "updated the ticket status of %{object} to <b>%{current_status}</b>"
+    ticket_assigned: "assigned the ticket %{object} to you"
+    ticket_assigned_to_group: "assigned the ticket %{object} to group <b>%{group_name}</b>"
+    ticket_created: "created a new ticket %{object}"
     collab_added_to: "You have been added as a collaborator on ticket %{object}"
     collab_invited_notification: "wants to collaborate with you on ticket %{object}"
     collab_first_mention: "mentioned you in a message on ticket %{object}"
     collab_first_mention_multi: "mentioned you in {{count}} messages on ticket %{object}"
+    types:
+      private_note_created: "Private Note Created"
+      public_note_created: "Public Note Added"
+      customer_responded: "Customer Responded"
+      ticket_status_update: "Ticket Status Updated"
+      ticket_assigned: "Ticket Assigned"
+      collab_added_to: "Discussion"
+      collab_invited_notification: "Discussion"
+      collab_first_mention: "Discussion"
+      ticket_assigned_to_group: "Ticket Assigned to Group"
+      ticket_created: "New Ticket"
+    preferences_text:
+      private_note_created: Private note sent to me
+      public_note_created: Public note added to ticket
+      customer_responded: New reply on my ticket
+      ticket_status_updated: Status updated on my ticket
+      ticket_assigned: Ticket assigned to me
+      ticket_assigned_to_group: Ticket assigned to my group
+      ticket_created: New tickets created
+    enable_desktop_notifications: Enable Desktop Notifications
+    enable_desktop_notifications_help: "Please click <strong>Allow</strong> when prompted"
+    desktop_notifications_enabled_flash: Desktop notifications are now enabled!
+    desktop_notifications_disabled: You've disabled desktop notifications
+    toggle_mobile_notifications: Toggle mobile notifications
+    toggle_web_notifications: Toggle web notifications
+    
   trial_plan_downgrade: "Important: You are currently downgrading from %{plan_from} plan to %{plan_to} plan"
   discounted_sum: "After Discount"
   selecting_plan: "Selecting..."

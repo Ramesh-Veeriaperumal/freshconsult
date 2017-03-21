@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "64437355faac225c7808937f9935a2f2fcc29909b60a19687937503ac6c29674",
-    "current": "64437355faac225c7808937f9935a2f2fcc29909b60a19687937503ac6c29674"
+    "previous": "a2feca62357c8e12ecf2b567804657d862fec147a94ceb3a3c6a45f738482c01",
+    "current": "a2feca62357c8e12ecf2b567804657d862fec147a94ceb3a3c6a45f738482c01"
   },
   "fonts": [
-    "public/assets/glyphs_64437355faac225c7808937f9935a2f2.ttf",
-    "public/assets/glyphs_64437355faac225c7808937f9935a2f2.svg",
-    "public/assets/glyphs_64437355faac225c7808937f9935a2f2.woff",
-    "public/assets/glyphs_64437355faac225c7808937f9935a2f2.eot"
+    "public/assets/glyphs_a2feca62357c8e12ecf2b567804657d8.ttf",
+    "public/assets/glyphs_a2feca62357c8e12ecf2b567804657d8.svg",
+    "public/assets/glyphs_a2feca62357c8e12ecf2b567804657d8.woff",
+    "public/assets/glyphs_a2feca62357c8e12ecf2b567804657d8.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -930,6 +930,14 @@
       "codepoint": 61806,
       "source": "public/glyphs/vectors/mobile.svg"
     },
+    "mobile-2": {
+      "codepoint": 62068,
+      "source": "public/glyphs/vectors/mobile-2.svg"
+    },
+    "mobile-2-disabled": {
+      "codepoint": 62069,
+      "source": "public/glyphs/vectors/mobile-2-disabled.svg"
+    },
     "mobile-active-source": {
       "codepoint": 61943,
       "source": "public/glyphs/vectors/mobile-active-source.svg"
@@ -1405,6 +1413,14 @@
     "warning": {
       "codepoint": 61863,
       "source": "public/glyphs/vectors/warning.svg"
+    },
+    "web": {
+      "codepoint": 62070,
+      "source": "public/glyphs/vectors/web.svg"
+    },
+    "web-disabled": {
+      "codepoint": 62071,
+      "source": "public/glyphs/vectors/web-disabled.svg"
     },
     "web-page": {
       "codepoint": 61864,
