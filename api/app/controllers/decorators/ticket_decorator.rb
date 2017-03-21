@@ -13,7 +13,7 @@ class TicketDecorator < ApiDecorator
   end
 
   def utc_format(value)
-    value.respond_to?(:utc) ? value.utc : value
+    value.respond_to?(:utc) ? value.strftime('%F') : value
   end
 
   def custom_fields
