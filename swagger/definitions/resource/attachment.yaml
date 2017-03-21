@@ -12,3 +12,5 @@ allOf:
         type: string
       inline_url:
         type: string
+      is_shared:
+        type: boolean

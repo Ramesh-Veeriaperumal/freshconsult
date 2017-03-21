@@ -161,8 +161,7 @@ class Ember::AttachmentsControllerTest < ActionController::TestCase
     ticket = create_ticket
     create_shared_attachment(ticket)
     attachment = ticket.attachments_sharable.first
-    shared_attachment = ticket.shared_attachments.first
-    params_hash = { shared_attachment_id: shared_attachment.id }
+    params_hash = { attachable_id: ticket.id, attachable_type: 'ticket' }
     put :unlink, construct_params({ version: 'private', id: attachment.id }, params_hash)
     ticket.reload
     refute ticket.shared_attachments.present?
@@ -173,7 +172,7 @@ class Ember::AttachmentsControllerTest < ActionController::TestCase
     @controller.request.env['CONTENT_TYPE'] = 'application/json; charset=UTF-8'
     ticket_id = create_ticket.id
     attachment = create_attachment(attachable_type: 'Helpdesk::Ticket', attachable_id: ticket_id)
-    params_hash = { shared_attachment_id: 10_000 }
+    params_hash = { attachable_id: 10_000, attachable_type: 'ticket' }
     put :unlink, construct_params({ version: 'private', id: attachment.id }, params_hash)
     assert_response 404
   end

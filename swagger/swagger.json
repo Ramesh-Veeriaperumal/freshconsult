@@ -2055,10 +2055,27 @@
             "schema": {
               "type": "object",
               "properties": {
-                "shared_attachment_id": {
+                "attachable_id": {
                   "type": "number",
                   "required": true,
-                  "description": "ID of the shared attachment"
+                  "description": "ID of the attachable item"
+                },
+                "attachable_type": {
+                  "type": "string",
+                  "enum": [
+                    "ticket",
+                    "conversation",
+                    "canned_response",
+                    "ticket_template",
+                    "solution_article",
+                    "solution_draft",
+                    "post",
+                    "user",
+                    "user_draft",
+                    "account"
+                  ],
+                  "required": true,
+                  "description": "Type of the attachable item"
                 }
               }
             }
@@ -4733,6 +4750,9 @@
             },
             "inline_url": {
               "type": "string"
+            },
+            "is_shared": {
+              "type": "boolean"
             }
           }
         }
