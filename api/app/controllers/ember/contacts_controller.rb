@@ -115,11 +115,15 @@ module Ember
       end
 
       def preload_options
-        (super - [:default_user_company]) | [:user_emails, :tags, :avatar, :user_companies]
+        if ContactConstants::PRELOAD_OPTIONS.key?(action_name.to_sym)
+          ContactConstants::PRELOAD_OPTIONS[action_name.to_sym]
+        else
+          (super - [:default_user_company]) | [:user_emails, :tags, :avatar, :user_companies]
+        end
       end
 
       def fetch_objects(items = scoper)
-        @items = items.find_all_by_id(params[cname][:ids])
+        @items = items.preload(preload_options).find_all_by_id(params[cname][:ids])
       end
 
       def render_201_with_location(template_name: "api_contacts/#{action_name}", location_url: 'api_contact_url', item_id: @item.id)
@@ -146,13 +150,13 @@ module Ember
       end
 
       def ticket_activities
-        @user_tickets ||= current_account.tickets.permissible(api_current_user)
+        @user_tickets ||= current_account.tickets.preload(:responder).permissible(api_current_user)
                                          .requester_active(@item).visible.newest(11)
       end
 
       def archived_ticket_activities
         return [] unless current_account.features_included?(:archive_tickets)
-        @user_archived_tickets ||= current_account.archive_tickets.permissible(api_current_user)
+        @user_archived_tickets ||= current_account.archive_tickets.preload(:responder).permissible(api_current_user)
                                                   .requester_active(@item).newest(10).take(10)
       end
 
