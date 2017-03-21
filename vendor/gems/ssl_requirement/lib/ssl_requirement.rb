@@ -92,7 +92,7 @@ module SslRequirement
       #returning if current_account is nil
       return true if current_account.nil?
 
-      if main_portal_with_ssl? || cnamed_portal_with_ssl?
+      if main_portal_with_ssl? || (current_portal.present? && cnamed_portal_with_ssl?)
          response.headers["Strict-Transport-Security"] = "max-age=31536000;"
       else
          response.headers["Strict-Transport-Security"] = "max-age=0;"
