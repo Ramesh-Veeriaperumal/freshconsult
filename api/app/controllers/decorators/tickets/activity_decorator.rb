@@ -35,10 +35,10 @@ module Tickets
 
     ARRAY_CONTENT_TYPES = [
       :add_tag, :remove_tag, :add_watcher, :add_a_cc,
-      :email_to_group, :email_to_agent
+      :email_to_requester, :email_to_group, :email_to_agent
     ].freeze
 
-    STRING_CONTENT_TYPES = [:spam, :archive, :deleted, :email_to_requester].freeze
+    CONTENT_LESS_TYPES = [:spam, :archive, :deleted].freeze
 
     def initialize(record, options)
       super(record)
@@ -53,9 +53,7 @@ module Tickets
         highlight: summary.nil? ? nil : summary.to_i,
         ticket_id: @ticket.display_id,
         performed_at: parse_activity_time(published_time),
-        actions: send("#{performer_type}_actions").reject do |action|
-          action[:content].nil?
-        end
+        actions: send("#{performer_type}_actions")
       }
     end
 
@@ -84,15 +82,15 @@ module Tickets
       end
 
       def performing_system
-        if content[:system_changes].present?
-          performing_rule(content[:system_changes])
+        if activity_content[:system_changes].present?
+          performing_rule(activity_content[:system_changes])
           {
             id: @rule_id,
             type: RULE_LIST[@rule_type],
             name: @rule_name,
             exists: rule_exists?
           }
-        elsif round_robin?(content)
+        elsif round_robin?(activity_content)
           {
             id: 0,
             type: RULE_LIST[-1],
@@ -116,7 +114,7 @@ module Tickets
       end
 
       def system_actions
-        action_array(content_hash.reject { |k| k == :rule })
+        action_array(activity_content_hash.reject { |k| k == :rule })
       end
 
       def parse_activity_time(time_in_seconds, multiplier = true)
@@ -124,27 +122,25 @@ module Tickets
         Time.at(time_in_seconds).utc
       end
 
-      def action_array(items = content)
+      def action_array(items = activity_content)
         result_hash = items.collect do |key, value|
           result = {}
           type, content = action_content(key, value)
           result[type] = content
           result
         end
-        result = result_hash.group_by(&:keys).map do |k, v|
-          {
-            type: k.first,
-            content: parsed_content(k.first, v)
-          }
+        result = result_hash.group_by(&:keys).map do |key, value|
+          content = parsed_content(key.first, value)
+          action_hash = { type: key.first }
+          action_hash[:content] = content if content
+          action_hash
         end
         result
       end
 
-      def parsed_content(key, value)
-        if ARRAY_CONTENT_TYPES.include?(key)
+      def parsed_content(type, value)
+        if ARRAY_CONTENT_TYPES.include?(type)
           value.flat_map(&:values).flatten
-        elsif STRING_CONTENT_TYPES.include?(key)
-          value.flat_map(&:values).flatten.first
         else
           value.flat_map(&:values).reduce do |first, val|
             # invalid_fields will not be uniquely identified with a key. So it should be array
@@ -163,8 +159,12 @@ module Tickets
         if PROPERTY_ACTIONS.include?(key)
           type = :property_update
           content = (send(key, value) if respond_to?(key.to_s, true))
-        elsif key.to_s == SPECIAL_ACTION_IDENTIFIER && SPECIAL_ACTIONS.include?(value[:type].to_sym)
-          content = send(value[:type], value) if respond_to?(value[:type], true)
+        elsif key.to_s == SPECIAL_ACTION_IDENTIFIER && SPECIAL_ACTIONS.include?(value[:type].to_sym) && respond_to?(value[:type], true)
+          type = value[:type]
+          content = send(value[:type], value)
+        elsif CONTENT_LESS_TYPES.include?(key)
+          # content will be empty for this types
+          type = send(key, value)
         elsif respond_to?(key.to_s, true)
           type = key
           content = send(key, value)
@@ -178,12 +178,12 @@ module Tickets
         [type, content]
       end
 
-      def content
-        @content ||= JSON.parse(record.content).deep_symbolize_keys
+      def activity_content
+        @activity_content ||= JSON.parse(record.content).deep_symbolize_keys
       end
 
-      def content_hash
-        content[:system_changes].present? ? system_changes(content[:system_changes]) : content
+      def activity_content_hash
+        activity_content[:system_changes].present? ? system_changes(activity_content[:system_changes]) : activity_content
       end
 
       def system_changes(value)
@@ -283,13 +283,6 @@ module Tickets
         ConversationDecorator.new(note, ticket: @ticket).to_hash
       end
 
-      # Tags
-      [:add_tag, :remove_tag].each do |name|
-        define_method name do |value|
-          value
-        end
-      end
-
       def delete_status(value)
         {
           deleted_status: value[0],
@@ -297,14 +290,16 @@ module Tickets
         }
       end
 
-      [:deleted, :spam].each do |name|
-        define_method name do |value|
-          value[1] ? true : false
-        end
+      def deleted(value)
+        value[1] ? :delete : :restore
+      end
+
+      def spam(value)
+        value[1] ? :spam : :unspam
       end
 
       def archive(_value)
-        true
+        :archive
       end
 
       # Special Activities
@@ -334,15 +329,11 @@ module Tickets
         { responder_id: value[:responder_id][1].to_i }
       end
 
-      # Rules Related activities
+      # Tags & Rules Related activities
 
-      def email_to_requester(value)
-        value[0].to_i
-      end
-
-      [:add_a_cc, :email_to_group, :email_to_agent].each do |name|
+      ARRAY_CONTENT_TYPES.each do |name|
         define_method name do |value|
-          value
+          value.compact
         end
       end
 

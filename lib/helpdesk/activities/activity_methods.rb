@@ -113,13 +113,13 @@ module Helpdesk::Activities
     end
 
     def fetch_user_and_its_parent(user_ids)
-      users = Account.current.all_users.where(:id => user_ids).to_a
+      users = Account.current.all_users.preload(:avatar).where(:id => user_ids).to_a
       parent_id = []
       users.each do |user|
         parent =  user.parent_id
         parent_id << parent if !user_ids.include?(parent) and !parent.zero?
       end
-      users += Account.current.users.where(:id => parent_id).to_a unless parent_id.blank?
+      users += Account.current.users.preload(:avatar).where(:id => parent_id).to_a unless parent_id.blank?
       users.collect{|user| [user.id, user]}.to_h
     end
 

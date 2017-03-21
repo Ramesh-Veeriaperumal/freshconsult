@@ -266,7 +266,7 @@ module TicketActivitiesTestHelper
         actions: [
           {
             type: :note,
-            content: note_pattern({}, @note)
+            content: private_note_pattern({}, @note)
           }
         ]
       }
@@ -310,8 +310,7 @@ module TicketActivitiesTestHelper
         performed_at: Time.at(tkt_data.published_time / 10_000).utc,
         actions: [
           {
-            type: :spam,
-            content: content[:spam][1] ? true : false
+            type: content[:spam][1] ? :spam : :unspam
           }
         ]
       }
@@ -332,8 +331,7 @@ module TicketActivitiesTestHelper
         performed_at: Time.at(tkt_data.published_time / 10_000).utc,
         actions: [
           {
-            type: :deleted,
-            content: content[:deleted][1] ? true : false
+            type: content[:deleted][1] ? :delete : :restore
           }
         ]
       }
@@ -354,8 +352,7 @@ module TicketActivitiesTestHelper
         performed_at: Time.at(tkt_data.published_time / 10_000).utc,
         actions: [
           {
-            type: :archive,
-            content: true
+            type: :archive
           }
         ]
       }
@@ -538,7 +535,7 @@ module TicketActivitiesTestHelper
         actions: [
           {
             type: type,
-            content: (type == :email_to_requester) ? content_hash[type][0].to_i : content_hash[type]
+            content: content_hash[type]
           }
         ]
       }
