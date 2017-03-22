@@ -19,21 +19,25 @@ class FdJWTAuth
 
 
   def decode_jwt_token
-    parse_payload
-    user = fetch_user
     begin
+      parse_payload
+      user = fetch_user
       decode_claim(user) if user
     rescue JWT::DecodeError => jwt_error
       Rails.logger.error "Error in validating claim : #{jwt_error.inspect} #{jwt_error.backtrace.join("\n\t")}"
     end
-    user if validate?
+    user if user && validate?
   end
 
   private
 
   def parse_payload
     header_segment, payload_segment, claim_segment = @jwt_token.split('.')
-    @payload = JSON.parse(JWT.base64url_decode(payload_segment), :symbolize_names => true) if payload_segment
+    begin
+      @payload = JSON.parse(JWT.base64url_decode(payload_segment), :symbolize_names => true) 
+    rescue JSON::ParserError 
+      raise JWT::DecodeError, 'Invalid segment encoding' 
+    end
   end
 
   def fetch_user
