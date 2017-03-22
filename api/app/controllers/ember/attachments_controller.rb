@@ -41,7 +41,8 @@ module Ember
       end
 
       def load_shared
-        @item = Helpdesk::SharedAttachment.find_by_attachment_id(params[:id],
+        @item = Helpdesk::SharedAttachment.find_by_attachment_id(
+          params[:id],
           conditions: ['shared_attachable_id=? AND shared_attachable_type=?', shared_attachable_id, shared_attachable_type]
         )
         log_and_render_404 unless @item
