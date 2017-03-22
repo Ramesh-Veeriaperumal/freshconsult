@@ -319,6 +319,11 @@ module Redis::RedisKeys
   HAPROXY_IP_BLACKLIST_KEY = "HAPROXY_IP_BLACKLIST_KEY"
   HAPROXY_IP_BLACKLIST_CHANNEL = "HAPROXY_IP_BLACKLIST_CHANNEL"
 
+
+  #JWT api keys
+  JWT_API_JTI = "JWT:%{account_id}:%{user_id}:%{jti}"
+
+
 	def newrelic_begin_rescue
 		begin
 		  yield
