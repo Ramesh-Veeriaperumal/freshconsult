@@ -8,4 +8,11 @@ module Mobile::Actions::CannedResponse
 		result
 	end
 	
+	def to_mob_json_search
+		options = { 
+	      		:only => [:id,:title],
+	        }
+	    as_json(options)
+	end
+	
 end
