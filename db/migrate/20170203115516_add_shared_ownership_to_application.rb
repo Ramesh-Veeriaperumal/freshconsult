@@ -5,7 +5,7 @@ class AddSharedOwnershipToApplication < ActiveRecord::Migration
       :name => "shared_ownership",
       :display_name => "integrations.shared_ownership.label",
       :description => "integrations.shared_ownership.desc",
-      :listing_order => 48,
+      :listing_order => 50,
       :options => {
         :direct_install => true,
         :user_specific_auth => true,

@@ -1,4 +1,7 @@
 class Integrations::CloudElements::CrmController < Integrations::CloudElementsController
+  class InstalledAppNotSavedException < StandardError 
+  end
+
   include Integrations::CloudElements::Crm::CrmUtil
 
   before_filter :check_feature, :verify_authenticity
@@ -23,7 +26,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     #Need to pass the domain for the Link generation in the Front End.
     config_hash['domain'] = "#{params["domain_label"]}" if params["domain_label"].present?
     @installed_app.configs[:inputs].merge!(config_hash)
-    @installed_app.save!
+    raise InstalledAppNotSavedException unless @installed_app.save!
     redirect_to "#{request.protocol}#{request.host_with_port}#{integrations_cloud_elements_crm_instances_path}?state=#{element}&method=post&id=#{el_response['id']}&token=#{CGI::escape(el_response['token'])}"
   rescue => e
     #delete if the element instance is found and the installed app is not saved delete the element instance.
@@ -34,8 +37,13 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     Rails.logger.debug "Error inside crm_controller::create Message: #{e}"
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Error inside crm_controller::create Message: #{e}", :account_id => current_account.id}})
     build_setting_configs
-    flash[:error] = t(:'flash.application.install.cloud_element_settings_failure')
-    redirect_to "#{request.protocol}#{request.host_with_port}#{integrations_cloud_elements_crm_settings_path}?state=#{element}"
+    unless e.class.eql? Integrations::CloudElements::CrmController::InstalledAppNotSavedException
+      flash[:error] = t(:'flash.application.install.cloud_element_settings_failure')
+      redirect_to "#{request.protocol}#{request.host_with_port}#{integrations_cloud_elements_crm_settings_path}?state=#{element}"
+    else
+      flash[:error] = t(:'flash.application.install.error')
+      redirect_to integrations_applications_path  
+    end
   end
 
   def instances
@@ -54,7 +62,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     Rails.logger.debug "Formula Instances Created successfully, CRM Id: #{crm_formula_resp['id']}, FD ID: #{fd_formula_resp['id']}"
     app_configs = get_app_configs(el_response_token, el_response_id, fd_response['id'], crm_formula_resp['id'], fd_formula_resp['id'])
     @installed_app.configs[:inputs].merge!(app_configs)
-    @installed_app.save!
+    raise InstalledAppNotSavedException unless @installed_app.save!
     flash[:notice] = t(:'flash.application.install.cloud_element_success')
     render_settings
   rescue => e
