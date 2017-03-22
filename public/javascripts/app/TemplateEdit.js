@@ -8,6 +8,7 @@ window.App = window.App || {};
 	
 	App.Parentchildtemplates.Edit = {
 		onVisit: function (data) {
+			App.Parentchildtemplates.initDynamicSection();
 			App.Parentchildtemplates.getOldValues();
   		App.Parentchildtemplates.intializeUnsavedModel();
 			if(jQuery('.ticket_template_form').data('parent-template')){

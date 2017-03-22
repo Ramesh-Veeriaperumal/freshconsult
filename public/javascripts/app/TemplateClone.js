@@ -12,6 +12,7 @@ window.App = window.App || {};
 				jQuery('#helpdesk_ticket_template_name').addClass('edit_parent_name');
     		App.Parentchildtemplates.initializeEditModel();
     		App.Parentchildtemplates.intializeUnsavedModel();
+    		App.Parentchildtemplates.initDynamicSection();
    			App.Parentchildtemplates.getOldValues();
 			}
 		}

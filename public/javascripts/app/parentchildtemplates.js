@@ -271,7 +271,7 @@ window.App = window.App || {};
 				$('#ticket_template.ticket_template_form').data('formChanged', true);
 			}else{
 				$('#ticket_template.ticket_template_form').data('formChanged', false);
-			}	
+			}
 		},
 		childExistingChange: function(status,value){// enable or disable all buttons based on status
 			var self=this;
@@ -693,11 +693,11 @@ window.App = window.App || {};
       }
       // return failureStatus
 	  },
+	  initDynamicSection: function(){
+	  	$('.dynamic_sections select.dropdown_blank').trigger('change');
+	  },
 		bindEvents:function(){ //bind events
 			invokeRedactor('template_data_ticket_body_attributes_description_html', 'template');
-			$(document).ready(function(){
-				$('.dynamic_sections select.dropdown_blank').trigger('change');
-			})
 			$('body')
 		    .on("change.template_form",'#template_data_group_id', function(e){
 		      var select_agent = $('#template_data_responder_id')[0];
