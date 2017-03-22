@@ -532,15 +532,17 @@ class Account < ActiveRecord::Base
   end
 
   def update_ticket_dynamo_shard
-    acct_additional_settings = self.account_additional_settings
-    if acct_additional_settings && acct_additional_settings.additional_settings.present?
-      acct_additional_settings.additional_settings[:tkt_dynamo_shard] = Helpdesk::Ticket::TICKET_DYNAMO_NEXT_SHARD
-      acct_additional_settings.save
-    else
-      additional_settings = {
-        :tkt_dynamo_shard => Helpdesk::Ticket::TICKET_DYNAMO_NEXT_SHARD
-      }
-      acct_additional_settings.update_attributes(:additional_settings => additional_settings)
+    acct_addtn_settings = self.account_additional_settings
+    if acct_addtn_settings
+      if acct_addtn_settings.additional_settings.present?
+        acct_addtn_settings.additional_settings[:tkt_dynamo_shard] = Helpdesk::Ticket::TICKET_DYNAMO_NEXT_SHARD
+      else
+        addtn_settings = {
+          :tkt_dynamo_shard => Helpdesk::Ticket::TICKET_DYNAMO_NEXT_SHARD
+        }
+        acct_addtn_settings.additional_settings = addtn_settings
+      end
+      acct_addtn_settings.save
     end
   end
 
