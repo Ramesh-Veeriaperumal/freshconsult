@@ -104,7 +104,7 @@ def self.currencies
 			:billing_api_key => "fmjVVijvPTcP0RxwEwWV3aCkk1kxVg8e"},
 		{ :name => "ZAR", :billing_site => "freshpo-zar-test", :exchange_rate => 0.095,
 			:billing_api_key => "test_HXf2ZGhes0Qbv8ckrXpxLVmuhhXSlZ51"},
-		{ :name => "ZAR", :billing_site => "freshpo-gbp-test", :exchange_rate => 0.74,
+		{ :name => "GBP", :billing_site => "freshpo-gbp-test", :exchange_rate => 1.25,
 			:billing_api_key => "test_zsyEST93T9PuAcuNZ0Ehcd2cuCUU8FHgIup"}
 	]
 end

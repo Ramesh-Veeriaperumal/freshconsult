@@ -212,7 +212,7 @@ end
   end
 
   def handle_link_tickets_toggle_add_data
-    account.update_ticket_dynamo_shard
+    account.revoke_feature(:link_tickets_toggle) unless account.update_ticket_dynamo_shard
   end
 
   def handle_link_tickets_toggle_drop_data
@@ -231,7 +231,7 @@ end
   end
 
   def handle_parent_child_tickets_toggle_add_data
-    account.update_ticket_dynamo_shard
+    account.revoke_feature(:parent_child_tickets_toggle) unless account.update_ticket_dynamo_shard
   end
 
   def handle_parent_child_tickets_toggle_drop_data

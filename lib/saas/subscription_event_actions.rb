@@ -41,14 +41,16 @@ class SAAS::SubscriptionEventActions
     end
 
     if add_ons_changed?
-      #to add new addons thats coming in to get added
-      account_add_ons.each do |addon|
-        account.add_feature(addon) unless existing_add_ons.include?(addon) rescue nil
-      end
-
+      to_be_added = account_add_ons - existing_add_ons
+      to_be_removed = existing_add_ons - account_add_ons
+      
       #add on removal case. we need to remove the feature in this case.
-      existing_add_ons.each do |addon|
-        account.revoke_feature(addon) unless account.has_feature?(addon) rescue nil
+      to_be_removed.each do |addon|
+        account.revoke_feature(addon) rescue nil
+      end
+      #to add new addons thats coming in to get added
+      to_be_added.each do |addon|
+        account.add_feature(addon) rescue nil
       end
     end
     
