@@ -527,6 +527,10 @@ class Account < ActiveRecord::Base
     ehawk_reputation_score >= 4
   end
 
+  def dashboard_shard_name
+    dashboard_shard_from_cache || ActiveRecord::Base.current_shard_selection.shard.to_s
+  end
+
   def update_ticket_dynamo_shard
     acct_additional_settings = self.account_additional_settings
     if acct_additional_settings && acct_additional_settings.additional_settings.present?

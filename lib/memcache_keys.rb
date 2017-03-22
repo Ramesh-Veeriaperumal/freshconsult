@@ -171,6 +171,8 @@ module MemcacheKeys
 
   MOST_VIEWED_ARTICLES = "MOST_VIEWED_ARTICLES:%{account_id}:%{language_id}:%{cache_version}"
 
+  ACCOUNT_DASHBOARD_SHARD_NAME = "v1/ACCOUNT_DASHBOARD_SHARD_NAME:%{account_id}"
+
   class << self
 
     include MemcacheReadWriteMethods

@@ -150,6 +150,10 @@ class Account < ActiveRecord::Base
     launched?(:link_tickets) || link_tickets_enabled?
   end
 
+  def dashboard_new_alias?
+    launched?(:dashboard_new_alias)
+  end
+
   def parent_child_tkts_enabled?
     @pc ||= (launched?(:parent_child_tickets) || parent_child_tickets_enabled?)
   end
@@ -165,5 +169,6 @@ class Account < ActiveRecord::Base
   def one_hop_enabled?
     features?(:inline_images_with_one_hop)
   end
+ 
 
 end

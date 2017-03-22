@@ -36,6 +36,7 @@ class SAAS::SubscriptionEventActions
         account.set_feature(feature)
       end
       account.save
+      handle_custom_dasboard_launch
       #disable_chat_routing unless account.has_feature?(:chat_routing)
     end
 
@@ -50,7 +51,7 @@ class SAAS::SubscriptionEventActions
         account.revoke_feature(addon) unless account.has_feature?(addon) rescue nil
       end
     end
-
+    
     if plan_changed? || add_ons_changed?
       handle_feature_drop_data
       handle_feature_add_data
@@ -103,6 +104,24 @@ class SAAS::SubscriptionEventActions
 
     def plan_changed?
       new_plan.subscription_plan_id != old_plan.subscription_plan_id
+    end
+
+    def handle_custom_dasboard_launch
+      is_dashboard_plan = dashboard_plan?
+        if is_dashboard_plan
+          CountES::IndexOperations::EnableCountES.perform_async({ :account_id => account.id })
+        else
+          [:admin_dashboard, :agent_dashboard, :supervisor_dashboard].each do |f|
+            account.features.countv2_reads.destroy
+            account.rollback(f)
+          end
+        end
+    end
+
+    def dashboard_plan?
+      dashboard_plans = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:estate], SubscriptionPlan::SUBSCRIPTION_PLANS[:forest],
+                        SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17], SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_17] ]
+      dashboard_plans.include?(new_plan.subscription_plan.name)
     end
 
 end
