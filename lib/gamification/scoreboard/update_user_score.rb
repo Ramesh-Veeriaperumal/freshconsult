@@ -19,6 +19,7 @@ module Gamification
         id, account_id = args[:id], args[:account_id]
         user = User.find_by_id_and_account_id(id, account_id)
         return if user.customer?
+        total_score = nil
         Sharding.run_on_slave do
           total_score = user.support_scores.sum(:score)
         end
