@@ -694,7 +694,7 @@ window.App = window.App || {};
       // return failureStatus
 	  },
 	  initDynamicSection: function(){
-	  	$('.dynamic_sections select.dropdown_blank').trigger('change');
+	  	$('.dynamic_sections').trigger('change');
 	  },
 		bindEvents:function(){ //bind events
 			invokeRedactor('template_data_ticket_body_attributes_description_html', 'template');
