@@ -57,9 +57,11 @@ module TicketsTestHelper
                                          :custom_field => params[:custom_field])
     test_ticket.build_ticket_body(:description => Faker::Lorem.paragraph)
     if params[:attachments]
-      test_ticket.attachments.build(:content => params[:attachments][:resource], 
-                                    :description => params[:attachments][:description], 
-                                    :account_id => test_ticket.account_id)
+      params[:attachments].each do |attach|
+        test_ticket.attachments.build(:content => attach[:resource], 
+                                      :description => attach[:description], 
+                                      :account_id => test_ticket.account_id)
+      end
     end
 
     if @account.link_tkts_enabled? && params[:display_ids].present?
@@ -101,5 +103,11 @@ module TicketsTestHelper
       end
     end
     tracker.add_associates(linked)
+  end
+
+  def create_ticket_with_attachments(params={})
+    file = File.new(Rails.root.join("spec/fixtures/files/attachment.txt"))
+    attachments = [{:resource => file}]
+    create_ticket(params.merge({:attachments => attachments}))
   end
 end

@@ -186,7 +186,7 @@ class Account < ActiveRecord::Base
     :es_v2_splqueries => false, :suggest_tickets => false, :"Freshfone New Notifications" => false, :feedback_widget_captcha => false,
     :es_multilang_solutions => false, :requester_widget => false, :spam_blacklist_feature => false,
     :custom_timesheet => false, :antivirus_service => false, :hide_api_key => false, :new_sla_logic => false, :multi_dynamic_sections => true,
-    :dashboard_new_alias => false
+    :dashboard_new_alias => false, :attachments_scope => false
   }
 
 end

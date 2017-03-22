@@ -16,7 +16,7 @@ class Helpdesk::NotesControllerTest < ActionController::TestCase
     enable_link_tickets do
       related_ticket_ids = create_link_tickets
       tracker = Helpdesk::Ticket.last
-      broadcast_note = create_broadcast_note(:notable_id => tracker.id)
+      broadcast_note = create_broadcast_note(:ticket_id => tracker.id)
       stub_ticket_associates(related_ticket_ids, tracker) do
         delete :destroy, {:id => broadcast_note.id,:ticket_id => tracker.display_id}
         assert tracker.notes.broadcast_notes.present?
