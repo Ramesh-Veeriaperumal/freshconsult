@@ -212,4 +212,60 @@ class ApiApplicationControllerTest < ActionController::TestCase
     assert_equal response.status, 500
     assert_equal response.body, base_error_pattern(:internal_error).to_json
   end
+
+  def test_valid_jwt_token_authentication
+    @account.launch(:api_jwt_auth)
+    token = generate_jwt_token(1, 1, Time.now.to_i, Time.now.to_i)
+    auth = ActionController::HttpAuthentication::Token.encode_credentials(token)
+    @controller.request.env['HTTP_AUTHORIZATION'] = auth
+    @controller.send(:api_current_user)
+    current_user = @controller.instance_variable_get(:@current_user)
+    assert_not_nil current_user
+  end
+
+  def test_already_used_jti_in_jwt_token_authentication
+    @account.launch(:api_jwt_auth)
+    jti = rand(234412121)
+    token = generate_jwt_token(1, 1, jti, Time.now.to_i - 35)
+    auth = ActionController::HttpAuthentication::Token.encode_credentials(token)
+    @controller.request.env['HTTP_AUTHORIZATION'] = auth
+    @controller.send(:api_current_user)
+    current_user = @controller.instance_variable_get(:@current_user)
+    assert_not_nil current_user
+
+    @controller.instance_variable_set(:@current_user, nil)
+    token = generate_jwt_token(1, 1, jti, Time.now.to_i - 34)
+    auth = ActionController::HttpAuthentication::Token.encode_credentials(token)
+    @controller.request.env['HTTP_AUTHORIZATION'] = auth
+    @controller.send(:api_current_user)
+
+    current_user = @controller.instance_variable_get(:@current_user)
+    assert_nil current_user
+  end
+
+  def test_invalid_iat_in_jwt_token_authentication
+    @account.launch(:api_jwt_auth)
+    token = generate_jwt_token(1, 1, Time.now.to_i, 2*(Time.now.to_i))
+    auth = ActionController::HttpAuthentication::Token.encode_credentials(token)
+    @controller.request.env['HTTP_AUTHORIZATION'] = auth
+    @controller.send(:api_current_user)
+    current_user = @controller.instance_variable_get(:@current_user)
+    assert_nil current_user
+  end
+
+  def test_jwt_authentication_using_same_token
+    @account.launch(:api_jwt_auth)
+    token = generate_jwt_token(1, 1,Time.now.to_i, Time.now.to_i)
+    auth = ActionController::HttpAuthentication::Token.encode_credentials(token)
+    @controller.request.env['HTTP_AUTHORIZATION'] = auth
+    @controller.send(:api_current_user)
+    current_user = @controller.instance_variable_get(:@current_user)
+    assert_not_nil current_user
+    @controller.instance_variable_set(:@current_user, nil)
+    # auth again with the same token , this time it should be unsuccessful
+    @controller.send(:api_current_user)
+    current_user = @controller.instance_variable_get(:@current_user)
+    assert_nil current_user
+  end
+
 end

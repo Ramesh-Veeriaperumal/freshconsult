@@ -5,6 +5,7 @@ routes_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_routes.ym
 rate_limit = YAML.load_file(File.join(Rails.root, 'config', 'rate_limit.yml'))[Rails.env]
 display_id_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_display_id.yml'))[Rails.env]
 round_robin_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_round_robin.yml'))[Rails.env]
+redis_session_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_session.yml'))[Rails.env]
 #$redis = Redis.new(:host => config["host"], :port => config["port"])
 
 #$redis_secondary = Redis.new(:host => config["host"], :port => config["port"])
@@ -20,6 +21,9 @@ $redis_routes = Redis.new(:host => routes_config["host"], :port => routes_config
 $redis_display_id = Redis.new(:host => display_id_config["host"], :port => display_id_config["port"], :timeout => 5)
 $redis_mkp = Redis.new(:host => config["host"], :port => config["port"], :timeout => 5)
 $redis_round_robin = Redis.new(:host => round_robin_config["host"], :port => round_robin_config["port"], :timeout => 5)
+$redis_session = Redis.new(:host => redis_session_config["host"], :port => redis_session_config["port"],:timeout => 5)
+
+
 
 mobile_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_mobile.yml'))[Rails.env]
 $redis_mobile = Redis.new(:host => mobile_config["host"], :port => mobile_config["port"], :timeout => 5)
