@@ -786,10 +786,10 @@ module ApplicationHelper
   def get_senti_i_tag(sentiment, opt)
     if sentiment
       if opt.include?(:senti_hover)
-        i_tag = content_tag( :i, :rel=> "sentiment-hover", :class => "sentiment #{sentiment} #{senti_class_locator(sentiment)}", :"data-placement"=>"below" , :title => "#{get_senti_title(sentiment)}" ) do
+        i_tag = content_tag( :i, :rel=> "sentiment-hover", :class => "sentiment #{sentiment} #{senti_class_locator(sentiment)}", :title => "#{get_senti_title(sentiment)}" ) do
         end
       else
-        i_tag = content_tag( :i, :class => "sentiment tooltip #{sentiment} #{senti_class_locator(sentiment)}", :"data-placement"=>"below" , :title => "#{get_senti_title(sentiment)}" ) do
+        i_tag = content_tag( :i, :class => "sentiment tooltip #{sentiment} #{senti_class_locator(sentiment)}", :title => "#{get_senti_title(sentiment)}" ) do
         end
       end
       return i_tag
@@ -801,25 +801,29 @@ module ApplicationHelper
   #TODO: Convert following functions to Constants
   def get_senti_title(sentiment)
 
-    if (sentiment == -2 || sentiment == -1)
-      return "SAD"
-    elsif (sentiment == 2 || sentiment == 1)
-      return "HAPPY"
+    if sentiment == -2
+      return "Angry"
+    elsif sentiment == -1
+      return "Sad"
+    elsif sentiment == 1
+      return "Happy"
+    elsif sentiment == 2
+      return "Very Happy"
     else 
-      return "NEUTRAL"   
+      return "Neutral"   
     end 
-  end
-
-  def sentiment_feature_and_lang_check
-    (Account.current.customer_sentiment_ui_enabled? && current_user.language=="en") ? true : false
   end
 
   def senti_class_locator(sentiment)
 
-  if (sentiment == -2 || sentiment == -1)
+    if sentiment == -2
+      return "symbols-emo-angry-20"
+    elsif sentiment == -1
       return "symbols-emo-sad-20"
-    elsif (sentiment == 2 || sentiment == 1)
+    elsif sentiment == 1
       return "symbols-emo-happy-20"
+    elsif sentiment == 2
+      return "symbols-emo-veryHappy-20"
     else 
       return "symbols-emo-neutral-20"   
     end  

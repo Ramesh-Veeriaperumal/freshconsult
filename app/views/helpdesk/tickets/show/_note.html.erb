@@ -36,7 +36,22 @@ end
 			<% end %>
 			class="conversation <%= 'minimized' if minimizable %> <%= 'source_email' if note.email? %>">
 	<% if note.user %>
-		 <div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
+		<% if notable_object.agent_performed?(note.user) %>
+			<div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
+		<% else %>
+			<% if (Account.current.customer_sentiment_ui_enabled? && current_user.language=="en") %>
+				<% survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results" %>
+
+				<% unless notable_object.send(survey_association).nil? || notable_object.send(survey_association).last.nil? %>
+				    <div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
+				<% else %>
+				    <div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= senti_user_avatar(note.user, note.sentiment, :thumb, 'preview_pic circle', {:senti_hover=>'true'}) %></div>
+				<% end %>
+
+			<% else %>
+			    <div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
+			<% end %>
+		<% end %>
 	<% end %>
   <div class="commentbox 
       <%= (note.user.blank? or notable_object.agent_performed?(note.user)) ? 'commentbox-gray' : 'commentbox-requester' %> 
@@ -190,18 +205,6 @@ end
 				                    :id => notable_object.display_id, 
 				                    :note_id => note.id })
 				                    				}) %>
-
-
-	<% if sentiment_feature_and_lang_check %>
-		  <% if(!notable_object.agent_performed?(note.user)) && (note.id != @last_note_id) %>
-				<div class="senti-top-margin senti-main-container disabled">
-		  			<div class="<%= get_senti_title(note.sentiment) %>"></div>
-		  			<div class="senti_text"><%= get_senti_title(note.sentiment) %></div>
-				</div>
-				<a class='help senti-tooltip tooltip' id='help' href='https://support.freshdesk.com/support/solutions/articles/224040' target='_blank' data-placement='above' data-original-title="More about Sentiment Prediction"><i class='ficon-help fsize-16' size='16'></i></a>
-		  <% end %>				                    				
-	<% end %>				                    				
-				                    				
 	</div>
 
 	<script type="text/javascript">
