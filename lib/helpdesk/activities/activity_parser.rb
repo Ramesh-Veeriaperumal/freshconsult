@@ -20,12 +20,13 @@ module Helpdesk::Activities
 
     def initialize(ticketdata, data_hash, ticket, type)
       @act_data_hash      = data_hash
-      @type           = type
+      @type               = type
       @act_ticket         = ticket
       @invalid_act        = false     # to denote, the activity will be show in UI or not
       @act_suffix         = TYPE[type]
       @current_user       = User.current
       @act_summary        = ticketdata.summary.nil? ? nil : ticketdata.summary.to_i
+      @email_failures     = JSON.parse(ticketdata.email_failures.gsub('=>', ':')) unless ticketdata.email_failures == "null"
       @act_activity       = {
                             :new  => [], :set  => [], :edit => [], :custom => [], 
                             :misc => [], :rule => {}, :text => [], :note   => [],
@@ -533,7 +534,20 @@ module Helpdesk::Activities
       note_id = value[:id]
       note    = get_note(note_id.to_i)
       return @invalid_act = true if note.nil?
-      @act_activity[:note] << [note, value]
+      ret_arr = [note, value]
+      if @email_failures.present?
+        @email_failures = @email_failures.reduce Hash.new, :merge
+        
+        ret_arr << note_email_failures(note.to_emails)
+        ret_arr << note_email_failures(note.cc_emails)
+      end
+      @act_activity[:note] << ret_arr
+    end
+
+    def note_email_failures(emails)
+      email_errors = @email_failures.select{|email, error| emails.include?(email)}
+      email_errors.each{|email,error| email_errors[email] = FAILURE_CATEGORY[error.to_i]}
+      email_errors
     end
 
     # for merge, split, ticket import and round robin

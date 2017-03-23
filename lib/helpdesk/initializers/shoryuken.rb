@@ -16,8 +16,10 @@ if SH_ENABLED
       chain.add Middleware::Shoryuken::Server::BelongsToAccount, :ignore => [
         "Ryuken::FacebookRealtime",
         "Email::MailFetchWorker",
-        "Email::EmailDeadLetterWorker"
+        "Email::EmailDeadLetterWorker",
+        "Email::FailedEmailFetchWorker"
       ]
+      
     end
   end
 end

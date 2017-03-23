@@ -86,6 +86,43 @@ en:
   reload: Reload
   any: Any
   or: or
+  email_failure:
+    dropped:
+      summary_error_text: "Message dropped - Invalid or problematic address"
+      help_text:
+        admin: "Any message to this address will not be sent as it's likely an invalid or mistyped address and has been added to the drop list. Contact Freshdesk Support if you believe that this address is valid and should be removed from the drop list for future communication."
+        agent: "Any message to this address will not be sent as it's likely an invalid or mistyped address and has been added to the drop list. Contact your account administrator if you believe that this address is valid and should be removed from the drop list for future communication."
+    dropped_unsubscribed:
+      summary_error_text: "Message dropped - Unsubscribed address"
+      help_text:
+        admin: "Any message to this address will not be sent as the recipient has unsubscribed from this domain. Contact Freshdesk Support if you want to enable future communication to this address."
+        agent: "Any message to this address will not be sent as the recipient has unsubscribed from this domain. Contact your account administrator if you want to enable future communication to this address"
+    bounce_temporary:
+      summary_error_text: "Message bounced - Temporary error"
+      help_text: "The message did not reach this recipient after multiple attempts likely due to connection issues with the remote server or temporary problems like the mailbox being full. Retrying after some time should solve the problem."
+    bounce_permanent:
+      summary_error_text: "Message bounced - Permanent error"
+      help_text: "The message did not reach this recipient after multiple attempts. You can attempt re-sending the message but it's likely that this is an invalid or mistyped address."
+    suppression_list_alert:
+      subject: "Request to remove address from drop list"
+      company: "Company"
+      freshdesk_url: "Freshdesk URL"
+      dropped_address: "Address to remove from drop list"
+      source_ticket: "Source Ticket"
+      thanks: "Thanks,"
+    agent_notification:
+      subject: "Email was not delivered to %{failed_email}"
+      content: | 
+              <p>Hi %{agent_name},<br><br>
+                The following message composed by you on ticket id <a target='_blank' href=%{ticket_url}>%{ticket_id}</a> failed to reach the recipient %{failed_email} permanently.<br>
+                Reason: %{error_message}.<br>
+                Message content: <br>%{failed_content}</p>
+    note_display:
+      title  : "Message not delivered"
+      failed_recipients: "Failed recipients"
+      contact_support: "Email Freshdesk Support"
+      call_recipient : "Call recipient"
+      add_note_to_admin : "Add note to admin"
   reorder_rules: Reorder Active Rules
   plain_yes: "Yes"
   plain_no: "No"

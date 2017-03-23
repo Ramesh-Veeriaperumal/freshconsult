@@ -1953,6 +1953,8 @@ Helpkit::Application.routes.draw do
         put :link
         put :unlink
         get :ticket_association
+        get :fetch_errored_email_details
+        put :suppression_list_alert
       end
 
       resources :child, :only => [:new], :controller => "tickets"
