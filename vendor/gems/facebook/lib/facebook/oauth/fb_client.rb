@@ -41,11 +41,23 @@ module Facebook
       
       # Gets the access token and page token once code is passed
       def auth(code)
-        oauth_access_token = @oauth.get_access_token(code)
-        graph              = Koala::Facebook::API.new(oauth_access_token)
+        access_token code
+        graph              = Koala::Facebook::API.new(@oauth_access_token)
         pages              = graph.get_connections("me", "accounts")
         pages              = pages.collect{|p| p  unless p["category"].eql?("Application")}.compact
-        REALTIME_BLOCK.call(pages, oauth_access_token)
+        REALTIME_BLOCK.call(pages, @oauth_access_token)
+      end
+
+      def access_token code
+        query_params = ACCESS_TOKEN_PARAMS % {:client_id => FacebookConfig::APP_ID, :client_secret => FacebookConfig::SECRET_KEY, :redirect_uri => call_back_url, :code => code}
+        access_token_request = "#{FACEBOOK_GRAPH_URL}/#{GRAPH_API_VERSION}/#{ACCESS_TOKEN_PATH}?#{query_params}"
+        message = RestClient.get access_token_request, {:accept => :json}
+        message = JSON.parse(message)
+        if message.nil? || message["access_token"].blank?
+          Rails.logger.debug "Error while adding facebook page in account #{Account.current} with response #{message}" 
+        else
+          @oauth_access_token = message["access_token"]
+        end
       end
       
       def page_tab_add(tabs_added)
