@@ -3,6 +3,7 @@ module Helpdesk::Activities
     include HelpdeskActivities::TicketActivities
     include Helpdesk::NotePropertiesMethods
     include Helpdesk::Email::Constants
+    include EmailParser
 
     DEFAULT_STATUS_KEYS = Helpdesk::Ticketfields::TicketStatus::DEFAULT_STATUSES.keys
 
@@ -32,8 +33,8 @@ module Helpdesk::Activities
         []
       end    
       email_failures = email_failures.reduce Hash.new, :merge
-      to_emails      = note.to_emails || []
-      cc_emails      = note.cc_emails || []
+      to_emails      = parse_addresses(note.to_emails)[:plain_emails] || []
+      cc_emails      = parse_addresses(note.cc_emails)[:plain_emails] || []
       to_list        = []
       cc_list        = [] 
       regret_failure_count = 0

@@ -3,6 +3,7 @@ module Helpdesk::Activities
     include TicketConstants
     include ActivityConstants
     include ApplicationHelper
+    include EmailParser
     include Rails.application.routes.url_helpers    #for rails routes
 
     attr_accessor :act_performed_time, :act_performer, :act_ticket, :act_content,
@@ -545,6 +546,7 @@ module Helpdesk::Activities
     end
 
     def note_email_failures(emails)
+      emails = parse_addresses(emails)[:plain_emails]
       email_errors = @email_failures.select{|email, error| emails.include?(email)}
       email_errors.each{|email,error| email_errors[email] = FAILURE_CATEGORY[error.to_i]}
       email_errors
