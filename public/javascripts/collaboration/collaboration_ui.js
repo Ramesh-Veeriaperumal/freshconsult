@@ -1203,6 +1203,12 @@ App.CollaborationUi = (function ($) {
                     });
                 }
             }
+        },
+
+        mentionListSorter: function(arr) {
+            return arr.sort(function (a, b) {
+                return (a.username && b.username) ? ( a.username.length - b.name.length || a.username > b.username) : -1;
+            });
         }
     };
 
@@ -1541,7 +1547,8 @@ App.CollaborationUi = (function ($) {
                 "menuHtml": menu_item,
                 "maxItems": 5,
                 "filterKeys": ["name", "username", "mention_text"],
-                "tagAttribute": "username"
+                "tagAttribute": "username",
+                "sort": _COLLAB_PVT.mentionListSorter
             };
             var lm = new lightMention(options);
             lm.bindMention();
