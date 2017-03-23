@@ -1207,7 +1207,7 @@ App.CollaborationUi = (function ($) {
 
         mentionListSorter: function(arr) {
             return arr.sort(function (a, b) {
-                return (a.username && b.username) ? ( a.username.length - b.name.length || a.username > b.username) : -1;
+                return (a.username && b.username) ? ( a.username.length - b.username.length || a.username > b.username) : -1;
             });
         }
     };
