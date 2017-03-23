@@ -19,12 +19,12 @@
 	<fieldset class="row-fluid">
 		<div class="span4">
 			<label class="lead-small"><%=t('export_data.filter_label_customer')%></label>
-			<%= select_tag "date_filter", options_for_select(TicketConstants::CREATED_BY_OPTIONS), 
+			<%= select_tag "date_filter", options_for_select(TicketConstants.created_options), 
 				{ :class => "export-custom-select" } %>
 		</div>
 		<div id="datepicker" class="hide">
  			<div class="span4">	
- 				<label class="lead-small">From</label>
+ 				<label class="lead-small"><%=t('export_data.from')%></label>
 				<input type="text" placeholder="<%=t('export_data.from')%>" id="start_date" date="" class="text auto" size="15" />
 				
 
@@ -32,7 +32,7 @@
 
 			</div>
 			<div class="span4 omega">
-				<label class="lead-small">To</label>
+				<label class="lead-small"><%=t('export_data.to')%></label>
 				<input type="text" placeholder="<%=t('export_data.to')%>" id="end_date" date="" class="text auto" size="15" />
 				
 
