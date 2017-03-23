@@ -8,7 +8,7 @@ class Account < ActiveRecord::Base
     :custom_contact_fields, :occasional_agent, :allow_auto_suggest_solutions, :basic_twitter, :basic_facebook,
     :multi_product,:multiple_business_hours, :multi_timezone, :customer_slas, :layout_customization,
     :advanced_reporting, :timesheets, :multiple_emails, :custom_domain, :gamification, :gamification_enable,
-    :auto_refresh, :branding, :advanced_dkim, :basic_dkim, :shared_ownership_toggle].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
+    :auto_refresh, :branding, :advanced_dkim, :basic_dkim, :shared_ownership_toggle, :unique_contact_identifier_toggle, :unique_contact_identifier].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   LP_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do

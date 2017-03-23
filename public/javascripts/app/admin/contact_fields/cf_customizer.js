@@ -81,6 +81,9 @@
 		feedJsonForm: function(formInput){
 			var self = this;
 			$(formInput).each(function(index, dataItem){
+				if(dataItem.name == "unique_external_id" && !is_unique_contact_idetifier_enabled){
+					return true
+				}
 				var dom = self.constructFieldDom(dataItem);
 				$(self.settings.formContainer).append(dom);  
 			});

@@ -117,6 +117,17 @@ end
     MemcacheKeys.delete_from_cache key
   end
 
+  def handle_unique_contact_identifier_toggle_data
+    account.revoke_feature(:unique_contact_identifier)
+    external_id_field = account.contact_form.default_fields.where(:name => "unique_external_id").first
+    if(external_id_field.present?)
+      external_id_field.visible_in_portal = false
+      external_id_field.field_options.delete("widget_position") if external_id_field.field_options["widget_position"].present?
+      external_id_field.save
+    end
+    clear_contact_fields_cache
+  end
+
   def handle_custom_apps_drop_data
     begin
       Integrations::Application.freshplugs(account).destroy_all

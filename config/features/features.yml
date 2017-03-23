@@ -71,6 +71,8 @@
       :link_tickets_toggle: 66
       :parent_child_tickets: 67
       :parent_child_tickets_toggle: 68
+      :unique_contact_identifier_toggle: 69
+      :unique_contact_identifier: 70
 :selectable_features:
       :branding: true
       :gamification_enable: false

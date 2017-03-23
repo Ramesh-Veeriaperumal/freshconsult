@@ -291,6 +291,7 @@ en:
     work: Work
     email: Email
     emails: Emails
+    unique_external_id: Unique External Id
     choose_another_photo: "Choose another photo"
     add_photo: "Add Photo"
     change_photo: "Change photo"
@@ -3920,6 +3921,7 @@ en:
         max_user_companies: A contact cannot have more than 20 companies
         max_skills_per_account: Cannot create more than %{max_limit} skills
         max_skills_per_user: Cannot have more than %{max_limit} skills per agent
+        unique_external_id: unique_external_id field cannot be updated
         edit_broadcast_note: "Broadcast message can't be edited"
       full_messages:
         format: "%{attribute} %{message}"

@@ -576,6 +576,10 @@ module ApplicationHelper
         ['{{ticket.internal_agent.email}}',      'Internal Agent email',      "",         'ticket_agent_email']]
     end
 
+    if current_account.unique_contact_identifier_enabled?
+      place_holders[:requester] += [['{{ticket.requester.unique_external_id}}', 'Requester Unique External Id',   "",       'unique_external_id']]
+    end
+
     # Custom Field Placeholders
     current_account.ticket_fields.custom_fields.each { |custom_field|
       nested_vals = []

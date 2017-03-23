@@ -460,7 +460,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def not_editable?
-    requester and !requester_has_email? and !requester_has_phone?
+    requester and !requester_has_email? and !requester_has_phone? and !requester_has_external_id?
   end
 
   def requester_has_email?
@@ -469,6 +469,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def requester_has_phone?
     requester and requester.phone.present?
+  end
+
+  def requester_has_external_id?
+    account.unique_contact_identifier_enabled? ? (requester and requester.unique_external_id.present?) : false
   end
 
   def encode_display_id
