@@ -436,7 +436,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
       message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@forward.freshdesk.com"
       
-      headers = email_headers(ticket, nil, false).merge({
+      headers = email_headers(ticket, message_id, false).merge({
         :subject    =>  formatted_subject(ticket),
         :to         =>  to_emails,
         :cc         =>  cc_emails,
