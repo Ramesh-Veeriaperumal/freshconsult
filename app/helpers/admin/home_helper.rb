@@ -1,4 +1,5 @@
  module Admin::HomeHelper
+  include Redis::RedisKeys
 
   ######### Admin Items ########
 
@@ -102,7 +103,7 @@
       },
       :ticket_template                 =>   {
         :url                           =>   "/helpdesk/ticket_templates",
-        :privilege                     =>   current_account.tkt_templates_enabled? && privilege?(:manage_ticket_templates)
+        :privilege                     =>   feature?(:ticket_templates) && privilege?(:manage_ticket_templates)
       },
       :"email-notifications"           =>   {
         :url                           =>   "/admin/email_notifications",
@@ -141,7 +142,9 @@
         :privilege                     =>   privilege?(:manage_account)
       },
       :import                          =>   {
-        :url                           =>   "/admin/zen_import/",
+        :url                           =>   redis_key_exists?(ZENDESK_IMPORT_APP_KEY) ?
+                                            "/integrations/applications##{ZEN_APP_ID}":
+                                            "/admin/zen_import",
         :privilege                     =>   privilege?(:manage_account)
       },
       :day_pass                        =>   {
@@ -199,6 +202,8 @@
       }
     }
   end
+
+  ZEN_APP_ID = ZendeskAppConfig::APP_ID
 
   ######### Admin groups & Associated admin items Constant ########
 
