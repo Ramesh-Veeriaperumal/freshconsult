@@ -73,8 +73,12 @@
       :parent_child_tickets_toggle: 68
       :unique_contact_identifier_toggle: 69
       :unique_contact_identifier: 70
+      :advanced_search: 71
+      :advanced_search_bulk_actions: 72
 :selectable_features:
       :branding: true
       :gamification_enable: false
       :parent_child_tickets: false
       :link_tickets: false
+      :advanced_search: false
+      :advanced_search_bulk_actions: false
