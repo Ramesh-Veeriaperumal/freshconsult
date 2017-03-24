@@ -327,9 +327,11 @@ window.App = window.App || {};
                     }
                 }
 
+                actors[0] = this.safe(actors[0])
                 if(actors.length == 1){
                     actor_text = actors[0];
                 } else if(actors.length==2){
+                    actors[1] = this.safe(actors[1]);
                     actor_text = I18n.t("user_notifications.actor_text_2",{actor_name_1:actors[0], actor_name_2: actors[1]});
                 } else {
                     actor_text = I18n.t("user_notifications.actor_text_multi",{actor_name_1:actors[0], more_actors_count: actors.length-1});
@@ -389,11 +391,12 @@ window.App = window.App || {};
         },
         flattenNotificationObject: function(notification){
             var obj = {};
+            var self = this;
 
             // Copy object
             for(var key in notification){
                 if(key!="extra"){
-                    obj[key] = notification[key];
+                    obj[key] = self.safe(notification[key]);
                 }
             }
 
@@ -406,7 +409,7 @@ window.App = window.App || {};
             }
 
             for(var key in notification.extra){
-                obj[key] = notification.extra[key];
+                obj[key] = self.safe(notification.extra[key]);
             }
 
             // Truncate the subject if it exists
@@ -503,6 +506,9 @@ window.App = window.App || {};
             } else {
                 $(".enable-desktop-notifications-button").addClass("disabled");
             }
+        },
+        safe: function(str){
+            return String(str).replace(/<(?:.|\n)*?>/gm, '');
         },
         destroy: function () {
             $(document).off(".usernotification");
