@@ -19,14 +19,10 @@ module Integrations::CloudElements::Crm
       "validator"=>{"string"=>["text"], "textarea"=>["paragraph"], "boolean"=>["checkbox"], "reference"=>[],
               "phone"=>["phone_number"], "picklist"=>["dropdown", "dropdown_blank"], "multipicklist"=>[], 
               "email"=>["email"], "date"=>["date"], "double"=>["number"], "number"=>["number"], "currency"=>["number"], 
-              "encryptedstring"=>["text"], "percent"=>["number"], "url"=>["url"], "id"=>[],
-              "datetime" => ["date"], "formula:date" => ["date"], "formula:datetime" => ["date"],
-              "formula:currency" => ["number"], "formula:boolean" => ["checkbox"], "formula:double" => ["number"],
-              "formula:percent" => ["number"], "formula:string" => ["text"]}, # Sync: Data type to be shown on the FD dropdown when CRM dropdown is selected
-      "fd_validator"=>{"text"=>["string", "encryptedstring", "formula:string"], "email"=>["email"], "phone_number"=>["phone"], 
-              "checkbox"=>["boolean", "formula:boolean"], "paragraph"=>["textarea"], "dropdown"=>["picklist"], "dropdown_blank"=>["picklist"], 
-              "number"=>["number", "currency", "percent", "double", "formula:currency", "formula:double", "formula:percent"], 
-              "survey_radio"=>[], "date"=>["date", "datetime", "formula:date", "formula:datetime"], "url"=>["url"]} # Vice Versa.
+              "encryptedstring"=>["text"], "percent"=>["number"], "url"=>["url"], "id"=>[]}, # Sync: Data type to be shown on the FD dropdown when CRM dropdown is selected
+        "fd_validator"=>{"text"=>["string", "encryptedstring"], "email"=>["email"], "phone_number"=>["phone"], 
+              "checkbox"=>["boolean"], "paragraph"=>["textarea"], "dropdown"=>["picklist"], "dropdown_blank"=>["picklist"], 
+              "number"=>["number", "currency", "percent", "double"], "survey_radio"=>[], "date"=>["date"], "url"=>["url"]} # Vice Versa.
     }
 
     SALESFORCE_V2_JSON = {
