@@ -666,8 +666,8 @@ class Freshfone::Call < ActiveRecord::Base
   end
 
   def source_number
-    return fetch_caller_id if meta.forward?
     return number if outgoing?
+    return fetch_caller_id if meta.forward?
     caller_number
   end
 
