@@ -16,7 +16,7 @@ module Integrations
     end
 
     # To be refactored
-    def generate_mkp_update_button(extension, method = "get")
+    def generate_mkp_update_button(extension)
       update_params = { "type" => "#{EXTENSION_TYPE[:plug]}", "installation_type" => "update", "display_name" => extension['display_name'] } 
       update_url = admin_marketplace_installed_extensions_new_configs_path(extension['extension_id'], extension['version_id'])
       update_button_class = "update"
