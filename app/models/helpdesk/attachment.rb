@@ -106,7 +106,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     end
 
     def attachment_permissions social
-      !social && Account.current.features_included?(:inline_images_with_one_hop) ? "private" : "public-read"
+      !social && Account.current.one_hop_enabled? ? "private" : "public-read"
     end
   end
 
@@ -231,7 +231,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def inline_url
-    if !public_image? && Account.current.features_included?(:inline_images_with_one_hop)
+    if !public_image? && Account.current.one_hop_enabled?
       config_env = AppConfig[:attachment][Rails.env]
       "#{config_env[:protocol]}://#{config_env[:domain][PodConfig['CURRENT_POD']]}#{config_env[:port]}#{inline_url_path}"
     else

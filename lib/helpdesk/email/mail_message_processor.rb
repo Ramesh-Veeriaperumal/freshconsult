@@ -50,7 +50,7 @@ module Helpdesk
 					email_logger.info "Processed Parameters: #{params.inspect}"
 					params[:envelope] =  metadata[:envelope]
 					spam_data = check_for_spam
-					self.ticket_params = params.merge({ :spam_info => spam_data })
+					self.ticket_params = params.merge({ :spam_info => spam_data ,:request_url => "Mimecontroller"})
 					ticket_data = create_ticket_or_note
 					Rails.logger.info "ticket_data : #{ticket_data.inspect}"
 					set_processing_state(EMAIL_PROCESSING_STATE[:finished], Time.now.utc, message[:uid])

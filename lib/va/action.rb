@@ -39,7 +39,7 @@ class Va::Action
   
   def trigger(act_on, doer=nil, triggered_event=nil)
     begin
-      Rails.logger.debug "INSIDE trigger of Va::Action with act_on : #{act_on.inspect} action_key : #{action_key} value: #{value}"
+      #Rails.logger.debug "INSIDE trigger of Va::Action with act_on : #{act_on.inspect} action_key : #{action_key} value: #{value}"
       @doer = doer
       @triggered_event = triggered_event
       return send(action_key, act_on) if respond_to?(action_key)
@@ -57,8 +57,8 @@ class Va::Action
           return
         end
       end
-      
-      puts "From the trigger of Action... Looks like #{action_key} is not supported!"
+
+      Rails.logger.debug "Unsupported action key :: #{action_key}"
     rescue Exception => e
       Rails.logger.debug "For Va::Action #{self} Exception #{e} rescued"
     end

@@ -101,7 +101,6 @@ var refreshCallBack = function (message, hashed_params, current_userid,updated_t
               count++;
             }
             else if (filter_options[i].condition == "created_at"){
-
               var created_at = Array.isArray(message['created_at']) ? message['created_at'].pop() : message['created_at']*1000;
               created_at = new Date(created_at);
               var created_at_filter = filter_options[i].value;
@@ -112,10 +111,14 @@ var refreshCallBack = function (message, hashed_params, current_userid,updated_t
                 (created_at < Date.today()) && 
                 (created_at > Date.today().add({ days: -1 }))) {
                   count++;
-              } else if (created_at_filter.split("-").length == 2 &&
-                  created_at > Date.parse(date_arr[0]) &&
-                  created_at < Date.parse(date_arr[1])) {
+              } else if (created_at_filter.split("-").length == 2) {
+                  var date_split = created_at_filter.split("-");
+                  var start_date = Date.parse(date_split[0]);
+                  var end_date = Date.parse(date_split[1]);
+                  end_date.setDate(end_date.getDate()+1);
+                  if (created_at >= start_date && created_at < end_date) {
                     count++;
+                  }
               } else if (created_at > auto_refresh_ticketFilterDateoptions[created_at_filter]) {
                 count++;
               }

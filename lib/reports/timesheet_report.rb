@@ -341,23 +341,34 @@ module Reports::TimesheetReport
     result_time_sheets = {}
     str_header_keys_time_entry = @headers.map(&:to_s)
     str_header_keys_time_entry +=  ["timespent","billable","user_id","ticket_id","customer_id","product_id","group_id","display_id","subject","executed_at"]
-    options = {time_format:'hm' , is_timesheet: true}
+    options = {time_format:  Helpdesk::TimeSheet::TIME_FORMAT_HOURMINUTES , is_reports: true}
     @time_sheets.each do | group_by_key, group_by_value|
       result_arr = []
       group_by_value.each do |time_entry|
         result_hash = time_entry.as_json(options)[:time_entry].slice(*str_header_keys_time_entry)
-        ticket_json =time_entry.workable.as_json["helpdesk_ticket"].stringify_keys.slice(*str_header_keys_time_entry)
+        ticket_json = nil
+        if(time_entry.workable_type == "Helpdesk::Ticket")
+          ticket_json = time_entry.workable.as_json["helpdesk_ticket"].stringify_keys.slice(*str_header_keys_time_entry)
+        else
+          ticket_json = time_entry.workable.as_json["helpdesk_archive_ticket"].stringify_keys.slice(*str_header_keys_time_entry)
+        end
         ticket_json[:group_name] = time_entry.workable.group.name if time_entry.workable.group.present?
         result_hash.merge!(ticket_json)
+        product_hash = nil
         if Account.current.products.any?
           if time_entry.workable.respond_to?(:schema_less_ticket)
             product_hash = time_entry.workable.schema_less_ticket.product.as_json
-            result_hash.merge!(product_hash) if product_hash.present?
           else
             product_hash = time_entry.workable.product.as_json
-            result_hash.merge!(product_hash) if product_hash.present?
           end
         end
+
+        if product_hash.present?
+          result_hash.merge!(product_hash)
+        else
+          result_hash["product_id"]=nil;
+        end
+
         result_arr.push(result_hash)
       end
       result_time_sheets[group_by_key] = result_arr
@@ -640,7 +651,7 @@ module Reports::TimesheetReport
 
   def construct_csv_string
     date_fields = [ I18n.t('helpdesk.time_sheets.createdAt'), I18n.t('helpdesk.time_sheets.date')]
-    workable_fields = [I18n.t('export_data.fields.requester_name'), I18n.t('helpdesk.time_sheets.ticket_type')]
+    workable_fields = [I18n.t('helpdesk.time_sheets.requester_name'), I18n.t('helpdesk.time_sheets.ticket_type')]
     customer_name_key = I18n.t('helpdesk.time_sheets.customer')
     csv_row_limit = HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:export][:csv]
     csv_hash = construct_csv_headers_hash

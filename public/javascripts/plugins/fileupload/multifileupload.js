@@ -985,7 +985,13 @@ Helpdesk = Helpdesk || {};
                    added = $this.siblings('.list_element').data('added') || false;
                 }
                 if(!added) {
-                    var attachSessionId = $(".attachment-icon:visible").data('iconCount') || this.openReply("attachment");
+                     var icount = $(".attachment-icon:visible").data('iconCount');
+                     var attachSessionId;
+                     if (icount == undefined) {
+                         attachSessionId = this.openReply("attachment");
+                     } else {
+                         attachSessionId = $(".attachment-icon:visible").data('iconCount');
+                     }
                     $.ajax({
                      url:"/helpdesk/attachments/"+attachId+".json",
                      type:"GET",

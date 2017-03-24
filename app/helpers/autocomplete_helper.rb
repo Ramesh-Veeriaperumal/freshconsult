@@ -14,6 +14,11 @@ module AutocompleteHelper
 																	:container => "requester",
 																	:max_limit => 3
 								},
+								:agents => {
+																	:url => "/search/autocomplete/agents",
+																	:container => "agents",
+																	:max_limit => 3
+								},
 								:company_users => {
 																	:url => "/search/autocomplete/company_users",
 																	:container => "user",

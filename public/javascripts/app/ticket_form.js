@@ -11,7 +11,7 @@ var AutoSuggest = {
                   _results_array = response.responseJSON.results
                   _results_array
                   .each(function(item){ 
-                  item.details = item.details ? item.details : item.value+' <'+item.id+'>';
+                  item.details = item.details ? item.details : item.value+' <'+item.email+'>';
                   choices.push(item.details);
                   });  
 
@@ -30,7 +30,7 @@ var AutoSuggest = {
                 _partial_list = jQuery("#helpdesk_ticket_email").data("partialRequesterList")
                 _partial_list.each(function(item){    
                   if(element.value == item.details){
-                    jQuery('#helpdesk_ticket_requester_id').val(item.id);
+                    jQuery('#helpdesk_ticket_requester_id').val(item.email);
                     jQuery('#helpdesk_ticket_email').blur().focus();
                   }
                 });

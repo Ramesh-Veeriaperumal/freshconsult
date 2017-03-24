@@ -30,8 +30,8 @@
           results: function(data, params) {
            var results = data.results.map(function(item){ 
                            return {
-                             id: item.id,
-                             text: (item.value + " <" + item.id + ">")
+                             id: item.email,
+                             text: (item.value + " <" + item.email + ">")
                            };
                         });
             return {
