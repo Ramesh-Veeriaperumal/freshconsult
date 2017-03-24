@@ -92,7 +92,7 @@ class PlanChangeWorker
         field.rollback_section_in_field_options
       end
       if field.section_dropdown? && field.has_sections?
-        field.field_options.delete("section_present")
+        field.field_options["section_present"] = false
         field.save
       end
     end

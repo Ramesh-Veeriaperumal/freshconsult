@@ -478,7 +478,7 @@
 			this.section_data[new_data.id] = $.extend({}, new_data);
 
 			data = this.options.builder_instance.data.get(this.options.parent_id);
-			element = $(this.options.formContainer).find('li[data-id="'+this.options.parent_id + '"]');
+			element = $(this.options.formContainer).find('li[data-id="'+this.options.parent_id + '"]').not(":hidden");
 			secContainer = $(element).find(this.options.sectionContainer)
 			if (secContainer.length == 0) $(element).html(JST['custom-form/template/dom_field'](data, multi_sections_enabled));
 			$(element).find(this.options.sectionContainer).prepend(dom);
@@ -664,7 +664,7 @@
 			this.removeFromOtherSections(id, false);
 			dataItem = this.options.builder_instance.data.get(id)
 			if (dataItem.has_section && multi_sections_enabled){
-				element = $(this.options.formContainer).find('li[data-id="'+id + '"]');
+				element = $(this.options.formContainer).find('li[data-id="'+id + '"]').not(":hidden");
 				$(element).html(JST['custom-form/template/dom_field'](dataItem, multi_sections_enabled));
 				this.pushToAllFieldsWithSections(id);
 				this.setNewSection("add");
@@ -709,7 +709,7 @@
 		saveSection: function () {
 			var self = this;
 			$.each(this.section_data, function (id, value) {
-				var sectionDom		= $(self.options.sectionContainer).find("[data-section-id='" + id + "']").not(":hidden"),
+				var sectionDom		= $(self.options.sectionContainer).find("[data-section-id='" + id + "']"),
 					fresh_section	= $(sectionDom).attr('data-section-fresh') ? true : false,
 					data			= self.section_data[id];
 				data = $.extend(
