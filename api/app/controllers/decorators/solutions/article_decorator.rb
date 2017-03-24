@@ -2,6 +2,11 @@ class Solutions::ArticleDecorator < ApiDecorator
   delegate :title, :description, :desc_un_html, :user_id, :status, :seo_data,
            :parent, :parent_id, :draft, :attachments, :modified_at, :modified_by, to: :record
 
+  def initialize(record, options)
+    super(record)
+    @user = options[:user]
+  end
+
   def tags
     record.tags.map(&:name)
   end
@@ -10,41 +15,29 @@ class Solutions::ArticleDecorator < ApiDecorator
   	Helpdesk::HTMLSanitizer.plain(html_string)
   end
 
-  def to_hash
-  	{
-			id: parent_id,
-			title: title,
-			description: description,
-			description_text: desc_un_html,
-			status: status,
-			agent_id: user_id,
-			type: parent.art_type,
-			category_id: parent.solution_category_meta.id,
-			folder_id: parent.solution_folder_meta.id,
-			thumbs_up: parent.thumbs_up,
-			thumbs_down: parent.thumbs_down,
-			hits: parent.hits,
-			tags: tags,
-			seo_data: seo_data,
-			created_at: created_at,
-			updated_at: updated_at
-		}
+  def to_search_hash
+  	ret_hash = {
+		id: parent_id,
+		title: title,
+		description: description,
+		status: status,
+		agent_id: user_id,
+		type: parent.art_type,
+		category_id: parent.solution_category_meta.id,
+		folder_id: parent.solution_folder_meta.id,
+  		path: record.to_param,
+		created_at: created_at,
+		updated_at: updated_at,
+		modified_at: modified_at,
+		modified_by: modified_by
+	}
+	ret_hash.merge(visibility_hash)
   end
 
-  def to_search_hash
+  def visibility_hash
+  	return {} unless @user.present?
   	{
-			id: parent_id,
-			title: title,
-			description_text: desc_un_html,
-			status: status,
-			agent_id: user_id,
-			type: parent.art_type,
-			category_id: parent.solution_category_meta.id,
-			folder_id: parent.solution_folder_meta.id,
-			created_at: created_at,
-			updated_at: updated_at,
-			modified_at: modified_at,
-			modified_by: modified_by
-		}
+  		visibility: { @user.id => parent.visible?(@user) || false }
+  	}
   end
 end

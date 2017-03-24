@@ -1,4 +1,6 @@
 module BootstrapTestHelper
+  include Gamification::GamificationUtil
+  include AgentsTestHelper
   
   def index_pattern(agent, account)
     {
@@ -14,7 +16,7 @@ module BootstrapTestHelper
       assumable_agents: agent.assumable_agents.map(&:id),
       preferences: agent.preferences
     })
-    if Account.current.gamification_enabled? && Account.current.gamification_enable_enabled?
+    if gamification_feature?(Account.current)
       ret_hash.merge!({
         points: agent.points,
         scoreboard_level_id: agent.scoreboard_level_id,
@@ -45,7 +47,6 @@ module BootstrapTestHelper
       pattern.merge!(subscription: {
         agent_limit: account.subscription.agent_limit,
         state: account.subscription.state,
-        addons: account.subscription.addons,
         subscription_plan: String
       })
     end

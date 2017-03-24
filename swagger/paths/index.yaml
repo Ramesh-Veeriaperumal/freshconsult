@@ -149,6 +149,10 @@
 /agents/me:
   $ref: ./agents/me.yaml
 
+# Portals
+/portals:
+  $ref: ./portals/list.yaml
+
 # Todo
 /todos:
   $ref: ./todos/list.yaml

@@ -256,13 +256,14 @@ Helpkit::Application.routes.draw do
         get :search
       end
     end
-    
+
     resources :twitter_handles, controller: 'ember/twitter_handles', only: [:index] do
       member do
         get :check_following
       end
     end
     resources :surveys, controller: 'ember/surveys', only: [:index]
+    resources :portals, controller: 'ember/portals', only: [:index]
     resources :agents, controller: 'ember/agents', only: [:index, :show] do
       collection do
         get :me
@@ -274,14 +275,14 @@ Helpkit::Application.routes.draw do
     post '/search/customers/',    to: 'ember/search/customers#results'
     post '/search/topics/',       to: 'ember/search/topics#results'
     post '/search/solutions/',    to: 'ember/search/solutions#results'
-    
+
     post '/search/autocomplete/requesters/',    to: 'ember/search/autocomplete#requesters'
     post '/search/autocomplete/agents/',        to: 'ember/search/autocomplete#agents'
     post '/search/autocomplete/companies/',     to: 'ember/search/autocomplete#companies'
     post '/search/autocomplete/tags/',          to: 'ember/search/autocomplete#tags'
   end
 
-  pipe_routes = proc do 
+  pipe_routes = proc do
     resources :contacts, controller: 'pipe/api_contacts', only: [:create, :update]
     resources :tickets, controller: 'pipe/tickets', only: [:create, :update] do
       member do

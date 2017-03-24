@@ -4,7 +4,7 @@ class AgentDecorator < ApiDecorator
 
   def initialize(record, options)
     super(record)
-    @agent_groups = options[:agent_groups]
+    @group_mapping_ids = options[:group_mapping_ids]
   end
 
   def to_hash
@@ -48,13 +48,7 @@ class AgentDecorator < ApiDecorator
   end
 
   def group_ids
-    if @agent_groups
-      @agent_groups.map do |agent_group|
-        agent_group.group_id if agent_group.user_id == (record.is_a?(User) ? record.id : record.user_id)
-      end.compact.uniq
-    else
-      record.agent_groups.map(&:group_id)
-    end
+    (@group_mapping_ids || record.agent_groups.map(&:group_id) || []).compact.uniq
   end
 
   private

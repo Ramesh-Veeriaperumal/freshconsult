@@ -1,0 +1,11 @@
+get:
+  tags: [Portal]
+  summary: List all
+  description: List all portals
+  responses:
+    200:
+      description: Success
+      schema:
+        type: array
+        items:
+          $ref: '#/definitions/portal'

@@ -2640,6 +2640,26 @@
         }
       }
     },
+    "/portals": {
+      "get": {
+        "tags": [
+          "Portal"
+        ],
+        "summary": "List all",
+        "description": "List all portals",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/portal"
+              }
+            }
+          }
+        }
+      }
+    },
     "/todos": {
       "get": {
         "tags": [
@@ -3714,9 +3734,6 @@
                     },
                     "state": {
                       "type": "string"
-                    },
-                    "addons": {
-                      "type": "array"
                     },
                     "subscription_plan": {
                       "type": "string"
@@ -5151,6 +5168,45 @@
           }
         }
       }
+    },
+    "portal": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/extension_generic"
+        },
+        {
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "host": {
+              "type": "string"
+            },
+            "default": {
+              "type": "boolean"
+            },
+            "product_id": {
+              "type": "number"
+            },
+            "ssl_enabled": {
+              "type": "boolean"
+            },
+            "solution_category_ids": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "discussion_category_ids": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      ]
     },
     "extension_generic": {
       "type": "object",
