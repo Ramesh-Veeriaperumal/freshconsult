@@ -24,7 +24,7 @@ class User < ActiveRecord::Base
   # V2 columns to be observed for changes
   #
   def esv2_columns
-    @@esv2_columns ||= [:account_id, :active, :address, :blocked, :deleted, :description, :email, :fb_profile_id, :helpdesk_agent, :job_title, :language, :mobile, :name, :phone, :string_uc04, :time_zone, :twitter_id, :tags].concat(esv2_contact_field_data_columns)
+    @@esv2_columns ||= [:account_id, :active, :address, :blocked, :deleted, :description, :email, :fb_profile_id, :helpdesk_agent, :job_title, :language, :mobile, :name, :phone, :string_uc04, :time_zone, :twitter_id, :tags, :unique_external_id].concat(esv2_contact_field_data_columns)
   end
   
   # V2 custom field columns
