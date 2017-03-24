@@ -325,8 +325,6 @@ module Redis::RedisKeys
   JWT_API_JTI = "JWT:%{account_id}:%{user_id}:%{jti}"
 
 
-  ZENDESK_IMPORT_APP_KEY = "ZENDESK_IMPORT_APP"
-
 	def newrelic_begin_rescue
 		begin
 		  yield
