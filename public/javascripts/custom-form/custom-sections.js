@@ -709,7 +709,7 @@
 		saveSection: function () {
 			var self = this;
 			$.each(this.section_data, function (id, value) {
-				var sectionDom		= $(self.options.sectionContainer).find("[data-section-id='" + id + "']"),
+				var sectionDom		= $(self.options.sectionContainer).find("[data-section-id='" + id + "']").not(":hidden"),
 					fresh_section	= $(sectionDom).attr('data-section-fresh') ? true : false,
 					data			= self.section_data[id];
 				data = $.extend(
