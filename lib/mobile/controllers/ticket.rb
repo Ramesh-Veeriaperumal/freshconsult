@@ -11,19 +11,19 @@ module Mobile::Controllers::Ticket
     all_fields.each do |field|
       next if field.section_field? || field.field_type == "default_company" || (field.shared_ownership_field? && !shared_ownership_supported?)
       if field.visible_in_view_form? || is_new        
-        field_hash = getField(field, item)
+        getField(field, item)
         
         #For Agent Field     
-        field_hash['ticket_field'][:agent_groups] = agent_group_map if field.field_type == "default_agent"
+        field[:agent_groups] = agent_group_map if field.field_type == "default_agent"
 
         #For shared ownership
-        field_hash['ticket_field'][:status_groups] = status_group_map if field.field_type == "default_status" and current_account.shared_ownership_enabled?
+        field[:status_groups] = status_group_map if field.field_type == "default_status" and current_account.shared_ownership_enabled?
 
         #Dynamic Sections  
         # field[:has_sections] = field.has_section? ? true : false
-        field_hash['ticket_field'][:sections] = sectionFields(field,item)
+        field[:sections] = sectionFields(field,item)
 
-        fields.push(field_hash)
+        fields.push(field)
         #populating cc field
         if ( is_new and
             ( field.dom_type.eql?("requester") || ( field.dom_type.eql?('email') && field.portal_cc_field? ) ) )
@@ -68,18 +68,14 @@ def getField field, item
       end
       field_value.merge!({:category_val => item.send(field.field_name)})
     end   
-
-    field_hash = field.as_json(:tailored_json => true)
-    ticket_field_hash = field_hash['ticket_field']
-    ticket_field_hash[:nested_choices] = field.nested_field? ? field.nested_choices : nil 
-    ticket_field_hash[:nested_levels] = field.nested_field? ? field.nested_levels : nil
-    ticket_field_hash[:field_value] = field_value    
-    ticket_field_hash[:choices] =  field.field_type == "default_agent" ?  current_account.technicians.includes(:avatar).collect {|c| [c.name, c.id, c.avatar_url]}  : field.choices #TODO try to use to_json
-
-    ticket_field_hash[:domtype] = dom_type
-    ticket_field_hash[:is_default_field] = field.is_default_field?
-    ticket_field_hash[:field_name] = field.field_name     
-    field_hash
+    field[:nested_choices] = field.nested_field? ? field.nested_choices : nil 
+    field[:nested_levels] = field.nested_field? ? field.nested_levels : nil
+    field[:field_value] = field_value
+    field[:choices] = field.choices #TODO try to use to_json
+    field[:domtype] = dom_type
+    field[:is_default_field] = field.is_default_field?
+    field[:field_name] = field.field_name     
+    field
 end 
 
   def top_view
