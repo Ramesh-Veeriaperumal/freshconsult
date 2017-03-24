@@ -408,12 +408,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     if new_sla_logic? && update_dueby?
       sla_detail = self.sla_policy.sla_details.where(:priority => priority).first
       set_dueby(sla_detail)
-      log_dueby(sla_detail.id)
+      log_dueby(sla_detail, "New SLA logic")
     elsif !new_sla_logic? && (self.new_record? || priority_changed? || changed_condition? || status_changed? || ticket_status_changed)
       sla_detail = self.sla_policy.sla_details.where(:priority => priority).first
       set_dueby_on_priority_change(sla_detail) if (self.new_record? || priority_changed? || changed_condition?)
       set_dueby_on_status_change(sla_detail) if !self.new_record? && (status_changed? || ticket_status_changed)
-      log_dueby(sla_detail.id)
+      log_dueby(sla_detail, "Old SLA logic")
     end
   end
 
@@ -1017,12 +1017,14 @@ private
   def update_resolution_time_by_bhrs
     self.ticket_states ||= Helpdesk::TicketState.new
     self.ticket_states.resolution_time_updated_at = time_zone_now
+    Rails.logger.debug "SLA :::: Account id #{self.account_id} :: #{self.new_record? ? 'New' : self.id} ticket :: Updating resolution time :: resolution_time_updated_at :: #{self.ticket_states.resolution_time_updated_at}"
     if self.ticket_states.sla_timer_stopped_at.nil? && !self.new_record?
       ticket_states.change_resolution_time_by_bhrs(ticket_states.resolution_time_updated_at_was, ticket_states.resolution_time_updated_at)
     end
   end
 
-  def log_dueby sla_detail_id
-    Rails.logger.debug "sla_detail_id :: #{sla_detail_id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} "
+  def log_dueby sla_detail, logic
+    sla_policy = self.sla_policy
+    Rails.logger.debug "SLA :::: Account id #{self.account_id} :: #{self.new_record? ? 'New' : self.id} ticket :: Calculated due time using #{logic} :: sla_policy #{sla_policy.id} - #{sla_policy.name} sla_detail :: #{sla_detail.id} - #{sla_detail.name} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy}"
   end
 end

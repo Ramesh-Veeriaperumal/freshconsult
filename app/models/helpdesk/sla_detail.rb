@@ -111,10 +111,12 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
   end
 
   def calculate_due_by(created_time, total_time_worked, calendar)
+    Rails.logger.debug "SLA :::: Account id #{self.account_id} :: Calculating due by :: created_time :: #{created_time} resolution_time :: #{resolution_time} total_time_worked :: #{total_time_worked} calendar :: #{calendar.id} - #{calendar.name} override_bhrs :: #{override_bhrs}"
     calculate_due(created_time, resolution_time, total_time_worked, calendar)
   end
 
   def calculate_frDue_by(created_time, total_time_worked, calendar)
+    Rails.logger.debug "SLA :::: Account id #{self.account_id} :: Calculating fr due by :: created_time :: #{created_time} response_time :: #{response_time.seconds} total_time_worked :: #{total_time_worked} calendar :: #{calendar.id} - #{calendar.name} override_bhrs :: #{override_bhrs}"
     calculate_due(created_time, response_time.seconds, total_time_worked, calendar)
   end
 
