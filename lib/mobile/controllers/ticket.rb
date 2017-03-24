@@ -57,20 +57,26 @@ module Mobile::Controllers::Ticket
   end 
 
 #return Field object with properties needed for Mobile 
-def getField field, item    
+def getField field, item
+    field_value = item.send(field.field_name) unless item.nil?
+    dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
+    dom_type = "dropdown_blank" if field.field_type == "nested_field"
+    if(field.field_type == "nested_field" && !item.nil?)
+      field_value = {}
+      field.nested_levels.each do |ff|
+        field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = item.send(ff[:name])
+      end
+      field_value.merge!({:category_val => item.send(field.field_name)})
+    end   
 
-    field_hash = field.as_json({:include => [:nested_ticket_fields], :tailored_json => true })
-
+    field_hash = field.as_json(:tailored_json => true)
     ticket_field_hash = field_hash['ticket_field']
     ticket_field_hash[:nested_choices] = field.nested_field? ? field.nested_choices : nil 
     ticket_field_hash[:nested_levels] = field.nested_field? ? field.nested_levels : nil
-    ticket_field_hash[:field_value] = get_field_value(field, item)    
+    ticket_field_hash[:field_value] = field_value    
     ticket_field_hash[:choices] =  field.field_type == "default_agent" ?  current_account.technicians.includes(:avatar).collect {|c| [c.name, c.id, c.avatar_url]}  : field.choices #TODO try to use to_json
 
-    dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
-    dom_type = "dropdown_blank" if field.field_type == "nested_field"    
     ticket_field_hash[:domtype] = dom_type
-
     ticket_field_hash[:is_default_field] = field.is_default_field?
     ticket_field_hash[:field_name] = field.field_name     
     field_hash
@@ -144,20 +150,5 @@ end
         :group_ids => group_ids)
     }
   end
-
-
-  def get_field_value field, item
-    field_value = item.send(field.field_name) unless item.nil?
-     if(field.field_type == "nested_field" && !item.nil?)
-      field_value = {}
-      field.nested_levels.each do |ff|
-        field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = item.send(ff[:name])
-      end
-      field_value.merge!({:category_val => item.send(field.field_name)})
-    end   
-
-    return field_value
-  end 
-
 
 end
