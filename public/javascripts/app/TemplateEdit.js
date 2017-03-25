@@ -8,7 +8,10 @@ window.App = window.App || {};
 	
 	App.Parentchildtemplates.Edit = {
 		onVisit: function (data) {
-			App.Parentchildtemplates.getOldValues();
+			setTimeout(function(){
+				App.Parentchildtemplates.initDynamicSection();
+				App.Parentchildtemplates.getOldValues();
+			},100);
   		App.Parentchildtemplates.intializeUnsavedModel();
 			if(jQuery('.ticket_template_form').data('parent-template')){
 				jQuery('#helpdesk_ticket_template_name').addClass('edit_parent_name');

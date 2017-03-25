@@ -270,8 +270,8 @@ protected
       if params[:shared_attachments].present?
         uniq_shared_attachments=params[:shared_attachments].uniq
         (uniq_shared_attachments || []).each do |r|
-          a=Helpdesk::Attachment.find(r)
-          item.shared_attachments.build(:account_id => item.account_id,:attachment=>a )
+          a=current_account.attachments.find(r)
+          item.shared_attachments.build(:attachment=>a)
         end
       end
       unless params[:admin_canned_responses_response].nil?
@@ -363,6 +363,7 @@ protected
       begin
         if a[:resource].is_a?(String) and Integer(a[:resource]) # In case of forward, we are passing existing Attachment ID's to upload the file via URL's
           attachment_obj = current_account.attachments.find_by_id(a[:resource])
+          next unless attachment_obj.present? && attachment_permissions(attachment_obj)
           url = attachment_obj.authenticated_s3_get_url
           io  = open(url)
           if io
@@ -382,6 +383,7 @@ protected
     params[:sol_articles_cloud_file_attachments].each do |a|
         if a[:resource].present?
           attachment_obj = current_account.cloud_files.find_by_id(a[:resource])
+          next unless attachment_obj.present? && attachment_permissions(attachment_obj)
           cloud_file_url = attachment_obj.url
           cloud_file_app_id = attachment_obj.application_id
           cloud_file_filename = attachment_obj.filename
@@ -425,6 +427,10 @@ protected
 
   def api_request?
     params[:format] == "json" || params[:format] == "xml"
+  end
+
+  def attachment_permissions(attach)
+    current_account.launched?(:attachments_scope) ? attach.visible_to_me? : true
   end
 
 end

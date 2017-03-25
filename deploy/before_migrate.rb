@@ -66,6 +66,7 @@ run "ln -nfs #{shared_path}/config/iris_notifications.yml #{node[:rel_path]}/con
 run "ln -nfs #{shared_path}/config/archive_queue.yml #{node[:rel_path]}/config/archive_queue.yml"
 run "ln -nfs #{shared_path}/config/autopilot.yml #{node[:rel_path]}/config/autopilot.yml"
 run "ln -nfs #{shared_path}/config/inline_manual.yml #{node[:rel_path]}/config/inline_manual.yml"
+run "ln -nfs #{shared_path}/config/redis_session.yml #{node[:rel_path]}/config/redis_session.yml"
 
 #supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"

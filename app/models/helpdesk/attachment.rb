@@ -7,6 +7,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   self.primary_key = :id
 
   include Helpdesk::Utils::Attachment
+  include Helpdesk::Permission::Attachment
 
   BINARY_TYPE = "application/octet-stream"
 
@@ -43,6 +44,9 @@ class Helpdesk::Attachment < ActiveRecord::Base
       :limit => 20
     }
 
+    scope :permissible_drafts, lambda {|user|
+      where("attachable_type = ? AND attachable_id = ? ", 'UserDraft', user.id)
+    }
 
     before_save :randomize_filename, :if => :randomize?
     before_post_process :image?, :valid_image?

@@ -37,7 +37,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   TICKET_STATE_ATTRIBUTES = ["opened_at", "pending_since", "resolved_at", "closed_at", "first_assigned_at", "assigned_at",
                              "first_response_time", "requester_responded_at", "agent_responded_at", "group_escalated",
                              "inbound_count", "status_updated_at", "sla_timer_stopped_at", "outbound_count", "avg_response_time",
-                             "first_resp_time_by_bhrs", "resolution_time_by_bhrs", "avg_response_time_by_bhrs"]
+                             "first_resp_time_by_bhrs", "resolution_time_by_bhrs", "avg_response_time_by_bhrs", "resolution_time_updated_at"]
                             
   OBSERVER_ATTR = []
   self.table_name =  "helpdesk_tickets"
@@ -237,6 +237,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   }}
 
   scope :not_associated, :conditions => {:association_type => nil}
+
+  scope :associated_tickets, lambda {|association_type| {
+          :conditions => ["association_type = ?", TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[association_type]]
+  }}
+
   scope :unassigned, :conditions => ["helpdesk_tickets.responder_id is NULL"]
   scope :sla_on_tickets, lambda { |status_ids|
     { :conditions => ["status IN (?)", status_ids] }
@@ -455,7 +460,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def not_editable?
-    requester and !requester_has_email? and !requester_has_phone?
+    requester and !requester_has_email? and !requester_has_phone? and !requester_has_external_id?
   end
 
   def requester_has_email?
@@ -464,6 +469,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def requester_has_phone?
     requester and requester.phone.present?
+  end
+
+  def requester_has_external_id?
+    account.unique_contact_identifier_enabled? ? (requester and requester.unique_external_id.present?) : false
   end
 
   def encode_display_id

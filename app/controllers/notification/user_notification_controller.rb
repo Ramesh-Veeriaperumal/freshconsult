@@ -3,7 +3,15 @@ class Notification::UserNotificationController < ApplicationController
   JWT_ALGO = 'HS256'
 
   def index
-    @cache_content = notifications_content
+    @prefs = [
+      "customer_responded",
+      "ticket_status_updated",
+      "ticket_assigned",
+      "private_note_created",
+      "public_note_created",
+      "ticket_assigned_to_group",
+      "ticket_created"
+    ]
     render :layout => false
   end
 

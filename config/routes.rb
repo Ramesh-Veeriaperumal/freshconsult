@@ -1953,6 +1953,8 @@ Helpkit::Application.routes.draw do
         put :link
         put :unlink
         get :ticket_association
+        get :fetch_errored_email_details
+        put :suppression_list_alert
       end
 
       resources :child, :only => [:new], :controller => "tickets"
@@ -2711,6 +2713,7 @@ Helpkit::Application.routes.draw do
         get :get_filtered_tickets
         get :get_solution_url
         get :mobile_filter_count
+        get :bulk_assign_agent_list
         post :recent_tickets
         match '/ticket_properties/:id' => 'tickets#ticket_properties', :via => :get
       end

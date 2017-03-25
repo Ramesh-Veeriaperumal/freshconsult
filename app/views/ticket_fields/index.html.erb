@@ -51,6 +51,9 @@
     // Localizing ticket fields js elements
     customFields = <%= @ticket_field_json.to_json.html_safe %>;
     customSection = <%= @section_data_json.to_json.html_safe %>;
+    multi_sections_enabled = <%= Account.current.multi_dynamic_sections_enabled? &&
+                                 Account.current.features?(:dynamic_sections) %>;
+    sectionLimit = <%= Helpdesk::TicketField::SECTION_LIMIT %>
     shared_ownership_enabled = <%= Account.current.shared_ownership_enabled?.to_json.html_safe %>;
     custom_ticket_fields_enabled = <%= current_account.custom_ticket_fields_enabled? %>
     sharedGroups = <%= @groups.to_json.html_safe %>;
@@ -147,7 +150,9 @@
       edit:               '<%= t("edit") %>',
       nestedFieldLabel:   '<%= t("ticket_fields.formfield_props.nested_label") %>',
       level:              '<%= t("ticket_fields.formfield_props.level") %>',
-      maxItemsReached:    '<%= t("admin.contact_fields.formfield_props.max_choices") %>'
+      maxItemsReached:    '<%= t("admin.contact_fields.formfield_props.max_choices") %>',
+      addSection:         '<%= t("ticket_fields.section.add_section") %>',
+      field_has_section:  '<%= t("ticket_fields.formfield_props.field_has_section") %>'
     };
 
     window['translate'] = {}; 

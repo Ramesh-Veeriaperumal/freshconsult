@@ -100,7 +100,7 @@ class Integrations::JiraIssueController < ApplicationController
             account_id = @installed_app.account_id
             id = params["comment"]? params["comment"]["id"] : Digest::SHA512.hexdigest("@")  
             recently_updated_by_fd = get_integ_redis_key(INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=> account_id, :local_integratable_id=> local_integratable_id, :remote_integratable_id=> remote_integratable_id, :comment_id => id})
-            if recently_updated_by_fd || (params[:comment] && params[:comment]["body"] =~ /Note added by .* in Freshdesk:/ ) # If JIRA has been update recently with same params then ignore that event.
+            if recently_updated_by_fd || (params[:comment] && (params[:comment]["body"] =~ /Note added by .* in Freshdesk:/  || params[:comment]["body"] =~/Freshdesk ticket status changed to :/)) # If JIRA has been update recently with same params then ignore that event.
               remove_integ_redis_key(INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=>account_id, :local_integratable_id=>local_integratable_id, :remote_integratable_id=>remote_integratable_id, :comment_id => id})
               @installed_app = nil
             end

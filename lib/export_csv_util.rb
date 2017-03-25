@@ -1,7 +1,9 @@
 # encoding: utf-8
 require 'csv'
 module ExportCsvUtil
-DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_response_time, :closed_at]
+  DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_response_time, :closed_at]
+
+  ALL_TEXT_FIELDS = [:default_description, :default_note, :default_address, :custom_paragraph]
 
   def set_date_filter
    if !(params[:date_filter].to_i == TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter])
@@ -59,12 +61,19 @@ DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_resp
 
   def export_customer_fields type
     return unless ["contact", "company"].include?(type)
-    custom_fields = Account.current.send("#{type}_form").fields
+    custom_fields = Account.current.send("#{type}_form").send("#{type}_fields")
     custom_fields.reject!{|x| ["tag_names"].include?(x.name)} if type.eql?("contact")
     custom_fields.collect { |cf| 
             { :label => cf.label, 
               :value => cf.name, 
               :type => cf.field_type, :selected => false} }
+  end
+
+  def contact_company_export_fields type
+    return [] unless Account.current.ticket_contact_export_enabled?
+    export_customer_fields(type).map { 
+        |f| f[:value] unless ALL_TEXT_FIELDS.include?(f[:type])
+    }.compact
   end
 
   def export_data(items, csv_hash, is_portal=false)

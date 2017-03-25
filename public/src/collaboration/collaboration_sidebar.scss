@@ -13,7 +13,7 @@ $link_color: #1272de;
 $link_hover_color: #0645AD;
 
 $icon_color: #666;
-$icon_hover_color: #444;
+$icon_hover_color: #333;
 
 $annotation_bg_color: #fee4c8;
 $annotation_border_color: #ebc397;
@@ -322,7 +322,7 @@ $disabled_border_color: #e0e0e0;
         }
         .collab-close-icon {
             position: absolute;
-            @include right(10px);
+            @include right(20px);
             top: 6px;
             font-size: 22px;
             color: $icon_color;

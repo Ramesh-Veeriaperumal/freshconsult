@@ -11,13 +11,19 @@ args = { :role_ids => account.roles.agent.first.id, :occasional => true }
 user.make_agent(args)
 agent = user
 
-description_html = I18n.t(:'default.ticket.email.body')
+requester = User.seed(:account_id, :email) do |s|
+  s.account_id = account.id
+  s.email      = Helpdesk::DEFAULT_TICKET_REQUESTER[:email_ticket][:email]
+  s.name       = Helpdesk::DEFAULT_TICKET_REQUESTER[:email_ticket][:name]
+end
+
+description_html = I18n.t(:'default.ticket.email.body', :onclick => "inline_manual_player.activateTopic(17777);")
 description = Helpdesk::HTMLSanitizer.html_to_plain_text(description_html)
 
 ticket = Helpdesk::Ticket.seed(:account_id, :subject) do |s|
   s.account_id  = account.id
   s.subject     = I18n.t(:'default.ticket.email.subject')
-  s.email       = Helpdesk::EMAIL[:default_requester_email]
+  s.email       = Helpdesk::DEFAULT_TICKET_REQUESTER[:email_ticket][:email]
   s.status      = Helpdesk::Ticketfields::TicketStatus::OPEN
   s.source      = TicketConstants::SOURCE_KEYS_BY_TOKEN[:email]
   s.priority    = TicketConstants::PRIORITY_KEYS_BY_TOKEN[:high]
@@ -30,7 +36,7 @@ ticket = Helpdesk::Ticket.seed(:account_id, :subject) do |s|
 end
 
 #Activity gets called at the end of commit transaction(Whole seed transaction.) Hence added here explicitly.
-ticket.create_activity(agent, "activities.tickets.new_ticket.long", {}, "activities.tickets.new_ticket.short") 
+ticket.create_activity(requester, "activities.tickets.new_ticket.long", {}, "activities.tickets.new_ticket.short") 
 
 #Step 2 replying ticket
 note_body_html = I18n.t(:'default.ticket.email.reply')

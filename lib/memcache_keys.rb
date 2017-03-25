@@ -157,11 +157,11 @@ module MemcacheKeys
 
   REQUESTER_WIDGET_FIELDS = "v1/REQUESTER_WIDGET_FIELDS:%{account_id}"
 
-  AGENT_NEW_TICKET_FORM = "v2/AGENT_NEW_TICKET_FORM:%{account_id}:%{language}"
+  AGENT_NEW_TICKET_FORM = "v3/AGENT_NEW_TICKET_FORM:%{account_id}:%{language}"
 
   ACCOUNT_INSTALLED_APPS_IN_COMPANY_PAGE = "V1/ACCOUNT_INSTALLED_APPS_IN_COMPANY_PAGE:%{account_id}"
 
-  COMPOSE_EMAIL_FORM = "v2/COMPOSE_EMAIL_FORM:%{account_id}:%{language}"
+  COMPOSE_EMAIL_FORM = "v3/COMPOSE_EMAIL_FORM:%{account_id}:%{language}"
 
   TKT_TEMPLATES_COUNT = "v1/TKT_TEMPLATES_COUNT:%{account_id}"
 
@@ -170,6 +170,8 @@ module MemcacheKeys
   SITEMAP_KEY = "SITEMAP:%{account_id}:%{portal_id}"
 
   MOST_VIEWED_ARTICLES = "MOST_VIEWED_ARTICLES:%{account_id}:%{language_id}:%{cache_version}"
+
+  ACCOUNT_DASHBOARD_SHARD_NAME = "v1/ACCOUNT_DASHBOARD_SHARD_NAME:%{account_id}"
 
   class << self
 

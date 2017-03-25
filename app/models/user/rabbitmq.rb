@@ -23,7 +23,8 @@ class User < ActiveRecord::Base
         "phone"               =>  phone,
         "created_at"          =>  created_at,
         "deleted"             =>  deleted,
-        "helpdesk_agent"      =>  helpdesk_agent
+        "helpdesk_agent"      =>  helpdesk_agent,
+        "unique_external_id"  => unique_external_id
       }
     end
 end

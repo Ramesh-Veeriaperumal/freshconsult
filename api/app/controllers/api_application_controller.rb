@@ -419,10 +419,17 @@ class ApiApplicationController < MetalApiController
           end
         end
       else
-        # authenticate using auth headers
-        authenticate_with_http_basic do |username, password| # authenticate_with_http_basic - AuthLogic method
-          # string check for @ is used to avoid a query.
-          @current_user = email_given?(username) ? AuthHelper.get_email_user(username, password, request.ip) : AuthHelper.get_token_user(username)
+         if current_account.launched? :api_jwt_auth and request.env["HTTP_AUTHORIZATION"][/^Token (.*)/]
+          # authenticate using JWT token
+          authenticate_with_http_token do |token|
+              @current_user = FdJWTAuth.new(token).decode_jwt_token
+            end
+        else
+          # authenticate using auth headers
+          authenticate_with_http_basic do |username, password| # authenticate_with_http_basic - AuthLogic method
+            # string check for @ is used to avoid a query.
+            @current_user = email_given?(username) ? AuthHelper.get_email_user(username, password, request.ip) : AuthHelper.get_token_user(username)
+          end
         end
       end
 

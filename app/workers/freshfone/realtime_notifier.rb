@@ -47,6 +47,7 @@ module Freshfone
         logger.info "Socket Notification pushed to SQS for account :: #{current_account.id} , call_id :: #{current_call.id} at #{Time.now}"
         $freshfone_call_notifier.send_message notification_params.to_json
         freshfone_notify_incoming_call(notification_params)
+        enqueue_call_timeout_job if enqueue_timeout_job?
         
       rescue Exception => e
         logger.error "[#{jid}] - [#{tid}] Error notifying for account #{current_account.id} for type #{type}"
@@ -144,6 +145,23 @@ module Freshfone
           Exception Message :: #{exception.message} <br>
           Error Code :: #{exception.respond_to?(:code) ? exception.code : ''}<br>
           Trace :: #{exception.backtrace.join('\n\t')}<br>")
+      end
+
+      def enqueue_timeout_job?
+        ['incoming', 'transfer', 'round_robin', 'warm_transfer'].include?(@type)
+      end
+
+      def enqueue_call_timeout_job
+        agents.each do |agent|
+          worker_params = { account_id: current_account.id, agent: agent,
+            call_id: current_call.id, CallStatus: 'no-answer' }
+          Freshfone::CallTimeoutWorker.perform_in(ringing_timeout+5, worker_params)
+        end
+      end
+
+      def ringing_timeout
+        return current_call.freshfone_number.rr_timeout if @type == 'round_robin'
+        current_call.freshfone_number.ringing_time
       end
   end
 end

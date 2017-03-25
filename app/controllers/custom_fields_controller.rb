@@ -5,7 +5,7 @@ class CustomFieldsController < Admin::AdminController
   include Helpdesk::CustomFields::CustomFieldMethods
 
   before_filter :check_ticket_field_count, :only => [ :update ]
-  
+
   MAX_ALLOWED_COUNT = { 
     :string => 80,
     :text => 10,
@@ -14,11 +14,23 @@ class CustomFieldsController < Admin::AdminController
     :boolean => 10,
     :decimal => 10
   }
+  SECTION_ACTIONS = ["save", "delete"]
+  SECTION_TYPE = ["existing", "new"]
 
   def update #To Do - Sending proper status messages to UI.
 
     @invalid_fields = []
-    @field_data.each_with_index do |f_d, i|
+    @invalid_sections = []
+    @fields_id_with_sections = []
+
+    if (params[:jsonSectionData] && params[:jsonSectionData].length >= 2)
+      sections_data = ActiveSupport::JSON.decode params[:jsonSectionData]
+      if current_account.multi_dynamic_sections_enabled?
+        @fields_id_with_sections = fetch_fields_with_sections(sections_data)
+      end
+    end
+
+    @field_data.each do |f_d|
       f_d.symbolize_keys!
 
       next if f_d[:action] == "create" && !current_account.custom_ticket_fields_enabled?
@@ -26,14 +38,21 @@ class CustomFieldsController < Admin::AdminController
         # f_d.delete(:choices) unless("nested_field".eql?(f_d[:field_type]) || 
         #                             "custom_dropdown".eql?(f_d[:field_type]) || 
         #                             "default_ticket_type".eql?(f_d[:field_type]))
+        f_d[:field_options].delete("section_present") if delete_section_present_key? f_d
         send("#{action}_field", f_d)
       end
     end
 
     # adding sections data...
-    if (params[:jsonSectionData] && params[:jsonSectionData].length >= 2)
-      sections_data = ActiveSupport::JSON.decode params[:jsonSectionData]
-      sections_attributes(sections_data)
+    sections_attributes(sections_data)
+
+    unless @invalid_sections.empty?
+      @invalid_sections.each do |field|
+        field.symbolize_keys!
+        reset_section_fields(field[:section_fields]) unless field[:section_fields].nil?
+        delete_section_data(account=current_account, field)
+        reset_parent_field(field[:parent_ticket_field_id])
+      end
     end
 
     err_str = ""
@@ -54,6 +73,12 @@ class CustomFieldsController < Admin::AdminController
   end
 
   private
+
+    def delete_section_present_key? field
+      current_account.multi_dynamic_sections_enabled? && !@fields_id_with_sections.include?(field[:id]) &&
+      Helpdesk::TicketField::SECTION_DROPDOWNS.include?(field[:field_type]) &&
+      field[:field_options].present?
+    end
 
     def edit_field(field_details)
       #Length(current: 4) has to be updated if any default status is added or deleted
@@ -118,6 +143,54 @@ class CustomFieldsController < Admin::AdminController
       end
     end
 
+    def fetch_fields_with_sections sections_data
+      parent_field_ids, del_sections, curr_sections = {}, {}, {}
+      parent_field_ids[SECTION_TYPE[0]], parent_field_ids[SECTION_TYPE[1]] = [], []
+      current_account.ticket_fields_from_cache .each do |field| 
+        if Helpdesk::TicketField::SECTION_DROPDOWNS.include?(field.field_type) &&
+            field.field_options && field.field_options["section_present"]
+          parent_field_ids[SECTION_TYPE[0]].push(field.id)
+        end
+      end
+      sections_data.each do |sec|
+        sec.symbolize_keys!
+        parent_field_id = sec[:parent_ticket_field_id].to_i
+        if sec[:id].present?
+          if sec[:action] == SECTION_ACTIONS[1]
+            del_sections[parent_field_id] ||= []
+            del_sections[parent_field_id].push(sec[:id])
+          else
+            curr_sections[parent_field_id] ||= []
+            curr_sections[parent_field_id].push(sec[:id])
+            parent_field_ids[SECTION_TYPE[0]].push(parent_field_id) if valid_section?(parent_field_ids,parent_field_id)
+          end
+        elsif sec[:action] == SECTION_ACTIONS[0]
+          parent_field_ids[SECTION_TYPE[1]].push(parent_field_id) if valid_section?(parent_field_ids, parent_field_id)
+        end
+      end
+      del_sections.each do |tf_id|
+        parent_field_ids[SECTION_TYPE[0]].delete(tf_id[0]) if curr_sections[tf_id[0]].blank?
+      end
+      (parent_field_ids[SECTION_TYPE[0]] | parent_field_ids[SECTION_TYPE[1]])[0..Helpdesk::TicketField::SECTION_LIMIT-1]
+    end
+
+    def valid_section?(parent_field_ids, parent_field_id)
+      combined_parent_field_ids = (parent_field_ids[SECTION_TYPE[0]] | parent_field_ids[SECTION_TYPE[1]])
+      !combined_parent_field_ids.include?(parent_field_id)
+    end
+
+    def invalid_section? sec
+      return unless current_account.multi_dynamic_sections_enabled?
+      unless @fields_id_with_sections.include?(sec[:parent_ticket_field_id].to_i)
+        if sec[:id].nil?
+          reset_section_fields(sec[:section_fields]) unless sec[:section_fields].nil?
+        else
+          @invalid_sections.push(sec)
+        end
+        true
+      end
+    end
+
     def custom_field_data
       @field_data = ActiveSupport::JSON.decode params[:jsonData]
       @field_data.reject { |f_d| f_d["field_type"].include?("default_") }.compact
@@ -133,8 +206,10 @@ class CustomFieldsController < Admin::AdminController
     def sections_attributes(sec_params,account=current_account)
       sec_params.each do |sec|
         sec.symbolize_keys!
-        if (action = sec.delete(:action)).present? && ["save", "delete"].include?(action)
-          send("#{action}_section_data",account,sec)
+        if (action = sec.delete(:action)).present? && SECTION_ACTIONS.include?(action)
+          send("#{action}_section_data",account,sec) 
+        else
+          invalid_section? sec
         end
       end
     end
@@ -144,10 +219,12 @@ class CustomFieldsController < Admin::AdminController
     end
 
     def save_section_data(account,sec)
+      return if invalid_section?(sec)
       section = sec[:id].nil? ? account.sections.build : find_section(account, sec[:id])
       section.label = sec[:label]
       build_section_picklist_mappings(section, 
                                       sec[:picklist_ids],
+                                      sec[:parent_ticket_field_id].to_i,
                                       account) unless sec[:picklist_ids].nil?
       return unless section.section_picklist_mappings.present?
       build_section_fields(account,
@@ -156,12 +233,13 @@ class CustomFieldsController < Admin::AdminController
       section.save
     end
 
-    def build_section_picklist_mappings(section,picklist_ids, account)
+    def build_section_picklist_mappings(section, picklist_ids, ticket_field_id, account)
       # We don't get the id of the picklist_mapping from the UI
       # We only get [{:picklist_value_id => 1}, {:picklist_value_id => 2}]
       # Supposedly, since it increases load on the browser
       # Need to change
-      pl_values = account.ticket_fields.find_by_field_type("default_ticket_type").picklist_values.map(&:id)
+      ticket_field = account.ticket_fields.find_by_id(ticket_field_id)
+      pl_values = ticket_field.picklist_values.map(&:id)
       pl_mappings = section.section_picklist_mappings
       db_ids = pl_mappings.map(&:picklist_value_id)
       ui_ids = picklist_ids.map {|p| p["picklist_value_id"].to_i}
@@ -218,6 +296,29 @@ class CustomFieldsController < Admin::AdminController
     def delete_section_data(account,sec)
       section = find_section(account, sec[:id])
       section.destroy unless section.nil?
+    end
+
+    def reset_parent_field(field)
+      return unless field.section_fields.blank?
+      if field.field_options["section_present"]
+        field.field_options["section_present"] = false
+        field.save
+      end
+    end
+
+    def reset_section_fields(section_fields, account=current_account)
+      section_fields.each do |sec_field|
+        sec_field.symbolize_keys!
+        if sec_field[:ticket_field_id].nil?
+          ticket_field_name = sec_field.delete(:ticket_field_name)
+          alias_name = field_name(ticket_field_name, account)
+          field_id = tkt_field_id_alias_hash(account)[alias_name]
+        else
+          field_id = sec_field[:ticket_field_id]
+        end
+        field = account.ticket_fields.find_by_id(field_id)
+        field.rollback_section_in_field_options
+      end
     end
     # Section related changes - end
 end

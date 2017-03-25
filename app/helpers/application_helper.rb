@@ -7,7 +7,6 @@ module ApplicationHelper
   include ActionView::Helpers::TextHelper
   include Gamification::GamificationUtil
   include ChatHelper
-  include Sanitize::FieldValues
 
   include AttachmentHelper
   include ConfirmDeleteHelper
@@ -577,6 +576,10 @@ module ApplicationHelper
         ['{{ticket.internal_agent.email}}',      'Internal Agent email',      "",         'ticket_agent_email']]
     end
 
+    if current_account.unique_contact_identifier_enabled?
+      place_holders[:requester] += [['{{ticket.requester.unique_external_id}}', 'Requester Unique External Id',   "",       'unique_external_id']]
+    end
+
     # Custom Field Placeholders
     current_account.ticket_fields.custom_fields.each { |custom_field|
       nested_vals = []
@@ -1011,7 +1014,7 @@ module ApplicationHelper
       widget_script(installed_app, widget, liquid_objs)
     end
   end
-  
+
   def widget_script(installed_app, widget, liquid_objs)
     replace_objs = liquid_objs || {}
     replace_objs = replace_objs.merge({"current_user"=>current_user})
@@ -1138,7 +1141,7 @@ module ApplicationHelper
                                                                  element_class).html_safe,
                                             :class => "controls input-date-field")
     end
-    element_class = (field.has_sections_feature? && (field.field_type == "default_ticket_type" || field.field_type == "default_source")) ? " dynamic_sections" : ""
+    element_class = (field.has_sections_feature? && (field.section_dropdown? || field.field_type == "default_source")) ? " dynamic_sections" : ""
     company_class = " hide" if field.field_type == "default_company" && @ticket.new_record?
     content_tag :li, element.html_safe, :class => "#{ dom_type } #{ field.field_type } field" + element_class + company_class.to_s
   end
@@ -1224,7 +1227,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
                                             :class => "controls input-date-field")
         
     end
-    element_class = (field.has_sections_feature? && (field.field_type == "default_ticket_type" || field.field_type == "default_source")) ? " dynamic_sections" : ""
+    element_class = (field.has_sections_feature? && (field.section_dropdown? || field.field_type == "default_source")) ? " dynamic_sections" : ""
     company_class = " hide" if field.field_type == "default_company" && (@ticket.new_record? || dropdown_choices.empty?)
     content_tag :li, element.html_safe, :class => "#{ dom_type } #{ field.field_type } field" + element_class + company_class.to_s
   end
@@ -1330,7 +1333,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
         
     end
     fd_class = "#{ dom_type } #{ field.field_type } field"
-    fd_class += " dynamic_sections" if (field.has_sections_feature? && (field.field_type == "default_ticket_type" || field.field_type == "default_source"))
+    fd_class += " dynamic_sections" if (field.has_sections_feature? && (field.section_dropdown? || field.field_type == "default_source"))
     fd_class += " hide" if field.field_type == "default_company" &&
                                                (@ticket.new_record? ||
                                                dropdown_choices.length <= 1)

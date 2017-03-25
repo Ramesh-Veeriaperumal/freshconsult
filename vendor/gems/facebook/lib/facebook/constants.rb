@@ -94,6 +94,10 @@ module Facebook
 
     MESSAGE_SHARE   = MESSAGE_IMAGE#{}"%{html_content} <a href=\"%{url}\" target=\"_blank\"> %{name} </a>"
 
+    ACCESS_TOKEN_PATH = "oauth/access_token"
+
+    ACCESS_TOKEN_PARAMS = "client_id=%{client_id}&client_secret=%{client_secret}&redirect_uri=%{redirect_uri}&code=%{code}"
+
   end
 end
   

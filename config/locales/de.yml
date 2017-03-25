@@ -4461,8 +4461,8 @@ de:
     export: Exportieren
     thirt_days: "Letzte 30 Tage"
     seven_days: "Letzte 7 Tage"
-    twenty_four: "Ab gestern"
-    custom_filter: "Datum festlegen"
+    twenty_four: "Gestern"
+    custom_filter: "Zeitraum auswählen"
     no_fields_selected: "Bitte markieren Sie mindestens eines der untenstehenden Felder, um fortzufahren."
     created_time: Erstellungsdatum
     resolved_time: Lösungszeit
@@ -4472,7 +4472,7 @@ de:
     closed_at: geschlossen
     archived_at: Archiviert
     from: Von
-    to: An
+    to: Bis
     show_additional_fields: "Zusätzliche Felder anzeigen"
     hide_additional_fields: "Zusätzliche Felder ausblenden"
     additional_fields_help: "Beschreibungsfelder werden in zusätzliche Felder verschoben"

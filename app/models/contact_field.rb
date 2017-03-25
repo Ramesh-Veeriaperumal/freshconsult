@@ -16,20 +16,21 @@ class ContactField < ActiveRecord::Base
   scope :customer_editable, :conditions => { :editable_in_portal => true }
   
   DEFAULT_FIELD_PROPS = {
-    :default_name           => { :type => 1,  :dom_type => :text, :label => 'user.full_name' },
-    :default_job_title      => { :type => 2,  :dom_type => :text, :label => 'user.title' },
-    :default_email          => { :type => 3,  :dom_type => :email, :label => 'user.email' },
-    :default_phone          => { :type => 4,  :dom_type => :phone_number, :label => 'user.work_phone' },
-    :default_mobile         => { :type => 5,  :dom_type => :phone_number, :label => 'user.mobile_phone' },
-    :default_twitter_id     => { :type => 6,  :dom_type => :text, :label => 'user.twitter_id' },
-    :default_company_name   => { :type => 7,  :dom_type => :text, :label => 'user.company' },
-    :default_client_manager => { :type => 8,  :dom_type => :checkbox, :label => 'contacts.role.info' },
-    :default_address        => { :type => 9,  :dom_type => :paragraph, :label => 'user.address' },
-    :default_time_zone      => { :type => 10, :dom_type => :dropdown, :label => 'account.time_zone' },
-    :default_language       => { :type => 11, :dom_type => :dropdown, :label => 'account.language' },
-    :default_tag_names      => { :type => 12, :dom_type => :text, :label => 'tag.title' },
-    :default_description    => { :type => 13, :dom_type => :paragraph, :label => 'user.back_info',
-                                 :dom_placeholder => 'contacts.info_example' }
+    :default_name                 => { :type => 1,  :dom_type => :text, :label => 'user.full_name' },
+    :default_job_title            => { :type => 2,  :dom_type => :text, :label => 'user.title' },
+    :default_email                => { :type => 3,  :dom_type => :email, :label => 'user.email' },
+    :default_phone                => { :type => 4,  :dom_type => :phone_number, :label => 'user.work_phone' },
+    :default_mobile               => { :type => 5,  :dom_type => :phone_number, :label => 'user.mobile_phone' },
+    :default_twitter_id           => { :type => 6,  :dom_type => :text, :label => 'user.twitter_id' },
+    :default_company_name         => { :type => 7,  :dom_type => :text, :label => 'user.company' },
+    :default_client_manager       => { :type => 8,  :dom_type => :checkbox, :label => 'contacts.role.info' },
+    :default_address              => { :type => 9,  :dom_type => :paragraph, :label => 'user.address' },
+    :default_time_zone            => { :type => 10, :dom_type => :dropdown, :label => 'account.time_zone' },
+    :default_language             => { :type => 11, :dom_type => :dropdown, :label => 'account.language' },
+    :default_tag_names            => { :type => 12, :dom_type => :text, :label => 'tag.title' },
+    :default_description          => { :type => 13, :dom_type => :paragraph, :label => 'user.back_info',
+                                  :dom_placeholder => 'contacts.info_example' },
+    :default_unique_external_id   => { :type => 14,  :dom_type => :text, :label => 'user.unique_external_id' },
   }
 
   CUSTOM_FIELDS_SUPPORTED = [ :custom_text, :custom_paragraph, :custom_checkbox, :custom_number,

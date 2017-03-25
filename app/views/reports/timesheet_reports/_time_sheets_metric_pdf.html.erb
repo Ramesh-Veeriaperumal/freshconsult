@@ -28,12 +28,20 @@
         <div class="billable"></div>
         <div class="billable_value"></div>
     </div>
-    <div id="timesheet_single_stacked_bar_chart_metric" class="example"></div>
   </div>
   <div class="clear"></div>
 </div>
 <script type="text/javascript">
+  I18n.defaultLocale = "<%= I18n.default_locale %>";
+  I18n.locale = "<%= I18n.locale %>";
+
   jQuery(document).ready(function() {
+    //Add rtl attribute for rtl languages
+    var rtl_locales = ['ar','he'];
+    if(jQuery.inArray(I18n.locale,rtl_locales) > -1) {
+        jQuery('html').attr('dir','rtl');
+        jQuery(".metric").removeClass('no-border');
+    }
     <%unless @metric_data[:current][:total_time] == 0%>
       jQuery('#bar_chart_noinfo').hide();
       if(<%=@activity_data_hash['barchart_data'].to_json.html_safe%>.length > 0) {
@@ -45,15 +53,6 @@
           var width = billabale_perc + '%';
           jQuery(".comparision_chart .billable").width(width);
           jQuery(".comparision_chart .billable_value").html(width);
-
-          //Tooltip
-          jQuery(".comparision_chart").twipsy({
-            html : true,
-            placement : "above",
-            title : function() { 
-
-              return "<div class='metric_tooltip billable'><div class='type'>Billable</div><div class='value'>" + billabale_perc + "%</div></div><div class='metric_tooltip non-billable'><div class='type'>Non-Billable</div><div class='value'>" + non_billable_perc + "%</div></div><div class='clear'></div>" }
-          });
       }
     <%else%>
       jQuery('.comparision_chart').hide();

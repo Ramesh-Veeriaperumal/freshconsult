@@ -141,7 +141,7 @@
         :privilege                     =>   privilege?(:manage_account)
       },
       :import                          =>   {
-        :url                           =>   "/admin/zen_import",
+        :url                           =>   "/admin/zen_import/",
         :privilege                     =>   privilege?(:manage_account)
       },
       :day_pass                        =>   {

@@ -3,6 +3,8 @@ class Helpdesk::CloudFile < ActiveRecord::Base
   self.table_name =  "helpdesk_dropboxes"
   self.primary_key = :id
 
+  include Helpdesk::Permission::Attachment
+
   belongs_to :droppable, :polymorphic => true
   belongs_to :application, :class_name => "Integrations::Application"
   belongs_to_account
