@@ -12,10 +12,6 @@ class TicketDecorator < ApiDecorator
     @sideload_options = options[:sideload_options] || []
   end
 
-  def utc_format(value)
-    value.respond_to?(:utc) ? value.strftime('%F') : value
-  end
-
   def custom_fields
     custom_fields_hash = {}
     custom_field_via_mapping.each { |k, v| custom_fields_hash[@name_mapping[k]] = utc_format(v) }

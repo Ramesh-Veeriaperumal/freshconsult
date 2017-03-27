@@ -18,4 +18,8 @@ class ApiDecorator
   def private_api?
     defined?($infra) && $infra['PRIVATE_API']
   end
+
+  def utc_format(value)
+    value.respond_to?(:utc) ? value.strftime('%F') : value
+  end
 end

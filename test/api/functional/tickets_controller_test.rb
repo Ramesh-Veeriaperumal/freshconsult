@@ -206,7 +206,7 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({}, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
+    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date']
     match_json(ticket_pattern(params, Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     result = parse_response(@response.body)
@@ -223,7 +223,7 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({}, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
+    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date']
     match_json(ticket_pattern(params, Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     result = parse_response(@response.body)
@@ -1189,7 +1189,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     t.schema_less_ticket.update_column(:product_id, nil)
     put :update, construct_params({ id: t.display_id }, params_hash)
-    params_hash[:custom_fields]['test_custom_date'] = params_hash[:custom_fields]['test_custom_date'].to_time.iso8601
+    params_hash[:custom_fields]['test_custom_date'] = params_hash[:custom_fields]['test_custom_date']
     match_json(update_ticket_pattern(params_hash, t.reload))
     match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
@@ -2992,7 +2992,7 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
+    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date']
     assert_response 403
     match_json(request_error_pattern(:require_feature, feature: 'compose_email'.titleize))
   ensure
@@ -3005,7 +3005,7 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
+    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date']
     assert_response 400
     match_json([bad_request_error_pattern('source',  :invalid_field),
                 bad_request_error_pattern('product_id',  :invalid_field),
@@ -3025,7 +3025,7 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
+    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date']
     match_json(ticket_pattern(params, Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     result = parse_response(@response.body)
@@ -3071,7 +3071,7 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
+    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date']
     match_json(ticket_pattern(params.merge(status: 5), Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     result = parse_response(@response.body)
@@ -3088,7 +3088,7 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
+    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date']
     match_json(ticket_pattern(params, Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     result = parse_response(@response.body)
@@ -3105,7 +3105,7 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
+    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date']
     assert_response 400
     match_json([bad_request_error_pattern('fr_due_by',  :cannot_set_due_by_fields, code: :incompatible_field)])
   end
@@ -3117,7 +3117,7 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
+    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date']
     assert_response 400
     match_json([bad_request_error_pattern('due_by',  :cannot_set_due_by_fields, code: :incompatible_field)])
   end
@@ -3128,7 +3128,7 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
+    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date']
     assert_response 400
     match_json([bad_request_error_pattern('email_config_id',  :field_validation_for_outbound, code: :missing_field),
                 bad_request_error_pattern('subject',  :field_validation_for_outbound, code: :missing_field),
@@ -3141,7 +3141,7 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
+    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date']
     assert_response 400
     match_json([bad_request_error_pattern('email_config_id',  :absent_in_db, resource: :email_config, attribute: :email_config_id)])
   end
@@ -3156,7 +3156,7 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
+    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date']
     match_json(ticket_pattern(params, Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
   ensure
@@ -3175,7 +3175,7 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
+    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date']
     assert_response 400
     match_json([bad_request_error_pattern('email_config_id',  :inaccessible_value, resource: :email_config, attribute: :email_config_id)])
   ensure
@@ -3195,7 +3195,7 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
+    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date']
     match_json(ticket_pattern(params, Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
   ensure
@@ -3216,7 +3216,7 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
+    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date']
     assert_response 400
     match_json([bad_request_error_pattern('email_config_id',  :inaccessible_value, resource: :email_config, attribute: :email_config_id)])
   ensure

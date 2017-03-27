@@ -9,7 +9,7 @@ module UsersTestHelper
   # Patterns
   def contact_pattern(expected_output = {}, ignore_extra_keys = true, contact)
     expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
-    custom_field = contact.custom_field.map { |k, v| [CustomFieldDecorator.display_name(k), v] }.to_h
+    custom_field = contact.custom_field.map { |k, v| [CustomFieldDecorator.display_name(k), v.respond_to?(:utc) ? v.strftime('%F') : v] }.to_h
     contact_custom_field = (custom_field && ignore_extra_keys) ? custom_field.ignore_extra_keys! : custom_field
 
     result = {
