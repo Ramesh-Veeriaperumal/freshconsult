@@ -2640,6 +2640,25 @@
         }
       }
     },
+    "/scenario_automations": {
+      "get": {
+        "tags": [
+          "scenario automation"
+        ],
+        "summary": "List all",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/scenario_automation"
+              }
+            }
+          }
+        }
+      }
+    },
     "/portals": {
       "get": {
         "tags": [
@@ -5207,6 +5226,37 @@
           }
         }
       ]
+    },
+    "scenario_automation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "private": {
+          "type": "boolean"
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
     },
     "extension_generic": {
       "type": "object",

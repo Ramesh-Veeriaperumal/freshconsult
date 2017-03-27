@@ -43,7 +43,7 @@ module Helpdesk::AccessibleElements
         ops[:id_data], ops[:excluded_ids], ops[:assn_types])
     end
     elements = accessible_elements(current_account.send(ops[:model_hash][:asstn]),
-      query_hash(ops[:model_hash][:model], ops[:model_hash][:table], ops[:query], [], db_limit)) if elements.nil?
+      query_hash(ops[:model_hash][:model], ops[:model_hash][:table], ops[:query], @include_options || [], db_limit)) if elements.nil?
     elements
   end
 

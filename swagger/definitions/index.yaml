@@ -113,6 +113,8 @@
     $ref: ./resource/extension/ticket/stats.yaml
   portal:
     $ref: ./resource/portal.yaml
+  scenario_automation:
+    $ref: ./resource/scenario_automation.yaml
   extension_generic:
     $ref: ./resource/extension/generic.yaml
   extended_contact:
