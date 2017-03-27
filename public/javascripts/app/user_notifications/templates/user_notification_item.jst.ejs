@@ -6,7 +6,7 @@
       <div class="preview_pic circle avatar-text text-center thumb bg-<%= Math.abs(uniqueCodeGenerator(actor_text)) %>" > 
         <span><%= actor_text[0] %></span>
         
-        <% if(!actor_text[0].match(/[A-Z|a-z|ü|é]/i)){ %>
+        <% if(!!actor_text[0] && !actor_text[0].match(/[A-Z|a-z|ü|é]/i)){ %>
           <img class="thumb_img thumb" src="/images/misc/profile_blank_thumb.jpg">
         <% } %>
 
