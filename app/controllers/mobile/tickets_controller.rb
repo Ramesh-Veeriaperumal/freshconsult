@@ -40,10 +40,6 @@ class Mobile::TicketsController < ApplicationController
 	render :json => ticket_props
   end
 
-  def bulk_assign_agent_list
-    render :json => {:agents =>  Account.current.agents_details_from_cache.collect { |c| {:name => c.name, :id => c.id} } }
-  end
-
   def load_reply_emails
     reply_emails = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
     render :json => reply_emails

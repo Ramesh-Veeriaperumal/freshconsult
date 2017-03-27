@@ -2713,7 +2713,6 @@ Helpkit::Application.routes.draw do
         get :get_filtered_tickets
         get :get_solution_url
         get :mobile_filter_count
-        get :bulk_assign_agent_list
         post :recent_tickets
         match '/ticket_properties/:id' => 'tickets#ticket_properties', :via => :get
       end
