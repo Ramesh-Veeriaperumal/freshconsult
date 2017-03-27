@@ -55,7 +55,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :scoper_ticket_actions, :only => [ :assign,:close_multiple, :pick_tickets ]
 
   before_filter :load_items, :only => [ :destroy, :restore, :spam, :unspam, :assign,
-    :close_multiple ,:pick_tickets, :delete_forever, :delete_forever_spam ]
+    :close_multiple ,:pick_tickets, :delete_forever, :delete_forever_spam]
 
   skip_before_filter :load_item
   alias :load_ticket :load_item
@@ -67,7 +67,7 @@ class Helpdesk::TicketsController < ApplicationController
     :only => [:edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft,
               :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties,
               :activities, :activitiesv2, :activities_all, :unlink, :associated_tickets, :ticket_association,
-              :suggest_tickets, :update_requester, :refresh_requester_widget]
+              :suggest_tickets, :update_requester, :refresh_requester_widget,:fetch_errored_email_details, :suppression_list_alert]
 
   before_filter :load_ticket_with_notes, :only => :show
   before_filter :load_ticket_contact_data, :only => [:show, :update_requester, :refresh_requester_widget]
@@ -88,7 +88,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :set_default_filter , :only => [:custom_search, :export_csv]
 
   before_filter :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft,
-              :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties, :activities, :unspam, :restore, :activitiesv2, :activities_all]
+              :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties, :activities, :unspam, :restore, :activitiesv2, :activities_all, :fetch_errored_email_details, :suppression_list_alert]
 
   before_filter :load_email_params, :only => [:show, :reply_to_conv, :forward_conv, :reply_to_forward]
   before_filter :load_conversation_params, :only => [:reply_to_conv, :forward_conv, :reply_to_forward]
@@ -1016,7 +1016,7 @@ class Helpdesk::TicketsController < ApplicationController
     @item.email = params[:helpdesk_ticket][:email]
     @item.group = current_account.groups.find_by_id(params[:helpdesk_ticket][:group_id]) if params[:helpdesk_ticket][:group_id]
     @item.tag_names = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
-    if current_account.link_tickets_enabled? and params[:display_ids].present?
+    if current_account.link_tkts_enabled? and params[:display_ids].present?
       @item.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]
       @item.related_ticket_ids = params[:display_ids].split(',')
     end

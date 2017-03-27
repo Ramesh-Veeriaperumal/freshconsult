@@ -218,6 +218,11 @@
 			&:hover{
 				display:block !important;
 			}
+			&.add-section{
+				@include left(470px);
+				z-index: 3;
+				cursor: pointer;
+			}
 		}
 		.private-symbol {
 			font-size: 13px;
@@ -340,7 +345,7 @@
 				color: #ccc;
 				cursor: default;
 			}
-			&:hover:not([class*='-strike-thru']), &.hover:not([class*='-strike-thru']) {
+			&:hover:not([class*='-strike-thru']), &.hover:not([class*='-strike-thru'],&:hover:not([class='ficon-add'])) {
 				background-color: #ebebc3;
 				color: #000;
 			}
@@ -435,7 +440,9 @@
 		}
 		&.active{
 			.options-wrapper {
-				display:block !important; 
+				&:not(.add-section-disabled){
+					display:block !important; 
+				}
 			}
 			.section .options-wrapper{
 				display:none !important; 	

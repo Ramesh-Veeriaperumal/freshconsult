@@ -189,6 +189,13 @@ module TicketConstants
     [ :custom_filter, I18n.t("export_data.custom_filter"), 4 ]
   ]
 
+  CREATED_BY_VALUES_EN = [
+    [ :thirt_days,    "export_data.thirt_days",   30 ],
+    [ :seven_days,    "export_data.seven_days",    7 ],
+    [ :twenty_four,   "export_data.twenty_four",   1 ],
+    [ :custom_filter, "export_data.custom_filter", 4 ]
+  ]
+
   CREATED_BY_OPTIONS = CREATED_BY_VALUES.map { |i| [i[1], i[2]] }
   CREATED_BY_NAMES_BY_KEY = Hash[*CREATED_BY_VALUES.map { |i| [i[2], i[1]] }.flatten]
   CREATED_BY_KEYS_BY_TOKEN = Hash[*CREATED_BY_VALUES.map { |i| [i[0], i[2]] }.flatten]
@@ -360,7 +367,7 @@ module TicketConstants
 
   def self.feature_based_association_type
     assoc_parent_child_feature = Account.current.parent_child_tkts_enabled?
-    link_tickets_feature = Account.current.link_tickets_enabled?
+    link_tickets_feature = Account.current.link_tkts_enabled?
     return [] unless assoc_parent_child_feature || link_tickets_feature
     list = [TICKET_ASSOCIATION_FILTER[0]]
     if assoc_parent_child_feature
@@ -381,5 +388,9 @@ module TicketConstants
 
   def self.association_type_filter_names
     TICKET_ASSOCIATION_FILTER.map { |i| [i[1], i[2].join(',')] }
+  end
+
+   def self.created_options
+    CREATED_BY_VALUES_EN.map { |i| [I18n.t(i[1]), i[2]] }
   end
 end

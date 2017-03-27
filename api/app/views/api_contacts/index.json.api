@@ -17,6 +17,7 @@ JSON.generate(@items.map do |item|
     created_at: item.created_at.try(:utc),
     updated_at: item.updated_at.try(:utc)
   }
+  response_hash.merge!(unique_external_id: item.unique_external_id) if item.unique_contact_identifier_enabled?
   response_hash.merge!(deleted: true) if item.deleted
   response_hash
 end)

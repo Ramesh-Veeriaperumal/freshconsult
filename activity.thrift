@@ -54,9 +54,8 @@ struct TicketData {
   6: required string object_id,
   7: required string content,
   8: optional string summary,
-  9: optional string email_type,
-  10: optional string recipient_list,
-  11: optional string message_id
+  9: optional i64 kind,
+  10: optional string email_failures
 }
 
 struct DashboardData {

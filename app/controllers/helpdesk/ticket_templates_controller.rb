@@ -377,7 +377,7 @@ class Helpdesk::TicketTemplatesController < ApplicationController
   end
 
   def require_feature_and_priv
-    current_account.features?(:ticket_templates) && has_privilege?
+    current_account.tkt_templates_enabled? && has_privilege?
   end
 
   # Hiding personal templates(for time being)

@@ -21,7 +21,7 @@
 			<div class="clear"></div>
 		</div>
 		<% if current_filter.eql?('tickets') && @search_results.present? %>
-			<% if current_account.features?(:advanced_search) %>
+			<% if current_account.has_feature?(:advanced_search) %>
 				<div class="row-fluid search-controls">
 					<!-- Button for pane for filtered search for tickets -->
 						
@@ -85,8 +85,8 @@ jQuery('body').one('assetLoaded.fjax', function() {
 							}
 	SEARCH_RESULTS_PAGE.is_tickets_page = <%= current_filter.eql?('tickets') %>
 	App.AdvancedSearch.time_zone = '<%= @account_time_zone %>'; 
-	App.AdvancedSearch.is_adv_search_feature_enabled = <%= current_account.features_included?(:advanced_search) %>;
-	App.AdvancedSearch.is_advanced_search_bulk_actions_feature_enabled = <%= current_account.features_included?(:advanced_search_bulk_actions) %>;
+	App.AdvancedSearch.is_adv_search_feature_enabled = <%= current_account.has_feature?(:advanced_search) %>;
+	App.AdvancedSearch.is_advanced_search_bulk_actions_feature_enabled = <%= current_account.has_feature?(:advanced_search_bulk_actions) %>;
 	App.AdvancedSearch.has_bulk_action_privilege = <%= privilege?(:edit_ticket_properties) || privilege?(:reply_ticket) %>
 	SEARCH_RESULTS_PAGE.initializeSearchPageDefaults();
 	<% if current_filter.eql?('tickets') %>

@@ -56,3 +56,9 @@ Ticket Templates:
   - :ticket_templates
 Round Robin Load Balancing:
   - :round_robin_load_balancing
+Parent Child Tickets:
+  - :parent_child_tickets_toggle
+Link Tickets:
+  - :link_tickets_toggle
+Shared Ownership:
+  - :shared_ownership_toggle

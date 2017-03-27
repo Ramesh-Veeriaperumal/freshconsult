@@ -1,0 +1,13 @@
+curl -XPOST "172.16.210.126:9101/_aliases" -d '{
+ "actions" : [{
+   "add" : {
+     "index" : "es_filters_count",
+     "alias" : "es_filters_count_alias",
+     "filter": {
+       "type": {
+         "value": "ticket"
+       }
+     }
+   }
+ }]
+}'

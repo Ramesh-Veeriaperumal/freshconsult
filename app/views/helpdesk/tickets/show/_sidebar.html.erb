@@ -2,7 +2,7 @@
 <div class="tkt-sidebar" id="ticket_details_sidebar" data-domhelper-name="ticket-details-sidebar">
 	<%= render :partial => 'helpdesk/tickets/show/status', :locals => {:ticket => @ticket} unless @ticket.deleted or @ticket.spam %>
 	<% if @ticket.can_be_associated? &&
-		(current_account.link_tickets_enabled? || current_account.parent_child_tkts_enabled?) %>
+		(current_account.link_tkts_enabled? || current_account.parent_child_tkts_enabled?) %>
 		<div id="ticket-association" data-remote-url="<%= ticket_association_helpdesk_ticket_path(@ticket)%>" rel="remote"></div>
 	<% end -%>
 	<%= render :partial => "helpdesk/tickets/show/requester" %>

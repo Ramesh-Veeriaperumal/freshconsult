@@ -3,7 +3,7 @@ class Helpdesk::CannedResponsesController < ApplicationController
   include HelpdeskAccessMethods
   include Helpdesk::Accessible::ElasticSearchMethods
   before_filter :load_canned_response, :set_mobile, :only => :show
-  before_filter :set_native_mobile,:only => [:show,:index]
+  before_filter :set_native_mobile,:only => [:show,:index,:search]
   before_filter :load_ticket , :if => :ticket_present?
 
   def index
@@ -35,7 +35,13 @@ class Helpdesk::CannedResponsesController < ApplicationController
     @allow_attachments = (@ticket.blank? ? true : (@ticket.ecommerce? ? false : true))
     respond_to do |format|
       format.html { render :partial => '/helpdesk/tickets/components/insert_canned_response.rjs'}
-      format.nmobile { render :json => @template_content }
+      format.nmobile {
+        if mobile_canned_response_search_supported?
+          render :json => {:template_content => @template_content, :attachments_sharable => @attachments}
+        else
+          render :json =>  @template_content
+        end
+        }
     end
   end
 
@@ -62,6 +68,9 @@ class Helpdesk::CannedResponsesController < ApplicationController
       format.html
       format.js {
         render :partial => '/helpdesk/tickets/components/ca_response_search.rjs'
+      }
+      format.nmobile {
+        render :json => @ca_responses.map{ |canned_response| canned_response.to_mob_json_search }
       }
     end
   end

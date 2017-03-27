@@ -36,6 +36,10 @@ class Helpdesk::AttachmentsController < ApplicationController
     end
   end
 
+  def update
+    access_denied
+  end
+
   def text_content
     style = params[:style] || "original"
     data = AwsWrapper::S3Object.read(@attachment.content.path(style.to_sym),@attachment.content.bucket_name)
@@ -112,7 +116,8 @@ class Helpdesk::AttachmentsController < ApplicationController
     end
 
     def check_download_permission
-      access_denied unless can_download?
+      visible = current_account.launched?(:attachments_scope) ? @attachment.visible_to_me? : can_download?
+      access_denied unless visible
     end
 
     def can_download?

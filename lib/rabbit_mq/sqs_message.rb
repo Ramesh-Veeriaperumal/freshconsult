@@ -9,6 +9,7 @@ module RabbitMq::SqsMessage
       sqs_params["account_id"]            =  account_id
       sqs_params["#{model}_properties"]   =  {}
       sqs_params["subscriber_properties"] =  {}
+      sqs_params["bulk_publish"]          =  true
     end
   end
   

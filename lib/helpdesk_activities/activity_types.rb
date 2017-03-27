@@ -96,9 +96,8 @@ module HelpdeskActivities
     OBJECT_ID = 6
     CONTENT = 7
     SUMMARY = 8
-    EMAIL_TYPE = 9
-    RECIPIENT_LIST = 10
-    MESSAGE_ID = 11
+    KIND = 9
+    EMAIL_FAILURES = 10
 
     FIELDS = {
       ACTOR => {:type => ::Thrift::Types::I64, :name => 'actor'},
@@ -109,9 +108,8 @@ module HelpdeskActivities
       OBJECT_ID => {:type => ::Thrift::Types::STRING, :name => 'object_id'},
       CONTENT => {:type => ::Thrift::Types::STRING, :name => 'content'},
       SUMMARY => {:type => ::Thrift::Types::STRING, :name => 'summary', :optional => true},
-      EMAIL_TYPE => {:type => ::Thrift::Types::STRING, :name => 'email_type', :optional => true},
-      RECIPIENT_LIST => {:type => ::Thrift::Types::STRING, :name => 'recipient_list', :optional => true},
-      MESSAGE_ID => {:type => ::Thrift::Types::STRING, :name => 'message_id', :optional => true}
+      KIND => {:type => ::Thrift::Types::I64, :name => 'kind', :optional => true},
+      EMAIL_FAILURES => {:type => ::Thrift::Types::STRING, :name => 'email_failures', :optional => true}
     }
 
     def struct_fields; FIELDS; end

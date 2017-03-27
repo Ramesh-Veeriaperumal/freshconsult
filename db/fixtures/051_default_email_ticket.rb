@@ -13,16 +13,17 @@ agent = user
 
 requester = User.seed(:account_id, :email) do |s|
   s.account_id = account.id
-  s.email      = Helpdesk::EMAIL[:default_requester_email]
+  s.email      = Helpdesk::DEFAULT_TICKET_REQUESTER[:email_ticket][:email]
+  s.name       = Helpdesk::DEFAULT_TICKET_REQUESTER[:email_ticket][:name]
 end
 
-description_html = I18n.t(:'default.ticket.email.body')
+description_html = I18n.t(:'default.ticket.email.body', :onclick => "inline_manual_player.activateTopic(17777);")
 description = Helpdesk::HTMLSanitizer.html_to_plain_text(description_html)
 
 ticket = Helpdesk::Ticket.seed(:account_id, :subject) do |s|
   s.account_id  = account.id
   s.subject     = I18n.t(:'default.ticket.email.subject')
-  s.email       = Helpdesk::EMAIL[:default_requester_email]
+  s.email       = Helpdesk::DEFAULT_TICKET_REQUESTER[:email_ticket][:email]
   s.status      = Helpdesk::Ticketfields::TicketStatus::OPEN
   s.source      = TicketConstants::SOURCE_KEYS_BY_TOKEN[:email]
   s.priority    = TicketConstants::PRIORITY_KEYS_BY_TOKEN[:high]
