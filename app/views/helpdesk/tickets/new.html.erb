@@ -34,12 +34,13 @@
     <!-- fragment caching starts here -->
     <% enable_fragment_cache(:agent_new_ticket, skip_frag_cache) do %>
       <ul class="compose-new-ticket">
-        <%= render :partial => "ticket_form", :object => f, :locals => { :is_edit => (@item.errors.any? ? true : false), :f => f } %>
+        <%= render :partial => "ticket_form", :object => f, :locals => { :is_edit => (@item.errors.any? ? true : false), :is_child_form => is_child_form, :f => f } %>
       </ul>
     <% end %>
     <!-- block ends here for fragment cache -->
     <%= hidden_field_tag('topic_id', params[:topic_id]) %>
     <%= hidden_field_tag('display_ids', params[:display_ids]) %>
+    <%= hidden_field_tag('assoc_parent_id', params[:ticket_id]) %>
   <% end %>
 </div>
 </div>

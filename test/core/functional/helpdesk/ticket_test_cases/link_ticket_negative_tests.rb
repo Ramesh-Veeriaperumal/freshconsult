@@ -1,7 +1,7 @@
 module LinkTicketNegativeTests
 
   def test_tracker_create_with_no_related
-    enable_link_tickets do
+    enable_adv_ticketing(:link_tickets) do
       stub_ticket_associates([]) do
         post :create, ticket_params_hash(:email => @agent.email, display_ids: "")
         ticket = Helpdesk::Ticket.last
@@ -15,7 +15,7 @@ module LinkTicketNegativeTests
     ticket1 = Helpdesk::Ticket.last
     create_ticket
     ticket2 = Helpdesk::Ticket.last
-    enable_link_tickets do
+    enable_adv_ticketing(:link_tickets) do
       stub_ticket_associates([ticket2.display_id], ticket1) do
         put :link, {:id => ticket2.display_id, :tracker_id => ticket1.display_id}
         assert_equal I18n.t("ticket.link_tracker.permission_denied"), flash[:notice]
@@ -26,7 +26,7 @@ module LinkTicketNegativeTests
 
 
   def test_unlink_normal_ticket
-    enable_link_tickets do
+    enable_adv_ticketing(:link_tickets) do
       related_ticket_ids = create_link_tickets
       tracker = Helpdesk::Ticket.last
       ticket = create_ticket
@@ -41,7 +41,7 @@ module LinkTicketNegativeTests
   end
 
   def test_fetch_related_tickets_from_related
-    enable_link_tickets do
+    enable_adv_ticketing(:link_tickets) do
       related_ticket_ids = create_link_tickets
       related_id = related_ticket_ids.shift
       stub_ticket_associates(related_ticket_ids) do
@@ -53,7 +53,7 @@ module LinkTicketNegativeTests
   end
 
   def test_linking_to_tracker_with_maximum_related_tickets
-    enable_link_tickets do
+    enable_adv_ticketing(:link_tickets) do
       related_ticket_ids = create_link_tickets(TicketConstants::MAX_RELATED_TICKETS)
       tracker = Helpdesk::Ticket.last
       create_ticket
@@ -67,7 +67,7 @@ module LinkTicketNegativeTests
   end
 
   def test_multiple_linking_to_tracker_with_maximum_related_tickets
-    enable_link_tickets do
+    enable_adv_ticketing(:link_tickets) do
       related_ticket_ids = create_link_tickets(TicketConstants::MAX_RELATED_TICKETS - 2 )
       tracker = Helpdesk::Ticket.last
       tickets_to_link = 5.times.collect {create_ticket.display_id}
