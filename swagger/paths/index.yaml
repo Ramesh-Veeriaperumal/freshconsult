@@ -149,10 +149,6 @@
 /agents/me:
   $ref: ./agents/me.yaml
 
-# Scenario Automations
-/scenario_automations:
-  $ref: ./scenario_automations/list.yaml
-
 # Portals
 /portals:
   $ref: ./portals/list.yaml
