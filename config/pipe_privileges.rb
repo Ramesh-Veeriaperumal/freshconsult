@@ -15,4 +15,8 @@ Authority::Authorization::PrivilegeList.build do
   create_topic do
   	resource :"api_discussions/pipe/topic", :only => [:create]
   end
+
+  admin_tasks do
+    resource :"settings/pipe/helpdesk", :only => [:index, :toggle_email]
+  end  
 end
