@@ -932,8 +932,6 @@ GEM
       multi_xml
       omniauth (~> 1.0)
       omniauth-oauth2 (~> 1.0)
-    omniauth-facebook (1.2.0)
-      omniauth-oauth2 (~> 1.0.0)
     omniauth-google (1.0.2)
       multi_json
       omniauth (~> 1.0)
@@ -1376,7 +1374,6 @@ DEPENDENCIES
   omniauth (= 1.2.2)
   omniauth-box2 (~> 0.0.1)
   omniauth-constantcontact2 (= 1.0.4)
-  omniauth-facebook (= 1.2.0)
   omniauth-google (= 1.0.2)
   omniauth-google-oauth2 (= 0.1.13)
   omniauth-mailchimp (= 1.0.3)
