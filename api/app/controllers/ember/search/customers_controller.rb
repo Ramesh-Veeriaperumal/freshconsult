@@ -19,7 +19,7 @@ module Ember
           @items = esv2_query_results(esv2_contact_merge_models)
         end
 
-        response.api_meta = { count: @items.count }
+        response.api_meta = { count: @items.total_entries }
       end
 
       private

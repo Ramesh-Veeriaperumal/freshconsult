@@ -13,7 +13,7 @@ module Ember
           end
         end
         response.api_root_key = :requesters
-        response.api_meta = { count: @items.count }
+        response.api_meta = { count: @items.total_entries }
       end
 
       def agents
@@ -33,7 +33,7 @@ module Ember
         end
 
         response.api_root_key = :agents
-        response.api_meta = { count: @items.count }
+        response.api_meta = { count: @items.total_entries }
       end
 
       def companies
@@ -51,7 +51,7 @@ module Ember
         end
 
         response.api_root_key = :companies
-        response.api_meta = { count: @items.count }
+        response.api_meta = { count: @items.total_entries }
       end
 
       def tags
@@ -68,7 +68,7 @@ module Ember
         end
 
         response.api_root_key = :tags
-        response.api_meta = { count: @items.count }
+        response.api_meta = { count: @items.total_entries }
       end
 
       def company_users

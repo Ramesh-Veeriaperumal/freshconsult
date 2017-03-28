@@ -1,5 +1,5 @@
 class Discussions::TopicDecorator < ApiDecorator
-  delegate :id, :title, :forum_id, :user_id, :locked, :published, :stamp_type,
+  delegate :id, :title, :forum_id, :user_id, :locked, :published, :stamp_type, :forum, :topic_desc,
            :replied_by, :hits, :user_votes, :merged_topic_id, :replied_at, :created_at, :updated_at, to: :record
 
   def comments_count
@@ -32,6 +32,13 @@ class Discussions::TopicDecorator < ApiDecorator
   end
 
   def to_search_hash
-  	to_hash.merge({replied_by: replied_by})
+  	category = forum.forum_category
+  	to_hash.merge({
+  		replied_by: replied_by,
+  		category_id: category.id,
+  		category_name: category.name,
+  		forum_name: forum.name,
+  		description_text: topic_desc
+  	})
   end
 end

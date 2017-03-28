@@ -122,7 +122,7 @@ class TicketDecorator < ApiDecorator
     topic = record.topic
     topic_hash(topic)
   end
-  
+
   def to_hash
     hash = {
       cc_emails: cc_email.try(:[], :cc_emails),
@@ -157,14 +157,21 @@ class TicketDecorator < ApiDecorator
   end
 
   def to_search_hash
+    company_name = company.key?(:name) ? company[:name] : nil
     ret_hash = {
       id: display_id,
-      description: description,
-      requester_id: requester_id,
-      company_id: company_id,
+      description_text: description,
       tags: tag_names,
       responder_id: responder_id,
-      created_at: created_at.try(:utc)
+      due_by: due_by.try(:utc),
+      created_at: created_at.try(:utc),
+      subject: subject,
+      requester_id: requester_id,
+      group_id: group_id,
+      status: status,
+      company_id: company_id,
+      company_name: company_name,
+      stats: stats
     }
     requester_hash = requester
     ret_hash.merge!(requester: requester_hash) if requester_hash

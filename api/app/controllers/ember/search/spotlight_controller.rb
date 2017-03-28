@@ -14,7 +14,8 @@ module Ember
             'topic'         => { model: 'Topic',              associations: [{ forum: :forum_category }, :user] },
             'ticket'        => { model: 'Helpdesk::Ticket',   associations: [{ flexifield: :flexifield_def }, { requester: :avatar }, :ticket_states, :ticket_old_body, :ticket_status, :responder, :group, { ticket_states: :tickets }, :company, :tags] },
             'archiveticket' => { model: 'Helpdesk::ArchiveTicket', associations: [] },
-            'article'       => { model: 'Solution::Article',  associations: [:user, :article_body, :recent_author, { solution_article_meta: :solution_category_meta }, { solution_folder_meta: [:customer_folders, :en_folder] }] },
+            # TODO: When mulitlingual solutions are to be supported, the associations preloading has to be changed accordingly.
+            'article'       => { model: 'Solution::Article',  associations: [:user, :article_body, :recent_author, { solution_article_meta: {solution_category_meta: :"#{Language.for_current_account.to_key}_category"} }, { solution_folder_meta: [:customer_folders, :"#{Language.for_current_account.to_key}_folder"] }] },
             'user'          => { model: 'User',               associations: [:avatar, :customer, :default_user_company, :companies] }
           }
         end

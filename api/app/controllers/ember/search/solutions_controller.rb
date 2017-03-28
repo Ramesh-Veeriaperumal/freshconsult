@@ -18,7 +18,7 @@ module Ember
         end
 
         @items  = esv2_query_results(esv2_agent_models)
-        response.api_meta = { count: @items.count }
+        response.api_meta = { count: @items.total_entries }
       end
 
       private

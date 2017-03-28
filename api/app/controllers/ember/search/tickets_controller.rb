@@ -43,13 +43,13 @@ module Ember
         end
 
         @items = esv2_query_results(esv2_agent_models)
-        response.api_meta = { count: @items.count }
+        response.api_meta = { count: @items.total_entries }
       end
 
       private
 
         def decorate_objects
-          options = { sideload_options: ['requester'], name_mapping: name_mapping }
+          options = { sideload_options: ['requester', 'company'], name_mapping: name_mapping }
           @items.map! { |item| TicketDecorator.new(item, options) } if @items
         end
 
