@@ -61,7 +61,9 @@ class TicketDecorator < ApiDecorator
       resolved_at: ticket_states.resolved_at.try(:utc),
       first_responded_at: ticket_states.first_response_time.try(:utc),
       closed_at: ticket_states.closed_at.try(:utc),
-      status_updated_at: ticket_states.status_updated_at.try(:utc)
+      status_updated_at: ticket_states.status_updated_at.try(:utc),
+      pending_since: ticket_states.pending_since.try(:utc),
+      reopened_at: ticket_states.opened_at.try(:utc)
     }
   end
 

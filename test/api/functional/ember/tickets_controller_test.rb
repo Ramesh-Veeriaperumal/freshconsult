@@ -17,6 +17,7 @@ module Ember
 
     def setup
       super
+      @private_api = true
       Sidekiq::Worker.clear_all
       before_all
     end

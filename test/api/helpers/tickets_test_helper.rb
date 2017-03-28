@@ -89,7 +89,9 @@ module TicketsTestHelper
       first_responded_at: ticket_states.first_response_time.try(:utc).try(:iso8601),
       agent_responded_at: ticket_states.agent_responded_at.try(:utc).try(:iso8601),
       requester_responded_at: ticket_states.requester_responded_at.try(:utc).try(:iso8601),
-      status_updated_at: ticket_states.status_updated_at.try(:utc).try(:iso8601)
+      status_updated_at: ticket_states.status_updated_at.try(:utc).try(:iso8601),
+      pending_since: ticket_states.pending_since.try(:utc).try(:iso8601),
+      reopened_at: ticket_states.opened_at.try(:utc).try(:iso8601)
     }
   end
 
