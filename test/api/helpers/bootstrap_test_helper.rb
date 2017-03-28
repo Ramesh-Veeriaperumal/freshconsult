@@ -1,6 +1,5 @@
 module BootstrapTestHelper
   include Gamification::GamificationUtil
-  include AgentsTestHelper
   
   def index_pattern(agent, account)
     {
