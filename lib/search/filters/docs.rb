@@ -30,7 +30,7 @@ class Search::Filters::Docs
 
   # Fetch count from Elasticsearch based on filters
   def count(model_class)
-    response = es_request(model_class, '_search?search_type=count')
+    response = es_request(model_class, '_search', {}, { :search_type => "count"})
     parsed_response = JSON.parse(response)
     Rails.logger.info "ES count response:: Account -> #{Account.current.id}, Took:: #{parsed_response['took']}"
     parsed_response['hits']['total']
@@ -105,12 +105,15 @@ class Search::Filters::Docs
   private
 
     # Make request to ES to get the DOCS
-    def es_request(model_class, end_point, options={})
+    def es_request(model_class, end_point, options={}, query_params = {})
       permissible_value = with_permissible.nil? ? true : with_permissible
       deserialized_params = es_query(params, negative_params, permissible_value).merge(options)
+      query_params.merge!(query_string)
+      path = [host, alias_name, end_point].join('/')
+      full_path = "#{path}?#{query_params.to_query}"
       error_handle do
         request = RestClient::Request.new(method: :get,
-                                           url: [host, alias_name, end_point].join('/'),
+                                           url: full_path,
                                            payload: deserialized_params.to_json)
         log_request(request)
         response = request.execute
@@ -121,12 +124,25 @@ class Search::Filters::Docs
 
     #_Note_: Include type if not doing only for ticket
     def alias_name
-      "es_count_#{Account.current.id}"
+      return "es_count_#{Account.current.id}" unless Account.current.dashboard_new_alias?
+      if Rails.env.production?
+        "es_filters_count_#{es_shard_name}_alias"
+      else
+        "es_filters_count_alias"
+      end
+    end
+
+    def es_shard_name
+      Account.current.dashboard_shard_name.to_s.gsub("_","")
     end
 
     def document_path(model_class, id, query_params={})
       path    = [host, alias_name, model_class.demodulize.downcase, id].join('/')
       query_params.blank? ? path : "#{path}?#{query_params.to_query}"
+    end
+
+    def query_string
+      {routing: Account.current.id}
     end
 
     def error_handle(&block)

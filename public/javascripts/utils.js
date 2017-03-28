@@ -257,8 +257,13 @@ function helpdesk_submit(url, method, params){
 
 function reply_multiple_submit( url, method, params){
   var form = $("replymultiple");
-
-  (params.concat(jQuery('#tickets-expanded [name="ids[]"]').get()) || []).each(function(item){
+  var selector = '#tickets-expanded [name="ids[]"]';
+  var current_page = window.location.pathname;
+  if(current_page.indexOf("search/tickets") > -1) {
+     selector = '#search-page-results [name="ids[]"]';
+  }
+  
+  (params.concat(jQuery(selector).get()) || []).each(function(item){
     item = $(item);
 
     if(item.name == 'ids[]' && !item.checked) return;
@@ -821,7 +826,6 @@ jQuery.fn.serializeObject = function(){
             {
               this.name = keys[0] + '[' + keys[1] + ']'
               keys.pop();
-              merge = parseFloat(merge);
               reverse_key = this.name
             }
             else if (jQuery(self).find('[name="'+this.name+'"]').hasClass("numeric"))

@@ -43,7 +43,10 @@ module Integrations::Constants
     :outlook_contacts => "outlook_contacts",
     :salesforce_v2 => "salesforce_v2",
     :dynamics_v2 => "dynamics_v2",
-    :office365 => "office365"
+    :office365 => "office365",
+    :parent_child_tickets => "parent_child_tickets",
+    :link_tickets => "link_tickets",
+    :shared_ownership => "shared_ownership"
   }
 
   DISPLAY_IN_PAGES = { "ticket_show" => 2, "contact_show" => 1, "company_show" => 0 }
@@ -67,6 +70,8 @@ module Integrations::Constants
   DYNAMICS_CRM_CONSTANTS = { "rst2_login_url" => "https://login.microsoftonline.com/RST2.srf" }
 
   GOOGLE_CONTACTS = {"provider" => "google_contacts", "app_name" => "google_contacts"}
+
+  ZOHO_CRM_PODS = {:us => "https://crm.zoho.com", :eu => "https://crm.zoho.EU"}
 
   SUCCESS = "success"
   FAILURE = "failure"

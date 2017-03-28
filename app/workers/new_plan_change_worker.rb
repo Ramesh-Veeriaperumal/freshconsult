@@ -6,7 +6,8 @@ class NewPlanChangeWorker < BaseWorker
     account = Account.current
     
     features = args[:features]
-    SAAS::AccountDataCleanup.new(account, features).perform_cleanup
+    action   = args[:action].nil? ? "drop" : args[:action]
+    SAAS::AccountDataCleanup.new(account, features, action).perform_cleanup
   rescue Exception => e
   	Rails.logger.info "Exception during account cleanup on downgrade"
   	NewRelic::Agent.notice_error(e)

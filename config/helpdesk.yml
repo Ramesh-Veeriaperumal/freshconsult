@@ -74,6 +74,15 @@ USER_FACING_TITLE: FreshDesk
 #            password: <your password>
 #
 
+AGENT:
+    name: "Customer Service"
+    email: custserv@freshdesk.com
+
+DEFAULT_TICKET_REQUESTER:
+    email_ticket:
+        email: james.dean@freshdesk.com
+        name: "James Dean"
+
 EMAIL: 
 
     # This will be the reply_to address in all outgoing email

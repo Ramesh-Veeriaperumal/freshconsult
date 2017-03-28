@@ -40,6 +40,7 @@ module Search::Filters::QueryHelper
         condition_block[:must].push(permissible_filter) if with_permissible and User.current.agent? and User.current.restricted?
         construct_conditions(condition_block[:must], conditions)
       end
+      condition_block[:must].push(account_id_filter)
       construct_conditions(condition_block[:must_not], neg_conditions)
       filtered_query(nil, bool_filter(condition_block))
     end

@@ -27,7 +27,7 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
     },
 
     bindGroupValidation: function() {
-      $('#user_phone, #user_mobile, #user_twitter_id, #user_email').addClass('fillone');
+      $('#user_phone, #user_mobile, #user_twitter_id, #user_email, #user_unique_external_id').addClass('fillone');
     },
 
     bindAutocomplete: function () {

@@ -26,10 +26,14 @@ class Integrations::MarketplaceAppsController <  Admin::AdminController
         elsif @application.name.eql? Integrations::Constants::APP_NAMES[:quickbooks]
           render :partial => '/integrations/applications/quickbooks_c2qb' and return
         elsif @application[:options][:user_specific_auth].present?
-          if direct_app_install
-            flash[:notice] = t(:'flash.application.install.success')
-          else
-            flash[:error] = t(:'flash.application.install.error')
+          begin
+            if direct_app_install
+              flash[:notice] = t(:'flash.application.install.success')
+            else
+              flash[:error] = t(:'flash.application.install.error')
+            end
+          rescue PlanUpgradeError => e
+            flash[:error] = t(:'integrations.adv_features.unavailable')
           end
           redirect_to integrations_applications_path and return
         end

@@ -13,6 +13,24 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   
   layout "email_font"
 
+  def suppression_list_alert(admin,dropped_address = nil,display_id)
+    headers = {
+      :to       => "support@freshdesk.com",
+      :from     => admin.email,
+      :subject  => I18n.t('email_failure.suppression_list_alert.subject'),
+      :sent_on  => Time.now
+    }
+    current_account     = Account.current
+    @account_name       = current_account.name
+    @account_url        = "#{current_account.url_protocol}://#{current_account.full_domain}"
+    @dropped_address    = dropped_address
+    @agent_name         = admin.name
+    @ticket_display_id  = display_id
+    mail(headers) do |part|
+      part.html { render "suppression_list_alert" }
+    end.deliver
+  end
+
   def self.notify_by_email(notification_type, ticket, comment = nil, opts = {})
     internal_notification = opts[:internal_notification]
     e_notification = ticket.account.email_notifications.find_by_notification_type(notification_type)
@@ -418,7 +436,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
       message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@forward.freshdesk.com"
       
-      headers = email_headers(ticket, nil, false).merge({
+      headers = email_headers(ticket, message_id, false).merge({
         :subject    =>  formatted_subject(ticket),
         :to         =>  to_emails,
         :cc         =>  cc_emails,

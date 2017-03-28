@@ -10,8 +10,15 @@ module NoteTestHelper
     test_note.incoming = params[:incoming] if params[:incoming]
     test_note.private = params[:private] if params[:private]
     test_note.category = params[:category] if params[:category]
-    test_note.build_note_body(:body => params[:body],
-                              :body_html => params[:body_html] || params[:body])
+    body = params[:body] || Faker::Lorem.paragraph
+    test_note.build_note_body(:body => body, :body_html => params[:body_html] || body)
+    if params[:attachments]
+      params[:attachments].each do |attach|
+        test_note.attachments.build(:content => attach[:resource], 
+                                      :description => attach[:description], 
+                                      :account_id => test_note.account_id)
+      end
+    end
     test_note.save_note
     test_note
   end
@@ -37,5 +44,11 @@ module NoteTestHelper
                                      },
                     :ticket_id => params[:ticket_id] || Helpdesk::Ticket.first.id,
                   }
+  end
+
+  def create_note_with_attachments(params = {})
+    file = File.new(Rails.root.join("spec/fixtures/files/attachment.txt"))
+    attachments = [{:resource => file}]
+    create_note(params.merge({:attachments => attachments}))
   end
 end

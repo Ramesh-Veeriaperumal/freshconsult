@@ -63,7 +63,7 @@ namespace :scheduled_task do
     subject = "Scheduler(#{task_type}) | processed #{task_count} task"
     message = subject + " | base_time: #{base_time}"
     log(message)
-    DevNotification.publish(SNS["reports_notification_topic"], subject, message)
+    #DevNotification.publish(SNS["reports_notification_topic"], subject, message)
   end
 
 

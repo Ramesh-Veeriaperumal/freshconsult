@@ -28,14 +28,15 @@ fixedColumn = {
 		first_cols = first_cols.map(function(i,el){
 			var $parent_tr = jQuery(el).parent();
 			var row = '';
+			var width  = jQuery(el).width();
 			if($parent_tr.hasClass('group')) {
 				var group_title = $parent_tr.attr('data-group');
 				if(group_title != undefined && group_title.length > 73){
 					group_title = group_title.substr(0,73) + '...'
 				}
-				row = '<tr><td class="fixedWidth" ><strong>' + group_title + '</strong></td></tr>';
+				row = '<tr><td class="fixedWidth"><strong>' + group_title + '</strong></td></tr>';
 			} else {
-				row = '<tr><td role="row" class = "workable">' + jQuery(el).html().trim() + '</td></tr>';
+				row = '<tr><td role="row" class = "workable" style="width:'+  width +'px">' + jQuery(el).html().trim() + '</td></tr>';
 			}
 			
 			return row;

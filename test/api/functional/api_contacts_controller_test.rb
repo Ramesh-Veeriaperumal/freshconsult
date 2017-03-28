@@ -2307,4 +2307,179 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response 404
     sample_user.parent_id = nil
   end
+
+  def test_unique_external_id_update_without_feature
+    post :create, construct_params({},  unique_external_id: Faker::Lorem.characters(10), name: Faker::Lorem.characters(10))
+    assert_response 400
+  end
+
+  def test_unique_external_id_update_with_feature_with_name
+    @account.add_feature(:unique_contact_identifier)
+    post :create, construct_params({},  unique_external_id: Faker::Lorem.characters(10), name: Faker::Lorem.characters(10))
+    assert_response 201
+    match_json(deleted_unique_external_id_contact_pattern(User.last))
+  ensure
+    @account.revoke_feature(:unique_contact_identifier)
+  end
+
+  def test_unique_external_id_update_with_feature_without_name
+    @account.add_feature(:unique_contact_identifier)
+    post :create, construct_params({},  unique_external_id: Faker::Lorem.characters(10))
+    match_json([bad_request_error_pattern('name', :datatype_mismatch, code: :missing_field, expected_data_type: String)])
+    assert_response 400
+  ensure
+    @account.revoke_feature(:unique_contact_identifier)
+  end
+
+  def test_create_length_invalid_for_unique_external_id
+    @account.add_feature(:unique_contact_identifier)
+    post :create, construct_params({}, name: Faker::Lorem.characters(10), unique_external_id: Faker::Lorem.characters(300))
+    match_json([bad_request_error_pattern('unique_external_id', :'Has 300 characters, it can have maximum of 255 characters')])
+    assert_response 400
+  ensure
+    @account.revoke_feature(:unique_contact_identifier)
+  end
+
+
+  def test_create_length_valid_with_trailing_spaces_for_unique_external_id
+    @account.add_feature(:unique_contact_identifier)
+    params = { unique_external_id: Faker::Lorem.characters(20) + white_space, name: Faker::Lorem.characters(20) + white_space}
+    post :create, construct_params({}, params)
+
+    match_json(deleted_unique_external_id_contact_pattern(User.last))
+    assert_response 201
+  ensure
+    @account.revoke_feature(:unique_contact_identifier)
+  end
+
+  def test_create_contact_without_any_contact_detail_with_unique_external_id
+    @account.add_feature(:unique_contact_identifier)
+    post :create, construct_params({},  name: Faker::Lorem.characters(10))
+    match_json([bad_request_error_pattern('email', :fill_a_mandatory_field, field_names: 'email, mobile, phone, twitter_id, unique_external_id')])
+    assert_response 400
+  ensure
+    @account.revoke_feature(:unique_contact_identifier)
+  end
+
+  def test_show_a_contact_with_unique_external_id
+    @account.add_feature(:unique_contact_identifier)
+    sample_user = get_user
+    get :show, construct_params(id: sample_user.id)
+    match_json(unique_external_id_contact_pattern(sample_user.reload))
+    assert_response 200
+  ensure
+    @account.revoke_feature(:unique_contact_identifier)
+  end
+
+  def test_contact_index_with_unique_external_id
+    @account.add_feature(:unique_contact_identifier)
+    get :index, controller_params()
+    assert_response 200
+    users = @account.all_contacts.order('users.name').select { |x| x.deleted == false && x.blocked == false }
+    pattern = users.map { |user| index_contact_pattern_with_unique_external_id(user) }
+    match_json(pattern.ordered!)
+  ensure
+    @account.revoke_feature(:unique_contact_identifier)
+  end
+
+  def test_contact_filter_email_for_unique_external_id
+    @account.add_feature(:unique_contact_identifier)
+    @account.all_contacts.update_all(email: nil)
+    unique_external_id =  Faker::Lorem.characters(10)
+    @account.all_contacts.first.update_column(:unique_external_id, unique_external_id)
+    get :index, controller_params(unique_external_id: unique_external_id)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal 1, response.size
+    users = @account.all_contacts.order('users.name').select { |x|  x.unique_external_id == unique_external_id }
+    pattern = users.map { |user| index_contact_pattern_with_unique_external_id(user) }
+    match_json(pattern.ordered!)
+  ensure
+    @account.revoke_feature(:unique_contact_identifier)
+  end
+
+  def test_contact_combined_filter_for_unique_external_id
+    @account.add_feature(:unique_contact_identifier)
+    email = Faker::Internet.email
+    unique_external_id =  Faker::Lorem.characters(40)
+    comp = get_company
+    # @account.all_contacts.update_all(customer_id: nil)
+    @account.all_contacts.first.update_column(:customer_id, comp.id)
+    @account.all_contacts.first.user_emails.create(email: email)
+    @account.all_contacts.last.update_column(:customer_id, comp.id)
+    @account.all_contacts.last.update_column(:unique_external_id, unique_external_id)
+    get :index, controller_params(company_id: "#{comp.id}", unique_external_id: unique_external_id)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal 1, response.size
+  ensure
+    @account.revoke_feature(:unique_contact_identifier)
+  end
+
+  def test_update_length_invalid_for_unique_external_id
+    @account.add_feature(:unique_contact_identifier)
+    sample_user = get_user
+    put :update, construct_params({ id: sample_user.id }, unique_external_id: Faker::Lorem.characters(300))
+    match_json([bad_request_error_pattern('unique_external_id', :'Has 300 characters, it can have maximum of 255 characters')])
+    assert_response 400
+  ensure
+    @account.revoke_feature(:unique_contact_identifier)
+  end
+
+  def default_fields_required_invalid_with_unique_external_id
+    @account.add_feature(:unique_contact_identifier)
+    default_non_required_fiels = ContactField.where(required_for_agent: false,  column_name: 'default')
+    default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
+    sample_user = get_user
+    put :update, construct_params({ id: sample_user.id },  unique_external_id: sample_user.unique_external_id
+                                 )
+    assert_response 400
+    match_json([bad_request_error_pattern('unique_external_id', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null')])
+  ensure
+    default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
+    @account.revoke_feature(:unique_contact_identifier)
+  end
+
+  def test_update_user_with_valid_params_with_unique_external_id
+    @account.add_feature(:unique_contact_identifier)
+    unique_external_id = Faker::Lorem.characters(10)
+    create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'city', editable_in_signup: 'true'))
+    tags = [Faker::Name.name, Faker::Name.name, 'tag_sample_test_4']
+    cf = { 'city' => 'Chennai' }
+
+    sample_user = User.where(helpdesk_agent: false).last
+    params_hash = { language: 'cs',
+                    time_zone: 'Tokyo',
+                    job_title: 'emp',
+                    custom_fields: cf,
+                    unique_external_id: unique_external_id,
+                    tags: tags }
+    put :update, construct_params({ id: sample_user.id }, params_hash)
+    assert sample_user.reload.language == 'cs'
+    assert sample_user.reload.time_zone == 'Tokyo'
+    assert sample_user.reload.job_title == 'emp'
+    assert sample_user.reload.tag_names.split(', ').sort == tags.sort
+    assert sample_user.reload.custom_field['cf_city'] == 'Chennai'
+    assert sample_user.reload.unique_external_id == unique_external_id
+    match_json(deleted_unique_external_id_contact_pattern(sample_user.reload))
+    assert_response 200
+  ensure
+    sample_user.update_column(:unique_external_id, nil)
+    @account.revoke_feature(:unique_contact_identifier)
+  end
+
+  def test_update_length_valid_with_trailing_space_for_unique_external_id
+    @account.add_feature(:unique_contact_identifier)
+    sample_user = get_user
+    unique_external_id = Faker::Lorem.characters(10)
+    sample_user.update_attribute(:unique_external_id, nil)
+    params = { name: Faker::Lorem.characters(20) + white_space, unique_external_id: unique_external_id + white_space }
+    put :update, construct_params({ id: sample_user.id }, params)
+    match_json(deleted_unique_external_id_contact_pattern(sample_user.reload))
+    assert_response 200
+  ensure
+    sample_user.update_column(:unique_external_id, nil)
+    @account.revoke_feature(:unique_contact_identifier)
+  end
+
 end

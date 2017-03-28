@@ -121,7 +121,9 @@ module ActionMailerCallbacks
       note_id = (note_id == -1) ? 0 : note_id
       category_id = (category_id == -1) ? 0 : category_id
       from_email[from_email.rindex("@")] = "=" if from_email.present?
-      "#{account_id}.#{ticket_id}.#{note_id}.#{type}.#{category_id}+#{from_email}@freshdesk.com"
+      shard_number = get_shard_number(account_id)
+      pod_number = get_pod_number
+      "#{account_id}.#{ticket_id}.#{note_id}.#{type}.#{category_id}.#{shard_number}.#{pod_number}+#{from_email}@freshdesk.com"
     end
 
     def decrypt_to_custom_variables(text)
@@ -131,13 +133,16 @@ module ActionMailerCallbacks
       custom_string = custom_string[0, custom_string.index("+")]
       custom_variables = custom_string.split(".")
       type = get_notification_type_text(custom_variables[3])
-
+      shard_name = get_shard_name(custom_variables[5])
+      pod_name = get_pod_name(custom_variables[6])
       {
         :account_id =>  (custom_variables[0] == "0") ? -1 : custom_variables[0],
         :ticket_id => (custom_variables[1] == "0") ? -1 : custom_variables[1],
         :note_id => (custom_variables[2] == "0") ? -1 : custom_variables[2],
         :email_type => type.nil? ?  custom_variables[3] : type,
         :category_id => (custom_variables[4].present? && custom_variables[4] == "0") ? -1 : custom_variables[4],
+        :shard_info => shard_name,
+        :pod_info => pod_name,
         :from_email => from_email
       }
     end
@@ -158,12 +163,12 @@ module ActionMailerCallbacks
 
     def get_unique_args(from_email, account_id = -1, ticket_id = -1, note_id = -1, mail_type = "", category_id = -1)
       note_id_str = note_id != -1 ? "\"note_id\": #{note_id}," : ""
-      shard = ShardMapping.fetch_by_account_id(account_id)
+      shard = get_shard account_id
       shard_name = shard.nil? ? "\"shard_info\":\"unknown\"" : "\"shard_info\":\"#{shard.shard_name}\""
       "{\"unique_args\":{\"account_id\": #{account_id},\"ticket_id\":#{ticket_id}," \
         "#{note_id_str}" \
         "\"email_type\":\"#{mail_type}\",\"from_email\":\"#{from_email}\",\"category_id\":\"#{category_id}\"," \
-        "\"pod_info\":\"#{PodConfig['CURRENT_POD']}\",#{shard_name} }}"
+        "\"pod_info\":\"#{get_pod}\",#{shard_name} }}"
     end
 
 
@@ -175,6 +180,36 @@ module ActionMailerCallbacks
         state = get_subscription
         key = (state == "active" || state == "premium") ? 'paid' : 'free'
         return Helpdesk::Email::OutgoingCategory::CATEGORY_BY_TYPE["#{key}_email_notification".to_sym]
+      end
+    end
+
+    def get_pod
+      PodConfig['CURRENT_POD']
+    end
+    def get_pod_number
+      pod = get_pod
+      EmailNotificationConstants::POD_TYPES.key(pod)
+    end
+    def get_shard account_id
+      ShardMapping.fetch_by_account_id(account_id)
+    end
+    def get_shard_number(account_id)
+      shard = get_shard account_id
+      if shard.nil?
+        return "0"
+      else
+        return shard.shard_name[6, shard.shard_name.length]
+      end
+    end
+
+    def get_pod_name(text)
+      pod_no = text.to_i
+      EmailNotificationConstants::POD_TYPES[pod_no]
+    end
+
+    def get_shard_name(text)
+      if text.to_i != 0
+        return "shard_#{text}"
       end
     end
 

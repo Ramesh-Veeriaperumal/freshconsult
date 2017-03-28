@@ -281,7 +281,13 @@ class Account < ActiveRecord::Base
     end
 
     def enable_count_es
-      CountES::IndexOperations::EnableCountES.perform_async({ :account_id => self.id }) if Account.current.features?(:countv2_writes)
+      if redis_key_exists?(DASHBOARD_FEATURE_ENABLED_KEY)
+        count = Search::Dashboard::Count.new(nil, id, nil)
+        count.index_new_account_dashboard_shard
+        key = ACCOUNT_DASHBOARD_SHARD_NAME % { :account_id => self.id }
+        MemcacheKeys.fetch(key) { ActiveRecord::Base.current_shard_selection.shard.to_s }
+        CountES::IndexOperations::EnableCountES.perform_async({ :account_id => self.id }) 
+      end
     end
 
     def disable_searchv2
@@ -289,7 +295,12 @@ class Account < ActiveRecord::Base
     end
 
     def disable_count_es
-      CountES::IndexOperations::DisableCountES.perform_async({ :account_id => self.id, :shard_name => ActiveRecord::Base.current_shard_selection.shard })
+      if redis_key_exists?(DASHBOARD_FEATURE_ENABLED_KEY)
+       [:admin_dashboard, :agent_dashboard, :supervisor_dashboard].each do |f|
+          self.rollback(f)
+        end
+      end
+      #CountES::IndexOperations::DisableCountES.perform_async({ :account_id => self.id, :shard_name => ActiveRecord::Base.current_shard_selection.shard }) unless dashboard_new_alias?
     end
 
     def update_sendgrid

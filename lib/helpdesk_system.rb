@@ -60,30 +60,35 @@ module HelpdeskSystem
   
   #Method to check permission for normal attachments & cloud_files destroy.
   def check_destroy_permission
-    can_destroy = false
-    model_name  = define_model
+    return if @item.nil? && @items.nil?
+    if current_account.launched?(:attachments_scope)
+      process_denied unless ( @items.nil? ? @item.can_be_deleted_by_me? : @items.all? {|f| f.can_be_deleted_by_me?} )
+    else
+      can_destroy = false
+      model_name  = define_model
 
-    @items.each do |file|
-      file_type       = file.send("#{model_name}_type")
-      file_attachable = file.send(model_name)
+      @items.each do |file|
+        file_type       = file.send("#{model_name}_type")
+        file_attachable = file.send(model_name)
 
-      if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? file_type
-        ticket = file_attachable.respond_to?(:notable) ? file_attachable.notable : file_attachable
-        can_destroy = true if privilege?(:manage_tickets) or (current_user && ticket.requester_id == current_user.id)
-      elsif ['Solution::Article', 'Solution::Draft'].include? file_type
-        can_destroy = true if privilege?(:publish_solution) or (current_user && file_attachable.user_id == current_user.id)
-      elsif ['Account'].include? file_type
-        can_destroy = true if privilege?(:manage_account)          
-      elsif ['Post'].include? file_type
-        can_destroy = true if privilege?(:edit_topic) or (current_user && file_attachable.user_id == current_user.id)
-      elsif ['User'].include? file_type
-        can_destroy = true if privilege?(:manage_users) or (current_user && file_attachable.id == current_user.id)
-      elsif ['Helpdesk::TicketTemplate'].include? file_type
-        can_destroy = true if template_priv? file_attachable
-      elsif ['UserDraft'].include? attachment.attachable_type
-        can_destroy = true if (current_user && file_attachable.id == current_user.id)
+        if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? file_type
+          ticket = file_attachable.respond_to?(:notable) ? file_attachable.notable : file_attachable
+          can_destroy = true if privilege?(:manage_tickets) or (current_user && ticket.requester_id == current_user.id)
+        elsif ['Solution::Article', 'Solution::Draft'].include? file_type
+          can_destroy = true if privilege?(:publish_solution) or (current_user && file_attachable.user_id == current_user.id)
+        elsif ['Account'].include? file_type
+          can_destroy = true if privilege?(:manage_account)          
+        elsif ['Post'].include? file_type
+          can_destroy = true if privilege?(:edit_topic) or (current_user && file_attachable.user_id == current_user.id)
+        elsif ['User'].include? file_type
+          can_destroy = true if privilege?(:manage_users) or (current_user && file_attachable.id == current_user.id)
+        elsif ['Helpdesk::TicketTemplate'].include? file_type
+          can_destroy = true if template_priv? file_attachable
+        elsif ['UserDraft'].include? attachment.attachable_type
+          can_destroy = true if (current_user && file_attachable.id == current_user.id)
+        end
+        process_denied unless can_destroy
       end
-      process_denied unless can_destroy
     end
   end
 

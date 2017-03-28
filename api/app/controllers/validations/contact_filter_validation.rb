@@ -1,5 +1,5 @@
 class ContactFilterValidation < FilterValidation
-  attr_accessor :state, :phone, :mobile, :email, :company_id, :conditions, :tag, :_updated_since
+  attr_accessor :state, :phone, :mobile, :email, :company_id, :conditions, :tag, :_updated_since, :unique_external_id
 
   validates :state, custom_inclusion: { in: ContactConstants::STATES }
   validates :email, data_type: { rules: String }
@@ -7,9 +7,10 @@ class ContactFilterValidation < FilterValidation
 
   validates :company_id, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param }
   validate :check_company, if: -> { company_id && errors[:company_id].blank? }
-  validates :phone, :mobile, data_type: { rules: String }
+  validates :phone, :mobile, :unique_external_id, data_type: { rules: String }
   validates :tag, data_type: { rules: String }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING }
   validates :_updated_since, date_time: true
+  validate :check_unique_external_id, if: -> { unique_external_id && errors[:unique_external_id].blank? }
 
   def initialize(request_params, item = nil, allow_string_param = true)
     @conditions = (request_params.keys & ContactConstants::INDEX_FIELDS)
@@ -22,4 +23,9 @@ class ContactFilterValidation < FilterValidation
     company = Account.current.companies.find_by_id(@company_id)
     errors[:company_id] << :"can't be blank" unless company
   end
+
+  def check_unique_external_id
+    errors[:unique_external_id] << :"can't be used" if !Account.current.unique_contact_identifier_enabled?
+  end
+
 end

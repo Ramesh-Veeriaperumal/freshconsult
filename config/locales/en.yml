@@ -86,6 +86,43 @@ en:
   reload: Reload
   any: Any
   or: or
+  email_failure:
+    dropped:
+      summary_error_text: "Message dropped - Invalid or problematic address"
+      help_text:
+        admin: "Any message to this address will not be sent as it's likely an invalid or mistyped address and has been added to the drop list. Contact Freshdesk Support if you believe that this address is valid and should be removed from the drop list for future communication."
+        agent: "Any message to this address will not be sent as it's likely an invalid or mistyped address and has been added to the drop list. Contact your account administrator if you believe that this address is valid and should be removed from the drop list for future communication."
+    dropped_unsubscribed:
+      summary_error_text: "Message dropped - Unsubscribed address"
+      help_text:
+        admin: "Any message to this address will not be sent as the recipient has unsubscribed from this domain. Contact Freshdesk Support if you want to enable future communication to this address."
+        agent: "Any message to this address will not be sent as the recipient has unsubscribed from this domain. Contact your account administrator if you want to enable future communication to this address"
+    bounce_temporary:
+      summary_error_text: "Message bounced - Temporary error"
+      help_text: "The message did not reach this recipient after multiple attempts likely due to connection issues with the remote server or temporary problems like the mailbox being full. Retrying after some time should solve the problem."
+    bounce_permanent:
+      summary_error_text: "Message bounced - Permanent error"
+      help_text: "The message did not reach this recipient after multiple attempts. You can attempt re-sending the message but it's likely that this is an invalid or mistyped address."
+    suppression_list_alert:
+      subject: "Request to remove address from drop list"
+      company: "Company"
+      freshdesk_url: "Freshdesk URL"
+      dropped_address: "Address to remove from drop list"
+      source_ticket: "Source Ticket"
+      thanks: "Thanks,"
+    agent_notification:
+      subject: "Email was not delivered to %{failed_email}"
+      content: | 
+              <p>Hi %{agent_name},<br><br>
+                The following message composed by you on ticket id <a target='_blank' href=%{ticket_url}>%{ticket_id}</a> failed to reach the recipient %{failed_email} permanently.<br>
+                Reason: %{error_message}.<br>
+                Message content: <br>%{failed_content}</p>
+    note_display:
+      title  : "Message not delivered"
+      failed_recipients: "Failed recipients"
+      contact_support: "Email Freshdesk Support"
+      call_recipient : "Call recipient"
+      add_note_to_admin : "Add note to admin"
   reorder_rules: Reorder Active Rules
   plain_yes: "Yes"
   plain_no: "No"
@@ -291,6 +328,7 @@ en:
     work: Work
     email: Email
     emails: Emails
+    unique_external_id: Unique External Id
     choose_another_photo: "Choose another photo"
     add_photo: "Add Photo"
     change_photo: "Change photo"
@@ -416,6 +454,7 @@ en:
       nested_tree_validation: You need atleast one category & sub-category
       nested_unique_names: Agent label should not be same as other two levels
       nested_3rd_level: Label required for 3rd level items
+      field_has_section: Field has section
     section:
       remove_type: Section is associated with this type
       new_section: New Section
@@ -439,7 +478,9 @@ en:
       section_prop: Section Properties
       sectino_label: Section Title
       section_type_is: Show section when type is
+      section_label_is: Show section when %{dataLabel} is
       section_name_unique: Section name already used
+      add_section: Add section
 
   folder:
     edit: Edit Folder
@@ -3917,6 +3958,7 @@ en:
         max_user_companies: A contact cannot have more than 20 companies
         max_skills_per_account: Cannot create more than %{max_limit} skills
         max_skills_per_user: Cannot have more than %{max_limit} skills per agent
+        unique_external_id: unique_external_id field cannot be updated
         edit_broadcast_note: "Broadcast message can't be edited"
       full_messages:
         format: "%{attribute} %{message}"
@@ -5065,7 +5107,7 @@ en:
     custom_mailbox: "Custom mail servers"
     ip_restriction: "Secure IP restriction"
     ticket_dispatch_automation: "Ticket dispatch automation"
-    app_gallery: "Access to App gallery"
+    app_gallery: "Access to Marketplace"
     basic_phone: "Basic phone and social channels"
     time_event_automation: "Time/event based automations"
     custom_ticket_fields_and_views: "Custom ticket fields/views"
@@ -6825,8 +6867,10 @@ en:
     requester_placeholder: "Name or Email"
     user_placeholder: "Name or Email"
     cc_emails_placeholder: "Name or email of user from selected company"
+    agents_placeholder: ""
     tags_placeholder: ""
     customers_placeholder: ""
+    companies_placeholder: ""
     company_id_placeholder: ""
     raised_by: "Tickets created by"
     everyone_in_company: "Everyone in %{company_name}"
@@ -7212,7 +7256,7 @@ en:
     reauthorize: "Reauthorize"
     app: app
     custom_app: custom app
-    app_gallery: App Gallery
+    app_gallery: Marketplace
     custom_app_gallery: Custom App Gallery
     app_description: "Apps allow you to integrate with other applications to make your Freshdesk experience more awesome. They also enable you to customize and personalize your Freshdesk portal."
     apps: Apps
@@ -7259,7 +7303,7 @@ en:
     no_apps_in_category: No Apps available in this category
     related_categories: "Apps from Related Categories:"
     similar_apps: "Similar Apps:"
-    no_connection: "The app gallery is currently unavailable. Please try again later. Please contact us, if the issue persists."
+    no_connection: "Marketplace is currently unavailable. Please try again later. Please contact us, if the issue persists."
     apps_unavailable: "Certain apps could not be rendered. Please try again later. Please contact us if the issue persists."
     installed_mkp_apps_unavailable: "The listing of installed apps is currently unavailable. Please try again later. Please contact us if the issue persists."
     api_error: "We could not process your request. Please try after sometime."
@@ -7274,6 +7318,7 @@ en:
     buy_app: Buy App
     paid_apps_trial_info: "Paid Apps are not available for trial at this point of time. Please contact <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> for further information."
     app_price: %{price} / %{addon_type} / month
+    paid_app: PAID
     no_payment_info: We do not have your payment details on file. Please update them to proceed further. <br>
     update_payment_info: Update payment info
     payment_trial_info: This is a paid app with a %{trial_period} day trial period. Once the trial period is over, you will be charged %{price} / %{addon_type} / month. Press Ok to install the app. <br>  %{payment_ok_btn}
@@ -8149,6 +8194,17 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       api_key: "API Token"
       api_key_info: "API Token can be accessed from your Pivotal Tracker Profile Page - https://www.pivotaltracker.com/profile"
       pivotal_updates: "Select to get updates from Pivotal Tracker"
+    adv_features:
+      unavailable: "This feature is not available for your plan."
+    parent_child:
+      label: "Parent Child Ticketing"
+      desc: "Parent-child ticketing helps support agents resolve issues faster and efficiently by breaking down action items into child tickets that can be worked on independently by different teams simultaneously."
+    link_ticket:
+      label: "Linked Tickets"
+      desc: "Manage and track related tickets together to ensure updates are delivered in a fast, consistent and efficient manner."
+    shared_ownership:
+      label: "Shared Ownership"
+      desc: "Get improved agent visibility over tickets that require assistance from specialised teams with the ability to share tickets between agents."
     marketplace_login:
       associate_account:
         email: Email
@@ -8522,6 +8578,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       info2: "Dependent Fields give you an easy way to create deeper ticket categories and identify the biggest issues that clog your support.  With dependent fields you can organize tickets hierarchically  into categories, subcategories and item affected."
       info4: "If you are in the estate plan or above, you can have dynamic fields that appear based on the option selected in the type field. For every option in the type field, you can create a different section. You can then add more ticket fields to each section. For example, in an ecommerce scenario, when the type is chosen as \"Replacement\", a section with a field called \"Reason\" can open up that will collect the reason why customer needs a replacement for the item. <a target='_blank' href='https://support.freshdesk.com/support/solutions/articles/212889-creating-your-dynamic-ticket-forms'>Read more about dynamic fields</a>."
       info4_v2: "If you are in the estate plan or above, you can have dynamic fields that appear based on the option selected in the type field. For every option in the type field, you can create a different section. You can then add more ticket fields to each section. For example, in an ecommerce scenario, when the type is chosen as \"Replacement\", a section with a field called \"Reason\" can open up that will collect the reason why customer needs a replacement for the item."
+      info4_v3: "If you are in the Estate plan or above, you can have sections with dynamic fields appear based on the option selected in a dropdown field. You can add ticket fields to each section, and associate a section with options in the dropdown field. If you run an e-commerce store, for example, you can have a section open up with a field called 'Reason' when your customer chooses the option 'Replacement'. This way, you can better understand why your customer would like to have a replacement issued. You can create a maximum of two dynamic sections and use them in two custom dropdowns. If you've associated a section with the 'type' field already, you'll be able to add just one more section to the ticket form."
   contact_field:
     helpcard:
       title2: "Customizing your contact fields"
@@ -8892,6 +8949,23 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   activation_link: Activation link has been sent to %{email}
   activation_link_no_email: Successfully registered
   not_given: "Not given."
+  helpdesk_search:
+    filter_by: Filter by
+    edit_filter: Filter
+    generate: Search
+    add_fields: Add field
+    requester: Requester
+    agent: Agent
+    company: Company
+    tags: Tags
+    created_at: Created
+    due_by: Due by
+    status: Status
+    priority: Priority
+    group: Group
+    type: Type
+    source: Source
+    product: Product
   helpdesk_reports:
     helpdesk_analysis : Helpdesk Analysis
     productivity : Productivity
@@ -10697,6 +10771,10 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   user_notifications:
     header: "Notifications"
     mark_all_as_read: "Mark all as read"
+    preferences: "Preferences"
+    notification_preferences: "Notification Preferences"
+    notify_when: Notify when...
+    checking_your_preferences: Checking your preferences...
     actor_text_2: "%{actor_name_1} and %{actor_name_2}"
     actor_text_multi: "%{actor_name_1} and %{more_actors_count} more"
     private_note_created: "sent you a private note on ticket %{object}"
@@ -10705,13 +10783,41 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     public_note_created_multi: "added %{count} notes on ticket %{object}"
     customer_responded: "responded to ticket %{object}"
     customer_responded_multi: "responded to ticket %{object}"
-    ticket_status_update: "updated the ticket status of %{object} to %{current_status}"
-    ticket_status_update_multi: "updated the ticket status of %{object} to %{current_status}"
-    ticket_assigned: "assigned the ticket %{object} to you."
+    ticket_status_update: "updated the ticket status of %{object} to <b>%{current_status}</b>"
+    ticket_status_update_multi: "updated the ticket status of %{object} to <b>%{current_status}</b>"
+    ticket_assigned: "assigned the ticket %{object} to you"
+    ticket_assigned_to_group: "assigned the ticket %{object} to group <b>%{group_name}</b>"
+    ticket_created: "created a new ticket %{object}"
     collab_added_to: "You have been added as a collaborator on ticket %{object}"
     collab_invited_notification: "wants to collaborate with you on ticket %{object}"
     collab_first_mention: "mentioned you in a message on ticket %{object}"
     collab_first_mention_multi: "mentioned you in {{count}} messages on ticket %{object}"
+    types:
+      private_note_created: "Private Note Created"
+      public_note_created: "Public Note Added"
+      customer_responded: "Customer Responded"
+      ticket_status_update: "Ticket Status Updated"
+      ticket_assigned: "Ticket Assigned"
+      collab_added_to: "Discussion"
+      collab_invited_notification: "Discussion"
+      collab_first_mention: "Discussion"
+      ticket_assigned_to_group: "Ticket Assigned to Group"
+      ticket_created: "New Ticket"
+    preferences_text:
+      private_note_created: Private note sent to me
+      public_note_created: Public note added to ticket
+      customer_responded: New reply on my ticket
+      ticket_status_updated: Status updated on my ticket
+      ticket_assigned: Ticket assigned to me
+      ticket_assigned_to_group: Ticket assigned to my group
+      ticket_created: New tickets created
+    enable_desktop_notifications: Enable Desktop Notifications
+    enable_desktop_notifications_help: "Please click <strong>Allow</strong> when prompted"
+    desktop_notifications_enabled_flash: Desktop notifications are now enabled!
+    desktop_notifications_disabled: You've disabled desktop notifications
+    toggle_mobile_notifications: Toggle mobile notifications
+    toggle_web_notifications: Toggle web notifications
+    
   trial_plan_downgrade: "Important: You are currently downgrading from %{plan_from} plan to %{plan_to} plan"
   discounted_sum: "After Discount"
   selecting_plan: "Selecting..."
@@ -10913,3 +11019,10 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       wrong_file_format: "Unsupported file format!"
       unexpected: "Something went wrong!"
       highlight_missing: "Highlight missing"
+
+  default:
+    ticket:
+      email:
+        subject: You lost my cat!
+        body: "<p>Dear Customer Relations,</p><br /><p>I recently flew Upper Class from Heathrow to JFK and whilst some bits were great,one bit in particular was really really bad.I flew with my cat* and you froze** it and it died*** which made me sad****.</p><br /><p>* I use the word 'cat' in the sense of 'suitcase'.\n<br />** I use the word 'froze' in the sense of 'lost'.\n<br />*** I use the word 'died' in the sense of 'didn't turn up for 2 days'.\n<br />**** I use the word 'sad' correctly.</p><br /><p>We all lose things. I once went for a pint with the late Keith Floyd and he lost an entire week.Another time I worked out an equation for cold fusion and gave it to my cat on a memory stick,which she lost. Keith Floyd, me, my cat, and you are all only human, so these things happen.What separates humans from super humans is the way they deal with these hiccups.</p><br /><p>I won't bore you with the details. The only question is how can we make it right?</p><br /><p>Yours ever,\n<br />James Dean</p><p><hr></p><p>P.S. This is a sample email that’s been converted into a ticket by Freshdesk.<a onclick='%{onclick}' href='javascript:void(0)'> See how you can start converting email</a> from customers into tickets in your helpdesk.</p>"
+        reply: "<p>Dear Mr James Dean (Like the Actor),</p><br /><p>Thank you for your email detailing your unfortunate events following the delay of your luggage. Please accept my sincerest apologies for this, and for the unexpected inconveniences caused as a result. I do hope that despite this, you had a pleasant trip.</p><br /><p>Thankfully, the following morning, it was me that you spoke to,and I advised you that your cat hadbeen found and was on its way to you. On a serious note though James,I'm happy to give you a Tier Point. I hope you cherish it. Like it's Magic.I have also added the mileage and remaining tier points from your most recentflight with us, which means that you are now a Gold Member (not like the movie).</p><br /><p>Please once again accept my sincerest apologies. This experience is not typical of us, and I hope it has not discouraged you from travelling with us again, as it would certainlybe a pleasure to welcome you back on board.</p><br /><p>Yours sincerely,\n<br />The Lady in Red\n<br />Baggage Services Advisor</p>"

@@ -1,10 +1,12 @@
 <% if !custom_activity.invalid %>
 	<%
 	note = custom_activity.note || nil
+	to_email_failures = custom_activity.to_email_failures || nil
+	cc_email_failures = custom_activity.cc_email_failures || nil
 	activity_date = format_activity_date(custom_activity.performed_time, true)
 	%>
 	<% if note.present? %>
-		<%= render :partial => '/helpdesk/tickets/show/note', :object => note, locals: {minimizable: true, timestamp_id: custom_activity.performed_time} %>
+		<%= render :partial => '/helpdesk/tickets/show/note', :object => note, locals: {minimizable: true, timestamp_id: custom_activity.performed_time, to_email_failures: to_email_failures, cc_email_failures: cc_email_failures} %>
 	<% else %>
 	<div class="conversation activity" data-activity-id="<%= custom_activity.performed_time %>" data-timestamp="<%= format_activity_date(custom_activity.performed_time, false) %>"> 
 		<div class="avatar-wrap">

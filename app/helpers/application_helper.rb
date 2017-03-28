@@ -180,7 +180,7 @@ module ApplicationHelper
     if tab_name.eql?(:tickets)
       options.merge!({:"data-parallel-url" => "/helpdesk/tickets/filter_options", :"data-parallel-placeholder" => "#ticket-leftFilter"})
     end
-    if tab_name.eql?(:reports) && ( request.fullpath.include?("reports/custom_survey") || request.fullpath.include?("timesheet_reports") || request.fullpath.include?("phone/summary_reports") || request.fullpath.include?("freshchat/summary_reports"))
+    if tab_name.eql?(:reports) && ( request.fullpath.include?("reports/custom_survey") || request.fullpath.include?("reports/timesheet") || request.fullpath.include?("phone/summary_reports") || request.fullpath.include?("freshchat/summary_reports"))
        options.delete(:"data-pjax") 
     end
     content_tag('li', link_to(strip_tags(title), url, options), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
@@ -580,6 +580,11 @@ module ApplicationHelper
         ['{{ticket.internal_agent.name}}',       'Internal Agent name',       "",         'ticket_agent_name'],
         ['{{ticket.internal_agent.email}}',      'Internal Agent email',      "",         'ticket_agent_email']]
     end
+
+    if current_account.unique_contact_identifier_enabled?
+      place_holders[:requester] += [['{{ticket.requester.unique_external_id}}', 'Requester Unique External Id',   "",       'unique_external_id']]
+    end
+
     # Custom Field Placeholders
     current_account.ticket_fields.custom_fields.each { |custom_field|
       nested_vals = []
@@ -1104,7 +1109,7 @@ module ApplicationHelper
                                                                  element_class).html_safe,
                                             :class => "controls input-date-field")
     end
-    element_class = (field.has_sections_feature? && (field.field_type == "default_ticket_type" || field.field_type == "default_source")) ? " dynamic_sections" : ""
+    element_class = (field.has_sections_feature? && (field.section_dropdown? || field.field_type == "default_source")) ? " dynamic_sections" : ""
     company_class = " hide" if field.field_type == "default_company" && @ticket.new_record?
     content_tag :li, element.html_safe, :class => "#{ dom_type } #{ field.field_type } field" + element_class + company_class.to_s
   end
@@ -1190,7 +1195,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
                                             :class => "controls input-date-field")
         
     end
-    element_class = (field.has_sections_feature? && (field.field_type == "default_ticket_type" || field.field_type == "default_source")) ? " dynamic_sections" : ""
+    element_class = (field.has_sections_feature? && (field.section_dropdown? || field.field_type == "default_source")) ? " dynamic_sections" : ""
     company_class = " hide" if field.field_type == "default_company" && (@ticket.new_record? || dropdown_choices.empty?)
     content_tag :li, element.html_safe, :class => "#{ dom_type } #{ field.field_type } field" + element_class + company_class.to_s
   end
@@ -1296,7 +1301,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
 
     end
     fd_class = "#{ dom_type } #{ field.field_type } field"
-    fd_class += " dynamic_sections" if (field.has_sections_feature? && (field.field_type == "default_ticket_type" || field.field_type == "default_source"))
+    fd_class += " dynamic_sections" if (field.has_sections_feature? && (field.section_dropdown? || field.field_type == "default_source"))
     fd_class += " hide" if field.field_type == "default_company" &&
                                                (@ticket.new_record? ||
                                                dropdown_choices.length <= 1)

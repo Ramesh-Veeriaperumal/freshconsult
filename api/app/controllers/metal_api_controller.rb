@@ -18,6 +18,7 @@ class MetalApiController < ActionController::Metal
   include ActionController::StrongParameters
   include ActionController::Cookies
   include ActionController::HttpAuthentication::Basic::ControllerMethods
+  include ActionController::HttpAuthentication::Token::ControllerMethods
   include AbstractController::Callbacks # before filters
   include ActionController::Rescue
   include ActionController::ParamsWrapper

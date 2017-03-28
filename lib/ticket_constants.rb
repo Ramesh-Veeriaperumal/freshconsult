@@ -131,7 +131,7 @@ module TicketConstants
     [ :source,              'source',           :dropdown],
     [ :priority,            'priority',         :dropdown],
     [ :due_by,              'due_by',           :due_by],
-    [ "helpdesk_tags.name", "tags",             :dropdown],
+    [ "helpdesk_tags.name", "tags",             :tags],
     [ "users.customer_id",  "customers",        :customer],
     [ :owner_id,            "customers",        :customer],
     [ :created_at,          "created_at",       :created_at],
@@ -187,6 +187,13 @@ module TicketConstants
     [ :seven_days,    I18n.t("export_data.seven_days"),    7 ],
     [ :twenty_four,   I18n.t("export_data.twenty_four"),   1 ],
     [ :custom_filter, I18n.t("export_data.custom_filter"), 4 ]
+  ]
+
+  CREATED_BY_VALUES_EN = [
+    [ :thirt_days,    "export_data.thirt_days",   30 ],
+    [ :seven_days,    "export_data.seven_days",    7 ],
+    [ :twenty_four,   "export_data.twenty_four",   1 ],
+    [ :custom_filter, "export_data.custom_filter", 4 ]
   ]
 
   CREATED_BY_OPTIONS = CREATED_BY_VALUES.map { |i| [i[1], i[2]] }
@@ -281,13 +288,18 @@ module TicketConstants
     "default_product",  "default_company"
   ]
 
-  SHARED_DEFAULT_FIELDS_ORDER = [
-    "default_priority",       "default_status",
-    "default_group",          "default_agent", 
-    "default_internal_group", "default_internal_agent",
-    "default_source",         "default_ticket_type",
-    "default_product",        "default_company"
-  ]
+  SHARED_DEFAULT_FIELDS_ORDER = {
+    "default_priority"       => "priority",
+    "default_status"         => "status",
+    "default_group"          => "group_id",
+    "default_agent"          => "responder_id",
+    "default_internal_group" => "internal_group_id",
+    "default_internal_agent" => "internal_agent_id",
+    "default_source"         => "source",
+    "default_ticket_type"    => "ticket_type",
+    "default_product"        => "product_id",
+    "default_company"        => "company_id"
+  }
 
   # CC emails count
   MAX_EMAIL_COUNT = 50
@@ -355,7 +367,7 @@ module TicketConstants
 
   def self.feature_based_association_type
     assoc_parent_child_feature = Account.current.parent_child_tkts_enabled?
-    link_tickets_feature = Account.current.link_tickets_enabled?
+    link_tickets_feature = Account.current.link_tkts_enabled?
     return [] unless assoc_parent_child_feature || link_tickets_feature
     list = [TICKET_ASSOCIATION_FILTER[0]]
     if assoc_parent_child_feature
@@ -376,5 +388,9 @@ module TicketConstants
 
   def self.association_type_filter_names
     TICKET_ASSOCIATION_FILTER.map { |i| [i[1], i[2].join(',')] }
+  end
+
+   def self.created_options
+    CREATED_BY_VALUES_EN.map { |i| [I18n.t(i[1]), i[2]] }
   end
 end

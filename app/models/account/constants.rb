@@ -40,7 +40,8 @@ class Account < ActiveRecord::Base
 
     :garden => {
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language,
-        :css_customization, :advanced_reporting, :multiple_business_hours, :dynamic_content, :chat, :ticket_templates, :custom_survey ],
+        :css_customization, :advanced_reporting, :multiple_business_hours, :dynamic_content, :chat,
+        :ticket_templates, :custom_survey ],
       :inherits => [ :blossom ]
     },
 
@@ -86,22 +87,23 @@ class Account < ActiveRecord::Base
     },
     
     :blossom_jan_17 => {
-      :features => [ :gamification, :auto_refresh, :twitter, :facebook, :surveys , :scoreboard, :timesheets, 
+      :features => [ :gamification, :auto_refresh, :twitter, :facebook, :surveys , :scoreboard, :timesheets,
         :custom_domain, :multiple_emails, :advanced_reporting, :default_survey, :sitemap, :requester_widget ],
       :inherits => [ :sprout_jan_17 ]
     },
     
     :garden_jan_17 => {
-      :features => [ :forums, :multi_language, :css_customization, :advanced_reporting, :dynamic_content, :chat, :ticket_templates, :custom_survey ],
+      :features => [ :forums, :multi_language, :css_customization, :advanced_reporting, :dynamic_content, :chat,
+        :ticket_templates, :custom_survey ],
       :inherits => [ :blossom_jan_17 ]
     },
 
     :estate_jan_17 => {
-      :features => [ :multi_product, :customer_slas, :multi_timezone , 
+      :features => [ :multi_product, :customer_slas, :multi_timezone ,
         :collision, :layout_customization, :round_robin, :enterprise_reporting,
         :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing, :dynamic_sections,
-        :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies, 
-        :multiple_companies_toggle, :round_robin_on_update, :shared_ownership_toggle ],
+        :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies,
+        :multiple_companies_toggle, :round_robin_on_update ],
       :inherits => [ :garden_jan_17 ]
     },
 
@@ -111,6 +113,9 @@ class Account < ActiveRecord::Base
     }
 
   }
+
+  ADVANCED_FEATURES = [:link_tickets, :parent_child_tickets]
+  ADVANCED_FEATURES_TOGGLE = ADVANCED_FEATURES.map{|f| "#{f}_toggle".to_sym}
 
   # Features added temporarily to avoid release for all the customers at one shot
   # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
@@ -125,8 +130,8 @@ class Account < ActiveRecord::Base
     :sort_by_customer_response => false, :survey_links => true,
     :tags_filter_reporting => false,
     :saml_unspecified_nameid => false, :euc_hide_agent_metrics => false,
-    :single_session_per_user => false, :link_tickets => false, :parent_child_tickets => false,
-    :marketplace_app => false, :sandbox_account => false, :collaboration => false
+    :single_session_per_user => false, :marketplace_app => false, :sandbox_account => false,
+    :collaboration => false
   }
 
 
@@ -145,7 +150,7 @@ class Account < ActiveRecord::Base
     :count_es_writes => false, :count_es_reads => false, :activity_revamp => true, :countv2_writes => false, :countv2_reads => false,
     :helpdesk_restriction_toggle => false, :freshfone_acw => false, :ticket_templates => false, :cti => false, :all_notify_by_custom_server => false,
     :freshfone_custom_forwarding => false, :freshfone_onboarding => false, :freshfone_gv_forward => false, :inline_images_with_one_hop => false, :skill_based_round_robin => false,
-    :salesforce_v2 => false, :dynamics_v2 => false}
+    :salesforce_v2 => false, :advanced_search => false, :advanced_search_bulk_actions => false,:dynamics_v2 => false }
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  {:anonymous_tickets => true, :open_solutions => true, :auto_suggest_solutions => true,
@@ -170,17 +175,18 @@ class Account < ActiveRecord::Base
     :freshfone_new_notifications => false, :freshfone_onboarding => false, :gamification_perf => false,
     :gamification_quest_perf => false, :lambda_exchange => false, :link_tickets => false,
     :list_page_new_cluster => false, :meta_read => false, :most_viewed_articles => false,
-    :multifile_attachments => false, :new_footer_feedback_box => false, :new_leaderboard => false,
+    :multifile_attachments => true, :new_footer_feedback_box => false, :new_leaderboard => false,
     :parent_child_tickets => false, :periodic_login_feature => false, :restricted_helpdesk => false,
     :round_robin_capping => false, :sidekiq_dispatchr_feature => false,
     :solutions_meta_read => false, :supervisor_dashboard => false, :support_new_ticket_cache => false,
     :synchronous_apps => false, :ticket_list_page_filters_cache => false, :translate_solutions => false,
-    :spam_detection_service => false, :skip_hidden_tkt_identifier => false, :agent_collision_alb => false, :auto_refresh_alb => false, 
-    :countv2_template_read => false, :customer_sentiment_ui => false, :portal_solution_cache_fetch => false, :activity_ui => false, 
+    :spam_detection_service => false, :skip_hidden_tkt_identifier => false, :agent_collision_alb => false, :auto_refresh_alb => false,
+    :countv2_template_read => false, :customer_sentiment_ui => false, :portal_solution_cache_fetch => false, :activity_ui => false,
     :customer_sentiment => false, :countv2_template_write => false, :logout_logs => false, :gnip_2_0 => false, :froala_editor => false,
-    :es_v2_splqueries => false, :suggest_tickets => false, :"Freshfone New Notifications" => false, :feedback_widget_captcha => false, 
+    :es_v2_splqueries => false, :suggest_tickets => false, :"Freshfone New Notifications" => false, :feedback_widget_captcha => false,
     :es_multilang_solutions => false, :requester_widget => false, :spam_blacklist_feature => false,
-    :custom_timesheet => false, :antivirus_service => false, :hide_api_key => false,
+    :custom_timesheet => false, :antivirus_service => false, :hide_api_key => false, :new_sla_logic => false, :multi_dynamic_sections => true,
+    :dashboard_new_alias => false, :attachments_scope => false, :email_failures => false,
     :falcon => false
   }
 

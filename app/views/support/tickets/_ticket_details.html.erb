@@ -87,16 +87,26 @@
 </section>
 
 <%= javascript_tag do %>
-  jQuery("#helpdesk_ticket_ticket_type")
+  jQuery(".dynamic_sections")
     .on("change", function(e){
-    	var id = jQuery("option:selected", this).data("id");
-      jQuery('div.ticket_section').remove();
+      var id;
+      var selected = jQuery(this).find(':selected');
+      if (selected.length > 0){
+        id = selected.data().id;
+      }
+      var nextElements = jQuery(this).parent().parent().nextAll();
+      nextElements.each(jQuery.proxy(function(index, dataItem){
+        if (jQuery(dataItem).hasClass('ticket_section'))
+          dataItem.remove();
+        else
+          return false;
+      },this));
       var element = jQuery('.section-ticket-field-'+id).parent();
       if(element.length != 0) {
-      	jQuery(jQuery('.section-ticket-field-'+id).val()
-      				.replace(new RegExp('&lt', 'g'), '<')
-      				.replace(new RegExp('&gt', 'g'), '>'))
-      		.insertAfter(jQuery("#ticket-field-ticket_type"));
+        jQuery(jQuery('.section-ticket-field-'+id).val()
+              .replace(new RegExp('&lt', 'g'), '<')
+              .replace(new RegExp('&gt', 'g'), '>'))
+            .insertAfter(jQuery("#"+this.id).parent().parent());
       }
   }).trigger('change');
 <% end %>

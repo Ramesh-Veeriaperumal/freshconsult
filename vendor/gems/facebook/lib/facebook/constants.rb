@@ -64,7 +64,40 @@ module Facebook
     FB_MESSAGE_PREFIX           = "m_"
 
     REALTIME_MESSSAGING_CHARACTER_LIMIT = 640
-    
+
+    URL_DELIMITER               = "?"
+
+    FILENAME_DELIMITER          = "."
+
+    URL_PATH_DELIMITER          = "/"
+
+    URL_PATHS = {
+      :message => {
+        :image => :image_data,
+        :video => :video_data
+      }
+    }
+
+    FEED_VIDEO      = "<div class=\"facebook_post\"><a class=\"thumbnail\" href=\"%{target_url}\" target=\"_blank\"><img src=\"%{thumbnail}\"></a><div><p><a href=\"%{att_url}}\" target=\"_blank\"> %{name}</a></p><p><strong>%{html_content}</strong></p><p>%{desc}</p></div></div>"
+
+    FEED_PHOTO      = "<div class=\"facebook_post\"><p> %{html_content}</p><p><a href=\"%{link}\" target=\"_blank\"><img height=\"%{height}\" src=\"%{photo_url}\"></a></p></div>"
+
+    FEED_LINK       = "<div class=\"facebook_post\"><p> %{html_content}</p><p>%{link_story}</p></div>"
+
+    COMMENT_SHARE   = FEED_LINK
+
+    COMMENT_PHOTO   = FEED_PHOTO
+
+    COMMENT_STICKER = FEED_PHOTO
+
+    MESSAGE_IMAGE   = "%{html_content} <a href=\"%{url}\" target=\"_blank\"><img src=\"%{url}\" height=\"%{height}\"></a>"
+
+    MESSAGE_SHARE   = MESSAGE_IMAGE#{}"%{html_content} <a href=\"%{url}\" target=\"_blank\"> %{name} </a>"
+
+    ACCESS_TOKEN_PATH = "oauth/access_token"
+
+    ACCESS_TOKEN_PARAMS = "client_id=%{client_id}&client_secret=%{client_secret}&redirect_uri=%{redirect_uri}&code=%{code}"
+
   end
 end
   

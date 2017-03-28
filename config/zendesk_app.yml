@@ -1,0 +1,14 @@
+defaults: &defaults
+  app_id: 157
+
+development:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults
+
+test:
+  <<: *defaults

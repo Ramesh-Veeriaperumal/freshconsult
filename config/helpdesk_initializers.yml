@@ -95,3 +95,5 @@ helpdesk:
     - sandbox
     - clamav_config
     - inline_manual_config
+    - health_check_constants
+    - zendesk_app_config

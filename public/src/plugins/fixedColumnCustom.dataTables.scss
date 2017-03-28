@@ -20,8 +20,10 @@
     table{
         table-layout : fixed;
         .fixedWidth , .workable{
-            width : 180px;
             word-break: break-word;
+        }
+        .fixedWidth{
+            width : 180px;
         }
     }
 }

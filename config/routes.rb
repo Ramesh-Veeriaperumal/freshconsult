@@ -205,6 +205,8 @@ Helpkit::Application.routes.draw do
     match '/search/autocomplete/tags',         to: 'search/v2/autocomplete#tags',                via: :get
     match '/search/merge_topic',               to: 'search/v2/merge_topics#search_topics',       via: :post
     match '/contact_merge/search',             to: 'search/v2/merge_contacts#index',             via: :get
+    
+    match '/search/tickets', to: 'search/v2/spotlight#tickets', via: :post
 
     match '/search/related_solutions/ticket/:ticket', to: 'search/v2/solutions#related_solutions',  via: :get, constraints: { format: /(html|js|json)/ }
     match '/search/search_solutions/ticket/:ticket',  to: 'search/v2/solutions#search_solutions',   via: :get, constraints: { format: /(html|js|json)/ }
@@ -1579,6 +1581,7 @@ Helpkit::Application.routes.draw do
     match '/search_solutions/ticket/:ticket/' => 'solutions#search_solutions', :as => :ticket_search_solutions
   end
 
+  match '/search/tickets' => 'search/tickets#index', via: [:get, :post]
   match '/search/tickets/filter/:search_field' => 'search/tickets#index'
   match '/search/ticket_associations/filter/:search_field' => 'search/ticket_associations#index'
   match '/search/ticket_associations/recent_trackers' => 'search/ticket_associations#index', via: :post
@@ -1956,6 +1959,8 @@ Helpkit::Application.routes.draw do
         put :link
         put :unlink
         get :ticket_association
+        get :fetch_errored_email_details
+        put :suppression_list_alert
       end
 
       resources :child, :only => [:new], :controller => "tickets"
@@ -2903,6 +2908,7 @@ Helpkit::Application.routes.draw do
           post :select_all_feature
           put :change_currency
           get :check_domain
+          put :unblock_outgoing_email
         end
       end
 

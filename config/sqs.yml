@@ -28,6 +28,7 @@ development:
   trial_customer_email_queue: trial_customer_email_queue_dev
   default_email_queue: default_email_queue_dev
   email_dead_letter_queue: failed_emails_queue_dev
+  fd_email_failure_reference: fd_email_failure_reference_dev
   email_events_queue: fd_email_spam
 staging:
   twitter_realtime_queue: social_gnip_2_0_tweet_staging
@@ -57,6 +58,7 @@ staging:
   trial_customer_email_queue: trial_customer_email_queue_staging
   default_email_queue: default_email_queue_staging
   email_dead_letter_queue: failed_emails_queue_staging
+  fd_email_failure_reference: fd_email_failure_reference_staging
 production:
   twitter_realtime_queue: social_gnip_tweet_production
   facebook_realtime_queue: social_fb_feed_production
@@ -86,6 +88,7 @@ production:
   trial_customer_email_queue: trial_customer_email_queue_production
   default_email_queue: default_email_queue_production
   email_dead_letter_queue: failed_emails_queue_production
+  fd_email_failure_reference: fd_email_failure_reference_production
 test:
   twitter_realtime_queue: social_gnip_2_0_tweet_test
   facebook_realtime_queue: social_fb_feed_test
@@ -113,3 +116,4 @@ test:
   trial_customer_email_queue: trial_customer_email_queue_test
   default_email_queue: default_email_queue_test
   email_dead_letter_queue: failed_emails_queue_test
+  fd_email_failure_reference: fd_email_failure_reference_test

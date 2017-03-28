@@ -443,7 +443,14 @@ class ApiApplicationController < MetalApiController
       if $infra['PRIVATE_API'] || (get_request? && !request.authorization)
         session_auth
       else
-        basic_auth
+         if current_account.launched? :api_jwt_auth and request.env["HTTP_AUTHORIZATION"][/^Token (.*)/]
+          # authenticate using JWT token
+          authenticate_with_http_token do |token|
+              @current_user = FdJWTAuth.new(token).decode_jwt_token
+            end
+        else
+          basic_auth
+        end
       end
 
       # should be defined in case of invalid credentials as api_current_user gets called repeatedly.
