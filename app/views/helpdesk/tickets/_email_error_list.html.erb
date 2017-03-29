@@ -5,10 +5,8 @@
             <div class = "errored-email">
                 <%= item["email"] %>
                 <div class="action-items">
-                    <% if false %>
                     <% if current_account.freshfone_active? && !item['user'].blank? && !item['user'].mobile.blank? %>
                         <%= strange_number?(item['user'].mobile) ? "" : can_make_calls(item['user'].mobile, item['user'], "ficon-phone",nil,false)%>
-                    <% end %>
                     <% end %>
                     <% if current_user.privilege?(:admin_tasks) %>
                         <% if item["type"].include? "dropped" %>
