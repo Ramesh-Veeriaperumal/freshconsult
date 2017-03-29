@@ -24,7 +24,8 @@ class Helpdesk::Note < ActiveRecord::Base
   #zero_downtime_migration_methods :methods => {:remove_columns => ["body", "body_html"] } 
   
   attr_accessor :nscname, :disable_observer, :send_survey, :include_surveymonkey_link, :quoted_text, 
-                :skip_notification, :disable_observer_rule
+                :skip_notification, :disable_observer_rule, :last_note_id
+
   attr_protected :attachments, :notable_id
 
   has_many :shared_attachments,
@@ -107,6 +108,7 @@ class Helpdesk::Note < ActiveRecord::Base
   validates :user, presence: true, if: -> {user_id.present?}
   validate :edit_broadcast_note, on: :update, :if => :broadcast_note?
 
+
   def edit_broadcast_note
     self.errors.add(:base, I18n.t('activerecord.errors.messages.edit_broadcast_note'))
   end
@@ -141,7 +143,6 @@ class Helpdesk::Note < ActiveRecord::Base
       { :conditions => ['`helpdesk_notes`.source <> ?', SOURCE_KEYS_BY_TOKEN[source]] }
     end
   end
-
 
   def status?
     source == SOURCE_KEYS_BY_TOKEN["status"]
