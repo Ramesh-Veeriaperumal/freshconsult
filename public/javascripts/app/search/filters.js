@@ -14,9 +14,10 @@ window.App.FilterOps = window.App.FilterOps || {};
     filter_remote_url : {
             "agent" : "agents",
             "company" : "companies",
-            "tags" : "tags"
+            "tags" : "tags",
+            "requesters" : "requesters"
     },
-    filter_remote : ["tags","agent","company"],
+    filter_remote : ["tags","agent","company","requesters"],
     default_available_filter : [ "agent","group","status","priority" ],
     bindSearchFilterEvents: function(context) {
       var _this = this;
@@ -125,6 +126,9 @@ window.App.FilterOps = window.App.FilterOps || {};
          var config = {
             maximumSelectionSize: 5
         };
+        if(condition == "requesters") {
+            config.maximumSelectionSize = 3;
+        }
          config.ajax = {
             url: "/search/autocomplete/" + _this.filter_remote_url[condition],
             dataType: 'json',
@@ -161,8 +165,10 @@ window.App.FilterOps = window.App.FilterOps || {};
         return 'responder_id';
       } else if(field == 'tags') {
         return 'tags';
-      }else if(field == 'group') {
+      } else if(field == 'group') {
         return 'group_id';
+      } else if(field == 'requesters') {
+        return 'requester_id'    
       } else {
         return field;
       }

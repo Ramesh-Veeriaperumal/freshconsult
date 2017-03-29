@@ -8966,6 +8966,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     type: Type
     source: Source
     product: Product
+    requesters: Requesters
   helpdesk_reports:
     helpdesk_analysis : Helpdesk Analysis
     productivity : Productivity
