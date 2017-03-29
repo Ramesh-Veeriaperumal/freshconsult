@@ -147,6 +147,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       associated_tickets = [self.associates_rdb]
     end
     notify_associates_fallback(associated_tickets) if associated_tickets.present?
+    self.associates = associated_tickets
     associated_tickets
   end
 
