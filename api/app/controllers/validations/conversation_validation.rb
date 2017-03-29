@@ -34,7 +34,7 @@ class ConversationValidation < ApiValidation
   validate :validate_cloud_files, if: -> { cloud_files.present? && errors[:cloud_files].blank? }
   validate :validate_full_text_length, if: -> { body.present? && full_text.present? }
   validate :validate_unseen_replies, on: :reply, if: :traffic_cop_required?
-  validate :validate_unseen_replies_for_public_notes, on: :create, if: -> { !private and traffic_cop_required? }
+  validate :validate_unseen_replies_for_public_notes, on: :create, if: -> { public_note? and traffic_cop_required? }
 
   def initialize(request_params, item, allow_string_param = false)
     super(request_params, item, allow_string_param)
@@ -74,6 +74,10 @@ class ConversationValidation < ApiValidation
 
     def traffic_cop_required?
       last_note_id.present? and Account.current.traffic_cop_enabled?
+    end
+
+    def public_note?
+      !self.private
     end
 
 end
