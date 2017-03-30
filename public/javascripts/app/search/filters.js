@@ -128,6 +128,13 @@ window.App.FilterOps = window.App.FilterOps || {};
         };
         if(condition == "requesters") {
             config.maximumSelectionSize = 3;
+            config.formatResult = function(state) {
+                return "<div style='font-weight:bold'>" + state.value + "</div><div>" + state.email + "</div>";
+            };
+            config.formatSelection = function(state) {
+                return "<div>" + state.value + "</div>";
+            };
+            config.escapeMarkup = function(m) { return m; }
         }
          config.ajax = {
             url: "/search/autocomplete/" + _this.filter_remote_url[condition],
@@ -141,15 +148,21 @@ window.App.FilterOps = window.App.FilterOps || {};
             },
             results: function (data, params) {
                       var results = [];
-                      jQuery.each(data.results, function(index, item){
-                            results.push({
-                              id: item.id,
-                              text: item.value
-                            });    
-                      });
-                      return {
-                        results: results 
-                      };
+                      if(condition != 'requesters') {
+                        jQuery.each(data.results, function(index, item){
+                                results.push({
+                                     id: item.id,
+                                    text: item.value
+                                });    
+                        });
+                        return {
+                            results: results 
+                        };    
+                      } else {
+                          return {
+                              results : data.results
+                          }
+                    }
             },
             cache: false
           };
@@ -456,7 +469,11 @@ window.App.FilterOps = window.App.FilterOps || {};
                   var data = jQuery(item).find(".select2-container").select2('data');
                   if(data != undefined && data.length > 0){
                       data.map(function(val,i){
-                          value.push(val.text); 
+                          if(property == "requesters") {
+                             value.push(val.value);
+                          } else {
+                             value.push(val.text);
+                          }
                       });
                   }
               } else {
