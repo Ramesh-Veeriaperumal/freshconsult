@@ -13,7 +13,7 @@ class User < ActiveRecord::Base
 
   before_update :backup_user_changes, :clear_redis_for_agent
 
-  after_update  :send_alert_email, :if => :email_changed?
+  #after_update  :send_alert_email, :if => :email_changed?
 
   before_save :set_time_zone, :set_default_company
   before_save :set_language, :unless => :created_from_email
