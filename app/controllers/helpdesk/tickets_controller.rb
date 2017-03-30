@@ -52,7 +52,11 @@ class Helpdesk::TicketsController < ApplicationController
   layout :choose_layout
 
   before_filter :filter_params_ids, :only =>[:destroy,:assign,:close_multiple,:spam,:pick_tickets, :delete_forever, :delete_forever_spam, :execute_bulk_scenario, :unspam, :restore]
-  before_filter :scoper_ticket_actions, :only => [ :assign,:close_multiple, :pick_tickets ]
+  
+  #Set Native mobile is above scoper ticket actions, because, we send mobile response in scoper ticket actions, and 
+  #the nmobile format has to be set. Else we will get a missing template error. 
+  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever,:change_due_by,:reply_to_forward, :save_draft, :clear_draft, :assign]
+  before_filter :scoper_ticket_actions, :only => [ :assign, :close_multiple, :pick_tickets ]
 
   before_filter :load_items, :only => [ :destroy, :restore, :spam, :unspam, :assign,
     :close_multiple ,:pick_tickets, :delete_forever, :delete_forever_spam]
@@ -60,7 +64,6 @@ class Helpdesk::TicketsController < ApplicationController
   skip_before_filter :load_item
   alias :load_ticket :load_item
 
-  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever,:change_due_by,:reply_to_forward, :save_draft, :clear_draft, :assign]
   before_filter :verify_ticket_permission_by_id, :only => [:component]
 
   before_filter :load_ticket,
@@ -1485,8 +1488,8 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def scoper_ticket_actions
-      # check for mobile can be removed when mobile apps perform bulk actions as background job
-      if  !mobile?  and (params[:ids] and params[:ids].length > BACKGROUND_THRESHOLD)
+      # Check for mobile removed. Mobile apps supporting bulk ticket assign. 
+      if (params[:ids] and params[:ids].length > BACKGROUND_THRESHOLD)
         ticket_actions_background
       end
     end
@@ -1499,11 +1502,13 @@ class Helpdesk::TicketsController < ApplicationController
       args = { :action => action_name }
       args.merge!(params_for_bulk_action)
       Tickets::BulkTicketActions.perform_async(args)
+      flash_message = t('helpdesk.flash.tickets_background')
       respond_to do |format|
         format.html {
-          flash[:notice] = t('helpdesk.flash.tickets_background')
+          flash[:notice] = flash_message
           redirect_to helpdesk_tickets_path
         }
+        format.nmobile {render :json => {:message => flash_message}}
       end
     end
 
