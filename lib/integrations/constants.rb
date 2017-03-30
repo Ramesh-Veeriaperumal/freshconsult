@@ -56,7 +56,8 @@ module Integrations::Constants
     APP_NAMES[:salesforce_v2] => 6,
     APP_NAMES[:harvest] => 8,
     APP_NAMES[:dropbox] => 16,
-    APP_NAMES[:surveymonkey] => 16
+    APP_NAMES[:surveymonkey] => 16,
+    APP_NAMES[:google_calendar] => 4
   }
 
   CRM_APPS= [:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm, :quickbooks, :freshbooks, :infusionsoft, :freshsales, :salesforce_v2, :dynamics_v2]
