@@ -2086,7 +2086,7 @@ App.Tickets.LimitEmails = {
     function _resetPrivateNoteToggle($form) {
         $('#toggle-note-visibility .toggle-button').addClass('active');
 				var $submitBtn = $form.find('.submit_btn');
-				$submitBtn.find('[rel=text]').text(submit_btn.data('defaultText'));
+				$submitBtn.find('[rel=text]').text($submitBtn.data('defaultText'));
     }
 
 }(window.jQuery));
