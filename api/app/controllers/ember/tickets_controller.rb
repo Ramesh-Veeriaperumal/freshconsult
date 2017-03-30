@@ -191,9 +191,15 @@ module Ember
       end
 
       def tickets_filter
-        filtered_tickets = current_account.tickets.permissible(api_current_user).filter(params: params.except(:ids), filter: 'Helpdesk::Filters::CustomTicketFilter')
+        filtered_tickets = current_account.tickets.permissible(api_current_user).filter(ticket_filter_params)
         filtered_tickets = params[:ids].present? ? filtered_tickets.where(display_id: params[:ids]) : filtered_tickets
         params[:updated_since].present? ? filtered_tickets.where('helpdesk_tickets.updated_at >= ?', params[:updated_since]) : filtered_tickets
+      end
+
+      def ticket_filter_params
+        # format (json) is checked in CustomTicketFilter for API v2 to filter all tickets without last 30 days created_at limit
+        # ids are not accepted by CustomTicketFilter, so ignoring it also.
+        { params: params.except(:ids, :format), filter: 'Helpdesk::Filters::CustomTicketFilter' }
       end
 
       def validate_filter_params

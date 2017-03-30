@@ -76,8 +76,6 @@ properties:
                 type: number
               state:
                 type: string
-              addons:
-                type: array
               subscription_plan:
                 type: string
           settings:

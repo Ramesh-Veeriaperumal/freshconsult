@@ -17,6 +17,9 @@ module Search
       class DefaultSearchException < StandardError
       end
 
+      class GatewayTimeoutException < StandardError
+      end
+
     end
   end
 end

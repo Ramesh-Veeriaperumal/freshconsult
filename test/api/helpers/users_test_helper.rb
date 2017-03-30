@@ -9,7 +9,7 @@ module UsersTestHelper
   # Patterns
   def contact_pattern(expected_output = {}, ignore_extra_keys = true, contact)
     expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
-    custom_field = contact.custom_field.map { |k, v| [CustomFieldDecorator.display_name(k), v] }.to_h
+    custom_field = contact.custom_field.map { |k, v| [CustomFieldDecorator.display_name(k), v.respond_to?(:utc) ? v.strftime('%F') : v] }.to_h
     contact_custom_field = (custom_field && ignore_extra_keys) ? custom_field.ignore_extra_keys! : custom_field
 
     result = {
@@ -77,6 +77,14 @@ module UsersTestHelper
     contact_pattern(expected_output, contact).merge(deleted: (expected_output[:deleted] || contact.deleted).to_s.to_bool)
   end
 
+  def unique_external_id_contact_pattern(expected_output = {}, contact)
+    contact_pattern(expected_output, contact).merge!(unique_external_id: expected_output[:unique_external_id] || contact.unique_external_id)
+  end
+
+  def deleted_unique_external_id_contact_pattern(expected_output = {}, contact)
+    deleted_contact_pattern(expected_output, contact).merge!(unique_external_id: expected_output[:unique_external_id] || contact.unique_external_id)
+  end
+
   def make_agent_pattern(expected_output = {}, agent_user)
     agent = agent_user.agent
     agent_pattern = {
@@ -114,6 +122,12 @@ module UsersTestHelper
     ]
     keys -= [:deleted] if contact.deleted
     contact_pattern(contact).except(*keys)
+  end
+
+  def index_contact_pattern_with_unique_external_id(contact)
+    keys = [:avatar, :tags, :other_emails, :deleted]
+    keys -= [:deleted] if contact.deleted
+    unique_external_id_contact_pattern(contact).except(*keys)
   end
 
   def v1_contact_payload

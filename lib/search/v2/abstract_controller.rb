@@ -46,7 +46,7 @@ module Search::V2::AbstractController
           types:        searchable_types,
           es_params:    construct_es_params,
           locale:       @es_locale
-        }).query_results
+        }).query_results        
       end
 
       # Types corresponding to the model classes
@@ -82,7 +82,7 @@ module Search::V2::AbstractController
           search_term: @es_search_term,
           account_id: current_account.id,
           request_id: request.try(:uuid)
-        }
+        }.merge(es_additional_params)
       end
 
       # Reconstruction of AR result set to JSON, etc if any
@@ -104,6 +104,13 @@ module Search::V2::AbstractController
           format.json {}
           format.js {}
         end
+      end
+
+      #Additional params for processing, specific conditions on es side
+      def es_additional_params
+        additional_params = {}
+        additional_params[:unique_external_id_feature] = true if (searchable_types.include?("user") && current_account.unique_contact_identifier_enabled?)
+        additional_params
       end
 
       # Before filter to construct parameters

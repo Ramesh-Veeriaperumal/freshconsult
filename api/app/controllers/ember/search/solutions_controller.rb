@@ -9,7 +9,8 @@ module Ember
         @sort_direction = 'desc'
         @search_sort  = params[:search_sort] if params[:search_sort].present?
         @language_id  = params[:language] if params[:language].present? && current_account.es_multilang_soln?
-          
+        @user = User.find_by_id(params[:user_id]) if params[:user_id].present?
+
         if params[:context] == 'spotlight'
           @search_context = :agent_spotlight_solution
         elsif params[:context] == 'insert_solutions'
@@ -17,13 +18,15 @@ module Ember
         end
 
         @items  = esv2_query_results(esv2_agent_models)
-        response.api_meta = { count: @items.count }
+        response.api_meta = { count: @items.total_entries }
       end
 
       private
 
         def decorator_options
-          [Solutions::ArticleDecorator, {}]
+          options = {}
+          options.merge!(user: @user) if @user
+          [Solutions::ArticleDecorator, options]
         end
 
         def construct_es_params

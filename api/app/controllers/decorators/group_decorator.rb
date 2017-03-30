@@ -3,7 +3,7 @@ class GroupDecorator < ApiDecorator
 
   def initialize(record, options)
     super(record)
-    @agent_groups = options[:agent_groups]
+    @agent_mapping_ids = options[:agent_mapping_ids]
   end
 
   def to_hash
@@ -49,13 +49,7 @@ class GroupDecorator < ApiDecorator
   end
 
   def agent_ids
-    if @agent_groups
-      @agent_groups.map do |agent_group|
-        agent_group.user_id if agent_group.group_id == record.id
-      end.compact
-    else
-      agent_ids_from_loaded_record
-    end
+    (@agent_mapping_ids || record.agent_groups.map(&:user_id) || []).compact.uniq
   end
 
   def business_hour_id

@@ -11,6 +11,7 @@ window.App = window.App || {};
 			App.Parentchildtemplates.initializeChildModel();
 			App.Parentchildtemplates.intializeUnsavedModel();
 			setTimeout(function(){
+				App.Parentchildtemplates.initDynamicSection();
 				App.Parentchildtemplates.getOldValues();
 			},100);
 			App.Parentchildtemplates.initializeEditInheritFeild(customMessages.inheritParentFields);

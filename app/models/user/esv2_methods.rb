@@ -16,7 +16,7 @@ class User < ActiveRecord::Base
               only: [ :name, :created_at, :updated_at, :account_id, :active, 
                       :job_title, :phone, :mobile, :twitter_id, 
                       :time_zone, :deleted, :fb_profile_id, :language, 
-                      :blocked, :address, :helpdesk_agent ], 
+                      :blocked, :address, :helpdesk_agent, :unique_external_id ], 
               methods: [ :user_description, :company_names, :emails, :company_ids, :tag_ids, :parent_id ]
             }, true).merge(esv2_custom_attributes).merge(tag_names: es_tag_names).to_json
   end
@@ -24,7 +24,7 @@ class User < ActiveRecord::Base
   # V2 columns to be observed for changes
   #
   def esv2_columns
-    @@esv2_columns ||= [:account_id, :active, :address, :blocked, :deleted, :description, :email, :fb_profile_id, :helpdesk_agent, :job_title, :language, :mobile, :name, :phone, :string_uc04, :time_zone, :twitter_id, :tags].concat(esv2_contact_field_data_columns)
+    @@esv2_columns ||= [:account_id, :active, :address, :blocked, :deleted, :description, :email, :fb_profile_id, :helpdesk_agent, :job_title, :language, :mobile, :name, :phone, :string_uc04, :time_zone, :twitter_id, :tags, :unique_external_id].concat(esv2_contact_field_data_columns)
   end
   
   # V2 custom field columns

@@ -27,4 +27,5 @@
 //= require custom-form/template/section_confirm
 //= require custom-form/template/section_dialogue
 //= require custom-form/template/section_header
+//= require custom-form/template/section_container
 //= require custom-form/template/section

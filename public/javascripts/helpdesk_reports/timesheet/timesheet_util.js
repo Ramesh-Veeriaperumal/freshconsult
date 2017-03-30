@@ -1054,6 +1054,14 @@ var savedReportUtil = (function() {
                       //populate the filters from report filter data
                       _this.addFiltersToMenu(false);
                       Helpkit.TimesheetUtil.toggleArchiveMessage();
+
+                      var is_preset_selected = Helpkit.report_filter_data[_this.last_applied_saved_report_index].report_filter.data_hash.date.presetRange;
+                      if(is_preset_selected){
+                          _this.save_util.controls.showScheduleOptions(false);
+                      }else{
+                          debugger;
+                         _this.save_util.controls.hideScheduleOptions();
+                      }
                   }
                   var result = Helpkit.ScheduleUtil.isScheduled(
                               _this.last_applied_saved_report_index,

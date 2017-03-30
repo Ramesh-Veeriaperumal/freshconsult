@@ -10,7 +10,7 @@ module Va::Observer::Util
 		def user_present?
 			observer_condition = @model_changes && (User.current || survey_result?) && 
 																														!zendesk_import? && !freshdesk_webhook? && !sent_for_enrichment?
-			Rails.logger.debug "INSIDE user_present? for object: #{self.inspect} observer_condition: #{observer_condition}"
+			Rails.logger.debug "user_present? :: ID=#{self.id} - Class=#{self.class} :: Cond=#{observer_condition}"
 			return observer_condition
 		end
 

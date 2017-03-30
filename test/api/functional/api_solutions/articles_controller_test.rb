@@ -17,6 +17,9 @@ module ApiSolutions
       additional.supported_languages = ["es","ru-RU"]
       additional.save
       @account.features.enable_multilingual.create
+      subscription = @account.subscription
+      subscription.state = "active"
+      subscription.save
       @account.reload
       setup_articles
       @@initial_setup_run = true

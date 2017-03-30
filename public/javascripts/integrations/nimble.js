@@ -21,7 +21,7 @@ NimbleWidget.prototype= {
 
   parse_contact: function(resJson, response){
     var contacts = [];
-    var nimble_domain = response.getHeader('x-nimble-domain');
+    var nimble_domain = "app.nimble.com";
     for(var i=0;i<resJson.resources.length;i++){
       var resource = resJson.resources[i];
       var contact_data = {name: '', designation: null, company: '', company_url: null, phone: 'N/A', mobile: 'N/A', department: null, 

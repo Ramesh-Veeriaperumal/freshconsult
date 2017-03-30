@@ -1,7 +1,7 @@
 module Helpdesk::Activities
   class Activity
     attr_accessor :performer, :performed_time, :activity, :summary, 
-            :rule, :note, :event_type, :activity_arr, :invalid
+            :rule, :note, :event_type, :activity_arr, :invalid, :to_email_failures, :cc_email_failures
 
     def initialize(params)
       @performer      = params[:performer]
@@ -10,8 +10,12 @@ module Helpdesk::Activities
       @activity_arr   = params[:activity_arr]
       @summary        = params[:summary]
       @invalid        = params[:invalid]
-      @rule           = @activity[:rule]    if @activity[:rule].present?
-      @note           = @activity[:note].first[0] if @activity[:note].present? and @activity[:note].first.present?
+      @rule           = @activity[:rule]  if @activity[:rule].present?
+      if @activity[:note].present? && @activity[:note].first[0].present?
+        @note         = @activity[:note].first[0]
+        @to_email_failures = @activity[:note].first[2] if @activity[:note].first[2].present?
+        @cc_email_failures = @activity[:note].first[3] if @activity[:note].first[3].present?
+      end
       @event_type     = @activity[:event_type]
     end
 

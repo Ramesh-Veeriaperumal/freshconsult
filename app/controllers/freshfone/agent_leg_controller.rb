@@ -54,9 +54,10 @@ module Freshfone
       end
 
       def active_calls(call)
-        params[:call_ids].present? && call.meta.present? && 
-            !call.meta.agent_pinged_and_no_response?(params[:agent].to_i) && 
-            call.supervisor_controls.warm_transfer_initiated_calls.blank?
+        ((params[:call_ids].present? && call.meta.present? && 
+          !call.meta.agent_pinged_and_no_response?(params[:agent].to_i)) ||
+        			!call.ringing?) &&
+        				call.supervisor_controls.warm_transfer_initiated_calls.blank?
       end
 
       def validate_new_notifications_feature
@@ -86,7 +87,7 @@ module Freshfone
 
       def set_ringing_call_ids
         call_ids = []
-        ringing_calls.each do |call|
+        current_account.freshfone_calls.ringing_calls.each do |call|
           call_ids.push(call.id) if call.meta.present? && call.meta.agent_pinged?(params[:agent])
         end
         params[:call_ids] = call_ids

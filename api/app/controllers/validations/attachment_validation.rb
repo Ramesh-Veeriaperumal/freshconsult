@@ -1,11 +1,11 @@
 class AttachmentValidation < ApiValidation
   CHECK_PARAMS_SET_FIELDS = %w(user_id inline_type).freeze
 
-  attr_accessor :user_id, :content, :inline, :inline_type, :shared_attachment_id
+  attr_accessor :user_id, :content, :inline, :inline_type, :attachable_id, :attachable_type
 
   validates :user_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false, ignore_string: :allow_string_param }
   validates :content, required: true, data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: false }, file_size: { max: ApiConstants::ALLOWED_ATTACHMENT_SIZE }, on: :create
-  validates :inline, data_type: { rules: 'Boolean',  ignore_string: :allow_string_param }
+  validates :inline, data_type: { rules: 'Boolean', ignore_string: :allow_string_param }
   validates :user_id, custom_absence: { allow_nil: false, message: :cannot_set_user_id }, if: -> { is_inline? }
   validates :inline_type, custom_absence: { allow_nil: false, message: :cannot_set_inline_type }, unless: -> { is_inline? }
   validates :inline_type, custom_inclusion: { in: AttachmentConstants::INLINE_ATTACHABLE_NAMES_BY_KEY.keys, ignore_string: :allow_string_param, detect_type: true }, if: -> { errors[:inline_type].blank? }
@@ -13,9 +13,14 @@ class AttachmentValidation < ApiValidation
 
   validate :validate_file_type, if: -> { errors[:content].blank? && is_inline? }
 
-  validates :shared_attachment_id, required: true, custom_numericality: {
+  validates :attachable_id, required: true, custom_numericality: {
     only_integer: true, greater_than: 0,
     allow_nil: false, ignore_string: :allow_string_param
+  }, on: :unlink
+
+  validates :attachable_type, required: true, custom_inclusion: {
+    in: AttachmentConstants::ATTACHABLE_TYPES.keys,
+    ignore_string: :allow_string_param
   }, on: :unlink
 
   def initialize(request_params, item, allow_string_param = false)
@@ -31,7 +36,7 @@ class AttachmentValidation < ApiValidation
   end
 
   private
-  
+
     def extension_valid?(file)
       ext = File.extname(file.respond_to?(:original_filename) ? file.original_filename : file.content_file_name).downcase
       [AttachmentConstants::INLINE_IMAGE_EXT.include?(ext), ext]

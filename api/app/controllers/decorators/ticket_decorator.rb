@@ -2,7 +2,7 @@ class TicketDecorator < ApiDecorator
   delegate :ticket_body, :custom_field_via_mapping, :cc_email, :email_config_id, :fr_escalated, :group_id, :priority,
            :requester_id, :responder, :responder_id, :source, :spam, :status, :subject, :display_id, :ticket_type,
            :schema_less_ticket, :deleted, :due_by, :frDueBy, :isescalated, :description,
-           :description_html, :tag_names, :attachments, :company_id, :cloud_files, :ticket_states, to: :record
+           :description_html, :tag_names, :attachments, :attachments_sharable, :company_id, :cloud_files, :ticket_states, to: :record
 
   def initialize(record, options)
     super(record)
@@ -10,10 +10,6 @@ class TicketDecorator < ApiDecorator
     @contact_name_mapping = options[:contact_name_mapping]
     @company_name_mapping = options[:company_name_mapping]
     @sideload_options = options[:sideload_options] || []
-  end
-
-  def utc_format(value)
-    value.respond_to?(:utc) ? value.utc : value
   end
 
   def custom_fields
@@ -40,22 +36,6 @@ class TicketDecorator < ApiDecorator
   end
 
   def privilege_based_requester_info
-    if @sideload_options.include?('requester') || @sideload_options.include?('falcon')
-      requester = record.requester
-        req_hash = {
-          id: requester.id,
-          name: requester.name,
-          email: requester.email,
-          mobile: requester.mobile,
-          phone: requester.phone
-        }
-      if @sideload_options.include?('falcon')
-        avatar_hash = requester.avatar ? AttachmentDecorator.new(requester.avatar).to_hash.merge(thumb_url: requester.avatar.attachment_url_for_api(true, :thumb)) : nil
-        req_hash.merge!({avatar: avatar_hash})
-      end
-      return req_hash
-    end
-    
     return unless @sideload_options.include?('requester') && record.requester.customer?
     contact_decorator = ContactDecorator.new(record.requester, name_mapping: @contact_name_mapping, company_name_mapping: @company_name_mapping)
     User.current.privilege?(:view_contacts) ? contact_decorator.full_requester_hash : contact_decorator.restricted_requester_hash
@@ -81,7 +61,9 @@ class TicketDecorator < ApiDecorator
       resolved_at: ticket_states.resolved_at.try(:utc),
       first_responded_at: ticket_states.first_response_time.try(:utc),
       closed_at: ticket_states.closed_at.try(:utc),
-      status_updated_at: ticket_states.status_updated_at.try(:utc)
+      status_updated_at: ticket_states.status_updated_at.try(:utc),
+      pending_since: ticket_states.pending_since.try(:utc),
+      reopened_at: ticket_states.opened_at.try(:utc)
     }
   end
 
@@ -103,14 +85,14 @@ class TicketDecorator < ApiDecorator
   end
 
   def company
-    if @sideload_options.include?('company') || @sideload_options.include?('falcon')
+    if @sideload_options.include?('company')
       company = record.company
       company ? { id: company.id, name: company.name } : {}
     end
   end
 
   def attachments_hash
-    attachments.map { |a| AttachmentDecorator.new(a).to_hash }
+    (attachments | attachments_sharable).map { |a| AttachmentDecorator.new(a).to_hash }
   end
 
   def cloud_files_hash
@@ -142,7 +124,7 @@ class TicketDecorator < ApiDecorator
     topic = record.topic
     topic_hash(topic)
   end
-  
+
   def to_hash
     hash = {
       cc_emails: cc_email.try(:[], :cc_emails),
@@ -178,17 +160,24 @@ class TicketDecorator < ApiDecorator
 
   def to_search_hash
     company_name = company.key?(:name) ? company[:name] : nil
-    responder_name = responder.name if responder
-    {
+    ret_hash = {
       id: display_id,
-      description: description,
-      requester_name: requester[:name],
-      requester_avatar: requester[:avatar],
-      company_name: company_name,
+      description_text: description,
       tags: tag_names,
-      responder_name: responder_name,
+      responder_id: responder_id,
+      due_by: due_by.try(:utc),
       created_at: created_at.try(:utc),
+      subject: subject,
+      requester_id: requester_id,
+      group_id: group_id,
+      status: status,
+      company_id: company_id,
+      company_name: company_name,
+      stats: stats
     }
+    requester_hash = requester
+    ret_hash.merge!(requester: requester_hash) if requester_hash
+    ret_hash
   end
 
   class << self

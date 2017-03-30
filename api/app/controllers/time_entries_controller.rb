@@ -131,7 +131,8 @@ class TimeEntriesController < ApiApplicationController
     end
 
     def set_time_spent(params)
-      params[cname][:time_spent] = convert_duration(params[cname][:time_spent]) if create? || params[cname].key?(:time_spent)
+      # nil value should not be stored for time_spent
+      params[cname][:time_spent] = convert_duration(params[cname][:time_spent] || 0) if create? || params[cname].key?(:time_spent)
       params[cname][:time_spent] ||= @item.calculate_time_spent if update? && params[cname][:timer_running] == false
     end
 

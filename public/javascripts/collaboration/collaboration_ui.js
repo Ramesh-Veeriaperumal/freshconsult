@@ -1203,6 +1203,12 @@ App.CollaborationUi = (function ($) {
                     });
                 }
             }
+        },
+
+        mentionListSorter: function(arr) {
+            return arr.sort(function (a, b) {
+                return (a.username && b.username) ? ( a.username.length - b.username.length || a.username > b.username) : -1;
+            });
         }
     };
 
@@ -1300,6 +1306,9 @@ App.CollaborationUi = (function ($) {
             // init UI if model is inited; or else save config
             // on connection init if config is pending; initUi will be called onModelInited
             config = config || Collab.parseJson($("#collab-ui-data").attr("data-ui-payload"));
+            // Conversation names may have special characters. Handling this case separately
+            config.currentConversationName = $("#collab-ui-data").attr("data-convo-name");
+            
             config.expandCollabOnLoad = !!Collab.getUrlParameter("collab");
             config.scrollToMsgId = Collab.getUrlParameter("message");
 
@@ -1538,17 +1547,22 @@ App.CollaborationUi = (function ($) {
                 "menuHtml": menu_item,
                 "maxItems": 5,
                 "filterKeys": ["name", "username", "mention_text"],
-                "tagAttribute": "username"
+                "tagAttribute": "username",
+                "sort": _COLLAB_PVT.mentionListSorter
             };
             var lm = new lightMention(options);
             lm.bindMention();
         },
 
         parseJson: function (data) {
-            if(typeof data === "string") {
-                return JSON.parse(data)
-            } else {
-                return data;
+            try {
+                if(typeof data === "string") {
+                    return JSON.parse(data)
+                } else {
+                    return data;
+                }
+            } catch(e) {
+                console.error("parse error: ", e, "\n\ntried to parse: ", data);
             }
         },
 
@@ -1588,6 +1602,8 @@ App.CollaborationUi = (function ($) {
         onReconnecthandler: function(response) {
             Collab.networkDisconnected = false;
             var config = $("#collab-ui-data").attr("data-ui-payload");
+            // Conversation names may have special characters. Handling this case separately
+            config.currentConversationName = $("#collab-ui-data").attr("data-convo-name");
             if(config) {
                 Collab.initingPostReconnect = true;
                 App.CollaborationUi.initUi(Collab.parseJson(config));

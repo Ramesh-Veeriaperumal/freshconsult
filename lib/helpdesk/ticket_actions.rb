@@ -86,7 +86,7 @@ module Helpdesk::TicketActions
   end
 
   def update_multiple_tickets
-    render :partial => "update_multiple" , :locals => { :select_all => false } 
+    render :partial => "update_multiple" , :locals => { :select_all => false ,:search_term => params[:term] } 
   end
 
   def update_all_tickets

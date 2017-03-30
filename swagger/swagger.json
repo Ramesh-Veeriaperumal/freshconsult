@@ -2055,10 +2055,27 @@
             "schema": {
               "type": "object",
               "properties": {
-                "shared_attachment_id": {
+                "attachable_id": {
                   "type": "number",
                   "required": true,
-                  "description": "ID of the shared attachment"
+                  "description": "ID of the attachable item"
+                },
+                "attachable_type": {
+                  "type": "string",
+                  "enum": [
+                    "ticket",
+                    "conversation",
+                    "canned_response",
+                    "ticket_template",
+                    "solution_article",
+                    "solution_draft",
+                    "post",
+                    "user",
+                    "user_draft",
+                    "account"
+                  ],
+                  "required": true,
+                  "description": "Type of the attachable item"
                 }
               }
             }
@@ -2619,6 +2636,45 @@
           },
           "404": {
             "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/scenario_automations": {
+      "get": {
+        "tags": [
+          "scenario automation"
+        ],
+        "summary": "List all",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/scenario_automation"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/portals": {
+      "get": {
+        "tags": [
+          "Portal"
+        ],
+        "summary": "List all",
+        "description": "List all portals",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/portal"
+              }
+            }
           }
         }
       }
@@ -3698,9 +3754,6 @@
                     "state": {
                       "type": "string"
                     },
-                    "addons": {
-                      "type": "array"
-                    },
                     "subscription_plan": {
                       "type": "string"
                     }
@@ -4733,6 +4786,9 @@
             },
             "inline_url": {
               "type": "string"
+            },
+            "is_shared": {
+              "type": "boolean"
             }
           }
         }
@@ -5127,6 +5183,76 @@
             "status_updated_at": {
               "type": "string",
               "format": "date-time"
+            }
+          }
+        }
+      }
+    },
+    "portal": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/extension_generic"
+        },
+        {
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "host": {
+              "type": "string"
+            },
+            "default": {
+              "type": "boolean"
+            },
+            "product_id": {
+              "type": "number"
+            },
+            "ssl_enabled": {
+              "type": "boolean"
+            },
+            "solution_category_ids": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "discussion_category_ids": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "scenario_automation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "private": {
+          "type": "boolean"
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
             }
           }
         }

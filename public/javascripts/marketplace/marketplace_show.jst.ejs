@@ -108,7 +108,9 @@
       <div class="tabbable">
         <ul class="nav nav-tabs app-tab" id="app-tabs">
           <li class="active"><a href="#app-overview" data-toggle="tab"><%= translate.get('overview') %></a></li>
-          <li><a href="#app-installation" data-toggle="tab"><%= translate.get('installation') %></a></li>
+          <% if (instructions) { %>
+            <li><a href="#app-installation" data-toggle="tab"><%= translate.get('installation') %></a></li>
+          <% } %>
         </ul>
         <div class="tab-content">
           <div class="tab-pane active" id="app-overview">
@@ -145,11 +147,11 @@
               </div>
             <% } %>
           </div>
-          <div class="tab-pane" id="app-installation">
-            <% if (instructions) { %>
+          <% if (instructions) { %>
+            <div class="tab-pane" id="app-installation">
               <pre class="pre-wrap"><%- instructions %></pre>
-            <% } %>
-          </div>
+            </div>
+          <% } %>
         </div>  
       </div>  
       <% if (typeof app_version != 'undefined') { %>

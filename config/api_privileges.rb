@@ -19,6 +19,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/agent", only: [:index, :me]
     resource :"ember/group", only: [:index]
     resource :"ember/survey", only: [:index]
+    resource :"ember/portal", only: [:index]
     resource :"ember/email_config", only: [:index]
     resource :"ember/contact_field", only: [:index]
     resource :"ember/installed_application"

@@ -89,7 +89,9 @@ module TicketsTestHelper
       first_responded_at: ticket_states.first_response_time.try(:utc).try(:iso8601),
       agent_responded_at: ticket_states.agent_responded_at.try(:utc).try(:iso8601),
       requester_responded_at: ticket_states.requester_responded_at.try(:utc).try(:iso8601),
-      status_updated_at: ticket_states.status_updated_at.try(:utc).try(:iso8601)
+      status_updated_at: ticket_states.status_updated_at.try(:utc).try(:iso8601),
+      pending_since: ticket_states.pending_since.try(:utc).try(:iso8601),
+      reopened_at: ticket_states.opened_at.try(:utc).try(:iso8601)
     }
   end
 
@@ -104,7 +106,7 @@ module TicketsTestHelper
 
   def ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
     expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
-    custom_field = ticket.custom_field.map { |k, v| [TicketDecorator.display_name(k), v.respond_to?(:utc) ? v.utc.iso8601 : v] }.to_h
+    custom_field = ticket.custom_field.map { |k, v| [TicketDecorator.display_name(k), v.respond_to?(:utc) ? v.strftime('%F') : v] }.to_h
     ticket_custom_field = (custom_field && ignore_extra_keys) ? custom_field.as_json.ignore_extra_keys! : custom_field.as_json
     description_html = format_ticket_html(ticket, expected_output[:description]) if expected_output[:description]
 

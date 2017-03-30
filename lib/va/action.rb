@@ -39,7 +39,7 @@ class Va::Action
   
   def trigger(act_on, doer=nil, triggered_event=nil)
     begin
-      Rails.logger.debug "INSIDE trigger of Va::Action with act_on : #{act_on.inspect} action_key : #{action_key} value: #{value}"
+      #Rails.logger.debug "INSIDE trigger of Va::Action with act_on : #{act_on.inspect} action_key : #{action_key} value: #{value}"
       @doer = doer
       @triggered_event = triggered_event
       return send(action_key, act_on) if respond_to?(action_key)
@@ -57,8 +57,8 @@ class Va::Action
           return
         end
       end
-      
-      puts "From the trigger of Action... Looks like #{action_key} is not supported!"
+
+      Rails.logger.debug "Unsupported action key :: #{action_key}"
     rescue Exception => e
       Rails.logger.debug "For Va::Action #{self} Exception #{e} rescued"
     end
@@ -103,7 +103,7 @@ class Va::Action
   def responder_id(act_on)
     r_id = value.to_i
     begin
-      responder = (r_id == EVENT_PERFORMER) ? (act_on.agent_performed?(doer) ? doer : nil) : act_on.account.users.find(value.to_i)
+      responder = (r_id == EVENT_PERFORMER) ? (act_on.agent_performed?(doer) ? doer : nil) : act_on.account.technicians.find(value.to_i)
     rescue ActiveRecord::RecordNotFound
     end
     act_on.responder = responder if responder || value.empty?
@@ -113,7 +113,7 @@ class Va::Action
   def internal_agent_id(act_on)
     ia_id = value.to_i
     begin
-      internal_agent = (ia_id == EVENT_PERFORMER) ? (act_on.agent_performed?(doer) ? doer : nil) : act_on.account.users.find(value.to_i)
+      internal_agent = (ia_id == EVENT_PERFORMER) ? (act_on.agent_performed?(doer) ? doer : nil) : act_on.account.technicians.find(value.to_i)
     rescue ActiveRecord::RecordNotFound
     end
     act_on.internal_agent = internal_agent if internal_agent || value.empty?

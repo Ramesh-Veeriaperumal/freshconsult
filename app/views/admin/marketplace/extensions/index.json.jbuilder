@@ -6,15 +6,13 @@ if params[:sort_by]
   @extensions.each do |key, value|
     json.set! "#{key.to_sym}_extensions" do
       json.array!(value) do |extension|
-        json.merge! extension
-        json.url show_admin_marketplace_extensions_path(extension['id']) + '?' + show_url_params
+        json.partial! 'app_details', extension: extension
       end
     end
   end
 else
   json.extensions @extensions do |extension|
-    json.merge! extension
-    json.url show_admin_marketplace_extensions_path(extension['id']) + '?' + show_url_params
+    json.partial! 'app_details', extension: extension
   end
 end  
 

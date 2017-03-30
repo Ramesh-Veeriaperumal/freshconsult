@@ -28,7 +28,8 @@ class User < ActiveRecord::Base
 
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   validates_uniqueness_of :external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
-  validates_uniqueness_of :unique_external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
+  validates_uniqueness_of :unique_external_id, :scope => :account_id, :allow_nil => true, :case_sensitive => false
+  before_validation :trim_attributes
 
   xss_sanitize  :only => [:name,:email,:language, :job_title, :twitter_id, :address, :description, :fb_profile_id], :plain_sanitizer => [:name,:email,:language, :job_title, :twitter_id, :address, :description, :fb_profile_id]
   scope :trimmed, :select => [:'users.id', :'users.name']
@@ -97,10 +98,15 @@ class User < ActiveRecord::Base
   validate :only_primary_email, on: :update, :if => [:agent?]
   validate :max_user_emails
   validate :max_user_companies, :if => :has_multiple_companies_feature?
+  validate :unique_external_id_feature, :if => :unique_external_id_changed?
 
   def email_validity
     self.errors.add(:base, I18n.t("activerecord.errors.messages.email_invalid")) unless self[:account_id].blank? or self[:email] =~ EMAIL_VALIDATOR
     self.errors.add(:base, I18n.t("activerecord.errors.messages.email_not_unique")) if self[:email] and self[:account_id].present? and User.exists?(["email = ? and id != '#{self.id}'", self[:email]])
+  end
+
+  def unique_external_id_feature
+    self.errors.add(:base, I18n.t('activerecord.errors.messages.unique_external_id')) unless account.unique_contact_identifier_enabled?
   end
 
   def only_primary_email
@@ -293,6 +299,9 @@ class User < ActiveRecord::Base
         },
         _updated_since: {
           conditions: ['updated_at >= ?', contact_filter.try(:_updated_since).try(:to_time).try(:utc)]
+        },
+        unique_external_id: {
+          conditions: { unique_external_id: contact_filter.unique_external_id}
         }
       }
     end
@@ -612,6 +621,7 @@ class User < ActiveRecord::Base
     return "#{name} (#{phone})" unless phone.blank?
     return "#{name} (#{mobile})" unless mobile.blank?
     return "@#{twitter_id}" unless twitter_id.blank?
+    return "#{name} (#{unique_external_id})" if  (unique_external_id.present? && account.unique_contact_identifier_enabled?)
     name
   end
 
@@ -668,7 +678,7 @@ class User < ActiveRecord::Base
   end
 
   def get_info
-    (email) || (twitter_id) || (external_id) || (unique_external_id) || (name)
+    (email) || (twitter_id.presence) || (external_id) || (unique_external_id) || (name)
   end
 
   def twitter_style_id
@@ -995,6 +1005,10 @@ class User < ActiveRecord::Base
     def name_part(part)
       part = parsed_name[part].blank? ? "particle" : part unless parsed_name.blank? and part == "family"
       parsed_name[part].blank? ? name : parsed_name[part]
+    end
+
+    def trim_attributes
+      self.unique_external_id = self.unique_external_id.try(:strip).presence
     end
 
     def parsed_name

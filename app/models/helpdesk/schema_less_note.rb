@@ -28,7 +28,22 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 
 	attr_protected :note_id, :account_id
 	validate :cc_and_bcc_emails_count
-	
+
+	def dynamodb_range_key
+		note_properties[:dynamodb_range_key]
+	end
+
+	def dynamodb_range_key=(value)
+		note_properties[:dynamodb_range_key] = value.to_i
+	end
+
+	def failure_count
+		note_properties[:failure_count]
+	end
+
+	def failure_count=(value)
+		note_properties[:failure_count] = value.to_i
+	end
 
 	def self.resp_time_column
 		:int_nc02

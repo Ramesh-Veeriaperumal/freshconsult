@@ -479,6 +479,15 @@ class TimeEntriesControllerTest < ActionController::TestCase
     end
   end
 
+  def test_create_without_time_spent
+    freeze_time do
+      post :create, construct_params({ id: ticket.display_id }, params_hash)
+      assert_response 201
+      time_sheet = time_entry(parse_response(response.body)['id'])
+      assert time_sheet.time_spent == 0
+    end
+  end
+
   def test_create_with_timer_running_and_time_spent
     freeze_time do
       post :create, construct_params({ id: ticket.display_id }, { time_spent: '03:00',

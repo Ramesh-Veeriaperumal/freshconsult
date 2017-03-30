@@ -108,6 +108,9 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
 
   FILTER_OPTIONS = { :group_id => [], :company_id => [], :user_id => [], :billable => true, :executed_after => 0 }
 
+  TIME_FORMAT_HOUR = :h
+  TIME_FORMAT_HOURMINUTES = :hm
+
   def self.billable_options
     { I18n.t('helpdesk.time_sheets.billable') => true,
       I18n.t('helpdesk.time_sheets.non_billable') => false}
@@ -251,14 +254,14 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
      self.save
   end
 
-   def as_json(options = {time_format:'h', is_timesheet: false}, deep=true)
+   def as_json(options = {time_format:TIME_FORMAT_HOUR}, deep=true)
     if deep
       hash = {}
       hash['ticket_id'] = self.workable.display_id
       hash['agent_name'] = self.agent_name
-      hash['timespent'] = ( options[:time_format] =='hm' ? get_time_in_hours_and_minutes(self.time_spent.to_i) : sprintf( "%0.02f", self.time_spent.to_f/3600) ) # converting to hours as in UI / Timesheet need it in secs
+      hash['timespent'] = get_time(self.time_spent, options[:time_format])
       hash['agent_email'] = user.email
-      hash['customer_name'] = options[:is_timesheet]? self.customer_name_reports : self.customer_name
+      hash['customer_name'] = options[:is_reports]? self.customer_name_reports : self.customer_name
       hash['contact_email'] = workable.requester.email
       options[:except] = [:account_id,:workable_id,:time_spent]
       options[:root] =:time_entry
@@ -276,7 +279,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       [:account_id,:workable_id,:time_spent],:root=>:time_entry) do |xml|
       xml.tag!(:ticket_id,workable.display_id)
       xml.tag!(:agent_name,agent_name)
-      xml.tag!(:time_spent,sprintf( "%0.02f", self.time_spent.to_f/3600)) # converting to hours as in UI
+      xml.tag!(:time_spent,get_time(self.time_spent,TIME_FORMAT_HOUR)) # converting to hours as in UI
       xml.tag!(:agent_email,user.email)
       xml.tag!(:customer_name,self.customer_name)
       xml.tag!(:contact_email,workable.requester.email)
@@ -369,10 +372,15 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     }
   end
 
-  def get_time_in_hours_and_minutes(seconds)
-    hh = (seconds/3600).to_i
-    mm = ((seconds % 3600)/60.to_f).round
-    hh.to_s.rjust(2,'0') + ":" + mm.to_s.rjust(2,'0')
+  def get_time(seconds, format)
+    if format == TIME_FORMAT_HOURMINUTES
+      seconds =seconds.to_i
+      hh = (seconds/3600).to_i
+      mm = ((seconds % 3600)/60.to_f).round
+      hh.to_s.rjust(2,'0') + ":" + mm.to_s.rjust(2,'0')
+    else
+      sprintf( "%0.02f", seconds.to_f/3600 )
+    end
   end
 
 end

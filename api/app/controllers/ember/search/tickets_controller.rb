@@ -43,14 +43,18 @@ module Ember
         end
 
         @items = esv2_query_results(esv2_agent_models)
-        response.api_meta = { count: @items.count }
+        response.api_meta = { count: @items.total_entries }
       end
 
       private
 
         def decorate_objects
-          options = { sideload_options: ['falcon'], name_mapping: Account.current.ticket_field_def.ff_alias_column_mapping.each_with_object({}) { |(ff_alias, column), hash| hash[ff_alias] = TicketDecorator.display_name(ff_alias) } }
-          @items.map! { |item| item.is_a?(Helpdesk::ArchiveTicket) ? TicketDecorator.new(item, options) : TicketDecorator.new(item, options) }
+          options = { sideload_options: ['requester', 'company'], name_mapping: name_mapping }
+          @items.map! { |item| TicketDecorator.new(item, options) } if @items
+        end
+
+        def name_mapping
+          @name_mapping ||= Account.current.ticket_field_def.ff_alias_column_mapping.each_with_object({}) { |(ff_alias, column), hash| hash[ff_alias] = TicketDecorator.display_name(ff_alias) }
         end
 
         def construct_es_params

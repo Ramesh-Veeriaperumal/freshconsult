@@ -10,7 +10,7 @@ module Ember
     skip_before_filter :check_privilege, only: [:destroy, :unlink]
     before_filter :can_send_user?, only: [:create]
     before_filter :check_shared, :load_items, :check_destroy_permission, only: [:destroy]
-    before_filter :validate_body_params, :load_shared, :check_unlink_permission, only: [:unlink]
+    before_filter :validate_body_params, :load_ticket, :load_shared, :check_unlink_permission, only: [:unlink]
 
     def create
       return unless validate_delegator(@item, user: @user, api_user: api_current_user)
@@ -41,8 +41,30 @@ module Ember
       end
 
       def load_shared
-        @item = Helpdesk::SharedAttachment.find_by_id(params[cname][:shared_attachment_id], :conditions=>["attachment_id=?", params[:id]])
+        @item = Helpdesk::SharedAttachment.find_by_attachment_id(
+          params[:id],
+          conditions: ['shared_attachable_id=? AND shared_attachable_type=?', shared_attachable_id, shared_attachable_type]
+        )
         log_and_render_404 unless @item
+      end
+
+      def load_ticket
+        if ['Helpdesk::Ticket', 'Helpdesk::Note'].include?(shared_attachable_type)
+          @ticket = if shared_attachable_type == 'Helpdesk::Ticket'
+                      current_account.tickets.find_by_display_id(params[cname][:attachable_id])
+                    elsif shared_attachable_type == 'Helpdesk::Note'
+                      current_account.notes.find_by_id(params[cname][:attachable_id])
+                    end
+          log_and_render_404 unless @ticket
+        end
+      end
+
+      def shared_attachable_id
+        shared_attachable_type == 'Helpdesk::Ticket' ? @ticket.id : params[cname][:attachable_id]
+      end
+
+      def shared_attachable_type
+        AttachmentConstants::ATTACHABLE_TYPES[params[cname][:attachable_type]]
       end
 
       def validate_params
@@ -62,7 +84,7 @@ module Ember
       end
 
       def public_upload?
-        [:forum, :solution].include?( AttachmentConstants::INLINE_ATTACHABLE_TOKEN_BY_KEY[params[cname][:inline_type].to_i])
+        [:forum, :solution].include?(AttachmentConstants::INLINE_ATTACHABLE_TOKEN_BY_KEY[params[cname][:inline_type].to_i])
       end
 
       def one_hop?
@@ -84,9 +106,8 @@ module Ember
 
       def check_unlink_permission
         can_unlink = false
-        shared_attachable_type = @item.shared_attachable_type || nil
         if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? shared_attachable_type
-          can_unlink = privilege?(:manage_tickets)
+          can_unlink = true if current_user && (@ticket.requester_id == current_user.id || ticket_privilege?(@ticket))
         elsif ['Helpdesk::TicketTemplate'].include? shared_attachable_type
           can_unlink = template_priv? @item.shared_attachable
         end

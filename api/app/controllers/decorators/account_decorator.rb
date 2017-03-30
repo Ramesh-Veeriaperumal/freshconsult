@@ -35,7 +35,6 @@ class AccountDecorator < ApiDecorator
       {
         agent_limit: subscription.agent_limit,
         state: subscription.state,
-        addons: subscription.addons,
         subscription_plan: subscription.subscription_plan.name
       }
     end
@@ -51,19 +50,25 @@ class AccountDecorator < ApiDecorator
     def agents_hash
       agents = record.agents_details_from_cache
       agents.map do |agent|
-        AgentDecorator.new(agent, agent_groups: agent_groups).to_restricted_hash
+        AgentDecorator.new(agent, group_mapping_ids: agent_groups[:agents][agent.id] || []).to_restricted_hash
       end
     end
 
     def groups_hash
       groups = record.groups_from_cache
       groups.map do |group|
-        GroupDecorator.new(group, agent_groups: agent_groups).to_restricted_hash
+        GroupDecorator.new(group, agent_mapping_ids: agent_groups[:groups][group.id] || []).to_restricted_hash
       end
     end
 
     def agent_groups
-      record.agent_groups_from_cache
+      @agent_group_mapping ||= begin
+        record.agent_groups_from_cache.inject({agents: {}, groups: {}}) do |mapping, ag|
+          (mapping[:agents][ag.user_id] ||= []).push(ag.group_id)
+          (mapping[:groups][ag.group_id] ||= []).push(ag.user_id)
+          mapping
+        end
+      end
     end
 
     def include_survey_manually?

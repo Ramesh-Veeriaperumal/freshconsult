@@ -59,6 +59,11 @@ class Wf::Filter < ActiveRecord::Base
  
   
   has_many :agent_groups , :through =>:accessible , :foreign_key => "group_id" , :source => :group
+
+  has_one :scheduled_task,
+          :class_name => "Helpdesk::ScheduledTask",
+          :as => :schedulable, 
+          :dependent => :destroy
   
   def validation_arr
     [:name,:account_id,:model_class_name]

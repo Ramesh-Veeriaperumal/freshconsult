@@ -11,7 +11,7 @@ var AutoSuggest = {
                   _results_array = response.responseJSON.results
                   _results_array
                   .each(function(item){ 
-                  item.details = item.details ? item.details : item.value+' <'+item.id+'>';
+                  item.details = item.details ? item.details : item.value+' <'+item.email+'>';
                   choices.push(item.details);
                   });  
 

@@ -3,7 +3,9 @@ class TicketFieldDecorator < ApiDecorator
            :field_type, :required, :required_in_portal, :label_in_portal, :editable_in_portal, :visible_in_portal,
            :level, :ticket_field_id, :picklist_values, to: :record
 
-  DEFAULT_FIELDS = %w(default_agent default_priority default_source default_status default_ticket_type default_group default_product).freeze
+  # Not including default_agent and default_group because its choices are not needed for private API
+  DEFAULT_FIELDS = %w(default_priority default_source default_status default_ticket_type default_product).freeze
+
   def portal_cc
     record.field_options.try(:[], 'portalcc')
   end
@@ -47,7 +49,7 @@ class TicketFieldDecorator < ApiDecorator
                  when 'nested_field'
                    record.formatted_nested_choices
                  when 'default_status'
-                   api_statuses = Helpdesk::TicketStatus.status_objects_from_cache(Account.current).map do|status|
+                   api_statuses = Helpdesk::TicketStatus.status_objects_from_cache(Account.current).map do |status|
                      [
                        status.status_id, [Helpdesk::TicketStatus.translate_status_name(status, 'name'),
                                           Helpdesk::TicketStatus.translate_status_name(status, 'customer_display_name')]
@@ -85,7 +87,7 @@ class TicketFieldDecorator < ApiDecorator
   private
 
     def nested_field_choices_by_id(pvs)
-      pvs.collect { |c| 
+      pvs.collect { |c|
         {
           label: c.value,
           value: c.value,
@@ -111,7 +113,7 @@ class TicketFieldDecorator < ApiDecorator
         }
       end
     end
-    
+
     def default_priority_choices
       TicketConstants.priority_list.map do |k, v|
         {
@@ -120,7 +122,7 @@ class TicketFieldDecorator < ApiDecorator
         }
       end
     end
-    
+
     def default_source_choices
       TicketConstants.source_names.map do |k, v|
         {
@@ -129,7 +131,7 @@ class TicketFieldDecorator < ApiDecorator
         }
       end
     end
-    
+
     def default_status_choices
       # TODO-EMBER This is a cached method. Not expected work properly in production
       Helpdesk::TicketStatus.statuses_list(Account.current).map do |status|
@@ -139,25 +141,18 @@ class TicketFieldDecorator < ApiDecorator
           })
       end
     end
-    
-    def default_agent_choices
-      choices_by_name_id Account.current.agents_details_from_cache
+
+    def default_product_choices
+      choices_by_name_id Account.current.products_from_cache
     end
-    
+
     def default_ticket_type_choices
       Account.current.ticket_types_from_cache.map do |type|
         {
           label: type.value,
           value: type.value,
-          id: type.id #Needed as it is used in section data.
+          id: type.id # Needed as it is used in section data.
         }
       end
     end
-    
-    [:group, :product].each do |field_name|
-      define_method "default_#{field_name}_choices" do
-        choices_by_name_id Account.current.send(:"#{field_name.to_s.pluralize}_from_cache")
-      end
-    end
-
 end

@@ -178,20 +178,20 @@ var TicketForm = {
 		this.$groupselector = this.$el.find('#helpdesk_ticket_group_id');
 		this.$agentselector = this.$el.find('#helpdesk_ticket_responder_id');
 		this.$tagsholder = this.$el.find("#helpdesk_tags");
-		this.$ticketType = this.$el.find("#helpdesk_ticket_ticket_type");
+		this.$dynamicSections = this.$el.find('.dynamic_sections');
 	},
 
 	bindEvents: function(){
 		this.groupToAgent();
 		this.validateAttachment();
-		this.ticketType();
+		this.dynamicSections();
 		this.requesterToCompany();
 	},
 
 	unBindEvents: function(){
 		this.$el.off('.ticketForms');
 		this.$groupselector.off('.ticketForms');
-		this.$ticketType.off('.ticketForms');
+		this.$dynamicSections.off('.ticketForms');
 		this.$tagsholder.select2('destroy');
 	},
 
@@ -267,10 +267,13 @@ var TicketForm = {
 		});
 	},
 
-	ticketType: function(){
-		this.$ticketType.on("change.ticketForms", function(){
-			var id = jQuery(this).find(':selected').data().id;
-			jQuery('ul.ticket_section').remove();
+	dynamicSections: function(){
+		this.$dynamicSections.on("change.ticketForms", function(){
+			var id;
+			selected = jQuery(this).find(':selected');
+			if (selected.length > 0) id = selected.data().id;
+			nextElement = jQuery(this.closest('li').next());
+			nextElement.find('ul.ticket_section').remove();
 			var element = jQuery('#picklist_section_'+id).parent();
 			if(element.length != 0) {
 				element.append(jQuery('#picklist_section_'+id).val()

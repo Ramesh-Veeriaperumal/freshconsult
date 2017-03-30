@@ -1,11 +1,6 @@
 class AttachmentDecorator < ApiDecorator
   delegate :id, :content_file_name, :content_file_size, :content_content_type,
-           :attachment_url_for_api, :inline_url, :attachable_type, :shared_attachments, to: :record
-
-  def initialize(record, options = {})
-    super(record)
-    @shared_attachable_id = options[:shared_attachable_id]
-  end
+           :attachment_url_for_api, :inline_url, :attachable_type, to: :record
 
   def to_hash
     ret_hash = {
@@ -17,16 +12,9 @@ class AttachmentDecorator < ApiDecorator
       updated_at: updated_at.try(:utc),
       attachment_url: attachment_url_for_api #See if this is needed in all cases
     }
-    ret_hash.merge!(inline_url: inline_url) if record.inline_image?
+    ret_hash[:inline_url] = inline_url if record.inline_image?
 
-    if @shared_attachable_id && attachable_type == 'Account'
-      ret_hash.merge!(shared_attachment_id: shared_attachment_id)
-    end
+    ret_hash[:is_shared] = true if attachable_type == 'Account'
     ret_hash
   end
-
-  def shared_attachment_id
-    shared_attachments.where(shared_attachable_id: @shared_attachable_id).first.id
-  end
-
 end

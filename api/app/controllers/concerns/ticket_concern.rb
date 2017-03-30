@@ -57,7 +57,7 @@ module TicketConcern
     end
 
     def verify_ticket_state_and_permission(user = api_current_user, ticket = @item)
-      return false unless verify_object_state
+      return false unless verify_object_state(ticket)
       if ticket_permission_required?
         return false unless verify_ticket_permission(user, ticket)
       end
@@ -67,12 +67,12 @@ module TicketConcern
       end
     end
 
-    def verify_object_state
+    def verify_object_state(ticket = @item)
       action_scopes = ApiTicketConstants::SCOPE_BASED_ON_ACTION[action_name] || ApiTicketConstants::CONDITIONS_FOR_TICKET_ACTIONS
       action_scopes.each_pair do |scope_attribute, value|
-        item_value = @item.send(scope_attribute)
+        item_value = ticket.send(scope_attribute)
         next if item_value == value
-        Rails.logger.debug "Ticket display_id: #{@item.display_id} with #{scope_attribute} is #{item_value}"
+        Rails.logger.debug "Ticket display_id: #{ticket.display_id} with #{scope_attribute} is #{item_value}"
         # Render 405 in case of update/delete as it acts on ticket endpoint itself
         # And User will be able to GET the same ticket via Show
         # other URLs such as tickets/id/restore will result in 404 as it is a separate endpoint

@@ -5,7 +5,7 @@ module ContactConstants
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
   CONTACT_FIELDS = %w(active address avatar avatar_id view_all_tickets company_id description
                       email job_title language mobile name other_companies
-                      other_emails phone time_zone twitter_id).freeze |
+                      other_emails phone time_zone twitter_id unique_external_id).freeze |
                     ARRAY_FIELDS | HASH_FIELDS |
                     ['other_companies' =>  ALLOWED_OTHER_COMPANIES_FIELDS]
   MAKE_AGENT_FIELDS = %w(occasional group_ids role_ids ticket_scope signature).freeze
@@ -13,7 +13,7 @@ module ContactConstants
 
   VALIDATABLE_DELEGATOR_ATTRIBUTES = %w(custom_field).freeze
 
-  INDEX_FIELDS = %w(state email phone mobile company_id tag _updated_since).freeze
+  INDEX_FIELDS = %w(state email phone mobile company_id tag _updated_since unique_external_id).freeze
   MERGE_ARRAY_FIELDS = ['target_ids'].freeze
   MERGE_FIELDS = %w(primary_id).freeze | MERGE_ARRAY_FIELDS
   EXPORT_CSV_ARRAY_FIELDS = %w(default_fields custom_fields).freeze
@@ -55,7 +55,7 @@ module ContactConstants
   # Routes that doesn't accept any params
   NO_PARAM_ROUTES = %w(restore).freeze
 
-  ATTRIBUTES_TO_BE_STRIPPED = %w(address email job_title language name mobile phone time_zone tags twitter_id custom_fields other_emails).freeze
+  ATTRIBUTES_TO_BE_STRIPPED = %w(address email job_title language name mobile phone time_zone tags twitter_id custom_fields other_emails unique_external_id).freeze
 
   # Wrap parameters args
   WRAP_PARAMS = [:api_contact, exclude: [], format: [:json, :multipart_form]].freeze
@@ -80,6 +80,13 @@ module ContactConstants
   }.freeze
 
   NO_CONTENT_TYPE_REQUIRED = [:restore, :send_invite].freeze
+
+  PRELOAD_OPTIONS = {
+    bulk_delete: [:user_emails, { user_companies: [:company] }, :default_user_company, :flexifield, :primary_email, :roles, :authorizations, :freshfone_user],
+    bulk_restore: [:user_emails, { user_companies: [:company] }, :default_user_company, :flexifield, :primary_email, :roles],
+    bulk_send_invite: [:flexifield, :user_companies, :avatar, :default_user_company, :roles],
+    bulk_whitelist: []
+  }
 
   VALIDATION_CLASS = 'ContactValidation'.freeze
   DELEGATOR_CLASS = 'ContactDelegator'.freeze

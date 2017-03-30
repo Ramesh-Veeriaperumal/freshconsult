@@ -32,7 +32,7 @@ class CannedResponseDecorator < ApiDecorator
   end
 
   def attachments_hash
-    attachments.map { |a| AttachmentDecorator.new(a, shared_attachable_id: id).to_hash }
+    attachments.map { |a| AttachmentDecorator.new(a).to_hash }
   end
 
   private

@@ -3,9 +3,9 @@ class ContactDecorator < ApiDecorator
 
   delegate  :id, :active, :address, :company_name, :deleted, :description,
             :customer_id, :email, :job_title, :language, :mobile,
-            :name, :phone, :time_zone, :twitter_id, :avatar, :whitelisted, to: :record
+            :name, :phone, :time_zone, :twitter_id, :avatar, :whitelisted, :unique_external_id, to: :record
   delegate :company_id, :client_manager, to: :default_company, allow_nil: true
-  delegate :multiple_user_companies_enabled?, to: 'Account.current'
+  delegate :multiple_user_companies_enabled?, :unique_contact_identifier_enabled?, to: 'Account.current'
 
   def initialize(record, options)
     super(record)
@@ -20,7 +20,7 @@ class ContactDecorator < ApiDecorator
   def custom_fields
     # @name_mapping will be nil for READ requests
     custom_fields_hash = {}
-    record.custom_field.each { |k, v| custom_fields_hash[@name_mapping[k]] = v } if @name_mapping.present?
+    record.custom_field.each { |k, v| custom_fields_hash[@name_mapping[k]] = utc_format(v) } if @name_mapping.present?
     custom_fields_hash
   end
 
@@ -44,7 +44,7 @@ class ContactDecorator < ApiDecorator
   end
 
   def to_hash
-    User.current.privilege?(:view_contacts) ? to_full_hash : to_restricted_hash
+    (User.current.privilege?(:view_contacts) || User.current.id == id) ? to_full_hash : to_restricted_hash
   end
 
   def to_search_hash
