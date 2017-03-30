@@ -115,6 +115,7 @@ module Helpdesk::Activities
                 :content => act.content, 
                 :trace => e.backtrace.join("\n")
               })
+            NewRelic::Agent.notice_error(e, {:description => "Exception in parse activity"})
             next
           end
         end
@@ -131,6 +132,7 @@ module Helpdesk::Activities
             :account_id  => Account.current.id,
             :display_id  => ticket.display_id,
             :trace       => e.backtrace.join("\n")})
+        NewRelic::Agent.notice_error(e, {:description => "Error in fetching and processing activites"})
       ensure
         $thrift_transport.close()
         return res_hash
