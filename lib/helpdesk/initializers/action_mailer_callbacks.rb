@@ -96,7 +96,8 @@ module ActionMailerCallbacks
         mail.header['X-Mailgun-Variables'] = "{\"message_id\": \"#{message_id}\"}"
       else
         Rails.logger.debug "Sending email via sendgrid"
-        mail.header['X-SMTPAPI'] = get_unique_args(from_email, account_id, ticket_id, note_id, mail_type, category_id)
+        subject = !mail.header[:subject].nil? ? mail.header[:subject].value : "No Subject"
+        mail.header['X-SMTPAPI'] = get_unique_args(from_email, account_id, ticket_id, note_id, mail_type, category_id, subject)
       end
     rescue => e
       Rails.logger.debug "Error while setting custom headers - #{e.message} - #{e.backtrace}"
@@ -161,14 +162,14 @@ module ActionMailerCallbacks
        false
     end
 
-    def get_unique_args(from_email, account_id = -1, ticket_id = -1, note_id = -1, mail_type = "", category_id = -1)
+    def get_unique_args(from_email, account_id = -1, ticket_id = -1, note_id = -1, mail_type = "", category_id = -1, subject = "")
       note_id_str = note_id != -1 ? "\"note_id\": #{note_id}," : ""
       shard = get_shard account_id
       shard_name = shard.nil? ? "\"shard_info\":\"unknown\"" : "\"shard_info\":\"#{shard.shard_name}\""
       "{\"unique_args\":{\"account_id\": #{account_id},\"ticket_id\":#{ticket_id}," \
         "#{note_id_str}" \
         "\"email_type\":\"#{mail_type}\",\"from_email\":\"#{from_email}\",\"category_id\":\"#{category_id}\"," \
-        "\"pod_info\":\"#{get_pod}\",#{shard_name} }}"
+        "\"pod_info\":\"#{get_pod}\",#{shard_name},\"subject\":\"#{subject}\" }}"
     end
 
 

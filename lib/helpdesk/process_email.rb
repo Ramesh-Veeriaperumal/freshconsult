@@ -217,7 +217,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     params[:cc] = permissible_ccs(user, params[:cc], account)
     if ticket
       if(from_email[:email].to_s.downcase == ticket.reply_email.to_s.downcase) #Premature handling for email looping..
-        email_processing_log "Email Processing Failed: From-email and reply-email email are same!", to_email[:email]
+        email_processing_log "Email Processing Failed: Email cannot be threaded. From-email and Ticket's reply-email email are same!", to_email[:email]
         return processed_email_data(PROCESSED_EMAIL_STATUS[:self_email], account.id)
       end
       primary_ticket = check_primary(ticket,account)
@@ -849,7 +849,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           att = Helpdesk::Attachment.create_for_3rd_party(account, item, 
                   params["attachment#{i+1}"], i, content_id, true)
           if att.is_a? Helpdesk::Attachment
-            if content_id
+            if content_id && !att["content_file_name"].include?(".svg")
               content_id_hash[att.content_file_name+"#{inline_count}"] = content_ids["attachment#{i+1}"]
               inline_count+=1
               inline_attachments.push att unless virus_attachment?(params["attachment#{i+1}"], account)
