@@ -1,6 +1,6 @@
 module Fixtures
   module DefaultObserver
-    def create_rule
+    def create_rule(downgrade=false)
       account = Account.current
 
       auto_assign_filter_data = {
@@ -52,7 +52,7 @@ module Fixtures
 
       ticket_reopen_rule = account.va_rules.new(
           :rule_type => VAConfig::OBSERVER_RULE,
-          :active => false,
+          :active => (downgrade == true) ? true : false,
           :match_type => 'any',
           :name => 'Automatically reopen tickets when the customer responds',
           :description => "When a requester replies to a ticket in any state (pending, resolved, closed or a custom status), its status is changed back to open.",
