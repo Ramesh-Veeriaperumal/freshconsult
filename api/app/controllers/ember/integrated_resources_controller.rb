@@ -64,7 +64,7 @@ class IntegratedResourcesController < ApiApplicationController
   end 
 
   def fetch_ticket_using_display_id (display_id)
-    current_account.tickets.find_by_display_id(display_id)
+    current_account.tickets.where(:display_id => display_id).first
   end
 
 end
