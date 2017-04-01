@@ -60,9 +60,10 @@ module Ember
     end
 
     def latest_note
-      @note = @item.conversation.first
+      @note = @item.conversation.first      
       return head(204) if @note.nil?
       @user = ContactDecorator.new(@note.user, {})
+      response.api_root_key = :conversation
     end
 
     def split_note

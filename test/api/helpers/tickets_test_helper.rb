@@ -153,7 +153,6 @@ module TicketsTestHelper
 
   def latest_note_response_pattern(note)
     pattern = private_note_pattern({}, note).merge!({ user: Hash })
-    pattern.except(:user_id)
   end
 
   def reply_draft_pattern(expected_output)
