@@ -4529,7 +4529,7 @@
         "name": {
           "type": "string"
         },
-        "order": {
+        "order_by": {
           "type": "string"
         },
         "order_type": {
@@ -5040,7 +5040,7 @@
             "$ref": "#/definitions/query_hash"
           }
         },
-        "order": {
+        "order_by": {
           "type": "string"
         },
         "order_type": {

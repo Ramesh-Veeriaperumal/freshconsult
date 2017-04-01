@@ -17,8 +17,8 @@ class CustomTicketFilterValidationTest < ActionView::TestCase
   def sample_params
     {
       name: Faker::Name.name,
-      order: ApiTicketConstants::ORDER_BY.sample,
-      order_type: ApiTicketConstants::ORDER_TYPE.sample,
+      order_by: TicketsFilter::api_sort_fields_options.map(&:first).map(&:to_s).sample,
+      order_type: ApiConstants::ORDER_TYPE.sample,
       per_page: ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page],
       query_hash: [
         {
@@ -49,7 +49,7 @@ class CustomTicketFilterValidationTest < ActionView::TestCase
     refute filter.valid?(:create)
     error = filter.errors.full_messages
     assert error.include?("Name missing_field")
-    assert error.include?("Order missing_field")
+    assert error.include?("Order by missing_field")
     assert error.include?("Order type missing_field")
     assert error.include?("Query hash missing_field")
     assert error.include?("Visibility missing_field")
@@ -78,7 +78,7 @@ class CustomTicketFilterValidationTest < ActionView::TestCase
       }
     ]
     filter_params[:visibility][:visibility] = Time.now.to_i
-    filter_params[:order] = 'random_order'
+    filter_params[:order_by] = 'random_order'
     filter_params[:order_type] = 'random_type'
     filter = CustomTicketFilterValidation.new(filter_params)
     refute filter.valid?
@@ -86,7 +86,7 @@ class CustomTicketFilterValidationTest < ActionView::TestCase
     assert error.include?("Query hash invalid_query_conditions")
     assert error.include?("Visibility not_included")
     assert error.include?("Order type not_included")
-    assert error.include?("Order not_included")
+    assert error.include?("Order by not_included")
   end
 
   def test_invalid_group

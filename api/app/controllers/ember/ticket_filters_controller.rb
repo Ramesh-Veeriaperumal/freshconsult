@@ -90,7 +90,7 @@ module Ember
       def extra_filter_params(obj)
         { 
           default: false, 
-          order: obj.data[:wf_order],
+          order_by: obj.data[:wf_order],
           order_type: obj.data[:wf_order_type],
           per_page: obj.data[:wf_per_page],
           query_hash: obj.data[:data_hash]
@@ -183,8 +183,8 @@ module Ember
       end
 
       def prefix_ff_params
-        CustomFilterConstants::WF_PREFIX.each do |key|
-          params[:ticket_filter]["wf_#{key}".to_sym] = params[:ticket_filter].delete(key) if params[:ticket_filter][key].present?
+        CustomFilterConstants::WF_PREFIX_PARAM_MAPPING.each_pair do |key, val|
+          params[:ticket_filter]["wf_#{key}".to_sym] = params[:ticket_filter].delete(val) if params[:ticket_filter][val].present?
         end
         params[:ticket_filter][:filter_name] = params[:ticket_filter][:name] if params[:ticket_filter][:name].present?
       end

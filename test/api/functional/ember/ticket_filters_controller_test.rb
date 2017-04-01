@@ -68,11 +68,11 @@ module Ember
 
     def test_create_with_invalid_values
       filter_params = sample_filter_input_params
-      filter_params[:order] = 'invalid_order'
+      filter_params[:order_by] = 'invalid_order'
       filter_params[:visibility][:visibility] = Admin::UserAccess::VISIBILITY_NAMES_BY_KEY.keys.max + 1 # invalid visibility
       post :create, construct_params({ version: 'private' },  filter_params)
       assert_response 400
-      match_json([bad_request_error_pattern('order', :not_included, list: ApiTicketConstants::ORDER_BY.join(',')),
+      match_json([bad_request_error_pattern('order_by', :not_included, list: sort_field_options.join(',')),
                   bad_request_error_pattern('visibility_id', :not_included, list: Admin::UserAccess::VISIBILITY_NAMES_BY_KEY.keys.join(','))])
     end
 
@@ -95,11 +95,11 @@ module Ember
 
     def test_update_with_invalid_values
       filter_params = sample_filter_input_params
-      filter_params[:order] = 'invalid_order'
+      filter_params[:order_by] = 'invalid_order'
       filter_params[:visibility][:visibility] = Admin::UserAccess::VISIBILITY_NAMES_BY_KEY.keys.max + 1 # invalid visibility
       put :update, construct_params({ version: 'private', id: @filter1.id },  filter_params)
       assert_response 400
-      match_json([bad_request_error_pattern('order', :not_included, list: ApiTicketConstants::ORDER_BY.join(',')),
+      match_json([bad_request_error_pattern('order_by', :not_included, list: sort_field_options.join(',')),
                   bad_request_error_pattern('visibility_id', :not_included, list: Admin::UserAccess::VISIBILITY_NAMES_BY_KEY.keys.join(','))])
     end
 

@@ -199,7 +199,17 @@ module Ember
       def ticket_filter_params
         # format (json) is checked in CustomTicketFilter for API v2 to filter all tickets without last 30 days created_at limit
         # ids are not accepted by CustomTicketFilter, so ignoring it also.
-        { params: params.except(:ids, :format), filter: 'Helpdesk::Filters::CustomTicketFilter' }
+        {
+          params: params.except(:ids, :format).merge(order_params),
+          filter: 'Helpdesk::Filters::CustomTicketFilter'
+        }
+      end
+
+      def order_params
+        remap = {}
+        remap[:wf_order] = params[:order_by] if params[:order_by]
+        remap[:wf_order_type] = params[:order_type] if params[:order_type]
+        remap
       end
 
       def validate_filter_params
@@ -216,13 +226,7 @@ module Ember
         else
           params[:filter] ||= DEFAULT_TICKET_FILTER
         end
-        map_filter_params
-      end
-
-      def map_filter_params
         params[:filter] = 'monitored_by' if params[:filter] == 'watching'
-        params[:wf_order] = params[:order_by]
-        params[:wf_order_type] = params[:order_type]
       end
 
       def assign_filter_params

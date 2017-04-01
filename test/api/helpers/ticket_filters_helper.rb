@@ -3,8 +3,8 @@ module TicketFiltersHelper
   def sample_filter_input_params(options = {})
     {
       name: options[:name] || Faker::Name.name, 
-      order: options[:order] || ApiTicketConstants::ORDER_BY.sample,
-      order_type: options[:order_type] || ApiTicketConstants::ORDER_TYPE.sample,
+      order_by: options[:order] || sort_field_options.sample,
+      order_type: options[:order_type] || ApiConstants::ORDER_TYPE.sample,
       per_page: options[:per_page] || 30,
     }.merge( { 
         query_hash: query_hash_queries(options)
@@ -74,7 +74,7 @@ module TicketFiltersHelper
   def custom_filter_attributes(filter)
     {
       default: false,
-      order: filter.data[:wf_order],
+      order_by: filter.data[:wf_order],
       order_type: filter.data[:wf_order_type],
       per_page: 30
     }
@@ -103,6 +103,10 @@ module TicketFiltersHelper
       all_filters << ticket_filter_show_pattern(filter)
     end
     all_filters
+  end
+
+  def sort_field_options
+    TicketsFilter::api_sort_fields_options.map(&:first).map(&:to_s)
   end
 
 end
