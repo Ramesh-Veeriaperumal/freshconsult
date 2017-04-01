@@ -724,7 +724,7 @@ window.App = window.App || {};
 					if (selected.length > 0){
 					  id = selected.data().id;
 					}
-					var nextElement = $el.closest('li').next());
+					var nextElement = $el.closest('li').next();
 					nextElement.find('ul.ticket_section').remove();
 					var element = $('#picklist_section_'+id).parent();
 		      if(element.length != 0) {
