@@ -86,11 +86,12 @@ default_fields.sort! {|x,y| field_order.index(x.first) <=> field_order.index(y.f
   jQuery(".dynamic_sections")
     .on("change", function(e){
       var id;
-      var selected = jQuery(this).find(':selected');
+      var $el = jQuery(this);
+      var selected = $el.find(':selected');
       if (selected.length > 0){
         id = selected.data().id;
       }
-      var nextElement = jQuery(this.closest('li').next());
+      var nextElement = $el.closest('li').next();
       nextElement.find('ul.ticket_section').remove();
       var element = jQuery('#picklist_section_'+id).parent();
       if(element.length != 0) {

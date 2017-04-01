@@ -719,11 +719,12 @@ window.App = window.App || {};
 		  $("body")
 				.on("change.template_form",'.dynamic_sections', function(e){
 					var id;
-					var selected = jQuery(this).find(':selected');
+					var $el = jQuery(this);
+					var selected = $el.find(':selected');
 					if (selected.length > 0){
 					  id = selected.data().id;
 					}
-					var nextElement = jQuery(this.closest('li').next());
+					var nextElement = $el.closest('li').next());
 					nextElement.find('ul.ticket_section').remove();
 					var element = $('#picklist_section_'+id).parent();
 		      if(element.length != 0) {
