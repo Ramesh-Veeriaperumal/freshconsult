@@ -22,7 +22,7 @@ class AccountsController < ApplicationController
     :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show, :manage_languages, :update_languages]
   skip_filter :select_shard, 
     :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages]
-  skip_before_filter :ensure_proper_protocol, :ensure_proper_sts_header,
+  skip_before_filter :ensure_proper_protocol, 
     :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages]
   skip_before_filter :determine_pod, 
     :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages]

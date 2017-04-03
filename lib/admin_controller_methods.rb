@@ -5,13 +5,12 @@ module AdminControllerMethods
 
    def self.included(base)
     base.send :prepend_before_filter, :check_admin_subdomain
-    base.send :skip_before_filter, :check_privilege
+    base.send :skip_before_filter, :check_privilege    
     base.send :skip_before_filter, :set_time_zone
     base.send :skip_before_filter, :set_current_account
     base.send :skip_before_filter, :set_locale
     base.send :skip_before_filter, :check_account_state
     base.send :skip_before_filter, :ensure_proper_protocol
-    base.send :skip_before_filter, :ensure_proper_sts_header
     base.send :skip_before_filter, :check_day_pass_usage
     base.send :skip_filter, :select_shard
     base.send :layout, "subscription_admin"
