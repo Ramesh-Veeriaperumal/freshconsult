@@ -33,7 +33,7 @@ class SAAS::AccountDataCleanup
     end
     Rails.logger.info "Deleting all observer rules and creating fixtures again #{account.id}"
     account.reload
-    Fixtures::DefaultObserver.create_rule(true)
+    Fixtures::DefaultObserver.create_rule
   end
 
 def handle_supervisor_drop_data
