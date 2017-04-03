@@ -454,12 +454,17 @@ module TicketActivitiesTestHelper
           {
             type: :timesheet_edit,
             content: {
-              user_id: content_hash[:user_id][1].to_i,
-              executed_at: Time.at(content_hash[:executed_at][1].to_i).utc,
-              billable: content_hash[:billable][1],
-              time_spent: {
-                old_value: content_hash[:time_spent][0].to_i,
-                new_value: content_hash[:time_spent][1].to_i
+              old_values: {
+                user_id: content_hash[:user_id][0].to_i,
+                executed_at: Time.at(content_hash[:executed_at][0].to_i).utc,
+                billable: content_hash[:billable][0],
+                time_spent: content_hash[:time_spent][0].to_i
+              },
+              new_values: {
+                user_id: content_hash[:user_id][1].to_i,
+                executed_at: Time.at(content_hash[:executed_at][1].to_i).utc,
+                billable: content_hash[:billable][1],
+                time_spent: content_hash[:time_spent][1].to_i
               }
             }
           }
@@ -535,7 +540,9 @@ module TicketActivitiesTestHelper
         actions: [
           {
             type: type,
-            content: content_hash[type]
+            content: content_hash[type].compact.map do |value|
+              value.to_i == 0 ? value : value.to_i
+            end
           }
         ]
       }
