@@ -10,7 +10,7 @@ module Fixtures
         ],
         :performer => {:type => Va::Performer::AGENT},
         :conditions => [
-          {:evaluate_on => "ticket", :value => ["1"], :operator => 'in', :name => 'responder_id'}
+          {:evaluate_on => "ticket", :value => [""], :operator => 'in', :name => 'responder_id'}
         ]
       }
 
