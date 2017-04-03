@@ -307,6 +307,18 @@ module Ember
         match_json(partial_success_response_pattern(ticket_ids, {}))
         assert_response 202
       end
+
+      def test_bulk_update_with_tags
+        tag = Faker::Lorem.word
+        ticket = create_ticket
+        ticket_ids = [ticket.id]
+        ticket.tags.create(name: tag)
+        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+        assert ticket.tag_names.include? (tag)
+        assert_response 202
+      end
     end
   end
 end

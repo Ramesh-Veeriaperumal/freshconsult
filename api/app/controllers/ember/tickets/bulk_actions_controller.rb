@@ -154,6 +154,9 @@ module Ember
           @custom_fields = cname_params[:custom_field] # Assigning it here as it would be deleted in the next statement while assigning.
           @delegator_attributes ||= validatable_delegator_attributes
           @item.assign_attributes(@delegator_attributes)
+          # Tags should not be overwritten for tickets in bulk update. Should delete from params so that update_attributes does not capture tags changes
+          @tags ||= cname_params.delete(:tags)
+          @item.tags += @tags if @tags
           @item.assign_description_html(cname_params[:ticket_body_attributes]) if cname_params[:ticket_body_attributes]
         end
 
