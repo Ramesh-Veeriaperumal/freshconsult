@@ -5,6 +5,7 @@ module Ember
 
     include QueryHashHelper
     include TicketFiltersHelper
+    include GroupsTestHelper
 
     def wrap_cname(params)
       { ticket_filter: params }
@@ -21,6 +22,17 @@ module Ember
       # create two filters
       @filter1 = create_filter
       @filter2 = create_filter
+
+      group = create_group(@account)
+      @inaccessible_filter = create_filter(nil, {
+        custom_ticket_filter: {
+          visibility: {
+            visibility: 2,
+            group_id: group.id
+          }
+        }
+      })
+
     end
 
     # Tests
@@ -43,6 +55,16 @@ module Ember
       get :show, construct_params({ version: 'private' }, false).merge(id: @filter1.id)
       assert_response 200
       match_custom_json(response.body, ticket_filter_show_pattern(@filter1))
+    end
+
+    def test_show_inaccessible_filter
+      get :show, construct_params({ version: 'private' }, false).merge(id: @inaccessible_filter.id)
+      assert_response 404
+    end
+
+    def test_show_invalid_filter
+      get :show, construct_params({ version: 'private' }, false).merge(id: @inaccessible_filter.id + 100)
+      assert_response 404
     end
 
     def test_show_with_default_visible_filter
