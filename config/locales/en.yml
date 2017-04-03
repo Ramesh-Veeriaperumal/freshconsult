@@ -3619,6 +3619,8 @@ en:
       parent_tooltip: "Inherit Parent"
       undo_parent_tooltip: "Undo Inherit Parent"
       applying_template: "Applying Child Template"
+      inherit_parent_tooltip: "Copies all properties from parent ticket"
+      undo_parent_inherit_tooltip: "Undo copies all properties from parent ticket"
     delete: "Delete"
     parent: "Parent"
     child: "Child"
@@ -3674,8 +3676,8 @@ en:
     parent_child_templates:
       title: "Parent Child Templates"
       helptext:
-        info1: "The parent child template allows you to set up a pre-defined workflow by establishing a parent and child relationship between tickets. For every parent template, you would be able to associate up to 10 child templates."
-        info2: "For example, one could create the workflow of onboarding a new employee as a parent child template where the child templates are sub tasks of the onboarding process such as Issuing an ID card, Issuing a laptop, etc."
+        info1: "Parent and child tickets can be used to incorporate common workflows, like onboarding a new employee or returns processing, into your helpdesk. When a request comes in, a template can be used to create multiple child tickets from the parent ticket and assign it to respective agents for processing, in a jiffy."
+        info2: "For every parent template, you would be able to associate up to 10 child templates."
       deleteMessage: "If you proceed with delete, <ul class='delete-msg-ul'><li>The parent template configuration will be lost.</li><li> Any child template which is associated to only this particular parent template will be deleted.</li></ul> Are you sure you want to delete?"
   solution_category:
     all: All Categories
@@ -5720,6 +5722,7 @@ en:
         subject: Subject
         tkt_id: Ticket ID
         requester: Requester
+      link_to_tracker_tooltip: "Manage similar tickets together by linking them to a relevant tracker to receive updates from it in a consistent manner."
       btn: Link
       view_tracker: "View Tracker"
       title: Link Tickets
@@ -5756,6 +5759,9 @@ en:
       search_for_tracker: "Search for tracker by"
       rlt_ticket_singular: "related ticket"
       rlt_ticket_plural: "related tickets"
+      create_tracker_sidebar_title: "What is a tracker?"
+      create_tracker_sidebar_line1: "A <b>Tracker</b> is a master ticket that allows you to manage multiple tickets with the same context by linking them together."
+      create_tracker_sidebar_line2: "Through a tracker, agents can broadcast messages to all related tickets and make sure updates are delivered to all the agents of the related tickets in a consistent manner."
     ticket_association:
        title: Ticket Association
     parent_child:
@@ -5782,6 +5788,11 @@ en:
       child_tkt_singular: "child ticket"
       child_tkt_plural: "child tickets"
       notn_subject: "Error while creating child tickets"
+      ticket_sidebar_title: "Parent-child ticketing"
+      ticket_sidebar: "<div class='parent-child-sidebar'>Parent-child ticketing helps support agents resolve issues faster by dividing a ticket into smaller sub-tickets. These sub-tickets can be assigned to, and worked on in parallel, by different agents.</div>"
+      add_child_btn_tooltip: "<div class='add-child-tooltip'>Helps agents resolve issues faster by dividing a ticket into sub-tickets that can be worked on independently.</div>"
+      childticket_sidebar_title: "What is a child ticket?"
+      childticket_sidebar: "A <b>child</b> ticket is a sub-ticket, created from a parent ticket. A child ticket is typically an action item that can be assigned to a different agent and worked on independently."
     singular: Ticket
     due_by_time: Due by time
     delete_btn_title: Move this ticket to trash

@@ -100,6 +100,8 @@
     unlinkPath:'<%= unlink_parent_helpdesk_ticket_template_path(@tkt_template, {:p_id=>@parent.id}) %>',
     inherit_tooltip:'<%= t('ticket_templates.child_template.parent_tooltip') %>',
     undo_inherit_tooltip:'<%= t('ticket_templates.child_template.undo_parent_tooltip') %>',
+    inheritParentTooltip: '<%= t("ticket_templates.child_template.inherit_parent_tooltip") %>',
+    undoParentInheritTooltip: '<%= t("ticket_templates.child_template.undo_parent_inherit_tooltip") %>',
     edit:true,
     noName:'<%= t('ticket_templates.child_template.noname') %>',
     <% if (inherit_parent_value) %>

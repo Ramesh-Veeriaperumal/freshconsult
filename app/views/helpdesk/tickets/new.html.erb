@@ -11,9 +11,10 @@
     "new_ticket_title"
   end
 %>
-<% if tracker_ticket %>
-  <% content_for :helpcard do %>
-    <%= render :partial => "helpdesk/tickets/new_tracker_helpnote" %>
+<% if tracker_ticket || is_child_form%>
+  <% content_for :helpcard do 
+    helpcard = tracker_ticket ? "tracker" : "child" %>
+    <%= render :partial => "helpdesk/tickets/new_#{helpcard}_helpnote" %>
   <% end %>
 <% end %>
 <% content_for :sidebar do %>
