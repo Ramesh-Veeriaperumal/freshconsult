@@ -169,7 +169,7 @@ module ActionMailerCallbacks
       "{\"unique_args\":{\"account_id\": #{account_id},\"ticket_id\":#{ticket_id}," \
         "#{note_id_str}" \
         "\"email_type\":\"#{mail_type}\",\"from_email\":\"#{from_email}\",\"category_id\":\"#{category_id}\"," \
-        "\"pod_info\":\"#{get_pod}\",#{shard_name},\"subject\":\"#{subject}\" }}"
+        "\"pod_info\":\"#{get_pod}\",#{shard_name}}}"
     end
 
 
