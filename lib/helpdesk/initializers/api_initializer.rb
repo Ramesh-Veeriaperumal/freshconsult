@@ -7,6 +7,7 @@ if Infra['API_LAYER']
 
     # API layer uses new verison API throttler. Hence deleted the above middleware and inserted new.
     config.middleware.insert_before 'Middleware::ApiRequestInterceptor', 'Middleware::FdApiThrottler', max: 1000
+    config.middleware.insert_before 'Middleware::ApiRequestInterceptor', 'Middleware::ApiPipeAuthenticator' if Infra['PIPE_LAYER']
 
     # This middleware will attempt to return the contents of a file's body from disk in the response.
     # If a file is not found on disk, the request will be delegated to the application stack.
