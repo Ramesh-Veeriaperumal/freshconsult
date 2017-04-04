@@ -17,7 +17,7 @@ class SearchV2::IndexOperations::PostArchiveProcess < SearchV2::IndexOperations
       'Helpdesk::Ticket'
     )
     RabbitMq::Utils.manual_publish_to_xchg(
-      ticket_uuid, 'ticket', ticket_message, RabbitMq::Constants::RMQ_SEARCH_TICKET_KEY
+      ticket_uuid, 'ticket', ticket_message, RabbitMq::Constants::RMQ_SEARCH_TICKET_KEY, true
     )
 
     # Publish to remove notes
@@ -33,7 +33,7 @@ class SearchV2::IndexOperations::PostArchiveProcess < SearchV2::IndexOperations
         args[:ticket_id]
       )
       RabbitMq::Utils.manual_publish_to_xchg(
-        note_uuid, 'note', note_message, RabbitMq::Constants::RMQ_SEARCH_NOTE_KEY
+        note_uuid, 'note', note_message, RabbitMq::Constants::RMQ_SEARCH_NOTE_KEY, true
       )
     end
 
@@ -48,7 +48,7 @@ class SearchV2::IndexOperations::PostArchiveProcess < SearchV2::IndexOperations
       'Helpdesk::ArchiveTicket'
     )
     RabbitMq::Utils.manual_publish_to_xchg(
-      archiveticket_uuid, 'archive_ticket', archiveticket_message, RabbitMq::Constants::RMQ_SEARCH_ARCHIVE_TICKET_KEY
+      archiveticket_uuid, 'archive_ticket', archiveticket_message, RabbitMq::Constants::RMQ_SEARCH_ARCHIVE_TICKET_KEY, true
     )
     
     # Publish as archive notes
@@ -67,7 +67,7 @@ class SearchV2::IndexOperations::PostArchiveProcess < SearchV2::IndexOperations
         args[:archive_ticket_id]
       )
       RabbitMq::Utils.manual_publish_to_xchg(
-        anote_uuid, 'archive_note', anote_message, RabbitMq::Constants::RMQ_SEARCH_ARCHIVE_NOTE_KEY
+        anote_uuid, 'archive_note', anote_message, RabbitMq::Constants::RMQ_SEARCH_ARCHIVE_NOTE_KEY, true
       )
     end
   end

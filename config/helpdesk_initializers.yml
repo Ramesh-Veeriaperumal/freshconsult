@@ -98,3 +98,4 @@ helpdesk:
     - health_check_constants
     - clearbit_config
     - freshpipe
+    - zendesk_app_config

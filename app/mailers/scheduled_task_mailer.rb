@@ -112,8 +112,10 @@ private
     agent_status = @config.config_data[:agents_status] || []
     emails = check_user_and_email_status(emails_and_users, agent_status)
   
-    ScheduledTaskMailer.notify_blocked_or_deleted(@task, emails) if(emails[:blocked_emails].present?)
-    ScheduledTaskMailer.notify_downgraded_user(@task, emails) if(emails[:agent_downgraded].present?)
+    if @task.schedulable.respond_to?(:report_type)
+      ScheduledTaskMailer.notify_blocked_or_deleted(@task, emails) if(emails[:blocked_emails].present?)
+      ScheduledTaskMailer.notify_downgraded_user(@task, emails) if(emails[:agent_downgraded].present?)
+    end
     
     emails[:to_emails]
   end
