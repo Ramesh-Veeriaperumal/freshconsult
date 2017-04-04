@@ -85,7 +85,8 @@ module Ember
       filter_params = sample_filter_input_params
       post :create, construct_params({ version: 'private' },  filter_params.except(:query_hash, :name))
       assert_response 400
-      match_custom_json(response.body, create_error_pattern([:query_hash, :name]))
+      match_json([bad_request_error_pattern('query_hash', :datatype_mismatch, code: :missing_field, expected_data_type: Array),
+                  bad_request_error_pattern('name', :missing_field)])
     end
 
     def test_create_with_invalid_values
@@ -96,6 +97,16 @@ module Ember
       assert_response 400
       match_json([bad_request_error_pattern('order_by', :not_included, list: sort_field_options.join(',')),
                   bad_request_error_pattern('visibility_id', :not_included, list: Admin::UserAccess::VISIBILITY_NAMES_BY_KEY.keys.join(','))])
+    end
+
+    def test_create_with_empty_query_hash
+      filter_params = sample_filter_input_params
+      new_name = "#{Faker::Name.name} - #{Time.now.to_s}"
+      filter_params[:name] = new_name
+      post :create, construct_params({ version: 'private' },  filter_params.merge(query_hash: []))
+      assert_response 200
+      filter = Helpdesk::Filters::CustomTicketFilter.find_by_name(new_name)
+      match_custom_json(response.body, ticket_filter_show_pattern(filter))
     end
 
     def test_create_with_valid_params
@@ -112,7 +123,8 @@ module Ember
       filter_params = sample_filter_input_params
       put :update, construct_params({ version: 'private', id: @filter1.id },  filter_params.except(:query_hash, :name))
       assert_response 400
-      match_custom_json(response.body, create_error_pattern([:query_hash, :name]))
+      match_json([bad_request_error_pattern('query_hash', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String),
+                  bad_request_error_pattern('name', :missing_field)])
     end
 
     def test_update_with_invalid_values
@@ -129,6 +141,16 @@ module Ember
       default_filter_id = TicketsFilter.default_views.map { |a| a[:id] }.sample
       put :update, construct_params({ version: 'private', id: default_filter_id },  sample_filter_input_params)
       assert_response 403
+    end
+
+    def test_update_with_empty_query_hash
+      filter_params = sample_filter_input_params
+      new_name = "#{Faker::Name.name} - #{Time.now.to_s}"
+      filter_params[:name] = new_name
+      post :update, construct_params({ version: 'private', id: @filter1.id},  filter_params.merge(query_hash: []))
+      assert_response 200
+      filter = Helpdesk::Filters::CustomTicketFilter.find_by_name(new_name)
+      match_custom_json(response.body, ticket_filter_show_pattern(filter))
     end
 
     def test_update_with_valid_params
