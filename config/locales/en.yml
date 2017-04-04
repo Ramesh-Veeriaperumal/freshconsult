@@ -110,13 +110,6 @@ en:
       dropped_address: "Address to remove from drop list"
       source_ticket: "Source Ticket"
       thanks: "Thanks,"
-    agent_notification:
-      subject: "Email was not delivered to %{failed_email}"
-      content: | 
-              <p>Hi %{agent_name},<br><br>
-                The following message composed by you on ticket id <a target='_blank' href=%{ticket_url}>%{ticket_id}</a> failed to reach the recipient %{failed_email} permanently.<br>
-                Reason: %{error_message}.<br>
-                Message content: <br>%{failed_content}</p>
     note_display:
       title  : "Message not delivered"
       failed_recipients: "Failed recipients"

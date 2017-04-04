@@ -51,6 +51,8 @@ class EmailNotification < ActiveRecord::Base
   RESOLUTION_SLA_REMINDER = 23
   DEFAULT_FORWARD_TEMPLATE = 24
 
+  EMAIL_DELIVERY_FAILURE_NOTIFICATION = 25
+
 
   DISABLE_NOTIFICATION = {
     NEW_TICKET =>  { 
@@ -82,26 +84,27 @@ class EmailNotification < ActiveRecord::Base
 
   # notification_token, notification_type, visibility
   EMAIL_NOTIFICATIONS = [
-    [:user_activation_email,          USER_ACTIVATION,                VISIBILITY[:AGENT_AND_REQUESTER]],
-    [:password_reset_email,           PASSWORD_RESET,                 VISIBILITY[:AGENT_AND_REQUESTER]],
-    [:new_ticket_created,             NEW_TICKET,                     VISIBILITY[:AGENT_AND_REQUESTER]],
-    [:tkt_assigned_to_group,          TICKET_ASSIGNED_TO_GROUP,       VISIBILITY[:AGENT_ONLY]         ],
-    [:tkt_unattended_in_grp,          TICKET_UNATTENDED_IN_GROUP,     VISIBILITY[:AGENT_ONLY]         ],
-    [:tkt_assigned_to_agent,          TICKET_ASSIGNED_TO_AGENT,       VISIBILITY[:AGENT_ONLY]         ],
-    [:agent_adds_comment,             COMMENTED_BY_AGENT,             VISIBILITY[:REQUESTER_ONLY]     ],
-    [:first_response_sla,             FIRST_RESPONSE_SLA_VIOLATION,   VISIBILITY[:AGENT_ONLY]         ],
-    [:response_reminder_sla,          RESPONSE_SLA_REMINDER,          VISIBILITY[:AGENT_ONLY]         ],
-    [:requester_replies,              REPLIED_BY_REQUESTER,           VISIBILITY[:AGENT_ONLY]         ],
-    [:resolution_time_sla,            RESOLUTION_TIME_SLA_VIOLATION,  VISIBILITY[:AGENT_ONLY]         ],
-    [:resolution_reminder_sla,        RESOLUTION_SLA_REMINDER,        VISIBILITY[:AGENT_ONLY]         ],
-    [:agent_solves_tkt,               TICKET_RESOLVED,                VISIBILITY[:REQUESTER_ONLY]     ],
-    [:agent_closes_tkt,               TICKET_CLOSED,                  VISIBILITY[:REQUESTER_ONLY]     ],
-    [:default_reply_template,         DEFAULT_REPLY_TEMPLATE,         VISIBILITY[:REPLY_TEMPLATE]     ],
-    [:default_forward_template,       DEFAULT_FORWARD_TEMPLATE,       VISIBILITY[:FORWARD_TEMPLATE]   ],
-    [:additional_email_verification,  ADDITIONAL_EMAIL_VERIFICATION,  VISIBILITY[:REQUESTER_ONLY]     ],
-    [:notify_comment,                 NOTIFY_COMMENT,                 VISIBILITY[:AGENT_ONLY]         ],
-    [:new_ticket_cc,                  NEW_TICKET_CC,                  VISIBILITY[:CC_NOTIFICATION]    ],
-    [:public_note_cc,                 PUBLIC_NOTE_CC,                 VISIBILITY[:CC_NOTIFICATION]    ]
+    [:user_activation_email,                USER_ACTIVATION,                      VISIBILITY[:AGENT_AND_REQUESTER]],
+    [:password_reset_email,                 PASSWORD_RESET,                       VISIBILITY[:AGENT_AND_REQUESTER]],
+    [:new_ticket_created,                   NEW_TICKET,                           VISIBILITY[:AGENT_AND_REQUESTER]],
+    [:tkt_assigned_to_group,                TICKET_ASSIGNED_TO_GROUP,             VISIBILITY[:AGENT_ONLY]         ],
+    [:tkt_unattended_in_grp,                TICKET_UNATTENDED_IN_GROUP,           VISIBILITY[:AGENT_ONLY]         ],
+    [:tkt_assigned_to_agent,                TICKET_ASSIGNED_TO_AGENT,             VISIBILITY[:AGENT_ONLY]         ],
+    [:agent_adds_comment,                   COMMENTED_BY_AGENT,                   VISIBILITY[:REQUESTER_ONLY]     ],
+    [:first_response_sla,                   FIRST_RESPONSE_SLA_VIOLATION,         VISIBILITY[:AGENT_ONLY]         ],
+    [:response_reminder_sla,                RESPONSE_SLA_REMINDER,                VISIBILITY[:AGENT_ONLY]         ],
+    [:requester_replies,                    REPLIED_BY_REQUESTER,                 VISIBILITY[:AGENT_ONLY]         ],
+    [:resolution_time_sla,                  RESOLUTION_TIME_SLA_VIOLATION,        VISIBILITY[:AGENT_ONLY]         ],
+    [:resolution_reminder_sla,              RESOLUTION_SLA_REMINDER,              VISIBILITY[:AGENT_ONLY]         ],
+    [:agent_solves_tkt,                     TICKET_RESOLVED,                      VISIBILITY[:REQUESTER_ONLY]     ],
+    [:agent_closes_tkt,                     TICKET_CLOSED,                        VISIBILITY[:REQUESTER_ONLY]     ],
+    [:default_reply_template,               DEFAULT_REPLY_TEMPLATE,               VISIBILITY[:REPLY_TEMPLATE]     ],
+    [:default_forward_template,             DEFAULT_FORWARD_TEMPLATE,             VISIBILITY[:FORWARD_TEMPLATE]   ],
+    [:additional_email_verification,        ADDITIONAL_EMAIL_VERIFICATION,        VISIBILITY[:REQUESTER_ONLY]     ],
+    [:notify_comment,                       NOTIFY_COMMENT,                       VISIBILITY[:AGENT_ONLY]         ],
+    [:new_ticket_cc,                        NEW_TICKET_CC,                        VISIBILITY[:CC_NOTIFICATION]    ],
+    [:public_note_cc,                       PUBLIC_NOTE_CC,                       VISIBILITY[:CC_NOTIFICATION]    ],
+    [:email_delivery_failure_notification,  EMAIL_DELIVERY_FAILURE_NOTIFICATION,  VISIBILITY[:AGENT_ONLY]]
   ]
 
   # List of notfications to agents which cannot be turned off
