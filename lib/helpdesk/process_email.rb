@@ -1114,7 +1114,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       begin
         ticket.sds_spam = params[:spam_info]['spam']
         ticket.spam_score = params[:spam_info]['score']
-        Rails.logger.info "Spam rules triggered for ticket #{ticket.id}: #{params[:spam_info]['rules']}"
+        Rails.logger.info "Spam rules triggered for ticket with message_id #{params[:message_id]}: #{params[:spam_info]['rules']}"
       rescue => e
         puts e.message
       end

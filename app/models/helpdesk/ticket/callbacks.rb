@@ -977,10 +977,10 @@ private
   def update_spam_detection_service
     if (Account.current.launched?(:spam_detection_service) && @model_changes.include?(:spam) &&
      self.source.eql?(Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]))
-      Rails.logger.info "Pushing to sidekiq to learn ticket"
       type = @model_changes[:spam][1] ? :spam : :ham
       SpamDetection::LearnTicketWorker.perform_async({ :ticket_id => self.id, 
         :type => Helpdesk::Email::Constants::MESSAGE_TYPE_BY_NAME[type]})
+      Rails.logger.info "Enqueued job to sidekiq to learn ticket"
     end
   end
 

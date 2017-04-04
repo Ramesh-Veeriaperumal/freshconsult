@@ -218,7 +218,8 @@ module ActionMailerCallbacks
       category = nil
       notification_type = is_num?(type) ? type : get_notification_type_id(type) 
       if account_created_recently? && spam_filtered_notifications.include?(notification_type)
-        response = FdSpamDetectionService::Service.new(Helpdesk::EMAIL[:outgoing_spam_account], mail.to_s).check_spam
+        email = Helpdesk::Email::SpamDetector.process_mail(mail.to_s)
+        response = FdSpamDetectionService::Service.new(Helpdesk::EMAIL[:outgoing_spam_account], email).check_spam
         category = Helpdesk::Email::OutgoingCategory::CATEGORY_BY_TYPE[:spam] if response.spam?
         Rails.logger.info "Spam check response for outgoing email: #{response.spam?}"
       end
