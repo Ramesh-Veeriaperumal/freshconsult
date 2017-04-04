@@ -54,7 +54,8 @@ class ContactDecorator < ApiDecorator
       email: email,
       phone: phone,
       company_name: company_name,
-      avatar: avatar_hash
+      avatar: avatar_hash,
+      twitter_id: twitter_id,
     }
   end
 
