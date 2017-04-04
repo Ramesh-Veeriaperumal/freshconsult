@@ -317,6 +317,12 @@ en:
     twitter_id: Twitter
     facebook: Facebook
     full_name: Full Name
+    first_name: First Name
+    last_name: Last Name
+    phone_number: Phone Number
+    company_name: Company Name
+    job_title: Job Title
+    industry: Industry
     name: Name
     secondary: secondary
     phone_no: Phone No
@@ -6103,9 +6109,10 @@ en:
   send_email_to_group: Send Email to Group
   activate_account: Activate your account
   activations:
-    activate_freshdesk_account: Activate your Freshdesk account
+    activate_freshdesk_account: Activate your account
     helpnote1: Tell us a little more about you and help us personalize your experience.
     helpnote2: Login to your account using %{email}
+    helpnote3: Please confirm your details and set a password for your account
   enter_message: Enter your message here
   not_selected: Not Selected
   enter_billing_for_free: Please enter the credit card details before you choose the paid plan
@@ -6248,7 +6255,7 @@ en:
   your_trial_account: Your trial account
   reply_comment: Add Comment
   password: Password
-  create_password: Create a Password
+  create_password: Enter Password
   retype_password: Retype Password
   feedbackwidget_defaulttitle: Help &amp; Support
   two: 2 Hours

@@ -100,6 +100,7 @@ class User < ActiveRecord::Base
   validate :max_user_companies, :if => :has_multiple_companies_feature?
   validate :unique_external_id_feature, :if => :unique_external_id_changed?
 
+
   def email_validity
     self.errors.add(:base, I18n.t("activerecord.errors.messages.email_invalid")) unless self[:account_id].blank? or self[:email] =~ EMAIL_VALIDATOR
     self.errors.add(:base, I18n.t("activerecord.errors.messages.email_not_unique")) if self[:email] and self[:account_id].present? and User.exists?(["email = ? and id != '#{self.id}'", self[:email]])
@@ -538,14 +539,21 @@ class User < ActiveRecord::Base
 
 
   def activate!(params)
-    self.active = true
-    self.name = params[:user][:name]
-    self.password = params[:user][:password]
-    self.password_confirmation = params[:user][:password_confirmation]
-    self.user_emails.first.update_attributes({:verified => true}) unless self.user_emails.blank?
-    self.account.verify_account_with_email  if self.privilege?(:admin_tasks)
-    #self.openid_identifier = params[:user][:openid_identifier]
-    save
+    self.transaction do
+      self.active = true
+      params[:user][:name] = params[:user][:name] || (params[:user][:first_name] + ' ' + params[:user][:last_name])
+      self.assign_attributes(params[:user].slice(*ACTIVATION_ATTRIBUTES))
+      update_account_info_and_verify(params[:user]) if can_verify_account?
+      self.user_emails.first.update_attributes({:verified => true}) unless self.user_emails.blank?
+      #self.openid_identifier = params[:user][:openid_identifier]
+      save!
+    end
+  end
+
+  def update_account_info_and_verify(user_params)
+    self.account.update_attribute(:name, user_params[:company_name])
+    self.account.main_portal.update_attribute(:name, user_params[:company_name])
+    self.account.account_configuration.update_contact_company_info!(user_params)
   end
 
   def exist_in_db?
@@ -998,6 +1006,10 @@ class User < ActiveRecord::Base
     else
       self.company_name = comp_name
     end
+  end
+
+  def can_verify_account?
+    !account.verified? && self.privilege?(:admin_tasks)
   end
 
   private
