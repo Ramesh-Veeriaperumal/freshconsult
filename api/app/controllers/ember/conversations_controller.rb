@@ -95,9 +95,10 @@ module Ember
     end
 
     def reply_forward_template
+      @item = last_forwardable_note if action_name.to_sym == :latest_note_forward_template
       @agent_signature = signature
       @content = template_content
-      @quoted_text = quoted_text(@item || @ticket, [:forward_template, :note_forward_template].include?(action_name.to_sym))
+      @quoted_text = quoted_text(@item || @ticket, [:forward_template, :note_forward_template, :latest_note_forward_template].include?(action_name.to_sym))
       fetch_cc_bcc_emails
       render action: :template
     end
@@ -105,6 +106,7 @@ module Ember
     alias reply_template reply_forward_template
     alias forward_template reply_forward_template
     alias note_forward_template reply_forward_template
+    alias latest_note_forward_template reply_forward_template
 
     private
 
@@ -307,7 +309,7 @@ module Ember
       end
 
       def notification_template
-        action_name.to_sym == :note_forward_template ? :forward_template : action_name.to_sym
+        [:note_forward_template, :latest_note_forward_template].include?(action_name.to_sym) ? :forward_template : action_name.to_sym
       end
 
       def fetch_cc_bcc_emails
@@ -321,6 +323,10 @@ module Ember
           'ticket' => @ticket,
           'helpdesk_name' => Account.current.portal_name
         )
+      end
+
+      def last_forwardable_note
+        @ticket.notes.where(['private = false AND source NOT IN (?)', Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['feedback']]).last
       end
 
       wrap_parameters(*wrap_params)
