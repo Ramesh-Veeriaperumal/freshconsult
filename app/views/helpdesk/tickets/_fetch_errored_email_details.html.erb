@@ -36,9 +36,8 @@
             jQuery("#TicketPseudoReply a[rel='note-button'").data('failed-email', email).trigger('click');
             jQuery('#cnt-note-body').data('redactor').insertOnCursorPosition('inserthtml', email);
             setTimeout(function(){
-                jQuery('#HelpdeskNotes #helpdesk_note_to_emails').val('').trigger('change');
                 jQuery('#HelpdeskNotes .add-note-select').focus();
-            },1500);
+            },1000);
         });
 
         jQuery('body').on('click.email_error', '.email-failure-list-item .can-make-calls', function(e){

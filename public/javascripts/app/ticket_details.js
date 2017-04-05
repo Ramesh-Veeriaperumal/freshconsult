@@ -1093,35 +1093,43 @@ var scrollToError = function(){
 				if(propertiesForm.valid()) {
 
 					if($.browser.msie || $.browser.msedge) {
-						if(eligibleForReply(_form)){
-							handleIEReply(_form);
-							submitTicketProperties();
-							removeFormChangedFlag();
+						if(eligibleForReply(_form)){ 	//if no response added returns true
+							handleIEReply(_form);		//stop saving draft if reply
+							submitTicketProperties();	// Load button submit ticket prop do callbacks
+							removeFormChangedFlag();	// flag reset on submit
 							return true;
 						}
-						changeStatusTo(currentStatus);
-						statusChangeField.data('val', '');
+						changeStatusTo(currentStatus);		//change new status and trigger change
+						statusChangeField.data('val', '');		//send and set field data 
 						return false;
-					} else {
+					} 
+					else {
 						ev.preventDefault();
-						blockConversationForm(_form);
-						if(!isFormLocked(_form)) {
-							lockForm(_form);
-							submitNewConversation(_form, ev, submitTicketProperties);
+						blockConversationForm(_form);	// grey out the form
+						if(!isFormLocked(_form)) {		// is form submitting
+							lockForm(_form);			// set form submitting
+							if (TICKET_DETAILS_DATA['new_send_and_set']){
+								send_and_set_a(_form, ev);
+							}
+							else{
+								submitNewConversation(_form, ev, submitTicketProperties);	
+							}
 						} else {
 							//Repeated submission, do something
 							console.log('Duplicate Request Blocked');
 						}
-		      }
-				} else {
+		      		}
+				} 
+				else {		// if ticket properties validation fails
 					ev.preventDefault();
 					scrollToError();
 				}
-			} else {
+			} 
+			else {		
 				if($.browser.msie || $.browser.msedge) {
-					if(eligibleForReply(_form)){
-						handleIEReply(_form);
-						removeFormChangedFlag();
+					if(eligibleForReply(_form)){	// traffic traffic_cop
+						handleIEReply(_form);		// stop saving draft for reply
+						removeFormChangedFlag();	// flag reset on submit
 						return true;
 					}
 					return false;
@@ -1156,7 +1164,6 @@ var scrollToError = function(){
 		} else {
 			scrollToError();
 		}
-
 	});
 
 	jQuery('#ticket-association').trigger('afterShow');
@@ -1212,6 +1219,8 @@ var scrollToError = function(){
 			});
 		}
 	}
+
+	
 
 	window.submitNewConversation = function(_form, ev, callback) {
 		
@@ -1373,6 +1382,220 @@ var scrollToError = function(){
 			}
 		});
 	}
+
+  	var send_and_set_a = function(_form, ev, callback){
+
+		var tkt_form = $('#custom_ticket_form');
+		var submit = $('#custom_ticket_form .btn-primary');
+		submit.button('loading');
+		submit.attr('disabled','disabled');
+
+		var isNotesVisible = $('#all_notes').length > 0;
+
+	    // Ajax Parameters stored in DOM
+	    [
+	      { name: 'format', value: 'js'},
+	      { name: 'showing', value: isNotesVisible ? 'notes' : 'activities'},
+	      { name: 'since_id', value: isNotesVisible ? TICKET_DETAILS_DATA['last_note_id'] : TICKET_DETAILS_DATA['last_activity']}
+	    ].map(function(x) {
+	      return $('<input type="hidden" rel="ajax_params" name="' + x.name + '" value="' + x.value + '" />');
+	    }).forEach(function(y) {
+	      _form.append(y);
+	    });
+
+		callback = callback || function(){};
+
+		$.ajax({
+			type: 'POST',
+			url: TICKET_DETAILS_DATA["displayId"] + '/send_and_set_status',
+			dataType: 'script',
+			beforeSubmit: function(values, form) {
+			  seperateQuoteText(_form);
+			  if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') {
+			    stopDraftSaving();
+			  }
+
+			},
+
+			data: jQuery.merge(_form.serializeArray(), tkt_form.serializeArray()),
+
+			success: function(response, statusCode, xhr) {
+
+			  releaseForm(_form);
+			  var statusChangeField = $('#send_and_set');
+
+			  function _unblockForm(){
+			    if (_form.data('panel')) {
+			      if(_form.data("form")){
+			        var $form = $('#' + _form.data('panel')),
+			            form_container = $form.find(".commentbox");
+
+			        form_container.unblock();
+			      } else {
+			        $('#' + _form.data('panel')).unblock();
+			      }
+			    }
+			  }
+
+			  function _unblockPanel(){
+			    if (_form.data('panel')) {
+			      $('#' + _form.data('panel')).unblock();
+			    }
+			  }
+
+			  function _saveDraft(){
+			    if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') {
+			      triggerDraftSaving();
+			    }
+			  }
+
+			  if(App.Tickets.TicketDetail.inlineError) {
+			    var msg = App.Tickets.TicketDetail.inlineErrorMessage;
+			    App.Tickets.LimitEmails.appendErrorMessage(_form,'.cc_fields:visible:last' ,msg);
+
+			    _unblockForm();
+			    _saveDraft();
+
+			    $.scrollTo(jQuery('.redactor.conversation_thread'));
+			    return false;
+			  }
+			  if($('#response_added_alert').length > 0 && !isNotesVisible){
+			    // if activities shown
+
+			    _unblockPanel();
+
+			    _form.trigger('focusin.keyboard_shortcuts');
+
+			    if(statusChangeField.data('val') != undefined && statusChangeField.data('val') != ""){
+			      changeStatusTo(currentStatus);
+			      statusChangeField.data('val','');
+			      $('.ticket_details #helpdesk_ticket_status').data('updated',false);
+			    }
+			  }else if($.trim(response).length){
+			    // after successful note
+			    _unblockForm();
+			    if (_form.data('panel')) {
+			      $('#' + _form.data('panel')).hide();
+			      $('#' + _form.data('panel')).trigger('visibility');
+			    }
+
+			    if (_form.data('cntId') && _form.data('destroyEditor')){
+			      $('#' + _form.data('cntId') + '-body').destroyEditor(); //Redactor
+			    }
+
+			    _form.resetForm();
+			    _form.trigger('reset');
+			    $('#selectAgentsOptions').select2('data',[]);
+			    var $select2Custom = $('.email_container.add_select2_custom');
+			    var default_agent_present = $select2Custom.data('default-agent');
+			    var default_agent_option = $select2Custom.data('default-agent-disp');
+
+			    if ( default_agent_present){
+			      $('#selectAgentsOptions').val(default_agent_present).trigger('change');
+			    }
+			    _form.find('select.select2').trigger('change'); //For resetting the values in Select2.
+
+			    if (_form.attr('rel') == 'forward_form')  {
+			      //Remove To Address
+			      _form.find('.forward_email li.choice').remove();
+			    }
+
+			    if (_form.attr('rel') == 'note_form')  {
+			      $('#toggle-note-visibility .toggle-button').addClass('active');
+			      var submit_btn = _form.find('.submit_btn');
+			      submit_btn.find('[rel=text]').text(submit_btn.data('defaultText'));
+			    }
+
+			    //Enabling original attachments
+			    _form.find('.item[rel=original_attachment]').show();
+			    _form.find('input[rel=original_attachment]').prop('disabled', false);
+
+			    try {
+			      if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') {
+			        stopDraftSaving();
+			        $('#cnt-reply-body').val(TICKET_DETAILS_DATA['draft']['default_reply']);
+			        _clearDraftDom();
+			      }
+			    } catch(e) {}
+			    // The above block has been added so that Redactor errors do not restrict further flow.
+
+
+			    _form.find('[rel=ajax_params]').remove();
+
+			    _form.find('input[type=submit]').prop('disabled', false);
+			    if (_form.data('showPseudoReply')) {
+			      $('#TicketPseudoReply').show();
+			      callback();
+			    }
+			  } else {
+			    _form.find('input[type=submit]').prop('disabled', false);
+
+			    _unblockPanel();
+			    $('#file_size_alert_' + _form.data('cntId')).show();
+
+			    _saveDraft();
+			  }
+
+			  if(_form.attr('rel') == 'tweet_form'){
+			    getTweetTypeAndBind();
+			  }
+
+			  _form.data("formChanged",false);
+
+			  Helpdesk.TicketStickyBar.check();
+
+			  var property_response = tkt_form.data('send_and_set_resp');
+
+			  TICKET_DETAILS_DATA['updating_properties'] = false;
+			  submit.val(submit.data('saved-text')).addClass('done');
+			  setTimeout( function() {
+			    submit.button('reset').removeClass('done');
+			  }, 2000);
+
+
+			  if(property_response.err_msg){
+			    jQuery("#noticeajax").html(property_response.err_msg).show();
+			      closeableFlash('#noticeajax');
+			        jQuery(document).scrollTop(0);
+			  }
+			  else{
+
+			    if (property_response.autoplay_link) {
+			      pjaxify(property_response.autoplay_link);
+			    }
+			    else if(property_response.redirect || property_response.autoplay_link == ""){
+			      $('[rel=link_ticket_list]').click();
+			    } 
+			    else {
+			      if(statusChangeField.length) {
+			        if(statusChangeField.data('val') != '') {
+			          refreshStatusBox();
+			          if(statusChangeField.data('val') == TICKET_CONSTANTS.statuses.resolved || statusChangeField.data('val') == TICKET_CONSTANTS.statuses.closed) {
+			            $('[rel=link_ticket_list]').click();
+			          }
+			          statusChangeField.data('val', '');
+			        }
+			      }
+			      afterTktPropertiesUpdate();
+			    }
+			  }
+			  tkt_form.removeData('send_and_set_resp');
+
+			},
+			error: function(response) {
+			  releaseForm(_form);
+			  //_enableUpdateButton();
+			  _form.find('input[type=submit]').prop('disabled', false);
+			  _unblockPanel();
+			  _saveDraft();
+			  //_enableActionButton();
+			  submit.text(submit.data('default-text')).prop('disabled',false);
+
+			}
+		});
+
+
+	};
 
 	/*
 	 * Below functions are introduced to prevent duplicate form submission, that is
@@ -1651,7 +1874,8 @@ var scrollToError = function(){
 			ev.preventDefault();
 			ev.stopPropagation();
 		}
-		if($(this).data('note-type') === 'note'){
+		//do not add agents when coming from email error popup
+		if($(this).data('note-type') === 'note' && !$(this).data('failed-email')){
 			addNoteAgents();
 		}
 
