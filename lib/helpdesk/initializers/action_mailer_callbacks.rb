@@ -57,7 +57,8 @@ module ActionMailerCallbacks
         mail.delivery_method(:smtp, read_smtp_settings(category_id))
         set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email)
       else
-        category_id = get_notification_category_id(mail_type) || check_spam_category(mail, mail_type)
+        params = { :account_id => account_id, :ticket_id => ticket_id, :type => mail_type, :note_id => note_id }
+        category_id = get_notification_category_id(mail_type) || check_spam_category(mail, params)
         if category_id.blank?
           mailgun_traffic = get_mailgun_percentage
           if mailgun_traffic > 0 && Random::DEFAULT.rand(100) < mailgun_traffic
@@ -214,14 +215,14 @@ module ActionMailerCallbacks
       end
     end
 
-    def check_spam_category(mail, type)
+    def check_spam_category(mail, params)
       category = nil
-      notification_type = is_num?(type) ? type : get_notification_type_id(type) 
+      notification_type = is_num?(params[:type]) ? params[:type] : get_notification_type_id(params[:type]) 
       if account_created_recently? && spam_filtered_notifications.include?(notification_type)
         email = Helpdesk::Email::SpamDetector.process_mail(mail.to_s)
         response = FdSpamDetectionService::Service.new(Helpdesk::EMAIL[:outgoing_spam_account], email).check_spam
         category = Helpdesk::Email::OutgoingCategory::CATEGORY_BY_TYPE[:spam] if response.spam?
-        Rails.logger.info "Spam check response for outgoing email: #{response.spam?}"
+        Rails.logger.info "Spam check response for outgoing email with Account ID : #{params[:account_id]}, Ticket ID: #{params[:ticket_id]}, Note ID: #{params[:note_id]} - #{response.spam?}"
       end
       return category
     rescue => e
