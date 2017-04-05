@@ -126,6 +126,10 @@
                             },
                         }, config.clientId, config.authToken);
                     }, response.UserHeartbeatPollTime || DEFAULT_HEARTBEAT_IVAL);
+
+                    if(typeof self.apiinited === "function") {
+                        self.apiinited(response);
+                    }
                 }
             },
             onerror: function(err) {
@@ -194,6 +198,7 @@
         self.onmessage = config.onmessage || function (){log(">> client: onmessage called.");};
         self.onnotify = config.onnotify || function (){log(">> client: onnotify called.");};
         self.onheartbeat = config.onheartbeat || function (){log(">> client: onheartbeat called.");};
+        self.apiinited = config.apiinited || function (){log(">> client: apiinited called.");};
         self.onmemberadd = config.onmemberadd || function(){log(">> client: onmemberadd called.");};
         self.onmemberremove = config.onmemberremove || function(){log(">> client: onmemberremove called.");};
         self.onerror = config.onerror || function(){log(">> client: on error called.");};

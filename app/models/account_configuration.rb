@@ -5,33 +5,63 @@ class AccountConfiguration < ActiveRecord::Base
 
   serialize :contact_info, Hash
   serialize :billing_emails, Hash
+  serialize :company_info, Hash
 
   validate :ensure_values
 
-  after_update :update_crm, :update_billing, :update_reseller_subscription
+  after_update :update_billing, :update_reseller_subscription
+  after_commit :update_crm_and_map, on: :update
+  include Concerns::DataEnrichmentConcern
 
-  def admin_first_name
-  	contact_info[:first_name]
+  CONTACT_INFO_KEYS = [:full_name, :first_name, :last_name, :email, :notification_emails,  :job_title, :phone]
+  COMPANY_INFO_KEYS = [:name, :industry]
+  COMPANY_INFO_KEYS_WITH_PREFIX = COMPANY_INFO_KEYS.map { |each| "company_#{each}"}
+  COMPANY_INDUSTRY_TYPES  = YAML.load_file(File.join(Rails.root, 'config', 'company_industries.yml')).keys
+
+  CONTACT_INFO_KEYS.each do |method_name|
+    define_method "admin_#{method_name.to_s}" do
+      contact_info[method_name]
+    end
+
+    define_method("admin_#{method_name}=") do |value|
+      contact_info[method_name] = value
+    end
+
+    alias_method "#{method_name}=", "admin_#{method_name}="
   end
 
-	def admin_last_name
-  	contact_info[:last_name]
+  COMPANY_INFO_KEYS.each do |method_name|
+    define_method "admin_company_#{method_name.to_s}" do
+      company_info[method_name]
+    end
+
+    define_method("admin_company_#{method_name}=") do |value|
+      company_info[method_name] = value
+    end
+
+    alias_method "company_#{method_name}=", "admin_company_#{method_name}="
   end
 
-  def admin_email
-    contact_info[:email]
-  end
 
   def notification_emails
     contact_info[:notification_emails] || [admin_email]
   end
 
-  def admin_phone
-  	contact_info[:phone]
-  end
-
   def invoice_emails
   	billing_emails[:invoice_emails]
+  end
+
+  def email_updated?
+    contact_info_changes = previous_changes['contact_info']
+    contact_info_changes && (contact_info_changes[0][:email] != contact_info_changes[1][:email])
+  end
+
+  def company_contact_info_updated?
+    [:contact_info, :company_info].any? {|k| previous_changes.key?(k)}
+  end
+
+  def update_contact_company_info!(user_params)
+    self.update_attributes(user_params.slice(*(CONTACT_INFO_KEYS + COMPANY_INFO_KEYS_WITH_PREFIX)))
   end
 
   private
@@ -42,9 +72,16 @@ class AccountConfiguration < ActiveRecord::Base
       end
   	end
 
-  	def update_crm
-  		Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::UpdateAdmin, {:account_id => account_id, :item_id => id})
-  	end
+  	def update_crm_and_map
+      if (Rails.env.production? or Rails.env.staging?) && company_contact_info_updated?
+        Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::UpdateAdmin, {:account_id => account_id, :item_id => id})
+        Resque.enqueue_at(15.minutes.from_now, Marketo::AddLead, { old_email: previous_email})
+      end
+    end
+
+    def previous_email
+      email_updated? ? previous_changes['contact_info'][0]["email"] : nil
+    end
 
   	def update_billing
   		Billing::Subscription.new.update_admin(self)

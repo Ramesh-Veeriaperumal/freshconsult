@@ -82,7 +82,7 @@ window.App.Groups = window.App.Groups || {};
         }
       } else {
         //Default
-        $("[name='group[ticket_assign_type]']").val(ASSIGNMENTS.DEFAULT);
+        $("[name='group[ticket_assign_type]']").val(ticket_assign_type);
         $("[rel=only_round]").removeClass('ui-helper-hidden');
         $("[rel=process_desc]").addClass('ui-helper-hidden');
         $("#toggle_method").hide();

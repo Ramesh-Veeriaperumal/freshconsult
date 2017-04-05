@@ -270,9 +270,10 @@ var TicketForm = {
 	dynamicSections: function(){
 		this.$dynamicSections.on("change.ticketForms", function(){
 			var id;
-			selected = jQuery(this).find(':selected');
+			var $el = jQuery(this);
+			selected = $el.find(':selected');
 			if (selected.length > 0) id = selected.data().id;
-			nextElement = jQuery(this.closest('li').next());
+			nextElement = $el.closest('li').next();
 			nextElement.find('ul.ticket_section').remove();
 			var element = jQuery('#picklist_section_'+id).parent();
 			if(element.length != 0) {

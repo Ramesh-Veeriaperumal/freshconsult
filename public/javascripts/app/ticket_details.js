@@ -146,7 +146,7 @@ function dueDateSelected(date){
 
 swapEmailNote = function(formid, link){
 	$('#TicketPseudoReply').hide();
-	
+
 
 	if((activeForm != null) && ($(activeForm).get(0).id != formid))
 		$("#"+activeForm.get(0).id).hide();
@@ -1308,9 +1308,7 @@ var scrollToError = function(){
 					}
 
 					if (_form.attr('rel') == 'note_form')  {
-						$('#toggle-note-visibility .toggle-button').addClass('active');
-						var submit_btn = _form.find('.submit_btn');
-						submit_btn.find('[rel=text]').text(submit_btn.data('defaultText'));
+            _resetPrivateNoteToggle(_form);
 					}
 
 					//Enabling original attachments
@@ -1656,6 +1654,12 @@ var scrollToError = function(){
 		if($(this).data('note-type') === 'note'){
 			addNoteAgents();
 		}
+
+      // Reset Add Private Note button
+      if ($(this).data('note-type') === 'note')  {
+          var $form = $('#cnt-' + $(this).data('note-type'));
+          _resetPrivateNoteToggle($form);
+		  }
 
 		//code for collapsing the broadcat message box
 		if(parseFloat($('.broadcast_message_box #ticket_original_request [dir="ltr"]').css('height')) > 64) {
@@ -2070,6 +2074,20 @@ App.Tickets.LimitEmails = {
 	}
 
 }
+
+    /**
+       Reset the Add Private Note toggle and
+       set the add note button caption to default value , 'Add Private Note' 
+
+       @params:
+        $form - jQuery form object to find the submit button
+
+    **/
+    function _resetPrivateNoteToggle($form) {
+        $('#toggle-note-visibility .toggle-button').addClass('active');
+				var $submitBtn = $form.find('.submit_btn');
+				$submitBtn.find('[rel=text]').text($submitBtn.data('defaultText'));
+    }
 
 }(window.jQuery));
 

@@ -156,11 +156,12 @@
       jQuery(".dynamic_sections")
         .on("change", function(e){
           var id;
-          var selected = jQuery(this).find(':selected');
+          var $el = jQuery(this);
+          var selected = $el.find(':selected');
           if (selected.length > 0){
             id = selected.data().id;
           }
-          var nextElements = jQuery(this.closest('div.control-group')).nextAll();
+          var nextElements = $el.closest('div.control-group').nextAll();
           nextElements.each(jQuery.proxy(function(index, dataItem){
             if (jQuery(dataItem).hasClass('ticket_section'))
               dataItem.remove();

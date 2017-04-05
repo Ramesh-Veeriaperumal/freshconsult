@@ -48,6 +48,7 @@ class Helpdesk::ConversationsController < ApplicationController
     build_attachments @item, :helpdesk_note
     @item.send_survey = params[:send_survey]
     @item.include_surveymonkey_link = params[:include_surveymonkey_link]
+    learn_valid_ticket_data
     if @item.save_note
       clear_saved_draft
       add_forum_post if params[:post_forums]
@@ -413,4 +414,13 @@ class Helpdesk::ConversationsController < ApplicationController
       def run_on_slave(&block)
         Sharding.run_on_slave(&block)
       end 
+
+      def learn_valid_ticket_data
+        if (current_account.launched?(:spam_detection_service) && @parent.notes.count == 0 &&
+         @parent.source.eql?(Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]) && !@parent.spam?)
+          SpamDetection::LearnTicketWorker.perform_async({ :ticket_id => @parent.id, 
+            :type => Helpdesk::Email::Constants::MESSAGE_TYPE_BY_NAME[:ham]})
+          Rails.logger.info "Enqueued job to sidekiq to learn ticket"
+        end
+      end
 end

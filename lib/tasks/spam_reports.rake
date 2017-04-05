@@ -24,7 +24,7 @@ end
 
 def learn_mail(args)
 	args.each do |sg_evt|
-    if (sg_evt['event'] == "spamreport" || sg_evt['event'] == "complained")
+    if (sg_evt['event'] == "spam")
 		  learn_spam(sg_evt.merge(:to => sg_evt['email'], :from => sg_evt['from_email']).with_indifferent_access) 
     end
 	end
