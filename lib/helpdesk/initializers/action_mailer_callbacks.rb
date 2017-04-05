@@ -224,6 +224,8 @@ module ActionMailerCallbacks
         Rails.logger.info "Spam check response for outgoing email: #{response.spam?}"
       end
       return category
+    rescue => e
+      Rails.logger.info "Error in outgoing email spam check: #{e.message} - #{e.backtrace}"
     end
   end
 end

@@ -175,6 +175,7 @@ defaults: &defaults
     - [send_and_set_observer]
     - [scheduled_ticket_export]
     - [data_enrichment]
+    - [spam_data_migration]
 
 development:
   <<: *defaults

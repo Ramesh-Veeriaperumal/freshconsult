@@ -68,7 +68,7 @@ class Helpdesk::Email::SpamDetector
     processed = []
     TRUNCATE_CONTENT.each do |key|
       processed << params[key].truncate(TRUNCATE_SIZE, omission: '') if params[key].present?
-      Rails.logger.info "Truncating the #{key} content since length exceeds limit #{TRUNCATE_SIZE} bytes" if params[key].bytesize > TRUNCATE_SIZE
+      Rails.logger.info "Truncating the #{key} content since length exceeds limit #{TRUNCATE_SIZE} bytes" if params[key].present? and params[key].bytesize > TRUNCATE_SIZE
     end
     return processed
   end
