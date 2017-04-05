@@ -28,6 +28,8 @@ class TicketBulkUpdateValidation < ApiValidation
     end
 
     def validate_ticket_properties
+      # We are obtaining the mapping in order to swap the field names while rendering(both successful and erroneous requests), instead of formatting the fields again.
+      ParamsHelper.modify_custom_fields(properties[:custom_fields], TicketsValidationHelper.name_mapping(ticket_fields).invert)
       tkt_validation = TicketValidation.new(properties.merge(statuses: statuses, ticket_fields: ticket_fields), nil)
       tkt_validation.skip_bulk_validations = true
       unless tkt_validation.valid?(:bulk_update)

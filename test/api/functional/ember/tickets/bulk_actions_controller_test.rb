@@ -10,6 +10,7 @@ module Ember
       include CannedResponsesHelper
 
       CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
+      CUSTOM_FIELDS_CHOICES = Faker::Lorem.words(5).freeze
 
       def setup
         super
@@ -29,7 +30,7 @@ module Ember
         @@ticket_fields = []
         @@custom_field_names = []
         @@ticket_fields << create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
-        @@ticket_fields << create_custom_field_dropdown('test_custom_dropdown', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
+        @@ticket_fields << create_custom_field_dropdown('test_custom_dropdown', CUSTOM_FIELDS_CHOICES)
         @@choices_custom_field_names = @@ticket_fields.map(&:name)
         CUSTOM_FIELDS.each do |custom_field|
           next if %w(dropdown country state city).include?(custom_field)
@@ -305,6 +306,83 @@ module Ember
         params_hash = {ids: ticket_ids, properties: update_ticket_params_hash, reply: reply_hash}
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         match_json(partial_success_response_pattern(ticket_ids, {}))
+        assert_response 202
+      end
+
+      # There was a bug when we try to bulk update with type set without mandatory section fields
+      def test_bulk_update_with_mandatory_dropdown_section_field
+        sections = [
+          {
+            title: 'section1',
+            value_mapping: ['Incident'],
+            ticket_fields: ['dropdown']
+          }
+        ]
+        create_section_fields(3, sections, true)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket.id
+        end
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :type)
+        properties_hash[:type] = 'Incident'
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+        assert_response 202
+      end
+
+      def test_bulk_update_with_mandatory_section_fields
+        sections = [
+          {
+            title: 'section1',
+            value_mapping: ['Incident'],
+            ticket_fields: ['test_custom_text']
+          }
+        ]
+        create_section_fields(3, sections, true)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket.id
+        end
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :type)
+        properties_hash[:type] = 'Incident'
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        failures = {}
+        ticket_ids.each {|id| failures[id] = { 'test_custom_text' => [:datatype_mismatch, { code: :missing_field, expected_data_type: :String }]}}
+        match_json(partial_success_response_pattern([], failures))
+        assert_response 202
+      end
+
+      def test_bulk_update_with_invalid_custom_field
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket.id
+        end
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :type)
+        properties_hash[:custom_fields] = {
+          'test_invalid_field' => "invalid_value"
+        }
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        match_json([bad_request_error_pattern('test_invalid_field', :invalid_field)])
+        assert_response 400
+      end
+
+      def test_bulk_update_with_invalid_dropdown_choice
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket.id
+        end
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :type)
+        properties_hash[:custom_fields] = {
+          'test_custom_dropdown' => "invalid choice"
+        }
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        failures = {}
+        ticket_ids.each {|id| failures[id] = { 'test_custom_dropdown' => [:not_included, list: CUSTOM_FIELDS_CHOICES.join(',') ]}}
+        match_json(partial_success_response_pattern([], failures))
         assert_response 202
       end
 
