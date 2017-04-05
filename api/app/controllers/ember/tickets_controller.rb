@@ -221,9 +221,9 @@ module Ember
       end
 
       def sanitize_filter_params
-        if params[:query_hash].present?
+        if params.key?(:query_hash)
           params[:wf_model] = 'Helpdesk::Ticket'
-          params[:data_hash] = QueryHash.new(params[:query_hash].values).to_system_format
+          params[:data_hash] = QueryHash.new(params[:query_hash].present? ? params[:query_hash].values : []).to_system_format
         else
           params[:filter] ||= DEFAULT_TICKET_FILTER
         end

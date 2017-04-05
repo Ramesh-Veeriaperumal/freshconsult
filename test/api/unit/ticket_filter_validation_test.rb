@@ -94,6 +94,11 @@ class TicketFilterValidationTest < ActionView::TestCase
 
   def test_invalid_query_hash
     Account.stubs(:current).returns(Account.new)
+    ticket_filter = TicketFilterValidation.new(query_hash: nil, version: 'private')
+    refute ticket_filter.valid?
+    errors = ticket_filter.errors.full_messages
+    assert errors.include?('Query hash datatype_mismatch')
+
     ticket_filter = TicketFilterValidation.new(query_hash: Faker::Lorem.word, version: 'private')
     refute ticket_filter.valid?
     errors = ticket_filter.errors.full_messages
@@ -120,6 +125,12 @@ class TicketFilterValidationTest < ActionView::TestCase
     assert errors.include?('Ids array_datatype_mismatch')
 
     ticket_filter = TicketFilterValidation.new(ids: '10,20,30,40,50', version: 'private')
+    assert ticket_filter.valid?
+  end
+
+  def test_empty_string_query_hash
+    Account.stubs(:current).returns(Account.new)
+    ticket_filter = TicketFilterValidation.new(query_hash: '', version: 'private')
     assert ticket_filter.valid?
   end
 end
