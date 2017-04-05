@@ -60,7 +60,7 @@ module Ember
     end
 
     def latest_note
-      @note = @item.conversation.first      
+      @note = @item.conversation.first
       return head(204) if @note.nil?
       @user = ContactDecorator.new(@note.user, {})
       response.api_root_key = :conversation
@@ -144,7 +144,7 @@ module Ember
 
       def shared_attachments
         @shared_attachments ||= begin
-          current_account.attachments.where('id IN (?) AND attachable_type IN (?)', @attachment_ids, ['Account', 'Admin::CannedResponses::Response'])
+          current_account.attachments.where('id IN (?) AND attachable_type IN (?)', @attachment_ids, AttachmentConstants::CLONEABLE_ATTACHMENT_TYPES)
         end
       end
 

@@ -120,7 +120,7 @@ module Ember
 
         def shared_attachments
           @shared_attachments ||= begin
-            current_account.attachments.where('id IN (?) AND attachable_type IN (?)', @attachment_ids, ['Account', 'Admin::CannedResponses::Response'])
+            current_account.attachments.where('id IN (?) AND attachable_type IN (?)', @attachment_ids, AttachmentConstants::CLONEABLE_ATTACHMENT_TYPES)
           end
         end
 

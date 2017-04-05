@@ -31,6 +31,10 @@ module AttachmentConstants
     'account'          => 'Account'
   }.freeze
 
+  CLONEABLE_ATTACHMENT_TYPES = [
+    'Account', 'Admin::CannedResponses::Response', 'Solution::Article'
+  ].freeze
+
   # Only xxx.jpg and xxx.png are allowed to upload
   INLINE_IMAGE_EXT = %w(.jpg .jpeg .jpe .png .gif .svg).freeze
 

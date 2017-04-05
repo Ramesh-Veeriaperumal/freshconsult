@@ -2,6 +2,8 @@ module Ember
   module Search
     class SolutionsController < SpotlightController
 
+      ROOT_KEY = :article
+
       def results
         @klasses = ['Solution::Article']
         @category_id  = params[:category_id].to_i if params[:category_id].present?
