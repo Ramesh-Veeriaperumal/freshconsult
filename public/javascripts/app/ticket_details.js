@@ -1874,8 +1874,7 @@ var scrollToError = function(){
 			ev.preventDefault();
 			ev.stopPropagation();
 		}
-		//do not add agents when coming from email error popup
-		if($(this).data('note-type') === 'note' && !$(this).data('failed-email')){
+		if($(this).data('note-type') === 'note'){
 			addNoteAgents();
 		}
 
