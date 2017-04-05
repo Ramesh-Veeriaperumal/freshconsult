@@ -772,7 +772,7 @@ en:
       new:
         new: New Skill
       edit:
-        edit: Edit Skill  
+        edit: Edit Skill
       rule_form:
         new: Skill Name
         info1: "example: Handling VIP customers"
@@ -3369,7 +3369,7 @@ en:
         portal_languages:
           title: "<b>Visible/Hidden on Portal</b><br />"
           info1: "When your knowledge base articles are translated to other languages and are ready to go live, you can make that language visible to your customers by clicking on the toggle button (Hidden on Portal/Visible on Portal)<br /><br />"
-    setup: 
+    setup:
       sales_manager_intro: "Hi %{user_name}! I'm %{sales_manager_name}, your account manager, and I'm happy to help with your evaluation of Freshdesk. Please feel free to reach out if you have any questions."
       write_to_us: Write to us
       request_demo: Request Demo
@@ -3378,13 +3378,13 @@ en:
       choose_plan: Choose your plan
       helpdesk_setup_incomplete: Setup your account
       helpdesk_setup_complete:  Check out what’s under the hood
-      configuration_status: "<b>%{in_setup_keys_length}</b> of <b>%{total_setup_keys_length}</b> completed." 
+      configuration_status: "<b>%{in_setup_keys_length}</b> of <b>%{total_setup_keys_length}</b> completed."
       feedback_success: We’ve got your message. You’ll hear back from us soon.
       setup_progress_0: Hurray!
       setup_progress_1: Let’s go!
       setup_progress_misc: Keep going!
       setup_progress_penultimate: Almost there!
-      new_account_title: Sign up for Freshdesk 
+      new_account_title: Sign up for Freshdesk
       new_account_description: Start your free 30-day trial of Freshdesk by signing up from the website.
       account_admin_email_title: Activate your account
       account_admin_email_description: Check your inbox for our activation email and verify your Freshdesk account.
@@ -8041,7 +8041,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
          access_private_channel: "Allow access to private channels"
          allow_dm_agent: "Allow DM to agent"
          allow_slash_command: "Allow Slash Command (<a href='https://support.freshdesk.com/support/solutions/articles/206103' target='_blank'> Convert Slack DM to Freshdesk ticket </a>)"
-         slash_command_token: "Slash Command Token"   
+         slash_command_token: "Slash Command Token"
       action_options:
         public: "Public"
         private: "Private"
@@ -10811,6 +10811,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     collab_invited_notification: "wants to collaborate with you on ticket %{object}"
     collab_first_mention: "mentioned you in a message on ticket %{object}"
     collab_first_mention_multi: "mentioned you in {{count}} messages on ticket %{object}"
+    collab_group_mention: "mentioned your group - %{group_name} in a message on ticket %{object}"
+    collab_group_mention_multi: "mentioned your group - %{group_name} in {{count}} messages on ticket %{object}"
     types:
       private_note_created: "Private Note Created"
       public_note_created: "Public Note Added"
@@ -10819,6 +10821,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       ticket_assigned: "Ticket Assigned"
       collab_added_to: "Discussion"
       collab_invited_notification: "Discussion"
+      collab_group_mention: :"Discussion"
+      collab_group_mention_multi: "Discussion"
       collab_first_mention: "Discussion"
       ticket_assigned_to_group: "Ticket Assigned to Group"
       ticket_created: "New Ticket"
@@ -10836,7 +10840,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     desktop_notifications_disabled: You've disabled desktop notifications
     toggle_mobile_notifications: Toggle mobile notifications
     toggle_web_notifications: Toggle web notifications
-    
+
   trial_plan_downgrade: "Important: You are currently downgrading from %{plan_from} plan to %{plan_to} plan"
   discounted_sum: "After Discount"
   selecting_plan: "Selecting..."
