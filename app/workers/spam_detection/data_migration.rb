@@ -5,6 +5,7 @@ module SpamDetection
 
 		STARTING_TIME_RANGE = 5 # in days
 		MAX_TIME_RANGE = 30 # in days
+		MAX_COUNT = 200
 
 		def perform
 			Sharding.select_shard_of(Account.current.id) do
@@ -28,7 +29,7 @@ module SpamDetection
 			while time_range <= MAX_TIME_RANGE do
 				count += learn_data(account, time_range, type)
 				time_range += 5
-				break if count >= 200
+				break if count >= MAX_COUNT
 			end
 			spam = (type == 1) ? 'spam' : 'ham'
 			Rails.logger.info "Total #{spam} tickets learned for Account ID #{account.id}: #{count}"
@@ -36,8 +37,10 @@ module SpamDetection
 
 		def learn_data(account, time, type)
 			mthd = (type == 1) ? 'learn_spam' : 'learn_ham'
+			count = 0
 			account.tickets.find_in_batches(:batch_size => 100, :conditions => 
 				{ :created_at => (time.days.ago..(time - 5).days.ago), :spam => type}) do |tickets|
+				count += tickets.size
 				tickets.each do |tkt|
 					params = {:from => tkt.requester.email, :to => tkt.to_email, :subject => tkt.subject, :text =>tkt.description, :html => tkt.description_html,
 					 :message_id => "#{Mail.random_tag}.#{::Socket.gethostname}@spamreport.freshdesk.com"}
@@ -45,8 +48,9 @@ module SpamDetection
 					sds = FdSpamDetectionService::Service.new(account.id, mail.to_s)
 					sds.send(mthd)
 				end
+				break if count >= MAX_COUNT
 			end
-			account.tickets.count(:all, :conditions => {:created_at => (time.days.ago..(time - 5).days.ago), :spam => type})
+			return count
 		end
 
 	end
