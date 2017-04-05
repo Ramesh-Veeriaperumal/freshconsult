@@ -2,16 +2,14 @@ class Helpdesk::TicketsController < ApplicationController
 
   require 'freemail'
 
+  include HelpdeskControllerMethods
   include ActionView::Helpers::TextHelper
-  include ParserUtil
   include Redis::RedisKeys
   include Redis::OthersRedis
-  include HelpdeskControllerMethods
   include Helpdesk::TicketActions
   include Search::TicketSearch
   include Helpdesk::Ticketfields::TicketStatus
   include Helpdesk::AdjacentTickets
-  include Helpdesk::Activities
   include Helpdesk::ToggleEmailNotification
   include ApplicationHelper
   include Mobile::Controllers::Ticket
@@ -23,9 +21,13 @@ class Helpdesk::TicketsController < ApplicationController
   helper Helpdesk::RequesterWidgetHelper
   include Helpdesk::TagMethods
   include Helpdesk::NotePropertiesMethods
+  include ParentChildHelper
+  include Helpdesk::Activities
   include Helpdesk::Activities::ActivityMethods
   include Helpdesk::SpamAccountConstants
-  include ParentChildHelper
+  include ParserUtil
+  include Redis::TicketsRedis
+  include Helpdesk::SendAndSetHelper
 
   before_filter :redirect_to_mobile_url
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:show,:suggest_tickets]
@@ -114,6 +116,8 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :outbound_email_allowed? , :only => [:create]
   before_filter :requester_widget_filter_params, :only => [:update_requester]
   before_filter :check_custom_view_feature, :only => [:custom_view_save]
+
+  # before_filter methods for send_and_set_status are to be added in send_and_set_helper.rb
 
   def check_custom_view_feature
     unless current_account.custom_ticket_views_enabled?
@@ -611,6 +615,31 @@ class Helpdesk::TicketsController < ApplicationController
         }
       end
     end
+  end
+
+  def send_and_set_status
+    can_close_assoc_parent?(@item, true) if [RESOLVED,CLOSED].include? params[:helpdesk_ticket][:status].to_i # check for parent tkt status
+    @item.schedule_observer = true
+
+    verify_update_properties_permission if @item.update_ticket_attributes(params[nscname])
+    unless @note.new_record?
+      enqueue_send_set_observer    
+      if is_reply?
+        @note.send_survey = params[:send_survey]
+        @note.include_surveymonkey_link = params[:include_surveymonkey_link]
+        clear_saved_draft
+        add_forum_post if params[:post_forums]
+        note_to_kbase
+        flash[:notice] = t(:'flash.tickets.reply.success')
+      end
+      flash_message "success"
+      process_and_redirect
+    else
+      note_type = is_reply? ? :reply : :note
+      flash_message "failure"
+      create_error(note_type)
+    end
+
   end
 
   def refresh_requester_widget
@@ -1937,29 +1966,6 @@ class Helpdesk::TicketsController < ApplicationController
     return load_ticket if request.format.html? or request.format.nmobile? or request.format.js?
     @ticket = @item = load_by_param(params[:id], preload_options)
     load_or_show_error(true)
-  end
-
-  def load_or_show_error(load_notes = false)
-    return redirect_to support_ticket_url(@ticket) if @ticket and current_user.customer?
-    helpdesk_restricted_access_redirection(@ticket, 'flash.agent_as_requester.ticket_show') if @ticket and @ticket.restricted_in_helpdesk?(current_user)
-    load_archive_ticket(load_notes) unless @ticket
-  end
-
-  def load_archive_ticket(load_notes = false)
-    raise ActiveRecord::RecordNotFound unless current_account.features_included?(:archive_tickets)
-
-    options = load_notes ? archive_preload_options : {}
-    archive_ticket = load_by_param(params[:id], options, true)
-    raise ActiveRecord::RecordNotFound unless archive_ticket
-
-    # Temporary fix to redirect /helpdesk URLs to /support for archived tickets
-    if current_user.customer?
-      redirect_to support_archive_ticket_path(params[:id])
-    elsif archive_ticket.restricted_in_helpdesk?(current_user)
-      helpdesk_restricted_access_redirection(archive_ticket, 'flash.agent_as_requester.ticket_show')
-    else
-      redirect_to helpdesk_archive_ticket_path(params[:id])
-    end
   end
 
   def preload_options

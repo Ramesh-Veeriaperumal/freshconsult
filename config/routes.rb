@@ -1953,6 +1953,7 @@ Helpkit::Application.routes.draw do
         put :link
         put :unlink
         get :ticket_association
+        put :send_and_set_status
         get :fetch_errored_email_details
         put :suppression_list_alert
       end
