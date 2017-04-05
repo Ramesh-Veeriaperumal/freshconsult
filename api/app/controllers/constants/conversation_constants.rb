@@ -9,7 +9,7 @@ module ConversationConstants
   TICKET_CONVERSATIONS_FIELDS = %w(include order_type).freeze
   SIDE_LOADING = %w(requester).freeze
 
-  REPLY_FIELDS = %w(body full_text user_id from_email send_survey).freeze | REPLY_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
+  REPLY_FIELDS = %w(body full_text user_id from_email send_survey include_surveymonkey_link).freeze | REPLY_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   FORWARD_FIELDS = %w(body full_text agent_id from_email include_quoted_text include_original_attachments).freeze | FORWARD_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   CREATE_FIELDS = %w(body private incoming user_id).freeze | CREATE_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   TWEET_FIELDS = %w(body tweet_type twitter_handle_id).freeze
@@ -27,7 +27,7 @@ module ConversationConstants
 
   PIPE_REPLY_FIELDS  = REPLY_FIELDS | %w( created_at updated_at )
   PIPE_CREATE_FIELDS = CREATE_FIELDS | %w( created_at updated_at )
-   
+
   ATTRIBUTES_TO_BE_STRIPPED = %w(notify_emails to_emails cc_emails bcc_emails).freeze
 
   # Denotes the email fields in notes.
@@ -51,7 +51,7 @@ module ConversationConstants
   PARAMS_TO_REMOVE = [:body, :full_text].freeze
 
   TICKET_LOAD_REQUIRED = [:create, :reply, :forward, :ticket_conversations, :facebook_reply, :tweet, :reply_template, :forward_template].freeze
-  
+
   VALIDATION_CLASS = 'ConversationValidation'.freeze
   DELEGATOR_CLASS = 'ConversationDelegator'.freeze
   CARRIAGE_RETURN = "\r"
