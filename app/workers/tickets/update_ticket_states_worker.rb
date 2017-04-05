@@ -23,7 +23,7 @@ module Tickets
         NewRelic::Agent.notice_error(e, {:args => args})
         raise
       ensure
-        return if note.blank?
+        return if @note.blank?
         @note.trigger_observer(args[:model_changes], args[:send_and_set] || false ) unless args[:freshdesk_webhook]
 
       end
