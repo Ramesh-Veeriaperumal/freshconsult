@@ -41,7 +41,7 @@ module SpamDetection
 				tickets.each do |tkt|
 					params = {:from => tkt.requester.email, :to => tkt.to_email, :subject => tkt.subject, :text =>tkt.description, :html => tkt.description_html,
 					 :message_id => "#{Mail.random_tag}.#{::Socket.gethostname}@spamreport.freshdesk.com"}
-					mail = Helpdesk::Email::SpamDetector.construct_raw_eml(params)
+					mail = Helpdesk::Email::SpamDetector.construct_raw_mail(params)
 					sds = FdSpamDetectionService::Service.new(account.id, mail.to_s)
 					sds.send(mthd)
 				end
