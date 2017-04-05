@@ -1,5 +1,5 @@
 class Helpdesk::ConversationsController < ApplicationController
-
+  
   require 'freemail'
 
   helper  Helpdesk::TicketsHelper#TODO-RAILS3
@@ -21,9 +21,6 @@ class Helpdesk::ConversationsController < ApplicationController
   include Ecommerce::Ebay::ReplyHelper
   include Helpdesk::SpamAccountConstants
   
-  # Send and set status is handled separately in the tickets_controller.
-  # Any changes related to note or reply made in this file should be replicated in 
-  # send_and_set_helper as well
   before_filter :build_note_body_attributes, :build_conversation, :except => [:full_text, :traffic_cop]
   before_filter :check_for_from_email, :only => [:reply, :forward, :reply_to_forward]
   before_filter :validate_tkt_type, :only => :broadcast
@@ -48,8 +45,6 @@ class Helpdesk::ConversationsController < ApplicationController
   }
     
   def reply
-    # Any changes related to note or reply made in this file should be replicated in 
-    # send_and_set_helper if required
     build_attachments @item, :helpdesk_note
     @item.send_survey = params[:send_survey]
     @item.include_surveymonkey_link = params[:include_surveymonkey_link]
@@ -93,8 +88,6 @@ class Helpdesk::ConversationsController < ApplicationController
   end
 
   def note
-    # Any changes related to note or reply made in this file should be replicated in 
-    # send_and_set_helper if required
     build_attachments @item, :helpdesk_note
     if @item.save_note
       flash_message "success"
@@ -247,7 +240,7 @@ class Helpdesk::ConversationsController < ApplicationController
       options.merge!({:human=>true}) if(!params[:human].blank? && params[:human].to_s.eql?("true"))  #to avoid unneccesary queries to users
       url_redirect = params[:redirect_to].present? ? TICKET_REDIRECT_MAPPINGS[params[:redirect_to]] : item_url
       
-      respond_to do |format|
+    respond_to do |format|
         format.html { redirect_to url_redirect }
         format.xml  { render :xml => @item.to_xml(options), :status => :created, :location => url_for(@item) }
         format.json { render :json => @item.to_json(options) }
@@ -263,8 +256,8 @@ class Helpdesk::ConversationsController < ApplicationController
         }
       end
       
-    ensure
-      Thread.current[:notifications] = nil
+      ensure
+        Thread.current[:notifications] = nil
     end
 
     def create_error(note_type = nil)

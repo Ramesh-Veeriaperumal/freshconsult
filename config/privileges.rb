@@ -147,7 +147,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   reply_ticket do
-    resource :"helpdesk/ticket", :only => [:reply_to_conv, :send_and_set_status]
+    resource :"helpdesk/ticket", :only => [:reply_to_conv]
     resource :"helpdesk/conversation", :only => [:reply, :twitter, :facebook, :mobihelp, :traffic_cop, :ecommerce]
     resource :"social/twitter_handle", :only => [:send_tweet]
     # In bulk actions you can reply even if you do not have edit_ticket_properties

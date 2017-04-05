@@ -14,11 +14,11 @@ module Va::Observer::Util
 			return observer_condition
 		end
 
-		def filter_observer_events(queue_events=true, inline=false)
+		def filter_observer_events(queue_events=true)
 			observer_changes = @model_changes.inject({}) do |filtered, (change_key, change_value)| 
 																						filter_event filtered, change_key, change_value  end
 			return observer_changes unless queue_events
-			send_events(observer_changes, inline) if !observer_changes.blank?
+			send_events(observer_changes) if !observer_changes.blank?
 		end
 
 		def merge_to_observer_changes(prev_changes,current_changes)
@@ -38,7 +38,7 @@ module Va::Observer::Util
 					) ? filtered.merge!({change_key => change_value}) : filtered
 		end
 
-		def send_events observer_changes, inline = false
+		def send_events observer_changes
 			observer_changes.merge! ticket_event observer_changes
 			doer_id = (self.class == Helpdesk::Ticket) ? User.current.id : self.send(FETCH_DOER_ID[self.class.name])
 			evaluate_on_id = self.send FETCH_EVALUATE_ON_ID[self.class.name]
@@ -48,17 +48,8 @@ module Va::Observer::Util
 				:current_events => observer_changes,
 				:enqueued_class => self.class.name
 			}
-			
 			args[:model_changes] = @model_changes if self.class == Helpdesk::Ticket
-
-			if inline
-				Tickets::ObserverWorker.new.perform(args)
-			elsif self.schedule_observer
-				# skipping observer for send and set ticket operation
-				self.send_and_set_args = args
-			else
-				Tickets::ObserverWorker.perform_async(args)
-			end
+			Tickets::ObserverWorker.perform_async(args)
 		end
 
 		def ticket_event current_events

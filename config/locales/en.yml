@@ -2639,9 +2639,6 @@ en:
           failure: There was a problem sending the review request
         broadcast:
           success: The message has been added and broadcasted to %{count} related tickets.
-        send_and_set: 
-          success:  The note has been added
-          failure:  Unable to save note
       empty_spam:
         delay_delete: Please wait while we delete all tickets from spam. This might take a few minutes.
         success: All tickets in the spam folder were deleted.
