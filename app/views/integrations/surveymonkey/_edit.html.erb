@@ -1,5 +1,19 @@
 <%	app = Integrations::Application.find_by_name('surveymonkey') %>
 <% if installed_app %>
+	<% if installed_app.configs[:inputs]['api_version'] != 'V3'%>
+		<% auth_url = app.oauth_url({:account_id => current_account.id}) %>
+		<div class="surveymonkey_alert hide">SurveyMonkey has updated authentication process.To make changes in configuration please, <a href="<%=auth_url%>">Re-authenticate</a></div>
+
+		<script>
+			jQuery(document).ready(function(){
+				jQuery('.surveymonkey_alert').insertBefore('#Pagearea .title');
+				jQuery('.surveymonkey_alert').show();
+				jQuery('input#integrations_installed_application_submit').addClass('disabled');
+			});
+		</script>
+
+	<% end%>
+
 <div id="survey-fields-container" class="survey-fields-container row-fluid">
 	<!-- It is hidden and it is used by JS script to do DOM action -->
 	<select class="all_groups_base_reference hide">
