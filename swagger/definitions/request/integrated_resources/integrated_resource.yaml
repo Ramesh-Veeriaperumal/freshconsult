@@ -1,0 +1,23 @@
+type: object
+properties:
+  application_id:
+    type: number
+    description: App id
+  integrated_resource:
+    type: object
+    description: Resource hash
+    properties:
+      local_integratable_type:
+        type: string
+        enum: ['Ticket']
+      local_integratable_id:
+        type: number
+      remote_integratable_id:
+        type: string
+      installed_application_id:
+        type: number
+      remote_integratable_type:
+        type: string
+required:
+  - application_id
+  - integrated_resource

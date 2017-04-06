@@ -1,0 +1,16 @@
+get:
+  tags: [Integrations]
+  summary: List all
+  description: List all enabled apps 
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          installed_applications:
+            type: array
+            items:
+              $ref: '#/definitions/installed_applications'
+    404:
+      description: No Installed Apps

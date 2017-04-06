@@ -2866,6 +2866,160 @@
         }
       }
     },
+    "/installed_applications": {
+      "get": {
+        "tags": [
+          "Integrations"
+        ],
+        "summary": "List all",
+        "description": "List all enabled apps",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "installed_applications": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/installed_applications"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No Installed Apps"
+          }
+        }
+      }
+    },
+    "/installed_applications/{name}": {
+      "get": {
+        "tags": [
+          "Integrations"
+        ],
+        "summary": "Apps filtered by Name",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "installed_applications": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/installed_applications"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Application not available"
+          }
+        }
+      }
+    },
+    "/integrated_resources/": {
+      "get": {
+        "tags": [
+          "Integrated Resources"
+        ],
+        "summary": "Resource Details",
+        "parameters": [
+          {
+            "name": "installed_application_id",
+            "in": "path",
+            "type": "number",
+            "required": true
+          },
+          {
+            "name": "local_integratable_id",
+            "in": "path",
+            "type": "number",
+            "required": true
+          },
+          {
+            "name": "local_integratable_type",
+            "in": "path",
+            "type": "string",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "integrated_resources": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/integrated_resources"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete resource",
+        "tags": [
+          "Integrated Resources"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Resource not available"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Integrated Resources"
+        ],
+        "summary": "Create resource",
+        "parameters": [
+          {
+            "name": "data",
+            "type": "object",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/integrated_resource_create"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/integrated_resources"
+            }
+          }
+        }
+      }
+    },
     "/twitter_handles": {
       "get": {
         "tags": [
@@ -4557,6 +4711,43 @@
         }
       }
     },
+    "integrated_resource_create": {
+      "type": "object",
+      "properties": {
+        "application_id": {
+          "type": "number",
+          "description": "App id"
+        },
+        "integrated_resource": {
+          "type": "object",
+          "description": "Resource hash",
+          "properties": {
+            "local_integratable_type": {
+              "type": "string",
+              "enum": [
+                "Ticket"
+              ]
+            },
+            "local_integratable_id": {
+              "type": "number"
+            },
+            "remote_integratable_id": {
+              "type": "string"
+            },
+            "installed_application_id": {
+              "type": "number"
+            },
+            "remote_integratable_type": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "required": [
+        "application_id",
+        "integrated_resource"
+      ]
+    },
     "contact": {
       "type": "object",
       "properties": {
@@ -5222,6 +5413,74 @@
               "items": {
                 "type": "number"
               }
+            }
+          }
+        }
+      ]
+    },
+    "installed_applications": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/extension_generic"
+        },
+        {
+          "properties": {
+            "id": {
+              "type": "number",
+              "description": "Installed App Id"
+            },
+            "application_id": {
+              "type": "number",
+              "description": "App Id"
+            },
+            "app_name": {
+              "type": "string",
+              "description": "App Name"
+            },
+            "app_display_name": {
+              "type": "string",
+              "description": "App Display Name"
+            },
+            "display_option": {
+              "type": "number",
+              "description": "Display option of the App"
+            },
+            "configs": {
+              "type": "hash",
+              "description": "Installed App Configs"
+            }
+          }
+        }
+      ]
+    },
+    "integrated_resources": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/extension_generic"
+        },
+        {
+          "properties": {
+            "id": {
+              "type": "number",
+              "description": "Installed Resource Id"
+            },
+            "installed_application_id": {
+              "type": "number",
+              "description": "Installed App Id"
+            },
+            "remote_integratable_id": {
+              "type": "string",
+              "description": "Remote Integratable Id"
+            },
+            "remote_integratable_type": {
+              "type": "string",
+              "description": "Remote Integratable Type"
+            },
+            "local_integratable_id": {
+              "type": "number",
+              "description": "Local integratable Id"
             }
           }
         }

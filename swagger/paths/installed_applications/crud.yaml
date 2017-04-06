@@ -1,0 +1,20 @@
+get:
+  tags: [Integrations]
+  summary: Apps filtered by Name
+  parameters:
+    - name: name
+      in: query
+      type: string
+      required: true
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          installed_applications:
+            type: array
+            items:
+              $ref: '#/definitions/installed_applications'
+    404:
+      description: Application not available

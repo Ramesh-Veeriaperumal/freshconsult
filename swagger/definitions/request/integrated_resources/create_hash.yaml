@@ -1,0 +1,13 @@
+type: object
+description: resource hash
+properties:
+  local_integratable_id:
+    type: number
+  remote_integratable_id:
+    type: number
+  local_integratable_type:
+    type: string
+  installed_application_id:
+    type: number
+  remote_integratable_type:
+    type: string

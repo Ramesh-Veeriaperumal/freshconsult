@@ -163,6 +163,15 @@
 /todos/{id}:
   $ref: ./todos/crud.yaml
 
+# Installed Applications
+/installed_applications:
+  $ref: ./installed_applications/list.yaml
+/installed_applications/{name}:
+  $ref: ./installed_applications/crud.yaml
+# Integrated Resources
+/integrated_resources/:
+  $ref: ./integrated_resources/crud.yaml
+
 #Social
 /twitter_handles:
   $ref: ./social/twitter_handles.yaml

@@ -1,0 +1,16 @@
+get:
+  tags: [Integrated Resources]
+  summary: List a particular resource
+  description: List the integrated resource of the currently logged in user 
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          integrated_resources:
+            type: array
+            items:
+              $ref: '#/definitions/integrated_resources'
+    404:
+      description: No resource available

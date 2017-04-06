@@ -1,0 +1,22 @@
+type: object
+allOf:
+  - $ref: '#/definitions/extension_generic'
+  - properties:
+      id:
+        type: number
+        description: Installed App Id
+      application_id:
+        type: number
+        description: App Id
+      app_name:
+        type: string
+        description: App Name
+      app_display_name:
+        type: string
+        description: App Display Name
+      display_option:
+        type: number
+        description: Display option of the App
+      configs:
+        type: hash
+        description: Installed App Configs

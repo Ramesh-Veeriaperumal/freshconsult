@@ -66,7 +66,8 @@
     $ref: ./request/ticket_filters/query_hash.yaml
   ticket_filter_input:
     $ref: ./request/ticket_filters/ticket_filter.yaml
-
+  integrated_resource_create:
+    $ref: ./request/integrated_resources/integrated_resource.yaml
 
   # RESOURCE
   contact:
@@ -113,6 +114,10 @@
     $ref: ./resource/extension/ticket/stats.yaml
   portal:
     $ref: ./resource/portal.yaml
+  installed_applications:
+    $ref: ./resource/installed_applications.yaml
+  integrated_resources:
+    $ref: ./resource/integrated_resources.yaml
   scenario_automation:
     $ref: ./resource/scenario_automation.yaml
   extension_generic:
