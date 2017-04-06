@@ -7,7 +7,7 @@ module Ember
     include Helpdesk::ToggleEmailNotification
     decorate_views(decorate_object: [:update_properties], decorate_objects: [:index, :search])
 
-    INDEX_PRELOAD_OPTIONS = [:tags, :ticket_old_body, :schema_less_ticket, :flexifield, { requester: [:avatar, :flexifield, :default_user_company] }].freeze
+    INDEX_PRELOAD_OPTIONS = [:ticket_states, :tags, :ticket_old_body, :schema_less_ticket, :flexifield, :ticket_status, { requester: [:avatar, :flexifield, :companies, :user_emails, :tags] }, :custom_survey_results].freeze
     DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
     SINGULAR_RESPONSE_FOR = %w(show create update split_note update_properties).freeze
 
