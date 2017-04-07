@@ -64,7 +64,7 @@ class ConversationValidation < ApiValidation
   end
 
   def validate_unseen_replies
-    unseen_notes_exists = (Account.current.notes.visible.last_traffic_cop_note.pluck(:id).try(:first) || -1) > last_note_id
+    unseen_notes_exists = (@ticket.notes.visible.last_traffic_cop_note.pluck(:id).try(:first) || -1) > last_note_id
     errors[:conversation] << :traffic_cop_alert if unseen_notes_exists
   end
 

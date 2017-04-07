@@ -73,3 +73,30 @@ class ActionDispatch::IntegrationTest
   self.use_transactional_fixtures = false
   fixtures :all
 end
+
+class ActionView::TestCase
+
+  def setup
+    begin_gc_deferment
+    activate_authlogic
+    get_agent
+    @account.make_current
+    create_session
+    set_request_params
+    set_key(account_key, 1000, nil)
+    set_key(default_key, 100, nil)
+
+    # Enabling Private API
+    @account.launch(:falcon)
+    # To prevent DynamoDB errors.
+    SpamCounter.stubs(:count).returns(0)
+  end
+
+  def self.fixture_path(path = File.join(Rails.root, 'test/api/fixtures/'))
+    path
+  end
+
+  # ActiveRecord::Base.logger.level = 1
+  self.use_transactional_fixtures = false
+  fixtures :all
+end
