@@ -1,5 +1,5 @@
 class AddCompanyInfoToAccountConfiguration < ActiveRecord::Migration
-  shard :none
+  shard :all
 
   def self.up
     Lhm.change_table :account_configurations, :atomic_switch => true do |m|

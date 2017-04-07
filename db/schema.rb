@@ -37,6 +37,7 @@ ActiveRecord::Schema.define(:version => 20170315115516) do
     t.text     "billing_emails"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "company_info"
   end
 
   add_index "account_configurations", ["account_id"], :name => "index_for_account_configurations_on_account_id"
