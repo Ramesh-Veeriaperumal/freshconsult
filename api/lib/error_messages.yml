@@ -109,6 +109,7 @@ api_error_messages:
   incorrect_image_dimensions: "Image dimensions are larger than expected"
   invalid_image_file: "Invalid file type(%{current_extension}). Please upload a jpg or png or gif or svg file"
   shorter_full_text: "Content of full text should be greater than that of body"
+  invalid_full_text: "Content of full text is different from that of body"
   cannot_set_pending_since: "It cannot be set, when created_at and updated_at are not set or status is not pending"
   duplicate_companies: "One or more duplicate company_ids found"
   cant_add_primary_resource_to_others: "Cannot add %{resource} to %{attribute} since it is %{status}"
