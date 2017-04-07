@@ -27,7 +27,7 @@ module Helpdesk::Activities
       @act_suffix         = TYPE[type]
       @current_user       = User.current
       @act_summary        = ticketdata.summary.nil? ? nil : ticketdata.summary.to_i
-      @email_failures     = JSON.parse(ticketdata.email_failures.gsub('=>', ':')) unless ticketdata.email_failures == "null"
+      @email_failures     = JSON.parse(ticketdata.email_failures.gsub('=>', ':')) if (ticketdata.email_failures.present? && ticketdata.email_failures != "null")
       @act_activity       = {
                             :new  => [], :set  => [], :edit => [], :custom => [], 
                             :misc => [], :rule => {}, :text => [], :note   => [],

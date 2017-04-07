@@ -46,8 +46,13 @@ If we are making use of the existing view app. dont't use this one.  -->
 <script type="text/javascript">
   function buildParams(){
     <% @settings["keys"].each do |field|%>
-        var value = jQuery("#<%=@settings["app_name"]%>_<%=field%>").val();
-        jQuery('#<%=field%>_label').val(value);
+      var value = jQuery("#<%=@settings["app_name"]%>_<%=field%>").val();
+      <% if field == "username" %>
+        if(value.indexOf("\\") != -1){
+          value = value.replace(/\\/g, "\\\\");
+        }
+      <%end%>
+      jQuery('#<%=field%>_label').val(value);
     <%end%>
     return true
   }

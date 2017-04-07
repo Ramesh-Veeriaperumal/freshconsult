@@ -1,8 +1,8 @@
 <%= stylesheet_link_tag_with_rtl :'cdn/dev_oauth' %>
 <% hide_page =  @pre_auth.client.name == Marketplace::Constants::ADMIN_PORTAL_NAME || current_user.developer? %>
 <% hideClass = hide_page ? 'hide' : '' %>
-<% portal_name = @pre_auth.client.name == Marketplace::Constants::DEV_PORTAL_NAME ? t('.dev_portal') : t('.admin_portal') %> 
-  
+<% portal_name = @pre_auth.client.name == Marketplace::Constants::DEV_PORTAL_NAME ? t('.dev_portal') : t('.admin_portal') %>
+
 <% unless hide_page %>
   <div class="control-group sticky-bar" rel="sticky">
     <%= form_tag oauth_authorization_path, method: :post do %>
@@ -13,7 +13,7 @@
       <%= hidden_field_tag :scope, @pre_auth.scope %>
       <div class="agreement-title">
         <h3 class="lead"><%= t('.authorize_text3').html_safe %> <%= link_to "#{portal_name} #{t('.portal')}", MarketplaceConfig::DEV_URL, :target=>"_blank" %> <%= t('.authorize_text2').html_safe %></h3>
-      </div> 
+      </div>
       <div class="agreement-btns">
         <%= link_to t('.decline'), MarketplaceConfig::DEV_URL, :class => "btn" %>
         <%= submit_tag t('.go_to_portal' , :portal_name => portal_name ).html_safe, :id=>'allow', :class => "btn btn-primary" %>

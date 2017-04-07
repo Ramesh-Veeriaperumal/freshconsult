@@ -4847,3 +4847,9 @@ li {
     }
 }
 
+.add-child-tooltip {
+    max-width: 305px;
+    text-align: center;
+    @include padding(3px 8px 4px);
+}
+

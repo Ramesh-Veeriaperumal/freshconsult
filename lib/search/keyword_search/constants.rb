@@ -1,6 +1,6 @@
 module Search::KeywordSearch::Constants
 
-  SUPPORTED_FIELDS = %w(agent created_at due_by status priority group type source product tags company)
+  SUPPORTED_FIELDS = %w(agent created_at due_by status priority group type source product tags company requesters)
 
   def fetch_fields
     filter_fields = Hash.new.tap do |field_hash|

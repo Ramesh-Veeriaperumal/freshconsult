@@ -1,6 +1,14 @@
 <% if !parent_template.nil? %>
   <div class="tree parent_id_holder" data-parent-template-id="<%= parent_template.id %>">
     <%if parent_template.parent_template? %>
+      <div class="parentchild-info">
+        <h3 class="title">
+          <%=t('ticket.parent_child.ticket_sidebar_title')%>
+          <div class="parent-child-info-icon tooltip" data-html="true" data-placement="below" data-original-title="<%= t('ticket.parent_child.ticket_sidebar') %>" twipsy-content-set="true">
+            <i class="ficon-help-icon fsize-18" size="18"></i>
+          </div>  
+        </h3>
+      </div>
       <div class="parent_title ellipsis parent_det" data-parent-template-id="<%= parent_template.id %>">
         <span class="label_tag">
           child listed from: <span class="name"><%= parent_template.name %></span>

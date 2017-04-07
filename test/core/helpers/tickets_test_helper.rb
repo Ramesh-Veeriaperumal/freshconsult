@@ -3,7 +3,7 @@ module TicketsTestHelper
   def ticket_params_hash(params = {})
     description = params[:description] || Faker::Lorem.paragraph
     description_html = params[:description_html] || "<div>#{description}</div>"
-    params_hash = { :helpdesk_ticket => { 
+    params_hash = { :helpdesk_ticket => {
                       :email => params[:email] || Faker::Internet.email,
                       :subject => params[:subject] || Faker::Lorem.words(10).join(' '),
                       :ticket_type => params[:ticket_type] || "Question",
@@ -13,26 +13,27 @@ module TicketsTestHelper
                       :group_id => params[:group_id] || "",
                       :responder_id => params[:responder_id] || "",
                       :description => description,
-                      :description_html => description_html,                        
+                      :description_html => description_html,
                     },
                     :helpdesk => {
                       :tags => params[:tags] || ""
                     },
                     :display_ids => params[:display_ids] || "",
+                    :assoc_parent_id => params[:assoc_parent_id] || "",
                     :cc_emails => params[:cc_emails] || ""
                   }
   end
 
-  def enable_link_tickets
-    Account.current.launch :link_tickets
+  def enable_adv_ticketing(feature, &block)
+    Account.current.launch feature
     if block_given?
       yield
-      Account.current.rollback :link_tickets
+      Account.current.rollback feature
     end
   end
 
-  def disable_link_tickets
-    Account.current.rollback :link_tickets
+  def disable_adv_ticketing feature
+    Account.current.rollback feature
   end
 
   def create_ticket(params = {}, group = nil, internal_group = nil)
@@ -46,11 +47,12 @@ module TicketsTestHelper
     subject = params[:subject] || Faker::Lorem.words(10).join(" ")
     account_id =  group ? group.account_id : @account.id
     test_ticket = FactoryGirl.build(:ticket, :status => params[:status] || 2,
-                                         :display_id => params[:display_id], 
+                                         :display_id => params[:display_id],
                                          :requester_id =>  requester_id,
                                          :subject => subject,
                                          :responder_id => params[:responder_id],
                                          :source => params[:source] || 2,
+                                         :priority => params[:priority] || 2,
                                          :cc_email => Helpdesk::Ticket.default_cc_hash.merge(cc_emails: cc_emails, fwd_emails: fwd_emails),
                                          :created_at => params[:created_at],
                                          :account_id => account_id,
@@ -58,8 +60,8 @@ module TicketsTestHelper
     test_ticket.build_ticket_body(:description => Faker::Lorem.paragraph)
     if params[:attachments]
       params[:attachments].each do |attach|
-        test_ticket.attachments.build(:content => attach[:resource], 
-                                      :description => attach[:description], 
+        test_ticket.attachments.build(:content => attach[:resource],
+                                      :description => attach[:description],
                                       :account_id => test_ticket.account_id)
       end
     end
@@ -67,6 +69,9 @@ module TicketsTestHelper
     if @account.link_tkts_enabled? && params[:display_ids].present?
       test_ticket.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]
       test_ticket.related_ticket_ids = params[:display_ids]
+    elsif @account.parent_child_tkts_enabled? and params[:assoc_parent_id].present?
+      test_ticket.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:child]
+      test_ticket.assoc_parent_tkt_id = params[:assoc_parent_id]
     end
     test_ticket.internal_agent_id = params[:internal_agent_id] if params[:internal_agent_id]
     test_ticket.group_id = group ? group.id : nil
@@ -109,5 +114,30 @@ module TicketsTestHelper
     file = File.new(Rails.root.join("spec/fixtures/files/attachment.txt"))
     attachments = [{:resource => file}]
     create_ticket(params.merge({:attachments => attachments}))
+  end
+
+  def create_parent_ticket(params={})
+    parent_child_tickets(params, true)
+  end
+
+  def create_child_ticket(params={})
+    parent_child_tickets(params)
+  end
+
+  def parent_child_tickets params={}, is_parent = false
+    prt_ticket = create_ticket(params)
+    @agent.make_current
+    options = {:requester_id => @agent.id, :assoc_parent_id => prt_ticket.display_id, :subject => "#{params[:subject]}_child_tkt"}
+    tkt = (is_parent ? prt_ticket : child_tkt) if (child_tkt = create_ticket(params.merge(options))).present?
+  end
+
+  def create_multiple_pc_tickets (child_tickets_count=5, parent_subject = nil, subjects=[])
+    @agent.make_current
+    prt_ticket = create_ticket({:subject => parent_subject})
+    Sidekiq::Testing.inline! do
+      @child_ticket_ids = child_tickets_count.times.collect  {|i|
+        create_ticket({:subject => subjects[i], :assoc_parent_id => prt_ticket.display_id}).display_id }
+    end
+    @child_ticket_ids
   end
 end

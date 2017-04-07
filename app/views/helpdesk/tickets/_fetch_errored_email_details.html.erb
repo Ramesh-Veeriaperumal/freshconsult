@@ -22,9 +22,11 @@
             var ele = jQuery(this).parents('.email-error-reason').children('.long-text');
             ele.toggleClass('show-content');
             if(ele.hasClass('show-content')){
+                jQuery(this).attr('data-original-title', 'Hide details');
                 ele.css('height', ele[0].offsetHeight || ele[0].scrollHeight);
             }else{
                 ele.css('height', '0px');
+                jQuery(this).attr('data-original-title', 'Show details');
             }
         });
 
@@ -61,6 +63,8 @@
                 });
             }
         });
+
+        jQuery('.email-failure-list-item .ficon-phone').addClass('tooltip').attr('title', 'Call');
     });
 <% end %>
 

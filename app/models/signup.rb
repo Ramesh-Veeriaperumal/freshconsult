@@ -180,5 +180,5 @@ class Signup < ActivePresenter::Base
       shard_mapping.id = shard_mapping_id
       shard_mapping.save!
     end
-    # * * * POD Operation Methods Ends * * * 
+    # * * * POD Operation Methods Ends * * *
 end

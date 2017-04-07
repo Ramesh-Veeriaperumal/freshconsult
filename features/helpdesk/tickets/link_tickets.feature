@@ -1,4 +1,4 @@
-@admin @link_tickets
+@admin @adv_ticketing
 Feature: Linked tickets
 
   Background: Enable Link tickets.

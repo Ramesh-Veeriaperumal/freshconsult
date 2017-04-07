@@ -18,6 +18,7 @@ module Fixtures
         {:name => 'responder_id', :value => Va::Action::EVENT_PERFORMER}
       ]
       
+
       VaRule.seed(:account_id, :name) do |s|
         s.account_id = account.id
         s.name =  'Automatically assign ticket to first responder'
@@ -52,7 +53,7 @@ module Fixtures
 
       ticket_reopen_rule = account.va_rules.new(
           :rule_type => VAConfig::OBSERVER_RULE,
-          :active => false,
+          :active => account.verified?,
           :match_type => 'any',
           :name => 'Automatically reopen tickets when the customer responds',
           :description => "When a requester replies to a ticket in any state (pending, resolved, closed or a custom status), its status is changed back to open.",

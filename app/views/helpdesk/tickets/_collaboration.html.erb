@@ -23,6 +23,9 @@
         </div>
         <div class="collab-scroll-box-cover">
             <div id="scroll-box" class="scroll-box"></div>
+            <div id="collab-scroll-bottom-btn" class="collab-scroll-bottom-btn">
+                <span class="scroll-bottom"> <%= font_icon "down-arrow", { :size => 20 , :class => "ficon"} %> </span>
+            </div>
         </div>
         <form id="send-collab-message-form" class="send-collab-message-form" autocomplete="off">
             <div id="collab-error-popup" class="collab-error-popup">
@@ -44,6 +47,11 @@
             <div id="annotation" class="annotation">
                 <span class="text"></span>
                 <span class="close" id="cancel-annotation"> <%= font_icon "cross", { :size => 20 , :class => "ficon"} %> </span> 
+            </div>
+
+            <div id="collab-msg-reply-to" class="collab-msg-reply-to">
+                <span class="text"></span>
+                <span class="close" id="cancel-reply"> <%= font_icon "cross", { :size=> 20 , :class => "ficon" } %> </span>
             </div>
 
             <div class="collab-editor-container">
@@ -68,4 +76,4 @@
     </div>
 </div>
 
-<input type="hidden" id="collab-ui-data" data-ui-payload='{"currentConversationId": "<%= @ticket.display_id %>", "isClosed": <%= @ticket.status == 5 || @ticket.spam == true || @ticket.deleted == true %>, "containerSelector": ".tkt-wrapper.ticket_show", "ownedBy": "<%= @ticket.responder_id %>", "convoToken": "<%= Collaboration::Ticket.convo_token(@ticket.display_id) %>", "requester_name": "<%= @ticket.requester_name %>", "requester_email": "<%= @ticket.requester.email %>" }' data-convo-name="<%= @ticket.subject %>">
+<input type="hidden" id="collab-ui-data" data-ui-payload='{"currentConversationId": "<%= @ticket.display_id %>", "isClosed": <%= @ticket.status == 5 || @ticket.spam == true || @ticket.deleted == true %>, "containerSelector": ".tkt-wrapper.ticket_show", "ownedBy": "<%= @ticket.responder_id %>", "convoToken": "<%= Collaboration::Ticket.convo_token(@ticket.display_id) %>", "requester_name": "<%= @ticket.requester_name %>", "requester_email": "<%= @ticket.requester.email %>" }' data-convo-name="<%= @ticket.subject %>" data-ticket-config-email="<%=@ticket.selected_reply_email.scan( /<([^>]*)>/)%>">

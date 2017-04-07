@@ -4,6 +4,10 @@
 		<% if (!!annotation_body) { %>
 			<div class="annotation-text <%= is_annotation_invalid ? 'invalid-annotation': '' %>" title="<%= annotation_body %>">&quot; <%= annotation_body %> &quot;</div>
 		<% } %>
+		<% if (!!reply_to_meta) { %>
+			<div class="collab-reply-to-text" data-reply-to-id="<%= reply_to_meta.msg_id %>" title="<%= App.CollaborationModel.usersMap[reply_to_meta.r_id] ? App.CollaborationModel.usersMap[reply_to_meta.r_id].name : "~" %> : <%= reply_to_meta.msg_body %>">&quot; <%= App.CollaborationModel.usersMap[reply_to_meta.r_id] ? App.CollaborationModel.usersMap[reply_to_meta.r_id].name : "~" %> : <%= reply_to_meta.msg_body %> &quot;</div>
+		<% } %>
+		
 		<% if (!!is_attachment) { %>
 			<div class="msg collab-attachment-msg"> 
 				<a class="collab-attached-image-section" download href="<%= msg_body.dl %>">
@@ -20,7 +24,10 @@
                 </a>
 			</div>
 		<% } else { %>
-			<span class="msg"> <%= msg_body %> </span>
+			<span class="msg" data-raw-msg="<%= msg_body_raw %>"> <%= msg_body %> </span>
+			<% if(!!enable_reply_to && msg_render_type == "received") { %>
+				<span class="collab-reply-btn" id="btn-reply"> <i class="ficon-reply fsize-14 collab-reply-icon" id="collab-reply-icon" size="14"></i> </span>
+			<% } %>
 		<% } %>
 	</div>
 

@@ -249,7 +249,7 @@ window.App = window.App || {};
 			}else
 				$('#inherit-parent').val('all')
 			self.clearData();
-			$('.inherit_parent').attr({'data-inherit-all':true,'data-original-title':customMessages.undoParentInherit})
+			$('.inherit_parent').attr({'data-inherit-all':true,'data-original-title':customMessages.undoParentInheritTooltip})
 				.removeClass('ficon-inherit-parent').addClass('ficon-undo-inherit').parent().addClass('parent-change');
 			$('.inherit_parent_label').text(customMessages.undoParentInherit);
 			this.enableDisableAllFields(true);
@@ -836,7 +836,7 @@ window.App = window.App || {};
 					if(dataInheritAll==='false'){
 						self.inheritAllParent();
 					}else{
-						$('.inherit_parent').attr({'data-inherit-all':false,'data-original-title':customMessages.insertParent})
+						$('.inherit_parent').attr({'data-inherit-all':false,'data-original-title':customMessages.inheritParentTooltip})
 							.removeClass('ficon-undo-inherit').addClass('ficon-inherit-parent').parent().removeClass('parent-change');
 						$('.inherit_parent_label').text(customMessages.insertParent);
 						self.clearData();
