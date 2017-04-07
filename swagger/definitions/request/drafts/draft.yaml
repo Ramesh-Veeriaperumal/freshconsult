@@ -4,6 +4,10 @@ properties:
     type: string
     required: true
     description: content of the ticket reply
+  quoted_text:
+    type: string
+    required: true
+    description: quoted text of the ticket reply
   cc_emails:
     type: array
     description: cc_emails for the ticket reply

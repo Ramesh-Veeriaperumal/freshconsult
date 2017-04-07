@@ -158,6 +158,7 @@ module TicketsTestHelper
   def reply_draft_pattern(expected_output)
     {
       body: expected_output[:body],
+      quoted_text: expected_output[:quoted_text],
       cc_emails: expected_output[:cc_emails] || [],
       bcc_emails: expected_output[:bcc_emails] || [],
       from_email: expected_output[:from_email] || "",

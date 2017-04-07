@@ -1,5 +1,6 @@
 response_hash = {
   body: @item.body,
+  quoted_text: @item.quoted_text,
   cc_emails: @item.cc_emails,
   bcc_emails: @item.bcc_emails,
   from_email: @item.from_email,
