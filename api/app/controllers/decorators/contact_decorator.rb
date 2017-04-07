@@ -62,6 +62,7 @@ class ContactDecorator < ApiDecorator
   def full_requester_hash
     req_hash = to_full_hash.except(:company_id)
     req_hash[:company] = CompanyDecorator.new(record.company, name_mapping: @company_name_mapping).to_hash if record.company
+    req_hash[:id] = record.id
     req_hash
   end
 
