@@ -34,7 +34,7 @@ module Tickets
     ].freeze
 
     ARRAY_CONTENT_TYPES = [
-      :add_tag, :remove_tag, :add_watcher, :add_a_cc,
+      :add_tag, :remove_tag, :add_a_cc,
       :email_to_requester, :email_to_group, :email_to_agent
     ].freeze
 
@@ -53,7 +53,7 @@ module Tickets
         highlight: summary.nil? ? nil : summary.to_i,
         ticket_id: @ticket.display_id,
         performed_at: parse_activity_time(published_time),
-        actions: send("#{performer_type}_actions")
+        actions: send("#{performer_type}_actions").reject{ |action| action.empty? }
       }
     end
 
@@ -126,13 +126,17 @@ module Tickets
         result_hash = items.collect do |key, value|
           result = {}
           type, content = action_content(key, value)
-          result[type] = content
+          result[type] = content if content.present? || CONTENT_LESS_TYPES.include?(key)
           result
         end
         result = result_hash.group_by(&:keys).map do |key, value|
           content = parsed_content(key.first, value)
-          action_hash = { type: key.first }
-          action_hash[:content] = content if content
+          type = key.first
+          action_hash = {}
+          if type
+            action_hash[:type] = type
+            action_hash[:content] = content if content
+          end
           action_hash
         end
         result

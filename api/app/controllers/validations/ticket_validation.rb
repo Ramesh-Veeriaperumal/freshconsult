@@ -111,7 +111,6 @@ class TicketValidation < ApiValidation
                               {
                                 validatable_custom_fields: proc { |x| TicketsValidationHelper.custom_non_dropdown_fields(x) },
                                 required_based_on_status: false,
-                                required_attribute: :required,
                                 ignore_string: :allow_string_param
                               }
                            }, if: :is_bulk_update?

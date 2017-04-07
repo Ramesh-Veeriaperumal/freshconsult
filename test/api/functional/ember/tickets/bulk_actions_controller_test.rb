@@ -331,6 +331,21 @@ module Ember
         assert_response 202
       end
 
+      def test_bulk_update_without_mandatory_non_dropdown_field
+        create_custom_field('test_custom_paragraph', 'paragraph', true)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket.id
+        end
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by)
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        failures = {}
+        ticket_ids.each {|id| failures[id] = { 'test_custom_paragraph' => [:datatype_mismatch, { code: :missing_field, expected_data_type: :String }]}}
+        match_json(partial_success_response_pattern([], failures))
+        assert_response 202
+      end
+
       def test_bulk_update_with_mandatory_section_fields
         sections = [
           {

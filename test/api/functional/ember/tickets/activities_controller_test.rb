@@ -334,6 +334,17 @@ module Ember
       ensure
         @controller.unstub(:fetch_activities)
       end
+
+      def test_empty_actions_activity
+        ticket = create_ticket
+        stub_data = empty_action_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        match_json([])
+        assert_response 200
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
     end
   end
 end

@@ -169,6 +169,12 @@ module TicketActivitiesTestHelper
     get_activity_data(params)
   end
 
+  def empty_action_activity
+    params = {}
+    params[:content] = "{\"note\":{}}"
+    get_activity_data(params)
+  end
+
   # PATTERNS
   def property_update_activity_pattern(ticket_activity_data)
     result = []
