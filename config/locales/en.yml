@@ -119,7 +119,8 @@ en:
                 Message content: <br>%{failed_content}</p>
     note_display:
       title  : "Message not delivered"
-      failed_recipients: "Failed recipients"
+      failed_recipient: "recipient"
+      failed_recipients: "recipients"
       contact_support: "Request to unblock recipient"
       mail_sent: "Unblock request sent to Freshdesk"
       call_recipient : "Call recipient"
