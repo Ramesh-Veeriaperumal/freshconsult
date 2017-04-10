@@ -39,7 +39,6 @@
             var email = jQuery(this).data('failed-email');
             jQuery("#TicketPseudoReply a[rel='note-button'").data('failed-email', email).trigger('click');
             jQuery('#cnt-note-body').data('redactor').insertOnCursorPosition('inserthtml', email);
-            jQuery('#HelpdeskNotes #helpdesk_note_to_emails').val('').trigger('change');
             setTimeout(function(){
                 jQuery('#HelpdeskNotes .add-note-select').focus();
             },1000);
