@@ -35,9 +35,15 @@
                       jQuery('.add_select2_custom').data('agent_loaded',response);
                       if(jQuery("#TicketPseudoReply a[rel='note-button'").data('failed-email')){
                         jQuery('#HelpdeskNotes #helpdesk_note_to_emails').val('').trigger('change');
+                        jQuery("#TicketPseudoReply a[rel='note-button'").data('failed-email', '');
                       }
                     }
                   });
+                }else{
+                  if(jQuery("#TicketPseudoReply a[rel='note-button'").data('failed-email')){
+                    jQuery('#HelpdeskNotes #helpdesk_note_to_emails').val('').trigger('change');
+                    jQuery("#TicketPseudoReply a[rel='note-button'").data('failed-email', '');
+                  }
                 }
               }
           </script>
