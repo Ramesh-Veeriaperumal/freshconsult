@@ -35,7 +35,7 @@
                     <span class="summary-error-text">
                         <%= t("email_failure.#{item["type"] }.summary_error_text") %>
                     </span>
-                    <a href="#" class="q-marker tooltip" data-original-title="Show details" twipsy-content-set="true"></a>
+                    <a href="#" class="q-marker tooltip" data-original-title="<%= t('email_failure.note_display.show_details') %>" twipsy-content-set="true"></a>
                 </p>
                 <p class="long-text">
                     <% if (item["type"] == Helpdesk::Email::Constants::FAILURE_CATEGORY[0] || item["type"] == Helpdesk::Email::Constants::FAILURE_CATEGORY[1]) %>
