@@ -61,7 +61,7 @@ class AccountConfiguration < ActiveRecord::Base
   end
 
   def update_contact_company_info!(user_params)
-    self.update_attributes(user_params.slice(*(CONTACT_INFO_KEYS + COMPANY_INFO_KEYS_WITH_PREFIX)))
+    self.update_attributes!(user_params.slice(*(CONTACT_INFO_KEYS + COMPANY_INFO_KEYS_WITH_PREFIX)))
   end
 
   private

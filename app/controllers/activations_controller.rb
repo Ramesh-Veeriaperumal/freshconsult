@@ -66,6 +66,8 @@ class ActivationsController < SupportController
       render :action => :new
     end
   rescue => e
+    Rails.logger.debug "******* EXCEPTION #{e} occured while activating user ##{@user.id} in account ##{current_account.id} *******"
+    NewRelic::Agent.notice_error(e,{:description => "error occured while activating user ##{@user.id} in account ##{current_account.id}"})
     current_account.reload
     load_password_policy
     render :action => :new
