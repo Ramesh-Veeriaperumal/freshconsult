@@ -21,7 +21,7 @@
                    <% end %>
                     <% if current_user.privilege?(:admin_tasks) %>
                         <% if item["type"].include? "dropped" %>
-                            <span class="ficon-mail drop-from-suppression tooltip" data-url="/helpdesk/tickets/<%= ticket_display_id %>/suppression_list_alert" data-user-mail="<%= item['email'] %>" data-original-title= "<%= t('email_failure.note_display.contact_support') %>"> </span>
+                            <span class="ficon-mail-source drop-from-suppression tooltip" data-url="/helpdesk/tickets/<%= ticket_display_id %>/suppression_list_alert" data-user-mail="<%= item['email'] %>" data-original-title= "<%= t('email_failure.note_display.contact_support') %>"> </span>
                         <% end %>
                     <% else %>
                         <span data-failed-email="<%= item["email"] %>" class="ficon-file-edit add_note_admin tooltip" data-original-title= "<%= t('email_failure.note_display.add_note_to_admin') %>"> </span>
