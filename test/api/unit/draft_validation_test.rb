@@ -9,7 +9,7 @@ class DraftValidationTest < ActionView::TestCase
   end
 
   def test_array_validation
-    controller_params = { body: 'Sample Text', quoted_Text: 'Sample Quoted Text', cc_emails: 'ABC', bcc_emails: 'XYZ', attachment_ids: '123' }
+    controller_params = { body: 'Sample Text', quoted_Text: nil, cc_emails: 'ABC', bcc_emails: 'XYZ', attachment_ids: '123' }
     draft_validation = DraftValidation.new(controller_params, nil)
     refute draft_validation.valid?(:save_draft)
     errors = draft_validation.errors.full_messages
