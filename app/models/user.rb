@@ -551,8 +551,8 @@ class User < ActiveRecord::Base
   end
 
   def update_account_info_and_verify(user_params)
-    self.account.update_attribute(:name, user_params[:company_name])
-    self.account.main_portal.update_attribute(:name, user_params[:company_name])
+    self.account.update_attributes!({:name => user_params[:company_name]})
+    self.account.main_portal.update_attributes!({:name => user_params[:company_name]})
     self.account.account_configuration.update_contact_company_info!(user_params)
   end
 

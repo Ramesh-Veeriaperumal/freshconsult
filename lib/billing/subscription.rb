@@ -155,7 +155,7 @@ class Billing::Subscription < Billing::ChargebeeWrapper
     end
     
     def customer_data(account)
-      data = CUSTOMER_INFO.inject({}) { |h, (k, v)| h[k] = account.send(v); h }
+      data = CUSTOMER_INFO.inject({}) { |h, (k, v)| h[k] = account.send(v).to_str; h }
       data.merge(:email => account.invoice_emails.first)
     end
     

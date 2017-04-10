@@ -32,7 +32,7 @@
           <div class="control-group">
             <%= form.label :company_name, t('user.company_name'), :class => "control-label required" %>
             <div class="controls">
-              <%= form.text_field "company_name", :value => current_account.name ||current_account.account_configuration.company_info[:name], :class => "required special span6" %>
+              <%= form.text_field "company_name", :value => current_account.name ||current_account.account_configuration.company_info[:name], :class => "required special span6 user_company_name_length" %>
             </div>
             <div class="clearfix"></div>
           </div>
@@ -89,6 +89,10 @@
 
 <%= javascript_tag do %>
     jQuery(document).ready(function() {
+
+    jQuery.validator.addMethod("user_company_name_length", jQuery.validator.methods.rangelength, "Please enter a value between {0} and {1} characters");
+    jQuery.validator.addClassRules("user_company_name_length", { user_company_name_length: [3,100] });
+
     jQuery('#user_company_industry').val("<%= current_account.account_configuration.company_info.fetch(:industry, "").html_safe %>").trigger('change');
     var mediaQcheck = window.matchMedia( "(max-device-width: 480px)" );
     var $placement = (jQuery("html").attr("dir") == "rtl") ? 'left' :'right';
