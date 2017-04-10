@@ -10,6 +10,10 @@
     </div>
 </div>
 <%= javascript_tag do %>
+    var mailSent = '<%= t('email_failure.note_display.mail_sent') %>';
+    var hideDetails = '<%= t('email_failure.note_display.hide_details') %>';
+    var showDetails = '<%= t('email_failure.note_display.show_details') %>';
+    var callRecipient = '<%= t('email_failure.note_display.call_recipient') %>';
     jQuery(document).ready(function(){
         jQuery('body').off('.email_error');
         var admin_emails = <%= admin_emails.to_json.html_safe %>.map(function(user, index){
@@ -26,7 +30,7 @@
                 ele.css('height', ele[0].offsetHeight || ele[0].scrollHeight);
             }else{
                 ele.css('height', '0px');
-                jQuery(this).attr('data-original-title', 'Show details');
+                jQuery(this).attr('data-original-title', showDetails);
             }
         });
 
@@ -59,13 +63,13 @@
                     },
                     dataType: 'json',
                     success: function(data){
-                        jQuery(_this).removeClass(loadingClass).addClass('ficon-checkmark').attr('data-original-title', "Mail Sent");
+                        jQuery(_this).removeClass(loadingClass).addClass('ficon-checkmark').attr('data-original-title', mailSent);
                     }
                 });
             }
         });
 
-        jQuery('.email-failure-list-item .ficon-phone').addClass('tooltip').attr('title', 'Call');
+        jQuery('.email-failure-list-item .ficon-phone').addClass('tooltip').attr('title', callRecipient);
     });
 <% end %>
 
