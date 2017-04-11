@@ -620,6 +620,7 @@ class Helpdesk::TicketsController < ApplicationController
     can_close_assoc_parent?(@item, true) if [RESOLVED,CLOSED].include? params[:helpdesk_ticket][:status].to_i # check for parent tkt status
     @item.schedule_observer = true
 
+    @note.build_note_and_sanitize
     verify_update_properties_permission if @item.update_ticket_attributes(params[nscname])
     unless @note.new_record?
       enqueue_send_set_observer    

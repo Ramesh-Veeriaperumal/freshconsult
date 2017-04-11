@@ -1402,6 +1402,10 @@ var scrollToError = function(){
 	    }).forEach(function(y) {
 	      _form.append(y);
 	    });
+		seperateQuoteText(_form);
+		if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') {
+			stopDraftSaving();
+		}
 
 		callback = callback || function(){};
 
@@ -1409,13 +1413,6 @@ var scrollToError = function(){
 			type: 'POST',
 			url: TICKET_DETAILS_DATA["displayId"] + '/send_and_set_status',
 			dataType: 'script',
-			beforeSubmit: function(values, form) {
-			  seperateQuoteText(_form);
-			  if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') {
-			    stopDraftSaving();
-			  }
-
-			},
 
 			data: jQuery.merge(_form.serializeArray(), tkt_form.serializeArray()),
 
