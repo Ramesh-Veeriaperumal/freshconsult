@@ -1,10 +1,11 @@
 class TicketBulkUpdateValidation < ApiValidation
-  CHECK_PARAMS_SET_FIELDS = %w(reply).freeze
+  CHECK_PARAMS_SET_FIELDS = %w(properties reply).freeze
 
   attr_accessor :properties, :reply, :statuses, :ticket_fields
 
   validates :properties, data_type: { rules: Hash, allow_nil: false }
   validates :reply, data_type: { rules: Hash, allow_nil: false }
+  validates :properties, custom_absence: { message: :no_edit_privilege }, unless: :has_edit_privilege?
   validates :reply, custom_absence: { message: :no_reply_privilege }, unless: :has_reply_privilege?
 
   validate :validate_properties_or_reply_presence, if: -> { errors.blank? }
@@ -18,6 +19,10 @@ class TicketBulkUpdateValidation < ApiValidation
   end
 
   private
+
+    def has_edit_privilege?
+      User.current.privilege?(:edit_ticket_properties)
+    end
 
     def has_reply_privilege?
       User.current.privilege?(:reply_ticket)

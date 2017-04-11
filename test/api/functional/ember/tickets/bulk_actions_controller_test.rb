@@ -8,6 +8,7 @@ module Ember
       include AttachmentsTestHelper
       include GroupHelper
       include CannedResponsesHelper
+      include PrivilegesHelper
 
       CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
       CUSTOM_FIELDS_CHOICES = Faker::Lorem.words(5).freeze
@@ -267,6 +268,39 @@ module Ember
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
+      end
+
+      def test_bulk_update_without_reply_privilege
+        User.stubs(:current).returns(@agent)
+        remove_privilege(User.current, :reply_ticket)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket.id
+        end
+        params_hash = { ids: ticket_ids, properties: update_ticket_params_hash }
+        Sidekiq::Testing.inline!
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+        add_privilege(User.current, :reply_ticket)
+        User.unstub(:current)
+      end
+
+      def test_bulk_update_without_edit_privilege
+        User.stubs(:current).returns(@agent)
+        remove_privilege(User.current, :edit_ticket_properties)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket.id
+        end
+        email_config = create_email_config
+        reply_hash = { body: Faker::Lorem.paragraph, from_email: email_config.reply_email }
+        params_hash = { ids: ticket_ids, reply: reply_hash }
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+        add_privilege(User.current, :edit_ticket_properties)
+        User.unstub(:current)
       end
 
       def test_bulk_reply_with_attachments

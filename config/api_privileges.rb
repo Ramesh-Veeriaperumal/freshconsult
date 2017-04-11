@@ -30,6 +30,7 @@ Authority::Authorization::PrivilegeList.build do
   reply_ticket do
     resource :"ember/conversation", only: [:reply, :facebook_reply, :tweet, :reply_template]
     resource :"ember/tickets/draft", only: [:save_draft, :show_draft, :clear_draft]
+    resource :"ember/tickets/bulk_action", only: [:bulk_update]
   end
 
   forward_ticket do
