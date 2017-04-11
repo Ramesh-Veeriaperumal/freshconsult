@@ -75,6 +75,7 @@
       :unique_contact_identifier: 70
       :advanced_search: 71
       :advanced_search_bulk_actions: 72
+      :ticket_activity_export: 73
 :selectable_features:
       :branding: true
       :gamification_enable: false

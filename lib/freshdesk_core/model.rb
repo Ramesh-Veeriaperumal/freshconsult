@@ -32,6 +32,7 @@ module FreshdeskCore::Model
                         "email_notifications",
                         "dynamic_notification_templates",
                         "features",
+                        "scheduled_exports",
 
                         "forums",
                           "customer_forums",

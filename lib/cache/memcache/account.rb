@@ -218,6 +218,15 @@ module Cache::Memcache::Account
     end
   end
 
+  def activity_export_from_cache
+    @activity_export_from_cache ||= begin
+      key = ACCOUNT_ACTIVITY_EXPORT % { :account_id => self.id }
+      MemcacheKeys.fetch(key) do
+        self.activity_export
+      end
+    end
+  end
+
   def observer_rules_from_cache
     key = ACCOUNT_OBSERVER_RULES % { :account_id => self.id }
     MemcacheKeys.fetch(key) do

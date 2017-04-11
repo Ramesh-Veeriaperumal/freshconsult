@@ -1636,6 +1636,13 @@ Helpkit::Application.routes.draw do
         post :time_entries_list
       end
     end
+    
+    resources :scheduled_exports, only: [:index] do
+      collection do
+        get :activities, action: :edit_activity
+        post :activities, action: :update_activity
+      end
+    end
 
     #routes for v1 agent and group performance reports
     # match '/:id' , action: :show, method: :get, constraints: { id: /[1-2]+/ }

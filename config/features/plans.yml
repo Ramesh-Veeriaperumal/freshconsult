@@ -82,6 +82,7 @@
       - :round_robin_on_update 
       - :shared_ownership_toggle
       - :advanced_dkim
+      - :ticket_activity_export
     :inherits: 
       - :garden_jan_17
     :exclude: []

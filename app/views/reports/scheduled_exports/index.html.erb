@@ -1,0 +1,89 @@
+<%= stylesheet_link_tag_with_rtl :'cdn/ticket_schedule'  %>
+
+<% content_for :helpcard do %>
+  <%= render :partial => "helpnote" %>
+<% end %>
+<% if @scheduled_ticket_export %>
+  <div class="list-page schedule-list-wrapper">
+    <div class="list-page-header" >
+    	<ul class="breadcrumb template_breadcrumb">
+  		  <li>
+  		    <%= link_to t('helpdesk_reports.ticket_schedule.all_reports'), reports_url%> <span class="divider">/</span>
+  		  </li>
+  		  <li class=""><%= t('helpdesk_reports.ticket_schedule.schedule_export') %></li>
+  		</ul>
+      <div class="row-fluid">
+        <div class="span6">
+        	<h3 class="title">
+            <%=t('helpdesk_reports.ticket_schedule.index.ticket_properties_title')%>
+          </h3>
+        </div>
+        <div class="span6 pull-right align-right new-schedule-btn" >
+          <%= (link_to t('helpdesk_reports.ticket_schedule.new_schedule'), new_reports_scheduled_export_path(), :class => "btn btn-primary") %>
+        </div>
+      </div>
+    </div>
+    <div class="list-page-body ticket-schedule-list">
+      <table class="table table-striped">
+        <tr id="">
+          <td class="pl15">
+            <strong>
+              <span class="item_info">
+                Hourly export schedule
+              </span>
+            </strong>
+            <p class="muted">
+              Runs hourly
+            </p>
+          </td>
+          <td>
+            <div class="item_actions">
+              <%= link_to "<i class='ficon-trash fsize-22 schedule-icon'></i>".html_safe, '', :class => "" %>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+<%end%>
+<% unless @scheduled_activity_export.nil? %>
+<div class="list-page schedule-list-wrapper ticket-activity-list-wrapper">
+  <div class="list-page-header">
+    <div class="row-fluid">
+      <div class="span6">
+        <h3 class="title">
+          <%= t('helpdesk_reports.ticket_activity.title') %>
+        </h3>
+      </div>
+    </div>
+  </div>
+  <div class="list-page-body ticket-schedule-list">
+    <table class="table table-striped">
+        <tr id="">
+          <td class="span1">
+            <strong>
+              <span class="item_info">
+                <input type="checkbox" name="scheduled_activity_export[active]" data-url="<%= activities_reports_scheduled_exports_path() %>" rel ="toggle" class="ticket_activity-toggle" <%= @scheduled_activity_export.active ? 'checked' : '' %> value="<%= @scheduled_activity_export.active %>"/>
+              </span>
+            </strong>
+          </td>
+          <td class="pl15">
+            <strong>
+              <span class="item_info">
+                <%= link_to @scheduled_activity_export.name, activities_reports_scheduled_exports_path(), :class => "" %>
+              </span>
+            </strong>
+            <p class="muted">
+              <%= @scheduled_activity_export.description %>
+            </p>
+          </td>
+          <td>
+            <div class="item_actions pull-right">
+              <%= link_to "<i class='ficon-edit fsize-22 schedule-icon'></i>".html_safe, activities_reports_scheduled_exports_path(), :class => "" %>
+            </div>
+          </td>
+        </tr>
+    </table>
+  </div>
+</div>
+<% end %>

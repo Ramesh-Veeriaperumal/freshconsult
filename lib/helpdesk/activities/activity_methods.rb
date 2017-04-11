@@ -77,8 +77,8 @@ module Helpdesk::Activities
       res_hash = DEFAULT_RET_HASH.clone
       return res_hash if !(ACTIVITIES_ENABLED and Account.current.features?(:activity_revamp))
       begin
-        $thrift_transport.open()
-        client    = ::HelpdeskActivities::TicketActivities::Client.new($thrift_protocol)
+        $activities_thrift_transport.open()
+        client    = ::HelpdeskActivities::TicketActivities::Client.new($activities_thrift_protocol)
         act_param = ::HelpdeskActivities::TicketDetail.new
         act_param.account_id = Account.current.id
         act_param.object     = "ticket"
@@ -134,7 +134,7 @@ module Helpdesk::Activities
             :trace       => e.backtrace.join("\n")})
         NewRelic::Agent.notice_error(e, {:description => "Error in fetching and processing activites"})
       ensure
-        $thrift_transport.close()
+        $activities_thrift_transport.close()
         return res_hash
       end
     end

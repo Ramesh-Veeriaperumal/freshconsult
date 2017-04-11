@@ -63,6 +63,8 @@ module MemcacheKeys
   FORUM_CATEGORIES = "v1/FORUM_CATEGORIES:%{account_id}"
 
   ALL_SOLUTION_CATEGORIES = "v1/ALL_SOLUTION_CATEGORIES:%{account_id}"
+  
+  ACCOUNT_ACTIVITY_EXPORT = "v1/ACCOUNT_ACTIVITY_EXPORT:%{account_id}"
 
   CONTACT_FORM_FIELDS = "v1/CONTACT_FORM_FIELDS:%{account_id}:%{contact_form_id}"
 

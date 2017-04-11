@@ -115,6 +115,8 @@ class Account < ActiveRecord::Base
 
   has_many :skills, :order => "position", :class_name => 'Admin::Skill'
   has_many :user_skills
+  
+  has_one :activity_export, :class_name => 'ScheduledExport::Activity', dependent: :destroy
 
   #Scoping restriction for other models starts here
   has_many :account_va_rules, :class_name => 'VaRule'
