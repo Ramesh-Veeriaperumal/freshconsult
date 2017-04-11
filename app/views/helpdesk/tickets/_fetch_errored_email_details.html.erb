@@ -49,11 +49,11 @@
         });
 
         jQuery('body').on('click.email_error', '.email-failure-list-item .drop-from-suppression', function(e){
-            if(jQuery(this).hasClass('ficon-mail')){
+            if(jQuery(this).hasClass('ficon-mail-source')){
                 var loadingClass = 'sloading loading-small';
                 var _this = this;
                 jQuery(_this).parents('.email-failure-list-item').addClass('active');
-                jQuery(_this).removeClass('ficon-mail').addClass(loadingClass);
+                jQuery(_this).removeClass('ficon-mail-source').addClass(loadingClass);
                 jQuery.ajax({
                     url: jQuery(_this).data('url'),
                     type: 'PUT',
