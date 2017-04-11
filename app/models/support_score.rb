@@ -52,7 +52,7 @@ class SupportScore < ActiveRecord::Base
     alias_method :love, :customer_champion
 
     # force index
-    def self.force_index(index)
+    def force_index(index)
       from("#{self.table_name} FORCE INDEX(#{index})")
     end
   end
