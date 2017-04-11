@@ -43,6 +43,7 @@ module HelpdeskReports::Helper::PlanConstraints
     plan_filters      = plan_excludes[plan_group] if plan_excludes
     excluded_filters |= plan_filters || [] 
     excluded_filters += [:agent_id] if hide_agent_reporting?
+    excluded_filters += [:tag_id] if(report_type.to_sym == :timesheet_reports)
     excluded_filters
   end
 
