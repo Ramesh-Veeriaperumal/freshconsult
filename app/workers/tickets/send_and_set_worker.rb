@@ -1,7 +1,7 @@
 class Tickets::SendAndSetWorker < BaseWorker
 
-  include Helpdesk::TicketNotifications
-
+  include Helpdesk::Ticketfields::TicketStatus
+  
   sidekiq_options :queue => :send_and_set_observer, :retry => 0, :backtrace => true, :failures => :exhausted
 
   def perform args
@@ -14,12 +14,12 @@ class Tickets::SendAndSetWorker < BaseWorker
       Tickets::UpdateTicketStatesWorker.new.perform(args[:note_changes])
       status = evaluate_on.status
       if (status == RESOLVED)
-        notify_by_email(EmailNotification::TICKET_RESOLVED) 
-        notify_watchers("resolved")
+        evaluate_on.notify_by_email(EmailNotification::TICKET_RESOLVED) 
+        evaluate_on.notify_watchers("resolved")
       end
       if (status == CLOSED)
-        notify_by_email(EmailNotification::TICKET_CLOSED)
-        notify_watchers("closed")
+        evaluate_on.notify_by_email(EmailNotification::TICKET_CLOSED)
+        evaluate_on.notify_watchers("closed")
       end
       puts "Send and Set Observer run for Account id:: #{Account.current.id}, Ticket id:: #{args[:ticket_changes][:ticket_id]}, params: #{args} "
     rescue => e
