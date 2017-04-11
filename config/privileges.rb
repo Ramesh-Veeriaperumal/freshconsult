@@ -432,6 +432,7 @@ Authority::Authorization::PrivilegeList.build do
 
       resource :"helpdesk/dashboard", :only => [:unresolved_tickets, :unresolved_tickets_data]
       resource :"reports/scheduled_export"
+      resource :export, :only => [:ticket_activities]
   end
 
   # NOTE: Resource(controller action) related to scheduling is not added here because save reports and scheduling reports use the same action
@@ -598,7 +599,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/onboarding"
     resource :"admin/getting_started"
     resource :"agent", :only => [:api_key]
-    resource :export, :only => [:ticket_activities]
   end
 
   assign_agent do

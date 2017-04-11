@@ -1,8 +1,7 @@
 require 'helpdesk_activities/activity_types'
 class ExportController < ApiApplicationController
 
-  before_filter :feature_check
-  before_filter :validate_params
+  before_filter :feature_check, :check_privilege, :validate_params
 
   def ticket_activities
     @client = thrift_client
@@ -20,6 +19,10 @@ class ExportController < ApiApplicationController
 
   def feature_check
     render_request_error(:require_feature, 403, feature: 'activity export'.titleize) unless Account.current.ticket_activity_export_enabled?
+  end
+
+  def check_privilege
+    render_request_error(:action_restricted, 403, action: action_name, reason: "user doesn't have required privilege") unless User.current.privilege?(:manage_account)
   end
 
   def validate_params
