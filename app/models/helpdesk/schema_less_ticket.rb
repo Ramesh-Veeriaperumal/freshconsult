@@ -28,6 +28,9 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
   COLUMN_TO_ATTRIBUTE_MAPPING.keys.each do |key|
     alias_attribute(COLUMN_TO_ATTRIBUTE_MAPPING[key], key)
   end
+
+    LIFECYCLE_REPORTS_MAPPING = {"agent" => 'responder_id', 'group' => 'group_id', 'status' => 'status'}
+    LIFECYCLE_REPORTS_COLUMNS = LIFECYCLE_REPORTS_MAPPING.keys
   
 	self.table_name =  "helpdesk_schema_less_tickets"
 	self.primary_key = :id
@@ -161,7 +164,32 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 			self.reports_hash["#{count_type}_count"] = current_count unless current_count.nil?
 		end
 	end
-	# Methods for new reports ends here
+
+    def update_lifecycle_changes(event_time, group, resolved_or_closed)
+        self.reports_hash ||= {}
+        tkt = self.ticket
+        last_updated_at = self.reports_hash["lifecycle_last_updated_at"] || tkt.created_at
+        action_time_in_bhrs = calculate_action_time_in_bhrs(last_updated_at, event_time, group)
+        if action_time_in_bhrs <= 30 && !resolved_or_closed #return if action_time_in_bhrs is less than 30 seconds
+            self.reports_hash["lifecycle_last_updated_at"] = event_time
+            return {}
+        end
+        action_time_hash = {
+            action_time_in_bhrs: action_time_in_bhrs,
+            action_time_in_chrs: event_time - last_updated_at,
+            chrs_from_tkt_creation: event_time - tkt.created_at
+        }
+        self.reports_hash["lifecycle_last_updated_at"] = event_time
+        action_time_hash
+    end
+
+    def calculate_action_time_in_bhrs(start_time, end_time, group)
+        time_in_bhrs = nil
+        BusinessCalendar.execute(self.ticket) {
+            time_in_bhrs = calculate_time_in_bhrs(start_time, end_time, group)
+        }
+        time_in_bhrs
+    end
 
 	def recalculate_note_count
 		recalculated_count = Hash.new(0)

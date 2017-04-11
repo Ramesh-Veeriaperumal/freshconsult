@@ -6,11 +6,11 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   include HelpdeskReports::Helper::ControllerMethods
   include HelpdeskReports::Helper::ScheduledReports
   
-  before_filter :check_account_state, :ensure_report_type_or_redirect, 
+  before_filter :check_account_state, :ensure_report_type_or_redirect, :lifecycle_launch_party_check,
                 :plan_constraints,                                      :except => [:download_file]              
   before_filter :pdf_export_config, :report_filter_data_hash,           :only   => [:index, :fetch_metrics]
   before_filter :filter_data, :set_selected_tab,                        :only   => [:index, :export_report, :email_reports]
-  before_filter :normalize_params, :validate_params, :validate_scope, 
+  before_filter :normalize_params, :construct_params, :validate_params, :validate_scope, 
                 :only_ajax_request, :redirect_if_invalid_request,          :except => [:index, :configure_export, :export_report, :download_file,
                                                                                     :save_reports_filter, :delete_reports_filter]
   before_filter :pdf_params,                                            :only   => [:export_report]
@@ -142,7 +142,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
     end
 
     response = bulk_request requests
-
+    
     @results = []
     response.each do |res|
       if res["last_dump_time"]
@@ -214,7 +214,9 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
 
   # TODO -> Ticket from Archive
   def ticket_from_db id_list
+    additional_details = {}
     ticket_list_columns = "display_id, subject, responder_id, status, priority, requester_id"
+    additional_details[:total_time] = id_list[:total_time] if report_type==:timespent
     Sharding.select_shard_of(current_account.id) do
       Sharding.run_on_slave do
         tkt = current_account.tickets.permissible(current_user).newest(TICKET_LIST_LIMIT)
@@ -226,17 +228,17 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
           Rails.logger.error "#{current_account.id} - Error occurred in Business Intelligence Reports while fetching tickets. \n#{e.inspect}\n#{e.message}\n#{e.backtrace.join("\n\t")}"
           NewRelic::Agent.notice_error(e,{:description => "#{current_account.id} - Error occurred in Business Intelligence Reports while fetching tickets"}) 
         end
-        @processed_result = tickets_data(tickets + archive_tickets)
+        @processed_result = tickets_data((tickets + archive_tickets), additional_details)
       end
     end
   end
   
-  def tickets_data(tickets)
+  def tickets_data(tickets, additional_details={})
     res=[]
     user_data = pre_load_users(tickets.collect{|t| [t.requester_id, t.responder_id]}.flatten.uniq.compact)
     status_hash, priority_hash = field_id_to_name_mapping("status"), field_id_to_name_mapping("priority")
     tickets.each do |t|
-      res << {
+      res_hash = {
         :id         => t.display_id,
         :subject    => escape_keys(t.subject),
         :status     => status_hash[t.status],
@@ -245,6 +247,8 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
         :avatar     => user_data[:avatars][t.requester_id],
         :agent      => (t.responder_id and user_data[:users][t.responder_id]) ? user_data[:users][t.responder_id] : "No Agent"
       }
+      res_hash[:total_time] = additional_details[:total_time][t.display_id] if report_type==:timespent
+      res << res_hash
     end
     res
   end
@@ -300,5 +304,20 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
     end
   end
 
+  def lifecycle_launch_party_check
+    redirect_to reports_path if (report_type == :timespent) && !current_account.launched?(:lifecycle_report)
+  end
+
+
+  def construct_params
+    return unless report_type == :timespent
+    #Currently input to param constructor is hash.
+    #hence following the same std for now. Might follow a common input std for all requests in future.
+    new_params = []
+    @query_params.each do |param_hash|
+      new_params << "HelpdeskReports::ParamConstructor::#{'Timespent'.to_s.camelcase}".constantize.new(param_hash.symbolize_keys).build_params
+    end
+    @query_params = new_params
+  end
 end
 
