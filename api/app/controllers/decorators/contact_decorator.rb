@@ -69,7 +69,6 @@ class ContactDecorator < ApiDecorator
   def restricted_requester_hash
     req_hash = construct_hash(requester_widget_contact_fields, record)
     req_hash[:company] = construct_hash(requester_widget_company_fields, record.company) if record.company.present?
-    req_hash[:id] = record.id
     req_hash
   end
 
@@ -126,6 +125,7 @@ class ContactDecorator < ApiDecorator
       custom_fields = req_widget_fields.select { |x| !x.default_field? }
       ret_hash = widget_fields_hash(obj, default_fields)
       ret_hash[:custom_fields] = widget_fields_hash(obj, custom_fields) if custom_fields.present?
+      ret_hash[:id] = obj.id
       ret_hash
     end
 
