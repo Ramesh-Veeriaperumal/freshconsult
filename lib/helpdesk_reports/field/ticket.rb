@@ -24,8 +24,6 @@ module HelpdeskReports::Field::Ticket
       Account.current.companies_from_cache.collect { |au| [au.id, au.name] }
     when :tags
       Account.current.tags_from_cache.collect { |au| [au.id, CGI.escapeHTML(au.name)] }
-    when :is_escalated
-      [[true,t('helpdesk_reports.yes')],[false,t('helpdesk_reports.no')]]
     else
       []
     end

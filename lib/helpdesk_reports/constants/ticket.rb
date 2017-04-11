@@ -30,11 +30,10 @@ module HelpdeskReports::Constants::Ticket
                                  :RECEIVED_RESOLVED_BENCHMARK, :AGENT_SUMMARY_HISTORIC, 
                                  :AGENT_SUMMARY_CURRENT, :GROUP_SUMMARY_HISTORIC, 
                                  :GROUP_SUMMARY_CURRENT, :CUSTOMER_CURRENT_HISTORIC, 
-                                 :GLANCE_CURRENT, :GLANCE_HISTORIC, :LIFECYCLE_GROUPBY, :LIFECYCLE_STATUS ]
-  
-  OTHER_METRICS = [:LIFECYCLE_TICKET_LIST]
+                                 :GLANCE_CURRENT, :GLANCE_HISTORIC ]
 
-  METRICS               = METRIC_AND_QUERY.map { |i| i[0].to_s } + TEMPLATE_METRICS_AND_QUERY.map(&:to_s) + OTHER_METRICS.map(&:to_s)
+
+  METRICS               = METRIC_AND_QUERY.map { |i| i[0].to_s } + TEMPLATE_METRICS_AND_QUERY.map(&:to_s)
   METRIC_TO_QUERY_TYPE  = Hash[*METRIC_AND_QUERY.map { |i| [i[0], i[1]] }.flatten]
   METRIC_TO_QUERY_TYPE.merge!({:list => "TicketList", :bucket => "Bucket" })
   
@@ -73,8 +72,7 @@ module HelpdeskReports::Constants::Ticket
     [ :historic_status,  "Historic Status",     :dropdown],
     [ :product_id,       "Product",             :dropdown],
     [ :company_id,       "Customer",            :dropdown],
-    [ :tag_id,           "Tags",                :dropdown],
-    [ :is_escalated,     "SLA Violated",        :dropdown]
+    [ :tag_id,           "Tags",                :dropdown]
   ]
 
   DEFAULT_COLUMNS_ORDER         = DEFAULT_COLUMNS.map { |i| i[0] }    
@@ -83,10 +81,10 @@ module HelpdeskReports::Constants::Ticket
 
   REQUIRED_PARAMS = [:model, :metric, :date_range, :reference, :bucket, :time_trend, :list]
   
-  FORMATTING_REQUIRED = [:glance, :agent_summary, :group_summary, :customer_report, :ticket_volume, :timespent]
+  FORMATTING_REQUIRED = [:glance, :agent_summary, :group_summary, :customer_report, :ticket_volume]
   
   PARAM_INCLUSION_VALUES = {
-    :model       =>  ["TICKET","TICKET_LIFECYCLE"],
+    :model       =>  ["TICKET"],
     :metric      =>  METRICS,
     :reference   =>  [true, false],
     :bucket      =>  [true, false],
@@ -124,8 +122,6 @@ module HelpdeskReports::Constants::Ticket
     "mon"       => 12,
     "qtr"       => 4
   }     
-
-  LIFECYCLE_GROUP_BY_SKIP_COLUMNS = [:agent_id, :status, :is_escalated, :historic_status, :tag_id, :company_id]
   
   DEFAULT_TIME_ZONE = "Pacific Time (US & Canada)"   
 

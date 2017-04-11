@@ -287,15 +287,5 @@ HelpdeskReports.Constants = {
             time_trend_conditions : [],
             sorting               : true,             
         }
-    },
-    TimeSpent : {
-        params : {
-            model: 'TICKET_LIFECYCLE',
-            metric: 'LIFECYCLE_GROUPBY',
-            list: false,
-            list_conditions: [],
-            bucket: false,
-            bucket_condtions: []
-        }
-    } 
+    }  
 }

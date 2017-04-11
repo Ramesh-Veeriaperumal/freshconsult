@@ -12,8 +12,7 @@ window.App = window.App || {};
 			'agent_summary': 'AgentSummary',
 			'group_summary': 'GroupSummary',
 			'performance_distribution': 'PerformanceDistribution',
-			'customer_report': 'CustomerReport',
-			'timespent': 'TimeSpent'
+			'customer_report': 'CustomerReport'
 		},
 
 		onFirstVisit: function(data) {

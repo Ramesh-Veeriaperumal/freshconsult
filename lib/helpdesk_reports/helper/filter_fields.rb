@@ -1,7 +1,4 @@
 module HelpdeskReports::Helper::FilterFields
-
-  ATLEAST_ONCE_FILTERS = [ :group_id, :agent_id, :status ]
-
   def show_options(column_order, columns_keys_by_token, columns_option)
 
     column_order -= exclude_filters(report_type)
@@ -28,26 +25,6 @@ module HelpdeskReports::Helper::FilterFields
         field_label_id_hash(defs[name])
       end
 
-      #Atleast once filter information
-      if add_atleast_once_filter?
-        ATLEAST_ONCE_FILTERS.each do |name|
-          container = columns_keys_by_token[name]
-          defs["atleast_once_in_#{name}"] = {
-            operator_list(container).to_sym => container,
-            :condition  =>  "atleast_once_in_#{name}" ,
-            :name       =>  "Atleast once in #{columns_option[name]}",
-            :container  =>  "multi_select",
-            :operator   =>  "atleast_once_in",
-            :options    =>  default_choices(name),
-            :value      =>  "",
-            :field_type =>  "default",
-            :ff_name    =>  "default",
-            :active     =>  false
-          }
-          field_label_id_hash(defs["atleast_once_in_#{name}"])
-        end
-      end
-
       #Custom fields
       Account.current.custom_dropdown_fields_from_cache.each do |col|
         condition = id_from_field(col).to_sym
@@ -61,8 +38,7 @@ module HelpdeskReports::Helper::FilterFields
           :value      =>  "",
           :field_type =>  "custom",
           :ff_name    =>  col.name,
-          :active     =>  false,
-          :section_field => col.field_options['section'] || false
+          :active     =>  false
         }
         field_label_id_hash(defs[condition])
       end
@@ -140,14 +116,9 @@ module HelpdeskReports::Helper::FilterFields
   #Adding None as extra options.
   def default_choices(field)
     return [] if [:agent_id, :company_id].include?(field) # A
-    none_choice = [:priority,:status,:source,:is_escalated].include?(field) ? "" : [-1,"-None-"]
+    none_choice = [:priority,:status,:source].include?(field) ? "" : [-1,"-None-"]
     choice_hash = get_default_choices(field)
     choice_hash.unshift(none_choice) if !choice_hash.empty? && !none_choice.empty?
     choice_hash
   end
-
-  def add_atleast_once_filter?
-    report_type==:timespent
-  end
-
 end

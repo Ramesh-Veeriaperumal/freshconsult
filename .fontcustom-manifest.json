@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "a33cb316726dcac23273cfdd4a1d0d3fe261b038d34d285e8099181a31fa3725",
-    "current": "a33cb316726dcac23273cfdd4a1d0d3fe261b038d34d285e8099181a31fa3725"
+    "previous": "a2feca62357c8e12ecf2b567804657d862fec147a94ceb3a3c6a45f738482c01",
+    "current": "a2feca62357c8e12ecf2b567804657d862fec147a94ceb3a3c6a45f738482c01"
   },
   "fonts": [
-    "public/assets/glyphs_a33cb316726dcac23273cfdd4a1d0d3f.ttf",
-    "public/assets/glyphs_a33cb316726dcac23273cfdd4a1d0d3f.svg",
-    "public/assets/glyphs_a33cb316726dcac23273cfdd4a1d0d3f.woff",
-    "public/assets/glyphs_a33cb316726dcac23273cfdd4a1d0d3f.eot"
+    "public/assets/glyphs_a2feca62357c8e12ecf2b567804657d8.ttf",
+    "public/assets/glyphs_a2feca62357c8e12ecf2b567804657d8.svg",
+    "public/assets/glyphs_a2feca62357c8e12ecf2b567804657d8.woff",
+    "public/assets/glyphs_a2feca62357c8e12ecf2b567804657d8.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -1325,10 +1325,6 @@
     "timeline-ticket": {
       "codepoint": 61852,
       "source": "public/glyphs/vectors/timeline-ticket.svg"
-    },
-    "timespent": {
-      "codepoint": 62072,
-      "source": "public/glyphs/vectors/timespent.svg"
     },
     "tint": {
       "codepoint": 62044,

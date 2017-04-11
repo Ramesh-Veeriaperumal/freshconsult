@@ -121,13 +121,4 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     new_hash
   end
-
-  def get_default_lifecycle_properties
-    {
-      action_time_in_bhrs: 0,
-      action_time_in_chrs: 0,
-      chrs_from_tkt_creation: 0
-    }
-  end
-  
 end

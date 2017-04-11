@@ -42,7 +42,7 @@
 </div>
 
 <% content_for :dialogs do %>
-	<!-- Ticket list view for all other reports except timespent -->
+	
 	<%= render :partial => "reports/v2/tickets/reports/shared/tickets" %>
 
 	<% if @report_type == :glance%>
@@ -68,34 +68,7 @@
 			<div id="custom_field_container" class="custom_field_container" data-report="glance-container"></div> 
 		</div>
 	<% end %>
-	<div class="details_pane" id="view_more_pane">
-			<div class="title">
-				<span id="view_title" class="view_title"></span>
-				<span class="close" data-action="close-view-more-pane"> 
-					<i class="ficon-cross fsize-20 " size="20"></i> 
-				</span>	
-			</div>
-			<div id="content" class="content" data-report="time-container"></div> 
-	</div>
-	<div class="details_pane" id="drill_down_pane">
-			<div class="title">
-				<span class="back-nav hide" data-action="navback-drill-down-pane"> 
-					<i class="ficon-arrow-left fsize-20 " size="20"></i> 
-				</span>
-				<span id="view_title" data-action="navback-drill-down-pane-title" class="view_title"></span>
-				<span class="close" data-action="close-drill-down-pane"> 
-					<i class="ficon-cross fsize-20 " size="20"></i> 
-				</span>	
-				<% if current_user.privilege?(:export_reports) %>
-					<div class="export_title pull-right hide">
-						<a class="link" href="javascript:void(0);" ><%= t('export_data.view_all_tickets') %></a>
-						<span class="title hide"><%= t('export_data.view_all_tickets') %></span> 
-					</div>
-				<% end %>
-			</div>
-			<div id="table_content"></div>
-			<div id="time_spent_ticket_list"></div> 
-		</div>
+
 <% end %>
 
 <% unless AppMetrics::FRESHFONE_METRICS.blank? %>
@@ -122,9 +95,6 @@
 	HelpdeskReports.locals.is_non_sprout_plan = <%= current_account.subscription.non_sprout_plan? || current_account.advanced_reporting_enabled? %>;
 	full_domain = '<%= current_account.full_domain %>';
 	HelpdeskReports.locals.report_filter_data = <%=  @report_filter_data.to_json.html_safe %>;
-	<% if @report_type ==:timespent %>
-	  HelpdeskReports.locals.lifecycle_group_by_options = <%= @lifecycle_group_by_options.to_json.html_safe %>
-	<% end %>  
 	current_user = {
 		mail : '<%= current_user.email %>',
 		id : '<%= current_user.id %>',

@@ -14,7 +14,6 @@ module HelpdeskReports::Helper::Ticket
   def filter_data
     show_options(DEFAULT_COLUMNS_ORDER, DEFAULT_COLUMNS_KEYS_BY_TOKEN, DEFAULT_COLUMNS_OPTIONS)
     @label_hash = column_id_label_hash
-    @lifecycle_group_by_options = lifecycle_group_by_options_hash if report_type == :timespent
   end
   
   def column_id_label_hash
@@ -26,16 +25,6 @@ module HelpdeskReports::Helper::Ticket
       end
     end
     labels
-  end
-
-  def lifecycle_group_by_options_hash
-    labels = {}
-    @show_options.each do|id, field|
-      next if field[:nested_fields] || field[:section_field] || id.to_s.include?('atleast_once_in_')
-      labels[id] = field[:name]
-    end
-    labels.delete(:group_id) if hide_agent_reporting?
-    labels.except(*LIFECYCLE_GROUP_BY_SKIP_COLUMNS)
   end
   
   def report_export_fields
@@ -79,20 +68,6 @@ module HelpdeskReports::Helper::Ticket
       res.merge!(pdf_export: pdf_export)
     elsif report_type == :ticket_volume
       res.merge!(date_range: @query_params[0][:date_range])
-    elsif report_type == :timespent
-      grp_by = @query_params[0][:group_by]
-      nested_filter = params[:filter].select{|filter_hash| filter_hash.has_key?(:drill_down_filter) } if params[:filter].present?
-      if nested_filter.present?
-        nested_filter.each do |f_h|
-          if f_h[:condition]==grp_by.first
-            res.merge!(group_by: grp_by, group_by_value: f_h[:value])
-          else
-            res.merge!(l2_group_by: f_h[:condition], l2_group_by_value: f_h[:value] )
-          end
-        end
-      else
-        res.merge!(group_by: grp_by)
-      end
     end
     
     res   

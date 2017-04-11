@@ -21,8 +21,7 @@ module RabbitMq::Subscribers::Tickets::Reports
     action_in_bhrs_flag = action_in_bhrs?
     { 
       :model_changes => @model_changes ? valid_changes : {} ,
-      :action_in_bhrs => action_in_bhrs_flag,
-      :lifecycle => (create_action?(action) && resolved_at) ?  get_default_lifecycle_properties : (@ticket_lifecycle || {})
+      :action_in_bhrs => action_in_bhrs_flag
     }
   end
 

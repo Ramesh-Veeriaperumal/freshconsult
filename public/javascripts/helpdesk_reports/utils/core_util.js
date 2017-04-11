@@ -14,20 +14,18 @@ HelpdeskReports.CoreUtil = {
         email_reports: "/email_reports",
         save_report : "/save_reports_filter",
         delete_report : "/delete_reports_filter",
-        update_report : "/update_reports_filter",
-        fetch_active_metric : '/fetch_active_metric'
+        update_report : "/update_reports_filter"
     },
     reports_specific_disabled_filter:{
         "customer_report":["agent_id","group_id","company_id"]
     },
     global_disabled_filter: ["status","historic_status"],
     default_available_filter : [ "agent_id","group_id","company_id" ],
-    filter_remote : [ "agent_id","tag_id","company_id","atleast_once_in_agent_id"],
+    filter_remote : [ "agent_id","tag_id","company_id"],
     filter_remote_url : {
             "agent_id" : "agents",
             "company_id" : "companies",
-            "tag_id" : "tags",
-            "atleast_once_in_agent_id" : "agents"
+            "tag_id" : "tags"
     },
     ATTACH_DEFAULT_FILTER : false,
     /* Time-outs for ajax requests in milliseconds, 
@@ -541,9 +539,6 @@ HelpdeskReports.CoreUtil = {
                 jQuery('#view_more_wrapper').removeClass('show-all-metrics');
             }
         },
-        hideDetailsPane : function(){
-            jQuery(".details_pane").removeClass('show')
-        },
         hideNestedFieldDrillDown : function(){
             if(jQuery('#custom_field_wrapper').hasClass('show-drill-down')) {
                 jQuery('#custom_field_wrapper').removeClass('show-drill-down');
@@ -798,7 +793,7 @@ HelpdeskReports.CoreUtil = {
             results: function (data, params) {
                       var results = [];
                       jQuery.each(data.results, function(index, item){
-                        if(condition == "agent_id" || condition == "atleast_once_in_agent_id") {
+                        if(condition == "agent_id") {
                             results.push({
                               id: item.user_id,
                               text: item.value
@@ -810,7 +805,7 @@ HelpdeskReports.CoreUtil = {
                             });    
                         }
                       });
-                      if(condition == "agent_id"|| condition == "atleast_once_in_agent_id") {
+                      if(condition == "agent_id") {
                             if(include_none && noneVal.toLowerCase().indexOf(searchText.toLowerCase()) > -1){
                                 results.push({
                                     id: -1, 
@@ -1180,11 +1175,10 @@ HelpdeskReports.CoreUtil = {
     generateCharts: function (params) {
         var _this = this;
         _this.scrollTop();
-        if (HelpdeskReports.locals.report_type == 'performance_distribution' && 
-            HelpdeskReports.locals.date_range.split("-").length == 1 ){
+        if (HelpdeskReports.locals.report_type == 'performance_distribution' && HelpdeskReports.locals.date_range.split("-").length == 1 ){
             params = params.filter(function(param){
-                    return param['bucket'] == true;
-             });
+                            return param['bucket'] == true;
+                     });
             jQuery.each(params,function(idx,param){
                 param['query_with_avg'] = true;
             })
@@ -1233,7 +1227,7 @@ HelpdeskReports.CoreUtil = {
                 _this.appendTicketList(data);
                 _this.actions.setTicketListFlag();
                 //Show Export Section
-                if( HelpdeskReports.locals.report_type != 'timespent' && data && data.length > 0){
+                if( data && data.length > 0){
                     jQuery(".export_title").removeClass('hide');
                 }else{
                     jQuery(".export_title").addClass('hide');
@@ -1250,16 +1244,14 @@ HelpdeskReports.CoreUtil = {
         var tmpl = JST["helpdesk_reports/templates/ticketlist_tmpl"]({
             'data': data
         });
-        ;
-        var selector = HelpdeskReports.locals.report_type != 'timespent' ? "#ticket_list" : '#time_spent_ticket_list';
-        jQuery(selector).removeClass('sloading loading-small');
-        jQuery(selector).html(tmpl);
+        jQuery("#ticket_list").removeClass('sloading loading-small');
+        jQuery('#ticket_list').html(tmpl);
     },
     appendTicketListError: function () {
         var _this = this;
-        var div = ['ticket_list','time_spent_ticket_list'];
+        var div = ['ticket_list'];
         var msg = I18n.t('helpdesk_reports.something_went_wrong_msg');
-        jQuery("#ticket_list,#time_spent_ticket_list").removeClass('sloading loading-small');
+        jQuery("#ticket_list").removeClass('sloading loading-small');
         _this.populateEmptyChart(div, msg);
     },
                      /* Start of Export Code*/
@@ -1522,7 +1514,6 @@ HelpdeskReports.CoreUtil = {
         this.actions.hideViewMore();
         this.actions.hideNestedFieldDrillDown();
         this.actions.closeFilterMenu();
-        this.actions.hideDetailsPane();
         this.generateCharts(HelpdeskReports.locals.params);
     },
     // This utility function is used to show empty chart, if the data is null.
