@@ -33,16 +33,16 @@
                       var custom_select2 = jQuery(response);
                       jQuery(".add_select2_custom").append(custom_select2);
                       jQuery('.add_select2_custom').data('agent_loaded',response);
-                      if(jQuery("#TicketPseudoReply a[rel='note-button'").data('failed-email')){
+                      if(jQuery("#TicketPseudoReply a[rel='note-button']").data('failed-email')){
                         jQuery('#HelpdeskNotes #helpdesk_note_to_emails').val('').trigger('change');
-                        jQuery("#TicketPseudoReply a[rel='note-button'").data('failed-email', '');
+                        jQuery("#TicketPseudoReply a[rel='note-button']").data('failed-email', '');
                       }
                     }
                   });
                 }else{
-                  if(jQuery("#TicketPseudoReply a[rel='note-button'").data('failed-email')){
+                  if(jQuery("#TicketPseudoReply a[rel='note-button']").data('failed-email')){
                     jQuery('#HelpdeskNotes #helpdesk_note_to_emails').val('').trigger('change');
-                    jQuery("#TicketPseudoReply a[rel='note-button'").data('failed-email', '');
+                    jQuery("#TicketPseudoReply a[rel='note-button']").data('failed-email', '');
                   }
                 }
               }
