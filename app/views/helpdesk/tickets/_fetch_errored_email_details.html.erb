@@ -67,8 +67,16 @@
                 });
             }
         });
-
-        jQuery('.email-failure-list-item .ficon-phone').addClass('tooltip').attr('title', callRecipient);
+        var addCallTooltip = function() {
+            setTimeout(function(){
+                if(jQuery('.email-failure-list-item .ficon-phone')){
+                    jQuery('.email-failure-list-item .ficon-phone').addClass('tooltip').attr('title', callRecipient);
+                }else{
+                    addCallTooltip();
+                }
+            }, 200);
+        };
+        addCallTooltip();
     });
 <% end %>
 
