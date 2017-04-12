@@ -2650,7 +2650,7 @@ en:
           failure: There was a problem sending the review request
         broadcast:
           success: The message has been added and broadcasted to %{count} related tickets.
-        send_and_set: 
+        send_and_set:
           success:  The note has been added
           failure:  Unable to save note
       empty_spam:
@@ -9400,9 +9400,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       schedule_show_message: "You cannot edit a schedule once it's created"
       helpnote:
         help_title_1: "Export ticket properties"
-        help_info_1: "You can schedule and export ticket properties, along with their associated contact and company fields from Freshdesk. Data from the export can then be used for building custom reports. For example, you can get an export of tickets every week which includes the first response time, resolution time and the assigned agent, and see how responsive your support team is. A maximum of five schedules can be created for an account. Read more on how to create a schedule to export ticket properties."
+        help_info_1: "You can schedule and export ticket properties, along with their associated contact and company fields from Freshdesk. Data from the export can then be used for building custom reports. For example, you can get an export of tickets every week which includes the first response time, resolution time and the assigned agent, and see how responsive your support team is. A maximum of five schedules can be created for an account. Read more on how to create a schedule to export ticket properties. <a href='https://support.freshdesk.com/support/solutions/articles/226461-export-ticket-properties/' target='_blank'>Learn more.</a>"
         help_title_2: "Export ticket activities"
-        help_info_2: "As an account admin, you would want a list of all activities performed on your tickets so you can build custom metrics. When this is turned on, you will be able to access a JSON file with all the events that occured in each ticket the previous day (including events performed by automations). You can create only one schedule per day for an account. <a href>Learn more.</a>"
+        help_info_2: "As an account admin, you would want a list of all activities performed on your tickets so you can build custom metrics. When this is turned on, you will be able to access a JSON file with all the events that occured in each ticket the previous day (including events performed by automations). You can create only one schedule per day for an account. <a href='https://support.freshdesk.com/support/solutions/articles/226460-export-ticket-activities/' target='_blank'>Learn more.</a>"
       index:
         no_ticket_Schedule: "No Ticket Schedule"
         ticket_properties_title: "Export ticket properties"

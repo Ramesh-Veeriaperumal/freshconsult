@@ -148,6 +148,9 @@
 			.ticket-schedule-li{
 				margin-bottom: 0;
 				.api-content{
+					label{
+						text-transform: uppercase;
+					}
 					.clip-data{
 						width: 98%;
 					}
