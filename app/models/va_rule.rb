@@ -8,7 +8,7 @@ class VaRule < ActiveRecord::Base
     [ :first, "dispatch.no_cascade",    0 ],
     [ :all,   "dispatch.cascade",        1 ] 
   ]
-
+  
   serialize :filter_data
   serialize :action_data
   
@@ -151,6 +151,10 @@ class VaRule < ActiveRecord::Base
     @triggered_event ||= TICKET_CREATED_EVENT
     add_rule_to_system_changes(evaluate_on) if activities_enabled?(evaluate_on)
     actions.each { |a| a.trigger(evaluate_on, doer, triggered_event) }
+  end
+
+  def trigger_actions_for_validation(evaluate_on, doer=nil)
+    actions.each { |a| a.trigger(evaluate_on, doer, nil, true) }
   end
 
   def add_rule_to_system_changes(evaluate_on)

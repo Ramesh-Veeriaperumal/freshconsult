@@ -58,7 +58,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :phone , :facebook_id, :send_and_set, :archive, :required_fields, :disable_observer_rule,
     :disable_activities, :tags_updated, :system_changes, :activity_type, :misc_changes,
     :round_robin_assignment, :related_ticket_ids, :tracker_ticket_id, :unique_external_id, :assoc_parent_tkt_id,
-    :sbrr_ticket_dequeued, :sbrr_user_score_incremented, :sbrr_fresh_ticket, :skip_sbrr, :model_changes, :schedule_observer,
+    :sbrr_ticket_dequeued, :sbrr_user_score_incremented, :sbrr_fresh_ticket, :skip_sbrr, :model_changes, :schedule_observer, :required_fields_on_closure,
     :send_and_set_args  # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
   # - will be clearing these after activity publish.
   
@@ -726,6 +726,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     build_schema_less_ticket unless schema_less_ticket
     args = args.first if args && args.is_a?(Array)
     (attribute.to_s.include? '=') ? schema_less_ticket.send(attribute, args) : schema_less_ticket.send(attribute)
+  end
+
+  def agent
+    responder
   end
 
   def method_missing(method, *args, &block)

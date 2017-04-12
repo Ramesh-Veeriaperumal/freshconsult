@@ -6431,7 +6431,19 @@ en:
     flash:
       assignedto: "%{tickets} assigned to %{username}."
       tickets_closed: "%{tickets} closed"
+      title_on_quick_close_fail: "Update ticket"
+      description_on_quick_close_fail: "Tickets with incomplete mandatory fields cannot be resolved or closed. You can update the properties for the ticket below and then close/resolve it."
+      title_on_bulk_close_fail: "Bulk close tickets"
+      description_on_bulk_close_fail: "Tickets with incomplete mandatory fields cannot be closed causing the tickets listed below to be skipped. You can update the properties for each ticket below and then close them."
+      title_on_bulk_scenario_close_fail: "Bulk update tickets"
+      description_on_bulk_scenario_close_fail: "Tickets with incomplete mandatory fields cannot be resolved or closed causing the tickets listed below to be skipped. You can update the properties for each ticket below and then close/resolve them."
+      tickets_close_fail_on_quick_close: "%{tickets} closed. Unable to close %{failed_tickets} <span class='failed_ticket_lbl'>(Required fields were empty)</span>"
+      tickets_close_fail_on_bulk_scenario: "Unable to execute scenario on %{failed_tickets} - <span class='failed_ticket_lbl'>Required fields were empty.</span> Executing the scenario <b>%{rule_name}</b> on remaining %{tickets} tickets."
+      tickets_close_fail_on_bulk_action: "%{tickets} updated. Unable to update %{failed_tickets} <span class='failed_ticket_lbl'>(Required fields were empty)</span>"
+      tickets_close_fail_on_bulk_close: "%{tickets} closed. Unable to close %{failed_tickets} <span class='failed_ticket_lbl'>(Required fields were empty)</span>"
+      tickets_failed: "%{failed_count} tickets"
       tickets_update: "%{tickets} updated"
+      scenario_fail: "Tickets with incomplete mandatory fields cannot be resolved or closed. You can update the properties before attempting to execute the scenario again."
       tickets_update_with_errors: "%{tickets} updated, but there are issues that need your attention."
       sending_failure : "Failure in sending reply to the following tickets : "
       assigned_to_you: "%{tickets} assigned to you"
@@ -6654,7 +6666,7 @@ en:
           view_name: View name
           view_visibility: Visible to
       execute_scenario_notice:
-        view_details: view details
+        view_details: View details
         bulk_execute_scenario: "Executing the scenario <b>%{rule_name}</b>"
         execute_the_scenario: "Executed the scenario <b>%{rule_name}</b>"
         actions_performed: Actions performed
