@@ -1874,15 +1874,17 @@ en:
       clone_rule:
         title: Observer - Clone Rule
       add_new_event: Add new event
+      performed_by: and the events are performed by
       events: When <b>Any</b> of these events occur
       conditions: on tickets with these properties
       actions: perform these actions
-      performed_by: and the events are performed by
-      customer_performed: Requester
-      agent_performed: Agent
+      new_performed_by: When an action performed by...
+      new_events: involves <b>any</b> of these events
+      new_anyone: Agent or Requester
       agent: Agent
       customer: Requester
-      present: Anyone
+      anyone: Anyone
+      system: System
       assigned_agent: Assigned Agent
       assigned_group: Assigned Group
       event_performer: Event Performing Agent
@@ -5577,6 +5579,8 @@ en:
     reply: Reply is sent
     due_date: Due date is changed
     ticket: Ticket is
+    mail_del_failed_requester: Mail sent to requester address failed
+    mail_del_failed_others: Mail sent to cc or forward address failed
     customer_feedback: Customer Feedback is received
     time_entry: Time Entry is
   observer_actions:

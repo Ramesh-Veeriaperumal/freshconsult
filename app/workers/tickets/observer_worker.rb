@@ -2,18 +2,20 @@ module Tickets
   class ObserverWorker < BaseWorker
 
     sidekiq_options :queue => :ticket_observer, :retry => 0, :backtrace => true, :failures => :exhausted
+    SYSTEM_DOER_ID = -1
 
     def perform args
+      
       begin
         args.symbolize_keys!
-        account = Account.current
-        evaluate_on = account.tickets.find_by_id args[:ticket_id]
-        doer = account.users.find_by_id args[:doer_id]        
+        account, ticket_id, doer_id, system_event = Account.current, args[:ticket_id], args[:doer_id], args[:system_event]
         current_events = args[:current_events].symbolize_keys
 
+        evaluate_on = account.tickets.find_by_id ticket_id
+        doer = account.users.find_by_id doer_id unless system_event
 
-        if evaluate_on.present? and doer.present?
-          Thread.current[:observer_doer_id] = doer.id
+        if evaluate_on.present? and (doer.present? || system_event)
+          Thread.current[:observer_doer_id] = doer_id || SYSTEM_DOER_ID
           account.observer_rules_from_cache.each do |vr|
             vr.check_events doer, evaluate_on, current_events
           end

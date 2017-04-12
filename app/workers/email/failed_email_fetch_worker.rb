@@ -17,6 +17,7 @@ module Email
             email_failure = Helpdesk::Email::FailedEmailMsg.new(args)
             email_failure.save!
             email_failure.notify
+            email_failure.trigger_observer_system_events
           else
             puts "FailedEmailFetchWorker:: note_id or account not available"
           end
@@ -28,4 +29,5 @@ module Email
     #   Account.reset_current_account
     end
   end
+
 end

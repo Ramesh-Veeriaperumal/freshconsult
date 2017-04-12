@@ -76,6 +76,7 @@
       :advanced_search: 71
       :advanced_search_bulk_actions: 72
       :ticket_activity_export: 73
+      :system_observer_events: 74
 :selectable_features:
       :branding: true
       :gamification_enable: false
