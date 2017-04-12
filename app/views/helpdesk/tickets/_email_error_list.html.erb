@@ -16,7 +16,13 @@
                            end
                        %>
                        <% if !phone.blank? %>
-                           <%= strange_number?(phone) ? "" : can_make_calls(phone, item['user'], "ficon-phone",nil,false)%>
+                           <%= strange_number?(phone) ? "" : content_tag(:span , nil, { 
+                                  :'data-phone-number' => "#{h(phone)}",
+                                  :'data-freshfone-number-id' => nil,
+                                  :'data-contact-id' => item['user'].present? ? item['user'].id : nil,
+                                  :'data-deleted' => item['user'].present? && item['user'].deleted,
+                                  :class => "can-make-calls ficon-phone tooltip",
+                                  :'data-original-title' => t('email_failure.note_display.call_recipient') })%>
                        <% end %>
                    <% end %>
                     <% if current_user.privilege?(:admin_tasks) %>
