@@ -29,6 +29,30 @@ module Cache::Memcache::Account
     MemcacheKeys.delete_from_cache key
   end
 
+  def required_ticket_fields_from_cache
+    @required_ticket_fields ||= begin
+      key = ACCOUNT_REQUIRED_TICKET_FIELDS % { :account_id => self.id }
+      MemcacheKeys.fetch(key) { self.required_ticket_fields.all }      
+    end
+  end
+
+  def section_parent_fields_from_cache
+    @section_parent_fields ||= begin
+      key = ACCOUNT_SECTION_PARENT_FIELDS % { :account_id => self.id }
+      MemcacheKeys.fetch(key) { self.section_parent_fields.all } 
+    end
+  end
+
+  def clear_required_ticket_fields_cache
+    key = ACCOUNT_REQUIRED_TICKET_FIELDS % { :account_id => self.id }
+    MemcacheKeys.delete_from_cache(key)
+  end
+
+  def clear_section_parent_fields_cache
+    key = ACCOUNT_SECTION_PARENT_FIELDS % { :account_id => self.id }
+    MemcacheKeys.delete_from_cache(key)
+  end
+
   def onhold_and_closed_statuses_from_cache
     @onhold_and_closed_statuses_from_cache ||= begin
       key = ACCOUNT_ONHOLD_CLOSED_STATUSES % { :account_id => self.id}
