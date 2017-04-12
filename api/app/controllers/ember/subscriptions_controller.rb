@@ -61,7 +61,7 @@ module Ember
     private
 
       def scoper
-        current_account.tickets
+        current_account.tickets.where(ApiTicketConstants::CONDITIONS_FOR_TICKET_ACTIONS)
       end
 
       def validate_params
