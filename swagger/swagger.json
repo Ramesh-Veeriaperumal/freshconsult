@@ -2309,7 +2309,7 @@
       }
     },
     "/tickets/{id}/watchers": {
-      "post": {
+      "get": {
         "tags": [
           "ticket"
         ],

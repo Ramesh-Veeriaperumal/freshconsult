@@ -64,7 +64,9 @@ module TicketConcern
 
       if ApiTicketConstants::NO_PARAM_ROUTES.include?(action_name) && cname_params.present?
         render_request_error :no_content_required, 400
+        return false
       end
+      true
     end
 
     def verify_object_state(ticket = @item)

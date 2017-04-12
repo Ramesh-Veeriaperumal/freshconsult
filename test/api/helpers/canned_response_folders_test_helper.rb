@@ -20,7 +20,7 @@ module CannedResponseFoldersTestHelper
     {
       id: folder.id,
       name: folder.display_name,
-      responses: responses_listing_pattern(folder.id)
+      canned_responses: responses_listing_pattern(folder.id)
     }
   end
 

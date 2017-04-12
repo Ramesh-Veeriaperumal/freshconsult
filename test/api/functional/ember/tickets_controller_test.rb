@@ -87,7 +87,7 @@ module Ember
       subject = Faker::Lorem.words(10).join(' ')
       description = Faker::Lorem.paragraph
       email = Faker::Internet.email
-      tags = [Faker::Lorem.word, Faker::Lorem.word]
+      tags = Faker::Lorem.words(3).uniq
       @create_group ||= create_group_with_agents(@account, agent_list: [@agent.id])
       params_hash = { email: email, cc_emails: cc_emails, description: description, subject: subject,
                       priority: 2, status: 2, type: 'Problem', responder_id: @agent.id, source: 1, tags: tags,
@@ -169,7 +169,7 @@ module Ember
 
     def test_index_with_ids
       ticket_ids = []
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| ticket_ids << create_ticket(priority: 2, requester_id: @agent.id).id }
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| ticket_ids << create_ticket(priority: 2, requester_id: @agent.id).display_id }
       get :index, controller_params({ version: 'private', ids: ticket_ids.join(',') }, false)
       assert_response 200
       match_json(private_api_ticket_index_pattern)
@@ -179,17 +179,11 @@ module Ember
       get :index, controller_params({ version: 'private', updated_since: Time.zone.now.iso8601 }, false)
       assert_response 200
       response = parse_response @response.body
+      time_now = Time.zone.now.iso8601
       assert_equal 0, response.size
-
-      tkt = Helpdesk::Ticket.first
-      tkt.update_column(:created_at, 1.days.from_now)
-      get :index, controller_params({ version: 'private', updated_since: Time.zone.now.iso8601 }, false)
-      assert_response 200
-      response = parse_response @response.body
-      assert_equal 0, response.size
-
-      tkt.update_column(:updated_at, 1.days.from_now)
-      get :index, controller_params({ version: 'private', updated_since: Time.zone.now.iso8601 }, false)
+      tkt = create_ticket
+      tkt.update_attributes(priority: 3)
+      get :index, controller_params({ version: 'private', updated_since: time_now }, false)
       assert_response 200
       response = parse_response @response.body
       assert_equal 1, response.size
@@ -203,13 +197,17 @@ module Ember
       end
       get :index, controller_params(version: 'private', include: 'survey')
       assert_response 200
-      match_json(private_api_ticket_index_pattern(ticket.id => result.last))
+      match_json(private_api_ticket_index_pattern(true))
     end
 
     def test_index_without_survey_enabled
+      MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
       ticket = create_ticket
       default_survey = Account.current.features?(:default_survey)
       custom_survey = Account.current.features?(:custom_survey)
+
+      # Check why sidekiq is running inline here
+
       Account.current.features.default_survey.destroy if default_survey
       Account.current.features.custom_survey.destroy if custom_survey
       Account.current.reload
@@ -218,13 +216,14 @@ module Ember
       match_json([bad_request_error_pattern('include', :require_feature, feature: 'Custom survey')])
       Account.current.features.default_survey.create if default_survey
       Account.current.features.custom_survey.create if custom_survey
+      MixpanelWrapper.unstub(:send_to_mixpanel)
     end
 
     def test_index_with_full_requester_info
       ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| create_ticket }
       get :index, controller_params(version: 'private', include: 'requester')
       assert_response 200
-      match_json(private_api_ticket_index_pattern({}, true))
+      match_json(private_api_ticket_index_pattern(false, true))
     end
 
     def test_index_with_restricted_requester_info
@@ -232,7 +231,7 @@ module Ember
       remove_privilege(User.current, :view_contacts)
       get :index, controller_params(version: 'private', include: 'requester')
       assert_response 200
-      match_json(private_api_ticket_index_pattern({}, true))
+      match_json(private_api_ticket_index_pattern(false, true))
       add_privilege(User.current, :view_contacts)
     end
 
@@ -240,23 +239,24 @@ module Ember
       ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| create_ticket(requester_id: add_test_agent(@account, role: Role.find_by_name('Agent').id).id) }
       get :index, controller_params(version: 'private', include: 'requester')
       assert_response 200
-      match_json(private_api_ticket_index_pattern)
+      match_json(private_api_ticket_index_pattern(false, true))
     end
 
     def test_index_with_company_side_load
       get :index, controller_params(version: 'private', include: 'company')
       assert_response 200
-      match_json(private_api_ticket_index_pattern({}, false, true))
+      match_json(private_api_ticket_index_pattern(false, false, true))
     end
 
     def test_index_with_count_included
       get :index, controller_params(version: 'private', include: 'count')
       assert_response 200
-      assert response.api_meta[:count] == Account.current.tickets.count
+      assert response.api_meta[:count] == @account.tickets.where(['spam = false AND deleted = false AND created_at > ?', 30.days.ago]).count
       match_json(private_api_ticket_index_pattern)
     end
 
     def test_show_with_survey_result
+      MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
       ticket = create_ticket
       result = []
       3.times do
@@ -265,6 +265,7 @@ module Ember
       get :show, controller_params(version: 'private', id: ticket.display_id, include: 'survey')
       assert_response 200
       match_json(ticket_show_pattern(ticket, result.last))
+      MixpanelWrapper.unstub(:send_to_mixpanel)
     end
 
     def test_show_without_survey_enabled
@@ -366,7 +367,7 @@ module Ember
       attachments = [file1, file2]
       params_hash = ticket_params_hash.merge({attachment_ids: [attachment_id], attachments: attachments})
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-      @request.env['CONTENT_TYPE'] = 'multipart/form-data' 
+      @request.env['CONTENT_TYPE'] = 'multipart/form-data'
       post :create, construct_params({version: 'private'}, params_hash)
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
@@ -422,7 +423,7 @@ module Ember
       attachment_ids = canned_response.shared_attachments.map(&:attachment_id) | [draft_attachment.id]
       params_hash = ticket_params_hash.merge({attachment_ids: attachment_ids, attachments: [file], cloud_files: cloud_file_params})
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-      @request.env['CONTENT_TYPE'] = 'multipart/form-data' 
+      @request.env['CONTENT_TYPE'] = 'multipart/form-data'
       post :create, construct_params({version: 'private'}, params_hash)
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
@@ -484,7 +485,7 @@ module Ember
     ensure
       Account.any_instance.unstub(:multiple_user_companies_enabled?)
     end
-    
+
     def test_execute_scenario_without_params
       scenario_id = create_scn_automation_rule(scenario_automation_params).id
       ticket_id = create_ticket(ticket_params_hash).display_id
@@ -543,21 +544,21 @@ module Ember
     def test_latest_note_ticket_without_permissison
       ticket = create_ticket
       user_stub_ticket_permission
-      get :latest_note, construct_params({ version: 'private', id: ticket.id }, false)
+      get :latest_note, construct_params({ version: 'private', id: ticket.display_id }, false)
       assert_response 403
       user_unstub_ticket_permission
     end
 
     def test_latest_note_ticket_without_notes
       ticket = create_ticket
-      get :latest_note, construct_params({ version: 'private', id: ticket.id }, false)
+      get :latest_note, construct_params({ version: 'private', id: ticket.display_id }, false)
       assert_response 204
     end
 
     def test_latest_note_ticket_with_private_note
       ticket = create_ticket
       note = create_note(custom_note_params(ticket, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[:note], true))
-      get :latest_note, construct_params({ version: 'private', id: ticket.id }, false)
+      get :latest_note, construct_params({ version: 'private', id: ticket.display_id }, false)
       assert_response 200
       match_json(latest_note_response_pattern(note))
     end
@@ -565,7 +566,7 @@ module Ember
     def test_latest_note_ticket_with_public_note
       ticket = create_ticket
       note = create_note(custom_note_params(ticket, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[:note]))
-      get :latest_note, construct_params({ version: 'private', id: ticket.id }, false)
+      get :latest_note, construct_params({ version: 'private', id: ticket.display_id }, false)
       assert_response 200
       match_json(latest_note_response_pattern(note))
     end
@@ -573,7 +574,7 @@ module Ember
     def test_latest_note_ticket_with_reply
       ticket = create_ticket
       reply = create_note(custom_note_params(ticket, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[:email]))
-      get :latest_note, construct_params({ version: 'private', id: ticket.id }, false)
+      get :latest_note, construct_params({ version: 'private', id: ticket.display_id }, false)
       assert_response 200
       match_json(latest_note_response_pattern(reply))
     end
@@ -596,14 +597,14 @@ module Ember
 
     def test_split_note_invalid_note_id
       ticket = create_ticket
-      put :split_note, construct_params({ version: 'private', id: ticket.id, note_id: 2 }, false)
+      put :split_note, construct_params({ version: 'private', id: ticket.display_id, note_id: 2 }, false)
       assert_response 404
     end
 
     def test_split_note_ticket_without_permission
       ticket = create_ticket
       user_stub_ticket_permission
-      put :split_note, construct_params({ version: 'private', id: ticket.id, note_id: 2 }, false)
+      put :split_note, construct_params({ version: 'private', id: ticket.display_id, note_id: 2 }, false)
       assert_response 403
       user_unstub_ticket_permission
     end
@@ -611,21 +612,21 @@ module Ember
     def test_split_note_with_normal_reply
       ticket = create_ticket
       note = create_normal_reply_for(ticket)
-      put :split_note, construct_params({ version: 'private', id: ticket.id, note_id: note.id }, false)
+      put :split_note, construct_params({ version: 'private', id: ticket.display_id, note_id: note.id }, false)
       assert_response 200
       verify_split_note_activity(ticket, note)
     end
 
     def test_split_note_with_twitter_reply
       ticket, note = twitter_ticket_and_note
-      put :split_note, construct_params({ version: 'private', id: ticket.id, note_id: note.id }, false)
+      put :split_note, construct_params({ version: 'private', id: ticket.display_id, note_id: note.id }, false)
       assert_response 200
       verify_split_note_activity(ticket, note)
     end
 
     def test_split_note_with_fb_reply
       ticket, note = create_fb_ticket_and_note
-      put :split_note, construct_params({ version: 'private', id: ticket.id, note_id: note.id }, false)
+      put :split_note, construct_params({ version: 'private', id: ticket.display_id, note_id: note.id }, false)
       assert_response 200
       verify_split_note_activity(ticket, note)
     end
@@ -634,7 +635,7 @@ module Ember
       ticket = create_ticket
       note = create_normal_reply_for(ticket)
       @controller.stubs(:ticket_attributes).returns({})
-      put :split_note, construct_params({ version: 'private', id: ticket.id, note_id: note.id }, false)
+      put :split_note, construct_params({ version: 'private', id: ticket.display_id, note_id: note.id }, false)
       @controller.unstub(:ticket_attributes)
       assert_response 400
     end
@@ -648,7 +649,7 @@ module Ember
       assert note.cloud_files.present?
       assert note.attachments.present?
 
-      put :split_note, construct_params({ version: 'private', id: ticket.id, note_id: note.id }, false)
+      put :split_note, construct_params({ version: 'private', id: ticket.display_id, note_id: note.id }, false)
       assert_response 200
       verify_split_note_activity(ticket, note)
       verify_attachments_moving(attachment_ids)
@@ -666,7 +667,7 @@ module Ember
       dt = 10.days.from_now.utc.iso8601
       agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
       update_group = create_group_with_agents(@account, agent_list: [agent.id])
-      tags = [Faker::Lorem.word, Faker::Lorem.word]
+      tags = Faker::Lorem.words(3).uniq
       params_hash = { due_by: dt, responder_id: agent.id, status: 2, priority: 4, group_id: update_group.id, tags: tags }
       put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 200
@@ -790,7 +791,7 @@ module Ember
       t = create_ticket(requester_id: add_test_agent(@account, role: Role.find_by_name('Agent').id).id)
       get :show, controller_params(version: 'private', id: t.display_id, include: 'requester')
       assert_response 200
-      match_json(ticket_show_pattern(ticket))
+      match_json(ticket_show_pattern(ticket, nil, true))
     end
 
     def test_update_with_attachment_ids

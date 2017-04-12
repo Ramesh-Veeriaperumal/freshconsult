@@ -11,7 +11,7 @@ module Ember
       include PrivilegesHelper
 
       CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
-      CUSTOM_FIELDS_CHOICES = Faker::Lorem.words(5).freeze
+      CUSTOM_FIELDS_CHOICES = Faker::Lorem.words(5).uniq.freeze
 
       def setup
         super
@@ -50,7 +50,7 @@ module Ember
         subject = Faker::Lorem.words(10).join(' ')
         description = Faker::Lorem.paragraph
         email = Faker::Internet.email
-        tags = [Faker::Lorem.word, Faker::Lorem.word]
+        tags = Faker::Lorem.words(3).uniq
         @create_group ||= create_group_with_agents(@account, agent_list: [@agent.id])
         params_hash = { email: email, cc_emails: cc_emails, description: description, subject: subject,
                         priority: 2, status: 2, type: 'Problem', responder_id: @agent.id, source: 1, tags: tags,
@@ -125,7 +125,7 @@ module Ember
       def test_bulk_update_with_no_properties_or_reply
         ticket_ids = []
         rand(2..4).times do
-          ticket_ids << create_ticket.id
+          ticket_ids << create_ticket.display_id
         end
         post :bulk_update, construct_params({ version: 'private' }, { ids: ticket_ids })
         match_json([bad_request_error_pattern('request', :select_a_field)])
@@ -135,7 +135,7 @@ module Ember
       def test_bulk_update_with_incorrect_values
         ticket_ids = []
         rand(2..4).times do
-          ticket_ids << create_ticket.id
+          ticket_ids << create_ticket.display_id
         end
         statuses = Helpdesk::TicketStatus.status_objects_from_cache(@account).map(&:status_id)
         incorrect_values = { priority: 90, status: statuses.last + 1, type: 'jksadjxyz' }
@@ -150,7 +150,7 @@ module Ember
       def test_bulk_update_with_invalid_params
         ticket_ids = []
         rand(2..4).times do
-          ticket_ids << create_ticket.id
+          ticket_ids << create_ticket.display_id
         end
         params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.merge(responder_id: User.last.id + 10) }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -161,7 +161,7 @@ module Ember
       def test_bulk_update_with_invalid_ids
         ticket_ids = []
         rand(2..4).times do
-          ticket_ids << create_ticket.id
+          ticket_ids << create_ticket.display_id
         end
         invalid_ids = [ticket_ids.last + 10, ticket_ids.last + 20]
         params_hash = {ids: [*ticket_ids, *invalid_ids], properties: update_ticket_params_hash }
@@ -177,7 +177,7 @@ module Ember
         ticket_field.update_attribute(:required_for_closure, true)
         ticket_ids = []
         rand(2..4).times do
-          ticket_ids << create_ticket.id
+          ticket_ids << create_ticket.display_id
         end
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5)
         params_hash = {ids: ticket_ids, properties: properties_hash}
@@ -186,6 +186,7 @@ module Ember
         ticket_ids.each {|id| failures[id] = { ticket_field.label => [:datatype_mismatch, { code: :missing_field, expected_data_type: :String }]}}
         match_json(partial_success_response_pattern([], failures))
         assert_response 202
+      ensure
         ticket_field.update_attribute(:required_for_closure, false)
       end
 
@@ -233,20 +234,21 @@ module Ember
         ticket_field.update_attribute(:required_for_closure, true)
         ticket_ids = []
         rand(2..4).times do
-          ticket_ids << create_ticket.id
+          ticket_ids << create_ticket.display_id
         end
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, custom_fields: {ticket_field.label => 'Sample text'})
         params_hash = {ids: ticket_ids, properties: properties_hash}
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         match_json(partial_success_response_pattern(ticket_ids, {}))
         assert_response 202
+      ensure
         ticket_field.update_attribute(:required_for_closure, false)
       end
 
       def test_bulk_reply_without_body
         ticket_ids = []
         rand(2..4).times do
-          ticket_ids << create_ticket.id
+          ticket_ids << create_ticket.display_id
         end
         email_config = create_email_config
         reply_hash = { from_email: email_config.reply_email }
@@ -259,7 +261,7 @@ module Ember
       def test_bulk_update_with_reply
         ticket_ids = []
         rand(2..4).times do
-          ticket_ids << create_ticket.id
+          ticket_ids << create_ticket.display_id
         end
         email_config = create_email_config
         reply_hash = { body: Faker::Lorem.paragraph, from_email: email_config.reply_email }
@@ -275,13 +277,13 @@ module Ember
         remove_privilege(User.current, :reply_ticket)
         ticket_ids = []
         rand(2..4).times do
-          ticket_ids << create_ticket.id
+          ticket_ids << create_ticket.display_id
         end
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash }
-        Sidekiq::Testing.inline!
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
+      ensure
         add_privilege(User.current, :reply_ticket)
         User.unstub(:current)
       end
@@ -291,14 +293,16 @@ module Ember
         remove_privilege(User.current, :edit_ticket_properties)
         ticket_ids = []
         rand(2..4).times do
-          ticket_ids << create_ticket.id
+          ticket_ids << create_ticket.display_id
         end
         email_config = create_email_config
         reply_hash = { body: Faker::Lorem.paragraph, from_email: email_config.reply_email }
         params_hash = { ids: ticket_ids, reply: reply_hash }
+        Sidekiq::Testing.inline!
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
+      ensure
         add_privilege(User.current, :edit_ticket_properties)
         User.unstub(:current)
       end
@@ -306,7 +310,7 @@ module Ember
       def test_bulk_reply_with_attachments
         ticket_ids = []
         rand(2..4).times do
-          ticket_ids << create_ticket.id
+          ticket_ids << create_ticket.display_id
         end
         attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
         canned_response = create_response(
@@ -333,7 +337,7 @@ module Ember
       def test_bulk_update_async
         ticket_ids = []
         10.times do
-          ticket_ids << create_ticket.id
+          ticket_ids << create_ticket.display_id
         end
         Sidekiq::Testing.inline!
         reply_hash = { body: Faker::Lorem.paragraph }
@@ -355,7 +359,7 @@ module Ember
         create_section_fields(3, sections, true)
         ticket_ids = []
         rand(2..4).times do
-          ticket_ids << create_ticket.id
+          ticket_ids << create_ticket.display_id
         end
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :type)
         properties_hash[:type] = 'Incident'
@@ -366,10 +370,10 @@ module Ember
       end
 
       def test_bulk_update_without_mandatory_non_dropdown_field
-        create_custom_field('test_custom_paragraph', 'paragraph', true)
+        new_custom_field = create_custom_field('test_custom_paragraph', 'paragraph', true)
         ticket_ids = []
         rand(2..4).times do
-          ticket_ids << create_ticket.id
+          ticket_ids << create_ticket.display_id
         end
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by)
         params_hash = {ids: ticket_ids, properties: properties_hash}
@@ -378,6 +382,8 @@ module Ember
         ticket_ids.each {|id| failures[id] = { 'test_custom_paragraph' => [:datatype_mismatch, { code: :missing_field, expected_data_type: :String }]}}
         match_json(partial_success_response_pattern([], failures))
         assert_response 202
+      ensure
+        new_custom_field.update_attributes(required: false)
       end
 
       def test_bulk_update_with_mandatory_section_fields
@@ -391,7 +397,7 @@ module Ember
         create_section_fields(3, sections, true)
         ticket_ids = []
         rand(2..4).times do
-          ticket_ids << create_ticket.id
+          ticket_ids << create_ticket.display_id
         end
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :type)
         properties_hash[:type] = 'Incident'
@@ -401,12 +407,14 @@ module Ember
         ticket_ids.each {|id| failures[id] = { 'test_custom_text' => [:datatype_mismatch, { code: :missing_field, expected_data_type: :String }]}}
         match_json(partial_success_response_pattern([], failures))
         assert_response 202
+      ensure
+        @account.ticket_fields.find_by_name("test_custom_text_#{@account.id}").update_attributes(required: false)
       end
 
       def test_bulk_update_with_invalid_custom_field
         ticket_ids = []
         rand(2..4).times do
-          ticket_ids << create_ticket.id
+          ticket_ids << create_ticket.display_id
         end
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :type)
         properties_hash[:custom_fields] = {
@@ -421,7 +429,7 @@ module Ember
       def test_bulk_update_with_invalid_dropdown_choice
         ticket_ids = []
         rand(2..4).times do
-          ticket_ids << create_ticket.id
+          ticket_ids << create_ticket.display_id
         end
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :type)
         properties_hash[:custom_fields] = {
@@ -438,7 +446,7 @@ module Ember
       def test_bulk_update_with_tags
         tag = Faker::Lorem.word
         ticket = create_ticket
-        ticket_ids = [ticket.id]
+        ticket_ids = [ticket.display_id]
         ticket.tags.create(name: tag)
         params_hash = {ids: ticket_ids, properties: update_ticket_params_hash}
         post :bulk_update, construct_params({ version: 'private' }, params_hash)

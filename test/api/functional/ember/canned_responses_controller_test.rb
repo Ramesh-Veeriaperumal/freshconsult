@@ -22,7 +22,7 @@ module Ember
       file = fixture_file_upload('files/attachment.txt', 'text/plain', :binary)
       @account = Account.first.make_current
       @sample_ticket = create_ticket
-      @agent = @account.agents.first.user
+      @agent = get_admin
 
       @ca_folder_all = create_cr_folder(name: Faker::Name.name)
       @ca_folder_personal = @account.canned_response_folders.personal_folder.first
@@ -46,6 +46,7 @@ module Ember
           description: ''
         }
       )
+      @account.subscription.update_column(:state, 'active')
     end
 
     # tests for show
@@ -183,7 +184,7 @@ module Ember
     def test_index_for_one_ca
       get :index, controller_params(version: 'private', ids: @ca_response_1.id)
       assert_response 200
-      match_json([ca_response_show_pattern(@ca_response_1.id)])
+      match_json([ca_response_search_pattern(@ca_response_1.id)])
     end
 
     def test_index_for_multiple_ca
@@ -192,7 +193,7 @@ module Ember
       assert_response 200
       pattern = []
       [@ca_response_1, @ca_response_2].each do |ca|
-        pattern << ca_response_show_pattern(ca.id)
+        pattern << ca_response_search_pattern(ca.id)
       end
       match_json(pattern)
     end
@@ -202,7 +203,7 @@ module Ember
       assert_response 200
       pattern = []
       [@ca_response_1, @ca_response_2].each do |ca|
-        pattern << ca_response_show_pattern(ca.id)
+        pattern << ca_response_search_pattern(ca.id)
       end
       match_json(pattern)
       # @ca_response_3 will not be present here.
@@ -218,7 +219,7 @@ module Ember
       assert_response 200
       pattern = []
       [@ca_response_1, @ca_response_2].each do |ca|
-        pattern << ca_response_show_pattern(ca.id)
+        pattern << ca_response_search_pattern(ca.id)
       end
       match_json(pattern)
       # @ca_response_3 will not be present here.
@@ -233,7 +234,7 @@ module Ember
       assert_response 200
       pattern = []
       ca_responses.first(9).each do |ca|
-        pattern << ca_response_show_pattern(ca.id)
+        pattern << ca_response_search_pattern(ca.id)
       end
       match_json(pattern)
     end

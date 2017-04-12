@@ -18,7 +18,7 @@ module Ember
 
     def before_all
       @account = Account.first.make_current
-      User.first.make_current
+      @agent = get_admin.make_current
       # create two filters
       @filter1 = create_filter
       @filter2 = create_filter
@@ -85,7 +85,7 @@ module Ember
       filter_params = sample_filter_input_params
       post :create, construct_params({ version: 'private' },  filter_params.except(:query_hash, :name))
       assert_response 400
-      match_json([bad_request_error_pattern('query_hash', :datatype_mismatch, code: :missing_field, expected_data_type: Array),
+      match_json([bad_request_error_pattern('query_hash', :datatype_mismatch, expected_data_type: Array),
                   bad_request_error_pattern('name', :missing_field)])
     end
 
@@ -123,7 +123,7 @@ module Ember
       filter_params = sample_filter_input_params
       put :update, construct_params({ version: 'private', id: @filter1.id },  filter_params.except(:query_hash, :name))
       assert_response 400
-      match_json([bad_request_error_pattern('query_hash', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String),
+      match_json([bad_request_error_pattern('query_hash', :datatype_mismatch, expected_data_type: Array),
                   bad_request_error_pattern('name', :missing_field)])
     end
 

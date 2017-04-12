@@ -11,7 +11,7 @@ class CustomTicketFilterValidationTest < ActionView::TestCase
   end
 
   def stub_account
-    Account.stubs(:current).returns(Account.first)
+    Account.stubs(:current).returns(StubbedAccount.new)
   end
 
   def sample_params
@@ -30,7 +30,7 @@ class CustomTicketFilterValidationTest < ActionView::TestCase
       ],
       visibility: {
         visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
-        group_id: (Account.current.groups.first || {})[:id] || 1
+        group_id: 1 # Just a sample value
       },
     }
   end
@@ -51,7 +51,8 @@ class CustomTicketFilterValidationTest < ActionView::TestCase
     assert error.include?("Name missing_field")
     assert error.include?("Order by missing_field")
     assert error.include?("Order type missing_field")
-    assert error.include?("Query hash missing_field")
+    assert error.include?("Query hash datatype_mismatch")
+    assert error.include?("Group missing_field")
     assert error.include?("Visibility missing_field")
   end
 
@@ -104,6 +105,20 @@ class CustomTicketFilterValidationTest < ActionView::TestCase
     stub_account
     filter = CustomTicketFilterValidation.new(sample_params)
     assert filter.valid?
+  end
+
+  class StubbedAccount
+    def ticket_fields_from_cache
+      []
+    end
+
+    def sla_management_enabled?
+      false
+    end
+
+    def groups_from_cache
+      []
+    end
   end
 
 end

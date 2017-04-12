@@ -40,7 +40,7 @@ module Ember
       def test_delete_forever_with_invalid_tickets
         ticket_ids = []
         rand(5..10).times do
-          ticket_ids << create_ticket.id
+          ticket_ids << create_ticket.display_id
         end
         invalid_ids = [ticket_ids.last + 10, ticket_ids.last + 20]
         put :delete_forever, construct_params({ version: 'private' }, {ids: [*ticket_ids, *invalid_ids]})
@@ -54,10 +54,10 @@ module Ember
       def test_delete_forever_success
         ticket_ids = []
         rand(5..10).times do
-          ticket_ids << create_ticket(deleted: true).id
+          ticket_ids << create_ticket(deleted: true).display_id
         end
         rand(5..10).times do
-          ticket_ids << create_ticket(spam: true).id
+          ticket_ids << create_ticket(spam: true).display_id
         end
         put :delete_forever, construct_params({ version: 'private' }, {ids: ticket_ids})
         assert_response 202
@@ -74,7 +74,7 @@ module Ember
         User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
         User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
         User.any_instance.stubs(:assigned_ticket_permission).returns(false).at_most_once
-        delete :destroy, construct_params({ version: 'private' }, false).merge(id: ticket.id)
+        delete :destroy, construct_params({ version: 'private' }, false).merge(id: ticket.display_id)
         User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
         assert_response 403
         match_json(request_error_pattern(:access_denied))
@@ -83,7 +83,7 @@ module Ember
       def test_delete_with_valid_ticket_id
         ticket = create_ticket
         assert !ticket.deleted?
-        delete :destroy, construct_params({ version: 'private' }, false).merge(id: ticket.id)
+        delete :destroy, construct_params({ version: 'private' }, false).merge(id: ticket.display_id)
         assert_response 204
         assert ticket.reload.deleted?
       end
@@ -98,21 +98,21 @@ module Ember
         User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
         User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
         User.any_instance.stubs(:assigned_ticket_permission).returns(false).at_most_once
-        put :restore, construct_params({ version: 'private' }, false).merge(id: ticket.id)
+        put :restore, construct_params({ version: 'private' }, false).merge(id: ticket.display_id)
         User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
         assert_response 403
         match_json(request_error_pattern(:access_denied))
       end
 
       def test_restore_with_valid_ticket_id
-        tags = [Faker::Lorem.word, Faker::Lorem.word]
+        tags = Faker::Lorem.words(3).uniq
         ticket = create_ticket(tag_names: tags.join(','))
-        delete :destroy, construct_params({ version: 'private' }, false).merge(id: ticket.id)
+        delete :destroy, construct_params({ version: 'private' }, false).merge(id: ticket.display_id)
         assert ticket.reload.deleted?
-        put :restore, construct_params({ version: 'private' }, false).merge(id: ticket.id)
+        put :restore, construct_params({ version: 'private' }, false).merge(id: ticket.display_id)
         assert_response 204
         assert !ticket.reload.deleted?
-        assert ticket.tags.count == 2
+        assert ticket.tags.count == tags.size
       end
 
       def test_spam_with_invalid_ticket_id
@@ -125,7 +125,7 @@ module Ember
         User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
         User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
         User.any_instance.stubs(:assigned_ticket_permission).returns(false).at_most_once
-        put :spam, construct_params({ version: 'private' }, false).merge(id: ticket.id)
+        put :spam, construct_params({ version: 'private' }, false).merge(id: ticket.display_id)
         User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
         assert_response 403
         match_json(request_error_pattern(:access_denied))
@@ -133,14 +133,14 @@ module Ember
 
       def test_spam_with_errors
         ticket = create_ticket(spam: true)
-        put :spam, construct_params({ version: 'private' }, false).merge(id: ticket.id)
+        put :spam, construct_params({ version: 'private' }, false).merge(id: ticket.display_id)
         assert_response 404
       end
 
       def test_spam_with_valid_ticket_id
         ticket = create_ticket
         assert !ticket.spam?
-        put :spam, construct_params({ version: 'private' }, false).merge(id: ticket.id)
+        put :spam, construct_params({ version: 'private' }, false).merge(id: ticket.display_id)
         assert_response 204
         assert ticket.reload.spam?
       end
@@ -155,7 +155,7 @@ module Ember
         User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
         User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
         User.any_instance.stubs(:assigned_ticket_permission).returns(false).at_most_once
-        put :unspam, construct_params({ version: 'private' }, false).merge(id: ticket.id)
+        put :unspam, construct_params({ version: 'private' }, false).merge(id: ticket.display_id)
         User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
         assert_response 403
         match_json(request_error_pattern(:access_denied))
@@ -163,19 +163,19 @@ module Ember
 
       def test_unspam_with_errors
         ticket = create_ticket
-        put :unspam, construct_params({ version: 'private' }, false).merge(id: ticket.id)
+        put :unspam, construct_params({ version: 'private' }, false).merge(id: ticket.display_id)
         assert_response 404
       end
 
       def test_unspam_with_valid_ticket_id
-        tags = [Faker::Lorem.word, Faker::Lorem.word]
+        tags = Faker::Lorem.words(3).uniq
         ticket = create_ticket(tag_names: tags.join(','))
-        put :spam, construct_params({ version: 'private' }, false).merge(id: ticket.id)
+        put :spam, construct_params({ version: 'private' }, false).merge(id: ticket.display_id)
         assert ticket.reload.spam?
-        put :unspam, construct_params({ version: 'private' }, false).merge(id: ticket.id)
+        put :unspam, construct_params({ version: 'private' }, false).merge(id: ticket.display_id)
         assert_response 204
         assert !ticket.reload.spam?
-        assert ticket.tags.count == 2
+        assert ticket.tags.count == tags.size
       end
 
       def test_bulk_delete_with_no_params

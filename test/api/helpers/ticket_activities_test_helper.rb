@@ -125,27 +125,27 @@ module TicketActivitiesTestHelper
   def ticket_merge_target_activity
     params = {}
     params[:summary] = '32.0'
-    params[:content] = "{\"activity_type\":{\"target_ticket_id\":[\"#{@target_ticket.id}.0\"],\"source_ticket_id\":[\"#{@ticket.id}.0\"],\"type\":\"ticket_merge_target\"}}"
+    params[:content] = "{\"activity_type\":{\"target_ticket_id\":[\"#{@target_ticket.display_id}.0\"],\"source_ticket_id\":[\"#{@ticket.display_id}.0\"],\"type\":\"ticket_merge_target\"}}"
     get_activity_data(params)
   end
 
   def ticket_merge_source_activity
     params = {}
     params[:summary] = '31.0'
-    params[:content] = "{\"activity_type\":{\"target_ticket_id\":[\"#{@target_ticket.id}.0\"],\"source_ticket_id\":[\"#{@ticket.id}.0\"],\"type\":\"ticket_merge_source\"}}"
+    params[:content] = "{\"activity_type\":{\"target_ticket_id\":[\"#{@target_ticket.display_id}.0\"],\"source_ticket_id\":[\"#{@ticket.display_id}.0\"],\"type\":\"ticket_merge_source\"}}"
     get_activity_data(params)
   end
 
   def ticket_split_target_activity
     params = {}
-    params[:content] = "{\"activity_type\":{\"target_ticket_id\":[\"#{@target_ticket.id}.0\"],\"source_ticket_id\":[\"#{@ticket.id}.0\"],\"type\":\"ticket_split_target\"}}"
+    params[:content] = "{\"activity_type\":{\"target_ticket_id\":[\"#{@target_ticket.display_id}.0\"],\"source_ticket_id\":[\"#{@ticket.display_id}.0\"],\"type\":\"ticket_split_target\"}}"
     get_activity_data(params)
   end
 
   def ticket_split_source_activity
     params = {}
     params[:summary] = '33.0'
-    params[:content] = "{\"activity_type\":{\"target_ticket_id\":[\"#{@target_ticket.id}.0\"],\"source_ticket_id\":[\"#{@ticket.id}.0\"],\"type\":\"ticket_split_source\"}}"
+    params[:content] = "{\"activity_type\":{\"target_ticket_id\":[\"#{@target_ticket.display_id}.0\"],\"source_ticket_id\":[\"#{@ticket.display_id}.0\"],\"type\":\"ticket_split_source\"}}"
     get_activity_data(params)
   end
 
@@ -183,7 +183,7 @@ module TicketActivitiesTestHelper
       performer_type = tkt_data.event_type.to_sym
       result << {
         id: tkt_data.published_time,
-        ticket_id: @ticket.id,
+        ticket_id: @ticket.display_id,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
         performed_at: Time.at(tkt_data.published_time / 10_000).utc,
@@ -227,7 +227,7 @@ module TicketActivitiesTestHelper
       performer_type = tkt_data.event_type.to_sym
       result << {
         id: tkt_data.published_time,
-        ticket_id: @ticket.id,
+        ticket_id: @ticket.display_id,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
         performed_at: Time.at(tkt_data.published_time / 10_000).utc,
@@ -265,7 +265,7 @@ module TicketActivitiesTestHelper
       performer_type = tkt_data.event_type.to_sym
       result << {
         id: tkt_data.published_time,
-        ticket_id: @ticket.id,
+        ticket_id: @ticket.display_id,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
         performed_at: Time.at(tkt_data.published_time / 10_000).utc,
@@ -288,7 +288,7 @@ module TicketActivitiesTestHelper
       performer_type = tkt_data.event_type.to_sym
       result << {
         id: tkt_data.published_time,
-        ticket_id: @ticket.id,
+        ticket_id: @ticket.display_id,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
         performed_at: Time.at(tkt_data.published_time / 10_000).utc,
@@ -310,7 +310,7 @@ module TicketActivitiesTestHelper
       performer_type = tkt_data.event_type.to_sym
       result << {
         id: tkt_data.published_time,
-        ticket_id: @ticket.id,
+        ticket_id: @ticket.display_id,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
         performed_at: Time.at(tkt_data.published_time / 10_000).utc,
@@ -331,7 +331,7 @@ module TicketActivitiesTestHelper
       performer_type = tkt_data.event_type.to_sym
       result << {
         id: tkt_data.published_time,
-        ticket_id: @ticket.id,
+        ticket_id: @ticket.display_id,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
         performed_at: Time.at(tkt_data.published_time / 10_000).utc,
@@ -352,7 +352,7 @@ module TicketActivitiesTestHelper
       performer_type = tkt_data.event_type.to_sym
       result << {
         id: tkt_data.published_time,
-        ticket_id: @ticket.id,
+        ticket_id: @ticket.display_id,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
         performed_at: Time.at(tkt_data.published_time / 10_000).utc,
@@ -374,7 +374,7 @@ module TicketActivitiesTestHelper
       content_hash = content[:watcher][:user_id]
       result << {
         id: tkt_data.published_time,
-        ticket_id: @ticket.id,
+        ticket_id: @ticket.display_id,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
         performed_at: Time.at(tkt_data.published_time / 10_000).utc,
@@ -399,7 +399,7 @@ module TicketActivitiesTestHelper
       performer_type = tkt_data.event_type.to_sym
       result << {
         id: tkt_data.published_time,
-        ticket_id: @ticket.id,
+        ticket_id: @ticket.display_id,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
         performed_at: Time.at(tkt_data.published_time / 10_000).utc,
@@ -424,7 +424,7 @@ module TicketActivitiesTestHelper
       content_hash = content[:timesheet_create]
       result << {
         id: tkt_data.published_time,
-        ticket_id: @ticket.id,
+        ticket_id: @ticket.display_id,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
         performed_at: Time.at(tkt_data.published_time / 10_000).utc,
@@ -452,7 +452,7 @@ module TicketActivitiesTestHelper
       content_hash = content[:timesheet_edit]
       result << {
         id: tkt_data.published_time,
-        ticket_id: @ticket.id,
+        ticket_id: @ticket.display_id,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
         performed_at: Time.at(tkt_data.published_time / 10_000).utc,
@@ -488,7 +488,7 @@ module TicketActivitiesTestHelper
       content_hash = content[:timesheet_delete]
       result << {
         id: tkt_data.published_time,
-        ticket_id: @ticket.id,
+        ticket_id: @ticket.display_id,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
         performed_at: Time.at(tkt_data.published_time / 10_000).utc,
@@ -516,7 +516,7 @@ module TicketActivitiesTestHelper
       content_hash = content[:system_changes][:"#{@rule.id}"]
       result << {
         id: tkt_data.published_time,
-        ticket_id: @ticket.id,
+        ticket_id: @ticket.display_id,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
         performed_at: Time.at(tkt_data.published_time / 10_000).utc,
@@ -539,7 +539,7 @@ module TicketActivitiesTestHelper
       content_hash = content[:system_changes][:"#{@rule.id}"]
       result << {
         id: tkt_data.published_time,
-        ticket_id: @ticket.id,
+        ticket_id: @ticket.display_id,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
         performed_at: Time.at(tkt_data.published_time / 10_000).utc,
@@ -564,7 +564,7 @@ module TicketActivitiesTestHelper
       content_hash = (type == :ticket_merge_source) ? { target_ticket_id: content[:activity_type][:target_ticket_id][0].to_i } : { source_ticket_ids: content[:activity_type][:source_ticket_id].map(&:to_i) }
       result << {
         id: tkt_data.published_time,
-        ticket_id: (type == :ticket_merge_source) ? @ticket.id : @target_ticket.id,
+        ticket_id: (type == :ticket_merge_source) ? @ticket.display_id : @target_ticket.display_id,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
         performed_at: Time.at(tkt_data.published_time / 10_000).utc,
@@ -587,7 +587,7 @@ module TicketActivitiesTestHelper
       content_hash = (type == :ticket_split_source) ? { target_ticket_id: content[:activity_type][:target_ticket_id][0].to_i } : { source_ticket_id: content[:activity_type][:source_ticket_id][0].to_i }
       result << {
         id: tkt_data.published_time,
-        ticket_id: (type == :ticket_split_source) ? @ticket.id : @target_ticket.id,
+        ticket_id: (type == :ticket_split_source) ? @ticket.display_id : @target_ticket.display_id,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
         performed_at: Time.at(tkt_data.published_time / 10_000).utc,
@@ -610,7 +610,7 @@ module TicketActivitiesTestHelper
       content_hash = { imported_at: Time.at(content[:activity_type][:imported_at].to_i).utc }
       result << {
         id: tkt_data.published_time,
-        ticket_id: @ticket.id,
+        ticket_id: @ticket.display_id,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
         performed_at: Time.at(tkt_data.published_time / 10_000).utc,
@@ -633,7 +633,7 @@ module TicketActivitiesTestHelper
       content_hash = { responder_id: content[:activity_type][:responder_id][1].to_i }
       result << {
         id: tkt_data.published_time,
-        ticket_id: @ticket.id,
+        ticket_id: @ticket.display_id,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
         performed_at: Time.at(tkt_data.published_time / 10_000).utc,
@@ -656,7 +656,7 @@ module TicketActivitiesTestHelper
       content_hash = content[:delete_status]
       result << {
         id: tkt_data.published_time,
-        ticket_id: @ticket.id,
+        ticket_id: @ticket.display_id,
         performer: get_performer_hash(tkt_data, content),
         highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
         performed_at: Time.at(tkt_data.published_time / 10_000).utc,
@@ -684,7 +684,7 @@ module TicketActivitiesTestHelper
     ticket_data.published_time  = 1
     ticket_data.account_id      = @ticket.account_id
     ticket_data.object          = 'ticket'
-    ticket_data.object_id       = "#{@ticket.id}.0"
+    ticket_data.object_id       = "#{@ticket.display_id}.0"
     ticket_data.summary         = params[:summary] || '0.0'
     # Hard coded the content for now
     ticket_data.content         = params[:content] || "{\"test_custom_country\":[null,\"USA\"],\"test_custom_state\":[null,\"California\"],\"test_custom_city\":[null,\"Burlingame\"],\"test_custom_number\":[null,\"32_234\"],\"test_custom_decimal\":[null,\"90.89\"],\"test_custom_text\":[null,\"*\"],\"test_custom_paragraph\":[null,\"*\"],\"checked\":[\"test_custom_checkbox\"],\"test_custom_dropdown\":[null,\"Pursuit of Happiness\"],\"test_custom_date\":[null,\"2015-09-09\"],\"add_tag\":[\"create_tag1\",\"create_tag2\"],\"ticket_type\":[null,\"Problem\"],\"source\":[\"*\",\"2.0\"],\"status\":[\"3.0\",\"Pending\"],\"group_id\":[null,\"Product Management\"],\"responder_id\":[null,\"#{@ticket.responder_id}.0\"],\"requester_id\":[null,\"#{@ticket.requester_id}.0\"],\"priority\":[null,\"2.0\"]}"

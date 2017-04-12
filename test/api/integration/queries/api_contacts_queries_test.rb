@@ -21,7 +21,7 @@ class ApiContactsQueriesTest < ActionDispatch::IntegrationTest
         show: 15,
         index: 16,
         destroy: 23,
-        make_agent: 50
+        make_agent: 50,
         restore: 21
       }
 
@@ -108,19 +108,19 @@ class ApiContactsQueriesTest < ActionDispatch::IntegrationTest
 
 
       user1 = User.find_by_id(id1)
-      user1.deleted = true 
+      user1.deleted = true
       user1.save
 
-      v1[:restore] = count_queries do 
+      v1[:restore] = count_queries do
         post("/contacts/restore.json", {:ids => [user1.id]}.to_json, @write_headers)
         assert_response 200
       end
 
-      user1.deleted = true 
+      user1.deleted = true
       user1.save
 
-      user1 = User.find_by_id(id1)      
-      user1.deleted = true 
+      user1 = User.find_by_id(id1)
+      user1.deleted = true
       user1.save
 
       v2[:restore], v2[:api_restore], v2[:restore_queries] = count_api_queries do
@@ -128,7 +128,7 @@ class ApiContactsQueriesTest < ActionDispatch::IntegrationTest
         assert_response 204
       end
 
-      user1.deleted = false 
+      user1.deleted = false
       user1.save
 
 
@@ -144,7 +144,7 @@ class ApiContactsQueriesTest < ActionDispatch::IntegrationTest
 
       v1[:make_agent] += 2 # trusted_ip
 
-      
+
 
       write_to_file(v1, v2)
       v1.keys.each do |key|
