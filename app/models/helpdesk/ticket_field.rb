@@ -26,7 +26,6 @@ class Helpdesk::TicketField < ActiveRecord::Base
   }
 
   SECTION_LIMIT = 2
-
   SECTION_DROPDOWNS = ["default_ticket_type", "custom_dropdown"]
 
   belongs_to_account
@@ -121,7 +120,6 @@ class Helpdesk::TicketField < ActiveRecord::Base
   scope :customer_visible, :conditions => { :visible_in_portal => true }
   scope :customer_editable, :conditions => { :editable_in_portal => true }
   scope :agent_required_fields, :conditions => { :required => true }
-  scope :agent_required_fields_for_closure, :conditions => { :required_for_closure => true }
   scope :type_field, :conditions => { :name => "ticket_type" }
   scope :status_field, :conditions => { :name => "status" }
   scope :default_company_field, :conditions => {:name => "company"}

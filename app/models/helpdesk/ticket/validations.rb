@@ -9,7 +9,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   validate :due_by_validation, :if => :due_by
   #validate :frDueBy_validation, :if => :frDueBy
   validate :presence_of_required_fields, :if => :required_fields
-  validate :presence_of_required_fields_for_closure, :if => :required_fields_on_closure
 
   validate on: :create do |ticket|
     req = ticket.requester
@@ -72,47 +71,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
-  def presence_of_required_fields_for_closure
-    account.required_ticket_fields_from_cache.each do |field|
-      return false unless field_validations(field)
-    end
-
-    account.section_parent_fields_from_cache.each do |field|
-      picklist = find_picklist(field.picklist_values, send(field.name))
-      picklist.required_ticket_fields.each do |ticket_field|
-        return false unless field_validations(ticket_field)
-      end if picklist
-    end
-
-    true
-  end
-
-  def field_validations field
-    return false unless validate_field(field, send(field.name))
-    return false if field.nested_field? && !validate_nested_field(field)
-    true
-  end
-
-  def validate_field field, value
-    if field_value_blank?(value)
-      add_required_field_error field, :label
-      return false
-    end
-    true
-  end
-
-  def validate_nested_field field
-    parent_picklist = find_picklist(field.picklist_values, send(field.name))
-
-    field.nested_ticket_fields.each do |child_field|
-      break if parent_picklist.nil? || parent_picklist.sub_picklist_values.empty?
-      child_field_value = send(child_field.field_name)
-      return false unless validate_field(child_field, child_field_value)
-      parent_picklist = find_picklist(parent_picklist.sub_picklist_values, child_field_value)
-    end
-    true
-  end
-
   # For API
   def requester_company_id_validation
     if self.owner_id.present? && !requester.company_ids.include?(self.owner_id)
@@ -136,5 +94,4 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def find_picklist(picklists, value)
       picklists.find do |picklist| picklist.value == value end
     end
-
 end

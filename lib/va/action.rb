@@ -11,9 +11,7 @@ class Va::Action
   EVENT_PERFORMER = -2
   ASSIGNED_AGENT = ASSIGNED_GROUP = 0
 
-  attr_accessor :action_key, :act_hash, :doer, :triggered_event, :va_rule, :skip_record_action
-
-  IRREVERSIBLE_ACTIONS = [:add_comment, :add_watcher, :send_email_to_agent, :send_email_to_group, :send_email_to_requester, :add_tag, :delete_ticket, :mark_as_spam, :internal_group_id, :internal_agent_id]
+  attr_accessor :action_key, :act_hash, :doer, :triggered_event, :va_rule
 
   ACTION_PRIVILEGE =
     {  
@@ -39,13 +37,8 @@ class Va::Action
     act_hash[:value]
   end
   
-  def trigger(act_on, doer=nil, triggered_event=nil, only_reversible_actions = false)
+  def trigger(act_on, doer=nil, triggered_event=nil)
     begin
-      if only_reversible_actions && IRREVERSIBLE_ACTIONS.include?(action_key.to_sym)
-        Rails.logger.debug "In validation, Skipping trigger act_on : #{act_on.inspect} action_key : #{action_key}"
-        return
-      end
-      @skip_record_action = only_reversible_actions
       #Rails.logger.debug "INSIDE trigger of Va::Action with act_on : #{act_on.inspect} action_key : #{action_key} value: #{value}"
       @doer = doer
       @triggered_event = triggered_event
@@ -64,6 +57,7 @@ class Va::Action
           return
         end
       end
+
       Rails.logger.debug "Unsupported action key :: #{action_key}"
     rescue Exception => e
       Rails.logger.debug "For Va::Action #{self} Exception #{e} rescued"
@@ -71,7 +65,6 @@ class Va::Action
   end
   
   def record_action(ticket, params = nil)
-    return if @skip_record_action
     performer = @doer
     activity_params = {:ticket => ticket}
     activity_params.merge!({

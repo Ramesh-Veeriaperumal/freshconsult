@@ -5,7 +5,6 @@ module HelpdeskControllerMethods
   include Helpdesk::NoteActions
   include CloudFilesHelper
   include Helpdesk::Permissible
-  
 
   def self.included(base)
     base.send :before_filter, :build_item,          :only => [:new, :create]
@@ -167,6 +166,7 @@ module HelpdeskControllerMethods
       end
     end
   end
+
 
 protected
 

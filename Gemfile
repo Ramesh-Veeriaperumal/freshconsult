@@ -44,7 +44,7 @@ gem "tnef", "1.0.2"
 
 
 group :development, :test do
-  gem 'active_record_query_trace'  
+  gem 'active_record_query_trace'
   gem 'rails-dev-boost', :git => 'git://github.com/thedarkone/rails-dev-boost.git'
   gem 'better_errors', '~> 1.1.0'
   # Commenting out for ruby ~> 2.1.0 upgrade

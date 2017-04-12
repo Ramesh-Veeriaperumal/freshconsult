@@ -1,5 +1,7 @@
 <% if current_account.parent_child_tkts_enabled? %>
-  <div class="parent_error_alert hide">
+  <div class="alert notice parent_error_alert hide">
+
+    <a href="#" onclick="jQuery('.parent_error_alert').hide();return false;" class="close"></a>
   </div>
 <% end %>
 <div id="bulkcontent">
