@@ -384,7 +384,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
       message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@forward.freshdesk.com"
       
-      headers = email_headers(ticket, message_id, false, true).merge({
+      headers = email_headers(ticket, message_id, false, false).merge({
         :subject    =>  fwd_formatted_subject(ticket),
         :to         =>  to_emails,
         :cc         =>  cc_emails,
@@ -392,6 +392,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
         :from       =>  from_email,
         "Reply-To"  =>  "#{from_email}"
       })
+
+      set_others_redis_key(message_key(ticket.account_id, message_id),
+                         "#{ticket.display_id}:#{message_id}",
+                         86400*7) unless message_id.nil?
 
       headers.merge!(make_header(ticket.display_id, note.id, ticket.account_id, "Forward"))
       headers.merge!({"X-FD-Email-Category" => email_config.category}) if email_config.category.present?
@@ -640,14 +644,11 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     def update_ticket_header_info(ticket_id, ticket_message_id)
       ticket = Account.current.tickets.find_by_id(ticket_id) if ticket_id and Account.current
       if ticket and ticket_message_id.present?
-        header_info = (ticket.header_info || {})
-        #Update header info only if not present
-        if header_info[:message_ids].blank?
-          header_info[:message_ids] = [ticket_message_id]
-          ticket.header_info = header_info
-          ticket.skip_sbrr = true
-          ticket.save
-        end
+        header_info = (ticket.header_info[:message_ids] || [])
+        header_info << ticket_message_id
+        ticket.header_info[:message_ids] = header_info
+        ticket.skip_sbrr = true
+        ticket.save
       end
     end
 

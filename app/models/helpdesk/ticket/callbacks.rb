@@ -18,6 +18,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_create :set_boolean_custom_fields
 
+  before_create :update_header_info
+
 	before_update :assign_email_config
 
   before_update :update_message_id, :if => :deleted_changed?
@@ -1019,4 +1021,12 @@ private
     sla_policy = self.sla_policy
     Rails.logger.debug "SLA :::: Account id #{self.account_id} :: #{self.new_record? ? 'New' : self.id} ticket :: Calculated due time using #{logic} :: sla_policy #{sla_policy.id} - #{sla_policy.name} sla_detail :: #{sla_detail.id} - #{sla_detail.name} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy}"
   end
+
+  def update_header_info
+    unless (outbound_email? or self.source == SOURCE_KEYS_BY_TOKEN[:email])
+      message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@others.freshdesk.com"
+      self.header_info[:message_ids] = [message_id] if self.header_info[:message_ids].blank?
+    end
+  end
+
 end
