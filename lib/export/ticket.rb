@@ -162,6 +162,8 @@ class Export::Ticket < Struct.new(:export_params)
         associations << { :schema_less_ticket => :product }
       elsif @custom_field_names.include?(val)
         associations << { :flexifield => { :flexifield_def => :flexifield_def_entries } }
+      elsif val.eql?("ticket_survey_results") && Account.current.new_survey_enabled?
+        associations << { :custom_survey_results => [:survey_result_data, {:survey => {:survey_default_question => [:survey, :custom_field_choices_asc, :custom_field_choices_desc]}}] }
       elsif Helpdesk::TicketModelExtension::ASSOCIATION_BY_VALUE[val]
         associations << Helpdesk::TicketModelExtension::ASSOCIATION_BY_VALUE[val]
       end

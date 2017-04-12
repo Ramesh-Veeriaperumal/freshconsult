@@ -623,7 +623,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def ticket_survey_results
-     survey_results.sort_by(&:id).last.try(:text)
+    if Account.current.new_survey_enabled?
+      custom_survey_results.sort_by(&:id).last.try(:text)
+    else
+      survey_results.sort_by(&:id).last.try(:text)
+    end
   end
 
   def subject_or_description
