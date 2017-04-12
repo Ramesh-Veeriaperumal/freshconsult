@@ -15,7 +15,7 @@ module Helpdesk::Activities
     def fetch_errored_email_details
       res_hash = DEFAULT_RET_HASH.clone
       params.symbolize_keys
-      $thrift_transport.open()
+      $activities_thrift_transport.open()
       client     = ::HelpdeskActivities::TicketActivities::Client.new($thrift_protocol)
       note                 = current_account.notes.where(id:params[:note]).first
       act_param            = ::HelpdeskActivities::TicketDetail.new
@@ -60,7 +60,7 @@ module Helpdesk::Activities
       return res_hash
     ensure
       render :partial => "fetch_errored_email_details", :locals => {:to_list => to_list, :cc_list => cc_list, :ticket_display_id => @ticket.display_id, :admin_emails => play_god_admin_emails} 
-      $thrift_transport.close()
+      $activities_thrift_transport.close()
     end
 
     def suppression_list_alert
