@@ -22,7 +22,8 @@ class ExportController < ApiApplicationController
   end
 
   def check_privilege
-    render_request_error(:action_restricted, 403, action: action_name, reason: "user doesn't have required privilege") unless User.current.privilege?(:manage_account)
+    super
+    render_request_error(:access_denied, 403) if User.current && !User.current.privilege?(:manage_account)
   end
 
   def validate_params
