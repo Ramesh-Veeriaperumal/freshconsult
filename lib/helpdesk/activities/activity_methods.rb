@@ -16,7 +16,7 @@ module Helpdesk::Activities
       res_hash = DEFAULT_RET_HASH.clone
       params.symbolize_keys
       $activities_thrift_transport.open()
-      client     = ::HelpdeskActivities::TicketActivities::Client.new($activities_thrift_transport)
+      client     = ::HelpdeskActivities::TicketActivities::Client.new($activities_thrift_protocol)
       note                 = current_account.notes.where(id:params[:note]).first
       act_param            = ::HelpdeskActivities::TicketDetail.new
       act_param.account_id = current_account.id
