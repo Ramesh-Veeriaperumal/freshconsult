@@ -7,17 +7,21 @@ class Helpdesk::Email::SpamDetector
     Rails.logger.info "Fetching email from archive path"
     dynamo_obj = Helpdesk::Email::ArchiveDatastore.find(:account_id => tkt.account_id,
      :unique_index => PROCESSED_EMAIL_TYPE[:ticket] + "_" + tkt.id.to_s)
-    if dynamo_obj.blank?
+    if dynamo_obj.blank? or dynamo_obj.path.blank?
       Rails.logger.info "No dynamodb path found"
       return
     end
     archive_db = Helpdesk::DBStore::MailDBStoreFactory.getDBStoreObject(DBTYPE[:archive])
     email_obj = archive_db.fetch(dynamo_obj.path)
     raw_eml = email_obj[:eml].read
-    process_mail(raw_eml)
+    mail = process_mail(raw_eml)
+    return mail
+  rescue Helpdesk::Email::Errors::EmailDBRecordNotFound
+    Rails.logger.info "S3 key not found"
   end
 
   def self.process_mail(raw_eml)
+    return if raw_eml.blank?
     params = Helpdesk::EmailParser::EmailProcessor.new(raw_eml).process_mail
     construct_raw_mail(params)
   end
