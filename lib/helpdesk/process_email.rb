@@ -534,11 +534,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       unless params[:dropped_cc_emails].blank?
         ticket.cc_email[:dropped_cc_emails] = params[:dropped_cc_emails]
       end
-      message_id_list = []
+
       begin
         self.class.trace_execution_scoped(['Custom/Sendgrid/tickets']) do
-          message_id_list.push(message_key).push(all_message_ids).flatten!.uniq!
-          (ticket.header_info ||= {}).merge!(:message_ids => message_id_list) unless message_id_list.blank?
+          (ticket.header_info ||= {}).merge!(:message_ids => [message_key]) unless message_key.nil?
           if large_email && duplicate_email?(from_email[:email], 
                                                     to_email[:email], 
                                                     params[:subject], 
@@ -570,9 +569,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         # FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
         NewRelic::Agent.notice_error(e)
       end
-      message_id_list.each do |msg_key|
-        store_ticket_threading_info(account, msg_key, ticket)
-      end
+      store_ticket_threading_info(account, message_key, ticket)
       # ticket
       return processed_email_data(PROCESSED_EMAIL_STATUS[:success], account.id, ticket)
     end
@@ -624,9 +621,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                         Nokogiri::HTML(params[:html]).css("span[title='fd_tkt_identifier']") 
                       }
       unless display_span.blank?
-        display_id, fetched_account_id = display_span.last.inner_html.split(":")
+        display_id = display_span.last.inner_html
         unless display_id.blank?
-          return if email_from_another_portal?(account, fetched_account_id)
           ticket = account.tickets.find_by_display_id(display_id.to_i)
           self.actual_archive_ticket = account.archive_tickets.find_by_display_id(display_id.to_i) if account.features_included?(:archive_tickets) && !ticket
           return ticket 
@@ -639,11 +635,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       parsed_html = run_with_timeout(NokogiriTimeoutError) { Nokogiri::HTML(params[:html]) }
       display_span = parsed_html.css("span[style]").select{|x| x.to_s.include?('fdtktid')}
       unless display_span.blank?
-        display_id, fetched_account_id = display_span.last.inner_html.split(":")
+        display_id = display_span.last.inner_html
         display_span.last.remove
         params[:html] = parsed_html.inner_html
         unless display_id.blank?
-          return if email_from_another_portal?(account, fetched_account_id)
           ticket = account.tickets.find_by_display_id(display_id.to_i)
           self.actual_archive_ticket = account.archive_tickets.find_by_display_id(display_id.to_i) if account.features_included?(:archive_tickets) && !ticket
           return ticket 

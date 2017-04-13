@@ -86,9 +86,8 @@ module Helpdesk::Email::TicketMethods
 
   def finalize_ticket_save
     ticket_message_id = header_processor.zendesk_email || header_processor.message_id
-    message_id_list = [ticket_message_id, header_processor.all_message_ids].flatten.uniq
     begin
-      header_info_update(message_id_list)
+      header_info_update(ticket_message_id)
       ticket.save_ticket!
       
     rescue ActiveRecord::RecordInvalid => e
@@ -96,9 +95,7 @@ module Helpdesk::Email::TicketMethods
       NewRelic::Agent.notice_error(e)
     end
     cleanup_attachments ticket
-    message_id_list.each do |msg_id|
-      store_ticket_threading_info(msg_id)
-    end
+    store_ticket_threading_info(ticket_message_id) unless ticket_message_id.nil?
   end
 
   def header_processor
@@ -108,7 +105,7 @@ module Helpdesk::Email::TicketMethods
   end
 
   def header_info_update ticket_message_id
-    (ticket.header_info ||= {}).merge!(:message_ids => ticket_message_id) unless ticket_message_id.nil?
+    (ticket.header_info ||= {}).merge!(:message_ids => [ticket_message_id]) unless ticket_message_id.nil?
   end
     
   private 

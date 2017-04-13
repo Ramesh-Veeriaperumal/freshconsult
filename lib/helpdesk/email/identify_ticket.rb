@@ -88,8 +88,7 @@ class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account)
   end
 
   def ticket_from_span span
-    display_id, fetched_account_id = span.inner_html.split(":")
-    return if email_from_another_portal?(account, fetched_account_id)
+    display_id = span.inner_html
     account.tickets.find_by_display_id(display_id.to_i) unless display_id.blank?
   end
 
