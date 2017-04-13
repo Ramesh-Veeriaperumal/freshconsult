@@ -111,7 +111,7 @@ module Delayed
         self.last_error   = message + "\n" + backtrace.join("\n")
         save!
       else
-        Rails.logger.info "* [JOB] PERMANENTLY removing #{self.name} because of #{attempts} consequetive failures. account_id:#{account_id} "
+        Rails.logger.info "* [JOB] PERMANENTLY removing #{self.name} [ID] #{self.id} because of #{attempts} consequetive failures. account_id:#{account_id} Destroy flag: #{destroy_failed_jobs} Handler: #{self.handler}"
         destroy_failed_jobs ? destroy : update_attribute(:failed_at, Delayed::Job.db_time_now)
       end
     end
@@ -126,7 +126,7 @@ module Delayed
           destroy
         end
         # TODO: warn if runtime > max_run_time ?
-        Rails.logger.info "* [JOB] #{name} completed after %.4f. account_id:#{account_id} " % runtime
+        Rails.logger.info "* [JOB] #{name} [ID] #{self.id} completed after %.4f. account_id:#{account_id} " % runtime
         return true  # did work
       rescue Timeout::Error => e
         NewRelic::Agent.notice_error(e, {:description => "Maximum run time - #{max_run_time} reached for [JOB] #{self.id}"})
@@ -158,7 +158,7 @@ module Delayed
             destroy
           end
           # TODO: warn if runtime > max_run_time ?
-          Rails.logger.info "* [JOB] #{name} completed after %.4f -- by worker - #{worker_name}" % runtime
+          Rails.logger.info "* [JOB] #{name} [ID] #{self.id} completed after %.4f -- by worker - #{worker_name}" % runtime
           return true  # did work
         rescue Timeout::Error => e
           NewRelic::Agent.notice_error(e, {:description => "Maximum run time - #{max_run_time} reached for [JOB] #{name} -- #{worker_name}"})
@@ -225,14 +225,15 @@ module Delayed
       #mailbox::Job queue. In Future we should check each individual smtp_mailbox based on the ticket and change the queue. 
       if smtp_mailboxes.any?{|smtp_mailbox| smtp_mailbox.enabled?}
         job = Mailbox::Job.create(job_params)
-        DelayedJobs::MailboxJob.send(*perform_type, 
+        worker_id = DelayedJobs::MailboxJob.send(*perform_type, 
           {:job_id => job.id, :account_id => account_id}) if job && job.id
       else
         job = Object.const_get("#{job_queue}::Job").create(job_params)
-        Object.const_get("DelayedJobs::#{job_queue}AccountJob").send(*perform_type, 
+        worker_id = Object.const_get("DelayedJobs::#{job_queue}AccountJob").send(*perform_type, 
           {:job_id => job.id, 
            :account_id => account_id}) if job && job.id && PUSH_QUEUE.include?(job_queue)
       end
+      Rails.logger.info "Job #{job.id} created and pushed to the sidekiq queue #{job_queue} with id #{worker_id}" if job
       job
     end
 
@@ -307,7 +308,7 @@ module Delayed
 
     # This is a good hook if you need to report job processing errors in additional or different ways
     def log_exception(error, account_id=-1)
-      Rails.logger.error "* [JOB] #{name} failed with #{error.class.name}: #{error.message} - #{attempts} failed attempts. account_id:#{account_id}"
+      Rails.logger.error "* [JOB] #{name} [ID] #{self.id} failed with #{error.class.name}: #{error.message} - #{attempts} failed attempts. account_id:#{account_id}"
       Rails.logger.error(error)
     end
 
