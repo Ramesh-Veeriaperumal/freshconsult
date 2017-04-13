@@ -51,17 +51,21 @@ class SsoController < ApplicationController
     if params[:provider] == 'google'
       email_id = mobile_sso_google(params[:id_token], params[:platform])
       if email_id.blank?
-        render status: 200, json: { login: 'failed', error: t('google_signup.signup_google_error.invalid_mobile_token')}
+        render status: 200, json: { login: 'failed', auth_token: "", error_code: 2111 } #2111 - Invalid mobile token
       else
         user = current_account.users.find_by_email(email_id)
         if user.present?
-          render status: 200, json: { login: 'success', auth_token: "#{user.mobile_auth_token}" }
+          if user.agent?
+            render status: 200, json: { login: 'success', auth_token: "#{user.mobile_auth_token}" }
+          else
+            render status: 200, json: { login: 'failed', auth_token: "", error_code: 2112 } #2112 - customer login
+          end
         else
-          render status: 401, json: { login: 'failed', error: t('google_signup.signup_google_error.incorrect_email_in_sso') }
+          render status: 401, json: { login: 'failed', auth_token: "", error_code: 2113 } #2113 - This email address is not registered in Freshdesk
         end
       end
     else
-      render status: 200, json: { login: 'failed', error: t('google_signup.signup_google_error.invalid_mobile_provider') }
+      render status: 200, json: { login: 'failed', auth_token: "", error_code: 2114 } #2114 - Invalid mobile provider
     end
   end
 
