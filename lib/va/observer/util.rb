@@ -55,7 +55,7 @@ module Va::Observer::Util
 
       if inline
         Tickets::ObserverWorker.new.perform(args)
-      elsif self.schedule_observer
+      elsif self.class == Helpdesk::Ticket and self.schedule_observer
         # skipping observer for send and set ticket operation
         self.send_and_set_args = args
       else
