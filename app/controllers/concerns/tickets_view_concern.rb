@@ -76,7 +76,9 @@ module Concerns
         @last_item = (item.is_a?(Helpdesk::Note) || forward) ? item : (item.notes.visible.public.last || item)
 
         %(<div class="freshdesk_quote">
-            <blockquote class="freshdesk_quote">#{I18n.t('ticket.quoted_text.wrote_on')} #{formated_date(@last_item.created_at)}
+            <blockquote class="freshdesk_quote">
+              #{I18n.t('ticket.quoted_text.wrote_on')}
+              #{formated_date(@last_item.created_at.in_time_zone((User.current || Account.current).time_zone))}
               <span class="separator" />, #{user_details_template(@last_item)} #{I18n.t('ticket.quoted_text.wrote')}:
               #{(@last_item.description_html || extract_quote_from_note(@last_item).to_s)}
             </blockquote>
