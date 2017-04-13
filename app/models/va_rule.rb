@@ -338,8 +338,8 @@ class VaRule < ActiveRecord::Base
     end
     
     def has_conditions?
-      return unless supervisor_rule?
       errors.add(:base,I18n.t("errors.conditions_empty")) if(filter_data.blank?)
+      (filter_data[:conditions].blank? ? errors.add(:base,I18n.t("errors.conditions_empty")) : return ) if observer_rule? 
     end
     
     def has_actions?
