@@ -119,14 +119,10 @@ en:
                 Message content: <br>%{failed_content}</p>
     note_display:
       title  : "Message not delivered"
-      failed_recipient: "recipient"
-      failed_recipients: "recipients"
-      contact_support: "Request to unblock recipient"
-      mail_sent: "Unblock request sent to Freshdesk"
+      failed_recipients: "Failed recipients"
+      contact_support: "Email Freshdesk Support"
       call_recipient : "Call recipient"
-      add_note_to_admin : "Notify admin of blocked address"
-      hide_details: "Hide details"
-      show_details: "Show details"
+      add_note_to_admin : "Add note to admin"
   reorder_rules: Reorder Active Rules
   plain_yes: "Yes"
   plain_no: "No"

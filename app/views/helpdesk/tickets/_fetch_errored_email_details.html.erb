@@ -10,10 +10,6 @@
     </div>
 </div>
 <%= javascript_tag do %>
-    var mailSent = '<%= t('email_failure.note_display.mail_sent') %>';
-    var hideDetails = '<%= t('email_failure.note_display.hide_details') %>';
-    var showDetails = '<%= t('email_failure.note_display.show_details') %>';
-    var callRecipient = '<%= t('email_failure.note_display.call_recipient') %>';
     jQuery(document).ready(function(){
         jQuery('body').off('.email_error');
         var admin_emails = <%= admin_emails.to_json.html_safe %>.map(function(user, index){
@@ -30,14 +26,14 @@
                 ele.css('height', ele[0].offsetHeight || ele[0].scrollHeight);
             }else{
                 ele.css('height', '0px');
-                jQuery(this).attr('data-original-title', showDetails);
+                jQuery(this).attr('data-original-title', 'Show details');
             }
         });
 
         jQuery('body').on('click.email_error', '.email-failure-list-item .add_note_admin', function(e){
             jQuery('#email_failure .modal-header .close').trigger('click');
             var email = jQuery(this).data('failed-email');
-            jQuery("#TicketPseudoReply a[rel='note-button']").data('failed-email', email).trigger('click');
+            jQuery("#TicketPseudoReply a[rel='note-button'").data('failed-email', email).trigger('click');
             jQuery('#cnt-note-body').data('redactor').insertOnCursorPosition('inserthtml', email);
             setTimeout(function(){
                 jQuery('#HelpdeskNotes .add-note-select').focus();
@@ -49,11 +45,11 @@
         });
 
         jQuery('body').on('click.email_error', '.email-failure-list-item .drop-from-suppression', function(e){
-            if(jQuery(this).hasClass('ficon-mail-source')){
+            if(jQuery(this).hasClass('ficon-mail')){
                 var loadingClass = 'sloading loading-small';
                 var _this = this;
                 jQuery(_this).parents('.email-failure-list-item').addClass('active');
-                jQuery(_this).removeClass('ficon-mail-source').addClass(loadingClass);
+                jQuery(_this).removeClass('ficon-mail').addClass(loadingClass);
                 jQuery.ajax({
                     url: jQuery(_this).data('url'),
                     type: 'PUT',
@@ -62,21 +58,13 @@
                     },
                     dataType: 'json',
                     success: function(data){
-                        jQuery(_this).removeClass(loadingClass).addClass('ficon-checkmark').attr('data-original-title', mailSent);
+                        jQuery(_this).removeClass(loadingClass).addClass('ficon-checkmark').attr('data-original-title', "Mail Sent");
                     }
                 });
             }
         });
-        var addCallTooltip = function() {
-            setTimeout(function(){
-                if(jQuery('.email-failure-list-item .ficon-phone')){
-                    jQuery('.email-failure-list-item .ficon-phone').addClass('tooltip').attr('title', callRecipient);
-                }else{
-                    addCallTooltip();
-                }
-            }, 200);
-        };
-        addCallTooltip();
+
+        jQuery('.email-failure-list-item .ficon-phone').addClass('tooltip').attr('title', 'Call');
     });
 <% end %>
 
