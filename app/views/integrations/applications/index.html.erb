@@ -22,14 +22,14 @@
         <div class="button-bar browse-apps pull-right <%= active_account ? '' : 'tooltip' %>" 
           <% unless active_account %> data-placement=below title="<%=t('marketplace.tooltip.suspended')%>" <% end %> >
           <a class="browse-btn btn btn-flat browse-apps-btn <%= active_account ? '' : 'disabled' %> " 
-             href="" data-url="<% active_account ? "#{admin_marketplace_extensions_path}?#{more_apps_params}" : '' %>">
+             href="" data-url="<%= active_account ? "#{admin_marketplace_extensions_path}?#{more_apps_params}" : '' %>">
              <span class="ficon-cube-filled"></span> <%= t('marketplace.get_more_apps') %>
           </a>
         </div>
       <% end %>
       <% if current_account.custom_apps_enabled? %>
       <div class="button-bar create-new pull-right" style="display:none;">
-        <a class="browse-btn btn btn-flat get-custom-apps <%= active_account ? '' : 'disabled' %>" href="" data-url="<% active_account ? "#{custom_apps_admin_marketplace_extensions_path}" : '' %>"><%= t('integrations.custom_application.get_custom_apps') %></a>
+        <a class="browse-btn btn btn-flat get-custom-apps <%= active_account ? '' : 'disabled' %>" href="" data-url="<%= active_account ? "#{custom_apps_admin_marketplace_extensions_path}" : '' %>"><%= t('integrations.custom_application.get_custom_apps') %></a>
         <%= link_to t('integrations.custom_application.new_custom_app').html_safe, new_admin_integrations_freshplug_path, :class =>"btn btn-flat new-customapp" %>
       </div>
       <% end %>
