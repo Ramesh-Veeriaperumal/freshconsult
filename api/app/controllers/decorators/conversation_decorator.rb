@@ -1,8 +1,8 @@
 class ConversationDecorator < ApiDecorator
   attr_accessor :ticket
 
-  delegate :body, :body_html, :full_text_html, :id, :incoming, :private, :deleted, :user_id, :support_email, 
-            :source, :attachments, :attachments_sharable, :schema_less_note, :cloud_files, :last_modified_timestamp, 
+  delegate :body, :body_html, :full_text_html, :id, :incoming, :private, :deleted, :user_id, :support_email,
+            :source, :attachments, :attachments_sharable, :schema_less_note, :cloud_files, :last_modified_timestamp,
             :last_modified_user_id, to: :record
 
   delegate :to_emails, :from_email, :cc_emails, :bcc_emails, to: :schema_less_note, allow_nil: true
@@ -75,7 +75,11 @@ class ConversationDecorator < ApiDecorator
   def tweet_hash
     return {} unless record.tweet? && record.tweet
     {
-      tweet: record.tweet.attributes.slice('tweet_id', 'tweet_type', 'twitter_handle_id')
+      tweet: {
+        tweet_id: "#{record.tweet.tweet_id}",
+        tweet_type: record.tweet.tweet_type,
+        twitter_handle_id: record.tweet.twitter_handle_id
+      }
     }
   end
 

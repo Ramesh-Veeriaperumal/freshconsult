@@ -1,7 +1,7 @@
 type: object
 properties:
   tweet_id:
-    type: number
+    type: string
   tweet_type:
     type: string
     enum:
