@@ -2903,6 +2903,14 @@
         ],
         "summary": "List all",
         "description": "List all enabled apps",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "type": "string",
+            "description": "App Name"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -2924,12 +2932,12 @@
         }
       }
     },
-    "/installed_applications/{name}": {
+    "/installed_applications/{id}": {
       "get": {
         "tags": [
           "Integrations"
         ],
-        "summary": "Apps filtered by Name",
+        "summary": "Show",
         "parameters": [
           {
             "name": "name",
@@ -5478,10 +5486,6 @@
         },
         {
           "properties": {
-            "id": {
-              "type": "number",
-              "description": "Installed App Id"
-            },
             "application_id": {
               "type": "number",
               "description": "App Id"
@@ -5514,10 +5518,6 @@
         },
         {
           "properties": {
-            "id": {
-              "type": "number",
-              "description": "Installed Resource Id"
-            },
             "installed_application_id": {
               "type": "number",
               "description": "Installed App Id"

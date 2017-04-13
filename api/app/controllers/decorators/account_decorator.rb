@@ -4,6 +4,7 @@ class AccountDecorator < ApiDecorator
       full_domain: record.full_domain,
       helpdesk_name: record.helpdesk_name,
       name: record.name,
+      internal_id: record.id,
       time_zone: record.time_zone,
       date_format: date_format,
       features: features_list,
@@ -63,7 +64,7 @@ class AccountDecorator < ApiDecorator
 
     def agent_groups
       @agent_group_mapping ||= begin
-        record.agent_groups_from_cache.inject({agents: {}, groups: {}}) do |mapping, ag|
+        record.agent_groups_from_cache.inject(agents: {}, groups: {}) do |mapping, ag|
           (mapping[:agents][ag.user_id] ||= []).push(ag.group_id)
           (mapping[:groups][ag.group_id] ||= []).push(ag.user_id)
           mapping

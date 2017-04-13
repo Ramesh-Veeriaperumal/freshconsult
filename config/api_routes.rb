@@ -220,11 +220,7 @@ Helpkit::Application.routes.draw do
 
     resources :todos, controller: 'ember/todos', except: [:new, :edit]
     resources :installed_applications, controller: 'ember/installed_applications', only: [:index,:show]
-    resources :integrated_resources, controller: 'ember/integrated_resources' , except: [:new, :edit,:create]  do
-      collection do
-        post :create, to: 'ember/integrated_resources#create'
-      end
-    end
+    resources :integrated_resources, controller: 'ember/integrated_resources' , except: [:new, :edit]
 
     resources :contacts, controller: 'ember/contacts', except: [:new, :edit] do
       collection do

@@ -2,9 +2,6 @@ type: object
 allOf:
   - $ref: '#/definitions/extension_generic'
   - properties:
-      id:
-        type: number
-        description: Installed App Id
       application_id:
         type: number
         description: App Id

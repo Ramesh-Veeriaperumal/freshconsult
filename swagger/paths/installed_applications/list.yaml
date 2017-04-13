@@ -1,7 +1,12 @@
 get:
   tags: [Integrations]
   summary: List all
-  description: List all enabled apps 
+  description: List all enabled apps
+  parameters:
+    - name: name
+      in: query
+      type: string
+      description: App Name
   responses:
     200:
       description: Success

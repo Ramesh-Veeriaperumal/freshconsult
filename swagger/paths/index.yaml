@@ -167,10 +167,12 @@
 # Installed Applications
 /installed_applications:
   $ref: ./installed_applications/list.yaml
-/installed_applications/{name}:
+/installed_applications/{id}:
   $ref: ./installed_applications/crud.yaml
 # Integrated Resources
-/integrated_resources/:
+/integrated_resources:
+  $ref: ./integrated_resources/list.yaml
+/integrated_resources/{id}:
   $ref: ./integrated_resources/crud.yaml
 
 #Social
