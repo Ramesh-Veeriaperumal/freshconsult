@@ -61,7 +61,7 @@ class SsoController < ApplicationController
             render status: 200, json: { login: 'failed', auth_token: "", error_code: 2112 } #2112 - customer login
           end
         else
-          render status: 401, json: { login: 'failed', auth_token: "", error_code: 2113 } #2113 - This email address is not registered in Freshdesk
+          render status: 200, json: { login: 'failed', auth_token: "", error_code: 2113 } #2113 - This email address is not registered in Freshdesk
         end
       end
     else
