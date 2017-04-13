@@ -319,10 +319,9 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
         return
       end
 
-      options = {} unless options.is_a?(Hash) 
-      build_references(ticket)
+      options = {} unless options.is_a?(Hash)
 
-      headers = email_headers(ticket, nil, false).merge({
+      headers = email_headers(ticket, nil, false, true).merge({
         :subject    =>  formatted_subject(ticket),
         :to         =>  to_emails,
         :bcc        =>  bcc_emails,
@@ -385,9 +384,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       cc_emails = validate_emails(note.cc_emails, note)
 
       message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@forward.freshdesk.com"
-      build_references(ticket)
       
-      headers = email_headers(ticket, message_id, false, false).merge({
+      headers = email_headers(ticket, message_id, false, false, true).merge({
         :subject    =>  fwd_formatted_subject(ticket),
         :to         =>  to_emails,
         :cc         =>  cc_emails,
@@ -647,15 +645,18 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     def update_ticket_header_info(ticket_id, ticket_message_id)
       ticket = Account.current.tickets.find_by_id(ticket_id) if ticket_id and Account.current
       if ticket and ticket_message_id.present?
-        header_info = (ticket.header_info[:message_ids] || [])
-        header_info << ticket_message_id
-        ticket.header_info[:message_ids] = header_info
-        ticket.skip_sbrr = true
-        ticket.save
+        header_info = (ticket.header_info || {})
+        #Update header info only if not present
+        if header_info[:message_ids].blank?
+          header_info[:message_ids] = [ticket_message_id]
+          ticket.header_info = header_info
+          ticket.skip_sbrr = true
+          ticket.save
+        end
       end
     end
 
-    def email_headers(ticket, message_id, auto_submitted=true, suppress_references=false)
+    def email_headers(ticket, message_id, auto_submitted=true, suppress_references=false, generate_reference = false)
       #default message id
       message_id = message_id || "#{Mail.random_tag}.#{::Socket.gethostname}@email.freshdesk.com"
 
@@ -678,10 +679,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
                          "#{ticket.display_id}:#{message_id}",
                          86400*7) unless message_id.nil?
       else
-        references = generate_email_references(ticket)
+        references, reply_to = build_references(ticket, generate_reference)
         headers["References"] = references unless references.blank?
-
-        reply_to = in_reply_to(ticket)
         headers["In-Reply-To"] = reply_to unless reply_to.blank?
       end
 
@@ -755,14 +754,17 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       EMAIL_TICKET_ID % {:account_id => account_id, :message_id => message_id}
     end
 
-    def build_references(ticket)
-      if(ticket.source != Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email] and ticket.source != Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email])
+    def build_references(ticket, generate_reference = false)
+      if generate_reference and !ticket.header_info_present?
         ticket_message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@email.freshdesk.com"
         set_others_redis_key(message_key(ticket.account_id, ticket_message_id),
                          "#{ticket.display_id}:#{ticket_message_id}",
                          86400*7) unless ticket_message_id.nil?
         update_ticket_header_info(ticket.id, ticket_message_id)
       end
+      references = generate_email_references(ticket)
+      reply_to = in_reply_to(ticket)
+      return references, reply_to
     end
 
   # TODO-RAILS3 Can be removed oncewe fully migrate to rails3
