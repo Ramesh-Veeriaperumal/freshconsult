@@ -320,6 +320,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       end
 
       options = {} unless options.is_a?(Hash) 
+      build_references(ticket)
+
       headers = email_headers(ticket, nil, false).merge({
         :subject    =>  formatted_subject(ticket),
         :to         =>  to_emails,
@@ -383,6 +385,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       cc_emails = validate_emails(note.cc_emails, note)
 
       message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@forward.freshdesk.com"
+      build_references(ticket)
       
       headers = email_headers(ticket, message_id, false, false).merge({
         :subject    =>  fwd_formatted_subject(ticket),
@@ -750,6 +753,16 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
     def message_key(account_id, message_id)
       EMAIL_TICKET_ID % {:account_id => account_id, :message_id => message_id}
+    end
+
+    def build_references(ticket)
+      if(ticket.source != Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email] and ticket.source != Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email])
+        ticket_message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@email.freshdesk.com"
+        set_others_redis_key(message_key(ticket.account_id, ticket_message_id),
+                         "#{ticket.display_id}:#{ticket_message_id}",
+                         86400*7) unless ticket_message_id.nil?
+        update_ticket_header_info(ticket.id, ticket_message_id)
+      end
     end
 
   # TODO-RAILS3 Can be removed oncewe fully migrate to rails3
