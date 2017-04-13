@@ -18,8 +18,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_create :set_boolean_custom_fields
 
-  before_create :update_header_info
-
 	before_update :assign_email_config
 
   before_update :update_message_id, :if => :deleted_changed?
