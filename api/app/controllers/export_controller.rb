@@ -22,8 +22,8 @@ class ExportController < ApiApplicationController
   end
 
   def check_privilege
-    super
-    render_request_error(:access_denied, 403) if User.current && !User.current.privilege?(:manage_account)
+    success = super
+    render_request_error(:access_denied, 403) if success && User.current && !User.current.privilege?(:manage_account)
   end
 
   def validate_params
