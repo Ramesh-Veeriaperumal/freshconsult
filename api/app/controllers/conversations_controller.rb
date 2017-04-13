@@ -117,9 +117,13 @@ class ConversationsController < ApiApplicationController
     end
 
     def load_parent_ticket # Needed here in controller to find the item by display_id
-      @ticket = current_account.tickets.find_by_param(params[:id], current_account)
+      @ticket = tickets_scoper.find_by_param(params[:id], current_account)
       log_and_render_404 unless @ticket
       @ticket
+    end
+
+    def tickets_scoper
+      current_account.tickets
     end
 
     def load_notable_from_item

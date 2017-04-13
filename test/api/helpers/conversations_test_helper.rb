@@ -22,6 +22,7 @@ module ConversationsTestHelper
     }
   end
 
+
   def private_note_pattern(expected_output = {}, note)
     response_pattern = note_pattern(expected_output, note).merge({
       deleted: (expected_output[:deleted] || note.deleted).to_s.to_bool,
