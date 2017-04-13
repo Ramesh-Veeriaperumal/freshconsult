@@ -58,7 +58,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     rand(2..5).times do
       create_company
     end
-    invalid_include_list = [Faker::Lorem.word, Faker::Lorem.word]
+    invalid_include_list = Faker::Lorem.words(3).uniq
     get :index, controller_params(version: 'private', include: invalid_include_list.join(','))
     assert_response 400
     match_json([bad_request_error_pattern('include', :not_included, list: 'contacts_count')])
@@ -133,7 +133,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     contact = add_new_user(@account, customer_id: company.id)
     ticket_ids = []
     11.times do
-      ticket_ids << create_ticket(requester_id: contact.id).id
+      ticket_ids << create_ticket(requester_id: contact.id, status: 5).id
     end
     create_archive_tickets(ticket_ids)
     get :activities, controller_params(version: 'private', id: company.id, type: 'archived_tickets')

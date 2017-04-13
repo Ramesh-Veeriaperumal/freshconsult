@@ -18,6 +18,8 @@ module Ember
     def before_all
       @account = Account.first.make_current
       @agent = @account.agents.first.user
+      @agent.active = true
+      @agent.save!
 
       @ca_folder_all = create_cr_folder(name: Faker::Name.name)
       @ca_folder_personal = @account.canned_response_folders.personal_folder.first
@@ -65,7 +67,7 @@ module Ember
       get :show, construct_params({ version: 'private' }, false).merge(id: @ca_folder_personal.id)
       assert_response 200
       match_json(ca_responses_pattern(@ca_folder_personal))
-      responses = ActiveSupport::JSON.decode(response.body)['responses']
+      responses = ActiveSupport::JSON.decode(response.body)['canned_responses']
       assert responses.include?(single_ca_response_pattern(@ca_response_3))
       assert responses.include?(single_ca_response_pattern(@ca_response_4))
     end
@@ -76,7 +78,7 @@ module Ember
       get :show, construct_params({ version: 'private' }, false).merge(id: @ca_folder_personal.id)
       assert_response 200
       match_json(ca_responses_pattern(@ca_folder_personal))
-      responses = ActiveSupport::JSON.decode(response.body)['responses']
+      responses = ActiveSupport::JSON.decode(response.body)['canned_responses']
       refute responses.include?(single_ca_response_pattern(@ca_response_3))
       refute responses.include?(single_ca_response_pattern(@ca_response_4))
     end
@@ -87,7 +89,7 @@ module Ember
       get :show, construct_params({ version: 'private' }, false).merge(id: @ca_folder_all.id)
       assert_response 200
       match_json(ca_responses_pattern(@ca_folder_all))
-      responses = ActiveSupport::JSON.decode(response.body)['responses']
+      responses = ActiveSupport::JSON.decode(response.body)['canned_responses']
       assert responses.include?(single_ca_response_pattern(@ca_response_1))
       assert responses.include?(single_ca_response_pattern(@ca_response_2))
       refute responses.include?(single_ca_response_pattern(@ca_response_5))

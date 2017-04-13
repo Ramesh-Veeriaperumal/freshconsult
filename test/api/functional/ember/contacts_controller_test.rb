@@ -215,7 +215,7 @@ module Ember
     end
 
     def test_index_with_tags
-      tags = [Faker::Lorem.word, Faker::Lorem.word]
+      tags = Faker::Lorem.words(3).uniq
       contact_ids = []
       rand(2..10).times do
         contact_ids << add_new_user(@account, tags: tags.join(', ')).id

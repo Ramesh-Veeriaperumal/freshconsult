@@ -117,7 +117,7 @@ module Ember
       attachments = [file1, file2]
       params_hash = create_note_params_hash.merge({attachment_ids: [attachment_id], attachments: attachments})
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-      @request.env['CONTENT_TYPE'] = 'multipart/form-data' 
+      @request.env['CONTENT_TYPE'] = 'multipart/form-data'
       post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
@@ -202,7 +202,7 @@ module Ember
       attachments = [file1, file2]
       params_hash = reply_note_params_hash.merge({attachment_ids: [attachment_id], attachments: attachments})
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-      @request.env['CONTENT_TYPE'] = 'multipart/form-data' 
+      @request.env['CONTENT_TYPE'] = 'multipart/form-data'
       post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
@@ -237,7 +237,7 @@ module Ember
       match_json(private_note_pattern({}, latest_note))
       assert latest_note.attachments.count == 1
     end
-    
+
     def test_reply_with_inapplicable_survey_option
       survey = Account.current.survey
       survey.send_while = rand(1..3)
@@ -383,7 +383,7 @@ module Ember
       post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
       note = Helpdesk::Note.last
-      assert_equal email_config.id, note.email_config_id 
+      assert_equal email_config.id, note.email_config_id
       match_json(private_note_pattern(params_hash, note))
       match_json(private_note_pattern({}, note))
     end
@@ -568,7 +568,7 @@ module Ember
       attachments = [file1, file2]
       params_hash = forward_note_params_hash.merge({agent_id: @agent.id, attachment_ids: [attachment_id], attachments: attachments})
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-      @request.env['CONTENT_TYPE'] = 'multipart/form-data' 
+      @request.env['CONTENT_TYPE'] = 'multipart/form-data'
       post :forward, construct_params({version: 'private', id: t.display_id }, params_hash)
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
@@ -614,7 +614,7 @@ module Ember
       t = create_ticket({ attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) },
                           cloud_files:  [Helpdesk::CloudFile.new({ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 })] })
       create_shared_attachment(t)
-      params = forward_note_params_hash.merge(include_original_attachments: true, 
+      params = forward_note_params_hash.merge(include_original_attachments: true,
                 attachments: new_attachments, attachment_ids: [draft_attachment_id])
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
       post :forward, construct_params({version: 'private', id: t.display_id }, params)
@@ -806,10 +806,10 @@ module Ember
 
     def test_tweet_reply_with_invalid_ticket
       ticket = create_ticket
-      post :tweet, construct_params({version: 'private', id: ticket.display_id}, { 
-        body: Faker::Lorem.sentence[0..130], 
-        tweet_type: 'dm', 
-        twitter_handle_id: get_twitter_handle.id 
+      post :tweet, construct_params({version: 'private', id: ticket.display_id}, {
+        body: Faker::Lorem.sentence[0..130],
+        tweet_type: 'dm',
+        twitter_handle_id: get_twitter_handle.id
       })
       assert_response 400
       match_json([bad_request_error_pattern('ticket_id', :not_a_twitter_ticket)])
@@ -817,46 +817,35 @@ module Ember
 
     def test_twitter_reply_to_tweet_ticket
       ticket = create_twitter_ticket
-      twitter_object = sample_twitter_object
       twitter_handle = get_twitter_handle
 
       @account = Account.current
       @default_stream = twitter_handle.default_stream
-      Twitter::REST::Client.any_instance.stubs(:update).returns(twitter_object)
-      
-      unless GNIP_ENABLED
-        Social::DynamoHelper.stubs(:update).returns(dynamo_update_attributes(twitter_object[:id]))
-        Social::DynamoHelper.stubs(:get_item).returns(sample_dynamo_get_item_params)
+
+      with_twitter_update_stubbed do
+
+        params_hash = {
+          body: Faker::Lorem.sentence[0..130],
+          tweet_type: 'mention',
+          twitter_handle_id: twitter_handle.id
+        }
+        post :tweet, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+        assert_response 201
+        latest_note = Helpdesk::Note.last
+        match_json(private_note_pattern(params_hash, latest_note))
+
       end
-      
-      params_hash = {
-        body: Faker::Lorem.sentence[0..130],
-        tweet_type: 'mention',
-        twitter_handle_id: twitter_handle.id
-      }
-      post :tweet, construct_params({version: 'private', id: ticket.display_id}, params_hash)
-      assert_response 201
-      latest_note = Helpdesk::Note.last
-      match_json(private_note_pattern(params_hash, latest_note))
-      
-      Twitter::REST::Client.any_instance.unstub(:update)
-      
-      unless GNIP_ENABLED
-        Social::DynamoHelper.unstub(:update)
-        Social::DynamoHelper.unstub(:get_item)
-      end
-      
+
     end
 
     def test_twitter_dm_reply_to_tweet_ticket
       ticket = create_twitter_ticket
-      twitter_object = sample_twitter_object
       twitter_handle = get_twitter_handle
-      
+
       dm_text = Faker::Lorem.paragraphs(5).join[0..500]
       @account = Account.current
       @default_stream = twitter_handle.default_stream
-      
+
       reply_id = get_social_id
       dm_reply_params = {
         :id => reply_id,
@@ -865,45 +854,40 @@ module Ember
         :text => dm_text ,
         :created_at => "#{Time.zone.now}"
       }
-      sample_dm_reply = Twitter::DirectMessage.new(dm_reply_params)
-      Twitter::REST::Client.any_instance.stubs(:create_direct_message).returns(sample_dm_reply)
 
-      unless GNIP_ENABLED
-        Social::DynamoHelper.stubs(:insert).returns({})
-        Social::DynamoHelper.stubs(:update).returns({})
-      end
+      with_twitter_dm_stubbed(Twitter::DirectMessage.new(dm_reply_params)) do
+        params_hash = {
+          body: Faker::Lorem.sentence[0..130],
+          tweet_type: 'dm',
+          twitter_handle_id: twitter_handle.id
+        }
+        post :tweet, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+        assert_response 201
+        latest_note = Helpdesk::Note.last
+        match_json(private_note_pattern(params_hash, latest_note))
 
-      params_hash = {
-        body: Faker::Lorem.sentence[0..130],
-        tweet_type: 'dm',
-        twitter_handle_id: twitter_handle.id
-      }
-      post :tweet, construct_params({version: 'private', id: ticket.display_id}, params_hash)
-      assert_response 201
-      latest_note = Helpdesk::Note.last
-      match_json(private_note_pattern(params_hash, latest_note))
-      
-      Twitter::REST::Client.any_instance.unstub(:create_direct_message)
-
-      unless GNIP_ENABLED
-        Social::DynamoHelper.unstub(:insert)
-        Social::DynamoHelper.unstub(:update)
       end
 
     end
 
     def test_ticket_conversations
+      Account.stubs(:current).returns(Account.first)
       t = create_ticket
       create_private_note(t)
       create_reply_note(t)
       create_forward_note(t)
       create_feedback_note(t)
       create_fb_note(t)
-      create_twitter_note(t)
+      twitter_handle = get_twitter_handle
+      @default_stream = twitter_handle.default_stream
+      with_twitter_update_stubbed { create_twitter_note(t) }
+      # Need to stub Twitter stuff here
+
       get :ticket_conversations, controller_params(version: 'private', id: t.display_id)
       assert_response 200
       response = parse_response @response.body
       assert_equal 6, response.size
+      Account.unstub(:current)
     end
 
     def test_ticket_conversations_with_requester
@@ -965,7 +949,7 @@ module Ember
           content_html: Faker::Lorem.paragraph,
           visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
           attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) })
-      params_hash = update_note_params_hash.merge('attachments' => [file], 
+      params_hash = update_note_params_hash.merge('attachments' => [file],
           'attachment_ids' => [attachment_id] | canned_response.shared_attachments.map(&:attachment_id))
       t = create_ticket
       note = create_private_note(t)
@@ -991,7 +975,7 @@ module Ember
       match_json(private_update_note_pattern({}, note))
       assert_equal 1, note.cloud_files.count
     end
-    
+
     def test_agent_reply_template_with_empty_signature
       remove_wrap_params
       t = create_ticket
@@ -1009,9 +993,9 @@ module Ember
 
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_reply_template)
-      
+
     end
-    
+
     def test_agent_reply_template_with_signature
       remove_wrap_params
       t = create_ticket
@@ -1023,7 +1007,7 @@ module Ember
 
       get :reply_template, construct_params({ version: 'private', id: t.display_id }, false)
       assert_response 200
-      
+
       match_json(reply_template_pattern({
           template: "<div>#{t.display_id}</div>",
           signature: "<div><p>Thanks</p><p>#{t.subject}</p></div>"
@@ -1031,7 +1015,7 @@ module Ember
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_reply_template)
     end
-    
+
     def test_agent_forward_emplate_with_empty_template_and_empty_signature
       t = create_ticket
 
@@ -1046,8 +1030,8 @@ module Ember
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:present?)
     end
-    
-    
+
+
     def test_agent_forward_emplate_with_empty_template_and_with_signature
       t = create_ticket
 
@@ -1066,7 +1050,7 @@ module Ember
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:present?)
     end
-    
+
     def test_agent_forward_template_with_empty_signature
       remove_wrap_params
       t = create_ticket
@@ -1085,28 +1069,27 @@ module Ember
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_forward_template)
     end
-    
+
     def test_agent_forward_template_with_signature
       remove_wrap_params
       t = create_ticket
-      
       notification_template = "<div>{{ticket.id}}</div>"
       agent_signature = "<div><p>Thanks</p><p>{{ticket.subject}}</p></div>"
-      
+
       Agent.any_instance.stubs(:signature_value).returns(agent_signature)
       EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
 
       get :forward_template, construct_params({ version: 'private', id: t.display_id }, false)
       assert_response 200
-      
+
       match_json(conversation_template_pattern({
           template: "<div>#{t.display_id}</div>",
           signature: "<div><p>Thanks</p><p>#{t.subject}</p></div>"
         }))
-        
+
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_forward_template)
-      
+
     end
 
     def test_note_forward_template_with_empty_signature
@@ -1134,6 +1117,29 @@ module Ember
       EmailNotification.any_instance.unstub(:get_forward_template)
     end
 
+    def test_latest_note_forward_template_with_empty_signature
+      notification_template = "<div>{{ticket.id}}</div>"
+      Agent.any_instance.stubs(:signature_value).returns('')
+      EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
+      get :latest_note_forward_template, controller_params(version: 'private', id: ticket.display_id)
+      assert_response 200
+      match_json(conversation_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: ''))
+      Agent.any_instance.unstub(:signature_value)
+      EmailNotification.any_instance.unstub(:get_forward_template)
+    end
+
+    def test_latest_note_forward_template_with_signature
+      notification_template = "<div>{{ticket.id}}</div>"
+      agent_signature = "<div><p>Thanks</p><p>{{ticket.subject}}</p></div>"
+      Agent.any_instance.stubs(:signature_value).returns(agent_signature)
+      EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
+      get :latest_note_forward_template, controller_params(version: 'private', id: ticket.display_id)
+      assert_response 200
+      match_json(conversation_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: "<div><p>Thanks</p><p>#{ticket.subject}</p></div>"))
+      Agent.any_instance.unstub(:signature_value)
+      EmailNotification.any_instance.unstub(:get_forward_template)
+    end
+
     def test_full_text
       note = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
       note.note_body.full_text_html = note.note_body.body_html + "<div>quoted_text test</div>"
@@ -1143,5 +1149,40 @@ module Ember
       match_json(full_text_pattern(note))
       assert_response 200
     end
+
+    private
+      def with_twitter_update_stubbed(&block)
+        twit = sample_twitter_object
+        Twitter::REST::Client.any_instance.stubs(:update).returns(twit)
+        unless GNIP_ENABLED
+          Social::DynamoHelper.stubs(:update).returns(dynamo_update_attributes(twit[:id]))
+          Social::DynamoHelper.stubs(:get_item).returns(sample_dynamo_get_item_params)
+        end
+
+        yield
+
+        Twitter::REST::Client.any_instance.unstub(:update)
+        unless GNIP_ENABLED
+          Social::DynamoHelper.unstub(:update)
+          Social::DynamoHelper.unstub(:get_item)
+        end
+      end
+
+      def with_twitter_dm_stubbed(sample_dm_reply, &block)
+        Twitter::REST::Client.any_instance.stubs(:create_direct_message).returns(sample_dm_reply)
+        unless GNIP_ENABLED
+          Social::DynamoHelper.stubs(:insert).returns({})
+          Social::DynamoHelper.stubs(:update).returns({})
+        end
+
+        yield
+
+        Twitter::REST::Client.any_instance.unstub(:create_direct_message)
+        unless GNIP_ENABLED
+          Social::DynamoHelper.unstub(:insert)
+          Social::DynamoHelper.unstub(:update)
+        end
+
+      end
   end
 end

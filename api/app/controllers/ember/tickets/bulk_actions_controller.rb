@@ -36,12 +36,9 @@ module Ember
       private
 
         # code duplicated - validate_params method of API Tickets controller
-        def process_request_params
-          # We are obtaining the mapping in order to swap the field names while rendering(both successful and erroneous requests), instead of formatting the fields again.
+        def fetch_ticket_fields_mapping
           @ticket_fields = Account.current.ticket_fields_from_cache
           @name_mapping = TicketsValidationHelper.name_mapping(@ticket_fields) # -> {:text_1 => :text}
-          properties_hash = cname_params[:properties]
-          ParamsHelper.modify_custom_fields(properties_hash[:custom_fields], @name_mapping.invert) if properties_hash.is_a?(Hash)
         end
 
         def validate_update_params(item, validation_context)
@@ -59,7 +56,7 @@ module Ember
         end
 
         def validate_bulk_update_params
-          process_request_params
+          fetch_ticket_fields_mapping
           @validation_klass = 'TicketBulkUpdateValidation'
           @params_hash = cname_params.merge(statuses: Helpdesk::TicketStatus.status_objects_from_cache(current_account), ticket_fields: @ticket_fields)
           return unless validate_body_params(nil, @params_hash) && validate_property_params && validate_reply_params
@@ -91,7 +88,7 @@ module Ember
         def fields_to_validate
           return super unless bulk_update?
           custom_fields = @name_mapping.empty? ? [nil] : @name_mapping.values
-          [*ApiConstants::BULK_ACTION_FIELDS, *ApiTicketConstants::BULK_REPLY_FIELDS, properties: [*ApiTicketConstants::BULK_UPDATE_FIELDS, ['custom_fields' => custom_fields]]]
+          [*ApiConstants::BULK_ACTION_FIELDS, *ApiTicketConstants::BULK_REPLY_FIELDS, properties: [*ApiTicketConstants::BULK_UPDATE_FIELDS | ['custom_fields' => custom_fields]]]
         end
 
         def sanitize_property_params
@@ -123,7 +120,7 @@ module Ember
 
         def shared_attachments
           @shared_attachments ||= begin
-            current_account.attachments.where('id IN (?) AND attachable_type IN (?)', @attachment_ids, ['Account', 'Admin::CannedResponses::Response'])
+            current_account.attachments.where('id IN (?) AND attachable_type IN (?)', @attachment_ids, AttachmentConstants::CLONEABLE_ATTACHMENT_TYPES)
           end
         end
 
@@ -151,9 +148,12 @@ module Ember
         def assign_attributes_for_update
           assign_protected
           # Assign attributes required as the ticket delegator needs it.
-          @custom_fields = cname_params[:custom_field] # Assigning it here as it would be deleted in the next statement while assigning.
+          @custom_fields ||= cname_params[:custom_field] # Assigning it here as it would be deleted in the next statement while assigning.
           @delegator_attributes ||= validatable_delegator_attributes
           @item.assign_attributes(@delegator_attributes)
+          # Tags should not be overwritten for tickets in bulk update. Should delete from params so that update_attributes does not capture tags changes
+          @tags ||= cname_params.delete(:tags)
+          @item.tags += @tags if @tags
           @item.assign_description_html(cname_params[:ticket_body_attributes]) if cname_params[:ticket_body_attributes]
         end
 

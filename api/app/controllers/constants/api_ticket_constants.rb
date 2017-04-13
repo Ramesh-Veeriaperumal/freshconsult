@@ -23,8 +23,6 @@ module ApiTicketConstants
   SIDE_LOADING = %w(requester stats company survey count).freeze
   INCLUDE_PRELOAD_MAPPING = { 'stats' => :ticket_states }.freeze
   BULK_DELETE_PRELOAD_OPTIONS = [:tags, :schema_less_ticket].freeze
-  ORDER_TYPE = TicketsFilter::SORT_ORDER_FIELDS.map(&:first).map(&:to_s).freeze
-  ORDER_BY = TicketsFilter::SORT_FIELDS.map(&:first).map(&:to_s) - ['priority']
   DEFAULT_ORDER_BY = TicketsFilter::DEFAULT_SORT
   DEFAULT_ORDER_TYPE = TicketsFilter::DEFAULT_SORT_ORDER
   VALIDATABLE_DELEGATOR_ATTRIBUTES = %w(group_id responder_id product_id

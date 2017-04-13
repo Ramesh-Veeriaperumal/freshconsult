@@ -5,7 +5,7 @@ module QueryHashHelper
   SPAM_CONDITION = { 'condition' => 'spam', 'operator' => 'is', 'value' => false }
   DELETED_CONDITION = { 'condition' => 'deleted', 'operator' => 'is', 'value' => false }
 
-  def sample_filter_conditions
+  def sample_filter_conditions(params={})
     {
       data_hash: [
         { "condition"=>"responder_id", "operator"=>"is_in", "ff_name"=>"default", "value"=>"0,-1" },
@@ -16,18 +16,18 @@ module QueryHashHelper
       ],
       wf_model: "Helpdesk::Ticket",
       wf_order: "created_at",
-      wf_order_type: "desc", 
+      wf_order_type: "desc",
       custom_ticket_filter: {
         visibility: {
-          visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents], 
+          visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
           user_id: User.current.id
         }
       }
-    }
+    }.merge(params)
   end
 
-  def create_filter(custom_field = nil)
-    wf_filter_params = sample_filter_conditions
+  def create_filter(custom_field = nil, additional_params={})
+    wf_filter_params = sample_filter_conditions(additional_params)
     if custom_field
       condition = cf_query_hash(custom_field)
       wf_filter_params[:data_hash] << condition

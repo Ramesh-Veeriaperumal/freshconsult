@@ -106,13 +106,12 @@ class TicketValidation < ApiValidation
                                 section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
                               }
                            }, if: -> { create_or_update? }
+  # Ignore section fields validation for bulk update
   validates :custom_fields, custom_field: { custom_fields:
                               {
                                 validatable_custom_fields: proc { |x| TicketsValidationHelper.custom_non_dropdown_fields(x) },
                                 required_based_on_status: false,
-                                required_attribute: :required,
-                                ignore_string: :allow_string_param,
-                                section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
+                                ignore_string: :allow_string_param
                               }
                            }, if: :is_bulk_update?
   validates :twitter_id, :phone, :name, data_type: { rules: String, allow_nil: true }

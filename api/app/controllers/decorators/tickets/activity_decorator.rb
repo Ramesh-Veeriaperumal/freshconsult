@@ -34,7 +34,7 @@ module Tickets
     ].freeze
 
     ARRAY_CONTENT_TYPES = [
-      :add_tag, :remove_tag, :add_watcher, :add_a_cc,
+      :add_tag, :remove_tag, :add_a_cc,
       :email_to_requester, :email_to_group, :email_to_agent
     ].freeze
 
@@ -53,7 +53,7 @@ module Tickets
         highlight: summary.nil? ? nil : summary.to_i,
         ticket_id: @ticket.display_id,
         performed_at: parse_activity_time(published_time),
-        actions: send("#{performer_type}_actions")
+        actions: send("#{performer_type}_actions").reject{ |action| action.empty? }
       }
     end
 
@@ -126,13 +126,17 @@ module Tickets
         result_hash = items.collect do |key, value|
           result = {}
           type, content = action_content(key, value)
-          result[type] = content
+          result[type] = content if content.present? || CONTENT_LESS_TYPES.include?(key)
           result
         end
         result = result_hash.group_by(&:keys).map do |key, value|
           content = parsed_content(key.first, value)
-          action_hash = { type: key.first }
-          action_hash[:content] = content if content
+          type = key.first
+          action_hash = {}
+          if type
+            action_hash[:type] = type
+            action_hash[:content] = content if content
+          end
           action_hash
         end
         result
@@ -280,6 +284,7 @@ module Tickets
       def note(value)
         note_id = value[:id].to_i
         note = @query_data_hash[:notes][note_id]
+        return if note.nil?
         ConversationDecorator.new(note, ticket: @ticket).to_hash
       end
 
@@ -332,8 +337,10 @@ module Tickets
       # Tags & Rules Related activities
 
       ARRAY_CONTENT_TYPES.each do |name|
-        define_method name do |value|
-          value.compact
+        define_method name do |values|
+          values.compact.map do |value|
+            value.to_i == 0 ? value : value.to_i
+          end
         end
       end
 
@@ -347,6 +354,13 @@ module Tickets
           user_id = watch_arr[1].to_i
           { add_watcher: true, user_ids: [user_id] }
         end
+      end
+
+      def add_watcher(value)
+        {
+          add_watcher: true,
+          user_ids: value.map(&:to_i)
+        }
       end
 
       # scenario automation
@@ -369,17 +383,10 @@ module Tickets
       end
 
       def timesheet_edit(value)
-        old_params = build_timesheet_params(value, false)
-        new_params = build_timesheet_params(value, true)
-        result = {}
-        old_params.map do |key, val|
-          result[key] = if val != new_params[key]
-                          { old_value: val, new_value: new_params[key] }
-                        else
-                          val
-                        end
-        end
-        result
+        {
+          old_values: build_timesheet_params(value, false),
+          new_values: build_timesheet_params(value, true)
+        }
       end
 
       def timesheet_delete(value)

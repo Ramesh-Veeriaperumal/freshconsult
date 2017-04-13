@@ -1,13 +1,17 @@
 module CannedResponsesTestHelper
   def ca_response_show_pattern(ca_response_id = nil, attachments = [])
-    ca_response_search_pattern(ca_response_id).merge({
+    ca_response_pattern(ca_response_id).merge({
       attachments: attachments.map do |attachment|
-        attachment_pattern(attachment).merge(shared_attachment_id: Fixnum)
+        attachment_pattern(attachment).merge(is_shared: true)
       end
     })
   end
 
   def ca_response_search_pattern(ca_response_id = nil)
+    ca_response_pattern(ca_response_id).slice(:id, :title, :folder_id)
+  end
+
+  def ca_response_pattern(ca_response_id = nil)
     ca_response = @account.canned_responses.find(ca_response_id)
     {
       id: ca_response.id,

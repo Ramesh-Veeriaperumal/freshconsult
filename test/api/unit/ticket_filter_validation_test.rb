@@ -60,7 +60,7 @@ class TicketFilterValidationTest < ActionView::TestCase
       },
       filter: { list: 'new_and_my_open,watching,spam,deleted' },
       updated_since: { accepted: :'combined date and time ISO8601' },
-      order_by: { list: (TicketsFilter::api_sort_fields_options.map(&:first).map(&:to_s) - ['priority']).join(',') },
+      order_by: { list: (TicketsFilter::api_sort_fields_options.map(&:first).map(&:to_s)).join(',') },
       order_type: { list: 'asc,desc' } }, ticket_filter.error_options)
   end
 
@@ -94,6 +94,11 @@ class TicketFilterValidationTest < ActionView::TestCase
 
   def test_invalid_query_hash
     Account.stubs(:current).returns(Account.new)
+    ticket_filter = TicketFilterValidation.new(query_hash: nil, version: 'private')
+    refute ticket_filter.valid?
+    errors = ticket_filter.errors.full_messages
+    assert errors.include?('Query hash datatype_mismatch')
+
     ticket_filter = TicketFilterValidation.new(query_hash: Faker::Lorem.word, version: 'private')
     refute ticket_filter.valid?
     errors = ticket_filter.errors.full_messages
@@ -120,6 +125,12 @@ class TicketFilterValidationTest < ActionView::TestCase
     assert errors.include?('Ids array_datatype_mismatch')
 
     ticket_filter = TicketFilterValidation.new(ids: '10,20,30,40,50', version: 'private')
+    assert ticket_filter.valid?
+  end
+
+  def test_empty_string_query_hash
+    Account.stubs(:current).returns(Account.new)
+    ticket_filter = TicketFilterValidation.new(query_hash: '', version: 'private')
     assert ticket_filter.valid?
   end
 end

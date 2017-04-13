@@ -103,12 +103,14 @@ api_error_messages:
   only_query_hash_or_filter: "Cannot set both query hash and filter"
   select_a_field: "Atleast one of the fields is required"
   no_reply_privilege: "Cannot be set, no reply privilege"
+  no_edit_privilege: "Cannot be set, no edit privilege"
   unresolved_child: 'Ticket cannot be closed or resolved since one or more of the child tickets associated with this ticket are unresolved.'
   cannot_set_skip_notification: 'Cannot be set unless status is changed to closed'
   cannot_set_user_id: "Cannot set user_id when content type is inline"
   incorrect_image_dimensions: "Image dimensions are larger than expected"
   invalid_image_file: "Invalid file type(%{current_extension}). Please upload a jpg or png or gif or svg file"
   shorter_full_text: "Content of full text should be greater than that of body"
+  invalid_full_text: "Content of full text is different from that of body"
   cannot_set_pending_since: "It cannot be set, when created_at and updated_at are not set or status is not pending"
   duplicate_companies: "One or more duplicate company_ids found"
   cant_add_primary_resource_to_others: "Cannot add %{resource} to %{attribute} since it is %{status}"

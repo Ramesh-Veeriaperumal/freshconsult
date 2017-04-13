@@ -20,7 +20,7 @@ module Ember
 
     def test_create_todo
       ticket = create_ticket
-      todo = { body: 'Ticket todo 1', ticket_id: ticket.id }
+      todo = { body: 'Ticket todo 1', ticket_id: ticket.display_id }
       post :create, construct_params(@api_params.merge(todo), false)
       assert_response 200
       match_json(todo_pattern(Helpdesk::Reminder.last))
@@ -31,7 +31,7 @@ module Ember
       ticket = create_ticket
       @ticket = ticket
       rand(2..5).times do
-        todo = { body: 'Ticket todo 1', ticket_id: ticket.id }
+        todo = { body: 'Ticket todo 1', ticket_id: ticket.display_id }
         post :create, construct_params(@api_params.merge(todo), false)
         assert_response 200
         match_json(todo_pattern(Helpdesk::Reminder.last))
@@ -67,13 +67,14 @@ module Ember
 
     def test_create_todo_without_body
       ticket = create_ticket
-      post :create, construct_params(@api_params.merge(ticket_id: ticket.id), false)
+      post :create, construct_params(@api_params.merge(ticket_id: ticket.display_id), false)
       assert_response 400
       match_json(merge_invalid_value_pattern('body', 'is too short (minimum is 1 characters)'))
     end
 
     def test_create_todo_nonexisting_ticketid
-      post :create, construct_params(@api_params.merge(body: 'Non existing Id', ticket_id: scoper.last.id + 10), false)
+      create_ticket # To make sure we have atleast one ticket
+      post :create, construct_params(@api_params.merge(body: 'Non existing Id', ticket_id: Helpdesk::Ticket.last.display_id + 10), false)
       assert_response 404
     end
 
@@ -150,14 +151,14 @@ module Ember
       pattern = []
       pattern << todo_pattern(get_new_reminder('todo1', ticket.id))
       pattern << todo_pattern(get_new_reminder('todo2', ticket.id))
-      get :index, construct_params(@api_params, false).merge(ticket_id: ticket.id)
+      get :index, construct_params(@api_params, false).merge(ticket_id: ticket.display_id)
       assert_response 200
       match_json(pattern)
     end
 
     def test_index_with_invalid_ticket_id
       remove_wrap_params
-      get :index, construct_params(@api_params, false).merge(ticket_id: Helpdesk::Ticket.last.id + 10)
+      get :index, construct_params(@api_params, false).merge(ticket_id: Helpdesk::Ticket.last.display_id + 10)
       assert_response 404
     end
 

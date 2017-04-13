@@ -73,7 +73,8 @@ module SocialTestHelper
     fb_message = Facebook::KoalaWrapper::DirectMessage.new(fb_page)
     fb_message.fetch_messages
     Koala::Facebook::API.any_instance.unstub(:get_connections)
-    @account.facebook_posts.find_by_post_id(msg_id).postable
+    postable = @account.facebook_posts.find_by_post_id(msg_id).postable
+    postable.is_a?(Helpdesk::Ticket) ? postable : postable.notable
   end
 
   def sample_fb_post_feed(sender_id, feed_id, comment_id = nil, reply_comment_id = nil)

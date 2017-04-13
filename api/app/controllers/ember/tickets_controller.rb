@@ -7,7 +7,7 @@ module Ember
     include Helpdesk::ToggleEmailNotification
     decorate_views(decorate_object: [:update_properties], decorate_objects: [:index, :search])
 
-    INDEX_PRELOAD_OPTIONS = [:tags, :ticket_old_body, :schema_less_ticket, :flexifield, { requester: [:avatar, :flexifield, :default_user_company] }].freeze
+    INDEX_PRELOAD_OPTIONS = [:ticket_states, :tags, :ticket_old_body, :schema_less_ticket, :flexifield, :ticket_status, { requester: [:avatar, :flexifield, :companies, :user_emails, :tags] }, :custom_survey_results].freeze
     DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
     SINGULAR_RESPONSE_FOR = %w(show create update split_note update_properties).freeze
 
@@ -63,6 +63,7 @@ module Ember
       @note = @item.conversation.first
       return head(204) if @note.nil?
       @user = ContactDecorator.new(@note.user, {})
+      response.api_root_key = :conversation
     end
 
     def split_note
@@ -143,7 +144,7 @@ module Ember
 
       def shared_attachments
         @shared_attachments ||= begin
-          current_account.attachments.where('id IN (?) AND attachable_type IN (?)', @attachment_ids, ['Account', 'Admin::CannedResponses::Response'])
+          current_account.attachments.where('id IN (?) AND attachable_type IN (?)', @attachment_ids, AttachmentConstants::CLONEABLE_ATTACHMENT_TYPES)
         end
       end
 
@@ -199,7 +200,17 @@ module Ember
       def ticket_filter_params
         # format (json) is checked in CustomTicketFilter for API v2 to filter all tickets without last 30 days created_at limit
         # ids are not accepted by CustomTicketFilter, so ignoring it also.
-        { params: params.except(:ids, :format), filter: 'Helpdesk::Filters::CustomTicketFilter' }
+        {
+          params: params.except(:ids, :format).merge(order_params),
+          filter: 'Helpdesk::Filters::CustomTicketFilter'
+        }
+      end
+
+      def order_params
+        remap = {}
+        remap[:wf_order] = params[:order_by] if params[:order_by]
+        remap[:wf_order_type] = params[:order_type] if params[:order_type]
+        remap
       end
 
       def validate_filter_params
@@ -210,19 +221,13 @@ module Ember
       end
 
       def sanitize_filter_params
-        if params[:query_hash].present?
+        if params.key?(:query_hash)
           params[:wf_model] = 'Helpdesk::Ticket'
-          params[:data_hash] = QueryHash.new(params[:query_hash].values).to_system_format
+          params[:data_hash] = QueryHash.new(params[:query_hash].present? ? params[:query_hash].values : []).to_system_format
         else
           params[:filter] ||= DEFAULT_TICKET_FILTER
         end
-        map_filter_params
-      end
-
-      def map_filter_params
         params[:filter] = 'monitored_by' if params[:filter] == 'watching'
-        params[:wf_order] = params[:order_by]
-        params[:wf_order_type] = params[:order_type]
       end
 
       def assign_filter_params

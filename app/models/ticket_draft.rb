@@ -3,7 +3,7 @@ class TicketDraft
   include Redis::RedisKeys
   include Redis::TicketsRedis
 
-  FIELDS = [:body, :cc_emails, :bcc_emails, :from_email, :attachment_ids, :saved_at].freeze
+  FIELDS = [:body, :quoted_text, :cc_emails, :bcc_emails, :from_email, :attachment_ids, :saved_at].freeze
 
   REDIS_MAX_ATTEMPTS = 3
 
@@ -60,6 +60,7 @@ class TicketDraft
     def map_hash_to_attributes(draft_hash)
       if draft_hash.present?
         @body = draft_hash['draft_data']
+        @quoted_text = draft_hash['draft_quoted_text']
         @cc_emails = draft_hash['draft_cc'].split(';')
         @bcc_emails = draft_hash['draft_bcc'].split(';')
         @from_email = draft_hash['draft_from']
@@ -71,6 +72,7 @@ class TicketDraft
     def to_hash
       @draft_hash ||= {
         'draft_data' => @body,
+        'draft_quoted_text' => @quoted_text,
         'draft_cc' => (@cc_emails || []).join(';'),
         'draft_bcc' => (@bcc_emails || []).join(';'),
         'draft_from' => @from_email || '',

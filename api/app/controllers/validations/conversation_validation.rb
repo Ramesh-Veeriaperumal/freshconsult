@@ -58,6 +58,7 @@ class ConversationValidation < ApiValidation
   end
 
   def validate_full_text_length
-    errors[:full_text] << :shorter_full_text if full_text.length <= body.length
+    errors[:full_text] << :shorter_full_text if full_text.length < body.length
+    errors[:full_text] << :invalid_full_text if full_text.length == body.length && full_text != body
   end
 end

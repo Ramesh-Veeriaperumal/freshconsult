@@ -1,7 +1,8 @@
 class DraftValidation < ApiValidation
-  attr_accessor :cc_emails, :bcc_emails, :body, :from_email
+  attr_accessor :cc_emails, :bcc_emails, :body, :quoted_text, :from_email
 
   validates :body, data_type: { rules: String, required: true, allow_nil: false }, on: :save_draft
+  validates :quoted_text, data_type: { rules: String, allow_nil: true }, on: :save_draft
   validates :cc_emails, :bcc_emails, data_type: { rules: Array }, array: { data_type: { rules: String, allow_nil: false }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } }
   validates :cc_emails, :bcc_emails, custom_length: { maximum: ApiTicketConstants::MAX_EMAIL_COUNT, message_options: { element_type: :values } }
   validates :from_email, data_type: { rules: String, allow_nil: true }

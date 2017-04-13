@@ -12,9 +12,18 @@ properties:
     type: array
     items:
       $ref: '#/definitions/query_hash'
-  order:
+  order_by:
     type: string
   order_type:
     type: string
   per_page:
     type: number
+  visibility:
+    type: object
+    properties:
+      visibility:
+        type: integer
+        enum: [1, 2, 3]
+        description: "1 - All Agents | 2 - Agents in the group specified by group_id | 3 - Just the owner(user_id)"
+      group_id:
+        type: integer

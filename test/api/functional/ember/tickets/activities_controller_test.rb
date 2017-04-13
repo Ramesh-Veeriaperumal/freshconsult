@@ -50,7 +50,7 @@ module Ember
 
       def test_activity_without_privilege
         remove_privilege(User.current, :manage_tickets)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         assert_response 403
       ensure
         add_privilege(User.current, :manage_tickets)
@@ -58,14 +58,14 @@ module Ember
 
       def test_activity_thrift_failure
         @controller.stubs(:fetch_activities).returns(false)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         assert_response 500
       end
 
       def test_property_update_activity
         stub_data = property_update_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         match_json(property_update_activity_pattern(stub_data))
         assert_response 200
       ensure
@@ -75,7 +75,7 @@ module Ember
       def test_invalid_fields_activity
         stub_data = invalid_fields_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         match_json(invalid_fields_activity_pattern(stub_data))
         assert_response 200
       ensure
@@ -85,7 +85,7 @@ module Ember
       def test_add_note_activity
         stub_data = add_note_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         match_json(note_activity_pattern(stub_data))
         assert_response 200
       ensure
@@ -95,7 +95,7 @@ module Ember
       def test_add_tag_activity
         stub_data = tag_activity(true)
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         match_json(tag_activity_pattern(stub_data, true))
         assert_response 200
       ensure
@@ -105,7 +105,7 @@ module Ember
       def test_remove_tag_activity
         stub_data = tag_activity(false)
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         match_json(tag_activity_pattern(stub_data, false))
         assert_response 200
       ensure
@@ -115,7 +115,7 @@ module Ember
       def test_spam_ticket_activity
         stub_data = spam_ticket_activity(true)
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         match_json(spam_activity_pattern(stub_data))
         assert_response 200
       ensure
@@ -125,7 +125,7 @@ module Ember
       def test_unspam_ticket_activity
         stub_data = spam_ticket_activity(false)
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         match_json(spam_activity_pattern(stub_data))
         assert_response 200
       ensure
@@ -135,7 +135,7 @@ module Ember
       def test_delete_ticket_activity
         stub_data = delete_ticket_activity(true)
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         match_json(delete_activity_pattern(stub_data))
         assert_response 200
       ensure
@@ -145,7 +145,7 @@ module Ember
       def test_restore_ticket_activity
         stub_data = delete_ticket_activity(false)
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         match_json(delete_activity_pattern(stub_data))
         assert_response 200
       ensure
@@ -155,7 +155,7 @@ module Ember
       def test_archive_ticket_activity
         stub_data = archive_ticket_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         match_json(archive_activity_pattern(stub_data))
         assert_response 200
       ensure
@@ -165,7 +165,7 @@ module Ember
       def test_add_watcher_activity
         stub_data = watcher_activity(true)
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         match_json(watcher_activity_pattern(stub_data))
         assert_response 200
       ensure
@@ -175,7 +175,7 @@ module Ember
       def test_remove_watcher_activity
         stub_data = watcher_activity(false)
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         match_json(watcher_activity_pattern(stub_data))
         assert_response 200
       ensure
@@ -185,7 +185,7 @@ module Ember
       def test_execute_scenario_activity
         stub_data = execute_scenario_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         match_json(execute_scenario_activity_pattern(stub_data))
         assert_response 200
       ensure
@@ -195,7 +195,7 @@ module Ember
       def test_add_cc_activity
         stub_data = add_cc_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         match_json(add_cc_activity_pattern(stub_data))
         assert_response 200
       ensure
@@ -205,7 +205,7 @@ module Ember
       def test_email_to_group_activity
         stub_data = email_to_group_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         match_json(email_to_activity_pattern(stub_data, :email_to_group))
         assert_response 200
       ensure
@@ -215,7 +215,7 @@ module Ember
       def test_email_to_requester_activity
         stub_data = email_to_requester_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         match_json(email_to_activity_pattern(stub_data, :email_to_requester))
         assert_response 200
       ensure
@@ -225,7 +225,7 @@ module Ember
       def test_email_to_agent_activity
         stub_data = email_to_agent_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         match_json(email_to_activity_pattern(stub_data, :email_to_agent))
         assert_response 200
       ensure
@@ -235,7 +235,7 @@ module Ember
       def test_delete_status_activity
         stub_data = delete_status_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         match_json(delete_status_activity_pattern(stub_data))
         assert_response 200
       ensure
@@ -245,7 +245,7 @@ module Ember
       def test_ticket_merge_target_activity
         stub_data = ticket_merge_target_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @target_ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @target_ticket.display_id)
         match_json(ticket_merge_activity_pattern(stub_data, :ticket_merge_target))
         assert_response 200
       ensure
@@ -255,7 +255,7 @@ module Ember
       def test_ticket_merge_source_activity
         stub_data = ticket_merge_source_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         match_json(ticket_merge_activity_pattern(stub_data, :ticket_merge_source))
         assert_response 200
       ensure
@@ -265,7 +265,7 @@ module Ember
       def test_ticket_split_target_activity
         stub_data = ticket_split_target_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @target_ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @target_ticket.display_id)
         match_json(ticket_split_activity_pattern(stub_data, :ticket_split_target))
         assert_response 200
       ensure
@@ -275,7 +275,7 @@ module Ember
       def test_ticket_split_source_activity
         stub_data = ticket_split_source_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         match_json(ticket_split_activity_pattern(stub_data, :ticket_split_source))
         assert_response 200
       ensure
@@ -285,7 +285,7 @@ module Ember
       def test_ticket_import_activity
         stub_data = ticket_import_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         match_json(ticket_import_activity_pattern(stub_data))
         assert_response 200
       ensure
@@ -295,7 +295,7 @@ module Ember
       def test_round_robin_activity
         stub_data = round_robin_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         match_json(round_robin_activity_pattern(stub_data))
         assert_response 200
       ensure
@@ -306,7 +306,7 @@ module Ember
         ticket = create_ticket
         stub_data = timesheet_create_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         match_json(create_timesheet_activity_pattern(stub_data))
         assert_response 200
       ensure
@@ -317,7 +317,7 @@ module Ember
         ticket = create_ticket
         stub_data = timesheet_edit_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         match_json(edit_timesheet_activity_pattern(stub_data))
         assert_response 200
       ensure
@@ -328,8 +328,19 @@ module Ember
         ticket = create_ticket
         stub_data = timesheet_delete_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
-        get :index, controller_params(version: 'private', ticket_id: @ticket.id)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         match_json(delete_timesheet_activity_pattern(stub_data))
+        assert_response 200
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_empty_actions_activity
+        ticket = create_ticket
+        stub_data = empty_action_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
+        match_json([])
         assert_response 200
       ensure
         @controller.unstub(:fetch_activities)
