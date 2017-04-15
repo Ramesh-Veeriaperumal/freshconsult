@@ -3668,7 +3668,7 @@ es:
     unflag_spam: "Unflag Spam"
     pick_up: Recoger
     unwatch: "sin observador"
-    submit_ticket_title: "Enviar un ticket"
+    submit_ticket_title: "Enviar una consulta"
     learn_more: "Mas información."
     submit_ticket_new_title: "Crear un nuevo ticket"
     create_ticket_title: "Crear un nuevo ticket"
@@ -7441,7 +7441,7 @@ es:
   emails_dropped_message: "Se han quitado los siguientes correos por moderación: %{emails}"
   emails_added_to_cc: "Correos agregados correctamente como CC."
   attach_file_local: "Adjuntar archivo desde el ordenador"
-  attach_file: "Adjuntar Archivo"
+  attach_file: "Adjuntar archivo"
   dropbox_attach_label: "Adjuntar desde"
   dropbox_attach_from_text: "Adjuntar desde <b>Dropbox</b>"
   dropbox_choose_file: "Elegir archivo"

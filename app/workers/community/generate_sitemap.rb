@@ -10,8 +10,10 @@ class Community::GenerateSitemap < BaseWorker
         @account = Account.find_by_id(account_id).make_current
         key = SITEMAP_OUTDATED % { :account_id => @account.id }
         if portal_redis_key_exists?(key)
-          generate if @account.features_included?(:sitemap)
+          Rails.logger.info ":::::: GenerateSitemap: Sitemap key is set for account #{account_id} ::::::"
+          generate if @account.sitemap_enabled?
           remove_portal_redis_key(key)
+          Rails.logger.info ":::::: GenerateSitemap: Sitemap key is removed for account #{account_id} ::::::"
         end
       end
     end
@@ -20,17 +22,23 @@ class Community::GenerateSitemap < BaseWorker
   private
 
   def generate
+    Rails.logger.info ":::::: GenerateSitemap: Sitemap feature is enabled for account #{@account.id} ::::::"
     @account.portals.each do |portal|
       portal.make_current
-      portal.clear_sitemap_cache 
       build(portal)
+      Portal.reset_current_portal
     end
   end
 
   def build(portal)
     xml = Community::Sitemap.new(portal).build
+    Rails.logger.info ":::::: GenerateSitemap: Sitemap xml is built for portal #{portal.id} in account #{portal.account_id} ::::::"
+    write_to_s3(xml, portal)
+    Rails.logger.info ":::::: GenerateSitemap: Sitemap xml is uploaded into S3 for portal #{portal.id} in account #{portal.account_id} ::::::"
+  end
+
+  def write_to_s3(xml, portal)
     path = "sitemap/#{portal.account_id}/#{portal.id}.xml"
     AwsWrapper::S3Object.store(path, xml, S3_CONFIG[:bucket])
-    Portal.reset_current_portal 
   end
 end

@@ -11,7 +11,9 @@ class Va::Action
   EVENT_PERFORMER = -2
   ASSIGNED_AGENT = ASSIGNED_GROUP = 0
 
-  attr_accessor :action_key, :act_hash, :doer, :triggered_event, :va_rule
+  attr_accessor :action_key, :act_hash, :doer, :triggered_event, :va_rule, :skip_record_action
+
+  IRREVERSIBLE_ACTIONS = [:add_comment, :add_watcher, :send_email_to_agent, :send_email_to_group, :send_email_to_requester, :add_tag, :delete_ticket, :mark_as_spam, :internal_group_id, :internal_agent_id]
 
   ACTION_PRIVILEGE =
     {  
@@ -37,8 +39,13 @@ class Va::Action
     act_hash[:value]
   end
   
-  def trigger(act_on, doer=nil, triggered_event=nil)
+  def trigger(act_on, doer=nil, triggered_event=nil, only_reversible_actions = false)
     begin
+      if only_reversible_actions && IRREVERSIBLE_ACTIONS.include?(action_key.to_sym)
+        Rails.logger.debug "In validation, Skipping trigger act_on : #{act_on.inspect} action_key : #{action_key}"
+        return
+      end
+      @skip_record_action = only_reversible_actions
       #Rails.logger.debug "INSIDE trigger of Va::Action with act_on : #{act_on.inspect} action_key : #{action_key} value: #{value}"
       @doer = doer
       @triggered_event = triggered_event
@@ -57,7 +64,6 @@ class Va::Action
           return
         end
       end
-
       Rails.logger.debug "Unsupported action key :: #{action_key}"
     rescue Exception => e
       Rails.logger.debug "For Va::Action #{self} Exception #{e} rescued"
@@ -65,6 +71,7 @@ class Va::Action
   end
   
   def record_action(ticket, params = nil)
+    return if @skip_record_action
     performer = @doer
     activity_params = {:ticket => ticket}
     activity_params.merge!({
@@ -102,8 +109,9 @@ class Va::Action
 
   def responder_id(act_on)
     r_id = value.to_i
+    return if r_id == EVENT_PERFORMER && doer.nil?
     begin
-      responder = (r_id == EVENT_PERFORMER) ? (act_on.agent_performed?(doer) ? doer : nil) : act_on.account.technicians.find(value.to_i)
+      responder = (r_id == EVENT_PERFORMER) ? event_performing_agent(act_on, doer) : act_on.account.technicians.find(value.to_i)
     rescue ActiveRecord::RecordNotFound
     end
     act_on.responder = responder if responder || value.empty?
@@ -112,8 +120,9 @@ class Va::Action
 
   def internal_agent_id(act_on)
     ia_id = value.to_i
+    return if ia_id == EVENT_PERFORMER && doer.nil?
     begin
-      internal_agent = (ia_id == EVENT_PERFORMER) ? (act_on.agent_performed?(doer) ? doer : nil) : act_on.account.technicians.find(value.to_i)
+      internal_agent = (ia_id == EVENT_PERFORMER) ? event_performing_agent(act_on, doer) : act_on.account.technicians.find(value.to_i)
     rescue ActiveRecord::RecordNotFound
     end
     act_on.internal_agent = internal_agent if internal_agent || value.empty?
@@ -225,7 +234,7 @@ class Va::Action
   end
 
   def send_email_to_agent(act_on)
-    return if act_on.spam?
+    return if act_on.spam? || (act_hash[:email_to].to_i == EVENT_PERFORMER && doer.nil?)
     agent = get_agent(act_on)
     if agent
       send_internal_email(act_on, agent.email)
@@ -275,12 +284,16 @@ class Va::Action
         when ASSIGNED_AGENT
           act_on.responder
         when EVENT_PERFORMER
-          act_on.agent_performed?(doer) ? doer : nil
+          event_performing_agent(act_on, doer)
         else 
           act_on.account.users.find(a_id)
         end
       rescue ActiveRecord::RecordNotFound
       end
+    end
+
+    def event_performing_agent(act_on, doer)
+      doer.present? && act_on.agent_performed?(doer) ? doer : nil
     end
 
     def send_internal_email act_on, receipients
@@ -297,10 +310,14 @@ class Va::Action
     end
 
     def substitute_placeholders act_on, content_key     
-      content = act_hash[content_key].to_s
-      content = RedCloth.new(content).to_html unless content_key == :email_subject
-      Liquid::Template.parse(content).render( 'event_performer' => doer,
-                'ticket' => act_on, 'helpdesk_name' => act_on.account.helpdesk_name, 'comment' => act_on.notes.visible.exclude_source('meta').last)
+      content           = act_hash[content_key].to_s
+      content           = RedCloth.new(content).to_html unless content_key == :email_subject
+
+      placeholder_hash  = {'ticket' => act_on, 'helpdesk_name' => act_on.account.helpdesk_name,
+                          'comment' => act_on.notes.visible.exclude_source('meta').last}
+      placeholder_hash.merge!('event_performer' => doer) if doer.present?
+
+      Liquid::Template.parse(content).render(placeholder_hash)
     end
 
     def assign_custom_field act_on, field, value

@@ -3,16 +3,23 @@ Dir["#{Rails.root}/test/core/functional/helpdesk/ticket_test_cases/*.rb"].each {
 
 class Helpdesk::TicketsControllerTest < ActionController::TestCase
 
-#include helpers
+  # include helpers
   include TicketsTestHelper
   include DynamoTestHelper
   include LinkTicketAssertions
   include NoteTestHelper
+  include SharedOwnershipTestHelper
+  include AccountTestHelper
+  include UsersTestHelper
+  include ControllerTestHelper
 
-#include tests
+  # include tests
   include LinkTicketTests
   include LinkTicketNegativeTests
-
+  include TicketDetailsTests
+  include TicketDetailsNegativeTests
+  include TicketListTests
+  include TicketListNegativeTests
 
   def setup
     super

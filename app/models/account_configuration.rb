@@ -61,7 +61,7 @@ class AccountConfiguration < ActiveRecord::Base
   end
 
   def update_contact_company_info!(user_params)
-    self.update_attributes(user_params.slice(*(CONTACT_INFO_KEYS + COMPANY_INFO_KEYS_WITH_PREFIX)))
+    self.update_attributes!(user_params.slice(*(CONTACT_INFO_KEYS + COMPANY_INFO_KEYS_WITH_PREFIX)))
   end
 
   private
@@ -75,7 +75,7 @@ class AccountConfiguration < ActiveRecord::Base
   	def update_crm_and_map
       if (Rails.env.production? or Rails.env.staging?) && company_contact_info_updated?
         Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::UpdateAdmin, {:account_id => account_id, :item_id => id})
-        # Resque.enqueue_at(15.minutes.from_now, Marketo::AddLead, {:account_id => account_id, :old_email => previous_email})
+        Resque.enqueue_at(15.minutes.from_now, Marketo::AddLead, {:account_id => account_id, :old_email => previous_email})
       end
     end
 

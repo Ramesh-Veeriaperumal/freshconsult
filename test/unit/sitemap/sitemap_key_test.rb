@@ -36,7 +36,7 @@ class SitemapKeyTest < ActiveSupport::TestCase
   end
 
   test "sitemap is not generated when sitemap feature is not set for account" do
-    if @account.features_included?(:sitemap)
+    if @account.sitemap_enabled?
       @account.features.sitemap.destroy
       @account.reload
     end
@@ -48,7 +48,7 @@ class SitemapKeyTest < ActiveSupport::TestCase
   end
 
   test "sitemap is generated only if sitemap feature is enabled and redis key is set for the account" do
-    @account.add_features(:sitemap) unless @account.features_included?(:sitemap)
+    @account.add_features(:sitemap) unless @account.sitemap_enabled?
     new_fc = create_test_category
     worker = Community::GenerateSitemap.new
     worker.perform(@account.id)

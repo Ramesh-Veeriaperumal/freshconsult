@@ -10,10 +10,10 @@ class Helpdesk::SectionField < ActiveRecord::Base
   attr_protected :account_id
 
   belongs_to_account
-  belongs_to :ticket_field, :class_name => "Helpdesk::TicketField"
+  belongs_to :ticket_field, :class_name => "Helpdesk::TicketField", :include => [:picklist_values, :nested_ticket_fields]
   belongs_to :parent_ticket_field, class_name: "Helpdesk::TicketField"
   belongs_to :section, :class_name => "Helpdesk::Section"
-
+  
   validates_presence_of :ticket_field_id
 
   after_commit :clear_cache

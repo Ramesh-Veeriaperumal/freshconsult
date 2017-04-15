@@ -52,7 +52,7 @@ class Subscription < ActiveRecord::Base
 
   after_update :add_to_crm
   after_update :update_reseller_subscription
-  after_commit :update_social_subscription, :add_free_freshfone_credit, :update_crm, :dkim_category_change, on: :update
+  after_commit :update_social_subscription, :add_free_freshfone_credit, :update_crm, :dkim_category_change, :update_ticket_activity_export, on: :update
   after_commit :clear_account_susbcription_cache
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
@@ -263,6 +263,16 @@ class Subscription < ActiveRecord::Base
     end
     update_gnip_subscription(twitter_callback) if twitter_callback
     update_facebook_subscription(facebook_callback) if facebook_callback
+  end
+
+  def update_ticket_activity_export
+    old_state = @old_subscription.state
+    if (old_state != "suspended" && state == "suspended")
+      ticket_activity_export = account.activity_export
+      return if ticket_activity_export.nil? or !ticket_activity_export.active
+      ticket_activity_export.active = false
+      ticket_activity_export.save
+    end
   end
 
   def offline_subscription?

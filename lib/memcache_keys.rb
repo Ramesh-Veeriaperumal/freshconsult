@@ -63,6 +63,8 @@ module MemcacheKeys
   FORUM_CATEGORIES = "v1/FORUM_CATEGORIES:%{account_id}"
 
   ALL_SOLUTION_CATEGORIES = "v1/ALL_SOLUTION_CATEGORIES:%{account_id}"
+  
+  ACCOUNT_ACTIVITY_EXPORT = "v1/ACCOUNT_ACTIVITY_EXPORT:%{account_id}"
 
   CONTACT_FORM_FIELDS = "v1/CONTACT_FORM_FIELDS:%{account_id}:%{contact_form_id}"
 
@@ -170,6 +172,10 @@ module MemcacheKeys
   SITEMAP_KEY = "SITEMAP:%{account_id}:%{portal_id}"
 
   MOST_VIEWED_ARTICLES = "MOST_VIEWED_ARTICLES:%{account_id}:%{language_id}:%{cache_version}"
+
+  ACCOUNT_REQUIRED_TICKET_FIELDS = "ACCOUNT_REQUIRED_TICKET_FIELDS:%{account_id}"
+
+  ACCOUNT_SECTION_PARENT_FIELDS = "ACCOUNT_SECTION_PARENT_FIELDS:%{account_id}"
 
   ACCOUNT_DASHBOARD_SHARD_NAME = "v1/ACCOUNT_DASHBOARD_SHARD_NAME:%{account_id}"
 

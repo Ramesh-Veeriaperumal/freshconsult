@@ -53,7 +53,7 @@ class SendgridDomainUpdates < BaseWorker
     generated_key = generate_callback_key
     check_spam_account
     post_url = SendgridWebhookConfig::POST_URL % { :full_domain => domain, :key => generated_key }
-    post_args = {:hostname => domain, :url => post_url, :spam_check => false, :send_raw => false }
+    post_args = {:hostname => domain, :url => post_url, :spam_check => false, :send_raw => true }
     response = send_request('post', SendgridWebhookConfig::SENDGRID_API["set_url"] , post_args)
     Rails.logger.info "Response for sendgrid create action code: #{response.code}, message: #{response.message}"
     return false unless response.code == 200
@@ -171,7 +171,7 @@ class SendgridDomainUpdates < BaseWorker
 
     generated_key = generate_callback_key
     post_url = SendgridWebhookConfig::POST_URL % { :full_domain => domain, :key => generated_key }
-    post_args = { :url => post_url, :spam_check => false, :send_raw => false }
+    post_args = { :url => post_url, :spam_check => false, :send_raw => true }
     response = send_request('patch', SendgridWebhookConfig::SENDGRID_API['update_url'] + domain, post_args)
     Rails.logger.info "Response message for sendgrid update action code: #{response.code}, message: #{response.message}"
     webhook_key = AccountWebhookKey.find_by_account_id_and_vendor_id(Account.current.id, vendor_id)
