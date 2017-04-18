@@ -13,6 +13,6 @@ module Reports::ScheduledExport::Constants
   	:active => false
   }
 
-  ACTIVITY_EXPORT_API = "%{domain}.freshdesk.com/api/v2/export/ticket_activities?created_at=date" 
+  ACTIVITY_EXPORT_API = "https://%{domain}.freshdesk.com/api/v2/export/ticket_activities" 
 
 end
