@@ -44,4 +44,7 @@ module Helpdesk::Email::Constants
 
 	MAX_EMAIL_SIZE = 30.megabyte
 
+	TRUNCATE_CONTENT = [:text, :html]
+	TRUNCATE_SIZE = 500.kilobyte
+
 end

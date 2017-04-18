@@ -6,9 +6,7 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
 
   before_filter :verify_oauth_callback , :only => [:oauth_callback]
   before_filter :extension, :only => [:install, :reinstall, :uninstall, :oauth_callback]
-  before_filter :installed_extension_details, :only => [:reinstall, :oauth_callback]
   before_filter :verify_billing_info, :only => [:install, :reinstall], :if => :paid_app?
-  before_filter :oauth_tokens, :only => [:reinstall]
 
   rescue_from Exception, :with => :mkp_exception
 
@@ -18,7 +16,7 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
     @configs = extn_configs.body
     render 'admin/marketplace/installed_extensions/configs', :status => extn_configs.status
   end
- 
+
   def edit_configs
     extn_configs = extension_configs
     render_error_response and return if error_status?(extn_configs)
@@ -45,7 +43,7 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
   def install
     install_ext = install_extension(install_params(params[:configs]))
     flash[:notice] = t('marketplace.install_action.success')
-    render :nothing => true, :status => install_ext.status 
+    render :nothing => true, :status => install_ext.status
   end
 
   def oauth_configs
@@ -65,15 +63,18 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
   def oauth_callback
     config_params = {}
     config_params = $redis_mkp.hgetall(redis_key)
+    config_params["oauth_configs"] = {}
     account_tokens = fetch_tokens
     if error_status?(account_tokens)
       notice_message = t('marketplace.install_action.failure')
     else
+      config_params["oauth_configs"].merge!(account_tokens.body)
       if params['upgrade']
-        update_ext = update_extension(install_params(config_params.merge(account_tokens.body))
-                                      .deep_merge(previous_version_addon))
+        prev_version_addon = previous_version_addon
+        return unless prev_version_addon
+        update_ext = update_extension(install_params(config_params).deep_merge(prev_version_addon))
       else
-        install_ext = install_extension(install_params(config_params.merge(account_tokens.body)))
+        install_ext = install_extension(install_params(config_params))
       end
       notice_message = t('marketplace.install_action.success')
     end
@@ -81,7 +82,9 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
   end
 
   def reinstall
-    update_ext = update_extension(install_params(params[:configs]).deep_merge(previous_version_addon))
+    prev_version_addon = previous_version_addon
+    return unless prev_version_addon
+    update_ext = update_extension(install_params(params[:configs]).deep_merge(prev_version_addon))
     flash[:notice] = t('marketplace.update_action.success')
     render :nothing => true, :status => update_ext.status
   end
@@ -103,20 +106,6 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
 
   private
 
-  def oauth_tokens
-    is_oauth_app = extension['features'].present? && extension['features'].include?('oauth')
-    
-    installed_extension = installed_extension_details
-    render_error_response and return if error_status?(installed_extension)
-
-    if (installed_extension.body['version_id'].to_s == params[:version_id]) && is_oauth_app
-      acc_config = account_configs
-      render_error_response and return if error_status?(acc_config)
-      params[:configs]['access_token'] = acc_config.body['access_token'] if acc_config.body['access_token']
-      params[:configs]['refresh_token'] = acc_config.body['refresh_token'] if acc_config.body['refresh_token']
-    end
-  end
-
   def oauth_handshake(callback, is_reauthorize = false)
     oauth_callback_url =  "#{request.protocol}#{request.host_with_port}" + callback
     mkp_oauth_endpoint = Marketplace::ApiEndpoint::ENDPOINT_URL[:oauth_install] % {
@@ -124,8 +113,7 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
       :account_id => Account.current.id.to_s,
       :version_id => params[:version_id]
     }
-    shard = ShardMapping.lookup_with_account_id(Account.current.id)
-    reauth_param = is_reauthorize ? "&edit_oauth=true&account_pod=" + shard.pod_info + "&installed_extn_id=" + params[:installed_extn_id] : ""
+    reauth_param = is_reauthorize ? "&edit_oauth=true&installed_extn_id=" + params[:installed_extn_id] : ""
     redirect_url = "#{MarketplaceConfig::MKP_OAUTH_URL}/" + mkp_oauth_endpoint + "?callback=" + oauth_callback_url + reauth_param
     redirect_to redirect_url + "&fdcode=" + CGI.escape(generate_md5_digest(redirect_url, MarketplaceConfig::API_AUTH_KEY))
   end
@@ -142,15 +130,20 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
   end
 
   def install_params(configs)
-      { :extension_id => params[:extension_id],
-        :version_id => params[:version_id],
-        :configs => configs,
-        :enabled => Marketplace::Constants::EXTENSION_STATUS[:enabled],
-        :type => @extension['type'],
-        :options => @extension['page_options'],
-        :events => @extension['events']
-      }.merge(paid_app_params)
+    inst_params = {
+                    :extension_id => params[:extension_id],
+                    :version_id => params[:version_id],
+                    :configs => configs,
+                    :enabled => Marketplace::Constants::EXTENSION_STATUS[:enabled],
+                    :type => @extension['type'],
+                    :options => @extension['page_options']
+                  }.merge(paid_app_params)
+    if configs.present? && configs["oauth_configs"].present?
+      inst_params[:oauth_configs] = configs["oauth_configs"]
+      inst_params[:configs].except!("oauth_configs")
     end
+    inst_params
+  end
 
     def uninstall_params
       { :extension_id => params[:extension_id]
@@ -183,7 +176,7 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
 
     def verify_billing_info
       unless current_account.active? && current_account.subscription.card_number.present?
-        render :nothing => true, :status => 400 
+        render :nothing => true, :status => 400
       end
     end
 
@@ -200,12 +193,12 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
 
     def previous_version_addon
       installed_extension = installed_extension_details
-      render_error_response and return if error_status?(installed_extension)
+      render_error_response and return false if error_status?(installed_extension)
       installed_version_id = installed_extension.body['version_id']
 
       if installed_version_id != params[:version_id]
         installed_version = version_details(installed_version_id)
-        render_error_response and return if error_status?(installed_version)
+        render_error_response and return false if error_status?(installed_version)
 
         addon_id = installed_version.body['addon_id']
         return { :billing => { :previous_version_addon => addon_id }.merge(

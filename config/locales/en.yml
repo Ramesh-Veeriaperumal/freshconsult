@@ -90,19 +90,19 @@ en:
     dropped:
       summary_error_text: "Message dropped - Invalid or problematic address"
       help_text:
-        admin: "Any message to this address will not be sent as it's likely an invalid or mistyped address and has been added to the drop list. Contact Freshdesk Support if you believe that this address is valid and should be removed from the drop list for future communication."
-        agent: "Any message to this address will not be sent as it's likely an invalid or mistyped address and has been added to the drop list. Contact your account administrator if you believe that this address is valid and should be removed from the drop list for future communication."
+        admin: "Any message sent to this address will not be delivered as the address you've entered is invalid or mistyped. Please contact Freshdesk support if you believe that this address is valid and should be removed from the drop list for future communication."
+        agent: "Any message sent to this address will not be delivered as the address you've entered is invalid or mistyped. Please contact your account administrator if you believe that this address is valid and should be removed from the drop list for future communication."
     dropped_unsubscribed:
       summary_error_text: "Message dropped - Unsubscribed address"
       help_text:
-        admin: "Any message to this address will not be sent as the recipient has unsubscribed from this domain. Contact Freshdesk Support if you want to enable future communication to this address."
-        agent: "Any message to this address will not be sent as the recipient has unsubscribed from this domain. Contact your account administrator if you want to enable future communication to this address"
+        admin: "Any message sent to this address will not be delivered as the recipient has unsubscribed from this domain. Please contact Freshdesk Support if you want to enable future communication with this address."
+        agent: "Any message sent to this address will not be delivered as the recipient has unsubscribed from this domain. Please contact your account administrator if you want to enable future communication with this address."
     bounce_temporary:
       summary_error_text: "Message bounced - Temporary error"
-      help_text: "The message did not reach this recipient after multiple attempts likely due to connection issues with the remote server or temporary problems like the mailbox being full. Retrying after some time should solve the problem."
+      help_text: "The message did not reach this recipient after multiple attempts. This could be due to connection issues with the remote server or temporary problems like the mailbox being full. Please retry sending the message after some time."
     bounce_permanent:
       summary_error_text: "Message bounced - Permanent error"
-      help_text: "The message did not reach this recipient after multiple attempts. You can attempt re-sending the message but it's likely that this is an invalid or mistyped address."
+      help_text: "The message did not reach this recipient even after multiple attempts. You can try resending the message, but it's likely that the address you've entered may be invalid or mistyped."
     suppression_list_alert:
       subject: "Request to remove address from drop list"
       company: "Company"
@@ -114,8 +114,8 @@ en:
       subject: "Email was not delivered to %{failed_email}"
       content: | 
               <p>Hi %{agent_name},<br><br>
-                The following message composed by you on ticket id <a target='_blank' href=%{ticket_url}>%{ticket_id}</a> failed to reach the recipient %{failed_email} permanently.<br>
-                Reason: %{error_message}.<br>
+                The following message composed by you on ticket <a target='_blank' href=%{ticket_url}>%{ticket_id}</a> failed to reach the recipient %{failed_email}.<br>
+                Reason: %{error_message}.<br><br>
                 Message content: <br>%{failed_content}</p>
     note_display:
       title  : "Message not delivered"
@@ -317,6 +317,12 @@ en:
     twitter_id: Twitter
     facebook: Facebook
     full_name: Full Name
+    first_name: First Name
+    last_name: Last Name
+    phone_number: Phone Number
+    company_name: Company Name
+    job_title: Job Title
+    industry: Industry
     name: Name
     secondary: secondary
     phone_no: Phone No
@@ -766,7 +772,7 @@ en:
       new:
         new: New Skill
       edit:
-        edit: Edit Skill  
+        edit: Edit Skill
       rule_form:
         new: Skill Name
         info1: "example: Handling VIP customers"
@@ -3363,7 +3369,7 @@ en:
         portal_languages:
           title: "<b>Visible/Hidden on Portal</b><br />"
           info1: "When your knowledge base articles are translated to other languages and are ready to go live, you can make that language visible to your customers by clicking on the toggle button (Hidden on Portal/Visible on Portal)<br /><br />"
-    setup: 
+    setup:
       sales_manager_intro: "Hi %{user_name}! I'm %{sales_manager_name}, your account manager, and I'm happy to help with your evaluation of Freshdesk. Please feel free to reach out if you have any questions."
       write_to_us: Write to us
       request_demo: Request Demo
@@ -3372,13 +3378,13 @@ en:
       choose_plan: Choose your plan
       helpdesk_setup_incomplete: Setup your account
       helpdesk_setup_complete:  Check out what’s under the hood
-      configuration_status: "<b>%{in_setup_keys_length}</b> of <b>%{total_setup_keys_length}</b> completed." 
+      configuration_status: "<b>%{in_setup_keys_length}</b> of <b>%{total_setup_keys_length}</b> completed."
       feedback_success: We’ve got your message. You’ll hear back from us soon.
       setup_progress_0: Hurray!
       setup_progress_1: Let’s go!
       setup_progress_misc: Keep going!
       setup_progress_penultimate: Almost there!
-      new_account_title: Sign up for Freshdesk 
+      new_account_title: Sign up for Freshdesk
       new_account_description: Start your free 30-day trial of Freshdesk by signing up from the website.
       account_admin_email_title: Activate your account
       account_admin_email_description: Check your inbox for our activation email and verify your Freshdesk account.
@@ -3619,6 +3625,8 @@ en:
       parent_tooltip: "Inherit Parent"
       undo_parent_tooltip: "Undo Inherit Parent"
       applying_template: "Applying Child Template"
+      inherit_parent_tooltip: "Copies all properties from parent ticket"
+      undo_parent_inherit_tooltip: "Undo copies all properties from parent ticket"
     delete: "Delete"
     parent: "Parent"
     child: "Child"
@@ -3674,8 +3682,8 @@ en:
     parent_child_templates:
       title: "Parent Child Templates"
       helptext:
-        info1: "The parent child template allows you to set up a pre-defined workflow by establishing a parent and child relationship between tickets. For every parent template, you would be able to associate up to 10 child templates."
-        info2: "For example, one could create the workflow of onboarding a new employee as a parent child template where the child templates are sub tasks of the onboarding process such as Issuing an ID card, Issuing a laptop, etc."
+        info1: "Parent and child tickets can be used to incorporate common workflows, like onboarding a new employee or returns processing, into your helpdesk. When a request comes in, a template can be used to create multiple child tickets from the parent ticket and assign it to respective agents for processing, in a jiffy."
+        info2: "For every parent template, you would be able to associate up to 10 child templates."
       deleteMessage: "If you proceed with delete, <ul class='delete-msg-ul'><li>The parent template configuration will be lost.</li><li> Any child template which is associated to only this particular parent template will be deleted.</li></ul> Are you sure you want to delete?"
   solution_category:
     all: All Categories
@@ -5485,7 +5493,7 @@ en:
       name: DKIM
       title: DKIM Settings
       help: How to configure DKIM settings?
-      help_note: DKIM helps you digitally sign email from your help desk with your eamil domain name(s). This helps build you brand identity in all communications with your customers.
+      help_note: DKIM helps you digitally sign email from your help desk with your email domain name(s). This helps build you brand identity in all communications with your customers.
       description: Please update the following DNS settings in your Internet Service Provider's website. Once you have copied all the settings for each domain, you can click the Verify button to validate that the settings are active
       config: Configure
       configuring: Configuring...
@@ -5720,6 +5728,7 @@ en:
         subject: Subject
         tkt_id: Ticket ID
         requester: Requester
+      link_to_tracker_tooltip: "Manage similar tickets together by linking them to a relevant tracker to receive updates from it in a consistent manner."
       btn: Link
       view_tracker: "View Tracker"
       title: Link Tickets
@@ -5756,6 +5765,9 @@ en:
       search_for_tracker: "Search for tracker by"
       rlt_ticket_singular: "related ticket"
       rlt_ticket_plural: "related tickets"
+      create_tracker_sidebar_title: "What is a tracker?"
+      create_tracker_sidebar_line1: "A <b>Tracker</b> is a master ticket that allows you to manage multiple tickets with the same context by linking them together."
+      create_tracker_sidebar_line2: "Through a tracker, agents can broadcast messages to all related tickets and make sure updates are delivered to all the agents of the related tickets in a consistent manner."
     ticket_association:
        title: Ticket Association
     parent_child:
@@ -5782,6 +5794,11 @@ en:
       child_tkt_singular: "child ticket"
       child_tkt_plural: "child tickets"
       notn_subject: "Error while creating child tickets"
+      ticket_sidebar_title: "Parent-child ticketing"
+      ticket_sidebar: "<div class='parent-child-sidebar'>Parent-child ticketing helps support agents resolve issues faster by dividing a ticket into smaller sub-tickets. These sub-tickets can be assigned to, and worked on in parallel, by different agents.</div>"
+      add_child_btn_tooltip: "<div class='add-child-tooltip'>Helps agents resolve issues faster by dividing a ticket into sub-tickets that can be worked on independently.</div>"
+      childticket_sidebar_title: "What is a child ticket?"
+      childticket_sidebar: "A <b>child</b> ticket is a sub-ticket, created from a parent ticket. A child ticket is typically an action item that can be assigned to a different agent and worked on independently."
     singular: Ticket
     due_by_time: Due by time
     delete_btn_title: Move this ticket to trash
@@ -6092,9 +6109,10 @@ en:
   send_email_to_group: Send Email to Group
   activate_account: Activate your account
   activations:
-    activate_freshdesk_account: Activate your Freshdesk account
+    activate_freshdesk_account: Activate your account
     helpnote1: Tell us a little more about you and help us personalize your experience.
     helpnote2: Login to your account using %{email}
+    helpnote3: Please confirm your details and set a password for your account
   enter_message: Enter your message here
   not_selected: Not Selected
   enter_billing_for_free: Please enter the credit card details before you choose the paid plan
@@ -6237,7 +6255,7 @@ en:
   your_trial_account: Your trial account
   reply_comment: Add Comment
   password: Password
-  create_password: Create a Password
+  create_password: Enter Password
   retype_password: Retype Password
   feedbackwidget_defaulttitle: Help &amp; Support
   two: 2 Hours
@@ -8023,7 +8041,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
          access_private_channel: "Allow access to private channels"
          allow_dm_agent: "Allow DM to agent"
          allow_slash_command: "Allow Slash Command (<a href='https://support.freshdesk.com/support/solutions/articles/206103' target='_blank'> Convert Slack DM to Freshdesk ticket </a>)"
-         slash_command_token: "Slash Command Token"   
+         slash_command_token: "Slash Command Token"
       action_options:
         public: "Public"
         private: "Private"
@@ -8966,6 +8984,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     type: Type
     source: Source
     product: Product
+    requesters: Requesters
   helpdesk_reports:
     helpdesk_analysis : Helpdesk Analysis
     productivity : Productivity
@@ -10792,6 +10811,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     collab_invited_notification: "wants to collaborate with you on ticket %{object}"
     collab_first_mention: "mentioned you in a message on ticket %{object}"
     collab_first_mention_multi: "mentioned you in {{count}} messages on ticket %{object}"
+    collab_group_mention: "mentioned your group - %{group_name} in a message on ticket %{object}"
+    collab_group_mention_multi: "mentioned your group - %{group_name} in {{count}} messages on ticket %{object}"
     types:
       private_note_created: "Private Note Created"
       public_note_created: "Public Note Added"
@@ -10800,6 +10821,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       ticket_assigned: "Ticket Assigned"
       collab_added_to: "Discussion"
       collab_invited_notification: "Discussion"
+      collab_group_mention: :"Discussion"
+      collab_group_mention_multi: "Discussion"
       collab_first_mention: "Discussion"
       ticket_assigned_to_group: "Ticket Assigned to Group"
       ticket_created: "New Ticket"
@@ -10817,7 +10840,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     desktop_notifications_disabled: You've disabled desktop notifications
     toggle_mobile_notifications: Toggle mobile notifications
     toggle_web_notifications: Toggle web notifications
-    
+
   trial_plan_downgrade: "Important: You are currently downgrading from %{plan_from} plan to %{plan_to} plan"
   discounted_sum: "After Discount"
   selecting_plan: "Selecting..."

@@ -518,13 +518,6 @@ module Integrations::CloudElements::Crm::CrmUtil
     change_active
   end
 
-  def check_feature
-    if FEATURE[element] && !current_account.features?(FEATURE[element])
-      flash[:error] = t(:'flash.application.install.no_feature_error')
-      redirect_to integrations_applications_path and return
-    end 
-  end
-
   def ticket_sync_option?
     params["ticket_sync_option"]["value"].to_bool
   end

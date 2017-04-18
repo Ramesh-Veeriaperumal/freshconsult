@@ -20,14 +20,13 @@ class Helpdesk::KbaseArticles
     end
 
     def create_article_attachments(article_params, article, account)
-      
       temp_body_html = String.new(article.description)
       content_ids = article_params[:content_ids] 
      
       article_params[:attachments].each_pair do |key,value|
 
         content_id = content_ids[key]
-        inline = temp_body_html.include?("cid:#{content_id}")
+        inline = temp_body_html.include?("cid:#{content_id}") && !value.content_type.include?("svg")
 
         attachment = {
           :content => value, 

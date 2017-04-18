@@ -292,7 +292,13 @@ Helpkit::Application.routes.draw do
         post :notes, to: 'pipe/conversations#create'
       end
     end
-
+    namespace :settings do
+      resources :helpdesk, controller: 'pipe/helpdesk', only: [:index] do
+        collection do
+          put :toggle_email
+        end
+      end    
+    end
     namespace :api_discussions, path: 'discussions' do
       resources :topics, controller: 'pipe/topics', only: [:create] do
         member do

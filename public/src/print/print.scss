@@ -73,4 +73,8 @@ body{
   }
 
 .freshdesk_quote{ display:none; }
+
+.description table td {
+  word-break: break-all;
+}
  

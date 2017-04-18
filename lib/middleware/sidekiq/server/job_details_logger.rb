@@ -18,7 +18,7 @@ module Middleware
 
         def log_format(msg)
           begin
-            "worker_class=#{msg[:class]}, queue_name=#{msg[:queue]}, account_id=#{msg[:account_id]}, response_time=#{msg[:response_time]}, enqueued_at = #{msg[:enqueued_at]}, pickup_time = #{msg[:pickup_time]}"
+            "worker_class=#{msg[:class]}, queue_name=#{msg[:queue]}, jobid=#{msg[:jid]}, account_id=#{msg[:account_id]}, response_time=#{msg[:response_time]}, enqueued_at = #{msg[:enqueued_at]}, pickup_time = #{msg[:pickup_time]}"
           rescue Exception => e
             NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Error occoured while capturing controller logs for #{msg}"}})
           end

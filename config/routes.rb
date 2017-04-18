@@ -2209,6 +2209,7 @@ Helpkit::Application.routes.draw do
     end
 
     match 'commons/group_agents/(:id)'    => "commons#group_agents"
+    match 'commons/agents_for_groups/(:id)'    => "commons#agents_for_groups"
     match 'commons/user_companies'        => "commons#user_companies", via: :post
     match "commons/fetch_company_by_name" => "commons#fetch_company_by_name"
     match 'commons/status_groups'         => "commons#status_groups"
@@ -2720,6 +2721,7 @@ Helpkit::Application.routes.draw do
         get :get_filtered_tickets
         get :get_solution_url
         get :mobile_filter_count
+        get :bulk_assign_agent_list
         post :recent_tickets
         match '/ticket_properties/:id' => 'tickets#ticket_properties', :via => :get
       end

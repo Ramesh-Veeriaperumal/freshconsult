@@ -64,7 +64,7 @@ module ParentChildHelper
   end
 
   def load_assoc_parent
-    @assoc_parent_ticket ||= load_by_param(params[:ticket_id] || params[:assoc_parent_id] || params[:id])
+    @assoc_parent_ticket ||= load_by_param(params[:ticket_id] || params[:assoc_parent_id] || params[:id]) if Account.current.parent_child_tkts_enabled?
   end
 
   def load_parent_template

@@ -508,7 +508,10 @@ window.App = window.App || {};
             }
         },
         safe: function(str){
-            return String(str).replace(/<(?:.|\n)*?>/gm, '');
+            var tmp = document.implementation.createHTMLDocument("New").body;
+            tmp.innerHTML = str;
+            return tmp.textContent || tmp.innerText || "";
+            // return String(str).replace(/<(?:.|\n)*?>/gm, '');
         },
         destroy: function () {
             $(document).off(".usernotification");
