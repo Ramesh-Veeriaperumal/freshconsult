@@ -4090,11 +4090,11 @@ ActiveRecord::Schema.define(:version => 20170411034444) do
   create_table :scheduled_exports do |t|
     t.string  :name
     t.text    :description
-    t.integer :user_id
+    t.column  :user_id, "bigint unsigned", :null => false 
     t.text    :filter_data
     t.text    :fields_data
     t.text    :schedule_details
-    t.integer :account_id
+    t.column  :account_id, "bigint unsigned", :null => false 
     t.string  :latest_file
     t.integer :schedule_type, :limit => 2
     t.boolean :active, :default => false
