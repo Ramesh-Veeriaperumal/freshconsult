@@ -262,6 +262,13 @@ end
     account.send("#{obj}_templates").destroy_all
   end
 
+  def handle_ticket_activity_export_drop_data
+    ticket_activity_export = account.activity_export
+    return if ticket_activity_export.nil? or !ticket_activity_export.active
+    ticket_activity_export.active = false
+    ticket_activity_export.save
+  end
+
   private
 
   def default_portal_preferences

@@ -75,6 +75,8 @@
       :unique_contact_identifier: 70
       :advanced_search: 71
       :advanced_search_bulk_actions: 72
+      :ticket_activity_export: 73
+      :system_observer_events: 74
 :selectable_features:
       :branding: true
       :gamification_enable: false
@@ -82,3 +84,4 @@
       :link_tickets: false
       :advanced_search: false
       :advanced_search_bulk_actions: false
+      :ticket_activity_export: false

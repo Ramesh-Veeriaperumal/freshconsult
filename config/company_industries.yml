@@ -56,5 +56,6 @@
   "Wireless Telecommunication Services": {"name": "Telecommunications", "id": 2617},
   "Renewable Electricity": {"name": "Energy", "id": 2618},
   "Electric Utilities": {"name": "Energy", "id": 2618},
-  "Utilities": {"name": "Utilities", "id": 2567}
+  "Utilities": {"name": "Utilities", "id": 2567},
+   "Other": {"name": "Other", "id": 2560}
 }

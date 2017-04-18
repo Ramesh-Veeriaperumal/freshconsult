@@ -1,6 +1,9 @@
 defaults: &defaults
-  host: 127.0.0.1
   port: 9090
+  activities:
+    host: 127.0.0.1
+  activities_export:
+    host: 127.0.0.1
 
 development:
   <<: *defaults

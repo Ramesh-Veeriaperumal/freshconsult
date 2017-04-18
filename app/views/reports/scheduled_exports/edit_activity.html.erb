@@ -1,0 +1,78 @@
+<%= stylesheet_link_tag_with_rtl :'cdn/ticket_schedule'  %>
+<%= render :partial => "admin/shared/filter_jsinit", :locals => { :filter_type => "ticket_schedule", :placeholders => {} } %>
+
+<% content_for :helpcard do %>
+  <%= render :partial => "helpnote" %>
+<% end %>
+
+
+<div class="list-page ticket-schedule-new-wrapper ticket-activity-wrapper">
+	<%= form_for @scheduled_activity_export, :as => :scheduled_activity_export, :url => activities_reports_scheduled_exports_path, :html => { :method => :post , :id => "editActivityForm", :class => "edit-ticket-activity-form" } do |f| %>
+		<%= f.error_messages %>
+		<div class="row-fluid">
+			<div class="span6	">
+				<ul class="breadcrumb">
+				  <li>
+				    <%= link_to t('helpdesk_reports.ticket_schedule.all_reports'), reports_url %>
+				    <span class="divider">/</span>
+				  </li>
+				  <li>
+				  	<%= link_to t('helpdesk_reports.ticket_schedule.schedule_export'), reports_scheduled_exports_path() %>
+				  </li>
+				</ul>
+			</div>
+			<div class="span6 pull-right align-right">
+				<input type="checkbox" name="scheduled_activity_export[active]" data-url="<%= activities_reports_scheduled_exports_path() %>" rel ="toggle" class="ticket_activity-toggle" <%= @scheduled_activity_export.active ? 'checked' : '' %>/>
+				<%= link_to t('cancel'), reports_scheduled_exports_path(), :class => "btn cancel" %>
+        <button class="btn btn-primary schedule-save" type="submit"><%= t('save') %></button>
+			</div>
+		</div>
+		<ul class="ui-form ticket-schedule-ul no-background">
+			<li class="ticket-schedule-li">
+				<div class="row-fluid mb18">
+					<div class="span6">
+						<h2 class="title schedule-title">
+							<%= t('helpdesk_reports.ticket_activity.edit') %>
+						</h2>
+					</div>
+				</div>
+				<div class="row-fluid">
+					<%= f.label :name, ("Title <span class='required_star'>*</span>").html_safe, :class => "span2" %>
+					<div class="span10">
+						<%= f.text_field :name, :class => "required text" %>
+					</div>
+				</div>
+				<div class="row-fluid mt">
+					<%= f.label :description, 'Description', :class => "span2" %>
+					<div class="span10">
+						<%= f.text_area :description, :class => "smallpara" %>
+					</div>
+				</div>
+			</li>
+			<div class="span6 pull-right align-right mt10">
+				<%= link_to t('helpdesk_reports.ticket_activity.learn_more'), "https://support.freshdesk.com/support/solutions/articles/226460-export-ticket-activities/", :target => 'blank' %>
+			</div>
+			<li class="ticket-schedule-li">
+				<div class="row-fluid api-content">
+					<%= label(:api , :url, class: "span2")	%>
+					<div class="span10">
+						<input type="text" class="clip-data" value="<%= @api_url %>" readonly>
+		        <button type="button" class="btn tooltip copy-clip" title="Copy to Clipboard">
+		          <i class="ficon-clone fsize-18"></i>
+		        </button>
+						<span class="span14">
+							<ul class="api-note muted">
+								<li>
+									<%= t('helpdesk_reports.ticket_schedule.new.helpnote.api_info1') %>
+								</li>
+								<li>
+									<%= t('helpdesk_reports.ticket_schedule.new.helpnote.api_info2') %>
+								</li>
+							</ul>
+						</div>
+					</span>
+				</div>
+			</li>
+		</ul>
+	<% end %>
+</div>

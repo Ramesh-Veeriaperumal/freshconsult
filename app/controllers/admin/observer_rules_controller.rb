@@ -78,6 +78,7 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
       event_hash = event_hash.select{ |event| event.fetch(:condition, true) }
       add_custom_events event_hash
       @event_defs = ActiveSupport::JSON.encode event_hash
+      @system_events = ActiveSupport::JSON.encode system_events_hash if current_account.system_observer_events_enabled? and current_account.email_failures_enabled?
     end
 
     def add_custom_events event_hash
@@ -148,6 +149,16 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
           end
         end  
       end
+    end
+
+    def system_events_hash
+      [
+        { :name => -1, :value => t('click_to_select_event') },
+        { :name => 'mail_del_failed_requester', :value => t('observer_events.mail_del_failed_requester'), :domtype => 'label',
+          :type => 0 },
+        { :name => 'mail_del_failed_others', :value => t('observer_events.mail_del_failed_others'), :domtype => 'label',
+          :type => 0 }
+      ]
     end
 
 end

@@ -2307,7 +2307,7 @@ nl:
           spam_check: "Bedankt voor het posten in onze forums. Na goedkeuring wordt uw bericht weergegeven."
       tickets:
         create:
-          success: "Uw ticket is gemaakt en een kopie van het ticket is naar uw e-mailadres verstuurd."
+          success: "Uw ticket is aangemaakt."
           success_cc_drop: "Uw ticket is gemaakt, maar de volgende cc's zijn verwijderd na controle."
       create:
         success: "Portaal is ingeschakeld voor %{product_name}"

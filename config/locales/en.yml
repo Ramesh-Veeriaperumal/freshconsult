@@ -112,7 +112,7 @@ en:
       thanks: "Thanks,"
     agent_notification:
       subject: "Email was not delivered to %{failed_email}"
-      content: | 
+      content: |
               <p>Hi %{agent_name},<br><br>
                 The following message composed by you on ticket <a target='_blank' href=%{ticket_url}>%{ticket_id}</a> failed to reach the recipient %{failed_email}.<br>
                 Reason: %{error_message}.<br><br>
@@ -1870,15 +1870,17 @@ en:
       clone_rule:
         title: Observer - Clone Rule
       add_new_event: Add new event
+      performed_by: and the events are performed by
       events: When <b>Any</b> of these events occur
       conditions: on tickets with these properties
       actions: perform these actions
-      performed_by: and the events are performed by
-      customer_performed: Requester
-      agent_performed: Agent
+      new_performed_by: When an action performed by...
+      new_events: involves <b>any</b> of these events
+      new_anyone: Agent or Requester
       agent: Agent
       customer: Requester
-      present: Anyone
+      anyone: Anyone
+      system: System
       assigned_agent: Assigned Agent
       assigned_group: Assigned Group
       event_performer: Event Performing Agent
@@ -2646,6 +2648,9 @@ en:
           failure: There was a problem sending the review request
         broadcast:
           success: The message has been added and broadcasted to %{count} related tickets.
+        send_and_set:
+          success:  The note has been added
+          failure:  Unable to save note
       empty_spam:
         delay_delete: Please wait while we delete all tickets from spam. This might take a few minutes.
         success: All tickets in the spam folder were deleted.
@@ -5570,6 +5575,8 @@ en:
     reply: Reply is sent
     due_date: Due date is changed
     ticket: Ticket is
+    mail_del_failed_requester: Mail sent to requester address failed
+    mail_del_failed_others: Mail sent to cc or forward address failed
     customer_feedback: Customer Feedback is received
     time_entry: Time Entry is
   observer_actions:
@@ -6420,7 +6427,19 @@ en:
     flash:
       assignedto: "%{tickets} assigned to %{username}."
       tickets_closed: "%{tickets} closed"
+      title_on_quick_close_fail: "Update ticket"
+      description_on_quick_close_fail: "Tickets with incomplete mandatory fields cannot be resolved or closed. You can update the properties for the ticket below and then close/resolve it."
+      title_on_bulk_close_fail: "Bulk close tickets"
+      description_on_bulk_close_fail: "Tickets with incomplete mandatory fields cannot be closed causing the tickets listed below to be skipped. You can update the properties for each ticket below and then close them."
+      title_on_bulk_scenario_close_fail: "Bulk update tickets"
+      description_on_bulk_scenario_close_fail: "Tickets with incomplete mandatory fields cannot be resolved or closed causing the tickets listed below to be skipped. You can update the properties for each ticket below and then close/resolve them."
+      tickets_close_fail_on_quick_close: "%{tickets} closed. Unable to close %{failed_tickets} <span class='failed_ticket_lbl'>(Required fields were empty)</span>"
+      tickets_close_fail_on_bulk_scenario: "Unable to execute scenario on %{failed_tickets} - <span class='failed_ticket_lbl'>Required fields were empty.</span> Executing the scenario <b>%{rule_name}</b> on remaining %{tickets} tickets."
+      tickets_close_fail_on_bulk_action: "%{tickets} updated. Unable to update %{failed_tickets} <span class='failed_ticket_lbl'>(Required fields were empty)</span>"
+      tickets_close_fail_on_bulk_close: "%{tickets} closed. Unable to close %{failed_tickets} <span class='failed_ticket_lbl'>(Required fields were empty)</span>"
+      tickets_failed: "%{failed_count} tickets"
       tickets_update: "%{tickets} updated"
+      scenario_fail: "Tickets with incomplete mandatory fields cannot be resolved or closed. You can update the properties before attempting to execute the scenario again."
       tickets_update_with_errors: "%{tickets} updated, but there are issues that need your attention."
       sending_failure : "Failure in sending reply to the following tickets : "
       assigned_to_you: "%{tickets} assigned to you"
@@ -6643,7 +6662,7 @@ en:
           view_name: View name
           view_visibility: Visible to
       execute_scenario_notice:
-        view_details: view details
+        view_details: View details
         bulk_execute_scenario: "Executing the scenario <b>%{rule_name}</b>"
         execute_the_scenario: "Executed the scenario <b>%{rule_name}</b>"
         actions_performed: Actions performed
@@ -9383,6 +9402,63 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       email_report_csv: "Email CSV"
     customer_satisfaction:
       title: Customer Satisfaction Report
+    ticket_schedule:
+      schedule_export: "Scheduled Export"
+      all_reports: "All Reports"
+      schedule: "Schedule"
+      new_schedule: "New Schedule"
+      no_schedule: "You haven’t created any schedule yet!"
+      create_new: "Create"
+      schedule_show_message: "You cannot edit a schedule once it's created"
+      helpnote:
+        help_title_1: "Export ticket properties"
+        help_info_1: "You can schedule and export ticket properties, along with their associated contact and company fields from Freshdesk. Data from the export can then be used for building custom reports. For example, you can get an export of tickets every week which includes the first response time, resolution time and the assigned agent, and see how responsive your support team is. A maximum of five schedules can be created for an account. <a href='https://support.freshdesk.com/support/solutions/articles/226461-export-ticket-properties/' target='_blank'>Read more</a> on how to create a schedule to export ticket properties."
+        help_title_2: "Export ticket activities"
+        help_info_2: "As an account admin, you would want a list of all activities performed on your tickets so you can build custom metrics. When this is turned on, you will be able to access a JSON file with all the events that occured in each ticket the previous day (including events performed by automations). You can create only one schedule per day for an account. <a href='https://support.freshdesk.com/support/solutions/articles/226460-export-ticket-activities/' target='_blank'>Learn more.</a>"
+      index:
+        no_ticket_Schedule: "No Ticket Schedule"
+        ticket_properties_title: "Export ticket properties"
+        ticket_properties_note: "Your account has exhausted the total number of schedules that can be created"
+        scheduled_message: "<span class='muted mr8'>%{count}/%{max_count} schedules created</span>"
+        scheduled_hourly: "Runs hourly"
+        scheduled_daily: "Runs daily at %{hrs}:00 hrs"
+        scheduled_weekly: "Runs weekly on %{day} at %{hrs}:00 hrs"
+      new:
+        title: "Title"
+        description: "Description"
+        filter: "Filters"
+        fields_to_export: "Fields to Export"
+        delivery: "Delivery"
+        add_new: "Add new"
+        ticket_fields_title: "Ticket Fields"
+        contact_fields_title: "Contact Fields"
+        company_fields_title: "Company Fields"
+        field_selected:
+          zero: "No field selected"
+          one: "field selected"
+          other: "fields selected"
+        one_time_export_label: "Send a one time export of tickets created or updated from the beginning of the current month for initial seeding of data"
+        helpnote:
+          api_info1: "The API will have the link to the latest export."
+          api_info2: "The export will contain a log of all ticket related updates peformed the previous day."
+        schedule:
+          hourly: "Hourly"
+          daily: "Daily"
+          weekly: "weekly"
+        hour_label: "hour"
+        daily_label: "24 hours"
+        weekly_label: "7 days"
+        schedule_message: "%{zone} for tickets created/updated in the last %{label}"
+        select_all: "select all"
+    ticket_activity:
+      title: "Export ticket activities"
+      edit: "Edit Schedule"
+      sample_file: "Sample file"
+      learn_more: "Learn more"
+      default:
+        field_value:
+          name: "Daily export of ticket activities"
+          description: "Contains a log of all the updates performed on new or old tickets by user or automation on a given day"
   adv_reports:
     deprecated_message : "(View classic report link will no longer be available from Fri, 18 March 2016)"
     deprecated_header : "This report will no longer be available from Fri, 18 March 2016"

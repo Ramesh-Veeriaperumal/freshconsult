@@ -11,6 +11,7 @@ development:
   iris_etl_msg_queue: iris_etl_msgs_dev
   cti_call_queue: cti_call_dev
   activity_queue: fd_activities_dev
+  activity_export_queue: fd_activities_export_dev
   reports_service_export_queue: reports_service_export_dev
   freshfone_call_tracker: freshfone_call_tracker_development
   cti_screen_pop: cti_screen_pop_dev
@@ -40,6 +41,7 @@ staging:
   reports_etl_msg_queue: reports_etl_msgs_staging
   iris_etl_msg_queue: iris_etl_msgs_staging
   activity_queue: fd_activities_staging
+  activity_export: fd_activities_export_staging
   reports_service_export_queue: reports_service_export_staging
   freshfone_call_tracker: freshfone_call_tracker_staging
   cti_screen_pop: cti_screen_pop_staging
