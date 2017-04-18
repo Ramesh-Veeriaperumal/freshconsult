@@ -1,12 +1,14 @@
 class SAAS::SubscriptionActions
 
-  DROP_DATA_FEATURES  = [ :customer_slas, :multiple_business_hours, :multi_product, 
-    :facebook, :twitter, :custom_domain, :multiple_emails, :css_customization, 
-    :custom_roles, :dynamic_content, :mailbox, :dynamic_sections, :custom_survey, 
-    :round_robin, :multi_language, :helpdesk_restriction_toggle, :ticket_templates, 
+  DROP_DATA_FEATURES  = [
+    :facebook, :twitter, :custom_domain, :css_customization,
+    :custom_roles, :dynamic_content, :mailbox, :dynamic_sections, :custom_survey,
+    :round_robin, :multi_language, :helpdesk_restriction_toggle, :ticket_templates,
     :multiple_companies_toggle, :round_robin_load_balancing ]
 
-  ADD_DATA_FEATURES   = [:round_robin]
+  ADD_DATA_FEATURES   = [ :round_robin ]
+  
+  ONLY_BITMAP_FEATURES = (Account::ADVANCED_FEATURES_TOGGLE + [:shared_ownership_toggle])
 
   DROP  = "drop"
   ADD   = "add"
@@ -46,14 +48,18 @@ class SAAS::SubscriptionActions
       account.remove_features_of old_subscription.subscription_plan.canon_name
       remove_chat_feature(account)      # Remove chat feature if downgrade to non chat plan
       existing_addons.each do |addon|
-        addon.features.collect{ |feature| account.remove_feature(feature) }
+        addon.features.collect{ |feature| 
+          next if ONLY_BITMAP_FEATURES.include?(feature) 
+          account.remove_feature(feature) 
+        }
       end
 
       account.reload
-      #Add appropriate features      
+      #Add appropriate features
       account.add_features_of account.plan_name
       features = new_addons.collect{ |addon| addon.features }.flatten
-      account.add_features(features)
+      
+      account.add_features((features - ONLY_BITMAP_FEATURES))
       # drop chat routing data in freshchat table if downgrade to non chat routing plan
       disable_chat_routing(account) unless account.features?(:chat_routing)
     end

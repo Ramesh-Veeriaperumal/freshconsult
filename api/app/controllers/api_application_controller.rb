@@ -347,12 +347,12 @@ class ApiApplicationController < MetalApiController
     end
 
     # Using optional parameters for extensibility
-    def render_201_with_location(template_name: "#{controller_path.gsub('pipe/', '')}/#{action_name}", location_url: "#{nscname}_url", item_id: @item.id)
+    def render_201_with_location(template_name: "#{controller_path.gsub(/pipe\/|channel\//, '')}/#{action_name}", location_url: "#{nscname}_url", item_id: @item.id)
       render template_name, location: send(location_url, item_id), status: 201
     end
 
     def nscname # namespaced controller name
-      controller_path.gsub('pipe/', '').gsub('/', '_').singularize
+      controller_path.gsub(/pipe\/|channel\//, '').gsub('/', '_').singularize
     end
 
     def set_custom_errors(_item = @item)
@@ -419,10 +419,17 @@ class ApiApplicationController < MetalApiController
           end
         end
       else
-        # authenticate using auth headers
-        authenticate_with_http_basic do |username, password| # authenticate_with_http_basic - AuthLogic method
-          # string check for @ is used to avoid a query.
-          @current_user = email_given?(username) ? AuthHelper.get_email_user(username, password, request.ip) : AuthHelper.get_token_user(username)
+         if current_account.launched? :api_jwt_auth and request.env["HTTP_AUTHORIZATION"][/^Token (.*)/]
+          # authenticate using JWT token
+          authenticate_with_http_token do |token|
+              @current_user = FdJWTAuth.new(token).decode_jwt_token
+            end
+        else
+          # authenticate using auth headers
+          authenticate_with_http_basic do |username, password| # authenticate_with_http_basic - AuthLogic method
+            # string check for @ is used to avoid a query.
+            @current_user = email_given?(username) ? AuthHelper.get_email_user(username, password, request.ip) : AuthHelper.get_token_user(username)
+          end
         end
       end
 

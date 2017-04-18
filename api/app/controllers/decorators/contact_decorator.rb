@@ -1,9 +1,10 @@
 class ContactDecorator < ApiDecorator
   delegate  :id, :active, :address, :deleted, :description,
             :customer_id, :email, :job_title, :language, :mobile,
-            :name, :phone, :time_zone, :twitter_id, :avatar, to: :record
+            :name, :phone, :time_zone, :twitter_id, :avatar, :unique_external_id, to: :record
   delegate :company_id, :client_manager, to: :default_company, allow_nil: true
   delegate :multiple_user_companies_enabled?, to: 'Account.current'
+  delegate :unique_contact_identifier_enabled?, to: 'Account.current'
 
   def initialize(record, options)
     super(record)

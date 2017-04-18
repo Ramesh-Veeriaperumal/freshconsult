@@ -1,4 +1,5 @@
-<% @header_right = "##{@ticket.display_id}" %>  
+<% @header_right = "##{@ticket.display_id}" %> 
+<% @date_format = Account.current.date_type(:short_day_separated) %>
 <h3>Ticket Details</h3>
 <div class="properties">
   <span>
@@ -31,7 +32,7 @@
       Unassigned
     <% end %>  
   </span> 
-  <% if feature?(:multi_product) && @ticket.product %>
+  <% if current_account.multi_product_enabled? && @ticket.product %>
     <span>
       <b>Product</b>
       <%= h(@ticket.product.name) %>
@@ -41,7 +42,12 @@
   <% if field.visible_in_view_form? && field.flexifield_def_entry %>
     <span>
       <b><%= field.label %></b>
-      <%= @ticket.send(field.field_name) %>      
+      <% value = @ticket.send(field.field_name) %>
+      <% if value.present? && field.field_type == "custom_date" %>
+        <%= value.utc.strftime(@date_format) %> 
+      <% else %>
+        <%= value %>
+      <% end %>     
     </span>
     <% if field.field_type == "nested_field" %>
       <% field.nested_ticket_fields.each do |nested_field| %>

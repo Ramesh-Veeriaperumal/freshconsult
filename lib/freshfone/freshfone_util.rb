@@ -298,6 +298,8 @@ module Freshfone::FreshfoneUtil
     end
 
     def warm_transfer_call_leg
+      return @warm_transfer_call_leg ||= current_account.supervisor_controls.find(
+        params[:warm_transfer_call_id]) if params[:warm_transfer_call_id].present?
       @warm_transfer_call_leg ||= current_account.supervisor_controls.find_by_sid(params[:CallSid])
     end
 

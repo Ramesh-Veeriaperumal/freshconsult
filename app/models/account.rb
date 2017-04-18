@@ -12,8 +12,10 @@ class Account < ActiveRecord::Base
   include Redis::OthersRedis
   include ErrorHandle
   include AccountConstants
+  include Helpdesk::SharedOwnershipMigrationMethods
   include Onboarding::OnboardingRedisMethods
   include FreshdeskFeatures::Feature
+  include Helpdesk::SharedOwnershipMigrationMethods
 
   has_many_attachments
   
@@ -23,7 +25,7 @@ class Account < ActiveRecord::Base
   
   is_a_launch_target
   
-  concerned_with :associations, :constants, :features, :validations, :callbacks, :solution_associations, :multilingual
+  concerned_with :associations, :constants, :validations, :callbacks, :features, :solution_associations, :multilingual
 
   include CustomerDeprecationMethods
   
@@ -105,8 +107,10 @@ class Account < ActiveRecord::Base
   end
   
   # Feature check to prevent data from being sent to v1 conditionally
+  # V1 has been completely removed in production
   def esv1_enabled?
-    (ES_ENABLED && launched?(:es_v1_enabled))
+    false
+    # (ES_ENABLED && launched?(:es_v1_enabled))
   end
 
   def permissible_domains
@@ -176,10 +180,6 @@ class Account < ActiveRecord::Base
     default_in_op_fields[:company].flatten!
 
     default_in_op_fields.stringify_keys!
-  end
-
-  def parent_child_tkts_enabled?
-    @pc ||= launched?(:parent_child_tickets)
   end
 
   class << self # class methods
@@ -335,6 +335,11 @@ class Account < ActiveRecord::Base
   def support_emails
     to_ret = email_configs.collect { |ec| ec.reply_email }
     to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret #to_email case will come, when none of the emails are active.. 
+  end
+
+  def support_emails_in_downcase
+    to_ret = email_configs.collect(&:reply_email_in_downcase)
+    to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret 
   end
 
   def portal_name #by Shan temp.
@@ -519,9 +524,32 @@ class Account < ActiveRecord::Base
   end
 
   def ehawk_spam?
-    ehawk_reputation_score >= 4 
+    ehawk_reputation_score >= 4
   end
-  
+
+  def dashboard_shard_name
+    dashboard_shard_from_cache || ActiveRecord::Base.current_shard_selection.shard.to_s
+  end
+
+  def update_ticket_dynamo_shard
+    acct_addtn_settings = self.account_additional_settings
+    if acct_addtn_settings
+      if acct_addtn_settings.additional_settings.present?
+        acct_addtn_settings.additional_settings[:tkt_dynamo_shard] = Helpdesk::Ticket::TICKET_DYNAMO_NEXT_SHARD
+      else
+        addtn_settings = {
+          :tkt_dynamo_shard => Helpdesk::Ticket::TICKET_DYNAMO_NEXT_SHARD
+        }
+        acct_addtn_settings.additional_settings = addtn_settings
+      end
+      acct_addtn_settings.save
+    end
+  end
+
+  def copy_right_enabled?
+    subscription.sprout_plan? || subscription.trial? || (branding_enabled?)
+  end
+
   protected
   
     def external_url_is_valid?(url) 

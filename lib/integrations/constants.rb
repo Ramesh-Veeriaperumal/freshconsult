@@ -41,12 +41,17 @@ module Integrations::Constants
     :fullcontact => "fullcontact",
     :cti => "cti",
     :outlook_contacts => "outlook_contacts",
-    :salesforce_v2 => "salesforce_v2"
+    :salesforce_v2 => "salesforce_v2",
+    :dynamics_v2 => "dynamics_v2",
+    :office365 => "office365",
+    :parent_child_tickets => "parent_child_tickets",
+    :link_tickets => "link_tickets",
+    :shared_ownership => "shared_ownership"
   }
 
   DISPLAY_IN_PAGES = { "ticket_show" => 2, "contact_show" => 1, "company_show" => 0 }
 
-  CRM_APPS= [:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm, :quickbooks, :freshbooks, :infusionsoft, :freshsales, :salesforce_v2]
+  CRM_APPS= [:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm, :quickbooks, :freshbooks, :infusionsoft, :freshsales, :salesforce_v2, :dynamics_v2]
 
   APP_CATEGORY_ID_TO_NAME = {
     10 => :custom,
@@ -65,6 +70,8 @@ module Integrations::Constants
   DYNAMICS_CRM_CONSTANTS = { "rst2_login_url" => "https://login.microsoftonline.com/RST2.srf" }
 
   GOOGLE_CONTACTS = {"provider" => "google_contacts", "app_name" => "google_contacts"}
+
+  ZOHO_CRM_PODS = {:us => "https://crm.zoho.com", :eu => "https://crm.zoho.EU"}
 
   SUCCESS = "success"
   FAILURE = "failure"
@@ -104,7 +111,8 @@ module Integrations::Constants
     "surveymonkey" => "surveymonkey",
     "outlook_contacts" => "outlook_contacts",
     "salesforce_v2" => "salesforce_v2",
-    "facebook" => ""
+    "facebook" => "",
+    "dynamics_v2" => "dynamics_v2"
   }
 
 end

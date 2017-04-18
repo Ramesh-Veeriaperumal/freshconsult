@@ -37,6 +37,9 @@ function freshdeskHandleEndCall(recordingUrl){
   if(cti===undefined){
     cti = new CtiEndCall();
   }
+
+  cti.number = cti.number || Cookie.retrieve("cti_call_number");
+  cti.callerName = cti.callerName || Cookie.retrieve("cti_caller_name");
   if (!jQuery('#cti_end_call').hasClass('in')) {
     cti.showEndCallForm();
     cti.recordingUrl=recordingUrl||"";
@@ -72,13 +75,19 @@ function show_incomming_popup(data){
             document.getElementById('tickets_table').innerHTML = myTable;
             if(cti===undefined){
               cti = new CtiEndCall();
+            } else {
+              jQuery('#cti_end_call').data('modal').hide();
+              cti.resetForm();
             }
+            
             cti.number = data.mobile;
             cti.callerName = null;
             if(data.name!=null) {
               cti.callerName = data.name;
               cti.$requesterName.val(data.name);
             }
+            Cookie.update("cti_call_number", cti.number);
+            Cookie.update("cti_caller_name", cti.callerName);
 
             
 }

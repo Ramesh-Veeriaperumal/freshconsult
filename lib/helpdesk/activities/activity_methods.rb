@@ -2,13 +2,79 @@ module Helpdesk::Activities
   module ActivityMethods
     include HelpdeskActivities::TicketActivities
     include Helpdesk::NotePropertiesMethods
+    include Helpdesk::Email::Constants
+    include EmailParser
 
     DEFAULT_STATUS_KEYS = Helpdesk::Ticketfields::TicketStatus::DEFAULT_STATUSES.keys
+
+    DEFAULT_RET_HASH    = {
+      :error      => "Internal server error",
+      :error_code => "400"
+    }
+
+    def fetch_errored_email_details
+      res_hash = DEFAULT_RET_HASH.clone
+      params.symbolize_keys
+      $thrift_transport.open()
+      client     = ::HelpdeskActivities::TicketActivities::Client.new($thrift_protocol)
+      note                 = current_account.notes.where(id:params[:note]).first
+      act_param            = ::HelpdeskActivities::TicketDetail.new
+      act_param.account_id = current_account.id
+      act_param.object     = "ticket"
+      act_param.object_id  = @ticket.display_id 
+      act_param.event_type = ::HelpdeskActivities::EventType::ALL
+      act_param.comparator = ActivityConstants::EQUAL_TO  
+      act_param.shard_name = ActiveRecord::Base.current_shard_selection.shard
+      act_param.range_key  = note.dynamodb_range_key
+      response             = client.get_activities(act_param, 1)
+      email_failures = if response.ticket_data[0].present?
+        JSON.parse(response.ticket_data[0].email_failures)
+      else
+        []
+      end    
+      email_failures = email_failures.reduce Hash.new, :merge
+      to_emails      = parse_addresses(note.to_emails)[:plain_emails] || []
+      cc_emails      = parse_addresses(note.cc_emails)[:plain_emails] || []
+      to_list        = []
+      cc_list        = [] 
+      regret_failure_count = 0
+      email_failures.each do |email,error|
+        user_email = current_account.users.where(email:email).first
+        item_obj = {
+          "email" => email,
+          "type"  => FAILURE_CATEGORY[error.to_i],
+          "user"  => user_email.nil? ? "" : user_email
+        }
+        to_list.push(item_obj) if to_emails.include?(email)
+        cc_list.push(item_obj) if cc_emails.include?(email)
+        regret_failure_count+=1 if !to_emails.include?(email) && !cc_emails.include?(email)
+      end
+      failure_count = email_failures.count - regret_failure_count
+      if failure_count != note.failure_count
+        note.failure_count = failure_count
+        note.save
+      end
+    rescue Exception => e
+      Rails.logger.error e.backtrace.join("\n")
+      Rails.logger.error e.message
+      return res_hash
+    ensure
+      render :partial => "fetch_errored_email_details", :locals => {:to_list => to_list, :cc_list => cc_list, :ticket_display_id => @ticket.display_id, :admin_emails => play_god_admin_emails} 
+      $thrift_transport.close()
+    end
+
+    def suppression_list_alert
+      dropped_address = params['drop_email']
+      if dropped_address.present?
+        Helpdesk::TicketNotifier.send_later(:suppression_list_alert, current_user, dropped_address, @ticket.display_id)
+        render :json => { :message => "success"}
+      else
+        render :json => { :message => "failure"}
+      end
+    end
+
     def new_activities(params, ticket, type, archive = false)
-      res_hash = {
-        :error => "Internal server error",
-        :error_code => "400"
-      }
+      res_hash = DEFAULT_RET_HASH.clone
       return res_hash if !(ACTIVITIES_ENABLED and Account.current.features?(:activity_revamp))
       begin
         $thrift_transport.open()
@@ -49,6 +115,7 @@ module Helpdesk::Activities
                 :content => act.content, 
                 :trace => e.backtrace.join("\n")
               })
+            NewRelic::Agent.notice_error(e, {:description => "Exception in parse activity"})
             next
           end
         end
@@ -65,6 +132,7 @@ module Helpdesk::Activities
             :account_id  => Account.current.id,
             :display_id  => ticket.display_id,
             :trace       => e.backtrace.join("\n")})
+        NewRelic::Agent.notice_error(e, {:description => "Error in fetching and processing activites"})
       ensure
         $thrift_transport.close()
         return res_hash
@@ -72,6 +140,24 @@ module Helpdesk::Activities
     end
 
   private
+
+    def play_god_admin_emails
+      agents = current_account.technicians.select("name, email, privileges")
+      admin_count = 0
+      agents.inject([]) do |result, agent|
+        return result if admin_count > 20
+        if agent.privilege?(:admin_tasks)
+          admin_count += 1
+          hash = {
+            "name"  => agent.name,
+            "email" => agent.email
+          }
+          result << hash
+        end
+        result
+      end
+    end
+
     def parse_query_hash(query_hash, ticket, archive)
       obj_hash = {}
       query_hash.each do |key, value|

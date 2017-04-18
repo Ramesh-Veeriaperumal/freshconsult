@@ -25,9 +25,12 @@
         this.menuHtml = opt.menuHtml || DEF_MENU_HTML;
         this.tagAttribute = opt.tagAttribute || DEF_TAG_ATTRIBUTE;
 
+        this.sort = opt.sort;
         this.appendSpace = typeof opt.appendSpace === UNDEF ? DEF_APPENDSPACE : opt.appendSpace;
         this.minChar = typeof opt.minChar === UNDEF ? DEF_MIN_CHAR : opt.minChar;
         this.matchCase = typeof opt.matchCase === UNDEF ? DEF_MATCH_CASE : opt.matchCase;
+
+        this.onSelectCallback = opt.onSelect;
     }
 
     // constructor
@@ -132,6 +135,8 @@
                 hideLmList.call(self);
                 restoreCaretPos.call(self);
             }
+
+            if(typeof self.onSelectCallback === "function") {self.onSelectCallback(cur_selected);}
         }
     }
 
@@ -227,6 +232,9 @@
             }
         }
         // TODO (mayank): sort this;
+        if(self.sort) {
+            res = self.sort(res);
+        }
         return res.splice(0, self.maxItems);
     }
 

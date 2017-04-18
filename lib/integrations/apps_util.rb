@@ -73,4 +73,22 @@ module Integrations::AppsUtil
   def spl_char_replace company_name
     company_name = company_name.to_s.gsub(/[&\'"+#\/\\]/, SPL_CHAR_ESCAPE)
   end
+
+  def get_zohocrm_pod api_key
+    zoho_pods = Integrations::Constants::ZOHO_CRM_PODS
+    (zoho_api_error? zoho_pods[:us], api_key) ? ( (zoho_api_error? zoho_pods[:eu], api_key) ? zoho_pods[:us] : zoho_pods[:eu] ) : zoho_pods[:us]
+  rescue => e
+    NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Error in checking the Zoho Domain: #{e}", :account_id => current_account.id}})
+    zoho_pods[:us]
+  end
+
+  def zoho_api_error? domain, api_key
+    hrp = HttpRequestProxy.new
+    params = { :domain => domain, :ssl_enabled => true, :rest_url => "crm/private/json/Contacts/searchRecords?scope=crmapi&selectColumns=All&criteria=(Email:sample@freshdesk.com)&authtoken=#{api_key}"}
+    requestParams = { :method => "get", :user_agent => "_" }
+    response = hrp.fetch_using_req_params(params, requestParams)
+    response_text = JSON.parse response[:text]
+    response_text["response"]["error"].present?
+  end
+
 end

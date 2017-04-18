@@ -19,6 +19,8 @@ Sidekiq.configure_client do |config|
       "Sidekiq::Batch::Callback",
       "Freshfone::CallQueueWorker",
       "Freshfone::AcwWorker",
+      "Freshfone::TranscriptAttachmentWorker",
+      "Freshfone::CallTimeoutWorker",
       "Ecommerce::EbayWorker",
       "Ecommerce::EbayUserWorker",
       "PasswordExpiryWorker",
@@ -45,7 +47,8 @@ Sidekiq.configure_client do |config|
       "DkimRecordVerificationWorker",
       "DkimSwitchCategoryWorker",
       "DelayedJobs::MailboxJob",
-      "Email::S3RetryWorker"
+      "Email::S3RetryWorker",
+      "Tickets::Schedule"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -88,6 +91,8 @@ Sidekiq.configure_server do |config|
       "Sidekiq::Batch::Callback",
       "Freshfone::CallQueueWorker",
       "Freshfone::AcwWorker",
+      "Freshfone::TranscriptAttachmentWorker",
+      "Freshfone::CallTimeoutWorker",
       "Ecommerce::EbayWorker",
       "Ecommerce::EbayUserWorker",
       "PasswordExpiryWorker",
@@ -114,7 +119,8 @@ Sidekiq.configure_server do |config|
       "DkimRecordVerificationWorker",
       "DkimSwitchCategoryWorker",
       "DelayedJobs::MailboxJob",
-      "Email::S3RetryWorker"
+      "Email::S3RetryWorker",
+      "Tickets::Schedule"
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -148,6 +154,8 @@ Sidekiq.configure_server do |config|
       "Sidekiq::Batch::Callback",
       "Freshfone::CallQueueWorker",
       "Freshfone::AcwWorker",
+      "Freshfone::TranscriptAttachmentWorker",
+      "Freshfone::CallTimeoutWorker",
       "Ecommerce::EbayWorker",
       "Ecommerce::EbayUserWorker",
       "PasswordExpiryWorker",
@@ -173,7 +181,8 @@ Sidekiq.configure_server do |config|
       "DkimRecordVerificationWorker",
       "DkimSwitchCategoryWorker",
       "DelayedJobs::MailboxJob",
-      "Email::S3RetryWorker"
+      "Email::S3RetryWorker",
+      "Tickets::Schedule"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",

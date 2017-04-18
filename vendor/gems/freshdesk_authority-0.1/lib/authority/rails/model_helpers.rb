@@ -8,7 +8,11 @@ module Authority::FreshdeskRails
     
     def owns_object?(object)
       # TODO: add support for other scopes
-      object.respond_to?(:user_id) && object.user_id == id
+      if object.respond_to?(:user_id)
+        return object.user_id == id
+      elsif object.respond_to?(:requester_id)
+        return object.requester_id == id
+      end
     end
     
     def abilities

@@ -134,7 +134,7 @@ class Middleware::Pod
   end
 
   def integrations_url?(host)
-    host == ::INTEGRATION_URL
+    host == ::INTEGRATION_URL || host == "ebaylogin.freshdesk.com"
   end
 
   def bypass_pod_check?

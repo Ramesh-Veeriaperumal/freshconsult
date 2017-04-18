@@ -2,11 +2,11 @@ class Helpdesk::ScenarioAutomationsController < ApplicationController
 
   include AutomationControllerMethods
   include SharedPersonalMethods
+  helper Admin::VaRulesHelper
 
   before_filter :escape_html_entities_in_json
   before_filter :load_config, :only => [:new, :edit, :clone]
   before_filter :set_type,    :only => :new
-  before_filter :check_automation_feature
   before_filter :validate_email_template, :only => [:create, :update]
 
   def create
@@ -63,10 +63,6 @@ class Helpdesk::ScenarioAutomationsController < ApplicationController
 
   def human_name
     "scenario"
-  end
-
-  def check_automation_feature
-    requires_feature :scenario_automations
   end
 
   def has_privilege?

@@ -142,7 +142,7 @@ class Helpdesk::Note < ActiveRecord::Base
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::REPLIED_BY_REQUESTER)
         if e_notification.agent_notification? && replied_by_customer?
           send_requester_replied_notification if notable.responder
-          send_requester_replied_notification(true) if Account.current.features?(:shared_ownership) and notable.internal_agent
+          send_requester_replied_notification(true) if Account.current.shared_ownership_enabled? and notable.internal_agent
         end
 
         if public_note? and performed_by_client_manager?
@@ -153,12 +153,12 @@ class Helpdesk::Note < ActiveRecord::Base
           additional_emails = [notable.requester.email] if !notable.included_in_cc?(notable.requester.email)
           # Using cc notification to send notification to requester about new comment by cc
           Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {:additional_emails => additional_emails,
-                                                                                   :ignore_emails => [user.email]})
+                                                                                   :ignore_emails => [user.email]}) unless notable.spam?
         end
         handle_notification_for_agent_as_req if ( !incoming && notable.agent_as_requester?(user.id))
 
         if notable.cc_email.present? && user.id == notable.requester_id && !self.private?
-          Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {})
+          Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {}) unless notable.spam?
         end
 
       else
@@ -168,7 +168,7 @@ class Helpdesk::Note < ActiveRecord::Base
         #notify the customer if it is public note
         if note? && !private && e_notification.requester_notification?
           Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT, notable, self)
-          Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {}) if notable.cc_email.present?
+          Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {}) if notable.cc_email.present? and !notable.spam?
         #handle the email conversion either fwd email or reply
         elsif email_conversation?
           send_reply_email
@@ -310,7 +310,7 @@ class Helpdesk::Note < ActiveRecord::Base
     
     # VA - Observer Rule 
     def update_observer_events
-      return if user.nil? || !human_note_for_ticket? || feedback? || !(notable.instance_of? Helpdesk::Ticket) || broadcast_note?
+      return if user.nil? || !human_note_for_ticket? || feedback? || !(notable.instance_of? Helpdesk::Ticket) || broadcast_note? || disable_observer_rule
       if replied_by_customer? || replied_by_agent?
         @model_changes = {:reply_sent => :sent}
       else

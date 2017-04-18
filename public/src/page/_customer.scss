@@ -625,6 +625,10 @@ $iconColorList: "ticket" $bg_color_ticket,
 	.field-value {
 		display: block;
 	}
+	.expand-link{
+		cursor: pointer;
+		font-weight:600;
+	}
 }
 
 .timeline {

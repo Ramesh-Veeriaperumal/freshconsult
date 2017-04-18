@@ -34,7 +34,7 @@ class Admin::PagesController < Admin::AdminController
     build_or_find
     @portal_template.clear_page_cache!(@portal_page_label)
     flash[:notice] = t("admin.portal_settings.flash.portal_page_reset")
-    redirect_to "#{admin_portal_template_path( @portal )}#header#pages"
+    redirect_to "#{admin_portal_template_path( @portal )}#layout"
   end
 
   private

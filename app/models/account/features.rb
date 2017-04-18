@@ -1,27 +1,24 @@
 class Account < ActiveRecord::Base
 
-  LP_FEATURES   = [:link_tickets, :select_all, :round_robin_capping, :suggest_tickets, :customer_sentiment_ui]
-  DB_FEATURES   = [:custom_survey, :requester_widget, :collaboration]
-  BOTH_FEATURES = [:shared_ownership]
-  BITMAP_FEATURES = [:split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management, 
-    :email_commands, :assume_identity, :rebranding, :custom_apps, :custom_ticket_fields, :custom_company_fields, 
-    :custom_contact_fields, :occasional_agent, :allow_auto_suggest_solutions, :basic_twitter, :basic_facebook] 
+  LP_FEATURES   = [:link_tickets, :select_all, :round_robin_capping, :suggest_tickets, :customer_sentiment_ui,
+                   :dkim, :bulk_security, :multi_dynamic_sections, :scheduled_ticket_export, :ticket_contact_export, :email_failures, :disable_emails]
+  DB_FEATURES   = [:shared_ownership, :custom_survey, :requester_widget, :collaboration, :archive_tickets]
+  BITMAP_FEATURES = [:split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management,
+    :email_commands, :assume_identity, :rebranding, :custom_apps, :custom_ticket_fields, :custom_company_fields,
+    :custom_contact_fields, :occasional_agent, :allow_auto_suggest_solutions, :basic_twitter, :basic_facebook,
+    :multi_product,:multiple_business_hours, :multi_timezone, :customer_slas, :layout_customization,
+    :advanced_reporting, :timesheets, :multiple_emails, :custom_domain, :gamification, :gamification_enable,
+    :auto_refresh, :branding, :advanced_dkim, :basic_dkim, :shared_ownership_toggle, :unique_contact_identifier_toggle, :unique_contact_identifier].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   LP_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
-      launched?(item)   
+      launched?(item)
     end
   end
 
   DB_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
-      features?(item)   
-    end
-  end
-
-  BOTH_FEATURES.each do |item|
-    define_method "#{item.to_s}_enabled?" do
-      has_both_feature?(item)
+      features?(item)
     end
   end
 
@@ -129,10 +126,6 @@ class Account < ActiveRecord::Base
     features?(:euc_hide_agent_metrics)
   end
   
-  def dkim_enabled?
-    launched?(:dkim)
-  end
-
   def new_pricing_launched?
     on_new_plan? || redis_key_exists?(NEW_SIGNUP_ENABLED)
   end
@@ -149,7 +142,33 @@ class Account < ActiveRecord::Base
     @on_new_plan ||= [:sprout_jan_17,:blossom_jan_17,:garden_jan_17,:estate_jan_17,:forest_jan_17].include?(plan_name)
   end
 
-  def tags_filter_reporting_enabled?    
-    features?(:tags_filter_reporting)   
+  def tags_filter_reporting_enabled?
+    features?(:tags_filter_reporting)
   end
+
+  def link_tkts_enabled?
+    launched?(:link_tickets) || link_tickets_enabled?
+  end
+
+  def dashboard_new_alias?
+    launched?(:dashboard_new_alias)
+  end
+
+  def parent_child_tkts_enabled?
+    @pc ||= (launched?(:parent_child_tickets) || parent_child_tickets_enabled?)
+  end
+
+  def tkt_templates_enabled?
+    @templates ||= (features?(:ticket_templates) || parent_child_tkts_enabled?)
+  end
+
+  def selectable_features_list
+    SELECTABLE_FEATURES_DATA || {}
+  end
+
+  def one_hop_enabled?
+    features?(:inline_images_with_one_hop)
+  end
+ 
+
 end

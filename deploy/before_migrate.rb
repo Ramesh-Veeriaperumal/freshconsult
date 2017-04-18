@@ -41,6 +41,7 @@ run "ln -nfs #{shared_path}/config/pod_info.yml #{node[:rel_path]}/config/pod_in
 run "ln -nfs #{shared_path}/config/infra_layer.yml #{node[:rel_path]}/config/infra_layer.yml"
 run "ln -nfs #{shared_path}/config/redis_routes.yml #{node[:rel_path]}/config/redis_routes.yml"
 run "ln -nfs #{shared_path}/config/integrations_config.yml #{node[:rel_path]}/config/integrations_config.yml"
+run "ln -nfs #{shared_path}/config/freshpipe_configs.yml #{node[:rel_path]}/config/freshpipe_configs.yml"
 run "ln -nfs #{shared_path}/config/fd_node_config.yml #{node[:rel_path]}/config/fd_node_config.yml"
 run "ln -nfs #{shared_path}/config/mobile_config.yml #{node[:rel_path]}/config/mobile_config.yml"
 run "ln -nfs #{shared_path}/config/asset_sync.yml #{node[:rel_path]}/config/asset_sync.yml"
@@ -62,8 +63,12 @@ run "ln -nfs #{shared_path}/config/sendgrid_webhook_api.yml #{node[:rel_path]}/c
 run "ln -nfs #{shared_path}/config/ehawk_api.yml #{node[:rel_path]}/config/ehawk_api.yml"
 run "ln -nfs #{shared_path}/config/sds.yml #{node[:rel_path]}/config/sds.yml"
 run "ln -nfs #{shared_path}/config/clamav.yml #{node[:rel_path]}/config/clamav.yml"
+run "ln -nfs #{shared_path}/config/zendesk_app.yml #{node[:rel_path]}/config/zendesk_app.yml"
 run "ln -nfs #{shared_path}/config/iris_notifications.yml #{node[:rel_path]}/config/iris_notifications.yml"
 run "ln -nfs #{shared_path}/config/archive_queue.yml #{node[:rel_path]}/config/archive_queue.yml"
+run "ln -nfs #{shared_path}/config/autopilot.yml #{node[:rel_path]}/config/autopilot.yml"
+run "ln -nfs #{shared_path}/config/inline_manual.yml #{node[:rel_path]}/config/inline_manual.yml"
+run "ln -nfs #{shared_path}/config/redis_session.yml #{node[:rel_path]}/config/redis_session.yml"
 
 #supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"

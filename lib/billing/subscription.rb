@@ -155,7 +155,7 @@ class Billing::Subscription < Billing::ChargebeeWrapper
     end
     
     def customer_data(account)
-      data = CUSTOMER_INFO.inject({}) { |h, (k, v)| h[k] = account.send(v); h }
+      data = CUSTOMER_INFO.inject({}) { |h, (k, v)| h[k] = account.send(v).to_str; h }
       data.merge(:email => account.invoice_emails.first)
     end
     
@@ -236,6 +236,14 @@ class Billing::Subscription < Billing::ChargebeeWrapper
       addon_id.slice(/(?<=[a-z]_)\d+(?=_|$)/).to_i
     end
 
+    def mkp_app_units_count(addon_type, subscription)
+      if addon_type == Marketplace::Constants::ADDON_TYPES[:agent]
+        return subscription.new_sprout? ? subscription.account.full_time_agents.count : subscription.agent_limit
+      else
+        return Marketplace::Constants::ACCOUNT_ADDON_APP_UNITS
+      end
+    end
+
     def marketplace_addons(subscription)  
       marketplace_addons = []    
       begin
@@ -245,7 +253,7 @@ class Billing::Subscription < Billing::ChargebeeWrapper
           marketplace_addon_ids.each do |addon_id|
             ext = extension_details(mkp_extension_id(addon_id)).body
             marketplace_addons << { :id => addon_id,
-            :quantity => ext["addon"]["addon_type"] == Marketplace::Constants::ADDON_TYPES[:agent] ? subscription.agent_limit : 1 }
+            :quantity => mkp_app_units_count(ext["addon"]["addon_type"], subscription) }
           end
         end
       rescue

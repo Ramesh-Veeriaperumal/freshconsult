@@ -14,6 +14,14 @@ module Cache::Memcache::Account
     base.extend ClassMethods
   end
 
+  def dashboard_shard_from_cache
+    key = ACCOUNT_DASHBOARD_SHARD_NAME % { :account_id => self.id }
+    MemcacheKeys.fetch(key) { 
+      count = Search::Dashboard::Count.new(nil, self.id, nil)
+      count.fetch_dashboard_shard
+    }
+  end
+
   def clear_cache
     key = ACCOUNT_BY_FULL_DOMAIN % { :full_domain => self.full_domain }
     MemcacheKeys.delete_from_cache key

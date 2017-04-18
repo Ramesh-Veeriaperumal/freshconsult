@@ -15,7 +15,8 @@ class VaRule < ActiveRecord::Base
   validates_presence_of :name, :rule_type
   validates_uniqueness_of :name, :scope => [:account_id, :rule_type] , :unless => :automation_rule?
   validate :has_events?, :has_conditions?, :has_actions?
-  
+  validate :any_restricted_actions?
+
   before_save :set_encrypted_password
   after_commit :clear_observer_rules_cache, :if => :observer_rule?
   after_commit :clear_api_webhook_rules_from_cache, :if => :api_webhook_rule?
@@ -66,11 +67,7 @@ class VaRule < ActiveRecord::Base
   end
 
   def conditions
-    @conditions ||= filter_array.collect { |f|
-                                           f.symbolize_keys!
-                                           Va::Condition.new(f, account) unless 
-                                           invalid_condition(f)
-                                         }.compact
+    @conditions ||= filter_array.collect{ |f| Va::Condition.new(f.symbolize_keys, account) }
   end
 
   def actions
@@ -89,18 +86,20 @@ class VaRule < ActiveRecord::Base
   end
 
   def event_matches? current_events, evaluate_on
-    Rails.logger.debug "INSIDE event_matches? WITH evaluate_on : #{evaluate_on.inspect}, va_rule #{self.inspect}"
+    #Rails.logger.debug "INSIDE event_matches? WITH evaluate_on : #{evaluate_on.inspect}, va_rule #{self.inspect}"
     events.each do  |e|
       if e.event_matches?(current_events, evaluate_on)
         @triggered_event = {e.name => current_events[e.name]}
+        Rails.logger.debug "event_matches - T=#{evaluate_on.id} :: R=#{self.id} :: #{@triggered_event.inspect} :: true"
         return true
       end
     end
+    Rails.logger.debug "event_matches - T=#{evaluate_on.id} :: R=#{self.id} :: false"
     return false
   end
   
   def pass_through(evaluate_on, actions=nil, doer=nil)
-    Rails.logger.debug "INSIDE pass_through WITH evaluate_on : #{evaluate_on.inspect}, actions #{actions}"
+    #Rails.logger.debug "INSIDE pass_through WITH evaluate_on : #{evaluate_on.inspect}, actions #{actions}"
     is_a_match = matches(evaluate_on, actions)
     trigger_actions(evaluate_on, doer) if is_a_match
     return evaluate_on if is_a_match
@@ -109,19 +108,23 @@ class VaRule < ActiveRecord::Base
   
   def matches(evaluate_on, actions=nil)
     return true if conditions.empty?
-    Rails.logger.debug "INSIDE matches WITH conditions : #{conditions.inspect}, actions #{actions}"
-    s_match = match_type.to_sym   
+    #Rails.logger.debug "INSIDE matches WITH conditions : #{conditions.inspect}, actions #{actions}"
+    s_match = match_type.to_sym
     to_ret = false
-    return to_ret if s_match == :all && @invalid_condition
     conditions.each do |c|
       current_evaluate_on = custom_eval(evaluate_on, c.evaluate_on_type)
-      to_ret = !current_evaluate_on.nil? ? 
-               c.matches(current_evaluate_on, actions) :
-               negation_operator?(c.operator)
-      return true if to_ret && (s_match == :any)
-      return false if !to_ret && (s_match == :all) #by Shan temp
+      to_ret = !current_evaluate_on.nil? ? c.matches(current_evaluate_on, actions) : negation_operator?(c.operator)
+      if to_ret && (s_match == :any)
+        Rails.logger.debug "rule_matches [1] - T=#{evaluate_on.id} :: R=#{self.id} :: #{c.inspect} :: true"
+        return true
+      end
+      if !to_ret && (s_match == :all)
+        Rails.logger.debug "rule_matches [1] - T=#{evaluate_on.id} :: R=#{self.id} :: #{c.inspect} :: false"
+        return false
+      end
     end
     
+    Rails.logger.debug "rule_matches [2] - T=#{evaluate_on.id} :: T=#{self.id} :: #{to_ret}"
     return to_ret
   end
 
@@ -167,8 +170,6 @@ class VaRule < ActiveRecord::Base
   def filter_query
     query_strings = []
     params = []
-    return query_strings if match_type == "all" &&
-                            (conditions.empty? || @invalid_condition)
     c_operator = (match_type.to_sym == :any ) ? ' or ' : ' and '
     
     conditions.each do |c|
@@ -313,7 +314,20 @@ class VaRule < ActiveRecord::Base
     (observer_rule? || api_webhook_rule?) ? filter_data[:conditions] : filter_data
   end
 
+  def self.with_send_email_actions
+    select {|va_rule| va_rule.contains_send_email_action?}
+  end
+
+  def any_restricted_actions?
+    actions.any? {|action| action.restricted?}
+  end
+
+  def contains_send_email_action?
+    actions.any? {|action| action.contains? 'send_email'}
+  end
+
   private
+
     def has_events?
       return unless observer_rule? || api_webhook_rule?
       errors.add(:base,I18n.t("errors.events_empty")) if(filter_data[:events].blank?)
@@ -326,14 +340,6 @@ class VaRule < ActiveRecord::Base
     
     def has_actions?
       errors.add(:base,I18n.t("errors.actions_empty")) if(action_data.blank?)
-    end
-
-    def invalid_condition condition_data
-      res = condition_data[:name].nil? ||
-            condition_data[:operator].nil? ||
-            condition_data[:value].nil?
-      @invalid_condition = res if res
-      res
     end
 
     def encrypt data

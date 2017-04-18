@@ -1,0 +1,15 @@
+
+	<p><b> <%= t('email_failure.suppression_list_alert.company') %>: </b><%= @account_name %> </p>
+
+	<br>
+	<p><b> <%= t('email_failure.suppression_list_alert.freshdesk_url') %>: </b><%= @account_url %></p>
+
+	<br>
+	<p><b> <%= t('email_failure.suppression_list_alert.dropped_address') %>: </b><%= @dropped_address%> </p>
+
+	<br>
+	<p><a href = '<%= @account_url %>/helpdesk/tickets/<%= @ticket_display_id %>'> <%= t('email_failure.suppression_list_alert.source_ticket') %> </a></p>
+
+	<br>
+	<p><b> <%= t('email_failure.suppression_list_alert.thanks') %></b></p>
+    <p><b> <%= @agent_name %> </b></p>

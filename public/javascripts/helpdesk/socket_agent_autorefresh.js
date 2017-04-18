@@ -101,7 +101,8 @@ var refreshCallBack = function (message, hashed_params, current_userid,updated_t
               count++;
             }
             else if (filter_options[i].condition == "created_at"){
-              var created_at = new Date(message['created_at']*1000);
+              var created_at = Array.isArray(message['created_at']) ? message['created_at'].pop() : message['created_at']*1000;
+              created_at = new Date(created_at);
               var created_at_filter = filter_options[i].value;
               if (!isNaN(created_at_filter) &&
                 (((Date.now() - created_at) / 60000) < ((filter_options[i].value) - ''))) {
@@ -110,10 +111,14 @@ var refreshCallBack = function (message, hashed_params, current_userid,updated_t
                 (created_at < Date.today()) && 
                 (created_at > Date.today().add({ days: -1 }))) {
                   count++;
-              } else if (created_at_filter.split("-").length == 2 &&
-                  created_at > Date.parse(date_arr[0]) &&
-                  created_at < Date.parse(date_arr[1])) {
+              } else if (created_at_filter.split("-").length == 2) {
+                  var date_split = created_at_filter.split("-");
+                  var start_date = Date.parse(date_split[0]);
+                  var end_date = Date.parse(date_split[1]);
+                  end_date.setDate(end_date.getDate()+1);
+                  if (created_at >= start_date && created_at < end_date) {
                     count++;
+                  }
               } else if (created_at > auto_refresh_ticketFilterDateoptions[created_at_filter]) {
                 count++;
               }
@@ -123,12 +128,6 @@ var refreshCallBack = function (message, hashed_params, current_userid,updated_t
               switch (filter_options[i].condition) {
                 case "helpdesk_schema_less_tickets.product_id":
                   message_key = "product_id";
-                  break;
-                case "helpdesk_schema_less_tickets.long_tc04":
-                  message_key = "internal_agent_id";
-                  break;
-                case "helpdesk_schema_less_tickets.long_tc03":
-                  message_key = "internal_group_id";
                   break;
                 default:
                   message_key = filter_options[i].condition;

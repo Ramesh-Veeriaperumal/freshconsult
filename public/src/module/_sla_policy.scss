@@ -390,7 +390,7 @@
 		}
 	}
 }
-.sla_policy_disabled form{
+.sla_policy_disabled form, .va_rule_disabled form{
 	@include opacity(0.3);
 }
 .sla-policy-tooltip {
@@ -402,7 +402,7 @@
 		padding: 11px;
 	}
 }
-.sla-policy-index-tooltip {
+.sla-policy-index-tooltip, .va-rule-index-tooltip {
 	&.ui-tooltip, &.qtip {
 		max-width: 310px;
 	}

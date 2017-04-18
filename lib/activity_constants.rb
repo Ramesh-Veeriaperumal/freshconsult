@@ -121,4 +121,6 @@ module ActivityConstants
               }
   DONT_CARE_VALUE = "*"
 
+  FAILURE_CATEGORY = ["dropped", "dropped_unsubscribed", "bounce_temporary", "bounce_permanent"]
+
 end

@@ -1,4 +1,5 @@
 require_relative 'pipe_privileges'
+require_relative 'channel_privileges'
 
 Authority::Authorization::PrivilegeList.build do
 
@@ -26,7 +27,7 @@ Authority::Authorization::PrivilegeList.build do
                                            :quick_assign, :canned_reponse, :full_paginate, :custom_view_save, :apply_template, :accessible_templates, :search_templates, :show_children,
                                            :filter_options, :filter_conditions, :activities, :status, :get_top_view, :recent_tickets, :old_tickets, :summary, :bulk_scenario,
                                            :execute_bulk_scenario, :activitiesv2, :activities_all, :link, :unlink, :ticket_association,
-                                           :bulk_child_tkt_create, :associated_tickets, :sentiment_feedback, :refresh_requester_widget]
+                                           :bulk_child_tkt_create, :associated_tickets, :sentiment_feedback, :refresh_requester_widget, :fetch_errored_email_details,:suppression_list_alert]
     resource :"helpdesk/subscription"
     resource :"helpdesk/tag_use"
     resource :"helpdesk/tag"
@@ -491,6 +492,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_email_settings do
+    resource :"admin/dkim_configuration"
     resource :"admin/email_config"
     resource :"admin/email_notification"
     resource :"admin/dynamic_notification_template"
@@ -599,7 +601,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/zen_import"
     # new item day passes && getting started
     resource :"admin/day_pass"
-    resource :"admin/dkim_configuration"
     resource :"admin/freshfone/credit"
     resource :"admin/onboarding"
     resource :"admin/getting_started"

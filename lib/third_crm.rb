@@ -12,12 +12,13 @@ class ThirdCRM
 
   LEAD_INFO = { 
       'default' => {
-        'LastName' => :admin_first_name, 'FirstName' => :admin_last_name,
-        'Email' => :admin_email, 'Phone' => :admin_phone, 'Company' => :name
+        'LastName' => :admin_last_name, 'FirstName' => :admin_first_name,
+        'Email' => :admin_email, 'Phone' => :admin_phone
       },
       'custom' => {
-        'integer--Freshdesk--Account--ID' => :id, 
-        'string--Freshdesk--Domain--Name' => :full_domain 
+        'integer--Account--ID' => :id,
+        'string--Account--URL' => :full_domain,
+        'boolean--Activated'   => :verified?,
       }
     }
 
@@ -33,13 +34,14 @@ class ThirdCRM
     }
 
     SUBSCRIPTION_INFO = {
-      'custom' => {'string--Plan' => :plan_name, 'float--Monthly--Revenue' => :amount, 'integer--Agent--Count' => :agent_limit, 
-        'string--Customer--Status' => :state, 'string--Contact--Status' => :state, 'integer--Renewal--Period' => :renewal_period}
+      'custom' => {'string--Plan' => :plan_name, 'float--Monthly--Revenue' => :cmrr, 'integer--Agent--Count' => :agent_limit,
+        'string--Customer--Status' => :state, 'integer--Renewal--Period' => :renewal_period}
     }
 
   def add_signup_data(account, options = {})
     @signup_id = options[:signup_id]
-    add_lead_to_crm(lead_info(account))    
+    @old_email = options[:old_email]
+    add_lead_to_crm(lead_info(account))
   end
 
   def update_subscription_data(account)
@@ -53,6 +55,16 @@ class ThirdCRM
   end
 
   def lead_info(account)
+
+    # Fetch list of associated accounts from dynamodb for the given email id
+    associated_accounts = AdminEmail::AssociatedAccounts.find account.admin_email
+
+    # Creating comma separated account ids
+
+    if associated_accounts.present?
+        @associated_account_id_list = associated_accounts.map(&:id).join(', ')
+    end
+
     account_info = user_info(account)
     subscription_info = subscription_info(account.subscription)
     misc = account.conversion_metric ? signup_info(account.conversion_metric) : {'default' => {}, 'custom' => {}}
@@ -74,18 +86,35 @@ class ThirdCRM
     end
 
     def user_info(account)
+      account_info = {
+          "default" => (LEAD_INFO["default"].inject({}) { |h, (k, v)| h[k] = account.send(v); h }).merge(clearbit_info(account)),
+          "custom" => LEAD_INFO["custom"].inject({}) { |h, (k, v)| h[k] = account.send(v); h }.merge(
+            {'string--Associated--Accounts' => @associated_account_id_list })
+      }
+      if @old_email
+        account_info["default"]["Email"], account_info["default"]["_NewEmail"] = @old_email, account_info["default"]["Email"]
+      end
+      account_info
+
+    end
+
+    def clearbit_info(account)
       {
-        "default" => LEAD_INFO["default"].inject({}) { |h, (k, v)| h[k] = account.send(v); h },
-        "custom" => LEAD_INFO["custom"].inject({}) { |h, (k, v)| h[k] = account.send(v); h } 
+          'Company' =>  account.account_configuration.company_info[:name],
+          'Title' => account.account_configuration.contact_info[:job_title],
+          'Twitter' => account.account_configuration.contact_info[:twitter],
+          'Linkedin' => account.account_configuration.contact_info[:linkedin],
+          'MailingCountry' => account.account_configuration.contact_info[:country],
+          'Industry' => account.account_configuration.company_info[:industry],
+          'NumberOfEmployees' => account.account_configuration.company_info.try(:[], :metrics).try(:[], :employees)
       }
     end
 
     def subscription_info(subscription)
       {
         'custom' => SUBSCRIPTION_INFO["custom"].inject({}) { |h, (k, v)| h[k] = AUTOPILOT_STATES[subscription.send(v).to_s] || subscription.send(v).to_s; h }.merge(
-          {"string--Product" => PRODUCT_NAME, 
-            'date--Signup--Date' => subscription.created_at.strftime("%Y-%m-%d"), 
-            'date--Next--Renewal--Date' => subscription.next_renewal_at.strftime("%Y-%m-%d")})
+          {  'date--Signup--Date' => subscription.created_at.strftime("%Y-%m-%d"),
+            'date--Renewal--Date' => subscription.next_renewal_at.strftime("%Y-%m-%d")})
       }
     end
 

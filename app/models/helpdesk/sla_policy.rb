@@ -237,7 +237,7 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
         if agent_ids.include?(assigned_agent_id)
           agent_ids.delete(assigned_agent_id)
           agent_ids << responder_id if responder_id
-          agent_ids << internal_agent_id if internal_agent_id && Account.current.features?(:shared_ownership)
+          agent_ids << internal_agent_id if internal_agent_id && Account.current.shared_ownership_enabled?
         end
         agent_ids.uniq!
         unless agent_ids.blank?

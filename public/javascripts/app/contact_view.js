@@ -115,6 +115,10 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 				e.preventDefault();
 				$('#delete_customer').trigger('click');
 			});
+			$('body').on('click.contact-view','.expand-link',function(){
+				$('.expanded-email').slideDown(100);
+				$(this).addClass('hide')
+			});
 			$(window).on('scroll.contact-view', this.toggleUsername);
 			$('.sp_paragraph')
 					.height($('.sp_paragraph')[0].scrollHeight);

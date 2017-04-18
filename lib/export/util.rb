@@ -17,9 +17,14 @@ module Export::Util
   end
 
   def build_file file_string, type, format = "csv"
+    file_path = create_file(file_string, type, format)
+    upload_file(file_path)
+  end
+
+  def create_file file_string, type, format = "csv"
     file_path = generate_file_path(type, format)
     write_file(file_string, file_path)
-    upload_file(file_path)
+    file_path
   end
   
   def upload_file(file_path)

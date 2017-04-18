@@ -72,7 +72,7 @@ class Integrations::JiraIssueController < ApplicationController
     else
       jira_webhook = Integrations::JiraWebhook.new(params)
       if @installed_app.blank?
-        Rails.logger.info "Linked ticket not found for remote JIRA app with params #{params.inspect}"
+        Rails.logger.info "Linked ticket not found for remote JIRA app"
       else
         jira_webhook.update_local(@installed_app,@selected_key)
       end
@@ -100,7 +100,7 @@ class Integrations::JiraIssueController < ApplicationController
             account_id = @installed_app.account_id
             id = params["comment"]? params["comment"]["id"] : Digest::SHA512.hexdigest("@")  
             recently_updated_by_fd = get_integ_redis_key(INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=> account_id, :local_integratable_id=> local_integratable_id, :remote_integratable_id=> remote_integratable_id, :comment_id => id})
-            if recently_updated_by_fd || (params[:comment] && params[:comment]["body"] =~ /Note added by .* in Freshdesk:/ ) # If JIRA has been update recently with same params then ignore that event.
+            if recently_updated_by_fd || (params[:comment] && (params[:comment]["body"] =~ /Note added by .* in Freshdesk:/  || params[:comment]["body"] =~/Freshdesk ticket status changed to :/)) # If JIRA has been update recently with same params then ignore that event.
               remove_integ_redis_key(INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=>account_id, :local_integratable_id=>local_integratable_id, :remote_integratable_id=>remote_integratable_id, :comment_id => id})
               @installed_app = nil
             end

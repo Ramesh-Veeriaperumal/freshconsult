@@ -124,6 +124,7 @@ class Search::Utils
     company_v2_search:                'companyApiSearch',
     hstickets_dispid:                 'hsTicketsByDisplayId',
     hstickets_subject:                'hsTicketsBySubject',
+    filteredTicketSearch:             'filteredTicketSearch',
     search_query_api:                 'searchQueryApi'
   }
 
@@ -147,7 +148,7 @@ class Search::Utils
     
     # Load each type's results via its model
     #
-    es_results['hits']['hits'].group_by { |item| item['_type'] }.each do |type, items| 
+    (es_results['hits']['hits'].presence || {}).group_by { |item| item['_type'] }.each do |type, items| 
       if items.empty?
         records[type] = []
       else
@@ -168,7 +169,7 @@ class Search::Utils
       end
 
       item['highlight'].keys.each do |field|
-        detected.send("highlight_#{field}=", item['highlight'][field].to_s) if detected.respond_to?("highlight_#{field}=")
+        detected.send("highlight_#{field}=", [*item['highlight'][field]].join(' ... ')) if detected.respond_to?("highlight_#{field}=")
       end if item['highlight'].present?
 
       detected

@@ -5,14 +5,9 @@ class PlanChangeWorker
 
   def perform(args)
     account = Account.current
-    if args.is_a?(Array)
-      features = args
-      action = "drop"
-    else
-      args.symbolize_keys!
-      features = args[:features]
-      action = args[:action]
-    end
+    args.symbolize_keys!
+    features  = args[:features]
+    action    = args[:action]
 
     features.each do |feature|
       method = "#{action}_#{feature}_data"
@@ -27,40 +22,12 @@ class PlanChangeWorker
     end
   end
 
-  def drop_customer_slas_data(account)
-    #account.sla_policies.destroy_all(:is_default => false) #wasn't working..
-    Helpdesk::SlaPolicy.destroy_all(:account_id => account.id, :is_default => false)
-    update_all_in_batches({ :sla_policy_id => account.sla_policies.default.first.id }) { |cond|
-      account.companies.where(@conditions).limit(@batch_size).update_all(cond)
-    }
-    #account.sla_details.update_all(:override_bhrs => true) #this too didn't work.
-    update_all_in_batches({ :override_bhrs => true }){ |cond| 
-      account.sla_policies.default.first.sla_details.where(@conditions).limit(@batch_size).update_all(cond)
-    }
-  end
-
-  def drop_multiple_business_hours_data(account)
-    update_all_in_batches({ :time_zone => account.time_zone }){ |cond| 
-      records = account.all_users.where(@conditions).limit(@batch_size)
-      count   = records.update_all(cond)
-      records.map(&:sqs_manual_publish)
-      count
-    }
-  end
-
-  def drop_round_robin_data(account)
-    Role.remove_manage_availability_privilege account
-  end
-
   def add_round_robin_data(account)
     Role.add_manage_availability_privilege account
   end
 
-  def drop_multi_product_data(account)
-    account.products.destroy_all
-
-    #We are not updating the email_config_id or product_id in Tickets model knowingly.
-    #Tested, haven't faced any problem with stale email config ids or product ids.
+  def drop_round_robin_data(account)
+    Role.remove_manage_availability_privilege account
   end
 
   def drop_facebook_data(account)
@@ -87,10 +54,6 @@ class PlanChangeWorker
     account.save!
   end
 
-  def drop_multiple_emails_data(account)
-    account.global_email_configs.find(:all, :conditions => {:primary_role => false}).each{|gec| gec.destroy}
-  end
-
   def drop_layout_customization_data(account)
     account.portal_pages.destroy_all
     account.portal_templates.each do |template|
@@ -99,7 +62,7 @@ class PlanChangeWorker
   end
 
   def drop_css_customization_data(account)
-    update_all_in_batches({ :custom_css => nil, :updated_at => Time.now }){ |cond| 
+    update_all_in_batches({ :custom_css => nil, :updated_at => Time.now }){ |cond|
       account.portal_templates.where(@conditions).limit(@batch_size).update_all(cond)
     }
     drop_layout_customization_data(account)
@@ -126,7 +89,10 @@ class PlanChangeWorker
   def drop_dynamic_sections_data(account)
     account.ticket_fields.each do |field|
       if field.section_field?
-        field.field_options["section"] = false
+        field.rollback_section_in_field_options
+      end
+      if field.section_dropdown? && field.has_sections?
+        field.field_options["section_present"] = false
         field.save
       end
     end
@@ -139,7 +105,8 @@ class PlanChangeWorker
   end
 
   def drop_ticket_templates_data(account)
-    account.ticket_templates.destroy_all
+    account.ticket_templates.where(:association_type =>
+      Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:general]).destroy_all
   end
 
   def drop_custom_survey_data(account)
@@ -151,15 +118,15 @@ class PlanChangeWorker
   end
 
   def drop_dynamic_content_data(account)
-    # update_all_in_batches({ :language => account.language }){ |cond| 
-    #   account.all_users.where(@conditions).limit(@batch_size).update_all(cond) 
+    # update_all_in_batches({ :language => account.language }){ |cond|
+    #   account.all_users.where(@conditions).limit(@batch_size).update_all(cond)
     # }
     # Below line has been intentionally commented, as we want to make sure,
     # when the customer upgrades again, he'll have all the data and config as it was before. [Solution Multilingual Feature]
     #account.account_additional_settings.update_attributes(:supported_languages => [])
   end
 
-  def drop_mailbox_data(account)      
+  def drop_mailbox_data(account)
     account.imap_mailboxes.destroy_all
     account.smtp_mailboxes.destroy_all
   end

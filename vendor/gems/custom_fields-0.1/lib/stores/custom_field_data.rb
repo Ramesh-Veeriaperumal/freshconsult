@@ -9,6 +9,7 @@ module Stores
         delegate  :to_ff_alias, :to_ff_field, :custom_fields_cache,
                   :ff_aliases, :non_text_ff_aliases,
                   :ff_fields, :non_text_ff_fields, :to => args[:custom_form_cache_method]
+        after_commit :update_parent_updated_at, :on => :update if args[:touch_parent_on_update]
 
         include Stores::CustomFieldData::Methods
 
@@ -26,6 +27,16 @@ module Stores
             eval %Q["#{args[:form_id]}"]
           end
         EOV
+
+        if args[:touch_parent_on_update]
+          class_eval <<-EOV
+            private
+
+            def update_parent_updated_at
+              eval self.parent.touch
+            end
+          EOV
+        end
       end
     end
 

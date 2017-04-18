@@ -14,7 +14,7 @@ class Va::Performer
 	end
 
 	def matches? doer, ticket
-		Rails.logger.debug "INSIDE Performer.matches? WITH ticket : #{ticket.inspect}, doer #{doer}"
+		Rails.logger.debug "performer_matches :: T=#{ticket.id} :: D=#{doer.id}"
 		return false unless check_type doer, ticket
 		members.nil? ? true : (check_members doer, ticket)
 	end

@@ -11,19 +11,19 @@ module Mobile::Controllers::Ticket
     all_fields.each do |field|
       next if field.section_field? || field.field_type == "default_company" || (field.shared_ownership_field? && !shared_ownership_supported?)
       if field.visible_in_view_form? || is_new        
-        getField(field, item)
+        field_hash = getField(field, item)
         
         #For Agent Field     
-        field[:agent_groups] = agent_group_map if field.field_type == "default_agent"
+        field_hash['ticket_field'][:agent_groups] = agent_group_map if field.field_type == "default_agent"
 
         #For shared ownership
-        field[:status_groups] = status_group_map if field.field_type == "default_status" and current_account.features?(:shared_ownership)
+        field_hash['ticket_field'][:status_groups] = status_group_map if field.field_type == "default_status" and current_account.shared_ownership_enabled?
 
         #Dynamic Sections  
         # field[:has_sections] = field.has_section? ? true : false
-        field[:sections] = sectionFields(field,item)
+        field_hash['ticket_field'][:sections] = sectionFields(field,item)
 
-        fields.push(field)
+        fields.push(field_hash)
         #populating cc field
         if ( is_new and
             ( field.dom_type.eql?("requester") || ( field.dom_type.eql?('email') && field.portal_cc_field? ) ) )
@@ -47,8 +47,8 @@ module Mobile::Controllers::Ticket
       fields =[]     
       #For each Field in each Section
       picklist.section_ticket_fields.each do |field|             
-        getField(field, item)
-        fields.push(field)        
+        field_hash = getField(field, item)
+        fields.push(field_hash)        
       end 
       section[:fields] = fields      
       sectionsList.push(section)
@@ -58,24 +58,19 @@ module Mobile::Controllers::Ticket
 
 #return Field object with properties needed for Mobile 
 def getField field, item
-    field_value = item.send(field.field_name) unless item.nil?
+    field_hash = field.as_json({:include => [:nested_ticket_fields], :tailored_json => true })
+    ticket_field_hash = field_hash['ticket_field']
+    ticket_field_hash[:nested_choices] = field.nested_field? ? field.nested_choices : nil 
+    ticket_field_hash[:nested_levels] = field.nested_field? ? field.nested_levels : nil
+    ticket_field_hash[:field_value] = get_field_value(field, item)     
+    ticket_field_hash[:choices] =  field.field_type == "default_agent" ?  current_account.technicians.includes(:avatar).collect {|c| [c.name, c.id, c.avatar_url]}  : field.choices #TODO try to use to_json
+
     dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
-    dom_type = "dropdown_blank" if field.field_type == "nested_field"
-    if(field.field_type == "nested_field" && !item.nil?)
-      field_value = {}
-      field.nested_levels.each do |ff|
-        field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = item.send(ff[:name])
-      end
-      field_value.merge!({:category_val => item.send(field.field_name)})
-    end   
-    field[:nested_choices] = field.nested_field? ? field.nested_choices : nil 
-    field[:nested_levels] = field.nested_field? ? field.nested_levels : nil
-    field[:field_value] = field_value
-    field[:choices] = field.choices #TODO try to use to_json
-    field[:domtype] = dom_type
-    field[:is_default_field] = field.is_default_field?
-    field[:field_name] = field.field_name     
-    field
+    dom_type = "dropdown_blank" if field.field_type == "nested_field"  
+    ticket_field_hash[:domtype] = dom_type
+    ticket_field_hash[:is_default_field] = field.is_default_field?
+    ticket_field_hash[:field_name] = field.field_name     
+    field_hash
 end 
 
   def top_view
@@ -146,5 +141,19 @@ end
         :group_ids => group_ids)
     }
   end
+
+  def get_field_value field, item
+    field_value = item.send(field.field_name) unless item.nil?
+     if(field.field_type == "nested_field" && !item.nil?)
+      field_value = {}
+      field.nested_levels.each do |ff|
+        field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = item.send(ff[:name])
+      end
+      field_value.merge!({:category_val => item.send(field.field_name)})
+    end   
+
+    return field_value
+  end 
+
 
 end

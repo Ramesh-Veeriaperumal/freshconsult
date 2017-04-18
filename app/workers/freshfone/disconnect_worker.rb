@@ -25,7 +25,7 @@ module Freshfone
       errors = []
       ringing_calls.each do |call|
         begin
-          next if call.meta.present? && !call.meta.agent_pinged_and_no_response?(params[:agent].to_i) 
+          next if call.meta.present? && !call.meta.agent_pinged_and_no_response?(params[:agent].to_i) && call.supervisor_controls.warm_transfer_initiated_calls.blank?
           self.current_call = call
           self.current_number = current_call.freshfone_number
           if simultaneous_call?
@@ -49,8 +49,7 @@ module Freshfone
 
     private
       def ringing_calls
-        return current_account.freshfone_calls.calls_with_ids(params[:call_ids]) if params[:call_ids].present?
-        current_account.freshfone_calls.ringing_calls
+        current_account.freshfone_calls.calls_with_ids(params[:call_ids])
       end
 
       def log_worker_info

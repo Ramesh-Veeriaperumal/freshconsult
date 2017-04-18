@@ -132,7 +132,7 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 
 		def business_calendar
 			return current_account.business_calendar.find(params[:business_calendar]) if 
-								current_account.features?(:multiple_business_hours) and params[:business_calendar]
+								current_account.multiple_business_hours_enabled? and params[:business_calendar]
 			current_account.business_calendar.default.first
 		end
 

@@ -36,7 +36,7 @@ module RabbitMq::Subscribers::Search::SqsUtils
       Ryuken::SearchPoller.new.perform(nil, model_message)
     else
       RabbitMq::Utils.manual_publish_to_xchg(
-        model_uuid, model_exchange, model_message.to_json, RabbitMq::Constants.const_get("RMQ_SEARCH_#{model_exchange.upcase}_KEY")
+        model_uuid, model_exchange, model_message.to_json, RabbitMq::Constants.const_get("RMQ_SEARCH_#{model_exchange.upcase}_KEY"), true
       )
     end
   end

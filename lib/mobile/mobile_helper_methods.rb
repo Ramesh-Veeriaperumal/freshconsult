@@ -14,6 +14,7 @@ module Mobile::MobileHelperMethods
                   }
 
   DOMAINS =  [ :localhost, :"192.168.1.28", :"siva.freshbugs.com", :"freshvikram.freshbugs.com", :"m.freshbugs.com" ]
+  IOS_DEVICES = ["iPod touch", "iPad", "iPhone"]
   
   def self.included(base)
     base.send :helper_method, :set_mobile, :mobile?, :allowed_domain?, :mobile_agent?, :set_native_mobile
@@ -114,8 +115,14 @@ module Mobile::MobileHelperMethods
     def shared_ownership_supported?
       device_desc = JSON.parse(request.env["HTTP_REQUEST_ID"])["device_desc"]
       app_version = Gem::Version.new(JSON.parse(request.env["HTTP_REQUEST_ID"])["app_version"])
-      devices = ["iPod touch", "iPad", "iPhone"]
-      app_version <= Gem::Version.new('4.4') && devices.include?(device_desc) ? false : true
+      !(app_version <= Gem::Version.new('4.4') && IOS_DEVICES.include?(device_desc))
+    end
+
+    def mobile_canned_response_search_supported?
+      app_version = Gem::Version.new(JSON.parse(request.env["HTTP_REQUEST_ID"])["app_version"])
+      device_desc = JSON.parse(request.env["HTTP_REQUEST_ID"])["device_desc"]
+
+      (app_version >= Gem::Version.new('5.0') && IOS_DEVICES.include?(device_desc)) || (app_version >= Gem::Version.new('4.0') && !IOS_DEVICES.include?(device_desc))    
     end
 
 end

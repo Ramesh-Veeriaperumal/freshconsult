@@ -27,7 +27,7 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
     },
 
     bindGroupValidation: function() {
-      $('#user_phone, #user_mobile, #user_twitter_id, #user_email').addClass('fillone');
+      $('#user_phone, #user_mobile, #user_twitter_id, #user_email, #user_unique_external_id').addClass('fillone');
     },
 
     bindAutocomplete: function () {
@@ -128,11 +128,11 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
           $("#user_companies [data-company-destroyed='true']").each(function(i, selected){ 
             var company_name = $(selected).find("p").text();
             if($.inArray(company_name, self.selected_companies) !== -1)
-              self.removedCompanies[i] = company_name;
+              self.removedCompanies.push(company_name);
           });
 
           $("#added_companies").val(self.addedCompanies.toJSON());
-          $("#removed_companies").val(String(self.removedCompanies));
+          $("#removed_companies").val(self.removedCompanies.toJSON());
           $("#edited_companies").val(self.editedCompanies.toJSON());
         }
       });
@@ -252,13 +252,13 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
     },
 
     manageNewEmail: function () {
-      if( this.emailWithNoErrors() && $('#emails_con li').not('.destroyed').length<5){
+      if( this.emailWithNoErrors() && $('#emails_con li').not('.destroyed').length<this.max_user_emails){
           $('#add_new_mail').removeClass('disabled')
         }else{
           $('#add_new_mail').addClass('disabled')
         }
 
-        if($('#emails_con li').not('.destroyed').length >= 5){
+        if($('#emails_con li').not('.destroyed').length >= this.max_user_emails){
           $('.ue_add_email').hide();
         }else{
           $('.ue_add_email').show();

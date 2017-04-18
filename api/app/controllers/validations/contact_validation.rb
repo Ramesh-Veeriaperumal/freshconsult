@@ -9,6 +9,7 @@ class ContactValidation < ApiValidation
     twitter_id: { data_type: { rules: String },  custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
     email: { data_type: { rules: String }, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, accepted: :'valid email address' }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
     description: { data_type: { rules: String } },
+    unique_external_id: { data_type: { rules: String },  custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
     company_name: {
       custom_numericality: {
         ignore_string: :allow_string_param,
@@ -18,7 +19,7 @@ class ContactValidation < ApiValidation
     }
   }.freeze
 
-  MANDATORY_FIELD_ARRAY = [:email, :mobile, :phone, :twitter_id].freeze
+  MANDATORY_FIELD_ARRAY = [:email, :mobile, :phone, :twitter_id, :unique_external_id].freeze
   CHECK_PARAMS_SET_FIELDS = ( MANDATORY_FIELD_ARRAY.map(&:to_s) +
                               %w(time_zone language custom_fields other_companies active)
                             ).freeze
@@ -27,7 +28,7 @@ class ContactValidation < ApiValidation
   attr_accessor :active, :avatar, :view_all_tickets, :custom_fields, :company_name,
                 :email, :fb_profile_id, :job_title, :language, :mobile,
                 :name, :other_emails, :other_companies, :phone, :tags,
-                :time_zone, :twitter_id, :address, :description
+                :time_zone, :twitter_id, :address, :description, :unique_external_id
 
   alias_attribute :company_id, :company_name
   alias_attribute :customer_id, :company_name
@@ -35,7 +36,8 @@ class ContactValidation < ApiValidation
   # Default fields validation
   validates :language, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field,  message_options: { attribute: 'language', feature: :multi_language } }, unless: :multi_language_enabled?
   validates :time_zone, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field, message_options: { attribute: 'time_zone', feature: :multi_timezone } }, unless: :multi_timezone_enabled?
-  validates :email, :phone, :mobile, :company_name, :address, :job_title, :twitter_id, :language, :time_zone, :description, :other_emails, default_field:
+  validates :unique_external_id, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field, message_options: { attribute: 'unique_external_id', feature: :unique_contact_identifier } }, unless: :unique_contact_identifier_enabled?
+  validates :email, :phone, :mobile, :company_name, :address, :job_title, :twitter_id, :language, :time_zone, :description, :unique_external_id, :other_emails, default_field:
                               {
                                 required_fields: proc { |x| x.required_default_fields },
                                 field_validations: DEFAULT_FIELD_VALIDATIONS
@@ -138,7 +140,7 @@ class ContactValidation < ApiValidation
       field = MANDATORY_FIELD_ARRAY.detect { |x| instance_variable_defined?("@#{x}_set") }
       field ? error_options[field] = { code: :invalid_value } : field = :email
       errors[field] = :fill_a_mandatory_field
-      (error_options[field] ||= {}).merge!(field_names: MANDATORY_FIELD_STRING)
+      (error_options[field] ||= {}).merge!(field_names: mandatory_fields_string)
     end
 
     alias_method :contact_detail_missing_update, :contact_detail_missing
@@ -178,7 +180,7 @@ class ContactValidation < ApiValidation
     end
 
     def multi_timezone_enabled?
-      Account.current.features?(:multi_timezone)
+      Account.current.multi_timezone_enabled?
     end
 
     def attributes_to_be_stripped
@@ -201,6 +203,22 @@ class ContactValidation < ApiValidation
         })
       elsif ids.length != ids.uniq.length
         errors[:other_companies] << :duplicate_companies
+      end
+    end
+
+    def unique_contact_identifier_enabled?
+      Account.current.unique_contact_identifier_enabled?
+    end
+
+    def mandatory_fields_string
+      mandatory_field_array.join(', ')
+    end
+
+    def mandatory_field_array
+      if unique_contact_identifier_enabled?
+        MANDATORY_FIELD_ARRAY
+      else
+        MANDATORY_FIELD_ARRAY - [:unique_external_id]
       end
     end
 end

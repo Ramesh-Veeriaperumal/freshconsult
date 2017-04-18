@@ -20,7 +20,10 @@ module Marketplace::ApiHelper
     def installed_mkp_apps_list(page)
       key = MemcacheKeys::INSTALLED_FRESHPLUGS % { 
             :page => page, :account_id => current_account.id }
-      @installed_list ||= mkp_memcache_fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
+      cache_invalidation = (page == Marketplace::Constants::DISPLAY_PAGE[:integrations_list]) ? 
+                           MarketplaceConfig::INTEGRATIONS_CACHE_INVD_TIME : 
+                           MarketplaceConfig::CACHE_INVALIDATION_TIME
+      @installed_list ||= mkp_memcache_fetch(key, cache_invalidation) do
         installed_extensions(installed_params(page))
       end
     end
@@ -33,7 +36,7 @@ module Marketplace::ApiHelper
                                         .merge({:installation_details => installed_mkp_app})
         if extension_details['app_type'] == Marketplace::Constants::APP_TYPE[:custom]
           installed_custom_apps << installed_extension_details
-        else
+        elsif extension_details['app_type'] == Marketplace::Constants::APP_TYPE[:regular]
           installed_mkp_apps << installed_extension_details
         end
       end

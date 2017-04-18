@@ -32,13 +32,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed",
                             "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email", 
                             "parent_ticket", "reports_hash","sla_response_reminded","sla_resolution_reminded", "dirty_attributes",
-                            "internal_group_id", "internal_group", "internal_agent_id", "internal_agent","association_type", 
-                            "associates_rdb", "sentiment", "spam_score", "sds_spam", "skill", "skill_id"]
+                            "sentiment", "spam_score", "sds_spam", "skill", "skill_id"]
 
   TICKET_STATE_ATTRIBUTES = ["opened_at", "pending_since", "resolved_at", "closed_at", "first_assigned_at", "assigned_at",
                              "first_response_time", "requester_responded_at", "agent_responded_at", "group_escalated",
                              "inbound_count", "status_updated_at", "sla_timer_stopped_at", "outbound_count", "avg_response_time",
-                             "first_resp_time_by_bhrs", "resolution_time_by_bhrs", "avg_response_time_by_bhrs"]
+                             "first_resp_time_by_bhrs", "resolution_time_by_bhrs", "avg_response_time_by_bhrs", "resolution_time_updated_at"]
                             
   OBSERVER_ATTR = []
   self.table_name =  "helpdesk_tickets"
@@ -237,10 +236,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
                             false, sla_rule_ids]
   }}
 
-  scope :not_associated,
-          :select => "helpdesk_tickets.*",
-          :joins => :schema_less_ticket,
-          :conditions => ["`helpdesk_schema_less_tickets`.#{Helpdesk::SchemaLessTicket.association_type_column} is null"]
+  scope :not_associated, :conditions => {:association_type => nil}
+
+  scope :associated_tickets, lambda {|association_type| {
+          :conditions => ["association_type = ?", TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[association_type]]
+  }}
+
   scope :unassigned, :conditions => ["helpdesk_tickets.responder_id is NULL"]
   scope :sla_on_tickets, lambda { |status_ids|
     { :conditions => ["status IN (?)", status_ids] }
@@ -459,7 +460,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def not_editable?
-    requester and !requester_has_email? and !requester_has_phone?
+    requester and !requester_has_email? and !requester_has_phone? and !requester_has_external_id?
   end
 
   def requester_has_email?
@@ -468,6 +469,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def requester_has_phone?
     requester and requester.phone.present?
+  end
+
+  def requester_has_external_id?
+    account.unique_contact_identifier_enabled? ? (requester and requester.unique_external_id.present?) : false
   end
 
   def encode_display_id
@@ -538,7 +543,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def set_time_zone
-    return set_account_time_zone unless account.features?(:multiple_business_hours)
+    return set_account_time_zone unless account.multiple_business_hours_enabled?
     if self.group.nil? || self.group.business_calendar.nil?
       set_account_time_zone
     else
@@ -723,7 +728,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     begin
       super
     rescue NoMethodError, NameError => e
-      Rails.logger.debug "method_missing :: args is #{args.inspect} and method:: #{method} "
+      #Rails.logger.debug "method_missing :: args is #{args.inspect} and method:: #{method} "
       return schema_less_attributes(method, args) if SCHEMA_LESS_ATTRIBUTES.include?(method.to_s.chomp("=").chomp("?"))
       return ticket_states.send(method) if ticket_states.respond_to?(method)
       return custom_field_attribute(method, args) if self.ff_aliases.include?(method.to_s.chomp("=").chomp("?"))
@@ -1153,7 +1158,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def send_agent_assigned_notification?(internal_notification = false)
       doer_id = Thread.current[:observer_doer_id]
-      agent_changed, agent = internal_notification ? [internal_agent_id_changed?, internal_agent] :
+      agent_changed, agent = internal_notification ? [@model_changes.key?(:internal_agent_id), internal_agent] :
           [@model_changes.key?(:responder_id), responder]
 
       agent_changed && agent && agent.id != doer_id && agent != User.current
@@ -1175,32 +1180,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
       internal_group_id_changed? or internal_agent_id_changed?
     end
 
-    def internal_group_id_changed?
-      internal_group_column = Helpdesk::SchemaLessTicket.internal_group_column
-      schema_less_ticket.changes.symbolize_keys.key?(internal_group_column)
-    end
-
-    def internal_agent_id_changed?
-      internal_agent_column = Helpdesk::SchemaLessTicket.internal_agent_column
-      schema_less_ticket.changes.symbolize_keys.key?(internal_agent_column)
-    end
-
-    def internal_group_id_changes
-      internal_group_column = Helpdesk::SchemaLessTicket.internal_group_column
-      schema_less_ticket.changes.symbolize_keys[internal_group_column]
-    end
-
-    def internal_agent_id_changes
-      internal_agent_column = Helpdesk::SchemaLessTicket.internal_agent_column
-      schema_less_ticket.changes.symbolize_keys[internal_agent_column]
-    end
-
-    def valid_internal_group?(ig_id = schema_less_ticket.internal_group_id)
+    def valid_internal_group?(ig_id = internal_group_id)
       return true if ig_id.blank?
       ticket_status.group_ids.include?(ig_id)
     end
 
-    def valid_internal_agent?(ia_id = schema_less_ticket.internal_agent_id)
+    def valid_internal_agent?(ia_id = internal_agent_id)
       return true if ia_id.blank?
       valid_internal_group? && (internal_group.try(:agent_ids) || []).include?(ia_id)
     end

@@ -16,7 +16,6 @@ window.App.Tickets = window.App.Tickets || {};
 
         init: function(e) {
         if(nba.enable == "true"){
-            $("#nba-loading").addClass("sloading") 
             this.kissMetricTrackingCode(nba.key)
             this.similar_tickets = [];
             this.widget_pos = 1;
@@ -45,6 +44,7 @@ window.App.Tickets = window.App.Tickets || {};
             $(document).on("click.nba",".ficon-dislike",this.thumbsDown.bind(this));
             $(document).on("click.nba","#fdbk-button",this.submitFeedBack.bind(this));
             $(document).on("click.nba","#help",this.showHelp.bind(this));
+            $(document).on("click.nba","#sas_survey",this.showSurvey.bind(this));
         },
 
         offEventBinding: function() {
@@ -65,9 +65,11 @@ window.App.Tickets = window.App.Tickets || {};
         },
 
         showHelp: function(event){
-            inline_manual_player.activateTopic("22248"); 
             event.stopPropagation();
-            event.preventDefault();
+        },
+
+        showSurvey: function(event){
+            this.pushEventToKM("NBA_Feedback_Clicked",this.userProperties(0,"",0));
         },
 
         thumbsUp: function(event){
@@ -160,7 +162,6 @@ window.App.Tickets = window.App.Tickets || {};
         addNBAWidget: function(event) {
             if (!($("#sas-hd-error").hasClass("sas-hidden"))){
                 $(".nba-sas").addClass("sas-hidden")
-                $("#nba-loading").addClass("sloading")
                 this.load_nba_widget(event);
                 event.preventDefault(); 
                 return 
@@ -287,7 +288,6 @@ window.App.Tickets = window.App.Tickets || {};
                 contentType: "application/json",
                 type: "GET",
                 success: function(response) {
-                    $("#nba-loading").removeClass("sloading")
                     if (response.length > 0) {
                         $this.process_response(response, event);
                     } else {
@@ -295,7 +295,6 @@ window.App.Tickets = window.App.Tickets || {};
                     }
                 },
                 error: function(xhr, textStatus, errorThrown) {
-                    $("#nba-loading").removeClass("sloading")
                     $this.load_no_response_widget("error", event);
                 }
             })

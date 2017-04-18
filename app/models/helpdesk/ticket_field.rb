@@ -24,7 +24,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
     :custom_decimal         => { :type => :custom, :dom_type => :decimal},
     :nested_field           => { :type => :custom, :dom_type => :nested_field}
   }
-  
+
+  SECTION_LIMIT = 2
+  SECTION_DROPDOWNS = ["default_ticket_type", "custom_dropdown"]
+
   belongs_to_account
   belongs_to :flexifield_def_entry, :dependent => :destroy
   belongs_to :parent, :class_name => 'Helpdesk::TicketField'
@@ -174,8 +177,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
   end
 
   def self.default_field_order
-    Account.current.features?(:shared_ownership) ? 
-      TicketConstants::SHARED_DEFAULT_FIELDS_ORDER : TicketConstants::DEFAULT_FIELDS_ORDER
+    Account.current.shared_ownership_enabled? ?
+      TicketConstants::SHARED_DEFAULT_FIELDS_ORDER.keys : TicketConstants::DEFAULT_FIELDS_ORDER
   end
 
   # Used by API V2
@@ -280,7 +283,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
   def html_unescaped_choices(ticket = nil)
     case field_type
       when "custom_dropdown" then
-        picklist_values.collect { |c| [CGI.unescapeHTML(c.value), c.value] }
+        picklist_values.collect { |c| [CGI.unescapeHTML(c.value), c.value,
+                                  {"data-id" => c.id}] }
       when "default_priority" then
         TicketConstants.priority_names
       when "default_source" then
@@ -401,6 +405,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   #Use as_json instead of to_json for future support Rails3 refer:(http://jonathanjulian.com/2010/04/rails-to_json-or-as_json/)
   def as_json(options={})
+    return super(options) unless options[:tailored_json].blank?
     options[:include] = [:nested_ticket_fields]
     options[:except] = [:account_id]
     options[:methods] = [:choices]
@@ -434,20 +439,40 @@ class Helpdesk::TicketField < ActiveRecord::Base
     field_options.fetch("portalcc")
   end
 
+  def shared_ownership_field?
+    self.field_type == "default_internal_group" or self.field_type == "default_internal_agent"
+  end
+
   def section_field?
     field_options.blank? ? false : field_options.symbolize_keys.fetch(:section, false)
   end
 
-  def shared_ownership_field?
-    self.field_type == "default_internal_group" or self.field_type == "default_internal_agent"
+  def rollback_section_in_field_options
+    self.field_options["section"] = false
+    self.save
+  end
+
+  def section_dropdown?
+    SECTION_DROPDOWNS.include?(self.field_type)
+  end
+
+  def has_sections?
+    field_options.blank? ? false : field_options.symbolize_keys.fetch(:section_present, false)
   end
 
   def has_sections_feature?
     Account.current.features?(:dynamic_sections)
   end
 
+  def has_multi_sections_feature?
+    Account.current.multi_dynamic_sections_enabled?
+  end
+
   def has_section?
-    return true if has_sections_feature? && field_type == "default_ticket_type"
+    return true if has_sections_feature? && 
+                  ((field_type == SECTION_DROPDOWNS[0] && !has_multi_sections_feature?) ||
+                   SECTION_DROPDOWNS.include?(self.field_type) &&
+                   has_multi_sections_feature?)
     # if field_type == "custom_dropdown"
     #   return false if section_field?
     #   !dynamic_section_fields.blank?
@@ -552,7 +577,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
     end
 
     def set_internal_field_values
-      if (self.name == "internal_agent" or self.name == "internal_group") and Account.current.features?(:shared_ownership)
+      if (self.name == "internal_agent" or self.name == "internal_group") and Account.current.shared_ownership_enabled?
         self.visible_in_portal = false
         self.editable_in_portal = false
         self.required_in_portal = false

@@ -61,7 +61,7 @@ module Freshfone::Disconnect
     end
 
     def return_missed_transfer
-      call_params = params.merge({:DialCallSid => params[:CallSid], :DialCallStatus => params[:CallStatus]})
+      call_params = params.except(:agent, :agent_id).merge({DialCallSid: params[:CallSid], DialCallStatus: params[:CallStatus]})
       call_params.merge!({ :direct_dial_number => format_external_number }) if params[:external_number].present? && params[:external_transfer].present?
       current_call.update_call(call_params)
       notify_source_agent_to_reconnect
@@ -88,9 +88,7 @@ module Freshfone::Disconnect
       !current_call.transferred_leg? &&
         current_number.round_robin? &&
         current_call.meta.simple_or_group_hunt? &&
-        !current_call.meta.all_agents_missed? &&
-        no_response_present? &&
-        current_call.user_id.blank?
+        !current_call.meta.all_agents_missed?
     end
 
     def canceled_call?

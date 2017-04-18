@@ -1415,6 +1415,18 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
   end
 
+  def test_update_with_product_required_not_in_request_in_db
+    params_hash = { priority: 1 }
+    Helpdesk::TicketField.where(name: "product").update_all(required: true)
+    product = create_product
+    t = ticket
+    t.schema_less_ticket.update_column(:product_id, product.id)
+    put :update, construct_params({ id: t.display_id}, params_hash)
+    Helpdesk::TicketField.where(name: "product").update_all(required: false)
+    match_json(update_ticket_pattern({}, t.reload))
+    assert_response 200    
+  end
+
   def test_update_with_product_id_and_diff_email_config_id
     product = create_product
     product_1 = create_product
@@ -2172,7 +2184,7 @@ class TicketsControllerTest < ActionController::TestCase
     User.any_instance.stubs(:assigned_ticket_permission).returns(false).at_most_once
     group = create_group_with_agents(@account, agent_list: [@agent.id])
     t = create_ticket(ticket_params_hash.merge(internal_group_id: group.id))
-    Account.any_instance.stubs(:features?).with(:shared_ownership).returns(true)
+    Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
     delete :destroy, construct_params(id: t.display_id)
     User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
     Account.any_instance.unstub(:features?)
@@ -2197,7 +2209,7 @@ class TicketsControllerTest < ActionController::TestCase
     User.any_instance.stubs(:assigned_ticket_permission).returns(true).at_most_once
     t = create_ticket(ticket_params_hash)
     Helpdesk::Ticket.any_instance.stubs(:internal_agent_id).returns(@agent.id)
-    Account.any_instance.stubs(:features?).with(:shared_ownership).returns(true)
+    Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
     delete :destroy, construct_params(id: t.display_id)
     User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
     assert_response 204
@@ -2403,6 +2415,26 @@ class TicketsControllerTest < ActionController::TestCase
     pattern = [bad_request_error_pattern('order_type', :not_included, list: 'asc,desc')]
     pattern << bad_request_error_pattern('order_by', :not_included, list: 'due_by,created_at,updated_at,status')
     match_json(pattern)
+
+    Account.any_instance.stubs(:sla_management_enabled?).returns(false)
+    get :index, controller_params(order_type: 'test', order_by: 'priority')
+    assert_response 400
+    pattern = [bad_request_error_pattern('order_type', :not_included, list: 'asc,desc')]
+    pattern << bad_request_error_pattern('order_by', :not_included, list: 'created_at,updated_at,status')
+    match_json(pattern)
+  ensure
+    Account.any_instance.unstub(:sla_management_enabled?)
+  end
+
+  def test_index_sort_by_due_by_with_sla_disabled
+    Account.any_instance.stubs(:sla_management_enabled?).returns(false)
+    get :index, controller_params(order_type: 'test', order_by: 'due_by')
+    assert_response 400
+    pattern = [bad_request_error_pattern('order_type', :not_included, list: 'asc,desc')]
+    pattern << bad_request_error_pattern('order_by', :not_included, list: 'created_at,updated_at,status')
+    match_json(pattern)
+  ensure
+    Account.any_instance.unstub(:sla_management_enabled?)
   end
 
   def test_index_with_extra_params

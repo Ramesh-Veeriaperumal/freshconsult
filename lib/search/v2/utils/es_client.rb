@@ -33,7 +33,7 @@ module Search
           # _Note_: If Typhoeus is not a preferred client, can change here alone.
           #
           def es_request
-            request_to_es = Typhoeus::Request.new(@path, method: @method, body: @payload, headers: { 'X-Request-Id' => @uuid, 'Connection' => 'keep-alive' })
+            request_to_es = Typhoeus::Request.new(@path, method: @method, body: @payload, headers: { 'User-Agent' => "V2Client #{@uuid}", 'X-Request-Id' => @uuid, 'Connection' => 'keep-alive' })
             attach_callbacks(request_to_es)
 
             logger.log_request(
@@ -133,8 +133,9 @@ module Search
               # BAD_GATEWAY
             # elsif response_from_es.code == 503
               # SERVICE_UNAVAILABLE
-            # elsif response_from_es.code == 504
+            elsif response_from_es.code == 504
               # GATEWAY_TIMEOUT
+              raise Errors::GatewayTimeoutException.new(response_from_es.body)
             # elsif response_from_es.code == 505
               # HTTP_VERSION_NOT_SUPPORTED
             # elsif response_from_es.code == 506
@@ -147,11 +148,12 @@ module Search
           # Makes request, prepares response and logs it
           #
           def es_response(response_from_es)
-            @response         = JSON.parse(response_from_es.body)
+            @response         = JSON.parse(response_from_es.body) rescue {}
             @es_response_time ||= @response["took"]
+            response_code = response_from_es.code
             
             logger.log_response(
-                                response_from_es.code, 
+                                response_code, 
                                 @es_response_time, 
                                 @response["error"],
                                 (log_response_payload? ? response_from_es.body : nil)
@@ -162,12 +164,27 @@ module Search
                                 @account_id,
                                 @cluster,
                                 @search_type,
-                                response_from_es.code,
-                                response_from_es.total_time*1000, 
+                                response_code,
+                                (response_from_es.total_time * 1000),
+                                (response_from_es.starttransfer_time * 1000),
+                                (response_from_es.appconnect_time * 1000),
+                                (response_from_es.pretransfer_time * 1000),
+                                (response_from_es.connect_time * 1000),
+                                (response_from_es.namelookup_time * 1000),
+                                (response_from_es.redirect_time * 1000),
                                 @es_response_time
                               )
-              
-             end
+
+              logger.track_hits(
+                                @account_id,
+                                @cluster,
+                                @search_type,
+                                response_code, 
+                                (response_code == 504 ? "-1" : @es_response_time), 
+                                (response_code == 504 ? "-1" : @response["hits"]["total"]),
+                                response_from_es.request.original_options[:body]
+                              )
+            end
           end
 
           # Log payload in development and in other 

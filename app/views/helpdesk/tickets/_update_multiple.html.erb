@@ -12,8 +12,8 @@
     <div class="content clearfix scrollbar">
     <% helpdesk_submit_options = []
       ticket_fields = current_portal.ticket_fields
-      if current_account.features?(:shared_ownership)
-        default_field_order = TicketConstants::SHARED_DEFAULT_FIELDS_ORDER
+      if current_account.shared_ownership_enabled?
+        default_field_order = TicketConstants::SHARED_DEFAULT_FIELDS_ORDER.keys
         default_fields  = ticket_fields.select{|tf| default_field_order.include?(tf.field_type)}
         other_fields    = ticket_fields - default_fields
         default_fields.sort! {|x,y| default_field_order.index(x.field_type).to_i <=> default_field_order.index(y.field_type).to_i }
@@ -71,6 +71,7 @@
       </div>
     </div>
   </div>
+  <input type="hidden" value="<%= search_term %>" name="search_term">
 <% end %>
 </div>
 
@@ -115,7 +116,7 @@
   var agentToGroupText = "<%= I18n.t('internal_agent_actions') %>";
   var MAX_TAG_LENGTH_MSG = "<%= I18n.t('helpdesk.tickets.show.max_tag_length_msg') %>";
   var enableDropDowns = false;
-  var sharedOwnershipEnabled = <%= current_account.features?(:shared_ownership) %>;
+  var sharedOwnershipEnabled = <%= current_account.shared_ownership_enabled? %>;
 
   jQuery('#ticket_cancel_multiple_button').off('click')
   jQuery('#ticket_cancel_multiple_button').on('click', function(){
@@ -173,7 +174,7 @@
 });
 
   jQuery("[rel=inputselectbox],[rel=inputtextbox],#helpdesk_tags").off('change');
- jQuery("[rel=inputselectbox],[rel=inputtextbox],#helpdesk_tags").on('change',  function(ev){
+  jQuery('body').on('change', "[rel=inputselectbox],[rel=inputtextbox],#helpdesk_tags",  function(ev){
     if(jQuery(this).attr('id')=="helpdesk_ticket_group_id" && jQuery("#helpdesk_ticket_group_id").val() != "-1")
     {
       if(jQuery('#helpdesk_ticket_responder_id_label').is(':checked'))
@@ -261,17 +262,23 @@
     submitBulkUpdate();
   });
 
-  // Need to make the code generic to handle the custom dropdown fields sections.
-  jQuery("#helpdesk_ticket_ticket_type")
+  jQuery(".dynamic_sections")
     .on("change", function(e){
-      var id = jQuery("option:selected", this).data("id");
-      jQuery('.ticket_section').remove();
+      var id;
+      var selected = jQuery(this).find(':selected');
+      if (selected.length > 0){
+        id = selected.data().id;
+      }
+      var nextElement = jQuery(this).parent().next();
+      if (nextElement.hasClass('ticket_section')){
+        nextElement.remove();
+      }
       var element = jQuery('#picklist_section_'+id).parent();
       if(element.length != 0) {
         jQuery(jQuery('#picklist_section_'+id).val()
-                .replace(new RegExp('&lt', 'g'), '<')
-                .replace(new RegExp('&gt', 'g'), '>'))
-              .insertAfter(jQuery("#helpdesk_ticket_ticket_type").parent());
+              .replace(new RegExp('&lt', 'g'), '<')
+              .replace(new RegExp('&gt', 'g'), '>'))
+            .insertAfter(jQuery("#"+this.id).parent());
       }
   });
 
@@ -290,7 +297,8 @@
     });
 
     //check for status of the tickets and disable internal dropdowns if status not equal
-    var ticketStatuses = jQuery('.tickets tbody tr .check :checkbox:checked');
+    var is_search_page = window.location.pathname.indexOf("search") > -1 ? true : false
+    var ticketStatuses = is_search_page ? jQuery("#search-page-results :checkbox:checked") : jQuery('.tickets tbody tr .check :checkbox:checked');
     function checkForTicketStatus(){
       if(ticketStatuses.length > 1){
         var size = ticketStatuses.length;

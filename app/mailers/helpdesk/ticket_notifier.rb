@@ -13,6 +13,24 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   
   layout "email_font"
 
+  def suppression_list_alert(admin,dropped_address = nil,display_id)
+    headers = {
+      :to       => "support@freshdesk.com",
+      :from     => admin.email,
+      :subject  => I18n.t('email_failure.suppression_list_alert.subject'),
+      :sent_on  => Time.now
+    }
+    current_account     = Account.current
+    @account_name       = current_account.name
+    @account_url        = "#{current_account.url_protocol}://#{current_account.full_domain}"
+    @dropped_address    = dropped_address
+    @agent_name         = admin.name
+    @ticket_display_id  = display_id
+    mail(headers) do |part|
+      part.html { render "suppression_list_alert" }
+    end.deliver
+  end
+
   def self.notify_by_email(notification_type, ticket, comment = nil, opts = {})
     internal_notification = opts[:internal_notification]
     e_notification = ticket.account.email_notifications.find_by_notification_type(notification_type)
@@ -33,16 +51,16 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       r_plain_template = Liquid::Template.parse(requester_plain_template.gsub("{{ticket.status}}","{{ticket.requester_status_name}}").gsub("{{ticket.description}}", "{{ticket.description_text}}"))
       r_s_template = Liquid::Template.parse(requester_template.first.gsub("{{ticket.status}}","{{ticket.requester_status_name}}")) 
       html_version = r_template.render('ticket' => ticket, 
-                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe
+                'helpdesk_name' => ticket.account.helpdesk_name, 'comment' => comment).html_safe
       plain_version = r_plain_template.render('ticket' => ticket, 
-                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe
+                'helpdesk_name' => ticket.account.helpdesk_name, 'comment' => comment).html_safe
 
       params = { :ticket => ticket,
              :notification_type => notification_type,
              :receips => ticket.from_email,
              :email_body_plain => plain_version,
              :email_body_html => html_version,
-             :subject => r_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe}
+             :subject => r_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.helpdesk_name).html_safe}
       if(notification_type == EmailNotification::NEW_TICKET and ticket.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone])
         params[:attachments] = ticket.all_attachments
         params[:cloud_files] = ticket.cloud_files
@@ -69,15 +87,15 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       a_plain_template = Liquid::Template.parse(agent_plain_template.gsub("{{ticket.description}}", "{{ticket.description_text}}"))
       a_s_template = Liquid::Template.parse(agent_template.first) 
       html_version = a_template.render('ticket' => ticket, 
-                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe
+                'helpdesk_name' => ticket.account.helpdesk_name, 'comment' => comment).html_safe
       plain_version = a_plain_template.render('ticket' => ticket, 
-                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe
+                'helpdesk_name' => ticket.account.helpdesk_name, 'comment' => comment).html_safe
       headers = { :ticket => ticket,
        :notification_type => e_notification.notification_type,
        :receips => receips,
        :email_body_plain => plain_version,
        :email_body_html => html_version,
-       :subject => a_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe,
+       :subject => a_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.helpdesk_name).html_safe,
        :survey_id => survey_id,
        :disable_bcc_notification => e_notification.bcc_disabled?,
        :private_comment => comment ? comment.private : false,
@@ -107,15 +125,15 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       r_plain_template = Liquid::Template.parse(requester_plain_template.gsub("{{ticket.status}}","{{ticket.requester_status_name}}").gsub("{{ticket.description}}", "{{ticket.description_text}}"))
       r_s_template = Liquid::Template.parse(requester_subject.gsub("{{ticket.status}}","{{ticket.requester_status_name}}"))
       html_version = r_template.render('ticket' => ticket, 
-                  'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe
+                  'helpdesk_name' => ticket.account.helpdesk_name, 'comment' => comment).html_safe
       plain_version = r_plain_template.render('ticket' => ticket, 
-                  'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe
+                  'helpdesk_name' => ticket.account.helpdesk_name, 'comment' => comment).html_safe
       params = { :ticket => ticket,
                :notification_type => e_notification.notification_type,
                :receips => to_emails,
                :email_body_plain => plain_version,
                :email_body_html => html_version,
-               :subject => r_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe,
+               :subject => r_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.helpdesk_name).html_safe,
                :disable_bcc_notification => e_notification.bcc_disabled?}
                   
       if !cc_mails.nil?
@@ -418,7 +436,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
       message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@forward.freshdesk.com"
       
-      headers = email_headers(ticket, nil, false).merge({
+      headers = email_headers(ticket, message_id, false).merge({
         :subject    =>  formatted_subject(ticket),
         :to         =>  to_emails,
         :cc         =>  cc_emails,

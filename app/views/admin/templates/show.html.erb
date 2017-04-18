@@ -16,7 +16,7 @@
         </a>
     </li>
     <% end %>
-    <% if feature?(:layout_customization) %>
+    <% if current_account.layout_customization_enabled? %>
     <li>
         <a id="layout-tab" href="#layout" data-toggle="tab" 
             data-code-refresh="#portal_template_head, #portal_template_header, #portal_template_footer, #portal_template_layout">
@@ -35,7 +35,7 @@
         <%= render :partial => "custom_css", :object => @portal_template %>
     	</div>
     <%end%>
-    <%if feature?(:layout_customization)%>
+    <%if current_account.layout_customization_enabled? %>
       <div class="tab-pane" id="layout">
         <ul data-tabs="tabs" class="pills nav-pills portal-pills">
           <li class="active">
@@ -104,9 +104,9 @@
 <% end %>
 
 <% content_for :onload_script do %>
-  jQuery("[rel=portal_form]").on("change", function(ev){
-    jQuery(this).data('formChanged', true)
-  })
+  jQuery("body").on("change", "[rel=portal_form]", function(ev){
+    jQuery(this).data('formChanged', true);
+  });
 
   jQuery("#custom_css-tab, #layout-tab").bind("click", function(evnt){
     var target = evnt.target;
@@ -158,31 +158,31 @@
           }
           return false;
         }
-      })
-    })
+      });
+    });
 
-    jQuery("#portal-tabs a").on("click", function(ev){
-      jQuery("[rel=helpcard]").hide()
-      jQuery("#" + this.id + "-helpcard").show()
-    })
+    jQuery("body").on("click", "#portal-tabs a", function(ev){
+      jQuery("[rel=helpcard]").hide();
+      jQuery("#" + this.id + "-helpcard").show();
+    });
 
-    jQuery("[rel=reset-btn]").on("click", function(ev){
+    jQuery("body").on("click", "[rel=reset-btn]", function(ev){
       var btn_disabled = (jQuery(this).data("resetDisabled") == 'true')
       jQuery("#soft-reset-proxy")
         .attr({ "href": jQuery(this).data("resetUrl"), 
                 "disabled": btn_disabled } )
         .toggleClass("disabled", btn_disabled)
 
-      jQuery("#reset-tab-type").html(jQuery(this).data("resetTab"))
-    })
+      jQuery("#reset-tab-type").html(jQuery(this).data("resetTab"));
+    });
 
-  jQuery("#pages-tab").on("click", function(ev){
+  jQuery("body").on("click", "#pages-tab", function(ev){
     if(jQuery("#Customizepage").html() == "")
       jQuery("#PortalPages a").first().trigger("click");
   });
 
   
-  jQuery("#PortalPages a.page-btn").on("click", function(ev){
+  jQuery("body").on("click", "#PortalPages a.page-btn", function(ev){
     jQuery("#PortalPages").find(".active").removeClass("active")
     jQuery(this).parent().addClass("active")
   })

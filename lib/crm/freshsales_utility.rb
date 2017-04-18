@@ -21,16 +21,22 @@ class CRM::FreshsalesUtility
   
   DEAL_TYPES              = { new_business: 'New Business', upgrade: 'Existing Business-Upgrade', 
                               downgrade: 'Existing Business-Downgrade', 
-                              renewal: 'Existing Business-Renewal' }
+                              renewal: 'Existing Business-Renewal',
+                              free: 'Free' }
   
   OFFLINE                 = 'off'
+  
+  NONE                    = 'None'
   
   ZERO                    = 0
 
   DEFAULT_ACCOUNT_MANAGER = { display_name:   "Bobby",
                               email:          "eval@freshdesk.com" }
                               
-  SUCCESS_CODES = (200...300).to_a                            
+  SUCCESS_CODES = (200...300).to_a
+  ADMIN_BASIC_INFO_KEYS = [:first_name, :last_name, :work_number, :email, :country, :job_title, :twitter, :facebook, :linkedin, :time_zone]
+  EMPLOYMENT_COUNT = [10001, 5001,1001,501,201,51,11,1, 0]
+  COMPANY_INDUSTRY_MAPPING  = YAML.load_file(File.join(Rails.root, 'config', 'company_industries.yml'))
 
   def initialize(data)
     @account = data[:account]
@@ -41,7 +47,7 @@ class CRM::FreshsalesUtility
   end
 
   def push_signup_data(data)
-    result = search({ entities: 'lead,contact', field: 'email', query: @account.admin_email, 
+    result = search({ entities: 'lead,contact', field: 'email', query: @account.admin_email,
                       includes: 'owner,lead_stage' })
     lead = recently_updated(result[:leads])
     contact = result[:contacts].first
@@ -156,14 +162,36 @@ class CRM::FreshsalesUtility
   private
 
     def admin_basic_info
-       data = { first_name: @account.admin_first_name, last_name: (@account.admin_last_name || @account.admin_first_name),
-        work_number: @account.admin_phone, email: @account.admin_email }
+      data = @account.account_configuration.contact_info.slice(*ADMIN_BASIC_INFO_KEYS)
+      data[:last_name]||= @account.admin_first_name
+      data[:work_number] = @account.admin_phone
       data.merge!(@source_and_campaign_info) if @source_and_campaign_info
       data
     end
 
     def account_basic_info
-      { name: @account.name }
+      {
+          name: @account.name, address: @account.account_configuration.company_info.try(:[], :location).try(:[], :streetName),
+          city: @account.account_configuration.company_info.try(:[], :location).try(:[], :city),
+          state: @account.account_configuration.company_info.try(:[], :location).try(:[], :state),
+          zipcode: @account.account_configuration.company_info.try(:[], :location).try(:[], :postalCode),
+          country: @account.account_configuration.company_info.try(:[], :location).try(:[], :country),
+          industry_type_id: company_industry_type_id(@account.account_configuration.company_info[:industry]),
+          number_of_employees: employment_value(@account.account_configuration.company_info.try(:[], :metrics).try(:[], :employees)),
+          phone: @account.account_configuration.company_info.fetch(:phone_numbers, []).join(","),
+          annual_revenue: @account.account_configuration.company_info.try(:[], :metrics).try(:[], :annualRevenue)
+      }
+    end
+
+    def employment_value(employment_count)
+      return unless employment_count && (employment_count.is_a? Integer)
+      EMPLOYMENT_COUNT.each do |i|
+        return i if employment_count >= i
+      end
+    end
+
+    def company_industry_type_id(company_industry)
+      COMPANY_INDUSTRY_MAPPING.try(:[], company_industry).try(:[], "id")
     end
 
     def account_metrics
@@ -332,7 +360,9 @@ class CRM::FreshsalesUtility
         sales_account_id: options[:sales_account_id],
         owner_id: options[:owner_id],
         deal_type_id: deal_type_id,
-        custom_field: attributes[:custom_field].merge({ cf_account_id: @account.id, cf_customer_status: options[:customer_status] })
+        custom_field: attributes[:custom_field].merge({ cf_account_id: @account.id, 
+                                                        cf_customer_status: options[:customer_status],
+                                                        cf_presales_contact: NONE})
       })
 
       attributes.merge!({ contacts_added_list: [options[:contact_id]] }) if options[:contact_id]
@@ -386,6 +416,7 @@ class CRM::FreshsalesUtility
         attributes.merge!({ deal_type_id: deal_type_id })
       end
       attributes[:custom_field].merge!({ cf_customer_status: options[:customer_status] }) if options[:customer_status].present?
+      attributes[:custom_field].merge!({ cf_presales_contact: NONE }) if open_deal[:custom_field][:cf_presales_contact].blank?
 
       attributes.merge!({ amount: options[:amount] }) if options[:amount].present?
 
@@ -494,7 +525,7 @@ class CRM::FreshsalesUtility
     def request_freshsales(options)
       proxy = HttpRequestProxy.new
       params = {
-        domain: AppConfig['freshsales'][Rails.env]['portal_url'], 
+        domain: AppConfig['freshsales'][Rails.env]['portal_url'],
         content_type: 'application/json',
         encode_url: false,
         rest_url: options[:rest_url], body: options[:body].to_json || {}

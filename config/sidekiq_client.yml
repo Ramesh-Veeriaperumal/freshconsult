@@ -172,6 +172,9 @@ defaults: &defaults
     - [cloud_elements_logger_email]
     - [populate_account_setup]
     - [manual_publish]
+    - [scheduled_ticket_export]
+    - [data_enrichment]
+    - [spam_data_migration]
 
 development:
   <<: *defaults

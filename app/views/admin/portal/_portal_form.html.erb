@@ -1,4 +1,4 @@
-<% multi_product = current_account.features_included?(:multi_product) %>
+<% multi_product = current_account.multi_product_enabled? %>
 <h4 class="heading caption lead">
 	<% if multi_product %>
 	  <%= pjax_link_to t('portals_key'), admin_portal_index_path  %> /

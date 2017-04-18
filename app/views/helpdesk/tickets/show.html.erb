@@ -42,8 +42,8 @@
 						</a>
 					</div>
 				</div>
-				<%= render :partial => "helpdesk/tickets/show/conversations" %> 
-				<% if current_account.link_tickets_enabled? && @last_broadcast_message.present? %>
+				<%= render :partial => "helpdesk/tickets/show/conversations" %>
+				<% if current_account.link_tkts_enabled? && @last_broadcast_message.present? %>
 					<div class="conversation_thread" id="recent_broadcasted_message">
 						<div class="conversation">
 							<%= render :partial => "helpdesk/tickets/show/broadcast_message" %> 
@@ -124,6 +124,7 @@ jQuery('body').one('assetLoaded.fjax', function() {
 			<% if @ticket.send(survey_association).nil? || @ticket.send(survey_association).last.nil? %>
 				sentiment = {};sentiment.last_note={};
 				sentiment.ticket_id = <%= @ticket.id %>
+				sentiment.key = "<%= MlAppConfig["kissmetrics"] %>"
 				sentiment.display_id = <%= @ticket.display_id %>
 				sentiment.ticket_sentiment = <%= @ticket.sentiment %>
 				<% if (@ticket.notes.visible.customer_responses.last != nil) %>

@@ -14,6 +14,7 @@ config = YAML::load_file(File.join(Rails.root, 'config', 'redis.yml'))[Rails.env
 
 if config
 	Resque.redis = Redis.new(:host => config["host"], :port => config["port"])
+  Resque.redis.namespace = config["namespace"]
 end
 
 Resque::Server.use Rack::Auth::Basic do |username, password|
@@ -32,17 +33,11 @@ Resque::Plugins::Status::Hash.expire_in = (7 * 24 * 60 * 60) # 1 week in seconds
 # Dirty hack to reduce the meta queries for each resque.
 # http://ablogaboutcode.com/2012/03/08/reducing-metadata-queries-in-resque/
 Resque.before_first_fork do
-  Sharding.all_shards.each do |shard|
-    Sharding.run_on_shard(shard) do
-      ActiveRecord::Base.send(:subclasses).each do |model|
-        next if model.abstract_class?
-        begin
-          ActiveRecord::Base.connection.schema_cache.columns_hash[model.table_name]
-          ActiveRecord::Base.connection.schema_cache.primary_keys[model.table_name]
-        rescue
-        end
-      end
-    end
+  if defined?(Resque)
+    Resque.redis = Redis.new(:host => config["host"], :port => config["port"])
+    Resque.redis.namespace = config["namespace"]
+  end
+  Sharding.all_shards.each do |shard|  
     Sharding.run_on_shard(shard) do
       Sharding.run_on_slave do
         ActiveRecord::Base.send(:subclasses).each do |model|

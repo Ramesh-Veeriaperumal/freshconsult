@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "ebdb24a6ad0bd3262ccf82363a4697b68c0ceb772880e72cdb9bb9e78183cf84",
-    "current": "ebdb24a6ad0bd3262ccf82363a4697b68c0ceb772880e72cdb9bb9e78183cf84"
+    "previous": "a2feca62357c8e12ecf2b567804657d862fec147a94ceb3a3c6a45f738482c01",
+    "current": "a2feca62357c8e12ecf2b567804657d862fec147a94ceb3a3c6a45f738482c01"
   },
   "fonts": [
-    "public/assets/glyphs_ebdb24a6ad0bd3262ccf82363a4697b6.ttf",
-    "public/assets/glyphs_ebdb24a6ad0bd3262ccf82363a4697b6.svg",
-    "public/assets/glyphs_ebdb24a6ad0bd3262ccf82363a4697b6.woff",
-    "public/assets/glyphs_ebdb24a6ad0bd3262ccf82363a4697b6.eot"
+    "public/assets/glyphs_a2feca62357c8e12ecf2b567804657d8.ttf",
+    "public/assets/glyphs_a2feca62357c8e12ecf2b567804657d8.svg",
+    "public/assets/glyphs_a2feca62357c8e12ecf2b567804657d8.woff",
+    "public/assets/glyphs_a2feca62357c8e12ecf2b567804657d8.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -29,6 +29,10 @@
     "add-people": {
       "codepoint": 62059,
       "source": "public/glyphs/vectors/add-people.svg"
+    },
+    "add-section": {
+      "codepoint": 62067,
+      "source": "public/glyphs/vectors/add-section.svg"
     },
     "agent": {
       "codepoint": 61697,
@@ -926,6 +930,14 @@
       "codepoint": 61806,
       "source": "public/glyphs/vectors/mobile.svg"
     },
+    "mobile-2": {
+      "codepoint": 62068,
+      "source": "public/glyphs/vectors/mobile-2.svg"
+    },
+    "mobile-2-disabled": {
+      "codepoint": 62069,
+      "source": "public/glyphs/vectors/mobile-2-disabled.svg"
+    },
     "mobile-active-source": {
       "codepoint": 61943,
       "source": "public/glyphs/vectors/mobile-active-source.svg"
@@ -977,6 +989,10 @@
     "notice-o": {
       "codepoint": 61811,
       "source": "public/glyphs/vectors/notice-o.svg"
+    },
+    "notification": {
+      "codepoint": 62064,
+      "source": "public/glyphs/vectors/notification.svg"
     },
     "number": {
       "codepoint": 61812,
@@ -1089,6 +1105,10 @@
     "puzzle": {
       "codepoint": 61911,
       "source": "public/glyphs/vectors/puzzle.svg"
+    },
+    "read-all": {
+      "codepoint": 62065,
+      "source": "public/glyphs/vectors/read-all.svg"
     },
     "rearrange": {
       "codepoint": 61825,
@@ -1393,6 +1413,14 @@
     "warning": {
       "codepoint": 61863,
       "source": "public/glyphs/vectors/warning.svg"
+    },
+    "web": {
+      "codepoint": 62070,
+      "source": "public/glyphs/vectors/web.svg"
+    },
+    "web-disabled": {
+      "codepoint": 62071,
+      "source": "public/glyphs/vectors/web-disabled.svg"
     },
     "web-page": {
       "codepoint": 61864,

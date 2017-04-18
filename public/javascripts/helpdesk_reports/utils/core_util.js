@@ -6,7 +6,7 @@ HelpdeskReports.CoreUtil = {
     FILTER_LIMIT: 10,
     FILTER_LIMIT_MSG: I18n.t('helpdesk_reports.filter_error_msg'),
     CONST: {
-        base_url    : "/reports/v2/",
+        base_url    : "/reports/",
         metrics_url : "/fetch_metrics",
         tickets_url : "/fetch_ticket_list",
         configure_export_url : "/configure_export",
@@ -1132,7 +1132,7 @@ HelpdeskReports.CoreUtil = {
 
         var config = {
                 earliestDate: Date.parse('01/01/2010'),
-                latestDate: Date.parse(date.end_date_with_no_lag),
+                latestDate: Date.parse(date.endDate),
                 presetRanges: presetRanges,
                 presets: {
                     dateRange: I18n.t('helpdesk_reports.date_range')

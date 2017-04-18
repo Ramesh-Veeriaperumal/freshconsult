@@ -5,13 +5,23 @@ module Helpdesk::SharedOwnershipMigrationMethods
   include Redis::TicketsRedis
   include Redis::OthersRedis
 
-  def remove_launch_party_feature(account = Account.current)
-    account.rollback(:shared_ownership) if account.launched?(:shared_ownership)
+  def toggle_shared_ownership enable
+    if enable
+      add_internal_fields
+    else
+      delete_internal_fields
+      delete_status_groups
+    end
+    clear_new_page_cache
   end
 
-  def add_launch_party_feature(account = Account.current)
-    account.launch(:shared_ownership)
-  end
+  # def remove_launch_party_feature(account = Account.current)
+  #   account.rollback(:shared_ownership) if account.launched?(:shared_ownership)
+  # end
+
+  # def add_launch_party_feature(account = Account.current)
+  #   account.launch(:shared_ownership)
+  # end
 
   def remove_feature(account = Account.current)
     account.features.shared_ownership.destroy

@@ -88,7 +88,7 @@ class CRM::Freshsales
         case
         when opted_for_free_plan?(subscription, old_subscription, cmrr, payments_count)
           amount = ZERO
-          freshsales.push_subscription_changes(:new_business, amount, payments_count, is_state_changed)
+          freshsales.push_subscription_changes(:free, amount, payments_count, is_state_changed)
 
         when paid_activation?(subscription, old_subscription)
           amount = cmrr.round(2)

@@ -28,7 +28,8 @@ class User < ActiveRecord::Base
 
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   validates_uniqueness_of :external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
-  validates_uniqueness_of :unique_external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
+  validates_uniqueness_of :unique_external_id, :scope => :account_id, :allow_nil => true, :case_sensitive => false
+  before_validation :trim_attributes
 
   xss_sanitize  :only => [:name,:email,:language, :job_title, :twitter_id, :address, :description, :fb_profile_id], :plain_sanitizer => [:name,:email,:language, :job_title, :twitter_id, :address, :description, :fb_profile_id]
   scope :trimmed, :select => [:'users.id', :'users.name']
@@ -97,10 +98,16 @@ class User < ActiveRecord::Base
   validate :only_primary_email, on: :update, :if => [:agent?]
   validate :max_user_emails
   validate :max_user_companies, :if => :has_multiple_companies_feature?
+  validate :unique_external_id_feature, :if => :unique_external_id_changed?
+
 
   def email_validity
     self.errors.add(:base, I18n.t("activerecord.errors.messages.email_invalid")) unless self[:account_id].blank? or self[:email] =~ EMAIL_VALIDATOR
     self.errors.add(:base, I18n.t("activerecord.errors.messages.email_not_unique")) if self[:email] and self[:account_id].present? and User.exists?(["email = ? and id != '#{self.id}'", self[:email]])
+  end
+
+  def unique_external_id_feature
+    self.errors.add(:base, I18n.t('activerecord.errors.messages.unique_external_id')) unless account.unique_contact_identifier_enabled?
   end
 
   def only_primary_email
@@ -293,6 +300,9 @@ class User < ActiveRecord::Base
         },
         _updated_since: {
           conditions: ['updated_at >= ?', contact_filter.try(:_updated_since).try(:to_time).try(:utc)]
+        },
+        unique_external_id: {
+          conditions: { unique_external_id: contact_filter.unique_external_id}
         }
       }
     end
@@ -394,8 +404,8 @@ class User < ActiveRecord::Base
   def update_companies(params)
     if has_multiple_companies_feature?
       if params[:user][:removed_companies].present?
-        to_be_removed = params[:user][:removed_companies].split(",").uniq
-        remove_ids = to_be_removed.map{ |company_name| companies.find { |c| c.name == company_name}.id }
+        to_be_removed = JSON.parse params[:user][:removed_companies]
+        remove_ids = to_be_removed.map{ |company_name| companies.find { |c| c.name.downcase == company_name.downcase}.id }
         UserCompany.destroy_all(:account_id => account_id,
                                 :user_id => id,
                                 :company_id => remove_ids) if remove_ids.any?
@@ -479,7 +489,11 @@ class User < ActiveRecord::Base
       portal = nil
       force_notification = false
       args = [ portal, force_notification ]
-      Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), nil, 2.minutes.from_now)
+      if Thread.current["notifications_#{account_id}"].nil?
+        Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), nil, 2.minutes.from_now)
+      else
+        deliver_activation_instructions!(*args)
+      end
     end
     true
   end
@@ -525,14 +539,21 @@ class User < ActiveRecord::Base
 
 
   def activate!(params)
-    self.active = true
-    self.name = params[:user][:name]
-    self.password = params[:user][:password]
-    self.password_confirmation = params[:user][:password_confirmation]
-    self.user_emails.first.update_attributes({:verified => true}) unless self.user_emails.blank?
-    self.account.verify_account_with_email  if self.privilege?(:admin_tasks)
-    #self.openid_identifier = params[:user][:openid_identifier]
-    save
+    self.transaction do
+      self.active = true
+      params[:user][:name] = params[:user][:name] || (params[:user][:first_name] + ' ' + params[:user][:last_name])
+      self.assign_attributes(params[:user].slice(*ACTIVATION_ATTRIBUTES))
+      update_account_info_and_verify(params[:user]) if can_verify_account?
+      self.user_emails.first.update_attributes({:verified => true}) unless self.user_emails.blank?
+      #self.openid_identifier = params[:user][:openid_identifier]
+      save!
+    end
+  end
+
+  def update_account_info_and_verify(user_params)
+    self.account.update_attributes!({:name => user_params[:company_name]})
+    self.account.main_portal.update_attributes!({:name => user_params[:company_name]})
+    self.account.account_configuration.update_contact_company_info!(user_params)
   end
 
   def exist_in_db?
@@ -608,6 +629,7 @@ class User < ActiveRecord::Base
     return "#{name} (#{phone})" unless phone.blank?
     return "#{name} (#{mobile})" unless mobile.blank?
     return "@#{twitter_id}" unless twitter_id.blank?
+    return "#{name} (#{unique_external_id})" if  (unique_external_id.present? && account.unique_contact_identifier_enabled?)
     name
   end
 
@@ -664,7 +686,7 @@ class User < ActiveRecord::Base
   end
 
   def get_info
-    (email) || (twitter_id) || (external_id) || (unique_external_id) || (name)
+    (email) || (twitter_id.presence) || (external_id) || (unique_external_id) || (name)
   end
 
   def twitter_style_id
@@ -693,7 +715,7 @@ class User < ActiveRecord::Base
 
   def group_ticket?(ticket)
     group_member?(ticket.group_id) or
-        (Account.current.features?(:shared_ownership) ? group_member?(ticket.internal_group_id) : false)
+        (Account.current.shared_ownership_enabled? ? group_member?(ticket.internal_group_id) : false)
   end
 
   def group_member?(group_id)
@@ -702,7 +724,7 @@ class User < ActiveRecord::Base
 
   
   def ticket_agent?(ticket)
-    ticket.responder_id == self.id || (Account.current.features?(:shared_ownership) ? ticket.internal_agent_id == self.id : false)
+    ticket.responder_id == self.id || (Account.current.shared_ownership_enabled? ? ticket.internal_agent_id == self.id : false)
   end
 
   def has_ticket_permission? ticket
@@ -986,11 +1008,19 @@ class User < ActiveRecord::Base
     end
   end
 
+  def can_verify_account?
+    !account.verified? && self.privilege?(:admin_tasks)
+  end
+
   private
 
     def name_part(part)
       part = parsed_name[part].blank? ? "particle" : part unless parsed_name.blank? and part == "family"
       parsed_name[part].blank? ? name : parsed_name[part]
+    end
+
+    def trim_attributes
+      self.unique_external_id = self.unique_external_id.try(:strip).presence
     end
 
     def parsed_name

@@ -192,6 +192,9 @@ module Delayed
       smtp_mailboxes = []
 
       if Account.current
+
+        return if Account.current.launched?(:disable_emails)
+
         account_id = Account.current.id
 
         shard = ShardMapping.lookup_with_account_id(account_id)

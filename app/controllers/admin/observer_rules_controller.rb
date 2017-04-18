@@ -43,7 +43,7 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
         { :name => 'priority', :value => t('observer_events.priority'), :domtype => 'dropdown', 
           :choices => [ ['--', t('any_val.any_priority')] ]+TicketConstants.priority_list.sort, :type => 2 },
         { :name => 'ticket_type', :value => t('observer_events.type'), :domtype => 'dropdown', 
-          :choices => [ ['--', t('any_val.any_ticket_type')] ]+current_account.ticket_type_values.collect { |c| [ c.value, c.value ] },
+          :choices => [ ['--', t('any_val.any_ticket_type')] ]+ticket_type_values_with_none,
           :type => 2 },
         { :name => 'status', :value => t('observer_events.status'), :domtype => 'dropdown', 
           :choices => [ ['--', t('any_val.any_status')] ]+Helpdesk::TicketStatus.status_names(current_account), :type => 2 },

@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: "glyphs";
-  src: font-url("glyphs_ebdb24a6ad0bd3262ccf82363a4697b6.eot");
-  src: font-url("glyphs_ebdb24a6ad0bd3262ccf82363a4697b6.eot?#iefix") format("embedded-opentype"),
-       font-url("glyphs_ebdb24a6ad0bd3262ccf82363a4697b6.woff") format("woff"),
-       font-url("glyphs_ebdb24a6ad0bd3262ccf82363a4697b6.ttf") format("truetype"),
-       font-url("glyphs_ebdb24a6ad0bd3262ccf82363a4697b6.svg#glyphs") format("svg");
+  src: font-url("glyphs_a2feca62357c8e12ecf2b567804657d8.eot");
+  src: font-url("glyphs_a2feca62357c8e12ecf2b567804657d8.eot?#iefix") format("embedded-opentype"),
+       font-url("glyphs_a2feca62357c8e12ecf2b567804657d8.woff") format("woff"),
+       font-url("glyphs_a2feca62357c8e12ecf2b567804657d8.ttf") format("truetype"),
+       font-url("glyphs_a2feca62357c8e12ecf2b567804657d8.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +16,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: font-url("glyphs_ebdb24a6ad0bd3262ccf82363a4697b6.svg#glyphs") format("svg");
+    src: font-url("glyphs_a2feca62357c8e12ecf2b567804657d8.svg#glyphs") format("svg");
   }
 }
 
@@ -28,6 +28,7 @@
 .ficon-add-attachment:before,
 .ficon-add-call:before,
 .ficon-add-people:before,
+.ficon-add-section:before,
 .ficon-agent:before,
 .ficon-agent-fchat-off:before,
 .ficon-agent-fchat-on:before,
@@ -252,6 +253,8 @@
 .ficon-minus:before,
 .ficon-mobihelp:before,
 .ficon-mobile:before,
+.ficon-mobile-2:before,
+.ficon-mobile-2-disabled:before,
 .ficon-mobile-active-source:before,
 .ficon-mobile-source:before,
 .ficon-multi-product:before,
@@ -265,6 +268,7 @@
 .ficon-no-network:before,
 .ficon-notice:before,
 .ficon-notice-o:before,
+.ficon-notification:before,
 .ficon-number:before,
 .ficon-observer:before,
 .ficon-onhold:before,
@@ -293,6 +297,7 @@
 .ficon-preserve-format:before,
 .ficon-pushpin:before,
 .ficon-puzzle:before,
+.ficon-read-all:before,
 .ficon-rearrange:before,
 .ficon-rebranding:before,
 .ficon-refresh:before,
@@ -369,6 +374,8 @@
 .ficon-view-retweets:before,
 .ficon-warm-transfer:before,
 .ficon-warning:before,
+.ficon-web:before,
+.ficon-web-disabled:before,
 .ficon-web-page:before,
 .ficon-web-source:before,
 .ficon-went-wrong:before,
@@ -392,6 +399,7 @@
 .ficon-add-attachment:before { content: "\f26a"; }
 .ficon-add-call:before { content: "\f21f"; }
 .ficon-add-people:before { content: "\f26b"; }
+.ficon-add-section:before { content: "\f273"; }
 .ficon-agent:before { content: "\f101"; }
 .ficon-agent-fchat-off:before { content: "\f1b0"; }
 .ficon-agent-fchat-on:before { content: "\f1b1"; }
@@ -616,6 +624,8 @@
 .ficon-minus:before { content: "\f16c"; }
 .ficon-mobihelp:before { content: "\f16d"; }
 .ficon-mobile:before { content: "\f16e"; }
+.ficon-mobile-2:before { content: "\f274"; }
+.ficon-mobile-2-disabled:before { content: "\f275"; }
 .ficon-mobile-active-source:before { content: "\f1f7"; }
 .ficon-mobile-source:before { content: "\f1f8"; }
 .ficon-multi-product:before { content: "\f16f"; }
@@ -629,6 +639,7 @@
 .ficon-no-network:before { content: "\f1b4"; }
 .ficon-notice:before { content: "\f172"; }
 .ficon-notice-o:before { content: "\f173"; }
+.ficon-notification:before { content: "\f270"; }
 .ficon-number:before { content: "\f174"; }
 .ficon-observer:before { content: "\f175"; }
 .ficon-onhold:before { content: "\f211"; }
@@ -657,6 +668,7 @@
 .ficon-preserve-format:before { content: "\f256"; }
 .ficon-pushpin:before { content: "\f180"; }
 .ficon-puzzle:before { content: "\f1d7"; }
+.ficon-read-all:before { content: "\f271"; }
 .ficon-rearrange:before { content: "\f181"; }
 .ficon-rebranding:before { content: "\f182"; }
 .ficon-refresh:before { content: "\f183"; }
@@ -733,6 +745,8 @@
 .ficon-view-retweets:before { content: "\f1a6"; }
 .ficon-warm-transfer:before { content: "\f231"; }
 .ficon-warning:before { content: "\f1a7"; }
+.ficon-web:before { content: "\f276"; }
+.ficon-web-disabled:before { content: "\f277"; }
 .ficon-web-page:before { content: "\f1a8"; }
 .ficon-web-source:before { content: "\f1fc"; }
 .ficon-went-wrong:before { content: "\f1ff"; }

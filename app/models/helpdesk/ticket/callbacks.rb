@@ -40,8 +40,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   after_update :start_recording_timestamps, :unless => :model_changes?
 
-  before_save :update_dueby, :unless => :manual_sla?
+  before_save :update_resolution_time_by_bhrs, :if => Proc.new { new_sla_logic? && update_resolution_time? }
 
+  before_save :update_dueby, :unless => :manual_sla?
 
   before_update :update_isescalated, :if => :check_due_by_change
   before_update :update_fr_escalated, :if => :check_frdue_by_change
@@ -50,7 +51,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_create :set_parent_child_assn, :if => :child_ticket?
   after_save :check_child_tkt_status, :if => :child_ticket?
 
-  after_commit :create_initial_activity, :pass_thro_biz_rules, on: :create
+  after_commit :create_initial_activity, on: :create
+  after_commit :pass_thro_biz_rules, on: :create, :unless => :skip_dispatcher?
   after_commit :send_outbound_email, :update_capping_on_create, on: :create, :if => :outbound_email?
 
   after_commit :filter_observer_events, on: :update, :if => :execute_observer?
@@ -74,7 +76,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher
-
 
   def set_outbound_default_values
     if email_config
@@ -117,15 +118,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def save_ticket_states
-    self.ticket_states                = self.ticket_states || Helpdesk::TicketState.new
+    self.ticket_states ||= Helpdesk::TicketState.new
     ticket_states.tickets             = self
     ticket_states.created_at          = ticket_states.created_at || created_at
     ticket_states.account_id          = account_id
     ticket_states.assigned_at         = ticket_states.first_assigned_at = time_zone_now if responder_id
-    ticket_states.pending_since       ||= Time.zone.now if (status == PENDING)
+    ticket_states.pending_since       ||= time_zone_now if (status == PENDING)
 
-    ticket_states.set_resolved_at_state(created_at) if ((status == RESOLVED) and ticket_states.resolved_at.nil?)
-    ticket_states.resolved_at ||= ticket_states.set_closed_at_state(created_at) if (status == CLOSED)
+    ticket_states.set_resolved_at_state if ((status == RESOLVED) and ticket_states.resolved_at.nil?)
+    ticket_states.set_closed_at_state if (status == CLOSED)
 
     ticket_states.status_updated_at    = created_at || time_zone_now
     ticket_states.sla_timer_stopped_at = time_zone_now if (ticket_status.stop_sla_timer?)
@@ -182,11 +183,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
       schema_less_ticket.set_group_assigned_flag
     end
     #for internal_agent_id
-    if @model_changes.key?(:long_tc04)
+    if @model_changes.key?(:internal_agent_id)
       schema_less_ticket.set_internal_agent_assigned_flag
       schema_less_ticket.set_internal_agent_first_assign_bhrs(self.created_at, time_zone_now, self.group) if (self.reports_hash["internal_agent_assigned_flag"]==true )
     end
-    schema_less_ticket.set_internal_group_assigned_flag if @model_changes.key?(:long_tc03)
+    schema_less_ticket.set_internal_group_assigned_flag if @model_changes.key?(:internal_group_id)
   end
 
   def process_status_changes
@@ -194,8 +195,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     ticket_states.status_updated_at = time_zone_now
 
-    ticket_states.pending_since = nil if @model_changes[:status][0] == PENDING
-    ticket_states.pending_since=time_zone_now if (status == PENDING)
+    ticket_states.pending_since = (status == PENDING) ? time_zone_now : nil
+
     ticket_states.set_resolved_at_state if (status == RESOLVED)
     ticket_states.set_closed_at_state if closed?
 
@@ -215,21 +216,23 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   #Shared onwership Validations
   def reset_internal_group_agent
-    (schema_less_ticket.internal_agent_id = schema_less_ticket.internal_group_id = nil) or return unless Account.current.features?(:shared_ownership)
+    (self.internal_agent_id = self.internal_group_id = nil) or return unless Account.current.shared_ownership_enabled?
     return unless (status_changed? || shared_ownership_fields_changed?)
 
     #Nullify internal group when the status(without the particular group mapped) is changed.
     #If the new status has the same group mapped to it, preserve internal group and internal agent.
     if !valid_internal_group?
-      previous_ig_id = internal_group_id_changed? ? internal_group_id_changes[0] : schema_less_ticket.internal_group_id
-      schema_less_ticket.internal_group_id = (valid_internal_group?(previous_ig_id) ? previous_ig_id : nil)
+      internal_group_id_changes = self.changes.symbolize_keys[:internal_group_id]
+      previous_ig_id = internal_group_id_changed? ? internal_group_id_changes[0] : internal_group_id
+      self.internal_group_id = (valid_internal_group?(previous_ig_id) ? previous_ig_id : nil)
     end
 
     #Nullify internal agent when the status or internal group(without the particular agent mapped) is changed.
     #If the new group has the same agent mapped to it, preserve internal agent.
     if !valid_internal_agent?
-      previous_ia_id = internal_agent_id_changed? ? internal_agent_id_changes[0] : schema_less_ticket.internal_agent_id
-      schema_less_ticket.internal_agent_id = (valid_internal_agent?(previous_ia_id) ? previous_ia_id : nil)
+      internal_agent_id_changes = self.changes.symbolize_keys[:internal_agent_id]
+      previous_ia_id = internal_agent_id_changed? ? internal_agent_id_changes[0] : internal_agent_id
+      self.internal_agent_id = (valid_internal_agent?(previous_ia_id) ? previous_ia_id : nil)
     end
   end
 
@@ -288,14 +291,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_was
   end
 
+  def skip_dispatcher?
+    import_id || outbound_email? || !requester.valid_user?
+  end
+  
   def pass_thro_biz_rules
     return if Account.current.skip_dispatcher?
     #Remove redis check if no issues after deployment
     if Account.current.launched?(:delayed_dispatchr_feature)
-      send_later(:delayed_rule_check, User.current, freshdesk_webhook?) unless (import_id or outbound_email?)
+      send_later(:delayed_rule_check, User.current, freshdesk_webhook?)
     else
       # This queue includes dispatcher_rules, auto_reply, round_robin.
-      Helpdesk::Dispatcher.enqueue(self.id, (User.current.blank? ? nil : User.current.id), freshdesk_webhook?) unless (import_id or outbound_email?)
+      Helpdesk::Dispatcher.enqueue(self.id, (User.current.blank? ? nil : User.current.id), freshdesk_webhook?)
     end
   end
 
@@ -310,6 +317,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     NewRelic::Agent.notice_error(e)
    end
     save #Should move this to unless block.. by Shan
+
+    if @ticket.cc_email_hash.present? && @ticket.cc_email_hash[:cc_emails].present? && get_others_redis_key("NOTIFY_CC_ADDED_VIA_DISPATCHER").present? 
+        Helpdesk::TicketNotifier.send_later(:send_cc_email, @ticket, nil, {:cc_emails => @ticket.cc_email_hash[:cc_emails].to_a })
+    end
+
     self.va_rules_after_save_actions.each do |action|
       klass = action[:klass].constantize
       klass.send(action[:method], action[:args])
@@ -385,11 +397,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   #shihab-- date format may need to handle later. methode will set both due_by and first_resp
   def set_sla_time(ticket_status_changed)
-    if self.new_record? || priority_changed? || changed_condition? || status_changed? || ticket_status_changed
-      sla_detail = self.sla_policy.sla_details.where(priority: priority).first
+    if new_sla_logic? && update_dueby?
+      sla_detail = self.sla_policy.sla_details.where(:priority => priority).first
+      set_dueby(sla_detail)
+      log_dueby(sla_detail, "New SLA logic")
+    elsif !new_sla_logic? && (self.new_record? || priority_changed? || changed_condition? || status_changed? || ticket_status_changed)
+      sla_detail = self.sla_policy.sla_details.where(:priority => priority).first
       set_dueby_on_priority_change(sla_detail) if (self.new_record? || priority_changed? || changed_condition?)
       set_dueby_on_status_change(sla_detail) if !self.new_record? && (status_changed? || ticket_status_changed)
-      Rails.logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} "
+      log_dueby(sla_detail, "Old SLA logic")
     end
   end
 
@@ -482,13 +498,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def linked_now?
-    tracker_ticket_id && related_ticket? && @model_changes.key?(Helpdesk::SchemaLessTicket.association_type_column) &&
-      @model_changes[Helpdesk::SchemaLessTicket.association_type_column][0].nil?
+    tracker_ticket_id && related_ticket? && @model_changes.key?(:association_type) &&
+      @model_changes[:association_type][0].nil?
   end
 
   def unlinked_now?
-    tracker_ticket_id && !related_ticket? && @model_changes.key?(Helpdesk::SchemaLessTicket.association_type_column) &&
-      @model_changes[Helpdesk::SchemaLessTicket.association_type_column][0] == TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]
+    tracker_ticket_id && !related_ticket? && @model_changes.key?(:association_type) &&
+      @model_changes[:association_type][0] == TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]
   end
 
   def add_links
@@ -585,7 +601,7 @@ private
   end
 
   def auto_refresh_allowed?
-    Account.current.features?(:auto_refresh)
+    Account.current.auto_refresh_enabled?
   end
 
   #RAILS3 Hack. TODO - @model_changes is a HashWithIndifferentAccess so we dont need symbolize_keys!,
@@ -763,18 +779,27 @@ private
     created_time = self.created_at.in_time_zone(Time.zone.name) || time_zone_now
     business_calendar = Group.default_business_calendar(group)
     self.due_by = sla_detail.calculate_due_by_time_on_priority_change(created_time, business_calendar)
-    self.frDueBy = sla_detail.calculate_frDue_by_time_on_priority_change(created_time, business_calendar)
+    self.frDueBy = sla_detail.calculate_frDue_by_time_on_priority_change(created_time, business_calendar) unless ticket_states && ticket_states.first_response_time.present?
   end
 
   def set_dueby_on_status_change(sla_detail)
     if calculate_dueby_and_frdueby?
       business_calendar = Group.default_business_calendar(group)
       self.due_by = sla_detail.calculate_due_by_time_on_status_change(self,business_calendar)
-      self.frDueBy = sla_detail.calculate_frDue_by_time_on_status_change(self,business_calendar)
+      self.frDueBy = sla_detail.calculate_frDue_by_time_on_status_change(self,business_calendar) unless ticket_states && ticket_states.first_response_time.present?
       if changed_to_closed_or_resolved?
         update_ticket_state_sla_timer
       end
     end
+  end
+
+  def set_dueby(sla_detail)
+    created_time = self.created_at || time_zone_now
+    total_time_worked = ticket_states.resolution_time_by_bhrs.to_i
+    business_calendar = Group.default_business_calendar(group)
+    self.due_by = sla_detail.calculate_due_by(created_time, total_time_worked, business_calendar)
+    self.frDueBy = sla_detail.calculate_frDue_by(created_time, total_time_worked, business_calendar) if self.ticket_states.first_response_time.nil?
+    update_ticket_state_sla_timer if status_changed? && changed_to_closed_or_resolved?
   end
 
   def calculate_dueby_and_frdueby?
@@ -952,10 +977,10 @@ private
   def update_spam_detection_service
     if (Account.current.launched?(:spam_detection_service) && @model_changes.include?(:spam) &&
      self.source.eql?(Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]))
-      Rails.logger.info "Pushing to sidekiq to learn ticket"
       type = @model_changes[:spam][1] ? :spam : :ham
       SpamDetection::LearnTicketWorker.perform_async({ :ticket_id => self.id, 
         :type => Helpdesk::Email::Constants::MESSAGE_TYPE_BY_NAME[type]})
+      Rails.logger.info "Enqueued job to sidekiq to learn ticket"
     end
   end
 
@@ -963,5 +988,35 @@ private
   # Reason for moving it to BJ is for activites(to generate as a system activity)
   def reopen_tickets item
     ::Tickets::ReopenTickets.perform_async({:ticket_ids=>[item.display_id]})
+  end
+
+  def new_sla_logic?
+    self.account.launched?(:new_sla_logic) && (self.new_record? || self.ticket_states.resolution_time_updated_at.present?)
+  end
+
+  def common_updation_condition
+    self.new_record? || priority_changed? || group_id_changed? || self.schema_less_ticket.sla_policy_id_changed?
+  end
+
+  def update_resolution_time?
+    common_updation_condition || (status_changed? && stop_sla_timer_changed?)
+  end
+
+  def update_dueby?
+    common_updation_condition || (status_changed? && calculate_dueby_and_frdueby?)
+  end
+
+  def update_resolution_time_by_bhrs
+    self.ticket_states ||= Helpdesk::TicketState.new
+    self.ticket_states.resolution_time_updated_at = time_zone_now
+    Rails.logger.debug "SLA :::: Account id #{self.account_id} :: #{self.new_record? ? 'New' : self.id} ticket :: Updating resolution time :: resolution_time_updated_at :: #{self.ticket_states.resolution_time_updated_at}"
+    if self.ticket_states.sla_timer_stopped_at.nil? && !self.new_record?
+      ticket_states.change_resolution_time_by_bhrs(ticket_states.resolution_time_updated_at_was, ticket_states.resolution_time_updated_at)
+    end
+  end
+
+  def log_dueby sla_detail, logic
+    sla_policy = self.sla_policy
+    Rails.logger.debug "SLA :::: Account id #{self.account_id} :: #{self.new_record? ? 'New' : self.id} ticket :: Calculated due time using #{logic} :: sla_policy #{sla_policy.id} - #{sla_policy.name} sla_detail :: #{sla_detail.id} - #{sla_detail.name} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy}"
   end
 end

@@ -94,7 +94,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       # clip_large_html
       account.make_current
       email_spam_watcher_counter(account)
-      email_processing_log("Processing email for ", to_email[:email])
+      email_processing_log("Processing email request for request_url: #{params[:request_url].to_s}",to_email[:email])
       verify
       TimeZone.set_time_zone
       from_email = parse_from_email(account)
@@ -121,11 +121,17 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         if duplicate_email?(from_email[:email], to_email[:email], params[:subject], message_id)
           return processed_email_data(PROCESSED_EMAIL_STATUS[:duplicate], account.id)
         end
+
         if (from_email[:email] =~ EMAIL_VALIDATOR).nil?
-          error_msg = "Invalid email address found in requester details - #{from_email[:email]} for account - #{account.id}"
-          Rails.logger.debug error_msg
-          NewRelic::Agent.notice_error(Exception.new(error_msg))
-          return processed_email_data(PROCESSED_EMAIL_STATUS[:invalid_from_email], account.id)
+          envelope_from_email = parse_email JSON.parse(params[:envelope])["from"]
+          if (envelope_from_email[:email] =~ EMAIL_VALIDATOR).nil?
+            error_msg = "Invalid email address found in requester details - #{from_email[:email]} for account - #{account.id}"
+            Rails.logger.debug error_msg
+            NewRelic::Agent.notice_error(Exception.new(error_msg))
+            return processed_email_data(PROCESSED_EMAIL_STATUS[:invalid_from_email], account.id)
+          else
+            from_email = envelope_from_email
+          end
         end
         user = existing_user(account, from_email)
 
@@ -211,7 +217,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     params[:cc] = permissible_ccs(user, params[:cc], account)
     if ticket
       if(from_email[:email].to_s.downcase == ticket.reply_email.to_s.downcase) #Premature handling for email looping..
-        email_processing_log "Email Processing Failed: From-email and reply-email email are same!", to_email[:email]
+        email_processing_log "Email Processing Failed: Email cannot be threaded. From-email and Ticket's reply-email email are same!", to_email[:email]
         return processed_email_data(PROCESSED_EMAIL_STATUS[:self_email], account.id)
       end
       primary_ticket = check_primary(ticket,account)
@@ -304,7 +310,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                 "_iso-2022-jp$esc" => "ISO-2022-JP",
                 "charset=us-ascii" => "us-ascii",
                 "iso-8859-8-i" => "iso-8859-8",
-                "unicode" => "utf-8"
+                "unicode" => "utf-8",
+                "cp-850" => "CP850"
               }
               if mapping_encoding[charset_encoding.downcase]
                 params[t_format] = Iconv.new('utf-8//IGNORE', mapping_encoding[charset_encoding.downcase]).iconv(params[t_format])
@@ -328,9 +335,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         subject = $1.strip
         unless subject =~ /=\?(.+)\?[BQ]?(.+)\?=/
           detected_encoding = CharlockHolmes::EncodingDetector.detect(subject)
-          detected_encoding = "UTF-8" if detected_encoding.nil?
+          detected_encoding = {:encoding => "UTF-8"} if detected_encoding.nil?
           begin
-            decoded_subject = subject.force_encoding(detected_encoding).encode(Encoding::UTF_8, :undef => :replace, 
+            decoded_subject = subject.force_encoding(detected_encoding[:encoding]).encode(Encoding::UTF_8, :undef => :replace, 
                                                                               :invalid => :replace, 
                                                                               :replace => '')
           rescue Exception => e
@@ -797,7 +804,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         rescue UserCreationError => e
           NewRelic::Agent.notice_error(e)
           Account.reset_current_account
-          email_processing_log "Email Processing Failed: Couldn't create new user!",to_email[:email]
+          email_processing_log "Email Processing Failed: Couldn't create new user!"
           raise e
         end
         if params[:text]
@@ -840,9 +847,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           content_id = content_ids["attachment#{i+1}"] && 
                         verify_inline_attachments(item, content_ids["attachment#{i+1}"])
           att = Helpdesk::Attachment.create_for_3rd_party(account, item, 
-                  params["attachment#{i+1}"], i, content_id)
+                  params["attachment#{i+1}"], i, content_id, true)
           if att.is_a? Helpdesk::Attachment
-            if content_id
+            if content_id && !att["content_file_name"].include?(".svg")
               content_id_hash[att.content_file_name+"#{inline_count}"] = content_ids["attachment#{i+1}"]
               inline_count+=1
               inline_attachments.push att unless virus_attachment?(params["attachment#{i+1}"], account)
@@ -852,12 +859,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           end
         rescue HelpdeskExceptions::AttachmentLimitException => ex
           Rails.logger.error("ERROR ::: #{ex.message}")
-          message = attachment_exceeded_message(HelpdeskAttachable::MAX_ATTACHMENT_SIZE)
+          message = attachment_exceeded_message(HelpdeskAttachable::MAILGUN_MAX_ATTACHMENT_SIZE)
           add_notification_text item, message
           break
         rescue Exception => e
           Rails.logger.error("Error while adding item attachments for ::: #{e.message}")
-          break
+          raise e
         end
       end
       if @total_virus_attachment
@@ -869,9 +876,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def virus_attachment? attachment, account
-      if VIRUS_CHECK_ENABLED && account.subscription.trial?
+      if account.launched?(:antivirus_service)
         begin
-          file_attachment = (attached.is_a? StringIO) ? attached : File.open(attached.tempfile)
+          file_attachment = (attachment.is_a? StringIO) ? attachment : File.open(attachment.tempfile)
           result = Email::AntiVirus.scan(io: file_attachment) 
           if result && result[0] == "virus"
             @total_virus_attachment = 0 unless @total_virus_attachment
@@ -879,7 +886,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
             return true
           end
         rescue => e
-         Rails.logger.info "Error While checking attachment for virus in account #{account.id}"
+         Rails.logger.info "Error While checking attachment for virus in account #{account.id}, #{e.class}, #{e.message}, #{e.backtrace}"
         end 
       end
       return false
@@ -1107,7 +1114,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       begin
         ticket.sds_spam = params[:spam_info]['spam']
         ticket.spam_score = params[:spam_info]['score']
-        Rails.logger.info "Spam rules triggered for ticket #{ticket.id}: #{params[:spam_info]['rules']}"
+        Rails.logger.info "Spam rules triggered for ticket with message_id #{params[:message_id]}: #{params[:spam_info]['rules']}"
       rescue => e
         puts e.message
       end

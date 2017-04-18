@@ -3,6 +3,7 @@ module Facebook
     module Post
       
       include Facebook::TicketActions::Util
+      include Facebook::Util
       
       def add_as_ticket(fan_page, koala_feed, ticket_attributes)
         ticket = nil
@@ -21,13 +22,14 @@ module Facebook
               :facebook_page_id => fan_page.id,
               :parent_id        => nil,
               :post_attributes  => post_attributes(koala_feed.post_type, can_comment)
-            },
-            :ticket_body_attributes => {
-              :description      => koala_feed.description,
-              :description_html => koala_feed.description_html
             }
           )
-           
+
+          description_html = send("html_content_from_#{koala_feed.type}", koala_feed.feed, ticket)
+          ticket.ticket_body_attributes = {
+              :description      => koala_feed.description,
+              :description_html => description_html
+          }
           if ticket.save_ticket
             if !koala_feed.created_at.blank?
               @fan_page.update_attribute(:fetch_since, koala_feed.created_at.to_i)
@@ -53,8 +55,6 @@ module Facebook
           @parent_id = ticket
           note = ticket.notes.build(
             :note_body_attributes => {
-              :body => koala_comment.description,
-              :body_html => koala_comment.description_html
             },
             :private    => true ,
             :incoming   => true,
@@ -69,6 +69,13 @@ module Facebook
               :post_attributes  => post_attributes(koala_comment.post_type, koala_comment.can_comment)
             }
           )
+
+          body_html = send("html_content_from_#{koala_comment.type}", koala_comment.feed, note)
+          note.note_body_attributes = {
+              :body => koala_comment.description,
+              :body_html => body_html
+          }
+          
           begin
             requester.make_current
             if note.save_note

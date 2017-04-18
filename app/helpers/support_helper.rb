@@ -388,6 +388,7 @@ module SupportHelper
 	    required = (field.required_in_portal && field.editable_in_portal)
 	    element_class   = " #{required ? 'required' : '' } #{ dom_type }"
 	    element_class  += " section_field" if field.section_field?
+	    element_class += " dynamic_sections" if field.section_dropdown?
 	    field_name      = (field_name.blank?) ? field.field_name : field_name
 	    object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
 	    case dom_type
@@ -624,7 +625,7 @@ module SupportHelper
 		%( 	<div class="copyright">
 				<a href="http://www.freshdesk.com" target="_blank"> #{ I18n.t('footer.helpdesk_software') } </a>
 				#{ I18n.t('footer.by_freshdesk') }
-			</div> ) unless portal.paid_account
+			</div> ) if Account.current.copy_right_enabled?
 	end
 
 	def link_to_cookie_law portal

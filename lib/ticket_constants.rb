@@ -94,15 +94,15 @@ module TicketConstants
 
   DEFAULT_COLUMNS_ORDER = [ :responder_id, :group_id, :created_at, :due_by, :status, :priority,
     :ticket_type, :source, "helpdesk_tags.name", :owner_id,
-    :requester_id, "helpdesk_schema_less_tickets.product_id", "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}" ]
+    :requester_id, "helpdesk_schema_less_tickets.product_id", :association_type ]
   
   ARCHIVE_DEFAULT_COLUMNS_ORDER = [ :responder_id, :group_id, :created_at, :due_by, :status, :priority,
     :ticket_type, :source, "helpdesk_tags.name", "users.customer_id", :owner_id,
-    :requester_id, :product_id, "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}" ]
+    :requester_id, :product_id, :association_type ]
 
-  INTERNAL_AGENT_ID = "helpdesk_schema_less_tickets.long_tc04"
+  INTERNAL_AGENT_ID = "internal_agent_id"
   ANY_AGENT_ID      = "any_agent_id"
-  INTERNAL_GROUP_ID = "helpdesk_schema_less_tickets.long_tc03"
+  INTERNAL_GROUP_ID = "internal_group_id"
   ANY_GROUP_ID      = "any_group_id"
 
   SHARED_AGENT_COLUMNS_ORDER = [INTERNAL_AGENT_ID, ANY_AGENT_ID]
@@ -121,7 +121,7 @@ module TicketConstants
     [ :created_at,          "created_at",       :created_at],
     [ :requester_id,        'requester',        :requester],
     [ "helpdesk_schema_less_tickets.product_id",'products', :dropdown],
-    [ "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}",  'association_type', :dropdown]
+    [ :association_type,    'association_type', :dropdown]
   ]
   ARCHIVE_DEFAULT_COLUMNS =  [
     [ :status,              'status',           :dropdown],
@@ -131,13 +131,13 @@ module TicketConstants
     [ :source,              'source',           :dropdown],
     [ :priority,            'priority',         :dropdown],
     [ :due_by,              'due_by',           :due_by],
-    [ "helpdesk_tags.name", "tags",             :dropdown],
+    [ "helpdesk_tags.name", "tags",             :tags],
     [ "users.customer_id",  "customers",        :customer],
     [ :owner_id,            "customers",        :customer],
     [ :created_at,          "created_at",       :created_at],
     [ :requester_id,        'requester',        :requester],
     [ :product_id,          'products',         :dropdown],
-    [ "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}",  'association_type', :dropdown]
+    [ :association_type,    'association_type', :dropdown]
   ]
   
   
@@ -152,13 +152,13 @@ module TicketConstants
   FILTER_MODES = {:primary => 0, :internal => 1, :any => 2}
 
   SHARED_AGENT_COLUMNS = [
-    ["helpdesk_schema_less_tickets.long_tc04",  :dropdown,          FILTER_MODES[:internal] ],
-    ["any_agent_id",                            :special_responder, FILTER_MODES[:any] ]
+    ["internal_agent_id",   :dropdown,          FILTER_MODES[:internal] ],
+    ["any_agent_id",        :special_responder, FILTER_MODES[:any] ]
   ]
 
   SHARED_GROUP_COLUMNS = [
-    ["helpdesk_schema_less_tickets.long_tc03",  :dropdown,          FILTER_MODES[:internal] ],
-    ["any_group_id",                            :special_responder, FILTER_MODES[:any] ]
+    ["internal_group_id",   :dropdown,          FILTER_MODES[:internal] ],
+    ["any_group_id",        :special_responder, FILTER_MODES[:any] ]
   ]
 
   SHARED_AGENT_COLUMNS_KEYS_BY_TOKEN       = Hash[*SHARED_AGENT_COLUMNS.map { |i| [i[0], i[1]] }.flatten]
@@ -187,6 +187,13 @@ module TicketConstants
     [ :seven_days,    I18n.t("export_data.seven_days"),    7 ],
     [ :twenty_four,   I18n.t("export_data.twenty_four"),   1 ],
     [ :custom_filter, I18n.t("export_data.custom_filter"), 4 ]
+  ]
+
+  CREATED_BY_VALUES_EN = [
+    [ :thirt_days,    "export_data.thirt_days",   30 ],
+    [ :seven_days,    "export_data.seven_days",    7 ],
+    [ :twenty_four,   "export_data.twenty_four",   1 ],
+    [ :custom_filter, "export_data.custom_filter", 4 ]
   ]
 
   CREATED_BY_OPTIONS = CREATED_BY_VALUES.map { |i| [i[1], i[2]] }
@@ -281,13 +288,18 @@ module TicketConstants
     "default_product",  "default_company"
   ]
 
-  SHARED_DEFAULT_FIELDS_ORDER = [
-    "default_priority",       "default_status",
-    "default_group",          "default_agent", 
-    "default_internal_group", "default_internal_agent",
-    "default_source",         "default_ticket_type",
-    "default_product",        "default_company"
-  ]
+  SHARED_DEFAULT_FIELDS_ORDER = {
+    "default_priority"       => "priority",
+    "default_status"         => "status",
+    "default_group"          => "group_id",
+    "default_agent"          => "responder_id",
+    "default_internal_group" => "internal_group_id",
+    "default_internal_agent" => "internal_agent_id",
+    "default_source"         => "source",
+    "default_ticket_type"    => "ticket_type",
+    "default_product"        => "product_id",
+    "default_company"        => "company_id"
+  }
 
   # CC emails count
   MAX_EMAIL_COUNT = 50
@@ -355,7 +367,7 @@ module TicketConstants
 
   def self.feature_based_association_type
     assoc_parent_child_feature = Account.current.parent_child_tkts_enabled?
-    link_tickets_feature = Account.current.link_tickets_enabled?
+    link_tickets_feature = Account.current.link_tkts_enabled?
     return [] unless assoc_parent_child_feature || link_tickets_feature
     list = [TICKET_ASSOCIATION_FILTER[0]]
     if assoc_parent_child_feature
@@ -376,5 +388,9 @@ module TicketConstants
 
   def self.association_type_filter_names
     TICKET_ASSOCIATION_FILTER.map { |i| [i[1], i[2].join(',')] }
+  end
+
+   def self.created_options
+    CREATED_BY_VALUES_EN.map { |i| [I18n.t(i[1]), i[2]] }
   end
 end

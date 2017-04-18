@@ -61,7 +61,6 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
     @export_query_params[:account_id]  = current_account.id
     @export_query_params[:report_type] = report_type
     @export_query_params[:portal_url]  = main_portal? ? current_account.host : current_portal.portal_url
-    @export_query_params[:portal_name] = current_portal.name if current_portal
     @export_query_params[:query_hash]  = request_object.fetch_req_params
     @export_query_params[:records_limit] = HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:export][:csv]
     puts (@export_query_params.inspect)
@@ -85,7 +84,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   end
   
   def email_reports
-    param_constructor = "HelpdeskReports::ParamConstructor::#{report_type.to_s.camelcase}".constantize.new(params.symbolize_keys) 
+    param_constructor = "HelpdeskReports::ParamConstructor::#{report_type.to_s.camelcase}".constantize.new(params.symbolize_keys)
     req_params = param_constructor.build_pdf_params
     req_params[:portal_name] = current_portal.name if current_portal
     Reports::Export.perform_async(req_params)
@@ -294,7 +293,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
       return false
     elsif enterprise_reporting?
       ENTERPRISE_REPORTS.include?(report_type)
-    elsif current_account.features_included?(:advanced_reporting)
+    elsif current_account.advanced_reporting_enabled?
       ADVANCED_REPORTS.include?(report_type)
     else
       DEFAULT_REPORTS.include?(report_type)

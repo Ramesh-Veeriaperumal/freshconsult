@@ -192,8 +192,8 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/fresh_request.git
-  revision: 351b324e221d07f744e0b22e34c0fb3a4ccfb775
-  branch: v10
+  revision: 7c521607a3fda8b2976ad5b5b8684ea2b32c635b
+  branch: v20
   specs:
     fresh_request (0.0.1)
       faraday (~> 0.9.0)
@@ -201,19 +201,19 @@ GIT
       hashie
       multi_json
       patron
-      redis (= 3.0.7)
+      redis (= 3.3.1)
 
 GIT
   remote: git@github.com:freshdesk/freshdesk-features.git
-  revision: f4716ab01bfb137326e18ec9262b0b1ce5494618
+  revision: 9d530cbf51b0c813dba47e73c986ca863ca12066
   branch: freshdesk
   specs:
-    freshdesk_features (0.0.1)
+    freshdesk_features (0.0.2)
 
 GIT
   remote: git@github.com:freshdesk/launch-party.git
-  revision: 2615d8f5b00c69d025d14eef2cf662a472b382ba
-  tag: v0.1.3
+  revision: edbb362ebaf1c84e2745270435cf4a93bbeb3149
+  tag: v0.1.4
   specs:
     launchparty (0.1.1)
       newrelic_rpm (>= 3.17.2.327)
@@ -543,6 +543,9 @@ GEM
       rest-client (~> 1.4)
     charlock_holmes (0.7.3)
     chunky_png (1.3.6)
+    clamav-client (3.1.0)
+    clearbit (0.2.7)
+      nestful (~> 1.1.0)
     climate_control (0.0.3)
       activesupport (>= 3.0)
     clockwork (0.4.1)
@@ -568,6 +571,7 @@ GEM
       sass (>= 3.2, < 3.5)
     compass-rails (2.0.0)
       compass (>= 0.12.2)
+    concurrent-ruby (1.0.4)
     connection_pool (2.2.0)
     css_parser (1.4.5)
       addressable
@@ -599,6 +603,7 @@ GEM
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
     diff-lcs (1.2.5)
+    dnsruby (1.60.0)
     domain_name (0.5.20161129)
       unf (>= 0.0.5, < 1.0.0)
     doorkeeper (2.2.1)
@@ -773,7 +778,7 @@ GEM
     fuubar (2.1.1)
       rspec (~> 3.0)
       ruby-progressbar (~> 1.4)
-    gemoji (2.1.0)
+    gemoji (3.0.0)
     gemoji-parser (1.3.1)
       gemoji (>= 2.1.0)
     gherkin (4.0.0)
@@ -871,8 +876,6 @@ GEM
       rb-inotify (>= 0.9)
       rb-kqueue (>= 0.2)
     lockfile (1.4.3)
-    macaddr (1.7.1)
-      systemu (~> 2.6.2)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
@@ -912,6 +915,7 @@ GEM
     mysql2 (0.3.21)
     namae (0.8.4)
     naught (1.1.0)
+    nestful (1.1.1)
     newrelic_rpm (3.17.2.327)
     nokogiri (1.5.11)
     nori (2.6.0)
@@ -931,8 +935,6 @@ GEM
       multi_xml
       omniauth (~> 1.0)
       omniauth-oauth2 (~> 1.0)
-    omniauth-facebook (1.2.0)
-      omniauth-oauth2 (~> 1.0.0)
     omniauth-google (1.0.2)
       multi_json
       omniauth (~> 1.0)
@@ -1033,7 +1035,7 @@ GEM
       trollop
     rdoc (3.12.2)
       json (~> 1.4)
-    redis (3.0.7)
+    redis (3.3.1)
     redis-namespace (1.5.2)
       redis (~> 3.0, >= 3.0.4)
     ref (2.0.0)
@@ -1103,9 +1105,8 @@ GEM
     ruby-openid-apps-discovery (1.2.0)
       ruby-openid (>= 2.1.7)
     ruby-progressbar (1.8.1)
-    ruby-saml (0.8.1)
-      nokogiri (>= 1.5.0)
-      uuid (~> 2.3)
+    ruby-saml (1.4.2)
+      nokogiri (>= 1.5.10)
     rubytree (0.9.7)
       json (~> 1.8)
       structured_warnings (~> 0.2)
@@ -1189,7 +1190,6 @@ GEM
     syck (1.0.5)
     sys-uname (1.0.2)
       ffi (>= 1.0.0)
-    systemu (2.6.5)
     test-unit (3.1.7)
       power_assert
     test-unit-minitest (0.9.1)
@@ -1234,8 +1234,6 @@ GEM
     unicode-display_width (1.1.0)
     uniform_notifier (1.10.0)
     useragent (0.16.7)
-    uuid (2.3.8)
-      macaddr (~> 1.0)
     uuidtools (2.1.5)
     vegas (0.1.11)
       rack (>= 1.0.0)
@@ -1291,9 +1289,12 @@ DEPENDENCIES
   carmen!
   chargebee (~> 1.5.1)
   charlock_holmes (= 0.7.3)
+  clamav-client (= 3.1.0)
+  clearbit
   clockwork (= 0.4.1)
   compass-blueprint (= 1.0.0)
   compass-rails (= 2.0.0)
+  connection_pool
   country_select!
   cucumber-rails
   cucumber_statistics
@@ -1304,6 +1305,7 @@ DEPENDENCIES
   deadlock_retry!
   delayed_job!
   dev_notification!
+  dnsruby
   doorkeeper (= 2.2.1)
   dynamic_form
   dynamics_crm!
@@ -1376,7 +1378,6 @@ DEPENDENCIES
   omniauth (= 1.2.2)
   omniauth-box2 (~> 0.0.1)
   omniauth-constantcontact2 (= 1.0.4)
-  omniauth-facebook (= 1.2.0)
   omniauth-google (= 1.0.2)
   omniauth-google-oauth2 (= 0.1.13)
   omniauth-mailchimp (= 1.0.3)
@@ -1410,7 +1411,7 @@ DEPENDENCIES
   rate-limiting!
   rbtrace
   recaptcha!
-  redis (= 3.0.7)
+  redis (= 3.3.1)
   request_store (~> 1.0)
   resque (~> 1.24.0)
   resque-scheduler (= 2.2.0)
@@ -1428,7 +1429,7 @@ DEPENDENCIES
   rubocop-checkstyle_formatter
   ruby-openid!
   ruby-openid-apps-discovery (= 1.2.0)
-  ruby-saml (= 0.8.1)
+  ruby-saml (= 1.4.2)
   rubytree
   rubyzip (= 0.9.4)
   rugged

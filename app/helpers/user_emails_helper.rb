@@ -17,6 +17,8 @@ module UserEmailsHelper
     def construct_disabled
       if @field_name == "email"
         @field_value = @form_builder.object.user_emails.map(&:email).join(", ")
+      elsif @field_name == "unique_external_id"
+        @field_value = @form_builder.object.unique_external_id
       end
       super
     end

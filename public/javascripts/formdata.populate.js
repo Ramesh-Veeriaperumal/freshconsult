@@ -118,7 +118,7 @@ var PopulateFormData = PopulateFormData ||  (function(){
       key = jQuery(this).attr('condition');
       initialObj[key] = '';
       if(key == 'created_at'){
-        initialObj[key] = (view_name == 'all_tickets') ? "last_month" : "any_time";
+        initialObj[key] = "any_time";
       }
     });
     return initialObj;

@@ -80,6 +80,23 @@ RealtimeDashboard.Widgets = RealtimeDashboard.Widgets || {};
 		closeSetupDetails: function(){
 			$('.setup-details-wrapper').removeClass("active");
 		},
+		percentageAnimation: function() {
+			var setupPrecentageDashboardElement = $("#configurationSetupPercentage");
+			var setupPrecentageContainerElement = $(".progress-percentage-wrap").children('b');
+			var setupPrecentage = parseInt(setupPrecentageDashboardElement.data('percentage'));
+			if(setupPrecentage !== 0) {
+				var initiatePercentage = 1;
+				var percentageTimer = window.setInterval(function(){
+					if(initiatePercentage == setupPrecentage) {
+						window.clearInterval(percentageTimer);
+					}
+					setupPrecentageDashboardElement.text(initiatePercentage);
+					setupPrecentageContainerElement.text(initiatePercentage + "%");
+					initiatePercentage++;
+				},(550/setupPrecentage)+2);
+
+			}	
+		},
 		invokeFeedbackFormValidator: function(){
 			var $this = this;
 			var feedbackUtils = $this.feedback;
@@ -165,9 +182,10 @@ RealtimeDashboard.Widgets = RealtimeDashboard.Widgets || {};
 		},
 		demoRequestDescription:function() { return "" },
 		setupProgressBar: function(){
+			this.percentageAnimation();
 			var progressBar = $('.progress-bar');
 			progressBar.attr("style", "width:" + progressBar.attr("aria-valuenow") + "%");
-			progressBar.show("slide", { direction: "left" }, 400);
+			progressBar.show("slide", { direction: "left" }, 550);
 			$(document).off("ajaxStop.setupWidget");			  
 		},
 		requestTrialExtension: function(elem){

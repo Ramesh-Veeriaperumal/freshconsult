@@ -4,7 +4,7 @@ class Helpdesk::CommonsController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token
   before_filter :check_privilege, :only => [:fetch_company_by_name, :status_groups]
 
-  before_filter :only => [:group_agents, :user_companies] do |c| 
+  before_filter :only => [:group_agents, :user_companies, :agents_for_groups] do |c| 
     c.check_portal_scope :anonymous_tickets
   end
   before_filter :group_agent_fields_editable?, :only => [:group_agents]
@@ -46,6 +46,21 @@ class Helpdesk::CommonsController < ApplicationController
       }
     end
   end
+
+  def agents_for_groups
+    group_ids = params[:group_ids]
+    @agents = current_account.agent_groups.where({:group_id => group_ids, :users => {:account_id => current_account.id, :deleted => false} }).preload(:user).joins(:user)
+    group_hash = {}
+    @agents.each do |agent_group|
+      t_h = {:user_id => agent_group.user_id, :user_name => agent_group.user.name, :email => agent_group.user.email}
+      if group_hash[agent_group.group_id].present?
+        group_hash[agent_group.group_id] << t_h
+      else
+        group_hash[agent_group.group_id] = [t_h]
+      end
+    end
+    render :json => group_hash.to_json
+  end
   
   def fetch_company_by_name
     company = current_account.companies.find_by_name(params["name"]) if params["name"]
@@ -59,9 +74,9 @@ class Helpdesk::CommonsController < ApplicationController
   end
 
   def status_groups
-    if params[:status_id] and current_account.features?(:shared_ownership) 
+    if params[:status_id] && current_account.shared_ownership_enabled?
       assigned_group_id = params[:group_id]
-      status = current_account.ticket_status_values_from_cache.find{|s| s.status_id == params[:status_id].to_i and !s.is_default}
+      status = current_account.ticket_status_values_from_cache.find{|s| s.status_id == params[:status_id].to_i && !s.is_default}
       group_ids = status.try(:group_ids)
       @groups = current_account.groups_from_cache.select { |g| group_ids.include?(g.id) } if group_ids.present?
     end

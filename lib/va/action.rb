@@ -1,7 +1,12 @@
 class Va::Action
   
+  include Va::Action::Restrictions
   include Va::Webhook::Trigger
   include ParserUtil
+
+  #including Redis keys for notify_cc - will be removed later
+  include Redis::RedisKeys
+  include Redis::OthersRedis
   
   EVENT_PERFORMER = -2
   ASSIGNED_AGENT = ASSIGNED_GROUP = 0
@@ -34,7 +39,7 @@ class Va::Action
   
   def trigger(act_on, doer=nil, triggered_event=nil)
     begin
-      Rails.logger.debug "INSIDE trigger of Va::Action with act_on : #{act_on.inspect} action_key : #{action_key} value: #{value}"
+      #Rails.logger.debug "INSIDE trigger of Va::Action with act_on : #{act_on.inspect} action_key : #{action_key} value: #{value}"
       @doer = doer
       @triggered_event = triggered_event
       return send(action_key, act_on) if respond_to?(action_key)
@@ -52,8 +57,8 @@ class Va::Action
           return
         end
       end
-      
-      puts "From the trigger of Action... Looks like #{action_key} is not supported!"
+
+      Rails.logger.debug "Unsupported action key :: #{action_key}"
     rescue Exception => e
       Rails.logger.debug "For Va::Action #{self} Exception #{e} rescued"
     end
@@ -98,7 +103,7 @@ class Va::Action
   def responder_id(act_on)
     r_id = value.to_i
     begin
-      responder = (r_id == EVENT_PERFORMER) ? (act_on.agent_performed?(doer) ? doer : nil) : act_on.account.users.find(value.to_i)
+      responder = (r_id == EVENT_PERFORMER) ? (act_on.agent_performed?(doer) ? doer : nil) : act_on.account.technicians.find(value.to_i)
     rescue ActiveRecord::RecordNotFound
     end
     act_on.responder = responder if responder || value.empty?
@@ -108,7 +113,7 @@ class Va::Action
   def internal_agent_id(act_on)
     ia_id = value.to_i
     begin
-      internal_agent = (ia_id == EVENT_PERFORMER) ? (act_on.agent_performed?(doer) ? doer : nil) : act_on.account.users.find(value.to_i)
+      internal_agent = (ia_id == EVENT_PERFORMER) ? (act_on.agent_performed?(doer) ? doer : nil) : act_on.account.technicians.find(value.to_i)
     rescue ActiveRecord::RecordNotFound
     end
     act_on.internal_agent = internal_agent if internal_agent || value.empty?
@@ -185,17 +190,16 @@ class Va::Action
       ticket_cc_emails = act_on.cc_email[:tkt_cc].collect { |email| (parse_email_text email.downcase)[:email] }
       reply_cc_emails  = act_on.cc_email[:reply_cc].collect { |email| (parse_email_text email.downcase)[:email] }
       cc_email_value   = value.downcase.strip
-      
+
       act_on.cc_email[:reply_cc]  << cc_email_value unless reply_cc_emails.include?(cc_email_value)
+      act_on.cc_email[:cc_emails] << cc_email_value unless cc_emails.include?(cc_email_value)
+      act_on.cc_email[:tkt_cc]    << cc_email_value unless ticket_cc_emails.include?(cc_email_value)
       
-      unless cc_emails.include?(cc_email_value)
-        act_on.cc_email[:cc_emails] << cc_email_value 
-        Helpdesk::TicketNotifier.send_later(:send_cc_email, act_on, nil, {:cc_emails => cc_email_value.to_a })
+      # send notify_cc_people unless redis key - will be removed later
+      unless get_others_redis_key("NOTIFY_CC_ADDED_VIA_DISPATCHER").present? || cc_emails.include?(cc_email_value)
+         Helpdesk::TicketNotifier.send_later(:send_cc_email, act_on, nil, {:cc_emails => cc_email_value.to_a })
       end
 
-      unless ticket_cc_emails.include?(cc_email_value)
-        act_on.cc_email[:tkt_cc] << cc_email_value 
-      end
       record_action(act_on)
     end
   end
@@ -251,6 +255,10 @@ class Va::Action
     record_action(act_on)
   end
 
+  def contains? action_string
+    action_key.include? action_string
+  end
+  
   private
     def get_group(act_on) # this (g == 0) is kind of hack, same goes for agents also.
       begin
@@ -292,7 +300,7 @@ class Va::Action
       content = act_hash[content_key].to_s
       content = RedCloth.new(content).to_html unless content_key == :email_subject
       Liquid::Template.parse(content).render( 'event_performer' => doer,
-                'ticket' => act_on, 'helpdesk_name' => act_on.account.portal_name, 'comment' => act_on.notes.visible.exclude_source('meta').last)
+                'ticket' => act_on, 'helpdesk_name' => act_on.account.helpdesk_name, 'comment' => act_on.notes.visible.exclude_source('meta').last)
     end
 
     def assign_custom_field act_on, field, value

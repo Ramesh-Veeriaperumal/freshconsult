@@ -1,9 +1,12 @@
 <% 
 var isDefault = /^default/.test(field_type),
-		delete_icon = isDefault ? 'ficon-trash-strike-thru' : 'ficon-trash-o',
+		field_with_section = "field_options" in obj && field_options.section_present
+		delete_icon = isDefault || field_with_section ? 'ficon-trash-strike-thru' : 'ficon-trash-o',
 		edit_icon = is_editable ? 'ficon-edit' : 'ficon-edit-strike-thru',
-		delete_tooltip = isDefault ? translate.get("field_delete_disabled") : translate.get("delete")%>
-		
+		delete_tooltip = isDefault ? translate.get("field_delete_disabled") : field_with_section ? translate.get("field_has_section") : translate.get("delete"),
+		new_section_text = translate.get("new_section")
+		%>
+
 <div class='control-group date'>
 	<div class='control-label'>
 		<% if(custom_form_type != 'company' && field_type != 'default_requester' && !visible_in_portal) { %>
@@ -73,13 +76,18 @@ var isDefault = /^default/.test(field_type),
 				<% break;
 		} %>
 	</div>
-</div>
-<% if ("has_section" in obj && has_section) { %>
-	<div class="section-wrapper" id="section-wrapper">
-		<a href="#" id="new-section" class="new-section">
-			<i class="rounded-add-icon fsize-12"></i>
-			<%= translate.get('new_section') %>
-		</a>
-		<ul id="section-container" class="section-container"></ul>
+	<% if (multi_sections_enabled && "has_section" in obj && has_section && "field_options" in obj && !field_options.section_present && !field_options.section ) { %>
+		<div class='options-wrapper add-section new-section'>
+			<div class = "ficon-add-section options tooltip" title="<%= translate.get('addSection') %>" data-placement= "topRight"></div>
 	</div>
+	<% } %>
+</div>
+<% if (multi_sections_enabled) { %>
+	<% if ("has_section" in obj && has_section && "field_options" in obj && field_options.section_present) { %>
+		<%=JST['custom-form/template/section_container']({section_label : new_section_text}) %>
+	<% } %>
+<% } else { %>
+	<% if ("has_section" in obj && has_section) { %>
+		<%=JST['custom-form/template/section_container']({section_label : new_section_text}) %>
+	<% } %>
 <% } %>

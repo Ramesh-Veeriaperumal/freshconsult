@@ -4,7 +4,13 @@ class SAAS::SubscriptionEventActions
 
   DROP_DATA_FEATURES_V2 = [:create_observer, :supervisor, :add_watcher, :custom_ticket_views, :custom_apps, :custom_ticket_fields, 
                             :custom_company_fields, :custom_contact_fields, :occasional_agent, :basic_twitter, :basic_facebook,
-                            :rebranding]
+                            :rebranding, :customer_slas, :multiple_business_hours, :multi_product, :multiple_emails, :link_tickets_toggle,
+                            :parent_child_tickets_toggle, :shared_ownership_toggle]
+
+  ADD_DATA_FEATURES_V2  = [:link_tickets_toggle, :parent_child_tickets_toggle]
+
+  DROP  = "drop"
+  ADD   = "add"
 
   ####################################################################################################################
   #ideally we need to initialize this class with account object, old subscription object and addons 
@@ -19,10 +25,11 @@ class SAAS::SubscriptionEventActions
   end
 
   def change_plan
+    plan_features = ::PLANS[:subscription_plans][new_plan.subscription_plan.canon_name.to_sym][:features]
+    
     if plan_changed?
-      plan_features = ::PLANS[:subscription_plans][new_plan.subscription_plan.canon_name.to_sym][:features]
       account.features_list.each do |feature|
-        account.reset_feature(feature) unless plan_features.include?(feature) || account_add_ons.include?(feature)
+        account.reset_feature(feature) unless plan_features.include?(feature) || account_add_ons.include?(feature) || account.selectable_features_list.include?(feature)
       end
       account.save
       #remove_chat_feature
@@ -30,22 +37,29 @@ class SAAS::SubscriptionEventActions
         account.set_feature(feature)
       end
       account.save
+      handle_custom_dasboard_launch
       #disable_chat_routing unless account.has_feature?(:chat_routing)
     end
 
     if add_ons_changed?
-      #to add new addons thats coming in to get added
-      account_add_ons.each do |addon|
-        account.add_feature(addon) unless existing_add_ons.include?(addon) rescue nil
-      end
-
+      to_be_added = account_add_ons - existing_add_ons
+      to_be_removed = existing_add_ons - account_add_ons
+      
       #add on removal case. we need to remove the feature in this case.
-      existing_add_ons.each do |addon|
-        account.revoke_feature(addon) unless account.has_feature?(addon) rescue nil
+      to_be_removed.each do |addon|
+        next if plan_features.include?(addon) # Don't remove features which are all related to current plan
+        account.revoke_feature(addon) rescue nil
+      end
+      #to add new addons thats coming in to get added
+      to_be_added.each do |addon|
+        account.add_feature(addon) rescue nil
       end
     end
     
-    handle_feature_drop_data if plan_changed? || add_ons_changed?
+    if plan_changed? || add_ons_changed?
+      handle_feature_drop_data
+      handle_feature_add_data
+    end
 
   end
 
@@ -54,11 +68,18 @@ class SAAS::SubscriptionEventActions
     def handle_feature_drop_data
       drop_data_features_v2 = DROP_DATA_FEATURES_V2.select { |feature| feature unless account.has_feature?(feature) }
       Rails.logger.info "Drop data feautres list:: #{drop_data_features_v2.inspect}"
-      handle_feature_data(drop_data_features_v2) if drop_data_features_v2.present?
+      handle_feature_data(drop_data_features_v2, DROP) if drop_data_features_v2.present?
     end
 
-    def handle_feature_data(features_to_drop_data)
-      NewPlanChangeWorker.perform_async({:features => features_to_drop_data})
+    def handle_feature_add_data
+      add_data_features_v2 = ADD_DATA_FEATURES_V2.select { |feature| feature if account.has_feature?(feature) }
+      Rails.logger.info "Add data feautres list:: #{add_data_features_v2.inspect}"
+      handle_feature_data(add_data_features_v2, ADD) if add_data_features_v2.present?
+    end
+
+
+    def handle_feature_data(features_data, event)
+      NewPlanChangeWorker.perform_async({:features => features_data, :action => event})
     end
 
     def remove_chat_feature
@@ -87,6 +108,24 @@ class SAAS::SubscriptionEventActions
 
     def plan_changed?
       new_plan.subscription_plan_id != old_plan.subscription_plan_id
+    end
+
+    def handle_custom_dasboard_launch
+      is_dashboard_plan = dashboard_plan?
+        if is_dashboard_plan
+          CountES::IndexOperations::EnableCountES.perform_async({ :account_id => account.id })
+        else
+          [:admin_dashboard, :agent_dashboard, :supervisor_dashboard].each do |f|
+            account.features.countv2_reads.destroy
+            account.rollback(f)
+          end
+        end
+    end
+
+    def dashboard_plan?
+      dashboard_plans = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:estate], SubscriptionPlan::SUBSCRIPTION_PLANS[:forest],
+                        SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17], SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_17] ]
+      dashboard_plans.include?(new_plan.subscription_plan.name)
     end
 
 end

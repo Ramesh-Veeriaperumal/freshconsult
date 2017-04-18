@@ -1,5 +1,9 @@
+require 'newrelic_rpm'
+
 module Email
   class MailFetchWorker
+
+    include ::NewRelic::Agent::Instrumentation::ControllerInstrumentation
 
     include Shoryuken::Worker
 
@@ -19,7 +23,10 @@ module Email
         Helpdesk::Email::MailMessageProcessor.new(params).execute
       rescue => e
         Rails.logger.info "Error in MailFetchWorker - #{e.message} - #{e.backtrace}"
+        NewRelic::Agent.notice_error(e, {:description => "Error in MailFetchWorker"})
       end
     end
+
+    add_transaction_tracer :perform, :category => :task
   end
 end

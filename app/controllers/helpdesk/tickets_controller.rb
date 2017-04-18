@@ -52,22 +52,25 @@ class Helpdesk::TicketsController < ApplicationController
   layout :choose_layout
 
   before_filter :filter_params_ids, :only =>[:destroy,:assign,:close_multiple,:spam,:pick_tickets, :delete_forever, :delete_forever_spam, :execute_bulk_scenario, :unspam, :restore]
-  before_filter :scoper_ticket_actions, :only => [ :assign,:close_multiple, :pick_tickets ]
+  
+  #Set Native mobile is above scoper ticket actions, because, we send mobile response in scoper ticket actions, and 
+  #the nmobile format has to be set. Else we will get a missing template error. 
+  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever,:change_due_by,:reply_to_forward, :save_draft, :clear_draft, :assign]
+  before_filter :scoper_ticket_actions, :only => [ :assign, :close_multiple, :pick_tickets ]
 
   before_filter :load_items, :only => [ :destroy, :restore, :spam, :unspam, :assign,
-    :close_multiple ,:pick_tickets, :delete_forever, :delete_forever_spam ]
+    :close_multiple ,:pick_tickets, :delete_forever, :delete_forever_spam]
 
   skip_before_filter :load_item
   alias :load_ticket :load_item
 
-  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever,:change_due_by,:reply_to_forward, :save_draft, :clear_draft]
   before_filter :verify_ticket_permission_by_id, :only => [:component]
 
   before_filter :load_ticket,
     :only => [:edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft,
               :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties,
               :activities, :activitiesv2, :activities_all, :unlink, :associated_tickets, :ticket_association,
-              :suggest_tickets, :update_requester, :refresh_requester_widget]
+              :suggest_tickets, :update_requester, :refresh_requester_widget,:fetch_errored_email_details, :suppression_list_alert]
 
   before_filter :load_ticket_with_notes, :only => :show
   before_filter :load_ticket_contact_data, :only => [:show, :update_requester, :refresh_requester_widget]
@@ -88,7 +91,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :set_default_filter , :only => [:custom_search, :export_csv]
 
   before_filter :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft,
-              :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties, :activities, :unspam, :restore, :activitiesv2, :activities_all]
+              :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties, :activities, :unspam, :restore, :activitiesv2, :activities_all, :fetch_errored_email_details, :suppression_list_alert]
 
   before_filter :load_email_params, :only => [:show, :reply_to_conv, :forward_conv, :reply_to_forward]
   before_filter :load_conversation_params, :only => [:reply_to_conv, :forward_conv, :reply_to_forward]
@@ -327,7 +330,7 @@ class Helpdesk::TicketsController < ApplicationController
     @show_options = show_options
     @is_default_filter = (!is_num?(view_context.current_filter))
     @current_view = @ticket_filter.id || @ticket_filter.name if is_custom_filter_ticket?
-    render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter , :shared_ownership_enabled => current_account.features?(:shared_ownership)}
+    render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter , :shared_ownership_enabled => current_account.shared_ownership_enabled?}
   end
 
   def filter_conditions
@@ -430,7 +433,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def custom_search
     params[:html_format] = true
-    @items = collab_filter_enabled_for?(filter) ? fetch_collab_tickets : fetch_tickets
+    @items = collab_filter_enabled_for?(view_context.current_filter) ? fetch_collab_tickets : fetch_tickets
 
     #Changes for customer sentiment - Beta feature
     if Account.current.customer_sentiment_ui_enabled? && @items.size > 0
@@ -660,9 +663,10 @@ class Helpdesk::TicketsController < ApplicationController
     user = params[:responder_id] ? User.find(params[:responder_id]) : current_user
     assign_ticket user
 
+    flash_message = t("helpdesk.flash.assignedto", :tickets => get_updated_ticket_count,
+                                                :username => user.name )
     flash[:notice] = render_to_string(
-      :inline => t("helpdesk.flash.assignedto", :tickets => get_updated_ticket_count,
-                                                :username => user.name ))
+      :inline => flash_message)
 
 
     respond_to do |format|
@@ -675,6 +679,7 @@ class Helpdesk::TicketsController < ApplicationController
       }
       format.xml { render :xml => @items.to_xml({:basic=>true}) }
       format.json { render :json => @items.to_json({:basic=>true}) }
+      format.nmobile {render :json => {:message => flash_message}}
     end
 
   end
@@ -1016,7 +1021,7 @@ class Helpdesk::TicketsController < ApplicationController
     @item.email = params[:helpdesk_ticket][:email]
     @item.group = current_account.groups.find_by_id(params[:helpdesk_ticket][:group_id]) if params[:helpdesk_ticket][:group_id]
     @item.tag_names = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
-    if current_account.link_tickets_enabled? and params[:display_ids].present?
+    if current_account.link_tkts_enabled? and params[:display_ids].present?
       @item.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]
       @item.related_ticket_ids = params[:display_ids].split(',')
     end
@@ -1422,7 +1427,7 @@ class Helpdesk::TicketsController < ApplicationController
     @email_config = current_account.primary_email_config
     @reply_emails = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
     @ticket ||= current_account.tickets.find_by_display_id(params[:id])
-    @signature = current_user.agent.parsed_signature('ticket' => @ticket, 'helpdesk_name' => @ticket.account.portal_name)
+    @signature = current_user.agent.parsed_signature('ticket' => @ticket, 'helpdesk_name' => @ticket.account.helpdesk_name)
     @selected_reply_email = current_account.features?(:personalized_email_replies) ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
   end
 
@@ -1483,8 +1488,8 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def scoper_ticket_actions
-      # check for mobile can be removed when mobile apps perform bulk actions as background job
-      if  !mobile?  and (params[:ids] and params[:ids].length > BACKGROUND_THRESHOLD)
+      # Check for mobile removed. Mobile apps supporting bulk ticket assign. 
+      if (params[:ids] and params[:ids].length > BACKGROUND_THRESHOLD)
         ticket_actions_background
       end
     end
@@ -1497,11 +1502,13 @@ class Helpdesk::TicketsController < ApplicationController
       args = { :action => action_name }
       args.merge!(params_for_bulk_action)
       Tickets::BulkTicketActions.perform_async(args)
+      flash_message = t('helpdesk.flash.tickets_background')
       respond_to do |format|
         format.html {
-          flash[:notice] = t('helpdesk.flash.tickets_background')
+          flash[:notice] = flash_message
           redirect_to helpdesk_tickets_path
         }
+        format.nmobile {render :json => {:message => flash_message}}
       end
     end
 
@@ -1571,7 +1578,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def check_autorefresh_feature
-      @is_auto_refresh_feature = current_account.features?(:auto_refresh)
+      @is_auto_refresh_feature = current_account.auto_refresh_enabled?
     end
 
     def get_cached_filters
@@ -1730,7 +1737,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def set_modes(conditions)
-      return unless current_account.features?(:shared_ownership)
+      return unless current_account.shared_ownership_enabled?
       @agent_mode = TicketConstants::FILTER_MODES[:primary]
       @group_mode = TicketConstants::FILTER_MODES[:primary]
       conditions.each do |condition|

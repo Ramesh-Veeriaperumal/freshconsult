@@ -16,10 +16,17 @@ class CountES::IndexOperations
 
   class EnableCountES < CountES::IndexOperations
    def perform(args)
-      Search::Dashboard::Count.new.create_alias
-
-      Account.current.tickets.visible.find_in_batches(:batch_size => 300) do |tickets|
-        tickets.map(&:count_es_manual_publish)
+      account = Account.current
+      #Search::Dashboard::Count.new.create_alias
+      unless account.features?(:countv2_writes)
+        account.features.countv2_writes.create
+        account.tickets.visible.find_in_batches(:batch_size => 300) do |tickets|
+          tickets.map(&:count_es_manual_publish)
+        end
+      end
+      account.features.countv2_reads.create
+      [:admin_dashboard, :agent_dashboard, :supervisor_dashboard, :dashboard_new_alias].each do |f|
+        account.launch(f)
       end
     end
   end
@@ -27,8 +34,8 @@ class CountES::IndexOperations
   class DisableCountES < CountES::IndexOperations
     def perform(args)
       return true #Since new signups wont have dashboard, we dont need to perform this job. We ll remove this line once we start enabling es for new signups.
-      args.symbolize_keys!
-      Search::Dashboard::Count.new({},args[:account_id], {:shard_name => args[:shard_name]}).remove_alias
+      #args.symbolize_keys!
+      #Search::Dashboard::Count.new({},args[:account_id], {:shard_name => args[:shard_name]}).remove_alias
     end
   end
 

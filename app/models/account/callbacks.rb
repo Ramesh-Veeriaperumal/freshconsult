@@ -12,6 +12,8 @@ class Account < ActiveRecord::Base
   after_update :update_freshfone_voice_url, :if => :freshfone_enabled?
   after_update :update_livechat_url_time_zone, :if => :freshchat_enabled?
 
+  before_save :sync_name_helpdesk_name
+  
   after_destroy :remove_global_shard_mapping, :remove_from_slave_queries
   after_destroy :remove_shard_mapping, :destroy_route_info
 
@@ -23,7 +25,7 @@ class Account < ActiveRecord::Base
   after_commit :enable_searchv2, :enable_count_es, on: :create
   after_commit :disable_searchv2, :disable_count_es, on: :destroy
   after_commit :update_sendgrid, on: :create
-  after_commit :activate_email_notification , on: :update , :if => :account_verification_changed? 
+  after_commit :remove_email_restrictions, on: :update , :if => :account_verification_changed? 
 
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -90,11 +92,16 @@ class Account < ActiveRecord::Base
       @all_changes.key?("reputation") && self.verified?
     end
 
-    def activate_email_notification
-      ActivationWorker.perform_async
+    def remove_email_restrictions
+      AccountActivation::RemoveRestrictionsWorker.perform_async
     end
 
   private
+
+    def sync_name_helpdesk_name
+      self.name = self.helpdesk_name if helpdesk_name_changed?
+      self.helpdesk_name = self.name if name_changed?
+    end
 
     def add_to_billing
       Billing::AddSubscriptionToChargebee.perform_async
@@ -138,6 +145,9 @@ class Account < ActiveRecord::Base
                               end
         plan_features_list.each do |key, value|
           bitmap_value = self.set_feature(key)
+        end
+        self.selectable_features_list.each do |feature_name, enable_on_signup|
+          bitmap_value = enable_on_signup ? self.set_feature(feature_name) : bitmap_value
         end
         self.plan_features = bitmap_value
       rescue Exception => e
@@ -271,7 +281,13 @@ class Account < ActiveRecord::Base
     end
 
     def enable_count_es
-      CountES::IndexOperations::EnableCountES.perform_async({ :account_id => self.id }) if Account.current.features?(:countv2_writes)
+      if redis_key_exists?(DASHBOARD_FEATURE_ENABLED_KEY)
+        count = Search::Dashboard::Count.new(nil, id, nil)
+        count.index_new_account_dashboard_shard
+        key = ACCOUNT_DASHBOARD_SHARD_NAME % { :account_id => self.id }
+        MemcacheKeys.fetch(key) { ActiveRecord::Base.current_shard_selection.shard.to_s }
+        CountES::IndexOperations::EnableCountES.perform_async({ :account_id => self.id }) 
+      end
     end
 
     def disable_searchv2
@@ -279,7 +295,12 @@ class Account < ActiveRecord::Base
     end
 
     def disable_count_es
-      CountES::IndexOperations::DisableCountES.perform_async({ :account_id => self.id, :shard_name => ActiveRecord::Base.current_shard_selection.shard })
+      if redis_key_exists?(DASHBOARD_FEATURE_ENABLED_KEY)
+       [:admin_dashboard, :agent_dashboard, :supervisor_dashboard].each do |f|
+          self.rollback(f)
+        end
+      end
+      #CountES::IndexOperations::DisableCountES.perform_async({ :account_id => self.id, :shard_name => ActiveRecord::Base.current_shard_selection.shard }) unless dashboard_new_alias?
     end
 
     def update_sendgrid

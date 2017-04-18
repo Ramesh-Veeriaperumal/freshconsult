@@ -33,6 +33,7 @@ module Search
       end
 
       def create_alias
+        return
         Search::Dashboard::CountClient.new(:post, 
                             [host, '_aliases'].join('/'), 
                             ({ actions: aliases }.to_json),
@@ -41,6 +42,7 @@ module Search
       end
 
       def remove_alias
+        return
         Search::Dashboard::CountClient.new(:post, 
                             [host, '_aliases'].join('/'), 
                             ({ actions: aliases("remove") }.to_json),
@@ -49,11 +51,17 @@ module Search
       end
 
       def alias_name
-        "es_count_#{account_id}"
+        return "es_count_#{account_id}" unless Account.current.dashboard_new_alias?
+        if Rails.env.production?
+          "es_filters_count_#{es_shard_name}_alias"
+        else
+          "es_filters_count_alias"
+        end
       end
 
       def document_path(model_class, id, query_params={})
         path    = [host, alias_name, model_class.demodulize.downcase, id].join('/')
+        query_params.merge!(query_string)
         query_params.blank? ? path : "#{path}?#{query_params.to_query}"
       end
 
@@ -61,6 +69,10 @@ module Search
         ::COUNT_V2_HOST
       end
 
+      def query_string
+        {routing: account_id}
+      end
+      
       def aliases(action_name = "add")
         action_list = []
         action_list << ({action_name=>{"index"=>index_name,"alias"=>alias_name,"filter"=>{"term"=>{"account_id"=>account_id.to_s}}, "routing"=>account_id.to_s}})
@@ -68,11 +80,37 @@ module Search
 
       def index_name
         if Rails.env.production?
-          es_shard_name = options[:shard_name].to_s.gsub("_","")
           "es_filters_count_#{es_shard_name}"
         else
           "es_filters_count"
         end
+      end
+
+      def fetch_dashboard_shard(query_params={})
+        response = Search::Dashboard::CountClient.new("get" ,dashboard_shard_path(query_params), nil).response
+        return response["_source"]["shard_name"] if response.present? && response["_source"].present? && response["_source"]["shard_name"].present?
+        nil
+      end
+
+      def index_new_account_dashboard_shard
+        Search::Dashboard::CountClient.new("put" ,dashboard_shard_path, account_shard_info_data).response
+      end
+
+      def account_shard_info_data
+        {"shard_name" => ActiveRecord::Base.current_shard_selection.shard.to_s }.to_json
+      end
+
+      def dashboard_shard_path(query_params={})
+        path   = [host, dashboard_alias_name, "dashboard_shard", account_id].join("/")
+        query_params.blank? ? path : "#{path}?#{query_params.to_query}"
+      end
+
+      def dashboard_alias_name
+        "dashboard_shard_alias"
+      end
+
+      def es_shard_name
+        Account.current.dashboard_shard_name.to_s.gsub("_","")
       end
 
     end

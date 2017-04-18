@@ -1,15 +1,24 @@
 <% if(!unreadIds.length){ %> 
 <a class="read" data-unread-ids='<%= unreadIds %>' href="<%= action_url %>">
 <% }else{ %>
-<a data-unread-ids="<%= unreadIds %>" href="<%= action_url %>">
+<a class="unread" data-unread-ids="<%= unreadIds %>" href="<%= action_url %>">
 <% } %>
-    <div class="preview_pic circle avatar-text text-center thumb bg-<%= Math.abs(uniqueCodeGenerator(actor_text)) %>" > 
-      <span><%= actor_text[0] %></span>
-      <img class="hide thumb_img thumb" src="" data-user-id="<%= actor_id %>" >
-    </div>
+      <div class="preview_pic circle avatar-text text-center thumb bg-<%= Math.abs(uniqueCodeGenerator(actor_text)) %>" > 
+        <span><%= actor_text[0] %></span>
+        
+        <% if(!!actor_text[0] && !actor_text[0].match(/[A-Z|a-z|ü|é]/i)){ %>
+          <img class="thumb_img thumb" src="/images/misc/profile_blank_thumb.jpg">
+        <% } %>
+
+        <% if(actor_id>0){ %>
+          <img class="thumb_img thumb" src="/users/<%= actor_id %>/profile_image_no_blank" onerror="jQuery(this).addClass('hide')">
+        <% } else { %>
+          <img class="thumb_img thumb" src="/images/misc/profile_blank_thumb.jpg">
+        <% } %>
+      </div>
     <div class="notification-inner">
       <div class="notification-type"><%= notification_type %></div>
       <div class="notification-content"><%= content %></div>
-      <div class="notification-time"><%= moment(created_at).fromNow() %></div>
+      <div class="notification-time" data-livestamp="<%= created_at %>"><%= moment(created_at).fromNow() %></div>
     </div>
 </a>

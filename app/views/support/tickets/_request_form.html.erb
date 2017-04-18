@@ -153,20 +153,30 @@
           Form.focusFirstElement(document.forms[0]); 
         }
 
-      // Need to make the code generic to handle the custom dropdown fields sections.
-      jQuery('#helpdesk_ticket_ticket_type')
+      jQuery(".dynamic_sections")
         .on("change", function(e){
-          var id = jQuery("option:selected", this).data("id");
-          jQuery('div.ticket_section').remove();
+          var id;
+          var $el = jQuery(this);
+          var selected = $el.find(':selected');
+          if (selected.length > 0){
+            id = selected.data().id;
+          }
+          var nextElements = $el.closest('div.control-group').nextAll();
+          nextElements.each(jQuery.proxy(function(index, dataItem){
+            if (jQuery(dataItem).hasClass('ticket_section'))
+              dataItem.remove();
+            else
+              return false;
+          },this));
           var element = jQuery('.picklist_section_'+id).parent();
           if(element.length != 0) {
             jQuery(jQuery('.picklist_section_'+id).val()
                   .replace(new RegExp('&lt', 'g'), '<')
                   .replace(new RegExp('&gt', 'g'), '>'))
-                .insertAfter(jQuery("#helpdesk_ticket_ticket_type").parents('.control-group'));
+                .insertAfter(jQuery("#"+this.id).parents('.control-group'));
           }
       });
-      jQuery('#helpdesk_ticket_ticket_type').trigger('change');
+      jQuery(".dynamic_sections").trigger('change');
       jQuery('[id^="helpdesk_ticket_custom_field_"]').val("").trigger('change');
 
       jQuery('[id^="helpdesk_ticket_custom_field_"][type*="checkbox"]').val(1).trigger('change');
@@ -177,7 +187,11 @@
     jQuery("#helpdesk_ticket_email").focusout(function(){
       var ticket_email = jQuery("#helpdesk_ticket_email").val();
       if(<%= current_user.present? && current_user.contractor? %>){
-        jQuery.ajax({ url: "<%= helpdesk_commons_user_companies_path %>?email="+ticket_email,
+        jQuery.ajax({ 
+          type: 'POST',
+          data: {email : ticket_email}, 
+          datatype: 'json',
+          url: "<%= helpdesk_commons_user_companies_path %>",
           success: function(data){
             if(data != false){
               jQuery('#helpdesk_ticket_company_id').empty();

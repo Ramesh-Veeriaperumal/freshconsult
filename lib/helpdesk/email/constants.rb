@@ -37,9 +37,14 @@ module Helpdesk::Email::Constants
 	PROCESSED_EMAIL_TYPE = { :ticket => "ticket", :note => "note", :article => "article", :invalid => "invalid" }
 
 	FAILED_EMAIL_PATH = "failed_email_path"
+	
+	FAILURE_CATEGORY = ["dropped", "dropped_unsubscribed", "bounce_temporary", "bounce_permanent"]
 
 	MESSAGE_TYPE_BY_NAME = { :spam => 1, :ham => 0 }
 
 	MAX_EMAIL_SIZE = 30.megabyte
+
+	TRUNCATE_CONTENT = [:text, :html]
+	TRUNCATE_SIZE = 500.kilobyte
 
 end

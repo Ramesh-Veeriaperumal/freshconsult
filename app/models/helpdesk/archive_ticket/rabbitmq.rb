@@ -60,9 +60,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   
   def archive_ticket_schemaless_hash 
     @rmq_archive_ticket_schemaless_hash ||= {
-      "sla_policy_id"   =>  sla_policy_id,
-      "internal_agent_id" => internal_agent_id,
-      "internal_group_id" => internal_group_id
+      "sla_policy_id"   =>  sla_policy_id
     }.merge(reports_hash)
   end
 
