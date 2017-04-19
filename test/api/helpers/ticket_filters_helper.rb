@@ -2,11 +2,11 @@ module TicketFiltersHelper
 
   def sample_filter_input_params(options = {})
     {
-      name: options[:name] || Faker::Name.name, 
-      order: options[:order] || ApiTicketConstants::ORDER_BY.sample,
-      order_type: options[:order_type] || ApiTicketConstants::ORDER_TYPE.sample,
+      name: options[:name] || Faker::Name.name,
+      order_by: options[:order] || sort_field_options.sample,
+      order_type: options[:order_type] || ApiConstants::ORDER_TYPE.sample,
       per_page: options[:per_page] || 30,
-    }.merge( { 
+    }.merge( {
         query_hash: query_hash_queries(options)
       }.merge(visibility_pattern(options))
     )
@@ -40,8 +40,8 @@ module TicketFiltersHelper
   def get_default_hidden_filters
     hidden_filter_names.collect do |filter|
       {
-        id: filter, 
-        name: I18n.t("helpdesk.tickets.views.#{filter}"), 
+        id: filter,
+        name: I18n.t("helpdesk.tickets.views.#{filter}"),
         default: true,
         hidden: true,
         query_hash: filter.eql?('on_hold') ? Helpdesk::Filters::CustomTicketFilter.new.on_hold_filter : Helpdesk::Filters::CustomTicketFilter::DEFAULT_FILTERS[filter]
@@ -59,7 +59,8 @@ module TicketFiltersHelper
       name: filter[:name]
     }
     if filter.is_a?(Helpdesk::Filters::CustomTicketFilter)
-      basic_pattern.merge!(custom_filter_attributes(filter)) 
+      basic_pattern.merge!(custom_filter_attributes(filter))
+      basic_pattern[:visibility] = filter.accessible.attributes.slice('visibility', 'group_id')
       basic_pattern.merge!(query_hash: query_hash_pattern_output(filter.data[:data_hash]))
     else
       basic_pattern.merge!(default: true)
@@ -74,7 +75,7 @@ module TicketFiltersHelper
   def custom_filter_attributes(filter)
     {
       default: false,
-      order: filter.data[:wf_order],
+      order_by: filter.data[:wf_order],
       order_type: filter.data[:wf_order_type],
       per_page: 30
     }
@@ -97,12 +98,21 @@ module TicketFiltersHelper
     }
   end
 
-  def ticket_filter_index_pattern
+  def ticket_filter_index_pattern(user=User.current)
     all_filters = []
-    (Account.current.ticket_filters + get_default_visible_filters + get_default_hidden_filters).compact.each do |filter|
+    (all_custom_ticket_filters(user) + get_default_visible_filters + get_default_hidden_filters).compact.each do |filter|
       all_filters << ticket_filter_show_pattern(filter)
     end
     all_filters
+  end
+
+  def all_custom_ticket_filters(user=User.current)
+    Account.current.ticket_filters.my_ticket_filters(user)
+  end
+
+
+  def sort_field_options
+    TicketsFilter::api_sort_fields_options.map(&:first).map(&:to_s)
   end
 
 end

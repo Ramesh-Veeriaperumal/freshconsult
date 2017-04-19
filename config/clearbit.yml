@@ -1,0 +1,13 @@
+--- 
+clearbit:
+  common: &common
+    secret_api_key: "sk_af10ae7af1c7dbe0d1e7e324aaef52a8"
+    publish_api_key: "pk_30c48bd4e92a6e7c67f0b56dd62e0780"
+  production: 
+    <<: *common
+  staging: 
+    <<: *common
+  development: 
+    <<: *common
+  test: 
+    <<: *common

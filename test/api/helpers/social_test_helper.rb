@@ -11,7 +11,7 @@ module SocialTestHelper
     ret_hash.merge!(fb_page: fb_page_pattern(fb_post)) if ['Helpdesk::Ticket'].include?(fb_post.postable_type)
     ret_hash
   end
-  
+
   def fb_post_pattern(expected_output = {}, fb_post)
     post_attributes_hash = {
         post_type: expected_output[:post_type] || fb_post.post_attributes[:post_type],
@@ -73,7 +73,8 @@ module SocialTestHelper
     fb_message = Facebook::KoalaWrapper::DirectMessage.new(fb_page)
     fb_message.fetch_messages
     Koala::Facebook::API.any_instance.unstub(:get_connections)
-    @account.facebook_posts.find_by_post_id(msg_id).postable
+    postable = @account.facebook_posts.find_by_post_id(msg_id).postable
+    postable.is_a?(Helpdesk::Ticket) ? postable : postable.notable
   end
 
   def sample_fb_post_feed(sender_id, feed_id, comment_id = nil, reply_comment_id = nil)
@@ -87,7 +88,7 @@ module SocialTestHelper
       "message"     => "#{Faker::Lorem.words(10).join(" ")}",
       "created_time"=> "#{Time.zone.now}"
     }
-    
+
     unless comment_id.nil?
       comments = {
           "data" => [
@@ -105,7 +106,7 @@ module SocialTestHelper
         }
       fb_feed.merge!({"comments" => comments})
     end
-    
+
     unless reply_comment_id.nil?
       reply_comment = {
         "id"   => "#{reply_comment_id}",
@@ -130,12 +131,12 @@ module SocialTestHelper
         "messages" => {
           "data" => [
               {
-                "id" => "#{msg_id}", 
+                "id" => "#{msg_id}",
                 "message" => "#{Faker::Lorem.words(10).join(" ")}",
                 "from" => {
                   "name" => "#{Faker::Lorem.words(1)}",
                   "id" => "#{actor_id}"
-                }, 
+                },
                 "created_time" => "#{Time.zone.now}"
               }
           ]
@@ -147,12 +148,12 @@ module SocialTestHelper
         "messages" => {
           "data" => [
               {
-                "id" => "#{msg_id + 2}", 
+                "id" => "#{msg_id + 2}",
                 "message" => "#{Faker::Lorem.words(10).join(" ")}",
                 "from" => {
                   "name" => "#{Faker::Lorem.words(1)}",
                   "id" => "#{actor_id}"
-                }, 
+                },
                 "created_time" => "#{Time.zone.now}"
               }
           ]
@@ -163,14 +164,14 @@ module SocialTestHelper
   def get_social_id
     (Time.now.utc.to_f*1000000).to_i
   end
-  
+
 
   def tweet_pattern(expected_output = {}, tweet)
     {
-      tweet_id: Fixnum,
+      tweet_id: expected_output[:tweet_id] || "#{tweet.tweet_id}",
       tweet_type: expected_output[:tweet_type] || tweet.tweet_type,
       twitter_handle_id: expected_output[:twitter_handle_id] || tweet.twitter_handle_id
     }
   end
-  
+
 end

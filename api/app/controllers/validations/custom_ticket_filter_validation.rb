@@ -1,12 +1,12 @@
 class CustomTicketFilterValidation < FilterValidation
   
-  attr_accessor :name, :order, :order_type, :query_hash, :visibility, :visibility_id, :group_id
+  attr_accessor :name, :order_by, :order_type, :query_hash, :visibility, :visibility_id, :group_id
 
   validates :name, required: true, data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
-  validates :order, required: true, custom_inclusion: { in: ApiTicketConstants::ORDER_BY }
-  validates :order_type, required: true, custom_inclusion: { in: ApiTicketConstants::ORDER_TYPE }
-  validates :query_hash, required: true, data_type: { rules: Array, allow_nil: false }
-  validates :query_hash, required: true, array: { data_type: { rules: Hash, allow_nil: false } }
+  validates :order_by, required: true, custom_inclusion: { in: proc { |x| x.sort_field_options } }
+  validates :order_type, required: true, custom_inclusion: { in: ApiConstants::ORDER_TYPE }
+  validates :query_hash, data_type: { required: true, rules: Array, allow_nil: false }
+  validates :query_hash, array: { data_type: { rules: Hash, allow_nil: false } }
   validates :visibility, data_type: { rules: Hash }
   validates :visibility_id, data_type: { rules: Integer }, custom_inclusion: { in: Admin::UserAccess::VISIBILITY_NAMES_BY_KEY.keys }
   validates :group_id, data_type: { rules: Integer }, if: -> { visibility_id == Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents] }
@@ -15,7 +15,7 @@ class CustomTicketFilterValidation < FilterValidation
   validates :visibility_id, required: true, on: :create
   validates :group_id, required: true, on: :create
 
-  validate :query_hash_integrity
+  validate :query_hash_integrity, if: -> { errors[:query_hash].blank? }
   validate :group_id_validation, if: -> { visibility_id && visibility_id == Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents] }
 
 
@@ -49,4 +49,7 @@ class CustomTicketFilterValidation < FilterValidation
     end
   end
 
+  def sort_field_options
+    TicketsFilter::api_sort_fields_options.map(&:first).map(&:to_s)
+  end
 end

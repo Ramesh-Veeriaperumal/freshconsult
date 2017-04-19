@@ -5233,6 +5233,8 @@ sv-SE:
     customers_placeholder: ""
     raised_by: "Ärenden skapade av"
     everyone_in_company: "Alla i %{company_name}"
+    company: "Företag"
+    all_companies: "Alla företag"
     copy_of: "Kopia av"
     save_tooltip: Spara
     saveas_tooltip: "Spara som"

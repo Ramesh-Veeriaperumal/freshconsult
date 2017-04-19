@@ -2,7 +2,7 @@ type: object
 properties:
   name:
     type: string
-  order:
+  order_by:
     type: string
   order_type:
     type: string

@@ -39,6 +39,14 @@ module Ember
       }
     end
 
+    def enable_archive_tickets(&block)
+      @account.enable_ticket_archiving(0)
+      yield
+      @account.account_additional_settings.additional_settings[:archive_days] = nil
+      @account.account_additional_settings.save
+      @account.features.archive_tickets.destroy
+    end
+
     def test_create_with_incorrect_avatar_type
       params_hash = contact_params_hash.merge({avatar_id: 'ABC'})
       post :create, construct_params({version: 'private'}, params_hash)
@@ -215,7 +223,7 @@ module Ember
     end
 
     def test_index_with_tags
-      tags = [Faker::Lorem.word, Faker::Lorem.word]
+      tags = Faker::Lorem.words(3).uniq
       contact_ids = []
       rand(2..10).times do
         contact_ids << add_new_user(@account, tags: tags.join(', ')).id
@@ -504,11 +512,13 @@ module Ember
     end
 
     def test_contact_with_archived_ticket_activity
-      contact = add_new_user(@account, deleted: false, active: true)
-      user_archived_tickets = sample_user_archived_tickets(contact)
-      get :activities, construct_params({ version: 'private', id: contact.id, type: 'archived_tickets' }, nil)
-      assert_response 200
-      match_json(user_activity_response(user_archived_tickets))
+      enable_archive_tickets do
+        contact = add_new_user(@account, deleted: false, active: true)
+        user_archived_tickets = sample_user_archived_tickets(contact)
+        get :activities, construct_params({ version: 'private', id: contact.id, type: 'archived_tickets' }, nil)
+        assert_response 200
+        match_json(user_activity_response(user_archived_tickets))
+      end
     end
 
     def test_contact_with_combined_activity

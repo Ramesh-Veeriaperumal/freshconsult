@@ -267,7 +267,7 @@ module UsersTestHelper
 
   def sample_user_topics(contact, count = 2)
     forum = create_test_forum(create_test_category)
-    count.times do 
+    count.times do
       create_test_topic(forum, contact)
     end
   end
@@ -288,7 +288,7 @@ module UsersTestHelper
     end
     count.times do
       @account.make_current
-      temp_ticket = create_ticket(requester_id: contact.id)
+      temp_ticket = create_ticket(requester_id: contact.id, status: 5)
       Sidekiq::Testing.inline! do
         Archive::BuildCreateTicket.perform_async({ account_id: @account.id, ticket_id: temp_ticket.id })
       end
@@ -330,7 +330,7 @@ module UsersTestHelper
       id: obj.id,
       topic_id: obj.topic.id,
       topic_title: obj.topic.title,
-      replied: obj.original_post? ? false : true 
+      replied: obj.original_post? ? false : true
     }
   end
 

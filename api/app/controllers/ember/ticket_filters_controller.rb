@@ -18,7 +18,7 @@ module Ember
       @item.validate!
       if @item.errors?
         render_errors(@item.errors, meta = {}) and return
-      else  
+      else
         @item.save
         create_helpdesk_accessible(@item, :ticket_filter)
       end
@@ -61,6 +61,7 @@ module Ember
         # Check whether the filter is accessible to the user
         if is_num?(params[:id])
           @item = scoper.find_by_id(params[:id])
+          @item = nil unless @item.try(:has_permission?, api_current_user)
         else
           @item = (default_visible_filters | default_hidden_filters).select { |filter| filter[:id] == params[:id] }.first
         end
@@ -88,13 +89,18 @@ module Ember
       end
 
       def extra_filter_params(obj)
-        { 
-          default: false, 
-          order: obj.data[:wf_order],
+        {
+          default: false,
+          order_by: obj.data[:wf_order],
           order_type: obj.data[:wf_order_type],
           per_page: obj.data[:wf_per_page],
-          query_hash: obj.data[:data_hash]
+          query_hash: obj.data[:data_hash],
+          visibility: visibility_attributes(obj)
         }
+      end
+
+      def visibility_attributes(obj)
+        (obj.try(:accessible).try(:attributes) || {}).slice(*TicketFilterConstants::VISIBILITY_ATTRIBUTES_NEEDED)
       end
 
       def append_default_filters
@@ -117,8 +123,8 @@ module Ember
       def default_hidden_filters
         hidden_filter_names.collect do |filter|
           {
-            id: filter, 
-            name: I18n.t("helpdesk.tickets.views.#{filter}"), 
+            id: filter,
+            name: I18n.t("helpdesk.tickets.views.#{filter}"),
             default: true,
             hidden: true,
             query_hash: filter.eql?('on_hold') ? Helpdesk::Filters::CustomTicketFilter.new.on_hold_filter : Helpdesk::Filters::CustomTicketFilter::DEFAULT_FILTERS[filter]
@@ -159,7 +165,7 @@ module Ember
 
       def remove_query_conditions(item)
         # This is to be done in QueryHash
-        item[:query_hash].select { |query| 
+        item[:query_hash].select { |query|
           !CustomFilterConstants::REMOVE_QUERY_CONDITIONS.include?(query['condition'])
         }
       end
@@ -183,8 +189,8 @@ module Ember
       end
 
       def prefix_ff_params
-        CustomFilterConstants::WF_PREFIX.each do |key|
-          params[:ticket_filter]["wf_#{key}".to_sym] = params[:ticket_filter].delete(key) if params[:ticket_filter][key].present?
+        CustomFilterConstants::WF_PREFIX_PARAM_MAPPING.each_pair do |key, val|
+          params[:ticket_filter]["wf_#{key}".to_sym] = params[:ticket_filter].delete(val) if params[:ticket_filter][val].present?
         end
         params[:ticket_filter][:filter_name] = params[:ticket_filter][:name] if params[:ticket_filter][:name].present?
       end

@@ -13,11 +13,12 @@ class ThirdCRM
   LEAD_INFO = { 
       'default' => {
         'LastName' => :admin_last_name, 'FirstName' => :admin_first_name,
-        'Email' => :admin_email, 'Phone' => :admin_phone, 'Company' => :name
+        'Email' => :admin_email, 'Phone' => :admin_phone
       },
       'custom' => {
         'integer--Account--ID' => :id,
-        'string--Account--URL' => :full_domain
+        'string--Account--URL' => :full_domain,
+        'boolean--Activated'   => :verified?,
       }
     }
 
@@ -39,7 +40,8 @@ class ThirdCRM
 
   def add_signup_data(account, options = {})
     @signup_id = options[:signup_id]
-    add_lead_to_crm(lead_info(account))    
+    @old_email = options[:old_email]
+    add_lead_to_crm(lead_info(account))
   end
 
   def update_subscription_data(account)
@@ -84,10 +86,27 @@ class ThirdCRM
     end
 
     def user_info(account)
+      account_info = {
+          "default" => (LEAD_INFO["default"].inject({}) { |h, (k, v)| h[k] = account.send(v); h }).merge(clearbit_info(account)),
+          "custom" => LEAD_INFO["custom"].inject({}) { |h, (k, v)| h[k] = account.send(v); h }.merge(
+            {'string--Associated--Accounts' => @associated_account_id_list })
+      }
+      if @old_email
+        account_info["default"]["Email"], account_info["default"]["_NewEmail"] = @old_email, account_info["default"]["Email"]
+      end
+      account_info
+
+    end
+
+    def clearbit_info(account)
       {
-        "default" => LEAD_INFO["default"].inject({}) { |h, (k, v)| h[k] = account.send(v); h },
-        "custom" => LEAD_INFO["custom"].inject({}) { |h, (k, v)| h[k] = account.send(v); h }.merge(
-          {'string--Associated--Accounts' => @associated_account_id_list })
+          'Company' =>  account.account_configuration.company_info[:name],
+          'Title' => account.account_configuration.contact_info[:job_title],
+          'Twitter' => account.account_configuration.contact_info[:twitter],
+          'Linkedin' => account.account_configuration.contact_info[:linkedin],
+          'MailingCountry' => account.account_configuration.contact_info[:country],
+          'Industry' => account.account_configuration.company_info[:industry],
+          'NumberOfEmployees' => account.account_configuration.company_info.try(:[], :metrics).try(:[], :employees)
       }
     end
 

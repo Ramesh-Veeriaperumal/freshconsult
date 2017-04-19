@@ -153,12 +153,12 @@ module TicketsTestHelper
 
   def latest_note_response_pattern(note)
     pattern = private_note_pattern({}, note).merge!({ user: Hash })
-    pattern.except(:user_id)
   end
 
   def reply_draft_pattern(expected_output)
     {
       body: expected_output[:body],
+      quoted_text: expected_output[:quoted_text],
       cc_emails: expected_output[:cc_emails] || [],
       bcc_emails: expected_output[:bcc_emails] || [],
       from_email: expected_output[:from_email] || "",
@@ -317,11 +317,12 @@ module TicketsTestHelper
     assert new_ticket.cloud_files.present?
   end
 
-  def private_api_ticket_index_pattern(survey_results = {}, requester = false, company = false, order_by = 'created_at', order_type = 'desc')
-    pattern_array = Helpdesk::Ticket.order("#{order_by} #{order_type}").limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).map do |ticket|
+  def private_api_ticket_index_pattern(survey = false, requester = false, company = false, order_by = 'created_at', order_type = 'desc', all_tickets = false)
+    filter_clause = all_tickets ? [''] : ['created_at > ?', 30.days.ago]
+    pattern_array = Helpdesk::Ticket.where(*filter_clause).order("#{order_by} #{order_type}").limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).map do |ticket|
       pattern = index_ticket_pattern_with_associations(ticket, requester, true, company, [:tags])
       pattern.merge!(requester: Hash) if requester
-      pattern.merge!(survey_result: feedback_pattern(survey_results[ticket.id])) if survey_results[ticket.id]
+      pattern.merge!(survey_result: feedback_pattern(ticket.custom_survey_results.last)) if survey && ticket.custom_survey_results.present?
       pattern
     end
   end

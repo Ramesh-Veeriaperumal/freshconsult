@@ -99,9 +99,10 @@ module Ember
     end
 
     def reply_forward_template
+      @item = last_forwardable_note if action_name.to_sym == :latest_note_forward_template
       @agent_signature = signature
       @content = template_content
-      @quoted_text = quoted_text(@item || @ticket, [:forward_template, :note_forward_template].include?(action_name.to_sym))
+      @quoted_text = quoted_text(@item || @ticket, [:forward_template, :note_forward_template, :latest_note_forward_template].include?(action_name.to_sym))
       fetch_cc_bcc_emails
       render action: :template
     end
@@ -109,6 +110,7 @@ module Ember
     alias reply_template reply_forward_template
     alias forward_template reply_forward_template
     alias note_forward_template reply_forward_template
+    alias latest_note_forward_template reply_forward_template
 
     private
 
@@ -243,7 +245,7 @@ module Ember
           attachments_to_exclude = forward? ? (parent_attachments || []).map(&:id) : []
           shared_attachment_ids = (@attachment_ids || []) - attachments_to_exclude
           return [] unless shared_attachment_ids.any?
-          current_account.attachments.where('id IN (?) AND attachable_type IN (?)', shared_attachment_ids, ['Account', 'Admin::CannedResponses::Response'])
+          current_account.attachments.where('id IN (?) AND attachable_type IN (?)', shared_attachment_ids, AttachmentConstants::CLONEABLE_ATTACHMENT_TYPES)
         end
       end
 
@@ -311,7 +313,7 @@ module Ember
       end
 
       def notification_template
-        action_name.to_sym == :note_forward_template ? :forward_template : action_name.to_sym
+        [:note_forward_template, :latest_note_forward_template].include?(action_name.to_sym) ? :forward_template : action_name.to_sym
       end
 
       def fetch_cc_bcc_emails
@@ -325,6 +327,31 @@ module Ember
           'ticket' => @ticket,
           'helpdesk_name' => Account.current.portal_name
         )
+      end
+
+      def last_forwardable_note
+        @ticket.notes.where(['private = false AND source NOT IN (?)', Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['feedback']]).last
+      end
+
+      def after_load_object
+        load_notable_from_item # find ticket in case of APIs which has @item.id in url
+        return false if @ticket && !verify_ticket_state
+        return false if @ticket && !verify_ticket_permission(api_current_user, @ticket) # Verify ticket permission if ticket exists.
+        return false if update? && !can_update?
+        check_agent_note if update? || destroy?
+      end
+
+      def verify_ticket_state
+        if (update? || destroy?) && (@ticket.spam || @ticket.deleted)
+          render_request_error(:access_denied, 403) 
+          return false
+        end
+        true
+      end
+
+      def tickets_scoper
+        return super if (ConversationConstants::TICKET_STATE_CHECK_NOT_REQUIRED.include?(action_name.to_sym))
+        super.where(ApiTicketConstants::CONDITIONS_FOR_TICKET_ACTIONS)
       end
 
       wrap_parameters(*wrap_params)

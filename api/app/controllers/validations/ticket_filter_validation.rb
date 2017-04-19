@@ -16,7 +16,11 @@ class TicketFilterValidation < FilterValidation
   validate :verify_cf_data_type, if: -> { cf.present? }
   validates :include, data_type: { rules: String }
   validate :query_hash_or_filter_presence
-  validates :query_hash, data_type: { rules: Hash, allow_nil: false }, if: -> { errors[:filter].blank? }
+  # query_hash should either be an empty string or a hash.
+  # This is for 'any_time' created_at filter for which default_filter should not be applied
+  # TODO: This should be handled more elegantly
+  validates :query_hash, data_type: { rules: String, allow_nil: false }, unless: -> { query_hash.is_a?(Hash) }
+  validates :query_hash, data_type: { rules: Hash, allow_nil: false }, if: -> { errors[:filter].blank? && !query_hash_empty_string? }
   validate :validate_include, if: -> { errors[:include].blank? && include }
   validate :validate_filter_param, if: -> { errors[:filter].blank? && filter.present? && private_API? }
   validate :validate_query_hash, if: -> { errors.blank? && query_hash.present? }
@@ -49,6 +53,11 @@ class TicketFilterValidation < FilterValidation
   def verify_company
     company = Account.current.companies.find_by_id(@company_id)
     errors[:company_id] << :"can't be blank" unless company
+  end
+
+  def query_hash_empty_string?
+    # query_hash should be 'hash' validated only if it is not an empty string
+    query_hash == ''
   end
 
   def find_attribute

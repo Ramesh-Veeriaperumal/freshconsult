@@ -1,10 +1,11 @@
 class TicketBulkUpdateValidation < ApiValidation
-  CHECK_PARAMS_SET_FIELDS = %w(reply).freeze
+  CHECK_PARAMS_SET_FIELDS = %w(properties reply).freeze
 
   attr_accessor :properties, :reply, :statuses, :ticket_fields
 
   validates :properties, data_type: { rules: Hash, allow_nil: false }
   validates :reply, data_type: { rules: Hash, allow_nil: false }
+  validates :properties, custom_absence: { message: :no_edit_privilege }, unless: :has_edit_privilege?
   validates :reply, custom_absence: { message: :no_reply_privilege }, unless: :has_reply_privilege?
 
   validate :validate_properties_or_reply_presence, if: -> { errors.blank? }
@@ -19,6 +20,10 @@ class TicketBulkUpdateValidation < ApiValidation
 
   private
 
+    def has_edit_privilege?
+      User.current.privilege?(:edit_ticket_properties)
+    end
+
     def has_reply_privilege?
       User.current.privilege?(:reply_ticket)
     end
@@ -28,6 +33,8 @@ class TicketBulkUpdateValidation < ApiValidation
     end
 
     def validate_ticket_properties
+      # We are obtaining the mapping in order to swap the field names while rendering(both successful and erroneous requests), instead of formatting the fields again.
+      ParamsHelper.modify_custom_fields(properties[:custom_fields], TicketsValidationHelper.name_mapping(ticket_fields).invert)
       tkt_validation = TicketValidation.new(properties.merge(statuses: statuses, ticket_fields: ticket_fields), nil)
       tkt_validation.skip_bulk_validations = true
       unless tkt_validation.valid?(:bulk_update)

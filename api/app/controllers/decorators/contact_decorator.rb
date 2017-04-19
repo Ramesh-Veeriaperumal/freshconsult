@@ -54,18 +54,21 @@ class ContactDecorator < ApiDecorator
       email: email,
       phone: phone,
       company_name: company_name,
-      avatar: avatar_hash
+      avatar: avatar_hash,
+      twitter_id: twitter_id,
     }
   end
 
   def full_requester_hash
     req_hash = to_full_hash.except(:company_id)
     req_hash[:company] = CompanyDecorator.new(record.company, name_mapping: @company_name_mapping).to_hash if record.company
+    req_hash[:id] = record.id
     req_hash
   end
 
   def restricted_requester_hash
     req_hash = construct_hash(requester_widget_contact_fields, record)
+    req_hash[:has_email] = record.email.present?
     req_hash[:company] = construct_hash(requester_widget_company_fields, record.company) if record.company.present?
     req_hash
   end
@@ -123,6 +126,7 @@ class ContactDecorator < ApiDecorator
       custom_fields = req_widget_fields.select { |x| !x.default_field? }
       ret_hash = widget_fields_hash(obj, default_fields)
       ret_hash[:custom_fields] = widget_fields_hash(obj, custom_fields) if custom_fields.present?
+      ret_hash[:id] = obj.id
       ret_hash
     end
 

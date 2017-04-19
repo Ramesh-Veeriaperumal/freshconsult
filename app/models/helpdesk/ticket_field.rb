@@ -405,6 +405,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   #Use as_json instead of to_json for future support Rails3 refer:(http://jonathanjulian.com/2010/04/rails-to_json-or-as_json/)
   def as_json(options={})
+    return super(options) unless options[:tailored_json].blank?
     options[:include] = [:nested_ticket_fields]
     options[:except] = [:account_id]
     options[:methods] = [:choices]

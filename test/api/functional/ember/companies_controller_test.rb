@@ -5,19 +5,6 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   include SlaPoliciesTestHelper
   include TicketHelper
 
-  def setup
-    super
-    before_all
-  end
-
-  @@before_all_run = false
-
-  def before_all
-    return if @@before_all_run
-    @account.features.archive_tickets.create
-    @@before_all_run = true
-  end
-
   def wrap_cname(params)
     { company: params }
   end
@@ -41,6 +28,14 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     end
   end
 
+  def enable_archive_tickets(&block)
+    @account.enable_ticket_archiving(0)
+    yield
+    @account.account_additional_settings.additional_settings[:archive_days] = nil
+    @account.account_additional_settings.save
+    @account.features.archive_tickets.destroy
+  end
+
   def test_index
     rand(2..5).times do
       create_company
@@ -58,7 +53,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     rand(2..5).times do
       create_company
     end
-    invalid_include_list = [Faker::Lorem.word, Faker::Lorem.word]
+    invalid_include_list = Faker::Lorem.words(3).uniq
     get :index, controller_params(version: 'private', include: invalid_include_list.join(','))
     assert_response 400
     match_json([bad_request_error_pattern('include', :not_included, list: 'contacts_count')])
@@ -129,17 +124,19 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   end
 
   def test_activities_with_archived_tickets
-    company =  create_company
-    contact = add_new_user(@account, customer_id: company.id)
-    ticket_ids = []
-    11.times do
-      ticket_ids << create_ticket(requester_id: contact.id).id
+    enable_archive_tickets do
+      company =  create_company
+      contact = add_new_user(@account, customer_id: company.id)
+      ticket_ids = []
+      11.times do
+        ticket_ids << create_ticket(requester_id: contact.id, status: 5).id
+      end
+      create_archive_tickets(ticket_ids)
+      get :activities, controller_params(version: 'private', id: company.id, type: 'archived_tickets')
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 10, response.size
     end
-    create_archive_tickets(ticket_ids)
-    get :activities, controller_params(version: 'private', id: company.id, type: 'archived_tickets')
-    assert_response 200
-    response = parse_response @response.body
-    assert_equal 10, response.size
   end
 
   def test_show_with_default_sla_policy

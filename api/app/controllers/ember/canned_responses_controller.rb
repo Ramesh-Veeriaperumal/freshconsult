@@ -12,7 +12,7 @@ module Ember
 
     def search
       return unless validate_url_params
-      load_ticket
+      return unless load_ticket
       @items = fetch_from_es("Admin::CannedResponses::Response", { load: Admin::CannedResponses::Response::INCLUDE_ASSOCIATIONS_BY_CLASS, size: 20 }, default_visiblity,"raw_title")
       @items = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', ["`admin_canned_responses`.title like ?","%#{params[:search_string]}%"])) if @items.nil?
       @items.compact! if @items.present?
@@ -67,9 +67,13 @@ module Ember
       end
 
       def load_ticket
-        if params[:ticket_id]
-          @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
-          @ticket ? verify_ticket_state_and_permission(api_current_user, @ticket) : log_and_render_404
+        return true unless params[:ticket_id]
+        @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
+        if @ticket
+          return verify_ticket_state_and_permission(api_current_user, @ticket)
+        else
+          log_and_render_404
+          false
         end
       end
 

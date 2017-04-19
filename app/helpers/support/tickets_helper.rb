@@ -72,7 +72,7 @@ module Support::TicketsHelper
 
   def company_list
     dropdown_menu [
-      [t("all_companies"), 
+      [t("tickets_filter.all_companies"), 
                     filter_support_tickets_path(:requested_by_company => 0), 
                     (@requested_by_company == 0 )],
       [:divider]].concat(@companies.map{ 

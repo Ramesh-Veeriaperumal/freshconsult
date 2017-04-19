@@ -1,1 +1,5 @@
-<h5 class="lead"></h3>
+<% if params[:display_ids].present? %>
+	<h3 class="lead"><%=t('ticket.link_tracker.create_tracker_sidebar_title')%></h3>
+	<p><%= t('ticket.link_tracker.create_tracker_sidebar_line1').html_safe %></p>
+	<p><%= t('ticket.link_tracker.create_tracker_sidebar_line2').html_safe %></p>
+<% end %>

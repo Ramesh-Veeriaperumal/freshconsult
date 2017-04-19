@@ -59,8 +59,24 @@ class TicketBulkUpdateValidationTest < ActionView::TestCase
     User.unstub(:current)
   end
 
+  def test_update_properties_without_privilege
+    Account.stubs(:current).returns(Account.first)
+    User.stubs(:current).returns(User.first)
+    User.any_instance.stubs(:privilege?).with(:edit_ticket_properties).returns(false)
+    User.any_instance.stubs(:privilege?).with(:reply_ticket).returns(true)
+    controller_params = { ids: [1, 2, 3], properties: { priority: 2 }, ticket_fields: [], statuses: statuses }.with_indifferent_access
+    ticket_validation = TicketBulkUpdateValidation.new(controller_params)
+    refute ticket_validation.valid?
+    errors = ticket_validation.errors.full_messages
+    assert errors.include?('Properties no_edit_privilege')  
+    User.any_instance.unstub(:privilege?)
+    User.unstub(:current)
+    Account.unstub(:current)
+  end
+
   def test_reply_without_privilege
     User.stubs(:current).returns(User.first)
+    User.any_instance.stubs(:privilege?).with(:edit_ticket_properties).returns(true)
     User.any_instance.stubs(:privilege?).with(:reply_ticket).returns(false)
     controller_params = { ids: [1, 2, 3], reply: { body: Faker::Lorem.paragraph } }.with_indifferent_access
     ticket_validation = TicketBulkUpdateValidation.new(controller_params)

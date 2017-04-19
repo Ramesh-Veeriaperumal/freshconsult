@@ -179,6 +179,8 @@ Helpkit::Application.routes.draw do
         get :reply_template, to: 'ember/conversations#reply_template'
         post :forward, to: 'ember/conversations#forward'
         get :forward_template, to: 'ember/conversations#forward_template'
+        # TODO: Should rename this
+        get :latest_note_forward_template, to: 'ember/conversations#latest_note_forward_template'
         post :tweet, to: 'ember/conversations#tweet'
         get :latest_note
         get :conversations, to: 'ember/conversations#ticket_conversations'
@@ -290,7 +292,13 @@ Helpkit::Application.routes.draw do
         post :notes, to: 'pipe/conversations#create'
       end
     end
-
+    namespace :settings do
+      resources :helpdesk, controller: 'pipe/helpdesk', only: [:index] do
+        collection do
+          put :toggle_email
+        end
+      end    
+    end
     namespace :api_discussions, path: 'discussions' do
       resources :topics, controller: 'pipe/topics', only: [:create] do
         member do

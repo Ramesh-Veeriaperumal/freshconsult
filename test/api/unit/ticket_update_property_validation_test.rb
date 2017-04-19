@@ -141,15 +141,20 @@ class TicketUpdatePropertyValidationTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.first)
     agent_field = mock('agent')
     agent_field.stubs(:required).returns(true)
+    agent_field.stubs(:required_for_closure).returns(false)
     agent_field.stubs(:default).returns(true)
     agent_field.stubs(:name).returns('agent')
     agent_field.stubs(:label).returns('Agent')
     item = Helpdesk::Ticket.new(requester_id: 1, status: 2, priority: 3, source: 10)
-    controller_params = { 'responder_id' => nil, statuses: statuses, ticket_fields: [agent_field] }
+    controller_params = { responder_id: nil, statuses: statuses, ticket_fields: [agent_field] }
     ticket_validation = TicketUpdatePropertyValidation.new(controller_params, item)
     refute ticket_validation.valid?
     errors = ticket_validation.errors.full_messages
     assert errors.include?('Agent datatype_mismatch')
+
+    controller_params = { priority: 4, statuses: statuses, ticket_fields: [agent_field] }
+    ticket_validation = TicketUpdatePropertyValidation.new(controller_params, item)
+    assert ticket_validation.valid?
     Account.unstub(:current)
   end
 

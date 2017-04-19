@@ -79,7 +79,6 @@ gem "omniauth-openid", "1.0.1"
 # TODO-RAILS3 need check are we still using this
 gem "omniauth-google", "1.0.2"
 gem "omniauth-google-oauth2", "0.1.13"
-gem "omniauth-facebook", "1.2.0"
 gem "omniauth-quickbooks", "0.0.2"
 gem "omniauth-salesforce", :git => "git://github.com/sathishfreshdesk/omniauth-salesforce.git", :branch => "master"
 gem "omniauth-mailchimp", "1.0.3"
@@ -328,3 +327,5 @@ gem 'gon', '6.1.0'
 gem 'dnsruby'
 
 gem 'rugged'
+
+gem 'clearbit'

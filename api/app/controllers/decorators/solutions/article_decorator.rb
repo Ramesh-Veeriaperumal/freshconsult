@@ -32,7 +32,8 @@ class Solutions::ArticleDecorator < ApiDecorator
       created_at: created_at,
       updated_at: updated_at,
       modified_at: modified_at,
-      modified_by: modified_by
+      modified_by: modified_by,
+      attachments: attachments_hash
     }
     ret_hash.merge(visibility_hash)
   end
@@ -57,4 +58,9 @@ class Solutions::ArticleDecorator < ApiDecorator
   	def language_short_code
   		Language.find(language_id).to_key
   	end
+
+    def attachments_hash
+      attachments.map { |a| AttachmentDecorator.new(a).to_hash }
+    end
+
 end

@@ -5,7 +5,7 @@ module TodosTestHelper
       body: expected_output[:body] || todo.body,
       completed: expected_output[:deleted] || todo.deleted,
       user_id: todo.user_id,
-      ticket_id: expected_output[:ticket_id] || todo.ticket_id,
+      ticket_id: expected_output[:ticket_id] || todo.ticket.try(:display_id),
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }

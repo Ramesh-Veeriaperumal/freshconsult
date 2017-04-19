@@ -59,6 +59,8 @@
   $ref: ./conversations/forward.yaml
 /tickets/{id}/forward_template:
   $ref: ./conversations/forward_template.yaml
+/tickets/{id}/latest_note_forward_template:
+  $ref: ./conversations/latest_note_forward_template.yaml
 /tickets/{id}/facebook_reply:
   $ref: ./conversations/facebook_reply.yaml
 /tickets/{id}/tweet:
@@ -70,7 +72,6 @@
   $ref: ./conversations/full_text.yaml
 /conversations/{id}/forward_template:
   $ref: ./conversations/note_forward_template.yaml
-
 
 /contacts:
   $ref: ./contacts/list_and_create.yaml

@@ -36,7 +36,7 @@ class TicketDecorator < ApiDecorator
   end
 
   def privilege_based_requester_info
-    return unless @sideload_options.include?('requester') && record.requester.customer?
+    return unless @sideload_options.include?('requester')
     contact_decorator = ContactDecorator.new(record.requester, name_mapping: @contact_name_mapping, company_name_mapping: @company_name_mapping)
     User.current.privilege?(:view_contacts) ? contact_decorator.full_requester_hash : contact_decorator.restricted_requester_hash
   end
@@ -74,7 +74,11 @@ class TicketDecorator < ApiDecorator
 
   def tweet
     return unless Account.current.features?(:twitter) && record.twitter?
-    record.tweet.attributes.slice('tweet_id', 'tweet_type', 'twitter_handle_id')
+    {
+      tweet_id: "#{record.tweet.tweet_id}",
+      tweet_type: record.tweet.tweet_type,
+      twitter_handle_id: record.tweet.twitter_handle_id,
+    }
   end
 
   def conversations

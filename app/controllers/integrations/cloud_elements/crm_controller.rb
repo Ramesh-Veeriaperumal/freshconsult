@@ -4,7 +4,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
 
   include Integrations::CloudElements::Crm::CrmUtil
 
-  before_filter :check_feature, :verify_authenticity
+  before_filter :verify_authenticity
   before_filter :build_installed_app, :only => [:instances, :create]
   before_filter :load_installed_app, :only => [:edit, :update, :fetch]
   before_filter :check_element_instances, :only => [:instances, :create, :edit]

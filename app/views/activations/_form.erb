@@ -1,61 +1,127 @@
-<%= form_for @user, :url => activate_path(@user.perishable_token), :html => { :rel => "validate", :class => "form-portal" } do |form| %>
-	<%= error_messages_for :user %>
-	<fieldset>
-	
-	  <div class="control-group">
-			<%= form.label :name, t('user.full_name'), :class => "control-label required" %>
-			<div class="controls">
-				<%= form.text_field :name, :class => "required special span6" %>
-			</div>
-			<div class="clearfix"></div>
-		</div>
-		
-		<div class="control-group">
-			<%= form.label :password, t('create_password'), :class => "control-label required" %>
-			<div class="controls">
-				<%= form.password_field :password, :class => "required special password span6 popover-enabled",
-						:data => {content: password_policies_for_popover, html: true} %>
-			</div>
-			<div class="clearfix"></div>
-		</div>
-		<div class="control-group">
-			<%= form.label :password_confirmation, t('retype_password'), :class => "control-label required" %>
-			<div class="controls">
-				<%= form.password_field :password_confirmation, :class => "required special password span6"  %>
-			</div>
-			<div class="clearfix"></div>
-		</div>
-		<div class="form-actions">
-			<button type="submit" class="btn btn-primary"> <%= t('activate_and_log_in_long') %> </button>
-	  	</div>	
-	</fieldset>
+<%= form_for @user, :url => activate_path(@user.perishable_token), :html => {:rel => "validate", :class => "form-portal activation-form"} do |form| %>
+    <%= error_messages_for :user %>
+    <fieldset>
+
+      <% if @user.can_verify_account? %>
+          <div class="control-group">
+            <%= form.label :first_name, t('user.first_name'), :class => "control-label required" %>
+            <div class="controls">
+              <%= form.text_field :first_name, :class => "required special span6" %>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+
+
+          <div class="control-group">
+            <%= form.label :last_name, t('user.last_name'), :class => "control-label required" %>
+            <div class="controls">
+              <%= form.text_field :last_name, :class => "required special span6" %>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+
+
+          <div class="control-group">
+            <%= form.label :phone, t('user.phone_number'), :class => "control-label required" %>
+            <div class="controls">
+              <%= form.text_field :phone, :class => "required special span6" %>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+
+          <div class="control-group">
+            <%= form.label :company_name, t('user.company_name'), :class => "control-label required" %>
+            <div class="controls">
+              <%= form.text_field "company_name", :value => current_account.name ||current_account.account_configuration.company_info[:name], :class => "required special span6 user_company_name_length" %>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+          <div class="control-group">
+            <%= form.label :job_title, t('user.job_title'), :class => "control-label " %>
+            <div class="controls">
+              <%= form.text_field "job_title", :value => @user.job_title ||current_account.account_configuration.contact_info[:job_title], :class => "special span6" %>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+
+          <div class="control-group">
+            <%= form.label :company_industry, t('user.industry'), :class => "control-label " %>
+            <div class="controls industry-control">
+              <%= form.select_tag("user[company_industry]", options_for_select(AccountConfiguration::COMPANY_INDUSTRY_TYPES),include_blank: true, selected: current_account.account_configuration.company_info[:industry],  :class => "select2 special span6 industry-select2", data: { placeholder: "Choose a Industry" }) %>
+
+            </div>
+            <div class="clearfix"></div>
+          </div>
+
+
+      <% else %>
+
+          <div class="control-group">
+            <%= form.label :name, t('user.full_name'), :class => "control-label required" %>
+            <div class="controls">
+              <%= form.text_field :name, :class => "required special span6" %>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+
+      <% end %>
+
+      <div class="control-group">
+        <%= form.label :password, t('create_password'), :class => "control-label required" %>
+        <div class="controls">
+          <%= form.password_field :password, :class => "required special password span6 popover-enabled",
+                                  :data => {content: password_policies_for_popover, html: true} %>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+      <div class="control-group">
+        <%= form.label :password_confirmation, t('retype_password'), :class => "control-label required" %>
+        <div class="controls">
+          <%= form.password_field :password_confirmation, :class => "required special password span6" %>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary"> <%= t('activate_and_log_in_long') %> </button>
+      </div>
+    </fieldset>
 <% end %>
 
 <%= javascript_tag do %>
-jQuery(document).ready(function() { 
-	var mediaQcheck = window.matchMedia( "(max-device-width: 480px)" );
-	var $placement = (jQuery("html").attr("dir") == "rtl") ? 'left' :'right';
-  if(mediaQcheck.matches){
-    $placement = 'top';
-  }
+    jQuery(document).ready(function() {
 
-  var popover_message = jQuery('#user_password').data('content');
-  if(popover_message){
+    jQuery.validator.addMethod("user_company_name_length", jQuery.validator.methods.rangelength, "Please enter a value between {0} and {1} characters");
+    jQuery.validator.addClassRules("user_company_name_length", { user_company_name_length: [3,100] });
+
+    jQuery('#user_company_industry').val("<%= current_account.account_configuration.company_info.fetch(:industry, "").html_safe %>").trigger('change');
+    var mediaQcheck = window.matchMedia( "(max-device-width: 480px)" );
+    var $placement = (jQuery("html").attr("dir") == "rtl") ? 'left' :'right';
+    if(mediaQcheck.matches){
+    $placement = 'top';
+    }
+
+    var popover_message = jQuery('#user_password').data('content');
+    if(popover_message){
     jQuery("#user_password").popover({
-      html: true,
-      trigger: 'manual', 
-      placement: $placement,
-      reloadContent: false,
-      template: "<div class='arrow'></div><div class='inner'><div class='content'><p></p></div></div>",
-      content: function(){
-                return "<div class='password-wrapper'><h5 class='policy-title'><%= t("admin.security.password_policy_popover.password_should") %></h5>" +jQuery("#user_password").attr("data-content") + "</div>"
-              }
+    html: true,
+    trigger: 'manual',
+    placement: $placement,
+    reloadContent: false,
+    template:   "<div class='arrow'></div>" +
+                "<div class='inner'>" +
+                "<div class='content'><p></p></div>" +
+                "</div>",
+    content: function(){
+    return  "<div class='password-wrapper'>" +
+            "<h5 class='policy-title'><%= t("admin.security.password_policy_popover.password_should") %></h5>"+jQuery("#user_password").attr("data-content") +
+            "</div>"
+    }
     }).focus(function(){
-        jQuery(this).popover("show");
+    jQuery(this).popover("show");
     }).blur(function(){
-        jQuery(this).popover("hide");
-    }); 
-  }
-});
- 	
+    jQuery(this).popover("hide");
+    });
+    }
+    });
+
 <% end %>

@@ -137,6 +137,13 @@ module Ember
         validate_merge_action(primary_ticket, source_tickets)
       end
 
+      def test_merge_spammed_ticket
+        primary_ticket = create_ticket(spam: true)
+        source_tickets = rand(5..7).times.inject([]) { |arr, i| arr << create_ticket }
+        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets.map(&:display_id) )
+        put :merge, construct_params({ version: 'private' }, request_params)
+        assert_response 404
+      end
     end
   end
 end

@@ -15,7 +15,7 @@ class Helpdesk::ConversationsControllerTest < ActionController::TestCase
   end
 
   def test_add_broadcast_note
-    enable_link_tickets do
+    enable_adv_ticketing(:link_tickets) do
       related_ticket_ids = create_link_tickets
       tracker = Helpdesk::Ticket.last
       stub_ticket_associates(related_ticket_ids, tracker) do

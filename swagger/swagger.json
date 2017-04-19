@@ -1144,6 +1144,36 @@
         }
       }
     },
+    "/tickets/{id}/latest_note_forward_template": {
+      "get": {
+        "tags": [
+          "conversation"
+        ],
+        "description": "Latest Note Forward Template",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "number",
+            "in": "path",
+            "description": "Note ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/conversation_template"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
     "/tickets/{id}/facebook_reply": {
       "post": {
         "tags": [
@@ -2279,7 +2309,7 @@
       }
     },
     "/tickets/{id}/watchers": {
-      "post": {
+      "get": {
         "tags": [
           "ticket"
         ],
@@ -4457,6 +4487,11 @@
           "required": true,
           "description": "content of the ticket reply"
         },
+        "quoted_text": {
+          "type": "string",
+          "required": true,
+          "description": "quoted text of the ticket reply"
+        },
         "cc_emails": {
           "type": "array",
           "description": "cc_emails for the ticket reply",
@@ -4529,7 +4564,7 @@
         "name": {
           "type": "string"
         },
-        "order": {
+        "order_by": {
           "type": "string"
         },
         "order_type": {
@@ -5040,7 +5075,7 @@
             "$ref": "#/definitions/query_hash"
           }
         },
-        "order": {
+        "order_by": {
           "type": "string"
         },
         "order_type": {
@@ -5048,6 +5083,23 @@
         },
         "per_page": {
           "type": "number"
+        },
+        "visibility": {
+          "type": "object",
+          "properties": {
+            "visibility": {
+              "type": "integer",
+              "enum": [
+                1,
+                2,
+                3
+              ],
+              "description": "1 - All Agents | 2 - Agents in the group specified by group_id | 3 - Just the owner(user_id)"
+            },
+            "group_id": {
+              "type": "integer"
+            }
+          }
         }
       }
     },
@@ -5055,7 +5107,7 @@
       "type": "object",
       "properties": {
         "tweet_id": {
-          "type": "number"
+          "type": "string"
         },
         "tweet_type": {
           "type": "string",
