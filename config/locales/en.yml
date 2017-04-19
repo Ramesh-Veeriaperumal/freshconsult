@@ -1861,6 +1861,7 @@ en:
         help_info_2a: An event may refer to any user-driven change that will trigger a specific Observer rule.
         help_title_2b: Event Performers
         help_info_2b: Specifies which user's changes should trigger the rule. You can choose between the agent, the requester (or someone outside your support team in the ticket loop), or both.
+        new_help_info_2b: Specifies which user's changes should trigger the rule. You can choose between the agent, the requester, the agent or the requester, and the system. The requester also includes someone outside your support team but are in the ticket loop.
         help_title_2c: Ticket conditions
         help_info_2c: You can optionally filter the rule to apply to only certain tickets.
         help_title_2d: Actions
