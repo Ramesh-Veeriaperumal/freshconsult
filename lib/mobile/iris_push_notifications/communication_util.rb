@@ -3,8 +3,7 @@ module Mobile::IrisPushNotifications::CommunicationUtil
     ERROR_CODES = [500, 401, 404, 400]
 
     def push_data_to_service(url, data)
-      host = [IrisNotificationsConfig["platform_host"], url].join('')
-      puts host
+      host = [IrisNotificationsConfig["collector_host"], url].join('')
       options = {
         :body => data.to_json,
         :headers => {

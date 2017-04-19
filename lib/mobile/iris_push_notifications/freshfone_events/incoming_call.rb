@@ -1,9 +1,11 @@
 module Mobile::IrisPushNotifications::FreshfoneEvents::IncomingCall
   include Mobile::IrisPushNotifications::CommunicationUtil
+  include Mobile::Constants
+
   def notify_incoming_call_event_to_iris (message)
     logger.info "notify_incoming_call_event_to_iris  => #{message.to_json}"
     data = payload_data_to_iris message
-    push_data_to_service(IrisRestApi["collector"], data)
+    push_data_to_service(IrisNotificationsConfig["api"]["collector_path"], data)
   end
 
   private
