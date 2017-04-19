@@ -43,3 +43,5 @@ ArchiveNoteConfig = YAML::load_file(File.join(Rails.root, 'config', 'archive_not
 IrisNotificationsConfig = YAML::load_file(File.join(Rails.root, 'config', 'iris_notifications.yml'))[Rails.env]
 
 ArchiveSikdekiqConfig = YAML::load_file(File.join(Rails.root, 'config', 'archive_queue.yml'))[Rails.env]
+
+IrisRestApi = YAML.load_file(File.join(Rails.root, 'config', 'iris_rest_api.yml'))

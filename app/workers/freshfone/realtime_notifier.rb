@@ -5,6 +5,7 @@ module Freshfone
     include Freshfone::Endpoints
     include Freshfone::CallsRedisMethods
     include Mobile::Actions::Push_Notifier
+    include Mobile::IrisPushNotifications::FreshfoneEvents::IncomingCall
 
     sidekiq_options :queue => :freshfone_notifications, :retry => 0, :backtrace => true, :failures => :exhausted
 
@@ -46,9 +47,10 @@ module Freshfone
         enqueue_notification_recovery
         logger.info "Socket Notification pushed to SQS for account :: #{current_account.id} , call_id :: #{current_call.id} at #{Time.now}"
         $freshfone_call_notifier.send_message notification_params.to_json
+        notify_incoming_call_event_to_iris(notification_params)
         freshfone_notify_incoming_call(notification_params)
         enqueue_call_timeout_job if enqueue_timeout_job?
-        
+
       rescue Exception => e
         logger.error "[#{jid}] - [#{tid}] Error notifying for account #{current_account.id} for type #{type}"
         logger.error "[#{jid}] - [#{tid}] Message:: #{e.message}"
@@ -110,7 +112,7 @@ module Freshfone
       def complete_other_agents
         puts "Complete other agents"
         params = {
-          notification_type: "completed", 
+          notification_type: "completed",
           call_sid: current_call.call_sid,
           call_id: current_call.id,
           agents: pinged_agents,
