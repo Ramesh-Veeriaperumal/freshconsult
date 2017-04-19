@@ -4,14 +4,14 @@
 (function($){
 
   // Tweet custom class
-  $.validator.addMethod("facebook", $.validator.methods.maxlength, "Your Facebook reply was over 8000 characters. You'll have to be more clever." );   
+  $.validator.addMethod("facebook", $.validator.methods.maxlength, "Your Facebook reply was over 8000 characters. You'll have to be more clever." );
   $.validator.addClassRules("facebook", { facebook: 8000 });
   $.validator.addMethod("facebook-realtime", function(value, element) {
     if($(element).data('reply-count') >= 0){
       return true;
     }
   }, "Oops! You have exceeded Messenger Platform's character limit. Please modify your response." );
-  
+
   $.validator.addMethod("notEqual", function(value, element, param) {
     return ((this.optional(element) || value).strip().toLowerCase() != $(param).val().strip().toLowerCase());
   }, "This element should not be equal to");
@@ -21,8 +21,8 @@
        return true;
      var emails = value.split( new RegExp( "\\s*,\\s*", "gi" ) );
      valid = true;
-     $.each(emails, function(i, email){            
-        valid=/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i.test(email);                     
+     $.each(emails, function(i, email){
+        valid=/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i.test(email);
         if(!valid) return false
      });
      return valid;
@@ -34,8 +34,8 @@
       return true;
     }
   }, "Oops! You have exceeded Twitter's character limit. You'll have to modify your response." );
-  
-  
+
+
   $.validator.addMethod("password_confirmation", function(value, element){
     return ($(element).val() == $("#password").val());
   }, "The passwords don't match. Please try again.");
@@ -44,7 +44,7 @@
 
   $.validator.addMethod("hours", function(value, element) {
      hours = normalizeHours(value);
-     element.value = hours;       
+     element.value = hours;
      return /^([0-9]*):([0-5][0-9])(:[0-5][0-9])?$/.test(hours);
   }, 'Please enter a valid hours.');
   $.validator.addClassRules("hours", { hours: true });
@@ -87,11 +87,11 @@
   }, '');
   $.validator.addClassRules("sla_time", { only_digits:true, sla_min_time: true, sla_max_time: true });
 
-  //Domain Name Validator 
+  //Domain Name Validator
   $.validator.addMethod("domain_validator", function(value, element) {
      if (this.optional(element)) // return true on optional element
        return true;
-      if (value.length == 0) { return true; }       
+      if (value.length == 0) { return true; }
     if(/((http|https|ftp):\/\/)\w+/.test(value))
     valid = false;
     else if(/\w+[\-]\w+/.test(value))
@@ -101,7 +101,7 @@
       }
       else valid = true;
       if(/_+\w*/.test(value))
-      valid = false;               
+      valid = false;
      return valid;
   }, 'Invalid URL format');
   $.validator.addClassRules("domain_validator", { domain_validator: true });
@@ -124,7 +124,7 @@
       url_without_protocol : { url_without_protocol : true }
   });
 
-  
+
    //domain name validator
   $.validator.addMethod("domain_name_validator", function(value, element) {
     var COLON_AND_SLASHES = "://";
@@ -140,14 +140,14 @@
   //validating linkback url to avoid xss content
   $.validator.addMethod("linkback_url_valid", function(value, element) {
       value = trim(value)
-      return this.optional(element) || /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/i.test(value); 
+      return this.optional(element) || /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/i.test(value);
     }, "Please enter a valid linkback URL");
   $.validator.addClassRules({
       linkback_url_valid : { linkback_url_valid : true }
   });
 
   function requesterValidate(value, element) {
-    
+
      var _returnCondition = jQuery(element).data("requesterCheck"),
         _partial_list = jQuery(element).data("partialRequesterList") || []
         _user = jQuery(element).data("currentUser"), //for not editing add new requester
@@ -156,10 +156,10 @@
 ;
     if (/(\b[-a-zA-Z0-9.'-_~!$&()*+;=:%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b)/.test(value)){
         _returnCondition = true
-        jQuery('#helpdesk_ticket_requester_id').val('') 
+        jQuery('#helpdesk_ticket_requester_id').val('')
     }
-    
-    if (value == _user) 
+
+    if (value == _user)
       _returnCondition = true
 
     if(value == _requester && jQuery("#helpdesk_ticket_requester_id") && jQuery("#helpdesk_ticket_requester_id").val() == _requesterId)
@@ -168,9 +168,9 @@
     _partial_list.each(function(item){  //check for item['choice']
       if(trim(value) == trim(item.details)) _returnCondition = true
     });
- 
+
     return _returnCondition
-    
+
   }
 
   // Valid Requester field check
@@ -181,7 +181,7 @@
   $.validator.addClassRules("requester", { requester: true });
 
   $.validator.addMethod("agent_requester", function(value, element) {
-    
+
     var _returnCondition = requesterValidate(value, element);
     if(_results_array.length === 0) { _returnCondition = false }
     return _returnCondition
@@ -190,13 +190,13 @@
 
   $.validator.addClassRules("agent_requester", { agent_requester: true });
 
-//Check if one of the two fields is filled 
+//Check if one of the two fields is filled
 $.validator.addMethod("require_from_group", function(value, element, options) {
   var numberRequired = options[0];
   var selector = options[1];
   var fields = $(selector, element.form);
   var filled_fields = fields.filter(function() {
-    return $(this).val() != ""; 
+    return $(this).val() != "";
   });
   var empty_fields = fields.not(filled_fields);
   if (filled_fields.length < numberRequired && empty_fields[0] == element) {
@@ -246,7 +246,7 @@ $.validator.addClassRules("at_least_one_item", { at_least_one_item: true});
 // Time validator
 
 $.validator.addMethod("hhmm_time_duration",function(value){
-     return (/(^[0-9]*$)|(^[0-9]*:([0-5][0-9]{0,1}|[0-9])$)|(^[0-9]*\.{1}[0-9]+$)/).test(value);}, 
+     return (/(^[0-9]*$)|(^[0-9]*:([0-5][0-9]{0,1}|[0-9])$)|(^[0-9]*\.{1}[0-9]+$)/).test(value);},
      "Please enter a valid time")
 $.validator.addClassRules("hhmm_time_duration", {
      hhmm_time_duration: true
@@ -278,7 +278,7 @@ $.validator.addMethod( //override email to sync ruby's email validation
 
 
 $.validator.addMethod("time_12", function(value, element){
-  if( ! /^[0-9]{1,2}:[0-9]{1,2} [ap]m$/i.test(value) ) return false;  
+  if( ! /^[0-9]{1,2}:[0-9]{1,2} [ap]m$/i.test(value) ) return false;
   var t = value.split(' ');
   var hm = t[0].split(':'), meridian = t[1];
   var h = hm[0], m = hm[1];
@@ -298,7 +298,7 @@ $.validator.addMethod("remotevalidate", function(value, element, param) {
           previous = this.previousValue(element);
       if (!this.settings.messages[element.name] )
         this.settings.messages[element.name] = {};
-      
+
       previous.originalMessage = this.settings.messages[element.name].remotevalidate;
       this.settings.messages[element.name].remotevalidate = previous.message;
 
@@ -319,7 +319,7 @@ $.validator.addMethod("remotevalidate", function(value, element, param) {
       this.startRequest(element);
       var data = {};
       data[d_name] = value;
-      
+
       $.ajax($.extend(true, {
         url: url,
         mode: "abort",
@@ -368,15 +368,15 @@ $.validator.addMethod("required_redactor", function(value, element, param) {
     } else if($(element).data('froala.editor')){
       isEmpty = !jQuery('.required_redactor').data('froala.editor').core.isEmpty();
     }
-    
+
     return isEmpty;
   } else {
     var is_valid = true;
-    
+
     if(value == null || value == ""){
       is_valid = false;
     }
-    
+
     return is_valid;
   }
 }, $.validator.messages.required)
@@ -445,7 +445,7 @@ $.validator.addMethod("ca_same_folder_validity", function(value, element) {
 
 $.validator.addClassRules("ca_same_folder_validity", { ca_same_folder_validity: true });
 
-$.validator.addMethod("field_maxlength", $.validator.methods.maxlength, "Please enter less than 255 characters" );   
+$.validator.addMethod("field_maxlength", $.validator.methods.maxlength, "Please enter less than 255 characters" );
 $.validator.addClassRules("field_maxlength", { field_maxlength: 255 });
 // For validation to the decimal fields so that only two decimal are accepted
 
@@ -498,7 +498,7 @@ $.validator.addMethod("compare_required",function(value, element){
     status =true;
   if($companyField && $companyField.length>0){  // text company field exist
     if($companyField.val()){   //company field value exist
-      status = value ? true : false 
+      status = value ? true : false
     }else{
       if(!value)
         status = true
@@ -516,5 +516,28 @@ $.validator.addMethod("company_required",function(value, element){
   return ($('#add-company').is(':checked') && value) ? true : false;
 },$.validator.messages.required);
 $.validator.addClassRules("company-required", { company_required: true });
+
+// ticket schedule email recipient validation
+$.validator.addMethod("email_recipient_required",function(value, element){
+  var selectedValue = $('input[name="scheduled_export[schedule_details][delivery_type]"]:checked').val();
+  var valid = ( selectedValue === '1' && value) || (selectedValue === '2');
+  return ( valid ? true : false);
+},$.validator.messages.required);
+$.validator.addClassRules("email-recipient-required", { email_recipient_required: true });
+
+
+// ticket schedule checkbox required validation
+$.validator.addMethod("schedule_checkbox_required",function(value, element){
+  var length = $('.'+ $(element).data('field') + '-item input:checkbox:checked:not(.select-all)').length;
+  return ((length > 0) ? true : false);
+},$.validator.messages.select_atleast_one);
+$.validator.addClassRules("schedule-checkbox-required", { schedule_checkbox_required: true });
+
+// ticket schedule checkbox maximum validation
+$.validator.addMethod("schedule_checkbox_maximum",function(value, element){
+  var length = $('.'+ $(element).data('field') + '-item input:checkbox:checked:not(.select-all)').length;
+  return ((length <= 100) ? true : false);
+},$.validator.messages.select2_maximum_limit);
+$.validator.addClassRules("schedule-checkbox-maxlength", { schedule_checkbox_maximum: [100,'fields'] });
 
 })(jQuery);

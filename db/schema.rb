@@ -2879,6 +2879,22 @@ ActiveRecord::Schema.define(:version => 20170411034444) do
 
   add_index "schedule_configurations", ["account_id", "scheduled_task_id"], :name => "index_schedule_configuration_on_account_id_and_scheduled_task_id"
 
+  create_table "scheduled_exports", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "user_id"
+    t.text     "filter_data"
+    t.text     "fields_data"
+    t.text     "schedule_details"
+    t.integer  "account_id"
+    t.string   "latest_file"
+    t.integer  "schedule_type",    :limit => 2
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
+  end
+
+  add_index "scheduled_exports", ["account_id"], :name => "index_scheduled_exports_on_account_id"
+
   create_table "scoreboard_levels", :force => true do |t|
     t.integer  "account_id", :limit => 8
     t.integer  "points"

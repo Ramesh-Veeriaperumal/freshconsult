@@ -4,11 +4,42 @@
 .schedule-list-wrapper{
 	.list-page-header{
 		margin-bottom: 0;
+		.title{
+			font-size: 14px;
+			font-weight: 500;
+		}
 	}
 	.ticket-schedule-list{
+		.scheduled-export-row{
+		  width: 100%;
+		  border: solid #f0f0f0;
+		  display: table;
+		  @include border-width(0px 0px 1px 0px);
+		  &:first-child {
+		    @include border-width(1px 0px 1px 0px);
+		  }
+		  .scheduled-export-disabled{
+		    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAH0lEQVQIW2NkQAWSjEh8SQYGhucwATAHJAkSgHNAAgBJLgMeVQZnUgAAAABJRU5ErkJggg==);
+		    border-color: #e5e5e5;
+		    .desc{
+		      color: #828282;
+		    }
+				.schedule-data,.muted{
+					color: #bbb;
+				}
+				.schedule-actions{
+					.muted{
+						font-size: 12px;
+					}
+				}
+		  }
+			&.scheduled-export-row-disabled{
+				background: #fff;
+			}
+		}
 		.list-noinfo{
 			@include padding(30px 0);
-			font-size: 1em;
+			font-size: 13px;
 			font-weight: 400;
 			color: #999;
 		}
@@ -17,6 +48,9 @@
 		}
 		.schedule-icon{
 			color:#888;
+			&:hover{
+				color:#333;
+			}
 		}
 	}
 	&.ticket-activity-list-wrapper{
@@ -32,8 +66,8 @@
 /* ticket schedule new page css start */
 .ticket-schedule-new-wrapper{
 	.new-ticket-schedule-form,.edit-ticket-activity-form{
-		.ticket-schedule-ul{
-			.ticket-schedule-li{
+		ul.ticket-schedule-form{
+			li.ticket-schedule-item{
 				width: 100%;
 				margin-bottom: 20px;
 				@include padding-left(0);
@@ -73,18 +107,30 @@
 								float: left;
 								width: 10px;
 							}
+							&.export-fields-first-list{
+								@include border-radius(2px 2px 0 0);
+							}
+							&.export-fields-last-list{
+								@include border-radius(0 0 2px 2px);
+							}
 						}
 					}
 				}
 				.export-fields-item{
 					padding:14px;
 					border-top: 1px solid #ccc;
-					&.contact-fields-item,&.company-fields-item{
-						display: none;
-					}
 					.checkbox{
 						input[type="checkbox"]{
 							margin-top:3px;
+						}
+						&.select-all-label{
+							font-weight: 500;
+							.max-label{
+								font-weight: 400;
+							}
+						}
+						&.nested-fields{
+							display:block;
 						}
 					}
 				}
@@ -93,19 +139,24 @@
 						width: 100%;
 						margin-bottom: 10px;
 					}
+					.email-content-content{
+						width: 75%;
+					}
 				}
 				.api-content{
 					.clip-data{
 						background: #fff;
 						border: 1px dashed #ccc;
 						box-shadow: none;
-						width: 75%;
-						background: whitesmoke;
+						width: 717px;
+						background: #f5f5f5;
 					}
 					.copy-clip{
+						z-index: 9999;
 				    display: inline-block;
-				    position: absolute;
-				    @include right(188px);
+				    position: relative;
+				    @include left(-35px);
+						top: -5px;
 				    @include padding(2px 8px);
 				    background: #eee;
 				    @include border-radius(0 3px 3px 0);
@@ -117,11 +168,27 @@
 						}
 					}
 				}
+				.initial_export{
+					label.checkbox{
+						font-size: 13px;
+					}
+				}
 				label.error{
 					background: #fff;
 					border: 0;
 					@include margin(0px 0 8px 0);
 					padding: 0;
+				}
+				#RuleList{
+					label.error{
+						border: 1px solid #efefef;
+						background: #fefcea;
+						@include margin(2px -3px);
+						@include padding(8px 12px);
+					}
+				}
+				input[type="checkbox"].initial-export{
+					margin-top: 3px;
 				}
 			}
 		}
@@ -134,9 +201,43 @@
   background: #fff;
   z-index: 101;
   opacity: 0.5;
-  top: 11%;
+  top: 105px;
 }
 /* ticket schedule new page css end */
+
+.list-box{
+	width: 97.5%;
+  @include clear(both);
+  @include padding(12px);
+	background: #fff;
+  &:hover{
+    background: #fafafa;
+  }
+	&:first-child{
+    @include border-width(1px 0px 1px 0px);
+	}
+	.desc-box{
+		width:100%;
+	}
+	.schedule-data{
+		word-break: break-all;
+		.schedule-actions{
+      @include float(right);
+		}
+	}
+	p{
+    line-height: 26px;
+    font-weight: 400;
+    overflow: hidden;
+    @include cursor(default);
+    @include margin(0px);
+	}
+}
+
+#index-delete-modal{
+	width: 374px;
+	@include margin-left(-214px);
+}
 
 /* ticket activity css start */
 .ticket-activity-wrapper{
@@ -144,8 +245,8 @@
 		@include border-right(1px solid #999);
 	}
 	.edit-ticket-activity-form{
-		.ticket-schedule-ul{
-			.ticket-schedule-li{
+		ul.ticket-schedule-form{
+			li.ticket-schedule-item{
 				margin-bottom: 0;
 				.api-content{
 					label{
@@ -155,7 +256,8 @@
 						width: 98%;
 					}
 					.copy-clip{
-						@include right(6px);
+						@include left(95.4%);
+						top: -35px;
 					}
 				}
 			}

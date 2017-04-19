@@ -3446,6 +3446,7 @@ en:
   import_note_info: Please ensure that the first row has the header information (eg. name, email etc.). The fields in your CSV file, though, can be in any order.
   utf_8_format: The file has to be in UTF-8 format.
   at: at
+  "on": "on"
   add_a_topic: Start a Topic
   bottom: Bottom
   feedbackwidget_help_title: Feedback widget
@@ -3944,6 +3945,17 @@ en:
           attributes:
             language:
               inclusion: "should be valid"
+        scheduled_export:
+          attributes:
+            base:
+              max_no_of_email_recipients_per_scheduled_export: You cannot add more than %{max_limit} email addresses
+              max_scheduled_exports_per_account: Cannot have more than %{max_limit} scheduled exports
+              ticket_fields_exceeds: Cannot have more than %{max_limit} ticket fields
+              contact_fields_exceeds: Cannot have more than %{max_limit} contact fields
+              company_fields_exceeds: Cannot have more than %{max_limit} company fields
+              filter_data_presence: At least one filter has to be selected
+              email_recipients_presence: Please enter one or more email addresses
+              fields_data_presence: Please select some fields
       messages:
         contact_admin: There seems to be some problem with your account. Please contact your administrator.
         record_invalid: "Validation failed: %{errors}"
@@ -3977,6 +3989,7 @@ en:
         max_skills_per_user: Cannot have more than %{max_limit} skills per agent
         unique_external_id: unique_external_id field cannot be updated
         edit_broadcast_note: "Broadcast message can't be edited"
+        max_scheduled_exports_per_account: Cannot have more than %{max_limit} scheduled exports
       full_messages:
         format: "%{attribute} %{message}"
       template:
@@ -7008,6 +7021,9 @@ en:
       info: Your Ticket data will be sent to your email shortly!
       subject: Export of tickets %{filter} within ( %{start_date} to %{end_date} ) for  %{domain}
       body: "The ticket export you had requested is complete. You can download the file from <a href=%{url}>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:"
+    scheduled_ticket_export:
+      subject: "%{title} for %{date}"
+      body: "Hello there,<br><br>The export scheduled by %{user_name} is now ready. This report has the details of tickets that were created and updated during %{latest_schedule_time}.<br><br><a href=%{url}>Download Report</a><br><br>Please download this report within 30 days, after which the link will expire.<br><br>Happy number crunching!<br>%{helpdesk_name}"
     agents:
       fields:
         name: "Name"
@@ -8577,7 +8593,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         agent_chat_summary: Agent Chat Summary
         agent: "Agent"
         deleted: "Deleted"
-
+      scheduled_exports:
+        create:
+          max_email_recipients_per_scheduled_export: "Cannot add more than %{max_limit} email recipients"
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"
   bulk_actions: "Bulk Actions"
@@ -9408,12 +9426,16 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       title: Customer Satisfaction Report
     ticket_schedule:
       schedule_export: "Scheduled Export"
+      schedule_properties: "Schedule ticket properties"
+      schedule_properties_activities: "Schedule ticket properties and activities"
       all_reports: "All Reports"
       schedule: "Schedule"
       new_schedule: "New Schedule"
-      no_schedule: "You haven’t created any schedule yet!"
+      no_schedule: "No schedules created"
       create_new: "Create"
       schedule_show_message: "You cannot edit a schedule once it's created"
+      file_not_found: The required export file is not found.
+      file_not_created: The required export file is not yet created.
       helpnote:
         help_title_1: "Export ticket properties"
         help_info_1: "You can schedule and export ticket properties, along with their associated contact and company fields from Freshdesk. Data from the export can then be used for building custom reports. For example, you can get an export of tickets every week which includes the first response time, resolution time and the assigned agent, and see how responsive your support team is. A maximum of five schedules can be created for an account. Read more on how to create a schedule to export ticket properties. <a href='https://support.freshdesk.com/support/solutions/articles/226461-export-ticket-properties/' target='_blank'>Learn more.</a>"
@@ -9427,12 +9449,19 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         scheduled_hourly: "Runs hourly"
         scheduled_daily: "Runs daily at %{hrs}:00 hrs"
         scheduled_weekly: "Runs weekly on %{day} at %{hrs}:00 hrs"
+        delete_title: "Delete Schedule"
+        delete_text: "Are you sure you want to delete this schedule?"
+        cancel: "Cancel"
+        confirm: "Confirm"
       new:
-        title: "Title"
+        title: "Schedule Name  <span class='required_star'>*</span>"
         description: "Description"
-        filter: "Filters"
-        fields_to_export: "Fields to Export"
-        delivery: "Delivery"
+        email: "Email"
+        api: "API"
+        frequency: "Schedule"
+        filter: "Select Filters"
+        fields_to_export: "Select Fields to Export"
+        delivery: "Receive via"
         add_new: "Add new"
         ticket_fields_title: "Ticket Fields"
         contact_fields_title: "Contact Fields"
@@ -9441,7 +9470,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
           zero: "No field selected"
           one: "field selected"
           other: "fields selected"
-        one_time_export_label: "Send a one time export of tickets created or updated from the beginning of the current month for initial seeding of data"
+        one_time_export_label: "Export ticket content from the start of the month when this schedule begins"
         helpnote:
           api_info1: "The API will have the link to the latest export."
           api_info2: "The export will be generated periodically containing the chosen ticket, contact and company fields."
@@ -9453,7 +9482,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         daily_label: "24 hours"
         weekly_label: "7 days"
         schedule_message: "%{zone} for tickets created/updated in the last %{label}"
-        select_all: "select all"
+        select_all: "Select all"
+        max_field: "(upto 100 fields)"
+        email_recipient_maxlimit: "You cannot add more than %{limit} email addresses"
     ticket_activity:
       title: "Export ticket activities"
       edit: "Edit Schedule"

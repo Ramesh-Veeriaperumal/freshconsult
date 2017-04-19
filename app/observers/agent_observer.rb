@@ -24,6 +24,7 @@ class AgentObserver < ActiveRecord::Observer
 
   def after_update(agent)
     handle_capping(agent)
+    sync_to_export_service(agent)
   end
 
   protected
@@ -69,5 +70,9 @@ class AgentObserver < ActiveRecord::Observer
       end
 
       Groups::AssignTickets.perform_async({:agent_id => agent.id}) if agent.available
+    end
+
+    def sync_to_export_service(agent)
+      agent.user.sync_to_export_service if agent.ticket_permission_changed?
     end
 end

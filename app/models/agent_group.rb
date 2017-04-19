@@ -28,6 +28,10 @@ class AgentGroup < ActiveRecord::Base
         :select => "agents.user_id",
         :conditions => ["agents.available = ?",true]
 
+  scope :with_groupids, lambda { |group_ids|
+    { :conditions => ["group_id in (?)", group_ids] }
+  }
+
   def sync_skill_based_user_queues
     if account.skill_based_round_robin_enabled? && group.skill_based_round_robin_enabled? && 
         (user.agent.nil? || user.agent.available?)#user.agent.nil? - hack for agent destroy

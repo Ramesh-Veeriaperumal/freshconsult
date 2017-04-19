@@ -159,4 +159,8 @@ module RabbitMq::Constants
   COLLABORATION_TICKET_KEYS = ["id", "responder_id", "status", "subject", "visible", "account_id", "display_id"]
   
   IRIS_USER_KEYS = REPORTS_USER_KEYS
+
+  EXPORT_TICKET_KEYS          = ["id", "company_id", "requester_id"]
+  EXPORT_USER_KEYS            = ["id"]
+
 end

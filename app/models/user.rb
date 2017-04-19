@@ -1008,6 +1008,12 @@ class User < ActiveRecord::Base
     end
   end
 
+  def sync_to_export_service
+    scheduled_ticket_exports.each do |schedule|
+      schedule.sync_to_service("update")
+    end
+  end
+
   def can_verify_account?
     !account.verified? && self.privilege?(:admin_tasks)
   end
@@ -1048,6 +1054,10 @@ class User < ActiveRecord::Base
 
     def blocked_updated?
        @all_changes.has_key?(:blocked)
+    end
+
+    def time_zone_updated?
+      @all_changes.has_key?(:time_zone)
     end
 
     def clear_redis_for_agent

@@ -177,6 +177,7 @@ defaults: &defaults
     - [data_enrichment]
     - [spam_data_migration]
     - [activity_export]
+    - [scheduled_ticket_export_config]
 
 development:
   <<: *defaults

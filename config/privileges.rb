@@ -548,6 +548,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/social/twitter_stream"
     resource :"admin/social/twitter_handle"
     resource :"admin/mobihelp/app"
+    resource :"reports/scheduled_export"
     resource :"solution/article", :only => [:change_author]
     resource :"helpdesk/ticket", :only => [:update_all_tickets]
     resource :"helpdesk/select_all_ticket_action"
