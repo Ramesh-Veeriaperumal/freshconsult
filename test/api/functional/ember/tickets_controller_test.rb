@@ -101,7 +101,7 @@ module Ember
       description = Faker::Lorem.paragraph
       @update_group ||= create_group_with_agents(@account, agent_list: [agent.id])
       params_hash = { description: description, subject: subject, priority: 4, status: 7, type: 'Incident',
-                      responder_id: agent.id, source: 3, tags: ['update_tag1', 'update_tag2'],
+                      responder_id: agent.id, tags: ['update_tag1', 'update_tag2'],
                       due_by: 12.days.since.iso8601, fr_due_by: 4.days.since.iso8601, group_id: @update_group.id }
       params_hash
     end
@@ -792,6 +792,13 @@ module Ember
       get :show, controller_params(version: 'private', id: t.display_id, include: 'requester')
       assert_response 200
       match_json(ticket_show_pattern(ticket, nil, true))
+    end
+
+    def test_update_ticket_source
+      params_hash = update_ticket_params_hash.merge(source: 3)
+      put :update, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern(:source, :invalid_field)])
     end
 
     def test_update_with_attachment_ids
