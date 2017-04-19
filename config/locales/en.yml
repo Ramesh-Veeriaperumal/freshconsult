@@ -9443,7 +9443,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       file_not_created: The required export file is not yet created.
       helpnote:
         help_title_1: "Export ticket properties"
-        help_info_1: "You can schedule and export ticket properties, along with their associated contact and company fields from Freshdesk. Data from the export can then be used for building custom reports. For example, you can get an export of tickets every week which includes the first response time, resolution time and the assigned agent, and see how responsive your support team is. A maximum of five schedules can be created for an account. Read more on how to create a schedule to export ticket properties. <a href='https://support.freshdesk.com/support/solutions/articles/226461-export-ticket-properties/' target='_blank'>Learn more.</a>"
+        help_info_1: "You can schedule and export ticket properties, along with their associated contact and company fields from Freshdesk. Data from the export can then be used for building custom reports. For example, you can get an export of tickets every week which includes the first response time, resolution time and the assigned agent, and see how responsive your support team is. A maximum of five schedules can be created for an account. <a href='https://support.freshdesk.com/support/solutions/articles/226461-export-ticket-properties/' target='_blank'>Read more</a> on how to create a schedule to export ticket properties."
         help_title_2: "Export ticket activities"
         help_info_2: "As an account admin, you would want a list of all activities performed on your tickets so you can build custom metrics. When this is turned on, you will be able to access a JSON file with all the events that occured in each ticket the previous day (including events performed by automations). You can create only one schedule per day for an account. <a href='https://support.freshdesk.com/support/solutions/articles/226460-export-ticket-activities/' target='_blank'>Learn more.</a>"
       index:
@@ -9478,7 +9478,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         one_time_export_label: "Export ticket content from the start of the month when this schedule begins"
         helpnote:
           api_info1: "The API will have the link to the latest export."
-          api_info2: "The export will be generated periodically containing the chosen ticket, contact and company fields."
+          api_info2: "The export will contain a log of all ticket related updates peformed the previous day."
         schedule:
           hourly: "Hourly"
           daily: "Daily"
@@ -9498,7 +9498,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       default:
         field_value:
           name: "Daily export of ticket activities"
-          description: "Contains a log of all ticket related updates and automations peformed the previous day"
+          description: "Contains a log of all the updates performed on new or old tickets by user or automation on a given day"
   adv_reports:
     deprecated_message : "(View classic report link will no longer be available from Fri, 18 March 2016)"
     deprecated_header : "This report will no longer be available from Fri, 18 March 2016"
