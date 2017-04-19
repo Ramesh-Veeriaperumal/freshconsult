@@ -77,7 +77,7 @@ class ConversationValidation < ApiValidation
     end
 
     def public_note?
-      !self.private
+      !self.private.nil? and !self.private
     end
 
 end

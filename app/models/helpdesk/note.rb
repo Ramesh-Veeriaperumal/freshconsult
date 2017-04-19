@@ -63,6 +63,10 @@ class Helpdesk::Note < ActiveRecord::Base
       :order => "helpdesk_notes.created_at DESC"
     }
   }
+
+  scope :notes_since, lambda { |last_note_id|
+    { :conditions => ["helpdesk_notes.id > ? ", last_note_id] }
+  }
   
   scope :before, lambda { |first_note_id|
     { :conditions => ["helpdesk_notes.id < ? ", first_note_id], 

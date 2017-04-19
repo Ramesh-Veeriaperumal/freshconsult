@@ -21,12 +21,16 @@ module Ember
     def ticket_conversations
       validate_filter_params
       return unless @conversation_filter.valid?
+
       order_type = params[:order_type]
       order_conditions = "created_at #{order_type}"
-      ticket_conversations = @ticket.notes.visible.exclude_source('meta')
-                                    .preload(conditional_preload_options)
-                                    .order(order_conditions)
-      load_objects(ticket_conversations)
+      since_id = params[:since_id]
+
+      conversations = @ticket.notes.visible.exclude_source('meta').preload(conditional_preload_options).order(order_conditions)
+      filtered_conversations = since_id ? conversations.notes_since(since_id) : conversations
+
+      @items = paginate_items(filtered_conversations)
+      @items_count = conversations.count
       response.api_meta = { count: @items_count }
     end
 
