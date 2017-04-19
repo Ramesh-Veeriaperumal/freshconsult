@@ -2,7 +2,7 @@
 	<div class="reports-loading sloading loading-small loading-left repo generate-hd-reports">Searching</div> 
 </div>
 <% content_for :layoutType do %>search-page<% end %>
-<div id="sticky_header" class="search-sticky" data-scroll-top="true">
+<div class="search-sticky">
 	<%= form_tag("/search/#{current_filter}", {:method => :get, :class => "search-form"}) do %>
 		<span class="search-dark"></span>
 		<input class="search-input lead" value="<%= @search_key %>" 
@@ -58,9 +58,9 @@
 	</div>
 <% else %>
 	<div class="big-info">
-		<div class="no-info-text">
+	  <div class="no-info-text">
 			<%= t('search.no_matching_results', :search_key => h(@search_key)).html_safe %>
-		</div>
+	  </div>
 	</div>
 <% end %>
 

@@ -9015,14 +9015,14 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     generate: Search
     add_fields: Add field
     requester: Requester
-    agent: Agent
+    agent: Agents
     company: Company
     tags: Tags
     created_at: Created
     due_by: Due by
     status: Status
     priority: Priority
-    group: Group
+    group: Groups
     type: Type
     source: Source
     product: Product

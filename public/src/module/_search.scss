@@ -73,7 +73,7 @@
 .search-sorting-wrapper{
 	.row-fluid.search-controls {
     	background : #fff;
-    	padding : 15px 0;
+    	padding : 10px 0;
     	border-top: 1px solid #EBEBEB;
 	 }
 
@@ -87,7 +87,8 @@
 	    cursor: pointer;
 	  }
 	  .filter-type{
-	    padding-top : 5px;
+      padding: 0 15px;
+      line-height: 30px;
 	    @include margin-left(10px);
 	    ul li{
 	      display: inline;
@@ -98,20 +99,18 @@
 	       word-wrap: break-word;
 	    }
 	  }
-	  .edit-filter{
-	    margin-left : 14px;
-		@include padding-right(10px);
-	    .btn:focus{
-	      outline: none;
-	    }
-	  }
-	}
+	  	}
 	.bulk-action-pane{
 		margin-left : 14px;
 	}
-	#search-sort-menu{ 
-		padding:15px 0;
+	#search-sort-menu{
+		padding:15px 0 0 0;
 		@include margin-left(14px);
+
+    .edit-filter{
+        margin-top: -5px;
+	  }
+
 	}
 	.menu-list{
 		.nav-tabs{
