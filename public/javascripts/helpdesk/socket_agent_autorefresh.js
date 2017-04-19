@@ -167,6 +167,13 @@ var refreshCallBack = function (message, hashed_params, current_userid,updated_t
                 } 
               }
 
+              if(filter_options[i].condition == "sl_skill_id"){
+                if(filter_values.indexOf(message["sl_skill_id"]) >= 0){
+                    count++;
+                    continue;
+                } 
+              }
+
               if(filter_options[i].condition == "any_agent_id"){
                 if(presentInList(filter_values, message["internal_agent_id"]) >= 0 ||
                   presentInList(filter_values, message["agent_id"]) >= 0 ){

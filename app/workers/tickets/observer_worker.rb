@@ -4,14 +4,14 @@ module Tickets
     sidekiq_options :queue => :ticket_observer, :retry => 0, :backtrace => true, :failures => :exhausted
     SYSTEM_DOER_ID = -1
 
-    def perform args
-      
+    def perform args 
       begin
         args.symbolize_keys!
         account, ticket_id, doer_id, system_event = Account.current, args[:ticket_id], args[:doer_id], args[:system_event]
         current_events = args[:current_events].symbolize_keys
 
-        evaluate_on = account.tickets.find_by_id ticket_id
+        evaluate_on = args[:evaluate_on]
+        evaluate_on ||= account.tickets.find_by_id ticket_id
         doer = account.users.find_by_id doer_id unless system_event
 
         if evaluate_on.present? and (doer.present? || system_event)
@@ -42,9 +42,9 @@ module Tickets
             else
               evaluate_on.model_changes = evaluate_on.merge_changes previous_changes, evaluate_on.model_changes
             end
-            evaluate_on.enqueue_skill_based_round_robin if evaluate_on.should_enqueue_sbrr_job?
+            evaluate_on.enqueue_skill_based_round_robin if evaluate_on.should_enqueue_sbrr_job? && !evaluate_on.skip_sbrr
           else
-            if evaluate_on.should_enqueue_sbrr_job? && !evaluate_on.errors.any?
+            if evaluate_on.should_enqueue_sbrr_job? && !evaluate_on.skip_sbrr && !evaluate_on.errors.any?
               evaluate_on.enqueue_skill_based_round_robin
             end
           end

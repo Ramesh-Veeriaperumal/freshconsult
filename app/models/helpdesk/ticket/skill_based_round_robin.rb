@@ -1,11 +1,15 @@
 class Helpdesk::Ticket < ActiveRecord::Base
 
   def enqueue_skill_based_round_robin
-    Rails.logger.debug "Inspecting SBRR job enqueue source for ticket #{display_id} \n #{caller.join("\n")}"
-    SBRR::Assignment.perform_async(:model_changes => model_changes, 
-      :ticket_id => display_id, :attributes => { :sbrr_fresh_ticket => sbrr_fresh_ticket,
-      :sbrr_ticket_dequeued => sbrr_ticket_dequeued, 
-      :sbrr_user_score_incremented => sbrr_user_score_incremented })
+    Rails.logger.debug "Inspecting SBRR job enqueue source for ticket #{display_id}, sbrr inline #{sbrr_inline?} \n #{caller.join("\n")}"
+    options = skip_sbrr_assigner ? {:action => "update_multiple_sync"} : {}
+    args = {:model_changes => sbrr_model_changes, 
+        :ticket_id => display_id, :attributes => sbrr_attributes, :options => options}
+    if sbrr_inline?
+      SBRR::Execution.new(args).execute
+    else
+      SBRR::Assignment.perform_async(args)
+    end
   end
 
   def enqueue_sbrr_job?
@@ -34,11 +38,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
   alias_method :has_queue_changes?, :has_ticket_queue_changes?
 
   def has_user_queue_changes?
-    has_round_robin_eligibility_changes? || @model_changes.key?(:responder_id) || sbrr_fresh_ticket
+    #has_config_changes? has to be before has_round_robin_eligibility_changes? for ticket status delete case
+    has_config_changes? || has_round_robin_eligibility_changes? || @model_changes.key?(:responder_id)
   end
 
   def has_round_robin_eligibility_changes?
     @model_changes.key?(:group_id) || stop_sla_timer_changed? || visibility_changed?
+  end
+
+  def has_config_changes?
+    sbrr_fresh_ticket || sbrr_turned_on || status_sla_toggled_to
   end
 
   def can_be_in_ticket_queue?
@@ -71,7 +80,50 @@ class Helpdesk::Ticket < ActiveRecord::Base
     _previous_changes.reject{|_attribute, _change| _change.nil?}
   end
 
+  def unassigned?
+    !assigned?
+  end
+
+  def assigned?
+    responder_id.present?
+  end
+
+  def old_ticket?
+    replicated_state == TicketConstants::TICKET_REPLICA[:first]
+  end
+
+  def new_ticket?
+    replicated_state == TicketConstants::TICKET_REPLICA[:last]
+  end
+
+  def status_sla_toggled_to_on?
+    status_sla_toggled_to == :on
+  end
+
+  def status_sla_toggled_to_off?
+    status_sla_toggled_to == :off
+  end
+
+  def eligible_for_round_robin?
+    visible? && sla_on? && 
+      group.present? && group.skill_based_round_robin_enabled? 
+  end
+
+  def sbrr_model_changes
+    model_changes.symbolize_keys.slice(*TicketConstants::NEEDED_SBRR_ATTRIBUTES)
+  end
+
+  def sbrr_attributes
+    attrs = {}
+    TicketConstants::SKILL_BASED_TICKET_ATTRIBUTES.each { |att| attrs[att] = send(att) }
+    attrs
+  end
+
   private    
+
+    def sbrr_inline?
+      Account.current.skill_based_round_robin_enabled? && bg_jobs_inline
+    end
 
     def right_time_to_enqueue_sbrr_job?
       Account.current.skill_based_round_robin_enabled? && 
@@ -87,26 +139,22 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     def merge_skill_change_to_model_changes
-      if schema_less_ticket.changes.key?(skill_id_column)
-        @model_changes = merge_changes @model_changes, schema_less_ticket.changes
+      if self.changes.key?(skill_id_column)
+        @model_changes = merge_changes @model_changes, self.changes
       end
     end
 
-    def eligible_for_round_robin?
-      visible? && !(ticket_status.stop_sla_timer) && 
-        group.present? && group.skill_based_round_robin_enabled? 
+    def sla_on?
+      if old_ticket? && status_sla_toggled_to_on?
+        false
+      elsif old_ticket? && status_sla_toggled_to_off?
+        true
+      else
+        !ticket_status.stop_sla_timer
+      end
     end
 
     def agent_available?
       assigned? && responder && responder.available?
-    end
-
-    def unassigned?
-      !assigned?
-    end
-
-    def assigned?
-      responder_id.present?
-    end
-    
+    end 
 end

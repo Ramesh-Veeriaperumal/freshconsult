@@ -40,7 +40,6 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 
 	belongs_to :sla_policy, :class_name => "Helpdesk::SlaPolicy", :foreign_key => "long_tc01"
 	belongs_to :parent, :class_name => 'Helpdesk::Ticket', :foreign_key => 'long_tc02'
-  belongs_to :skill, :class_name => 'Admin::Skill', :foreign_key => 'long_tc06'
 
 
 	belongs_to_account
@@ -62,7 +61,8 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :sla_response_reminded, :boolean_tc04
 	alias_attribute :sla_resolution_reminded, :boolean_tc05
 	alias_attribute :dirty_attributes, :text_tc03
-	alias_attribute :skill_id, :long_tc06
+	alias_attribute :association_type, :int_tc03
+	alias_attribute :associates_rdb, :long_tc05
 	alias_attribute :spam_score, :string_tc04
 	alias_attribute :sds_spam, :int_tc05
 
@@ -88,9 +88,10 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 		:datetime_tc01
 	end
 
-  def self.skill_id_column
-  	:long_tc06
-  end
+	def self.associates_rdb_column
+		:long_tc05
+	end
+
 
 	def self.find_by_access_token(token)
 		find_by_string_tc01(token)
@@ -203,21 +204,30 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	  self.reports_hash["recalculated_count"] = true
 	end
 
-  def schema_less_ticket_was _changes = nil
-    schema_less_ticket_was = account.schema_less_tickets.new #dup creates problems
+  def schema_less_ticket_was _changes = {}
+  	replicate_schema_less_ticket :first, _changes
+  end
+
+  def schema_less_ticket_is _changes = {}
+	replicate_schema_less_ticket :last, _changes
+  end
+
+  def replicate_schema_less_ticket index, _changes = {}
+    schema_less_ticket_replica = account.schema_less_tickets.new #dup creates problems
     attributes.each do |_attribute, value| #to work around protected attributes
-      schema_less_ticket_was.send("#{_attribute}=", value)
+      schema_less_ticket_replica.send("#{_attribute}=", value)
     end
     _changes ||= begin
       temp_changes = changes #calling changes builds a hash everytime
       temp_changes.present? ? temp_changes : previous_changes
     end
     _changes.each do |_attribute, change|
-      if schema_less_ticket_was.respond_to? _attribute
-        schema_less_ticket_was.send("#{_attribute}=", change.first) 
+      if schema_less_ticket_replica.respond_to? _attribute
+        schema_less_ticket_replica.send("#{_attribute}=", change.send(index)) 
       end
     end
-    schema_less_ticket_was
+
+    schema_less_ticket_replica  	
   end
 
 end

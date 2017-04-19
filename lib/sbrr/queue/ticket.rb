@@ -10,10 +10,28 @@ module SBRR
           top_object, _score = top
           return if top_object.nil?
           @object_display_id = top_object
+          watch
+
           result = zrem_multi_exec
           if result.is_a?(Array) && result[1].present?
             SBRR.log "pop time, attempt: #{time}, popped ticket #{top_object} " 
             return top_object 
+          end
+        end
+      end
+
+      def pop_with_score
+        @operation = :dequeue
+        MAX_RETRIES.times do |time|
+          top_object, _score = top
+          return if top_object.nil?
+          @object_display_id = top_object
+          watch
+          
+          result = zrem_multi_exec
+          if result.is_a?(Array) && result[1].present?
+            SBRR.log "pop time, attempt: #{time}, popped ticket #{top_object} " 
+            return [top_object, _score]
           end
         end
       end

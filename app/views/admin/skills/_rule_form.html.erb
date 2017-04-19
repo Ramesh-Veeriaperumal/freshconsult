@@ -7,7 +7,7 @@
 	<div class="control-group">
 		<%= f.label :name, (t('.new')+"<span class='required_star'>*</span>").html_safe, :class => "control-label" %>
 		<div class="controls skill-form">
-			<%= f.text_field :name, :class => "required text", placeholder: t('.info1') %>
+			<%= f.text_field :name, :class => "required text", placeholder: t('.info1'), :autofocus=>true%>
 		</div>
 	</div>
 	<div class="control-group">

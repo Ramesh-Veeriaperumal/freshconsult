@@ -67,6 +67,8 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_items, :only => [ :destroy, :restore, :spam, :unspam, :assign,
     :close_multiple ,:pick_tickets, :delete_forever, :delete_forever_spam ], :if => :items_empty?
 
+  before_filter :scoper_ticket_actions, :only => [:close_multiple, :pick_tickets, :assign, :destroy, :restore, :spam, :unspam], :if => :eligible_for_bulk?
+
   skip_before_filter :load_item
   alias :load_ticket :load_item
 
@@ -826,38 +828,19 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def spam
-    req_list = []
+    @req_list = []
+
     @items.each do |item|
       item.spam = true
       req = item.requester
-      req_list << req.id if req.customer?
+      @req_list << req.id if req.customer?
       store_dirty_tags(item)
       item.save
 
       Search::RecentTickets.new(item.display_id).delete if item.is_a?(Helpdesk::Ticket)
     end
 
-    msg1 = render_to_string(
-      :inline => t("helpdesk.flash.spam",
-                      :tickets => get_updated_ticket_count,
-                      :text => associations_flash_text,
-                      :undo => "<%= link_to(t('undo'), { :action => :unspam, :ids => params[:ids] }, { :method => :put }) %>"
-                  )).html_safe
-
-    link = render_to_string( :inline => "<%= link_to t('user_block'), block_user_path(:ids => req_list), :method => :put, :remote => true  %>" ,
-      :locals => { :req_list => req_list.uniq } )
-
-    notice_msg =  msg1
-    notice_msg << " <br />#{t("block_users")} #{link}".html_safe unless req_list.blank?
-
-    flash[:notice] =  notice_msg
-    respond_to do |format|
-      format.html { redirect_to redirect_url  }
-      format.js
-      format.mobile {  render :json => { :success => true , :success_message => t("helpdesk.flash.flagged_spam",
-                      :tickets => get_updated_ticket_count,
-                      :undo => "") }.to_json }
-    end
+    display_spam_flash
   end
 
   def unspam
@@ -867,17 +850,7 @@ class Helpdesk::TicketsController < ApplicationController
       item.save
       #mark_requester_deleted(item,false)
     end
-
-    flash[:notice] = render_to_string(
-      :inline => t("helpdesk.flash.flagged_unspam",
-                      :tickets => get_updated_ticket_count )).html_safe
-
-    respond_to do |format|
-      format.html { redirect_to (@items.size == 1) ? helpdesk_ticket_path(@items.first) : :back }
-      format.js
-	  format.mobile {  render :json => { :success => true , :success_message => t("helpdesk.flash.flagged_unspam",
-                     :tickets => get_updated_ticket_count) }.to_json }
-    end
+    display_unspam_flash
   end
 
   def delete_forever
@@ -1540,38 +1513,40 @@ class Helpdesk::TicketsController < ApplicationController
       end
     end
 
-    def scoper_ticket_actions
-      # Check for mobile removed. Mobile apps supporting bulk ticket assign. 
-      if (params[:ids] and params[:ids].length > BACKGROUND_THRESHOLD)
-        ticket_actions_background
-      end
-    end
-
     def params_for_bulk_action
       params.slice('ids','responder_id','disable_notification')
+    end
+
+    def scoper_ticket_actions
+      ticket_actions_background
+      req_list if action_name.to_sym == :spam
+      if [:spam, :destroy, :unspam, :restore].include? action_name.to_sym
+        send("display_#{action_name}_flash")
+      else
+        flash_message = t('helpdesk.flash.tickets_background')
+        respond_to do |format|
+          format.html {
+            if @failed_tickets.length == 0
+              flash[:notice] = flash_message
+            else
+              flash[:failed_tickets] = @failed_tickets
+              flash[:action] = "bulk_close"
+              flash[:notice] = render_to_string(
+              :inline => t("helpdesk.flash.tickets_close_fail_on_bulk_close", 
+              :tickets => get_updated_ticket_count,
+              :failed_tickets => "<%= link_to( t('helpdesk.flash.tickets_failed', :failed_count => @failed_tickets.count), '',  id: 'failed-tickets') %>" )).html_safe
+            end
+            redirect_to helpdesk_tickets_path
+          }
+          format.nmobile {render :json => {:message => flash_message}}
+        end
+      end
     end
 
     def ticket_actions_background
       args = { :action => action_name }
       args.merge!(params_for_bulk_action)
-      Tickets::BulkTicketActions.perform_async(args)
-      flash_message = t('helpdesk.flash.tickets_background')
-      respond_to do |format|
-        format.html {
-          if @failed_tickets.length == 0
-            flash[:notice] = flash_message
-          else
-            flash[:failed_tickets] = @failed_tickets
-            flash[:action] = "bulk_close"
-            flash[:notice] = render_to_string(
-            :inline => t("helpdesk.flash.tickets_close_fail_on_bulk_close", 
-            :tickets => get_updated_ticket_count,
-            :failed_tickets => "<%= link_to( t('helpdesk.flash.tickets_failed', :failed_count => @failed_tickets.count), '',  id: 'failed-tickets') %>" )).html_safe
-          end
-          redirect_to helpdesk_tickets_path
-        }
-        format.nmobile {render :json => {:message => flash_message}}
-      end
+      ::Tickets::BulkTicketActions.perform_async(args)
     end
 
     def find_topic
@@ -2180,6 +2155,112 @@ class Helpdesk::TicketsController < ApplicationController
 
   def check_ml_feature
     access_denied unless current_account.suggest_tickets_enabled?
+  end
+
+  def eligible_for_bulk?
+    !mobile? && multiple_tickets?
+  end
+
+  def multiple_tickets?
+    params[:ids].present?
+  end
+
+  def display_spam_flash
+    msg1 = render_to_string(
+      :inline => t("helpdesk.flash.spam",
+                    :tickets => pluralize(@items.count, "ticket"),
+                    :text => associations_flash_text,
+                    :undo => "<%= link_to(t('undo'), { :action => :unspam, :ids => params[:ids] }, { :method => :put }) %>"
+                )).html_safe
+
+    link = render_to_string( :inline => "<%= link_to t('user_block'), block_user_path(:ids => @req_list), :method => :put, :remote => true  %>" ,
+      :locals => { :req_list => @req_list.uniq } )
+
+    notice_msg =  msg1
+    notice_msg << " <br />#{t("block_users")} #{link}".html_safe unless @req_list.blank?
+
+    flash[:notice] =  notice_msg
+    respond_to do |format|
+      format.html { redirect_to redirect_url  }
+      format.js
+      format.mobile {  render :json => { :success => true , :success_message => t("helpdesk.flash.flagged_spam",
+                    :tickets => get_updated_ticket_count,
+                    :undo => "") }.to_json }
+    end
+
+  end
+
+  def display_unspam_flash
+    num_tickets = if params[:ids].present?
+      @items.length == 1 ? "_single" : "_multiple"
+    else
+      ""
+    end
+    flash[:notice] = render_to_string(
+      :inline => t("helpdesk.flash.flagged_unspam#{num_tickets}",
+                      :tickets => pluralize(@items.count, "ticket") )).html_safe
+
+    respond_to do |format|
+      format.html { redirect_to (@items.length == 1) ? helpdesk_ticket_path(@items.first) : :back }
+      format.js
+    format.mobile {  render :json => { :success => true , :success_message => t("helpdesk.flash.flagged_unspam",
+                     :tickets => get_updated_ticket_count) }.to_json }
+    end
+  end
+
+  def display_destroy_flash
+    respond_to do |expects|
+      expects.html do
+        flash[:notice] = render_to_string(
+          :inline => t("helpdesk.flash.destroy",
+                        :tickets => pluralize(@items.count, "ticket"),
+                        :undo => "<%= link_to(t('undo'), { :action => :restore, :ids => params[:ids] }, { :method => :put }) %>"
+                    )).html_safe
+        redirect_to after_destroy_url
+      end
+      expects.mobile{
+        render :json => {:success => true}
+      }
+      expects.nmobile{
+        render :json => {:success => true}
+      }
+      expects.json  { render :json => :deleted}
+      expects.js {
+        process_destroy_message
+        after_destroy_js
+      }
+      #until we impl query based retrieve we show only limited data on deletion.
+      expects.xml{ render :xml => @items.to_xml(options)}
+    end
+  end
+
+  def display_restore_flash
+    respond_to do |result|
+      result.html{
+        num_tickets = if params[:ids].present?
+          @items.length == 1 ? "_single" : "_multiple"
+        else
+          ""
+        end
+        flash[:notice] =  render_to_string(
+          :inline => t("helpdesk.flash.flagged_restore#{num_tickets}",
+                          :tickets => pluralize(@items.count, "ticket"))).html_safe
+        redirect_to after_restore_url
+      }
+      result.mobile { render :json => { :success => true }}
+      result.nmobile { render :json => { :success => true }}
+      result.xml {  render :xml => @items.to_xml(options) }
+      result.json {  render :json => @items.to_json(options) }
+      result.js {
+        flash[:notice] = render_to_string(
+          :partial => '/helpdesk/shared/flash/restore_notice', :contacts => @items).html_safe
+      }
+    end
+  end
+
+  def req_list
+    @req_list = []
+    @items.each {|item| req = item.requester; @req_list << req.id if req.customer? }
   end
 
   def validate_ticket_close

@@ -202,6 +202,7 @@ en:
     created_date_range: Time period
     none: None
     unresolved: All Unresolved
+    sl_skill_id: "Skill"
   proceed_now: "\n\nProceed now?"
   forward: "Forward"
   apply: "Apply"
@@ -758,6 +759,7 @@ en:
         nav_skill_list_text: Skill List
         nav_agent_skill_text: Agents' Skill
         confirm_delete_message: Are you sure you want to delete this skill?
+        confirm_delete_message_v2: Deleting a skill will remove the skill from all the agents. Unassigned tickets with this skill will be mapped to a new skill. Are you sure you want to proceed?
         skill_create: Create
         add_agents: Add agents
         skills: Skills
@@ -2858,6 +2860,7 @@ en:
   requester_email: Requester Email
   feedbackwidget_image_button: Image URL
   activities:
+    skill: 'Skill'
     action_verb: 'updated'
     email_response: "email response"
     reply: "reply"
@@ -3156,6 +3159,8 @@ en:
         new: "Flagged this ticket as Spam"
       unspam:
         new: "Restored this ticket from Spam"
+      skill_name:
+        new: "Skill as <strong>%{skill_name}</strong>"
       product_change:
         short: "{{user_path}} updated product to {{product_name}}"
         without_user: "updated product to <strong>{{product_name}}</strong>"
@@ -4128,7 +4133,7 @@ en:
     rr_v2_confimation_message: This action cannot be undone. Are you sure you want to proceed?
     tour: Help me create a new agent group
     helptext: You can organize your agents into specific Groups like “Support” and “Sales”. This lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that an agent can be a member of multiple groups.
-    automatic_assignment: <b>To each group</b><br/>Once you’ve created your groups, you can set up rules in dispatch’r to automatically route tickets to each group. <a href="https://support.freshdesk.com/support/solutions/articles/77157" target="_blank">Learn more</a><br/><br/><b> To agents within each group</b><br/>You can also auto-assign tickets to online agents within a group by three methods:<br>1. Round robin - Assign tickets to agents in a circular fashion<br>2. Load balanced - Set a limit on the number of tickets that are assigned to each agent<br/> <a href="https://support.freshdesk.com/support/solutions/articles/196581" target="_blank">Read more</a>
+    automatic_assignment: <b>To each group</b><br/>Once you’ve created your groups, you can set up rules in dispatch’r to automatically route tickets to each group. <a href="https://support.freshdesk.com/support/solutions/articles/77157" target="_blank">Learn more</a><br/><br/><b> To agents within each group</b><br/>You can also auto-assign tickets to online agents within a group by three methods:<br>1. Round robin - Assign tickets to agents in a circular fashion<br>2. Load balanced - Set a limit on the number of tickets that are assigned to each agent<br>3. Skill based  - Assign tickets to agents based on their expertise <br/> <a href="https://support.freshdesk.com/support/solutions/articles/196581" target="_blank">Read more</a>
     automatic_assignment_header: Auto-ticket Assignment
     working_hours_header: Business Hours
     working_hours: You can associate different business hours to each of these groups based on their working hours. You can group agents by shifts and assign different business hours to each group, or create separate groups for each location that your agents work from.
@@ -4289,6 +4294,10 @@ en:
     password_reset_message: "Do you want to reset %{requester}'s password?"
     password_reset_note: "Note: A reset mail with instructions will be sent to %{requester}"
     group: Groups
+    skill: Skills
+    manage_skills: Manage Skills
+    add_skills: Add Skills
+    more: more
     member: Member of
   account_admin: Account admin
   right: Right
@@ -6466,8 +6475,14 @@ en:
       assigned_reassigned: "%{type} to %{username}"
       flagged_spam: "%{tickets} flagged as spam. %{undo}"
       flagged_unspam: "%{tickets} removed from the spam folder."
+      flagged_unspam_single: "Please wait while we unspam this ticket. This might take upto a minute."
+      flagged_unspam_multiple: "Please wait while we unspam %{tickets}. This might take few minutes."
+      flagged_restore: "%{tickets} were restored."
+      flagged_restore_single: "Please wait while we restore this ticket. This might take upto a minute."
+      flagged_restore_multiple: "Please wait while we restore %{tickets}. This might take few minutes."
       tickets_background: "Please wait while we update the tickets. This might take a few minutes."
-      spam: "%{tickets} flagged as spam%{text}. %{undo}"
+      spam: "%{tickets} will be marked as spam shortly%{text}. %{undo}"
+      destroy: "%{tickets} will be deleted shortly. %{undo}"
 
     shared:
       addcc: "Add cc"
@@ -7038,6 +7053,7 @@ en:
         phone: "Phone"
         mobile: "Mobile"
         last_seen: "Last seen"
+        skills: "Skills"
     fields:
       ticket_id: "Ticket Id"
       display_id: "Display Id"
@@ -7073,6 +7089,7 @@ en:
       survey_received: "Survey Received Time"
       comment: "Comment"
       rating: "Rating"
+      skill: "Skill"
     call_history:
       info:
         success: We have started exporting your call records. It will be mailed to you once completed.

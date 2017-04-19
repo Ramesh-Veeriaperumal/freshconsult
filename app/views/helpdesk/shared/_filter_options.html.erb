@@ -140,7 +140,7 @@
             container = "single_select"
           elsif ['requester', 'customers', 'tags', 'association_type'].include?(c_hash[:name])
             container = c_hash[:name]
-          elsif ['responder_id','group_id'].include?(c_hash[:name])
+          elsif ['responder_id','group_id','sl_skill_id'].include?(c_hash[:name])
             container = "multi_select"
           else
             container = (c_hash[:options].size < 5)? "dropdown" : "multi_select"

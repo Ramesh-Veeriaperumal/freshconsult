@@ -135,7 +135,7 @@
   				</li>
           <% if(@agent.user != current_user) %>
           <li class="control-group" id="agent_ticket_permission">
-            <label class="control-label"><%=t('agent.ticket_scope')%></label>
+            <label class="control-label"></label>
             <ul class="controls">
               <li>
                 <label class="radio">
@@ -245,6 +245,34 @@
         </div>
       </li>          
      <% end %>
+     <%  if @skills.present? && current_account.skill_based_round_robin_enabled? %>
+      <li class="seperator"></li>
+      <li class="control-group">
+        <label class="control-label">       
+          <h5 class="lead">
+            <%=t('agent.skill')%>
+          </h5>
+        </label>
+        <div class="controls" id="selected-skills">
+          <div class="agent_skill_list">
+          <% if @agent_skills.present? %>
+            <% @agent_skills.first(5).each_with_index do |skill, index| %>
+              <span id = <%= "skill_#{skill[:skill_id]}" %> class="muted"><%= skill[:name] %></span>
+            <% end %> 
+            <% if @agent_skills.length > 5 %>
+              <span>
+                <%= link_to("#{@agent_skills.length - 5} "+ t('agent.more'), 'javascript:void(0)', :id => "view-all-skills") %>
+              </span>
+            <% end %> 
+          <% end %>
+          </div>
+          <div>
+            <input type='hidden' name='user[user_skills_attributes]' value = ''>
+            <a href='javascript:void(0)' id='add-skill' class="btn" data-width = "400px"> <b><%=t('agent.manage_skills')%></b></a>
+          </div>
+        </div>
+      </li>
+     <% end %>
     </ul>
    </div>
   </div>
@@ -258,6 +286,11 @@
     var group_details = {};
 
     $(document).ready(function() {
+
+      window.App = window.App || {};
+      App.Agents = App.Agents || {};
+      App.Agents.Form = App.Agents.Form || {};
+      App.Agents.Form.userName = '<%= @agent.user.name %>';
       <% @roles.each do |role| %>
         <% if role.name == "Account Administrator" %>
           <% if current_user.privilege?(:manage_account) %>
@@ -275,93 +308,10 @@
           group_details[<%= group.id %>] = ["<%= group.name %>", "<%= escape_javascript(group.description)%>"];
       <% end %>
 
-    });
-    
-    $(document).on("click", 'div.icon_remove', function(){
-      $('#role_'+jQuery(this).attr('rel')).remove();
-      $('.twipsy').remove();
-      jQuery("#agent_form").valid();
-      roles[jQuery(this).attr('rel')] = false;
-    });
-    
-    $(document).on("click", '#agent_role ul li input', function(){
-      jQuery(this).parents("li").toggleClass("selected_to_yellow", this.checked);
-    });
-    
-    $('#add-role').click(function(){
-      $("#agent_role ul").children().remove();
-      for(var key in roles){
-        if(!roles[key]){
-          $("#agent_role ul").append("<li id='role_dom_" + key + "' title='"+role_details[key][1]+"' class='tooltip'><label class='check_box checkbox'><input id= 'role_check_" + key + "' rel='" + key + "' multiple='multiple' name='roles[]' type='checkbox' value='" +  key + "'><b>" + role_details[key][0] + "</b><p class='muted ellipsis'>" + role_details[key][1] + "</p></label></li>");
-        }
-      }
-    });
-        
-    $(document).on("click.agent-roles", '#agent-role-container-submit', function() {
-      $('#agent_role input:checked').each(function(){
-        var role_id = jQuery(this).attr('rel');
-        roles[role_id] = true;
-        $("#selected-roles ul").append("<li id='role_" + role_id + "'><div class='icon_remove tooltip' title='Remove role' id='remove_role_" + role_id +"' rel='"+role_id+"'><span></span></div><label for='agent_ticket_permission'><b>" + role_details[role_id][0] + "</b><span class='muted info_data ellipsis'>" + role_details[role_id][1] + "</span></label><input type='hidden' name='user[role_ids][]' value='"+ role_id +"' /></li>");
-      });
-      
-      $('#agent_role input:unchecked').each(function(){
-        roles[jQuery(this).attr('rel')] = false;
-      });
-      
-      jQuery("#agent_form").valid();
-    });
-
-    $(document).on("click.agent-roles", 'div.group_icon_remove', function(){
-      $('#group_'+jQuery(this).attr('rel')).remove();
-      $('.twipsy').remove();
-      jQuery("#agent_form").valid();
-      groups[jQuery(this).attr('rel')] = false;
-    });
-
-    $(document).on("click.agent-roles", '#agent_group ul li input', function(){
-      jQuery(this).parents("li").toggleClass("selected_to_yellow", this.checked);
-    });
-
-    $('#add-group').click(function(){
-      $("#agent_group ul").children().remove();
-      for(var key in groups){
-        if(!groups[key]){
-          $("#agent_group ul").append("<li id='group_dom_" + key + "' ><label class='check_box checkbox'><input id= 'group_check_" + key + "' rel='" + key + "' multiple='multiple' name='groups[]' type='checkbox' value='" +  key + "'><b>" + group_details[key][0] + "</b></label></li>");
-        }
-      }
-    });
-
-    $(document).on("click.agent-roles", "#agent-group-container-submit", function(){
-      $('#agent_group input:checked').each(function(){
-        var group_id = jQuery(this).attr('rel');
-        groups[group_id] = true;
-        $("#selected-groups ul").append("<li id='group_" + group_id + "'><div class='group_icon_remove tooltip' title='Remove group' id='remove_group_" + group_id +"' rel='"+group_id+"'><span></span></div><label for='agent_group'><b>" + group_details[group_id][0] + "</b><span class='muted info_data ellipsis'>" + group_details[group_id][1] + "</span></label><input type='hidden' name='agent[group_ids][]' value='"+ group_id +"' /></li>");
-      });
-      
-      $('#agent_group input:unchecked').each(function(){
-        groups[jQuery(this).attr('rel')] = false;
-      });
-      
-      jQuery("#agent_form").valid();
-    });    
-        
-    $('#agent_form').submit(function(ev) {
-
-      if($("#selected-roles").length > 0 && !$("#selected-roles ul li").length > 0)
-      {
-          $('<input>').attr({
-            type: 'hidden',
-            name: 'user[role_ids][]',
-          }).appendTo('#agent_form');
-      } 
-
-      if($("#selected-groups").length > 0 && !$("#selected-groups ul li").length > 0)
-      {
-          $('<input>').attr({
-            type: 'hidden',
-            name: 'agent[group_ids][]',
-          }).appendTo('#agent_form');
-      } 
+      App.Agents.Form.roles = roles;
+      App.Agents.Form.role_details = role_details;
+      App.Agents.Form.groups = groups;
+      App.Agents.Form.group_details = group_details;
     });
     
   })(jQuery);
@@ -376,10 +326,12 @@
       <ul class="unstyled"></ul>
 	  </div>
 </div>
-
+<!-- Agent groups modal -->
 <div id="agent-group-container" class="hide">
   <p class="margin-bottom"><%=t('agent.groups_description')%></p>
   <div id="agent_group" class="agent-group-modal">
     <ul class="unstyled"></ul>
   </div>
 </div>
+<!-- Agent skills modal -->
+<%= render :partial => 'admin/shared/popup', :locals => {:type => 'agentskills'}%>

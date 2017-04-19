@@ -143,6 +143,11 @@ module Search::TicketSearch
       return TicketConstants.priority_list.sort
     end
 
+    if criteria_key == :sl_skill_id and Account.current.skill_based_round_robin_enabled?
+      skills = Account.current.skills_from_cache.collect {|au| [au.id, au.name]}
+      return [[NONE_VALUE, I18n.t("filter_options.none")]] + skills if skills.length > 0 
+    end
+
     if criteria_key == :responder_id
       agents = [[0, I18n.t("helpdesk.tickets.add_watcher.me")]]
       agents.concat(Account.current.agents_details_from_cache.collect { |au| [au.id, au.name] })      
