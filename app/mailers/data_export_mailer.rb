@@ -42,6 +42,8 @@ class DataExportMailer < ActionMailer::Base
   def scheduled_ticket_export options={}
     @account = Account.current
     schedule = @account.scheduled_ticket_exports.find_by_id(options[:filter_id])
+    schedule.user.make_current
+    TimeZone.set_time_zone
     headers = {
       :subject   => schedule.email_subject,
       :to        => schedule.agent_emails,
