@@ -1,0 +1,16 @@
+<div class="chart-section" data-group="<%= id%>" >
+	<div class="left-section">
+		<div class="hours"><%= total_hours %> hrs</div>
+		<div class="name"><%= title %></div>
+	</div>
+	<div class="right-section">
+		<div id="<%=id%>_bar_chart" class="chart-area" style="height: auto;min-width: 500px;">
+
+		</div>
+		<% if (showViewMore){ %>
+			<div class="view_more" data-group="<%= idx %>" data-container='view-more'><a  href="javascript:void(0)">View more</a></div>
+		<% } %>	
+	</div>
+	
+	<div class="clear"></div>
+</div>

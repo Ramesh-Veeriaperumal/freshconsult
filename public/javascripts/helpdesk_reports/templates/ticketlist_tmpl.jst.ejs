@@ -6,9 +6,12 @@
 				<div class="ticket-link-wrap"><a href="/helpdesk/tickets/<%= data[i]['id']%>" target="_blank" class="ticket-link visited"><%= data[i]['subject']%></a><span class="ticket-id">#<%= data[i]['id']%></span></div>
 				<div class="ticket-details"><%= I18n.t('helpdesk_reports.agent') %>: <span><%=data[i]['agent']%></span>, <%= I18n.t('helpdesk_reports.status') %>: <span><%=data[i]['status']%></span>, <%= I18n.t('helpdesk_reports.priority') %>: <span><%=data[i]['priority']%></span></div>
 				<div class="ticket-created"><%= I18n.t('helpdesk_reports.from') %>: <span><%=data[i]['requester']%></span></div>
+				<% if(HelpdeskReports.locals.report_type == 'timespent') {%>
+					<div class="ticket-hours"><%= (data[i].total_time/3600).toFixed(2) %> hrs</div>
+				<% }%>
 			</li>
 		<% } %>
 	</ul>
 <% } else { %>
-	<h4><%= I18n.t('helpdesk_reports.ticket_list_title.no_tickets') %></h4>
+	<h4 class="no-data-text"><%= I18n.t('helpdesk_reports.ticket_list_title.no_tickets') %></h4>
 <% } %>

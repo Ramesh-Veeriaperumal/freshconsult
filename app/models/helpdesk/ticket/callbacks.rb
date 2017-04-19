@@ -147,6 +147,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def update_ticket_states
     process_agent_and_group_changes
     process_status_changes
+    update_ticket_lifecycle
     ticket_states.save if ticket_states.changed?
     schema_less_ticket.save
   end
@@ -212,6 +213,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
       ticket_states.reset_tkt_states
       schema_less_ticket.update_reopened_count("create")
     end
+  end
+
+  def update_ticket_lifecycle
+    @ticket_lifecycle = {}
+    return if (created_at < Time.parse('2017-03-23')) || ([:responder_id, :group_id, :status] & model_changes.keys).empty?
+    tkt_group = model_changes.has_key?(:group_id) ? Group.find_by_id(model_changes[:group_id][0]) : self.group
+    @ticket_lifecycle = schema_less_ticket.update_lifecycle_changes(time_zone_now, tkt_group, [RESOLVED,CLOSED].include?(status))
   end
 
   #Shared onwership Validations

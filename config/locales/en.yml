@@ -9060,6 +9060,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     summary: Summary
     chats: Chats
     edit: Edit
+    'yes': 'Yes'
+    'no': 'No'
     filter_error_msg: '* You can select a maximum of 10 filters. (Each selected level of nested field counts as one filter)'
     no_data_to_display_msg: No data to display
     something_went_wrong_msg: 'Something went wrong, please try again'
@@ -9398,6 +9400,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       avg_res_time: Average response time
       avg_resolution_time: Average resolution time
       agent: Agent
+    timespent:
+      title : Ticket Lifecycle
     customer_report:
       title:  Top Customer Analysis
       received_tickets: Tickets submitted
