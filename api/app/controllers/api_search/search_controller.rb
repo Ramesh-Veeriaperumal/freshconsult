@@ -68,7 +68,7 @@ module ApiSearch
             current_page: page,
             offset:       ApiSearchConstants::DEFAULT_PER_PAGE,
             types:        type,
-            es_params:    { search_terms: search_terms.to_json, offset: (page - 1) * ApiSearchConstants::DEFAULT_PER_PAGE, size: ApiSearchConstants::DEFAULT_PER_PAGE }
+            es_params:    { search_terms: search_terms.to_json, offset: (page - 1) * ApiSearchConstants::DEFAULT_PER_PAGE, size: ApiSearchConstants::DEFAULT_PER_PAGE, account_id: current_account.id }
           }).query_results
         rescue Exception => e
           Rails.logger.error "Searchv2 exception - #{e.message} - #{e.backtrace.first}"

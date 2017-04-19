@@ -156,6 +156,7 @@ class Search::Utils
                                         .constantize
                                         .where(account_id: args[:current_account_id], id: items.map { |h| h['_id'] })
                                         .preload(model_and_assoc[type][:associations])
+                                        .compact
       end
     end
 
