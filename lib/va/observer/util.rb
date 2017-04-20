@@ -45,12 +45,12 @@ module Va::Observer::Util
       doer = User.current
       doer_id = (self.class == Helpdesk::Ticket) ? doer.id : self.send(FETCH_DOER_ID[self.class.name])
       evaluate_on_id = self.send FETCH_EVALUATE_ON_ID[self.class.name]
-      args = HashWithIndifferentAccess.new({
+      args = {
         :doer_id => doer_id,
         :ticket_id => evaluate_on_id,
         :current_events => observer_changes,
         :enqueued_class => self.class.name
-      })
+      }
       
       args[:model_changes] = @model_changes if self.class == Helpdesk::Ticket
       if inline
