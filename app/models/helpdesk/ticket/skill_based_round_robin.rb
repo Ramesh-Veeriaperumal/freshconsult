@@ -88,11 +88,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     responder_id.present?
   end
 
-  def old_ticket?
+  def old_replicated_state?
     replicated_state == TicketConstants::TICKET_REPLICA[:first]
   end
 
-  def new_ticket?
+  def new_replicated_state?
     replicated_state == TicketConstants::TICKET_REPLICA[:last]
   end
 
@@ -145,9 +145,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     def sla_on?
-      if old_ticket? && status_sla_toggled_to_on?
+      if old_replicated_state? && status_sla_toggled_to_on?
         false
-      elsif old_ticket? && status_sla_toggled_to_off?
+      elsif old_replicated_state? && status_sla_toggled_to_off?
         true
       else
         !ticket_status.stop_sla_timer
