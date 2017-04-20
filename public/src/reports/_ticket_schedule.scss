@@ -5,8 +5,8 @@
 	.list-page-header{
 		margin-bottom: 0;
 		.title{
-			font-size: 14px;
-			font-weight: 500;
+			font-size: 13px;
+			font-weight: 600;
 		}
 	}
 	.ticket-schedule-list{
@@ -226,7 +226,7 @@
 		}
 	}
 	p{
-    line-height: 26px;
+    line-height: 18px;
     font-weight: 400;
     overflow: hidden;
     @include cursor(default);

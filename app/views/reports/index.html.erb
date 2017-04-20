@@ -3,12 +3,8 @@
   <div class="admin-header">
       <div class="report-head report">
           <div class="report-link-block pull-right">
-            <%if (current_account.auto_ticket_export_enabled? or current_account.ticket_activity_export_enabled?) and privilege?(:admin_tasks) %>
-              <% if current_account.ticket_activity_export_enabled? && privilege?(:manage_account) %>
-                <%= (link_to t('helpdesk_reports.ticket_schedule.schedule_properties_activities'), reports_scheduled_exports_path(), :id => "schedule_link", :class => 'schedule-link') %>
-              <% else %>
-                <%= (link_to t('helpdesk_reports.ticket_schedule.schedule_properties'), reports_scheduled_exports_path(), :id => "schedule_link", :class => 'schedule-link') %>
-              <% end %>
+            <%if (current_account.auto_ticket_export_enabled? or (current_account.ticket_activity_export_enabled? && privilege?(:manage_account))) and privilege?(:admin_tasks) %>
+                <%= (link_to t('helpdesk_reports.ticket_schedule.schedule_export'), reports_scheduled_exports_path(), :id => "schedule_link", :class => 'schedule-link') %>
             <% end %>
             <% if current_account.launched?(:onboarding_inlinemanual) %>
               <a href="#" rel="guided-inlinemanual" data-topic-id="13753"><%= t('helpdesk_reports.reports_in_action')%></a>

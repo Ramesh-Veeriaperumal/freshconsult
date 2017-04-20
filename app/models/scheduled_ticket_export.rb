@@ -171,23 +171,18 @@ class ScheduledTicketExport < ScheduledExport
     end
 
     def agent_tkt_permission
-      case user.agent.ticket_permission
-        when Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets]
+      if user.all_tickets_permission?
           []
-        when Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets]
-          [{"evaluate_on"=>"ticket", "name"=>"group_id", "operator"=>"in",
-            "value"=>[user.groups.pluck(:id)]}]
-        when Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets]
-          [{"evaluate_on"=>"ticket", "name"=>"responder_id", "operator"=>"in",
-            "value"=>user_id}]
+      elsif user.assigned_tickets_permission?
+          [agent_condition]
+      elsif user.group_tickets_permission?
+          [group_condition]
       end
     end
 
     def not_deleted_or_spam
-      [{"evaluate_on"=>"ticket", "name"=>"deleted", "operator"=>"is",
-            "value"=>"false"},
-        {"evaluate_on"=>"ticket", "name"=>"spam", "operator"=>"is",
-            "value"=>"false"}]
+      [{"name"=>"deleted", "operator"=>"is", "value"=>"false"},
+        {"name"=>"spam", "operator"=>"is", "value"=>"false"}]
     end
 
     def schedule_first_export
@@ -249,6 +244,41 @@ class ScheduledTicketExport < ScheduledExport
         f["value"].join(',')
       else
         f["value"].blank? ? NONE_VALUE : f["value"]
+      end
+    end
+
+    def agent_condition
+      if Account.current.shared_ownership_enabled?
+        {"type"=>"or", "operator"=>"is", 
+          "rules" => [
+            {"name"=>"responder_id", "value"=> user_id}, 
+            {"name"=>"internal_agent_id", "value"=> user_id}
+          ]
+        }
+      else
+        {"name"=>"responder_id", "operator"=>"is", "value"=>user_id}
+      end
+    end
+
+    def group_condition
+      group_ids = user.agent_groups.pluck(:group_id)
+      group_ids << '' if group_ids.blank?
+      if Account.current.shared_ownership_enabled?
+        {"type"=>"or", "operator"=>"is", 
+          "rules" => [
+            {"name"=>"responder_id", "value"=> user_id}, 
+            {"name"=>"group_id", "value" => group_ids},
+            {"name"=>"internal_agent_id", "value"=> user_id},
+            {"name"=>"internal_group_id", "value"=> group_ids}
+          ]
+        }
+      else
+        {"type"=>"or", "operator"=>"is", 
+          "rules" => [
+            {"name"=>"responder_id", "value"=> user_id}, 
+            {"name"=>"group_id", "value"=> group_ids}
+          ]
+        }
       end
     end
 end
