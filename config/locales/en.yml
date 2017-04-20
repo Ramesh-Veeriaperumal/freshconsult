@@ -10948,6 +10948,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     collab_first_mention_multi: "mentioned you in {{count}} messages on ticket %{object}"
     collab_group_mention: "mentioned your group - %{group_name} in a message on ticket %{object}"
     collab_group_mention_multi: "mentioned your group - %{group_name} in {{count}} messages on ticket %{object}"
+    collab_reply: "replied to your message on ticket %{object}"
+    collab_reply_multi: "replied to your message on ticket %{object}"
     types:
       private_note_created: "Private Note Created"
       public_note_created: "Public Note Added"
@@ -10959,6 +10961,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       collab_group_mention: :"Discussion"
       collab_group_mention_multi: "Discussion"
       collab_first_mention: "Discussion"
+      collab_reply: "Discussion"
+      collab_reply_multi: "Discussion"
       ticket_assigned_to_group: "Ticket Assigned to Group"
       ticket_created: "New Ticket"
     preferences_text:
