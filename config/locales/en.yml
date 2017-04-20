@@ -2781,6 +2781,7 @@ en:
       limit_exceeded: You've exceeded the limit for performing this action. Please try again.
       access_denied: You are not allowed to access this page!
       need_login: You must be logged in to access this page
+      portal_blocked: "Portal is currently not accessible"
       recipient_limit_exceeded: You can include a maximum of %{limit} email recipients per ticket during your trial period
       outbound_limit_per_day_exceeded: You can send a maximum of 5 outbound emails a day per account during the trial period
       insufficient_privilege:
@@ -2840,6 +2841,7 @@ en:
   import_zendesk_title: Import from zendesk
   closed: Closed
   suspended_plan_info: Your account has been suspended.
+  suspended_account_info: "Your account has been suspended and the customer portal will not be accessible."
   plan_info_update: Your plan has been changed.
   note: "Note: "
   warning: WARNING
@@ -3292,6 +3294,7 @@ en:
   medium: "Medium"
   suspended_plan_admin_info: Your account has been suspended please contact your account administrator (%{email})
   suspended_plan_admin_info_new: Your account has been suspended please contact your account administrator
+  suspended_account_admin_info: "Your account has been suspended and the customer portal will not be accessible. Please contact your account administrator."
   delete_confirm_scenario: Are you sure you want to delete this scenario?
   days: Days
   basic_brief: For Small teams
