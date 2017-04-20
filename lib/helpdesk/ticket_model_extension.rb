@@ -17,7 +17,8 @@ module Helpdesk::TicketModelExtension
     [ "export_data.fields.agent_interactions",    "outbound_count",          false, :ticket_states    , 24    , nil], 
     [ "export_data.fields.customer_interactions", "inbound_count",           false, :ticket_states    , 25    , nil],
     [ "export_data.fields.tags",                  "ticket_tags",             false, :tags             , 28    , nil], 
-    [ "export_data.fields.survey_result",         "ticket_survey_results",   false, :survey_results   , 29    , "any_survey_feature_enabled?"]
+    [ "export_data.fields.survey_result",         "ticket_survey_results",   false, :survey_results   , 29    , "any_survey_feature_enabled?"],
+    [ "export_data.fields.skill",                 "skill_name",              false,  nil              , 30    , "skill_based_round_robin_enabled?"]
   ]
 
   # Requester and customer fields will be removed once the required UI changes are done
