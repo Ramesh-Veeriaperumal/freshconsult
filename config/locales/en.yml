@@ -90,8 +90,8 @@ en:
     dropped:
       summary_error_text: "Message dropped - Invalid or problematic address"
       help_text:
-        admin: "Any message sent to this address will not be delivered as the address you've entered is invalid or mistyped. Please contact Freshdesk support if you believe that this address is valid and should be removed from the drop list for future communication."
-        agent: "Any message sent to this address will not be delivered as the address you've entered is invalid or mistyped. Please contact your account administrator if you believe that this address is valid and should be removed from the drop list for future communication."
+        admin: "Any message sent to this address will not be delivered as the address is invalid or mistyped. Please contact Freshdesk support if you believe that this address is valid and should be removed from the drop list for future communication."
+        agent: "Any message sent to this address will not be delivered as the address is invalid or mistyped. Please contact your account administrator if you believe that this address is valid and should be removed from the drop list for future communication."
     dropped_unsubscribed:
       summary_error_text: "Message dropped - Unsubscribed address"
       help_text:
@@ -102,7 +102,7 @@ en:
       help_text: "The message did not reach this recipient after multiple attempts. This could be due to connection issues with the remote server or temporary problems like the mailbox being full. Please retry sending the message after some time."
     bounce_permanent:
       summary_error_text: "Message bounced - Permanent error"
-      help_text: "The message did not reach this recipient even after multiple attempts. You can try resending the message, but it's likely that the address you've entered may be invalid or mistyped."
+      help_text: "The message did not reach this recipient even after multiple attempts. You can try resending the message, but it's likely that the address may be invalid or mistyped."
     suppression_list_alert:
       subject: "Request to remove address from drop list"
       company: "Company"
