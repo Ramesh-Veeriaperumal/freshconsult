@@ -57,6 +57,7 @@ module Helpdesk::TicketModelExtension
     exportable_fields = Helpdesk::TicketModelExtension.allowed_fields
     fields = Hash[*exportable_fields.map { |i| [i[1], i[4]] }.flatten ]
     fields["description"]   = 3
+    fields["product_name"]  = fields.keys.length+1
     fields
   end
 
