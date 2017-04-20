@@ -16,6 +16,7 @@
       - :custom_ticket_views
       - :supervisor
       - :create_observer
+      - :system_observer_events
       - :sla_management
       - :email_commands
       - :assume_identity
@@ -53,7 +54,9 @@
       - :chat
       - :ticket_templates
       - :custom_survey
-    :inherits: 
+      - :parent_child_tickets_toggle
+      - :link_tickets_toggle
+    :inherits:
       - :blossom_jan_17
     :exclude: []
   :estate_jan_17:

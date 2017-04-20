@@ -11,7 +11,10 @@ class Account < ActiveRecord::Base
 
   after_update :update_freshfone_voice_url, :if => :freshfone_enabled?
   after_update :update_livechat_url_time_zone, :if => :freshchat_enabled?
+  after_update :update_activity_export, :if => :ticket_activity_export_enabled?
 
+  before_save :sync_name_helpdesk_name
+  
   after_destroy :remove_global_shard_mapping, :remove_from_slave_queries
   after_destroy :remove_shard_mapping, :destroy_route_info
 
@@ -71,6 +74,10 @@ class Account < ActiveRecord::Base
     #self.launch(:disable_old_sso)
   end
 
+  def update_activity_export
+    ScheduledExport::ActivitiesExport.perform_async if time_zone_changed? && activity_export_from_cache.try(:active)
+  end
+
   protected
 
     def set_default_values
@@ -95,6 +102,11 @@ class Account < ActiveRecord::Base
     end
 
   private
+
+    def sync_name_helpdesk_name
+      self.name = self.helpdesk_name if helpdesk_name_changed?
+      self.helpdesk_name = self.name if name_changed?
+    end
 
     def add_to_billing
       Billing::AddSubscriptionToChargebee.perform_async
@@ -274,7 +286,13 @@ class Account < ActiveRecord::Base
     end
 
     def enable_count_es
-      CountES::IndexOperations::EnableCountES.perform_async({ :account_id => self.id }) if Account.current.features?(:countv2_writes)
+      if redis_key_exists?(DASHBOARD_FEATURE_ENABLED_KEY)
+        count = Search::Dashboard::Count.new(nil, id, nil)
+        count.index_new_account_dashboard_shard
+        key = ACCOUNT_DASHBOARD_SHARD_NAME % { :account_id => self.id }
+        MemcacheKeys.fetch(key) { ActiveRecord::Base.current_shard_selection.shard.to_s }
+        CountES::IndexOperations::EnableCountES.perform_async({ :account_id => self.id }) 
+      end
     end
 
     def disable_searchv2
@@ -282,7 +300,12 @@ class Account < ActiveRecord::Base
     end
 
     def disable_count_es
-      CountES::IndexOperations::DisableCountES.perform_async({ :account_id => self.id, :shard_name => ActiveRecord::Base.current_shard_selection.shard })
+      if redis_key_exists?(DASHBOARD_FEATURE_ENABLED_KEY)
+       [:admin_dashboard, :agent_dashboard, :supervisor_dashboard].each do |f|
+          self.rollback(f)
+        end
+      end
+      #CountES::IndexOperations::DisableCountES.perform_async({ :account_id => self.id, :shard_name => ActiveRecord::Base.current_shard_selection.shard }) unless dashboard_new_alias?
     end
 
     def update_sendgrid

@@ -23,4 +23,19 @@ namespace :sidekiq_scheduler do
       sleep 30
     end  
   end
+  task :enqueue_sidekiq_retries => :environment do
+    loop do 
+      puts "Looping for retries....."
+      enq = Sidekiq::Scheduled::Enq.new
+      begin
+      enq.enqueue_jobs(Time.now.to_f.to_s, ["retry"])
+      rescue => ex
+      # Most likely a problem with redis networking.
+      # Punt and try again at the next interval
+      puts ex.message
+      puts ex.backtrace.first
+      end
+      sleep 30
+    end  
+  end
 end

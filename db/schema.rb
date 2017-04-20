@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170214042612) do
+ActiveRecord::Schema.define(:version => 20170411034444) do
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -37,6 +37,7 @@ ActiveRecord::Schema.define(:version => 20170214042612) do
     t.text     "billing_emails"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "company_info"
   end
 
   add_index "account_configurations", ["account_id"], :name => "index_for_account_configurations_on_account_id"
@@ -2878,6 +2879,22 @@ ActiveRecord::Schema.define(:version => 20170214042612) do
 
   add_index "schedule_configurations", ["account_id", "scheduled_task_id"], :name => "index_schedule_configuration_on_account_id_and_scheduled_task_id"
 
+  create_table "scheduled_exports", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "user_id"
+    t.text     "filter_data"
+    t.text     "fields_data"
+    t.text     "schedule_details"
+    t.integer  "account_id"
+    t.string   "latest_file"
+    t.integer  "schedule_type",    :limit => 2
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
+  end
+
+  add_index "scheduled_exports", ["account_id"], :name => "index_scheduled_exports_on_account_id"
+
   create_table "scoreboard_levels", :force => true do |t|
     t.integer  "account_id", :limit => 8
     t.integer  "points"
@@ -4084,5 +4101,20 @@ ActiveRecord::Schema.define(:version => 20170214042612) do
   end           
   
   add_index :dkim_category_change_activities, [:account_id, :outgoing_email_domain_category_id, :changed_on], 
-            :name => 'index_dkim_activities_on_account_email_domain_changed_on'         
+            :name => 'index_dkim_activities_on_account_email_domain_changed_on'
+
+  create_table :scheduled_exports do |t|
+    t.string  :name
+    t.text    :description
+    t.column  :user_id, "bigint unsigned"
+    t.text    :filter_data
+    t.text    :fields_data
+    t.text    :schedule_details
+    t.column  :account_id, "bigint unsigned", :null => false 
+    t.string  :latest_file
+    t.integer :schedule_type, :limit => 2
+    t.boolean :active, :default => false
+    t.timestamps
+  end
+  add_index :scheduled_exports, :account_id, :name => "index_scheduled_exports_on_account_id"
 end

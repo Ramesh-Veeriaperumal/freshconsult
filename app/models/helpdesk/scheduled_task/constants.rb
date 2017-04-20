@@ -33,9 +33,19 @@ class Helpdesk::ScheduledTask < ActiveRecord::Base
                           }
   STATUS_TOKEN_TO_NAME = STATUS_NAME_TO_TOKEN.invert
 
-  SCHEDULABLE_ALIAS = { 'Helpdesk::ReportFilter' => :scheduled_report, 'Reports::BuildNoActivity' => :build_no_activity }
+  SCHEDULABLE_ALIAS = { 
+    'Helpdesk::ReportFilter' => :scheduled_report, 
+    'Reports::BuildNoActivity' => :build_no_activity,
+    'Wf::Filter' => :ticket_schedule,
+    'ScheduledExport' => :ticket_dump
+  }
 
-  SCHEDULABLE_WORKER = { :scheduled_report => 'Reports::ScheduledReports'.constantize, :build_no_activity => 'Reports::BuildNoActivity'.constantize }
+  SCHEDULABLE_WORKER = { 
+    :scheduled_report => 'Reports::ScheduledReports'.constantize, 
+    :build_no_activity => 'Reports::BuildNoActivity'.constantize,
+    :ticket_schedule => 'Tickets::Schedule'.constantize,
+    :ticket_dump => 'Tickets::Dump'.constantize
+  }
 
   INACTIVE_STATUS = [ STATUS_NAME_TO_TOKEN[:disabled], STATUS_NAME_TO_TOKEN[:expired] ]
 

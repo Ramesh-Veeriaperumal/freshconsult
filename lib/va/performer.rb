@@ -1,34 +1,41 @@
 class Va::Performer
 
-	attr_accessor :type, :members
+  attr_accessor :type, :members
 
-	AGENT = '1'
-	CUSTOMER = '2'
-	ANYONE = '3'
-	ASSIGNED_AGENT = -1
-	TYPE_CHECK = { ANYONE => 'present?', CUSTOMER => 'customer_performed?', AGENT => 'agent_performed?' }
+  AGENT          = '1'
+  CUSTOMER       = '2'
+  ANYONE         = '3'
+  SYSTEM         = '4'
+  ASSIGNED_AGENT = -1
 
-	def initialize args
-		@type    = args[:type]
-		@members = args[:members].map(&:to_i) if args[:members]
-	end
+  TYPE_CHECK = {
+    AGENT     => {:doer_check => 'agent_performed?', :translation_key => "agent"},
+    CUSTOMER  => {:doer_check => 'customer_performed?', :translation_key => "customer"},
+    ANYONE    => {:doer_check => 'present?', :translation_key => "new_anyone"},
+    SYSTEM    => {:doer_check => 'nil?', :translation_key =>  "system"}
+  }
 
-	def matches? doer, ticket
-		Rails.logger.debug "INSIDE Performer.matches? WITH ticket : #{ticket.inspect}, doer #{doer}"
-		return false unless check_type doer, ticket
-		members.nil? ? true : (check_members doer, ticket)
-	end
+  def initialize args
+    @type    = args[:type]
+    @members = args[:members].map(&:to_i) if args[:members]
+  end
+
+  def matches? doer, ticket
+    Rails.logger.debug "performer_matches :: T=#{ticket.id} :: D=#{doer.try(:id)}"
+    return false unless check_type doer, ticket
+    members.nil? ? true : (check_members doer, ticket)
+  end
 
   private
 
-  	def check_type doer, ticket
-			return doer.send TYPE_CHECK[type] if type == ANYONE
-	    ticket.send TYPE_CHECK[type], doer
-	  end
+    def check_type doer, ticket
+      return doer.send TYPE_CHECK[type][:doer_check] if type == ANYONE || type == SYSTEM
+      ticket.send TYPE_CHECK[type][:doer_check], doer
+    end
 
-	  def check_members doer, ticket
-	  	return true if ((members.include? ASSIGNED_AGENT) && doer == ticket.responder)
-	    members.include? doer.id
-	  end
+    def check_members doer, ticket
+      return true if ((members.include? ASSIGNED_AGENT) && doer == ticket.responder)
+      members.include? doer.id
+    end
 
 end

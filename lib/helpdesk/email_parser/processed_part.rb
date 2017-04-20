@@ -221,7 +221,7 @@ class Helpdesk::EmailParser::ProcessedPart
 			html_content << "From:" + processed_mail.from + "\r\n"
 			html_content << "To:" + processed_mail.to + "\r\n"
 			html_content << "CC:" + processed_mail.cc + "\r\n"
-			html_content << "Date:" + processed_mail.date + "\r\n"
+			html_content << "Date:" + processed_mail.date.to_s + "\r\n"
 			html_content << "Subject:" + processed_mail.subject + "\r\n \r\n"
 			self.html << text_to_html(html_content)
 			self.html << processed_mail.html if processed_mail.html.present?

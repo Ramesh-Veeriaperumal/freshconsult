@@ -8,10 +8,10 @@ module RabbitMq::Subscribers::Tickets::Activities
 
   PROPERTIES_TO_CONSIDER      = [:requester_id, :responder_id, :group_id, :priority, :ticket_type, :subject,
                                  :source, :status, :product_id, :spam, :deleted, :parent_ticket, :due_by,
-                                 :int_tc03, :internal_group_id, :internal_agent_id]
-  PROPERTIES_TO_CONVERT       = [:group_id, :product_id, :status, :int_tc03, :internal_group_id]
+                                 :association_type, :internal_group_id, :internal_agent_id, :sl_skill_id]
+  PROPERTIES_TO_CONVERT       = [:group_id, :product_id, :status, :association_type, :internal_group_id, :sl_skill_id]
   PROPERTIES_AS_ARRAY         = [:add_tag, :add_watcher, :rule, :add_a_cc, :add_comment, :email_to_requester,
-                                 :email_to_group, :email_to_agent, :int_tc03]
+                                 :email_to_group, :email_to_agent, :association_type]
   PROPERTIES_RENAME_MAP       = {}
   SHARED_OWNERSHIP_PROPERTIES = [:internal_group_id, :internal_agent_id]
 
@@ -89,6 +89,15 @@ module RabbitMq::Subscribers::Tickets::Activities
 
   private
 
+  def activity_sl_skill_id(value)
+    if is_num?(value[1])
+      skill_name = Account.current.skills_from_cache.find {|skill| skill.id == value[1].to_i}.try(:name)
+      return false if !skill_name
+      value[1] = skill_name
+    end
+    {:skill_name => add_dont_care(value)}
+  end
+
   def fetch_group_name(value)
     if is_num?(value[1])
       group = Account.current.groups_from_cache.find{|x| x.id == value[1].to_i}
@@ -131,7 +140,7 @@ module RabbitMq::Subscribers::Tickets::Activities
     {:status => value}
   end
 
-  def activity_int_tc03(value)
+  def activity_association_type(value)
     v = value.compact
     case v[0]
     when 1 # assoc parent tkt

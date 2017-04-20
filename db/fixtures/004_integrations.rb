@@ -6,10 +6,10 @@ if Integrations::Application.count == 0
     s.description = "integrations.capsule.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 1
-    s.options = { :keys_order => [:title,:domain,:api_key,:bcc_drop_box_mail], 
+    s.options = { :keys_order => [:title,:domain,:api_key,:bcc_drop_box_mail],
     :title => { :type => :text, :required => true, :label => "integrations.capsule.form.widget_title", :default_value => "Capsule CRM"},
-    :domain => { :type => :text, :required => true, :label => "integrations.capsule.form.domain", :info => "integrations.capsule.form.domain_info", :rel => "ghostwriter", :autofill_text => ".capsulecrm.com", :validator_type => "domain_validator" }, 
-    :api_key => { :type => :text, :required => true, :label => "integrations.capsule.form.api_key", :info => "integrations.capsule.form.api_key_info" }, 
+    :domain => { :type => :text, :required => true, :label => "integrations.capsule.form.domain", :info => "integrations.capsule.form.domain_info", :rel => "ghostwriter", :autofill_text => ".capsulecrm.com", :validator_type => "domain_validator" },
+    :api_key => { :type => :text, :required => true, :label => "integrations.capsule.form.api_key", :info => "integrations.capsule.form.api_key_info" },
     :bcc_drop_box_mail => { :type => :multiemail, :required => false, :label => "integrations.capsule.form.bcc_drop_box_mail", :info => "integrations.capsule.form.bcc_drop_box_mail_info" }}
     s.application_type = "capsule_crm"
   end
@@ -25,14 +25,14 @@ if Integrations::Application.count == 0
   # Populate freshbooks
   freshbooks_app = Integrations::Application.seed(:name) do |s|
     s.name = "freshbooks"
-    s.display_name = "integrations.freshbooks.label"  
+    s.display_name = "integrations.freshbooks.label"
     s.description = "integrations.freshbooks.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 2
     s.options = {
-        :keys_order => [:title, :api_url, :api_key, :settings], 
+        :keys_order => [:title, :api_url, :api_key, :settings],
         :title => { :type => :text, :required => true, :label => "integrations.freshbooks.form.widget_title", :default_value => "Freshbooks"},
-        :api_url => { :type => :text, :required => true, :label => "integrations.freshbooks.form.api_url", :info => "integrations.freshbooks.form.api_url_info", :validator_type => "url_validator" }, 
+        :api_url => { :type => :text, :required => true, :label => "integrations.freshbooks.form.api_url", :info => "integrations.freshbooks.form.api_url_info", :validator_type => "url_validator" },
         :api_key => { :type => :text, :required => true, :label => "integrations.freshbooks.form.api_key", :info => "integrations.freshbooks.form.api_key_info" },
         :settings => { :type => :custom, :required => false, :label => "integrations.google_contacts.form.account_settings", :partial => "/integrations/applications/invoice_timeactivity_settings" }
     }
@@ -57,15 +57,15 @@ if Integrations::Application.count == 0
   # Populate harvest
   harvest_app = Integrations::Application.seed(:name) do |s|
     s.name = "harvest"
-    s.display_name = "integrations.harvest.label"  
+    s.display_name = "integrations.harvest.label"
     s.description = "integrations.harvest.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 3
     s.options = {
-        :keys_order => [:title, :domain, :harvest_note], 
+        :keys_order => [:title, :domain, :harvest_note],
         :title => { :type => :text, :required => true, :label => "integrations.harvest.form.widget_title", :default_value => "Harvest"},
-        :domain => { :type => :text, :required => true, :label => "integrations.harvest.form.domain", :info => "integrations.harvest.form.domain_info", :rel=> "ghostwriter", :autofill_text => ".harvestapp.com", :validator_type => "domain_validator" }, 
-        :harvest_note => { :type => :text, :required => false, :label => "integrations.harvest.form.harvest_note", 
+        :domain => { :type => :text, :required => true, :label => "integrations.harvest.form.domain", :info => "integrations.harvest.form.domain_info", :rel=> "ghostwriter", :autofill_text => ".harvestapp.com", :validator_type => "domain_validator" },
+        :harvest_note => { :type => :text, :required => false, :label => "integrations.harvest.form.harvest_note",
                             :info => "integrations.harvest.form.harvest_note_info", :default_value => 'Freshdesk Ticket # {{ticket.id}}' },
         :install => {:require_feature => {:notice => 'integrations.no_timesheet_feature', :feature_name => :timesheets}},
         :edit => {:require_feature => {:notice => 'integrations.no_timesheet_feature', :feature_name => :timesheets}}
@@ -91,15 +91,15 @@ if Integrations::Application.count == 0
   # Populate Google contacts
   google_contacts_app = Integrations::Application.seed(:name) do |s|
     s.name = "google_contacts"  # Do not change the name.
-    s.display_name = "integrations.google_contacts.label" 
+    s.display_name = "integrations.google_contacts.label"
     s.description = "integrations.google_contacts.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 4
-    s.options = { 
-                  :keys_order => [:account_settings], 
-                  :account_settings => {:type => :custom, 
-                      :partial => "/integrations/applications/google_accounts", 
-                      :required => false, :label => "integrations.google_contacts.form.account_settings", 
+    s.options = {
+                  :keys_order => [:account_settings],
+                  :account_settings => {:type => :custom,
+                      :partial => "/integrations/applications/google_accounts",
+                      :required => false, :label => "integrations.google_contacts.form.account_settings",
                       :info => "integrations.google_contacts.form.account_settings_info" },
                   :oauth_url => "/auth/google_contacts?origin=id%3D{{account_id}}%26app_name%3Dgoogle_contacts%26portal_id%3D{{portal_id}}"
                  }
@@ -109,24 +109,24 @@ if Integrations::Application.count == 0
   # Populate JIRA
   jira_app = Integrations::Application.seed(:name) do |s|
     s.name = "jira"  # Do not change the name.
-    s.display_name = "integrations.jira.label" 
+    s.display_name = "integrations.jira.label"
     s.description = "integrations.jira.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 5
     s.options = {
-                  :keys_order => [:title, :domain, :username, :password, :jira_note, :sync_settings], 
+                  :keys_order => [:title, :domain, :username, :password, :jira_note, :sync_settings],
                   :title => { :type => :text, :required => true, :label => "integrations.jira.form.widget_title", :default_value => "Atlassian Jira"},
-                  :domain => { :type => :text, :required => true, :label => "integrations.jira.form.domain", :info => "integrations.jira.form.domain_info", :validator_type => "url_validator" }, 
-                  :jira_note => { :type => :text, :required => false, :label => "integrations.jira.form.jira_note", 
+                  :domain => { :type => :text, :required => true, :label => "integrations.jira.form.domain", :info => "integrations.jira.form.domain_info", :validator_type => "url_validator" },
+                  :jira_note => { :type => :text, :required => false, :label => "integrations.jira.form.jira_note",
                                       :info => "integrations.jira.form.jira_note_info", :default_value => 'Freshdesk Ticket # {{ticket.id}} - {{ticket.description_html}}', :css_class => "hide" },
                   :username => { :type => :text, :required => true, :label => "integrations.jira.form.username" },
                   :password => { :type => :password, :label => "integrations.jira.form.password" },
                   :sync_settings => { :type => :custom, :required => false, :partial => "/integrations/applications/jira_sync_settings",
                                       :info => "integrations.google_contacts.form.account_settings_info", :label => "integrations.google_contacts.form.account_settings"},
                   :after_save => { :method => "install_jira_biz_rules", :clazz => "Integrations::JiraUtil" },
-                  :after_destroy => { :method => "uninstall_jira_biz_rules", :clazz => "Integrations::JiraUtil"} 
+                  :after_destroy => { :method => "uninstall_jira_biz_rules", :clazz => "Integrations::JiraUtil"}
                 }
-    s.application_type = "jira"            
+    s.application_type = "jira"
   end
 
   Integrations::Widget.seed(:application_id, :name) do |s|
@@ -177,24 +177,24 @@ if Integrations::Application.count == 0
   comment_add_jira_biz_rule = Integrations::AppBusinessRule.seed do |s|
     s.application = jira_app
     s.va_rule = comment_add_biz_rule
-  end  
+  end
 
   #Google Analytics
 
   google_analytics_app = Integrations::Application.seed(:name) do |s|
     s.name = "google_analytics"  # Do not change the name.
-    s.display_name = "integrations.google_analytics.label" 
+    s.display_name = "integrations.google_analytics.label"
     s.description = "integrations.google_analytics.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 6
-    s.options = { 
-                  :keys_order => [:google_analytics_settings], 
-                  :google_analytics_settings => {:type => :custom, 
-                      :partial => "/integrations/applications/google_analytics", 
-                      :required => false, :label => "integrations.google_analytics.form.google_analytics_settings", 
+    s.options = {
+                  :keys_order => [:google_analytics_settings],
+                  :google_analytics_settings => {:type => :custom,
+                      :partial => "/integrations/applications/google_analytics",
+                      :required => false, :label => "integrations.google_analytics.form.google_analytics_settings",
                       :info => "integrations.google_analytics.form.google_analytics_settings_info" }
                 }
-    s.application_type = "google_analytics"            
+    s.application_type = "google_analytics"
   end
 
   #Sugar CRM
@@ -202,15 +202,15 @@ if Integrations::Application.count == 0
   sugarcrm_app = Integrations::Application.seed(:name) do |s|
     s.name = "sugarcrm"
     s.display_name = "integrations.sugarcrm.label"
-    s.description = "integrations.sugarcrm.desc" 
+    s.description = "integrations.sugarcrm.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 7
     s.options = {:direct_install => true,
                  :auth_url => "/integrations/sugarcrm/settings",
                  :edit_url => "/integrations/sugarcrm/edit",
-                 :default_fields => { :account => ["Name:"], 
+                 :default_fields => { :account => ["Name:"],
                                       :contact => ["Name:"],
-                                      :lead => ["Name:"]  
+                                      :lead => ["Name:"]
                                     }
                }
     s.application_type = "sugarcrm"
@@ -234,21 +234,21 @@ if Integrations::Application.count == 0
   # Populate Workflow MAX
   wfmax_app = Integrations::Application.seed(:name) do |s|
     s.name = "workflow_max"  # Do not change the name.
-    s.display_name = "integrations.workflow_max.label" 
+    s.display_name = "integrations.workflow_max.label"
     s.description = "integrations.workflow_max.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 8
     s.options = {
-                  :keys_order => [:title, :api_key, :account_key, :workflow_max_note], 
+                  :keys_order => [:title, :api_key, :account_key, :workflow_max_note],
                   :title => { :type => :text, :required => true, :label => "integrations.workflow_max.form.widget_title", :default_value => "Workflow MAX"},
                   :api_key => { :type => :text, :required => true, :label => "integrations.workflow_max.form.api_key", :info => "integrations.workflow_max.form.api_key_info" },
                   :account_key => { :type => :text, :required => true, :label => "integrations.workflow_max.form.account_key", :info => "integrations.workflow_max.form.account_key_info" },
-                  :workflow_max_note => { :type => :text, :required => false, :label => "integrations.workflow_max.form.workflow_max_note", 
+                  :workflow_max_note => { :type => :text, :required => false, :label => "integrations.workflow_max.form.workflow_max_note",
                                       :info => "integrations.workflow_max.form.workflow_max_note_info", :default_value => 'Freshdesk Ticket # {{ticket.id}}' },
                   :install => {:require_feature => {:notice => 'integrations.no_timesheet_feature', :feature_name => :timesheets}},
                   :edit => {:require_feature => {:notice => 'integrations.no_timesheet_feature', :feature_name => :timesheets}}
                 }
-    s.application_type = "workflow_max"            
+    s.application_type = "workflow_max"
   end
 
   Integrations::Widget.seed(:application_id, :name) do |s|
@@ -269,10 +269,10 @@ if Integrations::Application.count == 0
   salesforce_app = Integrations::Application.seed(:name) do |s|
     s.name = "salesforce"
     s.display_name = "integrations.salesforce.label"
-    s.description = "integrations.salesforce.desc" 
+    s.description = "integrations.salesforce.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 9
-    s.options = {:direct_install => true, :oauth_url => "/auth/salesforce?origin=id%3D{{account_id}}", 
+    s.options = {:direct_install => true, :oauth_url => "/auth/salesforce?origin=id%3D{{account_id}}",
       :edit_url => "/integrations/salesforce/edit"}
     s.application_type = "salesforce"
   end
@@ -297,11 +297,11 @@ if Integrations::Application.count == 0
   logmein_app = Integrations::Application.seed(:name) do |s|
     s.name = "logmein"
     s.display_name = "integrations.logmein.label"
-    s.description = "integrations.logmein.desc" 
+    s.description = "integrations.logmein.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 10
     s.options = {
-      :keys_order => [:title, :company_id, :password], 
+      :keys_order => [:title, :company_id, :password],
       :title => { :type => :text, :required => true, :label => "integrations.logmein.form.widget_title", :default_value => "LogMeIn Rescue"},
       :company_id => { :type => :text, :required => true, :label => "integrations.logmein.form.company_id", :info => "integrations.logmein.form.logmein_company_info" },
       :password => { :type => :password, :label => "integrations.logmein.form.password", :info => "integrations.logmein.form.logmein_sso_pwd_info" }
@@ -324,16 +324,16 @@ if Integrations::Application.count == 0
       </script>}
     s.application_id = logmein_app.id
   end
-  
+
   # Batchbook
   batchbook_app = Integrations::Application.seed(:name) do |s|
-      s.name = "batchbook" 
+      s.name = "batchbook"
       s.display_name = "integrations.batchbook.label"
-      s.description = "integrations.batchbook.desc" 
+      s.description = "integrations.batchbook.desc"
       s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
       s.listing_order = 11
       s.options =  {
-          :keys_order => [:domain, :api_key, :version], 
+          :keys_order => [:domain, :api_key, :version],
           :domain => {  :type => :text,
                   :required => true,
                   :label => "integrations.batchbook.form.domain",
@@ -341,7 +341,7 @@ if Integrations::Application.count == 0
                   :rel => "ghostwriter",
                   :autofill_text => ".batchbook.com",
                   :validator_type => "domain_validator"
-                }, 
+                },
           :api_key => { :type => :text, :required => true, :label => "integrations.batchbook.form.api_key" },
           :version => { :type => :dropdown,
                         :choices => [
@@ -364,7 +364,7 @@ if Integrations::Application.count == 0
   Integrations::Widget.seed(:application_id, :name) do |s|
     s.name = "batchbook_widget"
     s.description = "batchbook.widgets.batchbook_widget.description"
-    s.script = %(      
+    s.script = %(
       <div id="batchbook_widget"  class="integration_widget crm_contact_widget">
         <div class="content"></div>
       </div>
@@ -382,12 +382,12 @@ if Integrations::Application.count == 0
   # Highrise CRM
   highrise_app = Integrations::Application.seed(:name) do |s|
     s.name = 'highrise'
-    s.display_name = "integrations.highrise.label"  
+    s.display_name = "integrations.highrise.label"
     s.description = "integrations.highrise.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 12
     s.options = {
-        :keys_order => [:domain, :api_key], 
+        :keys_order => [:domain, :api_key],
         :domain => {  :type => :text,
                 :required => true,
                 :label => "integrations.highrise.form.domain",
@@ -396,7 +396,7 @@ if Integrations::Application.count == 0
                 :rel => "ghostwriter",
                 :autofill_text => ".highrisehq.com",
                 :validator_type => "domain_validator"
-              }, 
+              },
         :api_key => { :type => :text, :required => true, :label => "integrations.highrise.form.api_key" },
     }
     s.application_type = 'highrise'
@@ -407,7 +407,7 @@ if Integrations::Application.count == 0
   mailchimp_app = Integrations::Application.seed(:name) do |s|
     s.name = "mailchimp"
     s.display_name = "integrations.mailchimp.label"
-    s.description = "integrations.mailchimp.desc" 
+    s.description = "integrations.mailchimp.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 13
     s.options = {:direct_install => true, :oauth_url => "/auth/mailchimp?origin=id%3D{{account_id}}"}
@@ -435,11 +435,11 @@ if Integrations::Application.count == 0
   campaignmonitor_app = Integrations::Application.seed(:name) do |s|
     s.name = "campaignmonitor"
     s.display_name = "integrations.campaignmonitor.label"
-    s.description = "integrations.campaignmonitor.desc" 
+    s.description = "integrations.campaignmonitor.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 14
     s.options = {
-        :keys_order => [:api_key, :client_id], 
+        :keys_order => [:api_key, :client_id],
         :api_key => { :type => :text, :required => true, :label => "integrations.campaignmonitor.form.api_key", :info => "integrations.campaignmonitor.form.api_key_info" },
         :client_id => { :type => :text, :required => true, :label => "integrations.campaignmonitor.form.client_id", :info => "integrations.campaignmonitor.form.client_id_info" }
     }
@@ -467,12 +467,12 @@ if Integrations::Application.count == 0
   icontact_app = Integrations::Application.seed(:name) do |s|
     s.name = "icontact"
     s.display_name = "integrations.icontact.label"
-    s.description = "integrations.icontact.desc" 
+    s.description = "integrations.icontact.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 15
     s.options = {
-        :keys_order => [:api_url, :username, :password], 
-        :api_url => { :type => :text, :required => true, :label => "integrations.icontact.form.api_url", :info => "integrations.icontact.form.api_url_info", :validator_type => "url_validator" }, 
+        :keys_order => [:api_url, :username, :password],
+        :api_url => { :type => :text, :required => true, :label => "integrations.icontact.form.api_url", :info => "integrations.icontact.form.api_url_info", :validator_type => "url_validator" },
         :username => { :type => :text, :required => true, :label => "integrations.icontact.form.username" },
         :password => { :type => :password, :label => "integrations.icontact.form.api_password" }
     }
@@ -500,7 +500,7 @@ if Integrations::Application.count == 0
   constantcontact_app = Integrations::Application.seed(:name) do |s|
     s.name = "constantcontact"
     s.display_name = "integrations.constantcontact.label"
-    s.description = "integrations.constantcontact.desc" 
+    s.description = "integrations.constantcontact.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 16
     s.options = {:direct_install => true, :oauth_url => "/auth/constantcontact?origin=id%3D{{account_id}}"}
@@ -537,12 +537,12 @@ if Integrations::Application.count == 0
   # Zoho CRM
   zoho_app =  Integrations::Application.seed(:name) do |s|
     s.name = 'zohocrm'
-    s.display_name = "integrations.zohocrm.label"  
+    s.display_name = "integrations.zohocrm.label"
     s.description = "integrations.zohocrm.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 18
     s.options = {
-        :keys_order => [:api_key], 
+        :keys_order => [:api_key],
         :api_key => { :type => :text, :required => true, :label => "integrations.zohocrm.form.api_key", :info => "integrations.zohocrm.form.api_key_info"}
     }
     s.application_type = 'zohocrm'
@@ -551,7 +551,7 @@ if Integrations::Application.count == 0
   # Google Calendar
   googlecalendar_app = Integrations::Application.seed(:name) do |s|
     s.name = "google_calendar"
-    s.display_name = "integrations.google_calendar.label"  
+    s.display_name = "integrations.google_calendar.label"
     s.description = "integrations.google_calendar.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.options = {
@@ -585,7 +585,7 @@ if Integrations::Application.count == 0
             <a href="{{installed_app.oauth_url}}" id="gcal-change-account-link" class="hide">Change</a>
           </div>
           <div class="gcal-content-body">
-            <div id="gcal-older-events-link-container" class="hide"><span class="arrow-right" id="gcal-older-events-arrow"></span><a id="gcal-older-events-link" href="#older_events">Older Events</a></div> 
+            <div id="gcal-older-events-link-container" class="hide"><span class="arrow-right" id="gcal-older-events-arrow"></span><a id="gcal-older-events-link" href="#older_events">Older Events</a></div>
             <div id="google_calendar_events_container"></div>
           </div>
         </div>
@@ -621,14 +621,14 @@ if Integrations::Application.count == 0
   surveymonkey_app = Integrations::Application.seed(:name) do |s|
     s.name = "surveymonkey"
     s.display_name = "integrations.surveymonkey.label"
-    s.description = "integrations.surveymonkey.desc" 
+    s.description = "integrations.surveymonkey.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 21
     s.application_type = 'surveymonkey'
     s.options = {
-        :keys_order => [:settings], 
+        :keys_order => [:settings],
         :direct_install => true,
-        :settings => { 
+        :settings => {
           :partial => 'integrations/surveymonkey/edit',
           :type => :custom,
           :required => false,
@@ -656,7 +656,7 @@ if Integrations::Application.count == 0
   #populate pivotal tracker
   pivotal_tracker = Integrations::Application.seed(:name) do |s|
     s.name = "pivotal_tracker"
-    s.display_name = "integrations.pivotal_tracker.label"  
+    s.display_name = "integrations.pivotal_tracker.label"
     s.description = "integrations.pivotal_tracker.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 23
@@ -670,7 +670,7 @@ if Integrations::Application.count == 0
   #populate shopify
   shopify_app = Integrations::Application.seed(:name) do |s|
     s.name = "shopify"
-    s.display_name = "integrations.shopify.label"  
+    s.display_name = "integrations.shopify.label"
     s.description = "integrations.shopify.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 24
@@ -692,14 +692,14 @@ if Integrations::Application.count == 0
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 25
     s.options = {
-   :keys_order => [:api_key, :api_secret, :language], 
+   :keys_order => [:api_key, :api_secret, :language],
    :api_key => {  :type => :text,
     :required => true,
     :label => "integrations.seoshop.form.api_key",
     :info => "integrations.seoshop.form.api_key_info"
-    }, 
-    :api_secret => { :type => :text, 
-      :required  => true, 
+    },
+    :api_secret => { :type => :text,
+      :required  => true,
       :label => "integrations.seoshop.form.api_secret",
       :info => "integrations.seoshop.form.api_secret_info"
       },
@@ -738,8 +738,8 @@ if Integrations::Application.count == 0
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 26
     s.options = {:direct_install => true, :oauth_url => "/auth/box?origin=id%3D{{account_id}}%26portal_id%3D{{portal_id}}%26user_id%3D{{user_id}}", :user_specific_auth => true}
-    s.application_type = "box" 
-  end 
+    s.application_type = "box"
+  end
 
   czentrix_app = Integrations::Application.seed(:name) do |s|
     s.name = "czentrix"
@@ -748,7 +748,7 @@ if Integrations::Application.count == 0
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 27
     s.options = {:direct_install => false,:keys_order => [:host_ip,:convert_to_ticket,:add_note_as_private],
-        :host_ip => { :type => :text, :required => true, :label => "integrations.czentrix.host_name", 
+        :host_ip => { :type => :text, :required => true, :label => "integrations.czentrix.host_name",
         :info => "integrations.czentrix.host_name_info"},
         :convert_to_ticket => {:type => :checkbox, :label => "integrations.cti.convert_to_ticket", :default_value => '1'},
         :add_note_as_private => {:type => :checkbox, :label => "integrations.cti.add_note_as_private", :default_value => '1'},
@@ -758,8 +758,8 @@ if Integrations::Application.count == 0
           :method => 'clear_memcache'
         }
     }
-    s.application_type = "cti_integration" 
-  end 
+    s.application_type = "cti_integration"
+  end
 
   drishti_app = Integrations::Application.seed(:name) do |s|
     s.name = "drishti"
@@ -770,15 +770,15 @@ if Integrations::Application.count == 0
     s.options = {
       :direct_install => false,
       :keys_order => [:host_ip,:convert_to_ticket,:add_note_as_private],
-      :host_ip => { 
+      :host_ip => {
         :type => :text,
-        :required => true, 
-        :label => "integrations.drishti.host_name", 
+        :required => true,
+        :label => "integrations.drishti.host_name",
         :info => "integrations.drishti.host_name_info"
         },
       :convert_to_ticket => {
-        :type => :checkbox, 
-        :label => "integrations.cti.convert_to_ticket", 
+        :type => :checkbox,
+        :label => "integrations.cti.convert_to_ticket",
         :default_value => '1'
         },
       :add_note_as_private => {:type => :checkbox, :label => "integrations.cti.add_note_as_private", :default_value => '1'},
@@ -793,7 +793,7 @@ if Integrations::Application.count == 0
 
   slack = Integrations::Application.seed(:name) do |s|
     s.name = "slack"
-    s.display_name = "integrations.slack.label"  
+    s.display_name = "integrations.slack.label"
     s.description = "integrations.slack.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 29
@@ -806,7 +806,7 @@ if Integrations::Application.count == 0
                 }
     s.application_type = "slack"
   end
-  
+
   quickbooks = Integrations::Application.seed(:name) do |s|
     s.name = "quickbooks"
     s.display_name = "integrations.quickbooks.label"
@@ -841,7 +841,7 @@ if Integrations::Application.count == 0
     s.description = "integrations.five9.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 30
-    s.options = { 
+    s.options = {
       :direct_install => false,
       :keys_order => [:convert_to_ticket, :add_note_as_private],
       :add_note_as_private => {:type => :checkbox, :label => "integrations.cti.add_note_as_private", :default_value => '1'},
@@ -875,7 +875,7 @@ if Integrations::Application.count == 0
     s.description = "integrations.xero.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 33
-    s.options = {:direct_install => true, :auth_url=> "/integrations/xero/authorize", 
+    s.options = {:direct_install => true, :auth_url=> "/integrations/xero/authorize",
       :edit_url => "/integrations/xero/edit"}
     s.application_type = "xero"
   end
@@ -901,16 +901,16 @@ if Integrations::Application.count == 0
     s.application_type = "cti_integration"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
   end
-  
+
   onedrive = Integrations::Application.seed(:name) do |s|
     s.name = "onedrive"
     s.display_name = "integrations.onedrive.label"
     s.description = "integrations.onedrive.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 35
-    s.options = { :direct_install => true, :user_specific_auth => true }   
-    s.application_type = "onedrive" 
-  end 
+    s.options = { :direct_install => true, :user_specific_auth => true }
+    s.application_type = "onedrive"
+  end
 
   github_app =  Integrations::Application.seed(:name) do |s|
     s.name = "github"
@@ -937,12 +937,12 @@ if Integrations::Application.count == 0
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 37
     s.options = {
-        :keys_order => [:api_key, :account_settings], 
+        :keys_order => [:api_key, :account_settings],
         :api_key => { :type => :text, :required => true, :label => "integrations.ilos.form.api_key" },
-        :account_settings => { 
-          :type => :custom, :required => false, :label => "integrations.google_contacts.form.account_settings", 
-          :partial => "/integrations/applications/ilosvideos_settings", 
-          :info => "integrations.google_contacts.form.account_settings_info" 
+        :account_settings => {
+          :type => :custom, :required => false, :label => "integrations.google_contacts.form.account_settings",
+          :partial => "/integrations/applications/ilosvideos_settings",
+          :info => "integrations.google_contacts.form.account_settings_info"
         }
     }
     s.application_type = "ilos"
@@ -982,9 +982,9 @@ if Integrations::Application.count == 0
     s.description = "integrations.infusionsoft.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 40
-    s.options = {:direct_install => true, 
+    s.options = {:direct_install => true,
                  :edit_url => "/integrations/infusionsoft/edit",
-                 :oauth_url => "/auth/infusionsoft?origin=id%3D{{account_id}}", 
+                 :oauth_url => "/auth/infusionsoft?origin=id%3D{{account_id}}",
                  :default_fields => {:contact => ["First Name"], :account => ["Company"]}
                  }
     s.application_type = "infusionsoft"
@@ -1009,14 +1009,14 @@ if Integrations::Application.count == 0
     s.description = "integrations.fullcontact.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 42
-    s.options = {:direct_install => true, 
+    s.options = {:direct_install => true,
                  :auth_url => "/integrations/fullcontact/new",
                  :edit_url => "/integrations/fullcontact/edit"
                  }
     s.application_type = "fullcontact"
     s.dip = 3
   end
-  
+
   cti_admin = Integrations::Application.seed(:name) do |s|
     s.name = "cti"
     s.display_name = "integrations.cti_admin.label"
@@ -1054,12 +1054,12 @@ if Integrations::Application.count == 0
   salesforce_v2_app = Integrations::Application.seed(:name) do |s|
     s.name = "salesforce_v2"
     s.display_name = "integrations.salesforce_v2.label"
-    s.description = "integrations.salesforce_v2.desc" 
+    s.description = "integrations.salesforce_v2.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 45
     s.options = {
       :direct_install => true,
-      :oauth_url => "/auth/salesforce_v2?origin=id%3D{{account_id}}", 
+      :oauth_url => "/auth/salesforce_v2?origin=id%3D{{account_id}}",
       :edit_url => "/integrations/sync/crm/edit?state=salesforce_v2&method=put",
       :after_commit_on_destroy => { :clazz => "IntegrationServices::Services::CloudElementsService", :method => "uninstall" }}
     s.application_type = "salesforce_v2"
@@ -1069,14 +1069,12 @@ if Integrations::Application.count == 0
   dynamics_v2_app = Integrations::Application.seed(:name) do |s|
     s.name = "dynamics_v2"
     s.display_name = "integrations.dynamics_v2.label"
-    s.description = "integrations.dynamics_v2.desc" 
+    s.description = "integrations.dynamics_v2.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 46
     s.options = {
       :direct_install => true,
-      :install => {:require_feature => {:notice => 'integrations.dynamics_v2.no_feature', :feature_name => :dynamics_v2}},
-      :edit => {:require_feature => {:notice => 'integrations.dynamics_v2.no_feature', :feature_name => :dynamics_v2}},
-      :auth_url => "/integrations/sync/crm/settings?state=dynamics_v2", 
+      :auth_url => "/integrations/sync/crm/settings?state=dynamics_v2",
       :edit_url => "/integrations/sync/crm/edit?state=dynamics_v2&method=put",
       :after_commit_on_destroy => { :clazz => "IntegrationServices::Services::CloudElementsService", :method => "uninstall" }}
     s.application_type = "dynamics_v2"
@@ -1085,11 +1083,73 @@ if Integrations::Application.count == 0
   office365 = Integrations::Application.seed(:name) do |s|
     s.name = "office365"
     s.display_name = "integrations.office365.label"
-    s.description = "integrations.office365.desc" 
+    s.description = "integrations.office365.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 47
     s.options = {:direct_install => true}
     s.application_type = "office365"
   end
 
+  parent_child = Integrations::Application.seed(:name) do |s|
+    s.name = "parent_child_tickets"
+    s.display_name = "integrations.parent_child.label"
+    s.description = "integrations.parent_child.desc"
+    s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
+    s.listing_order = 48
+    s.options = {
+      :direct_install => true,
+      :user_specific_auth => true,
+      :before_create => {
+        :clazz => 'Integrations::AdvancedTicketing::ParentChild',
+        :method => 'enable_parent_child'
+      },
+      :after_commit_on_destroy => {
+        :clazz => 'Integrations::AdvancedTicketing::ParentChild',
+        :method => 'disable_parent_child'
+      }
+    }
+    s.application_type = "parent_child_tickets"
+  end
+
+  link_ticket = Integrations::Application.seed(:name) do |s|
+    s.name = "link_tickets"
+    s.display_name = "integrations.link_ticket.label"
+    s.description = "integrations.link_ticket.desc"
+    s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
+    s.listing_order = 49
+    s.options = {
+      :direct_install => true,
+      :user_specific_auth => true,
+      :before_create => {
+        :clazz => 'Integrations::AdvancedTicketing::LinkTicket',
+        :method => 'enable_link_tkt'
+      },
+      :after_commit_on_destroy => {
+        :clazz => 'Integrations::AdvancedTicketing::LinkTicket',
+        :method => 'disable_link_tkt'
+      }
+    }
+    s.application_type = "link_tickets"
+  end
+
+  shared_ownership = Integrations::Application.seed(:name) do |s|
+    s.name = "shared_ownership"
+    s.display_name = "integrations.shared_ownership.label"
+    s.description = "integrations.shared_ownership.desc"
+    s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
+    s.listing_order = 50
+    s.options = {
+      :direct_install => true,
+      :user_specific_auth => true,
+      :before_create => {
+        :clazz => 'Integrations::AdvancedTicketing::SharedOwnership',
+        :method => 'install'
+      },
+      :after_commit_on_destroy => {
+        :clazz => 'Integrations::AdvancedTicketing::SharedOwnership',
+        :method => 'uninstall'
+      }
+    }
+    s.application_type = "shared_ownership"
+  end
 end

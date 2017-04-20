@@ -11,6 +11,7 @@ window.App = window.App || {};
         allNotifications: [],
         groupedNotifications: [],
         next_page: false,
+        preferences: null,
         initialize: function () {
             var self = this;
             this.getJwt(function(jwt){
@@ -23,6 +24,10 @@ window.App = window.App || {};
             this.bindNotificationClick();
             this.bindLoadMoreNotifications();
             this.bindReadAll();
+            this.bindShowPreferencesClick();
+            this.bindShowNotificationsClick();
+            this.bindPrefClick();
+            this.bindEnableDesktopNotifications();
         },
         getJwt: function(done){
             jQuery.get('/notification/user_notification/token', function(result){
@@ -32,6 +37,60 @@ window.App = window.App || {};
                     console.error("Could not get the JWT.")
                 }
             })
+        },
+        initIris: function(jwt){
+            var self = this;
+            if(window.Iris && window.RTS && window.PUBSUBio){
+              this.iris = new Iris({
+                jwt: jwt,
+                live: true,
+                onNotification: function(data){
+                    if(!data.msg) return;
+                    data = JSON.parse(JSON.parse(data.msg).payload);
+
+                    if(!!data.system){
+                        return;
+                    }
+
+                    if(!data.extra) {return};
+                    data.extra = JSON.parse(data.extra);
+                    var actionObj = self.flattenNotificationObject(data);
+
+                    var action = I18n.t("user_notifications."+data.action, actionObj)
+                    var actionType = I18n.t("user_notifications.types."+data.action)
+                    var notification = {
+                        content: "<b>"+data.actor+"</b> "+action,
+                        content_text: data.actor+" "+action.replace(/<[^>]*>/g,""),
+                        created_at: data.extra.action_date || data.created_at,
+                        notification_type: actionType,
+                        unreadIds: data.id+"",
+                        action_url: data.extra.action_url,
+                        actor_text: data.actor,
+                        actor_id: data.extra.actor_id
+                    };
+
+                    // When we get the first notification - [FRESHCHAT-550]
+                    $(".no-notification-message").remove();
+
+                    self.allNotifications.unshift(notification);
+                    self.groupedNotifications.push(notification);
+                    self.renderOneNotification(notification);
+                    self.setSeenIndicator(false);
+                    self.readAllButtonCheck();
+
+                    // Generate the desktop notification
+                    self.notify(data.id, notification);
+
+                    if(data.notification_type === "discussion") {
+                        var collab_event = new CustomEvent('collabNoti', { 'detail': {
+                            "ticket_id": data.extra.ticket_id,
+                            "noti_id": data.id
+                        }});
+                        document.dispatchEvent(collab_event);
+                    }
+                }
+              })
+            }
         },
         seenAll: function(){
             var self = this;
@@ -44,47 +103,6 @@ window.App = window.App || {};
                 $("#user-notification-icon").removeClass("unseen");
             } else {
                 $("#user-notification-icon").addClass("unseen");
-            }
-        },
-        initIris: function(jwt){
-            var self = this;
-            if(window.Iris && window.RTS && window.PUBSUBio){
-              this.iris = new Iris({
-                jwt: jwt,
-                live: true,
-                onNotification: function(data){
-                    if(!data.msg) return;
-                    data = JSON.parse(JSON.parse(data.msg).payload);
-
-                    if(!data.extra || !!data.system) return;
-                    data.extra = JSON.parse(data.extra);
-                    var actionObj = self.flattenNotificationObject(data);
-
-                    data.action = I18n.t("user_notifications."+data.action, actionObj)
-                    var notification = {
-                        content: data.actor+" "+data.action,
-                        created_at: data.created_at,
-                        notification_type: data.notification_type.replace(/_/g,' '),
-                        unreadIds: data.id+"",
-                        action_url: data.extra.action_url,
-                        actor_text: data.actor,
-                        actor_id: data.extra.actor_id
-                    };
-                    self.allNotifications.unshift(notification);
-                    self.groupedNotifications.push(notification);
-                    self.renderOneNotification(notification);
-                    self.setSeenIndicator(false);
-                    self.readAllButtonCheck();
-
-                    if(data.notification_type === "discussion") {
-                        var collab_event = new CustomEvent('collabNoti', { 'detail': {
-                            "ticket_id": data.extra.ticket_id,
-                            "noti_id": data.id
-                        }});
-                        document.dispatchEvent(collab_event);
-                    }
-                }
-              })
             }
         },
         fetchNotifications: function(numResults, next, done){
@@ -102,6 +120,21 @@ window.App = window.App || {};
                     if(done) done();
                 })
             }
+        },
+        fetchUserPreferences: function(done){
+            if(!this.iris){ return done("Iris not found."); }
+            this.iris.getUserPreferences(done);
+        },
+        setUserPreference: function(pref, done){
+            /**
+             * pref {
+             *     notification_type: "string",
+             *     pipe: "rts|mobile",
+             *     enabled: "true|false"
+             * }
+             */
+            if(!this.iris){ return done("Iris not found."); }
+            this.iris.setUserPreference(pref,done);
         },
         bindDocumentClick: function () {
             var self = this;
@@ -181,24 +214,75 @@ window.App = window.App || {};
         bindScroll: function(){
             // Making sure we don't duplicate the bindings.
             this.unbindScroll();
-            $(document).on('mousewheel.usernotification', '.notifications-list', function(e, d) {
-                var notifList = $(".notifications-list");
+            $(document).on('mousewheel.usernotification', '.notifications-list-wrapper', function(e, d) {
+                var notifList = $(".notifications-list-wrapper");
                 var scrollHeight = notifList.get(0).scrollHeight;
                 var height = notifList.height();
                 if((this.scrollTop === (scrollHeight - height) && d < 0) || (this.scrollTop === 0 && d > 0)) {
                   e.preventDefault();
                 }
             });
-
         },
         unbindScroll: function(){
             $(document).off('mousewheel.usernotification');
         },
+        bindShowPreferencesClick: function(){
+            var self = this;
+            $(document).on('click.usernotification','.show-user-prefs', function(){
+                $(".unp-list").addClass("hide");
+                $(".unp-prefs").removeClass("hide");
+                self.onPrefsShow();
+            });
+        },
+        bindShowNotificationsClick: function(){
+            $(document).on('click.usernotification','.show-user-notifications', function(){
+                $(".unp-list").removeClass("hide");
+                $(".unp-prefs").addClass("hide");
+            });
+        },
+        bindPrefClick: function(){
+            var self = this;
+            $(document).on("click.usernotification",".notif-pref-item a", function(){
+                var elem = $(this);
+                var isEnabled = elem.hasClass("enabled");
+                var ntype = elem.data("ntype");
+                var pipe = elem.data("pipe");
+                self.setUserPreference({
+                    notification_type: ntype,
+                    pipe: pipe,
+                    enabled: !isEnabled
+                }, function(err,result){
+                    if(!err){
+                        isEnabled ? elem.removeClass("enabled") : elem.addClass("enabled");
+                        self.preferences[ntype][pipe] = !isEnabled;
+                    } else {
+                        console.error("Could not set user preferece.",err);
+                    }
+                });
+            })
+        },
+        bindEnableDesktopNotifications: function(){
+            var self = this;
+            // Let's check if the browser supports notifications
+            if(!("Notification" in window) || Notification.permission === "granted"){
+                self.desktopNotificationBtnMsg("granted");
+                return;
+            }
+
+            if(Notification.permission === "denied"){
+                // TODO: Handle this case by publishing a solution article and linking that here.
+            }
+
+            $(document).on('click.usernotification','.enable-desktop-notifications-button', function(){
+                self.askNotificationPermission();
+                self.desktopNotificationBtnMsg("help");
+            })   
+        },
         hideLoadMoreButton: function(){
-            $("#load-more-notifications").css('display','none');
+            $("#load-more-notifications").addClass('hide');
         },
         showLoadMoreButton: function(){
-            $("#load-more-notifications").css('display','block');
+            $("#load-more-notifications").removeClass('hide');
         },
         getGroupedNotifications: function(){
             var collapsed = {};
@@ -225,7 +309,6 @@ window.App = window.App || {};
             }
 
             for(var key in collapsed){
-                var created_at = new Date("1970-01-01");
                 var unread = false;
                 var unreadIds = [];
                 var actor_text, action_text;
@@ -234,22 +317,28 @@ window.App = window.App || {};
                 var last = ngroup[0];
                 var oldest = ngroup[0];
                 
-                var unread_notifications = ngroup.filter(function(n) {return !(n.read_at)});
-                if(unread_notifications.length) {
-                    oldest = unread_notifications.sort(function(a, b) {
-                        return new Date(a.created_at) - new Date(b.created_at)
-                    })[0];
+                for (var i = ngroup.length - 1; i >= 0; i--) {
+                    var n = ngroup[i];
+                    if(!n.read_at){
+                        var created = n.extra.action_date || n.created_at;
+                        var oldestCreated = oldest.extra.action_date || oldest.created_at;
+                        var isOlder = new Date(created) < new Date(oldestCreated);
+                        if(isOlder) oldest = n;
+                    }
                 }
 
+                actors[0] = this.safe(actors[0])
                 if(actors.length == 1){
                     actor_text = actors[0];
                 } else if(actors.length==2){
+                    actors[1] = this.safe(actors[1]);
                     actor_text = I18n.t("user_notifications.actor_text_2",{actor_name_1:actors[0], actor_name_2: actors[1]});
                 } else {
                     actor_text = I18n.t("user_notifications.actor_text_multi",{actor_name_1:actors[0], more_actors_count: actors.length-1});
                 }
 
                 var action = "user_notifications."+last.action;
+                var actionType = I18n.t("user_notifications.types."+last.action);
                 var actionObj = this.flattenNotificationObject(last);
                 if(ngroup.length>1){
                     actionObj.count = ngroup.length;
@@ -259,9 +348,10 @@ window.App = window.App || {};
                 }
 
                 this.groupedNotifications.push({
-                    content: actor_text+" "+action_text,
-                    created_at: new Date(last.created_at),
-                    notification_type: last.notification_type.replace(/_/g,' '),
+                    content: "<b>"+actor_text+"</b> "+action_text,
+                    content_text: actor_text+" "+action.replace(/<[^>]*>/g,""),
+                    created_at: last.extra.action_date || last.created_at,
+                    notification_type: actionType,
                     unreadIds: collapsed[key].unreadIds.join(','),
                     action_url: oldest.extra.action_url,
                     actor_text: actor_text,
@@ -269,8 +359,8 @@ window.App = window.App || {};
                 });
             }
 
-            return this.groupedNotifications.sort(function(a,b){
-                return b.created_at - a.created_at;
+            return _.sortBy(this.groupedNotifications, function(a){
+                return -(new Date(a.created_at)).getTime();
             });
         },
         renderNotifications: function(){
@@ -301,11 +391,12 @@ window.App = window.App || {};
         },
         flattenNotificationObject: function(notification){
             var obj = {};
+            var self = this;
 
             // Copy object
             for(var key in notification){
                 if(key!="extra"){
-                    obj[key] = notification[key];
+                    obj[key] = self.safe(notification[key]);
                 }
             }
 
@@ -318,9 +409,106 @@ window.App = window.App || {};
             }
 
             for(var key in notification.extra){
-                obj[key] = notification.extra[key];
+                obj[key] = self.safe(notification.extra[key]);
             }
+
+            // Truncate the subject if it exists
+            if(obj.object.length>70) {
+                obj.object = obj.object.substr(0,67)+"...";
+            }
+
             return obj;
+        },
+        onPrefsShow: function(){
+            var self = this;
+            // Check if preferences object exists, else fetch it
+            if(!this.preferences){
+                this.fetchUserPreferences(function(err,prefs){
+                    if(!err){
+                        self.mapUserPrefs(prefs);
+                        self.renderPrefs();
+                        $(".notifications-preferences loader").addClass("hide");
+                    } else {
+                        console.error("Could not fetch user preferences");
+                    }
+                })
+            } else {
+                self.renderPrefs();
+                $(".notifications-preferences loader").addClass("hide");
+            }
+        },
+        mapUserPrefs: function(prefs){
+            var self = this;
+            // Given an array of prefs, creates the appropriate preference object.
+            self.preferences = {};
+            for(var i = prefs.length-1; i >= 0; i--){
+                var p = prefs[i];
+                self.preferences[p.notification_type] = self.preferences[p.notification_type] || {};
+                if(p.pipe == "android" || p.pipe == "ios") p.pipe = "mobile";
+                self.preferences[p.notification_type][p.pipe] = p.enabled;
+            }
+        },
+        renderPrefs: function(){
+            // Initial state
+            $(".notif-pref-item .npa-web, .notif-pref-item .npa-mobile").addClass("enabled");
+
+            // See which ones need to be disabled
+            for(var ntype in this.preferences){
+                var pref = this.preferences[ntype];
+                for(var pipe in pref){
+                    if(!pref[pipe]){
+                        $(".notif-pref-item .npa-"+pipe+"[data-ntype="+ntype+"]").removeClass("enabled");
+                    }
+                }
+            }
+
+            $(".notifications-preferences .loader").addClass("hide");
+        },
+        notify: function(id, notification){
+            var self = this;
+
+            // Play the notification sound
+            $(".user-notification-sound")[0].play()
+
+            // Let's check if the browser supports notifications
+            if (!("Notification" in window)) {
+                console.log("This browser does not support desktop notification");
+            }
+
+            // Let's check whether notification permissions have already been granted
+            else if (Notification.permission === "granted") {
+                // If it's okay let's create a notification
+                var n = new Notification(notification.notification_type,{
+                    icon: "/images/misc/admin-logo.png",
+                    body: notification.content_text,
+                    data: {url : notification.action_url },
+                    tag: id
+                });
+                n.onclick = function(event){
+                    event.preventDefault();
+                    window.open(event.currentTarget.data.url, '_blank');
+                    self.iris.readNotification([id], function(err,result){}); 
+                    event.currentTarget.close();
+                }
+            }
+        },
+        askNotificationPermission: function(){
+            var self = this;
+            Notification.requestPermission(function(permission){
+                self.desktopNotificationBtnMsg(permission);
+            })
+        },
+        desktopNotificationBtnMsg: function(msg){
+            $(".enable-desktop-notifications-button span").addClass('hide');
+            $(".enable-desktop-notifications-button span."+msg).removeClass('hide');
+            if(msg=="default") {
+                $(".enable-desktop-notifications-button").removeClass("disabled");
+            } else {
+                $(".enable-desktop-notifications-button").addClass("disabled");
+            }
+        },
+        safe: function(str){
+            return escapeHtml(str);
         },
         destroy: function () {
             $(document).off(".usernotification");

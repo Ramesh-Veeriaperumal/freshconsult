@@ -23,7 +23,7 @@ class Va::Handlers::Boolean < Va::RuleHandler
     end
     
     def filter_query_not_selected
-      [ "#{condition.db_column} != 1" ]
+      [ "( #{condition.db_column} != 1 or #{condition.db_column} IS NULL )" ]
     end
 
     def filter_query_negation

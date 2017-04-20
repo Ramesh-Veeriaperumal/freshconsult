@@ -112,18 +112,14 @@ jQuery(document).ready(function() {
             dateStart: date.last_6_months,
             dateEnd: 'Today',
             period : "last_6_months"
-          },
-          {
-            text: "<%= t('helpdesk_reports.this_year') %>",
-            dateStart: date.this_year_start,
-            dateEnd: 'Today',
-            period : "this_year"
           }
 		],
 		presets: {
 			dateRange: '<%= t('helpdesk_reports.date_range') %>'
 		},
 		dateFormat: getDateFormat('datepicker'),
+    rangeDurationMonths : 6,
+    limitRangeToConstraints : true,
 		closeOnSelect: true,
 		onClose: function() {
 			trigger_event("filter_changed",{});

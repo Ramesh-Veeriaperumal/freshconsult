@@ -107,6 +107,17 @@
     	clear: both;
     	min-height: 42px;
 	}
+	.agent_skill_list{ 
+		margin: 15px 0;
+		span{
+			@include border-left(2px solid #eee);
+			padding: 0 5px;
+		  	&:first-of-type{
+		  		border: none;
+		  		@include padding-left(0);
+		  	}
+	  	}
+	}
 }
 .agent-role{
 	margin-top:30px;
@@ -118,6 +129,7 @@
 		margin-top: 8px;	
 	}
 }
+
 .agent-role-modal {
   ul {
      border:1px solid #eee;
@@ -153,7 +165,9 @@
     
   }
 }
-
+.add-agent-wrapper .agent-list-wrapper.skill-list-wrapper {
+	max-height: 320px;
+}
 .agent-group-modal {
   ul {
      border:1px solid #eee;

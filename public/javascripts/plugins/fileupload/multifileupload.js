@@ -7,6 +7,7 @@ Helpdesk = Helpdesk || {};
         upload_status: [],
         reminder: true,
         maxFileSize:15000000,
+        dragCounter:0,
         init: function(count) {
             var _this = this;
             // hidden input element
@@ -31,6 +32,11 @@ Helpdesk = Helpdesk || {};
                     console.log('File Upload has been canceled');
                 }
             });
+            // on drag enter 
+              $("body").on("dragenter", function(e) {
+                _this.dragCounter++;
+                e.stopImmediatePropagation();
+              });
             // on drag
             $("body").on("dragover", function(e) {
                 // hide quoted text
@@ -43,6 +49,7 @@ Helpdesk = Helpdesk || {};
             // on droping to document
             $("body").on("drop", function(e) {
                 // show quoted text
+                _this.dragCounter = 0;
                 $(".wrap-marker").show();
                 var count = $(".attachment-icon:visible").data('iconCount')
                 $("#file_dropzone_" + count).hide();
@@ -51,16 +58,20 @@ Helpdesk = Helpdesk || {};
             });
 
             // on drag leav
-            $("body").on("dragleave", "#file_dropzone_" + count, function(e) {
-                $(".wrap-marker").show();
-                var count = $(".attachment-icon:visible").data('iconCount');
-                $("#file_dropzone_" + count).hide();
+            $("body").on("dragleave", function(e) {
+                _this.dragCounter--;
+                if(_this.dragCounter == 0) {
+                    $(".wrap-marker").show();
+                    var count = $(".attachment-icon:visible").data('iconCount');
+                    $("#file_dropzone_" + count).hide();
+                }
                 e.stopImmediatePropagation();
             });
             // on dropping to dropzone
             $("body").on("drop", "#file_dropzone_" + count, function(e) {
                 // show quoted text
                 $(".wrap-marker").show();
+                _this.dragCounter = 0;
                 var count = $(".attachment-icon:visible").data('iconCount');
                 $("#file_dropzone_" + count).hide();
                 e.stopImmediatePropagation();
@@ -985,7 +996,13 @@ Helpdesk = Helpdesk || {};
                    added = $this.siblings('.list_element').data('added') || false;
                 }
                 if(!added) {
-                    var attachSessionId = $(".attachment-icon:visible").data('iconCount') || this.openReply("attachment");
+                     var icount = $(".attachment-icon:visible").data('iconCount');
+                     var attachSessionId;
+                     if (icount == undefined) {
+                         attachSessionId = this.openReply("attachment");
+                     } else {
+                         attachSessionId = $(".attachment-icon:visible").data('iconCount');
+                     }
                     $.ajax({
                      url:"/helpdesk/attachments/"+attachId+".json",
                      type:"GET",

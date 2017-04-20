@@ -24,21 +24,25 @@ module Integrations::CloudElements::Crm::CrmUtil
     config_hash = Hash.new
     config_hash['lead_fields'] = params[:leads].join(",")
     config_hash['lead_labels'] = params['lead_labels']
-    config_hash['contract_view'] = params[:contract_view][:value]
-    if config_hash['contract_view'].to_bool
-      config_hash['contract_fields'] = params[:contracts].join(",")
-      config_hash['contract_labels'] = params['contract_labels']
-    else
-      contract_configs = [ "contract_fields", "contract_labels"]
-      @installed_app.configs[:inputs] = @installed_app.configs[:inputs].except(*contract_configs)
+    if params[:element_configs]["objects"].include? "contract"
+      config_hash['contract_view'] = params[:contract_view][:value]
+      if config_hash['contract_view'].to_bool
+        config_hash['contract_fields'] = params[:contracts].join(",")
+        config_hash['contract_labels'] = params['contract_labels']
+      else
+        contract_configs = [ "contract_fields", "contract_labels"]
+        @installed_app.configs[:inputs] = @installed_app.configs[:inputs].except(*contract_configs)
+      end
     end
-    config_hash['order_view'] = params[:order_view][:value]
-    if config_hash['order_view'].to_bool
-      config_hash['order_fields'] = params[:orders].join(",")
-      config_hash['order_labels'] = params['order_labels']
-    else
-      order_configs = [ "order_fields", "order_labels"]
-      @installed_app.configs[:inputs] = @installed_app.configs[:inputs].except(*order_configs)
+    if params[:element_configs]["objects"].include? "order"    
+      config_hash['order_view'] = params[:order_view][:value]
+      if config_hash['order_view'].to_bool
+        config_hash['order_fields'] = params[:orders].join(",")
+        config_hash['order_labels'] = params['order_labels']
+      else
+        order_configs = [ "order_fields", "order_labels"]
+        @installed_app.configs[:inputs] = @installed_app.configs[:inputs].except(*order_configs)
+      end
     end
     config_hash = get_opportunity_params config_hash
   end
@@ -96,14 +100,18 @@ module Integrations::CloudElements::Crm::CrmUtil
 
   def crm_element_metadata_fields(element_token)
     @element_config = Hash.new
+    @element_config['objects'] = []
     metadata = @metadata.merge({ :element_token => element_token })
     constant_file = get_crm_constants
     constant_file['objects'].each do |key, obj|
       metadata = @metadata.merge({ :element_token => element_token, :object => obj})
       element_metadata = service_obj({:object => key}, metadata).receive(:object_metadata)
-      hash = (key != "opportunity") ? map_fields(element_metadata) : map_opportunity_fields(element_metadata, constant_file['opportunity_keys'])
-      @element_config["#{key}_fields"] = hash['fields_hash']
-      @element_config["#{key}_fields_types"] = hash['data_type_hash']
+      if element_metadata != 404
+        hash = (key != "opportunity") ? map_fields(element_metadata) : map_opportunity_fields(element_metadata, constant_file['opportunity_keys'])
+        @element_config["#{key}_fields"] = hash['fields_hash']
+        @element_config["#{key}_fields_types"] = hash['data_type_hash']
+        @element_config['objects'].push(key)
+      end
     end
     @element_config['additional_fields'] = constant_file['additional_fields']
     @element_config['element_name'] = constant_file['element_name']
@@ -158,7 +166,7 @@ module Integrations::CloudElements::Crm::CrmUtil
     config_hash['crm_sync_type'] = "FD_AND_CRM"
     config_hash['companies'] = get_selected_field_arrays(element_config['existing_companies'])
     config_hash['contacts'] = get_selected_field_arrays(element_config['existing_contacts'])
-    element_config['objects'].each do |object|
+    @element_config['objects'].each do |object|
       config_hash["#{object}_fields"] = element_config['default_fields'][object].join(",")
       config_hash["#{object}_labels"] = element_config['default_labels'][object].join(",")
     end
@@ -222,7 +230,7 @@ module Integrations::CloudElements::Crm::CrmUtil
     @element_config['default_labels'] = file['default_visibility_labels']
     @element_config['element_validator'] = file['validator']
     @element_config['fd_validator'] = file['fd_validator']
-    @element_config['objects']= file['objects'].keys
+    # @element_config['objects']= file['objects'].keys
     @element_config['crm_sync_type'] = (@installed_app.configs_crm_sync_type.present?) ? @installed_app.configs_crm_sync_type : "FD_AND_CRM"
     @element_config['master_type'] = (@installed_app.configs_master_type.present?) ? @installed_app.configs_master_type : "CRM"
     @element_config['sync_frequency'] = (@installed_app.configs_sync_frequency.present?) ? @installed_app.configs_sync_frequency : "hourly"
@@ -508,13 +516,6 @@ module Integrations::CloudElements::Crm::CrmUtil
       end
     end
     change_active
-  end
-
-  def check_feature
-    if FEATURE[element] && !current_account.features?(FEATURE[element])
-      flash[:error] = t(:'flash.application.install.no_feature_error')
-      redirect_to integrations_applications_path and return
-    end 
   end
 
   def ticket_sync_option?

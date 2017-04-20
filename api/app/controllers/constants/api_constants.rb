@@ -28,7 +28,9 @@ module ApiConstants
                        ConversationConstants::LOAD_OBJECT_EXCEPT +
                        DiscussionConstants::LOAD_OBJECT_EXCEPT +
                        SolutionConstants::LOAD_OBJECT_EXCEPT +
-                       SurveyConstants::LOAD_OBJECT_EXCEPT
+                       SurveyConstants::LOAD_OBJECT_EXCEPT +
+                       Pipe::HelpdeskConstants::LOAD_OBJECT_EXCEPT +
+                       ExportConstants::LOAD_OBJECT_EXCEPT
 
   ALLOWED_DOMAIN = AppConfig['base_domain'][Rails.env]
   MAX_LENGTH_STRING = 255

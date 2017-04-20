@@ -42,6 +42,7 @@ class SecurityEmailNotification < ActionMailer::Base
     begin
       # sending this email via account's primary email config so that if the customer wants this emails
       # to be sent via custom mail server, simply switching the primary email config will do
+    return if doer.blank? or to.blank?
       email_config = Account.current.primary_email_config
       configure_email_config email_config
       Time.zone = model.time_zone

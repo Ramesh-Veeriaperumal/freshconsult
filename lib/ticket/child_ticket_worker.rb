@@ -130,7 +130,7 @@ class Ticket::ChildTicketWorker < BaseWorker
   def liqd_parser value
     value = if value.is_a?(String)
       Liquid::Template.parse(value).render('ticket' => @assoc_parent_ticket,
-        'helpdesk_name' => @assoc_parent_ticket.account.portal_name)
+        'helpdesk_name' => @assoc_parent_ticket.account.helpdesk_name)
     else
       value
     end

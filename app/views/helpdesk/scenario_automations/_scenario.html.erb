@@ -1,15 +1,17 @@
 <tr id=<%= dom_id(scenario) %>>
-  <td>
+  <td  <%= "class='va_rule_disabled custom-tip' data-tip-classes = 'va-rule-index-tooltip' title='#{t('admin.va_rules.disabled')}'".html_safe if scenario.any_restricted_actions? %>>
     <strong>
-      <%= link_to(h(scenario.name), edit_helpdesk_scenario_automation_path(scenario), :class => "item_info") %>
+      <%= link_to(h(scenario.name), edit_helpdesk_scenario_automation_path(scenario), va_rule_link_options(scenario)) %>
     </strong><br/>
     <span class="muted"><%= h scenario.description %></span>
   </td>
   <td>
-    <div class="item_actions" align="right">
-        <%= link_to(t('clone'),clone_helpdesk_scenario_automation_path(scenario), :class => "btn btn-mini")%>
-        <%= link_to(t('edit'), edit_helpdesk_scenario_automation_path(scenario), :class => "btn btn-mini") %>
-        <%= link_to "<i class='icon-trash'></i>".html_safe, helpdesk_scenario_automation_path(scenario), :confirm => t('confirm_delete_message', :human_name => t('admin.automations.index.human_name')), :method => :delete, :class => "btn btn-mini" %>
-    </div>
+    <% if !scenario.any_restricted_actions? %>
+      <div class="item_actions" align="right">
+          <%= link_to(t('clone'),clone_helpdesk_scenario_automation_path(scenario), :class => "btn btn-mini")%>
+          <%= link_to(t('edit'), edit_helpdesk_scenario_automation_path(scenario), :class => "btn btn-mini") %>
+          <%= link_to "<i class='icon-trash'></i>".html_safe, helpdesk_scenario_automation_path(scenario), :confirm => t('confirm_delete_message', :human_name => t('admin.automations.index.human_name')), :method => :delete, :class => "btn btn-mini" %>
+      </div>
+      <% end %>
   </td>
 </tr>

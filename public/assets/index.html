@@ -118,11 +118,11 @@
 
       @font-face {
   font-family: "glyphs";
-  src: url("../../assets/glyphs_f98e518c5ba7909b023600789cdfead0.eot");
-  src: url("../../assets/glyphs_f98e518c5ba7909b023600789cdfead0.eot?#iefix") format("embedded-opentype"),
-       url("../../assets/glyphs_f98e518c5ba7909b023600789cdfead0.woff") format("woff"),
-       url("../../assets/glyphs_f98e518c5ba7909b023600789cdfead0.ttf") format("truetype"),
-       url("../../assets/glyphs_f98e518c5ba7909b023600789cdfead0.svg#glyphs") format("svg");
+  src: url("../../assets/glyphs_a33cb316726dcac23273cfdd4a1d0d3f.eot");
+  src: url("../../assets/glyphs_a33cb316726dcac23273cfdd4a1d0d3f.eot?#iefix") format("embedded-opentype"),
+       url("../../assets/glyphs_a33cb316726dcac23273cfdd4a1d0d3f.woff") format("woff"),
+       url("../../assets/glyphs_a33cb316726dcac23273cfdd4a1d0d3f.ttf") format("truetype"),
+       url("../../assets/glyphs_a33cb316726dcac23273cfdd4a1d0d3f.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -130,7 +130,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: url("../../assets/glyphs_f98e518c5ba7909b023600789cdfead0.svg#glyphs") format("svg");
+    src: url("../../assets/glyphs_a33cb316726dcac23273cfdd4a1d0d3f.svg#glyphs") format("svg");
   }
 }
 
@@ -142,6 +142,7 @@
 .ficon-add-attachment:before,
 .ficon-add-call:before,
 .ficon-add-people:before,
+.ficon-add-section:before,
 .ficon-agent:before,
 .ficon-agent-fchat-off:before,
 .ficon-agent-fchat-on:before,
@@ -366,6 +367,8 @@
 .ficon-minus:before,
 .ficon-mobihelp:before,
 .ficon-mobile:before,
+.ficon-mobile-2:before,
+.ficon-mobile-2-disabled:before,
 .ficon-mobile-active-source:before,
 .ficon-mobile-source:before,
 .ficon-multi-product:before,
@@ -463,6 +466,7 @@
 .ficon-time_sheet:before,
 .ficon-timeline-forum:before,
 .ficon-timeline-ticket:before,
+.ficon-timespent:before,
 .ficon-tint:before,
 .ficon-transfer-round:before,
 .ficon-trash:before,
@@ -485,6 +489,8 @@
 .ficon-view-retweets:before,
 .ficon-warm-transfer:before,
 .ficon-warning:before,
+.ficon-web:before,
+.ficon-web-disabled:before,
 .ficon-web-page:before,
 .ficon-web-source:before,
 .ficon-went-wrong:before,
@@ -508,6 +514,7 @@
 .ficon-add-attachment:before { content: "\f26a"; }
 .ficon-add-call:before { content: "\f21f"; }
 .ficon-add-people:before { content: "\f26b"; }
+.ficon-add-section:before { content: "\f273"; }
 .ficon-agent:before { content: "\f101"; }
 .ficon-agent-fchat-off:before { content: "\f1b0"; }
 .ficon-agent-fchat-on:before { content: "\f1b1"; }
@@ -732,6 +739,8 @@
 .ficon-minus:before { content: "\f16c"; }
 .ficon-mobihelp:before { content: "\f16d"; }
 .ficon-mobile:before { content: "\f16e"; }
+.ficon-mobile-2:before { content: "\f274"; }
+.ficon-mobile-2-disabled:before { content: "\f275"; }
 .ficon-mobile-active-source:before { content: "\f1f7"; }
 .ficon-mobile-source:before { content: "\f1f8"; }
 .ficon-multi-product:before { content: "\f16f"; }
@@ -829,6 +838,7 @@
 .ficon-time_sheet:before { content: "\f1f2"; }
 .ficon-timeline-forum:before { content: "\f19b"; }
 .ficon-timeline-ticket:before { content: "\f19c"; }
+.ficon-timespent:before { content: "\f278"; }
 .ficon-tint:before { content: "\f25c"; }
 .ficon-transfer-round:before { content: "\f221"; }
 .ficon-trash:before { content: "\f19d"; }
@@ -851,6 +861,8 @@
 .ficon-view-retweets:before { content: "\f1a6"; }
 .ficon-warm-transfer:before { content: "\f231"; }
 .ficon-warning:before { content: "\f1a7"; }
+.ficon-web:before { content: "\f276"; }
+.ficon-web-disabled:before { content: "\f277"; }
 .ficon-web-page:before { content: "\f1a8"; }
 .ficon-web-source:before { content: "\f1fc"; }
 .ficon-went-wrong:before { content: "\f1ff"; }
@@ -869,7 +881,7 @@
 
   <body class="characters-off">
     <header>
-      <h1>Font Icons (352)</h1>
+      <h1>Font Icons (358)</h1>
       <p>We can use font icon classes or use helper method as follows <code>&lt;%= font_icon "icon-name", :size => 18 %&gt;</code>, which generates the Markup</p>
     </header>
     <div id="page" class="container">
@@ -917,6 +929,15 @@
         </div>
         <div class="usage">
           <span>add-people</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-add-section" class="ficon-add-section"></i></span>
+        </div>
+        <div class="usage">
+          <span>add-section</span>
         </div>
       </div>
       
@@ -2938,6 +2959,24 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-mobile-2" class="ficon-mobile-2"></i></span>
+        </div>
+        <div class="usage">
+          <span>mobile-2</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-mobile-2-disabled" class="ficon-mobile-2-disabled"></i></span>
+        </div>
+        <div class="usage">
+          <span>mobile-2-disabled</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-mobile-active-source" class="ficon-mobile-active-source"></i></span>
         </div>
         <div class="usage">
@@ -3811,6 +3850,15 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-timespent" class="ficon-timespent"></i></span>
+        </div>
+        <div class="usage">
+          <span>timespent</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-tint" class="ficon-tint"></i></span>
         </div>
         <div class="usage">
@@ -4004,6 +4052,24 @@
         </div>
         <div class="usage">
           <span>warning</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-web" class="ficon-web"></i></span>
+        </div>
+        <div class="usage">
+          <span>web</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-web-disabled" class="ficon-web-disabled"></i></span>
+        </div>
+        <div class="usage">
+          <span>web-disabled</span>
         </div>
       </div>
       

@@ -3,17 +3,22 @@ module SBRR
     module TicketUpdate
       class Base
 
-        attr_reader :new_ticket, :old_ticket, :score_calculator
+        attr_reader :new_ticket, :old_ticket, :score_calculator, :current_ticket
 
-        def initialize _ticket
-          @new_ticket = _ticket
-          @old_ticket = _ticket.ticket_was _ticket.model_changes
+        def initialize _ticket, options={}
+          @current_ticket = _ticket
+          @old_ticket = _ticket.ticket_was _ticket.model_changes, TicketConstants::SKILL_BASED_TICKET_ATTRIBUTES
+          @new_ticket = _ticket.ticket_is _ticket.model_changes, TicketConstants::SKILL_BASED_TICKET_ATTRIBUTES
         end
 
         private
 
           def perform_in_queues _queues, operation, _ticket
             _queues.each{ |_queue| _queue.send(operation, _ticket) }
+          end
+
+          def refresh_in_queues _queues, operation, _ticket, score = nil
+            _queues.each{ |_queue| _queue.send(operation, _ticket, score) }
           end
 
           def old_queues

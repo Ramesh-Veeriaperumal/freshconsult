@@ -42,9 +42,17 @@ class Fdadmin::AccountToolsController < Fdadmin::DevopsMainController
     end
   end
 
-	def update_global_blacklist_ips
-		result = {}
-		item = GlobalBlacklistedIp.first
+  def update_global_blacklist_ips
+    message_hash = { :ip => params[:ip_list], :action => "add"}
+    begin
+      $rate_limit.perform_redis_op("sadd", Redis::RedisKeys::HAPROXY_IP_BLACKLIST_KEY, params[:ip_list])
+      $rate_limit.perform_redis_op("publish", Redis::RedisKeys::HAPROXY_IP_BLACKLIST_CHANNEL, message_hash.to_json)
+    rescue Exception => e
+      Rails.logger.error("Exception Adding IP to the HAProxy blacklist ::::: #{e}")
+      NewRelic::Agent.notice_error(e)
+    end
+    result = {}
+    item = GlobalBlacklistedIp.first
     blacklisted_ip_list = item.ip_list ? item.ip_list : []
     blacklisted_ip_list << params["ip_list"] if !blacklisted_ip_list.include?(params["ip_list"])
     item.ip_list = blacklisted_ip_list
@@ -58,9 +66,17 @@ class Fdadmin::AccountToolsController < Fdadmin::DevopsMainController
         render :json => result
       end
     end
-	end
+  end
 
   def remove_blacklisted_ip
+    message_hash = { :ip => params[:whitelist_ip], :action => "remove"}
+    begin
+      $rate_limit.perform_redis_op("srem", Redis::RedisKeys::HAPROXY_IP_BLACKLIST_KEY, params[:whitelist_ip])
+      $rate_limit.perform_redis_op("publish", Redis::RedisKeys::HAPROXY_IP_BLACKLIST_CHANNEL, message_hash.to_json)
+    rescue Exception => e
+      Rails.logger.error("Exception Removing IP from the HAProxy blacklist ::::: #{e}")
+      NewRelic::Agent.notice_error(e)
+    end
     result = {}
     item = GlobalBlacklistedIp.first
     blacklisted_ip_list = item.ip_list ? JSON.parse(item.ip_list.to_json) : []

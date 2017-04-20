@@ -1,6 +1,9 @@
+require 'newrelic_rpm'
+
 module Email
 	class EmailDeadLetterWorker
 
+		include ::NewRelic::Agent::Instrumentation::ControllerInstrumentation
 		include Shoryuken::Worker
 		include Helpdesk::Email::MessageProcessingUtil
 
@@ -21,6 +24,7 @@ module Email
 				Rails.logger.info "S3 key not found. Deleting email from dead letter queue"
 			rescue => e
 				Rails.logger.info "Error in EmailDeadLetterWoker : #{e.message}"
+				NewRelic::Agent.notice_error(e, {:description => "Error in EmailDeadLetterWorker"})
 			end
 		end
 
@@ -49,5 +53,6 @@ module Email
 			Rails.logger.info "Deleted from S3 primary path"
 		end
 		
+		add_transaction_tracer :perform, :category => :task
 	end
 end

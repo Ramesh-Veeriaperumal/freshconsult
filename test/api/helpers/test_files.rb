@@ -5,3 +5,4 @@ require 'authlogic/test_case'
 include AccountHelper
 include ControllerHelper
 include UsersHelper
+include JwtTestHelper

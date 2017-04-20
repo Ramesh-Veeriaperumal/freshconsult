@@ -20,12 +20,12 @@ Before('@admin') do
   @account.make_current
 end
 
-Before('@link_tickets') do
+Before('@adv_ticketing') do
   ticket_dynamo_table_create
   Helpdesk::Ticket.any_instance.stubs(:manual_publish_to_rmq).returns(true)
 end
 
-After('@link_tickets') do
+After('@adv_ticketing') do
   Helpdesk::Ticket.any_instance.unstub(:manual_publish_to_rmq)
 end
 

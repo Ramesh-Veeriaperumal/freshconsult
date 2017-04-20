@@ -6,12 +6,12 @@ module IntegrationServices::Services
     end
  
     def server_url 
-      (["development", "staging"].include? Rails.env) ? "https://staging.cloud-elements.com" : "https://api.cloud-elements.com"
+      (["development", "staging"].include? Rails.env) ? "https://staging.cloud-elements.com" : Integrations::CLOUD_ELEMENTS_URL
     end
 
      def self.default_http_options
       @@default_http_options ||= {
-        :request => {:timeout => 60 , :open_timeout => 60},
+        :request => {:timeout => 90 , :open_timeout => 60},
         :ssl => {:verify => false, :verify_depth => 30},
         :headers => {}
       }

@@ -1,7 +1,7 @@
 module LinkTicketTests
 
   def test_tracker_create_with_one_related
-    enable_link_tickets do
+    enable_adv_ticketing(:link_tickets) do
       create_ticket
       display_id = Helpdesk::Ticket.last.display_id
       #stubbing dynamo db
@@ -15,7 +15,7 @@ module LinkTicketTests
   end
 
   def test_tracker_create_with_multiple_related
-    enable_link_tickets do
+    enable_adv_ticketing(:link_tickets) do
       related_ticket_ids = 5.times.collect { create_ticket.display_id }
       stub_ticket_associates(related_ticket_ids) do
         Sidekiq::Testing.inline! do
@@ -28,7 +28,7 @@ module LinkTicketTests
   end
 
   def test_link_one_ticket_to_tracker
-    enable_link_tickets do
+    enable_adv_ticketing(:link_tickets) do
       related_ticket_ids = create_link_tickets
       tracker = Helpdesk::Ticket.last
       create_ticket
@@ -36,6 +36,7 @@ module LinkTicketTests
       # link this to the tracker
       stub_ticket_associates(related_ticket_ids << ticket.display_id, tracker) do
         put :link, {:id => ticket.display_id, :tracker_id => tracker.display_id}
+        ticket.reload
         assert_related_ticket(tracker, ticket)
         assert_tracker(tracker, [ticket.display_id])
       end
@@ -43,7 +44,7 @@ module LinkTicketTests
   end
 
   def test_multiple_link_to_tracker
-    enable_link_tickets do
+    enable_adv_ticketing(:link_tickets) do
       related_ticket_ids = create_link_tickets
       tracker = Helpdesk::Ticket.last
       tickets_to_link = 5.times.collect { create_ticket.display_id }
@@ -58,7 +59,7 @@ module LinkTicketTests
   end
 
   def test_unlink_from_tracker
-    enable_link_tickets do
+    enable_adv_ticketing(:link_tickets) do
       related_ticket_ids = create_link_tickets
       tracker = Helpdesk::Ticket.last
       related_id = related_ticket_ids.shift
@@ -72,12 +73,12 @@ module LinkTicketTests
   end
 
   def test_delete_tracker
-    enable_link_tickets do
+    enable_adv_ticketing(:link_tickets) do
       related_ticket_ids = create_link_tickets
       tracker = Helpdesk::Ticket.last
       broadcast_note = create_broadcast_note(:notable_id => tracker.id)
       Sidekiq::Testing.inline! do
-        stub_ticket_associates(related_ticket_ids, tracker) do
+        stub_ticket_associates(related_ticket_ids) do
           delete :destroy, {:id => tracker.display_id }
           tracker.reload
           assert_tracker_deleted tracker, related_ticket_ids, broadcast_note.id
@@ -87,22 +88,22 @@ module LinkTicketTests
   end
 
   def test_spam_tracker
-    enable_link_tickets do
+    enable_adv_ticketing(:link_tickets) do
       related_ticket_ids = create_link_tickets
       tracker = Helpdesk::Ticket.last
       broadcast_note = create_broadcast_note(:notable_id => tracker.id)
       Sidekiq::Testing.inline! do
-        stub_ticket_associates(related_ticket_ids, tracker) do
+        stub_ticket_associates(related_ticket_ids) do
           put :spam, {:id => tracker.display_id }
           tracker.reload
-          assert_tracker_spammed tracker, related_ticket_ids, broadcast_note.id        
+          assert_tracker_spammed tracker, related_ticket_ids, broadcast_note.id
         end
       end
     end
   end
 
   def test_delete_related
-    enable_link_tickets do
+    enable_adv_ticketing(:link_tickets) do
       related_ticket_ids = create_link_tickets
       tracker = Helpdesk::Ticket.last
       ticket = Helpdesk::Ticket.find_by_display_id(related_ticket_ids.shift)
@@ -118,7 +119,7 @@ module LinkTicketTests
 
 
   def test_spam_related
-    enable_link_tickets do
+    enable_adv_ticketing(:link_tickets) do
       related_ticket_ids = create_link_tickets
       tracker = Helpdesk::Ticket.last
       ticket = Helpdesk::Ticket.find_by_display_id(related_ticket_ids.shift)
@@ -133,7 +134,7 @@ module LinkTicketTests
   end
 
   def test_fetch_related_tickets
-    enable_link_tickets do
+    enable_adv_ticketing(:link_tickets) do
       related_ticket_ids = create_link_tickets
       tracker = Helpdesk::Ticket.last
       stub_ticket_associates(related_ticket_ids) do
@@ -142,4 +143,16 @@ module LinkTicketTests
       end
     end
   end
+
+  def test_dynamo_fallsback_to_mysql
+    enable_adv_ticketing(:link_tickets) do
+      related_ticket_ids = create_link_tickets
+      tracker = Helpdesk::Ticket.last
+      #associates method is not stubbed, to make the fallback
+      Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
+      get :associated_tickets, {:id => tracker.display_id, :page => 1}
+      related_ticket_ids.each {|id| assert_select "#related_ticket_list_item_#{id}"}
+    end
+  end
+
 end

@@ -16,6 +16,7 @@ FreshbooksWidget.prototype = {
 		this.projectData = ""; init_reqs = []; this.executed_date = new Date(); this.projectResults = "";
 		this.staff_page = 0;
 		this.client_page = 0;
+		this.project_received = 0;
 		freshbooksBundle.freshbooksNote = jQuery('#freshbooks-note').html();
 		init_reqs = [null, {
 			body: Freshdesk.NativeIntegration.freshbooksWidget.STAFF_LIST_REQ.evaluate({page:1}),
@@ -145,6 +146,7 @@ FreshbooksWidget.prototype = {
 
 	loadProjectList:function(resData) {
 		tot_pages = this.fetchMultiPages(resData, "projects", this.PROJECT_LIST_REQ, this.loadProjectList)
+		this.project_received++;
 		if (tot_pages > 1){
 			this.mergePagedProjects(resData)
 		}
@@ -190,7 +192,7 @@ FreshbooksWidget.prototype = {
 			projResults = projResults.split("</projects>")[0];
 			this.projectResults += projResults;
 
-			if(this.curr_page == this.tot_pages){
+			if(this.project_received == this.tot_pages){
 				this.projectResults += "</projects>";
 				this.projectData = XmlUtil.loadXMLString(this.projectResults);
 				this.loadProjects();
@@ -305,7 +307,7 @@ FreshbooksWidget.prototype = {
 		if (freshbooksBundle.remote_integratable_id) {
 			this.updateTimeEntry();
 		} else {
-			this.createTimeEntry();
+			this.createTimeEntry(integratable_id);
 		}
 	},
 
@@ -313,13 +315,17 @@ FreshbooksWidget.prototype = {
 		if(integratable_id)
 			this.freshdeskWidget.local_integratable_id = integratable_id;
 		if (Freshdesk.NativeIntegration.freshbooksWidget.validateInput()) {
+			var timesheetDate = jQuery('#executed_at_helpdesk_time_sheet_'+ integratable_id + '.executed_at').val();
+			if(!timesheetDate){
+				timesheetDate = jQuery('#executed_at_new.executed_at').val();
+			}
 			var body = this.CREATE_TIMEENTRY_REQ.evaluate({
 				staff_id: $("freshbooks-timeentry-staff").value,
 				project_id: $("freshbooks-timeentry-projects").value,
 				task_id: $("freshbooks-timeentry-tasks").value,
 				notes: $("freshbooks-timeentry-notes").value,
 				hours: $("freshbooks-timeentry-hours").value,
-				date: new Date(jQuery('.executed_at').val()).toString("yyyy-MM-dd")
+				date: new Date(timesheetDate).toString("yyyy-MM-dd")
 			});
 			this.freshdeskWidget.request({
 				body: body,

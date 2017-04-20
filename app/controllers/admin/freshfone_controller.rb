@@ -129,6 +129,7 @@ class Admin::FreshfoneController < Admin::AdminController
 			if params[:search_options].present? &&
 				params[:search_options].values.any?(&:present?)
 				params[:search_options][:contains] << "*" if params[:search_options][:contains].length == 1
+				params[:search_options][:voiceEnabled] = true
 				return params[:search_options]
 			end
 			{}

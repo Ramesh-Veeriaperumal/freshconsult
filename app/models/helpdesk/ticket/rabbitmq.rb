@@ -63,7 +63,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       "outbound_email"    => outbound_email?,
       "archive"           => archive || false,
       "actor_type"        => User.current.nil? ? nil : (User.current.agent? ? ACTOR_TYPE[:agent] : ACTOR_TYPE[:contact]), 
-      "actor_id"          => User.current.nil? ? nil : User.current.id
+      "actor_id"          => User.current.nil? ? nil : User.current.id,
+      "association_type" =>   association_type
     }
   end
   
@@ -71,7 +72,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     @rmq_ticket_schemaless_hash ||= {
       "sla_policy_id"     => schema_less_ticket.sla_policy_id,
       "product_id"        => schema_less_ticket.product_id,
-      "association_type" => schema_less_ticket.association_type
     }.merge(schema_less_ticket.reports_hash)
   end
 
@@ -121,4 +121,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     new_hash
   end
+
+  def get_default_lifecycle_properties
+    {
+      action_time_in_bhrs: 0,
+      action_time_in_chrs: 0,
+      chrs_from_tkt_creation: 0
+    }
+  end
+  
 end

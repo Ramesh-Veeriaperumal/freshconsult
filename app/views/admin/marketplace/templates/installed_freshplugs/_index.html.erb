@@ -21,7 +21,7 @@
               <div class="switch-box pull-left <%= is_ni_integration ? 'hide tooltip' : '' %>" data-placement="below" data-original-title= "<%= t('marketplace.coming_soon') %>">
                 <% enabled_or_disabled_path = installation_details['enabled'] ? admin_marketplace_installed_extensions_disable_path(installation_details['extension_id']) : admin_marketplace_installed_extensions_enable_path(installation_details['extension_id']) %>
                 <% toggle_path = !installation_details['enabled'] ? admin_marketplace_installed_extensions_disable_path(installation_details['extension_id']) : admin_marketplace_installed_extensions_enable_path(installation_details['extension_id']) %>
-                <%= check_box_tag '', installation_details['enabled'], installation_details['enabled'], "data-url" => enabled_or_disabled_path, 
+                <%= check_box_tag '', installation_details['enabled'], installation_details['enabled'], "data-url" => enabled_or_disabled_path,
               "data-toggle" => toggle_path, :rel => "toggle", :class=>"switch", :name => "onoffswitch", :id => "indplug_#{installation_details['extension_id']}" %>
               </div>
               <% if !is_ni_integration && extension_details['version_id'] != installation_details['version_id'] %>
@@ -33,13 +33,11 @@
                     <%= link_to "<span class='#{font_class('settings1', 16)}'></span>".html_safe, edit_integrations_marketplace_app_path(ERB::Util.url_encode(extension_details['name'])), :class => "btn btn-mini btn-settings tooltip", "data-placement" => "below", "data-original-title" => t('application.tooltip.settings') %>
                   <% end %>
                 <% else %>
-                <% edit_button = generate_mkp_edit_button(extension_details, installation_details)%>
-                <%= edit_button if edit_button.present?%>
+                  <%= generate_mkp_edit_button(extension_details, installation_details)%>
                 <% end %>
-              <!-- To be decided for iframe apps with no configs-->
               <% elsif is_iframe_app?(extension_details)%>
-                <% edit_params = { "type" => "#{Marketplace::Constants::EXTENSION_TYPE[:plug]}", "installation_type" => "settings", "display_name" => "#{ERB::Util.url_encode(extension_details['display_name'])}" } %>
-                <%= link_to "<span class='#{font_class('settings1', 16)}'></span>".html_safe, "", 
+                <% edit_params = { "type" => "#{Marketplace::Constants::EXTENSION_TYPE[:plug]}", "installation_type" => "settings", "display_name" => extension_details['display_name'] } %>
+                <%= link_to "<span class='#{font_class('settings1', 16)}'></span>".html_safe, "",
                 "data-url"=> "#{admin_marketplace_installed_extensions_iframe_configs_path(installation_details['extension_id'], installation_details['version_id'])}?#{edit_params.to_query}",:class => "btn btn-mini btn-settings update-iframe-settings tooltip", "data-placement" => "below", "data-original-title" => t('application.tooltip.settings'), "data-developedby"=> extension_details['account'] %>
               <% end %>
               <% if is_oauth_app?(extension_details)%>

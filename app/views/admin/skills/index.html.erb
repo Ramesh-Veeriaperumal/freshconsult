@@ -57,7 +57,7 @@
                               <td class = "tdSkill">
                                 <div class="item_actions" align="right">
                                     <%= link_to(t('edit'), edit_admin_skill_path(skill), :class => "btn btn-mini") %>
-                                    <%= link_to "<i class='icon-trash'></i>".html_safe, admin_skill_path(skill), :confirm => t('.confirm_delete_message').html_safe, :method => :delete, :class => "btn btn-mini" %>
+                                    <%= link_to "<i class='icon-trash'></i>".html_safe, admin_skill_path(skill), :confirm => t('.confirm_delete_message_v2').html_safe, :method => :delete, :class => "btn btn-mini" %>
                                 </div>
                               </td>
                             </tr>
@@ -75,4 +75,5 @@
 
 </div>
 
-<%= render :partial => 'popup' %>
+<%= render :partial => '/admin/shared/popup' %>
+

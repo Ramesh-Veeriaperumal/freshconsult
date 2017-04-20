@@ -11,7 +11,6 @@ module Search::Filters::QueryHelper
       'helpdesk_tags.name'                        =>  'tag_names',
       'helpdesk_subscriptions.user_id'            =>  'watchers',
       'helpdesk_schema_less_tickets.product_id'   =>  'product_id',
-      'helpdesk_schema_less_tickets.int_tc03'     =>  'int_tc03'
     }
 
     private
@@ -41,6 +40,7 @@ module Search::Filters::QueryHelper
         condition_block[:must].push(permissible_filter) if with_permissible and User.current.agent? and User.current.restricted?
         construct_conditions(condition_block[:must], conditions)
       end
+      condition_block[:must].push(account_id_filter)
       construct_conditions(condition_block[:must_not], neg_conditions)
       filtered_query(nil, bool_filter(condition_block))
     end

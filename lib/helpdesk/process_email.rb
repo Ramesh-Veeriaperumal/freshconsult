@@ -94,7 +94,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       # clip_large_html
       account.make_current
       email_spam_watcher_counter(account)
-      email_processing_log("Processing email for ", to_email[:email])
+      email_processing_log("Processing email request for request_url: #{params[:request_url].to_s}",to_email[:email])
       verify
       TimeZone.set_time_zone
       from_email = parse_from_email(account)
@@ -217,7 +217,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     params[:cc] = permissible_ccs(user, params[:cc], account)
     if ticket
       if(from_email[:email].to_s.downcase == ticket.reply_email.to_s.downcase) #Premature handling for email looping..
-        email_processing_log "Email Processing Failed: From-email and reply-email email are same!", to_email[:email]
+        email_processing_log "Email Processing Failed: Email cannot be threaded. From-email and Ticket's reply-email email are same!", to_email[:email]
         return processed_email_data(PROCESSED_EMAIL_STATUS[:self_email], account.id)
       end
       primary_ticket = check_primary(ticket,account)
@@ -534,10 +534,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       unless params[:dropped_cc_emails].blank?
         ticket.cc_email[:dropped_cc_emails] = params[:dropped_cc_emails]
       end
-
+      message_id_list = []
       begin
         self.class.trace_execution_scoped(['Custom/Sendgrid/tickets']) do
-          (ticket.header_info ||= {}).merge!(:message_ids => [message_key]) unless message_key.nil?
+          message_id_list.push(message_key).push(all_message_ids).flatten!.uniq!
+          (ticket.header_info ||= {}).merge!(:message_ids => message_id_list) unless message_id_list.blank?
           if large_email && duplicate_email?(from_email[:email], 
                                                     to_email[:email], 
                                                     params[:subject], 
@@ -569,7 +570,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         # FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
         NewRelic::Agent.notice_error(e)
       end
-      store_ticket_threading_info(account, message_key, ticket)
+      message_id_list.each do |msg_key|
+        store_ticket_threading_info(account, msg_key, ticket)
+      end
       # ticket
       return processed_email_data(PROCESSED_EMAIL_STATUS[:success], account.id, ticket)
     end
@@ -621,8 +624,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                         Nokogiri::HTML(params[:html]).css("span[title='fd_tkt_identifier']") 
                       }
       unless display_span.blank?
-        display_id = display_span.last.inner_html
+        display_id, fetched_account_id = display_span.last.inner_html.split(":")
         unless display_id.blank?
+          return if email_from_another_portal?(account, fetched_account_id)
           ticket = account.tickets.find_by_display_id(display_id.to_i)
           self.actual_archive_ticket = account.archive_tickets.find_by_display_id(display_id.to_i) if account.features_included?(:archive_tickets) && !ticket
           return ticket 
@@ -635,10 +639,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       parsed_html = run_with_timeout(NokogiriTimeoutError) { Nokogiri::HTML(params[:html]) }
       display_span = parsed_html.css("span[style]").select{|x| x.to_s.include?('fdtktid')}
       unless display_span.blank?
-        display_id = display_span.last.inner_html
+        display_id, fetched_account_id = display_span.last.inner_html.split(":")
         display_span.last.remove
         params[:html] = parsed_html.inner_html
         unless display_id.blank?
+          return if email_from_another_portal?(account, fetched_account_id)
           ticket = account.tickets.find_by_display_id(display_id.to_i)
           self.actual_archive_ticket = account.archive_tickets.find_by_display_id(display_id.to_i) if account.features_included?(:archive_tickets) && !ticket
           return ticket 
@@ -847,9 +852,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           content_id = content_ids["attachment#{i+1}"] && 
                         verify_inline_attachments(item, content_ids["attachment#{i+1}"])
           att = Helpdesk::Attachment.create_for_3rd_party(account, item, 
-                  params["attachment#{i+1}"], i, content_id)
+                  params["attachment#{i+1}"], i, content_id, true)
           if att.is_a? Helpdesk::Attachment
-            if content_id
+            if content_id && !att["content_file_name"].include?(".svg")
               content_id_hash[att.content_file_name+"#{inline_count}"] = content_ids["attachment#{i+1}"]
               inline_count+=1
               inline_attachments.push att unless virus_attachment?(params["attachment#{i+1}"], account)
@@ -859,12 +864,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           end
         rescue HelpdeskExceptions::AttachmentLimitException => ex
           Rails.logger.error("ERROR ::: #{ex.message}")
-          message = attachment_exceeded_message(HelpdeskAttachable::MAX_ATTACHMENT_SIZE)
+          message = attachment_exceeded_message(HelpdeskAttachable::MAILGUN_MAX_ATTACHMENT_SIZE)
           add_notification_text item, message
           break
         rescue Exception => e
           Rails.logger.error("Error while adding item attachments for ::: #{e.message}")
-          break
+          raise e
         end
       end
       if @total_virus_attachment
@@ -1114,7 +1119,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       begin
         ticket.sds_spam = params[:spam_info]['spam']
         ticket.spam_score = params[:spam_info]['score']
-        Rails.logger.info "Spam rules triggered for ticket #{ticket.id}: #{params[:spam_info]['rules']}"
+        Rails.logger.info "Spam rules triggered for ticket with message_id #{params[:message_id]}: #{params[:spam_info]['rules']}"
       rescue => e
         puts e.message
       end

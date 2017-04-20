@@ -23,25 +23,16 @@ App.CollaborationModel = (function ($) {
 
     var _COLLAB_PVT = {
         ChatApi: {},
+        apiInited: function(response) {
+            Collab.features.groupMentionsEnabled = response.features.enable_group_mentions;
+            Collab.features.replyToEnabled = response.features.enable_reply_to;
+        },
         connectionInited : function() {
             Collab.MEMBER_PRESENCE_POLL_TIME = _COLLAB_PVT.ChatApi.memberPresencePollTime;
             // TODO(mayank): mergo updates DB with nil data
             // This is supposed to update latest self_info; Avoiding this temporarily; 
-            // _COLLAB_PVT.UpdateUser(Collab.currentUser.uid, Collab.currentUser.name, Collab.currentUser.email)
+            // _COLLAB_PVT.updateUser(Collab.currentUser.uid, Collab.currentUser.name, Collab.currentUser.email)
             
-
-            _COLLAB_PVT.ChatApi.getAllUsers(function(response) {
-                var users = response.users;
-                // TODO (ankit): manage response.start and futher fetching if(start != "")
-                users.forEach(function(user) {
-                    Collab.usersMap[user.uid] = jQuery.extend({"uid": user.uid}, user.info);
-                });
-
-                if(Collab.usersMap && !!Object.keys(Collab.usersMap).length) {
-                    // Collab.getNotifications();
-                }
-            });
-
             function uiIniter() {
                 Collab.initedWithData = true;
                 // call initUI if pending config found
@@ -51,8 +42,15 @@ App.CollaborationModel = (function ($) {
                 }
             }
 
-            // Removed store_profile_image dependency from here
-            uiIniter();
+            _COLLAB_PVT.ChatApi.getAllUsers(function(response) {
+                var users = response.users;
+                // TODO (ankit): manage response.start and futher fetching if(start != "")
+                users.forEach(function(user) {
+                    Collab.usersMap[user.uid] = jQuery.extend({"uid": user.uid}, user.info);
+                });
+                uiIniter();
+            });
+
         },
         disconnected: function(response) {
             App.CollaborationUi.onDisconnectHandler(response);
@@ -195,6 +193,10 @@ App.CollaborationModel = (function ($) {
         unreadNotiCount: 0,
         invalidAnnotationMessages: [],
         profileImages: {},
+        features: {
+            groupMentionsEnabled: false,
+            replyToEnabled: false,
+        },
 
         isOnline: function(userId) {
             var is_online = false;
@@ -463,7 +465,7 @@ App.CollaborationModel = (function ($) {
         sendMail: function(mail_content) {
             var mail_data = {
                 "toAddress": mail_content.toAddressList,
-                "fromAddress": "support@" + window.location.hostname,
+                "fromAddress": Collab.currentConversation.ticket_config_email,
                 "html_data": mail_content.html_data,
                 "co_id": Collab.currentConversation.co_id
             };
@@ -497,7 +499,8 @@ App.CollaborationModel = (function ($) {
                 "onmemberremove": _COLLAB_PVT.onMemberRemove,
                 "chatApiServer": config.collab_url,
                 "rtsServer": config.rts_url,
-                "onerror": _COLLAB_PVT.onErrorHandler
+                "onerror": _COLLAB_PVT.onErrorHandler,
+                "apiinited": _COLLAB_PVT.apiInited
             });
 
             if(typeof Annotation !== "undefined") {
@@ -505,6 +508,8 @@ App.CollaborationModel = (function ($) {
                     "annotationevents": _COLLAB_PVT.getAnnotationEvents(),
                     "wrapper_elem_style": "background-color: #fee4c8; line-height: 18px; box-shadow: 1px 1px 0 lightgrey; border-radius: 1px; border: 1px solid #ebc397; color:#333333; padding: 0 2px;"
                 });
+            } else {
+                console.warn("Annotations sdk not present. couldn't start annotations.");
             }
             window.$kapi = _COLLAB_PVT.ChatApi;
         }

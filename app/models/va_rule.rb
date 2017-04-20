@@ -8,7 +8,7 @@ class VaRule < ActiveRecord::Base
     [ :first, "dispatch.no_cascade",    0 ],
     [ :all,   "dispatch.cascade",        1 ] 
   ]
-
+  
   serialize :filter_data
   serialize :action_data
   
@@ -86,18 +86,20 @@ class VaRule < ActiveRecord::Base
   end
 
   def event_matches? current_events, evaluate_on
-    Rails.logger.debug "INSIDE event_matches? WITH evaluate_on : #{evaluate_on.inspect}, va_rule #{self.inspect}"
+    #Rails.logger.debug "INSIDE event_matches? WITH evaluate_on : #{evaluate_on.inspect}, va_rule #{self.inspect}"
     events.each do  |e|
       if e.event_matches?(current_events, evaluate_on)
         @triggered_event = {e.name => current_events[e.name]}
+        Rails.logger.debug "event_matches - T=#{evaluate_on.id} :: R=#{self.id} :: #{@triggered_event.inspect} :: true"
         return true
       end
     end
+    Rails.logger.debug "event_matches - T=#{evaluate_on.id} :: R=#{self.id} :: false"
     return false
   end
   
   def pass_through(evaluate_on, actions=nil, doer=nil)
-    Rails.logger.debug "INSIDE pass_through WITH evaluate_on : #{evaluate_on.inspect}, actions #{actions}"
+    #Rails.logger.debug "INSIDE pass_through WITH evaluate_on : #{evaluate_on.inspect}, actions #{actions}"
     is_a_match = matches(evaluate_on, actions)
     trigger_actions(evaluate_on, doer) if is_a_match
     return evaluate_on if is_a_match
@@ -106,16 +108,23 @@ class VaRule < ActiveRecord::Base
   
   def matches(evaluate_on, actions=nil)
     return true if conditions.empty?
-    Rails.logger.debug "INSIDE matches WITH conditions : #{conditions.inspect}, actions #{actions}"
-    s_match = match_type.to_sym   
+    #Rails.logger.debug "INSIDE matches WITH conditions : #{conditions.inspect}, actions #{actions}"
+    s_match = match_type.to_sym
     to_ret = false
     conditions.each do |c|
       current_evaluate_on = custom_eval(evaluate_on, c.evaluate_on_type)
       to_ret = !current_evaluate_on.nil? ? c.matches(current_evaluate_on, actions) : negation_operator?(c.operator)
-      return true if to_ret && (s_match == :any)
-      return false if !to_ret && (s_match == :all) #by Shan temp
+      if to_ret && (s_match == :any)
+        Rails.logger.debug "rule_matches [1] - T=#{evaluate_on.id} :: R=#{self.id} :: #{c.inspect} :: true"
+        return true
+      end
+      if !to_ret && (s_match == :all)
+        Rails.logger.debug "rule_matches [1] - T=#{evaluate_on.id} :: R=#{self.id} :: #{c.inspect} :: false"
+        return false
+      end
     end
     
+    Rails.logger.debug "rule_matches [2] - T=#{evaluate_on.id} :: T=#{self.id} :: #{to_ret}"
     return to_ret
   end
 
@@ -140,11 +149,15 @@ class VaRule < ActiveRecord::Base
     Va::RuleActivityLogger.initialize_activities if automation_rule?
     return false unless check_user_privilege
     @triggered_event ||= TICKET_CREATED_EVENT
-    add_rule_to_system_changes(evaluate_on, doer) if activities_enabled?(evaluate_on)
+    add_rule_to_system_changes(evaluate_on) if activities_enabled?(evaluate_on)
     actions.each { |a| a.trigger(evaluate_on, doer, triggered_event) }
   end
 
-  def add_rule_to_system_changes(evaluate_on, doer)
+  def trigger_actions_for_validation(evaluate_on, doer=nil)
+    actions.each { |a| a.trigger(evaluate_on, doer, nil, true) }
+  end
+
+  def add_rule_to_system_changes(evaluate_on)
     base_hash = {"#{self.id}" => {:rule => [self.rule_type, self.name.truncate(100)]}}
     if evaluate_on.system_changes.present?
       evaluate_on.system_changes.merge!(base_hash)

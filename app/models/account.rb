@@ -15,6 +15,7 @@ class Account < ActiveRecord::Base
   include Helpdesk::SharedOwnershipMigrationMethods
   include Onboarding::OnboardingRedisMethods
   include FreshdeskFeatures::Feature
+  include Helpdesk::SharedOwnershipMigrationMethods
 
   has_many_attachments
   
@@ -106,8 +107,10 @@ class Account < ActiveRecord::Base
   end
   
   # Feature check to prevent data from being sent to v1 conditionally
+  # V1 has been completely removed in production
   def esv1_enabled?
-    (ES_ENABLED && launched?(:es_v1_enabled))
+    false
+    # (ES_ENABLED && launched?(:es_v1_enabled))
   end
 
   def permissible_domains
@@ -160,6 +163,10 @@ class Account < ActiveRecord::Base
     active_groups_in_account(id)
   end
 
+  def has_any_scheduled_ticket_export?
+    auto_ticket_export_enabled? && scheduled_ticket_exports_from_cache.present?
+  end
+
   def fields_with_in_operators
     custom_dropdown = "custom_dropdown"
     default_in_op_fields = Hash.new
@@ -177,10 +184,6 @@ class Account < ActiveRecord::Base
     default_in_op_fields[:company].flatten!
 
     default_in_op_fields.stringify_keys!
-  end
-
-  def parent_child_tkts_enabled?
-    @pc ||= launched?(:parent_child_tickets)
   end
 
   class << self # class methods
@@ -525,7 +528,26 @@ class Account < ActiveRecord::Base
   end
 
   def ehawk_spam?
-    ehawk_reputation_score >= 4 
+    ehawk_reputation_score >= 4
+  end
+
+  def dashboard_shard_name
+    dashboard_shard_from_cache || ActiveRecord::Base.current_shard_selection.shard.to_s
+  end
+
+  def update_ticket_dynamo_shard
+    acct_addtn_settings = self.account_additional_settings
+    if acct_addtn_settings
+      if acct_addtn_settings.additional_settings.present?
+        acct_addtn_settings.additional_settings[:tkt_dynamo_shard] = Helpdesk::Ticket::TICKET_DYNAMO_NEXT_SHARD
+      else
+        addtn_settings = {
+          :tkt_dynamo_shard => Helpdesk::Ticket::TICKET_DYNAMO_NEXT_SHARD
+        }
+        acct_addtn_settings.additional_settings = addtn_settings
+      end
+      acct_addtn_settings.save
+    end
   end
 
   def copy_right_enabled?

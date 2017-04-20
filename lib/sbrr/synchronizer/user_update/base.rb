@@ -20,6 +20,10 @@ module SBRR
           perform_in_queues queues, :dequeue_object_with_lock, user
         end
 
+        def refresh_in_relevant_queues
+          perform_in_queues queues, :refresh_object_with_lock, user
+        end
+
         def queue_details
           [user, {:group => group, :skill => skill, :skills => skills}]
         end

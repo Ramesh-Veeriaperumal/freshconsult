@@ -19,7 +19,7 @@ class Helpdesk::MobihelpInfoController < ApplicationController
           :device_make => @extra_info.device_make,
           :device_model => @extra_info.device_model,
           :sdk_version => @extra_info.sdk_version,
-          :debug_data_url => AwsWrapper::S3Object.url_for(@debug_data.content.path(:original),@debug_data.content.bucket_name, :expires => 300.seconds, :secure => true, :response_content_type => @debug_data.content_content_type)
+          :debug_data_url => (@debug_data.present? ? AwsWrapper::S3Object.url_for(@debug_data.content.path(:original),@debug_data.content.bucket_name, :expires => 300.seconds, :secure => true, :response_content_type => @debug_data.content_content_type) : "")
         }
         render :json => json_data
       }

@@ -12,7 +12,6 @@
   jQuery("#index_refresh_alert").bind("click", function(ev){
     slide_up();
     jQuery("#FilterOptions").trigger("change");
-    getFilterData();
   });
 
   jQuery(".filter_item").bind("change", function(){
@@ -30,8 +29,9 @@
       'month' : Date.parse("<%= Time.now.beginning_of_month %>"),
       'two_months' : Date.parse("<%= Time.now.beginning_of_month - 2.months %>"),
       'six_months' : Date.parse("<%= Time.now.beginning_of_month - 6.months %>"),
-      'last_month' : Date.parse("<%= Time.now.midnight - 1.month %>")
- }
+      'last_month' : Date.parse("<%= Time.now.midnight - 1.month %>"),
+      'last_week'  : Date.parse("<%= Time.now.midnight - 7.days %>")
+  };
 
   function slide_up(){
     jQuery("#index_refresh_alert").slideUp(100);

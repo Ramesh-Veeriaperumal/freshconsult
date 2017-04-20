@@ -126,7 +126,8 @@ class Helpdesk::Email::HandleTicket
                                                         email[:attached_items]["attachment-#{i+1}"], 
                                                         i, content_id, true)
         if att.is_a? Helpdesk::Attachment
-          if content_id
+
+          if content_id && !att["content_file_name"].include?(".svg")
             content_id_hash[att.content_file_name+"#{inline_count}"] = cid(i)
             inline_count+=1
             inline_attachments.push att unless virus_attachment?(email[:attached_items]["attachment-#{i+1}"], account)
@@ -141,7 +142,7 @@ class Helpdesk::Email::HandleTicket
         break
       rescue Exception => e
         Rails.logger.error("Error while adding item attachments for ::: #{e.message}")
-        break
+        raise e
       end
     end
     if @total_virus_attachment

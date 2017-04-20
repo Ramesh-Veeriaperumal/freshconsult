@@ -82,7 +82,7 @@ window.App.Groups = window.App.Groups || {};
         }
       } else {
         //Default
-        $("[name='group[ticket_assign_type]']").val(ASSIGNMENTS.DEFAULT);
+        $("[name='group[ticket_assign_type]']").val(ticket_assign_type);
         $("[rel=only_round]").removeClass('ui-helper-hidden');
         $("[rel=process_desc]").addClass('ui-helper-hidden');
         $("#toggle_method").hide();
@@ -207,10 +207,16 @@ window.App.Groups = window.App.Groups || {};
       //Listeners
       
       $bodySelector.ready(function() {
-        
-        var business_cal_opts = jQuery('#business_calendar').data('select2').opts.data;
-        var cur_option = business_cal_opts.filter(function(e) {return e.id == jQuery('#business_calendar').select2('val');});
-        jQuery("#business_calendar").select2('data',cur_option[0]);     
+        const disabled = -1;
+        var multi_business_hr_check = DataStore.get('feature').store.features_list.indexOf('multiple_business_hours');
+        if (multi_business_hr_check !== disabled) {
+          var $business_cal = $('#business_calendar');
+          var business_cal_opts = $business_cal.data('select2').opts.data;
+          var cur_option = business_cal_opts.filter(function(e) {
+            return e.id == $business_cal.select2('val');
+          });
+          $business_cal.select2('data', cur_option[0]);
+        }
 
          if($('#group_capping_enabled_2').is(':checked')){
           _this.check_conditions_sbrr();

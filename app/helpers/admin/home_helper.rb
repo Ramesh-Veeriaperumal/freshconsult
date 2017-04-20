@@ -1,4 +1,5 @@
  module Admin::HomeHelper
+  include Redis::RedisKeys
 
   ######### Admin Items ########
 
@@ -80,9 +81,9 @@
         :privilege                     =>   privilege?(:manage_tags)
       },
       :skills                          =>   {
-        :url                           =>   privilege?(:admin_tasks) ? "/admin/skills" : "/admin/agent_skills",
+        :url                           =>   privilege?(:manage_skills) ? "/admin/skills" : "/admin/agent_skills",
         :privilege                     =>   current_account.skill_based_round_robin_enabled? && 
-                                              (privilege?(:admin_tasks) || privilege?(:assign_agent))
+                                              (privilege?(:manage_skills) || privilege?(:manage_availability))
       },
       :dispatcher                      =>   {
         :url                           =>   "/admin/va_rules",
@@ -141,7 +142,9 @@
         :privilege                     =>   privilege?(:manage_account)
       },
       :import                          =>   {
-        :url                           =>   "/admin/zen_import",
+        :url                           =>   redis_key_exists?(ZENDESK_IMPORT_APP_KEY) ?
+                                            "/integrations/applications##{ZEN_APP_ID}":
+                                            "/admin/zen_import",
         :privilege                     =>   privilege?(:manage_account)
       },
       :day_pass                        =>   {
@@ -199,6 +202,8 @@
       }
     }
   end
+
+  ZEN_APP_ID = ZendeskAppConfig::APP_ID
 
   ######### Admin groups & Associated admin items Constant ########
 
@@ -334,6 +339,7 @@
       :"day_pass"                             =>    [:occasional_agent],
       :custom_mailbox                         =>    [:custom_mailbox_meta]
     }
+
 
   ######### Constructing Admin Page ########
 

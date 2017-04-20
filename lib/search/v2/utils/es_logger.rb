@@ -54,6 +54,20 @@ module Search
           log(output.join(' '))
         end
 
+        def track_hits(account_id,cluster, search_type,response_code, response_time=nil, hits=nil, request_payload=nil)
+          output = []
+
+          output << "account_id=#{account_id}"
+          output << "cluster=#{cluster}"
+          output << "search_type=#{search_type}"
+          output << "response_code=#{response_code}"
+          output << "response_time=#{response_time}"
+          output << "hits=#{hits}"
+          output << "request_payload=#{request_payload}"
+
+          track(output.join(' '))
+        end
+
         # For easily parseble
         # (*) Log account_id
         # (*) Log cluster_name
@@ -114,11 +128,24 @@ module Search
             @@esv2_logger ||= Logger.new(log_path)
           end
 
+          def track_device
+            @@esv2_tracker ||= Logger.new("#{Rails.root}/log/esv2_hits.log")
+          end
+
           # Logging function
           #
           def log(message, level='info')
             begin
               log_device.send(level, "[#{@log_uuid}] [#{timestamp}] #{message}")
+            rescue Exception => e
+              Rails.logger.error("[#{@log_uuid}] Exception in ES Logger :: #{e.message}")
+              NewRelic::Agent.notice_error(e)
+            end
+          end
+
+          def track(message, level='info')
+            begin
+              track_device.send(level, "[#{@log_uuid}] [#{timestamp}] #{message}")
             rescue Exception => e
               Rails.logger.error("[#{@log_uuid}] Exception in ES Logger :: #{e.message}")
               NewRelic::Agent.notice_error(e)

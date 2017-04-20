@@ -2,6 +2,8 @@ class Helpdesk::Note < ActiveRecord::Base
 
   # rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['helpdesk_notes'] }, :if => lambda{|obj| obj.rl_enabled? }
 
+  # Any changes related to note or reply made in this file should be replicated in 
+  # send_and_set_helper if required
   before_create :validate_schema_less_note, :update_observer_events
   before_create :create_broadcast_message, :if => :broadcast_note?
   before_save :load_schema_less_note, :update_category, :load_note_body, :ticket_cc_email_backup
@@ -11,7 +13,8 @@ class Helpdesk::Note < ActiveRecord::Base
   # Doing update note count before pushing to ticket_states queue
   # So that note count will be reflected if the rmq publish happens via ticket states queue
   after_commit ->(obj) { obj.send(:update_note_count_for_reports)  }, on: :create , :if => :report_note_metrics?
-  after_commit :update_ticket_states, :notify_ticket_monitor, :push_mobile_notification, on: :create
+  after_commit :update_ticket_states, on: :create, :unless => :send_and_set?
+  after_commit :notify_ticket_monitor, :push_mobile_notification, on: :create
 
   after_commit :send_notifications, on: :create, :if => :human_note_for_ticket?
 
@@ -153,12 +156,12 @@ class Helpdesk::Note < ActiveRecord::Base
           additional_emails = [notable.requester.email] if !notable.included_in_cc?(notable.requester.email)
           # Using cc notification to send notification to requester about new comment by cc
           Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {:additional_emails => additional_emails,
-                                                                                   :ignore_emails => [user.email]})
+                                                                                   :ignore_emails => [user.email]}) unless notable.spam?
         end
         handle_notification_for_agent_as_req if ( !incoming && notable.agent_as_requester?(user.id))
 
         if notable.cc_email.present? && user.id == notable.requester_id && !self.private?
-          Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {})
+          Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {}) unless notable.spam?
         end
 
       else
@@ -168,7 +171,7 @@ class Helpdesk::Note < ActiveRecord::Base
         #notify the customer if it is public note
         if note? && !private && e_notification.requester_notification?
           Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT, notable, self)
-          Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {}) if notable.cc_email.present?
+          Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {}) if notable.cc_email.present? and !notable.spam?
         #handle the email conversion either fwd email or reply
         elsif email_conversation?
           send_reply_email
@@ -310,12 +313,21 @@ class Helpdesk::Note < ActiveRecord::Base
     
     # VA - Observer Rule 
     def update_observer_events
-      return if user.nil? || !human_note_for_ticket? || feedback? || !(notable.instance_of? Helpdesk::Ticket) || broadcast_note?
+      return if user.nil? || !human_note_for_ticket? || feedback? || !(notable.instance_of? Helpdesk::Ticket) || broadcast_note? || disable_observer_rule
       if replied_by_customer? || replied_by_agent?
         @model_changes = {:reply_sent => :sent}
       else
         @model_changes = {:note_type => NOTE_TYPE[private]}
       end
+    end
+
+    def send_and_set?
+      unless self.changes_for_observer.nil?
+        self.changes_for_observer = @model_changes
+        user_id = User.current.id if User.current
+        return true
+      end
+      return false
     end
 
     def replied_by_customer?

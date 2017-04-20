@@ -13,7 +13,10 @@ class User < ActiveRecord::Base
 
   before_update :backup_user_changes, :clear_redis_for_agent
 
-  after_update  :send_alert_email, :if => :email_changed?
+
+  after_update  :destroy_scheduled_ticket_exports, :if => :privileges_changed?
+
+  #after_update  :send_alert_email, :if => :email_changed?
 
   before_save :set_time_zone, :set_default_company
   before_save :set_language, :unless => :created_from_email
@@ -35,6 +38,7 @@ class User < ActiveRecord::Base
   after_commit :delete_forum_moderator, on: :update, :if => :helpdesk_agent_updated?
   after_commit :deactivate_monitorship, on: :update, :if => :blocked_deleted?
   after_commit :remove_user_mobile_registrations, on: :update, :if => :password_updated?
+  after_commit :sync_to_export_service, on: :update, :if => [:agent?, :time_zone_updated?]
 
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -203,13 +207,24 @@ class User < ActiveRecord::Base
   end
 
   def send_alert_email
-    changed_attributes_names = ["primary email "]
-    subject = "System notification: Agent email address changed"
-    SecurityEmailNotification.send_later(:deliver_agent_email_change, self, self.email_was,subject,
-      changed_attributes_names,User.current,"agent_email_change")
-    if User.current.email !=self.email_was
-        SecurityEmailNotification.send_later(:deliver_agent_email_change, self,User.current.email ,subject,
-        changed_attributes_names,User.current,"admin_alert_email_change")
+
+    if self.agent?
+      changed_attributes_names = ["primary email "]
+      subject = "System notification: Agent email address changed"
+      SecurityEmailNotification.send_later(:deliver_agent_email_change, self, self.email_was,subject,
+        changed_attributes_names,User.current,"agent_email_change")
+      if User.current.email !=self.email_was
+          SecurityEmailNotification.send_later(:deliver_agent_email_change, self,User.current.email ,subject,
+          changed_attributes_names,User.current,"admin_alert_email_change")
+      end
+    end
+  end
+
+  def destroy_scheduled_ticket_exports
+    if !self.privilege?(:admin_tasks)
+      Account.current.scheduled_ticket_exports_from_cache.each do |scheduled_ticket_export|
+        scheduled_ticket_export.destroy if scheduled_ticket_export.user_id == self.id
+      end 
     end
   end
 end

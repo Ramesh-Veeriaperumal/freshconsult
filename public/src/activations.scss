@@ -4,6 +4,7 @@
 @import "pattern/lib/buttons";
 @import "pattern/lib/button-groups";
 @import "pattern/lib/popovers";
+@import "plugins/select2";
 
 
 body{
@@ -13,6 +14,23 @@ body{
 .clearfix{
   clear: both;
 }
+.sub-heading {
+  letter-spacing: 1px;
+  font-weight: 200;
+  font-size: 14px;
+  color: #666;
+}
+.activation-form {
+  padding-top: 20px;
+  label.control-label {
+    margin-top: 5px;
+  }
+  .separator {
+    border-bottom: 1px solid rgba(153, 153, 153, 0.2);
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+}
 
 .activation-page {
   width: 600px;
@@ -20,8 +38,10 @@ body{
   margin: 75px auto;
   box-shadow: 0px 0px 10px -4px #4d4d4d;
   border-radius: 5px;
+  .industry-select2 {
+    width:107%;
+  }
 }
-
 .banner {
   background: #252525;
   @include border-radius(5px 5px 0px 0px);

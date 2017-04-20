@@ -24,7 +24,7 @@
 
 <%
   sign_value = if (desp = @item.description_html).blank? & (sign =
-                  current_user.agent.parsed_signature('ticket' => @ticket, 'helpdesk_name' => @ticket.account.portal_name)).blank?
+                  current_user.agent.parsed_signature('ticket' => @ticket, 'helpdesk_name' => @ticket.account.helpdesk_name)).blank?
                 desp.to_s
               else
                 desp.present? ? (sign.present? ? desp + sign : desp) : ("<p><br /></p>"*2)+sign.to_s
@@ -80,7 +80,7 @@
 
 <%= render :partial => "/helpdesk/tickets/canned_loading" %>
 <script>
- var isMultifileEnabled = <%= current_account.launched?(:multifile_attachments) %>
+ var isMultifileEnabled = <%= current_account.launched?(:multifile_attachments) && current_account.launched?(:pjax_reload)%>
 </script>
 
 <% if Account.current.launched?(:agent_new_ticket_cache) %>

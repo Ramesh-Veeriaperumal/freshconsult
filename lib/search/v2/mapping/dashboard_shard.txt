@@ -1,0 +1,31 @@
+curl -XPUT "localhost:9201/dashboard_shard_v1" -d '{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 1,
+    "refresh_interval": "30s"
+  },
+  "mappings": {
+    "dashboard_shard": {
+      "properties": {
+        "shard_name": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}'
+
+
+curl -XPOST "localhost:9201/_aliases" -d '{
+ "actions" : [{
+   "add" : {
+     "index" : "dashboard_shard_v1",
+     "alias" : "dashboard_shard_alias",
+     "filter": {
+       "type": {
+         "value": "dashboard_shard"
+       }
+     }
+   }
+ }]
+}'

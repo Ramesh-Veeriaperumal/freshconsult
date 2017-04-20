@@ -182,6 +182,13 @@ module EmailNotificationConstants
     PHONE_TRIAL_NUMBER_DELETION_REMINDER_LAST_DAY =>  "phone_trial_number_deletion_reminder_last_day" 
   }
 
+
+  POD_TYPES = {
+    1 => "poduseast1",
+    2 => "podeuwest1",
+    3 =>"podeucentral1"
+  }
+
   SPAM_FILTERED_NOTIFICATIONS = [ REPLY, FORWARD]
 
 end

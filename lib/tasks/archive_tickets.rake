@@ -10,6 +10,7 @@ namespace :archive_tickets do
       account_ids.each do |account_id|
         # puts account_id
         account = Account.find(account_id).make_current
+        next if account.launched?(:disable_archive)
         Archive::TicketsSplitter.perform_async({ :account_id => account_id, :ticket_status => :closed })
       end
     end

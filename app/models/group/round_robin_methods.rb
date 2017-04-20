@@ -166,6 +166,10 @@ class Group < ActiveRecord::Base
     (ticket_assign_type == TICKET_ASSIGN_TYPE[:round_robin]) and Account.current.features?(:round_robin)
   end
 
+  def lbrr_enabled?
+    round_robin_enabled? && capping_enabled?
+  end
+
   def capping_enabled?
     self.capping_limit > 0 if self.capping_limit.present?
   end

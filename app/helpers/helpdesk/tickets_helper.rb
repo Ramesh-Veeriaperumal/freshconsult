@@ -93,6 +93,7 @@ module Helpdesk::TicketsHelper
       label = label_tag(object_name+"_"+field.field_name+"_label",
                         (checkbox + field.label),
                         :rel => "inputcheckbox")
+      section_class = " dynamic_sections" if field.section_dropdown?
       if field.field_type == "nested_field"
         element = label + nested_field_tag(object_name,
                                  field.field_name,
@@ -116,7 +117,7 @@ module Helpdesk::TicketsHelper
                       field.html_unescaped_choices,
                       {:include_blank => t('select'),
                         :selected => t('select')},
-                      {:class => "#{dom_type} select2" ,
+                      {:class => "#{dom_type} #{section_class} select2" ,
                         :rel => "inputselectbox"})
       end
       content_tag :div, element.html_safe, attributes
@@ -265,7 +266,7 @@ module Helpdesk::TicketsHelper
     requester_template = current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_REPLY_TEMPLATE).get_reply_template(ticket.requester)
     if(!requester_template.nil?)
       requester_template.gsub!('{{ticket.satisfaction_survey}}', '')
-      reply_email_template = Liquid::Template.parse(requester_template).render('ticket' => ticket,'helpdesk_name' => ticket.account.portal_name)
+      reply_email_template = Liquid::Template.parse(requester_template).render('ticket' => ticket,'helpdesk_name' => ticket.account.helpdesk_name)
       # Adding <p> tag for the IE9 text not shown issue
       default_reply = (signature.blank?)? "<p/><div>#{reply_email_template}</div>" : "<p/><div>#{reply_email_template}<br/>#{signature}</div>"
     end
@@ -294,7 +295,7 @@ module Helpdesk::TicketsHelper
       requester_template = current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_FORWARD_TEMPLATE).get_forward_template(ticket.requester)
       if(requester_template.present?)
         requester_template.gsub!('{{ticket.satisfaction_survey}}', '')
-        forward_email_template = Liquid::Template.parse(requester_template).render('ticket' => ticket,'helpdesk_name' => ticket.account.portal_name)
+        forward_email_template = Liquid::Template.parse(requester_template).render('ticket' => ticket,'helpdesk_name' => ticket.account.helpdesk_name)
         # Adding <p> tag for the IE9 text not shown issue
         default_forward = (signature.blank?)? "<p/><div>#{forward_email_template}</div>" : "<p/><div>#{forward_email_template}<br/>#{signature}</div>"
       end
@@ -586,7 +587,7 @@ module Helpdesk::TicketsHelper
     email_content = []
     contents << content_tag(:div, (form_builder.text_field :subject, :class => "required text ticket-subject", :placeholder => t('ticket.compose.enter_subject')).html_safe)
     form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
-      field_value = if (desp = @item.description_html).blank? & (sign = current_user.agent.parsed_signature('ticket' => @ticket, 'helpdesk_name' => @ticket.account.portal_name)).blank?
+      field_value = if (desp = @item.description_html).blank? & (sign = current_user.agent.parsed_signature('ticket' => @ticket, 'helpdesk_name' => @ticket.account.helpdesk_name)).blank?
                       desp.to_s
                     else
                       desp.present? ? (sign.present? ? desp + sign : desp) : ("<p><br /></p>"*2)+sign.to_s
@@ -707,11 +708,11 @@ module Helpdesk::TicketsHelper
   def ticket_association_box
     links = []
     links << %(<span class="mr12">
-                  <b><a href="#" data-placement = "bottomLeft" data-trigger="add_child" class="lnk_tkt_tracker_show_dropdown" id="add_child_tkt"  role="button" data-toggle="popover" data-dropdown="close" data-ticket-id="#{@ticket.display_id}">Add Child </a></b>
+                  <b><a href="#" data-placement = "bottomLeft" data-trigger="add_child" class="lnk_tkt_tracker_show_dropdown" id="add_child_tkt"  role="button" data-toggle="popover" data-dropdown="close" data-ticket-id="#{@ticket.display_id}"><span class="tooltip" data-placement= "belowRight" twipsy-content-set="true" data-html="true" data-original-title="#{t('ticket.parent_child.add_child_btn_tooltip')}">#{t('ticket.parent_child.add_child')}</span> </a></b>
                 </span>) if Account.current.parent_child_tkts_enabled?
     links << %(<span class="ml12">
-                  <b><a href="#" data-placement = "bottomLeft" data-trigger="link_tracker" class="lnk_tkt_tracker_show_dropdown" id="lnk_tkt_tracker"  role="button" data-toggle="popover" data-dropdown="close" data-ticket-id="#{@ticket.display_id}">#{t('ticket.link_tracker.link_to_tracker')}</a></b>
-                </span>) if current_account.link_tickets_enabled?
+                  <b><a href="#" data-placement = "bottomLeft" data-trigger="link_tracker" class="lnk_tkt_tracker_show_dropdown" id="lnk_tkt_tracker"  role="button" data-toggle="popover" data-dropdown="close" data-ticket-id="#{@ticket.display_id}"><span class="tooltip" data-placement= "belowRight" twipsy-content-set="true" data-original-title="#{t('ticket.link_tracker.link_to_tracker_tooltip')}">#{t('ticket.link_tracker.link_to_tracker')}</span> </a></b>
+                </span>) if current_account.link_tkts_enabled?
     links.join(links.size > 1 ? '<span class="separator">OR</span>' : '')
     content_tag(:span,
                 links.join(links.size > 1 ? '<span class="separator">OR</span>' : '').html_safe,
@@ -719,7 +720,7 @@ module Helpdesk::TicketsHelper
   end
 
   def tracker_ticket_requester? dom_type
-    dom_type.eql?("requester") and (params[:display_ids].present? || @item.tracker_ticket?) and current_account.link_tickets_enabled?
+    dom_type.eql?("requester") and (params[:display_ids].present? || @item.tracker_ticket?) and current_account.link_tkts_enabled?
   end
 
   def show_insert_into_reply?

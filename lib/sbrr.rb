@@ -9,7 +9,7 @@ module SBRR
   end
 
   def self.log text
-  	logger.debug "\n#{Thread.current[:sbrr_log]} #{"%.5f" % Time.now.to_f}  #{text}" if Thread.current[:sbrr_log]
+  	logger.debug "\n#{Thread.current[:sbrr_log]} #{Thread.current[:mass_assignment]} #{"%.5f" % Time.now.to_f}  #{text}" if Thread.current[:sbrr_log]
   end
 
 end

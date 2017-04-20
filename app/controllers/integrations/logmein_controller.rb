@@ -4,11 +4,14 @@ class Integrations::LogmeinController < ApplicationController
   include Redis::IntegrationsRedis
   include Integrations::AppsUtil
 
+  LOGMEIN_CONSTANT = ["ChatLog","Note","SessionID","TechName","TechEmail","Platform","WorkTime"]
+
   skip_before_filter :check_privilege, :verify_authenticity_token
 
   def rescue_session
-    tracking = params["session"]["tracking0"]
+    tracking = params['Tracking0'] || params["session"]["tracking0"] 
     unless tracking.blank?
+      chat_params = params['Tracking0'] ? process_old_params(params) : params["session"]
       redis_val = tracking.split(":")
       redis_key = tracking.gsub(/:\w*$/, "")
       secret = redis_val[3]
@@ -20,14 +23,14 @@ class Integrations::LogmeinController < ApplicationController
       unless acc_ticket.blank?
         if (acc_ticket["md5secret"] == secret)
           note_head = '<b>' + t("integrations.logmein.note.header") + ' </b> <br />'
-          chatlog = params["session"]["chatlog"].gsub(/\n/, "<br />") unless params["session"]["chatlog"].blank?
-          tech_notes =  params["session"]["note"].gsub(/\n/, "<br />") unless params["session"]["note"].blank?
-          note_body = t("integrations.logmein.note.session_id") + " : " + params["session"]["sessionid"] + "<br />"
-          note_body += t("integrations.logmein.note.tech_name") + " : " + params["session"]["techname"] + "<br />"
-          note_body += t("integrations.logmein.note.tech_email") + " : " + params["session"]["techemail"] + "<br /><br />"
-          note_body += t("integrations.logmein.note.platform") + " : " + params["session"]["platform"] + "<br />"
-          note_body += t("integrations.logmein.note.work_time") + " : " + params["session"]["worktime"] + "<br /><br />"
-          note_body += "<b>" + t("integrations.logmein.note.chatlog")+ "</b>" + ("<div class = 'logmein_chatlog'>" + chatlog + "</div>") unless params["session"]["chatlog"].blank?
+          chatlog = chat_params["chatlog"].gsub(/\n/, "<br />") unless chat_params["chatlog"].blank?
+          tech_notes =  chat_params["note"].gsub(/\n/, "<br />") unless chat_params["note"].blank?
+          note_body = t("integrations.logmein.note.session_id") + " : " + chat_params["sessionid"] + "<br />"
+          note_body += t("integrations.logmein.note.tech_name") + " : " + chat_params["techname"] + "<br />"
+          note_body += t("integrations.logmein.note.tech_email") + " : " + chat_params["techemail"] + "<br /><br />"
+          note_body += t("integrations.logmein.note.platform") + " : " + chat_params["platform"] + "<br />"
+          note_body += t("integrations.logmein.note.work_time") + " : " + chat_params["worktime"] + "<br /><br />"
+          note_body += "<b>" + t("integrations.logmein.note.chatlog")+ "</b>" + ("<div class = 'logmein_chatlog'>" + chatlog + "</div>") unless chat_params["chatlog"].blank?
           note_body += ("<b>" +  t("integrations.logmein.note.tech_notes") + "</b>" + ("<div class = 'logmein_technotes'>" + tech_notes + "</div>")) unless tech_notes.blank?
           ticket = Helpdesk::Ticket.find_by_id_and_account_id(ticket_id, account_id)
           unless ticket.blank?
@@ -46,6 +49,15 @@ class Integrations::LogmeinController < ApplicationController
       end
     end
     render :json => {:status => "Success" }
+  end
+
+  #support both logmein  version
+  def process_old_params(params)
+    chat_params = {}
+    LOGMEIN_CONSTANT.each do |key| 
+      chat_params[key.downcase] = params[key]
+    end
+    chat_params
   end
 
   def update_pincode

@@ -78,7 +78,7 @@ module UploadedImagesControllerMethods
     end
 
     def one_hop?
-      current_account.features_included?(:inline_images_with_one_hop)
+      current_account.one_hop_enabled?
     end
 
     def public_upload?

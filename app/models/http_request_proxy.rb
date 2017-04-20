@@ -110,8 +110,8 @@ class HttpRequestProxy
 
           proxy_response.body = Hash.from_xml(proxy_response.body).to_json if (proxy_response.body.include? 'xml') # always returns JSON
           response_type = content_type
-          Rails.logger.debug "Response Body: #{proxy_response.body}"
-          Rails.logger.debug "Response Code: #{proxy_response.code}"
+          #Rails.logger.debug "Response Body: #{proxy_response.body}"
+          #Rails.logger.debug "Response Code: #{proxy_response.code}"
         else
           if !Rails.env.development? && Integrations::PROXY_SERVER["host"].present? #host will not be present for layers other than integration layer.
             options[:http_proxyaddr] = Integrations::PROXY_SERVER["host"]
@@ -122,8 +122,8 @@ class HttpRequestProxy
           proxy_request   = HTTParty::Request.new(net_http_method, final_url, options)
           Rails.logger.debug "Sending request: #{proxy_request.inspect}"
           proxy_response = proxy_request.perform
-          Rails.logger.debug "Response Body: #{proxy_response.body}"
-          Rails.logger.debug "Response Code: #{proxy_response.code}"
+          #Rails.logger.debug "Response Body: #{proxy_response.body}"
+          #Rails.logger.debug "Response Code: #{proxy_response.code}"
           Rails.logger.debug "Response Headers: #{proxy_response.headers.inspect}"
         end
         # TODO Need to audit all the request and response calls to 3rd party api.

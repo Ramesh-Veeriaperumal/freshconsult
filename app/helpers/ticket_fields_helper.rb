@@ -22,7 +22,6 @@ module TicketFieldsHelper
         :level_three_present    => field.level_three_present,
         :field_options          => field.field_options || { :section   => false},
         :has_section            => field.has_section?
-
       }
     end
   end

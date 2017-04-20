@@ -35,7 +35,8 @@ class SlaNotifier < ActionMailer::Base
   def trigger_escalation(ticket, agent, n_type, params)
     # Setting the headers to nil in order to allow the replacement of header attributes. 
     # This avoids duplication of attributes while called multiple times in loop.
-    mail.header = nil
+    
+    @_message = Mail.new
     @ticket = ticket
     begin
       configure_email_config ticket.reply_email_config if ticket.account.features?(:all_notify_by_custom_server)
@@ -50,8 +51,8 @@ class SlaNotifier < ActionMailer::Base
       }
       headers.merge!(make_header(ticket.display_id, nil, ticket.account_id, n_type))
       headers.merge!({"X-FD-Email-Category" => ticket.reply_email_config.category}) if ticket.reply_email_config.category.present?
-        references = generate_email_references(ticket)
-          headers["References"] = references unless references.blank?
+      references = generate_email_references(ticket)
+      headers["References"] = references unless references.blank?
       mail(headers) do |part|
         part.text do
           @body = Helpdesk::HTMLSanitizer.plain(params[:email_body])
@@ -71,9 +72,9 @@ class SlaNotifier < ActionMailer::Base
   def get_email_content(e_notification, agent, ticket, i_notif=false)
     subject_template, message_template = i_notif ? e_notification.get_internal_agent_template(agent) : e_notification.get_agent_template(agent)
     email_subject = Liquid::Template.parse(subject_template).render(
-                                'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
+                                'ticket' => ticket, 'helpdesk_name' => ticket.account.helpdesk_name)
     email_body = Liquid::Template.parse(message_template).render(
-                                'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
+                                'ticket' => ticket, 'helpdesk_name' => ticket.account.helpdesk_name)
     [email_subject, email_body]
   end
 

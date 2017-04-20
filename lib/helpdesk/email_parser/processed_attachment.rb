@@ -42,9 +42,18 @@ class Helpdesk::EmailParser::ProcessedAttachment
     	else
       		attachment = Helpdesk::EmailParser::MailAttachment.new(part.decoded)
     	end
+
+    	filename = ""
+    	if part.filename.present?
+    		filename = part.filename.strip
+    	else
+    		extension = Rack::Mime::MIME_TYPES.invert[part.mime_type].to_s
+    		extension = ".eml" if extension.downcase == '.mime'
+    		filename = ('attachment' + extension )
+    	end
     	
     	attachment.is_inline_attachment = part.inline? if part.respond_to?(:inline?) 
-    	attachment.original_filename = part.filename.strip unless part.filename.blank?
+    	attachment.original_filename = filename
     	attachment.content_type = part.mime_type
     	attachment.content_id = part.content_id[1..-2] if part.content_id
     	self.attachments << attachment

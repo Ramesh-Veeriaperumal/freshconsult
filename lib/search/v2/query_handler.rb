@@ -43,7 +43,7 @@ module Search
         rescue Exception => e
           Rails.logger.error "Searchv2 exception - #{e.message} - #{e.backtrace.first}"
           NewRelic::Agent.notice_error(e)
-          @records = []
+          @records = Search::Utils.send(:wrap_paginate, [], @current_page, @offset, 0)
         end
         @records
       end

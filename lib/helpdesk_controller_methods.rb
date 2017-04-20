@@ -5,6 +5,7 @@ module HelpdeskControllerMethods
   include Helpdesk::NoteActions
   include CloudFilesHelper
   include Helpdesk::Permissible
+  
 
   def self.included(base)
     base.send :before_filter, :build_item,          :only => [:new, :create]
@@ -167,7 +168,6 @@ module HelpdeskControllerMethods
     end
   end
 
-
 protected
 
   def scoper
@@ -270,8 +270,8 @@ protected
       if params[:shared_attachments].present?
         uniq_shared_attachments=params[:shared_attachments].uniq
         (uniq_shared_attachments || []).each do |r|
-          a=Helpdesk::Attachment.find(r)
-          item.shared_attachments.build(:account_id => item.account_id,:attachment=>a )
+          a=current_account.attachments.find(r)
+          item.shared_attachments.build(:attachment=>a)
         end
       end
       unless params[:admin_canned_responses_response].nil?
@@ -360,34 +360,40 @@ protected
       fetch_cloud_file_attachments
     end
     (params[nscname][:attachments] || []).each do |a|
-      begin
-        if a[:resource].is_a?(String) and Integer(a[:resource]) # In case of forward, we are passing existing Attachment ID's to upload the file via URL's
-          attachment_obj = current_account.attachments.find_by_id(a[:resource])
-          url = attachment_obj.authenticated_s3_get_url
-          io  = open(url)
-          if io
-            def io.original_filename; base_uri.path.split('/').last.gsub("%20"," "); end
-          end
-          a[:resource] = io
-        end
-      rescue Exception => e
-        NewRelic::Agent.notice_error(e)
-        Rails.logger.error("Error while fetching item attachments using ID")
-      end
+      fetch_item_attcachments_using_id a
     end
   end
 
-  def fetch_cloud_file_attachments
-    return unless (@item.is_a? Helpdesk::Note ) or @item.is_a? Helpdesk::Ticket or @item.is_a? Helpdesk::TicketTemplate
-    params[:sol_articles_cloud_file_attachments].each do |a|
-        if a[:resource].present?
-          attachment_obj = current_account.cloud_files.find_by_id(a[:resource])
-          cloud_file_url = attachment_obj.url
-          cloud_file_app_id = attachment_obj.application_id
-          cloud_file_filename = attachment_obj.filename
-          result = {:url => cloud_file_url, :filename => cloud_file_filename,:application_id => cloud_file_app_id}
-          @item.cloud_files.build(result)
+  def fetch_item_attcachments_using_id attachment
+    begin
+      if attachment[:resource].is_a?(String) and Integer(attachment[:resource]) # In case of forward, we are passing existing Attachment ID's to upload the file via URL's
+        attachment_obj = current_account.attachments.find_by_id(attachment[:resource])
+        return unless attachment_obj.present? && attachment_permissions(attachment_obj)
+        url = attachment_obj.authenticated_s3_get_url
+        io  = open(url)
+        if io
+          def io.original_filename; base_uri.path.split('/').last.gsub("%20"," "); end
         end
+        attachment[:resource] = io
+      end
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e)
+      Rails.logger.error("Error while fetching item attachments using ID")
+    end
+  end
+
+  def fetch_cloud_file_attachments item = @item
+    return unless (item.is_a? Helpdesk::Note ) or item.is_a? Helpdesk::Ticket or item.is_a? Helpdesk::TicketTemplate
+    params[:sol_articles_cloud_file_attachments].each do |a|
+      if a[:resource].present?
+        attachment_obj = current_account.cloud_files.find_by_id(a[:resource])
+        next unless attachment_obj.present? && attachment_permissions(attachment_obj)
+        cloud_file_url = attachment_obj.url
+        cloud_file_app_id = attachment_obj.application_id
+        cloud_file_filename = attachment_obj.filename
+        result = {:url => cloud_file_url, :filename => cloud_file_filename,:application_id => cloud_file_app_id}
+        item.cloud_files.build(result)
+      end
     end
   end
 
@@ -425,6 +431,10 @@ protected
 
   def api_request?
     params[:format] == "json" || params[:format] == "xml"
+  end
+
+  def attachment_permissions(attach)
+    current_account.launched?(:attachments_scope) ? attach.visible_to_me? : true
   end
 
 end

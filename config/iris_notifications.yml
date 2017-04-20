@@ -1,9 +1,14 @@
 defaults: &defaults
   shared_secret: "iris&arke"
   service_name: "freshdesk-dev"
-  socketioUrl: https://s3.amazonaws.com/iris-static-files/socket.io-1.0.js
-  rtsUrl: https://s3.amazonaws.com/iris-static-files/rts-1.0.js
-  irisUrl: https://s3.amazonaws.com/iris-static-files/iris-staging-1.0.js
+  socketioUrl: https://dzvv3qu02a8s8.cloudfront.net/socket.io-1.0.js
+  rtsUrl: https://dzvv3qu02a8s8.cloudfront.net/rts-1.0.js
+  irisUrl: https://dzvv3qu02a8s8.cloudfront.net/iris-staging-1.0.js
+  service_token: ZmlnOmZyZXNoZGVzaw==
+  collector_host: http://platforms-staging-776474962.us-east-1.elb.amazonaws.com
+
+  api:
+    collector_path: "/collector"
 
 development:
   <<: *defaults
@@ -18,4 +23,4 @@ staging:
 production:
   <<: *defaults
   service_name: "freshdesk"
-  irisUrl: https://s3.amazonaws.com/iris-static-files/iris-1.0.js
+  irisUrl: https://dzvv3qu02a8s8.cloudfront.net/iris-1.0.js

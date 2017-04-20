@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "f98e518c5ba7909b023600789cdfead04dc0730e1ce625698f32167aacf33d10",
-    "current": "f98e518c5ba7909b023600789cdfead04dc0730e1ce625698f32167aacf33d10"
+    "previous": "a33cb316726dcac23273cfdd4a1d0d3fe261b038d34d285e8099181a31fa3725",
+    "current": "a33cb316726dcac23273cfdd4a1d0d3fe261b038d34d285e8099181a31fa3725"
   },
   "fonts": [
-    "public/assets/glyphs_f98e518c5ba7909b023600789cdfead0.ttf",
-    "public/assets/glyphs_f98e518c5ba7909b023600789cdfead0.svg",
-    "public/assets/glyphs_f98e518c5ba7909b023600789cdfead0.woff",
-    "public/assets/glyphs_f98e518c5ba7909b023600789cdfead0.eot"
+    "public/assets/glyphs_a33cb316726dcac23273cfdd4a1d0d3f.ttf",
+    "public/assets/glyphs_a33cb316726dcac23273cfdd4a1d0d3f.svg",
+    "public/assets/glyphs_a33cb316726dcac23273cfdd4a1d0d3f.woff",
+    "public/assets/glyphs_a33cb316726dcac23273cfdd4a1d0d3f.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -29,6 +29,10 @@
     "add-people": {
       "codepoint": 62059,
       "source": "public/glyphs/vectors/add-people.svg"
+    },
+    "add-section": {
+      "codepoint": 62067,
+      "source": "public/glyphs/vectors/add-section.svg"
     },
     "agent": {
       "codepoint": 61697,
@@ -926,6 +930,14 @@
       "codepoint": 61806,
       "source": "public/glyphs/vectors/mobile.svg"
     },
+    "mobile-2": {
+      "codepoint": 62068,
+      "source": "public/glyphs/vectors/mobile-2.svg"
+    },
+    "mobile-2-disabled": {
+      "codepoint": 62069,
+      "source": "public/glyphs/vectors/mobile-2-disabled.svg"
+    },
     "mobile-active-source": {
       "codepoint": 61943,
       "source": "public/glyphs/vectors/mobile-active-source.svg"
@@ -1314,6 +1326,10 @@
       "codepoint": 61852,
       "source": "public/glyphs/vectors/timeline-ticket.svg"
     },
+    "timespent": {
+      "codepoint": 62072,
+      "source": "public/glyphs/vectors/timespent.svg"
+    },
     "tint": {
       "codepoint": 62044,
       "source": "public/glyphs/vectors/tint.svg"
@@ -1402,6 +1418,14 @@
       "codepoint": 61863,
       "source": "public/glyphs/vectors/warning.svg"
     },
+    "web": {
+      "codepoint": 62070,
+      "source": "public/glyphs/vectors/web.svg"
+    },
+    "web-disabled": {
+      "codepoint": 62071,
+      "source": "public/glyphs/vectors/web-disabled.svg"
+    },
     "web-page": {
       "codepoint": 61864,
       "source": "public/glyphs/vectors/web-page.svg"
@@ -1438,7 +1462,6 @@
     },
     "preprocessor_path": "",
     "quiet": false,
-    "skip_first": false,
     "templates": [
       "scss",
       "_glyphs-variables.scss",

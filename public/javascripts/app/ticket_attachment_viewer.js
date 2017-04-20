@@ -60,6 +60,7 @@ window.App = window.App || {};
           }
           case 27: {
             self.removePopup();
+            e.stopImmediatePropagation();
           }
         }
       })

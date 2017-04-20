@@ -73,11 +73,11 @@
 					},
 					results: function (data) {
 							var temp;
-							$(data.results).each(function(){
-								temp = this.id;
-								this.id = this.user_id;
-								this.email = temp;
-							});
+							// $(data.results).each(function(){
+								// temp = this.id;
+								// this.id = this.user_id;
+								// this.email = temp;
+							// });
 							if(assigned_agent_value.toLowerCase().indexOf(searchText.toLowerCase()) > -1){
 								data.results.push({email: assigned_agent_desc, id: assigned_agent_id, user_id: assigned_agent_id, value: assigned_agent_value})
 							}

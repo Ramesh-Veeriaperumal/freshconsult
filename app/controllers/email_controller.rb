@@ -25,6 +25,13 @@ class EmailController < ApplicationController
 
   def create
     envelope = params[:envelope]
+    request_url = ""
+    request_url_hash = {}
+    if request && request.url.present?
+      request_url = request.url
+      request_url_hash = {:request_url => request_url}
+    end
+    params.merge!(request_url_hash)
     if envelope.present? && multiple_envelope_to_address?( envelope_to = get_to_address_from_envelope(envelope))
      status = process_email_for_each_to_email_address(envelope_to)
     else

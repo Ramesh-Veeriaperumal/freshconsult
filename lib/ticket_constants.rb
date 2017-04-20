@@ -18,7 +18,13 @@ module TicketConstants
    
   # DATE_RANGE_CSV = 31
 
-  SKIPPED_TICKET_WAS_ATTRIBUTES = [ :description_html ] #desc_html skipped just to avoid Deprecation Warning
+  SKIPPED_TICKET_CHANGE_ATTRIBUTES = [ :description_html ] #desc_html skipped just to avoid Deprecation Warning
+
+  TICKET_REPLICA = {:first => :old_ticket, :last => :new_ticket}
+
+  STATUS_SLA_TOGGLED_TO = {true => :off, false => :on}
+
+  NEEDED_SBRR_ATTRIBUTES = [:group_id, :status, :responder_id, :spam, :deleted, :sl_skill_id]
 
   ### Bump the version of "TICKETS_LIST_PAGE_FILTERS" key in fragment_cache/keys.rb when SOURCES are modified.
   SOURCES = [
@@ -94,11 +100,11 @@ module TicketConstants
 
   DEFAULT_COLUMNS_ORDER = [ :responder_id, :group_id, :created_at, :due_by, :status, :priority,
     :ticket_type, :source, "helpdesk_tags.name", :owner_id,
-    :requester_id, "helpdesk_schema_less_tickets.product_id", "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}" ]
+    :requester_id, :sl_skill_id, "helpdesk_schema_less_tickets.product_id", :association_type ]
   
   ARCHIVE_DEFAULT_COLUMNS_ORDER = [ :responder_id, :group_id, :created_at, :due_by, :status, :priority,
     :ticket_type, :source, "helpdesk_tags.name", "users.customer_id", :owner_id,
-    :requester_id, :product_id, "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}" ]
+    :requester_id, :sl_skill_id, :product_id, :association_type ]
 
   INTERNAL_AGENT_ID = "internal_agent_id"
   ANY_AGENT_ID      = "any_agent_id"
@@ -120,8 +126,9 @@ module TicketConstants
     [ :owner_id,            "customers",        :customer],
     [ :created_at,          "created_at",       :created_at],
     [ :requester_id,        'requester',        :requester],
+    [ :sl_skill_id,         'sl_skill_id',      :dropdown],
     [ "helpdesk_schema_less_tickets.product_id",'products', :dropdown],
-    [ "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}",  'association_type', :dropdown]
+    [ :association_type,    'association_type', :dropdown]
   ]
   ARCHIVE_DEFAULT_COLUMNS =  [
     [ :status,              'status',           :dropdown],
@@ -131,13 +138,14 @@ module TicketConstants
     [ :source,              'source',           :dropdown],
     [ :priority,            'priority',         :dropdown],
     [ :due_by,              'due_by',           :due_by],
-    [ "helpdesk_tags.name", "tags",             :dropdown],
+    [ "helpdesk_tags.name", "tags",             :tags],
     [ "users.customer_id",  "customers",        :customer],
     [ :owner_id,            "customers",        :customer],
     [ :created_at,          "created_at",       :created_at],
     [ :requester_id,        'requester',        :requester],
+    [ :sl_skill_id,         'sl_skill_id',      :dropdown],
     [ :product_id,          'products',         :dropdown],
-    [ "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.association_type_column}",  'association_type', :dropdown]
+    [ :association_type,    'association_type', :dropdown]
   ]
   
   
@@ -187,6 +195,13 @@ module TicketConstants
     [ :seven_days,    I18n.t("export_data.seven_days"),    7 ],
     [ :twenty_four,   I18n.t("export_data.twenty_four"),   1 ],
     [ :custom_filter, I18n.t("export_data.custom_filter"), 4 ]
+  ]
+
+  CREATED_BY_VALUES_EN = [
+    [ :thirt_days,    "export_data.thirt_days",   30 ],
+    [ :seven_days,    "export_data.seven_days",    7 ],
+    [ :twenty_four,   "export_data.twenty_four",   1 ],
+    [ :custom_filter, "export_data.custom_filter", 4 ]
   ]
 
   CREATED_BY_OPTIONS = CREATED_BY_VALUES.map { |i| [i[1], i[2]] }
@@ -281,13 +296,18 @@ module TicketConstants
     "default_product",  "default_company"
   ]
 
-  SHARED_DEFAULT_FIELDS_ORDER = [
-    "default_priority",       "default_status",
-    "default_group",          "default_agent", 
-    "default_internal_group", "default_internal_agent",
-    "default_source",         "default_ticket_type",
-    "default_product",        "default_company"
-  ]
+  SHARED_DEFAULT_FIELDS_ORDER = {
+    "default_priority"       => "priority",
+    "default_status"         => "status",
+    "default_group"          => "group_id",
+    "default_agent"          => "responder_id",
+    "default_internal_group" => "internal_group_id",
+    "default_internal_agent" => "internal_agent_id",
+    "default_source"         => "source",
+    "default_ticket_type"    => "ticket_type",
+    "default_product"        => "product_id",
+    "default_company"        => "company_id"
+  }
 
   # CC emails count
   MAX_EMAIL_COUNT = 50
@@ -311,6 +331,8 @@ module TicketConstants
     "priority", "product_id", "description_html", "tags"]
 
   DB_INDEXED_QUERY_COLUMNS = ["requester_id", "responder_id", "group_id", "created_at", "status"]
+
+  SKILL_BASED_TICKET_ATTRIBUTES = [:sbrr_ticket_dequeued, :sbrr_user_score_incremented, :sbrr_fresh_ticket, :skip_sbrr, :sbrr_turned_on, :status_sla_toggled_to, :skip_sbrr_assigner]
 
   def self.translate_priority_name(priority)
     I18n.t(PRIORITY_NAMES_BY_KEY[priority])
@@ -355,7 +377,7 @@ module TicketConstants
 
   def self.feature_based_association_type
     assoc_parent_child_feature = Account.current.parent_child_tkts_enabled?
-    link_tickets_feature = Account.current.link_tickets_enabled?
+    link_tickets_feature = Account.current.link_tkts_enabled?
     return [] unless assoc_parent_child_feature || link_tickets_feature
     list = [TICKET_ASSOCIATION_FILTER[0]]
     if assoc_parent_child_feature
@@ -376,5 +398,9 @@ module TicketConstants
 
   def self.association_type_filter_names
     TICKET_ASSOCIATION_FILTER.map { |i| [i[1], i[2].join(',')] }
+  end
+
+   def self.created_options
+    CREATED_BY_VALUES_EN.map { |i| [I18n.t(i[1]), i[2]] }
   end
 end

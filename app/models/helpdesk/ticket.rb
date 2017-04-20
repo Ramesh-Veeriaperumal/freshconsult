@@ -32,12 +32,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed",
                             "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email", 
                             "parent_ticket", "reports_hash","sla_response_reminded","sla_resolution_reminded", "dirty_attributes",
-                            "association_type", "associates_rdb", "sentiment", "spam_score", "sds_spam", "skill", "skill_id"]
+                            "association_type", "associates_rdb", "sentiment", "spam_score", "sds_spam"]
 
   TICKET_STATE_ATTRIBUTES = ["opened_at", "pending_since", "resolved_at", "closed_at", "first_assigned_at", "assigned_at",
                              "first_response_time", "requester_responded_at", "agent_responded_at", "group_escalated",
                              "inbound_count", "status_updated_at", "sla_timer_stopped_at", "outbound_count", "avg_response_time",
-                             "first_resp_time_by_bhrs", "resolution_time_by_bhrs", "avg_response_time_by_bhrs"]
+                             "first_resp_time_by_bhrs", "resolution_time_by_bhrs", "avg_response_time_by_bhrs", "resolution_time_updated_at"]
                             
   OBSERVER_ATTR = []
   self.table_name =  "helpdesk_tickets"
@@ -58,15 +58,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :phone , :facebook_id, :send_and_set, :archive, :required_fields, :disable_observer_rule,
     :disable_activities, :tags_updated, :system_changes, :activity_type, :misc_changes,
     :round_robin_assignment, :related_ticket_ids, :tracker_ticket_id, :unique_external_id, :assoc_parent_tkt_id,
-    :sbrr_ticket_dequeued, :sbrr_user_score_incremented, :sbrr_fresh_ticket, :skip_sbrr, :model_changes
-  # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
-  # - will be clearing these after activity publish.
+    :sbrr_turned_on, :status_sla_toggled_to, :replicated_state, :skip_sbrr_assigner, :bg_jobs_inline,
+    :sbrr_ticket_dequeued, :sbrr_user_score_incremented, :sbrr_fresh_ticket, :skip_sbrr, :model_changes,
+    :schedule_observer, :required_fields_on_closure, :send_and_set_args  
+    # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
+    # - will be clearing these after activity publish.
   
 #  attr_protected :attachments #by Shan - need to check..
 
   attr_protected :account_id, :display_id, :attachments #to avoid update of these properties via api.
 
   alias_attribute :company_id, :owner_id
+  alias_attribute :skill_id, :sl_skill_id
 
   scope :created_at_inside, lambda { |start, stop|
           { :conditions => [" helpdesk_tickets.created_at >= ? and helpdesk_tickets.created_at <= ?", start, stop] }
@@ -236,10 +239,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
                             false, sla_rule_ids]
   }}
 
-  scope :not_associated,
-          :select => "helpdesk_tickets.*",
-          :joins => :schema_less_ticket,
-          :conditions => ["`helpdesk_schema_less_tickets`.#{Helpdesk::SchemaLessTicket.association_type_column} is null"]
+  scope :not_associated, :conditions => {:association_type => nil}
+
+  scope :associated_tickets, lambda {|association_type| {
+          :conditions => ["association_type = ?", TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[association_type]]
+  }}
+
   scope :unassigned, :conditions => ["helpdesk_tickets.responder_id is NULL"]
   scope :sla_on_tickets, lambda { |status_ids|
     { :conditions => ["status IN (?)", status_ids] }
@@ -247,6 +252,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   scope :agent_tickets, lambda { |status_ids, user_id|
     { :conditions => ["status IN (?) and responder_id = ?", status_ids, user_id] }
   }
+
+  scope :associated_with_skill, lambda {|skill_id| {
+    :conditions => ["sl_skill_id in (?)", skill_id],
+  }} 
 
   scope :next_autoplay_ticket, lambda {|account,responder_id| {
     :select => "helpdesk_tickets.display_id",
@@ -320,6 +329,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
       { :cc_emails => [], :fwd_emails => [], :reply_cc => [], :tkt_cc => [], :bcc_emails => [] }
     end
 
+  end
+
+  def skill_name
+    self.skill.try(:name)
   end
 
   def model_changes
@@ -458,7 +471,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def not_editable?
-    requester and !requester_has_email? and !requester_has_phone?
+    requester and !requester_has_email? and !requester_has_phone? and !requester_has_external_id?
   end
 
   def requester_has_email?
@@ -467,6 +480,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def requester_has_phone?
     requester and requester.phone.present?
+  end
+
+  def requester_has_external_id?
+    account.unique_contact_identifier_enabled? ? (requester and requester.unique_external_id.present?) : false
   end
 
   def encode_display_id
@@ -617,7 +634,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def ticket_survey_results
-     survey_results.sort_by(&:id).last.try(:text)
+    if Account.current.new_survey_enabled?
+      custom_survey_results.sort_by(&:id).last.try(:text)
+    else
+      survey_results.sort_by(&:id).last.try(:text)
+    end
   end
 
   def subject_or_description
@@ -718,11 +739,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
     (attribute.to_s.include? '=') ? schema_less_ticket.send(attribute, args) : schema_less_ticket.send(attribute)
   end
 
+  def agent
+    responder
+  end
+
   def method_missing(method, *args, &block)
     begin
       super
     rescue NoMethodError, NameError => e
-      Rails.logger.debug "method_missing :: args is #{args.inspect} and method:: #{method} "
+      #Rails.logger.debug "method_missing :: args is #{args.inspect} and method:: #{method} "
       return schema_less_attributes(method, args) if SCHEMA_LESS_ATTRIBUTES.include?(method.to_s.chomp("=").chomp("?"))
       return ticket_states.send(method) if ticket_states.respond_to?(method)
       return custom_field_attribute(method, args) if self.ff_aliases.include?(method.to_s.chomp("=").chomp("?"))
@@ -1138,11 +1163,42 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def skill_id_column
-    Helpdesk::SchemaLessTicket.skill_id_column
+    :sl_skill_id
   end
 
   def archive?
     false
+  end
+
+  def ticket_was _changes = {}, custom_attributes = []
+    replicate_ticket :first, _changes, custom_attributes
+  end
+
+  def ticket_is _changes = {}, custom_attributes = []
+    replicate_ticket :last, _changes, custom_attributes
+  end
+
+  def replicate_ticket index, _changes = {}, custom_attributes = [], _schema_less_ticket_changes = _changes
+    ticket_replica = account.tickets.new #dup creates problems
+    attributes.each do |_attribute, value| #to work around protected attributes
+      next if TicketConstants::SKIPPED_TICKET_CHANGE_ATTRIBUTES.include? _attribute.to_sym #skipping deprecation warning
+      ticket_replica.send("#{_attribute}=", value)
+    end
+    _changes ||= begin 
+      temp_changes = changes #calling changes builds a hash everytime
+      temp_changes.present? ? temp_changes : previous_changes
+    end
+    _changes.each do |_attribute, change|
+      if ticket_replica.respond_to?(_attribute) && (change.size == 2) #Hack for tags in model_changes
+        ticket_replica.send("#{_attribute}=", change.send(index))
+      end
+    end
+    ticket_replica.replicated_state = TicketConstants::TICKET_REPLICA[index]
+    custom_attributes.each {|custom_attr| ticket_replica.send("#{custom_attr}=", send(custom_attr)) }
+
+    ticket_replica.schema_less_ticket = 
+      schema_less_ticket.replicate_schema_less_ticket(index, _schema_less_ticket_changes)
+    ticket_replica
   end
 
   private

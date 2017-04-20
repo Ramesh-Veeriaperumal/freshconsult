@@ -155,6 +155,7 @@ defaults: &defaults
     - [sbrr_group_toggle]
     - [sbrr_config_user_skill]
     - [sbrr_config_agent_group]
+    - [sbrr_config_skill]
     - [delete_account]
     - [templates_cleanup]
     - [bulk_child_tkt_creation]
@@ -172,6 +173,12 @@ defaults: &defaults
     - [cloud_elements_logger_email]
     - [populate_account_setup]
     - [manual_publish]
+    - [send_and_set_observer]
+    - [scheduled_ticket_export]
+    - [data_enrichment]
+    - [spam_data_migration]
+    - [activity_export]
+    - [scheduled_ticket_export_config]
 
 development:
   <<: *defaults

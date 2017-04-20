@@ -7,7 +7,7 @@ class AccountsController < ApplicationController
   include Redis::DisplayIdRedis
   include MixpanelWrapper 
   include Onboarding::OnboardingRedisMethods
-  
+
   layout :choose_layout 
   
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:check_domain, :new_signup_free,
@@ -120,6 +120,7 @@ class AccountsController < ApplicationController
     @account.account_additional_settings[:supported_languages] = params[:account][:account_additional_settings_attributes][:supported_languages] if @account.features?(:multi_language) && !@account.launched?(:translate_solutions)
     @account.account_additional_settings[:date_format] = params[:account][:account_additional_settings_attributes][:date_format] 
     @account.time_zone = params[:account][:time_zone]
+    @account.helpdesk_name = params[:account][:helpdesk_name]
     @account.ticket_display_id = params[:account][:ticket_display_id]
     params[:account][:main_portal_attributes][:updated_at] = Time.now
     params[:account][:main_portal_attributes].delete(:language) if @account.features?(:enable_multilingual)
@@ -282,7 +283,7 @@ class AccountsController < ApplicationController
         else
           Rails.logger.info "Error while building conversion metrics. User Information is not been provided while creating an account"
         end
-        if params[:session_json].present? 
+        if params[:session_json].present?
           metrics =  JSON.parse(params[:session_json])
           metrics_obj[:first_referrer] = params[:first_referrer]
           metrics_obj[:first_landing_url] = params[:first_landing_url]
@@ -290,7 +291,7 @@ class AccountsController < ApplicationController
           metrics_obj[:referrer] = metrics["current_session"]["referrer"]
           metrics_obj[:landing_url] = metrics["current_session"]["url"]
           if metrics["location"].present?
-            metrics_obj[:country] = metrics["location"]["countryName"] 
+            metrics_obj[:country] = metrics["location"]["countryName"]
             account_obj[:country_code] = metrics["location"]["countryCode"]
             account_obj[:city] = metrics["location"]["cityName"]
             account_obj[:source_ip] = metrics["location"]["ipAddress"]
@@ -501,7 +502,7 @@ class AccountsController < ApplicationController
 
     def save_account_sign_up_params account_id, args = {}
       key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => account_id}
-      set_others_redis_key(key,args.to_json,1296000)
+      set_others_redis_key(key,args.to_json,3888000)
     end
 
     def mark_new_account_setup

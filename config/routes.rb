@@ -199,6 +199,8 @@ Helpkit::Application.routes.draw do
     match '/search/autocomplete/tags',         to: 'search/v2/autocomplete#tags',                via: :get
     match '/search/merge_topic',               to: 'search/v2/merge_topics#search_topics',       via: :post
     match '/contact_merge/search',             to: 'search/v2/merge_contacts#index',             via: :get
+    
+    match '/search/tickets', to: 'search/v2/spotlight#tickets', via: :post
 
     match '/search/related_solutions/ticket/:ticket', to: 'search/v2/solutions#related_solutions',  via: :get, constraints: { format: /(html|js)/ }
     match '/search/search_solutions/ticket/:ticket',  to: 'search/v2/solutions#search_solutions',   via: :get, constraints: { format: /(html|js)/ }
@@ -225,6 +227,7 @@ Helpkit::Application.routes.draw do
   root :to => 'home#index'
 
   match "/support/sitemap" => "support#sitemap", :format => "xml", :as => :sitemap, :via => :get
+  match "/robots" => "support#robots", :format => "text", :as => :robots, :via => :get
 
   match '/visitor/load/:id.:format' => 'chats#load', :via => :get
   match '/images/helpdesk/attachments/:id(/:style(.:format))' => 'helpdesk/attachments#show', :via => :get
@@ -749,6 +752,7 @@ Helpkit::Application.routes.draw do
       get :facebook
       get :portal_google_sso
       get :marketplace_google_sso
+      post :mobile_sso_login
     end
   end
 
@@ -1573,6 +1577,7 @@ Helpkit::Application.routes.draw do
     match '/search_solutions/ticket/:ticket/' => 'solutions#search_solutions', :as => :ticket_search_solutions
   end
 
+  match '/search/tickets' => 'search/tickets#index', via: [:get, :post]
   match '/search/tickets/filter/:search_field' => 'search/tickets#index'
   match '/search/ticket_associations/filter/:search_field' => 'search/ticket_associations#index'
   match '/search/ticket_associations/recent_trackers' => 'search/ticket_associations#index', via: :post
@@ -1632,6 +1637,21 @@ Helpkit::Application.routes.draw do
         post :time_entries_list
       end
     end
+    
+    resources :scheduled_exports, only: [:index] do
+      collection do
+        get :activities, action: :edit_activity
+        post :activities, action: :update_activity
+      end
+    end
+
+    resources :scheduled_exports, only: [:index, :new, :create, :show, :destroy] do
+      get :download_file, path: '/download_file(/:file_name)', on: :member
+    end
+    #routes for v1 agent and group performance reports
+    # match '/:id' , action: :show, method: :get, constraints: { id: /[1-2]+/ }
+    match '/classic/:report_type', action: :show, method: :get
+    match '/classic/:report_type', action: :show, method: :get
 
     #must be placed after 'timesheet' resource, to avoid path mismatch for timesheet report
     #both timesheet and new reports share the same path structure
@@ -1679,9 +1699,6 @@ Helpkit::Application.routes.draw do
         end
       end
     end
-
-    #routes for v1 agent and group performance reports
-    match '/:id' , action: :show, method: :get, constraints: { id: /[1-2]+/ }
 
   end
 
@@ -1948,6 +1965,9 @@ Helpkit::Application.routes.draw do
         put :link
         put :unlink
         get :ticket_association
+        put :send_and_set_status
+        get :fetch_errored_email_details
+        put :suppression_list_alert
       end
 
       resources :child, :only => [:new], :controller => "tickets"
@@ -2196,6 +2216,7 @@ Helpkit::Application.routes.draw do
     end
 
     match 'commons/group_agents/(:id)'    => "commons#group_agents"
+    match 'commons/agents_for_groups/(:id)'    => "commons#agents_for_groups"
     match 'commons/user_companies'        => "commons#user_companies", via: :post
     match "commons/fetch_company_by_name" => "commons#fetch_company_by_name"
     match 'commons/status_groups'         => "commons#status_groups"
@@ -2706,6 +2727,7 @@ Helpkit::Application.routes.draw do
         get :get_filtered_tickets
         get :get_solution_url
         get :mobile_filter_count
+        get :bulk_assign_agent_list
         post :recent_tickets
         match '/ticket_properties/:id' => 'tickets#ticket_properties', :via => :get
       end
@@ -2894,6 +2916,7 @@ Helpkit::Application.routes.draw do
           post :select_all_feature
           put :change_currency
           get :check_domain
+          put :unblock_outgoing_email
         end
       end
 

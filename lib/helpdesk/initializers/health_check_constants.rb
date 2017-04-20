@@ -1,0 +1,1 @@
+ASSETS_DIRECTORY_EXISTS = File.directory?("#{Rails.root}/public/assets/cdn")

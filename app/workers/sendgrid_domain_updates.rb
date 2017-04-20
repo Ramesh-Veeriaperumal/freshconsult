@@ -53,7 +53,7 @@ class SendgridDomainUpdates < BaseWorker
     generated_key = generate_callback_key
     check_spam_account
     post_url = SendgridWebhookConfig::POST_URL % { :full_domain => domain, :key => generated_key }
-    post_args = {:hostname => domain, :url => post_url, :spam_check => false, :send_raw => false }
+    post_args = {:hostname => domain, :url => post_url, :spam_check => false, :send_raw => true }
     response = send_request('post', SendgridWebhookConfig::SENDGRID_API["set_url"] , post_args)
     Rails.logger.info "Response for sendgrid create action code: #{response.code}, message: #{response.message}"
     return false unless response.code == 200
@@ -102,6 +102,7 @@ class SendgridDomainUpdates < BaseWorker
         if signup_params["api_response"] && signup_params["api_response"]["status"] == 5
           spam_score = 5
           reason = "Outgoing will be blocked for Account ID: #{account.id} , Reason: #{signup_params["api_response"]["reason"]}"
+          reason << " IP: #{signup_params["account_details"]["source_ip"]}, Email: #{signup_params["account_details"]["email"]}, Spam Status: 5"
         elsif((account.helpdesk_name =~ spam_email_apprx_match_regex || account.full_domain =~ spam_email_apprx_match_regex) && Freemail.free?(account.admin_email)) 
           spam_score = 4 
           stop_sending = false
@@ -110,6 +111,7 @@ class SendgridDomainUpdates < BaseWorker
           spam_score = 4
           stop_sending = false
           reason = "Account credetials looks suspicious for Account ID: #{account.id} , Reason: #{signup_params["api_response"]["reason"]}"
+          reason << " IP: #{signup_params["account_details"]["source_ip"]}, Email: #{signup_params["account_details"]["email"]}, Spam Status: 4"
         elsif signup_params["api_response"] && signup_params["api_response"]["status"]
           spam_score = signup_params["api_response"]["status"] 
         else 
@@ -122,11 +124,15 @@ class SendgridDomainUpdates < BaseWorker
         account.conversion_metric.save
       end
 
-      if (account.full_domain =~ /support/i && (spam_score >= 4  || Freemail.free_or_disposable?(account.admin_email)))
-        # sleep(5)
-        # Account.current.subscription.update_attributes(:state => "suspended")
-        # ShardMapping.find_by_account_id(Account.current.id).update_attributes(:status => 403)
-        blacklist_spam_account(account, stop_sending, "Reason: Domain url contains support and signup using free or spam email domains")
+      if (account.full_domain =~ /support/i)
+        if spam_score >=4
+         sleep(5)
+         Account.current.subscription.update_attributes(:state => "suspended")
+         ShardMapping.find_by_account_id(Account.current.id).update_attributes(:status => 403)
+         notify_blocked_spam_account_detection(account, "Reason: Domain url contains support and spam score is > 3")
+        elsif Freemail.free_or_disposable?(account.admin_email)
+         blacklist_spam_account(account, stop_sending, "Reason: Domain url contains support and signup using free or spam email domains")
+        end
       elsif spam_score >= 4
         blacklist_spam_account(account, stop_sending, reason)
       end
@@ -165,7 +171,7 @@ class SendgridDomainUpdates < BaseWorker
 
     generated_key = generate_callback_key
     post_url = SendgridWebhookConfig::POST_URL % { :full_domain => domain, :key => generated_key }
-    post_args = { :url => post_url, :spam_check => false, :send_raw => false }
+    post_args = { :url => post_url, :spam_check => false, :send_raw => true }
     response = send_request('patch', SendgridWebhookConfig::SENDGRID_API['update_url'] + domain, post_args)
     Rails.logger.info "Response message for sendgrid update action code: #{response.code}, message: #{response.message}"
     webhook_key = AccountWebhookKey.find_by_account_id_and_vendor_id(Account.current.id, vendor_id)
@@ -196,7 +202,7 @@ class SendgridDomainUpdates < BaseWorker
 
   def save_account_sign_up_params account_id, args = {}
     key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => account_id}
-    set_others_redis_key(key,args.to_json,1296000)
+    set_others_redis_key(key,args.to_json,3888000)
     increment_portal_cache_version
   end
 

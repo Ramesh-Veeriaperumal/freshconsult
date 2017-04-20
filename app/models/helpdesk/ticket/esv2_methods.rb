@@ -10,10 +10,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # Columns to observe for model_changes
   #
   def esv2_columns
-    @@esv2_columns ||= [:subject, :description, :requester_id, :to_emails, :cc_email, :priority, 
-                      :status, :ticket_type, :responder_id, :group_id, :source, :due_by, 
+    @@esv2_columns ||= [:subject, :description, :requester_id, :to_emails, :cc_email, :priority,
+                      :status, :ticket_type, :responder_id, :group_id, :source, :due_by,
                       :frDueBy, :spam, :deleted, :product_id, :status_stop_sla_timer, :status_deleted,
-                      :tags, :association_type
+                      :tags, :internal_group_id, :internal_agent_id, :association_type
                     ].concat(esv2_ff_columns)
   end
 
@@ -30,13 +30,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :root => false,
       :tailored_json => true,
       :methods => [
-                    :company_id, :tag_names, :tag_ids, :watchers, :status_stop_sla_timer, 
+                    :company_id, :tag_names, :tag_ids, :watchers, :status_stop_sla_timer,
                     :status_deleted, :product_id, :trashed, :es_cc_emails, :es_fwd_emails,
-                    :closed_at, :resolved_at, :to_emails, :association_type
+                    :closed_at, :resolved_at, :to_emails
                   ],
       :only => [
-                  :requester_id, :responder_id, :status, :source, :spam, :deleted, 
-                  :created_at, :updated_at, :account_id, :display_id, :group_id, :due_by, 
+                  :requester_id, :responder_id, :status, :source, :spam, :deleted,
+                  :created_at, :updated_at, :account_id, :display_id, :group_id, :due_by,
+                  :internal_group_id, :internal_agent_id, :association_type,
                   :frDueBy, :priority, :ticket_type, :subject, :description
                 ]
     }, false).merge(esv2_custom_attributes)
@@ -110,8 +111,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #
   def search_fields_updated?
     attribute_fields = ["subject", "description", "responder_id", "group_id", "requester_id", "product_id",
-                       "status", "spam", "deleted", "source", "priority", "due_by", "to_emails", "cc_email"]
-    include_fields = es_flexifield_columns | ['int_tc03']
+                       "status", "spam", "deleted", "source", "priority", "due_by", "to_emails", "cc_email", "association_type"]
+    include_fields = es_flexifield_columns
     all_fields = attribute_fields | include_fields
     (@model_changes.keys.map(&:to_s) & all_fields).any?
   end

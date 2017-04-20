@@ -1,6 +1,6 @@
 <% time_sheet.each do |group_title, time_entrys| %>
   <% time_entrys.each do |time_entry| %>
-  <tr class="odd" data-workable-id="<%= time_entry.workable.send(:display_id) %>" data-workable-desc="<%= time_entry.workable.send(:subject) %>" data-executed-at="<%= time_entry.send(:group_by_day_criteria) %>">
+  <tr class="odd" data-workable-id="<%= time_entry.workable.send(:display_id) %>" data-workable-desc="<%= time_entry.workable.send(:subject) %>" data-executed-at="<%= time_entry.send(:group_by_day_criteria) %>" data-groupby-id="<%=group_title %>" data-first-page="true">
     <%= construct_timesheet_entry_row(@headers, time_entry, load_time) %>
   </tr>
   <% end %>

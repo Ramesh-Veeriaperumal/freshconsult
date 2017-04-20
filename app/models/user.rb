@@ -28,7 +28,8 @@ class User < ActiveRecord::Base
 
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   validates_uniqueness_of :external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
-  validates_uniqueness_of :unique_external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
+  validates_uniqueness_of :unique_external_id, :scope => :account_id, :allow_nil => true, :case_sensitive => false
+  before_validation :trim_attributes
 
   xss_sanitize  :only => [:name,:email,:language, :job_title, :twitter_id, :address, :description, :fb_profile_id], :plain_sanitizer => [:name,:email,:language, :job_title, :twitter_id, :address, :description, :fb_profile_id]
   scope :trimmed, :select => [:'users.id', :'users.name']
@@ -91,16 +92,23 @@ class User < ActiveRecord::Base
                                       :duration => :periodic_login_duration}
   end
 
+  validates :user_skills, length: { :maximum => MAX_NO_OF_SKILLS_PER_USER }
   validate :has_role?, :unless => :customer?
   validate :email_validity, :if => :chk_email_presence?
   validate :user_email_presence, :if => :email_required?
   validate :only_primary_email, on: :update, :if => [:agent?]
   validate :max_user_emails
   validate :max_user_companies, :if => :has_multiple_companies_feature?
+  validate :unique_external_id_feature, :if => :unique_external_id_changed?
+
 
   def email_validity
     self.errors.add(:base, I18n.t("activerecord.errors.messages.email_invalid")) unless self[:account_id].blank? or self[:email] =~ EMAIL_VALIDATOR
     self.errors.add(:base, I18n.t("activerecord.errors.messages.email_not_unique")) if self[:email] and self[:account_id].present? and User.exists?(["email = ? and id != '#{self.id}'", self[:email]])
+  end
+
+  def unique_external_id_feature
+    self.errors.add(:base, I18n.t('activerecord.errors.messages.unique_external_id')) unless account.unique_contact_identifier_enabled?
   end
 
   def only_primary_email
@@ -293,6 +301,9 @@ class User < ActiveRecord::Base
         },
         _updated_since: {
           conditions: ['updated_at >= ?', contact_filter.try(:_updated_since).try(:to_time).try(:utc)]
+        },
+        unique_external_id: {
+          conditions: { unique_external_id: contact_filter.unique_external_id}
         }
       }
     end
@@ -456,6 +467,11 @@ class User < ActiveRecord::Base
     self.user_emails_attributes = params[:user][:user_emails_attributes] if params[:user][:user_emails_attributes].present?
     self.deleted = true if (email.present? && email =~ /MAILER-DAEMON@(.+)/i)
     self.created_from_email = params[:user][:created_from_email]
+    if params[:user][:user_skills_attributes] && Account.current.skill_based_round_robin_enabled?
+      self.skill_ids = params[:user][:user_skills_attributes].sort_by { |user_skill| 
+        user_skill["rank"] }.map { |user_skill| 
+          user_skill["skill_id"] }
+    end
     return false unless save_without_session_maintenance
     portal.make_current if portal
     if (!deleted and !email.blank? and send_activation)
@@ -529,14 +545,21 @@ class User < ActiveRecord::Base
 
 
   def activate!(params)
-    self.active = true
-    self.name = params[:user][:name]
-    self.password = params[:user][:password]
-    self.password_confirmation = params[:user][:password_confirmation]
-    self.user_emails.first.update_attributes({:verified => true}) unless self.user_emails.blank?
-    self.account.verify_account_with_email  if self.privilege?(:admin_tasks)
-    #self.openid_identifier = params[:user][:openid_identifier]
-    save
+    self.transaction do
+      self.active = true
+      params[:user][:name] = params[:user][:name] || (params[:user][:first_name] + ' ' + params[:user][:last_name])
+      self.assign_attributes(params[:user].slice(*ACTIVATION_ATTRIBUTES))
+      update_account_info_and_verify(params[:user]) if can_verify_account?
+      self.user_emails.first.update_attributes({:verified => true}) unless self.user_emails.blank?
+      #self.openid_identifier = params[:user][:openid_identifier]
+      save!
+    end
+  end
+
+  def update_account_info_and_verify(user_params)
+    self.account.update_attributes!({:name => user_params[:company_name]})
+    self.account.main_portal.update_attributes!({:name => user_params[:company_name]})
+    self.account.account_configuration.update_contact_company_info!(user_params)
   end
 
   def exist_in_db?
@@ -612,6 +635,7 @@ class User < ActiveRecord::Base
     return "#{name} (#{phone})" unless phone.blank?
     return "#{name} (#{mobile})" unless mobile.blank?
     return "@#{twitter_id}" unless twitter_id.blank?
+    return "#{name} (#{unique_external_id})" if  (unique_external_id.present? && account.unique_contact_identifier_enabled?)
     name
   end
 
@@ -668,7 +692,7 @@ class User < ActiveRecord::Base
   end
 
   def get_info
-    (email) || (twitter_id) || (external_id) || (unique_external_id) || (name)
+    (email) || (twitter_id.presence) || (external_id) || (unique_external_id) || (name)
   end
 
   def twitter_style_id
@@ -969,9 +993,13 @@ class User < ActiveRecord::Base
   end
 
   def no_of_assigned_tickets group
-    key = SKILL_BASED_USERS_LOCK_KEY % {:account_id => Account.current.id, :group_id => group.id,
-                                        :user_id => self.id}
-    assigned_tickets_count = get_round_robin_redis(key).to_i
+    # Only for skill based round robin
+    queue_aggregator = SBRR::QueueAggregator::User.new self, :group => group
+    queue = queue_aggregator.relevant_queues.first
+    if queue
+      score = queue.zscore(self.id)
+      assigned_tickets_count = SBRR::ScoreCalculator::User.new(nil, score.to_i).old_assigned_tickets_in_group
+    end
     SBRR.log "User #{self.id} Accessed assigned_tickets_count : #{assigned_tickets_count}" 
     assigned_tickets_count
   end
@@ -990,11 +1018,25 @@ class User < ActiveRecord::Base
     end
   end
 
+  def sync_to_export_service
+    scheduled_ticket_exports.each do |schedule|
+      schedule.sync_to_service("update")
+    end
+  end
+
+  def can_verify_account?
+    !account.verified? && self.privilege?(:admin_tasks)
+  end
+
   private
 
     def name_part(part)
       part = parsed_name[part].blank? ? "particle" : part unless parsed_name.blank? and part == "family"
       parsed_name[part].blank? ? name : parsed_name[part]
+    end
+
+    def trim_attributes
+      self.unique_external_id = self.unique_external_id.try(:strip).presence
     end
 
     def parsed_name
@@ -1022,6 +1064,10 @@ class User < ActiveRecord::Base
 
     def blocked_updated?
        @all_changes.has_key?(:blocked)
+    end
+
+    def time_zone_updated?
+      @all_changes.has_key?(:time_zone)
     end
 
     def clear_redis_for_agent

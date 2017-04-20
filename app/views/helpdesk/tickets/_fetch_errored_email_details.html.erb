@@ -1,0 +1,85 @@
+<div class="email-failure-list-container">
+    <div class="list-inner">
+        <div class = "to-error-details">
+            <%= render :partial => "helpdesk/tickets/email_error_list", :locals => { :email_list => to_list, :emails_label => "To", :ticket_display_id => ticket_display_id } if to_list.present? %>
+        </div>
+
+        <div class = "cc-error-details">
+            <%= render :partial => "helpdesk/tickets/email_error_list", :locals => { :email_list => cc_list, :emails_label => "Cc", :ticket_display_id => ticket_display_id } if cc_list.present? %>
+        </div>
+    </div>
+</div>
+<%= javascript_tag do %>
+    var mailSent = '<%= t('email_failure.note_display.mail_sent') %>';
+    var hideDetails = '<%= t('email_failure.note_display.hide_details') %>';
+    var showDetails = '<%= t('email_failure.note_display.show_details') %>';
+    var callRecipient = '<%= t('email_failure.note_display.call_recipient') %>';
+    jQuery(document).ready(function(){
+        jQuery('body').off('.email_error');
+        var admin_emails = <%= admin_emails.to_json.html_safe %>.map(function(user, index){
+            return user.name + " <" + user.email + ">";
+        });
+
+        jQuery('body').on('click.email_error', '.email-error-reason .q-marker', function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            var ele = jQuery(this).parents('.email-error-reason').children('.long-text');
+            ele.toggleClass('show-content');
+            if(ele.hasClass('show-content')){
+                jQuery(this).attr('data-original-title', 'Hide details');
+                ele.css('height', ele[0].offsetHeight || ele[0].scrollHeight);
+            }else{
+                ele.css('height', '0px');
+                jQuery(this).attr('data-original-title', showDetails);
+            }
+        });
+
+        jQuery('body').on('click.email_error', '.email-failure-list-item .add_note_admin', function(e){
+            jQuery('#email_failure .modal-header .close').trigger('click');
+            var email = jQuery(this).data('failed-email');
+            jQuery("#TicketPseudoReply a[rel='note-button']").data('failed-email', email).trigger('click');
+            jQuery('#cnt-note-body').data('redactor').insertOnCursorPosition('inserthtml', email);
+            setTimeout(function(){
+                jQuery('#HelpdeskNotes .add-note-select').focus();
+            },1000);
+        });
+
+        jQuery('body').on('click.email_error', '.email-failure-list-item .can-make-calls', function(e){
+            jQuery('#email_failure .modal-header .close').trigger('click');
+        });
+
+        jQuery('body').on('click.email_error', '.email-failure-list-item .drop-from-suppression', function(e){
+            if(jQuery(this).hasClass('ficon-mail-source')){
+                var loadingClass = 'sloading loading-small';
+                var _this = this;
+                jQuery(_this).parents('.email-failure-list-item').addClass('active');
+                jQuery(_this).removeClass('ficon-mail-source').addClass(loadingClass);
+                jQuery.ajax({
+                    url: jQuery(_this).data('url'),
+                    type: 'PUT',
+                    data : {
+                        'drop_email': jQuery(_this).data('userMail')
+                    },
+                    dataType: 'json',
+                    success: function(data){
+                        jQuery(_this).removeClass(loadingClass).addClass('ficon-checkmark').attr('data-original-title', mailSent);
+                    }
+                });
+            }
+        });
+        var addCallTooltip = function() {
+            setTimeout(function(){
+                if(jQuery('.email-failure-list-item .ficon-phone')){
+                    jQuery('.email-failure-list-item .ficon-phone').addClass('tooltip').attr('title', callRecipient);
+                }else{
+                    addCallTooltip();
+                }
+            }, 200);
+        };
+        addCallTooltip();
+    });
+<% end %>
+
+
+
+

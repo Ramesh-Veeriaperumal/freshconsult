@@ -1,0 +1,122 @@
+<%= stylesheet_link_tag_with_rtl :'cdn/ticket_schedule'  %>
+<% delivery_frequency = Reports::ScheduledExport::Constants::DELIVERY_FREQUENZY_BY_KEYS %>
+
+<% content_for :helpcard do %>
+  <%= render :partial => "helpnote" %>
+<% end %>
+
+<% if check_for_auto_ticket_export_feature? %>
+  <div class="list-page schedule-list-wrapper">
+    <div class="list-page-header">
+      <%= render :partial => "breadcrumb", :locals => { :index => true, :is_show => false, :title => ''} %>
+      <div class="row-fluid">
+        <div class="span6">
+        	<h3 class="title">
+            <%=t('helpdesk_reports.ticket_schedule.index.ticket_properties_title')%>
+          </h3>
+        </div>
+         <div class="span6 pull-right align-right new-schedule-btn" >
+          <% if @scheduled_exports_account_count == @scheduled_max_count %>
+            <span class="info-data"><%=t('helpdesk_reports.ticket_schedule.index.ticket_properties_note')%></span>
+           <% else %>
+              <span>
+                <%= t('helpdesk_reports.ticket_schedule.index.scheduled_message',
+                :count => @scheduled_exports_account_count,
+                :max_count => @scheduled_max_count).html_safe %>
+              </span>
+              <%= (link_to t('helpdesk_reports.ticket_schedule.new_schedule'), new_reports_scheduled_export_path(), :class => "btn btn-primary") %>
+           <% end %>
+        </div>
+      </div>
+    </div>
+    <div class="list-page-body ticket-schedule-list">
+      <% if !@scheduled_exports.present? %>
+        <div class="list-noinfo">
+          <%= t('helpdesk_reports.ticket_schedule.no_schedule') %>
+        </div>
+      <% else %>
+        <ul>
+          <% @scheduled_exports.each do |t| %>
+            <li class="row-fluid scheduled-export-row <%='scheduled-export-row-disabled' unless (current_user.id === t.user.id)%>">
+              <section class="fa-area ca-area clear">
+                <div class="row-fluid list-box <%='scheduled-export-disabled' unless (current_user.id === t.user.id)%>">
+                  <div class="desc-box pull-left">
+                    <div class="schedule-data">
+                      <b>
+                        <%= link_to t.name, reports_scheduled_export_path(t), :class => "" if current_user.id === t.user.id %>
+                        <%= t.name unless current_user.id === t.user.id %>
+                      </b>
+                      <div class="schedule-actions item_actions pull-right <%= ((current_user.id === t.user.id) ? 'pt7' : 'pt10') %>">
+                        <%= link_to "<i class='ficon-trash-o fsize-22 schedule-icon tooltip' data-original-title= '#{t('delete')}'></i>".html_safe, '',:data => { :controls_modal => "index-delete-modal", :delete_url => "#{reports_scheduled_export_path(t)}"}, :class => 'delete-schedule' if (current_user.id === t.user.id) %>
+                        <%= content_tag :span, "Created by #{t.user.name}", class: 'muted' unless (current_user.id === t.user.id)%>
+                      </div>
+                    </div>
+                    <p class="muted m0 desc">
+                      <%= index_scheduled_message(t.frequency, t.day_of_export, t.minute_of_day) %>
+                      <%= content_tag :span,  user_timezone(t.user), class: 'muted' if (delivery_frequency[:daily] === t.frequency.to_i || delivery_frequency[:weekly] === t.frequency.to_i)%>
+                    </p>
+                  </div>
+                </div>
+              </section>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<% unless @scheduled_activity_export.nil? %>
+  <div class="list-page schedule-list-wrapper ticket-activity-list-wrapper">
+    <div class="list-page-header">
+      <div class="row-fluid">
+        <div class="span6">
+          <h3 class="title">
+            <%= t('helpdesk_reports.ticket_activity.title') %>
+          </h3>
+        </div>
+      </div>
+    </div>
+    <div class="list-page-body ticket-schedule-list">
+      <table class="table table-striped">
+          <tr id="" class="scheduled-export-row">
+            <td class="span1">
+              <strong>
+                <span class="item_info">
+                  <input type="checkbox" name="scheduled_activity_export[active]" data-url="<%= activities_reports_scheduled_exports_path() %>" rel ="toggle" class="ticket_activity-toggle" <%= @scheduled_activity_export.active ? 'checked' : '' %> value="<%= @scheduled_activity_export.active %>"/>
+                </span>
+              </strong>
+            </td>
+            <td class="pl15">
+              <strong>
+                <span class="item_info">
+                  <%= link_to @scheduled_activity_export.name, activities_reports_scheduled_exports_path(), :class => "" %>
+                </span>
+              </strong>
+              <p class="muted">
+                <%= @scheduled_activity_export.description %>
+              </p>
+            </td>
+            <td>
+              <div class="item_actions pull-right">
+                <%= link_to "<i class='ficon-edit fsize-22 schedule-icon tooltip' data-original-title= '#{t('edit')}'></i>".html_safe, activities_reports_scheduled_exports_path() %>
+              </div>
+            </td>
+          </tr>
+      </table>
+    </div>
+  </div>
+<% end %>
+<div class="modal hide fade" id="index-delete-modal" aria-hidden="true" role="dialog">
+  <div class="modal-header">
+    <button class="close" data-dismiss="modal"></button>
+    <h3><%= t('helpdesk_reports.ticket_schedule.index.delete_title') %></h3>
+  </div>
+  <div class="modal-body">
+    <%= t("helpdesk_reports.ticket_schedule.index.delete_text") %>
+  </div>
+  <div class="modal-footer">
+    <%= link_to(t('helpdesk_reports.ticket_schedule.index.cancel'), '' ,:class => "btn",:data => { :dismiss => 'modal' } )%>
+    <%= link_to(t('helpdesk_reports.ticket_schedule.index.confirm'), '' ,:class => "btn btn-primary index-delete-confirm",:method => 'delete' )%>
+  </div>
+</div>

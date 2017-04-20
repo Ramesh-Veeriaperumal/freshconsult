@@ -5,12 +5,17 @@ class Search::V2::SpotlightController < ApplicationController
   include Search::SearchResultJson
   include Search::V2::AbstractController
   helper Search::SearchHelper
+
+  # For filtered operations
+  include Search::KeywordSearch::Constants
+  helper AutocompleteHelper
   
   before_filter :set_search_sort_cookie
   before_filter :only => [:solutions] do |c|
     c.requires_this_feature :allow_auto_suggest_solutions
   end
   before_filter :detect_multilingual_search, only: [:solutions]
+  before_filter :fetch_fields, only: [:tickets]
 
   # Unscoped spotlight search
   #
@@ -23,9 +28,17 @@ class Search::V2::SpotlightController < ApplicationController
   end
 
   # Tickets scoped spotlight search
+  # filteredTicketSearch is for custom filtered search
   #
   def tickets
-    @search_context = :agent_spotlight_ticket
+    if filter_params?
+      (render([]) && return) unless @es_search_term.present? #=> To not search when no term is passed.
+
+      @search_context = :filteredTicketSearch
+    else
+      @search_context = :agent_spotlight_ticket
+    end
+
     @klasses        = ['Helpdesk::Ticket', 'Helpdesk::ArchiveTicket']
     search(esv2_agent_models)
   end
@@ -89,6 +102,16 @@ class Search::V2::SpotlightController < ApplicationController
         if current_user.restricted?
           es_params[:restricted_responder_id] = current_user.id.to_i
           es_params[:restricted_group_id]     = current_user.agent_groups.map(&:group_id) if current_user.group_ticket_permission
+
+          if current_account.shared_ownership_enabled?
+            es_params[:restricted_internal_agent_id] = current_user.id.to_i
+            es_params[:restricted_internal_group_id] = current_user.agent_groups.map(&:group_id) if current_user.group_ticket_permission
+          end
+        end
+        
+        if filter_params?
+          transformed_values = Search::KeywordSearch::Transform.new(params[:filter_params]).transform
+          es_params.merge!(transformed_values)
         end
         
         if searchable_klasses.include?('Solution::Article')
@@ -134,6 +157,7 @@ class Search::V2::SpotlightController < ApplicationController
 
       @result_json[:current_page] = @current_page
       @total_pages                = (@result_set.total_entries.to_f / @size).ceil
+      @result_json[:total_pages]  = @total_pages 
       @search_results             = (@search_results.presence || []) + @result_set
 
       super
@@ -141,6 +165,7 @@ class Search::V2::SpotlightController < ApplicationController
 
     def handle_rendering
       @result_json = @result_json.to_json
+      @account_time_zone   = ActiveSupport::TimeZone::MAPPING[Account.current.time_zone]
       respond_to do |format|
         format.html do 
           if request.xhr? and !request.headers['X-PJAX']
@@ -188,6 +213,10 @@ class Search::V2::SpotlightController < ApplicationController
 
     def set_search_sort_cookie
       cookies[:search_sort] = @search_sort
+    end
+    
+    def filter_params?
+      params[:filter_params].present?
     end
 
     # ESType - [model, associations] mapping

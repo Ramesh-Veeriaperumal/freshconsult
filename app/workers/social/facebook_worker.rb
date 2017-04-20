@@ -14,7 +14,7 @@ module Social
 
     def perform(msg = nil)
       return if app_rate_limit_reached?
-      Koala.config.api_version = "v2.2" 
+      Koala.config.api_version = "v2.3" 
       account = Account.current
       if msg and msg['fb_page_id']
         fan_page = account.facebook_pages.find_by_id(msg['fb_page_id'])

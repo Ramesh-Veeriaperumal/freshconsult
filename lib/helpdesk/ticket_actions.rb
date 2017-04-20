@@ -86,7 +86,7 @@ module Helpdesk::TicketActions
   end
 
   def update_multiple_tickets
-    render :partial => "update_multiple" , :locals => { :select_all => false } 
+    render :partial => "update_multiple" , :locals => { :select_all => false ,:search_term => params[:term] } 
   end
 
   def update_all_tickets
@@ -284,8 +284,8 @@ module Helpdesk::TicketActions
   end
 
   def full_paginate
-
-    if collab_filter_enabled_for?(filter)
+    
+    if collab_filter_enabled_for?(view_context.current_filter)
       total_entries = params[:total_entries]
       @ticket_count = Collaboration::Ticket.fetch_count
     else
