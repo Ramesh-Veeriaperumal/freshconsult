@@ -35,7 +35,7 @@ module Helpdesk::TicketModelExtension
 
   CONTACT_FIELDS = [
     # [ "export_data.fields.requester_email",       "get_info",                true ,  :requester       , 1    ],
-    [ "export_data.fields.fb_profile_id",         "fb_profile_id",           false,  :requester       , 2    , nil]
+    [ "export_data.fields.fb_id",                 "fb_profile_id",           false,  :requester       , 2    , nil]
   ]
 
   COMPANY_FIELDS = []
