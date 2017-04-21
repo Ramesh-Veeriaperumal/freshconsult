@@ -64,7 +64,7 @@ module Ember
         description = Faker::Lorem.paragraph
         @update_group ||= create_group_with_agents(@account, agent_list: [agent.id])
         params_hash = { description: description, subject: subject, priority: 4, status: 7, type: 'Incident',
-                        responder_id: agent.id, source: 3, tags: ['update_tag1', 'update_tag2'],
+                        responder_id: agent.id, tags: ['update_tag1', 'update_tag2'],
                         due_by: 12.days.since.iso8601, fr_due_by: 4.days.since.iso8601, group_id: @update_group.id }
         params_hash
       end
@@ -444,7 +444,7 @@ module Ember
       end
 
       def test_bulk_update_with_tags
-        tag = Faker::Lorem.word
+        tag = "#{Faker::Lorem.word}_#{Time.now.to_s}"
         ticket = create_ticket
         ticket_ids = [ticket.display_id]
         ticket.tags.create(name: tag)

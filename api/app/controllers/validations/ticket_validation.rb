@@ -35,7 +35,6 @@ class TicketValidation < ApiValidation
                                 field_validations: proc { |x| x.default_field_validations }
                               }, on: :compose_email
 
-  validates :source, custom_inclusion: { in: proc { |x| x.sources }, ignore_string: :allow_string_param, detect_type: true }, if: :update_or_update_multiple?
   validates :source, custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :allow_string_param, detect_type: true, allow_nil: true }, on: :create
   validates :requester_id, :email_config_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param  }
 
@@ -200,14 +199,6 @@ class TicketValidation < ApiValidation
 
   def required_default_fields
     ticket_fields.select { |x| x.default && (x.required || (x.required_for_closure && closure_status?)) }
-  end
-
-  def sources
-    if Account.current.compose_email_enabled?
-      ApiTicketConstants::SOURCES | [TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]]
-    else
-      ApiTicketConstants::SOURCES
-    end
   end
 
   def create_or_update?
