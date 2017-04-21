@@ -2,7 +2,11 @@
 	<div class="reports-loading sloading loading-small loading-left repo generate-hd-reports">Searching</div> 
 </div>
 <% content_for :layoutType do %>search-page<% end %>
+<% if current_account.features?(:advanced_search) %>
 <div class="search-sticky">
+<% else %>
+  <div id="sticky_header" class="search-sticky" data-scroll-top="true">
+    <% end %>
 	<%= form_tag("/search/#{current_filter}", {:method => :get, :class => "search-form"}) do %>
 		<span class="search-dark"></span>
 		<input class="search-input lead" value="<%= @search_key %>" 
@@ -20,31 +24,6 @@
 			</div>
 			<div class="clear"></div>
 		</div>
-		<% if current_filter.eql?('tickets') && @search_results.present? %>
-			<% if current_account.has_feature?(:advanced_search) %>
-				<div class="row-fluid search-controls">
-					<!-- Button for pane for filtered search for tickets -->
-						
-						<div class="search-filter-pane">
-							<div class="edit-filter span1">
-								<button class="btn btn-primary" id="metric-edit" data-action="open-filter-menu">
-									<%=t('helpdesk_search.edit_filter') %>
-								</button> 
-							</div>
-							<div class="filter-type span8">
-								<ul id="filter_text"></ul>
-							</div>
-						</div>
-						<div class="bulk-action-pane hide">
-							<div class="edit-filter span2">	
-								<a class="btn btn-cancel" href="/helpdesk/tickets/update_multiple_tickets?term=<%= @search_key %>" id="bulk_actions_btn" data-target="#bulk" rel="freshdialog" data-width="709px" title="Bulk Actions" 
-								 data-submit-label="Update" data-submit-loading="Updating..." data-close-label="Cancel" >Bulk Actions</a> 
-							</div>
-						</div>
-						<div class="clear"></div>
-				</div>
-			<% end %>
-		<% end %>
 	</div>
 </div>
 <% unless @search_results.blank? %>
