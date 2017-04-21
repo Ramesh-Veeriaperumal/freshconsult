@@ -51,7 +51,7 @@ window.App.FilterOps = window.App.FilterOps || {};
                jQuery(".search-filters-container").hide();
             }, 100);
         }
-        jQuery('#search_fields_list').hide();
+          jQuery('#search_fields_list').hide();
       });
 
       // Removing the item from add-more menu
@@ -351,7 +351,7 @@ window.App.FilterOps = window.App.FilterOps || {};
         jQuery('#search_fields_list').hide();
       } else {
         jQuery('.search-fields-selector').show();
-        jQuery('#search_fields_list').show();
+        // jQuery('#search_fields_list').show();
       }
 
       this.addFieldToFilterPane(accessor,jQuery(field).data('container'));
