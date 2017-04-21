@@ -360,6 +360,16 @@ module Ember
       assert Helpdesk::Ticket.last.attachments.size == attachment_ids.size
     end
 
+    def test_create_without_source
+      params_hash = ticket_params_hash.clone
+      params_hash.delete(:source)
+      post :create, construct_params({version: 'private'}, params_hash)
+      assert_response 201
+      latest_ticket = Helpdesk::Ticket.last
+      match_json(ticket_show_pattern(latest_ticket))
+      assert latest_ticket.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone]
+    end
+
     def test_create_with_attachment_and_attachment_ids
       attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       file1 = fixture_file_upload('/files/attachment.txt', 'text/plain', :binary)
