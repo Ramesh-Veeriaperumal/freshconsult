@@ -219,7 +219,7 @@ class User < ActiveRecord::Base
   end
 
   def destroy_scheduled_ticket_exports
-    if !self.privilege?(:admin_tasks)
+    if !(self.privilege?(:admin_tasks) && self.privilege?(:view_reports))
       Account.current.scheduled_ticket_exports_from_cache.each do |scheduled_ticket_export|
         scheduled_ticket_export.destroy if scheduled_ticket_export.user_id == self.id
       end 

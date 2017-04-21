@@ -6,7 +6,7 @@ class Export::PayloadEnricher::Ticket < Export::PayloadEnricher::Base
   USER                  = "user"
   COMPANY               = "company"
   ACCOUNT_ID            = "account_id"
-  DEFAULT_FIELDS        = %w(responder_id group_id deleted spam).freeze
+  DEFAULT_FIELDS        = %w(deleted spam responder_id group_id internal_agent_id internal_group_id).freeze
   
   def initialize(sqs_msg, enricher_config)
     @sqs_msg         = sqs_msg

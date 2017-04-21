@@ -90,8 +90,8 @@ en:
     dropped:
       summary_error_text: "Message dropped - Invalid or problematic address"
       help_text:
-        admin: "Any message sent to this address will not be delivered as the address you've entered is invalid or mistyped. Please contact Freshdesk support if you believe that this address is valid and should be removed from the drop list for future communication."
-        agent: "Any message sent to this address will not be delivered as the address you've entered is invalid or mistyped. Please contact your account administrator if you believe that this address is valid and should be removed from the drop list for future communication."
+        admin: "Any message sent to this address will not be delivered as the address is invalid or mistyped. Please contact Freshdesk support if you believe that this address is valid and should be removed from the drop list for future communication."
+        agent: "Any message sent to this address will not be delivered as the address is invalid or mistyped. Please contact your account administrator if you believe that this address is valid and should be removed from the drop list for future communication."
     dropped_unsubscribed:
       summary_error_text: "Message dropped - Unsubscribed address"
       help_text:
@@ -102,7 +102,7 @@ en:
       help_text: "The message did not reach this recipient after multiple attempts. This could be due to connection issues with the remote server or temporary problems like the mailbox being full. Please retry sending the message after some time."
     bounce_permanent:
       summary_error_text: "Message bounced - Permanent error"
-      help_text: "The message did not reach this recipient even after multiple attempts. You can try resending the message, but it's likely that the address you've entered may be invalid or mistyped."
+      help_text: "The message did not reach this recipient even after multiple attempts. You can try resending the message, but it's likely that the address may be invalid or mistyped."
     suppression_list_alert:
       subject: "Request to remove address from drop list"
       company: "Company"
@@ -7069,6 +7069,7 @@ en:
       requester_name: "Requester Name"
       requester_email: "Requester Email"
       fb_profile_id: "Facebook Profile Id"
+      fb_id: "Facebook Profile ID"
       agent: "Agent"
       group: "Group"
       created_time: "Created Time"
@@ -9449,7 +9450,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     customer_satisfaction:
       title: Customer Satisfaction Report
     ticket_schedule:
-      schedule_export: "Scheduled Export"
+      schedule_export: "Schedule Export"
       schedule_properties: "Schedule ticket properties"
       schedule_properties_activities: "Schedule ticket properties and activities"
       all_reports: "All Reports"
@@ -10948,6 +10949,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     collab_first_mention_multi: "mentioned you in {{count}} messages on ticket %{object}"
     collab_group_mention: "mentioned your group - %{group_name} in a message on ticket %{object}"
     collab_group_mention_multi: "mentioned your group - %{group_name} in {{count}} messages on ticket %{object}"
+    collab_reply: "replied to your message on ticket %{object}"
+    collab_reply_multi: "replied to your message on ticket %{object}"
     types:
       private_note_created: "Private Note Created"
       public_note_created: "Public Note Added"
@@ -10959,6 +10962,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       collab_group_mention: :"Discussion"
       collab_group_mention_multi: "Discussion"
       collab_first_mention: "Discussion"
+      collab_reply: "Discussion"
+      collab_reply_multi: "Discussion"
       ticket_assigned_to_group: "Ticket Assigned to Group"
       ticket_created: "New Ticket"
     preferences_text:

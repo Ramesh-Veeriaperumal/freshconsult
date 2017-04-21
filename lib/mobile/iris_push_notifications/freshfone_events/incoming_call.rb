@@ -31,7 +31,7 @@ module Mobile::IrisPushNotifications::FreshfoneEvents::IncomingCall
       :number_id => message[:number_id],
       :notification_type => IRIS_FRESHFONE_NOTIFCATION_TYPES[:INCOMING_CALL],
       :freshfone_notification_type => message[:notification_type],
-      :account_id => message[:account_id].to_s
+      :to_agents => message[:agents]
     }
   end
 
@@ -39,7 +39,7 @@ module Mobile::IrisPushNotifications::FreshfoneEvents::IncomingCall
     data = {
       :payload => payload_data(message),
       :payload_type => IRIS_FRESHFONE_NOTIFCATION_TYPES[:INCOMING_CALL],
-      :to_agents => message[:agents]
+      :account_id => message[:account_id].to_s
     }
   end
 end

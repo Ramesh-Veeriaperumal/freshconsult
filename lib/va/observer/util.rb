@@ -61,7 +61,7 @@ module Va::Observer::Util
         ensure
           doer.make_current if doer
         end
-      elsif self.schedule_observer and self.schedule_observer
+      elsif self.class == Helpdesk::Ticket and self.schedule_observer
         # skipping observer for send and set ticket operation
         self.send_and_set_args = args
       else

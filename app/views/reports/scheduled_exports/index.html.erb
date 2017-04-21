@@ -15,18 +15,18 @@
             <%=t('helpdesk_reports.ticket_schedule.index.ticket_properties_title')%>
           </h3>
         </div>
-         <div class="span6 pull-right align-right new-schedule-btn" >
-          <% if @scheduled_exports_account_count == @scheduled_max_count %>
-            <span class="info-data"><%=t('helpdesk_reports.ticket_schedule.index.ticket_properties_note')%></span>
-           <% else %>
-              <span>
-                <%= t('helpdesk_reports.ticket_schedule.index.scheduled_message',
-                :count => @scheduled_exports_account_count,
-                :max_count => @scheduled_max_count).html_safe %>
-              </span>
-              <%= (link_to t('helpdesk_reports.ticket_schedule.new_schedule'), new_reports_scheduled_export_path(), :class => "btn btn-primary") %>
-           <% end %>
-        </div>
+        <% if @scheduled_exports_account_count >= @scheduled_max_count %>
+          <span class="info-data pull-right mt9"><%=t('helpdesk_reports.ticket_schedule.index.ticket_properties_note')%></span>
+        <% else %>
+          <div class="span6 pull-right align-right new-schedule-btn" >
+            <span>
+              <%= t('helpdesk_reports.ticket_schedule.index.scheduled_message',
+              :count => @scheduled_exports_account_count,
+              :max_count => @scheduled_max_count).html_safe %>
+            </span>
+            <%= (link_to t('helpdesk_reports.ticket_schedule.new_schedule'), new_reports_scheduled_export_path(), :class => "btn btn-primary") %>
+            </div>
+        <% end %>
       </div>
     </div>
     <div class="list-page-body ticket-schedule-list">
