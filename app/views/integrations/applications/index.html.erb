@@ -105,7 +105,7 @@
 
 
       if(app_id == "<%= ZendeskAppConfig::APP_ID %>" && jQuery('#ext-<%=ZendeskAppConfig::APP_ID %>').length != 0) {
-        jQuery(this).find('.btn-settings').trigger('click');
+        jQuery('#ext-<%=ZendeskAppConfig::APP_ID %>').find('.btn-settings').trigger('click');
       }else if(hash.match('^#[0-9]')) {    
         jQuery('.app-dtl').attr('href',hash);
         jQuery('.app-dtl').attr('data-url','/admin/marketplace/extensions/' + app_id + '?type=1,4,5');
