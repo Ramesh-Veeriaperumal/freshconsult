@@ -40,8 +40,6 @@ module Helpdesk::TicketModelExtension
 
   COMPANY_FIELDS = []
 
-  EXPORT_FIELDS = TICKET_FIELDS + CUSTOMER_FIELDS + REQUESTER_FIELDS
-
   FEATURES_BASED_FIELDS = [
     [ "export_data.fields.due_by_time",           "due_by",                  false,  nil              , 16    , "sla_management_enabled?"], 
     [ "export_data.fields.initial_response_time", "first_response_time",     false,  :ticket_states   , 20    , "sla_management_enabled?"], 
@@ -49,8 +47,9 @@ module Helpdesk::TicketModelExtension
     [ "export_data.fields.resolution_time",       "resolution_time_bhrs",    false,  :ticket_states   , 23    , "sla_management_enabled?"],
     [ "export_data.fields.resolution_status",     "resolution_status",       false,  :ticket_states   , 26    , "sla_management_enabled?"],
     [ "export_data.fields.first_response_status", "first_response_status",   false,  :ticket_states   , 27    , "sla_management_enabled?"]
-
   ]
+
+  EXPORT_FIELDS = TICKET_FIELDS + CUSTOMER_FIELDS + REQUESTER_FIELDS + FEATURES_BASED_FIELDS
 
   ASSOCIATION_BY_VALUE = Hash[*EXPORT_FIELDS.map { |i| [i[1], i[3]] }.flatten ]
 
