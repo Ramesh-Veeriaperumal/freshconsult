@@ -125,6 +125,9 @@ module Ember
         @item.ticket_old_body = @item.ticket_old_body # This will prevent ticket_old_body query during save
         @item.inline_attachments = @item.inline_attachments
         @item.schema_less_ticket.product ||= current_portal.product unless cname_params.key?(:product_id)
+
+        # Default source is set to phone. Instead of portal as set in the model.
+        @item.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone] if @item.source === 0
       end
 
       def assign_attributes_for_update
