@@ -60,7 +60,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :round_robin_assignment, :related_ticket_ids, :tracker_ticket_id, :unique_external_id, :assoc_parent_tkt_id,
     :sbrr_turned_on, :status_sla_toggled_to, :replicated_state, :skip_sbrr_assigner, :bg_jobs_inline,
     :sbrr_ticket_dequeued, :sbrr_user_score_incremented, :sbrr_fresh_ticket, :skip_sbrr, :model_changes,
-    :schedule_observer, :required_fields_on_closure, :send_and_set_args  
+    :schedule_observer, :required_fields_on_closure, :observer_args  
     # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
     # - will be clearing these after activity publish.
   

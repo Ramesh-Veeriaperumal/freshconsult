@@ -54,16 +54,10 @@ module Va::Observer::Util
       
       args[:model_changes] = @model_changes if self.class == Helpdesk::Ticket
       if inline
-        begin
-          User.reset_current_user
-          args[:evaluate_on] = self if self.class == Helpdesk::Ticket && Account.current.skill_based_round_robin_enabled? && bg_jobs_inline
-          Tickets::ObserverWorker.new.perform(args)
-        ensure
-          doer.make_current if doer
-        end
+        Tickets::ObserverWorker.new.perform(args)
       elsif self.class == Helpdesk::Ticket and self.schedule_observer
-        # skipping observer for send and set ticket operation
-        self.send_and_set_args = args
+        # skipping observer for send and set ticket operation & bulk ticket actions for skill
+        self.observer_args = args
       else
         Tickets::ObserverWorker.perform_async(args)
       end
