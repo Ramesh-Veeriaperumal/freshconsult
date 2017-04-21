@@ -963,6 +963,18 @@ module Ember
       match_json([bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
     end
 
+     def test_ticket_conversations_with_since_id
+      t = create_ticket
+      n = create_reply_note(t)
+      3.times do
+        create_reply_note(t)
+      end
+      get :ticket_conversations, controller_params(version: 'private', id: t.display_id, 
+        per_page: 50, page: 1, order_type: "desc", since_id: n.id)
+      assert_response 200
+      assert JSON.parse(response.body).count == 3
+    end
+
     def test_update_without_ticket_access
       User.any_instance.stubs(:has_ticket_permission?).returns(false)
       t = create_ticket
