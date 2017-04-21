@@ -32,6 +32,23 @@ module Helpdesk::BulkActionMethods
     doer.make_current if doer
   end
 
+  def run_observer_inline ticket
+    begin
+      doer = User.current
+      User.reset_current_user
+      args = ticket.observer_args
+      args = args.merge({:attributes => {:skip_sbrr_assigner => true, :bg_jobs_inline => true}}) if account.skill_based_round_robin_enabled?
+      response = Tickets::ObserverWorker.new.perform(args)
+      ticket.model_changes = response[:model_changes]
+    ensure
+      doer.make_current if doer
+    end
+  end
+
+  def observer_inline?
+    account.skill_based_round_robin_enabled?
+  end
+
   def account
     Account.current
   end

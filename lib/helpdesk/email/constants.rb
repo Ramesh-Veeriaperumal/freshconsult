@@ -32,7 +32,8 @@ module Helpdesk::Email::Constants
 								:blank_user => "No User",
 								:invalid_account => "Invalid account",
 								:inactive_account => "Inactive account",
-								:failed_article => "Article creation failed" 
+								:failed_article => "Article creation failed",
+								:max_email_limit => "Reached max allowed email limit in Ticket/Note"
 							} # add according to need
 	PROCESSED_EMAIL_TYPE = { :ticket => "ticket", :note => "note", :article => "article", :invalid => "invalid" }
 

@@ -17,9 +17,10 @@ class Tickets::BulkTicketActions < BaseWorker
                                       params["disable_notification"].to_bool
     group_ids = Set.new
     items.each do |ticket|
-      ticket.skip_sbrr_assigner = ticket.bg_jobs_inline = true
+      ticket.schedule_observer = true if observer_inline?
       bulk_action_handler = Helpdesk::TicketBulkActions.new(params)
       bulk_action_handler.perform(ticket)
+      run_observer_inline(ticket) if observer_inline?
       group_ids.merge (ticket.model_changes[:group_id] || [ticket.group_id])
     end
     group_ids.subtract([nil])

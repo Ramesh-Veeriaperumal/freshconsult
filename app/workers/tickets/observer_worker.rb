@@ -10,8 +10,8 @@ module Tickets
         account, ticket_id, doer_id, system_event = Account.current, args[:ticket_id], args[:doer_id], args[:system_event]
         current_events = args[:current_events].symbolize_keys
 
-        evaluate_on = args[:evaluate_on]
-        evaluate_on ||= account.tickets.find_by_id ticket_id
+        evaluate_on = account.tickets.find_by_id ticket_id
+        evaluate_on.attributes = args[:attributes]
         doer = account.users.find_by_id doer_id unless system_event
 
         if evaluate_on.present? and (doer.present? || system_event)
@@ -50,6 +50,7 @@ module Tickets
           end
         end
         Thread.current[:observer_doer_id] = nil
+        return {:model_changes => evaluate_on.model_changes}
       end
     end
   end
