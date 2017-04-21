@@ -64,8 +64,8 @@ class Helpdesk::Note < ActiveRecord::Base
     }
   }
 
-  scope :notes_since, lambda { |last_note_id|
-    { :conditions => ["helpdesk_notes.id > ? ", last_note_id] }
+  scope :created_since, lambda { |last_note_id, last_note_created_at|
+    { :conditions => ["helpdesk_notes.id != ? AND helpdesk_notes.created_at >= ?", last_note_id, last_note_created_at] }
   }
   
   scope :before, lambda { |first_note_id|

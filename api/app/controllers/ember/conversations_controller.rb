@@ -22,15 +22,7 @@ module Ember
       validate_filter_params
       return unless @conversation_filter.valid?
 
-      order_type = params[:order_type]
-      order_conditions = "created_at #{order_type}"
-      since_id = params[:since_id]
-
-      conversations = @ticket.notes.visible.exclude_source('meta').preload(conditional_preload_options).order(order_conditions)
-      filtered_conversations = since_id ? conversations.notes_since(since_id) : conversations
-
-      @items = paginate_items(filtered_conversations)
-      @items_count = conversations.count
+      load_conversations
       response.api_meta = { count: @items_count }
     end
 
@@ -113,6 +105,18 @@ module Ember
     alias latest_note_forward_template reply_forward_template
 
     private
+
+      def load_conversations
+        order_type = params[:order_type]
+        order_conditions = "created_at #{order_type}"
+        since_id = params[:since_id]
+        last_created_at = @ticket.notes.where(:id => since_id).pluck(:created_at).first
+
+        conversations = @ticket.notes.visible.exclude_source('meta').preload(conditional_preload_options).order(order_conditions)
+        filtered_conversations = since_id ? conversations.created_since(since_id, last_created_at) : conversations
+        @items = paginate_items(filtered_conversations)
+        @items_count = conversations.count
+      end
 
       def index?
         @index ||= (current_action?('index') || current_action?('ticket_conversations'))
