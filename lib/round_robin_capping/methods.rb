@@ -9,4 +9,8 @@ module RoundRobinCapping::Methods
     score <= 0 ? 0 : ROUND_ROBIN_DEFAULT_SCORE*(score) + Time.now.utc.to_i
   end
 
+  def agents_ticket_count score
+    (score/ROUND_ROBIN_DEFAULT_SCORE).to_i
+  end
+
 end
