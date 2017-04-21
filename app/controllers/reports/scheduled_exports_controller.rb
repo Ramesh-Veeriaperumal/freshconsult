@@ -151,7 +151,7 @@ class Reports::ScheduledExportsController < ApplicationController
 
       EXPORT_FIELD_TYPES.each do |type|
         @field_hash[type.to_sym] = transform_fields_hash(@field_hash[type.to_sym],
-                                      @scheduled_export.fields_data[type]) unless @scheduled_export.fields_data[type].nil?
+                                      @scheduled_export.fields_data[type] || {})
       end
     end
 
