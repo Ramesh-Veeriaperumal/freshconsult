@@ -127,7 +127,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           if (envelope_from_email[:email] =~ EMAIL_VALIDATOR).nil?
             error_msg = "Invalid email address found in requester details - #{from_email[:email]} for account - #{account.id}"
             Rails.logger.debug error_msg
-            NewRelic::Agent.notice_error(Exception.new(error_msg))
             return processed_email_data(PROCESSED_EMAIL_STATUS[:invalid_from_email], account.id)
           else
             from_email = envelope_from_email
@@ -489,9 +488,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         end
         user = get_user(account, e_email , email_config, true) unless e_email.blank?
       end
-
+      to_emails = parse_to_emails
       global_cc = parse_all_cc_emails(account.kbase_email, account.support_emails)
-
+      if max_email_limit_reached? "Ticket", to_emails, global_cc 
+        email_processing_log "You have exceeded the limit of #{TicketConstants::MAX_EMAIL_COUNT} cc emails for the ticket"
+        return processed_email_data(PROCESSED_EMAIL_STATUS[:max_email_limit], account.id)
+      end
       ticket = Helpdesk::Ticket.new(
         :account_id => account.id,
         :subject => params[:subject],
@@ -499,7 +501,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                           :description_html => cleansed_html || ""},
         :requester => user,
         :to_email => to_email[:email],
-        :to_emails => parse_to_emails,
+        :to_emails => to_emails,
         :cc_email => {:cc_emails => global_cc, :fwd_emails => [], :bcc_emails => [], :reply_cc => global_cc, :tkt_cc => parse_cc_email },
         :email_config => email_config,
         :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
@@ -688,7 +690,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       
       from_fwd_recipients = from_fwd_emails?(ticket, from_email)
       parsed_cc_emails = parse_cc_email
-      parsed_cc_emails.delete(ticket.account.kbase_email)
+      cc_emails = parsed_cc_emails.delete(ticket.account.kbase_email)
+      to_emails = parse_to_emails
+      if max_email_limit_reached? "Note", to_emails, cc_emails
+        email_processing_log "You have exceeded the limit of #{TicketConstants::MAX_EMAIL_COUNT} cc emails for the note"
+        return processed_email_data(PROCESSED_EMAIL_STATUS[:max_email_limit], ticket.account.id)
+      end
       note = ticket.notes.build(
         :private => (from_fwd_recipients or reply_to_private_note?(all_message_ids) or rsvp_to_fwd?(ticket, from_email, user)),
         :incoming => true,
@@ -696,14 +703,14 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           :body => tokenize_emojis(body) || "",
           :body_html => body_html || "",
           :full_text => tokenize_emojis(full_text),
-          :full_text_html => full_text_html
+          :full_text_html => full_text_html || ""
           },
         :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"],
         :user => user, #by Shan temp
         :account_id => ticket.account_id,
         :from_email => from_email[:email],
-        :to_emails => parse_to_emails,
-        :cc_emails => parsed_cc_emails
+        :to_emails => to_emails,
+        :cc_emails => cc_emails
       )  
       note.subject = Helpdesk::HTMLSanitizer.clean(params[:subject])   
       note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if (from_fwd_recipients or ticket.agent_performed?(user) or rsvp_to_fwd?(ticket, from_email, user))
@@ -831,6 +838,14 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       user
     end
 
+    def max_email_limit_reached? model_name, to_emails, cc_emails
+      if model_name == "Note"
+        return ((cc_emails.count >= TicketConstants::MAX_EMAIL_COUNT) || (to_emails.count >= TicketConstants::MAX_EMAIL_COUNT)) 
+      elsif model_name == "Ticket"
+        return cc_emails.count >= TicketConstants::MAX_EMAIL_COUNT
+      end
+    end
+
     def set_current_user(user)
       user.make_current if user.present?
     end
@@ -849,6 +864,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
       Integer(params[:attachments]).times do |i|
         begin
+          if params["attachment#{i+1}"].nil?
+            Rails.logger.info("Create attachment skipped for attachment#{i+1} Reason : Attachment object is nil")
+            next
+          end
           content_id = content_ids["attachment#{i+1}"] && 
                         verify_inline_attachments(item, content_ids["attachment#{i+1}"])
           att = Helpdesk::Attachment.create_for_3rd_party(account, item, 
