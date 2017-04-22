@@ -25,17 +25,14 @@ window.App = window.App || {};
 				case "agents/index":
           				this.currentModule = 'Index';
 				break;
-				case "agents/new":
-				case  "agents/edit":
-          				this.currentModule = 'Form';
-				break;
 			}
 		},
 		onLeave: function() {
-			if(this.currentModule !== ''){
-				this[this.currentModule].onLeave();
-				this.currentModule = '';
-			}
+			var $doc = $(document);
+			$doc.off(".agentskills");
+			$doc.off(".agent-roles");
+			$(document).off('.agentEvents');
+			this.currentModule = '';
 		}
 	};
 }(window.jQuery));

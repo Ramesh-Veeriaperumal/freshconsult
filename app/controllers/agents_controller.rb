@@ -15,7 +15,7 @@ class AgentsController < ApplicationController
   before_filter :load_object, :only => [:update, :destroy, :restore, :edit, :reset_password, 
     :convert_to_contact, :reset_score, :api_key] 
   before_filter :ssl_check, :can_assume_identity, :only => [:api_key] 
-  before_filter :load_roles, :load_groups, :only => [:new, :create, :edit, :update]
+  before_filter :load_roles, :load_groups, :set_skill_data, :only => [:new, :create, :edit, :update]
   before_filter :check_demo_site, :only => [:destroy,:update,:create]
   before_filter :restrict_current_user, :only => [ :edit, :update, :destroy,
     :convert_to_contact, :reset_score, :reset_password ]
@@ -27,7 +27,6 @@ class AgentsController < ApplicationController
   before_filter :filter_params, :only => [:create, :update]
   before_filter :check_occasional_agent_params, :only => [:index]
   before_filter :set_filter_data, :only => [ :update,  :create]
-  before_filter :set_skill_data, :only => [:new, :edit] 
 
   def load_object
     @agent = scoper.find(params[:id])
@@ -378,9 +377,9 @@ class AgentsController < ApplicationController
 private
 
   def set_filter_data
-    user_skills = params[:user][:user_skills_attributes]
-    params[:user][:user_skills_attributes] = user_skills.blank? ? 
-    [] : ActiveSupport::JSON.decode(user_skills)
+    user_skills = params[:user][:user_skills_attributes] || []
+    params[:user][:user_skills_attributes] = user_skills.is_a?(Array) ?
+    user_skills : ActiveSupport::JSON.decode(user_skills)
   end
 
   def set_skill_data

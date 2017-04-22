@@ -32,10 +32,7 @@ window.App.Agents = window.App.Agents || {};
 			var agent_id = $("#agent-filters").data('agent');
 			$('#agent_convert_id_'+agent_id).trigger('click');
 			$("#agent-filters").data('agent', null);
-		});	
-	},
-	onLeave: function(data) {
-		$(document).off('.agentEvents');
+		});
 	}
   };
 
