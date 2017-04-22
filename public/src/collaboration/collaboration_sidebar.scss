@@ -573,6 +573,12 @@ $disabled_border_color: #e0e0e0;
             }
         }
 
+        &.reply-added {
+            .collab-scroll-box-cover {
+                height: calc(100vh - 311px);
+            }
+        }
+
         .send-collab-message-form {
             .collab-error-popup {
                 display: block;
@@ -591,6 +597,12 @@ $disabled_border_color: #e0e0e0;
         }
 
         &.annotated {
+            .collab-scroll-box-cover {
+                height: calc(100vh - 311px);
+            }
+        }
+
+        &.reply-added {
             .collab-scroll-box-cover {
                 height: calc(100vh - 311px);
             }

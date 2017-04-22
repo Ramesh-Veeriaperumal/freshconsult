@@ -1,0 +1,9 @@
+<% skills = data.slice(0, limit) %>
+<% for(i =0; i<skills.length; i++) { %>
+         <span id = <%= "skill_#{skills[i].skill_id]}" %> class="muted"><%= skills[i].name %></span>
+<% } %> 
+<% if(data.length > limit) {%>
+	<span>
+		<a href = 'javascript:void(0)' id = 'view-all-skills'><%= data.length - limit %> <%= I18n.t('agent.more')%></a>
+	</span>
+<% } %>

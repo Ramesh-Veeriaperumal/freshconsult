@@ -34,6 +34,16 @@ module SBRR
         end
       end
 
+      def refresh_object_with_lock _object, score = nil
+        @object = _object
+        @old_score = score || zscore
+        SBRR.log "Refresh member #{member} to #{key} with score #{@old_score}"
+        MAX_RETRIES.times do
+          result = zadd_multi_exec
+          return true  if result.is_a?(Array) && result[1].present?
+        end
+      end
+
       def dequeue_object_with_lock _object
         @object = _object
         SBRR.log "Dequeueing member #{member} from #{key}" 

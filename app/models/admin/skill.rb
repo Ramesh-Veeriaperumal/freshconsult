@@ -3,6 +3,7 @@ class Admin::Skill < ActiveRecord::Base
   primary_key = :id
   
   include Cache::Memcache::Skill
+  include Redis::RoundRobinRedis
 
   NOT_OPERATORS = ['is_not', 'does_not_contain', 'not_selected', 'not_in']
   MAX_NO_OF_SKILLS_PER_ACCOUNT = 180
@@ -14,7 +15,7 @@ class Admin::Skill < ActiveRecord::Base
   has_many :users, :through => :user_skills, :source => :user, :order => 'user_skills.rank',
             :dependent => :destroy
 
-  scope :trimmed, :select => [:id, :name]
+  scope :trimmed, :select => [:'skills.id', :'skills.name']
 
   before_validation :assign_last_position, :unless => :position?
 
@@ -26,6 +27,7 @@ class Admin::Skill < ActiveRecord::Base
   validate :no_of_skills_per_account
   
   after_commit :clear_skills_cache
+  after_commit :destroy_sbrr_queues, :clear_tickets_skill, on: :destroy
 
   attr_accessor :conditions
   accepts_nested_attributes_for :user_skills, :allow_destroy => true
@@ -41,8 +43,10 @@ class Admin::Skill < ActiveRecord::Base
     end
 
     def check_skills account, ticket
-      account.skills_from_cache.any? do |skill|
-        skill.check_conditions(ticket)
+      unless (account.skills_from_cache.any? do |skill|
+          skill.check_conditions(ticket)
+        end)
+        ticket.skill = nil 
       end
     end
 
@@ -99,6 +103,30 @@ class Admin::Skill < ActiveRecord::Base
       if account.skills.count >= MAX_NO_OF_SKILLS_PER_ACCOUNT
         errors.add(:base, :max_skills_per_account, :max_limit => MAX_NO_OF_SKILLS_PER_ACCOUNT) 
       end
+    end
+
+    def destroy_sbrr_queues #no skill object in worker, just key deletion, one redis call
+      keys = []
+      
+      [ticket_queues, user_queues].each do |queues|
+      keys << queues.map(&:key)
+      end
+      keys.flatten!
+
+      del_round_robin_redis keys
+    end
+
+    def clear_tickets_skill
+      args = {:action => "destroy", :skill_id => self.id}
+      SBRR::Config::Skill.perform_async args
+    end
+
+    def ticket_queues
+      @ticket_queues ||= SBRR::QueueAggregator::Ticket.new(nil, {:skill => self}).relevant_queues
+    end
+
+    def user_queues
+      @user_queues ||= SBRR::QueueAggregator::User.new(nil, {:skill => self}).relevant_queues
     end
 
 end

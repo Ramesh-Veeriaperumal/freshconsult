@@ -32,7 +32,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed",
                             "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email", 
                             "parent_ticket", "reports_hash","sla_response_reminded","sla_resolution_reminded", "dirty_attributes",
-                            "sentiment", "spam_score", "sds_spam", "skill", "skill_id"]
+                            "association_type", "associates_rdb", "sentiment", "spam_score", "sds_spam"]
 
   TICKET_STATE_ATTRIBUTES = ["opened_at", "pending_since", "resolved_at", "closed_at", "first_assigned_at", "assigned_at",
                              "first_response_time", "requester_responded_at", "agent_responded_at", "group_escalated",
@@ -58,15 +58,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :phone , :facebook_id, :send_and_set, :archive, :required_fields, :disable_observer_rule,
     :disable_activities, :tags_updated, :system_changes, :activity_type, :misc_changes,
     :round_robin_assignment, :related_ticket_ids, :tracker_ticket_id, :unique_external_id, :assoc_parent_tkt_id,
-    :sbrr_ticket_dequeued, :sbrr_user_score_incremented, :sbrr_fresh_ticket, :skip_sbrr, :model_changes, :schedule_observer, :required_fields_on_closure,
-    :send_and_set_args  # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
-  # - will be clearing these after activity publish.
+    :sbrr_turned_on, :status_sla_toggled_to, :replicated_state, :skip_sbrr_assigner, :bg_jobs_inline,
+    :sbrr_ticket_dequeued, :sbrr_user_score_incremented, :sbrr_fresh_ticket, :skip_sbrr, :model_changes,
+    :schedule_observer, :required_fields_on_closure, :observer_args  
+    # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
+    # - will be clearing these after activity publish.
   
 #  attr_protected :attachments #by Shan - need to check..
 
   attr_protected :account_id, :display_id, :attachments #to avoid update of these properties via api.
 
   alias_attribute :company_id, :owner_id
+  alias_attribute :skill_id, :sl_skill_id
 
   scope :created_at_inside, lambda { |start, stop|
           { :conditions => [" helpdesk_tickets.created_at >= ? and helpdesk_tickets.created_at <= ?", start, stop] }
@@ -250,6 +253,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     { :conditions => ["status IN (?) and responder_id = ?", status_ids, user_id] }
   }
 
+  scope :associated_with_skill, lambda {|skill_id| {
+    :conditions => ["sl_skill_id in (?)", skill_id],
+  }} 
+
   scope :next_autoplay_ticket, lambda {|account,responder_id| {
     :select => "helpdesk_tickets.display_id",
     :conditions => ["status IN (?) and responder_id = ?", Helpdesk::TicketStatus::donot_stop_sla_statuses(account),responder_id],
@@ -322,6 +329,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
       { :cc_emails => [], :fwd_emails => [], :reply_cc => [], :tkt_cc => [], :bcc_emails => [] }
     end
 
+  end
+
+  def skill_name
+    self.skill.try(:name)
   end
 
   def model_changes
@@ -1152,11 +1163,42 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def skill_id_column
-    Helpdesk::SchemaLessTicket.skill_id_column
+    :sl_skill_id
   end
 
   def archive?
     false
+  end
+
+  def ticket_was _changes = {}, custom_attributes = []
+    replicate_ticket :first, _changes, custom_attributes
+  end
+
+  def ticket_is _changes = {}, custom_attributes = []
+    replicate_ticket :last, _changes, custom_attributes
+  end
+
+  def replicate_ticket index, _changes = {}, custom_attributes = [], _schema_less_ticket_changes = _changes
+    ticket_replica = account.tickets.new #dup creates problems
+    attributes.each do |_attribute, value| #to work around protected attributes
+      next if TicketConstants::SKIPPED_TICKET_CHANGE_ATTRIBUTES.include? _attribute.to_sym #skipping deprecation warning
+      ticket_replica.send("#{_attribute}=", value)
+    end
+    _changes ||= begin 
+      temp_changes = changes #calling changes builds a hash everytime
+      temp_changes.present? ? temp_changes : previous_changes
+    end
+    _changes.each do |_attribute, change|
+      if ticket_replica.respond_to?(_attribute) && (change.size == 2) #Hack for tags in model_changes
+        ticket_replica.send("#{_attribute}=", change.send(index))
+      end
+    end
+    ticket_replica.replicated_state = TicketConstants::TICKET_REPLICA[index]
+    custom_attributes.each {|custom_attr| ticket_replica.send("#{custom_attr}=", send(custom_attr)) }
+
+    ticket_replica.schema_less_ticket = 
+      schema_less_ticket.replicate_schema_less_ticket(index, _schema_less_ticket_changes)
+    ticket_replica
   end
 
   private

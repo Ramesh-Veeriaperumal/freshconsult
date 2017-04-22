@@ -1,0 +1,16 @@
+<ul class="breadcrumb #{'template_breadcrumb' if index}">
+  <li>
+    <%= link_to t('helpdesk_reports.ticket_schedule.all_reports'), reports_url %> 
+    <span class="divider">/</span>
+  </li>
+  <li>
+  	<%= link_to t('helpdesk_reports.ticket_schedule.schedule_export'), reports_scheduled_exports_path() unless index%>
+  	<%= t('helpdesk_reports.ticket_schedule.schedule_export') if index%>
+  	<%= content_tag :span, "/", class: 'divider' if is_show%>
+  </li>
+  <% if is_show %>
+	  <li>
+	  	<%= title %>
+	  </li>
+  <% end %>
+</ul>

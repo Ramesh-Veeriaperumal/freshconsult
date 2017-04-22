@@ -57,6 +57,8 @@ module MemcacheKeys
   ACCOUNT_SKILLS = "v1/ACCOUNT_SKILLS:%{account_id}"
 
   ACCOUNT_SKILLS_TRIMMED = "v1/ACCOUNT_SKILLS_TRIMMED:%{account_id}"
+
+  ACCOUNT_SCHEDULED_TICKET_EXPORTS = "v1/ACCOUNT_SCHEDULED_TICKET_EXPORTS:%{account_id}"
   
   ACCOUNT_TWITTER_HANDLES = "v2/ACCOUNT_TWITTER_HANDLES:%{account_id}"
 
@@ -172,6 +174,8 @@ module MemcacheKeys
   SITEMAP_KEY = "SITEMAP:%{account_id}:%{portal_id}"
 
   MOST_VIEWED_ARTICLES = "MOST_VIEWED_ARTICLES:%{account_id}:%{language_id}:%{cache_version}"
+
+  EXPORT_PAYLOAD_ENRICHER_CONFIG = "v1/EXPORT_PAYLOAD_ENRICHER_CONFIG:%{account_id}"
 
   ACCOUNT_REQUIRED_TICKET_FIELDS = "ACCOUNT_REQUIRED_TICKET_FIELDS:%{account_id}"
 

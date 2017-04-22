@@ -1,155 +1,158 @@
 module Admin::RolesHelper
 
-  ROLE_SECTIONS =
-    [
+  def role_sections
+      [
 
-      # *************************** Tickets **************************
+        # *************************** Tickets **************************
 
-      { :dom_type => "label", :id => "tickets",
-        :children =>
+        { :dom_type => "label", :id => "tickets",
+          :children =>
 
-          [{ :dom_type => "hidden_field", :id => "manage_tickets" },
-           { :dom_type => "check_box",    :id => "reply_ticket" },
-           { :dom_type => "check_box",    :id => "forward_ticket" },
-           { :dom_type => "check_box",    :id => "edit_note_choice",
-             :privilege => "0", :class => "nested permanent_disable",
-             :children =>
-
-              [{ :dom_type => "radio_button", :id => "edit_note" },
-               { :dom_type => "radio_button", :id => "edit_note_false",
-                 :privilege => "0", :class => "default" }]
-           },
-           { :dom_type => "check_box", :id => "edit_conversation"  },
-           { :dom_type => "check_box", :id => "merge_or_split_ticket" },
-           { :dom_type => "check_box", :id => "edit_ticket_properties" },
-           { :dom_type => "check_box", :id => "view_time_entries", :class => "nested",
-             :children =>
-
-              [{ :dom_type => "radio_button", :id => "edit_time_entries" },
-               { :dom_type => "radio_button", :id => "edit_time_entries_false",
-                 :privilege => "0", :class => "default" }]
-           },
-           { :dom_type => "check_box", :id => "delete_ticket" },
-           { :dom_type => "check_box", :id => "export_tickets" }]
-      },
-
-      # *************************** Solutions **************************
-
-      { :dom_type => "label", :id => "solutions",
-        :children =>
-
-            [{ :dom_type => "check_box", :id => "view_solutions", :class => "nested",
+            [{ :dom_type => "hidden_field", :id => "manage_tickets" },
+             { :dom_type => "check_box",    :id => "reply_ticket" },
+             { :dom_type => "check_box",    :id => "forward_ticket" },
+             { :dom_type => "check_box",    :id => "edit_note_choice",
+               :privilege => "0", :class => "nested permanent_disable",
                :children =>
 
-                [{ :dom_type => "check_box", :id => "publish_solution" },
-                 { :dom_type => "check_box", :id => "delete_solution" },
-                 { :dom_type => "check_box", :id => "manage_solutions" }]
-            }]
+                [{ :dom_type => "radio_button", :id => "edit_note" },
+                 { :dom_type => "radio_button", :id => "edit_note_false",
+                   :privilege => "0", :class => "default" }]
+             },
+             { :dom_type => "check_box", :id => "edit_conversation"  },
+             { :dom_type => "check_box", :id => "merge_or_split_ticket" },
+             { :dom_type => "check_box", :id => "edit_ticket_properties" },
+             { :dom_type => "check_box", :id => "view_time_entries", :class => "nested",
+               :children =>
+
+                [{ :dom_type => "radio_button", :id => "edit_time_entries" },
+                 { :dom_type => "radio_button", :id => "edit_time_entries_false",
+                   :privilege => "0", :class => "default" }]
+             },
+             { :dom_type => "check_box", :id => "delete_ticket" },
+             { :dom_type => "check_box", :id => "export_tickets" }]
         },
 
-       # *************************** Forums **************************
+        # *************************** Solutions **************************
 
-       { :dom_type => "label", :id => "forums",
-         :children =>
+        { :dom_type => "label", :id => "solutions",
+          :children =>
 
-           [{ :dom_type => "check_box", :id => "view_forums", :class => "nested",
-             :children =>
+              [{ :dom_type => "check_box", :id => "view_solutions", :class => "nested",
+                 :children =>
 
-               [{ :dom_type => "check_box", :id => "manage_forums" },
-                { :dom_type => "check_box", :id => "create_topic", :class => "nested",
-                  :children =>
+                  [{ :dom_type => "check_box", :id => "publish_solution" },
+                   { :dom_type => "check_box", :id => "delete_solution" },
+                   { :dom_type => "check_box", :id => "manage_solutions" }]
+              }]
+          },
 
-                     [{ :dom_type => "radio_button", :id => "edit_topic" },
-                      { :dom_type => "radio_button", :id => "edit_topic_false",
-                        :privilege => "0", :class => "default" }]
-                 },
-                 { :dom_type => "check_box", :id => "delete_topic" }]
-           }]
-       },
+         # *************************** Forums **************************
 
-       # *************************** Customers **************************
+         { :dom_type => "label", :id => "forums",
+           :children =>
 
-       { :dom_type => "label", :id => "customers",
-         :children =>
-
-           [{ :dom_type => "check_box", :id => "view_contacts", :class => "nested",
-              :children =>
-
-               [{ :dom_type => "check_box", :id => "manage_contacts" },
-                { :dom_type => "check_box", :id => "delete_contact" },
-                {:dom_type => "check_box", :id => "export_customers"}]
-              
-           }]
-           
-       },
-
-       # *************************** Reports **************************
-
-       { :dom_type => "label", :id => "reports", :children =>
-
-           [{ :dom_type => "check_box", :id => "view_reports", :class => "nested",
-              :children => 
-              
-              [{ :dom_type => "check_box", :id => "export_reports"}]
-              
-           }]
-           
-       },
-
-       # *************************** Admin **************************
-
-       { :dom_type => "label", :id => "admin",
-         :children =>
-
-           [{ :dom_type => "radio_button", :id => "not_administrator",
-              :privilege => "0", :class => "default"},
-
-            { :dom_type => "radio_button", :id => "operational_admin",
-              :privilege => "view_admin", :class => "nested",
-              :children =>
-
-                 [{ :dom_type => "check_box", :id => "manage_users" },
-                  { :dom_type => "check_box", :id => "manage_availability" },
-                  { :dom_type => "check_box", :id => "manage_tags" },
-                  { :dom_type => "check_box", :id => "manage_canned_responses" },
-                  { :dom_type => "check_box", :id => "manage_dispatch_rules" },
-                  { :dom_type => "check_box", :id => "manage_supervisor_rules" },
-                  { :dom_type => "check_box", :id => "manage_scenario_automation_rules" },
-                  { :dom_type => "check_box", :id => "manage_email_settings" },
-                  { :dom_type => "hidden_field", :id => "manage_dashboard" },
-                  { :dom_type => "check_box", :id => "manage_ticket_templates" },
-                  ]
-             },
-
-             { :dom_type => "radio_button", :id => "admin_tasks", :class => "nested",
+             [{ :dom_type => "check_box", :id => "view_forums", :class => "nested",
                :children =>
 
-                 [{ :dom_type => "hidden_field", :id => "view_admin" },
-                  { :dom_type => "hidden_field", :id => "manage_users" },
-                  { :dom_type => "hidden_field", :id => "manage_availability" },
-                  { :dom_type => "hidden_field", :id => "manage_canned_responses" },
-                  { :dom_type => "hidden_field", :id => "manage_dispatch_rules" },
-                  { :dom_type => "hidden_field", :id => "manage_supervisor_rules" },
-                  { :dom_type => "hidden_field", :id => "manage_scenario_automation_rules" },
-                  { :dom_type => "hidden_field", :id => "manage_email_settings" },
-                  { :dom_type => "hidden_field", :id => "manage_dashboard" },
-                  { :dom_type => "hidden_field", :id => "manage_ticket_templates" },
-                  { :dom_type => "check_box",    :id => "manage_account" }]
+                 [{ :dom_type => "check_box", :id => "manage_forums" },
+                  { :dom_type => "check_box", :id => "create_topic", :class => "nested",
+                    :children =>
 
+                       [{ :dom_type => "radio_button", :id => "edit_topic" },
+                        { :dom_type => "radio_button", :id => "edit_topic_false",
+                          :privilege => "0", :class => "default" }]
+                   },
+                   { :dom_type => "check_box", :id => "delete_topic" }]
              }]
-       },
-       
-        # *************************** General **************************
+         },
 
-       { :dom_type => "label", :id => "general", 
-          :children =>
-            [{ :dom_type => "check_box", :id => "create_tags"}]
-       },
-    ]
+         # *************************** Customers **************************
+
+         { :dom_type => "label", :id => "customers",
+           :children =>
+
+             [{ :dom_type => "check_box", :id => "view_contacts", :class => "nested",
+                :children =>
+
+                 [{ :dom_type => "check_box", :id => "manage_contacts" },
+                  { :dom_type => "check_box", :id => "delete_contact" },
+                  {:dom_type => "check_box", :id => "export_customers"}]
+                
+             }]
+             
+         },
+
+         # *************************** Reports **************************
+
+         { :dom_type => "label", :id => "reports", :children =>
+
+             [{ :dom_type => "check_box", :id => "view_reports", :class => "nested",
+                :children => 
+                
+                [{ :dom_type => "check_box", :id => "export_reports"}]
+                
+             }]
+             
+         },
+
+         # *************************** Admin **************************
+
+         { :dom_type => "label", :id => "admin",
+           :children =>
+
+             [{ :dom_type => "radio_button", :id => "not_administrator",
+                :privilege => "0", :class => "default"},
+
+              { :dom_type => "radio_button", :id => "operational_admin",
+                :privilege => "view_admin", :class => "nested",
+                :children =>
+
+                   [{ :dom_type => "check_box", :id => "manage_users" },
+                    { :dom_type => "check_box", :id => "manage_availability" },
+                    { :dom_type => "check_box", :id => "manage_tags" },
+                    { :dom_type => "check_box", :id => "manage_canned_responses" },
+                    { :dom_type => "check_box", :id => "manage_dispatch_rules" },
+                    { :dom_type => "check_box", :id => "manage_supervisor_rules" },
+                    { :dom_type => "check_box", :id => "manage_scenario_automation_rules" },
+                    { :dom_type => "check_box", :id => "manage_email_settings" },
+                    { :dom_type => "hidden_field", :id => "manage_dashboard" },
+                    { :dom_type => "check_box", :id => "manage_ticket_templates" },
+                    { :dom_type => "check_box", :id => "manage_skills", :not_display => !current_account.skill_based_round_robin_enabled? }
+                    ]
+               },
+
+               { :dom_type => "radio_button", :id => "admin_tasks", :class => "nested",
+                 :children =>
+
+                   [{ :dom_type => "hidden_field", :id => "view_admin" },
+                    { :dom_type => "hidden_field", :id => "manage_users" },
+                    { :dom_type => "hidden_field", :id => "manage_availability" },
+                    { :dom_type => "hidden_field", :id => "manage_canned_responses" },
+                    { :dom_type => "hidden_field", :id => "manage_dispatch_rules" },
+                    { :dom_type => "hidden_field", :id => "manage_supervisor_rules" },
+                    { :dom_type => "hidden_field", :id => "manage_scenario_automation_rules" },
+                    { :dom_type => "hidden_field", :id => "manage_email_settings" },
+                    { :dom_type => "hidden_field", :id => "manage_dashboard" },
+                    { :dom_type => "hidden_field", :id => "manage_ticket_templates" },
+                    { :dom_type => "hidden_field", :id => "manage_skills", :not_display => !current_account.skill_based_round_robin_enabled? },
+                    { :dom_type => "check_box",    :id => "manage_account" }]
+
+               }]
+         },
+         
+          # *************************** General **************************
+
+         { :dom_type => "label", :id => "general", 
+            :children =>
+              [{ :dom_type => "check_box", :id => "create_tags"}]
+         },
+      ]
+  end
 
   def build_role_form
     form = ""
-    ROLE_SECTIONS.each do |section|
+    role_sections.each do |section|
      form +=  content_tag( :div, {:class => "row-fluid margin-bottom", :id => section[:id] }) do
         content_tag( :div, content_tag( :p, t('admin.roles.privilege.'+ section[:id]).html_safe, :class => "lead-sub"), :class => "span2") +
         content_tag( :div, :class => "span10 role-section") do
@@ -172,21 +175,23 @@ module Admin::RolesHelper
   def process_children(children, parent, disabled)
     content_tag(:ul, :class => "nested-ul") do
       children.map do |child|
-        content_tag(:li) do
-          element =
-            content_tag(:label, :class => "#{child[:dom_type]} #{style(child[:dom_type])}") do
-              case child[:dom_type]
-              when "check_box", "radio_button"
-                build_element(child, parent, disabled)
-              when "hidden_field"
-                build_hidden(child, parent, disabled)
+        unless child[:not_display] 
+          content_tag(:li) do
+            element =
+              content_tag(:label, :class => "#{child[:dom_type]} #{style(child[:dom_type])}") do
+                case child[:dom_type]
+                when "check_box", "radio_button"
+                  build_element(child, parent, disabled)
+                when "hidden_field"
+                  build_hidden(child, parent, disabled)
+                end
+              end # label
+              if child[:children]
+                element += process_children(child[:children], child[:id], true)
               end
-            end # label
-            if child[:children]
-              element += process_children(child[:children], child[:id], true)
-            end
-            element.html_safe
-        end.to_s.html_safe # li
+              element.html_safe
+          end.to_s.html_safe # li
+        end.to_s.html_safe #unless
       end.to_s.html_safe # map
     end.to_s.html_safe #ul
   end

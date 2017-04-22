@@ -219,7 +219,8 @@
 							<%= link_to( "<span></span> #{t('header.submit_a_ticket')}".html_safe, new_support_ticket_path, :class => "new_ticket_button tooltip" ) if allowed_in_portal?(:anonymous_tickets) %>
 						<% end %>
 						<% if current_user then %>
-							<%= form_tag('/search/all', :method => :get, :class => "nav_search") do %>
+            <% search_url = current_account.features?(:advanced_search) ? '/search/tickets' : '/search/all' %>
+							<%= form_tag(search_url, :method => :get, :class => "nav_search") do %>
 								<div class="search_bar tooltip" id="SearchBar" title="<%= t("header.search").html_safe %>" data-placement="below">
 									<span class="search-icon-inactive"></span>
 									<span class="searchIcon nav-search-icon"></span>

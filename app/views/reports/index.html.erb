@@ -1,14 +1,19 @@
 <%= stylesheet_link_tag_with_rtl :'cdn/reports' %>
 <div class="report-home report ">
   <div class="admin-header">
-    <div class="report-head report">
-      <div class="report-link-block pull-right">
-      <% if current_account.ticket_activity_export_enabled? && privilege?(:manage_account)%>
-        <%= (link_to t('helpdesk_reports.ticket_schedule.schedule_export'), reports_scheduled_exports_path(), :id => "schedule_link") %>
-      <% end %> 
+      <div class="report-head report">
+          <div class="report-link-block pull-right">
+            <%if (current_account.auto_ticket_export_enabled? or (current_account.ticket_activity_export_enabled? && privilege?(:manage_account))) and privilege?(:admin_tasks) %>
+                <%= (link_to t('helpdesk_reports.ticket_schedule.schedule_export'), reports_scheduled_exports_path(), :id => "schedule_link", :class => 'schedule-link') %>
+            <% end %>
+            <% if current_account.launched?(:onboarding_inlinemanual) %>
+              <a href="#" rel="guided-inlinemanual" data-topic-id="13753"><%= t('helpdesk_reports.reports_in_action')%></a>
+            <% else %>
+              <a href="#report-demo" rel="freshdialog" id="demo_link" data-backdrop="static"  data-width="680" data-template-footer="false" data-title=""><%= t('helpdesk_reports.reports_in_action')%></a>
+            <% end %>
+          </div>
+        <div class="clear"></div>
       </div>
-      <div class="clear"></div>
-    </div>
   </div>
   <% if current_account.advanced_reporting_enabled? || feature?(:enterprise_reporting) %>
     <div class="report_category odd ataglance ">
@@ -82,6 +87,14 @@
                    </a>
                 </li>
               <%end%>
+              <% if feature?(:enterprise_reporting) && current_account.launched?(:lifecycle_report) %>
+                <li>
+                    <a href="/reports/timespent" data-pjax="#body-container">
+                          <div class="img-outer"><i class="fsize-36 ficon-timespent"></i></div>
+                          <div class="report-icon-text"><%= t('helpdesk_reports.timespent.title') %></div>
+                     </a>
+                  </li>
+              <% end %>
            </ul>
   </div>
   <% if feature?(:enterprise_reporting) || feature?(:surveys) %>
@@ -116,19 +129,19 @@
   <script>
     jQuery(document).ready(function() {
       var video_url = "//fast.wistia.net/embed/iframe/i0f0lofova?videoFoam=true&autoPlay=true";
-      jQuery(document).on('click',"#report-demo [data-dismiss='modal']",function(){ 
-          resetVideo(); 
+      jQuery(document).on('click',"#report-demo [data-dismiss='modal']",function(){
+          resetVideo();
       });
       jQuery(document).keyup(function(e) {
-          if (e.keyCode == 27) { 
-            resetVideo();   
+          if (e.keyCode == 27) {
+            resetVideo();
           }
       });
       function resetVideo(){
           var iframe = jQuery("#video_iframe")[0];
           if(iframe != undefined) {
               var url = iframe.src;
-              iframe.src = '';  
+              iframe.src = '';
           }
       }
       jQuery("#demo_link").on('click',function(){

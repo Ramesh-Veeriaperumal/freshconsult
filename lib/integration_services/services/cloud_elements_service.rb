@@ -6,7 +6,7 @@ module IntegrationServices::Services
     end
  
     def server_url 
-      (["development", "staging"].include? Rails.env) ? "https://staging.cloud-elements.com" : "https://api.cloud-elements.com"
+      Integrations::CLOUD_ELEMENTS_URL
     end
 
      def self.default_http_options

@@ -11,25 +11,6 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
   before_filter :update_multiple_methods, :only => :update_multiple
 
   def update_multiple
-    failed_tickets = []
-    
-    @items = sort_items(@items, @field_params["group_id"]) if @field_params.present?
-    @items.each do |ticket|
-      @field_params.each do |key, value|
-        #handling unassign for agent and group. from ui, -1 will be sent for unassigned case
-        value = nil if value == '-1'
-        ticket.send("#{key}=", value) if (value.nil? || value.present?) and ticket.respond_to?("#{key}=")
-      end
-      update_tags(params[:helpdesk][:tags], false, ticket) unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
-      ticket.save_ticket
-    end
-    display_flash failed_tickets
-    queue_replies
-    if params[:search_term].present? && !params[:search_term].nil?
-      redirect_to search_tickets_path(:term => params[:search_term])
-    else
-      redirect_to helpdesk_tickets_path
-    end
   end
 
   protected
@@ -38,7 +19,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
       filter_params_ids
       validate_params
       validate_ticket_close if close_validation_enabled?
-      scoper_bulk_actions
+      update_multiple_background
       load_items if items_empty? 
     end
 
@@ -87,7 +68,6 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
         return false
       end
       save_attachments
-
     end
 
     def load_by_param(id)
@@ -118,10 +98,6 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
       params.slice('ids', 'helpdesk_note', 'twitter_handle', 'cloud_file_attachments', 'shared_attachments', 'spam_key', 'email_config')
     end
 
-    def get_updated_ticket_count
-      pluralize(@items.length, t('ticket_was'), t('tickets_were'))
-    end  
-    
     def cname
       @cname ||= 'tickets'
     end
@@ -159,12 +135,6 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
       ticket_types = Account.current.ticket_types_from_cache.collect(&:value)
       if @field_params and !ticket_types.include?(@field_params[:ticket_type])
         @field_params.delete(:ticket_type)
-      end
-    end
-
-    def scoper_bulk_actions
-      if params[:ids] and params[:ids].length > BACKGROUND_THRESHOLD
-        update_multiple_background
       end
     end
 

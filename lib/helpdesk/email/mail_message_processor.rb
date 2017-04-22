@@ -141,6 +141,7 @@ module Helpdesk
 			def get_archive_attributes(ticket_data) #check processed time
 				metadata_attributes = metadata
 				metadata_attributes.merge!(Hash[ticket_data.map{ |k,v| [k, v.to_s] }])
+				metadata_attributes.merge!(:processed_host => "#{Socket.gethostname}")
 				return metadata_attributes.with_indifferent_access
 			end
 

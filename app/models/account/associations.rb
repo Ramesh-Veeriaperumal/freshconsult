@@ -118,6 +118,8 @@ class Account < ActiveRecord::Base
   
   has_one :activity_export, :class_name => 'ScheduledExport::Activity', dependent: :destroy
 
+  has_many :scheduled_ticket_exports
+
   #Scoping restriction for other models starts here
   has_many :account_va_rules, :class_name => 'VaRule'
 
