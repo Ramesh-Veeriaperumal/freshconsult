@@ -15,7 +15,7 @@ class AgentsController < ApplicationController
   before_filter :load_object, :only => [:update, :destroy, :restore, :edit, :reset_password, 
     :convert_to_contact, :reset_score, :api_key] 
   before_filter :ssl_check, :can_assume_identity, :only => [:api_key] 
-  before_filter :load_roles, :load_groups, :set_skill_data, :only => [:new, :create, :edit, :update]
+  before_filter :load_roles, :load_groups, :only => [:new, :create, :edit, :update]
   before_filter :check_demo_site, :only => [:destroy,:update,:create]
   before_filter :restrict_current_user, :only => [ :edit, :update, :destroy,
     :convert_to_contact, :reset_score, :reset_password ]
@@ -27,6 +27,7 @@ class AgentsController < ApplicationController
   before_filter :filter_params, :only => [:create, :update]
   before_filter :check_occasional_agent_params, :only => [:index]
   before_filter :set_filter_data, :only => [ :update,  :create]
+  before_filter :set_skill_data, :only => [:new, :edit]
 
   def load_object
     @agent = scoper.find(params[:id])
@@ -131,15 +132,17 @@ class AgentsController < ApplicationController
       if @agent.save
          flash[:notice] = t(:'flash.agents.create.success', :email => @user.email)
          redirect_to :action => 'index'
-      else      
-        render :action => :new         
+      else
+        set_skill_data
+        render :action => :new
       end
     else  
         check_email_exist
         @agent.user =@user
-        @scoreboard_levels = current_account.scoreboard_levels.find(:all, :order => "points ASC")       
-        render :action => :new        
-    end    
+        @scoreboard_levels = current_account.scoreboard_levels.find(:all, :order => "points ASC")
+        set_skill_data
+        render :action => :new
+    end
   end
   
   def create_multiple_items
@@ -197,7 +200,10 @@ class AgentsController < ApplicationController
           @agent.user =@user       
           result = {:errors=>@user.errors.full_messages }    
           respond_to do |format|
-            format.html { render :action => :edit }
+            format.html {
+              set_skill_data
+              render :action => :edit
+             }
             format.json { render :json => result.to_json, :status => :bad_request }
             format.xml {render :xml => result.to_xml, :status => :bad_request } 
           end    
@@ -206,7 +212,10 @@ class AgentsController < ApplicationController
       @agent.user = @user       
       result = {:errors=>@agent.errors.full_messages }    
       respond_to do |format|
-        format.html { render :action => :edit }
+        format.html {
+          set_skill_data
+          render :action => :edit
+         }
         format.json { render :json => result.to_json, :status => :bad_request }
         format.xml {render :xml => result.to_xml, :status => :bad_request } 
       end    
