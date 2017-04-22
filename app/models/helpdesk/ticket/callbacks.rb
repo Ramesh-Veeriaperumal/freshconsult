@@ -53,7 +53,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   after_commit :create_initial_activity, on: :create
   after_commit :pass_thro_biz_rules, on: :create, :unless => :skip_dispatcher?
-  after_commit :send_outbound_email, :update_capping_on_create, on: :create, :if => :outbound_email?
+  after_commit :send_outbound_email, :update_capping_on_create, :update_count_for_skill,on: :create, :if => :outbound_email?
 
   after_commit :trigger_observer, on: :update, :if => :execute_observer?
   after_commit :update_ticket_states, :notify_on_update, :update_activity,
