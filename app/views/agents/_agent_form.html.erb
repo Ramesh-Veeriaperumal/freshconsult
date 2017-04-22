@@ -281,7 +281,7 @@
 <%= javascript_tag do %>
   (function($) {
 
-    $(document).ready(function() {
+  	$(window).on('load', function(){	
 			var roles = {};
 			var role_details = {};
 			var groups = {};
