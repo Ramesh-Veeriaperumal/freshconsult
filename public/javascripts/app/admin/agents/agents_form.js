@@ -12,7 +12,6 @@ window.App.Agents = window.App.Agents || {};
 	},
 
 	onVisit: function(data) {
-		this.bindHandlers();
 	},
 
 	agentSkills: [],
@@ -21,6 +20,14 @@ window.App.Agents = window.App.Agents || {};
 	role_details: {},
 	groups: {},
 	group_details: {},
+  initializeData: function(data) {
+    this.userName = data.userName;
+    this.roles = data.roles;
+    this.role_details = data.role_details;
+    this.groups = data.groups;
+    this.group_details = data.group_details;
+    this.bindHandlers();
+  },
 	repaintSkills: function() {
 		return JST["app/admin/agents/templates/reset_skills"]({
 			data: this.agentSkills,
@@ -78,7 +85,8 @@ window.App.Agents = window.App.Agents || {};
 	},
   bindHandlers: function() {
     this.initializeAgentForm();
-		if(App.exports.SkillBasedRRFlag) {
+    ///////  How???????
+    if(App.exports.SkillBasedRRFlag) {
 			App.Admin.AgentSkills.Index.bindSkillEvents(true);
 			this.initializeAgentSkills();
 		}
@@ -185,12 +193,7 @@ window.App.Agents = window.App.Agents || {};
         }).appendTo('#agent_form');
       }
 		});
-	},
-	onLeave: function(data) {
-		var $doc = $(document);
-		$doc.off(".agentskills");
-      $doc.off(".agent-roles");
-    }
+	 }
   };
 
 }(window.jQuery));

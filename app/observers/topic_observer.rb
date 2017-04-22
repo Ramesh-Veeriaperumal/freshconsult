@@ -17,7 +17,6 @@ class TopicObserver < ActiveRecord::Observer
 
 	def before_save(topic)
 		topic.topic_changes
-    enqueue_topic_for_spam_check(topic)
 	end
 
 	def before_destroy(topic)
@@ -27,6 +26,7 @@ class TopicObserver < ActiveRecord::Observer
   def after_save(topic)
     update_forum_counter_cache(topic)
     after_publishing(topic) if topic.published_changed? and topic.published?
+    enqueue_topic_for_spam_check(topic)
   end
 
   def after_update(topic)

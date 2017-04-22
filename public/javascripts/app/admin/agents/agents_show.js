@@ -18,7 +18,7 @@ window.App.Agents = window.App.Agents || {};
 
     	bindHandlers: function() {
 		var $doc = $(document);
-		$doc.on("click.agentEvents", "#reset_password_button", function() 
+		$doc.on("click.agentEvents", "#reset_password_button", function()
 		{
 			$(this).addClass("disabled");
 		});
@@ -26,7 +26,7 @@ window.App.Agents = window.App.Agents || {};
 		$doc.on("click.agentEvents", '#cancel_agent_button', function()
 		{
 			$('#reset_password_template').modal('hide');
-		}); 
+		});
 		// need to convert this to util
 		$doc.ready(function(){
 		  if ($.trim( $('div.info-highlight').text() ).length != 0) {
@@ -42,12 +42,9 @@ window.App.Agents = window.App.Agents || {};
 			$('#agent_contact_convert').trigger('click');
 		});
 
-		$doc.on('click.agentEvents', '#agent-gamification-reset-submit', function(){ 
+		$doc.on('click.agentEvents', '#agent-gamification-reset-submit', function(){
 			$('#agent_score_reset').trigger('click');
 		});
-	},
-	onLeave: function(data) {
-		$(document).off('.agentEvents');
 	}
   };
 

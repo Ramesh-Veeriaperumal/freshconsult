@@ -11,7 +11,7 @@ module ImportCsvUtil
   #------------------------------------Customers include both contacts and companies-----------------------------------------------
 
   def import_fields
-    Rails.logger.debug("Import File uploaded :: #{params[:file]}")
+    Rails.logger.debug("Import File uploaded :: #{params[:file]} Type: #{params[:type]} File size #{params[:file].size}")
     store_file
     read_file session[:map_fields][:file_path],true
     @fields = current_account.send("#{params[:type]}_form").send("#{params[:type]}_fields").map{|f| {

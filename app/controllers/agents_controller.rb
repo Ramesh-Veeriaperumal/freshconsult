@@ -27,7 +27,7 @@ class AgentsController < ApplicationController
   before_filter :filter_params, :only => [:create, :update]
   before_filter :check_occasional_agent_params, :only => [:index]
   before_filter :set_filter_data, :only => [ :update,  :create]
-  before_filter :set_skill_data, :only => [:new, :edit] 
+  before_filter :set_skill_data, :only => [:new, :edit]
 
   def load_object
     @agent = scoper.find(params[:id])
@@ -132,15 +132,17 @@ class AgentsController < ApplicationController
       if @agent.save
          flash[:notice] = t(:'flash.agents.create.success', :email => @user.email)
          redirect_to :action => 'index'
-      else      
-        render :action => :new         
+      else
+        set_skill_data
+        render :action => :new
       end
     else  
         check_email_exist
         @agent.user =@user
-        @scoreboard_levels = current_account.scoreboard_levels.find(:all, :order => "points ASC")       
-        render :action => :new        
-    end    
+        @scoreboard_levels = current_account.scoreboard_levels.find(:all, :order => "points ASC")
+        set_skill_data
+        render :action => :new
+    end
   end
   
   def create_multiple_items
@@ -198,7 +200,10 @@ class AgentsController < ApplicationController
           @agent.user =@user       
           result = {:errors=>@user.errors.full_messages }    
           respond_to do |format|
-            format.html { render :action => :edit }
+            format.html {
+              set_skill_data
+              render :action => :edit
+             }
             format.json { render :json => result.to_json, :status => :bad_request }
             format.xml {render :xml => result.to_xml, :status => :bad_request } 
           end    
@@ -207,7 +212,10 @@ class AgentsController < ApplicationController
       @agent.user = @user       
       result = {:errors=>@agent.errors.full_messages }    
       respond_to do |format|
-        format.html { render :action => :edit }
+        format.html {
+          set_skill_data
+          render :action => :edit
+         }
         format.json { render :json => result.to_json, :status => :bad_request }
         format.xml {render :xml => result.to_xml, :status => :bad_request } 
       end    
@@ -378,9 +386,9 @@ class AgentsController < ApplicationController
 private
 
   def set_filter_data
-    user_skills = params[:user][:user_skills_attributes]
-    params[:user][:user_skills_attributes] = user_skills.blank? ? 
-    [] : ActiveSupport::JSON.decode(user_skills)
+    user_skills = params[:user][:user_skills_attributes] || []
+    params[:user][:user_skills_attributes] = user_skills.is_a?(Array) ?
+    user_skills : ActiveSupport::JSON.decode(user_skills)
   end
 
   def set_skill_data

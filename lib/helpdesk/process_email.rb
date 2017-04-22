@@ -690,7 +690,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       
       from_fwd_recipients = from_fwd_emails?(ticket, from_email)
       parsed_cc_emails = parse_cc_email
-      cc_emails = parsed_cc_emails.delete(ticket.account.kbase_email)
+      parsed_cc_emails.delete(ticket.account.kbase_email)
+      cc_emails = parsed_cc_emails
       to_emails = parse_to_emails
       if max_email_limit_reached? "Note", to_emails, cc_emails
         email_processing_log "You have exceeded the limit of #{TicketConstants::MAX_EMAIL_COUNT} cc emails for the note"
@@ -840,9 +841,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
     def max_email_limit_reached? model_name, to_emails, cc_emails
       if model_name == "Note"
-        return ((cc_emails.count >= TicketConstants::MAX_EMAIL_COUNT) || (to_emails.count >= TicketConstants::MAX_EMAIL_COUNT)) 
+        return ((cc_emails.present? && (cc_emails.count >= TicketConstants::MAX_EMAIL_COUNT)) || (to_emails.present? && (to_emails.count >= TicketConstants::MAX_EMAIL_COUNT))) 
       elsif model_name == "Ticket"
-        return cc_emails.count >= TicketConstants::MAX_EMAIL_COUNT
+        return (cc_emails.present? && (cc_emails.count >= TicketConstants::MAX_EMAIL_COUNT))
       end
     end
 
