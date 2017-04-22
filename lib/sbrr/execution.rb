@@ -78,7 +78,7 @@ module SBRR
     end
 
     def skip_set_sbrr_log_nil?
-      ["status_sla_toggled_to_on", "status_sla_toggled_to_off", "update_multiple_sync"].include? @args[:options][:action]
+      ["status_sla_toggled_to_on", "status_sla_toggled_to_off", "update_multiple_sync", "sbrr_turned_on_for_group"].include? @args[:options][:action]
     end
 
   end
