@@ -103,7 +103,7 @@ module Ember
           @validation_errors = {}
           if @params_hash[:properties].present?
             @items.each do |item|
-              unless validate_update_params(item, :update) && validate_bulk_update_delegator(item)
+              unless validate_bulk_update_delegator(item)
                 @items_failed << item
                 @validation_errors.merge!(item.display_id => @ticket_validation)
               end
