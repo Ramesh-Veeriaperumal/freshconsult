@@ -378,9 +378,10 @@ class AccountsController < ApplicationController
       if (Rails.env.production? or Rails.env.staging?)
         Resque.enqueue_at(3.minute.from_now, Marketo::AddLead, { :account_id => @signup.account.id,
           :signup_id => params[:signup_id]})
-        Resque.enqueue_at(5.minute.from_now, CRM::Freshsales::Signup, { account_id: @signup.account.id,
+        Resque.enqueue_at(3.minute.from_now, CRM::Freshsales::Signup, { account_id: @signup.account.id,
          fs_cookie: params[:fs_cookie] })
       end
+      
     end  
 
     def perform_account_cancel(feedback)

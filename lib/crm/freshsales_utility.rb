@@ -226,7 +226,7 @@ class CRM::FreshsalesUtility
     def new_lead_params
       lead_attrs = admin_basic_info.merge({
         custom_field: {
-          cf_account_id:  @account.id, cf_domain_name: @account.full_domain, cf_reputation_score: @account.ehawk_reputation_score
+          cf_account_id:  @account.id, cf_domain_name: @account.full_domain,
         }
       })
       lead_attrs[:company] = account_basic_info

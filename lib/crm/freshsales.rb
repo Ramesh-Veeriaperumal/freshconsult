@@ -36,7 +36,6 @@ class CRM::Freshsales
       rescue => e
         NewRelic::Agent.notice_error(e, { description: "Error occured while pushing Signup data to Freshsales 
           AccountID::#{Account.current.id}" })
-        raise e
       end
     end
   end
@@ -50,7 +49,6 @@ class CRM::Freshsales
       rescue => e
         NewRelic::Agent.notice_error(e, { description: "Error occured while pushing AdminUpdate Info to Freshsales 
           AccountID::#{Account.current.id}" })
-        raise e
       end
     end
   end
@@ -64,7 +62,6 @@ class CRM::Freshsales
       rescue => e
         NewRelic::Agent.notice_error(e, { description: "Error occured while pushing DeletedCustomer Info to Freshsales 
           AccountID::#{Account.current.id}" })
-        raise e
       end
     end
   end
@@ -119,7 +116,6 @@ class CRM::Freshsales
       rescue => e
         NewRelic::Agent.notice_error(e, { description: "Error occured while pushing SubscriptionTracking to Freshsales 
           Account:: #{Account.current.id} args:: #{args.inspect}" })
-        raise e
       end
     end
 
