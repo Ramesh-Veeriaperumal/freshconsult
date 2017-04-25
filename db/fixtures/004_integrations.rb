@@ -1086,9 +1086,7 @@ if Integrations::Application.count == 0
     s.description = "integrations.office365.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 47
-    s.options = {:direct_install => true,
-                 :user_specific_auth => true
-                }
+    s.options = {:direct_install => true}
     s.application_type = "office365"
   end
 
