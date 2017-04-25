@@ -44,8 +44,6 @@ class TicketUpdatePropertyValidation < ApiValidation
   validates :skip_close_notification, custom_absence: { allow_nil: false, message: :cannot_set_skip_notification }, unless: -> { request_params.key?(:status) && closure_status? }
   validates :skip_close_notification, data_type: { rules: 'Boolean', ignore_string: :allow_string_param }, if: -> { errors[:skip_close_notification].blank? }
 
-  validate :validate_closure, if: -> { item && request_params.key?(:status) }
-
   def initialize(request_params, item, allow_string_param = false)
     @request_params = request_params
     @status_ids = request_params[:statuses].map(&:status_id) if request_params.key?(:statuses)
@@ -104,10 +102,5 @@ class TicketUpdatePropertyValidation < ApiValidation
       errors[:request] << :fill_a_mandatory_field
       error_options.merge!(request: { field_names: MANDATORY_FIELD_STRING })
     end
-  end
-
-  def validate_closure
-    return unless closure_status?
-    errors[:status] << :unresolved_child if item.assoc_parent_ticket? && item.validate_assoc_parent_tkt_status
   end
 end

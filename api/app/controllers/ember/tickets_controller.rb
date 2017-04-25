@@ -13,8 +13,8 @@ module Ember
 
     before_filter :ticket_permission?, only: [:latest_note, :split_note]
     before_filter :load_note, only: [:split_note]
-    before_filter :disable_notification, if: :notification_not_required?
-    after_filter  :enable_notification, if: :notification_not_required?
+    before_filter :disable_notification, only: [:update, :update_properties], if: :notification_not_required?
+    after_filter  :enable_notification, only: [:update, :update_properties], if: :notification_not_required?
 
     def index
       sanitize_filter_params
@@ -257,7 +257,7 @@ module Ember
       end
 
       def notification_not_required?
-        @skip_notification ||= cname_params.try(:[], :skip_close_notification)
+        @skip_close_notification ||= cname_params.try(:[], :skip_close_notification)
       end
 
       def validate_url_params
