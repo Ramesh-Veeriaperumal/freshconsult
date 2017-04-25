@@ -210,7 +210,7 @@ class ConversationValidationTest < ActionView::TestCase
 
   def test_reply_with_traffic_cop_invalid
     Account.stubs(:current).returns(@account)
-    Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
+    Account.any_instance.stubs(:traffic_cop_enabled?).returns(true)
     ticket_id = ticket.id
     last_note_id = reply.id
     controller_params = { 'body' => Faker::Lorem.paragraph, 'last_note_id' => last_note_id - 1, 'ticket' => ticket} 
