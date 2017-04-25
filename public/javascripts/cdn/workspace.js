@@ -41,6 +41,3 @@
 //= require app/integrations/salesforce_v2/opportunity_create_form
 //= require app/integrations/salesforce_v2/object_search_results
 //= require app/integrations/salesforce_v2/object_search_results_na
-//= require app/integrations/box/list_item
-//= require app/integrations/box/search_bar
-//= require app/integrations/box/paginate_files
