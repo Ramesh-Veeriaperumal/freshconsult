@@ -2,6 +2,7 @@ namespace :failed_email_poller do
   
   desc "Fetch failed emails"
   task :poll => :environment do
+
     include EmailParser
     
     begin
@@ -14,6 +15,7 @@ namespace :failed_email_poller do
               email_failure = Helpdesk::Email::FailedEmailMsg.new(@args)
               email_failure.save!
               email_failure.notify
+              email_failure.trigger_observer_system_events
             else
               Rails.logger.info "FailedEmailPoller: Invalid message or feature unavailable. #{@args}"
             end
@@ -48,7 +50,7 @@ end
 
 def valid_note?
   note = Account.current.notes.where(id: @args[:note_id]).first
-  if note 
+  if note
     to_emails = parse_addresses(note.to_emails)[:plain_emails] || []
     cc_emails = parse_addresses(note.cc_emails)[:plain_emails] || []
     to_emails.include?(@args[:email]) || cc_emails.include?(@args[:email])

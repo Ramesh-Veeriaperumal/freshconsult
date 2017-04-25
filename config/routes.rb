@@ -233,6 +233,7 @@ Helpkit::Application.routes.draw do
   root :to => 'home#index'
 
   match "/support/sitemap" => "support#sitemap", :format => "xml", :as => :sitemap, :via => :get
+  match "/robots" => "support#robots", :format => "text", :as => :robots, :via => :get
 
   match '/visitor/load/:id.:format' => 'chats#load', :via => :get
   match '/images/helpdesk/attachments/:id(/:style(.:format))' => 'helpdesk/attachments#show', :via => :get
@@ -757,6 +758,7 @@ Helpkit::Application.routes.draw do
       get :facebook
       get :portal_google_sso
       get :marketplace_google_sso
+      post :mobile_sso_login
     end
   end
 
@@ -1641,6 +1643,13 @@ Helpkit::Application.routes.draw do
         post :time_entries_list
       end
     end
+    
+    resources :scheduled_exports, only: [:index] do
+      collection do
+        get :activities, action: :edit_activity
+        post :activities, action: :update_activity
+      end
+    end
 
     #routes for v1 agent and group performance reports
     # match '/:id' , action: :show, method: :get, constraints: { id: /[1-2]+/ }
@@ -1959,6 +1968,7 @@ Helpkit::Application.routes.draw do
         put :link
         put :unlink
         get :ticket_association
+        put :send_and_set_status
         get :fetch_errored_email_details
         put :suppression_list_alert
       end

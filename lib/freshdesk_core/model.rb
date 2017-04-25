@@ -32,6 +32,7 @@ module FreshdeskCore::Model
                         "email_notifications",
                         "dynamic_notification_templates",
                         "features",
+                        "scheduled_exports",
 
                         "forums",
                           "customer_forums",
@@ -373,6 +374,7 @@ module FreshdeskCore::Model
       objects.each do |object| 
         object.delete
       end
+      Rails.logger.info ":::::: Sitemap is deleted (redis, cache & S3) for account #{account.id} ::::::"
     end
 
     def remove_round_robin_redis_info(account)

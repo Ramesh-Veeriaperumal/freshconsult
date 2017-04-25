@@ -31,7 +31,7 @@ class CustomSurvey::Survey < ActiveRecord::Base
   end
 
   def default_question #this way no need to memoize & in most cases all survey_questions are fetched
-    survey_questions.find &:default
+    survey_questions.loaded? ? (survey_questions.find &:default) : survey_default_question
   end
 
   def feedback_questions

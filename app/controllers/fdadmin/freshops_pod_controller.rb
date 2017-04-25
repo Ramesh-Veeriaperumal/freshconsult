@@ -103,6 +103,8 @@ class Fdadmin::FreshopsPodController < Fdadmin::DevopsMainController
         mobile_info[:full_domain] = account.full_domain
         mobile_info[:sso_enabled] = account.sso_enabled? 
         mobile_info[:sso_logout_url] = account.sso_logout_url
+        mobile_info[:google_signin_enabled] = account.features_included?(:google_signin)
+        mobile_info[:facebook_signin_enabled] = account.features_included?(:facebook_signin)
       end
     end
     return mobile_info

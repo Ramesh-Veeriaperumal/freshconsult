@@ -7,6 +7,8 @@ class CustomSurvey::Survey < ActiveRecord::Base
   has_many :custom_survey_results, :class_name => 'CustomSurvey::SurveyResult', :foreign_key => :survey_id, :dependent => :destroy
   has_many :survey_questions, :class_name => 'CustomSurvey::SurveyQuestion', :foreign_key => :survey_id,
             :conditions => {:deleted => false}, :include => [:custom_field_choices], :order => "position"
+  has_one :survey_default_question, :class_name => 'CustomSurvey::SurveyQuestion', :foreign_key => :survey_id,
+            :conditions => {:deleted => false, :default => true}, :include => [:custom_field_choices]
 
   acts_as_custom_form :custom_field_class => 'CustomSurvey::SurveyQuestion', :custom_fields_cache_method => :survey_questions
 

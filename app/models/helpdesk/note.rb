@@ -24,7 +24,8 @@ class Helpdesk::Note < ActiveRecord::Base
   #zero_downtime_migration_methods :methods => {:remove_columns => ["body", "body_html"] } 
   
   attr_accessor :nscname, :disable_observer, :send_survey, :include_surveymonkey_link, :quoted_text, 
-                :skip_notification, :disable_observer_rule
+                :skip_notification, :changes_for_observer, :disable_observer_rule
+
   attr_protected :attachments, :notable_id
 
   has_many :shared_attachments,
@@ -303,9 +304,10 @@ class Helpdesk::Note < ActiveRecord::Base
     end
   end
 
-  def trigger_observer model_changes
+  def trigger_observer model_changes, inline = false, system_event = false
     @model_changes = model_changes.symbolize_keys unless model_changes.nil?
-    filter_observer_events if user_present?
+    @system_event = system_event
+    filter_observer_events(true, inline) if user_present?
   end
 
   def update_note_level_resp_time(ticket_state)

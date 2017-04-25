@@ -3,6 +3,7 @@
 
 <% content_for :pagefixed do %>
   <% content_for :onload_script do %> 
+    sys_events = false; // [ ] TODO: handle this in cond-filter js
     var Gamification = function($) {
       var base = this, selectListArr = ['','ticket','solution','forum'];
 

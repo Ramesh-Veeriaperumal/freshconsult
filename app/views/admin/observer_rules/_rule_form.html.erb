@@ -7,7 +7,7 @@
 <ul class="ui-form observer no-background">
 	<li>
 		<div class="row-fluid">
-			<%= f.label :name, (t('dispatch.rule_name') + "<span class='required_star'>*</span>").html_safe, :class => "span2" %>			
+			<%= f.label :name, (t('dispatch.rule_name') + "<span class='required_star'>*</span>").html_safe, :class => "span2" %>
 			<div class="span8">
 				<label class="overlabel" for="va_rule_name"><%= t("example") %>: <em>"<%=t('dispatch.info1')%>"</em> </label>
 				<%= f.text_field :name, :class => "required text" %>
@@ -25,29 +25,23 @@
 	</li>
 
 	<li>
-		<h3 class="lead"><%=t('admin.observer_rules.events').html_safe%></h3>
-		<div class="conditionset" id="eventDOM">
-		<div id="EventList" class="rule_list"></div>
-			<fieldset class="addchoice">
-				<i class="rounded-add-icon"></i>
-		   		<p><%=t('admin.observer_rules.add_new_event')%></p> 
-		  </fieldset>			
-		</div>
-	</li>
-
-	<li>
-		<h3 class="lead"><%=t('admin.observer_rules.performed_by')%></h3>
+		<h3 class="lead"><%=t('admin.observer_rules.new_performed_by')%></h3>
 		<div class="doer">
 			<%= fields_for :performer_data do |s| %>
-				<div class="choicelist">	
+				<div class="choicelist">
 					<%	Va::Performer::TYPE_CHECK.each do |number, type|	%>
-						<%= s.radio_button  :type, number, :class => "radio", :checked => (@va_rule.new_record? ? false : @va_rule.performer.type == number) %> 
-						<%= s.label :type, t("admin.observer_rules.#{type[0..-2]}").html_safe, :value => number, :class => "radiolabel" %>				
+
+						<%= s.radio_button  :type, number, :checked => (@va_rule.new_record? ? false : @va_rule.performer.type == number),
+						:class => (Va::Performer::SYSTEM == number && @system_events.nil?)? "radio hidden":"radio" %>
+
+						<%= s.label :type, t("admin.observer_rules.#{type[:translation_key]}").html_safe, :value => number,
+						:class => (Va::Performer::SYSTEM == number && @system_events.nil?)? "radiolabel hidden":"radiolabel" %>
+
 					<%	end	%>
 				</div>
 				<div class="performer_data_members_container">
-					<%= s.select :members, 
-								options_for_select((@agents.map {|id, name| [name, id.to_s]}), 	
+					<%= s.select :members,
+								options_for_select((@agents.map {|id, name| [name, id.to_s]}),
 									(@va_rule.new_record? || @va_rule.performer.members.nil?) ? [] : @va_rule.performer.members.map(&:to_s) ),{'formatResult' => 'ensure_performed_by'}, { :multiple => true, :class => "select2", :id => 'members' } %>
 				</div>
 			<% end %>
@@ -55,32 +49,45 @@
 	</li>
 
 	<li>
-		<h3 class="lead"><%=t('admin.observer_rules.conditions')%></h3>	
+		<h3 class="lead"><%=t('admin.observer_rules.new_events').html_safe%></h3>
+		<div class="conditionset" id="eventDOM">
+      <div id="EventList" class="rule_list event_container"></div>
+        <fieldset class="addchoice event_adder">
+          <i class="rounded-add-icon"></i>
+          <p><%=t('admin.observer_rules.add_new_event')%></p>
+        </fieldset>
+      </div>
+	</li>
+
+
+
+	<li>
+		<h3 class="lead"><%=t('admin.observer_rules.conditions')%></h3>
 		<div class="choicelist">
-			<%= f.radio_button  :match_type, 'any', :class => "radio" %> 
+			<%= f.radio_button  :match_type, 'any', :class => "radio" %>
 			<%= f.label :match_type_any, t('dispatch.match_any').html_safe, :class => "radiolabel" %>
-			<%= f.radio_button  :match_type, 'all', :class => "radio" %> 
+			<%= f.radio_button  :match_type, 'all', :class => "radio" %>
 			<%= f.label :match_type_all, t('dispatch.match_all').html_safe, :class => "radiolabel" %>
-		</div>			
+		</div>
 		<div class="conditionset" id="filterDOM">
-		<div id="RuleList" class="rule_list"></div>
-		<fieldset class="addchoice">
-			<i class="rounded-add-icon"></i>
-      <p><%=t('dispatch.add_condition')%></p>
-	  </fieldset>			
+      <div id="RuleList" class="rule_list condition_container"></div>
+      <fieldset class="addchoice condition_adder">
+        <i class="rounded-add-icon"></i>
+        <p><%=t('dispatch.add_condition')%></p>
+      </fieldset>
 		</div>
 	</li>
 	<li>
 		<h3 class="lead"><%=t('admin.observer_rules.actions')%></h3>
 		<div class="conditionset" id="actionDOM">
-			<div id="ActionList" class="rule_list"></div>
-			<fieldset class="addchoice">
+			<div id="ActionList" class="rule_list action_container"></div>
+			<fieldset class="addchoice action_adder">
 				<i class="rounded-add-icon"></i>
         <p><%=t('dispatch.add_new_action')%></p>
-	   	</fieldset>		
+	   	</fieldset>
 		</div>
 	</li>
-</ul>	
+</ul>
 
 <div class="hide">
 	<div id="webhook_usecase">
@@ -93,8 +100,7 @@
 	<input type="submit" class="btn btn-primary" id="dispatchr_submit" value="<%=t('save')%>" />
 </div>
 
-<% content_for :pagefixed do %>	
-	<%= render :partial => "/shared/placeholder_help", 
+<% content_for :pagefixed do %>
+	<%= render :partial => "/shared/placeholder_help",
 				:locals => { :placeholders => ticket_placeholders.merge(event_placeholders) } %>
 <% end %>
-

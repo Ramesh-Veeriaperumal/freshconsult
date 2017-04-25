@@ -11,6 +11,7 @@ class Account < ActiveRecord::Base
 
   after_update :update_freshfone_voice_url, :if => :freshfone_enabled?
   after_update :update_livechat_url_time_zone, :if => :freshchat_enabled?
+  after_update :update_activity_export, :if => :ticket_activity_export_enabled?
 
   before_save :sync_name_helpdesk_name
   
@@ -71,6 +72,10 @@ class Account < ActiveRecord::Base
     add_member_to_redis_set(SLAVE_QUERIES, self.id)
     LAUNCHPARTY_FEATURES.select{|k,v| v}.each_key {|feature| self.launch(feature)}
     #self.launch(:disable_old_sso)
+  end
+
+  def update_activity_export
+    ScheduledExport::ActivitiesExport.perform_async if time_zone_changed? && activity_export_from_cache.try(:active)
   end
 
   protected

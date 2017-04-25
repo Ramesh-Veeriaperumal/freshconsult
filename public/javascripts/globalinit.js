@@ -484,20 +484,32 @@ window.xhrPool = [];
 })(jQuery);
 
 function closeableFlash(flash){
+  //remove other alerts if any
+  if(typeof flash === 'string' && jQuery(".alert.notice:not("+flash+")")[0]){
+    jQuery(".alert.notice:not("+flash+")").empty().hide();
+  }else if(typeof flash !== 'string' && flash.children().length > 0){
+    jQuery(".alert.notice:not(#"+flash.attr("id")+")").empty().hide();
+  }
+
    flash = jQuery(flash);
    jQuery("<a />").addClass("close").attr("href", "#").appendTo(flash).click(function(ev){
       flash.fadeOut(600);
       return false;
    });
-   setTimeout(function() {
-      if(flash.css("display") != 'none')
-         flash.hide('blind', {}, 500);
-    }, 20000);
-    setTimeout(function() {      
-      flash.find("a").remove();
-      delete flash.find("a");
-      delete flash.prevObject;
-    }, 20700);
+
+   //limit autoclose for bulk close action validation failed tickets alert
+   //attach timeout function only if flash is not empty
+   if(flash.text().length > 0 && flash.children('#failed-tickets').length < 1) {
+      setTimeout(function() {
+        if(flash.css("display") != 'none')
+           flash.hide('blind', {}, 500);
+      }, 20000);
+      setTimeout(function() {      
+        flash.find("a").remove();
+        delete flash.find("a");
+        delete flash.prevObject;
+      }, 20700);
+   }
 }
 
 /*

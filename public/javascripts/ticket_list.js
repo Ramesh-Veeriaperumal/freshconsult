@@ -18,45 +18,221 @@ window.App.Tickets = window.App.Tickets || {};
 		// This script moved from html page (shared/_ticket_toolbar.html)
 		bindEventsInTicketToolbar: function () {
 			
-	  	jQuery(document).on("click.ticket_list", '#ticket-close-all-confirmation-submit', function(){
-		    jQuery('#close_all_ticket_btn').trigger('click');
-		  });
+	  		jQuery(document).on("click.ticket_list", '#ticket-close-all-confirmation-submit', function(){
+		    	jQuery('#close_all_ticket_btn').trigger('click');
+		  	});
 
-		  jQuery(document).on("click.ticket_list", '#ticket-spam-all-confirmation-submit', function(){
-		    jQuery('#spam_all_ticket_btn').trigger('click');
-		  });
+		  	jQuery(document).on("click.ticket_list", '#ticket-spam-all-confirmation-submit', function(){
+		    	jQuery('#spam_all_ticket_btn').trigger('click');
+		  	});
 
-		  jQuery(document).on("click.ticket_list", '#ticket-delete-all-confirmation-submit', function(){
-		    jQuery('#delete_all_ticket_btn').trigger('click');
-		  });
+		  	jQuery(document).on("click.ticket_list", '#ticket-delete-all-confirmation-submit', function(){
+		    	jQuery('#delete_all_ticket_btn').trigger('click');
+		  	});
 
-		  jQuery(document).on("click.ticket_list", '#empty-spam-confirmation-submit', function(){
-		    jQuery('#empty_spam').trigger('click');
-		  });
+		  	jQuery(document).on("click.ticket_list", '#empty-spam-confirmation-submit', function(){
+		    	jQuery('#empty_spam').trigger('click');
+		  	});
 
-		  jQuery(document).on("click.ticket_list", '#empty-trash-confirmation-submit', function(){
-		    jQuery('#empty_trash').trigger('click');
-		  });
+		  	jQuery(document).on("click.ticket_list", '#empty-trash-confirmation-submit', function(){
+		    	jQuery('#empty_trash').trigger('click');
+		  	});
 
-		  jQuery(document).on("click.ticket_list", '[data-action="merge"]', function(ev){
-	      var selected_tickets=[];
-	      var parameters=[];
-	      jQuery("#tickets-expanded .selector:checked").each(function(){
-	        selected_tickets.push(jQuery(this).val());
-	      });
-	      jQuery.ajax({
-	        type: 'POST',
-	        url: '/helpdesk/merge_tickets/bulk_merge',
-	        data: { "source_tickets" : selected_tickets, "redirect_back" : true },
-	        success: function(data){
+		  	jQuery(document).on("click.ticket_list", '[data-action="merge"]', function(ev){
+		      	var selected_tickets=[];
+		      	var parameters=[];
+		      	jQuery("#tickets-expanded .selector:checked").each(function(){
+		        	selected_tickets.push(jQuery(this).val());
+		      	});
+		      	jQuery.ajax({
+		        	type: 'POST',
+		        	url: '/helpdesk/merge_tickets/bulk_merge',
+		        	data: { "source_tickets" : selected_tickets, "redirect_back" : true },
+		        	success: function(data){
 						jQuery('#merge_freshdialog-content').html(data);
 					}
-		    });
-		  });
+			    });
+		  	});
 
-		  jQuery(document).on('click.ticket_list','.tooltip', function(){
-		    jQuery(this).twipsy('hide');
-		  });
+		  	jQuery(document).on('click.ticket_list','.tooltip', function(){
+		    	jQuery(this).twipsy('hide');
+		  	});
+
+		  	//load script only if bulk close validation feature enabled
+		  	if(closeValidationLaunched){
+		  		jQuery(document).on('click.ticket_list', '#failed-tickets', function(e) {
+			  		e.preventDefault();
+			  		jQuery('#failed-tickets-popup').remove();
+			  		if(jQuery(this).data('tickets')){
+			  			failedTicketData.failed_tickets = jQuery(this).data('tickets'); 
+			  			failedTicketData.title = jQuery(this).data('title'); 
+			  			failedTicketData.description = jQuery(this).data('description'); 
+			  		}
+			  		var data = {
+			      		targetId : '#failed-tickets-popup',
+			      		title : failedTicketData.title,
+			      		width:  '710',
+			      		destroyOnClose : false,
+			      		templateFooter: false,
+			      		templateHeader: "<div class='modal-header'><h3 class='ellipsis modal-title'>Bulk Close Tickets</h3>"
+			      					+"<div><abbr>"+failedTicketData.description+"</abbr></div></div>"
+			    	}
+			    	jQuery.freshdialog(data);
+			    	var failedTickets = failedTicketData.failed_tickets;
+			    	var listData = "";
+			    	jQuery.each(failedTickets, function(index, item){
+			    		listData += "<li class='ellipsis failed_ticket' data-index="+ index +" data-failed-ticket-id="+item.id+">"+ 
+			    		"<span class='subject ellipsis'>"+ item.subject + "  #"+item.display_id+ "</span><span class='updated_label hide'>Updated</span>"+
+			    		"</li>";
+			    	});
+			    	jQuery('#failed-tickets-popup .modal-body').html("<ul class='failed_ticket_list'>" + listData + "</ul> <div class='ticket_properties_list'></div>");
+			  	});
+
+			  	jQuery(document).on('click.ticket_list', '.failed_ticket', function(e) {
+			  		e.stopPropagation();
+			  		e.preventDefault();
+			  		var $properties_container = jQuery('.ticket_properties_list');
+			  		$properties_container.empty();
+			  		if($properties_container.hasClass('flow_in')){
+			  			$properties_container.addClass('sloading loading-small loading-block');
+			  		}
+			  		$properties_container.addClass('flow_in');
+			  		jQuery('.failed_ticket').removeClass('active').addClass('popup-active');
+			  		jQuery(this).addClass('active');
+			  		jQuery.ajax({
+			  			url : '/helpdesk/tickets/'+ jQuery(this).data('failed-ticket-id')+'/component?component=ticket_fields',
+			  			type: 'GET',
+			  			contentType: 'application/text',
+			  			success: function(data) {
+			  				$properties_container.removeClass('sloading loading-small loading-block').html(data).prepend('<h3 class="title">Properties</h3>');
+			  				App.Tickets.TicketList.validateRequiredOnCloseTickets();
+			  			}
+			  		});
+			  	});
+
+			  	jQuery(document).on('click', "#failed-tickets-popup:not('.failed_ticket')", function(e){
+			  		if(jQuery(e.target).parents('.ticket_properties_list').length <= 0){
+			  			var $ticket_properties_list = jQuery('.ticket_properties_list');
+			  			$ticket_properties_list.removeClass('flow_in');
+			  			jQuery('.failed_ticket').removeClass('active').removeClass('popup-active');
+			  			setTimeout(function(){
+			  				if(!jQuery('.ticket_properties_list').hasClass('flow_in')){
+			  					$ticket_properties_list.empty();
+			  				}
+			  			}, 3000);
+			  		}
+			  	});
+
+			  	jQuery(document).on('submit.ticket_list', '.ticket_properties_list #custom_ticket_form', function(e){
+			  		e.preventDefault();
+					e.stopPropagation();
+					var tkt_form = $('.ticket_properties_list #custom_ticket_form');
+					if (tkt_form.valid()) {
+						App.Tickets.TicketList.submitTicketProperties();
+					}else{
+						App.Tickets.TicketList.scrollToError();
+					}
+			  	});
+
+			  	//code added for agent and group filed change event capturing in bulk close validation popup
+			  	jQuery(document).on('change.ticket_list', '.ticket_properties_list #helpdesk_ticket_group_id', function(e){
+					// get the current selected agent if any
+					var select_agent = jQuery('.ticket_properties_list .default_agent select')[0];
+					var prev_val = select_agent.options[select_agent.selectedIndex].value;
+
+					jQuery('.ticket_properties_list .default_agent')
+						.addClass('sloading loading-small loading-right');
+
+					$.ajax({type: 'GET',
+						url: prev_val == "" ? '/helpdesk/commons/group_agents/'+this.value : '/helpdesk/commons/group_agents/'+this.value+"?agent="+prev_val,
+						contentType: 'application/text',
+						success: function(data){
+							jQuery('.ticket_properties_list .default_agent select')
+								.html(data)
+								.trigger('change');
+
+							jQuery('.ticket_properties_list .default_agent').removeClass('sloading loading-small loading-right');
+						  }
+					});
+				});
+
+				jQuery(document).on('change.ticket_list' ,'.ticket_properties_list #helpdesk_ticket_status', function(event){ 
+
+					var _this = $(this);
+					var previous =  _this.data("previous");
+					//in case of deleted status, manually pass the condition for api trigger
+					if(previous !== "" && !previous){
+						previous = true;
+					}
+					_this.data("previous", _this.val());
+					var select_group = jQuery('.ticket_properties_list .default_internal_group select')[0];
+					var prev_val = ""
+					if(select_group){
+			      		prev_val = select_group.options[select_group.selectedIndex].value;
+					}
+
+					if(previous && select_group){
+						jQuery('.ticket_properties_list .default_internal_group').addClass('sloading loading-small loading-right');
+						var val = jQuery(".ticket_properties_list #helpdesk_ticket_status").val();
+
+					    jQuery.ajax({type: "GET",
+					      	url: prev_val == "" ? "/helpdesk/commons/status_groups?status_id="+val : "/helpdesk/commons/status_groups?status_id="+val+"&group_id="+prev_val,
+					      	contentType: "application/text",
+					      	success: function(data){
+					    		jQuery('.ticket_properties_list #helpdesk_ticket_internal_group_id').html(data).trigger('change');
+					        	jQuery('.ticket_properties_list .default_internal_group').removeClass('sloading loading-small loading-right');
+					      	}
+					    });
+					}
+				});
+				jQuery(document).on("change.ticket_list", '.ticket_properties_list #helpdesk_ticket_internal_group_id', function(e){
+				    jQuery('.ticket_properties_list .default_internal_agent').addClass('sloading loading-small loading-right');
+				    var select_group = jQuery('.ticket_properties_list .default_internal_agent select')[0];
+			      	var prev_val = select_group.options[select_group.selectedIndex].value;
+					if(this.value){
+						jQuery.ajax({
+					       	type: 'GET',
+					      	url:  prev_val == "" ? '/helpdesk/commons/group_agents/'+this.value : '/helpdesk/commons/group_agents/'+this.value+"?agent="+prev_val,
+					      	contentType: 'application/text',
+					      	success: function(data){
+					        	jQuery('.ticket_properties_list #helpdesk_ticket_internal_agent_id').html(data).trigger('change');
+					        	jQuery('.ticket_properties_list .default_internal_agent').removeClass('sloading loading-small loading-right');
+					      	}
+					    });
+					}else{
+			      		jQuery('.ticket_properties_list #helpdesk_ticket_internal_agent_id').html("<option value=''>...</option>").trigger('change');
+						jQuery('.ticket_properties_list .default_internal_agent').removeClass('sloading loading-small loading-right');
+					}  
+				});
+
+				jQuery(document).on('click.ticket_list', '.ticket_properties_list .date.field', function(e){
+					if(jQuery('#ui-datepicker-div').is(':visible')){
+						jQuery('.ticket_properties_list ul#TicketPropertiesFields').css('overflow-y', 'hidden');
+					}else{
+						jQuery('.ticket_properties_list ul#TicketPropertiesFields').css('overflow-y', 'auto');
+					}
+				});
+
+				jQuery(document).on('click.ticket_list', '.ticket_properties_list', function(e){
+					setTimeout(function(){
+						if(jQuery('#ui-datepicker-div').is(':visible')){
+							jQuery('.ticket_properties_list ul#TicketPropertiesFields').css('overflow-y', 'hidden');
+						}else{
+							jQuery('.ticket_properties_list ul#TicketPropertiesFields').css('overflow-y', 'auto');
+						}
+					}, 200);
+				});
+
+				jQuery(document).on('change.ticket_list', '.ticket_properties_list input.date', function(e){
+					setTimeout(function(){
+						if(jQuery('#ui-datepicker-div').is(':visible')){
+							jQuery('.ticket_properties_list ul#TicketPropertiesFields').css('overflow-y', 'hidden');
+						}else{
+							jQuery('.ticket_properties_list ul#TicketPropertiesFields').css('overflow-y', 'auto');
+						}
+					}, 500);
+				});
+		  	}
 
 		},
 		onLeave: function() {
@@ -69,6 +245,49 @@ window.App.Tickets = window.App.Tickets || {};
 			jQuery("#filter-template").filterList("#filter-template",".tkt_views",function(element){
    				element.find('a').trigger('click');
    			}); 
+		},
+		validateRequiredOnCloseTickets: function() {
+			var required_closure_elements = $(".ticket_properties_list .required_closure");
+			required_closure_elements.each(function(){
+	          	element = $(this)
+	          	if(element.prop("type") == "checkbox"){
+	            	element.prev().remove()
+	          	}
+          		element.parents('.field').children('label').find('.required_star').remove();
+          		element.addClass('required').parents('.field').children('label').append('<span class="required_star">*</span>');
+	        });
+		},
+		submitTicketProperties: function() {
+			var tkt_form = $('#custom_ticket_form');
+			var submit = $('#custom_ticket_form .btn-primary');
+			submit.button('loading');
+			submit.attr('disabled','disabled');
+
+			$.ajax({
+				type: 'POST',
+				url: tkt_form.attr('action'),
+				data: tkt_form.serialize(),
+				dataType: 'json',
+				success: function(response) {
+					submit.val(submit.data('saved-text')).addClass('done');
+					setTimeout( function() {
+						submit.button('reset').removeClass('done');
+					}, 2000);
+					jQuery('.failed_ticket.active .updated_label').removeClass('hide');
+
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					submit.text(submit.data('default-text')).prop('disabled',false);
+				}
+			});
+		},
+		scrollToError: function(){
+			var errorLabel = $("label[class='error'][style!='display: none;']");
+			var elem = errorLabel.parent().children().first();
+			var topContainerHeight = elem.parents('ul#TicketPropertiesFields').offset().top;
+			jQuery("body .ticket_properties_list ul#TicketPropertiesFields").animate({
+	          	scrollTop: elem.offset().top - topContainerHeight
+	        }, 'slow');
 		}
 	}
 }(jQuery));
@@ -322,30 +541,38 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 			url: '/helpdesk/tickets/quick_assign/' + ticket_id,
 			data: {assign: assign_action, value : new_value, disable_notification: ev.shiftKey, _method: 'put'},
 			success: function (data) {
-				jQuery('[data-ticket=' + ticket_id + '] [data-type="' + assign_action + '"] .result').text(new_text);
-				jQuery('[data-ticket=' + ticket_id + '] [data-type="' + assign_action + '"] .result').animateHighlight();
+				if(data.success){
+					jQuery('[data-ticket=' + ticket_id + '] [data-type="' + assign_action + '"] .result').text(new_text);
+					jQuery('[data-ticket=' + ticket_id + '] [data-type="' + assign_action + '"] .result').animateHighlight();
 
-				//Special Processing for Priority
-				if (assign_action == 'priority') {
-					priority_colored_border = jQuery('[data-ticket=' + ticket_id + '] .priority-border');
-					priority_colored_border_1 = jQuery('[data-ticket=' + ticket_id + '] .sc-item-cursor');
-					priority_colored_border.removeAttr('class').addClass('priority-border priority-' + priority_ids[new_value]);
-					priority_colored_border_1.removeAttr('class').addClass('sc-item-cursor priority-border priority-' + priority_ids[new_value] + ' shorcuts-info');
-				}
-
-				//Special Processing for Status
-				if (assign_action == 'status') {
-					jQuery('[data-ticket=' + ticket_id + ']').removeClass('ticket-status-4').removeClass('ticket-status-5');
-					if (new_value == 4 || new_value == 5) {
-						jQuery('[data-ticket=' + ticket_id + ']').addClass('ticket-status-' + new_value);
+					//Special Processing for Priority
+					if (assign_action == 'priority') {
+						priority_colored_border = jQuery('[data-ticket=' + ticket_id + '] .priority-border');
+						priority_colored_border_1 = jQuery('[data-ticket=' + ticket_id + '] .sc-item-cursor');
+						priority_colored_border.removeAttr('class').addClass('priority-border priority-' + priority_ids[new_value]);
+						priority_colored_border_1.removeAttr('class').addClass('sc-item-cursor priority-border priority-' + priority_ids[new_value] + ' shorcuts-info');
 					}
+
+					//Special Processing for Status
+					if (assign_action == 'status') {
+						jQuery('[data-ticket=' + ticket_id + ']').removeClass('ticket-status-4').removeClass('ticket-status-5');
+						if (new_value == 4 || new_value == 5) {
+							jQuery('[data-ticket=' + ticket_id + ']').addClass('ticket-status-' + new_value);
+						}
+					}
+
+					full_menu.find('.ticksymbol').remove();
+					selected_item.prepend(ticksymbol);
+					selected_item.addClass('active').siblings().removeClass('active');
+				}else{
+					jQuery("#noticeajax").empty().hide();
+					jQuery("#notice").empty().hide();
+					jQuery("#noticeajax").html(data.message).show();
+        			// jQuery.scrollTo("body");
+        			jQuery('body #failed-tickets').trigger('click.ticket_list');
+        			jQuery("#noticeajax").empty().hide();
 				}
-
-				full_menu.find('.ticksymbol').remove();
-				selected_item.prepend(ticksymbol);
-				selected_item.addClass('active').siblings().removeClass('active');
 				full_menu.removeClass('loading');
-
 				hideActiveMenu();
 			}
 		});
@@ -371,118 +598,118 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 	});
 
 	jQuery(document).on('click.ticket_list', '#toggle_select_all', function(ev) {
-      ev.preventDefault();
-      var all_view_selector = jQuery("#all-views");
-      updateBulkActionTicketCount();
-      var select_all_mode = all_view_selector.data("selectallMode");
-      if(!select_all_mode) {
-        all_view_selector.data("selectallMode", true);
-        bulkActionButtonsDisabled();
-        jQuery("#toggle_select_all_default").hide();
-        jQuery("#toggle_select_all_clear").show();
-        jQuery("#toggle_select_all_page").hide();
-        jQuery("#toggle_select_all_view").show();
-        jQuery('.dynamic-menu').addClass('disabled').prop('disabled', true);
-        freezeTicketListView(true);
-        toggleTicketToolbar(true);
-	  }
-      else {
-        all_view_selector.data("selectallMode", false);
-        bulkActionButtonsDisabled();
-        jQuery("#toggle_select_all_default").show();
-        jQuery("#toggle_select_all_clear").hide();
-        jQuery("#toggle_select_all_view").hide();
-        jQuery("#toggle_select_all_page").show();
-        jQuery('.dynamic-menu').removeClass('disabled').prop('disabled', false);
-        freezeTicketListView(false);
-        toggleTicketToolbar(false);
-        jQuery("#helpdesk-select-all").removeAttr("checked").trigger("toggleState").trigger('change');
-      }
+      	ev.preventDefault();
+      	var all_view_selector = jQuery("#all-views");
+      	updateBulkActionTicketCount();
+      	var select_all_mode = all_view_selector.data("selectallMode");
+      	if(!select_all_mode) {
+        	all_view_selector.data("selectallMode", true);
+        	bulkActionButtonsDisabled();
+        	jQuery("#toggle_select_all_default").hide();
+        	jQuery("#toggle_select_all_clear").show();
+        	jQuery("#toggle_select_all_page").hide();
+        	jQuery("#toggle_select_all_view").show();
+        	jQuery('.dynamic-menu').addClass('disabled').prop('disabled', true);
+        	freezeTicketListView(true);
+        	toggleTicketToolbar(true);
+	  	}
+      	else {
+        	all_view_selector.data("selectallMode", false);
+        	bulkActionButtonsDisabled();
+        	jQuery("#toggle_select_all_default").show();
+        	jQuery("#toggle_select_all_clear").hide();
+        	jQuery("#toggle_select_all_view").hide();
+        	jQuery("#toggle_select_all_page").show();
+        	jQuery('.dynamic-menu').removeClass('disabled').prop('disabled', false);
+        	freezeTicketListView(false);
+        	toggleTicketToolbar(false);
+        	jQuery("#helpdesk-select-all").removeAttr("checked").trigger("toggleState").trigger('change');
+      	}
 	});
 
-  jQuery("#helpdesk-select-all").bind("change", function(ev){
-    if(!selectAllBarAvailable()) {
-      return;
-    }
+  	jQuery("#helpdesk-select-all").bind("change", function(ev){
+    	if(!selectAllBarAvailable()) {
+      		return;
+    	}
 
-    if(jQuery("#select_all_disabled").length > 0 && jQuery("#helpdesk-select-all").prop('checked')) {
-      jQuery.ajax({
-        url: "/helpdesk/select_all_ticket_actions/select_all_message_content",
-        type: "GET",
-        success: function(){
-          updateBulkActionTicketCount();
-        }            
-      });
-    }
-    var select_all_bar = $J("#select_all_alert");
-    updateBulkActionTicketCount();
-    if($J(this).prop("checked")){
-      disableAutoRefresh();
-      select_all_bar.show();
-    }
-    else {
-      enableAutoRefresh();
-      select_all_bar.hide();
-    }
-  });
+    	if(jQuery("#select_all_disabled").length > 0 && jQuery("#helpdesk-select-all").prop('checked')) {
+      		jQuery.ajax({
+        		url: "/helpdesk/select_all_ticket_actions/select_all_message_content",
+        		type: "GET",
+        		success: function(){
+          			updateBulkActionTicketCount();
+        		}            
+      		});
+    	}
+    	var select_all_bar = $J("#select_all_alert");
+    	updateBulkActionTicketCount();
+    	if($J(this).prop("checked")){
+      	disableAutoRefresh();
+      	select_all_bar.show();
+    	}
+    	else {
+      	enableAutoRefresh();
+      	select_all_bar.hide();
+    	}
+  	});
 
-  var toggleTicketToolbar = function(select_all_mode){
+  	var toggleTicketToolbar = function(select_all_mode){
 
-  	if(select_all_mode){
-        jQuery("#ticket-toolbar .bulk_action_buttons").hide();
-        jQuery("#ticket-toolbar .admin_bulk_actions").show();
+  		if(select_all_mode){
+        	jQuery("#ticket-toolbar .bulk_action_buttons").hide();
+        	jQuery("#ticket-toolbar .admin_bulk_actions").show();
+  		}
+  		else {
+        	jQuery("#ticket-toolbar .admin_bulk_actions").hide();
+        	jQuery("#ticket-toolbar .bulk_action_buttons").show();
+  		}
   	}
-  	else {
-        jQuery("#ticket-toolbar .admin_bulk_actions").hide();
-        jQuery("#ticket-toolbar .bulk_action_buttons").show();
+
+  	var updateBulkActionTicketCount = function() {
+    	var tkt_count = parseInt(jQuery("#ticket_list_count").text());
+    	if (!isNaN(tkt_count)) {
+      		jQuery(".admin_select_all_ticket_count").text(tkt_count);
+    	}
+    	var num_tickets_in_page = jQuery("#tickets-expanded input[type=checkbox]").length
+    	jQuery(".admin_select_all_ticket_count_page").text(num_tickets_in_page);
   	}
-  }
+  	var selectAllBarAvailable = function() {
+      	return !(jQuery("#select_all_alert").length < 1 || jQuery(".toolbar_pagination_full").length < 1);
+  	};
 
-  var updateBulkActionTicketCount = function() {
-    var tkt_count = parseInt(jQuery("#ticket_list_count").text());
-    if (!isNaN(tkt_count)) {
-      jQuery(".admin_select_all_ticket_count").text(tkt_count);
-    }
-    var num_tickets_in_page = jQuery("#tickets-expanded input[type=checkbox]").length
-    jQuery(".admin_select_all_ticket_count_page").text(num_tickets_in_page);
-  }
-  var selectAllBarAvailable = function() {
-      return !(jQuery("#select_all_alert").length < 1 || jQuery(".toolbar_pagination_full").length < 1);
-  };
+  	var freezeTicketListView = function(select_all_view){
+     	var select_all_checkbox = jQuery("#helpdesk-select-all");
+     	if(select_all_view === true){
+      		jQuery("#tickets-expanded input[type=checkbox]").attr("disabled", "disabled");
+      		select_all_checkbox.attr("disabled", "disabled");
+     	}
+     	else {
+      		jQuery("#tickets-expanded input[type=checkbox]").removeAttr("disabled");
+      		select_all_checkbox.removeAttr("disabled");       
+     	}
+  	};
 
-  var freezeTicketListView = function(select_all_view){
-     var select_all_checkbox = jQuery("#helpdesk-select-all");
-     if(select_all_view === true){
-      jQuery("#tickets-expanded input[type=checkbox]").attr("disabled", "disabled");
-      select_all_checkbox.attr("disabled", "disabled");
-     }
-     else {
-      jQuery("#tickets-expanded input[type=checkbox]").removeAttr("disabled");
-      select_all_checkbox.removeAttr("disabled");       
-     }
-  };
-
-  jQuery(".filter_item").bind("change", function(){
-      if(!selectAllBarAvailable()){
-          return;
-      }
-      if(jQuery("#all-views").data("selectallMode")){
-        jQuery("#toggle_select_all").trigger("click");
-      }
-      var select_all_checkbox = jQuery("#helpdesk-select-all");
-      select_all_checkbox.prop("checked", false);
-      select_all_checkbox.removeAttr("disabled"); 
-      select_all_checkbox.trigger("change"); 
-  });
+  	jQuery(".filter_item").bind("change", function(){
+      	if(!selectAllBarAvailable()){
+          	return;
+      	}
+      	if(jQuery("#all-views").data("selectallMode")){
+        	jQuery("#toggle_select_all").trigger("click");
+      	}
+      	var select_all_checkbox = jQuery("#helpdesk-select-all");
+      	select_all_checkbox.prop("checked", false);
+      	select_all_checkbox.removeAttr("disabled"); 
+      	select_all_checkbox.trigger("change"); 
+  	});
 
 	// Uncheck select all checkbox before navigate to next & prev page (in pagination)
 	jQuery(document).on('click.ticket_list', '.next_page, .prev_page', function () {
 		jQuery('#helpdesk-select-all').removeAttr('checked');
 	});
 
-  jQuery('body').on('click.ticket_list','a[data-target="#bulk"]', function () {
-    jQuery("#bulk").remove();
-  });
+  	jQuery('body').on('click.ticket_list','a[data-target="#bulk"]', function () {
+    	jQuery("#bulk").remove();
+  	});
 
 	jQuery(window).on('resize.ticket_list', function(){
 		bulkActionButtonsDisabled();

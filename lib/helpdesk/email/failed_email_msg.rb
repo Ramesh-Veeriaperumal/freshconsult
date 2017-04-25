@@ -1,4 +1,8 @@
 class Helpdesk::Email::FailedEmailMsg
+
+  REQUESTER_EMAIL_FAILED  = {:mail_del_failed_requester => :failed}
+  OTHER_EMAIL_FAILED      = {:mail_del_failed_others    => :failed}
+
   def initialize(args)
     @note_id          = args[:note_id]
     @dynamodb_key     = args[:published_time]
@@ -7,16 +11,12 @@ class Helpdesk::Email::FailedEmailMsg
   end
 
   def save!
-    @note        = Account.current.notes.where(id:@note_id).first
+    @note        = Account.current.notes.where(id: @note_id).first
     @note_owner = @note.user
     @recipient  = @note_owner.email
     @ticket     = @note.notable
     @note.dynamodb_range_key = @dynamodb_key
-    if @note.failure_count.present?
-      @note.failure_count += 1
-    else
-      @note.failure_count  = 1
-    end
+    @note.failure_count = @note.failure_count.present? ? @note.failure_count+1 : 1
     @note.schema_less_note.save!
     Rails.logger.info "FailedEmailPoller: Saved! account_id: #{@note.account_id}, ticket_id: #{@ticket.id}, note_id: #{@note_id}, failed_email: #{@failed_email}, dynamo: #{@dynamodb_key}"
   end
@@ -31,4 +31,10 @@ class Helpdesk::Email::FailedEmailMsg
     Helpdesk::TicketNotifier.send_later(:internal_email, @ticket, @recipient, content, subject)
     Rails.logger.info "FailedEmailPoller: Notified action performer! account_id: #{@ticket.account_id}, ticket_id: #{@ticket.id}, note_id: #{@note_id}, failed_email: #{@failed_email}, dynamo: #{@dynamodb_key}"
   end
+
+  def trigger_observer_system_events
+    event = @ticket.requester.emails.include?(@failed_email) ? REQUESTER_EMAIL_FAILED : OTHER_EMAIL_FAILED
+    @note.trigger_observer event, true
+  end
+
 end

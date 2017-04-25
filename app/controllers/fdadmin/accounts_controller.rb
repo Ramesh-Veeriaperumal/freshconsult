@@ -349,12 +349,12 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       result[:account_id] = account.id
       result[:account_name] = account.name
       account.make_current
-      sub = account.subscription
-      sub.state="suspended"
-      if sub.save
-        puts "Saved"
-        result[:status] = "success"
+      subscription = account.subscription
+      unless subscription.suspended?
+        subscription.state = "suspended"
+        subscription.save
       end
+      result[:status] = "success"
       Account.reset_current_account
     end
     $spam_watcher.perform_redis_op("del", "#{params[:account_id]}-")

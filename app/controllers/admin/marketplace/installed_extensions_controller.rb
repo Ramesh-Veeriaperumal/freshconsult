@@ -137,6 +137,8 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
                     :enabled => Marketplace::Constants::EXTENSION_STATUS[:enabled],
                     :type => @extension['type'],
                     :options => @extension['page_options']
+                    :options => @extension['page_options'],
+                    :events => @extension['events']
                   }.merge(paid_app_params)
     if configs.present? && configs["oauth_configs"].present?
       inst_params[:oauth_configs] = configs["oauth_configs"]

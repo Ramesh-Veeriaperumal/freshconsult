@@ -5,6 +5,7 @@
     var groupToStatusText = "<%= I18n.t('admin.observer_rules.filter_jsinit.internal_group_actions') %>";
     var agentToGroupText = "<%= I18n.t('admin.observer_rules.filter_jsinit.internal_agent_actions') %>";
     var MAX_TAG_LENGTH_MSG = "<%= I18n.t('helpdesk.tickets.show.max_tag_length_msg') %>";
+    var systemActionWarning = ' <%= I18n.t('admin.observer_rules.filter_jsinit.system_event_notice')%> ';
     // Condition Parsing 
     // This template contains the dom population information 
     var conditional_dom = function(filter, id, compName, initFeed, val, classname, _dataAttr){
@@ -388,7 +389,9 @@
    <% end %>
 <% end %>
 <% content_for :onload_script do %>
+  sys_events = <%= @system_events.to_json.html_safe %>;
   <% if (filter_type == "observer") %>  
+    // options for system events in observer rules
     // i18n For javascript entities
     event_lang = <%= t('event').to_json.html_safe %>;
     event_rule = new rules_filter("event", $A(<%= @event_defs.html_safe if @event_defs %>), "#eventDOM", { "init_feed":$A(<%= @event_input.html_safe if @event_input %>)});    
