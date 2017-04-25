@@ -3,6 +3,10 @@ class AddSystemObserverEventsFeature < ActiveRecord::Migration
 
   VALID_PLANS = ["Blossom", "Garden", "Estate", "Forest", "Blossom Jan 17", "Garden Jan 17", "Estate Jan 17", "Forest Jan 17"]
 
+  def migrate(direction)
+    self.send(direction)
+  end
+
   def up
     failed_accounts = []
     valid_plan_ids = SubscriptionPlan.where(:name => VALID_PLANS).pluck(:id)
