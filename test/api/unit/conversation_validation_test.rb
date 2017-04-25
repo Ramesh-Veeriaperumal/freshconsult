@@ -218,7 +218,7 @@ class ConversationValidationTest < ActionView::TestCase
     refute conversation.valid?(:reply)
     assert conversation.errors[:conversation].include? :traffic_cop_alert
     Account.unstub(:current)
-    Account.unstub(:traffic_cop_enabled?)
+    Account.any_instance.unstub(:traffic_cop_enabled?)
 
   end
 
@@ -232,7 +232,7 @@ class ConversationValidationTest < ActionView::TestCase
     refute conversation.valid?(:create)
     assert conversation.errors[:conversation].include? :traffic_cop_alert
     Account.unstub(:current)
-    Account.unstub(:traffic_cop_enabled?)
+    Account.any_instance.unstub(:traffic_cop_enabled?)
   end
 
   def test_reply_with_traffic_cop_valid
@@ -244,7 +244,7 @@ class ConversationValidationTest < ActionView::TestCase
     conversation = ConversationValidation.new(controller_params, nil)
     assert conversation.valid?(:reply)
     Account.unstub(:current)
-    Account.unstub(:traffic_cop_enabled?)
+    Account.any_instance.unstub(:traffic_cop_enabled?)
   end
 
   def test_public_note_with_traffic_cop_valid
@@ -256,7 +256,7 @@ class ConversationValidationTest < ActionView::TestCase
     conversation = ConversationValidation.new(controller_params, nil)
     assert conversation.valid?(:create)
     Account.unstub(:current)
-    Account.unstub(:traffic_cop_enabled?)
+    Account.any_instance.unstub(:traffic_cop_enabled?)
   end
 
   def test_reply_with_traffic_cop_without_last_note_id
@@ -268,7 +268,7 @@ class ConversationValidationTest < ActionView::TestCase
     conversation = ConversationValidation.new(controller_params, nil)
     assert conversation.valid?(:reply)
     Account.unstub(:current)
-    Account.unstub(:traffic_cop_enabled?)
+    Account.any_instance.unstub(:traffic_cop_enabled?)
   end
 
   def test_public_note_with_traffic_cop_without_last_note_id
@@ -280,7 +280,7 @@ class ConversationValidationTest < ActionView::TestCase
     conversation = ConversationValidation.new(controller_params, nil)
     assert conversation.valid?(:create)
     Account.unstub(:current)
-    Account.unstub(:traffic_cop_enabled?)
+    Account.any_instance.unstub(:traffic_cop_enabled?)
   end
 
   def test_reply_without_traffic_cop_with_last_note_id
@@ -292,7 +292,7 @@ class ConversationValidationTest < ActionView::TestCase
     conversation = ConversationValidation.new(controller_params, nil)
     assert conversation.valid?(:reply)
     Account.unstub(:current)
-    Account.unstub(:traffic_cop_enabled?)
+    Account.any_instance.unstub(:traffic_cop_enabled?)
   end
 
   def test_public_note_without_traffic_cop_with_last_note_id
@@ -304,7 +304,7 @@ class ConversationValidationTest < ActionView::TestCase
     conversation = ConversationValidation.new(controller_params, nil)
     assert conversation.valid?(:create)
     Account.unstub(:current)
-    Account.unstub(:traffic_cop_enabled?)
+    Account.any_instance.unstub(:traffic_cop_enabled?)
   end
 
   def test_private_note_with_traffic_cop_with_last_note_id
@@ -317,6 +317,6 @@ class ConversationValidationTest < ActionView::TestCase
     conversation = ConversationValidation.new(controller_params, nil)
     assert conversation.valid?(:create)
     Account.unstub(:current)
-    Account.unstub(:traffic_cop_enabled?)
+    Account.any_instance.unstub(:traffic_cop_enabled?)
   end
 end
