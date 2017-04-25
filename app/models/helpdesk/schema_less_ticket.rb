@@ -61,6 +61,8 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :sla_response_reminded, :boolean_tc04
 	alias_attribute :sla_resolution_reminded, :boolean_tc05
 	alias_attribute :dirty_attributes, :text_tc03
+	alias_attribute :association_type, :int_tc03
+	alias_attribute :associates_rdb, :long_tc05
 	alias_attribute :spam_score, :string_tc04
 	alias_attribute :sds_spam, :int_tc05
 
@@ -85,6 +87,11 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	def self.survey_rating_updated_at_column
 		:datetime_tc01
 	end
+
+	def self.associates_rdb_column
+		:long_tc05
+	end
+
 
 	def self.find_by_access_token(token)
 		find_by_string_tc01(token)
