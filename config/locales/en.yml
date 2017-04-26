@@ -4113,7 +4113,7 @@ en:
     sbrr:
       manage_skills: Manage Skills
       create_skills: Create Skills
-      no_skill_in_group_by_admin: "Associate skills with agents in this group for faster ticket resolution. If no skills have<br> been associated, tickets will be distributed based on load balanced assignment."
+      no_skill_in_group_by_admin: "Associate skills with agents in this group for faster ticket resolution. If no skills have<br> been associated, tickets will not be assigned to any agent."
       no_skill_in_group_by_supervisor: "Contact your helpdesk Admin to associate skills with agents in this group"
       no_skill_in_account_by_admin: "Create skills for resolving tickets assigned to this group"
       no_skill_in_account_by_supervisor: "Contact your helpdesk Admin to create and associate skills with agents in this group"
