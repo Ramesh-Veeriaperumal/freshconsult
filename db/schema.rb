@@ -1186,6 +1186,21 @@ ActiveRecord::Schema.define(:version => 20170411034444) do
     t.integer "account_id", :limit => 8, :null => false
   end
 
+  create_table "failed_helpkit_feeds", :force => true do |t|
+    t.integer  "account_id",  :limit => 8,  :null => false
+    t.string   "uuid"
+    t.string   "exchange",    :limit => 20
+    t.string   "routing_key", :limit => 20
+    t.text     "payload"
+    t.string   "exception"
+    t.datetime "created_at",                :null => false
+    t.datetime "updated_at",                :null => false
+  end
+
+  add_index "failed_helpkit_feeds", ["account_id"], :name => "index_failed_helpkit_feeds_on_account_id"
+  add_index "failed_helpkit_feeds", ["created_at"], :name => "index_failed_helpkit_feeds_on_created_at"
+  add_index "failed_helpkit_feeds", ["uuid"], :name => "index_failed_helpkit_feeds_on_uuid"
+
   create_table "features", :force => true do |t|
     t.string   "type",                    :null => false
     t.integer  "account_id", :limit => 8, :null => false
@@ -4087,7 +4102,7 @@ ActiveRecord::Schema.define(:version => 20170411034444) do
   add_index :dkim_category_change_activities, [:account_id, :outgoing_email_domain_category_id, :changed_on], 
             :name => 'index_dkim_activities_on_account_email_domain_changed_on'
 
-  create_table :scheduled_exports do |t|
+  create_table :scheduled_exports, :force => true do |t|
     t.string  :name
     t.text    :description
     t.column  :user_id, "bigint unsigned"
