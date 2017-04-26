@@ -318,7 +318,8 @@ window.App.Admin.AgentSkills = window.App.Admin.AgentSkills || {};
       var jst_template = _this.agentEditFlag ? "app/admin/agents/templates/add_skill" : "app/admin/skills/templates/add_skill";
       var list = JST[jst_template]({
         data: newObj,
-        skillLen: newObj.length
+        skillLen: newObj.length,
+        deletePrivilege: _this.agentEditFlag || App.exports.is_admin
       });
       $("#manage-agents .agent-list-wrapper").append(list);
 

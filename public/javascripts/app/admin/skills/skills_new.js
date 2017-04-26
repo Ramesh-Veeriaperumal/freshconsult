@@ -205,7 +205,8 @@ window.App.Admin.Skills = window.App.Admin.Skills || {};
       var newObj = _.sortBy(obj, 'forSort');
       var list = JST['app/admin/skills/templates/add_user']({
         data: newObj,
-        userLen: newObj.length
+        userLen: newObj.length,
+        deletePrivilege: true
       });
       $('#manage-agents .agent-list-wrapper').append(list);
       $('.addAgentHiddenInput').select2('val', '');

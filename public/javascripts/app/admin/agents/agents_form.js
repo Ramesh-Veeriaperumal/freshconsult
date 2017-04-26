@@ -13,7 +13,7 @@ window.App.Agents = window.App.Agents || {};
 
 	onVisit: function(data) {
 	},
-
+  SkillBasedRRFlag: false,
 	agentSkills: [],
 	userName: '',
 	roles: {},
@@ -22,6 +22,7 @@ window.App.Agents = window.App.Agents || {};
 	group_details: {},
   initializeData: function(data) {
     this.userName = data.userName;
+    this.SkillBasedRRFlag = data.SkillBasedRRFlag;
     this.roles = data.roles;
     this.role_details = data.role_details;
     this.groups = data.groups;
@@ -85,8 +86,7 @@ window.App.Agents = window.App.Agents || {};
 	},
   bindHandlers: function() {
     this.initializeAgentForm();
-    ///////  How???????
-    if(App.exports.SkillBasedRRFlag) {
+    if(this.SkillBasedRRFlag) {
 			App.Admin.AgentSkills.Index.bindSkillEvents(true);
 			this.initializeAgentSkills();
 		}
