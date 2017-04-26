@@ -28,11 +28,5 @@ class AgentsControllerTest < ActionController::TestCase
     agent.update_attributes(:email => agent.email.capitalize)
     assert_equal count_of_delayed_jobs_before+1, Delayed::Job.count
   end 
-  def test_email_trigger_nil_new_email
-    count_of_delayed_jobs_before = Delayed::Job.count
-    agent = add_test_agent
-    agent.update_attributes(:email => nil)
-    assert_equal count_of_delayed_jobs_before, Delayed::Job.count
-  end 
 
 end
