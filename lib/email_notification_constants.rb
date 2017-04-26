@@ -184,9 +184,9 @@ module EmailNotificationConstants
 
 
   POD_TYPES = {
-    1 => "poduseast",
-    2 => "podeuwest",
-    3 =>"podeucentral"
+    1 => "poduseast1",
+    2 => "podeuwest1",
+    3 =>"podeucentral1"
   }
 
   SPAM_FILTERED_NOTIFICATIONS = [ REPLY, FORWARD]

@@ -66,6 +66,7 @@ class CustomFieldsController < Admin::AdminController
     clear_fragment_caches
     err_str = err_str.to_s.html_safe
     flash_message(err_str)
+    expire_cache
     response_data = current_portal.ticket_fields_including_nested_fields if err_str.blank?
     invoke_respond_to(err_str, response_data.presence) do
       redirect_to :action => :index
@@ -106,6 +107,11 @@ class CustomFieldsController < Admin::AdminController
           end
         end
       end
+    end
+
+    def expire_cache
+      current_account.clear_required_ticket_fields_cache
+      current_account.clear_section_parent_fields_cache
     end
 
     def delete_field(field_details)

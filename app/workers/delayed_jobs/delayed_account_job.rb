@@ -8,8 +8,13 @@ module DelayedJobs
     end
       
     def perform(args)
+      Rails.logger.info "Inside the sidekiq worker with id #{jid}. Processing job #{args['job_id']}."
       job = Delayed::Job.find_by_id(args["job_id"])
-      job.run_without_lock(args["account_id"]) if job
+      if job
+        job.run_without_lock(args["account_id"])
+      else
+        Rails.logger.error "Unable to fetch job #{args['job_id']} inside the worker #{jid}. Account id: #{args["account_id"]}"
+      end 
     end
   end
 end

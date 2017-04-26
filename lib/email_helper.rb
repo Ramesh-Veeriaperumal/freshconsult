@@ -124,4 +124,10 @@ module EmailHelper
   def remove_email_config
     Thread.current[:email_config] = nil
   end
+
+  def email_from_another_portal?(account, fetched_account_id)
+    return true if (fetched_account_id and account.id != fetched_account_id.to_i)
+    return false
+  end
+  
 end

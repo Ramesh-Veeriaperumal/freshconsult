@@ -1,0 +1,165 @@
+// Styles for plugins used in freshdesk
+@import "settings/settings";
+/* ticket schedule list page css start */
+.schedule-list-wrapper{
+	.list-page-header{
+		margin-bottom: 0;
+	}
+	.ticket-schedule-list{
+		.list-noinfo{
+			@include padding(30px 0);
+			font-size: 1em;
+			font-weight: 400;
+			color: #999;
+		}
+		.schdule_checkbox{
+			@include padding(12px 0);
+		}
+		.schedule-icon{
+			color:#888;
+		}
+	}
+	&.ticket-activity-list-wrapper{
+		margin-top: 26px;
+	}
+}
+
+.activity-list-wrapper{
+	margin-top: 10px;
+}
+/* ticket schedule list page css end */
+
+/* ticket schedule new page css start */
+.ticket-schedule-new-wrapper{
+	.new-ticket-schedule-form,.edit-ticket-activity-form{
+		.ticket-schedule-ul{
+			.ticket-schedule-li{
+				width: 100%;
+				margin-bottom: 20px;
+				@include padding-left(0);
+				.schedule-label{
+					margin-top: 18px;
+				}
+				.schedule-title{
+					font-weight: 300;
+					font-size: 20px;
+				}
+				.schedule-state{
+					width: 100px;
+				}
+				.schedule-day-on,.schedule-time-at{
+					display: none;
+				}
+				.schedule-day,.schedule-time{
+					width: 100px;
+					display: none;
+				}
+				.schedule-day-show,.schedule-time-show{
+					display: inline-block;
+				}
+				.export-fields-wrapper{
+					border: 1px solid #ccc;
+					border-radius: 3px;
+					.export-fields{
+						cursor: pointer;
+						margin: 0;
+						border-top: 1px solid #ccc;
+						&:first-child{
+							border-top:none;
+						}
+						.export-fields-list{
+							padding: 15px;
+							.export-icon{
+								float: left;
+								width: 10px;
+							}
+						}
+					}
+				}
+				.export-fields-item{
+					padding:14px;
+					border-top: 1px solid #ccc;
+					&.contact-fields-item,&.company-fields-item{
+						display: none;
+					}
+					.checkbox{
+						input[type="checkbox"]{
+							margin-top:3px;
+						}
+					}
+				}
+				.email-content{
+					.select2-container{
+						width: 100%;
+						margin-bottom: 10px;
+					}
+				}
+				.api-content{
+					.clip-data{
+						background: #fff;
+						border: 1px dashed #ccc;
+						box-shadow: none;
+						width: 75%;
+						background: whitesmoke;
+					}
+					.copy-clip{
+				    display: inline-block;
+				    position: absolute;
+				    @include right(188px);
+				    @include padding(2px 8px);
+				    background: #eee;
+				    @include border-radius(0 3px 3px 0);
+					}
+					.api-note{
+						list-style-type: disc;
+						li{
+							@include padding(8px 0)
+						}
+					}
+				}
+				label.error{
+					background: #fff;
+					border: 0;
+					@include margin(0px 0 8px 0);
+					padding: 0;
+				}
+			}
+		}
+	}
+}
+.show-schedule-wrapper{
+	position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  z-index: 101;
+  opacity: 0.5;
+  top: 11%;
+}
+/* ticket schedule new page css end */
+
+/* ticket activity css start */
+.ticket-activity-wrapper{
+	.activity-sample{
+		@include border-right(1px solid #999);
+	}
+	.edit-ticket-activity-form{
+		.ticket-schedule-ul{
+			.ticket-schedule-li{
+				margin-bottom: 0;
+				.api-content{
+					label{
+						text-transform: uppercase;
+					}
+					.clip-data{
+						width: 98%;
+					}
+					.copy-clip{
+						@include right(6px);
+					}
+				}
+			}
+		}
+	}
+}
+/* ticket activity css end */

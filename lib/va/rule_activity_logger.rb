@@ -140,7 +140,7 @@ class Va::RuleActivityLogger
     def responder_id(responder = nil)
       if responder.nil?
         r_id = value.to_i
-        responder = (r_id == EVENT_PERFORMER) ? (doer.agent? ? doer : nil) : Account.current.users.find_by_id(value.to_i)
+        responder = (r_id == EVENT_PERFORMER) ? event_performing_agent(doer) : Account.current.users.find_by_id(value.to_i)
       end
 
       if responder || value.blank?
@@ -157,7 +157,7 @@ class Va::RuleActivityLogger
     def internal_agent_id(internal_agent = nil)
       if internal_agent.nil?
         ia_id = value.to_i
-        internal_agent = (ia_id == EVENT_PERFORMER) ? (doer.agent? ? doer : nil) : Account.current.users.find_by_id(value.to_i)
+        internal_agent = (ia_id == EVENT_PERFORMER) ? event_performing_agent(doer) : Account.current.users.find_by_id(value.to_i)
       end
 
       if internal_agent || value.blank?
@@ -285,5 +285,9 @@ class Va::RuleActivityLogger
       if (RULE_MISC_CHANGES & changes.keys).present?
         @ticket.misc_changes = {:misc_changes => [nil, "*"]}
       end
+    end
+
+    def event_performing_agent(doer)
+      (doer.present? && doer.agent?) ? doer : nil
     end
 end
