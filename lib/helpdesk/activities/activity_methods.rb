@@ -108,7 +108,7 @@ module Helpdesk::Activities
 
     def fetch_activities(params, ticket, archive = false)
       $activities_thrift_transport.open()
-      client    = ::HelpdeskActivities::TicketActivities::Client.new($thrift_protocol)
+      client    = ::HelpdeskActivities::TicketActivities::Client.new($activities_thrift_protocol)
       act_param = ::HelpdeskActivities::TicketDetail.new
       act_param.account_id = Account.current.id
       act_param.object     = "ticket"
