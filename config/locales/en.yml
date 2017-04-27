@@ -229,6 +229,7 @@ en:
   hard_pressed_for_time: Hard pressed for time? Get advice, tips and best practices from a Freshdesk expert.
   facebook_reauth: "Your Facebook channel is inaccessible. It looks like your username, password, or permission has been changed recently."
   fb_realtime_enable: "Facebook real-time messaging is now live! Reauthorize your existing Facebook Pages to enable the feature for your account. Read more <a target='_blank' href='https://support.freshdesk.com/support/solutions/articles/221711'>here</a>"
+  freshpipe_email_disabled: "All outgoing emails and notifications are currently disabled since the data migration is in progress."
   reauthorize_facebook: "Reauthorize your facebook account."
   twitter_reauth:  "Your Twitter channel is inaccessible. It looks like your username or password has been changed recently. "
   reauthorize_twitter: Reauthorize your twitter handle.
@@ -9465,7 +9466,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         help_title_1: "Export ticket properties"
         help_info_1: "You can schedule and export ticket properties, along with their associated contact and company fields from Freshdesk. Data from the export can then be used for building custom reports. For example, you can get an export of tickets every week which includes the first response time, resolution time and the assigned agent, and see how responsive your support team is. A maximum of five schedules can be created for an account. <a href='https://support.freshdesk.com/support/solutions/articles/226461-export-ticket-properties/' target='_blank'>Read more</a> on how to create a schedule to export ticket properties."
         help_title_2: "Export ticket activities"
-        help_info_2: "As an account admin, you would want a list of all activities performed on your tickets so you can build custom metrics. When this is turned on, you will be able to access a JSON file with all the events that occured in each ticket the previous day (including events performed by automations). You can create only one schedule per day for an account. <a href='https://support.freshdesk.com/support/solutions/articles/226460-export-ticket-activities/' target='_blank'>Learn more.</a>"
+        help_info_2: "As an account admin, you would want a list of all activities performed on your tickets so you can build custom metrics. When this is turned on, you will be able to access a JSON file with all the events that occurred in each ticket the previous day (including events performed by automations). You can create only one schedule per day for an account. <a href='https://support.freshdesk.com/support/solutions/articles/226460-export-ticket-activities/' target='_blank'>Learn more.</a>"
       index:
         no_ticket_Schedule: "No Ticket Schedule"
         ticket_properties_title: "Export ticket properties"
@@ -9498,7 +9499,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         one_time_export_label: "Export ticket content from the start of the month when this schedule begins"
         helpnote:
           api_info1: "The API will have the link to the latest export."
-          api_info2: "The export will contain a log of all ticket related updates peformed the previous day."
+          api_info2: "The export will be generated periodically containing the chosen ticket, contact and company fields."
         schedule:
           hourly: "Hourly"
           daily: "Daily"
@@ -9519,6 +9520,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         field_value:
           name: "Daily export of ticket activities"
           description: "Contains a log of all the updates performed on new or old tickets by user or automation on a given day"
+      helpnote:
+          api_info1: "The API will have the link to the latest export."
+          api_info2: "The export will contain a log of all ticket related updates performed the previous day."
   adv_reports:
     deprecated_message : "(View classic report link will no longer be available from Fri, 18 March 2016)"
     deprecated_header : "This report will no longer be available from Fri, 18 March 2016"

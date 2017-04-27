@@ -15,6 +15,10 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
 
   protected
 
+    def get_updated_ticket_count   
+      pluralize(@items.length, t('ticket_was'), t('tickets_were'))    
+    end
+
     def update_multiple_methods
       filter_params_ids
       validate_params

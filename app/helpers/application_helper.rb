@@ -1671,6 +1671,14 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     return
   end
 
+  #Checks if Email was disabled by Freshpipe for running migrations
+  def check_email_disabled_by_pipe
+    if current_account.launched?(:disable_emails)
+      return content_tag('div', "#{t('freshpipe_email_disabled')}".html_safe, :class =>
+        "alert-message block-message warning full-width")
+    end
+  end
+
   def fb_realtime_msg_disabled
     if current_account.fb_realtime_msg_from_cache
       return content_tag('div', "#{t('fb_realtime_enable')}".html_safe, :class =>
