@@ -167,10 +167,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       result = group.update_agent_capping_with_lock(user_id, new_score, operation)
 
       if result.is_a?(Array) && result[1].present?
-        status_ids = Helpdesk::TicketStatus::sla_timer_on_status_ids(account)
-        db_count = group.tickets.visible.where("responder_id = ? and status in (?)", user_id, status_ids).count
         Rails.logger.debug "RR SUCCESS #{operation}ementing count for ticket : #{display_id} - 
-          #{user_id}, #{group.id}, #{new_score}, #{db_count}, #{result.inspect}".squish
+          #{user_id}, #{group.id}, #{new_score}, #{result.inspect}".squish
         if operation=="incr"
           group.lrem_from_rr_capping_queue(self.display_id)
         else
