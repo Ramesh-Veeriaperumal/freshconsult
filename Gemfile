@@ -44,7 +44,7 @@ gem "tnef", "1.0.2"
 
 
 group :development, :test do
-  gem 'active_record_query_trace'
+  gem 'active_record_query_trace'  
   gem 'rails-dev-boost', :git => 'git://github.com/thedarkone/rails-dev-boost.git'
   gem 'better_errors', '~> 1.1.0'
   # Commenting out for ruby ~> 2.1.0 upgrade
@@ -79,7 +79,6 @@ gem "omniauth-openid", "1.0.1"
 # TODO-RAILS3 need check are we still using this
 gem "omniauth-google", "1.0.2"
 gem "omniauth-google-oauth2", "0.1.13"
-gem "omniauth-facebook", "1.2.0"
 gem "omniauth-quickbooks", "0.0.2"
 gem "omniauth-salesforce", :git => "git://github.com/sathishfreshdesk/omniauth-salesforce.git", :branch => "master"
 gem "omniauth-mailchimp", "1.0.3"
@@ -274,6 +273,7 @@ group :test do
   gem 'yard-cucumber', :require => false
   gem 'cucumber-rails', :require => false
   gem 'cucumber_statistics'
+  gem "fakeweb", "~> 1.3"
 end
 
 #ruby 2.2.3 expects tesst-unit to be available by default.
@@ -327,3 +327,5 @@ gem 'gon', '6.1.0'
 gem 'dnsruby'
 
 gem 'rugged'
+
+gem 'clearbit'

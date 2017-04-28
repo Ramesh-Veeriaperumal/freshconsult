@@ -11,8 +11,7 @@ class Admin::OnboardingController < Admin::AdminController
     current_user.email = @user_email_config[:new_email]
     current_user.keep_user_active = true
     if current_user.save
-      update_account_config  
-      add_to_crm
+      update_account_config
     end
   end
 
@@ -55,11 +54,4 @@ class Admin::OnboardingController < Admin::AdminController
       [:forums,:social].each { |channel| send("toggle_#{channel}_channel", @channel_config[channel]) }
     end
 
-    def add_to_crm
-      #skipping freshsales here since its done in callbacks
-      if (Rails.env.production? or Rails.env.staging?)
-        Resque.enqueue(Marketo::AddLead, { account_id: current_account.id, 
-          signup_id: nil, fs_cookie: nil, skip_freshsales: true  })
-      end
-    end
 end

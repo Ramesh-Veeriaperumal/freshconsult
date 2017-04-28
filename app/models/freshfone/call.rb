@@ -3,6 +3,7 @@ class Freshfone::Call < ActiveRecord::Base
   include ApplicationHelper
   include Mobile::Actions::Freshfone
   include Freshfone::CallerLookup
+  include Freshfone::CallsRedisMethods
   self.table_name =  :freshfone_calls
   self.primary_key = :id
 
@@ -665,9 +666,18 @@ class Freshfone::Call < ActiveRecord::Base
   end
 
   def source_number
-    return fetch_caller_id if meta.forward?
     return number if outgoing?
+    return fetch_caller_id if meta.forward?
     caller_number
+  end
+
+  def can_be_disconnected?(agent)
+    (ringing? && get_agent_response(account_id, id, agent).blank?) ||
+      disconnect_supervisor_call?
+  end
+
+  def disconnect_supervisor_call?
+    onhold? && supervisor_controls.any? { |supervisor_call| supervisor_call.default?}
   end
   
   private

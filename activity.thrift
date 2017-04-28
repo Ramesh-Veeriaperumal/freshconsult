@@ -25,15 +25,15 @@ enum EventType {
   ALL = 2
 }
 
- struct TicketDetail {
-   1: required i64 account_id,
-   2: required string object,
-   3: required i64 object_id,
-   4: required EventType event_type = EventType.ALL,
-   5: required string shard_name,
-   6: required string comparator,
-   7: optional i64 range_key
- }
+struct TicketDetail {
+  1: required i64 account_id,
+  2: required string object,
+  3: required i64 object_id,
+  4: required EventType event_type = EventType.ALL,
+  5: required string shard_name,
+  6: required string comparator,
+  7: optional i64 range_key
+}
 
 struct DashboardDetail {
   1: required i64 account_id,
@@ -54,9 +54,8 @@ struct TicketData {
   6: required string object_id,
   7: required string content,
   8: optional string summary,
-  9: optional string email_type,
-  10: optional string recipient_list,
-  11: optional string message_id
+  9: optional i64 kind,
+  10: optional string email_failures
 }
 
 struct DashboardData {
@@ -79,6 +78,17 @@ struct ActivityData {
   5: optional string error_message
 }
 
+struct ActivityExportRequest {
+  1: required i64 account_id,
+  2: optional string date
+}
+
+struct ActivityExportResponse {
+  1: required string date,
+  2: optional string file_url,
+  3: optional string error_message
+}
+
  //Exception class to return message incase of exception
 exception ActivityException {
   1: string message
@@ -88,11 +98,19 @@ exception DashboardException {
   1: string message
 }
 
+exception TicketActivityExportException {
+  1: string message
+}
+
 //Service to be defined by client and server
 service TicketActivities { 
-    ActivityData get_activities(1: TicketDetail activity_param, 2: i32 limit) throws (1:ActivityException error) 
+  ActivityData get_activities(1: TicketDetail activity_param, 2: i32 limit) throws (1:ActivityException error)
 }
 
 service DashboardActivities {
   list<DashboardData> dashboard_activities(1: DashboardDetail dash_act, 2: i32 limit) throws (1: DashboardException error)
+}
+
+service TicketActivitiesExport {
+  list<ActivityExportResponse> get_activities_export_file(1: ActivityExportRequest act_export) throws (1: TicketActivityExportException error)
 }

@@ -19,7 +19,7 @@ class ActivationsController < SupportController
   end
 
   def new
-    @user = current_account.users.find_using_perishable_token(params[:activation_code], 1.weeks) 
+    @user = current_account.users.find_using_perishable_token(params[:activation_code], 1.weeks)
     if @user.nil?
       flash[:notice] = t('users.activations.code_expired')
       return redirect_to new_password_reset_path
@@ -52,8 +52,8 @@ class ActivationsController < SupportController
 
   def create
     @user = current_account.users.find_by_perishable_token(
-            params[:perishable_token]) unless params[:perishable_token].blank?
-    return redirect_to support_login_url, 
+          params[:perishable_token]) unless params[:perishable_token].blank?
+    return redirect_to support_login_url,
            :flash =>{:notice => t('flash.general.access_denied')} if @user.nil?
 
     if @user.activate!(params)
@@ -65,6 +65,12 @@ class ActivationsController < SupportController
       load_password_policy
       render :action => :new
     end
+  rescue => e
+    Rails.logger.debug "******* EXCEPTION #{e} occured while activating user ##{@user.id} in account ##{current_account.id} *******"
+    NewRelic::Agent.notice_error(e,{:description => "error occured while activating user ##{@user.id} in account ##{current_account.id}"}) if @user && @user.valid?
+    current_account.reload
+    load_password_policy
+    render :action => :new
   end
 
   protected

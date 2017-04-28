@@ -84,7 +84,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                   nil,
                   "#{HASH_KEY}, #{ASSOCIATES}",
                   true)
-       resp_item?(resp) ? resp.data.item[ASSOCIATES].map {|e| e.to_i} : nil
+       resp_item?(resp) ? resp.data.item[ASSOCIATES].map {|e| e.to_i} : associates_from_db
       end
   end
 
@@ -138,6 +138,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
                 [ASSOCIATES])
     return resp.data.attributes[ASSOCIATES].map {|e| e.to_i} if resp_data?(resp)
     nil
+  end
+
+  def associates_from_db
+    if self.tracker_ticket? || self.assoc_parent_ticket?
+      associated_tickets =  Account.current.tickets.where(:associates_rdb => self.display_id).pluck(:display_id)
+    elsif self.related_ticket? || self.child_ticket?
+      associated_tickets = [self.associates_rdb]
+    end
+    notify_associates_fallback(associated_tickets) if associated_tickets.present?
+    self.associates = associated_tickets
+    associated_tickets
   end
 
   def resp_data?(resp)
@@ -219,5 +230,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def asstn_obj_count
       @asstn_obj_count ||= associates.present? ? associates.count : 0
+    end
+
+    def notify_associates_fallback(associated_tickets)
+      topic = SNS["associated_tickets_fallback_topic"]
+      subj = "Associated tickets dynamo fallback"
+      message = "Account id: #{self.account_id} \n Ticket id: #{self.display_id} \n Associated tickets id : #{associated_tickets.inspect} \n Time: #{Time.now.utc}"
+      DevNotification.publish(topic, subj, message.to_json)
     end
 end

@@ -55,6 +55,7 @@ class Export::Ticket < Struct.new(:export_params)
     reorder_export_params
     export_params[:format] = file_formats[0] unless file_formats.include? export_params[:format]
     delete_invisible_fields
+    format_contact_company_params
   end
 
   def set_current_user
@@ -70,10 +71,13 @@ class Export::Ticket < Struct.new(:export_params)
   end
 
   def csv_export
-    csv_hash = export_params[:export_fields]
     csv_string = CSVBridge.generate do |csv|
-      csv_headers = @headers.collect {|header| csv_hash[header]}
-      csv << csv_headers
+      csv_headers = @headers.collect {|header| export_params[:export_fields][header]}
+      csv_headers << @contact_headers.collect {|header| 
+                      export_params[:contact_fields][header]} if @contact_headers.present?
+      csv_headers << @company_headers.collect {|header| 
+                      export_params[:company_fields][header]} if @company_headers.present?
+      csv << csv_headers.flatten
       ticket_data(csv)
     end
     csv_string 
@@ -114,29 +118,41 @@ class Export::Ticket < Struct.new(:export_params)
   def add_to_records(items)
     @no_tickets = false
     @custom_field_names = Account.current.ticket_fields.custom_fields.pluck(:name)
-    date_format = Account.current.date_type(:short_day_separated)
     ActiveRecord::Associations::Preloader.new(items, preload_associations).run
 
     items.each do |item|
       record = []
-      @headers.each do |val|
-        begin
+      data = ""
+      begin
+        @headers.each do |val|
           data = export_params[:archived_tickets] ? fetch_field_value(item, val) : item.send(val)
-          if data.present?
-            if DATE_TIME_PARSE.include?(val.to_sym)
-              data = parse_date(data)
-            elsif @custom_field_names.include?(val) && data.is_a?(Time)
-              data = data.utc.strftime(date_format)
-            end
-          end
-          record << escape_html(strip_equal(data))
-        rescue Exception => e
-          NewRelic::Agent.notice_error(e,{:custom_params => {:ticket_id => item.id }})
-          Rails.logger.info "Exception in tickets export::: Ticket:: #{item}, data:: #{data}"
+          record << format_data(val, data)
         end
+        ['contact', 'company'].each do |type|
+          instance_variable_get("@#{type}_headers").each do |val|
+            assoc = type.eql?('contact') ? 'requester' : 'company'
+            data = item.send(assoc).respond_to?(val) ? item.send(assoc).send(val) : ""
+            record << format_data(val, data)
+          end
+        end
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e,{:custom_params => {:ticket_id => item.id }})
+        Rails.logger.info "Exception in tickets export::: Ticket:: #{item}, data:: #{data}"
       end
       @records << record
     end
+  end
+
+  def format_data(val, data)
+    date_format = Account.current.date_type(:short_day_separated)
+    if data.present?
+      if DATE_TIME_PARSE.include?(val.to_sym)
+        data = parse_date(data)
+      elsif @custom_field_names.include?(val) && data.is_a?(Time)
+        data = data.utc.strftime(date_format)
+      end
+    end
+    escape_html(strip_equal(data))
   end
 
   def preload_associations
@@ -146,10 +162,14 @@ class Export::Ticket < Struct.new(:export_params)
         associations << { :schema_less_ticket => :product }
       elsif @custom_field_names.include?(val)
         associations << { :flexifield => { :flexifield_def => :flexifield_def_entries } }
+      elsif val.eql?("ticket_survey_results") && Account.current.new_survey_enabled?
+        associations << { :custom_survey_results => [:survey_result_data, {:survey => {:survey_default_question => [:survey, :custom_field_choices_asc, :custom_field_choices_desc]}}] }
       elsif Helpdesk::TicketModelExtension::ASSOCIATION_BY_VALUE[val]
         associations << Helpdesk::TicketModelExtension::ASSOCIATION_BY_VALUE[val]
       end
     end
+    associations << :requester if @contact_headers.present?
+    associations << :company if @company_headers.present?
     associations.uniq
   end
 
@@ -175,6 +195,18 @@ class Export::Ticket < Struct.new(:export_params)
     @headers.delete_if{|header_key|
       !allowed_fields.include?(header_key)
     }
+  end
+
+  def format_contact_company_params
+    return unless Account.current.ticket_contact_export_enabled?
+    ["contact", "company"].each do |type|
+      next if export_params["#{type}_fields".to_sym].blank?
+      reorder_contact_company_fields type
+      instance_variable_set("@#{type}_headers", 
+        export_params["#{type}_fields".to_sym].keys.delete_if{|header_key|
+          !contact_company_export_fields(type).include?(header_key.to_s)
+      })
+    end
   end
 
   def parse_date(date_time)
@@ -269,18 +301,28 @@ class Export::Ticket < Struct.new(:export_params)
     export_fields = export_params[:export_fields]
     return if export_fields.blank?
     ticket_fields   = default_export_fields_order.merge(custom_export_fields_order)
+    
+    export_params[:export_fields] = sort_fields export_fields, ticket_fields
+  end
 
+  def reorder_contact_company_fields type
+    export_fields = export_params[:"#{type}_fields"]
+    actual_fields = contact_company_fields_order(type)
+
+    export_params[:"#{type}_fields"] = sort_fields export_fields, actual_fields
+  end
+
+  def sort_fields export_fields, actual_fields
     param_position_hash = export_fields.keys.inject({}) do |hash, key|
-      hash[key] = ticket_fields[key]      
+      hash[key] = actual_fields[key] if actual_fields[key]   
       hash
     end
     sorted_param_list = param_position_hash.sort_by{|k,v| v}
 
-    sorted_export_fields = sorted_param_list.inject({}) do |hash, element|
+    sorted_param_list.inject({}) do |hash, element|
       hash[element[0]] = export_fields[element[0]]
       hash
-    end 
-    export_params[:export_fields] = sorted_export_fields
+    end
   end
 
 end

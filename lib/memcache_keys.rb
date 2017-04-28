@@ -63,6 +63,8 @@ module MemcacheKeys
   FORUM_CATEGORIES = "v1/FORUM_CATEGORIES:%{account_id}"
 
   ALL_SOLUTION_CATEGORIES = "v1/ALL_SOLUTION_CATEGORIES:%{account_id}"
+  
+  ACCOUNT_ACTIVITY_EXPORT = "v1/ACCOUNT_ACTIVITY_EXPORT:%{account_id}"
 
   CONTACT_FORM_FIELDS = "v1/CONTACT_FORM_FIELDS:%{account_id}:%{contact_form_id}"
 
@@ -135,7 +137,7 @@ module MemcacheKeys
 
   MKP_EXTENSIONS = "v1/FA:MKP_EXTENSIONS:%{category_id}:%{type}:%{locale_id}:%{sort_by}"
   
-  CUSTOM_APPS = "v1/FA:CUSTOM_APPS:%{account_id}:%{locale_id}"
+  CUSTOM_APPS = "v2/FA:CUSTOM_APPS:%{account_id}:%{locale_id}"
 
   EXTENSION_DETAILS = "v2/FA:EXTENSION:%{extension_id}:%{locale_id}"
 
@@ -157,11 +159,11 @@ module MemcacheKeys
 
   REQUESTER_WIDGET_FIELDS = "v1/REQUESTER_WIDGET_FIELDS:%{account_id}"
 
-  AGENT_NEW_TICKET_FORM = "v2/AGENT_NEW_TICKET_FORM:%{account_id}:%{language}"
+  AGENT_NEW_TICKET_FORM = "v3/AGENT_NEW_TICKET_FORM:%{account_id}:%{language}"
 
   ACCOUNT_INSTALLED_APPS_IN_COMPANY_PAGE = "V1/ACCOUNT_INSTALLED_APPS_IN_COMPANY_PAGE:%{account_id}"
 
-  COMPOSE_EMAIL_FORM = "v2/COMPOSE_EMAIL_FORM:%{account_id}:%{language}"
+  COMPOSE_EMAIL_FORM = "v3/COMPOSE_EMAIL_FORM:%{account_id}:%{language}"
 
   TKT_TEMPLATES_COUNT = "v1/TKT_TEMPLATES_COUNT:%{account_id}"
 
@@ -170,6 +172,12 @@ module MemcacheKeys
   SITEMAP_KEY = "SITEMAP:%{account_id}:%{portal_id}"
 
   MOST_VIEWED_ARTICLES = "MOST_VIEWED_ARTICLES:%{account_id}:%{language_id}:%{cache_version}"
+
+  ACCOUNT_REQUIRED_TICKET_FIELDS = "ACCOUNT_REQUIRED_TICKET_FIELDS:%{account_id}"
+
+  ACCOUNT_SECTION_PARENT_FIELDS = "ACCOUNT_SECTION_PARENT_FIELDS:%{account_id}"
+
+  ACCOUNT_DASHBOARD_SHARD_NAME = "v1/ACCOUNT_DASHBOARD_SHARD_NAME:%{account_id}"
 
   class << self
 

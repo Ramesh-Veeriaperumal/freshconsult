@@ -826,7 +826,6 @@ jQuery.fn.serializeObject = function(){
             {
               this.name = keys[0] + '[' + keys[1] + ']'
               keys.pop();
-              merge = parseFloat(merge);
               reverse_key = this.name
             }
             else if (jQuery(self).find('[name="'+this.name+'"]').hasClass("numeric"))

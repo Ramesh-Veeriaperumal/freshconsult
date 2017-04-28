@@ -54,4 +54,6 @@ class User < ActiveRecord::Base
     'agent_topic' => 6266
   }
 
+  ACTIVATION_ATTRIBUTES = [:name, :phone, :job_title, :password, :password_confirmation]
+
 end

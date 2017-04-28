@@ -1,0 +1,4 @@
+<% if params[:ticket_id].present? %>
+	<h3 class="lead"><%=t('ticket.parent_child.childticket_sidebar_title')%></h3>
+	<p><%= t('ticket.parent_child.childticket_sidebar').html_safe %></p>
+<% end %>

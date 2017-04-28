@@ -16,6 +16,8 @@ module MarketplaceConfig
   ADMIN_OAUTH_SECRET = config[:admin_oauth_secret]
   CDN_STATIC_ASSETS = config[:cdn_static_assets]
   CACHE_INVALIDATION_TIME = config[:cache_invalidation_time]
+  CUSTOM_APPS_CACHE_INVD_TIME = config[:custom_apps_cache_invd_time]
+  INTEGRATIONS_CACHE_INVD_TIME = config[:integrations_cache_invd_time]
   ACC_API_TIMEOUT = { :read => config[:acc_api_read_timeout], :conn => config[:acc_api_conn_timeout] }
   MKP_OAUTH_TIMEOUT = { :read => config[:mkp_oauth_read_timeout], :conn => config[:mkp_oauth_conn_timeout] }
   GLOBAL_API_TIMEOUT = { :read => config[:global_api_read_timeout], :conn => config[:global_api_conn_timeout] }

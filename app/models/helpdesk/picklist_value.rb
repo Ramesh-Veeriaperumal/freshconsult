@@ -1,11 +1,14 @@
 class Helpdesk::PicklistValue < ActiveRecord::Base
   
   include MemcacheKeys
+  include Memcache::MarshalDumpMethods
 
   belongs_to_account
   self.table_name =  "helpdesk_picklist_values"
   validates_presence_of :value
   validates_uniqueness_of :value, :scope => [:pickable_id, :pickable_type, :account_id], :if => 'pickable_id.present?'
+
+  attr_accessor :required_ticket_fields, :section_ticket_fields
   
   belongs_to :pickable, :polymorphic => true
 
@@ -25,11 +28,19 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
   before_create :set_account_id
 
   after_commit :clear_cache
+
+  CACHEABLE_ATTRIBUTES = ["id", "account_id", "pickable_id", "pickable_type", "value", "position", "created_at", "updated_at"]
   
   # scope_condition for acts_as_list and as well for using index in fetching sub_picklist_values
   def scope_condition
     "pickable_id = #{pickable_id} AND #{connection.quote_column_name("pickable_type")} = 
     '#{pickable_type}'"
+  end
+
+  def custom_cache_attributes
+    {
+      :section_ticket_fields => section_ticket_fields
+    }
   end
 
   def choices=(c_attr)
@@ -43,15 +54,12 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
     end  
   end
 
+  def required_ticket_fields
+    @required_ticket_fields ||= filter_fields section_ticket_fields
+  end
+
   def section_ticket_fields
-    section_tkt_fields = []
-    unless section.blank?
-      picklist_section_fields = section.section_fields
-      picklist_section_fields.each do |section_field|
-        section_tkt_fields.push(section_field.ticket_field)
-      end
-    end
-    section_tkt_fields
+    @section_ticket_fields ||= (section.present?) ? section.section_fields.map(&:ticket_field) : []
   end
 
   def choices
@@ -70,6 +78,10 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
   private
     def set_account_id
       self.account_id = pickable.account_id
+    end
+
+    def filter_fields fields
+      fields.select {|field| field.required_for_closure? }
     end
 
 end

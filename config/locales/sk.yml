@@ -1982,7 +1982,7 @@ sk:
     assumed_text: "Zobrazuje sa ako"
     help_center: "Ako Vám dnes môžeme pomôcť?"
     new_support_ticket: "Nový tiket na podporu"
-    check_ticket_status: "Prrveriť stav tiketu"
+    check_ticket_status: "Preveriť stav tiketu"
     user_available: "Bude Vám automaticky pridelený<br>nový tiket."
     user_not_available: "Nový tiket vám NEBUDE <br>automaticky pridelený."
     tabs: 

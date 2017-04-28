@@ -44,6 +44,7 @@ window.Fjax = window.Fjax || {};
 			"/phone/dashboard": 'freshfonedashboard',
 
 			"/reports/phone/summary_reports": 'freshfonereports',
+			"/reports/scheduled_export": 'ticketschedule',
 			"/reports": 'helpdeskreports',
 			"/reports/v2": 'helpdeskreports',
 

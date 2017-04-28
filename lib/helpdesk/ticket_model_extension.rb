@@ -63,6 +63,12 @@ module Helpdesk::TicketModelExtension
     field_mapping
   end
 
+  def contact_company_fields_order type
+    Account.current.send("#{type}_form")
+      .send("#{type}_fields_from_cache")
+      .map{|f| [f.name, f.position]}.to_h
+  end
+
    def self.csv_headers
       self.exportable_fields.map do |i| 
          {:label => I18n.t(i[0]), :value => i[1], :selected => i[2] }

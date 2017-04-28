@@ -57,6 +57,9 @@ begin
   #Freshfone Call Tracker
   $sqs_freshfone_tracker = AWS::SQS.new.queues.named(SQS[:freshfone_call_tracker])
 
+  #Email failure reference from activities service
+  $sqs_email_failure_reference = AWS::SQS.new.queues.named(SQS[:fd_email_failure_reference])
+  
   # Add loop if more queues
   #
   SQS_V2_QUEUE_URLS = {
@@ -78,7 +81,8 @@ begin
     SQS[:email_dead_letter_queue]     => AwsWrapper::SqsV2.queue_url(SQS[:email_dead_letter_queue]),
     SQS[:agent_collision_queue] => AwsWrapper::SqsV2.queue_url(SQS[:agent_collision_queue]),
     SQS[:collab_agent_update_queue] => AwsWrapper::SqsV2.queue_url(SQS[:collab_agent_update_queue]),
-    SQS[:collab_ticket_update_queue] => AwsWrapper::SqsV2.queue_url(SQS[:collab_ticket_update_queue])
+    SQS[:collab_ticket_update_queue] => AwsWrapper::SqsV2.queue_url(SQS[:collab_ticket_update_queue]),
+    SQS[:fd_email_failure_reference] => AwsWrapper::SqsV2.queue_url(SQS[:fd_email_failure_reference])
   }
 
 rescue => e

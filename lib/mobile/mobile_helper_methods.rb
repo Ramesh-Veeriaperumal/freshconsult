@@ -14,6 +14,7 @@ module Mobile::MobileHelperMethods
                   }
 
   DOMAINS =  [ :localhost, :"192.168.1.28", :"siva.freshbugs.com", :"freshvikram.freshbugs.com", :"m.freshbugs.com" ]
+  IOS_DEVICES = ["iPod touch", "iPad", "iPhone"]
   
   def self.included(base)
     base.send :helper_method, :set_mobile, :mobile?, :allowed_domain?, :mobile_agent?, :set_native_mobile
@@ -96,26 +97,32 @@ module Mobile::MobileHelperMethods
       @item[:body_html] = RedCloth.new(textiled_body).to_html.gsub(/\n/,'<br />') unless textiled_body.nil?
     end
 
-    def populate_private
+    def populate_private item = @item
       if params[:helpdesk_note][:private].nil? and !params["public"].nil?
         is_public = params["public"]
         is_public = is_public == true || is_public =~ (/(true|t|yes|y|1)$/i) ? true : false
-        @item[:private] = !is_public
+        item[:private] = !is_public
       end
     end
 
-    def prepare_mobile_note
+    def prepare_mobile_note item = @item
       if mobile?
         # formate_body_html
-        populate_private
+        populate_private item
       end 
     end
 
     def shared_ownership_supported?
       device_desc = JSON.parse(request.env["HTTP_REQUEST_ID"])["device_desc"]
       app_version = Gem::Version.new(JSON.parse(request.env["HTTP_REQUEST_ID"])["app_version"])
-      devices = ["iPod touch", "iPad", "iPhone"]
-      app_version <= Gem::Version.new('4.4') && devices.include?(device_desc) ? false : true
+      !(app_version <= Gem::Version.new('4.4') && IOS_DEVICES.include?(device_desc))
+    end
+
+    def mobile_canned_response_search_supported?
+      app_version = Gem::Version.new(JSON.parse(request.env["HTTP_REQUEST_ID"])["app_version"])
+      device_desc = JSON.parse(request.env["HTTP_REQUEST_ID"])["device_desc"]
+
+      (app_version >= Gem::Version.new('5.0') && IOS_DEVICES.include?(device_desc)) || (app_version >= Gem::Version.new('4.0') && !IOS_DEVICES.include?(device_desc))    
     end
 
 end

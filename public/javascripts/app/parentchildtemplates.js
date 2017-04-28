@@ -249,7 +249,7 @@ window.App = window.App || {};
 			}else
 				$('#inherit-parent').val('all')
 			self.clearData();
-			$('.inherit_parent').attr({'data-inherit-all':true,'data-original-title':customMessages.undoParentInherit})
+			$('.inherit_parent').attr({'data-inherit-all':true,'data-original-title':customMessages.undoParentInheritTooltip})
 				.removeClass('ficon-inherit-parent').addClass('ficon-undo-inherit').parent().addClass('parent-change');
 			$('.inherit_parent_label').text(customMessages.undoParentInherit);
 			this.enableDisableAllFields(true);
@@ -271,7 +271,7 @@ window.App = window.App || {};
 				$('#ticket_template.ticket_template_form').data('formChanged', true);
 			}else{
 				$('#ticket_template.ticket_template_form').data('formChanged', false);
-			}	
+			}
 		},
 		childExistingChange: function(status,value){// enable or disable all buttons based on status
 			var self=this;
@@ -693,6 +693,9 @@ window.App = window.App || {};
       }
       // return failureStatus
 	  },
+	  initDynamicSection: function(){
+	  	$('.dynamic_sections').trigger('change');
+	  },
 		bindEvents:function(){ //bind events
 			invokeRedactor('template_data_ticket_body_attributes_description_html', 'template');
 			$('body')
@@ -714,10 +717,16 @@ window.App = window.App || {};
 
 		  // Need to make the code generic to handle the custom dropdown fields sections.
 		  $("body")
-		    .on("change.template_form",'#template_data_ticket_type', function(e){
-		      var id = $("option:selected", this).data("id");
-		      $('ul.ticket_section').remove();
-		      var element = $('#picklist_section_'+id).parent();
+				.on("change.template_form",'.dynamic_sections', function(e){
+					var id;
+					var $el = jQuery(this);
+					var selected = $el.find(':selected');
+					if (selected.length > 0){
+					  id = selected.data().id;
+					}
+					var nextElement = $el.closest('li').next();
+					nextElement.find('ul.ticket_section').remove();
+					var element = $('#picklist_section_'+id).parent();
 		      if(element.length != 0) {
 		        element.append($('#picklist_section_'+id).val()
 		                .replace(new RegExp('&lt', 'g'), '<')
@@ -827,7 +836,7 @@ window.App = window.App || {};
 					if(dataInheritAll==='false'){
 						self.inheritAllParent();
 					}else{
-						$('.inherit_parent').attr({'data-inherit-all':false,'data-original-title':customMessages.insertParent})
+						$('.inherit_parent').attr({'data-inherit-all':false,'data-original-title':customMessages.inheritParentTooltip})
 							.removeClass('ficon-undo-inherit').addClass('ficon-inherit-parent').parent().removeClass('parent-change');
 						$('.inherit_parent_label').text(customMessages.insertParent);
 						self.clearData();

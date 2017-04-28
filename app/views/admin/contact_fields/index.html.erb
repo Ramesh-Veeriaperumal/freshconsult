@@ -89,10 +89,11 @@
 
     var is_multiple_contact_feature_present = <%= Account.current.features?(:multiple_companies_toggle)%>;
     var is_multiple_contact_feature_enabled = <%= Account.current.features?(:multiple_user_companies)%>;
+    var is_unique_contact_idetifier_enabled = <%= Account.current.unique_contact_identifier_enabled? %>
 
     var customField = new CustomFields({existingFields : customFields, 
                         customMessages: tf_lang,
-                        nonEditableFields: ['default_tag_names', 'default_description', 'default_client_manager'],
+                        nonEditableFields: ['default_tag_names', 'default_description', 'default_client_manager', 'default_unique_external_id'],
                         inVisbileFields: ['default_client_manager'],
                         disabledByDefault: {
                                 'default_company_name' : 

@@ -33,7 +33,8 @@ module RabbitMq::Utils
       "account_id"            =>  Account.current.id,
       "shard"                 =>  shard_info,
       "#{model}_properties"   =>  {},
-      "subscriber_properties" =>  {}
+      "subscriber_properties" =>  {},
+      "bulk_publish"          =>  false
     }
   end
 
@@ -89,6 +90,7 @@ module RabbitMq::Utils
     # Currently need options only for reports, so adding all options directly to reports
     # TODO Need to change options as hash with subscriber name as key and modify the code as generic
     message["subscriber_properties"]["reports"].merge!(options) if message["subscriber_properties"]["reports"].present?
+    message["bulk_publish"] = true
     message.to_json
   end
 

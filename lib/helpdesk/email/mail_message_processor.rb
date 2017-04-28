@@ -49,7 +49,7 @@ module Helpdesk
 					Rails.logger.info "Processed email params #{params.except(:text, :html).inspect}"
 					email_logger.info "Processed Parameters: #{params.inspect}"
 					params[:envelope] =  metadata[:envelope]
-					spam_data = check_for_spam
+					spam_data = check_for_spam(params)
 					self.ticket_params = params.merge({ :spam_info => spam_data ,:request_url => "Mimecontroller"})
 					ticket_data = create_ticket_or_note
 					Rails.logger.info "ticket_data : #{ticket_data.inspect}"
@@ -128,8 +128,8 @@ module Helpdesk
 				msg_queue.delete_message(message[:message_attributes].with_indifferent_access)
 			end
 
-			def check_for_spam
-				Helpdesk::Email::SpamDetector.new.check_spam(raw_eml, metadata[:envelope])
+			def check_for_spam(params)
+				Helpdesk::Email::SpamDetector.new.check_spam(params, metadata[:envelope])
 			end
 
 			def message
@@ -141,6 +141,7 @@ module Helpdesk
 			def get_archive_attributes(ticket_data) #check processed time
 				metadata_attributes = metadata
 				metadata_attributes.merge!(Hash[ticket_data.map{ |k,v| [k, v.to_s] }])
+				metadata_attributes.merge!(:processed_host => "#{Socket.gethostname}")
 				return metadata_attributes.with_indifferent_access
 			end
 

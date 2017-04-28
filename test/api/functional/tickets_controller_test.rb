@@ -1415,6 +1415,18 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
   end
 
+  def test_update_with_product_required_not_in_request_in_db
+    params_hash = { priority: 1 }
+    Helpdesk::TicketField.where(name: "product").update_all(required: true)
+    product = create_product
+    t = ticket
+    t.schema_less_ticket.update_column(:product_id, product.id)
+    put :update, construct_params({ id: t.display_id}, params_hash)
+    Helpdesk::TicketField.where(name: "product").update_all(required: false)
+    match_json(update_ticket_pattern({}, t.reload))
+    assert_response 200    
+  end
+
   def test_update_with_product_id_and_diff_email_config_id
     product = create_product
     product_1 = create_product

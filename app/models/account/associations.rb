@@ -115,6 +115,8 @@ class Account < ActiveRecord::Base
 
   has_many :skills, :order => "position", :class_name => 'Admin::Skill'
   has_many :user_skills
+  
+  has_one :activity_export, :class_name => 'ScheduledExport::Activity', dependent: :destroy
 
   #Scoping restriction for other models starts here
   has_many :account_va_rules, :class_name => 'VaRule'
@@ -331,4 +333,10 @@ class Account < ActiveRecord::Base
   has_many :sandbox_jobs,    :class_name => 'Admin::Sandbox::Job'
   
   has_many :ticket_subscriptions, :class_name => 'Helpdesk::Subscription'
+
+  has_many :required_ticket_fields, :class_name => 'Helpdesk::TicketField', :conditions => "parent_id IS null AND required_for_closure IS true AND field_options NOT LIKE '%section: true%' AND field_type NOT IN ('default_subject','default_description','default_company')",
+    :include => [:nested_ticket_fields, :picklist_values], :order => "helpdesk_ticket_fields.position"
+
+  has_many :section_parent_fields, :class_name => 'Helpdesk::TicketField', :conditions => "parent_id is NULL AND field_type IN ('default_ticket_type' , 'custom_dropdown') AND field_options LIKE '%section_present: true%'", :include => [:nested_ticket_fields, {:picklist_values => {:section => {:section_fields => :ticket_field}}}], :limit => Helpdesk::TicketField::SECTION_LIMIT
+
 end

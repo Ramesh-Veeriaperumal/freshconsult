@@ -14,11 +14,43 @@ module Cache::Memcache::Account
     base.extend ClassMethods
   end
 
+  def dashboard_shard_from_cache
+    key = ACCOUNT_DASHBOARD_SHARD_NAME % { :account_id => self.id }
+    MemcacheKeys.fetch(key) { 
+      count = Search::Dashboard::Count.new(nil, self.id, nil)
+      count.fetch_dashboard_shard
+    }
+  end
+
   def clear_cache
     key = ACCOUNT_BY_FULL_DOMAIN % { :full_domain => self.full_domain }
     MemcacheKeys.delete_from_cache key
     key = ACCOUNT_BY_FULL_DOMAIN % { :full_domain => @old_object.full_domain }
     MemcacheKeys.delete_from_cache key
+  end
+
+  def required_ticket_fields_from_cache
+    @required_ticket_fields ||= begin
+      key = ACCOUNT_REQUIRED_TICKET_FIELDS % { :account_id => self.id }
+      MemcacheKeys.fetch(key) { self.required_ticket_fields.all }      
+    end
+  end
+
+  def section_parent_fields_from_cache
+    @section_parent_fields ||= begin
+      key = ACCOUNT_SECTION_PARENT_FIELDS % { :account_id => self.id }
+      MemcacheKeys.fetch(key) { self.section_parent_fields.all } 
+    end
+  end
+
+  def clear_required_ticket_fields_cache
+    key = ACCOUNT_REQUIRED_TICKET_FIELDS % { :account_id => self.id }
+    MemcacheKeys.delete_from_cache(key)
+  end
+
+  def clear_section_parent_fields_cache
+    key = ACCOUNT_SECTION_PARENT_FIELDS % { :account_id => self.id }
+    MemcacheKeys.delete_from_cache(key)
   end
 
   def onhold_and_closed_statuses_from_cache
@@ -206,6 +238,15 @@ module Cache::Memcache::Account
       key = ACCOUNT_SKILLS % { :account_id => self.id }
       MemcacheKeys.fetch(key) do
         skills.find(:all)
+      end
+    end
+  end
+
+  def activity_export_from_cache
+    @activity_export_from_cache ||= begin
+      key = ACCOUNT_ACTIVITY_EXPORT % { :account_id => self.id }
+      MemcacheKeys.fetch(key) do
+        self.activity_export
       end
     end
   end

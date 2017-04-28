@@ -87,7 +87,13 @@ class UsersController < ApplicationController
 
   def profile_image_no_blank
     load_object
-    redirect_to (@user.avatar.nil? ? "" : @user.avatar.expiring_url(:thumb, 300))
+    if @user.avatar.present?
+      redirect_to @user.avatar.expiring_url(:thumb, 300)
+    elsif is_user_social(@user, 300).present?
+      redirect_to is_user_social(@user, 300)
+    else
+      redirect_to ""
+    end
   end
 
   def delete_avatar

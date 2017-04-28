@@ -14,9 +14,9 @@ module IntegrationServices::Services
       end
 
       def self.default_http_options
-        @@default_http_options ||= {
-          :request => {:timeout => 90, :open_timeout => 60},
-          :ssl => {:verify => false, :verify_depth => 30},
+        {
+          :request => {:timeout => 60, :open_timeout => 20}, 
+          :ssl => {:verify => false, :verify_depth => 5},
           :headers => {}
         }
       end

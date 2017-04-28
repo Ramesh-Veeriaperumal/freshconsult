@@ -12,6 +12,13 @@ module HelpdeskReports
         "display_id",
         "subject",
         "description",
+        "created_at",
+        "resolved_at",
+        "closed_at",
+        "updated_at",
+        "time_tracked_hours",
+        "outbound_count",
+        "inbound_count",
         "status_name",
         "priority_name",
         "source_name",
@@ -23,6 +30,10 @@ module HelpdeskReports
         "requester_info",
         "requester_phone",
         "ticket_tags",
+        "due_by",
+        "first_response_time",
+        "first_res_time_bhrs",
+        "resolution_time_bhrs",
         "ticket_survey_results"
       ]
 
