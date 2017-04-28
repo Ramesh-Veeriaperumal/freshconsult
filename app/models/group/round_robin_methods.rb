@@ -46,8 +46,10 @@ class Group < ActiveRecord::Base
           result    = update_agent_capping_with_lock(user_id, new_score)
 
           if result.is_a?(Array) && result[1].present?
+            status_ids   = Helpdesk::TicketStatus::sla_timer_on_status_ids(account)
+            db_count = tickets.visible.where("responder_id = ? and status in (?)", user_id, status_ids).count
             Rails.logger.debug "RR SUCCESS RR assignment for ticket : #{ticket_id} - 
-            #{user_id}, #{self.id}, #{new_score}, #{result.inspect}".squish
+            #{user_id}, #{self.id}, #{status_ids.inspect}, #{new_score}, #{db_count}, #{result.inspect}".squish
             return account.agents.find_by_user_id(user_id)
           end
         else
@@ -217,6 +219,8 @@ class Group < ActiveRecord::Base
   def rpush_to_rr_capping_queue ticket_id
     update_sorted_set("rpush", ticket_id)
     rpush_round_robin_redis(round_robin_tickets_key, ticket_id)
+    Rails.logger.debug "RR SUCCESS Added ticket to unassigned queue : #{ticket_id} 
+                        #{self.id} #{list_unassigned_tickets_in_group.inspect}".squish
   end
 
   def lpop_from_rr_capping_queue
