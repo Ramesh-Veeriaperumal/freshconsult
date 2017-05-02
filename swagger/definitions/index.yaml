@@ -116,6 +116,8 @@
     $ref: ./resource/portal.yaml
   installed_applications:
     $ref: ./resource/installed_applications.yaml
+  integrated_users:
+    $ref: ./resource/integrated_users.yaml
   integrated_resources:
     $ref: ./resource/integrated_resources.yaml
   scenario_automation:

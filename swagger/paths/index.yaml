@@ -174,7 +174,11 @@
   $ref: ./integrated_resources/list.yaml
 /integrated_resources/{id}:
   $ref: ./integrated_resources/crud.yaml
-
+# Integrated Users
+/integrated_users:
+  $ref: ./integrated_users/list.yaml
+/integrated_users/{id}:
+  $ref: ./integrated_users/crud.yaml
 #Social
 /twitter_handles:
   $ref: ./social/twitter_handles.yaml

@@ -1,0 +1,30 @@
+get:
+  tags: [Integrated Users]
+  summary: List a particular integrated user resource
+  description: List the integrated user resource
+  parameters:
+    - name: installed_application_id
+      in: path
+      type: number
+      required: true
+    - name: user_id
+      in: path
+      type: number
+      required: true
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          integrated_users:
+            type: array
+            items:
+              $ref: '#/definitions/integrated_users'
+    404:
+      description: No resource available
+
+
+
+
+              

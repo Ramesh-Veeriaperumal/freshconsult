@@ -11,21 +11,20 @@ module Ember
       if params[:integrated_resource][:local_integratable_type] == 'Helpdesk::Ticket'
         ticket_id = params[:integrated_resource][:local_integratable_id]
         ticket = fetch_ticket_using_display_id(ticket_id)
-        if ticket.nil?
-          render_custom_errors
-        else
-          params[:integrated_resource].delete(:local_integratable_id)
-          params[:integrated_resource][:local_integratable_id] = ticket.id
+        unless ticket.present?
+          log_and_render_404
+          return
         end
+        params[:integrated_resource].delete(:local_integratable_id)
+        params[:integrated_resource][:local_integratable_id] = ticket.id
       end
-
       application_id = params[:application_id].to_i
       params[:integrated_resource][:account] = Account.current
       params.delete(:application_id)
       params['application_id'] = application_id
       @item = Integrations::IntegratedResource.createResource(params)
       if @item.blank?
-        render_custom_errors
+        return render_custom_errors
       else
         render '/ember/integrated_resources/show'
       end

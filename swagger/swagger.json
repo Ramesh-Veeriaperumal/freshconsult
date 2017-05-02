@@ -2940,25 +2940,18 @@
         "summary": "Show",
         "parameters": [
           {
-            "name": "name",
-            "in": "query",
-            "type": "string",
-            "required": true
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "required": true,
+            "description": "App Id"
           }
         ],
         "responses": {
           "200": {
             "description": "Success",
             "schema": {
-              "type": "object",
-              "properties": {
-                "installed_applications": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/installed_applications"
-                  }
-                }
-              }
+              "$ref": "#/definitions/installed_applications"
             }
           },
           "404": {
@@ -2967,12 +2960,13 @@
         }
       }
     },
-    "/integrated_resources/": {
+    "/integrated_resources": {
       "get": {
         "tags": [
           "Integrated Resources"
         ],
-        "summary": "Resource Details",
+        "summary": "List a particular resource",
+        "description": "List the integrated resource of the currently logged in user",
         "parameters": [
           {
             "name": "installed_application_id",
@@ -3006,6 +3000,34 @@
                   }
                 }
               }
+            }
+          },
+          "404": {
+            "description": "No resource available"
+          }
+        }
+      }
+    },
+    "/integrated_resources/{id}": {
+      "get": {
+        "tags": [
+          "Integrated Resources"
+        ],
+        "summary": "Resource Details",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "required": true,
+            "description": "Resource Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/integrated_resources"
             }
           }
         }
@@ -3053,6 +3075,73 @@
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/integrated_resources"
+            }
+          }
+        }
+      }
+    },
+    "/integrated_users": {
+      "get": {
+        "tags": [
+          "Integrated Users"
+        ],
+        "summary": "List a particular integrated user resource",
+        "description": "List the integrated user resource",
+        "parameters": [
+          {
+            "name": "installed_application_id",
+            "in": "path",
+            "type": "number",
+            "required": true
+          },
+          {
+            "name": "user_id",
+            "in": "path",
+            "type": "number",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "integrated_users": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/integrated_users"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No resource available"
+          }
+        }
+      }
+    },
+    "/integrated_users/{id}": {
+      "get": {
+        "tags": [
+          "Integrated Users"
+        ],
+        "summary": "User Resource Details",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "required": true,
+            "description": "Resource Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/integrated_users"
             }
           }
         }
@@ -5505,6 +5594,34 @@
             "configs": {
               "type": "hash",
               "description": "Installed App Configs"
+            }
+          }
+        }
+      ]
+    },
+    "integrated_users": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/extension_generic"
+        },
+        {
+          "properties": {
+            "installed_application_id": {
+              "type": "number",
+              "description": "Installed App Id"
+            },
+            "user_id": {
+              "type": "number",
+              "description": "User Id"
+            },
+            "auth_info": {
+              "type": "hash",
+              "description": "Auth configs"
+            },
+            "remote_user_id": {
+              "type": "string",
+              "description": "Remote User Id"
             }
           }
         }

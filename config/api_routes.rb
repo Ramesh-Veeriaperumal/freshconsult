@@ -42,7 +42,7 @@ Helpkit::Application.routes.draw do
           post :topics, to: 'topics#create'
         end
       end
-      resources :topics, except: [:new, :edit, :index, :create]do
+      resources :topics, except: [:new, :edit, :index, :create] do
         member do
           get :comments, to: 'api_comments#topic_comments'
           post :follow, to: :follow
@@ -71,7 +71,6 @@ Helpkit::Application.routes.draw do
       end
     end
 
-
     resources :surveys, only: [:index] do
       collection do
         get :satisfaction_ratings, to: 'satisfaction_ratings#index'
@@ -80,7 +79,6 @@ Helpkit::Application.routes.draw do
 
     resources :roles, controller: 'api_roles', only: [:index, :show]
 
-    
     resources :roles, controller: 'api_roles', only: [:index, :show]
 
     namespace :settings do
@@ -140,10 +138,10 @@ Helpkit::Application.routes.draw do
 
     resources :company_fields, as: 'api_company_fields', controller: 'api_company_fields', only: [:index]
 
-    namespace :api_integrations, :path => "integrations" do
-      namespace :cti, :path => "cti" do
-        post :pop, :action => :create
-        get :details, :action => :index
+    namespace :api_integrations, path: 'integrations' do
+      namespace :cti, path: 'cti' do
+        post :pop, action: :create
+        get :details, action: :index
       end
     end
     resources :sla_policies, controller: 'api_sla_policies', only: [:index, :update]
@@ -219,8 +217,9 @@ Helpkit::Application.routes.draw do
     end
 
     resources :todos, controller: 'ember/todos', except: [:new, :edit]
-    resources :installed_applications, controller: 'ember/installed_applications', only: [:index,:show]
-    resources :integrated_resources, controller: 'ember/integrated_resources' , except: [:new, :edit]
+    resources :installed_applications, controller: 'ember/installed_applications', only: [:index, :show]
+    resources :integrated_resources, controller: 'ember/integrated_resources', except: [:new, :edit]
+    resources :integrated_users, controller: 'ember/integrated_users', only: [:index, :show]
 
     resources :contacts, controller: 'ember/contacts', except: [:new, :edit] do
       collection do

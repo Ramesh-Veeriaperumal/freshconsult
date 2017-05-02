@@ -11,12 +11,7 @@ get:
     200:
       description: Success
       schema:
-        type: object
-        properties:
-          integrated_resources:
-            type: array
-            items:
-              $ref: '#/definitions/integrated_resources'
+        $ref: '#/definitions/integrated_resources'
 delete:
   summary: Delete resource
   tags: [Integrated Resources]
