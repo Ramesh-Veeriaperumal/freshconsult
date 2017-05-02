@@ -74,7 +74,11 @@ class TicketDecorator < ApiDecorator
 
   def tweet
     return unless Account.current.features?(:twitter) && record.twitter?
-    record.tweet.attributes.slice('tweet_id', 'tweet_type', 'twitter_handle_id')
+    {
+      tweet_id: "#{record.tweet.tweet_id}",
+      tweet_type: record.tweet.tweet_type,
+      twitter_handle_id: record.tweet.twitter_handle_id,
+    }
   end
 
   def conversations

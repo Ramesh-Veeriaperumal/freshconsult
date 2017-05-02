@@ -26,6 +26,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   }
 
   SECTION_LIMIT = 2
+
   SECTION_DROPDOWNS = ["default_ticket_type", "custom_dropdown"]
 
   belongs_to_account
@@ -120,6 +121,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   scope :customer_visible, :conditions => { :visible_in_portal => true }
   scope :customer_editable, :conditions => { :editable_in_portal => true }
   scope :agent_required_fields, :conditions => { :required => true }
+  scope :agent_required_fields_for_closure, :conditions => { :required_for_closure => true }
   scope :type_field, :conditions => { :name => "ticket_type" }
   scope :status_field, :conditions => { :name => "status" }
   scope :default_company_field, :conditions => {:name => "company"}
@@ -405,6 +407,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   #Use as_json instead of to_json for future support Rails3 refer:(http://jonathanjulian.com/2010/04/rails-to_json-or-as_json/)
   def as_json(options={})
+    return super(options) unless options[:tailored_json].blank?
     options[:include] = [:nested_ticket_fields]
     options[:except] = [:account_id]
     options[:methods] = [:choices]

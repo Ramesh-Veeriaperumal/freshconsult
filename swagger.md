@@ -50,4 +50,3 @@ Request and response definitions are organised into different folders:
 After making the relevant changes, make sure to check if swagger.json is generated. If it is blank, make a dummy edit-save to generate it.
 
 Go to http://localhost.freshdesk-dev.com:3000/swagger/ to see if the changes are reflected.
-

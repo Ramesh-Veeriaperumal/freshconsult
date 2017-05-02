@@ -2,8 +2,7 @@
       please update the memcache key version. key_name :: AGENT_NEW_TICKET_FORM  -->
 
 <%= ticket_form.error_messages %>
-<%= hidden_field_tag :assoc_parent_id, params[:ticket_id] %>
-<% is_new_child_tkt = params[:action].eql?("new") && @assoc_parent_ticket %>
+<% is_new_child_tkt = defined?(is_child_form) ? is_child_form : false %>
 <% current_portal.ticket_fields_including_nested_fields.each do |field|
     next if field.section_field?
     if is_edit or params[:template_form] or is_new_child_tkt

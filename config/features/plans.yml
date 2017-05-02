@@ -16,6 +16,7 @@
       - :custom_ticket_views
       - :supervisor
       - :create_observer
+      - :system_observer_events
       - :sla_management
       - :email_commands
       - :assume_identity

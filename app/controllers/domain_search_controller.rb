@@ -6,17 +6,12 @@ class DomainSearchController < ActionController::Base
   before_filter :ensure_email#, :unset_current_account
 
   def locate_domain
-    agents = urls = []
-    
-    Sharding.execute_on_all_shards do
-      Sharding.run_on_slave do
-        agents = User.technicians.find_all_by_email(params[:user_email])
-        agents.each do |agent|
-          account = agent.account
-          urls.push(account.host)
-        end
-      end
-    end
+
+    # Get the list of associated accounts from dynamodb for a given email id
+    associated_accounts = AdminEmail::AssociatedAccounts.find params[:user_email]
+
+    # Get the host details for each accounts and store it for user notification.
+    urls = associated_accounts.map(&:host)
         
     urls.uniq!
     UserNotifier.helpdesk_url_reminder(params[:user_email], urls) if urls.present?

@@ -57,7 +57,8 @@ module ActionMailerCallbacks
         mail.delivery_method(:smtp, read_smtp_settings(category_id))
         set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email)
       else
-        category_id = get_notification_category_id(mail_type) || check_spam_category(mail, mail_type)
+        params = { :account_id => account_id, :ticket_id => ticket_id, :type => mail_type, :note_id => note_id }
+        category_id = get_notification_category_id(mail_type) || check_spam_category(mail, params)
         if category_id.blank?
           mailgun_traffic = get_mailgun_percentage
           if mailgun_traffic > 0 && Random::DEFAULT.rand(100) < mailgun_traffic
@@ -96,7 +97,8 @@ module ActionMailerCallbacks
         mail.header['X-Mailgun-Variables'] = "{\"message_id\": \"#{message_id}\"}"
       else
         Rails.logger.debug "Sending email via sendgrid"
-        mail.header['X-SMTPAPI'] = get_unique_args(from_email, account_id, ticket_id, note_id, mail_type, category_id)
+        subject = !mail.header[:subject].nil? ? mail.header[:subject].value : "No Subject"
+        mail.header['X-SMTPAPI'] = get_unique_args(from_email, account_id, ticket_id, note_id, mail_type, category_id, subject)
       end
     rescue => e
       Rails.logger.debug "Error while setting custom headers - #{e.message} - #{e.backtrace}"
@@ -161,14 +163,14 @@ module ActionMailerCallbacks
        false
     end
 
-    def get_unique_args(from_email, account_id = -1, ticket_id = -1, note_id = -1, mail_type = "", category_id = -1)
+    def get_unique_args(from_email, account_id = -1, ticket_id = -1, note_id = -1, mail_type = "", category_id = -1, subject = "")
       note_id_str = note_id != -1 ? "\"note_id\": #{note_id}," : ""
       shard = get_shard account_id
       shard_name = shard.nil? ? "\"shard_info\":\"unknown\"" : "\"shard_info\":\"#{shard.shard_name}\""
       "{\"unique_args\":{\"account_id\": #{account_id},\"ticket_id\":#{ticket_id}," \
         "#{note_id_str}" \
         "\"email_type\":\"#{mail_type}\",\"from_email\":\"#{from_email}\",\"category_id\":\"#{category_id}\"," \
-        "\"pod_info\":\"#{get_pod}\",#{shard_name} }}"
+        "\"pod_info\":\"#{get_pod}\",#{shard_name}}}"
     end
 
 
@@ -213,15 +215,19 @@ module ActionMailerCallbacks
       end
     end
 
-    def check_spam_category(mail, type)
+    def check_spam_category(mail, params)
       category = nil
-      notification_type = is_num?(type) ? type : get_notification_type_id(type) 
+      notification_type = is_num?(params[:type]) ? params[:type] : get_notification_type_id(params[:type]) 
       if account_created_recently? && spam_filtered_notifications.include?(notification_type)
-        response = FdSpamDetectionService::Service.new(Helpdesk::EMAIL[:outgoing_spam_account], mail.to_s).check_spam
+        params = {:headers => mail.header.to_s, :text => mail.text_part.to_s, :html => mail.html_part.to_s }
+        email = Helpdesk::Email::SpamDetector.construct_raw_mail(params)
+        response = FdSpamDetectionService::Service.new(Helpdesk::EMAIL[:outgoing_spam_account], email).check_spam
         category = Helpdesk::Email::OutgoingCategory::CATEGORY_BY_TYPE[:spam] if response.spam?
-        Rails.logger.info "Spam check response for outgoing email: #{response.spam?}"
+        Rails.logger.info "Spam check response for outgoing email with Account ID : #{params[:account_id]}, Ticket ID: #{params[:ticket_id]}, Note ID: #{params[:note_id]} - #{response.spam?}"
       end
       return category
+    rescue => e
+      Rails.logger.info "Error in outgoing email spam check: #{e.message} - #{e.backtrace}"
     end
   end
 end

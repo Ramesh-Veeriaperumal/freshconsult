@@ -249,7 +249,7 @@ window.App = window.App || {};
 			}else
 				$('#inherit-parent').val('all')
 			self.clearData();
-			$('.inherit_parent').attr({'data-inherit-all':true,'data-original-title':customMessages.undoParentInherit})
+			$('.inherit_parent').attr({'data-inherit-all':true,'data-original-title':customMessages.undoParentInheritTooltip})
 				.removeClass('ficon-inherit-parent').addClass('ficon-undo-inherit').parent().addClass('parent-change');
 			$('.inherit_parent_label').text(customMessages.undoParentInherit);
 			this.enableDisableAllFields(true);
@@ -719,11 +719,12 @@ window.App = window.App || {};
 		  $("body")
 				.on("change.template_form",'.dynamic_sections', function(e){
 					var id;
-					var selected = jQuery(this).find(':selected');
+					var $el = jQuery(this);
+					var selected = $el.find(':selected');
 					if (selected.length > 0){
 					  id = selected.data().id;
 					}
-					var nextElement = jQuery(this.closest('li').next());
+					var nextElement = $el.closest('li').next();
 					nextElement.find('ul.ticket_section').remove();
 					var element = $('#picklist_section_'+id).parent();
 		      if(element.length != 0) {
@@ -835,7 +836,7 @@ window.App = window.App || {};
 					if(dataInheritAll==='false'){
 						self.inheritAllParent();
 					}else{
-						$('.inherit_parent').attr({'data-inherit-all':false,'data-original-title':customMessages.insertParent})
+						$('.inherit_parent').attr({'data-inherit-all':false,'data-original-title':customMessages.inheritParentTooltip})
 							.removeClass('ficon-undo-inherit').addClass('ficon-inherit-parent').parent().removeClass('parent-change');
 						$('.inherit_parent_label').text(customMessages.insertParent);
 						self.clearData();

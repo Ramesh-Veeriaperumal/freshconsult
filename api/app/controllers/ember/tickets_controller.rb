@@ -13,8 +13,8 @@ module Ember
 
     before_filter :ticket_permission?, only: [:latest_note, :split_note]
     before_filter :load_note, only: [:split_note]
-    before_filter :disable_notification, if: :notification_not_required?
-    after_filter  :enable_notification, if: :notification_not_required?
+    before_filter :disable_notification, only: [:update, :update_properties], if: :notification_not_required?
+    after_filter  :enable_notification, only: [:update, :update_properties], if: :notification_not_required?
 
     def index
       sanitize_filter_params
@@ -125,6 +125,9 @@ module Ember
         @item.ticket_old_body = @item.ticket_old_body # This will prevent ticket_old_body query during save
         @item.inline_attachments = @item.inline_attachments
         @item.schema_less_ticket.product ||= current_portal.product unless cname_params.key?(:product_id)
+
+        # Default source is set to phone. Instead of portal as set in the model.
+        @item.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone] if @item.source === 0
       end
 
       def assign_attributes_for_update
@@ -254,7 +257,7 @@ module Ember
       end
 
       def notification_not_required?
-        @skip_notification ||= cname_params.try(:[], :skip_close_notification)
+        @skip_close_notification ||= cname_params.try(:[], :skip_close_notification)
       end
 
       def validate_url_params

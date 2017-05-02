@@ -153,6 +153,14 @@ module Ember
       assert latest_note.attachments.count == 1
     end
 
+    def test_create_with_spam_ticket
+      t = create_ticket(spam: true)
+      post :create, construct_params({version: 'private', id: t.display_id }, create_note_params_hash)
+      assert_response 404
+    ensure
+      t.update_attributes(spam: false)
+    end
+
     def test_reply_with_full_text
       params_hash = reply_note_params_hash.merge(full_text: Faker::Lorem.paragraph(10))
       post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
@@ -271,6 +279,14 @@ module Ember
       assert_response 201
       match_json(private_note_pattern(params_hash, Helpdesk::Note.last))
       match_json(private_note_pattern({}, Helpdesk::Note.last))
+    end
+
+    def test_reply_to_spammed_ticket
+      t = create_ticket(spam: true)
+      post :reply, construct_params({version: 'private', id: t.display_id }, reply_note_params_hash)
+      assert_response 404
+    ensure
+      t.update_attributes(spam: false)
     end
 
     def test_forward_with_invalid_cc_emails_count
@@ -677,6 +693,14 @@ module Ember
       assert latest_note.attachments.count == 1
     end
 
+    def test_forward_from_spammed_ticket
+      t = create_ticket(spam: true)
+      post :forward, construct_params({version: 'private', id: t.display_id }, forward_note_params_hash)
+      assert_response 404
+    ensure
+      t.update_attributes(spam: false)
+    end
+
     def test_ticket_conversations_with_fone_call
       # while creating freshfone account during tests MixpanelWrapper was throwing error, so stubing that
       MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
@@ -687,6 +711,15 @@ module Ember
       assert_response 200
       match_json(conversations_pattern(ticket))
       MixpanelWrapper.unstub(:send_to_mixpanel)
+    end
+
+    def test_ticket_conversations_on_spammed_ticket
+      t = create_ticket(spam: true)
+      get :ticket_conversations, controller_params(version: 'private', id: t.display_id)
+      assert_response 200
+      match_json(conversations_pattern(t))
+    ensure
+      t.update_attributes(spam: false)
     end
 
     def test_facebook_reply_without_params
@@ -711,6 +744,16 @@ module Ember
       post :facebook_reply, construct_params({version: 'private', id: ticket.display_id}, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('note_id', :absent_in_db, resource: :note, attribute: :note_id)])
+    end
+
+    def test_facebook_reply_failure
+      ticket = create_ticket_from_fb_post
+      Facebook::TicketActions::Util.stubs(:send_reply).returns(false)
+      params_hash = { body: Faker::Lorem.paragraph }
+      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('body', :unable_to_perform)])
+      Facebook::TicketActions::Util.unstub(:send_reply)
     end
 
     def test_facebook_reply_to_fb_post_ticket
@@ -791,6 +834,16 @@ module Ember
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params_hash, latest_note))
       match_json(private_note_pattern({}, latest_note))
+    end
+
+    def test_facebook_reply_to_spammed_ticket
+      ticket = create_ticket_from_fb_direct_message
+      ticket.update_attributes(spam: true)
+      params_hash = { body: Faker::Lorem.paragraph }
+      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      assert_response 404
+    ensure
+      ticket.update_attributes(spam: false)
     end
 
     def test_tweet_reply_without_params
@@ -974,6 +1027,15 @@ module Ember
       match_json(private_update_note_pattern(params_hash, note))
       match_json(private_update_note_pattern({}, note))
       assert_equal 1, note.cloud_files.count
+    end
+
+    def test_update_on_spammed_ticket
+      t = create_ticket(spam: true)
+      note = create_private_note(t)
+      put :update, construct_params({ version: 'private', id: note.id }, update_note_params_hash)
+      assert_response 403
+    ensure
+      t.update_attributes(spam: false)
     end
 
     def test_agent_reply_template_with_empty_signature

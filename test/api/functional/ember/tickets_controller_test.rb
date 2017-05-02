@@ -101,7 +101,7 @@ module Ember
       description = Faker::Lorem.paragraph
       @update_group ||= create_group_with_agents(@account, agent_list: [agent.id])
       params_hash = { description: description, subject: subject, priority: 4, status: 7, type: 'Incident',
-                      responder_id: agent.id, source: 3, tags: ['update_tag1', 'update_tag2'],
+                      responder_id: agent.id, tags: ['update_tag1', 'update_tag2'],
                       due_by: 12.days.since.iso8601, fr_due_by: 4.days.since.iso8601, group_id: @update_group.id }
       params_hash
     end
@@ -358,6 +358,16 @@ module Ember
       assert_response 201
       match_json(ticket_show_pattern(Helpdesk::Ticket.last))
       assert Helpdesk::Ticket.last.attachments.size == attachment_ids.size
+    end
+
+    def test_create_without_source
+      params_hash = ticket_params_hash.clone
+      params_hash.delete(:source)
+      post :create, construct_params({version: 'private'}, params_hash)
+      assert_response 201
+      latest_ticket = Helpdesk::Ticket.last
+      match_json(ticket_show_pattern(latest_ticket))
+      assert latest_ticket.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone]
     end
 
     def test_create_with_attachment_and_attachment_ids
@@ -792,6 +802,52 @@ module Ember
       get :show, controller_params(version: 'private', id: t.display_id, include: 'requester')
       assert_response 200
       match_json(ticket_show_pattern(ticket, nil, true))
+    end
+
+    def test_update_ticket_source
+      params_hash = update_ticket_params_hash.merge(source: 3)
+      put :update, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern(:source, :invalid_field)])
+    end
+
+    def test_update_closure_status_without_notification
+      t = ticket
+      ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
+      ticket_field.update_attribute(:required_for_closure, true)
+      update_params = { custom_fields: { 'test_custom_text' => 'Hello' }, status: 5, skip_close_notification: true }
+      params_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(update_params)
+      put :update, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 200
+      match_json(ticket_show_pattern(t.reload))
+      assert_equal 5, t.status
+    ensure
+      ticket_field.update_attribute(:required_for_closure, false)
+    end
+
+    def test_update_closure_of_parent_ticket_failure
+      parent_ticket = create_ticket
+      child_ticket = create_ticket
+      Helpdesk::Ticket.any_instance.stubs(:child_ticket?).returns(true)
+      Helpdesk::Ticket.any_instance.stubs(:associates).returns([child_ticket.display_id])
+      Helpdesk::Ticket.any_instance.stubs(:association_type).returns(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:assoc_parent])
+      params_hash = { status: 4 }
+      put :update, construct_params({ version: 'private', id: parent_ticket.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('status', :unresolved_child)])
+    end
+
+    def test_update_closure_of_parent_ticket_success
+      parent_ticket = create_ticket
+      child_ticket = create_ticket(status: 4)
+      Helpdesk::Ticket.any_instance.stubs(:child_ticket?).returns(true)
+      Helpdesk::Ticket.any_instance.stubs(:associates).returns([child_ticket.display_id])
+      Helpdesk::Ticket.any_instance.stubs(:association_type).returns(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:assoc_parent])
+      params_hash = { status: 4 }
+      put :update, construct_params({ version: 'private', id: parent_ticket.display_id }, params_hash)
+      assert_response 200
+      match_json(ticket_show_pattern(parent_ticket.reload))
+      assert_equal 4, parent_ticket.status
     end
 
     def test_update_with_attachment_ids

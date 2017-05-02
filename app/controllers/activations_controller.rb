@@ -3,29 +3,29 @@ class ActivationsController < SupportController
 
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:new, :create]
   skip_before_filter :redirect_to_locale, :only => :send_invite
-  
+
   def send_invite
     user = current_account.all_users.find params[:id]
     user.deliver_activation_instructions!(current_portal, true) if user and user.has_email?
     respond_to do |format|
-      format.html { 
-        flash[:notice] = t('users.activations.send_invite_success') 
+      format.html {
+        flash[:notice] = t('users.activations.send_invite_success')
         redirect_to(:back)
       }
-      format.js { 
+      format.js {
         render :json => { :activation_sent => true }
       }
     end
   end
 
   def new
-    @user = current_account.users.find_using_perishable_token(params[:activation_code], 1.weeks) 
+    @user = current_account.users.find_using_perishable_token(params[:activation_code], 1.weeks)
     if @user.nil?
       flash[:notice] = t('users.activations.code_expired')
       return redirect_to new_password_reset_path
     end
     load_password_policy
-  end  
+  end
 
   def new_email
     @email = current_account.user_emails.find_email_using_perishable_token(params[:activation_code],
@@ -52,8 +52,8 @@ class ActivationsController < SupportController
 
   def create
     @user = current_account.users.find_by_perishable_token(
-            params[:perishable_token]) unless params[:perishable_token].blank?
-    return redirect_to support_login_url, 
+          params[:perishable_token]) unless params[:perishable_token].blank?
+    return redirect_to support_login_url,
            :flash =>{:notice => t('flash.general.access_denied')} if @user.nil?
 
     if @user.activate!(params)
@@ -65,6 +65,12 @@ class ActivationsController < SupportController
       load_password_policy
       render :action => :new
     end
+  rescue => e
+    Rails.logger.debug "******* EXCEPTION #{e} occured while activating user ##{@user.id} in account ##{current_account.id} *******"
+    NewRelic::Agent.notice_error(e,{:description => "error occured while activating user ##{@user.id} in account ##{current_account.id}"}) if @user && @user.valid?
+    current_account.reload
+    load_password_policy
+    render :action => :new
   end
 
   protected

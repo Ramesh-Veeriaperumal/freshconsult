@@ -34,6 +34,7 @@ class UserEmail < ActiveRecord::Base
 
   # Drop all authorizations, if the email is changed
   after_update :drop_authorization, :if => [:email_changed?]
+  after_update :verify_account, :if => [:verified_changed?]
   after_commit :send_activation_on_update, on: :update, :if => [:check_for_email_change?]
 
   before_destroy :drop_authorization
@@ -132,5 +133,9 @@ class UserEmail < ActiveRecord::Base
     def change_email_status
       self.verified = false
       true
+    end
+
+    def verify_account
+      self.account.verify_account_with_email  if (!self.account.verified? && self.verified == true && self.user.privilege?(:admin_tasks))
     end
 end

@@ -13,7 +13,7 @@ class Helpdesk::NotesControllerTest < ActionController::TestCase
   end
 
   def test_delete_broadcast_note
-    enable_link_tickets do
+    enable_adv_ticketing(:link_tickets) do
       related_ticket_ids = create_link_tickets
       tracker = Helpdesk::Ticket.last
       broadcast_note = create_broadcast_note(:ticket_id => tracker.id)

@@ -33,7 +33,7 @@ module Helpdesk::TicketNotifications
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if (@model_changes.key?(:group_id) && group)
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if send_agent_assigned_notification?
     
-    if @model_changes.key?(:status)
+    if @model_changes.key?(:status) && !self.schedule_observer
       if (status == RESOLVED)
         notify_by_email(EmailNotification::TICKET_RESOLVED) 
         notify_watchers("resolved")

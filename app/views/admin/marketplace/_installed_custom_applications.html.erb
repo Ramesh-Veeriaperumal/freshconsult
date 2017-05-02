@@ -1,6 +1,8 @@
 <div class="custom-apps-list freshplugs-list tab-pane"  id="custom_apps">
   <div id="freshplug-tab-content" class="tab-content clear">
 
+    <% active_account = current_account.active? %>
+
     <div class="no-custom-apps clear text-center blank-slate">
       <span class="ficon-cubes fsize-60" style="opacity: 0.4;"></span>
       <h3><%= t('marketplace.no_custom_apps_installed') %></h3>
@@ -8,7 +10,7 @@
       <p class="txt">
         <%= t('marketplace.no_custom_apps_note_2') %>
       </p>
-      <a class="btn browse-btn btn-flat btn-primary btn-appgallery get-custom-apps-blank-state" href="" data-url="<%= custom_apps_admin_marketplace_extensions_path %>"><span class="ficon-cube-filled"></span> <%= t('marketplace.get_custom_apps') %></a>
+      <a class="btn browse-btn btn-flat btn-primary btn-appgallery get-custom-apps-blank-state <%= active_account ? '' : 'disabled' %>" href="" data-url="<%= active_account ? "#{custom_apps_admin_marketplace_extensions_path}" : '' %>"><span class="ficon-cube-filled"></span> <%= t('marketplace.get_custom_apps') %></a>
     </div>
 
     <ul>

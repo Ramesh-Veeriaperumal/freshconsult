@@ -4674,7 +4674,6 @@ li {
 }
 
 .senti_hover a.help i{color:#06c;}
-.senti_hover a.help i{color:#06c;}
 
 /* ********************** END OF STYLE FOR CUSTOMER SENTIMENT ********************** */
 
@@ -4845,5 +4844,11 @@ li {
         color: #A90329;
         display: inline-block;
     }
+}
+
+.add-child-tooltip {
+    max-width: 305px;
+    text-align: center;
+    @include padding(3px 8px 4px);
 }
 

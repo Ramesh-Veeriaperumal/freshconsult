@@ -64,7 +64,7 @@ module Ember
         description = Faker::Lorem.paragraph
         @update_group ||= create_group_with_agents(@account, agent_list: [agent.id])
         params_hash = { description: description, subject: subject, priority: 4, status: 7, type: 'Incident',
-                        responder_id: agent.id, source: 3, tags: ['update_tag1', 'update_tag2'],
+                        responder_id: agent.id, tags: ['update_tag1', 'update_tag2'],
                         due_by: 12.days.since.iso8601, fr_due_by: 4.days.since.iso8601, group_id: @update_group.id }
         params_hash
       end
@@ -183,7 +183,7 @@ module Ember
         params_hash = {ids: ticket_ids, properties: properties_hash}
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         failures = {}
-        ticket_ids.each {|id| failures[id] = { ticket_field.label => [:datatype_mismatch, { code: :missing_field, expected_data_type: :String }]}}
+        ticket_ids.each {|id| failures[id] = { ticket_field.label => [:datatype_mismatch, { expected_data_type: :String, given_data_type: 'Null', prepend_msg: :input_received }]}}
         match_json(partial_success_response_pattern([], failures))
         assert_response 202
       ensure
@@ -378,9 +378,7 @@ module Ember
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by)
         params_hash = {ids: ticket_ids, properties: properties_hash}
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
-        failures = {}
-        ticket_ids.each {|id| failures[id] = { 'test_custom_paragraph' => [:datatype_mismatch, { code: :missing_field, expected_data_type: :String }]}}
-        match_json(partial_success_response_pattern([], failures))
+        match_json(partial_success_response_pattern(ticket_ids, {}))
         assert_response 202
       ensure
         new_custom_field.update_attributes(required: false)
@@ -403,9 +401,7 @@ module Ember
         properties_hash[:type] = 'Incident'
         params_hash = {ids: ticket_ids, properties: properties_hash}
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
-        failures = {}
-        ticket_ids.each {|id| failures[id] = { 'test_custom_text' => [:datatype_mismatch, { code: :missing_field, expected_data_type: :String }]}}
-        match_json(partial_success_response_pattern([], failures))
+        match_json(partial_success_response_pattern(ticket_ids, {}))
         assert_response 202
       ensure
         @account.ticket_fields.find_by_name("test_custom_text_#{@account.id}").update_attributes(required: false)
@@ -444,7 +440,7 @@ module Ember
       end
 
       def test_bulk_update_with_tags
-        tag = Faker::Lorem.word
+        tag = "#{Faker::Lorem.word}_#{Time.now.to_s}"
         ticket = create_ticket
         ticket_ids = [ticket.display_id]
         ticket.tags.create(name: tag)
@@ -453,6 +449,24 @@ module Ember
         match_json(partial_success_response_pattern(ticket_ids, {}))
         assert ticket.tag_names.include? (tag)
         assert_response 202
+      end
+
+      def test_bulk_update_with_mandatory_custom_dropdown
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+        ticket_field.update_attribute(:required_for_closure, true)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket.display_id
+        end
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5)
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        failures = {}
+        ticket_ids.each {|id| failures[id] = { ticket_field.label => [:not_included, list: CUSTOM_FIELDS_CHOICES.join(',') ]}}
+        match_json(partial_success_response_pattern([], failures))
+        assert_response 202
+      ensure
+        ticket_field.update_attribute(:required_for_closure, false)
       end
     end
   end

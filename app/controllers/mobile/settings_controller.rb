@@ -24,6 +24,8 @@ class Mobile::SettingsController < ApplicationController
       # {'id':'...','times':'...','app_version':'1.2.3','api_version':1,'mobile_type':1,'os_version':'1.1.1','domain_name':'something','device_desc':'moto-g'}
       result_code = MOBILE_API_RESULT_PARAM_FAILED
       sso_enabled = false
+      google_signin_enabled = false
+      facebook_signin_enabled = false
       sso_logout_url = ""
       full_domain = ""
       unless request.headers['Request-Id'].nil?
@@ -41,6 +43,8 @@ class Mobile::SettingsController < ApplicationController
                     full_domain = account.full_domain
                     sso_enabled = account.sso_enabled? 
                     sso_logout_url = account.sso_logout_url
+                    google_signin_enabled = account.features_included?(:google_signin)
+                    facebook_signin_enabled = account.features_included?(:facebook_signin)
                   end
                 end
               end
@@ -50,6 +54,8 @@ class Mobile::SettingsController < ApplicationController
               sso_enabled = response['account_id']['sso_enabled']
               sso_logout_url = response['account_id']['sso_logout_url']
               full_domain = response['account_id']['full_domain']
+              google_signin_enabled = response['account_id']['google_signin_enabled']
+              facebook_signin_enabled = response['account_id']['facebook_signin_enabled']
             end
           end
           result_code = MOBILE_API_RESULT_SUCCESS  #Success
@@ -59,7 +65,7 @@ class Mobile::SettingsController < ApplicationController
         end
 
       end 
-    render :json => {sso_logout_url: sso_logout_url,sso_enabled: sso_enabled,full_domain: full_domain,result_code: result_code}
+    render :json => {sso_logout_url: sso_logout_url,sso_enabled: sso_enabled,full_domain: full_domain,result_code: result_code,google_signin_enabled: google_signin_enabled, facebook_signin_enabled: facebook_signin_enabled}
   end
 
 # Mobile devices to fetch admin level settings

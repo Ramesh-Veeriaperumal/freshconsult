@@ -14,9 +14,10 @@ window.App.FilterOps = window.App.FilterOps || {};
     filter_remote_url : {
             "agent" : "agents",
             "company" : "companies",
-            "tags" : "tags"
+            "tags" : "tags",
+            "requesters" : "requesters"
     },
-    filter_remote : ["tags","agent","company"],
+    filter_remote : ["tags","agent","company","requesters"],
     default_available_filter : [ "agent","group","status","priority" ],
     bindSearchFilterEvents: function(context) {
       var _this = this;
@@ -125,6 +126,16 @@ window.App.FilterOps = window.App.FilterOps || {};
          var config = {
             maximumSelectionSize: 5
         };
+        if(condition == "requesters") {
+            config.maximumSelectionSize = 3;
+            config.formatResult = function(state) {
+                return "<div style='font-weight:bold'>" + state.value + "</div><div>" + state.email + "</div>";
+            };
+            config.formatSelection = function(state) {
+                return "<div>" + state.value + "</div>";
+            };
+            config.escapeMarkup = function(m) { return m; }
+        }
          config.ajax = {
             url: "/search/autocomplete/" + _this.filter_remote_url[condition],
             dataType: 'json',
@@ -137,15 +148,21 @@ window.App.FilterOps = window.App.FilterOps || {};
             },
             results: function (data, params) {
                       var results = [];
-                      jQuery.each(data.results, function(index, item){
-                            results.push({
-                              id: item.id,
-                              text: item.value
-                            });    
-                      });
-                      return {
-                        results: results 
-                      };
+                      if(condition != 'requesters') {
+                        jQuery.each(data.results, function(index, item){
+                                results.push({
+                                     id: item.id,
+                                    text: item.value
+                                });    
+                        });
+                        return {
+                            results: results 
+                        };    
+                      } else {
+                          return {
+                              results : data.results
+                          }
+                    }
             },
             cache: false
           };
@@ -161,8 +178,10 @@ window.App.FilterOps = window.App.FilterOps || {};
         return 'responder_id';
       } else if(field == 'tags') {
         return 'tags';
-      }else if(field == 'group') {
+      } else if(field == 'group') {
         return 'group_id';
+      } else if(field == 'requesters') {
+        return 'requester_id'    
       } else {
         return field;
       }
@@ -450,7 +469,11 @@ window.App.FilterOps = window.App.FilterOps || {};
                   var data = jQuery(item).find(".select2-container").select2('data');
                   if(data != undefined && data.length > 0){
                       data.map(function(val,i){
-                          value.push(val.text); 
+                          if(property == "requesters") {
+                             value.push(val.value);
+                          } else {
+                             value.push(val.text);
+                          }
                       });
                   }
               } else {

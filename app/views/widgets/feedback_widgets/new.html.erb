@@ -523,23 +523,24 @@
     jQuery(".dynamic_sections")
       .on("change", function(e){
         var id;
-        var selected = jQuery(this).find(':selected');
+        var $el = jQuery(this);
+        var selected = $el.find(':selected');
         if (selected.length > 0){
           id = selected.data().id;
         }
-        var nextElements =jQuery(this.closest('div.control-group')).nextAll();
+        var nextElements = $el.closest('div.control-group').nextAll();
         construct_section_elements(this, id, nextElements)
     });
 
     jQuery(window).on("load .dynamic_sections", function(e){
       var id;
-      section_fields = jQuery(document).find('.dynamic_sections');
+      var section_fields = jQuery(document).find('.dynamic_sections');
       section_fields.each(jQuery.proxy(function(index, data){
         var selected = jQuery(data).parent().find(':selected');
         if (selected.length > 0){
           id = selected.data().id;
         }
-        var nextElements =jQuery(data.closest('div.control-group')).nextAll();
+        var nextElements =jQuery(data).closest('div.control-group').nextAll();
         construct_section_elements(data, id, nextElements)
       }, this));
     });

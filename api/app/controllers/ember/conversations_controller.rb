@@ -16,6 +16,7 @@ module Ember
 
     before_filter :can_send_user?, only: [:forward, :facebook_reply, :tweet]
     before_filter :set_defaults, only: [:forward]
+    
     SINGULAR_RESPONSE_FOR = %w(reply forward create update tweet facebook_reply).freeze
 
     def ticket_conversations
@@ -163,11 +164,15 @@ module Ember
         return unless @item.save_note
         fb_page     = @ticket.fb_post.facebook_page
         parent_post = note || @ticket
-        if @ticket.is_fb_message?
-          send_reply(fb_page, @ticket, @item, POST_TYPE[:message])
-        else
-          send_reply(fb_page, parent_post, @item, POST_TYPE[:comment])
+        reply_sent = begin
+          if @ticket.is_fb_message?
+            send_reply(fb_page, @ticket, @item, POST_TYPE[:message])
+          else
+            send_reply(fb_page, parent_post, @item, POST_TYPE[:comment])
+          end
         end
+        @item.errors[:body] << :unable_to_perform unless reply_sent
+        reply_sent
       end
 
       def assign_note_attributes
@@ -327,6 +332,27 @@ module Ember
 
       def last_forwardable_note
         @ticket.notes.where(['private = false AND source NOT IN (?)', Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['feedback']]).last
+      end
+
+      def after_load_object
+        load_notable_from_item # find ticket in case of APIs which has @item.id in url
+        return false if @ticket && !verify_ticket_state
+        return false if @ticket && !verify_ticket_permission(api_current_user, @ticket) # Verify ticket permission if ticket exists.
+        return false if update? && !can_update?
+        check_agent_note if update? || destroy?
+      end
+
+      def verify_ticket_state
+        if (update? || destroy?) && (@ticket.spam || @ticket.deleted)
+          render_request_error(:access_denied, 403) 
+          return false
+        end
+        true
+      end
+
+      def tickets_scoper
+        return super if (ConversationConstants::TICKET_STATE_CHECK_NOT_REQUIRED.include?(action_name.to_sym))
+        super.where(ApiTicketConstants::CONDITIONS_FOR_TICKET_ACTIONS)
       end
 
       wrap_parameters(*wrap_params)

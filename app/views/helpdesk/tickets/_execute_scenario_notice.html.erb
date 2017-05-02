@@ -1,11 +1,25 @@
-<% bulk_scenario ||=false %>
-<%= t((bulk_scenario ? ".bulk_execute_scenario" : ".execute_the_scenario"), :rule_name => h(rule_name)).html_safe%>
-<%= link_to_function t(".view_details"), "jQuery('#scenario_actions_performed').slideDown(300); $(this).hide()" %>
-<div class='list' id="scenario_actions_performed" style="display:none;">
-  <h4 class='title'><%= (bulk_scenario ? t(".bulk_actions_perform",{:count => count}) : t(".actions_performed")) %></h4>
-  <ul>
-    <% actions_executed.each do |a| %>
-      <%= content_tag :li, a %>
-    <% end %>
-  </ul> 
-</div>
+<% if failed_tickets.present? %>
+  <% fail_link = link_to "#{@failed_tickets.length} tickets",'', :id => "failed-tickets" %>
+  <%= t("helpdesk.flash.tickets_close_fail_on_bulk_scenario", :rule_name => h(rule_name), :failed_tickets => fail_link, :tickets => count).html_safe %>
+  <%= link_to_function t(".view_details"), "jQuery('#scenario_actions_performed').slideDown(300); $(this).hide()" %>
+  <div class='list' id="scenario_actions_performed" style="display:none;">
+    <h4 class='title'><%= t(".bulk_actions_perform",{:count => count}) %></h4>
+    <ul>
+      <% actions_executed.each do |a| %>
+        <%= content_tag :li, a %>
+      <% end %>
+    </ul> 
+  </div>  
+<% else %>
+  <% bulk_scenario ||=false %>
+  <%= t((bulk_scenario ? ".bulk_execute_scenario" : ".execute_the_scenario"), :rule_name => h(rule_name)).html_safe%>
+  <%= link_to_function t(".view_details"), "jQuery('#scenario_actions_performed').slideDown(300); $(this).hide()" %>
+  <div class='list' id="scenario_actions_performed" style="display:none;">
+    <h4 class='title'><%= (bulk_scenario ? t(".bulk_actions_perform",{:count => count}) : t(".actions_performed")) %></h4>
+    <ul>
+      <% actions_executed.each do |a| %>
+        <%= content_tag :li, a %>
+      <% end %>
+    </ul> 
+  </div>
+<% end %>

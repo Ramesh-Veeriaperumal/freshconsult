@@ -85,6 +85,8 @@ Helpkit::Application.routes.draw do
       resources :helpdesk, only: [:index]
     end
 
+    match 'export/ticket_activities' => 'export#ticket_activities', :defaults => { format: 'json' }, :as => :ticket_activities, via: :get
+
     # Solution endpoints
     namespace :api_solutions, path: 'solutions' do
       resources :categories, only: [:create, :destroy], constraints: { id: /\d+/ } do
@@ -294,7 +296,13 @@ Helpkit::Application.routes.draw do
         post :notes, to: 'pipe/conversations#create'
       end
     end
-
+    namespace :settings do
+      resources :helpdesk, controller: 'pipe/helpdesk', only: [:index] do
+        collection do
+          put :toggle_email
+        end
+      end    
+    end
     namespace :api_discussions, path: 'discussions' do
       resources :topics, controller: 'pipe/topics', only: [:create] do
         member do

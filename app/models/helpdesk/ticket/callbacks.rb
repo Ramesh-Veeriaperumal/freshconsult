@@ -44,7 +44,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save :update_dueby, :unless => :manual_sla?
 
-  before_save :update_schema_less_ticket_association_fields, :if => :association_type_changed?
   before_update :update_isescalated, :if => :check_due_by_change
   before_update :update_fr_escalated, :if => :check_frdue_by_change
 
@@ -77,13 +76,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher
-
-
-  def update_schema_less_ticket_association_fields
-     return unless Account.current.parent_child_tkts_enabled? || Account.current.link_tkts_enabled?
-     schema_less_ticket.int_tc03 = self.association_type
-     schema_less_ticket.long_tc05 = self.associates_rdb
-  end
 
   def set_outbound_default_values
     if email_config
@@ -985,10 +977,10 @@ private
   def update_spam_detection_service
     if (Account.current.launched?(:spam_detection_service) && @model_changes.include?(:spam) &&
      self.source.eql?(Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]))
-      Rails.logger.info "Pushing to sidekiq to learn ticket"
       type = @model_changes[:spam][1] ? :spam : :ham
       SpamDetection::LearnTicketWorker.perform_async({ :ticket_id => self.id, 
         :type => Helpdesk::Email::Constants::MESSAGE_TYPE_BY_NAME[type]})
+      Rails.logger.info "Enqueued job to sidekiq to learn ticket"
     end
   end
 

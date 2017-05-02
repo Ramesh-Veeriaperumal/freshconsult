@@ -7,7 +7,7 @@ class AccountsController < ApplicationController
   include Redis::DisplayIdRedis
   include MixpanelWrapper 
   include Onboarding::OnboardingRedisMethods
-  
+
   layout :choose_layout 
   
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:check_domain, :new_signup_free,
@@ -283,7 +283,7 @@ class AccountsController < ApplicationController
         else
           Rails.logger.info "Error while building conversion metrics. User Information is not been provided while creating an account"
         end
-        if params[:session_json].present? 
+        if params[:session_json].present?
           metrics =  JSON.parse(params[:session_json])
           metrics_obj[:first_referrer] = params[:first_referrer]
           metrics_obj[:first_landing_url] = params[:first_landing_url]
@@ -291,7 +291,7 @@ class AccountsController < ApplicationController
           metrics_obj[:referrer] = metrics["current_session"]["referrer"]
           metrics_obj[:landing_url] = metrics["current_session"]["url"]
           if metrics["location"].present?
-            metrics_obj[:country] = metrics["location"]["countryName"] 
+            metrics_obj[:country] = metrics["location"]["countryName"]
             account_obj[:country_code] = metrics["location"]["countryCode"]
             account_obj[:city] = metrics["location"]["cityName"]
             account_obj[:source_ip] = metrics["location"]["ipAddress"]

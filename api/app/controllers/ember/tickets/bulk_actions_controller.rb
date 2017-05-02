@@ -7,8 +7,8 @@ module Ember
       include AttachmentConcern
       include Helpdesk::ToggleEmailNotification
 
-      before_filter :disable_notification, if: :notification_not_required?
-      after_filter  :enable_notification, if: :notification_not_required?
+      before_filter :disable_notification, only: [:bulk_update], if: :notification_not_required?
+      after_filter  :enable_notification, only: [:bulk_update], if: :notification_not_required?
 
       def bulk_update
         return unless validate_bulk_update_params
@@ -103,7 +103,7 @@ module Ember
           @validation_errors = {}
           if @params_hash[:properties].present?
             @items.each do |item|
-              unless validate_update_params(item, :update) && validate_bulk_update_delegator(item)
+              unless validate_bulk_update_delegator(item)
                 @items_failed << item
                 @validation_errors.merge!(item.display_id => @ticket_validation)
               end

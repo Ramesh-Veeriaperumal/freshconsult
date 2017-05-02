@@ -5,7 +5,7 @@ class ConversionMetric < ActiveRecord::Base
   has_one :subscription, :through => :account
   serialize :session_json, Hash
   before_create :update_referrer_type, :update_keywords
-  
+  include Concerns::DataEnrichmentConcern
   REFERRER_CATEGORIES = [
       [:gmp,     "Google Market Place",    1],
       [:gl,      "G-App Login",            2],

@@ -2,6 +2,7 @@ class TicketUpdatePropertyValidation < ApiValidation
   MANDATORY_FIELD_ARRAY = [:due_by, :agent, :group, :status].freeze
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
   CHECK_PARAMS_SET_FIELDS = %w(due_by skip_close_notification).freeze
+  REQUEST_PARAM_MAPPING = { agent: :responder_id, group: :group_id }.freeze
 
   attr_accessor :due_by, :fr_due_by, :agent, :group, :status, :priority, :item, :request_params, :status_ids, :statuses, :ticket_fields, 
                 :custom_fields, :tags, :skip_close_notification
@@ -43,8 +44,6 @@ class TicketUpdatePropertyValidation < ApiValidation
   validates :skip_close_notification, custom_absence: { allow_nil: false, message: :cannot_set_skip_notification }, unless: -> { request_params.key?(:status) && closure_status? }
   validates :skip_close_notification, data_type: { rules: 'Boolean', ignore_string: :allow_string_param }, if: -> { errors[:skip_close_notification].blank? }
 
-  validate :validate_closure, if: -> { item && request_params.key?(:status) }
-
   def initialize(request_params, item, allow_string_param = false)
     @request_params = request_params
     @status_ids = request_params[:statuses].map(&:status_id) if request_params.key?(:statuses)
@@ -81,7 +80,11 @@ class TicketUpdatePropertyValidation < ApiValidation
   end
 
   def required_default_fields
-    ticket_fields.select { |x| x.default && (x.required || (x.required_for_closure && closure_status?)) }
+    ticket_fields.select { |x| x.default && ((validate_field?(x) && x.required) || (x.required_for_closure && closure_status?)) }
+  end
+
+  def validate_field?(field)
+    request_params.key?(REQUEST_PARAM_MAPPING[field.name.to_sym] || field.name.to_sym)
   end
 
   def default_field_validations
@@ -99,10 +102,5 @@ class TicketUpdatePropertyValidation < ApiValidation
       errors[:request] << :fill_a_mandatory_field
       error_options.merge!(request: { field_names: MANDATORY_FIELD_STRING })
     end
-  end
-
-  def validate_closure
-    return unless closure_status?
-    errors[:status] << :unresolved_child if item.assoc_parent_ticket? && item.validate_assoc_parent_tkt_status
   end
 end

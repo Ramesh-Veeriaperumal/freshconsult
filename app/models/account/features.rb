@@ -1,14 +1,18 @@
 class Account < ActiveRecord::Base
 
   LP_FEATURES   = [:link_tickets, :select_all, :round_robin_capping, :suggest_tickets, :customer_sentiment_ui,
-                   :dkim, :bulk_security, :multi_dynamic_sections, :scheduled_ticket_export, :ticket_contact_export, :email_failures]
-  DB_FEATURES   = [:shared_ownership, :custom_survey, :requester_widget, :collaboration, :archive_tickets]
-  BITMAP_FEATURES = [:split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management,
-    :email_commands, :assume_identity, :rebranding, :custom_apps, :custom_ticket_fields, :custom_company_fields,
-    :custom_contact_fields, :occasional_agent, :allow_auto_suggest_solutions, :basic_twitter, :basic_facebook,
-    :multi_product,:multiple_business_hours, :multi_timezone, :customer_slas, :layout_customization,
-    :advanced_reporting, :timesheets, :multiple_emails, :custom_domain, :gamification, :gamification_enable,
-    :auto_refresh, :branding, :advanced_dkim, :basic_dkim, :shared_ownership_toggle, :unique_contact_identifier_toggle, :unique_contact_identifier].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
+                   :dkim, :bulk_security, :multi_dynamic_sections, :scheduled_ticket_export, :ticket_contact_export,
+                   :email_failures, :disable_emails]
+  DB_FEATURES   = [:shared_ownership, :custom_survey, :requester_widget, :collaboration, :archive_tickets, :sitemap]
+  BITMAP_FEATURES = [
+      :split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management,
+      :email_commands, :assume_identity, :rebranding, :custom_apps, :custom_ticket_fields, :custom_company_fields,
+      :custom_contact_fields, :occasional_agent, :allow_auto_suggest_solutions, :basic_twitter, :basic_facebook,
+      :multi_product,:multiple_business_hours, :multi_timezone, :customer_slas, :layout_customization,
+      :advanced_reporting, :timesheets, :multiple_emails, :custom_domain, :gamification, :gamification_enable,
+      :auto_refresh, :branding, :advanced_dkim, :basic_dkim, :shared_ownership_toggle, :unique_contact_identifier_toggle,
+      :system_observer_events, :unique_contact_identifier, :ticket_activity_export
+    ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   LP_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do

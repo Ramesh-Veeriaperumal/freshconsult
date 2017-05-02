@@ -913,6 +913,15 @@
       .action-buttons {
         display: none;
       }
+      .parentchild-info{
+        padding-bottom: 5px;
+        height: 40px;
+
+        .parent-child-info-icon {
+          display: inline-block;
+          color: #333;
+        }
+      }
   }
 }
 
@@ -1158,4 +1167,9 @@
 .template-msg{
   @include margin(10px 0);
   font-size:11px;
+}
+
+.parent-child-sidebar {
+  width: 250px;
+  text-align: center;
 }

@@ -45,6 +45,10 @@ module Ember
           add_field_mappings
         end
 
+        def scoper
+          current_account.tickets
+        end
+
         def decorator_options
           super({ query_data_hash: @query_data_hash, ticket: @ticket })
         end

@@ -99,7 +99,7 @@ module Mail
   class Ruby19
 
     def Ruby19.b_value_decode(str)
-      match = str.match(/\=\?(.+)?\?[Bb]\?(.+)?\?\=/m)
+      match = str.match(/\=\?(.+)?\?[Bb]\?(.*)\?\=/m)
       if match
         charset = match[1]
         str = Ruby19.decode_base64(match[2])
@@ -113,7 +113,7 @@ module Mail
     end
 
     def Ruby19.q_value_decode(str)
-      match = str.match(/\=\?(.+)?\?[Qq]\?(.+)?\?\=/m)
+      match = str.match(/\=\?(.+)?\?[Qq]\?(.*)\?\=/m)
       if match
         charset = match[1]
         string = match[2].gsub(/_/, '=20')
@@ -143,6 +143,9 @@ module Mail
       # UTF-8, UTF-32BE and alike
       when /utf-?(\d{1,2})?(\w{1,2})/i
         "UTF-#{$1}#{$2}".gsub(/\A(UTF-(?:16|32))\z/, '\\1BE')
+
+      when /Windows-?1258/i
+        "Windows-1252"
 
       # Windows-1252 and alike
       when /Windows-?(.*)/i
