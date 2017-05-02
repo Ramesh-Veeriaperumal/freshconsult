@@ -80,7 +80,7 @@ module Helpdesk::SendAndSetHelper
                     :send_and_set => true
     }
     args = {
-      :ticket_changes => @ticket.send_and_set_args,
+      :ticket_changes => @ticket.observer_args,
       :note_changes => note_params
     }
     ::Tickets::SendAndSetWorker.perform_async(args) if @ticket.schedule_observer

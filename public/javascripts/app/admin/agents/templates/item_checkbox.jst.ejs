@@ -1,0 +1,9 @@
+<li id='<%= type %>_dom_<%= key %>' <% if(type == 'role') { %> title='<%= details[1] %>' class='tooltip' <% } %> >
+	<label class='check_box checkbox'>
+		<input id= '<%= type %>_check_<%= key %>' rel = '<%= key%>' multiple='multiple' name='<%= type %>s[]' type='checkbox' value='<%= key %>' >
+		<b><%= details[0] %>  </b>
+		<% if(type == 'role') { %>
+			<p class='muted ellipsis'><%= details[1] %></p>
+		<% } %>
+	</label>
+</li>

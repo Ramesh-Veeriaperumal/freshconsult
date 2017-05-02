@@ -22,21 +22,32 @@ class Agent < ActiveRecord::Base
   PERMISSION_KEYS_BY_TOKEN = Hash[*TICKET_PERMISSION.map { |i| [i[0], i[1]] }.flatten]
 
   EXPORT_FIELDS = [
-    {:label => "export_data.agents.fields.name", :value => "agent_name", :selected => true},
-    {:label => "export_data.agents.fields.email",   :value => "agent_email",    :selected => true},
-    {:label => "export_data.agents.fields.agent_type", :value => "agent_type", :selected => false},
-    {:label => "export_data.agents.fields.ticket_scope",    :value => "ticket_scope", :selected => true},
-    {:label => "export_data.agents.fields.roles", :value => "agent_roles", :selected => false},
-    {:label => "export_data.agents.fields.groups", :value => "groups", :selected => false},
-    {:label => "export_data.agents.fields.phone", :value => "agent_phone", :selected => false},
-    {:label => "export_data.agents.fields.mobile", :value => "agent_mobile", :selected => false},
-    {:label => "export_data.agents.fields.language", :value => "agent_language", :selected => false},
-    {:label => "export_data.agents.fields.time_zone", :value => "agent_time_zone", :selected => false},
-    {:label => "export_data.agents.fields.last_seen", :value => "last_active_at", :selected => false}
+    {:label => "export_data.agents.fields.name",         :value => "agent_name",      :selected => true,  :feature => nil,                                 :association => :user               },
+    {:label => "export_data.agents.fields.email",        :value => "agent_email",     :selected => true,  :feature => nil,                                 :association => :user               },
+    {:label => "export_data.agents.fields.agent_type",   :value => "agent_type",      :selected => false, :feature => nil,                                 :association => nil                 },
+    {:label => "export_data.agents.fields.ticket_scope", :value => "ticket_scope",    :selected => true,  :feature => nil,                                 :association => nil                 },
+    {:label => "export_data.agents.fields.roles",        :value => "agent_roles",     :selected => false, :feature => nil,                                 :association => {:user => :roles}   },
+    {:label => "export_data.agents.fields.groups",       :value => "groups",          :selected => false, :feature => nil,                                 :association => :agent_groups       },
+    {:label => "export_data.agents.fields.phone",        :value => "agent_phone",     :selected => false, :feature => nil,                                 :association => :user               },
+    {:label => "export_data.agents.fields.mobile",       :value => "agent_mobile",    :selected => false, :feature => nil,                                 :association => :user               },
+    {:label => "export_data.agents.fields.language",     :value => "agent_language",  :selected => false, :feature => nil,                                 :association => :user               },
+    {:label => "export_data.agents.fields.time_zone",    :value => "agent_time_zone", :selected => false, :feature => nil,                                 :association => :user               },
+    {:label => "export_data.agents.fields.last_seen",    :value => "last_active_at",  :selected => false, :feature => nil,                                 :association => nil                 },
+    {:label => "export_data.agents.fields.skills",       :value => "skills_name",     :selected => false, :feature => "skill_based_round_robin_enabled?",  :association => {:user => :skills}  }
   ]
 
   EXPORT_FIELD_VALUES = EXPORT_FIELDS.map { |field| field[:value] }
-
+ 
   AGENTS_THRESHOLD_FOR_AUTOCOMPLETE_ES = 25
+
+  AGENT_ASSOCIATIONS = Hash[*EXPORT_FIELDS.map { |i| [i[:value], i[:association]] }.flatten ].delete_if { |key, value| value.blank? }
+
+  def self.allowed_export_fields
+    allowed_fields = []
+    EXPORT_FIELDS.each do |i|
+          ( allowed_fields << i ) if Export::ExportFields.allow_field? i[:feature]
+      end
+    allowed_fields
+  end
   
 end

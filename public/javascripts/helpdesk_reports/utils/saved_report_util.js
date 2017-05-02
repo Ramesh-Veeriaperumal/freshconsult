@@ -217,7 +217,7 @@ HelpdeskReports.SavedReportUtil = (function() {
 	    setDialogSubHeader : function(){
 	    	jQuery("#report-dialog-save .modal-header").append("<p class='visibility'>" + I18n.t('helpdesk_reports.saved_report.dialog_sub_header') + "</p>");
 
-	    	if(HelpdeskReports.locals.enable_schedule_report && HelpdeskReports.locals.presetRangesSelected){
+	    	if(HelpdeskReports.locals.report_type != "timespent" && HelpdeskReports.locals.enable_schedule_report && HelpdeskReports.locals.presetRangesSelected){
 	    		jQuery("#report-dialog-save .modal-header").append("<p class='visibility'>" + I18n.t('helpdesk_reports.saved_report.dialog_schedule_guide') + "</p>");
 	    	}
 	    },
@@ -259,6 +259,11 @@ HelpdeskReports.SavedReportUtil = (function() {
 	        if(locals.report_type == "glance" && locals.active_custom_field){
 	            params["active_custom_field"] = locals.active_custom_field;
 	        }
+
+			if(locals.report_type == "timespent") {
+				params.data_hash.active_timespent_group_by = HelpdeskReports.locals.current_group_by;
+			}
+
 	        var opts = {
 	            url: _FD.core.CONST.base_url + HelpdeskReports.locals.report_type + _FD.CONST.save_report,
 	            type: 'POST',
@@ -583,7 +588,12 @@ HelpdeskReports.SavedReportUtil = (function() {
     			if(hash != undefined ){
     				//jQuery("[data-trend='trend-type'][data-format='" + extras.trend + "']").trigger('click');
     			}
-	    	} else {
+	    	} else if(report_type == 'timespent') {
+				if(hash.active_timespent_group_by != undefined){
+					HelpdeskReports.locals.current_group_by = hash.active_timespent_group_by;
+				}
+				jQuery("[data-action='reports-submit']").click();
+			} else {
 	    		jQuery("[data-action='reports-submit']").click();
 	    	}
 	    },
@@ -678,6 +688,11 @@ HelpdeskReports.SavedReportUtil = (function() {
 	        if(locals.report_type == "glance" && locals.active_custom_field){
 	            params["active_custom_field"] = locals.active_custom_field;
 	        }
+			
+			if(locals.report_type == "timespent") {
+				params.data_hash.active_timespent_group_by = HelpdeskReports.locals.current_group_by;
+			}
+
 	        var opts = {
 	            url: _FD.core.CONST.base_url + locals.report_type + _FD.CONST.update_report,
 	            type: 'POST',

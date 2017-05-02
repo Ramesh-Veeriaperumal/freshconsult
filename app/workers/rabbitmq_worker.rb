@@ -99,6 +99,11 @@ class RabbitmqWorker
         sqs_msg_obj = sqs_v2_push(SQS[:iris_etl_msg_queue], message, nil)
         print_log("Iris ETL", sqs_msg_obj, routing_key, exchange_key)
       end
+
+      if scheduled_ticket_export_key?(exchange_key, routing_key)
+        sqs_msg_obj = sqs_v2_push(SQS[:scheduled_export_payload_enricher_queue], message, nil)
+        print_log("Scheduled ticket export", sqs_msg_obj, routing_key, exchange_key)
+      end
     rescue => e
       NewRelic::Agent.notice_error(e, {
                                    :custom_params => {
@@ -181,6 +186,12 @@ class RabbitmqWorker
 
     def cti_routing_key?(exchange)
       exchange.include?("cti_calls")
+    end
+
+    def scheduled_ticket_export_key?(exchange, key)
+      (exchange.starts_with?("tickets") && key[16] == "1") || 
+      (exchange.starts_with?("users") && key[6] == "1") ||
+      (exchange.starts_with?("companies") && key[2] == "1")
     end
 
     # Key will be like 1.1.1 (Possibility of additional 1s appended in future)

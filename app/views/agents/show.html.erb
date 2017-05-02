@@ -127,28 +127,3 @@
 		<% reset_score_alert = (@user == current_user ? 'agent.reset_score_alert_you' : 'agent.reset_score_alert_them') %>
 		<%= t(reset_score_alert, :points => current_account.scoreboard_levels.least_points.first.points, :name => @user.name) %></p>
 </div>
-<%= javascript_tag do %> 
-jQuery("#reset_password_button").click(function() 
-{
-	jQuery(this).addClass("disabled");
-});
-
-// need to convert this to util
-jQuery(document).ready(function(){
-  if (jQuery.trim( jQuery('div.info-highlight').text() ).length != 0) {
-    jQuery('div.info-highlight').show();
-  }
-
-  if (jQuery.trim( jQuery('div.action_buttons').text() ).length != 0) {
-    jQuery('div.action_buttons').show();
-  }
-});
-
-jQuery(document).on("click", '#agent-deletion-confirmation-submit', function(){
-	jQuery('#agent_contact_convert').trigger('click');
-});
-
-jQuery(document).on('click', '#agent-gamification-reset-submit', function(){ 
-	jQuery('#agent_score_reset').trigger('click');
-});
-<%end%>

@@ -12,11 +12,14 @@ module SBRR
           end
         end
 
+        def refresh score
+          refresh_in_new_ticket_queue score
+        end
+
         private
 
           def dequeue_from_old_ticket_queue?
-            !new_ticket.sbrr_fresh_ticket && !new_ticket.sbrr_ticket_dequeued &&
-              old_ticket.can_be_in_ticket_queue?
+            !new_ticket.sbrr_fresh_ticket && !new_ticket.sbrr_ticket_dequeued && old_ticket.can_be_in_ticket_queue?
           end
 
           def enqueue_to_new_ticket_queue?
@@ -35,6 +38,11 @@ module SBRR
 
           def queue_aggregator user, options
             QueueAggregator::Ticket.new user, options
+          end
+
+          def refresh_in_new_ticket_queue score
+            SBRR.log "#{__method__} #{new_ticket.display_id} #{score}" 
+            refresh_in_queues new_queues, :refresh_object_with_lock, new_ticket, score
           end
 
       end

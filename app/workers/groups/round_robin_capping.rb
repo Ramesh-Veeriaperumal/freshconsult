@@ -9,7 +9,7 @@ class Groups::RoundRobinCapping < BaseWorker
   include RoundRobinCapping::Methods
   
   def perform(args)
-    args.symbolize_keys!
+    args = args.deep_symbolize_keys
     Sharding.run_on_slave do 
       group = Account.current.groups.find_by_id(args[:group_id])
       capping_limit_change = args[:capping_limit_change]

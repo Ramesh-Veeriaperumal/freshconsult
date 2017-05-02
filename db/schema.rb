@@ -2386,6 +2386,7 @@ ActiveRecord::Schema.define(:version => 20170411034444) do
     t.integer   "association_type"
     t.integer   "associates_rdb"
     t.integer   "sla_state"
+    t.integer   "dirty"
   end
 
   add_index "helpdesk_tickets", ["account_id", "created_at", "id"], :name => "index_helpdesk_tickets_on_account_id_and_created_at_and_id"

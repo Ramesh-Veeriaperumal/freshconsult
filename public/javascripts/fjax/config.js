@@ -60,7 +60,8 @@ window.Fjax = window.Fjax || {};
 			"/helpdesk/tickets/compose_email": 'tickets',
 			"/helpdesk/dashboard/unresolved_tickets": 'unresolvedtickets',
 			"/helpdesk" : 'realtime_dashboard' ,
-	        "/groups" : 'groups'
+	        		"/groups" : 'groups',
+	        		"/agents" : 'agents'
 		},
 		LOADING_WAIT: 60
 	};

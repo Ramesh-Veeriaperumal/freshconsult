@@ -11,6 +11,10 @@ module SBRR
           end
         end
 
+        def refresh
+          refresh_in_relevant_queues
+        end
+
         private
 
           def queue_aggregator user, options

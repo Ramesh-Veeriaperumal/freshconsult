@@ -26,6 +26,7 @@ class TopicObserver < ActiveRecord::Observer
   def after_save(topic)
     update_forum_counter_cache(topic)
     after_publishing(topic) if topic.published_changed? and topic.published?
+    enqueue_topic_for_spam_check(topic)
   end
 
   def after_update(topic)
@@ -162,5 +163,12 @@ private
                         }
     )
   end
+
+  def enqueue_topic_for_spam_check(topic)
+      if !topic.account.launched?(:forum_post_spam_whitelist) && ( (topic.account.created_at >= (Time.zone.now - 90.days)) || (topic.account.subscription.present? && topic.account.subscription.free?))
+        Rails.logger.debug "Comes inside enqueue_topic_for_spam_check loop for account : #{topic.account} and Topic #{topic.id}"
+        Forum::CheckContentForSpam.perform_async({:topic_id =>topic.id})
+      end
+    end
 
 end

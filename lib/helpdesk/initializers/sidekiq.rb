@@ -48,7 +48,8 @@ Sidekiq.configure_client do |config|
       "DkimSwitchCategoryWorker",
       "DelayedJobs::MailboxJob",
       "Email::S3RetryWorker",
-      "Tickets::Schedule"
+      "Tickets::Schedule",
+      "Tickets::Dump"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -120,7 +121,8 @@ Sidekiq.configure_server do |config|
       "DkimSwitchCategoryWorker",
       "DelayedJobs::MailboxJob",
       "Email::S3RetryWorker",
-      "Tickets::Schedule"
+      "Tickets::Schedule",
+      "Tickets::Dump"
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -182,7 +184,8 @@ Sidekiq.configure_server do |config|
       "DkimSwitchCategoryWorker",
       "DelayedJobs::MailboxJob",
       "Email::S3RetryWorker",
-      "Tickets::Schedule"
+      "Tickets::Schedule",
+      "Tickets::Dump"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",

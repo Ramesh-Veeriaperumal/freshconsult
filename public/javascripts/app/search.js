@@ -91,14 +91,35 @@
 			this.searchedTicketIds = [];
 		},
 		asyncRender: function(){
+			  var $all_checked = jQuery('.selection input[type="checkbox"][selectable="true"]:checked');
+			  var $all_unchecked = jQuery('.selection input[type="checkbox"][selectable="true"]:unchecked');
 			if(this.searchResultsData().results.length){
 				window.search_page.processAndRenderResults();
 				window.search_page.afterComplete();
 			}
+
+			if($all_checked.length < this.BULK_ACTION_LIMIT) {
+				$all_unchecked.removeAttr('disabled');	
+				$all_unchecked.parent().each(function(i,item){
+					jQuery(item).attr('data-original-title','');	
+					var twipsy = jQuery(item).data('twipsy');
+			    	if(twipsy != undefined) {
+			   			twipsy.setContent();
+			   		}
+				});
+			} else {
+				$all_unchecked.attr('disabled',true);
+				$all_unchecked.parent().each(function(i,item){
+					jQuery(item).attr('data-original-title','you have selected max number of tickets');	
+					var twipsy = jQuery(item).data('twipsy');
+			    	if(twipsy != undefined) {
+			   			twipsy.setContent();
+			   		}
+				});
+			}		
 		},
 		bindEvents : function() {
 			var _this = this;
-			
 			jQuery('body').on('submit'+_this.namespace(), '.search-form', function(ev){ _this.pjaxifyUrl(ev) });
 			jQuery('body').on('click'+_this.namespace(), '.search-sorting-wrapper .nav-tabs li', function(){ 
 				_this.setActiveTab() 

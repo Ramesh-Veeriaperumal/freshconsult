@@ -383,6 +383,16 @@ module Helpdesk::Activities
       @act_activity[:set] << render_string(str, params)
     end
 
+    def skill_name(value)
+      params = if value[1].blank?
+        {:skill_name => "#{render_string("activities.none")}"}
+      else
+        {:skill_name => escapeHTML("#{value[1]}")}
+      end
+      str = get_string_name("skill_name")
+      @act_activity[:set] << render_string(str, params)
+    end
+
     def delete_group(value)
       str  = get_string_name("property_delete")
       deleted_property_value = escapeHTML("#{value[0]}")
