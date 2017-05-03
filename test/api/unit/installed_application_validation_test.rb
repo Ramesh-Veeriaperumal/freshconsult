@@ -7,6 +7,6 @@ class InstalledApplicationValidationTest < ActionView::TestCase
 
   def test_value_invalid
     installed_app = InstalledApplicationValidation.new({ name: nil }, nil)
-    assert installed_app.valid?
+    refute installed_app.valid?(:index)
   end
 end
