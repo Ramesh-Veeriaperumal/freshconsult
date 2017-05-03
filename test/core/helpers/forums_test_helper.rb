@@ -44,6 +44,7 @@ module ForumsTestHelper
               :account_id => @account.id,
               :topic_id => topic.id,
               :user_id => user.id,
+              :forum_id => forum.id,
               :user_votes => 0
               )
     post.save!

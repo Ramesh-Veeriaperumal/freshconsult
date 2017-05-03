@@ -19,10 +19,11 @@ class Solution::CheckContentForSpam < BaseWorker
   def check_description_for_spam article_id
     article = @account.solution_articles.find(article_id)
     article_spam_regex = Regexp.new($redis_others.perform_redis_op("get", ARTICLE_SPAM_REGEX), "i")
+    article_phone_number_spam_regex = Regexp.new($redis_others.perform_redis_op("get", PHONE_NUMBER_SPAM_REGEX), "i")
     desc_un_html_lines = article.desc_un_html.split("\n")
     spam_content = false
     desc_un_html_lines.each do |desc_line|
-      spam_content = true and break if (desc_line =~ article_spam_regex).present?
+      spam_content = true and break if ((desc_line =~ article_spam_regex).present? || (desc_line =~ article_phone_number_spam_regex).present?)
     end
     increase_ehawk_spam_score_for_account(4, article_id) if spam_content
   end

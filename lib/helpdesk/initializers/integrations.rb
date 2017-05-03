@@ -28,4 +28,5 @@ module Integrations
   CLOUD_ELEMENTS_AUTH_HEADER = cloud_elements_hash["auth_header"]
   CRM_TO_HELPDESK_FORMULA_ID = cloud_elements_hash["crm_formula_template_id"]
   HELPDESK_TO_CRM_FORMULA_ID = cloud_elements_hash["fd_formula_template_id"]
+  CLOUD_ELEMENTS_URL = cloud_elements_hash["server_url"]
 end

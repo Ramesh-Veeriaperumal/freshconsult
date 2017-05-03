@@ -16,7 +16,7 @@ class PostObserver < ActiveRecord::Observer
 		unless post.topic.last_post_id.nil?
 			create_activity(post, 'new_post') if post.published?
 		end
-
+		enqueue_post_for_spam_check(post)
 	end
   
   def before_destroy(post)
@@ -50,6 +50,7 @@ class PostObserver < ActiveRecord::Observer
 			end
 		end
 		create_activity(post, 'published_post') if post.published_changed? and post.published? and !post.topic.new?
+		enqueue_post_for_spam_check(post)
 	end
 
 	private
@@ -80,5 +81,12 @@ class PostObserver < ActiveRecord::Observer
 								}
 		)
 	end
+
+	def enqueue_post_for_spam_check(post)
+			if !post.account.launched?(:forum_post_spam_whitelist) && ( (post.account.created_at >= (Time.zone.now - 90.days)) || (post.account.subscription.present? && post.account.subscription.free?))
+				Rails.logger.debug "Comes inside enqueue_post_for_spam_check loop for account : #{post.account} and post #{post.id}"
+				Forum::CheckContentForSpam.perform_async({:post_id => post.id, :topic_id =>post.topic.id})
+			end
+    end
 
 end

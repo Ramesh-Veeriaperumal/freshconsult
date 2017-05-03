@@ -163,6 +163,10 @@ class Account < ActiveRecord::Base
     active_groups_in_account(id)
   end
 
+  def has_any_scheduled_ticket_export?
+    auto_ticket_export_enabled? && scheduled_ticket_exports_from_cache.present?
+  end
+
   def fields_with_in_operators
     custom_dropdown = "custom_dropdown"
     default_in_op_fields = Hash.new

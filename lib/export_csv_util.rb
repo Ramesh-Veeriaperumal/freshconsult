@@ -5,6 +5,18 @@ module ExportCsvUtil
 
   ALL_TEXT_FIELDS = [:default_description, :default_note, :default_address, :custom_paragraph]
 
+  CONTACT         = "contact"
+
+  DEFAULT_SELECTED_FIELDS = {
+    CONTACT: [:default_email, :default_phone],
+    COMPANY: []
+  }
+
+  REJECTED_FIELDS = {
+    CONTACT: [:default_company_name],
+    COMPANY: []
+  }
+
   def set_date_filter
    if !(params[:date_filter].to_i == TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter])
     params[:start_date] = params[:date_filter].to_i.days.ago.beginning_of_day.to_s(:db)
@@ -59,6 +71,16 @@ module ExportCsvUtil
     [default_csv_headers, additional_csv_headers]
   end
 
+  def ticket_export_fields_without_customer
+    flexi_fields = Account.current.ticket_fields.custom_fields(:include => :flexifield_def_entry)
+    default_csv_headers = Helpdesk::TicketModelExtension.ticket_csv_headers
+
+    flexi_fields , additional_flexi_fields = split_flexifields(flexi_fields)
+
+    default_csv_headers = default_csv_headers + [ {:label => I18n.t("export_data.fields.product"), :value => "product_name", :selected => false, :type => :field_type} ] if Account.current.has_multiple_products?
+    default_csv_headers = default_csv_headers + generate_headers(flexi_fields)
+  end
+
   def export_customer_fields type
     return unless ["contact", "company"].include?(type)
     custom_fields = Account.current.send("#{type}_form").send("#{type}_fields")
@@ -69,9 +91,22 @@ module ExportCsvUtil
               :type => cf.field_type, :selected => false} }
   end
 
+  def customer_export_fields type   
+    default_fields = Helpdesk::TicketModelExtension.customer_fields(type)
+    customer_fields = []
+    (export_customer_fields(type) + default_fields).each do |f|
+      f[:selected] = true if DEFAULT_SELECTED_FIELDS[type.upcase.to_sym].include?(f[:type])
+      unless (ALL_TEXT_FIELDS.include?(f[:type]) || REJECTED_FIELDS[type.upcase.to_sym].include?(f[:type]))
+        customer_fields << f
+      end
+    end
+    customer_fields
+  end
+
   def contact_company_export_fields type
     return [] unless Account.current.ticket_contact_export_enabled?
-    export_customer_fields(type).map { 
+    default_fields = Helpdesk::TicketModelExtension.customer_fields(type)
+    (export_customer_fields(type) + default_fields).map { 
         |f| f[:value] unless ALL_TEXT_FIELDS.include?(f[:type])
     }.compact
   end

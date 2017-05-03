@@ -374,6 +374,9 @@ var TemplateDockManager   = Class.create({
             jQuery('.install-form').remove();
             jQuery('.progress').removeClass('active');
             jQuery('.bar').css("width", "100%");
+            if (parent.location.hash && parent.location.hash.match('^#[0-9]')) {
+              parent.location.hash = "";
+            }
             parent.location.reload();
           } else {
             jQuery("#install-error").show().text(that.customMessages.api_error);

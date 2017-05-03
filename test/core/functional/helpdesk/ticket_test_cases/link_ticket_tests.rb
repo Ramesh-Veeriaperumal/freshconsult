@@ -78,7 +78,7 @@ module LinkTicketTests
       tracker = Helpdesk::Ticket.last
       broadcast_note = create_broadcast_note(:notable_id => tracker.id)
       Sidekiq::Testing.inline! do
-        stub_ticket_associates(related_ticket_ids, tracker) do
+        stub_ticket_associates(related_ticket_ids) do
           delete :destroy, {:id => tracker.display_id }
           tracker.reload
           assert_tracker_deleted tracker, related_ticket_ids, broadcast_note.id
@@ -93,7 +93,7 @@ module LinkTicketTests
       tracker = Helpdesk::Ticket.last
       broadcast_note = create_broadcast_note(:notable_id => tracker.id)
       Sidekiq::Testing.inline! do
-        stub_ticket_associates(related_ticket_ids, tracker) do
+        stub_ticket_associates(related_ticket_ids) do
           put :spam, {:id => tracker.display_id }
           tracker.reload
           assert_tracker_spammed tracker, related_ticket_ids, broadcast_note.id
@@ -143,4 +143,16 @@ module LinkTicketTests
       end
     end
   end
+
+  def test_dynamo_fallsback_to_mysql
+    enable_adv_ticketing(:link_tickets) do
+      related_ticket_ids = create_link_tickets
+      tracker = Helpdesk::Ticket.last
+      #associates method is not stubbed, to make the fallback
+      Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
+      get :associated_tickets, {:id => tracker.display_id, :page => 1}
+      related_ticket_ids.each {|id| assert_select "#related_ticket_list_item_#{id}"}
+    end
+  end
+
 end

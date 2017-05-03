@@ -1,4 +1,18 @@
-<div class="dropdown">
-    <%= t('search.sorted_by') %>
-    <%= search_sort_menu %>
+<div class="row-fluid">
+    <% if current_filter.eql?('tickets') && @search_results.present? %>
+			<% if current_account.features?(:advanced_search) %>
+  <div class="span3 edit-filter">
+					<!-- Button for pane for filtered search for tickets -->
+        <button class="btn btn-primary" id="metric-edit" data-action="open-filter-menu">
+          <%=t('helpdesk_search.edit_filter') %>
+        </button> 
+  </div>
+        			<% end %>
+		<% end %>
+    <div class="span6">
+  <div class="dropdown">
+      <%= t('search.sorted_by') %>
+      <%= search_sort_menu %>
+  </div>
+    </div>
 </div>

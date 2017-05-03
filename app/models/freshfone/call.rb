@@ -740,7 +740,7 @@ class Freshfone::Call < ActiveRecord::Base
     end
 
     def transcript_note?
-      params[:transcript_note]
+      params[:transcript_note].present?
     end
     
     def params_requester_name

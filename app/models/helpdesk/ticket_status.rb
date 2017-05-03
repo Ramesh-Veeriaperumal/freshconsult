@@ -245,6 +245,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
     Sharding.run_on_slave do 
       tickets.preload(:ticket_states).visible.find_each(batch_size: 300) do |ticket|
         update_sla_timer_stopped_at(ticket)
+        set_sla_toggled_and_enqueue_sbrr ticket unless deleted?
       end
     end
   end
@@ -256,6 +257,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
       Sharding.run_on_slave do 
         tickets.preload(:ticket_states).visible.joins(:ticket_states).where("helpdesk_ticket_states.sla_timer_stopped_at IS NOT NULL").find_each(batch_size: 300) do |ticket|
           update_ticket_due_by(ticket)
+          set_sla_toggled_and_enqueue_sbrr ticket
         end
       end
     end
@@ -271,6 +273,14 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
           ticket.save if ticket.responder_id_changed?
         end
       end
+    end
+  end
+
+  def set_sla_toggled_and_enqueue_sbrr ticket
+    ticket.status_sla_toggled_to = TicketConstants::STATUS_SLA_TOGGLED_TO[stop_sla_timer]
+    args = {:model_changes => {}, :ticket_id => ticket.display_id, :attributes => ticket.sbrr_attributes, :options => {:action => "status_sla_toggled_to_#{ticket.status_sla_toggled_to}"}}
+    Sharding.run_on_master do
+      SBRR::Execution.new(args).execute if ticket.enqueue_sbrr_job?
     end
   end
 

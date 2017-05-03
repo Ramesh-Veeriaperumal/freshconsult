@@ -42,7 +42,8 @@ module Va::Observer::Util
 
     def send_events observer_changes, inline = false
       observer_changes.merge! ticket_event observer_changes
-      doer_id = (self.class == Helpdesk::Ticket) ? User.current.id : self.send(FETCH_DOER_ID[self.class.name])
+      doer = User.current
+      doer_id = (self.class == Helpdesk::Ticket) ? doer.id : self.send(FETCH_DOER_ID[self.class.name])
       evaluate_on_id = self.send FETCH_EVALUATE_ON_ID[self.class.name]
       args = {
         :doer_id => doer_id,
@@ -52,14 +53,29 @@ module Va::Observer::Util
       }
       
       args[:model_changes] = @model_changes if self.class == Helpdesk::Ticket
-
+      
       if inline
-        Tickets::ObserverWorker.new.perform(args)
+        run_without_user { Tickets::ObserverWorker.new.perform(args) }
       elsif self.class == Helpdesk::Ticket and self.schedule_observer
-        # skipping observer for send and set ticket operation
-        self.send_and_set_args = args
+        # skipping observer for send and set ticket operation & bulk ticket actions for skill
+        self.observer_args = args
       else
         Tickets::ObserverWorker.perform_async(args)
+      end
+    end
+
+    def run_without_user
+      begin
+        doer = User.current
+        User.reset_current_user
+        puts "Running block without Current User"
+        yield
+      rescue Exception => e
+        puts "Something is wrong Util:run_without_user : Account id:: #{Account.current.id} #{e.message}"
+        NewRelic::Agent.notice_error(e)
+        raise e
+      ensure
+        doer.make_current if doer
       end
     end
 

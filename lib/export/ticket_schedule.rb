@@ -34,6 +34,8 @@ class Export::TicketSchedule < Export::Ticket
       (Time.zone.now.beginning_of_hour - 1.day).utc.to_s
     when :weekly
       (Time.zone.now.beginning_of_hour - 1.week).utc.to_s
+    when :hourly
+      (Time.zone.now.beginning_of_hour - 1.hour).utc.to_s
     else
       (Time.zone.now.beginning_of_hour - 1.day).utc.to_s
     end
