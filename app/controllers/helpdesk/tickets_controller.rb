@@ -634,7 +634,7 @@ class Helpdesk::TicketsController < ApplicationController
   def send_and_set_status
     can_close_assoc_parent?(@item, true) if [RESOLVED,CLOSED].include? params[:helpdesk_ticket][:status].to_i # check for parent tkt status
     @item.schedule_observer = true
-
+    params[nscname][:tag_names] = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].blank?
     @note.build_note_and_sanitize
     verify_update_properties_permission if @item.update_ticket_attributes(params[nscname])
     unless @note.new_record?
