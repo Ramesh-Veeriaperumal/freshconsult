@@ -98,8 +98,8 @@ module TicketsTestHelper
   def feedback_pattern(survey_result)
     {
       survey_id: survey_result.survey_id,
-      agent_id: survey_result.agent_id, 
-      group_id: survey_result.group_id, 
+      agent_id: survey_result.agent_id,
+      group_id: survey_result.group_id,
       rating: survey_result.custom_ratings
     }
   end
@@ -252,7 +252,7 @@ module TicketsTestHelper
       requester: requester
     })
     note_options = {
-      tweet: new_tweet({ 
+      tweet: new_tweet({
         twitter_user: tweet[:user],
         body: Faker::Lorem.sentence
       }),
@@ -299,7 +299,7 @@ module TicketsTestHelper
   end
 
   def add_attachments_to_note(note, count = 1)
-    count.times do 
+    count.times do
       note.attachments.build(
         content: fixture_file_upload('/files/attachment.txt', 'text/plain', :binary),
         description: Faker::Lorem.characters(10),
@@ -412,7 +412,7 @@ module TicketsTestHelper
     @call.update_status({ DialCallStatus: 'voicemail' })
     # It's tough to parse audio and get actual duration. So setting a random value.
     @call.call_duration = 25
-    
+
     @call.build_recording_audio(content: @data).save
   end
 
@@ -423,12 +423,14 @@ module TicketsTestHelper
 
     new_fone_call
     note = create_normal_reply_for(@ticket)
-    associate_call_to_item(note)    
+    associate_call_to_item(note)
     @ticket
   end
 
   def new_ticket_from_forum_topic
+    @account.launch(:forum_post_spam_whitelist)
     topic = create_test_topic(Forum.first)
+    @account.rollback(:forum_post_spam_whitelist)
     ticket = create_ticket
     ticket_topic = create_ticket_topic_mapping(topic, ticket)
     ticket
