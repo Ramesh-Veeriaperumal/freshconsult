@@ -109,6 +109,11 @@ module ApiSearch
                 bad_request_error_pattern('test_custom_checkbox',:array_datatype_mismatch, expected_data_type: 'Boolean')])
     end
 
+    def test_tickets_custom_fields_string_value_for_custom_number
+      get :index, controller_params(query: '"(test_custom_number:\'123\'"')
+      assert_response 400
+    end
+
     def test_tickets_priority
       tickets = @account.tickets.select { |x|  [1,2].include?(x.priority) }
       get :index, controller_params(query: '"priority:1 OR priority:2"')

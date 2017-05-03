@@ -135,7 +135,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
     def validate_custom_number_array(record, field_name)
       values = record.send(field_name)
       values.each do |value|
-        numericality_options = construct_options(ignore_string: :allow_string_param, only_integer: true, attributes: field_name, allow_nil: !@is_required, required: @is_required)
+        numericality_options = construct_options(only_integer: true, attributes: field_name, allow_nil: !@is_required, required: @is_required)
         CustomNumericalityValidator.new(numericality_options).validate_value(record, value)
       end
     end
