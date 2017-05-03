@@ -48,7 +48,7 @@ module Freshfone
         $freshfone_call_notifier.send_message notification_params.to_json
         freshfone_notify_incoming_call(notification_params)
         enqueue_call_timeout_job if enqueue_timeout_job?
-        
+
       rescue Exception => e
         logger.error "[#{jid}] - [#{tid}] Error notifying for account #{current_account.id} for type #{type}"
         logger.error "[#{jid}] - [#{tid}] Message:: #{e.message}"
@@ -110,7 +110,7 @@ module Freshfone
       def complete_other_agents
         puts "Complete other agents"
         params = {
-          notification_type: "completed", 
+          notification_type: "completed",
           call_sid: current_call.call_sid,
           call_id: current_call.id,
           agents: pinged_agents,

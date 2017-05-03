@@ -1,5 +1,6 @@
 class FreshopsMailer < ActionMailer::Base
   default from: "admin@freshdesk.com"
+  RECIPIENTS = "dev-ops@freshdesk.com"
 
   def subscription_summary_csv(email_id,email_params,csv_file)
     headers = {
@@ -27,6 +28,20 @@ class FreshopsMailer < ActionMailer::Base
     attachments[email_params[:export_type]+'_summary.csv'] = {
       :mime_type => 'application/csv; charset=utf-8; header=present',
       :content   => csv_file
+    }
+    mail(headers).deliver
+  end
+
+  def inconsistent_accounts_summary(json_file)
+    headers = {
+      :to        =>  RECIPIENTS,
+      :subject   =>  "Inconsistent data exists among global,non global pods",
+      :sent_on   => Time.now,
+      :body      => "The details of accounts that are inconsistent are present in the attachment."
+    }
+    attachments.inline['inconsistent_accounts.csv'] = {
+      mime_type: 'application/csv; charset=utf-8; header=present',
+      content: JSON.pretty_generate(json_file)
     }
     mail(headers).deliver
   end

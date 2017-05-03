@@ -38,7 +38,7 @@ module Marketplace::ApiMethods
                            { :product_id => PRODUCT_ID, :account_id => Account.current.id },
                            Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:mkp_custom_apps] 
                         )
-        mkp_memcache_fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
+        mkp_memcache_fetch(key, MarketplaceConfig::CUSTOM_APPS_CACHE_INVD_TIME) do
           get_api(api_payload, MarketplaceConfig::GLOBAL_API_TIMEOUT) 
         end
 

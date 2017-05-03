@@ -66,21 +66,35 @@ def handle_basic_facebook_drop_data
   end
 end
 
-def handle_occasional_agent_drop_data
-  #marking all occasional agents as full time.
-  account.agents.where(occasional:true).find_each do |agent|
-    agent.occasional = false
-    agent.save
+  def handle_skill_based_round_robin_data
+    account.groups.skill_based_round_robin_enabled.each do |group|
+      if account.features?(:round_robin_load_balancing) or account.features?(:round_robin)
+        group.ticket_assign_type = Group::TICKET_ASSIGN_TYPE[:round_robin]
+        group.capping_limit = 0 unless account.features?(:round_robin_load_balancing)
+      else
+        group.ticket_assign_type = Group::TICKET_ASSIGN_TYPE[:default]
+        group.capping_limit = 0
+      end
+      group.save!
+    end
+    account.skills.destroy_all
   end
-end
 
-def handle_custom_status_drop_data
-  account.ticket_statuses.where(is_default:false).find_each do |status|
-    status.deleted = true
-    status.save
-    ModifyTicketStatus.perform_async({ :status_id => status.status_id, :status_name => status.name })
+  def handle_occasional_agent_drop_data
+    #marking all occasional agents as full time.
+    account.agents.where(occasional:true).find_each do |agent|
+      agent.occasional = false
+      agent.save
+    end
   end
-end
+
+  def handle_custom_status_drop_data
+    account.ticket_statuses.where(is_default:false).find_each do |status|
+      status.deleted = true
+      status.save
+      ModifyTicketStatus.perform_async({ :status_id => status.status_id, :status_name => status.name })
+    end
+  end
 
   def handle_custom_ticket_fields_drop_data
     account.ticket_fields.where(default:false).destroy_all
@@ -260,6 +274,13 @@ end
     clear_fragment_caches
     obj = account.features?(:ticket_templates) ? "parent" : "prime"
     account.send("#{obj}_templates").destroy_all
+  end
+
+  def handle_ticket_activity_export_drop_data
+    ticket_activity_export = account.activity_export
+    return if ticket_activity_export.nil? or !ticket_activity_export.active
+    ticket_activity_export.active = false
+    ticket_activity_export.save
   end
 
   private

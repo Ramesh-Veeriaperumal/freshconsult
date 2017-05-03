@@ -2,6 +2,8 @@ class Helpdesk::Note < ActiveRecord::Base
 
   # rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['helpdesk_notes'] }, :if => lambda{|obj| obj.rl_enabled? }
 
+  # Any changes related to note or reply made in this file should be replicated in 
+  # send_and_set_helper if required
   before_create :validate_schema_less_note, :update_observer_events
   before_create :create_broadcast_message, :if => :broadcast_note?
   before_save :load_schema_less_note, :update_category, :load_note_body, :ticket_cc_email_backup
@@ -11,7 +13,8 @@ class Helpdesk::Note < ActiveRecord::Base
   # Doing update note count before pushing to ticket_states queue
   # So that note count will be reflected if the rmq publish happens via ticket states queue
   after_commit ->(obj) { obj.send(:update_note_count_for_reports)  }, on: :create , :if => :report_note_metrics?
-  after_commit :update_ticket_states, :notify_ticket_monitor, :push_mobile_notification, on: :create
+  after_commit :update_ticket_states, on: :create, :unless => :send_and_set?
+  after_commit :notify_ticket_monitor, :push_mobile_notification, on: :create
 
   after_commit :send_notifications, on: :create, :if => :human_note_for_ticket?
 
@@ -316,6 +319,15 @@ class Helpdesk::Note < ActiveRecord::Base
       else
         @model_changes = {:note_type => NOTE_TYPE[private]}
       end
+    end
+
+    def send_and_set?
+      unless self.changes_for_observer.nil?
+        self.changes_for_observer = @model_changes
+        user_id = User.current.id if User.current
+        return true
+      end
+      return false
     end
 
     def replied_by_customer?

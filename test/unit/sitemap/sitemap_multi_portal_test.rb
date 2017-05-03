@@ -32,10 +32,6 @@ class SitemapMultiPortalTest < ActiveSupport::TestCase
     test_product = FactoryGirl.build(:product, :name => option[:name] || Faker::Name.name, :description => Faker::Lorem.paragraph, :account_id => @account.id)
     test_product.save(validate: false)
 
-    test_email_config = FactoryGirl.build(:email_config, :to_email => option[:email], :reply_email => option[:email],
-      :primary_role =>"true", :name => test_product.name, :product_id => test_product.id,:account_id => @account.id,:active=>"true")
-    test_email_config.save(validate: false)
-
     if option[:portal_url]
       test_portal = FactoryGirl.build(:portal, 
         :name=> option[:portal_name] || Faker::Name.name, 

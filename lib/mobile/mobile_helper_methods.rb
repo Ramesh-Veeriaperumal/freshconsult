@@ -97,18 +97,18 @@ module Mobile::MobileHelperMethods
       @item[:body_html] = RedCloth.new(textiled_body).to_html.gsub(/\n/,'<br />') unless textiled_body.nil?
     end
 
-    def populate_private
+    def populate_private item = @item
       if params[:helpdesk_note][:private].nil? and !params["public"].nil?
         is_public = params["public"]
         is_public = is_public == true || is_public =~ (/(true|t|yes|y|1)$/i) ? true : false
-        @item[:private] = !is_public
+        item[:private] = !is_public
       end
     end
 
-    def prepare_mobile_note
+    def prepare_mobile_note item = @item
       if mobile?
         # formate_body_html
-        populate_private
+        populate_private item
       end 
     end
 

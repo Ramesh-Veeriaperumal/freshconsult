@@ -1,0 +1,26 @@
+<%= stylesheet_link_tag_with_rtl :'cdn/ticket_schedule'  %>
+<%= render :partial => "admin/shared/filter_jsinit", :locals => { :filter_type => "ticket_schedule", :placeholders => {} } %>
+
+<% content_for :helpcard do %>
+  <%= render :partial => "helpnote" %>
+<% end %>
+
+<div class="alert mt10 mb10 ml0 mr0" rel="permanent">
+	<%= t('helpdesk_reports.ticket_schedule.schedule_show_message') %>
+</div>
+
+<div class="list-page ticket-schedule-new-wrapper ticket-schedule-show-wrapper">
+	<%= form_for @scheduled_export, :as => :scheduled_export, :url => '', :html => { :id => "ticketScheduleForm", :class => "new-ticket-schedule-form" } do |f| %>
+		<%= render :partial => "form", :locals => { :f => f, :is_show => true, :title => t('helpdesk_reports.ticket_schedule.schedule')} %>
+	<% end %>
+</div>
+
+<%= javascript_tag do %>
+	var ticketSchedule = {
+		user_time_zone : '<%= @user_time_zone_abbr %>',
+		day_of_export: '<%= @scheduled_export.day_of_export  if @scheduled_export.schedule_details.present? %>',
+		frequency: '<%= @scheduled_export.frequency if @scheduled_export.schedule_details.present? %>',
+		minute_of_day: '<%= @scheduled_export.minute_of_day if @scheduled_export.schedule_details.present? %>',
+		email_recipients: <%= @scheduled_export.schedule_details.present? ? get_search_data_with_email_ids(@scheduled_export.email_recipients).to_json.html_safe : [].to_json %>
+	}
+<% end %>

@@ -10,7 +10,8 @@ class AgentGroup < ActiveRecord::Base
 
   validates_presence_of :user
 
-  attr_accessible :group_id, :user_id
+  attr_accessor :multiple_agents_added_to_group
+  attr_accessible :group_id, :user_id, :multiple_agents_added_to_group
 
   after_commit :reset_internal_agent, on: :destroy
 
@@ -28,10 +29,14 @@ class AgentGroup < ActiveRecord::Base
         :select => "agents.user_id",
         :conditions => ["agents.available = ?",true]
 
+  scope :with_groupids, lambda { |group_ids|
+    { :conditions => ["group_id in (?)", group_ids] }
+  }
+
   def sync_skill_based_user_queues
     if account.skill_based_round_robin_enabled? && group.skill_based_round_robin_enabled? && 
         (user.agent.nil? || user.agent.available?)#user.agent.nil? - hack for agent destroy
-      args = {:action => _action, :user_id => user_id, :group_id => group_id}
+      args = {:action => _action, :user_id => user_id, :group_id => group_id, :multiple_agents_added_to_group => multiple_agents_added_to_group}
       args[:skill_ids] = user.skills.pluck(:id) if _action == :destroy
       SBRR::Config::AgentGroup.perform_async args
     end

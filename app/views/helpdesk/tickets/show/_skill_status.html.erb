@@ -1,0 +1,7 @@
+<% if current_account.skill_based_round_robin_enabled? && ticket.group.try(:skill_based_round_robin_enabled?) %>
+	<% if ticket.skill.present? %>
+		<br><span><%=t('.ticket_fields.skill') %>: </span><span><strong><%= ticket.skill.name %></strong></span>
+	<% else %>
+		<br><span><%=t('.ticket_fields.skill') %>: </span><span><strong><%= t('filter_options.none') %></strong></span>
+	<% end %>
+<% end %>

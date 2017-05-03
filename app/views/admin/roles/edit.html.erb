@@ -1,7 +1,7 @@
 <% if @role.default_role? %>
   <div class="alert" rel="permanent">
     <%= "#{t('admin.roles.default_role_edit', :go_back => link_to(t('go_back_small'), admin_roles_path ) )}".html_safe %>
-  </div> 
+  </div>
 <% end %>
 <% content_for :helpcard do %>
   <%= render :partial => "helpnote_without_tour" %>
@@ -16,14 +16,14 @@
         </div>
       <% end %>
   </h3>
-  <%= generate_breadcrumbs(params, role_form) %>  
+  <%= generate_breadcrumbs(params, role_form) %>
   <%= render :partial => 'form', :locals => { :role_form => role_form} %>
 <% end %>
 
 <div id="edit-info" class="hide" data-isdefault="<%= @role.default_role? %>"></div>
 <input type="hidden" value="<%= @role.id %>" id="roleid">
 
-<%= render :partial => 'popup' %>
+<%= render :partial => '/admin/shared/popup', :locals => {:type => 'roles'} %>
 
 <script type="text/javascript">
 jQuery(window).on('load', function(){
@@ -38,10 +38,10 @@ jQuery(window).on('load', function(){
 <%= javascript_tag do %>
 
   (function($) {
-    
+
     /* If an element is checked, then enable all
        its children */
-       
+
     $.fn.editFormShowChildren = function(){
       return this.each(function(){
         if($(this).hasClass('nested'))
@@ -51,7 +51,7 @@ jQuery(window).on('load', function(){
 
     /* If radio button is not checked, then disable all its children,
        special case for hidden fields in admin set */
-       
+
     $.fn.editFormRadioSpecial = function(){
       return this.each(function(){
         if($(this).hasClass('nested'))
@@ -62,13 +62,13 @@ jQuery(window).on('load', function(){
     $(document).ready(function() {
       $('input:checked').editFormShowChildren();
       $('input:radio:unchecked').editFormRadioSpecial();
-      
+
       <% if @role.default_role? %>
         $('#role_form :input').prop('disabled',true)
       <% end %>
-      
+
     });
-    
+
   })(jQuery);
 
 <% end %>

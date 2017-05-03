@@ -1,12 +1,12 @@
 
 // ------------------------------------------------------------------------------------------------------------
-//														 Virtual Agent 
+//														 Virtual Agent
 // ------------------------------------------------------------------------------------------------------------
-.ui-form.observer{	
+.ui-form.observer,.ui-form.ticket-schedule-form{
 	.select2{
 		width: 332px;
 		li {
-			width: auto !important;	
+			width: auto !important;
 		}
 	}
 
@@ -32,11 +32,11 @@
 	.select2-container a{
 		@include margin-left(0);
 		@include margin-right(0);
-		span{ color: #444; @include padding-right(12px);} /* Hack for setting the placeholder color as normal one 
+		span{ color: #444; @include padding-right(12px);} /* Hack for setting the placeholder color as normal one
 														since  its considering option with value null as placeholders*/
 	}
 
-	
+
 	#filterDOM, #actionDOM{
 		.select2-container{width:150px;}
 		.dependent .select2-container{ @include margin-left(3px); }
@@ -80,11 +80,11 @@
 
       .select2-container{width:303px;}
 
-      .dependent{ 	
+      .dependent{
 				input[type="text"]{
 					&.number, &.decimal{
 						width:70px;
-						height:18px;	
+						height:18px;
 						margin:2px 4px;
 					}
 				}
@@ -98,7 +98,7 @@
 		    		}
 		    		.select2-search-choice-close{
 						@include float(left);
-						@include margin(0 0 0 8px);	
+						@include margin(0 0 0 8px);
 					}
 		    	}
 			}
@@ -128,7 +128,6 @@
 			.fromto_text{
 			 	@include margin-left(8px);
 			 	padding-top: 4px;
-			 	width: 35px;
 			}
 		}
 
@@ -148,7 +147,12 @@
                 -o-transform: rotate(180deg);
             }
         }
-	}	
+	}
+}
+
+.choicelist > .radiolabel.separator-line{
+	border-right: 1px solid #cac6c6;
+  @include padding-right(17px);
 }
 
 form:not(.supervisor-form) {

@@ -24,4 +24,21 @@ module ControllerTestHelper
                                   (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36"
     @request.env['CONTENT_TYPE'] = 'application/json'
   end
+
+  def set_request_auth_headers(user = nil)
+    auth = ActionController::HttpAuthentication::Basic.encode_credentials((user || @agent).single_access_token, 'X')
+    @request.env['HTTP_AUTHORIZATION'] = auth
+  end
+
+  def login_as(user)
+    session = UserSession.create!(user) if user.present?
+    session.save
+    set_request_auth_headers user
+  end
+  
+  def log_out
+    UserSession.find.try(:destroy)
+    User.reset_current_user
+  end
+  
 end

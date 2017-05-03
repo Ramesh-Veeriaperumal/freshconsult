@@ -19,7 +19,7 @@ class Account < ActiveRecord::Base
 
     :pro => {
       :features => [ :gamification, :scenario_automations, :customer_slas, :business_hours, :forums,
-        :surveys, :scoreboard, :facebook, :timesheets, :css_customization, :advanced_reporting, :sitemap ],
+        :surveys, :scoreboard, :facebook, :timesheets, :css_customization, :advanced_reporting ],
       :inherits => [ :basic ]
     },
 
@@ -64,7 +64,7 @@ class Account < ActiveRecord::Base
 
     :blossom_classic => {
       :features => [ :gamification, :auto_refresh, :twitter, :facebook, :forums, :surveys,
-        :scoreboard, :timesheets, :advanced_reporting, :sitemap ],
+        :scoreboard, :timesheets, :advanced_reporting ],
       :inherits => [ :sprout_classic ]
     },
 
@@ -185,8 +185,8 @@ class Account < ActiveRecord::Base
     :customer_sentiment => false, :countv2_template_write => false, :logout_logs => false, :gnip_2_0 => false, :froala_editor => false,
     :es_v2_splqueries => false, :suggest_tickets => false, :"Freshfone New Notifications" => false, :feedback_widget_captcha => false,
     :es_multilang_solutions => false, :requester_widget => false, :spam_blacklist_feature => false,
-    :custom_timesheet => false, :antivirus_service => false, :hide_api_key => false, :new_sla_logic => false, :multi_dynamic_sections => true,
-    :dashboard_new_alias => false, :attachments_scope => false, :email_failures => false
+    :custom_timesheet => false, :antivirus_service => false, :hide_api_key => false, :new_sla_logic => false,
+    :multi_dynamic_sections => true, :dashboard_new_alias => false, :attachments_scope => false, :kbase_spam_whitelist => false, :forum_post_spam_whitelist => false, :email_failures => false
   }
 
 end

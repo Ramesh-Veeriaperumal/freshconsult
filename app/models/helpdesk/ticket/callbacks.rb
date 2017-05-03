@@ -53,9 +53,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   after_commit :create_initial_activity, on: :create
   after_commit :pass_thro_biz_rules, on: :create, :unless => :skip_dispatcher?
-  after_commit :send_outbound_email, :update_capping_on_create, on: :create, :if => :outbound_email?
+  after_commit :send_outbound_email, :update_capping_on_create, :update_count_for_skill,on: :create, :if => :outbound_email?
 
-  after_commit :filter_observer_events, on: :update, :if => :execute_observer?
+  after_commit :trigger_observer, on: :update, :if => :execute_observer?
   after_commit :update_ticket_states, :notify_on_update, :update_activity,
                :stop_timesheet_timers, :fire_update_event, :push_update_notification,
                :update_old_group_capping, on: :update
@@ -147,6 +147,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def update_ticket_states
     process_agent_and_group_changes
     process_status_changes
+    update_ticket_lifecycle
     ticket_states.save if ticket_states.changed?
     schema_less_ticket.save
   end
@@ -214,6 +215,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
+  def update_ticket_lifecycle
+    @ticket_lifecycle = {}
+    return if ([:responder_id, :group_id, :status] & model_changes.keys).empty?
+    tkt_group = model_changes.has_key?(:group_id) ? Group.find_by_id(model_changes[:group_id][0]) : self.group
+    @ticket_lifecycle = schema_less_ticket.update_lifecycle_changes(time_zone_now, tkt_group, [RESOLVED,CLOSED].include?(status))
+  end
+
   #Shared onwership Validations
   def reset_internal_group_agent
     (self.internal_agent_id = self.internal_group_id = nil) or return unless Account.current.shared_ownership_enabled?
@@ -270,31 +278,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
-  def ticket_was _changes = nil, _schema_less_ticket_changes = _changes
-    ticket_was = account.tickets.new #dup creates problems
-    attributes.each do |_attribute, value| #to work around protected attributes
-      next if SKIPPED_TICKET_WAS_ATTRIBUTES.include? _attribute.to_sym #skipping deprecation warning
-      ticket_was.send("#{_attribute}=", value)
-    end
-    _changes ||= begin 
-      temp_changes = changes #calling changes builds a hash everytime
-      temp_changes.present? ? temp_changes : previous_changes
-    end
-    _changes.each do |_attribute, change|
-      if ticket_was.respond_to?(_attribute) && (change.size == 2) #Hack for tags in model_changes
-        ticket_was.send("#{_attribute}=", change.first)
-      end
-    end
-
-    ticket_was.schema_less_ticket = 
-      schema_less_ticket.schema_less_ticket_was(_schema_less_ticket_changes)
-    ticket_was
-  end
-
   def skip_dispatcher?
     import_id || outbound_email? || !requester.valid_user?
   end
-  
+
   def pass_thro_biz_rules
     return if Account.current.skip_dispatcher?
     #Remove redis check if no issues after deployment
@@ -897,6 +884,14 @@ private
   def start_recording_timestamps
     self.record_timestamps = true
     true
+  end
+
+  def trigger_observer
+    filter_observer_events(true, observer_inline?)
+  end
+
+  def observer_inline?
+    Account.current.skill_based_round_robin_enabled? && bg_jobs_inline
   end
 
   def execute_observer?
