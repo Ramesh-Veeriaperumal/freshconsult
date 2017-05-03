@@ -24,6 +24,7 @@ class AccountConfiguration < ActiveRecord::Base
     end
 
     define_method("admin_#{method_name}=") do |value|
+      contact_info_will_change! unless contact_info_changed?
       contact_info[method_name] = value
     end
 
@@ -36,6 +37,7 @@ class AccountConfiguration < ActiveRecord::Base
     end
 
     define_method("admin_company_#{method_name}=") do |value|
+      company_info_will_change! unless company_info_changed?
       company_info[method_name] = value
     end
 

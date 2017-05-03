@@ -1820,9 +1820,15 @@ Helpkit::Application.routes.draw do
   resource :accounts do
     collection do
       get :new_signup_free
+      post :email_signup
       post :new_signup_free
+      get :edit_domain
+      put :update_domain
+      get :validate_domain
     end
   end
+
+  match '/accounts/edit_domain/:perishable_token' => 'accounts#edit_domain', :as => :edit_account_domain
 
   resource :subscription do
     collection do

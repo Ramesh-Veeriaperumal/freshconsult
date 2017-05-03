@@ -588,7 +588,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_account do
-    resource :account, :only => [:show, :cancel]
+    resource :account, :only => [:show, :cancel, :update_domain, :validate_domain]
     resource :account_configuration
     resource :"admin/data_export"
     resource :subscription # plans and billing

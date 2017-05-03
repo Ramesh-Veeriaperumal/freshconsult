@@ -13,6 +13,10 @@ class Signup < ActivePresenter::Base
 
   after_save :make_user_current, :populate_seed_data
 
+  MAX_ACCOUNTS_COUNT = 10
+  #Using this as the version of Rack::Utils we are using doesn't have support for 429
+  SIGNUP_RESPONSE_STATUS_CODES = {:too_many_requests => 429, :precondition_failed => 412}
+
   def locale=(language)
     @locale = (language.blank? ? I18n.default_locale : language).to_s
   end

@@ -244,6 +244,8 @@ module Redis::RedisKeys
 
   META_DATA_TIMESTAMP = "META_DATA_TIMESTAMP"
 
+  ACCOUNT_ADMIN_ACTIVATION_JOB_ID = "ACCOUNT_ADMIN_ACTIVATION_JOB_ID:%{account_id}"
+
   #Following are the dead keys. Need to remove them from code and any references
   GROUP_AGENT_TICKET_ASSIGNMENT = "GROUP_AGENT_TICKET_ASSIGNMENT:%{account_id}:%{group_id}"
   HELPDESK_GAME_NOTIFICATIONS = "HELPDESK_GAME_NOTIFICATIONS:%{account_id}:%{user_id}"
