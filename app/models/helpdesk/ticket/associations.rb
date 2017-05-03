@@ -78,6 +78,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState',:dependent => :destroy
   belongs_to :ticket_status, :class_name =>'Helpdesk::TicketStatus', :foreign_key => "status", :primary_key => "status_id"
 
+  belongs_to :skill, :class_name => 'Admin::Skill', :foreign_key => 'sl_skill_id'
   delegate :active?, :open?, :is_closed, :closed?, :resolved?, :pending?, :onhold?, 
     :onhold_and_closed?, :to => :ticket_status, :allow_nil => true
 

@@ -10,7 +10,6 @@ window.App = window.App || {};
 		onVisit: function (data) {
       App.Ticketschedule.bindToggleEvents();
 		},
-
 		onLeave: function (data) {
 			if (this.current_module !== '') {
 				this.current_module = '';

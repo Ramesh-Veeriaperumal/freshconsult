@@ -90,8 +90,8 @@ en:
     dropped:
       summary_error_text: "Message dropped - Invalid or problematic address"
       help_text:
-        admin: "Any message sent to this address will not be delivered as the address you've entered is invalid or mistyped. Please contact Freshdesk support if you believe that this address is valid and should be removed from the drop list for future communication."
-        agent: "Any message sent to this address will not be delivered as the address you've entered is invalid or mistyped. Please contact your account administrator if you believe that this address is valid and should be removed from the drop list for future communication."
+        admin: "Any message sent to this address will not be delivered as the address is invalid or mistyped. Please contact Freshdesk support if you believe that this address is valid and should be removed from the drop list for future communication."
+        agent: "Any message sent to this address will not be delivered as the address is invalid or mistyped. Please contact your account administrator if you believe that this address is valid and should be removed from the drop list for future communication."
     dropped_unsubscribed:
       summary_error_text: "Message dropped - Unsubscribed address"
       help_text:
@@ -102,7 +102,7 @@ en:
       help_text: "The message did not reach this recipient after multiple attempts. This could be due to connection issues with the remote server or temporary problems like the mailbox being full. Please retry sending the message after some time."
     bounce_permanent:
       summary_error_text: "Message bounced - Permanent error"
-      help_text: "The message did not reach this recipient even after multiple attempts. You can try resending the message, but it's likely that the address you've entered may be invalid or mistyped."
+      help_text: "The message did not reach this recipient even after multiple attempts. You can try resending the message, but it's likely that the address may be invalid or mistyped."
     suppression_list_alert:
       subject: "Request to remove address from drop list"
       company: "Company"
@@ -119,10 +119,14 @@ en:
                 Message content: <br>%{failed_content}</p>
     note_display:
       title  : "Message not delivered"
-      failed_recipients: "Failed recipients"
-      contact_support: "Email Freshdesk Support"
+      failed_recipient: "recipient"
+      failed_recipients: "recipients"
+      contact_support: "Request to unblock recipient"
+      mail_sent: "Unblock request sent to Freshdesk"
       call_recipient : "Call recipient"
-      add_note_to_admin : "Add note to admin"
+      add_note_to_admin : "Notify admin of blocked address"
+      hide_details: "Hide details"
+      show_details: "Show details"
   reorder_rules: Reorder Active Rules
   plain_yes: "Yes"
   plain_no: "No"
@@ -198,6 +202,7 @@ en:
     created_date_range: Time period
     none: None
     unresolved: All Unresolved
+    sl_skill_id: "Skill"
   proceed_now: "\n\nProceed now?"
   forward: "Forward"
   apply: "Apply"
@@ -224,6 +229,7 @@ en:
   hard_pressed_for_time: Hard pressed for time? Get advice, tips and best practices from a Freshdesk expert.
   facebook_reauth: "Your Facebook channel is inaccessible. It looks like your username, password, or permission has been changed recently."
   fb_realtime_enable: "Facebook real-time messaging is now live! Reauthorize your existing Facebook Pages to enable the feature for your account. Read more <a target='_blank' href='https://support.freshdesk.com/support/solutions/articles/221711'>here</a>"
+  freshpipe_email_disabled: "All outgoing emails and notifications are currently disabled since the data migration is in progress."
   reauthorize_facebook: "Reauthorize your facebook account."
   twitter_reauth:  "Your Twitter channel is inaccessible. It looks like your username or password has been changed recently. "
   reauthorize_twitter: Reauthorize your twitter handle.
@@ -754,6 +760,7 @@ en:
         nav_skill_list_text: Skill List
         nav_agent_skill_text: Agents' Skill
         confirm_delete_message: Are you sure you want to delete this skill?
+        confirm_delete_message_v2: Deleting a skill will remove the skill from all the agents. Unassigned tickets with this skill will be mapped to a new skill. Are you sure you want to proceed?
         skill_create: Create
         add_agents: Add agents
         skills: Skills
@@ -1857,6 +1864,7 @@ en:
         help_info_2a: An event may refer to any user-driven change that will trigger a specific Observer rule.
         help_title_2b: Event Performers
         help_info_2b: Specifies which user's changes should trigger the rule. You can choose between the agent, the requester (or someone outside your support team in the ticket loop), or both.
+        new_help_info_2b: Specifies which user's changes should trigger the rule. You can choose between the agent, the requester, the agent or the requester, and the system. The requester also includes someone outside your support team but are in the ticket loop.
         help_title_2c: Ticket conditions
         help_info_2c: You can optionally filter the rule to apply to only certain tickets.
         help_title_2d: Actions
@@ -2774,6 +2782,7 @@ en:
       limit_exceeded: You've exceeded the limit for performing this action. Please try again.
       access_denied: You are not allowed to access this page!
       need_login: You must be logged in to access this page
+      portal_blocked: "Portal is currently not accessible"
       recipient_limit_exceeded: You can include a maximum of %{limit} email recipients per ticket during your trial period
       outbound_limit_per_day_exceeded: You can send a maximum of 5 outbound emails a day per account during the trial period
       insufficient_privilege:
@@ -2833,6 +2842,7 @@ en:
   import_zendesk_title: Import from zendesk
   closed: Closed
   suspended_plan_info: Your account has been suspended.
+  suspended_account_info: "Your account has been suspended and the customer portal will not be accessible."
   plan_info_update: Your plan has been changed.
   note: "Note: "
   warning: WARNING
@@ -2853,6 +2863,7 @@ en:
   requester_email: Requester Email
   feedbackwidget_image_button: Image URL
   activities:
+    skill: 'Skill'
     action_verb: 'updated'
     email_response: "email response"
     reply: "reply"
@@ -3151,6 +3162,8 @@ en:
         new: "Flagged this ticket as Spam"
       unspam:
         new: "Restored this ticket from Spam"
+      skill_name:
+        new: "Skill as <strong>%{skill_name}</strong>"
       product_change:
         short: "{{user_path}} updated product to {{product_name}}"
         without_user: "updated product to <strong>{{product_name}}</strong>"
@@ -3281,7 +3294,7 @@ en:
   current_free_plan: Current Free Plan
   medium: "Medium"
   suspended_plan_admin_info: Your account has been suspended please contact your account administrator (%{email})
-  suspended_plan_admin_info_new: Your account has been suspended please contact your account administrator
+  suspended_account_admin_info: "Your account has been suspended and the customer portal will not be accessible. Please contact your account administrator."
   delete_confirm_scenario: Are you sure you want to delete this scenario?
   days: Days
   basic_brief: For Small teams
@@ -3442,6 +3455,7 @@ en:
   import_note_info: Please ensure that the first row has the header information (eg. name, email etc.). The fields in your CSV file, though, can be in any order.
   utf_8_format: The file has to be in UTF-8 format.
   at: at
+  "on": "on"
   add_a_topic: Start a Topic
   bottom: Bottom
   feedbackwidget_help_title: Feedback widget
@@ -3940,6 +3954,17 @@ en:
           attributes:
             language:
               inclusion: "should be valid"
+        scheduled_export:
+          attributes:
+            base:
+              max_no_of_email_recipients_per_scheduled_export: You cannot add more than %{max_limit} email addresses
+              max_scheduled_exports_per_account: Cannot have more than %{max_limit} scheduled exports
+              ticket_fields_exceeds: Cannot have more than %{max_limit} ticket fields
+              contact_fields_exceeds: Cannot have more than %{max_limit} contact fields
+              company_fields_exceeds: Cannot have more than %{max_limit} company fields
+              filter_data_presence: At least one filter has to be selected
+              email_recipients_presence: Please enter one or more email addresses
+              fields_data_presence: Please select some fields
       messages:
         contact_admin: There seems to be some problem with your account. Please contact your administrator.
         record_invalid: "Validation failed: %{errors}"
@@ -3973,6 +3998,7 @@ en:
         max_skills_per_user: Cannot have more than %{max_limit} skills per agent
         unique_external_id: unique_external_id field cannot be updated
         edit_broadcast_note: "Broadcast message can't be edited"
+        max_scheduled_exports_per_account: Cannot have more than %{max_limit} scheduled exports
       full_messages:
         format: "%{attribute} %{message}"
       template:
@@ -4110,7 +4136,7 @@ en:
     rr_v2_confimation_message: This action cannot be undone. Are you sure you want to proceed?
     tour: Help me create a new agent group
     helptext: You can organize your agents into specific Groups like “Support” and “Sales”. This lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that an agent can be a member of multiple groups.
-    automatic_assignment: <b>To each group</b><br/>Once you’ve created your groups, you can set up rules in dispatch’r to automatically route tickets to each group. <a href="https://support.freshdesk.com/support/solutions/articles/77157" target="_blank">Learn more</a><br/><br/><b> To agents within each group</b><br/>You can also auto-assign tickets to online agents within a group by three methods:<br>1. Round robin - Assign tickets to agents in a circular fashion<br>2. Load balanced - Set a limit on the number of tickets that are assigned to each agent<br/> <a href="https://support.freshdesk.com/support/solutions/articles/196581" target="_blank">Read more</a>
+    automatic_assignment: <b>To each group</b><br/>Once you’ve created your groups, you can set up rules in dispatch’r to automatically route tickets to each group. <a href="https://support.freshdesk.com/support/solutions/articles/77157" target="_blank">Learn more</a><br/><br/><b> To agents within each group</b><br/>You can also auto-assign tickets to online agents within a group by three methods:<br>1. Round robin - Assign tickets to agents in a circular fashion<br>2. Load balanced - Set a limit on the number of tickets that are assigned to each agent<br>3. Skill based  - Assign tickets to agents based on their expertise <br/> <a href="https://support.freshdesk.com/support/solutions/articles/196581" target="_blank">Read more</a>
     automatic_assignment_header: Auto-ticket Assignment
     working_hours_header: Business Hours
     working_hours: You can associate different business hours to each of these groups based on their working hours. You can group agents by shifts and assign different business hours to each group, or create separate groups for each location that your agents work from.
@@ -4271,6 +4297,10 @@ en:
     password_reset_message: "Do you want to reset %{requester}'s password?"
     password_reset_note: "Note: A reset mail with instructions will be sent to %{requester}"
     group: Groups
+    skill: Skills
+    manage_skills: Manage Skills
+    add_skills: Add Skills
+    more: more
     member: Member of
   account_admin: Account admin
   right: Right
@@ -6448,8 +6478,14 @@ en:
       assigned_reassigned: "%{type} to %{username}"
       flagged_spam: "%{tickets} flagged as spam. %{undo}"
       flagged_unspam: "%{tickets} removed from the spam folder."
+      flagged_unspam_single: "Please wait while we unspam this ticket. This might take upto a minute."
+      flagged_unspam_multiple: "Please wait while we unspam %{tickets}. This might take few minutes."
+      flagged_restore: "%{tickets} were restored."
+      flagged_restore_single: "Please wait while we restore this ticket. This might take upto a minute."
+      flagged_restore_multiple: "Please wait while we restore %{tickets}. This might take few minutes."
       tickets_background: "Please wait while we update the tickets. This might take a few minutes."
-      spam: "%{tickets} flagged as spam%{text}. %{undo}"
+      spam: "%{tickets} will be marked as spam shortly%{text}. %{undo}"
+      destroy: "%{tickets} will be deleted shortly. %{undo}"
 
     shared:
       addcc: "Add cc"
@@ -7004,6 +7040,9 @@ en:
       info: Your Ticket data will be sent to your email shortly!
       subject: Export of tickets %{filter} within ( %{start_date} to %{end_date} ) for  %{domain}
       body: "The ticket export you had requested is complete. You can download the file from <a href=%{url}>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:"
+    scheduled_ticket_export:
+      subject: "%{title} for %{date}"
+      body: "Hello there,<br><br>The export scheduled by %{user_name} is now ready. This report has the details of tickets that were created and updated during %{latest_schedule_time}.<br><br><a href=%{url}>Download Report</a><br><br>Please download this report within 30 days, after which the link will expire.<br><br>Happy number crunching!<br>%{helpdesk_name}"
     agents:
       fields:
         name: "Name"
@@ -7017,6 +7056,7 @@ en:
         phone: "Phone"
         mobile: "Mobile"
         last_seen: "Last seen"
+        skills: "Skills"
     fields:
       ticket_id: "Ticket Id"
       display_id: "Display Id"
@@ -7030,6 +7070,7 @@ en:
       requester_name: "Requester Name"
       requester_email: "Requester Email"
       fb_profile_id: "Facebook Profile Id"
+      fb_id: "Facebook Profile ID"
       agent: "Agent"
       group: "Group"
       created_time: "Created Time"
@@ -7052,6 +7093,7 @@ en:
       survey_received: "Survey Received Time"
       comment: "Comment"
       rating: "Rating"
+      skill: "Skill"
     call_history:
       info:
         success: We have started exporting your call records. It will be mailed to you once completed.
@@ -8573,7 +8615,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         agent_chat_summary: Agent Chat Summary
         agent: "Agent"
         deleted: "Deleted"
-
+      scheduled_exports:
+        create:
+          max_email_recipients_per_scheduled_export: "Cannot add more than %{max_limit} email recipients"
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"
   bulk_actions: "Bulk Actions"
@@ -8992,14 +9036,14 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     generate: Search
     add_fields: Add field
     requester: Requester
-    agent: Agent
+    agent: Agents
     company: Company
     tags: Tags
     created_at: Created
     due_by: Due by
     status: Status
     priority: Priority
-    group: Group
+    group: Groups
     type: Type
     source: Source
     product: Product
@@ -9037,6 +9081,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     summary: Summary
     chats: Chats
     edit: Edit
+    'yes': 'Yes'
+    'no': 'No'
     filter_error_msg: '* You can select a maximum of 10 filters. (Each selected level of nested field counts as one filter)'
     no_data_to_display_msg: No data to display
     something_went_wrong_msg: 'Something went wrong, please try again'
@@ -9375,6 +9421,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       avg_res_time: Average response time
       avg_resolution_time: Average resolution time
       agent: Agent
+    timespent:
+      title : Ticket Lifecycle
     customer_report:
       title:  Top Customer Analysis
       received_tickets: Tickets submitted
@@ -9403,18 +9451,22 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     customer_satisfaction:
       title: Customer Satisfaction Report
     ticket_schedule:
-      schedule_export: "Scheduled Export"
+      schedule_export: "Schedule Export"
+      schedule_properties: "Schedule ticket properties"
+      schedule_properties_activities: "Schedule ticket properties and activities"
       all_reports: "All Reports"
       schedule: "Schedule"
       new_schedule: "New Schedule"
-      no_schedule: "You haven’t created any schedule yet!"
+      no_schedule: "No schedules created"
       create_new: "Create"
       schedule_show_message: "You cannot edit a schedule once it's created"
+      file_not_found: The required export file is not found.
+      file_not_created: The required export file is not yet created.
       helpnote:
         help_title_1: "Export ticket properties"
         help_info_1: "You can schedule and export ticket properties, along with their associated contact and company fields from Freshdesk. Data from the export can then be used for building custom reports. For example, you can get an export of tickets every week which includes the first response time, resolution time and the assigned agent, and see how responsive your support team is. A maximum of five schedules can be created for an account. <a href='https://support.freshdesk.com/support/solutions/articles/226461-export-ticket-properties/' target='_blank'>Read more</a> on how to create a schedule to export ticket properties."
         help_title_2: "Export ticket activities"
-        help_info_2: "As an account admin, you would want a list of all activities performed on your tickets so you can build custom metrics. When this is turned on, you will be able to access a JSON file with all the events that occured in each ticket the previous day (including events performed by automations). You can create only one schedule per day for an account. <a href='https://support.freshdesk.com/support/solutions/articles/226460-export-ticket-activities/' target='_blank'>Learn more.</a>"
+        help_info_2: "As an account admin, you would want a list of all activities performed on your tickets so you can build custom metrics. When this is turned on, you will be able to access a JSON file with all the events that occurred in each ticket the previous day (including events performed by automations). You can create only one schedule per day for an account. <a href='https://support.freshdesk.com/support/solutions/articles/226460-export-ticket-activities/' target='_blank'>Learn more.</a>"
       index:
         no_ticket_Schedule: "No Ticket Schedule"
         ticket_properties_title: "Export ticket properties"
@@ -9423,12 +9475,19 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         scheduled_hourly: "Runs hourly"
         scheduled_daily: "Runs daily at %{hrs}:00 hrs"
         scheduled_weekly: "Runs weekly on %{day} at %{hrs}:00 hrs"
+        delete_title: "Delete Schedule"
+        delete_text: "Are you sure you want to delete this schedule?"
+        cancel: "Cancel"
+        confirm: "Confirm"
       new:
-        title: "Title"
+        title: "Schedule Name  <span class='required_star'>*</span>"
         description: "Description"
-        filter: "Filters"
-        fields_to_export: "Fields to Export"
-        delivery: "Delivery"
+        email: "Email"
+        api: "API"
+        frequency: "Schedule"
+        filter: "Select Filters"
+        fields_to_export: "Select Fields to Export"
+        delivery: "Receive via"
         add_new: "Add new"
         ticket_fields_title: "Ticket Fields"
         contact_fields_title: "Contact Fields"
@@ -9437,10 +9496,10 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
           zero: "No field selected"
           one: "field selected"
           other: "fields selected"
-        one_time_export_label: "Send a one time export of tickets created or updated from the beginning of the current month for initial seeding of data"
+        one_time_export_label: "Export ticket content from the start of the month when this schedule begins"
         helpnote:
           api_info1: "The API will have the link to the latest export."
-          api_info2: "The export will contain a log of all ticket related updates peformed the previous day."
+          api_info2: "The export will be generated periodically containing the chosen ticket, contact and company fields."
         schedule:
           hourly: "Hourly"
           daily: "Daily"
@@ -9449,7 +9508,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         daily_label: "24 hours"
         weekly_label: "7 days"
         schedule_message: "%{zone} for tickets created/updated in the last %{label}"
-        select_all: "select all"
+        select_all: "Select all"
+        max_field: "(upto 100 fields)"
+        email_recipient_maxlimit: "You cannot add more than %{limit} email addresses"
     ticket_activity:
       title: "Export ticket activities"
       edit: "Edit Schedule"
@@ -9459,6 +9520,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         field_value:
           name: "Daily export of ticket activities"
           description: "Contains a log of all the updates performed on new or old tickets by user or automation on a given day"
+      helpnote:
+          api_info1: "The API will have the link to the latest export."
+          api_info2: "The export will contain a log of all ticket related updates performed the previous day."
   adv_reports:
     deprecated_message : "(View classic report link will no longer be available from Fri, 18 March 2016)"
     deprecated_header : "This report will no longer be available from Fri, 18 March 2016"
@@ -10889,6 +10953,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     collab_first_mention_multi: "mentioned you in {{count}} messages on ticket %{object}"
     collab_group_mention: "mentioned your group - %{group_name} in a message on ticket %{object}"
     collab_group_mention_multi: "mentioned your group - %{group_name} in {{count}} messages on ticket %{object}"
+    collab_reply: "replied to your message on ticket %{object}"
+    collab_reply_multi: "replied to your message on ticket %{object}"
     types:
       private_note_created: "Private Note Created"
       public_note_created: "Public Note Added"
@@ -10900,6 +10966,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       collab_group_mention: :"Discussion"
       collab_group_mention_multi: "Discussion"
       collab_first_mention: "Discussion"
+      collab_reply: "Discussion"
+      collab_reply_multi: "Discussion"
       ticket_assigned_to_group: "Ticket Assigned to Group"
       ticket_created: "New Ticket"
     preferences_text:

@@ -7,6 +7,7 @@ module Concerns::DataEnrichmentConcern
 
     def enqueue_for_data_enrichment
       account = Account.current
+      Rails.logger.debug "******* Data Enrichment Concern account: ##{account.id}  ehawk_spam: #{account.ehawk_spam?} verified: #{account.verified?} model: #{self.class.name.underscore} condition: #{send(self.class.name.underscore + "_check")} changes: #{self.previous_changes.inspect}"
       return if account.ehawk_spam? || account.verified?
       ContactEnrichment.perform_async({:email_update => @email_update}) if send(self.class.name.underscore + "_check")
     end

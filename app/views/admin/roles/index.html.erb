@@ -55,7 +55,7 @@
 </div>
 <input type="hidden" value="" id="roleid">
 
-<%= render :partial => 'popup' %>
+<%= render :partial => '/admin/shared/popup', :locals => {:type => 'roles'} %>
 
 <script type="text/javascript">
 jQuery(window).on('load', function(){

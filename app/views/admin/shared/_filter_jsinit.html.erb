@@ -389,15 +389,16 @@
    <% end %>
 <% end %>
 <% content_for :onload_script do %>
+var filter_type = '<%= filter_type %>';
   sys_events = <%= @system_events.to_json.html_safe %>;
   <% if (filter_type == "observer") %>  
     // options for system events in observer rules
     // i18n For javascript entities
     event_lang = <%= t('event').to_json.html_safe %>;
-    event_rule = new rules_filter("event", $A(<%= @event_defs.html_safe if @event_defs %>), "#eventDOM", { "init_feed":$A(<%= @event_input.html_safe if @event_input %>)});    
+    event_rule = new rules_filter("event", $A(<%= @event_defs.html_safe if @event_defs %>), "#eventDOM", { "init_feed":$A(<%= @event_input.html_safe if @event_input %>)});
     ObserverDom.init();
   <% end %>
-  <% if (filter_type == "va_rule" || filter_type == "observer") %>
+  <% if (filter_type == "va_rule" || filter_type == "observer" || filter_type == 'ticket_schedule') %>
     var filter_array = <%= @filter_defs.html_safe if @filter_defs %>;
     var op_hash = preProcessCondition(<%= @op_types.html_safe if @op_types %>, <%= @op_list.html_safe if @op_list %>, <%= @op_label.html_safe if @op_label %>);
     var options = {
@@ -405,7 +406,7 @@
         "init_feed"   :$A(<%= @filter_input.html_safe if @filter_input %>),
         "is_requester":true
       }
-    if(<%= @is_supervisor ? true : false %>) {
+    if(<%= (@is_supervisor || filter_type == 'ticket_schedule') ? true : false %>) {
       options['is_requester'] = false
       if(filter_array['ticket'])
         filter_array = filter_array['ticket'];

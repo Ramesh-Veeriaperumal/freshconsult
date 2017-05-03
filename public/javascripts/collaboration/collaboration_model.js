@@ -24,8 +24,10 @@ App.CollaborationModel = (function ($) {
     var _COLLAB_PVT = {
         ChatApi: {},
         apiInited: function(response) {
-            Collab.features.groupMentionsEnabled = response.features.enable_group_mentions;
-            Collab.features.replyToEnabled = response.features.enable_reply_to;
+            if(!!response.features) {
+                Collab.features.groupMentionsEnabled = !!response.features.enable_group_mentions;
+                Collab.features.replyToEnabled = !!response.features.enable_reply_to;
+            }
         },
         connectionInited : function() {
             Collab.MEMBER_PRESENCE_POLL_TIME = _COLLAB_PVT.ChatApi.memberPresencePollTime;
@@ -46,8 +48,28 @@ App.CollaborationModel = (function ($) {
                 var users = response.users;
                 // TODO (ankit): manage response.start and futher fetching if(start != "")
                 users.forEach(function(user) {
+                    var handle = user.info.email.split("@")[0];
                     Collab.usersMap[user.uid] = jQuery.extend({"uid": user.uid}, user.info);
+                    Collab.usersTagMap[handle] = jQuery.extend({"uid": user.uid, "tag": handle}, user.info);
                 });
+                if(!!window.raw_store_data && !!window.raw_store_data.group) {
+                    var grp_info = window.raw_store_data.group;
+                    Collab.groupsTagMap = {};
+                    grp_info.forEach( function (grp) {
+                        var grp_name = grp.name.trim().replace(/\s+/g, "-");
+                        // TODO (kshitij) : see if a workaround is possible to optimize this
+                        Object.keys(Collab.usersTagMap).forEach( function(user_name) {
+                            if(user_name.toLowerCase() === grp_name.toLowerCase()) {
+                                grp_name += "*";
+                            }
+                        });
+                        while(Collab.groupsTagMap.hasOwnProperty((grp_name))) {
+                            grp_name += "*";
+                        }
+                        Collab.groupsMap[grp.id] = grp.name;
+                        Collab.groupsTagMap[grp_name] = grp.id;
+                    });
+                }
                 uiIniter();
             });
 
@@ -90,6 +112,7 @@ App.CollaborationModel = (function ($) {
                 App.CollaborationUi.addMessageHtml(msg, CONST.TYPE_RECEIVED);
             }
             if(sent_by_me) {
+                App.CollaborationUi.updateSentMessage(msg);
                 _COLLAB_PVT.updateConvoMeta(msg); /* stores metadata per convo */
             }
         },
@@ -189,6 +212,9 @@ App.CollaborationModel = (function ($) {
     var Collab = {
         conversationsMap: {},
         usersMap: {},
+        usersTagMap: {},
+        groupsMap: {},
+        groupsTagMap: {},
         notificationsMap: {},
         unreadNotiCount: 0,
         invalidAnnotationMessages: [],
@@ -232,8 +258,10 @@ App.CollaborationModel = (function ($) {
                 "metadata": m.metadata,
                 "body": m.body,
                 "m_type": m.m_type,
-                "attachment_link": m.attachment_link
+                "attachment_link": m.attachment_link,
+                "ts": m.ts
             };
+            
             var convo = {
                 "co_id": co_id,
                 "token": Collab.currentConversation.token

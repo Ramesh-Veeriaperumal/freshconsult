@@ -28,6 +28,9 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
   COLUMN_TO_ATTRIBUTE_MAPPING.keys.each do |key|
     alias_attribute(COLUMN_TO_ATTRIBUTE_MAPPING[key], key)
   end
+
+    LIFECYCLE_REPORTS_MAPPING = {"agent" => 'responder_id', 'group' => 'group_id', 'status' => 'status'}
+    LIFECYCLE_REPORTS_COLUMNS = LIFECYCLE_REPORTS_MAPPING.keys
   
 	self.table_name =  "helpdesk_schema_less_tickets"
 	self.primary_key = :id
@@ -37,7 +40,6 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 
 	belongs_to :sla_policy, :class_name => "Helpdesk::SlaPolicy", :foreign_key => "long_tc01"
 	belongs_to :parent, :class_name => 'Helpdesk::Ticket', :foreign_key => 'long_tc02'
-  belongs_to :skill, :class_name => 'Admin::Skill', :foreign_key => 'long_tc06'
 
 
 	belongs_to_account
@@ -59,7 +61,6 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :sla_response_reminded, :boolean_tc04
 	alias_attribute :sla_resolution_reminded, :boolean_tc05
 	alias_attribute :dirty_attributes, :text_tc03
-	alias_attribute :skill_id, :long_tc06
 	alias_attribute :spam_score, :string_tc04
 	alias_attribute :sds_spam, :int_tc05
 
@@ -84,10 +85,6 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	def self.survey_rating_updated_at_column
 		:datetime_tc01
 	end
-
-  def self.skill_id_column
-  	:long_tc06
-  end
 
 	def self.find_by_access_token(token)
 		find_by_string_tc01(token)
@@ -161,7 +158,32 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 			self.reports_hash["#{count_type}_count"] = current_count unless current_count.nil?
 		end
 	end
-	# Methods for new reports ends here
+
+    def update_lifecycle_changes(event_time, group, resolved_or_closed)
+        self.reports_hash ||= {}
+        tkt = self.ticket
+        last_updated_at = self.reports_hash["lifecycle_last_updated_at"] || tkt.created_at
+        action_time_in_bhrs = calculate_action_time_in_bhrs(last_updated_at, event_time, group)
+        if action_time_in_bhrs <= 30 && !resolved_or_closed #return if action_time_in_bhrs is less than 30 seconds
+            self.reports_hash["lifecycle_last_updated_at"] = event_time
+            return {}
+        end
+        action_time_hash = {
+            action_time_in_bhrs: action_time_in_bhrs,
+            action_time_in_chrs: event_time - last_updated_at,
+            chrs_from_tkt_creation: event_time - tkt.created_at
+        }
+        self.reports_hash["lifecycle_last_updated_at"] = event_time
+        action_time_hash
+    end
+
+    def calculate_action_time_in_bhrs(start_time, end_time, group)
+        time_in_bhrs = nil
+        BusinessCalendar.execute(self.ticket) {
+            time_in_bhrs = calculate_time_in_bhrs(start_time, end_time, group)
+        }
+        time_in_bhrs
+    end
 
 	def recalculate_note_count
 		recalculated_count = Hash.new(0)
@@ -175,21 +197,30 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	  self.reports_hash["recalculated_count"] = true
 	end
 
-  def schema_less_ticket_was _changes = nil
-    schema_less_ticket_was = account.schema_less_tickets.new #dup creates problems
+  def schema_less_ticket_was _changes = {}
+  	replicate_schema_less_ticket :first, _changes
+  end
+
+  def schema_less_ticket_is _changes = {}
+	replicate_schema_less_ticket :last, _changes
+  end
+
+  def replicate_schema_less_ticket index, _changes = {}
+    schema_less_ticket_replica = account.schema_less_tickets.new #dup creates problems
     attributes.each do |_attribute, value| #to work around protected attributes
-      schema_less_ticket_was.send("#{_attribute}=", value)
+      schema_less_ticket_replica.send("#{_attribute}=", value)
     end
     _changes ||= begin
       temp_changes = changes #calling changes builds a hash everytime
       temp_changes.present? ? temp_changes : previous_changes
     end
     _changes.each do |_attribute, change|
-      if schema_less_ticket_was.respond_to? _attribute
-        schema_less_ticket_was.send("#{_attribute}=", change.first) 
+      if schema_less_ticket_replica.respond_to? _attribute
+        schema_less_ticket_replica.send("#{_attribute}=", change.send(index)) 
       end
     end
-    schema_less_ticket_was
+
+    schema_less_ticket_replica  	
   end
 
 end

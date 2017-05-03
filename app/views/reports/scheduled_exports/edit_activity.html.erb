@@ -27,8 +27,8 @@
         <button class="btn btn-primary schedule-save" type="submit"><%= t('save') %></button>
 			</div>
 		</div>
-		<ul class="ui-form ticket-schedule-ul no-background">
-			<li class="ticket-schedule-li">
+		<ul class="ui-form ticket-schedule-form no-background">
+			<li class="ticket-schedule-item">
 				<div class="row-fluid mb18">
 					<div class="span6">
 						<h2 class="title schedule-title">
@@ -52,7 +52,7 @@
 			<div class="span6 pull-right align-right mt10">
 				<%= link_to t('helpdesk_reports.ticket_activity.learn_more'), "https://support.freshdesk.com/support/solutions/articles/226460-export-ticket-activities/", :target => 'blank' %>
 			</div>
-			<li class="ticket-schedule-li">
+			<li class="ticket-schedule-item">
 				<div class="row-fluid api-content">
 					<%= label(:api , :url, class: "span2")	%>
 					<div class="span10">
@@ -63,10 +63,10 @@
 						<span class="span14">
 							<ul class="api-note muted">
 								<li>
-									<%= t('helpdesk_reports.ticket_schedule.new.helpnote.api_info1') %>
+									<%= t('helpdesk_reports.ticket_activity.helpnote.api_info1') %>
 								</li>
 								<li>
-									<%= t('helpdesk_reports.ticket_schedule.new.helpnote.api_info2') %>
+									<%= t('helpdesk_reports.ticket_activity.helpnote.api_info2') %>
 								</li>
 							</ul>
 						</div>

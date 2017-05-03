@@ -9,6 +9,7 @@ app:
     client_secret: "0aJhfYIgkDDPb-cE57TehreBwVlRKQd4"
   cloud_elements:
     development:
+      server_url: "https://api.cloud-elements.com"
       auth_header: "User y31G0E60L6Zs/nZx7x0MJtRKCyhsJACUaAaDYU67S78=,Organization 3abb0215cd97f5f346f29a860e1e5982"
       crm_formula_template_id:
         salesforce_v2:  "4345"
@@ -17,6 +18,7 @@ app:
         salesforce_v2: "4346"
         dynamics_v2: "5976"
     test:
+      server_url: "https://api.cloud-elements.com"
       auth_header: "User y31G0E60L6Zs/nZx7x0MJtRKCyhsJACUaAaDYU67S78=,Organization 3abb0215cd97f5f346f29a860e1e5982"
       crm_formula_template_id:
         salesforce_v2:  "4345"

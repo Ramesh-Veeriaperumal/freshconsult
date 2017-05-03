@@ -156,10 +156,10 @@ window.App.Admin.Skills = window.App.Admin.Skills || {};
       var _this = this;
       _this._appendContent(name, agentcount, _this._initmodal);
       var $agentSelectBox = $('#manage-agents-content .add-agent-box, #manage-agents-content .button-container');
-      if (isaccadmin && $("#is-accadmin").val() === "false") {
-        $agentSelectBox.hide();
-      } else {
+      if (isaccadmin) {
         $agentSelectBox.show();
+      } else {
+        $agentSelectBox.hide();
       }
       _this.temp_agents = {};
     },
