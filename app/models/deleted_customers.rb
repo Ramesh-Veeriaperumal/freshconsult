@@ -6,7 +6,13 @@ class DeletedCustomers < ActiveRecord::Base
   def reactivate
     event = SubscriptionEvent.deleted_event(account_id)
     event.delete if event
-    Resque.remove_delayed(Workers::ClearAccountData, { :account_id => account_id })
+    begin
+	    scheduled_set = Sidekiq::ScheduledSet.new
+	    scheduled_set.select {|x| x.klass == "AccountCleanup::DeleteAccount" and x.args[0]["account_id"].to_i == account_id.to_i }.map(&:delete)
+	  rescue Exception => e
+	  	 NewRelic::Agent.notice_error(e,{:description => "Account reactivated:: #{account_id},  Delete account sidekiq job removal failed."})
+	  end
+
     delete
   end
 end
