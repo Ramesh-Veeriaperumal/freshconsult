@@ -52,15 +52,7 @@ class Export::TicketDump < Export::TicketSchedule
     end
 
     def file_name
-      @file_name ||=
-        "tickets-#{file_timestamp}.csv"
-    end
-
-    def file_timestamp
-      exp = @task.hourly? ? "%B-%d-%Y-%H-00" : "%B-%d-%Y"
-      ret = "#{@task.frequency_name}-#{Time.zone.now.strftime(exp)}"
-      ret << "-with-dump" if initial_dump
-      ret
+      @file_name ||= @schedule.file_name(Time.zone.now.to_s)
     end
 
     def save_file_name file_name

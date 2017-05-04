@@ -37,6 +37,12 @@ class ScheduledTicketExport < ScheduledExport
     define_method(key) { schedule_details[key] }
   end
 
+  DELIVERY_FREQUENZY_BY_KEYS.each do |type, val|
+    define_method("#{type}?") do
+      frequency.to_i == val
+    end
+  end
+
   def params_for_service
     {
       :user_id         => user_id,
@@ -48,6 +54,10 @@ class ScheduledTicketExport < ScheduledExport
       :day_of_frequency => day_of_export,
       :class_name       => 'Ticket' #To Do
     }
+  end
+
+  def frequency_name
+    DELIVERY_FREQUENZY_BY_VALUE[frequency.to_i]
   end
 
   def download_url filename = nil
@@ -84,14 +94,14 @@ class ScheduledTicketExport < ScheduledExport
   end
 
   def latest_schedule_time
-    case frequency.to_i
-      when DELIVERY_FREQUENZY_BY_KEYS[:hourly]
+    case frequency_name
+      when :hourly
         "#{Time.zone.now.day.ordinalize}
         #{Time.zone.now.beginning_of_hour.advance(hours: -1).strftime("%b %Y, %H:%M")} -
         #{Time.zone.now.beginning_of_hour.strftime("%H:%M")}".squish
-      when DELIVERY_FREQUENZY_BY_KEYS[:daily]
+      when :daily
         "#{Time.zone.now.day.ordinalize} #{Time.zone.now.strftime("%b %Y")}"
-      when DELIVERY_FREQUENZY_BY_KEYS[:weekly]
+      when :weekly
         last_week_time = Time.zone.now.advance(days: -6)
         "#{last_week_time.day.ordinalize} #{last_week_time.strftime("%b %Y")} -
         #{Time.zone.now.day.ordinalize} #{Time.zone.now.strftime("%b %Y")}".squish
@@ -164,6 +174,28 @@ class ScheduledTicketExport < ScheduledExport
     send_email? && (user_id == current_user_id || email_recipients.include?(current_user_id))
   end
 
+  def created_at_label
+    case frequency_name
+      when :hourly
+        Time.zone.now.beginning_of_hour.advance(hours: -1).strftime("%Y-%m-%dT%H:00")
+      when :daily
+        Time.zone.now.strftime("%Y-%m-%d")
+      when :weekly
+        Time.zone.now.advance(days: -6).strftime("%Y-%m-%d")
+    end
+  end
+
+  def file_timestamp(time = Time.zone.now)
+    exp = hourly? ? "%B-%d-%Y-%H-00" : "%B-%d-%Y"
+    "#{frequency_name}-#{time.strftime(exp)}"
+  end
+
+  def file_name(time = nil)
+    return nil unless time
+    time = Time.parse(time)
+    "tickets-#{file_timestamp(time)}.csv"
+  end
+
   private
 
     def set_user_id
@@ -231,7 +263,7 @@ class ScheduledTicketExport < ScheduledExport
         "flexifields.#{field.flexifield_name}"
       elsif f["name"].eql?('product_id')
         "helpdesk_schema_less_tickets.product_id"
-      elsif f["name"].eql?('tags')
+      elsif f["name"].eql?('tag_names')
         "helpdesk_tags.name"
       else
         f["name"]
