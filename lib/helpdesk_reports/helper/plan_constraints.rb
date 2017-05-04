@@ -10,7 +10,11 @@ module HelpdeskReports::Helper::PlanConstraints
     :enterprise_reporting => ['estate', 'forest']
   }
 
-  PLAN_BASED_FEATURE = [:enable_lifecycle_report]
+  PLAN_BASED_FEATURE_CONSTRAINT_MAPPING = {timespent: :enable_lifecycle_report}
+
+  PLAN_BASED_REPORTS = PLAN_BASED_FEATURE_CONSTRAINT_MAPPING.keys
+
+  PLAN_BASED_CONSTRAINTS = PLAN_BASED_FEATURE_CONSTRAINT_MAPPING.values
 
   def plan_group
     return @plan_group if defined?(@plan_group)
@@ -28,7 +32,7 @@ module HelpdeskReports::Helper::PlanConstraints
   
   ReportsAppConfig::REPORT_CONSTRAINTS[:plan_constraints].each do |constraint, plans| 
     define_method("#{constraint}?") do
-      account_plan = PLAN_BASED_FEATURE.include?(constraint.to_sym) ? account_plan_name : plan_group
+      account_plan = PLAN_BASED_CONSTRAINTS.include?(constraint.to_sym) ? account_plan_name : plan_group
       Account.current.active? && (plans || []).include?(account_plan)
     end
   end
@@ -41,6 +45,14 @@ module HelpdeskReports::Helper::PlanConstraints
   def hide_agent_reporting?
     return @hide_agent_metrics if defined?(@hide_agent_metrics)
     @hide_agent_metrics ||= Account.current.hide_agent_metrics_feature?
+  end
+
+  def plan_based_report?(report_type)
+    PLAN_BASED_REPORTS.include?(report_type.to_sym)
+  end
+
+  def allowed_plan?(report_type)
+    send("#{PLAN_BASED_FEATURE_CONSTRAINT_MAPPING[report_type.to_sym]}?")
   end
 
   def exclude_filters(report_type)  

@@ -295,6 +295,8 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   def has_scope?(report_type)
     if (report_type == :agent_summary && hide_agent_reporting?)
       return false
+    elsif plan_based_report?(report_type)
+      allowed_plan?(report_type)
     elsif enterprise_reporting?
       ENTERPRISE_REPORTS.include?(report_type)
     elsif current_account.advanced_reporting_enabled?
