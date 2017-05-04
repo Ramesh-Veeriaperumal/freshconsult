@@ -12,4 +12,5 @@ module RoundRobinCapping::Methods
   def agents_ticket_count score
     (score/ROUND_ROBIN_DEFAULT_SCORE).to_i
   end
+
 end

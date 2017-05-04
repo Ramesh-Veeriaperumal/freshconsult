@@ -9,7 +9,7 @@ window.App.Admin.AgentSkills = window.App.Admin.AgentSkills || {};
   'use strict';
 
   App.Admin.AgentSkills.Index = {
-
+    agentEditFlag: false,
     onFirstVisit: function(data) {
       this.onVisit(data);
     },
@@ -20,6 +20,7 @@ window.App.Admin.AgentSkills = window.App.Admin.AgentSkills || {};
 
     init: function() {
       this.bindEvents();
+      this.bindSkillEvents(false);
     },
 
     getExistingList: function(userid) {
@@ -29,16 +30,20 @@ window.App.Admin.AgentSkills = window.App.Admin.AgentSkills || {};
         type: "GET",
         dataType: 'json',
         success: function(data) {
-          _this.existing_list = data;
-          var currentAgentArray = _this.formattedObject(data);
-          _this.agentTemplate(currentAgentArray);
-          _this.innitiateSelect2();
-          _this.enableSelectable();
-          _this.partialHideOnPermissions();
-          _this.customResizeModal();
-          _this.checkifNoSkills();
+          _this.setUpExistingSkills(data);
         }
       });
+    },
+
+    setUpExistingSkills: function(data) {
+          this.existing_list = data;
+          var currentAgentArray = this.formattedObject(data);
+          this.agentTemplate(currentAgentArray);
+          this.innitiateSelect2();
+          this.enableSelectable();
+          this.partialHideOnPermissions();
+          this.customResizeModal();
+          this.checkifNoSkills();
     },
 
     enableSelectable: function() {
@@ -63,18 +68,9 @@ window.App.Admin.AgentSkills = window.App.Admin.AgentSkills || {};
 
 
     },
-
     bindEvents: function() {
       var _this = this;
-
-      _this.allSkillsObj = App.exports.allSkills.toJSON();
       var $doc = $(document);
-
-      //binding on-click events
-      $doc.on('shown.agentskills', ".modal", function() {
-        $('.agent-list-wrapper').addClass("selectableitems");
-        document.activeElement.blur();
-      });
 
       $doc.on('click.agentskills', 'a.manageSkills', function() {
 
@@ -97,6 +93,50 @@ window.App.Admin.AgentSkills = window.App.Admin.AgentSkills || {};
       $doc.on('click.agentskills', function() {
         $('.user_skill_dropdown').hide();
       });
+      // submit-modal event listener
+      $doc.on('click.agentskills', '[data-action="submitmodal"]', function() {
+        $.ajax({
+          url: "/admin/agent_skills/" + localStorage.currentUserID,
+          type: "PUT",
+          data: { user_skills_attributes: _this.setUpFinalSkills().toJSON() },
+          error: function() {
+            console.log("couldnt submit data");
+          }
+        }).fail(function(data) {
+          console.log('ajax failed: ', data);
+        });
+        _this.printSkillsInMarkup(_this.finalAgentArray);
+        _this.resetManageSkills();
+      });
+
+
+    },
+
+    resetManageSkills: function() {
+        $("#manage-agents").modal('hide');
+        this.deletedItems = [];
+        this.addAndUpdateItems = [];
+        this.finalAgentArray = [];
+    },
+
+    setUpFinalSkills: function() {
+        this.recreateRank();
+        var finalArray = (this.deletedItems).concat(this.addAndUpdateItems);
+        return finalArray;
+    },
+
+    bindSkillEvents: function( agentEditFlag) {
+      var _this = this;
+       _this.agentEditFlag = agentEditFlag;
+
+      _this.allSkillsObj = App.exports.allSkills.toJSON();
+      var $doc = $(document);
+
+      //binding on-click events
+      $doc.on('shown.agentskills', ".modal", function() {
+        $('.agent-list-wrapper').addClass("selectableitems");
+        document.activeElement.blur();
+      });
 
 
       // on-modal-hide event listener
@@ -115,38 +155,12 @@ window.App.Admin.AgentSkills = window.App.Admin.AgentSkills || {};
         _this.addAndUpdateItems = [];
       });
 
-
-      // submit-modal event listener
-      $doc.on('click.agentskills', '[data-action="submitmodal"]', function() {
-
-        _this.recreateRank();
-        var finalArray = (_this.deletedItems).concat(_this.addAndUpdateItems);
-        finalArray = finalArray.toJSON();
-        $.ajax({
-          url: "/admin/agent_skills/" + localStorage.currentUserID,
-          type: "PUT",
-          data: { user_skills_attributes: finalArray },
-          error: function() {
-            console.log("couldnt submit data");
-          }
-        }).fail(function(data) {
-          console.log('ajax failed: ', data);
-        });
-        _this.printSkillsInMarkup(_this.finalAgentArray);
-        $("#manage-agents").modal('hide');
-        _this.deletedItems = [];
-        _this.addAndUpdateItems = [];
-        _this.finalAgentArray = [];
-
-
-      });
-
       // remove-agent event listener
       $doc.on('click.agentskills', '[data-action="remove-agent"]', function() {
-         if (App.exports.is_admin) { 
+         if ( _this.agentEditFlag || App.exports.is_admin) {
             _this.removeAgent($(this));
             _this.deletedArray($(this));
-         } 
+         }
       });
 
 
@@ -169,6 +183,7 @@ window.App.Admin.AgentSkills = window.App.Admin.AgentSkills || {};
     },
 
     partialHideOnPermissions: function() {
+      if(this.agentEditFlag) return;
       var $agentSelectBox = $('.add-agent-box, .agent-delete-icon.pull-left');
       if (App.exports.is_admin === false) {
         $agentSelectBox.hide();
@@ -185,7 +200,7 @@ window.App.Admin.AgentSkills = window.App.Admin.AgentSkills || {};
 
       if (skillCount === 0) {
         finalString = "";
-        $('[data-userid=' + localStorage.currentUserID + '].skillsModalLink').html("Add Skills");
+        $('[data-userid=' + localStorage.currentUserID + '].skillsModalLink').html(I18n.t('agent.add_skills'));
       } else {
         if (skillCount == 1) {
           finalString = arr[0];
@@ -207,7 +222,7 @@ window.App.Admin.AgentSkills = window.App.Admin.AgentSkills || {};
           tempString = doubleSpace + "|" + doubleSpace + "<a href=\"#\" " + 'data-skillcount=' + localData.skillcount + " " + 'data-userid=' + localData.userid + " " + 'data-username=' + localData.username + " " + "class=\"manageSkills\"> " + remainingCount + " more</a>";
           finalString = finalString.concat(tempString);
         }
-        $('[data-userid=' + localStorage.currentUserID + '].skillsModalLink').html("Manage Skills");
+        $('[data-userid=' + localStorage.currentUserID + '].skillsModalLink').html(I18n.t('agent.manage_skills'));
       }
       $currentUserRow.html(finalString);
     },
@@ -259,16 +274,20 @@ window.App.Admin.AgentSkills = window.App.Admin.AgentSkills || {};
     innitiateSelect2: function() {
       var _this = this;
       var final_list = _this.getSkillOptions(this.existing_list, this.allSkillsObj);
+
       var $SelectBox = $('.addAgentHiddenInput');
       $SelectBox.select2('destroy')
         .off('change')
         .select2({
           multiple: true,
-          placeholder: "Add Skill",
+          placeholder: I18n.t('agent.add_skills'),
           allowClear: true,
           data: final_list
         });
-      if (!App.exports.is_admin) {$('.addAgentHiddenInput').modal('destroy');}
+      if (!App.exports.is_admin && !_this.agentEditFlag) {
+        $('.addAgentHiddenInput').modal('destroy');
+        $('.add-agent-icon').hide();
+      }
     },
 
     getSkillOptions: function(existing_list, all_availble) {
@@ -296,7 +315,8 @@ window.App.Admin.AgentSkills = window.App.Admin.AgentSkills || {};
     agentTemplate: function(obj) {
       var _this = this;
       var newObj = _.sortBy(obj, 'rank');
-      var list = JST["app/admin/skills/templates/add_skill"]({
+      var jst_template = _this.agentEditFlag ? "app/admin/agents/templates/add_skill" : "app/admin/skills/templates/add_skill";
+      var list = JST[jst_template]({
         data: newObj,
         skillLen: newObj.length
       });
@@ -315,6 +335,7 @@ window.App.Admin.AgentSkills = window.App.Admin.AgentSkills || {};
 
       $('.addAgentHiddenInput').select2("val", "");
       $('.modal-body').css("max-height", "none");
+
       _this.customResizeModal();
     },
 
@@ -360,7 +381,7 @@ window.App.Admin.AgentSkills = window.App.Admin.AgentSkills || {};
           //goes to some page and visits back without reloading assets
           $('body').select2('destroy');
           $('#manage-agents').modal('destroy');
-      $(document).off(".agentskills");
+          $(document).off(".agentskills");
     },
 
     checkifNoSkills: function() {
@@ -370,14 +391,14 @@ window.App.Admin.AgentSkills = window.App.Admin.AgentSkills || {};
       var len = $agentListWrapper.children('.roles-agent-list').length;
       if (len === 0) {
         $agentListWrapper.html(Template);
-        $('#fDialogHeader').text('Add Skill');
+        $('#fDialogHeader').text(I18n.t('agent.add_skills'));
       } else {
               if(len >= TOTAL_SKILLS_PER_AGENT)
                 {$('.add-agent-box').hide();}
               else
                 {$('.add-agent-box').show();}
         $agentListWrapper.find('.no-agent-info').remove();
-        $('#fDialogHeader').text('Manage Skill');
+        $('#fDialogHeader').text(I18n.t('agent.manage_skills'));
       }
     }
   };

@@ -92,6 +92,7 @@ class User < ActiveRecord::Base
                                       :duration => :periodic_login_duration}
   end
 
+  validates :user_skills, length: { :maximum => MAX_NO_OF_SKILLS_PER_USER }
   validate :has_role?, :unless => :customer?
   validate :email_validity, :if => :chk_email_presence?
   validate :user_email_presence, :if => :email_required?
@@ -466,6 +467,11 @@ class User < ActiveRecord::Base
     self.user_emails_attributes = params[:user][:user_emails_attributes] if params[:user][:user_emails_attributes].present?
     self.deleted = true if (email.present? && email =~ /MAILER-DAEMON@(.+)/i)
     self.created_from_email = params[:user][:created_from_email]
+    if params[:user][:user_skills_attributes] && Account.current.skill_based_round_robin_enabled?
+      self.skill_ids = params[:user][:user_skills_attributes].sort_by { |user_skill| 
+        user_skill["rank"] }.map { |user_skill| 
+          user_skill["skill_id"] }
+    end
     return false unless save_without_session_maintenance
     portal.make_current if portal
     if (!deleted and !email.blank? and send_activation)
@@ -987,9 +993,13 @@ class User < ActiveRecord::Base
   end
 
   def no_of_assigned_tickets group
-    key = SKILL_BASED_USERS_LOCK_KEY % {:account_id => Account.current.id, :group_id => group.id,
-                                        :user_id => self.id}
-    assigned_tickets_count = get_round_robin_redis(key).to_i
+    # Only for skill based round robin
+    queue_aggregator = SBRR::QueueAggregator::User.new self, :group => group
+    queue = queue_aggregator.relevant_queues.first
+    if queue
+      score = queue.zscore(self.id)
+      assigned_tickets_count = SBRR::ScoreCalculator::User.new(nil, score.to_i).old_assigned_tickets_in_group
+    end
     SBRR.log "User #{self.id} Accessed assigned_tickets_count : #{assigned_tickets_count}" 
     assigned_tickets_count
   end
@@ -1005,6 +1015,12 @@ class User < ActiveRecord::Base
         self.user_companies.find_by_company_id(comp.id).blank?
     else
       self.company_name = comp_name
+    end
+  end
+
+  def sync_to_export_service
+    scheduled_ticket_exports.each do |schedule|
+      schedule.sync_to_service("update")
     end
   end
 
@@ -1048,6 +1064,10 @@ class User < ActiveRecord::Base
 
     def blocked_updated?
        @all_changes.has_key?(:blocked)
+    end
+
+    def time_zone_updated?
+      @all_changes.has_key?(:time_zone)
     end
 
     def clear_redis_for_agent

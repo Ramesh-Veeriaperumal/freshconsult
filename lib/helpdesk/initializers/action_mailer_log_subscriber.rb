@@ -12,7 +12,7 @@ module ActionMailer
         recipients = Array.wrap(recipients_array).join(', ')
         from = Array.wrap(event.payload[:from]).join(', ')
         logger.info("Sent mail From #{from} to #{recipients} (%1.fms)" % event.duration)
-        logger.info("Headers : #{extract_header(event.payload[:mail])}")
+        logger.info("Headers : #{extract_header(event.payload[:mail])} , mail_size : #{event.payload[:mail].bytesize}")
         email_logger.debug(event.payload[:mail])
       else
         logger.info("Email Sending Failed due to : #{event.payload[:exception]}")

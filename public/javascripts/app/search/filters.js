@@ -50,7 +50,8 @@ window.App.FilterOps = window.App.FilterOps || {};
             setTimeout(function(){
                jQuery(".search-filters-container").hide();
             }, 100);
-          }
+        }
+          jQuery('#search_fields_list').hide();
       });
 
       // Removing the item from add-more menu
@@ -126,16 +127,7 @@ window.App.FilterOps = window.App.FilterOps || {};
          var config = {
             maximumSelectionSize: 5
         };
-        if(condition == "requesters") {
-            config.maximumSelectionSize = 3;
-            config.formatResult = function(state) {
-                return "<div style='font-weight:bold'>" + state.value + "</div><div>" + state.email + "</div>";
-            };
-            config.formatSelection = function(state) {
-                return "<div>" + state.value + "</div>";
-            };
-            config.escapeMarkup = function(m) { return m; }
-        }
+
          config.ajax = {
             url: "/search/autocomplete/" + _this.filter_remote_url[condition],
             dataType: 'json',
@@ -148,6 +140,7 @@ window.App.FilterOps = window.App.FilterOps || {};
             },
             results: function (data, params) {
                       var results = [];
+
                       if(condition != 'requesters') {
                         jQuery.each(data.results, function(index, item){
                                 results.push({
@@ -161,7 +154,7 @@ window.App.FilterOps = window.App.FilterOps || {};
                       } else {
                           return {
                               results : data.results
-                          }
+                          };
                     }
             },
             cache: false
@@ -178,6 +171,7 @@ window.App.FilterOps = window.App.FilterOps || {};
         return 'responder_id';
       } else if(field == 'tags') {
         return 'tags';
+
       } else if(field == 'group') {
         return 'group_id';
       } else if(field == 'requesters') {
@@ -357,7 +351,7 @@ window.App.FilterOps = window.App.FilterOps || {};
         jQuery('#search_fields_list').hide();
       } else {
         jQuery('.search-fields-selector').show();
-        jQuery('#search_fields_list').show();
+        // jQuery('#search_fields_list').show();
       }
 
       this.addFieldToFilterPane(accessor,jQuery(field).data('container'));
@@ -495,6 +489,7 @@ window.App.FilterOps = window.App.FilterOps || {};
        _this.setFilterDisplayData();
     },
     setFilterDisplayData: function () {
+        jQuery('.search-filter-pane').removeClass('hide');
       var tmpl = JST["app/search/templates/filter_data_template"]({ 
           data: this.locals.select_hash 
       });

@@ -1651,6 +1651,9 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :scheduled_exports, only: [:index, :new, :create, :show, :destroy] do
+      get :download_file, path: '/download_file(/:file_name)', on: :member
+    end
     #routes for v1 agent and group performance reports
     # match '/:id' , action: :show, method: :get, constraints: { id: /[1-2]+/ }
     match '/classic/:report_type', action: :show, method: :get

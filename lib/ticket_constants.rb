@@ -18,7 +18,13 @@ module TicketConstants
    
   # DATE_RANGE_CSV = 31
 
-  SKIPPED_TICKET_WAS_ATTRIBUTES = [ :description_html ] #desc_html skipped just to avoid Deprecation Warning
+  SKIPPED_TICKET_CHANGE_ATTRIBUTES = [ :description_html ] #desc_html skipped just to avoid Deprecation Warning
+
+  TICKET_REPLICA = {:first => :old_ticket, :last => :new_ticket}
+
+  STATUS_SLA_TOGGLED_TO = {true => :off, false => :on}
+
+  NEEDED_SBRR_ATTRIBUTES = [:group_id, :status, :responder_id, :spam, :deleted, :sl_skill_id]
 
   ### Bump the version of "TICKETS_LIST_PAGE_FILTERS" key in fragment_cache/keys.rb when SOURCES are modified.
   SOURCES = [
@@ -94,11 +100,11 @@ module TicketConstants
 
   DEFAULT_COLUMNS_ORDER = [ :responder_id, :group_id, :created_at, :due_by, :status, :priority,
     :ticket_type, :source, "helpdesk_tags.name", :owner_id,
-    :requester_id, "helpdesk_schema_less_tickets.product_id", :association_type ]
+    :requester_id, :sl_skill_id, "helpdesk_schema_less_tickets.product_id", :association_type ]
   
   ARCHIVE_DEFAULT_COLUMNS_ORDER = [ :responder_id, :group_id, :created_at, :due_by, :status, :priority,
     :ticket_type, :source, "helpdesk_tags.name", "users.customer_id", :owner_id,
-    :requester_id, :product_id, :association_type ]
+    :requester_id, :sl_skill_id, :product_id, :association_type ]
 
   INTERNAL_AGENT_ID = "internal_agent_id"
   ANY_AGENT_ID      = "any_agent_id"
@@ -120,6 +126,7 @@ module TicketConstants
     [ :owner_id,            "customers",        :customer],
     [ :created_at,          "created_at",       :created_at],
     [ :requester_id,        'requester',        :requester],
+    [ :sl_skill_id,         'sl_skill_id',      :dropdown],
     [ "helpdesk_schema_less_tickets.product_id",'products', :dropdown],
     [ :association_type,    'association_type', :dropdown]
   ]
@@ -136,6 +143,7 @@ module TicketConstants
     [ :owner_id,            "customers",        :customer],
     [ :created_at,          "created_at",       :created_at],
     [ :requester_id,        'requester',        :requester],
+    [ :sl_skill_id,         'sl_skill_id',      :dropdown],
     [ :product_id,          'products',         :dropdown],
     [ :association_type,    'association_type', :dropdown]
   ]
@@ -323,6 +331,8 @@ module TicketConstants
     "priority", "product_id", "description_html", "tags"]
 
   DB_INDEXED_QUERY_COLUMNS = ["requester_id", "responder_id", "group_id", "created_at", "status"]
+
+  SKILL_BASED_TICKET_ATTRIBUTES = [:sbrr_ticket_dequeued, :sbrr_user_score_incremented, :sbrr_fresh_ticket, :skip_sbrr, :sbrr_turned_on, :status_sla_toggled_to, :skip_sbrr_assigner]
 
   def self.translate_priority_name(priority)
     I18n.t(PRIORITY_NAMES_BY_KEY[priority])

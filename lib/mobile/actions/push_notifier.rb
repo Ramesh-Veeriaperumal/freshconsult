@@ -3,6 +3,7 @@ module Mobile::Actions::Push_Notifier
 	include Redis::RedisKeys
 	include Mobile::Constants
 	include Redis::MobileRedis
+	include Mobile::IrisPushNotifications::FreshfoneEvents::IncomingCall
 
 	def remove_user_mobile_registrations
         message = {
@@ -14,16 +15,16 @@ module Mobile::Actions::Push_Notifier
 
         publish_to_channel MOBILE_NOTIFICATION_REGISTRATION_CHANNEL, message
 	end
-	
+
   def remove_logged_out_user_mobile_registrations
     return if(params[:registration_key] == "")
-    
+
     message = {
           :account_id => current_account.id,
           :user_id => current_user.id
       }
 
-    if (params[:registration_key]) 
+    if (params[:registration_key])
       message.merge!(:delete_axn => :device, :clean_up => params[:registration_key])
     elsif (!params[:registration_key])
       message.merge!(:delete_axn => :user, :clean_up => 1)
@@ -32,7 +33,7 @@ module Mobile::Actions::Push_Notifier
     Rails.logger.debug "DEBUG :: add_to_mobile_reg_queue : message : #{message.to_json}"
     publish_to_channel MOBILE_NOTIFICATION_REGISTRATION_CHANNEL, message.to_json
   end
-	
+
   def freshfone_notify_incoming_call(message)
     user_ids = message[:agents]
     message[:freshfone_notification_type] = message[:notification_type]
@@ -40,8 +41,9 @@ module Mobile::Actions::Push_Notifier
     channel_id = message[:account_id]%MOBILE_NOTIFICATION_CHANNEL_COUNT
     Rails.logger.debug "DEBUG :: freshfone_notify_incoming_call hash : #{message}"
     publish_to_mobile_channel message.to_json, channel_id
+		notify_incoming_call_event_to_iris(notification_params)
   end
-  
+
   def send_mobile_notification(action=:new, message)
     notification_types = Hash.new()
 
@@ -59,13 +61,13 @@ module Mobile::Actions::Push_Notifier
         rescue Exception => e
           ### When the group_id is invalid (before deleteing email_configs invalid entries),
           ### new ticket notification is sent.
-          notification_types = {NOTIFCATION_TYPES[:NEW_TICKET] => []}  
+          notification_types = {NOTIFCATION_TYPES[:NEW_TICKET] => []}
         end
-      else 
-        notification_types = {NOTIFCATION_TYPES[:NEW_TICKET] => []}  
+      else
+        notification_types = {NOTIFCATION_TYPES[:NEW_TICKET] => []}
       end
-		  
-      #Fix for - mobihelp/hotline agent not receiving push notification  
+
+      #Fix for - mobihelp/hotline agent not receiving push notification
       if self.mobihelp?
         current_user_id   = ""
         current_user_name = ""
@@ -73,12 +75,12 @@ module Mobile::Actions::Push_Notifier
 
     elsif action == :response then
 
-        # Fix for - mobihelp/hotline agent not receiving push notification  
-        if self.mobihelp? 
+        # Fix for - mobihelp/hotline agent not receiving push notification
+        if self.mobihelp?
           current_user_id   = self.user ? self.user.id : ""
           current_user_name = self.user ? self.user.name : ""
         end
-        
+
         user_ids = notable.subscriptions.pluck(:user_id)
         unless incoming || self.to_emails.blank? || self.source != Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] then
           notified_agent_emails =  self.to_emails.map { |email| parse_email_text(email)[:email] }
@@ -99,7 +101,7 @@ module Mobile::Actions::Push_Notifier
 	message.merge!(:agent =>  (!User.current || User.current.agent?));
   message.merge!(:notification_types => notification_types, :user => current_user_name, :user_id => current_user_id)
   message.store(:account_id,self.account.id)
-	
+
     Rails.logger.debug "DEBUG :: send_mobile_notification hash : #{message}"
 	channel_id = self.account.id%MOBILE_NOTIFICATION_CHANNEL_COUNT
 
@@ -125,7 +127,7 @@ module Mobile::Actions::Push_Notifier
       user_ids.delete(current_user_id)
       user_ids.push(responder_id) unless responder_id.blank? || responder_id == current_user_id || user_ids.include?(responder_id)
       notification_types.merge! NOTIFCATION_TYPES[:STATUS_UPDATE] => user_ids unless user_ids.empty?
-    end    
+    end
   end
 
   def publish_to_mobile_channel message, channel_id
@@ -136,5 +138,5 @@ module Mobile::Actions::Push_Notifier
     end
   end
 
-  
+
 end

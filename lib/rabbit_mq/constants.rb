@@ -107,7 +107,7 @@ module RabbitMq::Constants
 
 
   AUTO_REFRESH_TICKET_KEYS  = ["id", "display_id", "tag_names", "account_id", "user_id", "responder_id", "group_id", "status",
-    "priority", "ticket_type", "source", "requester_id", "due_by", "created_at"
+    "priority", "ticket_type", "source", "requester_id", "due_by", "created_at", "sl_skill_id"
   ]
 
   ACTIVITIES_TICKET_KEYS         = ["id", "account_id", "created_at", "display_id", "updated_at", "parent_id",
@@ -159,4 +159,8 @@ module RabbitMq::Constants
   COLLABORATION_TICKET_KEYS = ["id", "responder_id", "status", "subject", "visible", "account_id", "display_id"]
   
   IRIS_USER_KEYS = REPORTS_USER_KEYS
+
+  EXPORT_TICKET_KEYS          = ["id", "company_id", "requester_id"]
+  EXPORT_USER_KEYS            = ["id"]
+
 end

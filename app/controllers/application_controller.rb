@@ -77,10 +77,10 @@ class ApplicationController < ActionController::Base
         format.widget { render :json => account_suspended_hash.to_json }
         format.html { 
           if privilege?(:manage_account)
-            flash[:notice] = t('suspended_plan_info')
+            flash[:notice] = t('suspended_account_info')
             return redirect_to(subscription_url)
           else
-            flash[:notice] = t('suspended_plan_admin_info_new')
+            flash[:notice] = t('suspended_account_admin_info')
             redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
           end
         }

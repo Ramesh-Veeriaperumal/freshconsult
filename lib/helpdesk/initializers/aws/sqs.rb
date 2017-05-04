@@ -57,6 +57,9 @@ begin
   #Freshfone Call Tracker
   $sqs_freshfone_tracker = AWS::SQS.new.queues.named(SQS[:freshfone_call_tracker])
 
+  # Scheduled Ticket Export
+  $sqs_scheduled_ticket_export = AWS::SQS.new.queues.named(SQS[:scheduled_ticket_export_config])
+
   #Email failure reference from activities service
   $sqs_email_failure_reference = AWS::SQS.new.queues.named(SQS[:fd_email_failure_reference])
   
@@ -82,7 +85,11 @@ begin
     SQS[:agent_collision_queue] => AwsWrapper::SqsV2.queue_url(SQS[:agent_collision_queue]),
     SQS[:collab_agent_update_queue] => AwsWrapper::SqsV2.queue_url(SQS[:collab_agent_update_queue]),
     SQS[:collab_ticket_update_queue] => AwsWrapper::SqsV2.queue_url(SQS[:collab_ticket_update_queue]),
-    SQS[:fd_email_failure_reference] => AwsWrapper::SqsV2.queue_url(SQS[:fd_email_failure_reference])
+    SQS[:fd_email_failure_reference] => AwsWrapper::SqsV2.queue_url(SQS[:fd_email_failure_reference]),
+    SQS[:scheduled_ticket_export_queue] => AwsWrapper::SqsV2.queue_url(SQS[:scheduled_ticket_export_queue]),
+    SQS[:scheduled_user_export_queue] => AwsWrapper::SqsV2.queue_url(SQS[:scheduled_user_export_queue]),
+    SQS[:scheduled_company_export_queue] => AwsWrapper::SqsV2.queue_url(SQS[:scheduled_company_export_queue]),
+    SQS[:scheduled_export_payload_enricher_queue] => AwsWrapper::SqsV2.queue_url(SQS[:scheduled_export_payload_enricher_queue])
   }
 
 rescue => e

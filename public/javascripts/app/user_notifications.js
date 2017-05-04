@@ -508,10 +508,7 @@ window.App = window.App || {};
             }
         },
         safe: function(str){
-            var tmp = document.implementation.createHTMLDocument("New").body;
-            tmp.innerHTML = str;
-            return tmp.textContent || tmp.innerText || "";
-            // return String(str).replace(/<(?:.|\n)*?>/gm, '');
+            return escapeHtml(str);
         },
         destroy: function () {
             $(document).off(".usernotification");

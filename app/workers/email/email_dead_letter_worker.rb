@@ -45,7 +45,8 @@ module Email
 			options = email_obj[:metadata]
 			email_content = StringIO.new(email_obj[:eml].read)
 			failed_db.save(email_content, options.with_indifferent_access)
-			Rails.logger.info "Saved to S3 Failed path"
+			Rails.logger.info "Saved to S3 Failed path - Metadata : #{email_obj[:metadata].inspect}"
+			NewRelic::Agent.notice_error(Exception.new("Failed to process one email"),{:description => "Email Metadata : #{email_obj[:metadata].inspect}"})
 		end
 
 		def delete_email_in_primary(primary_db, path)

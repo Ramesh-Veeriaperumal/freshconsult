@@ -81,21 +81,3 @@
 <div id="agent-deletion-confirmation" class="hide">
 	<p class="margin-bottom"><br/><%= t('agent.delete_agent_confirmation')%></p>
 </div>
-
-<script type="text/javascript">
-	jQuery(document).ready(function(){
-		if(jQuery("#agentTab li.active .agent-list-count").data("agentCount") < 20){
-			jQuery(".sort_list").hide();
-		}
-	});
-
-	jQuery(".delete_agent_btn").on('click',function(){
-		jQuery("#agent-filters").data('agent', jQuery(this).data('agent'));
-	});
-
-	jQuery(document).on("click", '#agent-deletion-confirmation-submit', function(){
-		var agent_id = jQuery("#agent-filters").data('agent');
-		jQuery('#agent_convert_id_'+agent_id).trigger('click');
-		jQuery("#agent-filters").data('agent', null);
-	});	
-</script>

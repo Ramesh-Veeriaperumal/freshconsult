@@ -43,5 +43,9 @@ module Mobile::Constants
   MOBILE_API_RESULT_PARAM_FAILED=3
 
   MOBILE_RECENT_TICKETS_LIMIT = 30
-  
+
+  IRIS_FRESHFONE_NOTIFCATION_TYPES = {
+    :INCOMING_CALL => "incoming_call"
+  }
+
 end

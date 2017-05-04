@@ -26,6 +26,15 @@ window.App = window.App || {};
 				case 'reports/scheduled_exports/index':
 					this.current_module = "IndexSchedule";
 					break;
+				case 'reports/scheduled_exports/create':
+					this.current_module = "CreateSchedule";
+					break;
+				case 'reports/scheduled_exports/new':
+					this.current_module = "NewSchedule";
+					break;
+				case 'reports/scheduled_exports/show':
+					this.current_module = "ShowSchedule";
+					break;
 				case 'reports/scheduled_exports/edit_activity':
 					this.current_module = "EditActivity";
 					break;
@@ -44,7 +53,7 @@ window.App = window.App || {};
 				$emailField.select2({
 					maximumSelectionSize: 10,
 					ajax: {
-						url: "/search/autocomplete/requesters",
+						url: "/search/autocomplete/agents",
 						dataType: 'json',
 						delay: 250,
 						cache : false,
@@ -79,6 +88,9 @@ window.App = window.App || {};
 							}
 						}
 						callback(initData);
+					},
+					formatSelectionTooBig: function (limit){
+			      return I18n.t('helpdesk_reports.ticket_schedule.new.email_recipient_maxlimit', {limit: 10});
 					}
 				});
 			}
@@ -88,7 +100,7 @@ window.App = window.App || {};
 			if(item){
 				obj = {
 					id: item.id,
-					text: item.details,
+					text: item.email,
 					email : item.email
 				}
 			}
@@ -119,26 +131,36 @@ window.App = window.App || {};
 			return text
 		},
 
-		constructScheduleTime: function() {
-    	var $el = $(".schedule-time");
-    	jQuery($el).empty();
-
-      for(var i = 0 ; i <= 23 ; i++) {
-          $el.append(jQuery('<option>', {
-              value: i,
-              text: i + ":00"
-          }));
-      }
+		constructScheduleMessage: function() {
       $('.schedule-message').html(I18n.t('helpdesk_reports.ticket_schedule.new.schedule_message',{zone: ticketSchedule.user_time_zone,label: I18n.t('helpdesk_reports.ticket_schedule.new.daily_label') }));
     },
+
+		checkSelectAll: function(length, elements, selectAllValue){
+			if(length > 100){
+				elements.slice(0,100).prop('checked',selectAllValue);
+			}else{
+				elements.prop('checked',selectAllValue);
+			}
+		},
 
 		changeFieldLabel: function(field,selectAll){
 			var $element = $('.'+field).find('.selected-label'),
 					checkedLength,
 					fieldText,
-					selectAllValue = $('.'+ field + '-item .select-all').is(':checked');
+					selectAllValue = $('.'+ field + '-item .select-all').is(':checked'),
+					$fields = $('.'+ field + '-item input:checkbox:not(.select-all)');
 			if(selectAll){
-				$('.'+ field + '-item input:checkbox').prop('checked',selectAllValue);
+				switch(field){
+					case "ticket-fields":
+						this.checkSelectAll(ticketSchedule.fields_to_export.ticket_fields, $fields, selectAllValue);
+						break;
+					case "contact-fields":
+						this.checkSelectAll(ticketSchedule.fields_to_export.contact_fields, $fields, selectAllValue);
+						break;
+					case "company-fields":
+						this.checkSelectAll(ticketSchedule.fields_to_export.company_fields, $fields, selectAllValue);
+						break;
+				}
 			}
 			if(!selectAll && selectAllValue){
 				$('.'+ field + '-item input:checkbox.select-all').prop('checked',!selectAllValue)
@@ -192,17 +214,19 @@ window.App = window.App || {};
 			}else{
 				$scheduleTimeElement.val(ticketSchedule.minute_of_day).trigger('change');
 			}
-			if($('.contact-fields-item input:checkbox:checked').length){
-				this.fieldsToggle('contact');
-				this.changeFieldLabel('contact-fields');
-			}
-			if($('.company-fields-item input:checkbox:checked').length){
-				this.fieldsToggle('company');
-				this.changeFieldLabel('company-fields');
-			}
+			this.initToggleFields();
 			this.initSelectAllFields();
 			if(ticketSchedule.email_recipients && ticketSchedule.email_recipients[0]){
 				$('#email_recipients').val(ticketSchedule.email_recipients[0].id).trigger('change')
+			}
+		},
+
+		initToggleFields: function(){
+			if($('.contact-fields-item input:checkbox:checked').length){
+				this.changeFieldLabel('contact-fields');
+			}
+			if($('.company-fields-item input:checkbox:checked').length){
+				this.changeFieldLabel('company-fields');
 			}
 		},
 
@@ -216,6 +240,12 @@ window.App = window.App || {};
 			if($('.company-fields-item input:checkbox:not(".select-all")').length === $('.company-fields-item input:checkbox:not(".select-all"):checked').length){
 				$('.company-fields-item .select-all').prop('checked',true);
 			}
+		},
+
+		initializeIndexModel: function(modelName){ // intialize index page modal popup
+      var $model = $('#'+modelName);
+			$body.append($model);
+			$model.modal('hide');
 		},
 
 		bindEvents: function(){
@@ -259,10 +289,25 @@ window.App = window.App || {};
 				}
 				$('.schedule-message').html(I18n.t('helpdesk_reports.ticket_schedule.new.schedule_message',{zone: zone,label: label }))
 			});
+			$body.on('submit.ticket-schedule','#ticketScheduleForm',function(e){
+				$('.select-all').prop('disabled',true);
+				_this.disableButton('save');
+			});
+			$body.on('click.ticket-schedule','.cancel',function(){
+				_this.disableButton('cancel');
+			});
 		},
 
 		bindToggleEvents: function(){
 			var _this = this;
+			_this.initializeIndexModel('index-delete-modal');
+			$body.on('click.ticket-schedule','.delete-schedule',function(e){
+				e.preventDefault();
+				var $srcElement = $(this),
+					modal = $srcElement.data();
+				$('#'+modal.controlsModal).modal('show');
+				$('.index-delete-confirm').attr('href',modal.deleteUrl);
+			});
 			$body.on('change.ticket-schedule','.ticket_activity-toggle', function(e){
 		    var value = $(this).is(':checked'),
 					url = $(this).data('url');

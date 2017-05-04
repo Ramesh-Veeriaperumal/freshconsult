@@ -5,6 +5,7 @@ class Community::Moderation::QueuedPost
   include ModerationUtil
   include SpamAttachmentMethods
   include CloudFilesHelper
+  include Forum::CheckSpamContent
 
   attr_accessor :params, :topic, :post, :spam
 
@@ -72,7 +73,14 @@ class Community::Moderation::QueuedPost
     end
 
     def check_for_spam
-      @spam = is_spam?(post, params['request_params'])
+      begin
+        post_content = ""
+        post_content = Helpdesk::HTMLSanitizer.plain(post.body_html) if post.body_html.present?
+        @spam = check_post_content_for_spam(post_content)
+        @spam = is_spam?(post, params['request_params']) unless spam
+      rescue => e
+        Rails.logger.error("Error during check_for_spam :#{e.message} - #{e.backtrace} ")
+      end
     end
 
     def moderate
