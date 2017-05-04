@@ -24,7 +24,7 @@ module ApiSearch
       # custom_field names mapped to equivalent column_names in the database and stored under the key 'custom_fields'
       def sanitize_custom_fields(hash, fields)
         record = ActionController::Parameters.new(hash)
-        record.permit(*fields | custom_fields.values)
+        record.permit(*fields | allowed_custom_fields.values)
 
         record[:custom_fields] = {}
         custom_fields.each do |field_name, display_name|
@@ -35,7 +35,7 @@ module ApiSearch
         record
       end
 
-      def custom_fields
+      def allowed_custom_fields
         # Returns the mapping where the key is the custom_field column_name with account id and value decorated column_name
       end
 

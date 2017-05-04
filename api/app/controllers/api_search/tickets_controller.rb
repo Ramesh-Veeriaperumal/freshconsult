@@ -32,6 +32,10 @@ module ApiSearch
         Search::TermVisitor.new(column_names)
       end
 
+      def allowed_custom_fields
+        ticket_custom_fields.each_with_object({}) { |ticket_field, hash| hash[ticket_field.name] = TicketDecorator.display_name(ticket_field.name) }
+      end
+
       def ticket_custom_fields
         ticket_fields.select{|x| ApiSearchConstants::ALLOWED_CUSTOM_FIELD_TYPES.include? x.field_type }
       end

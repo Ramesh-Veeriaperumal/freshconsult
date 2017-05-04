@@ -76,9 +76,9 @@ module ApiSearch
     end
 
     def test_tickets_invalid_fields_in_query
-      get :index, controller_params(query: '"priority:111 OR status:1111 OR group_id:1111 OR xxx:yyy"')
+      get :index, controller_params(query: '"priority:111 OR status:1111 OR group_id:1111 OR xxx:yyy OR sample_decimal:2"')
       assert_response 400
-      match_json([bad_request_error_pattern('xxx', :invalid_field)])
+      match_json([bad_request_error_pattern('xxx', :invalid_field),bad_request_error_pattern('sample_decimal', :invalid_field)])
     end
 
     def test_tickets_with_page_and_per_page
