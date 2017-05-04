@@ -734,4 +734,12 @@ class ApiApplicationController < MetalApiController
       Rails.logger.debug "Private API attempted without enabling FalconUI. Domain: #{current_account.full_domain} | Controller: #{params[:controller]} | Action: #{params[:action]} "
       head 404
     end
+
+    def run_on_db(&block)
+      db_type = current_account.slave_queries? ? :run_on_slave : :run_on_master
+      Sharding.send(db_type) do
+        yield
+      end
+    end
+
 end

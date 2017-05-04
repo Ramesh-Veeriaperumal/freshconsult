@@ -16,6 +16,8 @@ module Ember
     before_filter :disable_notification, only: [:update, :update_properties], if: :notification_not_required?
     after_filter  :enable_notification, only: [:update, :update_properties], if: :notification_not_required?
 
+    around_filter :run_on_db, :only => :index
+
     def index
       sanitize_filter_params
       @delegator_klass = 'TicketFilterDelegator'
