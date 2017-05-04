@@ -13,7 +13,7 @@ class AccountsController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:check_domain, :new_signup_free, :email_signup,
                                                                              :create, :rebrand, :dashboard, :rabbitmq_exchange_info, :edit_domain]
 
-  skip_before_filter :set_locale, :except => [:cancel, :show, :edit, :manage_languages]
+  skip_before_filter :set_locale, :except => [:cancel, :show, :edit, :manage_languages, :edit_domain]
   skip_before_filter :set_time_zone, :set_current_account,
     :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show, :manage_languages, :update_languages]
   skip_before_filter :check_account_state
