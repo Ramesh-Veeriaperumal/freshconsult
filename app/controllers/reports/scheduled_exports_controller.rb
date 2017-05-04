@@ -9,6 +9,7 @@ class Reports::ScheduledExportsController < ApplicationController
 
   skip_before_filter :check_privilege, :only => :download_file
 
+  before_filter :set_selected_tab
   before_filter :access_denied, :unless => :require_feature_and_privilege
   before_filter :access_denied, :unless => :has_properties_export?, :only => [:new, :create, :show, :destroy, :download_file]
   before_filter :load_object, :only => [:show, :destroy, :download_file]
