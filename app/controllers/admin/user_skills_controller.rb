@@ -44,7 +44,8 @@ class Admin::UserSkillsController < Admin::AdminController
     end
 
     def set_filter_data
-      params[:user_skills_attributes] = params[:user_skills_attributes].blank? ? [] : ActiveSupport::JSON.decode(params[:user_skills_attributes])
+      user_skills = params[:user_skills_attributes] || []
+      params[:user_skills_attributes] = user_skills.is_a?(Array) ? user_skills : ActiveSupport::JSON.decode(params[:user_skills_attributes])
     end
 
     def group_scoper

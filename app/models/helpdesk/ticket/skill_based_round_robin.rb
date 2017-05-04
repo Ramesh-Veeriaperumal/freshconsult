@@ -119,7 +119,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     attrs
   end
 
-  private    
+  private   
+
+    def update_count_for_skill
+      self.sbrr_fresh_ticket = true
+      enqueue_skill_based_round_robin if Account.current.skill_based_round_robin_enabled?
+    end 
 
     def sbrr_inline?
       Account.current.skill_based_round_robin_enabled? && bg_jobs_inline

@@ -90,8 +90,8 @@ en:
     dropped:
       summary_error_text: "Message dropped - Invalid or problematic address"
       help_text:
-        admin: "Any message sent to this address will not be delivered as the address you've entered is invalid or mistyped. Please contact Freshdesk support if you believe that this address is valid and should be removed from the drop list for future communication."
-        agent: "Any message sent to this address will not be delivered as the address you've entered is invalid or mistyped. Please contact your account administrator if you believe that this address is valid and should be removed from the drop list for future communication."
+        admin: "Any message sent to this address will not be delivered as the address is invalid or mistyped. Please contact Freshdesk support if you believe that this address is valid and should be removed from the drop list for future communication."
+        agent: "Any message sent to this address will not be delivered as the address is invalid or mistyped. Please contact your account administrator if you believe that this address is valid and should be removed from the drop list for future communication."
     dropped_unsubscribed:
       summary_error_text: "Message dropped - Unsubscribed address"
       help_text:
@@ -102,7 +102,7 @@ en:
       help_text: "The message did not reach this recipient after multiple attempts. This could be due to connection issues with the remote server or temporary problems like the mailbox being full. Please retry sending the message after some time."
     bounce_permanent:
       summary_error_text: "Message bounced - Permanent error"
-      help_text: "The message did not reach this recipient even after multiple attempts. You can try resending the message, but it's likely that the address you've entered may be invalid or mistyped."
+      help_text: "The message did not reach this recipient even after multiple attempts. You can try resending the message, but it's likely that the address may be invalid or mistyped."
     suppression_list_alert:
       subject: "Request to remove address from drop list"
       company: "Company"
@@ -229,6 +229,7 @@ en:
   hard_pressed_for_time: Hard pressed for time? Get advice, tips and best practices from a Freshdesk expert.
   facebook_reauth: "Your Facebook channel is inaccessible. It looks like your username, password, or permission has been changed recently."
   fb_realtime_enable: "Facebook real-time messaging is now live! Reauthorize your existing Facebook Pages to enable the feature for your account. Read more <a target='_blank' href='https://support.freshdesk.com/support/solutions/articles/221711'>here</a>"
+  freshpipe_email_disabled: "All outgoing emails and notifications are currently disabled since the data migration is in progress."
   reauthorize_facebook: "Reauthorize your facebook account."
   twitter_reauth:  "Your Twitter channel is inaccessible. It looks like your username or password has been changed recently. "
   reauthorize_twitter: Reauthorize your twitter handle.
@@ -3423,13 +3424,24 @@ en:
       trial_will_expire: Your trial will expire in <b id='trial-days'>%{trial_days}</b> days.
       trial_expired: "Your trial has expired."
       trial_extension_requested: Trial extension requested
+    edit_domain:
+      title1: Thank you for choosing Freshdesk.
+      title2: Please confirm your account details to get started.
+      url_label: Your Freshdesk URL (you can access your account from here) 
+      url_error1: Sorry, this URL is already taken. 
+      email_error: Please enter at least 3 characters.
+      email_label: Your Freshdesk Email (you can share this with your customers) 
+      email_info_text: You can change this or add your own later.
+      submit_button_text: Take me to my account
+      account_url_defaulted: Due to inactivity, we've defaulted to an auto-generated URL for your account. Redirecting you to your dashboard now...
+      check_activation_email: Due to inactivity, we've defaulted to an auto-generated URL for your account. Please check your inbox for our activation email.
   success_msg : Account settings updated successfully!
   failure_msg : Failed to update Account Settings!
   account_configuration:
     notification_emails_blank: "Please select an Administrator"
-  domain_not_available_msg: The domain <strong>%{domain_name}</strong> is not available.
-  long_company_name_error: Company name shouldn't exceed 100 characters.
-  short_company_name_error: Company name should be atleast 3 characters
+  domain_not_available_msg: Sorry, this URL is already taken.
+  long_company_name_error: Please enter below 100 characters.
+  short_company_name_error: Please enter at least 3 characters.
   forum_key: Forum
   topics:
     edit_title: Edit
@@ -7069,6 +7081,7 @@ en:
       requester_name: "Requester Name"
       requester_email: "Requester Email"
       fb_profile_id: "Facebook Profile Id"
+      fb_id: "Facebook Profile ID"
       agent: "Agent"
       group: "Group"
       created_time: "Created Time"
@@ -9449,7 +9462,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     customer_satisfaction:
       title: Customer Satisfaction Report
     ticket_schedule:
-      schedule_export: "Scheduled Export"
+      schedule_export: "Schedule Export"
       schedule_properties: "Schedule ticket properties"
       schedule_properties_activities: "Schedule ticket properties and activities"
       all_reports: "All Reports"
@@ -9464,7 +9477,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         help_title_1: "Export ticket properties"
         help_info_1: "You can schedule and export ticket properties, along with their associated contact and company fields from Freshdesk. Data from the export can then be used for building custom reports. For example, you can get an export of tickets every week which includes the first response time, resolution time and the assigned agent, and see how responsive your support team is. A maximum of five schedules can be created for an account. <a href='https://support.freshdesk.com/support/solutions/articles/226461-export-ticket-properties/' target='_blank'>Read more</a> on how to create a schedule to export ticket properties."
         help_title_2: "Export ticket activities"
-        help_info_2: "As an account admin, you would want a list of all activities performed on your tickets so you can build custom metrics. When this is turned on, you will be able to access a JSON file with all the events that occured in each ticket the previous day (including events performed by automations). You can create only one schedule per day for an account. <a href='https://support.freshdesk.com/support/solutions/articles/226460-export-ticket-activities/' target='_blank'>Learn more.</a>"
+        help_info_2: "As an account admin, you would want a list of all activities performed on your tickets so you can build custom metrics. When this is turned on, you will be able to access a JSON file with all the events that occurred in each ticket the previous day (including events performed by automations). You can create only one schedule per day for an account. <a href='https://support.freshdesk.com/support/solutions/articles/226460-export-ticket-activities/' target='_blank'>Learn more.</a>"
       index:
         no_ticket_Schedule: "No Ticket Schedule"
         ticket_properties_title: "Export ticket properties"
@@ -9497,7 +9510,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         one_time_export_label: "Export ticket content from the start of the month when this schedule begins"
         helpnote:
           api_info1: "The API will have the link to the latest export."
-          api_info2: "The export will contain a log of all ticket related updates peformed the previous day."
+          api_info2: "The export will be generated periodically containing the chosen ticket, contact and company fields."
         schedule:
           hourly: "Hourly"
           daily: "Daily"
@@ -9518,6 +9531,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         field_value:
           name: "Daily export of ticket activities"
           description: "Contains a log of all the updates performed on new or old tickets by user or automation on a given day"
+      helpnote:
+          api_info1: "The API will have the link to the latest export."
+          api_info2: "The export will contain a log of all ticket related updates performed the previous day."
   adv_reports:
     deprecated_message : "(View classic report link will no longer be available from Fri, 18 March 2016)"
     deprecated_header : "This report will no longer be available from Fri, 18 March 2016"
@@ -10948,6 +10964,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     collab_first_mention_multi: "mentioned you in {{count}} messages on ticket %{object}"
     collab_group_mention: "mentioned your group - %{group_name} in a message on ticket %{object}"
     collab_group_mention_multi: "mentioned your group - %{group_name} in {{count}} messages on ticket %{object}"
+    collab_reply: "replied to your message on ticket %{object}"
+    collab_reply_multi: "replied to your message on ticket %{object}"
     types:
       private_note_created: "Private Note Created"
       public_note_created: "Public Note Added"
@@ -10959,6 +10977,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       collab_group_mention: :"Discussion"
       collab_group_mention_multi: "Discussion"
       collab_first_mention: "Discussion"
+      collab_reply: "Discussion"
+      collab_reply_multi: "Discussion"
       ticket_assigned_to_group: "Ticket Assigned to Group"
       ticket_created: "New Ticket"
     preferences_text:

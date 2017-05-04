@@ -53,19 +53,29 @@ module Va::Observer::Util
       }
       
       args[:model_changes] = @model_changes if self.class == Helpdesk::Ticket
+      
       if inline
-        begin
-          User.reset_current_user
-          args[:evaluate_on] = self if self.class == Helpdesk::Ticket && Account.current.skill_based_round_robin_enabled? && bg_jobs_inline
-          Tickets::ObserverWorker.new.perform(args)
-        ensure
-          doer.make_current if doer
-        end
-      elsif self.schedule_observer and self.schedule_observer
-        # skipping observer for send and set ticket operation
-        self.send_and_set_args = args
+        run_without_user { Tickets::ObserverWorker.new.perform(args) }
+      elsif self.class == Helpdesk::Ticket and self.schedule_observer
+        # skipping observer for send and set ticket operation & bulk ticket actions for skill
+        self.observer_args = args
       else
         Tickets::ObserverWorker.perform_async(args)
+      end
+    end
+
+    def run_without_user
+      begin
+        doer = User.current
+        User.reset_current_user
+        puts "Running block without Current User"
+        yield
+      rescue Exception => e
+        puts "Something is wrong Util:run_without_user : Account id:: #{Account.current.id} #{e.message}"
+        NewRelic::Agent.notice_error(e)
+        raise e
+      ensure
+        doer.make_current if doer
       end
     end
 

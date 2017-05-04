@@ -18,8 +18,9 @@ module Tickets
       tickets.each do |ticket|
         begin
           va_rule.trigger_actions(ticket, current_user)
-          ticket.skip_sbrr_assigner = ticket.bg_jobs_inline = true
+          ticket.schedule_observer = true if observer_inline?
           ticket.save
+          run_observer_inline(ticket) if observer_inline?
           group_ids.merge (ticket.model_changes[:group_id] || [ticket.group_id])
           Va::RuleActivityLogger.clear_activities
           ticket.create_scenario_activity(va_rule.name)

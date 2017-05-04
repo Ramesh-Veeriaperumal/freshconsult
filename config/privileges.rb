@@ -549,7 +549,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/social/twitter_stream"
     resource :"admin/social/twitter_handle"
     resource :"admin/mobihelp/app"
-    resource :"reports/scheduled_export"
     resource :"solution/article", :only => [:change_author]
     resource :"helpdesk/ticket", :only => [:update_all_tickets]
     resource :"helpdesk/select_all_ticket_action"
@@ -589,7 +588,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_account do
-    resource :account, :only => [:show, :cancel]
+    resource :account, :only => [:show, :cancel, :update_domain, :validate_domain]
     resource :account_configuration
     resource :"admin/data_export"
     resource :subscription # plans and billing

@@ -10,8 +10,8 @@ class AccountsController < ApplicationController
 
   layout :choose_layout 
   
-  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:check_domain, :new_signup_free,
-                     :create, :rebrand, :dashboard, :rabbitmq_exchange_info]
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:check_domain, :new_signup_free, :email_signup,
+                                                                             :create, :rebrand, :dashboard, :rabbitmq_exchange_info, :edit_domain]
 
   skip_before_filter :set_locale, :except => [:cancel, :show, :edit, :manage_languages]
   skip_before_filter :set_time_zone, :set_current_account,
@@ -21,25 +21,33 @@ class AccountsController < ApplicationController
   skip_before_filter :check_day_pass_usage, 
     :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show, :manage_languages, :update_languages]
   skip_filter :select_shard, 
-    :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages]
+
+    :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages, :edit_domain, :validate_domain, :update_domain]
   skip_before_filter :ensure_proper_protocol, :ensure_proper_sts_header,
+
     :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages]
   skip_before_filter :determine_pod, 
     :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages]
   skip_after_filter :set_last_active_time
 
-  around_filter :select_latest_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,:manage_languages,:update_languages]
+  around_filter :select_latest_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,:manage_languages,:update_languages, :edit_domain, :validate_domain, :update_domain]
 
+  before_filter :validate_signup_email, :check_for_existing_accounts, :only => [:email_signup]
+  before_filter :account_unverified?, :only => [:edit_domain, :validate_domain, :update_domain]
+  before_filter :ensure_proper_user, :only => [:edit_domain]
+  before_filter :check_activation_mail_job_status, :only => [:edit_domain, :update_domain]
+  before_filter :validate_domain_name, :only => [:update_domain]
+  after_filter  :kill_account_activation_email_job, :only => [:update_domain]
   before_filter :build_user, :only => [ :new, :create ]
   before_filter :build_metrics, :only => [ :create ]
   before_filter :load_billing, :only => [ :show, :new, :create, :payment_info ]
   before_filter :build_plan, :only => [:new, :create]
   before_filter :admin_selected_tab, :only => [:show, :edit, :cancel, :manage_languages  ]
   before_filter :validate_custom_domain_feature, :only => [:update]
-  before_filter :build_signup_param, :only => [:new_signup_free]
-  before_filter :build_signup_contact, :only => [:new_signup_free]
+  before_filter :build_signup_param, :build_signup_contact, :only => [:new_signup_free, :email_signup]
   before_filter :check_supported_languages, :only =>[:update], :if => :multi_language_available?
-  before_filter :set_native_mobile, :only => [:new_signup_free]
+  before_filter :set_native_mobile, :only => [:new_signup_free ]
+  before_filter :set_additional_signup_params, :only => [:email_signup]
   before_filter :validate_feature_params, :only => [:update]
   before_filter :update_language_attributes, :only => [:update_languages]
   before_filter :validate_portal_language_inclusion, :only => [:update_languages]
@@ -65,16 +73,74 @@ class AccountsController < ApplicationController
     puts "#{params[:domain]}"
     render :json => { :account_name => true }, :callback => params[:callback]
   end
-   
+
+  def email_signup
+    @signup = Signup.new(params[:signup])
+    if @signup.save
+      finish_signup params[:signup]
+      respond_to do |format|
+        format.json {
+          render :json => { :success => true,
+                            :url => edit_account_domain_url(:perishable_token => @signup.user.perishable_token, :host => @signup.account.full_domain),
+                            :callback => params[:callback]
+                          }
+        }
+      end
+    else
+      respond_to do |format|
+        format.json {
+          render :json => { :success => false, :errors => (@signup.account.errors || @signup.errors).fd_json }, :callback => params[:callback]
+        }
+      end
+    end
+  end
+
+  # Enables user to edit domain name & support email.
+  # Scheduling a job for 10 min. If the user did not submit the form before the scheduled time,
+  # then auto generated domain name will be considered and account activation mail will be sent to user.
+  # creating a session which will be deleted once update domain is done as the session cookie is based on domain
+
+  def edit_domain
+    @user_session = current_account.user_sessions.new(current_user)
+    if @user_session.save
+      current_account.schedule_account_activation_email(current_user.id)
+      render :layout => false
+      return
+    else
+      flash[:notice] = "Please provide valid login details!"
+      return redirect_to support_login_url,
+             :flash =>{:notice => t('flash.general.access_denied')}
+    end
+  end
+
+  # If the user updates the domain name, account domain name, portal & forums will be updated with new domain name.
+
+  def update_domain
+    if current_account.update_default_domain_and_email_config(params["company_domain"],params["support_email"])
+      current_user.reset_perishable_token!
+      add_to_crm(current_account.id)
+      render json: {  :success => true, 
+                      :url => signup_complete_url(:token => current_user.perishable_token, :host => current_account.full_domain)
+                    }
+      destroy_user_session
+    else
+      render json: {:success => false, :errors => "Domain name updation failed!"}
+    end
+  end
+
+  # endpoint to validate domain name @edit domain page (UI)
+
+  def validate_domain
+    return unless validate_domain_name
+    respond_to do |format|
+      format.json { render :json => { :success => true} }
+    end
+  end
+
   def new_signup_free
    @signup = Signup.new(params[:signup])
    if @signup.save
-    @signup.user.reset_perishable_token! 
-      save_account_sign_up_params(@signup.account.id, params[:signup])
-      add_account_info_to_dynamo
-      set_account_onboarding_pending
-      add_to_crm
-      mark_new_account_setup
+      finish_signup params[:signup]
       respond_to do |format|
         format.html {
           render :json => { :success => true,
@@ -208,8 +274,8 @@ class AccountsController < ApplicationController
 
     def choose_layout 
       request.headers['X-PJAX'] ? 'maincontent' : 'application'
-	  end
-	
+    end
+  
     def load_object
       @obj = @account = current_account
     end
@@ -359,7 +425,7 @@ class AccountsController < ApplicationController
     end
 
     def assign_language
-      params[:account][:lang] if params[:account][:lang] and Language.find_by_code(params[:account][:lang]).present?
+      params[:account][:lang] if params.try(:[], :account).try(:[], :lang) && Language.find_by_code(params[:account][:lang]).present?
     end
 
     def build_signup_contact
@@ -374,14 +440,13 @@ class AccountsController < ApplicationController
       AccountInfoToDynamo.perform_async({email: params[:signup][:user_email]})
     end
 
-    def add_to_crm
+    def add_to_crm(account_id)
       if (Rails.env.production? or Rails.env.staging?)
-        Resque.enqueue_at(3.minute.from_now, Marketo::AddLead, { :account_id => @signup.account.id,
+        Resque.enqueue_at(3.minute.from_now, Marketo::AddLead, { :account_id => account_id,
           :signup_id => params[:signup_id]})
-        Resque.enqueue_at(3.minute.from_now, CRM::Freshsales::Signup, { account_id: @signup.account.id,
+        Resque.enqueue_at(3.minute.from_now, CRM::Freshsales::Signup, { account_id: account_id,
          fs_cookie: params[:fs_cookie] })
-      end
-      
+      end  
     end  
 
     def perform_account_cancel(feedback)
@@ -421,10 +486,13 @@ class AccountsController < ApplicationController
 
     def schedule_cleanup
       current_account.subscription.update_attributes(:state => "suspended")
-      AccountCleanup::DeleteAccount.perform_in(14.days.from_now, {:account_id => current_account.id})
+      jid = AccountCleanup::DeleteAccount.perform_in(14.days.from_now, {:account_id => current_account.id})
+      dc = DeletedCustomers.find_by_account_id(current_account.id)
+      dc.update_attributes({:job_id => jid}) if dc
     end
 
     def clear_account_data
+      current_account.subscription.update_attributes(:state => "suspended")
       AccountCleanup::DeleteAccount.perform_async({:account_id => current_account.id})
       ::MixpanelWrapper.send_to_mixpanel(self.class.name)
     end
@@ -507,5 +575,131 @@ class AccountsController < ApplicationController
 
     def mark_new_account_setup
       @signup.account.mark_new_account_setup_and_save
+    end
+
+    def finish_signup params
+      @signup.user.reset_perishable_token!
+      save_account_sign_up_params(@signup.account.id, params[:signup])
+      add_account_info_to_dynamo
+      set_account_onboarding_pending
+      mark_new_account_setup
+      add_to_crm(@signup.account.id)
+    end
+
+    def set_additional_signup_params
+      params["signup"]["account_name"] =  @domain_generator.subdomain
+      params["signup"]["account_domain"] =  @domain_generator.subdomain
+      params["signup"]["contact_first_name"] = @domain_generator.email_name
+      params["signup"]["contact_last_name"] = @domain_generator.email_name
+    end
+
+    def check_for_existing_accounts
+      accounts_count = AdminEmail::AssociatedAccounts.find(params["user"]["email"]).length
+      return if (@domain_generator.email_company_name == AppConfig["app_name"].downcase) || accounts_count == 0 || (accounts_count < Signup::MAX_ACCOUNTS_COUNT && params["force"] == "true")
+      status_code = accounts_count >= Signup::MAX_ACCOUNTS_COUNT ?  Signup::SIGNUP_RESPONSE_STATUS_CODES[:too_many_requests] : Signup::SIGNUP_RESPONSE_STATUS_CODES[:precondition_failed]
+      render :json => {:success => false, :accounts_count => accounts_count}, :callback => params[:callback], :status => status_code
+    end
+
+    def validate_signup_email
+      params["user"]["email"].downcase!
+      @domain_generator = DomainGenerator.new(params["user"]["email"])
+      unless @domain_generator.valid?
+        respond_to do |format|
+          format.json {
+            render :json => { :success => false, 
+              :errors => @domain_generator.errors}, 
+              :status => :unprocessable_entity  
+          }
+        end
+      end
+    end
+
+    # Do not allow users to perform edit/validate/update domain if account is verified
+    def account_unverified?
+      access_denied if current_account.verified?
+    end
+
+    def ensure_proper_user
+      @current_user = current_user || current_account.users.find_by_perishable_token(
+          params[:perishable_token]) unless params[:perishable_token].blank?
+      unless (current_user && current_user.privilege?(:manage_account))
+        flash[:notice] = t('flash.general.access_denied')
+        redirect_to support_login_path
+      end
+    end
+
+    # Once update domain is executed (once user updates the domain name successfully),
+    # deleting the job scheduled for auto-enter to dashboard after 10min.
+
+    def kill_account_activation_email_job
+      current_account.kill_account_activation_email_job
+    end
+
+    # Scheduled job will be cancelled(deleted) when a user submits the form within 10m.
+    # Suppose, if the user submits form after 10 min, he will be taken to dashboard with 
+    # domain name which was auto-generated.Even if user enters new domain name in the 
+    # edit domain page after 10 min, it will not be considered.
+
+    def check_activation_mail_job_status
+      job_id = get_others_redis_key(current_account.account_activation_job_status_key)
+      job = Sidekiq::ScheduledSet.new.find_job(job_id)
+
+      if job.present?
+        respond_to do |format|
+          format.html { render :layout => false } #skipping email scheduling and session creation in edit_domain if mail is already enqueued
+          format.json {} #do nothing for update_domain
+        end
+      else
+        respond_to do |format|
+          format.html do 
+            if current_user_session
+              flash[:notice] = t("accounts.edit_domain.account_url_defaulted")
+              redirect_to "/"
+            end
+          end
+          format.json do 
+            render json: {  :success => false, 
+                            :url => root_url(:host => current_account.full_domain)},
+                            :status => :request_timeout
+            return
+          end
+        end
+      end
+    end      
+
+    # When user submits edit domain form & does not change domain name, taking user directly to dashboard.
+    # If user changes the domain name, validate and proceed with update_domain.
+    # method is also used for on blur domain validation
+
+    def validate_domain_name
+      downcase_domain_params
+      new_domain = params["company_domain"] + "." + AppConfig['base_domain'][Rails.env]
+
+      unless valid_domain?(new_domain)
+        respond_to do |format|
+          format.json {
+            render(:json => { :success => false,
+                              :errors => "Domain already exists"},
+                              :status => :unprocessable_entity) and return false
+          }
+        end
+      end
+      true
+    end
+
+    def downcase_domain_params
+      ["company_domain", "support_email"].each do |param_name|
+        params[param_name].downcase! if params[param_name]
+      end
+    end
+
+    def valid_domain?(new_domain)
+      return true if (new_domain == current_account.full_domain)
+      DomainGenerator.valid_domain?(new_domain)
+    end
+
+    def destroy_user_session
+      current_user_session.destroy unless current_user_session.nil?
+      @current_user_session = @current_user = nil
     end
 end

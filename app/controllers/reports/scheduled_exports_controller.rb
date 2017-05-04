@@ -9,20 +9,23 @@ class Reports::ScheduledExportsController < ApplicationController
 
   skip_before_filter :check_privilege, :only => :download_file
 
-  before_filter :check_permission, :set_selected_tab, :except => :download_file
-  before_filter :check_feature, :only => [:new, :create, :show, :destroy, :download_file]
+  before_filter :access_denied, :unless => :require_feature_and_privilege
+  before_filter :access_denied, :unless => :has_properties_export?, :only => [:new, :create, :show, :destroy, :download_file]
   before_filter :load_object, :only => [:show, :destroy, :download_file]
   before_filter :check_download_permission, :only => :download_file
   before_filter :check_schedule_owner_permission, :only => [:show, :destroy]
   before_filter :load_config, :generate_id, :only => :new
   before_filter :set_filter_data, :set_fields_data, :set_type_and_email_recipients, :only => :create
-  before_filter :has_activity_export_feature_and_privilege?, :load_activity_export, :only => [:edit_activity, :update_activity]
+  before_filter :access_denied, :unless => :has_activity_export?, :only => [:edit_activity, :update_activity]
+  before_filter :load_activity_export, :only => [:edit_activity, :update_activity]
 
   def index
-    @scheduled_exports = current_account.scheduled_ticket_exports_from_cache
-    @scheduled_exports_account_count = @scheduled_exports.count
-    @scheduled_max_count = ScheduledTicketExport::MAX_NO_OF_SCHEDULED_EXPORTS_PER_ACCOUNT
-    load_activity_export if has_activity_export_feature_and_privilege?
+    if has_properties_export?
+      @scheduled_exports = current_account.scheduled_ticket_exports_from_cache
+      @scheduled_exports_account_count = @scheduled_exports.count
+      @scheduled_max_count = ScheduledTicketExport::MAX_NO_OF_SCHEDULED_EXPORTS_PER_ACCOUNT
+    end
+    load_activity_export if has_activity_export?
 
     respond_to do |format|
       format.html { @scheduled_exports } #index.html.erb
@@ -148,7 +151,7 @@ class Reports::ScheduledExportsController < ApplicationController
 
       EXPORT_FIELD_TYPES.each do |type|
         @field_hash[type.to_sym] = transform_fields_hash(@field_hash[type.to_sym],
-                                      @scheduled_export.fields_data[type]) unless @scheduled_export.fields_data[type].nil?
+                                      @scheduled_export.fields_data[type] || {})
       end
     end
 
@@ -180,14 +183,6 @@ class Reports::ScheduledExportsController < ApplicationController
       @selected_tab = :reports
     end
 
-    def check_feature
-      access_denied unless Account.current.auto_ticket_export_enabled?
-    end
-
-    def check_permission
-      access_denied unless privilege?(:view_reports) && privilege?(:admin_tasks)
-    end
-
     def check_schedule_owner_permission
       access_denied unless @scheduled_export.user_id == current_user.id
     end
@@ -203,10 +198,14 @@ class Reports::ScheduledExportsController < ApplicationController
     end
 
     def require_feature_and_privilege
-      has_activity_export_feature_and_privilege?
+      has_activity_export? || has_properties_export?
     end
 
-    def has_activity_export_feature_and_privilege?
+    def has_activity_export?
       current_account.ticket_activity_export_enabled? && privilege?(:manage_account)
+    end
+
+    def has_properties_export?
+      current_account.auto_ticket_export_enabled? && privilege?(:admin_tasks)
     end
 end

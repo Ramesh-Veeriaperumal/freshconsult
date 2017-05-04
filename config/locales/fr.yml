@@ -5276,7 +5276,7 @@ fr:
     stop_monitor_btn_title: "Arrêter de surveiller ce ticket"
     merge_title: "Fusionner les tickets"
     tweets: Tweets
-    agent_notify: "a ajouté une note et souhaite que vous la consultiez"
+    agent_notify: "A ajouté une note et souhaiterait que vous y jetiez un coup d'oeil"
     note_content: "Contenu de la note"
     private_note_alert: "Pour envoyer une réponse privée, utilisez les commandes e-mail ci-dessous dans le corps de votre message."
     ticket_url: "URL du ticket"
@@ -8681,7 +8681,7 @@ fr:
         cancelling: "Annulation en cours..."
         resuming: Reprise...
     call_history:
-      title: "Historique des appels"
+      title: "Historique téléphonique"
       sort_by: "Triés par :"
       singular_active_number: "Numéro actif"
       none_active_number: "- aucun -"

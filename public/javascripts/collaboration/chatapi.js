@@ -434,6 +434,7 @@
         var conversation = self.conversationsMap[conversationName];
 
         var msgObj = {
+            "ts": msg.ts,
             "body": msg.body,
             "co_id" : conversationName,
             "co_ch" : conversation.co_ch,

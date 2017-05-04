@@ -53,7 +53,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   after_commit :create_initial_activity, on: :create
   after_commit :pass_thro_biz_rules, on: :create, :unless => :skip_dispatcher?
-  after_commit :send_outbound_email, :update_capping_on_create, on: :create, :if => :outbound_email?
+  after_commit :send_outbound_email, :update_capping_on_create, :update_count_for_skill,on: :create, :if => :outbound_email?
 
   after_commit :trigger_observer, on: :update, :if => :execute_observer?
   after_commit :update_ticket_states, :notify_on_update, :update_activity,
@@ -217,7 +217,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def update_ticket_lifecycle
     @ticket_lifecycle = {}
-    return if (created_at < Time.zone.parse('2017-01-01 00:00:00')) || ([:responder_id, :group_id, :status] & model_changes.keys).empty?
+    return if ([:responder_id, :group_id, :status] & model_changes.keys).empty?
     tkt_group = model_changes.has_key?(:group_id) ? Group.find_by_id(model_changes[:group_id][0]) : self.group
     @ticket_lifecycle = schema_less_ticket.update_lifecycle_changes(time_zone_now, tkt_group, [RESOLVED,CLOSED].include?(status))
   end

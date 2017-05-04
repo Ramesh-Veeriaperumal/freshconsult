@@ -32,7 +32,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed",
                             "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email", 
                             "parent_ticket", "reports_hash","sla_response_reminded","sla_resolution_reminded", "dirty_attributes",
-                            "association_type", "associates_rdb", "sentiment", "spam_score", "sds_spam"]
+                            "sentiment", "spam_score", "sds_spam"]
 
   TICKET_STATE_ATTRIBUTES = ["opened_at", "pending_since", "resolved_at", "closed_at", "first_assigned_at", "assigned_at",
                              "first_response_time", "requester_responded_at", "agent_responded_at", "group_escalated",
@@ -60,7 +60,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :round_robin_assignment, :related_ticket_ids, :tracker_ticket_id, :unique_external_id, :assoc_parent_tkt_id,
     :sbrr_turned_on, :status_sla_toggled_to, :replicated_state, :skip_sbrr_assigner, :bg_jobs_inline,
     :sbrr_ticket_dequeued, :sbrr_user_score_incremented, :sbrr_fresh_ticket, :skip_sbrr, :model_changes,
-    :schedule_observer, :required_fields_on_closure, :send_and_set_args  
+    :schedule_observer, :required_fields_on_closure, :observer_args  
     # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
     # - will be clearing these after activity publish.
   

@@ -91,6 +91,8 @@
 			this.searchedTicketIds = [];
 		},
 		asyncRender: function(){
+			  var $all_checked = jQuery('.selection input[type="checkbox"][selectable="true"]:checked');
+			  var $all_unchecked = jQuery('.selection input[type="checkbox"][selectable="true"]:unchecked');
 			if(this.searchResultsData().results.length){
 				window.search_page.processAndRenderResults();
 				window.search_page.afterComplete();
