@@ -3,7 +3,7 @@ module ApiSearch
   class TicketsControllerTest < ActionController::TestCase
     include SearchTestHelper
 
-    CUSTOM_FIELDS = %w(number checkbox text)
+    CUSTOM_FIELDS = %w(number checkbox decimal text paragraph date)
 
     def setup
       super
@@ -17,6 +17,7 @@ module ApiSearch
       CUSTOM_FIELDS.each do |custom_field|
         create_custom_field("test_custom_#{custom_field}", custom_field)
       end
+      create_custom_field_dropdown('test_custom_dropdown', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
       clear_es(@account.id)
       20.times { create_search_ticket(ticket_params_hash) }
       write_data_to_es(@account.id)
@@ -36,7 +37,7 @@ module ApiSearch
       tags = [Faker::Name.name, Faker::Name.name]
       priority = rand(4) + 1
       status = ticket_statuses[rand(ticket_statuses.size)]
-      custom_fields = { test_custom_number_1: rand(10) - 5, test_custom_checkbox_1: rand(5) % 2 ? true : false, test_custom_text_1: Faker::Lorem.word + " " + special_chars.shuffle[0..8].join }
+      custom_fields = { test_custom_number_1: rand(10) - 5, test_custom_checkbox_1: rand(5) % 2 ? true : false, test_custom_text_1: Faker::Lorem.word + " " + special_chars.shuffle[0..8].join, test_custom_paragraph_1: Faker::Lorem.paragraph }
       group = create_group_with_agents(@account, agent_list: [@agent.id])
       params_hash = { email: email, cc_emails: cc_emails, description: description, subject: subject,
                       priority: priority, status: status, type: 'Problem', responder_id: @agent.id, source: 1, tags: tags,

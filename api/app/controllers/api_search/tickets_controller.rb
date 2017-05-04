@@ -24,7 +24,7 @@ module ApiSearch
     private
     
       def custom_fields
-        @custom_fields ||= Account.current.ticket_field_def.ff_alias_column_mapping.each_with_object({}) {|(key,value), hash| hash[key] = TicketDecorator.display_name(key) if value=~ ApiSearchConstants::TICKET_FIELDS_REGEX }
+        @custom_fields ||= Account.current.ticket_field_def.ff_alias_column_mapping.each_with_object({}) {|(key,value), hash| hash[key] = TicketDecorator.display_name(key) }
       end
 
       def visitor
