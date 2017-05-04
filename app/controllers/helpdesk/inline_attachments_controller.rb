@@ -10,13 +10,13 @@ class Helpdesk::InlineAttachmentsController < ApplicationController
   skip_before_filter :ensure_proper_protocol, :ensure_proper_sts_header
   around_filter { |&block| Sharding.run_on_slave(&block) }
   before_filter :redirect_to_referer_host, :if => :global_host?
-  before_filter :check_anonymous_user
+  before_filter :check_anonymous_user, :if => :private_inline?
   
   def one_hop_url
     decoded_hash = Helpdesk::Attachment.decode_token(params[:token])
     attachment = current_account.attachments.where(:id => decoded_hash[:id]).first
     if attachment.present?
-      redirect_to attachment.authenticated_s3_get_url(:expires => 5.minutes)
+      redirect_to attachment.authenticated_s3_get_url(:expires => 2.minutes)
     else
       render_404
     end
@@ -72,5 +72,9 @@ class Helpdesk::InlineAttachmentsController < ApplicationController
       # Also, checking to ensure the host is not a third party referer to avoid a redirect attack
       render_404 and return if host == global_host || invalid_referer?(host)
       redirect_to "#{referer}#{env_config[:port]}/inline/attachment?token=#{params[:token]}"
+    end
+
+    def private_inline?
+      current_account.private_inline_enabled?
     end
 end
