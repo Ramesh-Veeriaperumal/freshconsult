@@ -805,7 +805,7 @@ class Helpdesk::TicketsController < ApplicationController
           }
           format.xml { render :xml => @item }
           format.mobile {
-            render :json => {:success => true, :id => @item.id, :actions_executed => actions_executed, :rule_name => @va_rule.name , :success_message => t("activities.tag.execute_scenario", :rule_name => va_rule.name) }.to_json
+            render :json => {:success => true, :id => @item.id, :actions_executed => actions_executed, :rule_name => @va_rule.name , :success_message => t("activities.tag.execute_scenario") }.to_json
           }
           format.json { render :json => @item }
           format.js {
