@@ -37,14 +37,6 @@
       forest: 100
       :default: 70
 
-:data_refresh_frequency:
-  default: 1440
-  sprout: 1440
-  blossom: -1
-  garden: 60
-  estate: 60
-  forest: 30
-
 :plan_constraints:
   enable_ticket_list:
     - garden
