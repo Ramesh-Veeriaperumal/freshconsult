@@ -2,6 +2,7 @@ module ReportsHelper
   
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include HelpdeskReports::Helper::PlanConstraints
   
   def current_start_time
     

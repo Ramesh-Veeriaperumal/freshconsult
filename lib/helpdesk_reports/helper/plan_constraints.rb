@@ -10,6 +10,8 @@ module HelpdeskReports::Helper::PlanConstraints
     :enterprise_reporting => ['estate', 'forest']
   }
 
+  PLAN_BASED_FEATURE = [:enable_lifecycle_report]
+
   def plan_group
     return @plan_group if defined?(@plan_group)
     account_plan = Account.current.subscription.subscription_plan.display_name.downcase
@@ -19,10 +21,15 @@ module HelpdeskReports::Helper::PlanConstraints
     end
     @plan_group
   end
+
+  def account_plan_name
+    Account.current.subscription.subscription_plan.display_name.downcase
+  end
   
   ReportsAppConfig::REPORT_CONSTRAINTS[:plan_constraints].each do |constraint, plans| 
     define_method("#{constraint}?") do
-      Account.current.active? && (plans || []).include?(plan_group)
+      account_plan = PLAN_BASED_FEATURE.include?(constraint.to_sym) ? account_plan_name : plan_group
+      Account.current.active? && (plans || []).include?(account_plan)
     end
   end
 
