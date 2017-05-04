@@ -484,7 +484,9 @@ class AccountsController < ApplicationController
 
     def schedule_cleanup
       current_account.subscription.update_attributes(:state => "suspended")
-      AccountCleanup::DeleteAccount.perform_in(14.days.from_now, {:account_id => current_account.id})
+      jid = AccountCleanup::DeleteAccount.perform_in(14.days.from_now, {:account_id => current_account.id})
+      dc = DeletedCustomers.find_by_account_id(current_account.id)
+      dc.update_attributes({:job_id => jid}) if dc
     end
 
     def clear_account_data
