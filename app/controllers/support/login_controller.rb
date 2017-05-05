@@ -7,6 +7,7 @@ class Support::LoginController < SupportController
 	MAX_ATTEMPT = 3
 	SUB_DOMAIN = "freshdesk.com"
 
+  skip_before_filter :check_suspended_account
 	before_filter :set_no_ssl_msg, :only => :new
 	skip_before_filter :check_account_state
 	after_filter :set_domain_cookie, :only => :create

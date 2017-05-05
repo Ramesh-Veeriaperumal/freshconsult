@@ -13,8 +13,10 @@ module Ember
 
     before_filter :ticket_permission?, only: [:latest_note, :split_note]
     before_filter :load_note, only: [:split_note]
-    before_filter :disable_notification, if: :notification_not_required?
-    after_filter  :enable_notification, if: :notification_not_required?
+    before_filter :disable_notification, only: [:update, :update_properties], if: :notification_not_required?
+    after_filter  :enable_notification, only: [:update, :update_properties], if: :notification_not_required?
+
+    around_filter :run_on_db, :only => :index
 
     def index
       sanitize_filter_params
@@ -137,7 +139,7 @@ module Ember
 
       def load_objects
         items = tickets_filter.preload(conditional_preload_options)
-        @items_count = items.count if count_included?
+        @items_count = optimized_count(items) if count_included?
         @items = paginate_items(items)
       end
 
@@ -223,6 +225,26 @@ module Ember
         @ticket_filter = @validator
       end
 
+      def wf_query_hash
+        @wf_query_hash ||= begin
+          filter = Helpdesk::Filters::CustomTicketFilter.new
+          filter.deserialize_from_params(ticket_filter_params[:params])
+          filter.query_hash
+        end
+      end
+
+      def optimized_count(items)
+        if current_account.count_es_enabled? && non_indexed_columns_query?
+          Search::Tickets::Docs.new(wf_query_hash).count(Helpdesk::Ticket)
+        else
+          items.count
+        end
+      end
+
+      def non_indexed_columns_query?
+        (wf_query_hash.collect {|q| q["condition"] } - TicketConstants::DB_INDEXED_QUERY_COLUMNS) > 0
+      end
+
       def sanitize_filter_params
         if params.key?(:query_hash)
           params[:wf_model] = 'Helpdesk::Ticket'
@@ -257,7 +279,7 @@ module Ember
       end
 
       def notification_not_required?
-        @skip_notification ||= cname_params.try(:[], :skip_close_notification)
+        @skip_close_notification ||= cname_params.try(:[], :skip_close_notification)
       end
 
       def validate_url_params

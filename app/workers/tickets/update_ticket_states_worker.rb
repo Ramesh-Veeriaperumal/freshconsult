@@ -24,7 +24,8 @@ module Tickets
         raise
       ensure
         return if @note.blank?
-        @note.trigger_observer(args[:model_changes]) unless args[:freshdesk_webhook]
+        inline = args[:send_and_set] ? true : false
+        @note.trigger_observer(args[:model_changes], inline) unless args[:freshdesk_webhook]
       end
     end
 

@@ -1,6 +1,9 @@
 show_ajax_flash(page)
-#Getting the latest notes and appending
 
+# to handle send and set status behaviour
+item, @parent = ((@item.class == Helpdesk::Ticket) ? [@note, @ticket] : [@item, @parent])
+
+#Getting the latest notes and appending
 if params[:showing] == 'activities'
     @total_activities =  @parent.activities_count
     if !Account.current.launched?(:activity_ui_disable) and Account.current.features?(:activity_revamp)
@@ -12,12 +15,13 @@ else
 	@notes = @parent.conversation_since(params[:since_id]).reverse
 	public_notes = @notes.select{ |note| note.private == false || note.incoming == true }
 	page.insert_html :bottom, 'all_notes', render(:partial => "helpdesk/tickets/show/note", :collection => @notes)
-	page << "trigger_event('note_created', #{to_event_data(@item)} );"
-  
+	
+  page << "trigger_event('note_created', #{to_event_data(item)} );"
+
   unless @parent.fb_post.blank?
     page << "jQuery('#parent_post_id').val('')" 
     page << "jQuery('#fb_form_title').html('#{@parent.requester.name}')"
-    if @item.fb_post.blank?
+    if item.fb_post.blank?
         page <<"jQuery.scrollTo('#noticeajax');"
     end
   end
@@ -33,3 +37,6 @@ end
 page << "if(document.getElementById('cnt-reply-quoted')){"
 page.replace_html 'cnt-reply-quoted', h(quoted_text(@parent))
 page << "}"
+
+#send and set response for ticket property update
+page << "jQuery('#custom_ticket_form').data('send_and_set_resp', #{@send_and_set_response.to_json})" if @send_and_set_response

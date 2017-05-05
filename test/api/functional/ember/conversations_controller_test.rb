@@ -746,6 +746,16 @@ module Ember
       match_json([bad_request_error_pattern('note_id', :absent_in_db, resource: :note, attribute: :note_id)])
     end
 
+    def test_facebook_reply_failure
+      ticket = create_ticket_from_fb_post
+      Facebook::TicketActions::Util.stubs(:send_reply).returns(false)
+      params_hash = { body: Faker::Lorem.paragraph }
+      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('body', :unable_to_perform)])
+      Facebook::TicketActions::Util.unstub(:send_reply)
+    end
+
     def test_facebook_reply_to_fb_post_ticket
       ticket = create_ticket_from_fb_post
       put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f*100000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f*100000).to_i}"

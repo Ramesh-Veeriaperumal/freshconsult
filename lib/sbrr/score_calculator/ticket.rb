@@ -7,7 +7,7 @@ module SBRR
         @score ||= begin
           @member    = _member
           @old_score = _old_score
-          old_score || member.created_at.to_i
+          old_score || (Time.now.to_f * 1000000).to_i #support until year 2254
         end
       end
 

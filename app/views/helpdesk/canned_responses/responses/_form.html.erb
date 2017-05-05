@@ -24,7 +24,8 @@ jQuery(document).ready(function(){
       jQuery('#admin_canned_responses_response_visibility_group_id').removeClass('required');
     }
 
-	if (!<%=privilege?(:manage_canned_responses)%>){ 
+	var can_manage_canned_response = <%=current_user.privilege?(:manage_canned_responses)%> || false;
+	if (!can_manage_canned_response){
 	  jQuery('#all_agent,#group_agent,#only_me').children().attr('disabled','disabled');
 	  jQuery('#all_agent,#group_agent').addClass("muted");
     }else{
@@ -114,7 +115,7 @@ function toggleGroup(access_id)
               <%= label_tag(:new_folder_id, t('canned_folders.folder')+ " : ", :class => "control-label") %>
               <div class="controls">
                 <%= select_tag(:new_folder_id, options_from_collection_for_select(@response_folders, 'id', 'name', 
-    			@folder.id), :class => 'select2') %>	
+    			@folder.id), :class => 'select2',  :style => "width:50%") %>	
               </div>
     	</div>
 	</li>

@@ -16,7 +16,7 @@ module Cache::Memcache::Account
 
   def dashboard_shard_from_cache
     key = ACCOUNT_DASHBOARD_SHARD_NAME % { :account_id => self.id }
-    MemcacheKeys.fetch(key) { 
+    MemcacheKeys.fetch(key) {
       count = Search::Dashboard::Count.new(nil, self.id, nil)
       count.fetch_dashboard_shard
     }
@@ -27,6 +27,30 @@ module Cache::Memcache::Account
     MemcacheKeys.delete_from_cache key
     key = ACCOUNT_BY_FULL_DOMAIN % { :full_domain => @old_object.full_domain }
     MemcacheKeys.delete_from_cache key
+  end
+
+  def required_ticket_fields_from_cache
+    @required_ticket_fields ||= begin
+      key = ACCOUNT_REQUIRED_TICKET_FIELDS % { :account_id => self.id }
+      MemcacheKeys.fetch(key) { self.required_ticket_fields.all }      
+    end
+  end
+
+  def section_parent_fields_from_cache
+    @section_parent_fields ||= begin
+      key = ACCOUNT_SECTION_PARENT_FIELDS % { :account_id => self.id }
+      MemcacheKeys.fetch(key) { self.section_parent_fields.all } 
+    end
+  end
+
+  def clear_required_ticket_fields_cache
+    key = ACCOUNT_REQUIRED_TICKET_FIELDS % { :account_id => self.id }
+    MemcacheKeys.delete_from_cache(key)
+  end
+
+  def clear_section_parent_fields_cache
+    key = ACCOUNT_SECTION_PARENT_FIELDS % { :account_id => self.id }
+    MemcacheKeys.delete_from_cache(key)
   end
 
   def onhold_and_closed_statuses_from_cache
@@ -42,7 +66,7 @@ module Cache::Memcache::Account
       MemcacheKeys.fetch(key) { self.ticket_status_values.find(:all) }
     end
   end
-  
+
   def clear_api_limit_cache
     key = API_LIMIT % {:account_id => self.id }
     MemcacheKeys.delete_from_cache key
@@ -94,7 +118,7 @@ module Cache::Memcache::Account
       key = agents_details_memcache_key
       MemcacheKeys.fetch(key) { self.users.where(:helpdesk_agent => true).select("id,name,email").all }
     end
-  end  
+  end
 
   def groups_from_cache
     @groups_from_cache ||= begin
@@ -144,7 +168,7 @@ module Cache::Memcache::Account
     key = handles_memcache_key
     MemcacheKeys.fetch(key) { self.twitter_handles.all }
   end
-  
+
   def twitter_reauth_check_from_cache
     key = TWITTER_REAUTH_CHECK % {:account_id => self.id }
     MemcacheKeys.fetch(key) { self.twitter_handles.reauth_required.present? }
@@ -154,12 +178,12 @@ module Cache::Memcache::Account
     key = FB_REAUTH_CHECK % {:account_id => self.id }
     MemcacheKeys.fetch(key) { self.facebook_pages.reauth_required.present? }
   end
-  
+
   def fb_realtime_msg_from_cache
     key = FB_REALTIME_MSG_ENABLED % {:account_id => self.id }
     MemcacheKeys.fetch(key) { self.facebook_pages.realtime_messaging_disabled.present? }
   end
-  
+
   def custom_dropdown_fields_from_cache
     @custom_dropdown_fields_from_cache ||= begin
       key = ACCOUNT_CUSTOM_DROPDOWN_FIELDS % { :account_id => self.id }
@@ -225,6 +249,24 @@ module Cache::Memcache::Account
     end
   end
 
+  def scheduled_ticket_exports_from_cache
+    @scheduled_ticket_exports_from_cache ||= begin
+      key = ACCOUNT_SCHEDULED_TICKET_EXPORTS % { :account_id => self.id }
+      MemcacheKeys.fetch(key) do
+        self.scheduled_ticket_exports.all
+      end
+    end
+  end
+
+  def activity_export_from_cache
+    @activity_export_from_cache ||= begin
+      key = ACCOUNT_ACTIVITY_EXPORT % { :account_id => self.id }
+      MemcacheKeys.fetch(key) do
+        self.activity_export
+      end
+    end
+  end
+
   def observer_rules_from_cache
     key = ACCOUNT_OBSERVER_RULES % { :account_id => self.id }
     MemcacheKeys.fetch(key) do
@@ -237,7 +279,7 @@ module Cache::Memcache::Account
 
     # fetch won't know the difference between nils from query block and key not present.
     # Hence DB will be queried again & again via memcache for accounts without whitelisted ip if we use self.whitelisted_ip
-    # Below query will return array containing results from query self.whitelisted_ip. 
+    # Below query will return array containing results from query self.whitelisted_ip.
     # So that cache won't be executed again & again for accounts without whitelistedip.
     MemcacheKeys.fetch(key) { WhitelistedIp.where(account_id: self.id).limit(1).all }
   end
@@ -272,7 +314,7 @@ module Cache::Memcache::Account
     key = FORUM_CATEGORIES % { :account_id => self.id }
     MemcacheKeys.delete_from_cache(key)
   end
-  
+
   def solution_categories_from_cache
     MemcacheKeys.fetch(ALL_SOLUTION_CATEGORIES % { :account_id => self.id }) do
       self.solution_category_meta.all(:conditions => {:is_default => false},
@@ -289,7 +331,7 @@ module Cache::Memcache::Account
     key = ALL_SOLUTION_CATEGORIES % { :account_id => self.id }
     MemcacheKeys.delete_from_cache(key)
   end
-  
+
 
   def sales_manager_from_cache
     if self.created_at > Time.now.utc - 3.days # Logic to handle sales manager change
@@ -314,10 +356,10 @@ module Cache::Memcache::Account
     end
     MemcacheKeys.fetch(key,expiry) do
       begin
-        CRM::FreshsalesUtility.new({ account: self }).account_manager  
+        CRM::FreshsalesUtility.new({ account: self }).account_manager
       rescue  => e
         CRM::FreshsalesUtility::DEFAULT_ACCOUNT_MANAGER
-      end      
+      end
     end
   end
 
@@ -454,10 +496,10 @@ module Cache::Memcache::Account
     def companies_memcache_key
       ACCOUNT_COMPANIES % { :account_id => self.id }
     end
-    
+
     def handles_memcache_key
       ACCOUNT_TWITTER_HANDLES % { :account_id => self.id }
-    end    
+    end
 
     def password_policy_memcache_key(user_type)
       ACCOUNT_PASSWORD_POLICY % { :account_id => self.id, :user_type => user_type}

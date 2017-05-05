@@ -31,6 +31,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:pod] = shard_info.pod_info
     account_summary[:freshfone_feature] = account.features?(:freshfone) || account.features?(:freshfone_onboarding)
     account_summary[:spam_details] = ehawk_spam_details
+    account_summary[:disable_emails] = account.launched?(:disable_emails)
     respond_to do |format|
       format.json do
         render :json => account_summary
@@ -349,12 +350,12 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       result[:account_id] = account.id
       result[:account_name] = account.name
       account.make_current
-      sub = account.subscription
-      sub.state="suspended"
-      if sub.save
-        puts "Saved"
-        result[:status] = "success"
+      subscription = account.subscription
+      unless subscription.suspended?
+        subscription.state = "suspended"
+        subscription.save
       end
+      result[:status] = "success"
       Account.reset_current_account
     end
     $spam_watcher.perform_redis_op("del", "#{params[:account_id]}-")

@@ -54,6 +54,8 @@ class User < ActiveRecord::Base
     'agent_topic' => 6266
   }
 
+  MAX_NO_OF_SKILLS_PER_USER = 35
+
   ACTIVATION_ATTRIBUTES = [:name, :phone, :job_title, :password, :password_confirmation]
 
 end

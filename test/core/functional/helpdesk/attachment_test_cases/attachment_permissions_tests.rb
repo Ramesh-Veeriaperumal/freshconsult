@@ -154,6 +154,7 @@ module AttachmentPermissionsTests
     forum = create_test_forum(create_test_category)
     topic = create_test_topic_with_attachments(forum, user)
     attachment = topic.posts.last.attachments.first
+    log_out
     xhr :get, :show, {:id => attachment.id}
     assert_response :redirect
     assert_match Regexp.new(Helpdesk::Attachment.s3_path(attachment.id, "attachment.txt")), @response.redirect_url
@@ -163,7 +164,7 @@ module AttachmentPermissionsTests
     @agent = add_agent(@account, {:ticket_permission => Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets]})
     user = add_new_user(@account)
     log_in(user)
-    forum = create_test_forum(create_test_category)
+    forum = create_test_forum(create_test_category,1, Forum::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
     topic = create_test_topic_with_attachments(forum, @agent)
     attachment = topic.posts.last.attachments.first
     xhr :get, :show, {:id => attachment.id}
@@ -176,7 +177,7 @@ module AttachmentPermissionsTests
     company = create_company
     user = add_new_user(@account, :customer_id => company.id)
     log_in(user)
-    forum = create_test_forum(create_test_category)
+    forum = create_test_forum(create_test_category,1, Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users])
     forum.customer_forums.create(:customer_id => company.id)
     topic = create_test_topic_with_attachments(forum, @agent)
     attachment = topic.posts.last.attachments.first
@@ -185,12 +186,22 @@ module AttachmentPermissionsTests
     assert_match Regexp.new(Helpdesk::Attachment.s3_path(attachment.id, "attachment.txt")), @response.redirect_url
   end
 
-  def test_agent_can_delete_all_forum_attachments
+  def test_agent_can_delete_all_post_attachments
     @agent = add_agent(@account, {:ticket_permission => Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets]})
     forum = create_test_forum(create_test_category)
     user = add_new_user(@account)
     topic = create_test_topic_with_attachments(forum, user)
     log_in(@agent)
+    attachment = topic.posts.last.attachments.first
+    xhr :delete, :destroy, {:id => attachment.id}
+    assert_response :success
+  end
+
+  def test_users_can_delete_their_post_attachments
+    forum = create_test_forum(create_test_category)
+    user = add_new_user(@account)
+    topic = create_test_topic_with_attachments(forum, user)
+    log_in(user)
     attachment = topic.posts.last.attachments.first
     xhr :delete, :destroy, {:id => attachment.id}
     assert_response :success
@@ -212,6 +223,7 @@ module AttachmentPermissionsTests
     article_meta = create_article(:user_id => user.id,
        :attachments => [{:resource => File.new(Rails.root.join("spec/fixtures/files/attachment.txt"))}] )
     attachment = article_meta.solution_articles.first.attachments.first
+    log_out
     xhr :get, :show, {:id => attachment.id}
     assert_response :redirect
     assert_match Regexp.new(Helpdesk::Attachment.s3_path(attachment.id, "attachment.txt")), @response.redirect_url
@@ -250,6 +262,25 @@ module AttachmentPermissionsTests
       :attachments => [{:resource => File.new(Rails.root.join("spec/fixtures/files/attachment.txt"))}])
     log_in(@agent)
     attachment = article_meta.solution_articles.first.attachments.first
+    xhr :delete, :destroy, {:id => attachment.id}
+    assert_response :success
+  end
+
+  def test_agents_can_view_their_draft_attachments
+    agent = add_agent(@account, {:ticket_permission => Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets]})
+    add_user_draft_attachments(:user_id => agent.id)
+    log_in(agent)
+    attachment = Helpdesk::Attachment.last
+    xhr :get, :show, {:id => attachment.id}
+    assert_response :redirect
+    assert_match Regexp.new(Helpdesk::Attachment.s3_path(attachment.id, "attachment.txt")), @response.redirect_url
+  end
+
+  def test_agents_can_delete_their_draft_attachments
+    agent = add_agent(@account)
+    add_user_draft_attachments(:user_id => agent.id)
+    log_in(agent)
+    attachment = Helpdesk::Attachment.last
     xhr :delete, :destroy, {:id => attachment.id}
     assert_response :success
   end

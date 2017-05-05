@@ -142,4 +142,24 @@ module TicketsTestHelper
     end
     @child_ticket_ids
   end
+
+  def update_bulk_tickets(tickets_display_id = [], params = {})
+    put :update_multiple, {:helpdesk_note => {:note_body_attributes => {:body_html => ""},
+                                              :private => "0",
+                                              :user_id => @agent.id,
+                                              :source => "0"
+    },
+                           :helpdesk_ticket => {
+                             :internal_group_id => params[:internal_group_id],
+                             :internal_agent_id => params[:internal_agent_id],
+                             :status => params[:status_id]
+                           },
+                           :ids => tickets_display_id
+    }
+  end
+
+  def custom_search_on_ticket_list_filters(conditions = [], agent_mode = 0, group_mode = 0)
+    post :custom_search, { :data_hash => conditions, :agent_mode => agent_mode, :group_mode => group_mode,
+                           :filter_name => "all_tickets" }
+  end
 end

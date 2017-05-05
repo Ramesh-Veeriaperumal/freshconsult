@@ -18,6 +18,14 @@ module Cache::Memcache::Helpdesk::TicketField
 		MemcacheKeys.delete_from_cache key
 		key = ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING % { account_id: self.account_id }
 		MemcacheKeys.delete_from_cache key
+		key = ACCOUNT_REQUIRED_TICKET_FIELDS % { :account_id => self.account_id }
+		MemcacheKeys.delete_from_cache(key) if product_field_set_reqd_false
+		key = ACCOUNT_SECTION_PARENT_FIELDS % { :account_id => self.account_id }
+		MemcacheKeys.delete_from_cache(key) if product_field_set_reqd_false
+	end
+
+	def product_field_set_reqd_false
+		self.field_type == "default_product" && self.previous_changes.has_key?(:required_for_closure) && !self.required_for_closure?
 	end
   
 end

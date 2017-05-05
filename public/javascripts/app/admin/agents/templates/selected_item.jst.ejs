@@ -1,0 +1,10 @@
+<li id='<%=type%>_<%= key %>'>
+	<div class="<%= type == 'group' ? 'group_' : '' %>icon_remove tooltip" title='Remove <%= type %>' id='remove_<%= type %>_<%= key %>' rel='<%= key %>'>
+		<span></span>
+	</div>
+	<label for='<%= type== "group" ? "agent_group" : "agent_ticket_permission" %>'>
+		<b><%= details[0] %></b>
+		<span class='muted info_data ellipsis'><%= details[1] %></span>
+	</label>
+	<input type='hidden' name='<%= type== "group" ? "agent" : "user" %>[<%= type %>_ids][]' value='<%= key %>' />
+</li>

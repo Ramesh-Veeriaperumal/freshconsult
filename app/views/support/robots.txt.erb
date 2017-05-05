@@ -12,4 +12,6 @@ Disallow: /login/normal/
 Allow: /helpdesk/attachments
 Disallow: /helpdesk/
 Disallow: /public/tickets/
-#Sitemap: /support/sitemap.xml
+<% if @crawl_sitemap %>
+Sitemap: <%= @url %>/support/sitemap.xml
+<% end %>

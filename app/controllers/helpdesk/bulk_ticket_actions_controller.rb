@@ -4,35 +4,42 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
   include ParserUtil
   include HelpdeskControllerMethods
   include Helpdesk::TagMethods
+  include Helpdesk::Ticketfields::TicketStatus
   include Helpdesk::BulkActionMethods
+  include TicketValidationMethods
 
-  before_filter :filter_params_ids, :validate_params, :scoper_bulk_actions, :only => :update_multiple
-  before_filter :load_items, :only => :update_multiple
+  before_filter :update_multiple_methods, :only => :update_multiple
 
-  def update_multiple             
-    failed_tickets = []
-    
-    @items = sort_items(@items, @field_params["group_id"]) if @field_params.present?
-    @items.each do |ticket|
-      @field_params.each do |key, value|
-        #handling unassign for agent and group. from ui, -1 will be sent for unassigned case
-        value = nil if value == '-1'
-        ticket.send("#{key}=", value) if (value.nil? || value.present?) and ticket.respond_to?("#{key}=")
-      end
-      update_tags(params[:helpdesk][:tags], false, ticket) unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
-      ticket.save_ticket
-    end
-    flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/bulk_actions_notice', 
-                                      :locals => { :failed_tickets => failed_tickets, :get_updated_ticket_count => get_updated_ticket_count })
-    queue_replies
-    if params[:search_term].present? && !params[:search_term].nil?
-      redirect_to search_tickets_path(:term => params[:search_term])
-    else
-      redirect_to helpdesk_tickets_path
-    end
+  def update_multiple
   end
 
   protected
+
+    def get_updated_ticket_count   
+      pluralize(@items.length, t('ticket_was'), t('tickets_were'))    
+    end
+
+    def update_multiple_methods
+      filter_params_ids
+      validate_params
+      validate_ticket_close if close_validation_enabled?
+      update_multiple_background
+      load_items if items_empty? 
+    end
+
+    def validate_ticket_close
+      @failed_tickets = []
+      if params[:helpdesk_ticket] and params[:helpdesk_ticket][:status].present? and close_action?(params[:helpdesk_ticket][:status].to_i)
+        values_hash = params[:helpdesk_ticket][:custom_field] ? params[:helpdesk_ticket].merge(params[:helpdesk_ticket][:custom_field]) : params[:helpdesk_ticket]
+        load_items
+        @items.each do |ticket|
+          ticket.attributes = values_hash
+          unless valid_ticket?(ticket)
+            remove_from_params ticket
+          end
+        end
+      end
+    end
 
     def queue_replies
       if privilege?(:reply_ticket) and reply_content.present?
@@ -65,7 +72,6 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
         return false
       end
       save_attachments
-
     end
 
     def load_by_param(id)
@@ -96,10 +102,6 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
       params.slice('ids', 'helpdesk_note', 'twitter_handle', 'cloud_file_attachments', 'shared_attachments', 'spam_key', 'email_config')
     end
 
-    def get_updated_ticket_count
-      pluralize(@items.length, t('ticket_was'), t('tickets_were'))
-    end  
-    
     def cname
       @cname ||= 'tickets'
     end
@@ -109,6 +111,21 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
     end
 
    private
+
+    def display_flash failed_tickets
+      @failed_tickets ||= failed_tickets
+      if @failed_tickets.length == 0
+        flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/bulk_actions_notice', 
+                                        :locals => { :failed_tickets => @failed_tickets, :get_updated_ticket_count => get_updated_ticket_count })
+      else
+        flash[:failed_tickets] = @failed_tickets
+        flash[:action] = "bulk_scenario_close"
+        flash[:notice] = render_to_string(
+              :inline => t("helpdesk.flash.tickets_close_fail_on_bulk_action", 
+              :tickets => get_updated_ticket_count,
+              :failed_tickets => "<%= link_to( t('helpdesk.flash.tickets_failed', :failed_count => @failed_tickets.count), '',  id: 'failed-tickets' )%>" )).html_safe
+      end
+    end
 
     def params_for_bulk_action
       params.slice('ids')
@@ -125,12 +142,6 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
       end
     end
 
-    def scoper_bulk_actions
-      if params[:ids] and params[:ids].length > BACKGROUND_THRESHOLD
-        update_multiple_background
-      end
-    end
-
     def update_multiple_background
       args = { :action => action_name, :helpdesk_ticket => @field_params }
       args.merge!(params_for_bulk_action)
@@ -139,7 +150,17 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
       queue_replies
       respond_to do |format|
         format.html {
-          flash[:notice] = t('helpdesk.flash.tickets_background')
+          if @failed_tickets.length == 0
+            flash[:notice] = t('helpdesk.flash.tickets_background')
+          else
+            flash[:failed_tickets] = @failed_tickets
+            flash[:action] = "bulk_scenario_close"            
+            flash[:notice] = render_to_string(
+            :inline => t("helpdesk.flash.tickets_close_fail_on_bulk_action", 
+            :tickets => get_updated_ticket_count,
+            :failed_tickets => "<%= link_to( t('helpdesk.flash.tickets_failed', :failed_count => @failed_tickets.count), '',  id: 'failed-tickets') %>" )).html_safe
+
+          end
           redirect_to helpdesk_tickets_path
         }
       end

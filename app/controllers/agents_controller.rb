@@ -26,7 +26,9 @@ class AgentsController < ApplicationController
   before_filter :set_native_mobile, :only => :show
   before_filter :filter_params, :only => [:create, :update]
   before_filter :check_occasional_agent_params, :only => [:index]
-  
+  before_filter :set_filter_data, :only => [ :update,  :create]
+  before_filter :set_skill_data, :only => [:new, :edit]
+
   def load_object
     @agent = scoper.find(params[:id])
     @scoreboard_levels = current_account.scoreboard_levels.level_up_for @agent.level
@@ -84,7 +86,12 @@ class AgentsController < ApplicationController
 
   def edit   
     #@agent.signature_html ||= @agent.signature_value
-      respond_to do |format|
+    @agent_skills = gon.agent_skills = current_account.skill_based_round_robin_enabled? ? 
+    @agent.user.user_skills.preload(:skill).map { |user_skill|
+      {:id => user_skill.id, :rank => user_skill.rank, 
+        :skill_id => user_skill.skill_id, :name => user_skill.skill.name}
+      } : []
+    respond_to do |format|
       format.html # edit.html.erb
       format.xml  { render :xml => @agent }
     end    
@@ -125,15 +132,17 @@ class AgentsController < ApplicationController
       if @agent.save
          flash[:notice] = t(:'flash.agents.create.success', :email => @user.email)
          redirect_to :action => 'index'
-      else      
-        render :action => :new         
+      else
+        set_skill_data
+        render :action => :new
       end
     else  
         check_email_exist
         @agent.user =@user
-        @scoreboard_levels = current_account.scoreboard_levels.find(:all, :order => "points ASC")       
-        render :action => :new        
-    end    
+        @scoreboard_levels = current_account.scoreboard_levels.find(:all, :order => "points ASC")
+        set_skill_data
+        render :action => :new
+    end
   end
   
   def create_multiple_items
@@ -191,7 +200,10 @@ class AgentsController < ApplicationController
           @agent.user =@user       
           result = {:errors=>@user.errors.full_messages }    
           respond_to do |format|
-            format.html { render :action => :edit }
+            format.html {
+              set_skill_data
+              render :action => :edit
+             }
             format.json { render :json => result.to_json, :status => :bad_request }
             format.xml {render :xml => result.to_xml, :status => :bad_request } 
           end    
@@ -200,7 +212,10 @@ class AgentsController < ApplicationController
       @agent.user = @user       
       result = {:errors=>@agent.errors.full_messages }    
       respond_to do |format|
-        format.html { render :action => :edit }
+        format.html {
+          set_skill_data
+          render :action => :edit
+         }
         format.json { render :json => result.to_json, :status => :bad_request }
         format.xml {render :xml => result.to_xml, :status => :bad_request } 
       end    
@@ -281,7 +296,7 @@ class AgentsController < ApplicationController
   end 
 
   def configure_export
-    @csv_headers = Agent::EXPORT_FIELDS
+    @csv_headers = Agent.allowed_export_fields
     render :layout => false
   end
 
@@ -369,6 +384,20 @@ class AgentsController < ApplicationController
   end
  
 private
+
+  def set_filter_data
+    user_skills = params[:user][:user_skills_attributes] || []
+    params[:user][:user_skills_attributes] = user_skills.is_a?(Array) ?
+    user_skills : ActiveSupport::JSON.decode(user_skills)
+  end
+
+  def set_skill_data
+    @skills = gon.allSkills = current_account.skill_based_round_robin_enabled? ?
+     current_account.skills_trimmed_version_from_cache.map { |skill| 
+      {:skill_id=>skill.id, :name=>skill.name} 
+     } : []
+    gon.SkillBasedRRFlag = @skills.present?
+  end
 
   def ssl_check
     unless request.ssl?

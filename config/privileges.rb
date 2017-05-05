@@ -148,7 +148,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   reply_ticket do
-    resource :"helpdesk/ticket", :only => [:reply_to_conv]
+    resource :"helpdesk/ticket", :only => [:reply_to_conv, :send_and_set_status]
     resource :"helpdesk/conversation", :only => [:reply, :twitter, :facebook, :mobihelp, :traffic_cop, :ecommerce]
     resource :"social/twitter_handle", :only => [:send_tweet]
     # In bulk actions you can reply even if you do not have edit_ticket_properties
@@ -432,6 +432,8 @@ Authority::Authorization::PrivilegeList.build do
                                                         :save_reports_filter, :update_reports_filter, :delete_reports_filter]
 
       resource :"helpdesk/dashboard", :only => [:unresolved_tickets, :unresolved_tickets_data]
+      resource :"reports/scheduled_export"
+      resource :export, :only => [:ticket_activities]
   end
 
   # NOTE: Resource(controller action) related to scheduling is not added here because save reports and scheduling reports use the same action
@@ -469,6 +471,7 @@ Authority::Authorization::PrivilegeList.build do
   manage_availability do
     resource :group, :only => [:index, :show, :edit, :update, :toggle_roundrobin, :user_skill_exists]
     resource :"helpdesk/dashboard",:only => [:agent_status]
+    resource :"admin/user_skill"
   end
 
   manage_canned_responses do
@@ -600,7 +603,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"agent", :only => [:api_key]
   end
 
-  assign_agent do
+  manage_skills do
+    resource :"admin/skill"
     resource :"admin/user_skill"
   end
 

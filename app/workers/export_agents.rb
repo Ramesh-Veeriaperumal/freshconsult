@@ -10,7 +10,8 @@ class ExportAgents < BaseWorker
 
   def perform args
     begin
-      @agents = Account.current.agents.includes({:user => :roles},:agent_groups)
+      associations = preload_associations args
+      @agents = Account.current.agents.includes(associations)
       @csv_hash = args["csv_hash"]
       @portal_url = args["portal_url"]
       User.current = Account.current.users.find_by_id(args["user"])
@@ -21,6 +22,19 @@ class ExportAgents < BaseWorker
       User.reset_current_user
       I18n.locale = I18n.default_locale
     end
+  end
+
+  def preload_associations args
+    associations = Agent::AGENT_ASSOCIATIONS
+    resultant_associations = []
+    csv_values = args["csv_hash"].values
+
+    csv_values.each do |c|
+      if associations[c]
+          resultant_associations << associations[c]
+      end
+    end
+    resultant_associations.uniq
   end
 
   private
@@ -93,4 +107,9 @@ class ExportAgents < BaseWorker
         :url    => hash_url(@portal_url)
       })
     end
+
+    def skills_name agent
+      agent.user.skills.pluck(:name).join(" || ") 
+    end
+
 end

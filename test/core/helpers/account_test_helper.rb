@@ -59,4 +59,12 @@ module AccountTestHelper
     subscription.sneaky_save
   end
 
+  def enable_feature(feature)
+    @account.features.send(feature).send(:create)
+    @account.make_current.reload
+    yield
+    @account.features.send(feature).send(:destroy)
+    @account.make_current.reload
+  end
+
 end

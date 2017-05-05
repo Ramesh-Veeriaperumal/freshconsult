@@ -338,6 +338,20 @@ helpdeskReports.prototype = {
         p    = r.split('<br>', 2).join('<br>').length;//Displaying Only 2 lines
         str  = r.substring(0,p);
         return r.substring(p).length > 0 ? '<span title="'+s+'">'+str+'...</span>' : str; //Appending '...'' if skipping more words...
+    },
+    timeSpentTooltip : function() {
+        var point = this.point;
+        if( point != undefined) {
+            var tooltip = '<div class="tooltip"><div>' + point.time +' hrs ( '+ point.perc +'% ) </div><div>'+ point.ticket_cnt +' tickets </div>';
+
+            if(HelpdeskReports.locals.current_type != 'average') {
+                tooltip += '<div>Avg : ' + point.avg + ' hrs/ticket</div>'
+            }
+            tooltip += "</div>"
+            return tooltip;
+        } else {
+            return '';
+        }
     }
 }
 
@@ -1194,3 +1208,115 @@ perfLineChart.prototype.perfLineChartGraph = function () {
     var chart = new Highcharts.Chart(this.options);
 }
 
+function barChartWithAxis(opts){
+
+    helpdeskReports.call(this, {
+            chart: {
+                renderTo: opts['renderTo'],
+                type: 'bar',
+                plotBackgroundColor: REPORT_COLORS['plotBG'],
+                backgroundColor: REPORT_COLORS['plotBG'],
+                borderRadius: 0,
+                height: opts['height']
+            },
+            title: {
+                text: (typeof opts['title'] === 'undefined') ? '' : opts['title'],
+                style: {
+                    fontSize: '14px',
+                }
+            },
+            xAxis: [{
+                categories: opts['xAxisLabel'],
+                labels: {
+                    style: {
+                        width: '180px',
+                        'min-width': '180px',
+                        'max-width' : '180px',
+                        'textOverflow' : 'ellipsis',
+                        fontSize: '13px',
+                        align : 'right',
+                    },
+                    useHTML : true
+                },
+                title:{
+                  text: null
+                },
+                minorTickLength: 0,
+                tickLength: 0,
+                lineWidth: 0,
+                minPadding: 0,
+                maxPadding: 0,
+                lineWidth: 1
+            }],
+            yAxis: {
+                min: 0,
+                title: {
+                    enabled: false
+                },
+                labels: {
+                    enabled: false
+                },
+                max: opts['yAxisMaxValue'] === undefined ? null : opts['yAxisMaxValue'],
+                gridLineWidth: 0,
+                minorGridLineWidth: 0,
+                minPadding: 0,
+                maxPadding: 0
+            },
+            plotOptions: {
+                bar: {
+                    pointWidth: 18,
+                    grouping: false,
+                    minPointLength: opts['minPoint'] === undefined ? 0 : 2,
+                    dataLabels: {
+                        enabled: true,
+                        style : {
+                            color : "#666",
+                            fontWeight : "normal",
+                            "fontSize": "12px",
+                        },
+                        crop : false
+                    }
+                },
+                series: {
+                    cursor: 'pointer',
+                    color :  "#9AC4D8",
+                    point: {
+                        events: {
+                            click: function (e) {
+                                if(e.point.time != 0){
+                                    trigger_event("bar_chart_point_click",e);
+                                }
+                                
+                            }
+                        }
+                    }
+                }
+            },
+            tooltip: {
+                useHTML: true,
+                shared: false,
+                formatter: this.timeSpentTooltip,
+                followPointer: true,
+                enabled: opts['enableTooltip'] == true ? true : false,
+                backgroundColor: REPORT_COLORS['tooltip_bg'],
+                borderColor: 'none',
+                shadow: false,
+                hideDelay: 50,
+                style : {
+                    padding : 0
+                }
+            },
+            series: opts['chartData'],
+            legend: {
+                enabled: false
+            }
+        });
+    
+}
+barChartWithAxis.prototype = new helpdeskReports;
+barChartWithAxis.prototype.updateDefaultCharts();
+barChartWithAxis.constructor = barChartWithAxis;
+
+barChartWithAxis.prototype.barChartGraph = function () {
+    var chart = new Highcharts.Chart(this.options);
+}

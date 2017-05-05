@@ -11,6 +11,7 @@ development:
   iris_etl_msg_queue: iris_etl_msgs_dev
   cti_call_queue: cti_call_dev
   activity_queue: fd_activities_dev
+  activity_export_queue: fd_activities_export_dev
   reports_service_export_queue: reports_service_export_dev
   freshfone_call_tracker: freshfone_call_tracker_development
   cti_screen_pop: cti_screen_pop_dev
@@ -30,6 +31,13 @@ development:
   email_dead_letter_queue: failed_emails_queue_dev
   fd_email_failure_reference: fd_email_failure_reference_dev
   email_events_queue: fd_email_spam
+  scheduled_ticket_export_config: scheduled_ticket_export_config_dev
+  scheduled_ticket_export_complete: scheduled_ticket_export_complete_dev
+  scheduled_export_payload_enricher_queue: scheduled_export_payload_enricher_queue_dev
+  scheduled_ticket_export_queue: scheduled_ticket_export_queue_dev 
+  scheduled_user_export_queue: scheduled_user_export_queue_dev 
+  scheduled_company_export_queue: scheduled_company_export_queue_dev
+
 staging:
   twitter_realtime_queue: social_gnip_2_0_tweet_staging
   facebook_realtime_queue: social_fb_feed_staging
@@ -40,6 +48,7 @@ staging:
   reports_etl_msg_queue: reports_etl_msgs_staging
   iris_etl_msg_queue: iris_etl_msgs_staging
   activity_queue: fd_activities_staging
+  activity_export: fd_activities_export_staging
   reports_service_export_queue: reports_service_export_staging
   freshfone_call_tracker: freshfone_call_tracker_staging
   cti_screen_pop: cti_screen_pop_staging
@@ -59,6 +68,13 @@ staging:
   default_email_queue: default_email_queue_staging
   email_dead_letter_queue: failed_emails_queue_staging
   fd_email_failure_reference: fd_email_failure_reference_staging
+  scheduled_ticket_export_config: scheduled_ticket_export_config_staging
+  scheduled_ticket_export_complete: scheduled_ticket_export_complete_staging
+  scheduled_export_payload_enricher_queue: scheduled_export_payload_enricher_queue_staging
+  scheduled_ticket_export_queue: scheduled_ticket_export_queue_staging
+  scheduled_user_export_queue: scheduled_user_export_queue_staging 
+  scheduled_company_export_queue: scheduled_company_export_queue_staging
+
 production:
   twitter_realtime_queue: social_gnip_tweet_production
   facebook_realtime_queue: social_fb_feed_production
@@ -89,6 +105,13 @@ production:
   default_email_queue: default_email_queue_production
   email_dead_letter_queue: failed_emails_queue_production
   fd_email_failure_reference: fd_email_failure_reference_production
+  scheduled_ticket_export_config: scheduled_ticket_export_config_production
+  scheduled_ticket_export_complete: scheduled_ticket_export_complete_prod
+  scheduled_export_payload_enricher_queue: scheduled_export_payload_enricher_queue_production
+  scheduled_ticket_export_queue: scheduled_ticket_export_queue_production
+  scheduled_user_export_queue: scheduled_user_export_queue_production
+  scheduled_company_export_queue: scheduled_company_export_queue_production
+  
 test:
   twitter_realtime_queue: social_gnip_2_0_tweet_test
   facebook_realtime_queue: social_fb_feed_test
@@ -117,3 +140,9 @@ test:
   default_email_queue: default_email_queue_test
   email_dead_letter_queue: failed_emails_queue_test
   fd_email_failure_reference: fd_email_failure_reference_test
+  scheduled_ticket_export_config: scheduled_ticket_export_config_test
+  scheduled_ticket_export_complete: scheduled_ticket_export_complete_test
+  scheduled_export_payload_enricher_queue: scheduled_export_payload_enricher_queue_test
+  scheduled_ticket_export_queue: scheduled_ticket_export_queue_test
+  scheduled_user_export_queue: scheduled_user_export_queue_test
+  scheduled_company_export_queue: scheduled_company_export_queue_test

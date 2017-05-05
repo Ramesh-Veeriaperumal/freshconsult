@@ -22,14 +22,14 @@
         <div class="button-bar browse-apps pull-right <%= active_account ? '' : 'tooltip' %>" 
           <% unless active_account %> data-placement=below title="<%=t('marketplace.tooltip.suspended')%>" <% end %> >
           <a class="browse-btn btn btn-flat browse-apps-btn <%= active_account ? '' : 'disabled' %> " 
-             href="" data-url="<%= admin_marketplace_extensions_path %>?<%= more_apps_params %>">
+             href="" data-url="<%= active_account ? "#{admin_marketplace_extensions_path}?#{more_apps_params}" : '' %>">
              <span class="ficon-cube-filled"></span> <%= t('marketplace.get_more_apps') %>
           </a>
         </div>
       <% end %>
       <% if current_account.custom_apps_enabled? %>
       <div class="button-bar create-new pull-right" style="display:none;">
-        <a class="browse-btn btn btn-flat get-custom-apps" href="" data-url="<%= custom_apps_admin_marketplace_extensions_path %>"><%= t('integrations.custom_application.get_custom_apps') %></a>
+        <a class="browse-btn btn btn-flat get-custom-apps <%= active_account ? '' : 'disabled' %>" href="" data-url="<%= active_account ? "#{custom_apps_admin_marketplace_extensions_path}" : '' %>"><%= t('integrations.custom_application.get_custom_apps') %></a>
         <%= link_to t('integrations.custom_application.new_custom_app').html_safe, new_admin_integrations_freshplug_path, :class =>"btn btn-flat new-customapp" %>
       </div>
       <% end %>
@@ -102,10 +102,15 @@
       jQuery(jQuery('#myTab > li.active > a').attr('href')).addClass('active');
       var hash = window.location.hash,
           app_id = window.location.hash.substring(1);
-      if (hash.match('^#[0-9]')) { 
+
+
+      if(app_id == "<%= ZendeskAppConfig::APP_ID %>" && jQuery('#ext-<%=ZendeskAppConfig::APP_ID %>').length != 0) {
+        jQuery('#ext-<%=ZendeskAppConfig::APP_ID %>').find('.btn-settings').trigger('click');
+      }else if(hash.match('^#[0-9]')) {    
         jQuery('.app-dtl').attr('href',hash);
         jQuery('.app-dtl').attr('data-url','/admin/marketplace/extensions/' + app_id + '?type=1,4,5');
       };
+
       var selectedTab = jQuery('a[href="' + hash + '"]', jQuery("#myTab,#appTab"));
       if(selectedTab.length > 0) 
         jQuery(selectedTab).click();

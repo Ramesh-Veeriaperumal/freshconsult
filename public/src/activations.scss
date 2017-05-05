@@ -22,6 +22,14 @@ body{
 }
 .activation-form {
   padding-top: 20px;
+  label.control-label {
+    margin-top: 5px;
+  }
+  .separator {
+    border-bottom: 1px solid rgba(153, 153, 153, 0.2);
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
 }
 
 .activation-page {

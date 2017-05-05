@@ -15,15 +15,15 @@ module Helpdesk::Activities
     def fetch_errored_email_details
       res_hash = DEFAULT_RET_HASH.clone
       params.symbolize_keys
-      $thrift_transport.open()
-      client     = ::HelpdeskActivities::TicketActivities::Client.new($thrift_protocol)
+      $activities_thrift_transport.open()
+      client     = ::HelpdeskActivities::TicketActivities::Client.new($activities_thrift_protocol)
       note                 = current_account.notes.where(id:params[:note]).first
       act_param            = ::HelpdeskActivities::TicketDetail.new
       act_param.account_id = current_account.id
       act_param.object     = "ticket"
-      act_param.object_id  = @ticket.display_id 
+      act_param.object_id  = @ticket.display_id
       act_param.event_type = ::HelpdeskActivities::EventType::ALL
-      act_param.comparator = ActivityConstants::EQUAL_TO  
+      act_param.comparator = ActivityConstants::EQUAL_TO
       act_param.shard_name = ActiveRecord::Base.current_shard_selection.shard
       act_param.range_key  = note.dynamodb_range_key
       response             = client.get_activities(act_param, 1)
@@ -31,12 +31,12 @@ module Helpdesk::Activities
         JSON.parse(response.ticket_data[0].email_failures)
       else
         []
-      end    
+      end
       email_failures = email_failures.reduce Hash.new, :merge
       to_emails      = parse_addresses(note.to_emails)[:plain_emails] || []
       cc_emails      = parse_addresses(note.cc_emails)[:plain_emails] || []
       to_list        = []
-      cc_list        = [] 
+      cc_list        = []
       regret_failure_count = 0
       email_failures.each do |email,error|
         user_email = current_account.users.where(email:email).first
@@ -59,8 +59,8 @@ module Helpdesk::Activities
       Rails.logger.error e.message
       return res_hash
     ensure
-      render :partial => "fetch_errored_email_details", :locals => {:to_list => to_list, :cc_list => cc_list, :ticket_display_id => @ticket.display_id, :admin_emails => play_god_admin_emails} 
-      $thrift_transport.close()
+      render :partial => "fetch_errored_email_details", :locals => {:to_list => to_list, :cc_list => cc_list, :ticket_display_id => @ticket.display_id, :admin_emails => play_god_admin_emails}
+      $activities_thrift_transport.close()
     end
 
     def suppression_list_alert
@@ -76,51 +76,39 @@ module Helpdesk::Activities
     def new_activities(params, ticket, type, archive = false)
       res_hash = DEFAULT_RET_HASH.clone
       return res_hash if !(ACTIVITIES_ENABLED and Account.current.features?(:activity_revamp))
-      begin
-        response = fetch_activities(params, ticket, archive)
-        # for querying
-        query_hash = response.members.present? ? JSON.parse(response.members).symbolize_keys : {}
-        data_hash  = parse_query_hash(query_hash, ticket, archive)
-        activities = response.ticket_data
-        
-        act_arr    = []
-        activities.each do |act|
-          begin
-            activity = ActivityParser.new(act, data_hash, ticket, type)
-            act_arr << activity.send("get_#{type}")
-          rescue => e
-            Rails.logger.error "#{e} Exception in parse activity #{JSON.parse(act.content)}"
-            dev_notification("Error in parse activity", 
-              { :exception => e.to_s, 
-                :content => act.content, 
-                :trace => e.backtrace.join("\n")
-              })
-            NewRelic::Agent.notice_error(e, {:description => "Exception in parse activity"})
-            next
-          end
+      response = fetch_activities(params, ticket, archive)
+      return res_hash unless response
+      # for querying
+      query_hash = response.members.present? ? JSON.parse(response.members).symbolize_keys : {}
+      data_hash  = parse_query_hash(query_hash, ticket, archive)
+      activities = response.ticket_data
+
+      act_arr    = []
+      activities.each do |act|
+        begin
+          activity = ActivityParser.new(act, data_hash, ticket, type)
+          act_arr << activity.send("get_#{type}")
+        rescue => e
+          Rails.logger.error "#{e} Exception in parse activity #{JSON.parse(act.content)}"
+          dev_notification("Error in parse activity",
+            { :exception => e.to_s,
+              :content => act.content,
+              :trace => e.backtrace.join("\n")
+            })
+          NewRelic::Agent.notice_error(e, {:description => "Exception in parse activity"})
+          next
         end
-        res_hash = {
-          :activity_list => act_arr
-        }
-        res_hash.merge!({:total_count => response.total_count}) if response.total_count.present?
-      rescue Exception => e
-        Rails.logger.error e.backtrace.join("\n")
-        Rails.logger.error e.message
-        dev_notification("Error in fetching and processing activites", 
-          { :exception    => e.to_s, 
-            :content     => e.message,
-            :account_id  => Account.current.id,
-            :display_id  => ticket.display_id,
-            :trace       => e.backtrace.join("\n")})
-        NewRelic::Agent.notice_error(e, {:description => "Error in fetching and processing activites"})
-      ensure
-        $thrift_transport.close()
       end
+      res_hash = {
+        :activity_list => act_arr
+      }
+      res_hash.merge!({:total_count => response.total_count}) if response.total_count.present?
+      res_hash
     end
-    
+
     def fetch_activities(params, ticket, archive = false)
-      $thrift_transport.open()
-      client    = ::HelpdeskActivities::TicketActivities::Client.new($thrift_protocol)
+      $activities_thrift_transport.open()
+      client    = ::HelpdeskActivities::TicketActivities::Client.new($activities_thrift_protocol)
       act_param = ::HelpdeskActivities::TicketDetail.new
       act_param.account_id = Account.current.id
       act_param.object     = "ticket"
@@ -140,21 +128,21 @@ module Helpdesk::Activities
       if response.error_message.present?
         return false
       end
-      
+
       return response
 
     rescue Exception => e
       Rails.logger.error e.backtrace.join("\n")
       Rails.logger.error e.message
-      dev_notification("Error in fetching and processing activites", 
-        { :exception    => e.to_s, 
+      dev_notification("Error in fetching and processing activites",
+        { :exception    => e.to_s,
           :content     => e.message,
           :account_id  => Account.current.id,
           :display_id  => ticket.display_id,
           :trace       => e.backtrace.join("\n")})
       return false
     ensure
-      $thrift_transport.close()
+      $activities_thrift_transport.close()
     end
 
   private
@@ -192,7 +180,7 @@ module Helpdesk::Activities
           obj_hash[:rules]  = Account.current.account_va_rules.select("id, name").where(:id => query_hash[:rule_ids]).collect {|x| [x.id, x.name]}.to_h
         when :note_ids
           obj_hash[:notes]  = archive ? prefetch_archive_notes_for_v2(ticket, query_hash[:note_ids]) :
-                              prefetch_notes_for_v2(ticket, query_hash[:note_ids])                      
+                              prefetch_notes_for_v2(ticket, query_hash[:note_ids])
         end
       end
       obj_hash

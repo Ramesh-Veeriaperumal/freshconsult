@@ -9,6 +9,7 @@ class SsoController < ApplicationController
   skip_after_filter :set_last_active_time
   before_filter :form_authenticity_token, :only => :mobile_app_google_login, :if => :is_native_mobile?
 
+  MOBILE_GOOGLE_SSO_VERIFY_URL = 'https://www.googleapis.com/oauth2/v3/tokeninfo'
 
   def mobile_app_google_login
     redirect_to "https://#{request.host}/auth/google_login"
@@ -46,6 +47,28 @@ class SsoController < ApplicationController
     end
   end
 
+  def mobile_sso_login
+    if params[:provider] == 'google'
+      email_id = mobile_sso_google(params[:id_token], params[:platform])
+      if email_id.blank?
+        render status: 200, json: { login: 'failed', auth_token: "", error_code: 2111 } #2111 - Invalid mobile token
+      else
+        user = current_account.users.find_by_email(email_id)
+        if user.present?
+          if user.agent?
+            render status: 200, json: { login: 'success', auth_token: "#{user.mobile_auth_token}" }
+          else
+            render status: 200, json: { login: 'failed', auth_token: "", error_code: 2112 } #2112 - customer login
+          end
+        else
+          render status: 200, json: { login: 'failed', auth_token: "", error_code: 2113 } #2113 - This email address is not registered in Freshdesk
+        end
+      end
+    else
+      render status: 200, json: { login: 'failed', auth_token: "", error_code: 2114 } #2114 - Invalid mobile provider
+    end
+  end
+
   def facebook
     session["_csrf_token"] ||= SecureRandom.base64(32)
     token = Base64.encode64(session["_csrf_token"])
@@ -63,6 +86,19 @@ class SsoController < ApplicationController
   end
 
   private
+
+    def mobile_sso_google(id_token, platform)
+      gsso_response = HTTParty.post(MOBILE_GOOGLE_SSO_VERIFY_URL, body: { id_token: id_token }).parsed_response
+      return nil if gsso_response.has_key?('error_description')
+      client_id_name = (platform.downcase == 'ios' ? 'client_id_ios' : 'consumer_token')
+
+      if gsso_response['aud'] == Integrations::OAUTH_CONFIG_HASH['google_oauth2'][client_id_name] &&
+        ['accounts.google.com', 'https://accounts.google.com'].include?(gsso_response['iss'])
+        gsso_response['email']
+      else
+        nil
+      end
+    end
 
     def set_current_user
       redis_oauth_key = GOOGLE_OAUTH_SSO % {:random_key => params['sso']}

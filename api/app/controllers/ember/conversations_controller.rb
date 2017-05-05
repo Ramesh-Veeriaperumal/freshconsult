@@ -16,6 +16,7 @@ module Ember
 
     before_filter :can_send_user?, only: [:forward, :facebook_reply, :tweet]
     before_filter :set_defaults, only: [:forward]
+    
     SINGULAR_RESPONSE_FOR = %w(reply forward create update tweet facebook_reply).freeze
 
     def ticket_conversations
@@ -172,11 +173,15 @@ module Ember
         return unless @item.save_note
         fb_page     = @ticket.fb_post.facebook_page
         parent_post = note || @ticket
-        if @ticket.is_fb_message?
-          send_reply(fb_page, @ticket, @item, POST_TYPE[:message])
-        else
-          send_reply(fb_page, parent_post, @item, POST_TYPE[:comment])
+        reply_sent = begin
+          if @ticket.is_fb_message?
+            send_reply(fb_page, @ticket, @item, POST_TYPE[:message])
+          else
+            send_reply(fb_page, parent_post, @item, POST_TYPE[:comment])
+          end
         end
+        @item.errors[:body] << :unable_to_perform unless reply_sent
+        reply_sent
       end
 
       def assign_note_attributes

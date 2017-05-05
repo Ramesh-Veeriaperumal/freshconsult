@@ -44,6 +44,7 @@ window.Fjax = window.Fjax || {};
 			"/phone/dashboard": 'freshfonedashboard',
 
 			"/reports/phone/summary_reports": 'freshfonereports',
+			"/reports/scheduled_export": 'ticketschedule',
 			"/reports": 'helpdeskreports',
 			"/reports/v2": 'helpdeskreports',
 
@@ -59,7 +60,8 @@ window.Fjax = window.Fjax || {};
 			"/helpdesk/tickets/compose_email": 'tickets',
 			"/helpdesk/dashboard/unresolved_tickets": 'unresolvedtickets',
 			"/helpdesk" : 'realtime_dashboard' ,
-	        "/groups" : 'groups'
+	        		"/groups" : 'groups',
+	        		"/agents" : 'agents'
 		},
 		LOADING_WAIT: 60
 	};
