@@ -56,7 +56,7 @@ end
 *API is accessible only over HTTPS.*
 
 ##### Others things to look into
-. .
+. . .
 
 
 ##### What to do when the passenger server refuses to start
