@@ -121,8 +121,8 @@ class Account < ActiveRecord::Base
     self.helpdesk_permissible_domains_attributes = CustomNestedAttributes.new(list, self).helpdesk_permissible_domains_attributes if list.present?
   end
 
-  def slave_queries?
-    ismember?(SLAVE_QUERIES, self.id)
+  def master_queries?
+    ismember?(MASTER_QUERIES, self.id)
   end
 
   def public_ticket_token

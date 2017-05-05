@@ -1955,7 +1955,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def run_on_db(&block)
-    db_type = current_account.slave_queries? ? :run_on_slave : :run_on_master
+    db_type = current_account.master_queries? ? :run_on_master : :run_on_slave
     Sharding.send(db_type) do
       yield
     end
