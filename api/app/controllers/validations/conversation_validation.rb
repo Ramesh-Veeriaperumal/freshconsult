@@ -3,17 +3,17 @@ class ConversationValidation < ApiValidation
 
   attr_accessor :body, :full_text, :private, :user_id, :agent_id, :incoming, :notify_emails,
                 :attachments, :to_emails, :cc_emails, :bcc_emails, :item, :from_email,
-                :include_quoted_text, :include_original_attachments, :cloud_file_ids, 
-                :cloud_files, :send_survey, :last_note_id
+                :include_quoted_text, :include_original_attachments, :cloud_file_ids,
+                :cloud_files, :send_survey
 
   validates :body, data_type: { rules: String, required: true }, if: -> { !forward? }
   validates :body, data_type: { rules: String }, on: :forward
   validates :body, required: true, if: -> { include_quoted_text.to_s == 'false' || full_text.present? }, on: :forward
   validates :full_text, data_type: { rules: String }
-  
-  validates :user_id, :agent_id, :last_note_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }
+
+  validates :user_id, :agent_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }
   validates :private, :incoming, :include_quoted_text, :include_original_attachments, :send_survey, data_type: { rules: 'Boolean', ignore_string: :allow_string_param }
-  validates :from_email, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, accepted: :'valid email address' } 
+  validates :from_email, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, accepted: :'valid email address' }
   validates :notify_emails, :to_emails, :attachments, :cc_emails, :bcc_emails, data_type: { rules: Array }
   validates :notify_emails, :to_emails, :cc_emails, :bcc_emails, custom_length: { maximum: ApiTicketConstants::MAX_EMAIL_COUNT, message_options: { element_type: :values } }
   validates :notify_emails, :to_emails, :cc_emails, :bcc_emails, array: { custom_format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, accepted: :'valid email address' } }
@@ -33,8 +33,6 @@ class ConversationValidation < ApiValidation
 
   validate :validate_cloud_files, if: -> { cloud_files.present? && errors[:cloud_files].blank? }
   validate :validate_full_text_length, if: -> { body.present? && full_text.present? }
-  validate :validate_unseen_replies, on: :reply, if: :traffic_cop_required?
-  validate :validate_unseen_replies_for_public_notes, on: :create, if: -> { public_note? and traffic_cop_required? }
 
   def initialize(request_params, item, allow_string_param = false)
     super(request_params, item, allow_string_param)
@@ -63,22 +61,5 @@ class ConversationValidation < ApiValidation
     errors[:full_text] << :shorter_full_text if full_text.length < body.length
     errors[:full_text] << :invalid_full_text if full_text.length == body.length && full_text != body
   end
-
-  def validate_unseen_replies
-    unseen_notes_exists = (@ticket.notes.visible.last_traffic_cop_note.pluck(:id).try(:first) || -1) > last_note_id
-    errors[:conversation] << :traffic_cop_alert if unseen_notes_exists
-  end
-
-  alias_method :validate_unseen_replies_for_public_notes, :validate_unseen_replies
-
-  private
-
-    def traffic_cop_required?
-      last_note_id.present? and Account.current.traffic_cop_enabled?
-    end
-
-    def public_note?
-      !self.private.nil? and !self.private
-    end
 
 end

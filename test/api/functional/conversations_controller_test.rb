@@ -1,4 +1,5 @@
 require_relative '../test_helper'
+['note_test_helper.rb', 'tickets_test_helper.rb', 'account_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 
 class ConversationsControllerTest < ActionController::TestCase
   include ConversationsTestHelper
@@ -405,7 +406,7 @@ class ConversationsControllerTest < ActionController::TestCase
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 201
     note = Helpdesk::Note.last
-    assert_equal email_config.id, note.email_config_id 
+    assert_equal email_config.id, note.email_config_id
     match_json(reply_note_pattern(params_hash, note))
     match_json(reply_note_pattern({}, note))
   end
@@ -852,4 +853,145 @@ class ConversationsControllerTest < ActionController::TestCase
     match_json(note_pattern({}, Helpdesk::Note.last))
     assert_response 201
   end
+
+    def test_validate_cloud_files
+    controller_params = { 'body' => Faker::Lorem.paragraph, 'cloud_files' => Faker::Lorem.word }
+    conversation = ConversationValidation.new(controller_params, nil)
+    refute conversation.valid?(:reply)
+    errors = conversation.errors.full_messages
+    assert errors.include?('Cloud files datatype_mismatch')
+
+    controller_params = { 'body' => Faker::Lorem.paragraph, 'cloud_files' => [{'filename' => Faker::Lorem.word}] }
+    conversation = ConversationValidation.new(controller_params, nil)
+    refute conversation.valid?(:reply)
+    errors = conversation.errors.full_messages
+    assert errors.include?('Cloud files is invalid')
+  end
+
+  def test_validate_cloud_files
+    controller_params = { 'body' => Faker::Lorem.paragraph, 'cloud_files' => Faker::Lorem.word }
+    conversation = ConversationValidation.new(controller_params, nil)
+    refute conversation.valid?(:reply)
+    errors = conversation.errors.full_messages
+    assert errors.include?('Cloud files datatype_mismatch')
+
+    controller_params = { 'body' => Faker::Lorem.paragraph, 'cloud_files' => [{'filename' => Faker::Lorem.word}] }
+    conversation = ConversationValidation.new(controller_params, nil)
+    refute conversation.valid?(:reply)
+    errors = conversation.errors.full_messages
+    assert errors.include?('Cloud files is invalid')
+  end
+
+  def test_reply_with_traffic_cop_invalid
+    Account.stubs(:current).returns(@account)
+    Account.any_instance.stubs(:traffic_cop_enabled?).returns(true)
+    ticket_id = ticket.id
+    last_note_id = reply.id
+    controller_params = { 'body' => Faker::Lorem.paragraph, 'last_note_id' => last_note_id - 1, 'ticket' => ticket}
+    conversation = ConversationValidation.new(controller_params, nil)
+    refute conversation.valid?(:reply)
+    assert conversation.errors[:conversation].include? :traffic_cop_alert
+    Account.unstub(:current)
+    Account.any_instance.unstub(:traffic_cop_enabled?)
+
+  end
+
+  def test_public_note_with_traffic_cop_invalid
+    Account.stubs(:current).returns(@account)
+    Account.any_instance.stubs(:traffic_cop_enabled?).returns(true)
+    ticket_id = ticket.id
+    last_note_id = note.id
+    controller_params = { 'body' => Faker::Lorem.paragraph, 'last_note_id' => last_note_id - 1, 'ticket' => ticket, 'private' => false }
+    conversation = ConversationValidation.new(controller_params, nil)
+    refute conversation.valid?(:create)
+    assert conversation.errors[:conversation].include? :traffic_cop_alert
+    Account.unstub(:current)
+    Account.any_instance.unstub(:traffic_cop_enabled?)
+  end
+
+  def test_reply_with_traffic_cop_valid
+    Account.stubs(:current).returns(@account)
+    Account.any_instance.stubs(:traffic_cop_enabled?).returns(true)
+    ticket_id = ticket.id
+    last_note_id = reply.id
+    controller_params = { 'body' => Faker::Lorem.paragraph, 'last_note_id' => last_note_id, 'ticket' => ticket}
+    conversation = ConversationValidation.new(controller_params, nil)
+    assert conversation.valid?(:reply)
+    Account.unstub(:current)
+    Account.any_instance.unstub(:traffic_cop_enabled?)
+  end
+
+  def test_public_note_with_traffic_cop_valid
+    Account.stubs(:current).returns(@account)
+    Account.any_instance.stubs(:traffic_cop_enabled?).returns(true)
+    ticket_id = ticket.id
+    last_note_id = note.id
+    controller_params = { 'body' => Faker::Lorem.paragraph, 'last_note_id' => last_note_id, 'ticket' => ticket, 'private' => false }
+    conversation = ConversationValidation.new(controller_params, nil)
+    assert conversation.valid?(:create)
+    Account.unstub(:current)
+    Account.any_instance.unstub(:traffic_cop_enabled?)
+  end
+
+  def test_reply_with_traffic_cop_without_last_note_id
+    Account.stubs(:current).returns(@account)
+    Account.any_instance.stubs(:traffic_cop_enabled?).returns(true)
+    ticket_id = ticket.id
+    last_note_id = reply.id
+    controller_params = { 'body' => Faker::Lorem.paragraph, 'ticket' => ticket}
+    conversation = ConversationValidation.new(controller_params, nil)
+    assert conversation.valid?(:reply)
+    Account.unstub(:current)
+    Account.any_instance.unstub(:traffic_cop_enabled?)
+  end
+
+  def test_public_note_with_traffic_cop_without_last_note_id
+    Account.stubs(:current).returns(@account)
+    Account.any_instance.stubs(:traffic_cop_enabled?).returns(true)
+    ticket_id = ticket.id
+    last_note_id = note.id
+    controller_params = { 'body' => Faker::Lorem.paragraph, 'ticket' => ticket, 'private' => false }
+    conversation = ConversationValidation.new(controller_params, nil)
+    assert conversation.valid?(:create)
+    Account.unstub(:current)
+    Account.any_instance.unstub(:traffic_cop_enabled?)
+  end
+
+  def test_reply_without_traffic_cop_with_last_note_id
+    Account.stubs(:current).returns(@account)
+    Account.any_instance.stubs(:traffic_cop_enabled?).returns(false)
+    ticket_id = ticket.id
+    last_note_id = reply.id
+    controller_params = { 'body' => Faker::Lorem.paragraph, 'last_note_id' => last_note_id-1, 'ticket' => ticket}
+    conversation = ConversationValidation.new(controller_params, nil)
+    assert conversation.valid?(:reply)
+    Account.unstub(:current)
+    Account.any_instance.unstub(:traffic_cop_enabled?)
+  end
+
+  def test_public_note_without_traffic_cop_with_last_note_id
+    Account.stubs(:current).returns(@account)
+    Account.any_instance.stubs(:traffic_cop_enabled?).returns(false)
+    ticket_id = ticket.id
+    last_note_id = note.id
+    controller_params = { 'body' => Faker::Lorem.paragraph, 'last_note_id' => last_note_id-1, 'ticket' => ticket, 'private' => false }
+    conversation = ConversationValidation.new(controller_params, nil)
+    assert conversation.valid?(:create)
+    Account.unstub(:current)
+    Account.any_instance.unstub(:traffic_cop_enabled?)
+  end
+
+  def test_private_note_with_traffic_cop_with_last_note_id
+    Account.stubs(:current).returns(@account)
+    Account.any_instance.stubs(:traffic_cop_enabled?).returns(true)
+    ticket_id = ticket.id
+    private_note = note(ticket, true)
+    last_note_id = private_note.id
+    controller_params = { 'body' => Faker::Lorem.paragraph, 'last_note_id' => last_note_id-1, 'ticket' => ticket, 'private' => true }
+    conversation = ConversationValidation.new(controller_params, nil)
+    assert conversation.valid?(:create)
+    Account.unstub(:current)
+    Account.any_instance.unstub(:traffic_cop_enabled?)
+  end
+
 end

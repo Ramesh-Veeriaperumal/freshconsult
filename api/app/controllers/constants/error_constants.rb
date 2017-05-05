@@ -9,8 +9,7 @@ module ErrorConstants
     inaccessible_field: ['inaccessible_field'],
     inaccessible_value: ['inaccessible_value'],
     unable_to_perform: ['unable_to_perform'],
-    access_denied: ['access_denied'],
-    traffic_cop_alert: ['traffic_cop_alert']
+    access_denied: ['access_denied']
   }.freeze
 
   API_HTTP_ERROR_STATUS_BY_CODE = {
