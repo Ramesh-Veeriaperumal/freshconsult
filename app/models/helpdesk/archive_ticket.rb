@@ -553,6 +553,10 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     end
   end
 
+  def outbound_email?
+    (source == SOURCE_KEYS_BY_TOKEN[:outbound_email]) && Account.current.compose_email_enabled?
+  end
+
   private
 
     def note_preload_options
