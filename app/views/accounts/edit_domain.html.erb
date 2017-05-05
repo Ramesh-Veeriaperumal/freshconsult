@@ -96,6 +96,11 @@
                 }
             });
 
+            // paste event: preventing 
+            editableSpan.bind("paste", function(e) {
+                e.preventDefault();
+            });
+
             editableSpan.on('input', function (e) {
                 // to lower case
                 var editableType = $(this).data("editable");
@@ -125,10 +130,7 @@
                         invalidDomainPopover(invalidDomainError);
                     } 
                 // validate email
-                    var e = {};
-                    e.currentTarget = {}
-                    e.currentTarget.innerText = $(".editable-span.email-name").text();
-                    validateEmail(e);
+                    validateEmail();
 
                 if(!invalidEmail && !invalidDomain) {
                     populateFormFields();
@@ -161,11 +163,11 @@
                 } else {
                     if(invalidDomain) {
                         // show domain popover
-                        $('.domain-input-container').popover().popover("show");
+                        $('.domain-input-container').addClass('error').popover().popover("show");
                     } 
                     if(invalidEmail) {
                         // show email popover
-                        $('.email-input-container').popover().popover("show");
+                        $('.email-input-container').addClass('error').popover().popover("show");
                     }
                 }
                 return false;
@@ -204,21 +206,23 @@
             }
 
             function validateEmail(e) {
-                var text = e.currentTarget.innerText;
+                var emailField = $(".editable-span.email-name");
+                var text = emailField.text();
                 var email = text + "@" + $(".editable-span.domain-name").text() + ".<%= AppConfig['base_domain'][Rails.env] %>";
                 var exp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                 if (!exp.test(email) || text.length <= 2) {
                     invalidEmail = true;
-                    $(e.currentTarget).parent('.input-container').addClass("error").popover().popover("enable").popover("show");
+                    $(emailField).parent('.input-container').addClass("error").popover().popover("enable").popover("show");
                 } else {
                     invalidEmail = false;
-
+                    $(emailField).parent('.input-container').removeClass('error').popover("hide").popover("disable");
                 }
             }
 
             function updateEmailDomain() {
                 var emailDomainName = "@" + $(".editable-span.domain-name").text() + ".<%= AppConfig['base_domain'][Rails.env] %>"
                 $(".domain-ext.email-domain").text(emailDomainName);
+                validateEmail();
             }
 
             function populateFormFields() {
