@@ -94,7 +94,7 @@ module ApiSearch
     end    
 
     def test_tickets_custom_fields
-      tickets = @account.tickets.select{|x| x.custom_field["test_custom_number_1"] == 1 || x.custom_field["test_custom_checkbox_1"] == false || x.priority == 2 }
+      tickets = @account.tickets.select{|x| x.custom_field["test_custom_number_1"] == 1 || x.custom_field["test_custom_checkbox_1"] == false || x.custom_field["test_custom_checkbox_1"] == nil || x.priority == 2 }
       get :index, controller_params(query: '"test_custom_number:1 OR test_custom_checkbox:false OR priority:2"')
       assert_response 200
       response = parse_response @response.body
@@ -120,6 +120,26 @@ module ApiSearch
       val = ticket.custom_field["test_custom_number_1"]
       tickets = @account.tickets.select{|x|  x if x.custom_field["test_custom_number_1"].to_i == val }
       get :index, controller_params(query: '"test_custom_number:' + val.to_s + '"')
+      assert_response 200
+      response = parse_response @response.body
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json({results: pattern, total: tickets.size})
+    end
+
+    def test_tickets_filter_query_with_leading_and_trialing_spaces
+      ticket = @account.tickets.select{|x|  x if x.custom_field["test_custom_number_1"].to_i < 0 }.first
+      val = ticket.custom_field["test_custom_number_1"]
+      tickets = @account.tickets.select{|x|  x if x.custom_field["test_custom_number_1"].to_i == val }
+      get :index, controller_params(query: '"  ( test_custom_number:' + val.to_s + '  )  "')
+      assert_response 200
+      response = parse_response @response.body
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json({results: pattern, total: tickets.size})
+    end
+
+    def test_tickets_filter_using_custom_checkbox
+      tickets = @account.tickets.select{|x| x.custom_field["test_custom_checkbox_1"] == true  }
+      get :index, controller_params(query: '"test_custom_checkbox:true"')
       assert_response 200
       response = parse_response @response.body
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
