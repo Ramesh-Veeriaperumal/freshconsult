@@ -78,6 +78,7 @@
       :ticket_activity_export: 73
       :system_observer_events: 74
       :private_inline: 75
+      :multi_dynamic_sections: 76
 :selectable_features:
       :branding: true
       :gamification_enable: false
