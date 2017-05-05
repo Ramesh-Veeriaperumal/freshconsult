@@ -7053,7 +7053,7 @@ en:
       body: "The ticket export you had requested is complete. You can download the file from <a href=%{url}>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:"
     scheduled_ticket_export:
       subject: "%{title} for %{date}"
-      body: "Hello there,<br><br>The export scheduled by %{user_name} is now ready. This report has the details of tickets that were created and updated during %{latest_schedule_time}.<br><br><a href=%{url}>Download Report</a><br><br>Please download this report within 30 days, after which the link will expire.<br><br>Happy number crunching!<br>%{helpdesk_name}"
+      body: "Hello there,<br><br>The export scheduled by %{user_name} is now ready. This report has the details of tickets that were created and updated from %{latest_schedule_range}.<br><br><a href=%{url}>Download Report</a><br><br>Please download this report within 30 days, after which the link will expire.<br><br>Happy number crunching!<br>%{helpdesk_name}"
     agents:
       fields:
         name: "Name"

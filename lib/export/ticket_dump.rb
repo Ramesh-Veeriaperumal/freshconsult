@@ -8,7 +8,7 @@ class Export::TicketDump < Export::TicketSchedule
     DataExportMailer.scheduled_ticket_export(:filter_id => @schedule.id) if @schedule.send_email?
     destroy_task
   rescue => e
-    NewRelic::Agent.notice_error(e)
+    NewRelic::Agent.notice_error(e,{:description => "Ticket Schedule Dump error #{Account.current.id} :: #{export_params[:task_id]}"})
     Rails.logger.debug "Ticket Schedule Dump error ::#{e.message}\n#{e.backtrace.join("\n")}"
   end
 

@@ -20,9 +20,9 @@ class ScheduledTicketExport < ScheduledExport
   SCHEDULE_DETAILS_KEYS = [:delivery_type, :email_recipients, :frequency, 
                            :day_of_export, :minute_of_day, :initial_export]
 
-  serialize :filter_data
-  serialize :fields_data
-  serialize :schedule_details
+  serialize :filter_data, Array
+  serialize :fields_data, Hash
+  serialize :schedule_details, Hash
 
   concerned_with :validations
 
@@ -90,7 +90,7 @@ class ScheduledTicketExport < ScheduledExport
             :url => download_url(latest_file),
             :user_name => user.name,
             :helpdesk_name => account.name,
-            :latest_schedule_time => latest_schedule_time)
+            :latest_schedule_range => latest_schedule_range)
   end
 
   def latest_schedule_time
@@ -102,9 +102,28 @@ class ScheduledTicketExport < ScheduledExport
       when :daily
         "#{Time.zone.now.day.ordinalize} #{Time.zone.now.strftime("%b %Y")}"
       when :weekly
-        last_week_time = Time.zone.now.advance(days: -6)
+        last_week_time = Time.zone.now.advance(days: -7)
         "#{last_week_time.day.ordinalize} #{last_week_time.strftime("%b %Y")} -
         #{Time.zone.now.day.ordinalize} #{Time.zone.now.strftime("%b %Y")}".squish
+    end
+  end
+
+  def latest_schedule_range
+    case frequency_name
+      when :hourly
+        time = Time.zone.now
+        "#{Time.zone.now.beginning_of_hour.advance(hours: -1).strftime("%H:%M")} to 
+        #{Time.zone.now.beginning_of_hour.strftime("%H:%M")} on 
+        #{Time.zone.now.day.ordinalize} #{Time.zone.now.strftime("%b %Y")}".squish
+      when :daily
+        time = "#{sprintf('%02d', minute_of_day)}:00"
+        "#{Time.zone.now.advance(days: -1).strftime("%B %d, %Y")} #{time} to
+        #{Time.zone.now.strftime("%B %d, %Y")} #{time}".squish
+      when :weekly
+        time = "#{sprintf('%02d', minute_of_day)}:00"
+        last_week_time = Time.zone.now.advance(days: -7)
+        "#{last_week_time.strftime("%B %d, %Y")} #{time} to
+        #{Time.zone.now.strftime("%B %d, %Y")} #{time}".squish
     end
   end
 
