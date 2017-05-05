@@ -44,7 +44,7 @@
       <b><%= field.label %></b>
       <% value = field.is_default_field? ? @ticket.send(field.field_name) : @ticket.custom_field_value(field.name) %>
       <% if value.present? && field.field_type == "custom_date" %>
-        <%= value.utc.strftime(@date_format) %> 
+        <%= Time.parse(value).utc.strftime(@date_format) %> 
       <% else %>
         <%= value %>
       <% end %>     
