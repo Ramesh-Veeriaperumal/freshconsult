@@ -76,9 +76,9 @@ class Account < ActiveRecord::Base
 
     :estate_classic => {
       :features => [ :collision, :layout_customization, :round_robin, :enterprise_reporting,
-        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing,
+        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing, :dynamic_sections,
         :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies,
-        :multiple_companies_toggle, :round_robin_on_update ],
+        :multiple_companies_toggle, :round_robin_on_update, :multi_dynamic_sections ],
       :inherits => [ :garden_classic ]
     },
 
