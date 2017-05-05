@@ -34,7 +34,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
         group.next_agent_with_capping(self.display_id)
       end
     elsif group.round_robin_enabled?
-      group.next_available_agent
+      agent = group.next_available_agent
+      Rails.logger.debug "Normal round robin : #{self.display_id} #{agent.inspect}
+        #{get_others_redis_list(group.round_robin_key).inspect}".squish
+      agent
     end
 
     return if next_agent.nil? #There is no agent available to assign ticket.
@@ -167,8 +170,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
       result = group.update_agent_capping_with_lock(user_id, new_score, operation)
 
       if result.is_a?(Array) && result[1].present?
+        status_ids = Helpdesk::TicketStatus::sla_timer_on_status_ids(account)
+        db_count = group.tickets.visible.where("responder_id = ? and status in (?)", user_id, status_ids).count
         Rails.logger.debug "RR SUCCESS #{operation}ementing count for ticket : #{display_id} - 
-          #{user_id}, #{group.id}, #{new_score}, #{result.inspect}".squish
+          #{user_id}, #{group.id}, #{status_ids.inspect}, #{new_score}, #{db_count}, #{result.inspect}".squish
         if operation=="incr"
           group.lrem_from_rr_capping_queue(self.display_id)
         else
