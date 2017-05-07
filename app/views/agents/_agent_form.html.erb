@@ -245,7 +245,7 @@
         </div>
       </li>
      <% end %>
-     <%  if @skills.present? && current_account.skill_based_round_robin_enabled? %>
+     <%  if @manage_skills %>
       <li class="seperator"></li>
       <li class="control-group">
         <label class="control-label">
@@ -281,7 +281,7 @@
 <%= javascript_tag do %>
   (function($) {
 
-  	$(window).on('load', function(){	
+  	$(window).on('load', function(){
 			var roles = {};
 			var role_details = {};
 			var groups = {};
@@ -308,7 +308,8 @@
           group_details[<%= group.id %>] = ["<%= group.name %>", "<%= escape_javascript(group.description)%>"];
       <% end %>
 
-      App.Agents.Form.initializeData({userName: userName, roles: roles, role_details: role_details, groups: groups, group_details: group_details});
+      App.Agents.Form.initializeData({userName: userName, roles: roles,
+				role_details: role_details, groups: groups, group_details: group_details, SkillBasedRRFlag: <%=@manage_skills%>});
     });
 
   })(jQuery);

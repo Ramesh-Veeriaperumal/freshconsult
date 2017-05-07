@@ -121,8 +121,8 @@ class Account < ActiveRecord::Base
     self.helpdesk_permissible_domains_attributes = CustomNestedAttributes.new(list, self).helpdesk_permissible_domains_attributes if list.present?
   end
 
-  def slave_queries?
-    ismember?(SLAVE_QUERIES, self.id)
+  def master_queries?
+    ismember?(MASTER_QUERIES, self.id)
   end
 
   def public_ticket_token
@@ -554,6 +554,40 @@ class Account < ActiveRecord::Base
     subscription.sprout_plan? || subscription.trial? || (branding_enabled?)
   end
 
+  def account_activation_job_status_key
+    ACCOUNT_ADMIN_ACTIVATION_JOB_ID % {:account_id => self.id}
+  end
+
+  def schedule_account_activation_email(admin_user_id)
+    # Storing job id in redis key which will be used update_domain to delete job,
+    # when user completes the signup. 
+    set_others_redis_key(account_activation_job_status_key,
+      SendSignupActivationMail.perform_in(10.minutes.from_now,{ :user_id => admin_user_id, :account_id => self.id }))
+  end
+
+  def kill_account_activation_email_job
+    job_id = get_others_redis_key(account_activation_job_status_key)
+    job = Sidekiq::ScheduledSet.new.find_job(job_id)
+    job.delete if job.present?
+    delete_account_activation_job_status
+  end
+
+  def delete_account_activation_job_status
+    remove_others_redis_key(account_activation_job_status_key)
+  end
+
+  # update domain name at Portal, Forum & Activities and support email
+
+  def update_default_domain_and_email_config(new_domain_name, support_email_name)
+    self.transaction do 
+      update_account_and_main_portal_domain(new_domain_name)
+      update_default_forum_category_name(new_domain_name)
+      update_primary_email_config(support_email_name)
+      self.make_current
+      save!
+    end
+  end
+
   protected
   
     def external_url_is_valid?(url) 
@@ -592,4 +626,34 @@ class Account < ActiveRecord::Base
       subscription.next_renewal_at
     end
 
+  private
+
+    def update_account_and_main_portal_domain new_domain_name
+      self.assign_attributes({
+        :domain => new_domain_name,
+        :name => new_domain_name.capitalize,
+        :helpdesk_name => new_domain_name
+      })
+      self.main_portal.name = new_domain_name
+    end
+    
+    def update_default_forum_category_name(new_domain_name)
+      forum_category = forum_categories.first
+      forum_category.name = "#{new_domain_name} Forums"
+      forum_category.save!
+      # account.activities.update_all(:created_at => Time.now.utc)
+      # TODO ACTIVITIES - need to add set update activity service for updation of forum category.
+      activities.where("notable_type LIKE 'Forum'").each do |activity|
+        activity.activity_data["category_name"] = "#{new_domain_name} Forums"
+        activity.save!
+      end
+    end
+
+    def update_primary_email_config(support_email_name)
+      primary_email_config.assign_attributes({
+        :to_email => support_email_name + "@#{full_domain}",
+        :reply_email => support_email_name + "@#{full_domain}",
+        :name => name
+      })
+    end
 end

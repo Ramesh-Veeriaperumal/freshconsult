@@ -32,11 +32,13 @@ class Middleware::CorsEnabler < Rack::Cors
   def call(env)
     unless(env['HTTP_ORIGIN'])
       @status, @headers, @response = @app.call(env)
-    else 
-      if env["PATH_INFO"].eql?('/accounts/new_signup_free') && ( WHITELISTED_ORIGIN.include?(env["HTTP_ORIGIN"]) || check_whitelisted_domains_from_redis(env) )
+    else
+      if ['/accounts/new_signup_free', '/accounts/email_signup'].include?(env["PATH_INFO"]) &&
+        ( WHITELISTED_ORIGIN.include?(env["HTTP_ORIGIN"]) || check_whitelisted_domains_from_redis(env) )
           allow do
             origins "*"
             resource '/accounts/new_signup_free',:headers => :any, :methods => [:get, :post]
+            resource '/accounts/email_signup',:headers => :any, :methods => [:post]
           end 
       else
         path_regex = api_request?(env) ? env["PATH_INFO"] : RESOURCE_PATH_REGEX

@@ -1,0 +1,286 @@
+// Getting started styles
+ @import "../settings/settings";
+ 
+ // Defaults
+ @import "../pattern/lib/rtl-mixins";
+ @import "../app/lib/reset";
+ 
+ // Page styles
+body {
+	background: linear-gradient(45deg, #a3d583 0%,#16a085 100%);
+	min-height: 100%;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight: normal;
+	color: #fff;
+	height: 100%;
+	margin: 0;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+}
+
+.body-wrapper {
+	max-width: 550px;
+	margin: 130px auto;
+}
+
+.header {
+	margin: 20px 0px;
+	.logo-container .logo-image {
+		height: 60px;
+		margin-bottom: 30px;
+		@include margin-left(-5px);
+		-webkit-filter: drop-shadow(0.5px 0px 0.5px #4d4d4d);
+	}
+	.title-text {
+		font-weight: 100;
+		font-size: 25px;
+		padding: 5px 0px;
+		letter-spacing: .04em;
+		opacity: .9;
+	}
+}
+
+.set-domain-form-wrapper {
+	margin-top: 40px;
+	width:85%;
+	.input-fieldset {
+		margin-bottom: 50px;
+		&:not(.active){
+			cursor: pointer;
+		}
+	}
+	.label-text {
+		opacity: .7;
+		display: block;
+		margin-bottom: 15px;
+	}
+	.input-container {
+		display: block;
+		width: 100%;
+		clear: both;
+		font-size: 21px;
+		font-weight: 400;
+		color: #D7F1BE;
+		padding:5px 0px;
+
+		.editable-span{
+			color:#fff;
+			text-transform: lowercase;
+		}
+
+		.domain-ext{
+			@include margin-left(-5px);
+			text-transform: lowercase;
+		}
+
+		.margin-left-0{
+			@include margin-left(0px);
+		}
+
+		&.underlined {
+			border-bottom: 1px solid #fff;
+			opacity: 9;
+			&.error{
+			 border-color: #CE3125;
+			}
+
+		}
+	}
+	.info-text {
+		font-size: 12px;
+		opacity: .8;
+		margin-top: 15px;
+		display: block;
+	}
+	.submit-button {
+		background: #354842;
+		border: none;
+		color: #fff;
+		font-size: 15px;
+		padding: 10px 40px;
+		border-radius: 5px;
+	}
+}
+
+
+
+.popover {
+	position: absolute;
+	top: 0;
+	@include left(0);
+	z-index: $zindexPopover;
+	padding: 6px;
+	display: none;
+	.inner {
+		background: red;
+		padding: 1px;
+		overflow: hidden;
+		border-radius: 3px;
+		@include min-width(230px);
+		@include border-radius($popover-radius);
+		@include box-shadow(0 10px 30px -10px rgba(0, 0, 0, 0.4));
+	}
+	.title {
+		
+	}
+	.content {
+		overflow:hidden; // fix for Contact hover
+		background-color: #ffffff;
+		padding: 10px 25px;
+		color: #CE362A;
+		font-size: 13px;
+		@include border-radius($popover-radius);
+		-webkit-background-clip: padding-box;
+		-moz-background-clip: padding-box;
+		background-clip: padding-box;
+		p, ul, ol{
+			margin-bottom: 0;
+		}
+	}
+
+	.arrow {
+		position: absolute;
+		width: 0;
+		height: 0;
+		&:after {
+			content:" ";
+			display:block;
+			position: absolute;
+			width:0; height:0;
+		}
+	}
+	&.above{
+		.arrow {
+			bottom: -1px;
+			@include left(50%);
+			@include margin-left(-$popover-arrow-size);
+			@include border-left($popover-arrow-size solid transparent);
+			@include border-right($popover-arrow-size solid transparent);
+			border-top: $popover-arrow-size solid $popoverStroke;
+			&:after {
+				bottom: 1px;
+				@include left(50%);
+				@include margin-left(-$popover-arrow-size);
+				@include border-left($popover-arrow-size solid transparent);
+				@include border-right($popover-arrow-size solid transparent);
+				border-top: $popover-arrow-size solid $popover-arrow-color;
+				z-index: 2000;
+			}
+		}
+	}
+	&.below{
+		.arrow {
+			top: -2px;
+			@include left(50%);
+			@include margin-left(-$popover-arrow-size);
+			@include border-left($popover-arrow-size solid transparent);
+			@include border-right($popover-arrow-size solid transparent);
+			border-bottom: $popover-arrow-size solid $popoverStroke;
+			border-bottom: $popover-arrow-size solid rgba($popoverStroke, 0.8);
+		}
+	}
+	&.belowLeft{
+		.arrow {
+			top: -2px;
+			@include left(90%);
+			@include margin-left(-$popover-arrow-size);
+			@include border-left($popover-arrow-size solid transparent);
+			@include border-right($popover-arrow-size solid transparent);
+			border-bottom: $popover-arrow-size solid $popoverStroke;
+			border-bottom: $popover-arrow-size solid rgba($popoverStroke, 0.8);
+		}
+	}
+	&.left{
+		.arrow {
+			top: 50%;
+			@include right(-1px);
+			margin-top: -$popover-arrow-size;
+			border-top: $popover-arrow-size solid transparent;
+			border-bottom: $popover-arrow-size solid transparent;
+			@include border-left($popover-arrow-size solid  $popoverStroke);
+			&:after {
+				top: 0px;
+				@include right(1px);
+				margin-top: -$popover-arrow-size;
+				border-top: $popover-arrow-size solid transparent;
+				border-bottom: $popover-arrow-size solid transparent;
+				@include border-left($popover-arrow-size solid $popover-arrow-color);
+				z-index: 2000;
+			}
+		}
+	}
+	&.topLeft{
+		.arrow {
+			top: 30px;
+			@include right(-1px);
+			margin-top: -$popover-arrow-size;
+			border-top: $popover-arrow-size solid transparent;
+			border-bottom: $popover-arrow-size solid transparent;
+			@include border-left($popover-arrow-size solid  $popoverStroke);
+			&:after {
+				top: 0px;
+				@include right(1px);
+				margin-top: -$popover-arrow-size;
+				border-top: $popover-arrow-size solid transparent;
+				border-bottom: $popover-arrow-size solid transparent;
+				@include border-left($popover-arrow-size solid $popover-arrow-color);
+				z-index: 2000;
+			}
+		}
+	}
+	&.right{
+		.arrow {
+			top: 50%;
+			@include left(-2px);
+			margin-top: -$popover-arrow-size;
+			border-top: $popover-arrow-size solid transparent;
+			border-bottom: $popover-arrow-size solid transparent;
+			@include border-right($popover-arrow-size solid red);
+			&:after {
+				top: 0px;
+				@include left(1px);
+				margin-top: -$popover-arrow-size;
+				border-top: $popover-arrow-size solid transparent;
+				border-bottom: $popover-arrow-size solid transparent;
+				@include border-right($popover-arrow-size solid $popover-arrow-color);
+				z-index: 2000;
+			}
+		}
+	}
+	&.topRight{
+		.arrow {
+			top: 30px;
+			@include left(-2px);
+			margin-top: -$popover-arrow-size;
+			border-top: $popover-arrow-size solid transparent;
+			border-bottom: $popover-arrow-size solid transparent;
+			@include border-right($popover-arrow-size solid $popoverStroke);
+			&:after {
+				top: 0px;
+				@include left(1px);
+				margin-top: -$popover-arrow-size;
+				border-top: $popover-arrow-size solid transparent;
+				border-bottom: $popover-arrow-size solid transparent;
+				@include border-right($popover-arrow-size solid $popover-arrow-color);
+				z-index: 2000;
+			}
+		}
+	}
+	.negtive-margin{
+		margin:-27px;
+	}
+
+}
+
+.account-flash {
+	background-color: #ffffff;
+	line-height: 19px;
+	color: #CE362A;
+	padding: 10px;
+	border: 1px solid #CE362A;
+	border-radius: 7px;
+	margin-top: -31px;
+	margin-bottom: 20px;
+	font-size: 14px;
+	display:none;
+}

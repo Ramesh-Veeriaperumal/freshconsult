@@ -1,0 +1,112 @@
+<% @header_right = "##{@ticket.display_id}" %> 
+<% @date_format = Account.current.date_type(:short_day_separated) %>
+<h3>Ticket Details</h3>
+<div class="properties">
+  <span>
+    <b>Status</b>
+    <%= h(@ticket.status_name) %>
+  </span>
+  <span>
+    <b>Priority</b>
+    <%= h(@ticket.priority_name) %>
+  </span>
+  <span>
+    <b>Source</b>
+    <%= h(@ticket.source_name) %>
+  </span>
+  <span>
+    <b>Type</b>
+    <%= h(@ticket.ticket_type) %>
+  </span> 
+  <% unless @ticket.group.nil? %>
+    <span>
+      <b>Group</b>
+      <%= h(@ticket.group.name) %>
+    </span>
+  <% end %>
+  <span>
+    <b>Agent</b>
+    <% unless @ticket.responder.nil? %>
+      <%= h(@ticket.responder.name) %>
+    <% else %>  
+      Unassigned
+    <% end %>  
+  </span> 
+  <% if current_account.multi_product_enabled? && @ticket.product %>
+    <span>
+      <b>Product</b>
+      <%= h(@ticket.product.name) %>
+    </span>
+  <% end %>
+<% current_portal.ticket_fields.each do |field| %>
+  <% if field.visible_in_view_form? && field.flexifield_def_entry %>
+    <span>
+      <b><%= field.label %></b>
+      <% value = field.is_default_field? ? @ticket.send(field.field_name) : @ticket.custom_field_value(field.name) %>
+      <% if value.present? && field.field_type == "custom_date" %>
+        <%= Time.parse(value).utc.strftime(@date_format) %> 
+      <% else %>
+        <%= value %>
+      <% end %>     
+    </span>
+    <% if field.field_type == "nested_field" %>
+      <% field.nested_ticket_fields.each do |nested_field| %>
+        <span>
+          <b><%= nested_field.label %></b>
+          <%= @item.custom_field_value(nested_field.name) %>      
+        </span>
+      <% end %>
+    <% end %>
+  <% end %>  
+<% end %>  
+</div>
+  <span class="seperator"></span>
+  <div>
+    <% if @ticket.outbound_email? %>
+      to <strong><%= h(@ticket.requester.display_name) %></strong> on <strong><%= formated_date(@ticket.created_at)  %></strong> via <strong><%= h(@ticket.source_name) %></strong>
+    <% else %>
+      by <strong><%= h(@ticket.requester.display_name) %></strong> on <strong><%= formated_date(@ticket.created_at)  %></strong> via <strong><%= h(@ticket.source_name) %></strong>
+    <% end %>
+  </div>  
+
+  <h3><%= h(@ticket.subject) %></h3>
+  <div class="description"> 
+    <%= @ticket.description_html.html_safe %>
+  </div>  
+  <span class="seperator"></span>
+  <% @ticket_notes = @ticket.notes.visible.exclude_source('meta') %>
+  <% unless @ticket_notes.empty? %>
+  <h3>Comments</h3>  
+  <div>
+    <% @ticket_notes.each do |note| %>
+      <div>
+        by <strong><%= h(note.user.display_name) %></strong> on <strong><%= formated_date(note.created_at)  %></strong> as 
+        <strong>
+        <% if note.private_note? && !note.broadcast_note? %>	 
+  				<%= t("helpdesk.tickets.note.private_note") %>
+  			<% elsif note.public_note? %>
+  				<%= t("helpdesk.tickets.note.public_note") %>
+  			<% elsif note.inbound_email? %>
+  				<%= t("helpdesk.tickets.note.inbound_email") %>
+  			<% elsif note.outbound_email? %>
+  				<%= t("helpdesk.tickets.note.outbound_email") %>
+  			<% elsif note.tweet? %>
+  				tweet
+        <% elsif note.broadcast_note? %>
+          <%= t("helpdesk.tickets.note.broadcast_note") %>
+  			<% end %>  
+  			</strong>
+      </div>
+      <div class="description"> 
+        <%= note.body_html.html_safe %>
+      </div>
+      <span class="seperator"></span>
+    <% end %>
+  </div>
+  <% end %>
+</div>
+
+
+<%= javascript_tag do %>
+  setTimeout("window.print()",1)
+<% end %>

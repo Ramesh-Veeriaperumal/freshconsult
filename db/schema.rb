@@ -1186,6 +1186,21 @@ ActiveRecord::Schema.define(:version => 20170411034444) do
     t.integer "account_id", :limit => 8, :null => false
   end
 
+  create_table "failed_helpkit_feeds", :force => true do |t|
+    t.integer  "account_id",  :limit => 8,  :null => false
+    t.string   "uuid"
+    t.string   "exchange",    :limit => 20
+    t.string   "routing_key", :limit => 20
+    t.text     "payload"
+    t.string   "exception"
+    t.datetime "created_at",                :null => false
+    t.datetime "updated_at",                :null => false
+  end
+
+  add_index "failed_helpkit_feeds", ["account_id"], :name => "index_failed_helpkit_feeds_on_account_id"
+  add_index "failed_helpkit_feeds", ["created_at"], :name => "index_failed_helpkit_feeds_on_created_at"
+  add_index "failed_helpkit_feeds", ["uuid"], :name => "index_failed_helpkit_feeds_on_uuid"
+
   create_table "features", :force => true do |t|
     t.string   "type",                    :null => false
     t.integer  "account_id", :limit => 8, :null => false

@@ -35,6 +35,7 @@ module Reports::ScheduledExport::Constants
     [19, "19:00"], [20, "20:00"], [21, "21:00"], [22, "22:00"], [23, "23:00"]]
 
   DELIVERY_FREQUENZY_BY_KEYS  = Hash[*DELIVERY_FREQUENZY.map { |i| [i[0], i[1]] }.flatten]
+  DELIVERY_FREQUENZY_BY_VALUE = Hash[*DELIVERY_FREQUENZY.map { |i| [i[1], i[0]] }.flatten]
   DELIVERY_DAYS_BY_KEYS       = Hash[*DELIVERY_DAYS.map { |i| [i[0], i[1]] }.flatten]
   DELIVERY_DAYS_BY_VALUE      = Hash[*DELIVERY_DAYS.map { |i| [i[1], i[0]] }.flatten]
   DELIVERY_TYPE_BY_VALUE      = Hash[*DELIVERY_TYPES.map { |i| [i[1], i[0]] }.flatten]
