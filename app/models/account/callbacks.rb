@@ -15,7 +15,7 @@ class Account < ActiveRecord::Base
 
   before_save :sync_name_helpdesk_name
   
-  after_destroy :remove_global_shard_mapping, :remove_from_slave_queries
+  after_destroy :remove_global_shard_mapping, :remove_from_master_queries
   after_destroy :remove_shard_mapping, :destroy_route_info
 
   after_commit :add_to_billing, :enable_elastic_search, on: :create
@@ -69,7 +69,6 @@ class Account < ActiveRecord::Base
     SELECTABLE_FEATURES.each { |key,value| features.send(key).create  if value}
     TEMPORARY_FEATURES.each { |key,value| features.send(key).create  if value}
     ADMIN_CUSTOMER_PORTAL_FEATURES.each { |key,value| features.send(key).create  if value}
-    add_member_to_redis_set(SLAVE_QUERIES, self.id)
     LAUNCHPARTY_FEATURES.select{|k,v| v}.each_key {|feature| self.launch(feature)}
     #self.launch(:disable_old_sso)
   end
@@ -226,8 +225,8 @@ class Account < ActiveRecord::Base
       shard_mapping.save
     end
 
-    def remove_from_slave_queries
-      remove_member_from_redis_set(SLAVE_QUERIES,self.id)
+    def remove_from_master_queries
+      remove_member_from_redis_set(MASTER_QUERIES,self.id)
     end
 
     def update_freshfone_voice_url

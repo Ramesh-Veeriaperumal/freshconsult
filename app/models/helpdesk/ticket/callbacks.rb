@@ -870,6 +870,8 @@ private
       schema_less_ticket.set_agent_assigned_flag
     end
     schema_less_ticket.set_group_assigned_flag if group_id
+    schema_less_ticket.reports_hash ||= {}
+    schema_less_ticket.reports_hash['lifecycle_last_updated_at'] = current_action_time
   end
 
   def time_zone_now
