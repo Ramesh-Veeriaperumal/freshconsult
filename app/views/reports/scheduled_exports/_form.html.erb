@@ -1,0 +1,255 @@
+<%
+	delivery_type = Reports::ScheduledExport::Constants::DELIVERY_TYPE_BY_VALUE
+	delivery_hours = Reports::ScheduledExport::Constants::DELIVERY_HOURS
+	delivery_frequency = Reports::ScheduledExport::Constants::DELIVERY_FREQUENZY_BY_KEYS
+	delivery_days = Reports::ScheduledExport::Constants::DELIVERY_DAYS_BY_VALUE
+ %>
+<div class="row-fluid">
+	<div class="span6	">
+		<%= render :partial => "breadcrumb", :locals => { :index => false, :is_show => is_show, :title => title} %>
+	</div>
+	<%= content_tag :div, "", class: 'show-schedule-wrapper' if is_show%>
+	<% unless is_show %>
+		<div class="span6 pull-right align-right">
+			<%= link_to t('cancel'), reports_scheduled_exports_path(), :class => "btn cancel" %>
+			<button class="btn btn-primary schedule-save" type="submit" data-loading-text="<%= t('saving')  %>" >
+				<%= t('save')  %>
+			</button>
+		</div>
+	<% end %>
+</div>
+<ul class="ui-form ticket-schedule-form no-background">
+	<li class="ticket-schedule-item">
+		<div class="row-fluid mb18">
+			<div class="span6">
+				<h2 class="title schedule-title">
+					<%= title %>
+				</h2>
+			</div>
+		</div>
+		<div class="row-fluid">
+			<%= f.label :name, (t('helpdesk_reports.ticket_schedule.new.title').html_safe), :class => "span2" %>
+			<div class="span10">
+				<%= f.text_field :name, :class => "required text" %>
+				<input type="hidden" name="scheduled_export[id]" id="id" value="<%= @scheduled_export.id %>" />
+			</div>
+		</div>
+		<div class="row-fluid">
+			<%= f.label :description, t('helpdesk_reports.ticket_schedule.new.description'), :class => "span2" %>
+			<div class="span10">
+				<%= f.text_area :description, :class => "smallpara" %>
+			</div>
+		</div>
+		<div class="row-fluid">
+			<label for="schedule-state" class= "span2 schedule-label"><%= t('helpdesk_reports.ticket_schedule.new.frequency') %></label>
+			<div class="span10 mt5">
+				<select class="schedule-state mt5" name="scheduled_export[schedule_details][frequency]" id="schedule-state">
+          <option value="<%= delivery_frequency[:hourly]%>"><%= t('helpdesk_reports.ticket_schedule.new.hourly') %></option>
+          <option value="<%= delivery_frequency[:daily] %>" selected><%= t('helpdesk_reports.ticket_schedule.new.daily') %></option>
+          <option value="<%= delivery_frequency[:weekly] %>"><%= t('helpdesk_reports.ticket_schedule.new.weekly') %></option>
+       </select>
+       <span class="ml5 schedule-day-on"><%= t('on') %></span>
+       <select class="schedule-day ml5 mt5" name="scheduled_export[schedule_details][day_of_export]" disabled>
+				 <% delivery_days.each do |day| %>
+				 	<option value="<%= day[0]%>"><%= day[1] %></option>
+				 <% end %>
+       </select>
+       <span class="ml5 schedule-time-at"><%= t('at') %></span>
+       <select class="schedule-time ml5 mt5" name="scheduled_export[schedule_details][minute_of_day]">
+				 <% delivery_hours.each do |hour| %>
+				 		<option value="<%= hour[0] %>"><%= hour[1] %></option>
+				 <% end %>
+			 </select>
+       <span class="schedule-message ml5"></span>
+			</div>
+		</div>
+	</li>
+	<li class="ticket-schedule-item">
+		<h3 class="title mb8 schedule-title">
+			<%= t('helpdesk_reports.ticket_schedule.new.filter')%>
+		</h3>
+		<div class="conditionset" id="filterDOM">
+		<div id="RuleList" class="rule_list"></div>
+		<fieldset class="addchoice">
+			<i class="rounded-add-icon pull-left"></i>
+	    <p><%=t('dispatch.add_condition')%></p>
+	  </fieldset>
+		</div>
+	</li>
+	<li class="ticket-schedule-item">
+		<h3 class="title mb8 schedule-title">
+			<%= t('helpdesk_reports.ticket_schedule.new.fields_to_export')%>
+		</h3>
+		<div class="export-fields-wrapper">
+			<div class="conditionset export-fields ticket-fields">
+				<div class="rule_list export-fields-list export-fields-first-list">
+					<span class="export-icon">
+						<i class="ficon-caret-right hide"></i>
+						<i class="ficon-caret-down"></i>
+					</span>
+					<span class="title pl4 ml5">
+						<b><%= t('helpdesk_reports.ticket_schedule.new.ticket_fields_title')%></b>
+					</span>
+					<span class="muted pull-right selected-label">
+						<%= t('helpdesk_reports.ticket_schedule.new.field_selected', :count => 0) %>
+					</span>
+				</div>
+			</div>
+			<div class="export-fields-item ticket-fields-item">
+				<div class="threecol-form row-fluid mb8">
+					<span class="item">
+						<label class="checkbox select-all-label">
+	    				<%= check_box_tag "fields_data[ticket][selectall]", "select-all", false, :class => 'select-all schedule-checkbox-required schedule-checkbox-maxlength', :data => {:field =>"ticket-fields", :select_all => true} %>
+							<%= t('helpdesk_reports.ticket_schedule.new.select_all') %>
+							<%= content_tag :span, t('helpdesk_reports.ticket_schedule.new.max_field'), class: 'muted max-label pl6' if (@field_hash[:ticket].length > 100)%>
+	  				</label>
+					</span>
+				</div>
+				<div class="threecol-form row-fluid">
+					<% @field_hash[:ticket].each do |ticket| %>
+						<span class="item">
+							<label class="checkbox">
+								<%= check_box_tag "fields_data[ticket][#{ticket[:value]}]", ticket[:label], ticket[:selected], :data => {:field =>"ticket-fields"} %>
+								<%= ticket[:label].html_safe %>
+		  				</label>
+							<% if ticket[:levels] %>
+								<div class="ml10">
+									<% ticket[:levels].each do |level| %>
+										<label class="checkbox nested-fields">
+											<%= check_box_tag "fields_data[ticket][#{level[:name]}]", level[:label], level[:selected], :data => {:field =>"ticket-fields"} %>
+											<%= level[:label].html_safe %>
+										</label>
+									<% end %>
+								</div>
+							<% end %>
+						</span>
+					<% end %>
+				</div>
+			</div>
+			<div class="conditionset export-fields contact-fields">
+				<div class="rule_list export-fields-list">
+					<span class="export-icon">
+						<i class="ficon-caret-right hide"></i>
+						<i class="ficon-caret-down"></i>
+					</span>
+					<span class="title pl4">
+						<b><%= t('helpdesk_reports.ticket_schedule.new.contact_fields_title')%></b>
+					</span>
+					<span class="muted pull-right selected-label">
+						<%= I18n.t('helpdesk_reports.ticket_schedule.new.field_selected', :count => 0) %>
+					</span>
+				</div>
+			</div>
+			<div class="export-fields-item contact-fields-item">
+				<div class="threecol-form row-fluid mb8">
+					<span class="item">
+						<label class="checkbox select-all-label">
+	    				<%= check_box_tag "fields_data[contact][selectall]", "select-all", false, :class => 'select-all schedule-checkbox-maxlength', :data => {:field =>"contact-fields", :select_all => true} %>
+							<%= t('helpdesk_reports.ticket_schedule.new.select_all') %>
+							<%= content_tag :span, t('helpdesk_reports.ticket_schedule.new.max_field'), class: 'muted max-label pl6' if (@field_hash[:contact].length > 100)%>
+	  				</label>
+					</span>
+				</div>
+				<div class="threecol-form row-fluid">
+					<% @field_hash[:contact].each do |contact| %>
+						<span class="item">
+							<label class="checkbox">
+		    				<%= check_box_tag "fields_data[contact][#{contact[:value]}]", contact[:label], contact[:selected], :data => {:field =>"contact-fields"}  %>
+								<%= contact[:label].html_safe %>
+		  				</label>
+						</span>
+					<% end %>
+				</div>
+			</div>
+			<div class="conditionset export-fields company-fields">
+				<div class="rule_list export-fields-list export-fields-last-list">
+					<span class="export-icon">
+						<i class="ficon-caret-right hide"></i>
+						<i class="ficon-caret-down"></i>
+					</span>
+					<span class="title pl4">
+						<b><%= t('helpdesk_reports.ticket_schedule.new.company_fields_title')%></b>
+					</span>
+					<span class="muted pull-right selected-label">
+						<%= I18n.t('helpdesk_reports.ticket_schedule.new.field_selected', :count => 0) %>
+					</span>
+				</div>
+			</div>
+			<div class="export-fields-item company-fields-item">
+				<div class="threecol-form row-fluid mb8">
+					<span class="item">
+						<label class="checkbox select-all-label">
+	    				<%= check_box_tag "fields_data[company][selectall]", "select-all", false, :class => 'select-all schedule-checkbox-maxlength', :data => {:field =>"company-fields", :select_all => true} %>
+							<%= t('helpdesk_reports.ticket_schedule.new.select_all') %>
+							<%= content_tag :span, t('helpdesk_reports.ticket_schedule.new.max_field'), class: 'muted max-label pl6' if (@field_hash[:company].length > 100)%>
+	  				</label>
+					</span>
+				</div>
+				<div class="threecol-form row-fluid">
+					<% @field_hash[:company].each do |company| %>
+						<span class="item">
+							<label class="checkbox">
+		    				<%= check_box_tag "fields_data[company][#{company[:value]}]", company[:label], company[:selected], :data => {:field =>"company-fields"}  %>
+								<%= company[:label].html_safe %>
+		  				</label>
+						</span>
+					<% end %>
+				</div>
+			</div>
+		</div>
+	</li>
+	<li class="ticket-schedule-item">
+		<h3 class="title mb8 schedule-title"> <%= t('helpdesk_reports.ticket_schedule.new.delivery')%> </h3>
+		<div class="mt20">
+			<div class="row-fluid">
+				<div class="span10">
+					<div class="choicelist">
+						<input <%= (!@scheduled_export.schedule_details.present? || @scheduled_export.schedule_details.present? && (@scheduled_export.delivery_type.eql? delivery_type[:email])) ? 'checked' : '' %> class="radio" id="schedule_details[delivery_type]_1" name="scheduled_export[schedule_details][delivery_type]" type="radio" value="<%= delivery_type[:email] %>">
+						<label class="radiolabel" for="schedule_details[delivery_type]_1"><%= t('helpdesk_reports.ticket_schedule.new.email') %></label>
+						<input class="radio" id="schedule_details[delivery_type]_2" name="scheduled_export[schedule_details][delivery_type]" type="radio" value="<%=delivery_type[:api] %>" <%= (@scheduled_export.schedule_details.present? && (@scheduled_export.delivery_type.eql? delivery_type[:api])) ? 'checked' : '' %>>
+						<label class="radiolabel" for="schedule_details[delivery_type]_2"><%= t('helpdesk_reports.ticket_schedule.new.api') %></label>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row-fluid email-content <%= (@scheduled_export.schedule_details.present? && (@scheduled_export.delivery_type.eql? delivery_type[:api])) ? 'hide' : '' %>">
+			<div class="span10 email-content-content">
+				<input type="hidden" name="scheduled_export[schedule_details][email_recipients]" class="email-recipient-required" id="email_recipients"/>
+			</div>
+		</div>
+		<div class="row-fluid api-content <%= (!@scheduled_export.schedule_details.present? || (@scheduled_export.schedule_details.present? && (@scheduled_export.delivery_type.eql? delivery_type[:email]))) ? 'hide' : '' %>">
+			<div class="span12">
+				<input type="text" class="clip-data" value="<%= @scheduled_export.api_url %>" readonly>
+        <button type="button" class="btn tooltip copy-clip" title="Copy to Clipboard">
+          <i class="ficon-clone fsize-18"></i>
+        </button>
+				<span class="span12">
+					<ul class="api-note muted">
+						<li>
+							<%= t('helpdesk_reports.ticket_schedule.new.helpnote.api_info1') %>
+						</li>
+						<li>
+							<%= t('helpdesk_reports.ticket_schedule.new.helpnote.api_info2') %>
+						</li>
+					</ul>
+				</span>
+			</div>
+		</div>
+		<div class="pt5 initial_export">
+			<label class="checkbox">
+				<%= check_box_tag "scheduled_export[schedule_details][initial_export]", 1 , (@scheduled_export.schedule_details.present? ? @scheduled_export.initial_export : true), :class => 'initial-export' %>
+				<%= t('helpdesk_reports.ticket_schedule.new.one_time_export_label') %>
+			</label>
+		</div>
+	</li>
+	<li class="ticket-schedule-item">
+		<% unless is_show %>
+			<div class="span6 pull-right align-right">
+					<%= link_to t('cancel'), reports_scheduled_exports_path(), :class => "btn cancel" %>
+					<button class="btn btn-primary schedule-save" type="submit" data-loading-text="<%= t('saving')  %>" >
+						<%= t('save')  %>
+					</button>
+				</div>
+		<% end %>
+	</li>
+</ul>

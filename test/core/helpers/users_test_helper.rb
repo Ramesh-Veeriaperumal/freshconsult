@@ -59,4 +59,12 @@ module UsersTestHelper
     new_user.save
     new_user.reload
   end
+
+
+  def add_user_draft_attachments(params={})
+    file = File.new(Rails.root.join("spec/fixtures/files/attachment.txt"))
+    user_id = params[:user_id] || add_new_user(@account).id
+    att = Helpdesk::Attachment.new(content: file, account_id: @account.id, attachable_type: "UserDraft", attachable_id: user_id)
+    att.save
+  end
 end

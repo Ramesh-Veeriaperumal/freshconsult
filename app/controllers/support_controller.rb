@@ -1,11 +1,12 @@
 class SupportController < ApplicationController
 
+  before_filter :check_suspended_account
   skip_before_filter :check_privilege, :set_cache_buster
   layout :resolve_layout
   before_filter :portal_context
   before_filter :strip_url_locale
   before_filter :set_language
-  before_filter :redirect_to_locale, :except => [:sitemap]
+  before_filter :redirect_to_locale, :except => [:sitemap, :robots]
   around_filter :run_on_slave , :only => [:index,:show],
     :if => proc {|controller| 
       path = controller.controller_path
@@ -317,5 +318,13 @@ class SupportController < ApplicationController
     render_404 and return if unscoped_fetch.blank?
     flash[:warning] = version_not_available_msg(controller_name.singularize)
     redirect_to support_home_path
+  end
+
+  def check_suspended_account
+    unless current_account.active? || current_account.subscription.updated_at > 1.day.ago
+      # Account suspended more than 1 day ago
+      flash[:notice] = t('flash.general.portal_blocked')
+      redirect_to support_login_path
+    end
   end
 end

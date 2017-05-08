@@ -137,6 +137,8 @@ class User < ActiveRecord::Base
 
   has_many :report_filters, :class_name => 'Helpdesk::ReportFilter'
   has_many :data_exports
+  has_many :scheduled_exports
+  has_many :scheduled_ticket_exports, :dependent => :destroy
 
   has_and_belongs_to_many :accesses,  
     :class_name => 'Helpdesk::Access',

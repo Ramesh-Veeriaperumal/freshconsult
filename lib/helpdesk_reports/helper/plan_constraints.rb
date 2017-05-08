@@ -44,6 +44,7 @@ module HelpdeskReports::Helper::PlanConstraints
     excluded_filters |= plan_filters || [] 
     excluded_filters += [:agent_id] if hide_agent_reporting?
     excluded_filters += [:tag_id] if(report_type.to_sym == :timesheet_reports)
+    excluded_filters += [:is_escalated] unless report_type==:timespent
     excluded_filters
   end
 

@@ -81,9 +81,9 @@
         :privilege                     =>   privilege?(:manage_tags)
       },
       :skills                          =>   {
-        :url                           =>   privilege?(:admin_tasks) ? "/admin/skills" : "/admin/agent_skills",
+        :url                           =>   privilege?(:manage_skills) ? "/admin/skills" : "/admin/agent_skills",
         :privilege                     =>   current_account.skill_based_round_robin_enabled? && 
-                                              (privilege?(:admin_tasks) || privilege?(:assign_agent))
+                                              (privilege?(:manage_skills) || privilege?(:manage_availability))
       },
       :dispatcher                      =>   {
         :url                           =>   "/admin/va_rules",

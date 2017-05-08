@@ -29,13 +29,13 @@ class Admin::UserSkillsController < Admin::AdminController
   private
 
     def skills_present?
-      if privilege?(:admin_tasks)
+      if privilege?(:manage_skills)
         redirect_to(admin_skills_path) unless current_account.skills_trimmed_version_from_cache.present?
       end
     end
 
     def set_user_role
-      @is_admin = gon.is_admin = privilege?(:admin_tasks)
+      @is_admin = gon.is_admin = privilege?(:manage_skills)
       # using gon variable to pass rails-variables directly in js files
     end
 
@@ -44,11 +44,12 @@ class Admin::UserSkillsController < Admin::AdminController
     end
 
     def set_filter_data
-      params[:user_skills_attributes] = params[:user_skills_attributes].blank? ? [] : ActiveSupport::JSON.decode(params[:user_skills_attributes])
+      user_skills = params[:user_skills_attributes] || []
+      params[:user_skills_attributes] = user_skills.is_a?(Array) ? user_skills : ActiveSupport::JSON.decode(params[:user_skills_attributes])
     end
 
     def group_scoper
-      current_user.accessible_groups
+      @is_admin ? current_account.groups : current_user.accessible_groups
     end
 
     def load_groups_trimmed_version

@@ -102,10 +102,15 @@
       jQuery(jQuery('#myTab > li.active > a').attr('href')).addClass('active');
       var hash = window.location.hash,
           app_id = window.location.hash.substring(1);
-      if (hash.match('^#[0-9]')) { 
+
+
+      if(app_id == "<%= ZendeskAppConfig::APP_ID %>" && jQuery('#ext-<%=ZendeskAppConfig::APP_ID %>').length != 0) {
+        jQuery('#ext-<%=ZendeskAppConfig::APP_ID %>').find('.btn-settings').trigger('click');
+      }else if(hash.match('^#[0-9]')) {    
         jQuery('.app-dtl').attr('href',hash);
         jQuery('.app-dtl').attr('data-url','/admin/marketplace/extensions/' + app_id + '?type=1,4,5');
       };
+
       var selectedTab = jQuery('a[href="' + hash + '"]', jQuery("#myTab,#appTab"));
       if(selectedTab.length > 0) 
         jQuery(selectedTab).click();

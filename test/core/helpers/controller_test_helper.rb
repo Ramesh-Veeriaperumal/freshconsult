@@ -36,4 +36,9 @@ module ControllerTestHelper
     set_request_auth_headers user
   end
   
+  def log_out
+    UserSession.find.try(:destroy)
+    User.reset_current_user
+  end
+  
 end

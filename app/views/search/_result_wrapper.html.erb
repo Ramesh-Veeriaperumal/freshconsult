@@ -1,5 +1,10 @@
+<% if current_account.features?(:advanced_search)  %>
+<ul class="unstyled" id="search-page-results">
+</ul>
+<% else %>
 <ul class="unstyled menuselector" id="search-page-results">
 </ul>
+<% end %>
 <% if !current_filter.eql?('tickets') %>
 	<%= load_more({
 	  :totalPages   => @total_pages,

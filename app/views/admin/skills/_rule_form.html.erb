@@ -7,7 +7,7 @@
 	<div class="control-group">
 		<%= f.label :name, (t('.new')+"<span class='required_star'>*</span>").html_safe, :class => "control-label" %>
 		<div class="controls skill-form">
-			<%= f.text_field :name, :class => "required text", placeholder: t('.info1') %>
+			<%= f.text_field :name, :class => "required text", placeholder: t('.info1'), :autofocus=>true%>
 		</div>
 	</div>
 	<div class="control-group">
@@ -24,7 +24,7 @@
         			<div class="" style="margin-top: 5px;">
 						<% label = (@skill.users.count == 0 ? t('admin.skills.index.add_label') : t('admin.skills.index.manage_label')) %>
 						
-						<a class="popup" data-isaccadmin="<%= @current_user.privilege?(:manage_account) %> "data-agentcount="<%= @skill.users.count %>" data-skillid="<%= @skill.id %>" href="javascript:void(0)" data-title="<%= @skill.name %>">
+						<a class="popup" data-isaccadmin="<%= @current_user.privilege?(:manage_skills) %> "data-agentcount="<%= @skill.users.count %>" data-skillid="<%= @skill.id %>" href="javascript:void(0)" data-title="<%= @skill.name %>">
 					        <span data-changecount="<%= @skill.id %>" style="cursor: text;color: #555;">
 						    <% if @skill.users.count == 0 %>
 						        <%= t('admin.skills.index.no_agent_label') %></span> - <span data-addManage><b><%= label %></b></span>
