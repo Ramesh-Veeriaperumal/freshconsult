@@ -64,7 +64,7 @@ module Mobile::Actions::Account
   end
   
   def social_feature
-    (features?(:twitter) && User.current.privilege?(:manage_tickets)) && !twitter_handles_from_cache.blank?
+    (basic_twitter_enabled? && User.current.privilege?(:manage_tickets)) && !twitter_handles_from_cache.blank?
   end
 
 end

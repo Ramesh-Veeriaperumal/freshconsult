@@ -16,12 +16,13 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
   before_filter :get_tag_name, :only => :index
   before_filter :set_filter_options, :set_data_hash, :load_sort_order, :only => [ :index, :custom_search ]
   before_filter :load_ticket, :verify_permission, :load_reply_to_all_emails, :only => [:activities, :prevnext, :activitiesv2]
-  before_filter :verify_format_and_tkt_id, :load_ticket_with_notes, :verify_permission, :load_reply_to_all_emails, :only => :show
+  before_filter :verify_format_and_tkt_id, :load_ticket_with_notes, :verify_permission, :load_reply_to_all_emails, :only => [:show,:print_archive]
   before_filter :set_date_filter, :only => [:export_csv]
   before_filter :csv_date_range_in_days , :only => [:export_csv]
   before_filter :set_selected_tab  
 
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
+  layout :choose_layout
 
   def index
     @items = current_account.archive_tickets.preload({requester: [:avatar]}, :company).permissible(current_user).filter(:params => params, 
@@ -253,4 +254,12 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
     Sharding.run_on_slave(&block)
   end 
 
+  def choose_layout
+      layout_name = request.headers['X-PJAX'] ? 'maincontent' : 'application'
+      case action_name
+        when "print_archive"
+          layout_name = 'print'
+      end
+      layout_name
+  end
 end

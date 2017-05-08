@@ -33,11 +33,6 @@ module Reports::TimesheetReport
     :group_by_day_criteria => "executed_at"
   }
 
-  OPTIONAL_COLUMN_CONFIG = {
-    :requester_name => I18n.t('helpdesk.time_sheets.requester_name'),
-    :ticket_type => I18n.t('helpdesk.time_sheets.ticket_type')
-  }
-
   def valid_month?(time)
     time.is_a?(Numeric) && (1..12).include?(time)
   end
@@ -52,19 +47,19 @@ module Reports::TimesheetReport
 
   def construct_csv_headers_hash
     default_colset = {
-      I18n.t('helpdesk.time_sheets.hours')=> :hours,
-      I18n.t('helpdesk.time_sheets.date') =>:executed_at ,
-      I18n.t('helpdesk.time_sheets.ticket')=>:ticket_display,
-      I18n.t('helpdesk.time_sheets.group')=>:group_name ,
-      I18n.t('helpdesk.time_sheets.note')=>:note,
-      I18n.t('helpdesk.time_sheets.customer') => :customer_name ,
-      I18n.t('helpdesk.time_sheets.billalblenonbillable') => :billable_type,
-      I18n.t('helpdesk.time_sheets.priority')=>:priority_name,
-      I18n.t('helpdesk.time_sheets.status')=>:status_name,
-    I18n.t('helpdesk.time_sheets.createdAt') => :created_at }
+      hours: I18n.t('helpdesk.time_sheets.hours'),
+      executed_at: I18n.t('helpdesk.time_sheets.date') ,
+      ticket_display: I18n.t('helpdesk.time_sheets.ticket'),
+      group_name: I18n.t('helpdesk.time_sheets.group'),
+      note: I18n.t('helpdesk.time_sheets.note'),
+      customer_name: I18n.t('helpdesk.time_sheets.customer'),
+      billable_type: I18n.t('helpdesk.time_sheets.billalblenonbillable'),
+      priority_name: I18n.t('helpdesk.time_sheets.priority'),
+      status_name:I18n.t('helpdesk.time_sheets.status'),
+      created_at: I18n.t('helpdesk.time_sheets.createdAt')}
 
-    default_colset[I18n.t('helpdesk.time_sheets.agent')] = :agent_name unless  Account.current.hide_agent_metrics_feature?
-    default_colset[I18n.t('helpdesk.time_sheets.product')] = :product_name if Account.current.products.any?
+    default_colset[:agent_name] = I18n.t('helpdesk.time_sheets.agent') unless  Account.current.hide_agent_metrics_feature?
+    default_colset[:product_name] = I18n.t('helpdesk.time_sheets.product') if Account.current.products.any?
 
     selected_colset = transform_selected_columns
 
@@ -73,15 +68,15 @@ module Reports::TimesheetReport
 
 
   def build_master_column_header_hash
-    columns_hash_arr = [Helpdesk::TimeSheet.report_list, OPTIONAL_COLUMN_CONFIG, custom_column_master_hash]
+    columns_hash_arr = [Helpdesk::TimeSheet.report_list, optional_column_config, custom_column_master_hash]
     @master_column_header_hash = Hash[*columns_hash_arr.map(&:to_a).flatten]
   end
 
   def transform_selected_columns
     cols = Hash.new
-    custom_col_hash = OPTIONAL_COLUMN_CONFIG.merge(custom_column_master_hash)
+    custom_col_hash = optional_column_config.merge(custom_column_master_hash)
     @time_sheet_columns.each do |column_key|
-      cols[custom_col_hash[column_key.to_sym]] = column_key
+      cols[column_key.to_sym] = custom_col_hash[column_key.to_sym]
     end
     cols
   end
@@ -302,7 +297,7 @@ module Reports::TimesheetReport
     end
 
     #phase1 - adding only custom dropdown and nested fields.
-    OPTIONAL_COLUMN_CONFIG.each do |key,value|
+    optional_column_config.each do |key,value|
       report_columns_arr.push({name:value, id:key, default: false, is_custom: false})
     end
     Account.current.custom_dropdown_fields_from_cache.each do |col|
@@ -651,31 +646,30 @@ module Reports::TimesheetReport
 
 
   def construct_csv_string
-    date_fields = [ I18n.t('helpdesk.time_sheets.createdAt'), I18n.t('helpdesk.time_sheets.date')]
-    workable_fields = [I18n.t('helpdesk.time_sheets.requester_name'), I18n.t('helpdesk.time_sheets.ticket_type')]
-    customer_name_key = I18n.t('helpdesk.time_sheets.customer')
+    date_fields = [:created_at, :executed_at]
+    workable_fields = [:requester_name, :ticket_type]
     csv_row_limit = HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:export][:csv]
-    csv_hash = construct_csv_headers_hash
+    csv_hash = Hash[construct_csv_headers_hash.sort_by{|k, v| v}]
     csv_size = @time_sheets.size
     if (csv_size > csv_row_limit)
       @time_sheets.slice!(csv_row_limit..(csv_size - 1))
       exceeds_row_limit = true
     end
     csv_string = CSVBridge.generate do |csv|
-      headers = csv_hash.keys.sort
-      csv << headers
+      headers = csv_hash.keys
+      csv << csv_hash.values
       @time_sheets.each do |record|
         record[:time_spent] += record[:timer_running]==true ? (@load_time - record[:start_time]).to_i : 0
         csv_data = []
         headers.each do |val|
           if date_fields.include?(val)
-            csv_data << parse_date(record.send(csv_hash[val]))
+            csv_data << parse_date(record.send(val))
           elsif workable_fields.include?(val)
-            csv_data << strip_equal(record.workable.send(csv_hash[val]))
-          elsif customer_name_key == val
+            csv_data << strip_equal(record.workable.send(val))
+          elsif :customer_name == val
             csv_data << strip_equal(record.customer_name_reports)
           else
-            csv_data << strip_equal(record.send(csv_hash[val]))
+            csv_data << strip_equal(record.send(val))
           end
         end
         csv << csv_data
@@ -787,6 +781,13 @@ module Reports::TimesheetReport
 
   def nullify(arr)
     arr.map { |x| x.to_i == -1 ? nil : x }
+  end
+
+  def optional_column_config
+  {
+    :requester_name => I18n.t('helpdesk.time_sheets.requester_name'),
+    :ticket_type => I18n.t('helpdesk.time_sheets.ticket_type')
+  }
   end
 
 end

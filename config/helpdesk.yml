@@ -78,6 +78,7 @@ AGENT:
     name: "Customer Service"
     email: custserv@freshdesk.com
 
+
 DEFAULT_TICKET_REQUESTER:
     email_ticket:
         email: james.dean@freshdesk.com
@@ -89,7 +90,7 @@ EMAIL:
     from: support@freshdesk.com
 
     staging_support_email: vijay@freshdesk.com
-    default_requester_email: rachel@freshdesk.com
+    default_requester_email: james@mailinator.com
     production_dev_ops_email: dev-ops@freshdesk.com
     sample_email: sample@freshdesk.com
     spam_watcher: dev-ops@freshdesk.com

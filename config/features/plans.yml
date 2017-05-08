@@ -83,6 +83,7 @@
       - :round_robin_on_update 
       - :shared_ownership_toggle
       - :advanced_dkim
+      - :multi_dynamic_sections
     :inherits: 
       - :garden_jan_17
     :exclude: []

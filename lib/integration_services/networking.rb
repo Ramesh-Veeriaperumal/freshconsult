@@ -19,10 +19,12 @@ module IntegrationServices
 
         encoding = options.delete(:encoding)
 
+        adapter = options.delete(:adapter) # will be nil for all the services except cloud_elements service. value net_http
+        
         Faraday.new(options) do |b|
           b.request encoding || :url_encoded
           faraday_builder(b)
-          b.adapter *(options[:adapter] || :typhoeus)
+          b.adapter *(adapter || :typhoeus)
           b.use(HttpReporter, self)
         end
       end
