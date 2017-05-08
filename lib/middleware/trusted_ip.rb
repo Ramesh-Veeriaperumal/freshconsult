@@ -21,6 +21,7 @@ class Middleware::TrustedIp
     execute_request(env) unless api_request?(req_path)
 
     if env['SHARD'].present?
+      raise AccountBlocked if env['SHARD'].blocked?
       raise DomainNotReady unless env['SHARD'].ok?
 
       Sharding.run_on_shard(env['SHARD'].shard_name) do
@@ -49,9 +50,11 @@ class Middleware::TrustedIp
     execute_request(env) if api_request?(req_path)
     [@status, @headers, @response]
 
-    rescue DomainNotReady => ex
-      @status, @headers, @response = set_response(req_path, 404, "/DomainNotReady.html", 
-                                                  'Your data is getting moved to a new datacenter.')
+  rescue DomainNotReady, AccountBlocked => ex
+      location_header = env['SHARD'].blocked? ? "/AccountBlocked.html" : "/DomainNotReady.html"
+      error_message = env['SHARD'].blocked? ? 'You are account has been blocked' : 'Your data is getting moved to a new datacenter.'
+      @status, @headers, @response = set_response(req_path, 404, location_header,
+                                                  error_message)
       return [@status, @headers, @response]
     ensure
       Thread.current[:account] = nil 
