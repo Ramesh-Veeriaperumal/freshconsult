@@ -52,7 +52,7 @@ class Middleware::TrustedIp
 
   rescue DomainNotReady, AccountBlocked => ex
       location_header = env['SHARD'].blocked? ? "/AccountBlocked.html" : "/DomainNotReady.html"
-      error_message = env['SHARD'].blocked? ? 'You are account has been blocked' : 'Your data is getting moved to a new datacenter.'
+      error_message = env['SHARD'].blocked? ? 'Your account has been blocked' : 'Your data is getting moved to a new datacenter.'
       @status, @headers, @response = set_response(req_path, 404, location_header,
                                                   error_message)
       return [@status, @headers, @response]
