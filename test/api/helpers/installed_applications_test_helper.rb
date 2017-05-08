@@ -23,7 +23,11 @@ module InstalledApplicationsTestHelper
   def validate_configs(app)
     return {} unless app.configs[:inputs].present?
     configs_hash = app.configs[:inputs]
-    configs_hash.symbolize_keys.except(*Integrations::Constants::EXCLUDE_FROM_APP_CONFIGS_HASH)
+    if app.application.name == 'dropbox'
+      return configs_hash
+    else
+      configs_hash.symbolize_keys.except(*Integrations::Constants::EXCLUDE_FROM_APP_CONFIGS_HASH)
+    end
   end
 
   def validate_auth_hash(auth_info)
@@ -40,6 +44,8 @@ module InstalledApplicationsTestHelper
       installed_app.set_configs(inputs: { 'title' => 'Harvest',
                                           'domain' => 'starimpact.harvestapp.com',
                                           'harvest_note' => 'Freshdesk Ticket # {{ticket.id}}}' })
+    elsif app_name == 'dropbox'
+      installed_app.set_configs(inputs: { 'app_key' => '25zkc7ywmf7tnrl' })
     end
     installed_app.save!
     installed_app

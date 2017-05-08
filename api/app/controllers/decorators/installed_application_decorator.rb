@@ -15,6 +15,11 @@ class InstalledApplicationDecorator < ApiDecorator
   def configs_hash
     return {} unless configs[:inputs].present?
     configs_hash = configs[:inputs]
-    configs_hash.symbolize_keys.except(*Integrations::Constants::EXCLUDE_FROM_APP_CONFIGS_HASH)
+    # For Dropbox - we need to pass the authkey for loading the chooser
+    if Integrations::Constants::ATTACHMENT_APPS.include?(application.name)
+      return configs_hash
+    else
+      configs_hash.symbolize_keys.except(*Integrations::Constants::EXCLUDE_FROM_APP_CONFIGS_HASH)
+    end
   end
 end

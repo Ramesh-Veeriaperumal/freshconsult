@@ -47,6 +47,17 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     match_json(pattern.ordered!)
   end
 
+  def test_app_index_dropbox
+    create_application('dropbox')
+    application = Integrations::Application.find_by_name('dropbox')
+    dropbox_app = Account.current.installed_applications.find_by_application_id(application.id)
+    pattern = []
+    pattern << installed_application_pattern(dropbox_app)
+    get :index, controller_params({ version: 'private', name: 'dropbox' }, {})
+    assert_response 200
+    match_json(pattern.ordered!)
+  end
+
   def test_app_index_filter_with_multipe_names
     pattern = []
     harvest_app = Account.current.installed_applications.find_by_application_id(3)
