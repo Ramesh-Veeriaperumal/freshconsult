@@ -79,7 +79,7 @@ module RabbitMq::Subscribers::Tickets::Activities
     if VALID_MODELS.include?(model)
       val = send("mq_activities_#{model}_valid", action, model)
       Rails.logger.info "activities_debug ::: mq_activities_#{model}_valid #{val}"
-      Rails.logger.info "activities_debug ::: Thread.current[:scenario_action_log] #{Thread.current[:scenario_action_log]}"
+      Rails.logger.info "activities_debug ::: Thread.current[:scenario_action_log] #{Thread.current[:scenario_action_log].inspect}"
       val
     else
       Rails.logger.info "activities_debug ::: mq_activities_valid mq_activities_#{model}_valid false"
@@ -88,7 +88,7 @@ module RabbitMq::Subscribers::Tickets::Activities
   end
 
   def mq_activities_ticket_valid(action, model)
-    Rails.logger.info "activities_debug ::: mq_activities_ticket_valid #{Account.current.features?(:activity_revamp)} and #{activity_valid_model?(model)} and #{ticket_valid?(action)}"
+    Rails.logger.info "activities_debug ::: mq_activities_ticket_valid #{Account.current.features?(:activity_revamp).inspect} and #{activity_valid_model?(model).inspect} and #{ticket_valid?(action).inspect}"
     Account.current.features?(:activity_revamp) and activity_valid_model?(model) and ticket_valid?(action)
   end
 
@@ -167,8 +167,8 @@ module RabbitMq::Subscribers::Tickets::Activities
   end
     
   def ticket_valid?(action)
-    Rails.logger.info "activities_debug ::: ticket_valid? #{destroy_action?(action)} or #{archive} or #{manual_publish?} or #{user_changes?} or #{system_changes?}"
-    Rails.logger.info "activities_debug ::: Va::RuleActivityLogger.automation_execution? #{Va::RuleActivityLogger.automation_execution?}"
+    Rails.logger.info "activities_debug ::: ticket_valid? #{destroy_action?(action).inspect} or #{archive.inspect} or #{manual_publish?.inspect} or #{user_changes?.inspect} or #{system_changes?.inspect}"
+    Rails.logger.info "activities_debug ::: Va::RuleActivityLogger.automation_execution? #{Va::RuleActivityLogger.automation_execution?.inspect}"
     destroy_action?(action) || archive || manual_publish? || user_changes? || system_changes?
   end 
 
