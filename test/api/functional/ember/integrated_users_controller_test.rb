@@ -5,9 +5,14 @@ class Ember::IntegratedUsersControllerTest < ActionController::TestCase
 
   def setup
     super
-    mkt_place = Account.current.features?(:marketplace)
-    Account.current.features.marketplace.destroy if mkt_place
-    Account.current.reload
+    # mkt_place = Account.current.features?(:marketplace)
+    # Account.current.features.marketplace.destroy if mkt_place
+    # Account.current.reload
+    Integrations::InstalledApplication.any_instance.stubs(:marketplace_enabled?).returns(false)
+  end
+
+  def teardown
+    Integrations::InstalledApplication.unstub(:marketplace_enabled?)
   end
 
   def wrap_cname(params)
