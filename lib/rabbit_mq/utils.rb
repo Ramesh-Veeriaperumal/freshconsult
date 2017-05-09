@@ -67,6 +67,7 @@ module RabbitMq::Utils
 
   def construct_message_for_subscriber(s, message, model, action)
     valid = send("mq_#{s}_valid", action, model)
+    Rails.logger.info "activities_debug ::: construct_message_for_subscriber mq_#{s}_valid #{valid}"
     if valid
       message["#{model}_properties"].deep_merge!(send("mq_#{s}_#{model}_properties", action))
       message["subscriber_properties"].merge!({ s => send("mq_#{s}_subscriber_properties", action) })
