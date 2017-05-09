@@ -25,7 +25,9 @@ class Ember::IntegratedResourcesControllerTest < ActionController::TestCase
 
   def test_create_integ_resource
     t1 = create_ticket
-    harvest_app = create_application('harvest')
+    app = Integrations::Application.find_by_name('harvest')
+    harvest_app = Account.current.installed_applications.find_by_application_id(app.id)
+    harvest_app = create_application('harvest') if harvest_app.nil?
     agent = add_test_agent(@account)
     time_sheet = create_time_entry(billable: false, ticket_id: t1.id, agent_id: agent.id, executed_at: 19.days.ago.iso8601)
     application = Integrations::Application.find_by_name('harvest')
@@ -40,7 +42,7 @@ class Ember::IntegratedResourcesControllerTest < ActionController::TestCase
     }
     post :create, construct_params(@api_params.merge(resource_params))
     assert_response 200
-    match_json(integrated_resource_pattern(Integrations::IntegratedResource.first))
+    match_json(integrated_resource_pattern(scoper.first))
   end
 
   def test_show_integ_resource

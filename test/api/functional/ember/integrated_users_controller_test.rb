@@ -21,7 +21,9 @@ class Ember::IntegratedUsersControllerTest < ActionController::TestCase
 
   def test_index
     agent = add_test_agent(@account)
-    harvest_app = create_application('harvest')
+    app = Integrations::Application.find_by_name('harvest')
+    harvest_app = Account.current.installed_applications.find_by_application_id(app.id)
+    harvest_app = create_application('harvest') if harvest_app.nil?
     user_params = {
       app_name: 'harvest',
       user_id: agent.id,
