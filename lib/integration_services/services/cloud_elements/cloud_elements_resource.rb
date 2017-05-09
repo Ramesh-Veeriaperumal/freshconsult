@@ -21,6 +21,11 @@ module IntegrationServices::Services
         }
       end
 
+      def initialize(service)
+        super
+        http({:adapter => :net_http})
+      end
+
       def process_response(response, *success_codes, &block)
         if success_codes.include?(response.status)
           yield parse(response.body)

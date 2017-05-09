@@ -162,7 +162,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
     def update_lifecycle_changes(event_time, group, resolved_or_closed)
         self.reports_hash ||= {}
         tkt = self.ticket
-        last_updated_at = self.reports_hash["lifecycle_last_updated_at"] || tkt.created_at
+        last_updated_at = self.reports_hash["lifecycle_last_updated_at"] || ([tkt.ticket_states.status_updated_at, tkt.ticket_states.assigned_at, tkt.created_at].compact.max)
         action_time_in_bhrs = calculate_action_time_in_bhrs(last_updated_at, event_time, group)
         if action_time_in_bhrs <= 30 && !resolved_or_closed #return if action_time_in_bhrs is less than 30 seconds
             self.reports_hash["lifecycle_last_updated_at"] = event_time

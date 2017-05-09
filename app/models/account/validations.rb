@@ -11,6 +11,15 @@ class Account < ActiveRecord::Base
                             :less_than => 10000000,
                             :message => "Value must be less than seven digits"
 
+  def run_domain_validations
+    Account.validators_on(:domain).each do |validator|
+      validator.validate_each(self, :domain, self.domain)
+      return false if self.errors[:domain].present?
+    end
+    return false if self.full_domain.split('.').count > 3
+    return true
+  end
+
   protected
 
   	def valid_domain?

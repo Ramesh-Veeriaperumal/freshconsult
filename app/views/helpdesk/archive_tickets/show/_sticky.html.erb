@@ -34,6 +34,9 @@
 			</div>
 
 		<%end%>
+		<div>
+			<%= link_to( " Print ", "/helpdesk/tickets/archived/#{@ticket.display_id}/print",:target => "_blank", "class" => "btn archive_ticket_btns") %>
+		</div>
 
 	<div class="sticky_left">
 		<div>
