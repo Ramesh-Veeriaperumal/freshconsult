@@ -72,7 +72,8 @@ App.CollaborationUi = (function ($) {
             $collabSidebar.on("mouseover.collab", ".avatar-cover", _COLLAB_PVT.showHoverCard);
             $collabSidebar.on("mouseleave.collab", ".avatar-cover", _COLLAB_PVT.hideHoverCard);
             $collabSidebar.on("click.collab", ".collab-reply-btn", function(event){
-                if(!$("#annotation").attr("data-annotation")) {
+                var annotation_in_progress = $("#annotation").attr("data-annotation");
+                if(!annotation_in_progress) {
                     var parent_msg_box = event.currentTarget.closest('.collab-message-box'); 
                     var msg = $(parent_msg_box).find(".msg");
                     var msg_body = $(msg).hasClass("collab-attachment-msg") ? 
@@ -101,7 +102,8 @@ App.CollaborationUi = (function ($) {
             });
             $pagearea.on("mouseleave.collab", "#show-discussion-dd", _COLLAB_PVT.hideDiscussionDD);
             $pagearea.on("click.collab", "#collab-option-dd", function(){
-                if(!$("#collab-msg-reply-to").attr("data-reply")) {
+                var reply_in_progress = $("#collab-msg-reply-to").attr("data-reply");
+                if(!reply_in_progress) {
                     _COLLAB_PVT.markAnnotation();
                 }
             }); 
@@ -553,7 +555,7 @@ App.CollaborationUi = (function ($) {
             function processGroupData(group_object) {
                 for(var id in group_object) {
                     var current_group = group_object[id];
-                    var group_name = collabModel.groupsMap[id];
+                    var group_name = collabModel.groupsMap[id].name;
                     var agent_arr = [];
                     for(var j = 0; j < current_group.length; j++) {
                         var grp_member = String(current_group[j].user_id);
@@ -1614,7 +1616,7 @@ App.CollaborationUi = (function ($) {
         updateSentMessage: function(msg) {
             if(!!$("collab-" + msg.ts)) {
                $("#collab-" + msg.ts).attr("id", "collab-" + msg.mid);
-               var ann_elem = $("#annotation-" + msg.ts);
+               var ann_elem = $(".annotation[data-message-id="+msg.ts+"]");
                if(ann_elem.length) {
                    ann_elem.attr("id", "annotation-" + msg.mid);
                    ann_elem.attr("data-message-id", msg.mid);
@@ -1733,10 +1735,10 @@ App.CollaborationUi = (function ($) {
             var collabModel = App.CollaborationModel;
 
             if(!!collabModel.features.groupMentionsEnabled) {
-                for(var grp_name in collabModel.groupsTagMap) {
+                for(var grp_id in collabModel.groupsMap) {
                     usersToMention.push({
-                        mention_text: grp_name,
-                        job_title: "All agents in " + grp_name.replace("-", " ") + " group",
+                        name: collabModel.groupsMap[grp_id].name,
+                        mention_text: collabModel.groupsMap[grp_id].tag,
                         group: true
                     });
                 }

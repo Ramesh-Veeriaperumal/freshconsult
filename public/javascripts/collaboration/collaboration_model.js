@@ -56,17 +56,14 @@ App.CollaborationModel = (function ($) {
                     var grp_info = window.raw_store_data.group;
                     Collab.groupsTagMap = {};
                     grp_info.forEach( function (grp) {
-                        var grp_name = grp.name.trim().replace(/\s+/g, "-");
-                        // TODO (kshitij) : see if a workaround is possible to optimize this
-                        Object.keys(Collab.usersTagMap).forEach( function(user_name) {
-                            if(user_name.toLowerCase() === grp_name.toLowerCase()) {
-                                grp_name += "*";
-                            }
-                        });
-                        while(Collab.groupsTagMap.hasOwnProperty((grp_name))) {
+                        var grp_name = grp.name.trim().toLowerCase().replace(/\s+/g, "-");
+                        if(!!Collab.usersTagMap[grp_name] && Collab.usersTagMap[grp_name].deleted !== "1") {
                             grp_name += "*";
                         }
-                        Collab.groupsMap[grp.id] = grp.name;
+                        while(!!Collab.groupsTagMap[grp_name]) {
+                            grp_name += "*";
+                        }
+                        Collab.groupsMap[grp.id] = jQuery.extend({"tag": grp_name}, grp);
                         Collab.groupsTagMap[grp_name] = grp.id;
                     });
                 }

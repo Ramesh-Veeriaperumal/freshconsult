@@ -324,7 +324,7 @@ module Helpdesk::TicketActions
   end
 
   def get_db_type(params)
-    ((params[:wf_order] && sort_by_response?) || current_account.slave_queries?) ? :run_on_slave : :run_on_master
+    ((params[:wf_order] && sort_by_response?) || !current_account.master_queries?) ? :run_on_slave : :run_on_master
   end
 
   def get_tag_name

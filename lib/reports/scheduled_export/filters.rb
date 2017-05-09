@@ -24,7 +24,7 @@ module Reports::ScheduledExport::Filters
         :operatortype => "choicelist" },
       { :name => "source", :value => t('ticket.source'), :domtype => dropdown_domtype, 
         :choices => TicketConstants.source_list.sort, :operatortype => "choicelist" },
-      { :name => "tags", :value => t('ticket.tag_condition'), :domtype => "autocomplete_multiple", 
+      { :name => "tag_names", :value => t('ticket.tag_condition'), :domtype => "autocomplete_multiple", 
         :data_url => tags_search_autocomplete_index_path, :operatortype => "choicelist",
         :autocomplete_choices => @tag_hash },
       { :name => "requester_id", :value => t('ticket.requester'), :domtype => "autocomplete_multiple_with_id", 

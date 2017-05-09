@@ -11,7 +11,7 @@ class ApiContactsDependencyTest < ActionView::TestCase
       :add_to_history, :redirect_to_mobile_url, :clean_params, :check_demo_site, :set_selected_tab, :load_item,
       :can_change_password?, :load_password_policy, :check_agent_limit, :can_make_agent, :run_on_slave, :set_mobile,
       :init_user_email, :load_companies, :check_parent, :fetch_contacts, :set_native_mobile, :set_required_fields,
-      :set_validatable_custom_fields, :restrict_user_primary_email_delete]
+      :set_validatable_custom_fields, :restrict_user_primary_email_delete, :ensure_proper_sts_header]
     actual_filters = ContactsController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
   end
