@@ -4,7 +4,6 @@ class AccountDecorator < ApiDecorator
       full_domain: record.full_domain,
       helpdesk_name: record.helpdesk_name,
       name: record.name,
-      internal_id: record.id,
       time_zone: record.time_zone,
       date_format: date_format,
       features: features_list,
