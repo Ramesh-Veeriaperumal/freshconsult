@@ -62,7 +62,7 @@ module HelpdeskReports::Helper::FilterFields
           :field_type =>  "custom",
           :ff_name    =>  col.name,
           :active     =>  false,
-          :section_field => col.field_options['section'] || false
+          :section_field => col.section_field?
         }
         field_label_id_hash(defs[condition])
       end
