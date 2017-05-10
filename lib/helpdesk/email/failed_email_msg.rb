@@ -34,7 +34,7 @@ class Helpdesk::Email::FailedEmailMsg
 
   def trigger_observer_system_events
     event = @ticket.requester.emails.include?(@failed_email) ? REQUESTER_EMAIL_FAILED : OTHER_EMAIL_FAILED
-    @note.trigger_observer event, true
+    @note.trigger_observer event, false, true
   end
 
 end
