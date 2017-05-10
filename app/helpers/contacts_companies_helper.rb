@@ -36,9 +36,9 @@ module ContactsCompaniesHelper
 
   def ticket_desc(ticket)
     if ticket.class.eql?(Helpdesk::Ticket)
-      sanitize(ticket.ticket_body.description)
+      escape_javascript(ticket.ticket_body.description)
     elsif ticket.class.eql?(Helpdesk::ArchiveTicket)
-      sanitize(ticket.description)
+      escape_javascript(ticket.description)
     else
       ""
     end
