@@ -9,6 +9,10 @@ module TicketConstants
   BUSINESS_HOUR_CALLER_THREAD = "business_hour"
 
   NBA_NULL_PRODUCT_ID = "-1"
+
+  TFS_COMPUTE_FIELDS = ["ticket_type","priority","group_id","responder_id","owner_id","spam"]
+  TFS_COMPUTE_FIELDS_EXTRA = ["product_id","ticket_tags"]
+  TFS_TICKETS_COUNT_LIMIT = 30
   
   OUT_OF_OFF_SUBJECTS = [ "away from the office", "out of office", "away from office","mail delivery failed","returning your reply to helpdesk message", "vacation" ]
 

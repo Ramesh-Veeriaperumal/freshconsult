@@ -1917,6 +1917,7 @@ Helpkit::Application.routes.draw do
         post :export_csv
         post :latest_ticket_count
         post :sentiment_feedback
+        post :bulk_fetch_ticket_fields
         match :add_requester
         get :filter_options
         get :filter_conditions
@@ -2505,6 +2506,7 @@ Helpkit::Application.routes.draw do
   end
 
   match '/helpdesk/tickets/:id/suggest/tickets' => 'helpdesk/tickets#suggest_tickets'
+  match '/helpdesk/tickets/:id/ticket_properties' => 'helpdesk/tickets#bulk_fetch_ticket_fields'
   match '/support/theme.:format' => 'theme/support#index'
   match '/support/theme_rtl.:format' => 'theme/support_rtl#index'
   match '/helpdesk/theme.:format' => 'theme/helpdesk#index'
