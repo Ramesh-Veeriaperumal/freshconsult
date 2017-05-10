@@ -209,7 +209,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     days_count = if account.admin_email.ends_with?("freshdesk.com")
       account.tickets.count < 500 ? 120 : 60
     else
-      30
+      account.tickets.count < 1000 ? 30 : 10
     end
     result[:status] = (do_trial_extend(days_count.days) ? "success" : "notice")
     Account.reset_current_account

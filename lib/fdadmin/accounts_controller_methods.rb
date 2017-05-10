@@ -147,6 +147,7 @@ module Fdadmin::AccountsControllerMethods
 			result = Billing::ChargebeeWrapper.new.update_subscription(subscription.account_id, data)
 			return unless result.subscription.status.eql?("in_trial")
 			subscription.next_renewal_at = days.from_now.utc
+			subscription.state = "trial"
 			subscription.save!
 		end
 	rescue
