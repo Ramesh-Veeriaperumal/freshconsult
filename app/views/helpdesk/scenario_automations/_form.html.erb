@@ -40,8 +40,8 @@
 		<%= f.fields_for :accessible do |access| %>
 			<label class="control-label"><%=t('automations.visibility.available_for').html_safe%> :</label>
 			<div class="controls">
-        <% has_privilege = privilege?(:manage_scenario_automation_rule) || false %>
-        <% muted_options = has_privilege ? "muted" : "" %>
+        <% has_privilege = privilege?(:manage_scenario_automation_rules) || false %>
+        <% muted_options = has_privilege ? "" : "muted" %>
 				<label class="radio" id="only_me">
 					<%= access.radio_button  :access_type, Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users], {:onclick =>"toggleGroup(this.value)", :class => "radio", :checked => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]== @va_rule.accessible.access_type , :disabled => has_privilege }  %>
 					<%= t('automations.visibility.me_only') %>
