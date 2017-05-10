@@ -38,7 +38,7 @@ module Helpdesk::Permission
     end
 
     def can_view_helpdesk_note?
-      return false if ::User.current.customer? && owner_object.private?
+      return false if ::User.current && ::User.current.customer? && owner_object.private?
       can_view_helpdesk_ticket? owner_object.notable
     end
 
