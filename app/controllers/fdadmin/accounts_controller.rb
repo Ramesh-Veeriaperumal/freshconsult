@@ -203,6 +203,23 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end 
   end
 
+  def extend_trial
+    account = Account.find_by_id(params[:account_id]).make_current
+    result = {:account_id => account.id , :account_name => account.name }
+    days_count = if account.admin_email.ends_with?("freshdesk.com")
+      account.tickets.count < 500 ? 120 : 60
+    else
+      30
+    end
+    result[:status] = (do_trial_extend(days_count.days) ? "success" : "notice")
+    Account.reset_current_account
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end
+  end
+
 
   def change_url
     result = {}

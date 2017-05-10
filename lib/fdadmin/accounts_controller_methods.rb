@@ -139,6 +139,18 @@ module Fdadmin::AccountsControllerMethods
 		result.subscription.status.include?("trial")
 	rescue	
 	end
+
+	def do_trial_extend(days)
+		subscription = Account.current.subscription
+		if ["trial", "suspended"].include?(subscription.state)
+			data = {:trial_end => days.from_now.utc.to_i}
+			result = Billing::ChargebeeWrapper.new.update_subscription(subscription.account_id, data)
+			return unless result.subscription.status.eql?("in_trial")
+			subscription.next_renewal_at = days.from_now.utc
+			subscription.save!
+		end
+	rescue
+	end
 	
 	def switch_currency
 		account = Account.current
