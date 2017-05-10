@@ -1826,9 +1826,15 @@ Helpkit::Application.routes.draw do
   resource :accounts do
     collection do
       get :new_signup_free
+      post :email_signup
       post :new_signup_free
+      get :edit_domain
+      put :update_domain
+      get :validate_domain
     end
   end
+
+  match '/accounts/edit_domain/:perishable_token' => 'accounts#edit_domain', :as => :edit_account_domain
 
   resource :subscription do
     collection do
@@ -1861,6 +1867,7 @@ Helpkit::Application.routes.draw do
     match '/tickets/archived/filter/requester/:requester_id' => 'archive_tickets#index', :as => :archive_requester_filter, via: :get
     match '/tickets/archived/filter/company/:company_id' => 'archive_tickets#index', :as => :archive_company_filter, via: :get
     match '/tickets/archived/:id' => 'archive_tickets#show', :as => :archive_ticket, via: :get
+    match '/tickets/archived/:id/print' => 'archive_tickets#print_archive',via: :get
     match '/tickets/archived' => 'archive_tickets#index', :as => :archive_tickets, via: :get
     match '/tickets/archived/filter/tags/:tag_id' => 'archive_tickets#index', :as => :tag_filter
     resources :archive_tickets, :only => [:index, :show] do

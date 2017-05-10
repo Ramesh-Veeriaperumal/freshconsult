@@ -8,7 +8,7 @@ class Export::TicketDump < Export::TicketSchedule
     DataExportMailer.scheduled_ticket_export(:filter_id => @schedule.id) if @schedule.send_email?
     destroy_task
   rescue => e
-    NewRelic::Agent.notice_error(e)
+    NewRelic::Agent.notice_error(e,{:description => "Ticket Schedule Dump error #{Account.current.id} :: #{export_params[:task_id]}"})
     Rails.logger.debug "Ticket Schedule Dump error ::#{e.message}\n#{e.backtrace.join("\n")}"
   end
 
@@ -52,15 +52,7 @@ class Export::TicketDump < Export::TicketSchedule
     end
 
     def file_name
-      @file_name ||=
-        "tickets-#{file_timestamp}.csv"
-    end
-
-    def file_timestamp
-      exp = @task.hourly? ? "%B-%d-%Y-%H-00" : "%B-%d-%Y"
-      ret = "#{@task.frequency_name}-#{Time.zone.now.strftime(exp)}"
-      ret << "-with-dump" if initial_dump
-      ret
+      @file_name ||= @schedule.file_name(Time.zone.now.to_s)
     end
 
     def save_file_name file_name

@@ -396,7 +396,7 @@ private
      current_account.skills_trimmed_version_from_cache.map { |skill| 
       {:skill_id=>skill.id, :name=>skill.name} 
      } : []
-    gon.SkillBasedRRFlag = @skills.present?
+    @manage_skills = @skills.present? && current_user.privilege?(:manage_skills)
   end
 
   def ssl_check

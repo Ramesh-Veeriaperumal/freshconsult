@@ -147,7 +147,8 @@ window.App = window.App || {};
 			var $element = $('.'+field).find('.selected-label'),
 					checkedLength,
 					fieldText,
-					selectAllValue = $('.'+ field + '-item .select-all').is(':checked'),
+					$selectField = $('.'+ field + '-item .select-all'),
+					selectAllValue = $selectField.is(':checked'),
 					$fields = $('.'+ field + '-item input:checkbox:not(.select-all)');
 			if(selectAll){
 				switch(field){
@@ -165,7 +166,10 @@ window.App = window.App || {};
 			if(!selectAll && selectAllValue){
 				$('.'+ field + '-item input:checkbox.select-all').prop('checked',!selectAllValue)
 			}
-			checkedLength = $('.'+ field + '-item input:checkbox:checked:not(.select-all)').length,
+			checkedLength = $('.'+ field + '-item input:checkbox:checked:not(.select-all)').length;
+			if($fields.length === checkedLength && !selectAllValue){
+				$selectField.prop('checked',!selectAllValue);
+			}
 			fieldText = this.checkedFieldText(checkedLength)
 			$element.text(fieldText);
 		},

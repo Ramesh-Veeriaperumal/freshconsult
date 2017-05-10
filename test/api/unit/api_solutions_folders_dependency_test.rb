@@ -9,7 +9,7 @@ class ApiSolutionsFoldersDependencyTest < ActionView::TestCase
       :persist_user_agent, :set_cache_buster, :remove_pjax_param, :set_pjax_url, :set_last_active_time, :reset_language, 
       :remove_rails_2_flash_after, :set_affiliate_cookie, :verify_authenticity_token, :language, :set_modal, 
       :sanitize_item_id, :portal_check, :set_selected_tab, :load_meta, :validate_and_set_customers, :set_parent_for_old_params, 
-      :old_category, :check_new_category, :bulk_update_category, :clear_cache]
+      :old_category, :check_new_category, :bulk_update_category, :clear_cache, :ensure_proper_sts_header]
     actual_filters = Solution::FoldersController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
   end

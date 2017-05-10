@@ -49,7 +49,7 @@ class Account < ActiveRecord::Base
       :features => [ :collision, :layout_customization, :round_robin, :enterprise_reporting,
         :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing, :dynamic_sections,
         :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies,
-        :multiple_companies_toggle, :round_robin_on_update ],
+        :multiple_companies_toggle, :round_robin_on_update, :multi_dynamic_sections ],
       :inherits => [ :garden ]
     },
 
@@ -76,9 +76,9 @@ class Account < ActiveRecord::Base
 
     :estate_classic => {
       :features => [ :collision, :layout_customization, :round_robin, :enterprise_reporting,
-        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing,
+        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing, :dynamic_sections,
         :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies,
-        :multiple_companies_toggle, :round_robin_on_update ],
+        :multiple_companies_toggle, :round_robin_on_update, :multi_dynamic_sections ],
       :inherits => [ :garden_classic ]
     },
 
@@ -103,7 +103,7 @@ class Account < ActiveRecord::Base
         :collision, :layout_customization, :round_robin, :enterprise_reporting,
         :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing, :dynamic_sections,
         :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies,
-        :multiple_companies_toggle, :round_robin_on_update ],
+        :multiple_companies_toggle, :round_robin_on_update, :multi_dynamic_sections ],
       :inherits => [ :garden_jan_17 ]
     },
 
@@ -149,7 +149,7 @@ class Account < ActiveRecord::Base
     :agent_conference => false, :freshfone_warm_transfer => false, :restricted_helpdesk => false, :enable_multilingual => false,
     :count_es_writes => false, :count_es_reads => false, :activity_revamp => true, :countv2_writes => false, :countv2_reads => false,
     :helpdesk_restriction_toggle => false, :freshfone_acw => false, :ticket_templates => false, :cti => false, :all_notify_by_custom_server => false,
-    :freshfone_custom_forwarding => false, :freshfone_onboarding => false, :freshfone_gv_forward => false, :inline_images_with_one_hop => false, :skill_based_round_robin => false,
+    :freshfone_custom_forwarding => false, :freshfone_onboarding => false, :freshfone_gv_forward => false, :skill_based_round_robin => false,
     :salesforce_v2 => false, :advanced_search => false, :advanced_search_bulk_actions => false,:dynamics_v2 => false }
 
   # This list below is for customer portal features list only to prevent from adding addition features

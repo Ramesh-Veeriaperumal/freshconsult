@@ -10,7 +10,7 @@ class ApiSolutionsArticlesDependencyTest < ActionView::TestCase
       :remove_rails_2_flash_after, :set_affiliate_cookie, :verify_authenticity_token, :set_modal, :sanitize_item_id, 
       :portal_check, :set_selected_tab, :page_title, :load_meta_objects, :check_create_privilege, :old_folder, :check_new_folder, 
       :bulk_update_folder, :validate_author, :language, :cleanup_params_for_title, :language_scoper, :check_parent_params, 
-      :set_parent_for_old_params, :check_account_activation]
+      :set_parent_for_old_params, :check_account_activation, :ensure_proper_sts_header]
     actual_filters = Solution::ArticlesController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
   end

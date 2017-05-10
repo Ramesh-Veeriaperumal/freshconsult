@@ -26,7 +26,7 @@ module SslRequirement
     class_attribute :ssl_allowed_actions
     
     before_filter :ensure_proper_protocol
-    #before_filter :ensure_proper_sts_header
+    before_filter :ensure_proper_sts_header
   end
   
   module ClassMethods
@@ -89,10 +89,13 @@ module SslRequirement
     end
 
     def ensure_proper_sts_header
-      if main_portal_with_ssl? || cnamed_portal_with_ssl?
-         response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+      #returning if current_account is nil
+      return true if current_account.nil?
+
+      if main_portal_with_ssl? || (current_portal.present? && cnamed_portal_with_ssl?)
+         response.headers["Strict-Transport-Security"] = "max-age=31536000;"
       else
-         response.headers["Strict-Transport-Security"] = "max-age=0; includeSubDomains"
+         response.headers["Strict-Transport-Security"] = "max-age=0;"
       end
     end
 
