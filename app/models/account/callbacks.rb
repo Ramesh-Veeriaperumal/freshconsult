@@ -286,10 +286,6 @@ class Account < ActiveRecord::Base
 
     def enable_count_es
       if redis_key_exists?(DASHBOARD_FEATURE_ENABLED_KEY)
-        count = Search::Dashboard::Count.new(nil, id, nil)
-        count.index_new_account_dashboard_shard
-        key = ACCOUNT_DASHBOARD_SHARD_NAME % { :account_id => self.id }
-        MemcacheKeys.fetch(key) { ActiveRecord::Base.current_shard_selection.shard.to_s }
         CountES::IndexOperations::EnableCountES.perform_async({ :account_id => self.id }) 
       end
     end
