@@ -92,7 +92,7 @@ class UsersController < ApplicationController
     elsif is_user_social(@user, 300).present?
       redirect_to is_user_social(@user, 300)
     else
-      redirect_to ""
+      render :text => "noimage"
     end
   end
 

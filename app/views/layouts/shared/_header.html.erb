@@ -143,7 +143,7 @@
 				  </div>
 			  <% end %>    
 				<% if current_user.agent? %>
-					<% if current_account.launched?(:user_notifications) %>
+					<% if current_account.user_notifications_enabled? %>
 						<div id="user_notify_header" class="header-notification-wrapper" rel="remote-load" 
 								data-url="/notification/user_notification">
 						</div>

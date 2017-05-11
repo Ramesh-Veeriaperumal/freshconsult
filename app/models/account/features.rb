@@ -2,7 +2,7 @@ class Account < ActiveRecord::Base
 
   LP_FEATURES   = [:link_tickets, :select_all, :round_robin_capping, :suggest_tickets, :customer_sentiment_ui,
                    :dkim, :bulk_security, :multi_dynamic_sections, :scheduled_ticket_export, :ticket_contact_export,
-                   :email_failures, :disable_emails, :auto_ticket_export, :one_hop]
+                   :email_failures, :disable_emails, :auto_ticket_export, :one_hop, :user_notifications]
   DB_FEATURES   = [:shared_ownership, :custom_survey, :requester_widget, :collaboration, :archive_tickets, :sitemap]
   BITMAP_FEATURES = [
       :split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management,
