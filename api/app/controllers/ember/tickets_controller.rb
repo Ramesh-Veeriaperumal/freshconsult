@@ -17,6 +17,7 @@ module Ember
     after_filter  :enable_notification, only: [:update, :update_properties], if: :notification_not_required?
 
     around_filter :run_on_db, :only => :index
+    around_filter :use_time_zone, :only => :index
 
     def index
       sanitize_filter_params
@@ -273,6 +274,12 @@ module Ember
 
       def constants_class
         :ApiTicketConstants.to_s.freeze
+      end
+
+      def use_time_zone
+        Time.use_zone(TimeZone.set_time_zone) {
+          yield
+        }
       end
 
       def load_note
