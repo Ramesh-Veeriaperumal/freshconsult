@@ -1057,6 +1057,7 @@ ActiveRecord::Schema.define(:version => 20170411034444) do
     t.text     "account_info"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "job_id"
     t.integer  "status",                    :default => 0
   end
 
