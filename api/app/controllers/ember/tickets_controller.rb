@@ -237,11 +237,15 @@ module Ember
       end
 
       def optimized_count(items)
-        if current_account.count_es_enabled? && non_indexed_columns_query?
+        if !default_filter? && current_account.count_es_enabled? && non_indexed_columns_query?
           ::Search::Tickets::Docs.new(wf_query_hash).count(Helpdesk::Ticket)
         else
           items.count
         end
+      end
+
+      def default_filter?
+        !@delegator.ticket_filter.respond_to?(:id)
       end
 
       def non_indexed_columns_query?
