@@ -92,6 +92,10 @@ module HelpdeskReports::Helper::PlanConstraints
     limit[plan_group] || limit[:default]
   end
 
+  def data_refresh_frequency
+    ReportsAppConfig::REPORT_CONSTRAINTS[:data_refresh_frequency][plan_group]
+  end
+
   def save_report_user_count
     @save_report_user_count ||= User.current.report_filters.count
   end
