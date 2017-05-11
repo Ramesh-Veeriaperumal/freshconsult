@@ -58,6 +58,8 @@ module Ember
       @item.save
       # TODO-LongTerm create_scenario_activity should ideally be inside va_rule model and not in the controllers
       @item.create_scenario_activity(va_rule.name)
+      # TODO: Need to revisit. Find a better way to unset scenario_action_log thread variable.
+      Va::RuleActivityLogger.clear_activities
       head 204
     end
 
