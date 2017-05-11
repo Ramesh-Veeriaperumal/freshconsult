@@ -123,7 +123,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/canned_responses/response"
 
     resource :"helpdesk/archive_ticket", :only => [:show, :index, :custom_search, :latest_note,
-                                                    :full_paginate,  :activities, :component, :prevnext, :activitiesv2]
+                                                    :full_paginate,  :activities, :component, :prevnext, :activitiesv2, :print_archive]
     resource :"helpdesk/archive_note", :only => [:index, :full_text]
 
     resource :"wf/filter", :only => [:index, :update_filter, :save_filter, :delete_filter]
@@ -588,7 +588,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_account do
-    resource :account, :only => [:show, :cancel]
+    resource :account, :only => [:show, :cancel, :update_domain, :validate_domain]
     resource :account_configuration
     resource :"admin/data_export"
     resource :subscription # plans and billing

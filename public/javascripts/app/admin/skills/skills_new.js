@@ -121,10 +121,10 @@ window.App.Admin.Skills = window.App.Admin.Skills || {};
       var _this = this;
       _this.appendContent(name, agentcount, _this.initmodal);
       var $agentSelectBox = $('#manage-agents-content .add-agent-box, #manage-agents-content .button-container');
-      if (isaccadmin && $('#is-accadmin').val() === 'false') {
-        $agentSelectBox.hide();
-      } else {
+      if (isaccadmin) {
         $agentSelectBox.show();
+      } else {
+        $agentSelectBox.hide();
       }
       _this.temp_agents = {};
     },
@@ -205,7 +205,8 @@ window.App.Admin.Skills = window.App.Admin.Skills || {};
       var newObj = _.sortBy(obj, 'forSort');
       var list = JST['app/admin/skills/templates/add_user']({
         data: newObj,
-        userLen: newObj.length
+        userLen: newObj.length,
+        deletePrivilege: true
       });
       $('#manage-agents .agent-list-wrapper').append(list);
       $('.addAgentHiddenInput').select2('val', '');

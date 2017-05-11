@@ -50,7 +50,13 @@ class SupportScore < ActiveRecord::Base
     alias_method :speed, :fast
     alias_method :sharpshooter, :first_call
     alias_method :love, :customer_champion
+
+    # force index
+    def force_index(index)
+      from("#{self.table_name} FORCE INDEX(#{index})")
+    end
   end
+
 
   # RAILS3 by default has this feature
   #scope :limit, lambda { |num| { :limit => num } }

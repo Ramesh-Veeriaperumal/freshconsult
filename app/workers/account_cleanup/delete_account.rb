@@ -9,6 +9,7 @@ class AccountCleanup::DeleteAccount < BaseWorker
 
   def perform(args)
     account = Account.current
+    return if account.active?
     deleted_customer = DeletedCustomers.find_by_account_id(account.id)
 
     update_status(deleted_customer, STATUS[:in_progress])

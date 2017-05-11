@@ -19,7 +19,9 @@ end
 
         </div>
                 <div class="add-agent-box">
-                <span class="rounded-add-icon add-agent-icon"></span>
+                <% if current_user.privilege?(:manage_account) || current_user.privilege?(:manage_skills) %>
+                  <span class="rounded-add-icon add-agent-icon"></span>
+                <% end %>
                 <% if type == 'roles' %>
                   <select data-action="add-agent" multiple="true"
                   class="add-agent-class agent-select-list" placeholder="<%= t('admin.roles.add_agent_label') %>">

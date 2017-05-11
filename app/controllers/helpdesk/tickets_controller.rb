@@ -805,7 +805,7 @@ class Helpdesk::TicketsController < ApplicationController
           }
           format.xml { render :xml => @item }
           format.mobile {
-            render :json => {:success => true, :id => @item.id, :actions_executed => actions_executed, :rule_name => @va_rule.name , :success_message => t("activities.tag.execute_scenario", :rule_name => va_rule.name) }.to_json
+            render :json => {:success => true, :id => @item.id, :actions_executed => actions_executed, :rule_name => @va_rule.name , :success_message => t("activities.tag.execute_scenario") }.to_json
           }
           format.json { render :json => @item }
           format.js {
@@ -1955,7 +1955,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def run_on_db(&block)
-    db_type = current_account.slave_queries? ? :run_on_slave : :run_on_master
+    db_type = current_account.master_queries? ? :run_on_master : :run_on_slave
     Sharding.send(db_type) do
       yield
     end
