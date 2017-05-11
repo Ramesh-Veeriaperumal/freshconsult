@@ -207,12 +207,7 @@ class User < ActiveRecord::Base
   end
 
   def send_alert_email
-<<<<<<< HEAD
     if self.agent? && self.email_was.downcase != self.email.downcase
-=======
-
-    if self.agent?
->>>>>>> origin/rails3-phase2
       changed_attributes_names = ["primary email "]
       subject = "System notification: Agent email address changed"
       SecurityEmailNotification.send_later(:deliver_agent_email_change, self, self.email_was,subject,
