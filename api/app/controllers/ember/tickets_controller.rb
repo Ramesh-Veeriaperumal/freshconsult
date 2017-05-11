@@ -237,14 +237,14 @@ module Ember
 
       def optimized_count(items)
         if current_account.count_es_enabled? && non_indexed_columns_query?
-          Search::Tickets::Docs.new(wf_query_hash).count(Helpdesk::Ticket)
+          ::Search::Tickets::Docs.new(wf_query_hash).count(Helpdesk::Ticket)
         else
           items.count
         end
       end
 
       def non_indexed_columns_query?
-        (wf_query_hash.collect {|q| q["condition"] } - TicketConstants::DB_INDEXED_QUERY_COLUMNS) > 0
+        (wf_query_hash.collect {|q| q["condition"] } - (TicketConstants::DB_INDEXED_QUERY_COLUMNS + ['spam', 'deleted'])).count > 0
       end
 
       def sanitize_filter_params
