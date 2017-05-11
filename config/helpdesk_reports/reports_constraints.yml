@@ -40,7 +40,7 @@
 :data_refresh_frequency:
   default: 1440
   sprout: 1440
-  blossom: -1
+  blossom: 1440
   garden: 60
   estate: 60
   forest: 30
