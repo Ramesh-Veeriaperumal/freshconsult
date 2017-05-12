@@ -82,7 +82,8 @@ class AccountsController < ApplicationController
         format.json {
           render :json => { :success => true,
                             :url => edit_account_domain_url(:perishable_token => @signup.user.perishable_token, :host => @signup.account.full_domain),
-                            :callback => params[:callback]
+                            :callback => params[:callback],
+                            :account_id => @signup.account.id
                           }
         }
       end
