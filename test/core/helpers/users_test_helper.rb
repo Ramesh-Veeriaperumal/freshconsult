@@ -1,4 +1,11 @@
+['contact_fields_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 module UsersTestHelper
+  include ContactFieldsTestHelper
+
+  XSS_SCRIPT_TEXT = "<script> alert('hi'); </script>"
+  CUSTOM_FIELDS_TYPES = %w(text paragraph)
+  CUSTOM_FIELDS_CONTENT_BY_TYPE = { 'text' => XSS_SCRIPT_TEXT, 'paragraph' =>  XSS_SCRIPT_TEXT }  
+
   def add_test_agent(account=nil, options={})
     account = account || @account
 
@@ -41,7 +48,6 @@ module UsersTestHelper
   end
 
   def add_new_user(account, options={})
-
     if options[:email]
       user = User.find_by_email(options[:email])
       return user if user
@@ -60,11 +66,26 @@ module UsersTestHelper
     new_user.reload
   end
 
-
   def add_user_draft_attachments(params={})
     file = File.new(Rails.root.join("spec/fixtures/files/attachment.txt"))
     user_id = params[:user_id] || add_new_user(@account).id
     att = Helpdesk::Attachment.new(content: file, account_id: @account.id, attachable_type: "UserDraft", attachable_id: user_id)
     att.save
+
+  def create_user_with_xss other_object_params = {}
+    params  = create_user_params_with_xss other_object_params
+    contact = add_new_user @account, params
+  end
+
+  def create_user_params_with_xss other_object_params
+    params = {}
+    params[:custom_fields] = {}
+    CUSTOM_FIELDS_TYPES.each do |field_type|
+      cf_params = cf_params(type: field_type, field_type: "custom_#{field_type}", label: "test_custom_#{field_type}", editable_in_signup: 'true')
+      custom_field = create_custom_contact_field(cf_params)
+      params[:custom_fields][:"#{custom_field.name}"] = CUSTOM_FIELDS_CONTENT_BY_TYPE[field_type]
+    end
+    Account.current.reload
+    params.merge(other_object_params)
   end
 end

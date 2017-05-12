@@ -69,6 +69,10 @@
       if dip.present? && dip.include?('helpdesk_tickets_show_page_side_bar')
         next if is_invoice_disabled?(installed_app)
         app_name = app.name
+        if app.freshplug?
+          sanitize_field_values_for_substitution(@ticket)
+          sanitize_field_values_for_substitution(@ticket.requester) 
+        end
         liquid_objects = {"ticket" => @ticket, "requester" => @ticket.requester }
         if app_name == Integrations::Constants::APP_NAMES[:xero]         
           liquid_objects["timesheet"] = @ticket.time_sheets.to_json
