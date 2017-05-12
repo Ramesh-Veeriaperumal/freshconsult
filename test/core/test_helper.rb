@@ -1,9 +1,8 @@
 require 'simplecov'
 require 'simplecov-rcov'
 require 'simplecov-csv'
-require 'fakeweb'
 require_relative 'helpers/test_files.rb'
-
+require 'fakeweb'
 class ActionController::TestCase
   rescue_from AWS::DynamoDB::Errors::ResourceNotFoundException do |exception|
     Rake::Task['forum_moderation:create_tables'].invoke(Time.zone.now.year, Time.zone.now.month) if  Rails.env.test?
@@ -19,13 +18,4 @@ class ActionController::TestCase
 
   self.use_transactional_fixtures = false
   fixtures :all
-end
-
-class ActiveSupport::TestCase
-  def setup
-    create_test_account
-  end
-
-  self.use_transactional_fixtures = false
-  fixtures :all 
 end
