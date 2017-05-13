@@ -532,7 +532,7 @@ class Account < ActiveRecord::Base
   end
 
   def dashboard_shard_name
-    dashboard_shard_from_cache || ActiveRecord::Base.current_shard_selection.shard.to_s
+    dashboard_shard_from_cache.presence || ActiveRecord::Base.current_shard_selection.shard.to_s
   end
 
   def update_ticket_dynamo_shard

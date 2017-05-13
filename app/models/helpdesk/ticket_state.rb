@@ -13,6 +13,8 @@ class Helpdesk::TicketState <  ActiveRecord::Base
   TICKET_STATE_SEARCH_FIELDS = [ 'resolved_at', 'closed_at', 'agent_responded_at',
                                  'requester_responded_at', 'status_updated_at' ]
 
+  alias_attribute :on_state_time, :ts_int1
+
   belongs_to_account
   belongs_to :tickets , :class_name =>'Helpdesk::Ticket',:foreign_key =>'ticket_id'
   
@@ -156,6 +158,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     end
     log_resolution_time_by_bhrs(from_time, to_time, sla_policy, sla_detail, updated_time)
     self.resolution_time_by_bhrs = self.resolution_time_by_bhrs.to_i + updated_time
+    self.on_state_time = self.on_state_time.to_i + updated_time
   end
 
   def set_avg_response_time

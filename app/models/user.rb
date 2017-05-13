@@ -102,6 +102,7 @@ class User < ActiveRecord::Base
   validate :unique_external_id_feature, :if => :unique_external_id_changed?
 
 
+
   def email_validity
     self.errors.add(:base, I18n.t("activerecord.errors.messages.email_invalid")) unless self[:account_id].blank? or self[:email] =~ EMAIL_VALIDATOR
     self.errors.add(:base, I18n.t("activerecord.errors.messages.email_not_unique")) if self[:email] and self[:account_id].present? and User.exists?(["email = ? and id != '#{self.id}'", self[:email]])
@@ -876,7 +877,7 @@ class User < ActiveRecord::Base
   def make_agent(args = {})
     ActiveRecord::Base.transaction do
       self.user_emails = [self.primary_email]
-      self.deleted = false
+      self.deleted = args[:deleted] || false
       self.helpdesk_agent = true
       self.address = nil
       self.role_ids = args[:role_ids].present? ? args[:role_ids] : [account.roles.find_by_name("Agent").id]
