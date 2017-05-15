@@ -1,8 +1,6 @@
 class ConversationDelegator < BaseDelegator
 
-  attr_accessor :email_config_id, :cloud_file_attachments, :last_note_id
-
-  validates :last_note_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }
+  attr_accessor :email_config_id, :cloud_file_attachments
 
   validate :validate_agent_emails, if: -> { note? && to_emails.present? && attr_changed?('to_emails', schema_less_note)}
 
@@ -75,7 +73,7 @@ class ConversationDelegator < BaseDelegator
   end
 
   def validate_unseen_replies
-    unseen_notes_exists = (@ticket.notes.visible.last_traffic_cop_note.pluck(:id).try(:first) || -1) > last_note_id
+    unseen_notes_exists = (notable.notes.visible.last_traffic_cop_note.pluck(:id).try(:first) || -1) > last_note_id
     errors[:conversation] << :traffic_cop_alert if unseen_notes_exists
   end
 
