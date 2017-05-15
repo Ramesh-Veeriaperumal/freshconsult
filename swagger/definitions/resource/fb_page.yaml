@@ -1,11 +1,11 @@
 type: object
 properties:
   id:
-    type: number
+    type: integer
   profile_id:
-    type: number
+    type: integer
   page_id:
-    type: number
+    type: integer
   page_name:
     type: string
   page_image_url:
@@ -15,4 +15,4 @@ properties:
   enable_page:
     type: boolean
   product_id:
-    type: number
+    type: integer

@@ -2,13 +2,13 @@ type: object
 description: Company activities
 properties:
   id:
-    type: number
+    type: integer
   subject:
     type: string
   status:
     type: string
   agent_id:
-    type: number
+    type: integer
   created_at:
     type: string
     format: date-time

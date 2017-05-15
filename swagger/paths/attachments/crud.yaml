@@ -25,7 +25,8 @@ delete:
   parameters:
     - name: id
       in: path
-      type: number
+      type: integer
+      format: int64
       description: ID of attachment to be deleted
       required: true
   responses:

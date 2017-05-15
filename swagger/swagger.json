@@ -81,12 +81,12 @@
           {
             "name": "company_id",
             "in": "query",
-            "type": "number"
+            "type": "integer"
           },
           {
             "name": "requester_id",
             "in": "query",
-            "type": "number"
+            "type": "integer"
           },
           {
             "name": "email",
@@ -177,7 +177,8 @@
           {
             "name": "id",
             "in": "path",
-            "type": "number",
+            "type": "integer",
+            "format": "int64",
             "description": "Display ID of ticket",
             "required": true
           },
@@ -218,7 +219,8 @@
           {
             "name": "id",
             "in": "path",
-            "type": "number",
+            "type": "integer",
+            "format": "int64",
             "description": "Display ID of ticket",
             "required": true
           }
@@ -282,7 +284,8 @@
           {
             "name": "id",
             "in": "path",
-            "type": "number",
+            "type": "integer",
+            "format": "int64",
             "description": "Display ID of ticket",
             "required": true
           }
@@ -310,7 +313,8 @@
           {
             "name": "id",
             "in": "path",
-            "type": "number",
+            "type": "integer",
+            "format": "int64",
             "description": "Display ID of ticket",
             "required": true
           }
@@ -338,7 +342,7 @@
           {
             "name": "id",
             "in": "path",
-            "type": "number",
+            "type": "integer",
             "description": "Display ID of ticket",
             "required": true
           }
@@ -366,7 +370,8 @@
           {
             "name": "id",
             "in": "path",
-            "type": "number",
+            "type": "integer",
+            "format": "int64",
             "description": "Display ID of ticket",
             "required": true
           },
@@ -525,8 +530,9 @@
         "parameters": [
           {
             "name": "scenario_id",
-            "in": "path",
-            "type": "number",
+            "in": "query",
+            "type": "integer",
+            "format": "int64",
             "required": true,
             "description": "ID of scenario to be executed"
           },
@@ -604,7 +610,8 @@
           {
             "name": "id",
             "in": "path",
-            "type": "number",
+            "type": "integer",
+            "format": "int64",
             "description": "Display ID of ticket",
             "required": true
           }
@@ -636,7 +643,8 @@
           {
             "name": "id",
             "in": "path",
-            "type": "number",
+            "type": "integer",
+            "format": "int64",
             "description": "Display ID of ticket",
             "required": true
           },
@@ -644,6 +652,7 @@
             "name": "note_id",
             "in": "query",
             "type": "integer",
+            "format": "int64",
             "required": true
           }
         ],
@@ -672,16 +681,11 @@
         "description": "Agent specific draft version of the reply for a ticket will be saved.",
         "parameters": [
           {
-            "name": "id",
-            "type": "number",
-            "description": "Display ID of ticket",
-            "in": "path",
-            "required": true
+            "$ref": "#/parameters/id"
           },
           {
             "name": "data",
             "in": "body",
-            "type": "object",
             "required": true,
             "schema": {
               "$ref": "#/definitions/draft_create_input"
@@ -717,11 +721,7 @@
         "description": "Retrieves agent specific draft version of the reply for a ticket",
         "parameters": [
           {
-            "name": "id",
-            "type": "number",
-            "description": "Display ID of ticket",
-            "in": "path",
-            "required": true
+            "$ref": "#/parameters/id"
           }
         ],
         "responses": {
@@ -748,7 +748,8 @@
         "parameters": [
           {
             "name": "id",
-            "type": "number",
+            "type": "integer",
+            "format": "int64",
             "description": "Display ID of ticket",
             "in": "path",
             "required": true
@@ -870,11 +871,10 @@
         "description": "Update Properties",
         "parameters": [
           {
-            "name": "id",
-            "in": "path"
+            "$ref": "#/parameters/id"
           },
           {
-            "name": "data",
+            "name": "body",
             "in": "body",
             "required": true,
             "schema": {
@@ -906,19 +906,25 @@
         "summary": "Activities",
         "parameters": [
           {
+            "$ref": "#/parameters/id"
+          },
+          {
             "name": "limit",
-            "in": "path",
-            "type": "number"
+            "in": "query",
+            "type": "integer",
+            "format": "int64"
           },
           {
             "name": "before_id",
-            "in": "path",
-            "type": "number"
+            "in": "query",
+            "type": "integer",
+            "format": "int64"
           },
           {
             "name": "since_id",
-            "in": "path",
-            "type": "number"
+            "in": "query",
+            "type": "integer",
+            "format": "int64"
           }
         ],
         "responses": {
@@ -945,15 +951,12 @@
         "description": "Conversations",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "type": "number",
-            "description": "Display ID of ticket",
-            "required": true
+            "$ref": "#/parameters/id"
           }
         ],
         "responses": {
           "200": {
+            "description": "Success",
             "schema": {
               "$ref": "#/definitions/conversations_show"
             }
@@ -975,10 +978,7 @@
         "description": "Create a Note",
         "parameters": [
           {
-            "name": "id",
-            "type": "number",
-            "in": "path",
-            "description": "Display ID of ticket"
+            "$ref": "#/parameters/id"
           },
           {
             "name": "data",
@@ -1016,10 +1016,7 @@
         "description": "Create a Reply",
         "parameters": [
           {
-            "name": "id",
-            "type": "number",
-            "in": "path",
-            "description": "Display ID of ticket"
+            "$ref": "#/parameters/id"
           },
           {
             "name": "data",
@@ -1054,10 +1051,7 @@
         "description": "Reply Template",
         "parameters": [
           {
-            "name": "id",
-            "type": "number",
-            "in": "path",
-            "description": "Ticket ID"
+            "$ref": "#/parameters/id"
           }
         ],
         "responses": {
@@ -1084,10 +1078,7 @@
         "description": "Forward Ticket",
         "parameters": [
           {
-            "name": "id",
-            "type": "number",
-            "in": "path",
-            "description": "Display ID of ticket"
+            "$ref": "#/parameters/id"
           },
           {
             "name": "data",
@@ -1122,10 +1113,7 @@
         "description": "Forward Template",
         "parameters": [
           {
-            "name": "id",
-            "type": "number",
-            "in": "path",
-            "description": "Ticket ID"
+            "$ref": "#/parameters/id"
           }
         ],
         "responses": {
@@ -1152,10 +1140,7 @@
         "description": "Latest Note Forward Template",
         "parameters": [
           {
-            "name": "id",
-            "type": "number",
-            "in": "path",
-            "description": "Note ID"
+            "$ref": "#/parameters/id"
           }
         ],
         "responses": {
@@ -1182,10 +1167,7 @@
         "description": "Facebook Reply",
         "parameters": [
           {
-            "name": "id",
-            "type": "number",
-            "in": "path",
-            "description": "Display ID of ticket"
+            "$ref": "#/parameters/id"
           },
           {
             "name": "data",
@@ -1220,6 +1202,9 @@
         "description": "Reply/DM to a Twitter ticket",
         "parameters": [
           {
+            "$ref": "#/parameters/id"
+          },
+          {
             "name": "data",
             "in": "body",
             "required": true,
@@ -1252,10 +1237,7 @@
         "description": "Update a Note",
         "parameters": [
           {
-            "name": "id",
-            "type": "number",
-            "in": "path",
-            "description": "ID of note to be updated"
+            "$ref": "#/parameters/id"
           },
           {
             "name": "data",
@@ -1293,10 +1275,7 @@
         "description": "Full Text",
         "parameters": [
           {
-            "name": "id",
-            "type": "number",
-            "in": "path",
-            "description": "ID of note"
+            "$ref": "#/parameters/id"
           }
         ],
         "responses": {
@@ -1329,10 +1308,7 @@
         "description": "Note Forward Template",
         "parameters": [
           {
-            "name": "id",
-            "type": "number",
-            "in": "path",
-            "description": "Note ID"
+            "$ref": "#/parameters/id"
           }
         ],
         "responses": {
@@ -1376,7 +1352,7 @@
           {
             "name": "company_id",
             "in": "query",
-            "type": "number"
+            "type": "integer"
           },
           {
             "name": "state",
@@ -1465,8 +1441,7 @@
         "summary": "Show contact",
         "parameters": [
           {
-            "name": "id",
-            "in": "path"
+            "$ref": "#/parameters/id"
           },
           {
             "name": "email",
@@ -1494,8 +1469,9 @@
         "parameters": [
           {
             "name": "id",
+            "type": "integer",
+            "format": "int64",
             "in": "path",
-            "type": "number",
             "required": true
           }
         ],
@@ -1515,8 +1491,7 @@
         "description": "Update a contact",
         "parameters": [
           {
-            "name": "id",
-            "in": "path"
+            "$ref": "#/parameters/id"
           },
           {
             "name": "data",
@@ -1552,8 +1527,9 @@
         "parameters": [
           {
             "name": "id",
+            "type": "integer",
+            "format": "int64",
             "in": "path",
-            "type": "number",
             "required": true
           }
         ],
@@ -1577,7 +1553,8 @@
           {
             "name": "id",
             "in": "path",
-            "type": "number",
+            "type": "integer",
+            "format": "int64",
             "required": true,
             "description": "ID of contact"
           }
@@ -1609,7 +1586,8 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "number"
+            "type": "integer",
+            "format": "int64"
           },
           {
             "name": "data",
@@ -1643,7 +1621,8 @@
           {
             "name": "id",
             "in": "path",
-            "type": "number",
+            "type": "integer",
+            "format": "int64",
             "required": true
           },
           {
@@ -1686,7 +1665,8 @@
           {
             "name": "id",
             "in": "path",
-            "type": "number",
+            "type": "integer",
+            "format": "int64",
             "required": true,
             "description": "ID of contact"
           }
@@ -1716,18 +1696,7 @@
         ],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "type": "number",
-            "required": true
-          }
-        ],
-        "examples": [
-          {
-            "id": 22
-          },
-          {
-            "id": 23
+            "$ref": "#/parameters/id"
           }
         ],
         "responses": {
@@ -1950,7 +1919,8 @@
           {
             "name": "id",
             "in": "path",
-            "type": "number",
+            "type": "integer",
+            "format": "int64",
             "required": true
           }
         ],
@@ -1973,9 +1943,7 @@
         "description": "Lists all recent tickets raised by company contacts",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "type": "string"
+            "$ref": "#/parameters/id"
           },
           {
             "name": "type",
@@ -2003,7 +1971,7 @@
         }
       }
     },
-    "/attachments": {
+    "/attachments/{id}": {
       "post": {
         "tags": [
           "attachment"
@@ -2046,7 +2014,8 @@
           {
             "name": "id",
             "in": "path",
-            "type": "number",
+            "type": "integer",
+            "format": "int64",
             "description": "ID of attachment to be deleted",
             "required": true
           }
@@ -2072,22 +2041,21 @@
         "summary": "Unlink Shared Attachment",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "type": "number",
-            "description": "ID of attachment",
-            "required": true
+            "$ref": "#/parameters/id"
           },
           {
             "name": "data",
             "in": "body",
             "required": true,
             "schema": {
-              "type": "object",
+              "required": [
+                "attachable_id",
+                "attachable_type"
+              ],
               "properties": {
                 "attachable_id": {
-                  "type": "number",
-                  "required": true,
+                  "type": "integer",
+                  "format": "int64",
                   "description": "ID of the attachable item"
                 },
                 "attachable_type": {
@@ -2104,7 +2072,6 @@
                     "user_draft",
                     "account"
                   ],
-                  "required": true,
                   "description": "Type of the attachable item"
                 }
               }
@@ -2183,7 +2150,8 @@
           {
             "name": "id",
             "in": "path",
-            "type": "string",
+            "type": "integer",
+            "format": "int64",
             "required": true
           }
         ],
@@ -2229,7 +2197,8 @@
           {
             "name": "id",
             "in": "path",
-            "type": "string",
+            "type": "integer",
+            "format": "int64",
             "required": true
           }
         ],
@@ -2249,7 +2218,8 @@
         "parameters": [
           {
             "name": "id",
-            "type": "number",
+            "type": "integer",
+            "format": "int64",
             "description": "Display ID of ticket",
             "in": "path",
             "required": true
@@ -2287,6 +2257,8 @@
         "parameters": [
           {
             "name": "id",
+            "type": "integer",
+            "format": "int64",
             "description": "Display ID of ticket",
             "in": "path",
             "required": true
@@ -2317,7 +2289,8 @@
         "parameters": [
           {
             "name": "id",
-            "type": "id",
+            "type": "integer",
+            "format": "int64",
             "description": "Display ID of ticket",
             "in": "path",
             "required": true
@@ -2453,7 +2426,8 @@
           {
             "name": "id",
             "in": "path",
-            "type": "number",
+            "type": "integer",
+            "format": "int64",
             "required": true,
             "description": "ID of canned response"
           }
@@ -2514,7 +2488,8 @@
           {
             "name": "id",
             "in": "path",
-            "type": "number",
+            "type": "integer",
+            "format": "int64",
             "required": true,
             "description": "ID of canned response"
           },
@@ -2557,7 +2532,7 @@
           {
             "name": "ticket_id",
             "in": "query",
-            "type": "number"
+            "type": "integer"
           },
           {
             "name": "search_string",
@@ -2620,7 +2595,8 @@
           {
             "name": "id",
             "in": "path",
-            "type": "number",
+            "type": "integer",
+            "format": "int64",
             "required": true
           }
         ],
@@ -2646,14 +2622,6 @@
           "agent"
         ],
         "summary": "Show me",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "type": "number",
-            "required": true
-          }
-        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -2721,6 +2689,7 @@
             "name": "ticket_id",
             "in": "query",
             "type": "integer",
+            "format": "int64",
             "description": "Ticket ID to filter todo of a ticket"
           }
         ],
@@ -2765,14 +2734,17 @@
             "required": true,
             "schema": {
               "type": "object",
+              "required": [
+                "body"
+              ],
               "properties": {
                 "body": {
                   "type": "string",
-                  "required": true,
                   "description": "content of the todo"
                 },
                 "ticket_id": {
-                  "type": "id",
+                  "type": "integer",
+                  "format": "int64",
                   "description": "Ticket id, if its associated with a ticket."
                 }
               }
@@ -2806,7 +2778,8 @@
           {
             "name": "id",
             "in": "path",
-            "type": "number",
+            "type": "integer",
+            "format": "int64",
             "required": true,
             "description": "ID of todo"
           }
@@ -2836,10 +2809,7 @@
         "description": "Update a todo",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "type": "number",
-            "required": true
+            "$ref": "#/parameters/id"
           },
           {
             "name": "data",
@@ -2880,10 +2850,7 @@
         ],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "type": "number",
-            "required": true
+            "$ref": "#/parameters/id"
           }
         ],
         "responses": {
@@ -2926,11 +2893,14 @@
         "description": "Check Following for an User",
         "parameters": [
           {
+            "$ref": "#/parameters/id"
+          },
+          {
             "name": "screen_name",
-            "in": "path",
+            "in": "query",
             "required": true,
-            "example": "@potus",
-            "type": "number",
+            "type": "integer",
+            "format": "int64",
             "description": "Twitter ID of the user for whom following check is done"
           }
         ],
@@ -3002,666 +2972,12 @@
           }
         }
       }
-    },
-    "/search/home/suggest": {
-      "get": {
-        "summary": "Suggestion",
-        "description": "Home suggestion - default results dropdown in spotlight",
-        "tags": [
-          "search"
-        ],
-        "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "type": "string",
-            "description": "search query"
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "type": "number"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "type": "number"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/search_suggest"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      }
-    },
-    "/search/all": {
-      "get": {
-        "summary": "Spotlight",
-        "description": "Default search in Nav bar which lists all items results like contacts, articles, topics, tickets",
-        "tags": [
-          "search"
-        ],
-        "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "type": "string",
-            "description": "search query"
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "type": "number"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "type": "number"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/search_spotlight_response"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      }
-    },
-    "/search/tickets": {
-      "get": {
-        "summary": "Ticket Search",
-        "tags": [
-          "search"
-        ],
-        "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "type": "string",
-            "description": "search query"
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "type": "number"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "type": "number"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "results": {
-                  "type": "array",
-                  "items": {
-                    "allOf": [
-                      {
-                        "$ref": "#/definitions/search_generic"
-                      },
-                      {
-                        "$ref": "#/definitions/search_spotlight_ticket"
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "result_type": {
-                            "type": "string",
-                            "example": "helpdesk_ticket"
-                          }
-                        }
-                      }
-                    ]
-                  }
-                },
-                "current_page": {
-                  "type": "number"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      }
-    },
-    "/search/users": {
-      "get": {
-        "summary": "User Search",
-        "tags": [
-          "search"
-        ],
-        "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "type": "string",
-            "description": "search query"
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "type": "number"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "type": "number"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "results": {
-                  "type": "array",
-                  "items": {
-                    "allOf": [
-                      {
-                        "$ref": "#/definitions/search_generic"
-                      },
-                      {
-                        "$ref": "#/definitions/search_spotlight_user"
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "result_type": {
-                            "type": "string",
-                            "example": "user"
-                          }
-                        }
-                      }
-                    ]
-                  }
-                },
-                "current_page": {
-                  "type": "number"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      }
-    },
-    "/search/solutions": {
-      "get": {
-        "summary": "Solution Search",
-        "tags": [
-          "search"
-        ],
-        "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "type": "string",
-            "description": "search query"
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "type": "number"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "type": "number"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "results": {
-                  "type": "array",
-                  "items": {
-                    "allOf": [
-                      {
-                        "$ref": "#/definitions/search_generic"
-                      },
-                      {
-                        "$ref": "#/definitions/search_spotlight_article"
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "result_type": {
-                            "type": "string",
-                            "example": "solution_article"
-                          }
-                        }
-                      }
-                    ]
-                  }
-                },
-                "current_page": {
-                  "type": "number"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      }
-    },
-    "/search/forums": {
-      "get": {
-        "summary": "Topic Search",
-        "tags": [
-          "search"
-        ],
-        "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "type": "string",
-            "description": "search query"
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "type": "number"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "type": "number"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "results": {
-                  "type": "array",
-                  "items": {
-                    "allOf": [
-                      {
-                        "$ref": "#/definitions/search_generic"
-                      },
-                      {
-                        "$ref": "#/definitions/search_spotlight_topic"
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "result_type": {
-                            "type": "string",
-                            "example": "topic"
-                          }
-                        }
-                      }
-                    ]
-                  }
-                },
-                "current_page": {
-                  "type": "number"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      }
-    },
-    "/search/customers": {
-      "get": {
-        "summary": "Company Search",
-        "tags": [
-          "search"
-        ],
-        "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "type": "string",
-            "description": "search query"
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "type": "number"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "type": "number"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "results": {
-                  "type": "array",
-                  "items": {
-                    "allOf": [
-                      {
-                        "$ref": "#/definitions/search_generic"
-                      },
-                      {
-                        "$ref": "#/definitions/search_spotlight_company"
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "result_type": {
-                            "type": "string",
-                            "example": "customer"
-                          }
-                        }
-                      }
-                    ]
-                  }
-                },
-                "current_page": {
-                  "type": "number"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      }
-    },
-    "/search/autocomplete/requesters": {
-      "get": {
-        "summary": "Autocomplete Requesters",
-        "tags": [
-          "search"
-        ],
-        "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "type": "string",
-            "description": "search query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/search_autocomplete_requesters"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      }
-    },
-    "/search/autocomplete/agents": {
-      "get": {
-        "summary": "Autocomplete Agents",
-        "tags": [
-          "search"
-        ],
-        "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "type": "string",
-            "description": "search query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/search_autocomplete_agents"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      }
-    },
-    "/search/autocomplete/tags": {
-      "get": {
-        "summary": "Autocomplete Tags",
-        "tags": [
-          "search"
-        ],
-        "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "type": "string",
-            "description": "search query"
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "type": "number"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "type": "number"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/search_autocomplete_response"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      }
-    },
-    "/search/autocomplete/companies": {
-      "get": {
-        "summary": "Autocomplete Companies",
-        "tags": [
-          "search"
-        ],
-        "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "type": "string",
-            "description": "search query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/search_autocomplete_response"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      }
-    },
-    "/search/related_solutions/ticket/${id}": {
-      "get": {
-        "summary": "Ticket Related Solutions",
-        "tags": [
-          "search"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "type": "number",
-            "description": "Ticket ID ** Currently not working"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/search_ticket_solutions"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      }
-    },
-    "/search/search_solutions/ticket/${id}": {
-      "get": {
-        "summary": "Ticket Search Solutions",
-        "tags": [
-          "search"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "type": "number",
-            "description": "Ticket ID ** Currently not working"
-          },
-          {
-            "name": "q",
-            "in": "query",
-            "type": "string",
-            "description": "Search term"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/search_ticket_solutions"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      }
-    },
-    "/search/tickets/filter/display_id": {
-      "get": {
-        "summary": "Tickets Filtered by ID",
-        "tags": [
-          "search"
-        ],
-        "parameters": [
-          {
-            "name": "term",
-            "in": "query",
-            "type": "number",
-            "description": "Starting digits of the ticket id"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/search_filtered_tickets"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      }
-    },
-    "/search/tickets/filter/requester": {
-      "get": {
-        "summary": "Tickets Filtered by Requester",
-        "tags": [
-          "search"
-        ],
-        "parameters": [
-          {
-            "name": "term",
-            "in": "query",
-            "type": "string",
-            "example": "Rachel(rachel@freshdesk.com)"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/search_filtered_tickets"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      }
-    },
-    "/search/tickets/filter/subject": {
-      "get": {
-        "summary": "Tickets Filtered by Subject",
-        "tags": [
-          "search"
-        ],
-        "parameters": [
-          {
-            "name": "term",
-            "in": "query",
-            "type": "string",
-            "description": "Any term to search on the subject"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/search_filtered_tickets"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      }
     }
   },
   "definitions": {
     "id": {
-      "type": "number",
+      "type": "integer",
+      "format": "int64",
       "minimum": 1
     },
     "custom_field": {
@@ -3685,15 +3001,15 @@
                       "format": "date-time"
                     },
                     "points": {
-                      "type": "number"
+                      "type": "integer"
                     },
                     "scoreboard_level_id": {
-                      "type": "number"
+                      "type": "integer"
                     },
                     "assumable_agents": {
                       "type": "array",
                       "items": {
-                        "type": "number"
+                        "type": "integer"
                       }
                     },
                     "next_level_id": {
@@ -3779,7 +3095,7 @@
                   "description": "Available only if he is an admin",
                   "properties": {
                     "agent_limit": {
-                      "type": "number"
+                      "type": "integer"
                     },
                     "state": {
                       "type": "string"
@@ -3807,7 +3123,7 @@
                   "type": "object",
                   "properties": {
                     "id": {
-                      "type": "number"
+                      "type": "integer"
                     },
                     "name": {
                       "type": "string"
@@ -3824,7 +3140,7 @@
                   "type": "object",
                   "properties": {
                     "id": {
-                      "type": "number"
+                      "type": "integer"
                     },
                     "name": {
                       "type": "string"
@@ -3852,7 +3168,7 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "number"
+          "type": "integer"
         },
         "errors": {
           "type": "array",
@@ -3899,7 +3215,7 @@
           "type": "array",
           "maxItems": 50,
           "items": {
-            "type": "number",
+            "type": "integer",
             "minimum": 1,
             "example": 987
           }
@@ -3921,21 +3237,21 @@
           "description": "Signature of the agent in HTML format"
         },
         "ticket_scope": {
-          "type": "number",
+          "type": "integer",
           "description": "Ticket permission of the agent (1 -> Global Access, 2 -> Group Access, 3 -> Restricted Access). Current logged in agent can't update his/her ticket_scope"
         },
         "group_ids": {
           "type": "array",
           "description": "Group IDs associated with the agent",
           "items": {
-            "type": "number"
+            "type": "integer"
           }
         },
         "role_ids": {
           "type": "array",
           "description": "Role IDs associated with the agent. Atleast one role should be assoicated with the agent. Current logged in agent can't update his/her role_ids",
           "items": {
-            "type": "number"
+            "type": "integer"
           }
         }
       }
@@ -3944,7 +3260,7 @@
       "type": "object",
       "properties": {
         "user_id": {
-          "type": "number"
+          "type": "integer"
         },
         "content": {
           "type": "string",
@@ -3981,7 +3297,7 @@
               "type": "boolean"
             },
             "avatar_id": {
-              "type": "number"
+              "type": "integer"
             }
           }
         }
@@ -3992,13 +3308,13 @@
       "properties": {
         "primary_id": {
           "description": "ID of the primary contact",
-          "type": "number"
+          "type": "integer"
         },
         "target_ids": {
           "description": "Ids of contacts that will be merged into the Primary contact",
           "type": "array",
           "items": {
-            "type": "number"
+            "type": "integer"
           }
         }
       },
@@ -4028,7 +3344,7 @@
         {
           "properties": {
             "user_id": {
-              "type": "number"
+              "type": "integer"
             },
             "attachments": {
               "type": "array",
@@ -4040,7 +3356,7 @@
             "attachment_ids": {
               "type": "array",
               "items": {
-                "type": "number"
+                "type": "integer"
               }
             },
             "incoming": {
@@ -4077,7 +3393,7 @@
             "attachment_ids": {
               "type": "array",
               "items": {
-                "type": "number"
+                "type": "integer"
               }
             },
             "cloud_files": {
@@ -4102,7 +3418,7 @@
               "type": "string"
             },
             "user_id": {
-              "type": "number"
+              "type": "integer"
             },
             "attachments": {
               "type": "array",
@@ -4114,7 +3430,7 @@
             "attachment_ids": {
               "type": "array",
               "items": {
-                "type": "number"
+                "type": "integer"
               }
             },
             "from_email": {
@@ -4157,7 +3473,7 @@
               "type": "boolean"
             },
             "agent_id": {
-              "type": "number"
+              "type": "integer"
             },
             "attachments": {
               "type": "array",
@@ -4169,13 +3485,13 @@
             "attachment_ids": {
               "type": "array",
               "items": {
-                "type": "number"
+                "type": "integer"
               }
             },
             "cloud_file_ids": {
               "type": "array",
               "items": {
-                "type": "number"
+                "type": "integer"
               }
             },
             "from_email": {
@@ -4207,11 +3523,11 @@
       "type": "object",
       "properties": {
         "agent_id": {
-          "type": "number",
+          "type": "integer",
           "description": "User ID of agent replying to the ticket"
         },
         "note_id": {
-          "type": "number",
+          "type": "integer",
           "description": "ID of note when replying to a comment"
         },
         "body": {
@@ -4221,6 +3537,10 @@
     },
     "twitter_reply_input": {
       "type": "object",
+      "required": [
+        "tweet_type",
+        "twitter_handle_id"
+      ],
       "allOf": [
         {
           "$ref": "#/definitions/note"
@@ -4229,7 +3549,6 @@
           "properties": {
             "tweet_type": {
               "type": "string",
-              "required": true,
               "enum": [
                 "dm",
                 "mention"
@@ -4238,8 +3557,8 @@
               "default": "mention"
             },
             "twitter_handle_id": {
-              "required": true,
-              "type": "number",
+              "type": "integer",
+              "format": "int64",
               "description": "Twitter Handle ID (To be fetched in a seperate API)"
             }
           }
@@ -4306,7 +3625,7 @@
             "attachment_ids": {
               "type": "array",
               "items": {
-                "type": "number"
+                "type": "integer"
               }
             },
             "cc_emails": {
@@ -4331,7 +3650,7 @@
         "ids": {
           "type": "array",
           "items": {
-            "type": "number"
+            "type": "integer"
           }
         },
         "properties": {
@@ -4351,7 +3670,7 @@
               "type": "array",
               "description": "Draft attachment/Shared attachment IDs",
               "items": {
-                "type": "number"
+                "type": "integer"
               }
             },
             "cloud_files": {
@@ -4396,11 +3715,13 @@
     },
     "ticket_merge_input": {
       "type": "object",
+      "required": [
+        "primary_id"
+      ],
       "properties": {
         "primary_id": {
-          "type": "number",
-          "description": "ID of the Primary ticket",
-          "required": true
+          "type": "integer",
+          "description": "ID of the Primary ticket"
         },
         "ticket_ids": {
           "type": "array",
@@ -4408,7 +3729,7 @@
           "minItems": 1,
           "maxItems": 30,
           "items": {
-            "type": "number"
+            "type": "integer"
           }
         },
         "note_in_primary": {
@@ -4448,16 +3769,16 @@
           "format": "date-time"
         },
         "responder_id": {
-          "type": "number"
+          "type": "integer"
         },
         "group_id": {
-          "type": "number"
+          "type": "integer"
         },
         "status": {
-          "type": "number"
+          "type": "integer"
         },
         "priority": {
-          "type": "number"
+          "type": "integer"
         },
         "tags": {
           "type": "array",
@@ -4474,22 +3795,24 @@
       "type": "object",
       "properties": {
         "user_id": {
-          "type": "number",
+          "type": "integer",
           "description": "ID of agent to be added to list of watchers"
         }
       }
     },
     "draft_create_input": {
       "type": "object",
+      "required": [
+        "body",
+        "quoted_text"
+      ],
       "properties": {
         "body": {
           "type": "string",
-          "required": true,
           "description": "content of the ticket reply"
         },
         "quoted_text": {
           "type": "string",
-          "required": true,
           "description": "quoted text of the ticket reply"
         },
         "cc_emails": {
@@ -4512,17 +3835,20 @@
         "attachment_ids": {
           "type": "array",
           "items": {
-            "type": "number"
+            "type": "integer"
           }
         }
       }
     },
     "execute_scenario_input": {
       "type": "object",
+      "required": [
+        "scenario_id"
+      ],
       "properties": {
         "scenario_id": {
-          "type": "number",
-          "required": true,
+          "type": "integer",
+          "format": "int64",
           "description": "ID of scenario to be executed"
         }
       }
@@ -4537,7 +3863,8 @@
           "type": "string"
         },
         "application_id": {
-          "type": "number"
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -4571,7 +3898,7 @@
           "type": "string"
         },
         "per_page": {
-          "type": "number"
+          "type": "integer"
         },
         "query_hash": {
           "type": "array",
@@ -4586,7 +3913,7 @@
               "type": "string"
             },
             "group_id": {
-              "type": "number"
+              "type": "integer"
             }
           }
         }
@@ -4599,7 +3926,7 @@
           "type": "string"
         },
         "company_id": {
-          "type": "number"
+          "type": "integer"
         },
         "description": {
           "type": "string"
@@ -4652,7 +3979,7 @@
             "type": "object",
             "properties": {
               "company_id": {
-                "type": "number"
+                "type": "integer"
               },
               "view_all_tickets": {
                 "type": "boolean"
@@ -4712,13 +4039,13 @@
       "type": "object",
       "properties": {
         "email_config_id": {
-          "type": "number"
+          "type": "integer"
         },
         "group_id": {
-          "type": "number"
+          "type": "integer"
         },
         "priority": {
-          "type": "number",
+          "type": "integer",
           "enum": [
             1,
             2,
@@ -4727,13 +4054,13 @@
           ]
         },
         "requester_id": {
-          "type": "number"
+          "type": "integer"
         },
         "responder_id": {
-          "type": "number"
+          "type": "integer"
         },
         "source": {
-          "type": "number",
+          "type": "integer",
           "enum": [
             1,
             2,
@@ -4745,7 +4072,7 @@
           ]
         },
         "status": {
-          "type": "number",
+          "type": "integer",
           "enum": [
             2,
             3,
@@ -4768,7 +4095,7 @@
           ]
         },
         "product_id": {
-          "type": "number"
+          "type": "integer"
         },
         "due_by": {
           "type": "string",
@@ -4811,7 +4138,8 @@
               "type": "string"
             },
             "size": {
-              "type": "number"
+              "type": "integer",
+              "format": "int64"
             },
             "name": {
               "type": "string"
@@ -4839,7 +4167,7 @@
           "type": "boolean"
         },
         "id": {
-          "type": "number"
+          "type": "integer"
         },
         "ticket_scope": {
           "type": "string"
@@ -4850,13 +4178,13 @@
         "group_ids": {
           "type": "array",
           "items": {
-            "type": "number"
+            "type": "integer"
           }
         },
         "role_ids": {
           "type": "array",
           "items": {
-            "type": "number"
+            "type": "integer"
           }
         },
         "available_since": {
@@ -4922,19 +4250,19 @@
             "product_ids": {
               "type": "array",
               "items": {
-                "type": "number"
+                "type": "integer"
               }
             },
             "company_ids": {
               "type": "array",
               "items": {
-                "type": "number"
+                "type": "integer"
               }
             },
             "group_ids": {
               "type": "array",
               "items": {
-                "type": "number"
+                "type": "integer"
               }
             },
             "sources": {
@@ -4955,7 +4283,7 @@
           "type": "boolean"
         },
         "position": {
-          "type": "number"
+          "type": "integer"
         }
       }
     },
@@ -4986,7 +4314,7 @@
           "type": "string"
         },
         "folder_id": {
-          "type": "number"
+          "type": "integer"
         }
       }
     },
@@ -5010,7 +4338,8 @@
         {
           "properties": {
             "post_id": {
-              "type": "string"
+              "type": "integer",
+              "format": "int64"
             },
             "msg_type": {
               "type": "string"
@@ -5029,13 +4358,13 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "number"
+          "type": "integer"
         },
         "profile_id": {
-          "type": "number"
+          "type": "integer"
         },
         "page_id": {
-          "type": "number"
+          "type": "integer"
         },
         "page_name": {
           "type": "string"
@@ -5050,7 +4379,7 @@
           "type": "boolean"
         },
         "product_id": {
-          "type": "number"
+          "type": "integer"
         }
       }
     },
@@ -5082,7 +4411,7 @@
           "type": "string"
         },
         "per_page": {
-          "type": "number"
+          "type": "integer"
         },
         "visibility": {
           "type": "object",
@@ -5107,7 +4436,8 @@
       "type": "object",
       "properties": {
         "tweet_id": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64"
         },
         "tweet_type": {
           "type": "string",
@@ -5117,7 +4447,8 @@
           ]
         },
         "twitter_handle_id": {
-          "type": "number"
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -5125,16 +4456,19 @@
       "type": "object",
       "properties": {
         "survey_id": {
-          "type": "number"
+          "type": "integer",
+          "format": "int64"
         },
         "agent_id": {
-          "type": "number"
+          "type": "integer",
+          "format": "int64"
         },
         "group_id": {
-          "type": "number"
+          "type": "integer",
+          "format": "int64"
         },
         "ratings": {
-          "type": "hash"
+          "type": "object"
         }
       }
     },
@@ -5143,10 +4477,12 @@
       "description": "freshfone call",
       "properties": {
         "id": {
-          "type": "integer"
+          "type": "integer",
+          "format": "int64"
         },
         "duration": {
           "type": "integer",
+          "format": "int64",
           "description": "duration is in seconds"
         },
         "recording": {
@@ -5258,7 +4594,7 @@
               "type": "boolean"
             },
             "product_id": {
-              "type": "number"
+              "type": "integer"
             },
             "ssl_enabled": {
               "type": "boolean"
@@ -5266,13 +4602,13 @@
             "solution_category_ids": {
               "type": "array",
               "items": {
-                "type": "number"
+                "type": "integer"
               }
             },
             "discussion_category_ids": {
               "type": "array",
               "items": {
-                "type": "number"
+                "type": "integer"
               }
             }
           }
@@ -5283,7 +4619,7 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "number"
+          "type": "integer"
         },
         "name": {
           "type": "string"
@@ -5314,7 +4650,8 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "number"
+          "type": "integer",
+          "format": "int64"
         },
         "created_at": {
           "type": "string",
@@ -5399,10 +4736,12 @@
                   "type": "string"
                 },
                 "ticket_id": {
-                  "type": "number"
+                  "type": "integer",
+                  "format": "int64"
                 },
                 "user_id": {
-                  "type": "number"
+                  "type": "integer",
+                  "format": "int64"
                 },
                 "incoming": {
                   "type": "boolean"
@@ -5435,7 +4774,8 @@
                   }
                 },
                 "source": {
-                  "type": "number"
+                  "type": "integer",
+                  "format": "int64"
                 },
                 "has_quoted_text": {
                   "type": "boolean"
@@ -5445,7 +4785,8 @@
                   "format": "date-time"
                 },
                 "last_edited_user_id": {
-                  "type": "number"
+                  "type": "integer",
+                  "format": "int64"
                 },
                 "attachments": {
                   "type": "array",
@@ -5690,7 +5031,7 @@
                     "type": "object",
                     "properties": {
                       "id": {
-                        "type": "number"
+                        "type": "integer"
                       },
                       "name": {
                         "type": "string"
@@ -5834,7 +5175,7 @@
                 "type": "object",
                 "properties": {
                   "id": {
-                    "type": "number"
+                    "type": "integer"
                   },
                   "title": {
                     "type": "string"
@@ -5861,10 +5202,12 @@
               "type": "boolean"
             },
             "ticket_id": {
-              "type": "id"
+              "type": "integer",
+              "format": "int64"
             },
             "user_id": {
-              "type": "id"
+              "type": "integer",
+              "format": "int64"
             }
           }
         }
@@ -5875,7 +5218,7 @@
       "title": "meta",
       "properties": {
         "count": {
-          "type": "number"
+          "type": "integer"
         }
       }
     },
@@ -5893,7 +5236,7 @@
         "succeeded": {
           "type": "array",
           "items": {
-            "type": "number"
+            "type": "integer"
           }
         },
         "failed": {
@@ -5914,8 +5257,8 @@
             "errors": [
               {
                 "field": "product_id",
-                "message": "Invalid number",
-                "code": "invalid_number"
+                "message": "Invalid integer",
+                "code": "invalid_integer"
               }
             ]
           }
@@ -5973,7 +5316,7 @@
         "watcher_ids": {
           "type": "array",
           "items": {
-            "type": "number"
+            "type": "integer"
           }
         }
       }
@@ -6005,7 +5348,7 @@
         {
           "properties": {
             "contacts_count": {
-              "type": "number"
+              "type": "integer"
             }
           }
         }
@@ -6074,7 +5417,7 @@
       "description": "Company activities",
       "properties": {
         "id": {
-          "type": "number"
+          "type": "integer"
         },
         "subject": {
           "type": "string"
@@ -6083,7 +5426,7 @@
           "type": "string"
         },
         "agent_id": {
-          "type": "number"
+          "type": "integer"
         },
         "created_at": {
           "type": "string",
@@ -6117,11 +5460,11 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "number",
+          "type": "integer",
           "description": "Twitter Handle's id in the account's context"
         },
         "twitter_user": {
-          "type": "number",
+          "type": "integer",
           "description": "User Id provided by Twitter"
         },
         "screen_name": {
@@ -6130,7 +5473,7 @@
           "description": "Twitter user handle or the screen name"
         },
         "product_id": {
-          "type": "number"
+          "type": "integer"
         },
         "capture_dm_as_ticket": {
           "type": "boolean"
@@ -6150,7 +5493,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "number"
+            "type": "integer"
           },
           "performer": {
             "type": "object",
@@ -6166,7 +5509,7 @@
                 "type": "object",
                 "properties": {
                   "id": {
-                    "type": "number"
+                    "type": "integer"
                   },
                   "name": {
                     "type": "string"
@@ -6189,7 +5532,7 @@
                 "type": "object",
                 "properties": {
                   "id": {
-                    "type": "number"
+                    "type": "integer"
                   },
                   "name": {
                     "type": "string"
@@ -6261,7 +5604,7 @@
             }
           },
           "highlight": {
-            "type": "number",
+            "type": "integer",
             "description": "Shows which action has to be highlighted"
           }
         }
@@ -6289,393 +5632,18 @@
           ]
         }
       ]
-    },
-    "search_generic": {
-      "title": "data",
-      "type": "object",
-      "properties": {
-        "result_type": {
-          "type": "string",
-          "enum": [
-            "helpdesk_ticket",
-            "solution_article",
-            "user",
-            "customer",
-            "topic",
-            "helpdesk_note"
-          ]
-        },
-        "id": {
-          "type": "integer"
-        }
-      }
-    },
-    "search_suggest": {
-      "type": "object",
-      "properties": {
-        "results": {
-          "type": "array",
-          "items": {
-            "allOf": [
-              {
-                "$ref": "#/definitions/search_generic"
-              },
-              {
-                "properties": {
-                  "content": {
-                    "type": "string",
-                    "description": "Will contain HTML markup like &lt;span class='match'&gt;Language</span> assigning rule"
-                  },
-                  "path": {
-                    "type": "string"
-                  }
-                }
-              }
-            ]
-          }
-        },
-        "current_page": {
-          "type": "number"
-        },
-        "term": {
-          "type": "string"
-        },
-        "more_results_text": {
-          "type": "string"
-        },
-        "no_results_text": {
-          "type": "string"
-        }
-      }
-    },
-    "search_spotlight_response": {
-      "type": "object",
-      "properties": {
-        "results": {
-          "type": "array",
-          "items": {
-            "allOf": [
-              {
-                "$ref": "#/definitions/search_generic"
-              },
-              {
-                "$ref": "#/definitions/search_spotlight_article"
-              },
-              {
-                "$ref": "#/definitions/search_spotlight_ticket"
-              },
-              {
-                "$ref": "#/definitions/search_spotlight_user"
-              },
-              {
-                "$ref": "#/definitions/search_spotlight_company"
-              },
-              {
-                "$ref": "#/definitions/search_spotlight_topic"
-              }
-            ]
-          }
-        },
-        "current_page": {
-          "type": "number"
-        }
-      }
-    },
-    "search_spotlight_article": {
-      "type": "object",
-      "properties": {
-        "title": {
-          "type": "string"
-        },
-        "path": {
-          "type": "string"
-        },
-        "folder_name": {
-          "type": "string"
-        },
-        "folder_path": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "user_name": {
-          "type": "string"
-        },
-        "user_path": {
-          "type": "string"
-        },
-        "info": {
-          "type": "string"
-        },
-        "views": {
-          "type": "string"
-        },
-        "up_votes": {
-          "type": "string"
-        },
-        "down_votes": {
-          "type": "integer"
-        }
-      }
-    },
-    "search_spotlight_company": {
-      "type": "object",
-      "properties": {
-        "path": {
-          "type": "string"
-        },
-        "domains": {
-          "type": "string",
-          "description": "Comma seperated set of domains"
-        }
-      }
-    },
-    "search_spotlight_ticket": {
-      "type": "object",
-      "properties": {
-        "subject": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "created_at": {
-          "type": "timestamp"
-        },
-        "ticket_priority": {
-          "type": "string"
-        },
-        "ticket_group": {
-          "type": "string"
-        },
-        "ticket_display_id": {
-          "type": "string"
-        },
-        "ticket_path": {
-          "type": "string"
-        },
-        "avatar_url": {
-          "type": "string"
-        },
-        "ticket_info": {
-          "type": "string"
-        },
-        "ticket_status": {
-          "type": "string"
-        },
-        "responder_id": {
-          "type": "integer"
-        },
-        "responder_name": {
-          "type": "string"
-        }
-      }
-    },
-    "search_spotlight_topic": {
-      "type": "object",
-      "properties": {
-        "title": {
-          "type": "string"
-        },
-        "forum_name": {
-          "type": "string"
-        },
-        "forum_path": {
-          "type": "string"
-        },
-        "category_name": {
-          "type": "string"
-        },
-        "user_name": {
-          "type": "string"
-        },
-        "user_path": {
-          "type": "string"
-        },
-        "locked": {
-          "type": "boolean"
-        },
-        "info": {
-          "type": "string"
-        },
-        "created_at": {
-          "type": "datetime"
-        },
-        "description": {
-          "type": "string"
-        },
-        "searchKey": {
-          "type": "string"
-        }
-      }
-    },
-    "search_spotlight_user": {
-      "type": "object",
-      "properties": {
-        "path": {
-          "type": "string"
-        },
-        "avatar_url": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        },
-        "phone": {
-          "type": "integer"
-        },
-        "company_name": {
-          "type": "string"
-        }
-      }
-    },
-    "search_autocomplete_response": {
-      "type": "object",
-      "properties": {
-        "results": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "number"
-              },
-              "value": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      }
-    },
-    "search_autocomplete_agents": {
-      "type": "object",
-      "properties": {
-        "results": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string",
-                "format": "email"
-              },
-              "value": {
-                "type": "string"
-              },
-              "user_id": {
-                "type": "number"
-              }
-            }
-          }
-        }
-      }
-    },
-    "search_autocomplete_requesters": {
-      "type": "object",
-      "properties": {
-        "results": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string"
-              },
-              "details": {
-                "type": "string",
-                "example": "Rachel &lt;rachel@freshdesk.com&gt;"
-              },
-              "value": {
-                "type": "string",
-                "description": "Name of the user"
-              },
-              "email": {
-                "type": "string",
-                "format": "email"
-              }
-            }
-          }
-        }
-      }
-    },
-    "search_ticket_solutions": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number"
-          },
-          "title": {
-            "type": "string"
-          },
-          "published": {
-            "type": "boolean"
-          },
-          "visible": {
-            "type": "boolean"
-          },
-          "url": {
-            "type": "string"
-          },
-          "insert_link": {
-            "type": "boolean"
-          },
-          "insert_content": {
-            "type": "boolean"
-          }
-        }
-      }
-    },
-    "search_filtered_tickets": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number",
-            "description": "The Original ID of the Ticket (Donot use it) *****"
-          },
-          "display_id": {
-            "type": "number",
-            "description": "The actual Ticket ID that we use everywhere else"
-          },
-          "created_at": {
-            "type": "datetime"
-          },
-          "created_at_int": {
-            "type": "number",
-            "description": "Timestamp in Integer format"
-          },
-          "requester_id": {
-            "type": "number",
-            "description": "User Id of the Requester"
-          },
-          "searchKey": {
-            "type": "string"
-          },
-          "subject": {
-            "type": "string"
-          },
-          "ticket_info": {
-            "type": "string",
-            "description": "HTML formatted Information",
-            "example": "From: &lt;span class='muted'&gt;Rachel&lt;/span&gt;&lt;br /&gt; Created: &lt;span class='emphasize'&gt;about 4 years ago&lt;/span&gt;"
-          },
-          "ticket_path": {
-            "type": "string",
-            "description": "Ticket's Url path"
-          },
-          "ticket_status": {
-            "type": "string"
-          }
-        }
-      }
+    }
+  },
+  "parameters": {
+    "id": {
+      "name": "id",
+      "in": "path",
+      "required": true,
+      "description": "An unique identifier",
+      "type": "integer",
+      "format": "int64",
+      "minimum": 1,
+      "x-example": 10
     }
   }
 }

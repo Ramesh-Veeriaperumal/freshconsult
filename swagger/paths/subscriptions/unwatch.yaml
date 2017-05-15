@@ -3,6 +3,8 @@ put:
   summary: Remove watcher
   parameters:
     - name: id
+      type: integer
+      format: int64    
       description: Display ID of ticket
       in: path
       required: true

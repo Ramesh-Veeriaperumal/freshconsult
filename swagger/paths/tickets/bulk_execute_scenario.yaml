@@ -4,8 +4,9 @@ put:
   tags: [ticket]
   parameters:
     - name: scenario_id
-      in: path
-      type: number
+      in: query
+      type: integer
+      format: int64
       required: true
       description: ID of scenario to be executed
     - name: data

@@ -6,6 +6,7 @@ get:
     - name: ticket_id
       in: query
       type: integer
+      format: int64
       description: Ticket ID to filter todo of a ticket
   responses:
     200:
@@ -33,13 +34,15 @@ post:
       required: true
       schema:
         type: object
+        required:
+          - body
         properties:
           body:
             type: string
-            required: true
             description: content of the todo
           ticket_id:
-            type: id
+            type: integer
+            format: int64
             description: Ticket id, if its associated with a ticket.
   responses:
     200:

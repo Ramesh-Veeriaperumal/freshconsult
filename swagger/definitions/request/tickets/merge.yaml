@@ -1,16 +1,17 @@
 type: object
+required:
+  - primary_id
 properties:
   primary_id:
-    type: number
+    type: integer
     description: ID of the Primary ticket
-    required: true
   ticket_ids:
     type: array
     description: Ids of the tickets that will be merged into the Primary ticket
     minItems: 1
     maxItems: 30
     items:
-      type: number
+      type: integer
   note_in_primary:
     type: object
     properties:

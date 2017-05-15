@@ -3,8 +3,9 @@ put:
   tags: [contact]
   parameters:
     - name: id
+      type: integer
+      format: int64
       in: path
-      type: number
       required: true
   responses:
     204:

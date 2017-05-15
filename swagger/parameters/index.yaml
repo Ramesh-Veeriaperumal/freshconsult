@@ -1,0 +1,10 @@
+# Generic Defintions
+id:
+  name: id
+  in: path
+  required: true
+  description: An unique identifier
+  type: integer
+  format: int64
+  minimum: 1
+  x-example: 10
