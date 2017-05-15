@@ -1,6 +1,5 @@
 module TicketsTestHelper
 
-  include UsersTestHelper
 
   def ticket_params_hash(params = {})
     description = params[:description] || Faker::Lorem.paragraph
