@@ -1,6 +1,5 @@
 module TicketsTestHelper
 
-
   def ticket_params_hash(params = {})
     description = params[:description] || Faker::Lorem.paragraph
     description_html = params[:description_html] || "<div>#{description}</div>"
