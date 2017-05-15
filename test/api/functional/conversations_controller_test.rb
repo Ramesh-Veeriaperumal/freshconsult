@@ -1,5 +1,4 @@
 require_relative '../test_helper'
-['note_test_helper.rb', 'tickets_test_helper.rb', 'account_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 
 class ConversationsControllerTest < ActionController::TestCase
   include ConversationsTestHelper
