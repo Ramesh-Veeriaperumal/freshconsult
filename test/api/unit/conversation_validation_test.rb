@@ -44,20 +44,6 @@ class ConversationValidationTest < ActionView::TestCase
     assert conversation.errors.full_messages.include?('To emails missing_field')
   end
 
-  def test_validate_cloud_files   
-    controller_params = { 'body' => Faker::Lorem.paragraph, 'cloud_files' => Faker::Lorem.word }    
-    conversation = ConversationValidation.new(controller_params, nil)   
-    refute conversation.valid?(:reply)    
-    errors = conversation.errors.full_messages    
-    assert errors.include?('Cloud files datatype_mismatch')   
-    
-    controller_params = { 'body' => Faker::Lorem.paragraph, 'cloud_files' => [{'filename' => Faker::Lorem.word}] }    
-    conversation = ConversationValidation.new(controller_params, nil)   
-    refute conversation.valid?(:reply)    
-    errors = conversation.errors.full_messages    
-    assert errors.include?('Cloud files is invalid')    
-  end
-
   def test_emails_validation_invalid
     controller_params = { 'notify_emails' => ['fggg@ddd.com,ss@fff.com'], 'to_emails' => ['fggg@ddd.com,ss@fff.com'],
                             'cc_emails' => ['fggg@ddd.com,ss@fff.com'], 'bcc_emails' => ['fggg@ddd.com,ss@fff.com'],
@@ -164,6 +150,20 @@ class ConversationValidationTest < ActionView::TestCase
     assert errors.include?('Cc emails datatype_mismatch')
     assert errors.include?('Attachments datatype_mismatch')
     Account.unstub(:current)
+  end
+
+  def test_validate_cloud_files   
+    controller_params = { 'body' => Faker::Lorem.paragraph, 'cloud_files' => Faker::Lorem.word }    
+    conversation = ConversationValidation.new(controller_params, nil)   
+    refute conversation.valid?(:reply)    
+    errors = conversation.errors.full_messages    
+    assert errors.include?('Cloud files datatype_mismatch')   
+    
+    controller_params = { 'body' => Faker::Lorem.paragraph, 'cloud_files' => [{'filename' => Faker::Lorem.word}] }    
+    conversation = ConversationValidation.new(controller_params, nil)   
+    refute conversation.valid?(:reply)    
+    errors = conversation.errors.full_messages    
+    assert errors.include?('Cloud files is invalid')    
   end
 
 end
