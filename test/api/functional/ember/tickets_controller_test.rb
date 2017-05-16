@@ -123,7 +123,13 @@ module Ember
     def test_index_with_invalid_filter_names
       get :index, controller_params(version: 'private', filter: Faker::Lorem.word)
       assert_response 400
-      valid_filters = ["spam", "deleted", "overdue", "pending", "open", "due_today", "new", "monitored_by", "new_and_my_open", "all_tickets", "unresolved", "article_feedback", "my_article_feedback", "watching", "on_hold", "raised_by_me", "shared_by_me", "shared_with_me"]
+      valid_filters = [
+        "spam", "deleted", "overdue", "pending", "open", "due_today", "new",
+        "monitored_by", "new_and_my_open", "all_tickets", "unresolved",
+        "article_feedback", "my_article_feedback",
+        "watching", "on_hold",
+        "raised_by_me", "shared_by_me", "shared_with_me"
+      ]
       match_json([bad_request_error_pattern(:filter, :not_included, list: valid_filters.join(', '))])
     end
 
