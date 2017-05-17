@@ -40,20 +40,22 @@
 		<%= f.fields_for :accessible do |access| %>
 			<label class="control-label"><%=t('automations.visibility.available_for').html_safe%> :</label>
 			<div class="controls">
+        <% has_privilege = privilege?(:manage_scenario_automation_rules).present?  %>
+        <% muted_options = has_privilege ? "" : "muted" %>
 				<label class="radio" id="only_me">
-					<%= access.radio_button  :access_type, Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users], {:onclick =>"toggleGroup(this.value)", :class => "radio", :checked => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]== @va_rule.accessible.access_type } %>
+					<%= access.radio_button  :access_type, Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users], {:onclick =>"toggleGroup(this.value)", :class => "radio", :checked => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]== @va_rule.accessible.access_type  }  %>
 					<%= t('automations.visibility.me_only') %>
 				</label>
 			</div>
 			<div class="controls">
-				<label class="radio" id="all_agents">
-					<%= access.radio_button  :access_type, Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all], {:onclick =>"toggleGroup(this.value)",:class => "radio" ,:checked => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]== @va_rule.accessible.access_type } %>
+				<label class="radio <%= muted_options %>" id="all_agents">
+					<%= access.radio_button  :access_type, Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all], {:onclick =>"toggleGroup(this.value)",:class => "radio" ,:checked => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]== @va_rule.accessible.access_type , :disabled => !has_privilege }  %>
 					<%= t('automations.visibility.all_agents') %>
 				</label>
 			</div>
 			<div class="controls">
-				<label class="radio" id="group_agents">
-					<%= access.radio_button  :access_type, Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:groups],{:onclick =>"toggleGroup(this.value)" , :class => "radio" , :checked => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:groups]== @va_rule.accessible.access_type} %>
+				<label class="radio <%= muted_options %>" id="group_agents">
+					<%= access.radio_button  :access_type, Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:groups],{:onclick =>"toggleGroup(this.value)" , :class => "radio" , :checked => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:groups]== @va_rule.accessible.access_type, :disabled => !has_privilege }  %>
 					<%= t('automations.visibility.groups') %>
 				</label>
 				<div style="display:none;" class="mt5" id="accessible_group">
@@ -80,12 +82,6 @@
 
 jQuery(document).ready(function(){
 	toggleGroup(<%=@va_rule.accessible.access_type%>);
-
-	if (!<%=privilege?(:manage_scenario_automation_rules)%>)
-	{
-	  jQuery('#all_agents,#group_agents,#only_me').children().attr('disabled','disabled');
-	  jQuery('#all_agents,#group_agents').addClass("muted");
-  }
 });
 
 function toggleGroup(access_id)

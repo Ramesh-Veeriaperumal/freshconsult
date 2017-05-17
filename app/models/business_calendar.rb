@@ -138,10 +138,7 @@ class BusinessCalendar < ActiveRecord::Base
     if multiple_business_hours_enabled?
       @business_hour_caller.business_calendar
     elsif Account.current 
-      key = DEFAULT_BUSINESS_CALENDAR % {:account_id => Account.current.id}
-      MemcacheKeys.fetch(key) do
-        Account.current.business_calendar.default.first
-      end
+      Account.current.default_calendar_from_cache
     else
       BusinessTime::Config
     end

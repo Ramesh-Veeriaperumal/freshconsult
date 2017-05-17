@@ -1,13 +1,17 @@
 account = Account.current
 
 #Step 1 ticket creation
+
 user = User.seed(:account_id, :email) do |s|
   s.account_id  = account.id
   s.email       = Helpdesk::AGENT[:email]
   s.name        = Helpdesk::AGENT[:name]
 end
 
-args = { :role_ids => account.roles.agent.first.id, :occasional => true }
+args = { 
+  :role_ids => account.roles.agent.first.id, 
+  :occasional => true,
+  :deleted => true }
 user.make_agent(args)
 agent = user
 

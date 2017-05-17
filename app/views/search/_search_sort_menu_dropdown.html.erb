@@ -1,6 +1,6 @@
 <div class="row-fluid">
     <% if current_filter.eql?('tickets') && @search_results.present? %>
-			<% if current_account.features?(:advanced_search) %>
+			<% if current_account.has_feature?(:advanced_search) %>
   <div class="span3 edit-filter">
 					<!-- Button for pane for filtered search for tickets -->
         <button class="btn btn-primary" id="metric-edit" data-action="open-filter-menu">

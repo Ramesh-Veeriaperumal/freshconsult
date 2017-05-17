@@ -164,6 +164,15 @@ module Cache::Memcache::Account
     MemcacheKeys.fetch(key) { self.companies.all }
   end
 
+  def default_calendar_from_cache
+    @default_calendar_from_cache ||= begin
+      key = DEFAULT_BUSINESS_CALENDAR % {:account_id => self.id}
+      MemcacheKeys.fetch(key) do
+        self.business_calendar.default.first
+      end    
+    end
+  end
+
   def twitter_handles_from_cache
     key = handles_memcache_key
     MemcacheKeys.fetch(key) { self.twitter_handles.all }
@@ -210,9 +219,11 @@ module Cache::Memcache::Account
   end
 
   def flexifields_with_ticket_fields_from_cache
-    key = ACCOUNT_FLEXIFIELDS % { :account_id => self.id }
-    MemcacheKeys.fetch(key) do
-      ticket_field_def.flexifield_def_entries.find(:all, :include => :ticket_field)
+    @flexifields_with_ticket_fields_from_cache ||= begin
+      key = ACCOUNT_FLEXIFIELDS % { :account_id => self.id }
+      MemcacheKeys.fetch(key) do
+        ticket_field_def.flexifield_def_entries.find(:all, :include => :ticket_field)
+      end
     end
   end
 

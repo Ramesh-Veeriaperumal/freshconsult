@@ -77,12 +77,13 @@ class AccountsController < ApplicationController
   def email_signup
     @signup = Signup.new(params[:signup])
     if @signup.save
-      finish_signup params[:signup]
+      finish_signup
       respond_to do |format|
         format.json {
           render :json => { :success => true,
                             :url => edit_account_domain_url(:perishable_token => @signup.user.perishable_token, :host => @signup.account.full_domain),
-                            :callback => params[:callback]
+                            :callback => params[:callback],
+                            :account_id => @signup.account.id
                           }
         }
       end
@@ -140,7 +141,7 @@ class AccountsController < ApplicationController
   def new_signup_free
    @signup = Signup.new(params[:signup])
    if @signup.save
-      finish_signup params[:signup]
+      finish_signup
       respond_to do |format|
         format.html {
           render :json => { :success => true,
@@ -577,7 +578,7 @@ class AccountsController < ApplicationController
       @signup.account.mark_new_account_setup_and_save
     end
 
-    def finish_signup params
+    def finish_signup
       @signup.user.reset_perishable_token!
       save_account_sign_up_params(@signup.account.id, params[:signup])
       add_account_info_to_dynamo
