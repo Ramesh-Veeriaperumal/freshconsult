@@ -1,6 +1,6 @@
 class ConversationDelegator < BaseDelegator
 
-  attr_accessor :email_config_id, :cloud_file_attachments
+  attr_accessor :email_config_id, :email_config, :cloud_file_attachments
 
   validate :validate_agent_emails, if: -> { note? && to_emails.present? && attr_changed?('to_emails', schema_less_note)}
 
@@ -37,6 +37,7 @@ class ConversationDelegator < BaseDelegator
   	email_config = Account.current.email_configs.where(reply_email: from_email).first
     if email_config
       self.email_config_id = email_config.id
+      self.email_config = email_config
     else
       errors[:from_email] << :"can't be blank"
     end

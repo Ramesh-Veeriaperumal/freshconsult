@@ -79,6 +79,24 @@ module Ember
         match_json(reply_draft_pattern(params_hash))
       end
 
+      def test_show_draft_after_save_in_old_UI
+        ticket = create_ticket
+        unwrapped_params = { version: 'private', id: ticket.display_id }
+        params_hash = { body: 'Sample text', cc_emails: [Faker::Internet.email], bcc_emails: [Faker::Internet.email] }
+        draft_hash = {
+          'draft_data' => params_hash[:body],
+          'draft_cc' => params_hash[:cc_emails].join(';'),
+          'draft_bcc' => params_hash[:bcc_emails].join(';')
+        }
+        ticket.draft.build(params_hash)
+        TicketDraft.any_instance.stubs(:to_hash).returns(draft_hash)
+        ticket.draft.save
+        TicketDraft.any_instance.unstub(:to_hash)
+        get :show_draft, controller_params(unwrapped_params)
+        assert_response 200
+        match_json(reply_draft_pattern(params_hash, true))
+      end
+
       def test_stripping_invalid_emails
         ticket = create_ticket
         invalid_email = 'invalid'
