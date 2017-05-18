@@ -7,7 +7,7 @@ module Facebook
 			include Facebook::TicketActions::Util
 
 			def create_tickets(message,thread_id)
-	    	  fb_msg = Sharding.run_on_slave { @account.facebook_posts.latest_thread(thread[:id], 1).first }
+	    	  fb_msg = Sharding.run_on_slave { @account.facebook_posts.latest_thread(thread_id, 1).first }
 	    	  previous_ticket = fb_msg.try(:postable)
 	    	  last_reply = unless previous_ticket.blank?
 	    	    if (!previous_ticket.notes.blank? && !previous_ticket.notes.latest_facebook_message.blank?)
