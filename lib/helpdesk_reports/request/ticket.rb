@@ -2,7 +2,6 @@ class HelpdeskReports::Request::Ticket
   include TicketConstants
   include HelpdeskReports::Constants
   include HelpdeskReports::Util::Ticket
-  include HelpdeskReports::Helper::PlanConstraints
 
   attr_accessor :req_params, :metric, :query_type, :end_date
 
@@ -18,9 +17,9 @@ class HelpdeskReports::Request::Ticket
     req_params.merge!(report_type: @report_type)
     req_params.merge!(account_plan: current_account_plan)
     req_params.merge!(account_domain: Account.current.full_domain)
-    req_params.merge!(refresh_frequency: data_refresh_frequency)
     add_bucketing_condition unless req_params[:bucket_conditions].blank?
     add_time_zone_condition
+    
     # building list_conditions on trend_graph at helpkit side
     build_list_condition if time_trend_query? and list_query? 
   end

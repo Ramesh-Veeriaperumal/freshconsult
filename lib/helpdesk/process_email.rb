@@ -788,7 +788,20 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def text_part
-      params[:text] = (params[:text].nil? || params[:text].empty?) ? Helpdesk::HTMLSanitizer.html_to_plain_text(params[:html]) : params[:text]
+      Timeout.timeout(180) do
+        if(params[:text].nil? || params[:text].empty?) 
+          if params[:html].size < MAXIMUM_CONTENT_LIMIT
+            params[:text] = Helpdesk::HTMLSanitizer.html_to_plain_text(params[:html])
+          else
+            email_processing_log "Large Email deducted . Content exceeding maximum content limit #{MAXIMUM_CONTENT_LIMIT} . "
+            params[:text] = Helpdesk::HTMLSanitizer.html_to_plain_text(truncate(params[:html], :length => MAXIMUM_CONTENT_LIMIT))
+          end
+        end
+      end
+      return params[:text]
+      rescue => e
+        Rails.logger.info "Exception while getting text_part , message :#{e.message} - #{e.backtrace}"
+        params[:text] = ""
     end
     
     def get_user(account, from_email, email_config, force_create = false)
