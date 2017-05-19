@@ -291,7 +291,7 @@ class Helpdesk::TicketsController < ApplicationController
         end
         @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false, :user_id => i.accessible.user_id} }
         @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
-        unless request.headers['X-PJAX']
+        if !request.headers['X-PJAX'] || params[:pjax_redirect]
           # Bad code need to rethink. Pratheep
           @show_options = show_options
         end
@@ -1881,6 +1881,9 @@ class Helpdesk::TicketsController < ApplicationController
         verified = false
         flash[:notice] = t("flash.general.access_denied")
         if request.xhr? || is_native_mobile?
+          if params[:action] = "show"
+            params[:redirect] = "true"
+          end
           render json: {access_denied: true}
         else
           redirect_to helpdesk_tickets_url
