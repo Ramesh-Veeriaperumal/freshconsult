@@ -89,7 +89,8 @@ module Search
       def fetch_dashboard_shard(query_params={})
         response = Search::Dashboard::CountClient.new("get" ,dashboard_shard_path(query_params), nil).response
         return response["_source"]["shard_name"] if response.present? && response["_source"].present? && response["_source"]["shard_name"].present?
-        nil
+        rescue
+          nil
       end
 
       def index_new_account_dashboard_shard

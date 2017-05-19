@@ -489,7 +489,10 @@ window.App.FilterOps = window.App.FilterOps || {};
        _this.setFilterDisplayData();
     },
     setFilterDisplayData: function () {
-        jQuery('.search-filter-pane').removeClass('hide');
+        jQuery('.search-filter-pane').addClass('hide');
+        if(this.locals.select_hash.length > 0) { // show only if you have any filter values
+            jQuery('.search-filter-pane').removeClass('hide');
+        }
       var tmpl = JST["app/search/templates/filter_data_template"]({ 
           data: this.locals.select_hash 
       });

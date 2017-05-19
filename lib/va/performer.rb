@@ -30,7 +30,7 @@ class Va::Performer
 
     def check_type doer, ticket
       return doer.send TYPE_CHECK[type][:doer_check] if type == ANYONE || type == SYSTEM
-      ticket.send TYPE_CHECK[type][:doer_check], doer
+      doer.present? and ticket.send TYPE_CHECK[type][:doer_check], doer
     end
 
     def check_members doer, ticket
