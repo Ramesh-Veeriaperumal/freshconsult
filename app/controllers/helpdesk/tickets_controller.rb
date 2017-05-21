@@ -37,7 +37,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :check_compose_feature, :check_trial_outbound_limit, :only => :compose_email
 
   before_filter :find_topic, :redirect_merged_topics, :only => :new
-  around_filter :run_on_slave, :only => [:user_ticket, :activities, :suggest_tickets]
+  around_filter :run_on_slave, :only => [:user_ticket, :activities, :suggest_tickets, :bulk_fetch_ticket_fields]
   before_filter :save_article_filter, :only => :index
   around_filter :run_on_db, :only => [:custom_search, :index, :full_paginate]
 
@@ -153,6 +153,30 @@ class Helpdesk::TicketsController < ApplicationController
     render :json =>  tickets_list.compact.to_json
   end
 
+  def bulk_fetch_ticket_fields
+    # This method skips checking permissible(current_user) as we need to
+    # return required fields for required ticket ids
+    # irrespective of user permission over the ticket
+    tickets_list = params['ticket_list']
+    fields_to_compute = (params['ticket_fields'] & TicketConstants::TFS_COMPUTE_FIELDS)
+    # Below extra fields can not be obtained using select
+    extra_fields_to_compute = (params['ticket_fields'] & TicketConstants::TFS_COMPUTE_FIELDS_EXTRA)
+    ticket_fields = []
+    if (fields_to_compute.present? or extra_fields_to_compute.present?) and tickets_list.present?
+      tickets_list = tickets_list.first(TicketConstants::TFS_TICKETS_COUNT_LIMIT) # Limiting number of tickets
+      fields_to_compute << "id"
+      tickets = current_account.tickets.where(id:tickets_list).select(fields_to_compute)
+      ticket_fields = tickets.each_with_object([]) {|ticket, return_list| return_list << get_properties_hash(ticket,fields_to_compute,extra_fields_to_compute)}
+    end
+    render :json => ticket_fields
+  end
+
+  def get_properties_hash(ticket, fields_to_compute, extra_fields)
+    fields_hash = fields_to_compute.map{|field| [field,ticket[field]]}.to_h
+    extra_hash = extra_fields.select{|field| (ticket.respond_to? field)}.map{|field| [field, ticket.send(field)]}.to_h
+    fields_hash.merge(extra_hash).select{|_,field_value| (!field_value.nil?)}
+  end
+
   def get_similar_tickets
     begin
       con = Faraday.new(MlAppConfig["host"]) do |faraday|
@@ -186,9 +210,9 @@ class Helpdesk::TicketsController < ApplicationController
             }
 
     if current_user.group_ticket_permission
-      body[:filter_condiiton] = {:group_id=>current_user.agent_groups.pluck(:group_id),:responder_id=> [current_user.id]}
+      body[:filter_condition] = {:group_id=>current_user.agent_groups.pluck(:group_id),:responder_id=> [current_user.id]}
     elsif current_user.assigned_ticket_permission
-       body[:filter_condiiton] = {:responder_id => [current_user.id]}
+       body[:filter_condition] = {:responder_id => [current_user.id]}
     end
    Rails.logger.info "Resquest from ML : #{body}"
    body.to_json
@@ -805,7 +829,7 @@ class Helpdesk::TicketsController < ApplicationController
           }
           format.xml { render :xml => @item }
           format.mobile {
-            render :json => {:success => true, :id => @item.id, :actions_executed => actions_executed, :rule_name => @va_rule.name , :success_message => t("activities.tag.execute_scenario", :rule_name => va_rule.name) }.to_json
+            render :json => {:success => true, :id => @item.id, :actions_executed => actions_executed, :rule_name => @va_rule.name , :success_message => t("activities.tag.execute_scenario") }.to_json
           }
           format.json { render :json => @item }
           format.js {
@@ -1955,7 +1979,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def run_on_db(&block)
-    db_type = current_account.slave_queries? ? :run_on_slave : :run_on_master
+    db_type = current_account.master_queries? ? :run_on_master : :run_on_slave
     Sharding.send(db_type) do
       yield
     end

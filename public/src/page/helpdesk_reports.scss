@@ -2080,6 +2080,7 @@ p.default_report_name {
 
 			.select2.dropdown {
 				border-bottom: 1px dashed #999;
+				min-width: 150px;
 			}
 		}
 		.controls{
@@ -2139,6 +2140,10 @@ p.default_report_name {
 
 	#table_content{
 		min-height: 200px;
+	}
+
+	#content{
+		margin-top: 0px;
 	}
 
 	#time_spent_ticket_list {

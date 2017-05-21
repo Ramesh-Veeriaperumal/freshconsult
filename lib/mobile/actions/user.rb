@@ -9,7 +9,8 @@ module Mobile::Actions::User
       :include =>{ :roles => { :only => [:id, :name, :default_role] } },
       :methods => [:display_name, :can_delete_ticket, :can_view_contacts, :can_delete_contact, :can_edit_ticket_properties, 
         :can_view_solutions, :can_merge_or_split_tickets,:can_reply_ticket, :manage_scenarios,:can_view_time_entries,
-        :can_edit_time_entries, :can_forward_ticket, :can_edit_conversation, :can_manage_tickets,:user_time_zone,:can_manage_contact, :avatar_url, :original_avatar, :medium_avatar]
+        :can_edit_time_entries, :can_forward_ticket, :can_edit_conversation, :can_manage_tickets, :has_global_access, :has_group_access,
+         :has_restricted_access, :user_time_zone,:can_manage_contact, :avatar_url, :original_avatar, :medium_avatar]
       }
 
 	def to_mob_json_search(opts={})
@@ -142,6 +143,18 @@ module Mobile::Actions::User
   
   def mobile_jwt_secret
     generate_hmac_secret(generate_mobile_access_token)
+  end
+
+  def has_global_access
+    self.all_tickets_permission?
+  end
+
+  def has_group_access
+    self.group_tickets_permission?
+  end
+
+  def has_restricted_access
+    self.assigned_tickets_permission?
   end
 
   private 
