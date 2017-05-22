@@ -3,9 +3,9 @@ module InstalledApplicationsTestHelper
     {
       id: app.id,
       application_id: app.application_id,
-      app_name: app.application.name,
+      name: app.application.name,
       configs: validate_configs(app),
-      app_display_name: app.application.display_name,
+      display_name: app.application.display_name,
       display_option: Integrations::Constants::APPS_DISPLAY_MAPPING[app.application.name]
     }
   end
