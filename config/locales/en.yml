@@ -4433,6 +4433,7 @@ en:
       replied_forum_title: "Replied to topic <a href='%{topic_url}' data-pjax='#body-container' class='bold-title'>%{topic_title}</a>"
       user_forum_timeinfo: "%{time} ago in <a href='%{forum_url}' data-pjax='#body-container' class='muted'>%{forum_title}</a>"
       user_ticket_timeinfo: " %{time} ago,  Status: %{status} <span class='middot'> &middot; </span> Agent: %{agent_name}"
+      user_ticket_timeinfo2: " %{time} ago,  Status: %{status}"
       company_ticket_timeinfo: "by %{user_name}, %{time} ago <span class='middot'> &middot; </span> Status: %{status} <span class='middot'> &middot; </span> Agent: %{agent_name}"
       contact_all: 'Recent ticket and forum activities'
       company: 'Contains tickets raised by company contacts'

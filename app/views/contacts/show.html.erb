@@ -194,7 +194,7 @@
 											<%= forum_activity(item) %>
 										<% else %>
 											<% no_tickets_shown = no_tickets_shown + 1 %>
-											<%= ticket_activity(item, true) %>
+                      <%= render partial: "ticket_activity" , locals: { ticket: item } %>
 										<% end %>
 									</li>
 
@@ -219,7 +219,7 @@
 							<ul class='timeline-list'>
 								<% @user_tickets.each do |item| %>
 									<li class='timeline-item'>
-										<%= ticket_activity(item, true) %>
+                    <%= render partial: "ticket_activity" , locals: { ticket: item } %>
 									</li>
 								<% end %>
 							</ul>
