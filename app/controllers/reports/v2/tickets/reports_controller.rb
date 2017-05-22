@@ -250,6 +250,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
       res_hash[:total_time] = additional_details[:total_time][t.display_id] if report_type==:timespent
       res << res_hash
     end
+    res = res.sort_by{|r_h| r_h[:total_time]}.reverse if report_type == :timespent
     res
   end
   

@@ -89,7 +89,7 @@ class SendgridDomainUpdates < BaseWorker
         reason = "Outgoing will be blocked for Account ID: #{account.id} , Reason: Account name contains exact suspicious words"
       else
         signup_params = get_account_signup_params(Account.current.id)
-        if (signup_params["account_details"].present? && signup_params["metrics"].present?)
+        if (signup_params["account_details"].present?)
           begin
             signup_params["api_response"] = Email::AntiSpam.scan(signup_params,Account.current.id) 
             signup_params["api_response"]["status"] = -1 if (signup_params["api_response"].present? && !signup_params["api_response"]["status"].present?)

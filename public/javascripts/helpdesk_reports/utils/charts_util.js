@@ -342,10 +342,10 @@ helpdeskReports.prototype = {
     timeSpentTooltip : function() {
         var point = this.point;
         if( point != undefined) {
-            var tooltip = '<div class="tooltip"><div>' + point.time +' hrs ( '+ point.perc +'% ) </div><div>'+ point.ticket_cnt +' tickets </div>';
+            var tooltip = '<div class="tooltip"><div>' + HelpdeskReports.CoreUtil.timeMetricConversion(point.time) +' ('+ point.perc +'%) </div><div>'+ point.ticket_cnt +' tickets </div>';
 
             if(HelpdeskReports.locals.current_type != 'average') {
-                tooltip += '<div>Avg : ' + point.avg + ' hrs/ticket</div>'
+                tooltip += '<div>Avg : ' + HelpdeskReports.CoreUtil.timeMetricConversion(point.avg) + ' per ticket</div>'
             }
             tooltip += "</div>"
             return tooltip;
@@ -1229,12 +1229,10 @@ function barChartWithAxis(opts){
                 categories: opts['xAxisLabel'],
                 labels: {
                     style: {
-                        width: '180px',
-                        'min-width': '180px',
-                        'max-width' : '180px',
-                        'textOverflow' : 'ellipsis',
+                        width: '165px',
+                        'min-width': '165px',
                         fontSize: '13px',
-                        align : 'right',
+                        textAlign : 'left'
                     },
                     useHTML : true
                 },
@@ -1274,7 +1272,10 @@ function barChartWithAxis(opts){
                             fontWeight : "normal",
                             "fontSize": "12px",
                         },
-                        crop : false
+                        crop : false,
+                        formatter: function(){
+                            return HelpdeskReports.CoreUtil.timeMetricConversion(this.y);
+                        }
                     }
                 },
                 series: {

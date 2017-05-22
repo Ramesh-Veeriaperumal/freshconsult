@@ -93,7 +93,7 @@ HelpdeskReports.ReportUtil.TimeSpent = (function($){
 		showDrillDownPane : function(e){
 			$pane = $("#drill_down_pane");
 			$pane.addClass('show');
-			$pane.find(".view_title").html(e.point.name + " ( " + e.point.category + " )");
+			$pane.find(".view_title").html(e.point.name + " (" + e.point.category + ")");
 			_FD.breadcrum_data = e;
 			this.constructTable(e);
 		},
@@ -143,36 +143,6 @@ HelpdeskReports.ReportUtil.TimeSpent = (function($){
 				data: Browser.stringify(request),
 				timeout: _FD.core.timeouts.main_request,
 				success: function (data) {
-					/*
-					data = {
-						"status_category" :{
-							"category_sort_by_total":[
-								null,
-								"Pending"
-							],
-							"category_sort_by_avg":[
-								null,
-								"Pending"
-							],
-							"Open":{
-								"id":"1",
-								"tkt_count":"2",
-								"total_time":"2747",
-								"no_of_times":"2",
-								"avg_time":1373.5,
-								"percent_time":79.12
-							},
-							"Pending":{
-								"id":"3",
-								"tkt_count":"1",
-								"total_time":"725",
-								"no_of_times":"2",
-								"avg_time":725,
-								"percent_time":20.88
-							}
-						}
-					}
-					*/
 					if(!$.isEmptyObject(data)){
 						var status = data['status_category'];
 						var template_data = {
@@ -186,6 +156,7 @@ HelpdeskReports.ReportUtil.TimeSpent = (function($){
 								}
 							})
 						}
+						template_data.keys.sort(function(a,b){ return parseFloat(status[b].total_time) - parseFloat(status[a].total_time); });
 						var tmpl = JST["helpdesk_reports/templates/time_spent_drill_down_tmpl"](template_data);
 						
 						$("#table_content").removeClass('sloading loading-small');

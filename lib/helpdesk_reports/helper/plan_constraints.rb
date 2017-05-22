@@ -18,8 +18,7 @@ module HelpdeskReports::Helper::PlanConstraints
 
   def plan_group
     return @plan_group if defined?(@plan_group)
-    account_plan = Account.current.subscription.subscription_plan.display_name.downcase
-    @plan_group ||= account_plan || :default
+    @plan_group ||= account_plan_name || :default
     if enterprise_reporting? && FEATURE_BASE_PLAN[:enterprise_reporting].exclude?(plan_group)
       @plan_group = FEATURE_BASE_PLAN[:enterprise_reporting].first
     end
@@ -27,7 +26,7 @@ module HelpdeskReports::Helper::PlanConstraints
   end
 
   def account_plan_name
-    Account.current.subscription.subscription_plan.display_name.downcase
+    @plan_name ||= Account.current.subscription.subscription_plan.display_name.downcase
   end
   
   ReportsAppConfig::REPORT_CONSTRAINTS[:plan_constraints].each do |constraint, plans| 
@@ -90,6 +89,10 @@ module HelpdeskReports::Helper::PlanConstraints
     feature_limits = ReportsAppConfig::REPORT_CONSTRAINTS[:max_limits][feature] || {}
     limit = (feature_limits[context] || {})
     limit[plan_group] || limit[:default]
+  end
+
+  def data_refresh_frequency
+    ReportsAppConfig::REPORT_CONSTRAINTS[:data_refresh_frequency][account_plan_name]
   end
 
   def save_report_user_count

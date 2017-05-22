@@ -368,7 +368,7 @@ module HelpdeskReports::Helper::Ticket
   end
   
   def set_last_dump_time time, export=false
-    return (Time.now.in_time_zone(Account.current.time_zone) - 1.days).end_of_day if !disable_date_lag?
+    # return (Time.now.in_time_zone(Account.current.time_zone) - 1.days).end_of_day if !disable_date_lag?
     export ? Time.at(time.to_i).in_time_zone(Account.current.time_zone) : time.to_i
   end
 
