@@ -16,7 +16,7 @@ module Ember
 
     before_filter :can_send_user?, only: [:forward, :facebook_reply, :tweet]
     before_filter :set_defaults, only: [:forward]
-    
+
     SINGULAR_RESPONSE_FOR = %w(reply forward create update tweet facebook_reply).freeze
 
     def ticket_conversations
@@ -204,14 +204,23 @@ module Ember
 
       def save_note
         # assign attributes post delegator validation
-        @item.email_config_id = @delegator.email_config_id
         @item.attachments = @item.attachments + @delegator.draft_attachments if @delegator.draft_attachments
+        assign_from_email
         assign_attributes_for_forward if forward?
         @item.save_note
       end
 
+      def assign_from_email
+        return unless reply? || forward?
+        if @delegator.email_config
+          @item.email_config_id = @delegator.email_config.id
+          @item.from_email = current_account.features?(:personalized_email_replies) ? @delegator.email_config.friendly_email_personalize(current_user.name) : @delegator.email_config.friendly_email
+        else
+          @item.from_email = current_account.features?(:personalized_email_replies) ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
+        end
+      end
+
       def assign_attributes_for_forward
-        @item.from_email ||= current_account.primary_email_config.reply_email
         @item.note_body.full_text_html ||= (@item.note_body.body_html || '')
         @item.note_body.full_text_html = @item.note_body.full_text_html + bind_last_conv(@ticket, signature, true) if @include_quoted_text
         load_cloud_files
@@ -344,7 +353,7 @@ module Ember
 
       def verify_ticket_state
         if (update? || destroy?) && (@ticket.spam || @ticket.deleted)
-          render_request_error(:access_denied, 403) 
+          render_request_error(:access_denied, 403)
           return false
         end
         true

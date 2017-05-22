@@ -24,6 +24,11 @@ module ConversationsTestHelper
 
 
   def private_note_pattern(expected_output = {}, note)
+    if expected_output[:from_email]
+      email_config = @account.email_configs.where(reply_email: expected_output[:from_email]).first
+      expected_output[:from_email] = @account.features?(:personalized_email_replies) ? email_config.friendly_email_personalize(note.user.name) : email_config.friendly_email if email_config
+    end
+
     response_pattern = note_pattern(expected_output, note).merge({
       deleted: (expected_output[:deleted] || note.deleted).to_s.to_bool,
       source: (expected_output[:source] || note.source),
@@ -102,7 +107,7 @@ module ConversationsTestHelper
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
   end
-  
+
   def v1_note_payload
     { helpdesk_note: { body: Faker::Lorem.paragraph, to_emails: [Faker::Internet.email, Faker::Internet.email], private: true } }.to_json
   end

@@ -17,6 +17,7 @@ module Ember
     after_filter  :enable_notification, only: [:update, :update_properties], if: :notification_not_required?
 
     around_filter :run_on_db, :only => :index
+    around_filter :use_time_zone, :only => :index
 
     def index
       sanitize_filter_params
@@ -58,6 +59,8 @@ module Ember
       @item.save
       # TODO-LongTerm create_scenario_activity should ideally be inside va_rule model and not in the controllers
       @item.create_scenario_activity(va_rule.name)
+      # TODO: Need to revisit. Find a better way to unset scenario_action_log thread variable.
+      Va::RuleActivityLogger.clear_activities
       head 204
     end
 
@@ -199,7 +202,7 @@ module Ember
       def tickets_filter
         filtered_tickets = current_account.tickets.permissible(api_current_user).filter(ticket_filter_params)
         filtered_tickets = params[:ids].present? ? filtered_tickets.where(display_id: params[:ids]) : filtered_tickets
-        params[:updated_since].present? ? filtered_tickets.where('helpdesk_tickets.updated_at >= ?', params[:updated_since]) : filtered_tickets
+        params[:updated_since].present? ? filtered_tickets.where('helpdesk_tickets.updated_at >= ?', Time.parse(params[:updated_since])) : filtered_tickets
       end
 
       def ticket_filter_params
@@ -234,15 +237,19 @@ module Ember
       end
 
       def optimized_count(items)
-        if current_account.count_es_enabled? && non_indexed_columns_query?
-          Search::Tickets::Docs.new(wf_query_hash).count(Helpdesk::Ticket)
+        if !default_filter? && current_account.count_es_enabled? && non_indexed_columns_query?
+          ::Search::Tickets::Docs.new(wf_query_hash).count(Helpdesk::Ticket)
         else
           items.count
         end
       end
 
+      def default_filter?
+        !@delegator.ticket_filter.respond_to?(:id)
+      end
+
       def non_indexed_columns_query?
-        (wf_query_hash.collect {|q| q["condition"] } - TicketConstants::DB_INDEXED_QUERY_COLUMNS) > 0
+        (wf_query_hash.collect {|q| q["condition"] } - (TicketConstants::DB_INDEXED_QUERY_COLUMNS + ['spam', 'deleted'])).count > 0
       end
 
       def sanitize_filter_params
@@ -271,6 +278,12 @@ module Ember
 
       def constants_class
         :ApiTicketConstants.to_s.freeze
+      end
+
+      def use_time_zone
+        Time.use_zone(TimeZone.set_time_zone) {
+          yield
+        }
       end
 
       def load_note
