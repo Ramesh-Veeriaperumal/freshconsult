@@ -177,10 +177,10 @@ class Ember::IntegratedResourcesControllerTest < ActionController::TestCase
     }
     post :create, construct_params(@api_params.merge(sf_params))
     assert_response 200
-    integ_resource_id = Integrations::IntegratedResource.last
-    delete :destroy, construct_params(@api_params, false).merge(id: integ_resource_id.id)
+    integ_resource = JSON.parse(response.body)
+    delete :destroy, construct_params(@api_params, false).merge(id: integ_resource["id"])
     assert_response 204
-    refute scoper.exists?(integ_resource_id.id)
+    refute scoper.exists?(integ_resource["id"])
   end
 
   def test_delete_with_invalid_id
