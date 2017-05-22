@@ -20,6 +20,7 @@ class Helpdesk::ConversationsController < ApplicationController
   helper Helpdesk::NotesHelper
   include Ecommerce::Ebay::ReplyHelper
   include Helpdesk::SpamAccountConstants
+  include Redis::OthersRedis
   
   # Send and set status is handled separately in the tickets_controller.
   # Any changes related to note or reply made in this file should be replicated in 
@@ -384,22 +385,38 @@ class Helpdesk::ConversationsController < ApplicationController
 
       def check_trial_customers_limit
         if ((current_account.id > get_spam_account_id_threshold) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)))
-          if (current_account.subscription.trial?) && Freemail.free?(current_account.admin_email) && max_to_cc_threshold_crossed?
+          if (current_account.subscription.trial?) && max_to_cc_threshold_crossed?
+            max_email_threshhold_check
             respond_to do |format|
               format.js { render :file => "helpdesk/notes/inline_error.rjs", :locals => { :msg => t(:'flash.general.recipient_limit_exceeded', :limit => get_trial_account_max_to_cc_threshold )} }
               format.html { redirect_to @parent }
               format.nmobile { render :json => { :server_response => false } }
               format.any(:json, :xml) { render request.format.to_sym => @item.errors, :status => 400 }
             end
-          elsif(account_created_recently? && (current_account.email_configs.count == 1) && (current_account.email_configs[0].reply_email.end_with?(current_account.full_domain)) && max_to_cc_threshold_crossed?)
-            FreshdeskErrorsMailer.error_email(nil, {:domain_name => current_account.full_domain}, nil, {
-              :subject => "Maximum thread to, cc, bcc threshold crossed for Account :#{current_account.id} ", 
-              :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com"],
-              :additional_info => {:info => "Please check spam activity in Ticket : #{@parent.id}"}
-              })
+          elsif(account_created_recently? && max_to_cc_threshold_crossed?)
+            max_email_threshhold_check
           end
         end
       end
+
+      def max_email_threshhold_check 
+        count = email_threshold_crossed_count(current_account.id)
+        if count == 3
+          FreshdeskErrorsMailer.error_email(nil, {:domain_name => current_account.full_domain}, nil, {
+                  :subject => "Maximum email threshold crossed third time for Account :#{current_account.id} ", 
+                  :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com"],
+                  :additional_info => {:info => "Please check spam activity in Ticket : #{@parent.id}"}
+                  })
+        elsif count == 5
+          FreshdeskErrorsMailer.error_email(nil, {:domain_name => current_account.full_domain}, nil, {
+                  :subject => "Reached Maximum email threshold limit for a day crossed for Account :#{current_account.id} ", 
+                  :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com"],
+                  :additional_info => {:info => "Blocking outgoing emails and marked #{current_account.id} as spam"}
+                  })
+          add_member_to_redis_set(SPAM_EMAIL_ACCOUNTS, current_account.id)
+          current_account.launch(:spam_blacklist_feature)
+        end 
+      end 
 
       def max_to_cc_threshold_crossed?
         note_cc_email = get_email_array(@item.cc_emails_hash[:cc_emails])
@@ -414,7 +431,6 @@ class Helpdesk::ConversationsController < ApplicationController
 
         old_recipients = bcc_emails.present? ? (cc_emails | fwd_emails | ticket_from_email | bcc_emails) : (cc_emails | fwd_emails | ticket_from_email)
         total_recipients = old_recipients | note_cc_email | note_to_email | note_bcc_email
-
         return (total_recipients.count != old_recipients.count ) && (total_recipients.count) > get_trial_account_max_to_cc_threshold
       end
 

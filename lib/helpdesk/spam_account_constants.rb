@@ -16,6 +16,12 @@ module Helpdesk::SpamAccountConstants
   		return $trial_account_max_to_cc_threshold
   	end
 
+    def email_threshold_crossed_count account_id
+      key = EMAIL_THRESHOLD_CROSSED_COUNT % { :account_id => account_id}
+      set_others_redis_key(key,0) unless get_others_redis_key(key)
+      threshold_crossed_count = increment_others_redis(key)
+    end
+
   	def get_spam_account_id_threshold
       if $trial_account_id_spam_threshold.blank?
   		  account_id_threshold = get_others_redis_key(SPAM_ACCOUNT_ID_THRESHOLD)
