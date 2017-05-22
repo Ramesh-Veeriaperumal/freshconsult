@@ -32,7 +32,7 @@ HelpdeskReports.ChartsInitializer.TimeSpent = (function ($) {
 
 				$.each(groups.data,function(idx,group) {
 					var title = group['name'];
-					var total_hours = (group['total_time'] / 3600).toFixed(2);
+					var total_hours = HelpdeskReports.CoreUtil.timeMetricConversion(group['total_time']);
 					var group_level1_id = group['id'];
 					var tmpl = JST["helpdesk_reports/templates/time_spent_tmpl"]({
 		                title : title,
@@ -79,8 +79,8 @@ HelpdeskReports.ChartsInitializer.TimeSpent = (function ($) {
 					$.each(limited_rows,function(lp,key) {
 						var tuple = series[key];
 						
-						var total_time = parseFloat((parseFloat(tuple['total_time']) / 3600).toFixed(2));
-						var avg_time = parseFloat((parseFloat(tuple['avg_time']) / 3600).toFixed(2));
+						var total_time = parseFloat(tuple['total_time']);
+						var avg_time = parseFloat(tuple['avg_time']);
 						var point = {
 							time : total_time,
 							ticket_cnt : tuple['tkt_count'],
