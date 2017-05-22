@@ -47,6 +47,7 @@ window.Fjax = {
 	    this.bodyClass = null;
 
     	this._setLoading();
+    this._updateInlineManual();
     	return true;
     },
 
@@ -247,6 +248,9 @@ window.Fjax = {
           }
         })
       }
+    },
+      _updateInlineManual() {
+      inline_manual_player.update();
     }
 }
 
