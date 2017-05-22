@@ -249,8 +249,12 @@ window.Fjax = {
         })
       }
     },
-      _updateInlineManual() {
-      inline_manual_player.update();
+
+    _updateInlineManual: function() {
+      if (typeof(inline_manual_player) != 'undefined' ) { 
+        inline_manual_player.update();
+      }
+
     }
 }
 
