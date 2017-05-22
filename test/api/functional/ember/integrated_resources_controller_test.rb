@@ -165,7 +165,7 @@ class Ember::IntegratedResourcesControllerTest < ActionController::TestCase
   def test_delete
     t6 = create_ticket
     app = Integrations::Application.find_by_name('salesforce_v2')
-    installed_app = Account.current.installed_applications.find_by_application_id(app.id)
+    installed_app = Account.current.installed_applications.find_by_application_id(app.id).nil? ? create_application('salesforce_v2') : Account.current.installed_applications.find_by_application_id(app.id)
     sf_params = {
       application_id: app.id,
       integrated_resource: {
