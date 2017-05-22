@@ -1,13 +1,13 @@
 class InstalledApplicationDecorator < ApiDecorator
-  delegate :id, :application_id, :configs, :application, :configs, to: :record
+  delegate :id, :application_id, :configs, :application, :name, :display_name, to: :record
 
   def to_hash
     {
       id: id,
       application_id: application_id,
-      app_name: application.name,
+      name: application.name,
       configs: configs_hash,
-      app_display_name: application.display_name,
+      display_name: application.display_name,
       display_option: Integrations::Constants::APPS_DISPLAY_MAPPING[record.application.name]
     }
   end

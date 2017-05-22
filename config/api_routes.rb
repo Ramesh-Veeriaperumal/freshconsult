@@ -222,6 +222,8 @@ Helpkit::Application.routes.draw do
     resources :installed_applications, controller: 'ember/installed_applications', only: [:index, :show]
     resources :integrated_resources, controller: 'ember/integrated_resources', except: [:new, :edit]
     resources :integrated_users, controller: 'ember/integrated_users', only: [:index, :show]
+    resources :cloud_files, controller: 'ember/cloud_files', only: [:destroy]
+
 
     resources :contacts, controller: 'ember/contacts', except: [:new, :edit] do
       collection do

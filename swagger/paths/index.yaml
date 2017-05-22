@@ -179,6 +179,9 @@
   $ref: ./integrated_users/list.yaml
 /integrated_users/{id}:
   $ref: ./integrated_users/crud.yaml
+# Cloud Attachments
+/cloud_files/{id}:
+  $ref: ./cloud_files/crud.yaml  
 #Social
 /twitter_handles:
   $ref: ./social/twitter_handles.yaml

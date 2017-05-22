@@ -117,4 +117,5 @@ api_error_messages:
   invalid_company_id: "There is no record matching the id %{company_id}"
   unable_to_perform: "Unable to perform"
   installed_application_id_required: "Installed application id required"
+  user_id_required: "User Id required"
   ticket_id_required: "Ticket id required"

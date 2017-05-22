@@ -4,18 +4,13 @@ module Ember
     include HelperConcern
 
     decorate_views
-
+    before_filter :validate_ticket_permission, only: [:create,:destroy]
+    
     def create
       return unless validate_body_params
-      params.with_indifferent_access
-      if params[:integrated_resource][:local_integratable_type] == 'Helpdesk::Ticket'
+      if params[:integrated_resource][:local_integratable_type] == IntegratedResourceConstants::TICKET
         ticket_id = params[:integrated_resource][:local_integratable_id]
         ticket = fetch_ticket_using_display_id(ticket_id)
-        unless ticket.present?
-          log_and_render_404
-          return
-        end
-        params[:integrated_resource].delete(:local_integratable_id)
         params[:integrated_resource][:local_integratable_id] = ticket.id
       end
       application_id = params[:application_id].to_i
@@ -68,7 +63,28 @@ module Ember
       end
 
       def fetch_ticket_using_display_id(display_id)
-        current_account.tickets.where(display_id: display_id).first
+        current_account.tickets.find_by_display_id(display_id)
+      end
+
+      def validate_ticket_permission
+        local_integratable_id = nil
+        if params[:integrated_resource][:local_integratable_type] == IntegratedResourceConstants::TICKET
+          local_integratable_id = params[:integrated_resource][:local_integratable_id]
+        elsif  params[:integrated_resource][:local_integratable_type] == IntegratedResourceConstants::TIMESHEET
+          time_sheet_id = params[:integrated_resource][:local_integratable_id]
+          local_integratable_id = Account.current.time_sheets.find_by_id(time_sheet_id)
+        else
+          integ_resource = Integrations::IntegratedResource.find(@item.id)
+          local_integratable_id = integ_resource.local_integratable_id
+        end
+        return log_and_render_404 unless local_integratable_id
+        ticket = current_account.tickets.find_by_display_id(local_integratable_id)
+        if ticket
+          return verify_ticket_state_and_permission(api_current_user, ticket)
+        else
+          log_and_render_404
+          false
+        end
       end
   end
 end

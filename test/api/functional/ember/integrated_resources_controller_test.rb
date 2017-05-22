@@ -8,9 +8,6 @@ class Ember::IntegratedResourcesControllerTest < ActionController::TestCase
 
   def setup
     super
-    # mkt_place = Account.current.features?(:marketplace)
-    # Account.current.features.marketplace.destroy if mkt_place
-    # Account.current.reload
     Integrations::InstalledApplication.any_instance.stubs(:marketplace_enabled?).returns(false)
     @api_params = { version: 'private' }
   end
@@ -29,10 +26,9 @@ class Ember::IntegratedResourcesControllerTest < ActionController::TestCase
     harvest_app = Account.current.installed_applications.find_by_application_id(app.id)
     harvest_app = create_application('harvest') if harvest_app.nil?
     agent = add_test_agent(@account)
-    time_sheet = create_time_entry(billable: false, ticket_id: t1.id, agent_id: agent.id, executed_at: 19.days.ago.iso8601)
-    application = Integrations::Application.find_by_name('harvest')
+    time_sheet = create_time_entry(billable: false, ticket_id: t1.id, agent_id: agent.id, executed_at: 19.days.ago.iso8601)    
     resource_params = {
-      application_id: application.id,
+      application_id: app.id,
       integrated_resource: {
         remote_integratable_id: 'ROSH-100',
         local_integratable_id: time_sheet.id,
@@ -54,8 +50,8 @@ class Ember::IntegratedResourcesControllerTest < ActionController::TestCase
 
   def test_create_integ_resource_with_ticket_type
     t2 = create_ticket
-    salesforce_app = create_application('salesforce_v2')
     app = Integrations::Application.find_by_name('salesforce_v2')
+    salesforce_app = Account.current.installed_applications.find_by_application_id(app.id).nil? ? create_application('salesforce_v2') : Account.current.installed_applications.find_by_application_id(app.id)
     sf_params = {
       application_id: app.id,
       integrated_resource: {
@@ -72,19 +68,19 @@ class Ember::IntegratedResourcesControllerTest < ActionController::TestCase
 
   def test_create_integ_resource_with_wrong_ticket_id
     t3 = create_ticket
-    sf_v1_installedapp = create_application('salesforce')
     sf_v1_app = Integrations::Application.find_by_name('salesforce')
+    sf_v1_installedapp = Account.current.installed_applications.find_by_application_id(sf_v1_app.id).nil? ? create_application('salesforce') : Account.current.installed_applications.find_by_application_id(sf_v1_app.id)
     sf_params1 = {
       application_id: sf_v1_app.id,
       integrated_resource: {
         remote_integratable_id: 'ROSH-1000',
         local_integratable_id: Helpdesk::Ticket.last.display_id + 100,
         installed_application_id: sf_v1_installedapp.id,
-        local_integratable_type: 'Helpdesk::Ticket'
+        local_integratable_type: 'ticket'
       }
     }
     post :create, construct_params({ version: 'private' }.merge(sf_params1))
-    assert_response 404
+    assert_response 400
   end
 
   def test_create_integ_resource_with_invalid_params
@@ -106,6 +102,41 @@ class Ember::IntegratedResourcesControllerTest < ActionController::TestCase
     assert_response 400
   end
 
+  def test_create_integ_resource_with_invalid_type
+    ticket = create_ticket
+    sf_app = Integrations::Application.find_by_name('salesforce_v2')
+    sf_installed_app = Account.current.installed_applications.find_by_application_id(sf_app.id).nil? ? create_application('salesforce_v2') : Account.current.installed_applications.find_by_application_id(sf_app.id)
+    sf_params1 = { 
+      application_id: sf_app.id,
+      integrated_resource: {
+        remote_integratable_id: 'ROSH-1000',
+        local_integratable_id: ticket.display_id,
+        installed_application_id: sf_installed_app.id,
+        local_integratable_type: 'abcasdf'
+      }
+    }
+    post :create, construct_params({ version: 'private' }.merge(sf_params1))
+    assert_response 400
+    match_json([bad_request_error_pattern('local_integratable_type', :not_included, list: 'Helpdesk::TimeSheet,Helpdesk::Ticket')])
+  end
+
+  def test_create_integ_resource_with_invalid_remote_integratable_id
+    ticket1 = create_ticket
+    sf_app = Integrations::Application.find_by_name('salesforce_v2')
+    sf_installed_app = Account.current.installed_applications.find_by_application_id(sf_app.id).nil? ? create_application('salesforce_v2') : Account.current.installed_applications.find_by_application_id(sf_app.id)
+    params = { 
+      application_id: sf_app.id,
+      integrated_resource: {
+        remote_integratable_id: 231123123,
+        local_integratable_id: ticket1.display_id,
+        installed_application_id: sf_installed_app.id,
+        local_integratable_type: 'ticket'
+      }
+    }
+    post :create, construct_params({ version: 'private' }.merge(params))
+    assert_response 400
+  end
+
   def test_index_with_installed_and_integratable_id
     app = Integrations::Application.find_by_name('harvest')
     harvest_app = Account.current.installed_applications.find_by_application_id(app.id)
@@ -118,7 +149,7 @@ class Ember::IntegratedResourcesControllerTest < ActionController::TestCase
     t5 = create_ticket
     app = Integrations::Application.find_by_name('salesforce_v2')
     installed_app = Account.current.installed_applications.find_by_application_id(app.id)
-    get :index, controller_params({ version: 'private', installed_application_id: installed_app.id, local_integratable_id: t5.display_id, local_integratable_type: 'ticket' }, true)
+    get :index, controller_params({ version: 'private', installed_application_id: installed_app.id, local_integratable_id: t5.display_id, local_integratable_type: 'Helpdesk::Ticket' }, true)
     assert_response 200
   end
 
@@ -150,6 +181,11 @@ class Ember::IntegratedResourcesControllerTest < ActionController::TestCase
     delete :destroy, construct_params(@api_params, false).merge(id: integ_resource_id.id)
     assert_response 204
     refute scoper.exists?(integ_resource_id.id)
+  end
+
+  def test_delete_with_invalid_id
+    delete :destroy, construct_params(@api_params, false).merge(id: 100000)
+    assert_response 404
   end
 
   def scoper

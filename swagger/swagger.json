@@ -3147,6 +3147,30 @@
         }
       }
     },
+    "/cloud_files/{id}": {
+      "delete": {
+        "summary": "Delete Cloud Attachment",
+        "tags": [
+          "attachment"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Resource not available"
+          }
+        }
+      }
+    },
     "/twitter_handles": {
       "get": {
         "tags": [
