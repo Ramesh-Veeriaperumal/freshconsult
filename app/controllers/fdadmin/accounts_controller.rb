@@ -272,6 +272,48 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     render :json => {:status => enabled}
   end
 
+  def sha256_enabled_feature
+    enabled = false
+    account = Account.find(params[:account_id]).make_current
+    if params[:operation] == "launch"
+      enabled = account.launch(:sha256_enabled).include?(:sha256_enabled) unless account.launched?(:sha1_enabled)
+    elsif params[:operation] == "rollback"
+      enabled = account.rollback(:sha256_enabled).include?(:sha256_enabled)
+    elsif params[:operation] == "check"
+      enabled = account.launched?(:sha256_enabled)
+    end
+    Account.reset_current_account
+    render :json => {:status => enabled}
+  end
+
+  def sha1_enabled_feature
+    enabled = false
+    account = Account.find(params[:account_id]).make_current
+    if params[:operation] == "launch"
+      enabled = account.launch(:sha1_enabled).include?(:sha1_enabled) unless account.launched?(:sha256_enabled)
+    elsif params[:operation] == "rollback"
+      enabled = account.rollback(:sha1_enabled).include?(:sha1_enabled)
+    elsif params[:operation] == "check"
+      enabled = account.launched?(:sha1_enabled)
+    end
+    Account.reset_current_account
+    render :json => {:status => enabled}
+  end
+
+  def api_jwt_auth_feature
+    enabled = false
+    account = Account.find(params[:account_id]).make_current
+    if params[:operation] == "launch"
+      enabled = account.launch(:api_jwt_auth).include?(:api_jwt_auth)
+    elsif params[:operation] == "rollback"
+      enabled = account.rollback(:api_jwt_auth).include?(:api_jwt_auth)
+    elsif params[:operation] == "check"
+      enabled = account.launched?(:api_jwt_auth)
+    end
+    Account.reset_current_account
+    render :json => {:status => enabled}
+  end
+
   def change_account_name
     account = Account.find(params[:account_id])
     result = { :account_id => account.id , :account_name => account.name }

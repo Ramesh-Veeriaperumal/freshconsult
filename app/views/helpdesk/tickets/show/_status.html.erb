@@ -3,7 +3,7 @@
 	<h4 class="title"><%= h(ticket.status_name.html_safe) %></h4>
 	<p id="edit-dueby-time-parent">
 		<%= render :partial => "/helpdesk/tickets/show/due_by", :formats => [:html], :object => ticket.due_by %>			
-		<%= render :partial => "/helpdesk/tickets/show/skill_status" , :locals => {:ticket => ticket}%>
+		<%#= render :partial => "/helpdesk/tickets/show/skill_status" , :locals => {:ticket => ticket}%>
 	</p>
 <% else %>
 	<% if ticket.ticket_status.deleted? %>
