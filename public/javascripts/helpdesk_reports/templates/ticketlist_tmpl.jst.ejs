@@ -7,7 +7,7 @@
 				<div class="ticket-details"><%= I18n.t('helpdesk_reports.agent') %>: <span><%=data[i]['agent']%></span>, <%= I18n.t('helpdesk_reports.status') %>: <span><%=data[i]['status']%></span>, <%= I18n.t('helpdesk_reports.priority') %>: <span><%=data[i]['priority']%></span></div>
 				<div class="ticket-created"><%= I18n.t('helpdesk_reports.from') %>: <span><%=data[i]['requester']%></span></div>
 				<% if(HelpdeskReports.locals.report_type == 'timespent') {%>
-					<div class="ticket-hours"><%= HelpdeskReports.CoreUtil.timeMetricConversion(data[i].total_time) %></div>
+					<div class="ticket-hours"><%= HelpdeskReports.CoreUtil.timeMetricConversion(parseFloat(data[i].total_time)) %></div>
 				<% }%>
 			</li>
 		<% } %>

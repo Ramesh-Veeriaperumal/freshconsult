@@ -1154,6 +1154,9 @@ HelpdeskReports.CoreUtil = {
                 limitRangeToConstraints : true
             };
 
+        if(HelpdeskReports.locals.report_type == "timespent") {
+            config.rangeDurationMonths = 6;
+        }
         //Different date pickers for sprout plan & others
         if(HelpdeskReports.locals.is_non_sprout_plan){
             config.onChange = function() {
