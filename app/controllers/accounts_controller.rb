@@ -119,7 +119,7 @@ class AccountsController < ApplicationController
   def update_domain
     if current_account.update_default_domain_and_email_config(params["company_domain"],params["support_email"])
       current_user.reset_perishable_token!
-      update_crm_and_map
+      add_to_crm(current_account.id)
       render json: {  :success => true, 
                       :url => signup_complete_url(:token => current_user.perishable_token, :host => current_account.full_domain)
                     }
@@ -439,14 +439,6 @@ class AccountsController < ApplicationController
 
     def add_account_info_to_dynamo
       AccountInfoToDynamo.perform_async({email: params[:signup][:user_email]})
-    end
-
-    # TODO - Need to have common util methods for crm and map
-    def update_crm_and_map
-      if (Rails.env.production? or Rails.env.staging?)
-        Resque.enqueue_at(3.minutes.from_now, Marketo::AddLead, {:account_id => current_account.id})
-        Resque.enqueue_at(5.minutes.from_now, CRM::AddToCRM::UpdateAdmin, {:account_id => current_account.id})
-      end
     end
 
     def add_to_crm(account_id)
