@@ -40,7 +40,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   after_update :start_recording_timestamps, :unless => :model_changes?
 
-  before_save :update_resolution_time_by_bhrs, :if => Proc.new { new_sla_logic? && update_resolution_time? }
+  before_save :update_on_state_time, :if => Proc.new { new_sla_logic? && update_on_state_time? }
 
   before_save :update_dueby, :unless => :manual_sla?
 
@@ -782,11 +782,10 @@ private
 
   def set_dueby(sla_detail)
     created_time = self.created_at || time_zone_now
-    total_time_worked = ticket_states.resolution_time_by_bhrs.to_i
+    total_time_worked = ticket_states.on_state_time.to_i
     business_calendar = Group.default_business_calendar(group)
     self.due_by = sla_detail.calculate_due_by(created_time, total_time_worked, business_calendar)
     self.frDueBy = sla_detail.calculate_frDue_by(created_time, total_time_worked, business_calendar) if self.ticket_states.first_response_time.nil?
-    update_ticket_state_sla_timer if status_changed? && changed_to_closed_or_resolved?
   end
 
   def calculate_dueby_and_frdueby?
@@ -991,7 +990,7 @@ private
     self.new_record? || priority_changed? || group_id_changed? || self.schema_less_ticket.sla_policy_id_changed?
   end
 
-  def update_resolution_time?
+  def update_on_state_time?
     common_updation_condition || (status_changed? && stop_sla_timer_changed?)
   end
 
@@ -999,12 +998,12 @@ private
     common_updation_condition || (status_changed? && calculate_dueby_and_frdueby?)
   end
 
-  def update_resolution_time_by_bhrs
+  def update_on_state_time
     self.ticket_states ||= Helpdesk::TicketState.new
     self.ticket_states.resolution_time_updated_at = time_zone_now
     Rails.logger.debug "SLA :::: Account id #{self.account_id} :: #{self.new_record? ? 'New' : self.id} ticket :: Updating resolution time :: resolution_time_updated_at :: #{self.ticket_states.resolution_time_updated_at}"
     if self.ticket_states.sla_timer_stopped_at.nil? && !self.new_record?
-      ticket_states.change_resolution_time_by_bhrs(ticket_states.resolution_time_updated_at_was, ticket_states.resolution_time_updated_at)
+      ticket_states.change_on_state_time(ticket_states.resolution_time_updated_at_was, ticket_states.resolution_time_updated_at)
     end
   end
 
