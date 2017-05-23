@@ -92,7 +92,8 @@ module HelpdeskReports::Helper::PlanConstraints
   end
 
   def data_refresh_frequency
-    ReportsAppConfig::REPORT_CONSTRAINTS[:data_refresh_frequency][account_plan_name]
+    plan_frequency = ReportsAppConfig::REPORT_CONSTRAINTS[:data_refresh_frequency][account_plan_name]
+    enterprise_reporting? ? [plan_frequency, ReportsAppConfig::REPORT_CONSTRAINTS[:data_refresh_frequency][:enterprise_reporting]].min : plan_frequency
   end
 
   def save_report_user_count
