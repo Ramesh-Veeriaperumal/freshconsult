@@ -56,6 +56,7 @@ There are some parts where we have set new standards for Private API.
 - Still no root node for the request body.
 - No rate limiting. This is a temporary thing. We will re-introduce rate-limiting one we've figured out the ideal limits for UI consumption.
 - Please try to stick to general REST API standards possible.
+- Include `helper_concern.rb` in the controllers to avoid redundant code for instantiating delegators, validation classes etc. Override its methods where necessary. For usage, refer other controllers in `api/app/controllers/ember` folder that included this concern.
 
 ### View files
 - We prefer that most of the view presentation logic for each model is abstracted inside decorators for those models.
@@ -73,7 +74,7 @@ Before creating a PR or sending it for review, make sure:
 - Only squash commits. Lets minimize the merge commits and lets resolve all the conflicts in our local branches.
 
 #### Pull Requests
-- Raise PRs agains `helpkit-ember` branch
+- Raise PRs against `helpkit-ember` branch
 - Your branch name to start with `falcon-%{feature-name}`
 - Add **Falcon-API** label to the PR.
 - Make sure the branch is deleted once the PR is merged.
