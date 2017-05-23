@@ -79,7 +79,7 @@ module SsoUtil
     settings.idp_slo_target_url = acc.sso_logout_url unless acc.sso_logout_url.blank?
     settings.name_identifier_format = SAML_NAME_ID_FORMAT
     settings.name_identifier_format = SAML_NAME_ID_UNSPECIFIED if current_account.features?(:saml_unspecified_nameid)
-    settings.idp_cert_fingerprint_algorithm = XMLSecurity::Document::SHA256 unless acc.launched?(:sha1_enabled?)
+    settings.idp_cert_fingerprint_algorithm = XMLSecurity::Document::SHA256 unless acc.launched?(:sha1_enabled)
     settings
   end
 
