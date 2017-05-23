@@ -1,7 +1,6 @@
 class Helpdesk::PicklistValue < ActiveRecord::Base
   
   include MemcacheKeys
-  #include Memcache::MarshalDumpMethods
 
   belongs_to_account
   self.table_name =  "helpdesk_picklist_values"

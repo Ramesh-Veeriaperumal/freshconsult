@@ -11,6 +11,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
   before_filter :update_multiple_methods, :only => :update_multiple
 
   def update_multiple
+
   end
 
   protected
@@ -26,7 +27,6 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
       update_multiple_background
       load_items if items_empty? 
     end
-
     def validate_ticket_close
       @failed_tickets = []
       if params[:helpdesk_ticket] and params[:helpdesk_ticket][:status].present? and close_action?(params[:helpdesk_ticket][:status].to_i)

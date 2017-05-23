@@ -58,7 +58,6 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :filter_params_ids, :only =>[:destroy,:assign,:close_multiple,:spam,:pick_tickets, :delete_forever, :delete_forever_spam, :execute_bulk_scenario, :unspam, :restore]
   before_filter :validate_bulk_scenario, :only => [:execute_bulk_scenario], :if => :close_validation_enabled?
   before_filter :validate_ticket_close, :only => [:close_multiple], :if => :close_validation_enabled?
-  before_filter :scoper_ticket_actions, :only => [ :assign,:close_multiple, :pick_tickets ]
   
   #Set Native mobile is above scoper ticket actions, because, we send mobile response in scoper ticket actions, and 
   #the nmobile format has to be set. Else we will get a missing template error. 
@@ -1571,7 +1570,8 @@ class Helpdesk::TicketsController < ApplicationController
     def ticket_actions_background
       args = { :action => action_name }
       args.merge!(params_for_bulk_action)
-      ::Tickets::BulkTicketActions.perform_async(args)
+      Rails.logger.debug "ids while queueing #{params[:ids].inspect}"
+      ::Tickets::BulkTicketActions.perform_async(args) if params[:ids].present?
     end
 
     def find_topic
@@ -2190,7 +2190,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def multiple_tickets?
-    params[:ids].present?
+    !params[:ids].nil?
   end
 
   def display_spam_flash
