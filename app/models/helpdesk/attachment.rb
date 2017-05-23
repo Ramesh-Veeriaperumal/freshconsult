@@ -162,12 +162,19 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def attachment_sizes
-   if self.description == "logo"
-      return {:logo => "x50>"}
-   elsif  self.description == "fav_icon"
-      return {:fav_icon  => "32x32>" }
-   else
-      return {:medium => "127x177>",:thumb  => "50x50#" }
+    if self.description == "logo"
+      return { 
+        :logo => { :geometry => "x50>", :animated => false } 
+      }
+    elsif  self.description == "fav_icon"
+      return { 
+        :fav_icon  => { :geometry => "32x32>", :animated => false } 
+      }
+    else
+      return {
+        :medium => { :geometry => "127x177>", :animated => false }, 
+        :thumb  => { :geometry => "50x50#", :animated => false }
+      }
     end
   end
 
