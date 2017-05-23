@@ -1,6 +1,6 @@
 <%= @cache_content.html_safe %>
 
 <script type="text/javascript">
-	App.ProductNotification.addNotificationClass("<%= current_user.agent.notification_timestamp %>");
 	App.ProductNotification.initialize({onBoardingPending: <%= current_account.onboarding_pending? %>});
+	App.ProductNotification.addNotificationClass("<%= current_user.agent.notification_timestamp %>");
 </script>
