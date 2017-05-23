@@ -172,6 +172,8 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
         @field_params.keys.each do |key|
           if key == "custom_field"
             @field_params[key].delete_if {|key, value| !visible_custom_fields.include?(key)}
+          elsif key == "skill_id"
+            @field_params.delete(key) unless has_edit_ticket_skill_privilege?
           else
             @field_params.delete(key) unless visible_default_fields.include?(key)
           end

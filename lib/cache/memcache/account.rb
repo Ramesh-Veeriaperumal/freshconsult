@@ -239,7 +239,7 @@ module Cache::Memcache::Account
     @skills_trimmed_version_from_cache ||= begin
       key = ACCOUNT_SKILLS_TRIMMED % { :account_id => self.id }
       MemcacheKeys.fetch(key) do
-        skills.trimmed.find(:all)
+        sorted_skills.trimmed.find(:all)
       end
     end
   end

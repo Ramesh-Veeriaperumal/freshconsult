@@ -114,6 +114,8 @@ class Account < ActiveRecord::Base
   has_many :mobihelp_devices, :class_name => 'Mobihelp::Device'
 
   has_many :skills, :order => "position", :class_name => 'Admin::Skill'
+  has_many :sorted_skills, :order => "name", :class_name => 'Admin::Skill'
+
   has_many :user_skills
   
   has_one :activity_export, :class_name => 'ScheduledExport::Activity', dependent: :destroy
@@ -234,6 +236,8 @@ class Account < ActiveRecord::Base
   has_one :contact_import, :class_name => 'Admin::DataImport' , :conditions => {:source => Admin::DataImport::IMPORT_TYPE[:contact]}
 
   has_one :company_import, :class_name => 'Admin::DataImport' , :conditions => {:source => Admin::DataImport::IMPORT_TYPE[:company]}
+
+  has_one :agent_skill_import, :class_name => 'Admin::DataImport' , :conditions => {:source => Admin::DataImport::IMPORT_TYPE[:agent_skill]}
 
 
   has_many :tags, :class_name =>'Helpdesk::Tag'

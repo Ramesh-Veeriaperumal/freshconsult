@@ -105,6 +105,12 @@ class Account < ActiveRecord::Base
       end
     end
   end
+
+  def ticket_custom_dropdown_nested_fields
+    @ticket_custom_dropdown_nested_fields ||= begin
+      ticket_fields_from_cache.select{|x| x.default == false && (x.field_type == 'nested_field' || x.field_type == 'custom_dropdown')}
+    end
+  end
   
   # Feature check to prevent data from being sent to v1 conditionally
   # V1 has been completely removed in production

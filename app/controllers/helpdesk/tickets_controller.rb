@@ -124,6 +124,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :outbound_email_allowed? , :only => [:create]
   before_filter :requester_widget_filter_params, :only => [:update_requester]
   before_filter :check_custom_view_feature, :only => [:custom_view_save]
+  before_filter :remove_skill_param, :only => [:update_ticket_properties], unless: :has_edit_ticket_skill_privilege?
 
   # before_filter methods for send_and_set_status are to be added in send_and_set_helper.rb
 
@@ -2349,4 +2350,7 @@ class Helpdesk::TicketsController < ApplicationController
     params[:assign] == 'status' && !@item.deleted? && !@item.spam?
   end
 
+  def remove_skill_param
+    params[nscname].delete("skill_id")
+  end
 end

@@ -889,11 +889,7 @@ private
   end
 
   def trigger_observer
-    filter_observer_events(true, observer_inline?)
-  end
-
-  def observer_inline?
-    Account.current.skill_based_round_robin_enabled? && bg_jobs_inline
+    filter_observer_events(true)
   end
 
   def execute_observer?

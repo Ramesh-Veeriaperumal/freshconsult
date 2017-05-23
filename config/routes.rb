@@ -406,6 +406,7 @@ Helpkit::Application.routes.draw do
       get :info_for_node
       get :configure_export
       post :export_csv
+      post :export_skill_csv
     end
     member do
       put :toggle_shortcuts
@@ -1162,6 +1163,8 @@ Helpkit::Application.routes.draw do
       end
       collection do
         put :reorder
+        get :import
+        post :process_csv
       end
     end
     
