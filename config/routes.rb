@@ -2926,6 +2926,9 @@ Helpkit::Application.routes.draw do
           put :reset_login_count
           post :contact_import_destroy
           post :select_all_feature
+          post :sha256_enabled_feature
+          post :sha1_enabled_feature
+          post :api_jwt_auth_feature
           put :change_currency
           get :check_domain
           put :unblock_outgoing_email
