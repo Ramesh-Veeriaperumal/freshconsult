@@ -31,7 +31,9 @@ module Helpdesk::TicketModelExtension
     [ "export_data.fields.fr_time",               "first_res_time_bhrs",     false,  nil              , 22    , "sla_management_enabled?"], 
     [ "export_data.fields.resolution_time",       "resolution_time_bhrs",    false,  nil              , 23    , "sla_management_enabled?"],
     [ "export_data.fields.resolution_status",     "resolution_status",       false,  nil              , 26    , "sla_management_enabled?"],
-    [ "export_data.fields.first_response_status", "first_response_status",   false,  nil              , 27    , "sla_management_enabled?"]
+    [ "export_data.fields.first_response_status", "first_response_status",   false,  nil              , 27    , "sla_management_enabled?"],
+    [ "export_data.fields.internal_agent",        "internal_agent_name",     false,  :internal_agent  , 31    , "shared_ownership_enabled?"],
+    [ "export_data.fields.internal_group",        "internal_group_name",     false,  :internal_group  , 32    , "shared_ownership_enabled?"]
   ]
 
   ASSOCIATION_BY_VALUE = Hash[*EXPORT_FIELDS.map { |i| [i[1], i[3]] }.flatten ]

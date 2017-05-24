@@ -873,6 +873,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
     responder.nil? ? "No Agent" : responder.name
   end
 
+  def internal_agent_name
+    internal_agent.nil? ? "No Agent" : internal_agent.name
+  end
+
+  def internal_group_name
+    internal_group.nil? ? "No Group" : internal_group.name
+  end
+
   def cc_email_hash
     if cc_email.is_a?(Array)
       {:cc_emails => cc_email, :fwd_emails => [], :bcc_emails => [] , :reply_cc => cc_email}
