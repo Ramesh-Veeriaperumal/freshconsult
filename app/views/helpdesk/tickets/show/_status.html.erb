@@ -22,7 +22,7 @@
 		%>
 		<%= t('since').html_safe %> <abbr data-livestamp="<%= changed_time.to_i %>"><%= distance_of_time_in_words(Time.now(), changed_time) %></abbr>
 		<br>from <%= formated_date(changed_time) %>		
-		<%= render :partial => "/helpdesk/tickets/show/skill_status" , :locals => {:ticket => ticket}%>
+		<%#= render :partial => "/helpdesk/tickets/show/skill_status" , :locals => {:ticket => ticket}%>
 	</p>
 <% end %>
 
