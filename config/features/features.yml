@@ -85,6 +85,7 @@
       :gamification_enable: false
       :parent_child_tickets: false
       :link_tickets: false
+      :advanced_search: false
       :advanced_search_bulk_actions: false
       :ticket_activity_export: false
       :caching: false
