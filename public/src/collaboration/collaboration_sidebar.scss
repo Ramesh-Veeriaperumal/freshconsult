@@ -684,6 +684,7 @@ $disabled_border_color: #e0e0e0;
         .collab-reply-text {
             color: #0066cc;
             display: block;
+            font-size: $font_size_sec;
             text-shadow: 1px 2px 1px rgba(0, 0, 0, 0.14);
         }
 
@@ -1385,7 +1386,7 @@ $disabled_border_color: #e0e0e0;
     .collab-slogan {
         width: 342px;
         height: 15px;
-        font-size: $font_size_sec;
+        font-size: $font_size_primary;
         font-weight: normal;
         font-style: normal;
         font-stretch: normal;

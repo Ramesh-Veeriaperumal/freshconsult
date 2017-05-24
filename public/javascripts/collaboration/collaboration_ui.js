@@ -12,7 +12,7 @@ App.CollaborationUi = (function ($) {
         MENTION_RE: /\B@([\S]+\b[*]*)/igm,
         GROUP_MENTION_RE: /\B@\((.*?)\)\B/igm,
         IMAGE_TAG_RE: /<img/igm,
-        MENTION_EVERYONE_TAG: "@everyone",
+        MENTION_EVERYONE_TAG: "@huddle",
         TYPE_SENT: 'sent',
 		TYPE_RECEIVED: 'received',
         MSG_TYPE_CLIENT: "1", // Msg from Client
@@ -1815,8 +1815,8 @@ App.CollaborationUi = (function ($) {
             }
 
             usersToMention.push({
-                username: "everyone",
-                job_title: "All members of this discussion",
+                username: "huddle",
+                job_title: "All members of this Team Huddle",
                 id_post_fix: "mention-list"
             });
             menu_prefix = "<label class='info'>"+ I18n.translate("collaboration.collab_max_out_info", {max_collaborators: "<b>" + CONST.HELPKIT_MAX_COLLABORATORS + "</b>", contact_person: "<b>" + "your Admin" + "</b>"}) +"</label>";

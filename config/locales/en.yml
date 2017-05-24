@@ -6863,7 +6863,7 @@ en:
         my_article_feedback: My Articles Feedback
         archived: Archive
         invalid_requester: Invalid requester
-        ongoing_collab: My Open Discussions
+        ongoing_collab: My Active Huddles
       note:
         posted_on: "%{user_name} on %{note_date}"
         created_on:
@@ -11001,13 +11001,13 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       customer_responded: "Customer Responded"
       ticket_status_update: "Ticket Status Updated"
       ticket_assigned: "Ticket Assigned"
-      collab_added_to: "Discussion"
-      collab_invited_notification: "Discussion"
-      collab_group_mention: :"Discussion"
-      collab_group_mention_multi: "Discussion"
-      collab_first_mention: "Discussion"
-      collab_reply: "Discussion"
-      collab_reply_multi: "Discussion"
+      collab_added_to: "Team Huddle"
+      collab_invited_notification: "Team Huddle"
+      collab_group_mention: :"Team Huddle"
+      collab_group_mention_multi: "Team Huddle"
+      collab_first_mention: "Team Huddle"
+      collab_reply: "Team Huddle"
+      collab_reply_multi: "Team Huddle"
       ticket_assigned_to_group: "Ticket Assigned to Group"
       ticket_created: "New Ticket"
     preferences_text:
@@ -11200,7 +11200,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     help: What's this?
     feed_back_survery: Help us with some feedback?
   collaboration:
-    my_open_discussions: "My Open Discussions"
+    my_open_discussions: "My Active Huddles"
     notifications: "Notifications"
     no_notifications: "No new notifications"
     discussion: "Discussion"
@@ -11208,7 +11208,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     collaborators: "Members"
     view_all_collaborations: "View all discussions"
     view_discussion: "View Discussion"
-    open_discussions: "My Open Discussions"
+    open_discussions: "My Active Huddles"
     type_message: "Type message"
     added_to: "You have been added as collaborator on ticket %{ticket_id}"
     invited_notification: "%{user_name} wants to collaborate with you on ticket %{ticket_id}"
@@ -11216,11 +11216,12 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     nth_mention: "%{who} has mentioned you in %{how_many} messages in ticket %{ticket_id}"
     nth_mention_multi_users: "%{who_all} have mentioned you in %{how_many} messages in ticket %{ticket_id}"
     send_msg_placeholder: "Type '%{newline_key}' to add a new line. '%{send_key}' to send..."
-    collab_max_out_info: "A ticket cannot have more than %{max_collaborators} collaborators. Please contact %{contact_person} to @mention people who are not in the list below."
-    collab_motto: "Collaborate with your team in context, fast."
-    chat_and_more_slogan: "'@' mention someone to invite them, highlight and discuss."
+    collab_max_out_info: "This discussion cannot have more than %{max_collaborators} members."
+    collab_motto: "Collaborate with your team to resolve issues faster"
+    collab_motto_slogan1: "@mention a teammate to invite them."
+    collab_motto_slogan2: "Highlight in the ticket and discuss."
     error:
-      network_err: "Could not connect to internet!"
+      network_err: "Could not connect to the internet!"
       size_exceeded: "Your file exceeded the maximium upload limit of %{max_size}. Please try again with a smaller file."
       wrong_file_format: "Unsupported file format!"
       unexpected: "Something went wrong!"
