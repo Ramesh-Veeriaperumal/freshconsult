@@ -476,8 +476,10 @@ class Account < ActiveRecord::Base
 
   def verify_account_with_email
     unless verified?
-      self.reputation = 1 
-      self.save
+      self.reputation = 1
+      if self.save
+        Rails.logger.info "Account Verification Completed account_id: #{self.id} signup_method: #{self.signup_method}"
+      end
     end
   end
 
@@ -592,6 +594,18 @@ class Account < ActiveRecord::Base
       self.make_current
       save!
     end
+  end
+
+  def signup_method
+    @signup_method ||= (
+      key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => self.id}
+      json_response = get_others_redis_key(key)
+      json_response.present? ? JSON.parse(json_response)["signup_method"] : self.conversion_metric.try(:[], :session_json).try(:[], :signup_method)
+    )
+  end
+
+  def email_signup?
+    "email_signup" == self.signup_method.to_s
   end
 
   protected
