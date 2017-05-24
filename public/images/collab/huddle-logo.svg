@@ -1,29 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="360px" height="360px" viewBox="0 0 360 360" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 43.2 (39069) - http://www.bohemiancoding.com/sketch -->
-    <title>huddle-logo</title>
+    <!-- Generator: Sketch 44.1 (41455) - http://www.bohemiancoding.com/sketch -->
+    <title>huddle-blunt</title>
     <desc>Created with Sketch.</desc>
-    <defs>
-        <path d="M159.5,319 C186.740142,319 234.817249,300.132537 234.817249,300.132537 L319,319 L303.987074,227.144784 C303.987074,227.144784 319,183.68269 319,159.5 C319,71.4105824 247.589418,0 159.5,0 C71.4105824,0 0,71.4105824 0,159.5 C0,247.589418 71.4105824,319 159.5,319 Z" id="path-1"></path>
-    </defs>
+    <defs></defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="huddle-logo">
-            <g id="Group-2" transform="translate(23.000000, 21.000000)">
-                <mask id="mask-2" fill="white">
-                    <use xlink:href="#path-1"></use>
-                </mask>
-                <g id="Mask">
-                    <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
-                    <path stroke="#252525" stroke-width="12" d="M311.646028,311.202941 L236.129446,294.277783 L234.336128,293.875856 L232.625345,294.547238 C232.543071,294.579526 232.371248,294.646346 232.114104,294.745389 C231.678492,294.913173 231.165973,295.10858 230.580781,295.329301 C228.900877,295.962922 226.980756,296.670217 224.854357,297.432702 C218.7728,299.613428 212.269674,301.79475 205.619044,303.828563 C199.034805,305.842073 192.659716,307.600399 186.633617,309.030504 C175.808036,311.599615 166.563785,313 159.5,313 C74.7242909,313 6,244.275709 6,159.5 C6,74.7242909 74.7242909,6 159.5,6 C244.275709,6 313,74.7242909 313,159.5 C313,165.864854 311.851592,174.284551 309.749287,184.187677 C308.627614,189.471435 307.260328,195.05667 305.701317,200.825594 C304.08291,206.814305 302.34715,212.678075 300.611876,218.167515 C300.005152,220.086853 299.442346,221.820769 298.938165,223.33837 C298.762536,223.86702 298.60705,224.330103 298.473545,224.723766 C298.394737,224.956144 298.341571,225.11144 298.315882,225.185809 L297.821301,226.61761 L298.065642,228.11259 L311.646028,311.202941 Z"></path>
-                </g>
-            </g>
-            <g id="Group-4" transform="translate(100.322581, 107.322581)" stroke-width="12" fill="#FFFFFF">
-                <g id="Group">
-                    <polygon id="Triangle" stroke="#000000" points="82.5 28 138 113 27 113"></polygon>
-                    <circle id="Oval-4-Copy-2" stroke="#252525" cx="82.5" cy="27.5" r="27.5"></circle>
-                    <circle id="Oval-4-Copy" stroke="#252525" cx="137.5" cy="112.5" r="27.5"></circle>
-                    <circle id="Oval-4-Copy-2" stroke="#252525" cx="27.5" cy="112.5" r="27.5"></circle>
-                </g>
+        <g id="huddle-blunt">
+            <path d="M333,334 L333,180.5 C333,95.7242909 264.275709,27 179.5,27 C94.7242909,27 26,95.7242909 26,180.5 C26,265.275709 94.7242909,334 179.5,334 L333,334 Z" id="Mask" stroke="#000000" stroke-width="12"></path>
+            <g id="Group-3" transform="translate(143.000000, 151.000000)"></g>
+            <g id="Group" transform="translate(105.000000, 110.000000)" stroke="#000000" stroke-width="12">
+                <circle id="Oval-4-Copy-2" cx="82.8225806" cy="27.8225806" r="27.5"></circle>
+                <circle id="Oval-4-Copy" cx="137.822581" cy="112.822581" r="27.5"></circle>
+                <circle id="Oval-4-Copy-2" cx="27.8225806" cy="112.822581" r="27.5"></circle>
+                <path d="M45.4560547,85.4521484 L63.8603516,57.4375" id="Line" stroke-linecap="square"></path>
+                <path d="M101,84 L119,56" id="Line-Copy" stroke-linecap="square" transform="translate(110.000000, 70.000000) scale(-1, 1) translate(-110.000000, -70.000000) "></path>
+                <path d="M66,113 L99.29,113" id="Line-Copy" stroke-linecap="square" transform="translate(82.645000, 113.000000) scale(-1, 1) translate(-82.645000, -113.000000) "></path>
             </g>
         </g>
     </g>

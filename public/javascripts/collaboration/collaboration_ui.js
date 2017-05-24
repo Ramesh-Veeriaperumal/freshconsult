@@ -1140,7 +1140,7 @@ App.CollaborationUi = (function ($) {
                 $showDiscussionDD.attr('data-message-id', event.currentTarget.getAttribute('data-message-id'));
 
                 var $annotatorImage = $("#annotator-image");
-                $annotatorImage.html(_COLLAB_PVT.getAvatarHtml(event.currentTarget.getAttribute('data-annotator-id'), "small"));
+                $annotatorImage.html(_COLLAB_PVT.getAvatarHtml(event.currentTarget.getAttribute('data-annotator-id'), "small x-small"));
 
                 $showDiscussionDD.css({
                     left: dropDownPos.left,

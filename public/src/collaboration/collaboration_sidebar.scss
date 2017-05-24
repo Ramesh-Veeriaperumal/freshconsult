@@ -185,6 +185,7 @@ $disabled_border_color: #e0e0e0;
 
         &.invalid-annotation {
             background-color: $msg_bg_color;
+            box-shadow: none;
             border-color: $received_msg_border_color;
             cursor: not-allowed;
         }
@@ -194,6 +195,13 @@ $disabled_border_color: #e0e0e0;
         background-color: $reply_to_bg_color;
         border: 1px solid $reply_to_border_color;
         box-shadow: 1px 1px 0 $reply_to_shadow_color;
+        height: 36px;
+
+        .collab-source-msg-from {
+            font-weight: 500;
+            color: #636363;
+            display: block;
+        }
     }
 
     .msg-cover {
@@ -205,6 +213,8 @@ $disabled_border_color: #e0e0e0;
         @include text-align(left);
         @include padding(10px);
         @include border-radius($std_border_radius);
+        min-height: 44px;
+        box-sizing: border-box;
 
         &:before {
             border: solid transparent;
@@ -268,11 +278,6 @@ $disabled_border_color: #e0e0e0;
                 @include border-right-color(transparent);
             }
         }
-
-        .collab-reply-btn {
-            transform: rotateY(180deg);
-            -webkit-transform: rotateY(180deg);
-        }
     }
 
     .avatar {
@@ -304,25 +309,18 @@ $disabled_border_color: #e0e0e0;
         @include margin(5px 0);
         @include right( 8px );
         background-color: #0066cc;
-        box-shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.14);
+        box-shadow: $box_shadow2;
 
         .ficon {
             color: white;
             position: absolute;
-        }
-        .first-arrow {
-            left: 7px;
-            top: -1px;
-        }
-        .second-arrow {
-            top: 5px;
+            top: 2px;
             left: 7px;
         }
-    
     }
 
     .title-row {
-        background-color: $chat_bg;
+        background-color: #f5f5f5;
         border-bottom: 1px solid $border_color2;
         height: 75px;
         box-sizing: border-box;
@@ -664,20 +662,31 @@ $disabled_border_color: #e0e0e0;
 
     .collab-reply-btn {
         display: none;
-        position: absolute;
-        bottom: 1px;
-        @include right(calc(100% + 10px));
-        background: lightgray;
+        bottom: -1px;
         box-sizing: border-box;
         z-index: 1;
         text-align: center;
         cursor: pointer;
-        border-radius: 50%;
-        width: 25px;
-        height: 25px;
-        line-height: 25px;
-        background-color: #0066cc;
         color: white;
+        position: absolute;
+        @include left(-44px);
+
+        .collab-reply-icon {
+            width: 25px;
+            height: 25px;
+            line-height: 25px;
+            background-color: #0066cc;
+            display: inline-block;
+            box-shadow: $box_shadow2;
+            border-radius: 50%;
+        }
+
+        .collab-reply-text {
+            color: #0066cc;
+            display: block;
+            text-shadow: 1px 2px 1px rgba(0, 0, 0, 0.14);
+        }
+
     }
 
     &:hover {
@@ -695,8 +704,8 @@ $disabled_border_color: #e0e0e0;
 
     &.received-box {
         .collab-reply-btn {
-            @include left(calc(100% + 10px));
-            @include right(initial);
+            @include left(initial);
+            @include right(-44px);
         }
         @include text-align(left);
 
@@ -904,8 +913,9 @@ $disabled_border_color: #e0e0e0;
 .collab-activity-container {
     @include padding(10px);
     background-color: #f5f5f5;
-    box-shadow: 0 -1px 2px 0 rgba(0, 0, 0, 0.14);
-    border-top: 1px solid #cccccc;
+    box-shadow: $box_shadow2;
+    border-top: 1px solid #f5f5f5;
+    position: relative;
 }
 
 .send-collab-message-form {
@@ -1392,7 +1402,23 @@ $disabled_border_color: #e0e0e0;
         background-color: transparent;
         box-shadow: 0 -4px 0 7px transparent;
     }
-    50% {
+    5% {
+        background-color: $reply_to_blink_color;
+        box-shadow: 0 -4px 0 7px $reply_to_blink_color;
+    }
+    20% {
+        background-color: $reply_to_blink_color;
+        box-shadow: 0 -4px 0 7px $reply_to_blink_color;
+    }
+    30% {
+        background-color: transparent;
+        box-shadow: 0 -4px 0 7px transparent;
+    }
+    40% {
+        background-color: $reply_to_blink_color;
+        box-shadow: 0 -4px 0 7px $reply_to_blink_color;
+    }
+    90% {
         background-color: $reply_to_blink_color;
         box-shadow: 0 -4px 0 7px $reply_to_blink_color;
     }
@@ -1572,12 +1598,17 @@ $disabled_border_color: #e0e0e0;
 
     .view-discussion-text {
         display: inline-block;
-        line-height: 20px;
+        line-height: 17px;
         vertical-align: middle;
         margin-top: 2px;
         margin-right: 1px;
         font-weight: initial;
         font-weight: auto;
+        color: #1272de;
+
+        &:hover {
+            color: #0645AD;
+        }
     }
 
     .collab-discuss-text {
@@ -1587,6 +1618,11 @@ $disabled_border_color: #e0e0e0;
         margin-right: -1px;
         font-weight: initial;
         font-weight: auto;
+        color: #1272de;
+
+        &:hover {
+            color: #0645AD;
+        }
     }
 
     .collab-logo {
@@ -1627,6 +1663,13 @@ $disabled_border_color: #e0e0e0;
         .preview_pic {
             @include margin-right(6px); 
             margin-bottom: 1px;
+
+            &.x-small {
+                width: 16px;
+                height: 16px;
+                line-height: 17px;
+                font-size: 10px;
+            }
         }
 
         .thumb_img {
@@ -1639,8 +1682,8 @@ $disabled_border_color: #e0e0e0;
             content: " ";
             display: block;
             position: absolute;
-            width: 2px;
-            height: 19px;
+            width: 1px;
+            height: 13px;
             background-color: $border_color;
             right: 0;
             top: 2px;
