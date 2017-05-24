@@ -1,6 +1,6 @@
 <%	app = Integrations::Application.find_by_name('surveymonkey') %>
 <% if installed_app %>
-	<% if installed_app.configs[:inputs]['api_version'].nil? %>
+	<% if installed_app.configs[:inputs]['api_version'] != 'V3'%>
 		<% auth_url = app.oauth_url({:account_id => current_account.id}) %>
 		<div class="surveymonkey_alert hide"><%= t('integrations.surveymonkey.reauth_text_html', :link_auth => auth_url) %></div>
 		<script>
