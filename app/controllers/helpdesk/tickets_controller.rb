@@ -275,7 +275,7 @@ class Helpdesk::TicketsController < ApplicationController
     params[:html_format] = request.format.html?
     tkt = current_account.tickets.permissible(current_user)
     @items = fetch_tickets unless is_native_mobile?
-    @failed_tickets = (flash[:failed_tickets] || []).collect { |id| ticket = @items.find {|item| item.display_id == id}; {:id => ticket.id, :subject => ticket.subject, :display_id => id} }
+    @failed_tickets = (flash[:failed_tickets] || []).collect { |id| ticket = @items.find {|item| item.display_id == id}; {:id => ticket.id, :subject => CGI.escape_html(ticket.subject), :display_id => id} }
     if flash[:action]
       title = I18n.t("helpdesk.flash.title_on_#{flash[:action]}_fail") 
       description = I18n.t("helpdesk.flash.description_on_#{flash[:action]}_fail")
@@ -2335,7 +2335,7 @@ class Helpdesk::TicketsController < ApplicationController
     valid_ticket = (validate_ticket? && close_action?(params[:value].to_i)) ? valid_ticket?(@item) : true
     unless valid_ticket
       log_error @item
-      @item_id_and_subject = [{:id => @item.id, :display_id => @item.display_id, :subject => @item.subject}]
+      @item_id_and_subject = [{:id => @item.id, :display_id => @item.display_id, :subject => CGI.escape_html(@item.subject)}]
       render :json => {
         :success => false,
         :message => render_to_string(
