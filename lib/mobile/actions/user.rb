@@ -39,6 +39,14 @@ module Mobile::Actions::User
     as_json(options,true)
   end
 
+  def to_mob_json_basic_detail(opts={})
+    options = { 
+      :methods => [ :original_avatar, :medium_avatar, :avatar_url, :is_agent],         
+      :only => [ :id, :name, :email]
+    }.merge(opts)
+    as_json(options,true)
+  end
+
   def as_config_json
     as_json(CONFIG_JSON_INCLUDE,true)
   end

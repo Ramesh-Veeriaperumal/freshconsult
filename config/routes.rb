@@ -412,6 +412,7 @@ Helpkit::Application.routes.draw do
       get :info_for_node
       get :configure_export
       post :export_csv
+      post :export_skill_csv
     end
     member do
       put :toggle_shortcuts
@@ -1168,6 +1169,8 @@ Helpkit::Application.routes.draw do
       end
       collection do
         put :reorder
+        get :import
+        post :process_csv
       end
     end
     
@@ -2930,6 +2933,9 @@ Helpkit::Application.routes.draw do
           put :reset_login_count
           post :contact_import_destroy
           post :select_all_feature
+          post :sha256_enabled_feature
+          post :sha1_enabled_feature
+          post :api_jwt_auth_feature
           put :change_currency
           get :check_domain
           put :unblock_outgoing_email

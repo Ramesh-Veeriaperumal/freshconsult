@@ -146,7 +146,19 @@ class Group < ActiveRecord::Base
 
   def trigger_capping
     Groups::RoundRobinCapping.perform_async({ :group_id => self.id,
-      :capping_limit_change => @model_changes[:capping_limit] }) if round_robin_capping_changed?
+      :model_changes => @model_changes }) if trigger_lbrr?
+  end
+
+  def trigger_lbrr?
+    round_robin_capping_changed? || round_robin_changed?
+  end
+
+  def round_robin_changed?
+    @model_changes && @model_changes[:ticket_assign_type] && @model_changes[:ticket_assign_type].include?(TICKET_ASSIGN_TYPE[:round_robin])
+  end
+
+  def round_robin_capping_initialized?
+    @model_changes[:ticket_assign_type] && @model_changes[:ticket_assign_type].last == TICKET_ASSIGN_TYPE[:round_robin]
   end
 
   def shutdown_capping user_ids
@@ -161,7 +173,11 @@ class Group < ActiveRecord::Base
   end
 
   def round_robin_capping_changed?
-    @model_changes.key?(:capping_limit) && Account.current.round_robin_capping_enabled?
+    @model_changes && @model_changes.key?(:capping_limit) && round_robin? && Account.current.round_robin_capping_enabled?
+  end
+
+  def round_robin?
+    (ticket_assign_type == TICKET_ASSIGN_TYPE[:round_robin]) 
   end
 
   def round_robin_enabled?

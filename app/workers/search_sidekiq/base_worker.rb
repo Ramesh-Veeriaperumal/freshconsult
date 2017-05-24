@@ -1,4 +1,4 @@
-class SearchSidekiq::BaseWorker
+class SearchSidekiq::BaseWorker < BaseWorker
   include Tire::Model::Search if ES_ENABLED
   include Sidekiq::Worker
 
@@ -54,14 +54,6 @@ class SearchSidekiq::BaseWorker
     def log_path
       @@log_file_path ||= "#{Rails.root}/log/search_sidekiq.log"
     end 
-
-    def custom_logger
-      begin
-        @@es_logger ||= CustomLogger.new(log_path)
-      rescue Exception => e
-        NewRelic::Agent.notice_error(e)
-      end
-    end
 
     def formatted_log(op_type, alias_name, id, res_code, response)
       @@log_file_format = "#{op_type} index=#{alias_name}, doc_id=#{id}, response_code=#{res_code}, es_response=#{response.inspect}"

@@ -13,4 +13,16 @@ module RoundRobinCapping::Methods
     (score/ROUND_ROBIN_DEFAULT_SCORE).to_i
   end
 
+  def capping_enabled?
+    @capping_limit_change.is_a?(Array) && @capping_limit_change[0] == 0
+  end
+
+  def capping_increased?
+    @capping_limit_change.is_a?(Array) && @capping_limit_change[1] > @capping_limit_change[0]
+  end
+
+  def lbrr_init?
+    @model_changes[:ticket_assign_type] && @model_changes[:ticket_assign_type].last == Group::TICKET_ASSIGN_TYPE[:round_robin]
+  end
+
 end

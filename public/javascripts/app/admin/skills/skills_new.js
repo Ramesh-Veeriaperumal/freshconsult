@@ -15,10 +15,10 @@ window.App.Admin.Skills = window.App.Admin.Skills || {};
     },
 
     onVisit: function(data) {
-      this.init();
     },
 
     init: function() {
+      $(document).off('.skills');
       this.bindEvents();
     },
 
@@ -268,11 +268,6 @@ window.App.Admin.Skills = window.App.Admin.Skills || {};
         $agentCountString.html('No Agent');
         $addorManageText.html('<b>Add</b>');
       }
-    },
-
-
-    onLeave: function() {
-      $(document).off('.skills');
     },
 
 

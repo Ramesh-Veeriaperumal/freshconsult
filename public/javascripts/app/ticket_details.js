@@ -1917,6 +1917,11 @@ var scrollToError = function(){
 		swapEmailNote('cnt-' + $(this).data('note-type'), this);
 	});
 
+	//binding Discuss button
+    $('body').on('click.ticket_details', '[id=DiscussButton]', function(ev) {
+    	$("#collab-btn") .trigger("click");
+    });
+
 	$('body').on('click.ticket_details', '[rel=review-button]','[id=ReviewButton]', function(ev) {
 		if(confirm("Do you want to send request for App review?")) {
 			$("#HelpdeskReviewNotes").submit();
