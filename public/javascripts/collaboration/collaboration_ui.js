@@ -66,7 +66,7 @@ App.CollaborationUi = (function ($) {
             var $scrollBox = $("#collab-sidebar #scroll-box");
             
             $collabBtn.on("click.collab", "#collab-btn", _COLLAB_PVT.fetchAndToggleCollab);
-            $collabSidebar.on("click.collab", "#collab-close-icon", _COLLAB_PVT.toggleCollabExpand);
+            $collabSidebar.on("click.collab", "#collab-close-icon", _COLLAB_PVT.closeCollabSidebar);
             $collabSidebar.on("click.collab", "#collaborators-tab-btn", _COLLAB_PVT.showCollaboratorsListView);
             $collabSidebar.on("click.collab", "#discussion-tab-btn", _COLLAB_PVT.showDiscussionView);
             $collabSidebar.on("mouseover.collab", ".avatar-cover", _COLLAB_PVT.showHoverCard);
@@ -209,11 +209,11 @@ App.CollaborationUi = (function ($) {
                         ann.addClass("collab-temp-annotation");
                     }
                     prepareDataMarkAnnotation();
-                    _COLLAB_PVT.toggleCollabExpand(true);
+                    _COLLAB_PVT.openCollabSidebar();
                 });
             } else {
                 prepareDataMarkAnnotation();
-                _COLLAB_PVT.toggleCollabExpand(true);
+                _COLLAB_PVT.openCollabSidebar();
             }
 
             function prepareDataMarkAnnotation() {
@@ -324,7 +324,7 @@ App.CollaborationUi = (function ($) {
             var $scrollBox = $("#collab-sidebar #scroll-box");
             $scrollBox.animate({
                 scrollTop: $scrollBox[0].scrollHeight
-                }, 1000);
+                }, 400);
         },
 
         scrollToBottom: function() {
@@ -336,33 +336,47 @@ App.CollaborationUi = (function ($) {
             }
         },
         fetchAndToggleCollab: function() {
-            if(!Collab.isCollabOpen()) {
-                Collab.loadConversation(_COLLAB_PVT.toggleCollabExpand);
+            if(Collab.isCollabOpen()) {
+                if(!_COLLAB_PVT.collabBtn.isDisabled()) {
+                    _COLLAB_PVT.closeCollabSidebar();
+                }
             } else {
-                _COLLAB_PVT.toggleCollabExpand();
+                Collab.loadConversation(_COLLAB_PVT.openCollabSidebar);
             }
         },
-        toggleCollabExpand: function(forceOpen) {
+        openCollabSidebar: function() {
+            if(_COLLAB_PVT.collabBtn.isDisabled()) {
+                return false;
+            }
             var $collabSidebar = $("#collab-sidebar");
             var $msgBox = $("#collab-sidebar #send-message-box");
 
-            if(forceOpen === true) {
-                $collabSidebar.removeClass("expand");
+            $collabSidebar.removeClass("expand navFromRightBounceIn");
+            
+            $collabSidebar.addClass("expand navFromRightBounceIn");
+
+            setTimeout(function() {
+                _COLLAB_PVT.scrollToBottom();
+                if(!_COLLAB_PVT.collabDisabled()) {
+                    $msgBox.focus();
+                }
+            });
+        },
+
+        closeCollabSidebar: function() {
+            var $collabSidebar = $("#collab-sidebar");
+            var $msgBox = $("#collab-sidebar #send-message-box");
+
+            $collabSidebar.removeClass("expand navFromRightBounceIn");
+            $msgBox.blur();
+        },
+
+        toggleCollabExpand: function(forceOpen) {
+            if(Collab.isCollabOpen()) {
+                _COLLAB_PVT.closeCollabSidebar();
+            } else {
+                _COLLAB_PVT.openCollabSidebar();
             }
-
-	        if($collabSidebar.hasClass("expand")) {
-                $collabSidebar.removeClass("expand");
-                $msgBox.blur();
-	        } else {
-                $collabSidebar.addClass("expand");
-
-                setTimeout(function() {
-                    _COLLAB_PVT.scrollToBottom();
-                    if(!_COLLAB_PVT.collabDisabled()) {
-    	                $msgBox.focus();
-                    }
-	            });
-	        }
 	    },
 
         uploadFile: function(files) {
@@ -759,7 +773,7 @@ App.CollaborationUi = (function ($) {
         scrollToMessage: function(data_msg_id, retryCounter, animation_class) {
             animation_class = animation_class || "collab-ann-blink";
             _COLLAB_PVT.hideDiscussionDD();
-            _COLLAB_PVT.toggleCollabExpand(true);
+            _COLLAB_PVT.openCollabSidebar();
             _COLLAB_PVT.showDiscussionView();
             var msg_e = $("#collab-" + data_msg_id);
             retryCounter = (retryCounter >= 0) ? retryCounter : CONST.DEFAULT_FETCH_RETRY;
@@ -965,6 +979,7 @@ App.CollaborationUi = (function ($) {
 
                 // change it from winow object to something else
                 collabModel.collaboratorsGetPresence();
+                window.clearInterval(window.getPresenceIval);
                 window.getPresenceIval = setInterval(function() {
                     collabModel.collaboratorsGetPresence();
                 }, collabModel.MEMBER_PRESENCE_POLL_TIME);
@@ -979,7 +994,7 @@ App.CollaborationUi = (function ($) {
             *   Collab expand or not
             */ 
             if(!!Collab.expandCollabOnLoad) {
-                _COLLAB_PVT.toggleCollabExpand(true);
+                _COLLAB_PVT.openCollabSidebar();
                 Collab.expandCollabOnLoad = false;
                 _COLLAB_PVT.scrollToMessage(Collab.scrollToMsgId);
             }
@@ -1068,6 +1083,12 @@ App.CollaborationUi = (function ($) {
 
                     var $hovercard = $("#collab-hovercard-cover");
                     $hovercard.off('click');
+
+                    $("#DiscussButton, .discuss-cta-separator").hide();
+
+                    if(!_COLLAB_PVT.isCurrentCollabInited()) {
+                        _COLLAB_PVT.collabBtn.disable();
+                    }
                 } else if($collabSidebar.hasClass("closed-conversation")) {
                     console.log("Re-enabling Collaboration that was disabled!");
 
@@ -1080,6 +1101,10 @@ App.CollaborationUi = (function ($) {
 
                     _COLLAB_PVT.unbindEvents();
                     _COLLAB_PVT.events();
+
+                    $("#DiscussButton, .discuss-cta-separator").show();
+
+                    _COLLAB_PVT.collabBtn.enable();
                 }
             }
         },
@@ -1320,6 +1345,13 @@ App.CollaborationUi = (function ($) {
         getUserInfo: function(uid, cb) {
             App.CollaborationModel.getUserInfo(uid, cb);
         },
+        changeLogoForInitedCollab: function() {
+            var collabModel = App.CollaborationModel;
+            $("#collab-btn .collab-logo").removeClass("collab-inited");
+            if(_COLLAB_PVT.isCurrentCollabInited()){
+                $("#collab-btn .collab-logo").addClass("collab-inited");  
+            }
+        },
         showCollaboratorsWithLogo: function() {
             var collabModel = App.CollaborationModel;
             var image_class = "convo-started-icon";
@@ -1400,8 +1432,25 @@ App.CollaborationUi = (function ($) {
 
         mentionListSorter: function(arr) {
             return arr.sort(function (a, b) {
-                return (a.username && b.username) ? ( a.username.length - b.username.length || a.username > b.username) : -1;
+                return (a.username && b.username) ? ( a.username.length - b.username.length || (a.username > b.username ? 1 : -1)) : -1;
             });
+        },
+
+        isCurrentCollabInited: function() {
+            var collabModel = App.CollaborationModel;
+            return !!collabModel.currentConversation && collabModel.conversationsMap[collabModel.currentConversation.co_id];
+        },
+
+        collabBtn: {
+            enable: function() {
+                $("#collab-btn").removeClass("disabled");
+            },
+            disable: function() {
+                $("#collab-btn").addClass("disabled");
+            },
+            isDisabled: function() {
+                return $("#collab-btn").hasClass("disabled");
+            }
         }
     };
 
@@ -1567,7 +1616,9 @@ App.CollaborationUi = (function ($) {
                     }
                 }
                 if(typeof cb === "function") cb(response);
-                _COLLAB_PVT.showCollaboratorsWithLogo();
+                // Stopped showing collaborator with logo for now.
+                // _COLLAB_PVT.showCollaboratorsWithLogo();
+                _COLLAB_PVT.changeLogoForInitedCollab();
             });
         },
 
@@ -1614,7 +1665,7 @@ App.CollaborationUi = (function ($) {
         },
 
         updateSentMessage: function(msg) {
-            if(!!$("collab-" + msg.ts)) {
+            if(!!$("#collab-" + msg.ts).length) {
                $("#collab-" + msg.ts).attr("id", "collab-" + msg.mid);
                var ann_elem = $(".annotation[data-message-id="+msg.ts+"]");
                if(ann_elem.length) {
@@ -1738,7 +1789,7 @@ App.CollaborationUi = (function ($) {
                 for(var grp_id in collabModel.groupsMap) {
                     usersToMention.push({
                         name: collabModel.groupsMap[grp_id].name,
-                        mention_text: collabModel.groupsMap[grp_id].tag,
+                        username: collabModel.groupsMap[grp_id].tag,
                         group: true
                     });
                 }
@@ -1764,8 +1815,8 @@ App.CollaborationUi = (function ($) {
             }
 
             usersToMention.push({
-                mention_text: "everyone",
-                job_title: "All collaborators on this tickets",
+                username: "everyone",
+                job_title: "All members of this discussion",
                 id_post_fix: "mention-list"
             });
             menu_prefix = "<label class='info'>"+ I18n.translate("collaboration.collab_max_out_info", {max_collaborators: "<b>" + CONST.HELPKIT_MAX_COLLABORATORS + "</b>", contact_person: "<b>" + "your Admin" + "</b>"}) +"</label>";
@@ -1776,7 +1827,7 @@ App.CollaborationUi = (function ($) {
                 "editor": "#collab-sidebar #send-message-box",
                 "menuHtml": menu_item,
                 "maxItems": 7,
-                "filterKeys": ["name", "username", "mention_text"],
+                "filterKeys": ["name", "username"],
                 "tagAttribute": "username",
                 "sort": _COLLAB_PVT.mentionListSorter
             };

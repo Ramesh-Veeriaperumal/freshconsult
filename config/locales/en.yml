@@ -6355,7 +6355,7 @@ en:
   back_to_reports: "&larr; Back to reports"
   helpdesk:
     collab: Discussion
-    start_collab: Start Discussion
+    start_collab: Discuss
     add_requester: Add Requester
     surveys:
       invalid_rating: Rating value "%{rating}" is invalid. Please rate with the correct rating value.
@@ -11024,7 +11024,6 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     desktop_notifications_disabled: You've disabled desktop notifications
     toggle_mobile_notifications: Toggle mobile notifications
     toggle_web_notifications: Toggle web notifications
-
   trial_plan_downgrade: "Important: You are currently downgrading from %{plan_from} plan to %{plan_to} plan"
   discounted_sum: "After Discount"
   selecting_plan: "Selecting..."
@@ -11206,7 +11205,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     no_notifications: "No new notifications"
     discussion: "Discussion"
     discuss: "Discuss"
-    collaborators: "Collaborators"
+    collaborators: "Members"
     view_all_collaborations: "View all discussions"
     view_discussion: "View Discussion"
     open_discussions: "My Open Discussions"
