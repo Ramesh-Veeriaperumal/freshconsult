@@ -301,11 +301,10 @@ class AgentsController < ApplicationController
   end
 
   def export_csv
-    portal_url = main_portal? ? current_account.host : current_portal.portal_url
     if valid_export_params?
       ExportAgents.perform_async({:csv_hash => params[:export_fields], 
                                             :user => current_user.id, 
-                                            :portal_url => portal_url})
+                                            :portal_url => fetch_portal_url})
       flash[:notice] = t('agent.export_successfull')
     else
       flash[:notice] = t('agent.invalid_export_params')
@@ -317,6 +316,13 @@ class AgentsController < ApplicationController
     GamificationReset.perform_async({"agent_id" => @agent.id })
     flash[:notice] = I18n.t('gamification.score_reset_successfull')
     redirect_to agent_path(@agent)
+  end
+
+  def export_skill_csv
+    csv_string = Export::AgentDetail.new({:csv_hash => Agent::SKILL_EXPORT_FIELDS,
+                        :send_mail => false, :portal_url => fetch_portal_url}).perform
+    send_data csv_string, :type => 'text/csv; charset=utf-8; header=present',
+            :disposition => "attachment; filename=agent_skill_export.csv"
   end
 
  protected
@@ -498,6 +504,10 @@ private
 
   def check_occasional_agent_params
     redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) if params[:state].to_s == "occasional" and !current_account.occasional_agent_enabled?
+  end
+
+  def fetch_portal_url
+    main_portal? ? current_account.host : current_portal.portal_url
   end
 
 end

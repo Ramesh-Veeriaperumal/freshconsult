@@ -136,9 +136,9 @@ class GroupsController < Admin::AdminController
 
     def load_group
       @group = gon.current_group = current_user.accessible_groups.find_by_id(params[:id])
+      access_denied and return if @group.blank?
       gon.capping_enabled = @group.capping_enabled?
       gon.escalation_agent = @group.escalate.present? ? @group.escalate.name : ""
-      access_denied and return if @group.blank?
       # using gon variable to pass rails-variables directly in js files
     end
   

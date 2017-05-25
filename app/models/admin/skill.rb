@@ -18,13 +18,18 @@ class Admin::Skill < ActiveRecord::Base
   scope :trimmed, :select => [:'skills.id', :'skills.name']
 
   before_validation :assign_last_position, :unless => :position?
+  before_validation :remove_whitespaces
 
   validates_presence_of :name
+  validates :name, length: { maximum: 50 }
+
+  validates :name, format: {without: /,/, message: I18n.t('activerecord.errors.messages.skill_name')}
+
+  validate :no_of_skills_per_account, on: :create
   validates_presence_of :position
   validates_presence_of :match_type
   validates_inclusion_of :match_type, :in => %w( any all )
-  validates_uniqueness_of :name, :scope => :account_id
-  validate :no_of_skills_per_account
+  validates_uniqueness_of :name, :case_sensitive => false, :scope => :account_id
   
   after_commit :clear_skills_cache
   after_commit :destroy_sbrr_queues, :clear_tickets_skill, on: :destroy
@@ -127,6 +132,10 @@ class Admin::Skill < ActiveRecord::Base
 
     def user_queues
       @user_queues ||= SBRR::QueueAggregator::User.new(nil, {:skill => self}).relevant_queues
+    end
+
+    def remove_whitespaces
+      name.strip!
     end
 
 end

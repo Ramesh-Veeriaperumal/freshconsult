@@ -39,7 +39,7 @@
 
 <% content_for :layoutType do -%>ticket_list<%- end %>
   <div id="leftcol" class="ticket-leftcol" style="display:<%=(['deleted', 'spam', 'monitored_by'].include?(@current_view)) || collab_filter_enabled_for?(@current_view) ? 'none' : 'block' %>">
-    <%if request.headers['X-PJAX'] %>
+    <%if @show_options.blank? %>
       <div id="ticket-leftFilter" class="leftFilter">
       </div>
     <%else%>

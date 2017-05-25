@@ -53,6 +53,7 @@ module TicketsTestHelper
                                          :responder_id => params[:responder_id],
                                          :source => params[:source] || 2,
                                          :priority => params[:priority] || 2,
+                                         :ticket_type => params[:ticket_type],
                                          :cc_email => Helpdesk::Ticket.default_cc_hash.merge(cc_emails: cc_emails, fwd_emails: fwd_emails),
                                          :created_at => params[:created_at],
                                          :account_id => account_id,

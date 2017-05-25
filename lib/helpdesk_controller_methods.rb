@@ -411,12 +411,16 @@ protected
     current_account.ticket_filters.my_ticket_filters(current_user)
   end
 
-  def helpdesk_restricted_access_redirection(ticket, msg)
+  def helpdesk_restricted_access_redirection(ticket, msg, full_message = "")
     view_on_portal_msg = I18n.t('flash.agent_as_requester.view_ticket_on_portal', :support_ticket_link => ticket.support_ticket_path)
     redirect_msg =  "#{I18n.t(:"#{msg}")} #{view_on_portal_msg}".html_safe
-    flash[:notice] = redirect_msg
+    flash[:notice] = full_message.presence || redirect_msg
+    redirect_params = {}
     respond_to do |format|
-        format.html { redirect_to helpdesk_tickets_url }
+        format.html {
+          redirect_params[:pjax_redirect] = true if request.headers['X-PJAX']
+          redirect_to helpdesk_tickets_url(redirect_params)
+        }
         format.xml  { render :xml => {:message => redirect_msg } }
         format.widget { render :text => redirect_msg }
         format.js

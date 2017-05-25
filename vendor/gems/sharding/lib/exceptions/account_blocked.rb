@@ -1,0 +1,1 @@
+class AccountBlocked < StandardError; end

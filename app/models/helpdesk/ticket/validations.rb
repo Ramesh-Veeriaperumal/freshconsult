@@ -79,9 +79,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     account.section_parent_fields_from_cache.each do |field|
       picklist = find_picklist(field.picklist_values, send(field.name))
-      picklist.required_ticket_fields.each do |ticket_field|
+      picklist.section.reqd_ticket_fields.each do |ticket_field|
         return false unless field_validations(ticket_field)
-      end if picklist
+      end if picklist && picklist.section
     end
 
     true

@@ -202,22 +202,13 @@ window.App.Admin.AgentSkills = window.App.Admin.AgentSkills || {};
         finalString = "";
         $('[data-userid=' + localStorage.currentUserID + '].skillsModalLink').html(I18n.t('agent.add_skills'));
       } else {
-        if (skillCount == 1) {
-          finalString = arr[0];
-
-        } else if (skillCount <= 5) {
-          finalString = arr[0];
-          for (i = 1; i < skillCount; i += 1) {
-            tempString = doubleSpace + "|" + doubleSpace + arr[i];
-            finalString = finalString.concat(tempString);
-          }
-        } else {
-          finalString = arr[0];
-          for (i = 1; i < 5; i += 1) {
-            tempString = doubleSpace + "|" + doubleSpace + arr[i];
-            finalString = finalString.concat(tempString);
-          }
-          var remainingCount = skillCount - 5;
+        finalString = arr[0].toString();
+        for (i = 1; (i < skillCount && i < 5); i += 1) {
+          tempString = doubleSpace + "|" + doubleSpace + arr[i];
+          finalString = finalString.concat(tempString);
+        }
+        var remainingCount = skillCount - 5;
+        if(remainingCount > 0) {
           var localData = JSON.parse(localStorage.getItem('currentUserDataAttrib'));
           tempString = doubleSpace + "|" + doubleSpace + "<a href=\"#\" " + 'data-skillcount=' + localData.skillcount + " " + 'data-userid=' + localData.userid + " " + 'data-username=' + localData.username + " " + "class=\"manageSkills\"> " + remainingCount + " more</a>";
           finalString = finalString.concat(tempString);

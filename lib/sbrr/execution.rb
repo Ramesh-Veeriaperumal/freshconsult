@@ -31,7 +31,7 @@ module SBRR
 
     def do_skill_based_round_robin
       #Order affects when ticket gets unassigned and unassigned agent's score will not be synced if SBRR is triggered before syncing queues
-      @ticket.map_skill
+      @ticket.map_skill unless @args[:skip_skill_remap]
       SBRR.log "Model changes after remap skill #{@ticket.model_changes.inspect}"
       sync_skill_based_queues
       trigger_skill_based_round_robin unless skip_assigner?

@@ -3,7 +3,7 @@ require 'csv'
 module ImportCsvUtil
 
   ONE_MEGABYTE  = 1000000
-  CUSTOMER_TYPE = ["contact", "company"]
+  CUSTOMER_TYPE = ["contact", "company", "agent_skill"]
   COMPANY_DELIMITER = "||"
   VALID_CLIENT_MANAGER_VALUES = ["yes", "true"]
   AND_SYMBOL = "&"
@@ -36,7 +36,7 @@ module ImportCsvUtil
     session[:map_fields][:file_path] = file_path
   end
 
-  def read_file file_location, header = false    
+  def read_file file_location, header = false
     @rows = []
     csv_file = AwsWrapper::S3Object.find(file_location, S3_CONFIG[:bucket])
     CSVBridge.parse(content_of(csv_file)) do |row|
@@ -61,5 +61,9 @@ module ImportCsvUtil
 
   def content_of csv_file
     csv_file.read.force_encoding('utf-8').encode('utf-16', :undef => :replace, :invalid => :replace, :replace => '').encode('utf-8')
+  end
+
+  def delete_import_file(file_location)
+    AwsWrapper::S3Object.delete(file_location, S3_CONFIG[:bucket])
   end
 end 

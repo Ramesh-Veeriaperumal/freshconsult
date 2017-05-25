@@ -1,0 +1,15 @@
+<div class="timeline-icon ticket">
+  <span class="ficon-timeline-ticket"></span>
+</div>
+<% grey_class = ticket.active? ? 'bold-title' : 'muted'; %>
+<p class="break-word timeline-head <%= grey_class  %>">
+  <%= link_to "#{ticket.subject} ##{ticket.display_id}", ticket_url(ticket) ,  :title => truncate(ticket_desc(ticket), { :length => 350, :omission => "..." }), :data => { :pjax => '#body-container' } %>
+</p>
+<p class="muted">
+  <%= t('contacts.conversations.user_ticket_timeinfo2' ,
+    :time => time_ago_in_words(ticket.created_at),
+    :status => ticket.status_name)
+  %>
+  <span class="middot">&middot;</span>
+  <%= t('ticket.agent') %> :  <%= ticket.freshness == :new ? t('none') : ticket.responder.display_name %>
+</p>

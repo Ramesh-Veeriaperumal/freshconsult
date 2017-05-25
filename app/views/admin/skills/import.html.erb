@@ -1,0 +1,95 @@
+<%= stylesheet_link_tag_with_rtl :'cdn/import_skills'  %>
+<% content_for :sidebar do -%>
+&nbsp;
+<%-end %>
+<%
+params[:type] = "agent_skill"
+%>
+<%= content_tag(:h3, t('admin.skills.import_csv'), :class => "lead") %>
+<div class="import-skills-wrapper">
+	<%= form_for :agents,:url => export_skill_csv_agents_path, :html => {:multipart => true} do |f| %>
+		<div class="row-fluid import-container">
+			<div class="import-left-contnet  span1 pt10 pl10"">
+				<label class="control-label muted" for="file"><%= t('step1') %></label>
+			</div>
+			<div class="import-right-contnet p10 span11">
+				<input id="type" name="type" type="hidden" value="agent_skill">
+				<span class="clear">
+					<b><%= t('.download_xls_title') %></b>
+				</span>
+				<br/>
+				<br/>
+				<span class="clear">
+					<button class="btn btn-download-xls" id="customer_submit" name="commit" value="Export"><%= t('.download_xls_btn') %></button>
+				</span>
+			</div>
+		</div>
+	<% end %>
+
+	<br/ >
+
+<%= form_for :skills,:url => { :controller => "skills", :action => "process_csv" }, :html => {:multipart => true} do |f| %>
+	<div class="import-skills-wrapper">
+		<div class="row-fluid import-container">
+			<div class="import-left-contnet span1 pt10 pl10">
+				<label class="control-label muted" for="file"><%= t('step2') %></label>
+			</div>
+			<div class="import-right-contnet p10 span11">
+				<input id="type" name="type" type="hidden" value="agent_skill">
+				<span class="clear">
+					<b><%= t('.add_skills_title') %></b>
+				</span>
+				<br/>
+				<br/>
+				<span class="clear">
+					<div class="fileUpload btn">
+						<span><%= t('.upload_file') %></span>
+						<input accept=".csv" type="file" class="required upload" id="file" name="file"/>
+					</div>
+					<span class="fileUpload-label"></span>
+					<span class="ficon-cross close fsize-16 m3 hide"></span>
+				</span>
+				<br/>
+				<br/>
+				<span class="important">
+					<i class="ficon-notice-o fsize-18"></i>
+					<span class="important-content"><%= t('.important_note') %></span>
+				</span>
+				<ul class="import-notes-wrapper">
+					<li>
+						<%= t('.note_info_1') %>
+					</li>
+					<li>
+						<%= t('.note_info_2') %>
+					</li>
+					<li>
+						<%= t('.note_info_3') %>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="pull-right mt10">
+		<a href="/admin/skills" class="btn" data-pjax="#body-container"><%= t('cancel') %></a>
+		<input class="btn btn-primary" id="customer_submit" name="commit" type="submit" value="Import">
+	</div>
+<% end %>
+
+
+<%= javascript_tag do %>
+	jQuery(document).ready(function () {
+		jQuery('body').on('change', '.upload', function() {
+			var $labelElement = jQuery('.fileUpload-label'), $closeElement = jQuery('.close');
+			if(this.value){
+				$labelElement.text(this.value.split('\\').pop());
+				$closeElement.removeClass('hide');
+			}else{
+				$labelElement.text('');
+				$closeElement.addClass('hide');
+			}
+		});
+		jQuery('body').on('click', '.close', function() {
+			jQuery('.upload').val('').trigger('change');
+		});
+	});
+<% end %>

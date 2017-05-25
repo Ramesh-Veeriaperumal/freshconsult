@@ -35,7 +35,7 @@ module HelpdeskReports::Helper::FilterFields
           defs["atleast_once_in_#{name}"] = {
             operator_list(container).to_sym => container,
             :condition  =>  "atleast_once_in_#{name}" ,
-            :name       =>  "Atleast once in #{columns_option[name]}",
+            :name       =>  "At least once in #{columns_option[name]}",
             :container  =>  "multi_select",
             :operator   =>  "atleast_once_in",
             :options    =>  default_choices(name),

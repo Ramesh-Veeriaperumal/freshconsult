@@ -1,0 +1,30 @@
+<%= t(:'flash.import.hi').html_safe%> <%=User.current.name%>,
+
+<%if @params[:failure]%>
+<%= "#{t(:'flash.import.info14', :file_name => @params[:file_name])}".html_safe%>
+1. <%= t(:'flash.import.info12').html_safe%>
+2. <%= t(:'flash.import.info13').html_safe%>
+
+<%= t(:'flash.import.info11').html_safe%>
+
+<%elsif @params[:message].present?%>
+<%= t(:'flash.import.info10').html_safe%>
+<%= "#{t(:'flash.import.info15', :create_count => @params[:message][:skill_creation_success].count)}".html_safe%>
+<%= "#{t(:'flash.import.info16', :update_count => @params[:message][:skill_update_success].count)}".html_safe%>
+
+<%if @params[:message][:skill_creation_failed].present? or @params[:message][:agent_update_failed].present? or @params[:message][:agent_not_found].present?%>
+<%
+  total_failed_count = @params[:message][:agent_update_failed].count.to_i + @params[:message][:agent_not_found].count.to_i
+%>
+<%= "#{t(:'flash.import.info17', :create_failed_count => @params[:message][:skill_creation_failed].count)}".html_safe%>
+<%= "#{t(:'flash.import.info18', :update_failed_count => total_failed_count)}".html_safe%>
+
+<%= t(:'flash.import.info8').html_safe%>
+<%end%>
+<%= t(:'flash.import.info9').html_safe%>
+
+<%= t(:'flash.import.help_desk').html_safe%>
+
+<%end%>
+<%= t(:'flash.import.regards').html_safe%>
+<%= t(:'flash.import.freshdesk').html_safe%>

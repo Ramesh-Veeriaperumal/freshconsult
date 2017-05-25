@@ -180,6 +180,7 @@ defaults: &defaults
     - [spam_data_migration]
     - [activity_export]
     - [scheduled_ticket_export_config]
+    - [skill_import]
     - [send_signup_activation_mail]
 
 development:
