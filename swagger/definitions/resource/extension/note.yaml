@@ -37,6 +37,8 @@ allOf:
         format: date-time
       last_edited_user_id:
         type: number
+      last_note_id:
+        type: number
       attachments:
         type: array
         items:

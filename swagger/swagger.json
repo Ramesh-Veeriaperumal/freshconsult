@@ -950,6 +950,12 @@
             "type": "number",
             "description": "Display ID of ticket",
             "required": true
+          },
+          {
+            "name": "since_id",
+            "in": "path",
+            "type": "number",
+            "description": "Conversation ID from which converations have to be fetched"
           }
         ],
         "responses": {
@@ -4054,6 +4060,9 @@
             },
             "private": {
               "type": "boolean"
+            },
+            "last_note_id": {
+              "type": "number"
             }
           }
         }
@@ -4134,6 +4143,9 @@
             },
             "send_survey": {
               "type": "boolean"
+            },
+            "last_note_id": {
+              "type": "number"
             }
           }
         }
@@ -5445,6 +5457,9 @@
                   "format": "date-time"
                 },
                 "last_edited_user_id": {
+                  "type": "number"
+                },
+                "last_note_id": {
                   "type": "number"
                 },
                 "attachments": {

@@ -21,3 +21,5 @@ allOf:
           type: string
       private:
         type: boolean
+      last_note_id:
+        type: number

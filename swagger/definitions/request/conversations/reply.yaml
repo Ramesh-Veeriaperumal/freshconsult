@@ -27,4 +27,6 @@ allOf:
           type: string
       send_survey:
         type: boolean
+      last_note_id:
+        type: number
   
