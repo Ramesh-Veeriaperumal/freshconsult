@@ -29,6 +29,7 @@ module ApiConstants
                        DiscussionConstants::LOAD_OBJECT_EXCEPT +
                        SolutionConstants::LOAD_OBJECT_EXCEPT +
                        SurveyConstants::LOAD_OBJECT_EXCEPT +
+                       AttachmentConstants::LOAD_OBJECT_EXCEPT +
                        Pipe::HelpdeskConstants::LOAD_OBJECT_EXCEPT +
                        ExportConstants::LOAD_OBJECT_EXCEPT
 
