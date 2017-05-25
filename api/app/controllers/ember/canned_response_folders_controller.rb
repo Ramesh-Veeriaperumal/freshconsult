@@ -7,8 +7,8 @@ module Ember
     skip_before_filter :load_objects, only: [:index]
 
     def index
-      ca_facets = ca_folders_from_es(Admin::CannedResponses::Response, { size: 300 }, default_visiblity)
-      process_ca_data(ca_facets)
+      @results = ca_folders_from_esv2('Admin::CannedResponses::Response', { size: 300 }, default_visiblity)
+      @items = @results.nil? ? fetch_ca_folders_from_db : process_search_results
     end
 
     def show
@@ -25,49 +25,39 @@ module Ember
         current_account.canned_response_folders
       end
 
-      def process_ca_data(ca_facets)
-        begin
-          ca_facets.try(:[], 'ca_folders') ? parse_ca_folders_from_response(ca_facets) : fetch_ca_folders_from_db
-        rescue
-          # Any ES execption fallback to db
-          fetch_ca_folders_from_db
+      def process_search_results
+        return [] if es_folders_and_counts.blank?
+        current_account.canned_response_folders.where(id: es_folders_and_counts.keys).each do |folder|
+          folder.visible_responses_count = es_folders_and_counts[folder.id]
         end
       end
 
-      def parse_ca_folders_from_response(ca_facets)
-        folder_ids = ca_facets['ca_folders']['terms'].map { |x| x['term'] }
-        @items = []
-        unless folder_ids.blank?
-          @items = current_account.canned_response_folders.find_all_by_id(folder_ids)
-          responses_count(ca_facets)
+      def es_folders_and_counts
+        @es_folders_counts ||= begin
+          @results['aggregations']['ca_folders']['buckets'].each_with_object({}) do |folder, hash|
+            hash[folder['key']] = folder['doc_count']
+          end
         end
       end
 
-      def responses_count(ca_facets)
-        @items.each do |folder|
-          folder.visible_responses_count = ca_facets['ca_folders']['terms'].detect { |f| f['term'] == folder.id }.try(:[], 'count')
-        end
-      end
-
+      # When ES is down or when it throws exception - fallback to DB
       def fetch_ca_folders_from_db
-        # When ES is down or when it throws exception - fallback to DB
-        fetch_ca_responses_from_db
-        folders = @ca_responses.map(&:folder)
-        @items = folders.uniq.sort_by { |folder| [folder.folder_type, folder.name] }
-        @items.each do |folder|
-          folder.visible_responses_count = folders.count(folder)
+        folders = fetch_ca_responses_from_db.map(&:folder)
+        folders.uniq.sort_by { |f| [f.folder_type, f.name] }.each do |f|
+          f.visible_responses_count = folders.count(f)
         end
-      end
-
-      def fetch_ca_responses(folder_id = nil)
-        @ca_responses = accessible_from_es(Admin::CannedResponses::Response, { load: true, size: 300 }, default_visiblity, 'raw_title', folder_id)
-        fetch_ca_responses_from_db(folder_id) if @ca_responses.nil?
       end
 
       def fetch_ca_responses_from_db(folder_id = nil)
         options = folder_id ? [{ folder_id: folder_id }] : [nil, [:folder]]
-        @ca_responses = accessible_elements(current_account.canned_responses, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', *options))
-        @ca_responses.blank? ? @ca_responses : @ca_responses.compact!
+        ca_responses = accessible_elements(current_account.canned_responses,
+            query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', *options))
+        (ca_responses || []).compact
+      end
+
+      def fetch_ca_responses(folder_id = nil)
+        @ca_responses = accessible_from_esv2('Admin::CannedResponses::Response', { size: 300 }, default_visiblity, 'raw_title', folder_id)
+        @ca_responses = fetch_ca_responses_from_db(folder_id) if @ca_responses.nil?
       end
   end
 end
