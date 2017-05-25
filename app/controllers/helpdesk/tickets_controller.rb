@@ -58,7 +58,6 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :filter_params_ids, :only =>[:destroy,:assign,:close_multiple,:spam,:pick_tickets, :delete_forever, :delete_forever_spam, :execute_bulk_scenario, :unspam, :restore]
   before_filter :validate_bulk_scenario, :only => [:execute_bulk_scenario], :if => :close_validation_enabled?
   before_filter :validate_ticket_close, :only => [:close_multiple], :if => :close_validation_enabled?
-  before_filter :scoper_ticket_actions, :only => [ :assign,:close_multiple, :pick_tickets ]
   
   #Set Native mobile is above scoper ticket actions, because, we send mobile response in scoper ticket actions, and 
   #the nmobile format has to be set. Else we will get a missing template error. 
@@ -124,6 +123,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :outbound_email_allowed? , :only => [:create]
   before_filter :requester_widget_filter_params, :only => [:update_requester]
   before_filter :check_custom_view_feature, :only => [:custom_view_save]
+  before_filter :remove_skill_param, :only => [:update_ticket_properties], unless: :has_edit_ticket_skill_privilege?
 
   # before_filter methods for send_and_set_status are to be added in send_and_set_helper.rb
 
@@ -275,7 +275,7 @@ class Helpdesk::TicketsController < ApplicationController
     params[:html_format] = request.format.html?
     tkt = current_account.tickets.permissible(current_user)
     @items = fetch_tickets unless is_native_mobile?
-    @failed_tickets = (flash[:failed_tickets] || []).collect { |id| ticket = @items.find {|item| item.display_id == id}; {:id => ticket.id, :subject => ticket.subject, :display_id => id} }
+    @failed_tickets = (flash[:failed_tickets] || []).collect { |id| ticket = @items.find {|item| item.display_id == id}; {:id => ticket.id, :subject => CGI.escape_html(ticket.subject), :display_id => id} }
     if flash[:action]
       title = I18n.t("helpdesk.flash.title_on_#{flash[:action]}_fail") 
       description = I18n.t("helpdesk.flash.description_on_#{flash[:action]}_fail")
@@ -291,7 +291,7 @@ class Helpdesk::TicketsController < ApplicationController
         end
         @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false, :user_id => i.accessible.user_id} }
         @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
-        unless request.headers['X-PJAX']
+        if !request.headers['X-PJAX'] || params[:pjax_redirect]
           # Bad code need to rethink. Pratheep
           @show_options = show_options
         end
@@ -1570,7 +1570,8 @@ class Helpdesk::TicketsController < ApplicationController
     def ticket_actions_background
       args = { :action => action_name }
       args.merge!(params_for_bulk_action)
-      ::Tickets::BulkTicketActions.perform_async(args)
+      Rails.logger.debug "ids while queueing #{params[:ids].inspect}"
+      ::Tickets::BulkTicketActions.perform_async(args) if params[:ids].present?
     end
 
     def find_topic
@@ -1881,6 +1882,9 @@ class Helpdesk::TicketsController < ApplicationController
         verified = false
         flash[:notice] = t("flash.general.access_denied")
         if request.xhr? || is_native_mobile?
+          if params[:action] = "show"
+            params[:redirect] = "true"
+          end
           render json: {access_denied: true}
         else
           redirect_to helpdesk_tickets_url
@@ -2186,7 +2190,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def multiple_tickets?
-    params[:ids].present?
+    !params[:ids].nil?
   end
 
   def display_spam_flash
@@ -2331,7 +2335,7 @@ class Helpdesk::TicketsController < ApplicationController
     valid_ticket = (validate_ticket? && close_action?(params[:value].to_i)) ? valid_ticket?(@item) : true
     unless valid_ticket
       log_error @item
-      @item_id_and_subject = [{:id => @item.id, :display_id => @item.display_id, :subject => @item.subject}]
+      @item_id_and_subject = [{:id => @item.id, :display_id => @item.display_id, :subject => CGI.escape_html(@item.subject)}]
       render :json => {
         :success => false,
         :message => render_to_string(
@@ -2346,4 +2350,7 @@ class Helpdesk::TicketsController < ApplicationController
     params[:assign] == 'status' && !@item.deleted? && !@item.spam?
   end
 
+  def remove_skill_param
+    params[nscname].delete("skill_id")
+  end
 end

@@ -46,8 +46,6 @@ window.App = window.App || {};
 				this.current_module = 'AdminFontSettings'
 				  break;
       case 'admin/skills/index':
-      case 'admin/skills/new':
-      case 'admin/skills/edit':
           this.current_module = 'Skills';
           break;
       case 'admin/user_skills/index':

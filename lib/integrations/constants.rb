@@ -91,28 +91,32 @@ module Integrations::Constants
   CONTACTS_SYNC_ACCOUNTS_LIMIT = 10
 
   PROVIDER_TO_APPNAME_MAP = {
-    "github" => "github",
-    "salesforce" => "salesforce",
-    "magento" => "magento",
-    "shopify" => "shopify",
-    "slack" => "slack_v2",
-    "infusionsoft" => "infusionsoft",
-    "google_calendar" => "google_calendar",
-    "google_login" => "",
-    "google_marketplace_sso" => "",
-    "google_contacts" => "google_contacts",
-    "google_gadget" => "",
-    "quickbooks" => "quickbooks",
-    "nimble" => "nimble",
-    "surveymonkey" => "surveymonkey",
-    "box" => "box",
-    "mailchimp" => "mailchimp",
-    "constantcontact" => "constantcontact",
-    "surveymonkey" => "surveymonkey",
-    "outlook_contacts" => "outlook_contacts",
-    "salesforce_v2" => "salesforce_v2",
-    "facebook" => "",
-    "dynamics_v2" => "dynamics_v2"
-  }
+    'github' => 'github',
+    'salesforce' => 'salesforce',
+    'magento' => 'magento',
+    'shopify' => 'shopify',
+    'slack' => 'slack_v2',
+    'infusionsoft' => 'infusionsoft',
+    'google_calendar' => 'google_calendar',
+    'google_login' => '',
+    'google_marketplace_sso' => '',
+    'google_contacts' => 'google_contacts',
+    'google_gadget' => '',
+    'quickbooks' => 'quickbooks',
+    'nimble' => 'nimble',
+    'surveymonkey' => 'surveymonkey',
+    'box' => 'box',
+    'mailchimp' => 'mailchimp',
+    'constantcontact' => 'constantcontact',
+    'surveymonkey' => 'surveymonkey',
+    'outlook_contacts' => 'outlook_contacts',
+    'salesforce_v2' => 'salesforce_v2',
+    'facebook' => '',
+    'dynamics_v2' => 'dynamics_v2'
+  }.freeze
 
+  EXCLUDE_FROM_APP_CONFIGS_HASH = [:password, :auth_key, :api_key, :app_key, :oauth_token, :refresh_token, :element_token, :auth_token, :session_id, :secret, :cti_ctd_api].freeze
+
+  ZOHO_URL_SUFFIX = '&authtoken='
+  MAILCHIMP_URL_SUFFIX = '&apikey='
 end

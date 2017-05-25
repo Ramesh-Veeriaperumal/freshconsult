@@ -16,11 +16,11 @@ module SBRR
 
         sbrr_user_config_synchronizer.sync args[:action].to_sym if @group.present? #group destroyed
 
-        if (args[:action].to_sym == :create && @group.present?)
+        if (args[:action].to_sym == :create && @group.present? && @user.user_skills.present?)
           if (args[:multiple_agents_added_to_group])
             sbrr_resource_allocator_for_ticket_queue.allocate
           else
-            sbrr_ticket_allotter_for_user.allot if (args[:action].to_sym == :create && @group.present?)
+            sbrr_ticket_allotter_for_user.allot
           end
         end
       ensure
@@ -28,7 +28,7 @@ module SBRR
       end
 
       private 
-        
+
         def sbrr_user_config_synchronizer
           SBRR::Synchronizer::UserUpdate::Config.new @user, :group => @group, :skills => @skills
         end

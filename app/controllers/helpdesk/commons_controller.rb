@@ -1,6 +1,7 @@
 class Helpdesk::CommonsController < ApplicationController
 
   before_filter :set_mobile, :only => [:group_agents]
+  before_filter :set_native_mobile, :only => [:group_agents]
   skip_before_filter :check_privilege, :verify_authenticity_token
   before_filter :check_privilege, :only => [:fetch_company_by_name, :status_groups]
 
@@ -43,6 +44,14 @@ class Helpdesk::CommonsController < ApplicationController
             end
           }
         render :json => array
+      }
+      format.nmobile {
+        @agents = current_account.users.technicians.visible
+        array = []
+        @agents.each { |agent_group|
+              array << agent_group.to_mob_json_basic_detail(:root => false)
+          }
+          render :json => array
       }
     end
   end

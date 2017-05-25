@@ -34,7 +34,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     @resolved_time_was = self.resolved_at_was
     self.resolved_at = nil
     self.closed_at = nil
-    self.resolution_time_by_bhrs = nil unless Account.current.launched?(:new_sla_logic)
+    self.resolution_time_by_bhrs = nil
   end
 
   def resolved_time_was
@@ -43,7 +43,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
   
   def set_resolved_at_state(time=Time.zone.now)
     self.resolved_at = time 
-    set_resolution_time_by_bhrs unless Account.current.launched?(:new_sla_logic)
+    set_resolution_time_by_bhrs
   end
   
   def set_closed_at_state(time=Time.zone.now)
@@ -135,7 +135,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     }
   end
 
-  def set_resolution_time_by_bhrs # Remove this method after all accounts start using new sla logic
+  def set_resolution_time_by_bhrs
     return unless resolved_at
     time = created_at || Time.zone.now
     BusinessCalendar.execute(self.tickets) {
@@ -144,7 +144,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     }
   end
   
-  def change_resolution_time_by_bhrs(from_time, to_time)
+  def change_on_state_time(from_time, to_time)
     priority_for_sla_calculation = tickets.priority_changed? ? tickets.priority_was : tickets.priority
     sla_policy = tickets.sla_policy || account.sla_policies.default.first
     sla_detail = sla_policy.sla_details.where(:priority => priority_for_sla_calculation).first
@@ -156,8 +156,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
         updated_time = calculate_time_in_bhrs(from_time, to_time, default_group)
       }
     end
-    log_resolution_time_by_bhrs(from_time, to_time, sla_policy, sla_detail, updated_time)
-    self.resolution_time_by_bhrs = self.resolution_time_by_bhrs.to_i + updated_time
+    log_on_state_time(from_time, to_time, sla_policy, sla_detail, updated_time)
     self.on_state_time = self.on_state_time.to_i + updated_time
   end
 
@@ -321,9 +320,9 @@ private
     !("false".eql?(get_reports_redis_key ENTERPRISE_REPORTS_ENABLED))
   end
 
-  def log_resolution_time_by_bhrs(from_time, to_time, sla_policy, sla_detail, updated_time)
+  def log_on_state_time(from_time, to_time, sla_policy, sla_detail, updated_time)
     Rails.logger.debug "SLA :::: Account id #{self.account_id} :: #{self.id} ticket :: Inputs for updating on state time :: from_time :: #{from_time} to_time :: #{to_time} sla_policy :: #{sla_policy.id} - #{sla_policy.name} sla_detail :: #{sla_detail.id} - #{sla_detail.name} override_bhrs :: #{sla_detail.override_bhrs}"
-    Rails.logger.debug "SLA :::: Account id #{self.account_id} :: #{self.id} ticket :: Updating on state time :: resolution_time_by_bhrs_was :: #{self.resolution_time_by_bhrs.to_i} updated_time :: #{updated_time} resolution_time_by_bhrs :: #{self.resolution_time_by_bhrs.to_i + updated_time}"
+    Rails.logger.debug "SLA :::: Account id #{self.account_id} :: #{self.id} ticket :: Updating on state time :: on_state_time_was :: #{self.on_state_time.to_i} updated_time :: #{updated_time} on_state_time :: #{self.on_state_time.to_i + updated_time}"
   end
 
 end

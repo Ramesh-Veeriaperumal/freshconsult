@@ -86,6 +86,8 @@ module Concerns::ApplicationConcern
 
     if shard.nil?
       raise ShardNotFound
+    elsif shard.blocked?
+      raise AccountBlocked
     elsif !shard.ok?
       raise DomainNotReady
     else

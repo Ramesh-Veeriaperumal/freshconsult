@@ -136,6 +136,32 @@ class UserNotifier < ActionMailer::Base
     end.deliver
   end
 
+  def notify_skill_import(args)
+    account = Account.current
+    headers = {
+      :subject    => t(:'flash.import.info19', :portal_url => account.full_domain),
+      :to         => User.current.email,
+      :from       => AppConfig['from_email'],
+      :sent_on    => Time.now,
+      "Reply-to"       => "",
+      "Auto-Submitted" => "auto-generated",
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+    }
+
+    if args[:csv_data].present?
+      attachments["skill_import.csv"] = {
+        :mime_type => "text/csv",
+        :content => args[:csv_data]
+      }
+    end
+
+    @params = args
+    mail(headers) do |part|
+      part.text { render "notify_skill_import.text.plain.erb" }
+      part.html { render "notify_skill_import.text.html.erb" }
+    end.deliver
+  end
+
   def notify_customers_import(options={})
     begin
       # sending this email via account's primary email config so that if the customer wants this emails 
