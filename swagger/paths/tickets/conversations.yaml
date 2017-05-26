@@ -9,7 +9,7 @@ get:
       description: Display ID of ticket
       required: true
     - name: since_id
-      in: path
+      in: query
       type: number
       description: Conversation ID from which converations have to be fetched
   responses:
