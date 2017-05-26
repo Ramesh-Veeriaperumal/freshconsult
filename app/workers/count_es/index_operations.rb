@@ -1,5 +1,6 @@
 class CountES::IndexOperations
   
+  include MemcacheKeys  
   include Sidekiq::Worker
 
   sidekiq_options :queue => :count_es_queue, :retry => 2, :backtrace => true, :failures => :exhausted
@@ -20,6 +21,10 @@ class CountES::IndexOperations
       #Search::Dashboard::Count.new.create_alias
       unless account.features?(:countv2_writes)
         account.features.countv2_writes.create
+        count = Search::Dashboard::Count.new(nil, Account.current.id, nil)
+        count.index_new_account_dashboard_shard
+        key = ACCOUNT_DASHBOARD_SHARD_NAME % { :account_id => Account.current.id }
+        MemcacheKeys.fetch(key) { ActiveRecord::Base.current_shard_selection.shard.to_s }
         account.tickets.visible.find_in_batches(:batch_size => 300) do |tickets|
           tickets.map(&:count_es_manual_publish)
         end

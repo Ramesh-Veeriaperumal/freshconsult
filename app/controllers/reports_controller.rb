@@ -8,7 +8,10 @@ class ReportsController < ApplicationController
 
   include Reports::ConstructReport
   include Reports::ReportTimes
+  include HelpdeskReports::Helper::PlanConstraints
   # include Reports::ActivityReport
+
+  helper_method :enable_lifecycle_report?
   
   def show
     @current_report  = @t_reports[params[:report_type].to_sym]       

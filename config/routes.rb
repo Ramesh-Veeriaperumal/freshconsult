@@ -1820,9 +1820,15 @@ Helpkit::Application.routes.draw do
   resource :accounts do
     collection do
       get :new_signup_free
+      post :email_signup
       post :new_signup_free
+      get :edit_domain
+      put :update_domain
+      get :validate_domain
     end
   end
+
+  match '/accounts/edit_domain/:perishable_token' => 'accounts#edit_domain', :as => :edit_account_domain
 
   resource :subscription do
     collection do
@@ -1855,6 +1861,7 @@ Helpkit::Application.routes.draw do
     match '/tickets/archived/filter/requester/:requester_id' => 'archive_tickets#index', :as => :archive_requester_filter, via: :get
     match '/tickets/archived/filter/company/:company_id' => 'archive_tickets#index', :as => :archive_company_filter, via: :get
     match '/tickets/archived/:id' => 'archive_tickets#show', :as => :archive_ticket, via: :get
+    match '/tickets/archived/:id/print' => 'archive_tickets#print_archive',via: :get
     match '/tickets/archived' => 'archive_tickets#index', :as => :archive_tickets, via: :get
     match '/tickets/archived/filter/tags/:tag_id' => 'archive_tickets#index', :as => :tag_filter
     resources :archive_tickets, :only => [:index, :show] do
@@ -1910,6 +1917,7 @@ Helpkit::Application.routes.draw do
         post :export_csv
         post :latest_ticket_count
         post :sentiment_feedback
+        post :bulk_fetch_ticket_fields
         match :add_requester
         get :filter_options
         get :filter_conditions
@@ -2498,6 +2506,7 @@ Helpkit::Application.routes.draw do
   end
 
   match '/helpdesk/tickets/:id/suggest/tickets' => 'helpdesk/tickets#suggest_tickets'
+  match '/helpdesk/tickets/:id/ticket_properties' => 'helpdesk/tickets#bulk_fetch_ticket_fields'
   match '/support/theme.:format' => 'theme/support#index'
   match '/support/theme_rtl.:format' => 'theme/support_rtl#index'
   match '/helpdesk/theme.:format' => 'theme/helpdesk#index'
@@ -2917,6 +2926,7 @@ Helpkit::Application.routes.draw do
           put :change_currency
           get :check_domain
           put :unblock_outgoing_email
+          post :extend_trial
         end
       end
 

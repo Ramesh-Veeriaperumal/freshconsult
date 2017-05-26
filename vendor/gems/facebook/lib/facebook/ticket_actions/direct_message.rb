@@ -9,7 +9,7 @@ module Facebook
       def create_tickets(threads)
         threads.each do |thread|
           thread.symbolize_keys!
-          fb_msg = @account.facebook_posts.latest_thread(thread[:id], 1).first
+          fb_msg = Sharding.run_on_slave { @account.facebook_posts.latest_thread(thread[:id], 1).first }
           previous_ticket = fb_msg.try(:postable)
 
           last_reply = unless previous_ticket.blank?

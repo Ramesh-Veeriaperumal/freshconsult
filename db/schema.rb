@@ -1057,6 +1057,7 @@ ActiveRecord::Schema.define(:version => 20170411034444) do
     t.text     "account_info"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "job_id"
     t.integer  "status",                    :default => 0
   end
 
@@ -1185,6 +1186,21 @@ ActiveRecord::Schema.define(:version => 20170411034444) do
   create_table "facebook_page_mappings", :primary_key => "facebook_page_id", :force => true do |t|
     t.integer "account_id", :limit => 8, :null => false
   end
+
+  create_table "failed_helpkit_feeds", :force => true do |t|
+    t.integer  "account_id",  :limit => 8,  :null => false
+    t.string   "uuid"
+    t.string   "exchange",    :limit => 20
+    t.string   "routing_key", :limit => 20
+    t.text     "payload"
+    t.string   "exception"
+    t.datetime "created_at",                :null => false
+    t.datetime "updated_at",                :null => false
+  end
+
+  add_index "failed_helpkit_feeds", ["account_id"], :name => "index_failed_helpkit_feeds_on_account_id"
+  add_index "failed_helpkit_feeds", ["created_at"], :name => "index_failed_helpkit_feeds_on_created_at"
+  add_index "failed_helpkit_feeds", ["uuid"], :name => "index_failed_helpkit_feeds_on_uuid"
 
   create_table "features", :force => true do |t|
     t.string   "type",                    :null => false
@@ -3035,6 +3051,7 @@ ActiveRecord::Schema.define(:version => 20170411034444) do
   add_index "social_fb_posts", ["account_id", "postable_id", "postable_type"], :name => "index_social_fb_posts_account_id_postable_id_postable_type", :length => {"account_id"=>nil, "postable_id"=>nil, "postable_type"=>15}
   add_index "social_fb_posts", ["account_id", "ancestry"], :name => "account_ancestry_index", :length => {"account_id"=>nil, "ancestry"=>30}
   add_index "social_fb_posts", ["account_id", "post_id"], :name => "index_social_fb_posts_on_post_id", :length => {"account_id"=>nil, "post_id"=>30}
+  add_index "social_fb_posts", ["account_id", "thread_id", "postable_type"], :name => "account_thread_postable_type", :length => {"account_id"=>nil, "thread_id"=>30, "postable_type"=>30}
 
   create_table "social_streams", :force => true do |t|
     t.string   "name"
