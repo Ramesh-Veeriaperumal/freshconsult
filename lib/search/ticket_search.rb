@@ -144,7 +144,7 @@ module Search::TicketSearch
     end
 
     if criteria_key == :sl_skill_id and Account.current.skill_based_round_robin_enabled?
-      skills = Account.current.skills_from_cache.collect {|au| [au.id, au.name]}
+      skills = Account.current.skills_trimmed_version_from_cache.collect {|au| [au.id, au.name]}
       return [[NONE_VALUE, I18n.t("filter_options.none")]] + skills if skills.length > 0 
     end
 

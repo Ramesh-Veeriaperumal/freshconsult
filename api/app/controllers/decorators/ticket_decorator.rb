@@ -108,6 +108,9 @@ class TicketDecorator < ApiDecorator
     return {} unless meta_info
     meta_info = YAML::load(meta_info.body)
     handle_timestamps(meta_info)
+  rescue
+    # Errors suppressed
+    {}
   end
 
   def feedback_hash

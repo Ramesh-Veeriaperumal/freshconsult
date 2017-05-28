@@ -18,9 +18,7 @@ module Tickets
       tickets.each do |ticket|
         begin
           va_rule.trigger_actions(ticket, current_user)
-          ticket.schedule_observer = true if observer_inline?
-          ticket.save
-          run_observer_inline(ticket) if observer_inline?
+          bulk_update_tickets(ticket) { ticket.save }
           group_ids.merge (ticket.model_changes[:group_id] || [ticket.group_id])
           Va::RuleActivityLogger.clear_activities
           ticket.create_scenario_activity(va_rule.name)
@@ -31,7 +29,6 @@ module Tickets
           NewRelic::Agent.notice_error(e,{:description => "Error while executing scenario automations for a tkt :: #{ticket.id} :: account :: #{current_account.id}" })
         end
       end
-      group_ids.subtract([nil])
     rescue Exception => e
       logger.info "#{e}"
       logger.info e.backtrace.join("\n")

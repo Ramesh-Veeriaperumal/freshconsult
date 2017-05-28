@@ -44,6 +44,7 @@ module Ember
 
         @items = esv2_query_results(esv2_agent_models)
         response.api_meta = { count: @items.total_entries }
+        @items.reject! { |x| x.nil? }
       end
 
       private

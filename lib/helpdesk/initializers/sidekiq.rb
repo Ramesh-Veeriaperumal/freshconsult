@@ -69,7 +69,9 @@ Sidekiq.configure_client do |config|
       "Admin::ProvisionSandbox",
       "Tickets::LinkTickets",
       "BroadcastMessages::NotifyBroadcastMessages",
-      "BroadcastMessages::NotifyAgent"
+      "BroadcastMessages::NotifyAgent",
+      "Import::SkillWorker",
+      "ExportAgents"
     ]
   end
 end
@@ -142,7 +144,9 @@ Sidekiq.configure_server do |config|
       "Admin::ProvisionSandbox",
       "Tickets::LinkTickets",
       "BroadcastMessages::NotifyBroadcastMessages",
-      "BroadcastMessages::NotifyAgent"
+      "BroadcastMessages::NotifyAgent",
+      "Import::SkillWorker",
+      "ExportAgents"
     ]
 
     chain.add Middleware::Sidekiq::Server::JobDetailsLogger
@@ -206,7 +210,9 @@ Sidekiq.configure_server do |config|
       "Admin::ProvisionSandbox",
       "Tickets::LinkTickets",
       "BroadcastMessages::NotifyBroadcastMessages",
-      "BroadcastMessages::NotifyAgent"
+      "BroadcastMessages::NotifyAgent",
+      "Import::SkillWorker",
+      "ExportAgents"
     ]
   end
 end

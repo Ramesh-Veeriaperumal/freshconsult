@@ -4,6 +4,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   self.primary_key = :id
   include Helpdesk::Ticketfields::TicketStatus
   include Cache::Memcache::Helpdesk::TicketStatus
+  include Helpdesk::BulkActionMethods
   
   self.table_name =  "helpdesk_ticket_statuses"
 
@@ -242,11 +243,17 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   end
 
   def update_tickets_sla
-    Sharding.run_on_slave do 
-      tickets.preload(:ticket_states).visible.find_each(batch_size: 300) do |ticket|
-        update_sla_timer_stopped_at(ticket)
-        set_sla_toggled_and_enqueue_sbrr ticket unless deleted?
+    group_ids = Set.new
+    begin
+      Sharding.run_on_slave do 
+        tickets.preload(:ticket_states).visible.find_each(batch_size: 300) do |ticket|
+          update_sla_timer_stopped_at(ticket)
+          group_ids.add ticket.group_id
+          set_sla_toggled_and_enqueue_sbrr(ticket) unless deleted?
+        end
       end
+    ensure
+      sbrr_assigner(group_ids)
     end
   end
 
@@ -254,11 +261,17 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
     if stop_sla_timer?
       update_tickets_sla
     else
-      Sharding.run_on_slave do 
-        tickets.preload(:ticket_states).visible.joins(:ticket_states).where("helpdesk_ticket_states.sla_timer_stopped_at IS NOT NULL").find_each(batch_size: 300) do |ticket|
-          update_ticket_due_by(ticket)
-          set_sla_toggled_and_enqueue_sbrr ticket
+      group_ids = Set.new
+      begin
+        Sharding.run_on_slave do 
+          tickets.preload(:ticket_states).visible.joins(:ticket_states).where("helpdesk_ticket_states.sla_timer_stopped_at IS NOT NULL").find_each(batch_size: 300) do |ticket|
+            update_ticket_due_by(ticket)
+            group_ids.add ticket.group_id
+            set_sla_toggled_and_enqueue_sbrr(ticket)
+          end
         end
+      ensure
+        sbrr_assigner(group_ids) 
       end
     end
   end
@@ -278,6 +291,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
 
   def set_sla_toggled_and_enqueue_sbrr ticket
     ticket.status_sla_toggled_to = TicketConstants::STATUS_SLA_TOGGLED_TO[stop_sla_timer]
+    ticket.skip_sbrr_assigner = true
     args = {:model_changes => {}, :ticket_id => ticket.display_id, :attributes => ticket.sbrr_attributes, :options => {:action => "status_sla_toggled_to_#{ticket.status_sla_toggled_to}"}}
     Sharding.run_on_master do
       SBRR::Execution.new(args).execute if ticket.enqueue_sbrr_job?

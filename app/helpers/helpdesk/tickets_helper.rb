@@ -130,6 +130,39 @@ module Helpdesk::TicketsHelper
     end
   end
 
+  def construct_bulk_skill_edit
+    account_skills = sorted_account_skills if privilege?(:edit_ticket_skill)
+    return '' unless account_skills.present?
+    object_name = "#{:helpdesk_ticket.to_s}"
+    checkbox = check_box_tag object_name + "_skill_label",
+                             "",
+                             false,
+                             :class => "update-check-for-fields"
+    label = label_tag(object_name+"_skill_label",
+                      (checkbox + t("ticket_fields.fields.skill_required")),
+                      :rel => "inputcheckbox")
+    element = label + select(object_name,
+                  'skill_id',
+                  account_skills,
+                  {:include_blank => t('select'),
+                    :selected => t('select')},
+                  {:class => "dropdown select2" ,
+                    :rel => "inputselectbox"})
+    content_tag :div, element.html_safe, :class => "field-item skill"
+  end
+
+  def construct_skill_edit ticket
+    account_skills = sorted_account_skills if @ticket.group.present? && @ticket.group.skill_based_round_robin_enabled?
+    return '' unless account_skills.present?
+    field_value = @ticket.skill_id
+    field_label = t("ticket_fields.fields.skill_required")
+    object_name = "#{:helpdesk_ticket.to_s}"
+
+    label = label_tag object_name+"_skill_id", field_label.html_safe
+    element = label + select('helpdesk_ticket', 'skill_id', account_skills, { :include_blank => "...", :selected => field_value},{:class => " select2", :disabled => !privilege?(:edit_ticket_skill), "data-domhelper-name" => "ticket-properties-" + 'skill_id' })
+    content_tag :li, element.html_safe, :class => "dropdown field #{ privilege?(:edit_ticket_skill) ? '' : 'disabled'}"
+  end
+
   def sort_by_text(sort_key, order)
     help_text = [
       [ :due_by     ,   'Showing Latest Due by time'  ],
@@ -604,6 +637,15 @@ module Helpdesk::TicketsHelper
 
   def show_insert_into_reply?
     privilege?(:reply_ticket) && !(@ticket.twitter? || @ticket.facebook? || @ticket.allow_ecommerce_reply?) && @ticket.from_email.present?
+  end
+
+  def sorted_account_skills
+    current_account.skill_based_round_robin_enabled? ?
+     current_account.skills_trimmed_version_from_cache.collect { |e| [e.name, e.id] } : []
+  end
+
+  def has_edit_ticket_skill_privilege?
+    current_account.skill_based_round_robin_enabled? && current_user.privilege?(:edit_ticket_skill)
   end
 
   private

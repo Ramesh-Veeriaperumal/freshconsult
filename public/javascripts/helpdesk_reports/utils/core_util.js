@@ -21,7 +21,7 @@ HelpdeskReports.CoreUtil = {
         "customer_report":["agent_id","group_id","company_id"]
     },
     global_disabled_filter: ["status","historic_status"],
-    default_available_filter : [ "agent_id","group_id","company_id" ],
+    default_available_filter : [ "agent_id","group_id","company_id","atleast_once_in_agent_id","atleast_once_in_group_id","atleast_once_in_status","is_escalated" ],
     filter_remote : [ "agent_id","tag_id","company_id","atleast_once_in_agent_id"],
     filter_remote_url : {
             "agent_id" : "agents",
@@ -1093,12 +1093,15 @@ HelpdeskReports.CoreUtil = {
                     dateStart: date.last_6_months,
                     dateEnd: Date.parse(date.endDate) <= Date.parse(date.last_6_months) ? date.last_6_months : date.endDate,
                     period : "last_6_months"
-                },{
-                    text: I18n.t('helpdesk_reports.this_year'),
-                    dateStart: date.this_year_start, 
-                    dateEnd: Date.parse(date.endDate) <= Date.parse(date.this_year_start) ? date.this_year_start : date.endDate,
-                    period : "this_year"
                 }];
+                if(HelpdeskReports.locals.report_type != "timespent") {
+                    presetRanges.push({
+                        text: I18n.t('helpdesk_reports.this_year'),
+                        dateStart: date.this_year_start, 
+                        dateEnd: Date.parse(date.endDate) <= Date.parse(date.this_year_start) ? date.this_year_start : date.endDate,
+                        period : "this_year"
+                    });
+                }
             }else{
                 var presetRanges = [{
                     text: I18n.t('helpdesk_reports.last_num_days',{ num: 7 }),
@@ -1151,6 +1154,9 @@ HelpdeskReports.CoreUtil = {
                 limitRangeToConstraints : true
             };
 
+        if(HelpdeskReports.locals.report_type == "timespent") {
+            config.rangeDurationMonths = 6;
+        }
         //Different date pickers for sprout plan & others
         if(HelpdeskReports.locals.is_non_sprout_plan){
             config.onChange = function() {
