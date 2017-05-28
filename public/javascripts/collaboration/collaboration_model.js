@@ -18,7 +18,8 @@ App.CollaborationModel = (function ($) {
         MONTHS: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         TIME_CHUNKS: [[60 * 60 * 24, "d"], [60 * 60, "h"], [60, "m"]],
         NOTIFICATION_POPUP_CARD_TEMPLATE: "collaboration/templates/notification_popup_card",
-        DUMMY_USER: {name: "New user"}
+        DUMMY_USER: {name: "New user"},
+        ANNOTATION: {bg_color: "#b4ebdf", shadow_color: "#7ec7b7", border_color: "#96dbcc"}
     };
 
     var _COLLAB_PVT = {
@@ -531,7 +532,7 @@ App.CollaborationModel = (function ($) {
             if(typeof Annotation !== "undefined") {
                 _COLLAB_PVT.Annotations = new Annotation({
                     "annotationevents": _COLLAB_PVT.getAnnotationEvents(),
-                    "wrapper_elem_style": "background-color: #fee4c8; line-height: 18px; box-shadow: 1px 1px 0 lightgrey; border-radius: 1px; border: 1px solid #ebc397; color:#333333; padding: 0 2px;"
+                    "wrapper_elem_style": "background-color: "+ CONST.ANNOTATION.bg_color +"; line-height: 18px; box-shadow: 1px 1px 0 "+ CONST.ANNOTATION.shadow_color +"; border-radius: 1px; border: 1px solid "+ CONST.ANNOTATION.border_color +"; color:#333333; padding: 0 2px;"
                 });
             } else {
                 console.warn("Annotations sdk not present. couldn't start annotations.");

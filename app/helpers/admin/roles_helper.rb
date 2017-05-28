@@ -21,7 +21,10 @@ module Admin::RolesHelper
              },
              { :dom_type => "check_box", :id => "edit_conversation"  },
              { :dom_type => "check_box", :id => "merge_or_split_ticket" },
-             { :dom_type => "check_box", :id => "edit_ticket_properties" },
+             { :dom_type => "check_box", :id => "edit_ticket_properties", :class => "nested",
+               :children => 
+               [{ :dom_type => "check_box", :id => "edit_ticket_skill", :not_display => !current_account.skill_based_round_robin_enabled? }]
+              },
              { :dom_type => "check_box", :id => "view_time_entries", :class => "nested",
                :children =>
 

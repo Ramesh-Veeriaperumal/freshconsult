@@ -66,6 +66,8 @@ BoxChooser.prototype = {
                 <a href="#"><span class="name-holder">#{name}</span>#{arrow_span}</a> \
               </li>'),
   navbar_item: new Template('<div class="box-item"><span data-item-id="#{item_id}">#{name}</span></div>'),
+  searchBar: new Template('<div class="box-search-bar"><div class="box-search inline-block"><input type="text" id="box-search-text" placeholder="Search in #{name}"></div>#{pageDirection}</div>'),
+  pageDirection: new Template('<div class="page-info inline-block">#{number} of #{total}</div><div class="page-navigation inline-block"><label class="btn btn-prev disabled"><span class="arrow-previous"></span></label><label class="btn btn-next"><span class="arrow-next"></span></label></div>'),
   
   initialize: function(boxBundle) {
     if(boxBundle.auth_status === 'failed') {
@@ -74,12 +76,17 @@ BoxChooser.prototype = {
       performOAuth();
     } else {
       boxChooser = this
+      this.folder_items = [];
+      this.pageSize = 100; // The number of files per pages for Both API limit and the UI.
+      this.current_page_id = '';
+      this.current_page_size = 0;
       this.options = boxBundle
       this.options.app_name = 'box'
       this.options.domain = 'api.box.com'
       this.options.auth_type = 'OAuth'
       this.options.useBearer=true
       this.options.ssl_enabled = true
+      this.set_folder_actions();
       this.fw = new Freshdesk.Widget(this.options)
       this.item_id_to_entry = {}
       this.get_folder_items((function(){
@@ -91,26 +98,95 @@ BoxChooser.prototype = {
     }
   },
 
-  get_folder_items: function(folder_id){
-    var url = '2.0/folders/' + folder_id;
+  set_folder_actions: function(){
+    // For Navigation between Pages.
+    jQuery(document).on('click', '#box-content-pane .btn', function(){
+      var pageNumberSelector = "div[id*=page-number]";
+      var previousPage = (jQuery(this).attr("class").indexOf("btn-prev") != - 1);
+      // navPage denotes the next or prev page depending on the selection.
+      var navPage = previousPage ? jQuery("#"+boxChooser.current_page_id).prev(pageNumberSelector) : jQuery("#"+boxChooser.current_page_id).next(pageNumberSelector);
+      navPage.removeClass("hide");
+      boxChooser.current_page_id = jQuery(navPage[0]).attr("id");
+      var currPage = boxChooser.current_page_id.split("_").last();
+      jQuery(".page-info").text(currPage + " of " + boxChooser.current_page_size);
+      if(previousPage){
+        if(jQuery(navPage[0]).prev(pageNumberSelector).length == 0){
+          jQuery("#box-content-pane .btn-prev").addClass("disabled");
+        }
+        if(jQuery(navPage[0]).next(pageNumberSelector).length > 0){
+          jQuery("#box-content-pane .btn-next").removeClass("disabled");
+        }
+      }else{
+        if(jQuery(navPage[0]).next(pageNumberSelector).length == 0){
+          jQuery("#box-content-pane .btn-next").addClass("disabled");
+        }
+        if(jQuery(navPage[0]).prev(pageNumberSelector).length > 0){
+          jQuery("#box-content-pane .btn-prev").removeClass("disabled");
+        }
+      }
+      jQuery('div[id*="page-number"]:not(#'+ boxChooser.current_page_id + ')').addClass("hide");  
+    });
+
+    // For search inside Folders.
+    jQuery(document).on('input', '.box-search', function(){
+      var searchTerm = jQuery('#box-search-text').val();
+      if(!searchTerm){
+        jQuery('div[id*="page-number"]:not(#'+ boxChooser.current_page_id + ')').addClass("hide");
+        jQuery('#box-content-pane .page-info').show();
+        jQuery('#box-content-pane .page-navigation').show();
+        jQuery(".box-item").show();
+      }else{
+        jQuery('#box-content-pane .page-info').hide();
+        jQuery('#box-content-pane .page-navigation').hide();
+        jQuery('div[id*="page-number"]').removeClass("hide");
+        jQuery('#box-content-pane .box-item').each(function(){
+          if(jQuery(this).text().toUpperCase().indexOf(searchTerm.toUpperCase()) != -1){
+            jQuery(this).show();
+          }else{
+            jQuery(this).hide();
+          }
+        });
+      }
+    });
+  },
+
+  get_folder_items: function(folder_id, curOffset){
+    var baseURL = '2.0/folders/' + folder_id + "?limit=" + this.pageSize;
+    var url = (!curOffset) ? baseURL : ( baseURL +  "&offset=" + curOffset );
     this.last_accessed_folder_id = folder_id;
     if(this.isDuplicateRequest(url)) return;
     var req = {
       rest_url: url,
       method: 'get',
-      on_success: function(response){ this.populate_files(response, folder_id, url) }.bind(this),
+      on_success: function(response){ this.get_paginated_items(response, folder_id, url) }.bind(this),
       on_failure: this.handle_request_failure.bind(this),
       custom_callbacks: { on0: this.handle_broken_request.bind(this) }
     }
     this.fw.request(req)
   },
 
+  get_paginated_items: function(response, folder_id, url){
+    var res = response.responseJSON;
+    var curOffset = res.item_collection.offset;
+    var totalPages = res.item_collection.total_count;
+    if(curOffset == 0){
+      this.folder_items =[];
+    }
+    this.folder_items = this.folder_items.concat(res.item_collection.entries);
+    if( (totalPages - curOffset) < this.pageSize){
+      this.populate_files(response, this.folder_items, folder_id, url);
+    }
+    else{
+      this.get_folder_items(folder_id, curOffset + this.pageSize);
+    }
+  },
+
   get_item_by_id: function(itemId){
     return this.item_id_to_entry[itemId]
   },
 
-  populate_files: function(response, folder_id, url){
-    
+  populate_files: function(response, itemCollection, folder_id, url){
+    var _this = this;
     if(url!=this.last_requested_url) return;
     this.last_requested_url = null; // To make sure refresh of same folder works. else isDuplicateRequest would block it.
     if(window.opener && window.opener.window.Box){
@@ -118,18 +194,50 @@ BoxChooser.prototype = {
     }
     // Parse the data.
     res = response.responseJSON;
-    res.item_collection.entries.sort(function(a, b){
-      return (a.type==b.type) ? a.name.localeCompare(b.name) : (a.type=='folder' ? -1 : 1);
+    itemCollection.sort(function(a, b){
+      return (a.type==b.type) ? a.name.localeCompare(b.name) : _this.checkItemisFolder(a.type);
     });
     var list_markup = '';
-    res.item_collection.entries.each(function(entry, index){
+    var page;
+    var folderName = ( res.name == "All Files" ) ? "Folder" : res.name;
+    // Page navigation only if page size is greater than 1.
+    var pageDirectionTemplate = JST["app/integrations/box/paginate_files"]({ 
+      number: "1", 
+      total: Math.floor(itemCollection.length / this.pageSize) + 1 
+    });
+    list_markup += JST["app/integrations/box/search_bar"]({ 
+      name: clip_filename(htmlEntities(folderName), 35), 
+      pageDirection: pageDirectionTemplate 
+    });
+    itemCollection.each(function(entry, index){
+      if(index == 0){
+        page = 1;
+        this.current_page_id = 'page-number_' + folder_id + '_'+ page;
+        list_markup += '<div id="'+ this.current_page_id + '">';
+      }else{
+        if(index % 100 == 0){ 
+          page++;          
+          list_markup += '</div>';
+          list_markup += '<div id="page-number_' + folder_id + '_'+ page + '" class="hide">';
+        }
+      }
       arrow_span_html = (entry.type=='folder'?'<span class="arrow-right"></span>':'');
-      list_markup += this.list_item.evaluate({name: clip_filename(htmlEntities(entry.name), 35), item_id: entry.id, type: entry.type, arrow_span: arrow_span_html});
+      list_markup += JST["app/integrations/box/list_item"]({
+        name: clip_filename(htmlEntities(entry.name), 35), 
+        item_id: entry.id, type: entry.type, 
+        arrow_span: arrow_span_html
+      });
       entry.parent_id = folder_id;
       this.item_id_to_entry[entry.id] = entry;
+      if (index == (itemCollection.length - 1)){
+        list_markup += '</div>';
+      }
     }.bind(this));
-    if(list_markup=='')
+    list_markup += ( itemCollection.length > this.pageSize ) ? ('<div class= "bottom-nav"><div class="box-search inline-block"></div>' + pageDirectionTemplate + '</div>') : '';
+    this.current_page_size = page;
+    if(itemCollection.length == 0){
       list_markup = "<li><p class=\"empty-folder\">Folder Empty<br><span><!--This folder doesn't contain any file or folder.--></span></p></li>";
+    }
     jQuery("#box-left-list").html(list_markup);
     this.path_collection = res.path_collection;
     max_depth = res.path_collection.total_count;
@@ -213,6 +321,10 @@ BoxChooser.prototype = {
     }
 
     jQuery.freshdialog(data);
+  },
+
+  checkItemisFolder: function(type){
+    return (type == 'folder') ? -1 : 1 ;
   }
 
 };
@@ -221,7 +333,7 @@ jQuery(document).on('click', '#box-error-button', function(){
   jQuery('.modal').modal('hide');
 })
 
-jQuery('div#box-navbar').on('click.box_chooser', 'div.box-header div.box-item span:not([data-item-id=na])', function(e) {
+jQuery(document).on('click', 'div.box-header div.box-item span:not([data-item-id=na])', function(e) {
   jQuery(".box-loading-big").show();
   boxChooser.get_folder_items(jQuery(this).data('item-id'));
 });

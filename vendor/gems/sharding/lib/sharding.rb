@@ -3,6 +3,7 @@ require 'models/domain_mapping'
 require 'exceptions/domain_not_ready'
 require 'exceptions/shard_not_found'
 require 'models/pod_shard_condition'
+require 'exceptions/account_blocked'
 class Sharding
   
  class << self
@@ -57,6 +58,7 @@ class Sharding
 
   def check_shard_status(shard)
     raise ShardNotFound  if shard.nil?
+    raise AccountBlocked if shard.blocked?
     raise DomainNotReady  unless shard.ok?
   end
 

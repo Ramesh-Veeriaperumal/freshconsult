@@ -69,6 +69,7 @@ module Reports
       Sharding.select_shard_of(account_id) do
         Sharding.run_on_slave do
           Account.find(account_id).make_current
+          TimeZone.set_time_zone
           Account.current.all_users.find(user_id).make_current if user_id.present?
           yield if block_given?
         end
