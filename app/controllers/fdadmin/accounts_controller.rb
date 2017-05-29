@@ -5,7 +5,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   include Redis::OthersRedis
 
   before_filter :check_domain_exists, :only => :change_url , :if => :non_global_pods?
-  around_filter :select_slave_shard , :only => [:select_all_feature,:show, :features, :agents, :tickets, :portal, :user_info,:check_contact_import,:latest_solution_articles]
+  around_filter :select_slave_shard , :only => [:api_jwt_auth_feature,:sha256_enabled_feature,:sha1_enabled_feature,:select_all_feature,:show, :features, :agents, :tickets, :portal, :user_info,:check_contact_import,:latest_solution_articles]
   around_filter :select_master_shard , :only => [:add_day_passes, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name, :change_api_limit, :reset_login_count,:contact_import_destroy, :change_currency, :extend_trial]
   before_filter :validate_params, :only => [ :change_api_limit ]
   before_filter :load_account, :only => [:user_info, :reset_login_count]
@@ -32,6 +32,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:freshfone_feature] = account.features?(:freshfone) || account.features?(:freshfone_onboarding)
     account_summary[:spam_details] = ehawk_spam_details
     account_summary[:disable_emails] = account.launched?(:disable_emails)
+    account_summary[:saml_sso_enabled] = account.is_saml_sso?
     respond_to do |format|
       format.json do
         render :json => account_summary
