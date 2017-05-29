@@ -125,7 +125,7 @@ class Search::Utils
     hstickets_dispid:                 'hsTicketsByDisplayId',
     hstickets_subject:                'hsTicketsBySubject',
     filteredTicketSearch:             'filteredTicketSearch',
-    search_query_api:                 'searchQueryApi'
+    search_ticket_api:                'searchTicketApi'
   }
 
   # _Note_: Parent ID to be used for routing.

@@ -62,7 +62,7 @@ module ApiSearch
         begin
           @records = Search::V2::QueryHandler.new({
             account_id:   current_account.id,
-            context:      :search_query_api,
+            context:      fetch_context(type),
             exact_match:  false,
             es_models:    associations,
             current_page: page,
@@ -96,6 +96,12 @@ module ApiSearch
               end
             end
           end
+        end
+      end
+
+      def fetch_context(type)
+        if type.include?('ticket')
+          :search_ticket_api
         end
       end
   end
