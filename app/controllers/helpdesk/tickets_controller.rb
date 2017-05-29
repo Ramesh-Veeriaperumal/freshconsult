@@ -157,18 +157,22 @@ class Helpdesk::TicketsController < ApplicationController
     # This method skips checking permissible(current_user) as we need to
     # return required fields for required ticket ids
     # irrespective of user permission over the ticket
-    tickets_list = params['ticket_list']
-    fields_to_compute = (params['ticket_fields'] & TicketConstants::TFS_COMPUTE_FIELDS)
-    # Below extra fields can not be obtained using select
-    extra_fields_to_compute = (params['ticket_fields'] & TicketConstants::TFS_COMPUTE_FIELDS_EXTRA)
     ticket_fields = []
-    if (fields_to_compute.present? or extra_fields_to_compute.present?) and tickets_list.present?
-      tickets_list = tickets_list.first(TicketConstants::TFS_TICKETS_COUNT_LIMIT) # Limiting number of tickets
-      fields_to_compute << "id"
-      tickets = current_account.tickets.where(id:tickets_list).select(fields_to_compute)
-      ticket_fields = tickets.each_with_object([]) {|ticket, return_list| return_list << get_properties_hash(ticket,fields_to_compute,extra_fields_to_compute)}
+    unless request.post?
+      render :json => ticket_fields , :status => 405
+    else
+      tickets_list = params['ticket_list']
+      fields_to_compute = (params['ticket_fields'] & TicketConstants::TFS_COMPUTE_FIELDS)
+      # Below extra fields can not be obtained using select
+      extra_fields_to_compute = (params['ticket_fields'] & TicketConstants::TFS_COMPUTE_FIELDS_EXTRA)
+      if (fields_to_compute.present? or extra_fields_to_compute.present?) and tickets_list.present?
+        tickets_list = tickets_list.first(TicketConstants::TFS_TICKETS_COUNT_LIMIT) # Limiting number of tickets
+        fields_to_compute << "id"
+        tickets = current_account.tickets.where(id:tickets_list).select(fields_to_compute)
+        ticket_fields = tickets.each_with_object([]) {|ticket, return_list| return_list << get_properties_hash(ticket,fields_to_compute,extra_fields_to_compute)}
+      end
+      render :json => ticket_fields
     end
-    render :json => ticket_fields
   end
 
   def get_properties_hash(ticket, fields_to_compute, extra_fields)
