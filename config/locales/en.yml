@@ -2952,6 +2952,7 @@ en:
       spam: "Marked Spam"
       rel_tkt_link: "Ticket Linked"
       rel_tkt_unlink: "Ticket Unlinked"
+      skill_update: "Skill Updated"
     solutions:
       new_solution:
         short: "{{user_path}} created a new solution"
