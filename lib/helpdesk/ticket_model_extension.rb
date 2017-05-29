@@ -36,6 +36,8 @@ module Helpdesk::TicketModelExtension
     [ "export_data.fields.internal_group",        "internal_group_name",     false,  :internal_group  , 32    , "shared_ownership_enabled?"]
   ]
 
+  ARCHIVE_TICKETS_FIELDS_TO_IGNORE = ["internal_agent_name", "internal_group_name"]
+
   ASSOCIATION_BY_VALUE = Hash[*EXPORT_FIELDS.map { |i| [i[1], i[3]] }.flatten ]
 
   def default_export_fields_order
