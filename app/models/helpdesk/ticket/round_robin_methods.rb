@@ -17,7 +17,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #user changes will be passed when observer worker calls the function
   def round_robin_on_ticket_update(user_changes={})
     ticket_changes = self.changes
-    ticket_changes  = merge_to_observer_changes(user_changes,self.changes) if user_changes.present?
+    ticket_changes  = merge_changes(user_changes,self.changes) if user_changes.present?
     
     if group.round_robin_capping_enabled?
       check_capping_conditions(ticket_changes)
@@ -47,71 +47,71 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end  
 
   def check_capping_conditions(ticket_changes)
-    if ticket_changes.has_key?(:deleted) && has_valid_status?(ticket_changes)
-      ticket_changes[:deleted][1] ? decr_agent_capping_limit : incr_agent_capping_limit
-    elsif ticket_changes.has_key?(:spam) && has_valid_status?(ticket_changes)
-      ticket_changes[:spam][1] ? decr_agent_capping_limit : incr_agent_capping_limit
-    end
-    if round_robin_conditions(ticket_changes)
-      ticket_changes[:group_id][1].present? ? assign_agent_via_round_robin : decr_agent_capping_limit
-      return
-    end
-    return if self.round_robin_assignment
-    if ticket_changes.has_key?(:responder_id) && self.group_id.present? && 
-       !self.round_robin_assignment && !ticket_changes.has_key?(:round_robin_assignment)
-      old_group_id = ticket_changes[:responder_id][0].present? ? self.group_id : nil
-      new_group_id = ticket_changes[:responder_id][1].present? ? self.group_id : nil
-      balance_agent_capping({ :group_id => [old_group_id, new_group_id], 
-                              :responder_id => [ticket_changes[:responder_id][0],
-                                                ticket_changes[:responder_id][1]]})
-      ticket_changes[:responder_id][1].present? ? self.group.lrem_from_rr_capping_queue(self.display_id) : 
-                                                  assign_agent_via_round_robin
-      return
-    end
-    
-    if ticket_changes.has_key?(:status)
-      status_ids = Helpdesk::TicketStatus::sla_timer_on_status_ids(account)
-      if status_ids.include?(status) && !status_ids.include?(ticket_changes[:status][0])
-        if responder.present?
-          incr_agent_capping_limit if responder.agent.available?
-        else
-          assign_agent_via_round_robin
+    return if ticket_changes.has_key?(:round_robin_assignment)
+    actions = []
+    ticket_changes = ticket_changes.slice(*LBRR_REFLECTION_KEYS).sort_by { 
+      |k, v| LBRR_REFLECTION_KEYS.index(k)
+    }.to_h
+    ticket_changes.symbolize_keys!
+    ticket_changes.keys.each do |key|
+      case true
+      when [:deleted, :spam].include?(key)
+        state = spam || deleted
+        operation = state ? "decr" : "incr"
+        actions.push([operation, 
+                      fetch_lbrr_id(ticket_changes, :responder_id, state), 
+                      fetch_lbrr_id(ticket_changes, :group_id, state)])
+        break
+      
+      when key == :status
+        status_ids = Helpdesk::TicketStatus::sla_timer_on_status_ids(account)
+        if lbrr_status_change?(status_ids, status, ticket_changes[:status][0])
+          operation = "incr"
+          state = false
+        elsif lbrr_status_change?(status_ids, ticket_changes[:status][0], status)
+          operation = "decr"
+          state = true
         end
-      elsif !status_ids.include?(status) && status_ids.include?(ticket_changes[:status][0])
-        decr_agent_capping_limit
+        if operation.present?
+          actions.push([operation, 
+                        fetch_lbrr_id(ticket_changes, :responder_id, state), 
+                        fetch_lbrr_id(ticket_changes, :group_id, state)])
+          break
+        end
+      
+      when [:responder_id, :group_id].include?(key)
+        ["decr", "incr"].each_with_index do |operation, index|
+          state = index==0 ? true : false
+          g_id = fetch_lbrr_id(ticket_changes, :group_id, state)
+          u_id = fetch_lbrr_id(ticket_changes, :responder_id, state)
+          t_group = account.groups.find_by_id(g_id)
+          actions.push([operation, u_id, g_id]) if t_group.present? && 
+                                                   t_group.round_robin_capping_enabled?
+        end
+        break
       end
+    end
+    actions.each do |act|
+      send("#{act[0]}_agent_capping_limit", act[1], act[2])
     end
   end
 
-  def balance_agent_capping ticket_changes
-    return unless has_capping_status?
-    ["decr", "incr"].each_with_index do |operation, index|
-      g_id = ticket_changes[:group_id][index]
-      u_id = ticket_changes[:responder_id][index]
-      t_group = account.groups.find_by_id(g_id)
-      change_agents_ticket_count(t_group, u_id, operation) if t_group.present? && 
-                                                              t_group.round_robin_capping_enabled?
+  def incr_agent_capping_limit agent_id, group_id
+    group = account.groups.find_by_id group_id
+    if agent_id.present?
+      ret = change_agents_ticket_count(group, agent_id, "incr")
+      assign_agent_via_round_robin if !ret
+    else
+      assign_agent_via_round_robin
     end
   end
 
-  def incr_agent_capping_limit
-    if self.group.present?
-      if self.responder_id.present?
-        ret = change_agents_ticket_count(self.group, responder_id, "incr") if responder_id.present?
-        assign_agent_via_round_robin if !ret
-      else
-        assign_agent_via_round_robin
-      end
-    end
-  end
-
-  def decr_agent_capping_limit
-    if self.group.present?
-      if responder_id.present?
-        change_agents_ticket_count(self.group, responder_id, "decr")
-      else
-        group.lrem_from_rr_capping_queue(self.display_id)
-      end
+  def decr_agent_capping_limit agent_id, group_id
+    group = account.groups.find_by_id group_id
+    if agent_id.present?
+      change_agents_ticket_count(group, agent_id, "decr")
+    else
+      group.lrem_from_rr_capping_queue(display_id) if group.present?
     end
   end
 
@@ -203,6 +203,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   private
 
+  def fetch_lbrr_id ticket_changes, key, state=false
+    ticket_changes.has_key?(key) ? ticket_changes[key][state ? 0 : 1] : 
+                                   send(key.to_s)
+  end
+
+  def lbrr_status_change? status_ids, status, old_status
+    status_ids.include?(status) && status_ids.exclude?(old_status)
+  end
+
   def skip_rr_on_update?
     #Option to toggle round robin off in L2 script
     return true unless rr_allowed_on_update?
@@ -222,36 +231,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def round_robin_conditions(ticket_changes)
-    to_ret = false
     #return if no change was made to the group
     return if !ticket_changes.has_key?(:group_id)
-    to_ret = true if self.responder_id.nil?
     #skip if agent is assigned in the transaction
-    if !to_ret && ticket_changes.has_key?(:responder_id)
-      balance_agent_capping(ticket_changes)
-      self.round_robin_assignment = true
-      return
-    end
+    return if ticket_changes.has_key?(:responder_id) && self.responder_id.present?
     #skip if the existing agent also belongs to the new group
-    if !to_ret && agent_in_new_group?
-      balance_agent_capping(ticket_changes.merge(:responder_id => [responder_id, responder_id]))
-      self.round_robin_assignment = true
-      return
-    end
-    if ticket_changes[:group_id][0].present?
-      old_group = account.groups.find_by_id(ticket_changes[:group_id][0])
-      if old_group.present? && old_group.round_robin_capping_enabled?
-        old_group.lrem_from_rr_capping_queue(self.display_id)
-        change_agents_ticket_count(old_group, responder_id, "decr")
-      end
-    end
+    return if self.responder_id.present? && 
+              Account.current.agent_groups.exists?(:user_id => self.responder_id, 
+                                                   :group_id => group_id)
     true
   end
   
-  def agent_in_new_group?
-    group_id.present? and Account.current.agent_groups.exists?(:user_id => self.responder_id, :group_id => group_id)
-  end
-
   def update_old_group_capping
     if @model_changes.present? && @model_changes.key?(:group_id) && 
       !self.group.try(:round_robin?)
