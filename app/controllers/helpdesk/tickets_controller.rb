@@ -545,7 +545,7 @@ class Helpdesk::TicketsController < ApplicationController
         hash.merge!({:selected_email => @selected_reply_email})
         hash.merge!({:to_cc_emails => @to_cc_emails})
         hash.merge!({:bcc_drop_box_email => bcc_drop_box_email.map{|item|[item, item]}})
-        hash.merge!({:last_reply => bind_last_reply(@ticket, @signature, false, true, true)})
+        hash.merge!({:last_reply => bind_last_reply(@ticket, @signature, false, true, true, true)})
         hash.merge!({:last_forward => bind_last_conv(@ticket, @signature, true)})
         hash.merge!({:ticket_properties => ticket_props})
         hash.merge!({:reply_template => parsed_reply_template(@ticket,nil)})
