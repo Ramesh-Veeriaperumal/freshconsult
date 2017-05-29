@@ -26,7 +26,7 @@ class Ember::IntegratedResourcesControllerTest < ActionController::TestCase
     harvest_app = Account.current.installed_applications.find_by_application_id(app.id)
     harvest_app = create_application('harvest') if harvest_app.nil?
     agent = add_test_agent(@account)
-    time_sheet = create_time_entry(billable: false, ticket_id: t1.id, agent_id: agent.id, executed_at: 19.days.ago.iso8601)    
+    time_sheet = create_time_entry(billable: false, ticket_id: t1.id, agent_id: agent.id, executed_at: 19.days.ago.iso8601)
     resource_params = {
       application_id: app.id,
       integrated_resource: {
@@ -106,7 +106,7 @@ class Ember::IntegratedResourcesControllerTest < ActionController::TestCase
     ticket = create_ticket
     sf_app = Integrations::Application.find_by_name('salesforce_v2')
     sf_installed_app = Account.current.installed_applications.find_by_application_id(sf_app.id).nil? ? create_application('salesforce_v2') : Account.current.installed_applications.find_by_application_id(sf_app.id)
-    sf_params1 = { 
+    sf_params1 = {
       application_id: sf_app.id,
       integrated_resource: {
         remote_integratable_id: 'ROSH-1000',
@@ -124,10 +124,10 @@ class Ember::IntegratedResourcesControllerTest < ActionController::TestCase
     ticket1 = create_ticket
     sf_app = Integrations::Application.find_by_name('salesforce_v2')
     sf_installed_app = Account.current.installed_applications.find_by_application_id(sf_app.id).nil? ? create_application('salesforce_v2') : Account.current.installed_applications.find_by_application_id(sf_app.id)
-    params = { 
+    params = {
       application_id: sf_app.id,
       integrated_resource: {
-        remote_integratable_id: 231123123,
+        remote_integratable_id: 231_123_123,
         local_integratable_id: ticket1.display_id,
         installed_application_id: sf_installed_app.id,
         local_integratable_type: 'ticket'
@@ -177,10 +177,12 @@ class Ember::IntegratedResourcesControllerTest < ActionController::TestCase
     }
     post :create, construct_params(@api_params.merge(sf_params))
     assert_response 200
-    integ_resource = JSON.parse(response.body)
-    delete :destroy, construct_params(@api_params, false).merge(id: integ_resource["id"])
+    integ_resource = JSON.parse(@response.body)
+    resource_id = integ_resource['id']
+    delete :destroy, construct_params(@api_params, false).merge(id: resource_id)
     assert_response 204
-    refute scoper.exists?(integ_resource["id"])
+    assert_equal ' ', @response.body
+    refute scoper.exists?(resource_id)
   end
 
   def test_delete_with_invalid_id
