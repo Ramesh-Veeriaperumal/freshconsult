@@ -61,7 +61,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
       "data/helpdesk/attachments/#{Rails.env}/#{att_id}/original/#{content_file_name}"
     end
 
-    def create_for_3rd_party account, item, attached, i, content_id, mailgun=false, social=false
+    def create_for_3rd_party account, item, attached, i, content_id, mailgun=false
       limit = mailgun ? HelpdeskAttachable::MAILGUN_MAX_ATTACHMENT_SIZE : 
                         HelpdeskAttachable::MAX_ATTACHMENT_SIZE
       if attached.is_a?(Hash)
@@ -90,7 +90,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
         if content_id
           model = item.is_a?(Helpdesk::Ticket) ? "Ticket" : "Note"
           attributes.merge!({:description => "content_id", :attachable_type => "#{model}::Inline"})
-          write_options.merge!({ :acl => attachment_permissions(social) })
+          attachment_permissions = Account.current.one_hop_enabled? ? "private" : "public-read"
+          write_options.merge!({ :acl => attachment_permissions })
         end
 
         att = account.attachments.new(attributes)
@@ -109,9 +110,6 @@ class Helpdesk::Attachment < ActiveRecord::Base
       JWT.decode(token, account.attachment_secret).first.with_indifferent_access
     end
 
-    def attachment_permissions social
-      !social && Account.current.one_hop_enabled? ? "private" : "public-read"
-    end
   end
 
   def s3_permissions
