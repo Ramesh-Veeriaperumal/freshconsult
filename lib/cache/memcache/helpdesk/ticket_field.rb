@@ -22,6 +22,7 @@ module Cache::Memcache::Helpdesk::TicketField
 		MemcacheKeys.delete_from_cache(key) if product_field_set_reqd_false
 		key = ACCOUNT_SECTION_PARENT_FIELDS % { :account_id => self.account_id }
 		MemcacheKeys.delete_from_cache(key) if product_field_set_reqd_false
+		# In Scripts, clear_all_section_ticket_fields_cache in Cache::Memcache::Helpdesk::Section
 	end
 
 	def product_field_set_reqd_false

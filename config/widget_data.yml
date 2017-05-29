@@ -159,7 +159,7 @@
   script: |-
           <script type="text/javascript">
               CustomWidget.include_js("/javascripts/integrations/mailchimp.js");
-              mailchimpBundle={api_endpoint:"{{mailchimp.api_endpoint}}", reqEmail:"{{requester.email}}", reqName:"{{requester.name | make_vaild_javascript}}",  token:"{{mailchimp.oauth_token}}", export: "{{export}}" , fname: "{{requester.firstname | make_vaild_javascript}}" , lname: "{{requester.lastname | make_vaild_javascript}}"  } ;
+              mailchimpBundle={api_endpoint:"{{mailchimp.api_endpoint}}", reqEmail:"{{requester.email}}", reqName:"{{requester.name | make_vaild_javascript}}", export: "{{export}}" , fname: "{{requester.firstname | make_vaild_javascript}}" , lname: "{{requester.lastname | make_vaild_javascript}}"  } ;
           </script>
   name: mailchimp_widget
   id: 11
@@ -217,7 +217,7 @@
 
   script: |-
           <script type="text/javascript">
-              zohocrm_options={ k:"{{zohocrm.api_key}}", domain:"{{zohocrm.domain}}", reqEmail: "{{requester.email}}", reqName: "{{requester.name | make_vaild_javascript}}"};
+              zohocrm_options={ domain:"{{zohocrm.domain}}", reqEmail: "{{requester.email}}", reqName: "{{requester.name | make_vaild_javascript}}"};
               CustomWidget.include_js("/javascripts/integrations/zohocrm.js");
           </script>
   name: zohocrm_widget

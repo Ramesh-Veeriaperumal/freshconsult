@@ -14,7 +14,9 @@
 	<ul class="cnt dont-validate" id="TicketPropertiesFields">
 
 		<!--form values starts here-->
-		<%= render :partial => '/helpdesk/tickets/show/ticket_field_elements', 
+		<%= construct_skill_edit @ticket if current_account.skill_based_round_robin_enabled? %>
+
+		<%= render :partial => '/helpdesk/tickets/show/ticket_field_elements',
 									:locals => {:form_builder => f, :ticket => @item} %>
 		<!--form values ends here-->
 		<!-- Custom fields ends here-->

@@ -30,6 +30,8 @@ module TicketConstants
 
   NEEDED_SBRR_ATTRIBUTES = [:group_id, :status, :responder_id, :spam, :deleted, :sl_skill_id]
 
+  SKILL_DEFAULT_CONDITION_FIELDS = [:group_id, :priority, :source, :ticket_type, :product_id]
+
   ### Bump the version of "TICKETS_LIST_PAGE_FILTERS" key in fragment_cache/keys.rb when SOURCES are modified.
   SOURCES = [
     [ :email,            'email',            1 ],
@@ -404,7 +406,11 @@ module TicketConstants
     TICKET_ASSOCIATION_FILTER.map { |i| [i[1], i[2].join(',')] }
   end
 
-   def self.created_options
+  def self.created_options
     CREATED_BY_VALUES_EN.map { |i| [I18n.t(i[1]), i[2]] }
+  end
+
+  def skill_condition_attributes
+    SKILL_DEFAULT_CONDITION_FIELDS + Account.current.ticket_custom_dropdown_nested_fields.map{ |x| x.column_name.to_sym}
   end
 end

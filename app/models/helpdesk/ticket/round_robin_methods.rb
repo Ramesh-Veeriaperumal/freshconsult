@@ -254,9 +254,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def update_old_group_capping
     if @model_changes.present? && @model_changes.key?(:group_id) && 
-       (@model_changes[:group_id][1].nil? || !self.group.round_robin_enabled?)
+      !self.group.try(:round_robin?)
       old_group = Account.current.groups.find_by_id(@model_changes[:group_id][0])
-      return unless old_group.present? && old_group.round_robin_capping_enabled?
+      return unless old_group.present? && old_group.lbrr_enabled?
       if responder_id.present?
         change_agents_ticket_count(old_group, responder_id, "decr")
       else

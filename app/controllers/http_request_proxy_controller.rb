@@ -61,6 +61,13 @@ class HttpRequestProxyController < ApplicationController
         elsif params[:app_name] == "czentrix" #adding this as a hack in here. ideally it should not be here.
           params[:domain] = "#{request.protocol}#{installed_app.configs[:inputs][:host_ip]}"
           @domain_verified = true
+        elsif params[:app_name] == APP_NAMES[:zohocrm]
+          authKey = "#{installed_app.configs[:inputs]['api_key']}"
+          params[:rest_url] += "#{ZOHO_URL_SUFFIX}%s" %[authKey] unless params[:rest_url].include? authKey
+        elsif params[:app_name] == APP_NAMES[:mailchimp].downcase
+          authKey = "#{installed_app.configs[:inputs]['oauth_token']}"
+          params[:domain] = "#{installed_app.configs[:inputs]['api_endpoint']}"
+          params[:rest_url] += "#{MAILCHIMP_URL_SUFFIX}%s" %[authKey] unless params[:rest_url].include? authKey
         elsif params[:app_name] == "jira"
           params[:domain] = installed_app.configs_domain
           params[:password] = installed_app.configsdecrypt_password

@@ -1,6 +1,7 @@
 class Helpdesk::Section < ActiveRecord::Base
 
   include MemcacheKeys
+  include Cache::Memcache::Helpdesk::Section
 
   self.primary_key = :id
   self.table_name = "helpdesk_sections"
@@ -13,6 +14,8 @@ class Helpdesk::Section < ActiveRecord::Base
   has_many :section_fields, :dependent => :destroy, :order => 'position'
   has_many :section_picklist_mappings, :class_name => 'Helpdesk::SectionPicklistValueMapping', 
                                        :dependent => :destroy
+  has_many :required_ticket_fields, :class_name => 'Helpdesk::TicketField', :through => :section_fields
+
   validates_presence_of :label
   validates_uniqueness_of :label, :scope => :account_id, :case_sensitive => false
 
@@ -25,8 +28,4 @@ class Helpdesk::Section < ActiveRecord::Base
     section_picklist_mappings[0].picklist_value.pickable_id
   end
 
-  def clear_cache
-    key = ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING % { account_id: self.account_id }
-    MemcacheKeys.delete_from_cache key
-  end
 end

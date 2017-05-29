@@ -385,6 +385,7 @@ en:
       group: Group
       agent: Agent
       skill: Skill
+      skill_required: Skill required
       internal_group: Internal Group
       internal_agent: Internal Agent
       priority: Priority
@@ -776,6 +777,7 @@ en:
         no_skill_info_1: No skill have been created.
         no_skill_info_2: Please contact your helpdesk administrator.
         new: New Skill
+      import_csv: "Import Agent Skills"
       new:
         new: New Skill
       edit:
@@ -795,12 +797,21 @@ en:
         learn_more_skill_based_info: Learn more about skill based assignment
         title3: Skill to Ticket Mapping
         info3: "Skill rules are used to identify which skill should be associated with a ticket, based on ticket or customer properties. For each ticket assigned to a group, the first matching skill rule in the Skill List will be executed. Admins can reorder the list of skills to have the most important rules on top."
+      import:
+        download_xls_title: "Download current list of agents and their skills (if any) as csv file"
+        download_xls_btn: "Download .CSV file"
+        add_skills_title: "Add skills to agents in the decreasing order of preference and upload the file"
+        upload_file: "Upload .CSV file"
+        important_note: "Important Note"
+        note_info_1: "If we encounter a new skill name, we will create the skill and map it to the agents"
+        note_info_2: "If we encounter an existing agent with different set of skills, we will disassociate existing set of skills and map the new set of skills present in the file"
+        note_info_3: "Please note that only a maximum of 35 skills can be associated to an agent and 180 skills can be created per account"
     user_skills:
       update:
         update_success: "Skills were successfully updated to the agents."
         update_error: "There were errors in saving skills of %{unsaved_user_count} users. Please reassign the skills and try saving again."
       index:
-        sbrr_disabled_admin: Skill based assignment has not been turned on for this group -
+        sbrr_disabled_admin: Skill based assignment has not been turned on for this group
         turn_on: Turn On
         any: Any
         groups: Group
@@ -2209,6 +2220,7 @@ en:
         edit_conversation: Delete a conversation
         merge_or_split_ticket: Merge / split a ticket
         edit_ticket_properties: Edit ticket properties
+        edit_ticket_skill: Edit skill required
         view_time_entries: View or edit time entries
         edit_time_entries: Edit everyone's time entries
         edit_time_entries_false: Edit only their time
@@ -2613,7 +2625,8 @@ en:
       wrong_format: The CSV file format is not supported. Please check the CSV file format!
       success: "%{created_count} contacts has been newly imported and %{updated_count} existing contacts has been updated!"
     import:
-      already_running: Currently one csv import is running. you may try later !!
+      hi: "Hi"
+      already_running: "A csv import is already in progress. Please try again later."
       failure: Please try again
       no_file: Please upload a file
       success: Your csv import has started and you will receive an email when it is completed. The import process may take several minutes depending on the volume of your data
@@ -2627,6 +2640,19 @@ en:
       info5: "Please follow the instructions mentioned in this <a href = '%{solution_link}'>link</a> to check the formatting of the CSV file"
       info6: "Please send the file to support@freshdesk.com so that we can verify and upload it from our end."
       info7: "%{type} import could not be initiated for csv that you submitted as the file format was incorrect. Please resubmit the file after reformatting it according to the guidelines mentioned in this solution article <a href = '%{solution_link}'>link</a>."
+      info8: "Agents for whom skill update failed can be found in the attachment along with the reason for the failure."
+      info9: "The successfully imported skills and mapping can be viewed under Admin->Skills. Kindly ensure that you add conditions to the new skills in order to map the skill to the right tickets. The new skills can be found at the bottom of the skill list."
+      info10: "The agent to skill mapping csv file that you uploaded has been imported. Please find the summary below:"
+      info11: "Please check the formatting of the CSV file and upload it again."
+      info12: "The value 'Email' or 'Skills' was not present in the first row."
+      info13: "The columns Email or Skills was missing is the csv."
+      info14: "We could not import skills from the file %{file_name} due to one of the following reasons:"
+      info15: "No. of new skills that were created: %{create_count}"
+      info16: "No. of agents whose skills were updated: %{update_count}"
+      info17: "No. of new skills that could not be created: %{create_failed_count}"
+      info18: "No. of agents whose skills could not be updated: %{update_failed_count}"
+      info19: "Skills Import for %{portal_url}"
+      invalid_file: "Please upload proper csv file"
       help_desk: Please feel free to get in touch with us if you need anything else.
       regards: Regards
       freshdesk: Freshdesk Team
@@ -4010,6 +4036,7 @@ en:
         unique_external_id: unique_external_id field cannot be updated
         edit_broadcast_note: "Broadcast message can't be edited"
         max_scheduled_exports_per_account: Cannot have more than %{max_limit} scheduled exports
+        skill_name: Should not contain comma
       full_messages:
         format: "%{attribute} %{message}"
       template:
@@ -4319,7 +4346,7 @@ en:
     helpdesk_software: Help Desk Software
     by_freshdesk: by Freshdesk
     submit_feedback: Submit Feedback
-    footer_feedback_subject_placeholder: If Freshdesk could launch anything in 2017, what would it be?
+    footer_feedback_subject_placeholder: Tell us how we can make Freshdesk better
     footer_feedback_thanks: Thank you for your feedback!
     errors:
       feedback_subject_required: Cannot be blank.
@@ -6328,7 +6355,7 @@ en:
   back_to_reports: "&larr; Back to reports"
   helpdesk:
     collab: Discussion
-    start_collab: Start Discussion
+    start_collab: Discuss
     add_requester: Add Requester
     surveys:
       invalid_rating: Rating value "%{rating}" is invalid. Please rate with the correct rating value.
@@ -6836,7 +6863,7 @@ en:
         my_article_feedback: My Articles Feedback
         archived: Archive
         invalid_requester: Invalid requester
-        ongoing_collab: My Open Discussions
+        ongoing_collab: My Active Huddles
       note:
         posted_on: "%{user_name} on %{note_date}"
         created_on:
@@ -10973,13 +11000,13 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       customer_responded: "Customer Responded"
       ticket_status_update: "Ticket Status Updated"
       ticket_assigned: "Ticket Assigned"
-      collab_added_to: "Discussion"
-      collab_invited_notification: "Discussion"
-      collab_group_mention: :"Discussion"
-      collab_group_mention_multi: "Discussion"
-      collab_first_mention: "Discussion"
-      collab_reply: "Discussion"
-      collab_reply_multi: "Discussion"
+      collab_added_to: "Team Huddle"
+      collab_invited_notification: "Team Huddle"
+      collab_group_mention: :"Team Huddle"
+      collab_group_mention_multi: "Team Huddle"
+      collab_first_mention: "Team Huddle"
+      collab_reply: "Team Huddle"
+      collab_reply_multi: "Team Huddle"
       ticket_assigned_to_group: "Ticket Assigned to Group"
       ticket_created: "New Ticket"
     preferences_text:
@@ -10996,7 +11023,6 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     desktop_notifications_disabled: You've disabled desktop notifications
     toggle_mobile_notifications: Toggle mobile notifications
     toggle_web_notifications: Toggle web notifications
-
   trial_plan_downgrade: "Important: You are currently downgrading from %{plan_from} plan to %{plan_to} plan"
   discounted_sum: "After Discount"
   selecting_plan: "Selecting..."
@@ -11173,15 +11199,15 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     help: What's this?
     feed_back_survery: Help us with some feedback?
   collaboration:
-    my_open_discussions: "My Open Discussions"
+    my_open_discussions: "My Active Huddles"
     notifications: "Notifications"
     no_notifications: "No new notifications"
     discussion: "Discussion"
     discuss: "Discuss"
-    collaborators: "Collaborators"
+    collaborators: "Members"
     view_all_collaborations: "View all discussions"
     view_discussion: "View Discussion"
-    open_discussions: "My Open Discussions"
+    open_discussions: "My Active Huddles"
     type_message: "Type message"
     added_to: "You have been added as collaborator on ticket %{ticket_id}"
     invited_notification: "%{user_name} wants to collaborate with you on ticket %{ticket_id}"
@@ -11189,11 +11215,12 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     nth_mention: "%{who} has mentioned you in %{how_many} messages in ticket %{ticket_id}"
     nth_mention_multi_users: "%{who_all} have mentioned you in %{how_many} messages in ticket %{ticket_id}"
     send_msg_placeholder: "Type '%{newline_key}' to add a new line. '%{send_key}' to send..."
-    collab_max_out_info: "A ticket cannot have more than %{max_collaborators} collaborators. Please contact %{contact_person} to @mention people who are not in the list below."
-    collab_motto: "Collaborate with your team in context, fast."
-    chat_and_more_slogan: "'@' mention someone to invite them, highlight and discuss."
+    collab_max_out_info: "This discussion cannot have more than %{max_collaborators} members."
+    collab_motto: "Collaborate with your team to resolve issues faster"
+    collab_motto_slogan1: "@mention a teammate to invite them."
+    collab_motto_slogan2: "Highlight in the ticket and discuss."
     error:
-      network_err: "Could not connect to internet!"
+      network_err: "Could not connect to the internet!"
       size_exceeded: "Your file exceeded the maximium upload limit of %{max_size}. Please try again with a smaller file."
       wrong_file_format: "Unsupported file format!"
       unexpected: "Something went wrong!"

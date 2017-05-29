@@ -13,6 +13,7 @@
 
        <div class="span6 pull-right pagination-right header_buttons align-right" >
        <% if @is_admin %>
+       <%= (link_to t('admin.skills.import_csv'), import_admin_skills_path, :class => "pr10") %>
         <%= (link_to t('admin.skills.index.new'), new_admin_skill_path, :class => "btn btn-primary") %>
         <% end %>
       </div>
@@ -42,7 +43,9 @@
           <% if @filtered_group && !@filtered_group.skill_based_round_robin_enabled? %>
                     <span class="vertical-alignment" style="color:#A90329"> 
                     <%= t('.sbrr_disabled_admin').html_safe%>
-                    <%= (link_to t('.turn_on'), "/groups/#{@filtered_group.id}/edit") %>
+                    <% if access_to_filtered_group? %>
+                      - <%= link_to t('.turn_on'), "/groups/#{@filtered_group.id}/edit" %>
+                    <% end %>
                     </span>
                     <br/>
           <% end%>

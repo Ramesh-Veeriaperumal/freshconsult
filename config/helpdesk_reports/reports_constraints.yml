@@ -44,6 +44,7 @@
   garden: 60
   estate: 60
   forest: 30
+  enterprise_reporting: 240
 
 :plan_constraints:
   enable_ticket_list:
