@@ -34,24 +34,22 @@ end
 def make_tokens(scanner)
   keyword_x = "([a-zA-Z][a-zA-Z0-9_]*)[\s]*"
   seperator_x = ":"
-  value_x = "[\s]*([-]?[0-9]+|[a-zA-Z0-9_\@]+|'[^']+')"
-  regex_string = /(#{keyword_x}#{seperator_x}#{value_x})+[\s]*/
+  value_x = "[\s]*([a-zA-Z0-9_\@]+|'[^']+'|[-]?[0-9]+)"
+  regex_string = /(#{keyword_x}#{seperator_x}#{value_x})/
   until scanner.empty?
-    scanner.skip(/(\t|\r|\n|\s)+/) # Skip white spaces
     case
-      when match = scanner.scan(/\(/)
-        @tokens.push [:LPAREN, match]    
-      when match = scanner.scan(/\)/)
-        @tokens.push [:RPAREN, match]
-      when match = scanner.scan(/AND|OR/i)
-        @tokens.push [match.upcase.to_sym, match.upcase]
+      when match = scanner.scan(/\([\s]*/)
+        @tokens.push [:LPAREN, match.strip]    
+      when match = scanner.scan(/[\s]*\)/)
+        @tokens.push [:RPAREN, match.strip]
+      when match = scanner.scan(/[\s]+(AND|OR)[\s]+/i)
+        @tokens.push [match.strip.upcase.to_sym, match.strip.upcase]
       when match = scanner.scan(regex_string) # match any keyword:value
         @tokens.push [:PAIR, match]
       else
         current_pos = scanner.pos
         rest = scanner.rest
         error_scanner = StringScanner.new rest
-        error_scanner.scan(/[\t|\r|\n|\s]*/)
         [/#{keyword_x}/,/#{seperator_x}/,/#{value_x}/].each { |x|
           unless error_scanner.scan(x)
             current_pos += error_scanner.pos
