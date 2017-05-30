@@ -7429,7 +7429,7 @@ en:
     installed_mkp_apps_unavailable: "The listing of installed apps is currently unavailable. Please try again later. Please contact us if the issue persists."
     api_error: "We could not process your request. Please try after sometime."
     results: results
-    field_blank: Please fill all the fields.
+    field_blank: Please fill the required fields.
     installed: Installed
     helpnote1: "Apps in Freshdesk let you share data with third party solutions and services that you use regularly. They also enable you to add additional features to the ticket and contact details page. Freshdesk offers several apps out-of-the-box. To browse our selection of apps, click on the “Get More Apps” button."
     helpnote_custom_apps_html: "Can't find an app that fits your needs? With our Custom Apps (earlier called Freshplugs), you can bring in contextual information from any third party solution, legacy system or database. These Custom Apps can also be used to make visual changes to your helpdesk and boost productivity. Click <a href='https://support.freshdesk.com/support/solutions/articles/121846' target='_blank'>here</a> to learn more!"
