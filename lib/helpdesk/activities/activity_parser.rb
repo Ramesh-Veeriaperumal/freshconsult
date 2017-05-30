@@ -612,14 +612,11 @@ module Helpdesk::Activities
     end
 
     def round_robin(value)
-      user = get_user(value[:responder_id][1].to_i)
-      return if user.blank?
-      params = {:responder_path => "#{build_url(user.name, user_path(user))}"}
-      str = get_string_name("assigned")
+      skill_name(value[:skill_name]) if value[:skill_name].present?
+      responder_id(value[:responder_id]) if value[:responder_id].present?
       rule_type_name   = "#{render_string("activities.round_robin")}"
       # marking rule type as -1 for round robin
       @act_activity[:rule] = {:type_name => rule_type_name, :name => "", :id=> 0 , :type=> -1, :exists => false}
-      @act_activity[:set] << render_string(str, params)
     end
 
     def shared_ownership_reset(value)

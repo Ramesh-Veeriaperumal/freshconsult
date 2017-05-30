@@ -110,7 +110,7 @@ module Helpdesk::ProcessByMessageId
           ticket_display_id_list.each do |ticket_id|
             ticket = find_ticket(account, ticket_id, is_archive)
             matched_ticket ||= ticket #will be used if none of the ticket's email config matches with current email config
-            ticket_email_config = ticket.email_config if ticket.present?
+            ticket_email_config = ticket.email_config if ticket.present? && ticket.respond_to?(:email_config) #email config check for archive tickets
             if email_config.present? && ticket_email_config.present?
               if email_config.id == ticket_email_config.id
                 matched_ticket = ticket 
@@ -142,6 +142,7 @@ module Helpdesk::ProcessByMessageId
 
     def references
       @email_references ||= params[:references].present? ? scan_quoted_message_ids(params[:references]) : (get_references || [])
+      get_valid_message_ids(@email_references)
     end
 
     def get_references
@@ -156,5 +157,15 @@ module Helpdesk::ProcessByMessageId
 
     def scan_quoted_message_ids(text)
       text.squish.scan(/#{MESSAGE_ID_REGEX}/).flatten
+    end
+
+    def get_valid_message_ids(message_id_array)
+      valid_message_ids = []
+      message_id_array.each do |msg_id|
+        if msg_id.present? && (msg_id.downcase != "null" || msg_id.downcase != "nil")
+          valid_message_ids.push(msg_id) 
+        end
+      end
+      return valid_message_ids
     end
 end
