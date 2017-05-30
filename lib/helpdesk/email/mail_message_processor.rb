@@ -49,6 +49,7 @@ module Helpdesk
 					Rails.logger.info "Processed email params #{params.except(:text, :html).inspect}"
 					email_logger.info "Processed Parameters: #{params.inspect}"
 					params[:envelope] =  metadata[:envelope]
+					params[:verification_key] = metadata[:verification_key] if metadata[:verification_key].present?
 					spam_data = check_for_spam(params)
 					self.ticket_params = params.merge({ :spam_info => spam_data ,:request_url => "Mimecontroller"})
 					ticket_data = create_ticket_or_note
