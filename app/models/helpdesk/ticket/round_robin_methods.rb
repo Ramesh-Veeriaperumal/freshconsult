@@ -56,6 +56,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_changes.keys.each do |key|
       case true
       when [:deleted, :spam].include?(key)
+        next unless has_valid_status?(ticket_changes)
         state = spam || deleted
         operation = state ? "decr" : "incr"
         actions.push([operation, 
@@ -80,6 +81,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
         end
       
       when [:responder_id, :group_id].include?(key)
+        next unless has_capping_status?
         ["decr", "incr"].each_with_index do |operation, index|
           state = index==0 ? true : false
           g_id = fetch_lbrr_id(ticket_changes, :group_id, state)
