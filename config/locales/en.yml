@@ -7126,6 +7126,8 @@ en:
       customer_interactions: "Customer interactions"
       resolution_status: "Resolution Status"
       first_response_status: "First Response Status"
+      internal_agent: Internal Agent
+      internal_group: Internal Group
       tags: "Tags"
       survey_result: "Survey Result"
       product: "Product"
