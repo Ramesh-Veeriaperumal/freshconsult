@@ -340,8 +340,6 @@ module Redis::RedisKeys
 
   ZENDESK_IMPORT_APP_KEY = "ZENDESK_IMPORT_APP"
 
-  IFRAME_WHITELIST_DOMAIN = "IFRAME_WHITELIST_DOMAIN"
-
 	def newrelic_begin_rescue
 		begin
 		  yield
