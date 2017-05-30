@@ -28,6 +28,15 @@ module ApplicationHelper
 
   ASSETIMAGE = { :help => "/assets/helpimages" }
   ASSET_MANIFEST = {}
+  USER_NOTIFICATION_PREFS = [
+    { :text => "customer_responded", :default => true },
+    { :text => "ticket_status_updated", :default => true },
+    { :text => "ticket_assigned", :default => true },
+    { :text => "private_note_created", :default => true },
+    { :text => "public_note_created", :default => true },
+    { :text => "ticket_assigned_to_group", :default => false },
+    { :text => "ticket_created", :default => false }
+  ].freeze
 
   def open_html_tag
     html_conditions = [ ["lt IE 7", "ie6"],
