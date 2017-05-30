@@ -78,6 +78,7 @@ module Facebook
           
           begin
             requester.make_current
+            ticket.skip_sbrr = true
             if note.save_note
               if !koala_comment.created_at.blank?
                 @fan_page.update_attribute(:fetch_since, koala_comment.created_at.to_i)
@@ -87,6 +88,7 @@ module Facebook
               note = nil
             end
           ensure
+            ticket.skip_sbrr = nil
             User.reset_current_user
           end
         end
