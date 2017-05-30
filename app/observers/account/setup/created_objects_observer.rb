@@ -30,7 +30,7 @@ class Account::Setup::CreatedObjectsObserver < ActiveRecord::Observer
 	end
 
 	def account_signup_completed?
-		!background_fixtures_running? && Account.current.try(:setup).to_i > 0
+		!Account.current.background_fixtures_running? && Account.current.try(:setup).to_i > 0
 	end
 
 end
