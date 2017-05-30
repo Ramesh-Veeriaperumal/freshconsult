@@ -15,7 +15,6 @@ args = {
 user.make_agent(args)
 agent = user
 
-
 requester = User.seed(:account_id, :email) do |s|
   s.account_id = account.id
   s.email      = Helpdesk::DEFAULT_TICKET_REQUESTER[:email_ticket][:email]

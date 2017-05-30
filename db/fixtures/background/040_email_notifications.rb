@@ -1,36 +1,6 @@
 account = Account.current
 
 EmailNotification.seed_many(:account_id, :notification_type, [
-  {
-    :notification_type => EmailNotification::USER_ACTIVATION, 
-    :account_id => account.id, 
-    :requester_notification => true, 
-    :agent_notification => true,
-    :agent_template => '<p>Hi {{agent.name}},<br /><br />Your {{helpdesk_name}} account has been created.<br /><br />Click the url below to activate your account!<br /><br />{{activation_url}}<br /><br />If the above URL does not work try copying and pasting it into your browser. If you continue to have problems, please feel free to contact us.<br /><br />Regards,<br />{{helpdesk_name}}</p>',
-    :requester_template => '<p>Hi {{contact.name}},<br /><br />A new {{helpdesk_name}} account has been created for you.<br /><br />Click the url below to activate your account and select a password!<br /><br />{{activation_url}}<br /><br />If the above URL does not work try copying and pasting it into your browser. If you continue to have problems, please feel free to contact us.<br/><br/>Regards,<br/>{{helpdesk_name}}</p>',
-    :requester_subject_template => "{{portal_name}} user activation",
-    :agent_subject_template => "{{portal_name}} user activation"
-  },
-  {
-    :notification_type => EmailNotification::PASSWORD_RESET,
-    :account_id => account.id, 
-    :requester_notification => true, 
-    :agent_notification => true,
-    :agent_template => 'Hey {{agent.name}},<br /><br />
-              A request to change your password has been made.<br /><br />
-              To reset your password, click on the link below:<br />
-              <a href="{{password_reset_url}}">Click here to reset the password.</a> <br /><br />
-              If the above URL does not work, try copying and pasting it into your browser. Please feel free to contact us, if you continue to face any problems.<br /><br />
-              Regards,<br />{{helpdesk_name}}',
-    :requester_template => 'Hey {{contact.name}},<br /><br />
-              A request to change your password has been made.<br /><br />
-              To reset your password, click on the link below:<br />
-              <a href="{{password_reset_url}}">Click here to reset the password.</a> <br /><br />
-              If the above URL does not work, try copying and pasting it into your browser. Please feel free to contact us,if you continue to face any problems.<br /><br />
-              Regards,<br />{{helpdesk_name}}',
-    :requester_subject_template => "{{portal_name}} password reset instructions",
-    :agent_subject_template => "{{portal_name}} password reset instructions"
-  },
   { 
     :notification_type => EmailNotification::NEW_TICKET, 
     :account_id => account.id, :requester_notification => false, 
@@ -91,19 +61,6 @@ EmailNotification.seed_many(:account_id, :notification_type, [
       :account_id => account.id, :requester_notification => false, :agent_notification => false,
       :requester_template => '<p>Dear {{ticket.requester.name}},<br /><br />Your ticket - {{ticket.subject}} -  has been closed.<br /><br />We hope that the ticket was resolved to your satisfaction. If you feel that the ticket should not be closed or if the ticket has not been resolved, please reply to this email.<br /><br />Sincerely,<br />{{helpdesk_name}} Support Team<br />{{ticket.url}}</p>',
     :requester_subject_template => "Ticket Closed - {{ticket.subject}}"
-},
-{ :notification_type => EmailNotification::DEFAULT_REPLY_TEMPLATE, 
-      :account_id => account.id, :requester_notification => true, :agent_notification => false,
-      :requester_template => '<p>Hi {{ticket.requester.name}},<br /><br />Ticket: {{ticket.url}}<br/></p>',
-      :requester_subject_template => "{{ticket.subject}}"
-},
-{ 
-  :notification_type => EmailNotification::DEFAULT_FORWARD_TEMPLATE, 
-  :account_id => account.id, 
-  :requester_notification => true, 
-  :agent_notification => false,
-  :requester_template => '<p>Please take a look at ticket <a href="{{ticket.url}}">#{{ticket.id}}</a> raised by {{ticket.requester.name}} ({{ticket.requester.email}}).</p>',
-  :requester_subject_template => "{{ticket.subject}}"
 },
 {
     :notification_type => EmailNotification::ADDITIONAL_EMAIL_VERIFICATION,
