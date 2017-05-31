@@ -849,6 +849,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     (art_portal && { :host => art_portal.host, :protocol => art_portal.url_protocol }) || {}
   end
 
+  def article_url(article)
+    url_opts = self.article_url_options(article)
+    url_opts.merge!({ :url_locale => article.language.code }) if Account.current.multilingual?
+    return url_opts[:host].present? && Rails.application.routes.url_helpers.support_solutions_article_url(article, url_opts)
+  end
+
   def microresponse_only?
     twitter? || facebook? || mobihelp? || ecommerce?
   end

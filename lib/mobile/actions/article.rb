@@ -17,4 +17,10 @@ module Mobile::Actions::Article
 		hash
   end
 
+  def to_mob_json_for_ticket(ticket)
+    hash = to_mob_json
+    hash["article"]["url"] = ticket.article_url(self)
+    hash
+  end
+
 end
