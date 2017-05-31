@@ -259,7 +259,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     if @model_changes.present? && @model_changes.key?(:group_id) && 
       !self.group.try(:round_robin?)
       old_group = Account.current.groups.find_by_id(@model_changes[:group_id][0])
-      return unless old_group.present? && old_group.lbrr_enabled?
+      return unless old_group.present? && old_group.lbrr_enabled? && 
+                    has_valid_status?(@model_changes)
       if responder_id.present?
         change_agents_ticket_count(old_group, responder_id, "decr")
       else
