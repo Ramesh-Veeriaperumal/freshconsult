@@ -39,7 +39,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   
   # This filter function fetches data from collaboration/tickets.rb; that fetches data from collab microservice
   def collab_filter
-    Helpdesk::Filters::CustomTicketFilter.collab_filter_condition(Collaboration::Ticket.fetch_tickets(@per_page, @page))
+    @collab_tickets ||= Helpdesk::Filters::CustomTicketFilter.collab_filter_condition(Collaboration::Ticket.new.fetch_tickets)
   end
 
   def shared_by_me_filter

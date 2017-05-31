@@ -11225,13 +11225,19 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     collab_motto: "Collaborate with your team to resolve issues faster"
     collab_motto_slogan1: "@mention a teammate to invite them."
     collab_motto_slogan2: "Highlight in the ticket and discuss."
+    attach_file: "Attach file"
+    remove_file: "Remove file"
+    reply: "Reply"
+    disable_collab_info:
+      huddle_closed: "This discussion is closed since the ticket has been closed or deleted."
+      huddle_max_out: "This discussion already has %{max_collaborators} members."
     error:
       network_err: "Could not connect to the internet!"
-      size_exceeded: "Your file exceeded the maximium upload limit of %{max_size}. Please try again with a smaller file."
+      size_exceeded: "Your file exceeded the maximum upload limit of %{max_size}. Please try again with a smaller file."
       wrong_file_format: "Unsupported file format!"
       unexpected: "Something went wrong!"
       highlight_missing: "Highlight missing"
-
+      
   default:
     ticket:
       email:

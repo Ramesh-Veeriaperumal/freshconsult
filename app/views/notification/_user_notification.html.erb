@@ -9,11 +9,6 @@
         <a href="javascript:;" class="show-user-prefs tooltip" title="<%= t('user_notifications.preferences') %>" data-placement="below">
           <%= font_icon "gear", { :size => 18 } %>
         </a>
-        <% if current_account.collaboration_enabled? %>
-          <a href="/helpdesk/tickets/filter/ongoing_collab" class="tooltip" title="<%= t('collaboration.my_open_discussions') %>" data-placement="below">
-            <%= font_icon "comment-multi", { :size => 18 } %>
-          </a>
-        <% end %>
       </div>
     </header>
     <div class="notifications-list-wrapper">

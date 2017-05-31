@@ -495,10 +495,14 @@ class Helpdesk::TicketsController < ApplicationController
   # Generating custom data hash
   # Since this is the only filter when data_hash will update for every pagination request
   def fetch_collab_tickets
-    convo_id_arr = Collaboration::Ticket.fetch_tickets
+    convo_id_arr = Collaboration::Ticket.new.fetch_tickets
     params["data_hash"] = Helpdesk::Filters::CustomTicketFilter.collab_filter_condition(convo_id_arr).to_json
-    
-    current_account.tickets.preload({requester: [:avatar]}, :company).permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+    # Not using permissible(current_user) scope for group_collab collab-sub-feature
+    if current_account.group_collab_enabled?
+      current_account.tickets.preload({requester: [:avatar]}, :company).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+    else
+      current_account.tickets.preload({requester: [:avatar]}, :company).permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+    end
   end
 
   def show
@@ -563,8 +567,13 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def prevnext
-    @previous_ticket = find_adjacent(:prev)
-    @next_ticket = find_adjacent(:next)
+    if collab_filter_with_group_collab_for?(view_context.current_filter)
+      @previous_ticket = find_in_list(:prev)
+      @next_ticket = find_in_list(:next)
+    else
+      @previous_ticket = find_adjacent(:prev)
+      @next_ticket = find_adjacent(:next)
+    end
   end
 
   def update

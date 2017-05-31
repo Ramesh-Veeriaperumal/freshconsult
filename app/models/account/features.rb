@@ -3,7 +3,7 @@ class Account < ActiveRecord::Base
   LP_FEATURES   = [:link_tickets, :select_all, :round_robin_capping, :suggest_tickets, :customer_sentiment_ui,
                    :dkim, :bulk_security, :multi_dynamic_sections, :scheduled_ticket_export, :ticket_contact_export,
                    :email_failures, :disable_emails, :auto_ticket_export, :one_hop, :user_notifications]
-  DB_FEATURES   = [:shared_ownership, :custom_survey, :requester_widget, :collaboration, :archive_tickets, :sitemap]
+  DB_FEATURES   = [:shared_ownership, :custom_survey, :requester_widget, :archive_tickets, :sitemap]
   BITMAP_FEATURES = [
       :split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management,
       :email_commands, :assume_identity, :rebranding, :custom_apps, :custom_ticket_fields, :custom_company_fields,
@@ -11,7 +11,7 @@ class Account < ActiveRecord::Base
       :multi_product,:multiple_business_hours, :multi_timezone, :customer_slas, :layout_customization,
       :advanced_reporting, :timesheets, :multiple_emails, :custom_domain, :gamification, :gamification_enable,
       :auto_refresh, :branding, :advanced_dkim, :basic_dkim, :shared_ownership_toggle, :unique_contact_identifier_toggle,
-      :system_observer_events, :unique_contact_identifier, :ticket_activity_export, :caching, :private_inline
+      :system_observer_events, :unique_contact_identifier, :ticket_activity_export, :caching, :private_inline, :collaboration
     ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   LP_FEATURES.each do |item|
@@ -29,6 +29,12 @@ class Account < ActiveRecord::Base
   BITMAP_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
       has_feature?(item)
+    end
+  end
+
+    Collaboration::Ticket::SUB_FEATURES.each do |item|
+    define_method "#{item.to_s}_enabled?" do
+      self.collaboration_enabled? && (self.collab_settings[item.to_s] == 1)
     end
   end
 
