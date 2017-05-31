@@ -2,6 +2,7 @@ require 'rack/throttle'
 
 class Middleware::FdApiThrottler < Rack::Throttle::Hourly
   include Redis::RedisKeys
+  include Redis::RateLimitRedis
 
   FRESHDESK_DOMAIN = 'freshdesk'
   SKIPPED_SUBDOMAINS =  %w(admin billing partner signup freshsignup email login emailparser mailboxparser freshops) + FreshopsSubdomains
@@ -144,18 +145,6 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
                                                        domain: @host, account_id: account_id })
     end
 
-    def increment_redis(key, used)
-      handle_exception { return $rate_limit.perform_redis_op("INCRBY", key, used) }
-    end
-
-    def set_redis_expiry(key, expires)
-      handle_exception { $rate_limit.perform_redis_op("expire", key, expires) }
-    end
-
-    def get_multiple_redis_keys(*keys)
-      handle_exception { $rate_limit.perform_redis_op("mget", *keys) }
-    end
-
     def key
       API_THROTTLER_V2 % { account_id: account_id }
     end
@@ -166,18 +155,6 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
 
     def api_version
       @request.env['action_dispatch.request.path_parameters'].try(:[], :version) # This parameter would come from api_routes
-    end
-
-    def handle_exception
-      # similar to newrelic_begin_rescue, additionally logs and sends more info to newrelic.
-      yield
-    rescue Exception => e
-      options_hash =  { uri: @request.env['REQUEST_URI'], custom_params: @request.env['action_dispatch.request_id'],
-                        description: 'Error occurred while accessing Redis', request_method: @request.env['REQUEST_METHOD'],
-                        request_body: @request.env['rack.input'].gets }
-      Rails.logger.error("Redis Exception :: Host: #{@host}, Exception: #{e.message}\n#{e.class}\n#{e.backtrace.join("\n")}")
-      NewRelic::Agent.notice_error(e, options_hash)
-      return
     end
 
     # This is the first custom middleware which has account based logic where the api request will hit first.
