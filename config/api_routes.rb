@@ -167,6 +167,12 @@ Helpkit::Application.routes.draw do
         end
       end    
     end
+    resources :attachments, controller: 'ember/attachments', only: [:create, :destroy] do
+      member do
+        put :unlink
+      end
+    end
+
     namespace :api_discussions, path: 'discussions' do
       resources :topics, controller: 'pipe/topics', only: [:create] do
         member do
