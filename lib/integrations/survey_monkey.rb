@@ -66,6 +66,11 @@ module Integrations::SurveyMonkey
   def self.sanitize_survey_text installed_app
     installed_app.configs[:inputs]['survey_text'] = Sanitize.clean(installed_app.configs[:inputs]['survey_text'],
       Sanitize::Config::BASIC)
+    add_api_version installed_app
+  end
+
+  def self.add_api_version installed_app
+    installed_app.configs[:inputs]['api_version'] = 'V3'
   end
 
   def self.delete_cached_status installed_app
