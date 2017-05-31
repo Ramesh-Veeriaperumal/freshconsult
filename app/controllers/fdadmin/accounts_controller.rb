@@ -320,13 +320,13 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     enabled = false
     account = Account.find(params[:account_id]).make_current
     if params[:operation] == "launch"
-      account.add_feature(:collab)
-      enabled = account.has_feature?(:collab)
+      account.add_feature(:collaboration)
+      enabled = account.has_feature?(:collaboration)
     elsif params[:operation] == "rollback"
-      account.revoke_feature(:collab)
-      enabled = account.has_feature?(:collab)
+      account.revoke_feature(:collaboration)
+      enabled = account.has_feature?(:collaboration)
     elsif params[:operation] == "check"
-      enabled = account.has_feature?(:collab)
+      enabled = account.has_feature?(:collaboration)
     end
     Account.reset_current_account
     render :json => {:status => enabled}
