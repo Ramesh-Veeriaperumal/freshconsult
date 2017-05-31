@@ -123,22 +123,7 @@ module AccountCleanup
     end
 
     def perform_es_deletion(account_id)
-      es_delete(account_id, Helpdesk::Ticket, @ticket_ids)
-      es_delete(account_id, Helpdesk::Note, @note_ids)
       manual_publish_subscribers(account_id, Helpdesk::Ticket, @ticket_ids)
-    end
-
-    def es_delete(account_id, klass, object_ids)
-      index_alias = Search::EsIndexDefinition.searchable_aliases(Array(klass), account_id).to_s
-      is_index_present =  Search::EsIndexDefinition.index_exists?(index_alias, account_id)
-      if is_index_present
-        query = Tire.search do |search|
-          search.query { |q| q.terms :_id, object_ids}
-        end
-      query_params  = { :source => query.to_hash[:query].to_json }
-      request_url   = [Search::EsIndexDefinition.index_url(index_alias, account_id)].join('/')    
-      response = Tire::Configuration.client.delete "#{request_url}/_query?source=#{Tire::Utils.escape(query.to_hash[:query].to_json)}"
-      end
     end
 
     def manual_publish_subscribers(account_id, klass, object_ids)

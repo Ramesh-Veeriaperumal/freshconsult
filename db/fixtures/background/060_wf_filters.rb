@@ -24,11 +24,3 @@ user = User.current
                        :visibility => {:visibility => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents], :user_id => user.id}})  
    end    
    Helpdesk::Filters::CustomTicketFilter.seed_many(:account_id,:name,filter_array)
-
-
-
-
-
-
-
-

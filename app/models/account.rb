@@ -39,7 +39,8 @@ class Account < ActiveRecord::Base
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
 
   include Account::Setup
-  
+  include Account::BackgroundFixtures
+
   scope :active_accounts,
               :conditions => [" subscriptions.state != 'suspended' "], 
               :joins => [:subscription]
@@ -247,6 +248,7 @@ class Account < ActiveRecord::Base
     key = TICKET_DISPLAY_ID % { :account_id => self.id }
     get_display_id_redis_key(key).to_i
   end
+
   
   def account_managers
     technicians.select do |user|

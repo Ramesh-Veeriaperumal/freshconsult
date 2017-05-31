@@ -62,7 +62,7 @@ GIT
 
 GIT
   remote: git://github.com/freshdesk/rate-limiting.git
-  revision: b09a31a31cbfb74190799bc143d4e6445ac5bf98
+  revision: f43173165c95b5ba9f72a1298050d2b2431d7606
   specs:
     rate-limiting (1.0.4)
       json

@@ -7,8 +7,10 @@ class Helpdesk::EmailParser::ProcessedMail
 	include Helpdesk::EmailParser::EmailParseError
 
 	attr_accessor :raw_eml, :mail, :from, :to, :cc , :subject, :text, :html, :header, :header_string, :attachments, :message_id, :references, :in_reply_to, :date, :mail_header_default_charset
+
 	SUBJECT_PATTERN = /(=\?.*?\?[QB]\?.*?\?=)/
-	SUBJECT_ORIGINAL_PATTERN = /\=\?([^?]+)\?([QB])\?[^?]*?\?\=/mi
+	ENCODED_VALUE = /\=\?([^?]+)\?([QB])\?[^?]*?\?\=/mi
+
 	def initialize(raw_eml)
 		self.raw_eml = raw_eml
 		self.mail = Mail.new(raw_eml)
@@ -50,7 +52,11 @@ private
 		from_addr = ""
 		begin
 			from_addr = mail[:from].to_s
-			return encode_header_data(from_addr, self.mail_header_default_charset)
+			if mail[:from].value =~ ENCODED_VALUE
+				return from_addr
+			else
+				return encode_header_data(from_addr, self.mail_header_default_charset)
+			end
 		rescue Exception => e
 			begin
 				Rails.logger.info "Exception while fetching from address from parsed email object - #{e.message} - #{e.backtrace}"
@@ -67,7 +73,8 @@ private
 	def get_to_address
 		to_addr = ""
 		begin
-			to_addr = mail.to.blank? ? mail.header['Delivered-To'].to_s : ((mail.to.kind_of? String) ? mail.to : mail.to.join(','))
+			#mail.to returns address container[Array]. Contact name will not come only email addresses will be returned, so encoding unquote_and_convert will not be required ideally
+			to_addr = mail.to.blank? ? mail.header['Delivered-To'].to_s : ((mail.to.kind_of? String) ? mail.to : mail.to.join(',')) 
 			return encode_header_data(to_addr, self.mail_header_default_charset)
 		rescue Exception => e
 			Rails.logger.info "Exception while fetching to address from parsed email object - #{e.message} - #{e.backtrace}"
@@ -82,7 +89,11 @@ private
 		cc_addr = ""
 		begin
 			cc_addr = mail[:cc].to_s
-			return encode_header_data(cc_addr, self.mail_header_default_charset)
+			if mail[:cc].value =~ ENCODED_VALUE
+				return cc_addr
+			else
+				return encode_header_data(cc_addr, self.mail_header_default_charset)
+			end
 		rescue Exception => e
 			begin 
 				Rails.logger.info "Exception while fetching cc address from parsed email object - #{e.message} - #{e.backtrace}"
@@ -147,7 +158,7 @@ private
 
 	#should monitor and decide whether utf-8 encoding has to be done
 	def get_header_data
-		mail.header.to_s
+		encode_header_data(mail.header.to_s)
 	rescue Exception => e
 		begin
   			mail.header.raw_source

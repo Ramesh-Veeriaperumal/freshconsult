@@ -59,7 +59,7 @@ def construct_email(account, params)
 	if (params[:note_id].present? && params[:note_id] != -1)
 		note = Helpdesk::Note.find_by_account_id_and_id(account.id, params[:note_id])
     subject = note.subject
-    content = note.body_html
+    content = note.full_text_html
 	elsif (params[:ticket_id].present? && params[:ticket_id] != -1)
 		tkt = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, params[:ticket_id])
     subject = tkt.subject

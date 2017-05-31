@@ -86,11 +86,11 @@ module AutomationControllerMethods
   end
 
   def load_config
-    @agents = [[0, t('admin.observer_rules.assigned_agent')]] + get_event_performer + none_option
+    @agents = none_option + [[0, t('admin.observer_rules.assigned_agent')]] + get_event_performer
     @agents.concat agents_list
     @watcher_agents = agents_list
 
-    @groups = [[0, t('admin.observer_rules.assigned_group')]] + none_option
+    @groups = none_option + [[0, t('admin.observer_rules.assigned_group')]]
     @groups.concat groups_list_from_cache
     
     load_internal_group_agents if allow_shared_ownership_fields?
@@ -185,7 +185,7 @@ module AutomationControllerMethods
     internal_group_ids  = current_account.account_status_groups_from_cache.collect(&:group_id).uniq
     internal_agent_ids  = current_account.agent_groups.where(:group_id => internal_group_ids).pluck(:user_id).uniq
     @internal_groups    = none_option + groups_list_from_cache.select {|g| internal_group_ids.include?(g[0])}.compact
-    @internal_agents    = none_option + agents_list.select {|a| internal_agent_ids.include?(a[0])}.compact
+    @internal_agents    = none_option + get_event_performer + agents_list.select { |a| internal_agent_ids.include?(a[0]) }.compact
   end
 
   def allow_shared_ownership_fields?
