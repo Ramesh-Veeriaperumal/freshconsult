@@ -40,7 +40,7 @@ class Reports::NoActivityWorker < BaseWorker
           #skipping merged tickets
           next if ticket.parent_ticket?
           timestamp = (current_date.to_time - ((ticket.created_at.to_date - current_date.to_date).to_i.abs % 90).days).to_f
-          ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_REPORTS_TICKET_KEY, {:model_changes => { :no_activity => []}, :ingest_timestamp => timestamp})        
+          ticket.delayed_manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_REPORTS_TICKET_KEY, {:model_changes => { :no_activity => []}, :ingest_timestamp => timestamp})        
         rescue Exception => e
           options = {:account_id => account.id, :ticket_id => ticket.id }
           HelpdeskReports::Logger.log("Exception in build_no_activity ticket manual publish",e,options)

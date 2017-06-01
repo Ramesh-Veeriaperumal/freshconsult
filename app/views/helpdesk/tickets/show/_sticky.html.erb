@@ -58,7 +58,7 @@
 				<% end %>
 
 				
-				<% if feature?(:collaboration) %>
+				<% if current_account.collaboration_enabled? %>
 					<li class="ticket-btns">
 						<div id="collab-btn" class="collab-btn btn tooltip" data-placement = "below"
 							title='<%= "#{t('helpdesk.start_collab')}" %>' 

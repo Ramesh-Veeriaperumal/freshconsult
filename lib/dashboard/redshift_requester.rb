@@ -64,12 +64,8 @@ class Dashboard::RedshiftRequester
   end
 
   def process_cache_expiry dump_time
-    remaining_time = (dashboard_cache_timeout.to_i - (Time.now.utc.to_i - dump_time.to_i))
+    remaining_time = (4.hours.to_i - (Time.now.utc.to_i - dump_time.to_i))
     (remaining_time > MemcacheKeys::DASHBOARD_TIMEOUT) ? remaining_time : MemcacheKeys::DASHBOARD_TIMEOUT
-  end
-
-  def dashboard_cache_timeout
-    30.minutes
   end
 
 end

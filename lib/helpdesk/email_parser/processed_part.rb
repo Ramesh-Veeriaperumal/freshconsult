@@ -124,7 +124,7 @@ class Helpdesk::EmailParser::ProcessedPart
 
 	def fetch_known_attachment_from_part
 		if(part.content_transfer_encoding && ["UUENCODE", "X-UUENCODE"].include?(part.content_transfer_encoding.upcase))
-      		lines = /begin \d\d\d (.*)\r\nend/m.match(part.raw_source)[1].split /[\r\n]+/
+      		lines = /begin \d\d\d (.*)\r\nend/m.match(part.raw_source)[1].split(/[\r\n]+/)
       		encoded = lines[1..-2].join("\n")
       		attachment = Helpdesk::EmailParser::MailAttachment.new(encoded.unpack("u")[0])
     	else
@@ -185,9 +185,9 @@ class Helpdesk::EmailParser::ProcessedPart
     	if part.delivery_status_report_part?
         	delivery_status_data = part.delivery_status_data
         	if delivery_status_data[key].is_a?(Array)
-          		delivery_status_data[key].map { |a| a.value }
+          		delivery_status_data[key].map { |a| encode_header_data(a.to_s, default_charset) }
         	elsif !delivery_status_data[key].nil?
-          		delivery_status_data[key].value
+          		encode_header_data(delivery_status_data[key].to_s, default_charset)
         	else
           		nil
         	end

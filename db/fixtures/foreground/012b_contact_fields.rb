@@ -15,7 +15,7 @@ def self.contact_fields_data
       :editable_in_signup => true,
       :required_in_portal => true },
 
-    { :name               => "job_title", 
+    { :name               => "job_title",
       :label              => "Title", 
       :visible_in_portal  => true, 
       :editable_in_portal => true },
@@ -34,43 +34,21 @@ def self.contact_fields_data
       :editable_in_portal => true,
       :field_options      => {"widget_position" => 2} },
 
-    { :name               => "mobile", 
-      :label              => "Mobile Phone", 
-      :visible_in_portal  => true, 
-      :editable_in_portal => true,
-      :field_options      => {"widget_position" => 3} },
-      
-    { :name               => "twitter_id", 
-      :label              => "Twitter", 
-      :visible_in_portal  => true, 
-      :editable_in_portal => true,
-      :field_options      => {"widget_position" => 4} },
       
     { :name               => "company_name", 
       :label              => "Company", 
       :visible_in_portal  => true },
-      
-    { :name               => "client_manager", 
-      :label              => "Can see all tickets from his company"},
-      
-    { :name               => "address", 
-      :label              => "Address" },
-      
+
     { :name               => "time_zone", 
       :label              => "Time Zone", 
       :visible_in_portal  => true, 
       :editable_in_portal => true },
-    
+      
+          
     { :name               => "language", 
       :label              => "Language", 
       :visible_in_portal  => true, 
-      :editable_in_portal => true },
-
-    { :name               => "tag_names", 
-      :label              => "Tags" },
-    
-    { :name               => "description", 
-      :label              => "Background Information" }
+      :editable_in_portal => true }
   ]
 end
 

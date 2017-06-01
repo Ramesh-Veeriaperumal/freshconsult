@@ -310,7 +310,7 @@ label.overlabel{
 	width:300px;
 	border-bottom: 7px solid #eee;
 	@include border-radius(5px);
-	@include box-shadow( rgba(0, 0, 0, 0.8) 0px 3px 8px );
+	@include box-shadow(0 10px 40px 0px rgba(0,0,0,0.2), 0 4px 10px 0px rgba(0,0,0,0.1), 0 0px 0px 1px rgba(0,0,0,0.1));
 	&:after{
 		content:"";
 		position:absolute;

@@ -12,7 +12,7 @@ class Search::V2::Mobile::RelatedArticlesController < Search::V2::SolutionsContr
 
     def process_results
       @result_set.each do |result|
-        @mobile_results << result.to_mob_json['article'] if result
+        @mobile_results << result.to_mob_json_for_ticket(@ticket)['article'] if result
       end
       handle_rendering
     end

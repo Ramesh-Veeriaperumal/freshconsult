@@ -6,6 +6,7 @@ defaults: &defaults
   :logfile: ./log/sidekiq.log
   :timeout: 30
   :queues:
+    - [account_creation_fixtures]
     - [select_all_tickets]
     - [select_all_batcher]
     - [freshfone_notifications]
