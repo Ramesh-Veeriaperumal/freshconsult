@@ -58,10 +58,10 @@ App.CollaborationModel = (function ($) {
                     Collab.groupsTagMap = {};
                     grp_info.forEach( function (grp) {
                         var grp_name = grp.name.trim().toLowerCase().replace(/\s+/g, "-");
-                        if(!!Collab.usersTagMap[grp_name] && Collab.usersTagMap[grp_name].deleted !== "1") {
+                        if(Collab.usersTagMap.hasOwnProperty(grp_name) && Collab.usersTagMap[grp_name].deleted !== "1") {
                             grp_name += "*";
                         }
-                        while(!!Collab.groupsTagMap[grp_name]) {
+                        while(Collab.groupsTagMap.hasOwnProperty(grp_name)) {
                             grp_name += "*";
                         }
                         Collab.groupsMap[grp.id] = jQuery.extend({"tag": grp_name}, grp);
@@ -266,6 +266,29 @@ App.CollaborationModel = (function ($) {
             };
             _COLLAB_PVT.ChatApi.sendMessage(msg, convo, cb);
         },
+        sendNotification: function(msg) {
+            var ticket_id = Collab.currentConversation.co_id;
+            if(!!ticket_id) {
+                var urlParams = new URLSearchParams(window.location.search);
+                var collab_access_token = !!urlParams.get('token') ? urlParams.get('token') : "";
+                message_data = {
+                    mid: msg.mid,
+                    body: msg.body,
+                    token: collab_access_token,
+                    metadata: msg.metadata
+                };
+                var jsonData = JSON.stringify(message_data);
+                jQuery.ajax({
+                    url: '/helpdesk/tickets/collab/' + ticket_id + '/notify',
+                    type: 'POST',
+                    dataType: 'json',                  
+                    data: jsonData,
+                    contentType: 'application/json; charset=utf-8'
+                }); 
+            } else {
+                console.log("Sending notification failed!! Ticket ID not found!");
+            }
+        },
         formatTimestamp: function(age) {  // in seconds
             if (age > 60 * 86400) {
                 return CONST.LONG_AGO_TEXT;
@@ -357,7 +380,8 @@ App.CollaborationModel = (function ($) {
                 "co_id": c.co_id,
                 "owned_by": c.owned_by,
                 "token": Collab.currentConversation.token,
-                "name": Collab.currentConversation.name
+                "name": Collab.currentConversation.name,
+                "notify_version": App.CollaborationUi.notifyVersion
             };
             _COLLAB_PVT.ChatApi.createConversation(convo, cb);
         },
@@ -486,19 +510,6 @@ App.CollaborationModel = (function ($) {
                     console.log("READ: ", arguments);
                 });
             }
-        },
-
-        sendMail: function(mail_content) {
-            var mail_data = {
-                "toAddress": mail_content.toAddressList,
-                "fromAddress": Collab.currentConversation.ticket_config_email,
-                "html_data": mail_content.html_data,
-                "co_id": Collab.currentConversation.co_id
-            };
-            _COLLAB_PVT.ChatApi.notificationMail({
-                "token": Collab.currentConversation.token,
-                "mail_data": mail_data
-            });
         },
         
         init: function() {

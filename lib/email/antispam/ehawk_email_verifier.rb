@@ -38,7 +38,7 @@ module Email::Antispam
       begin
         Timeout.timeout(60) do 
           response = HTTParty.send('post', EhawkConfig::URL, :body => @parameters)
-          Rails.logger.info "Response from Ehawk for email #{@parameters[:email]}, account_id #{account_id} : #{response.body}"
+          Rails.logger.info "Response from Ehawk for  #{@parameters.inspect}, account_id #{account_id} : #{response.body}"
           @api_response = parse_response response.body
         end
       rescue Timeout::Error => e

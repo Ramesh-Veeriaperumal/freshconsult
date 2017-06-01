@@ -58,7 +58,7 @@ class Community::Moderation::QueuedPost
 
     def post_params
       {
-        :body_html => params['body_html'],
+        :body_html => Helpdesk::HTMLSanitizer.clean(params['body_html']),
         :topic => topic,
         :portal => params['portal']
       }.merge(common_attributes)

@@ -267,7 +267,7 @@
             $("#addwatcher .select2-search-field input").focus();
         },
         toggleCollab = function() {
-           $("#collab-btn") .trigger("click");
+           $("#collab-btn").trigger("click");
         },
         getConversationId = function(){
             return $('.conversation_thread form:visible').attr('id');

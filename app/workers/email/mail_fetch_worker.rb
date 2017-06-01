@@ -27,7 +27,7 @@ module Email
         NewRelic::Agent.notice_error(e, {:description => "Error in MailFetchWorker - Params : #{params.inspect}"})
       ensure
         elapsed_time = (Time.now - start).round(3)
-        Rails.logger.info "Time taken for mailfetchworker perform for - Params : #{params.inspect} Timetaken: #{elapsed_time} seconds"
+        Rails.logger.info "Time taken for mailfetchworker perform : #{elapsed_time} seconds - UID : #{params[:uid]} path - #{params[:email_path]} "
       end
     end
 

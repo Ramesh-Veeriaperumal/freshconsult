@@ -2952,6 +2952,7 @@ en:
       spam: "Marked Spam"
       rel_tkt_link: "Ticket Linked"
       rel_tkt_unlink: "Ticket Unlinked"
+      skill_update: "Skill Updated"
     solutions:
       new_solution:
         short: "{{user_path}} created a new solution"
@@ -7125,6 +7126,8 @@ en:
       customer_interactions: "Customer interactions"
       resolution_status: "Resolution Status"
       first_response_status: "First Response Status"
+      internal_agent: Internal Agent
+      internal_group: Internal Group
       tags: "Tags"
       survey_result: "Survey Result"
       product: "Product"
@@ -7426,7 +7429,7 @@ en:
     installed_mkp_apps_unavailable: "The listing of installed apps is currently unavailable. Please try again later. Please contact us if the issue persists."
     api_error: "We could not process your request. Please try after sometime."
     results: results
-    field_blank: Please fill all the fields.
+    field_blank: Please fill the required fields.
     installed: Installed
     helpnote1: "Apps in Freshdesk let you share data with third party solutions and services that you use regularly. They also enable you to add additional features to the ticket and contact details page. Freshdesk offers several apps out-of-the-box. To browse our selection of apps, click on the “Get More Apps” button."
     helpnote_custom_apps_html: "Can't find an app that fits your needs? With our Custom Apps (earlier called Freshplugs), you can bring in contextual information from any third party solution, legacy system or database. These Custom Apps can also be used to make visual changes to your helpdesk and boost productivity. Click <a href='https://support.freshdesk.com/support/solutions/articles/121846' target='_blank'>here</a> to learn more!"
@@ -8028,6 +8031,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       label: "SurveyMonkey"
       helptext: "<h4>SurveyMonkey Integration</h4><p>This integration lets you link a custom survey of your choice from your SurveyMonkey account to ticket replies in Freshdesk based on the group that the ticket belongs to. It can be used to replace the default Satisfaction Survey in your helpdesk or be used along with it.</p><p>Once you have linked your SurveyMonkey account, you can pick out the survey and <a href='http://help.surveymonkey.com/articles/en_US/kb/How-do-I-send-my-survey-to-respondents-or-get-responses-to-my-survey' target='_blank'>the collector</a> you want to use by using the drop down boxes and map it to various ticket groups in Freshdesk. </p><p>You also get to decide when you want survey links to be included with replies. For example, it can be configured to append surveys automatically when ticket gets closed or resolved, or set to manual, so that agents get to choose themselves with each ticket. </p>"
       desc: "Integrate Freshdesk with SurveyMonkey and let your agents link any of your customized surveys to their messages when they are replying to tickets."
+      reauth_text_html: "SurveyMonkey has updated authentication process. To make changes in configuration please, <a href=%{link_auth}>Re-authenticate</a>"
       form:
         survey_settings: ""
         survey_settings_info: ""
@@ -10973,8 +10977,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     notification_preferences: "Notification Preferences"
     notify_when: Notify when...
     checking_your_preferences: Checking your preferences...
-    actor_text_2: "%{actor_name_1} and %{actor_name_2}"
-    actor_text_multi: "%{actor_name_1} and %{more_actors_count} more"
+    actor_text_2: "%{actor_name_1} and %{actor_name_2} "
+    actor_text_multi: "%{actor_name_1} and %{more_actors_count} more "
     private_note_created: "sent you a private note on ticket %{object}"
     private_note_created_multi: "sent you %{count} private notes on ticket %{object}"
     public_note_created: "added a note on ticket %{object}"
@@ -10994,6 +10998,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     collab_group_mention_multi: "mentioned your group - %{group_name} in {{count}} messages on ticket %{object}"
     collab_reply: "replied to your message on ticket %{object}"
     collab_reply_multi: "replied to your message on ticket %{object}"
+    generic_notification: "%{title}"
     types:
       private_note_created: "Private Note Created"
       public_note_created: "Public Note Added"
@@ -11009,6 +11014,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       collab_reply_multi: "Team Huddle"
       ticket_assigned_to_group: "Ticket Assigned to Group"
       ticket_created: "New Ticket"
+      generic_notification: "%{type}"
     preferences_text:
       private_note_created: Private note sent to me
       public_note_created: Public note added to ticket
@@ -11018,11 +11024,12 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       ticket_assigned_to_group: Ticket assigned to my group
       ticket_created: New tickets created
     enable_desktop_notifications: Enable Desktop Notifications
-    enable_desktop_notifications_help: "Please click <strong>Allow</strong> when prompted"
-    desktop_notifications_enabled_flash: Desktop notifications are now enabled!
+    enable_desktop_notifications_help: "Please click 'Allow' when prompted"
+    desktop_notifications_enabled_flash: Desktop notifications are enabled!
     desktop_notifications_disabled: You've disabled desktop notifications
     toggle_mobile_notifications: Toggle mobile notifications
     toggle_web_notifications: Toggle web notifications
+    silent_notifications: Silent notifications
   trial_plan_downgrade: "Important: You are currently downgrading from %{plan_from} plan to %{plan_to} plan"
   discounted_sum: "After Discount"
   selecting_plan: "Selecting..."
@@ -11219,13 +11226,19 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     collab_motto: "Collaborate with your team to resolve issues faster"
     collab_motto_slogan1: "@mention a teammate to invite them."
     collab_motto_slogan2: "Highlight in the ticket and discuss."
+    attach_file: "Attach file"
+    remove_file: "Remove file"
+    reply: "Reply"
+    disable_collab_info:
+      huddle_closed: "This discussion is closed since the ticket has been closed or deleted."
+      huddle_max_out: "This discussion already has %{max_collaborators} members."
     error:
       network_err: "Could not connect to the internet!"
-      size_exceeded: "Your file exceeded the maximium upload limit of %{max_size}. Please try again with a smaller file."
+      size_exceeded: "Your file exceeded the maximum upload limit of %{max_size}. Please try again with a smaller file."
       wrong_file_format: "Unsupported file format!"
       unexpected: "Something went wrong!"
       highlight_missing: "Highlight missing"
-
+      
   default:
     ticket:
       email:

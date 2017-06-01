@@ -122,8 +122,10 @@
 <div id="agent-deletion-confirmation" class="hide">
 	<p class="margin-bottom"><br/><%= t('agent.convert_agent_confirmation')%></p>
 </div>
-<div id="agent-gamification-reset" class="hide">
-	<p class="margin-bottom"><br/> 
-		<% reset_score_alert = (@user == current_user ? 'agent.reset_score_alert_you' : 'agent.reset_score_alert_them') %>
-		<%= t(reset_score_alert, :points => current_account.scoreboard_levels.least_points.first.points, :name => @user.name) %></p>
-</div>
+<% if current_account.scoreboard_levels.present? %>
+	<div id="agent-gamification-reset" class="hide">
+		<p class="margin-bottom"><br/> 
+			<% reset_score_alert = (@user == current_user ? 'agent.reset_score_alert_you' : 'agent.reset_score_alert_them') %>
+			<%= t(reset_score_alert, :points => current_account.scoreboard_levels.least_points.first.points, :name => @user.name) %></p>
+	</div>
+<% end %>
