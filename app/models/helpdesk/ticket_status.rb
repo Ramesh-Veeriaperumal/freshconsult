@@ -280,9 +280,9 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
     account.groups.round_robin_groups.capping_enabled_groups.find_each do |g|
       g.tickets.where(:status => status_id).find_each do |ticket|
         if stop_sla_timer?
-          ticket.decr_agent_capping_limit(ticket.responder_id, g.id)
+          ticket.decr_agent_capping_limit
         else
-          ticket.incr_agent_capping_limit(ticket.responder_id, g.id)
+          ticket.incr_agent_capping_limit
           ticket.save if ticket.responder_id_changed?
         end
       end

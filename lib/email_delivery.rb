@@ -39,8 +39,8 @@ include ParserUtil
     subject = !params[:subject].nil? ? params[:subject] : "No Subject"
     from_email = (!(params[:from]).nil? && (params[:from]).kind_of?(Array)) ? construct_email_json(params[:from][0] ): construct_email_json(params[:from])
     to_email = construct_email_json_array params[:to]
-    cc = construct_email_json_array params[:cc]
-    bcc = construct_email_json_array params[:bcc]
+    cc = params[:cc].present? ? (construct_email_json_array params[:cc] ): nil
+    bcc = params[:bcc].present? ? (construct_email_json_array params[:bcc]) : nil
     reply_to = construct_email_json params["Reply-To"]
     account_id = params["X-FD-Account-Id"].present? ? params["X-FD-Account-Id"] : -1
     subject = params[:subject]
