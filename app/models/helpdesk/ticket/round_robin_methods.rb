@@ -140,7 +140,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def has_valid_status? ticket_changes
-    has_capping_status?(ticket_changes.has_key?(:status) ? status_was : status)
+    has_capping_status?(ticket_changes.has_key?(:status) ? ticket_changes[:status][0] : status)
   end
 
   def set_sbrr_skill_activity
