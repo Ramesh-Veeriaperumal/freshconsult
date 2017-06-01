@@ -5,6 +5,7 @@ module Pipe
       def sanitize_params
         super
         @pending_since = params[cname].delete(:pending_since) if params[cname].key?(:pending_since)
+        @on_state_time = params[cname].delete(:on_state_time) if params[cname].key?(:on_state_time)
       end
 
       def validate_params
@@ -23,12 +24,17 @@ module Pipe
 
       def assign_protected
         super
+        assign_on_state_time if create?
         assign_pending_since if @item[:status] == PENDING
       end
 
       def assign_pending_since
-        @item.ticket_states = Helpdesk::TicketState.new
         @item.ticket_states.pending_since = @pending_since
+      end
+
+      def assign_on_state_time
+        @item.ticket_states = Helpdesk::TicketState.new
+        @item.ticket_states.on_state_time = @on_state_time
       end
   end
 end

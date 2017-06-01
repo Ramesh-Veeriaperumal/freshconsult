@@ -260,6 +260,13 @@ class Helpdesk::Attachment < ActiveRecord::Base
     attachment.instance.content_file_name
   end
 
+  def inline_image?    
+    # Inline image will have attachable type as one of these :    
+    # ArchiveNote::Inline, ArchiveTicket::Inline, Ticket::Inline, Note::Inline    
+    # Image Upload, Email Notification Image Upload, Forums Image Upload, Templates Image Upload, Tickets Image Upload    
+    self.attachable_type.include?("Inline") || self.attachable_type.include?("Image Upload")    
+  end
+
   private
 
   def set_random_secret
@@ -280,12 +287,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     self.attachable_type == "Image Upload" || self.attachable_type == "Forums Image Upload"
   end
 
-  def inline_image?
-    # Inline image will have attachable type as one of these :
-    # ArchiveNote::Inline, ArchiveTicket::Inline, Ticket::Inline, Note::Inline
-    # Image Upload, Email Notification Image Upload, Forums Image Upload, Templates Image Upload, Tickets Image Upload
-    self.attachable_type.include?("Inline") || self.attachable_type.include?("Image Upload")
-  end
+  
 
   def user_avatar?
     self.attachable_type == "User"

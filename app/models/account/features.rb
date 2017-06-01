@@ -1,7 +1,7 @@
 class Account < ActiveRecord::Base
 
   LP_FEATURES   = [:link_tickets, :select_all, :round_robin_capping, :suggest_tickets, :customer_sentiment_ui,
-                   :dkim, :bulk_security, :multi_dynamic_sections, :scheduled_ticket_export, :ticket_contact_export,
+                   :dkim, :bulk_security, :scheduled_ticket_export, :ticket_contact_export,
                    :email_failures, :disable_emails, :auto_ticket_export, :one_hop, :user_notifications]
   DB_FEATURES   = [:shared_ownership, :custom_survey, :requester_widget, :archive_tickets, :sitemap]
   BITMAP_FEATURES = [
@@ -11,7 +11,8 @@ class Account < ActiveRecord::Base
       :multi_product,:multiple_business_hours, :multi_timezone, :customer_slas, :layout_customization,
       :advanced_reporting, :timesheets, :multiple_emails, :custom_domain, :gamification, :gamification_enable,
       :auto_refresh, :branding, :advanced_dkim, :basic_dkim, :shared_ownership_toggle, :unique_contact_identifier_toggle,
-      :system_observer_events, :unique_contact_identifier, :ticket_activity_export, :caching, :private_inline, :collaboration
+      :system_observer_events, :unique_contact_identifier, :ticket_activity_export, :caching, :private_inline, :collaboration,
+      :multi_dynamic_sections
     ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   LP_FEATURES.each do |item|

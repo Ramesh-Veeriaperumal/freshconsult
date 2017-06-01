@@ -162,7 +162,7 @@ module Helpdesk::ProcessByMessageId
     def get_valid_message_ids(message_id_array)
       valid_message_ids = []
       message_id_array.each do |msg_id|
-        if msg_id.present? && (msg_id.downcase != "null" || msg_id.downcase != "nil")
+        if msg_id.present? && ( !(msg_id.strip.downcase == "null" || msg_id.strip.downcase == "nil") )
           valid_message_ids.push(msg_id) 
         end
       end

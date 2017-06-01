@@ -161,7 +161,7 @@ private
 		encode_header_data(mail.header.to_s)
 	rescue Exception => e
 		begin
-  			mail.header.raw_source
+  			encode_header_data(mail.header.raw_source)
   		rescue Exception => e
   			Rails.logger.info "Exception while fetching header from parsed email object - #{e.message} - #{e.backtrace}"
   			replace_invalid_characters
