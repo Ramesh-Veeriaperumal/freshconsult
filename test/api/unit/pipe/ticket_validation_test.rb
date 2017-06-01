@@ -236,5 +236,29 @@ module Pipe
       assert errors.include?('Fr due by gt_created_and_now')
       Account.unstub(:current)
     end
+
+    def test_create_with_on_state_time
+      Account.stubs(:current).returns(Account.first)
+      controller_params = { requester_id: 1, description: Faker::Lorem.paragraph,
+                            ticket_fields: [], statuses: statuses, status: 5,
+                            on_state_time: 100 }
+      item = nil
+      ticket = TicketValidation.new(controller_params, item)
+      assert ticket.valid?(:create)
+      Account.unstub(:current)
+    end
+
+    def test_on_state_time_string
+      Account.stubs(:current).returns(Account.first)
+      controller_params = { requester_id: 1, description: Faker::Lorem.paragraph,
+                            ticket_fields: [], statuses: statuses, status: 2,
+                            on_state_time: 'string' }
+      item = nil
+      ticket = TicketValidation.new(controller_params, item)
+      refute ticket.valid?(:create)
+      errors = ticket.errors.full_messages
+      assert errors.include?('On state time datatype_mismatch')
+      Account.unstub(:current)
+    end
   end
 end
