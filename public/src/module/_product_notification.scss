@@ -9,7 +9,7 @@ $header-link-padding: 20px;
 		z-index: 999;
 		top: 45px;
 		@include right(0px);
-		@include box-shadow(0 30px 140px -30px rgba(0,0,0,0.5), 0 0px 0px 1px rgba(0,0,0,0.2));
+		@include box-shadow(0 10px 40px 0px rgba(0,0,0,0.2), 0 4px 10px 0px rgba(0,0,0,0.1), 0 0px 0px 1px rgba(0,0,0,0.1));
 		border-radius: 5px;
 		background-color: white;
 	}

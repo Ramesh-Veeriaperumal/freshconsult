@@ -119,9 +119,9 @@ module Social::Util
             :content_size => 1000
           }
 
-          image_attachment = Helpdesk::Attachment.create_for_3rd_party(account,item, options, 1, 1, false, true)
+          image_attachment = Helpdesk::Attachment.create_for_3rd_party(account,item, options, 1, 1, false)
           if image_attachment.present? && image_attachment.content.present?
-            photo_url_hash[media.url.to_s] = image_attachment.content.url
+            photo_url_hash[media.url.to_s] = image_attachment.inline_url
           end
         end
       end

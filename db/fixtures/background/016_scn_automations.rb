@@ -1,5 +1,4 @@
 account = Account.current
-
 ScenarioAutomation.seed_many(:account_id, :name, :rule_type, [
     [ 'Assign to QA', 'Customer reported bugs are assigned to QA in a single click',
         [

@@ -13,7 +13,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   MAX_DIMENSIONS = 16000000
 
-  NON_THUMBNAIL_RESOURCES = ["Helpdesk::Ticket", "Helpdesk::Note", "Account", 
+  NON_THUMBNAIL_RESOURCES = ["Helpdesk::Ticket", "Helpdesk::Note", "Account",
     "Helpdesk::ArchiveTicket", "Helpdesk::ArchiveNote"]
 
   self.table_name =  "helpdesk_attachments"
@@ -61,15 +61,15 @@ class Helpdesk::Attachment < ActiveRecord::Base
       "data/helpdesk/attachments/#{Rails.env}/#{att_id}/original/#{content_file_name}"
     end
 
-    def create_for_3rd_party account, item, attached, i, content_id, mailgun=false, social=false
-      limit = mailgun ? HelpdeskAttachable::MAILGUN_MAX_ATTACHMENT_SIZE : 
+    def create_for_3rd_party account, item, attached, i, content_id, mailgun=false
+      limit = mailgun ? HelpdeskAttachable::MAILGUN_MAX_ATTACHMENT_SIZE :
                         HelpdeskAttachable::MAX_ATTACHMENT_SIZE
       if attached.is_a?(Hash)
-        file_content = attached[:file_content] 
+        file_content = attached[:file_content]
         original_filename = attached[:filename]
-        content_type = attached[:content_type] 
-        content_size = attached[:content_size] 
-        verify_attachment_size = false 
+        content_type = attached[:content_type]
+        content_size = attached[:content_size]
+        verify_attachment_size = false
       else
         file_content = (attached.is_a? StringIO) ? attached : attached.tempfile
         original_filename = attached.original_filename
@@ -90,15 +90,16 @@ class Helpdesk::Attachment < ActiveRecord::Base
         if content_id
           model = item.is_a?(Helpdesk::Ticket) ? "Ticket" : "Note"
           attributes.merge!({:description => "content_id", :attachable_type => "#{model}::Inline"})
-          write_options.merge!({ :acl => attachment_permissions(social) })
+          attachment_permissions = Account.current.one_hop_enabled? ? "private" : "public-read"
+          write_options.merge!({ :acl => attachment_permissions })
         end
 
         att = account.attachments.new(attributes)
         if att.save
           path = s3_path(att.id, att.content_file_name)
-          AwsWrapper::S3Object.store(path, 
-                                     file_content, 
-                                     S3_CONFIG[:bucket], 
+          AwsWrapper::S3Object.store(path,
+                                     file_content,
+                                     S3_CONFIG[:bucket],
                                      write_options)
           att
         end
@@ -109,9 +110,6 @@ class Helpdesk::Attachment < ActiveRecord::Base
       JWT.decode(token, account.attachment_secret).first.with_indifferent_access
     end
 
-    def attachment_permissions social
-      !social && Account.current.one_hop_enabled? ? "private" : "public-read"
-    end
   end
 
   def s3_permissions
@@ -163,16 +161,16 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   def attachment_sizes
     if self.description == "logo"
-      return { 
-        :logo => { :geometry => "x50>", :animated => false } 
+      return {
+        :logo => { :geometry => "x50>", :animated => false }
       }
     elsif  self.description == "fav_icon"
-      return { 
-        :fav_icon  => { :geometry => "32x32>", :animated => false } 
+      return {
+        :fav_icon  => { :geometry => "32x32>", :animated => false }
       }
     else
       return {
-        :medium => { :geometry => "127x177>", :animated => false }, 
+        :medium => { :geometry => "127x177>", :animated => false },
         :thumb  => { :geometry => "50x50#", :animated => false }
       }
     end
@@ -237,7 +235,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
       "size"        => content_file_size,
       "url"         => Rails.application.routes.url_helpers.helpdesk_attachment_path(self),
       "delete_url"  => Rails.application.routes.url_helpers.delete_attachment_helpdesk_attachment_path(self),
-      "delete_type" => "DELETE" 
+      "delete_type" => "DELETE"
     }
   end
 

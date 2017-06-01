@@ -144,8 +144,8 @@
 			  <% end %>    
 				<% if current_user.agent? %>
 					<% if current_account.user_notifications_enabled? %>
-						<div id="user_notify_header" class="header-notification-wrapper" rel="remote-load" 
-								data-url="/notification/user_notification">
+						<div id="user_notify_header" class="header-notification-wrapper">
+								<%= render :partial => "/notification/user_notification" %>
 						</div>
 					<% end %>
           <% unless Rails.env.development? %>
@@ -241,7 +241,7 @@
 </div>
 
 <% if current_account.collaboration_enabled? and current_user %>
-	<input type="hidden" id="collab-model-data" data-model-payload='{"clientId": "<%= Collaboration::Ticket::HK_CLIENT_ID %>", "clientAccountId": "<%=current_account.id%>", "initAuthToken": "<%= Collaboration::Ticket.collab_token %>", "userId": "<%= current_user.id %>", "userName": "<%= current_user %>", "userEmail": "<%= current_user.email %>", "collab_url": <%= CollabConfig['collab_url'].to_json.html_safe %>, "rts_url": <%= CollabConfig['rts_url'].to_json.html_safe %>}'>
+	<input type="hidden" id="collab-model-data" data-model-payload='{"clientId": "<%= Collaboration::Ticket::HK_CLIENT_ID %>", "clientAccountId": "<%=current_account.id%>", "initAuthToken": "<%= Collaboration::Ticket.new.acc_auth_token %>", "userId": "<%= current_user.id %>", "userName": "<%= current_user %>", "userEmail": "<%= current_user.email %>", "collab_url": <%= CollabConfig['collab_url'].to_json.html_safe %>, "rts_url": <%= CollabConfig['rts_url'].to_json.html_safe %>}'>
 <% end %>
 
 <%  if logged_in? and current_user.agent?  %>

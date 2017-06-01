@@ -18,6 +18,7 @@ Custom Ssl:
   - :custom_ssl
 Dynamic Sections:
   - :dynamic_sections
+  - :multi_dynamic_sections
 Enterprise Reporting:
   - :enterprise_reporting
   - :surveys
