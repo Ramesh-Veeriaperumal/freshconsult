@@ -33,6 +33,15 @@ module ApplicationHelper
 
   ASSETIMAGE = { :help => "/assets/helpimages" }
   ASSET_MANIFEST = {}
+  USER_NOTIFICATION_PREFS = [
+    { :text => "customer_responded", :default => true },
+    { :text => "ticket_status_updated", :default => true },
+    { :text => "ticket_assigned", :default => true },
+    { :text => "private_note_created", :default => true },
+    { :text => "public_note_created", :default => true },
+    { :text => "ticket_assigned_to_group", :default => false },
+    { :text => "ticket_created", :default => false }
+  ].freeze
 
   def open_html_tag
     html_conditions = [ ["lt IE 7", "ie6"],
@@ -863,7 +872,7 @@ module ApplicationHelper
   def link_to_user(user, options = {})
     return if user.blank?
 
-    if privilege?(:view_contacts)
+    if privilege?(:view_contacts) && !collab_ticket_view?
       default_opts = { :class => "username",
                        :rel => "contact-hover",
                        "data-contact-id" => user.id,
@@ -1688,7 +1697,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
 
   # This helper is for the partial expanded/_ticket.html.erb
   def quick_action
-    privilege?(:edit_ticket_properties) ? 'quick-action dynamic-menu' : ''
+    privilege?(:edit_ticket_properties) && !collab_filter_enabled_for?(@current_view) ? 'quick-action dynamic-menu' : ''
   end
 
   def will_paginate(collection_or_options = nil, options = {})
@@ -1976,6 +1985,10 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
 
   def description_attachment params = {}
     render :partial => "helpdesk/tickets/description_attachment", :locals => {:filename => params[:filename], :value => params[:value], :name => params[:name]}
+  end
+
+  def collab_ticket_view?
+    current_account.collaboration_enabled? and @collab_context
   end
 
 end

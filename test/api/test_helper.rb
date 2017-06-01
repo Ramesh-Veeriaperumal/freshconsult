@@ -7,6 +7,7 @@ class ActionController::TestCase
   end
 
   def setup
+    $redis_others.set('NEW_SIGNUP_ENABLED', 1)
     begin_gc_deferment
     activate_authlogic
     get_agent

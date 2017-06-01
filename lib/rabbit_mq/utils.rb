@@ -80,6 +80,7 @@ module RabbitMq::Utils
     message = subscriber_basic_message(model, action, uuid)
     MANUAL_PUBLISH_SUBCRIBERS.each { |f|
       next if f == "activities" && !Account.current.features?(:activity_revamp)
+      next if f == "collaboration" && !Account.current.collaboration_enabled?
       if Account.current.features?(:countv2_writes)
         next if f == "count" && model != "ticket"
       else

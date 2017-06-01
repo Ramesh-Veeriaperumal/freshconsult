@@ -82,7 +82,8 @@ class Import::Skills::Agent
               notify_details[:csv_errors][@current_agent] << "Unable to assign skills #{fetch_unassigned_skill_names(skills)}"
             end
           rescue ActiveRecord::RecordInvalid => e
-            agent.skill_ids = skill_ids.slice(0..User::MAX_NO_OF_SKILLS_PER_USER-1)
+            agent.reload # not working in staging so again fetching from db.
+            agent.skill_ids = skill_ids.slice(0..User::MAX_NO_OF_SKILLS_PER_USER-1) #slicing 1st 35 skills because it will not take partial skill ids.
             unassigned_skill_ids = skill_ids[User::MAX_NO_OF_SKILLS_PER_USER, skill_ids.length]
             notify_details[:customer_message][:agent_update_failed][agent.email] = build_skill_limit_error(unassigned_skill_ids, e.exception.message)
             notify_details[:csv_errors][@current_agent] << build_skill_limit_error(unassigned_skill_ids, e.exception.message)
