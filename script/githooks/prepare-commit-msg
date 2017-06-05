@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# This generates a default commit message
+
+commitMsgFile=$1
+type=$2 
+
+
+cat $commitMsgFile >> /tmp/x
+sed -i ' ' -e '1s/^/FDCORE\-  \: /' $commitMsgFile
