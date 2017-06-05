@@ -1204,7 +1204,7 @@ Redactor.prototype = {
 
 			if(this.opts.mixedDirectionSupport ){
 				var text_node =  $(this.getCurrentNode());
-				var parent = text_node.closest("p,div,blockquote");
+				var parent = text_node.closest("p,div,blockquote,ul,ol");
 				var blockText =  parent.text();
 	    			if(!parent.is('.redactor_editor') && blockText!='' ){
 		    			var dir=this.findDirection(blockText);
@@ -3151,7 +3151,7 @@ Redactor.prototype = {
 			if(this.opts.mixedDirectionSupport){
 				var textNode = $(e.target)
 		  		var blockText =  textNode.text();
-		  		if(textNode.is("p,div:not(.redactor_editor),blockquote")){
+		  		if(textNode.is("p,div:not(.redactor_editor),blockquote,ul,ol")){
 					var dir=this.findDirection(blockText);
 					if(dir == this.opts.direction){
 						textNode.removeAttr('dir'); 
