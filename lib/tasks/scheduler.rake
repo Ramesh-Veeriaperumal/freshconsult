@@ -95,7 +95,7 @@ namespace :scheduler do
   PREMIUM_ACCOUNT_IDS_TWT = {
     "development" => [1],
     "staging"     => [390], 
-    "production"  => [79003, 309357, 39190, 19063, 86336, 34388, 126077, 220561, 166928, 254067, 381984]
+    "production"  => [79003, 309357, 39190, 19063, 86336, 34388, 126077, 220561, 166928, 254067, 381984, 558611]
   }
 
   def log_file
@@ -186,7 +186,7 @@ namespace :scheduler do
         end
       end
     else
-      puts "Facebook Worker is already running . skipping at #{Time.zone.now}" 
+      puts "Facebook Worker is already running . skipping at #{Time.zone.now}. Type #{task_name}" 
     end
   end
   
@@ -207,7 +207,7 @@ namespace :scheduler do
         end
       end
     else
-      puts "Twitter Worker is already running . skipping at #{Time.zone.now}" 
+      puts "Twitter Worker is already running . skipping at #{Time.zone.now}. Type #{task_name}" 
     end
   end
   
@@ -264,7 +264,7 @@ namespace :scheduler do
     if account_type == "paid"
       enqueue_premium_facebook
       enqueue_premium_facebook(2.minutes)
-      enqueue_premium_facebook(4.minutes)
+      #enqueue_premium_facebook(4.minutes)
     end
     enqueue_facebook(account_type)
     puts "Running #{account_type} facebook worker completed at #{Time.zone.now}"
@@ -277,7 +277,7 @@ namespace :scheduler do
     if account_type == "paid"
       enqueue_premium_twitter
       enqueue_premium_twitter(2.minutes)
-      enqueue_premium_twitter(4.minutes)
+      #enqueue_premium_twitter(4.minutes)
     end
     enqueue_twitter(account_type)
     puts "Running #{account_type} twitter worker completed at #{Time.zone.now}"
