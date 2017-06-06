@@ -124,7 +124,6 @@ window.App.Admin.Skills = window.App.Admin.Skills || {};
         $('[data-skillid='+ skillid +']').removeClass("disabled");
         _this.clone_selected_agents = _this.selected_agents;
         _this.UpdateAgentCount();
-        _this.printCountInMarkup(_this.skillidofCurrent[0]);
         _this.selected_agents = $.extend({}, _this.selected_agents, _this.temp_agents);
         _this.temp_agents = {};
         _this.flushSelect2();
@@ -137,6 +136,11 @@ window.App.Admin.Skills = window.App.Admin.Skills || {};
           dataType: 'json',
           async: 'true',
           data: { user_ids: listOfIds },
+          success: function(data) {
+            if(data.skill_user_count != undefined) {
+              _this.printCountInMarkup(_this.skillidofCurrent[0], data.skill_user_count);
+            }
+          },
           error: function() {}
         });
 
@@ -305,9 +309,8 @@ window.App.Admin.Skills = window.App.Admin.Skills || {};
     selected_agents: {},
     clone_selected_agents: {},
 
-    printCountInMarkup: function(skill_id) {
+    printCountInMarkup: function(skill_id, updatedCount) {
       var _this = this;
-      var updatedCount = _.keys(_this.selected_agents).length + _.keys(_this.temp_agents).length;
 
       if (updatedCount == 1) {
         $("[data-skillid=" + skill_id + "]").html(updatedCount + " Agent");

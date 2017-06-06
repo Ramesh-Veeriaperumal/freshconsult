@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170411034444) do
+ActiveRecord::Schema.define(:version => 20170515122708) do
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -442,6 +442,16 @@ ActiveRecord::Schema.define(:version => 20170411034444) do
   end
 
   add_index "chat_widgets", ["account_id", "widget_id"], :name => "account_id_and_widget_id"
+
+  create_table "collab_settings", :force => true do |t|
+    t.integer  "account_id",    :limit => 8
+    t.string   "key"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+    t.integer  "group_collab",  :limit => 1, :default => 0
+  end
+
+  add_index "collab_settings", ["account_id"], :name => "index_collab_settings_on_account_id"
 
   create_table "company_domains", :force => true do |t|
     t.integer  "account_id",       :limit => 8
@@ -3051,6 +3061,7 @@ ActiveRecord::Schema.define(:version => 20170411034444) do
   add_index "social_fb_posts", ["account_id", "postable_id", "postable_type"], :name => "index_social_fb_posts_account_id_postable_id_postable_type", :length => {"account_id"=>nil, "postable_id"=>nil, "postable_type"=>15}
   add_index "social_fb_posts", ["account_id", "ancestry"], :name => "account_ancestry_index", :length => {"account_id"=>nil, "ancestry"=>30}
   add_index "social_fb_posts", ["account_id", "post_id"], :name => "index_social_fb_posts_on_post_id", :length => {"account_id"=>nil, "post_id"=>30}
+  add_index "social_fb_posts", ["account_id", "thread_id", "postable_type"], :name => "account_thread_postable_type", :length => {"account_id"=>nil, "thread_id"=>30, "postable_type"=>30}
 
   create_table "social_streams", :force => true do |t|
     t.string   "name"

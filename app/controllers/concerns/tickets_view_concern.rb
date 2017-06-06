@@ -4,7 +4,7 @@ module Concerns
 
     private
 
-      def bind_last_reply(item, signature, forward = false, quoted = false, remove_cursor = false)
+      def bind_last_reply(item, signature, forward = false, quoted = false, remove_cursor = false, mobile_request = false)
         # last_conv = (item.is_a? Helpdesk::Note) ? item : ((!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item)
 
         draft_hash = @ticket.draft
@@ -18,13 +18,16 @@ module Concerns
           end
         end
 
-        draft_message || bind_last_conv(item, signature, forward, quoted)
+        draft_message || bind_last_conv(item, signature, forward, quoted, mobile_request)
       end
 
-      def bind_last_conv(item, signature, forward = false, quoted = true)
+      def bind_last_conv(item, signature, forward = false, quoted = true, mobile_request = false)
         ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
-        default_reply_forward = signature.blank? ? '<p/><p/><br/>' : "<p/><p><br></br></p><p></p><p></p>
-    <div>#{signature}</div>"
+        if mobile_request
+          default_reply_forward = (signature.blank?)? "<p/><p/><br/>": "<br/><div>#{signature}</div>"
+        else
+          default_reply_forward = signature.blank? ? '<p/><p/><br/>' : "<p/><p><br></br></p><p></p><p></p><div>#{signature}</div>"
+        end
         quoted_text = ''
         if quoted
           quoted_text = quoted_text(item, forward)

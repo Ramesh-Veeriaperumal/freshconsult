@@ -9,6 +9,10 @@ module TicketConstants
   BUSINESS_HOUR_CALLER_THREAD = "business_hour"
 
   NBA_NULL_PRODUCT_ID = "-1"
+
+  TFS_COMPUTE_FIELDS = ["ticket_type","priority","group_id","responder_id","owner_id","spam"]
+  TFS_COMPUTE_FIELDS_EXTRA = ["product_id","ticket_tags"]
+  TFS_TICKETS_COUNT_LIMIT = 30
   
   OUT_OF_OFF_SUBJECTS = [ "away from the office", "out of office", "away from office","mail delivery failed","returning your reply to helpdesk message", "vacation" ]
 
@@ -25,6 +29,8 @@ module TicketConstants
   STATUS_SLA_TOGGLED_TO = {true => :off, false => :on}
 
   NEEDED_SBRR_ATTRIBUTES = [:group_id, :status, :responder_id, :spam, :deleted, :sl_skill_id]
+
+  SKILL_DEFAULT_CONDITION_FIELDS = [:group_id, :priority, :source, :ticket_type, :product_id]
 
   ### Bump the version of "TICKETS_LIST_PAGE_FILTERS" key in fragment_cache/keys.rb when SOURCES are modified.
   SOURCES = [
@@ -400,7 +406,11 @@ module TicketConstants
     TICKET_ASSOCIATION_FILTER.map { |i| [i[1], i[2].join(',')] }
   end
 
-   def self.created_options
+  def self.created_options
     CREATED_BY_VALUES_EN.map { |i| [I18n.t(i[1]), i[2]] }
+  end
+
+  def skill_condition_attributes
+    SKILL_DEFAULT_CONDITION_FIELDS + Account.current.ticket_custom_dropdown_nested_fields.map{ |x| x.column_name.to_sym}
   end
 end

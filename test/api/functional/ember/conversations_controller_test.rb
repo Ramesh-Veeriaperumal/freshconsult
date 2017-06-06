@@ -1,4 +1,6 @@
 require_relative '../../test_helper'
+require 'sidekiq/testing'
+Sidekiq::Testing.fake!
 ['canned_responses_helper.rb', 'group_helper.rb', 'social_tickets_creation_helper.rb', 'twitter_helper.rb', 'dynamo_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module Ember
   class ConversationsControllerTest < ActionController::TestCase
@@ -12,6 +14,15 @@ module Ember
     include TwitterHelper
     include DynamoHelper
     include SurveysTestHelper
+
+    def setup
+      super
+      MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
+    end
+
+    def teardown
+      MixpanelWrapper.unstub(:send_to_mixpanel)
+    end
 
     def wrap_cname(params)
       { conversation: params }
@@ -170,6 +181,37 @@ module Ember
       match_json(private_note_pattern({}, latest_note))
     end
 
+    def test_reply_without_from_email
+      # Without personalized_email_replies
+      @account.features.personalized_email_replies.destroy
+      @account.reload
+
+      params_hash = reply_note_params_hash.merge(full_text: Faker::Lorem.paragraph(10))
+      params_hash.delete(:from_email)
+      post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      assert_equal ticket.selected_reply_email, latest_note.from_email
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+    end
+
+    def test_reply_without_from_email_and_personalized_replies
+      # WITH personalized_email_replies
+      @account.features.personalized_email_replies.create
+      @account.reload
+
+      params_hash = reply_note_params_hash
+      params_hash.delete(:from_email)
+      post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+
+      assert_equal ticket.friendly_reply_email_personalize(@agent.name), latest_note.from_email
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+    end
+
     def test_reply_with_invalid_attachment_ids
       attachment_ids = []
       attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
@@ -323,8 +365,41 @@ module Ember
       params_hash = forward_note_params_hash
       post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
-      match_json(private_note_pattern(params_hash, Helpdesk::Note.last))
-      match_json(private_note_pattern({}, Helpdesk::Note.last))
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+    end
+
+
+    def test_forward_without_from_email
+      # Without personalized_email_replies
+      @account.features.personalized_email_replies.destroy
+      @account.reload
+
+      params_hash = forward_note_params_hash
+      params_hash.delete(:from_email)
+      post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      assert_equal ticket.selected_reply_email, latest_note.from_email
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+    end
+
+    def test_forward_without_from_email_and_personalized_email_replies
+      # WITH personalized_email_replies
+      @account.features.personalized_email_replies.create
+      @account.reload
+
+      params_hash = forward_note_params_hash
+      params_hash.delete(:from_email)
+      post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      assert_equal ticket.friendly_reply_email_personalize(@agent.name), latest_note.from_email
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+
     end
 
     def test_forward_with_user_id_valid

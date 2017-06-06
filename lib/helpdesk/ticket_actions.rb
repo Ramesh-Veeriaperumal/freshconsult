@@ -284,10 +284,16 @@ module Helpdesk::TicketActions
   end
 
   def full_paginate
-    
     if collab_filter_enabled_for?(view_context.current_filter)
       total_entries = params[:total_entries]
-      @ticket_count = Collaboration::Ticket.fetch_count
+      # Not using permissible(current_user) scope for group_collab collab-sub-feature
+      if current_account.group_collab_enabled?
+        @ticket_count = Collaboration::Ticket.new.fetch_count
+      else
+        collab_ticket_ids = Collaboration::Ticket.new.fetch_tickets
+        filtered_collab_tickets = current_account.tickets.permissible(current_user).where(display_id:collab_ticket_ids)
+        @ticket_count = filtered_collab_tickets.count
+      end
     else
       unless current_account.features_included?(:no_list_view_count_query)
         total_entries = params[:total_entries]

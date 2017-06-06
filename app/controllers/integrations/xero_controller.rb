@@ -224,7 +224,7 @@
     invoice.save
     render :json => { :invoice_details => { "invoice_number" => invoice.invoice_number ,"invoice_id" => invoice.invoice_id } }
     rescue Exception => e       
-      Rails.logger.error "e"
+      Rails.logger.error "XeroController#create_invoices #{e}"
       NewRelic::Agent.notice_error(e,{:description => "some Validation errors might have occured"})
       render :text => "A validation exception has occured"
   end

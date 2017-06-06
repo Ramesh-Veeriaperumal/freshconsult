@@ -123,7 +123,13 @@ module Ember
     def test_index_with_invalid_filter_names
       get :index, controller_params(version: 'private', filter: Faker::Lorem.word)
       assert_response 400
-      valid_filters = ["spam", "deleted", "overdue", "pending", "open", "due_today", "new", "monitored_by", "new_and_my_open", "all_tickets", "unresolved", "article_feedback", "my_article_feedback", "watching", "on_hold", "raised_by_me"]
+      valid_filters = [
+        "spam", "deleted", "overdue", "pending", "open", "due_today", "new",
+        "monitored_by", "new_and_my_open", "all_tickets", "unresolved",
+        "article_feedback", "my_article_feedback",
+        "watching", "on_hold",
+        "raised_by_me", "shared_by_me", "shared_with_me"
+      ]
       match_json([bad_request_error_pattern(:filter, :not_included, list: valid_filters.join(', '))])
     end
 
@@ -184,6 +190,8 @@ module Ember
       tkt = create_ticket
       tkt.update_attributes(priority: 3)
       get :index, controller_params({ version: 'private', updated_since: time_now }, false)
+
+      Rails.logger.debug "-"  * 100
       assert_response 200
       response = parse_response @response.body
       assert_equal 1, response.size
@@ -802,6 +810,62 @@ module Ember
       get :show, controller_params(version: 'private', id: t.display_id, include: 'requester')
       assert_response 200
       match_json(ticket_show_pattern(ticket, nil, true))
+    end
+
+    def test_show_with_valid_meta
+        t = create_ticket(requester_id: add_test_agent(@account, role: Role.find_by_name('Agent').id).id)
+
+        # Adding meta note
+        meta_data = "created_by: 1\ntime: 2017-03-14 15:13:13 +0530\nuser_agent: Mozilla/5.0"
+        meta_note = t.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"])
+
+        if meta_note
+          meta_note.note_body_attributes = { body: meta_data }
+        else
+          meta_note = t.notes.build({
+            source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"],
+            note_body_attributes: {
+              body: meta_data,
+            },
+            private: true,
+            notable: t,
+            user_id: User.current.id
+          })
+        end
+        meta_note.save
+
+        get :show, controller_params(version: 'private', id: t.display_id)
+        assert_response 200
+        json = ActiveSupport::JSON.decode(response.body)
+        assert_equal ['created_by', 'time', 'user_agent' ].sort, json['meta'].keys.sort
+    end
+
+    def test_show_with_invalid_meta
+        t = create_ticket(requester_id: add_test_agent(@account, role: Role.find_by_name('Agent').id).id)
+        # Adding meta note
+        meta_data = "user_agent: Mozilla/5.0 (Windows NT 6.1; Trident/7.0; swrinfo: 2576:cbc.ad.colchester.gov.uk:kayd; rv:11.0) like Gecko\nreferrer: https://colchesterboroughcouncil.freshservice.com/itil/custom_reports/ticket/2271"
+        meta_note = t.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"])
+
+        if meta_note
+          meta_note.note_body_attributes = { body: meta_data }
+        else
+          meta_note = t.notes.build({
+            source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"],
+            note_body_attributes: {
+              body: meta_data,
+            },
+            private: true,
+            notable: t,
+            user_id: User.current.id
+          })
+        end
+        meta_note.save
+
+        get :show, controller_params(version: 'private', id: t.display_id)
+        assert_response 200
+
+        json = ActiveSupport::JSON.decode(response.body)
+        assert_equal Hash.new, json['meta']
     end
 
     def test_update_ticket_source

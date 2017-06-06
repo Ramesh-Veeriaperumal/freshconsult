@@ -31,15 +31,23 @@ module Cache::Memcache::Account
 
   def required_ticket_fields_from_cache
     @required_ticket_fields ||= begin
-      key = ACCOUNT_REQUIRED_TICKET_FIELDS % { :account_id => self.id }
-      MemcacheKeys.fetch(key) { self.required_ticket_fields.all }      
+      if caching_enabled?
+        key = ACCOUNT_REQUIRED_TICKET_FIELDS % { :account_id => self.id }
+        MemcacheKeys.fetch(key) { self.required_ticket_fields.all }
+      else
+        self.required_ticket_fields.all
+      end
     end
   end
 
   def section_parent_fields_from_cache
     @section_parent_fields ||= begin
-      key = ACCOUNT_SECTION_PARENT_FIELDS % { :account_id => self.id }
-      MemcacheKeys.fetch(key) { self.section_parent_fields.all } 
+      if caching_enabled?
+        key = ACCOUNT_SECTION_PARENT_FIELDS % { :account_id => self.id }
+        MemcacheKeys.fetch(key) { self.section_parent_fields.all }
+      else
+        self.section_parent_fields.all
+      end
     end
   end
 
@@ -164,6 +172,15 @@ module Cache::Memcache::Account
     MemcacheKeys.fetch(key) { self.companies.all }
   end
 
+  def default_calendar_from_cache
+    @default_calendar_from_cache ||= begin
+      key = DEFAULT_BUSINESS_CALENDAR % {:account_id => self.id}
+      MemcacheKeys.fetch(key) do
+        self.business_calendar.default.first
+      end    
+    end
+  end
+
   def twitter_handles_from_cache
     key = handles_memcache_key
     MemcacheKeys.fetch(key) { self.twitter_handles.all }
@@ -210,9 +227,11 @@ module Cache::Memcache::Account
   end
 
   def flexifields_with_ticket_fields_from_cache
-    key = ACCOUNT_FLEXIFIELDS % { :account_id => self.id }
-    MemcacheKeys.fetch(key) do
-      ticket_field_def.flexifield_def_entries.find(:all, :include => :ticket_field)
+    @flexifields_with_ticket_fields_from_cache ||= begin
+      key = ACCOUNT_FLEXIFIELDS % { :account_id => self.id }
+      MemcacheKeys.fetch(key) do
+        ticket_field_def.flexifield_def_entries.find(:all, :include => :ticket_field)
+      end
     end
   end
 
@@ -235,7 +254,7 @@ module Cache::Memcache::Account
     @skills_trimmed_version_from_cache ||= begin
       key = ACCOUNT_SKILLS_TRIMMED % { :account_id => self.id }
       MemcacheKeys.fetch(key) do
-        skills.trimmed.find(:all)
+        sorted_skills.trimmed.find(:all)
       end
     end
   end

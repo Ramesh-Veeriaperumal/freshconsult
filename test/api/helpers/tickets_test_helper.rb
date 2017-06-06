@@ -155,8 +155,9 @@ module TicketsTestHelper
     pattern = private_note_pattern({}, note).merge!({ user: Hash })
   end
 
-  def reply_draft_pattern(expected_output)
-    {
+  # draft_exists denotes whether the draft was saved using old UI code
+  def reply_draft_pattern(expected_output, draft_exists = false)
+    ret_hash = {
       body: expected_output[:body],
       quoted_text: expected_output[:quoted_text],
       cc_emails: expected_output[:cc_emails] || [],
@@ -165,6 +166,8 @@ module TicketsTestHelper
       attachment_ids: (expected_output[:attachment_ids] || []).map(&:to_s),
       saved_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
+    ret_hash.merge!(from_email: nil, saved_at: nil) if draft_exists
+    ret_hash
   end
 
   # Helpers
@@ -375,6 +378,8 @@ module TicketsTestHelper
     meta_info = ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]).body
     meta_info = YAML::load(meta_info)
     handle_timestamps(meta_info)
+  rescue
+    {}
   end
 
   def ticket_topic_pattern(ticket)

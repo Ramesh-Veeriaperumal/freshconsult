@@ -298,7 +298,7 @@ var TemplateDockManager   = Class.create({
 
   isValidForm: function() {
     var isFormValid = true;
-    jQuery(".installer-form input.fa-textip").each(function(index, value){
+    jQuery(".installer-form input.fa-textip.required").each(function(index, value){
       if (jQuery.trim(jQuery(value).val()).length == 0){
         isFormValid = false;
       }

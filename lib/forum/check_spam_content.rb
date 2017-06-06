@@ -52,7 +52,7 @@ module Forum::CheckSpamContent
   end
 
   def notify_spam_detection(subject , additional_info)
-    mail_recipients = ["mail-alerts@freshdesk.com"]
+    mail_recipients = ["mail-alerts@freshdesk.com","noc@freshdesk.com"]
     FreshdeskErrorsMailer.error_email(nil, {:domain_name => Account.current.full_domain}, nil, {
             :subject => subject, 
             :recipients => mail_recipients,

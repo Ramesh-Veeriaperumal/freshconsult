@@ -32,6 +32,7 @@ class ApplicationController < ActionController::Base
   rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
   rescue_from ShardNotFound, :with => :record_not_found
   rescue_from DomainNotReady, :with => :render_domain_not_ready
+  rescue_from AccountBlocked, :with => :render_account_blocked
 
   
   include AuthenticationSystem
@@ -143,6 +144,10 @@ class ApplicationController < ActionController::Base
 
   def render_domain_not_ready
     render :file => "#{Rails.root}/public/DomainNotReady.html", :status => 403, :layout => false
+  end
+  
+  def render_account_blocked
+    render :file => "#{Rails.root}/public/AccountBlocked.html", :status => 403, :layout => false
   end
 
   def render_404

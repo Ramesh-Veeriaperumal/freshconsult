@@ -23,11 +23,11 @@ module Ember
 
       @ca_folder_all = create_cr_folder(name: Faker::Name.name)
       @ca_folder_personal = @account.canned_response_folders.personal_folder.first
-      
+
       # responses in visible to all folder
       @ca_response_1 = create_canned_response(@ca_folder_all.id)
       @ca_response_2 = create_canned_response(@ca_folder_all.id)
-      
+
       # responses in personal folder
       @ca_response_3 = create_canned_response(@ca_folder_personal.id, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me])
       @ca_response_4 = create_canned_response(@ca_folder_personal.id, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me])
@@ -51,22 +51,36 @@ module Ember
 
     def test_index_listing
       remove_wrap_params
+
+      ::Search::V2::Count::AccessibleMethods.any_instance.stubs(:ca_folders_es_request).returns(nil)
       get :index, construct_params({ version: 'private' }, false)
+      ::Search::V2::Count::AccessibleMethods.any_instance.unstub(:ca_folders_es_request)
+
       assert_response 200
       match_json(ca_folders_pattern)
     end
 
     def test_show_list_responses
+
+      ::Search::V2::Count::AccessibleMethods.any_instance.stubs(:es_request).returns(nil)
       get :show, construct_params({ version: 'private' }, false).merge(id: @ca_folder_all.id)
+      ::Search::V2::Count::AccessibleMethods.any_instance.unstub(:es_request)
+
       assert_response 200
+
       match_json(ca_responses_pattern(@ca_folder_all))
     end
 
     def test_show_responses_in_personal_folder_of_self
       login_as(@agent)
+
+      ::Search::V2::Count::AccessibleMethods.any_instance.stubs(:es_request).returns(nil)
       get :show, construct_params({ version: 'private' }, false).merge(id: @ca_folder_personal.id)
+      ::Search::V2::Count::AccessibleMethods.any_instance.unstub(:es_request)
+
       assert_response 200
       match_json(ca_responses_pattern(@ca_folder_personal))
+
       responses = ActiveSupport::JSON.decode(response.body)['canned_responses']
       assert responses.include?(single_ca_response_pattern(@ca_response_3))
       assert responses.include?(single_ca_response_pattern(@ca_response_4))
@@ -75,7 +89,11 @@ module Ember
     def test_show_personal_responses_of_other_agents
       new_agent = add_agent_to_account(@account, { name: Faker::Name.name, active: 1, role: 1 })
       login_as(new_agent.user)
+
+      ::Search::V2::Count::AccessibleMethods.any_instance.stubs(:es_request).returns(nil)
       get :show, construct_params({ version: 'private' }, false).merge(id: @ca_folder_personal.id)
+      ::Search::V2::Count::AccessibleMethods.any_instance.unstub(:es_request)
+
       assert_response 200
       match_json(ca_responses_pattern(@ca_folder_personal))
       responses = ActiveSupport::JSON.decode(response.body)['canned_responses']
@@ -86,7 +104,11 @@ module Ember
     def test_show_with_group_visibility_response
       new_agent = add_agent_to_account(@account, { name: Faker::Name.name, active: 1, role: 1 })
       login_as(new_agent.user)
+
+      ::Search::V2::Count::AccessibleMethods.any_instance.stubs(:es_request).returns(nil)
       get :show, construct_params({ version: 'private' }, false).merge(id: @ca_folder_all.id)
+      ::Search::V2::Count::AccessibleMethods.any_instance.unstub(:es_request)
+
       assert_response 200
       match_json(ca_responses_pattern(@ca_folder_all))
       responses = ActiveSupport::JSON.decode(response.body)['canned_responses']

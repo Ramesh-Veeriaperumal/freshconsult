@@ -69,7 +69,7 @@ class AgentGroup < ActiveRecord::Base
   private
 
     def capping_enabled?
-      self.group.round_robin_capping_enabled?
+      self.group.lbrr_enabled?
     end
 
     def add_to_group_capping

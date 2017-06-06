@@ -108,6 +108,9 @@ class TicketDecorator < ApiDecorator
     return {} unless meta_info
     meta_info = YAML::load(meta_info.body)
     handle_timestamps(meta_info)
+  rescue
+    # Errors suppressed
+    {}
   end
 
   def feedback_hash
@@ -163,24 +166,24 @@ class TicketDecorator < ApiDecorator
   end
 
   def to_search_hash
-    company_name = company.key?(:name) ? company[:name] : nil
     ret_hash = {
       id: display_id,
       description_text: description,
       tags: tag_names,
       responder_id: responder_id,
-      due_by: due_by.try(:utc),
+      due_by: archived? ? parse_time(due_by) : due_by.try(:utc),
       created_at: created_at.try(:utc),
       subject: subject,
       requester_id: requester_id,
       group_id: group_id,
       status: status,
       company_id: company_id,
-      company_name: company_name,
+      company_name: record.company.try(:name),
       stats: stats
     }
     requester_hash = requester
     ret_hash.merge!(requester: requester_hash) if requester_hash
+    ret_hash.merge!(archived: archived?) if archived?
     ret_hash
   end
 
@@ -211,6 +214,14 @@ class TicketDecorator < ApiDecorator
         id: topic.id,
         title: topic.title
       }
+    end
+
+    def parse_time(attribute)
+      attribute ? Time.parse(attribute).utc : nil
+    end
+
+    def archived?
+      @is_archived ||= record.is_a?(Helpdesk::ArchiveTicket)
     end
 
 end

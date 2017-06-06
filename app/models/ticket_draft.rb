@@ -64,7 +64,7 @@ class TicketDraft
         @cc_emails = draft_hash['draft_cc'].split(';')
         @bcc_emails = draft_hash['draft_bcc'].split(';')
         @from_email = draft_hash['draft_from']
-        @attachment_ids = draft_hash['draft_attachment_ids'].split(';')
+        @attachment_ids = (draft_hash['draft_attachment_ids'] || "").split(';')
         @saved_at = Time.at(draft_hash['saved_at'].to_i).utc.iso8601 if draft_hash['saved_at']
       end
     end

@@ -143,9 +143,9 @@
 				  </div>
 			  <% end %>    
 				<% if current_user.agent? %>
-					<% if current_account.launched?(:user_notifications) %>
-						<div id="user_notify_header" class="header-notification-wrapper" rel="remote-load" 
-								data-url="/notification/user_notification">
+					<% if current_account.user_notifications_enabled? %>
+						<div id="user_notify_header" class="header-notification-wrapper">
+								<%= render :partial => "/notification/user_notification" %>
 						</div>
 					<% end %>
           <% unless Rails.env.development? %>
@@ -219,7 +219,7 @@
 							<%= link_to( "<span></span> #{t('header.submit_a_ticket')}".html_safe, new_support_ticket_path, :class => "new_ticket_button tooltip" ) if allowed_in_portal?(:anonymous_tickets) %>
 						<% end %>
 						<% if current_user then %>
-            <% search_url = current_account.features?(:advanced_search) ? '/search/tickets' : '/search/all' %>
+            <% search_url = current_account.has_feature?(:advanced_search) ? '/search/tickets' : '/search/all' %>
 							<%= form_tag(search_url, :method => :get, :class => "nav_search") do %>
 								<div class="search_bar tooltip" id="SearchBar" title="<%= t("header.search").html_safe %>" data-placement="below">
 									<span class="search-icon-inactive"></span>
@@ -241,7 +241,7 @@
 </div>
 
 <% if current_account.collaboration_enabled? and current_user %>
-	<input type="hidden" id="collab-model-data" data-model-payload='{"clientId": "<%= Collaboration::Ticket::HK_CLIENT_ID %>", "clientAccountId": "<%=current_account.id%>", "initAuthToken": "<%= Collaboration::Ticket.collab_token %>", "userId": "<%= current_user.id %>", "userName": "<%= current_user %>", "userEmail": "<%= current_user.email %>", "collab_url": <%= CollabConfig['collab_url'].to_json.html_safe %>, "rts_url": <%= CollabConfig['rts_url'].to_json.html_safe %>}'>
+	<input type="hidden" id="collab-model-data" data-model-payload='{"clientId": "<%= Collaboration::Ticket::HK_CLIENT_ID %>", "clientAccountId": "<%=current_account.id%>", "initAuthToken": "<%= Collaboration::Ticket.new.acc_auth_token %>", "userId": "<%= current_user.id %>", "userName": "<%= current_user %>", "userEmail": "<%= current_user.email %>", "collab_url": <%= CollabConfig['collab_url'].to_json.html_safe %>, "rts_url": <%= CollabConfig['rts_url'].to_json.html_safe %>}'>
 <% end %>
 
 <%  if logged_in? and current_user.agent?  %>
