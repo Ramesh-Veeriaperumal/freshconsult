@@ -4,8 +4,9 @@ module Ember
     include HelperConcern
 
     decorate_views
-    before_filter :validate_ticket_permission, only: [:create,:destroy]
-    
+    before_filter :validate_ticket_permission_for_create, only: [:create]
+    before_filter :check_ticket_permission_for_destroy, only: [:destroy]
+
     def create
       return unless validate_body_params
       if params[:integrated_resource][:local_integratable_type] == IntegratedResourceConstants::TICKET
@@ -40,7 +41,7 @@ module Ember
       end
 
       def load_objects
-        if params[:local_integratable_type] == 'ticket'
+        if params[:local_integratable_type] == IntegratedResourceConstants::TICKET
           ticket = fetch_ticket_using_display_id(params[:local_integratable_id])
           @items = Integrations::IntegratedResource.where(installed_application_id: params[:installed_application_id], local_integratable_id: ticket.id)
         else
@@ -66,25 +67,43 @@ module Ember
         current_account.tickets.find_by_display_id(display_id)
       end
 
-      def validate_ticket_permission
-        local_integratable_id = nil
+      def check_ticket_permission_for_destroy
+        log_and_render_404 unless @item.id
+        ticket = nil
+        integ_resource = Integrations::IntegratedResource.find_by_id(@item.id)
+        log_and_render_404 unless integ_resource
+        local_integratable_type = integ_resource.local_integratable_type
+        if local_integratable_type == IntegratedResourceConstants::TICKET
+          ticket = Account.current.tickets.find_by_id(integ_resource.local_integratable_id)
+        elsif local_integratable_type == IntegratedResourceConstants::TIMESHEET
+          ticket = fetch_ticket_using_workable_id(integ_resource.local_integratable_id)
+        end
+        verify_ticket_state ticket
+      end
+
+      def fetch_ticket_using_workable_id(local_integratable_id)
+        time_sheet = Account.current.time_sheets.find_by_id(local_integratable_id)
+        return nil unless time_sheet
+        fetch_ticket_using_display_id(time_sheet.workable_id)
+      end
+
+      def verify_ticket_state(ticket)
+        if ticket.nil?
+          log_and_render_404
+          return false
+        end
+        verify_ticket_state_and_permission(api_current_user, ticket)
+      end
+
+      def validate_ticket_permission_for_create
+        ticket = nil
         if params[:integrated_resource][:local_integratable_type] == IntegratedResourceConstants::TICKET
           local_integratable_id = params[:integrated_resource][:local_integratable_id]
-        elsif  params[:integrated_resource][:local_integratable_type] == IntegratedResourceConstants::TIMESHEET
-          time_sheet_id = params[:integrated_resource][:local_integratable_id]
-          local_integratable_id = Account.current.time_sheets.find_by_id(time_sheet_id)
-        else
-          integ_resource = Integrations::IntegratedResource.find(@item.id)
-          local_integratable_id = integ_resource.local_integratable_id
+          ticket = fetch_ticket_using_display_id(local_integratable_id)
+        elsif params[:integrated_resource][:local_integratable_type] == IntegratedResourceConstants::TIMESHEET
+          ticket = fetch_ticket_using_workable_id(params[:integrated_resource][:local_integratable_id])
         end
-        return log_and_render_404 unless local_integratable_id
-        ticket = current_account.tickets.find_by_display_id(local_integratable_id)
-        if ticket
-          return verify_ticket_state_and_permission(api_current_user, ticket)
-        else
-          log_and_render_404
-          false
-        end
+        verify_ticket_state ticket
       end
   end
 end

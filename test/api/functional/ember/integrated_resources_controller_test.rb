@@ -26,7 +26,7 @@ class Ember::IntegratedResourcesControllerTest < ActionController::TestCase
     harvest_app = Account.current.installed_applications.find_by_application_id(app.id)
     harvest_app = create_application('harvest') if harvest_app.nil?
     agent = add_test_agent(@account)
-    time_sheet = create_time_entry(billable: false, ticket_id: t1.id, agent_id: agent.id, executed_at: 19.days.ago.iso8601)
+    time_sheet = create_time_entry(billable: false, ticket_id: t1.display_id, agent_id: agent.id, executed_at: 19.days.ago.iso8601)
     resource_params = {
       application_id: app.id,
       integrated_resource: {
@@ -38,7 +38,8 @@ class Ember::IntegratedResourcesControllerTest < ActionController::TestCase
     }
     post :create, construct_params(@api_params.merge(resource_params))
     assert_response 200
-    match_json(integrated_resource_pattern(scoper.first))
+    integ_resource = JSON.parse(@response.body)
+    match_json(integrated_resource_pattern(Integrations::IntegratedResource.find_by_id(integ_resource['id'])))
   end
 
   def test_show_integ_resource
@@ -63,7 +64,8 @@ class Ember::IntegratedResourcesControllerTest < ActionController::TestCase
     }
     post :create, construct_params(@api_params.merge(sf_params))
     assert_response 200
-    match_json(integrated_resource_pattern(Integrations::IntegratedResource.last))
+    integ_resource = JSON.parse(@response.body)
+    match_json(integrated_resource_pattern(Integrations::IntegratedResource.find_by_id(integ_resource['id'])))
   end
 
   def test_create_integ_resource_with_wrong_ticket_id
@@ -162,10 +164,11 @@ class Ember::IntegratedResourcesControllerTest < ActionController::TestCase
     assert_equal '[]', response.body
   end
 
-  def test_delete
+  def test_delete_valid_resource_id_with_type_ticket
     t6 = create_ticket
     app = Integrations::Application.find_by_name('salesforce_v2')
-    installed_app = Account.current.installed_applications.find_by_application_id(app.id).nil? ? create_application('salesforce_v2') : Account.current.installed_applications.find_by_application_id(app.id)
+    installed_app = Account.current.installed_applications.find_by_application_id(app.id)
+    installed_app = create_application('salesforce_v2') if installed_app.nil?
     sf_params = {
       application_id: app.id,
       integrated_resource: {
@@ -179,14 +182,65 @@ class Ember::IntegratedResourcesControllerTest < ActionController::TestCase
     assert_response 200
     integ_resource = JSON.parse(@response.body)
     resource_id = integ_resource['id']
+    # integ_resource = Integrations::IntegratedResource.find_by_id(resource_id)
     delete :destroy, construct_params(@api_params, false).merge(id: resource_id)
     assert_response 204
     assert_equal ' ', @response.body
     refute scoper.exists?(resource_id)
   end
 
-  def test_delete_with_invalid_id
-    delete :destroy, construct_params(@api_params, false).merge(id: 100000)
+  def test_delete_valid_resource_id_with_type_timesheet
+    tkt = create_ticket
+    app = Integrations::Application.find_by_name('harvest')
+    harvest_app = Account.current.installed_applications.find_by_application_id(app.id)
+    harvest_app = create_application('harvest') if harvest_app.nil?
+    agent = add_test_agent(@account)
+    time_sheet = create_time_entry(billable: false, ticket_id: tkt.display_id, agent_id: agent.id, executed_at: 19.days.ago.iso8601)
+    resource_params = {
+      application_id: app.id,
+      integrated_resource: {
+        remote_integratable_id: 'ROSH-100',
+        local_integratable_id: time_sheet.id,
+        installed_application_id: harvest_app.id,
+        local_integratable_type: 'Helpdesk::TimeSheet'
+      }
+    }
+    post :create, construct_params(@api_params.merge(resource_params))
+    assert_response 200
+    integ_resource = JSON.parse(@response.body)
+    delete :destroy, construct_params(@api_params, false).merge(id: integ_resource['id'])
+    assert_response 204
+    assert_equal ' ', @response.body
+    refute scoper.exists?(integ_resource['id'])
+  end
+
+  # def test_delete_valid_resource_id_with_invalid_ticket_id
+  #   invalid_tkt = create_ticket
+  #   app = Integrations::Application.find_by_name('harvest')
+  #   harvest_app = Account.current.installed_applications.find_by_application_id(app.id)
+  #   harvest_app = create_application('harvest') if harvest_app.nil?
+  #   invalid_agent = add_test_agent(@account)
+  #   tkt_id = invalid_tkt.display_id
+  #   time_sheet = create_time_entry(billable: false, ticket_id: tkt_id, agent_id: invalid_agent.id, executed_at: 19.days.ago.iso8601)
+  #   resource_params = {
+  #     application_id: app.id,
+  #     integrated_resource: {
+  #       remote_integratable_id: 'ROSH-100',
+  #       local_integratable_id: time_sheet.id,
+  #       installed_application_id: harvest_app.id,
+  #       local_integratable_type: 'Helpdesk::TimeSheet'
+  #     }
+  #   }
+  #   post :create, construct_params(@api_params.merge(resource_params))
+  #   assert_response 200
+  #   integ_resource = JSON.parse(@response.body)
+  #   invalid_tkt.update_column(:deleted, true)
+  #   delete :destroy, construct_params(@api_params, false).merge(id: integ_resource['id'])
+  #   assert_response 404
+  # end
+
+  def test_delete_with_invalid_resource_id
+    delete :destroy, construct_params(@api_params, false).merge(id: 1004)
     assert_response 404
   end
 
