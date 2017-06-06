@@ -5,7 +5,8 @@
     parameters:
       - name: id
         in: path
-        type: string
+        type: integer
+        format: int64
         required: true
     responses:
       200:
@@ -34,7 +35,8 @@
     parameters:
       - name: id
         in: path
-        type: string
+        type: integer
+        format: int64
         required: true
     responses:
       204:

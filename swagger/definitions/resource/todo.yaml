@@ -7,6 +7,8 @@ allOf:
       completed:
         type: boolean
       ticket_id:
-        type: id
+        type: integer
+        format: int64
       user_id:
-        type: id
+        type: integer
+        format: int64

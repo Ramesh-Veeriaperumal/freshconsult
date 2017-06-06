@@ -3,7 +3,8 @@ allOf:
   - $ref: '#/definitions/extension_generic'
   - properties:
       post_id:
-        type: string
+        type: integer
+        format: int64
       msg_type:
         type: string
       post_type:

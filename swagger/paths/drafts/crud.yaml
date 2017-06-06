@@ -3,14 +3,9 @@ post:
   summary: Save Draft
   description: Agent specific draft version of the reply for a ticket will be saved.
   parameters:
-    - name: id
-      type: number
-      description: Display ID of ticket
-      in: path
-      required: true
+    - $ref: '#/parameters/id'
     - name: data
       in: body
-      type: object
       required: true
       schema:
         $ref: '#/definitions/draft_create_input'
@@ -33,11 +28,7 @@ get:
   summary: Show Draft
   description: Retrieves agent specific draft version of the reply for a ticket
   parameters:
-    - name: id
-      type: number
-      description: Display ID of ticket
-      in: path
-      required: true
+    - $ref: '#/parameters/id'
   responses:
     200:
       description: Success
@@ -54,7 +45,8 @@ delete:
   description: Clears the draft version of the reply for a ticket
   parameters:
     - name: id
-      type: number
+      type: integer
+      format: int64
       description: Display ID of ticket
       in: path
       required: true

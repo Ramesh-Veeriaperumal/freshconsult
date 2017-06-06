@@ -2,12 +2,12 @@ type: object
 properties:
   primary_id:
     description: ID of the primary contact
-    type: number
+    type: integer
   target_ids:
     description: Ids of contacts that will be merged into the Primary contact
     type: array
     items:
-      type: number
+      type: integer
 required:
   - primary_id
   - target_ids

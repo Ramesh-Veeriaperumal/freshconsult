@@ -5,7 +5,7 @@ get:
   parameters:
     - name: ticket_id
       in: query
-      type: number
+      type: integer
     - name: search_string
       in: query
       type: string

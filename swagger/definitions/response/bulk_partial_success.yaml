@@ -5,7 +5,7 @@ properties:
   succeeded:
     type: array
     items:
-      type: number
+      type: integer
   failed:
     type: array
     items:
@@ -18,5 +18,5 @@ example:
     - id: 13
       errors:
         - field: product_id
-          message: Invalid number
-          code: invalid_number
+          message: Invalid integer
+          code: invalid_integer

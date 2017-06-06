@@ -1,7 +1,7 @@
 type: object
 properties:
   user_id:
-    type: number
+    type: integer
   content:
     type: string
     format: byte

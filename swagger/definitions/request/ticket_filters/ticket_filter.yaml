@@ -7,7 +7,7 @@ properties:
   order_type:
     type: string
   per_page:
-    type: number
+    type: integer
   query_hash:
     type: array
     items:
@@ -18,4 +18,4 @@ properties:
       visibility:
         type: string
       group_id:
-        type: number
+        type: integer

@@ -8,15 +8,15 @@ properties:
     type: string
     description: Signature of the agent in HTML format
   ticket_scope:
-    type: number
+    type: integer
     description: Ticket permission of the agent (1 -> Global Access, 2 -> Group Access, 3 -> Restricted Access). Current logged in agent can't update his/her ticket_scope
   group_ids:
       type: array
       description: Group IDs associated with the agent
       items:
-        type: number
+        type: integer
   role_ids:
     type: array
     description: Role IDs associated with the agent. Atleast one role should be assoicated with the agent. Current logged in agent can't update his/her role_ids
     items:
-      type: number
+      type: integer

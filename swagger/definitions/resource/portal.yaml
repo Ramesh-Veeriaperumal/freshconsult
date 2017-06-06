@@ -9,14 +9,14 @@ allOf:
       default:
         type: boolean
       product_id:
-        type: number
+        type: integer
       ssl_enabled:
         type: boolean
       solution_category_ids:
         type: array
         items:
-          type: number
+          type: integer
       discussion_category_ids:
         type: array
         items:
-          type: number
+          type: integer

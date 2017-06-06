@@ -1,11 +1,6 @@
 get:
   tags: [agent]
   summary: Show me
-  parameters:
-    - name: id
-      in: path
-      type: number
-      required: true
   responses:
     200:
       description: Success

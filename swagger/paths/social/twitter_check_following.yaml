@@ -2,11 +2,12 @@ get:
   tags: [social]
   description: Check Following for an User
   parameters:
+    - $ref: '#/parameters/id'
     - name: screen_name
-      in: path
+      in: query
       required: true
-      example: "@potus"
-      type: number
+      type: integer
+      format: int64
       description: Twitter ID of the user for whom following check is done
   responses:
     200:
