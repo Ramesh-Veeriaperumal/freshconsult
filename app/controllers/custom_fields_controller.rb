@@ -3,6 +3,7 @@ class CustomFieldsController < Admin::AdminController
   include Helpdesk::Ticketfields::ControllerMethods
   include Cache::FragmentCache::Base
   include Helpdesk::CustomFields::CustomFieldMethods
+  include Cache::Memcache::Helpdesk::Section
 
   before_filter :check_ticket_field_count, :only => [ :update ]
 
@@ -112,6 +113,7 @@ class CustomFieldsController < Admin::AdminController
     def expire_cache
       current_account.clear_required_ticket_fields_cache
       current_account.clear_section_parent_fields_cache
+      clear_all_section_ticket_fields_cache
     end
 
     def delete_field(field_details)

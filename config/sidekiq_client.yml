@@ -6,6 +6,7 @@ defaults: &defaults
   :logfile: ./log/sidekiq.log
   :timeout: 30
   :queues:
+    - [account_creation_fixtures]
     - [select_all_tickets]
     - [select_all_batcher]
     - [freshfone_notifications]
@@ -180,6 +181,7 @@ defaults: &defaults
     - [spam_data_migration]
     - [activity_export]
     - [scheduled_ticket_export_config]
+    - [skill_import]
     - [send_signup_activation_mail]
 
 development:

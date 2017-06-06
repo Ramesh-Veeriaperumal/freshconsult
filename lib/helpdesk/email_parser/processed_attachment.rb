@@ -54,11 +54,22 @@ class Helpdesk::EmailParser::ProcessedAttachment
     	
     	attachment.is_inline_attachment = part.inline? if part.respond_to?(:inline?) 
     	attachment.original_filename = filename
-    	attachment.content_type = part.mime_type
+    	attachment.content_type = get_content_type(filename)
     	attachment.content_id = part.content_id[1..-2] if part.content_id
     	self.attachments << attachment
     rescue => e
     	raise_parse_error "Error while parsing part for an attachment : #{e.message} - #{e.backtrace}"
+	end
+
+	def get_content_type(filename)
+		content_type = nil
+		if part.mime_type.present?
+			content_type = part.mime_type
+		else
+			ext = File.extname(filename) if filename.present?
+		    content_type = Rack::Mime.mime_type(ext.downcase) if ext.present?
+		end
+		return content_type
 	end
 
 	def fetch_html_attachment_from_tnef_content

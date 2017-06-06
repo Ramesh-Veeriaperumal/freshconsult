@@ -14,12 +14,12 @@ module DecoratorConcern
       custom_options = ACTION_MAPPING.merge(options)
       custom_method_mapping = custom_options.each_with_object({}) { |(k, v), inverse| v.each { |e| inverse[e] = k } }
       @decorator_method_mapping = DECORATOR_METHOD_MAPPING.merge(custom_method_mapping)
-      alias_method_chain :render, :before_render_action
+      alias_method_chain :render, :before_render_action unless self.method_defined? :render_without_before_render_action
     end
 
     def decorator_name
       # name is a class variable, will be computed only once when class is loaded.
-      @name ||= "#{name.gsub('Controller', '').gsub(/Pipe::|Channel::/, '').gsub('Api', '').singularize}Decorator".constantize
+      @name ||= "#{name.gsub('Controller', '').gsub('Ember::Search::', '').gsub(/Ember::|Pipe::|Channel::/, '').gsub('Api', '').singularize}Decorator".constantize
     end
   end
 

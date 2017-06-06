@@ -6,6 +6,7 @@ Authority::Authorization::PrivilegeList.build do
   manage_tickets do
     resource :"pipe/ticket", only: [:create, :update]
     resource :"pipe/conversation", only: [:create]
+    resource :"ember/attachment", only: [:create]
   end
 
   view_forums do
@@ -17,6 +18,6 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   admin_tasks do
-    resource :"settings/pipe/helpdesk", :only => [:index, :toggle_email]
+    resource :"settings/pipe/helpdesk", :only => [:index, :toggle_email, :toggle_fast_ticket_creation, :change_api_v2_limit]
   end  
 end

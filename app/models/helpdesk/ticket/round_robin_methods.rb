@@ -140,9 +140,20 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def has_valid_status? ticket_changes
     has_capping_status?(ticket_changes.has_key?(:status) ? status_was : status)
   end
-  
+
+  def set_sbrr_skill_activity
+    activity_type = {:type => "round_robin"}
+    if self.model_changes.has_key?(:sl_skill_id)
+      skill_name = Account.current.skills_from_cache.find {|skill| skill.id == self.sl_skill_id.to_i}.try(:name) if self.sl_skill_id.present?
+      activity_type.merge!(:skill_name =>[nil, skill_name]) if skill_name.present?
+    end
+    self.activity_type = activity_type if activity_type.has_key?(:skill_name)
+  end
+
   def set_round_robin_activity
-    self.activity_type = {:type => "round_robin", :responder_id => [nil, self.responder_id]}
+    activity_type = self.activity_type || {:type => "round_robin"}
+    activity_type.merge!(:responder_id => [nil, self.responder_id])
+    self.activity_type = activity_type
   end
 
   def change_agents_ticket_count group, user_id, operation
@@ -254,9 +265,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def update_old_group_capping
     if @model_changes.present? && @model_changes.key?(:group_id) && 
-       (@model_changes[:group_id][1].nil? || !self.group.round_robin_enabled?)
+      !self.group.try(:round_robin?)
       old_group = Account.current.groups.find_by_id(@model_changes[:group_id][0])
-      return unless old_group.present? && old_group.round_robin_capping_enabled?
+      return unless old_group.present? && old_group.lbrr_enabled?
       if responder_id.present?
         change_agents_ticket_count(old_group, responder_id, "decr")
       else

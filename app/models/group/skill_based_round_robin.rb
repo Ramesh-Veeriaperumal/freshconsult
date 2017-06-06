@@ -23,7 +23,7 @@ class Group < ActiveRecord::Base
         if skill_based_round_robin_toggled? 
           skill_based_round_robin_enabled? ?
             SBRR::Toggle::Group.perform_async(:group_id => self.id) : destroy_sbrr_queues
-        elsif capping_limit_changed?
+        elsif capping_limit_changed? && skill_based_round_robin_enabled?
           SBRR::Toggle::Group.perform_async(:group_id => self.id, 
             :capping_limit_change => capping_limit_change)
         end

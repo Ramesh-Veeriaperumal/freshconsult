@@ -13,6 +13,7 @@ class UserSkill < ActiveRecord::Base
   validates_presence_of :user
   validates_presence_of :skill
   validates_presence_of :rank # rank is user's skill preference, not the other way
+  validate :no_of_skills_per_user, on: :create
 
   attr_accessor :rank_handled_in_ui, :multiple_skills_added_to_user
   attr_accessible :skill_id, :user_id, :rank, :rank_handled_in_ui,
@@ -59,9 +60,9 @@ class UserSkill < ActiveRecord::Base
       "account_id = #{account_id} and user_id = #{user_id}"
     end
 
-    def no_of_skills_per_user
-      if user.user_skills.count > MAX_NO_OF_SKILLS_PER_USER
-        errors.add(:base, :max_skills_per_user, :max_limit => MAX_NO_OF_SKILLS_PER_USER) 
+    def no_of_skills_per_user # to validate bulk skill ids assignment eg: user.user_ids = []
+      if user.user_skills.count >= User::MAX_NO_OF_SKILLS_PER_USER
+        errors.add(:base, :max_skills_per_user, :max_limit => User::MAX_NO_OF_SKILLS_PER_USER)
       end
     end
 

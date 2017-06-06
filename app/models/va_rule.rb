@@ -23,7 +23,7 @@ class VaRule < ActiveRecord::Base
   after_commit :clear_installed_app_business_rules_from_cache, :if => :installed_app_business_rule?
 
   attr_writer :conditions, :actions, :events, :performer
-  attr_accessor :triggered_event
+  attr_accessor :triggered_event, :response_time
 
   attr_accessible :name, :description, :match_type, :active, :filter_data, :action_data, :rule_type, :position
 
@@ -100,7 +100,8 @@ class VaRule < ActiveRecord::Base
   
   def pass_through(evaluate_on, actions=nil, doer=nil)
     #Rails.logger.debug "INSIDE pass_through WITH evaluate_on : #{evaluate_on.inspect}, actions #{actions}"
-    is_a_match = matches(evaluate_on, actions)
+    is_a_match = false
+    benchmark { is_a_match = matches(evaluate_on, actions) }
     trigger_actions(evaluate_on, doer) if is_a_match
     return evaluate_on if is_a_match
     return nil
@@ -330,7 +331,19 @@ class VaRule < ActiveRecord::Base
     actions.any? {|action| action.contains? 'send_email'}
   end
 
+  def response_time
+    @response_time ||= {}
+  end
+
   private
+
+    def benchmark
+      if observer_rule?
+        response_time[:matches] = Benchmark.realtime { yield }
+      else
+        yield
+      end
+    end
 
     def has_events?
       return unless observer_rule? || api_webhook_rule?

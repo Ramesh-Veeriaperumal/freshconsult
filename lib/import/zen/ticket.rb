@@ -95,7 +95,10 @@ def save_ticket ticket_xml
     ticket_post_process ticket_prop , @ticket  
     # updating ticket level properties of ticket_states
     t_state = @ticket.ticket_states
-    t_state.set_resolution_time_by_bhrs if ticket_prop.status.to_i >2
+    if ticket_prop.status.to_i >2
+      t_state.set_resolution_time_by_bhrs
+      t_state.on_state_time = t_state.resolution_time_by_bhrs
+    end
     t_state.inbound_count = @ticket.notes.visible.customer_responses.count+1
     t_state.set_avg_response_time
     t_state.save

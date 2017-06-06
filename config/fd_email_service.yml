@@ -1,0 +1,18 @@
+defaults: &defaults
+  key: "33E15283B3FE1D1FD22B1619DA9C"
+  host: "http://mailservice.freshpo.com"
+  timeout: 30
+  url: "api/v1/email/send"
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults
+  

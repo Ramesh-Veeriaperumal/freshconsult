@@ -1,5 +1,7 @@
 class Admin::UserSkillsController < Admin::AdminController
 
+  include Admin::UserSkillsHelper
+
   before_filter { |c| c.requires_feature :skill_based_round_robin }
   before_filter :skills_present?
   before_filter :set_user_role, :only => :index
