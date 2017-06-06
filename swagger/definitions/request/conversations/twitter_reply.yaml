@@ -5,7 +5,7 @@ required:
 allOf:
   - $ref: '#/definitions/note'
   - properties:
-      tweet_type:     
+      tweet_type:
         type: string
         enum:
           - dm
