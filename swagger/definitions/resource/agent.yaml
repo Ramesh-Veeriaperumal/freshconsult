@@ -6,7 +6,7 @@
     occasional:
       type: boolean
     id:
-      type: number
+      type: integer
     ticket_scope:
       type: string
     signature:
@@ -14,11 +14,11 @@
     group_ids:
       type: array
       items:
-        type: number
+        type: integer
     role_ids:
       type: array
       items:
-        type: number
+        type: integer
     available_since:
       type: string
     contact:

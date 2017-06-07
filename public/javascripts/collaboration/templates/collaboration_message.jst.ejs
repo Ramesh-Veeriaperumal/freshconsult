@@ -29,12 +29,12 @@
                 </a>
 			</div>
 			<% if(!!enable_reply_to) { %>
-				<span class="collab-reply-btn" id="btn-reply"> <i class="ficon-reply fsize-14 collab-reply-icon" id="collab-reply-icon" size="14"></i> <span class="collab-reply-text">Reply</span> </span>
+				<span class="collab-reply-btn tooltip" id="btn-reply" data-placement="above" title="<%= reply_tooltip %>" twipsy-content-set="true"> <i class="ficon-reply fsize-14 collab-reply-icon" id="collab-reply-icon" size="14"></i> </span>
 			<% } %>
 		<% } else { %>
 			<span class="msg" data-raw-msg="<%- msg_body_raw %>"> <%= msg_body %> </span>
 			<% if(!!enable_reply_to) { %>
-				<span class="collab-reply-btn" id="btn-reply"> <i class="ficon-reply fsize-14 collab-reply-icon" id="collab-reply-icon" size="14"></i> <span class="collab-reply-text">Reply</span> </span>
+				<span class="collab-reply-btn tooltip" id="btn-reply" data-placement="above" title="<%= reply_tooltip %>" twipsy-content-set="true"> <i class="ficon-reply fsize-14 collab-reply-icon" id="collab-reply-icon" size="14"></i> </span>
 			<% } %>
 		<% } %>
 	</div>

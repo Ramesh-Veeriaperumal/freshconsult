@@ -4,7 +4,7 @@ properties:
   address:
     type: string
   company_id:
-    type: number
+    type: integer
   description:
     type: string
   email:
@@ -41,6 +41,6 @@ properties:
       type: object
       properties:
         company_id:
-          type: number
+          type: integer
         view_all_tickets:
           type: boolean

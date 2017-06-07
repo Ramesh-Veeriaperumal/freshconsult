@@ -9,13 +9,8 @@
     @include float(right);
 
     i {
-      color: rgba(255,255,255,0.4);
       @include transition-property(color);
       @include transition-duration(0.25s);
-    }
-
-    i:hover {
-      color: #fff;
     }
 
     .user-notification-seen-state {
@@ -41,9 +36,8 @@
     @include right(-30px);
     top: 40px;
     z-index: 1000;
-    box-shadow: 0 6px 6px 0px rgba(0,0,0,0.4);
+    @include box-shadow(0 10px 40px 0px rgba(0,0,0,0.2), 0 4px 10px 0px rgba(0,0,0,0.1), 0 0px 0px 1px rgba(0,0,0,0.1));
     width: 340px;
-    border: 1px solid #ddd;
 
     header {
       font-size: 13px;
@@ -285,6 +279,10 @@
           }
 
         }
+      }
+
+      .silent_notifications {
+        margin-top: 20px;
       }
 
       .enable-desktop-notifications-button, 

@@ -13,7 +13,7 @@ get:
       type: string
     - name: company_id
       in: query
-      type: number
+      type: integer
     - name: state
       in: query
       type: string

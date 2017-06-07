@@ -58,18 +58,12 @@ Style/BracesAroundHashParameters:
 # Offense count: 3
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 Style/ClassAndModuleChildren:
-  AutoCorrect: true
-  Enabled: true
+  AutoCorrect: false
+  Enabled: false
 
 # Offense count: 3
 # Cop supports --auto-correct.
 Style/CommentIndentation:
-  AutoCorrect: true
-  Enabled: true
-
-# Offense count: 4
-# Cop supports --auto-correct.
-Style/DeprecatedHashMethods:
   AutoCorrect: true
   Enabled: true
 
@@ -236,7 +230,7 @@ Style/SpaceBeforeBlockBraces:
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles, EnforcedStyleForEmptyBraces, SpaceBeforeBlockParameters.
 Style/SpaceInsideBlockBraces:
-  EAutoCorrect: true
+  AutoCorrect: true
   Enabled: true
 
 # Offense count: 4

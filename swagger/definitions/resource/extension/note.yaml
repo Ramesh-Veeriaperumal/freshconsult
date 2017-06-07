@@ -5,9 +5,11 @@ allOf:
       body_text:
         type: string
       ticket_id:
-        type: number
+        type: integer
+        format: int64
       user_id:
-        type: number
+        type: integer
+        format: int64
       incoming:
         type: boolean
       private:
@@ -22,21 +24,23 @@ allOf:
           type: string
       cc_emails:
         type: array
-        items:
+        items: 
           type: string
       bcc_emails:
         type: array
         items:
           type: string
       source:
-        type: number
+        type: integer
+        format: int64
       has_quoted_text:
         type: boolean
       last_edited_at:
         type: string
         format: date-time
       last_edited_user_id:
-        type: number
+        type: integer
+        format: int64
       attachments:
         type: array
         items:

@@ -639,6 +639,14 @@ module Helpdesk::TicketsHelper
     privilege?(:reply_ticket) && !(@ticket.twitter? || @ticket.facebook? || @ticket.allow_ecommerce_reply?) && @ticket.from_email.present?
   end
 
+  def collab_ticket_url(ticket_display_id)
+    "/helpdesk/tickets/collab/#{ticket_display_id}?collab=true&token=#{Collaboration::Ticket.new(ticket_display_id).access_token}"
+  end
+
+  def latest_note_collab_ticket_url(ticket_display_id)
+    "/helpdesk/tickets/collab/#{ticket_display_id}/latest_note?token=#{Collaboration::Ticket.new(ticket_display_id).access_token}"
+  end
+
   def sorted_account_skills
     current_account.skill_based_round_robin_enabled? ?
      current_account.skills_trimmed_version_from_cache.collect { |e| [e.name, e.id] } : []

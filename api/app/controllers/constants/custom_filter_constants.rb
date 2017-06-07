@@ -5,8 +5,8 @@ module CustomFilterConstants
   QUERY_TYPE_OPTIONS = %w(default custom_field).freeze
   INDEX_FIELDS = [:name, :order_by, :order_type, :per_page, :query_hash, visibility: [:visibility, :group_id]].freeze
 
-  CONDITIONAL_FIELDS = ['responder_id', 'group_id', 'created_at', 'due_by', 'status', 
-    'priority', 'ticket_type', 'source', 'helpdesk_tags.name', 'owner_id', 'requester_id', 
+  CONDITIONAL_FIELDS = ['responder_id', 'group_id', 'created_at', 'due_by', 'status',
+    'priority', 'ticket_type', 'source', 'helpdesk_tags.name', 'owner_id', 'requester_id',
     'helpdesk_schema_less_tickets.product_id'].freeze
 
 
@@ -14,8 +14,8 @@ module CustomFilterConstants
   REMOVE_QUERY_CONDITIONS = ['spam', 'deleted'].freeze
 
   WF_PREFIX_PARAM_MAPPING = {
-    order: :order_by, 
-    order_type: :order_type, 
+    order: :order_by,
+    order_type: :order_type,
     per_page: :per_page
     }.freeze
 

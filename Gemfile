@@ -190,6 +190,7 @@ gem 'freshdesk_features', :git => 'git@github.com:freshdesk/freshdesk-features.g
 gem 'launchparty', :git => 'git@github.com:freshdesk/launch-party.git', :tag => 'v0.1.4'
 gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branch => 'not_a_model_column'
 
+gem 'net-http-persistent', '~> 2.9.4'
 
 gem "bunny", "1.7.0"
 

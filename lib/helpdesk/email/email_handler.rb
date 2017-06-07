@@ -44,11 +44,12 @@ module Helpdesk
 			end
 
 			def get_supporting_attributes
-
+				verify_key = params[:verification_key].present? ? params[:verification_key] : ""
 				#to decide whether account_id is required
 				metadata_attributes = {
 					:received_time => "#{Time.now.utc}",
 					:received_host => "#{Socket.gethostname}",
+					:verification_key => verify_key,
 					:envelope => params[:envelope]
 					# :from => params[:from]
 				}

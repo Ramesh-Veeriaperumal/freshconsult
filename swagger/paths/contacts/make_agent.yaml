@@ -5,7 +5,8 @@ put:
   parameters:
     - name: id
       in: path
-      type: number
+      type: integer
+      format: int64
       required: true
     - name: data
       in: body

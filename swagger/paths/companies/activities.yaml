@@ -3,9 +3,7 @@ get:
   summary: Recent Activities
   description: Lists all recent tickets raised by company contacts
   parameters:
-    - name: id
-      in: path
-      type: string
+    - $ref: '#/parameters/id'
     - name: type
       in: query
       type: string

@@ -6,7 +6,8 @@ get:
   parameters:
     - name: id
       in: path
-      type: number
+      type: integer
+      format: int64
       required: true
       description: ID of canned response
     - name: include
