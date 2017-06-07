@@ -39,8 +39,13 @@ class Helpdesk::CollabTicketsController < ApplicationController
       head :forbidden
     elsif verify_permission? || (Account.current.group_collab_enabled? && valid_token?)
       if params[:metadata].present?
-        @ticket.collab_msg = prepare_notification_data
-        @ticket.delayed_manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_COLLAB_MSG_KEY)
+        noti_info = {
+          :mid => params[:mid],
+          :mbody => params[:body],
+          :metadata => params[:metadata],
+          :ticket_display_id => params[:id]
+        }
+        CollaborationWorker.perform_async(noti_info)
         head :ok
       else
         head :bad_request
@@ -87,56 +92,5 @@ class Helpdesk::CollabTicketsController < ApplicationController
       redirect_params = {}
       redirect_params[:pjax_redirect] = true if request.headers['X-PJAX']
       redirect_to helpdesk_tickets_url(redirect_params)
-    end
-
-    def append_token_to_user_data(meta)
-      if meta["reply"].present?
-        meta["reply"]["token"] = current_account.group_collab_enabled? ? Collaboration::Ticket.new(params[:id]).access_token(meta["reply"]["r_id"]).to_s : ""
-      end
-
-      if meta["hk_group_notify"].present?
-        for group in meta["hk_group_notify"] do
-          for user in group["users"] do
-            user["token"] = current_account.group_collab_enabled? ? Collaboration::Ticket.new(params[:id]).access_token(user["user_id"]).to_s : ""
-          end
-        end
-      end
-
-      if meta["hk_notify"].present?
-        for user in meta["hk_notify"] do
-          user["token"] = current_account.group_collab_enabled? ? Collaboration::Ticket.new(params[:id]).access_token(user["user_id"]).to_s : ""
-        end
-      end
-      return meta
-    end
-
-    def prepare_notification_data
-      begin
-        meta = JSON.parse(params[:metadata])          
-      rescue JSON::ParserError => e
-        raise e, "Invalid JSON string: #{params[:metadata]}"
-      end
-
-      data_with_token = append_token_to_user_data(meta)
-
-      from_email = @ticket.selected_reply_email.scan( /<([^>]*)>/).to_s
-      if from_email.blank?
-        from_email = current_account.default_friendly_email
-      end
-
-      {
-        :notification_data => {
-          :client_id => Collaboration::Ticket::HK_CLIENT_ID,
-          :current_domain => current_account.full_domain,
-          :message_id => params[:mid],
-          :message_body => params[:body],
-          :mentioned_by_id => current_user.id.to_s,
-          :mentioned_by_name => current_user.name,
-          :requester_name => @ticket.requester[:name],
-          :requester_email => @ticket.requester[:email],
-          :from_address => from_email,
-          :metadata => data_with_token
-        }
-      }
     end
 end

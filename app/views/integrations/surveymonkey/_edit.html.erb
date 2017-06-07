@@ -1,18 +1,5 @@
 <%	app = Integrations::Application.find_by_name('surveymonkey') %>
 <% if installed_app %>
-	<% if installed_app.configs[:inputs]['api_version'].nil? %>
-		<% auth_url = app.oauth_url({:account_id => current_account.id}) %>
-		<div class="surveymonkey_alert hide"><%= t('integrations.surveymonkey.reauth_text_html', :link_auth => auth_url) %></div>
-		<script>
-			jQuery(document).ready(function(){
-				jQuery('.surveymonkey_alert').insertBefore('#Pagearea .title');
-				jQuery('.surveymonkey_alert').show();
-				jQuery('input#integrations_installed_application_submit').addClass('disabled');
-			});
-		</script>
-
-	<% end%>
-
 <div id="survey-fields-container" class="survey-fields-container row-fluid">
 	<!-- It is hidden and it is used by JS script to do DOM action -->
 	<select class="all_groups_base_reference hide">
@@ -25,7 +12,7 @@
 	</select>
 
 	<p class="black_and_bold"><%= t('integrations.surveymonkey.edit_form.survey_link_text.label') %></p>
-
+	
 	<div class="survey_for_groups m-survey-list">
 		<!-- have to iterate row div based on the number of groups configured in the DB -->
 		<%if installed_app.configs[:inputs]['groups'] %>
@@ -65,22 +52,22 @@
 			<div class="send_while">
 				<%=t('integrations.surveymonkey.edit_form.send_while_title').html_safe%> <sup>*</sup>
 			</div>
-
+			
 			<label>
 			  <%= "<input type=\"radio\" name=\"configs[send_while]\" value=\"#{Survey::CLOSED_NOTIFICATION}\">".html_safe %>
 				<%=t('admin.surveys.satisfaction_settings.send_while_option3').html_safe%>
 			</label>
-
+			
 			<label>
 			  <%= "<input type=\"radio\" name=\"configs[send_while]\" value=\"#{Survey::RESOLVED_NOTIFICATION}\">".html_safe %>
 			  <%=t('admin.surveys.satisfaction_settings.send_while_option2').html_safe%>
 			</label>
-
+			
 			<label>
 				<%= "<input type=\"radio\" name=\"configs[send_while]\" value=\"#{Survey::ANY_EMAIL_RESPONSE}\">".html_safe %>
 				<%=t('admin.surveys.satisfaction_settings.send_while_option1').html_safe%>
 			</label>
-
+			
 			<label>
 				<%= "<input type=\"radio\" name=\"configs[send_while]\" value=\"#{Survey::SPECIFIC_EMAIL_RESPONSE}\">".html_safe %>
 				<%=t('admin.surveys.satisfaction_settings.send_while_option4').html_safe%>
@@ -104,6 +91,6 @@
 		jQuery("#InstallApplication input[type=\"submit\"]").click(function(e){
 			e.preventDefault();
 			window.location.href = "<%=app.oauth_url({:account_id => current_account.id, :portal_id => current_portal.id})%>";
-		});
+		});			
 	</script>
 <%end%>
