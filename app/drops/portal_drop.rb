@@ -28,7 +28,7 @@ class PortalDrop < BaseDrop
 
   # Portal branding related information
   def logo_url
-    @logo_url ||=  MemcacheKeys.fetch(["v7", "portal", "logo_href", source],7.days.to_i) do
+    @logo_url ||=  MemcacheKeys.fetch(["v8", "portal", "logo_href", source],7.days.to_i) do
             source.logo.nil? ? 
               "/assets/misc/logo.png" :
               AwsWrapper::S3Object.public_url_for(source.logo.content.path(:logo), 
