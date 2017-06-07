@@ -18,7 +18,7 @@ helpkit/swagger contains three folders:
 # Paths
 A file named "index.yaml" lists all endpoints and file paths that contain the specs for each endpoint.
 
-For eg: 
+For eg:
 ```
 	/tickets/{id}:
 		$ref: ./tickets/crud.yaml
@@ -52,6 +52,7 @@ Request and response definitions are organised into different folders:
 <dt>Response</dt>
 	<dd>Contains the response structure (Response param name, type etc.)</dd>
 </dl>
-After making the relevant changes, make sure to check if swagger.json is generated. If it is blank, make a dummy edit-save to generate it.
+After making the relevant changes, make sure to check if swagger.json is generated.
+If it is blank, make a dummy edit-save to generate it.
 
 Go to http://localhost.freshdesk-dev.com:3000/swagger/ to see if the changes are reflected.
