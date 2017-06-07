@@ -250,7 +250,8 @@ i.#{$font-class-name}twitter{
 // 											header notification 
 // -----------------------------------------------------------------------------------------------
 .header-notification-wrapper{
-	.notification_present .#{$font-class-name}help{
+	.notification_present .#{$font-class-name}help,
+	.#{font-class-name}notification {
 		color: white;
 	}
 	.popover-wrapper{

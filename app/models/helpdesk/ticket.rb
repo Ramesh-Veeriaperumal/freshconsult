@@ -60,7 +60,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :round_robin_assignment, :related_ticket_ids, :tracker_ticket_id, :unique_external_id, :assoc_parent_tkt_id,
     :sbrr_turned_on, :status_sla_toggled_to, :replicated_state, :skip_sbrr_assigner, :bg_jobs_inline,
     :sbrr_ticket_dequeued, :sbrr_user_score_incremented, :sbrr_fresh_ticket, :skip_sbrr, :model_changes,
-    :schedule_observer, :required_fields_on_closure, :observer_args  
+    :schedule_observer, :required_fields_on_closure, :observer_args
     # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
     # - will be clearing these after activity publish.
   
@@ -849,6 +849,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     (art_portal && { :host => art_portal.host, :protocol => art_portal.url_protocol }) || {}
   end
 
+  def article_url(article)
+    url_opts = self.article_url_options(article)
+    url_opts.merge!({ :url_locale => article.language.code }) if Account.current.multilingual?
+    return url_opts[:host].present? && Rails.application.routes.url_helpers.support_solutions_article_url(article, url_opts)
+  end
+
   def microresponse_only?
     twitter? || facebook? || mobihelp? || ecommerce?
   end
@@ -871,6 +877,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def responder_name
     responder.nil? ? "No Agent" : responder.name
+  end
+
+  def internal_agent_name
+    internal_agent.nil? ? "No Agent" : internal_agent.name
+  end
+
+  def internal_group_name
+    internal_group.nil? ? "No Group" : internal_group.name
   end
 
   def cc_email_hash

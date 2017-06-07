@@ -27,6 +27,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   MESSAGE_LIMIT = 10.megabytes
   MAXIMUM_CONTENT_LIMIT = 300.kilobytes
   VIRUS_CHECK_ENABLED = false
+  LARGE_TEXT_TIMEOUT = 60
 
   attr_accessor :reply_to_email, :additional_emails,:archived_ticket, :start_time, :actual_archive_ticket
 
@@ -185,6 +186,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end   
     end
     end
+    elapsed_time = (Time.now.utc - start_time).round(3)
+    Rails.logger.info "Time taken for process_email perform : #{elapsed_time} seconds"
     result
   end
 
@@ -788,7 +791,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def text_part
-      Timeout.timeout(180) do
+      Timeout.timeout(LARGE_TEXT_TIMEOUT) do
         if(params[:text].nil? || params[:text].empty?) 
           if params[:html].size < MAXIMUM_CONTENT_LIMIT
             params[:text] = Helpdesk::HTMLSanitizer.html_to_plain_text(params[:html])
@@ -956,54 +959,59 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
       return text if text.blank?
 
-      regex_arr = [
-        Regexp.new("From:\s*" + Regexp.escape(address), Regexp::IGNORECASE),
-        Regexp.new("<" + Regexp.escape(address) + ">", Regexp::IGNORECASE),
-        Regexp.new(Regexp.escape(address) + "\s+wrote:", Regexp::IGNORECASE),
-        Regexp.new("\\n.*.\d.*." + Regexp.escape(address) ),
-        Regexp.new("<div>\n<br>On.*?wrote:"), #iphone
-        Regexp.new("On((?!On).)*wrote:"),
-        Regexp.new("-+original\s+message-+\s*", Regexp::IGNORECASE),
-        Regexp.new("from:\s*", Regexp::IGNORECASE)
-      ]
-      tl = text.length
+      Timeout.timeout(LARGE_TEXT_TIMEOUT) do
+        regex_arr = [
+          Regexp.new("From:\s*" + Regexp.escape(address), Regexp::IGNORECASE),
+          Regexp.new("<" + Regexp.escape(address) + ">", Regexp::IGNORECASE),
+          Regexp.new(Regexp.escape(address) + "\s+wrote:", Regexp::IGNORECASE),
+          Regexp.new("\\n.*.\d.*." + Regexp.escape(address) ),
+          Regexp.new("<div>\n<br>On.*?wrote:"), #iphone
+          Regexp.new("On((?!On).)*wrote:"),
+          Regexp.new("-+original\s+message-+\s*", Regexp::IGNORECASE),
+          Regexp.new("from:\s*", Regexp::IGNORECASE)
+        ]
+        tl = text.length
 
-      #calculates the matching regex closest to top of page
-      index = regex_arr.inject(tl) do |min, regex|
-          (text.index(regex) or tl) < min ? (text.index(regex) or tl) : min
-      end
-
-      original_msg = text[0, index]
-      old_msg = text[index,text.size]
-
-      return  {:body => original_msg, :full_text => text } if plain
-      #Sanitizing the original msg
-      unless original_msg.blank?
-        sanitized_org_msg = Nokogiri::HTML(original_msg).at_css("body")
-        unless sanitized_org_msg.blank?
-          remove_identifier_span(sanitized_org_msg)
-          original_msg = sanitized_org_msg.inner_html
+        #calculates the matching regex closest to top of page
+        index = regex_arr.inject(tl) do |min, regex|
+            (text.index(regex) or tl) < min ? (text.index(regex) or tl) : min
         end
-      end
-      #Sanitizing the old msg
-      unless old_msg.blank?
-        sanitized_old_msg = Nokogiri::HTML(old_msg).at_css("body")
-        unless sanitized_old_msg.blank?
-          remove_identifier_span(sanitized_old_msg)
-          remove_survey_div(sanitized_old_msg) unless plain
-          old_msg = sanitized_old_msg.inner_html
+
+        original_msg = text[0, index]
+        old_msg = text[index,text.size]
+
+        return  {:body => original_msg, :full_text => text } if plain
+        #Sanitizing the original msg
+        unless original_msg.blank?
+          sanitized_org_msg = Nokogiri::HTML(original_msg).at_css("body")
+          unless sanitized_org_msg.blank?
+            remove_identifier_span(sanitized_org_msg)
+            original_msg = sanitized_org_msg.inner_html
+          end
         end
-      end
+        #Sanitizing the old msg
+        unless old_msg.blank?
+          sanitized_old_msg = Nokogiri::HTML(old_msg).at_css("body")
+          unless sanitized_old_msg.blank?
+            remove_identifier_span(sanitized_old_msg)
+            remove_survey_div(sanitized_old_msg) unless plain
+            old_msg = sanitized_old_msg.inner_html
+          end
+        end
 
-      full_text = original_msg
-      unless old_msg.blank?
+        full_text = original_msg
+        unless old_msg.blank?
 
-       full_text = full_text +
-       "<div class='freshdesk_quote'>" +
-       "<blockquote class='freshdesk_quote'>" + old_msg + "</blockquote>" +
-       "</div>"
+         full_text = full_text +
+         "<div class='freshdesk_quote'>" +
+         "<blockquote class='freshdesk_quote'>" + old_msg + "</blockquote>" +
+         "</div>"
+        end
+        return {:body => full_text,:full_text => full_text}  #temp fix made for showing quoted text in incoming conversations
       end
-      {:body => full_text,:full_text => full_text}  #temp fix made for showing quoted text in incoming conversations
+    rescue => e
+      Rails.logger.info "Exception in show_quoted_text , message :#{e.message} - #{e.backtrace}"
+      return {:body => text,:full_text => text}
     end
 
     def remove_identifier_span msg

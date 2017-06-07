@@ -50,10 +50,14 @@
               
               <% for(var i=0; i < configs.length; i++) { %>
                 <li class="field">
-                  <label class="form-lbl"> <%- configs[i].label %> </label>           
+                  <label class="form-lbl"> <%- configs[i].label %> 
+                    <% if (configs[i].is_required) { %>
+                      <span class="required_star">*</span>
+                    <% } %>
+                  </label>
                   
                   <% if (configs[i].field_type == 1) { %>
-                    <input type="text" class="fa-textip required fa-elements" name="[configs][<%- configs[i].name %>]" value="<%- configs[i].default_value %>">
+                    <input type="text" class="fa-textip <% if (configs[i].is_required) {%> required <%}%> fa-elements" name="[configs][<%- configs[i].name %>]" value="<%- configs[i].default_value %>">
                   <% } else { %>
                     <select name="[configs][<%- configs[i].name %>]" class="select2 fa-elements" style="width:200px;">
                       <% for(var j=0; j < configs[i].default_value.length; j++){ %>
