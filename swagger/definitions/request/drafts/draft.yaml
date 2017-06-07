@@ -1,12 +1,13 @@
 type: object
+required:
+  - body
+  - quoted_text
 properties:
   body:
     type: string
-    required: true
     description: content of the ticket reply
   quoted_text:
     type: string
-    required: true
     description: quoted text of the ticket reply
   cc_emails:
     type: array
@@ -23,4 +24,4 @@ properties:
   attachment_ids:
     type: array
     items:
-      type: number
+      type: integer

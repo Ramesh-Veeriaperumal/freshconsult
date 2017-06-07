@@ -21,10 +21,10 @@ get:
       description: Comma-separated values
     - name: company_id
       in: query
-      type: number
+      type: integer
     - name: requester_id
       in: query
-      type: number
+      type: integer
     - name: email
       in: query
       type: string

@@ -21,7 +21,7 @@ CZentrixWidget.prototype = {
       callback(agentId);
       addCZentrixEventListener();
     }, function(data) {
-       alert("Unable to reach C-Zentrix servers");
+       console.error("Unable to reach C-Zentrix servers");
     });
   },
   getCallRecording : function(session_id){

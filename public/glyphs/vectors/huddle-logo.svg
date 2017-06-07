@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="360px" height="360px" viewBox="0 0 360 360" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 44.1 (41455) - http://www.bohemiancoding.com/sketch -->
+    <title>huddle-blunt</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="huddle-blunt">
+            <path d="M333,334 L333,180.5 C333,95.7242909 264.275709,27 179.5,27 C94.7242909,27 26,95.7242909 26,180.5 C26,265.275709 94.7242909,334 179.5,334 L333,334 Z" id="Mask" stroke="#000000" stroke-width="12"></path>
+            <g id="Group-3" transform="translate(143.000000, 151.000000)"></g>
+            <g id="Group" transform="translate(105.000000, 110.000000)" stroke="#000000" stroke-width="12">
+                <circle id="Oval-4-Copy-2" cx="82.8225806" cy="27.8225806" r="27.5"></circle>
+                <circle id="Oval-4-Copy" cx="137.822581" cy="112.822581" r="27.5"></circle>
+                <circle id="Oval-4-Copy-2" cx="27.8225806" cy="112.822581" r="27.5"></circle>
+                <path d="M45.4560547,85.4521484 L63.8603516,57.4375" id="Line" stroke-linecap="square"></path>
+                <path d="M101,84 L119,56" id="Line-Copy" stroke-linecap="square" transform="translate(110.000000, 70.000000) scale(-1, 1) translate(-110.000000, -70.000000) "></path>
+                <path d="M66,113 L99.29,113" id="Line-Copy" stroke-linecap="square" transform="translate(82.645000, 113.000000) scale(-1, 1) translate(-82.645000, -113.000000) "></path>
+            </g>
+        </g>
+    </g>
+</svg>

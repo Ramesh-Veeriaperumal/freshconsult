@@ -2,15 +2,19 @@ get:
   tags: [ticket]
   summary: Activities
   parameters:
+    - $ref: '#/parameters/id'
     - name: limit
-      in: path
-      type: number
+      in: query
+      type: integer
+      format: int64
     - name: before_id
-      in: path
-      type: number
+      in: query
+      type: integer
+      format: int64
     - name: since_id
-      in: path
-      type: number
+      in: query
+      type: integer
+      format: int64
   responses:
     200:
       description: Success

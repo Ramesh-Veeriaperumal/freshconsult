@@ -6,4 +6,4 @@ properties:
   title:
     type: string
   folder_id:
-    type: number
+    type: integer

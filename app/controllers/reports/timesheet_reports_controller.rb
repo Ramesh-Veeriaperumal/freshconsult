@@ -17,7 +17,7 @@ class Reports::TimesheetReportsController < ApplicationController
 
   around_filter :run_on_slave , :except => [:save_reports_filter,:update_reports_filter,:delete_reports_filter]
 
-  helper_method :enable_schedule_report?, :custom_filters_enabled?
+  helper_method :enable_schedule_report?
 
   attr_accessor :report_type
 

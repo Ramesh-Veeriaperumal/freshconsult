@@ -3,7 +3,7 @@
     type: object
     properties:
       id:
-        type: number
+        type: integer
       performer:
         type: object
         properties:
@@ -16,7 +16,7 @@
             type: object
             properties:
               id:
-                type: number
+                type: integer
               name:
                 type: string
               agent:
@@ -31,7 +31,7 @@
             type: object
             properties:
               id:
-                type: number
+                type: integer
               name:
                 type: string
               exists:
@@ -87,5 +87,5 @@
               type: object
               description: "Value corresponding to the action type."
       highlight:
-        type: number
+        type: integer
         description: Shows which action has to be highlighted

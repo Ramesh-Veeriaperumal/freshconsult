@@ -2,9 +2,8 @@ put:
   tags: [ticket]
   description: Update Properties
   parameters:
-    - name: id
-      in: path
-    - name: data
+    - $ref: '#/parameters/id'
+    - name: body
       in: body
       required: true
       schema:

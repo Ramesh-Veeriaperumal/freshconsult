@@ -8,13 +8,7 @@
     activities."
     tags: [contact]
     parameters:
-      - name: id
-        in: path
-        type: number
-        required: true
-    examples:
-      - id: 22
-      - id: 23
+      - $ref: '#/parameters/id'
     responses:
       200:
         description: Success
