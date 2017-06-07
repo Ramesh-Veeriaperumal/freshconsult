@@ -19,28 +19,32 @@ class Search::V2::Operations::DocumentAdd
       # All dates to be stored in UTC
       #
       Time.use_zone('UTC') do
-        @request_object = Search::V2::IndexRequestHandler.new(
+        if Account.current.service_writes_enabled?
+          SearchService::Client.new(@account_id).write_object(entity, @params[:version], @params[:parent_id], @type)
+        else
+          @request_object = Search::V2::IndexRequestHandler.new(
                                               @type,
                                               @account_id,
                                               @doc_id
                                             )
-        @request_object.send_to_es(
-                                    @params[:version],
-                                    @params[:routing_id],
-                                    @params[:parent_id],
-                                    entity.to_esv2_json
-                                  )
-        
-        # Multiplexing for pinnacle sports currently
-        if entity.is_a?(Solution::Article) && Account.current.es_multilang_soln?
-          locale = entity.solution_folder_meta.solution_category_meta.portals.last.try(:language)
-          @request_object.send_to_multilang_es(
-                                                @params[:version],
-                                                @params[:routing_id],
-                                                @params[:parent_id],
-                                                entity.to_esv2_json,
-                                                locale
-                                              )
+          @request_object.send_to_es(
+                                      @params[:version],
+                                      @params[:routing_id],
+                                      @params[:parent_id],
+                                      entity.to_esv2_json
+                                    )
+          
+          # Multiplexing for pinnacle sports currently
+          if entity.is_a?(Solution::Article) && Account.current.es_multilang_soln?
+            locale = entity.solution_folder_meta.solution_category_meta.portals.last.try(:language)
+            @request_object.send_to_multilang_es(
+                                                  @params[:version],
+                                                  @params[:routing_id],
+                                                  @params[:parent_id],
+                                                  entity.to_esv2_json,
+                                                  locale
+                                                )
+          end
         end
       end
     end
