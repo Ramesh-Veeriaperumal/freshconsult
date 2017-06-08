@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "6edb285f212302cea7be5d1e3a8ff50f508694a8ff34f592db40220015e65985",
-    "current": "6edb285f212302cea7be5d1e3a8ff50f508694a8ff34f592db40220015e65985"
+    "previous": "298020d085d1036c15fb6d84c65fed87298491f0daee5a84147bbe8b337bd09f",
+    "current": "298020d085d1036c15fb6d84c65fed87298491f0daee5a84147bbe8b337bd09f"
   },
   "fonts": [
-    "public/assets/glyphs_6edb285f212302cea7be5d1e3a8ff50f.ttf",
-    "public/assets/glyphs_6edb285f212302cea7be5d1e3a8ff50f.svg",
-    "public/assets/glyphs_6edb285f212302cea7be5d1e3a8ff50f.woff",
-    "public/assets/glyphs_6edb285f212302cea7be5d1e3a8ff50f.eot"
+    "public/assets/glyphs_298020d085d1036c15fb6d84c65fed87.ttf",
+    "public/assets/glyphs_298020d085d1036c15fb6d84c65fed87.svg",
+    "public/assets/glyphs_298020d085d1036c15fb6d84c65fed87.woff",
+    "public/assets/glyphs_298020d085d1036c15fb6d84c65fed87.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -1476,6 +1476,10 @@
     "config": "config/fontcustom.yml",
     "css_selector": ".ficon-{{glyph}}",
     "debug": false,
+    "font_ascent": 448,
+    "font_descent": 64,
+    "font_design_size": 16,
+    "font_em": 512,
     "font_name": "glyphs",
     "force": true,
     "input": {
