@@ -5,4 +5,4 @@ properties:
   url:
     type: string
   application_id:
-    type: number
+    type: integer

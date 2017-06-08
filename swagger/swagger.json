@@ -4812,7 +4812,7 @@
           "type": "string"
         },
         "application_id": {
-          "type": "number"
+          "type": "integer"
         }
       }
     },
@@ -5600,7 +5600,7 @@
         {
           "properties": {
             "application_id": {
-              "type": "number",
+              "type": "integer",
               "description": "App Id"
             },
             "app_name": {
@@ -5612,7 +5612,7 @@
               "description": "App Display Name"
             },
             "display_option": {
-              "type": "number",
+              "type": "integer",
               "description": "Display option of the App"
             },
             "configs": {
@@ -5632,11 +5632,11 @@
         {
           "properties": {
             "installed_application_id": {
-              "type": "number",
+              "type": "integer",
               "description": "Installed App Id"
             },
             "user_id": {
-              "type": "number",
+              "type": "integer",
               "description": "User Id"
             },
             "auth_info": {
@@ -5660,7 +5660,7 @@
         {
           "properties": {
             "installed_application_id": {
-              "type": "number",
+              "type": "integer",
               "description": "Installed App Id"
             },
             "remote_integratable_id": {
@@ -5672,7 +5672,7 @@
               "description": "Remote Integratable Type"
             },
             "local_integratable_id": {
-              "type": "number",
+              "type": "integer",
               "description": "Local integratable Id"
             }
           }

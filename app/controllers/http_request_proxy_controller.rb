@@ -90,7 +90,7 @@ class HttpRequestProxyController < ApplicationController
     end
 
     def verify_domain
-      return if @domain_verified || Rails.env.development?
+      return if @domain_verified
       begin
         parsed_url = URI.parse(params[:domain])
         parsed_url = URI.parse("#{request.protocol}#{params[:domain]}") if parsed_url.scheme.nil?

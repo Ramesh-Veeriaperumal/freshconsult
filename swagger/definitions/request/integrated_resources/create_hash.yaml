@@ -2,12 +2,12 @@ type: object
 description: resource hash
 properties:
   local_integratable_id:
-    type: number
+    type: integer
   remote_integratable_id:
-    type: number
+    type: integer
   local_integratable_type:
     type: string
   installed_application_id:
-    type: number
+    type: integer
   remote_integratable_type:
     type: string

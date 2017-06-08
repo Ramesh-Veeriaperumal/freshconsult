@@ -3,10 +3,10 @@ allOf:
   - $ref: '#/definitions/extension_generic'
   - properties:
       installed_application_id:
-        type: number
+        type: integer
         description: Installed App Id
       user_id:
-        type: number
+        type: integer
         description: User Id
       auth_info:
         type: hash

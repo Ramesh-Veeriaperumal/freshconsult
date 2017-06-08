@@ -9,7 +9,7 @@ module Ember
 
     def create
       return unless validate_body_params
-      if params[:integrated_resource][:local_integratable_type] == IntegratedResourceConstants::TICKET
+      if params[:integrated_resource][:local_integratable_type] == ::IntegratedResourceConstants::TICKET
         ticket_id = params[:integrated_resource][:local_integratable_id]
         ticket = fetch_ticket_using_display_id(ticket_id)
         params[:integrated_resource][:local_integratable_id] = ticket.id
@@ -41,9 +41,11 @@ module Ember
       end
 
       def load_objects
-        if params[:local_integratable_type] == IntegratedResourceConstants::TICKET
+        if params[:local_integratable_type] == ::IntegratedResourceConstants::TICKET
           ticket = fetch_ticket_using_display_id(params[:local_integratable_id])
-          @items = Integrations::IntegratedResource.where(installed_application_id: params[:installed_application_id], local_integratable_id: ticket.id)
+          if verify_ticket_state ticket
+            @items = Integrations::IntegratedResource.where(installed_application_id: params[:installed_application_id], local_integratable_id: ticket.id)
+          end
         else
           @items = Integrations::IntegratedResource.where(installed_application_id: params[:installed_application_id], local_integratable_id: params[:local_integratable_id])
         end
@@ -73,9 +75,9 @@ module Ember
         integ_resource = Integrations::IntegratedResource.find_by_id(@item.id)
         log_and_render_404 unless integ_resource
         local_integratable_type = integ_resource.local_integratable_type
-        if local_integratable_type == IntegratedResourceConstants::TICKET
+        if local_integratable_type == ::IntegratedResourceConstants::TICKET
           ticket = Account.current.tickets.find_by_id(integ_resource.local_integratable_id)
-        elsif local_integratable_type == IntegratedResourceConstants::TIMESHEET
+        elsif local_integratable_type == ::IntegratedResourceConstants::TICKET
           ticket = fetch_ticket_using_workable_id(integ_resource.local_integratable_id)
         end
         verify_ticket_state ticket
@@ -97,10 +99,10 @@ module Ember
 
       def validate_ticket_permission_for_create
         ticket = nil
-        if params[:integrated_resource][:local_integratable_type] == IntegratedResourceConstants::TICKET
+        if params[:integrated_resource][:local_integratable_type] == ::IntegratedResourceConstants::TICKET
           local_integratable_id = params[:integrated_resource][:local_integratable_id]
           ticket = fetch_ticket_using_display_id(local_integratable_id)
-        elsif params[:integrated_resource][:local_integratable_type] == IntegratedResourceConstants::TIMESHEET
+        elsif params[:integrated_resource][:local_integratable_type] == ::IntegratedResourceConstants::TICKET
           ticket = fetch_ticket_using_workable_id(params[:integrated_resource][:local_integratable_id])
         end
         verify_ticket_state ticket
