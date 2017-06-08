@@ -1,6 +1,19 @@
 
 //This also used in dynamics CRM integration
 
+.surveymonkey_alert {
+    padding: 8px 35px 8px 14px;
+    margin-bottom: 16px;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    background-color: #fcf8e3;
+    border: 1px solid #fbeed5;
+    border-radius: 4px;
+    color: #82683c;
+    position: relative;
+    margin: 20px;
+
+  }
+
 @mixin int-select-after {
   content: "+";
   background:green;

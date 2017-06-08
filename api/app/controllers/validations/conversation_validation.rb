@@ -4,7 +4,7 @@ class ConversationValidation < ApiValidation
   attr_accessor :body, :full_text, :private, :user_id, :agent_id, :incoming, :notify_emails,
                 :attachments, :to_emails, :cc_emails, :bcc_emails, :item, :from_email,
                 :include_quoted_text, :include_original_attachments, :cloud_file_ids,
-                :cloud_files, :send_survey
+                :cloud_files, :send_survey, :include_surveymonkey_link
 
   validates :body, data_type: { rules: String, required: true }, if: -> { !forward? }
   validates :body, data_type: { rules: String }, on: :forward
