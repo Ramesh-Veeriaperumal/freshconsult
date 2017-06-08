@@ -5,7 +5,7 @@ allOf:
       full_text:
         type: string
       user_id:
-        type: number
+        type: integer
       attachments:
         type: array
         items:
@@ -14,7 +14,7 @@ allOf:
       attachment_ids:
         type: array
         items:
-          type: number
+          type: integer
       from_email:
         type: string
       cc_emails:

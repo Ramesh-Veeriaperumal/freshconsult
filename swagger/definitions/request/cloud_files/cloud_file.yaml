@@ -6,3 +6,4 @@ properties:
     type: string
   application_id:
     type: integer
+    format: int64

@@ -4,13 +4,13 @@ properties:
       type: string
       format: date-time
     responder_id:
-      type: number
+      type: integer
     group_id:
-      type: number
+      type: integer
     status:
-      type: number
+      type: integer
     priority:
-      type: number
+      type: integer
     tags:
       type: array
       items:

@@ -5,7 +5,8 @@ allOf:
       content_type:
         type: string
       size:
-        type: number
+        type: integer
+        format: int64
       name:
         type: string
       attachment_url:

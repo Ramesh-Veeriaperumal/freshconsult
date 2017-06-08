@@ -11,13 +11,13 @@ properties:
                 type: string
                 format: date-time
               points:
-                type: number
+                type: integer
               scoreboard_level_id:
-                type: number
+                type: integer
               assumable_agents:
                 type: array
                 items:
-                  type: number
+                  type: integer
               next_level_id:
                 type: object
               abilities:
@@ -73,7 +73,7 @@ properties:
             description: Available only if he is an admin
             properties:
               agent_limit:
-                type: number
+                type: integer
               state:
                 type: string
               subscription_plan:
@@ -91,7 +91,7 @@ properties:
             type: object
             properties:
               id:
-                type: number
+                type: integer
               name:
                 type: string
               email:
@@ -102,7 +102,7 @@ properties:
             type: object
             properties:
               id:
-                type: number
+                type: integer
               name:
                 type: string
               agent_ids:

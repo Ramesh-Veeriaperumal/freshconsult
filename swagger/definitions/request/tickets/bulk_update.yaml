@@ -3,7 +3,7 @@ properties:
   ids:
     type: array
     items:
-      type: number
+      type: integer
   properties:
     $ref: '#/definitions/ticket_update_input'
   reply:
@@ -18,7 +18,7 @@ properties:
         type: array
         description: Draft attachment/Shared attachment IDs
         items:
-          type: number
+          type: integer
       cloud_files:
         type: array
         items:

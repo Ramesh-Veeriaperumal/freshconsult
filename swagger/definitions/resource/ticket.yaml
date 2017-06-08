@@ -2,21 +2,21 @@
   type: object
   properties:
     email_config_id:
-      type: number
+      type: integer
     group_id:
-      type: number
+      type: integer
     priority:
-      type: number
+      type: integer
       enum: [1,2,3,4]
     requester_id:
-      type: number
+      type: integer
     responder_id:
-      type: number
+      type: integer
     source:
-      type: number
+      type: integer
       enum: [1,2,3,7,8,9,10]
     status:
-      type: number
+      type: integer
       enum: [2,3,4,5,6,7]
     subject:
       type: string
@@ -24,7 +24,7 @@
       type: string
       enum: ['Question','Incident','Problem','Feature Request']
     product_id:
-      type: number
+      type: integer
     due_by:
       type: string
       format: date-time
