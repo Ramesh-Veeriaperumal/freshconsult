@@ -1060,6 +1060,28 @@ module Ember
       assert JSON.parse(response.body).count == 3
     end
 
+    def test_ticket_conversations_with_since_id_eq_0
+      t = create_ticket
+      3.times do
+        create_reply_note(t)
+      end
+      get :ticket_conversations, controller_params(version: 'private', id: t.display_id, 
+        per_page: 50, page: 1, order_type: "desc", since_id: 0)
+      assert_response 200
+      assert JSON.parse(response.body).count == 3
+    end
+
+    def test_ticket_conversations_with_since_id_lt_0
+      t = create_ticket
+      3.times do
+        create_reply_note(t)
+      end
+      get :ticket_conversations, controller_params(version: 'private', id: t.display_id, 
+        per_page: 50, page: 1, order_type: "desc", since_id: -1)
+      assert_response 200
+      assert JSON.parse(response.body).count == 3
+    end
+
     def test_update_without_ticket_access
       User.any_instance.stubs(:has_ticket_permission?).returns(false)
       t = create_ticket
