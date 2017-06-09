@@ -92,7 +92,7 @@ class User < ActiveRecord::Base
                                       :duration => :periodic_login_duration}
   end
 
-  validates :user_skills, length: { :maximum => MAX_NO_OF_SKILLS_PER_USER }
+  validates :user_skills, length: { :maximum => MAX_NO_OF_SKILLS_PER_USER } # to validate nested_attributes assignment, but this will not handle bulk array of skill ids assignment
   validate :has_role?, :unless => :customer?
   validate :email_validity, :if => :chk_email_presence?
   validate :user_email_presence, :if => :email_required?
@@ -100,6 +100,7 @@ class User < ActiveRecord::Base
   validate :max_user_emails
   validate :max_user_companies, :if => :has_multiple_companies_feature?
   validate :unique_external_id_feature, :if => :unique_external_id_changed?
+
 
 
   def email_validity
@@ -260,6 +261,19 @@ class User < ActiveRecord::Base
 
     def reset_current_user
       User.current = nil
+    end
+
+    def run_without_current_user
+      doer = User.current
+      User.reset_current_user
+      Rails.logger.debug "Running block without Current User"
+      yield
+    rescue Exception => e
+      Rails.logger.debug "Something is wrong run_without_current_user Account id:: #{Account.current.id} #{e.message}"
+      NewRelic::Agent.notice_error(e)
+      raise e
+    ensure
+      doer.make_current if doer
     end
 
     # Used by API V2
@@ -876,7 +890,7 @@ class User < ActiveRecord::Base
   def make_agent(args = {})
     ActiveRecord::Base.transaction do
       self.user_emails = [self.primary_email]
-      self.deleted = false
+      self.deleted = args[:deleted] || false
       self.helpdesk_agent = true
       self.address = nil
       self.role_ids = args[:role_ids].present? ? args[:role_ids] : [account.roles.find_by_name("Agent").id]
@@ -1074,7 +1088,7 @@ class User < ActiveRecord::Base
       if helpdesk_agent_changed? and !agent?
         self.agent_groups.each do |ag|
           group = ag.group
-          group.remove_agent_from_round_robin(self.id) if group.round_robin_enabled?
+          group.remove_agent_from_round_robin(self.id) if group.lbrr_enabled?
         end
       end
     end

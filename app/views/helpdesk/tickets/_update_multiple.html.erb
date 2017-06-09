@@ -18,6 +18,7 @@
         ticket_fields = (default_fields + other_fields)
       end
       %>
+    <%= construct_bulk_skill_edit if current_account.skill_based_round_robin_enabled? %>
   	<% ticket_fields.each  do |field| %>
       <% next if field.section_field? %>
       <% dom_type = (field.field_type == "nested_field") ? "nested_field" : field.dom_type %>

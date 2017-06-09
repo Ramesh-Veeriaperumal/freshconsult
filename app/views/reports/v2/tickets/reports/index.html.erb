@@ -28,6 +28,9 @@
 					<% if @report_type == :customer_report%>
 						<a target="_blank" href="https://support.freshdesk.com/support/solutions/articles/214629"><%=t('helpdesk_reports.solution_article_text') %></a>
 					<% end %>
+					<% if @report_type == :timespent%>
+						<a target="_blank" href="https://support.freshdesk.com/support/solutions/articles/227095"><%=t('helpdesk_reports.solution_article_text') %></a>
+					<% end %>
 				</div>
 				<div class="clear"></div>
 		</div>

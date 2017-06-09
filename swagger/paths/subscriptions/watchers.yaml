@@ -3,7 +3,8 @@ get:
   summary: List watchers
   parameters:
     - name: id
-      type: id
+      type: integer
+      format: int64
       description: Display ID of ticket
       in: path
       required: true

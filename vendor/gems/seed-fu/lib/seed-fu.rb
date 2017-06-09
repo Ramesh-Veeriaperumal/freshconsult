@@ -1,9 +1,28 @@
 module SeedFu
   
   class PopulateSeed
-    def self.populate
-      fixture_path = ENV["FIXTURE_PATH"] ? ENV["FIXTURE_PATH"] : "db/fixtures"
-  
+
+     def self.populate
+      if ENV["FIXTURE_PATH"]
+        perform(ENV["FIXTURE_PATH"])
+      else
+        populate_foreground
+        populate_background
+      end
+    end
+
+    def self.populate_foreground
+      foreground_jobs_fixture_path = "db/fixtures/foreground"
+      perform(foreground_jobs_fixture_path)
+    end
+
+    def self.populate_background
+      background_jobs_fixture_path = "db/fixtures/background"
+      perform(background_jobs_fixture_path)
+    end
+
+    def self.perform fixture_path  
+
       seed_files = (
         ( Dir[File.join(Rails.root, fixture_path, '*.rb')] +
           Dir[File.join(Rails.root, fixture_path, '*.rb.gz')] ).sort +

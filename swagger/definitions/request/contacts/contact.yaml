@@ -5,4 +5,4 @@ allOf:
       view_all_tickets:
         type: boolean
       avatar_id:
-        type: number
+        type: integer

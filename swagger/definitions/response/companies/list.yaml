@@ -4,4 +4,4 @@ allOf:
   - $ref: '#/definitions/extension_generic'
   - properties:
       contacts_count:
-        type: number
+        type: integer

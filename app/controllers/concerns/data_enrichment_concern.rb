@@ -6,6 +6,7 @@ module Concerns::DataEnrichmentConcern
     after_commit :enqueue_for_data_enrichment, on: :update
 
     def enqueue_for_data_enrichment
+      return unless Rails.env.production?
       account = Account.current
       Rails.logger.debug "******* Data Enrichment Concern account: ##{account.id}  ehawk_spam: #{account.ehawk_spam?} verified: #{account.verified?} model: #{self.class.name.underscore} condition: #{send(self.class.name.underscore + "_check")} changes: #{self.previous_changes.inspect}"
       return if account.ehawk_spam? || account.verified?
@@ -20,7 +21,7 @@ module Concerns::DataEnrichmentConcern
 
     def conversion_metric_check
       @email_update = false
-      self.previous_changes.key?("spam_score")
+      return true
     end
   end
 

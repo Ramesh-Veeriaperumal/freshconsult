@@ -2,25 +2,22 @@ put:
   tags: [attachment]
   summary: Unlink Shared Attachment
   parameters:
-    - name: id
-      in: path
-      type: number
-      description: ID of attachment
-      required: true
+    - $ref: '#/parameters/id'
     - name: data
       in: body
       required: true
       schema:
-        type: object
+        required:
+          - attachable_id
+          - attachable_type
         properties:
           attachable_id:
-            type: number
-            required: true
+            type: integer
+            format: int64
             description: ID of the attachable item
           attachable_type:
             type: string
             enum: ['ticket', 'conversation', 'canned_response', 'ticket_template', 'solution_article', 'solution_draft', 'post', 'user', 'user_draft', 'account']
-            required: true
             description: Type of the attachable item
   responses:
     204:

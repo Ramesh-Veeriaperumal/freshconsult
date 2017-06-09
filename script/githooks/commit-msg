@@ -1,0 +1,44 @@
+#!/bin/sh
+
+# This commit hook validates the commit message for the following
+#   - It should contains a JIRA id 
+
+printMsg(){
+  echo "$*"
+  echo "----------------------------"
+}
+
+commitMsgFile=$1
+
+numIssueIdsInMsg=`cat $1 | head -n 1 | egrep -o "FDCORE-(\\d+)" | wc -l`
+isMergeCommit=`cat $1 | egrep "Merge branch '.*?'" | wc -l`
+
+if [ $isMergeCommit -gt 0 ]
+then 
+  exit 0;
+fi
+
+if [ $numIssueIdsInMsg -eq 0 ] 
+then 
+  numIssueIdsInDesc=`cat $1 | egrep -o "FDCORE-(\\d+)" | wc -l | awk '{print $1}'`
+  if [ $numIssueIdsInDesc -gt 0 ] 
+    then
+      printMsg "$numIssueIdsInDesc Jira Issue Id was found as part of the commit description. 
+Please enter a valid Jira Id in the commit message instead."
+    else
+      read -r -d '' MSG << EndOfMessage 
+Missing JIRA Issue id. The commit message needs to contain a valid JIRA Issue id.
+Example : 
+
+FDCORE-3352 : This is a sample commit message
+EndOfMessage
+      printMsg "$MSG"
+  fi
+  exit 1;
+fi
+
+if [ `cat $commitMsgFile | grep -v "^#" | egrep "[^ ]" | wc -l` -lt 2 ] 
+then 
+  printMsg "Missing description. Please add a description to your commit" 
+  exit 1;
+fi

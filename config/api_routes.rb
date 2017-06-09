@@ -298,9 +298,17 @@ Helpkit::Application.routes.draw do
       resources :helpdesk, controller: 'pipe/helpdesk', only: [:index] do
         collection do
           put :toggle_email
+          put :toggle_fast_ticket_creation
+          put :change_api_v2_limit
         end
       end    
     end
+    resources :attachments, controller: 'ember/attachments', only: [:create, :destroy] do
+      member do
+        put :unlink
+      end
+    end
+
     namespace :api_discussions, path: 'discussions' do
       resources :topics, controller: 'pipe/topics', only: [:create] do
         member do

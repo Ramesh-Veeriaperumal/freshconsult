@@ -378,6 +378,8 @@ module TicketsTestHelper
     meta_info = ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]).body
     meta_info = YAML::load(meta_info)
     handle_timestamps(meta_info)
+  rescue
+    {}
   end
 
   def ticket_topic_pattern(ticket)

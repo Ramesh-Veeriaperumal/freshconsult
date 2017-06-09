@@ -1,16 +1,16 @@
 
 <div class="message">
 	<% if( HelpdeskReports.locals.current_group_by != "group_id") { %>
-		<%= point.name %> tickets spent <strong><%= point.perc %> %</strong> in <%= point.category %>,  <strong><%= point.time %> hrs</strong> for <strong><%= point.ticket_cnt %> tickets</strong>, Average time <strong><%= point.avg %> hrs/ticket</strong>
+		<%= point.name %> tickets spent <strong><%= point.perc %>%</strong> in <%= point.category %>,  <strong><%= HelpdeskReports.CoreUtil.timeMetricConversion(point.time) %> </strong> for <strong><%= point.ticket_cnt %> tickets</strong>, Average time <strong><%= HelpdeskReports.CoreUtil.timeMetricConversion(point.avg) %> per ticket</strong>
 	<% } else { %>
-		<%= point.name %> tickets spent <strong><%= point.perc %> %</strong> with <%= point.category %>,  <strong><%= point.time %> hrs</strong> for <strong><%= point.ticket_cnt %> tickets</strong>, Average time <strong><%= point.avg %> hrs/ticket</strong>
+		<%= point.name %> tickets spent <strong><%= point.perc %>%</strong> with <%= point.category %>,  <strong><%= HelpdeskReports.CoreUtil.timeMetricConversion(point.time) %> </strong> for <strong><%= point.ticket_cnt %> tickets</strong>, Average time <strong><%= HelpdeskReports.CoreUtil.timeMetricConversion(point.avg) %> per ticket</strong>
 	<% } %>
 </div>
 <table data-table="ticket-data">	
 	<thead>
 		<tr>
 			<th>Status</th>
-			<th>Time Spent (hrs)</th>
+			<th>Time Spent</th>
 			<th>No. of Tickets</th>
 			<th>Avg. time / ticket</th>
 			<th class="action"></th>
@@ -20,9 +20,9 @@
 		<% for ( var i =0;i< keys.length;i++) { %>
 			<tr data-action="ticket-list" data-title="<%= stats[keys[i]].name %>" data-level1="<%= point.condition_id %>" data-level2="<%= point.id %>" data-level3="<%= stats[keys[i]].id %>">
 					<td><%= stats[keys[i]].name %></td>
-					<td><%= (stats[keys[i]].total_time/ 3600).toFixed(2) %> ( <%= stats[keys[i]].percent_time %>% )</td>
+					<td><%= HelpdeskReports.CoreUtil.timeMetricConversion(parseFloat(stats[keys[i]].total_time)) %> (<%= stats[keys[i]].percent_time %>%)</td>
 					<td><%= stats[keys[i]].tkt_count %></td>
-					<td><%= (stats[keys[i]].avg_time/3600).toFixed(2) %></td>
+					<td><%= HelpdeskReports.CoreUtil.timeMetricConversion(stats[keys[i]].avg_time) %></td>
 					<td class="action"><b>&gt;</b></td>
 			</tr>
 		<% } %>

@@ -17,7 +17,7 @@ properties:
   order_type:
     type: string
   per_page:
-    type: number
+    type: integer
   visibility:
     type: object
     properties:

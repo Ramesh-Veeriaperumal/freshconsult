@@ -6,7 +6,7 @@
       type: array
       maxItems: 50
       items:
-        type: number
+        type: integer
         minimum: 1
         example: 987
   required:

@@ -28,7 +28,7 @@ Authority::Authorization::PrivilegeList.build do
                                            :quick_assign, :canned_reponse, :full_paginate, :custom_view_save, :apply_template, :accessible_templates, :search_templates, :show_children,
                                            :filter_options, :filter_conditions, :activities, :status, :get_top_view, :recent_tickets, :old_tickets, :summary, :bulk_scenario,
                                            :execute_bulk_scenario, :activitiesv2, :activities_all, :link, :unlink, :ticket_association,
-                                           :bulk_child_tkt_create, :associated_tickets, :sentiment_feedback, :refresh_requester_widget, :fetch_errored_email_details,:suppression_list_alert]
+                                           :bulk_child_tkt_create, :associated_tickets, :sentiment_feedback, :refresh_requester_widget, :fetch_errored_email_details,:suppression_list_alert, :bulk_fetch_ticket_fields]
     resource :"helpdesk/subscription"
     resource :"helpdesk/tag_use"
     resource :"helpdesk/tag"
@@ -126,6 +126,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/archive_ticket", :only => [:show, :index, :custom_search, :latest_note,
                                                     :full_paginate,  :activities, :component, :prevnext, :activitiesv2, :print_archive]
     resource :"helpdesk/archive_note", :only => [:index, :full_text]
+    resource :"helpdesk/collab_ticket"
 
     resource :"wf/filter", :only => [:index, :update_filter, :save_filter, :delete_filter]
     resource :"profile"
@@ -606,6 +607,8 @@ Authority::Authorization::PrivilegeList.build do
   manage_skills do
     resource :"admin/skill"
     resource :"admin/user_skill"
+    resource :"admin/skill", :only => [:import, :process_csv]
+    resource :"agent", :only => [:export_skill_csv]
   end
 
   client_manager do

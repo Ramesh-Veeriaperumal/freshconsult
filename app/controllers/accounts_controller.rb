@@ -77,12 +77,13 @@ class AccountsController < ApplicationController
   def email_signup
     @signup = Signup.new(params[:signup])
     if @signup.save
-      finish_signup params[:signup]
+      finish_signup
       respond_to do |format|
         format.json {
           render :json => { :success => true,
                             :url => edit_account_domain_url(:perishable_token => @signup.user.perishable_token, :host => @signup.account.full_domain),
-                            :callback => params[:callback]
+                            :callback => params[:callback],
+                            :account_id => @signup.account.id
                           }
         }
       end
@@ -118,7 +119,6 @@ class AccountsController < ApplicationController
   def update_domain
     if current_account.update_default_domain_and_email_config(params["company_domain"],params["support_email"])
       current_user.reset_perishable_token!
-      add_to_crm(current_account.id)
       render json: {  :success => true, 
                       :url => signup_complete_url(:token => current_user.perishable_token, :host => current_account.full_domain)
                     }
@@ -140,7 +140,7 @@ class AccountsController < ApplicationController
   def new_signup_free
    @signup = Signup.new(params[:signup])
    if @signup.save
-      finish_signup params[:signup]
+      finish_signup
       respond_to do |format|
         format.html {
           render :json => { :success => true,
@@ -381,6 +381,7 @@ class AccountsController < ApplicationController
           metrics_obj[:os] = metrics["browser"]["os"]
           metrics_obj[:offset] = metrics["time"]["tz_offset"]
           metrics_obj[:is_dst] = metrics["time"]["observes_dst"]
+          metrics[:signup_method] = action
           metrics_obj[:session_json] = metrics
         else
           metrics_obj = nil
@@ -442,9 +443,9 @@ class AccountsController < ApplicationController
 
     def add_to_crm(account_id)
       if (Rails.env.production? or Rails.env.staging?)
-        Resque.enqueue_at(3.minute.from_now, Marketo::AddLead, { :account_id => account_id,
+        Resque.enqueue_at(15.minute.from_now, Marketo::AddLead, { :account_id => account_id,
           :signup_id => params[:signup_id]})
-        Resque.enqueue_at(5.minute.from_now, CRM::Freshsales::Signup, { account_id: account_id,
+        Resque.enqueue_at(15.minute.from_now, CRM::Freshsales::Signup, { account_id: account_id,
          fs_cookie: params[:fs_cookie] })
       end  
     end  
@@ -577,9 +578,9 @@ class AccountsController < ApplicationController
       @signup.account.mark_new_account_setup_and_save
     end
 
-    def finish_signup params
+    def finish_signup
       @signup.user.reset_perishable_token!
-      save_account_sign_up_params(@signup.account.id, params[:signup])
+      save_account_sign_up_params(@signup.account.id, params[:signup].merge({"signup_method" => action}))
       add_account_info_to_dynamo
       set_account_onboarding_pending
       mark_new_account_setup

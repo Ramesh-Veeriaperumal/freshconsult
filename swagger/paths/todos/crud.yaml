@@ -5,7 +5,8 @@ get:
   parameters:
     - name: id
       in: path
-      type: number
+      type: integer
+      format: int64
       required: true
       description: ID of todo
   responses:
@@ -24,10 +25,7 @@ put:
   tags: [todos]
   description: Update a todo
   parameters:
-    - name: id
-      in: path
-      type: number
-      required: true
+    - $ref: '#/parameters/id'
     - name: data
       in: body
       required: true
@@ -52,10 +50,7 @@ delete:
   summary: Delete todo
   tags: [todos]
   parameters:
-    - name: id
-      in: path
-      type: number
-      required: true
+    - $ref: '#/parameters/id'
   responses:
     204:
       description: Success

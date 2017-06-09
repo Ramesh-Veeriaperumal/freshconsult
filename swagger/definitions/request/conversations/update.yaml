@@ -10,7 +10,7 @@ allOf:
       attachment_ids:
         type: array
         items:
-          type: number
+          type: integer
       cloud_files:
         type: array
         items:

@@ -53,6 +53,7 @@ Sidekiq.configure_client do |config|
       "Tickets::Dump"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
+      "AccountCreation::PopulateSeedData",
       "Tickets::BulkScenario",
       "Tickets::BulkTicketActions",
       "Tickets::BulkTicketReply",
@@ -69,7 +70,10 @@ Sidekiq.configure_client do |config|
       "Admin::ProvisionSandbox",
       "Tickets::LinkTickets",
       "BroadcastMessages::NotifyBroadcastMessages",
-      "BroadcastMessages::NotifyAgent"
+      "BroadcastMessages::NotifyAgent",
+      "Import::SkillWorker",
+      "ExportAgents",
+      "CollaborationWorker"
     ]
   end
 end
@@ -127,6 +131,7 @@ Sidekiq.configure_server do |config|
       "Tickets::Dump"
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
+      "AccountCreation::PopulateSeedData",
       "Tickets::BulkScenario",
       "Tickets::BulkTicketActions",
       "Tickets::BulkTicketReply",
@@ -142,7 +147,10 @@ Sidekiq.configure_server do |config|
       "Admin::ProvisionSandbox",
       "Tickets::LinkTickets",
       "BroadcastMessages::NotifyBroadcastMessages",
-      "BroadcastMessages::NotifyAgent"
+      "BroadcastMessages::NotifyAgent",
+      "Import::SkillWorker",
+      "ExportAgents",
+      "CollaborationWorker"
     ]
 
     chain.add Middleware::Sidekiq::Server::JobDetailsLogger
@@ -187,6 +195,7 @@ Sidekiq.configure_server do |config|
       "DkimSwitchCategoryWorker",
       "DelayedJobs::MailboxJob",
       "Email::S3RetryWorker",
+      "AccountCreation::PopulateSeedData",
       "Tickets::Schedule",
       "Tickets::Dump"
     ]
@@ -206,7 +215,10 @@ Sidekiq.configure_server do |config|
       "Admin::ProvisionSandbox",
       "Tickets::LinkTickets",
       "BroadcastMessages::NotifyBroadcastMessages",
-      "BroadcastMessages::NotifyAgent"
+      "BroadcastMessages::NotifyAgent",
+      "Import::SkillWorker",
+      "ExportAgents",
+      "CollaborationWorker"
     ]
   end
 end

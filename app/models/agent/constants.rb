@@ -37,6 +37,11 @@ class Agent < ActiveRecord::Base
   ]
 
   EXPORT_FIELD_VALUES = EXPORT_FIELDS.map { |field| field[:value] }
+
+  SKILL_EXPORT_FIELDS = {"Name"=>"agent_name", "Email"=>"agent_email",
+                          "Groups"=>"groups", "Skills"=>"skills_name"}
+
+  SKILL_IMPORT_FIELDS = ["Email", "Skills"]
  
   AGENTS_THRESHOLD_FOR_AUTOCOMPLETE_ES = 25
 

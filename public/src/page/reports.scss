@@ -353,6 +353,10 @@ html[dir="rtl"]{
 			    	border-top : 1px solid #e1e1e1;
 			    	padding-top: 10px;
 			    }
+
+				&.nested{
+					margin-left: 18px;
+				}
 			}
 		}
 		.footer{

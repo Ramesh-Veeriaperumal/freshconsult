@@ -5,14 +5,7 @@ module BusinessCalendarExt::Association
   end
 
   def current_business_calendar
-    self.business_calendar ? self.business_calendar : self.business_calendar_default
-  end
-
-  def business_calendar_default
-    key = ::MemcacheKeys::DEFAULT_BUSINESS_CALENDAR % {:account_id => ::Account.current.id}
-    MemcacheKeys.fetch(key) do
-      ::Account.current.business_calendar.default.first
-    end
+    self.business_calendar ? self.business_calendar : Account.current.default_calendar_from_cache
   end
 
   module ClassMethods
@@ -20,10 +13,7 @@ module BusinessCalendarExt::Association
       if caller && ::Account.current.multiple_business_hours_enabled?
         caller.current_business_calendar
       elsif ::Account.current
-        key = ::MemcacheKeys::DEFAULT_BUSINESS_CALENDAR % {:account_id => ::Account.current.id}
-        MemcacheKeys.fetch(key) do
-          ::Account.current.business_calendar.default.first
-        end
+        Account.current.default_calendar_from_cache
       else
         ::BusinessTime::Config
       end

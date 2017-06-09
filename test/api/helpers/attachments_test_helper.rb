@@ -5,7 +5,7 @@ module AttachmentsTestHelper
       content_type: attachment.content_content_type,
       size: attachment.content_file_size,
       name: attachment.content_file_name,
-      attachment_url: String,
+      attachment_url: attachment.inline_image? ? attachment.inline_url : String,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }

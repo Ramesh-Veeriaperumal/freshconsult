@@ -1,10 +1,13 @@
 type: object
 properties:
   survey_id:
-    type: number
+    type: integer
+    format: int64
   agent_id:
-    type: number
+    type: integer
+    format: int64
   group_id:
-    type: number
+    type: integer
+    format: int64
   ratings:
-    type: hash
+    type: object

@@ -30,12 +30,6 @@ window.App.Admin = window.App.Admin || {};
               case 'admin/skills/index':
                   this.currentModule = 'Index';
                   break;
-              case 'admin/skills/new':
-                  this.currentModule = 'New';
-                  break;
-              case 'admin/skills/edit':
-                  this.currentModule = 'Edit';
-                  break;
               default:
                   break;
             }
@@ -48,5 +42,5 @@ window.App.Admin = window.App.Admin || {};
             }
         }
     };
-    
+
 }(window.jQuery));
