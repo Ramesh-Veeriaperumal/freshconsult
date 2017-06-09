@@ -1,106 +1,92 @@
 module Integrations::Constants
   APP_NAMES = {
-    capsule_crm: 'capsule_crm',
-    freshbooks: 'freshbooks',
-    harvest: 'harvest',
-    google_contacts: 'google_contacts',
-    jira: 'jira',
-    sugarcrm: 'sugarcrm',
-    workflow_max: 'workflow_max',
-    salesforce: 'salesforce',
-    logmein: 'logmein',
-    batchbook: 'batchbook',
-    highrise: 'highrise',
-    mailchimp: 'MailChimp',
-    constantcontact: 'ConstantContact',
-    icontact: 'iContact',
-    campaignmonitor: 'CampaignMonitor',
-    nimble: 'nimble',
-    zohocrm: 'zohocrm',
-    google_calendar: 'google_calendar',
-    surveymonkey: 'surveymonkey',
-    dropbox: 'dropbox',
-    shopify: 'shopify',
-    seoshop: 'seoshop',
-    box: 'box',
-    slack: 'slack',
-    quickbooks: 'quickbooks',
-    dynamicscrm: 'dynamicscrm',
-    xero: 'xero',
-    hootsuite: 'hootsuite',
-    onedrive: 'onedrive',
-    github: 'github',
-    ilos: 'ilos',
-    magento: 'magento',
-    slack_v2: 'slack_v2',
-    infusionsoft: 'infusionsoft',
-    pivotal_tracker: 'pivotal_tracker',
-    twitter: 'twitter',
-    facebook: 'facebook',
-    freshsales: 'freshsales',
-    fullcontact: 'fullcontact',
-    cti: 'cti',
-    outlook_contacts: 'outlook_contacts',
-    salesforce_v2: 'salesforce_v2',
-    dynamics_v2: 'dynamics_v2',
-    office365: 'office365',
-    parent_child_tickets: 'parent_child_tickets',
-    link_tickets: 'link_tickets',
-    shared_ownership: 'shared_ownership'
-  }.freeze
+    :capsule_crm => "capsule_crm",
+    :freshbooks => "freshbooks",
+    :harvest => "harvest",
+    :google_contacts => "google_contacts",
+    :jira => "jira",
+    :sugarcrm => "sugarcrm",
+    :workflow_max => "workflow_max",
+    :salesforce => "salesforce",
+    :logmein => "logmein",
+    :batchbook => "batchbook",
+    :highrise => "highrise",
+    :mailchimp => "MailChimp",
+    :constantcontact => "ConstantContact",
+    :icontact => "iContact",
+    :campaignmonitor => "CampaignMonitor",
+    :nimble => "nimble",
+    :zohocrm => "zohocrm",
+    :google_calendar => "google_calendar",
+    :surveymonkey => "surveymonkey",
+    :dropbox => 'dropbox',
+    :shopify => "shopify",
+    :seoshop => "seoshop",
+    :box => 'box',
+    :slack => "slack",
+    :quickbooks => "quickbooks",
+    :dynamicscrm => "dynamicscrm",
+    :xero => "xero",
+    :hootsuite => "hootsuite",
+    :onedrive => "onedrive",
+    :github => "github",
+    :ilos => "ilos",
+    :magento => "magento",
+    :slack_v2 => "slack_v2",
+    :infusionsoft => "infusionsoft",
+    :pivotal_tracker => "pivotal_tracker",
+    :twitter => "twitter",
+    :facebook => "facebook",
+    :freshsales => "freshsales",
+    :fullcontact => "fullcontact",
+    :cti => "cti",
+    :outlook_contacts => "outlook_contacts",
+    :salesforce_v2 => "salesforce_v2",
+    :dynamics_v2 => "dynamics_v2",
+    :office365 => "office365",
+    :parent_child_tickets => "parent_child_tickets",
+    :link_tickets => "link_tickets",
+    :shared_ownership => "shared_ownership"
+  }
 
-  DISPLAY_IN_PAGES = { 'ticket_show' => 2, 'contact_show' => 1, 'company_show' => 0, 'time_sheet_show' => 3, 'editor_show' => 4 }.freeze
+  DISPLAY_IN_PAGES = { "ticket_show" => 2, "contact_show" => 1, "company_show" => 0 }
 
-  # Need to check whether we need to update the DB or not
-  APPS_DISPLAY_MAPPING = {
-    APP_NAMES[:jira] => 4,
-    APP_NAMES[:zohocrm] => 6,
-    APP_NAMES[:mailchimp].downcase => 2,
-    APP_NAMES[:salesforce_v2] => 6,
-    APP_NAMES[:harvest] => 8,
-    APP_NAMES[:dropbox] => 16,
-    APP_NAMES[:surveymonkey] => 16,
-    APP_NAMES[:google_calendar] => 4
-  }.freeze
-
-  CRM_APPS = [:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm, :quickbooks, :freshbooks, :infusionsoft, :freshsales, :salesforce_v2, :dynamics_v2].freeze
+  CRM_APPS= [:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm, :quickbooks, :freshbooks, :infusionsoft, :freshsales, :salesforce_v2, :dynamics_v2]
 
   APP_CATEGORY_ID_TO_NAME = {
     10 => :custom,
     11 => :crm,
     12 => :invoicing,
     13 => :google
-  }.freeze
-  APP_CATEGORY_NAME_TO_ID = Hash[APP_CATEGORY_ID_TO_NAME.map { |val| [val[1], val[0]] }]
+  }
+  APP_CATEGORY_NAME_TO_ID = Hash[APP_CATEGORY_ID_TO_NAME.map{|val| [val[1], val[0]]}]
 
   SYSTEM_ACCOUNT_ID = 0
 
-  CRM_MODULE_TYPES = %w(account contact lead).freeze
+  CRM_MODULE_TYPES = ["account", "contact", "lead"]
 
-  CRM_INSTANCE_TYPES = { 'on_demand' => 'On-Demand', 'on_premise' => 'On-Premise' }.freeze
+  CRM_INSTANCE_TYPES = { "on_demand" => "On-Demand", "on_premise" => "On-Premise" }
 
-  DYNAMICS_CRM_CONSTANTS = { 'rst2_login_url' => 'https://login.microsoftonline.com/RST2.srf' }.freeze
+  DYNAMICS_CRM_CONSTANTS = { "rst2_login_url" => "https://login.microsoftonline.com/RST2.srf" }
 
-  GOOGLE_CONTACTS = { 'provider' => 'google_contacts', 'app_name' => 'google_contacts' }.freeze
+  GOOGLE_CONTACTS = {"provider" => "google_contacts", "app_name" => "google_contacts"}
 
-  ZOHO_CRM_PODS = { us: 'https://crm.zoho.com', eu: 'https://crm.zoho.EU' }.freeze
+  ZOHO_CRM_PODS = {:us => "https://crm.zoho.com", :eu => "https://crm.zoho.EU"}
 
-  SUCCESS = 'success'.freeze
-  FAILURE = 'failure'.freeze
+  SUCCESS = "success"
+  FAILURE = "failure"
 
-  INVOICE_APPS = [APP_NAMES[:quickbooks], APP_NAMES[:freshbooks]].freeze
+  INVOICE_APPS = [APP_NAMES[:quickbooks], APP_NAMES[:freshbooks]]
 
-  CAMPAIGN_APPS = [:mailchimp, :icontact, :constantcontact, :campaignmonitor].freeze
+  CAMPAIGN_APPS = [:mailchimp, :icontact, :constantcontact, :campaignmonitor]
 
-  TIMESHEET_APPS = [APP_NAMES[:freshbooks], APP_NAMES[:harvest], APP_NAMES[:workflow_max], APP_NAMES[:quickbooks]].freeze
+  TIMESHEET_APPS = [APP_NAMES[:freshbooks], APP_NAMES[:harvest], APP_NAMES[:workflow_max], APP_NAMES[:quickbooks]]
 
-  ATTACHMENT_APPS = [APP_NAMES[:dropbox]].freeze
+  FRESHPLUG = 'freshplug'
 
-  FRESHPLUG = 'freshplug'.freeze
+  NON_EDITABLE_APPS = ["mailchimp", "constantcontact", "nimble", "google_calendar", "shopify", "box", "onedrive"]
 
-  NON_EDITABLE_APPS = %w(mailchimp constantcontact nimble google_calendar shopify box onedrive).freeze
-
-  CONTACTS_SYNC_APPS = [APP_NAMES[:outlook_contacts]].freeze
+  CONTACTS_SYNC_APPS = [APP_NAMES[:outlook_contacts]]
 
   CONTACTS_SYNC_ACCOUNTS_LIMIT = 10
 

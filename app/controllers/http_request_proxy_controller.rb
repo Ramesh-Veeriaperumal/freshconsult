@@ -2,13 +2,12 @@ class HttpRequestProxyController < ApplicationController
 
   include Integrations::AppsUtil
   include Integrations::Constants
-  include Integrations::Mailchimp::Constant
   include Redis::IntegrationsRedis
 
   skip_before_filter :check_privilege
   before_filter :authenticated_agent_check 
   before_filter :populate_server_password
-  before_filter :verify_domain 
+  before_filter :verify_domain
   before_filter :populate_additional_headers
 
   DOMAIN_WHITELIST = "INTEGRATION_WHITELISTED_DOMAINS"
@@ -23,7 +22,7 @@ class HttpRequestProxyController < ApplicationController
   end
 
   private
-    def populate_server_password
+    def populate_server_password  
       if params[:use_server_password].present?
         installed_app = current_account.installed_applications.with_name(params[:app_name]).first
         if params[:app_name] == "icontact"
@@ -57,7 +56,7 @@ class HttpRequestProxyController < ApplicationController
           if params[:company_id].present?
             company_name = spl_char_replace current_account.companies.find(params[:company_id]).name
           end
-    		  params[:body] = params[:body] % { :SESSION_ID => installed_app.configs[:inputs]['session_id'], :company_name => company_name}
+          params[:body] = params[:body] % { :SESSION_ID => installed_app.configs[:inputs]['session_id'], :company_name => company_name}
         elsif params[:app_name] == "czentrix" #adding this as a hack in here. ideally it should not be here.
           params[:domain] = "#{request.protocol}#{installed_app.configs[:inputs][:host_ip]}"
           @domain_verified = true
@@ -90,7 +89,7 @@ class HttpRequestProxyController < ApplicationController
     end
 
     def verify_domain
-      return if @domain_verified
+      return if @domain_verified ||  Rails.env.development?
       begin
         parsed_url = URI.parse(params[:domain])
         parsed_url = URI.parse("#{request.protocol}#{params[:domain]}") if parsed_url.scheme.nil?

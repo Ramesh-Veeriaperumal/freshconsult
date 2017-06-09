@@ -140,10 +140,10 @@ Helpkit::Application.routes.draw do
 
     resources :company_fields, as: 'api_company_fields', controller: 'api_company_fields', only: [:index]
 
-    namespace :api_integrations, path: 'integrations' do
-      namespace :cti, path: 'cti' do
-        post :pop, action: :create
-        get :details, action: :index
+    namespace :api_integrations, :path => "integrations" do
+      namespace :cti, :path => "cti" do
+        post :pop, :action => :create
+        get :details, :action => :index
       end
     end
     resources :sla_policies, controller: 'api_sla_policies', only: [:index, :update]
