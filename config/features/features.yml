@@ -81,6 +81,7 @@
       :multi_dynamic_sections: 76
       :caching: 77
       :collaboration: 78
+      :auto_ticket_export: 79
 :selectable_features:
       :branding: true
       :gamification_enable: false

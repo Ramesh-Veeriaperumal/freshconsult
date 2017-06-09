@@ -136,8 +136,8 @@ window.App = window.App || {};
     },
 
 		checkSelectAll: function(length, elements, selectAllValue){
-			if(length > 100){
-				elements.slice(0,100).prop('checked',selectAllValue);
+			if(length > 150){
+				elements.slice(0,150).prop('checked',selectAllValue);
 			}else{
 				elements.prop('checked',selectAllValue);
 			}
