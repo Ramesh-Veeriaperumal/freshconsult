@@ -5,6 +5,9 @@
 commitMsgFile=$1
 type=$2 
 
-
-cat $commitMsgFile >> /tmp/x
-sed -i ' ' -e '1s/^/FDCORE\-  \: /' $commitMsgFile
+#Don't apply FDCORE- commit message for merge commits
+#And for non terminal git clients
+if [ "$type" != "merge" -a -t 1 ] 
+then 
+  sed -i ' ' -e '1s/^/FDCORE\-\: /' $commitMsgFile
+fi;
