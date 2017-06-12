@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "a35e4bcffd43eaf4e51644ea919b37abb27c23f0c3ae36f62b51d81e31a57197",
-    "current": "a35e4bcffd43eaf4e51644ea919b37abb27c23f0c3ae36f62b51d81e31a57197"
+    "previous": "c6c5f22568ee791c65c28ff1c0f0132956c189ed1f98853e59985ba193049261",
+    "current": "c6c5f22568ee791c65c28ff1c0f0132956c189ed1f98853e59985ba193049261"
   },
   "fonts": [
-    "public/assets/glyphs_a35e4bcffd43eaf4e51644ea919b37ab.ttf",
-    "public/assets/glyphs_a35e4bcffd43eaf4e51644ea919b37ab.svg",
-    "public/assets/glyphs_a35e4bcffd43eaf4e51644ea919b37ab.woff",
-    "public/assets/glyphs_a35e4bcffd43eaf4e51644ea919b37ab.eot"
+    "public/assets/glyphs_c6c5f22568ee791c65c28ff1c0f01329.ttf",
+    "public/assets/glyphs_c6c5f22568ee791c65c28ff1c0f01329.svg",
+    "public/assets/glyphs_c6c5f22568ee791c65c28ff1c0f01329.woff",
+    "public/assets/glyphs_c6c5f22568ee791c65c28ff1c0f01329.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -43,7 +43,7 @@
       "source": "public/glyphs/vectors/agent-fchat-off.svg"
     },
     "agent-fchat-on": {
-      "codepoint": 61873,
+      "codepoint": 62080,
       "source": "public/glyphs/vectors/agent-fchat-on.svg"
     },
     "agent_summary": {
@@ -779,15 +779,15 @@
       "source": "public/glyphs/vectors/horizontal-line.svg"
     },
     "huddle-group": {
-      "codepoint": 62075,
+      "codepoint": 62074,
       "source": "public/glyphs/vectors/huddle-group.svg"
     },
     "huddle-logo": {
-      "codepoint": 62076,
+      "codepoint": 62075,
       "source": "public/glyphs/vectors/huddle-logo.svg"
     },
     "huddle-logo-dark": {
-      "codepoint": 62080,
+      "codepoint": 62076,
       "source": "public/glyphs/vectors/huddle-logo-dark.svg"
     },
     "huddle-logo-green": {
@@ -1490,6 +1490,7 @@
     },
     "preprocessor_path": "",
     "quiet": false,
+    "skip_first": false,
     "templates": [
       "scss",
       "_glyphs-variables.scss",

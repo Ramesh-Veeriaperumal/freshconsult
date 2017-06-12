@@ -72,7 +72,8 @@ Sidekiq.configure_client do |config|
       "BroadcastMessages::NotifyBroadcastMessages",
       "BroadcastMessages::NotifyAgent",
       "Import::SkillWorker",
-      "ExportAgents"
+      "ExportAgents",
+      "CollaborationWorker"
     ]
   end
 end
@@ -148,7 +149,8 @@ Sidekiq.configure_server do |config|
       "BroadcastMessages::NotifyBroadcastMessages",
       "BroadcastMessages::NotifyAgent",
       "Import::SkillWorker",
-      "ExportAgents"
+      "ExportAgents",
+      "CollaborationWorker"
     ]
 
     chain.add Middleware::Sidekiq::Server::JobDetailsLogger
@@ -215,7 +217,8 @@ Sidekiq.configure_server do |config|
       "BroadcastMessages::NotifyBroadcastMessages",
       "BroadcastMessages::NotifyAgent",
       "Import::SkillWorker",
-      "ExportAgents"
+      "ExportAgents",
+      "CollaborationWorker"
     ]
   end
 end

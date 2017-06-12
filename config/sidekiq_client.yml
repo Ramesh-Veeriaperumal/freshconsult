@@ -183,6 +183,7 @@ defaults: &defaults
     - [scheduled_ticket_export_config]
     - [skill_import]
     - [send_signup_activation_mail]
+    - [collaboration_publish]
 
 development:
   <<: *defaults
