@@ -8,7 +8,7 @@ class SAAS::SubscriptionActions
 
   ADD_DATA_FEATURES   = [ :round_robin ]
   
-  ONLY_BITMAP_FEATURES = (Account::ADVANCED_FEATURES_TOGGLE + [:shared_ownership_toggle])
+  ONLY_BITMAP_FEATURES = (Account::ADVANCED_FEATURES_TOGGLE + [:shared_ownership_toggle, :auto_ticket_export, :ticket_activity_export])
 
   DROP  = "drop"
   ADD   = "add"
