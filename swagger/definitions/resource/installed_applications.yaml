@@ -15,5 +15,5 @@ allOf:
         type: integer
         description: Display option of the App
       configs:
-        type: hash
+        type: object
         description: Installed App Configs

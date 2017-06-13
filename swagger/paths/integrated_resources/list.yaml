@@ -4,17 +4,17 @@ get:
   description: List the integrated resource of the currently logged in user 
   parameters:
     - name: installed_application_id
-      in: path
-      type: number
+      in: query
+      type: integer
       required: true
     - name: local_integratable_id
-      in: path
-      type: number
+      in: query
+      type: integer
+      format: int64
       required: true
     - name: local_integratable_type
-      in: path
+      in: query
       type: string
-      required: false
   responses:
     200:
       description: Success

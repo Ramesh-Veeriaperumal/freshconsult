@@ -9,7 +9,7 @@ allOf:
         type: integer
         description: User Id
       auth_info:
-        type: hash
+        type: object
         description: Auth configs
       remote_user_id:
         type: string

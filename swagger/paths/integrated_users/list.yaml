@@ -4,12 +4,12 @@ get:
   description: List the integrated user resource
   parameters:
     - name: installed_application_id
-      in: path
-      type: number
+      in: query
+      type: integer
       required: true
     - name: user_id
-      in: path
-      type: number
+      in: query
+      type: integer
       required: true
   responses:
     200:

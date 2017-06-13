@@ -2937,21 +2937,21 @@
         "parameters": [
           {
             "name": "installed_application_id",
-            "in": "path",
-            "type": "number",
+            "in": "query",
+            "type": "integer",
             "required": true
           },
           {
             "name": "local_integratable_id",
-            "in": "path",
-            "type": "number",
+            "in": "query",
+            "type": "integer",
+            "format": "int64",
             "required": true
           },
           {
             "name": "local_integratable_type",
-            "in": "path",
-            "type": "string",
-            "required": false
+            "in": "query",
+            "type": "string"
           }
         ],
         "responses": {
@@ -2980,18 +2980,45 @@
         "tags": [
           "Integrated Resources"
         ],
-        "summary": "Resource Details",
+        "summary": "View a resource",
+        "description": "Details of a selected resource",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "type": "number",
+            "type": "integer",
+            "format": "int64",
             "required": true,
             "description": "Resource Id"
           }
         ],
         "responses": {
           "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/integrated_resources"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Integrated Resources"
+        ],
+        "summary": "Create resource",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/integrated_resource_create"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/integrated_resources"
@@ -3008,7 +3035,9 @@
           {
             "name": "id",
             "in": "path",
-            "type": "number",
+            "type": "integer",
+            "format": "int64",
+            "description": "Resource id to be deleted",
             "required": true
           }
         ],
@@ -3018,31 +3047,6 @@
           },
           "404": {
             "description": "Resource not available"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Integrated Resources"
-        ],
-        "summary": "Create resource",
-        "parameters": [
-          {
-            "name": "data",
-            "type": "object",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/integrated_resource_create"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/integrated_resources"
-            }
           }
         }
       }
@@ -3057,14 +3061,14 @@
         "parameters": [
           {
             "name": "installed_application_id",
-            "in": "path",
-            "type": "number",
+            "in": "query",
+            "type": "integer",
             "required": true
           },
           {
             "name": "user_id",
-            "in": "path",
-            "type": "number",
+            "in": "query",
+            "type": "integer",
             "required": true
           }
         ],
@@ -3099,7 +3103,7 @@
           {
             "name": "id",
             "in": "path",
-            "type": "number",
+            "type": "integer",
             "required": true,
             "description": "Resource Id"
           }
@@ -4196,40 +4200,43 @@
     },
     "integrated_resource_create": {
       "type": "object",
+      "required": [
+        "application_id",
+        "integrated_resource"
+      ],
       "properties": {
         "application_id": {
-          "type": "number",
+          "type": "integer",
           "description": "App id"
         },
         "integrated_resource": {
           "type": "object",
           "description": "Resource hash",
           "properties": {
+            "local_integratable_id": {
+              "type": "integer",
+              "format": "int64"
+            },
             "local_integratable_type": {
               "type": "string",
               "enum": [
-                "Ticket"
-              ]
-            },
-            "local_integratable_id": {
-              "type": "number"
+                "Ticket",
+                "Timesheet"
+              ],
+              "description": "Whether the local integratable type is ticket or timesheet"
             },
             "remote_integratable_id": {
               "type": "string"
             },
             "installed_application_id": {
-              "type": "number"
+              "type": "integer"
             },
             "remote_integratable_type": {
               "type": "string"
             }
           }
         }
-      },
-      "required": [
-        "application_id",
-        "integrated_resource"
-      ]
+      }
     },
     "contact": {
       "type": "object",
@@ -4952,7 +4959,7 @@
               "description": "Display option of the App"
             },
             "configs": {
-              "type": "hash",
+              "type": "object",
               "description": "Installed App Configs"
             }
           }
@@ -4976,7 +4983,7 @@
               "description": "User Id"
             },
             "auth_info": {
-              "type": "hash",
+              "type": "object",
               "description": "Auth configs"
             },
             "remote_user_id": {

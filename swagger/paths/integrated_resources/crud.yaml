@@ -1,14 +1,31 @@
 get:
   tags: [Integrated Resources]
-  summary: Resource Details
+  summary: View a resource
+  description: Details of a selected resource
   parameters:
     - name: id
       in: path
-      type: number
+      type: integer
+      format: int64
       required: true
       description: Resource Id
   responses:
     200:
+      description: Success
+      schema:
+        $ref: '#/definitions/integrated_resources'
+post:
+  tags: [Integrated Resources]
+  summary: Create resource
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        type: object
+        $ref: '#/definitions/integrated_resource_create'
+  responses:
+    201:
       description: Success
       schema:
         $ref: '#/definitions/integrated_resources'
@@ -18,25 +35,12 @@ delete:
   parameters:
     - name: id
       in: path
-      type: number
+      type: integer
+      format: int64
+      description: Resource id to be deleted
       required: true
   responses:
     204:
       description: Success
     404:
       description: Resource not available
-post:
-  tags: [Integrated Resources]
-  summary: Create resource
-  parameters:
-    - name: data
-      type: object
-      in: body
-      required: true
-      schema:
-        $ref: '#/definitions/integrated_resource_create'
-  responses:
-    201:
-      description: Success
-      schema:
-        $ref: '#/definitions/integrated_resources'
