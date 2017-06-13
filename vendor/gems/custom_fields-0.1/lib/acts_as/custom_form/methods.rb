@@ -28,7 +28,7 @@ module ActAs
       def ff_aliases
         custom_fields_cache.nil? ? [] : custom_fields_cache.map(&:name)
       end
-      
+
       def non_text_ff_aliases
         custom_fields_cache.nil? ? [] : non_text_fields.map(&:name)
       end

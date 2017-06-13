@@ -11,7 +11,7 @@ class Helpdesk::TicketDrop < BaseDrop
   end
 
   def subject
-    @source.subject
+    h(@source.subject)
   end
 
   def id
@@ -247,15 +247,10 @@ class Helpdesk::TicketDrop < BaseDrop
   end
 
   def before_method(method)
-    custom_fields = @source.custom_field
-    mappings = @source.custom_field_type_mappings
     field_name = "#{method}_#{@source.account_id}"
-    if custom_fields[field_name]
-      mappings[field_name] == "custom_date" ? formatted_date(custom_fields[field_name]) : 
-                                                                custom_fields[field_name]
-    else
-      super
-    end
+    required_field_value = @source.custom_field[field_name]
+    required_field_type = @source.custom_field_type_mappings[field_name]
+    formatted_field_value(required_field_type.to_sym, required_field_value)
   end
 
   def current_portal

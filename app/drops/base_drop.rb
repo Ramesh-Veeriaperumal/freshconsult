@@ -103,4 +103,21 @@ class BaseDrop < Liquid::Drop
       @page = max_page and return if respond_to?(:max_page, true) && (@page == "last" or @page.to_i > max_page)
       @page = 1 if @page.to_i.to_s != @page || @page.to_i <= 0
     end
+
+    def formatted_field_value(field_type, field_value)
+      if(field_type)
+        case field_type
+        when :custom_paragraph
+          h(field_value).gsub(/\n/, '<br/>')
+        when :custom_text
+          h(field_value)
+        when :custom_date
+          formatted_date(field_value)
+        else 
+          field_value
+        end
+      else
+        super
+      end
+    end
 end

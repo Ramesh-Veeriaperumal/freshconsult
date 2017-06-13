@@ -21,17 +21,9 @@ class CompanyDrop < BaseDrop
   end
 	
   def before_method(method)
-    custom_fields = @source.custom_field
-    field_types =  @source.custom_field_types
-    if(custom_fields["cf_#{method}"] || field_types["cf_#{method}"])
-      unless custom_fields["cf_#{method}"].blank?
-        return custom_fields["cf_#{method}"].gsub(/\n/, '<br/>') if field_types["cf_#{method}"] == :custom_paragraph
-        return formatted_date(custom_fields["cf_#{method}"]) if field_types["cf_#{method}"] == :custom_date
-      end
-      custom_fields["cf_#{method}"] 
-    else
-      super
-    end
+    required_field_value = @source.custom_field["cf_#{method}"]
+    required_field_type = @source.custom_field_types["cf_#{method}"]
+    formatted_field_value(required_field_type, required_field_value)
   end
-  
+
 end
