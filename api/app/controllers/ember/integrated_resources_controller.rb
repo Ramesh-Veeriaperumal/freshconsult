@@ -77,7 +77,7 @@ module Ember
         local_integratable_type = integ_resource.local_integratable_type
         if local_integratable_type == ::IntegratedResourceConstants::TICKET
           ticket = Account.current.tickets.find_by_id(integ_resource.local_integratable_id)
-        elsif local_integratable_type == ::IntegratedResourceConstants::TICKET
+        elsif local_integratable_type == ::IntegratedResourceConstants::TIMESHEET
           ticket = fetch_ticket_using_workable_id(integ_resource.local_integratable_id)
         end
         verify_ticket_state ticket
@@ -102,7 +102,7 @@ module Ember
         if params[:integrated_resource][:local_integratable_type] == ::IntegratedResourceConstants::TICKET
           local_integratable_id = params[:integrated_resource][:local_integratable_id]
           ticket = fetch_ticket_using_display_id(local_integratable_id)
-        elsif params[:integrated_resource][:local_integratable_type] == ::IntegratedResourceConstants::TICKET
+        elsif params[:integrated_resource][:local_integratable_type] == ::IntegratedResourceConstants::TIMESHEET
           ticket = fetch_ticket_using_workable_id(params[:integrated_resource][:local_integratable_id])
         end
         verify_ticket_state ticket
