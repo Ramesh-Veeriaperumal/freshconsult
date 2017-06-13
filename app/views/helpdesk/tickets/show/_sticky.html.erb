@@ -34,17 +34,6 @@
 
 		<div class="ticket-actions" data-domhelper-name="ticket-actions">
 			<ul class="collapse-content" data-domhelper-name="ticket-action-options">
-				<% if feature?(:collaboration) %>
-					<li class="ticket-btns">
-						<div id="collab-btn" class="collab-btn btn tooltip" data-placement = "below"
-							title='<%= "#{t('helpdesk.start_collab')}" %>' 
-							data-hotkey='<%="#{shortcut('ticket_detail.collaboration')}" %>'>
-							<span class="collab-logo">
-								<img class="logo-image" alt="Logo" data-type="logo" onerror="default_image_error(this)" src="/assets/collab/collab-logo.svg">
-							</span>
-						</div>
-					</li>
-				<% end %>
 				<% unless @ticket.deleted or @ticket.spam %>
 				<li class="ticket-btns">
 					<div class="watchers_tooltip hide" id="new_watcher_page"
@@ -68,6 +57,20 @@
 				</li>
 				<% end %>
 
+				
+				<% if current_account.collaboration_enabled? %>
+					<li class="ticket-btns">
+						<div id="collab-btn" class="collab-btn btn tooltip" data-placement = "below"
+							title='<%= "#{t('helpdesk.start_collab')}" %>' 
+							data-hotkey='<%="#{shortcut('ticket_detail.collaboration')}" %>'>
+							<span class="collab-logo">
+								<img class="logo-image" alt="Logo" data-type="logo" onerror="default_image_error(this)" src="/assets/collab/huddle-logo.svg">
+								<img class="logo-image collab-filled" alt="Logo" data-type="logo" onerror="default_image_error(this)" src="/assets/collab/huddle-filled.svg">
+							</span>
+							<%= t('collaboration.discuss')  %>
+						</div>
+					</li>
+				<% end %>
 				
 				<li class="ticket-btns">
 					<div class="btn-group">

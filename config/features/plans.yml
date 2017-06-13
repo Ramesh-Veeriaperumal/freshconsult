@@ -40,6 +40,7 @@
       - :default_survey
       - :sitemap
       - :requester_widget
+      - :advanced_search
     :inherits: 
       - :sprout_jan_17
     :exclude: []

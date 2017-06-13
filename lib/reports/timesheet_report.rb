@@ -305,11 +305,11 @@ module Reports::TimesheetReport
     end
 
     Account.current.nested_fields_from_cache.each do |col|
+      id = col.flexifield_def_entry.flexifield_name
+      report_columns_arr.push({name: col.label, id:id, default: false, is_custom: true})
       col.nested_ticket_fields(:include => :flexifield_def_entry).each do |nested_col|
-
-        report_columns_arr.push({name: nested_col.label, id:nested_col.flexifield_def_entry.flexifield_name, default: false, is_custom: true})
+        report_columns_arr.push({name: nested_col.label, id:nested_col.flexifield_def_entry.flexifield_name, default: false, is_custom: true, nested:id})
       end
-      report_columns_arr.push({name: col.label, id:col.flexifield_def_entry.flexifield_name, default: false, is_custom: true})
     end
 
     @report_columns = report_columns_arr
@@ -423,13 +423,15 @@ module Reports::TimesheetReport
     end
   end
 
-  def custom_filters_enabled?
-    return Account.current.launched?(:custom_timesheet)
-  end
-
   def select_flexiconditions
     @flexi_conditions = {}
-    params[:report_filters].each do |filter|
+    report_filters = []
+    if params[:current_params].nil?
+      report_filters = params[:report_filters]
+    elsif params[:current_params][:report_filters]
+      report_filters = params[:current_params][:report_filters].values
+    end
+    report_filters.each do |filter|
       if filter[:condition].to_s.start_with?('ffs')
         name = filter[:condition]
         key = "@#{name}"
@@ -746,7 +748,7 @@ module Reports::TimesheetReport
 
   def construct_timesheet_entries
     params[:current_params].each { |name, value| instance_variable_set("@#{name}", (value || [])) }
-    @billable.map!{|b| b.to_bool} if @billable
+    @billable.map!{|b| b.to_s.to_bool} if @billable
     offset = params[:scroll_position].to_i * TIMESHEET_ROWS_LIMIT
     @current_group = [group_by_caluse]
     [:totaltime, :group_names, :latest_timesheet_id].each { |param| instance_variable_set("@#{param}", params[param])}

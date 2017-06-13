@@ -51,7 +51,10 @@ module Helpdesk::SendAndSetHelper
 
   def load_or_show_error(load_notes = false)
     return redirect_to support_ticket_url(@ticket) if @ticket and current_user.customer?
-    helpdesk_restricted_access_redirection(@ticket, 'flash.agent_as_requester.ticket_show') if @ticket and @ticket.restricted_in_helpdesk?(current_user)
+    if @ticket 
+      return helpdesk_restricted_access_redirection(@ticket, 'flash.agent_as_requester.ticket_show') if @ticket.restricted_in_helpdesk?(current_user)
+      return helpdesk_restricted_access_redirection(@ticket, nil, t("flash.general.access_denied").html_safe) unless current_user && current_user.has_ticket_permission?(@ticket) && !@ticket.trashed
+    end
     load_archive_ticket(load_notes) unless @ticket
   end
 

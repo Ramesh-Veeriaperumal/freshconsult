@@ -1,0 +1,56 @@
+// Styles for plugins used in freshdesk
+@import "settings/settings";
+
+.import-skills-wrapper {
+	.import-container {
+		border: 1px solid #eee;
+		border-radius: 4px;
+		.import-right-contnet {
+			background: #F9F7F9;
+			@include border-left( 1px solid #eee);
+			@include padding(15px 18px 15px);
+			.btn-download-xls{
+				background: #fff;
+				@include border-width(1px 1px 2px);
+			}
+			.fileUpload {
+		    position: relative;
+		    overflow: hidden;
+		    background: #fff;
+		    border-width: 1px 1px 2px;
+		    @include padding(5px 22px);
+		    input.upload{
+			    position: absolute;
+			    top: 0;
+			    right: 0;
+			    margin: 0;
+			    padding: 0;
+			    font-size: 20px;
+			    cursor: pointer;
+			    opacity: 0;
+			    filter: alpha(opacity=0);
+				}
+			}
+			.important {
+				color:#CB1214;
+				font-weight: 500;
+				.important-content {
+					position: relative;
+					top:-1px;
+					@include padding(2px);
+				}
+			}
+			.import-notes-wrapper {
+				list-style-type: disc;
+				li{
+					@include margin(10px 10px 10px 19px)
+				}
+			}
+			.close {
+				position: relative;
+				top: 2px;
+				cursor: pointer;
+	    }
+		}
+	}
+}

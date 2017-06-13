@@ -127,6 +127,16 @@ window.App.FilterOps = window.App.FilterOps || {};
          var config = {
             maximumSelectionSize: 5
         };
+        if(condition == "requesters") {
+            config.maximumSelectionSize = 3;
+            config.formatResult = function(state) {
+              return "<div style='font-weight:bold'>" + state.value + "</div><div>" + state.email + "</div>";
+            };
+            config.formatSelection = function(state) {
+              return "<div>" + state.value + "</div>";
+            };
+            config.escapeMarkup = function(m) { return m; };
+        }
 
          config.ajax = {
             url: "/search/autocomplete/" + _this.filter_remote_url[condition],

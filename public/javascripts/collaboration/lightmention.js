@@ -5,6 +5,7 @@
     var DEF_DELIMITER = "@";
     var DEF_APPENDSPACE = true;
     var DEF_MATCH_CASE = false;
+    var DEF_SUBSTRING_MATCH = false;
     var DEF_MIN_CHAR = 0;
     var UP_KEY = 38;
     var DOWN_KEY = 40;
@@ -19,6 +20,7 @@
     function setOptions(opt) {
         this.data = opt.data;
         this.editor = opt.editor;
+        this.substringMatch = opt.substringMatch || DEF_SUBSTRING_MATCH;
         this.delimiter = opt.delimiter || DEF_DELIMITER;
         this.maxItems = opt.maxItems || DEF_MAX_ITEM;
         this.filterKeys = opt.filterKeys || DEF_FILTER_KEYS;
@@ -225,9 +227,16 @@
 
                 var target = !!self.matchCase ? user_json[filter_key] : (user_json[filter_key] ? user_json[filter_key].toLowerCase() : "");
                 var item_to_check = !!self.matchCase ? item : item.toLowerCase();
-                if(target.indexOf(item_to_check) >= 0) {
-                    res.push(data[user_json_idx]);
-                    break;
+                if(!!self.substringMatch) {
+                    if(target.indexOf(item_to_check) >= 0) {
+                        res.push(data[user_json_idx]);
+                        break;
+                    }
+                } else {
+                    if(target.match(new RegExp("\\b" + item_to_check, "ig")) !== null) {
+                        res.push(data[user_json_idx]);
+                        break;
+                    }
                 }
             }
         }
@@ -260,7 +269,7 @@
             // li.setAttribute("data-lm-tag", list[i][self.tagAttribute]);
             // li.innerHTML = list[i][self.tagAttribute];
 
-            li.setAttribute("data-lm-tag", list[i][self.tagAttribute] || list[i].mention_text); // Added by FD
+            li.setAttribute("data-lm-tag", list[i][self.tagAttribute]); // Added by FD
             li.innerHTML = JST["collaboration/templates/collaborators_list_item"]({ "data": list[i]}); // Added by FD
             
             li.addEventListener("click", function(event) {

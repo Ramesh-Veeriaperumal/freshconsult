@@ -47,6 +47,7 @@ window.Fjax = {
 	    this.bodyClass = null;
 
     	this._setLoading();
+    this._updateInlineManual();
     	return true;
     },
 
@@ -247,6 +248,13 @@ window.Fjax = {
           }
         })
       }
+    },
+
+    _updateInlineManual: function() {
+      if (typeof(inline_manual_player) != 'undefined' ) { 
+        inline_manual_player.update();
+      }
+
     }
 }
 

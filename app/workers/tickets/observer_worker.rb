@@ -16,9 +16,12 @@ module Tickets
 
         if evaluate_on.present? and (doer.present? || system_event)
           Thread.current[:observer_doer_id] = doer_id || SYSTEM_DOER_ID
+          aggregated_response_time = 0
           account.observer_rules_from_cache.each do |vr|
             vr.check_events doer, evaluate_on, current_events
+            aggregated_response_time += vr.response_time[:matches] || 0
           end
+          Rails.logger.debug "Response time :: #{aggregated_response_time}"
           evaluate_on.round_robin_on_ticket_update(current_events) if evaluate_on.rr_allowed_on_update?
           evaluate_on.save!
           evaluate_on.va_rules_after_save_actions.each do |action|

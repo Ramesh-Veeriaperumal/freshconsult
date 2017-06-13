@@ -33,9 +33,11 @@
 	</ul>
 
 	<div class="tab-content">
-		<div id="points" class="tab-pane active">
-			<%= render :partial => "gamification_settings" %>
-		</div>			  
+			<div id="points" class="tab-pane active">
+				<% if current_account.scoreboard_levels.present? %>
+					<%= render :partial => "gamification_settings" %>
+				<% end %>	
+			</div>			  
 		<div id="quests" class="tab-pane">
 			<%= render :partial => "/admin/quests/index" %>
 		</div>

@@ -3,7 +3,9 @@ module Helpdesk::EmailParser::Constants
   ENCODING_MAPPING = { "GB2312"         => "GB18030",
                        "GBK"            => "GB18030",
                        "KS_C_5601-1987" => "CP949",
-                       "MS949"          => "CP949"
+                       "MS949"          => "CP949",
+                       "ISO-8859-8-I"   => "ISO-8859-8",
+                       "ISO-8859-8-E"   => "ISO-8859-8"
                        }
 
   #Mime type constants
