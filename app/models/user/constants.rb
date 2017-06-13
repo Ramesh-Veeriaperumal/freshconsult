@@ -35,16 +35,21 @@ class User < ActiveRecord::Base
                                 "external_id", "job_title", "language", "description", "unique_external_id"] #client_manager will be moved directly
 
   MAX_USER_EMAILS = 10
-  
-  MERGE_VALIDATIONS = [["emails", MAX_USER_EMAILS, "emails"], ["twitter_id", 1, "Twitter User"], 
-    ["fb_profile_id", 1, "Facebook User"], ["external_id", 1, "Ecommerce User or Mobihelp User"], 
-    ["company_names", 20, "companies"], ["mobile", 1, "mobile phone"], ["phone", 1, "work phone"],
-    ["unique_external_id", 1, "Unique external id"]] #[Attribute, limit, message] ["phone", 1, "Phone User"]
+  MAX_USER_COMPANIES = 20
 
-  USER_FILTER_TYPES = ["verified","unverified","all","deleted","blocked"]
+  MERGE_VALIDATIONS = [['emails', MAX_USER_EMAILS, 'emails'],
+                       ['twitter_id', 1, 'Twitter User'],
+                       ['fb_profile_id', 1, 'Facebook User'],
+                       ['external_id', 1, 'Ecommerce User or Mobihelp User'],
+                       ['company_names', MAX_USER_COMPANIES, 'companies'],
+                       ['mobile', 1, 'mobile phone'],
+                       ['phone', 1, 'work phone'],
+                       ['unique_external_id', 1, 'Unique external id']].freeze
+  # [Attribute, limit, message] ['phone', 1, 'Phone User']
+
+  USER_FILTER_TYPES = %w(verified unverified all deleted blocked).freeze
 
   PASSWORD_LENGTH = 4
-  MAX_USER_COMPANIES = 20
 
   ALPHA_NUMERIC_REGEX = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/
   SPECIAL_CHARACTERS_REGEX = /(?=.*([\x20-\x2F]|[\x3A-\x40]|[\x5B-\x60]|[\x7B-\x7E]))/
@@ -52,10 +57,9 @@ class User < ActiveRecord::Base
   INLINE_MANUAL = {
     'admin_topic' => 3649,
     'agent_topic' => 6266
-  }
+  }.freeze
 
   MAX_NO_OF_SKILLS_PER_USER = 35
 
-  ACTIVATION_ATTRIBUTES = [:name, :phone, :job_title, :password, :password_confirmation]
-
+  ACTIVATION_ATTRIBUTES = [:name, :phone, :job_title, :password, :password_confirmation].freeze
 end
