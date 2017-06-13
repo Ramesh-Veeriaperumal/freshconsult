@@ -125,6 +125,7 @@ class Integrations::SlackV2Controller < Admin::AdminController
         :user_name => params["user_name"],
         :channel_name => params["channel_name"],
         :channel_id => params["channel_id"],
+        :event_type => operation_event,
         :time => Time.now.utc.to_f
       },
       :operation_name => "slack",

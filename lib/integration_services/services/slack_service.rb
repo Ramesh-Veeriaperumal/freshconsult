@@ -1,6 +1,10 @@
 module IntegrationServices::Services
   class SlackService < IntegrationServices::Service
 
+    DEFAULT_LINES = 200
+    OLD_SLACK_COMMAND = "create_ticket"
+    NEW_SLACK_COMMAND = "create_ticket_v3"
+
     def receive_channels
       begin
         handle_success({ :channels => channel_resource.list })
@@ -17,9 +21,9 @@ module IntegrationServices::Services
       end
     end
 
-    def receive_history token
+    def receive_history token, count=200
       begin
-        handle_success({ :history => im_resource.history(token) })
+        handle_success({ :history => im_resource.history(token, count) })
       rescue => e
         handle_error(e)
       end
@@ -72,7 +76,7 @@ module IntegrationServices::Services
 
     def receive_slash_command
       user, user_cred = nil, nil
-      if user_slack_token.present?
+      if user_slack_token.present? && @payload[:act_hash][:event_type] == OLD_SLACK_COMMAND
         response = receive_auth_info
         if response[:error].blank?
           user_details = get_user
@@ -261,8 +265,21 @@ module IntegrationServices::Services
       def get_conversation user, user_cred
         token = user_cred.auth_info["oauth_token"]
         return nil if token.blank?
-        history_response = receive_history(token)
+        count = valid_digit_params? ? no_of_lines : DEFAULT_LINES
+        history_response = receive_history(token, count) 
         history_response[:error].blank? ? history_response[:history] : nil
+      end
+
+      def valid_digit_params?
+        contains_digits? && @payload[:act_hash][:event_type] == NEW_SLACK_COMMAND && no_of_lines < DEFAULT_LINES
+      end
+
+      def contains_digits?
+        @payload[:act_hash][:user_slack_token] !~ /\D/ #non-digit characters not present
+      end
+
+      def no_of_lines
+        @payload[:act_hash][:user_slack_token].to_i
       end
 
       def create_or_update_user_cred user, remote_user_id, params
