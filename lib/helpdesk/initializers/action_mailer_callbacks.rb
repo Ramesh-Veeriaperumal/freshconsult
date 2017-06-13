@@ -117,7 +117,7 @@ module ActionMailerCallbacks
     end
 
     def get_category_header(mail)
-      mail.header["X-FD-Email-Category"].to_s.to_i if mail.present? and mail.header["X-FD-Email-Category"].present?
+      mail.header["X-FD-Email-Category"].to_s.to_i if mail.present? and mail.header["X-FD-Email-Category"].present? and mail.header["X-FD-Email-Category"].value.present?
     end
 
     def encrypt_custom_variables(account_id, ticket_id, note_id, type, from_email, category_id)
