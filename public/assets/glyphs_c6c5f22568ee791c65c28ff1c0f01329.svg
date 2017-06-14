@@ -1,13 +1,13 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
 <!--
-2017-6-6: Created with FontForge (http://fontforge.org)
+2017-6-8: Created with FontForge (http://fontforge.org)
 -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
 <metadata>
-Created by FontForge 20170426 at Tue Jun  6 14:45:27 2017
- By Arvinth
-Copyright (c) 2017, Arvinth
+Created by FontForge 20170608 at Thu Jun  8 12:10:13 2017
+ By user
+Copyright (c) 2017, user
 </metadata>
 <defs>
 <font id="glyphs" horiz-adv-x="398" >
@@ -22,7 +22,7 @@ Copyright (c) 2017, Arvinth
     bbox="-0.572668 -65 1343 476"
     underline-thickness="25.6"
     underline-position="-51.2"
-    unicode-range="U+F100-F27F"
+    unicode-range="U+F100-F280"
   />
     <missing-glyph />
     <glyph glyph-name="uniF23F" unicode="&#xf23f;" horiz-adv-x="507" 
@@ -81,7 +81,7 @@ l-1 1c-40 14 -73 21 -98 21h-34c-51 0 -62 -30 -62 -55c0 -4 1 -8 1 -12c-5 -4 -9 -9
 d="M284 222c71 0 128 -58 128 -129s-57 -129 -128 -129s-128 58 -128 129s57 129 128 129zM284 -21c63 0 114 51 114 114s-51 114 -114 114s-114 -51 -114 -114s51 -114 114 -114zM331 105c6 0 10 -5 10 -11v-62c0 -6 -4 -10 -10 -10h-94c-6 0 -10 4 -10 10v62
 c0 6 4 11 10 11h94zM289 57c4 2 7 6 7 11c0 7 -5 12 -11 12s-12 -5 -12 -12c0 -4 2 -8 5 -10v-14c0 -3 3 -5 6 -5s5 2 5 5v13zM261 133v-22h-20v21c0 26 19 47 44 47s45 -21 45 -47v-21h-19v22c0 14 -11 25 -25 25s-25 -11 -25 -25zM110 289v0h55l-7 -65h-48v-188h-66v188
 h-44v65h44v38c0 53 14 85 72 85h49v-65h-31c-23 0 -24 -9 -24 -26v-32z" />
-    <glyph glyph-name="uniF1B1" unicode="&#xf1b1;" horiz-adv-x="452" 
+    <glyph glyph-name="uniF280" unicode="&#xf280;" horiz-adv-x="452" 
 d="M434 163v0v0c-26 -56 -80 -98 -146 -115l-133 -105v107c-90 26 -155 101 -155 190c0 110 101 200 226 200s226 -90 226 -200c0 -27 -7 -53 -18 -77z" />
     <glyph glyph-name="uniF13D" unicode="&#xf13d;" horiz-adv-x="440" 
 d="M385 412c30 0 55 -25 55 -55v-330c0 -30 -25 -55 -55 -55h-83v158h58v69h-58v35c0 9 3 16 14 16h44v78h-49c-50 0 -89 -42 -89 -95v-34h-53v-69h53v-158h-167c-30 0 -55 25 -55 55v330c0 30 25 55 55 55h330z" />
