@@ -91,7 +91,6 @@ helpdesk:
     - sendgrid_webhook_config
     - skip_all_middlewares
     - api_config_internal_tools
-    - ehawk_config
     - sandbox
     - clamav_config
     - inline_manual_config

@@ -9,7 +9,8 @@ include ParserUtil
  EMAIL_SERVICE_AUTHORISATION_KEY = FD_EMAIL_SERVICE["key"]
  EMAIL_SERVICE_HOST = FD_EMAIL_SERVICE["host"]
  EMAIL_SERVICE_TIMEOUT = FD_EMAIL_SERVICE["timeout"]
- EMAIL_SERVICE_URL = FD_EMAIL_SERVICE["url"]
+ EMAIL_SERVICE_URL = FD_EMAIL_SERVICE["email_send_urlpath"]
+ ACCOUNT_VALIDATE_URLPATH = FD_EMAIL_SERVICE["account_validate_urlpath"]
  class EmailDeliveryError < StandardError
  end
 
