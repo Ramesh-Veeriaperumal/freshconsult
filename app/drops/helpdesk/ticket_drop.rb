@@ -250,6 +250,7 @@ class Helpdesk::TicketDrop < BaseDrop
     field_name = "#{method}_#{@source.account_id}"
     required_field_value = @source.custom_field[field_name]
     required_field_type = @source.custom_field_type_mappings[field_name]
+    return super unless required_field_type
     formatted_field_value(required_field_type.to_sym, required_field_value)
   end
 
