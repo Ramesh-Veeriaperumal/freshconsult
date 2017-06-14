@@ -105,15 +105,19 @@ class BaseDrop < Liquid::Drop
     end
 
     def formatted_field_value(field_type, field_value)
-      case field_type
-      when :custom_paragraph
-        h(field_value).gsub(/\n/, '<br/>')
-      when :custom_text
-        h(field_value)
-      when :custom_date
-        formatted_date(field_value)
-      else 
-        field_value
+      if(field_type)
+        case field_type
+        when :custom_paragraph
+          h(field_value).gsub(/\n/, '<br/>')
+        when :custom_text
+          h(field_value)
+        when :custom_date
+          formatted_date(field_value)
+        else 
+          field_value
+        end
+      else
+        super
       end
     end
 end

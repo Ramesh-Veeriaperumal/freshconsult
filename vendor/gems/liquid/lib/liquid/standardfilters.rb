@@ -29,10 +29,6 @@ module Liquid
       CGI.escapeHTML(input) rescue input
     end
 
-    def unescape(input)
-      CGI.unescapeHTML("#{input}") rescue input
-    end
-
     def escape_once(input)
       ActionController::Base.helpers.escape_once(input)
     rescue NameError

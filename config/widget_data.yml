@@ -57,7 +57,7 @@
             {{jira.jira_note}}
            </pre>
           <script type="text/javascript">
-            jiraBundle={domain:"{{jira.domain}}", application_id:"{{application.id}}", integrated_resource_id:"{{integrated_resource.id}}", remote_integratable_id:"{{integrated_resource.remote_integratable_id}}", ticketId:"{{ticket.id}}", ticket_url:"{{ticket.public_url}}",ticket_rawId:"{{ticket.raw_id}}", ticketSubject:"{{ticket.subject | unescape | make_vaild_javascript}}", agentEmail:"{{agent.email}}", reqEmail:"{{requester.email}}", username:"{{jira.username}}", custom_field_id:"{{jira.customFieldId}}", attachments: {{cloud_files}} } ;
+            jiraBundle={domain:"{{jira.domain}}", application_id:"{{application.id}}", integrated_resource_id:"{{integrated_resource.id}}", remote_integratable_id:"{{integrated_resource.remote_integratable_id}}", ticketId:"{{ticket.id}}", ticket_url:"{{ticket.public_url}}",ticket_rawId:"{{ticket.raw_id}}", ticketSubject:"{{ticket.subject | make_vaild_javascript}}", agentEmail:"{{agent.email}}", reqEmail:"{{requester.email}}", username:"{{jira.username}}", custom_field_id:"{{jira.customFieldId}}", attachments: {{cloud_files}} } ;
             Fjax.Assets.integration('jira', function () {
               new JiraWidget(jiraBundle);
             });
@@ -255,7 +255,7 @@
               application_id: {{application.id}},
               oauth_token:"{{installed_app.user_access_token}}",
               ticket_id: parseInt('{{ticket.id}}'),
-              ticket_subject: "{{ticket.subject | unescape | make_vaild_javascript}}",
+              ticket_subject: "{{ticket.subject | make_vaild_javascript}}",
               events_list: [{{installed_app.events_list}}],
               oauth_url: "{{installed_app.oauth_url}}"
             };
@@ -284,7 +284,7 @@
   script: |-
           <div class="sloading loading-block loading-small" id="pivotal_tracker_loading"></div>
           <script type="text/javascript">
-            pivotal_bundle={ticketId:"{{ticket.id}}", ticketSubject:"{{ticket.subject | unescape | make_vaild_javascript}}", get_pivotal_updates:"{{integrated_resource["get_updates"]}}",webhooks_application_ids:"{{integrated_resource["webhooks_application_ids"]}}",local_integratable_id:"{{integrated_resource["local_integratable_id"]}}", remote_integratable_id:"{{integrated_resource["remote_integratable_id"]}}", resource_id:"{{integrated_resource["resource_id"]}}", reqEmail:"{{requester.email}}" , application_id:"{{application.id}}"};
+            pivotal_bundle={ticketId:"{{ticket.id}}", ticketSubject:"{{ticket.subject | make_vaild_javascript}}", get_pivotal_updates:"{{integrated_resource["get_updates"]}}",webhooks_application_ids:"{{integrated_resource["webhooks_application_ids"]}}",local_integratable_id:"{{integrated_resource["local_integratable_id"]}}", remote_integratable_id:"{{integrated_resource["remote_integratable_id"]}}", resource_id:"{{integrated_resource["resource_id"]}}", reqEmail:"{{requester.email}}" , application_id:"{{application.id}}"};
             CustomWidget.include_js("/javascripts/integrations/pivotal_tracker.js");
           </script>
   name: pivotal_tracker_widget
@@ -380,7 +380,7 @@
     - helpdesk_tickets_show_page_side_bar
   script: |-
           <script type="text/javascript">
-            githubBundle={can_set_milestone:"{{github.can_set_milestone}}", application_id:"{{application.id}}", integrated_resource_id:"", remote_integratable_id:"", ticketId:"{{ticket.id}}",ticket_rawId:"{{ticket.raw_id}}", ticketSubject:"{{ticket.subject | unescape | make_vaild_javascript}}", repositories:{{installed_app.configs_repositories}} };
+            githubBundle={can_set_milestone:"{{github.can_set_milestone}}", application_id:"{{application.id}}", integrated_resource_id:"", remote_integratable_id:"", ticketId:"{{ticket.id}}",ticket_rawId:"{{ticket.raw_id}}", ticketSubject:"{{ticket.subject | make_vaild_javascript}}", repositories:{{installed_app.configs_repositories}} };
             Fjax.Assets.integration('github', function () {
               new GithubWidget();
             });
