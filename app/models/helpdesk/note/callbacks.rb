@@ -182,8 +182,10 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def send_requester_replied_notification(internal_notification = false)
-      Helpdesk::TicketNotifier.send_later(:notify_by_email, (EmailNotification::REPLIED_BY_REQUESTER),
-              notable, self, {:internal_notification => internal_notification})
+      # if the source is "feedback" then send the notification email after 2 minutes
+      send_at = ([SOURCE_KEYS_BY_TOKEN["feedback"]].include?(self.source))? 2 : 0
+      args = [(EmailNotification::REPLIED_BY_REQUESTER), notable, self, {:internal_notification => internal_notification}]
+      Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::TicketNotifier, :notify_by_email, args), nil, send_at.minutes.from_now)
     end
 
     def handle_notification_for_agent_as_req

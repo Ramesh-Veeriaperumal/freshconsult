@@ -4,7 +4,7 @@ class ScheduledTicketExport < ScheduledExport
 
   MAX_NO_OF_SCHEDULED_EXPORTS_PER_ACCOUNT = 5
   MAX_NO_OF_EMAIL_RECIPIENTS_PER_SCHEDULED_EXPORT = 10
-  MAX_FIELDS = 100
+  MAX_FIELDS = 150
   S3_TICKETS_PATH = "data/helpdesk/scheduled_exports/tickets/%{schedule_id}/%{filename}"
   NAME = "name"
 
@@ -60,11 +60,11 @@ class ScheduledTicketExport < ScheduledExport
     DELIVERY_FREQUENZY_BY_VALUE[frequency.to_i]
   end
 
-  def download_url filename = nil
+  def download_url created_at = nil
     Rails.application.routes.url_helpers.
       download_file_reports_scheduled_export_url(self, :host => account.host,
                                                :protocol => account.url_protocol,
-                                               :filename => filename)
+                                               :created_at => created_at)
   end
 
   def api_url
@@ -87,7 +87,19 @@ class ScheduledTicketExport < ScheduledExport
 
   def email_description
     I18n.t('export_data.scheduled_ticket_export.body',
-            :url => download_url(latest_file),
+            :url => download_url(created_at_label),
+            :user_name => user.name,
+            :helpdesk_name => account.name,
+            :latest_schedule_range => latest_schedule_range)
+  end
+
+  def email_no_data_subject
+    I18n.t('export_data.scheduled_ticket_export_no_data.subject',
+            :title => name)
+  end
+
+  def email_no_data_description
+    I18n.t('export_data.scheduled_ticket_export_no_data.body',
             :user_name => user.name,
             :helpdesk_name => account.name,
             :latest_schedule_range => latest_schedule_range)
@@ -196,11 +208,9 @@ class ScheduledTicketExport < ScheduledExport
   def created_at_label
     case frequency_name
       when :hourly
-        Time.zone.now.beginning_of_hour.advance(hours: -1).strftime("%Y-%m-%dT%H:00")
-      when :daily
+        Time.zone.now.beginning_of_hour.strftime("%Y-%m-%dT%H:00")
+      when :daily, :weekly
         Time.zone.now.strftime("%Y-%m-%d")
-      when :weekly
-        Time.zone.now.advance(days: -6).strftime("%Y-%m-%d")
     end
   end
 
