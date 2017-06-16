@@ -536,8 +536,8 @@ $.validator.addClassRules("schedule-checkbox-required", { schedule_checkbox_requ
 // ticket schedule checkbox maximum validation
 $.validator.addMethod("schedule_checkbox_maximum",function(value, element){
   var length = $('.'+ $(element).data('field') + '-item input:checkbox:checked:not(.select-all)').length;
-  return ((length <= 100) ? true : false);
+  return ((length <= 150) ? true : false);
 },$.validator.messages.select2_maximum_limit);
-$.validator.addClassRules("schedule-checkbox-maxlength", { schedule_checkbox_maximum: [100,'fields'] });
+$.validator.addClassRules("schedule-checkbox-maxlength", { schedule_checkbox_maximum: [150,'fields'] });
 
 })(jQuery);

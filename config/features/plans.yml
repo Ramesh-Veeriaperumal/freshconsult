@@ -85,6 +85,8 @@
       - :shared_ownership_toggle
       - :advanced_dkim
       - :multi_dynamic_sections
+      - :auto_ticket_export
+      - :ticket_activity_export
     :inherits: 
       - :garden_jan_17
     :exclude: []

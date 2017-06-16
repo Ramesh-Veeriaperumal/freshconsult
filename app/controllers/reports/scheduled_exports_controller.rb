@@ -46,23 +46,29 @@ class Reports::ScheduledExportsController < ApplicationController
 
   def download_file
     file_name = @scheduled_export.file_name(params[:created_at])
-    if @scheduled_export.file_exists?(file_name)
-      respond_to do |format|
-        format.html {
+    respond_to do |format|
+      format.html do
+        if @scheduled_export.file_exists?(file_name)
           redirect_to @scheduled_export.export_path(file_name)
-        }
-        format.json {
+        else
+          flash[:notice] = t("helpdesk_reports.ticket_schedule.file_not_#{params[:created_at] ? 'found' : 'created'}")
+          redirect_back_or_default redirect_url
+        end
+      end
+      format.json do
+        if @scheduled_export.file_exists?(file_name)
           render :json => {
             :export => {
               :created_at => params[:created_at] || @scheduled_export.created_at_label,
               :url => @scheduled_export.export_path(file_name)
             }
           }
-        }
+        else
+          render :json => {
+            :info => t("helpdesk_reports.ticket_schedule.file_not_#{params[:created_at] ? 'found' : 'created'}")
+          }
+        end
       end
-    else
-      flash[:notice] = t("helpdesk_reports.ticket_schedule.file_not_#{params[:created_at] ? 'found' : 'created'}")
-      redirect_back_or_default redirect_url
     end
   end
 

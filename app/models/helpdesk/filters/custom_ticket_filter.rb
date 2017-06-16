@@ -370,8 +370,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         all_conditions = sql_conditions
         all_joins = get_joins(sql_conditions)
         all_joins[0].concat(states_join) if all_conditions[0].include?("helpdesk_ticket_states")
-        status_in_conditions = query_hash.any? {|q_h| q_h["condition"] == "status"}
-        model_klass = if status_in_conditions and Account.current.launched?(:force_index_tickets)
+        model_klass = if Account.current.launched?(:force_index_tickets) and open_status_in_conditions?
                         model_class.use_index("index_helpdesk_tickets_status_and_account_id")
                       else
                         model_class
@@ -394,6 +393,10 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         recs
       end
     end
+  end
+
+  def open_status_in_conditions?
+    query_hash.any? {|q_h| q_h["condition"] == "status" and (q_h["value"].to_s.split(",").include?(OPEN.to_s) || q_h["value"].to_s.split(",").include?("0")) }
   end
 
   def count_without_query
