@@ -271,7 +271,7 @@ module IntegrationServices::Services
       end
 
       def valid_digit_params?
-        contains_digits? && @payload[:act_hash][:event_type] == NEW_SLACK_COMMAND && no_of_lines < DEFAULT_LINES
+        contains_digits? && @payload[:act_hash][:event_type] == NEW_SLACK_COMMAND && no_of_lines <= DEFAULT_LINES && no_of_lines > 0
       end
 
       def contains_digits?
