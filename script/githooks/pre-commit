@@ -43,6 +43,12 @@ then
   exit 0;
 fi;
 
+#if merge commit then ignore check
+if [`git rev-parse -q --verify MERGE_HEAD | wc -c` -gt 1 ] 
+then 
+  exit 0;
+fi;
+
 command -v osascript &> /dev/null  && osascript -e 'display notification "Running validations for your commit" with title "Please wait"'
 
 while read changes 
