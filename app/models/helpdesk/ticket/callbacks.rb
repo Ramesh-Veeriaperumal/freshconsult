@@ -814,7 +814,9 @@ private
   end
 
   def previous_ticket_status
-    Helpdesk::TicketStatus.status_objects_from_cache(account).find{|x| x.status_id == @model_changes[:status][0]}
+    previous_status_id = @model_changes[:status][0]
+    Helpdesk::TicketStatus.status_objects_from_cache(account).find{ |x| x.status_id == previous_status_id } || 
+      account.ticket_statuses.where(:status_id => previous_status_id).first
   end
     
   def update_ticket_state_sla_timer
