@@ -186,6 +186,7 @@ module AutomationControllerMethods
     internal_agent_ids  = current_account.agent_groups.where(:group_id => internal_group_ids).pluck(:user_id).uniq
     @internal_groups    = none_option + groups_list_from_cache.select {|g| internal_group_ids.include?(g[0])}.compact
     @internal_agents    = get_event_performer + none_option + agents_list.select {|a| internal_agent_ids.include?(a[0])}.compact
+    @internal_agents_condition = @internal_agents[1..-1]
   end
 
   def allow_shared_ownership_fields?

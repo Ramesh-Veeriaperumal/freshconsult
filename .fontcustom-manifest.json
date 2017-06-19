@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "c6c5f22568ee791c65c28ff1c0f0132956c189ed1f98853e59985ba193049261",
-    "current": "c6c5f22568ee791c65c28ff1c0f0132956c189ed1f98853e59985ba193049261"
+    "previous": "5c4094d1fd8fec04b9e922cfa6caea005433cc303d84e6d0d9ab34370195b59f",
+    "current": "5c4094d1fd8fec04b9e922cfa6caea005433cc303d84e6d0d9ab34370195b59f"
   },
   "fonts": [
-    "public/assets/glyphs_c6c5f22568ee791c65c28ff1c0f01329.ttf",
-    "public/assets/glyphs_c6c5f22568ee791c65c28ff1c0f01329.svg",
-    "public/assets/glyphs_c6c5f22568ee791c65c28ff1c0f01329.woff",
-    "public/assets/glyphs_c6c5f22568ee791c65c28ff1c0f01329.eot"
+    "public/assets/glyphs_5c4094d1fd8fec04b9e922cfa6caea00.ttf",
+    "public/assets/glyphs_5c4094d1fd8fec04b9e922cfa6caea00.svg",
+    "public/assets/glyphs_5c4094d1fd8fec04b9e922cfa6caea00.woff",
+    "public/assets/glyphs_5c4094d1fd8fec04b9e922cfa6caea00.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -1490,7 +1490,6 @@
     },
     "preprocessor_path": "",
     "quiet": false,
-    "skip_first": false,
     "templates": [
       "scss",
       "_glyphs-variables.scss",

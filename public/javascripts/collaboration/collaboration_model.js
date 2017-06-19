@@ -47,10 +47,14 @@ App.CollaborationModel = (function ($) {
 
             _COLLAB_PVT.ChatApi.getAllUsers(function(response) {
                 var users = response.users;
+                Collab.usersTagMap = {};
                 // TODO (ankit): manage response.start and futher fetching if(start != "")
                 users.forEach(function(user) {
                     var handle = user.info.email.split("@")[0];
-                    Collab.usersMap[user.uid] = jQuery.extend({"uid": user.uid}, user.info);
+                    while(Collab.usersTagMap.hasOwnProperty(handle) && Collab.usersTagMap[handle].deleted !== "1") {
+                        handle += "+";
+                    }
+                    Collab.usersMap[user.uid] = jQuery.extend({"uid": user.uid}, {"tag": handle}, user.info);
                     Collab.usersTagMap[handle] = jQuery.extend({"uid": user.uid, "tag": handle}, user.info);
                 });
                 if(!!window.raw_store_data && !!window.raw_store_data.group) {
@@ -269,14 +273,15 @@ App.CollaborationModel = (function ($) {
         sendNotification: function(msg) {
             var ticket_id = Collab.currentConversation.co_id;
             if(!!ticket_id) {
-                var urlParams = new URLSearchParams(window.location.search);
-                var collab_access_token = !!urlParams.get('token') ? urlParams.get('token') : "";
+                var collab_access_token = App.CollaborationUi.getUrlParameter("token");
                 message_data = {
                     mid: msg.mid,
                     body: msg.body,
-                    token: collab_access_token,
                     metadata: msg.metadata
                 };
+                if(collab_access_token) {
+                    message_data.token = collab_access_token;
+                }
                 var jsonData = JSON.stringify(message_data);
                 jQuery.ajax({
                     url: '/helpdesk/tickets/collab/' + ticket_id + '/notify',
@@ -513,19 +518,18 @@ App.CollaborationModel = (function ($) {
         },
         
         init: function() {
-            var config = App.CollaborationUi.parseJson($("#collab-model-data").attr("data-model-payload"));
+            var config = App.CollaborationUi.parseJson($("#collab-account-payload").data("accountPayload"));
             // TODO(aravind): Add all fields.
-            Collab.currentUser = {
-                "name": config.userName,
-                "uid": config.userId,
-                "email": config.userEmail
-            };
+            Collab.currentUser = config.user;
             
             _COLLAB_PVT.ChatApi = new ChatApi({
-                "clientId": config.clientId,
-                "clientAccountId": config.clientAccountId,
-                "userId": config.userId,
-                "initAuthToken": config.initAuthToken,
+                "clientId": config.client_id,
+                "clientAccountId": config.client_account_id,
+                "userId": config.user.uid,
+                "initAuthToken": config.init_auth_token,
+                "chatApiServer": config.collab_url,
+                "rtsServer": config.rts_url,
+
                 "onconnect": _COLLAB_PVT.connectionInited,
                 "ondisconnect": _COLLAB_PVT.disconnected,
                 "onreconnect": _COLLAB_PVT.reconnected,
@@ -534,8 +538,6 @@ App.CollaborationModel = (function ($) {
                 "onheartbeat": _COLLAB_PVT.onHeartBeat,
                 "onmemberadd": _COLLAB_PVT.onMemberAdd,
                 "onmemberremove": _COLLAB_PVT.onMemberRemove,
-                "chatApiServer": config.collab_url,
-                "rtsServer": config.rts_url,
                 "onerror": _COLLAB_PVT.onErrorHandler,
                 "apiinited": _COLLAB_PVT.apiInited
             });
