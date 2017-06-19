@@ -42,6 +42,28 @@ var domHelperValidator = domHelperValidator || {};
     convertToAgent: { signature: "agent_type", description: "Converts the contact to a fulltime / occasional agent", helpURL: "convertToAgent" }
   };
 
+  dhValidator.newTicketHelpDetails = {
+    onRequesterChanged: { signature: "callbackFunction", description: "Executed when an input is given in requester field", helpURL: ""},
+    onPriorityChanged: { signature: "callbackFunction", description: "Executed when priority of the new ticket is changed", helpURL: "" },
+    onStatusChanged: { signature: "callbackFunction", description: "Executed when status of the new ticket is changed", helpURL: "" },
+    setRequester: { signature: "text", description: "Sets the value of requester field", helpURL: ""},
+    setPriority: { signature: "number", description: "Sets the priority of the ticket with the corresponding value", helpURL: ""},
+    setStatus: { signature: "number", description: "Sets the status of the ticket with the corresponding value", helpURL: ""},
+    disableRequesterField: {signature: "", description: "Disables the requester field from editing", helpURL: ""}
+  }
+
+  dhValidator.newOutboundEmailHelpDetails = {
+    onRequesterChanged: { signature: "callbackFunction", description: "Executed when an input is given in requester field", helpURL: ""},
+    onPriorityChanged: { signature: "callbackFunction", description: "Executed when priority of the new ticket is changed", helpURL: "" },
+    onStatusChanged: { signature: "callbackFunction", description: "Executed when status of the new ticket is changed", helpURL: "" },
+    setRequester: { signature: "text", description: "Sets the value of requester field", helpURL: ""},
+    setPriority: { signature: "number", description: "Sets the priority of the ticket with the corresponding value", helpURL: ""},
+    setStatus: { signature: "number", description: "Sets the status of the ticket with the corresponding value", helpURL: ""},
+    disableFromEmail: { signature: "", description: "Disables the From Email field from editing", helpURL: ""},
+    enableFromEmail: { signature: "", description: "Enables the From Email field for editing", helpURL: ""},
+    setFromEmail: { signature: "text", description: "Sets the value of From Email field from the input value", helpURL: ""}
+  }
+
   dhValidator.ticketHelpLink = "https://freshdesk.com/api#ticket";
   dhValidator.contactHelpLink = "https://freshdesk.com/api#contact";
   dhValidator.helpURLPrefix = "https://freshdesk.com/api#";

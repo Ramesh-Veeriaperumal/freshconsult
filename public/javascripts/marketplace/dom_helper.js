@@ -168,6 +168,86 @@ var domHelper = domHelper || {};
     }
   }
 
+  if(page_type === "new_ticket") {
+    helpLink = domHelperValidator.ticketHelpLink;
+    helpContent = domHelperValidator.newTicketHelpDetails;
+
+    domHelper.new_ticket = {
+
+      onRequesterChanged: function(callback) {
+        newTicketDom.onRequesterChanged(callback);
+      },
+
+      onPriorityChanged: function(callback) {
+        newTicketDom.onPriorityChanged(callback);
+      },
+
+      onStatusChanged: function(callback) {
+        newTicketDom.onStatusChanged(callback);
+      },
+
+      setRequester: function(value) {
+        newTicketDom.setRequester(value);
+      },
+
+      disableRequesterField: function() {
+        newTicketDom.disableRequesterField();
+      },
+
+      setPriority: function(priorityId) {
+        newTicketDom.setPriority(priorityId);
+      },
+
+      setStatus: function(statusId) {
+        newTicketDom.setStatus(statusId);
+      }
+    }
+  }
+
+  if(page_type === "new_outbound_email") {
+    helpLink = domHelperValidator.ticketHelpLink;
+    helpContent = domHelperValidator.newOutboundEmailHelpDetails;
+
+    domHelper.new_email = {
+
+      onRequesterChanged: function(callback) {
+        newEmailDom.onRequesterChanged(callback);
+      },
+
+      onPriorityChanged: function(callback) {
+        newEmailDom.onPriorityChanged(callback);
+      },
+
+      onStatusChanged: function(callback) {
+        newEmailDom.onStatusChanged(callback);
+      },
+
+      setRequester: function(value) {
+        newEmailDom.setRequester(value);
+      },
+
+      setPriority: function(priorityId) {
+        newEmailDom.setPriority(priorityId);
+      },
+
+      setStatus: function(statusId) {
+        newEmailDom.setStatus(statusId);
+      },
+
+      disableFromEmail: function() {
+        newEmailDom.disableFromEmail();
+      },
+
+      enableFromEmail: function() {
+        newEmailDom.enableFromEmail();
+      },
+
+      setFromEmail: function(input_email) {
+        newEmailDom.setFromEmail(input_email);
+      }
+    }
+  }
+
   dh.getAgentEmail = function() {
     return current_user.user.email;
   }
