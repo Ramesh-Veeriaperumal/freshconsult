@@ -184,6 +184,15 @@ defaults: &defaults
     - [skill_import]
     - [send_signup_activation_mail]
     - [collaboration_publish]
+    - [realtime]
+    - [scheduled]
+    - [occasional]
+    - [maintainence]
+    - [external]
+    - [free]
+    - [email]
+    - [trial]
+    - [spam]
 
 development:
   <<: *defaults
