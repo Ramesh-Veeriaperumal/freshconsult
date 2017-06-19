@@ -72,7 +72,7 @@ class Search::V2::TicketsController < ApplicationController
           end
 
           es_results  = Search::V2::SearchRequestHandler.new(current_account.id,
-                                                                Search::Utils.template_context(:requester_autocomplete, @exact_match),
+                                                                Search::Utils.get_template_id(:requester_autocomplete, @exact_match),
                                                                 ['user']
                                                               ).fetch(user_params.merge(ES_V2_BOOST_VALUES[:requester_autocomplete])
                                                                 )

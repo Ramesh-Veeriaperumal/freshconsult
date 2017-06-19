@@ -36,7 +36,7 @@ module AttachmentConstants
   ].freeze
 
   # Only xxx.jpg and xxx.png are allowed to upload
-  INLINE_IMAGE_EXT = %w(.jpg .jpeg .jpe .png .gif .svg).freeze
+  INLINE_IMAGE_EXT = %w(.jpg .jpeg .jpe .png .gif .tiff).freeze
 
   LOAD_OBJECT_EXCEPT = %w(unlink).freeze
 

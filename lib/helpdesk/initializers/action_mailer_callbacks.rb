@@ -49,13 +49,11 @@ module ActionMailerCallbacks
         }
         Rails.logger.debug "Used SMTP mailbox : #{email_config.smtp_mailbox.user_name} in email config : #{email_config.id} while email delivery"
         self.smtp_settings = smtp_settings
-        mail.header["X-FD-Email-Category"] = nil
         mail.delivery_method(:smtp, smtp_settings)
       elsif (email_config && email_config.category)
         Rails.logger.debug "Used EXISTING category : #{email_config.category} in email config : #{email_config.id} while email delivery"
         category_id = email_config.category
         self.smtp_settings = read_smtp_settings(category_id)
-        mail.header["X-FD-Email-Category"] = nil
         mail.delivery_method(:smtp, read_smtp_settings(category_id))
         set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email)
       else
@@ -71,12 +69,12 @@ module ActionMailerCallbacks
         else
           Rails.logger.debug "Fetched category : #{category_id} while email delivery"
           self.smtp_settings = read_smtp_settings(category_id)
-          mail.header["X-FD-Email-Category"] = nil
           mail.delivery_method(:smtp, read_smtp_settings(category_id))
         end
         set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email)
       end
       @email_confg = nil
+      mail.header["X-FD-Email-Category"] = nil
     end
 
     def reset_smtp_settings(mail, use_mailgun = false)
@@ -89,7 +87,6 @@ module ActionMailerCallbacks
       end
       Rails.logger.debug "Fetched category : #{category_id} while email delivery"
       self.smtp_settings = read_smtp_settings(category_id)
-      mail.header["X-FD-Email-Category"] = nil
       mail.delivery_method(:smtp, read_smtp_settings(category_id))
       return category_id
     end
@@ -117,7 +114,7 @@ module ActionMailerCallbacks
     end
 
     def get_category_header(mail)
-      mail.header["X-FD-Email-Category"].to_s.to_i if mail.present? and mail.header["X-FD-Email-Category"].present?
+      mail.header["X-FD-Email-Category"].to_s.to_i if mail.present? and mail.header["X-FD-Email-Category"].present? and mail.header["X-FD-Email-Category"].value.present?
     end
 
     def encrypt_custom_variables(account_id, ticket_id, note_id, type, from_email, category_id)

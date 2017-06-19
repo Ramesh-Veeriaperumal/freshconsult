@@ -23,6 +23,7 @@ class Subscription < ActiveRecord::Base
   ACTIVE = "active"
   TRIAL = "trial"
   FREE = "free"
+  SUSPENDED = "suspended"
   
   belongs_to :account
   belongs_to :subscription_plan
@@ -54,6 +55,8 @@ class Subscription < ActiveRecord::Base
   after_update :update_reseller_subscription
   after_commit :update_social_subscription, :add_free_freshfone_credit, :update_crm, :dkim_category_change, :update_ticket_activity_export, on: :update
   after_commit :clear_account_susbcription_cache
+  after_commit :suspend_tenant, on: :update, :if => :suspended?
+  after_commit :activate_account, on: :update, :if => :non_suspended?
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
   
@@ -205,6 +208,10 @@ class Subscription < ActiveRecord::Base
 
   def free?
     state == 'free'
+  end
+
+  def non_suspended?
+    @old_subscription.state.eql?(SUSPENDED) && !self.state.eql?(SUSPENDED)
   end
   
   def non_new_sprout?
@@ -553,6 +560,14 @@ class Subscription < ActiveRecord::Base
     def clear_account_susbcription_cache
       key = MemcacheKeys::ACCOUNT_SUBSCRIPTION % { :account_id => self.account_id }
       MemcacheKeys.delete_from_cache key
+    end
+
+    def suspend_tenant
+      SearchService::Client.new(self.account_id).tenant_rollback if self.account.service_reads_enabled?
+    end
+
+    def activate_account
+      SearchService::Client.new(self.account_id).activate if self.account.service_reads_enabled?
     end
 
     def autopilot_fields_changed?
