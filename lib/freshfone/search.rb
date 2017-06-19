@@ -19,7 +19,7 @@ module Freshfone::Search
 				search_term: phone_number,
 				account_id: current_account.id,
 				request_id: Thread.current[:message_uuid].try(:first), #=> Msg ID is casted as array.
-				is_deleted: false,
+				isdeleted: false,
 				phone_fields_str: custom_field_data_columns.join('\",\"'),
 				phone_fields_arr: custom_field_data_columns
 			})
