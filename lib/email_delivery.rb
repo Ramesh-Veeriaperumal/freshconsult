@@ -58,7 +58,21 @@ include ParserUtil
     Rails.logger.info "Sending email: properties: #{properties.inspect}"
     header = construct_headers params
     Rails.logger.info "Sending email: Headers: #{header.inspect}"
-    "{\"headers\":#{header},\"to\":[#{to_email}],\"cc\":[#{cc}],\"bcc\":[#{bcc}],\"from\":#{from_email},\"replyTo\":#{reply_to},\"subject\":\"#{subject}\",\"text\":#{params[:text].to_json},\"html\":#{params[:html].to_json},\"accountId\":\"#{account_id}\",\"categoryId\":\"#{category_id}\",\"properties\":#{properties}}"
+
+    result =  {"headers" => header,
+                "to" => to_email,
+                "cc" => cc,
+                "bcc" => bcc,
+                "from" => from_email,
+                "replyTo" => reply_to,
+                "subject" => subject,
+                "text" => params[:text],
+                "html" => params[:html],
+                "accountId" => "#{account_id}",
+                "categoryId" => "#{category_id}",
+                "properties"=> properties
+              }
+    return result.to_json
   end
 
   def construct_headers full_headers
@@ -66,7 +80,7 @@ include ParserUtil
     message_id = headers["Message-ID"]
     headers.delete("Message-ID")
     headers.merge!("messageId" => message_id)
-    headers.to_json
+    headers
   end
   def construct_properties(headers, category_id = -1)
       mail_type = (headers["X-FD-Type"].present?) ? headers["X-FD-Type"] : "empty"
@@ -79,10 +93,17 @@ include ParserUtil
       shard_info = get_shard account_id
       pod_info = get_pod
       
-      "{\"account_id\": \"#{account_id}\",\"ticket_id\":\"#{ticket_id}\"," \
-        "#{note_id_str}" \
-        "\"email_type\":\"#{mail_type}\",\"from_email\":\"#{from_email_text}\",\"category_id\":\"#{category_id}\"," \
-        "\"pod_info\":\"#{pod_info}\",\"shard_info\":\"#{shard_info}\"}"
+      result_hash = {
+                      "account_id" => "#{account_id}",
+                      "ticket_id" => "#{ticket_id}", 
+                      "note_id" => "#{note_id}", 
+                      "email_type" => "#{mail_type}",
+                      "from_email" => from_email_text,
+                      "category_id" => "#{category_id}", 
+                      "pod_info" => "#{pod_info}",
+                      "shard_info" => "#{shard_info}"
+                    }
+    return result_hash
   end
 
   def check_spam_category(mail, type)
@@ -117,15 +138,21 @@ include ParserUtil
 
   def construct_email_json_array email_array
     email_json_array = []
-    email_array.each do |email|
-      email_json_array.push(construct_email_json email)
+    if(!email_array.nil? && email_array.kind_of?(Array))
+      email_array.each do |email|
+        email_json_array.push(construct_email_json email)
+      end
     end
     email_json_array
   end
 
   def construct_email_json email
     parsed_email = parse_email email
-    "{\"email\": \"#{parsed_email[:email]}\",\"name\": \"#{parsed_email[:name]}\"}"
+    email_hash = {
+      "email" => parsed_email[:email],
+      "name" => parsed_email[:name]
+    }
+    email_hash
   end
 
   def get_shard account_id
