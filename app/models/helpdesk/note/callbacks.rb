@@ -164,6 +164,8 @@ class Helpdesk::Note < ActiveRecord::Base
           Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {}) unless notable.spam?
         end
 
+        integrations_private_note_notifications unless replied_by_customer?
+
       else
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)  
         #notify the agents only for notes
@@ -181,9 +183,16 @@ class Helpdesk::Note < ActiveRecord::Base
       end
     end
 
-    def send_requester_replied_notification(internal_notification = false)
-      Helpdesk::TicketNotifier.send_later(:notify_by_email, (EmailNotification::REPLIED_BY_REQUESTER),
+    def integrations_private_note_notifications(internal_notification = false)
+      Helpdesk::TicketNotifier.send_later(:notify_by_email, (EmailNotification::NOTIFY_COMMENT),
               notable, self, {:internal_notification => internal_notification})
+    end
+
+    def send_requester_replied_notification(internal_notification = false)
+      # if the source is "feedback" then send the notification email after 2 minutes
+      send_at = ([SOURCE_KEYS_BY_TOKEN["feedback"]].include?(self.source))? 2 : 0
+      args = [(EmailNotification::REPLIED_BY_REQUESTER), notable, self, {:internal_notification => internal_notification}]
+      Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::TicketNotifier, :notify_by_email, args), nil, send_at.minutes.from_now)
     end
 
     def handle_notification_for_agent_as_req
@@ -314,7 +323,7 @@ class Helpdesk::Note < ActiveRecord::Base
     # VA - Observer Rule 
     def update_observer_events
       return if user.nil? || !human_note_for_ticket? || feedback? || !(notable.instance_of? Helpdesk::Ticket) || broadcast_note? || disable_observer_rule
-      if replied_by_customer? || replied_by_agent?
+      if replied_by_customer?  || replied_by_agent?
         @model_changes = {:reply_sent => :sent}
       else
         @model_changes = {:note_type => NOTE_TYPE[private]}
@@ -333,7 +342,7 @@ class Helpdesk::Note < ActiveRecord::Base
     def replied_by_customer?
       # Added the private note check when agent as a requester adds a private note should not trigger the observer rule
       # (Should behave as a private note)
-      (user.customer? || (notable.agent_as_requester?(user.id) && (public_note? || email?)))
+      (user.customer? && (public_note? || (tweet? || fb_note?))) || (notable.agent_as_requester?(user.id) && (public_note? || email?))
     end
 
     def replied_by_agent?

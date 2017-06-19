@@ -5,7 +5,9 @@ class Export::TicketDump < Export::TicketSchedule
     file_string =  Sharding.run_on_slave{ export_file }
     upload_file(file_string)
     save_file_name file_name
-    DataExportMailer.scheduled_ticket_export(:filter_id => @schedule.id) if @schedule.send_email?
+    DataExportMailer.send(
+      @no_tickets ? :scheduled_ticket_export_no_data : :scheduled_ticket_export,
+      :filter_id => @schedule.id) if @schedule.send_email?
     destroy_task
   rescue => e
     NewRelic::Agent.notice_error(e,{:description => "Ticket Schedule Dump error #{Account.current.id} :: #{export_params[:task_id]}"})

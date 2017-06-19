@@ -59,6 +59,26 @@ class DataExportMailer < ActionMailer::Base
     end.deliver
   end
 
+  def scheduled_ticket_export_no_data options={}
+    @account = Account.current
+    schedule = @account.scheduled_ticket_exports.find_by_id(options[:filter_id])
+    schedule.user.make_current
+    TimeZone.set_time_zone
+    headers = {
+      :subject   => schedule.email_no_data_subject,
+      :to        => schedule.agent_emails,
+      :from      => AppConfig['from_email'],
+      :bcc       => AppConfig['reports_email'],
+      :sent_on   => Time.now,
+      "Reply-to" => ""
+    }
+    headers.merge!(make_header(nil, nil, @account.id, "Scheduled Ticket Export No Data"))
+    @description = schedule.email_no_data_description
+    mail(headers) do |part|
+      part.html { render "scheduled_ticket_export", :formats => [:html] }
+    end.deliver
+  end
+
   def no_tickets(options={})
     headers = {
       :subject  => "No tickets in range - #{options[:domain]}",

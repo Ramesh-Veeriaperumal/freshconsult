@@ -81,12 +81,13 @@
       :multi_dynamic_sections: 76
       :caching: 77
       :collaboration: 78
+      :auto_ticket_export: 79
+      :skill_based_round_robin: 80
 :selectable_features:
       :branding: true
       :gamification_enable: false
       :parent_child_tickets: false
       :link_tickets: false
       :advanced_search_bulk_actions: false
-      :ticket_activity_export: false
       :caching: false
       :private_inline: false

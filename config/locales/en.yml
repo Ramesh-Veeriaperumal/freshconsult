@@ -7083,6 +7083,9 @@ en:
     scheduled_ticket_export:
       subject: "%{title} for %{date}"
       body: "Hello there,<br><br>The export scheduled by %{user_name} is now ready. This report has the details of tickets that were created and updated from %{latest_schedule_range}.<br><br><a href=%{url}>Download Report</a><br><br>Please download this report within 30 days, after which the link will expire.<br><br>Happy number crunching!<br>%{helpdesk_name}"
+    scheduled_ticket_export_no_data:
+      subject: "%{title} - No tickets created or updated"
+      body: "Hello there,<br><br>It’s been a little quiet here! You have no tickets created or updated from %{latest_schedule_range}. We’ll be back once your support is in action.<br><br>%{helpdesk_name}"
     agents:
       fields:
         name: "Name"
@@ -9504,7 +9507,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       create_new: "Create"
       schedule_show_message: "You cannot edit a schedule once it's created"
       file_not_found: The required export file is not found.
-      file_not_created: The required export file is not yet created.
+      file_not_created: The required export file has not yet been created.
       helpnote:
         help_title_1: "Export ticket properties"
         help_info_1: "You can schedule and export ticket properties, along with their associated contact and company fields from Freshdesk. Data from the export can then be used for building custom reports. For example, you can get an export of tickets every week which includes the first response time, resolution time and the assigned agent, and see how responsive your support team is. A maximum of five schedules can be created for an account. <a href='https://support.freshdesk.com/support/solutions/articles/226461-export-ticket-properties/' target='_blank'>Read more</a> on how to create a schedule to export ticket properties."
@@ -9552,7 +9555,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         weekly_label: "7 days"
         schedule_message: "%{zone} for tickets created/updated in the last %{label}"
         select_all: "Select all"
-        max_field: "(upto 100 fields)"
+        max_field: "(upto 150 fields)"
         email_recipient_maxlimit: "You cannot add more than %{limit} email addresses"
     ticket_activity:
       title: "Export ticket activities"
@@ -10977,8 +10980,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     notification_preferences: "Notification Preferences"
     notify_when: Notify when...
     checking_your_preferences: Checking your preferences...
-    actor_text_2: "%{actor_name_1} and %{actor_name_2} "
-    actor_text_multi: "%{actor_name_1} and %{more_actors_count} more "
+    actor_text_2: "%{actor_name_1} and %{actor_name_2}&nbsp;"
+    actor_text_multi: "%{actor_name_1} and %{more_actors_count} more&nbsp;"
     private_note_created: "sent you a private note on ticket %{object}"
     private_note_created_multi: "sent you %{count} private notes on ticket %{object}"
     public_note_created: "added a note on ticket %{object}"

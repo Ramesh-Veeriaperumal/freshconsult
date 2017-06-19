@@ -1772,6 +1772,14 @@ li {
             }
             .redactor_editor {
                 padding-top: 10px !important;
+                ol, ul{
+                    &[dir='ltr'] {
+                        padding: 0px 0px 0px 40px;
+                    }
+                    &[dir='rtl'] {
+                        padding: 0px 40px 0px 0px;
+                    }
+                }
             }
         }
         .redactor_toolbar {
@@ -2056,6 +2064,14 @@ li {
         margin-top: 30px;
         overflow-x: auto;
         @include text-formatting();
+        ol, ul{
+            &[dir='ltr'] {
+                padding: 0px 0px 0px 40px;
+            }
+            &[dir='rtl'] {
+                padding: 0px 40px 0px 0px;
+            }
+        }
         // table:not(.p-table){
         //  &, td, th{
         //      border: none;

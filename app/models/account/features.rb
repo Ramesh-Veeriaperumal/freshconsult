@@ -2,7 +2,7 @@ class Account < ActiveRecord::Base
 
   LP_FEATURES   = [:link_tickets, :select_all, :round_robin_capping, :suggest_tickets, :customer_sentiment_ui,
                    :dkim, :bulk_security, :scheduled_ticket_export, :ticket_contact_export,
-                   :email_failures, :disable_emails, :auto_ticket_export, :one_hop, :user_notifications]
+                   :email_failures, :disable_emails, :one_hop, :user_notifications]
   DB_FEATURES   = [:shared_ownership, :custom_survey, :requester_widget, :archive_tickets, :sitemap]
   BITMAP_FEATURES = [
       :split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management,
@@ -12,7 +12,7 @@ class Account < ActiveRecord::Base
       :advanced_reporting, :timesheets, :multiple_emails, :custom_domain, :gamification, :gamification_enable,
       :auto_refresh, :branding, :advanced_dkim, :basic_dkim, :shared_ownership_toggle, :unique_contact_identifier_toggle,
       :system_observer_events, :unique_contact_identifier, :ticket_activity_export, :caching, :private_inline, :collaboration,
-      :multi_dynamic_sections
+      :multi_dynamic_sections, :auto_ticket_export
     ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   LP_FEATURES.each do |item|
@@ -33,7 +33,7 @@ class Account < ActiveRecord::Base
     end
   end
 
-    Collaboration::Ticket::SUB_FEATURES.each do |item|
+  Collaboration::Ticket::SUB_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
       self.collaboration_enabled? && (self.collab_settings[item.to_s] == 1)
     end
@@ -171,6 +171,14 @@ class Account < ActiveRecord::Base
 
   def tkt_templates_enabled?
     @templates ||= (features?(:ticket_templates) || parent_child_tkts_enabled?)
+  end
+
+  def auto_ticket_export_enabled?
+    @auto_ticket_export ||= (launched?(:auto_ticket_export) || has_feature?(:auto_ticket_export))
+  end
+
+  def ticket_contact_export_enabled?
+    @ticket_contact_export_enabled ||= (launched?(:ticket_contact_export) || auto_ticket_export_enabled?)
   end
 
   def selectable_features_list

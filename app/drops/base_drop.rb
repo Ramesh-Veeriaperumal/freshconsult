@@ -103,4 +103,26 @@ class BaseDrop < Liquid::Drop
       @page = max_page and return if respond_to?(:max_page, true) && (@page == "last" or @page.to_i > max_page)
       @page = 1 if @page.to_i.to_s != @page || @page.to_i <= 0
     end
+
+    def escape_liquid_attributes?
+      #Enable this feature to skip escaping for customers who don't want their placeholder values to get escaped 
+      @can_escape ||= (@source.escape_liquid_attributes && !Account.current.launched?(:escape_liquid_attributes_whitelist))
+    end
+
+    def escape_liquid_attribute(value)
+        escape_liquid_attributes? ? h(value) : value
+    end
+
+    def formatted_field_value(field_type, field_value)
+      case field_type.to_sym
+      when :custom_paragraph
+         escape_liquid_attribute(field_value).gsub(/\n/, '<br/>')
+      when :custom_text
+        escape_liquid_attribute(field_value)
+      when :custom_date
+        formatted_date(field_value)
+      else 
+        field_value
+      end
+    end
 end

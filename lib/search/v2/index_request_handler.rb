@@ -5,10 +5,11 @@ module Search
 
       attr_accessor :type, :tenant, :document_id
 
-      def initialize(type, tenant_id, document_id)
+      def initialize(type, tenant_id, document_id, timestamps = nil)
         @type           = type
         @tenant         = Tenant.fetch(tenant_id)
         @document_id    = document_id
+        @timestamps     = timestamps
       end
 
       # Upsert individual records in ES
@@ -70,19 +71,23 @@ module Search
       private
       
         def send_request(path, version, routing_id, parent_id, payload)
-          Utils::EsClient.new(:put,
-                              path,
-                              add_params(version, @tenant.id, parent_id),
-                              payload,
-                              Search::Utils::SEARCH_LOGGING[:response]).response
+          client = Utils::EsClient.new(:put,
+                                      path,
+                                      add_params(version, @tenant.id, parent_id),
+                                      payload,
+                                      Search::Utils::SEARCH_LOGGING[:response])
+          client.logger.log_timestamps(@timestamps["timestamps"])
+          client.response
         end
         
         def remove_request(path)
-          Utils::EsClient.new(:delete,
-                              path,
-                              { routing: @tenant.id },
-                              nil,
-                              Search::Utils::SEARCH_LOGGING[:response]).response
+          client = Utils::EsClient.new(:delete,
+                                      path,
+                                      { routing: @tenant.id },
+                                      nil,
+                                      Search::Utils::SEARCH_LOGGING[:response])
+          client.logger.log_timestamps(@timestamps["timestamps"])
+          client.response
         end
 
         # Pass external version to ES for OCC
