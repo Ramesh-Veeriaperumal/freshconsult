@@ -138,7 +138,7 @@ class User < ActiveRecord::Base
   end
 
   attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, :sbrr_fresh_user,
-                :primary_email_attributes, :tags_updated, :keep_user_active, :role_ids_changed # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there.
+                :primary_email_attributes, :tags_updated, :keep_user_active, :escape_liquid_attributes, :role_ids_changed # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there.
   # As role_ids are not part of user_model(it is an association_reader), agent.update_attributes won't trigger user callbacks since user doesn't have any change.
   # Hence user.send(:attribute_will_change!, :role_ids_changed) is being called in api_agents_controller.)
 
