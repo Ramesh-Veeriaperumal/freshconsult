@@ -265,17 +265,13 @@ module IntegrationServices::Services
       def get_conversation user, user_cred
         token = user_cred.auth_info["oauth_token"]
         return nil if token.blank?
-        count = valid_digit_params? ? no_of_lines : DEFAULT_LINES
+        count = valid_params? ? no_of_lines : DEFAULT_LINES
         history_response = receive_history(token, count) 
         history_response[:error].blank? ? history_response[:history] : nil
       end
 
-      def valid_digit_params?
-        contains_digits? && @payload[:act_hash][:event_type] == NEW_SLACK_COMMAND && no_of_lines <= DEFAULT_LINES && no_of_lines > 0
-      end
-
-      def contains_digits?
-        @payload[:act_hash][:user_slack_token] !~ /\D/ #non-digit characters not present
+      def valid_params?
+        @payload[:act_hash][:event_type] == NEW_SLACK_COMMAND && @payload[:act_hash][:user_slack_token].present?
       end
 
       def no_of_lines

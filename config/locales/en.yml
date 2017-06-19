@@ -8175,6 +8175,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       slack_token_failure: "Error while updating the token."
       disable_slash_command: Admin has not enabled the slash command in Freshdesk."
       authorize_in_fd: "Please go to your Freshdesk account and Authorize your account.This Account doesnot have permission to create Ticket"
+      invalid_parameter: "Invalid command. Please enter a value between 1 and 200 to create a ticket on Freshdesk."
     slack_settings:
       channels: "Channels to post"
       notify: "Notification for"
