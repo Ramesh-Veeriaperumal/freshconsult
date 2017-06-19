@@ -24,6 +24,8 @@ Enterprise Reporting:
   - :surveys
   - :survey_links
   - :timesheets
+  - :auto_ticket_export
+  - :ticket_activity_export
 Gamification:
   - :forums
   - :gamification

@@ -5,9 +5,9 @@ module Search
 
       attr_accessor :types, :tenant, :template_name
 
-      def initialize(tenant_id, search_context, types=[], locale='')
+      def initialize(tenant_id, template_name, types=[], locale='')
         @tenant         = Tenant.fetch(tenant_id)
-        @template_name  = get_template_id(search_context)
+        @template_name  = template_name
         @types          = types
         @locale         = locale
       end
@@ -18,26 +18,18 @@ module Search
         request_uuid = search_params.delete(:request_id)
 
         Utils::EsClient.new(:get, 
-                            (@template_name? template_query_path : search_path), 
-                            query_params,
-                            construct_payload(search_params),
-                            Search::Utils::SEARCH_LOGGING[:request],
-                            request_uuid,
-                            search_params[:account_id],
-                            @tenant.home_cluster,
-                            @template_name
-                          ).response
+                          (@template_name? template_query_path : search_path), 
+                          query_params,
+                          construct_payload(search_params),
+                          Search::Utils::SEARCH_LOGGING[:request],
+                          request_uuid,
+                          search_params[:account_id],
+                          @tenant.home_cluster,
+                          @template_name
+                        ).response
       end
 
       private
-
-        def get_template_id(template_key)
-          if(Account.current.launched?(:es_v2_splqueries) && Search::Utils::SPECIAL_TEMPLATES.has_key?(template_key))
-            Search::Utils::SPECIAL_TEMPLATES[template_key]
-          else
-            Search::Utils::TEMPLATE_BY_CONTEXT[template_key]
-          end
-        end
 
         # The path to direct search requests
         # Eg: http://localhost:9200/ticket_v1,user_v1/_search

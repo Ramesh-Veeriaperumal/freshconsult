@@ -8,9 +8,9 @@ class Ryuken::ScheduledExportPoller
     schedule = Account.current.scheduled_ticket_exports.find_by_id(args["id"]) # TO DO : cache
     if schedule.present?
       schedule.update_column(:latest_file, args["file_name"])
-      DataExportMailer.send_later(:scheduled_ticket_export, 
-                                  :file_name => args["file_name"], 
-                                  :filter_id => args["id"]) if schedule.send_email?
+      DataExportMailer.send_later(
+        args["no_data"].present? ? :scheduled_ticket_export_no_data : :scheduled_ticket_export,
+        :filter_id => args["id"]) if schedule.send_email?
     end
     sqs_msg.try :delete
   rescue Exception => e

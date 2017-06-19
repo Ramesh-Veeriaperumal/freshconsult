@@ -49,7 +49,7 @@ module Integrations::Constants
     :shared_ownership => "shared_ownership"
   }
 
-  DISPLAY_IN_PAGES = { "ticket_show" => 2, "contact_show" => 1, "company_show" => 0 }
+  DISPLAY_IN_PAGES = { 'ticket_show' => 2, 'contact_show' => 1, 'company_show' => 0, 'time_sheet_show' => 3, 'editor_show' => 4 }.freeze
 
   CRM_APPS= [:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm, :quickbooks, :freshbooks, :infusionsoft, :freshsales, :salesforce_v2, :dynamics_v2]
 
@@ -119,4 +119,19 @@ module Integrations::Constants
 
   ZOHO_URL_SUFFIX = '&authtoken='
   MAILCHIMP_URL_SUFFIX = '&apikey='
+
+  APPS_DISPLAY_MAPPING = {
+    APP_NAMES[:jira] => 4,
+    APP_NAMES[:zohocrm] => 6,
+    APP_NAMES[:mailchimp].downcase => 2,
+    APP_NAMES[:salesforce_v2] => 6,
+    APP_NAMES[:harvest] => 8,
+    APP_NAMES[:dropbox] => 16,
+    APP_NAMES[:box] => 16,
+    APP_NAMES[:onedrive] => 16,
+    APP_NAMES[:surveymonkey] => 16,
+    APP_NAMES[:google_calendar] => 4
+  }.freeze
+
+  ATTACHMENT_APPS = [APP_NAMES[:dropbox],APP_NAMES[:box],APP_NAMES[:onedrive]].freeze
 end

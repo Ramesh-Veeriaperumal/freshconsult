@@ -49,9 +49,14 @@ module ContactConstants
   # Max other company count excluding the default company
   MAX_OTHER_COMPANIES_COUNT = (User::MAX_USER_COMPANIES - 1)
 
-  MERGE_VALIDATIONS = [['emails', 5, 'emails'], ['twitter_id', 1, 'Twitter User'],
-                       ['fb_profile_id', 1, 'Facebook User'], ['external_id', 1, 'Ecommerce User or Mobihelp User'],
-                       ['company_names', 20, 'companies'], ['mobile', 1, 'mobile phone'], ['phone', 1, 'work phone']].freeze # [Attribute, limit, message] ["phone", 1, "Phone User"]
+  MERGE_VALIDATIONS = [['emails', User::MAX_USER_EMAILS, 'emails'],
+                       ['twitter_id', 1, 'Twitter User'],
+                       ['fb_profile_id', 1, 'Facebook User'],
+                       ['external_id', 1, 'Ecommerce User or Mobihelp User'],
+                       ['company_names', User::MAX_USER_COMPANIES, 'companies'],
+                       ['mobile', 1, 'mobile phone'],
+                       ['phone', 1, 'work phone']].freeze
+  # [Attribute, limit, message] ["phone", 1, "Phone User"]
   # Routes that doesn't accept any params
   NO_PARAM_ROUTES = %w(restore).freeze
 
