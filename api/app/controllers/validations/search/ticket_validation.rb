@@ -8,7 +8,7 @@ module Search
 
 	  validates :status, data_type: { rules: Array }, array: { custom_inclusion: { in: proc { |x| x.status_ids }, detect_type: true } }
     validates :priority, data_type: { rules: Array }, array: { custom_inclusion: { in: ApiTicketConstants::PRIORITIES, detect_type: true } }
-    validates :group_id, array: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param } }
+    validates :group_id, array: { custom_numericality: { only_integer: true, greater_than: 0 } }
 
 	  validates :custom_fields, custom_field: { custom_fields:
 	                          {

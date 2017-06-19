@@ -115,6 +115,11 @@ module ApiSearch
       assert_response 400
     end
 
+    def test_tickets_custom_fields_string_value_for_group_id
+      get :index, controller_params(query: '"group_id:\'123\'"')
+      assert_response 400
+    end
+
     def test_tickets_filter_using_negative_number_in_custom_field
       ticket = @account.tickets.select{|x|  x if x.custom_field["test_custom_number_1"].to_i < 0 }.first
       val = ticket.custom_field["test_custom_number_1"]
