@@ -8,19 +8,25 @@ printMsg(){
   echo "----------------------------"
 }
 
+jiraIssuePattern="(FDCORE|FRESHPIPE)-(\\d+)"
 commitMsgFile=$1
 
-numIssueIdsInMsg=`cat $1 | head -n 1 | egrep -o "FDCORE-(\\d+)" | wc -l`
-isMergeCommit=`cat $1 | egrep "Merge branch '.*?'" | wc -l`
+numIssueIdsInMsg=`cat $1 | head -n 1 | egrep -o "${jiraIssuePattern}" | wc -l`
+msgWordCount=`cat $1 | head -n 1 | tr -s ' ' '\n' | egrep -v "${jiraIssuePattern}" | wc -l`
 
-if [ $isMergeCommit -gt 0 ]
+if [ `git rev-parse -q --verify MERGE_HEAD | wc -c` -gt 1 ]
 then 
   exit 0;
 fi
 
+if [ $msgWordCount -lt 3 ] 
+then 
+  printMsg "Please enter a decriptive commit msg title" 
+fi
+
 if [ $numIssueIdsInMsg -eq 0 ] 
 then 
-  numIssueIdsInDesc=`cat $1 | egrep -o "FDCORE-(\\d+)" | wc -l | awk '{print $1}'`
+  numIssueIdsInDesc=`cat $1 | egrep -o  "${jiraIssuePattern}" | wc -l | awk '{print $1}'`
   if [ $numIssueIdsInDesc -gt 0 ] 
     then
       printMsg "$numIssueIdsInDesc Jira Issue Id was found as part of the commit description. 
@@ -39,6 +45,6 @@ fi
 
 if [ `cat $commitMsgFile | grep -v "^#" | egrep "[^ ]" | wc -l` -lt 2 ] 
 then 
-  printMsg "Missing description. Please add a description to your commit" 
+  printMsg "Missing description. Please add a description to your commit." 
   exit 1;
 fi
