@@ -1,5 +1,7 @@
 class HealthCheckupController < ActionController::Metal
 
+  INFRA = YAML.load_file(File.join(Rails.root, 'config', 'infra_layer.yml'))
+
   include ActionController::Head
 
   def app_health_check
@@ -11,7 +13,7 @@ class HealthCheckupController < ActionController::Metal
   end
 
   def check_asset_compilation 
-    @status = ASSETS_DIRECTORY_EXISTS ? :ok : nil
+    @status = ASSETS_DIRECTORY_EXISTS ? :ok : (INFRA['PRIVATE_API'] ? :ok : nil) # Escape asset existence check for falcon apps
   end
 
 end

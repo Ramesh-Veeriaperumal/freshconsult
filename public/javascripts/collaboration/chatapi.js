@@ -251,7 +251,7 @@
                     // TODO (mayank): make your own unique_id and use them instead of id
                     msg = JSON.parse(data.msg);
                     msg.mid = String(data.id); /* quick fix */
-                    if(msg.u_nch === NOTIFICATION_CONVO_ID) {
+                    if(typeof msg.u_nch !== "undefined" && msg.u_nch === NOTIFICATION_CONVO_ID) {
                         msg.nid = String(data.id); /* quick fix for notification use case */
                         self.onnotify(msg);
                     }
@@ -491,7 +491,7 @@
         
         collabHttpAjax({
             method: "GET",
-            url: CONVERSATION_GET_ROUTE + "?co_id=" + conversationName + "&uid=" + uid,
+            url: CONVERSATION_GET_ROUTE + "?co_id=" + conversationName + "&count=true&uid=" + uid,
             success: function(response){
                 conversationLoadCb.call(self, response, cb);
             },

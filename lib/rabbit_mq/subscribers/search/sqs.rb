@@ -5,7 +5,9 @@ module RabbitMq::Subscribers::Search::Sqs
   end
 
   def mq_search_subscriber_properties(action)
-    {}
+    { 
+      "timestamps" => [Search::Job.es_version/1000]
+    }
   end
 
   # Invoked via sqs_manual_publish_without_feature_check due to alias_method_chain

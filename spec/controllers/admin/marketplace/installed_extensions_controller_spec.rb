@@ -74,6 +74,15 @@ describe Admin::Marketplace::InstalledExtensionsController do
     end
   end
 
+  describe "PUT update_config" do
+    it "updates configs of the extension" do
+      controller.stubs(:update_extension).returns(success_response)
+      put :update_config, { extension_id: 1, version_id: 1, configs: account_configs.body }
+      expect(response.body).to eq(success_response.body)
+      expect(response.status).to eq(200)
+    end
+  end
+
   describe "DELETE uninstall" do
     it "deletes the extension" do
       controller.stubs(:uninstall_extension).returns(success_response)
