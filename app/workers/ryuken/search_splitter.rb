@@ -11,12 +11,6 @@ class Ryuken::SearchSplitter
   
   def perform(sqs_msg, args)
     begin
-      if args["subscriber_properties"]["search"]
-        if sqs_msg.attributes["SentTimestamp"]
-          args["subscriber_properties"]["search"]["timestamps"] << sqs_msg.attributes["SentTimestamp"]
-        end
-        args["subscriber_properties"]["search"]["timestamps"] << Search::Job.es_version/1000
-      end
       cluster = Search::V2::Tenant.new(Account.current.id).home_cluster
       if args["#{args['object']}_properties"]['archive'].presence
         Ryuken::SearchPoller.perform_async(args.to_json, queue: ES_V2_QUEUE_KEY % { cluster: (cluster + '-archive') })
