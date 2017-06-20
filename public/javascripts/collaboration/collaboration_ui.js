@@ -1506,9 +1506,7 @@ App.CollaborationUi = (function ($) {
 	            "co_id": config.display_id,
                 "owned_by": config.responder_id,
                 "is_closed": config.is_closed,
-                "token": config.convo_token,
-                "requester_name": config.requester_name,
-                "requester_email": config.requester_email
+                "token": config.convo_token
 	        }
 
             /*
