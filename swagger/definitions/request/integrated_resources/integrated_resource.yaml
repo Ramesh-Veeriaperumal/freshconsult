@@ -1,0 +1,25 @@
+type: object
+required:
+  - application_id
+  - integrated_resource
+properties:
+  application_id:
+    type: integer
+    description: App id
+  integrated_resource:
+    type: object
+    description: Resource hash
+    properties:
+      local_integratable_id:
+        type: integer
+        format: int64
+      local_integratable_type:
+        type: string
+        enum: ['Ticket','Timesheet']
+        description: Whether the local integratable type is ticket or timesheet
+      remote_integratable_id:
+        type: string
+      installed_application_id:
+        type: integer
+      remote_integratable_type:
+        type: string

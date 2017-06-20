@@ -22,6 +22,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/portal", only: [:index]
     resource :"ember/email_config", only: [:index]
     resource :"ember/contact_field", only: [:index]
+    resource :"ember/installed_application"
+    resource :"ember/integrated_resource"
+    resource :"ember/integrated_user"
+
 
     resource :"ember/search/ticket", only: [:results]
     resource :"ember/search/autocomplete", :only => [:requesters, :agents, :companies, :tags]

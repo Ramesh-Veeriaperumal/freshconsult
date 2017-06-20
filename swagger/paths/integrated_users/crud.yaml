@@ -1,0 +1,15 @@
+get:
+  tags: [Integrated Users]
+  summary: User Resource Details
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      required: true
+      description: Resource Id
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/integrated_users'
+              
