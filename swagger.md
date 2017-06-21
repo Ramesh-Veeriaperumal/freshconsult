@@ -55,4 +55,7 @@ Request and response definitions are organised into different folders:
 After making the relevant changes, make sure to check if swagger.json is generated.
 If it is blank, make a dummy edit-save to generate it.
 
+It is mandatory to check in the `swagger.json` along the changes to the yaml files.
+Before committing, please visit http://editor.swagger.io and import the generated `swagger.json`. The documentation should be generated on the right without any errors/warnings.
+
 Go to http://localhost.freshdesk-dev.com:3000/swagger/ to see if the changes are reflected.

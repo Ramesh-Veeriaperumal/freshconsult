@@ -1,0 +1,29 @@
+get:
+  tags: [Integrated Resources]
+  summary: List a particular resource
+  description: List the integrated resource of the currently logged in user 
+  parameters:
+    - name: installed_application_id
+      in: query
+      type: integer
+      required: true
+    - name: local_integratable_id
+      in: query
+      type: integer
+      format: int64
+      required: true
+    - name: local_integratable_type
+      in: query
+      type: string
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          integrated_resources:
+            type: array
+            items:
+              $ref: '#/definitions/integrated_resources'
+    404:
+      description: No resource available

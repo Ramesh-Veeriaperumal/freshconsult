@@ -1,0 +1,16 @@
+type: object
+allOf:
+  - $ref: '#/definitions/extension_generic'
+  - properties:
+      installed_application_id:
+        type: integer
+        description: Installed App Id
+      remote_integratable_id:
+        type: string
+        description: Remote Integratable Id
+      remote_integratable_type:
+        type: string
+        description: Remote Integratable Type
+      local_integratable_id:
+        type: integer
+        description: Local integratable Id

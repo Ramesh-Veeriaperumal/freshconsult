@@ -283,6 +283,10 @@ end
     ticket_activity_export.save
   end
 
+  def handle_auto_ticket_export_drop_data
+    account.scheduled_ticket_exports.destroy_all
+  end
+
   private
 
   def default_portal_preferences

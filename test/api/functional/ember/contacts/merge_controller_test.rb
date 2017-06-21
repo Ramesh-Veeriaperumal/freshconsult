@@ -22,21 +22,21 @@ module Ember
       end
 
       def test_merge_with_no_params
-        post :merge, construct_params({version: 'private'}, {})
+        post :merge, construct_params({ version: 'private' }, {})
         assert_response 400
         match_json([bad_request_error_pattern(:primary_id, :missing_field),
                     bad_request_error_pattern(:target_ids, :missing_field)])
       end
 
       def test_merge_with_non_existing_contact
-        post :merge, construct_params({version: 'private'}, {primary_id: (User.last.try(:id) || 0) + 10, target_ids: [1,2]})
+        post :merge, construct_params({ version: 'private' }, primary_id: (User.last.try(:id) || 0) + 10, target_ids: [1, 2])
         assert_response 404
       end
 
       def test_merge_with_invalid_target_ids
         primary_contact = add_new_user(@account)
         invalid_ids = [primary_contact.id + 10, primary_contact.id + 20]
-        post :merge, construct_params({version: 'private'}, {primary_id: primary_contact.id, target_ids: invalid_ids})
+        post :merge, construct_params({ version: 'private' }, primary_id: primary_contact.id, target_ids: invalid_ids)
         assert_response 400
         match_json([bad_request_error_pattern(:target_ids, :invalid_list, list: invalid_ids.join(', '))])
       end
@@ -44,13 +44,13 @@ module Ember
       def test_merge_validation_failures
         primary_contact = add_new_user(@account)
         target_ids = []
-        5.times do
+        10.times do
           target_ids << add_new_user(@account).id
         end
         params_hash = { primary_id: primary_contact.id, target_ids: target_ids }
-        post :merge, construct_params({version: 'private'}, params_hash)
+        post :merge, construct_params({ version: 'private' }, params_hash)
         assert_response 400
-        match_json([bad_request_error_pattern(:emails, :contact_merge_validation, max_value: 5, field: 'emails')])
+        match_json([bad_request_error_pattern(:emails, :contact_merge_validation, max_value: 10, field: 'emails')])
       end
 
       def test_merge_with_errors
@@ -61,7 +61,7 @@ module Ember
         end
         params_hash = { primary_id: primary_contact.id, target_ids: target_ids }
         User.any_instance.stubs(:save).returns(false)
-        post :merge, construct_params({version: 'private'}, params_hash)
+        post :merge, construct_params({ version: 'private' }, params_hash)
         assert_response 500
         User.any_instance.unstub(:save)
       end
@@ -73,7 +73,7 @@ module Ember
           target_ids << add_new_user(@account, customer_id: create_company.id).id
         end
         params_hash = { primary_id: primary_contact.id, target_ids: target_ids }
-        post :merge, construct_params({version: 'private'}, params_hash)
+        post :merge, construct_params({ version: 'private' }, params_hash)
         assert_response 204
         primary_contact.reload
         assert_equal target_ids.size + 1, primary_contact.user_emails.count

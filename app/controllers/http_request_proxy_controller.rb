@@ -56,7 +56,7 @@ class HttpRequestProxyController < ApplicationController
           if params[:company_id].present?
             company_name = spl_char_replace current_account.companies.find(params[:company_id]).name
           end
-    		  params[:body] = params[:body] % { :SESSION_ID => installed_app.configs[:inputs]['session_id'], :company_name => company_name}
+          params[:body] = params[:body] % { :SESSION_ID => installed_app.configs[:inputs]['session_id'], :company_name => company_name}
         elsif params[:app_name] == "czentrix" #adding this as a hack in here. ideally it should not be here.
           params[:domain] = "#{request.protocol}#{installed_app.configs[:inputs][:host_ip]}"
           @domain_verified = true
