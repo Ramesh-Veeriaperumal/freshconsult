@@ -1183,6 +1183,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def archive?
     false
   end
+  alias :archive :archive?
 
   def ticket_was _changes = {}, custom_attributes = []
     replicate_ticket :first, _changes, custom_attributes

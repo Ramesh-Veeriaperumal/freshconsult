@@ -9,10 +9,12 @@ namespace :archive_automation do
         current_archive_shard = ActiveRecord::Base.current_shard_selection.shard.to_s + "_archive"
         account_ids = $redis_tickets.perform_redis_op("lrange",current_archive_shard,0,-1)
         account_ids.each do |account_id|
-          # puts account_id
-          account = Account.find(account_id).make_current
-          next if account.launched?(:disable_archive)
-          Archive::TicketsSplitter.new.perform({ "account_id" => account_id, "ticket_status" => "closed" })
+          begin
+            account = Account.find(account_id).make_current
+            next if account.launched?(:disable_archive)
+            Archive::TicketsSplitter.perform_async({ :account_id => account_id, :ticket_status => :closed })
+          rescue
+          end
         end
       end
     end
