@@ -12,8 +12,7 @@ module Tickets
       :ticket_split_source,
       :ticket_split_target,
       :ticket_import,
-      :round_robin,
-      :shared_ownership_reset
+      :round_robin
     ].freeze
 
     PROPERTY_ACTIONS = [
@@ -30,15 +29,31 @@ module Tickets
       :product_id,
       :custom_fields,
       :checked,
-      :unchecked
+      :unchecked,
+      :internal_agent_id,
+      :internal_group_id
     ].freeze
 
     ARRAY_CONTENT_TYPES = [
       :add_tag, :remove_tag, :add_a_cc,
-      :email_to_requester, :email_to_group, :email_to_agent
+      :email_to_requester, :email_to_group, :email_to_agent,
+      :tracker_link, :tracker_unlink, :assoc_parent_tkt_unlink
     ].freeze
 
-    CONTENT_LESS_TYPES = [:spam, :archive, :deleted].freeze
+    CONTENT_LESS_TYPES = [:spam, :archive, :deleted, :tracker_reset, :assoc_parent_tkt_open].freeze
+
+    ACTION_TYPE_MAPPING = {
+      rel_tkt_link:            :ticket_linked,
+      rel_tkt_unlink:          :ticket_unlinked,
+      tracker_link:            :tracker_linked,
+      tracker_unlink:          :tracker_unlinked,
+      assoc_parent_tkt_link:   :child_ticket_linked,
+      assoc_parent_tkt_unlink: :child_ticket_unlinked,
+      assoc_parent_tkt_open:   :parent_ticket_reopened,
+      child_tkt_link:          :parent_ticket_linked,
+      child_tkt_unlink:        :parent_ticket_unlinked,
+      watcher:                 :add_watcher
+    }.freeze
 
     def initialize(record, options)
       super(record)
@@ -53,7 +68,7 @@ module Tickets
         highlight: summary.nil? ? nil : summary.to_i,
         ticket_id: @ticket.display_id,
         performed_at: parse_activity_time(published_time),
-        actions: send("#{performer_type}_actions").reject{ |action| action.empty? }
+        actions: send("#{performer_type}_actions").reject(&:empty?)
       }
     end
 
@@ -168,9 +183,9 @@ module Tickets
           content = send(value[:type], value)
         elsif CONTENT_LESS_TYPES.include?(key)
           # content will be empty for this types
-          type = send(key, value)
+          type = type_mapping(send(key, value))
         elsif respond_to?(key.to_s, true)
-          type = key
+          type = type_mapping(key)
           content = send(key, value)
         elsif custom_field?(key)
           type = :property_update
@@ -180,6 +195,10 @@ module Tickets
           content = value
         end
         [type, content]
+      end
+
+      def type_mapping(type)
+        ACTION_TYPE_MAPPING.keys.include?(type) ? ACTION_TYPE_MAPPING[type] : type
       end
 
       def activity_content
@@ -214,6 +233,17 @@ module Tickets
         name.ends_with?("_#{Account.current.id}")
       end
 
+      def get_user(user_id)
+        user = @query_data_hash[:users][user_id]
+        if user.blank?
+          Rails.logger.info("ticket_activities_api ::: user is nil, user_id: #{user_id}, ticket_id: #{@ticket.display_id}, account_id: #{Account.current.id}")
+          return
+        else
+          parent = user.parent_id.zero? ? nil : @query_data_hash[:users][user.parent_id]
+          parent.nil? ? user : parent
+        end
+      end
+
       # Property Update actions
       [:subject, :description].each do |name|
         define_method name do |value|
@@ -221,14 +251,29 @@ module Tickets
         end
       end
 
-      [:responder_id, :priority, :source, :internal_agent_id, :requester_id].each do |name|
+      [:responder_id, :internal_agent_id, :requester_id].each do |name|
+        define_method name do |value|
+          if value[1].blank?
+            { name => nil }
+          else
+            user = get_user(value[1].to_i)
+            return if user.blank?
+            { name => value[1].to_i }
+          end
+        end
+      end
+
+      [:priority, :source].each do |name|
         define_method name do |value|
           { name => value[1].present? ? value[1].to_i : nil }
         end
       end
 
       def status(value)
-        { status: value[0].to_i }
+        {
+          status: value[0].to_i,
+          status_label: @query_data_hash[:status_name][value[0].to_i] || value[1]
+        }
       end
 
       def ticket_type(value)
@@ -239,12 +284,22 @@ module Tickets
         { group_name: value[1] }
       end
 
+      def internal_group_id(value)
+        { internal_group_name: value[1] }
+      end
+
       def product_id(value)
         { product_name: value[1] }
       end
 
       def due_by(value)
-        { due_by: parse_activity_time(value[1].to_i, false) }
+        time = parse_activity_time(value[1].to_i, false)
+        return if time.blank?
+        { due_by: time }
+      end
+
+      def skill_name(value)
+        value[1]
       end
 
       # custom checkboxes
@@ -284,14 +339,23 @@ module Tickets
       def note(value)
         note_id = value[:id].to_i
         note = @query_data_hash[:notes][note_id]
-        return if note.nil?
+        if note.nil?
+          Rails.logger.info("ticket_activities_api ::: note is nil, note_id: #{note_id}, ticket_id: #{@ticket.display_id}, account_id: #{Account.current.id}")
+          return
+        end
         ConversationDecorator.new(note, ticket: @ticket).to_hash
       end
 
       def delete_status(value)
         {
-          deleted_status: value[0],
-          current_status: value[1].to_i
+          deleted_value: value[0],
+          current_value: @query_data_hash[:status_name][value[1].to_i]
+        }
+      end
+
+      def delete_group(value)
+        {
+          deleted_value: value[0]
         }
       end
 
@@ -331,12 +395,14 @@ module Tickets
       end
 
       def round_robin(value)
+        user = get_user(value[:responder_id][1].to_i)
+        return if user.blank?
         { responder_id: value[:responder_id][1].to_i }
       end
 
       # Tags & Rules Related activities
 
-      ARRAY_CONTENT_TYPES.each do |name|
+      [:add_tag, :remove_tag, :add_a_cc, :email_to_group, :tracker_link, :tracker_unlink, :assoc_parent_tkt_unlink].each do |name|
         define_method name do |values|
           values.compact.map do |value|
             value.to_i == 0 ? value : value.to_i
@@ -344,22 +410,44 @@ module Tickets
         end
       end
 
+      def email_to_requester(value)
+        user = get_user(value[0].to_i)
+        return if user.blank?
+        value.map(&:to_i)
+      end
+
+      def email_to_agent(value)
+        user_ids = value.select do |id|
+          get_user(id.to_i).present?
+        end
+        return if user_ids.blank?
+        user_ids.map(&:to_i)
+      end
+
       # watchers
       def watcher(value)
-        watch_arr = value[:user_id]
-        if watch_arr[1].to_i.zero?
-          user_id = watch_arr[0].to_i
-          { add_watcher: false, user_ids: [user_id] }
+        user_ids = []
+        watcher_arr = value[:user_id]
+        if watcher_arr[1].to_i.zero?
+          flag = false
+          user = get_user(watcher_arr[0].to_i)
         else
-          user_id = watch_arr[1].to_i
-          { add_watcher: true, user_ids: [user_id] }
+          flag = true
+          user = get_user(watcher_arr[1].to_i)
         end
+        user_ids << user.id if user.present?
+        return if user_ids.blank?
+        { add_watcher: flag, user_ids: user_ids }
       end
 
       def add_watcher(value)
+        user_ids = value.select do |id|
+          get_user(id.to_i).present?
+        end
+        return if user_ids.count.zero?
         {
           add_watcher: true,
-          user_ids: value.map(&:to_i)
+          user_ids: user_ids.map(&:to_i)
         }
       end
 
@@ -402,14 +490,67 @@ module Tickets
       end
 
       def build_timesheet_params(value, flag)
-        index  = (flag == true ? 1 : 0)
+        index  = flag ? 1 : 0
+        user   = get_user(value[:user_id][index].to_i)
         params = {}
         params[:billable]      = value[:billable][index]
-        params[:user_id]       = value[:user_id][index].to_i
+        params[:user_id]       = user.present? ? value[:user_id][index].to_i : nil
         params[:executed_at]   = parse_activity_time(value[:executed_at][index].to_i, false)
         params[:time_spent]    = value[:time_spent][index].to_i
         params[:timer_running] = value[:timer_running][index] if value.key?(:timer_running)
         params
+      end
+
+      def remove_group(value)
+        {
+          group_name: value[0],
+          status_name: value[1]
+        }
+      end
+
+      def remove_agent(value)
+        user = get_user(value[0].to_i)
+        return if user.blank?
+        {
+          user_id: value[0].to_i,
+          group_name: value[1]
+        }
+      end
+
+      def remove_status(value)
+        value[0]
+      end
+
+      def shared_ownership_reset(value)
+        result_hash = {}
+        result_hash = internal_group_id(value[:internal_group_id]) if value[:internal_group_id].present?
+        if value[:internal_agent_id].present?
+          internal_agent_id = internal_agent_id(value[:internal_agent_id])
+          result_hash.merge!(internal_agent_id) unless internal_agent_id.nil?
+        end
+        result_hash
+      end
+
+      [:delete_agent, :delete_internal_agent, :rel_tkt_link, :rel_tkt_unlink, :assoc_parent_tkt_link, :child_tkt_link, :child_tkt_unlink].each do |name|
+        define_method name do |value|
+          value[0].to_i
+        end
+      end
+
+      def delete_internal_group(value)
+        value[0]
+      end
+
+      def tracker_unlink_all(value)
+        value.to_i
+      end
+
+      def tracker_reset(_value)
+        :tracker_reset
+      end
+
+      def assoc_parent_tkt_open(_value)
+        :parent_ticket_reopened
       end
   end
 end

@@ -112,7 +112,7 @@ namespace :seed_sample do
           device_make: "Samsung",
           device_model: "I9031",
           debug_data: {
-            resource: Rack::Test::UploadedFile.new('db/sample_data/mobihelp_debug_data.json', 'text/plain')
+            resource: Rack::Test::UploadedFile.new('script/tasks/sample_data/mobihelp_debug_data.json', 'text/plain')
           }
         }
       }

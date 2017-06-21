@@ -1,6 +1,6 @@
 namespace :seed_sample do
 
-  USER_AGENTS = YAML.load_file('db/sample_data/user_agents.yml')
+  USER_AGENTS = YAML.load_file('script/tasks/sample_data/user_agents.yml')
 
   desc "This task creates portal tickets with meta info (browser info) loaded" 
   task :portal_tickets, [:account_id] => :environment do |t, args|

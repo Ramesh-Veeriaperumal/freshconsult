@@ -9,4 +9,6 @@ module TicketFilterConstants
 
   VISIBILITY_ATTRIBUTES_NEEDED = %w(visibility group_id).freeze
 
+  WRAP_PARAMS = [:ticket_filter, exclude: [], format: [:json]].freeze
+
 end.freeze

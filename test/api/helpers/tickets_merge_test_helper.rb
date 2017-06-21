@@ -82,7 +82,7 @@ module TicketsMergeTestHelper
     end
   end
 
-  def validate_merge_action(target, source_tickets)
+  def validate_merge_action(target, source_tickets, check_timesheet = true)
     target.reload
     # check status as closed for source tickets
     source_reply_ccs = []
@@ -109,13 +109,15 @@ module TicketsMergeTestHelper
       assert flag
     end
 
-    # checking the timesheets
-    source_tickets.each do |ticket|
-      refute @account.time_sheets.where(workable_type: 'Helpdesk::Ticket', workable_id: ticket.id).present?
-    end
+    if check_timesheet
+      # checking the timesheets
+      source_tickets.each do |ticket|
+        refute @account.time_sheets.where(workable_type: 'Helpdesk::Ticket', workable_id: ticket.id).present?
+      end
 
-    assert @account.time_sheets.where(workable_type: 'Helpdesk::Ticket', workable_id: target.id).present?
-    assert @account.time_sheets.where(workable_type: 'Helpdesk::Ticket', workable_id: target.id).count == source_tickets.count
+      assert @account.time_sheets.where(workable_type: 'Helpdesk::Ticket', workable_id: target.id).present?
+      assert @account.time_sheets.where(workable_type: 'Helpdesk::Ticket', workable_id: target.id).count == source_tickets.count
+    end
   end
 
 end

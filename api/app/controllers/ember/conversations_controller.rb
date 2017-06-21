@@ -221,6 +221,7 @@ module Ember
       end
 
       def assign_attributes_for_forward
+        @item.private = true
         @item.note_body.full_text_html ||= (@item.note_body.body_html || '')
         @item.note_body.full_text_html = @item.note_body.full_text_html + bind_last_conv(@ticket, signature, true) if @include_quoted_text
         load_cloud_files
