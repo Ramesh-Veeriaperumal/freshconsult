@@ -1,4 +1,5 @@
 ticket=current_account.tickets.last
+enable_escape_liquid_attributes(ticket)
 liquid_objects = {"ticket" => ticket, "requester" => ticket.requester}
 
 widget = Integrations::Widget.new(:script=>params["application_script"])

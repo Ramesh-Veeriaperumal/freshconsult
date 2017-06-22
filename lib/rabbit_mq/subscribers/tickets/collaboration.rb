@@ -2,7 +2,7 @@ module RabbitMq::Subscribers::Tickets::Collaboration
   include RabbitMq::Constants
   
   def mq_collaboration_subscriber_properties(action)
-    {}
+    @model_changes.present? && @model_changes[:responder_id].present? ? responder_noti_data : {}
   end
 
   def mq_collaboration_ticket_properties(action)
@@ -20,5 +20,24 @@ module RabbitMq::Subscribers::Tickets::Collaboration
 
   def collab_keys
     COLLABORATION_TICKET_KEYS    
+  end
+
+  def responder_noti_data
+    collab_msg = {}
+    new_assignee_present = @model_changes[:responder_id][1].present?
+    if new_assignee_present
+      from_email = self.selected_reply_email.scan( /<([^>]*)>/).to_s
+      collab_msg = {
+        :from_email_address => from_email.blank? ? Account.current.default_friendly_email.scan( /<([^>]*)>/).to_s : from_email,
+        :client_id => Collaboration::Ticket::HK_CLIENT_ID,
+        :to_email_address => self.responder.email,
+        :user_id => self.responder_id.to_s,
+        :user_name => self.responder_name,
+        :requester_name => self.requester[:name],
+        :requester_email => self.requester[:email],
+        :current_domain => Account.current.full_domain
+      }
+    end
+    collab_msg
   end
 end
