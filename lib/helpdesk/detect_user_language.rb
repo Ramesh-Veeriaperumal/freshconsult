@@ -18,7 +18,7 @@ class Helpdesk::DetectUserLanguage
       client = Google::APIClient.new(:application_name => "Helpkit")
       translate = client.discovered_api('translate', 'v2')
       oauth_keys = Integrations::OauthHelper.get_oauth_keys('google_oauth2')
-      client.authorization.access_token = oauth_keys["consumer_token"]
+      client.authorization = nil
       client.key = oauth_keys["api_key"]
       start_time = Time.now.utc
       response = client.execute(:api_method => translate.detections.list,:parameters => {'q' => text})
