@@ -6,7 +6,7 @@ class Admin::UserSkillsController < Admin::AdminController
   before_filter :skills_present?
   before_filter :set_user_role, :only => :index
   before_filter :load_user, :except => :index
-  before_filter :set_filter_data, :only => [ :update ]
+  before_filter :set_filter_data, :check_skill_update_access, :only => [ :update ]
   
   def index
     load_groups_trimmed_version
@@ -42,7 +42,11 @@ class Admin::UserSkillsController < Admin::AdminController
     end
 
     def load_user
-      @user = current_account.users.technicians.find_by_id(params[:user_id])
+      if privilege?(:manage_skills) or current_user.has_edit_access?
+        @user = current_account.technicians.find_by_id(params[:user_id])
+      else
+        render :json => { :success => 403 }
+      end
     end
 
     def set_filter_data
@@ -72,4 +76,11 @@ class Admin::UserSkillsController < Admin::AdminController
       @filtered_group.present? ? @filtered_group.agents : (current_account.users if @is_admin)
     end
 
+    def check_skill_update_access
+      return if privilege?(:manage_skills)
+      new_skill_ids = params[:user_skills_attributes].map { |skill_set| skill_set[:skill_id] }
+      unless new_skill_ids.uniq.sort == @user.skill_ids.uniq.sort
+        render :json => { :success => 403 }
+      end
+    end
 end
