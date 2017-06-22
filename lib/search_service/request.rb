@@ -36,7 +36,6 @@ module SearchService
           if error['code'] == 'invalid_json'
             raise Errors::InvalidJsonException.new(error['message'])
           elsif error['code'] == 'invalid_field'
-            byebug
             raise Errors::InvalidFieldException.new(error['message'])
           elsif error['code'] == 'duplicate_value'
             raise Errors::DuplicateValueException.new(error['message'])

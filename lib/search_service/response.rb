@@ -3,7 +3,7 @@ module SearchService
     attr_accessor :records, :total_entries, :error, :response_object
 
     delegate :total_time, :starttransfer_time, :appconnect_time, :pretransfer_time, :connect_time, :namelookup_time,
-             :redirect_time, :headers, :code, :timed_out?, :request, to: :response_object
+             :redirect_time, :headers, :code, :timed_out?, :request, :body, to: :response_object
 
     def initialize(response)
       @response_object = response

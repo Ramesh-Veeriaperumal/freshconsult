@@ -13,7 +13,7 @@ class Ryuken::SearchSplitter
     begin
       if args["subscriber_properties"]["search"]
         if sqs_msg.attributes["SentTimestamp"]
-          args["subscriber_properties"]["search"]["timestamps"] << sqs_msg.attributes["SentTimestamp"]
+          args["subscriber_properties"]["search"]["timestamps"] << sqs_msg.attributes["SentTimestamp"].to_i
         end
         args["subscriber_properties"]["search"]["timestamps"] << Search::Job.es_version/1000
       end
