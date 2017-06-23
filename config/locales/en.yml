@@ -8178,6 +8178,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       slack_token_failure: "Error while updating the token."
       disable_slash_command: Admin has not enabled the slash command in Freshdesk."
       authorize_in_fd: "Please go to your Freshdesk account and Authorize your account.This Account doesnot have permission to create Ticket"
+      invalid_parameter: "Invalid command. Please enter a value between 1 and 200 to create a ticket on Freshdesk."
     slack_settings:
       channels: "Channels to post"
       notify: "Notification for"
@@ -10979,8 +10980,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     notification_preferences: "Notification Preferences"
     notify_when: Notify when...
     checking_your_preferences: Checking your preferences...
-    actor_text_2: "%{actor_name_1} and %{actor_name_2} "
-    actor_text_multi: "%{actor_name_1} and %{more_actors_count} more "
+    actor_text_2: "%{actor_name_1} and %{actor_name_2}&nbsp;"
+    actor_text_multi: "%{actor_name_1} and %{more_actors_count} more&nbsp;"
     private_note_created: "sent you a private note on ticket %{object}"
     private_note_created_multi: "sent you %{count} private notes on ticket %{object}"
     public_note_created: "added a note on ticket %{object}"

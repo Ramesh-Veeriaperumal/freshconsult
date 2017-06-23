@@ -1,7 +1,7 @@
 <div id="collab-sidebar" class="collab-sidebar hide">
     <div id="title-row" class="title-row">
         <div class="collab-logo">
-            <img class="logo-image" alt="Logo" data-type="logo" onerror="default_image_error(this)" src="/assets/collab/huddle-logo.svg">
+            <%= font_icon "huddle-logo", { :class => "logo-image"} %>
         </div>
         <div class="title-tabs clearfix">
             <div id="discussion-tab-btn" class="tab active"><%=t('collaboration.discussion')%></div>
@@ -83,5 +83,4 @@
         <div id="hovercard" class="hovercard"></div>
     </div>
 </div>
-
-<input type="hidden" id="collab-ui-data" data-ui-payload='{"currentConversationId": "<%= @ticket.display_id %>", "isClosed": <%= @ticket.status == 5 || @ticket.spam == true || @ticket.deleted == true %>, "containerSelector": ".tkt-wrapper.ticket_show", "ownedBy": "<%= @ticket.responder_id %>", "convoToken": "<%= Collaboration::Ticket.new.convo_token(@ticket.display_id) %>", "requester_name": "<%= @ticket.requester_name %>", "requester_email": "<%= @ticket.requester.email %>" }' data-convo-name="<%= @ticket.subject %>" data-ticket-config-email="<%=@ticket.selected_reply_email.scan( /<([^>]*)>/)%>">
+<input type="hidden" id="collab-ticket-payload" data-ticket-payload="<%= Collaboration::Ticket.new(@ticket.display_id).ticket_payload %>">

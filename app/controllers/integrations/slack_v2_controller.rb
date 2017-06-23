@@ -8,10 +8,12 @@ class Integrations::SlackV2Controller < Admin::AdminController
   before_filter :load_app, :only => [:new, :install]
   before_filter :load_installed_app, :only => [:edit, :update, :create_ticket, :tkt_create_v3,:add_slack_agent,:help]
   before_filter :check_slash_token, :check_direct_channel, :check_remote_user, :only => [:create_ticket]
-  before_filter :check_slash_token_v3,:check_user_credentials, :only => [:tkt_create_v3]
+  before_filter :check_slash_token_v3,:check_user_credentials, :check_command_params, :only => [:tkt_create_v3]
   before_filter :init_slack_obj, :only => [:edit, :update]
 
   APP_NAME = Integrations::Constants::APP_NAMES[:slack_v2]
+  DEFAULT_LINES = 200
+  MINIMUM_LINES = 0
 
   def oauth
     redirect_to "#{AppConfig['integrations_url'][Rails.env]}/auth/slack?origin=id%3D#{current_account.id}%26portal_id%3D#{current_portal.id}%26user_id%3D#{current_user.id}"
@@ -125,6 +127,7 @@ class Integrations::SlackV2Controller < Admin::AdminController
         :user_name => params["user_name"],
         :channel_name => params["channel_name"],
         :channel_id => params["channel_id"],
+        :event_type => operation_event,
         :time => Time.now.utc.to_f
       },
       :operation_name => "slack",
@@ -280,6 +283,14 @@ class Integrations::SlackV2Controller < Admin::AdminController
           render :json => { :text => "#{t('integrations.slack_v2.message.missing_remote_token')}" } and return
         end
       end
+    end
+
+    def check_command_params
+      render :json => { :text => "#{t('integrations.slack_v3.invalid_parameter')}" } and return unless (params[:text].blank? or is_valid_digit?)
+    end
+
+    def is_valid_digit?
+      params[:text] !~ /\D/ && params[:text].to_i <= DEFAULT_LINES && params[:text].to_i > MINIMUM_LINES
     end
 
     def validate_and_construct_fields
