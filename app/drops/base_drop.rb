@@ -104,13 +104,8 @@ class BaseDrop < Liquid::Drop
       @page = 1 if @page.to_i.to_s != @page || @page.to_i <= 0
     end
 
-    def escape_liquid_attributes?
-      #Enable this feature to skip escaping for customers who don't want their placeholder values to get escaped 
-      @can_escape ||= (@source.escape_liquid_attributes && !Account.current.launched?(:escape_liquid_attributes_whitelist))
-    end
-
     def escape_liquid_attribute(value)
-        escape_liquid_attributes? ? h(value) : value
+        @source.escape_liquid_attributes ? h(value) : value
     end
 
     def formatted_field_value(field_type, field_value)
