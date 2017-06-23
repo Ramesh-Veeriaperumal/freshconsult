@@ -1,0 +1,16 @@
+get:
+  tags: [Integrations]
+  summary: Show
+  parameters:
+    - name: id
+      in: path
+      type: number
+      required: true
+      description: App Id
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/installed_applications'
+    404:
+      description: Application not available

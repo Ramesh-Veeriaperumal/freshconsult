@@ -42,7 +42,7 @@ Helpkit::Application.routes.draw do
           post :topics, to: 'topics#create'
         end
       end
-      resources :topics, except: [:new, :edit, :index, :create]do
+      resources :topics, except: [:new, :edit, :index, :create] do
         member do
           get :comments, to: 'api_comments#topic_comments'
           post :follow, to: :follow
@@ -70,7 +70,6 @@ Helpkit::Application.routes.draw do
         get :me
       end
     end
-
 
     resources :surveys, only: [:index] do
       collection do
@@ -220,6 +219,11 @@ Helpkit::Application.routes.draw do
     end
 
     resources :todos, controller: 'ember/todos', except: [:new, :edit]
+    resources :installed_applications, controller: 'ember/installed_applications', only: [:index, :show]
+    resources :integrated_resources, controller: 'ember/integrated_resources', except: [:new, :edit]
+    resources :integrated_users, controller: 'ember/integrated_users', only: [:index, :show]
+    resources :cloud_files, controller: 'ember/cloud_files', only: [:destroy]
+
 
     resources :contacts, controller: 'ember/contacts', except: [:new, :edit] do
       collection do

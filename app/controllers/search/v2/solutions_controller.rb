@@ -4,7 +4,6 @@ class Search::V2::SolutionsController < ApplicationController
 
   include Search::SearchResultJson
   include Search::V2::AbstractController
-  include Search::SolutionsHelper
   helper Search::SearchHelper
 
   before_filter :load_ticket, :only => [:related_solutions, :search_solutions]
@@ -15,7 +14,7 @@ class Search::V2::SolutionsController < ApplicationController
   def related_solutions
     @es_search_term = @ticket.subject
     search_and_assign
-    render_results
+    render partial: 'search/solutions/results'
   end
 
   # Find solutions for insert_solution search
@@ -23,7 +22,7 @@ class Search::V2::SolutionsController < ApplicationController
   #
   def search_solutions
     search_and_assign
-    render_results
+    render partial: 'search/solutions/results'
   end
   
   private
@@ -75,13 +74,5 @@ class Search::V2::SolutionsController < ApplicationController
       @@esv2_agent_solution ||= {
         'article' => { model: 'Solution::Article',  associations: [ :folder, :article_body ] }
       }
-    end
-
-    def render_results
-      respond_to do |format|
-        format.html { render partial: 'search/solutions/results' }
-        format.js { render partial: 'search/solutions/results' }
-        format.json { render json: format_articles_result }
-      end
     end
 end

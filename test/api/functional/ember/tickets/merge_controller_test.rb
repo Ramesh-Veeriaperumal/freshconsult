@@ -1,10 +1,12 @@
 require_relative '../../../test_helper'
+['social_tickets_creation_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module Ember
   module Tickets
     class MergeControllerTest < ActionController::TestCase
       include TicketsTestHelper
       include CannedResponsesTestHelper
       include TicketsMergeTestHelper
+      include SocialTicketsCreationHelper
 
       def wrap_cname(params)
         { merge: params }
@@ -143,6 +145,15 @@ module Ember
         request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets.map(&:display_id) )
         put :merge, construct_params({ version: 'private' }, request_params)
         assert_response 404
+      end
+
+      def test_merge_twitter_and_email_ticket
+        primary_twitter_ticket = create_twitter_ticket
+        email_ticket = create_ticket(source: 1)
+        request_params = sample_merge_request_params(primary_twitter_ticket.display_id, [email_ticket.display_id] )
+        put :merge, construct_params({ version: 'private' }, request_params)
+        assert_response 204
+        validate_merge_action(primary_twitter_ticket, [email_ticket], false)
       end
     end
   end
