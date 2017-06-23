@@ -992,17 +992,6 @@ App.CollaborationUi = (function ($) {
                 _COLLAB_PVT.openCollabSidebar();
                 Collab.expandCollabOnLoad = false;
                 _COLLAB_PVT.scrollToMessage(Collab.scrollToMsgId);
-            } else {
-                try{
-                    if(typeof inline_manual_player !== "undefined" && localStorage.collabTourDone !== "true") {
-                        inline_manual_player.activateTopic("33220");
-                        inline_manual_player.callbacks.onTopicEnd = function() {
-                            localStorage.collabTourDone = "true";
-                        }
-                    }
-                } catch(e) {
-                    console.log("couldn't show the tour: ", e);
-                }
             }
             
             _COLLAB_PVT.disableCollabUiIfNeeded();
