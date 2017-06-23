@@ -4202,6 +4202,10 @@ en:
     capping_ticket: "ticket"
     capping_tickets: "tickets"
     page_not_found: "This group could not be found. It might have been deleted or the URL mistyped."
+    maximum: Maximum
+    per_agent: per agent
+    sbrr_trial_text: Did you know you can assign tickets based on your agents’ skills? <a href="https://support.freshdesk.com/solution/articles/222692" target="_blank">Learn more</a>
+    sbrr_plan_text: <span class="muted"> Available on the </span> <b> Forest plan </b>
     assigntime:
       half: 30 Minutes
       one: 1 Hour
@@ -5212,10 +5216,12 @@ en:
     role_dashboard: "Role-based dashboards"
     advanced_dkim: "Unlimited DKIM/DMARC"
     ip_whitelisting: "IP whitelisting"
+    skill_based_assignment: "Skill based assignment"
     advanced_phone_integration: "Advanced phone integration"
     machine_learning: "Machine learning"
     custom_data_center: "Data centre location"
     whitelisted_ip_desc: "Whitelisted IP addresses"
+    skill_based_assignment_desc: "Skill based assignment"
     custom_mailbox_desc: "Custom email servers"
     advanced_phone_desc: "Advanced phone features"
     multiple_products_desc: "Multiple product portals/knowledge base"

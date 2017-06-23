@@ -47,12 +47,14 @@ module SBRR
 
         def trigger_sbrr ticket
           ticket.sl_skill_id = nil
-          args = {:model_changes => {}, :ticket_id => ticket.display_id, :attributes => ticket.sbrr_attributes, :options => {:action => "skill_deleted", :jid => self.jid}}
-          sbrr_executor(args).execute 
+          #args = {:model_changes => {}, :ticket_id => ticket.display_id, :attributes => ticket.sbrr_attributes, :sbrr_state_attributes => ticket.sbrr_state_attributes, :options => {:action => "skill_deleted", :jid => self.jid}}
+          args = {:model_changes => {}, :options => {:action => "skill_deleted", :jid => self.jid}}
+          sbrr_executor(ticket, args).execute 
         end
 
-        def sbrr_executor args
-          SBRR::Execution.new args
+        def sbrr_executor ticket, args
+          SBRR::Execution.enqueue ticket, args
+          #SBRR::Execution.new args
         end        
     end
   end

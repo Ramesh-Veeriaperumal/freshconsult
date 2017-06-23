@@ -12,6 +12,8 @@ module Helpdesk::Activities
     DONT_CARE_VALUE = "*"
     TIME_FORMAT_FOR_TIMESHEET = "%a, %-d %b, %Y"
     ACTIVITY = "activities.tickets.%{value}.%{suffix}"
+    CUSTOM_FIELDS_WITH_RAILS_METHOD_NAME = [:test] # For custom field names that is same as Rails/Ruby method names, which will return true for respond_to?
+
     TYPE = {
         :tkt_activity   => "new",
         :dashboard      => "dashboard",
@@ -878,6 +880,13 @@ module Helpdesk::Activities
         title = "##{v.to_i}"
        "#{build_url(title, helpdesk_ticket_path(v.to_i))}"
       end.join(', ')
+    end
+
+    # For custom field names that is same as Rails/Ruby method names, which will return true for respond_to?
+    CUSTOM_FIELDS_WITH_RAILS_METHOD_NAME.each do |field_name|
+      define_method("#{field_name}") do |value|
+        custom_fields(field_name, value[1])
+      end
     end
   end
 end

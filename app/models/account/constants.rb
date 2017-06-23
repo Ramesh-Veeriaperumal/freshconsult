@@ -54,7 +54,7 @@ class Account < ActiveRecord::Base
     },
 
     :forest => {
-      :features => [ :mailbox, :whitelisted_ips ],
+      :features => [ :mailbox, :whitelisted_ips, :skill_based_round_robin ],
       :inherits => [ :estate ]
     },
 
