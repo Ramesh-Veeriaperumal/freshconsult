@@ -75,6 +75,7 @@ module Search
           total_timespent = end_time - t
           output << "start=#{t}"
           timestamps.each_with_index do |stamp, i|
+            stamp = stamp.to_i
             output << "h#{i}_pick=#{stamp}, h#{i}_spent=#{stamp - t}"
             t = stamp
           end
