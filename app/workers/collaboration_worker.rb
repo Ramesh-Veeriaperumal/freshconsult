@@ -12,7 +12,7 @@ class CollaborationWorker
     if ticket.present?
       from_email = ticket.selected_reply_email.scan( /<([^>]*)>/).to_s
       if from_email.blank?
-        from_email = current_account.default_friendly_email
+        from_email = current_account.default_friendly_email.scan( /<([^>]*)>/).to_s
       end
 
       begin
@@ -22,7 +22,7 @@ class CollaborationWorker
       end
 
       message = {
-        :object => "ticket",
+        :object => "user_notification",
         :account_id => ticket.account_id,
         :ticket_properties => {
           id: ticket.id,

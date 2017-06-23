@@ -22,7 +22,10 @@ module Tickets
             aggregated_response_time += vr.response_time[:matches] || 0
           end
           Rails.logger.debug "Response time :: #{aggregated_response_time}"
-          evaluate_on.round_robin_on_ticket_update(current_events) if evaluate_on.rr_allowed_on_update?
+          ticket_changes = evaluate_on.merge_changes(current_events, 
+                            evaluate_on.changes) if current_events.present?
+          evaluate_on.round_robin_on_ticket_update(ticket_changes) if evaluate_on.rr_allowed_on_update?
+          evaluate_on.update_old_group_capping(ticket_changes)
           evaluate_on.save!
           evaluate_on.va_rules_after_save_actions.each do |action|
             klass = action[:klass].constantize
