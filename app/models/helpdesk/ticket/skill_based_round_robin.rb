@@ -25,7 +25,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def map_skill
     if remap_skill?
       Admin::Skill.map_to self
-      set_sbrr_skill_activity
       merge_skill_change_to_model_changes
       set_sbrr_skill_activity
     end
