@@ -71,7 +71,7 @@ module Helpdesk::BulkActionMethods
     Thread.current[:mass_assignment] = "tickets_push"
     @sbrr_exec_objs.each do |sbrr_exec|
       sbrr_exec.ticket_push unless @pulled_tickets.include?(sbrr_exec.ticket.display_id)
-      sbrr_exec.save_ticket if sbrr_exec.has_changes?
+      sbrr_exec.save_ticket
     end
   end
 
