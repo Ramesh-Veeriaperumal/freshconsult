@@ -1,3 +1,15 @@
+<% if from_page == 'new_ticket_page_side_bar' %>
+  <script type='text/javascript'>
+    var page_type = 'new_ticket';
+  </script>
+  <%= javascript_include_tag :'cdn/marketplace/fa_new_ticket_dom_helper' %>
+<% elsif from_page == 'new_outbound_email_page_side_bar' %>
+  <script type='text/javascript'>
+    var page_type = 'new_outbound_email';
+  </script>
+   <%= javascript_include_tag :'cdn/marketplace/fa_new_email_dom_helper' %> 
+<% end %>
+
 <div class='new-ticket-sidebar'>
 	<div id="child_select_template_wrapper" class='new-ticket-sidebar-content'>
 		<%= render :partial => "helpdesk/tickets/ticket_widget/integrations" , :locals => {:from_page => from_page } %>

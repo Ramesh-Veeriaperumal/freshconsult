@@ -1476,6 +1476,7 @@ Helpkit::Application.routes.draw do
           delete :uninstall
           put :enable
           put :disable
+          put :update_config
         end
       end
     end
