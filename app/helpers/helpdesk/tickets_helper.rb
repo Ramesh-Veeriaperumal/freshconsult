@@ -284,7 +284,8 @@ module Helpdesk::TicketsHelper
     else
           default_reply_forward = (signature.blank?)? "<p/><p/><br/>": "<p/><p><br></br></p><p></p><p></p><div>#{signature}</div>"
     end
-
+    
+    ticket.escape_liquid_attributes = current_account.launched?(:escape_liquid_for_reply)
     quoted_text = ""
     if quoted
       quoted_text = quoted_text(item, forward)
