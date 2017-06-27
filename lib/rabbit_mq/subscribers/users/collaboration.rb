@@ -12,13 +12,13 @@ module RabbitMq::Subscribers::Users::Collaboration
   def mq_collaboration_valid(action, model)
     Account.current.collaboration_enabled? &&
       valid_collab_model?(model) && 
-      valid_collab_agent? &&
-      update_action?(action)
+      update_action?(action) &&
+      valid_collab_agent?
   end
 
   private  
   def valid_collab_agent?
-    self.agent? || @all_changes.has_key?(:helpdesk_agent)
+    self.agent? || (@all_changes.present? && @all_changes.has_key?(:helpdesk_agent))
   end
 
   def valid_collab_model?(model)
