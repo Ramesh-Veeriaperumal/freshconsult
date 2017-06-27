@@ -56,11 +56,6 @@ Helpkit::Application.routes.draw do
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id))(.:format)'
 
-  #Route to handle new ember UI
-    get '/new' => 'newui#index'
-    match '/new/*path' => 'newui#index'
-  #End of Route to handle new ember UI
-
   match '/health_checkup' => 'health_checkup#app_health_check',via: :get
 
   constraints(lambda {|req| req.subdomain == AppConfig['admin_subdomain'] }) do
@@ -208,9 +203,9 @@ Helpkit::Application.routes.draw do
     
     match '/search/tickets', to: 'search/v2/spotlight#tickets', via: :post
 
-    match '/search/related_solutions/ticket/:ticket', to: 'search/v2/solutions#related_solutions',  via: :get, constraints: { format: /(html|js|json)/ }
-    match '/search/search_solutions/ticket/:ticket',  to: 'search/v2/solutions#search_solutions',   via: :get, constraints: { format: /(html|js|json)/ }
-    match '/search/tickets/filter/:search_field',     to: 'search/v2/tickets#index',                via: [:get, :post]
+    match '/search/related_solutions/ticket/:ticket', to: 'search/v2/solutions#related_solutions',  via: :get, constraints: { format: /(html|js)/ }
+    match '/search/search_solutions/ticket/:ticket',  to: 'search/v2/solutions#search_solutions',   via: :get, constraints: { format: /(html|js)/ }
+    match '/search/tickets/filter/:search_field',     to: 'search/v2/tickets#index',                via: :post
     
     # Linked ticket routes
     match '/search/ticket_associations/filter/:search_field', to: 'search/v2/ticket_associations#index'
@@ -1481,6 +1476,7 @@ Helpkit::Application.routes.draw do
           delete :uninstall
           put :enable
           put :disable
+          put :update_config
         end
       end
     end
@@ -2255,7 +2251,7 @@ Helpkit::Application.routes.draw do
         delete :delete_multiple
       end
     end
-    match '/ticket_templates/tab/:current_tab' => 'ticket_templates#index'
+
     match '/ticket_templates/tab/:current_tab'    => 'ticket_templates#index',     :as => :my_ticket_templates
     match '/parent_template/:p_id/child/new'      => 'ticket_templates#new_child', :as => :new_child_template
     match '/parent_template/:p_id/child/:id/edit' => 'ticket_templates#edit_child',:as => :edit_child_template

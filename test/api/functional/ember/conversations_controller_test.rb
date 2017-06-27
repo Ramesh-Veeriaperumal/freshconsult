@@ -368,6 +368,7 @@ module Ember
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params_hash, latest_note))
       match_json(private_note_pattern({}, latest_note))
+      assert_equal true, latest_note.private, "Forward Note should be added as a private note only"
     end
 
 

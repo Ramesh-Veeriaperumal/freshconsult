@@ -57,7 +57,7 @@ $attachment_bg_color: #f8f9fb;
 $disabled_bg_color: #efefef;
 $disabled_border_color: #e0e0e0;
 
-$highlight_yellow: #fff78a;
+$highlight_yellow: #fff3b8;
 
 .collab-logo {
     .logo-image {
@@ -104,8 +104,10 @@ $highlight_yellow: #fff78a;
         }
     }
 
-    .mention-to-notify {
-        background-color: #fff78a;
+    .received-box {
+        .mention-to-notify {
+            background-color: $highlight_yellow;
+        }
     }
 
     &.closed-conversation {
@@ -210,10 +212,6 @@ $highlight_yellow: #fff78a;
         }
     }
 
-    .annotation-text {
-        font-style: italic;
-    }
-
     .collab-reply-to-text {
         background-color: $reply_to_bg_color;
         border: 1px solid $reply_to_border_color;
@@ -224,10 +222,6 @@ $highlight_yellow: #fff78a;
             font-weight: 500;
             color: #636363;
             display: block;
-        }
-
-        .collab-reply-msg-body {
-            font-style: italic;
         }
     }
 
@@ -363,6 +357,9 @@ $highlight_yellow: #fff78a;
                 height: 30px;
                 max-width: 30px;
                 @include margin(8px 10px);
+                margin-bottom: 13px;
+                display: inline-block;
+                font-size: 42px
             }
         }
         .tab {
@@ -724,6 +721,7 @@ $highlight_yellow: #fff78a;
     &.received-box {
         .collab-reply-btn {
             @include left(initial);
+            @include left(auto);
             @include right(-44px);
         }
         @include text-align(left);
@@ -1344,6 +1342,10 @@ $highlight_yellow: #fff78a;
             height: 30px;
             line-height: 30px;
             font-size: $font_size_thumb;
+
+            &.fsize-32 {
+                font-size: 32px;
+            }
         }
 
         .prepend-separator {
@@ -1370,7 +1372,8 @@ $highlight_yellow: #fff78a;
 
         .huddle-group-icon {
             .thumb {
-                background: #888888;
+                color: #888888;
+                background: transparent;
             }
         }
     }
@@ -1407,7 +1410,7 @@ $highlight_yellow: #fff78a;
         margin-bottom: 40px;
 
         .logo-image {
-            width: 85px;
+            width: 100px;
         }
     }
 
@@ -1603,26 +1606,23 @@ $highlight_yellow: #fff78a;
 */
 .ticket-actions .btn.collab-btn {
     height: 26px;
+    padding-left: 34px;
+    position: relative;
 
     .collab-logo {
+        position: absolute;
+        left: 12px;
+        top: 3px;
 
-        .logo-image {
+    }
+
+    .collab-message-count {
+        display: none;
+    }
+    
+    &.collab-inited {
+        .collab-message-count {
             display: inline-block;
-            height: 17px;
-            margin: -1px 0 -3px;
-
-            &.collab-filled {
-                display: none;
-            }
-        }
-        &.collab-inited {
-            .logo-image {
-                display: none;
-
-                &.collab-filled {
-                    display: inline-block;
-                }
-            }
         }
     }
 }
@@ -1662,6 +1662,7 @@ $highlight_yellow: #fff78a;
         font-weight: initial;
         font-weight: auto;
         color: #1272de;
+        @include margin-right(2px);
 
         &:hover {
             color: #0645AD;
