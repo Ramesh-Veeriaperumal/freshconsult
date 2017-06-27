@@ -2,12 +2,12 @@ module IntegrationServices::Services
   module Slack
     class ImResource < SlackResource
 
-      def history token
+      def history token, count=200
         channel = @service.payload[:act_hash][:channel_id]
         last_message_time = @service.payload[:act_hash][:time]
         url = channel_api_url
         response = http_get(url, {:token=>token, :channel=>channel, :latest=>last_message_time,
-                                    :count=>200, :inclusive=> 1})
+                                    :count=>count, :inclusive=> 1})
         process_response(response, 200) do |json_response|
           return json_response["messages"].reverse
         end

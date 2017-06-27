@@ -56,7 +56,7 @@ class HttpRequestProxyController < ApplicationController
           if params[:company_id].present?
             company_name = spl_char_replace current_account.companies.find(params[:company_id]).name
           end
-    		  params[:body] = params[:body] % { :SESSION_ID => installed_app.configs[:inputs]['session_id'], :company_name => company_name}
+          params[:body] = params[:body] % { :SESSION_ID => installed_app.configs[:inputs]['session_id'], :company_name => company_name}
         elsif params[:app_name] == "czentrix" #adding this as a hack in here. ideally it should not be here.
           params[:domain] = "#{request.protocol}#{installed_app.configs[:inputs][:host_ip]}"
           @domain_verified = true
@@ -67,6 +67,8 @@ class HttpRequestProxyController < ApplicationController
           authKey = "#{installed_app.configs[:inputs]['oauth_token']}"
           params[:domain] = "#{installed_app.configs[:inputs]['api_endpoint']}"
           params[:rest_url] += "#{MAILCHIMP_URL_SUFFIX}%s" %[authKey] unless params[:rest_url].include? authKey
+        elsif params[:app_name] == APP_NAMES[:google_calendar]
+          google_calendar_auth(installed_app)
         elsif params[:app_name] == "jira"
           params[:domain] = installed_app.configs_domain
           params[:password] = installed_app.configsdecrypt_password
@@ -84,6 +86,12 @@ class HttpRequestProxyController < ApplicationController
       params[:password] = Base64.decode64(user_credential.auth_info[:password])
     end
 
+    def google_calendar_auth(installed_app)
+      user_credential = installed_app.user_credentials.find_by_user_id(current_user)
+      return if user_credential.blank?
+      params[:oauth_token ] = "OAuth #{user_credential.auth_info['oauth_token']}" 
+    end
+    
     def authenticated_agent_check
       render :status => 401 if current_user.blank? || !current_user.agent?
     end

@@ -303,7 +303,6 @@ module Ember
       end
 
       def test_timesheet_create_activity
-        ticket = create_ticket
         stub_data = timesheet_create_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
         get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
@@ -314,7 +313,6 @@ module Ember
       end
 
       def test_timesheet_edit_activity
-        ticket = create_ticket
         stub_data = timesheet_edit_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
         get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
@@ -325,7 +323,6 @@ module Ember
       end
 
       def test_timesheet_delete_activity
-        ticket = create_ticket
         stub_data = timesheet_delete_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
         get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
@@ -336,8 +333,188 @@ module Ember
       end
 
       def test_empty_actions_activity
-        ticket = create_ticket
         stub_data = empty_action_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
+        match_json([])
+        assert_response 200
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_skill_name_activity
+        stub_data = skill_name_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
+        match_json(skill_name_activity_pattern(stub_data))
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_delete_group_activity
+        stub_data = delete_group_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
+        match_json(delete_group_activity_pattern(stub_data))
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_remove_group_activity
+        stub_data = remove_group_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
+        match_json(remove_group_activity_pattern(stub_data))
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_remove_agent_activity
+        stub_data = remove_agent_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
+        match_json(remove_agent_activity_pattern(stub_data))
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_remove_status_activity
+        stub_data = remove_status_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
+        match_json(remove_status_activity_pattern(stub_data))
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_shared_ownership_reset_activity
+        stub_data = shared_ownership_reset_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
+        match_json(shared_ownership_reset_activity_pattern(stub_data))
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_delete_agent_activity
+        stub_data = delete_agent_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
+        match_json(delete_agent_activity_pattern(stub_data))
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_delete_internal_agent_activity
+        stub_data = delete_internal_agent_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
+        match_json(delete_internal_agent_activity_pattern(stub_data))
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_delete_internal_group_activity
+        stub_data = delete_internal_group_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
+        match_json(delete_internal_group_activity_pattern(stub_data))
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_ticket_linked_activity
+        stub_data = ticket_linked_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
+        match_json(ticket_linked_activity_pattern(stub_data))
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_ticket_unlinked_activity
+        stub_data = ticket_unlinked_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
+        match_json(ticket_unlinked_activity_pattern(stub_data))
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_tracker_linked_activity
+        stub_data = tracker_linked_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
+        match_json(tracker_linked_activity_pattern(stub_data))
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_tracker_unlinked_activity
+        stub_data = tracker_unlinked_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
+        match_json(tracker_unlinked_activity_pattern(stub_data))
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_tracker_reset_activity
+        stub_data = tracker_reset_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
+        match_json(tracker_reset_activity_pattern(stub_data))
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_parent_ticket_linked_activity
+        stub_data = parent_ticket_linked_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
+        match_json(parent_ticket_linked_activity_pattern(stub_data))
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_parent_ticket_unlinked_activity
+        stub_data = parent_ticket_unlinked_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
+        match_json(parent_ticket_unlinked_activity_pattern(stub_data))
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_child_ticket_linked_activity
+        stub_data = child_ticket_linked_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
+        match_json(child_ticket_linked_activity_pattern(stub_data))
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_child_ticket_unlinked_activity
+        stub_data = child_ticket_unlinked_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
+        match_json(child_ticket_unlinked_activity_pattern(stub_data))
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_parent_ticket_reopened_activity
+        stub_data = parent_ticket_reopened_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
+        match_json(parent_ticket_reopened_activity_pattern(stub_data))
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_empty_user_activity
+        stub_data = empty_user_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
         get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
         match_json([])

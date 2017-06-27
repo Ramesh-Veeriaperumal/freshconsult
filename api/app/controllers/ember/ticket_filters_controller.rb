@@ -43,6 +43,10 @@ module Ember
       head 204
     end
 
+    def self.wrap_params
+      TicketFilterConstants::WRAP_PARAMS
+    end
+
     private
 
       def validate_params
@@ -201,6 +205,6 @@ module Ember
         new_params
       end
 
-      wrap_parameters(*Helpdesk::Filters::CustomTicketFilter::EMBER_WRAP_PARAMS)
+      wrap_parameters(*wrap_params)
   end
 end

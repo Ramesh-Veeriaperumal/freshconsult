@@ -58,6 +58,31 @@ class Collaboration::Ticket
 		generate_acc_auth_token
   end
 
+  def ticket_payload
+  	{
+			:display_id => @ticket.display_id.to_s,
+			:is_closed => @ticket.status == 5 || @ticket.status == 4 || @ticket.spam == true || @ticket.deleted == true,
+			:responder_id => @ticket.responder_id.to_s,
+			:convo_token => Collaboration::Ticket.new.convo_token(@ticket.display_id),
+			:subject => @ticket.subject.html_safe
+		}.to_json if @ticket.present?
+  end
+
+  def account_payload
+  	{
+  		:client_id => HK_CLIENT_ID,
+  		:client_account_id => Account.current.id.to_s,
+			:init_auth_token => acc_auth_token,
+			:collab_url => CollabConfig['collab_url'],
+			:rts_url => CollabConfig['rts_url'],
+			:user => {
+				:uid => User.current.id.to_s,
+				:name => User.current.name.html_safe,
+				:email => User.current.email.html_safe,
+			}
+		}.to_json
+  end
+
 	private
 	def parse_payload(jwt_token)
     header_segment, payload_segment, claim_segment = jwt_token.split('.')

@@ -2,7 +2,6 @@ require_relative '../../test_helper'
 
 class ApiContactsFlowTest < ActionDispatch::IntegrationTest
   include UsersTestHelper
-  include TicketsTestHelper
 
   def get_user
     @account.all_contacts.where(deleted: false).first
@@ -179,36 +178,5 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
     end
   ensure
     Account.unstub(:current)
-  end
-
-  def test_bulk_deletion
-    skip_bullet do
-      cid = add_new_user(@account).id
-      put "api/_/contacts/bulk_delete", {ids: [cid]}.to_json, @write_headers
-      assert_response 204
-
-      put "api/_/contacts/bulk_delete", {ids: [cid, 1000]}.to_json, @write_headers
-      assert_response 202
-
-      put "api/_/contacts/bulk_delete", nil, @write_headers
-      assert_response 400
-    end
-  end
-
-  def test_contacts_activities
-    skip_bullet do
-      contact = add_new_user(@account, deleted: false, active: true)
-      
-      user_tickets = sample_user_tickets(contact, 5)
-      get "api/_/contacts/#{contact.id}/activities", nil, @write_headers
-      assert_response 200
-      match_json({ data: user_activity_response(user_tickets), meta: { more_tickets: false }})
-
-      # meta info with more_tickets key will be true if more than 10 tickets
-      user_tickets = sample_user_tickets(contact, 11)
-      get "api/_/contacts/#{contact.id}/activities", nil, @write_headers
-      assert_response 200
-      match_json({ data: user_activity_response(user_tickets), meta: { more_tickets: true }})
-    end
   end
 end

@@ -164,6 +164,24 @@
 /todos/{id}:
   $ref: ./todos/crud.yaml
 
+# Installed Applications
+/installed_applications:
+  $ref: ./installed_applications/list.yaml
+/installed_applications/{id}:
+  $ref: ./installed_applications/crud.yaml
+# Integrated Resources
+/integrated_resources:
+  $ref: ./integrated_resources/list.yaml
+/integrated_resources/{id}:
+  $ref: ./integrated_resources/crud.yaml
+# Integrated Users
+/integrated_users:
+  $ref: ./integrated_users/list.yaml
+/integrated_users/{id}:
+  $ref: ./integrated_users/crud.yaml
+# Cloud Attachments
+/cloud_files/{id}:
+  $ref: ./cloud_files/crud.yaml  
 #Social
 /twitter_handles:
   $ref: ./social/twitter_handles.yaml

@@ -24,7 +24,7 @@ class TicketMerge
     add_note_to_target
     true
   rescue => e
-    options_hash =  { custom_params: { description: 'Ticket Merge Error', params: params } }
+    options_hash = { custom_params: { description: 'Ticket Merge Error', params: params } }
     NewRelic::Agent.notice_error(e, options_hash)
     false
   end
@@ -83,6 +83,7 @@ class TicketMerge
 
     def update_header_info(source_header)
       (source_header[:message_ids] || []).each do |source|
+        header[:message_ids] ||= []
         update_source_header(source) unless header[:message_ids].include?(source)
       end
     end

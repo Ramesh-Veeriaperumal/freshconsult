@@ -1,0 +1,16 @@
+type: object
+allOf:
+  - $ref: '#/definitions/extension_generic'
+  - properties:
+      installed_application_id:
+        type: integer
+        description: Installed App Id
+      user_id:
+        type: integer
+        description: User Id
+      auth_info:
+        type: object
+        description: Auth configs
+      remote_user_id:
+        type: string
+        description: Remote User Id
