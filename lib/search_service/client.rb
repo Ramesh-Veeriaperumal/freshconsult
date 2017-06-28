@@ -51,6 +51,7 @@ module SearchService
       def request_headers(headers={})
         { 
           'Content-type' => 'application/json',
+          'Content-Encoding' => 'gzip, deflate',
           'X-Auth-Token' => ES_V2_CONFIG[:auth_token]
         }.merge(headers)
       end
