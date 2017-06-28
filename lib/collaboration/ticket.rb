@@ -64,8 +64,6 @@ class Collaboration::Ticket
 			:is_closed => @ticket.status == 5 || @ticket.status == 4 || @ticket.spam == true || @ticket.deleted == true,
 			:responder_id => @ticket.responder_id.to_s,
 			:convo_token => Collaboration::Ticket.new.convo_token(@ticket.display_id),
-			:requester_name => @ticket.requester_name.html_safe,
-			:requester_email => @ticket.requester.email.html_safe,
 			:subject => @ticket.subject.html_safe
 		}.to_json if @ticket.present?
   end
