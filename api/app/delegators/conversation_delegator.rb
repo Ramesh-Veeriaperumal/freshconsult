@@ -14,6 +14,10 @@ class ConversationDelegator < BaseDelegator
 
   validate :validate_send_survey, unless: -> { send_survey.nil? }
 
+  validate :validate_unseen_replies, on: :reply, if: :traffic_cop_required?
+
+  validate :validate_unseen_replies_for_public_notes, on: :create, if: -> { public_note? and traffic_cop_required? }
+
   def initialize(record, options = {})
     options[:attachment_ids] = skip_existing_attachments(options) if options[:attachment_ids]
     super(record, options)
@@ -69,6 +73,13 @@ class ConversationDelegator < BaseDelegator
     end
   end
 
+  def validate_unseen_replies
+    unseen_notes_exists = (notable.notes.visible.last_traffic_cop_note.pluck(:id).try(:first) || 0) > last_note_id
+    errors[:conversation] << :traffic_cop_alert if unseen_notes_exists
+  end
+
+  alias_method :validate_unseen_replies_for_public_notes, :validate_unseen_replies
+
   private
 
     # skip parent and shared attachments
@@ -78,5 +89,13 @@ class ConversationDelegator < BaseDelegator
 
     def retrieve_cloud_files
       @cloud_file_attachments = notable.cloud_files.where(id: @cloud_file_ids)
+    end
+
+    def traffic_cop_required?
+      last_note_id.present? and Account.current.traffic_cop_enabled?
+    end
+
+    def public_note?
+      !self.private.nil? and !self.private
     end
 end

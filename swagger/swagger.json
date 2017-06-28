@@ -951,6 +951,12 @@
         "description": "Conversations",
         "parameters": [
           {
+            "name": "since_id",
+            "in": "query",
+            "type": "number",
+            "description": "Conversation ID from which converations have to be fetched"
+          },
+          {
             "$ref": "#/parameters/id"
           }
         ],
@@ -3649,6 +3655,9 @@
             },
             "private": {
               "type": "boolean"
+            },
+            "last_note_id": {
+              "type": "number"
             }
           }
         }
@@ -3729,6 +3738,9 @@
             },
             "send_survey": {
               "type": "boolean"
+            },
+            "last_note_id": {
+              "type": "number"
             }
           }
         }

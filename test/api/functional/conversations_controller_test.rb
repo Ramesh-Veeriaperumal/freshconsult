@@ -405,7 +405,7 @@ class ConversationsControllerTest < ActionController::TestCase
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 201
     note = Helpdesk::Note.last
-    assert_equal email_config.id, note.email_config_id 
+    assert_equal email_config.id, note.email_config_id
     match_json(reply_note_pattern(params_hash, note))
     match_json(reply_note_pattern({}, note))
   end
@@ -852,4 +852,5 @@ class ConversationsControllerTest < ActionController::TestCase
     match_json(note_pattern({}, Helpdesk::Note.last))
     assert_response 201
   end
+
 end
