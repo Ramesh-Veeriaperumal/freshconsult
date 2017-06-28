@@ -42,7 +42,7 @@ class Admin::UserSkillsController < Admin::AdminController
     end
 
     def load_user
-      if privilege?(:manage_skills) or current_user.has_edit_access?
+      if privilege?(:manage_skills) or current_user.has_edit_access?(params[:user_id])
         @user = current_account.technicians.find_by_id(params[:user_id])
       else
         render :json => { :success => 403 }
@@ -69,7 +69,7 @@ class Admin::UserSkillsController < Admin::AdminController
     end
 
     def load_users
-      @users = user_scoper.technicians.trimmed.preload(:skills) if user_scoper.present?
+      @users = user_scoper.technicians.trimmed.preload(:skills) if @filtered_group.present? || @is_admin
     end
 
     def user_scoper
