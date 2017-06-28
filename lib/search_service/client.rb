@@ -52,7 +52,8 @@ module SearchService
         { 
           'Content-type' => 'application/json',
           'Content-Encoding' => 'gzip, deflate',
-          'X-Auth-Token' => ES_V2_CONFIG[:auth_token]
+          'X-Auth-Token' => ES_V2_CONFIG[:auth_token],
+          'User-Agent' => ''
         }.merge(headers)
       end
 
