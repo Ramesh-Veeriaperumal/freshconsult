@@ -7457,10 +7457,11 @@ en:
     account: account
     delete_action:
       success: "App deleted successfully."
-      error: "Error while deleting the App."
+      error: "<span>Error while deleting the App.</span> Please try again. If the error persists, please <a href=https://support.freshdesk.com>contact support.</a>"
     install_action:
       success: "App installed successfully."
       failure: "Could not process the request"
+      app_setup_error: "There was an error during installation."
       auth_error: "Error while authorizing the app"
     update_action:
       success: "App updated successfully."

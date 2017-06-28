@@ -90,4 +90,6 @@ module Marketplace::Constants
 
   IFRAME_DEFAULT_COMP_ALGO = "DEF"
 
+  UNINSTALL_IN_PROGRESS = 5
+
 end

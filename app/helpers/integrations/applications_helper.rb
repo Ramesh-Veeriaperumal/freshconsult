@@ -15,6 +15,10 @@ module Integrations
       extension["features"].present? and extension['features'].include?('iframe_settings')
     end
 
+    def is_uninstall_in_progress?(installed_ext)
+      installed_ext['state'] == UNINSTALL_IN_PROGRESS
+    end
+
     def generate_mkp_update_button(extension)
       update_params = { "type" => "#{EXTENSION_TYPE[:plug]}", "installation_type" => "update", "display_name" => extension['display_name'] }
       update_url = admin_marketplace_installed_extensions_new_configs_path(extension['extension_id'], extension['version_id'])

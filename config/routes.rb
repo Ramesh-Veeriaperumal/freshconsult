@@ -1476,6 +1476,7 @@ Helpkit::Application.routes.draw do
           put :enable
           put :disable
           put :update_config
+          get :app_status
         end
       end
     end
