@@ -1,0 +1,26 @@
+put:
+  tags: [ticket]
+  summary: Link Ticket
+  parameters:
+    - $ref: '#/parameters/id'
+    - name: data
+      in: body
+      required: true
+      schema:
+        required:
+          - tracker_id
+        properties:
+          tracker_id:
+            type: integer
+            description: Display ID of tracker ticket
+  responses:
+    204:
+      description: Success
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    404:
+      description: Ticket not found
+    403:
+      description: Access denied

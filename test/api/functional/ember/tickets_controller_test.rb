@@ -968,5 +968,69 @@ module Ember
     ensure
       Account.any_instance.unstub(:multiple_user_companies_enabled?)
     end
+
+    def test_tracker_create
+      enable_adv_ticketing(:link_tickets) do
+        Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
+        create_ticket
+        agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+        ticket = Helpdesk::Ticket.last
+        params_hash = ticket_params_hash.merge(email: agent.email, related_ticket_ids: [ticket.display_id])
+        post :create, construct_params({ version: 'private' }, params_hash)
+        assert_response 201
+        latest_ticket = Helpdesk::Ticket.last
+        ticket.reload
+        match_json(ticket_show_pattern(latest_ticket))
+        assert ticket.related_ticket?
+      end
+    end
+
+    def test_tracker_create_with_contact_email
+      enable_adv_ticketing(:link_tickets) do
+        create_ticket
+        ticket = Helpdesk::Ticket.last
+        params_hash = ticket_params_hash.merge(related_ticket_ids: [ticket.display_id])
+        post :create, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern('email', nil, append_msg: I18n.t('ticket.tracker_agent_error'))])
+        assert !ticket.related_ticket?
+      end
+    end
+
+    def test_child_create
+      enable_adv_ticketing(:parent_child_tickets) do
+        Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
+        create_parent_ticket
+        parent_ticket = Helpdesk::Ticket.last
+        params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
+        post :create, construct_params({ version: 'private' }, params_hash)
+        assert_response 201
+        latest_ticket = Helpdesk::Ticket.last
+        match_json(ticket_show_pattern(latest_ticket))
+      end
+    end
+
+    def test_create_child_to_parent_with_max_children
+      enable_adv_ticketing(:parent_child_tickets) do
+        Helpdesk::Ticket.any_instance.stubs(:associates).returns((10..21).to_a)
+        parent_ticket = create_parent_ticket
+        params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
+        post :create, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern('parent_id', nil, append_msg: I18n.t('ticket.parent_child.count_exceeded', count: TicketConstants::CHILD_TICKETS_PER_ASSOC_PARENT))])
+      end
+    end
+
+    def test_create_child_to_a_invalid_parent
+      enable_adv_ticketing(:parent_child_tickets) do
+        Helpdesk::Ticket.any_instance.stubs(:associates).returns((10..21).to_a)
+        parent_ticket = create_parent_ticket
+        parent_ticket.update_attributes(spam: true)
+        params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
+        post :create, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern('parent_id', nil, append_msg: I18n.t('ticket.parent_child.permission_denied'))])
+      end
+    end
   end
 end

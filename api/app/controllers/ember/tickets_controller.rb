@@ -116,6 +116,7 @@ module Ember
         assign_attachments
         assign_attributes_for_create if create?
         assign_ticket_status
+        assign_association_type
       end
 
       def assign_attachments
@@ -133,6 +134,14 @@ module Ember
 
         # Default source is set to phone. Instead of portal as set in the model.
         @item.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone] if @item.source === 0
+      end
+
+      def assign_association_type
+        if cname_params[:related_ticket_ids].present?
+          @item.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]
+        elsif cname_params[:assoc_parent_tkt_id].present?
+          @item.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:child]
+        end
       end
 
       def assign_attributes_for_update

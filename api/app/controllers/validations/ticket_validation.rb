@@ -6,7 +6,8 @@ class TicketValidation < ApiValidation
   attr_accessor :id, :cc_emails, :description, :due_by, :email_config_id, :fr_due_by, :group, :priority, :email,
                 :phone, :twitter_id, :facebook_id, :requester_id, :name, :agent, :source, :status, :subject, :ticket_type,
                 :product, :tags, :custom_fields, :attachments, :request_params, :item, :statuses, :status_ids, :ticket_fields, :company_id, :scenario_id,
-                :primary_id, :ticket_ids, :note_in_primary, :note_in_secondary, :convert_recepients_to_cc, :cloud_files, :skip_close_notification
+                :primary_id, :ticket_ids, :note_in_primary, :note_in_secondary, :convert_recepients_to_cc, :cloud_files, :skip_close_notification,
+                :related_ticket_ids, :assoc_parent_tkt_id
 
   alias_attribute :type, :ticket_type
   alias_attribute :product_id, :product
@@ -47,6 +48,24 @@ class TicketValidation < ApiValidation
     }
   }, unless: -> { Account.current.multiple_user_companies_enabled? }
 
+  validates :related_ticket_ids, custom_absence: {
+    message: :require_feature_for_attribute,
+    code: :inaccessible_field,
+    message_options: {
+      attribute: 'related_ticket_ids',
+      feature: :link_tickets
+    }
+  }, unless: -> { Account.current.link_tkts_enabled? }
+
+  validates :assoc_parent_tkt_id, custom_absence: {
+    message: :require_feature_for_attribute,
+    code: :inaccessible_field,
+    message_options: {
+      attribute: 'assoc_parent_tkt_id',
+      feature: :parent_child_tickets
+    }
+  }, unless: -> { Account.current.parent_child_tkts_enabled? }
+
   validates :company_id, custom_numericality: {
     only_integer: true,
     greater_than: 0,
@@ -79,7 +98,8 @@ class TicketValidation < ApiValidation
   validates :attachments, data_type: { rules: Array, allow_nil: true }, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: false } }
   validates :attachments, file_size:  {
     max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,
-    base_size: proc { |x| ValidationHelper.attachment_size(x.item) } }
+    base_size: proc { |x| ValidationHelper.attachment_size(x.item) }
+  }
 
   # Email related validations
   validates :email, data_type: { rules: String, allow_nil: true }

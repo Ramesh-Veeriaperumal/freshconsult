@@ -1,7 +1,7 @@
 class TicketDecorator < ApiDecorator
   delegate :ticket_body, :custom_field_via_mapping, :cc_email, :email_config_id, :fr_escalated, :group_id, :priority,
            :requester_id, :responder, :responder_id, :source, :spam, :status, :subject, :display_id, :ticket_type,
-           :schema_less_ticket, :deleted, :due_by, :frDueBy, :isescalated, :description,
+           :schema_less_ticket, :deleted, :due_by, :frDueBy, :isescalated, :description, :association_type, :associated_tickets_count,
            :description_html, :tag_names, :attachments, :attachments_sharable, :company_id, :cloud_files, :ticket_states, to: :record
 
   def initialize(record, options)
@@ -75,9 +75,9 @@ class TicketDecorator < ApiDecorator
   def tweet
     return unless Account.current.features?(:twitter) && record.twitter?
     {
-      tweet_id: "#{record.tweet.tweet_id}",
+      tweet_id: record.tweet.tweet_id.to_s,
       tweet_type: record.tweet.tweet_type,
-      twitter_handle_id: record.tweet.twitter_handle_id,
+      twitter_handle_id: record.tweet.twitter_handle_id
     }
   end
 
@@ -155,6 +155,8 @@ class TicketDecorator < ApiDecorator
       due_by: due_by.try(:utc),
       fr_due_by: frDueBy.try(:utc),
       is_escalated: isescalated,
+      association_type: association_type,
+      associated_tickets_count: associated_tickets_count,
       description: ticket_body.description_html,
       description_text: ticket_body.description,
       custom_fields: custom_fields,

@@ -1,12 +1,12 @@
 module ApiTicketConstants
   # ControllerConstants
-  ARRAY_FIELDS = %w(tags cc_emails attachments attachment_ids).freeze
+  ARRAY_FIELDS = %w(tags cc_emails attachments attachment_ids related_ticket_ids).freeze
   HASH_FIELDS = ['custom_fields'].freeze
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
 
   CREATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id priority
                      email phone twitter_id facebook_id requester_id name
-                     responder_id source status subject type product_id company_id
+                     responder_id source status subject type product_id company_id parent_id
                   ).freeze | ARRAY_FIELDS | HASH_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   # removed source since update of ticket source should not be allowed. - Might break API v2
   UPDATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id priority
@@ -33,9 +33,9 @@ module ApiTicketConstants
   PRIORITIES = TicketConstants::PRIORITY_TOKEN_BY_KEY.keys.freeze
   SOURCES = TicketConstants::SOURCE_KEYS_BY_TOKEN.slice(:email, :portal, :phone, :chat, :mobihelp, :feedback_widget).values.freeze
 
-  PIPE_CREATE_FIELDS = CREATE_FIELDS | %w( pending_since created_at updated_at on_state_time )
-  PIPE_UPDATE_FIELDS = UPDATE_FIELDS | %w( pending_since created_at updated_at )
-  
+  PIPE_CREATE_FIELDS = CREATE_FIELDS | %w(pending_since created_at updated_at on_state_time)
+  PIPE_UPDATE_FIELDS = UPDATE_FIELDS | %w(pending_since created_at updated_at)
+
   SCOPE_BASED_ON_ACTION = {
     'restore' => { deleted: true, spam: false },
     'unspam' => { deleted: false, spam: true },
@@ -101,7 +101,7 @@ module ApiTicketConstants
 
   MERGE_PARAMS = [:primary_id, :ticket_ids, :convert_recepients_to_cc, note_in_primary: [:body, :private], note_in_secondary: [:body, :private]].freeze
 
-  PARAMS_TO_REMOVE = [:cc_emails, :description].freeze
+  PARAMS_TO_REMOVE = [:cc_emails, :description, :parent_id].freeze
   PARAMS_MAPPINGS = { custom_fields: :custom_field, fr_due_by: :frDueBy, type: :ticket_type }.freeze
   PARAMS_TO_SAVE_AND_REMOVE = [:status, :cloud_files, :attachment_ids, :skip_close_notification].freeze
 end.freeze
