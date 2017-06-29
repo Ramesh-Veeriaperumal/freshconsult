@@ -55,6 +55,8 @@ module Freshfone
         logger.error "[#{jid}] - [#{tid}] Trace :: #{e.backtrace.join('\n\t')}"
         NewRelic::Agent.notice_error(e, {description: "Error in Realtime Notifier for account #{current_account.id} for type #{type}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"})
         notify_error(e)
+      ensure
+        enqueue_call_timeout_job if enqueue_timeout_job?
       end
     end
 
