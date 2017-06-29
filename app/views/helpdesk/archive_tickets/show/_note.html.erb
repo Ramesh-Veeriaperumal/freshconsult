@@ -11,7 +11,7 @@ if @note_last_modified_user_hash.present? && @note_last_modified_user_hash[note.
   last_modified_user = @note_last_modified_user_hash[note.id.to_s]
 end
 
-if current_account.custom_survey_enabled?
+if current_account.new_survey_enabled?
   kind = note.custom_survey_remark.nil? ? note.kind : 'survey'
   
   unless note.custom_survey_remark.blank?

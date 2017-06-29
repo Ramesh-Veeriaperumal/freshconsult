@@ -385,6 +385,7 @@ en:
       group: Group
       agent: Agent
       skill: Skill
+      skill_required: Skill required
       internal_group: Internal Group
       internal_agent: Internal Agent
       priority: Priority
@@ -776,6 +777,7 @@ en:
         no_skill_info_1: No skill have been created.
         no_skill_info_2: Please contact your helpdesk administrator.
         new: New Skill
+      import_csv: "Import Agent Skills"
       new:
         new: New Skill
       edit:
@@ -795,12 +797,21 @@ en:
         learn_more_skill_based_info: Learn more about skill based assignment
         title3: Skill to Ticket Mapping
         info3: "Skill rules are used to identify which skill should be associated with a ticket, based on ticket or customer properties. For each ticket assigned to a group, the first matching skill rule in the Skill List will be executed. Admins can reorder the list of skills to have the most important rules on top."
+      import:
+        download_xls_title: "Download current list of agents and their skills (if any) as csv file"
+        download_xls_btn: "Download .CSV file"
+        add_skills_title: "Add skills to agents in the decreasing order of preference and upload the file"
+        upload_file: "Upload .CSV file"
+        important_note: "Important Note"
+        note_info_1: "If we encounter a new skill name, we will create the skill and map it to the agents"
+        note_info_2: "If we encounter an existing agent with different set of skills, we will disassociate existing set of skills and map the new set of skills present in the file"
+        note_info_3: "Please note that only a maximum of 35 skills can be associated to an agent and 180 skills can be created per account"
     user_skills:
       update:
         update_success: "Skills were successfully updated to the agents."
         update_error: "There were errors in saving skills of %{unsaved_user_count} users. Please reassign the skills and try saving again."
       index:
-        sbrr_disabled_admin: Skill based assignment has not been turned on for this group -
+        sbrr_disabled_admin: Skill based assignment has not been turned on for this group
         turn_on: Turn On
         any: Any
         groups: Group
@@ -2209,6 +2220,7 @@ en:
         edit_conversation: Delete a conversation
         merge_or_split_ticket: Merge / split a ticket
         edit_ticket_properties: Edit ticket properties
+        edit_ticket_skill: Edit skill required
         view_time_entries: View or edit time entries
         edit_time_entries: Edit everyone's time entries
         edit_time_entries_false: Edit only their time
@@ -2613,7 +2625,8 @@ en:
       wrong_format: The CSV file format is not supported. Please check the CSV file format!
       success: "%{created_count} contacts has been newly imported and %{updated_count} existing contacts has been updated!"
     import:
-      already_running: Currently one csv import is running. you may try later !!
+      hi: "Hi"
+      already_running: "A csv import is already in progress. Please try again later."
       failure: Please try again
       no_file: Please upload a file
       success: Your csv import has started and you will receive an email when it is completed. The import process may take several minutes depending on the volume of your data
@@ -2627,6 +2640,19 @@ en:
       info5: "Please follow the instructions mentioned in this <a href = '%{solution_link}'>link</a> to check the formatting of the CSV file"
       info6: "Please send the file to support@freshdesk.com so that we can verify and upload it from our end."
       info7: "%{type} import could not be initiated for csv that you submitted as the file format was incorrect. Please resubmit the file after reformatting it according to the guidelines mentioned in this solution article <a href = '%{solution_link}'>link</a>."
+      info8: "Agents for whom skill update failed can be found in the attachment along with the reason for the failure."
+      info9: "The successfully imported skills and mapping can be viewed under Admin->Skills. Kindly ensure that you add conditions to the new skills in order to map the skill to the right tickets. The new skills can be found at the bottom of the skill list."
+      info10: "The agent to skill mapping csv file that you uploaded has been imported. Please find the summary below:"
+      info11: "Please check the formatting of the CSV file and upload it again."
+      info12: "The value 'Email' or 'Skills' was not present in the first row."
+      info13: "The columns Email or Skills was missing is the csv."
+      info14: "We could not import skills from the file %{file_name} due to one of the following reasons:"
+      info15: "No. of new skills that were created: %{create_count}"
+      info16: "No. of agents whose skills were updated: %{update_count}"
+      info17: "No. of new skills that could not be created: %{create_failed_count}"
+      info18: "No. of agents whose skills could not be updated: %{update_failed_count}"
+      info19: "Skills Import for %{portal_url}"
+      invalid_file: "Please upload proper csv file"
       help_desk: Please feel free to get in touch with us if you need anything else.
       regards: Regards
       freshdesk: Freshdesk Team
@@ -2926,6 +2952,7 @@ en:
       spam: "Marked Spam"
       rel_tkt_link: "Ticket Linked"
       rel_tkt_unlink: "Ticket Unlinked"
+      skill_update: "Skill Updated"
     solutions:
       new_solution:
         short: "{{user_path}} created a new solution"
@@ -4010,6 +4037,7 @@ en:
         unique_external_id: unique_external_id field cannot be updated
         edit_broadcast_note: "Broadcast message can't be edited"
         max_scheduled_exports_per_account: Cannot have more than %{max_limit} scheduled exports
+        skill_name: Should not contain comma
       full_messages:
         format: "%{attribute} %{message}"
       template:
@@ -4174,6 +4202,10 @@ en:
     capping_ticket: "ticket"
     capping_tickets: "tickets"
     page_not_found: "This group could not be found. It might have been deleted or the URL mistyped."
+    maximum: Maximum
+    per_agent: per agent
+    sbrr_trial_text: Did you know you can assign tickets based on your agents’ skills? <a href="https://support.freshdesk.com/solution/articles/222692" target="_blank">Learn more</a>
+    sbrr_plan_text: <span class="muted"> Available on the </span> <b> Forest plan </b>
     assigntime:
       half: 30 Minutes
       one: 1 Hour
@@ -4319,7 +4351,7 @@ en:
     helpdesk_software: Help Desk Software
     by_freshdesk: by Freshdesk
     submit_feedback: Submit Feedback
-    footer_feedback_subject_placeholder: If Freshdesk could launch anything in 2017, what would it be?
+    footer_feedback_subject_placeholder: Tell us how we can make Freshdesk better
     footer_feedback_thanks: Thank you for your feedback!
     errors:
       feedback_subject_required: Cannot be blank.
@@ -4433,6 +4465,7 @@ en:
       replied_forum_title: "Replied to topic <a href='%{topic_url}' data-pjax='#body-container' class='bold-title'>%{topic_title}</a>"
       user_forum_timeinfo: "%{time} ago in <a href='%{forum_url}' data-pjax='#body-container' class='muted'>%{forum_title}</a>"
       user_ticket_timeinfo: " %{time} ago,  Status: %{status} <span class='middot'> &middot; </span> Agent: %{agent_name}"
+      user_ticket_timeinfo2: " %{time} ago,  Status: %{status}"
       company_ticket_timeinfo: "by %{user_name}, %{time} ago <span class='middot'> &middot; </span> Status: %{status} <span class='middot'> &middot; </span> Agent: %{agent_name}"
       contact_all: 'Recent ticket and forum activities'
       company: 'Contains tickets raised by company contacts'
@@ -5183,10 +5216,12 @@ en:
     role_dashboard: "Role-based dashboards"
     advanced_dkim: "Unlimited DKIM/DMARC"
     ip_whitelisting: "IP whitelisting"
+    skill_based_assignment: "Skill based assignment"
     advanced_phone_integration: "Advanced phone integration"
     machine_learning: "Machine learning"
     custom_data_center: "Data centre location"
     whitelisted_ip_desc: "Whitelisted IP addresses"
+    skill_based_assignment_desc: "Skill based assignment"
     custom_mailbox_desc: "Custom email servers"
     advanced_phone_desc: "Advanced phone features"
     multiple_products_desc: "Multiple product portals/knowledge base"
@@ -6327,7 +6362,7 @@ en:
   back_to_reports: "&larr; Back to reports"
   helpdesk:
     collab: Discussion
-    start_collab: Start Discussion
+    start_collab: Discuss
     add_requester: Add Requester
     surveys:
       invalid_rating: Rating value "%{rating}" is invalid. Please rate with the correct rating value.
@@ -6835,7 +6870,7 @@ en:
         my_article_feedback: My Articles Feedback
         archived: Archive
         invalid_requester: Invalid requester
-        ongoing_collab: My Open Discussions
+        ongoing_collab: My Active Huddles
       note:
         posted_on: "%{user_name} on %{note_date}"
         created_on:
@@ -7054,6 +7089,9 @@ en:
     scheduled_ticket_export:
       subject: "%{title} for %{date}"
       body: "Hello there,<br><br>The export scheduled by %{user_name} is now ready. This report has the details of tickets that were created and updated from %{latest_schedule_range}.<br><br><a href=%{url}>Download Report</a><br><br>Please download this report within 30 days, after which the link will expire.<br><br>Happy number crunching!<br>%{helpdesk_name}"
+    scheduled_ticket_export_no_data:
+      subject: "%{title} - No tickets created or updated"
+      body: "Hello there,<br><br>It’s been a little quiet here! You have no tickets created or updated from %{latest_schedule_range}. We’ll be back once your support is in action.<br><br>%{helpdesk_name}"
     agents:
       fields:
         name: "Name"
@@ -7097,6 +7135,8 @@ en:
       customer_interactions: "Customer interactions"
       resolution_status: "Resolution Status"
       first_response_status: "First Response Status"
+      internal_agent: Internal Agent
+      internal_group: Internal Group
       tags: "Tags"
       survey_result: "Survey Result"
       product: "Product"
@@ -7398,7 +7438,7 @@ en:
     installed_mkp_apps_unavailable: "The listing of installed apps is currently unavailable. Please try again later. Please contact us if the issue persists."
     api_error: "We could not process your request. Please try after sometime."
     results: results
-    field_blank: Please fill all the fields.
+    field_blank: Please fill the required fields.
     installed: Installed
     helpnote1: "Apps in Freshdesk let you share data with third party solutions and services that you use regularly. They also enable you to add additional features to the ticket and contact details page. Freshdesk offers several apps out-of-the-box. To browse our selection of apps, click on the “Get More Apps” button."
     helpnote_custom_apps_html: "Can't find an app that fits your needs? With our Custom Apps (earlier called Freshplugs), you can bring in contextual information from any third party solution, legacy system or database. These Custom Apps can also be used to make visual changes to your helpdesk and boost productivity. Click <a href='https://support.freshdesk.com/support/solutions/articles/121846' target='_blank'>here</a> to learn more!"
@@ -7417,10 +7457,11 @@ en:
     account: account
     delete_action:
       success: "App deleted successfully."
-      error: "Error while deleting the App."
+      error: "<span>Error while deleting the App.</span> Please try again. If the error persists, please <a href=https://support.freshdesk.com>contact support.</a>"
     install_action:
       success: "App installed successfully."
       failure: "Could not process the request"
+      app_setup_error: "There was an error during installation."
       auth_error: "Error while authorizing the app"
     update_action:
       success: "App updated successfully."
@@ -8144,6 +8185,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       slack_token_failure: "Error while updating the token."
       disable_slash_command: Admin has not enabled the slash command in Freshdesk."
       authorize_in_fd: "Please go to your Freshdesk account and Authorize your account.This Account doesnot have permission to create Ticket"
+      invalid_parameter: "Invalid command. Please enter a value between 1 and 200 to create a ticket on Freshdesk."
     slack_settings:
       channels: "Channels to post"
       notify: "Notification for"
@@ -9472,7 +9514,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       create_new: "Create"
       schedule_show_message: "You cannot edit a schedule once it's created"
       file_not_found: The required export file is not found.
-      file_not_created: The required export file is not yet created.
+      file_not_created: The required export file has not yet been created.
       helpnote:
         help_title_1: "Export ticket properties"
         help_info_1: "You can schedule and export ticket properties, along with their associated contact and company fields from Freshdesk. Data from the export can then be used for building custom reports. For example, you can get an export of tickets every week which includes the first response time, resolution time and the assigned agent, and see how responsive your support team is. A maximum of five schedules can be created for an account. <a href='https://support.freshdesk.com/support/solutions/articles/226461-export-ticket-properties/' target='_blank'>Read more</a> on how to create a schedule to export ticket properties."
@@ -9520,7 +9562,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         weekly_label: "7 days"
         schedule_message: "%{zone} for tickets created/updated in the last %{label}"
         select_all: "Select all"
-        max_field: "(upto 100 fields)"
+        max_field: "(upto 150 fields)"
         email_recipient_maxlimit: "You cannot add more than %{limit} email addresses"
     ticket_activity:
       title: "Export ticket activities"
@@ -10945,8 +10987,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     notification_preferences: "Notification Preferences"
     notify_when: Notify when...
     checking_your_preferences: Checking your preferences...
-    actor_text_2: "%{actor_name_1} and %{actor_name_2}"
-    actor_text_multi: "%{actor_name_1} and %{more_actors_count} more"
+    actor_text_2: "%{actor_name_1} and %{actor_name_2}&nbsp;"
+    actor_text_multi: "%{actor_name_1} and %{more_actors_count} more&nbsp;"
     private_note_created: "sent you a private note on ticket %{object}"
     private_note_created_multi: "sent you %{count} private notes on ticket %{object}"
     public_note_created: "added a note on ticket %{object}"
@@ -10966,21 +11008,23 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     collab_group_mention_multi: "mentioned your group - %{group_name} in {{count}} messages on ticket %{object}"
     collab_reply: "replied to your message on ticket %{object}"
     collab_reply_multi: "replied to your message on ticket %{object}"
+    generic_notification: "%{title}"
     types:
       private_note_created: "Private Note Created"
       public_note_created: "Public Note Added"
       customer_responded: "Customer Responded"
       ticket_status_update: "Ticket Status Updated"
       ticket_assigned: "Ticket Assigned"
-      collab_added_to: "Discussion"
-      collab_invited_notification: "Discussion"
-      collab_group_mention: :"Discussion"
-      collab_group_mention_multi: "Discussion"
-      collab_first_mention: "Discussion"
-      collab_reply: "Discussion"
-      collab_reply_multi: "Discussion"
+      collab_added_to: "Team Huddle"
+      collab_invited_notification: "Team Huddle"
+      collab_group_mention: :"Team Huddle"
+      collab_group_mention_multi: "Team Huddle"
+      collab_first_mention: "Team Huddle"
+      collab_reply: "Team Huddle"
+      collab_reply_multi: "Team Huddle"
       ticket_assigned_to_group: "Ticket Assigned to Group"
       ticket_created: "New Ticket"
+      generic_notification: "%{type}"
     preferences_text:
       private_note_created: Private note sent to me
       public_note_created: Public note added to ticket
@@ -10990,12 +11034,12 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       ticket_assigned_to_group: Ticket assigned to my group
       ticket_created: New tickets created
     enable_desktop_notifications: Enable Desktop Notifications
-    enable_desktop_notifications_help: "Please click <strong>Allow</strong> when prompted"
-    desktop_notifications_enabled_flash: Desktop notifications are now enabled!
+    enable_desktop_notifications_help: "Please click 'Allow' when prompted"
+    desktop_notifications_enabled_flash: Desktop notifications are enabled!
     desktop_notifications_disabled: You've disabled desktop notifications
     toggle_mobile_notifications: Toggle mobile notifications
     toggle_web_notifications: Toggle web notifications
-
+    silent_notifications: Silent notifications
   trial_plan_downgrade: "Important: You are currently downgrading from %{plan_from} plan to %{plan_to} plan"
   discounted_sum: "After Discount"
   selecting_plan: "Selecting..."
@@ -11172,15 +11216,15 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     help: What's this?
     feed_back_survery: Help us with some feedback?
   collaboration:
-    my_open_discussions: "My Open Discussions"
+    my_open_discussions: "My Active Huddles"
     notifications: "Notifications"
     no_notifications: "No new notifications"
     discussion: "Discussion"
     discuss: "Discuss"
-    collaborators: "Collaborators"
+    collaborators: "Members"
     view_all_collaborations: "View all discussions"
     view_discussion: "View Discussion"
-    open_discussions: "My Open Discussions"
+    open_discussions: "My Active Huddles"
     type_message: "Type message"
     added_to: "You have been added as collaborator on ticket %{ticket_id}"
     invited_notification: "%{user_name} wants to collaborate with you on ticket %{ticket_id}"
@@ -11188,16 +11232,23 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     nth_mention: "%{who} has mentioned you in %{how_many} messages in ticket %{ticket_id}"
     nth_mention_multi_users: "%{who_all} have mentioned you in %{how_many} messages in ticket %{ticket_id}"
     send_msg_placeholder: "Type '%{newline_key}' to add a new line. '%{send_key}' to send..."
-    collab_max_out_info: "A ticket cannot have more than %{max_collaborators} collaborators. Please contact %{contact_person} to @mention people who are not in the list below."
-    collab_motto: "Collaborate with your team in context, fast."
-    chat_and_more_slogan: "'@' mention someone to invite them, highlight and discuss."
+    collab_max_out_info: "This discussion cannot have more than %{max_collaborators} members."
+    collab_motto: "Collaborate with your team to resolve issues faster"
+    collab_motto_slogan1: "@mention a teammate to invite them."
+    collab_motto_slogan2: "Highlight in the ticket and discuss."
+    attach_file: "Attach file"
+    remove_file: "Remove file"
+    reply: "Reply"
+    disable_collab_info:
+      huddle_closed: "This discussion is closed since the ticket has been closed or deleted."
+      huddle_max_out: "This discussion already has %{max_collaborators} members."
     error:
-      network_err: "Could not connect to internet!"
-      size_exceeded: "Your file exceeded the maximium upload limit of %{max_size}. Please try again with a smaller file."
+      network_err: "Could not connect to the internet!"
+      size_exceeded: "Your file exceeded the maximum upload limit of %{max_size}. Please try again with a smaller file."
       wrong_file_format: "Unsupported file format!"
       unexpected: "Something went wrong!"
       highlight_missing: "Highlight missing"
-
+      
   default:
     ticket:
       email:

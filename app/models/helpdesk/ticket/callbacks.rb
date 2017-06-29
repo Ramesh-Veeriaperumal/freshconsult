@@ -40,7 +40,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   after_update :start_recording_timestamps, :unless => :model_changes?
 
-  before_save :update_resolution_time_by_bhrs, :if => Proc.new { new_sla_logic? && update_resolution_time? }
+  before_save :update_on_state_time, :if => Proc.new { new_sla_logic? && update_on_state_time? }
 
   before_save :update_dueby, :unless => :manual_sla?
 
@@ -57,8 +57,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   after_commit :trigger_observer, on: :update, :if => :execute_observer?
   after_commit :update_ticket_states, :notify_on_update, :update_activity,
-               :stop_timesheet_timers, :fire_update_event, :push_update_notification,
-               :update_old_group_capping, on: :update
+               :stop_timesheet_timers, :fire_update_event, 
+               :push_update_notification, on: :update
   #after_commit :regenerate_reports_data, on: :update, :if => :regenerate_data?
   after_commit :push_create_notification, on: :create
   after_commit :update_group_escalation, on: :create, :if => :model_changes?
@@ -782,11 +782,10 @@ private
 
   def set_dueby(sla_detail)
     created_time = self.created_at || time_zone_now
-    total_time_worked = ticket_states.resolution_time_by_bhrs.to_i
+    total_time_worked = ticket_states.on_state_time.to_i
     business_calendar = Group.default_business_calendar(group)
     self.due_by = sla_detail.calculate_due_by(created_time, total_time_worked, business_calendar)
     self.frDueBy = sla_detail.calculate_frDue_by(created_time, total_time_worked, business_calendar) if self.ticket_states.first_response_time.nil?
-    update_ticket_state_sla_timer if status_changed? && changed_to_closed_or_resolved?
   end
 
   def calculate_dueby_and_frdueby?
@@ -815,7 +814,9 @@ private
   end
 
   def previous_ticket_status
-    Helpdesk::TicketStatus.status_objects_from_cache(account).find{|x| x.status_id == @model_changes[:status][0]}
+    previous_status_id = @model_changes[:status][0]
+    Helpdesk::TicketStatus.status_objects_from_cache(account).find{ |x| x.status_id == previous_status_id } || 
+      account.ticket_statuses.where(:status_id => previous_status_id).first
   end
     
   def update_ticket_state_sla_timer
@@ -889,11 +890,7 @@ private
   end
 
   def trigger_observer
-    filter_observer_events(true, observer_inline?)
-  end
-
-  def observer_inline?
-    Account.current.skill_based_round_robin_enabled? && bg_jobs_inline
+    filter_observer_events(true)
   end
 
   def execute_observer?
@@ -995,7 +992,7 @@ private
     self.new_record? || priority_changed? || group_id_changed? || self.schema_less_ticket.sla_policy_id_changed?
   end
 
-  def update_resolution_time?
+  def update_on_state_time?
     common_updation_condition || (status_changed? && stop_sla_timer_changed?)
   end
 
@@ -1003,12 +1000,12 @@ private
     common_updation_condition || (status_changed? && calculate_dueby_and_frdueby?)
   end
 
-  def update_resolution_time_by_bhrs
+  def update_on_state_time
     self.ticket_states ||= Helpdesk::TicketState.new
     self.ticket_states.resolution_time_updated_at = time_zone_now
     Rails.logger.debug "SLA :::: Account id #{self.account_id} :: #{self.new_record? ? 'New' : self.id} ticket :: Updating resolution time :: resolution_time_updated_at :: #{self.ticket_states.resolution_time_updated_at}"
     if self.ticket_states.sla_timer_stopped_at.nil? && !self.new_record?
-      ticket_states.change_resolution_time_by_bhrs(ticket_states.resolution_time_updated_at_was, ticket_states.resolution_time_updated_at)
+      ticket_states.change_on_state_time(ticket_states.resolution_time_updated_at_was, ticket_states.resolution_time_updated_at)
     end
   end
 

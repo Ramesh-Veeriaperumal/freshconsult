@@ -21,7 +21,10 @@ module Admin::RolesHelper
              },
              { :dom_type => "check_box", :id => "edit_conversation"  },
              { :dom_type => "check_box", :id => "merge_or_split_ticket" },
-             { :dom_type => "check_box", :id => "edit_ticket_properties" },
+             { :dom_type => "check_box", :id => "edit_ticket_properties", :class => "nested",
+               :children => 
+               [{ :dom_type => "check_box", :id => "edit_ticket_skill", :not_display => !current_account.skill_based_round_robin_enabled? }]
+              },
              { :dom_type => "check_box", :id => "view_time_entries", :class => "nested",
                :children =>
 
@@ -110,6 +113,7 @@ module Admin::RolesHelper
 
                    [{ :dom_type => "check_box", :id => "manage_users" },
                     { :dom_type => "check_box", :id => "manage_availability" },
+                    { :dom_type => "check_box", :id => "manage_skills", :not_display => !current_account.skill_based_round_robin_enabled? },
                     { :dom_type => "check_box", :id => "manage_tags" },
                     { :dom_type => "check_box", :id => "manage_canned_responses" },
                     { :dom_type => "check_box", :id => "manage_dispatch_rules" },
@@ -117,8 +121,7 @@ module Admin::RolesHelper
                     { :dom_type => "check_box", :id => "manage_scenario_automation_rules" },
                     { :dom_type => "check_box", :id => "manage_email_settings" },
                     { :dom_type => "hidden_field", :id => "manage_dashboard" },
-                    { :dom_type => "check_box", :id => "manage_ticket_templates" },
-                    { :dom_type => "check_box", :id => "manage_skills", :not_display => !current_account.skill_based_round_robin_enabled? }
+                    { :dom_type => "check_box", :id => "manage_ticket_templates" }
                     ]
                },
 
@@ -128,6 +131,7 @@ module Admin::RolesHelper
                    [{ :dom_type => "hidden_field", :id => "view_admin" },
                     { :dom_type => "hidden_field", :id => "manage_users" },
                     { :dom_type => "hidden_field", :id => "manage_availability" },
+                    { :dom_type => "hidden_field", :id => "manage_skills", :not_display => !current_account.skill_based_round_robin_enabled? },
                     { :dom_type => "hidden_field", :id => "manage_canned_responses" },
                     { :dom_type => "hidden_field", :id => "manage_dispatch_rules" },
                     { :dom_type => "hidden_field", :id => "manage_supervisor_rules" },
@@ -135,7 +139,6 @@ module Admin::RolesHelper
                     { :dom_type => "hidden_field", :id => "manage_email_settings" },
                     { :dom_type => "hidden_field", :id => "manage_dashboard" },
                     { :dom_type => "hidden_field", :id => "manage_ticket_templates" },
-                    { :dom_type => "hidden_field", :id => "manage_skills", :not_display => !current_account.skill_based_round_robin_enabled? },
                     { :dom_type => "check_box",    :id => "manage_account" }]
 
                }]

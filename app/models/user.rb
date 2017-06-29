@@ -92,7 +92,7 @@ class User < ActiveRecord::Base
                                       :duration => :periodic_login_duration}
   end
 
-  validates :user_skills, length: { :maximum => MAX_NO_OF_SKILLS_PER_USER }
+  validates :user_skills, length: { :maximum => MAX_NO_OF_SKILLS_PER_USER } # to validate nested_attributes assignment, but this will not handle bulk array of skill ids assignment
   validate :has_role?, :unless => :customer?
   validate :email_validity, :if => :chk_email_presence?
   validate :user_email_presence, :if => :email_required?
@@ -138,7 +138,7 @@ class User < ActiveRecord::Base
   end
 
   attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, :sbrr_fresh_user,
-                :primary_email_attributes, :tags_updated, :keep_user_active, :role_ids_changed # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there.
+                :primary_email_attributes, :tags_updated, :keep_user_active, :escape_liquid_attributes, :role_ids_changed # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there.
   # As role_ids are not part of user_model(it is an association_reader), agent.update_attributes won't trigger user callbacks since user doesn't have any change.
   # Hence user.send(:attribute_will_change!, :role_ids_changed) is being called in api_agents_controller.)
 
@@ -186,6 +186,10 @@ class User < ActiveRecord::Base
 
   def ebay_user?
     (self.external_id && self.external_id =~ /\Afbay-/) ? true : false
+  end
+
+  def has_edit_access?(user_id)
+    account.agent_groups.permissible_user(self.accessible_groups.pluck(:id), user_id).exists?
   end
 
   class << self # Class Methods
@@ -261,6 +265,19 @@ class User < ActiveRecord::Base
 
     def reset_current_user
       User.current = nil
+    end
+
+    def run_without_current_user
+      doer = User.current
+      User.reset_current_user
+      Rails.logger.debug "Running block without Current User"
+      yield
+    rescue Exception => e
+      Rails.logger.debug "Something is wrong run_without_current_user Account id:: #{Account.current.id} #{e.message}"
+      NewRelic::Agent.notice_error(e)
+      raise e
+    ensure
+      doer.make_current if doer
     end
 
     # Used by API V2
@@ -1075,7 +1092,7 @@ class User < ActiveRecord::Base
       if helpdesk_agent_changed? and !agent?
         self.agent_groups.each do |ag|
           group = ag.group
-          group.remove_agent_from_round_robin(self.id) if group.round_robin_enabled?
+          group.remove_agent_from_round_robin(self.id) if group.lbrr_enabled?
         end
       end
     end

@@ -60,7 +60,6 @@ run "ln -nfs #{shared_path}/config/lambda.yml #{node[:rel_path]}/config/lambda.y
 run "ln -nfs #{shared_path}/config/redis_round_robin.yml #{node[:rel_path]}/config/redis_round_robin.yml"
 run "ln -nfs #{shared_path}/config/ml_app.yml #{node[:rel_path]}/config/ml_app.yml"
 run "ln -nfs #{shared_path}/config/sendgrid_webhook_api.yml #{node[:rel_path]}/config/sendgrid_webhook_api.yml"
-run "ln -nfs #{shared_path}/config/ehawk_api.yml #{node[:rel_path]}/config/ehawk_api.yml"
 run "ln -nfs #{shared_path}/config/sds.yml #{node[:rel_path]}/config/sds.yml"
 run "ln -nfs #{shared_path}/config/clamav.yml #{node[:rel_path]}/config/clamav.yml"
 run "ln -nfs #{shared_path}/config/zendesk_app.yml #{node[:rel_path]}/config/zendesk_app.yml"
@@ -69,6 +68,7 @@ run "ln -nfs #{shared_path}/config/archive_queue.yml #{node[:rel_path]}/config/a
 run "ln -nfs #{shared_path}/config/autopilot.yml #{node[:rel_path]}/config/autopilot.yml"
 run "ln -nfs #{shared_path}/config/inline_manual.yml #{node[:rel_path]}/config/inline_manual.yml"
 run "ln -nfs #{shared_path}/config/redis_session.yml #{node[:rel_path]}/config/redis_session.yml"
+run "ln -nfs #{shared_path}/config/fd_email_service.yml #{node[:rel_path]}/config/fd_email_service.yml"
 
 #supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"

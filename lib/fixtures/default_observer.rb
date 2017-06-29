@@ -17,7 +17,6 @@ module Fixtures
       auto_assign_action_data = [
         {:name => 'responder_id', :value => Va::Action::EVENT_PERFORMER}
       ]
-      
 
       VaRule.seed(:account_id, :name) do |s|
         s.account_id = account.id

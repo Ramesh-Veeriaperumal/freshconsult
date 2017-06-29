@@ -30,6 +30,8 @@ module TicketConstants
 
   NEEDED_SBRR_ATTRIBUTES = [:group_id, :status, :responder_id, :spam, :deleted, :sl_skill_id]
 
+  SKILL_DEFAULT_CONDITION_FIELDS = [:group_id, :priority, :source, :ticket_type, :product_id]
+
   ### Bump the version of "TICKETS_LIST_PAGE_FILTERS" key in fragment_cache/keys.rb when SOURCES are modified.
   SOURCES = [
     [ :email,            'email',            1 ],
@@ -336,7 +338,11 @@ module TicketConstants
 
   DB_INDEXED_QUERY_COLUMNS = ["requester_id", "responder_id", "group_id", "created_at", "status"]
 
-  SKILL_BASED_TICKET_ATTRIBUTES = [:sbrr_ticket_dequeued, :sbrr_user_score_incremented, :sbrr_fresh_ticket, :skip_sbrr, :sbrr_turned_on, :status_sla_toggled_to, :skip_sbrr_assigner]
+  SKILL_BASED_TICKET_ATTRIBUTES = [:sbrr_ticket_dequeued, :sbrr_user_score_incremented, :sbrr_fresh_ticket, :skip_sbrr, :sbrr_turned_on, :status_sla_toggled_to, :skip_sbrr_assigner, :skip_sbrr_save]
+
+  LBRR_REFLECTION_KEYS = [:deleted, :spam, :status, :responder_id, :group_id]
+
+  LBRR_REFLECTION_KEYS = [:deleted, :spam, :status, :responder_id, :group_id]
 
   def self.translate_priority_name(priority)
     I18n.t(PRIORITY_NAMES_BY_KEY[priority])
@@ -404,7 +410,11 @@ module TicketConstants
     TICKET_ASSOCIATION_FILTER.map { |i| [i[1], i[2].join(',')] }
   end
 
-   def self.created_options
+  def self.created_options
     CREATED_BY_VALUES_EN.map { |i| [I18n.t(i[1]), i[2]] }
+  end
+
+  def skill_condition_attributes
+    SKILL_DEFAULT_CONDITION_FIELDS + Account.current.ticket_custom_dropdown_nested_fields.map{ |x| x.column_name.to_sym}
   end
 end

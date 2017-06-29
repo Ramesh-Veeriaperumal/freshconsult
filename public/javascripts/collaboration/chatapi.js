@@ -251,7 +251,7 @@
                     // TODO (mayank): make your own unique_id and use them instead of id
                     msg = JSON.parse(data.msg);
                     msg.mid = String(data.id); /* quick fix */
-                    if(msg.u_nch === NOTIFICATION_CONVO_ID) {
+                    if(typeof msg.u_nch !== "undefined" && msg.u_nch === NOTIFICATION_CONVO_ID) {
                         msg.nid = String(data.id); /* quick fix for notification use case */
                         self.onnotify(msg);
                     }
@@ -276,9 +276,19 @@
     /*
     *  Subscribing to RTS
     */
-    function subscribe(conversation, callback) {
+    function subscribeWithAuthGrant(channel, rts_token, callback) {
         var self = this;
-        rts.subscribe(conversation, function(data){onmessagehandler.call(self, data);}, function(err, data){
+        if (!!rts_token) {
+          // Token for the channel.
+          rts.grant(rts_token,function(data){subscribe.call(self, channel, callback);});
+        } else {
+          subscribe.call(self, channel, callback);
+        }
+    }
+
+    function subscribe(channel, callback) {
+        var self = this;
+        rts.subscribe(channel, function(data){onmessagehandler.call(self, data);}, function(err, data){
             if (typeof callback === "function"){callback(data);}
         });
     };
@@ -354,7 +364,7 @@
         if(!!response.conversation.co_id && !!response.conversation.co_ch) {
             var conversation = response.conversation;
             self.conversationsMap[conversation.co_id] = conversation;
-            subscribe.call(self, response.conversation.co_ch, function() {
+            subscribeWithAuthGrant.call(self, conversation.co_ch, conversation.rts_token, function() {
                 log(">> client: conversation subscribed in RTS.");
                 if(typeof cb === "function") {cb(response);}
             });
@@ -389,7 +399,8 @@
             "members": convo.members,
             "co_name": convo.name,
             "co_id": convo.co_id,
-            "owned_by": convo.owned_by
+            "owned_by": convo.owned_by,
+            "notify_version": convo.notify_version
         };
         conversationObj.members = !!conversationObj.members.length ? conversationObj.members : [self.userId]
         conversationObj.read_access = CONVO_ACCESS_SCOPE;
@@ -409,7 +420,7 @@
                 var conversation = response.conversation;
                 self.conversationsMap[conversation.co_id] = conversation;
                 // If created subscribe
-                subscribe.call(self, response.conversation.co_ch, function() {
+                subscribeWithAuthGrant.call(self, conversation.co_ch, conversation.rts_token, function() {
                     log(">> client: conversation subscribed in RTS.");
                     if(typeof cb === "function") {cb(response);}
                 });
@@ -480,7 +491,7 @@
         
         collabHttpAjax({
             method: "GET",
-            url: CONVERSATION_GET_ROUTE + "?co_id=" + conversationName + "&uid=" + uid,
+            url: CONVERSATION_GET_ROUTE + "?co_id=" + conversationName + "&count=true&uid=" + uid,
             success: function(response){
                 conversationLoadCb.call(self, response, cb);
             },
@@ -749,19 +760,6 @@
                 if(typeof cb === "function"){cb(response);}
             }
         }, self.clientId, self.authToken);
-    },
-
-    ChatApi.prototype.notificationMail = function(convo, cb){
-        var self = this;
-        collabHttpAjax({
-            method: "POST",
-            url: NOTIFICATION_MAIL_URL,
-            data: convo.mail_data,
-            success: function(response){
-                if(typeof response === "string"){response = JSON.parse(response);};
-                if(typeof cb === "function"){cb(response);}
-            }
-        }, self.clientId, getAuthToken(self.authToken, convo.token));
     }
 
     return ChatApi;

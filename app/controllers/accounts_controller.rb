@@ -381,6 +381,7 @@ class AccountsController < ApplicationController
           metrics_obj[:os] = metrics["browser"]["os"]
           metrics_obj[:offset] = metrics["time"]["tz_offset"]
           metrics_obj[:is_dst] = metrics["time"]["observes_dst"]
+          metrics[:signup_method] = action
           metrics_obj[:session_json] = metrics
         else
           metrics_obj = nil
@@ -579,7 +580,7 @@ class AccountsController < ApplicationController
 
     def finish_signup
       @signup.user.reset_perishable_token!
-      save_account_sign_up_params(@signup.account.id, params[:signup])
+      save_account_sign_up_params(@signup.account.id, params[:signup].merge({"signup_method" => action}))
       add_account_info_to_dynamo
       set_account_onboarding_pending
       mark_new_account_setup

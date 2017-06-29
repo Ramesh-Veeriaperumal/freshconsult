@@ -33,6 +33,10 @@ class AgentGroup < ActiveRecord::Base
     { :conditions => ["group_id in (?)", group_ids] }
   }
 
+  scope :permissible_user, lambda { |group_ids, user_id|
+    { :conditions => ["user_id = ? AND group_id in (?)", user_id, group_ids] }
+  }
+
   def sync_skill_based_user_queues
     if account.skill_based_round_robin_enabled? && group.skill_based_round_robin_enabled? && 
         (user.agent.nil? || user.agent.available?)#user.agent.nil? - hack for agent destroy
@@ -63,7 +67,7 @@ class AgentGroup < ActiveRecord::Base
   private
 
     def capping_enabled?
-      self.group.round_robin_capping_enabled?
+      self.group.lbrr_enabled?
     end
 
     def add_to_group_capping

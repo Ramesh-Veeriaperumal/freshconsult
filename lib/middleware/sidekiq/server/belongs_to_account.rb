@@ -37,6 +37,8 @@ module Middleware
             puts "Just ignoring the DomainNotReady , #{e.inspect}"
         rescue ShardNotFound => e
             puts "Ignoring ShardNotFound, #{e.inspect}, #{msg['account_id']}"
+        rescue AccountBlocked => e
+            puts "Ignore AccountBlocked, #{e.inspect}"
           # rescue Exception => e
           #   NewRelic::Agent.notice_error(e)
         ensure

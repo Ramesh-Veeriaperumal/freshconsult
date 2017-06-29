@@ -5,6 +5,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
   extend ParserUtil
   include EmailHelper
+  include EmailDelivery
   include Helpdesk::NotifierFormattingMethods
 
   include Redis::RedisKeys
@@ -270,26 +271,36 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       if !params[:cc_mails].nil?
          headers[:cc] = params[:cc_mails].join(", ")
       end
-        
-       ##Setting the templates for mail usage###
-      message = mail(headers) do |part|
-        part.text { render "email_notification.text.plain" }
-        part.html { render "email_notification.text.html" }
-      end
-      
-      ##Envelope is set for mail cc case. 
-      #Only the people in envelope receive the mail and rest go in cc. 
-      #Facilitates reply-to all feature
-      if !params[:smtp_envelope_to].nil?
-        envelope_mail  = validate_emails(params[:smtp_envelope_to], params[:ticket])
-        if !envelope_mail.nil?
-          message.smtp_envelope_to=envelope_mail
+    
+      if params[:ticket].account.launched?(:send_emails_via_fd_email_service_feature)
+        text = render_to_string("email_notification.text.plain", {formats: :text})
+        html = render_to_string("email_notification.text.html", {formats: :html})
+        coder = HTMLEntities.new
+
+        hmtl = coder.encode(html, :named)
+
+        headers.merge!(:text => text, :html => html)
+
+        deliver_email(headers, params[:attachments])
+      else
+        ##Setting the templates for mail usage###
+        message = mail(headers) do |part|
+          part.text { render "email_notification.text.plain" }
+          part.html { render "email_notification.text.html" }
         end
+        
+        ##Envelope is set for mail cc case. 
+        #Only the people in envelope receive the mail and rest go in cc. 
+        #Facilitates reply-to all feature
+        if !params[:smtp_envelope_to].nil?
+          envelope_mail  = validate_emails(params[:smtp_envelope_to], params[:ticket])
+          if !envelope_mail.nil?
+            message.smtp_envelope_to=envelope_mail
+          end
+        end
+
+        message.deliver  
       end
-      
-      #End of cc change
-      
-      message.deliver  
     ensure 
       remove_email_config
     end

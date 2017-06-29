@@ -18,7 +18,7 @@ module Search
         def initialize(uuid)
           @log_uuid = uuid || UUIDTools::UUID.timestamp_create.hexdigest
         end
-        
+
         # [01dc7d52106eabd6a8e8d173f8cb9b38] [2015-10-17 18:05:54:271] GET localhost:9200/_search
         # '{"query":{"match":{"query_string":"term*"}}}'
         #
@@ -28,7 +28,7 @@ module Search
         #
         def log_request(endpoint, http_method='get', payload=nil)
           output = []
-          
+
           output << http_method.to_s.upcase
           output << endpoint
           output << payload.inspect if payload
@@ -67,6 +67,23 @@ module Search
 
           track(output.join(' '))
         end
+
+
+        def log_timestamps(timestamps)
+          output = []
+          end_time = Search::Job.es_version/1000
+          t = timestamps.shift
+          total_timespent = end_time - t
+          output << "start=#{t}"
+          timestamps.each_with_index do |stamp, i|
+            stamp = stamp.to_i
+            output << "h#{i}_pick=#{stamp}, h#{i}_spent=#{stamp - t}"
+            t = stamp
+          end
+          output << "end=#{end_time}, end_spent=#{end_time - t}, total=#{total_timespent}"
+          log(output.join(', '))
+        end
+
 
         # For easily parseble
         # (*) Log account_id
@@ -108,49 +125,49 @@ module Search
 
         private
 
-          # 2015-10-15 11:36:15:542
-          #
-          # Get timestamp event is happening at in custom format
-          #
-          def timestamp
-            Time.zone.now.utc.strftime('%Y-%m-%d %H:%M:%S:%L')
-          end
+        # 2015-10-15 11:36:15:542
+        #
+        # Get timestamp event is happening at in custom format
+        #
+        def timestamp
+          Time.zone.now.utc.strftime('%Y-%m-%d %H:%M:%S:%L')
+        end
 
-          # Log filepath
-          #
-          def log_path
-            @@esv2_log_path ||= "#{Rails.root}/log/esv2_requests.log"
-          end 
+        # Log filepath
+        #
+        def log_path
+          @@esv2_log_path ||= "#{Rails.root}/log/esv2_requests.log"
+        end
 
-          # Logging mechanism
-          #
-          def log_device
-            @@esv2_logger ||= Logger.new(log_path)
-          end
+        # Logging mechanism
+        #
+        def log_device
+          @@esv2_logger ||= Logger.new(log_path)
+        end
 
-          def track_device
-            @@esv2_tracker ||= Logger.new("#{Rails.root}/log/esv2_hits.log")
-          end
+        def track_device
+          @@esv2_tracker ||= Logger.new("#{Rails.root}/log/esv2_hits.log")
+        end
 
-          # Logging function
-          #
-          def log(message, level='info')
-            begin
-              log_device.send(level, "[#{@log_uuid}] [#{timestamp}] #{message}")
-            rescue Exception => e
-              Rails.logger.error("[#{@log_uuid}] Exception in ES Logger :: #{e.message}")
-              NewRelic::Agent.notice_error(e)
-            end
+        # Logging function
+        #
+        def log(message, level='info')
+          begin
+            log_device.send(level, "[#{@log_uuid}] [#{timestamp}] #{message}")
+          rescue Exception => e
+            Rails.logger.error("[#{@log_uuid}] Exception in ES Logger :: #{e.message}")
+            NewRelic::Agent.notice_error(e)
           end
+        end
 
-          def track(message, level='info')
-            begin
-              track_device.send(level, "[#{@log_uuid}] [#{timestamp}] #{message}")
-            rescue Exception => e
-              Rails.logger.error("[#{@log_uuid}] Exception in ES Logger :: #{e.message}")
-              NewRelic::Agent.notice_error(e)
-            end
+        def track(message, level='info')
+          begin
+            track_device.send(level, "[#{@log_uuid}] [#{timestamp}] #{message}")
+          rescue Exception => e
+            Rails.logger.error("[#{@log_uuid}] Exception in ES Logger :: #{e.message}")
+            NewRelic::Agent.notice_error(e)
           end
+        end
       end
 
     end

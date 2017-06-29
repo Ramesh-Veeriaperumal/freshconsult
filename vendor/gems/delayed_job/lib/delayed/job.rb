@@ -193,9 +193,12 @@ module Delayed
 
       if Account.current
 
-        return if Account.current.launched?(:disable_emails)
-
         account_id = Account.current.id
+
+        if Account.current.launched?(:disable_emails)
+          Rails.logger.info "Outgoings emails are stopped for account #{account_id} due to :disable_emails feature."
+          return
+        end
 
         shard = ShardMapping.lookup_with_account_id(account_id)
         pod_info = shard.pod_info if (shard and !shard.pod_info.blank?)

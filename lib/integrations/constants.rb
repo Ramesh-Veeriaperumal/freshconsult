@@ -49,7 +49,7 @@ module Integrations::Constants
     :shared_ownership => "shared_ownership"
   }
 
-  DISPLAY_IN_PAGES = { "ticket_show" => 2, "contact_show" => 1, "company_show" => 0 }
+  DISPLAY_IN_PAGES = { 'ticket_show' => 2, 'contact_show' => 1, 'company_show' => 0, 'time_sheet_show' => 3, 'editor_show' => 4 }.freeze
 
   CRM_APPS= [:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm, :quickbooks, :freshbooks, :infusionsoft, :freshsales, :salesforce_v2, :dynamics_v2]
 
@@ -91,28 +91,47 @@ module Integrations::Constants
   CONTACTS_SYNC_ACCOUNTS_LIMIT = 10
 
   PROVIDER_TO_APPNAME_MAP = {
-    "github" => "github",
-    "salesforce" => "salesforce",
-    "magento" => "magento",
-    "shopify" => "shopify",
-    "slack" => "slack_v2",
-    "infusionsoft" => "infusionsoft",
-    "google_calendar" => "google_calendar",
-    "google_login" => "",
-    "google_marketplace_sso" => "",
-    "google_contacts" => "google_contacts",
-    "google_gadget" => "",
-    "quickbooks" => "quickbooks",
-    "nimble" => "nimble",
-    "surveymonkey" => "surveymonkey",
-    "box" => "box",
-    "mailchimp" => "mailchimp",
-    "constantcontact" => "constantcontact",
-    "surveymonkey" => "surveymonkey",
-    "outlook_contacts" => "outlook_contacts",
-    "salesforce_v2" => "salesforce_v2",
-    "facebook" => "",
-    "dynamics_v2" => "dynamics_v2"
-  }
+    'github' => 'github',
+    'salesforce' => 'salesforce',
+    'magento' => 'magento',
+    'shopify' => 'shopify',
+    'slack' => 'slack_v2',
+    'infusionsoft' => 'infusionsoft',
+    'google_calendar' => 'google_calendar',
+    'google_login' => '',
+    'google_marketplace_sso' => '',
+    'google_contacts' => 'google_contacts',
+    'google_gadget' => '',
+    'quickbooks' => 'quickbooks',
+    'nimble' => 'nimble',
+    'surveymonkey' => 'surveymonkey',
+    'box' => 'box',
+    'mailchimp' => 'mailchimp',
+    'constantcontact' => 'constantcontact',
+    'surveymonkey' => 'surveymonkey',
+    'outlook_contacts' => 'outlook_contacts',
+    'salesforce_v2' => 'salesforce_v2',
+    'facebook' => '',
+    'dynamics_v2' => 'dynamics_v2'
+  }.freeze
 
+  EXCLUDE_FROM_APP_CONFIGS_HASH = [:password, :auth_key, :api_key, :app_key, :oauth_token, :refresh_token, :element_token, :auth_token, :session_id, :secret, :cti_ctd_api].freeze
+
+  ZOHO_URL_SUFFIX = '&authtoken='
+  MAILCHIMP_URL_SUFFIX = '&apikey='
+
+  APPS_DISPLAY_MAPPING = {
+    APP_NAMES[:jira] => 4,
+    APP_NAMES[:zohocrm] => 6,
+    APP_NAMES[:mailchimp].downcase => 2,
+    APP_NAMES[:salesforce_v2] => 6,
+    APP_NAMES[:harvest] => 8,
+    APP_NAMES[:dropbox] => 16,
+    APP_NAMES[:box] => 16,
+    APP_NAMES[:onedrive] => 16,
+    APP_NAMES[:surveymonkey] => 16,
+    APP_NAMES[:google_calendar] => 4
+  }.freeze
+
+  ATTACHMENT_APPS = [APP_NAMES[:dropbox],APP_NAMES[:box],APP_NAMES[:onedrive]].freeze
 end

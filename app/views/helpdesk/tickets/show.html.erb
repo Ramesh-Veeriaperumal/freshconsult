@@ -54,8 +54,8 @@
 				<% if current_account.collaboration_enabled? %>
 					<div id="collab-option-dd" class="collab-option-dd hide">
 						<span class="collab-logo">
-							<img class="logo-image" alt="Logo" data-type="logo" onerror="default_image_error(this)" src="/assets/collab/collab-logo.svg">
-			            </span>
+							<%= font_icon "huddle-logo", { :size => 22 , :class => "logo-image"} %>
+			      </span>
 						<span class="collab-discuss-text" id="collab-discuss-text"><%=t('collaboration.discuss')%></span>
 					</div>
 					<div id="show-discussion-dd" class="show-discussion-dd hide">

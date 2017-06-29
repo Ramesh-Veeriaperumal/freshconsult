@@ -307,7 +307,11 @@ class Helpdesk::Note < ActiveRecord::Base
   def trigger_observer model_changes, inline = false, system_event = false
     @model_changes = model_changes.symbolize_keys unless model_changes.nil?
     @system_event = system_event
-    filter_observer_events(true, inline) if user_present?
+    if user_present?
+      filter_observer_events(true, inline)
+    else
+      Rails.logger.debug "@model_changes #{@model_changes.inspect}, User.current #{User.current}, survey_result? #{survey_result?}, system_event? #{system_event?}, zendesk_import? #{zendesk_import?}, freshdesk_webhook? #{freshdesk_webhook?}, sent_for_enrichment? #{sent_for_enrichment?}"
+    end
   end
 
   def update_note_level_resp_time(ticket_state)

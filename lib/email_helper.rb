@@ -64,7 +64,7 @@ module EmailHelper
     end
   rescue error => e
     subject = "ProcessEmail :: Timeout Error - #{error}"
-    Rails.logger.debug "#{error} #{e.backtrace}"
+    Rails.logger.debug "Error in run_with_timeout #{error} #{e.backtrace}"
     NewRelic::Agent.notice_error(e)
     DevNotification.publish(SNS["mailbox_notification_topic"], subject, e.backtrace.inspect)
     yield # Running the same code without timeout, as a temporary way. Need to handle it better

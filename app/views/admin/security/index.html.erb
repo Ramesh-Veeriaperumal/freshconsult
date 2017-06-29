@@ -35,10 +35,10 @@
                   </li>
                   <li>
                     <%= p.label :saml_cert, t('.saml_cert_fingerprint') %>
-                    <% if @account.launched? :sha256_enabled %>
-                    <%= content_tag( :div, t(".saml_cert_fingerprint_info_sha256"), :class => "info-data" ) %>
+                    <% if @account.launched? :sha1_enabled %>
+                      <%= content_tag(:div, t(".saml_cert_fingerprint_info"), :class => "info-data") %>
                     <% else %>
-                    <%= content_tag( :div, t(".saml_cert_fingerprint_info"), :class => "info-data" ) %>
+                      <%= content_tag(:div, t(".saml_cert_fingerprint_info_sha256"), :class => "info-data") %>
                     <% end %>
                     <%= p.text_field :saml_cert_fingerprint, :value => @account[:sso_options].default(:saml_cert_fingerprint), :size => 50, :class => "text" %>
                   </li>

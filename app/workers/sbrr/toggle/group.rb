@@ -57,15 +57,18 @@ module SBRR
       private
 
         def trigger_sbrr ticket
-          args = {:model_changes => {},:ticket_id => ticket.display_id, :attributes => { :sbrr_turned_on => true }, :options => {:action => "sbrr_turned_on_for_group"}}
-          assign = sbrr_worker args
+          #args = {:model_changes => {},:ticket_id => ticket.display_id, :sbrr_state_attributes => ticket.sbrr_state_attributes, :attributes => { :sbrr_turned_on => true }, :options => {:action => "sbrr_turned_on_for_group"}}
+          ticket.sbrr_turned_on = true
+          args = {:model_changes => {}, :options => {:action => "sbrr_turned_on_for_group"}}
+          assign = sbrr_worker ticket, args
           assign.execute
         rescue Exception => e
           SBRR.log("Exception #{e.message} in sbrr turned on for group #{@group.id} ticket #{ticket.display_id} account #{Account.current.id}")
         end
 
-        def sbrr_worker args
-          SBRR::Execution.new args
+        def sbrr_worker ticket, args
+          SBRR::Execution.enqueue ticket, args
+          #SBRR::Execution.new args
         end
 
         def user_toggle_synchronizers

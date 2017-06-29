@@ -15,18 +15,25 @@ $link_hover_color: #0645AD;
 $icon_color: #666;
 $icon_hover_color: #333;
 
-$annotation_bg_color: #fee4c8;
-$annotation_border_color: #ebc397;
+$annotation_bg_color: #b4ebdf;
+$annotation_border_color: #96dbcc;
+$annotation_shadow_color: #7ec7b7;
+$annotation_blink_color: #d8f4ee;
 
-$reply_to_bg_color: #fee4c8;
-$reply_to_border_color: #ebc397;
+$reply_to_bg_color: #b4ebdf;
+$reply_to_border_color: #96dbcc;
+$reply_to_shadow_color: #7ec7b7;
+$reply_to_blink_color: #d8f4ee;
 
 $error_bg_color: #ffeeee;
 $error_text_color: #ff3a3a;
 
-$border_color: #ddd;
+$border_color: #bebebe;
 $border_color_hover: #bbb;
 $received_msg_border_color: #c1c1c1;
+$sent_msg_border_color: #a5a5a5;
+
+$border_color2: #e1e1e1;
 
 $std_border_radius: 3px;
 
@@ -37,17 +44,20 @@ $mention_name_color: #696969;
 $active_tab_base: #888888;
 $tab_base_hover: #bfbfbf;
 
-$chat_bg: #f7f7f7;
+$chat_bg: #f9f9f9;
 $input_text_color: #4a4a4a;
-$box_shadow: 0 2px 6px 0 rgba(0,0,0,.2);
-$msg_bg_color: #e6e6e6;
+$box_shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+$box_shadow2: 0 1px 2px 1px rgba(0, 0, 0, 0.14);
+$msg_bg_color: #ececec;
 $ol_color: #88ca60;
 $selected_item_color: #fefef0;
 $motto_color: #979797;
 
 $attachment_bg_color: #f8f9fb;
-$disabled_bg_color: #f8f9fb;
+$disabled_bg_color: #efefef;
 $disabled_border_color: #e0e0e0;
+
+$highlight_yellow: #fff3b8;
 
 .collab-logo {
     .logo-image {
@@ -61,13 +71,10 @@ $disabled_border_color: #e0e0e0;
     height: 100vh;
     background-color: transparent;
     z-index: 1051;
-    box-shadow: $box_shadow;
-    width: 400px;
-    -webkit-transition-duration: 1s;
-    -moz-transition-duration: 1s;
-    -o-transition-duration: 1s;
-    transition-duration: 1s;
-    @include right(-420px);
+    box-shadow: $box_shadow2;
+    width: 405px;
+    display: none;
+    @include right(0px);
 
     img {
         max-width: 100%;
@@ -97,6 +104,12 @@ $disabled_border_color: #e0e0e0;
         }
     }
 
+    .received-box {
+        .mention-to-notify {
+            background-color: $highlight_yellow;
+        }
+    }
+
     &.closed-conversation {
         .send-collab-message-form {
             border-color: $disabled_border_color;
@@ -107,21 +120,30 @@ $disabled_border_color: #e0e0e0;
             cursor: not-allowed;
         }
 
-        .collab-action-btn {
-            display: none!important;
+         .collab-action-btns {
+         		.collab-attachment-help-info,
+                .collab-action-btn {
+                    display: none;
+                }
+            }
+
+        .collab-message-box {
+            .collab-reply-btn {
+                display: none;   
+            }
         }
 
         .collab-reply-btn {
             display: none!important;   
         }
+
+        .collab-disabled-reason {
+            display: block;
+        }
     }
 
     &.expand {
-        -webkit-transition-duration: .8s;
-        -moz-transition-duration: .8s;
-        -o-transition-duration: .8s;
-        transition-duration: .8s;
-        @include right(0px);
+        display: block;
 
         .title-row {
             display: block;
@@ -171,19 +193,20 @@ $disabled_border_color: #e0e0e0;
         border: 1px solid $annotation_border_color;
         color: $text_color;
         line-height: 18px;
-        box-shadow: 1px 1px 0 lightgrey;
+        box-shadow: 1px 1px 0 $annotation_shadow_color;
         @include border-radius(1px);
         @include padding(1px 4px);
         margin-bottom: 5px;
         cursor: pointer;
         text-overflow: ellipsis;
         height: 18px;
-        font-size: $font_size_sec;
+        font-size: $font_size_primary;
         overflow: hidden;
         white-space: nowrap;
 
         &.invalid-annotation {
             background-color: $msg_bg_color;
+            box-shadow: none;
             border-color: $received_msg_border_color;
             cursor: not-allowed;
         }
@@ -192,17 +215,26 @@ $disabled_border_color: #e0e0e0;
     .collab-reply-to-text {
         background-color: $reply_to_bg_color;
         border: 1px solid $reply_to_border_color;
+        box-shadow: 1px 1px 0 $reply_to_shadow_color;
+        height: 36px;
+
+        .collab-source-msg-from {
+            font-weight: 500;
+            color: #636363;
+            display: block;
+        }
     }
 
     .msg-cover {
-        background-color: $msg_bg_color;
+        background-color: white;
         position: relative;
-        border: 1px solid $border_color;
+        border: 1px solid $sent_msg_border_color;
         display: inline-block;
         max-width: 260px;
         @include text-align(left);
         @include padding(10px);
         @include border-radius($std_border_radius);
+        box-sizing: border-box;
 
         &:before {
             border: solid transparent;
@@ -225,7 +257,7 @@ $disabled_border_color: #e0e0e0;
             top: 11px;
             @include border-width(6px);
             @include right(100%);
-            @include border-right-color($msg_bg_color);
+            @include border-right-color(white);
         }
 
         .name {
@@ -251,7 +283,7 @@ $disabled_border_color: #e0e0e0;
             @include margin(0);
         }
         .msg-cover {
-            background-color: white;
+            background-color: $msg_bg_color;
             @include margin-left(0);
 
             &:before {
@@ -262,9 +294,13 @@ $disabled_border_color: #e0e0e0;
 
             &:after {
                 @include right(-11px);
-                @include border-left-color(white);
+                @include border-left-color($msg_bg_color);
                 @include border-right-color(transparent);
             }
+        }
+        .collab-my-mention-name {
+            color: $text_color;
+            font-weight: initial;
         }
     }
 
@@ -291,25 +327,29 @@ $disabled_border_color: #e0e0e0;
         cursor: pointer;
         width: 25px;
         height: 25px;
-        background-color: white;
         text-align: center;
         line-height: 23px;
         border-radius: 50%;
-        border: solid 1px #ddd;
         @include margin(5px 0);
         @include right( 8px );
-        opacity: .35;
+        background-color: #0066cc;
+          box-shadow: 0 1px 2px 0px rgba(0, 0, 0, 0.14);
 
-        &:hover {
-            opacity: .9;
+        .ficon {
+            color: white;
+            position: absolute;
+            top: 2px;
+            left: 7px;
         }
     }
 
     .title-row {
-        background-color: $chat_bg;
-        border-bottom: 1px solid $border_color;
+        background-color: #f5f5f5;
+        border-bottom: 1px solid $border_color2;
         height: 75px;
         box-sizing: border-box;
+        position: absolute;
+        width: 100%;
 
         .collab-logo {
             .logo-image {
@@ -317,6 +357,9 @@ $disabled_border_color: #e0e0e0;
                 height: 30px;
                 max-width: 30px;
                 @include margin(8px 10px);
+                margin-bottom: 13px;
+                display: inline-block;
+                font-size: 42px
             }
         }
         .tab {
@@ -361,14 +404,10 @@ $disabled_border_color: #e0e0e0;
             position: absolute;
             @include right(20px);
             top: 6px;
-            font-size: 22px;
-            color: $icon_color;
+            font-size: 24px;
+            color: $text_color;
             cursor: pointer;
-            opacity: .6;
-
-            &:hover {
-                color: $icon_hover_color;
-            }
+            line-height: 30px;
         }
     }
 
@@ -646,22 +685,23 @@ $disabled_border_color: #e0e0e0;
 
     .collab-reply-btn {
         display: none;
-        position: absolute;
-        bottom: 1px;
-        @include right(calc(100% + 10px));
-        background: lightgray;
+        bottom: -1px;
         box-sizing: border-box;
         z-index: 1;
         text-align: center;
         cursor: pointer;
-        border-radius: 50%;
-        width: 25px;
-        height: 25px;
-        line-height: 25px;
-        opacity: .4;
+        position: absolute;
+        @include left(-44px);
 
-        &:hover {
-            opacity: .7;
+        .collab-reply-icon {
+            width: 25px;
+            height: 25px;
+            line-height: 25px;
+            background-color: white;
+            display: inline-block;
+            box-shadow: 0 1px 2px 0 rgba(0,0,0,0.14);
+            border-radius: 50%;
+            border: solid 1px #c8c8c8;
         }
     }
 
@@ -680,8 +720,9 @@ $disabled_border_color: #e0e0e0;
 
     &.received-box {
         .collab-reply-btn {
-            @include left(calc(100% + 10px));
-            @include right(initial);
+            @include left(initial);
+            @include left(auto);
+            @include right(-44px);
         }
         @include text-align(left);
 
@@ -859,7 +900,6 @@ $disabled_border_color: #e0e0e0;
         }
     }
 
-    .collab-send-attachment-button,
     .collab-attachment-cancel-icon {
         float: right;
         height: 30px;
@@ -886,13 +926,20 @@ $disabled_border_color: #e0e0e0;
     position: relative;
 }
 
+.collab-activity-container {
+    @include padding(10px);
+    background-color: #f5f5f5;
+    box-shadow: 2px 1px 2px 1px rgba(0, 0, 0, 0.14);
+    border-top: 1px solid #f5f5f5;
+    position: relative;
+}
+
 .send-collab-message-form {
     z-index: 3;
     position: relative;
     background-color: white;
-    border: 1px solid $border_color;
+    border: 1px solid $border_color2;
     @include border-radius($std_border_radius);
-    @include margin (10px);
 
     .collab-msg-reply-to , 
     .annotation {
@@ -964,7 +1011,7 @@ $disabled_border_color: #e0e0e0;
     }
 
     .collab-action-btns {
-        border-top: solid 1px $border_color;
+        border-top: solid 1px $border_color2;
         @include padding(5px 10px);
         height: 36px;
         box-sizing: border-box;
@@ -1000,6 +1047,30 @@ $disabled_border_color: #e0e0e0;
                 }
             }
         }
+    }
+
+    .collab-attachment-help-info {
+        position: absolute;
+        line-height: 35px;
+        padding: 0 10px;
+        bottom: 0;
+        color: gray;
+        font-size: 11px;
+    }
+
+    .collab-disabled-reason {
+        position: absolute;
+        width: 100%;
+        top: 50%;
+        font-size: 15px;
+        transform: translateY(-50%);
+        text-align: center;
+        color: $mention_name_color;
+        padding: 10px;
+        font-weight: 500;
+        opacity: .5;
+        display: none;
+        box-sizing: border-box;
     }
 }
 
@@ -1164,16 +1235,15 @@ $disabled_border_color: #e0e0e0;
 
         .line-item {
             display: inline-block;
-            max-width: 180px;
+            max-width: 130px;
             vertical-align: middle;
         }
 
         .tag-handle {
-            font-weight: 600;
             display: inline-block;
             position: relative;
             font-family: sans-serif;
-            max-width: 125px;
+            max-width: 110px;
         }
 
         .prepend-separator {
@@ -1217,6 +1287,7 @@ $disabled_border_color: #e0e0e0;
     box-shadow: $box_shadow;
     background-color: white;
     min-width: 200px;
+    max-width: 320px;
 
     a {
         @include padding(0);
@@ -1271,6 +1342,10 @@ $disabled_border_color: #e0e0e0;
             height: 30px;
             line-height: 30px;
             font-size: $font_size_thumb;
+
+            &.fsize-32 {
+                font-size: 32px;
+            }
         }
 
         .prepend-separator {
@@ -1282,11 +1357,29 @@ $disabled_border_color: #e0e0e0;
         .group-mention-icon {
             background: lightgray;
         }
+
+        .huddle-circle-icon {
+            .thumb {
+                background: transparent;
+                height: 24px;
+                width: 24px;
+                border-radius: 0!important;
+                left: 3px;
+                top: 2px;
+            }
+           background-color: #636363; 
+        }
+
+        .huddle-group-icon {
+            .thumb {
+                color: #888888;
+                background: transparent;
+            }
+        }
     }
     
     .info {
         @include padding(10px);
-        max-width: 300px;
         border-bottom: 2px solid $border_color;
         display: none;
     }
@@ -1317,7 +1410,7 @@ $disabled_border_color: #e0e0e0;
         margin-bottom: 40px;
 
         .logo-image {
-            width: 85px;
+            width: 100px;
         }
     }
 
@@ -1336,7 +1429,7 @@ $disabled_border_color: #e0e0e0;
     .collab-slogan {
         width: 342px;
         height: 15px;
-        font-size: $font_size_sec;
+        font-size: $font_size_primary;
         font-weight: normal;
         font-style: normal;
         font-stretch: normal;
@@ -1353,9 +1446,25 @@ $disabled_border_color: #e0e0e0;
         background-color: transparent;
         box-shadow: 0 -4px 0 7px transparent;
     }
-    50% {
-        background-color: $reply_to_bg_color;
-        box-shadow: 0 -4px 0 7px $reply_to_bg_color;
+    5% {
+        background-color: $reply_to_blink_color;
+        box-shadow: 0 -4px 0 7px $reply_to_blink_color;
+    }
+    20% {
+        background-color: $reply_to_blink_color;
+        box-shadow: 0 -4px 0 7px $reply_to_blink_color;
+    }
+    30% {
+        background-color: transparent;
+        box-shadow: 0 -4px 0 7px transparent;
+    }
+    40% {
+        background-color: $reply_to_blink_color;
+        box-shadow: 0 -4px 0 7px $reply_to_blink_color;
+    }
+    90% {
+        background-color: $reply_to_blink_color;
+        box-shadow: 0 -4px 0 7px $reply_to_blink_color;
     }
     100% {
         background-color: transparent;
@@ -1372,9 +1481,25 @@ $disabled_border_color: #e0e0e0;
         background-color: transparent;
         box-shadow: 0 -4px 0 7px transparent;
     }
-    50% {
-        background-color: $annotation_bg_color;
-        box-shadow: 0 -4px 0 7px $annotation_bg_color;
+    5% {
+        background-color: $annotation_blink_color;
+        box-shadow: 0 -4px 0 7px $annotation_blink_color;
+    }
+    20% {
+        background-color: $annotation_blink_color;
+        box-shadow: 0 -4px 0 7px $annotation_blink_color;
+    }
+    30% {
+        background-color: transparent;
+        box-shadow: 0 -4px 0 7px transparent;
+    }
+    40% {
+        background-color: $annotation_blink_color;
+        box-shadow: 0 -4px 0 7px $annotation_blink_color;
+    }
+    90% {
+        background-color: $annotation_blink_color;
+        box-shadow: 0 -4px 0 7px $annotation_blink_color;
     }
     100% {
         background-color: transparent;
@@ -1388,31 +1513,116 @@ $disabled_border_color: #e0e0e0;
 
 @keyframes hl-blinker {
     0% {
-        background-color: #fee4c8;
+        background-color: $annotation_blink_color;
     }
     50% {
         background-color: transparent;
     }
     100% {
-        background-color: #fee4c8;
+        background-color: $annotation_blink_color;
     }
+}
+
+
+
+/*navFromRightBounceIn  for Convo Panel */
+@-webkit-keyframes navFromRightBounceIn {
+  0% {
+    -webkit-transform: translateX(100%);
+    transform: translateX(100%);
+  }
+
+  20% {
+    padding-right: 0px;
+    -webkit-transform: translateX(0%);
+    transform: translateX(0%);
+  }
+
+  60% {
+    padding-right: 0px;
+  }
+
+  100% {
+    padding-right: 0px;
+  }
+}
+
+@-o-keyframes navFromRightBounceIn {
+  0% {
+    -o-transform: translateX(100%);
+    transform: translateX(100%);
+  }
+
+  20% {
+    padding-right: 0px;
+    -o-transform: translateX(0%);
+    transform: translateX(0%);
+  }
+
+  60% {
+    padding-right: 0px;
+  }
+
+  100% {
+    padding-right: 0px;
+  }
+}
+
+@keyframes navFromRightBounceIn {
+  0% {
+    -webkit-transform: translateX(100%);
+    -ms-transform: translateX(100%);
+    -o-transform: translateX(100%);
+    transform: translateX(100%);
+  }
+
+  20% {
+    padding-right: 0px;
+    -webkit-transform: translateX(0%);
+    -ms-transform: translateX(0%);
+    -o-transform: translateX(0%);
+    transform: translateX(0%);
+  }
+
+  60% {
+    padding-right: 0px;
+  }
+
+  100% {
+    padding-right: 0px;
+  }
+}
+
+.navFromRightBounceIn {
+  visibility: visible;
+  display: block;
+  -webkit-animation: navFromRightBounceIn 500ms both ease;
+  -o-animation: navFromRightBounceIn 500ms both ease;
+  animation: navFromRightBounceIn 500ms both ease;
 }
 
 /*
     On Helpkit's page:
 */
 .ticket-actions .btn.collab-btn {
-    padding: 0 6px;
-    line-height: 1;
+    height: 26px;
+    padding-left: 34px;
+    position: relative;
 
     .collab-logo {
-        display: inline-block;
-        height: 18px;
-        padding: 4px 0 2px;
-        .logo-image {
-            width: 18px;
-            max-width: 18px;
-            height: 18px;
+        position: absolute;
+        left: 12px;
+        top: 3px;
+
+    }
+
+    .collab-message-count {
+        display: none;
+    }
+    
+    &.collab-inited {
+        .collab-message-count {
+            display: inline-block;
         }
     }
 }
@@ -1445,12 +1655,18 @@ $disabled_border_color: #e0e0e0;
 
     .view-discussion-text {
         display: inline-block;
-        line-height: 20px;
+        line-height: 17px;
         vertical-align: middle;
         margin-top: 2px;
         margin-right: 1px;
         font-weight: initial;
         font-weight: auto;
+        color: #1272de;
+        @include margin-right(2px);
+
+        &:hover {
+            color: #0645AD;
+        }
     }
 
     .collab-discuss-text {
@@ -1460,6 +1676,11 @@ $disabled_border_color: #e0e0e0;
         margin-right: -1px;
         font-weight: initial;
         font-weight: auto;
+        color: #1272de;
+
+        &:hover {
+            color: #0645AD;
+        }
     }
 
     .collab-logo {
@@ -1500,6 +1721,18 @@ $disabled_border_color: #e0e0e0;
         .preview_pic {
             @include margin-right(6px); 
             margin-bottom: 1px;
+
+            &.x-small {
+                width: 16px;
+                height: 16px;
+                line-height: 17px;
+                font-size: 10px;
+
+                .thumb_img {
+                    width: 16px;
+                    height: 16px;
+                }
+            }
         }
 
         .thumb_img {
@@ -1512,8 +1745,8 @@ $disabled_border_color: #e0e0e0;
             content: " ";
             display: block;
             position: absolute;
-            width: 2px;
-            height: 19px;
+            width: 1px;
+            height: 13px;
             background-color: $border_color;
             right: 0;
             top: 2px;
@@ -1522,12 +1755,7 @@ $disabled_border_color: #e0e0e0;
 }
 
 .collab-mention-name {
-    font-weight: 500;
     color: $mention_name_color;
-
-    &.collab-my-mention-name {
-        color: $text_color;
-    }
 }
 
 .show-discussion-dd {

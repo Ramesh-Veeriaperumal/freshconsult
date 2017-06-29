@@ -8,7 +8,7 @@ class SAAS::SubscriptionActions
 
   ADD_DATA_FEATURES   = [ :round_robin ]
   
-  ONLY_BITMAP_FEATURES = (Account::ADVANCED_FEATURES_TOGGLE + [:shared_ownership_toggle])
+  ONLY_BITMAP_FEATURES = (Account::ADVANCED_FEATURES_TOGGLE + [:shared_ownership_toggle, :skill_based_round_robin, :auto_ticket_export, :ticket_activity_export])
 
   DROP  = "drop"
   ADD   = "add"
@@ -49,8 +49,11 @@ class SAAS::SubscriptionActions
       remove_chat_feature(account)      # Remove chat feature if downgrade to non chat plan
       existing_addons.each do |addon|
         addon.features.collect{ |feature| 
-          next if ONLY_BITMAP_FEATURES.include?(feature) 
-          account.remove_feature(feature) 
+          if ONLY_BITMAP_FEATURES.include?(feature)
+            account.revoke_feature(feature)
+            next
+          end
+          account.remove_feature(feature)
         }
       end
 
@@ -58,6 +61,12 @@ class SAAS::SubscriptionActions
       #Add appropriate features
       account.add_features_of account.plan_name
       features = new_addons.collect{ |addon| addon.features }.flatten
+
+      features.each do |addon_feature|
+        if ONLY_BITMAP_FEATURES.include?(addon_feature)
+          account.add_feature(addon_feature)
+        end
+      end
       
       account.add_features((features - ONLY_BITMAP_FEATURES))
       # drop chat routing data in freshchat table if downgrade to non chat routing plan

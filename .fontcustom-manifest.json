@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "a33cb316726dcac23273cfdd4a1d0d3fe261b038d34d285e8099181a31fa3725",
-    "current": "a33cb316726dcac23273cfdd4a1d0d3fe261b038d34d285e8099181a31fa3725"
+    "previous": "5c4094d1fd8fec04b9e922cfa6caea005433cc303d84e6d0d9ab34370195b59f",
+    "current": "5c4094d1fd8fec04b9e922cfa6caea005433cc303d84e6d0d9ab34370195b59f"
   },
   "fonts": [
-    "public/assets/glyphs_a33cb316726dcac23273cfdd4a1d0d3f.ttf",
-    "public/assets/glyphs_a33cb316726dcac23273cfdd4a1d0d3f.svg",
-    "public/assets/glyphs_a33cb316726dcac23273cfdd4a1d0d3f.woff",
-    "public/assets/glyphs_a33cb316726dcac23273cfdd4a1d0d3f.eot"
+    "public/assets/glyphs_5c4094d1fd8fec04b9e922cfa6caea00.ttf",
+    "public/assets/glyphs_5c4094d1fd8fec04b9e922cfa6caea00.svg",
+    "public/assets/glyphs_5c4094d1fd8fec04b9e922cfa6caea00.woff",
+    "public/assets/glyphs_5c4094d1fd8fec04b9e922cfa6caea00.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -43,7 +43,7 @@
       "source": "public/glyphs/vectors/agent-fchat-off.svg"
     },
     "agent-fchat-on": {
-      "codepoint": 61873,
+      "codepoint": 62080,
       "source": "public/glyphs/vectors/agent-fchat-on.svg"
     },
     "agent_summary": {
@@ -329,6 +329,10 @@
     "code-snippet": {
       "codepoint": 62016,
       "source": "public/glyphs/vectors/code-snippet.svg"
+    },
+    "collab-download": {
+      "codepoint": 62073,
+      "source": "public/glyphs/vectors/collab-download.svg"
     },
     "comment-multi": {
       "codepoint": 61733,
@@ -773,6 +777,30 @@
     "horizontal-line": {
       "codepoint": 62026,
       "source": "public/glyphs/vectors/horizontal-line.svg"
+    },
+    "huddle-group": {
+      "codepoint": 62074,
+      "source": "public/glyphs/vectors/huddle-group.svg"
+    },
+    "huddle-logo": {
+      "codepoint": 62075,
+      "source": "public/glyphs/vectors/huddle-logo.svg"
+    },
+    "huddle-logo-dark": {
+      "codepoint": 62076,
+      "source": "public/glyphs/vectors/huddle-logo-dark.svg"
+    },
+    "huddle-logo-green": {
+      "codepoint": 62077,
+      "source": "public/glyphs/vectors/huddle-logo-green.svg"
+    },
+    "huddle-thick": {
+      "codepoint": 62078,
+      "source": "public/glyphs/vectors/huddle-thick.svg"
+    },
+    "huddle-thick-filled": {
+      "codepoint": 62079,
+      "source": "public/glyphs/vectors/huddle-thick-filled.svg"
     },
     "ie": {
       "codepoint": 61785,

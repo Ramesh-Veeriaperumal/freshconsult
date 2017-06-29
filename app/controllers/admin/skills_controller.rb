@@ -1,21 +1,25 @@
 class Admin::SkillsController < Admin::AdminController
   include ModelControllerMethods
   include Va::Constants
-
-  before_filter { |c| c.requires_feature :skill_based_round_robin }
+  include ImportCsvUtil
+  
+  before_filter { |c| c.requires_this_feature :skill_based_round_robin }
   before_filter :check_max_skills_limit,  :only => [:new, :create]
   before_filter :load_object,             :only => [:edit, :update, :destroy, :users]
   before_filter :escape_html_entities_in_json
   before_filter :load_config,             :only => [:new, :edit]
   before_filter :set_filter_data,         :only => [:create, :update]
+  before_filter :validate_import ,        :only => [:process_csv]
   
   include Helpdesk::ReorderUtility
 
+  SKILL_IMPORT = "agent_skill"
+
   def index
-    @skills = current_account.skills_trimmed_version_from_cache
+    @skills = current_account.skills_from_cache
     respond_to do |format|
       format.html { @skills } #index.html.erb
-      format.any(:json) { render request.format.to_sym => @skills.map {|rule| {:id => rule.id, :name => rule.name, :active => rule.active} }}
+      format.any(:json) { render request.format.to_sym => @skills.map {|rule| {:id => rule.id, :name => rule.name} }}
     end
   end
 
@@ -44,7 +48,7 @@ class Admin::SkillsController < Admin::AdminController
           redirect_back_or_default redirect_url
         }
         format.json{
-          render :json => { :status => 200 }
+          render :json => { :status => 200, :skill_user_count => @skill.users.length }
         }
       end
     else
@@ -67,6 +71,17 @@ class Admin::SkillsController < Admin::AdminController
       {:id => user.id, :text => user.name, :forSort => user.name.upcase, :profile_img => (user.avatar.nil? ? false : user.avatar.expiring_url(:thumb, 300))}
     end
     render :json => user_details
+  end
+
+  def import
+  end
+
+  def process_csv
+    current_account.create_agent_skill_import({:import_status => Admin::DataImport::IMPORT_STATUS[:started]})
+    store_file
+    Import::SkillWorker.perform_async({:data => session[:map_fields]})
+    session.delete(:map_fields)
+    redirect_to admin_skills_path, :flash =>{ :notice => t(:'flash.import.success')}
   end
 
   protected
@@ -96,10 +111,14 @@ class Admin::SkillsController < Admin::AdminController
     end
 
     def set_filter_data
-      @skill.user_ids    = params[:user_ids].blank? ? [] : ActiveSupport::JSON.decode(params[:user_ids]) if params.key?(:user_ids)
-      if params.key?(:filter_data)
-        @skill.filter_data = params[:filter_data].blank? ? [] : ActiveSupport::JSON.decode(params[:filter_data]) 
-        set_nested_fields_data @skill.filter_data
+      begin
+        @skill.user_ids    = params[:user_ids].blank? ? [] : ActiveSupport::JSON.decode(params[:user_ids]) if params.key?(:user_ids)
+        if params.key?(:filter_data)
+          @skill.filter_data = params[:filter_data].blank? ? [] : ActiveSupport::JSON.decode(params[:filter_data])
+          set_nested_fields_data @skill.filter_data
+        end
+      rescue ActiveRecord::RecordInvalid => e # to handle add agents to skills from skills list view
+        render :json => {:success => false }
       end
     end
 
@@ -262,6 +281,20 @@ class Admin::SkillsController < Admin::AdminController
 
     def escape_html_entities_in_json
       ActiveSupport::JSON::Encoding.escape_html_entities_in_json = true
+    end
+
+    def validate_import
+      redirect_to import_admin_skills_path,
+        :flash=>{:error =>t(:'flash.import.no_file')} and return if params[:file].blank?
+      if !params[:file].original_filename.to_s.ends_with?('.csv')
+        flash[:notice] = t(:'flash.import.invalid_file')
+      elsif current_account.agent_skill_import
+        flash[:notice] = t(:'flash.import.already_running')
+      elsif current_account.agent_skill_import.nil? and params[:type].eql?(SKILL_IMPORT)
+        return
+      end
+
+      redirect_to :action => :index
     end
 
 end

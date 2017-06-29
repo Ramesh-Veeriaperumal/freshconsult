@@ -42,7 +42,7 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
 
   def install
     install_ext = install_extension(install_params(params[:configs]))
-    flash[:notice] = t('marketplace.install_action.success')
+    flash[:notice] = t('marketplace.install_action.success') if install_ext.status == 200
     render :nothing => true, :status => install_ext.status
   end
 
@@ -84,9 +84,7 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
   def reinstall
     prev_version_addon = previous_version_addon
     return unless prev_version_addon
-    update_ext = update_extension(install_params(params[:configs]).deep_merge(prev_version_addon))
-    flash[:notice] = t('marketplace.update_action.success')
-    render :nothing => true, :status => update_ext.status
+    update_ext(install_params(params[:configs]).deep_merge(prev_version_addon))
   end
 
   def uninstall
@@ -104,7 +102,27 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
     render :nothing => true, :status => update_ext.status
   end
 
+  def update_config
+    update_ext(update_config_params(params[:configs]))
+  end
+
+  def app_status
+    resp = fetch_app_status
+    if resp.status == 202
+      render :nothing => true, :status => resp.status
+    else
+      flash[:notice] = t("marketplace.#{params[:event]}_action.success") if params[:event].present?
+      render :json => resp.body, :status => resp.status
+    end
+  end
+
   private
+
+  def update_ext(update_ext_params)
+    update_ext = update_extension(update_ext_params)
+    flash[:notice] = t('marketplace.update_action.success') if update_ext.status == 200
+    render :nothing => true, :status => update_ext.status
+  end
 
   def oauth_handshake(callback, is_reauthorize = false)
     oauth_callback_url =  "#{request.protocol}#{request.host_with_port}" + callback
@@ -137,7 +155,8 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
                     :enabled => Marketplace::Constants::EXTENSION_STATUS[:enabled],
                     :type => @extension['type'],
                     :options => @extension['page_options'],
-                    :events => @extension['events']
+                    :events => @extension['events'] || {},
+                    :account_full_domain => current_account.full_domain
                   }.merge(paid_app_params)
     if configs.present? && configs["oauth_configs"].present?
       inst_params[:oauth_configs] = configs["oauth_configs"]
@@ -147,7 +166,10 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
   end
 
     def uninstall_params
-      { :extension_id => params[:extension_id]
+      { :extension_id => params[:extension_id],
+        :version_id => @extension['version_id'],
+        :events => @extension['events'] || {},
+        :account_full_domain => current_account.full_domain
       }.merge(paid_app_params)
     end
 
@@ -159,6 +181,18 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
     def disable_params
       { :extension_id => params[:extension_id],
         :enabled => Marketplace::Constants::EXTENSION_STATUS[:disabled] }
+    end
+
+    def update_config_params(configs)
+      config_params = {
+        :extension_id => params[:extension_id],
+        :version_id => params[:version_id], 
+        :configs => configs }
+      if configs.present? && configs["oauth_configs"].present?
+        config_params[:oauth_configs] = configs["oauth_configs"]
+        config_params[:configs].except!("oauth_configs")
+      end
+      config_params
     end
 
     def account_configurations(configs, acc_configs)

@@ -18,7 +18,8 @@ App.CollaborationModel = (function ($) {
         MONTHS: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         TIME_CHUNKS: [[60 * 60 * 24, "d"], [60 * 60, "h"], [60, "m"]],
         NOTIFICATION_POPUP_CARD_TEMPLATE: "collaboration/templates/notification_popup_card",
-        DUMMY_USER: {name: "New user"}
+        DUMMY_USER: {name: "New user"},
+        ANNOTATION: {bg_color: "#b4ebdf", shadow_color: "#7ec7b7", border_color: "#96dbcc"}
     };
 
     var _COLLAB_PVT = {
@@ -46,10 +47,14 @@ App.CollaborationModel = (function ($) {
 
             _COLLAB_PVT.ChatApi.getAllUsers(function(response) {
                 var users = response.users;
+                Collab.usersTagMap = {};
                 // TODO (ankit): manage response.start and futher fetching if(start != "")
                 users.forEach(function(user) {
                     var handle = user.info.email.split("@")[0];
-                    Collab.usersMap[user.uid] = jQuery.extend({"uid": user.uid}, user.info);
+                    while(Collab.usersTagMap.hasOwnProperty(handle) && Collab.usersTagMap[handle].deleted !== "1") {
+                        handle += "+";
+                    }
+                    Collab.usersMap[user.uid] = jQuery.extend({"uid": user.uid}, {"tag": handle}, user.info);
                     Collab.usersTagMap[handle] = jQuery.extend({"uid": user.uid, "tag": handle}, user.info);
                 });
                 if(!!window.raw_store_data && !!window.raw_store_data.group) {
@@ -57,10 +62,10 @@ App.CollaborationModel = (function ($) {
                     Collab.groupsTagMap = {};
                     grp_info.forEach( function (grp) {
                         var grp_name = grp.name.trim().toLowerCase().replace(/\s+/g, "-");
-                        if(!!Collab.usersTagMap[grp_name] && Collab.usersTagMap[grp_name].deleted !== "1") {
+                        if(Collab.usersTagMap.hasOwnProperty(grp_name) && Collab.usersTagMap[grp_name].deleted !== "1") {
                             grp_name += "*";
                         }
-                        while(!!Collab.groupsTagMap[grp_name]) {
+                        while(Collab.groupsTagMap.hasOwnProperty(grp_name)) {
                             grp_name += "*";
                         }
                         Collab.groupsMap[grp.id] = jQuery.extend({"tag": grp_name}, grp);
@@ -265,6 +270,30 @@ App.CollaborationModel = (function ($) {
             };
             _COLLAB_PVT.ChatApi.sendMessage(msg, convo, cb);
         },
+        sendNotification: function(msg) {
+            var ticket_id = Collab.currentConversation.co_id;
+            if(!!ticket_id) {
+                var collab_access_token = App.CollaborationUi.getUrlParameter("token");
+                message_data = {
+                    mid: msg.mid,
+                    body: msg.body,
+                    metadata: msg.metadata
+                };
+                if(collab_access_token) {
+                    message_data.token = collab_access_token;
+                }
+                var jsonData = JSON.stringify(message_data);
+                jQuery.ajax({
+                    url: '/helpdesk/tickets/collab/' + ticket_id + '/notify',
+                    type: 'POST',
+                    dataType: 'json',                  
+                    data: jsonData,
+                    contentType: 'application/json; charset=utf-8'
+                }); 
+            } else {
+                console.log("Sending notification failed!! Ticket ID not found!");
+            }
+        },
         formatTimestamp: function(age) {  // in seconds
             if (age > 60 * 86400) {
                 return CONST.LONG_AGO_TEXT;
@@ -356,7 +385,8 @@ App.CollaborationModel = (function ($) {
                 "co_id": c.co_id,
                 "owned_by": c.owned_by,
                 "token": Collab.currentConversation.token,
-                "name": Collab.currentConversation.name
+                "name": Collab.currentConversation.name,
+                "notify_version": App.CollaborationUi.notifyVersion
             };
             _COLLAB_PVT.ChatApi.createConversation(convo, cb);
         },
@@ -486,34 +516,20 @@ App.CollaborationModel = (function ($) {
                 });
             }
         },
-
-        sendMail: function(mail_content) {
-            var mail_data = {
-                "toAddress": mail_content.toAddressList,
-                "fromAddress": Collab.currentConversation.ticket_config_email,
-                "html_data": mail_content.html_data,
-                "co_id": Collab.currentConversation.co_id
-            };
-            _COLLAB_PVT.ChatApi.notificationMail({
-                "token": Collab.currentConversation.token,
-                "mail_data": mail_data
-            });
-        },
         
         init: function() {
-            var config = App.CollaborationUi.parseJson($("#collab-model-data").attr("data-model-payload"));
+            var config = App.CollaborationUi.parseJson($("#collab-account-payload").data("accountPayload"));
             // TODO(aravind): Add all fields.
-            Collab.currentUser = {
-                "name": config.userName,
-                "uid": config.userId,
-                "email": config.userEmail
-            };
+            Collab.currentUser = config.user;
             
             _COLLAB_PVT.ChatApi = new ChatApi({
-                "clientId": config.clientId,
-                "clientAccountId": config.clientAccountId,
-                "userId": config.userId,
-                "initAuthToken": config.initAuthToken,
+                "clientId": config.client_id,
+                "clientAccountId": config.client_account_id,
+                "userId": config.user.uid,
+                "initAuthToken": config.init_auth_token,
+                "chatApiServer": config.collab_url,
+                "rtsServer": config.rts_url,
+
                 "onconnect": _COLLAB_PVT.connectionInited,
                 "ondisconnect": _COLLAB_PVT.disconnected,
                 "onreconnect": _COLLAB_PVT.reconnected,
@@ -522,8 +538,6 @@ App.CollaborationModel = (function ($) {
                 "onheartbeat": _COLLAB_PVT.onHeartBeat,
                 "onmemberadd": _COLLAB_PVT.onMemberAdd,
                 "onmemberremove": _COLLAB_PVT.onMemberRemove,
-                "chatApiServer": config.collab_url,
-                "rtsServer": config.rts_url,
                 "onerror": _COLLAB_PVT.onErrorHandler,
                 "apiinited": _COLLAB_PVT.apiInited
             });
@@ -531,7 +545,7 @@ App.CollaborationModel = (function ($) {
             if(typeof Annotation !== "undefined") {
                 _COLLAB_PVT.Annotations = new Annotation({
                     "annotationevents": _COLLAB_PVT.getAnnotationEvents(),
-                    "wrapper_elem_style": "background-color: #fee4c8; line-height: 18px; box-shadow: 1px 1px 0 lightgrey; border-radius: 1px; border: 1px solid #ebc397; color:#333333; padding: 0 2px;"
+                    "wrapper_elem_style": "background-color: "+ CONST.ANNOTATION.bg_color +"; line-height: 18px; box-shadow: 1px 1px 0 "+ CONST.ANNOTATION.shadow_color +"; border-radius: 1px; border: 1px solid "+ CONST.ANNOTATION.border_color +"; color:#333333; padding: 0 2px;"
                 });
             } else {
                 console.warn("Annotations sdk not present. couldn't start annotations.");

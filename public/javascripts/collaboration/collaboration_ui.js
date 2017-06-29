@@ -9,10 +9,9 @@
 App.CollaborationUi = (function ($) {
 	
     var CONST = {
-        MENTION_RE: /\B@([\S]+\b[*]*)/igm,
-        GROUP_MENTION_RE: /\B@\((.*?)\)\B/igm,
+        MENTION_RE: /\B@([\S]+\b[*|+]*)/igm,
         IMAGE_TAG_RE: /<img/igm,
-        MENTION_EVERYONE_TAG: "@everyone",
+        MENTION_EVERYONE_TAG: "@huddle",
         TYPE_SENT: 'sent',
 		TYPE_RECEIVED: 'received',
         MSG_TYPE_CLIENT: "1", // Msg from Client
@@ -35,7 +34,8 @@ App.CollaborationUi = (function ($) {
         DUMMY_USER: {name: "---"},
         DEFAULT_ERR: "unexpected",
         HIDE_ERROR_DURATION: 3000, //ms
-        MAX_UPLOAD_SIZE: "15MB"
+        MAX_UPLOAD_SIZE: "15MB",
+        NOTI_KEYS: ["hk_notify", "hk_group_notify", "reply"]
     };
 
     var _COLLAB_PVT = {
@@ -65,16 +65,21 @@ App.CollaborationUi = (function ($) {
             var $pagearea = $("#Pagearea");
             var $scrollBox = $("#collab-sidebar #scroll-box");
             
-            $collabBtn.on("click.collab", "#collab-btn", _COLLAB_PVT.fetchAndToggleCollab);
-            $collabSidebar.on("click.collab", "#collab-close-icon", _COLLAB_PVT.toggleCollabExpand);
+            $collabSidebar.on("click.collab", "#collab-close-icon", _COLLAB_PVT.closeCollabSidebar);
             $collabSidebar.on("click.collab", "#collaborators-tab-btn", _COLLAB_PVT.showCollaboratorsListView);
             $collabSidebar.on("click.collab", "#discussion-tab-btn", _COLLAB_PVT.showDiscussionView);
             $collabSidebar.on("mouseover.collab", ".avatar-cover", _COLLAB_PVT.showHoverCard);
             $collabSidebar.on("mouseleave.collab", ".avatar-cover", _COLLAB_PVT.hideHoverCard);
+            $collabBtn.on("click.collab", "#collab-btn", function() {
+                Collab.loadConversation(_COLLAB_PVT.openCollabSidebar);
+            });
+            $pagearea.on("click.collab", ".pseudo_reply #DiscussButton", function() {
+                Collab.loadConversation(_COLLAB_PVT.openCollabSidebar);
+            });
             $collabSidebar.on("click.collab", ".collab-reply-btn", function(event){
                 var annotation_in_progress = $("#annotation").attr("data-annotation");
                 if(!annotation_in_progress) {
-                    var parent_msg_box = event.currentTarget.closest('.collab-message-box'); 
+                    var parent_msg_box = $(event.currentTarget).closest('.collab-message-box'); 
                     var msg = $(parent_msg_box).find(".msg");
                     var msg_body = $(msg).hasClass("collab-attachment-msg") ? 
                                    String($(parent_msg_box).find(".collab-attachment-details").attr("title")).trim() :
@@ -103,15 +108,16 @@ App.CollaborationUi = (function ($) {
             $pagearea.on("mouseleave.collab", "#show-discussion-dd", _COLLAB_PVT.hideDiscussionDD);
             $pagearea.on("click.collab", "#collab-option-dd", function(){
                 var reply_in_progress = $("#collab-msg-reply-to").attr("data-reply");
-                if(!reply_in_progress) {
+                if (_COLLAB_PVT.collabDisabled()){
+                    if(!Collab.isCollabOpen()) {
+                        _COLLAB_PVT.openCollabSidebar();
+                    }
+                } else if(!reply_in_progress) {
                     _COLLAB_PVT.markAnnotation();
                 }
             }); 
             $scrollBox.on("scroll.collab", _COLLAB_PVT.hasChatReachedTop); // scroll doesn't bubble
 
-            $collabSidebar.on("click.enabledCollab", "#collab-send-attachment-button", function(event){
-                _COLLAB_PVT.sendAttachmentMessage(event.currentTarget.getAttribute("data-file"));
-            });
             $collabSidebar.on("change.enabledCollab", "#collab-attachment-input", function(event) {
                 _COLLAB_PVT.uploadFile(event.target.files);
             });
@@ -127,7 +133,7 @@ App.CollaborationUi = (function ($) {
             $collabSidebar.on("click.enabledCollab", "#collab-attachment-cancel-icon", function(event) {
                 _COLLAB_PVT.resetAttachmentFormView();
             });
-            $collabSidebar.on("click.collab", "#collaborators-list-items .tag-handle", function(event) {
+            $collabSidebar.on("click.collab", "#collaborators-list-items .tag-handle, #collab-chat-section .tag-handle", function(event) {
                 _COLLAB_PVT.mentionUser(event.currentTarget.getAttribute("data-mention-text"));
             });
             $collabSidebar.on("mouseenter.collab", "#collaborators-list", function(event) {
@@ -152,7 +158,7 @@ App.CollaborationUi = (function ($) {
                     _COLLAB_PVT.sendMessageSubmit();
                 } else if(event.which === 27 && !event.shiftKey) {
                     event.preventDefault();
-                    _COLLAB_PVT.fetchAndToggleCollab();
+                    _COLLAB_PVT.closeCollabSidebar();
                 }
             })
             $collabSidebar.on("click.collab", ".collab-reply-to-text", function(event) {
@@ -209,11 +215,11 @@ App.CollaborationUi = (function ($) {
                         ann.addClass("collab-temp-annotation");
                     }
                     prepareDataMarkAnnotation();
-                    _COLLAB_PVT.toggleCollabExpand(true);
+                    _COLLAB_PVT.openCollabSidebar();
                 });
             } else {
                 prepareDataMarkAnnotation();
-                _COLLAB_PVT.toggleCollabExpand(true);
+                _COLLAB_PVT.openCollabSidebar();
             }
 
             function prepareDataMarkAnnotation() {
@@ -276,7 +282,7 @@ App.CollaborationUi = (function ($) {
             $("#collab-attachment-name").text("");
             $("#collab-attachment-image .image").remove();
             $("#collab-attachment-size").text("");
-            $("#collab-send-attachment-button").attr("data-file", "");
+            $(".collab-attached-image-section").attr("data-file", "");
             $("#collab-attachment-section").removeClass("sent");
 
             var text_msg_val = $("#send-message-box").val();
@@ -309,7 +315,7 @@ App.CollaborationUi = (function ($) {
 
         displayScrollDownBtn: function() {
             var $scrollBox = $("#collab-sidebar #scroll-box");
-            if($scrollBox) {
+            if($scrollBox.length) {
                 if ($scrollBox[0].scrollTop < ($scrollBox[0].scrollHeight - ($scrollBox[0].clientHeight)*1.5)){
                     $("#collab-scroll-bottom-btn").css('display', 'block');
                 } else {
@@ -324,7 +330,7 @@ App.CollaborationUi = (function ($) {
             var $scrollBox = $("#collab-sidebar #scroll-box");
             $scrollBox.animate({
                 scrollTop: $scrollBox[0].scrollHeight
-                }, 1000);
+                }, 400);
         },
 
         scrollToBottom: function() {
@@ -335,35 +341,29 @@ App.CollaborationUi = (function ($) {
                 console.log("Could not find the scrollbox; scrollToBottom called anyway.")
             }
         },
-        fetchAndToggleCollab: function() {
-            if(!Collab.isCollabOpen()) {
-                Collab.loadConversation(_COLLAB_PVT.toggleCollabExpand);
-            } else {
-                _COLLAB_PVT.toggleCollabExpand();
-            }
-        },
-        toggleCollabExpand: function(forceOpen) {
+        openCollabSidebar: function() {
             var $collabSidebar = $("#collab-sidebar");
             var $msgBox = $("#collab-sidebar #send-message-box");
 
-            if(forceOpen === true) {
-                $collabSidebar.removeClass("expand");
-            }
+            $collabSidebar.removeClass("expand navFromRightBounceIn");
+            
+            $collabSidebar.addClass("expand navFromRightBounceIn");
 
-	        if($collabSidebar.hasClass("expand")) {
-                $collabSidebar.removeClass("expand");
-                $msgBox.blur();
-	        } else {
-                $collabSidebar.addClass("expand");
+            setTimeout(function() {
+                _COLLAB_PVT.scrollToBottom();
+                if(!_COLLAB_PVT.collabDisabled()) {
+                    $msgBox.focus();
+                }
+            });
+        },
 
-                setTimeout(function() {
-                    _COLLAB_PVT.scrollToBottom();
-                    if(!_COLLAB_PVT.collabDisabled()) {
-    	                $msgBox.focus();
-                    }
-	            });
-	        }
-	    },
+        closeCollabSidebar: function() {
+            var $collabSidebar = $("#collab-sidebar");
+            var $msgBox = $("#collab-sidebar #send-message-box");
+
+            $collabSidebar.removeClass("expand navFromRightBounceIn");
+            $msgBox.blur();
+        },
 
         uploadFile: function(files) {
             var collabModel = App.CollaborationModel;
@@ -394,7 +394,7 @@ App.CollaborationUi = (function ($) {
                             $("#collab-attachment-name").attr("title", response.fn);
                             $("#collab-attachment-image").prepend("<img class='image' src='"+ response.pl +"'><span class='valign-helper'></span>");
                             $("#collab-attachment-size").text(response.fs);
-                            $("#collab-send-attachment-button").attr("data-file", JSON.stringify(response));
+                            $(".collab-attached-image-section").attr("data-file", JSON.stringify(response));
                             break;
                         }
                         case 413: {
@@ -408,6 +408,7 @@ App.CollaborationUi = (function ($) {
                             break;
                         }
                     }
+                    $("#send-message-box").focus();
                 });
             }
         },
@@ -449,7 +450,6 @@ App.CollaborationUi = (function ($) {
                 msg.body = JSON.stringify(msgBodyJSON);
 
                 collabModel.sendMessage(msg, currentConvo.co_id, function(){
-                    _COLLAB_PVT.sendMessageSubmit();
                     _COLLAB_PVT.resetAttachmentFormView();
                 });
                 
@@ -480,6 +480,13 @@ App.CollaborationUi = (function ($) {
             var usersMap = collabModel.usersMap;
             var usersTagMap = collabModel.usersTagMap;
             var msgBody = $msgBox.val().trim();
+
+            var attachmentData = $(".collab-attached-image-section").data("file");
+
+            if(!!attachmentData) {
+                _COLLAB_PVT.sendAttachmentMessage(attachmentData);
+            }
+            
             if(!msgBody) {
                 return;
             }
@@ -502,6 +509,9 @@ App.CollaborationUi = (function ($) {
             if(replyData) {
                 msg.metadata = msg.metadata || {};
                 msg.metadata.reply = Collab.parseJson(replyData);
+                msg.metadata.reply.name = collabModel.usersMap[msg.metadata.reply.r_id].name;
+                msg.metadata.reply.email = collabModel.usersMap[msg.metadata.reply.r_id].email;
+                msg.metadata.reply.no_notif = true;
             }
 
             $("form#send-collab-message-form")[0].reset();
@@ -560,10 +570,16 @@ App.CollaborationUi = (function ($) {
                     for(var j = 0; j < current_group.length; j++) {
                         var grp_member = String(current_group[j].user_id);
                         if(grp_member !== collabModel.currentUser.uid) {
-                            agent_arr.push(grp_member);
+                            agent = {
+                                user_id: grp_member,
+                                name: collabModel.usersMap[grp_member].name,
+                                email: collabModel.usersMap[grp_member].email
+                            }
+                            agent_arr.push(agent);
                         }
                     }
                     var member_info = {
+                        group_id: id,
                         group_name: group_name,
                         users: agent_arr
                     };
@@ -572,7 +588,7 @@ App.CollaborationUi = (function ($) {
 
                     if(groupsToNotify.length) {
                         msg.metadata = msg.metadata || {};
-                        msg.metadata.group_notify = groupsToNotify;
+                        msg.metadata.hk_group_notify = groupsToNotify;
                     }
 
                     proceedToSendMessage();
@@ -609,7 +625,17 @@ App.CollaborationUi = (function ($) {
 
                     if(usersToNotify.length) {
                         msg.metadata = msg.metadata || {};
-                        msg.metadata.notify = usersToNotify;
+
+                        userInfos = [];
+                        usersToNotify.forEach( function(userId) {
+                            userInfos.push({
+                                user_id: userId,
+                                name: collabModel.usersMap[userId].name,
+                                email: collabModel.usersMap[userId].email,
+                                invite: currentConvoMembers ? !currentConvoMembers[userId] : true
+                            });
+                        });
+                        msg.metadata.hk_notify = userInfos;
                     }
                 }
 
@@ -624,31 +650,14 @@ App.CollaborationUi = (function ($) {
                         "metadata": msg.metadata,
                         "mid": msg.mid,
                         "m_type": CONST.MSG_TYPE_CLIENT,
-                        "ts": msg.ts
+                        "ts": msg.ts,
+                        "incremental": true
                     }, CONST.TYPE_SENT);
-                    // TODO (mayank): expect a response with notify | send_message | add_member data
-                    collabModel.sendMessage(msg, currentConvo.co_id, function() {
-                        if(!!msg.metadata) {
-                            var recipients_to_notify = [];
-
-                            if(msg.metadata.notify) {
-                                recipients_to_notify.push(msg.metadata.notify);
-                            }
-                            if(msg.metadata.group_notify) {
-                                recipients_to_notify.push(msg.metadata.group_notify);
-                            }
-                            if(msg.metadata.reply) {
-                                recipients_to_notify.push(msg.metadata.reply);
-                            }
-                            if(recipients_to_notify) {
-                                _COLLAB_PVT.sendMailWorker(msg.body, recipients_to_notify);
-                            }
-                        }
-
-                        // if(!!msg.metadata && (msg.metadata.notify || msg.metadata.notify_all)) {
-                        //     _COLLAB_PVT.sendMailWorker(msg.body, msg.metadata.notify);
-                        // }
-                    });
+                    
+                    if(!!msg.metadata) {
+                        msg.metadata.notify_version = Collab.notifyVersion;
+                    }
+                    collabModel.sendMessage(msg, currentConvo.co_id);
                     _COLLAB_PVT.scrollToBottom();
                     $msgBox.focus();
                     if(!!msg.metadata && !!msg.metadata.annotations) {
@@ -759,7 +768,7 @@ App.CollaborationUi = (function ($) {
         scrollToMessage: function(data_msg_id, retryCounter, animation_class) {
             animation_class = animation_class || "collab-ann-blink";
             _COLLAB_PVT.hideDiscussionDD();
-            _COLLAB_PVT.toggleCollabExpand(true);
+            _COLLAB_PVT.openCollabSidebar();
             _COLLAB_PVT.showDiscussionView();
             var msg_e = $("#collab-" + data_msg_id);
             retryCounter = (retryCounter >= 0) ? retryCounter : CONST.DEFAULT_FETCH_RETRY;
@@ -771,7 +780,7 @@ App.CollaborationUi = (function ($) {
                     msg_e.addClass(animation_class);
                     setTimeout(function(){msg_e.removeClass(animation_class);}, 5000); /* this time has to be in sync with animation timing; */
                 });
-                
+
             } else if(retryCounter > 0) {
                 _COLLAB_PVT.fetchMoreMessages(function () {
                     _COLLAB_PVT.scrollToMessage(data_msg_id, --retryCounter, animation_class);
@@ -965,6 +974,7 @@ App.CollaborationUi = (function ($) {
 
                 // change it from winow object to something else
                 collabModel.collaboratorsGetPresence();
+                window.clearInterval(window.getPresenceIval);
                 window.getPresenceIval = setInterval(function() {
                     collabModel.collaboratorsGetPresence();
                 }, collabModel.MEMBER_PRESENCE_POLL_TIME);
@@ -979,7 +989,7 @@ App.CollaborationUi = (function ($) {
             *   Collab expand or not
             */ 
             if(!!Collab.expandCollabOnLoad) {
-                _COLLAB_PVT.toggleCollabExpand(true);
+                _COLLAB_PVT.openCollabSidebar();
                 Collab.expandCollabOnLoad = false;
                 _COLLAB_PVT.scrollToMessage(Collab.scrollToMsgId);
             }
@@ -1063,11 +1073,14 @@ App.CollaborationUi = (function ($) {
                         $msgBox.blur();
                     })
 
-                    var $pagearea = $("#Pagearea");
-                    $pagearea.off("mouseup.collab");
-
                     var $hovercard = $("#collab-hovercard-cover");
                     $hovercard.off('click');
+
+                    if(_COLLAB_PVT.isCollaboratorMaxOut(currentConversation.co_id)) {
+                        $collabSidebar.find(".collab-disabled-reason").text(I18n.translate("collaboration.disable_collab_info.huddle_max_out", {max_collaborators: CONST.HELPKIT_MAX_COLLABORATORS}));
+                    } else {
+                        $collabSidebar.find(".collab-disabled-reason").text(I18n.translate("collaboration.disable_collab_info.huddle_closed"));
+                    }
                 } else if($collabSidebar.hasClass("closed-conversation")) {
                     console.log("Re-enabling Collaboration that was disabled!");
 
@@ -1115,7 +1128,7 @@ App.CollaborationUi = (function ($) {
                 $showDiscussionDD.attr('data-message-id', event.currentTarget.getAttribute('data-message-id'));
 
                 var $annotatorImage = $("#annotator-image");
-                $annotatorImage.html(_COLLAB_PVT.getAvatarHtml(event.currentTarget.getAttribute('data-annotator-id'), "small"));
+                $annotatorImage.html(_COLLAB_PVT.getAvatarHtml(event.currentTarget.getAttribute('data-annotator-id'), "small x-small"));
 
                 $showDiscussionDD.css({
                     left: dropDownPos.left,
@@ -1161,7 +1174,7 @@ App.CollaborationUi = (function ($) {
             return {
                 name: modelUserData ? (isSelf ? "Me (" + modelUserData.name + ")" : modelUserData.name) : "",
                 email: modelUserData && modelUserData.email ? modelUserData.email : "",
-                username: modelUserData && modelUserData.email ? modelUserData.email.substring(0, modelUserData.email.indexOf("@")) : "",
+                username: modelUserData && modelUserData.tag ? modelUserData.tag : "",
                 job_title: modelUserData ? modelUserData.title : "",
                 id: userId,
                 is_online: collabModel.isOnline(userId),
@@ -1320,6 +1333,19 @@ App.CollaborationUi = (function ($) {
         getUserInfo: function(uid, cb) {
             App.CollaborationModel.getUserInfo(uid, cb);
         },
+        updateConvoMessageCount: function(total_messages) {
+            if(typeof total_messages !== "undefined" && Collab.showTotalCount) {
+                var message_count_e = $("#collab-btn .collab-message-count");
+                message_count_e.text("("+ total_messages +")");
+                message_count_e.attr("data-message-count", total_messages);
+
+                var collabModel = App.CollaborationModel;
+                $("#collab-btn").removeClass("collab-inited");
+                if(total_messages > 0){
+                    $("#collab-btn").addClass("collab-inited");  
+                }
+            }
+        },
         showCollaboratorsWithLogo: function() {
             var collabModel = App.CollaborationModel;
             var image_class = "convo-started-icon";
@@ -1340,72 +1366,30 @@ App.CollaborationUi = (function ($) {
             }
         },
 
-        sendMailWorker: function(message_body, recipients_to_notify) {
-            var collab_model = App.CollaborationModel;
-            var my_id = App.CollaborationModel.currentUser.uid;
-            var co_id = collab_model.currentConversation.co_id;
-            var current_convo = collab_model.conversationsMap[co_id];
-            var user_infos= [];
-            recipients_to_notify.forEach(function(recipient_list) {
-                if(!recipient_list.length) {
-                    if(recipient_list.r_id !== my_id) {
-                        var user = {
-                            name: collab_model.usersMap[recipient_list.r_id].name,
-                            email: collab_model.usersMap[recipient_list.r_id].email,
-                            is_reply: true
-                        };
-                        user_infos.push(user);
-                    }
-                    
-                } else if(typeof recipient_list[0].group_name === 'undefined') {
-                    for(var idx = 0; idx < recipient_list.length; idx++) {
-                        if(recipient_list[idx] !== my_id) {
-                            var user = {
-                                name: collab_model.usersMap[recipient_list[idx]].name,
-                                email: collab_model.usersMap[recipient_list[idx]].email,
-                                invite: current_convo ? !current_convo.members[recipient_list[idx]] : true
-                            };
-                            user_infos.push(user);
-                        }
-                    }
-                } else {
-                    for(var idx = 0; idx < recipient_list.length; idx++) {
-                        for(var usr_idx = 0; usr_idx < recipient_list[idx].users.length; usr_idx++) {
-                            if(recipient_list[idx].users[usr_idx] !== my_id) {
-                                var user = {
-                                    name: collab_model.usersMap[recipient_list[idx].users[usr_idx]].name,
-                                    email: collab_model.usersMap[recipient_list[idx].users[usr_idx]].email,
-                                    group_name: recipient_list[idx].group_name
-                                };
-                                user_infos.push(user);
-                            }
-                        }
-                    }
-                }
-            });
-            
-            if(user_infos.length > 0) {
-                Collab.sendMail({
-                    sender_name: collab_model.usersMap[collab_model.currentUser.uid].name,
-                    co_id: co_id,
-                    co_name: collab_model.currentConversation.name,
-                    requestor_name: collab_model.currentConversation.requester_name,
-                    requestor_email: collab_model.currentConversation.requester_email,
-                    users_list: user_infos,
-                    message_body: message_body,
-                    ticket_link: window.location.origin + window.location.pathname + "?collab=true"
-                });                
-            } 
-        },
-
         mentionListSorter: function(arr) {
             return arr.sort(function (a, b) {
-                return (a.username && b.username) ? ( a.username.length - b.username.length || a.username > b.username) : -1;
+                return (a.username && b.username) ? ( a.username.length - b.username.length || (a.username > b.username ? 1 : -1)) : -1;
             });
+        },
+
+        isCurrentCollabInited: function() {
+            var collabModel = App.CollaborationModel;
+            return !!collabModel.currentConversation && collabModel.conversationsMap[collabModel.currentConversation.co_id];
+        },
+
+        checkNotiKeys: function(msg) {
+            meta = JSON.parse(msg.metadata)
+            for(var i in CONST.NOTI_KEYS) {
+                if(meta.hasOwnProperty(CONST.NOTI_KEYS[i])){
+                    return true;
+                }
+            }
+            return false;
         }
     };
 
     var Collab = {
+        notifyVersion: "2",
         annotationEvents: [{
             eventName: "mouseenter",
             eventHandler: _COLLAB_PVT.showDiscussionDD
@@ -1498,10 +1482,7 @@ App.CollaborationUi = (function ($) {
         askInitUi: function(config) {
             // init UI if model is inited; or else save config
             // on connection init if config is pending; initUi will be called onModelInited
-            config = config || Collab.parseJson($("#collab-ui-data").attr("data-ui-payload"));
-            // Conversation names may have special characters. Handling this case separately
-            config.currentConversationName = $("#collab-ui-data").attr("data-convo-name");
-            config.ticket_config_email = $("#collab-ui-data").attr("data-ticket-config-email");
+            config = config || Collab.parseJson($("#collab-ticket-payload").data("ticketPayload"));
             
             config.expandCollabOnLoad = !!Collab.getUrlParameter("collab");
             config.scrollToMsgId = Collab.getUrlParameter("message");
@@ -1521,14 +1502,11 @@ App.CollaborationUi = (function ($) {
 	    	var collabModel = App.CollaborationModel;
             // TODO (mayank): don't set this if convo isn't present
 	        collabModel.currentConversation = {
-	            "name": config.currentConversationName,
-	            "co_id": config.currentConversationId,
-                "owned_by": config.ownedBy,
-                "is_closed": config.isClosed,
-                "token": config.convoToken,
-                "requester_name": config.requester_name,
-                "requester_email": config.requester_email,
-                "ticket_config_email": config.ticket_config_email || "support@" + window.location.hostname
+	            "name": config.subject,
+	            "co_id": config.display_id,
+                "owned_by": config.responder_id,
+                "is_closed": config.is_closed,
+                "token": config.convo_token
 	        }
 
             /*
@@ -1557,7 +1535,11 @@ App.CollaborationUi = (function ($) {
             collabModel.loadConversation(function(response) {
                 if(!!response) {
                     $("#collab-chat-section").removeClass("empty-chat-view");
-                    _COLLAB_PVT.conversationCreateOrLoadCb(response)
+                    _COLLAB_PVT.conversationCreateOrLoadCb(response);
+                    if(typeof response.mcount !== "undefined") {
+                        Collab.showTotalCount=true;
+                    }
+                    _COLLAB_PVT.updateConvoMessageCount(response.mcount);
                 } else {
                     Collab.fetchCount++;
                     _COLLAB_PVT.setCollaboratorsCount();
@@ -1567,7 +1549,6 @@ App.CollaborationUi = (function ($) {
                     }
                 }
                 if(typeof cb === "function") cb(response);
-                _COLLAB_PVT.showCollaboratorsWithLogo();
             });
         },
 
@@ -1614,12 +1595,16 @@ App.CollaborationUi = (function ($) {
         },
 
         updateSentMessage: function(msg) {
-            if(!!$("collab-" + msg.ts)) {
+            if(!!$("#collab-" + msg.ts).length) {
                $("#collab-" + msg.ts).attr("id", "collab-" + msg.mid);
-               var ann_elem = $(".annotation[data-message-id="+msg.ts+"]");
+               var ann_elem = $(".annotation[data-message-id=" + msg.ts + "]");
                if(ann_elem.length) {
                    ann_elem.attr("id", "annotation-" + msg.mid);
                    ann_elem.attr("data-message-id", msg.mid);
+                }
+                // send notification
+                if(!!msg.metadata && _COLLAB_PVT.checkNotiKeys(msg)) {
+                    App.CollaborationModel.sendNotification(msg);
                 }
             }
         },
@@ -1628,7 +1613,7 @@ App.CollaborationUi = (function ($) {
 	        if(!msg.body) {
                 return;
             }
-
+            
             var msg_meta, annotation_meta, is_annotation_invalid, reply_to_meta;
             if(!!msg.metadata) {
                 msg_meta = Collab.parseJson(msg.metadata);
@@ -1640,15 +1625,19 @@ App.CollaborationUi = (function ($) {
                 }
             }
 
-
-
-            if(msg.incremental && !!annotation_meta) {
+            var live_msg_by_others = msg.s_id !== App.CollaborationModel.currentUser.uid && msg.incremental;
+            if(live_msg_by_others && !!annotation_meta) {
                 annotation_meta.messageId = msg.mid;
                 App.CollaborationModel.restoreAnnotations(annotation_meta);
             }
 
-            
             var collabModel = App.CollaborationModel;
+            
+            if(msg.m_type === CONST.MSG_TYPE_CLIENT && msg.incremental) {
+                // Update total message count for every message added incrementally;
+                _COLLAB_PVT.updateConvoMessageCount(Number($("#collab-btn .collab-message-count").attr("data-message-count"))+1);
+            }
+            
             var userId = !!msg.s_id ? msg.s_id : (render_type === CONST.TYPE_SENT ? collabModel.currentUser.uid : "");
             var add_method = msg.forcePrepend ? "prepend" : "append";
             var sender_name = collabModel.usersMap[msg.s_id] ? collabModel.usersMap[msg.s_id].name : CONST.DUMMY_USER.name;
@@ -1673,7 +1662,8 @@ App.CollaborationUi = (function ($) {
                     is_attachment: msg_type ? !!msg_type.attachment : false,
                     is_annotation_invalid: !!is_annotation_invalid,
                     invalid_annotation_text: I18n.translate("collaboration.error.highlight_missing"),
-                    enable_reply_to: !!App.CollaborationModel.features.replyToEnabled
+                    enable_reply_to: !!App.CollaborationModel.features.replyToEnabled,
+                    reply_tooltip: I18n.translate("collaboration.reply"),
                 }));
             }
 
@@ -1719,11 +1709,13 @@ App.CollaborationUi = (function ($) {
 
         strongifyUserNames: function(text, uarr) {
             var self_name = App.CollaborationModel.currentUser.email.split("@")[0];
-            var self_class;
+            var everyone_name = CONST.MENTION_EVERYONE_TAG.split("@")[1];
+            var mention_to_notify_class;
             return text.replace(CONST.MENTION_RE,
             function (matched, username, offset, source_string) {
-                self_class = (username === self_name ? "collab-my-mention-name" : "");
-                return uarr.indexOf(username) >= 0 ? ("<b class='collab-mention-name "+ self_class +"'>"+ matched +"</b>") : matched;
+                var was_notified_with = (username === self_name || username === everyone_name);
+                mention_to_notify_class = (was_notified_with ? "mention-to-notify" : "");
+                return uarr.indexOf(username) >= 0 ? ("<span data-mention-text='"+ matched +"' class='collab-mention-name tag-handle "+ mention_to_notify_class +"'>"+ matched +"</span>") : matched;
             });
         },
 
@@ -1738,7 +1730,7 @@ App.CollaborationUi = (function ($) {
                 for(var grp_id in collabModel.groupsMap) {
                     usersToMention.push({
                         name: collabModel.groupsMap[grp_id].name,
-                        mention_text: collabModel.groupsMap[grp_id].tag,
+                        username: collabModel.groupsMap[grp_id].tag,
                         group: true
                     });
                 }
@@ -1764,8 +1756,8 @@ App.CollaborationUi = (function ($) {
             }
 
             usersToMention.push({
-                mention_text: "everyone",
-                job_title: "All collaborators on this tickets",
+                username: "huddle",
+                job_title: "All members of this Team Huddle",
                 id_post_fix: "mention-list"
             });
             menu_prefix = "<label class='info'>"+ I18n.translate("collaboration.collab_max_out_info", {max_collaborators: "<b>" + CONST.HELPKIT_MAX_COLLABORATORS + "</b>", contact_person: "<b>" + "your Admin" + "</b>"}) +"</label>";
@@ -1776,7 +1768,7 @@ App.CollaborationUi = (function ($) {
                 "editor": "#collab-sidebar #send-message-box",
                 "menuHtml": menu_item,
                 "maxItems": 7,
-                "filterKeys": ["name", "username", "mention_text"],
+                "filterKeys": ["name", "username"],
                 "tagAttribute": "username",
                 "sort": _COLLAB_PVT.mentionListSorter
             };
@@ -1835,10 +1827,8 @@ App.CollaborationUi = (function ($) {
         },
         onReconnecthandler: function(response) {
             Collab.networkDisconnected = false;
-            if($("#collab-ui-data").length) {
-                var config = $("#collab-ui-data").attr("data-ui-payload");
-                // Conversation names may have special characters. Handling this case separately
-                config.currentConversationName = $("#collab-ui-data").attr("data-convo-name");
+            if($("#collab-ticket-payload").length) {
+                var config = $("#collab-ticket-payload").data("ticketPayload");
                 if(config) {
                     Collab.initingPostReconnect = true;
                     App.CollaborationUi.initUi(Collab.parseJson(config));
@@ -1863,12 +1853,6 @@ App.CollaborationUi = (function ($) {
         },
         dpLoadComplete: function(elem) {
             $(elem).removeClass("hide");
-        },
-        sendMail: function(params) {
-            var mail_data = {
-                "html_data": params
-            };
-            App.CollaborationModel.sendMail(mail_data);
         }
     };
     return Collab;

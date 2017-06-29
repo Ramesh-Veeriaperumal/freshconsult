@@ -209,7 +209,7 @@ module Facebook
     end
 
     def create_inline_attachment(item, i, options)
-      Helpdesk::Attachment.create_for_3rd_party(Account.current, item, options, i, 1, false, false)
+      Helpdesk::Attachment.create_for_3rd_party(Account.current, item, options, i, 1, false)
     end
 
     def attachment_url attachment, default_url, type = :original

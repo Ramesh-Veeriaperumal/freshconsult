@@ -13,6 +13,7 @@ require 'search/v2/utils/es_logger'
 require 'search/v2/query_handler'
 require 'search/v2/parser/node.rb'
 require 'search/v2/parser/search_parser.rb'
+require 'search/v2/pagination_wrapper'
 
 module Search
   module V2

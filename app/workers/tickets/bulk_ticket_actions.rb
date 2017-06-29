@@ -10,20 +10,17 @@ class Tickets::BulkTicketActions < BaseWorker
     SBRR.logger.debug "BulkTicketActions #{ids.inspect}"
     @account = Account.current
     ids_join = ids.length > 0 ? ids.join(',') : '1' #'1' is dummy to prevent error
-    items    = @account.tickets.order("field(display_id, #{ids_join})").find_all_by_param(ids)
+    @items    = @account.tickets.order("field(display_id, #{ids_join})").find_all_by_param(ids)
     group_id = params["helpdesk_ticket"]["group_id"] if params["helpdesk_ticket"].present?
-    items    = sort_items(items, group_id)
+    sort_items(@items, group_id)
     disable_notification(@account) if params["disable_notification"].present? && 
                                       params["disable_notification"].to_bool
-    group_ids = Set.new
-    items.each do |ticket|
-      ticket.schedule_observer = true if observer_inline?
-      bulk_action_handler = Helpdesk::TicketBulkActions.new(params)
-      bulk_action_handler.perform(ticket)
-      run_observer_inline(ticket) if observer_inline?
-      group_ids.merge (ticket.model_changes[:group_id] || [ticket.group_id])
+    @items.each do |ticket|
+      bulk_update_tickets(ticket) do
+        bulk_action_handler = Helpdesk::TicketBulkActions.new(params)
+        bulk_action_handler.perform(ticket)
+      end
     end
-    group_ids.subtract([nil])
   rescue => e
       NewRelic::Agent.notice_error(e, {
         :custom_params => {
@@ -31,7 +28,7 @@ class Tickets::BulkTicketActions < BaseWorker
       }})
      raise e
   ensure
-    sbrr_assigner(group_ids, {:jid => self.jid})
+    bulk_sbrr_assigner
     enable_notification(@account)
     Thread.current[:sbrr_log] = nil
   end

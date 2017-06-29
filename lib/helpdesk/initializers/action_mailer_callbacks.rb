@@ -74,6 +74,7 @@ module ActionMailerCallbacks
         set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email)
       end
       @email_confg = nil
+      mail.header["X-FD-Email-Category"] = nil
     end
 
     def reset_smtp_settings(mail, use_mailgun = false)
@@ -113,7 +114,7 @@ module ActionMailerCallbacks
     end
 
     def get_category_header(mail)
-      mail.header["X-FD-Email-Category"].to_s.to_i if mail.present? and mail.header["X-FD-Email-Category"].present?
+      mail.header["X-FD-Email-Category"].to_s.to_i if mail.present? and mail.header["X-FD-Email-Category"].present? and mail.header["X-FD-Email-Category"].value.present?
     end
 
     def encrypt_custom_variables(account_id, ticket_id, note_id, type, from_email, category_id)
@@ -219,8 +220,8 @@ module ActionMailerCallbacks
       category = nil
       notification_type = is_num?(params[:type]) ? params[:type] : get_notification_type_id(params[:type]) 
       if account_created_recently? && spam_filtered_notifications.include?(notification_type)
-        params = {:headers => mail.header.to_s, :text => mail.text_part.to_s, :html => mail.html_part.to_s }
-        email = Helpdesk::Email::SpamDetector.construct_raw_mail(params)
+        spam_params = {:headers => mail.header.to_s, :text => mail.text_part.to_s, :html => mail.html_part.to_s }
+        email = Helpdesk::Email::SpamDetector.construct_raw_mail(spam_params)
         response = FdSpamDetectionService::Service.new(Helpdesk::EMAIL[:outgoing_spam_account], email).check_spam
         category = Helpdesk::Email::OutgoingCategory::CATEGORY_BY_TYPE[:spam] if response.spam?
         Rails.logger.info "Spam check response for outgoing email with Account ID : #{params[:account_id]}, Ticket ID: #{params[:ticket_id]}, Note ID: #{params[:note_id]} - #{response.spam?}"

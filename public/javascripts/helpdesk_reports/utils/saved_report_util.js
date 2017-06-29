@@ -971,7 +971,8 @@ HelpdeskReports.SavedReportUtil = (function() {
     	},
     	init: function (index) {
 			if(!this.initialized){
-		        _FD.core = HelpdeskReports.CoreUtil;
+		        _FD.default_report_is_scheduled = false;
+				_FD.core = HelpdeskReports.CoreUtil;
 		        _FD.constants = jQuery.extend({}, HelpdeskReports.Constants.Glance);
 		        _FD.bindEvents();
 		        _FD.populateSavedReports(index);
