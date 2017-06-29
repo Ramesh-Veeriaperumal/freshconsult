@@ -5,8 +5,8 @@
 <div class="contact_hover">
     <%= user_avatar(user, :thumb, 'preview_pic small') %>
   <div class="infoblock muted">
-    <%= content_tag :div, link_to(h(user.display_name), user, :target => link_target, :'data-pjax' => '#body-container'), :class => "user_name" if privilege?(:view_contacts) %>
-    <%= content_tag :div, h(user.display_name), :class => 'user_name_noprivilege' unless privilege?(:view_contacts) %>
+    <%= content_tag :div, link_to(h(user.display_name), user, :target => link_target, :'data-pjax' => '#body-container'), :class => "user_name" if privilege?(:view_contacts) && !collab_ticket_view?%>
+    <%= content_tag :div, h(user.display_name), :class => 'user_name_noprivilege' if !privilege?(:view_contacts) || collab_ticket_view? %>
     <% if user.parent.present? %>
       <div class="contact-append">
         <p class="merged_user"><%= t('contacts.merged_info') %></p><%= link_to h(user.parent.name), contact_path(user.parent_id), :class => "hover-contact-box merged_user" %>
@@ -56,7 +56,7 @@
       <div class="recent-tickets">
         <% case show_recent_tickets %>
           <% when :dialog then %>
-            <% if ticket.is_a?(Helpdesk::ArchiveTicket) %>
+            <% if !collab_ticket_view? and ticket.is_a?(Helpdesk::ArchiveTicket) %>
               <%= link_to t('ticket.recent_tickets'),
                     "/helpdesk/archive_tickets/#{ticket.id}/component?component=requester_tickets",
                     :rel => 'freshdialog',

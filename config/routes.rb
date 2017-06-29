@@ -1870,7 +1870,10 @@ Helpkit::Application.routes.draw do
     match '/tickets/archived' => 'archive_tickets#index', :as => :archive_tickets, via: :get
     match '/tickets/archived/filter/tags/:tag_id' => 'archive_tickets#index', :as => :tag_filter
 
+    match '/tickets/collab/:id' => 'collab_tickets#show'
     match '/tickets/collab/:id/notify' => 'collab_tickets#notify', via: :post
+    match '/tickets/collab/:id/prevnext' => 'collab_tickets#prevnext'
+    match '/tickets/collab/:id/latest_note' => 'collab_tickets#latest_note'
 
     resources :archive_tickets, :only => [:index, :show] do
       collection do

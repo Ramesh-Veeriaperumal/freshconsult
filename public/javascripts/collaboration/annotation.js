@@ -157,6 +157,8 @@
     *   Logic is DOM dependent
     *   Assumes DOM elements and decides the outer container for
     *   ticket detail HTML
+    *   - Finding container that is store in HK DB
+    *   - if DOM changes, this logic needs to be updated
     */ 
     function getNoteContainer(noteElem) {
         if(!noteElem) {
@@ -166,16 +168,16 @@
         var c, nid, details;
 
         if(noteDomid === ORIGINAL_TICKET_ID) {
-            c = noteElem;
-        } else {
             c = noteElem.children[0];
+        } else {
+            c = noteElem.children[0].children[0];
             nid = noteElem.getAttribute('data-note-id');
         }
         return {container: c, id: nid};
     }
-	
-	// constructor
-	function Annotation(config) {
+    
+    // constructor
+    function Annotation(config) {
         this.selectionInfo = {};
         this.annotationevents = config.annotationevents;
         if(!!config.wrapper_elem_style) {
@@ -183,7 +185,7 @@
         }
     }
 
-	// endpoints
+    // endpoints
     Annotation.prototype.getSelectionInfo = function(s_id) {
         var self = this;
         var selection = getSelection();
@@ -243,13 +245,13 @@
         return selectionInfo;
     }
     
-	/*
+    /*
     *   Taken from:
     *   http://stackoverflow.com/questions/1730967/how-to-wrap-with-html-tags-a-cross-boundary-dom-selection-range#19987884
     *   http://jsfiddle.net/mayankcpdixit/2t8k59jz/
     *   Modified by freshdesk
     */
-	Annotation.prototype.markAnnotation = function() {
+    Annotation.prototype.markAnnotation = function() {
         var self = this;
         var selection, status;
         
@@ -374,39 +376,31 @@
         return {status: status, annotation: self.selectionInfo};
     };
 
-	/*
+    /*
     *   Taken from:
     *   http://stackoverflow.com/questions/1730967/how-to-wrap-with-html-tags-a-cross-boundary-dom-selection-range#19987884
     *   http://jsfiddle.net/mayankcpdixit/2t8k59jz/
     */
+
     Annotation.prototype.restoreAnnotation = function(annSelection) {
-    	var self = this;
+        var self = this;
         var success = false;
         var note_hidden = false;
 
         annSelection = (typeof annSelection === "string") ? JSON.parse(annSelection) : annSelection;
-        var container, hidden_note;
+        var closest_el, hidden_note;
         if(annSelection.type === "note") {
             if(!!document.getElementById("note_details_" + annSelection.id)) {
-                container = document.getElementById("note_details_" + annSelection.id).children[0];
+                closest_el = {"elem": document.getElementById("note_details_" + annSelection.id), type: "note"};
             } else {
                 hidden_note = true;
             }
         } else {
-            container = document.getElementById(ORIGINAL_TICKET_ID);
+            closest_el = {"elem": document.getElementById(ORIGINAL_TICKET_ID), type: "ticket"};
         }
 
         if(!hidden_note) {
-            restoreSelection(container, annSelection);
-            var sel = self.getSelectionInfo(annSelection.s_id);
-            // content match check
-            if(sel.isAnnotableSelection && !!sel.selectionMeta && getTextContent(sel.selectionMeta.htmlContent) === getTextContent(annSelection.htmlContent)) {
-                self.selectionInfo.tempAnnotation = false,
-                self.selectionInfo.selectionMeta.messageId = annSelection.messageId;
-                self.selectionInfo.selectionMeta.s_id = annSelection.s_id;
-                self.markAnnotation();
-                success = true;
-            }
+            success = highlightMatcher.call(self, closest_el, annSelection);
         } else {
             note_hidden = true;
         }
@@ -416,6 +410,44 @@
             sel.removeAllRanges();
         }
         return {success: success, note_hidden: note_hidden};
+    } 
+
+    function highlightMatcher(closest_el, annSelection) {
+        // Call this function with Annotation context.
+        var self = this;
+        var success = false;
+        var sel;
+
+        function verify_annotation(container) {
+            restoreSelection(container, annSelection);
+            sel = self.getSelectionInfo(annSelection.s_id);
+            if(sel.isAnnotableSelection && !!sel.selectionMeta && getTextContent(sel.selectionMeta.htmlContent) === getTextContent(annSelection.htmlContent)){
+                success = true;
+            }
+        }
+
+        if(closest_el.type === "ticket") {
+            verify_annotation(closest_el.elem.children[0]); // Ticket case 1
+
+            if(!success) {
+                verify_annotation(closest_el.elem);  // Ticket fallback case 1
+            }
+        } else if (closest_el.type === "note") {
+            verify_annotation(closest_el.elem.children[0].children[0]);  // Note case 1
+
+            if(!success) {
+                verify_annotation(closest_el.elem.children[0]); // Note fallback case 1
+            }
+        }
+
+        if(success) {
+            self.selectionInfo.tempAnnotation = false,
+            self.selectionInfo.selectionMeta.messageId = annSelection.messageId;
+            self.selectionInfo.selectionMeta.s_id = annSelection.s_id;
+            self.markAnnotation();
+        }
+
+        return success;
     }
 
     /**
