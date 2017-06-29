@@ -163,8 +163,10 @@ class CRM::FreshsalesUtility
 
     def admin_basic_info
       data = @account.account_configuration.contact_info.slice(*ADMIN_BASIC_INFO_KEYS)
+      data[:company] = account_basic_info
       data[:last_name]||= @account.admin_first_name
       data[:work_number] = @account.admin_phone
+      data[:custom_field] = { cf_domain_name: @account.full_domain }
       data.merge!(@source_and_campaign_info) if @source_and_campaign_info
       data
     end
@@ -229,8 +231,6 @@ class CRM::FreshsalesUtility
           cf_account_id:  @account.id, cf_domain_name: @account.full_domain, cf_reputation_score: @account.ehawk_reputation_score
         }
       })
-      lead_attrs[:company] = account_basic_info
-
       acc_metrics = account_metrics
       subscription_attrs = new_lead_subscription_params
 
