@@ -13,7 +13,7 @@ module Ember
     include SurveysTestHelper
     include PrivilegesHelper
 
-    CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
+    CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date).freeze
 
     def setup
       super
@@ -56,9 +56,9 @@ module Ember
         user_company.user
       else
         new_user = add_new_user(@account)
-        new_user.user_companies.create(:company_id => get_company.id, :default => true)
+        new_user.user_companies.create(company_id: get_company.id, default: true)
         other_company = create_company
-        new_user.user_companies.create(:company_id => other_company.id)
+        new_user.user_companies.create(company_id: other_company.id)
         new_user.reload
       end
     end
@@ -69,7 +69,7 @@ module Ember
         user_company.user
       else
         new_user = add_new_user(@account)
-        new_user.user_companies.create(:company_id => get_company.id, :default => true)
+        new_user.user_companies.create(company_id: get_company.id, default: true)
         new_user.reload
       end
     end
@@ -91,7 +91,7 @@ module Ember
       @create_group ||= create_group_with_agents(@account, agent_list: [@agent.id])
       params_hash = { email: email, cc_emails: cc_emails, description: description, subject: subject,
                       priority: 2, status: 2, type: 'Problem', responder_id: @agent.id, source: 1, tags: tags,
-                      due_by: 14.days.since.iso8601, fr_due_by: 1.days.since.iso8601, group_id: @create_group.id }
+                      due_by: 14.days.since.iso8601, fr_due_by: 1.day.since.iso8601, group_id: @create_group.id }
       params_hash
     end
 
@@ -101,7 +101,7 @@ module Ember
       description = Faker::Lorem.paragraph
       @update_group ||= create_group_with_agents(@account, agent_list: [agent.id])
       params_hash = { description: description, subject: subject, priority: 4, status: 7, type: 'Incident',
-                      responder_id: agent.id, tags: ['update_tag1', 'update_tag2'],
+                      responder_id: agent.id, tags: %w(update_tag1 update_tag2),
                       due_by: 12.days.since.iso8601, fr_due_by: 4.days.since.iso8601, group_id: @update_group.id }
       params_hash
     end
@@ -114,7 +114,7 @@ module Ember
 
     def test_index_with_all_tickets_filter
       # Private API should filter all tickets with last 30 days created_at limit
-      test_ticket = create_ticket(created_at: 2.month.ago)
+      test_ticket = create_ticket(created_at: 2.months.ago)
       get :index, controller_params(version: 'private', filter: 'all_tickets', include: 'count')
       assert_response 200
       assert response.api_meta[:count] != @account.tickets.where(spam: false, deleted: false).count
@@ -123,14 +123,20 @@ module Ember
     def test_index_with_invalid_filter_names
       get :index, controller_params(version: 'private', filter: Faker::Lorem.word)
       assert_response 400
-      valid_filters = [
-        "spam", "deleted", "overdue", "pending", "open", "due_today", "new",
-        "monitored_by", "new_and_my_open", "all_tickets", "unresolved",
-        "article_feedback", "my_article_feedback",
-        "watching", "on_hold",
-        "raised_by_me", "shared_by_me", "shared_with_me"
-      ]
+      valid_filters = %w(
+        spam deleted overdue pending open due_today new
+        monitored_by new_and_my_open all_tickets unresolved
+        article_feedback my_article_feedback
+        watching on_hold
+        raised_by_me shared_by_me shared_with_me
+      )
       match_json([bad_request_error_pattern(:filter, :not_included, list: valid_filters.join(', '))])
+    end
+
+    def test_index_with_invalid_only_param
+      get :index, controller_params(version: 'private', only: Faker::Lorem.word)
+      assert_response 400
+      match_json([bad_request_error_pattern(:only, :not_included, list: 'count')])
     end
 
     def test_index_with_invalid_query_hash
@@ -165,9 +171,9 @@ module Ember
     def test_index_with_query_hash
       ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| create_ticket(priority: 2, requester_id: @agent.id) }
       query_hash_params = {
-                            '0' => {'condition' => 'priority', 'operator' => 'is', 'value' => 2, 'type' => 'default'},
-                            '1' => {'condition' => 'requester_id', 'operator' => 'is_in', 'value' => [@agent.id], 'type' => 'default'}
-                          }
+        '0' => { 'condition' => 'priority', 'operator' => 'is', 'value' => 2, 'type' => 'default' },
+        '1' => { 'condition' => 'requester_id', 'operator' => 'is_in', 'value' => [@agent.id], 'type' => 'default' }
+      }
       get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
       assert_response 200
       match_json(private_api_ticket_index_pattern)
@@ -191,7 +197,7 @@ module Ember
       tkt.update_attributes(priority: 3)
       get :index, controller_params({ version: 'private', updated_since: time_now }, false)
 
-      Rails.logger.debug "-"  * 100
+      Rails.logger.debug '-' * 100
       assert_response 200
       response = parse_response @response.body
       assert_equal 1, response.size
@@ -256,11 +262,11 @@ module Ember
       match_json(private_api_ticket_index_pattern(false, false, true))
     end
 
-    def test_index_with_count_included
-      get :index, controller_params(version: 'private', include: 'count')
+    def test_index_with_only_count
+      get :index, controller_params(version: 'private', only: 'count')
       assert_response 200
       assert response.api_meta[:count] == @account.tickets.where(['spam = false AND deleted = false AND created_at > ?', 30.days.ago]).count
-      match_json(private_api_ticket_index_pattern)
+      match_json([])
     end
 
     def test_show_with_survey_result
@@ -311,15 +317,15 @@ module Ember
     def test_ticket_show_with_ticket_topic
       ticket = new_ticket_from_forum_topic
       remove_wrap_params
-      get :show, construct_params({ version: 'private', id: ticket.display_id })
+      get :show, construct_params(version: 'private', id: ticket.display_id)
       assert_response 200
       match_json(ticket_show_pattern(ticket))
     end
 
     def test_create_with_incorrect_attachment_type
-      attachment_ids = ['A', 'B', 'C']
-      params_hash = ticket_params_hash.merge({attachment_ids: attachment_ids})
-      post :create, construct_params({version: 'private'}, params_hash)
+      attachment_ids = %w(A B C)
+      params_hash = ticket_params_hash.merge(attachment_ids: attachment_ids)
+      post :create, construct_params({ version: 'private' }, params_hash)
       match_json([bad_request_error_pattern(:attachment_ids, :array_datatype_mismatch, expected_data_type: 'Positive Integer')])
       assert_response 400
     end
@@ -328,17 +334,17 @@ module Ember
       attachment_ids = []
       attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       invalid_ids = [attachment_ids.last + 10, attachment_ids.last + 20]
-      params_hash = ticket_params_hash.merge({attachment_ids: (attachment_ids | invalid_ids)})
-      post :create, construct_params({version: 'private'}, params_hash)
+      params_hash = ticket_params_hash.merge(attachment_ids: (attachment_ids | invalid_ids))
+      post :create, construct_params({ version: 'private' }, params_hash)
       match_json([bad_request_error_pattern(:attachment_ids, :invalid_list, list: invalid_ids.join(', '))])
       assert_response 400
     end
 
-     def test_create_with_invalid_attachment_size
+    def test_create_with_invalid_attachment_size
       attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
-      params_hash = ticket_params_hash.merge({attachment_ids: [attachment_id]})
+      params_hash = ticket_params_hash.merge(attachment_ids: [attachment_id])
       Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(20_000_000)
-      post :create, construct_params({version: 'private'}, params_hash)
+      post :create, construct_params({ version: 'private' }, params_hash)
       Helpdesk::Attachment.any_instance.unstub(:content_file_size)
       match_json([bad_request_error_pattern(:attachment_ids, :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
       assert_response 400
@@ -349,9 +355,9 @@ module Ember
       rand(2..10).times do
         attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       end
-      params_hash = ticket_params_hash.merge({attachment_ids: attachment_ids})
+      params_hash = ticket_params_hash.merge(attachment_ids: attachment_ids)
       Helpdesk::Ticket.any_instance.stubs(:save).returns(false)
-      post :create, construct_params({version: 'private'}, params_hash)
+      post :create, construct_params({ version: 'private' }, params_hash)
       Helpdesk::Ticket.any_instance.unstub(:save)
       assert_response 500
     end
@@ -361,8 +367,8 @@ module Ember
       rand(2..10).times do
         attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       end
-      params_hash = ticket_params_hash.merge({attachment_ids: attachment_ids})
-      post :create, construct_params({version: 'private'}, params_hash)
+      params_hash = ticket_params_hash.merge(attachment_ids: attachment_ids)
+      post :create, construct_params({ version: 'private' }, params_hash)
       assert_response 201
       match_json(ticket_show_pattern(Helpdesk::Ticket.last))
       assert Helpdesk::Ticket.last.attachments.size == attachment_ids.size
@@ -371,7 +377,7 @@ module Ember
     def test_create_without_source
       params_hash = ticket_params_hash.clone
       params_hash.delete(:source)
-      post :create, construct_params({version: 'private'}, params_hash)
+      post :create, construct_params({ version: 'private' }, params_hash)
       assert_response 201
       latest_ticket = Helpdesk::Ticket.last
       match_json(ticket_show_pattern(latest_ticket))
@@ -383,10 +389,10 @@ module Ember
       file1 = fixture_file_upload('/files/attachment.txt', 'text/plain', :binary)
       file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
       attachments = [file1, file2]
-      params_hash = ticket_params_hash.merge({attachment_ids: [attachment_id], attachments: attachments})
+      params_hash = ticket_params_hash.merge(attachment_ids: [attachment_id], attachments: attachments)
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
       @request.env['CONTENT_TYPE'] = 'multipart/form-data'
-      post :create, construct_params({version: 'private'}, params_hash)
+      post :create, construct_params({ version: 'private' }, params_hash)
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
       match_json(ticket_show_pattern(Helpdesk::Ticket.last))
@@ -394,7 +400,7 @@ module Ember
     end
 
     def test_create_with_invalid_cloud_files
-      cloud_file_params = [{ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 10000 }]
+      cloud_file_params = [{ filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 10_000 }]
       params = ticket_params_hash.merge(cloud_files: cloud_file_params)
       post :create, construct_params({ version: 'private' }, params)
       assert_response 400
@@ -402,10 +408,10 @@ module Ember
     end
 
     def test_create_with_cloud_files
-      cloud_file_params = [{ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 },
-                           { filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 }]
-      params_hash = ticket_params_hash.merge({cloud_files: cloud_file_params})
-      post :create, construct_params({version: 'private'}, params_hash)
+      cloud_file_params = [{ filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 },
+                           { filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 }]
+      params_hash = ticket_params_hash.merge(cloud_files: cloud_file_params)
+      post :create, construct_params({ version: 'private' }, params_hash)
       assert_response 201
       match_json(ticket_show_pattern(Helpdesk::Ticket.last))
       assert Helpdesk::Ticket.last.cloud_files.count == 2
@@ -413,36 +419,38 @@ module Ember
 
     def test_create_with_shared_attachments
       canned_response = create_response(
-          title: Faker::Lorem.sentence,
-          content_html: Faker::Lorem.paragraph,
-          visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
-          attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) })
-      params_hash = ticket_params_hash.merge({attachment_ids: canned_response.shared_attachments.map(&:attachment_id)})
-      post :create, construct_params({version: 'private'}, params_hash)
+        title: Faker::Lorem.sentence,
+        content_html: Faker::Lorem.paragraph,
+        visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+        attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) }
+      )
+      params_hash = ticket_params_hash.merge(attachment_ids: canned_response.shared_attachments.map(&:attachment_id))
+      post :create, construct_params({ version: 'private' }, params_hash)
       assert_response 201
       match_json(ticket_show_pattern(Helpdesk::Ticket.last))
       assert Helpdesk::Ticket.last.attachments.count == 1
     end
 
     def test_create_with_all_attachments
-      #normal attachment
+      # normal attachment
       file = fixture_file_upload('/files/attachment.txt', 'text/plain', :binary)
       # cloud file
-      cloud_file_params = [{ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 }]
+      cloud_file_params = [{ filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 }]
       # shared attachment
       canned_response = create_response(
-          title: Faker::Lorem.sentence,
-          content_html: Faker::Lorem.paragraph,
-          visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
-          attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) })
+        title: Faker::Lorem.sentence,
+        content_html: Faker::Lorem.paragraph,
+        visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+        attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) }
+      )
       # draft attachment
       draft_attachment = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id)
 
       attachment_ids = canned_response.shared_attachments.map(&:attachment_id) | [draft_attachment.id]
-      params_hash = ticket_params_hash.merge({attachment_ids: attachment_ids, attachments: [file], cloud_files: cloud_file_params})
+      params_hash = ticket_params_hash.merge(attachment_ids: attachment_ids, attachments: [file], cloud_files: cloud_file_params)
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
       @request.env['CONTENT_TYPE'] = 'multipart/form-data'
-      post :create, construct_params({version: 'private'}, params_hash)
+      post :create, construct_params({ version: 'private' }, params_hash)
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
       match_json(ticket_show_pattern(Helpdesk::Ticket.last))
@@ -457,7 +465,7 @@ module Ember
         status: 2, priority: 2,
         subject: Faker::Name.name, description: Faker::Lorem.paragraph
       }
-      post :create, construct_params({version: 'private'}, params)
+      post :create, construct_params({ version: 'private' }, params)
       t = Helpdesk::Ticket.last
       match_json(ticket_show_pattern(t))
       assert_equal t.owner_id, sample_requester.company_id
@@ -476,7 +484,7 @@ module Ember
         priority: 2, subject: Faker::Name.name,
         description: Faker::Lorem.paragraph
       }
-      post :create, construct_params({version: 'private'}, params)
+      post :create, construct_params({ version: 'private' }, params)
       t = Helpdesk::Ticket.last
       match_json(ticket_show_pattern(t))
       assert_equal t.owner_id, company.id
@@ -495,7 +503,7 @@ module Ember
         priority: 2, subject: Faker::Name.name,
         description: Faker::Lorem.paragraph
       }
-      post :create, construct_params({version: 'private'}, params)
+      post :create, construct_params({ version: 'private' }, params)
       t = Helpdesk::Ticket.last
       match_json(ticket_show_pattern(t))
       assert_equal t.owner_id, company_id
@@ -507,7 +515,7 @@ module Ember
     def test_execute_scenario_without_params
       scenario_id = create_scn_automation_rule(scenario_automation_params).id
       ticket_id = create_ticket(ticket_params_hash).display_id
-      put :execute_scenario, construct_params({version: 'private', id: ticket_id}, {})
+      put :execute_scenario, construct_params({ version: 'private', id: ticket_id }, {})
       assert_response 400
       match_json([bad_request_error_pattern('scenario_id', :missing_field)])
     end
@@ -515,7 +523,7 @@ module Ember
     def test_execute_scenario_with_invalid_ticket_id
       scenario_id = create_scn_automation_rule(scenario_automation_params).id
       ticket_id = create_ticket(ticket_params_hash).display_id + 20
-      put :execute_scenario, construct_params({version: 'private', id: ticket_id}, scenario_id: scenario_id)
+      put :execute_scenario, construct_params({ version: 'private', id: ticket_id }, scenario_id: scenario_id)
       assert_response 404
     end
 
@@ -523,7 +531,7 @@ module Ember
       scenario_id = create_scn_automation_rule(scenario_automation_params).id
       ticket_id = create_ticket(ticket_params_hash).display_id
       User.any_instance.stubs(:has_ticket_permission?).returns(false)
-      put :execute_scenario, construct_params({version: 'private', id: ticket_id}, scenario_id: scenario_id)
+      put :execute_scenario, construct_params({ version: 'private', id: ticket_id }, scenario_id: scenario_id)
       User.any_instance.unstub(:has_ticket_permission?)
       assert_response 403
     end
@@ -532,7 +540,7 @@ module Ember
       scenario_id = create_scn_automation_rule(scenario_automation_params).id
       ticket_id = create_ticket(ticket_params_hash).display_id
       ScenarioAutomation.any_instance.stubs(:check_user_privilege).returns(false)
-      put :execute_scenario, construct_params({version: 'private', id: ticket_id}, scenario_id: scenario_id)
+      put :execute_scenario, construct_params({ version: 'private', id: ticket_id }, scenario_id: scenario_id)
       ScenarioAutomation.any_instance.unstub(:check_user_privilege)
       assert_response 400
       match_json([bad_request_error_pattern('scenario_id', :inaccessible_value, resource: :scenario, attribute: :scenario_id)])
@@ -541,7 +549,7 @@ module Ember
     def test_execute_scenario
       scenario_id = create_scn_automation_rule(scenario_automation_params).id
       ticket_id = create_ticket(ticket_params_hash).display_id
-      put :execute_scenario, construct_params({version: 'private', id: ticket_id}, scenario_id: scenario_id)
+      put :execute_scenario, construct_params({ version: 'private', id: ticket_id }, scenario_id: scenario_id)
       assert_response 204
     end
 
@@ -813,64 +821,60 @@ module Ember
     end
 
     def test_show_with_valid_meta
-        t = create_ticket(requester_id: add_test_agent(@account, role: Role.find_by_name('Agent').id).id)
+      t = create_ticket(requester_id: add_test_agent(@account, role: Role.find_by_name('Agent').id).id)
 
-        # Adding meta note
-        meta_data = "created_by: 1\ntime: 2017-03-14 15:13:13 +0530\nuser_agent: Mozilla/5.0"
-        meta_note = t.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"])
+      # Adding meta note
+      meta_data = "created_by: 1\ntime: 2017-03-14 15:13:13 +0530\nuser_agent: Mozilla/5.0"
+      meta_note = t.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'])
 
-        if meta_note
-          meta_note.note_body_attributes = { body: meta_data }
-        else
-          meta_note = t.notes.build({
-            source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"],
-            note_body_attributes: {
-              body: meta_data,
-            },
-            private: true,
-            notable: t,
-            user_id: User.current.id
-          })
-        end
-        meta_note.save
+      if meta_note
+        meta_note.note_body_attributes = { body: meta_data }
+      else
+        meta_note = t.notes.build(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
+                                  note_body_attributes: {
+                                    body: meta_data
+                                  },
+                                  private: true,
+                                  notable: t,
+                                  user_id: User.current.id)
+      end
+      meta_note.save
 
-        get :show, controller_params(version: 'private', id: t.display_id)
-        assert_response 200
-        json = ActiveSupport::JSON.decode(response.body)
-        assert_equal ['created_by', 'time', 'user_agent' ].sort, json['meta'].keys.sort
+      get :show, controller_params(version: 'private', id: t.display_id)
+      assert_response 200
+      json = ActiveSupport::JSON.decode(response.body)
+      assert_equal %w(created_by time user_agent).sort, json['meta'].keys.sort
     end
 
     def test_show_with_invalid_meta
-        t = create_ticket(requester_id: add_test_agent(@account, role: Role.find_by_name('Agent').id).id)
-        # Adding meta note
-        meta_data = "user_agent: Mozilla/5.0 (Windows NT 6.1; Trident/7.0; swrinfo: 2576:cbc.ad.colchester.gov.uk:kayd; rv:11.0) like Gecko\nreferrer: https://colchesterboroughcouncil.freshservice.com/itil/custom_reports/ticket/2271"
-        meta_note = t.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"])
+      t = create_ticket(requester_id: add_test_agent(@account, role: Role.find_by_name('Agent').id).id)
+      # Adding meta note
+      meta_data = "user_agent: Mozilla/5.0 (Windows NT 6.1; Trident/7.0; swrinfo: 2576:cbc.ad.colchester.gov.uk:kayd; rv:11.0) like Gecko\nreferrer: https://colchesterboroughcouncil.freshservice.com/itil/custom_reports/ticket/2271"
+      meta_note = t.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'])
 
-        if meta_note
-          meta_note.note_body_attributes = { body: meta_data }
-        else
-          meta_note = t.notes.build({
-            source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"],
-            note_body_attributes: {
-              body: meta_data,
-            },
-            private: true,
-            notable: t,
-            user_id: User.current.id
-          })
-        end
-        meta_note.save
+      if meta_note
+        meta_note.note_body_attributes = { body: meta_data }
+      else
+        meta_note = t.notes.build(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
+                                  note_body_attributes: {
+                                    body: meta_data
+                                  },
+                                  private: true,
+                                  notable: t,
+                                  user_id: User.current.id)
+      end
+      meta_note.save
 
-        get :show, controller_params(version: 'private', id: t.display_id)
-        assert_response 200
+      get :show, controller_params(version: 'private', id: t.display_id)
+      assert_response 200
 
-        json = ActiveSupport::JSON.decode(response.body)
-        assert_equal Hash.new, json['meta']
+      json = ActiveSupport::JSON.decode(response.body)
+      assert_equal ({}), json['meta']
     end
 
     def test_update_ticket_source
       params_hash = update_ticket_params_hash.merge(source: 3)
-      put :update, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      put :update, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern(:source, :invalid_field)])
     end
@@ -920,8 +924,8 @@ module Ember
       rand(2..10).times do
         attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       end
-      params_hash = update_ticket_params_hash.merge({attachment_ids: attachment_ids})
-      put :update, construct_params({version: 'private', id: t.display_id}, params_hash)
+      params_hash = update_ticket_params_hash.merge(attachment_ids: attachment_ids)
+      put :update, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 200
       match_json(ticket_show_pattern(t.reload))
       assert ticket.attachments.size == attachment_ids.size
@@ -929,10 +933,10 @@ module Ember
 
     def test_update_with_cloud_files
       t = ticket
-      cloud_file_params = [{ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 },
-                           { filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 }]
-      params_hash = update_ticket_params_hash.merge({cloud_files: cloud_file_params})
-      put :update, construct_params({version: 'private', id: t.display_id}, params_hash)
+      cloud_file_params = [{ filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 },
+                           { filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 }]
+      params_hash = update_ticket_params_hash.merge(cloud_files: cloud_file_params)
+      put :update, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 200
       match_json(ticket_show_pattern(t.reload))
       assert ticket.cloud_files.count == 2
@@ -941,12 +945,13 @@ module Ember
     def test_update_with_shared_attachments
       t = create_ticket
       canned_response = create_response(
-          title: Faker::Lorem.sentence,
-          content_html: Faker::Lorem.paragraph,
-          visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
-          attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) })
-      params_hash = update_ticket_params_hash.merge({attachment_ids: canned_response.shared_attachments.map(&:attachment_id)})
-      put :update, construct_params({version: 'private', id: t.display_id}, params_hash)
+        title: Faker::Lorem.sentence,
+        content_html: Faker::Lorem.paragraph,
+        visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+        attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) }
+      )
+      params_hash = update_ticket_params_hash.merge(attachment_ids: canned_response.shared_attachments.map(&:attachment_id))
+      put :update, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 200
       t = Helpdesk::Ticket.last
       match_json(ticket_show_pattern(t))
@@ -957,8 +962,8 @@ module Ember
       Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
       t = ticket
       sample_requester = get_user_with_multiple_companies
-      t.update_attributes(:requester => sample_requester)
-      company_id = sample_requester.user_companies.where(:default => false).first.company.id
+      t.update_attributes(requester: sample_requester)
+      company_id = sample_requester.user_companies.where(default: false).first.company.id
       params = { company_id: company_id }
       put :update, construct_params({ version: 'private', id: t.display_id }, params)
       t.reload
@@ -967,6 +972,70 @@ module Ember
       assert_response 200
     ensure
       Account.any_instance.unstub(:multiple_user_companies_enabled?)
+    end
+
+    def test_tracker_create
+      enable_adv_ticketing(:link_tickets) do
+        Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
+        create_ticket
+        agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+        ticket = Helpdesk::Ticket.last
+        params_hash = ticket_params_hash.merge(email: agent.email, related_ticket_ids: [ticket.display_id])
+        post :create, construct_params({ version: 'private' }, params_hash)
+        assert_response 201
+        latest_ticket = Helpdesk::Ticket.last
+        ticket.reload
+        match_json(ticket_show_pattern(latest_ticket))
+        assert ticket.related_ticket?
+      end
+    end
+
+    def test_tracker_create_with_contact_email
+      enable_adv_ticketing(:link_tickets) do
+        create_ticket
+        ticket = Helpdesk::Ticket.last
+        params_hash = ticket_params_hash.merge(related_ticket_ids: [ticket.display_id])
+        post :create, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern('email', nil, append_msg: I18n.t('ticket.tracker_agent_error'))])
+        assert !ticket.related_ticket?
+      end
+    end
+
+    def test_child_create
+      enable_adv_ticketing(:parent_child_tickets) do
+        Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
+        create_parent_ticket
+        parent_ticket = Helpdesk::Ticket.last
+        params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
+        post :create, construct_params({ version: 'private' }, params_hash)
+        assert_response 201
+        latest_ticket = Helpdesk::Ticket.last
+        match_json(ticket_show_pattern(latest_ticket))
+      end
+    end
+
+    def test_create_child_to_parent_with_max_children
+      enable_adv_ticketing(:parent_child_tickets) do
+        Helpdesk::Ticket.any_instance.stubs(:associates).returns((10..21).to_a)
+        parent_ticket = create_parent_ticket
+        params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
+        post :create, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern('parent_id', nil, append_msg: I18n.t('ticket.parent_child.count_exceeded', count: TicketConstants::CHILD_TICKETS_PER_ASSOC_PARENT))])
+      end
+    end
+
+    def test_create_child_to_a_invalid_parent
+      enable_adv_ticketing(:parent_child_tickets) do
+        Helpdesk::Ticket.any_instance.stubs(:associates).returns((10..21).to_a)
+        parent_ticket = create_parent_ticket
+        parent_ticket.update_attributes(spam: true)
+        params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
+        post :create, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern('parent_id', nil, append_msg: I18n.t('ticket.parent_child.permission_denied'))])
+      end
     end
   end
 end

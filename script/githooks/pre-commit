@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# This script validates the commit for the following 
-#   - commit contains a JIRA Id as part of the commit message 
+# This script validates the commit for the following
+#   - commit contains a JIRA Id as part of the commit message
 #   - commit is not a merge commit on the following branches [ master, staging, prestaging ]
-#   - files changed do have any code quality errors as reported by rubocop 
-#   - cannot commit to rails3-phase2 
+#   - files changed do have any code quality errors as reported by rubocop
+#   - cannot commit to rails3-phase2
 
 printMsg(){
   echo "********************************************************"
@@ -27,9 +27,9 @@ currentBranch=`git rev-parse --abbrev-ref HEAD`
 if [ "$currentBranch" == "falcon-master" \
       -o "$currentBranch" == "falcon-staging"  \
       -o "$currentBranch" == "helpkit-ember" ]
-then 
-  printMsg "You cannot commit directly to $currentBranch. 
-Please commit to a seperate branch and submit a PR in github." 
+then
+  printMsg "You cannot commit directly to $currentBranch.
+Please commit to a seperate branch and submit a PR in github."
   exit 1;
 fi;
 
@@ -39,63 +39,70 @@ cat  $changedFileList | egrep "(.erb|.rb)$" > $changedRubyFiles
 cat $changedRubyFiles | xargs git diff -U0 --cached | egrep "^@@|^\+\+\+" > $gitDiffFile
 
 if [ `cat  $changedRubyFiles | wc -l` -eq 0 ]
-then 
+then
   exit 0;
 fi;
 
 #if merge commit then ignore check
-if [`git rev-parse -q --verify MERGE_HEAD | wc -c` -gt 1 ] 
-then 
+if [`git rev-parse -q --verify MERGE_HEAD | wc -c` -gt 1 ]
+then
   exit 0;
 fi;
 
 command -v osascript &> /dev/null  && osascript -e 'display notification "Running validations for your commit" with title "Please wait"'
 
-while read changes 
-do 
-  if [[ "$changes" =~ ^\+\+\+ ]] 
+while read changes
+do
+  if [[ "$changes" =~ ^\+\+\+ ]]
   then
     currentFileName=`echo $changes | sed 's,^[^/]*/,,'`
   fi
 
-  if [[ "$changes" =~ ^@@ ]] 
+  if [[ "$changes" =~ ^@@ ]]
   then
     changedLines=`echo $changes |  awk '{ print $3}' | grep "^+" | sed -e 's/+/ /g'`
-    changedLineStart=`echo $changedLines | cut -d',' -f1` 
-    noOfLines=`echo $changedLines | cut -d',' -f2` 
+    changedLineStart=`echo $changedLines | cut -d',' -f1`
+    noOfLines=`echo $changedLines | awk -F',' '{ print $2}'`
     currentLine=$changedLineStart
-    while [ $noOfLines -gt 0 ] 
-    do 
+    if [ "$noOfLines" == "" ]; then noOfLines=0; fi
+    if [ $noOfLines -eq 0 ]; then
+      echo "$currentFileName:$currentLine"
       echo "$currentFileName:$currentLine" >> $changedLinesFile
-      noOfLines=`expr $noOfLines - 1`
-      currentLine=`expr $currentLine + 1`
-    done
+    else
+      while [ $noOfLines -gt 0 ]
+      do
+        echo "$currentFileName:$currentLine"
+        echo "$currentFileName:$currentLine" >> $changedLinesFile
+        currentLine=`expr $currentLine + 1`
+        noOfLines=`expr $noOfLines - 1`
+      done
+    fi;
   fi
 done < $gitDiffFile
 
 if [ `cat  $changedRubyFiles | wc -l` -gt 0 ]
 then
   command -v rvm &> /dev/null || RVM_MISSING="yes"
-  if [ "$RVM_MISSING" == "yes" ] 
-  then 
+  if [ "$RVM_MISSING" == "yes" ]
+  then
     export PATH="$HOME/.rvm/bin:$PATH" # Add RVM to PATH for scripting
-    [ -s "$HOME/.rvm/scripts/rvm" ] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function* 
+    [ -s "$HOME/.rvm/scripts/rvm" ] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
     rvm default
   fi;
   command -v rubocop &> /dev/null || gem install rubocop || { echo "Could not install rubocop. Please install and commit code"; exit 1; }
-  rubocop --no-color -o $rubocopOutfile `cat $changedRubyFiles | xargs echo` &> /dev/null || syntaxErrors="YES" 
+  rubocop --no-color -o $rubocopOutfile `cat $changedRubyFiles | xargs echo` &> /dev/null || syntaxErrors="YES"
 fi
 
 grep -A 1 -f $changedLinesFile $rubocopOutfile > $matchingChangesFile
 
-if [ `cat $matchingChangesFile | wc -l` -gt 0 ] 
-then 
+if [ `cat $matchingChangesFile | wc -l` -gt 0 ]
+then
   printMsg "Rubocop reported the below listed errors in the files(/lines) you changed. Kindly fix it and commit"
   cat $matchingChangesFile
   printMsg "Tip : You can use rubocop to quickly fix it as follows. Take a backup before you do.
 
-rubocop -a `cat $changedRubyFiles | xargs echo` 
+rubocop -a `cat $changedRubyFiles | xargs echo`
 
-if you want to proceed anyway try 'git commit --no-verify' from the command line [ not recommended :) ]" 
+if you want to proceed anyway try 'git commit --no-verify' from the command line [ not recommended :) ]"
   exit 1;
 fi

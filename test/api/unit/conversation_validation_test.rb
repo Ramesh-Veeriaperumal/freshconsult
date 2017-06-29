@@ -1,6 +1,7 @@
 require_relative '../unit_test_helper'
 
 class ConversationValidationTest < ActionView::TestCase
+
   def test_numericality
     controller_params = { 'user_id' => 1,  body: Faker::Lorem.paragraph }
     item = nil
@@ -44,7 +45,7 @@ class ConversationValidationTest < ActionView::TestCase
   end
 
   def test_emails_validation_invalid
-    controller_params = { 'notify_emails' => ['fggg@ddd.com,ss@fff.com'], 'to_emails' => ['fggg@ddd.com,ss@fff.com'], 
+    controller_params = { 'notify_emails' => ['fggg@ddd.com,ss@fff.com'], 'to_emails' => ['fggg@ddd.com,ss@fff.com'],
                             'cc_emails' => ['fggg@ddd.com,ss@fff.com'], 'bcc_emails' => ['fggg@ddd.com,ss@fff.com'],
                             'from_email' => 'fggg@ddd.com,ss@fff.com'  }
     item = nil
@@ -164,4 +165,5 @@ class ConversationValidationTest < ActionView::TestCase
     errors = conversation.errors.full_messages
     assert errors.include?('Cloud files is invalid')
   end
+
 end

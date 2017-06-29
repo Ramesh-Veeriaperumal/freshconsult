@@ -119,6 +119,8 @@ module TicketsTestHelper
       id: expected_output[:display_id] || ticket.display_id,
       fr_escalated:  (expected_output[:fr_escalated] || ticket.fr_escalated).to_s.to_bool,
       is_escalated:  (expected_output[:is_escalated] || ticket.isescalated).to_s.to_bool,
+      association_type: expected_output[:association_type] || ticket.association_type,
+      associated_tickets_count: expected_output[:associated_tickets_count] || ticket.associated_tickets_count,
       spam:  (expected_output[:spam] || ticket.spam).to_s.to_bool,
       email_config_id:  expected_output[:email_config_id] || ticket.email_config_id,
       group_id:  expected_output[:group_id] || ticket.group_id,
@@ -321,11 +323,11 @@ module TicketsTestHelper
   end
 
   def private_api_ticket_index_pattern(survey = false, requester = false, company = false, order_by = 'created_at', order_type = 'desc', all_tickets = false)
-    filter_clause = all_tickets ? [''] : ['created_at > ?', 30.days.ago]
+    filter_clause = all_tickets ? ['spam = ? AND deleted = ?', false, false] : ['created_at > ?', 30.days.ago]
     pattern_array = Helpdesk::Ticket.where(*filter_clause).order("#{order_by} #{order_type}").limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).map do |ticket|
       pattern = index_ticket_pattern_with_associations(ticket, requester, true, company, [:tags])
-      pattern.merge!(requester: Hash) if requester
-      pattern.merge!(survey_result: feedback_pattern(ticket.custom_survey_results.last)) if survey && ticket.custom_survey_results.present?
+      pattern[:requester] = Hash if requester
+      pattern[:survey_result] = feedback_pattern(ticket.custom_survey_results.last) if survey && ticket.custom_survey_results.present?
       pattern
     end
   end
@@ -351,17 +353,31 @@ module TicketsTestHelper
   def ticket_show_pattern(ticket, survey_result = nil, requester = false)
     pattern = ticket_pattern_with_association(ticket, false, false, false, false, true).merge(cloud_files: Array)
     ticket_topic = ticket_topic_pattern(ticket)
-    pattern.merge!(freshfone_call: freshfone_call_pattern(ticket)) if freshfone_call_pattern(ticket).present?
+    pattern[:freshfone_call] = freshfone_call_pattern(ticket) if freshfone_call_pattern(ticket).present?
     if Account.current.features?(:facebook) && ticket.facebook?
       fb_pattern = ticket.fb_post.post? ? fb_post_pattern({}, ticket.fb_post) : fb_dm_pattern({}, ticket.fb_post)
-      pattern.merge!(fb_post: fb_pattern)
+      pattern[:fb_post] = fb_pattern
     end
-    pattern.merge!(tweet: tweet_pattern({}, ticket.tweet)) if Account.current.features?(:twitter) && ticket.twitter?
-    pattern.merge!(meta: ticket_meta_pattern(ticket))
-    pattern.merge!(survey_result: feedback_pattern(survey_result)) if survey_result
-    pattern.merge!(ticket_topic: ticket_topic) if ticket_topic.present?
-    pattern.merge!(requester: Hash) if requester
+    pattern[:tweet] = tweet_pattern({}, ticket.tweet) if Account.current.features?(:twitter) && ticket.twitter?
+    pattern[:meta] = ticket_meta_pattern(ticket)
+    pattern[:survey_result] = feedback_pattern(survey_result) if survey_result
+    pattern[:ticket_topic] = ticket_topic if ticket_topic.present?
+    pattern[:association_type] = ticket.association_type
+    pattern[:requester] = Hash if requester
     pattern
+  end
+
+  def prime_association_pattern(ticket)
+    prime_association = ticket.related_ticket? ? ticket.associated_prime_ticket('related') : ticket.associated_prime_ticket('child')
+    return unless prime_association.present?
+    {
+      id: prime_association.display_id,
+      requester_id: prime_association.requester_id,
+      responder_id: prime_association.responder_id,
+      subject: prime_association.subject,
+      association_type: prime_association.association_type,
+      status: prime_association.status
+    }
   end
 
   def freshfone_call_pattern(ticket)
@@ -375,8 +391,8 @@ module TicketsTestHelper
   end
 
   def ticket_meta_pattern(ticket)
-    meta_info = ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]).body
-    meta_info = YAML::load(meta_info)
+    meta_info = ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta']).body
+    meta_info = YAML.load(meta_info)
     handle_timestamps(meta_info)
   rescue
     {}
@@ -414,7 +430,7 @@ module TicketsTestHelper
     @data = File.open(@file_url)
 
     @call.update_attributes(recording_url: @file_url.gsub('.mp3', ''))
-    @call.update_status({ DialCallStatus: 'voicemail' })
+    @call.update_status(DialCallStatus: 'voicemail')
     # It's tough to parse audio and get actual duration. So setting a random value.
     @call.call_duration = 25
 
@@ -450,7 +466,7 @@ module TicketsTestHelper
   def conversations_pattern(ticket, requester = false, limit = false)
     notes_pattern = ticket.notes.visible.exclude_source('meta').order(:created_at).map do |n|
       note_pattern = note_pattern_index(n)
-      note_pattern.merge!(requester: Hash) if requester
+      note_pattern[:requester] = Hash if requester
       note_pattern
     end
     limit ? notes_pattern.take(limit) : notes_pattern
@@ -465,8 +481,30 @@ module TicketsTestHelper
     }
     single_note = private_note_pattern({}, note)
     single_note.merge!(index_note)
-    single_note.merge!(freshfone_call: freshfone_call_pattern(note)) if freshfone_call_pattern(note)
+    single_note[:freshfone_call] = freshfone_call_pattern(note) if freshfone_call_pattern(note)
     single_note
   end
 
+  def create_parent_ticket
+    create_ticket
+    parent_ticket = Helpdesk::Ticket.last
+    parent_ticket.update_attributes(association_type: 1)
+    parent_ticket.reload
+  end
+
+  def create_tracker_ticket
+    create_ticket
+    tracker_ticket = Helpdesk::Ticket.last
+    tracker_ticket.update_attributes(association_type: 3)
+    tracker_ticket.reload
+  end
+
+  def assert_link_failure(ticket_id, pattern = nil)
+    assert_response 400
+    match_json([bad_request_error_pattern(*pattern)]) if pattern.present?
+    if ticket_id.present?
+      ticket = Helpdesk::Ticket.find_by_display_id(ticket_id)
+      assert !ticket.related_ticket?
+    end
+  end
 end

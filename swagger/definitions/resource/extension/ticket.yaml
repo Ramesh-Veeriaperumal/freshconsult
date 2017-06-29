@@ -24,6 +24,11 @@ allOf:
           type: string
       is_escalated:
         type: boolean
+      association_type:
+        type: integer
+        enum: [1,2,3,4]
+      associated_tickets_count:
+        type: integer
       description_text:
         type: string
       cloud_files:

@@ -1,7 +1,7 @@
 class TicketFilterValidation < FilterValidation
   attr_accessor :filter, :company_id, :requester_id, :email, :updated_since,
                 :order_by, :conditions, :requester, :status, :cf, :include,
-                :include_array, :query_hash
+                :include_array, :query_hash, :only
 
   validates :company_id, :requester_id, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param }
   validate :verify_requester, if: -> { errors[:requester_id].blank? && (requester_id || email) }
@@ -24,9 +24,10 @@ class TicketFilterValidation < FilterValidation
   validate :validate_include, if: -> { errors[:include].blank? && include }
   validate :validate_filter_param, if: -> { errors[:filter].blank? && filter.present? && private_API? }
   validate :validate_query_hash, if: -> { errors.blank? && query_hash.present? }
-  validates :ids, data_type: { rules: Array, allow_nil: false }, 
-            array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false, ignore_string: :allow_string_param} },
-            custom_length: { maximum: ApiConstants::MAX_ITEMS_FOR_BULK_ACTION, message_options: { element_type: :values } }
+  validates :ids, data_type: { rules: Array, allow_nil: false },
+                  array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false, ignore_string: :allow_string_param } },
+                  custom_length: { maximum: ApiConstants::MAX_ITEMS_FOR_BULK_ACTION, message_options: { element_type: :values } }
+  validates :only, custom_inclusion: { in: ApiTicketConstants::ALLOWED_ONLY_PARAMS }
 
   def initialize(request_params, item = nil, allow_string_param = true)
     @email = request_params.delete('email') if request_params.key?('email') # deleting email and replacing it with requester_id
@@ -116,7 +117,7 @@ class TicketFilterValidation < FilterValidation
       query_hash_errors << query_hash_validator.errors.full_messages unless query_hash_validator.valid?
     end
     if query_hash_errors.present?
-      errors[:query_hash] << :"invalid_query_conditions"
+      errors[:query_hash] << :invalid_query_conditions
     end
   end
 
@@ -128,7 +129,7 @@ class TicketFilterValidation < FilterValidation
   end
 
   def sort_field_options
-    TicketsFilter::api_sort_fields_options.map(&:first).map(&:to_s)
+    TicketsFilter.api_sort_fields_options.map(&:first).map(&:to_s)
   end
 
   private

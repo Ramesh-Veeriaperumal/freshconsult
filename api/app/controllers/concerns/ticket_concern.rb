@@ -104,6 +104,7 @@ module TicketConcern
     def modify_ticket_params
       cname_params[:attachments] = cname_params[:attachments].map { |att| { resource: att } } if cname_params[:attachments]
       cname_params[:ticket_body_attributes] = { description_html: cname_params[:description] } if cname_params[:description]
+      cname_params[:assoc_parent_tkt_id] = cname_params[:parent_id] if cname_params[:parent_id]
     end
 
     def process_email_params
