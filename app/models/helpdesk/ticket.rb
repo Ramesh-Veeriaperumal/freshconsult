@@ -1227,6 +1227,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_replica
   end
 
+  def valid_internal_group?(ig_id = internal_group_id)
+    return true if ig_id.blank?
+    ticket_status.group_ids.include?(ig_id)
+  end
+
+  def valid_internal_agent?(ia_id = internal_agent_id)
+    return true if ia_id.blank?
+    valid_internal_group? && (internal_group.try(:agent_ids) || []).include?(ia_id)
+  end
+
+
   private
     def sphinx_data_changed?
       description_html_changed? || requester_id_changed? || responder_id_changed? || group_id_changed? || deleted_changed?
@@ -1254,16 +1265,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def shared_ownership_fields_changed?
       internal_group_id_changed? or internal_agent_id_changed?
-    end
-
-    def valid_internal_group?(ig_id = internal_group_id)
-      return true if ig_id.blank?
-      ticket_status.group_ids.include?(ig_id)
-    end
-
-    def valid_internal_agent?(ia_id = internal_agent_id)
-      return true if ia_id.blank?
-      valid_internal_group? && (internal_group.try(:agent_ids) || []).include?(ia_id)
     end
 
   #Shared ownership methods ends here
