@@ -114,7 +114,7 @@ class BaseDrop < Liquid::Drop
     end
 
     def escape_liquid_attribute(value)
-      @source.escape_liquid_attributes ? h(value) : value
+      escape_liquid_attributes? ? h(value) : value
     end
 
     # Escape liquid attributes by default for portal and based on attribute in other places
