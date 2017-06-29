@@ -1,6 +1,7 @@
 require_relative '../../test_helper'
 require 'sidekiq/testing'
 Sidekiq::Testing.fake!
+
 ['canned_responses_helper.rb', 'group_helper.rb', 'social_tickets_creation_helper.rb', 'twitter_helper.rb', 'dynamo_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module Ember
   class ConversationsControllerTest < ActionController::TestCase
