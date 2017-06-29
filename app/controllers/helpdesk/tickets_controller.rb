@@ -782,36 +782,11 @@ class Helpdesk::TicketsController < ApplicationController
         flash[:action] = "bulk_close"
           redirect_to helpdesk_tickets_path
         }
-      
-      format.xml {  render :xml =>@items.to_xml({:basic=>true}) }
-      
-      format.mobile do
-        response_hash = {}
-        if @items.present?
-          if @failed_tickets.present?
-            response_hash = { 
-              :success => true,
-              :success_message => t("helpdesk.flash.tickets_close_fail_on_bulk_close_mobile",
-                                        :tickets => get_updated_ticket_count, :failed_tickets => @failed_tickets.length )
-            }
-          else
-            response_hash = { 
-              :success => true,
-              :success_message => t("helpdesk.flash.tickets_closed",
-                                        :tickets => get_updated_ticket_count )
-            }
-          end
-        else
-          response_hash = { 
-            :success => false,
-            :error => t("helpdesk.flash.tickets_close_fail_on_bulk_close_mobile",
-                                        :tickets => get_updated_ticket_count, :failed_tickets => @failed_tickets.length )
-          }
-        end
-        render :json => response_hash.to_json 
-      end
-      
-      format.json {  render :json =>@items.to_json({:basic=>true}) }
+        format.xml {  render :xml =>@items.to_xml({:basic=>true}) }
+        format.mobile { render :json => { :success => true , :success_message => t("helpdesk.flash.tickets_closed",
+                                          :tickets => get_updated_ticket_count )}.to_json }
+        format.json {  render :json =>@items.to_json({:basic=>true}) }
+
     end
   end
 
@@ -2089,10 +2064,8 @@ class Helpdesk::TicketsController < ApplicationController
   def scenario_failure_notification
     message = if @valid_ticket.is_a? FalseClass 
       log_error @item
-      error_code = 1012
       I18n.t("helpdesk.flash.scenario_fail")
     else
-      error_code = 1013
       I18n.t("admin.automations.failure")
     end
     flash[:notice] = render_to_string(:inline => message).html_safe
@@ -2102,12 +2075,8 @@ class Helpdesk::TicketsController < ApplicationController
       }
       format.js
       format.mobile {
-        render :json => {
-          :failure => true,
-          :success => false,
-          :rule_name => message,
-          :error_code => error_code
-        }.to_json
+          render :json => { :failure => true,
+             :rule_name => message }.to_json
       }
     end
   end
