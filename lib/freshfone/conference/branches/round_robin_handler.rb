@@ -7,11 +7,11 @@ module Freshfone::Conference::Branches::RoundRobinHandler
     if round_robin_agents_pending?
       initiate_round_robin
     else
-      if params[:round_robin_call].present?
+      # if params[:round_robin_call].present?
         reset_presence_for_forward_calls
         initiate_voicemail if move_to_voicemail?
         clear_batch_key(get_call_sid) 
-      end
+      # end
     end
   end
 
