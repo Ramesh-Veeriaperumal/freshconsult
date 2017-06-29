@@ -1,0 +1,50 @@
+
+<div id="sticky_header"  rel="sticky" data-scroll-top = "true" class="tkt-details-sticky" data-collapsed="true" data-sticky-bottom="true">
+	<div class="sticky_right">
+		<div class="status_info"></div>
+	</div>
+		
+		<div class="pagination-link" id="adjacents">
+			<ul>
+				<li>
+					<a id="next_page" href="#" class="page-btn btn disabled"><span class="arrow-next"></span></a>
+				</li>
+				<li>
+					<a href="#" class="page-btn btn disabled"><span class="arrow-previous"></span></a>
+				</li>
+			</ul>
+		</div>
+
+		<div class="ticket-actions" data-domhelper-name="ticket-actions">
+			<ul class="collapse-content" data-domhelper-name="ticket-action-options">
+				<li class="ticket-btns">
+					<div id="collab-btn" class="collab-btn btn tooltip" data-placement = "below"
+						title='<%= "#{t('helpdesk.start_collab')}" %>' 
+						data-hotkey='<%="#{shortcut('ticket_detail.collaboration')}" %>'>
+						<span class="collab-logo">
+							<%= font_icon "huddle-logo", { :size => 26 , :class => "logo-image"} %>
+						</span>
+						<%= t('collaboration.discuss')  %>
+						<span class="collab-message-count" data-message-count="0"></span>
+					</div>
+				</li>
+			</ul>
+		</div>
+		
+	<div class="sticky_left">
+		<div>
+				<%= link_to t('header.tabs.tickets').html_safe, helpdesk_tickets_path, 
+										"data-pjax" => "#body-container", "data-parallel-url" => "/helpdesk/tickets/filter_options", 
+										"data-parallel-placeholder" => '#ticket-leftFilter',
+										:rel =>'link_ticket_list' %>
+			/ <%= "#{t('ticket.singular')} <span id='ticket-display-id'>##{h(@ticket.display_id)}</span>".html_safe%>
+		</div>
+		<div class="source-badge-wrap">
+			<div class='source <%= "priority_color_#{@ticket.priority} status_#{@ticket.status}" %>' >
+				<span class="source_<%= @ticket.source %>"></span>
+			</div>
+		</div>
+
+	</div>
+</div>
+<div class="clearfix"></div>
