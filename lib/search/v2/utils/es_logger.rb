@@ -68,7 +68,6 @@ module Search
           track(output.join(' '))
         end
 
-
         def log_timestamps(timestamps)
           output = []
           end_time = Search::Job.es_version/1000
@@ -83,8 +82,6 @@ module Search
           output << "end=#{end_time}, end_spent=#{end_time - t}, total=#{total_timespent}"
           log(output.join(', '))
         end
-
-
         # For easily parseble
         # (*) Log account_id
         # (*) Log cluster_name
