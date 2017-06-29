@@ -6513,6 +6513,7 @@ en:
       tickets_close_fail_on_bulk_scenario: "Unable to execute scenario on %{failed_tickets} - <span class='failed_ticket_lbl'>Required fields were empty.</span> Executing the scenario <b>%{rule_name}</b> on remaining %{tickets} tickets."
       tickets_close_fail_on_bulk_action: "%{tickets} updated. Unable to update %{failed_tickets} <span class='failed_ticket_lbl'>(Required fields were empty)</span>"
       tickets_close_fail_on_bulk_close: "%{tickets} closed. Unable to close %{failed_tickets} <span class='failed_ticket_lbl'>(Required fields were empty)</span>"
+      tickets_close_fail_on_bulk_close_mobile: "%{tickets} closed. Unable to close %{failed_tickets} tickets (Required fields were empty)"
       tickets_failed: "%{failed_count} tickets"
       tickets_update: "%{tickets} updated"
       scenario_fail: "Tickets with incomplete mandatory fields cannot be resolved or closed. You can update the properties before attempting to execute the scenario again."
