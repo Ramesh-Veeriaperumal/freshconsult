@@ -1870,7 +1870,7 @@ en:
         tour: Help me create a new observer rule
         tour_v2: Help me create a observer rule
         help_title: Observer
-        help_info_1: The Observer lets you trigger specific actions in your support desk as soon as a certain event occurs. For example, you could create an Observer Rule to alert the big man when a customer gives an unfavorable satisfaction rating on any ticket.
+        help_info_1: The Observer lets you trigger specific actions in your support desk as soon as a certain event occurs. For example, you could create an Observer Rule to alert your boss when a customer gives an unfavorable satisfaction rating on any ticket.
         help_title_2a: Events
         help_info_2a: An event may refer to any user-driven change that will trigger a specific Observer rule.
         help_title_2b: Event Performers
