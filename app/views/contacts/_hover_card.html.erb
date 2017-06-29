@@ -56,20 +56,22 @@
       <div class="recent-tickets">
         <% case show_recent_tickets %>
           <% when :dialog then %>
-            <% if !collab_ticket_view? and ticket.is_a?(Helpdesk::ArchiveTicket) %>
-              <%= link_to t('ticket.recent_tickets'),
-                    "/helpdesk/archive_tickets/#{ticket.id}/component?component=requester_tickets",
-                    :rel => 'freshdialog',
-                    "data-target" => "#requester_tickets",
-                    "data-template-footer" => "",
-                    :title => t('contacts.info4', :nick_name => h(user.display_name)) if ticket.present? %>
-            <% else %>
-              <%= link_to t('ticket.recent_tickets'),
-                    "/helpdesk/tickets/#{ticket.id}/component?component=requester_tickets",
-                    :rel => 'freshdialog',
-                    "data-target" => "#requester_tickets",
-                    "data-template-footer" => "",
-                    :title => t('contacts.info4', :nick_name => h(user.display_name)) unless ticket.nil? %>
+            <% unless collab_ticket_view?  %>
+              <% if ticket.is_a?(Helpdesk::ArchiveTicket) %>
+                <%= link_to t('ticket.recent_tickets'),
+                      "/helpdesk/archive_tickets/#{ticket.id}/component?component=requester_tickets",
+                      :rel => 'freshdialog',
+                      "data-target" => "#requester_tickets",
+                      "data-template-footer" => "",
+                      :title => t('contacts.info4', :nick_name => h(user.display_name)) if ticket.present? %>
+              <% else %>
+                <%= link_to t('ticket.recent_tickets'),
+                      "/helpdesk/tickets/#{ticket.id}/component?component=requester_tickets",
+                      :rel => 'freshdialog',
+                      "data-target" => "#requester_tickets",
+                      "data-template-footer" => "",
+                      :title => t('contacts.info4', :nick_name => h(user.display_name)) unless ticket.nil? %>
+              <% end %>
             <% end %>
           <% when :filter then %>
             <% if local_assigns.has_key? :new_tab %>
