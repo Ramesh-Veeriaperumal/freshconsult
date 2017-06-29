@@ -27,16 +27,28 @@ module SharedOwnershipTestHelper
                                             :group_id => group_id })
   end
 
-  def initialize_internal_agent_with_default_internal_group
+  def initialize_internal_agent_with_default_internal_group(permission = 3)
     @internal_group = @account.groups.first
     @status = @account.ticket_statuses.where(:is_default => 0).last
     @status.group_ids = [@internal_group.id]
     @status.save
     @account.instance_variable_set(:@account_status_groups_from_cache, nil)
     @responding_agent = add_agent_to_group(nil,
-                                       ticket_permission = 3, role_id = @account.roles.agent.first.id)
+                                           permission , role_id = @account.roles.agent.first.id)
     @internal_agent = add_agent_to_group(group_id = @internal_group.id,
-                                        ticket_permission = 3, role_id = @account.roles.agent.first.id)
+                                         permission, role_id = @account.roles.agent.first.id)
+  end
+
+  def add_another_group_to_status
+    @another_internal_group = @account.groups.second
+    @status.group_ids = [@another_internal_group.id]
+    @status.save
+    @account.instance_variable_set(:@account_status_groups_from_cache, nil)
+  end
+
+  def add_agent_to_new_group
+    @another_internal_group.agent_groups.build(:user_id => @internal_agent.id)
+    @another_internal_group.save
   end
 
   def initialize_internal_agent_with_custom_internal_group

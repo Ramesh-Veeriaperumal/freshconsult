@@ -81,7 +81,8 @@
                 browseBtn: ".browse-btn, .moreinfo-lnk, .update, .update-iframe-settings",
                 activationSwitch: ".switch",
                 deleteBtn: ".delete-btn",
-                reauthorizeBtn: ".reauthorize-btn"
+                reauthorizeBtn: ".reauthorize-btn",
+                accApiPollInterval: "<%= MarketplaceConfig::ACCOUNT_API_POLL_INTERVAL %>"
               }
     var customMessages  = {
                             delete_success: "<%= I18n.t('marketplace.delete_action.success') %>",
@@ -89,6 +90,7 @@
                             api_error : "<%= I18n.t('marketplace.api_error') %>",
                             no_connection: "<%= I18n.t('marketplace.no_connection') %>"
                           };
+
     var marketplaceBrowser = new MarketplaceBrowser(settingsLinks, customMessages);
 
     marketplaceBrowser.toggleAppsMessage(marketplaceBrowser.getAppsLength() > 0 );

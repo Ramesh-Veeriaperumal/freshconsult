@@ -140,7 +140,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           user = create_new_user(account, from_email, email_config)
         else
           if user.blocked?
-            email_processing_log "Email Processing Failed: User is blocked!", to_email[:email]
+            email_processing_log "Email Processing Failed: User is been blocked!", to_email[:email]
             return processed_email_data(PROCESSED_EMAIL_STATUS[:user_blocked], account.id)
           end
           text_part
@@ -497,19 +497,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         email_processing_log "You have exceeded the limit of #{TicketConstants::MAX_EMAIL_COUNT} cc emails for the ticket"
         return processed_email_data(PROCESSED_EMAIL_STATUS[:max_email_limit], account.id)
       end
-      ticket = Helpdesk::Ticket.new(
-        :account_id => account.id,
-        :subject => params[:subject],
-        :ticket_body_attributes => {:description => tokenize_emojis(params[:text]) || "",
-                          :description_html => cleansed_html || ""},
-        :requester => user,
-        :to_email => to_email[:email],
-        :to_emails => to_emails,
-        :cc_email => {:cc_emails => global_cc, :fwd_emails => [], :bcc_emails => [], :reply_cc => global_cc, :tkt_cc => parse_cc_email },
-        :email_config => email_config,
-        :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
-        :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
-      )
+      ticket_params = build_ticket_params account, user, to_email, global_cc, email_config
+      ticket = Helpdesk::Ticket.new(ticket_params)
       ticket.sender_email = e_email[:email] || from_email[:email]
       ticket = check_for_chat_scources(ticket,from_email)
       ticket = check_for_spam(ticket)
@@ -555,6 +544,16 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
             # tags = archived_ticket.tags
             # add_ticket_tags(tags,ticket) unless tags.blank?
           end
+          if params[:migration_tags]
+            tags_hash = JSON.parse(params[:migration_tags])
+            if tags_hash.present?
+              tags_hash.each do |tag_name|
+                custom_tag = account.tags.find_by_name(tag_name)
+                custom_tag = account.tags.create(:name => tag_name) if custom_tag.nil?
+                ticket.tags << custom_tag 
+              end
+            end
+          end
           ticket.save_ticket!
           email_processing_log "Email Processing Successful: Email Successfully created as Ticket!!", to_email[:email]
           cleanup_attachments ticket
@@ -580,6 +579,28 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
       # ticket
       return processed_email_data(PROCESSED_EMAIL_STATUS[:success], account.id, ticket)
+    end
+
+    def build_ticket_params account, user, to_email, global_cc, email_config
+      ticket_params = {
+        :account_id => account.id,
+        :subject => params[:subject],
+        :ticket_body_attributes => {:description => tokenize_emojis(params[:text]) || "",
+                          :description_html => cleansed_html || ""},
+        :requester => user,
+        :to_email => to_email[:email],
+        :to_emails => parse_to_emails,
+        :cc_email => {:cc_emails => global_cc, :fwd_emails => [], :bcc_emails => [], :reply_cc => global_cc, :tkt_cc => parse_cc_email },
+        :email_config => email_config,
+        :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
+        :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
+      }
+      ticket_params.merge!({
+                  :created_at => params[:migration_internal_date].to_time,
+                  :updated_at => params[:migration_internal_date].to_time,
+                  :status => params[:migration_status]
+                  }) if (params[:migration_internal_date] && params[:migration_status])
+      ticket_params
     end
 
     def store_ticket_threading_info(account, message_id, ticket)
@@ -700,22 +721,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         email_processing_log "You have exceeded the limit of #{TicketConstants::MAX_EMAIL_COUNT} cc emails for the note"
         return processed_email_data(PROCESSED_EMAIL_STATUS[:max_email_limit], ticket.account.id)
       end
-      note = ticket.notes.build(
-        :private => (from_fwd_recipients or reply_to_private_note?(all_message_ids) or rsvp_to_fwd?(ticket, from_email, user)),
-        :incoming => true,
-        :note_body_attributes => {
-          :body => tokenize_emojis(body) || "",
-          :body_html => body_html || "",
-          :full_text => tokenize_emojis(full_text),
-          :full_text_html => full_text_html || ""
-          },
-        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"],
-        :user => user, #by Shan temp
-        :account_id => ticket.account_id,
-        :from_email => from_email[:email],
-        :to_emails => to_emails,
-        :cc_emails => cc_emails
-      )  
+      note_params = build_note_params ticket, from_email, user, from_fwd_recipients, body, body_html, full_text, full_text_html, cc_emails
+      note = ticket.notes.build note_params
       note.subject = Helpdesk::HTMLSanitizer.clean(params[:subject])   
       note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if (from_fwd_recipients or ticket.agent_performed?(user) or rsvp_to_fwd?(ticket, from_email, user))
       
@@ -770,7 +777,31 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       # note
       return processed_email_data(PROCESSED_EMAIL_STATUS[:success], note.account_id, note)
     end
-    
+
+    def build_note_params ticket, from_email, user, from_fwd_recipients, body, body_html, full_text, full_text_html, cc_emails
+      note_params = {
+        :private => (from_fwd_recipients or reply_to_private_note?(all_message_ids) or rsvp_to_fwd?(ticket, from_email, user)),
+        :incoming => true,
+        :note_body_attributes => {
+          :body => tokenize_emojis(body) || "",
+          :body_html => body_html || "",
+          :full_text => tokenize_emojis(full_text),
+          :full_text_html => full_text_html || ""
+         },
+        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"],
+        :user => user, #by Shan temp
+        :account_id => ticket.account_id,
+        :from_email => from_email[:email],
+        :to_emails => parse_to_emails,
+        :cc_emails => cc_emails
+      }
+      note_params.merge!({
+              :created_at => params[:migration_internal_date].to_time,
+              :updated_at => params[:migration_internal_date].to_time
+              }) if params[:migration_internal_date]
+      note_params
+    end
+
     def rsvp_to_fwd?(ticket, from_email, user)
       @rsvp_to_fwd ||= ((Account.current.features?(:threading_without_user_check) || (!ticket.cc_email.nil? && !ticket.cc_email[:cc_emails].nil? && ticket.cc_email[:cc_emails].include?(from_email[:email])) || user.agent?) && reply_to_forward(all_message_ids))
     end
@@ -851,6 +882,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
             end
           end
         end
+      else
+        email_processing_log "Can't create new user for #{from_email.inspect}"
       end
       user
     end
@@ -888,14 +921,14 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           content_id = content_ids["attachment#{i+1}"] && 
                         verify_inline_attachments(item, content_ids["attachment#{i+1}"])
           att = Helpdesk::Attachment.create_for_3rd_party(account, item, 
-                  params["attachment#{i+1}"], i, content_id, true)
-          if att.is_a? Helpdesk::Attachment
+                  params["attachment#{i+1}"], i, content_id, true) unless virus_attachment?(params["attachment#{i+1}"], account)
+          if att && (att.is_a? Helpdesk::Attachment)
             if content_id && !att["content_file_name"].include?(".svg")
               content_id_hash[att.content_file_name+"#{inline_count}"] = content_ids["attachment#{i+1}"]
               inline_count+=1
-              inline_attachments.push att unless virus_attachment?(params["attachment#{i+1}"], account)
+              inline_attachments.push att
             else
-              attachments.push att unless  virus_attachment?(params["attachment#{i+1}"], account)
+              attachments.push att
             end
           end
         rescue HelpdeskExceptions::AttachmentLimitException => ex
@@ -1173,9 +1206,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     data = { :account_id => account_id, :processed_status => processed_status }
     if processed_status == PROCESSED_EMAIL_STATUS[:success] && model.present?
       if model.class.name.include?("Ticket")
-        data.merge!(:ticket_id => model.id, :type => PROCESSED_EMAIL_TYPE[:ticket], :note_id => "-1", :article_id => "-1") # check with nil values
+        data.merge!(:ticket_id => model.id, :type => PROCESSED_EMAIL_TYPE[:ticket], :note_id => "-1", :article_id => "-1", :display_id => model.display_id) # check with nil values
       elsif model.class.name.include?("Note")
         data.merge!(:ticket_id => model.notable_id, :note_id => model.id, :type => PROCESSED_EMAIL_TYPE[:note], :article_id => "-1")
+        data.merge!(:display_id => model.notable.display_id) unless model.notable.nil?
       elsif model.class.name.include?("Article")
         data.merge!(:article_id => model.id, :type => PROCESSED_EMAIL_TYPE[:article], :ticket_id => "-1", :note_id => "-1")
       end

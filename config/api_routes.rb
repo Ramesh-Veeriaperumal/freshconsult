@@ -58,6 +58,10 @@ Helpkit::Application.routes.draw do
     end
     resources :groups, as: 'api_groups', controller: 'api_groups', except: [:new, :edit]
 
+    namespace :api_search, path: 'search' do
+      resources :tickets, only: [:index]
+    end
+
     resources :contacts, as: 'api_contacts', controller: 'api_contacts', except: [:new, :edit] do
       member do
         put :make_agent

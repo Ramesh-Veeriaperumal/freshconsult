@@ -91,7 +91,11 @@ api_error_messages:
   language_not_allowed: "Language given in the request URL (%{code}) is not found. Allowed languages are %{list}"
   agent_roles_and_scope_error: 'You cannot edit your own roles & ticket scopes'
   action_restricted: "Cannot perform '%{action}' when %{reason}"
+  query_format_invalid: "Given query is invalid, expected format \"keyword1:value1 OPERATOR keyword2:value2 OPERATOR keyword3:'value with space'\". Space is mandatory between key/value pair and operator. Please check the paranthesis if there are any."
   cannot_set_pending_since: "It cannot be set, when created_at and updated_at are not set or status is not pending"
   duplicate_companies: "One or more duplicate company_ids found"
   cant_add_primary_resource_to_others: "Cannot add %{resource} to %{attribute} since it is %{status}"
   invalid_company_id: "There is no record matching the id %{company_id}"
+  wrong_internal_agent: "Internal Agent does not belong to the specified Group"
+  wrong_internal_group: "Internal group does not belong to the given status of the ticket"
+  

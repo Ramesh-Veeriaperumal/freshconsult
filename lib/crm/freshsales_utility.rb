@@ -163,8 +163,10 @@ class CRM::FreshsalesUtility
 
     def admin_basic_info
       data = @account.account_configuration.contact_info.slice(*ADMIN_BASIC_INFO_KEYS)
+      data[:company] = account_basic_info
       data[:last_name]||= @account.admin_first_name
       data[:work_number] = @account.admin_phone
+      data[:custom_field] = { cf_domain_name: @account.full_domain }
       data.merge!(@source_and_campaign_info) if @source_and_campaign_info
       data
     end
@@ -229,8 +231,6 @@ class CRM::FreshsalesUtility
           cf_account_id:  @account.id, cf_domain_name: @account.full_domain, cf_reputation_score: @account.ehawk_reputation_score
         }
       })
-      lead_attrs[:company] = account_basic_info
-
       acc_metrics = account_metrics
       subscription_attrs = new_lead_subscription_params
 
@@ -250,7 +250,8 @@ class CRM::FreshsalesUtility
           cf_plan: SubscriptionPlan.find_by_id(@subscription[:subscription_plan_id]).try(:name),
           cf_customer_status: CUSTOMER_STATUS[@subscription[:state].to_sym],
           cf_domain_name: @account.full_domain,
-          cf_signup_date: @subscription[:created_at].strftime("%Y-%m-%d")
+          cf_signup_date: @subscription[:created_at].strftime("%Y-%m-%d"),
+          cf_renewal_period: fetch_renewal_period.humanize
         }
       }
     end
@@ -362,7 +363,8 @@ class CRM::FreshsalesUtility
         deal_type_id: deal_type_id,
         custom_field: attributes[:custom_field].merge({ cf_account_id: @account.id, 
                                                         cf_customer_status: options[:customer_status],
-                                                        cf_presales_contact: NONE})
+                                                        cf_presales_contact: NONE,
+                                                        cf_renewal_period: fetch_renewal_period.humanize})
       })
 
       attributes.merge!({ contacts_added_list: [options[:contact_id]] }) if options[:contact_id]
@@ -396,6 +398,11 @@ class CRM::FreshsalesUtility
     end
 
     def convert_lead(lead, options={})
+      if lead[:custom_field][:cf_presales_contact].blank?
+        status, response = fs_update('lead', lead[:id], { custom_field: { cf_presales_contact: NONE } }) 
+        return [status, response] unless success_status?(status)
+      end
+
       data = { last_name: lead[:last_name], email: lead[:email], company: { name: lead[:company][:name] } }
 
       if options.present? && options[:deal_type].present? && options[:amount].present?
@@ -418,7 +425,9 @@ class CRM::FreshsalesUtility
       attributes[:custom_field].merge!({ cf_customer_status: options[:customer_status] }) if options[:customer_status].present?
       attributes[:custom_field].merge!({ cf_presales_contact: NONE }) if open_deal[:custom_field][:cf_presales_contact].blank?
 
-      attributes.merge!({ amount: options[:amount] }) if options[:amount].present?
+      attributes.merge!({ amount: options[:amount]}) if options[:amount].present?
+
+      attributes.merge!({cf_renewal_period: fetch_renewal_period.humanize})
 
       fs_update('deal', open_deal[:id], attributes)
     end
@@ -567,6 +576,10 @@ class CRM::FreshsalesUtility
     
     def success_status?(status)
       status.in?(SUCCESS_CODES)
+    end
+
+    def fetch_renewal_period
+      Billing::Subscription::BILLING_PERIOD[@account.subscription.renewal_period]
     end
 
 end

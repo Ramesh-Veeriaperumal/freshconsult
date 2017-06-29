@@ -124,15 +124,15 @@ class Helpdesk::Email::HandleTicket
         content_id = cid(i) && verify_inline_attachments(item, cid(i))
         att = Helpdesk::Attachment.create_for_3rd_party(account, item, 
                                                         email[:attached_items]["attachment-#{i+1}"], 
-                                                        i, content_id, true)
-        if att.is_a? Helpdesk::Attachment
+                                                        i, content_id, true) unless virus_attachment?(email[:attached_items]["attachment-#{i+1}"], account)
+        if att && (att.is_a? Helpdesk::Attachment)
 
           if content_id && !att["content_file_name"].include?(".svg")
             content_id_hash[att.content_file_name+"#{inline_count}"] = cid(i)
             inline_count+=1
-            inline_attachments.push att unless virus_attachment?(email[:attached_items]["attachment-#{i+1}"], account)
+            inline_attachments.push att 
           else
-            attachments.push att unless virus_attachment?(email[:attached_items]["attachment-#{i+1}"], account)
+            attachments.push att 
           end
         end
       rescue HelpdeskExceptions::AttachmentLimitException => ex

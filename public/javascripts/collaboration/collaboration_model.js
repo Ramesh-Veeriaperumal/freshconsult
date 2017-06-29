@@ -105,11 +105,10 @@ App.CollaborationModel = (function ($) {
         },
         onMessageHandler: function(msg) {    
             // Rendering will be handled by addMessageHtml based on message Type
-            var is_open_collab_view = !!$("#collab-sidebar.expand").length;
             var sent_by_me = (msg.s_id === Collab.currentUser.uid);
-            var msg_for_opend_collab = (!!Collab.currentConversation && msg.co_id === Collab.currentConversation.co_id);
+            var msg_for_current_convo = (!!Collab.currentConversation && msg.co_id === Collab.currentConversation.co_id);
 
-            if(is_open_collab_view && msg_for_opend_collab && !sent_by_me) {
+            if(msg_for_current_convo && !sent_by_me) {
                 msg.incremental = true;
                 App.CollaborationUi.addMessageHtml(msg, CONST.TYPE_RECEIVED);
             }

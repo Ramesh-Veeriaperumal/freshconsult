@@ -188,6 +188,10 @@ class User < ActiveRecord::Base
     (self.external_id && self.external_id =~ /\Afbay-/) ? true : false
   end
 
+  def has_edit_access?(user_id)
+    account.agent_groups.permissible_user(self.accessible_groups.pluck(:id), user_id).exists?
+  end
+
   class << self # Class Methods
     #Search display
     def search_display(user)

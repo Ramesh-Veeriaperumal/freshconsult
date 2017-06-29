@@ -17,6 +17,10 @@
             <a href="" data-url="<%= show_admin_marketplace_extensions_path(installation_details['extension_id']) %>?type=<%=Marketplace::Constants::DEFAULT_EXTENSION_TYPES %>" class="moreinfo-lnk plug-name show_btn">
               <%= extension_details['display_name'] %>
             </a>
+            <div class="mkp-prog hide" id="delete_prog_<%= installation_details['extension_id']%>">
+              <div class="mkp-prog-spinner"></div>
+              <div class="mkp-prog-text">Please wait...</div>
+            </div>
             <div class="plug-actions">
               <div class="switch-box pull-left <%= is_ni_integration ? 'hide tooltip' : '' %>" data-placement="below" data-original-title= "<%= t('marketplace.coming_soon') %>">
                 <% enabled_or_disabled_path = installation_details['enabled'] ? admin_marketplace_installed_extensions_disable_path(installation_details['extension_id']) : admin_marketplace_installed_extensions_enable_path(installation_details['extension_id']) %>
@@ -27,7 +31,7 @@
               <% if !is_ni_integration && extension_details['version_id'] != installation_details['version_id'] %>
                   <%= generate_mkp_update_button(extension_details) %>
               <% end %>
-              <% if installation_details['configs'] %>
+              <% if installation_details['configs'].present? %>
                 <% if is_ni_integration %>
                   <% if show_edit?(extension_details['name']) %>
                     <%= link_to "<span class='#{font_class('settings1', 16)}'></span>".html_safe, edit_integrations_marketplace_app_path(ERB::Util.url_encode(extension_details['name'])), :class => "btn btn-mini btn-settings tooltip", "data-placement" => "below", "data-original-title" => t('application.tooltip.settings') %>
@@ -47,7 +51,7 @@
                 </a>
               <% end %>
               <% delete_url = is_ni_integration ? uninstall_integrations_marketplace_app_path(ERB::Util.url_encode(extension_details['name'])) : admin_marketplace_installed_extensions_uninstall_path(installation_details['extension_id']) %>
-              <a href="#toggle-confirm" rel="freshdialog" class="btn btn-mini tooltip delete-btn" title="<%= t('integrations.uninstall') %>" data-placement="below" data-original-title="<%= t('integrations.uninstall') %>" data-width="600" data-close-on-submit="true" data-show-close="true" data-destroy-on-close="true"  data-url="<%= delete_url %>"  <% if extension_details['features'].present? && extension_details['features'].include?("db") %> data-delete-url="<%= data_pipe_path(:data_pipe => {"action" => "batchDelete"}, :format => :json)%>" data-mkp-route="<%= Marketplace::Constants::MKP_ROUTE[:db]%>" data-extn-id="<%= installation_details['extension_id']%>" data-version-id="<%=installation_details['version_id']%>" data-confirm-content=" <%= t('marketplace.confirm_data_lose')%> <%= t('marketplace.confirm_uninstall_message', :human_name => t('marketplace.app')) %>" <%end%> data-confirm-content=" <%= t('marketplace.confirm_uninstall_message', :human_name => t('marketplace.app')) %>"  data-close-label="<%= t('plain_no') %>" data-submit-label="<%= t('plain_yes') %>" data-submit-class="btn btn-primary delete-confirm" >
+              <a href="#toggle-confirm" rel="freshdialog" class="btn btn-mini tooltip delete-btn" title="<%= t('integrations.uninstall') %>" data-placement="below" data-original-title="<%= t('integrations.uninstall') %>" data-width="600" data-close-on-submit="true" data-show-close="true" data-destroy-on-close="true"  data-url="<%= delete_url %>" data-extn-id="<%= installation_details['extension_id']%>" <% if extension_details['features'].present? && extension_details['features'].include?("db") %> data-delete-url="<%= data_pipe_path(:data_pipe => {"action" => "batchDelete"}, :format => :json)%>" data-mkp-route="<%= Marketplace::Constants::MKP_ROUTE[:db]%>" data-extn-id="<%= installation_details['extension_id']%>" data-version-id="<%=installation_details['version_id']%>" data-confirm-content=" <%= t('marketplace.confirm_data_lose')%> <%= t('marketplace.confirm_uninstall_message', :human_name => t('marketplace.app')) %>" <%end%> data-confirm-content=" <%= t('marketplace.confirm_uninstall_message', :human_name => t('marketplace.app')) %>"  data-close-label="<%= t('plain_no') %>" data-submit-label="<%= t('plain_yes') %>" data-submit-class="btn btn-primary delete-confirm" >
                 <span class="<%= font_class('trash-o', 16) %>"></span>
               </a>
             </div>
@@ -57,5 +61,15 @@
       </div>
     </section>
   </li>
+  <script>
+    // if an app is still in 'uninstall_in_progress' state, poll again.
+    <% if is_uninstall_in_progress?(installation_details) %>
+      var el = jQuery("#delete_prog_<%= installation_details['extension_id'] %>");
+      el.closest('.list-box').addClass('disabled-app mkp-uninstall_in_progress');
+      el.siblings('.plug-actions').hide();
+      jQuery("#delete_prog_<%= installation_details['extension_id'] %> .mkp-prog-spinner").addClass('sloading loading-tiny');
+      el.show();
+    <% end %>
+  </script>
 
 <% end %>

@@ -8,7 +8,10 @@ json.set! :id, @item.display_id
 json.set! :type, @item.ticket_type
 json.set! :to_emails, @item.schema_less_ticket.to_emails
 json.set! :product_id, @item.schema_less_ticket.product_id
-
+if Account.current.shared_ownership_enabled?
+  json.set! :internal_group_id, @item.internal_group_id
+  json.set! :internal_agent_id, @item.internal_agent_id
+end
 json.set! :attachments do
   json.array! @item.attachments do |att|
     json.set! :id, att.id

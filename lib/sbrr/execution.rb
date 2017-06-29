@@ -1,6 +1,20 @@
 module SBRR
   class Execution
 
+    attr_reader :ticket
+
+    def self.enqueue _ticket, _args = {}
+      args = { 
+        :model_changes => _ticket.sbrr_model_changes, 
+        :ticket_id => _ticket.display_id, 
+        :skip_skill_remap => _ticket.ticket_update_skill_alone?, 
+        :attributes => _ticket.sbrr_attributes, 
+        :sbrr_state_attributes => _ticket.sbrr_state_attributes
+      }
+      args.merge!(_args)
+      SBRR::Execution.new args
+    end
+
   	def initialize args
       @args = args.deep_symbolize_keys
       SBRR.log @args.inspect
@@ -12,7 +26,7 @@ module SBRR
     def execute
       prep_up_ticket
       do_skill_based_round_robin
-      save_ticket if @ticket.changes.present?
+      save_ticket if !skip_save? && has_changes?
     rescue Exception => e
       SBRR.log @args.inspect
     ensure
@@ -27,6 +41,7 @@ module SBRR
       SBRR.log "Args: #{@args.inspect}"
       @ticket.model_changes = @args[:model_changes].symbolize_keys
       @ticket.attributes = @args[:attributes]
+      @ticket.sbrr_state_attributes = @args[:sbrr_state_attributes]
     end
 
     def do_skill_based_round_robin
@@ -43,8 +58,16 @@ module SBRR
     end
 
     def trigger_skill_based_round_robin
-      assigner_ticket = ticket_assigner.assign if @ticket.has_user_queue_changes?
-      user_assigner.assign if @ticket.has_ticket_queue_changes? && !skip_user_assigner?(assigner_ticket)
+      ticket_pull
+      ticket_push
+    end
+
+    def ticket_pull
+      @assigner_ticket = ticket_assigner.assign if @ticket.has_user_queue_changes?
+    end
+
+    def ticket_push
+      user_assigner.assign if @ticket.has_ticket_queue_changes? && !skip_user_assigner?(@assigner_ticket)
     end
 
     def sync_skill_based_queues
@@ -68,6 +91,10 @@ module SBRR
       SBRR::Assigner::User.new @ticket
     end
 
+    def skip_save?
+      @ticket.skip_sbrr_save
+    end
+
     def skip_assigner?
       @ticket.skip_sbrr_assigner
     end
@@ -79,6 +106,10 @@ module SBRR
 
     def skip_set_sbrr_log_nil?
       ["status_sla_toggled_to_on", "status_sla_toggled_to_off", "update_multiple_sync", "sbrr_turned_on_for_group"].include? @args[:options][:action]
+    end
+
+    def has_changes?
+      @ticket.changes.present?
     end
 
   end
