@@ -1,0 +1,15 @@
+type: object
+properties:
+  id:
+    type: integer
+  requester_id:
+    type: integer
+  responder_id:
+    type: integer
+  subject:
+    type: string
+  association_type:
+    type: integer
+    enum: [1,2,3,4]
+  status:
+    type: integer

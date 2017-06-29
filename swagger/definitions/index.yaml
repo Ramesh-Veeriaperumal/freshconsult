@@ -192,6 +192,8 @@
     $ref: ./response/tickets/watchers.yaml
   latest_note:
     $ref: './response/conversations/latest_note.yaml'
+  prime_association:
+    $ref: ./response/tickets/prime_association.yaml
   company_with_associations:
     $ref: './response/companies/list.yaml'
   contact_activity:

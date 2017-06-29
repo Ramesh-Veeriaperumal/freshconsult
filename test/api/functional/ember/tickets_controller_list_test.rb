@@ -116,7 +116,7 @@ module Ember
 
     def random_query_hash_params
       query_hash_params = {}
-      data_hash = filter_data_hash.delete_if {|k, v| v[1].nil? }
+      data_hash = filter_data_hash.delete_if { |k, v| v[1].nil? }
       counter = 1
       data_hash.keys.sample(rand(1..14)).each do |filter|
         val = data_hash[filter]
@@ -423,7 +423,7 @@ module Ember
     end
 
     def test_all_filters
-      data_hash = filter_data_hash.delete_if {|k, v| v[1].nil? }
+      data_hash = filter_data_hash.delete_if { |k, v| v[1].nil? }
       query_hash_params = {}
       counter = 1
       data_hash.each do |k, v|

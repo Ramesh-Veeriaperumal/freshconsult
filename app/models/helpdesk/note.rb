@@ -24,7 +24,7 @@ class Helpdesk::Note < ActiveRecord::Base
   #zero_downtime_migration_methods :methods => {:remove_columns => ["body", "body_html"] } 
   
   attr_accessor :nscname, :disable_observer, :send_survey, :include_surveymonkey_link, :quoted_text, 
-                :skip_notification, :changes_for_observer, :disable_observer_rule
+                :skip_notification, :changes_for_observer, :disable_observer_rule, :last_note_id
 
   attr_protected :attachments, :notable_id
 
@@ -62,6 +62,10 @@ class Helpdesk::Note < ActiveRecord::Base
     { :conditions => ["helpdesk_notes.id > ? ", last_note_id], 
       :order => "helpdesk_notes.created_at DESC"
     }
+  }
+
+  scope :created_since, lambda { |last_note_id, last_note_created_at|
+    { :conditions => ["helpdesk_notes.id != ? AND helpdesk_notes.created_at >= ?", last_note_id, last_note_created_at] }
   }
   
   scope :before, lambda { |first_note_id|
@@ -108,6 +112,7 @@ class Helpdesk::Note < ActiveRecord::Base
   validates :user, presence: true, if: -> {user_id.present?}
   validate :edit_broadcast_note, on: :update, :if => :broadcast_note?
 
+
   def edit_broadcast_note
     self.errors.add(:base, I18n.t('activerecord.errors.messages.edit_broadcast_note'))
   end
@@ -142,7 +147,6 @@ class Helpdesk::Note < ActiveRecord::Base
       { :conditions => ['`helpdesk_notes`.source <> ?', SOURCE_KEYS_BY_TOKEN[source]] }
     end
   end
-
 
   def status?
     source == SOURCE_KEYS_BY_TOKEN["status"]

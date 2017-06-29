@@ -403,6 +403,52 @@
         }
       }
     },
+    "/tickets/{id}/link": {
+      "put": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Link Ticket",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "required": [
+                "tracker_id"
+              ],
+              "properties": {
+                "tracker_id": {
+                  "type": "integer",
+                  "description": "Display ID of tracker ticket"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      }
+    },
     "/tickets/bulk_delete": {
       "put": {
         "tags": [
@@ -621,6 +667,43 @@
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/latest_note"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      }
+    },
+    "/tickets/{id}/prime_association": {
+      "get": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Prime Association",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "description": "Display ID of related/child ticket",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/prime_association"
+            }
+          },
+          "400": {
+            "description": "Bad request error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
             }
           },
           "403": {
@@ -950,6 +1033,12 @@
         ],
         "description": "Conversations",
         "parameters": [
+          {
+            "name": "since_id",
+            "in": "query",
+            "type": "number",
+            "description": "Conversation ID from which converations have to be fetched"
+          },
           {
             "$ref": "#/parameters/id"
           }
@@ -3649,6 +3738,9 @@
             },
             "private": {
               "type": "boolean"
+            },
+            "last_note_id": {
+              "type": "number"
             }
           }
         }
@@ -3729,6 +3821,9 @@
             },
             "send_survey": {
               "type": "boolean"
+            },
+            "last_note_id": {
+              "type": "number"
             }
           }
         }
@@ -3902,6 +3997,15 @@
               "type": "string"
             },
             "attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "parent_id": {
+              "type": "integer"
+            },
+            "related_ticket_ids": {
               "type": "array",
               "items": {
                 "type": "integer"
@@ -5271,6 +5375,18 @@
                 "is_escalated": {
                   "type": "boolean"
                 },
+                "association_type": {
+                  "type": "integer",
+                  "enum": [
+                    1,
+                    2,
+                    3,
+                    4
+                  ]
+                },
+                "associated_tickets_count": {
+                  "type": "integer"
+                },
                 "description_text": {
                   "type": "string"
                 },
@@ -5492,6 +5608,18 @@
                   },
                   "is_escalated": {
                     "type": "boolean"
+                  },
+                  "association_type": {
+                    "type": "integer",
+                    "enum": [
+                      1,
+                      2,
+                      3,
+                      4
+                    ]
+                  },
+                  "associated_tickets_count": {
+                    "type": "integer"
                   },
                   "description_text": {
                     "type": "string"
@@ -5742,6 +5870,35 @@
           }
         }
       ]
+    },
+    "prime_association": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "requester_id": {
+          "type": "integer"
+        },
+        "responder_id": {
+          "type": "integer"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "association_type": {
+          "type": "integer",
+          "enum": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "status": {
+          "type": "integer"
+        }
+      }
     },
     "company_with_associations": {
       "type": "object",

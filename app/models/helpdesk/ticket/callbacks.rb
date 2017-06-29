@@ -466,11 +466,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def validate_tracker_ticket
     @tracker_ticket = Account.current.tickets.find_by_display_id(tracker_ticket_id)
-    unless @tracker_ticket && @tracker_ticket.tracker_ticket? && !@tracker_ticket.spam_or_deleted? && self.can_be_associated?
-      errors.add(:base,t("ticket.link_tracker.permission_denied")) and return false
+    unless @tracker_ticket && @tracker_ticket.tracker_ticket? && !@tracker_ticket.spam_or_deleted? && can_be_associated?
+      errors.add(:tracker_id, t('ticket.link_tracker.permission_denied'))
+      return false
     end
-    if self.association_type && @tracker_ticket.associates.present? && links_limit_exceeded(@tracker_ticket.associates.count + 1)
-      errors.add(:base,t("ticket.link_tracker.count_exceeded",:count => TicketConstants::MAX_RELATED_TICKETS)) and return false
+    if association_type && @tracker_ticket.associates.present? && links_limit_exceeded(@tracker_ticket.associates.count + 1)
+      errors.add(:ticket, t('ticket.link_tracker.count_exceeded', count: TicketConstants::MAX_RELATED_TICKETS))
+      return false
     end
     self.associates_rdb = related_ticket? ? @tracker_ticket.display_id : nil
   end
@@ -512,9 +514,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def validate_assoc_parent_ticket
     @assoc_parent_ticket = Account.current.tickets.permissible(User.current).readonly(false).find_by_display_id(assoc_parent_tkt_id)
     if !(@assoc_parent_ticket && @assoc_parent_ticket.can_be_associated?)
-      errors.add(:base,t("ticket.parent_child.permission_denied")) and return false
+      errors.add(:parent_id, t('ticket.parent_child.permission_denied'))
+      return false
     elsif !@assoc_parent_ticket.child_tkt_limit_reached?
-      errors.add(:base,t("ticket.parent_child.count_exceeded",:count => TicketConstants::CHILD_TICKETS_PER_ASSOC_PARENT)) and return false
+      errors.add(:parent_id, t('ticket.parent_child.count_exceeded', count: TicketConstants::CHILD_TICKETS_PER_ASSOC_PARENT))
+      return false
     end
     self.associates_rdb = @assoc_parent_ticket.display_id
   end
@@ -660,7 +664,7 @@ private
     if agent_requester.present?
       self.requester = agent_requester
     else
-      errors.add(:base,t("ticket.tracker_agent_error"))
+      errors.add(:email, t('ticket.tracker_agent_error'))
     end
   end
 

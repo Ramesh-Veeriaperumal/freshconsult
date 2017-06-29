@@ -14,6 +14,8 @@
   $ref: ./tickets/unspam.yaml
 /tickets/{id}/execute_scenario:
   $ref: ./tickets/execute_scenario.yaml
+/tickets/{id}/link:
+  $ref: ./tickets/link.yaml
 /tickets/bulk_delete:
   $ref: ./tickets/bulk_delete.yaml
 /tickets/bulk_restore:
@@ -28,6 +30,8 @@
   $ref: ./tickets/bulk_update.yaml
 /tickets/{id}/latest_note:
   $ref: ./tickets/latest_note.yaml
+/tickets/{id}/prime_association:
+  $ref: ./tickets/prime_association.yaml
 /tickets/{id}/split_note:
   $ref: ./tickets/split_note.yaml
 /tickets/{id}/draft:

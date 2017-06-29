@@ -2,7 +2,7 @@ module TestCaseMethods
   include Redis::RedisKeys
   def parse_response(response)
     JSON.parse(response)
-    rescue
+  rescue
   end
 
   def skip_bullet
@@ -40,6 +40,19 @@ module TestCaseMethods
     Sidekiq::Testing.inline! do
       yield
     end
+  end
+
+  def enable_adv_ticketing(feature)
+    Account.current.launch feature
+    if block_given?
+      yield
+      Account.current.rollback feature
+    end
+  end
+
+  def disable_adv_ticketing(feature)
+    Account.current.revoke_feature feature
+    Account.current.rollback feature
   end
 
   def stub_current_account
@@ -111,7 +124,7 @@ module TestCaseMethods
     remove_wrap_params
 
     # Stringifying the values as controller params are going to be used as query params in only GET & PUT request.
-    params.each { |k, v| params[k] = v.is_a?(Array) ? v : "#{v}" } if query_string
+    params.each { |k, v| params[k] = v.is_a?(Array) ? v : v.to_s } if query_string
     request_params.merge(params)
   end
 
@@ -159,7 +172,7 @@ module TestCaseMethods
     PLAN_API_LIMIT % { plan_id: id.to_s }
   end
 
-  EOL = "\015\012"  # "\r\n"
+  EOL = "\015\012".freeze # "\r\n"
   # Encode params and image in multipart/form-data.
   def encode_multipart(params, image_param = nil, image_file_path = nil, content_type = nil, encoding = true)
     headers = {}

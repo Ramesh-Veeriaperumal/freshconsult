@@ -50,6 +50,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     asstn_obj_count if assoc_parent_ticket?
   end
 
+  def associated_tickets_count
+    (tracker_ticket? || assoc_parent_ticket?) ? asstn_obj_count : 0
+  end
+
   def validate_assoc_parent_tkt_status
     child_tkt_states = self.associated_subsidiary_tickets("assoc_parent").pluck(:status)
     child_tkt_states.present? and (child_tkt_states - [CLOSED, RESOLVED]).present?

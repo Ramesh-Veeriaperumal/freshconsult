@@ -22,6 +22,11 @@ module NoteHelper
     {:helpdesk_note => params}
   end
 
+  def create_public_note(ticket)
+    note = create_note(source: 2, ticket_id: ticket.id, user_id: @agent.id, body: Faker::Lorem.paragraph)
+    note.reload
+  end
+
   def create_private_note(ticket)
     note = create_note(source: 2, ticket_id: ticket.id, user_id: @agent.id, private: true, body: Faker::Lorem.paragraph)
     note.reload

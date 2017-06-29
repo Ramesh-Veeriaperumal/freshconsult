@@ -16,8 +16,8 @@ module Ember
     before_filter :disable_notification, only: [:update, :update_properties], if: :notification_not_required?
     after_filter  :enable_notification, only: [:update, :update_properties], if: :notification_not_required?
 
-    around_filter :run_on_db, :only => :index
-    around_filter :use_time_zone, :only => :index
+    around_filter :run_on_db, only: :index
+    around_filter :use_time_zone, only: :index
 
     def index
       sanitize_filter_params
@@ -25,7 +25,7 @@ module Ember
       return unless validate_delegator(nil, params)
       assign_filter_params
       super
-      response.api_meta = { count: @items_count } if count_included?
+      response.api_meta = { count: @items_count } if params[:only] == 'count' || count_included?
     end
 
     def create
@@ -116,6 +116,7 @@ module Ember
         assign_attachments
         assign_attributes_for_create if create?
         assign_ticket_status
+        assign_association_type
       end
 
       def assign_attachments
@@ -135,6 +136,14 @@ module Ember
         @item.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone] if @item.source === 0
       end
 
+      def assign_association_type
+        if cname_params[:related_ticket_ids].present?
+          @item.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]
+        elsif cname_params[:assoc_parent_tkt_id].present?
+          @item.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:child]
+        end
+      end
+
       def assign_attributes_for_update
         @item.assign_attributes(validatable_delegator_attributes)
         @item.assign_description_html(cname_params[:ticket_body_attributes]) if cname_params[:ticket_body_attributes]
@@ -142,7 +151,13 @@ module Ember
 
       def load_objects
         items = tickets_filter.preload(conditional_preload_options)
-        @items_count = optimized_count(items) if count_included?
+        if params[:only] == 'count'
+          @items_count = optimized_count(items)
+          @items = []
+          return
+        elsif count_included?
+          @items_count = optimized_count(items)
+        end
         @items = paginate_items(items)
       end
 
@@ -249,7 +264,7 @@ module Ember
       end
 
       def non_indexed_columns_query?
-        (wf_query_hash.collect {|q| q["condition"] } - (TicketConstants::DB_INDEXED_QUERY_COLUMNS + ['spam', 'deleted'])).count > 0
+        (wf_query_hash.collect { |q| q['condition'] } - (TicketConstants::DB_INDEXED_QUERY_COLUMNS + %w(spam deleted))).count > 0
       end
 
       def sanitize_filter_params
@@ -281,9 +296,9 @@ module Ember
       end
 
       def use_time_zone
-        Time.use_zone(TimeZone.set_time_zone) {
+        Time.use_zone(TimeZone.set_time_zone) do
           yield
-        }
+        end
       end
 
       def load_note
