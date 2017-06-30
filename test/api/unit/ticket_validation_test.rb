@@ -20,7 +20,7 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_mandatory
     Account.stubs(:current).returns(Account.first)
-    controller_params = { 'requester_id' => 1, description: Faker::Lorem.paragraph,  ticket_fields: [], statuses: statuses }
+    controller_params = { requester_id: 1, description: Faker::Lorem.paragraph,  ticket_fields: [], statuses: statuses }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     assert ticket.valid?(:create)
@@ -116,7 +116,7 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_fr_due_by_nil_and_due_by_nil_when_status_is_open
     Account.stubs(:current).returns(Account.first)
-    controller_params = { 'requester_id' => 1,  description: Faker::Lorem.paragraph,  ticket_fields: [], statuses: statuses, status: 2, due_by: nil, fr_due_by: nil }
+    controller_params = { requester_id: 1,  description: Faker::Lorem.paragraph,  ticket_fields: [], statuses: statuses, status: 2, due_by: nil, fr_due_by: nil }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     assert ticket.valid?(:create)
@@ -125,7 +125,7 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_fr_due_by_not_nil_and_due_by_not_nil_when_status_is_closed
     Account.stubs(:current).returns(Account.first)
-    controller_params = { 'requester_id' => 1,  description: Faker::Lorem.paragraph,  ticket_fields: [], statuses: statuses, status: 5, due_by: '', fr_due_by: '' }.with_indifferent_access
+    controller_params = { requester_id: 1,  description: Faker::Lorem.paragraph,  ticket_fields: [], statuses: statuses, status: 5, due_by: '', fr_due_by: '' }.with_indifferent_access
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)
@@ -274,6 +274,7 @@ class TicketValidationTest < ActionView::TestCase
     ticket_validation = TicketValidation.new(controller_params, item)
     assert ticket_validation.valid?(:update)
     Account.unstub(:current)
+  end
 
   def test_valid_params_when_shared_ownership_enabled_ownership_enabled
     Account.stubs(:current).returns(Account.first)
