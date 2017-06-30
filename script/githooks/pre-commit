@@ -66,13 +66,11 @@ do
     currentLine=$changedLineStart
     if [ "$noOfLines" == "" ]; then noOfLines=0; fi
     if [ $noOfLines -eq 0 ]; then
-      echo "$currentFileName:$currentLine"
-      echo "$currentFileName:$currentLine" >> $changedLinesFile
+      echo "$currentFileName:$currentLine:" >> $changedLinesFile
     else
       while [ $noOfLines -gt 0 ]
       do
-        echo "$currentFileName:$currentLine"
-        echo "$currentFileName:$currentLine" >> $changedLinesFile
+        echo "$currentFileName:$currentLine:" >> $changedLinesFile
         currentLine=`expr $currentLine + 1`
         noOfLines=`expr $noOfLines - 1`
       done
