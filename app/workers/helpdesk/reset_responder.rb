@@ -52,7 +52,8 @@ class Helpdesk::ResetResponder < BaseWorker
 
   def trigger_sbrr ticket
     ticket.sbrr_fresh_ticket = true
-    args = {:model_changes => {}, :ticket_id => ticket.display_id, :attributes => ticket.sbrr_attributes, :options => {:action => "reset_responder", :jid => self.jid}}
-    SBRR::Execution.new(args).execute if ticket.eligible_for_round_robin?
+    #args = {:model_changes => {}, :ticket_id => ticket.display_id, :attributes => ticket.sbrr_attributes, :sbrr_state_attributes => ticket.sbrr_state_attributes, :options => {:action => "reset_responder", :jid => self.jid}}
+    args = {:model_changes => {}, :options => {:action => "reset_responder", :jid => self.jid}}
+    SBRR::Execution.enqueue(ticket, args).execute if ticket.eligible_for_round_robin?
   end
 end

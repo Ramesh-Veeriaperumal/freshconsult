@@ -443,9 +443,9 @@ class AccountsController < ApplicationController
 
     def add_to_crm(account_id)
       if (Rails.env.production? or Rails.env.staging?)
-        Resque.enqueue_at(15.minute.from_now, Marketo::AddLead, { :account_id => account_id,
+        Resque.enqueue_at(3.minute.from_now, Marketo::AddLead, { :account_id => account_id,
           :signup_id => params[:signup_id]})
-        Resque.enqueue_at(15.minute.from_now, CRM::Freshsales::Signup, { account_id: account_id,
+        Resque.enqueue_at(5.minute.from_now, CRM::Freshsales::Signup, { account_id: account_id,
          fs_cookie: params[:fs_cookie] })
       end  
     end  

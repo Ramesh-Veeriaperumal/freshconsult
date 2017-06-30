@@ -5,11 +5,11 @@
 <tr class="ticket-status-<%= ticket.status %> " data-ticket="<%= ticket.display_id %>"
 	data-association="<%= ticket.association_type || ticket.parent_ticket.present? if (current_account.link_tkts_enabled? || current_account.parent_child_tkts_enabled?) %>">
   <td class="priority-border priority-<%=ticket.priority_key%>"></td>
-  	<% unless collab_filter_enabled_for?(@current_view) %>
-	    <td class="check">
-	    	<input class="selector mousetrap" id="ids_" name="ids[]" type="checkbox" value="<%=ticket.to_param%>" data-ticket-status="<%= ticket.status %> ">
-	    </td>
-	  <% end %>
+	<% unless collab_filter_enabled_for?(@current_view) %>
+		<td class="check">
+			<input class="selector mousetrap" id="ids_" name="ids[]" type="checkbox" value="<%=ticket.to_param%>" data-ticket-status="<%= ticket.status %> ">
+		</td>
+	<% end %>
   <% unless user_page %>
 		<td class="userpic">
 			<div class="hideForList">
@@ -26,8 +26,13 @@
   <td class="name td-ticket-details <%= 'user-page' if user_page %>">
 		<div class="ticket_subject">
 			<span class="sc-item-cursor priority-border  priority-<%=ticket.priority_key%> shorcuts-info"></span>
-			<h3 class="ticket-description-tip <%= ticket_style %>_ticket break-word" data-tip-url="<%= latest_note_helpdesk_ticket_url(ticket) %>">
-				<%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "ticket_id"), ticket, "data-pjax" => "#body-container" ) %>
+			<h3 class="ticket-description-tip <%= ticket_style %>_ticket break-word" data-tip-url="<%= collab_filter_with_group_collab_for?(@current_view) ? latest_note_collab_ticket_url(ticket.display_id) : latest_note_helpdesk_ticket_url(ticket.display_id) %>">
+
+				<% if collab_filter_with_group_collab_for?(@current_view) %>
+					<%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "ticket_id"), collab_ticket_url(ticket.display_id), "data-pjax" => "#body-container" ) %>
+				<% else %>
+					<%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "ticket_id"), ticket, "data-pjax" => "#body-container" ) %>
+				<% end %>
 
 				<% if (feature?(:agent_collision) || feature?(:collision)) %>
 					<div class="index-collision">
@@ -96,14 +101,14 @@
 					<% unless collab_filter_enabled_for?(@current_view) %>
 						<a href="javascript:void(0)" class="result"><%=t('ticket.assigned_none')%></a>
 					<% else %>
- 						<span class="result"><%=t('ticket.assigned_none')%></span>
- 					<% end %>
+						<span class="result"><%=t('ticket.assigned_none')%></span>
+					<% end %>
 				<% else %>
 					<% unless collab_filter_enabled_for?(@current_view) %>
 						<a href="javascript:void(0)" class="result"><%=h(ticket.responder.display_name)%></a>
 					<% else %>
- 						<span class="result"><%=h(ticket.responder.display_name)%></span>
- 					<% end %>
+						<span class="result"><%=h(ticket.responder.display_name)%></span>
+					<% end %>	
 				<% end %>
 			</li>
 
@@ -113,8 +118,8 @@
 				<% unless collab_filter_enabled_for?(@current_view) %>
 					<a href="javascript:void(0)" class="result"><%= h(ticket.status_name.html_safe) %></a>
 				<% else %>
- 					<span class="result"><%= h(ticket.status_name.html_safe) %></span>
- 				<% end %>
+					<span class="result"><%= h(ticket.status_name.html_safe) %></span>
+				<% end %>
 			</li>
 
 			<li class="<%= quick_action unless modal %>" title="<%= 'Change Priority' unless modal %>"
@@ -123,8 +128,8 @@
 				<% unless collab_filter_enabled_for?(@current_view) %>
 					<a href="javascript:void(0)" class="result"><%= h(ticket.priority_name) %></a>
 				<% else %>
- 					<span class="result"><%= h(ticket.priority_name) %></span>
- 				<% end %>
+					<span class="result"><%= h(ticket.priority_name) %></span>
+				<% end %>
 			</li>
 		</ul>
   </td>

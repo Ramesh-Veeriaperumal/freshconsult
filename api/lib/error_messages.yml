@@ -111,6 +111,7 @@ api_error_messages:
   invalid_image_file: "Invalid file type(%{current_extension}). Please upload a jpg or png or gif or svg file"
   shorter_full_text: "Content of full text should be greater than that of body"
   invalid_full_text: "Content of full text is different from that of body"
+  query_format_invalid: "Given query is invalid, expected format \"keyword1:value1 OPERATOR keyword2:value2 OPERATOR keyword3:'value with space'\". Space is mandatory between key/value pair and operator. Please check the paranthesis if there are any."
   cannot_set_pending_since: "It cannot be set, when created_at and updated_at are not set or status is not pending"
   duplicate_companies: "One or more duplicate company_ids found"
   cant_add_primary_resource_to_others: "Cannot add %{resource} to %{attribute} since it is %{status}"
@@ -120,3 +121,5 @@ api_error_messages:
   installed_application_id_required: "Installed application id required"
   user_id_required: "User Id required"
   ticket_id_required: "Ticket id required"
+  wrong_internal_agent: "Internal Agent does not belong to the specified Group"
+  wrong_internal_group: "Internal group does not belong to the given status of the ticket"

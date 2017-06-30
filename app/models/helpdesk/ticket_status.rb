@@ -292,9 +292,9 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   def set_sla_toggled_and_enqueue_sbrr ticket
     ticket.status_sla_toggled_to = TicketConstants::STATUS_SLA_TOGGLED_TO[stop_sla_timer]
     ticket.skip_sbrr_assigner = true
-    args = {:model_changes => {}, :ticket_id => ticket.display_id, :attributes => ticket.sbrr_attributes, :options => {:action => "status_sla_toggled_to_#{ticket.status_sla_toggled_to}"}}
+    args = {:model_changes => {}, :options => {:action => "status_sla_toggled_to_#{ticket.status_sla_toggled_to}"}}
     Sharding.run_on_master do
-      SBRR::Execution.new(args).execute if ticket.enqueue_sbrr_job?
+      SBRR::Execution.enqueue(ticket, args).execute if ticket.enqueue_sbrr_job?
     end
   end
 

@@ -135,6 +135,7 @@ class Helpdesk::Note < ActiveRecord::Base
       add_client_manager_cc if performed_by_client_manager?
       # notable.cc_email_will_change! if notable_cc_email_updated?(@prev_cc_email, notable.cc_email)
       notable.trigger_cc_changes(@prev_cc_email)
+      notable.skip_sbrr = true #to skip sbrr on note creation. make sure not to pass this to update_ticket_states worker
       notable.save
     end
 
@@ -164,8 +165,6 @@ class Helpdesk::Note < ActiveRecord::Base
           Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {}) unless notable.spam?
         end
 
-        integrations_private_note_notifications unless replied_by_customer?
-
       else
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)  
         #notify the agents only for notes
@@ -181,11 +180,6 @@ class Helpdesk::Note < ActiveRecord::Base
         end
         # notable.responder ||= self.user unless private_note? # Added as a default observer rule
       end
-    end
-
-    def integrations_private_note_notifications(internal_notification = false)
-      Helpdesk::TicketNotifier.send_later(:notify_by_email, (EmailNotification::NOTIFY_COMMENT),
-              notable, self, {:internal_notification => internal_notification})
     end
 
     def send_requester_replied_notification(internal_notification = false)
@@ -323,7 +317,7 @@ class Helpdesk::Note < ActiveRecord::Base
     # VA - Observer Rule 
     def update_observer_events
       return if user.nil? || !human_note_for_ticket? || feedback? || !(notable.instance_of? Helpdesk::Ticket) || broadcast_note? || disable_observer_rule
-      if replied_by_customer?  || replied_by_agent?
+      if replied_by_customer? || replied_by_agent?
         @model_changes = {:reply_sent => :sent}
       else
         @model_changes = {:note_type => NOTE_TYPE[private]}
@@ -342,7 +336,7 @@ class Helpdesk::Note < ActiveRecord::Base
     def replied_by_customer?
       # Added the private note check when agent as a requester adds a private note should not trigger the observer rule
       # (Should behave as a private note)
-      (user.customer? && (public_note? || (tweet? || fb_note?))) || (notable.agent_as_requester?(user.id) && (public_note? || email?))
+      (user.customer? || (notable.agent_as_requester?(user.id) && (public_note? || email?)))
     end
 
     def replied_by_agent?

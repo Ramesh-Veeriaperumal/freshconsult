@@ -56,7 +56,12 @@ class UserDrop < BaseDrop
 
 	# To access User's company details
 	def company
-		@company ||= @source.company if @source.company
+		return @company if instance_variable_defined?("@company")
+		@company = @source.company
+		if @company			
+			@company.escape_liquid_attributes = @source.escape_liquid_attributes
+			@company
+		end
 	end
 
 	def formatted_timezone

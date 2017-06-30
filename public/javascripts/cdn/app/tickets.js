@@ -22,3 +22,4 @@
 //= require app/sentiment.js
 //= require app/ticket_filter_views.js
 //= require app/link_tickets.js
+//= require app/collab_ticket_details.js

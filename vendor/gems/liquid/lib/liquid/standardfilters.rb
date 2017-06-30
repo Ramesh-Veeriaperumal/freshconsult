@@ -25,8 +25,9 @@ module Liquid
       input.to_s.capitalize
     end
 
+    #For rails 4 port, convert to html_escape_once
     def escape(input)
-      CGI.escapeHTML(input) rescue input
+      html_escape(input) rescue input
     end
 
     def escape_once(input)
