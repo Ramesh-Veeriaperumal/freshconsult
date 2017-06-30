@@ -7145,6 +7145,7 @@ en:
       comment: "Comment"
       rating: "Rating"
       skill: "Skill"
+      contact_id: "Contact Id"
     call_history:
       info:
         success: We have started exporting your call records. It will be mailed to you once completed.
