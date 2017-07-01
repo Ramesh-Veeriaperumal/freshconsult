@@ -11,7 +11,7 @@ class Ryuken::SearchPoller
 
   def perform(sqs_msg, args)
     begin
-      if sqs_msg.attributes["SentTimestamp"]
+      if sqs_msg.try(:attributes).try(:[],"SentTimestamp")
         args["subscriber_properties"]["search"]["timestamps"] << sqs_msg.attributes["SentTimestamp"].to_i
       end
       args["subscriber_properties"]["search"]["timestamps"] << Search::Job.es_version/1000
