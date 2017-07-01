@@ -1,4 +1,5 @@
 require_relative '../../test_helper'
+['account_test_helper.rb', 'shared_ownership_test_helper'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 module Ember
   class TicketsControllerTest < ActionController::TestCase
     include TicketsTestHelper
@@ -7,6 +8,8 @@ module Ember
     include CompanyHelper
     include GroupHelper
     include QueryHashHelper
+    include AccountTestHelper
+    include SharedOwnershipTestHelper
 
     TAG_NAMES = Faker::Lorem.words(10).freeze
 
@@ -464,6 +467,144 @@ module Ember
       get :index, controller_params({ version: 'private' }.merge(filter_params))
       assert_response 200
       match_json(private_api_ticket_index_pattern(false, false, false, filter_params[:order_by], filter_params[:order_type]))
+    end
+
+    def test_tickets_shared_by_Internal_agent
+      enable_feature(:shared_ownership) do
+        initialize_internal_agent_with_default_internal_group
+
+        ticket1 = create_ticket({:status => @status.status_id, :internal_agent_id => @internal_agent.id,
+                                 :responder_id => @responding_agent.id}, nil, @internal_group)
+        ticket2 = create_ticket({:status => 2, :responder_id => @responding_agent.id})
+        login_as(@responding_agent)
+        get :index, controller_params(version: 'private', filter: 'shared_by_me')
+
+        assert_match /#{ticket1.subject}/, response.body
+        assert_no_match /#{ticket2.subject}/, response.body
+
+      end
+    end
+
+    def test_tickets_shared_with_Internal_agent
+      enable_feature(:shared_ownership) do
+        initialize_internal_agent_with_default_internal_group
+
+        ticket1 = create_ticket({:status => @status.status_id, :internal_agent_id => @internal_agent.id,
+                                 :responder_id => @responding_agent.id}, nil, @internal_group)
+        ticket2 = create_ticket({:status => 2, :responder_id => @internal_agent.id})
+
+        login_as(@internal_agent)
+
+        get :index, controller_params(version: 'private', filter: 'shared_with_me')
+
+        assert_match /#{ticket1.subject}/, response.body
+        assert_no_match /#{ticket2.subject}/, response.body
+      end
+    end
+
+    def test_filter_by_internal_agent_with_agent
+      enable_feature(:shared_ownership) do
+        initialize_internal_agent_with_default_internal_group
+
+        ticket = create_ticket({:status => @status.status_id, :internal_agent_id => @internal_agent.id,
+                                :responder_id => @responding_agent.id}, nil, @internal_group)
+        query_hash_params = {'0' => query_hash_param('internal_agent_id', 'is_in', [@internal_agent.id])}
+        get :index, controller_params({version: 'private', query_hash: query_hash_params}, false)
+
+        assert_match /#{ticket.subject}/, response.body
+      end
+    end
+
+    def test_filter_by_internal_group_with_group
+      enable_feature(:shared_ownership) do
+        initialize_internal_agent_with_default_internal_group
+
+        ticket = create_ticket({:status => @status.status_id, :internal_agent_id => @internal_agent.id,
+                                :responder_id => @responding_agent.id}, nil, @internal_group)
+
+
+        query_hash_params = {'0' => query_hash_param('internal_group_id', 'is_in', [@internal_group.id])}
+        get :index, controller_params({version: 'private', query_hash: query_hash_params}, false)
+
+        assert_match /#{ticket.subject}/, response.body
+      end
+    end
+
+    def test_filter_by_any_agent_with_agent
+      enable_feature(:shared_ownership) do
+        initialize_internal_agent_with_default_internal_group
+
+        ticket = create_ticket({:status => @status.status_id, :internal_agent_id => @internal_agent.id,
+                                :responder_id => @responding_agent.id}, nil, @internal_group)
+
+        query_hash_params = {'0' => query_hash_param('any_agent_id', 'is_in', [@internal_agent.id])}
+        get :index, controller_params({version: 'private', query_hash: query_hash_params}, false)
+
+        assert_match /#{ticket.subject}/, response.body
+      end
+    end
+
+    def test_filter_by_any_group_with_group
+      enable_feature(:shared_ownership) do
+        initialize_internal_agent_with_default_internal_group
+
+        ticket = create_ticket({:status => @status.status_id, :internal_agent_id => @internal_agent.id,
+                                :responder_id => @responding_agent.id}, nil, @internal_group)
+
+        query_hash_params = {'0' => query_hash_param('any_group_id', 'is_in', [@internal_group.id])}
+        get :index, controller_params({version: 'private', query_hash: query_hash_params}, false)
+
+        assert_match /#{ticket.subject}/, response.body
+      end
+    end
+
+    def test_filter_by_internal_agent_and_internal_group_with_agent_and_group
+      enable_feature(:shared_ownership) do
+        initialize_internal_agent_with_default_internal_group
+
+        ticket1 = create_ticket({:status => @status.status_id, :internal_agent_id => @internal_agent.id,
+                                 :responder_id => @responding_agent.id}, nil, @internal_group)
+        ticket2 = create_ticket({:status => 2, :responder_id => @internal_agent.id}, group = @internal_group)
+
+        query_hash_params = {'0' => query_hash_param('internal_agent_id', 'is_in', [@internal_agent.id]),
+                             '1' => query_hash_param('internal_group_id', 'is_in', [@internal_group.id])}
+        get :index, controller_params({version: 'private', query_hash: query_hash_params}, false)
+        assert_match /#{ticket1.subject}/, response.body
+        assert_no_match /#{ticket2.subject}/, response.body
+      end
+    end
+
+    def test_filter_by_any_agent_and_any_group_with_agent_and_group
+      enable_feature(:shared_ownership) do
+        initialize_internal_agent_with_default_internal_group
+
+        ticket1 = create_ticket({:status => @status.status_id, :internal_agent_id => @internal_agent.id,
+                                 :responder_id => @responding_agent.id}, nil, @internal_group)
+        ticket2 = create_ticket({:status => 2, :responder_id => @internal_agent.id}, group = @internal_group)
+
+        query_hash_params = {'0' => query_hash_param('any_agent_id', 'is_in', [@internal_agent.id]),
+                             '1' => query_hash_param('any_group_id', 'is_in', [@internal_group.id])}
+        get :index, controller_params({version: 'private', query_hash: query_hash_params}, false)
+
+        assert_match /#{ticket1.subject}/, response.body
+        assert_match /#{ticket2.subject}/, response.body
+      end
+    end
+
+    def test_filter_by_any_agent_and_any_group_with_agent
+      enable_feature(:shared_ownership) do
+        initialize_internal_agent_with_default_internal_group
+
+        ticket1 = create_ticket({:status => @status.status_id, :internal_agent_id => @internal_agent.id,
+                                 :responder_id => @responding_agent.id}, nil, @internal_group)
+        ticket2 = create_ticket({:status => 2, :responder_id => @responding_agent.id}, group = @internal_group)
+
+        query_hash_params = {'0' => query_hash_param('any_agent_id', 'is_in', [@internal_agent.id])}
+        get :index, controller_params({version: 'private', query_hash: query_hash_params}, false)
+
+        assert_match /#{ticket1.subject}/, response.body
+        assert_no_match /#{ticket2.subject}/, response.body
+      end
     end
 
     # Tickets list without any filter and query_hash should get all tickets without created_at limit

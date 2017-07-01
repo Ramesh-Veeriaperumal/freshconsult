@@ -1,8 +1,9 @@
 class TicketDecorator < ApiDecorator
   delegate :ticket_body, :custom_field_via_mapping, :cc_email, :email_config_id, :fr_escalated, :group_id, :priority,
            :requester_id, :responder, :responder_id, :source, :spam, :status, :subject, :display_id, :ticket_type,
-           :schema_less_ticket, :deleted, :due_by, :frDueBy, :isescalated, :description, :association_type, :associated_tickets_count,
-           :description_html, :tag_names, :internal_agent_id, :internal_group_id, :attachments, :attachments_sharable, :company_id, :cloud_files, :ticket_states, to: :record
+           :schema_less_ticket, :deleted, :due_by, :frDueBy, :isescalated, :description,
+           :internal_group_id , :internal_agent_id, :association_type, :associated_tickets_count,
+           :description_html, :tag_names, :attachments, :attachments_sharable, :company_id, :cloud_files, :ticket_states, to: :record
 
   def initialize(record, options)
     super(record)
@@ -126,6 +127,14 @@ class TicketDecorator < ApiDecorator
     }
   end
 
+  def shared_ownership_hash
+    return {} unless Account.current.shared_ownership_enabled?
+    {
+      internal_agent_id: internal_agent_id,
+      internal_group_id: internal_group_id
+    }
+  end
+
   def ticket_topic
     return unless forums_enabled? && record.ticket_topic.present?
     topic = record.topic
@@ -164,7 +173,8 @@ class TicketDecorator < ApiDecorator
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc)
     }
-    [hash, feedback_hash].inject(&:merge)
+    [hash, feedback_hash , shared_ownership_hash].inject(&:merge)
+
   end
 
   def to_search_hash

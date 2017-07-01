@@ -38,9 +38,11 @@ module TicketHelper
       test_ticket.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:child]
       test_ticket.assoc_parent_tkt_id = params[:assoc_parent_id]
     end
-    test_ticket.internal_agent_id = params[:internal_agent_id] if params[:internal_agent_id]
+    if @account.shared_ownership_enabled?
+      test_ticket.internal_agent_id = params[:internal_agent_id] if params[:internal_agent_id]
+      test_ticket.internal_group_id = internal_group ? internal_group.id : nil
+    end
     test_ticket.group_id = group ? group.id : nil
-    test_ticket.internal_group_id = internal_group ? internal_group.id : nil
     test_ticket.save_ticket
     test_ticket
   end

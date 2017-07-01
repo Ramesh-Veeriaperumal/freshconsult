@@ -6,9 +6,19 @@ module CustomFilterConstants
   INDEX_FIELDS = [:name, :order_by, :order_type, :per_page, :query_hash, visibility: [:visibility, :group_id]].freeze
 
   CONDITIONAL_FIELDS = ['responder_id', 'group_id', 'created_at', 'due_by', 'status',
-    'priority', 'ticket_type', 'source', 'helpdesk_tags.name', 'owner_id', 'requester_id',
-    'helpdesk_schema_less_tickets.product_id'].freeze
+                        'priority', 'ticket_type', 'source', 'helpdesk_tags.name',
+                        'owner_id', 'requester_id', 'helpdesk_schema_less_tickets.product_id',
+                        'internal_agent_id', 'internal_group_id', 'any_agent_id', 'any_group_id'].freeze
 
+  FEATURE_BASED_CONDITIONAL_FIELDS = [
+    ["internal_agent_id", :shared_ownership, "Shared Ownership"],
+    ["internal_group_id", :shared_ownership, "Shared Ownership"],
+    ["any_agent_id",      :shared_ownership, "Shared Ownership"],
+    ["any_group_id",      :shared_ownership, "Shared Ownership"]
+  ]
+
+  FEATURES_KEYS_BY_FIELD   = Hash[*FEATURE_BASED_CONDITIONAL_FIELDS.map { |i| [i[0], i[1]] }.flatten]
+  FEATURES_NAMES_BY_FILED  = Hash[*FEATURE_BASED_CONDITIONAL_FIELDS.map { |i| [i[0], i[2]] }.flatten]
 
   REMOVE_QUERY_HASH = ['spam', 'deleted', 'monitored_by', 'archived'].freeze
   REMOVE_QUERY_CONDITIONS = ['spam', 'deleted'].freeze

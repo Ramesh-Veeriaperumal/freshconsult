@@ -1322,140 +1322,157 @@ module Ember
       assert_response 200
     end
 
+    def test_reply_with_traffic_cop_invalid
+      @account.add_feature(:traffic_cop)
+      ticket = create_ticket
+      reply = create_reply_note(ticket)
+      last_note_id = reply.id
+      params_hash = reply_note_params_hash.merge(last_note_id: last_note_id-1 )
+      post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern(:conversation, :traffic_cop_alert)])
+      @account.revoke_feature(:traffic_cop)
+    end
 
-  def test_reply_with_traffic_cop_invalid
-    @account.add_feature(:traffic_cop)
-    ticket = create_ticket
-    reply = create_reply_note(ticket)
-    last_note_id = reply.id
-    params_hash = reply_note_params_hash.merge(last_note_id: last_note_id-1 )
-    post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
-    assert_response 400
-    match_json([bad_request_error_pattern(:conversation, :traffic_cop_alert)])
-    @account.revoke_feature(:traffic_cop)
-  end
+    def test_public_note_with_traffic_cop_invalid
+      @account.add_feature(:traffic_cop)
+      ticket = create_ticket
+      note = create_public_note(ticket)
+      last_note_id = note.id
+      params_hash = create_note_params_hash.merge(last_note_id: last_note_id-1, private: false)
+      post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern(:conversation, :traffic_cop_alert)])
+      @account.revoke_feature(:traffic_cop)
+    end
 
-  def test_public_note_with_traffic_cop_invalid
-    @account.add_feature(:traffic_cop)
-    ticket = create_ticket
-    note = create_public_note(ticket)
-    last_note_id = note.id
-    params_hash = create_note_params_hash.merge(last_note_id: last_note_id-1, private: false)
-    post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
-    assert_response 400
-    match_json([bad_request_error_pattern(:conversation, :traffic_cop_alert)])
-    @account.revoke_feature(:traffic_cop)
-  end
+    def test_reply_with_traffic_cop_valid
+      @account.add_feature(:traffic_cop)
+      ticket = create_ticket
+      reply = create_reply_note(ticket)
+      last_note_id = reply.id
+      params_hash = reply_note_params_hash.merge(last_note_id: last_note_id)
+      post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+      @account.revoke_feature(:traffic_cop)
+    end
 
-  def test_reply_with_traffic_cop_valid
-    @account.add_feature(:traffic_cop)
-    ticket = create_ticket
-    reply = create_reply_note(ticket)
-    last_note_id = reply.id
-    params_hash = reply_note_params_hash.merge(last_note_id: last_note_id)
-    post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
-    assert_response 201
-    latest_note = Helpdesk::Note.last
-    match_json(private_note_pattern(params_hash, latest_note))
-    match_json(private_note_pattern({}, latest_note))
-    @account.revoke_feature(:traffic_cop)
-  end
+    def test_public_note_with_traffic_cop_valid
+      @account.add_feature(:traffic_cop)
+      ticket = create_ticket
+      note = create_public_note(ticket)
+      last_note_id = note.id
+      params_hash = create_note_params_hash.merge(last_note_id: last_note_id, private: false)
+      post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+      @account.revoke_feature(:traffic_cop)
+    end
 
-  def test_public_note_with_traffic_cop_valid
-    @account.add_feature(:traffic_cop)
-    ticket = create_ticket
-    note = create_public_note(ticket)
-    last_note_id = note.id
-    params_hash = create_note_params_hash.merge(last_note_id: last_note_id, private: false)
-    post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
-    assert_response 201
-    latest_note = Helpdesk::Note.last
-    match_json(private_note_pattern(params_hash, latest_note))
-    match_json(private_note_pattern({}, latest_note))
-    @account.revoke_feature(:traffic_cop)
-  end
+    def test_reply_with_traffic_cop_without_last_note_id
+      @account.add_feature(:traffic_cop)
+      ticket = create_ticket
+      reply = create_reply_note(ticket)
+      last_note_id = reply.id
+      params_hash = reply_note_params_hash
+      post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+      @account.revoke_feature(:traffic_cop)
+    end
 
-  def test_reply_with_traffic_cop_without_last_note_id
-    @account.add_feature(:traffic_cop)
-    ticket = create_ticket
-    reply = create_reply_note(ticket)
-    last_note_id = reply.id
-    params_hash = reply_note_params_hash
-    post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
-    assert_response 201
-    latest_note = Helpdesk::Note.last
-    match_json(private_note_pattern(params_hash, latest_note))
-    match_json(private_note_pattern({}, latest_note))
-    @account.revoke_feature(:traffic_cop)
-  end
+    def test_public_note_with_traffic_cop_without_last_note_id
+      @account.add_feature(:traffic_cop)
+      ticket = create_ticket
+      note = create_public_note(ticket)
+      last_note_id = note.id
+      params_hash = create_note_params_hash.merge(private: false)
+      post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+      @account.revoke_feature(:traffic_cop)
+    end
 
-  def test_public_note_with_traffic_cop_without_last_note_id
-    @account.add_feature(:traffic_cop)
-    ticket = create_ticket
-    note = create_public_note(ticket)
-    last_note_id = note.id
-    params_hash = create_note_params_hash.merge(private: false)
-    post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
-    assert_response 201
-    latest_note = Helpdesk::Note.last
-    match_json(private_note_pattern(params_hash, latest_note))
-    match_json(private_note_pattern({}, latest_note))
-    @account.revoke_feature(:traffic_cop)
-  end
+    def test_reply_without_traffic_cop_with_last_note_id
+      @account.revoke_feature(:traffic_cop)
+      ticket = create_ticket
+      reply = create_reply_note(ticket)
+      last_note_id = reply.id
+      params_hash = reply_note_params_hash.merge(last_note_id: last_note_id-1)
+      post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+    end
 
-  def test_reply_without_traffic_cop_with_last_note_id
-    @account.revoke_feature(:traffic_cop)
-    ticket = create_ticket
-    reply = create_reply_note(ticket)
-    last_note_id = reply.id
-    params_hash = reply_note_params_hash.merge(last_note_id: last_note_id-1)
-    post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
-    assert_response 201
-    latest_note = Helpdesk::Note.last
-    match_json(private_note_pattern(params_hash, latest_note))
-    match_json(private_note_pattern({}, latest_note))
-  end
+    def test_public_note_without_traffic_cop_with_last_note_id
+      @account.revoke_feature(:traffic_cop)
+      ticket = create_ticket
+      note = create_public_note(ticket)
+      last_note_id = note.id
+      params_hash = create_note_params_hash.merge(last_note_id: last_note_id-1, private: false)
+      post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+    end
 
-  def test_public_note_without_traffic_cop_with_last_note_id
-    @account.revoke_feature(:traffic_cop)
-    ticket = create_ticket
-    note = create_public_note(ticket)
-    last_note_id = note.id
-    params_hash = create_note_params_hash.merge(last_note_id: last_note_id-1, private: false)
-    post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
-    assert_response 201
-    latest_note = Helpdesk::Note.last
-    match_json(private_note_pattern(params_hash, latest_note))
-    match_json(private_note_pattern({}, latest_note))
-  end
+    def test_private_note_with_traffic_cop_with_last_note_id
+      @account.add_feature(:traffic_cop)
+      ticket = create_ticket
+      note = create_public_note(ticket)
+      last_note_id = note.id
+      params_hash = create_note_params_hash.merge(private: true, last_note_id: last_note_id-1)
+      post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+      @account.revoke_feature(:traffic_cop)
+    end
 
-  def test_private_note_with_traffic_cop_with_last_note_id
-    @account.add_feature(:traffic_cop)
-    ticket = create_ticket
-    note = create_public_note(ticket)
-    last_note_id = note.id
-    params_hash = create_note_params_hash.merge(private: true, last_note_id: last_note_id-1)
-    post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
-    assert_response 201
-    latest_note = Helpdesk::Note.last
-    match_json(private_note_pattern(params_hash, latest_note))
-    match_json(private_note_pattern({}, latest_note))
-    @account.revoke_feature(:traffic_cop)
-  end
+    def test_public_note_with_traffic_cop_ignoring_private_note
+      @account.add_feature(:traffic_cop)
+      ticket = create_ticket
+      note = create_private_note(ticket)
+      last_note_id = note.id
+      params_hash = create_note_params_hash.merge(last_note_id: last_note_id - 1)
+      post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+      @account.revoke_feature(:traffic_cop)
+    end
 
-  def test_public_note_with_traffic_cop_ignoring_private_note
-    @account.add_feature(:traffic_cop)
-    ticket = create_ticket
-    note = create_private_note(ticket)
-    last_note_id = note.id
-    params_hash = create_note_params_hash.merge(last_note_id: last_note_id - 1)
-    post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
-    assert_response 201
-    latest_note = Helpdesk::Note.last
-    match_json(private_note_pattern(params_hash, latest_note))
-    match_json(private_note_pattern({}, latest_note))
-    @account.revoke_feature(:traffic_cop)
-  end
+    def test_tweet_with_traffic_cop_ignoring_public_note
+      @account.add_feature(:traffic_cop)
+      ticket = create_twitter_ticket
+      note = create_public_note(ticket)
+      post :tweet, construct_params({version: 'private', id: ticket.display_id, last_note_id: note.id - 1}, {})
+      assert_response 400
+      @account.revoke_feature(:traffic_cop)
+    end
+
+    def test_facebook_reply_with_traffic_cop_ignoring_public_note
+      @account.add_feature(:traffic_cop)
+      ticket = create_ticket_from_fb_post
+      note = create_public_note(ticket)
+      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id, last_note_id: note.id - 1}, {})
+      assert_response 400
+      @account.revoke_feature(:traffic_cop)
+    end
 
     private
       def with_twitter_update_stubbed(&block)

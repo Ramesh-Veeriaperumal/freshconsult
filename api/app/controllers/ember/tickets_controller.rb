@@ -274,7 +274,8 @@ module Ember
         else
           params[:filter] ||= DEFAULT_TICKET_FILTER
         end
-        params[:filter] = 'monitored_by' if params[:filter] == 'watching'
+        renamed_filter  = TicketFilterConstants::RENAME_FILTER_NAMES[params[:filter]]
+        params[:filter] = renamed_filter if renamed_filter.present?
       end
 
       def assign_filter_params

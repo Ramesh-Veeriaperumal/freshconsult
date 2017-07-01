@@ -115,7 +115,7 @@ module TicketsTestHelper
     ticket_custom_field = (custom_field && ignore_extra_keys) ? custom_field.as_json.ignore_extra_keys! : custom_field.as_json
     description_html = format_ticket_html(ticket, expected_output[:description]) if expected_output[:description]
 
-    {
+    ticket_hash = {
       cc_emails: expected_output[:cc_emails] || ticket.cc_email && ticket.cc_email[:cc_emails],
       fwd_emails: expected_output[:fwd_emails] || ticket.cc_email && ticket.cc_email[:fwd_emails],
       reply_cc_emails:  expected_output[:reply_cc_emails] || ticket.cc_email && ticket.cc_email[:reply_cc],
@@ -147,6 +147,11 @@ module TicketsTestHelper
       due_by: expected_output[:due_by].try(:to_time).try(:utc).try(:iso8601) || ticket.due_by.try(:utc).try(:iso8601),
       fr_due_by: expected_output[:fr_due_by].try(:to_time).try(:utc).try(:iso8601) || ticket.frDueBy.try(:utc).try(:iso8601)
     }
+    if @account.shared_ownership_enabled?
+      ticket_hash.merge!( :internal_group_id => expected_output[:internal_group_id] || ticket.internal_group_id,
+                          :internal_agent_id => expected_output[:internal_agent_id] || ticket.internal_agent_id)
+    end
+    ticket_hash
   end
 
   def create_ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)

@@ -2,13 +2,11 @@ class TicketValidation < ApiValidation
   MANDATORY_FIELD_ARRAY = [:requester_id, :phone, :email, :twitter_id, :facebook_id].freeze
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
   CHECK_PARAMS_SET_FIELDS = (MANDATORY_FIELD_ARRAY.map(&:to_s) +
-                            %w(fr_due_by due_by subject description
-                              skip_close_notification
-                              custom_fields company_id
-                              internal_group_id internal_agent_id)
+                            %w(fr_due_by due_by subject description skip_close_notification
+                              custom_fields company_id internal_group_id internal_agent_id)
                           ).freeze
 
-  attr_accessor :id, :cc_emails, :description, :due_by, :email_config_id, :fr_due_by, :group, :priority, :email,
+  attr_accessor :id, :cc_emails, :description, :due_by, :email_config_id, :fr_due_by, :group, :internal_group_id, :internal_agent_id, :priority, :email,
                 :phone, :twitter_id, :facebook_id, :requester_id, :name, :agent, :source, :status, :subject, :ticket_type,
                 :product, :tags, :custom_fields, :attachments, :request_params, :item, :statuses, :status_ids, :ticket_fields, :company_id, :scenario_id,
                 :primary_id, :ticket_ids, :note_in_primary, :note_in_secondary, :convert_recepients_to_cc, :cloud_files, :skip_close_notification,
@@ -23,6 +21,7 @@ class TicketValidation < ApiValidation
   validates :subject, custom_absence: { message: :outbound_email_field_restriction }, if: :source_as_outbound_email?, on: :update
   validates :description, custom_absence: { message: :outbound_email_field_restriction }, if: :source_as_outbound_email?, on: :update
   validates :email_config_id, :subject, :email, required: { message: :field_validation_for_outbound }, on: :compose_email
+
   validates :description, :ticket_type, :status, :subject, :priority, :product, :agent, :group, :internal_group_id, :internal_agent_id, default_field:
                               {
                                 required_fields: proc { |x| x.required_default_fields },
@@ -193,7 +192,6 @@ class TicketValidation < ApiValidation
     errors[field] = :fill_a_mandatory_field
     (error_options[field] ||= {}).merge!(field_names: MANDATORY_FIELD_STRING)
   end
-
 
   def requester_id_mandatory? # requester_id is must if any one of email/twitter_id/fb_profile_id/phone is not given.
     MANDATORY_FIELD_ARRAY.all? { |x| send(x).blank? && errors[x].blank? }

@@ -8,8 +8,6 @@ class TicketFilterValidation < FilterValidation
   validate :verify_company, if: -> { errors[:company_id].blank? && company_id }
   validates :email, data_type: { rules: String }
   validates :filter, custom_inclusion: { in: ApiTicketConstants::FILTER }, if: -> { !private_API? }
-  # Unless add_watcher feature is enabled, a user cannot be allowed to get tickets that he/she is "watching"
-  validate :watcher_filter, if: -> { filter }
   validates :updated_since, date_time: true
   validates :order_by, custom_inclusion: { in: proc { |x| x.sort_field_options } }
   validates :status, array: { custom_inclusion: { in: proc { |x| x.account_statuses }, ignore_string: :allow_string_param, detect_type: true } }
@@ -42,6 +40,7 @@ class TicketFilterValidation < FilterValidation
     request_params[:ids] = request_params[:ids].split(',') if request_params.key?(:ids)
     super(request_params, item, allow_string_param)
     @status = status.to_s.split(',') if request_params.key?('status')
+
     @version = request_params[:version]
   end
 
@@ -85,12 +84,17 @@ class TicketFilterValidation < FilterValidation
 
   def validate_include
     @include_array = include.split(',').map!(&:strip)
+    feature_based_include_array = @include_array & TicketFilterConstants::FEATURES_KEYS_BY_SIDE_LOAD_KEY.keys
     if @include_array.blank? || (@include_array - ApiTicketConstants::SIDE_LOADING).present?
       errors[:include] << :not_included
       (self.error_options ||= {}).merge!(include: { list: ApiTicketConstants::SIDE_LOADING.join(', ') })
-    elsif @include_array.include?('survey') && !Account.current.new_survey_enabled?
-      errors[:include] << :require_feature
-      (self.error_options ||= {}).merge!(include: { feature: 'Custom survey' })
+    elsif feature_based_include_array.present?
+      accessible_side_loadings = TicketsFilter.accessible_filters(feature_based_include_array, TicketFilterConstants::FEATURES_KEYS_BY_SIDE_LOAD_KEY)
+      unauthorised_side_loadings = feature_based_include_array - accessible_side_loadings
+      if unauthorised_side_loadings.present?
+        errors[:include] << :require_feature
+        (self.error_options ||= {}).merge!(include: { feature: TicketFilterConstants::FEATURES_NAMES_BY_SIDE_LOAD_KEY[unauthorised_side_loadings.first] })
+      end
     end
   end
 
@@ -104,9 +108,13 @@ class TicketFilterValidation < FilterValidation
         errors[:filter] << :datatype_mismatch
         (self.error_options ||= {}).merge!(filter: { expected_data_type: 'Positive Integer' })
       end
-    elsif !TicketFilterConstants::FILTER.include?(filter) # Filter name
+    elsif TicketFilterConstants::FILTER.exclude?(filter) # Filter name
       errors[:filter] << :not_included
       (self.error_options ||= {}).merge!(filter: { list: TicketFilterConstants::FILTER.join(', ') })
+    elsif !TicketsFilter.accessible_filter?(filter)
+      errors[:filter] << :require_feature
+      error_options.merge!(filter: 
+        { feature: TicketsFilter::FEATURES_NAMES_BY_FILTER_KEY[filter], code: :access_denied })
     end
   end
 
@@ -121,16 +129,10 @@ class TicketFilterValidation < FilterValidation
     end
   end
 
-  def watcher_filter
-    if @filter == 'watching' && !Account.current.add_watcher_enabled?
-      errors[:filter] << :require_feature
-      error_options.merge!(filter: { feature: 'Add Watcher', code: :access_denied })
-    end
-  end
-
   def sort_field_options
     TicketsFilter.api_sort_fields_options.map(&:first).map(&:to_s)
   end
+
 
   private
 

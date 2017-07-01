@@ -75,7 +75,7 @@ module Ember
     end
 
     def test_show_with_default_hidden_filter
-      default_filter_id = hidden_filter_names.sample
+      default_filter_id = TicketsFilter.accessible_filters(TicketFilterConstants::HIDDEN_FILTERS).sample
       get :show, construct_params({ version: 'private' }, false).merge(id: default_filter_id)
       assert_response 200
       match_custom_json(response.body, default_filter_pattern(default_filter_id))

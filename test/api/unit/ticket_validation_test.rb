@@ -72,6 +72,77 @@ class TicketValidationTest < ActionView::TestCase
     Account.unstub(:current)
   end
 
+  def test_internal_groups_and_agents_valid
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
+    controller_params = { status: 6 , internal_group_id: 3 , internal_agent_id: 5 , ticket_fields: [] , statuses: statuses , requester_id: 1}
+    item = nil
+    ticket = TicketValidation.new(controller_params , item)
+    assert ticket.valid?(:create)
+    Account.any_instance.unstub(:shared_ownership_enabled?)
+    Account.unstub(:current)
+  end
+
+  def test_internal_groups_and_agents_invalid
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
+    controller_params = { status: 6 , internal_group_id: "five" , internal_agent_id: "three" , ticket_fields: [] , statuses: statuses , requester_id: 1}
+    item = nil
+    ticket = TicketValidation.new(controller_params , item)
+    refute ticket.valid?(:create)
+    errors = ticket.errors.full_messages
+    assert errors.include?("Internal group datatype_mismatch")
+    assert errors.include?("Internal agent datatype_mismatch")
+    Account.any_instance.unstub(:shared_ownership_enabled?)
+    Account.unstub(:current)
+  end
+
+  def test_valid_params_when_shared_ownership_enabled
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
+    controller_params = { internal_group_id: 3 , internal_agent_id: 5 , ticket_fields: [] , statuses: statuses , requester_id: 1}
+    item = nil
+    ticket = TicketValidation.new(controller_params , item)
+    assert ticket.valid?(:create)
+    Account.any_instance.unstub(:shared_ownership_enabled?)
+    Account.unstub(:current)
+  end
+
+  def test_valid_params_when_shared_ownership_not_enabled
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:shared_ownership_enabled?).returns(false)
+    controller_params = { internal_group_id: 3 ,ticket_fields: [] , statuses: statuses , requester_id: 1, description: Faker::Lorem.paragraph}
+    item = Helpdesk::Ticket.new
+    ticket = TicketValidation.new(controller_params , item)
+    refute ticket.valid?(:update)
+    errors = ticket.errors.full_messages
+    Account.any_instance.unstub(:shared_ownership_enabled?)
+    Account.unstub(:current)
+  end
+
+  def test_invalid_group_params_when_shared_ownership_enabled
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:shared_ownership_enabled?).returns(false)
+    controller_params = { internal_group_id: 0 ,ticket_fields: [] , statuses: statuses , requester_id: 1, description: Faker::Lorem.paragraph}
+    item = Helpdesk::Ticket.new
+    ticket = TicketValidation.new(controller_params , item)
+    refute ticket.valid?(:update)
+    errors = ticket.errors.full_messages
+    Account.any_instance.unstub(:shared_ownership_enabled?)
+    Account.unstub(:current)
+  end
+
+  def test_invalid_agent_params_when_shared_ownership_enabled
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:shared_ownership_enabled?).returns(false)
+    controller_params = { internal_agent_id: 0 ,ticket_fields: [] , statuses: statuses , requester_id: 1, description: Faker::Lorem.paragraph}
+    item = Helpdesk::Ticket.new
+    ticket = TicketValidation.new(controller_params , item)
+    refute ticket.valid?(:update)
+    errors = ticket.errors.full_messages
+    Account.any_instance.unstub(:shared_ownership_enabled?)
+    Account.unstub(:current)
+  end
   def test_attachment_multiple_errors
     Account.stubs(:current).returns(Account.first)
     String.any_instance.stubs(:size).returns(20_000_000)
@@ -276,44 +347,4 @@ class TicketValidationTest < ActionView::TestCase
     Account.unstub(:current)
   end
 
-  def test_valid_params_when_shared_ownership_enabled_ownership_enabled
-    Account.stubs(:current).returns(Account.first)
-    Account.current.stubs(:shared_ownership_enabled?).returns(true)
-    controller_params = { internal_group_id: 3 , internal_agent_id: 5 , ticket_fields: [] , statuses: statuses , requester_id: 1}
-    item = nil
-    ticket = TicketValidation.new(controller_params , item)
-    assert ticket.valid?(:create)
-    Account.current.unstub(:shared_ownership_enabled?)
-    Account.unstub(:current)
-  end
-
-  def test_valid_params_when_shared_ownership_not_enabled
-    Account.stubs(:current).returns(Account.first)
-    Account.any_instance.stubs(:shared_ownership_enabled?).returns(false)
-    controller_params = { internal_group_id: 3 ,ticket_fields: [] , statuses: statuses , requester_id: 1, description: Faker::Lorem.paragraph}
-    item = Helpdesk::Ticket.new
-    ticket = TicketValidation.new(controller_params , item)
-    refute ticket.valid?(:update)
-    errors = ticket.errors.full_messages
-  end
-
-  def test_invalid_group_params_when_shared_ownership_enabled
-    Account.stubs(:current).returns(Account.first)
-    Account.any_instance.stubs(:shared_ownership_enabled?).returns(false)
-    controller_params = { internal_group_id: 0 ,ticket_fields: [] , statuses: statuses , requester_id: 1, description: Faker::Lorem.paragraph}
-    item = Helpdesk::Ticket.new
-    ticket = TicketValidation.new(controller_params , item)
-    refute ticket.valid?(:update)
-    errors = ticket.errors.full_messages
-  end
-
-  def test_invalid_agent_params_when_shared_ownership_enabled
-    Account.stubs(:current).returns(Account.first)
-    Account.any_instance.stubs(:shared_ownership_enabled?).returns(false)
-    controller_params = { internal_agent_id: 0 ,ticket_fields: [] , statuses: statuses , requester_id: 1, description: Faker::Lorem.paragraph}
-    item = Helpdesk::Ticket.new
-    ticket = TicketValidation.new(controller_params , item)
-    refute ticket.valid?(:update)
-    errors = ticket.errors.full_messages
-  end
 end

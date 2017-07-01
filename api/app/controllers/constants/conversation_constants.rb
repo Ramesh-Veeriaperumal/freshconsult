@@ -12,9 +12,9 @@ module ConversationConstants
   REPLY_FIELDS = %w(body full_text user_id from_email send_survey last_note_id).freeze | REPLY_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   FORWARD_FIELDS = %w(body full_text agent_id from_email include_quoted_text include_original_attachments).freeze | FORWARD_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   CREATE_FIELDS = %w(body private incoming user_id last_note_id).freeze | CREATE_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
-  TWEET_FIELDS = %w(body tweet_type twitter_handle_id).freeze
+  TWEET_FIELDS = %w(body tweet_type twitter_handle_id last_note_id).freeze
   UPDATE_FIELDS = %w(body).freeze | UPDATE_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
-  FACEBOOK_REPLY_FIELDS = %w(body agent_id note_id).freeze
+  FACEBOOK_REPLY_FIELDS = %w(body agent_id note_id last_note_id).freeze
   MAX_INCLUDE = 10
   TYPE_FOR_ACTION = {
     'create' => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],

@@ -18,8 +18,14 @@ class QueryHashValidation < FilterValidation
   end
 
   def ticket_fields_condition
-    unless (custom_field_names + CustomFilterConstants::CONDITIONAL_FIELDS).include?(condition)
+    if (custom_field_names + CustomFilterConstants::CONDITIONAL_FIELDS).exclude?(condition)
       errors[:condition] << :"is invalid"
+    elsif CustomFilterConstants::FEATURES_KEYS_BY_FIELD.keys.include?(condition)
+      unless TicketsFilter.accessible_filter?(condition, CustomFilterConstants::FEATURES_KEYS_BY_FIELD)
+        errors[:condition] << :require_feature
+        error_options.merge!(condition: { feature: CustomFilterConstants::FEATURES_NAMES_BY_FILED[condition],
+            code: :access_denied })
+      end
     end
   end
 

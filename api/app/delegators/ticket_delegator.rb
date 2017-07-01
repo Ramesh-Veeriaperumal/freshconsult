@@ -32,6 +32,7 @@ class TicketDelegator < BaseDelegator
   validate :validate_closure, if: -> { status && attr_changed?('status') && !bulk_update? }
 
   validate :company_presence, if: -> { company_id }
+
   validate :validate_internal_agent_group_mapping, if: -> {internal_agent_id && attr_changed?('internal_agent_id') && Account.current.shared_ownership_enabled?}
   validate :validate_status_group_mapping, if: -> {internal_group_id && attr_changed?('internal_group_id') && Account.current.shared_ownership_enabled?}
 
@@ -41,6 +42,7 @@ class TicketDelegator < BaseDelegator
     check_params_set(options[:custom_fields]) if options[:custom_fields].is_a?(Hash)
     options[:attachment_ids] = skip_existing_attachments(options) if options[:attachment_ids]
     super(record, options)
+    @ticket = record
   end
 
   def product_presence

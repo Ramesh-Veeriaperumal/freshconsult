@@ -1,5 +1,7 @@
 require_relative '../../test_helper'
 ['canned_responses_helper.rb', 'group_helper.rb', 'social_tickets_creation_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['account_test_helper.rb', 'shared_ownership_test_helper'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
+
 module Ember
   class TicketsControllerTest < ActionController::TestCase
     include TicketsTestHelper
@@ -12,6 +14,8 @@ module Ember
     include SocialTicketsCreationHelper
     include SurveysTestHelper
     include PrivilegesHelper
+    include AccountTestHelper
+    include SharedOwnershipTestHelper
 
     CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date).freeze
 
@@ -972,6 +976,81 @@ module Ember
       assert_response 200
     ensure
       Account.any_instance.unstub(:multiple_user_companies_enabled?)
+    end
+
+    # Test when group restricted agent trying to access the ticket which has been assigned to its group
+    def test_ticket_access_by_assigned_group_agent
+      group = @account.groups.first
+      ticket = create_ticket({:status => 2}, group)
+      group_restricted_agent = add_agent_to_group(group_id = group.id,
+                                                  ticket_permission = 2, role_id = @account.roles.agent.first.id)
+      login_as(group_restricted_agent)
+      get :show, controller_params(version: 'private', id: ticket.display_id)
+
+      assert_match /#{ticket.description_html}/, response.body
+    end
+
+
+    # Test access of ticket by ticket restricted agent who can view only those tickets which has been assigned to him
+    def test_ticket_access_by_assigned_agent
+      ticket_restricted_agent = add_agent_to_group(nil,
+                                                   ticket_permission = 3, role_id = @account.roles.agent.first.id)
+      ticket = create_ticket({:status => 2, :responder_id => ticket_restricted_agent.id})
+      login_as(ticket_restricted_agent)
+      get :show, controller_params(version: 'private', id: ticket.display_id)
+
+      assert_match /#{ticket.description_html}/, response.body
+    end
+
+    # Test when Internal agent have group tickets access.
+    def test_ticket_access_for_group_restricted_agent
+      enable_feature(:shared_ownership) do
+        initialize_internal_agent_with_default_internal_group
+
+        group_restricted_agent = add_agent_to_group(group_id = @internal_group.id,
+                                                    ticket_permission = 2, role_id = @account.roles.first.id)
+        ticket = create_ticket({:status => @status.status_id}, nil, @internal_group)
+        login_as(group_restricted_agent)
+        get :show, controller_params(version: 'private', id: ticket.display_id)
+        assert_match /#{ticket.description_html}/, response.body
+      end
+    end
+
+    # Test ticket access by Internal agent when ticket has been assigned to him
+    def test_ticket_access_by_Internal_restricted_agent
+      enable_feature(:shared_ownership) do
+        initialize_internal_agent_with_default_internal_group
+
+        ticket = create_ticket({:status => @status.status_id, :internal_agent_id => @internal_agent.id}, nil, @internal_group)
+        login_as(@internal_agent)
+        get :show, controller_params(version: 'private', id: ticket.display_id)
+
+        assert_match /#{ticket.description_html}/, response.body
+      end
+    end
+
+    def test_ticket_assignment_to_internal_agent
+      enable_feature(:shared_ownership) do
+        initialize_internal_agent_with_default_internal_group
+
+        ticket = create_ticket({:status => 2, :responder_id => @responding_agent.id}, group = @account.groups.find_by_id(2))
+        # params = {
+        #   :status => @status.status_id,
+        #   :internal_group_id => @internal_group.id,
+        #   :internal_agent_id => @internal_agent.id
+        # }
+        params = {
+          :status => @status.status_id,
+          :internal_group_id => @internal_group.id,
+          :internal_agent_id => @internal_agent.id
+        }
+        put :update, construct_params({ version: 'private', id: ticket.display_id }, params)
+
+        login_as(@internal_agent)
+        ticket.reload
+        # get :show, controller_params(version: 'private', id: ticket.display_id)
+        assert_match /#{ticket.description_html}/, response.body
+      end
     end
 
     def test_tracker_create
