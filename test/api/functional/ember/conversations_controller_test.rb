@@ -18,10 +18,22 @@ module Ember
     def setup
       super
       MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
+      Account.current.features.es_v2_writes.destroy
+      Account.find(Account.current.id).make_current
+
+      Social::CustomTwitterWorker.stubs(:perform_async).returns(true)
+
+      @twitter_handle = get_twitter_handle
+      @default_stream = @twitter_handle.default_stream
+
+      3.times do
+        add_test_agent(@account, role: Role.find_by_name('Agent').id)
+      end
     end
 
     def teardown
       MixpanelWrapper.unstub(:send_to_mixpanel)
+      Social::CustomTwitterWorker.unstub(:perform_async)
     end
 
     def wrap_cname(params)
@@ -47,12 +59,11 @@ module Ember
     end
 
     def create_note_params_hash
-      body = Faker::Lorem.paragraph
-      agent_email1 = Agent.last.user.email
-      agent_email2 = Agent.find { |x| x.user.email != agent_email1 }.try(:user).try(:email) || add_test_agent(@account, role: Role.find_by_name('Agent').id).email
-      email = [agent_email1, agent_email2]
-      params_hash = { body: body, notify_emails: email, private: true }
-      params_hash
+      {
+        body: Faker::Lorem.paragraph,
+        notify_emails: Account.current.agents_details_from_cache.sample(2).map(&:email),
+        private: true
+      }
     end
 
     def reply_note_params_hash
@@ -185,6 +196,7 @@ module Ember
       # Without personalized_email_replies
       @account.features.personalized_email_replies.destroy
       @account.reload
+      Account.current.reload
 
       params_hash = reply_note_params_hash.merge(full_text: Faker::Lorem.paragraph(10))
       params_hash.delete(:from_email)
@@ -201,6 +213,7 @@ module Ember
       @account.features.personalized_email_replies.create
       @account.reload
 
+      Account.current.reload
       params_hash = reply_note_params_hash
       params_hash.delete(:from_email)
       post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
@@ -376,6 +389,7 @@ module Ember
       # Without personalized_email_replies
       @account.features.personalized_email_replies.destroy
       @account.reload
+      Account.current.reload
 
       params_hash = forward_note_params_hash
       params_hash.delete(:from_email)
@@ -391,6 +405,7 @@ module Ember
       # WITH personalized_email_replies
       @account.features.personalized_email_replies.create
       @account.reload
+      Account.current.reload
 
       params_hash = forward_note_params_hash
       params_hash.delete(:from_email)
@@ -945,18 +960,16 @@ module Ember
     end
 
     def test_twitter_reply_to_tweet_ticket
-      ticket = create_twitter_ticket
-      twitter_handle = get_twitter_handle
-
-      @account = Account.current
-      @default_stream = twitter_handle.default_stream
-
       with_twitter_update_stubbed do
+
+        ticket = create_twitter_ticket
+
+        @account = Account.current
 
         params_hash = {
           body: Faker::Lorem.sentence[0..130],
           tweet_type: 'mention',
-          twitter_handle_id: twitter_handle.id
+          twitter_handle_id: @twitter_handle.id
         }
         post :tweet, construct_params({version: 'private', id: ticket.display_id}, params_hash)
         assert_response 201
@@ -969,11 +982,9 @@ module Ember
 
     def test_twitter_dm_reply_to_tweet_ticket
       ticket = create_twitter_ticket
-      twitter_handle = get_twitter_handle
 
       dm_text = Faker::Lorem.paragraphs(5).join[0..500]
       @account = Account.current
-      @default_stream = twitter_handle.default_stream
 
       reply_id = get_social_id
       dm_reply_params = {
@@ -988,7 +999,7 @@ module Ember
         params_hash = {
           body: Faker::Lorem.sentence[0..130],
           tweet_type: 'dm',
-          twitter_handle_id: twitter_handle.id
+          twitter_handle_id: @twitter_handle.id
         }
         post :tweet, construct_params({version: 'private', id: ticket.display_id}, params_hash)
         assert_response 201
@@ -1007,9 +1018,10 @@ module Ember
       create_forward_note(t)
       create_feedback_note(t)
       create_fb_note(t)
-      twitter_handle = get_twitter_handle
-      @default_stream = twitter_handle.default_stream
-      with_twitter_update_stubbed { create_twitter_note(t) }
+
+      with_twitter_update_stubbed do
+        create_twitter_note(t)
+      end
       # Need to stub Twitter stuff here
 
       get :ticket_conversations, controller_params(version: 'private', id: t.display_id)
@@ -1055,7 +1067,7 @@ module Ember
       3.times do
         create_reply_note(t)
       end
-      get :ticket_conversations, controller_params(version: 'private', id: t.display_id, 
+      get :ticket_conversations, controller_params(version: 'private', id: t.display_id,
         per_page: 50, page: 1, order_type: "desc", since_id: n.id)
       assert_response 200
       assert JSON.parse(response.body).count == 3
@@ -1066,7 +1078,7 @@ module Ember
       3.times do
         create_reply_note(t)
       end
-      get :ticket_conversations, controller_params(version: 'private', id: t.display_id, 
+      get :ticket_conversations, controller_params(version: 'private', id: t.display_id,
         per_page: 50, page: 1, order_type: "desc", since_id: 0)
       assert_response 200
       assert JSON.parse(response.body).count == 3
@@ -1077,7 +1089,7 @@ module Ember
       3.times do
         create_reply_note(t)
       end
-      get :ticket_conversations, controller_params(version: 'private', id: t.display_id, 
+      get :ticket_conversations, controller_params(version: 'private', id: t.display_id,
         per_page: 50, page: 1, order_type: "desc", since_id: -1)
       assert_response 200
       assert JSON.parse(response.body).count == 3
@@ -1324,6 +1336,7 @@ module Ember
 
     def test_reply_with_traffic_cop_invalid
       @account.add_feature(:traffic_cop)
+      Account.current.reload
       ticket = create_ticket
       reply = create_reply_note(ticket)
       last_note_id = reply.id
@@ -1336,6 +1349,7 @@ module Ember
 
     def test_public_note_with_traffic_cop_invalid
       @account.add_feature(:traffic_cop)
+      Account.current.reload
       ticket = create_ticket
       note = create_public_note(ticket)
       last_note_id = note.id
@@ -1348,6 +1362,7 @@ module Ember
 
     def test_reply_with_traffic_cop_valid
       @account.add_feature(:traffic_cop)
+      Account.current.reload
       ticket = create_ticket
       reply = create_reply_note(ticket)
       last_note_id = reply.id
@@ -1362,6 +1377,7 @@ module Ember
 
     def test_public_note_with_traffic_cop_valid
       @account.add_feature(:traffic_cop)
+      Account.current.reload
       ticket = create_ticket
       note = create_public_note(ticket)
       last_note_id = note.id
@@ -1376,6 +1392,7 @@ module Ember
 
     def test_reply_with_traffic_cop_without_last_note_id
       @account.add_feature(:traffic_cop)
+      Account.current.reload
       ticket = create_ticket
       reply = create_reply_note(ticket)
       last_note_id = reply.id
@@ -1390,6 +1407,7 @@ module Ember
 
     def test_public_note_with_traffic_cop_without_last_note_id
       @account.add_feature(:traffic_cop)
+      Account.current.reload
       ticket = create_ticket
       note = create_public_note(ticket)
       last_note_id = note.id
@@ -1430,6 +1448,7 @@ module Ember
 
     def test_private_note_with_traffic_cop_with_last_note_id
       @account.add_feature(:traffic_cop)
+      Account.current.reload
       ticket = create_ticket
       note = create_public_note(ticket)
       last_note_id = note.id
@@ -1444,6 +1463,7 @@ module Ember
 
     def test_public_note_with_traffic_cop_ignoring_private_note
       @account.add_feature(:traffic_cop)
+      Account.current.reload
       ticket = create_ticket
       note = create_private_note(ticket)
       last_note_id = note.id
@@ -1458,6 +1478,7 @@ module Ember
 
     def test_tweet_with_traffic_cop_ignoring_public_note
       @account.add_feature(:traffic_cop)
+      Account.current.reload
       ticket = create_twitter_ticket
       note = create_public_note(ticket)
       post :tweet, construct_params({version: 'private', id: ticket.display_id, last_note_id: note.id - 1}, {})
@@ -1467,6 +1488,7 @@ module Ember
 
     def test_facebook_reply_with_traffic_cop_ignoring_public_note
       @account.add_feature(:traffic_cop)
+      Account.current.reload
       ticket = create_ticket_from_fb_post
       note = create_public_note(ticket)
       post :facebook_reply, construct_params({version: 'private', id: ticket.display_id, last_note_id: note.id - 1}, {})
@@ -1479,7 +1501,7 @@ module Ember
         twit = sample_twitter_object
         Twitter::REST::Client.any_instance.stubs(:update).returns(twit)
         unless GNIP_ENABLED
-          Social::DynamoHelper.stubs(:update).returns(dynamo_update_attributes(twit[:id]))
+          Social::DynamoHelper.stubs(:update).returns(dynamo_update_attributes(twit.id))
           Social::DynamoHelper.stubs(:get_item).returns(sample_dynamo_get_item_params)
         end
 

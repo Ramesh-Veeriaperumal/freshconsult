@@ -23,6 +23,10 @@ module Ember
       super
       @private_api = true
       Sidekiq::Worker.clear_all
+      MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
+      Account.current.features.es_v2_writes.destroy
+      Account.current.reload
+      
       before_all
     end
 
