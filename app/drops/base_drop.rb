@@ -128,7 +128,7 @@ class BaseDrop < Liquid::Drop
     end
 
     def formatted_field_value(field_type, field_value)
-      case field_type.to_sym
+      case (field_type.blank? ? :default : field_type.to_sym) 
       when :custom_paragraph
          escape_liquid_attribute(field_value).gsub(/\n/, '<br/>').html_safe #adding html_safe so that the return value is of ActiveSupport::SafeBuffer class.
       when :custom_text

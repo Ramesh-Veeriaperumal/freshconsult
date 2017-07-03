@@ -9,7 +9,6 @@ class Search::V2::Operations::DocumentAdd
     @type       = args.delete(:type)
     @account_id = args.delete(:account_id)
     @doc_id     = args.delete(:document_id)
-    @timestamps = args.delete(:timestamps)
     @params     = args
   end
 
@@ -26,8 +25,7 @@ class Search::V2::Operations::DocumentAdd
           @request_object = Search::V2::IndexRequestHandler.new(
                                               @type,
                                               @account_id,
-                                              @doc_id,
-                                              @timestamps
+                                              @doc_id
                                             )
           @request_object.send_to_es(
                                       @params[:version],

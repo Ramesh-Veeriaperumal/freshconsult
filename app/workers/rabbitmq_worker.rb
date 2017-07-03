@@ -26,12 +26,6 @@ class RabbitmqWorker
     #
     if search_routing_key?(exchange_key, rounting_key)
       # sqs_msg_obj = sqs_v2_push(SQS[:search_etl_queue], message, 0)
-      hash = JSON.parse(message)
-      if hash["subscriber_properties"]["search"]
-        stamp = Search::Job.es_version/1000
-        hash["subscriber_properties"]["search"]["timestamps"] << stamp
-        message = hash.to_json
-      end
       unless Rails.env.development?
         sqs_msg_obj = (Ryuken::SearchSplitter.perform_async(message) rescue nil)
       else
