@@ -109,11 +109,13 @@
   $ref: ./contacts/merge.yaml
 
 /companies:
-  $ref: ./companies/list.yaml
+  $ref: ./companies/list_and_create.yaml
 /companies/{id}:
   $ref: ./companies/crud.yaml
 /companies/{id}/activities:
   $ref: ./companies/activities.yaml
+/companies/bulk_delete:
+  $ref: ./companies/bulk_delete.yaml
 
 /attachments/{id}:
   $ref: ./attachments/crud.yaml

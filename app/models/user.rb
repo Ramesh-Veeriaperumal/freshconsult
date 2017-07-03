@@ -287,10 +287,10 @@ class User < ActiveRecord::Base
           conditions: { deleted: true }
         },
         verified: {
-          conditions: { deleted: false, active: true }
+          conditions: { deleted: false, active: true, blocked: false }
         },
         unverified: {
-          conditions: { deleted: false, active: false }
+          conditions: { deleted: false, active: false, blocked: false }
         },
         blocked: {
           conditions: [ "((blocked = true and blocked_at <= ?) or (deleted = true and deleted_at <= ?)) and whitelisted = false", Time.zone.now+5.days, Time.zone.now+5.days ]

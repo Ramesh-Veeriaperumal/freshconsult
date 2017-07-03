@@ -1,7 +1,6 @@
 require_relative '../../test_helper'
 class ApiValidationTest < ActionView::TestCase
-
-  BULK_ACTIONS = [:bulk_spam, :bulk_unspam, :bulk_delete, :bulk_restore, :bulk_send_invite]
+  BULK_ACTIONS = [:bulk_spam, :bulk_unspam, :bulk_delete, :bulk_restore, :bulk_send_invite].freeze
 
   def test_bulk_action_with_no_params
     controller_params = { version: 'private' }
@@ -16,23 +15,24 @@ class ApiValidationTest < ActionView::TestCase
   end
 
   def test_bulk_action_with_incorrect_params
-    controller_params = { version: 'private', ids: "Text" }
+    controller_params = { version: 'private', ids: 'Text' }
     api_validation = ApiValidation.new(controller_params)
     refute api_validation.valid?(BULK_ACTIONS.sample)
     assert api_validation.errors.full_messages.include?('Ids datatype_mismatch')
     assert_equal({ ids: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: String } }, api_validation.error_options)
 
-    controller_params = { version: 'private', ids: ["Text"] }
+    controller_params = { version: 'private', ids: ['Text'] }
     api_validation = ApiValidation.new(controller_params)
     refute api_validation.valid?(BULK_ACTIONS.sample)
     assert api_validation.errors.full_messages.include?('Ids array_datatype_mismatch')
     assert_equal({ ids: { expected_data_type: :'Positive Integer', code: :datatype_mismatch } }, api_validation.error_options)
 
-    controller_params = { version: 'private', ids: (1..100).to_a }
+    controller_params = { version: 'private', ids: (1..110).to_a }
     api_validation = ApiValidation.new(controller_params)
     refute api_validation.valid?(BULK_ACTIONS.sample)
     assert api_validation.errors.full_messages.include?('Ids too_long')
-    assert_equal({ ids: { max_count: 50, current_count: 100, element_type: :values, min_count: 0 } }, api_validation.error_options)
+    assert_equal({ ids: { max_count: ApiConstants::MAX_ITEMS_FOR_BULK_ACTION,
+                          current_count: 110, element_type: :values, min_count: 0 } }, api_validation.error_options)
   end
 
   def test_bulk_action_with_valid_params

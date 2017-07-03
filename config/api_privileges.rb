@@ -53,6 +53,7 @@ Authority::Authorization::PrivilegeList.build do
 
   delete_contact do
     resource :"ember/contact", only: [:bulk_delete, :destroy, :bulk_restore, :restore, :whitelist, :bulk_whitelist]
+    resource :"ember/company", only: [:bulk_delete, :destroy]
   end
 
   view_contacts do
@@ -64,6 +65,7 @@ Authority::Authorization::PrivilegeList.build do
 
   manage_contacts do
     resource :"ember/contact", only: [:create, :update, :activities]
+    resource :"ember/company", only: [:create, :update]
     resource :"ember/contacts/merge", only: [:merge]
 
     resource :"ember/search/autocomplete", :only => [:companies]

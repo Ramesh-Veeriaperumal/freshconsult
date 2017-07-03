@@ -23,6 +23,8 @@
     $ref: ./request/contacts/make_agent.yaml
   attachment_create_input:
     $ref: ./request/attachments/attachment.yaml
+  company_input:
+    $ref: ./request/companies/company.yaml
   contact_input:
     $ref: ./request/contacts/contact.yaml
   contact_merge_input:

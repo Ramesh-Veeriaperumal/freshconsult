@@ -46,7 +46,7 @@ module ApiConstants
 
   ALLOWED_DOMAIN = AppConfig['base_domain'][Rails.env]
   MAX_LENGTH_STRING = 255
-  MAX_ITEMS_FOR_BULK_ACTION = 50
+  MAX_ITEMS_FOR_BULK_ACTION = 100
 
   TAG_MAX_LENGTH_STRING = 32
   CACHE_VERSION = { v2: 'V2', v3: 'V3' }.freeze
@@ -68,10 +68,11 @@ module ApiConstants
   BULK_ACTION_FIELDS = BULK_ACTION_ARRAY_FIELDS.freeze
   BULK_ACTION_METHODS = ApiTicketConstants::BULK_ACTION_METHODS +
                         ContactConstants::BULK_ACTION_METHODS +
+                        CompanyConstants::BULK_ACTION_METHODS +
                         SubscriptionConstants::BULK_ACTION_METHODS
   BULK_ACTION_ASYNC_METHODS = ApiTicketConstants::BULK_ACTION_ASYNC_METHODS
 
-  TWITTER_REPLY_TYPES = %w(mention dm).freeze
+  TWITTER_REPLY_TYPES = %w[mention dm].freeze
   TWEET_MAX_LENGTH = 140
-  TWITTER_DM_MAX_LENGTH = 10000
+  TWITTER_DM_MAX_LENGTH = 10_000
 end.freeze

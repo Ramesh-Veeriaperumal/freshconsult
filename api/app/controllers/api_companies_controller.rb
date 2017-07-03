@@ -63,7 +63,7 @@ class ApiCompaniesController < ApiApplicationController
     end
 
     def error_options_mappings
-      @name_mapping || {}
+      (@name_mapping || {}).merge(CompanyConstants::FIELD_MAPPINGS)
     end
 
     def decorator_options_hash

@@ -60,6 +60,7 @@ module UsersHelper
                                     :tag_names => options[:tags],
                                     :unique_external_id => options[:unique_external_id])
     new_user.custom_field = options[:custom_fields] if options.key?(:custom_fields)
+    new_user.avatar = options[:avatar] if options[:avatar]
     new_user.save
     new_user.reload
   end

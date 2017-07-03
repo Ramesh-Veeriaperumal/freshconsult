@@ -252,7 +252,10 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :companies, controller: 'ember/companies', only: [:index, :show] do
+    resources :companies, controller: 'ember/companies', only: [:index, :show, :create, :update] do
+      collection do
+        put :bulk_delete
+      end
       member do
         get :activities
       end

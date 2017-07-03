@@ -35,12 +35,23 @@ properties:
     $ref: '#/definitions/custom_field'
   view_all_tickets:
     type: boolean
+  company:
+    type: object
+    properties:
+      id:
+        type: number
+      name:
+        type: string
+      view_all_tickets:
+        type: boolean
   other_companies:
     type: array
     items:
       type: object
       properties:
-        company_id:
-          type: integer
+        id:
+          type: number
+        name:
+          type: string
         view_all_tickets:
           type: boolean

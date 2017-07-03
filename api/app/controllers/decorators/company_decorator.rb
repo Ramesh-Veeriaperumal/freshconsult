@@ -1,5 +1,5 @@
 class CompanyDecorator < ApiDecorator
-  delegate :id, :name, :description, :note, :users, to: :record
+  delegate :id, :name, :description, :note, :users, :avatar, to: :record
 
   def initialize(record, options)
     super(record)
@@ -22,6 +22,11 @@ class CompanyDecorator < ApiDecorator
     @sla_policies.map { |item| SlaPolicyDecorator.new(item) }
   end
 
+  def avatar_hash
+    return nil unless avatar.present?
+    AttachmentDecorator.new(avatar).to_hash.merge(thumb_url: record.avatar.attachment_url_for_api(true, :thumb))
+  end
+
   def to_hash
     {
       id: id,
@@ -31,7 +36,8 @@ class CompanyDecorator < ApiDecorator
       domains: domains,
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc),
-      custom_fields: custom_fields
+      custom_fields: custom_fields,
+      avatar: avatar_hash
     }
   end
 
