@@ -101,6 +101,7 @@ module Ember
         'source' => ['is_in', [sample_arr(11), nil].sample],
         'helpdesk_tags.name' => ['is_in', [TAG_NAMES.sample(rand(1..5)), nil].sample],
         'helpdesk_schema_less_tickets.product_id' => ['is_in', [@account.products.map(&:id).sample(rand(1..3)), nil].sample],
+        'association_type' => ['is_in', [sample_arr(4), nil].sample],
         'created_at' => ['is_greater_than', CREATED_AT_OPTIONS.sample],
         'test_custom_dropdown' => ['is_in', [DROPDOWN_OPTIONS.sample(rand(1..3)), nil].sample, 'custom_field']
       }.merge(dependent_filter_data_hash)
@@ -433,6 +434,7 @@ module Ember
         query_hash_params[counter.to_s] = query_hash_param(k.dup, *v)
         counter += 1
       end
+      enable_associate_tickets
       get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
       assert_response 200
       match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
@@ -442,6 +444,7 @@ module Ember
       define_method("test_multiple_filter_case_#{i + 1}") do
         query_hash_params = random_query_hash_params
         Rails.logger.debug "Method: test_multiple_filter_case_#{i + 1} :: params: #{random_query_hash_params.inspect}"
+        enable_associate_tickets
         get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
         assert_response 200
         match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))

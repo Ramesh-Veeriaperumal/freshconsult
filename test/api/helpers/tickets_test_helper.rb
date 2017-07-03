@@ -56,16 +56,16 @@ module TicketsTestHelper
         notes_pattern << index_note_pattern(n)
       end
       notes_pattern = notes_pattern.take(10) if limit
-      result_pattern.merge!(conversations: notes_pattern.ordered!)
+      result_pattern[:conversations] = notes_pattern.ordered!
     end
     if requester
-      ticket.requester ? result_pattern.merge!(requester: requester_pattern(ticket.requester)) : result_pattern.merge!(requester: {})
+      result_pattern[:requester] = ticket.requester ? requester_pattern(ticket.requester) : {}
     end
     if company
-      ticket.company ? result_pattern.merge!(company: company_pattern(ticket.company)) : result_pattern.merge!(company: {})
+      result_pattern[:company] = ticket.company ? company_pattern(ticket.company) : {}
     end
     if stats
-      ticket.ticket_states ? result_pattern.merge!(stats: ticket_states_pattern(ticket.ticket_states)) : result_pattern.merge!(stats: {})
+      result_pattern[:stats] = ticket.ticket_states ? ticket_states_pattern(ticket.ticket_states) : {}
     end
     result_pattern
   end
@@ -164,7 +164,7 @@ module TicketsTestHelper
   end
 
   def latest_note_response_pattern(note)
-    pattern = private_note_pattern({}, note).merge!({ user: Hash })
+    pattern = private_note_pattern({}, note).merge!(user: Hash)
   end
 
   # draft_exists denotes whether the draft was saved using old UI code
@@ -174,11 +174,14 @@ module TicketsTestHelper
       quoted_text: expected_output[:quoted_text],
       cc_emails: expected_output[:cc_emails] || [],
       bcc_emails: expected_output[:bcc_emails] || [],
-      from_email: expected_output[:from_email] || "",
+      from_email: expected_output[:from_email] || '',
       attachment_ids: (expected_output[:attachment_ids] || []).map(&:to_s),
       saved_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
-    ret_hash.merge!(from_email: nil, saved_at: nil) if draft_exists
+    if draft_exists
+      ret_hash[:from_email] = nil
+      ret_hash[:saved_at] = nil
+    end
     ret_hash
   end
 
@@ -222,25 +225,23 @@ module TicketsTestHelper
     @integrate_group ||= create_group_with_agents(@account, agent_list: [@agent.id])
     { email: Faker::Internet.email, cc_emails: [Faker::Internet.email, Faker::Internet.email], description:  Faker::Lorem.paragraph, subject: Faker::Lorem.words(10).join(' '),
       priority: 2, status: 7, type: 'Problem', responder_id: @agent.id, source: 1, tags: [Faker::Name.name, Faker::Name.name],
-      due_by: 14.days.since.iso8601, fr_due_by: 1.days.since.iso8601, group_id: @integrate_group.id
-    }
+      due_by: 14.days.since.iso8601, fr_due_by: 1.day.since.iso8601, group_id: @integrate_group.id }
   end
 
   def v1_ticket_params
     { email: Faker::Internet.email, description:  Faker::Lorem.paragraph, subject: Faker::Lorem.words(10).join(' '),
       priority: 2, status: 7, ticket_type: 'Problem', responder_id: @agent.id, source: 1,
-      due_by: 14.days.since.iso8601, frDueBy: 1.days.since.iso8601, group_id: Group.find(1).id
-    }
+      due_by: 14.days.since.iso8601, frDueBy: 1.day.since.iso8601, group_id: Group.find(1).id }
   end
 
-  def custom_note_params(ticket, source, private_note = false)
+  def custom_note_params(ticket, _source, private_note = false)
     sample_params = {
       source: ticket.source,
       ticket_id: ticket.id,
       body: Faker::Lorem.paragraph,
       user_id: @agent.id
     }
-    sample_params.merge!(private: true) if private_note
+    sample_params[:private] = true if private_note
     sample_params
   end
 
@@ -255,22 +256,18 @@ module TicketsTestHelper
   def twitter_ticket_and_note
     @account.make_current
     social_related_factories_definition
-    #create a twitter ticket
+    # create a twitter ticket
     stream_id = get_twitter_stream_id
     twitter_handle = get_twitter_handle
 
-    tweet = new_tweet({ stream_id: stream_id })
+    tweet = new_tweet(stream_id: stream_id)
     requester = create_tweet_user(tweet[:user])
-    ticket = create_twitter_ticket({
-      twitter_handle: twitter_handle,
-      tweet: tweet,
-      requester: requester
-    })
+    ticket = create_twitter_ticket(twitter_handle: twitter_handle,
+                                   tweet: tweet,
+                                   requester: requester)
     note_options = {
-      tweet: new_tweet({
-        twitter_user: tweet[:user],
-        body: Faker::Lorem.sentence
-      }),
+      tweet: new_tweet(twitter_user: tweet[:user],
+                       body: Faker::Lorem.sentence),
       twitter_handle: twitter_handle,
       stream_id: stream_id
     }
@@ -320,7 +317,7 @@ module TicketsTestHelper
         description: Faker::Lorem.characters(10),
         account_id: @account.id
       )
-      note.cloud_files.build({ filename: "#{Faker::Name.name}.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 })
+      note.cloud_files.build(filename: "#{Faker::Name.name}.jpg", url: 'https://www.dropbox.com/image.jpg', application_id: 20)
     end
     note.save
   end
@@ -386,8 +383,39 @@ module TicketsTestHelper
       responder_id: prime_association.responder_id,
       subject: prime_association.subject,
       association_type: prime_association.association_type,
-      status: prime_association.status
+      status: prime_association.status,
+      permission: User.current.has_ticket_permission?(prime_association)
     }
+  end
+
+  def associations_pattern(ticket)
+    associations = ticket.tracker_ticket? ? ticket.associated_subsidiary_tickets('tracker') : ticket.associated_subsidiary_tickets('assoc_parent')
+    return unless associations.present?
+    responses = associations.map do |item|
+      response_hash = {
+        group_id: item.group_id,
+        priority: item.priority,
+        requester_id: item.requester_id,
+        responder_id: item.responder_id,
+        source: item.source,
+        company_id: item.company_id,
+        status: item.status,
+        permission: User.current.has_ticket_permission?(item),
+        stats: ticket_states_pattern(item.ticket_states),
+        subject: item.subject,
+        product_id: item.schema_less_ticket.try(:product_id),
+        id: item.display_id,
+        type: item.ticket_type,
+        due_by: item.due_by.try(:utc),
+        fr_due_by: item.frDueBy.try(:utc),
+        is_escalated: item.isescalated,
+        created_at: item.created_at.try(:utc),
+        updated_at: item.updated_at.try(:utc)
+      }
+      response_hash[:deleted] = item.deleted if item.deleted
+      response_hash
+    end
+    responses
   end
 
   def freshfone_call_pattern(ticket)
@@ -493,6 +521,18 @@ module TicketsTestHelper
     single_note.merge!(index_note)
     single_note[:freshfone_call] = freshfone_call_pattern(note) if freshfone_call_pattern(note)
     single_note
+  end
+
+  def create_linked_tickets
+    @related_ticket = create_ticket
+    @tracker_ticket = create_tracker_ticket
+    put :link, construct_params({ version: 'private', id: @related_ticket.display_id, tracker_id:  @tracker_ticket.display_id }, false)
+    @related_ticket.reload
+  end
+
+  def create_parent_child_tickets
+    @parent_ticket = create_parent_ticket
+    @child_ticket  = create_ticket(assoc_parent_id: @parent_ticket.display_id)
   end
 
   def create_parent_ticket

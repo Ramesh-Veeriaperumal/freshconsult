@@ -32,6 +32,8 @@
   $ref: ./tickets/latest_note.yaml
 /tickets/{id}/prime_association:
   $ref: ./tickets/prime_association.yaml
+/tickets/{id}/associated_tickets:
+  $ref: ./tickets/associated_ticket.yaml
 /tickets/{id}/split_note:
   $ref: ./tickets/split_note.yaml
 /tickets/{id}/draft:

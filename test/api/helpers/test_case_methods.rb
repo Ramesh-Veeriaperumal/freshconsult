@@ -42,6 +42,11 @@ module TestCaseMethods
     end
   end
 
+  def enable_associate_tickets
+    enable_adv_ticketing(:link_ticket)
+    enable_adv_ticketing(:parent_child_tickets)
+  end
+
   def enable_adv_ticketing(feature)
     Account.current.launch feature
     if block_given?
@@ -51,7 +56,6 @@ module TestCaseMethods
   end
 
   def disable_adv_ticketing(feature)
-    Account.current.revoke_feature feature
     Account.current.rollback feature
   end
 

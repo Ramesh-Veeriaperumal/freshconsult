@@ -700,6 +700,37 @@
               "$ref": "#/definitions/prime_association"
             }
           },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      }
+    },
+    "/tickets/{id}/associated_tickets": {
+      "get": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Associated Tickets",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "description": "Display ID of Tracker/Parent ticket",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/associated_tickets"
+            }
+          },
           "400": {
             "description": "Bad request error",
             "schema": {
@@ -711,6 +742,9 @@
           },
           "404": {
             "description": "Ticket not found"
+          },
+          "500": {
+            "description": "Internal error"
           }
         }
       }
@@ -4997,6 +5031,14 @@
             "status_updated_at": {
               "type": "string",
               "format": "date-time"
+            },
+            "pending_since": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "reopened_at": {
+              "type": "string",
+              "format": "date-time"
             }
           }
         }
@@ -5900,6 +5942,87 @@
         },
         "status": {
           "type": "integer"
+        }
+      }
+    },
+    "associated_tickets": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "group_id": {
+          "type": "integer"
+        },
+        "priority": {
+          "type": "integer",
+          "enum": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "requester_id": {
+          "type": "integer"
+        },
+        "responder_id": {
+          "type": "integer"
+        },
+        "source": {
+          "type": "integer",
+          "enum": [
+            1,
+            2,
+            3,
+            7,
+            8,
+            9,
+            10
+          ]
+        },
+        "company_id": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "integer"
+        },
+        "stats": {
+          "$ref": "#/definitions/ticket_stats"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "product_id": {
+          "type": "integer"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Question",
+            "Incident",
+            "Problem",
+            "Feature Request"
+          ]
+        },
+        "due_by": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "fr_due_by": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "is_escalated": {
+          "type": "integer"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },

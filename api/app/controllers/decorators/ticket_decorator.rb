@@ -10,6 +10,8 @@ class TicketDecorator < ApiDecorator
     @name_mapping = options[:name_mapping]
     @contact_name_mapping = options[:contact_name_mapping]
     @company_name_mapping = options[:company_name_mapping]
+    @permission = options[:permission]
+    @permissibles = options[:permissibles]
     @sideload_options = options[:sideload_options] || []
   end
 
@@ -105,9 +107,9 @@ class TicketDecorator < ApiDecorator
   end
 
   def meta
-    meta_info = record.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"])
+    meta_info = record.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'])
     return {} unless meta_info
-    meta_info = YAML::load(meta_info.body)
+    meta_info = YAML.load(meta_info.body)
     handle_timestamps(meta_info)
   rescue
     # Errors suppressed
@@ -141,14 +143,9 @@ class TicketDecorator < ApiDecorator
     topic_hash(topic)
   end
 
-  def to_hash
-    hash = {
-      cc_emails: cc_email.try(:[], :cc_emails),
-      fwd_emails: cc_email.try(:[], :fwd_emails),
-      reply_cc_emails: cc_email.try(:[], :reply_cc),
-      fr_escalated: fr_escalated,
-      spam: spam,
-      email_config_id: email_config_id,
+  def simple_hash
+    {
+      id: display_id,
       group_id: group_id,
       priority: priority,
       requester_id: requester_id,
@@ -157,24 +154,35 @@ class TicketDecorator < ApiDecorator
       company_id: company_id,
       status: status,
       subject: subject,
-      to_emails: schema_less_ticket.try(:to_emails),
       product_id: schema_less_ticket.try(:product_id),
-      id: display_id,
       type: ticket_type,
       due_by: due_by.try(:utc),
       fr_due_by: frDueBy.try(:utc),
       is_escalated: isescalated,
+      created_at: created_at.try(:utc),
+      updated_at: updated_at.try(:utc)
+    }
+  end
+
+  def to_hash
+    hash = {
+      cc_emails: cc_email.try(:[], :cc_emails),
+      fwd_emails: cc_email.try(:[], :fwd_emails),
+      reply_cc_emails: cc_email.try(:[], :reply_cc),
+      fr_escalated: fr_escalated,
+      spam: spam,
+      email_config_id: email_config_id,
+      company_id: company_id,
+      status: status,
+      to_emails: schema_less_ticket.try(:to_emails),
       association_type: association_type,
       associated_tickets_count: associated_tickets_count,
       description: ticket_body.description_html,
       description_text: ticket_body.description,
       custom_fields: custom_fields,
-      tags: tag_names,
-      created_at: created_at.try(:utc),
-      updated_at: updated_at.try(:utc)
+      tags: tag_names
     }
-    [hash, feedback_hash , shared_ownership_hash].inject(&:merge)
-
+    [hash, simple_hash, feedback_hash , shared_ownership_hash].inject(&:merge)
   end
 
   def to_search_hash
@@ -194,9 +202,30 @@ class TicketDecorator < ApiDecorator
       stats: stats
     }
     requester_hash = requester
-    ret_hash.merge!(requester: requester_hash) if requester_hash
-    ret_hash.merge!(archived: archived?) if archived?
+    ret_hash[:requester] = requester_hash if requester_hash
+    ret_hash[:archived] = archived? if archived?
     ret_hash
+  end
+
+  def to_prime_association_hash
+    {
+      id: display_id,
+      requester_id: requester_id,
+      responder_id: responder_id,
+      subject: subject,
+      association_type: association_type,
+      status: status,
+      permission: @permission
+    }
+  end
+
+  def to_associations_hash
+    ret_hash = {
+      permission: permission?,
+      stats: stats
+    }
+    ret_hash[:deleted] = deleted if deleted
+    [ret_hash, simple_hash].inject(&:merge)
   end
 
   class << self
@@ -206,6 +235,7 @@ class TicketDecorator < ApiDecorator
   end
 
   private
+
     def handle_timestamps(meta_info)
       if meta_info.is_a?(Hash) && meta_info.keys.include?('time')
         meta_info['time'] = Time.parse(meta_info['time']).utc.iso8601
@@ -228,6 +258,10 @@ class TicketDecorator < ApiDecorator
       }
     end
 
+    def permission?
+      @permissibles.find { |perm| perm[:display_id] == display_id }.present?
+    end
+
     def parse_time(attribute)
       attribute ? Time.parse(attribute).utc : nil
     end
@@ -235,5 +269,4 @@ class TicketDecorator < ApiDecorator
     def archived?
       @is_archived ||= record.is_a?(Helpdesk::ArchiveTicket)
     end
-
 end

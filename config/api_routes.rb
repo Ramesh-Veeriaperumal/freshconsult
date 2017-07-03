@@ -201,7 +201,7 @@ Helpkit::Application.routes.draw do
         get :prime_association, to: 'ember/tickets/associates#prime_association'
         put :link, to: 'ember/tickets/associates#link'
         put :unlink, to: 'ember/tickets/associates#unlink'
-        get :list_associates, to: 'ember/tickets/associates#list_associates'
+        get :associated_tickets, to: 'ember/tickets/associates#associated_tickets'
       end
       resources :activities, controller: 'ember/tickets/activities', only: [:index]
 

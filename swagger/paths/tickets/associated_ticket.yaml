@@ -1,17 +1,17 @@
 get:
   tags: [ticket]
-  summary: Prime Association
+  summary: Associated Tickets
   parameters:
     - name: id
       in: path
       type: number
-      description: Display ID of related/child ticket
+      description: Display ID of Tracker/Parent ticket
       required: true
   responses:
     200:
       description: Success
       schema:
-        $ref: '#/definitions/prime_association'
+        $ref: '#/definitions/associated_tickets'
     404:
       description: Ticket not found
     403:
