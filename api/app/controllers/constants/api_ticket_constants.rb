@@ -56,6 +56,9 @@ module ApiTicketConstants
 
   ATTRIBUTES_TO_BE_STRIPPED = %w(email phone name subject type tags cc_emails twitter_id custom_fields).freeze
 
+  EXPORT_CSV_HASH_FIELDS = %w(ticket_fields contact_fields company_fields).freeze
+  EXPORT_CSV_FIELDS =  %w(format date_filter ticket_state_filter start_date end_date query_hash).freeze | EXPORT_CSV_HASH_FIELDS
+
   CLOSED = Helpdesk::Ticketfields::TicketStatus::CLOSED
   RESOLVED = Helpdesk::Ticketfields::TicketStatus::RESOLVED
   PENDING = Helpdesk::Ticketfields::TicketStatus::PENDING
@@ -90,6 +93,7 @@ module ApiTicketConstants
 
   FIELD_MAPPINGS = { group: :group_id, agent: :responder_id, responder: :responder_id, requester: :requester_id, email_config: :email_config_id,
                      product: :product_id, ticket_type: :type }.freeze
+
 
   SEARCH_ALLOWED_DEFAULT_FIELDS = ['status'].freeze
 

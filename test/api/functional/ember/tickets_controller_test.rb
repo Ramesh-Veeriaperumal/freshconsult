@@ -14,6 +14,7 @@ module Ember
     include SocialTicketsCreationHelper
     include SurveysTestHelper
     include PrivilegesHelper
+    include ContactFieldsHelper
     include AccountTestHelper
     include SharedOwnershipTestHelper
 
@@ -41,11 +42,11 @@ module Ember
       Helpdesk::TicketStatus.find(2).update_column(:stop_sla_timer, false)
       @@ticket_fields = []
       @@custom_field_names = []
-      @@ticket_fields << create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
+      @@ticket_fields << create_dependent_custom_field(%w[test_custom_country test_custom_state test_custom_city])
       @@ticket_fields << create_custom_field_dropdown('test_custom_dropdown', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
       @@choices_custom_field_names = @@ticket_fields.map(&:name)
       CUSTOM_FIELDS.each do |custom_field|
-        next if %w(dropdown country state city).include?(custom_field)
+        next if %w[dropdown country state city].include?(custom_field)
         @@ticket_fields << create_custom_field("test_custom_#{custom_field}", custom_field)
         @@custom_field_names << @@ticket_fields.last.name
       end
@@ -898,6 +899,7 @@ module Ember
       assert_response 200
 
       json = ActiveSupport::JSON.decode(response.body)
+
       assert_equal ({}), json['meta']
     end
 
@@ -985,6 +987,74 @@ module Ember
       t = Helpdesk::Ticket.last
       match_json(ticket_show_pattern(t))
       assert ticket.attachments.count == 1
+    end
+
+    def test_export_csv_with_no_params
+      rand(2..10).times do
+        add_new_user(@account)
+      end
+      post :export_csv, construct_params({ version: 'private' }, {})
+      assert_response 400
+      match_json([bad_request_error_pattern('format', :missing_field),
+                  bad_request_error_pattern('date_filter', :missing_field),
+                  bad_request_error_pattern('ticket_state_filter', :missing_field),
+                  bad_request_error_pattern('query_hash', :missing_field)])
+    end
+
+    def test_export_csv_invalid_params_without_privilege
+      contact_fields = @account.contact_form.fields
+      company_fields = @account.company_form.fields
+      params_hash = { ticket_fields: { id: rand(2..10) }, contact_fields: { display_id: rand(2..10) }, query_hash: [{ 'condition' => 'responder_id', 'operaor' => 'is_in', 'ff_name' => 'default' }],
+                      company_fields: { number: rand(2..10) }, format: Faker::Lorem.word, date_filter: Faker::Lorem.word,
+                      ticket_state_filter: Faker::Lorem.word, start_date: 6.days.ago.to_s, end_date: Time.zone.now.to_s }
+      User.any_instance.stubs(:privilege?).with(:export_tickets).returns(true)
+      User.any_instance.stubs(:privilege?).with(:export_customers).returns(false)
+      post :export_csv, construct_params({ version: 'private' }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern(:ticket_fields, :not_included, list: ticket_export_fields.join(',')),
+                  bad_request_error_pattern(:contact_fields, :not_included, list: %i[name phone mobile fb_profile_id].join(',')),
+                  bad_request_error_pattern(:company_fields, :not_included, list: %i[name].join(',')),
+                  bad_request_error_pattern(:format, :not_included, list: %w[csv xls].join(',')),
+                  bad_request_error_pattern(:date_filter, :not_included, list: TicketConstants::CREATED_BY_NAMES_BY_KEY.keys.map(&:to_s).join(',')),
+                  bad_request_error_pattern(:ticket_state_filter, :not_included, list: TicketConstants::STATES_HASH.keys.map(&:to_s).join(',')),
+                  bad_request_error_pattern(:start_date, :invalid_date, accepted: 'combined date and time ISO8601'),
+                  bad_request_error_pattern(:end_date, :invalid_date, accepted: 'combined date and time ISO8601'),
+                  bad_request_error_pattern(:"query_hash[0]", :"operator: Mandatory attribute missing & value: Mandatory attribute missing")])
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_export_csv_without_privilege
+      User.any_instance.stubs(:privilege?).with(:export_tickets).returns(true)
+      User.any_instance.stubs(:privilege?).with(:export_customers).returns(false)
+      export_fields = Helpdesk::TicketModelExtension.allowed_ticket_fields
+      params_hash = { ticket_fields: export_fields.map { |i| { i[1] => I18n.t(i[0]) } if i[5] == :ticket }.compact.inject(&:merge),
+                      contact_fields: { 'name' => 'Requester Name', 'mobile' => 'Mobile Phone' },
+                      company_fields: { 'name' => 'Company Name' },
+                      format: 'csv', date_filter: '30',
+                      ticket_state_filter: 'resolved_at', start_date: 6.days.ago.iso8601, end_date: Time.zone.now.iso8601,
+                      query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w[2 5] }] }
+      post :export_csv, construct_params({ version: 'private' }, params_hash)
+      assert_response 204
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_export_csv_with_privilege
+      User.any_instance.stubs(:privilege?).with(:export_tickets).returns(true)
+      User.any_instance.stubs(:privilege?).with(:export_customers).returns(true)
+      @account.launch(:ticket_contact_export)
+      create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'Address', name: 'cf_address'))
+      create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'Location', name: 'cf_location', editable_in_signup: 'true'))
+      contact_fields = @account.contact_form.fields.map(&:name) - %i[name phone mobile fb_profile_id]
+      company_fields = @account.company_form.fields.map(&:name) - %i[name]
+      params_hash = { ticket_fields: { display_id: rand(2..10) }, contact_fields: { custom_fields: { location: Faker::Lorem.word } },
+                      company_fields: { custom_fields: { address: Faker::Lorem.word } },
+                      format: 'csv', date_filter: '30',
+                      ticket_state_filter: 'resolved_at', start_date: 6.days.ago.iso8601, end_date: Time.zone.now.iso8601,
+                      query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w(2 5) }] }
+      post :export_csv, construct_params({ version: 'private' }, params_hash)
+      assert_response 204
+      User.any_instance.unstub(:privilege?)
+      @account.rollback(:ticket_contact_export)
     end
 
     def test_update_with_company_id

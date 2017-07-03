@@ -52,7 +52,7 @@ class User < ActiveRecord::Base
   # alias_attribute :last_name, :string_uc02 # string_uc02 is used in Freshservice to store last name
   alias_attribute :user_type, :user_role # Used for "System User"
   alias_attribute :extn, :string_uc03 # Active Directory User - Phone Extension
-
+  
   delegate :history_column=, :history_column, :to => :flexifield
 
   acts_as_authentic do |c|

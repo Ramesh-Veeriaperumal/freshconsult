@@ -87,4 +87,15 @@ class ApiValidation
   def is_bulk_action?
     ApiConstants::BULK_ACTION_METHODS.include?(validation_context)
   end
+
+  def validate_query_hash
+    return unless query_hash.present? && query_hash.is_a?(Array)
+    query_hash.each_with_index do |query, index|
+      query_hash_validator = ::QueryHashValidation.new(query)
+      next if query_hash_validator.valid?
+      message = ErrorHelper.format_error(query_hash_validator.errors, query_hash_validator.error_options)
+      messages = message.is_a?(Array) ? message : [message]
+      errors[:"query_hash[#{index}]"] = messages.map { |m| "#{m.field}: #{m.message}" }.join(' & ')
+    end
+  end
 end

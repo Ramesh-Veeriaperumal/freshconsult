@@ -104,6 +104,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/contact", only: [:export_csv]
   end
 
+  export_tickets do
+    resource :"ember/ticket", :only => [:export_csv]
+  end
+
   view_forums do
     resource :"ember/search/topic", only: [:results]
   end

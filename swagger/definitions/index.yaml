@@ -40,7 +40,7 @@
   facebook_reply_input:
     $ref: ./request/conversations/facebook_reply.yaml
   twitter_reply_input:
-    $ref: ./request/conversations/twitter_reply.yaml
+    $ref: ./request/conversations/twitter_reply.yaml  
   conversation_template:
     $ref: ./resource/conversation_template.yaml
   full_text:
@@ -55,6 +55,8 @@
     $ref: ./request/tickets/merge.yaml
   ticket_update_properties_input:
     $ref: ./request/tickets/update_properties.yaml
+  ticket_export_csv_input:
+    $ref: ./request/tickets/export_csv.yaml
   add_watcher_input:
     $ref: ./request/subscriptions/add_watcher.yaml
   draft_create_input:

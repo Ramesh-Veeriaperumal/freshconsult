@@ -119,13 +119,12 @@ class TicketFilterValidation < FilterValidation
   end
 
   def validate_query_hash
-    query_hash_errors = []
     query_hash.each do |key, query|
       query_hash_validator = ::QueryHashValidation.new(query)
-      query_hash_errors << query_hash_validator.errors.full_messages unless query_hash_validator.valid?
-    end
-    if query_hash_errors.present?
-      errors[:query_hash] << :invalid_query_conditions
+      next if query_hash_validator.valid?
+      message = ErrorHelper.format_error(query_hash_validator.errors, query_hash_validator.error_options)
+      messages = message.is_a?(Array) ? message : [message]
+      errors[:"query_hash[#{key}]"] = messages.map { |m| "#{m.field}: #{m.message}" }.join(' & ')
     end
   end
 

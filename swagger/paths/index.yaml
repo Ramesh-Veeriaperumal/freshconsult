@@ -48,6 +48,8 @@
   $ref: ./tickets/delete_forever.yaml
 /tickets/{id}/update_properties:
   $ref: ./tickets/update_properties.yaml
+/tickets/export_csv:
+  $ref: ./tickets/export_csv.yaml
 
 /tickets/{id}/activities:
   $ref: ./tickets/activities.yaml

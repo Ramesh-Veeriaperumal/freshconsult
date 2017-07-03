@@ -16,8 +16,8 @@ module Ember
     before_filter :disable_notification, only: [:update, :update_properties], if: :notification_not_required?
     after_filter  :enable_notification, only: [:update, :update_properties], if: :notification_not_required?
 
-    around_filter :run_on_db, only: :index
-    around_filter :use_time_zone, only: :index
+    around_filter :run_on_db, :only => :index
+    around_filter :use_time_zone, only: [:index, :export_csv]
 
     def index
       sanitize_filter_params
@@ -93,6 +93,14 @@ module Ember
       else
         render_errors(@item.errors)
       end
+    end
+
+    def export_csv
+      @validation_klass = 'TicketExportValidation'
+      return unless validate_body_params(@item, validate_export_params)
+      sanitize_export_params
+      Export::Ticket.enqueue(build_export_hash)
+      head 204
     end
 
     private
@@ -316,7 +324,69 @@ module Ember
         @include_validation = TicketIncludeValidation.new(params)
         render_errors @include_validation.errors, @include_validation.error_options unless @include_validation.valid?
       end
-      
+
+      def validate_export_params
+        cname_params.merge({
+          ticket_fields: (merge_custom_fields(:ticket_fields) || {}).keys,
+          contact_fields: (merge_custom_fields(:contact_fields) || {}).keys,
+          company_fields: (merge_custom_fields(:company_fields)|| {}).keys
+        })
+      end  
+
+      def sanitize_export_params
+        #set_date_filter
+        if !(cname_params[:date_filter].to_i == TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter])
+          cname_params[:start_date] = cname_params[:date_filter].to_i.days.ago.beginning_of_day.to_s(:db)
+          cname_params[:end_date] = Time.now.end_of_day.to_s(:db)
+        else
+          cname_params[:start_date] = Time.zone.parse(cname_params[:start_date]).to_s(:db)
+          cname_params[:end_date] = Time.zone.parse(cname_params[:end_date]).end_of_day.to_s(:db)
+        end
+
+        #set_default_filter
+        cname_params[:filter_name] = "all_tickets" if cname_params[:filter_name].blank? && cname_params[:filter_key].blank? && cname_params[:data_hash].blank?
+        # When there is no data hash sent selecting all_tickets instead of new_and_my_open
+
+        cname_params[:ticket_fields] = merge_custom_fields(:ticket_fields, true)
+        cname_params[:contact_fields] = merge_custom_fields(:contact_fields, true)
+        cname_params[:company_fields] = merge_custom_fields(:company_fields, true)
+      end
+
+      def build_export_hash
+        cname_params.merge!({
+          export_fields: cname_params[:ticket_fields],
+          data_hash: QueryHash.new(cname_params[:query_hash]).to_system_format,
+          current_user_id: api_current_user.id, 
+          portal_url: portal_url
+        })
+      end
+
+      def merge_custom_fields(field_type, prefix=nil)
+        if cname_params[field_type]
+          request_params = cname_params[field_type].except(:custom_fields)
+          return request_params.merge(custom_field_name(field_type)) if prefix
+          request_params.merge(cname_params[field_type][:custom_fields] || {})
+        end
+      end
+
+      def custom_field_name(field_type)
+        fields = []
+        if cname_params[field_type][:custom_fields]
+          cname_params[field_type][:custom_fields].each do |key, value|
+            if field_type == :ticket_fields
+              fields << { "#{key}_#{Account.current.id}" => value }
+            else
+              fields << { "cf_#{key}" => value}
+            end
+          end
+        end
+        fields.inject(:merge) || {}
+      end
+
+      def portal_url
+        main_portal? ? current_account.host : current_portal.portal_url
+      end
+
       wrap_parameters(*wrap_params)
   end
 end

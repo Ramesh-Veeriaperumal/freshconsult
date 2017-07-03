@@ -172,6 +172,7 @@ Helpkit::Application.routes.draw do
         put :delete_forever, to: 'ember/tickets/delete_spam#delete_forever'
         put :bulk_watch, to: 'ember/subscriptions#bulk_watch'
         put :bulk_unwatch, to: 'ember/subscriptions#bulk_unwatch'
+        post :export_csv
       end
       member do
         delete :destroy, to: 'ember/tickets/delete_spam#destroy'
