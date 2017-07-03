@@ -1,4 +1,4 @@
-JSON.generate(cc_emails: @item.cc_email.try(:[], :cc_emails),
+ response_hash = {cc_emails: @item.cc_email.try(:[], :cc_emails),
               fwd_emails: @item.cc_email.try(:[], :fwd_emails),
               reply_cc_emails: @item.cc_email.try(:[], :reply_cc),
               fr_escalated: @item.fr_escalated,
@@ -26,13 +26,17 @@ JSON.generate(cc_emails: @item.cc_email.try(:[], :cc_emails),
               updated_at: @item.updated_at.try(:utc),
               tags: @item.tag_names,
               attachments: @item.attachments.map do |a|
-                {
-                  id: a.id,
-                  content_type: a.content_content_type,
-                  size: a.content_file_size,
-                  name: a.content_file_name,
-                  attachment_url: a.attachment_url_for_api,
-                  created_at: a.created_at.try(:utc),
-                  updated_at: a.updated_at.try(:utc)
-                }
-              end)
+                                            {
+                                              id: a.id,
+                                              content_type: a.content_content_type,
+                                              size: a.content_file_size,
+                                              name: a.content_file_name,
+                                              attachment_url: a.attachment_url_for_api,
+                                              created_at: a.created_at.try(:utc),
+                                              updated_at: a.updated_at.try(:utc)
+                                            }
+                                          end
+               }
+              response_hash.merge!(internal_agent_id: @item.internal_agent_id, internal_group_id: @item.internal_group_id) if Account.current.shared_ownership_enabled?
+              JSON.generate(response_hash)
+

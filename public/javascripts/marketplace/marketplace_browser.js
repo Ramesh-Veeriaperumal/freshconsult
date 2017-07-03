@@ -5,6 +5,8 @@ var MarketplaceBrowser  = Class.create({
 		this.isMouseInside = false; //flag for checking whether mouse is in app-browser
 		this.viewportHeight = jQuery(window).height();
     this.deletablePlug = {};
+    this.pollRetryLimit = 5;
+    this.accApiPollInterval = settingsLinks.accApiPollInterval;
 
 		jQuery(document).on("click.nc_apps_evt", this.settingsLinks.browseBtn , this.openAppBrowser.bindAsEventListener(this))
         						.on("keyup.nc_apps_evt", this.onPageKeyup.bindAsEventListener(this)) //doubt
@@ -24,7 +26,23 @@ var MarketplaceBrowser  = Class.create({
 
     this.pageURL = document.location.toString();
     this.setupSelectedTabs();
+    this.deleteInProgressExt();
 	},
+
+  deleteInProgressExt: function() {
+    var inProgressExt = jQuery('.list-box.mkp-uninstall_in_progress .plug-actions .delete-btn');
+    if (inProgressExt.length > 0) {
+      var plug = {
+        element: inProgressExt,
+        url: inProgressExt.attr("data-url"),
+        deleteUrl: inProgressExt.attr("data-delete-url"),
+        mkpRoute: inProgressExt.attr("data-mkp-route"),
+        extensionId: inProgressExt.attr("data-extn-id"),
+        versionId: inProgressExt.attr("data-version-id")
+      };
+      this.pollAccountApi(plug, 0, this.pollRetryLimit);
+    }
+  },
 
   showActions: function(e){
     if(jQuery(e.target).hasClass("mkt-apps")){
@@ -135,67 +153,143 @@ var MarketplaceBrowser  = Class.create({
 
   onConfirmDelete: function(e) {
     var that = this;
-    var el = that.deletablePlug.element;
-    
-    if(that.deletablePlug.deleteUrl)
+    var plug = that.deletablePlug;
+    var el = plug.element;
+
+    if(plug.deleteUrl)
     {
       jQuery.ajax({
-        url: that.deletablePlug.deleteUrl,
+        url: plug.deleteUrl,
         type:"post",
         headers: {
-          "MKP-ROUTE":that.deletablePlug.mkpRoute,
-          "MKP-EXTNID": that.deletablePlug.extensionId,
-          "MKP-VERSIONID": that.deletablePlug.versionId
+          "MKP-ROUTE": plug.mkpRoute,
+          "MKP-EXTNID": plug.extensionId,
+          "MKP-VERSIONID": plug.versionId
         },
         success: function(resp_body, statustext, resp){
-          that.uninstallApp();
+          that.uninstallApp(plug);
         },
         error: function(){
           jQuery("#toggle-confirm").modal("hide");
           jQuery('.twipsy').remove();
-          jQuery("#noticeajax").html(that.customMessages.delete_error).show().addClass("alert-danger");
+          jQuery("#noticeajax").html(that.customMessages.delete_error.unescapeHTML()).show().addClass("alert-danger");
           closeableFlash('#noticeajax');
         }
       });
     }
     else
     {
-      that.uninstallApp();
+      that.uninstallApp(plug);
     }
 
   },
-  uninstallApp: function(){
+  uninstallApp: function(plug){
     var that = this;
-    var el = that.deletablePlug.element;
+    var el = plug.element;
     jQuery.ajax({
-      url: that.deletablePlug.url,
+      url: plug.url,
       type: "delete",
+      beforeSend: function(){
+        var list_box = jQuery(el).parents(".list-box");
+        jQuery(list_box).addClass("disabled-app");
+        jQuery(el).closest('.plug-actions').hide();
+        jQuery('#delete_prog_'+ plug.extensionId +' .mkp-prog-spinner').addClass('sloading loading-tiny');
+        jQuery('#delete_prog_'+ plug.extensionId).show();
+      },
       success: function(resp_body, statustext, resp){
         jQuery("#toggle-confirm").modal("hide");
         jQuery('.twipsy').remove();
         if(resp.status == 200){
-          jQuery(el).closest(".installed-listing").remove();
-          jQuery("#noticeajax").html(that.customMessages.delete_success).show().removeClass("alert-danger");
-          closeableFlash('#noticeajax');
-          if(jQuery(el).closest(".plugs").length > 0){
-            that.togglePlugsMessage(that.getFreshPlugsLength() == 0);
-          }else{
-            that.toggleAppsMessage(that.getAppsLength() == 0);
-          }
+          that.handleUninstallSuccess(plug);
+        } else if (resp.status == 202) {
+          setTimeout( function() {
+        		that.pollAccountApi(plug, 0, that.pollRetryLimit);
+        	}, that.accApiPollInterval);
+        } else {
+          that.handleUninstallFailure(plug);
         }
-        else {
-          jQuery("#noticeajax").html(that.customMessages.delete_error).show().addClass("alert-danger");
-          closeableFlash('#noticeajax');
-        }     
       },
       error: function(){
-        jQuery("#toggle-confirm").modal("hide");
-        jQuery('.twipsy').remove();
-        jQuery("#noticeajax").html(that.customMessages.delete_error).show().addClass("alert-danger");
-        closeableFlash('#noticeajax');
+        that.handleUninstallFailure(plug);
       }
     });
   },
+
+  handleUninstallSuccess: function(plug) {
+    var el = plug.element;
+    jQuery(el).closest(".installed-listing").remove();
+    jQuery("#noticeajax").html(this.customMessages.delete_success).show().removeClass("alert-danger");
+    closeableFlash('#noticeajax');
+    if(jQuery(el).closest(".plugs").length > 0){
+    	this.togglePlugsMessage(this.getFreshPlugsLength() == 0);
+    }else{
+    	this.toggleAppsMessage(this.getAppsLength() == 0);
+    }
+  },
+
+  handleUninstallFailure: function(plug, message) {
+    var that = this;
+    that.rollbackDelete(plug);
+    jQuery("#toggle-confirm").modal("hide");
+    jQuery('.twipsy').remove();
+    html = that.customMessages.delete_error.unescapeHTML();
+    if (message) {
+      html += '<div class="mkp-error-details"><a>View error details<a></div>';
+    }
+    jQuery("#noticeajax").html(html).show().addClass("alert-danger");
+    jQuery('.mkp-error-details').click(function() {
+      jQuery('.mkp-error-details').html('<p>'+ message +'<p>');
+    });
+    closeableFlash('#noticeajax');
+  },
+
+  pollAccountApi: function(plug, count, maxCount) {
+    var self = this;
+    jQuery.ajax({
+      url: '/admin/marketplace/installed_extensions/'+ plug.extensionId +'/app_status',
+      type: "GET",
+      success: function(resp_body, statustext, resp){
+        self.handlePollSuccess(plug, resp, count, maxCount);
+      },
+      error: function(jqXHR, exception) {
+        self.handleUninstallFailure(plug);
+      }
+    });
+  },
+
+  handlePollSuccess: function(plug, resp, count, maxCount) {
+    var self = this;
+    if (resp.status == 202 && count < maxCount) {
+      count = count + 1;
+      setTimeout( function() {
+        self.pollAccountApi(plug, count, maxCount);
+      }, self.accApiPollInterval);
+    } else if (resp.status == 200) {
+      response = resp.responseJSON;
+      switch (response.status) {
+        case 'SUCCESS':
+          self.handleUninstallSuccess(plug);
+          break;
+        case 'FAILED':
+        case 'LIMBO':
+          self.handleUninstallFailure(plug, response.message);
+          break;
+      }
+    } else {
+    	self.handleUninstallFailure(plug);
+    }
+  },
+
+  rollbackDelete: function(plug) {
+    var self = this;
+    var el = plug.element;
+    var list_box = jQuery(el).parents(".list-box");
+    jQuery(list_box).removeClass("disabled-app");
+    jQuery(el).closest('.plug-actions').show();
+    jQuery('#delete_prog_'+ plug.extensionId +' .mkp-prog-spinner').removeClass('sloading loading-tiny');
+    jQuery('#delete_prog_'+ plug.extensionId).hide();
+  },
+
   onAppBrowserHover: function(e){ //used
     this.isMouseInside=true;
   },
@@ -210,9 +304,9 @@ var MarketplaceBrowser  = Class.create({
 			}
 		}
 	},
-	onBodyClick: function(e){  
+	onBodyClick: function(e){
     var ele = jQuery(e.originalEvent.target);
-    var clickedSuggestions = jQuery(ele).hasClass("ui-autocomplete") || jQuery(ele).hasClass("suggested-term") || jQuery(ele).hasClass("fa-autocomplete") 
+    var clickedSuggestions = jQuery(ele).hasClass("ui-autocomplete") || jQuery(ele).hasClass("suggested-term") || jQuery(ele).hasClass("fa-autocomplete")
 
 	  if(!this.isMouseInside && !jQuery(ele).hasClass("select2-drop-mask") && !clickedSuggestions ){
     	if(jQuery(this.settingsLinks.appBrowser).hasClass('slide-activate')){

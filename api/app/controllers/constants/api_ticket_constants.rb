@@ -10,8 +10,8 @@ module ApiTicketConstants
                   ).freeze | ARRAY_FIELDS | HASH_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
 
   # removed source since update of ticket source should not be allowed. - Might break API v2
-  UPDATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id priority
-                     email phone twitter_id facebook_id requester_id name
+  UPDATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id priority internal_group_id
+                     email phone twitter_id facebook_id requester_id name internal_agent_id
                      responder_id status subject type product_id company_id
                      skip_close_notification).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   BULK_REPLY_FIELDS = [reply: ([:body, :from_email, :attachment_ids] | AttachmentConstants::CLOUD_FILE_FIELDS)].freeze
@@ -27,7 +27,7 @@ module ApiTicketConstants
   BULK_DELETE_PRELOAD_OPTIONS = [:tags, :schema_less_ticket].freeze
   DEFAULT_ORDER_BY = TicketsFilter::DEFAULT_SORT
   DEFAULT_ORDER_TYPE = TicketsFilter::DEFAULT_SORT_ORDER
-  VALIDATABLE_DELEGATOR_ATTRIBUTES = %w(group_id responder_id product_id
+  VALIDATABLE_DELEGATOR_ATTRIBUTES = %w(group_id responder_id product_id internal_agent_id internal_group_id
                                         email_config_id custom_field requester_id
                                         status facebook_id ticket_type company_id).freeze
   PRIORITIES = TicketConstants::PRIORITY_TOKEN_BY_KEY.keys.freeze

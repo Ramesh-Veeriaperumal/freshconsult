@@ -4,7 +4,7 @@ class Helpdesk::TicketDrop < BaseDrop
   include TicketConstants
   include DateHelper
 
-  self.liquid_attributes += [ :requester , :group , :ticket_type , :deleted, :company, :internal_group ]
+  self.liquid_attributes += [ :group , :ticket_type , :deleted, :internal_group ]
 
   def initialize(source)
     super source
@@ -58,8 +58,16 @@ class Helpdesk::TicketDrop < BaseDrop
       @source.cloud_files
   end
 
-  def requester
-    @source.requester.presence
+  #Escaping for associated objects having custom fields.
+  ["requester", "company"].each do |assoc|
+    define_method(assoc) do
+      return instance_variable_get("@#{assoc}") if instance_variable_defined?("@#{assoc}")
+      current_assoc = @source.send(assoc).presence
+      if current_assoc
+        current_assoc.escape_liquid_attributes = @source.escape_liquid_attributes
+      end
+      instance_variable_set("@#{assoc}", current_assoc)
+    end
   end
 
   def outbound_initiator
@@ -249,8 +257,8 @@ class Helpdesk::TicketDrop < BaseDrop
   def before_method(method)
     field_name = "#{method}_#{@source.account_id}"
     required_field_type = @source.custom_field_type_mappings[field_name]
-    return super unless required_field_type
     required_field_value = @source.custom_field[field_name]
+    return super unless required_field_value # required_field_value will be present only for custom field
     formatted_field_value(required_field_type, required_field_value)
   end
 

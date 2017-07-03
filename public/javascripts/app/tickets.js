@@ -29,7 +29,7 @@ window.App = window.App || {};
 				break;
 			
 			case 'helpdesk/collab_tickets/show':
-				this.current_module = 'Collabticketdetails';
+				this.current_module = 'CollabTicketDetails';
 				break;
 
 			case 'helpdesk/tickets/compose_email':

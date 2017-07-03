@@ -1987,15 +1987,6 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     render :partial => "helpdesk/tickets/description_attachment", :locals => {:filename => params[:filename], :value => params[:value], :name => params[:name]}
   end
 
-  def enable_escape_liquid_attributes(object)
-    object.escape_liquid_attributes = true
-    if object.respond_to?(:requester) && object.requester
-      object.requester.escape_liquid_attributes = true
-      object.requester.company.escape_liquid_attributes = true if object.requester.company
-    end
-    object.company.escape_liquid_attributes = true if object.company
-  end
-
   def collab_ticket_view?
     current_account.collaboration_enabled? and @collab_context
   end
