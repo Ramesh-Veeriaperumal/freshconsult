@@ -71,12 +71,14 @@ class SendgridDomainUpdates < BaseWorker
         begin
           signup_params["api_response"] = Email::AntiSpam.scan(signup_params, Account.current.id, account.helpdesk_name, account.full_domain)
           mask_new_response signup_params["api_response"]
-          signup_params["api_response"]["status"] = -1 if (signup_params["api_response"].present? && !signup_params["api_response"]["status"].present?)
+          signup_params["api_response"]["status"] = -1 if (signup_params["api_response"].blank? || signup_params["api_response"]["status"].blank?)
           save_account_sign_up_params(Account.current.id, signup_params)
           Rails.logger.info "Response by EmailServ account validate account - #{account.id} ::: email - #{signup_params["account_details"]["email"]} ::: ip - #{signup_params["account_details"]["source_ip"]} ::: status - #{signup_params["api_response"]["status"]} ::: reason - #{signup_params["api_response"]["reason"].to_a.to_sentence} "
         rescue => e
           Rails.logger.error "Error while processing Ehawk Email Verifier \n#{e.message}\n#{e.backtrace.join("\n\t")}"
         end
+      else
+          Rails.logger.info "Account - #{account.id} , account_details not found"
       end
         
       if signup_params["api_response"] && signup_params["api_response"]["status"] == 5
