@@ -415,6 +415,27 @@ module Ember
       match_json([bad_request_error_pattern(:application_id, :invalid_list, list: '10000')])
     end
 
+    def test_create_cloud_files_with_no_app_id
+      cloud_file_params = [{ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg"}]
+      params = ticket_params_hash.merge(cloud_files: cloud_file_params)
+      post :create, construct_params({ version: 'private' }, params)
+      assert_response 400
+    end
+
+     def test_create_cloud_files_with_no_file_name
+      cloud_file_params = [{ url: "https://www.dropbox.com/image.jpg" , application_id: 20}]
+      params = ticket_params_hash.merge(cloud_files: cloud_file_params)
+      post :create, construct_params({ version: 'private' }, params)
+      assert_response 400
+    end
+
+    def test_create_cloud_files_with_no_file_url
+      cloud_file_params = [{ filename: "image.jpg" , application_id: 20}]
+      params = ticket_params_hash.merge(cloud_files: cloud_file_params)
+      post :create, construct_params({ version: 'private' }, params)
+      assert_response 400
+    end
+
     def test_create_with_cloud_files
       cloud_file_params = [{ filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 },
                            { filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 }]
