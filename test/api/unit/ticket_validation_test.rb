@@ -302,15 +302,13 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_bulk_update_validation
     Account.stubs(:current).returns(Account.first)
-    TicketsValidationHelper.stubs(:data_type_validatable_custom_fields).returns(CustomFieldValidatorTestHelper.data_type_validatable_custom_fields)
-    controller_params = {  'description' => Faker::Lorem.paragraph,  custom_fields: 'Incorrect_value' }
+    controller_params = {  'description' => Faker::Lorem.paragraph, ticket_fields: [], custom_fields: 'Incorrect_value' }
     ticket = TicketValidation.new(controller_params, nil)
     ticket.skip_bulk_validations = true
     refute ticket.valid?(:bulk_update)
     errors = ticket.errors.full_messages
     assert errors.include?('Custom fields datatype_mismatch')
     assert_equal({ description: {}, custom_fields: { expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: String } }, ticket.error_options)
-    TicketsValidationHelper.unstub(:data_type_validatable_custom_fields)
     Account.unstub(:current)
   end
 

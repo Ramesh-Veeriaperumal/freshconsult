@@ -42,8 +42,9 @@ module Ember
       Helpdesk::TicketStatus.find(2).update_column(:stop_sla_timer, false)
       @@ticket_fields = []
       @@custom_field_names = []
-      @@ticket_fields << create_dependent_custom_field(%w[test_custom_country test_custom_state test_custom_city])
-      @@ticket_fields << create_custom_field_dropdown('test_custom_dropdown', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
+      @@ticket_fields << create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
+      @@dropdown_choices = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon']
+      @@ticket_fields << create_custom_field_dropdown('test_custom_dropdown', @@dropdown_choices)
       @@choices_custom_field_names = @@ticket_fields.map(&:name)
       CUSTOM_FIELDS.each do |custom_field|
         next if %w[dropdown country state city].include?(custom_field)
@@ -736,17 +737,6 @@ module Ember
       assert_equal update_group.id, ticket.group_id
     end
 
-    def test_update_properties_validation_for_closure_status
-      ticket = create_ticket
-      params_hash = { status: 4 }
-      ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
-      ticket_field.update_attribute(:required_for_closure, true)
-      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
-      ticket_field.update_attribute(:required_for_closure, false)
-      assert_response 400
-      match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, expected_data_type: String)])
-    end
-
     def test_update_properties_closure_of_parent_ticket_failure
       parent_ticket = create_ticket
       child_ticket = create_ticket
@@ -779,6 +769,349 @@ module Ember
       assert_response 200
       match_json(ticket_show_pattern(ticket.reload))
       assert_equal 5, ticket.status
+    end
+
+    def test_update_properties_with_required_default_field_blank
+      Helpdesk::TicketField.where(name: "group").update_all(required: true)
+      group = create_group(@account)
+      t = create_ticket({}, group)
+      params_hash = { group_id: nil }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('group_id', :datatype_mismatch, { expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received })])
+    ensure
+      Helpdesk::TicketField.where(name: "group").update_all(required: false)
+    end
+
+    def test_update_properties_with_required_default_field_blank_in_db
+      Helpdesk::TicketField.where(name: "group").update_all(required: true)
+      t = create_ticket
+      params_hash = { status: 3 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 200
+      match_json(ticket_show_pattern(t.reload))
+    ensure
+      Helpdesk::TicketField.where(name: "group").update_all(required: false)
+    end
+
+    def test_update_properties_closure_status_with_required_for_closure_default_field_blank
+      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: true)
+      group = create_group(@account)
+      t = create_ticket({}, group)
+      params_hash = { status: 5, group_id: nil }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern("group_id", :datatype_mismatch, { expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received })])
+    ensure
+      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: false)
+    end
+
+    def test_update_properties_closure_status_with_required_for_closure_default_field_blank_in_db
+      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: true)
+      t = create_ticket
+      params_hash = { status: 5 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern("group_id", :datatype_mismatch, { expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received })])
+    ensure
+      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: false)
+    end
+
+    def test_update_properties_of_closed_tickets_with_required_for_closure_default_field_blank
+      group = create_group(@account)
+      t = create_ticket({ status: 5 }, group)
+      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: true)
+      params_hash = { group_id: nil }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern("group_id", :datatype_mismatch, { expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received })])
+    ensure
+      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: false)
+    end
+
+    def test_update_properties_of_closed_tickets_with_required_for_closure_default_field_blank_in_db
+      t = create_ticket(status: 5)
+      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: true)
+      params_hash = { priority: 4 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 200
+      match_json(ticket_show_pattern(t.reload))
+    ensure
+      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: false)
+    end
+
+    def test_update_properties_with_required_custom_non_dropdown_field_blank_in_db
+      t = create_ticket
+      ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
+      ticket_field.update_attribute(:required, true)
+      params_hash = { status: 3 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 200
+      match_json(ticket_show_pattern(t.reload))
+    ensure
+      ticket_field.update_attribute(:required, false)
+    end
+
+    def test_update_properties_closure_status_with_required_for_closure_custom_non_dropdown_field_blank_in_db
+      ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
+      ticket_field.update_attribute(:required_for_closure, true)
+      t = create_ticket
+      params_hash = { status: 5 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, { expected_data_type: :String })])
+    ensure
+      ticket_field.update_attribute(:required_for_closure, false)
+    end
+
+    def test_update_properties_of_closed_tickets_with_required_for_closure_custom_non_dropdown_field_blank_in_db
+      t = create_ticket(status: 5)
+      ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
+      ticket_field.update_attribute(:required_for_closure, true)
+      params_hash = { priority: 4 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 200
+      match_json(ticket_show_pattern(t.reload))
+    ensure
+      ticket_field.update_attribute(:required_for_closure, false)
+    end
+
+    def test_update_properties_with_required_custom_dropdown_field_blank_in_db
+      t = create_ticket
+      ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+      ticket_field.update_attribute(:required, true)
+      params_hash = { status: 3 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 200
+      match_json(ticket_show_pattern(t.reload))
+    ensure
+      ticket_field.update_attribute(:required, false)
+    end
+
+    def test_update_properties_closure_status_with_required_for_closure_custom_dropdown_field_blank_in_db
+      ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+      ticket_field.update_attribute(:required_for_closure, true)
+      t = create_ticket
+      params_hash = { status: 5 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern(ticket_field.label, :not_included, list: @@dropdown_choices.join(','))])
+    ensure
+      ticket_field.update_attribute(:required_for_closure, false)
+    end
+
+    def test_update_properties_of_closed_tickets_with_required_for_closure_custom_dropdown_field_blank_in_db
+      t = create_ticket(status: 5)
+      ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+      ticket_field.update_attribute(:required_for_closure, true)
+      params_hash = { priority: 4 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 200
+      match_json(ticket_show_pattern(t.reload))
+    ensure
+      ticket_field.update_attribute(:required_for_closure, false)
+    end
+
+    def test_update_properties_with_required_default_field_with_incorrect_value
+      Helpdesk::TicketField.where(name: "group").update_all(required: true)
+      group = create_group(@account)
+      t = create_ticket({}, group)
+      params_hash = { group_id: group.id + 10 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('group_id', :absent_in_db, resource: :group, attribute: :group_id)])
+    ensure
+      Helpdesk::TicketField.where(name: "group").update_all(required: false)
+    end
+
+    def test_update_properties_with_required_default_field_with_incorrect_value_in_db
+      Helpdesk::TicketField.where(name: "group").update_all(required: true)
+      group = create_group(@account)
+      t = create_ticket
+      t.update_attributes(group_id: group.id + 10)
+      params_hash = { status: 3 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 200
+      match_json(ticket_show_pattern(t.reload))
+    ensure
+      Helpdesk::TicketField.where(name: "group").update_all(required: false)
+    end
+
+    def test_update_properties_closure_status_with_required_for_closure_default_field_with_incorrect_value
+      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: true)
+      group = create_group(@account)
+      t = create_ticket({}, group)
+      params_hash = { status: 5, group_id: group.id + 10 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('group_id', :absent_in_db, resource: :group, attribute: :group_id)])
+    ensure
+      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: false)
+    end
+
+    def test_update_properties_closure_status_with_required_for_closure_default_field_with_incorrect_value_in_db
+      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: true)
+      group = create_group(@account)
+      t = create_ticket
+      t.update_attributes(group_id: group.id + 10)
+      params_hash = { status: 5 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern("group_id", :absent_in_db, resource: :group, attribute: :group_id)])
+    ensure
+      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: false)
+    end
+
+    def test_update_properties_of_closed_tickets_with_required_for_closure_default_field_with_incorrect_value
+      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: true)
+      group = create_group(@account)
+      t = create_ticket({ status: 5 }, group)
+      params_hash = { group_id: group.id + 10 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('group_id', :absent_in_db, resource: :group, attribute: :group_id)])
+    ensure
+      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: false)
+    end
+
+    def test_update_properties_of_closed_tickets_with_required_for_closure_default_field_with_incorrect_value_in_db
+      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: true)
+      group = create_group(@account)
+      t = create_ticket(status: 5)
+      t.update_attributes(group_id: group.id + 10)
+      params_hash = { priority: 4 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 200
+      match_json(ticket_show_pattern(t.reload))
+    ensure
+      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: false)
+    end
+
+    def test_update_properties_with_required_custom_non_dropdown_field_blank_with_incorrect_value_in_db
+      ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_date_#{@account.id}" }
+      ticket_field.update_attribute(:required, true)
+      t = create_ticket(custom_field: { ticket_field.name => 'Sample Text'})
+      params_hash = { priority: 4 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 200
+      match_json(ticket_show_pattern(t.reload))
+    ensure
+      ticket_field.update_attribute(:required, false)
+    end
+
+    def test_update_properties_closure_status_with_required_for_closure_custom_non_dropdown_field_blank_with_incorrect_value_in_db
+      ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_date_#{@account.id}" }
+      ticket_field.update_attribute(:required_for_closure, true)
+      t = create_ticket(custom_field: { ticket_field.name => 'Sample Text' })
+      params_hash = { status: 5 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern(ticket_field.label, :invalid_date, { code: :missing_field, accepted: 'yyyy-mm-dd' })])
+    ensure
+      ticket_field.update_attribute(:required_for_closure, false)
+    end
+
+    def test_update_properties_of_closed_tickets_with_required_for_closure_custom_non_dropdown_field_with_incorrect_value_in_db
+      ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_date_#{@account.id}" }
+      t = create_ticket(status: 5, custom_field: { ticket_field.name => 'Sample Text' })
+      ticket_field.update_attribute(:required_for_closure, true)
+      params_hash = { priority: 4 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 200
+      match_json(ticket_show_pattern(t.reload))
+    ensure
+      ticket_field.update_attribute(:required_for_closure, false)
+    end
+
+    def test_update_properties_with_required_custom_dropdown_field_blank_with_incorrect_value_in_db
+      ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+      ticket_field.update_attribute(:required, true)
+      t = create_ticket(custom_field: {ticket_field.name => 'invalid_choice'})
+      params_hash = { priority: 4 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 200
+      match_json(ticket_show_pattern(t.reload))
+    ensure
+      ticket_field.update_attribute(:required, false)
+    end
+
+    def test_update_properties_closure_status_with_required_for_closure_custom_dropdown_field_blank_with_incorrect_value_in_db
+      ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+      ticket_field.update_attribute(:required_for_closure, true)
+      t = create_ticket(custom_field: { ticket_field.name => 'invalid_choice' })
+      params_hash = { status: 5 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern(ticket_field.label, :not_included, list: @@dropdown_choices.join(','))])
+    ensure
+      ticket_field.update_attribute(:required_for_closure, false)
+    end
+
+    def test_update_properties_of_closed_tickets_with_required_for_closure_custom_dropdown_field_with_incorrect_value_in_db
+      ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+      t = create_ticket(status: 5, custom_field: { ticket_field.name => 'invalid_choice' })
+      ticket_field.update_attribute(:required_for_closure, true)
+      params_hash = { priority: 4 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 200
+      match_json(ticket_show_pattern(t.reload))
+    ensure
+      ticket_field.update_attribute(:required_for_closure, false)
+    end
+
+    def test_update_properties_with_non_required_default_field_with_incorrect_value
+      t = create_ticket
+      group = create_group(@account)
+      params_hash = { priority: 1000 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('priority', :not_included, list: ApiTicketConstants::PRIORITIES.join(','))])
+    end
+
+    def test_update_properties_with_non_required_default_field_with_incorrect_value_in_db
+      ticket_ids = []
+      t = create_ticket(type: 'Sample')
+      params_hash = { priority: 4}
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 200
+      match_json(ticket_show_pattern(t.reload))
+    end
+
+    def test_update_properties_with_non_required_custom_non_dropdown_field_with_incorrect_value_in_db
+      ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_date_#{@account.id}" }
+      t = create_ticket(custom_field: { ticket_field.name => 'Sample Text' })
+      params_hash = { priority: 4 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 200
+      match_json(ticket_show_pattern(t.reload))
+    end
+
+    def test_update_properties_with_non_required_default_field_with_invalid_value
+      group = create_group(@account)
+      t = create_ticket({}, group)
+      params_hash = { group_id: group.id + 10 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('group_id', :absent_in_db, { resource: :group, attribute: :group_id })])
+    end
+
+    def test_update_properties_with_non_required_default_field_with_invalid_value_in_db
+      group = create_group(@account)
+      t = create_ticket
+      t.update_attributes(group_id: group.id + 10)
+      params_hash = { status: 3 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 200
+      match_json(ticket_show_pattern(t.reload))
+    end
+
+    def test_update_properties_with_non_required_custom_dropdown_field_with_incorrect_value_in_db
+      ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+      t = create_ticket(custom_field: { ticket_field.name => 'invalid_choice' })
+      params_hash = { priority: 4 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 200
+      match_json(ticket_show_pattern(t.reload))
     end
 
     def test_show_with_facebook_post

@@ -172,24 +172,6 @@ module Ember
         assert_response 202
       end
 
-      def test_bulk_update_with_custom_fields
-        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
-        ticket_field.update_attribute(:required_for_closure, true)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
-        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5)
-        params_hash = {ids: ticket_ids, properties: properties_hash}
-        post :bulk_update, construct_params({ version: 'private' }, params_hash)
-        failures = {}
-        ticket_ids.each {|id| failures[id] = { ticket_field.label => [:datatype_mismatch, { expected_data_type: :String, given_data_type: 'Null', prepend_msg: :input_received }]}}
-        match_json(partial_success_response_pattern([], failures))
-        assert_response 202
-      ensure
-        ticket_field.update_attribute(:required_for_closure, false)
-      end
-
       def test_bulk_update_closure_of_parent_ticket_failure
         parent_ticket = create_ticket
         child_ticket = create_ticket
@@ -347,6 +329,680 @@ module Ember
         assert_response 202
       end
 
+      def test_bulk_update_with_required_default_field_blank
+        Helpdesk::TicketField.where(name: "product").update_all(required: true)
+        product = create_product
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(product_id: product.id).display_id
+        end
+        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.merge(product_id: nil)}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern('product_id', :datatype_mismatch, { expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received })])
+      ensure
+        Helpdesk::TicketField.where(name: "product").update_all(required: false)
+      end
+
+      def test_bulk_update_with_required_default_field_blank_in_db
+        Helpdesk::TicketField.where(name: "product").update_all(required: true)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket.display_id
+        end
+        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+      ensure
+        Helpdesk::TicketField.where(name: "product").update_all(required: false)
+      end
+
+      def test_bulk_update_closure_status_with_required_for_closure_default_field_blank
+        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: true)
+        product = create_product
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(product_id: product.id).display_id
+        end
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, product_id: nil)
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern("product_id", :datatype_mismatch, { expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received })])
+      ensure
+        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: false)
+      end
+
+      def test_bulk_update_closure_status_with_required_for_closure_default_field_blank_in_db
+        Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: true)
+        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: true)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket.display_id
+        end
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :group_id).merge(status: 5)
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        failures = {}
+        ticket_ids.each {|id| failures[id] = { "group_id" => [:datatype_mismatch, { expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received}],
+                                               "product_id" => [:datatype_mismatch, { expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received}]}}
+        match_json(partial_success_response_pattern([], failures))
+      ensure
+        Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: false)
+        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: false)
+      end
+
+      def test_bulk_update_closed_tickets_with_required_for_closure_default_field_blank
+        product = create_product
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(status: 5, product_id: product.id).display_id
+        end
+        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: true)
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :status).merge(product_id: nil)
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        failures = {}
+        ticket_ids.each {|id| failures[id] = { "product_id" => [:datatype_mismatch, { expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received}]}}
+        match_json(partial_success_response_pattern([], failures))
+      ensure
+        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: false)
+      end
+
+      def test_bulk_update_closed_tickets_with_required_for_closure_default_field_blank_in_db
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(status: 5).display_id
+        end
+        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: true)
+        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.except(:due_by, :fr_due_by, :status)}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+      ensure
+        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: false)
+      end
+
+      def test_bulk_update_with_required_custom_non_dropdown_field_blank
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
+        ticket_field.update_attribute(:required, true)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(custom_field: { ticket_field.name => 'Sample Text' }).display_id
+        end
+        properties_hash = update_ticket_params_hash.merge(custom_fields: {ticket_field.label => ''})
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern(ticket_field.label, :blank, code: :missing_field)])
+      ensure
+        ticket_field.update_attribute(:required, false)
+      end
+
+      def test_bulk_update_with_required_custom_non_dropdown_field_blank_in_db
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket.display_id
+        end
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
+        ticket_field.update_attribute(:required, true)
+        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+      ensure
+        ticket_field.update_attribute(:required, false)
+      end
+
+      def test_bulk_update_closure_status_with_required_for_closure_custom_non_dropdown_field_blank
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
+        ticket_field.update_attribute(:required_for_closure, true)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket.display_id
+        end
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, custom_fields: {ticket_field.label => ''})
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern(ticket_field.label, :blank, { code: :missing_field })])
+      ensure
+        ticket_field.update_attribute(:required_for_closure, false)
+      end
+
+      def test_bulk_update_closure_status_with_required_for_closure_custom_non_dropdown_field_blank_in_db
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
+        ticket_field.update_attribute(:required_for_closure, true)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket.display_id
+        end
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5)
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        failures = {}
+        ticket_ids.each {|id| failures[id] = { ticket_field.label => [:datatype_mismatch, { expected_data_type: :String, given_data_type: 'Null', prepend_msg: :input_received }]}}
+        match_json(partial_success_response_pattern([], failures))
+      ensure
+        ticket_field.update_attribute(:required_for_closure, false)
+      end
+
+      def test_bulk_update_closed_tickets_with_required_for_closure_custom_non_dropdown_field_blank
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(status: 5, custom_field: { ticket_field.name => 'Sample Text' }).display_id
+        end
+        ticket_field.update_attribute(:required_for_closure, true)
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :status).merge(custom_fields: { ticket_field.label => nil })
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, { expected_data_type: :String, given_data_type: 'Null', prepend_msg: :input_received })])
+      ensure
+        ticket_field.update_attribute(:required_for_closure, false)
+      end
+
+      def test_bulk_update_closed_tickets_with_required_for_closure_custom_non_dropdown_field_blank_in_db
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(status: 5).display_id
+        end
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
+        ticket_field.update_attribute(:required_for_closure, true)
+        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.except(:due_by, :fr_due_by, :status)}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+      ensure
+        ticket_field.update_attribute(:required_for_closure, false)
+      end
+
+      def test_bulk_update_with_required_custom_dropdown_field_blank
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+        ticket_field.update_attribute(:required, true)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(custom_field: { ticket_field.name => CUSTOM_FIELDS_CHOICES.sample }).display_id
+        end
+        properties_hash = update_ticket_params_hash.merge(custom_fields: {ticket_field.label => nil})
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern(ticket_field.label, :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
+      ensure
+        ticket_field.update_attribute(:required, false)
+      end
+
+      def test_bulk_update_with_required_custom_dropdown_field_blank_in_db
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket.display_id
+        end
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+        ticket_field.update_attribute(:required, true)
+        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+      ensure
+        ticket_field.update_attribute(:required, false)
+      end
+
+      def test_bulk_update_closure_status_with_required_for_closure_custom_dropdown_field_blank
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+        ticket_field.update_attribute(:required_for_closure, true)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket.display_id
+        end
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, custom_fields: {ticket_field.label => nil})
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern(ticket_field.label, :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
+      ensure
+        ticket_field.update_attribute(:required_for_closure, false)
+      end
+
+      def test_bulk_update_closure_status_with_required_for_closure_custom_dropdown_field_blank_in_db
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+        ticket_field.update_attribute(:required_for_closure, true)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket.display_id
+        end
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5)
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        failures = {}
+        ticket_ids.each {|id| failures[id] = { ticket_field.label => [:not_included, list: CUSTOM_FIELDS_CHOICES.join(',') ]}}
+        match_json(partial_success_response_pattern([], failures))
+      ensure
+        ticket_field.update_attribute(:required_for_closure, false)
+      end
+
+      def test_bulk_update_closed_tickets_with_required_for_closure_custom_dropdown_field_blank
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(status: 5, custom_field: { ticket_field.name => CUSTOM_FIELDS_CHOICES.sample }).display_id
+        end
+        ticket_field.update_attribute(:required_for_closure, true)
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :status).merge(custom_fields: { ticket_field.label => nil })
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        failures = {}
+        ticket_ids.each {|id| failures[id] = { ticket_field.label => [:not_included, list: CUSTOM_FIELDS_CHOICES.join(',') ]}}
+        match_json(partial_success_response_pattern([], failures))
+      ensure
+        ticket_field.update_attribute(:required_for_closure, false)
+      end
+
+      def test_bulk_update_closed_tickets_with_required_for_closure_custom_dropdown_field_blank_in_db
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(status: 5).display_id
+        end
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+        ticket_field.update_attribute(:required_for_closure, true)
+        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.except(:due_by, :fr_due_by, :status)}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+      ensure
+        ticket_field.update_attribute(:required_for_closure, false)
+      end
+
+      def test_bulk_update_with_required_default_field_with_incorrect_value
+        Helpdesk::TicketField.where(name: "product").update_all(required: true)
+        product = create_product
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(product_id: product.id).display_id
+        end
+        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.merge(product_id: product.id + 10)}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern('product_id', :absent_in_db, resource: :product, attribute: :product_id)])
+      ensure
+        Helpdesk::TicketField.where(name: "product").update_all(required: false)
+      end
+
+      def test_bulk_update_with_required_default_field_with_incorrect_value_in_db
+        Helpdesk::TicketField.where(name: "product").update_all(required: true)
+        product = create_product
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(product_id: product.id + 10).display_id
+        end
+        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+      ensure
+        Helpdesk::TicketField.where(name: "product").update_all(required: false)
+      end
+
+      def test_bulk_update_closure_status_with_required_for_closure_default_field_with_incorrect_value
+        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: true)
+        product = create_product
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(product_id: product.id).display_id
+        end
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, product_id: product.id + 10)
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern('product_id', :absent_in_db, resource: :product, attribute: :product_id)])
+      ensure
+        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: false)
+      end
+
+      def test_bulk_update_closure_status_with_required_for_closure_default_field_with_incorrect_value_in_db
+        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: true)
+        product = create_product
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(product_id: product.id + 10).display_id
+        end
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5)
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        failures = {}
+        ticket_ids.each {|id| failures[id] = { "product_id" => [:absent_in_db, { resource: :product, attribute: :product_id }]}}
+        match_json(partial_success_response_pattern([], failures))
+      ensure
+        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: false)
+      end
+
+      def test_bulk_update_closed_tickets_with_required_for_closure_default_field_with_incorrect_value
+        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: true)
+        product = create_product
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(status: 5, product_id: product.id).display_id
+        end
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :status).merge(product_id: product.id + 10)
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern('product_id', :absent_in_db, resource: :product, attribute: :product_id)])
+      ensure
+        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: false)
+      end
+
+      def test_bulk_update_closed_tickets_with_required_for_closure_default_field_with_incorrect_value_in_db
+        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: true)
+        product = create_product
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(status: 5, product_id: product.id + 10).display_id
+        end
+        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.except(:due_by, :fr_due_by, :status)}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+      ensure
+        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: false)
+      end
+
+      def test_bulk_update_with_required_custom_non_dropdown_field_with_incorrect_value
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_number_#{@account.id}" }
+        ticket_field.update_attribute(:required, true)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(custom_field: { ticket_field.name => 25 }).display_id
+        end
+        properties_hash = update_ticket_params_hash.merge(custom_fields: {ticket_field.label => 'Sample Text'})
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, { expected_data_type: :Integer, given_data_type: 'String', prepend_msg: :input_received })])
+      ensure
+        ticket_field.update_attribute(:required, false)
+      end
+
+      def test_bulk_update_with_required_custom_non_dropdown_field_blank_with_incorrect_value_in_db
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_date_#{@account.id}" }
+        ticket_field.update_attribute(:required, true)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(custom_field: { ticket_field.name => 'Sample Text'}).display_id
+        end
+        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+      ensure
+        ticket_field.update_attribute(:required, false)
+      end
+
+      def test_bulk_update_closure_status_with_required_for_closure_custom_non_dropdown_field_with_incorrect_value
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_number_#{@account.id}" }
+        ticket_field.update_attribute(:required_for_closure, true)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket.display_id
+        end
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, custom_fields: {ticket_field.label => 'Sample Text'})
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, { expected_data_type: :Integer, given_data_type: 'String', prepend_msg: :input_received })])
+      ensure
+        ticket_field.update_attribute(:required_for_closure, false)
+      end
+
+      def test_bulk_update_closure_status_with_required_for_closure_custom_non_dropdown_field_blank_with_incorrect_value_in_db
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_date_#{@account.id}" }
+        ticket_field.update_attribute(:required_for_closure, true)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(custom_field: { ticket_field.name => 'Sample Text' }).display_id
+        end
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5)
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        failures = {}
+        ticket_ids.each {|id| failures[id] = { ticket_field.label => [:invalid_date, { accepted: 'yyyy-mm-dd' }]}}
+        match_json(partial_success_response_pattern([], failures))
+      ensure
+        ticket_field.update_attribute(:required_for_closure, false)
+      end
+
+      def test_bulk_update_closed_tickets_with_required_for_closure_custom_non_dropdown_field_with_incorrect_value
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_number_#{@account.id}" }
+        ticket_field.update_attribute(:required_for_closure, true)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(status: 5, custom_field: { ticket_field.name => 25 }).display_id
+        end
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :status).merge(custom_fields: { ticket_field.label => 'Sample Text' })
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, { expected_data_type: :Integer, given_data_type: 'String', prepend_msg: :input_received })])
+      ensure
+        ticket_field.update_attribute(:required_for_closure, false)
+      end
+
+      def test_bulk_update_closed_tickets_with_required_for_closure_custom_non_dropdown_field_with_incorrect_value_in_db
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_date_#{@account.id}" }
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(status: 5, custom_field: { ticket_field.name => 'Sample Text' }).display_id
+        end
+        ticket_field.update_attribute(:required_for_closure, true)
+        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.except(:due_by, :fr_due_by, :status)}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+      ensure
+        ticket_field.update_attribute(:required_for_closure, false)
+      end
+
+      def test_bulk_update_with_required_custom_dropdown_field_with_incorrect_value
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+        ticket_field.update_attribute(:required, true)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(custom_field: { ticket_field.name => CUSTOM_FIELDS_CHOICES.sample }).display_id
+        end
+        properties_hash = update_ticket_params_hash.merge(custom_fields: {ticket_field.label => 'invalid_choice'})
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern(ticket_field.label, :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
+      ensure
+        ticket_field.update_attribute(:required, false)
+      end
+
+      def test_bulk_update_with_required_custom_dropdown_field_blank_with_incorrect_value_in_db
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+        ticket_field.update_attribute(:required, true)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(custom_field: {ticket_field.name => 'invalid_choice'}).display_id
+        end
+        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+      ensure
+        ticket_field.update_attribute(:required, false)
+      end
+
+      def test_bulk_update_closure_status_with_required_for_closure_custom_dropdown_field_with_incorrect_value
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+        ticket_field.update_attribute(:required_for_closure, true)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket.display_id
+        end
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, custom_fields: {ticket_field.label => 'invalid_choice'})
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern(ticket_field.label, :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
+      ensure
+        ticket_field.update_attribute(:required_for_closure, false)
+      end
+
+      def test_bulk_update_closure_status_with_required_for_closure_custom_dropdown_field_blank_with_incorrect_value_in_db
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+        ticket_field.update_attribute(:required_for_closure, true)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(custom_field: { ticket_field.name => 'invalid_choice' }).display_id
+        end
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5)
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        failures = {}
+        ticket_ids.each {|id| failures[id] = { ticket_field.label => [:not_included, list: CUSTOM_FIELDS_CHOICES.join(',') ]}}
+        match_json(partial_success_response_pattern([], failures))
+      ensure
+        ticket_field.update_attribute(:required_for_closure, false)
+      end
+
+      def test_bulk_update_closed_tickets_with_required_for_closure_custom_dropdown_field_with_incorrect_value
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+        ticket_field.update_attribute(:required_for_closure, true)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(status: 5, custom_field: { ticket_field.name => CUSTOM_FIELDS_CHOICES.sample }).display_id
+        end
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :status).merge(custom_fields: { ticket_field.label => 'invalid_choice' })
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern(ticket_field.label, :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
+      ensure
+        ticket_field.update_attribute(:required_for_closure, false)
+      end
+
+      def test_bulk_update_closed_tickets_with_required_for_closure_custom_dropdown_field_with_incorrect_value_in_db
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(status: 5, custom_field: { ticket_field.name => 'invalid_choice' }).display_id
+        end
+        ticket_field.update_attribute(:required_for_closure, true)
+        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.except(:due_by, :fr_due_by, :status)}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+      ensure
+        ticket_field.update_attribute(:required_for_closure, false)
+      end
+
+      def test_bulk_update_with_non_required_default_field_with_incorrect_value
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket.display_id
+        end
+        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.merge(priority: 1000)}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern('priority', :not_included, list: ApiTicketConstants::PRIORITIES.join(','))])
+      end
+
+      def test_bulk_update_with_non_required_default_field_with_incorrect_value_in_db
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(type: 'Sample').display_id
+        end
+        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.except(:priority)}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+      end
+
+      def test_bulk_update_with_non_required_custom_non_dropdown_field_with_incorrect_value
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_number_#{@account.id}" }
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket.display_id
+        end
+        properties_hash = update_ticket_params_hash.merge(custom_fields: { ticket_field.label => 'Sample Text' })
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, { expected_data_type: :Integer, given_data_type: 'String', prepend_msg: :input_received })])
+      end
+
+      def test_bulk_update_with_non_required_custom_non_dropdown_field_with_incorrect_value_in_db
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_date_#{@account.id}" }
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(custom_field: { ticket_field.name => 'Sample Text' }).display_id
+        end
+        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+      end
+
+      def test_bulk_update_with_non_required_default_field_with_invalid_value
+        product = create_product
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(product_id: product.id).display_id
+        end
+        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.merge(product_id: product.id + 10)}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern('product_id', :absent_in_db, { resource: :product, attribute: :product_id })])
+      end
+
+      def test_bulk_update_with_non_required_default_field_with_invalid_value_in_db
+        product = create_product
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(product_id: product.id + 10).display_id
+        end
+        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+      end
+
+      def test_bulk_update_with_non_required_custom_dropdown_field_with_incorrect_value
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(custom_field: { ticket_field.name => CUSTOM_FIELDS_CHOICES.sample }).display_id
+        end
+        properties_hash = update_ticket_params_hash.merge(custom_fields: {ticket_field.label => 'invalid_choice'})
+        params_hash = {ids: ticket_ids, properties: properties_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern(ticket_field.label, :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
+      end
+
+      def test_bulk_update_with_non_required_custom_dropdown_field_with_incorrect_value_in_db
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(custom_field: { ticket_field.name => 'invalid_choice' }).display_id
+        end
+        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+      end
+
       # There was a bug when we try to bulk update with type set without mandatory section fields
       def test_bulk_update_with_mandatory_dropdown_section_field
         sections = [
@@ -367,21 +1023,9 @@ module Ember
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         match_json(partial_success_response_pattern(ticket_ids, {}))
         assert_response 202
-      end
-
-      def test_bulk_update_without_mandatory_non_dropdown_field
-        new_custom_field = create_custom_field('test_custom_paragraph', 'paragraph', true)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
-        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by)
-        params_hash = {ids: ticket_ids, properties: properties_hash}
-        post :bulk_update, construct_params({ version: 'private' }, params_hash)
-        match_json(partial_success_response_pattern(ticket_ids, {}))
-        assert_response 202
       ensure
-        new_custom_field.update_attributes(required: false)
+        @account.section_fields.last.destroy
+        @account.ticket_fields.find_by_name("test_custom_dropdown_#{@account.id}").update_attributes(required: false, field_options: {section: false})
       end
 
       def test_bulk_update_with_mandatory_section_fields
@@ -404,7 +1048,8 @@ module Ember
         match_json(partial_success_response_pattern(ticket_ids, {}))
         assert_response 202
       ensure
-        @account.ticket_fields.find_by_name("test_custom_text_#{@account.id}").update_attributes(required: false)
+        @account.section_fields.last.destroy
+        @account.ticket_fields.find_by_name("test_custom_text_#{@account.id}").update_attributes(required: false, field_options: {section: false})
       end
 
       def test_bulk_update_with_invalid_custom_field
@@ -422,23 +1067,6 @@ module Ember
         assert_response 400
       end
 
-      def test_bulk_update_with_invalid_dropdown_choice
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
-        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :type)
-        properties_hash[:custom_fields] = {
-          'test_custom_dropdown' => "invalid choice"
-        }
-        params_hash = {ids: ticket_ids, properties: properties_hash}
-        post :bulk_update, construct_params({ version: 'private' }, params_hash)
-        failures = {}
-        ticket_ids.each {|id| failures[id] = { 'test_custom_dropdown' => [:not_included, list: CUSTOM_FIELDS_CHOICES.join(',') ]}}
-        match_json(partial_success_response_pattern([], failures))
-        assert_response 202
-      end
-
       def test_bulk_update_with_tags
         tag = "#{Faker::Lorem.word}_#{Time.now.to_s}"
         ticket = create_ticket
@@ -449,24 +1077,6 @@ module Ember
         match_json(partial_success_response_pattern(ticket_ids, {}))
         assert ticket.tag_names.include? (tag)
         assert_response 202
-      end
-
-      def test_bulk_update_with_mandatory_custom_dropdown
-        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
-        ticket_field.update_attribute(:required_for_closure, true)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
-        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5)
-        params_hash = {ids: ticket_ids, properties: properties_hash}
-        post :bulk_update, construct_params({ version: 'private' }, params_hash)
-        failures = {}
-        ticket_ids.each {|id| failures[id] = { ticket_field.label => [:not_included, list: CUSTOM_FIELDS_CHOICES.join(',') ]}}
-        match_json(partial_success_response_pattern([], failures))
-        assert_response 202
-      ensure
-        ticket_field.update_attribute(:required_for_closure, false)
       end
     end
   end

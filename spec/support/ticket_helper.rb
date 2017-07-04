@@ -9,21 +9,22 @@ module TicketHelper
     fwd_emails = params[:fwd_emails] || []
     subject = params[:subject] || Faker::Lorem.words(10).join(' ')
     account_id =  group ? group.account_id : @account.id
-    test_ticket = FactoryGirl.build(:ticket, status: params[:status] || 2,
-                                             display_id: params[:display_id],
-                                             requester_id: requester_id,
-                                             subject: subject,
-                                             priority: params[:priority] || 1,
-                                             responder_id: params[:responder_id],
-                                             source: params[:source] || 2,
-                                             cc_email: Helpdesk::Ticket.default_cc_hash.merge(cc_emails: cc_emails, fwd_emails: fwd_emails),
-                                             created_at: params[:created_at],
-                                             account_id: account_id,
-                                             deleted: params[:deleted] || 0,
-                                             spam: params[:spam] || 0,
-                                             custom_field: params[:custom_field],
-                                             tag_names: params[:tag_names])
-    test_ticket.build_ticket_body(description: Faker::Lorem.paragraph)
+    test_ticket = FactoryGirl.build(:ticket, :status => params[:status] || 2,
+                                         :display_id => params[:display_id], 
+                                         :requester_id =>  requester_id,
+                                         :subject => subject,
+                                         :priority => params[:priority] || 1,
+                                         :responder_id => params[:responder_id],
+                                         :source => params[:source] || 2,
+                                         :cc_email => Helpdesk::Ticket.default_cc_hash.merge(cc_emails: cc_emails, fwd_emails: fwd_emails),
+                                         :created_at => params[:created_at],
+                                         :account_id => account_id,
+                                         :deleted => params[:deleted] || 0,
+                                         :spam => params[:spam] || 0,
+                                         :custom_field => params[:custom_field],
+                                         :tag_names => params[:tag_names],
+                                         :product_id =>params[:product_id])
+    test_ticket.build_ticket_body(:description => Faker::Lorem.paragraph)
     if params[:attachments]
       test_ticket.attachments.build(content: params[:attachments][:resource],
                                     description: params[:attachments][:description],

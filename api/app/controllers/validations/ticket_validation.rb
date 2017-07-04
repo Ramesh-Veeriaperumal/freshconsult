@@ -30,7 +30,7 @@ class TicketValidation < ApiValidation
 
   validates :description, :ticket_type, :status, :subject, :priority, :product, :agent, :group, default_field:
                               {
-                                required_fields: [],
+                                required_fields: proc { |x| x.default_fields_to_validate },
                                 field_validations: proc { |x| x.default_field_validations }
                               }, if: :is_bulk_update?
 
@@ -140,21 +140,13 @@ class TicketValidation < ApiValidation
   # TODO EMBER - error messages to be changed for validations that require values for fields on status change
   validates :custom_fields, custom_field: { custom_fields:
                               {
-                                validatable_custom_fields: proc { |x| TicketsValidationHelper.custom_non_dropdown_fields(x) },
+                                validatable_custom_fields: proc { |x| x.custom_fields_to_validate },
                                 required_based_on_status: proc { |x| x.closure_status? },
                                 required_attribute: :required,
                                 ignore_string: :allow_string_param,
                                 section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
                               }
-                           }, if: -> { create_or_update? }
-  # Ignore section fields validation for bulk update
-  validates :custom_fields, custom_field: { custom_fields:
-                              {
-                                validatable_custom_fields: proc { |x| TicketsValidationHelper.custom_non_dropdown_fields(x) },
-                                required_based_on_status: false,
-                                ignore_string: :allow_string_param
-                              }
-                           }, if: :is_bulk_update?
+                           }, if: -> { errors[:custom_fields].blank? && (create_or_update? || is_bulk_update?) }
   validates :twitter_id, :phone, :name, data_type: { rules: String, allow_nil: true }
   validates :twitter_id, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :phone, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
@@ -243,6 +235,10 @@ class TicketValidation < ApiValidation
     ticket_fields.select { |x| x.default && (x.required || (x.required_for_closure && closure_status?)) }
   end
 
+  def default_fields_to_validate
+    required_default_fields.select { |x| validate_field?(x) }
+  end
+
   def create_or_update?
     [:create, :update].include?(validation_context)
   end
@@ -292,5 +288,18 @@ class TicketValidation < ApiValidation
       cloud_file_hash_errors << cloud_file_validator.errors.full_messages unless cloud_file_validator.valid?
     end
     errors[:cloud_files] << :"is invalid" if cloud_file_hash_errors.present?
+  end
+
+  def custom_fields_to_validate
+    tkt_fields = TicketsValidationHelper.custom_non_dropdown_fields(self)
+    create_or_update? ? tkt_fields : tkt_fields.select { |x| validate_field?(x) }
+  end
+
+  def validate_field?(x)
+    if x.default? 
+      request_params.key?(ApiTicketConstants::FIELD_MAPPINGS[x.name.to_sym] || x.name.to_sym)
+    else
+      request_params[:custom_fields] ? request_params[:custom_fields].key?(x.name) : false
+    end
   end
 end
