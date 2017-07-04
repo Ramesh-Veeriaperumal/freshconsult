@@ -51,8 +51,12 @@ module Va::Observer::Util
         :current_events => observer_changes,
         :enqueued_class => self.class.name
       }
-      
-      args[:model_changes] = @model_changes if self.class == Helpdesk::Ticket
+
+      if self.class == Helpdesk::Ticket
+        args[:model_changes] = @model_changes 
+        args[:sbrr_state_attributes] = sbrr_state_attributes if Account.current.skill_based_round_robin_enabled?
+      end
+
       if inline
         User.run_without_current_user { Tickets::ObserverWorker.new.perform(args) }
       elsif self.class == Helpdesk::Ticket and self.schedule_observer

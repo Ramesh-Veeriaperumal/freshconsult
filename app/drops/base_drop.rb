@@ -66,6 +66,15 @@ class BaseDrop < Liquid::Drop
     records
   end
 
+  def customer_portal?
+    return @customer_portal if instance_variable_defined?("@customer_portal")
+    begin
+      @customer_portal = (@context.registers[:controller].try(:class).try(:parent).to_s == "Support")
+    rescue Exception => e
+      @customer_portal = false
+    end
+  end
+
   protected
     # def self.timezone_dates(*attrs)
     #   attrs.each do |attr_name|
@@ -105,13 +114,23 @@ class BaseDrop < Liquid::Drop
     end
 
     def escape_liquid_attribute(value)
-        @source.escape_liquid_attributes ? h(value) : value
+      escape_liquid_attributes? ? h(value) : value
+    end
+
+    # Escape liquid attributes by default for portal and based on attribute in other places
+    def escape_liquid_attributes?
+      escape_for_customer_portal? || @source.escape_liquid_attributes
+    end
+
+    def escape_for_customer_portal?
+      return @escape_portal if instance_variable_defined?("@escape_portal")
+      @escape_portal = ( customer_portal? && Account.current.launched?(:escape_liquid_for_portal) )
     end
 
     def formatted_field_value(field_type, field_value)
-      case field_type.to_sym
+      case (field_type.blank? ? :default : field_type.to_sym) 
       when :custom_paragraph
-         escape_liquid_attribute(field_value).gsub(/\n/, '<br/>')
+         escape_liquid_attribute(field_value).gsub(/\n/, '<br/>').html_safe #adding html_safe so that the return value is of ActiveSupport::SafeBuffer class.
       when :custom_text
         escape_liquid_attribute(field_value)
       when :custom_date

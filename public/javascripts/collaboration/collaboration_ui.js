@@ -9,7 +9,7 @@
 App.CollaborationUi = (function ($) {
 	
     var CONST = {
-        MENTION_RE: /\B@([\S]+\b[*|+]*)/igm,
+        MENTION_RE: /\B@([\S]+)(?!=[\s])/igm,
         IMAGE_TAG_RE: /<img/igm,
         MENTION_EVERYONE_TAG: "@huddle",
         TYPE_SENT: 'sent',
@@ -509,8 +509,6 @@ App.CollaborationUi = (function ($) {
             if(replyData) {
                 msg.metadata = msg.metadata || {};
                 msg.metadata.reply = Collab.parseJson(replyData);
-                msg.metadata.reply.name = collabModel.usersMap[msg.metadata.reply.r_id].name;
-                msg.metadata.reply.email = collabModel.usersMap[msg.metadata.reply.r_id].email;
                 msg.metadata.reply.no_notif = true;
             }
 
@@ -533,8 +531,9 @@ App.CollaborationUi = (function ($) {
             $replyHolder.attr("data-reply", "");
             $replyHolder.find(".text").empty();
             $chatSection.removeClass("reply-added");
-
-            if(!!userMentions.length) {
+             
+            // Set metadata for tagged users
+            if(userMentions.length) {
                 var group_ids = [];
                 userMentions.forEach( function (grp) {
                     var group_name = grp.replace("@" , "");
@@ -543,149 +542,96 @@ App.CollaborationUi = (function ($) {
                     }
                 });
                 if(group_ids.length) {
-                    fetchGroupUsers(group_ids);
-                }else {
-                    proceedToSendMessage();
-                }
-            } else {
-                proceedToSendMessage();
-            }
-
-            function fetchGroupUsers(group_ids) {
-                var group_xhr = jQuery.ajax({url: "/helpdesk/commons/agents_for_groups/", 
-                    data: {"group_ids": group_ids}
-                });
-
-                group_xhr.done(processGroupData).fail(function(err) {
-                    console.error("Could not fetch group data: ", err);
-                    proceedToSendMessage();
-                });
-            }
-
-            function processGroupData(group_object) {
-                for(var id in group_object) {
-                    var current_group = group_object[id];
-                    var group_name = collabModel.groupsMap[id].name;
-                    var agent_arr = [];
-                    for(var j = 0; j < current_group.length; j++) {
-                        var grp_member = String(current_group[j].user_id);
-                        if(grp_member !== collabModel.currentUser.uid) {
-                            agent = {
-                                user_id: grp_member,
-                                name: collabModel.usersMap[grp_member].name,
-                                email: collabModel.usersMap[grp_member].email
-                            }
-                            agent_arr.push(agent);
-                        }
-                    }
-                    var member_info = {
-                        group_id: id,
-                        group_name: group_name,
-                        users: agent_arr
-                    };
-                    groupsToNotify.push(member_info);
+                    msg.metadata = msg.metadata || {};
+                    msg.metadata.hk_group_notify = group_ids;
                 }
 
-                    if(groupsToNotify.length) {
-                        msg.metadata = msg.metadata || {};
-                        msg.metadata.hk_group_notify = groupsToNotify;
+                if(userMentions.indexOf(CONST.MENTION_EVERYONE_TAG) !== -1) {
+                    usersToNotify = Object.keys(currentConvoMembers);
+                    var current_user_idx = usersToNotify.indexOf(collabModel.currentUser.uid);
+                    if(current_user_idx >= 0) {
+                        usersToNotify.splice(usersToNotify.indexOf(collabModel.currentUser.uid), 1);
                     }
+                }
 
-                    proceedToSendMessage();
-            }
-             
-            function proceedToSendMessage() {
-                // Set metadata for tagged users
-                if(!!userMentions && userMentions.length) {
-                    if(userMentions.indexOf(CONST.MENTION_EVERYONE_TAG) !== -1) {
-                        usersToNotify = Object.keys(currentConvoMembers);
-                        var current_user_idx = usersToNotify.indexOf(collabModel.currentUser.uid);
-                        if(current_user_idx >= 0) {
-                            usersToNotify.splice(usersToNotify.indexOf(collabModel.currentUser.uid), 1);
+                for (var i = 0; i < userMentions.length && totalMembersInCurrentConvo < CONST.HELPKIT_MAX_COLLABORATORS; i++) {
+
+                    userMentionName = userMentions[i].trim().substr(1).toLowerCase();
+                    var id = usersTagMap.hasOwnProperty(userMentionName) ? usersTagMap[userMentionName].uid : "";
+                    if(id !== ""
+                    && id !== collabModel.currentUser.uid // not self
+                    && usersTagMap[userMentionName].deleted !== "1" // not deleted agent
+                    && (!!currentConvoMembers[id] || totalMembersInCurrentConvo < CONST.HELPKIT_MAX_COLLABORATORS) // already a member || can be added as member
+                    && usersToNotify.indexOf(id) === -1) { // not already in the list
+                        usersToNotify.push(id);
+
+                        if(!currentConvoMembers[id] && totalMembersInCurrentConvo < CONST.HELPKIT_MAX_COLLABORATORS) {
+                            usersMapToAdd[id] = {"id": id, "added_at": collabModel.getCurrentUTCTimeStamp()};
+                            totalMembersInCurrentConvo++;
                         }
                     }
+                }
 
-                    for (var i = 0; i < userMentions.length && totalMembersInCurrentConvo < CONST.HELPKIT_MAX_COLLABORATORS; i++) {
+                if(usersToNotify.length) {
+                    msg.metadata = msg.metadata || {};
 
-                        userMentionName = userMentions[i].trim().substr(1).toLowerCase();
-                        var id = usersTagMap.hasOwnProperty(userMentionName) ? usersTagMap[userMentionName].uid : "";
-                        if(id !== ""
-                        && id !== collabModel.currentUser.uid // not self
-                        && usersTagMap[userMentionName].deleted !== "1" // not deleted agent
-                        && (!!currentConvoMembers[id] || totalMembersInCurrentConvo < CONST.HELPKIT_MAX_COLLABORATORS) // already a member || can be added as member
-                        && usersToNotify.indexOf(id) === -1) { // not already in the list
-                            usersToNotify.push(id);
-
-                            if(!currentConvoMembers[id] && totalMembersInCurrentConvo < CONST.HELPKIT_MAX_COLLABORATORS) {
-                                usersMapToAdd[id] = {"id": id, "added_at": collabModel.getCurrentUTCTimeStamp()};
-                                totalMembersInCurrentConvo++;
-                            }
-                        }
-                    }
-
-                    if(usersToNotify.length) {
-                        msg.metadata = msg.metadata || {};
-
-                        userInfos = [];
-                        usersToNotify.forEach( function(userId) {
-                            userInfos.push({
-                                user_id: userId,
-                                name: collabModel.usersMap[userId].name,
-                                email: collabModel.usersMap[userId].email,
-                                invite: currentConvoMembers ? !currentConvoMembers[userId] : true
-                            });
+                    userInfos = [];
+                    usersToNotify.forEach( function(userId) {
+                        userInfos.push({
+                            user_id: userId,
+                            invite: currentConvoMembers ? !currentConvoMembers[userId] : true
                         });
-                        msg.metadata.hk_notify = userInfos;
-                    }
-                }
-
-                function sendAndRender() {
-                    $chatSection.removeClass("empty-chat-view");
-                    if(!msg.mid) {
-                        msg.ts = msg.ts || Date.now().toString();
-                    }
-                    Collab.addMessageHtml({
-                        "body": msg.body,
-                        "s_id": collabModel.currentUser.uid,
-                        "metadata": msg.metadata,
-                        "mid": msg.mid,
-                        "m_type": CONST.MSG_TYPE_CLIENT,
-                        "ts": msg.ts,
-                        "incremental": true
-                    }, CONST.TYPE_SENT);
-                    
-                    if(!!msg.metadata) {
-                        msg.metadata.notify_version = Collab.notifyVersion;
-                    }
-                    collabModel.sendMessage(msg, currentConvo.co_id);
-                    _COLLAB_PVT.scrollToBottom();
-                    $msgBox.focus();
-                    if(!!msg.metadata && !!msg.metadata.annotations) {
-                        $("[data-message-id='"+ msg.metadata.annotations.messageId +"']").toArray().forEach(function(elem) {
-                            $(elem).removeClass("collab-temp-annotation");
-                        });
-                    }
-                }
-                var convoObject = collabModel.conversationsMap[currentConvo.co_id];
-                
-                if(!convoObject) {
-                    Collab.createConversation(currentConvo.co_id, [collabModel.currentUser.uid], function(response) {
-                        if(!!response.conversation && !!response.conversation.members[collabModel.currentUser.uid]) {
-                            sendAndRender();
-                        } else {
-                            collabModel.addMember(currentConvo.co_id, collabModel.currentUser.uid, sendAndRender);
-                        }
                     });
-                } else {
-                    if(!!convoObject){
-                        if(!convoObject.members[collabModel.currentUser.uid]){
-                            collabModel.addMember(currentConvo.co_id, collabModel.currentUser.uid, sendAndRender);
-                        }else{
-                            sendAndRender();    
-                        }
+                    msg.metadata.hk_notify = userInfos;
+                }
+            }
+
+            function sendAndRender() {
+                $chatSection.removeClass("empty-chat-view");
+                if(!msg.mid) {
+                    msg.ts = msg.ts || Date.now().toString();
+                }
+                Collab.addMessageHtml({
+                    "body": msg.body,
+                    "s_id": collabModel.currentUser.uid,
+                    "metadata": msg.metadata,
+                    "mid": msg.mid,
+                    "m_type": CONST.MSG_TYPE_CLIENT,
+                    "ts": msg.ts,
+                    "incremental": true
+                }, CONST.TYPE_SENT);
+                
+                if(!!msg.metadata) {
+                    msg.metadata.notify_version = Collab.notifyVersion;
+                }
+                collabModel.sendMessage(msg, currentConvo.co_id);
+                _COLLAB_PVT.scrollToBottom();
+                $msgBox.focus();
+                if(!!msg.metadata && !!msg.metadata.annotations) {
+                    $("[data-message-id='"+ msg.metadata.annotations.messageId +"']").toArray().forEach(function(elem) {
+                        $(elem).removeClass("collab-temp-annotation");
+                    });
+                }
+            }
+            
+            var convoObject = collabModel.conversationsMap[currentConvo.co_id];
+            
+            if(!convoObject) {
+                Collab.createConversation(currentConvo.co_id, [collabModel.currentUser.uid], function(response) {
+                    if(!!response.conversation && !!response.conversation.members[collabModel.currentUser.uid]) {
+                        sendAndRender();
+                    } else {
+                        collabModel.addMember(currentConvo.co_id, collabModel.currentUser.uid, sendAndRender);
+                    }
+                });
+            } else {
+                if(!!convoObject){
+                    if(!convoObject.members[collabModel.currentUser.uid]){
+                        collabModel.addMember(currentConvo.co_id, collabModel.currentUser.uid, sendAndRender);
+                    }else{
+                        sendAndRender();    
                     }
                 }
-
             }
             
         },
@@ -805,6 +751,7 @@ App.CollaborationUi = (function ($) {
             } else if(!self.hasExapndedTicket) {
                 // annotation_e is not present and ticket expand has not been called
                 // expand and scroll
+                // TODO(:mayank) add safecheck here
                 App.fetchMoreAndRender(event, function() {
                     self.hasExapndedTicket = true;
                     _COLLAB_PVT.scrollToAnnotationHighlight(msg_id || annotation_e);
@@ -825,7 +772,7 @@ App.CollaborationUi = (function ($) {
                     _COLLAB_PVT.fetchMoreMessages()
                 }
             } else {
-                console.log("Could not find the scrollbox; hasChatReachedTop called anyway.")
+                console.log("Could not find the scrollbox; But hasChatReachedTop was called.")
             }
         },
         fetchMoreMessages : function(cb){
@@ -841,6 +788,7 @@ App.CollaborationUi = (function ($) {
                 if(!_COLLAB_PVT.fetchingMessageBatch) {
                     _COLLAB_PVT.fetchingMessageBatch = true;
                     collabModel.fetchMoreMessages(param, function(response) {
+                        // TODO(:mayank) verify that scroll postion is not messed up because of this.
                         _COLLAB_PVT.prependMessages(response);
                         if(typeof cb === "function") cb(response);
                     });
@@ -991,7 +939,9 @@ App.CollaborationUi = (function ($) {
             if(!!Collab.expandCollabOnLoad) {
                 _COLLAB_PVT.openCollabSidebar();
                 Collab.expandCollabOnLoad = false;
-                _COLLAB_PVT.scrollToMessage(Collab.scrollToMsgId);
+                if(typeof Collab.scrollToMsgId !== "undefined") {
+                    _COLLAB_PVT.scrollToMessage(Collab.scrollToMsgId);
+                }
             }
             
             _COLLAB_PVT.disableCollabUiIfNeeded();

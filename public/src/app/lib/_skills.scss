@@ -64,7 +64,7 @@
 }
 
 #group_selector_block {
-    float: right;
+    @include float(right);
 }
 
 #group_selector {
@@ -73,17 +73,42 @@
 
 //custom styles for groups form    
 #toggle_method {
-    margin-left: 70px;
-    border-left: 1px solid #e6e6e6;
-    padding-left: 15px;
+    @include margin-left(70px);
+    @include padding-left(15px);
+}
+
+.skill-help {
+    margin: 10px 0;
+
+    .ficon-help {
+        vertical-align: middle;
+    }
+
+    .skill-divider{
+        @include margin-left(3px);
+        position: relative;
+        padding-top: 8px;
+        &::before {
+            content: '';
+            width: 35px;
+            height: 1px;
+            top: 0;
+            position: absolute;
+            background: #333;
+        }
+    }
+
+    .skill-text {
+        @include margin-left(20px);
+    }
 }
 
 #toggle_availability_container {
-    margin: 15px 0 0 70px;
+    @include margin(20px 0 0 70px);
 }
 
 .groups-form.inline-box {
-    float: left;
+    @include float(left);
 }
 
 .group_form .select2-container.capping-limit {
@@ -130,7 +155,7 @@
 }
 
 .drag_move_icon {
-    float: left;
+    @include float(left);
     bottom: 0;
     top: 0;
     line-height: 37px;
@@ -142,7 +167,7 @@
 }
 
 .load_based.limit,.skill_based.limit {
-    margin: 0px 0 20px;
+    @include margin(0px 0 20px);
 }
 
 .placeholderForSortable {
@@ -161,6 +186,6 @@
 
 .user_skill_dropdown .ficon-tick{
     margin-top: -18px!important;
-    float: left;
-    margin-left: 8px;
+    @include float(left);
+    @include margin-left(8px);
 }

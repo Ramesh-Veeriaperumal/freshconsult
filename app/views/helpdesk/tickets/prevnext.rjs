@@ -1,8 +1,9 @@
 
 next_link = 'javascript:void(0)'
 next_class = 'page-btn next_page'
+group_collab_with_filter_in_list_view = Collaboration::Ticket.new.group_collab_with_filter_in_list_view?(cookies[:filter_name])
 if !@next_ticket.nil? &&  @next_ticket.to_s != '-1'
-	next_link = "/helpdesk/tickets/#{@next_ticket}"
+	next_link = group_collab_with_filter_in_list_view ? collab_ticket_url(@next_ticket) : "/helpdesk/tickets/#{@next_ticket}"
 else
 	next_class << " disabled"
 end
@@ -10,7 +11,7 @@ end
 previous_link = 'javascript:void(0)'
 previous_class = 'page-btn prev_page'
 if !@previous_ticket.nil? &&  @previous_ticket.to_s != '-1'
-	previous_link = "/helpdesk/tickets/#{@previous_ticket}"
+	previous_link = group_collab_with_filter_in_list_view ? collab_ticket_url(@previous_ticket) : "/helpdesk/tickets/#{@previous_ticket}"
 else
 	previous_class << " disabled"
 end

@@ -720,6 +720,7 @@ $highlight_yellow: #fff3b8;
 
     &.received-box {
         .collab-reply-btn {
+            @include left(auto);
             @include left(initial);
             @include left(auto);
             @include right(-44px);
@@ -1011,7 +1012,6 @@ $highlight_yellow: #fff3b8;
     }
 
     .collab-action-btns {
-        border-top: solid 1px $border_color2;
         @include padding(5px 10px);
         height: 36px;
         box-sizing: border-box;
@@ -1659,8 +1659,8 @@ $highlight_yellow: #fff3b8;
         vertical-align: middle;
         margin-top: 2px;
         margin-right: 1px;
-        font-weight: initial;
         font-weight: auto;
+        font-weight: initial;
         color: #1272de;
         @include margin-right(2px);
 
@@ -1674,8 +1674,8 @@ $highlight_yellow: #fff3b8;
         display: inline-block;
         vertical-align: middle;
         margin-right: -1px;
-        font-weight: initial;
         font-weight: auto;
+        font-weight: initial;
         color: #1272de;
 
         &:hover {

@@ -52,11 +52,11 @@ module ArchiveTicketExportParams
   end
 
   def resolution_status
-    resolved_at.nil? ? "" : ((resolved_at < due_by) ? t('export_data.in_sla') : t('export_data.out_of_sla'))
+    resolved_at.nil? ? "" : ((resolved_at < due_by) ? I18n.t('export_data.in_sla') : I18n.t('export_data.out_of_sla'))
   end
 
   def first_response_status
-    first_response_time.nil? ? "" : ((first_response_time < frDueBy) ? t('export_data.in_sla') : t('export_data.out_of_sla'))
+    first_response_time.nil? ? "" : ((first_response_time < frDueBy) ? I18n.t('export_data.in_sla') : I18n.t('export_data.out_of_sla'))
   end
 
   def tag_names

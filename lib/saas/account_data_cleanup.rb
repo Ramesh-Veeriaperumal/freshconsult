@@ -66,7 +66,7 @@ def handle_basic_facebook_drop_data
   end
 end
 
-  def handle_skill_based_round_robin_data
+  def handle_skill_based_round_robin_drop_data
     account.groups.skill_based_round_robin_enabled.each do |group|
       if account.features?(:round_robin_load_balancing) or account.features?(:round_robin)
         group.ticket_assign_type = Group::TICKET_ASSIGN_TYPE[:round_robin]

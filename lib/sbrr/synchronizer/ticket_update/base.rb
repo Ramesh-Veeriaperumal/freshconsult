@@ -7,8 +7,8 @@ module SBRR
 
         def initialize _ticket, options={}
           @current_ticket = _ticket
-          @old_ticket = _ticket.ticket_was _ticket.model_changes, TicketConstants::SKILL_BASED_TICKET_ATTRIBUTES
-          @new_ticket = _ticket.ticket_is _ticket.model_changes, TicketConstants::SKILL_BASED_TICKET_ATTRIBUTES
+          @old_ticket = _ticket.ticket_was _ticket.model_changes, _ticket.sbrr_state_attributes, TicketConstants::SKILL_BASED_TICKET_ATTRIBUTES
+          @new_ticket = _ticket.ticket_is _ticket.model_changes, _ticket.sbrr_state_attributes, TicketConstants::SKILL_BASED_TICKET_ATTRIBUTES
         end
 
         private

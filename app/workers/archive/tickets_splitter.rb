@@ -14,6 +14,7 @@ module Archive
 
           @account.tickets.find_in_batches(:batch_size => 300, :conditions => archive_conditions) do |tickets|
             tickets.each do |ticket|
+              next if ticket.association_type.present?
               Archive::BuildCreateTicket.perform_async({:account_id => @account.id, :ticket_id => ticket.id }) if ticket.display_id < max_display_id && !ticket.archive_child
             end
           end

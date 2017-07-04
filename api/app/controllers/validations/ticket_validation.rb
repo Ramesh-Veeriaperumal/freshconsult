@@ -1,9 +1,9 @@
 class TicketValidation < ApiValidation
   MANDATORY_FIELD_ARRAY = [:requester_id, :phone, :email, :twitter_id, :facebook_id].freeze
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
-  CHECK_PARAMS_SET_FIELDS = ( MANDATORY_FIELD_ARRAY.map(&:to_s) +
-                              %w(fr_due_by due_by subject description
-                              custom_fields company_id)
+  CHECK_PARAMS_SET_FIELDS = (MANDATORY_FIELD_ARRAY.map(&:to_s) +
+                              %w(fr_due_by due_by subject description custom_fields company_id
+                                 internal_group_id internal_agent_id)
                             ).freeze
 
   attr_accessor :id, :cc_emails, :description, :due_by, :email_config_id,
@@ -11,7 +11,7 @@ class TicketValidation < ApiValidation
                 :facebook_id, :requester_id, :name, :agent, :source, :status,
                 :subject, :ticket_type, :product, :tags, :custom_fields,
                 :attachments, :request_params, :item, :statuses, :status_ids,
-                :ticket_fields, :company_id
+                :ticket_fields, :company_id, :internal_group_id, :internal_agent_id
 
   alias_attribute :type, :ticket_type
   alias_attribute :product_id, :product
@@ -22,7 +22,7 @@ class TicketValidation < ApiValidation
   validates :subject, custom_absence: { message: :outbound_email_field_restriction }, if: :source_as_outbound_email?, on: :update
   validates :description, custom_absence: { message: :outbound_email_field_restriction }, if: :source_as_outbound_email?, on: :update
   validates :email_config_id, :subject, :email, required: { message: :field_validation_for_outbound }, on: :compose_email
-  validates :description, :ticket_type, :status, :subject, :priority, :product, :agent, :group, default_field:
+  validates :description, :ticket_type, :status, :subject, :priority, :product, :agent, :group, :internal_group_id, :internal_agent_id, default_field:
                               {
                                 required_fields: proc { |x| x.required_default_fields },
                                 field_validations: proc { |x| x.default_field_validations }
@@ -54,6 +54,24 @@ class TicketValidation < ApiValidation
     ignore_string: :allow_string_param,
     greater_than: 0
   }
+
+  validates :internal_group_id, custom_absence: {
+      message: :require_feature_for_attribute,
+      code: :inaccessible_field,
+      message_options: {
+          attribute: 'internal_group_id',
+          feature: :shared_ownership
+      }
+  }, unless: -> { Account.current.shared_ownership_enabled?  }
+
+  validates :internal_agent_id, custom_absence: {
+      message: :require_feature_for_attribute,
+      code: :inaccessible_field,
+      message_options: {
+          attribute: 'internal_agent_id',
+          feature: :shared_ownership
+      }
+  }, unless: -> { Account.current.shared_ownership_enabled?  }
 
   validate :requester_detail_missing, if: -> { create_or_update? && requester_id_mandatory? }
   # validates :requester_id, required: { allow_nil: false, message: :fill_a_mandatory_field, message_options: { field_names: 'requester_id, phone, email, twitter_id, facebook_id' } }, if: :requester_id_mandatory? # No
@@ -127,6 +145,7 @@ class TicketValidation < ApiValidation
     errors[field] = :fill_a_mandatory_field
     (error_options[field] ||= {}).merge!(field_names: MANDATORY_FIELD_STRING)
   end
+
 
   def requester_id_mandatory? # requester_id is must if any one of email/twitter_id/fb_profile_id/phone is not given.
     MANDATORY_FIELD_ARRAY.all? { |x| send(x).blank? && errors[x].blank? }
@@ -202,6 +221,8 @@ class TicketValidation < ApiValidation
       ticket_type: { custom_inclusion: { in: proc { TicketsValidationHelper.ticket_type_values } } },
       group: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
       agent: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
+      internal_group_id: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param } },
+      internal_agent_id: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param } },
       product: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
       subject: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
       description: { data_type: { rules: String } }
