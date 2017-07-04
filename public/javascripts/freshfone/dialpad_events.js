@@ -405,7 +405,7 @@ var FreshfoneDialpadEvents
 	  	return element.hasClass('direct_dial');
 	  },
 	  isNumeric: function(searchString) {
-	  	return /(^[0-9.]|\+|\W)[0-9]*$/.test(searchString.trim());
+	  	return /^[0-9\+.\-\(\) ]+$/.test(searchString.trim());
 	  },
 	  getDirectDialElementOrCurrent: function(current_element) {
 	  	var directDialElem = current_element.parents("li").parent().prev().find("li:visible:last");
