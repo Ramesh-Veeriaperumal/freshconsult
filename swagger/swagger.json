@@ -108,7 +108,9 @@
               "created_at",
               "updated_at",
               "priority",
-              "status"
+              "status",
+              "agent_responded_at",
+              "requester_responded_at"
             ]
           },
           {

@@ -1337,7 +1337,7 @@ module Ember
     def test_export_csv_invalid_params_without_privilege
       contact_fields = @account.contact_form.fields
       company_fields = @account.company_form.fields
-      params_hash = { ticket_fields: { id: rand(2..10) }, contact_fields: { display_id: rand(2..10) }, query_hash: [{ 'condition' => 'responder_id', 'operaor' => 'is_in', 'ff_name' => 'default' }],
+      params_hash = { ticket_fields: { id: rand(2..10) }, contact_fields: { display_id: rand(2..10) }, query_hash: [{ 'condition' => 'responder_id', 'ff_name' => 'default' }],
                       company_fields: { number: rand(2..10) }, format: Faker::Lorem.word, date_filter: Faker::Lorem.word,
                       ticket_state_filter: Faker::Lorem.word, start_date: 6.days.ago.to_s, end_date: Time.zone.now.to_s }
       User.any_instance.stubs(:privilege?).with(:export_tickets).returns(true)

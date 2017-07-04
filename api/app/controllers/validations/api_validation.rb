@@ -15,6 +15,7 @@ class ApiValidation
   # Set instance variables of validation class from request params or items. so that manual assignment is not needed.
   def initialize(request_params, item = nil, allow_string_param = false)
     # Set instance variables of validation class from loaded item's attributes (incase of PUT/update request)
+    @request_params = request_params
     if item
       item.attributes.keys.each do |field, value|
         send("#{field}=", format_value(item.send(field))) if respond_to?("#{field}=")

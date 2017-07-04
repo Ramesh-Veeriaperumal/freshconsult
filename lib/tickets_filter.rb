@@ -130,13 +130,6 @@ module TicketsFilter
   SORT_ORDER_FIELDS_BY_KEY  = Hash[*SORT_ORDER_FIELDS.map { |i| [i[0], i[0]] }.flatten]
 
   def self.sort_fields_options
-    sort_fields = SORT_FIELDS.clone
-    if Account.current && Account.current.features_included?(:sort_by_customer_response)
-      sort_fields << [ :requester_responded_at, "tickets_filter.sort_fields.requester_responded_at"]
-      sort_fields << [ :agent_responded_at, "tickets_filter.sort_fields.agent_responded_at"]
-    end
-
-    sort_fields.insert(0, [ :due_by, "tickets_filter.sort_fields.due_by"]) if Account.current && Account.current.sla_management_enabled?
     sort_fields.map { |i| [I18n.t(i[1]), i[0]] }
   end
 
@@ -145,10 +138,18 @@ module TicketsFilter
     sort_fields.map { |i| [I18n.t(i[1]), i[0]] }
   end
 
-  def self.api_sort_fields_options
-    sort_fields_api = SORT_FIELDS.clone
-    sort_fields_api.insert(0, [ :due_by, "tickets_filter.sort_fields.due_by"]) if Account.current && Account.current.sla_management_enabled?
-    sort_fields_api
+  def self.sort_fields
+    sort_fields = SORT_FIELDS.clone
+    if Account.current && Account.current.features_included?(:sort_by_customer_response)
+      sort_fields << [ :requester_responded_at, "tickets_filter.sort_fields.requester_responded_at"]
+      sort_fields << [ :agent_responded_at, "tickets_filter.sort_fields.agent_responded_at"]
+    end
+    sort_fields.insert(0, [ :due_by, "tickets_filter.sort_fields.due_by"]) if Account.current && Account.current.sla_management_enabled?
+    sort_fields
+  end
+
+  class << self
+    alias_method :api_sort_fields_options, :sort_fields
   end
 
   def self.shared_agent_sort_fields_options

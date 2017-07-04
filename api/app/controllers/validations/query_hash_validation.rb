@@ -10,6 +10,7 @@ class QueryHashValidation < FilterValidation
   validates :value, data_type: { rules: Array }, if: -> { CustomFilterConstants::ARRAY_VALUED_OPERATORS.include?(operator) }
 
   validate :ticket_fields_condition
+  validate :valid_params?
 
   def custom_field_names
     @custom_field_names ||= Account.current.ticket_fields_from_cache
@@ -26,6 +27,12 @@ class QueryHashValidation < FilterValidation
         error_options.merge!(condition: { feature: CustomFilterConstants::FEATURES_NAMES_BY_FILED[condition],
             code: :access_denied })
       end
+    end
+  end
+
+  def valid_params?
+    @request_params.each do |key, value|
+      errors[key] << :"is a invalid param" unless key.to_sym.in? CustomFilterConstants::QUERY_HASH_PARAMS
     end
   end
 

@@ -31,4 +31,6 @@ module CustomFilterConstants
 
   ARRAY_VALUED_OPERATORS = ['is_in', 'due_by_op'].freeze
 
+  QUERY_HASH_PARAMS = [:condition, :operator, :type, :value, :ff_name].freeze
+
 end

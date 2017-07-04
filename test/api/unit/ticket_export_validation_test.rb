@@ -61,7 +61,7 @@ class TicketExportValidationTest < ActionView::TestCase
     CompanyForm.any_instance.stubs(:company_fields_from_cache).returns([company_field('cf_address')])
     User.stubs(:current).returns(User.new)
     User.current.stubs(:privilege?).with(:export_customers).returns(true)
-    controller_params = { format: 'csv', date_filter: '1', ticket_state_filter: 'created_at', query_hash: [{ 'condition' => 'status', 'operator' => 'is_n', 'type' => 'dummy', 'ff_name' => 'default' }, { 'condition' => 'responder_id', 'operaor' => 'is_in', 'ff_name' => 'default' }], ticket_fields: [], contact_fields: ['location'], company_fields: ['address'] }
+    controller_params = { format: 'csv', date_filter: '1', ticket_state_filter: 'created_at', query_hash: [{ 'condition' => 'status', 'operator' => 'is_n', 'type' => 'dummy', 'ff_name' => 'default' }, { 'condition' => 'responder_id', 'ff_name' => 'default' }], ticket_fields: [], contact_fields: ['location'], company_fields: ['address'] }
     ticket_export_valdiation = TicketExportValidation.new(controller_params, nil)
     refute ticket_export_valdiation.valid?
     errors = ticket_export_valdiation.errors.full_messages

@@ -118,5 +118,9 @@ class CustomTicketFilterValidationTest < ActionView::TestCase
     def groups_from_cache
       []
     end
+
+    def features_included?(feature)
+      false
+    end
   end
 end

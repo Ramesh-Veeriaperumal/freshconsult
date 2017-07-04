@@ -472,6 +472,32 @@ module Ember
       match_json(private_api_ticket_index_pattern(false, false, false, filter_params[:order_by], filter_params[:order_type]))
     end
 
+    def test_index_with_customer_response_order_clauses
+      MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
+      query_hash_params = { '0' => query_hash_param('responder_id', 'is_in', [0]) }
+      @account.features.sort_by_customer_response.create
+      @account.features.reload
+      get :index, controller_params({ version: 'private', query_hash: query_hash_params, order_by: 'requester_responded_at' }, false)
+      assert_response 200
+      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params, wf_order = 'requester_responded_at'))
+    ensure
+      @account.features.sort_by_customer_response.destroy
+      MixpanelWrapper.unstub(:send_to_mixpanel)
+    end
+
+    def test_index_with_agent_response_order_clauses
+      MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
+      query_hash_params = { '0' => query_hash_param('responder_id', 'is_in', [0]) }
+      @account.features.sort_by_customer_response.create
+      @account.features.reload
+      get :index, controller_params({ version: 'private', query_hash: query_hash_params, order_by: 'agent_responded_at' }, false)
+      assert_response 200
+      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params, 'agent_responded_at'))
+    ensure
+      @account.features.sort_by_customer_response.destroy
+      MixpanelWrapper.unstub(:send_to_mixpanel)
+    end
+    
     def test_tickets_shared_by_Internal_agent
       enable_feature(:shared_ownership) do
         initialize_internal_agent_with_default_internal_group

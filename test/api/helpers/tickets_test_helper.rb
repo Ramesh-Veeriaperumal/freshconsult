@@ -339,11 +339,12 @@ module TicketsTestHelper
     end
   end
 
-  def private_api_ticket_index_query_hash_pattern(query_hash)
+  def private_api_ticket_index_query_hash_pattern(query_hash, wf_order = 'created_at')
     per_page = ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
     query_hash_params = {}
     query_hash_params[:query_hash] = query_hash
     query_hash_params[:wf_model] = 'Helpdesk::Ticket'
+    query_hash_params[:wf_order] = wf_order
     query_hash_params[:data_hash] = QueryHash.new(query_hash_params[:query_hash].values).to_system_format
     pattern_array = Account.current.tickets.filter(params: query_hash_params, filter: 'Helpdesk::Filters::CustomTicketFilter').first(per_page).map do |ticket|
       index_ticket_pattern_with_associations(ticket, false, true, false, [:tags])
