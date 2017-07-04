@@ -37,7 +37,7 @@ class TicketDecorator < ApiDecorator
 
   def privilege_based_requester_info
     return unless @sideload_options.include?('requester')
-    contact_decorator = ContactDecorator.new(record.requester, name_mapping: @contact_name_mapping, company_name_mapping: @company_name_mapping)
+    contact_decorator = ContactDecorator.new(record.requester, name_mapping: @contact_name_mapping)
     User.current.privilege?(:view_contacts) ? contact_decorator.full_requester_hash : contact_decorator.restricted_requester_hash
   end
 
@@ -88,6 +88,14 @@ class TicketDecorator < ApiDecorator
     end
   end
 
+  def full_company_hash
+    if @sideload_options.include?('company')
+      company = record.company
+      return unless company
+      CompanyDecorator.new(company, name_mapping: @company_name_mapping).to_hash
+    end
+  end
+
   def company
     if @sideload_options.include?('company')
       company = record.company
@@ -104,9 +112,9 @@ class TicketDecorator < ApiDecorator
   end
 
   def meta
-    meta_info = record.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"])
+    meta_info = record.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'])
     return {} unless meta_info
-    meta_info = YAML::load(meta_info.body)
+    meta_info = YAML.load(meta_info.body)
     handle_timestamps(meta_info)
   rescue
     # Errors suppressed
@@ -184,8 +192,8 @@ class TicketDecorator < ApiDecorator
       stats: stats
     }
     requester_hash = requester
-    ret_hash.merge!(requester: requester_hash) if requester_hash
-    ret_hash.merge!(archived: archived?) if archived?
+    ret_hash[:requester] = requester_hash if requester_hash
+    ret_hash[:archived] = archived? if archived?
     ret_hash
   end
 
@@ -196,6 +204,7 @@ class TicketDecorator < ApiDecorator
   end
 
   private
+
     def handle_timestamps(meta_info)
       if meta_info.is_a?(Hash) && meta_info.keys.include?('time')
         meta_info['time'] = Time.parse(meta_info['time']).utc.iso8601
@@ -225,5 +234,4 @@ class TicketDecorator < ApiDecorator
     def archived?
       @is_archived ||= record.is_a?(Helpdesk::ArchiveTicket)
     end
-
 end

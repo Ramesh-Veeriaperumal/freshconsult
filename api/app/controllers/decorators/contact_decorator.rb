@@ -61,7 +61,6 @@ class ContactDecorator < ApiDecorator
 
   def full_requester_hash
     req_hash = to_full_hash.except(:company_id)
-    req_hash[:company] = CompanyDecorator.new(record.company, name_mapping: @company_name_mapping).to_hash if record.company
     req_hash[:id] = record.id
     req_hash
   end
@@ -69,7 +68,6 @@ class ContactDecorator < ApiDecorator
   def restricted_requester_hash
     req_hash = construct_hash(requester_widget_contact_fields, record)
     req_hash[:has_email] = record.email.present?
-    req_hash[:company] = construct_hash(requester_widget_company_fields, record.company) if record.company.present?
     req_hash[:twitter_id] = twitter_id if !req_hash.key(:twitter_id) && twitter_id.present?
     req_hash
   end
