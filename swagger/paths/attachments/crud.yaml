@@ -2,6 +2,7 @@ post:
   tags: [attachment]
   summary: Create a draft attachment
   parameters:
+    - $ref: '#/parameters/id'
     - name: data
       in: body
       required: true
