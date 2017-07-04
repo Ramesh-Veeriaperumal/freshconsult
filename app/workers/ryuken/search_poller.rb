@@ -15,10 +15,8 @@ class Ryuken::SearchPoller
         args["subscriber_properties"]["search"]["timestamps"] << sqs_msg.attributes["SentTimestamp"].to_i
       end
       args["subscriber_properties"]["search"]["timestamps"] << Search::Job.es_version/1000
-
       search_payload = args["#{args['object']}_properties"].merge({
-        'version' => (args['action_epoch'] * 1000000).ceil,
-        'timestamps' => args['subscriber_properties']['search']
+        'version' => (args['action_epoch'] * 1000000).ceil
       })
 
       case search_payload['action']
