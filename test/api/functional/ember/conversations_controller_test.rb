@@ -1,6 +1,7 @@
 require_relative '../../test_helper'
 require 'sidekiq/testing'
 Sidekiq::Testing.fake!
+
 ['canned_responses_helper.rb', 'group_helper.rb', 'social_tickets_creation_helper.rb', 'twitter_helper.rb', 'dynamo_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module Ember
   class ConversationsControllerTest < ActionController::TestCase
@@ -47,10 +48,11 @@ module Ember
     end
 
     def create_note_params_hash
+      3.times do
+        add_test_agent(@account, role: Role.find_by_name('Agent').id)
+      end
       body = Faker::Lorem.paragraph
-      agent_email1 = Agent.last.user.email
-      agent_email2 = Agent.find { |x| x.user.email != agent_email1 }.try(:user).try(:email) || add_test_agent(@account, role: Role.find_by_name('Agent').id).email
-      email = [agent_email1, agent_email2]
+      email = Account.current.agents_details_from_cache.sample(2).map(&:email)
       params_hash = { body: body, notify_emails: email, private: true }
       params_hash
     end
@@ -81,9 +83,9 @@ module Ember
     end
 
     def test_create_with_incorrect_attachment_type
-      attachment_ids = ['A', 'B', 'C']
-      params_hash = create_note_params_hash.merge({attachment_ids: attachment_ids})
-      post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      attachment_ids = %w(A B C)
+      params_hash = create_note_params_hash.merge(attachment_ids: attachment_ids)
+      post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       match_json([bad_request_error_pattern(:attachment_ids, :array_datatype_mismatch, expected_data_type: 'Positive Integer')])
       assert_response 400
     end
@@ -92,17 +94,17 @@ module Ember
       attachment_ids = []
       attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       invalid_ids = [attachment_ids.last + 10, attachment_ids.last + 20]
-      params_hash = create_note_params_hash.merge({attachment_ids: (attachment_ids | invalid_ids)})
-      post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      params_hash = create_note_params_hash.merge(attachment_ids: (attachment_ids | invalid_ids))
+      post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       match_json([bad_request_error_pattern(:attachment_ids, :invalid_list, list: invalid_ids.join(', '))])
       assert_response 400
     end
 
     def test_create_with_invalid_attachment_size
       attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
-      params_hash = create_note_params_hash.merge({attachment_ids: [attachment_id]})
+      params_hash = create_note_params_hash.merge(attachment_ids: [attachment_id])
       Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(20_000_000)
-      post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       Helpdesk::Attachment.any_instance.unstub(:content_file_size)
       match_json([bad_request_error_pattern(:attachment_ids, :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
       assert_response 400
@@ -113,8 +115,8 @@ module Ember
       rand(2..10).times do
         attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       end
-      params_hash = create_note_params_hash.merge({attachment_ids: attachment_ids})
-      post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      params_hash = create_note_params_hash.merge(attachment_ids: attachment_ids)
+      post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
       match_json(private_note_pattern(params_hash, Helpdesk::Note.last))
       match_json(private_note_pattern({}, Helpdesk::Note.last))
@@ -126,10 +128,10 @@ module Ember
       file1 = fixture_file_upload('files/attachment.txt', 'text/plain', :binary)
       file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
       attachments = [file1, file2]
-      params_hash = create_note_params_hash.merge({attachment_ids: [attachment_id], attachments: attachments})
+      params_hash = create_note_params_hash.merge(attachment_ids: [attachment_id], attachments: attachments)
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
       @request.env['CONTENT_TYPE'] = 'multipart/form-data'
-      post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
       match_json(private_note_pattern(params_hash, Helpdesk::Note.last))
@@ -138,10 +140,10 @@ module Ember
     end
 
     def test_create_with_cloud_files_upload
-      cloud_file_params = [{ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 },
-                           { filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 }]
+      cloud_file_params = [{ filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 },
+                           { filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 }]
       params = create_note_params_hash.merge(cloud_files: cloud_file_params)
-      post :create, construct_params({version: 'private', id: ticket.display_id }, params)
+      post :create, construct_params({ version: 'private', id: ticket.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params, latest_note))
@@ -151,12 +153,13 @@ module Ember
 
     def test_create_with_shared_attachments
       canned_response = create_response(
-          title: Faker::Lorem.sentence,
-          content_html: Faker::Lorem.paragraph,
-          visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
-          attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) })
+        title: Faker::Lorem.sentence,
+        content_html: Faker::Lorem.paragraph,
+        visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+        attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) }
+      )
       params = create_note_params_hash.merge(attachment_ids: canned_response.shared_attachments.map(&:attachment_id))
-      post :create, construct_params({version: 'private', id: create_ticket.display_id }, params)
+      post :create, construct_params({ version: 'private', id: create_ticket.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params, latest_note))
@@ -166,7 +169,7 @@ module Ember
 
     def test_create_with_spam_ticket
       t = create_ticket(spam: true)
-      post :create, construct_params({version: 'private', id: t.display_id }, create_note_params_hash)
+      post :create, construct_params({ version: 'private', id: t.display_id }, create_note_params_hash)
       assert_response 404
     ensure
       t.update_attributes(spam: false)
@@ -174,7 +177,7 @@ module Ember
 
     def test_reply_with_full_text
       params_hash = reply_note_params_hash.merge(full_text: Faker::Lorem.paragraph(10))
-      post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params_hash, latest_note))
@@ -188,7 +191,7 @@ module Ember
 
       params_hash = reply_note_params_hash.merge(full_text: Faker::Lorem.paragraph(10))
       params_hash.delete(:from_email)
-      post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
       latest_note = Helpdesk::Note.last
       assert_equal ticket.selected_reply_email, latest_note.from_email
@@ -203,7 +206,7 @@ module Ember
 
       params_hash = reply_note_params_hash
       params_hash.delete(:from_email)
-      post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
       latest_note = Helpdesk::Note.last
 
@@ -216,17 +219,17 @@ module Ember
       attachment_ids = []
       attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       invalid_ids = [attachment_ids.last + 10, attachment_ids.last + 20]
-      params_hash = reply_note_params_hash.merge({attachment_ids: (attachment_ids | invalid_ids)})
-      post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      params_hash = reply_note_params_hash.merge(attachment_ids: (attachment_ids | invalid_ids))
+      post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       match_json([bad_request_error_pattern(:attachment_ids, :invalid_list, list: invalid_ids.join(', '))])
       assert_response 400
     end
 
     def test_reply_with_invalid_attachment_size
       attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
-      params_hash = reply_note_params_hash.merge({attachment_ids: [attachment_id]})
+      params_hash = reply_note_params_hash.merge(attachment_ids: [attachment_id])
       Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(20_000_000)
-      post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       Helpdesk::Attachment.any_instance.unstub(:content_file_size)
       match_json([bad_request_error_pattern(:attachment_ids, :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
       assert_response 400
@@ -237,8 +240,8 @@ module Ember
       rand(2..10).times do
         attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       end
-      params_hash = reply_note_params_hash.merge({attachment_ids: attachment_ids, user_id: @agent.id})
-      post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      params_hash = reply_note_params_hash.merge(attachment_ids: attachment_ids, user_id: @agent.id)
+      post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
       match_json(private_note_pattern(params_hash, Helpdesk::Note.last))
       match_json(private_note_pattern({}, Helpdesk::Note.last))
@@ -250,10 +253,10 @@ module Ember
       file1 = fixture_file_upload('files/attachment.txt', 'text/plain', :binary)
       file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
       attachments = [file1, file2]
-      params_hash = reply_note_params_hash.merge({attachment_ids: [attachment_id], attachments: attachments})
+      params_hash = reply_note_params_hash.merge(attachment_ids: [attachment_id], attachments: attachments)
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
       @request.env['CONTENT_TYPE'] = 'multipart/form-data'
-      post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
       match_json(private_note_pattern(params_hash, Helpdesk::Note.last))
@@ -262,10 +265,10 @@ module Ember
     end
 
     def test_reply_with_cloud_files_upload
-      cloud_file_params = [{ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 },
-                           { filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 }]
+      cloud_file_params = [{ filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 },
+                           { filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 }]
       params = reply_note_params_hash.merge(cloud_files: cloud_file_params)
-      post :reply, construct_params({version: 'private', id: ticket.display_id }, params)
+      post :reply, construct_params({ version: 'private', id: ticket.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params, latest_note))
@@ -275,12 +278,13 @@ module Ember
 
     def test_reply_with_shared_attachments
       canned_response = create_response(
-          title: Faker::Lorem.sentence,
-          content_html: Faker::Lorem.paragraph,
-          visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
-          attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) })
+        title: Faker::Lorem.sentence,
+        content_html: Faker::Lorem.paragraph,
+        visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+        attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) }
+      )
       params = reply_note_params_hash.merge(attachment_ids: canned_response.shared_attachments.map(&:attachment_id))
-      post :reply, construct_params({version: 'private', id: create_ticket.display_id }, params)
+      post :reply, construct_params({ version: 'private', id: create_ticket.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params, latest_note))
@@ -294,7 +298,7 @@ module Ember
       survey.save
       t = create_ticket
       params_hash = reply_note_params_hash.merge(send_survey: true)
-      post :reply, construct_params({version: 'private', id: t.display_id }, params_hash)
+      post :reply, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern(:send_survey, :should_be_blank)])
     end
@@ -305,7 +309,7 @@ module Ember
       survey.save
       t = create_ticket
       params_hash = reply_note_params_hash.merge(send_survey: false)
-      post :reply, construct_params({version: 'private', id: t.display_id }, params_hash)
+      post :reply, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 201
       match_json(private_note_pattern(params_hash, Helpdesk::Note.last))
       match_json(private_note_pattern({}, Helpdesk::Note.last))
@@ -317,7 +321,7 @@ module Ember
       survey.save
       t = create_ticket
       params_hash = reply_note_params_hash.merge(send_survey: true)
-      post :reply, construct_params({version: 'private', id: t.display_id }, params_hash)
+      post :reply, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 201
       match_json(private_note_pattern(params_hash, Helpdesk::Note.last))
       match_json(private_note_pattern({}, Helpdesk::Note.last))
@@ -325,7 +329,7 @@ module Ember
 
     def test_reply_to_spammed_ticket
       t = create_ticket(spam: true)
-      post :reply, construct_params({version: 'private', id: t.display_id }, reply_note_params_hash)
+      post :reply, construct_params({ version: 'private', id: t.display_id }, reply_note_params_hash)
       assert_response 404
     ensure
       t.update_attributes(spam: false)
@@ -337,16 +341,16 @@ module Ember
         cc_emails << Faker::Internet.email
       end
       params = forward_note_params_hash.merge(cc_emails: cc_emails, bcc_emails: cc_emails)
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params)
       assert_response 400
-      match_json([bad_request_error_pattern('cc_emails', :too_long, element_type: :values, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}", current_count: 50),
-                  bad_request_error_pattern('bcc_emails', :too_long, element_type: :values, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}", current_count: 50)])
+      match_json([bad_request_error_pattern('cc_emails', :too_long, element_type: :values, max_count: ApiTicketConstants::MAX_EMAIL_COUNT.to_s, current_count: 50),
+                  bad_request_error_pattern('bcc_emails', :too_long, element_type: :values, max_count: ApiTicketConstants::MAX_EMAIL_COUNT.to_s, current_count: 50)])
     end
 
     def test_forward_with_ticket_trashed
       Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
       params_hash = forward_note_params_hash
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
       assert_response 403
       match_json(request_error_pattern(:access_denied))
@@ -355,7 +359,7 @@ module Ember
     def test_forward_without_ticket_privilege
       User.any_instance.stubs(:has_ticket_permission?).returns(false)
       params_hash = forward_note_params_hash
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       User.any_instance.unstub(:has_ticket_permission?)
       assert_response 403
       match_json(request_error_pattern(:access_denied))
@@ -363,14 +367,13 @@ module Ember
 
     def test_forward
       params_hash = forward_note_params_hash
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params_hash, latest_note))
       match_json(private_note_pattern({}, latest_note))
-      assert_equal true, latest_note.private, "Forward Note should be added as a private note only"
+      assert_equal true, latest_note.private, 'Forward Note should be added as a private note only'
     end
-
 
     def test_forward_without_from_email
       # Without personalized_email_replies
@@ -379,7 +382,7 @@ module Ember
 
       params_hash = forward_note_params_hash
       params_hash.delete(:from_email)
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
       latest_note = Helpdesk::Note.last
       assert_equal ticket.selected_reply_email, latest_note.from_email
@@ -394,19 +397,18 @@ module Ember
 
       params_hash = forward_note_params_hash
       params_hash.delete(:from_email)
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
       latest_note = Helpdesk::Note.last
       assert_equal ticket.friendly_reply_email_personalize(@agent.name), latest_note.from_email
       match_json(private_note_pattern(params_hash, latest_note))
       match_json(private_note_pattern({}, latest_note))
-
     end
 
     def test_forward_with_user_id_valid
-      user = add_test_agent(account, { role: account.roles.find_by_name("Agent").id })
+      user = add_test_agent(account, role: account.roles.find_by_name('Agent').id)
       params_hash = forward_note_params_hash.merge(agent_id: user.id)
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params_hash, latest_note))
@@ -416,7 +418,7 @@ module Ember
     def test_forward_with_user_id_invalid_privilege
       params_hash = forward_note_params_hash.merge(agent_id: other_user.id)
       controller.class.any_instance.stubs(:is_allowed_to_assume?).returns(false)
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 403
       match_json(request_error_pattern('invalid_user', id: other_user.id, name: other_user.name))
       controller.class.any_instance.unstub(:is_allowed_to_assume?)
@@ -424,14 +426,14 @@ module Ember
 
     def test_forward_numericality_invalid
       params_hash = { agent_id: 'x', body: Faker::Lorem.paragraph, to_emails: [Faker::Internet.email] }
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('agent_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
     end
 
     def test_forward_datatype_invalid
       params_hash = { to_emails: 'x', cc_emails: 'x', attachments: 'x', bcc_emails: 'x', body: Faker::Lorem.paragraph }
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('to_emails', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String),
                   bad_request_error_pattern('cc_emails', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String),
@@ -441,7 +443,7 @@ module Ember
 
     def test_forward_email_format_invalid
       params_hash = { to_emails: ['dj#'], cc_emails: ['tyt@'], bcc_emails: ['hj#'], from_email: 'dg#', body: Faker::Lorem.paragraph }
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('to_emails', :array_invalid_format, accepted: 'valid email address'),
                   bad_request_error_pattern('cc_emails', :array_invalid_format, accepted: 'valid email address'),
@@ -451,20 +453,20 @@ module Ember
 
     def test_forward_invalid_id
       params_hash = { body: 'test', to_emails: [Faker::Internet.email] }
-      post :forward, construct_params({version: 'private', id: '6786878' }, params_hash)
+      post :forward, construct_params({ version: 'private', id: '6786878' }, params_hash)
       assert_response :missing
     end
 
     def test_forward_invalid_model
       params_hash = { body: 'test', agent_id: 789_789_789, to_emails: [Faker::Internet.email] }
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('agent_id', :absent_in_db, resource: :agent, attribute: :agent_id)])
     end
 
     def test_forward_invalid_from_email
       params_hash = { body: 'test', to_emails: [Faker::Internet.email], from_email: Faker::Internet.email }
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('from_email', :absent_in_db, resource: :"active email_config", attribute: :from_email)])
     end
@@ -472,7 +474,7 @@ module Ember
     def test_forward_new_email_config
       email_config = create_email_config
       params_hash = forward_note_params_hash.merge(from_email: email_config.reply_email)
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
       note = Helpdesk::Note.last
       assert_equal email_config.id, note.email_config_id
@@ -485,14 +487,14 @@ module Ember
       email_config.active = false
       email_config.save
       params_hash = forward_note_params_hash.merge(from_email: email_config.reply_email)
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('from_email', :absent_in_db, resource: :"active email_config", attribute: :from_email)])
     end
 
     def test_forward_extra_params
       params_hash = { body_html: 'test', junk: 'test', to_emails: [Faker::Internet.email] }
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('junk', :invalid_field), bad_request_error_pattern('body_html', :invalid_field)])
     end
@@ -500,7 +502,7 @@ module Ember
     def test_forward_invalid_agent
       user = add_new_user(account)
       params_hash = forward_note_params_hash.merge(agent_id: user.id)
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('agent_id', :absent_in_db, resource: :agent, attribute: :agent_id)])
     end
@@ -511,7 +513,7 @@ module Ember
       file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
       params = forward_note_params_hash.merge('attachments' => [file, file2])
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-      post :forward, construct_params({version: 'private', id: t.display_id }, params)
+      post :forward, construct_params({ version: 'private', id: t.display_id }, params)
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
       response_params = params.except(:attachments)
@@ -521,9 +523,9 @@ module Ember
     end
 
     def test_forward_with_ticket_with_attachment
-      t = create_ticket({ attachments: { resource: fixture_file_upload('files/attachment.txt', 'plain/text', :binary) } })
+      t = create_ticket(attachments: { resource: fixture_file_upload('files/attachment.txt', 'plain/text', :binary) })
       params = forward_note_params_hash
-      post :forward, construct_params({version: 'private', id: t.display_id }, params)
+      post :forward, construct_params({ version: 'private', id: t.display_id }, params)
       assert_response 201
       match_json(private_note_pattern(params, Helpdesk::Note.last))
       match_json(private_note_pattern({}, Helpdesk::Note.last))
@@ -531,9 +533,9 @@ module Ember
     end
 
     def test_forward_with_ticket_with_cloud_attachment
-      t = create_ticket({ cloud_files:  [Helpdesk::CloudFile.new({ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 })] })
+      t = create_ticket(cloud_files:  [Helpdesk::CloudFile.new(filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20)])
       params = forward_note_params_hash
-      post :forward, construct_params({version: 'private', id: t.display_id }, params)
+      post :forward, construct_params({ version: 'private', id: t.display_id }, params)
       assert_response 201
       match_json(private_note_pattern(params, Helpdesk::Note.last))
       match_json(private_note_pattern({}, Helpdesk::Note.last))
@@ -545,7 +547,7 @@ module Ember
       file = fixture_file_upload('files/attachment.txt', 'text/plain', :binary)
       params = forward_note_params_hash.merge('attachments' => [file])
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params)
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 400
       match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
@@ -553,7 +555,7 @@ module Ember
 
     def test_forward_with_invalid_attachment_params_format
       params = forward_note_params_hash.merge('attachments' => [1, 2])
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params)
       assert_response 400
       match_json([bad_request_error_pattern('attachments', :array_datatype_mismatch, expected_data_type: 'valid file format')])
     end
@@ -561,7 +563,7 @@ module Ember
     def test_forward_without_privilege
       User.any_instance.stubs(:privilege?).with(:forward_ticket).returns(false).at_most_once
       params_hash = forward_note_params_hash
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       User.any_instance.unstub(:privilege?)
       assert_response 403
       match_json(request_error_pattern(:access_denied))
@@ -570,14 +572,14 @@ module Ember
     def test_forward_without_quoted_text_and_empty_body
       params = forward_note_params_hash.merge(include_quoted_text: false)
       params.delete(:body)
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params)
       assert_response 400
       match_json([bad_request_error_pattern('body', :missing_field)])
     end
 
     def test_forward_without_quoted_text
       params = forward_note_params_hash.merge(include_quoted_text: false)
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params, latest_note))
@@ -586,7 +588,7 @@ module Ember
 
     def test_forward_with_full_text
       params = forward_note_params_hash.merge(full_text: Faker::Lorem.paragraph(10))
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params, latest_note))
@@ -597,8 +599,8 @@ module Ember
       attachment_ids = []
       attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       invalid_ids = [attachment_ids.last + 10, attachment_ids.last + 20]
-      params_hash = forward_note_params_hash.merge({attachment_ids: (attachment_ids | invalid_ids)})
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      params_hash = forward_note_params_hash.merge(attachment_ids: (attachment_ids | invalid_ids))
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern(:attachment_ids, :invalid_list, list: invalid_ids.join(', '))])
     end
@@ -608,8 +610,8 @@ module Ember
       rand(2..10).times do
         attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       end
-      params_hash = forward_note_params_hash.merge({attachment_ids: attachment_ids, agent_id: @agent.id})
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      params_hash = forward_note_params_hash.merge(attachment_ids: attachment_ids, agent_id: @agent.id)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params_hash, latest_note))
@@ -618,9 +620,9 @@ module Ember
     end
 
     def test_forward_without_original_attachments
-      t = create_ticket({ attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) } })
+      t = create_ticket(attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) })
       params = forward_note_params_hash.merge(include_original_attachments: false)
-      post :forward, construct_params({version: 'private', id: t.display_id }, params)
+      post :forward, construct_params({ version: 'private', id: t.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params, latest_note))
@@ -631,7 +633,7 @@ module Ember
     def test_forward_with_ticket_attachment_ids
       t = create_ticket(attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) })
       params = forward_note_params_hash.merge(include_original_attachments: false, attachment_ids: [t.attachments.first.id])
-      post :forward, construct_params({version: 'private', id: t.display_id }, params)
+      post :forward, construct_params({ version: 'private', id: t.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params, latest_note))
@@ -644,7 +646,7 @@ module Ember
       create_shared_attachment(t)
       attachment_ids = t.all_attachments.map(&:id)
       params = forward_note_params_hash.merge(include_original_attachments: true, attachment_ids: attachment_ids)
-      post :forward, construct_params({version: 'private', id: t.display_id }, params)
+      post :forward, construct_params({ version: 'private', id: t.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params, latest_note))
@@ -658,10 +660,10 @@ module Ember
       file1 = fixture_file_upload('files/attachment.txt', 'text/plain', :binary)
       file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
       attachments = [file1, file2]
-      params_hash = forward_note_params_hash.merge({agent_id: @agent.id, attachment_ids: [attachment_id], attachments: attachments})
+      params_hash = forward_note_params_hash.merge(agent_id: @agent.id, attachment_ids: [attachment_id], attachments: attachments)
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
       @request.env['CONTENT_TYPE'] = 'multipart/form-data'
-      post :forward, construct_params({version: 'private', id: t.display_id }, params_hash)
+      post :forward, construct_params({ version: 'private', id: t.display_id }, params_hash)
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
       latest_note = Helpdesk::Note.last
@@ -672,7 +674,7 @@ module Ember
 
     def test_forward_with_cloud_file_ids_error
       params = forward_note_params_hash.merge(include_original_attachments: true, cloud_file_ids: [100, 200])
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params)
       assert_response 400
       match_json([bad_request_error_pattern('cloud_file_ids', :included_original_attachments, code: :incompatible_field)])
     end
@@ -681,16 +683,16 @@ module Ember
       latest_cloud_file = Helpdesk::CloudFile.last.try(:id) || 0
       invalid_ids = [latest_cloud_file + 10, latest_cloud_file + 20]
       params = forward_note_params_hash.merge(include_original_attachments: false, cloud_file_ids: invalid_ids)
-      post :forward, construct_params({version: 'private', id: ticket.display_id }, params)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params)
       assert_response 400
       match_json([bad_request_error_pattern(:cloud_file_ids, :invalid_list, list: invalid_ids.join(', '))])
     end
 
     def test_forward_with_cloud_file_ids
-      t = create_ticket({ cloud_files:  [Helpdesk::CloudFile.new({ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 }),
-                                         Helpdesk::CloudFile.new({ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 })] })
+      t = create_ticket(cloud_files:  [Helpdesk::CloudFile.new(filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20),
+                                       Helpdesk::CloudFile.new(filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20)])
       params = forward_note_params_hash.merge(include_original_attachments: false, cloud_file_ids: [t.cloud_files.first.id])
-      post :forward, construct_params({version: 'private', id: t.display_id }, params)
+      post :forward, construct_params({ version: 'private', id: t.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params, latest_note))
@@ -703,13 +705,13 @@ module Ember
       file1 = fixture_file_upload('files/attachment.txt', 'text/plain', :binary)
       file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
       new_attachments = [file1, file2]
-      t = create_ticket({ attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) },
-                          cloud_files:  [Helpdesk::CloudFile.new({ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 })] })
+      t = create_ticket(attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) },
+                        cloud_files:  [Helpdesk::CloudFile.new(filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20)])
       create_shared_attachment(t)
       params = forward_note_params_hash.merge(include_original_attachments: true,
-                attachments: new_attachments, attachment_ids: [draft_attachment_id])
+                                              attachments: new_attachments, attachment_ids: [draft_attachment_id])
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-      post :forward, construct_params({version: 'private', id: t.display_id }, params)
+      post :forward, construct_params({ version: 'private', id: t.display_id }, params)
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
       latest_note = Helpdesk::Note.last
@@ -721,10 +723,10 @@ module Ember
 
     def test_forward_with_cloud_files_upload
       t = create_ticket
-      cloud_file_params = [{ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 },
-                           { filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 }]
+      cloud_file_params = [{ filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 },
+                           { filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 }]
       params = forward_note_params_hash.merge(cloud_files: cloud_file_params)
-      post :forward, construct_params({version: 'private', id: t.display_id }, params)
+      post :forward, construct_params({ version: 'private', id: t.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params, latest_note))
@@ -734,19 +736,19 @@ module Ember
 
     def test_forward_with_invalid_cloud_files
       t = create_ticket
-      cloud_file_params = [{ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 10000 }]
+      cloud_file_params = [{ filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 10_000 }]
       params = forward_note_params_hash.merge(cloud_files: cloud_file_params)
-      post :forward, construct_params({version: 'private', id: t.display_id }, params)
+      post :forward, construct_params({ version: 'private', id: t.display_id }, params)
       assert_response 400
       match_json([bad_request_error_pattern(:application_id, :invalid_list, list: '10000')])
     end
 
     def test_forward_with_existing_and_new_cloud_files
-      t = create_ticket({ cloud_files:  [Helpdesk::CloudFile.new({ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 }),
-                                         Helpdesk::CloudFile.new({ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 })] })
-      cloud_file_params = [{ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 }]
+      t = create_ticket(cloud_files:  [Helpdesk::CloudFile.new(filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20),
+                                       Helpdesk::CloudFile.new(filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20)])
+      cloud_file_params = [{ filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 }]
       params = forward_note_params_hash.merge(cloud_files: cloud_file_params)
-      post :forward, construct_params({version: 'private', id: t.display_id }, params)
+      post :forward, construct_params({ version: 'private', id: t.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params, latest_note))
@@ -756,12 +758,13 @@ module Ember
 
     def test_forward_with_shared_attachments
       canned_response = create_response(
-          title: Faker::Lorem.sentence,
-          content_html: Faker::Lorem.paragraph,
-          visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
-          attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) })
+        title: Faker::Lorem.sentence,
+        content_html: Faker::Lorem.paragraph,
+        visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+        attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) }
+      )
       params = forward_note_params_hash.merge(attachment_ids: canned_response.shared_attachments.map(&:attachment_id))
-      post :forward, construct_params({version: 'private', id: create_ticket.display_id }, params)
+      post :forward, construct_params({ version: 'private', id: create_ticket.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params, latest_note))
@@ -771,7 +774,7 @@ module Ember
 
     def test_forward_from_spammed_ticket
       t = create_ticket(spam: true)
-      post :forward, construct_params({version: 'private', id: t.display_id }, forward_note_params_hash)
+      post :forward, construct_params({ version: 'private', id: t.display_id }, forward_note_params_hash)
       assert_response 404
     ensure
       t.update_attributes(spam: false)
@@ -800,7 +803,7 @@ module Ember
 
     def test_facebook_reply_without_params
       ticket = create_ticket_from_fb_post
-      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id}, {})
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, {})
       assert_response 400
       match_json([bad_request_error_pattern('body', :datatype_mismatch, code: :missing_field, expected_data_type: String)])
     end
@@ -808,7 +811,7 @@ module Ember
     def test_facebook_reply_with_invalid_ticket
       ticket = create_ticket
       params_hash = { body: Faker::Lorem.paragraph }
-      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('ticket_id', :not_a_facebook_ticket)])
     end
@@ -816,8 +819,8 @@ module Ember
     def test_facebook_reply_with_invalid_note_id
       ticket = create_ticket_from_fb_post
       invalid_id = (Helpdesk::Note.last.try(:id) || 0) + 10
-      params_hash = { body: Faker::Lorem.paragraph, note_id: invalid_id}
-      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      params_hash = { body: Faker::Lorem.paragraph, note_id: invalid_id }
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('note_id', :absent_in_db, resource: :note, attribute: :note_id)])
     end
@@ -826,7 +829,7 @@ module Ember
       ticket = create_ticket_from_fb_post
       Facebook::TicketActions::Util.stubs(:send_reply).returns(false)
       params_hash = { body: Faker::Lorem.paragraph }
-      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('body', :unable_to_perform)])
       Facebook::TicketActions::Util.unstub(:send_reply)
@@ -834,11 +837,11 @@ module Ember
 
     def test_facebook_reply_to_fb_post_ticket
       ticket = create_ticket_from_fb_post
-      put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f*100000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f*100000).to_i}"
-      sample_put_comment = { "id" => put_comment_id }
+      put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
+      sample_put_comment = { 'id' => put_comment_id }
       Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
       params_hash = { body: Faker::Lorem.paragraph }
-      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       Koala::Facebook::API.any_instance.unstub(:put_comment)
       assert_response 201
       latest_note = Helpdesk::Note.last
@@ -847,12 +850,12 @@ module Ember
 
     def test_facebook_reply_to_fb_comment_note
       ticket = create_ticket_from_fb_post(true)
-      put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f*100000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f*100000).to_i}"
-      sample_put_comment = { "id" => put_comment_id }
-      fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"]).first
+      put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
+      sample_put_comment = { 'id' => put_comment_id }
+      fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).first
       Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
       params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id }
-      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       Koala::Facebook::API.any_instance.unstub(:put_comment)
       assert_response 201
       latest_note = Helpdesk::Note.last
@@ -861,10 +864,10 @@ module Ember
 
     def test_facebook_reply_to_fb_direct_message_ticket
       ticket = create_ticket_from_fb_direct_message
-      sample_reply_dm = { "id" => Time.now.utc.to_i + 5 }
+      sample_reply_dm = { 'id' => Time.now.utc.to_i + 5 }
       Koala::Facebook::API.any_instance.stubs(:put_object).returns(sample_reply_dm)
       params_hash = { body: Faker::Lorem.paragraph }
-      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       Koala::Facebook::API.any_instance.unstub(:put_object)
       assert_response 201
       latest_note = Helpdesk::Note.last
@@ -873,18 +876,18 @@ module Ember
 
     def test_facebook_reply_to_non_fb_post_note
       ticket = create_ticket_from_fb_direct_message
-      fb_dm_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"]).first
+      fb_dm_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).first
       params_hash = { body: Faker::Lorem.paragraph, note_id: fb_dm_note.id }
-      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('note_id', :unable_to_post_reply)])
     end
 
     def test_facebook_reply_to_non_commentable_note
       ticket = create_ticket_from_fb_post(true, true)
-      fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"]).last
+      fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).last
       params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id }
-      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('note_id', :unable_to_post_reply)])
     end
@@ -893,18 +896,18 @@ module Ember
       user = add_new_user(account)
       ticket = create_ticket_from_fb_direct_message
       params_hash = { body: Faker::Lorem.paragraph, agent_id: user.id }
-      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('agent_id', :absent_in_db, resource: :agent, attribute: :agent_id)])
     end
 
     def test_facebook_reply_with_valid_agent_id
-      user = add_test_agent(account, { role: account.roles.find_by_name("Agent").id })
+      user = add_test_agent(account, role: account.roles.find_by_name('Agent').id)
       ticket = create_ticket_from_fb_direct_message
-      sample_reply_dm = { "id" => Time.now.utc.to_i + 5 }
+      sample_reply_dm = { 'id' => Time.now.utc.to_i + 5 }
       Koala::Facebook::API.any_instance.stubs(:put_object).returns(sample_reply_dm)
       params_hash = { body: Faker::Lorem.paragraph, agent_id: user.id }
-      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       Koala::Facebook::API.any_instance.unstub(:put_object)
       assert_response 201
       latest_note = Helpdesk::Note.last
@@ -916,7 +919,7 @@ module Ember
       ticket = create_ticket_from_fb_direct_message
       ticket.update_attributes(spam: true)
       params_hash = { body: Faker::Lorem.paragraph }
-      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 404
     ensure
       ticket.update_attributes(spam: false)
@@ -924,22 +927,20 @@ module Ember
 
     def test_tweet_reply_without_params
       ticket = create_twitter_ticket
-      post :tweet, construct_params({version: 'private', id: ticket.display_id}, {})
+      post :tweet, construct_params({ version: 'private', id: ticket.display_id }, {})
       assert_response 400
       match_json([
-        bad_request_error_pattern('body', :datatype_mismatch, code: :missing_field, expected_data_type: String),
-        bad_request_error_pattern('tweet_type', :datatype_mismatch, code: :missing_field, expected_data_type: String),
-        bad_request_error_pattern('twitter_handle_id', :datatype_mismatch, code: :missing_field, expected_data_type: 'Positive Integer')
-      ])
+                   bad_request_error_pattern('body', :datatype_mismatch, code: :missing_field, expected_data_type: String),
+                   bad_request_error_pattern('tweet_type', :datatype_mismatch, code: :missing_field, expected_data_type: String),
+                   bad_request_error_pattern('twitter_handle_id', :datatype_mismatch, code: :missing_field, expected_data_type: 'Positive Integer')
+                 ])
     end
 
     def test_tweet_reply_with_invalid_ticket
       ticket = create_ticket
-      post :tweet, construct_params({version: 'private', id: ticket.display_id}, {
-        body: Faker::Lorem.sentence[0..130],
-        tweet_type: 'dm',
-        twitter_handle_id: get_twitter_handle.id
-      })
+      post :tweet, construct_params({ version: 'private', id: ticket.display_id }, body: Faker::Lorem.sentence[0..130],
+                                                                                   tweet_type: 'dm',
+                                                                                   twitter_handle_id: get_twitter_handle.id)
       assert_response 400
       match_json([bad_request_error_pattern('ticket_id', :not_a_twitter_ticket)])
     end
@@ -952,19 +953,16 @@ module Ember
       @default_stream = twitter_handle.default_stream
 
       with_twitter_update_stubbed do
-
         params_hash = {
           body: Faker::Lorem.sentence[0..130],
           tweet_type: 'mention',
           twitter_handle_id: twitter_handle.id
         }
-        post :tweet, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+        post :tweet, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
         assert_response 201
         latest_note = Helpdesk::Note.last
         match_json(private_note_pattern(params_hash, latest_note))
-
       end
-
     end
 
     def test_twitter_dm_reply_to_tweet_ticket
@@ -977,11 +975,11 @@ module Ember
 
       reply_id = get_social_id
       dm_reply_params = {
-        :id => reply_id,
-        :id_str => "#{reply_id}",
-        :recipient_id_str => rand.to_s[2..11],
-        :text => dm_text ,
-        :created_at => "#{Time.zone.now}"
+        id: reply_id,
+        id_str: reply_id.to_s,
+        recipient_id_str: rand.to_s[2..11],
+        text: dm_text,
+        created_at: Time.zone.now.to_s
       }
 
       with_twitter_dm_stubbed(Twitter::DirectMessage.new(dm_reply_params)) do
@@ -990,13 +988,11 @@ module Ember
           tweet_type: 'dm',
           twitter_handle_id: twitter_handle.id
         }
-        post :tweet, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+        post :tweet, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
         assert_response 201
         latest_note = Helpdesk::Note.last
         match_json(private_note_pattern(params_hash, latest_note))
-
       end
-
     end
 
     def test_ticket_conversations
@@ -1049,14 +1045,14 @@ module Ember
       match_json([bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
     end
 
-     def test_ticket_conversations_with_since_id
+    def test_ticket_conversations_with_since_id
       t = create_ticket
       n = create_reply_note(t)
       3.times do
         create_reply_note(t)
       end
-      get :ticket_conversations, controller_params(version: 'private', id: t.display_id, 
-        per_page: 50, page: 1, order_type: "desc", since_id: n.id)
+      get :ticket_conversations, controller_params(version: 'private', id: t.display_id,
+                                                   per_page: 50, page: 1, order_type: 'desc', since_id: n.id)
       assert_response 200
       assert JSON.parse(response.body).count == 3
     end
@@ -1066,8 +1062,8 @@ module Ember
       3.times do
         create_reply_note(t)
       end
-      get :ticket_conversations, controller_params(version: 'private', id: t.display_id, 
-        per_page: 50, page: 1, order_type: "desc", since_id: 0)
+      get :ticket_conversations, controller_params(version: 'private', id: t.display_id,
+                                                   per_page: 50, page: 1, order_type: 'desc', since_id: 0)
       assert_response 200
       assert JSON.parse(response.body).count == 3
     end
@@ -1077,8 +1073,8 @@ module Ember
       3.times do
         create_reply_note(t)
       end
-      get :ticket_conversations, controller_params(version: 'private', id: t.display_id, 
-        per_page: 50, page: 1, order_type: "desc", since_id: -1)
+      get :ticket_conversations, controller_params(version: 'private', id: t.display_id,
+                                                   per_page: 50, page: 1, order_type: 'desc', since_id: -1)
       assert_response 200
       assert JSON.parse(response.body).count == 3
     end
@@ -1108,12 +1104,13 @@ module Ember
       file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
       attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       canned_response = create_response(
-          title: Faker::Lorem.sentence,
-          content_html: Faker::Lorem.paragraph,
-          visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
-          attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) })
+        title: Faker::Lorem.sentence,
+        content_html: Faker::Lorem.paragraph,
+        visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+        attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) }
+      )
       params_hash = update_note_params_hash.merge('attachments' => [file],
-          'attachment_ids' => [attachment_id] | canned_response.shared_attachments.map(&:attachment_id))
+                                                  'attachment_ids' => [attachment_id] | canned_response.shared_attachments.map(&:attachment_id))
       t = create_ticket
       note = create_private_note(t)
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
@@ -1152,38 +1149,33 @@ module Ember
       remove_wrap_params
       t = create_ticket
 
-      notification_template = "<div>{{ticket.id}}</div>"
+      notification_template = '<div>{{ticket.id}}</div>'
       Agent.any_instance.stubs(:signature_value).returns('')
       EmailNotification.any_instance.stubs(:get_reply_template).returns(notification_template)
 
       get :reply_template, construct_params({ version: 'private', id: t.display_id }, false)
       assert_response 200
-      match_json(reply_template_pattern({
-          template: "<div>#{t.display_id}</div>",
-          signature: ''
-        }))
+      match_json(reply_template_pattern(template: "<div>#{t.display_id}</div>",
+                                        signature: ''))
 
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_reply_template)
-
     end
 
     def test_agent_reply_template_with_signature
       remove_wrap_params
       t = create_ticket
 
-      notification_template = "<div>{{ticket.id}}</div>"
-      agent_signature = "<div><p>Thanks</p><p>{{ticket.subject}}</p></div>"
+      notification_template = '<div>{{ticket.id}}</div>'
+      agent_signature = '<div><p>Thanks</p><p>{{ticket.subject}}</p></div>'
       Agent.any_instance.stubs(:signature_value).returns(agent_signature)
       EmailNotification.any_instance.stubs(:get_reply_template).returns(notification_template)
 
       get :reply_template, construct_params({ version: 'private', id: t.display_id }, false)
       assert_response 200
 
-      match_json(reply_template_pattern({
-          template: "<div>#{t.display_id}</div>",
-          signature: "<div><p>Thanks</p><p>#{t.subject}</p></div>"
-        }))
+      match_json(reply_template_pattern(template: "<div>#{t.display_id}</div>",
+                                        signature: "<div><p>Thanks</p><p>#{t.subject}</p></div>"))
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_reply_template)
     end
@@ -1197,27 +1189,24 @@ module Ember
 
       get :forward_template, construct_params({ version: 'private', id: t.display_id }, false)
       assert_response 200
-      match_json(conversation_template_pattern(template: '', signature: ''))
+      match_json(reply_template_pattern(template: '', signature: ''))
 
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:present?)
     end
 
-
     def test_agent_forward_emplate_with_empty_template_and_with_signature
       t = create_ticket
 
-      agent_signature = "<div><p>Thanks</p><p>{{ticket.subject}}</p></div>"
+      agent_signature = '<div><p>Thanks</p><p>{{ticket.subject}}</p></div>'
       Agent.any_instance.stubs(:signature_value).returns(agent_signature)
       EmailNotification.any_instance.stubs(:present?).returns(false)
       EmailNotification.any_instance.stubs(:get_forward_template).returns('')
 
       get :forward_template, construct_params({ version: 'private', id: t.display_id }, false)
       assert_response 200
-      match_json(conversation_template_pattern({
-        template: '',
-        signature: "<div><p>Thanks</p><p>#{t.subject}</p></div>"
-        }))
+      match_json(reply_template_pattern(template: '',
+                                        signature: "<div><p>Thanks</p><p>#{t.subject}</p></div>"))
 
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:present?)
@@ -1227,17 +1216,15 @@ module Ember
       remove_wrap_params
       t = create_ticket
 
-      notification_template = "<div>{{ticket.id}}</div>"
+      notification_template = '<div>{{ticket.id}}</div>'
 
       Agent.any_instance.stubs(:signature_value).returns('')
       EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
 
       get :forward_template, construct_params({ version: 'private', id: t.display_id }, false)
       assert_response 200
-      match_json(conversation_template_pattern({
-          template: "<div>#{t.display_id}</div>",
-          signature: ''
-        }))
+      match_json(reply_template_pattern(template: "<div>#{t.display_id}</div>",
+                                        signature: ''))
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_forward_template)
     end
@@ -1245,8 +1232,8 @@ module Ember
     def test_agent_forward_template_with_signature
       remove_wrap_params
       t = create_ticket
-      notification_template = "<div>{{ticket.id}}</div>"
-      agent_signature = "<div><p>Thanks</p><p>{{ticket.subject}}</p></div>"
+      notification_template = '<div>{{ticket.id}}</div>'
+      agent_signature = '<div><p>Thanks</p><p>{{ticket.subject}}</p></div>'
 
       Agent.any_instance.stubs(:signature_value).returns(agent_signature)
       EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
@@ -1254,211 +1241,208 @@ module Ember
       get :forward_template, construct_params({ version: 'private', id: t.display_id }, false)
       assert_response 200
 
-      match_json(conversation_template_pattern({
-          template: "<div>#{t.display_id}</div>",
-          signature: "<div><p>Thanks</p><p>#{t.subject}</p></div>"
-        }))
+      match_json(reply_template_pattern(template: "<div>#{t.display_id}</div>",
+                                        signature: "<div><p>Thanks</p><p>#{t.subject}</p></div>"))
 
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_forward_template)
-
     end
 
     def test_note_forward_template_with_empty_signature
       note = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
-      notification_template = "<div>{{ticket.id}}</div>"
+      notification_template = '<div>{{ticket.id}}</div>'
       Agent.any_instance.stubs(:signature_value).returns('')
       EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
       get :note_forward_template, controller_params(version: 'private', id: note.id)
       assert_response 200
-      match_json(conversation_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: ''))
+      match_json(reply_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: ''))
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_forward_template)
     end
 
     def test_note_forward_template_with_signature
       note = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
-      notification_template = "<div>{{ticket.id}}</div>"
-      agent_signature = "<div><p>Thanks</p><p>{{ticket.subject}}</p></div>"
+      notification_template = '<div>{{ticket.id}}</div>'
+      agent_signature = '<div><p>Thanks</p><p>{{ticket.subject}}</p></div>'
       Agent.any_instance.stubs(:signature_value).returns(agent_signature)
       EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
       get :note_forward_template, controller_params(version: 'private', id: note.id)
       assert_response 200
-      match_json(conversation_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: "<div><p>Thanks</p><p>#{ticket.subject}</p></div>"))
+      match_json(reply_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: "<div><p>Thanks</p><p>#{ticket.subject}</p></div>"))
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_forward_template)
     end
 
     def test_latest_note_forward_template_with_empty_signature
-      notification_template = "<div>{{ticket.id}}</div>"
+      notification_template = '<div>{{ticket.id}}</div>'
       Agent.any_instance.stubs(:signature_value).returns('')
       EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
       get :latest_note_forward_template, controller_params(version: 'private', id: ticket.display_id)
       assert_response 200
-      match_json(conversation_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: ''))
+      match_json(reply_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: ''))
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_forward_template)
     end
 
     def test_latest_note_forward_template_with_signature
-      notification_template = "<div>{{ticket.id}}</div>"
-      agent_signature = "<div><p>Thanks</p><p>{{ticket.subject}}</p></div>"
+      notification_template = '<div>{{ticket.id}}</div>'
+      agent_signature = '<div><p>Thanks</p><p>{{ticket.subject}}</p></div>'
       Agent.any_instance.stubs(:signature_value).returns(agent_signature)
       EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
       get :latest_note_forward_template, controller_params(version: 'private', id: ticket.display_id)
       assert_response 200
-      match_json(conversation_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: "<div><p>Thanks</p><p>#{ticket.subject}</p></div>"))
+      match_json(reply_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: "<div><p>Thanks</p><p>#{ticket.subject}</p></div>"))
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_forward_template)
     end
 
     def test_full_text
       note = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
-      note.note_body.full_text_html = note.note_body.body_html + "<div>quoted_text test</div>"
+      note.note_body.full_text_html = note.note_body.body_html + '<div>quoted_text test</div>'
       note.save_note
       note.reload
-      get :full_text, construct_params({ version: 'private', id: note.id}, false)
+      get :full_text, construct_params({ version: 'private', id: note.id }, false)
       match_json(full_text_pattern(note))
       assert_response 200
     end
 
+    def test_reply_with_traffic_cop_invalid
+      @account.add_feature(:traffic_cop)
+      ticket = create_ticket
+      reply = create_reply_note(ticket)
+      last_note_id = reply.id
+      params_hash = reply_note_params_hash.merge(last_note_id: last_note_id - 1)
+      post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern(:conversation, :traffic_cop_alert)])
+      @account.revoke_feature(:traffic_cop)
+    end
 
-  def test_reply_with_traffic_cop_invalid
-    @account.add_feature(:traffic_cop)
-    ticket = create_ticket
-    reply = create_reply_note(ticket)
-    last_note_id = reply.id
-    params_hash = reply_note_params_hash.merge(last_note_id: last_note_id-1 )
-    post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
-    assert_response 400
-    match_json([bad_request_error_pattern(:conversation, :traffic_cop_alert)])
-    @account.revoke_feature(:traffic_cop)
-  end
+    def test_public_note_with_traffic_cop_invalid
+      @account.add_feature(:traffic_cop)
+      ticket = create_ticket
+      note = create_public_note(ticket)
+      last_note_id = note.id
+      params_hash = create_note_params_hash.merge(last_note_id: last_note_id - 1, private: false)
+      post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern(:conversation, :traffic_cop_alert)])
+      @account.revoke_feature(:traffic_cop)
+    end
 
-  def test_public_note_with_traffic_cop_invalid
-    @account.add_feature(:traffic_cop)
-    ticket = create_ticket
-    note = create_public_note(ticket)
-    last_note_id = note.id
-    params_hash = create_note_params_hash.merge(last_note_id: last_note_id-1, private: false)
-    post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
-    assert_response 400
-    match_json([bad_request_error_pattern(:conversation, :traffic_cop_alert)])
-    @account.revoke_feature(:traffic_cop)
-  end
+    def test_reply_with_traffic_cop_valid
+      @account.add_feature(:traffic_cop)
+      ticket = create_ticket
+      reply = create_reply_note(ticket)
+      last_note_id = reply.id
+      params_hash = reply_note_params_hash.merge(last_note_id: last_note_id)
+      post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+      @account.revoke_feature(:traffic_cop)
+    end
 
-  def test_reply_with_traffic_cop_valid
-    @account.add_feature(:traffic_cop)
-    ticket = create_ticket
-    reply = create_reply_note(ticket)
-    last_note_id = reply.id
-    params_hash = reply_note_params_hash.merge(last_note_id: last_note_id)
-    post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
-    assert_response 201
-    latest_note = Helpdesk::Note.last
-    match_json(private_note_pattern(params_hash, latest_note))
-    match_json(private_note_pattern({}, latest_note))
-    @account.revoke_feature(:traffic_cop)
-  end
+    def test_public_note_with_traffic_cop_valid
+      @account.add_feature(:traffic_cop)
+      ticket = create_ticket
+      note = create_public_note(ticket)
+      last_note_id = note.id
+      params_hash = create_note_params_hash.merge(last_note_id: last_note_id, private: false)
+      post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+      @account.revoke_feature(:traffic_cop)
+    end
 
-  def test_public_note_with_traffic_cop_valid
-    @account.add_feature(:traffic_cop)
-    ticket = create_ticket
-    note = create_public_note(ticket)
-    last_note_id = note.id
-    params_hash = create_note_params_hash.merge(last_note_id: last_note_id, private: false)
-    post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
-    assert_response 201
-    latest_note = Helpdesk::Note.last
-    match_json(private_note_pattern(params_hash, latest_note))
-    match_json(private_note_pattern({}, latest_note))
-    @account.revoke_feature(:traffic_cop)
-  end
+    def test_reply_with_traffic_cop_without_last_note_id
+      @account.add_feature(:traffic_cop)
+      ticket = create_ticket
+      reply = create_reply_note(ticket)
+      last_note_id = reply.id
+      params_hash = reply_note_params_hash
+      post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+      @account.revoke_feature(:traffic_cop)
+    end
 
-  def test_reply_with_traffic_cop_without_last_note_id
-    @account.add_feature(:traffic_cop)
-    ticket = create_ticket
-    reply = create_reply_note(ticket)
-    last_note_id = reply.id
-    params_hash = reply_note_params_hash
-    post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
-    assert_response 201
-    latest_note = Helpdesk::Note.last
-    match_json(private_note_pattern(params_hash, latest_note))
-    match_json(private_note_pattern({}, latest_note))
-    @account.revoke_feature(:traffic_cop)
-  end
+    def test_public_note_with_traffic_cop_without_last_note_id
+      @account.add_feature(:traffic_cop)
+      ticket = create_ticket
+      note = create_public_note(ticket)
+      last_note_id = note.id
+      params_hash = create_note_params_hash.merge(private: false)
+      post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+      @account.revoke_feature(:traffic_cop)
+    end
 
-  def test_public_note_with_traffic_cop_without_last_note_id
-    @account.add_feature(:traffic_cop)
-    ticket = create_ticket
-    note = create_public_note(ticket)
-    last_note_id = note.id
-    params_hash = create_note_params_hash.merge(private: false)
-    post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
-    assert_response 201
-    latest_note = Helpdesk::Note.last
-    match_json(private_note_pattern(params_hash, latest_note))
-    match_json(private_note_pattern({}, latest_note))
-    @account.revoke_feature(:traffic_cop)
-  end
+    def test_reply_without_traffic_cop_with_last_note_id
+      @account.revoke_feature(:traffic_cop)
+      ticket = create_ticket
+      reply = create_reply_note(ticket)
+      last_note_id = reply.id
+      params_hash = reply_note_params_hash.merge(last_note_id: last_note_id - 1)
+      post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+    end
 
-  def test_reply_without_traffic_cop_with_last_note_id
-    @account.revoke_feature(:traffic_cop)
-    ticket = create_ticket
-    reply = create_reply_note(ticket)
-    last_note_id = reply.id
-    params_hash = reply_note_params_hash.merge(last_note_id: last_note_id-1)
-    post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
-    assert_response 201
-    latest_note = Helpdesk::Note.last
-    match_json(private_note_pattern(params_hash, latest_note))
-    match_json(private_note_pattern({}, latest_note))
-  end
+    def test_public_note_without_traffic_cop_with_last_note_id
+      @account.revoke_feature(:traffic_cop)
+      ticket = create_ticket
+      note = create_public_note(ticket)
+      last_note_id = note.id
+      params_hash = create_note_params_hash.merge(last_note_id: last_note_id - 1, private: false)
+      post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+    end
 
-  def test_public_note_without_traffic_cop_with_last_note_id
-    @account.revoke_feature(:traffic_cop)
-    ticket = create_ticket
-    note = create_public_note(ticket)
-    last_note_id = note.id
-    params_hash = create_note_params_hash.merge(last_note_id: last_note_id-1, private: false)
-    post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
-    assert_response 201
-    latest_note = Helpdesk::Note.last
-    match_json(private_note_pattern(params_hash, latest_note))
-    match_json(private_note_pattern({}, latest_note))
-  end
+    def test_private_note_with_traffic_cop_with_last_note_id
+      @account.add_feature(:traffic_cop)
+      ticket = create_ticket
+      note = create_public_note(ticket)
+      last_note_id = note.id
+      params_hash = create_note_params_hash.merge(private: true, last_note_id: last_note_id - 1)
+      post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+      @account.revoke_feature(:traffic_cop)
+    end
 
-  def test_private_note_with_traffic_cop_with_last_note_id
-    @account.add_feature(:traffic_cop)
-    ticket = create_ticket
-    note = create_public_note(ticket)
-    last_note_id = note.id
-    params_hash = create_note_params_hash.merge(private: true, last_note_id: last_note_id-1)
-    post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
-    assert_response 201
-    latest_note = Helpdesk::Note.last
-    match_json(private_note_pattern(params_hash, latest_note))
-    match_json(private_note_pattern({}, latest_note))
-    @account.revoke_feature(:traffic_cop)
-  end
-
-  def test_public_note_with_traffic_cop_ignoring_private_note
-    @account.add_feature(:traffic_cop)
-    ticket = create_ticket
-    note = create_private_note(ticket)
-    last_note_id = note.id
-    params_hash = create_note_params_hash.merge(last_note_id: last_note_id - 1)
-    post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
-    assert_response 201
-    latest_note = Helpdesk::Note.last
-    match_json(private_note_pattern(params_hash, latest_note))
-    match_json(private_note_pattern({}, latest_note))
-    @account.revoke_feature(:traffic_cop)
-  end
+    def test_public_note_with_traffic_cop_ignoring_private_note
+      @account.add_feature(:traffic_cop)
+      ticket = create_ticket
+      note = create_private_note(ticket)
+      last_note_id = note.id
+      params_hash = create_note_params_hash.merge(last_note_id: last_note_id - 1)
+      post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+      @account.revoke_feature(:traffic_cop)
+    end
 
     private
-      def with_twitter_update_stubbed(&block)
+
+      def with_twitter_update_stubbed
         twit = sample_twitter_object
         Twitter::REST::Client.any_instance.stubs(:update).returns(twit)
         unless GNIP_ENABLED
@@ -1475,7 +1459,7 @@ module Ember
         end
       end
 
-      def with_twitter_dm_stubbed(sample_dm_reply, &block)
+      def with_twitter_dm_stubbed(sample_dm_reply)
         Twitter::REST::Client.any_instance.stubs(:create_direct_message).returns(sample_dm_reply)
         unless GNIP_ENABLED
           Social::DynamoHelper.stubs(:insert).returns({})
@@ -1489,7 +1473,6 @@ module Ember
           Social::DynamoHelper.unstub(:insert)
           Social::DynamoHelper.unstub(:update)
         end
-
       end
   end
 end
