@@ -1,0 +1,10 @@
+
+<div class="tkt-sidebar" id="ticket_details_sidebar">
+  <%= render :partial => 'helpdesk/collab_tickets/show/status', :locals => {:ticket => @ticket} %>
+  <%= render :partial => "helpdesk/collab_tickets/show/requester" %>
+   
+  <div class="widget" id='TicketProperties'>
+    <h3 class="title"><%=t('ticket.properties')%></h3>
+      <%= render :partial => "helpdesk/collab_tickets/show/ticket_fields", :locals => { :ticket => @ticket } %>
+  </div>
+</div>

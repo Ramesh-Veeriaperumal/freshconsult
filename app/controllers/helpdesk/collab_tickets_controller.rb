@@ -1,10 +1,9 @@
 class Helpdesk::CollabTicketsController < ApplicationController
-  include Helpdesk::NotePropertiesMethods #build_notes_last_modified_user_hash
-  helper Helpdesk::ArchiveNotesHelper # needed to load note_lock_icon(_note.html)
-  helper Helpdesk::ArchiveTicketsHelper #needed to load _sticky
+  include Helpdesk::NotePropertiesMethods # build_notes_last_modified_user_hash
+  helper Helpdesk::ArchiveNotesHelper # needed for methods in (_note.html)
   include Helpdesk::AdjacentTickets
 
-  around_filter :run_on_slave
+  around_filter :run_on_slave, :only => [:show, :latest_note, :prevnext, :notify]
   before_filter :check_feature
   before_filter :load_or_show_error, :only => [:show, :latest_note, :prevnext, :notify]
   before_filter :validate_collab_user, :only => [:show]
@@ -15,7 +14,6 @@ class Helpdesk::CollabTicketsController < ApplicationController
     @ticket_notes = @ticket.conversation.reverse
     @ticket_notes_total = @ticket.conversation_count
     build_notes_last_modified_user_hash(@ticket_notes)
-    render "/helpdesk/archive_tickets/show"
   end
 
   def latest_note
@@ -31,7 +29,6 @@ class Helpdesk::CollabTicketsController < ApplicationController
   def prevnext
     @previous_ticket = find_in_list(:prev).to_s
     @next_ticket = find_in_list(:next).to_s
-    render "/helpdesk/archive_tickets/prevnext"
   end
 
   def notify
@@ -69,10 +66,6 @@ class Helpdesk::CollabTicketsController < ApplicationController
       unless current_account.collaboration_enabled?
         pjax_safe_redirect_to_tickets
       end
-    end
-
-    def run_on_slave(&block)
-      Sharding.run_on_slave(&block)
     end
 
     def valid_token?

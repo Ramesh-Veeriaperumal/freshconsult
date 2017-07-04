@@ -11,11 +11,11 @@ module SBRR
       end
 
       def old_ticket
-        @old_ticket ||= @current_ticket.ticket_was @current_ticket.model_changes, TicketConstants::SKILL_BASED_TICKET_ATTRIBUTES if @current_ticket
+        @old_ticket ||= @current_ticket.ticket_was @current_ticket.model_changes, @current_ticket.sbrr_state_attributes, TicketConstants::SKILL_BASED_TICKET_ATTRIBUTES if @current_ticket
       end
 
       def new_ticket
-        @new_ticket ||= @current_ticket.ticket_is @current_ticket.model_changes, TicketConstants::SKILL_BASED_TICKET_ATTRIBUTES if @current_ticket
+        @new_ticket ||= @current_ticket.ticket_is @current_ticket.model_changes, @current_ticket.sbrr_state_attributes, TicketConstants::SKILL_BASED_TICKET_ATTRIBUTES if @current_ticket
       end
 
       def assign

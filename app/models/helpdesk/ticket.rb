@@ -60,13 +60,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :round_robin_assignment, :related_ticket_ids, :tracker_ticket_id, :unique_external_id, :assoc_parent_tkt_id,
     :sbrr_turned_on, :status_sla_toggled_to, :replicated_state, :skip_sbrr_assigner, :bg_jobs_inline,
     :sbrr_ticket_dequeued, :sbrr_user_score_incremented, :sbrr_fresh_ticket, :skip_sbrr, :model_changes,
-    :schedule_observer, :required_fields_on_closure, :observer_args, :escape_liquid_attributes
+    :schedule_observer, :required_fields_on_closure, :observer_args, :skip_sbrr_save, :sbrr_state_attributes, :escape_liquid_attributes
+    # :skip_sbrr_assigner and :skip_sbrr_save can be combined together if needed.
     # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
     # - will be clearing these after activity publish.
   
 #  attr_protected :attachments #by Shan - need to check..
 
   attr_protected :account_id, :display_id, :attachments #to avoid update of these properties via api.
+
+  attr_reader :sbrr_exec_obj
 
   alias_attribute :company_id, :owner_id
   alias_attribute :skill_id, :sl_skill_id
@@ -337,6 +340,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def model_changes
     @model_changes ||= {}
+  end
+
+  def sbrr_state_attributes
+    @sbrr_state_attributes ||= attributes.symbolize_keys.slice(*TicketConstants::NEEDED_SBRR_ATTRIBUTES)
   end
 
   def to_param 
@@ -1187,21 +1194,26 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def archive?
     false
   end
+  alias :archive :archive?
 
-  def ticket_was _changes = {}, custom_attributes = []
-    replicate_ticket :first, _changes, custom_attributes
+  def ticket_was _changes = {}, _attributes = self.attributes, custom_attributes = []
+    replicate_ticket :first, _changes, _attributes, custom_attributes
   end
 
-  def ticket_is _changes = {}, custom_attributes = []
-    replicate_ticket :last, _changes, custom_attributes
+  def ticket_is _changes = {}, _attributes = self.attributes, custom_attributes = []
+    replicate_ticket :last, _changes, _attributes, custom_attributes
   end
 
-  def replicate_ticket index, _changes = {}, custom_attributes = [], _schema_less_ticket_changes = _changes
+  def replicate_ticket index, _changes = {}, _attributes = self.attributes, custom_attributes = [], _schema_less_ticket_changes = _changes
     ticket_replica = account.tickets.new #dup creates problems
-    attributes.each do |_attribute, value| #to work around protected attributes
+    ticket_replica.id = id
+    ticket_replica.display_id = display_id
+
+    _attributes.each do |_attribute, value| #to work around protected attributes
       next if TicketConstants::SKIPPED_TICKET_CHANGE_ATTRIBUTES.include? _attribute.to_sym #skipping deprecation warning
       ticket_replica.send("#{_attribute}=", value)
     end
+
     _changes ||= begin 
       temp_changes = changes #calling changes builds a hash everytime
       temp_changes.present? ? temp_changes : previous_changes
@@ -1218,6 +1230,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
       schema_less_ticket.replicate_schema_less_ticket(index, _schema_less_ticket_changes)
     ticket_replica
   end
+
+  def valid_internal_group?(ig_id = internal_group_id)
+    return true if ig_id.blank?
+    ticket_status.group_ids.include?(ig_id)
+  end
+
+  def valid_internal_agent?(ia_id = internal_agent_id)
+    return true if ia_id.blank?
+    valid_internal_group? && (internal_group.try(:agent_ids) || []).include?(ia_id)
+  end
+
 
   private
     def sphinx_data_changed?
@@ -1246,16 +1269,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def shared_ownership_fields_changed?
       internal_group_id_changed? or internal_agent_id_changed?
-    end
-
-    def valid_internal_group?(ig_id = internal_group_id)
-      return true if ig_id.blank?
-      ticket_status.group_ids.include?(ig_id)
-    end
-
-    def valid_internal_agent?(ia_id = internal_agent_id)
-      return true if ia_id.blank?
-      valid_internal_group? && (internal_group.try(:agent_ids) || []).include?(ia_id)
     end
 
   #Shared ownership methods ends here

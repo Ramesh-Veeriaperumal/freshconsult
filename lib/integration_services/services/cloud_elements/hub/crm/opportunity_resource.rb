@@ -26,7 +26,7 @@ module IntegrationServices::Services
 
       def get_selected_fields fields, value, app_name
         return { FRONTEND_OBJECTS[:totalSize] => 0, FRONTEND_OBJECTS[:done] => true, FRONTEND_OBJECTS[:records] => [] } if value[:account_id].blank?
-        link_status, linked_opportunity = integrated_remote_resource(value[:account_id],fields,app_name)
+        link_status, linked_opportunity = integrated_remote_resource(value[:account_id],fields,app_name, value[:isNewUI])
         return linked_opportunity if linked_opportunity.present? && linked_opportunity[FRONTEND_OBJECTS[:records]].present?
         query = build_query(value, app_name)
         request_url = "#{cloud_elements_api_url}/hubs/crm/opportunities?where=#{query}"
@@ -40,10 +40,11 @@ module IntegrationServices::Services
         URI.encode(OBJECT_QUERIES[:opportunity_resource][app_name] % {:account_id => value[:account_id]})
       end
       
-      def integrated_remote_resource(account_id,fields,app_name)
+      def integrated_remote_resource(account_id,fields,app_name,is_new_ui)
         link_status, linked_opportunity = nil, nil
         unless @service.payload[:ticket_id].blank?
-          integrated_resource = @service.installed_app.integrated_resources.find_by_local_integratable_id(@service.payload[:ticket_id]) 
+          ticket_id = is_new_ui ?  fetch_ticket_id_using_display_id(@service.payload[:ticket_id]) : @service.payload[:ticket_id]
+          integrated_resource = @service.installed_app.integrated_resources.find_by_local_integratable_id(ticket_id)
           link_status = false
           unless integrated_resource.blank?
             link_status = true
@@ -69,6 +70,10 @@ module IntegrationServices::Services
         send("#{@service.meta_data[:app_name]}_selected_fields", fields, response, [200], "Opportunity") do |opportunity|
           return opportunity
         end
+      end
+
+      def fetch_ticket_id_using_display_id display_id
+        Account.current.tickets.find_by_display_id(display_id).id
       end
 
     end

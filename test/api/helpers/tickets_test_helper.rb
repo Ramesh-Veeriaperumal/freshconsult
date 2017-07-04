@@ -23,6 +23,11 @@ module TicketsTestHelper
     ticket_pattern(ticket).except(*([:attachments, :conversations, :tags] - exclude))
   end
 
+  def so_ticket_pattern(expected_output = {}, ticket)
+    ticket_pattern(expected_output, ticket).merge(internal_agent_id:  expected_output[:internal_agent_id] || ticket.internal_agent_id,
+                                                  internal_group_id: expected_output[:internal_group_id] || ticket.internal_group_id)
+  end
+
   def index_ticket_pattern_with_associations(ticket, requester = true, ticket_states = true, company = true, exclude = [])
     ticket_pattern_with_association(
       ticket, false, false, requester,

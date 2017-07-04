@@ -2,8 +2,8 @@ class Admin::SkillsController < Admin::AdminController
   include ModelControllerMethods
   include Va::Constants
   include ImportCsvUtil
-
-  before_filter { |c| c.requires_feature :skill_based_round_robin }
+  
+  before_filter { |c| c.requires_this_feature :skill_based_round_robin }
   before_filter :check_max_skills_limit,  :only => [:new, :create]
   before_filter :load_object,             :only => [:edit, :update, :destroy, :users]
   before_filter :escape_html_entities_in_json

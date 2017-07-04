@@ -26,6 +26,7 @@ module TicketFieldsTestHelper
                                                            field_type: "custom_#{type}",
                                                            description: '',
                                                            required: required,
+                                                           column_name: flexifield_def_entry.flexifield_name,
                                                            flexifield_def_entry_id: flexifield_def_entry.id)
     parent_custom_field.save
     parent_custom_field

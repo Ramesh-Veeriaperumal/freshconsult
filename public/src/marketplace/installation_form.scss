@@ -28,7 +28,7 @@
     border-bottom: solid 1px #ccc;
     width: 100%;
     .progress{
-      height: 70px;
+      height: 80px;
       background-color: transparent;
       background-image: none;
       box-shadow: none;
@@ -53,7 +53,8 @@
   }
   .app-name{
     font-weight: 300;
-    @include padding(5px);
+    padding-top: 15px;
+    font-size: 15px;
   }
   .fa-settings{
     @include padding(2%);

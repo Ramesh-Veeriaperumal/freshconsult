@@ -157,10 +157,6 @@ class Account < ActiveRecord::Base
   def round_robin_capping_enabled?
     features?(:round_robin_load_balancing)
   end
-  
-  def skill_based_round_robin_enabled?
-    features?(:skill_based_round_robin)
-  end
 
   def validate_required_ticket_fields?
     ismember?(VALIDATE_REQUIRED_TICKET_FIELDS, self.id)

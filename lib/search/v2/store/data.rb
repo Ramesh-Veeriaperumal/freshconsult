@@ -14,7 +14,7 @@ module Search
 
         # Get tenant info from cache/data store
         def tenant_info(tenant_id)
-          unless Rails.env.development?
+          unless (Rails.env.development? || Rails.env.test?)
             get_item(
             TENANT_TABLE,
             Cache::TENANT_INFO % { tenant_id: tenant_id },

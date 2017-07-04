@@ -32,9 +32,12 @@ class TicketDelegator < BaseDelegator
   validate :validate_closure, if: -> { status && attr_changed?('status') && !bulk_update? }
 
   validate :company_presence, if: -> { company_id }
+  validate :validate_internal_agent_group_mapping, if: -> {internal_agent_id && attr_changed?('internal_agent_id') && Account.current.shared_ownership_enabled?}
+  validate :validate_status_group_mapping, if: -> {internal_group_id && attr_changed?('internal_group_id') && Account.current.shared_ownership_enabled?}
 
   def initialize(record, options)
     @ticket_fields = options[:ticket_fields]
+    @ticket = record
     check_params_set(options[:custom_fields]) if options[:custom_fields].is_a?(Hash)
     options[:attachment_ids] = skip_existing_attachments(options) if options[:attachment_ids]
     super(record, options)
@@ -113,6 +116,14 @@ class TicketDelegator < BaseDelegator
   def validate_closure
     return unless closure_status?
     errors[:status] << :unresolved_child if self.assoc_parent_ticket? && self.validate_assoc_parent_tkt_status
+  end
+
+  def validate_internal_agent_group_mapping
+    errors[:internal_agent] << :wrong_internal_agent unless @ticket.valid_internal_agent?
+  end
+
+  def validate_status_group_mapping
+    errors[:internal_group] << :wrong_internal_group unless @ticket.valid_internal_group?
   end
 
   private

@@ -1,6 +1,4 @@
 require_relative '../../test_helper'
-require 'sidekiq/testing'
-
 Dir["#{Rails.root}/test/core/functional/helpdesk/conversation_test_cases/*.rb"].each { |file| require file }
 
 class Helpdesk::NotesControllerTest < ActionController::TestCase
@@ -8,19 +6,10 @@ class Helpdesk::NotesControllerTest < ActionController::TestCase
   include DynamoTestHelper
   include LinkTicketAssertions
   include NoteTestHelper
-  include NoteTestIntegrationsHelper
-  include TicketConstants
-  include UsersTestHelper
 
   def setup
     super
     login_admin
-    Sidekiq::Testing.inline!
-  end
-
-  def teardown
-    super
-    Sidekiq::Testing.disable!
   end
 
   def test_delete_broadcast_note
@@ -34,55 +23,6 @@ class Helpdesk::NotesControllerTest < ActionController::TestCase
         assert_present @account.broadcast_messages.where(:tracker_display_id => tracker.display_id)
       end
     end
-  end
-
-
-  def test_private_note_contact_integrations_no_status_change
-    notification_count ,ticket = create_ticket_add_note(nil, nil, nil, COMMENT_ADDED_UNIQ_STRING, PRIVATE, CUSTOMER)
-    assert_equal Helpdesk::Ticketfields::TicketStatus::RESOLVED, ticket.status
-    assert_equal notification_count + 1, Delayed::Job.where(COMMENT_ADDED_UNIQ_STRING).all.count
-  end
-
-
-
-  def test_public_note_contact_integrations_status_change
-    notification_count ,ticket = create_ticket_add_note(nil, nil, nil, CUSTOMER_REPLIED_UNIQ_STRING, PUBLIC, CUSTOMER)
-    assert_equal Helpdesk::Ticketfields::TicketStatus::OPEN, ticket.status
-    assert_equal notification_count + 1, Delayed::Job.where(CUSTOMER_REPLIED_UNIQ_STRING).all.count
-  end
-
-  def test_private_note_contact_twitter_status_change
-    notification_count ,ticket = create_ticket_add_note(SOURCE_KEYS_BY_TOKEN["twitter"], Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["twitter"], nil,
-                                                        CUSTOMER_REPLIED_UNIQ_STRING, PRIVATE, CUSTOMER)
-    assert_equal Helpdesk::Ticketfields::TicketStatus::OPEN, ticket.status
-    assert_equal notification_count + 1, Delayed::Job.where(CUSTOMER_REPLIED_UNIQ_STRING).all.count
-  end
-
-  def test_private_note_contact_facebook_status_change
-    notification_count ,ticket = create_ticket_add_note(SOURCE_KEYS_BY_TOKEN["facebook"], Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"], nil,
-                                                        CUSTOMER_REPLIED_UNIQ_STRING, PRIVATE, CUSTOMER)
-    assert_equal Helpdesk::Ticketfields::TicketStatus::OPEN, ticket.status
-    assert_equal notification_count + 1, Delayed::Job.where(CUSTOMER_REPLIED_UNIQ_STRING).all.count
-  end
-
-
-
-  def test_private_note_agent_integrations_no_status_change
-    notification_count ,ticket = create_ticket_add_note(nil, nil, nil, COMMENT_ADDED_UNIQ_STRING, PRIVATE, AGENT)
-    assert_equal Helpdesk::Ticketfields::TicketStatus::RESOLVED, ticket.status
-    assert_equal notification_count, Delayed::Job.where(COMMENT_ADDED_UNIQ_STRING).all.count
-  end
-
-  def test_public_note_agent_integrations_no_status_change
-    notification_count ,ticket = create_ticket_add_note(nil, nil, nil, COMMENT_ADDED_UNIQ_STRING, PUBLIC, AGENT)
-    assert_equal Helpdesk::Ticketfields::TicketStatus::RESOLVED, ticket.status
-    assert_equal notification_count, Delayed::Job.where(COMMENT_ADDED_UNIQ_STRING).all.count
-  end
-
-  def test_private_note_agent_integrations_no_status_change_third_party
-    notification_count ,ticket = create_ticket_add_note(nil, nil, Helpdesk::Note::CATEGORIES[:third_party_response], COMMENT_ADDED_UNIQ_STRING, PRIVATE, AGENT)
-    assert_equal Helpdesk::Ticketfields::TicketStatus::RESOLVED, ticket.status
-    assert_equal notification_count, Delayed::Job.where(COMMENT_ADDED_UNIQ_STRING).all.count
   end
 
 end

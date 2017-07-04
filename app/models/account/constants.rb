@@ -54,7 +54,7 @@ class Account < ActiveRecord::Base
     },
 
     :forest => {
-      :features => [ :mailbox, :whitelisted_ips ],
+      :features => [ :mailbox, :whitelisted_ips, :skill_based_round_robin ],
       :inherits => [ :estate ]
     },
 
@@ -187,7 +187,7 @@ class Account < ActiveRecord::Base
     :es_multilang_solutions => false, :requester_widget => false, :spam_blacklist_feature => false,
     :custom_timesheet => false, :antivirus_service => false, :hide_api_key => false, :new_sla_logic => false,
     :dashboard_new_alias => false, :attachments_scope => false, :kbase_spam_whitelist => false, :forum_post_spam_whitelist => false, :email_failures => false,
-    :escape_liquid_attributes_whitelist => false,
+    :escape_liquid_attributes => true, :escape_liquid_for_reply => true, :escape_liquid_for_portal => true,
     :falcon => false
   }
 
