@@ -1,9 +1,9 @@
-class TwitterReplyDelegator < BaseDelegator
+class TwitterReplyDelegator < ConversationBaseDelegator
   attr_accessor :twitter_handle_id
 
   validate :validate_twitter_handle
-
   validate :validate_agent_id, if: -> { fwd_email? && user_id.present? && attr_changed?('user_id') }
+  validate :validate_unseen_replies, on: :tweet, if: :traffic_cop_required?
 
   def initialize(record, options = {})
     super(record, options)

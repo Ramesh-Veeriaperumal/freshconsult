@@ -6,3 +6,5 @@ allOf:
         type: array
         items:
           $ref: '#/definitions/extended_sla_policy'
+      avatar:
+        $ref: '#/definitions/avatar'

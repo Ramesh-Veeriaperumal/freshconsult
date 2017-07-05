@@ -13,6 +13,7 @@ module TicketsTestHelper
   def ticket_params_hash(params = {})
     description = params[:description] || Faker::Lorem.paragraph
     description_html = params[:description_html] || "<div>#{description}</div>"
+
     params_hash = { :helpdesk_ticket => {
                       :email => params[:email] || Faker::Internet.email,
                       :subject => params[:subject] || Faker::Lorem.words(10).join(' '),
@@ -55,7 +56,7 @@ module TicketsTestHelper
     cc_emails = params[:cc_emails] || []
     fwd_emails = params[:fwd_emails] || []
     subject = params[:subject] || Faker::Lorem.words(10).join(" ")
-    account_id =  group ? group.account_id : @account.id
+    account_id = group ? group.account_id : @account.id
     test_ticket = FactoryGirl.build(:ticket, :status => params[:status] || 2,
                                          :display_id => params[:display_id],
                                          :requester_id =>  requester_id,
@@ -84,15 +85,17 @@ module TicketsTestHelper
       test_ticket.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:child]
       test_ticket.assoc_parent_tkt_id = params[:assoc_parent_id]
     end
-    test_ticket.internal_agent_id = params[:internal_agent_id] if params[:internal_agent_id]
+    if @account.shared_ownership_enabled?
+      test_ticket.internal_agent_id = params[:internal_agent_id] if params[:internal_agent_id]
+      test_ticket.internal_group_id = internal_group ? internal_group.id : nil
+    end
     test_ticket.group_id = group ? group.id : nil
-    test_ticket.internal_group_id = internal_group ? internal_group.id : nil
     test_ticket.save_ticket
     test_ticket
   end
 
   def create_link_tickets(related_tickets_count=5, tracker_subject = nil, subjects=[])
-    related_ticket_ids = related_tickets_count.times.collect  {|i| create_ticket(:subject => subjects[i]).display_id }
+    related_ticket_ids = related_tickets_count.times.collect { |i| create_ticket(:subject => subjects[i]).display_id }
     Sidekiq::Testing.inline! do
       tracker = create_ticket({:subject => tracker_subject, :display_ids => related_ticket_ids})
     end

@@ -41,13 +41,22 @@ module UsersTestHelper
     result.merge!(
       other_companies: expected_output[:other_companies] ||
       get_other_companies(contact)
-    )
+    ) if Account.current.multiple_user_companies_enabled?
     result.merge!(deleted: true) if contact.deleted
     result
   end
 
   def private_api_contact_pattern(expected_output = {}, ignore_extra_keys = true, contact)
-    contact_pattern(expected_output, ignore_extra_keys, contact).merge(whitelisted: contact.whitelisted)
+    result = contact_pattern(expected_output, ignore_extra_keys, contact)
+    result.merge!(whitelisted: contact.whitelisted,
+      facebook_id: (expected_output[:facebook_id] || contact.fb_profile_id))
+    result.merge!(
+        company: company_hash(contact.default_user_company)
+        ) if expected_output[:include].eql?('company') && contact.default_user_company.present?
+    result.merge!(
+      other_companies: other_companies_hash(expected_output[:include].eql?('company'), contact)
+    ) if Account.current.multiple_user_companies_enabled?
+    result
   end
 
   def get_contact_avatar(contact)
@@ -188,6 +197,20 @@ module UsersTestHelper
     new_user = add_new_user(account)
     new_user.blocked = true
     new_user.blocked_at = Time.now
+    new_user.save
+    new_user
+  end
+
+  def create_contact_with_other_companies(account, company_ids = nil)
+    company_ids ||= Company.first(2).map(&:id)
+    new_user = add_new_user(account)
+    company_attributes = []
+    company_ids.each do |c|
+      h = { :company_id => c, :client_manager => true}
+      h.merge!({:default => true}) if c == company_ids.first 
+      company_attributes << h
+    end
+    new_user.user_companies_attributes = Hash[(0...company_attributes.size).zip company_attributes]
     new_user.save
     new_user
   end
@@ -343,6 +366,26 @@ module UsersTestHelper
       }
     end
     other_companies
+  end
+
+  def other_companies_hash(include, contact)
+    if include
+      other_companies = []
+      contact.user_companies.where(default: false).each do |uc|
+        other_companies << company_hash(uc)
+      end
+      other_companies
+    else
+      contact.user_companies.map(&:company_id)
+    end
+  end
+
+  def company_hash(user_comp)
+    {
+      id: user_comp.company_id,
+      name: user_comp.company.name,
+      view_all_tickets: user_comp.client_manager
+    }
   end
 
   def get_client_manager(contact)

@@ -2,24 +2,20 @@ module Ember
   class ContactsController < ApiContactsController
     include DeleteSpamConcern
     include HelperConcern
+    include ContactsCompaniesConcern
     decorate_views
 
     before_filter :can_change_password?, :validate_password_change, only: [:update_password]
 
     def create
       assign_protected
-      delegator_params = {
-        other_emails: @email_objects[:old_email_objects],
-        primary_email: @email_objects[:primary_email],
-        custom_fields: params[cname][:custom_field],
-        default_company: @company_id,
-        avatar_id: params[cname][:avatar_id]
-      }
+      delegator_params = construct_delegator_params
       return unless validate_delegator(@item, delegator_params)
       build_user_emails_attributes if @email_objects.any?
       build_other_companies if @all_companies
+      assign_avatar
       if @item.create_contact!(params[cname][:active])
-        render :show, location: api_contact_url(@item.id), status: 201
+        render :show, status: 201
       else
         render_custom_errors
       end
@@ -29,8 +25,21 @@ module Ember
     end
 
     def update
-      super
-      render :show, location: api_contact_url(@item.id)
+      assign_protected
+      delegator_params = construct_delegator_params
+      @item.assign_attributes(validatable_delegator_attributes)
+      return unless validate_delegator(@item, delegator_params)
+      build_user_emails_attributes if @email_objects.any?
+      build_other_companies if @all_companies
+      mark_avatar_for_destroy
+      User.transaction do
+        @item.update_attributes!(params[cname].except(:avatar_id))
+        assign_avatar
+      end
+      @item.reload
+      render :show
+    rescue
+      render_custom_errors
     end
 
     def index
@@ -101,7 +110,7 @@ module Ember
     end
 
     def self.wrap_params
-      ContactConstants::EMBER_WRAP_PARAMS
+      Ember::ContactConstants::EMBER_WRAP_PARAMS
     end
 
     private
@@ -114,16 +123,97 @@ module Ember
         super
       end
 
+      def construct_delegator_params
+        {
+          other_emails: @email_objects[:old_email_objects],
+          primary_email: @email_objects[:primary_email],
+          custom_fields: params[cname][:custom_field],
+          default_company: @def_company.try(:id),
+          avatar_id: params[cname][:avatar_id]
+        }
+      end
+
       def preload_options
-        if ContactConstants::PRELOAD_OPTIONS.key?(action_name.to_sym)
-          ContactConstants::PRELOAD_OPTIONS[action_name.to_sym]
+        if Ember::ContactConstants::PRELOAD_OPTIONS.key?(action_name.to_sym)
+          Ember::ContactConstants::PRELOAD_OPTIONS[action_name.to_sym]
         else
-          (super - [:default_user_company]) | [:user_emails, :tags, :avatar, :user_companies]
+          (super - [:default_user_company]) | preload_with_sideload
+        end
+      end
+
+      def preload_with_sideload
+        if sideload_options.present? && sideload_options.include?('company')
+          [:user_emails, :tags, :avatar, {user_companies: [:company]}]
+        else
+          [:user_emails, :tags, :avatar, :user_companies]
         end
       end
 
       def fetch_objects(items = scoper)
         @items = items.preload(preload_options).find_all_by_id(params[cname][:ids])
+      end
+
+      def sideload_options
+        index? ? @contact_filter.try(:include_array) : @include_validation.try(:include_array)
+      end
+
+      def sanitize_params
+        construct_primary_company
+        super
+      end
+
+      def construct_primary_company
+        return unless params[cname][:company].present?
+        @company_param = params[cname].delete(:company)
+        @def_company = find_or_create_company(@company_param)
+        return unless @def_company
+        build_primary_company
+      end
+
+      def build_primary_company
+        if params[cname].key?(:other_companies)
+          @company_param[:default] = true
+        else
+          params[cname][:company_id] = @def_company.id
+          params[cname][:client_manager] = @company_param[:view_all_tickets]
+        end
+      end
+
+      def construct_all_companies
+        @all_companies = params[cname].delete(:other_companies) + [@company_param]
+        @all_companies.compact!.try(:uniq!)
+      end
+
+      def build_other_companies
+        company_attributes = []
+        if update?
+          @all_company_ids = @all_companies.map{ |c| c[:id].to_i }.compact.uniq
+          current_companies.each do |user_company|
+            company_attributes << { 
+              'id' => user_company.id, 
+              '_destroy' => 1 } if @all_company_ids.exclude? user_company.company_id
+          end
+        end
+        @all_companies.each do |comp|
+          company = find_or_create_company(comp) if comp[:id].blank?
+          company_attributes << user_company_hash(company || comp, comp[:view_all_tickets], comp[:default])
+        end
+        @item.user_companies_attributes = Hash[(0...company_attributes.size).zip company_attributes]
+      end
+
+      def find_or_create_company(company)
+        company[:id].present? ? current_account.companies.find_by_id(company[:id]) :
+          current_account.companies.find_or_create_by_name(company[:name])
+      end
+
+      def user_company_hash(company, cm, default = false)
+        uc_id = current_companies.find{|uc| uc.company_id.to_s == company[:id].to_s}.try(:id) if update?
+        {
+          id: uc_id,
+          company_id: company[:id],
+          client_manager: cm,
+          default: default || false
+        }
       end
 
       def render_201_with_location(template_name: "api_contacts/#{action_name}", location_url: 'api_contact_url', item_id: @item.id)
@@ -141,9 +231,27 @@ module Ember
         render_errors(password: :"Not allowed to change.") unless @item.allow_password_update?
       end
 
+      def validate_params
+        @contact_fields = current_account.contact_form.custom_contact_fields
+        @name_mapping = CustomFieldDecorator.name_mapping(@contact_fields)
+        custom_fields = @name_mapping.empty? ? [nil] : @name_mapping.values
+
+        field = Ember::ContactConstants::CONTACT_FIELDS | ['custom_fields' => custom_fields]
+        params[cname].permit(*(field))
+        ParamsHelper.modify_custom_fields(params[cname][:custom_fields], @name_mapping.invert)
+        contact = Ember::ContactValidation.new(params[cname], @item, string_request_params?)
+        render_custom_errors(contact, true)  unless contact.valid?(action_name.to_sym)
+      end
+
+      def validate_url_params
+        params.permit(*ContactConstants::SHOW_FIELDS, *ApiConstants::DEFAULT_PARAMS)
+        @include_validation = ContactFilterValidation.new(params, nil, string_request_params?)
+        render_errors(@include_validation.errors, @include_validation.error_options) unless @include_validation.valid?
+      end
+
       def validate_password_change
         params[cname].permit(:password)
-        contacts_validation = ContactValidation.new(params, @item)
+        contacts_validation = Ember::ContactValidation.new(params, @item)
         return true if contacts_validation.valid?(action_name.to_sym)
         render_errors contacts_validation.errors, contacts_validation.error_options
         false
@@ -192,7 +300,7 @@ module Ember
       end
 
       def constants_class
-        :ContactConstants.to_s.freeze
+        ::Ember::ContactConstants.to_s.freeze
       end
 
       wrap_parameters(*wrap_params)

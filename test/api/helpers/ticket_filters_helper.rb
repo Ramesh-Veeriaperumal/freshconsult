@@ -27,30 +27,21 @@ module TicketFiltersHelper
 
   def get_default_visible_filters
     TicketsFilter.default_views.collect do |filter|
-      if filter[:id].eql?('raised_by_me')
-        filter.merge(query_hash: Helpdesk::Filters::CustomTicketFilter.new.raised_by_me_filter)
-      elsif CustomFilterConstants::REMOVE_QUERY_HASH.include?(filter[:id])
-        filter
-      else
-        filter.merge(query_hash: Helpdesk::Filters::CustomTicketFilter::DEFAULT_FILTERS[filter[:id]])
-      end
+      CustomFilterConstants::REMOVE_QUERY_HASH.include?(filter) ? filter :
+        filter.merge(query_hash: Helpdesk::Filters::CustomTicketFilter.new.default_filter_query_hash(filter[:id]))
     end
   end
 
   def get_default_hidden_filters
-    hidden_filter_names.collect do |filter|
+    TicketsFilter.accessible_filters(TicketFilterConstants::HIDDEN_FILTERS).collect do |filter|
       {
         id: filter,
         name: I18n.t("helpdesk.tickets.views.#{filter}"),
         default: true,
         hidden: true,
-        query_hash: filter.eql?('on_hold') ? Helpdesk::Filters::CustomTicketFilter.new.on_hold_filter : Helpdesk::Filters::CustomTicketFilter::DEFAULT_FILTERS[filter]
+        query_hash: Helpdesk::Filters::CustomTicketFilter.new.default_filter_query_hash(filter)
       }
     end
-  end
-
-  def hidden_filter_names
-    TicketFilterConstants::HIDDEN_FILTERS - (Account.current.sla_management_enabled? ? [] : ['overdue', 'due_today'])
   end
 
   def ticket_filter_show_pattern(filter)
@@ -64,8 +55,8 @@ module TicketFiltersHelper
       basic_pattern.merge!(query_hash: query_hash_pattern_output(filter.data[:data_hash]))
     else
       basic_pattern.merge!(default: true)
-      basic_pattern.merge!(hidden: true) if hidden_filter_names.include?(filter[:id])
-      if !CustomFilterConstants::REMOVE_QUERY_HASH.include?(filter[:id])
+      basic_pattern.merge!(hidden: true) if TicketsFilter.accessible_filters(TicketFilterConstants::HIDDEN_FILTERS).include?(filter[:id])
+      if CustomFilterConstants::REMOVE_QUERY_HASH.exclude?(filter[:id])
         basic_pattern.merge!(query_hash: query_hash_pattern_output(filter[:query_hash]))
       end
     end

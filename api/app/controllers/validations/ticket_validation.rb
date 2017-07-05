@@ -2,13 +2,11 @@ class TicketValidation < ApiValidation
   MANDATORY_FIELD_ARRAY = [:requester_id, :phone, :email, :twitter_id, :facebook_id].freeze
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
   CHECK_PARAMS_SET_FIELDS = (MANDATORY_FIELD_ARRAY.map(&:to_s) +
-                            %w(fr_due_by due_by subject description
-                              skip_close_notification
-                              custom_fields company_id
-                              internal_group_id internal_agent_id)
+                            %w(fr_due_by due_by subject description skip_close_notification
+                              custom_fields company_id internal_group_id internal_agent_id)
                           ).freeze
 
-  attr_accessor :id, :cc_emails, :description, :due_by, :email_config_id, :fr_due_by, :group, :priority, :email,
+  attr_accessor :id, :cc_emails, :description, :due_by, :email_config_id, :fr_due_by, :group, :internal_group_id, :internal_agent_id, :priority, :email,
                 :phone, :twitter_id, :facebook_id, :requester_id, :name, :agent, :source, :status, :subject, :ticket_type,
                 :product, :tags, :custom_fields, :attachments, :request_params, :item, :statuses, :status_ids, :ticket_fields, :company_id, :scenario_id,
                 :primary_id, :ticket_ids, :note_in_primary, :note_in_secondary, :convert_recepients_to_cc, :cloud_files, :skip_close_notification,
@@ -23,6 +21,7 @@ class TicketValidation < ApiValidation
   validates :subject, custom_absence: { message: :outbound_email_field_restriction }, if: :source_as_outbound_email?, on: :update
   validates :description, custom_absence: { message: :outbound_email_field_restriction }, if: :source_as_outbound_email?, on: :update
   validates :email_config_id, :subject, :email, required: { message: :field_validation_for_outbound }, on: :compose_email
+
   validates :description, :ticket_type, :status, :subject, :priority, :product, :agent, :group, :internal_group_id, :internal_agent_id, default_field:
                               {
                                 required_fields: proc { |x| x.required_default_fields },
@@ -31,7 +30,7 @@ class TicketValidation < ApiValidation
 
   validates :description, :ticket_type, :status, :subject, :priority, :product, :agent, :group, default_field:
                               {
-                                required_fields: [],
+                                required_fields: proc { |x| x.default_fields_to_validate },
                                 field_validations: proc { |x| x.default_field_validations }
                               }, if: :is_bulk_update?
 
@@ -141,21 +140,13 @@ class TicketValidation < ApiValidation
   # TODO EMBER - error messages to be changed for validations that require values for fields on status change
   validates :custom_fields, custom_field: { custom_fields:
                               {
-                                validatable_custom_fields: proc { |x| TicketsValidationHelper.custom_non_dropdown_fields(x) },
+                                validatable_custom_fields: proc { |x| x.custom_fields_to_validate },
                                 required_based_on_status: proc { |x| x.closure_status? },
                                 required_attribute: :required,
                                 ignore_string: :allow_string_param,
                                 section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
                               }
-                           }, if: -> { create_or_update? }
-  # Ignore section fields validation for bulk update
-  validates :custom_fields, custom_field: { custom_fields:
-                              {
-                                validatable_custom_fields: proc { |x| TicketsValidationHelper.custom_non_dropdown_fields(x) },
-                                required_based_on_status: false,
-                                ignore_string: :allow_string_param
-                              }
-                           }, if: :is_bulk_update?
+                           }, if: -> { errors[:custom_fields].blank? && (create_or_update? || is_bulk_update?) }
   validates :twitter_id, :phone, :name, data_type: { rules: String, allow_nil: true }
   validates :twitter_id, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :phone, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
@@ -193,7 +184,6 @@ class TicketValidation < ApiValidation
     errors[field] = :fill_a_mandatory_field
     (error_options[field] ||= {}).merge!(field_names: MANDATORY_FIELD_STRING)
   end
-
 
   def requester_id_mandatory? # requester_id is must if any one of email/twitter_id/fb_profile_id/phone is not given.
     MANDATORY_FIELD_ARRAY.all? { |x| send(x).blank? && errors[x].blank? }
@@ -245,6 +235,10 @@ class TicketValidation < ApiValidation
     ticket_fields.select { |x| x.default && (x.required || (x.required_for_closure && closure_status?)) }
   end
 
+  def default_fields_to_validate
+    required_default_fields.select { |x| validate_field?(x) }
+  end
+
   def create_or_update?
     [:create, :update].include?(validation_context)
   end
@@ -294,5 +288,18 @@ class TicketValidation < ApiValidation
       cloud_file_hash_errors << cloud_file_validator.errors.full_messages unless cloud_file_validator.valid?
     end
     errors[:cloud_files] << :"is invalid" if cloud_file_hash_errors.present?
+  end
+
+  def custom_fields_to_validate
+    tkt_fields = TicketsValidationHelper.custom_non_dropdown_fields(self)
+    create_or_update? ? tkt_fields : tkt_fields.select { |x| validate_field?(x) }
+  end
+
+  def validate_field?(x)
+    if x.default? 
+      request_params.key?(ApiTicketConstants::FIELD_MAPPINGS[x.name.to_sym] || x.name.to_sym)
+    else
+      request_params[:custom_fields] ? request_params[:custom_fields].key?(x.name) : false
+    end
   end
 end

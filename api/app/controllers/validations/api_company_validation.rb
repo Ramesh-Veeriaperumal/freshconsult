@@ -6,7 +6,9 @@ class ApiCompanyValidation < ApiValidation
   }.freeze
   CHECK_PARAMS_SET_FIELDS = %w(custom_fields).freeze
 
-  attr_accessor :name, :description, :domains, :note, :custom_fields, :custom_field_types
+  attr_accessor :name, :description, :domains, :note, :custom_fields, :custom_field_types,
+                :avatar, :avatar_id
+
   validates :description, :domains, :note, default_field:
                               {
                                 required_fields: proc { |x| x.required_default_fields },
@@ -23,6 +25,15 @@ class ApiCompanyValidation < ApiValidation
   }
   }
 
+  validates :avatar, data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true }, file_size: {
+    max: CompanyConstants::ALLOWED_AVATAR_SIZE }
+  validate :validate_avatar, if: -> { avatar && errors[:avatar].blank? }
+  validate :validate_avatar_id_or_avatar, if: -> { avatar && avatar_id }
+  validates :avatar_id, custom_numericality: { only_integer: true, greater_than: 0,
+                                               allow_nil: true,
+                                               ignore_string: :allow_string_param }
+
+
   def initialize(request_params, item)
     super(request_params, item)
     @domains = item.domains.to_s.split(',') if item && !request_params.key?(:domains)
@@ -35,5 +46,17 @@ class ApiCompanyValidation < ApiValidation
 
   def required_default_fields
     Account.current.company_form.default_company_fields.select(&:required_for_agent)
+  end
+
+  def validate_avatar
+    valid_extension, extension = ApiUserHelper.avatar_extension_valid?(avatar)
+    unless valid_extension
+      errors[:avatar] << :upload_jpg_or_png_file
+      error_options[:avatar] = { current_extension: extension }
+    end
+  end
+
+  def validate_avatar_id_or_avatar
+    errors[:avatar_id] << :only_avatar_or_avatar_id
   end
 end

@@ -13,7 +13,8 @@ module ContactConstants
 
   VALIDATABLE_DELEGATOR_ATTRIBUTES = %w(custom_field).freeze
 
-  INDEX_FIELDS = %w(state email phone mobile company_id tag _updated_since unique_external_id).freeze
+  INDEX_FIELDS = %w(state email phone mobile company_id tag _updated_since unique_external_id include).freeze
+  SHOW_FIELDS = %w(include).freeze
   MERGE_ARRAY_FIELDS = ['target_ids'].freeze
   MERGE_FIELDS = %w(primary_id).freeze | MERGE_ARRAY_FIELDS
   EXPORT_CSV_ARRAY_FIELDS = %w(default_fields custom_fields).freeze
@@ -92,6 +93,8 @@ module ContactConstants
     bulk_send_invite: [:flexifield, :user_companies, :avatar, :default_user_company, :roles],
     bulk_whitelist: []
   }
+
+  SIDE_LOADING = %w(company).freeze
 
   VALIDATION_CLASS = 'ContactValidation'.freeze
   DELEGATOR_CLASS = 'ContactDelegator'.freeze

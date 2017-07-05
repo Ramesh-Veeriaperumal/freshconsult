@@ -15,6 +15,7 @@ class ApiValidation
   # Set instance variables of validation class from request params or items. so that manual assignment is not needed.
   def initialize(request_params, item = nil, allow_string_param = false)
     # Set instance variables of validation class from loaded item's attributes (incase of PUT/update request)
+    @request_params = request_params
     if item
       item.attributes.keys.each do |field, value|
         send("#{field}=", format_value(item.send(field))) if respond_to?("#{field}=")
@@ -86,5 +87,16 @@ class ApiValidation
 
   def is_bulk_action?
     ApiConstants::BULK_ACTION_METHODS.include?(validation_context)
+  end
+
+  def validate_query_hash
+    return unless query_hash.present? && query_hash.is_a?(Array)
+    query_hash.each_with_index do |query, index|
+      query_hash_validator = ::QueryHashValidation.new(query)
+      next if query_hash_validator.valid?
+      message = ErrorHelper.format_error(query_hash_validator.errors, query_hash_validator.error_options)
+      messages = message.is_a?(Array) ? message : [message]
+      errors[:"query_hash[#{index}]"] = messages.map { |m| "#{m.field}: #{m.message}" }.join(' & ')
+    end
   end
 end

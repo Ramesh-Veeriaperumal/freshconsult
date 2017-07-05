@@ -4,12 +4,19 @@ module TicketsFilter
   
   DEFAULT_FILTER = "new_and_my_open"
   DEFAULT_VISIBLE_FILTERS = %w( new_and_my_open ongoing_collab shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by archived spam deleted )
-  DEFAULT_FILTERS_FEATURES = {
-    :archived       => :archive_tickets,
-    :shared_by_me   => :shared_ownership,
-    :shared_with_me => :shared_ownership,
-    :ongoing_collab => :collaboration
-  }
+  DEFAULT_FILTERS_FEATURES = [
+    ["archived",       :archive_tickets,  "Archive Tickets"],
+    ["shared_by_me",   :shared_ownership, "Shared ownership"],
+    ["shared_with_me", :shared_ownership, "Shared ownership"],
+    ["ongoing_collab", :collaboration,    "Collaboration"],
+    ["due_today",      :sla_management,   "SLA Policy"],
+    ["overdue",        :sla_management,   "SLA Policy"],
+    ["monitored_by",   :add_watcher,      "Add watcher"],
+    ["watching",       :add_watcher,      "Add watcher"]
+  ]
+
+  FEATURES_KEYS_BY_FILTER_KEY   = Hash[*DEFAULT_FILTERS_FEATURES.map { |i| [i[0], i[1]] }.flatten]
+  FEATURES_NAMES_BY_FILTER_KEY  = Hash[*DEFAULT_FILTERS_FEATURES.map { |i| [i[0], i[2]] }.flatten]
 
   SELECTORS = [
     [:new_and_my_open,      I18n.t('helpdesk.tickets.views.new_and_my_open'), [:visible]  ],
@@ -123,13 +130,6 @@ module TicketsFilter
   SORT_ORDER_FIELDS_BY_KEY  = Hash[*SORT_ORDER_FIELDS.map { |i| [i[0], i[0]] }.flatten]
 
   def self.sort_fields_options
-    sort_fields = SORT_FIELDS.clone
-    if Account.current && Account.current.features_included?(:sort_by_customer_response)
-      sort_fields << [ :requester_responded_at, "tickets_filter.sort_fields.requester_responded_at"]
-      sort_fields << [ :agent_responded_at, "tickets_filter.sort_fields.agent_responded_at"]
-    end
-
-    sort_fields.insert(0, [ :due_by, "tickets_filter.sort_fields.due_by"]) if Account.current && Account.current.sla_management_enabled?
     sort_fields.map { |i| [I18n.t(i[1]), i[0]] }
   end
 
@@ -138,10 +138,18 @@ module TicketsFilter
     sort_fields.map { |i| [I18n.t(i[1]), i[0]] }
   end
 
-  def self.api_sort_fields_options
-    sort_fields_api = SORT_FIELDS.clone
-    sort_fields_api.insert(0, [ :due_by, "tickets_filter.sort_fields.due_by"]) if Account.current && Account.current.sla_management_enabled?
-    sort_fields_api
+  def self.sort_fields
+    sort_fields = SORT_FIELDS.clone
+    if Account.current && Account.current.features_included?(:sort_by_customer_response)
+      sort_fields << [ :requester_responded_at, "tickets_filter.sort_fields.requester_responded_at"]
+      sort_fields << [ :agent_responded_at, "tickets_filter.sort_fields.agent_responded_at"]
+    end
+    sort_fields.insert(0, [ :due_by, "tickets_filter.sort_fields.due_by"]) if Account.current && Account.current.sla_management_enabled?
+    sort_fields
+  end
+
+  class << self
+    alias_method :api_sort_fields_options, :sort_fields
   end
 
   def self.shared_agent_sort_fields_options
@@ -176,17 +184,24 @@ module TicketsFilter
   end
 
   def self.default_views
-    filters = DEFAULT_VISIBLE_FILTERS.select {|filter|
-      feature = DEFAULT_FILTERS_FEATURES[filter.to_sym]
-      Account.current && (feature.nil? or Account.current.send("#{feature}_enabled?"))
-    }
-    filters.map { |i| 
+    accessible_filters.map { |i| 
       { 
         :id       =>  i, 
         :name     =>  I18n.t("helpdesk.tickets.views.#{i}"), 
         :default  =>  true 
       } 
     }
+  end
+
+  def self.accessible_filters(all_filters = DEFAULT_VISIBLE_FILTERS, feature_keys = FEATURES_KEYS_BY_FILTER_KEY)
+    filters = all_filters.select {|filter|
+      accessible_filter? filter, feature_keys
+    }
+  end
+
+  def self.accessible_filter?(filter, feature_keys = FEATURES_KEYS_BY_FILTER_KEY)
+    feature = feature_keys[filter]
+    Account.current and (feature.nil? or Account.current.send("#{feature}_enabled?"))
   end
 
   def self.filter(filter, user = nil, scope = nil)

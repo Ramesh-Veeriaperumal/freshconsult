@@ -7,3 +7,5 @@ properties:
   application_id:
     type: integer
     format: int64
+  application_name:
+    type: string

@@ -1,0 +1,43 @@
+type: object
+properties:
+  id:
+    type: integer
+  group_id:
+    type: integer
+  priority:
+    type: integer
+    enum: [1,2,3,4]
+  requester_id:
+    type: integer
+  responder_id:
+    type: integer
+  source:
+    type: integer
+    enum: [1,2,3,7,8,9,10]
+  company_id:
+    type: integer
+  status:
+    type: integer
+  stats:
+      $ref: '#/definitions/ticket_stats'
+  subject:
+    type: string
+  product_id:
+    type: integer
+  type:
+    type: string
+    enum: ['Question','Incident','Problem','Feature Request']
+  due_by:
+    type: string
+    format: date-time
+  fr_due_by:
+    type: string
+    format: date-time 
+  is_escalated:
+    type: integer
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: string
+    format: date-time

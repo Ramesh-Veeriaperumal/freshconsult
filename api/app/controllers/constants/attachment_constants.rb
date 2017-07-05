@@ -27,6 +27,7 @@ module AttachmentConstants
     'solution_draft'   => 'Solution::Draft',
     'post'             => 'Post',
     'user'             => 'User',
+    'company'          => 'Company',
     'user_draft'       => 'UserDraft',
     'account'          => 'Account'
   }.freeze

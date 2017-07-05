@@ -114,15 +114,58 @@ module Ember
       assert User.last.avatar.id == avatar_id
     end
 
+    # Tests for Multiple User companies feature
+
+    def test_create_contact_with_default_company
+      company_ids = Company.first(2).map(&:id)
+      @account.features.multiple_user_companies.destroy
+      @account.reload
+      post :create, construct_params({version: 'private'},  name: Faker::Lorem.characters(10),
+                                          email: Faker::Internet.email,
+                                          company: {
+                                            id: company_ids[0],
+                                            view_all_tickets: true
+                                          })
+      assert_response 201
+      match_json(private_api_contact_pattern(User.last))
+      assert User.last.user_companies.find_by_default(true).company_id == company_ids[0]
+      assert User.last.user_companies.find_by_default(true).client_manager == true
+      assert User.last.user_companies.where(:default => false) == []
+      @account.features.multiple_user_companies.create
+      @account.reload
+    end
+
+    def test_update_contact_with_default_company
+      company_ids = Company.first(2).map(&:id)
+      @account.features.multiple_user_companies.destroy
+      @account.reload
+      sample_user = add_new_user(@account)
+      company_ids = Company.first(2).map(&:id)
+      put :update, construct_params({version: 'private', id: sample_user.id},
+                                          company: {
+                                            id: company_ids[0],
+                                            view_all_tickets: true
+                                          })
+      assert_response 201
+      match_json(private_api_contact_pattern(User.last))
+      assert User.last.user_companies.find_by_default(true).company_id == company_ids[0]
+      assert User.last.user_companies.find_by_default(true).client_manager == true
+      assert User.last.user_companies.where(:default => false) == []
+      @account.features.multiple_user_companies.create
+      @account.reload
+    end
+
     def test_create_contact_with_other_companies
       company_ids = Company.first(2).map(&:id)
       post :create, construct_params({version: 'private'},  name: Faker::Lorem.characters(10),
                                           email: Faker::Internet.email,
-                                          company_id: company_ids[0],
-                                          view_all_tickets: true,
+                                          company: {
+                                            id: company_ids[0],
+                                            view_all_tickets: true
+                                          },
                                           other_companies: [
                                               {
-                                                company_id: company_ids[1],
+                                                id: company_ids[1],
                                                 view_all_tickets: true
                                               }
                                             ])
@@ -134,10 +177,275 @@ module Ember
       assert User.last.user_companies.find_by_default(false).client_manager == true
     end
 
+    def test_create_contact_with_other_companies_name
+      comp_name1 = Faker::Lorem.characters(10)
+      comp_name2 = Faker::Lorem.characters(10)
+      post :create, construct_params({version: 'private'},  name: Faker::Lorem.characters(10),
+                                          email: Faker::Internet.email,
+                                          company: {
+                                            name: comp_name1,
+                                            view_all_tickets: true
+                                          },
+                                          other_companies: [
+                                              {
+                                                name: comp_name2,
+                                                view_all_tickets: true
+                                              }
+                                            ])
+      assert_response 201
+      match_json(private_api_contact_pattern(User.last))
+      company_1 = Company.find_by_name(comp_name1)
+      company_2 = Company.find_by_name(comp_name2)
+      refute company_1 == nil
+      refute company_2 == nil
+      assert User.last.user_companies.find_by_default(true).company_id == company_1.id
+      assert User.last.user_companies.find_by_default(true).client_manager == true
+      assert User.last.user_companies.find_by_default(false).company_id == company_2.id
+      assert User.last.user_companies.find_by_default(false).client_manager == true
+    end
+
+    def test_error_in_create_contact_without_feature
+      company_ids = Company.first(2).map(&:id)
+      @account.features.multiple_user_companies.destroy
+      @account.reload
+      sample_user = add_new_user(@account)
+      company_ids = Company.first(2).map(&:id)
+      put :update, construct_params({version: 'private', id: sample_user.id},
+                                          company: {
+                                            id: company_ids[0],
+                                            view_all_tickets: true
+                                          },
+                                          other_companies: [
+                                              {
+                                                id: company_ids[1],
+                                                view_all_tickets: true
+                                              }
+                                            ])
+      assert_response 400
+      match_json([bad_request_error_pattern(:other_companies, 
+        :require_feature_for_attribute, 
+        code: :inaccessible_field, 
+        attribute: 'other_companies', 
+        feature: :multiple_user_companies)])
+      @account.features.multiple_user_companies.create
+      @account.reload
+    end
+
+    def test_error_in_create_contact_with_other_companies
+      company_ids = Company.first(2).map(&:id)
+      post :create, construct_params({version: 'private'},  name: Faker::Lorem.characters(10),
+                                          email: Faker::Internet.email,
+                                          company: {
+                                            id: company_ids[0],
+                                            view_all_tickets: true
+                                          },
+                                          other_companies: [
+                                              {
+                                                id: company_ids[0],
+                                                view_all_tickets: true
+                                              }
+                                            ])
+      assert_response 400
+      match_json([bad_request_error_pattern(
+        'other_companies', 
+        :cant_add_primary_resource_to_others,
+        resource: "#{company_ids[0]}",
+        status: "default company",
+        attribute: 'other_companies')])
+    end
+
+    def test_error_in_create_contact_with_other_companies_format
+      company_ids = Company.first(2).map(&:id)
+      post :create, construct_params({version: 'private'},  name: Faker::Lorem.characters(10),
+                                          email: Faker::Internet.email,
+                                          company: {
+                                            id: company_ids[0],
+                                            view_all_tickets: true
+                                          },
+                                          other_companies: [
+                                              {
+                                                company_id: company_ids[0],
+                                                view_all_tickets: true
+                                              }
+                                            ])
+      assert_response 400
+      match_json([{:field => "company_id", 
+        :message => "Unexpected/invalid field in request", 
+        :code => :invalid_value}])
+    end
+
+    def test_error_in_create_contact_with_other_companies_duplicates
+      company_ids = Company.first(2).map(&:id)
+      post :create, construct_params({version: 'private'},  name: Faker::Lorem.characters(10),
+                                          email: Faker::Internet.email,
+                                          company: {
+                                            id: company_ids[0],
+                                            view_all_tickets: true
+                                          },
+                                          other_companies: [
+                                              {
+                                                id: company_ids[1],
+                                                view_all_tickets: true
+                                              },
+                                              {
+                                                id: company_ids[1],
+                                                view_all_tickets: true
+                                              }
+                                            ])
+      assert_response 400
+      match_json([bad_request_error_pattern('other_companies', :duplicate_companies)])
+    end
+
+    def test_create_contact_without_default_company
+      company_ids = Company.first(2).map(&:id)
+      post :create, construct_params({version: 'private'},  name: Faker::Lorem.characters(10),
+                                          email: Faker::Internet.email,
+                                          other_companies: [
+                                              {
+                                                id: company_ids[1],
+                                                view_all_tickets: true
+                                              }
+                                            ])
+      assert_response 201
+      match_json(private_api_contact_pattern(User.last))
+      assert User.last.user_companies.find_by_default(true).company_id == company_ids[1]
+      assert User.last.user_companies.find_by_default(true).client_manager == true
+    end
+
+    def test_update_contact_without_default_company
+      sample_user = add_new_user(@account)
+      company_ids = Company.first(2).map(&:id)
+      put :update, construct_params({version: 'private', id: sample_user.id},
+                                          other_companies: [
+                                              {
+                                                id: company_ids[1],
+                                                view_all_tickets: true
+                                              }
+                                            ])
+      assert_response 200
+      match_json(private_api_contact_pattern(sample_user.reload))
+      assert sample_user.user_companies.find_by_default(true).company_id == company_ids[1]
+      assert sample_user.user_companies.find_by_default(true).client_manager == true
+    end
+
+    def test_update_contact_with_default_company
+      sample_user = add_new_user(@account)
+      company_ids = Company.first(2).map(&:id)
+      put :update, construct_params({version: 'private', id: sample_user.id},
+                                          company: {
+                                            id: company_ids[0],
+                                            view_all_tickets: true
+                                          },
+                                          other_companies: [
+                                              {
+                                                id: company_ids[1],
+                                                view_all_tickets: true
+                                              }
+                                            ])
+      assert_response 200
+      match_json(private_api_contact_pattern(sample_user.reload))
+      assert sample_user.user_companies.find_by_default(true).company_id == company_ids[0]
+      assert sample_user.user_companies.find_by_default(true).client_manager == true
+      assert sample_user.user_companies.find_by_default(false).company_id == company_ids[1]
+      assert sample_user.user_companies.find_by_default(false).client_manager == true
+    end
+
+    def test_update_contact_with_other_companies_name
+      sample_user = add_new_user(@account)
+      comp_name1 = Faker::Lorem.characters(10)
+      comp_name2 = Faker::Lorem.characters(10)
+      put :update, construct_params({version: 'private', id: sample_user.id},
+                                          company: {
+                                            name: comp_name1,
+                                            view_all_tickets: true
+                                          },
+                                          other_companies: [
+                                              {
+                                                name: comp_name2,
+                                                view_all_tickets: true
+                                              }
+                                            ])
+      assert_response 200
+      match_json(private_api_contact_pattern(sample_user.reload))
+      company_1 = Company.find_by_name(comp_name1)
+      company_2 = Company.find_by_name(comp_name2)
+      refute company_1 == nil
+      refute company_2 == nil
+      assert sample_user.user_companies.find_by_default(true).company_id == company_1.id
+      assert sample_user.user_companies.find_by_default(true).client_manager == true
+      assert sample_user.user_companies.find_by_default(false).company_id == company_2.id
+      assert sample_user.user_companies.find_by_default(false).client_manager == true
+    end
+
+    def test_update_contact_with_default_company_and_client_manager
+      sample_user = add_new_user(@account)
+      company_ids = Company.first(2).map(&:id)
+      put :update, construct_params({version: 'private', id: sample_user.id},
+                                          company: {
+                                            id: company_ids[0],
+                                            view_all_tickets: false
+                                          },
+                                          other_companies: [
+                                              {
+                                                id: company_ids[1],
+                                                view_all_tickets: false
+                                              }
+                                            ])
+      assert_response 200
+      match_json(private_api_contact_pattern(sample_user.reload))
+      assert sample_user.user_companies.find_by_default(true).company_id == company_ids[0]
+      assert sample_user.user_companies.find_by_default(true).client_manager == false
+      assert sample_user.user_companies.find_by_default(false).company_id == company_ids[1]
+      assert sample_user.user_companies.find_by_default(false).client_manager == false
+    end
+
+    def test_create_and_update_contact_with_default_company_and_client_manager
+      company_ids = Company.first(2).map(&:id)
+      sample_user = create_contact_with_other_companies(@account, company_ids)
+      
+      put :update, construct_params({version: 'private', id: sample_user.id},
+                                          company: {
+                                            id: company_ids[0],
+                                            view_all_tickets: false
+                                          },
+                                          other_companies: [
+                                              {
+                                                id: company_ids[1],
+                                                view_all_tickets: false
+                                              }
+                                            ])
+      assert_response 200
+      match_json(private_api_contact_pattern(sample_user.reload))
+      assert sample_user.user_companies.find_by_default(true).company_id == company_ids[0]
+      assert sample_user.user_companies.find_by_default(true).client_manager == false
+      assert sample_user.user_companies.find_by_default(false).company_id == company_ids[1]
+      assert sample_user.user_companies.find_by_default(false).client_manager == false
+    end
+
+    def test_update_contact_by_removing_companies
+      company_ids = Company.first(2).map(&:id)
+      sample_user = create_contact_with_other_companies(@account, company_ids)
+      
+      put :update, construct_params({version: 'private', id: sample_user.id},
+                                          company: {
+                                            id: company_ids[0],
+                                            view_all_tickets: false
+                                          },
+                                          other_companies: [])
+      assert_response 200
+      match_json(private_api_contact_pattern(sample_user.reload))
+      assert sample_user.user_companies.find_by_default(true).company_id == company_ids[0]
+      assert sample_user.user_companies.find_by_default(true).client_manager == false
+      assert sample_user.user_companies.find_by_default(false) == nil
+      assert sample_user.user_companies.find_by_company_id(company_ids[1]) == nil
+    end
+
+
+
     # Show User
     def test_show_a_contact
       sample_user = add_new_user(@account)
-      get :show, construct_params({ version: 'private', id: sample_user.id })
+      get :show, controller_params({ version: 'private', id: sample_user.id })
       match_json(private_api_contact_pattern(sample_user.reload))
       assert_response 200
     end
@@ -146,13 +454,36 @@ module Ember
       file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
       sample_user = add_new_user(@account)
       sample_user.build_avatar(content_content_type: file.content_type, content_file_name: file.original_filename)
-      get :show, construct_params({ version: 'private', id: sample_user.id })
+      get :show, controller_params({ version: 'private', id: sample_user.id })
+      match_json(private_api_contact_pattern(sample_user.reload))
+      assert_response 200
+    end
+
+    def test_show_a_contact_with_other_companies
+      company_ids = Company.first(2).map(&:id)
+      sample_user = create_contact_with_other_companies(@account, company_ids)
+      get :show, controller_params({ version: 'private', id: sample_user.id })
+      match_json(private_api_contact_pattern(sample_user.reload))
+      assert_response 200
+    end
+
+    def test_show_a_contact_with_include_company
+      company_ids = Company.first(2).map(&:id)
+      sample_user = create_contact_with_other_companies(@account, company_ids)
+      get :show, controller_params({ version: 'private', id: sample_user.id, include: 'company' })
+      match_json(private_api_contact_pattern({:include => 'company'}, true, sample_user.reload))
+      assert_response 200
+    end
+
+    def test_show_a_contact_with_include_company_other_companies
+      sample_user = add_new_user(@account)
+      get :show, controller_params({ version: 'private', id: sample_user.id })
       match_json(private_api_contact_pattern(sample_user.reload))
       assert_response 200
     end
 
     def test_show_a_non_existing_contact
-      get :show, construct_params({ version: 'private', id: 0 })
+      get :show, controller_params({ version: 'private', id: 0 })
       assert_response :missing
     end
 
@@ -244,7 +575,6 @@ module Ember
     end
 
     def test_index_with_contacts_having_avatar
-      contact_ids = []
       rand(2..10).times do
         contact = add_new_user(@account)
         add_avatar_to_user(contact)
@@ -478,6 +808,51 @@ module Ember
       contact = add_new_user(@account, deleted: false, active: true)
       put :update_password, construct_params({ version: 'private', id: contact.id }, { password: random_password })
       assert_response 204
+    end
+
+    def test_update_remove_avatar
+      file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
+      avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
+      contact = add_new_user(@account, avatar: avatar)
+      put :update, construct_params({ version: 'private', id: contact.id }, { avatar_id: nil })
+      assert_response 200
+      contact.reload
+      match_json(private_api_contact_pattern(contact))
+      assert contact.avatar == nil
+    end
+
+    def test_update_change_avatar
+      file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
+      avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
+      contact = add_new_user(@account, avatar: avatar)
+      new_avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
+      put :update, construct_params({ version: 'private', id: contact.id }, { avatar_id: new_avatar.id })
+      assert_response 200
+      contact.reload
+      match_json(private_api_contact_pattern(contact))
+      assert contact.avatar.id == new_avatar.id
+    end
+
+    def test_update_add_avatar
+      file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
+      avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
+      contact = add_new_user(@account)
+      put :update, construct_params({ version: 'private', id: contact.id }, { avatar_id: avatar.id })
+      assert_response 200
+      contact.reload
+      match_json(private_api_contact_pattern(contact))
+      assert contact.avatar.id == avatar.id
+    end
+
+    def test_update_avatar_and_contact_update_failure
+      file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
+      avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
+      contact = add_new_user(@account)
+      other_contact = add_new_user(@account)
+      put :update, construct_params({ version: 'private', id: contact.id }, { avatar_id: avatar.id, email: other_contact.email})
+      assert_response 409
+      contact.reload
+      assert contact.avatar == nil
     end
 
     # tests for contact activities
