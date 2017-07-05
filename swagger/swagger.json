@@ -108,7 +108,9 @@
               "created_at",
               "updated_at",
               "priority",
-              "status"
+              "status",
+              "agent_responded_at",
+              "requester_responded_at"
             ]
           },
           {
@@ -703,6 +705,37 @@
               "$ref": "#/definitions/prime_association"
             }
           },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      }
+    },
+    "/tickets/{id}/associated_tickets": {
+      "get": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Associated Tickets",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "description": "Display ID of Tracker/Parent ticket",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/associated_tickets"
+            }
+          },
           "400": {
             "description": "Bad request error",
             "schema": {
@@ -714,6 +747,9 @@
           },
           "404": {
             "description": "Ticket not found"
+          },
+          "500": {
+            "description": "Internal error"
           }
         }
       }
@@ -980,6 +1016,35 @@
           },
           "403": {
             "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/tickets/export_csv": {
+      "post": {
+        "summary": "Export ticket fields",
+        "tags": [
+          "ticket"
+        ],
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ticket_export_csv_input"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
           }
         }
       }
@@ -1975,21 +2040,48 @@
           "200": {
             "description": "Success",
             "schema": {
-              "allOf": [
-                {
-                  "properties": {
-                    "companies": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/definitions/company_with_associations"
-                      }
-                    },
-                    "meta": {
-                      "$ref": "#/definitions/meta"
-                    }
+              "type": "object",
+              "properties": {
+                "companies": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/company_with_associations"
                   }
+                },
+                "meta": {
+                  "$ref": "#/definitions/meta"
                 }
-              ]
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "company"
+        ],
+        "description": "Create a company",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/company_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/extended_company"
             }
           },
           "400": {
@@ -2022,6 +2114,65 @@
             "schema": {
               "$ref": "#/definitions/extended_company"
             }
+          },
+          "404": {
+            "description": "Company not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "company"
+        ],
+        "description": "Update a company",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/company_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/extended_company"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "company"
+        ],
+        "summary": "Delete a company",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "integer",
+            "format": "int64",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Company not found"
           }
         }
       }
@@ -2059,6 +2210,36 @@
             "schema": {
               "$ref": "#/definitions/bad_request_error"
             }
+          }
+        }
+      }
+    },
+    "/companies/bulk_delete": {
+      "put": {
+        "tags": [
+          "company"
+        ],
+        "summary": "Bulk Delete",
+        "description": "Bulk delete companies",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bulk_action_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "204": {
+            "description": "Success"
           }
         }
       }
@@ -3662,6 +3843,21 @@
         "content"
       ]
     },
+    "company_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/company"
+        },
+        {
+          "properties": {
+            "avatar_id": {
+              "type": "integer"
+            }
+          }
+        }
+      ]
+    },
     "contact_input": {
       "type": "object",
       "allOf": [
@@ -4183,6 +4379,199 @@
         }
       }
     },
+    "ticket_export_csv_input": {
+      "type": "object",
+      "properties": {
+        "query_hash": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/query_hash"
+          }
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "csv",
+            "xls"
+          ]
+        },
+        "ticket_state_filter": {
+          "type": "string",
+          "enum": [
+            "1",
+            "4",
+            "7",
+            "30"
+          ]
+        },
+        "date_filter": {
+          "type": "string",
+          "enum": [
+            "created_at",
+            "resolved_at",
+            "closed_at"
+          ]
+        },
+        "start_date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "end_date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ticket_fields": {
+          "type": "object",
+          "properties": {
+            "display_id": {
+              "type": "string"
+            },
+            "subject": {
+              "type": "string"
+            },
+            "status_name": {
+              "type": "string"
+            },
+            "priority_name": {
+              "type": "string"
+            },
+            "source_name": {
+              "type": "string"
+            },
+            "ticket_type": {
+              "type": "string"
+            },
+            "responder_name": {
+              "type": "string"
+            },
+            "group_name": {
+              "type": "string"
+            },
+            "created_at": {
+              "type": "string"
+            },
+            "resolved_at": {
+              "type": "string"
+            },
+            "closed_at": {
+              "type": "string"
+            },
+            "updated_at": {
+              "type": "string"
+            },
+            "time_tracked_hours": {
+              "type": "string"
+            },
+            "outbound_count": {
+              "type": "string"
+            },
+            "inbound_count": {
+              "type": "string"
+            },
+            "ticket_tags": {
+              "type": "string"
+            },
+            "ticket_survey_results": {
+              "type": "string"
+            },
+            "skill_name": {
+              "type": "string"
+            },
+            "due_by": {
+              "type": "string"
+            },
+            "first_response_time": {
+              "type": "string"
+            },
+            "first_res_time_bhrs": {
+              "type": "string"
+            },
+            "resolution_time_bhrs": {
+              "type": "string"
+            },
+            "resolution_status": {
+              "type": "string"
+            },
+            "first_response_status": {
+              "type": "string"
+            },
+            "custom_fields": {
+              "$ref": "#/definitions/custom_field"
+            }
+          }
+        },
+        "contact_fields": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "contact_id": {
+              "type": "string"
+            },
+            "phone": {
+              "type": "string"
+            },
+            "mobile": {
+              "type": "string"
+            },
+            "fb_profile_id": {
+              "type": "string"
+            },
+            "job_title": {
+              "type": "string"
+            },
+            "twitter_id": {
+              "type": "string"
+            },
+            "company_name": {
+              "type": "string"
+            },
+            "client_manager": {
+              "type": "string"
+            },
+            "address": {
+              "type": "string"
+            },
+            "time_zone": {
+              "type": "string"
+            },
+            "language": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "custom_fields": {
+              "$ref": "#/definitions/custom_field"
+            }
+          }
+        },
+        "company_fields": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "domains": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "note": {
+              "type": "string"
+            },
+            "custom_fields": {
+              "$ref": "#/definitions/custom_field"
+            }
+          }
+        }
+      }
+    },
     "add_watcher_input": {
       "type": "object",
       "properties": {
@@ -4257,6 +4646,9 @@
         "application_id": {
           "type": "integer",
           "format": "int64"
+        },
+        "application_name": {
+          "type": "string"
         }
       }
     },
@@ -4405,13 +4797,30 @@
         "view_all_tickets": {
           "type": "boolean"
         },
+        "company": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "number"
+            },
+            "name": {
+              "type": "string"
+            },
+            "view_all_tickets": {
+              "type": "boolean"
+            }
+          }
+        },
         "other_companies": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "company_id": {
-                "type": "integer"
+              "id": {
+                "type": "number"
+              },
+              "name": {
+                "type": "string"
               },
               "view_all_tickets": {
                 "type": "boolean"
@@ -5003,6 +5412,14 @@
             "status_updated_at": {
               "type": "string",
               "format": "date-time"
+            },
+            "pending_since": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "reopened_at": {
+              "type": "string",
+              "format": "date-time"
             }
           }
         }
@@ -5232,6 +5649,9 @@
                   "items": {
                     "$ref": "#/definitions/extended_sla_policy"
                   }
+                },
+                "avatar": {
+                  "$ref": "#/definitions/avatar"
                 }
               }
             }
@@ -5906,6 +6326,87 @@
         },
         "status": {
           "type": "integer"
+        }
+      }
+    },
+    "associated_tickets": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "group_id": {
+          "type": "integer"
+        },
+        "priority": {
+          "type": "integer",
+          "enum": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "requester_id": {
+          "type": "integer"
+        },
+        "responder_id": {
+          "type": "integer"
+        },
+        "source": {
+          "type": "integer",
+          "enum": [
+            1,
+            2,
+            3,
+            7,
+            8,
+            9,
+            10
+          ]
+        },
+        "company_id": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "integer"
+        },
+        "stats": {
+          "$ref": "#/definitions/ticket_stats"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "product_id": {
+          "type": "integer"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Question",
+            "Incident",
+            "Problem",
+            "Feature Request"
+          ]
+        },
+        "due_by": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "fr_due_by": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "is_escalated": {
+          "type": "integer"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },

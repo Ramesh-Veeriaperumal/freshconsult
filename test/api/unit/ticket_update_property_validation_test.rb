@@ -17,7 +17,7 @@ class TicketUpdatePropertyValidationTest < ActionView::TestCase
   def test_property_update_with_no_params
     Account.stubs(:current).returns(Account.first)
     item = Helpdesk::Ticket.new(requester_id: 1, status: 2, priority: 3, source: 10)
-    ticket_validation = TicketUpdatePropertyValidation.new({}, item)
+    ticket_validation = TicketUpdatePropertyValidation.new({ticket_fields: []}, item)
     refute ticket_validation.valid?
     errors = ticket_validation.errors.full_messages
     assert errors.include?('Request fill_a_mandatory_field')
@@ -62,8 +62,14 @@ class TicketUpdatePropertyValidationTest < ActionView::TestCase
 
   def test_status_validation
     Account.stubs(:current).returns(Account.first)
+    status_field = mock('status')
+    status_field.stubs(:required).returns(false)
+    status_field.stubs(:required_for_closure).returns(false)
+    status_field.stubs(:default).returns(true)
+    status_field.stubs(:name).returns('status')
+    status_field.stubs(:label).returns('Status')
     item = Helpdesk::Ticket.new(requester_id: 1, status: 2, priority: 3, source: 10)
-    controller_params = { 'status' => 10, statuses: statuses, ticket_fields: [] }
+    controller_params = { status: 10, statuses: statuses, ticket_fields: [status_field] }
     ticket_validation = TicketUpdatePropertyValidation.new(controller_params, item)
     refute ticket_validation.valid?
     errors = ticket_validation.errors.full_messages
@@ -74,14 +80,32 @@ class TicketUpdatePropertyValidationTest < ActionView::TestCase
   def test_numericality
     Account.stubs(:current).returns(Account.first)
     item = Helpdesk::Ticket.new(requester_id: 1, status: 2, priority: 3, source: 10)
-    controller_params = { 'responder_id' => 'Test', priority: 'Test', statuses: statuses, ticket_fields: [] }
+    agent_field = mock('agent')
+    agent_field.stubs(:required).returns(false)
+    agent_field.stubs(:required_for_closure).returns(false)
+    agent_field.stubs(:default).returns(true)
+    agent_field.stubs(:name).returns('agent')
+    agent_field.stubs(:label).returns('Agent')
+    priority_field = mock('priority')
+    priority_field.stubs(:required).returns(false)
+    priority_field.stubs(:required_for_closure).returns(false)
+    priority_field.stubs(:default).returns(true)
+    priority_field.stubs(:name).returns('priority')
+    priority_field.stubs(:label).returns('Priority')
+    controller_params = { responder_id: 'Test', priority: 'Test', statuses: statuses, ticket_fields: [agent_field, priority_field] }
     ticket_validation = TicketUpdatePropertyValidation.new(controller_params, item)
     refute ticket_validation.valid?
     errors = ticket_validation.errors.full_messages
     assert errors.include?('Agent datatype_mismatch')
     assert errors.include?('Priority not_included')
 
-    controller_params = { 'group_id' => 'Test', statuses: statuses, ticket_fields: [] }
+    group_field = mock('group')
+    group_field.stubs(:required).returns(false)
+    group_field.stubs(:required_for_closure).returns(false)
+    group_field.stubs(:default).returns(true)
+    group_field.stubs(:name).returns('group')
+    group_field.stubs(:label).returns('Group')
+    controller_params = { group_id: 'Test', statuses: statuses, ticket_fields: [group_field] }
     ticket_validation = TicketUpdatePropertyValidation.new(controller_params, item)
     refute ticket_validation.valid?
     errors = ticket_validation.errors.full_messages

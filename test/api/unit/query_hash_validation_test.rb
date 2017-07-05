@@ -50,6 +50,16 @@ class QueryHashValidationTest < ActionView::TestCase
     assert error.include?('Condition is invalid')
   end
 
+  def test_invalid_params
+    stub_account
+    query = sample_query_params
+    query[:test] = 'invalid'
+    query_validation = QueryHashValidation.new(query)
+    refute query_validation.valid?
+    error = query_validation.errors.full_messages
+    assert error.include?('Test is a invalid param')
+  end
+
   def test_invalid_operator
     stub_account
     query = sample_query_params

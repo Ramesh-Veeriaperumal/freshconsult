@@ -14,9 +14,5 @@ get:
         $ref: '#/definitions/prime_association'
     404:
       description: Ticket not found
-    400:
-      description: Bad request error
-      schema:
-        $ref: '#/definitions/bad_request_error'
     403:
       description: Access denied

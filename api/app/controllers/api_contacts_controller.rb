@@ -87,7 +87,12 @@ class ApiContactsController < ApiApplicationController
     end
 
     def decorator_options
-      super({ name_mapping: (@name_mapping || get_name_mapping) })
+      super({ name_mapping: (@name_mapping || get_name_mapping),
+          sideload_options: sideload_options})
+    end
+
+    def sideload_options
+      []
     end
 
     def get_name_mapping
@@ -185,7 +190,7 @@ class ApiContactsController < ApiApplicationController
       @email_objects = {}
       construct_all_emails(params_hash) if params_hash.key?(:other_emails)
 
-      @company_id = params[cname][:company_id]
+      @company_id = params[cname][:company_id] if params_hash.key?(:company_id)
 
       construct_all_companies if params_hash.key?(:other_companies)
 

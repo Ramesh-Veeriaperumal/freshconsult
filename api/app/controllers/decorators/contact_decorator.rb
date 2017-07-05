@@ -3,7 +3,7 @@ class ContactDecorator < ApiDecorator
 
   delegate  :id, :active, :address, :company_name, :deleted, :description,
             :customer_id, :email, :job_title, :language, :mobile,
-            :name, :phone, :time_zone, :twitter_id, :avatar, :whitelisted, :unique_external_id, to: :record
+            :name, :phone, :time_zone, :twitter_id, :avatar, :whitelisted, :unique_external_id, :fb_profile_id, to: :record
   delegate :company_id, :client_manager, to: :default_company, allow_nil: true
   delegate :multiple_user_companies_enabled?, :unique_contact_identifier_enabled?, to: 'Account.current'
 
@@ -11,6 +11,7 @@ class ContactDecorator < ApiDecorator
     super(record)
     @name_mapping = options[:name_mapping]
     @company_name_mapping = options[:company_name_mapping]
+    @sideload_options = options[:sideload_options] || []
   end
 
   def tags
@@ -35,6 +36,16 @@ class ContactDecorator < ApiDecorator
   def other_companies
     others = record.user_companies - [default_company]
     others.map{|x| {company_id: x.company_id, view_all_tickets: x.client_manager}}
+  end
+
+  def other_companies_hash
+    if @sideload_options.include?('company')
+      record.user_companies.map do |c|
+        company_hash(c) if c.company.present? && !c.default
+      end.compact
+    else
+      record.user_companies.map(&:company_id)
+    end
   end
 
   def avatar_hash
@@ -113,11 +124,23 @@ class ContactDecorator < ApiDecorator
         tags: tags,
         whitelisted: whitelisted,
         created_at: created_at.try(:utc),
-        updated_at: updated_at.try(:utc)
+        updated_at: updated_at.try(:utc),
+        facebook_id: fb_profile_id 
       })
+      response_hash.merge!(
+        company: company_hash(default_company)
+        ) if @sideload_options.include?('company') && default_company.present? && default_company.company.present?
       response_hash.merge!(deleted: true) if record.deleted
-      response_hash.merge!(other_companies: other_companies) if multiple_user_companies_enabled?
+      response_hash.merge!(other_companies: other_companies_hash) if multiple_user_companies_enabled?
       response_hash
+    end
+
+    def company_hash uc
+      {
+        id: uc.company_id,
+        view_all_tickets: uc.client_manager,
+        name: uc.company.name
+      }
     end
 
     def construct_hash(req_widget_fields, obj)

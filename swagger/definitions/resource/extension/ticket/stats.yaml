@@ -21,3 +21,9 @@ properties:
       status_updated_at:
         type: string
         format: date-time
+      pending_since:
+        type: string
+        format: date-time
+      reopened_at:
+        type: string
+        format: date-time

@@ -108,8 +108,8 @@ module QueryHashHelper
       {
         'condition' => 'created_at',
         'operator' => 'is_greater_than',
-        'ff_name' => 'default',
-        'value' => options[:time] || %r{^(\d{2}\s\w{3}\s\d{4})\s-\s(\d{2}\s\w{3}\s\d{4})$}
+        'value' => options[:time] || %r{^(\d{2}\s\w{3}\s\d{4})\s-\s(\d{2}\s\w{3}\s\d{4})$},
+        'ff_name' => 'default'
       }
     ] + [SPAM_CONDITION, DELETED_CONDITION]
   end

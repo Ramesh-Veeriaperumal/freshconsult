@@ -75,7 +75,7 @@ module Ember
     end
 
     def test_show_with_default_hidden_filter
-      default_filter_id = hidden_filter_names.sample
+      default_filter_id = TicketsFilter.accessible_filters(TicketFilterConstants::HIDDEN_FILTERS).sample
       get :show, construct_params({ version: 'private' }, false).merge(id: default_filter_id)
       assert_response 200
       match_custom_json(response.body, default_filter_pattern(default_filter_id))
@@ -91,7 +91,7 @@ module Ember
 
     def test_create_with_invalid_values
       filter_params = sample_filter_input_params
-      filter_params[:order_by] = 'invalid_order'
+      filter_params[:order_by] = 'agent_responded_at'
       filter_params[:visibility][:visibility] = Admin::UserAccess::VISIBILITY_NAMES_BY_KEY.keys.max + 1 # invalid visibility
       post :create, construct_params({ version: 'private' },  filter_params)
       assert_response 400
@@ -129,7 +129,7 @@ module Ember
 
     def test_update_with_invalid_values
       filter_params = sample_filter_input_params
-      filter_params[:order_by] = 'invalid_order'
+      filter_params[:order_by] = 'requester_responded_at'
       filter_params[:visibility][:visibility] = Admin::UserAccess::VISIBILITY_NAMES_BY_KEY.keys.max + 1 # invalid visibility
       put :update, construct_params({ version: 'private', id: @filter1.id },  filter_params)
       assert_response 400

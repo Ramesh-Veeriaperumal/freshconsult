@@ -1,14 +1,17 @@
 class TicketDecorator < ApiDecorator
   delegate :ticket_body, :custom_field_via_mapping, :cc_email, :email_config_id, :fr_escalated, :group_id, :priority,
            :requester_id, :responder, :responder_id, :source, :spam, :status, :subject, :display_id, :ticket_type,
-           :schema_less_ticket, :deleted, :due_by, :frDueBy, :isescalated, :description, :association_type, :associated_tickets_count,
-           :description_html, :tag_names, :internal_agent_id, :internal_group_id, :attachments, :attachments_sharable, :company_id, :cloud_files, :ticket_states, to: :record
+           :schema_less_ticket, :deleted, :due_by, :frDueBy, :isescalated, :description,
+           :internal_group_id , :internal_agent_id, :association_type, :associated_tickets_count,
+           :description_html, :tag_names, :attachments, :attachments_sharable, :company_id, :cloud_files, :ticket_states, to: :record
 
   def initialize(record, options)
     super(record)
     @name_mapping = options[:name_mapping]
     @contact_name_mapping = options[:contact_name_mapping]
     @company_name_mapping = options[:company_name_mapping]
+    @permission = options[:permission]
+    @permissibles = options[:permissibles]
     @sideload_options = options[:sideload_options] || []
   end
 
@@ -134,10 +137,39 @@ class TicketDecorator < ApiDecorator
     }
   end
 
+  def shared_ownership_hash
+    return {} unless Account.current.shared_ownership_enabled?
+    {
+      internal_agent_id: internal_agent_id,
+      internal_group_id: internal_group_id
+    }
+  end
+
   def ticket_topic
     return unless forums_enabled? && record.ticket_topic.present?
     topic = record.topic
     topic_hash(topic)
+  end
+
+  def simple_hash
+    {
+      id: display_id,
+      group_id: group_id,
+      priority: priority,
+      requester_id: requester_id,
+      responder_id: responder_id,
+      source: source,
+      company_id: company_id,
+      status: status,
+      subject: subject,
+      product_id: schema_less_ticket.try(:product_id),
+      type: ticket_type,
+      due_by: due_by.try(:utc),
+      fr_due_by: frDueBy.try(:utc),
+      is_escalated: isescalated,
+      created_at: created_at.try(:utc),
+      updated_at: updated_at.try(:utc)
+    }
   end
 
   def to_hash
@@ -148,31 +180,17 @@ class TicketDecorator < ApiDecorator
       fr_escalated: fr_escalated,
       spam: spam,
       email_config_id: email_config_id,
-      group_id: group_id,
-      priority: priority,
-      requester_id: requester_id,
-      responder_id: responder_id,
-      source: source,
       company_id: company_id,
       status: status,
-      subject: subject,
       to_emails: schema_less_ticket.try(:to_emails),
-      product_id: schema_less_ticket.try(:product_id),
-      id: display_id,
-      type: ticket_type,
-      due_by: due_by.try(:utc),
-      fr_due_by: frDueBy.try(:utc),
-      is_escalated: isescalated,
       association_type: association_type,
       associated_tickets_count: associated_tickets_count,
       description: ticket_body.description_html,
       description_text: ticket_body.description,
       custom_fields: custom_fields,
-      tags: tag_names,
-      created_at: created_at.try(:utc),
-      updated_at: updated_at.try(:utc)
+      tags: tag_names
     }
-    [hash, feedback_hash].inject(&:merge)
+    [hash, simple_hash, feedback_hash , shared_ownership_hash].inject(&:merge)
   end
 
   def to_search_hash
@@ -195,6 +213,27 @@ class TicketDecorator < ApiDecorator
     ret_hash[:requester] = requester_hash if requester_hash
     ret_hash[:archived] = archived? if archived?
     ret_hash
+  end
+
+  def to_prime_association_hash
+    {
+      id: display_id,
+      requester_id: requester_id,
+      responder_id: responder_id,
+      subject: subject,
+      association_type: association_type,
+      status: status,
+      permission: @permission
+    }
+  end
+
+  def to_associations_hash
+    ret_hash = {
+      permission: permission?,
+      stats: stats
+    }
+    ret_hash[:deleted] = deleted if deleted
+    [ret_hash, simple_hash].inject(&:merge)
   end
 
   class << self
@@ -225,6 +264,10 @@ class TicketDecorator < ApiDecorator
         id: topic.id,
         title: topic.title
       }
+    end
+
+    def permission?
+      @permissibles.find { |perm| perm[:display_id] == display_id }.present?
     end
 
     def parse_time(attribute)

@@ -12,3 +12,40 @@ get:
       description: Success
       schema:
         $ref: '#/definitions/extended_company'
+    404:
+      description: Company not found
+put:
+  tags: [company]
+  description: Update a company
+  parameters:
+    - $ref: '#/parameters/id'
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/company_input'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/extended_company'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+delete:
+  tags: [company]
+  summary: Delete a company
+  parameters:
+    - name: id
+      type: integer
+      format: int64
+      in: path
+      type: integer
+      required: true
+  responses:
+    204:
+      description: Success
+    404:
+      description: Company not found
+

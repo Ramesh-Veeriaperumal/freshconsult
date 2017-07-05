@@ -23,4 +23,11 @@ class Company < ActiveRecord::Base
 
   accepts_nested_attributes_for :company_domains, :allow_destroy => true
 
+  has_one :avatar,
+    :as => :attachable,
+    :class_name => 'Helpdesk::Attachment',
+    :dependent => :destroy
+
+  accepts_nested_attributes_for :avatar, :allow_destroy => true
+
 end

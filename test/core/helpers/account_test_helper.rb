@@ -60,11 +60,13 @@ module AccountTestHelper
   end
 
   def enable_feature(feature)
-    @account.features.send(feature).send(:create)
-    @account.make_current.reload
-    yield
-    @account.features.send(feature).send(:destroy)
-    @account.make_current.reload
+    MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
+      @account.features.send(feature).send(:create)
+      @account.make_current.reload
+      yield
+      @account.features.send(feature).send(:destroy)
+      @account.make_current.reload
+    MixpanelWrapper.unstub(:send_to_mixpanel)
   end
 
 end

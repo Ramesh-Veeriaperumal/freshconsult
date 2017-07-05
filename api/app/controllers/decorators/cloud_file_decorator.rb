@@ -1,6 +1,5 @@
 class CloudFileDecorator < ApiDecorator
-
-  def initialize(record, options = {})
+  def initialize(record, _options = {})
     super(record)
   end
 
@@ -9,7 +8,7 @@ class CloudFileDecorator < ApiDecorator
       id: record.id,
       name: record.filename,
       url: record.url,
-      application_id: record.application_id,
+      application_name: record.application.name,
       created_at: record.created_at.try(:utc),
       updated_at: record.updated_at.try(:utc)
     }

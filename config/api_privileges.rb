@@ -8,7 +8,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/canned_response", only: [:show, :index, :search]
     resource :"ember/ticket", only: [:index, :show, :create, :execute_scenario, :spam, :latest_note]
     resource :"ember/tickets/bulk_action", only: [:bulk_execute_scenario]
-    resource :"ember/tickets/associate", only: [:link, :unlink, :list_associates, :prime_association]
+    resource :"ember/tickets/associate", only: [:link, :unlink, :associated_tickets, :prime_association]
     resource :"ember/ticket_filter", only: [:index, :show, :create, :update, :destroy]
     resource :"ember/attachment", only: [:create]
     resource :"ember/conversation", only: [:create, :ticket_conversations, :full_text]
@@ -53,6 +53,7 @@ Authority::Authorization::PrivilegeList.build do
 
   delete_contact do
     resource :"ember/contact", only: [:bulk_delete, :destroy, :bulk_restore, :restore, :whitelist, :bulk_whitelist]
+    resource :"ember/company", only: [:bulk_delete, :destroy]
   end
 
   view_contacts do
@@ -64,6 +65,7 @@ Authority::Authorization::PrivilegeList.build do
 
   manage_contacts do
     resource :"ember/contact", only: [:create, :update, :activities]
+    resource :"ember/company", only: [:create, :update]
     resource :"ember/contacts/merge", only: [:merge]
 
     resource :"ember/search/autocomplete", :only => [:companies]
@@ -102,6 +104,10 @@ Authority::Authorization::PrivilegeList.build do
 
   export_customers do
     resource :"ember/contact", only: [:export_csv]
+  end
+
+  export_tickets do
+    resource :"ember/ticket", :only => [:export_csv]
   end
 
   view_forums do

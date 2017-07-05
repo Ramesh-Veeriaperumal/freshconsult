@@ -35,7 +35,9 @@ module Helpdesk::TicketFilterMethods
   # Adding a divider to separate Archive, Spam and Trash from other views
   def fetch_default_views
     default_views = TicketsFilter.default_views
-    insert_separator_at = default_views.index(default_views.find{ |f| /monitored_by/ =~ f[:id] }) + 1
+    monitored_by_index = default_views.index(default_views.find{ |f| /monitored_by/ =~ f[:id] })
+    raised_by_me_index = default_views.index(default_views.find{ |f| /raised_by_me/ =~ f[:id] })
+    insert_separator_at = (monitored_by_index ? monitored_by_index : raised_by_me_index) + 1
     default_views.insert(insert_separator_at, { :id => :freshdesk_view_seperator })
   end
 

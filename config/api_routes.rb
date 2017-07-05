@@ -172,6 +172,7 @@ Helpkit::Application.routes.draw do
         put :delete_forever, to: 'ember/tickets/delete_spam#delete_forever'
         put :bulk_watch, to: 'ember/subscriptions#bulk_watch'
         put :bulk_unwatch, to: 'ember/subscriptions#bulk_unwatch'
+        post :export_csv
       end
       member do
         delete :destroy, to: 'ember/tickets/delete_spam#destroy'
@@ -201,7 +202,7 @@ Helpkit::Application.routes.draw do
         get :prime_association, to: 'ember/tickets/associates#prime_association'
         put :link, to: 'ember/tickets/associates#link'
         put :unlink, to: 'ember/tickets/associates#unlink'
-        get :list_associates, to: 'ember/tickets/associates#list_associates'
+        get :associated_tickets, to: 'ember/tickets/associates#associated_tickets'
       end
       resources :activities, controller: 'ember/tickets/activities', only: [:index]
 
@@ -251,7 +252,10 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :companies, controller: 'ember/companies', only: [:index, :show] do
+    resources :companies, controller: 'ember/companies', only: [:index, :show, :create, :update] do
+      collection do
+        put :bulk_delete
+      end
       member do
         get :activities
       end

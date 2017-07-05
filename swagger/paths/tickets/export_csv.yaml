@@ -1,0 +1,16 @@
+post:
+  summary: Export ticket fields
+  tags: [ticket]
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/ticket_export_csv_input'
+  responses:
+    204:
+      description: Success
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
