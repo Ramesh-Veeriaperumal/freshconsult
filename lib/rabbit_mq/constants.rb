@@ -149,7 +149,7 @@ module RabbitMq::Constants
   REPORTS_NOTE_KEYS           = ["id", "source", "user_id", "agent", "category", "private", "incoming", "deleted", "account_id", "created_at", "archive", "actor_type"]
   IRIS_NOTE_KEYS = REPORTS_NOTE_KEYS
   
-  MANUAL_PUBLISH_SUBCRIBERS   = ["reports", "activities", "count", "collaboration"]
+  MANUAL_PUBLISH_SUBCRIBERS   = ["reports", "activities", "count"]
   CTI_CALL_KEYS = ["id", "call_sid", "options", "account_id", "responder_id", "requester_id"]
   
   MARKETPLACE_APP_TICKET_KEYS = ["id", "display_id", "subject", "account_id", "user_id", "responder_id", "group_id", "status",
