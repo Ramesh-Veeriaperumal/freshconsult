@@ -47,7 +47,6 @@ module Freshfone
         logger.info "Socket Notification pushed to SQS for account :: #{current_account.id} , call_id :: #{current_call.id} at #{Time.now}"
         $freshfone_call_notifier.send_message notification_params.to_json
         freshfone_notify_incoming_call(notification_params)
-        enqueue_call_timeout_job if enqueue_timeout_job?
 
       rescue Exception => e
         logger.error "[#{jid}] - [#{tid}] Error notifying for account #{current_account.id} for type #{type}"
