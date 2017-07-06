@@ -1,5 +1,7 @@
 class ContactFilterValidation < FilterValidation
-  attr_accessor :state, :phone, :mobile, :email, :company_id, :conditions, :tag, :_updated_since, :unique_external_id
+  attr_accessor :state, :phone, :mobile, :email, :company_id, :conditions, :tag, :_updated_since, :unique_external_id,
+                :include, :include_array
+
 
   validates :state, custom_inclusion: { in: ContactConstants::STATES }
   validates :email, data_type: { rules: String }
@@ -11,6 +13,8 @@ class ContactFilterValidation < FilterValidation
   validates :tag, data_type: { rules: String }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING }
   validates :_updated_since, date_time: true
   validate :check_unique_external_id, if: -> { unique_external_id && errors[:unique_external_id].blank? }
+  validates :include, data_type: { rules: String }, on: [:index, :show]
+  validate :validate_include, if: -> { errors[:include].blank? && include }
 
   def initialize(request_params, item = nil, allow_string_param = true)
     @conditions = (request_params.keys & ContactConstants::INDEX_FIELDS)
@@ -26,6 +30,14 @@ class ContactFilterValidation < FilterValidation
 
   def check_unique_external_id
     errors[:unique_external_id] << :"can't be used" if !Account.current.unique_contact_identifier_enabled?
+  end
+
+  def validate_include
+    @include_array = include.split(',').map!(&:strip)
+    unless @include_array.present? && (@include_array - ContactConstants::SIDE_LOADING).blank?
+      errors[:include] << :not_included
+      (self.error_options ||= {}).merge!(include: { list: ContactConstants::SIDE_LOADING.join(', ') })
+    end
   end
 
 end

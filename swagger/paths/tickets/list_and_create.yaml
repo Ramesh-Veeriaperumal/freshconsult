@@ -35,7 +35,7 @@ get:
     - name: order_by
       in: query
       type: string
-      enum: ["due_by", "created_at", "updated_at", "priority", "status"]
+      enum: ["due_by", "created_at", "updated_at", "priority", "status", "agent_responded_at", "requester_responded_at"]
     - name: order_type
       in: query
       type: string

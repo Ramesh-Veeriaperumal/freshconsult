@@ -71,16 +71,13 @@ module Ember
 
       def check_ticket_permission_for_destroy
         log_and_render_404 unless @item.id
-        ticket = nil
         integ_resource = Integrations::IntegratedResource.find_by_id(@item.id)
         log_and_render_404 unless integ_resource
         local_integratable_type = integ_resource.local_integratable_type
         if local_integratable_type == ::IntegratedResourceConstants::TICKET
           ticket = Account.current.tickets.find_by_id(integ_resource.local_integratable_id)
-        elsif local_integratable_type == ::IntegratedResourceConstants::TIMESHEET
-          ticket = fetch_ticket_using_workable_id(integ_resource.local_integratable_id)
+          verify_ticket_state ticket
         end
-        verify_ticket_state ticket
       end
 
       def fetch_ticket_using_workable_id(local_integratable_id)

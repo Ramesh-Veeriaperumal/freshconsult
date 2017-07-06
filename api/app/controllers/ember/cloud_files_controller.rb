@@ -1,14 +1,12 @@
 module Ember
   class CloudFilesController < ApiApplicationController
+    skip_before_filter :check_privilege, only: [:destroy]
+    before_filter :check_destroy_permission, only: [:destroy]
 
-  skip_before_filter :check_privilege, only: [:destroy]
-  before_filter :check_destroy_permission, only: [:destroy]
+    protected
 
-   protected
-
-    def scoper
-      current_account.cloud_files
-    end
-
+      def scoper
+        current_account.cloud_files
+      end
   end
 end

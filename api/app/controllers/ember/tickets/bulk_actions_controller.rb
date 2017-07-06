@@ -50,7 +50,7 @@ module Ember
         def validate_bulk_update_delegator(item)
           @item = item
           assign_attributes_for_update
-          delegator_hash = { ticket_fields: @ticket_fields, custom_fields: @custom_fields }
+          delegator_hash = { ticket_fields: @ticket_fields, custom_fields: @custom_fields, statuses: @params_hash[:statuses], request_params: @params_hash[:properties].keys }
           @ticket_validation = TicketBulkUpdateDelegator.new(@item, delegator_hash)
           @ticket_validation.valid?
         end
@@ -245,7 +245,6 @@ module Ember
             NewRelic::Agent.notice_error(e, description: 'error occured while adding key in redis')
           end
         end
-
         wrap_parameters(*wrap_params)
     end
   end

@@ -2,7 +2,6 @@ require_relative '../unit_test_helper'
 require_relative '../helpers/ticket_fields_test_helper'
 
 class CustomTicketFilterValidationTest < ActionView::TestCase
-
   include TicketFieldsTestHelper
 
   def tear_down
@@ -17,7 +16,7 @@ class CustomTicketFilterValidationTest < ActionView::TestCase
   def sample_params
     {
       name: Faker::Name.name,
-      order_by: TicketsFilter::api_sort_fields_options.map(&:first).map(&:to_s).sample,
+      order_by: TicketsFilter.api_sort_fields_options.map(&:first).map(&:to_s).sample,
       order_type: ApiConstants::ORDER_TYPE.sample,
       per_page: ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page],
       query_hash: [
@@ -31,13 +30,13 @@ class CustomTicketFilterValidationTest < ActionView::TestCase
       visibility: {
         visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
         group_id: 1 # Just a sample value
-      },
+      }
     }
   end
 
   def test_missing_attributes
     stub_account
-    (sample_params.keys - [:per_page, :visibility]).each do |attribute|
+    (sample_params.keys - %i[per_page visibility]).each do |attribute|
       filter = CustomTicketFilterValidation.new(sample_params.except(attribute))
       refute filter.valid?
     end
@@ -48,12 +47,12 @@ class CustomTicketFilterValidationTest < ActionView::TestCase
     filter = CustomTicketFilterValidation.new({})
     refute filter.valid?(:create)
     error = filter.errors.full_messages
-    assert error.include?("Name missing_field")
-    assert error.include?("Order by missing_field")
-    assert error.include?("Order type missing_field")
-    assert error.include?("Query hash datatype_mismatch")
-    assert error.include?("Group missing_field")
-    assert error.include?("Visibility missing_field")
+    assert error.include?('Name missing_field')
+    assert error.include?('Order by missing_field')
+    assert error.include?('Order type missing_field')
+    assert error.include?('Query hash datatype_mismatch')
+    assert error.include?('Group missing_field')
+    assert error.include?('Visibility missing_field')
   end
 
   def test_invalid_datatypes
@@ -65,9 +64,9 @@ class CustomTicketFilterValidationTest < ActionView::TestCase
     filter = CustomTicketFilterValidation.new(filter_params)
     refute filter.valid?
     error = filter.errors.full_messages
-    assert error.include?("Name datatype_mismatch")
-    assert error.include?("Query hash datatype_mismatch")
-    assert error.include?("Visibility datatype_mismatch")
+    assert error.include?('Name datatype_mismatch')
+    assert error.include?('Query hash datatype_mismatch')
+    assert error.include?('Visibility datatype_mismatch')
   end
 
   def test_invalid_values
@@ -84,10 +83,10 @@ class CustomTicketFilterValidationTest < ActionView::TestCase
     filter = CustomTicketFilterValidation.new(filter_params)
     refute filter.valid?
     error = filter.errors.full_messages
-    assert error.include?("Query hash invalid_query_conditions")
-    assert error.include?("Visibility not_included")
-    assert error.include?("Order type not_included")
-    assert error.include?("Order by not_included")
+    assert error.include?('Query hash[0] condition: is invalid & operator: Mandatory attribute missing & value: Mandatory attribute missing')
+    assert error.include?('Visibility not_included')
+    assert error.include?('Order type not_included')
+    assert error.include?('Order by not_included')
   end
 
   def test_invalid_group
@@ -98,7 +97,7 @@ class CustomTicketFilterValidationTest < ActionView::TestCase
     filter = CustomTicketFilterValidation.new(filter_params)
     refute filter.valid?
     error = filter.errors.full_messages
-    assert error.include?("Group invalid_group_id")
+    assert error.include?('Group invalid_group_id')
   end
 
   def test_valid_filter_params
@@ -119,6 +118,9 @@ class CustomTicketFilterValidationTest < ActionView::TestCase
     def groups_from_cache
       []
     end
-  end
 
+    def features_included?(feature)
+      false
+    end
+  end
 end

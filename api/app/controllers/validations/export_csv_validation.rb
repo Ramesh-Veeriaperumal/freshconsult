@@ -1,6 +1,6 @@
 class ExportCsvValidation < ApiValidation
   attr_accessor :default_fields, :custom_fields
-
+  
   validates :default_fields, 
     data_type: { rules: Array, allow_nil: false }, 
     array: { 
@@ -22,7 +22,7 @@ class ExportCsvValidation < ApiValidation
   end
 
   def default_field_names
-    Account.current.contact_form.default_fields.map(&:name) - ["tag_names"]
+    Account.current.contact_form.default_fields.map(&:name) - ['tag_names']
   end
 
   def custom_field_names
@@ -31,5 +31,30 @@ class ExportCsvValidation < ApiValidation
 
   def validate_request_params
     errors[:request] << :select_a_field if [*default_fields, *custom_fields].empty?
+  end
+
+  def default_company_fields
+    Account.current.company_form.company_fields_from_cache.select { |x| x.column_name == 'default' }.map(&:name)
+  end
+
+  def custom_company_fields
+    Account.current.company_form.company_fields_from_cache.reject { |x| x.column_name == 'default' }.map(&:name).collect { |x| display_name(x) }
+  end
+
+  def default_contact_fields
+    Account.current.contact_form.contact_fields_from_cache.select { |x| x.column_name == 'default' }.map(&:name) - ['tag_names']
+  end
+
+  def custom_contact_fields
+    Account.current.contact_form.contact_fields_from_cache.reject { |x| x.column_name == 'default' }.map(&:name).collect { |x| display_name(x) }
+  end
+
+  def customer_export_privilege?
+    User.current.privilege?(:export_customers)
+  end
+
+  def display_name(name, type = nil)
+    return name[0..(-Account.current.id.to_s.length - 2)] if type == :ticket
+    name[3..-1]
   end
 end

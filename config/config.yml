@@ -17,33 +17,39 @@ feedback_account:
     production: https://support.freshdesk.com
 
 attachment:
-    attachment_common: &attachment_common 
+    attachment_common: &attachment_common
         protocol: http
-        port: 
-    development: 
+        port:
+    development:
         <<: *attachment_common
-        domain: 
+        domain:
             poduseast: localhost.freshdesk-dev.com
             podeuwest: localhost.freshdesk-dev.com
             podeucentral: localhost.freshdesk-dev.com
         port: ':3000'
     staging:
         <<: *attachment_common
-        domain: 
+        domain:
             poduseast: attachment.freshpo.com
             podeuwest: euattachment.freshpo.com
             podeucentral: eucattachment.freshpo.com
         protocol: https
     production:
         <<: *attachment_common
-        domain: 
+        domain:
             poduseast: attachment.freshdesk.com
             podeuwest: euattachment.freshdesk.com
             podeucentral: eucattachment.freshdesk.com
         protocol: https
+    test:
+      domain:
+          poduseast: localhost.freshdesk-dev.com
+          podeuwest: localhost.freshdesk-dev.com
+          podeucentral: localhost.freshdesk-dev.com
+      port: ':3000'
 
 # Used in account creation (account.rb)
-base_domain: 
+base_domain:
     development: freshdesk-dev.com
     production: freshdesk.com
     staging: freshpo.com
@@ -58,15 +64,15 @@ sub_bcc_email:
     development: "kiran@freshdesk.com"
     production:  "team@freshdesk.com"
     staging:     "support@freshpo.com"
-    
+
 crm:
-    development: 
+    development:
        api_key: "08a70b1b65d5775a1138db79ed84313b"
        domain:  "freshdesk-dev"
-    production: 
+    production:
        api_key: "7689a7f6686c7ad23037f9ad96e7c4cc"
        domain:  "freshdesk"
-    staging:  
+    staging:
        api_key: "08a70b1b65d5775a1138db79ed84313b"
        domain:  "freshdesk-dev"
 
@@ -76,12 +82,12 @@ salesforce:
        consumer_secret : "8034737126137452216"
        access_token : "5Aep8617VFpoP.M.4tPuMJu8KZ7H4IwcutjcNuNzoB_S7l9x0BM6vIHUXzDWH26X7Kh5XTLcVfdnA=="
        access_secret : "2336849265765064476"
-    production: 
+    production:
        consumer_key : "3MVG9Y6d_Btp4xp7._6YSpCqcHkm0UjNo990w4MV9TRff1pc.8Y3.ZHlScJe87hD9Y93UycT6NV3VuWqZwTTq"
        consumer_secret : "8034737126137452216"
        access_token : "5Aep8617VFpoP.M.4tPuMJu8KZ7H4IwcutjcNuNzoB_S7l9x0BM6vIHUXzDWH26X7Kh5XTLcVfdnA=="
        access_secret : "2336849265765064476"
-    staging:  
+    staging:
        consumer_key : "3MVG9Y6d_Btp4xp7._6YSpCqcHkm0UjNo990w4MV9TRff1pc.8Y3.ZHlScJe87hD9Y93UycT6NV3VuWqZwTTq"
        consumer_secret : "8034737126137452216"
        access_token : "5Aep8617VFpoP.M.4tPuMJu8KZ7H4IwcutjcNuNzoB_S7l9x0BM6vIHUXzDWH26X7Kh5XTLcVfdnA=="
@@ -191,4 +197,3 @@ billing_subdomain: billing
 
 # Show Trial Expiry notifier only if the trail days is less than 100 (dashboard/index.html)
 show_trail_notifier_in_days: 30
-

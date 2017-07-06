@@ -1,8 +1,9 @@
-class FbReplyDelegator < BaseDelegator
+class FbReplyDelegator < ConversationBaseDelegator
   attr_accessor :note_id, :note
 
   validate :validate_note_id, if: -> { note_id.present? }
   validate :validate_agent_id, if: -> { user_id.present? }
+  validate :validate_unseen_replies, on: :facebook_reply, if: :traffic_cop_required?
 
   def initialize(record, options = {})
     super(record, options)

@@ -52,7 +52,7 @@ class User < ActiveRecord::Base
   # alias_attribute :last_name, :string_uc02 # string_uc02 is used in Freshservice to store last name
   alias_attribute :user_type, :user_role # Used for "System User"
   alias_attribute :extn, :string_uc03 # Active Directory User - Phone Extension
-
+  
   delegate :history_column=, :history_column, :to => :flexifield
 
   acts_as_authentic do |c|
@@ -287,10 +287,10 @@ class User < ActiveRecord::Base
           conditions: { deleted: true }
         },
         verified: {
-          conditions: { deleted: false, active: true }
+          conditions: { deleted: false, active: true, blocked: false }
         },
         unverified: {
-          conditions: { deleted: false, active: false }
+          conditions: { deleted: false, active: false, blocked: false }
         },
         blocked: {
           conditions: [ "((blocked = true and blocked_at <= ?) or (deleted = true and deleted_at <= ?)) and whitelisted = false", Time.zone.now+5.days, Time.zone.now+5.days ]

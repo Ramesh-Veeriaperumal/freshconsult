@@ -24,16 +24,17 @@ module SplitNoteHelper
   end
 
   def ticket_attributes
+    ticket_attributes_hash = ticket_params
+    ticket_attributes_hash.merge!(shared_ownership_params) if Account.current.shared_ownership_enabled?
     if @note.tweet.present?
       @note.tweet.destroy
-      ticket_params.merge(twitter_params)
+      ticket_attributes_hash.merge!(twitter_params)
     elsif @note.fb_post.present?
       @child_fb_note_ids = @note.fb_post.child_ids
       @note.fb_post.destroy
-      ticket_params.merge(fb_params)
-    else
-      ticket_params
+      ticket_attributes_hash.merge!(fb_params)
     end
+    ticket_attributes_hash
   end
 
   def move_cloud_files
@@ -106,6 +107,13 @@ module SplitNoteHelper
         tweet_type: @note.tweet.tweet_type.to_s,
         stream_id: @note.tweet.stream_id
       }
+    }
+  end
+
+  def shared_ownership_params
+    {
+      internal_agent_id: @item.internal_agent_id,
+      internal_group_id: @item.internal_group_id
     }
   end
 

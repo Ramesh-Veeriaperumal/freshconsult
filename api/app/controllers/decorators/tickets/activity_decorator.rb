@@ -395,9 +395,10 @@ module Tickets
       end
 
       def round_robin(value)
-        user = get_user(value[:responder_id][1].to_i)
-        return if user.blank?
-        { responder_id: value[:responder_id][1].to_i }
+        round_robin_hash = {}
+        round_robin_hash[:skill_name] = skill_name(value[:skill_name]) if value[:skill_name].present?
+        round_robin_hash.merge!(responder_id(value[:responder_id])) if value[:responder_id].present?
+        round_robin_hash
       end
 
       # Tags & Rules Related activities

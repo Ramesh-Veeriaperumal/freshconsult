@@ -38,7 +38,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
   
   # This filter function fetches data from collaboration/tickets.rb; that fetches data from collab microservice
-  def collab_filter
+  def ongoing_collab_filter
     @collab_tickets ||= Helpdesk::Filters::CustomTicketFilter.collab_filter_condition(Collaboration::Ticket.new.fetch_tickets)
   end
 
@@ -97,6 +97,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                       "article_feedback" => [spam_condition(false), deleted_condition(false)],
                       "my_article_feedback" => [spam_condition(false), deleted_condition(false)]
                    }
+
+  DYNAMIC_DEFAULT_FILTERS = ["on_hold", "raised_by_me", "ongoing_collab", "shared_by_me", "shared_with_me"]
 
   USER_COLUMNS = ["responder_id", "helpdesk_subscriptions.user_id", "internal_agent_id"]
   GROUP_COLUMNS = ["group_id", "internal_group_id"]
@@ -200,7 +202,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     elsif "raised_by_me".eql?filter_name
       raised_by_me_filter
     elsif collab_filter_enabled_for?(filter_name)
-      collab_filter
+      ongoing_collab_filter
     elsif (from_api && "all_tickets".eql?(filter_name))
      api_all_tickets_filter
     elsif("shared_by_me" == filter_name and Account.current.shared_ownership_enabled?)
@@ -210,6 +212,11 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     else
       DEFAULT_FILTERS.fetch(filter_name, DEFAULT_FILTERS[default_value]).dclone
     end
+  end
+
+  def default_filter_query_hash filter_name
+    DYNAMIC_DEFAULT_FILTERS.include?(filter_name) ? send("#{filter_name}_filter") : 
+        DEFAULT_FILTERS.fetch(filter_name).dclone
   end
   
   def self.deserialize_from_params(params)

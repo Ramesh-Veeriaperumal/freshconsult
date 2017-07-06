@@ -9,7 +9,7 @@ class ContactDelegator < BaseDelegator
   }
   validate :user_emails_validation, if: -> { @other_emails }
   validate :validate_user_activation, on: :send_invite
-  validate :validate_avatar_ext, if: -> { self.avatar && errors[:attachment_ids].blank? }
+  validate :validate_avatar_ext, if: -> { @avatar_attachment && errors[:attachment_ids].blank? }
   validate :default_company_presence, if: -> { @default_company }
 
   def initialize(record, options = {})
@@ -20,7 +20,7 @@ class ContactDelegator < BaseDelegator
     check_params_set(options[:custom_fields]) if options[:custom_fields].is_a?(Hash)
     options[:attachment_ids] = Array.wrap(options[:avatar_id].to_i) if options[:avatar_id]
     super(record, options)
-    self.avatar = @draft_attachments.first if @draft_attachments
+    @avatar_attachment = @draft_attachments.first if @draft_attachments
   end
 
   # Web displays a generic error message "Email has already been taken" when we try to add emails associated to other users
@@ -45,7 +45,7 @@ class ContactDelegator < BaseDelegator
   end
 
   def validate_avatar_ext
-    valid_extension, extension = ApiUserHelper.avatar_extension_valid?(self.avatar)
+    valid_extension, extension = ApiUserHelper.avatar_extension_valid?(@avatar_attachment)
     unless valid_extension
       errors[:avatar_id] << :upload_jpg_or_png_file
       error_options[:avatar_id] = { current_extension: extension }

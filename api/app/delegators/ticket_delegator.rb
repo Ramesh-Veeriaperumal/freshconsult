@@ -1,11 +1,11 @@
 # A big thanks to http://blog.arkency.com/2014/05/mastering-rails-validations-objectify/ !!!!
 class TicketDelegator < BaseDelegator
   attr_accessor :ticket_fields
-  validate :group_presence, if: -> { group_id && attr_changed?('group_id') }
-  validate :responder_presence, if: -> { responder_id && attr_changed?('responder_id') }
+  validate :group_presence, if: -> { group_id && (attr_changed?('group_id') || (property_update? && required_for_closure_field?('group') && status_set_to_closed?)) }
+  validate :responder_presence, if: -> { responder_id && (attr_changed?('responder_id') || (property_update? && required_for_closure_field?('agent') && status_set_to_closed?)) }
   validate :email_config_presence,  if: -> {  !property_update? && email_config_id && outbound_email? }
   validates :email_config, presence: true, if: -> { errors[:email_config_id].blank? && email_config_id && attr_changed?('email_config_id') }
-  validate :product_presence, if: -> { product_id && attr_changed?('product_id', schema_less_ticket) }
+  validate :product_presence, if: -> { product_id && (attr_changed?('product_id', schema_less_ticket) || (property_update? && required_for_closure_field?('product') && status_set_to_closed?)) }
   validate :user_blocked?, if: -> { requester_id && errors[:requester].blank? && attr_changed?('requester_id') }
   validates :custom_field_via_mapping,  custom_field: { custom_field_via_mapping:
                               {
@@ -19,19 +19,33 @@ class TicketDelegator < BaseDelegator
                             }, unless: -> { property_update? || bulk_update? }
   validates :custom_field_via_mapping,  custom_field: { custom_field_via_mapping:
                               {
-                                validatable_custom_fields: proc { |x| TicketsValidationHelper.custom_dropdown_fields(x) },
+                                validatable_custom_fields: proc { |x| x.custom_fields_to_validate },
                                 drop_down_choices: proc { TicketsValidationHelper.custom_dropdown_field_choices },
                                 nested_field_choices: proc { TicketsValidationHelper.custom_nested_field_choices },
-                                required_based_on_status: proc { |x| x.closure_status? }
+                                required_based_on_status: proc { |x| x.closure_status? },
+                                required_attribute: :required,
+                                section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
+                              }
+                            }, if: :bulk_update?
+
+  validates :custom_field_via_mapping,  custom_field: { custom_field_via_mapping:
+                              {
+                                validatable_custom_fields: proc { |x| x.custom_fields_to_validate },
+                                drop_down_choices: proc { TicketsValidationHelper.custom_dropdown_field_choices },
+                                nested_field_choices: proc { TicketsValidationHelper.custom_nested_field_choices },
+                                required_based_on_status: proc { |x| x.closure_status? },
+                                section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
                               }
                             }, if: :property_update?
+
   validate :facebook_id_exists?, if: -> { !property_update? && facebook_id }
 
   validate :validate_application_id, if: -> { cloud_files.present? }
 
-  validate :validate_closure, if: -> { status && attr_changed?('status') && !bulk_update? }
+  validate :validate_closure, if: -> { status_set_to_closed? && !bulk_update? }
 
   validate :company_presence, if: -> { company_id }
+
   validate :validate_internal_agent_group_mapping, if: -> {internal_agent_id && attr_changed?('internal_agent_id') && Account.current.shared_ownership_enabled?}
   validate :validate_status_group_mapping, if: -> {internal_group_id && attr_changed?('internal_group_id') && Account.current.shared_ownership_enabled?}
 
@@ -41,6 +55,7 @@ class TicketDelegator < BaseDelegator
     check_params_set(options[:custom_fields]) if options[:custom_fields].is_a?(Hash)
     options[:attachment_ids] = skip_existing_attachments(options) if options[:attachment_ids]
     super(record, options)
+    @ticket = record
   end
 
   def product_presence
@@ -114,8 +129,25 @@ class TicketDelegator < BaseDelegator
   end
 
   def validate_closure
-    return unless closure_status?
     errors[:status] << :unresolved_child if self.assoc_parent_ticket? && self.validate_assoc_parent_tkt_status
+  end
+
+
+  def custom_fields_to_validate
+    custom_drodpowns = TicketsValidationHelper.custom_dropdown_fields(self)
+    if bulk_update?
+      custom_drodpowns.select { |x| instance_variable_get("@#{x.name}_set") }
+    else
+      custom_drodpowns.select { |x| x.required_for_closure && status_set_to_closed? }
+    end
+  end
+
+  def required_for_closure_field?(x)
+    ticket_fields.select { |x| x.name == x && x.required_for_closure }
+  end
+
+  def status_set_to_closed?
+    status && attr_changed?('status') && closure_status?
   end
 
   def validate_internal_agent_group_mapping
@@ -128,7 +160,7 @@ class TicketDelegator < BaseDelegator
 
   private
 
-     def property_update?
+    def property_update?
       [:update_properties].include?(validation_context)
     end
 
