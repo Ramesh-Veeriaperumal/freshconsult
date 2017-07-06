@@ -28,14 +28,14 @@ class ContactDecorator < ApiDecorator
   def other_emails
     record.user_emails.reject(&:primary_role).map(&:email)
   end
-  
+
   def default_company
-    @default_user_company ||= record.user_companies.select{ |x| x.default }.first
+    @default_user_company ||= record.user_companies.select(&:default).first
   end
 
   def other_companies
     others = record.user_companies - [default_company]
-    others.map{|x| {company_id: x.company_id, view_all_tickets: x.client_manager}}
+    others.map { |x| { company_id: x.company_id, view_all_tickets: x.client_manager } }
   end
 
   def other_companies_hash
@@ -66,7 +66,7 @@ class ContactDecorator < ApiDecorator
       phone: phone,
       company_name: company_name,
       avatar: avatar_hash,
-      twitter_id: twitter_id,
+      twitter_id: twitter_id
     }
   end
 
@@ -119,7 +119,6 @@ class ContactDecorator < ApiDecorator
         view_all_tickets: client_manager,
         description: description,
         twitter_id: twitter_id,
-        custom_fields: custom_fields,
         other_emails: other_emails,
         tags: tags,
         whitelisted: whitelisted,
@@ -127,6 +126,7 @@ class ContactDecorator < ApiDecorator
         updated_at: updated_at.try(:utc),
         facebook_id: fb_profile_id 
       })
+      response_hash[:custom_fields] = custom_fields if custom_fields.present?
       response_hash.merge!(
         company: company_hash(default_company)
         ) if @sideload_options.include?('company') && default_company.present? && default_company.company.present?
@@ -144,8 +144,8 @@ class ContactDecorator < ApiDecorator
     end
 
     def construct_hash(req_widget_fields, obj)
-      default_fields = req_widget_fields.select { |x| x.default_field? }
-      custom_fields = req_widget_fields.select { |x| !x.default_field? }
+      default_fields = req_widget_fields.select(&:default_field?)
+      custom_fields = req_widget_fields.reject { |x| !x.default_field? }
       ret_hash = widget_fields_hash(obj, default_fields)
       ret_hash[:custom_fields] = widget_fields_hash(obj, custom_fields) if custom_fields.present?
       ret_hash[:id] = obj.id
@@ -153,7 +153,7 @@ class ContactDecorator < ApiDecorator
     end
 
     def widget_fields_hash(obj, fields)
-      fields.inject({}){ |hash, field| hash.merge(field.name => obj.send(field.name)) }
+      fields.inject({}) { |hash, field| hash.merge(field.name => obj.send(field.name)) }
     end
 
     def current_account

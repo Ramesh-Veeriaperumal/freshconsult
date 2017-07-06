@@ -72,6 +72,18 @@ module Ember
         @controller.unstub(:fetch_activities)
       end
 
+      def test_activity_with_restricted_hash
+        stub_data = property_update_activity
+        remove_privilege(User.current, :view_contacts)
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
+        match_json(property_update_activity_pattern(stub_data))
+        assert_response 200
+      ensure
+        add_privilege(User.current, :view_contacts)
+        @controller.unstub(:fetch_activities)
+      end
+
       def test_invalid_fields_activity
         stub_data = invalid_fields_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
