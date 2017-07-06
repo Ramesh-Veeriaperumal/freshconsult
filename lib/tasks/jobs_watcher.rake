@@ -54,15 +54,17 @@ namespace :delayedjobs_watcher do
       end
     end
 
-    desc "Monitoring growing queue of delayed jobs"
+    desc "Monitoring growing queue of enqueued jobs"
     task :total_jobs => :environment do
       DELAYED_JOB_QUEUES.each do |queue,config|
 
         queue = queue.capitalize
-        total_jobs_count = Object.const_get("#{queue}::Job").count
+        total_jobs_count = Object.const_get("#{queue}::Job").count(
+          :conditions => ["created_at = run_at and attempts=0"]
+        )
     
         FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil, {
-          :subject => "#{queue} #{DELAYED_JOBS_MSG} #{total_jobs_count} jobs are in queue" 
+          :subject => "#{queue} #{DELAYED_JOBS_MSG} #{total_jobs_count} enqueued jobs are in queue" 
         }) if total_jobs_count >= config["total"]
 
         #For every 5 hours we will init the alert
@@ -70,12 +72,38 @@ namespace :delayedjobs_watcher do
           $redis_others.perform_redis_op("get", "#{queue.upcase}_TOTAL_JOBS_ALERTED").blank?
 
           Monitoring::PagerDuty.trigger_incident("delayed_jobs/#{Time.now}",{
-            :description => "#{queue} #{DELAYED_JOBS_MSG} #{total_jobs_count} jobs are in queue"
+            :description => "#{queue} #{DELAYED_JOBS_MSG} #{total_jobs_count} enqueued jobs are in queue"
           })
           $redis_others.perform_redis_op("setex", "#{queue.upcase}_TOTAL_JOBS_ALERTED", PAGER_DUTY_FREQUENCY_SECS, true)
         end
       end
     end
+    
+    desc "Monitoring growing queue of scheduled jobs"
+    task :scheduled_jobs => :environment do
+      DELAYED_JOB_QUEUES.each do |queue,config|
+
+        queue = queue.capitalize
+        total_jobs_count = Object.const_get("#{queue}::Job").count(
+          :conditions => ["created_at != run_at and attempts=0"]
+        )
+    
+        FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil, {
+          :subject => "#{queue} #{DELAYED_JOBS_MSG} #{total_jobs_count} scheduled jobs are in queue" 
+        }) if total_jobs_count >= config["total"]
+
+        #For every 5 hours we will init the alert
+        if config["pg_duty_total"]  <= total_jobs_count and 
+          $redis_others.perform_redis_op("get", "#{queue.upcase}_TOTAL_JOBS_ALERTED").blank?
+
+          Monitoring::PagerDuty.trigger_incident("delayed_jobs/#{Time.now}",{
+            :description => "#{queue} #{DELAYED_JOBS_MSG} #{total_jobs_count} scheduled jobs are in queue"
+          })
+          $redis_others.perform_redis_op("setex", "#{queue.upcase}_TOTAL_JOBS_ALERTED", PAGER_DUTY_FREQUENCY_SECS, true)
+        end
+      end
+    end
+
 end
 
 namespace :resque_watcher do 
