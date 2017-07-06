@@ -1,22 +1,24 @@
 put:
-  tags: [ticket]
-  summary: Link Ticket
+  summary: Bulk Link
+  tags   : [ticket]
   parameters:
-    - $ref: '#/parameters/id'
     - name: data
-      in: body
+      in:   body
       required: true
       schema:
         allOf:
+          - $ref: '#/definitions/bulk_action_input'
           - $ref: '#/definitions/link_input'
   responses:
     204:
       description: Success
+    202:
+      description: Accepted
+      schema:
+        $ref: '#/definitions/partial_success_response'
     400:
       description: Bad Request Error
       schema:
         $ref: '#/definitions/bad_request_error'
-    404:
-      description: Ticket not found
     403:
       description: Access denied

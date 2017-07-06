@@ -65,6 +65,8 @@
     $ref: ./request/drafts/draft.yaml
   execute_scenario_input:
     $ref: ./request/tickets/execute_scenario.yaml
+  link_input:
+    $ref: ./request/tickets/link_input.yaml
   cloud_file_input:
     $ref: ./request/cloud_files/cloud_file.yaml
   query_hash:

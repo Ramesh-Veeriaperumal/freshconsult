@@ -7,7 +7,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/canned_response_folder", only: %i(index show)
     resource :"ember/canned_response", only: %i(show index search)
     resource :"ember/ticket", only: %i(index show create execute_scenario spam latest_note)
-    resource :"ember/tickets/bulk_action", only: [:bulk_execute_scenario]
+    resource :"ember/tickets/bulk_action", only: %i(bulk_execute_scenario bulk_link)
     resource :"ember/tickets/associate", only: [:link, :unlink, :associated_tickets, :prime_association]
     resource :"ember/ticket_filter", only: [:index, :show, :create, :update, :destroy]
     resource :"ember/attachment", only: [:create]

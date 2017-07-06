@@ -420,15 +420,11 @@
             "in": "body",
             "required": true,
             "schema": {
-              "required": [
-                "tracker_id"
-              ],
-              "properties": {
-                "tracker_id": {
-                  "type": "integer",
-                  "description": "Display ID of tracker ticket"
+              "allOf": [
+                {
+                  "$ref": "#/definitions/link_input"
                 }
-              }
+              ]
             }
           }
         ],
@@ -447,6 +443,81 @@
           },
           "404": {
             "description": "Ticket not found"
+          }
+        }
+      }
+    },
+    "/tickets/{id}/unlink": {
+      "put": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Unlink Ticket",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      }
+    },
+    "/tickets/bulk_link": {
+      "put": {
+        "summary": "Bulk Link",
+        "tags": [
+          "ticket"
+        ],
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/bulk_action_input"
+                },
+                {
+                  "$ref": "#/definitions/link_input"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
           }
         }
       }
@@ -733,20 +804,11 @@
               "$ref": "#/definitions/associated_tickets"
             }
           },
-          "400": {
-            "description": "Bad request error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          },
           "403": {
             "description": "Access denied"
           },
           "404": {
             "description": "Ticket not found"
-          },
-          "500": {
-            "description": "Internal error"
           }
         }
       }
@@ -4925,6 +4987,19 @@
           "type": "integer",
           "format": "int64",
           "description": "ID of scenario to be executed"
+        }
+      }
+    },
+    "link_input": {
+      "type": "object",
+      "required": [
+        "tracker_id"
+      ],
+      "properties": {
+        "tracker_id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Display ID of tracker ticket"
         }
       }
     },
