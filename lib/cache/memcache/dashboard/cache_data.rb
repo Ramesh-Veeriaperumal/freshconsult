@@ -14,9 +14,9 @@ module Cache::Memcache::Dashboard::CacheData
     cache_and_notify_redis(key, "group")
   end
 
-  def redshift_cache_data memcachekey, process
+  def redshift_cache_data memcachekey, process, cache_identifier = "redshift_cache_identifier"
     result_data = MemcacheKeys.newrelic_begin_rescue {
-      key = memcachekey % {:account_id => Account.current.id, :cache_identifier => redshift_cache_identifier, :user_id => User.current.id}    
+      key = memcachekey % {:account_id => Account.current.id, :cache_identifier => send(cache_identifier), :user_id => User.current.id}    
       data = MemcacheKeys.get_from_cache(key)
       redis_key = key.split(":").first
       if (data.present? || data.is_a?(Array))
@@ -73,6 +73,16 @@ module Cache::Memcache::Dashboard::CacheData
     else
       "USER:#{User.current.id}"
     end
+    User.current.assigned_ticket_permission ? "#{cache_identifier}:USER:#{User.current.id}" : cache_identifier
+  end
+
+  def redshiftv2_cache_identifier
+    cache_identifier = ""
+    cache_identifier = cache_identifier + ":GROUP:#{@req_params[:group_id]}" if @req_params.present? && @req_params[:group_id].present? &&  (@req_params[:group_id].split(",").length == 1)
+    cache_identifier = cache_identifier + ":PRODUCT:#{@req_params[:product_id]}" if @req_params.present? && @req_params[:product_id].present? &&  (@req_params[:product_id].split(",").length == 1)
+
+    cache_identifier = cache_identifier + ":USER:#{User.current.id}" if(User.current.group_ticket_permission || User.current.can_view_all_tickets?)
+
     User.current.assigned_ticket_permission ? "#{cache_identifier}:USER:#{User.current.id}" : cache_identifier
   end
 

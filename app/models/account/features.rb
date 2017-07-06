@@ -184,5 +184,9 @@ class Account < ActiveRecord::Base
   def selectable_features_list
     SELECTABLE_FEATURES_DATA || {}
   end
+ 
+  def chat_activated?
+    !subscription.suspended? && features?(:chat) && !!chat_setting.site_id
+  end
 
 end

@@ -106,7 +106,7 @@ class SupportScore < ActiveRecord::Base
     end
   end
 
-  def get_mini_list account, user, category
+  def get_mini_list account, user, category, version = "v1"
     search_time = Time.now.in_time_zone account.time_zone
     key = send("agents_leaderboard_key", category, search_time.month)
 
@@ -120,17 +120,20 @@ class SupportScore < ActiveRecord::Base
     end
 
     rank = get_rank_from_sorted_set_redis key, user.id
-    return nil if rank.nil?
+    return nil if (rank.nil? && version == "v1")
 
-    leaderboard = get_mini_leaderboard rank, size, key
+    leaderboard = get_mini_leaderboard rank, size, key, version
 
   end
 
-  def get_mini_leaderboard rank, size, key
-		start = rank - 2 > 0 ? rank - 2 : 1
-		stop = start + 5 > size ? size : start + 5 
-		start = stop == size ? (size - 5 > 0 ? size - 5 : 1) : start
-		largest = get_largest_members_of_sorted_set_redis key
+  def get_mini_leaderboard rank, size, key, version
+    largest = get_largest_members_of_sorted_set_redis key
+    return largest if (rank.nil? && version == "v2")
+    list_size, indent = mini_list_size(version.to_sym)
+    others = []
+		start = rank - indent > 0 ? rank - indent : 1
+		stop = start + list_size > size ? size : start + list_size 
+		start = stop == size ? (size - list_size > 0 ? size - list_size : 1) : start
 		others = get_largest_members_of_sorted_set_redis key, stop, start
 		others.each_with_index do |person, index|
 			person << start+1+index
@@ -222,6 +225,10 @@ protected
 
       return leader_list.first(result_count).collect{ |details| details.reverse } if result_count
     end
+  end
+
+  def mini_list_size version
+    [MINI_LIST_SIZE[version][:size], MINI_LIST_SIZE[version][:indent]]
   end
 
 end

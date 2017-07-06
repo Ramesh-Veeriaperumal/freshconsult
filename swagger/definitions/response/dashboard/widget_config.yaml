@@ -1,0 +1,32 @@
+type: object
+properties:  
+  dashboards:
+    type: object
+    properties:
+      id: 
+        type: integer
+        description: id of the dashboard object
+      widgets:
+        description: This will give all the data about widget configuration which include widget's name and physical attributes
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+              description: Id of the widget
+            name:
+              type: string
+              description: Name of the widget
+            width:
+              type: integer
+              description: Width of the widget
+            height:
+              type: integer
+              description: Height of the widget
+            x:
+              type: integer
+              description: Horiontal postion in the xy plane
+            y:
+              type: integer
+              description: Vertical postion in the xy plane

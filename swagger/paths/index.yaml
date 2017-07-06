@@ -201,3 +201,22 @@
 #Surveys
 /surveys:
   $ref: ./surveys/crud.yaml
+
+#Dashboard
+/dashboards:
+  $ref: ./dashboard/config.yaml
+/dashboards/ticket_summaries:
+  $ref: ./dashboard/ticket_summary.yaml
+/dashboards/satisfaction_surveys:
+  $ref: ./dashboard/satisfaction_survey.yaml
+/dashboards/forum_moderations:
+  $ref: ./dashboard/forum_moderation.yaml
+/dashboards/unresolved_tickets:
+  $ref: ./dashboard/unresolved_ticket.yaml
+/dashboards/ticket_trends:
+  $ref: ./dashboard/ticket_trends.yaml
+/dashboards/ticket_metrics:
+  $ref: ./dashboard/ticket_metrics.yaml
+
+/dashboards/leaderboard_agents:
+  $ref: ./dashboard/leaderboard/agents.yaml

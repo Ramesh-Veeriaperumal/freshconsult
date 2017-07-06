@@ -1,0 +1,10 @@
+get:
+  tags: [dashboard]
+  description: Forum moderation widget
+  responses: 
+    200:
+      description: success
+      schema:
+        $ref: '#/definitions/forum_moderation_widget'
+    403:
+      description: access denied

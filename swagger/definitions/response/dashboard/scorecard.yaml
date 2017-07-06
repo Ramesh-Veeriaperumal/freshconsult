@@ -1,0 +1,17 @@
+type: object
+properties:
+  ticket_summaries:
+    description: Ticket summary data for scorecard widget
+    type: array
+    items: 
+      type: object
+      properties: 
+        id: 
+          type: integer
+          description: represents id of ticket summary item
+        name: 
+          type: string
+          description: Name of the status on the scorecard
+        value: 
+          type: integer
+          description: Count of tickets in that status

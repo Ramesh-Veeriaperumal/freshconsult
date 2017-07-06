@@ -144,10 +144,10 @@ Helpkit::Application.routes.draw do
 
     resources :company_fields, as: 'api_company_fields', controller: 'api_company_fields', only: [:index]
 
-    namespace :api_integrations, :path => "integrations" do
-      namespace :cti, :path => "cti" do
-        post :pop, :action => :create
-        get :details, :action => :index
+    namespace :api_integrations, path: 'integrations' do
+      namespace :cti, path: 'cti' do
+        post :pop, action: :create
+        get :details, action: :index
       end
     end
     resources :sla_policies, controller: 'api_sla_policies', only: [:index, :update]
@@ -290,6 +290,19 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    match '/dashboards/leaderboard_agents' => 'ember/leaderboard#agents', via: :get
+
+    resources :dashboards, controller: 'ember/dashboard', only: [:show] do
+      collection do
+        get :satisfaction_survey, to: 'ember/dashboard#survey_info'
+        get :moderation_count, to: 'ember/dashboard#moderation_count'
+        get :ticket_trends, to: 'ember/dashboard#ticket_trends'
+        get :ticket_metrics, to: 'ember/dashboard#ticket_metrics'
+        get :unresolved_tickets, to: 'ember/dashboard#unresolved_tickets_data'
+        get :ticket_summaries, to: 'ember/dashboard#scorecard'
+      end
+    end
+
     # Search routes
     post '/search/tickets/',      to: 'ember/search/tickets#results'
     post '/search/customers/',    to: 'ember/search/customers#results'
@@ -317,7 +330,7 @@ Helpkit::Application.routes.draw do
           put :toggle_fast_ticket_creation
           put :change_api_v2_limit
         end
-      end    
+      end
     end
     resources :attachments, controller: 'ember/attachments', only: [:create, :destroy] do
       member do

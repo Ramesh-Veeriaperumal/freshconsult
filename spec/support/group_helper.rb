@@ -22,4 +22,14 @@ module GroupHelper
     group.save!
     group
   end
+
+  def create_groups(account, options= {:count => 2})
+    groups = []
+    options[:count].times do |no|
+        group = create_group(account)
+        groups << group
+    end
+    groups
+  end
+
 end

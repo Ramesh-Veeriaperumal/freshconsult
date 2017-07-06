@@ -1,0 +1,10 @@
+get:
+  tags: [dashboard]
+  description: customer satisfaction survey widget
+  responses: 
+    200:
+      description: success
+      schema:
+        $ref: '#/definitions/satisfaction_survey_widget'
+    403:
+      description: access denied
