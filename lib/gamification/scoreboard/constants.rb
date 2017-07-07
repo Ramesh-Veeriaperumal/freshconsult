@@ -40,6 +40,17 @@ module Gamification
         UNHAPPY_CUSTOMER => :love,
         FAST_RESOLUTION => :speed
       }
+
+      MINI_LIST_SIZE = {
+        :v1 => {
+          :size       => 5,
+          :indent     => 2
+        },
+        :v2 => {
+          :size       => 7,
+          :indent     => 3
+        }
+      }
     end
   end
 end

@@ -1,0 +1,36 @@
+type: array
+items:
+  type: object
+  properties:
+    id:
+      type: number
+    name: 
+      type: string
+    leader:
+      type: object
+      properties:
+        id:
+          type: number
+        rank:
+          type: number
+        score:
+          type: number
+        user_id:
+          type: number
+        avatar:
+          type: string
+    rank_holders:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: number
+          rank:
+            type: number
+          score:
+            type: number
+          user_id:
+            type: number
+          avatar:
+            type: string

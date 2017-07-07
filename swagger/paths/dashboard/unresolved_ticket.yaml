@@ -1,0 +1,44 @@
+get:
+  tags: [dashboard]
+  description: Unresolved Tickets Count
+  Content: Get the aggregated counts of unresolved tickets
+  parameters:
+    - name: widget
+      description: Should be present if called for widget
+      in: query
+      type: number
+    - name: group_by
+      description: Columns for grouping counts
+      type: string
+      in: query
+      required: true
+      enum: [ 'group_id','responder_id' ]
+    - name: group_ids
+      description: Selected groups for filtering
+      type: Array
+      in: query
+      items:
+        type: int
+    - name: responder_ids
+      description: Selected agents for filtering
+      type: Array
+      in: query
+      items:
+        type: number
+    - name: status_ids
+      description: Selected statuses for filtering
+      type: Array
+      in: query
+      items:
+        type: number
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/unresolved_tickets'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied 

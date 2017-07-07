@@ -441,6 +441,7 @@ Authority::Authorization::PrivilegeList.build do
                                                         :save_reports_filter, :update_reports_filter, :delete_reports_filter]
 
       resource :"helpdesk/dashboard", :only => [:unresolved_tickets, :unresolved_tickets_data]
+      resource :"api_product", :only => [:index]
       resource :"reports/scheduled_export"
       resource :export, :only => [:ticket_activities]
   end
@@ -589,7 +590,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_business_hour", :only => [:index, :show]
     resource :"api_group", :only => [:create, :update, :destroy, :index, :show]
     resource :"api_sla_policy", :only => [:index, :update]
-    resource :"api_product", :only => [:index, :show]
+    resource :"api_product", :only => [:show]
     resource :"settings/helpdesk", :only => [:index]
     resource :survey, :only => [:index]
     resource :"satisfaction_rating", :only => [:index]

@@ -385,6 +385,8 @@ module TicketsTestHelper
       subject: prime_association.subject,
       association_type: prime_association.association_type,
       status: prime_association.status,
+      created_at: prime_association.created_at.try(:utc),
+      stats: ticket_states_pattern(prime_association.ticket_states),
       permission: User.current.has_ticket_permission?(prime_association)
     }
   end
@@ -523,14 +525,7 @@ module TicketsTestHelper
     single_note[:freshfone_call] = freshfone_call_pattern(note) if freshfone_call_pattern(note)
     single_note
   end
-
-  def create_linked_tickets
-    @related_ticket = create_ticket
-    @tracker_ticket = create_tracker_ticket
-    put :link, construct_params({ version: 'private', id: @related_ticket.display_id, tracker_id:  @tracker_ticket.display_id }, false)
-    @related_ticket.reload
-  end
-
+  
   def create_parent_child_tickets
     @parent_ticket = create_parent_ticket
     @child_ticket  = create_ticket(assoc_parent_id: @parent_ticket.display_id)
@@ -556,6 +551,25 @@ module TicketsTestHelper
     if ticket_id.present?
       ticket = Helpdesk::Ticket.find_by_display_id(ticket_id)
       assert !ticket.related_ticket?
+    end
+  end
+
+  def create_linked_tickets
+    @ticket_id = create_ticket.display_id
+    @tracker_id = create_tracker_ticket.display_id
+    link_to_tracker(@tracker_id, @ticket_id)
+  end
+
+  def link_to_tracker(tracker_id, ticket_id)
+    put :link, construct_params({ version: 'private', id: ticket_id, tracker_id: tracker_id }, false)
+  end
+
+  def assert_unlink_failure(ticket_id, error_code, pattern = nil)
+    assert_response error_code
+    match_json([bad_request_error_pattern(*pattern)]) if pattern.present?
+    if ticket_id.present?
+      ticket = Helpdesk::Ticket.where(display_id: ticket_id).first
+      assert ticket.related_ticket?
     end
   end
 end

@@ -1,0 +1,29 @@
+get:
+  tags: [dashboard]
+  description: Ticket trends widgets
+  parameters:
+  - name: group_ids
+    type: array
+    items: 
+      type: string
+    in: query
+    description: Selected group's id for filtering scorecard
+  - name: product_ids
+    type: array
+    items: 
+      type: string
+    in: query
+    description: Selected product's id for filtering scorecard
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/ticket_trends_widget'
+    403:
+      description: Access denied
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    503:
+      description: Internal server error

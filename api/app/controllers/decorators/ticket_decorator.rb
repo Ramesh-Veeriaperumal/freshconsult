@@ -215,6 +215,8 @@ class TicketDecorator < ApiDecorator
       subject: subject,
       association_type: association_type,
       status: status,
+      created_at: created_at.try(:utc),
+      stats: stats,
       permission: @permission
     }
   end

@@ -169,6 +169,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
+  def remove_associations!
+    if related_ticket? && associates.present?
+      # tracker_ticket_id attribute accessor is set for the purpose of knowing that we need to reduce the count of related tickets for the tracker
+      self.tracker_ticket_id = associates.first
+      self.association_type = nil
+      return save
+    end
+    false
+  end
+
   private
 
     def table_name

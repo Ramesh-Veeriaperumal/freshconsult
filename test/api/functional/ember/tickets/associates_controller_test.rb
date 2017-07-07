@@ -133,9 +133,10 @@ module Ember
       def test_link_tickets_prime_association
         enable_adv_ticketing(:link_tickets) do
           create_linked_tickets
-          get :prime_association, construct_params({ version: 'private', id: @related_ticket.display_id }, false)
+          get :prime_association, construct_params({ version: 'private', id: @ticket_id }, false)
           assert_response 200
-          match_json(prime_association_pattern(@related_ticket))
+          related_ticket = Helpdesk::Ticket.where(display_id: @ticket_id).first
+          match_json(prime_association_pattern(related_ticket))
         end
       end
 
@@ -157,7 +158,7 @@ module Ember
       def test_link_tickets_prime_association_with_invalid_ticket
         enable_adv_ticketing(:link_tickets) do
           create_linked_tickets
-          get :prime_association, construct_params({ version: 'private', id: @tracker_ticket.display_id }, false)
+          get :prime_association, construct_params({ version: 'private', id: @tracker_id }, false)
           assert_response 404
         end
       end
@@ -166,7 +167,7 @@ module Ember
         enable_adv_ticketing(:link_tickets) do
           create_linked_tickets
           user_stub_ticket_permission
-          get :prime_association, construct_params({ version: 'private', id: @related_ticket.display_id }, false)
+          get :prime_association, construct_params({ version: 'private', id: @ticket_id }, false)
           assert_response 403
           user_unstub_ticket_permission
         end
@@ -177,7 +178,7 @@ module Ember
           create_linked_tickets
         end
         disable_adv_ticketing(:link_tickets)
-        get :prime_association, construct_params({ version: 'private', id: @related_ticket.display_id }, false)
+        get :prime_association, construct_params({ version: 'private', id: @ticket_id }, false)
         assert_response 403
         match_json(request_error_pattern(:require_feature, feature: 'Link Tickets'))
       end
@@ -245,9 +246,10 @@ module Ember
       def test_link_tickets_associations
         enable_adv_ticketing(:link_tickets) do
           create_linked_tickets
-          get :associated_tickets, construct_params({ version: 'private', id: @tracker_ticket.display_id }, false)
+          get :associated_tickets, construct_params({ version: 'private', id: @tracker_id }, false)
           assert_response 200
-          match_json(associations_pattern(@tracker_ticket))
+          tracker_ticket = Helpdesk::Ticket.where(display_id: @tracker_id).first
+          match_json(associations_pattern(tracker_ticket))
         end
       end
 
@@ -256,7 +258,7 @@ module Ember
           create_linked_tickets
           Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
           Helpdesk::Ticket.any_instance.stubs(:associates).returns([])
-          get :associated_tickets, construct_params({ version: 'private', id: @tracker_ticket.display_id }, false)
+          get :associated_tickets, construct_params({ version: 'private', id: @tracker_id }, false)
           assert_response 200
           assert JSON.parse(response.body).empty?
         end
@@ -280,7 +282,7 @@ module Ember
       def test_link_tickets_associations_with_invalid_ticket
         enable_adv_ticketing(:link_tickets) do
           create_linked_tickets
-          get :associated_tickets, construct_params({ version: 'private', id: @related_ticket.display_id }, false)
+          get :associated_tickets, construct_params({ version: 'private', id: @ticket_id }, false)
           assert_response 404
         end
       end
@@ -289,7 +291,7 @@ module Ember
         enable_adv_ticketing(:link_tickets) do
           create_linked_tickets
           user_stub_ticket_permission
-          get :associated_tickets, construct_params({ version: 'private', id: @tracker_ticket.display_id }, false)
+          get :associated_tickets, construct_params({ version: 'private', id: @tracker_id }, false)
           assert_response 403
           user_unstub_ticket_permission
         end
@@ -300,7 +302,7 @@ module Ember
           create_linked_tickets
         end
         disable_adv_ticketing(:link_tickets)
-        get :associated_tickets, construct_params({ version: 'private', id: @tracker_ticket.display_id }, false)
+        get :associated_tickets, construct_params({ version: 'private', id: @tracker_id }, false)
         assert_response 403
         match_json(request_error_pattern(:require_feature, feature: 'Link Tickets'))
       end
@@ -369,6 +371,79 @@ module Ember
         get :associated_tickets, construct_params({ version: 'private', id: @parent_ticket.display_id }, false)
         assert_response 403
         match_json(request_error_pattern(:require_feature, feature: 'Parent Child Tickets'))
+      end
+
+      # Test cases for Unlink
+
+      def test_unlink_related_ticket_from_tracker
+        enable_adv_ticketing(:link_tickets) do
+          create_linked_tickets
+          Helpdesk::Ticket.any_instance.stubs(:associates).returns([@tracker_id])
+          put :unlink, construct_params({ version: 'private', id: @ticket_id }, false)
+          Helpdesk::Ticket.any_instance.unstub(:associates)
+          assert_response 204
+          ticket = Helpdesk::Ticket.where(display_id: @ticket_id).first
+          assert !ticket.related_ticket?
+          assert_nil ticket.associated_prime_ticket('related')
+        end
+      end
+
+      def test_unlink_non_related_ticket_from_tracker
+        enable_adv_ticketing(:link_tickets) do
+          create_linked_tickets
+          non_related_ticket_id = create_ticket.display_id
+          put :unlink, construct_params({ version: 'private', id: non_related_ticket_id }, false)
+          assert_unlink_failure(nil, 400, [:id, :not_a_related_ticket])
+        end
+      end
+
+      def test_unlink_ticket_without_permission
+        enable_adv_ticketing(:link_tickets) do
+          create_linked_tickets
+          user_stub_ticket_permission
+          put :unlink, construct_params({ version: 'private', id: @ticket_id }, false)
+          assert_unlink_failure(@ticket, 403)
+          user_unstub_ticket_permission
+        end
+      end
+
+      def test_unlink_non_existant_ticket_from_tracker
+        enable_adv_ticketing(:link_tickets) do
+          create_linked_tickets
+          Helpdesk::Ticket.where(display_id: @ticket_id).first.destroy
+          put :unlink, construct_params({ version: 'private', id: @ticket_id }, false)
+          assert_response 404
+        end
+      end
+
+      def test_unlink_without_link_tickets_feature
+        enable_adv_ticketing(:link_tickets) { create_linked_tickets }
+        disable_adv_ticketing(:link_tickets) if Account.current.launched?(:link_tickets)
+        put :unlink, construct_params({ version: 'private', id: @ticket_id }, false)
+        assert_unlink_failure(@ticket, 403)
+        match_json(request_error_pattern(:require_feature, feature: 'Link Tickets'))
+      end
+
+      def test_unlink_ticket_without_associates
+        enable_adv_ticketing(:link_tickets) do
+          create_linked_tickets
+          Helpdesk::Ticket.any_instance.stubs(:associates).returns(nil)
+          put :unlink, construct_params({ version: 'private', id: @ticket_id }, false)
+          Helpdesk::Ticket.any_instance.unstub(:associates)
+          assert_unlink_failure(@ticket, 500)
+          match_json(base_error_pattern(:internal_error))
+        end
+      end
+
+      def test_unlink_related_ticket_from_non_tracker
+        enable_adv_ticketing(:link_tickets) do
+          create_linked_tickets
+          non_tracker_id = create_ticket.display_id
+          Helpdesk::Ticket.any_instance.stubs(:associates).returns([non_tracker_id])
+          put :unlink, construct_params({ version: 'private', id: @ticket_id }, false)
+          Helpdesk::Ticket.any_instance.unstub(:associates)
+          assert_unlink_failure(@ticket, 400, ['tracker_id', nil, { append_msg: I18n.t('ticket.link_tracker.permission_denied') }])
+        end
       end
     end
   end

@@ -1,0 +1,23 @@
+    type: object
+    properties:
+      unresolved_tickets:
+        description: Aggregated values of unresolved tickets for group by values
+        type: Array
+        items:
+          type: object
+          properties:
+            group_by_choice:
+              type: integer
+              description: Either group_id or responder_id value based on group_by choice in request
+            stats:
+              type: Array
+              description: Count value for each status
+              items:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Status ID
+                  count:
+                    type: integer
+                    description: Count of tickets with provided group_id/responder_id and status

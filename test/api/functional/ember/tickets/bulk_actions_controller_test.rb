@@ -9,6 +9,7 @@ module Ember
       include GroupHelper
       include CannedResponsesHelper
       include PrivilegesHelper
+      include CannedResponsesTestHelper
 
       CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
       CUSTOM_FIELDS_CHOICES = Faker::Lorem.words(5).uniq.freeze
@@ -114,6 +115,267 @@ module Ember
         end
         post :bulk_execute_scenario, construct_params({ version: 'private' }, { scenario_id: scenario_id, ids: ticket_ids })
         assert_response 202
+      end
+
+      def test_bulk_link_excess_number_of_tickets
+        enable_adv_ticketing(:link_tickets) do
+          tracker_id = create_tracker_ticket.display_id
+          ticket_ids = []
+          (ApiConstants::MAX_ITEMS_FOR_BULK_ACTION + 1).times do
+            ticket_ids << create_ticket.display_id
+          end
+          Sidekiq::Testing.inline! do
+            put :bulk_link, construct_params({ version: 'private', ids: ticket_ids, tracker_id: tracker_id }, false)
+          end
+          assert_response 400
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
+          tickets.each do |ticket|
+            assert !ticket.related_ticket?
+          end
+        end
+      end
+
+      def test_bulk_link_non_existant_tickets_to_tracker
+        enable_adv_ticketing(:link_tickets) do
+          tracker_id = create_tracker_ticket.display_id
+          ticket_ids = []
+          rand(3..5).times do
+            ticket_ids << create_ticket.display_id
+          end
+          non_existant_tickets = []
+          non_existant_tickets << Helpdesk::Ticket.last
+          non_existant_ticket = non_existant_tickets.last
+          non_existant_ticket.destroy
+          Sidekiq::Testing.inline! do
+            put :bulk_link, construct_params({ version: 'private', ids: ticket_ids, tracker_id: tracker_id }, false)
+          end
+          assert_response 202
+          assert !non_existant_ticket.related_ticket?
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
+          valid_tickets = tickets - non_existant_tickets
+          valid_tickets.each do |valid_ticket|
+            assert valid_ticket.related_ticket?
+          end
+        end
+      end
+
+      def test_bulk_link_associated_tickets_to_tracker
+        enable_adv_ticketing(:link_tickets) do
+          tracker_id = create_tracker_ticket.display_id
+          asso_tracker_id = create_tracker_ticket.display_id
+          ticket_ids = []
+          rand(3..5).times do
+            ticket_ids << create_ticket.display_id
+          end
+          associated_tickets = Helpdesk::Ticket.find_all_by_display_id([ticket_ids[0], ticket_ids[1]])
+          associated_tickets.each do |associated_ticket|
+            attributes = { association_type: 4, associates_rdb: asso_tracker_id }
+            associated_ticket.update_attributes(attributes)
+          end
+          Sidekiq::Testing.inline! do
+            put :bulk_link, construct_params({ version: 'private', ids: ticket_ids, tracker_id: tracker_id }, false)
+          end
+          assert_response 202
+          associated_tickets.each do |associated_ticket|
+            associated_ticket.reload
+            assert associated_ticket.associates_rdb != tracker_id
+          end
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
+          valid_tickets = tickets - associated_tickets
+          valid_tickets.each do |valid_ticket|
+            assert valid_ticket.related_ticket?
+          end
+        end
+      end
+
+      def test_bulk_link_spammed_tickets
+        enable_adv_ticketing(:link_tickets) do
+          tracker_id = create_tracker_ticket.display_id
+          ticket_ids = []
+          rand(3..5).times do
+            ticket_ids << create_ticket.display_id
+          end
+          spammed_tickets = Helpdesk::Ticket.find_all_by_display_id([ticket_ids[0], ticket_ids[1]])
+          spammed_tickets.each do |spammed_ticket|
+            spammed_ticket.update_attributes(spam: true)
+          end
+          Sidekiq::Testing.inline! do
+            put :bulk_link, construct_params({ version: 'private', ids: ticket_ids, tracker_id: tracker_id }, false)
+          end
+          assert_response 202
+          spammed_tickets.each do |spammed_ticket|
+            spammed_ticket.reload
+            assert !spammed_ticket.related_ticket?
+          end
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
+          valid_tickets = tickets - spammed_tickets
+          valid_tickets.each do |valid_ticket|
+            assert valid_ticket.related_ticket?
+          end
+        end
+      end
+
+      def test_bulk_link_deleted_tickets
+        enable_adv_ticketing(:link_tickets) do
+          tracker_id = create_tracker_ticket.display_id
+          ticket_ids = []
+          rand(3..5).times do
+            ticket_ids << create_ticket.display_id
+          end
+          deleted_tickets = Helpdesk::Ticket.find_all_by_display_id([ticket_ids[0], ticket_ids[1]])
+          deleted_tickets.each do |deleted_ticket|
+            deleted_ticket.update_attributes(deleted: true)
+          end
+          Sidekiq::Testing.inline! do
+            put :bulk_link, construct_params({ version: 'private', ids: ticket_ids, tracker_id: tracker_id }, false)
+          end
+          assert_response 202
+          deleted_tickets.each do |deleted_ticket|
+            deleted_ticket.reload
+            assert !deleted_ticket.related_ticket?
+          end
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
+          valid_tickets = tickets - deleted_tickets
+          valid_tickets.each do |valid_ticket|
+            assert valid_ticket.related_ticket?
+          end
+        end
+      end
+
+      def test_bulk_link_without_mandatory_field
+        # Without tracker_id
+        enable_adv_ticketing(:link_tickets) do
+          ticket_ids = []
+          rand(2..4).times do
+            ticket_ids << create_ticket.display_id
+          end
+          Sidekiq::Testing.inline! do
+            put :bulk_link, construct_params({ version: 'private', ids: ticket_ids }, false)
+          end
+          assert_response 400
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
+          tickets.each do |ticket|
+            assert !ticket.related_ticket?
+          end
+        end
+      end
+
+      def test_bulk_link_tickets_without_permission
+        enable_adv_ticketing(:link_tickets) do
+          tracker_id = create_tracker_ticket.display_id
+          ticket_ids = []
+          ticket_ids << create_ticket.display_id
+          user_stub_ticket_permission
+          Sidekiq::Testing.inline! do
+            put :bulk_link, construct_params({ version: 'private', ids: ticket_ids, tracker_id: tracker_id }, false)
+          end
+          assert_response 202
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
+          tickets.each do |ticket|
+            assert !ticket.related_ticket?
+          end
+          user_unstub_ticket_permission
+        end
+      end
+
+      def test_bulk_link_to_deleted_tracker
+        test_bulk_link_for_tracker_with(deleted: true)
+      end
+
+      def test_bulk_link_for_tracker_with(attribute = {spam: true})
+        enable_adv_ticketing(:link_tickets) do
+          tracker    = create_tracker_ticket
+          tracker_id = tracker.display_id
+          tracker.update_attributes(attribute)
+          ticket_ids = []
+          rand(2..4).times do
+            ticket_ids << create_ticket.display_id
+          end
+          Sidekiq::Testing.inline! do
+            put :bulk_link, construct_params({ version: 'private', ids: ticket_ids, tracker_id: tracker_id }, false)
+          end
+          assert_response 400
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
+          tickets.each do |ticket|
+            assert !ticket.related_ticket?
+          end
+        end
+      end      
+
+      def test_bulk_link_to_deleted_tracker
+        enable_adv_ticketing(:link_tickets) do
+          tracker    = create_tracker_ticket
+          tracker_id = tracker.display_id
+          tracker.update_attributes(deleted: true)
+          ticket_ids = []
+          rand(2..4).times do
+            ticket_ids << create_ticket.display_id
+          end
+          Sidekiq::Testing.inline! do
+            put :bulk_link, construct_params({ version: 'private', ids: ticket_ids, tracker_id: tracker_id }, false)
+          end
+          assert_response 400
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
+          tickets.each do |ticket|
+            assert !ticket.related_ticket?
+          end
+        end
+      end
+
+      def test_bulk_link_to_spammed_tracker
+        enable_adv_ticketing(:link_tickets) do
+          tracker    = create_tracker_ticket
+          tracker_id = tracker.display_id
+          tracker.update_attributes(spam: true)
+          ticket_ids = []
+          rand(2..4).times do
+            ticket_ids << create_ticket.display_id
+          end
+          Sidekiq::Testing.inline! do
+            put :bulk_link, construct_params({ version: 'private', ids: ticket_ids, tracker_id: tracker_id }, false)
+          end
+          assert_response 400
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
+          tickets.each do |ticket|
+            assert !ticket.related_ticket?
+          end
+        end
+      end
+
+      def test_bulk_link_to_invalid_tracker
+        enable_adv_ticketing(:link_tickets) do
+          tracker_id = create_ticket.display_id
+          ticket_ids = []
+          rand(2..4).times do
+            ticket_ids << create_ticket.display_id
+          end
+          Sidekiq::Testing.inline! do
+            put :bulk_link, construct_params({ version: 'private', ids: ticket_ids, tracker_id: tracker_id }, false)
+          end
+          assert_response 400
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
+          tickets.each do |ticket|
+            assert !ticket.related_ticket?
+          end
+        end
+      end
+
+      def test_bulk_link_to_valid_tracker
+        enable_adv_ticketing(:link_tickets) do
+          tracker_id = create_tracker_ticket.display_id
+          ticket_ids = []
+          rand(2..4).times do
+            ticket_ids << create_ticket.display_id
+          end
+          Sidekiq::Testing.inline! do
+            put :bulk_link, construct_params({ version: 'private', ids: ticket_ids, tracker_id: tracker_id }, false)
+          end
+          assert_response 204
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
+          tickets.each do |ticket|
+            assert ticket.related_ticket?
+          end
+        end
       end
 
       def test_bulk_update_with_no_params

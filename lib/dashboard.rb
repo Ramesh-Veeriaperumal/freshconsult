@@ -186,12 +186,21 @@ class Dashboard
       "value"     => User.current.id}
   end
 
+  def redshift_product_filter product_id
+    {   "condition" => "product_id", 
+        "operator"  => "is_in",
+        "value"     => "#{product_id}"}
+  end
+
   def handle_redshift_filters options={}
     filter_params = []
     filter_params = (filter_params << redshift_user_filter) if (options[:include_user].present? || User.current.assigned_ticket_permission)
-    return filter_params if (User.current.can_view_all_tickets? && @req_params[:group_id].blank?)
+    return filter_params if (User.current.can_view_all_tickets? && @req_params[:group_id].blank? && @req_params[:product_id].blank?)
     if @req_params[:group_id].present?
       filter_params = (filter_params << redshift_group_filter(@req_params[:group_id]) )
+    end
+    if @req_params[:product_id].present?
+      filter_params = (filter_params << redshift_product_filter(@req_params[:product_id]) )
     end
     filter_params
   end

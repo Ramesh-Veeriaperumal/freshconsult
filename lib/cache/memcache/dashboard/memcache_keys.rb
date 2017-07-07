@@ -14,4 +14,7 @@ module Cache::Memcache::Dashboard::MemcacheKeys
 
   DASHBOARD_WORKLOAD_GROUPWISE                    = "v1/DASHBOARD_WORKLOAD_GROUPWISE:%{account_id}:%{cache_identifier}:%{workload_name}:%{group_by}"
   DASHBOARD_WORKLOAD                              = "v1/DASHBOARD_WORKLOAD:%{account_id}:%{cache_identifier}:%{workload_name}:%{group_by}"
+
+  DASHBOARD_V2_TRENDS                             = "v1/DASHBOARD_V2_TRENDS:%{account_id}:%{cache_identifier}"
+  DASHBOARD_V2_METRICS                            = "v1/DASHBOARD_V2_METRICS:%{account_id}:%{cache_identifier}"
 end

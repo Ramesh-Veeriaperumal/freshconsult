@@ -11,6 +11,8 @@ class Dashboard::DataLayer < Dashboard
     @workload_name = options[:workload].to_s
     @cache_available = options[:cache_data] || false
     @include_missing = options[:include_missing] || false
+    @limit_option = options[:limit_option] || first_group_by_limit
+
   end
 
   def fetch_aggregation
@@ -34,12 +36,12 @@ class Dashboard::DataLayer < Dashboard
       action_hash.push({ "condition" => key.to_s, "operator" => "is_in", "value" => filter_val}) if filter_condition[key].present?
     end
 
-    es_response = Search::Dashboard::Docs.new(action_hash,negative_conditions,group_by.dup, limit_options).aggregation(Helpdesk::Ticket)["name"]["buckets"]
+    es_response = ::Search::Dashboard::Docs.new(action_hash,negative_conditions,group_by.dup, limit_options).aggregation(Helpdesk::Ticket)["name"]["buckets"]
     es_res_hash = parse_es_response_v2(es_response)
     if include_missing
       #Logic for constructing missing fields starts here...
       action_hash.push({"condition" => group_by.first,"operator" => "is_in", "value" => "-1" })
-      missing_es_response = Search::Dashboard::Docs.new(action_hash,negative_conditions,["status"],{:first_limit => last_group_by_limit}).aggregation(Helpdesk::Ticket)["name"]["buckets"]
+      missing_es_response = ::Search::Dashboard::Docs.new(action_hash,negative_conditions,["status"],{:first_limit => last_group_by_limit}).aggregation(Helpdesk::Ticket)["name"]["buckets"]
       missing_es_res_hash = missing_es_response.inject({}) do |res_hash, response|
         res_hash.merge([nil,response["key"]] => response["doc_count"])
       end
@@ -57,12 +59,15 @@ class Dashboard::DataLayer < Dashboard
       default_scoper.where(filter_condition).group(group_by).count
     else
       #Need to order by count as we are showing by descending order in UI. ES returns data by count desc always by default
-      default_scoper.where(filter_condition).where("#{workload_name} is not NULL").group(group_by).order("count(*) desc").count
+      default_scoper.where(filter_condition).where("#{workload_name} is not NULL").group(group_by).order("count(*) desc").limit(@limit_option).count
     end
   end
 
   def limit_options
-    if include_missing
+    if @limit_option.present?
+      #have to revisit
+      {:first_limit => @limit_option, :second_limit => last_group_by_limit}
+    elsif include_missing
       {:first_limit => first_group_by_limit, :second_limit => last_group_by_limit}
     else
       {:first_limit => DEFAULT_ORDER_LIMIT, :second_limit => DEFAULT_ORDER_LIMIT}
