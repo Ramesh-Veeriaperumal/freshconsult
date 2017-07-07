@@ -119,7 +119,7 @@ class ApiApplicationController < MetalApiController
   protected
 
     def requires_feature(*f) # Should be from cache. Need to revisit.
-      return if Account.current.features?(*f)
+      return if Account.current.features?(*f) || Account.current.has_feature?(*f)
       render_request_error(:require_feature, 403, feature: f.join(',').titleize)
     end
 

@@ -1,0 +1,12 @@
+type: object
+properties:
+  moderation_counts:
+    description: Forum posts count that are awaiting moderation or spam
+    type: object
+    properties:
+      spam:
+        type: integer
+        description: Count of spam forum posts
+      unpublished:
+        type: integer
+        description: Count of unpublished forum posts awaiting moderation

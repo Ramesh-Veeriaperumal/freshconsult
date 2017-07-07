@@ -7,8 +7,27 @@ module Ember
       include AttachmentConcern
       include Helpdesk::ToggleEmailNotification
 
+      before_filter :link_tickets_enabled?, only: [:bulk_link]
       before_filter :disable_notification, only: [:bulk_update], if: :notification_not_required?
       after_filter  :enable_notification, only: [:bulk_update], if: :notification_not_required?
+
+      TICKET_ASSOCIATE_CONSTANTS_CLASS = :TicketAssociateConstants.to_s.freeze
+
+      def bulk_link
+        @constants_klass = TICKET_ASSOCIATE_CONSTANTS_CLASS
+        @validation_klass = TicketAssociateConstants::VALIDATION_CLASS
+        return unless validate_body_params
+        @tracker = Account.current.tickets.find_by_display_id(params[:tracker_id])
+        @delegator_klass = TicketAssociateConstants::TRACKER_DELEGATOR_CLASS
+        return unless validate_delegator(@tracker)
+        fetch_objects
+        unless @items.present?
+          return render_bulk_action_response(bulk_action_succeeded_items, bulk_action_errors)
+        end
+        validate_items_to_bulk_link
+        execute_bulk_link
+        render_bulk_action_response(bulk_action_succeeded_items, bulk_action_errors)
+      end
 
       def bulk_update
         return unless validate_bulk_update_params
@@ -34,6 +53,29 @@ module Ember
       end
 
       private
+
+        def link_tickets_enabled?
+          render_request_error(:require_feature, 403, feature: 'Link Tickets') unless Account.current.link_tkts_enabled?
+        end
+
+        def validate_items_to_bulk_link
+          @items_failed = []
+          @validation_errors = {}
+          @delegator_klass = TicketAssociateConstants::DELEGATOR_CLASS
+          @dklass_computed = @delegator_klass.constantize
+          @items.each do |item|
+            @delegator = delegator_klass.new(item)
+            unless @delegator.valid?(action_name.to_sym)
+              @items_failed << item
+              @validation_errors.merge!(item.display_id => @delegator)
+            end
+          end
+        end
+
+        def execute_bulk_link
+          items = @items - @items_failed
+          ::Tickets::LinkTickets.perform_async(related_ticket_ids: items.map(&:display_id), tracker_id: params[:tracker_id]) if items.present?
+        end
 
         # code duplicated - validate_params method of API Tickets controller
         def fetch_ticket_fields_mapping

@@ -1,0 +1,12 @@
+type: object
+properties:
+  today:
+    type: array
+    items:
+      type: number
+  yesterday:
+    type: array
+    items:
+      type: number
+  last_dump_time:
+    type: string

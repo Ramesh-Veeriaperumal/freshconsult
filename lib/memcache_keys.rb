@@ -187,6 +187,8 @@ module MemcacheKeys
 
   ACCOUNT_DASHBOARD_SHARD_NAME = "v1/ACCOUNT_DASHBOARD_SHARD_NAME:%{account_id}"
 
+  LEADERBOARD_MINILIST_REALTIME_FALCON = 'v1/LEADERBOARD_MINILIST_REALTIME_FALCON:%{account_id}:%{user_id}'.freeze
+
   class << self
 
     include MemcacheReadWriteMethods

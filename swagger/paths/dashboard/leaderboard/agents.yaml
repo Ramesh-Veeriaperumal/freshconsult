@@ -1,0 +1,17 @@
+get: 
+  tags: [leaderboard]
+  description: Leaderboard information about agents
+  parameters:
+    - name: mini_list
+      in: query
+      type: string
+      required: true
+  responses: 
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/leaderboard_agents_lists'
+    403:
+      description: Access denied
+    400:
+      description: Bad request error

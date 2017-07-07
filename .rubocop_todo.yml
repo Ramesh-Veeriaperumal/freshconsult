@@ -10,6 +10,10 @@
 Lint/UnusedBlockArgument:
   Enabled: false
 
+#suppress this warning
+Rails/HttpPositionalArguments:
+  Enabled: false
+
 # Offense count: 9
 Metrics/AbcSize:
   Max: 21

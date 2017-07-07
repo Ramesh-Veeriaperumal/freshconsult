@@ -423,15 +423,11 @@
             "in": "body",
             "required": true,
             "schema": {
-              "required": [
-                "tracker_id"
-              ],
-              "properties": {
-                "tracker_id": {
-                  "type": "integer",
-                  "description": "Display ID of tracker ticket"
+              "allOf": [
+                {
+                  "$ref": "#/definitions/link_input"
                 }
-              }
+              ]
             }
           }
         ],
@@ -450,6 +446,81 @@
           },
           "404": {
             "description": "Ticket not found"
+          }
+        }
+      }
+    },
+    "/tickets/{id}/unlink": {
+      "put": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Unlink Ticket",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      }
+    },
+    "/tickets/bulk_link": {
+      "put": {
+        "summary": "Bulk Link",
+        "tags": [
+          "ticket"
+        ],
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/bulk_action_input"
+                },
+                {
+                  "$ref": "#/definitions/link_input"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
           }
         }
       }
@@ -736,20 +807,11 @@
               "$ref": "#/definitions/associated_tickets"
             }
           },
-          "400": {
-            "description": "Bad request error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          },
           "403": {
             "description": "Access denied"
           },
           "404": {
             "description": "Ticket not found"
-          },
-          "500": {
-            "description": "Internal error"
           }
         }
       }
@@ -3530,6 +3592,309 @@
           }
         }
       }
+    },
+    "/dashboards": {
+      "get": {
+        "tags": [
+          "dashboard"
+        ],
+        "description": "Config of all the widgets in dashboard",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/dashboard_widget_config"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/dashboards/ticket_summaries": {
+      "get": {
+        "tags": [
+          "dashboard"
+        ],
+        "description": "Get the scorecard widget",
+        "parameters": [
+          {
+            "name": "group_ids",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "in": "query",
+            "description": "Selected group's id for filtering scorecard"
+          },
+          {
+            "name": "product_ids",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "in": "query",
+            "description": "Selected product's id for filtering scorecard"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/scorecard"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/dashboards/satisfaction_surveys": {
+      "get": {
+        "tags": [
+          "dashboard"
+        ],
+        "description": "customer satisfaction survey widget",
+        "responses": {
+          "200": {
+            "description": "success",
+            "schema": {
+              "$ref": "#/definitions/satisfaction_survey_widget"
+            }
+          },
+          "403": {
+            "description": "access denied"
+          }
+        }
+      }
+    },
+    "/dashboards/forum_moderations": {
+      "get": {
+        "tags": [
+          "dashboard"
+        ],
+        "description": "Forum moderation widget",
+        "responses": {
+          "200": {
+            "description": "success",
+            "schema": {
+              "$ref": "#/definitions/forum_moderation_widget"
+            }
+          },
+          "403": {
+            "description": "access denied"
+          }
+        }
+      }
+    },
+    "/dashboards/unresolved_tickets": {
+      "get": {
+        "tags": [
+          "dashboard"
+        ],
+        "description": "Unresolved Tickets Count",
+        "Content": "Get the aggregated counts of unresolved tickets",
+        "parameters": [
+          {
+            "name": "widget",
+            "description": "Should be present if called for widget",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "group_by",
+            "description": "Columns for grouping counts",
+            "type": "string",
+            "in": "query",
+            "required": true,
+            "enum": [
+              "group_id",
+              "responder_id"
+            ]
+          },
+          {
+            "name": "group_ids",
+            "description": "Selected groups for filtering",
+            "type": "Array",
+            "in": "query",
+            "items": {
+              "type": "int"
+            }
+          },
+          {
+            "name": "responder_ids",
+            "description": "Selected agents for filtering",
+            "type": "Array",
+            "in": "query",
+            "items": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "status_ids",
+            "description": "Selected statuses for filtering",
+            "type": "Array",
+            "in": "query",
+            "items": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/unresolved_tickets"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/dashboards/ticket_trends": {
+      "get": {
+        "tags": [
+          "dashboard"
+        ],
+        "description": "Ticket trends widgets",
+        "parameters": [
+          {
+            "name": "group_ids",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "in": "query",
+            "description": "Selected group's id for filtering scorecard"
+          },
+          {
+            "name": "product_ids",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "in": "query",
+            "description": "Selected product's id for filtering scorecard"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ticket_trends_widget"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "503": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/dashboards/ticket_metrics": {
+      "get": {
+        "tags": [
+          "dashboard"
+        ],
+        "description": "Ticket metrics widgets",
+        "parameters": [
+          {
+            "name": "group_ids",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "in": "query",
+            "description": "Selected group's id for filtering scorecard"
+          },
+          {
+            "name": "product_ids",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "in": "query",
+            "description": "Selected product's id for filtering scorecard"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ticket_metrics_widget"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/dashboards/leaderboard_agents": {
+      "get": {
+        "tags": [
+          "leaderboard"
+        ],
+        "description": "Leaderboard information about agents",
+        "parameters": [
+          {
+            "name": "mini_list",
+            "in": "query",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/leaderboard_agents_lists"
+            }
+          },
+          "400": {
+            "description": "Bad request error"
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -4631,6 +4996,19 @@
           "type": "integer",
           "format": "int64",
           "description": "ID of scenario to be executed"
+        }
+      }
+    },
+    "link_input": {
+      "type": "object",
+      "required": [
+        "tracker_id"
+      ],
+      "properties": {
+        "tracker_id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Display ID of tracker ticket"
         }
       }
     },
@@ -6706,6 +7084,248 @@
           ]
         }
       ]
+    },
+    "dashboard_widget_config": {
+      "type": "object",
+      "properties": {
+        "dashboards": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "id of the dashboard object"
+            },
+            "widgets": {
+              "description": "This will give all the data about widget configuration which include widget's name and physical attributes",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "Id of the widget"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the widget"
+                  },
+                  "width": {
+                    "type": "integer",
+                    "description": "Width of the widget"
+                  },
+                  "height": {
+                    "type": "integer",
+                    "description": "Height of the widget"
+                  },
+                  "x": {
+                    "type": "integer",
+                    "description": "Horiontal postion in the xy plane"
+                  },
+                  "y": {
+                    "type": "integer",
+                    "description": "Vertical postion in the xy plane"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "scorecard": {
+      "type": "object",
+      "properties": {
+        "ticket_summaries": {
+          "description": "Ticket summary data for scorecard widget",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "description": "represents id of ticket summary item"
+              },
+              "name": {
+                "type": "string",
+                "description": "Name of the status on the scorecard"
+              },
+              "value": {
+                "type": "integer",
+                "description": "Count of tickets in that status"
+              }
+            }
+          }
+        }
+      }
+    },
+    "satisfaction_survey_widget": {
+      "type": "object",
+      "properties": {
+        "satisfaction_surveys": {
+          "description": "data for customer satisfaction survey",
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "survey_responded": {
+              "type": "integer",
+              "description": "number of survey responses that agent has got"
+            },
+            "results": {
+              "type": "object",
+              "properties": {
+                "positive": {
+                  "type": "integer",
+                  "description": "percentage of positive responses to the survey"
+                },
+                "neutral": {
+                  "type": "integer",
+                  "description": "percentage of neutral responses to the survey"
+                },
+                "negative": {
+                  "type": "integer",
+                  "description": "percentage of negative responses to the survey"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "forum_moderation_widget": {
+      "type": "object",
+      "properties": {
+        "moderation_counts": {
+          "description": "Forum posts count that are awaiting moderation or spam",
+          "type": "object",
+          "properties": {
+            "spam": {
+              "type": "integer",
+              "description": "Count of spam forum posts"
+            },
+            "unpublished": {
+              "type": "integer",
+              "description": "Count of unpublished forum posts awaiting moderation"
+            }
+          }
+        }
+      }
+    },
+    "unresolved_tickets": {
+      "type": "object",
+      "properties": {
+        "unresolved_tickets": {
+          "description": "Aggregated values of unresolved tickets for group by values",
+          "type": "Array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "group_by_choice": {
+                "type": "integer",
+                "description": "Either group_id or responder_id value based on group_by choice in request"
+              },
+              "stats": {
+                "type": "Array",
+                "description": "Count value for each status",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "Status ID"
+                    },
+                    "count": {
+                      "type": "integer",
+                      "description": "Count of tickets with provided group_id/responder_id and status"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "ticket_trends_widget": {
+      "type": "object",
+      "properties": {
+        "today": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "yesterday": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "last_dump_time": {
+          "type": "string"
+        }
+      }
+    },
+    "ticket_metrics_widget": {
+      "type": "object",
+      "properties": {
+        "received": {
+          "type": "number"
+        },
+        "resolved": {
+          "type": "number"
+        },
+        "first_response": {
+          "type": "string"
+        },
+        "avg_response": {
+          "type": "string"
+        },
+        "sla": {
+          "type": "number"
+        },
+        "last_dump_time": {
+          "type": "string"
+        }
+      }
+    },
+    "leaderboard_agents_lists": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "rank_holders": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "rank": {
+                  "type": "number"
+                },
+                "score": {
+                  "type": "number"
+                },
+                "user_id": {
+                  "type": "number"
+                },
+                "avatar": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "parameters": {
