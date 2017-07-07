@@ -18,6 +18,7 @@
     tags: ['ticket filter']
     summary: Update Ticket Filter
     parameters:
+      - $ref: '#/parameters/id'
       - name: data
         in: body
         required: true

@@ -110,15 +110,15 @@ module Ember
       def load_conversations
         order_type = params[:order_type]
         order_conditions = "created_at #{order_type}"
-        since_id = (params[:since_id] and params[:since_id].to_i <= 0) ? nil : params[:since_id]
+        since_id = params[:since_id] && params[:since_id].to_i <= 0 ? nil : params[:since_id]
 
         conversations = @ticket.notes.visible.exclude_source('meta').preload(conditional_preload_options).order(order_conditions)
         filtered_conversations = if since_id
-          last_created_at = @ticket.notes.where(:id => since_id).pluck(:created_at).first
-          conversations.created_since(since_id, last_created_at)
-        else
-          conversations
-        end
+                                   last_created_at = @ticket.notes.where(id: since_id).pluck(:created_at).first
+                                   conversations.created_since(since_id, last_created_at)
+                                 else
+                                   conversations
+                                 end
 
         @items = paginate_items(filtered_conversations)
         @items_count = conversations.count
@@ -258,8 +258,14 @@ module Ember
           if @include_original_attachments
             @ticket.all_attachments
           elsif @attachment_ids
-            @ticket.all_attachments.select { |x| @attachment_ids.include?(x.id) }
+            (@ticket.all_attachments | conversations_attachments).select { |x| @attachment_ids.include?(x.id) }
           end
+        end
+      end
+
+      def conversations_attachments
+        @converation_attachments ||= begin
+          @ticket.notes.visible.preload(:attachments).map(&:attachments).flatten
         end
       end
 
@@ -341,7 +347,6 @@ module Ember
       end
 
       def fetch_cc_bcc_emails
-        return unless [:reply_template].include?(action_name.to_sym)
         @cc_emails = reply_cc_emails(@ticket)
         @bcc_emails = bcc_drop_box_email
       end
@@ -359,10 +364,15 @@ module Ember
 
       def after_load_object
         load_notable_from_item # find ticket in case of APIs which has @item.id in url
-        return false if @ticket && !verify_ticket_state
-        return false if @ticket && !verify_ticket_permission(api_current_user, @ticket) # Verify ticket permission if ticket exists.
-        return false if update? && !can_update?
+        return false if check_ticket_action_permissions
+
         check_agent_note if update? || destroy?
+      end
+
+      def check_ticket_action_permissions
+        (@ticket && (!verify_ticket_state ||
+          verify_ticket_permission(api_current_user, @ticket))) || # Verify ticket permission if ticket exists.
+          (update? && !can_update?)
       end
 
       def verify_ticket_state
@@ -374,7 +384,7 @@ module Ember
       end
 
       def tickets_scoper
-        return super if (ConversationConstants::TICKET_STATE_CHECK_NOT_REQUIRED.include?(action_name.to_sym))
+        return super if ConversationConstants::TICKET_STATE_CHECK_NOT_REQUIRED.include?(action_name.to_sym)
         super.where(ApiTicketConstants::CONDITIONS_FOR_TICKET_ACTIONS)
       end
 

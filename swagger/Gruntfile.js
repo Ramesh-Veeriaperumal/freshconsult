@@ -19,6 +19,7 @@ module.exports = function(grunt) {
     var resolve = require('json-refs').resolveRefs;
     var YAML = require('yaml-js');
     var fs = require('fs');
+    var swaggerParser = require('swagger-parser');
 
     var root = YAML.load(fs.readFileSync(filenames.source).toString());
     var options = {
@@ -36,8 +37,17 @@ module.exports = function(grunt) {
             return console.log(err);
         }
         grunt.log.writeln("Unified Swagger file generated");
+        swaggerParser.validate('swagger.json', function(err, api) {
+          if (err) {
+            grunt.log.error('Swagger.json Validation Error:');
+            grunt.log.error(err.stack);
+            done(false);
+          }
+          else {
+            done();
+          }
+        });
       });
-      done();
     }, function (err) {
       grunt.log.error('Error');
       grunt.log.error(err.stack);

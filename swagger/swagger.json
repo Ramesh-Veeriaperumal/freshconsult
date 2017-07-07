@@ -246,6 +246,9 @@
         "description": "Update a ticket",
         "parameters": [
           {
+            "$ref": "#/parameters/id"
+          },
+          {
             "name": "data",
             "in": "body",
             "required": true,
@@ -2311,6 +2314,9 @@
         "summary": "Create a draft attachment",
         "parameters": [
           {
+            "$ref": "#/parameters/id"
+          },
+          {
             "name": "data",
             "in": "body",
             "required": true,
@@ -2502,6 +2508,9 @@
         ],
         "summary": "Update Ticket Filter",
         "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
           {
             "name": "data",
             "in": "body",
