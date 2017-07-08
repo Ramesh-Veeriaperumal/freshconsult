@@ -7,12 +7,8 @@ put:
       in: body
       required: true
       schema:
-        required:
-          - tracker_id
-        properties:
-          tracker_id:
-            type: integer
-            description: Display ID of tracker ticket
+        allOf:
+          - $ref: '#/definitions/link_input'
   responses:
     204:
       description: Success

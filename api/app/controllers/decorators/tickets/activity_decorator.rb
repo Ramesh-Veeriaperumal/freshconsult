@@ -64,7 +64,7 @@ module Tickets
     def to_hash
       {
         id: published_time, # Just for the sake of giving an id
-        performer: performer_hash,
+        performer: performer,
         highlight: summary.nil? ? nil : summary.to_i,
         ticket_id: @ticket.display_id,
         performed_at: parse_activity_time(published_time),
@@ -74,26 +74,23 @@ module Tickets
 
     private
 
-      def performer_hash
-        {
-          type: performer_type,
-          performer_type => send("performing_#{performer_type}")
-        }
+      def performer
+        performing_hash = send("performing_#{performer_type}")
+        return if performing_hash.nil?
+        performer_hash = {}
+        performer_hash[:type] = performer_type
+        performer_hash[:user_id] = actor if performer_type == :user
+        performer_hash[performer_type] = performing_hash if performing_hash.present?
+        performer_hash
       end
 
       def performing_user
-        user = @query_data_hash[:users][actor]
-        if user.present?
-          {
-            id: user.id,
-            name: user.name,
-            avatar: avatar_hash(user.avatar),
-            is_agent: user.agent?,
-            deleted: user.deleted
-          }.merge(
-            User.current.privilege?(:view_contacts) ? { email: user.email } : {}
-          )
-        end
+        user = get_user(actor)
+        user_hash(user) || {} if user.present?
+      end
+
+      def user_hash(user)
+        ContactDecorator.new(user, {}).to_hash unless user.agent? || @ticket.requester_id == user.id
       end
 
       def performing_system

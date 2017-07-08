@@ -62,3 +62,8 @@ end
 ##### What to do when the passenger server refuses to start
 Try opening the rails console. If there is a problem with the code or missing config files/keys, most of them error out here.
 Fix them and try restarting the server. Chances are high that you may need update the recipes or pull the cookbooks.
+
+
+For Stack setup and related scripts refer to the doc :
+
+https://docs.google.com/a/freshdesk.com/document/d/192PFrvOjrDmYgMDjGbKkHHEjGnN40ZWpEbP6Jmazpng/edit?usp=sharing

@@ -38,6 +38,30 @@ class Dashboard::RedshiftResponseParser
     process_glance_raw_data
   end
 
+  def dashboard_v2_trends
+    parse_trends_v2
+  end
+
+  def dashboard_v2_metrics
+    metrics_data = @raw_data[0].to_h
+    metrics = {
+      :received         => metrics_data["received_count"].to_i,
+      :resolved         => metrics_data["resolved_count"].to_i,
+      :last_dump_time   => @dump_time
+    }
+    if (metrics_data["resolution_sla_count"].to_i.zero? || metrics_data["resolved_count"].to_i.zero?)
+      sla = 0
+    else
+      sla = ((metrics_data["resolution_sla_count"].to_f/metrics_data["resolved_count"].to_f) * 100).round
+    end
+    first_response = metrics_data["first_response_count"].to_i.zero? ? 0 : (metrics_data["first_response_sum"].to_i/metrics_data["first_response_count"].to_i)
+    avg_response   = metrics_data["response_count"].to_i.zero? ? 0 : (metrics_data["response_sum"].to_i/metrics_data["response_count"].to_i)
+    metrics[:sla]  = sla
+    metrics[:first_response] = hhmm_v2(first_response)
+    metrics[:avg_response]   = hhmm_v2(avg_response)
+    metrics
+  end
+
   def admin_group_received_resolved
     data_hash = process_admin_group_received_resolved
     data_values = data_hash.deep_symbolize_keys.values
@@ -470,6 +494,38 @@ class Dashboard::RedshiftResponseParser
 
   def sort_by_received_resolved result_list
     result_list.sort_by{|key, value| value["received_count"].to_i }.reverse.to_h
+  end
+
+  def hhmm_v2 seconds
+    hh = (seconds/3600).to_i
+    mm = ((seconds % 3600) / 60).to_i
+    time = ""
+    time = (time + hh.to_s.rjust(1,'0') + "h " ) if hh > 0
+    time = (time + mm.to_s.rjust(1,'0') + "m" )
+    time
+  end
+
+  def parse_trends_v2  
+    yes_count_aray = hours_array_v2_trends 23
+    today_max_hour = Time.zone.parse(@dump_time.to_s).in_time_zone(TimeZone.find_time_zone).strftime("%k").to_i  
+    time_count_array = hours_array_v2_trends today_max_hour
+    result = {
+      :today          => time_count_array,
+      :yesterday      => yes_count_aray,
+      :last_dump_time => @dump_time
+    }
+    @raw_data.each do |data|
+      if data["range_benchmark"] == "t"
+        time_count_array[data["h"].to_i] = data["received_count"].to_i
+      else
+        yes_count_aray[data["h"].to_i] = data["received_count"].to_i
+      end
+    end
+    result
+  end
+
+  def hours_array_v2_trends max_hour
+    Array.new(max_hour+1, 0)
   end
 
 end

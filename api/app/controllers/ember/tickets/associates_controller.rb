@@ -5,7 +5,8 @@ module Ember
       include HelperConcern
 
       before_filter :ticket_permission?
-      before_filter :link_tickets_enabled?, only: [:link]
+      before_filter :load_object
+      before_filter :link_tickets_enabled?, only: [:link, :unlink]
       before_filter :feature_enabled?, only: [:prime_association, :associated_tickets]
 
       TICKET_ASSOCIATE_CONSTANTS_CLASS = :TicketAssociateConstants.to_s.freeze
@@ -24,6 +25,15 @@ module Ember
       def associated_tickets
         return log_and_render_404 unless @item.tracker_ticket? || @item.assoc_parent_ticket?
         load_associations
+      end
+
+      def unlink
+        return unless validate_body_params(@item) && validate_delegator(@item)
+        if @item.remove_associations!
+          head 204
+        else
+          render_errors(@item.errors)
+        end
       end
 
       def prime_association

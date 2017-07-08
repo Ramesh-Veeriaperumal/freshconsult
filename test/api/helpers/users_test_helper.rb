@@ -33,7 +33,6 @@ module UsersTestHelper
       custom_fields:  expected_custom_field || contact_custom_field,
       avatar: expected_output[:avatar] || get_contact_avatar(contact)
     }
-
     result.merge!(
       other_emails: expected_output[:other_emails] ||
       contact.user_emails.where(primary_role: false).map(&:email)
@@ -46,8 +45,9 @@ module UsersTestHelper
     result
   end
 
-  def private_api_contact_pattern(expected_output = {}, ignore_extra_keys = true, contact)
+  def private_api_contact_pattern(expected_output = {}, ignore_extra_keys = true, exclude_custom_fields = false, contact)
     result = contact_pattern(expected_output, ignore_extra_keys, contact)
+    result.except!(:custom_fields) if result[:custom_fields].empty? || exclude_custom_fields
     result.merge!(whitelisted: contact.whitelisted,
       facebook_id: (expected_output[:facebook_id] || contact.fb_profile_id))
     result.merge!(
@@ -71,11 +71,8 @@ module UsersTestHelper
     }
 
     if @private_api
-      contact_avatar.merge!({
-        # changing from direct url to string because of changing X-Amz-Signature in the URL
-        attachment_url: String,
-        thumb_url: String
-      })
+      contact_avatar[:attachment_url] = String
+      contact_avatar[:thumb_url] = String
     else
       contact_avatar[:avatar_url] = String
     end
@@ -165,19 +162,19 @@ module UsersTestHelper
 
   # private
   def v1_contact_params
-    comp  = Company.first || create_company
+    comp = Company.first || create_company
     {
       name: Faker::Lorem.characters(10), address: Faker::Lorem.characters(10), phone: '1234567890',
-      mobile: '1234567891', description: Faker::Lorem.characters(20), email: Faker::Internet.email,  job_title: Faker::Lorem.characters(10),
+      mobile: '1234567891', description: Faker::Lorem.characters(20), email: Faker::Internet.email, job_title: Faker::Lorem.characters(10),
       language: 'en', time_zone: 'Chennai', company_id: comp.id
     }
   end
 
   def v2_contact_params
-    comp  = create_company
+    comp = create_company
     {
-      name: Faker::Lorem.characters(10), address: Faker::Lorem.characters(10),  phone: '1234567892',
-      mobile: '1234567893', description: Faker::Lorem.characters(20), email: Faker::Internet.email,  job_title: Faker::Lorem.characters(10),
+      name: Faker::Lorem.characters(10), address: Faker::Lorem.characters(10), phone: '1234567892',
+      mobile: '1234567893', description: Faker::Lorem.characters(20), email: Faker::Internet.email, job_title: Faker::Lorem.characters(10),
       language: 'en', time_zone: 'Chennai', company_id: comp.id
     }
   end
@@ -220,7 +217,7 @@ module UsersTestHelper
     @account.users.where(id: ids).each do |user|
       refute user.blocked
       refute user.deleted
-      assert user.blocked_at == nil
+      assert user.blocked_at.nil?
       assert user.whitelisted
     end
   end
@@ -313,7 +310,7 @@ module UsersTestHelper
       @account.make_current
       temp_ticket = create_ticket(requester_id: contact.id, status: 5)
       Sidekiq::Testing.inline! do
-        Archive::BuildCreateTicket.perform_async({ account_id: @account.id, ticket_id: temp_ticket.id })
+        Archive::BuildCreateTicket.perform_async(account_id: @account.id, ticket_id: temp_ticket.id)
       end
     end
     @account.archive_tickets.permissible(@agent).requester_active(contact).newest(10)
@@ -325,7 +322,7 @@ module UsersTestHelper
     tickets + contact.recent_posts
   end
 
-  def user_activity_response(objects, meta = false)
+  def user_activity_response(objects, _meta = false)
     response_pattern = objects.map do |item|
       {
         type: item.class.name.gsub('Helpdesk::', ''),

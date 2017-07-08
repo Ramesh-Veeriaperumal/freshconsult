@@ -40,7 +40,7 @@ class TicketDecorator < ApiDecorator
 
   def privilege_based_requester_info
     return unless @sideload_options.include?('requester')
-    contact_decorator = ContactDecorator.new(record.requester, name_mapping: @contact_name_mapping, company_name_mapping: @company_name_mapping)
+    contact_decorator = ContactDecorator.new(record.requester, name_mapping: @contact_name_mapping)
     User.current.privilege?(:view_contacts) ? contact_decorator.full_requester_hash : contact_decorator.restricted_requester_hash
   end
 
@@ -88,6 +88,14 @@ class TicketDecorator < ApiDecorator
     if @sideload_options.include?('conversations')
       ticket_conversations = record.notes.visible.exclude_source('meta').preload(:schema_less_note, :note_old_body, :attachments).order(:created_at).limit(ConversationConstants::MAX_INCLUDE)
       ticket_conversations.map { |conversation| ConversationDecorator.new(conversation, ticket: record).construct_json }
+    end
+  end
+
+  def full_company_hash
+    if @sideload_options.include?('company')
+      company = record.company
+      return unless company
+      CompanyDecorator.new(company, name_mapping: @company_name_mapping).to_hash
     end
   end
 
@@ -215,6 +223,8 @@ class TicketDecorator < ApiDecorator
       subject: subject,
       association_type: association_type,
       status: status,
+      created_at: created_at.try(:utc),
+      stats: stats,
       permission: @permission
     }
   end

@@ -31,7 +31,11 @@ class BadRequestError < BaseError
     responder_phone: :agent,
     application_id: :application,
     note_id: :note,
-    filter: :ticket_filter
+    filter: :ticket_filter,
+    responder_ids: :agent,
+    group_ids: :group,
+    product_ids: :product,
+    status_ids: :status
   }
 
   def initialize(attribute, value, params_hash = {})

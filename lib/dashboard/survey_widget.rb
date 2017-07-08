@@ -1,4 +1,4 @@
-class Dashboard::Survey < Dashboard
+class Dashboard::SurveyWidget < Dashboard
 
   SURVEY_ID_NAME_MAPPING = {
     1 => "Positive",

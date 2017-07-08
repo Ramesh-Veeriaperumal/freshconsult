@@ -25,7 +25,7 @@ module Dashboard::UtilMethods
       sum_value   = result_hash.last.sum
       result_arr << ((sum_value.zero? and !valid_row?(group_value.first)) ? [] : [result_hash, sum_value].flatten)
     end
-    return result_array.reject(&:empty?) if !@filter_condition.blank? || User.current.assigned_ticket_permission
+    return result_array.reject(&:empty?) if @filter_condition.key?(@report_type) || User.current.assigned_ticket_permission
 
     #Handle unassign case - special case to put it as a separate row in response array to UI.
     mapped_status_arr = statuses_list.inject(["unassigned"]) do |status_arr,status_list|

@@ -32,10 +32,11 @@ module ApiConstants
                        ContactConstants::LOAD_OBJECT_EXCEPT +
                        ApiTicketConstants::LOAD_OBJECT_EXCEPT +
                        DraftConstants::LOAD_OBJECT_EXCEPT +
-                       SubscriptionConstants::LOAD_OBJECT_EXCEPT +
+                       SubscriptionConstants::LOAD_OBJECT_EXCEPT+
                        SpotlightConstants::LOAD_OBJECT_EXCEPT +
                        AutocompleteConstants::LOAD_OBJECT_EXCEPT +
-                       AttachmentConstants::LOAD_OBJECT_EXCEPT +
+                       AttachmentConstants::LOAD_OBJECT_EXCEPT + 
+                       ApiLeaderboardConstants::LOAD_OBJECT_EXCEPT+
                        Pipe::HelpdeskConstants::LOAD_OBJECT_EXCEPT+
                        ExportConstants::LOAD_OBJECT_EXCEPT
 

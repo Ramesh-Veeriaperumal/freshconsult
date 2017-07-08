@@ -998,24 +998,28 @@ module TicketActivitiesTestHelper
     {
       id: tkt_data.published_time,
       ticket_id: ticket.display_id,
-      performer: get_performer_hash(tkt_data, content),
+      performer: get_performer_hash(tkt_data, content, ticket),
       highlight: tkt_data.summary.nil? ? nil : tkt_data.summary.to_i,
       performed_at: Time.at(tkt_data.published_time / 10_000).utc
     }
   end
 
-  def get_performer_hash(tkt_data, content)
+  def get_performer_hash(tkt_data, content, ticket)
     performer_type = tkt_data.event_type.to_sym
     performer_content = if performer_type == :user
                           user = get_user(tkt_data.actor)
-                          {
-                            id: user.id,
-                            name: user.name,
-                            avatar: get_contact_avatar(user),
-                            is_agent: user.agent?,
-                            email: user.email,
-                            deleted: user.deleted
-                          }
+                          user_hash = { user_id: user.id }
+                          contact_hash = if User.current.privilege?(:view_contacts)
+                                           private_api_contact_pattern({}, true, true, user)
+                                         else
+                                           {
+                                             id: user.id,
+                                             name: user.name,
+                                             avatar: Hash
+                                           }
+                                         end
+                          user_hash[:user] = contact_hash unless user.agent? || ticket.requester_id == user.id
+                          user_hash
                         elsif content[:system_changes].present?
                           value = content[:system_changes]
                           rule = get_rule(value.keys.first.to_s.to_i)
@@ -1034,10 +1038,16 @@ module TicketActivitiesTestHelper
                           }
                         end
 
-    {
-      type: performer_type,
-      performer_type => performer_content
+    result = {
+      type: performer_type
     }
+    if performer_type == :user
+      result[:user_id] = performer_content[:user_id]
+      result[:user] = performer_content[:user] if performer_content[:user].present?
+    else
+      result[:system] = performer_content
+    end
+    result
   end
 
   def get_user(user_id)

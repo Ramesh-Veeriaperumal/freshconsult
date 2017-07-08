@@ -1,0 +1,23 @@
+type: object
+properties:
+  satisfaction_surveys:
+    description: data for customer satisfaction survey
+    type: object
+    properties:
+      id: 
+        type: integer
+      survey_responded: 
+        type: integer
+        description: number of survey responses that agent has got
+      results:
+        type: object
+        properties:
+          positive:
+            type: integer
+            description: percentage of positive responses to the survey
+          neutral: 
+            type: integer
+            description: percentage of neutral responses to the survey
+          negative:
+            type: integer
+            description: percentage of negative responses to the survey

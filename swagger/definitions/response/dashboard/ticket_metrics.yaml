@@ -1,0 +1,14 @@
+type: object
+properties:
+  received:
+    type: number
+  resolved:
+    type: number
+  first_response:
+    type: string
+  avg_response:
+    type: string
+  sla:
+    type: number
+  last_dump_time:
+    type: string
