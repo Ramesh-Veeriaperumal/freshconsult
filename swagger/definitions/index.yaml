@@ -65,6 +65,8 @@
     $ref: ./request/drafts/draft.yaml
   execute_scenario_input:
     $ref: ./request/tickets/execute_scenario.yaml
+  link_input:
+    $ref: ./request/tickets/link_input.yaml
   cloud_file_input:
     $ref: ./request/cloud_files/cloud_file.yaml
   query_hash:
@@ -216,3 +218,22 @@
     allOf:
       - $ref: '#/definitions/extended_canned_response'
       - $ref: ./response/canned_response/show.yaml
+
+  #dashboard
+  dashboard_widget_config: 
+    $ref: './response/dashboard/widget_config.yaml'
+  scorecard: 
+    $ref: './response/dashboard/scorecard.yaml'
+  satisfaction_survey_widget:
+    $ref: './response/dashboard/satisfaction_survey.yaml'
+  forum_moderation_widget:
+    $ref: './response/dashboard/forum_moderation.yaml'
+  unresolved_tickets:
+    $ref: './response/dashboard/unresolved_ticket.yaml'
+  ticket_trends_widget:
+    $ref: './response/dashboard/ticket_trends.yaml'
+  ticket_metrics_widget:
+    $ref: './response/dashboard/ticket_metrics.yaml'
+  leaderboard_agents_lists:
+    $ref: './response/dashboard/leaderboard/agents.yaml'
+

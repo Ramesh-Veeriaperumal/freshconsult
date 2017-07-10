@@ -50,7 +50,7 @@ module DashboardControllerMethods
   end
 
   def survey_info
-    widget_count = Dashboard::Survey.new.fetch_records
+    widget_count = Dashboard::SurveyWidget.new.fetch_records
     render :json => {:survey => widget_count}.to_json
   end
 

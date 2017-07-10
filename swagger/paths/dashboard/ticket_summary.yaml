@@ -1,0 +1,27 @@
+get:
+  tags: [dashboard]
+  description: Get the scorecard widget
+  parameters:
+    - name: group_ids
+      type: array
+      items: 
+        type: string
+      in: query
+      description: Selected group's id for filtering scorecard
+    - name: product_ids
+      type: array
+      items: 
+        type: string
+      in: query
+      description: Selected product's id for filtering scorecard
+  responses: 
+    200: 
+      description: Success
+      schema:
+        $ref: '#/definitions/scorecard'
+    403:
+      description: Access denied
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

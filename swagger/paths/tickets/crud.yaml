@@ -46,6 +46,7 @@
     tags: [ticket]
     description: Update a ticket
     parameters:
+      - $ref: '#/parameters/id'
       - name: data
         in: body
         required: true

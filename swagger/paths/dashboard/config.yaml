@@ -1,0 +1,14 @@
+get:
+  tags: [dashboard]
+  description: Config of all the widgets in dashboard
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/dashboard_widget_config'
+    403:
+      description: Access denied
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
