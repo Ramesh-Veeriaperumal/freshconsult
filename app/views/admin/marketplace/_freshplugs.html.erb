@@ -31,8 +31,10 @@
                           no_connection: "<%= I18n.t('marketplace.no_connection') %>",
                           installing: "<%= I18n.t('marketplace.installing') %>",
                           api_error : "<%= I18n.t('marketplace.api_error') %>",
+                          app_setup_error: "<%= I18n.t('marketplace.install_action.app_setup_error') %>",
                           field_blank: "<%= I18n.t('marketplace.field_blank') %>",
-                          suspended_plan_info: "<%= I18n.t('suspended_plan_info') %>"
+                          suspended_plan_info: "<%= I18n.t('suspended_plan_info') %>",
+                          accapi_poll_interval: "<%= MarketplaceConfig::ACCOUNT_API_POLL_INTERVAL %>"
                         }
   var templateDockManager = new TemplateDockManager(extensionsWrapper, customMessages, tabName);
 

@@ -27,28 +27,6 @@
 								:class => 'mobile_switchBtn') if mobile_agent? && allowed_domain? %>
 		</div>
 		<div class="header-wrapper">
-			<% if false %>
-				<div id="collab-bell" class="collab-bell">
-					<a id="bell-icon-link" class="bell-icon-link product-notification-link tooltip" data-placement="below">
-						<%= font_icon "bell", { :size => 30, :class => 'bell-icon' } %>
-						<span id="noti-count" class="noti-count hide"></span>
-					</a>
-					<ul id="collab-notification-dd" class="collab-notification-dd hide">
-						<li class="collab-notification-dd-head collab-notification-list-item"> <a class="collab-notification-link light-text"> <%= t('collaboration.notifications') %> </a></li>
-						<li class="info collab-notification-list-item"> <a class="collab-notification-link light-text"> <%= t('collaboration.no_notifications') %> </a></li>
-						<li class="list-container">
-							<ul id="collab-notification-list" class="collab-notification-list">
-							</ul>
-						</li>
-						<li class="collab-notification-dd-foot collab-notification-list-item">
-							<a href="/helpdesk/tickets/filter/ongoing_collab" class="collab-notification-link"> 
-								<%= t('collaboration.view_all_collaborations') %> 
-								<span id="notifiaction-total-collab"></span>
-							</a>
-						</li>
-					</ul>
-				</div>	
-			<% end %>
 			<% if current_user then %>
 			  	<div class="header-link-wrapper">
 			  		<% if current_account.freshfone_active? %>
@@ -144,8 +122,8 @@
 			  <% end %>    
 				<% if current_user.agent? %>
 					<% if current_account.user_notifications_enabled? %>
-						<div id="user_notify_header" class="header-notification-wrapper" rel="remote-load" 
-								data-url="/notification/user_notification">
+						<div id="user_notify_header" class="header-notification-wrapper">
+								<%= render :partial => "/notification/user_notification" %>
 						</div>
 					<% end %>
           <% unless Rails.env.development? %>
@@ -241,7 +219,7 @@
 </div>
 
 <% if current_account.collaboration_enabled? and current_user %>
-	<input type="hidden" id="collab-model-data" data-model-payload='{"clientId": "<%= Collaboration::Ticket::HK_CLIENT_ID %>", "clientAccountId": "<%=current_account.id%>", "initAuthToken": "<%= Collaboration::Ticket.collab_token %>", "userId": "<%= current_user.id %>", "userName": "<%= current_user %>", "userEmail": "<%= current_user.email %>", "collab_url": <%= CollabConfig['collab_url'].to_json.html_safe %>, "rts_url": <%= CollabConfig['rts_url'].to_json.html_safe %>}'>
+	<input type="hidden" id="collab-account-payload" data-account-payload='<%= Collaboration::Ticket.new.account_payload %>'>
 <% end %>
 
 <%  if logged_in? and current_user.agent?  %>

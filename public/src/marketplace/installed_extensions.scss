@@ -131,6 +131,26 @@
 		.plug-actions{
       @include float(right);
 		}
+    .mkp-prog-text {
+      width: 70%;
+      padding-top: 5px;
+      @include float(right);
+    }
+    .mkp-prog-spinner {
+      width: 30%;
+      padding-top: 25px;
+      @include float(left);
+    }
+    .mkp-prog{
+      @include float(right);
+      background: white;
+      width: 120px;
+      height: 25px;
+      border-radius: 25px;
+      box-shadow: 0 0 8px grey;
+      padding: 1px;
+      color: grey;
+    }
 		.btn-default{
 			background: #F0F0F0;
 			border: none;
@@ -208,7 +228,11 @@
     }
   }
 }
-
+.mkp-error-details {
+  cursor: pointer;
+  font-size: 14px;
+  padding-top: 8px;
+}
 .custom-apps-list{
   margin-top: 1px;
   .app-custom{

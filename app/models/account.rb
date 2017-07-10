@@ -39,7 +39,8 @@ class Account < ActiveRecord::Base
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
 
   include Account::Setup
-  
+  include Account::BackgroundFixtures
+
   scope :active_accounts,
               :conditions => [" subscriptions.state != 'suspended' "], 
               :joins => [:subscription]
@@ -119,6 +120,14 @@ class Account < ActiveRecord::Base
     # (ES_ENABLED && launched?(:es_v1_enabled))
   end
 
+  def service_reads_enabled?
+    launched?(:service_reads)
+  end
+
+  def service_writes_enabled?
+    launched?(:service_writes)
+  end
+
   def permissible_domains
     helpdesk_permissible_domains.pluck(:domain).join(",")
   end
@@ -147,10 +156,6 @@ class Account < ActiveRecord::Base
 
   def round_robin_capping_enabled?
     features?(:round_robin_load_balancing)
-  end
-  
-  def skill_based_round_robin_enabled?
-    features?(:skill_based_round_robin)
   end
 
   def validate_required_ticket_fields?
@@ -247,6 +252,7 @@ class Account < ActiveRecord::Base
     key = TICKET_DISPLAY_ID % { :account_id => self.id }
     get_display_id_redis_key(key).to_i
   end
+
   
   def account_managers
     technicians.select do |user|

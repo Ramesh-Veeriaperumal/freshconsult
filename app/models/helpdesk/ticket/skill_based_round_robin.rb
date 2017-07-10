@@ -3,10 +3,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def enqueue_skill_based_round_robin
     Rails.logger.debug "Inspecting SBRR job enqueue source for ticket #{display_id}, sbrr inline #{sbrr_inline?} \n #{caller.join("\n")}"
     options = skip_sbrr_assigner ? {:action => "update_multiple_sync"} : {}
-    args = {:model_changes => sbrr_model_changes, :skip_skill_remap => ticket_update_skill_alone?,
-        :ticket_id => display_id, :attributes => sbrr_attributes, :options => options}
+    args = { :model_changes => sbrr_model_changes, :ticket_id => display_id, :skip_skill_remap => ticket_update_skill_alone?, 
+      :attributes => sbrr_attributes, :sbrr_state_attributes => sbrr_state_attributes, :options => options, :parent_jid => Thread.current[:message_uuid] }
     if sbrr_inline?
-      SBRR::Execution.new(args).execute
+      @sbrr_exec_obj = SBRR::Execution.new(args)
+      @sbrr_exec_obj.execute
     else
       SBRR::Assignment.perform_async(args)
     end
@@ -25,6 +26,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     if remap_skill?
       Admin::Skill.map_to self
       merge_skill_change_to_model_changes
+      set_sbrr_skill_activity
     end
   end
 

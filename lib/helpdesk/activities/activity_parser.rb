@@ -12,6 +12,8 @@ module Helpdesk::Activities
     DONT_CARE_VALUE = "*"
     TIME_FORMAT_FOR_TIMESHEET = "%a, %-d %b, %Y"
     ACTIVITY = "activities.tickets.%{value}.%{suffix}"
+    CUSTOM_FIELDS_WITH_RAILS_METHOD_NAME = [:test] # For custom field names that is same as Rails/Ruby method names, which will return true for respond_to?
+
     TYPE = {
         :tkt_activity   => "new",
         :dashboard      => "dashboard",
@@ -612,14 +614,11 @@ module Helpdesk::Activities
     end
 
     def round_robin(value)
-      user = get_user(value[:responder_id][1].to_i)
-      return if user.blank?
-      params = {:responder_path => "#{build_url(user.name, user_path(user))}"}
-      str = get_string_name("assigned")
+      skill_name(value[:skill_name]) if value[:skill_name].present?
+      responder_id(value[:responder_id]) if value[:responder_id].present?
       rule_type_name   = "#{render_string("activities.round_robin")}"
       # marking rule type as -1 for round robin
       @act_activity[:rule] = {:type_name => rule_type_name, :name => "", :id=> 0 , :type=> -1, :exists => false}
-      @act_activity[:set] << render_string(str, params)
     end
 
     def shared_ownership_reset(value)
@@ -881,6 +880,13 @@ module Helpdesk::Activities
         title = "##{v.to_i}"
        "#{build_url(title, helpdesk_ticket_path(v.to_i))}"
       end.join(', ')
+    end
+
+    # For custom field names that is same as Rails/Ruby method names, which will return true for respond_to?
+    CUSTOM_FIELDS_WITH_RAILS_METHOD_NAME.each do |field_name|
+      define_method("#{field_name}") do |value|
+        custom_fields(field_name, value[1])
+      end
     end
   end
 end

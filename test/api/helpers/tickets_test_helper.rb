@@ -14,6 +14,11 @@ module TicketsTestHelper
     ticket_pattern(expected_output, ticket).merge(deleted: (expected_output[:deleted] || ticket.deleted).to_s.to_bool)
   end
 
+  def so_ticket_pattern(expected_output = {}, ticket)
+    ticket_pattern(expected_output, ticket).merge(internal_agent_id:  expected_output[:internal_agent_id] || ticket.internal_agent_id,
+                                                  internal_group_id: expected_output[:internal_group_id] || ticket.internal_group_id)
+  end
+
   def index_ticket_pattern(ticket)
     ticket_pattern(ticket).except(:attachments, :conversations, :tags)
   end

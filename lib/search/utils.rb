@@ -124,7 +124,8 @@ class Search::Utils
     company_v2_search:                'companyApiSearch',
     hstickets_dispid:                 'hsTicketsByDisplayId',
     hstickets_subject:                'hsTicketsBySubject',
-    filteredTicketSearch:             'filteredTicketSearch'
+    filteredTicketSearch:             'filteredTicketSearch',
+    search_ticket_api:                'searchTicketApi'
   }
 
   # _Note_: Parent ID to be used for routing.
@@ -144,7 +145,7 @@ class Search::Utils
   #
   def self.load_records(es_results, model_and_assoc, args={})
     records = {}
-    
+
     # Load each type's results via its model
     #
     (es_results['hits']['hits'].presence || {}).group_by { |item| item['_type'] }.each do |type, items| 
@@ -155,6 +156,7 @@ class Search::Utils
                                         .constantize
                                         .where(account_id: args[:current_account_id], id: items.map { |h| h['_id'] })
                                         .preload(model_and_assoc[type][:associations])
+                                        .compact
       end
     end
 
@@ -200,64 +202,21 @@ class Search::Utils
     template_key = context unless TEMPLATE_BY_CONTEXT.has_key?(template_key) # To-do: Bad hack. Revisit.
     template_key
   end
+
+  def self.get_template_id(context, exact_match, locale=nil)
+    template_key = template_context(context, exact_match, locale=nil)
+    if(Account.current.launched?(:es_v2_splqueries) && Search::Utils::SPECIAL_TEMPLATES.has_key?(template_key))
+      Search::Utils::SPECIAL_TEMPLATES[template_key]
+    else
+      Search::Utils::TEMPLATE_BY_CONTEXT[template_key]
+    end
+  end
   
   private
     
     def self.wrap_paginate(result_set, page_number, es_offset, total_entries)
-      PaginationWrapper.new(result_set, { page: page_number,
+      Search::V2::PaginationWrapper.new(result_set, { page: page_number,
                                           from: es_offset,
                                           total_entries: total_entries })
-    end
-
-    #_Note_: Not sure if array is the right superclass. But works for now.
-    class PaginationWrapper < Array
-
-      attr_accessor :total, :options, :records
-
-      def initialize(result_set, es_options={})
-        @total    = es_options[:total_entries]
-        @options  = {
-          :page   => es_options[:page] || 1,
-          :from   => es_options[:from] || 0
-        }
-        super(result_set)
-      end
-
-      #=> Will Paginate Support(taken from Tire) <=#
-      def total_entries
-        @total
-      end
-
-      def per_page
-        MAX_PER_PAGE.to_i
-      end
-
-      def total_pages
-        ( @total.to_f / per_page ).ceil
-      end
-
-      def current_page
-        if @options[:page]
-          @options[:page].to_i
-        else
-          (per_page + @options[:from].to_i) / per_page
-        end
-      end
-
-      def previous_page
-        current_page > 1 ? (current_page - 1) : nil
-      end
-
-      def next_page
-        current_page < total_pages ? (current_page + 1) : nil
-      end
-
-      def offset
-        per_page * (current_page - 1)
-      end
-
-      def out_of_bounds?
-        current_page > total_pages
-      end
     end
 end

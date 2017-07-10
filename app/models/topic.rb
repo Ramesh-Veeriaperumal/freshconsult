@@ -138,7 +138,7 @@ class Topic < ActiveRecord::Base
   # Generally with days before DateTime.now - 30.days
   scope :popular, lambda { |days_before|
     { :conditions => ["replied_at >= ?", days_before],
-      :order => "hits DESC, #{Topic.table_name}.user_votes DESC, replied_at DESC",
+      :order => "#{Topic.table_name}.user_votes DESC, hits DESC, replied_at DESC",
       :include => :last_post }
   }
 

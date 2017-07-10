@@ -92,5 +92,20 @@ module Pipe
       match_json(ticket_pattern({}, t))
       assert (t.pending_since - pending_since).to_i == 0
     end
+
+    def test_create_with_on_state_time
+      on_state_time = 100
+      params = {
+        requester_id: requester.id, status: 2, priority: 2,
+        subject: Faker::Name.name, description: Faker::Lorem.paragraph,
+        on_state_time: on_state_time
+      }
+      post :create, construct_params({ version: 'private' }, params)
+      assert_response 201
+      t = Helpdesk::Ticket.last
+      match_json(ticket_pattern(params, t))
+      match_json(ticket_pattern({}, t))
+      assert t.on_state_time - on_state_time == 0
+    end
   end
 end

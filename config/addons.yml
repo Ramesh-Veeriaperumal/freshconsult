@@ -18,11 +18,14 @@ Custom Ssl:
   - :custom_ssl
 Dynamic Sections:
   - :dynamic_sections
+  - :multi_dynamic_sections
 Enterprise Reporting:
   - :enterprise_reporting
   - :surveys
   - :survey_links
   - :timesheets
+  - :auto_ticket_export
+  - :ticket_activity_export
 Gamification:
   - :forums
   - :gamification
@@ -62,3 +65,5 @@ Link Tickets:
   - :link_tickets_toggle
 Shared Ownership:
   - :shared_ownership_toggle
+Skill Based Round Robin:
+  - :skill_based_round_robin

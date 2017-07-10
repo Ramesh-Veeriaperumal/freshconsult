@@ -338,7 +338,11 @@ module TicketConstants
 
   DB_INDEXED_QUERY_COLUMNS = ["requester_id", "responder_id", "group_id", "created_at", "status"]
 
-  SKILL_BASED_TICKET_ATTRIBUTES = [:sbrr_ticket_dequeued, :sbrr_user_score_incremented, :sbrr_fresh_ticket, :skip_sbrr, :sbrr_turned_on, :status_sla_toggled_to, :skip_sbrr_assigner]
+  SKILL_BASED_TICKET_ATTRIBUTES = [:sbrr_ticket_dequeued, :sbrr_user_score_incremented, :sbrr_fresh_ticket, :skip_sbrr, :sbrr_turned_on, :status_sla_toggled_to, :skip_sbrr_assigner, :skip_sbrr_save]
+
+  LBRR_REFLECTION_KEYS = [:deleted, :spam, :status, :responder_id, :group_id]
+
+  LBRR_REFLECTION_KEYS = [:deleted, :spam, :status, :responder_id, :group_id]
 
   def self.translate_priority_name(priority)
     I18n.t(PRIORITY_NAMES_BY_KEY[priority])

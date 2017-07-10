@@ -60,8 +60,12 @@ module Helpdesk::Permission
     end
 
     def can_view_freshfone_call?
-      ticket = owner_object.notable.respond_to?(:notable) ? owner_object.notable.notable : owner_object.notable
-      can_view_helpdesk_ticket? ticket
+      return true if ::Account.current.launched?(:relax_fone_calls) || (::User.current && ::User.current.agent?)
+      permission = false
+      if owner_object.present?
+        permission = (owner_object.notable_type == 'Helpdesk::Note') ? !owner_object.notable.private? : true
+      end
+      permission
     end
 
     def can_view_data_export?

@@ -135,6 +135,7 @@ class Helpdesk::Note < ActiveRecord::Base
       add_client_manager_cc if performed_by_client_manager?
       # notable.cc_email_will_change! if notable_cc_email_updated?(@prev_cc_email, notable.cc_email)
       notable.trigger_cc_changes(@prev_cc_email)
+      notable.skip_sbrr = true #to skip sbrr on note creation. make sure not to pass this to update_ticket_states worker
       notable.save
     end
 
@@ -182,8 +183,10 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def send_requester_replied_notification(internal_notification = false)
-      Helpdesk::TicketNotifier.send_later(:notify_by_email, (EmailNotification::REPLIED_BY_REQUESTER),
-              notable, self, {:internal_notification => internal_notification})
+      # if the source is "feedback" then send the notification email after 2 minutes
+      send_at = ([SOURCE_KEYS_BY_TOKEN["feedback"]].include?(self.source))? 2 : 0
+      args = [(EmailNotification::REPLIED_BY_REQUESTER), notable, self, {:internal_notification => internal_notification}]
+      Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::TicketNotifier, :notify_by_email, args), nil, send_at.minutes.from_now)
     end
 
     def handle_notification_for_agent_as_req

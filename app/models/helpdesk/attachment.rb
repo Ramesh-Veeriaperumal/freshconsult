@@ -61,7 +61,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
       "data/helpdesk/attachments/#{Rails.env}/#{att_id}/original/#{content_file_name}"
     end
 
-    def create_for_3rd_party account, item, attached, i, content_id, mailgun=false, social=false
+    def create_for_3rd_party account, item, attached, i, content_id, mailgun=false
       limit = mailgun ? HelpdeskAttachable::MAILGUN_MAX_ATTACHMENT_SIZE : 
                         HelpdeskAttachable::MAX_ATTACHMENT_SIZE
       if attached.is_a?(Hash)
@@ -90,7 +90,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
         if content_id
           model = item.is_a?(Helpdesk::Ticket) ? "Ticket" : "Note"
           attributes.merge!({:description => "content_id", :attachable_type => "#{model}::Inline"})
-          write_options.merge!({ :acl => attachment_permissions(social) })
+          attachment_permissions = Account.current.skip_one_hop_enabled? ? "public-read" : "private"
+          write_options.merge!({ :acl => attachment_permissions })
         end
 
         att = account.attachments.new(attributes)
@@ -109,9 +110,6 @@ class Helpdesk::Attachment < ActiveRecord::Base
       JWT.decode(token, account.attachment_secret).first.with_indifferent_access
     end
 
-    def attachment_permissions social
-      !social && Account.current.one_hop_enabled? ? "private" : "public-read"
-    end
   end
 
   def s3_permissions
@@ -242,7 +240,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def inline_url
-    if !public_image? && Account.current.one_hop_enabled?
+    unless public_image? || Account.current.skip_one_hop_enabled?
       config_env = AppConfig[:attachment][Rails.env]
       "#{config_env[:protocol]}://#{config_env[:domain][PodConfig['CURRENT_POD']]}#{config_env[:port]}#{inline_url_path}"
     else
@@ -260,6 +258,13 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   Paperclip.interpolates :filename do |attachment, style|
     attachment.instance.content_file_name
+  end
+
+  def inline_image?    
+    # Inline image will have attachable type as one of these :    
+    # ArchiveNote::Inline, ArchiveTicket::Inline, Ticket::Inline, Note::Inline    
+    # Image Upload, Email Notification Image Upload, Forums Image Upload, Templates Image Upload, Tickets Image Upload    
+    self.attachable_type.include?("Inline") || self.attachable_type.include?("Image Upload")    
   end
 
   private
@@ -282,12 +287,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     self.attachable_type == "Image Upload" || self.attachable_type == "Forums Image Upload"
   end
 
-  def inline_image?
-    # Inline image will have attachable type as one of these :
-    # ArchiveNote::Inline, ArchiveTicket::Inline, Ticket::Inline, Note::Inline
-    # Image Upload, Email Notification Image Upload, Forums Image Upload, Templates Image Upload, Tickets Image Upload
-    self.attachable_type.include?("Inline") || self.attachable_type.include?("Image Upload")
-  end
+  
 
   def user_avatar?
     self.attachable_type == "User"

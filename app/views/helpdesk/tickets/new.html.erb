@@ -113,3 +113,14 @@ attachment_dom = ""
     <% end %>
   <% end %>
 <% end %>
+
+<script type="text/javascript">
+  var dom_helper_data = {};
+  var requester = {};
+  current_user = <%= escape_html_entity(true) {
+                      raw current_user.to_json
+                     }
+                 %>;
+  jQuery(document).trigger("dom_helper_loaded");
+  window.postMessage({type: "FA_INITIATE"}, "*");
+</script>

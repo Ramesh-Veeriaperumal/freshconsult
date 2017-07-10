@@ -1,6 +1,15 @@
 config = YAML::load_file(File.join(Rails.root, 'config', 'sidekiq.yml'))[Rails.env]
 sidekiq_config = YAML::load_file(File.join(Rails.root, 'config', 'sidekiq_client.yml'))[Rails.env]
 
+SIDEKIQ_CLASSIFICATION = YAML::load_file(File.join(Rails.root, 'config', 'sidekiq_classification.yml'))
+
+SIDEKIQ_CLASSIFICATION_MAPPING = SIDEKIQ_CLASSIFICATION[:classification].inject({}) do |t_h, queue|
+  queue.last.each do |q|
+    t_h[q] = queue.first
+  end
+  t_h
+end
+
 $sidekiq_conn = Redis.new(:host => config["host"], :port => config["port"])
 $sidekiq_datastore = proc { Redis::Namespace.new(config["namespace"], :redis => $sidekiq_conn) }
 $sidekiq_redis_pool_size = sidekiq_config[:redis_pool_size] || sidekiq_config[:concurrency]
@@ -53,6 +62,7 @@ Sidekiq.configure_client do |config|
       "Tickets::Dump"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
+      "AccountCreation::PopulateSeedData",
       "Tickets::BulkScenario",
       "Tickets::BulkTicketActions",
       "Tickets::BulkTicketReply",
@@ -71,7 +81,8 @@ Sidekiq.configure_client do |config|
       "BroadcastMessages::NotifyBroadcastMessages",
       "BroadcastMessages::NotifyAgent",
       "Import::SkillWorker",
-      "ExportAgents"
+      "ExportAgents",
+      "CollaborationWorker"
     ]
   end
 end
@@ -129,6 +140,7 @@ Sidekiq.configure_server do |config|
       "Tickets::Dump"
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
+      "AccountCreation::PopulateSeedData",
       "Tickets::BulkScenario",
       "Tickets::BulkTicketActions",
       "Tickets::BulkTicketReply",
@@ -146,7 +158,8 @@ Sidekiq.configure_server do |config|
       "BroadcastMessages::NotifyBroadcastMessages",
       "BroadcastMessages::NotifyAgent",
       "Import::SkillWorker",
-      "ExportAgents"
+      "ExportAgents",
+      "CollaborationWorker"
     ]
 
     chain.add Middleware::Sidekiq::Server::JobDetailsLogger
@@ -191,6 +204,7 @@ Sidekiq.configure_server do |config|
       "DkimSwitchCategoryWorker",
       "DelayedJobs::MailboxJob",
       "Email::S3RetryWorker",
+      "AccountCreation::PopulateSeedData",
       "Tickets::Schedule",
       "Tickets::Dump"
     ]
@@ -212,7 +226,8 @@ Sidekiq.configure_server do |config|
       "BroadcastMessages::NotifyBroadcastMessages",
       "BroadcastMessages::NotifyAgent",
       "Import::SkillWorker",
-      "ExportAgents"
+      "ExportAgents",
+      "CollaborationWorker"
     ]
   end
 end

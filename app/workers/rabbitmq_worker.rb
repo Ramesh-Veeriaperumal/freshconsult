@@ -45,7 +45,7 @@ class RabbitmqWorker
     # Publish to Reports-v2
     #
     if reports_routing_key?(exchange_key, rounting_key)
-      sqs_msg_obj = sqs_v2_push(SQS[:reports_etl_msg_queue], message, 10)
+      sqs_msg_obj = sqs_v2_push(SQS[:reports_etl_msg_queue], message, nil)
       puts " SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
     end
 

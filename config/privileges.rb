@@ -68,6 +68,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/data_pipe"
     resource :"integrations/cloud_elements/crm", :only => [:fetch]
 
+
+    # Used by API V2 Search
+    resource :"api_search/ticket", :only => [:index]
+
     #Freshfone
     resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
     resource :"freshfone/user"
@@ -125,6 +129,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/archive_ticket", :only => [:show, :index, :custom_search, :latest_note,
                                                     :full_paginate,  :activities, :component, :prevnext, :activitiesv2, :print_archive]
     resource :"helpdesk/archive_note", :only => [:index, :full_text]
+    resource :"helpdesk/collab_ticket"
 
     resource :"wf/filter", :only => [:index, :update_filter, :save_filter, :delete_filter]
     resource :"profile"
@@ -378,7 +383,11 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_contact", :only => [:create, :update]
     resource :"api_company", :only => [:create, :update]
 
-    # This privilege should only be used for API. This should have only read permission.
+    # Used by API V2 Search
+    resource :"api_search/contact", :only => [:index]
+    resource :"api_search/company", :only => [:index]
+
+    # This privilege should only be used for API. This should have only read permission. 
     # Agent who has access to contact/company create will obviously know the custom field names.
     # So access to read the list of custom fields for an account through API should also be given at the same level of privilege as contact/company create.
     resource :api_contact_field, :only => [:index]

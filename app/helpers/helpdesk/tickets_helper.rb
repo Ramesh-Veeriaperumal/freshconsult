@@ -259,7 +259,7 @@ module Helpdesk::TicketsHelper
       :ticket_id => @ticket.id}
   end
 
-  def bind_last_reply(item, signature, forward = false, quoted = false, remove_cursor = false)
+  def bind_last_reply(item, signature, forward = false, quoted = false, remove_cursor = false, mobile_request = false)
     # last_conv = (item.is_a? Helpdesk::Note) ? item :
                 # ((!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item)
 
@@ -274,13 +274,18 @@ module Helpdesk::TicketsHelper
       end
     end
 
-    return ( draft_message || bind_last_conv(item, signature, false, quoted) )
+    return ( draft_message || bind_last_conv(item, signature, false, quoted, mobile_request) )
   end
 
-  def bind_last_conv(item, signature, forward = false, quoted = true)
+  def bind_last_conv(item, signature, forward = false, quoted = true, mobile_request = false)
     ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
-    default_reply_forward = (signature.blank?)? "<p/><p/><br/>": "<p/><p><br></br></p><p></p><p></p>
-<div>#{signature}</div>"
+    if mobile_request
+          default_reply_forward = (signature.blank?)? "<p/><p/><br/>": "<br/><div>#{signature}</div>"
+    else
+          default_reply_forward = (signature.blank?)? "<p/><p/><br/>": "<p/><p><br></br></p><p></p><p></p><div>#{signature}</div>"
+    end
+    
+    ticket.escape_liquid_attributes = current_account.launched?(:escape_liquid_for_reply)
     quoted_text = ""
     if quoted
       quoted_text = quoted_text(item, forward)
@@ -758,6 +763,14 @@ module Helpdesk::TicketsHelper
 
   def show_insert_into_reply?
     privilege?(:reply_ticket) && !(@ticket.twitter? || @ticket.facebook? || @ticket.allow_ecommerce_reply?) && @ticket.from_email.present?
+  end
+
+  def collab_ticket_url(ticket_display_id)
+    "/helpdesk/tickets/collab/#{ticket_display_id}?collab=true&token=#{Collaboration::Ticket.new(ticket_display_id).access_token}"
+  end
+
+  def latest_note_collab_ticket_url(ticket_display_id)
+    "/helpdesk/tickets/collab/#{ticket_display_id}/latest_note?token=#{Collaboration::Ticket.new(ticket_display_id).access_token}"
   end
 
   def sorted_account_skills

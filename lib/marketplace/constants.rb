@@ -41,7 +41,9 @@ module Marketplace::Constants
   DISPLAY_PAGE_OPTIONS = [
     [:integrations_list, 0],
     [:ticket_details_page, 1],
-    [:contact_details_page, 2]
+    [:contact_details_page, 2],
+    [:new_ticket_page_side_bar, 3],
+    [:new_outbound_email_page_side_bar, 4]
   ]
 
   DISPLAY_PAGE = Hash[*DISPLAY_PAGE_OPTIONS.map { |i| [i[0], i[1]] }.flatten]
@@ -87,5 +89,7 @@ module Marketplace::Constants
   IFRAME_DEFAULT_ENC_TYPE = "A128CBC-HS256"
 
   IFRAME_DEFAULT_COMP_ALGO = "DEF"
+
+  UNINSTALL_IN_PROGRESS = 5
 
 end

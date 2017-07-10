@@ -1,0 +1,102 @@
+<div class="hide" id="user-notifications-popover" >
+  <div class="unp-list">
+    <header>
+      <%= t('user_notifications.header') %>
+      <div class="user-notification-actions">
+        <a href="javascript:;" class="user-notifications-read-all tooltip" title="<%= t('user_notifications.mark_all_as_read') %>" data-placement="below">
+          <%= font_icon "read-all", { :size => 18 } %>
+        </a>
+        <a href="javascript:;" class="show-user-prefs tooltip" title="<%= t('user_notifications.preferences') %>" data-placement="below">
+          <%= font_icon "gear", { :size => 18 } %>
+        </a>
+      </div>
+    </header>
+    <div class="notifications-list-wrapper">
+      <div class="notifications-list">
+        <a class='read no-notification-message'>
+          <img src="/images/animated/ajax-loader.gif">
+        </a>
+      </div>
+      <a id="load-more-notifications" class="hide"><%= t('notification.load_more') %></a>
+    </div>
+  </div>
+
+  <div class="unp-prefs hide">
+    <header>
+      <a class="show-user-notifications" href="javascript:;">
+        <%= font_icon "arrow-left", { :size => 16 } %>
+      </a>
+      <%= t('user_notifications.notification_preferences') %>
+    </header>
+
+    <!-- Notifications Preferences Content -->
+    <div class="notifications-preferences">
+      <div class="loader">
+        <img src="/images/animated/ajax-loader.gif">
+      </div>
+      
+      <!-- The titles for the list -->
+      <div class="notif-pref-item title-text">
+        <%= t('user_notifications.notify_when') %>
+      </div>
+
+      <!-- The list of the preferences. -->
+      <% ApplicationHelper::USER_NOTIFICATION_PREFS.each do |pref| %>
+        <!-- for the ticket_create preference, user needs to have the all_tickets_permission -->
+        <!-- for the ticket_assigned_to_group preference, user needs to have the all_tickets_permission or group_tickets_permission -->
+        <% unless (pref=="ticket_created" && !current_user.all_tickets_permission?) || 
+              (pref=="ticket_assigned_to_group" && !(current_user.all_tickets_permission? || current_user.group_tickets_permission?)) %>
+          <div class="notif-pref-item">
+            <%= t('user_notifications.preferences_text.'+pref[:text]) %>
+            <div class="notif-pref-action-items">
+              <a class="npa-mobile <%= 'enabled' if pref[:default] %> tooltip hide" 
+                  data-ntype="<%= pref[:text] %>" 
+                  data-pipe="mobile" 
+                  title="<%= t('user_notifications.toggle_mobile_notifications') %>"
+                  data-placement="below">
+                <%= font_icon "mobile-2", { :size => 16 } %>
+                <%= font_icon "mobile-2-disabled", { :size => 16} %>
+              </a>
+              <a class="npa-rts <%= 'enabled' if pref[:default] %> tooltip" 
+                  data-ntype="<%= pref[:text] %>" 
+                  data-pipe="rts" 
+                  title="<%= t('user_notifications.toggle_web_notifications') %>"
+                  data-placement="below">
+                <%= font_icon "web", { :size => 16 } %>
+                <%= font_icon "web-disabled", { :size => 16}%>
+              </a>
+            </div>    
+          </div>
+        <% end %>
+      <% end %>
+
+      <div class="row-fluid silent_notifications">
+        <div class="span8"> <%= t('user_notifications.silent_notifications') %> </div>
+        <div class="span4 align-right">
+          <input rel="toggle" type="checkbox" id="mute_notification_sound" data-checked-label="<%= t('plain_on') %>" data-unchecked-label="<%= t('plain_off') %>"/>
+        </div>
+      </div>
+
+      <a class="enable-desktop-notifications-button btn" href="javascript:;">
+        <span class="default"><%= t('user_notifications.enable_desktop_notifications') %></span>
+        <span class="help hide"><%= t('user_notifications.enable_desktop_notifications_help').html_safe %></span>
+        <span class="granted hide"><%= t('user_notifications.desktop_notifications_enabled_flash') %></span>
+        <span class="denied hide"><%= t('user_notifications.desktop_notifications_disabled') %></span>
+      </a>
+    </div>
+  </div>
+</div>  
+
+<a href="javascript:;" id="user-notification-icon" class="user-notification-link tooltip" title="<%= t('user_notifications.header') %>" data-placement="below">
+  <%= font_icon "notification", { :size => 30 } %>
+  <div class="user-notification-seen-state"></div>
+  <audio class="user-notification-sound hide">
+    <source src="/sound/notification.mp3" type="audio/mpeg">
+  </audio>
+</a>
+
+<script>
+jQuery(window).load(function() {
+  App.UserNotification.initialize();
+});
+</script>

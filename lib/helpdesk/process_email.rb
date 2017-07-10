@@ -27,6 +27,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   MESSAGE_LIMIT = 10.megabytes
   MAXIMUM_CONTENT_LIMIT = 300.kilobytes
   VIRUS_CHECK_ENABLED = false
+  LARGE_TEXT_TIMEOUT = 60
 
   attr_accessor :reply_to_email, :additional_emails,:archived_ticket, :start_time, :actual_archive_ticket
 
@@ -139,7 +140,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           user = create_new_user(account, from_email, email_config)
         else
           if user.blocked?
-            email_processing_log "Email Processing Failed: User is blocked!", to_email[:email]
+            email_processing_log "Email Processing Failed: User is been blocked!", to_email[:email]
             return processed_email_data(PROCESSED_EMAIL_STATUS[:user_blocked], account.id)
           end
           text_part
@@ -185,6 +186,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end   
     end
     end
+    elapsed_time = (Time.now.utc - start_time).round(3)
+    Rails.logger.info "Time taken for process_email perform : #{elapsed_time} seconds"
     result
   end
 
@@ -494,19 +497,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         email_processing_log "You have exceeded the limit of #{TicketConstants::MAX_EMAIL_COUNT} cc emails for the ticket"
         return processed_email_data(PROCESSED_EMAIL_STATUS[:max_email_limit], account.id)
       end
-      ticket = Helpdesk::Ticket.new(
-        :account_id => account.id,
-        :subject => params[:subject],
-        :ticket_body_attributes => {:description => tokenize_emojis(params[:text]) || "",
-                          :description_html => cleansed_html || ""},
-        :requester => user,
-        :to_email => to_email[:email],
-        :to_emails => to_emails,
-        :cc_email => {:cc_emails => global_cc, :fwd_emails => [], :bcc_emails => [], :reply_cc => global_cc, :tkt_cc => parse_cc_email },
-        :email_config => email_config,
-        :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
-        :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
-      )
+      ticket_params = build_ticket_params account, user, to_email, global_cc, email_config
+      ticket = Helpdesk::Ticket.new(ticket_params)
       ticket.sender_email = e_email[:email] || from_email[:email]
       ticket = check_for_chat_scources(ticket,from_email)
       ticket = check_for_spam(ticket)
@@ -552,6 +544,16 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
             # tags = archived_ticket.tags
             # add_ticket_tags(tags,ticket) unless tags.blank?
           end
+          if params[:migration_tags]
+            tags_hash = JSON.parse(params[:migration_tags])
+            if tags_hash.present?
+              tags_hash.each do |tag_name|
+                custom_tag = account.tags.find_by_name(tag_name)
+                custom_tag = account.tags.create(:name => tag_name) if custom_tag.nil?
+                ticket.tags << custom_tag 
+              end
+            end
+          end
           ticket.save_ticket!
           email_processing_log "Email Processing Successful: Email Successfully created as Ticket!!", to_email[:email]
           cleanup_attachments ticket
@@ -577,6 +579,28 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
       # ticket
       return processed_email_data(PROCESSED_EMAIL_STATUS[:success], account.id, ticket)
+    end
+
+    def build_ticket_params account, user, to_email, global_cc, email_config
+      ticket_params = {
+        :account_id => account.id,
+        :subject => params[:subject],
+        :ticket_body_attributes => {:description => tokenize_emojis(params[:text]) || "",
+                          :description_html => cleansed_html || ""},
+        :requester => user,
+        :to_email => to_email[:email],
+        :to_emails => parse_to_emails,
+        :cc_email => {:cc_emails => global_cc, :fwd_emails => [], :bcc_emails => [], :reply_cc => global_cc, :tkt_cc => parse_cc_email },
+        :email_config => email_config,
+        :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
+        :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
+      }
+      ticket_params.merge!({
+                  :created_at => params[:migration_internal_date].to_time,
+                  :updated_at => params[:migration_internal_date].to_time,
+                  :status => params[:migration_status]
+                  }) if (params[:migration_internal_date] && params[:migration_status])
+      ticket_params
     end
 
     def store_ticket_threading_info(account, message_id, ticket)
@@ -697,22 +721,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         email_processing_log "You have exceeded the limit of #{TicketConstants::MAX_EMAIL_COUNT} cc emails for the note"
         return processed_email_data(PROCESSED_EMAIL_STATUS[:max_email_limit], ticket.account.id)
       end
-      note = ticket.notes.build(
-        :private => (from_fwd_recipients or reply_to_private_note?(all_message_ids) or rsvp_to_fwd?(ticket, from_email, user)),
-        :incoming => true,
-        :note_body_attributes => {
-          :body => tokenize_emojis(body) || "",
-          :body_html => body_html || "",
-          :full_text => tokenize_emojis(full_text),
-          :full_text_html => full_text_html || ""
-          },
-        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"],
-        :user => user, #by Shan temp
-        :account_id => ticket.account_id,
-        :from_email => from_email[:email],
-        :to_emails => to_emails,
-        :cc_emails => cc_emails
-      )  
+      note_params = build_note_params ticket, from_email, user, from_fwd_recipients, body, body_html, full_text, full_text_html, cc_emails
+      note = ticket.notes.build note_params
       note.subject = Helpdesk::HTMLSanitizer.clean(params[:subject])   
       note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if (from_fwd_recipients or ticket.agent_performed?(user) or rsvp_to_fwd?(ticket, from_email, user))
       
@@ -767,7 +777,31 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       # note
       return processed_email_data(PROCESSED_EMAIL_STATUS[:success], note.account_id, note)
     end
-    
+
+    def build_note_params ticket, from_email, user, from_fwd_recipients, body, body_html, full_text, full_text_html, cc_emails
+      note_params = {
+        :private => (from_fwd_recipients or reply_to_private_note?(all_message_ids) or rsvp_to_fwd?(ticket, from_email, user)),
+        :incoming => true,
+        :note_body_attributes => {
+          :body => tokenize_emojis(body) || "",
+          :body_html => body_html || "",
+          :full_text => tokenize_emojis(full_text),
+          :full_text_html => full_text_html || ""
+         },
+        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"],
+        :user => user, #by Shan temp
+        :account_id => ticket.account_id,
+        :from_email => from_email[:email],
+        :to_emails => parse_to_emails,
+        :cc_emails => cc_emails
+      }
+      note_params.merge!({
+              :created_at => params[:migration_internal_date].to_time,
+              :updated_at => params[:migration_internal_date].to_time
+              }) if params[:migration_internal_date]
+      note_params
+    end
+
     def rsvp_to_fwd?(ticket, from_email, user)
       @rsvp_to_fwd ||= ((Account.current.features?(:threading_without_user_check) || (!ticket.cc_email.nil? && !ticket.cc_email[:cc_emails].nil? && ticket.cc_email[:cc_emails].include?(from_email[:email])) || user.agent?) && reply_to_forward(all_message_ids))
     end
@@ -788,7 +822,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def text_part
-      Timeout.timeout(180) do
+      Timeout.timeout(LARGE_TEXT_TIMEOUT) do
         if(params[:text].nil? || params[:text].empty?) 
           if params[:html].size < MAXIMUM_CONTENT_LIMIT
             params[:text] = Helpdesk::HTMLSanitizer.html_to_plain_text(params[:html])
@@ -848,6 +882,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
             end
           end
         end
+      else
+        email_processing_log "Can't create new user for #{from_email.inspect}"
       end
       user
     end
@@ -885,14 +921,14 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           content_id = content_ids["attachment#{i+1}"] && 
                         verify_inline_attachments(item, content_ids["attachment#{i+1}"])
           att = Helpdesk::Attachment.create_for_3rd_party(account, item, 
-                  params["attachment#{i+1}"], i, content_id, true)
-          if att.is_a? Helpdesk::Attachment
+                  params["attachment#{i+1}"], i, content_id, true) unless virus_attachment?(params["attachment#{i+1}"], account)
+          if att && (att.is_a? Helpdesk::Attachment)
             if content_id && !att["content_file_name"].include?(".svg")
               content_id_hash[att.content_file_name+"#{inline_count}"] = content_ids["attachment#{i+1}"]
               inline_count+=1
-              inline_attachments.push att unless virus_attachment?(params["attachment#{i+1}"], account)
+              inline_attachments.push att
             else
-              attachments.push att unless  virus_attachment?(params["attachment#{i+1}"], account)
+              attachments.push att
             end
           end
         rescue HelpdeskExceptions::AttachmentLimitException => ex
@@ -956,54 +992,59 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
       return text if text.blank?
 
-      regex_arr = [
-        Regexp.new("From:\s*" + Regexp.escape(address), Regexp::IGNORECASE),
-        Regexp.new("<" + Regexp.escape(address) + ">", Regexp::IGNORECASE),
-        Regexp.new(Regexp.escape(address) + "\s+wrote:", Regexp::IGNORECASE),
-        Regexp.new("\\n.*.\d.*." + Regexp.escape(address) ),
-        Regexp.new("<div>\n<br>On.*?wrote:"), #iphone
-        Regexp.new("On((?!On).)*wrote:"),
-        Regexp.new("-+original\s+message-+\s*", Regexp::IGNORECASE),
-        Regexp.new("from:\s*", Regexp::IGNORECASE)
-      ]
-      tl = text.length
+      Timeout.timeout(LARGE_TEXT_TIMEOUT) do
+        regex_arr = [
+          Regexp.new("From:\s*" + Regexp.escape(address), Regexp::IGNORECASE),
+          Regexp.new("<" + Regexp.escape(address) + ">", Regexp::IGNORECASE),
+          Regexp.new(Regexp.escape(address) + "\s+wrote:", Regexp::IGNORECASE),
+          Regexp.new("\\n.*.\d.*." + Regexp.escape(address) ),
+          Regexp.new("<div>\n<br>On.*?wrote:"), #iphone
+          Regexp.new("On((?!On).)*wrote:"),
+          Regexp.new("-+original\s+message-+\s*", Regexp::IGNORECASE),
+          Regexp.new("from:\s*", Regexp::IGNORECASE)
+        ]
+        tl = text.length
 
-      #calculates the matching regex closest to top of page
-      index = regex_arr.inject(tl) do |min, regex|
-          (text.index(regex) or tl) < min ? (text.index(regex) or tl) : min
-      end
-
-      original_msg = text[0, index]
-      old_msg = text[index,text.size]
-
-      return  {:body => original_msg, :full_text => text } if plain
-      #Sanitizing the original msg
-      unless original_msg.blank?
-        sanitized_org_msg = Nokogiri::HTML(original_msg).at_css("body")
-        unless sanitized_org_msg.blank?
-          remove_identifier_span(sanitized_org_msg)
-          original_msg = sanitized_org_msg.inner_html
+        #calculates the matching regex closest to top of page
+        index = regex_arr.inject(tl) do |min, regex|
+            (text.index(regex) or tl) < min ? (text.index(regex) or tl) : min
         end
-      end
-      #Sanitizing the old msg
-      unless old_msg.blank?
-        sanitized_old_msg = Nokogiri::HTML(old_msg).at_css("body")
-        unless sanitized_old_msg.blank?
-          remove_identifier_span(sanitized_old_msg)
-          remove_survey_div(sanitized_old_msg) unless plain
-          old_msg = sanitized_old_msg.inner_html
+
+        original_msg = text[0, index]
+        old_msg = text[index,text.size]
+
+        return  {:body => original_msg, :full_text => text } if plain
+        #Sanitizing the original msg
+        unless original_msg.blank?
+          sanitized_org_msg = Nokogiri::HTML(original_msg).at_css("body")
+          unless sanitized_org_msg.blank?
+            remove_identifier_span(sanitized_org_msg)
+            original_msg = sanitized_org_msg.inner_html
+          end
         end
-      end
+        #Sanitizing the old msg
+        unless old_msg.blank?
+          sanitized_old_msg = Nokogiri::HTML(old_msg).at_css("body")
+          unless sanitized_old_msg.blank?
+            remove_identifier_span(sanitized_old_msg)
+            remove_survey_div(sanitized_old_msg) unless plain
+            old_msg = sanitized_old_msg.inner_html
+          end
+        end
 
-      full_text = original_msg
-      unless old_msg.blank?
+        full_text = original_msg
+        unless old_msg.blank?
 
-       full_text = full_text +
-       "<div class='freshdesk_quote'>" +
-       "<blockquote class='freshdesk_quote'>" + old_msg + "</blockquote>" +
-       "</div>"
+         full_text = full_text +
+         "<div class='freshdesk_quote'>" +
+         "<blockquote class='freshdesk_quote'>" + old_msg + "</blockquote>" +
+         "</div>"
+        end
+        return {:body => full_text,:full_text => full_text}  #temp fix made for showing quoted text in incoming conversations
       end
-      {:body => full_text,:full_text => full_text}  #temp fix made for showing quoted text in incoming conversations
+    rescue => e
+      Rails.logger.info "Exception in show_quoted_text , message :#{e.message} - #{e.backtrace}"
+      return {:body => text,:full_text => text}
     end
 
     def remove_identifier_span msg
@@ -1152,6 +1193,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       begin
         ticket.sds_spam = params[:spam_info]['spam']
         ticket.spam_score = params[:spam_info]['score']
+        ticket.spam = true if params[:spam_info]['spam'] == true
         Rails.logger.info "Spam rules triggered for ticket with message_id #{params[:message_id]}: #{params[:spam_info]['rules']}"
       rescue => e
         puts e.message
@@ -1164,9 +1206,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     data = { :account_id => account_id, :processed_status => processed_status }
     if processed_status == PROCESSED_EMAIL_STATUS[:success] && model.present?
       if model.class.name.include?("Ticket")
-        data.merge!(:ticket_id => model.id, :type => PROCESSED_EMAIL_TYPE[:ticket], :note_id => "-1", :article_id => "-1") # check with nil values
+        data.merge!(:ticket_id => model.id, :type => PROCESSED_EMAIL_TYPE[:ticket], :note_id => "-1", :article_id => "-1", :display_id => model.display_id) # check with nil values
       elsif model.class.name.include?("Note")
         data.merge!(:ticket_id => model.notable_id, :note_id => model.id, :type => PROCESSED_EMAIL_TYPE[:note], :article_id => "-1")
+        data.merge!(:display_id => model.notable.display_id) unless model.notable.nil?
       elsif model.class.name.include?("Article")
         data.merge!(:article_id => model.id, :type => PROCESSED_EMAIL_TYPE[:article], :ticket_id => "-1", :note_id => "-1")
       end

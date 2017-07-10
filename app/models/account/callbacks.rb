@@ -26,8 +26,9 @@ class Account < ActiveRecord::Base
   after_commit :enable_searchv2, :enable_count_es, on: :create
   after_commit :disable_searchv2, :disable_count_es, on: :destroy
   after_commit :update_sendgrid, on: :create
-  after_commit :remove_email_restrictions, on: :update , :if => :account_verification_changed? 
+  after_commit :remove_email_restrictions, on: :update , :if => :account_verification_changed?
 
+  after_commit :update_crm_and_map, on: :update, :if => :account_domain_changed?
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher 
@@ -94,6 +95,10 @@ class Account < ActiveRecord::Base
 
     def account_verification_changed?
       @all_changes.key?("reputation") && self.verified?
+    end
+
+    def account_domain_changed?
+      @all_changes.key?("full_domain")
     end
 
     def remove_email_restrictions
@@ -279,6 +284,10 @@ class Account < ActiveRecord::Base
     
     def enable_searchv2
       if self.features?(:es_v2_writes)
+        if redis_key_exists?(SEARCH_SERVICE_SIGNUP)
+          self.launch(:service_reads)
+          self.launch(:service_writes)
+        end
         SearchV2::Manager::EnableSearch.perform_async
         self.launch(:es_v2_reads)
       end
@@ -305,5 +314,12 @@ class Account < ActiveRecord::Base
 
     def update_sendgrid
       SendgridDomainUpdates.perform_async({:action => 'create', :domain => full_domain, :vendor_id => Account::MAIL_PROVIDER[:sendgrid]})
+    end
+
+    def update_crm_and_map
+      if (Rails.env.production? or Rails.env.staging?)
+        Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::UpdateAdmin, {:account_id => self.id})
+        Resque.enqueue_at(15.minutes.from_now, Marketo::AddLead, {:account_id => self.id})
+      end
     end
 end
