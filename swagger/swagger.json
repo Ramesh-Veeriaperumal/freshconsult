@@ -3707,7 +3707,6 @@
           "dashboard"
         ],
         "description": "Unresolved Tickets Count",
-        "Content": "Get the aggregated counts of unresolved tickets",
         "parameters": [
           {
             "name": "widget",
@@ -3729,16 +3728,16 @@
           {
             "name": "group_ids",
             "description": "Selected groups for filtering",
-            "type": "Array",
+            "type": "array",
             "in": "query",
             "items": {
-              "type": "int"
+              "type": "number"
             }
           },
           {
             "name": "responder_ids",
             "description": "Selected agents for filtering",
-            "type": "Array",
+            "type": "array",
             "in": "query",
             "items": {
               "type": "number"
@@ -3747,7 +3746,7 @@
           {
             "name": "status_ids",
             "description": "Selected statuses for filtering",
-            "type": "Array",
+            "type": "array",
             "in": "query",
             "items": {
               "type": "number"
@@ -7217,7 +7216,7 @@
       "properties": {
         "unresolved_tickets": {
           "description": "Aggregated values of unresolved tickets for group by values",
-          "type": "Array",
+          "type": "array",
           "items": {
             "type": "object",
             "properties": {
@@ -7226,7 +7225,7 @@
                 "description": "Either group_id or responder_id value based on group_by choice in request"
               },
               "stats": {
-                "type": "Array",
+                "type": "array",
                 "description": "Count value for each status",
                 "items": {
                   "type": "object",

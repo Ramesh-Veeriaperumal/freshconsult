@@ -1,7 +1,6 @@
 get:
   tags: [dashboard]
   description: Unresolved Tickets Count
-  Content: Get the aggregated counts of unresolved tickets
   parameters:
     - name: widget
       description: Should be present if called for widget
@@ -15,19 +14,19 @@ get:
       enum: [ 'group_id','responder_id' ]
     - name: group_ids
       description: Selected groups for filtering
-      type: Array
+      type: array
       in: query
       items:
-        type: int
+        type: number
     - name: responder_ids
       description: Selected agents for filtering
-      type: Array
+      type: array
       in: query
       items:
         type: number
     - name: status_ids
       description: Selected statuses for filtering
-      type: Array
+      type: array
       in: query
       items:
         type: number
