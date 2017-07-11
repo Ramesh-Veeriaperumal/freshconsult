@@ -1,9 +1,8 @@
 <%= stylesheet_link_tag_with_rtl :'cdn/reports' %>
 <div class="report-home report ">
-  <div class="left-section" style="width:<%= enable_qna? ? '68%' : '100%' %>">
+  <div class="left-section <%= enable_qna? ? '' : 'active' %>">
   <div class="admin-header">
     <div class="report-head report">
-      <h3 class="lead"><%=t('adv_reports.reports')%></h3>
       <% if enable_qna? %>
         <div class="qna-search-bar">
             <div class="search-field-holder">
@@ -37,7 +36,10 @@
             <div class="clear"></div>
 
         </div>
+        <% else %>
+      <h3 class="lead"><%=t('adv_reports.reports')%></h3>
       <% end %>
+
       <div class="clear"></div>
     </div>
   </div>
