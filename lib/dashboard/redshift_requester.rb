@@ -7,7 +7,7 @@ class Dashboard::RedshiftRequester
   end
 
   def fetch_records
-    result = bulk_request @query_params
+    result = bulk_request(@query_params, true)
     expiry = cache_expire_time result
     result = [error_message] if error_in_response?(result)
     dump_time = last_redshift_dump_time(result)
