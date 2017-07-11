@@ -2,7 +2,7 @@
     properties:
       unresolved_tickets:
         description: Aggregated values of unresolved tickets for group by values
-        type: Array
+        type: array
         items:
           type: object
           properties:
@@ -10,7 +10,7 @@
               type: integer
               description: Either group_id or responder_id value based on group_by choice in request
             stats:
-              type: Array
+              type: array
               description: Count value for each status
               items:
                 type: object

@@ -55,7 +55,7 @@ module Ember
         end
 
         def name_mapping
-          @name_mapping ||= Account.current.ticket_field_def.ff_alias_column_mapping.each_with_object({}) { |(ff_alias, column), hash| hash[ff_alias] = TicketDecorator.display_name(ff_alias) }
+          @name_mapping ||= cf_alias_mapping.each_with_object({}) { |(ff_alias, column), hash| hash[ff_alias] = TicketDecorator.display_name(ff_alias) }
         end
 
         def construct_es_params
@@ -70,6 +70,8 @@ module Ember
             end
 
             if filter_params?
+              map_date if @filter_params[:created_at]
+              sanitize_cf_params if @filter_params[:custom_fields].present?
               transformed_values = ::Search::KeywordSearch::Transform.new(@filter_params).transform
               es_params.merge!(transformed_values)
             end
@@ -91,6 +93,22 @@ module Ember
 
         def filter_params?
           params[:filter_params].present?
+        end
+
+        def map_date
+          @filter_params[:created_at] = @filter_params[:created_at].to_i.days.ago.beginning_of_day.to_s
+        end
+          
+        def cf_alias_mapping
+          @cf_mapping ||= Account.current.ticket_field_def.ff_alias_column_mapping
+        end
+
+        def sanitize_cf_params
+          @filter_params[:custom_fields].each_pair do |field, value|
+            cf_name = cf_alias_mapping[field + "_#{Account.current.id}"]
+            @filter_params.merge!(cf_name => value) if cf_name.present?
+          end
+          @filter_params.delete(:custom_fields)
         end
     end
   end
