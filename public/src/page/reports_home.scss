@@ -1,0 +1,489 @@
+/* Common styles between landing page and customize insights */
+@mixin insights-content() {
+    .insights-content {
+        margin-top : 18px;
+        .widget-item {
+            width: 100%;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+            background: #fff;
+            height: 80px;
+            box-shadow : 0px 1px 2px 0px rgba(136,136,136,0.2);
+
+            &.disabled-state{
+                opacity: 0.6;
+            }
+        }
+
+        .widget-visual {
+            width: 20%;
+            background: #f9f9f9;
+            height: 100%;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            &.positive {
+                color : #009900;
+            }
+            &.negative{
+                color : #e22a24;
+            }
+            .variance-value {
+                font-size: 14px;
+                margin-left: 5px;
+            }
+
+            i {
+                font-size: 15px;
+            }
+            .ficon-pie-chart,
+            .ficon-bar-chart {
+                font-size: 24px;
+                color: rgb(10,96,99);
+            }
+        }
+
+        .widget-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            flex-direction: column;
+            width: 78%;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+
+        .tag-line {
+            align-self: flex-start;
+            color: #888888;
+            font-size: 12px;
+        }
+
+        .statement {
+            align-self: flex-start;
+            margin-bottom: 4px;
+            .metric-value{
+                font-size: 18px;
+                color : #006064;
+            }
+            .metric-title {
+                font-size: 14px;
+                color: #333333;
+            }
+            .ficon-arrow-left {
+                font-size: 16px;
+                color: #888;
+                padding: 0 5px;
+            }
+        }
+        .insights-headline {
+          border-top: 1px solid #979797;
+          margin: 30px  0;
+          > div {
+            margin-top: -10px;
+          }
+          span {
+            background: #fff;
+            padding: 0 5px 0 0;
+          }
+        }
+        
+        .no-outliers {
+          text-align: center;
+          margin-top: 50%;
+          
+          a.inm_tour_button {
+            width: 225px;
+            margin: 8px auto;
+            display: block;
+            padding: 14px 20px 14px 20px;
+            color: #333; 
+            background: #fff;
+            font-weight: 500;
+            border-radius: 4px;
+            i{
+              font-size: 20px;
+              margin-right: 12px;
+              vertical-align: middle;
+            }
+          }
+        }
+        
+        .empty-outliers {
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #878787;
+            font-size: 15px;
+            
+            &.hide-section{
+              display: none;
+            }
+        }
+        .form.vcenter {
+          margin-top: 30px;
+          &.bar-chart {
+            margin-top: 42px;
+          }
+        }
+        .form.vcenter .edit-label{
+          padding: 0 15px;
+        }
+        .button-edit {
+          margin-top: 25px;
+          margin-right: 25px;
+          cursor: pointer;
+        }
+        .field-width {
+          min-width: 150px;
+        }
+    }
+}
+
+
+/* Main layout */
+.left-section{
+    width : 68%;
+    &.active{
+        width : 100%;
+    }
+}
+
+.insights{
+    width : 32%;
+    position : absolute;
+    height : 108.6%;//Had to use decimal because of px padding and fluid height needed to be available on body
+    right : -20px;
+    top : -20px; 
+    padding: 20px;
+    background: #f2f4f4;
+    box-sizing: border-box;
+    &.hide-section{
+      display: none !important;
+    }
+    .insights-title{
+        font-size : 16px;
+        .last_updated{
+            font-size: 13px;
+            color : #888888;
+        }
+        .insights-customize{
+            font-size: 14px;
+            color : #0066cc;
+            cursor : pointer;
+        }
+
+        .ficon-solution_article_1 {
+            color: #888;
+            &:hover {
+                color: #333;
+            }
+        }
+
+
+     }
+    @include insights-content();
+    .insights-content{
+        min-height: 80%;
+        
+        .no-outliers{
+            .message{
+                color: #183247;
+                font-size: 16px;
+            }
+            .help-text{
+                color: #9aa1a6;
+                font-size: 12px;
+                margin: 8px 0;
+            }
+        }
+    }
+}
+
+.configure-insight-widget {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    padding-bottom : 16px;
+    background: #fff;
+    top: 0;
+    left: 0;
+    z-index: 3;
+    padding : 16px;
+    box-sizing: border-box;
+    overflow : auto;
+
+    .insights-title{
+        font-size : 22px;
+        .last_updated{
+            font-size: 13px;
+            color : #888888;
+        }
+        .customize_help{
+          font-size: 13px;
+          color : #888888;
+        }
+        .insights-customize{
+            font-size: 14px;
+            color : #0066cc;
+            cursor : pointer;
+        }
+    }
+    @include insights-content();
+
+    /* Override certain styles*/
+    .widget-row:hover{
+      background: #f6f6f6;
+    }
+    .edit-row{
+      background: #f6f6f6;
+    }
+    
+    .widget-row,.edit-row{
+        padding : 8px;
+        margin : 4px 0;
+        height : 100px;
+        box-sizing: border-box;
+    }
+    .widget-row .filter_item {
+        min-width: 250px;
+    }
+    .highlight {
+      background-color: #fffade;
+    }
+
+    .widget-item {
+        width : 400px !important;
+        margin-bottom : 0 !important;
+        float : left;
+    }
+
+    .widget-configuration{
+        float : left;
+        margin-left : 16px;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        justify-content: center;
+        .config-row{
+            margin : 4px 0;
+        }
+        .config-label{
+            width : 70px;
+            color : #888;
+            float : left;
+        }
+        .config-val{
+            color : #333;
+            float : left;
+
+            &:before{
+                content : ' : ';
+                margin-right: 14px;
+            }
+        }
+    }
+    
+    .no-outliers.network_error{
+      margin-top: 20%;
+    }
+}
+
+.edit-row {
+    .form {
+        margin: 15px;
+        &::after{
+          display: block;
+          content: '';
+          clear: both;
+        }
+        input.js-insightThreshold{
+          width: 50px;
+          margin-bottom: 0px;
+          margin-right: 5px;
+        }
+        .missing_field,.invalid_field {
+          color : #b94a48;
+        }
+        .filter_item ,.filter_compare{
+            width: 170px;
+        }
+    }
+
+    .edit-label {
+        margin: 6px 0;
+        width: 130px;
+        text-align: right;
+        margin-right: 16px;
+        color: #888;
+    }
+    .sub-header{
+      margin-top: -12px;
+      font-size: 13px;
+      color: #878787;
+    }
+}
+/* Search results */
+
+.search-results{
+    background: #fff;
+    position: relative;
+    bottom: 0;
+    height: 100%;
+    width: 100%;
+    min-height : 300px;
+    display: none;
+    z-index: 2;
+    
+    .message_container{
+      text-align: center;
+      margin-bottom: 10px;
+      height: 100px;
+      .message{
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 10px;
+        color: #333;
+      }
+      .info{
+        font-size: 13px;
+        color: #888888;
+      }
+    }
+    
+    .dot_seperator{
+      border : 1px dashed #999;
+      width: 70%;
+      margin: 10px auto 20px auto;
+    }
+    
+    .sample_container {
+      .sample_message {
+        text-align: center;
+        color: #888888;
+      }
+      .sample_image {
+        height: auto;
+        text-align: center;
+        margin: 20px auto;
+      }
+    }
+    
+    
+    .answer-preview {
+        width: 400px;
+        box-shadow: 0px 1px 1px 0px rgba(136, 136, 136, 0.2);
+        margin: 10px auto 40px auto;
+        border-radius: 4px;
+        border : 1px solid #f3f3f3;
+        .profile-img {
+          img{
+            border-radius: 100%;
+          }
+        }
+    }
+
+    .left-part {
+        border-right: 1px solid #eee;
+    }
+
+    .right-part {
+        margin-left: 16px;
+        .title {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .details {
+            .value{
+                display: inline-block;
+                color: #666;
+                font-size: 16px;
+                font-weight: 500;
+
+                &.positive{
+                    color : #009900;
+                }
+
+                &.negative{
+                     color : #e22a24;
+                }
+            }
+            i {
+                &.positive{
+                    color : #009900;
+                }
+
+                &.negative{
+                     color : #e22a24;
+                }
+                
+                &.neutral{
+                  color: #999;
+                }
+            }
+        }
+    }
+
+    .answer-section {
+        margin-top: 30px;
+
+        .graph-preview {
+            height : 300px;
+
+
+            #graph-view {
+                width : 80%;
+                margin: 0 auto;
+            }
+        }
+
+        .answer-preview {
+            padding: 8px;
+            .stat {
+                color: #006063;
+                font-size: 25px;
+                margin-top: 10px;
+                margin-right: 10px;
+                height: 35px;
+                min-width: 50px;
+                text-align: center
+            }
+        }
+
+        .view-report {
+            width : 200px;
+            margin : 20px auto;
+        }
+    }
+}
+
+/* Recent Questions */
+
+.recent-questions{
+
+    .title{
+        color: #666;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    margin-top : 10%;
+    text-align: center;
+
+    div.recent-item {
+        border: 1px solid #dbdbdb;
+        padding: 10px;
+        width: 450px;
+        margin: 10px auto;
+        text-align: left;
+        cursor : pointer;
+        border-radius: 4px;
+    }
+}

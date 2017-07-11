@@ -1,0 +1,433 @@
+<%
+    var widgetIds = _.keys(data);
+    var widgetStatus;
+
+    var index, insightGroups, insightGroupsLabel, insightProducts,
+    insightProductsLabel, metricName, metricType, metricVal1, metricVal2,
+    tagline, threshold, varianceDirection, varianceStatus, varianceValue, widgetType,displayCount = 0;;
+%>
+<div class="insights-headline <%= is_customize_screen ? '' : 'hide' %>">
+  <div><span><%= I18n.t('helpdesk_reports.insights.current_outliers') %></span></div>
+</div>
+<% if (is_customize_screen) { %>
+  <div class="empty-outliers <%= current_outlier_count == 0 ? '' : 'hide-section' %> ">
+    No current outliers
+  </div>
+<% } %>
+<% jQuery.each(widgetIds, function( id, key ) {
+
+    if ( key != 'last_dump_time' ) {
+
+        insightGroups = data[key].groups_value;
+        insightGroupsLabel = data[key].groups_label;
+        insightProducts = data[key].products_value;
+        insightProductsLabel = data[key].products_label;
+        metric_name = data[key].metric;
+        metricName = HelpdeskReports.Constants.Glance.metrics[data[key].metric].name;
+        metricType = data[key].metric_type;
+        metricVal1 = data[key].val1;
+        metricVal2 = data[key].val2;
+        threshold = data[key].threshold;
+        varianceDirection = data[key].variance.direction;
+        varianceStatus = data[key].variance.status !== null ? data[key].variance.status : 'neutral';
+        varianceValue = data[key].variance.value;
+        visibility = data[key].visibility;
+        widgetType = data[key].widget_type;
+        highlight = data[key].highlight;
+        if(widgetType == "1" && metricType == 'Avg') {
+            
+            metricVal1 = HelpdeskReports.CoreUtil.timeMetricConversion(metricVal1)
+        }
+        
+        display_text = I18n.t('helpdesk_reports.insights_tagline.' + key + '.display_text');
+        if (widgetStatus != null && visibility === 0) {
+            widgetStatus = 0;
+        }
+        
+        if ( visibility == 1 ) { %>
+            
+            <div data-action="<%= is_edit_view ? 'edit-widget' : '' %>" class="widget-row <%= !is_edit_view && displayCount >= page_size ? 'hide' : '' %> <%= is_edit_view && highlight ? 'highlight' : '' %>" data-index="<%= id %>" >
+                <div class="widget-item">
+                    <div class="widget-visual pull-left <%= varianceStatus || "" %>">
+                        <% if (widgetType == "1") { %>
+                            <% if (varianceDirection === 1) { %>
+                                <i class="ficon-caret-up"></i>
+                            <% } else if (varianceDirection === 0) { %>
+                                <i class="ficon-caret-down"></i>
+                            <% } %>
+                            <% if (varianceValue == null) { %>
+                                <div class="variance-value">0 %</div>
+                            <% } else { %>
+                                <div class="variance-value"><%= varianceValue > 99 ? "99+" : varianceValue %>%</div>
+                            <% } %>
+                            
+                        <% } else if (widgetType == "2") { %>
+                            <i class="ficon-bar-chart"></i>
+                        <% } else if (widgetType == "3") { %>
+                            <i class="ficon-pie-chart"></i>
+                        <% } %>
+                    </div>
+                    <div class="widget-content pull-left">
+                        <div class="statement">
+                            <% if (widgetType == "1") { %>
+                                <% if (metricType == 'Avg' && metricVal1 == null) { %>
+                                    <span class="metric-value">
+                                            <span class="metric-value">0<span class="time-char-format">m</span> 0<span class="time-char-format">s</span> </span>     
+                                    </span>
+                                <% } else if(metricType == 'Percentage') { %>
+                                    <span class="metric-value"><%= metricVal1 || 0 %>%</span>
+                                <% } else { %>
+                                    <span class="metric-value"><%= metricVal1 || 0 %> </span>
+                                <% } %>
+                                <span class="metric-title"><%= display_text %></span>
+                            <% } else if (widgetType == "2") { %>
+                                <%= I18n.t('helpdesk_reports.insights_tagline.' + key + '.' + varianceStatus,{ count : metricVal2,total : metricVal1, group : insightGroupsLabel }) %>
+                            <% } else if (widgetType == "3"){ %>
+                                <span class="metric-value"><%= insightGroupsLabel[1] || 'NA' %> </span>
+                                <% if ( metricVal1 > metricVal2 ) { %>
+                                    <i class="ficon-arrow-left"></i>
+                                <% } else { %>
+                                    <i class="ficon-arrow-right"></i>
+                                <% } %>
+                                <span class="metric-value"><%= insightGroupsLabel[0] || 'NA' %> </span>
+                            <% } %>
+                        </div>
+                        <% if (widgetType == "1") { %>
+                            <div class="tag-line"><%= I18n.t('helpdesk_reports.insights_tagline.' + key + '.' + varianceStatus) %></div>
+                        <% } else if ( widgetType == "3") { %>
+                            <div class="tag-line"><%= I18n.t('helpdesk_reports.insights_tagline.' + key + '.' + varianceStatus, { group1: insightGroupsLabel[0] , group2 : insightGroupsLabel[1]}) %></div>
+                        <% } %>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+                <div class="widget-configuration">
+                    <% if(is_edit_view) { %>
+                        <% if (widgetType != "2") { %>
+                            <div class="config-row">
+                                <div class="config-label">Threshold</div>
+                                <div class="config-val"><%= threshold %>%</div>
+                                <div class="clear"></div>
+                            </div>
+                        <% } %>
+                        <% if (widgetType == "1" || widgetType == "2") { %>
+                            <div class="config-row">
+                                <div class="config-label">Group</div>
+                                <div class="config-val"> <%= insightGroupsLabel.length != 0 ? insightGroupsLabel.join(",") : '-' %></div>
+                                <div class="clear"></div>
+                            </div>
+                        <% } %>
+                        <% if (widgetType == "3") { %>
+                            <div class="config-row">
+                                <div class="config-label">Group1</div>
+                                <div class="config-val"><%= insightGroupsLabel[0] %></div>
+                                <div class="clear"></div>
+                            </div>
+                            <div class="config-row">
+                                <div class="config-label">Group2</div>
+                                <div class="config-val"><%= insightGroupsLabel[1] %></div>
+                                <div class="clear"></div>
+                            </div>
+                        <% } %>
+                        <% if (widgetType == "1") { %>
+                            <div class="config-row">
+                                <div class="config-label">Product</div>
+                                <div class="config-val"><%= insightProductsLabel.length != 0 ? insightProductsLabel.join(",") : '-' %></div>
+                                <div class="clear"></div>
+                            </div>
+                        <% } %>
+                    <% } %>
+                </div>
+                <% if(is_edit_view) { %>
+                    <a 
+                      href="#insights-edit-<%=id%>" 
+                      rel="freshdialog" 
+                      data-backdrop="static"
+                      data-show-close="true"
+                      data-destroy-on-close="true" 
+                      class="pull-right btn btn-default button-edit hide"
+                      data-index="<%= key %>" 
+                      data-metric="<%= metric_name %>"
+                      data-metric-type="<%= metricType %>" 
+                      data-widget-type="<%= widgetType %>"
+                      data-title="Customize Insights"
+                      data-submit-label="Save"
+                      data-close-label="Cancel"
+                      
+                      >
+                      Edit
+                    </a>
+                <% } %>
+                <div class="clear"></div>
+            </div>
+            <% if (is_edit_view) { %>
+                <div class="edit-row hide" data-index="<%= id %>" id="insights-edit-<%=id%>">
+                    <p class="sub-header"><%=display_text%></p>
+                    <% if (widgetType == "1" || widgetType == "3") { %>
+                        <div class="form">
+                            <div class="edit-label pull-left">Threshold (%)</div>
+                            <input class="js-insightThreshold" type="number" min="0" max="99" value="<%= threshold %>">
+                            <p class="missing_field hide">This field is required</p>
+                            <p class="invalid_field hide">This field is invalid</p>
+                        </div>
+                    <% } %>
+                    <% if (widgetType == "1") { %>
+                        <div class="form">
+                            <div class="edit-label pull-left">Group</div>
+                            <select class="filter_item field-width js-insightGroups" name="groups">
+                                <option value="-1">...</option>
+                                <% for ( var groupsIndex = 0; groupsIndex < all_groups.length; groupsIndex++ ) {
+                                    var selected = data[key].groups_value.indexOf(all_groups[groupsIndex][0]) != -1 ? "selected" : ""; %>
+                                    <option value="<%= all_groups[groupsIndex][0] %>" <%= selected %> ><%= all_groups[groupsIndex][1] %></option>
+                                <% } %>
+                            </select>
+                        </div>
+                        <div class="form">
+                            <div class="edit-label pull-left">Product</div>
+                            <select class="filter_item field-width js-insightProducts" name="products">
+                                <option value="-1">...</option>
+                                <% for ( var productsIndex = 0; productsIndex <	all_products.length; productsIndex++ ) {
+                                    var selected = data[key].products_value.indexOf(all_products[productsIndex][0]) != -1 ? "selected" : ""; %>
+                                    <option value="<%= all_products[productsIndex][0] %>"  <%= selected %> ><%= all_products[productsIndex][1] %></option>
+                                <% } %>
+                            </select>
+                        </div>
+                    <% } else if (widgetType == "2" ) { %>
+                        <div class="form vcenter">
+                            <div class="edit-label pull-left">Compare Agent performance in Group </div>
+                            <select class="filter_compare field-width js-insightGroups" name="groups">
+                                <% for ( var groupsIndex = 0; groupsIndex < all_groups.length; groupsIndex++ ) {
+                                    var selected = data[key].groups_value.indexOf(all_groups[groupsIndex][0]) != -1 ? "selected" : "";%>
+                                    <option value="<%= all_groups[groupsIndex][0] %>" <%= selected %> ><%= all_groups[groupsIndex][1] %></option>
+                                <% } %>
+                            </select>
+                        </div>
+                    <% } else if (widgetType == "3") { %>
+                        <div class="form vcenter bar-chart">
+                            <div class="edit-label pull-left">Compare Group 1 </div>
+                            <select class="filter_compare field-width js-insightGroup1" name="groups">
+                                <% for ( var groupsIndex = 0; groupsIndex < all_groups.length; groupsIndex++ ) {
+                                    var selected = data[key].groups_value[0] === all_groups[groupsIndex][0] ? "selected" : ""; %>
+                                    <option value="<%= all_groups[groupsIndex][0] %>" <%= selected %> ><%= all_groups[groupsIndex][1] %></option>
+                                <% } %>
+                            </select>
+                        </div>
+                        <div class="form pull-left vcenter bar-chart">
+                            <div class="edit-label pull-left">with Group 2 </div>
+                            <select class="filter_compare field-width js-insightGroup2" name="groups">
+                                <% for ( var groupsIndex = 0; groupsIndex < all_groups.length; groupsIndex++ ) {
+                                    var selected = data[key].groups_value[1] === all_groups[groupsIndex][0] ? "selected" : ""; %>
+                                    <option value="<%= all_groups[groupsIndex][0] %>" <%= selected %> ><%= all_groups[groupsIndex][1] %></option>
+                                <% } %>
+                            </select>
+                        </div>
+                    <% } %>
+                    <div class="clear"></div>
+                </div>
+          <% } %>
+          <% displayCount++ %>
+        <% } %>
+    <% } %>
+
+<% }); %>
+<% if (is_customize_screen) { %>
+<div class="insights-headline <%= is_customize_screen ? '' :'hide' %>">
+  <div><span>Others</span></div>
+</div>
+<% jQuery.each(widgetIds, function( id, key ){
+    if ( key != 'last_dump_time' ) {
+
+        insightGroups = data[key].groups_value;
+        insightGroupsLabel = data[key].groups_label;
+        insightProducts = data[key].products_value;
+        insightProductsLabel = data[key].products_label;
+        metric_name = data[key].metric;
+        metricName = HelpdeskReports.Constants.Glance.metrics[data[key].metric].name;
+        metricType = data[key].metric_type;
+        metricVal1 = data[key].val1;
+        metricVal2 = data[key].val2;
+        threshold = data[key].threshold;
+        varianceDirection = data[key].variance.direction;
+        varianceStatus = data[key].variance.status !== null ? data[key].variance.status : 'neutral';
+        varianceValue = data[key].variance.value;
+        visibility = data[key].visibility;
+        widgetType = data[key].widget_type;
+        highlight = data[key].highlight;
+        if(widgetType == "1" && metricType == 'Avg') {
+            metricVal1 = HelpdeskReports.CoreUtil.timeMetricConversion(metricVal1)
+        }
+        tagline = I18n.t('helpdesk_reports.insights_tagline.' + key + '.' + varianceStatus);
+        display_text = I18n.t('helpdesk_reports.insights_tagline.' + key + '.display_text');
+        if ( visibility == 0 ) { %>
+            <div data-action="<%= is_edit_view ? 'edit-widget' : '' %>" class="widget-row <%= !is_edit_view && id >= page_size ? 'hide' : '' %> <%= is_edit_view && highlight ? 'highlight' : '' %>" data-index="<%= id %>" >
+                <div class="widget-item disabled-state">
+                    <div class="widget-visual pull-left <%= varianceStatus || '' %>">
+                        <% if (widgetType == "1") { %>
+                            <% if (varianceDirection === 1) { %>
+                                <i class="ficon-caret-up"></i>
+                            <% } else if (varianceDirection === 0) { %>
+                                <i class="ficon-caret-down"></i>
+                            <% } %>
+                            <% if (varianceValue == null) { %>
+                                <div class="variance-value">0 %</div>
+                            <% } else { %>
+                                <div class="variance-value"><%= varianceValue > 99 ? "99+" : varianceValue %>%</div>
+                            <% } %>
+                        <% } else if (widgetType == "2") { %>
+                            <i class="ficon-bar-chart"></i>
+                        <% } else if (widgetType == "3") { %>
+                            <i class="ficon-pie-chart"></i>
+                        <% } %>
+                    </div>
+                    <div class="widget-content pull-left">
+                        <div class="statement">
+                            <% if (widgetType == "1") { %>
+                                <% if (metricType == 'Avg' && metricVal1 == null) { %>
+                                    <span class="metric-value">
+                                            <span class="metric-value">0<span class="time-char-format">m</span> 0<span class="time-char-format">s</span> </span>     
+                                    </span>
+                                <% } else if(metricType == 'Percentage') { %>
+                                    <span class="metric-value"><%= metricVal1 || 0 %>% </span>
+                                <% } else { %>
+                                    <span class="metric-value"><%= metricVal1 || 0 %> </span>
+                                <% } %>
+                                <span class="metric-title"><%= display_text %></span>
+                            <% } else if (widgetType == "2") { %>
+                                <%= I18n.t('helpdesk_reports.insights_tagline.' + key + '.' + varianceStatus,{ count : metricVal2,total : metricVal1, group : insightGroupsLabel }) %>
+                            <% } else if (widgetType == "3") { %>
+                                <%= I18n.t('helpdesk_reports.insights_tagline.' + key + '.' + varianceStatus) %>
+                            <% } %>
+                        </div>
+                        <% if (widgetType == "1") { %>
+                            <div class="tag-line"><%= tagline %></div>
+                        <% } %>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="widget-configuration">
+                    <% if(is_edit_view) { %>
+                        <% if (widgetType != "2") { %>
+                            <div class="config-row">
+                                <div class="config-label">Threshold</div>
+                                <div class="config-val"><%= threshold %>%</div>
+                                <div class="clear"></div>
+                            </div>
+                        <% } %>
+                        <% if (widgetType == "1" || widgetType == "2") { %>
+                            <div class="config-row">
+                                <div class="config-label">Group</div>
+                                <div class="config-val"> <%= insightGroupsLabel.length != 0 ? insightGroupsLabel.join(",") : '-' %></div>
+                                <div class="clear"></div>
+                            </div>
+                        <% } %>
+                        <% if (widgetType == "3") { %>
+                            <div class="config-row">
+                                <div class="config-label">Group1</div>
+                                <div class="config-val"> <%= insightGroupsLabel[0] %></div>
+                                <div class="clear"></div>
+                            </div>
+                            <div class="config-row">
+                                <div class="config-label">Group2</div>
+                                <div class="config-val"> <%= insightGroupsLabel[1] %></div>
+                                <div class="clear"></div>
+                            </div>
+                        <% } %>
+                        <% if (widgetType == "1") { %>
+                            <div class="config-row">
+                                <div class="config-label">Product</div>
+                                <div class="config-val"><%= insightProductsLabel.length != 0 ? insightProductsLabel.join(",") : '-' %></div>
+                                <div class="clear"></div>
+                            </div>
+                        <% } %>
+                    <% } %>
+                </div>
+                <% if(is_edit_view) { %>
+                  <a 
+                    href="#insights-edit-<%=id%>" 
+                    rel="freshdialog" 
+                    data-backdrop="static"
+                    data-show-close="true" 
+                    class="pull-right btn btn-default button-edit hide"
+                    data-index="<%= key %>" 
+                    data-metric="<%= metric_name %>"
+                    data-metric-type="<%= metricType %>" 
+                    data-widget-type="<%= widgetType %>"
+                    data-submit-label="Save"
+                    data-close-label="Cancel"
+                    data-title="Customize Insights">
+                    Edit
+                  </a>
+                <% } %>
+                <div class="clear"></div>
+            </div>
+            <% if (is_edit_view) { %>
+                <div class="edit-row hide" data-index="<%= id %>" id="insights-edit-<%=id%>">
+                    <p class="sub-header"><%=display_text%></p>
+                    <p>&nbsp;</p>
+                    <% if (widgetType == "1" || widgetType == "3") { %>
+                        <div class="form threshold">
+                            <div class="edit-label pull-left">Threshold (%)</div>
+                            <input class="js-insightThreshold pull-left" type="number" min="0" max="99" value="<%= threshold %>">
+                            <p class="missing_field hide">This field is required</p>
+                            <p class="invalid_field hide">This field is invalid</p>
+                        </div>
+                    <% } %>
+                    <% if (widgetType == "1") { %>
+                        <div class="form">
+                            <div class="edit-label pull-left">Group</div>
+                            <select class="filter_item field-width js-insightGroups" name="groups">
+                                <option value="-1">...</option>
+                                <% for ( var groupsIndex = 0; groupsIndex < all_groups.length; groupsIndex++ ) { %>
+                                    <option value="<%= all_groups[groupsIndex][0] %>" <%= selected %> ><%= all_groups[groupsIndex][1] %></option>
+                                <% } %>
+                            </select>
+                        </div>
+                        <div class="form">
+                            <div class="edit-label pull-left">Product</div>
+                            <select class="filter_item field-width js-insightProducts" name="products">
+                                <option value="-1">...</option>
+                                <% for ( var productsIndex = 0; productsIndex <	all_products.length; productsIndex++ ) { %>
+                                    <option value="<%= all_products[productsIndex][0] %>" ><%= all_products[productsIndex][1] %></option>
+                                <% } %>
+                            </select>
+                        </div>
+                    <% } else if (widgetType == "2" ) { %>
+                        <div class="form vcenter">
+                            <div class="edit-label pull-left">Compare Agent performance in Group </div>
+                            <select class="filter_compare field-width js-insightGroups" name="groups">
+                                <% for ( var groupsIndex = 0; groupsIndex < all_groups.length; groupsIndex++ ) { %>
+                                    <option value="<%= all_groups[groupsIndex][0] %>" ><%= all_groups[groupsIndex][1] %></option>
+                                <% } %>
+                            </select>
+                        </div>
+                    <% } else if (widgetType == "3") { %>
+                        <div class="form vcenter bar-chart">
+                            <div class="edit-label pull-left">Compare Group 1 </div>
+                            <select class="filter_compare field-width js-insightGroup1" name="groups">
+                                <% for ( var groupsIndex = 0; groupsIndex < all_groups.length; groupsIndex++ ) {
+                                    var selected = data[key].groups_value[0] === all_groups[groupsIndex][0] ? "selected" : ""; %>
+                                    <option value="<%= all_groups[groupsIndex][0] %>" <%= selected %> ><%= all_groups[groupsIndex][1] %></option>
+                                <% } %>
+                            </select>
+                        </div>
+                        <div class="form vcenter bar-chart">
+                            <div class="edit-label pull-left">with Group 2 </div>
+                            <select class="filter_compare field-width js-insightGroup2" name="groups">
+                                <% for ( var groupsIndex = 0; groupsIndex < all_groups.length; groupsIndex++ ) {
+                                    var selected = data[key].groups_value[1] === all_groups[groupsIndex][0] ? "selected" : ""; %>
+                                    <option value="<%= all_groups[groupsIndex][0] %>" <%= selected %> ><%= all_groups[groupsIndex][1] %></option>
+                                <% } %>
+                            </select>
+                        </div>
+                    <% } %>
+                </div>
+          <% } %>
+        <% } %>
+    <% } %>
+<% }); %>
+<% } %>
+<% if (is_customize_screen) { %>
+  <div class="empty-outliers <%= current_outlier_count == widgetIds.length ? '' : 'hide-section' %>">
+    No other outliers
+  </div>
+<% } %>
+

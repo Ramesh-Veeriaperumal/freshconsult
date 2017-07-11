@@ -10,7 +10,7 @@ module HelpdeskReports::Helper::PlanConstraints
     :enterprise_reporting => ['estate', 'forest']
   }
 
-  PLAN_BASED_FEATURE_CONSTRAINT_MAPPING = {timespent: :enable_lifecycle_report}
+  PLAN_BASED_FEATURE_CONSTRAINT_MAPPING = {timespent: :enable_lifecycle_report, qna: :enable_qna_insights, insights: :enable_qna_insights}
 
   PLAN_BASED_REPORTS = PLAN_BASED_FEATURE_CONSTRAINT_MAPPING.keys
 

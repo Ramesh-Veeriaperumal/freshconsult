@@ -1675,6 +1675,11 @@ Helpkit::Application.routes.draw do
         post :delete_reports_filter
         post :update_reports_filter
         post :fetch
+        post :fetch_qna_metric
+        post :fetch_insights_metric
+        post :save_insights_config
+        post :fetch_recent_questions
+        post :fetch_insights_config
       end
     end
 

@@ -85,13 +85,13 @@ class Account < ActiveRecord::Base
     :sprout_jan_17 => {
       :features => [ :scenario_automations, :business_hours ]
     },
-    
+
     :blossom_jan_17 => {
       :features => [ :gamification, :auto_refresh, :twitter, :facebook, :surveys , :scoreboard, :timesheets,
         :custom_domain, :multiple_emails, :advanced_reporting, :default_survey, :sitemap, :requester_widget ],
       :inherits => [ :sprout_jan_17 ]
     },
-    
+
     :garden_jan_17 => {
       :features => [ :forums, :multi_language, :css_customization, :advanced_reporting, :dynamic_content, :chat,
         :ticket_templates, :custom_survey ],
@@ -186,8 +186,10 @@ class Account < ActiveRecord::Base
     :es_v2_splqueries => false, :suggest_tickets => false, :"Freshfone New Notifications" => false, :feedback_widget_captcha => false,
     :es_multilang_solutions => false, :requester_widget => false, :spam_blacklist_feature => false,
     :custom_timesheet => false, :antivirus_service => false, :hide_api_key => false, :new_sla_logic => false,
-    :dashboard_new_alias => false, :attachments_scope => false, :kbase_spam_whitelist => false, :forum_post_spam_whitelist => false, :email_failures => false,
+    :multi_dynamic_sections => true, :dashboard_new_alias => false, :attachments_scope => false, :kbase_spam_whitelist => false, 
+    :forum_post_spam_whitelist => false, :email_failures => false, :enable_qna => false, :enable_insights => false,
     :escape_liquid_attributes => true, :escape_liquid_for_reply => true, :escape_liquid_for_portal => true
+    
   }
 
 end

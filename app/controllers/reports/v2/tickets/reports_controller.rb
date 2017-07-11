@@ -5,14 +5,16 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   include ExportCsvUtil
   include HelpdeskReports::Helper::ControllerMethods
   include HelpdeskReports::Helper::ScheduledReports
-  
-  before_filter :check_account_state, :ensure_report_type_or_redirect, :lifecycle_launch_party_check,
+  include HelpdeskReports::Helper::QnaInsightsReports
+
+  before_filter :check_account_state, :ensure_report_type_or_redirect,  :lifecycle_launch_party_check,
                 :plan_constraints,                                      :except => [:download_file]              
   before_filter :pdf_export_config, :report_filter_data_hash,           :only   => [:index, :fetch_metrics]
   before_filter :filter_data, :set_selected_tab,                        :only   => [:index, :export_report, :email_reports]
+  before_filter :transform_qna_insight_request,                         :only   => [:fetch_qna_metric, :fetch_insights_metric]
   before_filter :normalize_params, :construct_params, :validate_params, :validate_scope, 
                 :only_ajax_request, :redirect_if_invalid_request,          :except => [:index, :configure_export, :export_report, :download_file,
-                                                                                    :save_reports_filter, :delete_reports_filter]
+                                                                                    :save_reports_filter, :delete_reports_filter, :save_insights_config, :fetch_recent_questions]
   before_filter :pdf_params,                                            :only   => [:export_report]
   before_filter :save_report_max_limit?,                                :only   => [:save_reports_filter]
   before_filter :construct_report_filters, :schedule_allowed?,          :only   => [:save_reports_filter,:update_reports_filter]
@@ -108,7 +110,34 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
     redir_url = AwsWrapper::S3Object.url_for(path,S3_CONFIG[:bucket], :expires => 300.seconds, :secure => true)
     redirect_to redir_url
   end
+  ############## QnA and Insights Metric Start ########################
+  def fetch_qna_metric
+    save_recent_question(params[:question])
+    generate_data
+    @data[:last_dump_time]  = @last_dump_time
+    send_json_result
+  end
 
+  def fetch_insights_metric
+    generate_data
+    @data[:last_dump_time]  = @last_dump_time
+    send_json_result
+  end
+
+  def save_insights_config
+    save_insights_config_model
+    render json: {config: get_insights_widget_config }
+  end
+
+  def fetch_recent_questions
+    recent_qs = current_user.qna_insight ? current_user.qna_insight.get_recent_questions : []
+    render json: { recent_questions: recent_qs }
+  end
+
+  def fetch_insights_config
+      render json: {config: get_insights_widget_config(params[:widget_type]) }
+  end
+  ############## QnA and Insights Metric End ########################
   private
   
   def generate_data
@@ -140,9 +169,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
       request_object.build_request
       requests << request_object
     end
-
     response = bulk_request requests
-    
     @results = []
     response.each do |res|
       if res["last_dump_time"]
@@ -166,7 +193,14 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
     else
       @processed_result = {}
       @results.each do |res_obj|
-        key = res_obj.query_type == :bucket ? "#{res_obj.metric}_BUCKET" : res_obj.metric
+        key = nil
+        if res_obj.query_type == :bucket
+          key = "#{res_obj.metric}_BUCKET"
+        elsif res_obj.report_type == :insights # for insights same metric will be used more than once
+          key = res_obj.result['index']
+        else
+          key = res_obj.metric
+        end
         @processed_result[key] = res_obj.parse_result
       end
     end
