@@ -480,7 +480,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def custom_search
     params[:html_format] = true
-    @items = collab_filter_enabled_for?(view_context.current_filter) ? fetch_collab_tickets : fetch_tickets
+    @items = fetch_tickets
 
     #Changes for customer sentiment - Beta feature
     if Account.current.customer_sentiment_ui_enabled? && @items.size > 0

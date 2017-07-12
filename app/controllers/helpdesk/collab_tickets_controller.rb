@@ -36,11 +36,19 @@ class Helpdesk::CollabTicketsController < ApplicationController
       head :forbidden
     elsif verify_permission? || (Account.current.group_collab_enabled? && valid_token?)
       if params[:metadata].present?
+        if @ticket.product && @ticket.product.portal_url.present?
+          host_domain = @ticket.product.portal_url
+        elsif @current_portal && @current_portal.portal_url.present?
+          host_domain = @current_portal.portal_url
+        else
+          host_domain = current_account.host
+        end
         noti_info = {
           :mid => params[:mid],
           :mbody => params[:body],
           :metadata => params[:metadata],
-          :ticket_display_id => params[:id]
+          :ticket_display_id => params[:id],
+          :current_domain => host_domain
         }
         CollaborationWorker.perform_async(noti_info)
         head :ok
@@ -54,7 +62,7 @@ class Helpdesk::CollabTicketsController < ApplicationController
 
   private
     def load_or_show_error
-      @item = @ticket = current_account.tickets.find_by_display_id(params[:id])
+      @item = @ticket = (current_account.tickets.find_by_display_id(params[:id]) || current_account.archive_tickets.find_by_display_id(params[:id]))
       @item || raise(ActiveRecord::RecordNotFound)
     end
 
