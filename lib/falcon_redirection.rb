@@ -91,13 +91,12 @@ class FalconRedirection
     end
 
     def iframe_paths
-      ['/a/admin/', '/a/forums/', '/a/social/', '/a/solutions/', '/a/reports/', '/a/contacts/new', '/a/companies/new'] + get_all_members_in_a_redis_set(FALCON_REDIRECTION_IFRAME_PATHS)
+      ['/a/admin/', '/a/forums/', '/a/social/', '/a/solutions/', '/a/reports/', '/a/contacts/new', '/a/companies/new', '/a/sla_policies/'] + get_all_members_in_a_redis_set(FALCON_REDIRECTION_IFRAME_PATHS)
     end
 
     def iframe_re_paths
-      ['^/a/contacts/\d+', '^/a/companies/\d+', '^/a/forums/topics/\d+'].freeze
+      ['^/a/contacts/\d+', '^/a/companies/\d+', '^/a/forums/topics/\d+', "^/sla_policies/\d+/edit"].freeze
     end
-
   end
 
 end
