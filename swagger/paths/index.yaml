@@ -103,6 +103,8 @@
   $ref: ./contacts/whitelist.yaml
 /contacts/{id}/activities:
   $ref: ./contacts/activities.yaml
+/contacts/{id}/assume_identity:
+  $ref: ./contacts/assume_identity.yaml
 /contacts/bulk_delete:
   $ref: ./contacts/bulk_delete.yaml
 /contacts/bulk_restore:

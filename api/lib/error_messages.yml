@@ -125,6 +125,7 @@ api_error_messages:
   installed_application_id_required: "Installed application id required"
   user_id_required: "User Id required"
   ticket_id_required: "Ticket id required"
+  not_allowed_to_assume: "You are not allowed to assume this user."
   not_a_related_ticket: "Not a related ticket"
   wrong_internal_agent: "Internal Agent does not belong to the specified Group"
   wrong_internal_group: "Internal group does not belong to the given status of the ticket"

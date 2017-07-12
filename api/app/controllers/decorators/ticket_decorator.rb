@@ -216,6 +216,27 @@ class TicketDecorator < ApiDecorator
     ret_hash
   end
 
+  def to_activity_hash
+    ret_hash = {
+      activity_type: (archived? ? "ArchiveTicket" : "Ticket").downcase,
+      id: display_id,
+      description_text: description,
+      tags: tag_names,
+      responder_id: responder_id,
+      source: source,
+      due_by: archived? ? parse_time(due_by) : due_by.try(:utc),
+      created_at: created_at.try(:utc),
+      subject: subject,
+      requester_id: requester_id,
+      group_id: group_id,
+      status: status,
+      stats: stats,
+      fr_due_by: archived? ? parse_time(frDueBy) : frDueBy.try(:utc)
+    }
+    ret_hash.merge!(archived: archived?) if archived?
+    ret_hash
+  end
+
   def to_prime_association_hash
     hash = {
       id: display_id,

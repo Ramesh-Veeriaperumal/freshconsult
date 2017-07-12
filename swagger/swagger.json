@@ -1969,6 +1969,30 @@
         }
       }
     },
+    "/contacts/{id}/assume_identity": {
+      "put": {
+        "summary": "Assume identity",
+        "tags": [
+          "contact"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
     "/contacts/bulk_delete": {
       "put": {
         "tags": [
@@ -6935,45 +6959,99 @@
       "type": "object",
       "properties": {
         "data": {
-          "title": "data",
           "type": "object",
           "properties": {
-            "type": {
-              "type": "string",
-              "enum": [
-                "Post",
-                "Ticket"
-              ]
-            },
-            "id": {
-              "type": "integer"
-            },
-            "created_at": {
-              "type": "string"
-            },
-            "topic_id": {
-              "description": "Will be present for Forum Activity",
-              "type": "integer"
-            },
-            "topic_title": {
-              "description": "Will be present for Forum Activity",
-              "type": "string"
-            },
-            "replied": {
-              "description": "Will be present for Forum Activity",
-              "type": "boolean"
-            },
-            "status": {
-              "description": "Will be present for Ticket Activity",
-              "type": "integer"
-            },
-            "agent_id": {
-              "description": "Will be present for Ticket Activity",
-              "type": "integer"
-            },
-            "subject": {
-              "description": "Will be present for Ticket Activity",
-              "type": "string"
+            "post/ticket/archiveticket": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "topic_id": {
+                    "description": "Will be present for Forum Activity",
+                    "type": "integer"
+                  },
+                  "title": {
+                    "description": "Will be present for Forum Activity",
+                    "type": "string"
+                  },
+                  "comment": {
+                    "description": "Will be present for Forum Activity",
+                    "type": "boolean"
+                  },
+                  "forum": {
+                    "description": "Will be present for Forum Activity",
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "description_text": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string"
+                  },
+                  "tags": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "responder_id": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "integer"
+                  },
+                  "due_by": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "requester_id": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string"
+                  },
+                  "subject": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string"
+                  },
+                  "group_id": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string"
+                  },
+                  "status": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string"
+                  },
+                  "fr_due_by": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string"
+                  },
+                  "stats": {
+                    "$ref": "#/definitions/ticket_stats"
+                  },
+                  "created_at": {
+                    "description": "Will be present for all activities",
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "description": "Will be present for all activities",
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "position": {
+                    "description": "Will be present for all activities",
+                    "type": "integer"
+                  }
+                }
+              }
             }
           }
         },
@@ -6990,47 +7068,93 @@
     },
     "company_activity": {
       "type": "object",
-      "description": "Company activities",
       "properties": {
-        "id": {
-          "type": "integer"
-        },
-        "subject": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string"
-        },
-        "agent_id": {
-          "type": "integer"
-        },
-        "created_at": {
-          "type": "string",
-          "format": "date-time"
-        }
-      }
-    },
-    "company_activities_with_meta": {
-      "type": "object",
-      "properties": {
-        "activities": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/company_activity"
+        "data": {
+          "type": "object",
+          "properties": {
+            "ticket/archiveticket": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "description_text": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string"
+                  },
+                  "tags": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "responder_id": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "integer"
+                  },
+                  "due_by": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "requester_id": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string"
+                  },
+                  "subject": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string"
+                  },
+                  "group_id": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string"
+                  },
+                  "status": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string"
+                  },
+                  "fr_due_by": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string"
+                  },
+                  "stats": {
+                    "$ref": "#/definitions/ticket_stats"
+                  },
+                  "created_at": {
+                    "description": "Will be present for all activities",
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "description": "Will be present for all activities",
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "position": {
+                    "description": "Will be present for all activities",
+                    "type": "integer"
+                  }
+                }
+              }
+            }
           }
         },
         "meta": {
+          "title": "meta data",
           "type": "object",
           "properties": {
             "more_tickets": {
-              "type": "boolean"
-            },
-            "more_archived_tickets": {
               "type": "boolean"
             }
           }
         }
       }
+    },
+    "company_activities_with_meta": {
+      "$ref": "#/definitions/company_activity"
     },
     "twitter_handle": {
       "type": "object",

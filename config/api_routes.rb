@@ -251,6 +251,7 @@ Helpkit::Application.routes.draw do
         put :send_invite
         put :update_password
         get :activities
+        put :assume_identity
       end
     end
 
@@ -271,6 +272,7 @@ Helpkit::Application.routes.draw do
 
     resources :ticket_filters, controller: 'ember/ticket_filters', only: [:index, :show, :create, :update, :destroy]
     resources :contact_fields, controller: 'ember/contact_fields', only: :index
+    resources :company_fields, controller: 'ember/company_fields', only: :index
     resources :scenario_automations, controller: 'ember/scenario_automations', only: :index
     resources :canned_response_folders, controller: 'ember/canned_response_folders', only: [:index, :show]
     resources :canned_responses, controller: 'ember/canned_responses', only: [:show, :index] do

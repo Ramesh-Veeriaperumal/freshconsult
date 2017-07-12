@@ -2,9 +2,12 @@ module Ember
   class ContactsController < ApiContactsController
     include DeleteSpamConcern
     include HelperConcern
+    include CustomerActivityConcern
+    include AgentContactConcern
     include ContactsCompaniesConcern
     decorate_views
 
+    around_filter :run_on_slave, only: [:activities]
     before_filter :can_change_password?, :validate_password_change, only: [:update_password]
 
     def create
@@ -22,6 +25,7 @@ module Ember
     end
 
     def show
+      preload_associations
     end
 
     def update
@@ -69,22 +73,6 @@ module Ember
       else
         ErrorHelper.rename_error_fields({ base: :password }, @item)
         render_errors(@item.errors)
-      end
-    end
-
-    def activities
-      @user_activities = case params[:type]
-                         when 'tickets'
-                           ticket_activities.take(10)
-                         when 'archived_tickets'
-                           archived_ticket_activities
-                         when 'forums'
-                           @item.recent_posts
-                         else
-                           combined_activities
-                         end
-      if params[:type].blank? || (params[:type] == 'tickets')
-        response.api_meta = { more_tickets: (ticket_activities.count > 10) }
       end
     end
 
@@ -151,6 +139,11 @@ module Ember
 
       def fetch_objects(items = scoper)
         @items = items.preload(preload_options).find_all_by_id(params[cname][:ids])
+      end
+
+      def preload_associations
+        return unless sideload_options.present? && sideload_options.include?('company')
+        ActiveRecord::Associations::Preloader.new(@item, preload_options).run
       end
 
       def sideload_options
@@ -255,22 +248,6 @@ module Ember
         return true if contacts_validation.valid?(action_name.to_sym)
         render_errors contacts_validation.errors, contacts_validation.error_options
         false
-      end
-
-      def ticket_activities
-        @user_tickets ||= current_account.tickets.preload(:responder).permissible(api_current_user)
-                                         .requester_active(@item).visible.newest(11)
-      end
-
-      def archived_ticket_activities
-        return [] unless current_account.features_included?(:archive_tickets)
-        @user_archived_tickets ||= current_account.archive_tickets.preload(:responder).permissible(api_current_user)
-                                                  .requester_active(@item).newest(10).take(10)
-      end
-
-      def combined_activities
-        user_activities = ticket_activities.take(10) + (current_account.features?(:forums) ? @item.recent_posts : [])
-        user_activities.sort_by { |item| - item.created_at.to_i }
       end
 
       def whitelist_item(item)

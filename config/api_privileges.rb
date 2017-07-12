@@ -25,6 +25,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/email_config", only: [:index]
     resource :"ember/dashboard", only: %i(scorecard show survey_info)
     resource :"ember/contact_field", only: [:index]
+    resource :"ember/company_field", only: [:index]
     resource :"ember/installed_application"
     resource :"ember/integrated_resource"
     resource :"ember/integrated_user"
@@ -75,7 +76,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_users do
-    resource :"ember/contact", only: %i(make_agent send_invite bulk_send_invite)
+    resource :"ember/contact", only: %i(make_agent send_invite bulk_send_invite assume_identity)
     resource :"ember/agent", only: [:show]
   end
 
