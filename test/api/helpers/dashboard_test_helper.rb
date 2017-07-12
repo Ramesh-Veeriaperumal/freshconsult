@@ -135,13 +135,24 @@ module DashboardTestHelper
     build_group_by_list 
     res_array = []
     if include_missing
-      res_array << { @group_by.first => -1, "stats" => statuses_list.inject([]){|obj,status| obj << { "status_id" => status, "count" => ticket_counts[[nil,status]] || 0 }}}
+      total_count = 0
+      stats_hash = statuses_list.inject([]) do |obj, status|
+        status_count = ticket_counts[[nil, status]] || 0
+        total_count += status_count
+        obj << { 'status_id' => status, 'count' => status_count }
+      end
+      stats_hash << { 'status_id' => 0, 'count' => total_count }
+      res_array << { @group_by.first => -1, 'stats' => stats_hash }
     end
-    group_by_values.keys.each do |group| 
+    group_by_values.keys.each do |group|
+      total_count = 0
       status_counts = statuses_list.inject([]) do |obj,status|
+        status_count = ticket_counts[[group, status]] || 0
+        total_count += status_count
         obj << {"status_id" => status, "count" => ticket_counts[[group,status]] || 0}
-      end 
-      res_array << { @group_by.first => group, "stats" => status_counts} 
+      end
+      status_counts << { 'status_id' => 0, 'count' => total_count } unless params[:widget]
+      res_array << { @group_by.first => group, 'stats' => status_counts } unless total_count.zero? && !valid_row?(group)
     end
     if !params[:widget]
       return res_array
