@@ -58,7 +58,7 @@ class TicketBulkUpdateDelegator < BaseDelegator
   end
 
   def required_default_fields
-    fields_to_validate(true).select { |x| x.required || x.required_for_closure }
+    fields_to_validate(true).select { |x| x.required || (closure_status? && x.required_for_closure) }
   end
 
   def fields_to_validate(default)

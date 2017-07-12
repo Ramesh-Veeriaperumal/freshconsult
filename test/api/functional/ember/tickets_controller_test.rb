@@ -1059,6 +1059,18 @@ module Ember
       ticket_field.update_attribute(:required_for_closure, false)
     end
 
+    def test_update_properties_with_non_required_default_field_blank
+      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: true)
+      group = create_group(@account)
+      t = create_ticket({}, group)
+      params_hash = { group_id: nil }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 200
+      match_json(ticket_show_pattern(t.reload))
+    ensure
+      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: false)
+    end
+
     def test_update_properties_with_non_required_default_field_with_incorrect_value
       t = create_ticket
       group = create_group(@account)

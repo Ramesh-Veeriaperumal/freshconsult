@@ -5,6 +5,9 @@ module Ember
     include SplitNoteHelper
     include AttachmentConcern
     include Helpdesk::ToggleEmailNotification
+    include Redis::RedisKeys
+    include Redis::OthersRedis
+
     decorate_views(decorate_object: [:update_properties], decorate_objects: [:index, :search])
 
     INDEX_PRELOAD_OPTIONS = [:ticket_states, :tags, :ticket_old_body, :schema_less_ticket, :flexifield, :ticket_status, { requester: [:avatar, :flexifield, :companies, :user_emails, :tags] }, :custom_survey_results].freeze
@@ -26,6 +29,7 @@ module Ember
       assign_filter_params
       super
       response.api_meta = { count: @items_count } if params[:only] == 'count' || count_included?
+      (response.api_meta ||= {}).merge!(background_info)
     end
 
     def create
@@ -323,6 +327,22 @@ module Ember
         params.permit(*ApiTicketConstants::SHOW_FIELDS, *ApiConstants::DEFAULT_PARAMS)
         @include_validation = TicketIncludeValidation.new(params)
         render_errors @include_validation.errors, @include_validation.error_options unless @include_validation.valid?
+      end
+
+      def background_info
+        return {} unless %w(spam deleted).include?(params[:filter])
+        key = params[:filter] == 'spam' ? empty_spam_key : empty_trash_key
+        {
+          emptying_on_background: get_others_redis_key(key) || false
+        }
+      end
+
+      def empty_spam_key
+        EMPTY_SPAM_TICKETS % { account_id: current_account.id }
+      end
+
+      def empty_trash_key
+        EMPTY_TRASH_TICKETS % { account_id: current_account.id }
       end
 
       def validate_export_params

@@ -1169,6 +1169,21 @@ module Ember
         ticket_field.update_attribute(:required_for_closure, false)
       end
 
+      def test_bulk_update_with_non_required_default_field_blank
+        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: true)
+        product = create_product
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(product_id: product.id).display_id
+        end
+        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.merge(product_id: nil)}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+      ensure
+        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: false)
+      end
+
       def test_bulk_update_with_non_required_default_field_with_incorrect_value
         ticket_ids = []
         rand(2..4).times do
@@ -1238,6 +1253,21 @@ module Ember
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
+      end
+
+      def test_bulk_update_with_non_required_custom_dropdown_field_blank
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+        ticket_field.update_attribute(:required_for_closure, true)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket.display_id
+        end
+        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.merge(custom_fields: { ticket_field.label => nil })}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+      ensure
+        ticket_field.update_attribute(:required_for_closure, false)
       end
 
       def test_bulk_update_with_non_required_custom_dropdown_field_with_incorrect_value

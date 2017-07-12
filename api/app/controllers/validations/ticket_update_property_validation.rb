@@ -81,7 +81,7 @@ class TicketUpdatePropertyValidation < ApiValidation
   end
 
   def required_default_fields
-    default_fields_to_validate.select { |x| x.required || x.required_for_closure }
+    default_fields_to_validate.select { |x| x.required || (closure_status? && x.required_for_closure) }
   end
 
   def default_fields_to_validate

@@ -14,7 +14,11 @@ module Ember
       end
 
       def scoper
-        User.current.privilege?(:manage_users) ? current_account.all_agents.preload(user: [:avatar, :user_roles]) : current_account.agents_details_from_cache
+        if User.current.privilege?(:manage_users)
+          current_account.all_agents.preload(user: [:avatar, :user_roles], agent_groups: []).where('users.deleted' => false)
+        else
+          current_account.agents_details_from_cache
+        end
       end
   end
 end

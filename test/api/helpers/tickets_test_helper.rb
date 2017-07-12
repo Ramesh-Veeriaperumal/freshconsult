@@ -58,6 +58,7 @@ module TicketsTestHelper
       notes_pattern = notes_pattern.take(10) if limit
       result_pattern[:conversations] = notes_pattern.ordered!
     end
+    result_pattern[:deleted] = true if ticket.deleted
     if requester
       result_pattern[:requester] = ticket.requester ? requester_pattern(ticket.requester) : {}
     end
@@ -338,6 +339,15 @@ module TicketsTestHelper
       pattern[:company] = Hash if company && ticket.company
       pattern[:survey_result] = feedback_pattern(ticket.custom_survey_results.last) if survey && ticket.custom_survey_results.present?
       pattern
+    end
+  end
+
+  def private_api_ticket_index_spam_deleted_pattern(spam = false, deleted = false)
+    filter_clause = { created_at: (30.days.ago..Time.zone.now) }
+    filter_clause[:spam] = true if spam
+    filter_clause[:deleted] = true if deleted
+    pattern_array = Helpdesk::Ticket.where(filter_clause).order('created_at desc').limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).map do |ticket|
+      index_ticket_pattern_with_associations(ticket, false, true, false, [:tags])
     end
   end
 

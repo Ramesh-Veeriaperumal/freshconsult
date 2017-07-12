@@ -8,6 +8,8 @@ module Ember
     include CompanyHelper
     include GroupHelper
     include QueryHashHelper
+    include Redis::RedisKeys
+    include Redis::OthersRedis
     include AccountTestHelper
     include SharedOwnershipTestHelper
 
@@ -645,6 +647,53 @@ module Ember
       assert_response 200
       match_json(private_api_ticket_index_pattern(false, false, false, 'created_at', 'desc', true))
       assert response.api_meta[:count] == @account.tickets.where(spam: false, deleted: false).count
+    end
+
+    # Tickets list spam / trash should have emptying_on_background flag about background job in its meta
+    def test_index_empty_spam_meta_notice
+      filter_params = { filter: 'spam' }
+      get :index, controller_params({ version: 'private' }.merge(filter_params))
+      assert_response 200
+      match_json(private_api_ticket_index_spam_deleted_pattern(true))
+      assert response.api_meta.key?(:emptying_on_background) && !response.api_meta[:emptying_on_background]
+    end
+
+    def test_index_empty_trash_meta_notice
+      filter_params = { filter: 'deleted' }
+      get :index, controller_params({ version: 'private' }.merge(filter_params))
+      assert_response 200
+      match_json(private_api_ticket_index_spam_deleted_pattern(false, true))
+      assert response.api_meta.key?(:emptying_on_background) && !response.api_meta[:emptying_on_background]
+    end
+
+    def test_index_other_fields_must_not_have_the_notice_key
+      ticket_filter = @account.ticket_filters.find_by_name('Urgent and High priority Tickets')
+      get :index, controller_params(version: 'private', filter: ticket_filter.id)
+      assert_response 200
+      match_json(private_api_ticket_index_filter_pattern(ticket_filter.data))
+      assert !response.api_meta.key?(:emptying_on_background)
+    end
+
+    def test_index_empty_spam_notice_should_be_true
+      filter_params = { filter: 'spam' }
+      empty_spam_key = EMPTY_SPAM_TICKETS % { account_id: Account.current.id }
+      set_others_redis_key(empty_spam_key, true)
+      get :index, controller_params({ version: 'private' }.merge(filter_params))
+      assert_response 200
+      match_json(private_api_ticket_index_spam_deleted_pattern(true))
+      assert response.api_meta[:emptying_on_background]
+    ensure
+      remove_others_redis_key(empty_spam_key)
+    end
+
+    def test_index_empty_spam_notice_should_be_false
+      filter_params = { filter: 'spam' }
+      empty_spam_key = EMPTY_SPAM_TICKETS % { account_id: Account.current.id }
+      remove_others_redis_key(empty_spam_key)
+      get :index, controller_params({ version: 'private' }.merge(filter_params))
+      assert_response 200
+      match_json(private_api_ticket_index_spam_deleted_pattern(true))
+      assert !response.api_meta[:emptying_on_background]
     end
   end
 end
