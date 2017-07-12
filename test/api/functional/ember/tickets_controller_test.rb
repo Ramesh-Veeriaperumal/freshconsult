@@ -737,6 +737,27 @@ module Ember
       assert_equal update_group.id, ticket.group_id
     end
 
+    def test_update_properties_with_subject_description
+      ticket = create_ticket
+      subject = Faker::Lorem.words(10).join(' ')
+      description = Faker::Lorem.paragraph
+      attachment_ids = []
+      rand(2..10).times do
+        attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      end
+      params_hash = { 
+        subject: subject,
+        description: description,
+        attachment_ids: attachment_ids }
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 200
+      ticket.reload
+      ticket.remove_instance_variable('@ticket_body_content')
+      assert_equal subject, ticket.subject
+      assert_equal description, ticket.description
+      assert_equal attachment_ids, ticket.attachment_ids
+    end
+
     def test_update_properties_closure_of_parent_ticket_failure
       parent_ticket = create_ticket
       child_ticket = create_ticket
