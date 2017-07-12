@@ -1478,6 +1478,8 @@ Helpkit::Application.routes.draw do
           put :enable
           put :disable
           put :update_config
+        end
+        scope ':installed_extension_id' do
           get :app_status
         end
       end
