@@ -7,7 +7,7 @@ class UsersController < ApplicationController
   # include ActionView::Helpers::AssetTagHelper
   # include ActionView::AssetPaths
 
-  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:revert_identity, :profile_image, :profile_image_no_blank]
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:revert_identity, :profile_image, :profile_image_no_blank, :enable_falcon, :disable_falcon]
   before_filter :set_selected_tab
   skip_before_filter :load_object , :only => [ :show, :edit ]
   before_filter(:only => [:assume_identity]) { |c| c.requires_this_feature :assume_identity }
@@ -137,6 +137,21 @@ class UsersController < ApplicationController
     end
     redirect_to "/"
   end
+
+  def enable_falcon
+    return unless current_account.launched?(:falcon)
+    current_user.toggle_ui_preference unless current_user.is_falcon_pref?
+    cookies[:falcon_enabled] = true
+    redirect_to_falcon
+  end
+
+  def disable_falcon
+    # render nothing: true, status: 400 unless get_referer.start_with?('/a/')
+    current_user.toggle_ui_preference if current_user.is_falcon_pref?
+    cookies[:falcon_enabled] = false
+    return head :no_content
+  end
+
   protected
   
     def scoper
@@ -156,6 +171,21 @@ class UsersController < ApplicationController
 
     def assume_allowed?
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) if current_account.hide_agent_metrics_feature?
+    end
+
+    def redirect_to_falcon
+      options = {
+        prevent_redirect: false,
+        request_referer: request.referer,
+        path_info: request.path_info
+      }
+      redirect_to FalconRedirection.falcon_redirect(options)[:path]
+      # redirect_to check_tickets_show_path(get_referer) || FalconUiRouteMapping[get_referer] ||
+      #   check_re_routes || ('/a' + get_referer)
+    end
+
+    def check_re_routes
+      get_re_route(req_referer)
     end
   
 end

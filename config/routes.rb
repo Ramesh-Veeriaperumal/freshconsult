@@ -725,6 +725,8 @@ Helpkit::Application.routes.draw do
 
   resource :user_session
 
+  match '/enable_falcon' => 'users#enable_falcon', :as => :enable_falcon, via: :post
+  match '/disable_falcon' => 'users#disable_falcon', :as => :disable_falcon, via: :post
   match '/register/:activation_code' => 'activations#new', :as => :register
   match 'register_new_email/:activation_code' => 'activations#new_email', :as => :register_new_email
   match '/activate/:perishable_token' => 'activations#create', :as => :activate

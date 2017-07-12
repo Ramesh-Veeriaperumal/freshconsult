@@ -409,6 +409,16 @@ class User < ActiveRecord::Base
 		phone.blank? ? mobile : phone
 	end
 
+  def toggle_ui_preference
+    new_pref = { :falcon_ui => !self.preferences[:agent_preferences][:falcon_ui] }
+    self.merge_preferences = { :agent_preferences => new_pref }
+    save!
+  end
+
+  def is_falcon_pref?
+    self.preferences[:agent_preferences][:falcon_ui]
+  end
+
   def update_attributes(params) # Overriding to normalize params at one place
     normalize_params(params) # hack to facilitate contact_fields & deprecate customer
     self.active = params["active"] if params["active"]
