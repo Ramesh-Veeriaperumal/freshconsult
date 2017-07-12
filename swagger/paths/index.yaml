@@ -206,6 +206,10 @@
 /surveys:
   $ref: ./surveys/crud.yaml
 
+#Dashboard activities
+/dashboards/activities:
+  $ref: ./dashboard/activities.yaml
+
 #Dashboard
 /dashboards:
   $ref: ./dashboard/config.yaml

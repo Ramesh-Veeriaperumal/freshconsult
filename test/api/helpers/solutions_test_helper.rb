@@ -113,5 +113,4 @@ module SolutionsTestHelper
     { description: "API V1 Description" }.to_json
   end
 
-
 end

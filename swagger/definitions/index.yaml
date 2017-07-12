@@ -219,6 +219,10 @@
       - $ref: '#/definitions/extended_canned_response'
       - $ref: ./response/canned_response/show.yaml
 
+  # Dashboard activities
+  dashboard_activities:
+    $ref: './response/dashboard/activities.yaml'
+
   #dashboard
   dashboard_widget_config: 
     $ref: './response/dashboard/widget_config.yaml'

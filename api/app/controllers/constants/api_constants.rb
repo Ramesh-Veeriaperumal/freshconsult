@@ -38,7 +38,8 @@ module ApiConstants
                        AttachmentConstants::LOAD_OBJECT_EXCEPT + 
                        ApiLeaderboardConstants::LOAD_OBJECT_EXCEPT+
                        Pipe::HelpdeskConstants::LOAD_OBJECT_EXCEPT+
-                       ExportConstants::LOAD_OBJECT_EXCEPT
+                       ExportConstants::LOAD_OBJECT_EXCEPT +
+                       DashboardConstants::LOAD_OBJECT_EXCEPT
 
   NO_CONTENT_TYPE_REQUIRED = ApiTicketConstants::NO_CONTENT_TYPE_REQUIRED +
                              ContactConstants::NO_CONTENT_TYPE_REQUIRED +

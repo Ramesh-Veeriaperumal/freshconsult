@@ -3593,6 +3593,50 @@
         }
       }
     },
+    "/dashboards/activities": {
+      "get": {
+        "tags": [
+          "dashboard_activities"
+        ],
+        "summary": "Dashboard activities",
+        "parameters": [
+          {
+            "name": "since_id",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "before_id",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/dashboard_activities"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Activities not found"
+          }
+        }
+      }
+    },
     "/dashboards": {
       "get": {
         "tags": [
@@ -7083,6 +7127,73 @@
           ]
         }
       ]
+    },
+    "dashboard_activities": {
+      "type": "array",
+      "description": "Dashboard activities",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "object_id": {
+            "type": "number"
+          },
+          "object_type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "performer": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "performer_type": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "number"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "avatar": {
+                    "type": "string"
+                  },
+                  "is_agent": {
+                    "type": "boolean"
+                  },
+                  "deleted": {
+                    "type": "boolean"
+                  },
+                  "email": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "performed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "actions": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "content": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
     },
     "dashboard_widget_config": {
       "type": "object",

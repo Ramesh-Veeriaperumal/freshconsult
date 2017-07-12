@@ -126,3 +126,5 @@ api_error_messages:
   ticket_id_required: "Ticket id required"
   wrong_internal_agent: "Internal Agent does not belong to the specified Group"
   wrong_internal_group: "Internal group does not belong to the given status of the ticket"
+  # Dashboard activities
+  either_since_id_or_before_id: "Specify since_id or before_id, not both"

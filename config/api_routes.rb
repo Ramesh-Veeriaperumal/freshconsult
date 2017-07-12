@@ -301,6 +301,7 @@ Helpkit::Application.routes.draw do
         get :ticket_metrics, to: 'ember/dashboard#ticket_metrics'
         get :unresolved_tickets, to: 'ember/dashboard#unresolved_tickets_data'
         get :ticket_summaries, to: 'ember/dashboard#scorecard'
+        get :activities, to: 'ember/dashboard/activities#index'
       end
     end
 

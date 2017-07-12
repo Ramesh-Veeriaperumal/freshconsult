@@ -20,6 +20,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/agent", only: %i(index me)
     resource :"ember/group", only: [:index]
     resource :"ember/survey", only: [:index]
+    resource :"ember/dashboard/activity", only: [:index]
     resource :"ember/portal", only: [:index]
     resource :"ember/email_config", only: [:index]
     resource :"ember/dashboard", only: %i(scorecard show survey_info)
