@@ -1,3 +1,1 @@
-prime_association_hash = TicketDecorator.new(@prime_association, {permission: @permission}).to_prime_association_hash
-
-JSON.generate(prime_association_hash)
+JSON.generate(@item.to_prime_association_hash)

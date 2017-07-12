@@ -60,17 +60,17 @@ module Ember
         primary_ticket = create_ticket
         source_tickets = rand(5..7).times.inject([]) { |arr, i| arr << create_ticket }
         invalid_ids = [@account.tickets.last.id + 100, @account.tickets.last.id + 200, @account.tickets.last.id + 300]
-        request_params = sample_merge_request_params(primary_ticket.display_id, (invalid_ids + source_tickets.map(&:display_id)) )
+        request_params = sample_merge_request_params(primary_ticket.display_id, (invalid_ids + source_tickets.map(&:display_id)))
         put :merge, construct_params({ version: 'private' }, request_params)
         assert_response 400
         match_json(merge_invalid_ids_pattern(invalid_ids))
       end
-      
+
       def test_merge_with_primary_ticket_without_permission
         primary_ticket = create_ticket
         source_tickets = rand(5..7).times.inject([]) { |arr, i| arr << create_ticket }
         user_stub_ticket_permission
-        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets.map(&:display_id) )
+        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets.map(&:display_id))
         put :merge, construct_params({ version: 'private' }, request_params)
         assert_response 403
         user_unstub_ticket_permission
@@ -79,7 +79,7 @@ module Ember
       def test_merge_with_secondary_tickets_without_permission
         primary_ticket = create_ticket
         source_tickets = rand(5..7).times.inject([]) { |arr, i| arr << create_ticket }
-        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets.map(&:display_id) )
+        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets.map(&:display_id))
         TicketMergeDelegator.any_instance.stubs(:ticket_permission?).returns(false)
         put :merge, construct_params({ version: 'private' }, request_params)
         assert_response 400
@@ -91,7 +91,7 @@ module Ember
         primary_ticket = create_ticket
         invalid_ids = [@account.tickets.last.id + 100, @account.tickets.last.id + 200, @account.tickets.last.id + 300]
         source_tickets = rand(5..7).times.inject([]) { |arr, i| arr << create_ticket }
-        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets.map(&:display_id) + invalid_ids )
+        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets.map(&:display_id) + invalid_ids)
         TicketMergeDelegator.any_instance.stubs(:ticket_permission?).returns(false)
         put :merge, construct_params({ version: 'private' }, request_params)
         assert_response 400
@@ -103,7 +103,7 @@ module Ember
         primary_ticket = create_ticket
         source_tickets = rand(5..7).times.inject([]) { |arr, i| arr << create_ticket }
         add_reply_cc_emails_to_ticket(source_tickets + [primary_ticket])
-        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets.map(&:display_id) )
+        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets.map(&:display_id))
         request_params[:convert_recepients_to_cc] = true
         put :merge, construct_params({ version: 'private' }, request_params)
         assert_response 400
@@ -132,7 +132,7 @@ module Ember
         end
         refute @account.time_sheets.where(workable_type: 'Helpdesk::Ticket', workable_id: primary_ticket.id).present?
 
-        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets.map(&:display_id) )
+        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets.map(&:display_id))
         request_params[:convert_recepients_to_cc] = true
         put :merge, construct_params({ version: 'private' }, request_params)
         assert_response 204
@@ -142,7 +142,7 @@ module Ember
       def test_merge_spammed_ticket
         primary_ticket = create_ticket(spam: true)
         source_tickets = rand(5..7).times.inject([]) { |arr, i| arr << create_ticket }
-        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets.map(&:display_id) )
+        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets.map(&:display_id))
         put :merge, construct_params({ version: 'private' }, request_params)
         assert_response 404
       end
@@ -150,10 +150,36 @@ module Ember
       def test_merge_twitter_and_email_ticket
         primary_twitter_ticket = create_twitter_ticket
         email_ticket = create_ticket(source: 1)
-        request_params = sample_merge_request_params(primary_twitter_ticket.display_id, [email_ticket.display_id] )
+        request_params = sample_merge_request_params(primary_twitter_ticket.display_id, [email_ticket.display_id])
         put :merge, construct_params({ version: 'private' }, request_params)
         assert_response 204
         validate_merge_action(primary_twitter_ticket, [email_ticket], false)
+      end
+
+      def test_merge_assoc_tkt_as_primary_tkt
+        enable_adv_ticketing([:parent_child_tickets]) { create_parent_child_tickets } #enabling feature to allow parent child tkt creation
+        tracker_ticket   = create_tracker_ticket
+        related_ticket   = create_related_tickets.first
+
+        source_tickets   = rand(2..4).times.inject([]) { |arr, i| arr << create_ticket }
+        [tracker_ticket, related_ticket, @child_ticket, @parent_ticket].each do |assoc_ticket|
+          request_params = sample_merge_request_params(assoc_ticket.display_id, source_tickets.map(&:display_id))
+          put :merge, construct_params({ version: 'private' }, request_params)
+          assert_response 403
+        end
+      end
+
+      def test_merge_assoc_tkt_as_secondary_tkt
+        enable_adv_ticketing([:parent_child_tickets]) { create_parent_child_tickets }
+        tracker_ticket = create_tracker_ticket
+        related_ticket = create_related_tickets.first
+
+        primary_ticket = create_ticket
+        assoc_tkt_ids  = [tracker_ticket, related_ticket, @child_ticket, @parent_ticket].map(&:display_id)
+        request_params = sample_merge_request_params(primary_ticket.display_id, assoc_tkt_ids)
+        put :merge, construct_params({ version: 'private' }, request_params)
+        assert_response 400
+        match_json(merge_assoc_tkt_pattern(assoc_tkt_ids.sort))
       end
     end
   end

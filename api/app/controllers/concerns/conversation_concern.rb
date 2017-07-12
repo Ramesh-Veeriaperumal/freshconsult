@@ -14,6 +14,8 @@ module ConversationConcern
       cname_params[:source] = ConversationConstants::TYPE_FOR_ACTION[action_name] if ConversationConstants::TYPE_FOR_ACTION.keys.include?(action_name)
       # only note can have choices for private field. others will be set to false always.
       cname_params[:private] = false unless update? || cname_params[:source] == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
+      # set category for broadcast note
+      params[cname][:category] = Helpdesk::Note::CATEGORIES[:broadcast] if broadcast?
       # Set ticket id from already assigned ticket only for create/reply/forward action not for update action.
       cname_params[:notable_id] = @ticket.id if @ticket
       modify_attachment_params

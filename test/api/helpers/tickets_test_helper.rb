@@ -393,6 +393,17 @@ module TicketsTestHelper
     }
   end
 
+  def latest_broadcast_pattern(tracker_id)
+    last_broadcast = Helpdesk::BroadcastMessage.where(tracker_display_id: tracker_id).last
+    return {} unless last_broadcast.present?
+    {
+      broadcast_message: {
+        body: last_broadcast.body_html,
+        created_at: last_broadcast.created_at
+      }
+    }
+  end
+
   def associations_pattern(ticket)
     associations = ticket.tracker_ticket? ? ticket.associated_subsidiary_tickets('tracker') : ticket.associated_subsidiary_tickets('assoc_parent')
     return unless associations.present?
@@ -537,14 +548,22 @@ module TicketsTestHelper
     create_ticket
     parent_ticket = Helpdesk::Ticket.last
     parent_ticket.update_attributes(association_type: 1)
-    parent_ticket.reload
+    parent_ticket
   end
 
   def create_tracker_ticket
     create_ticket
     tracker_ticket = Helpdesk::Ticket.last
     tracker_ticket.update_attributes(association_type: 3)
-    tracker_ticket.reload
+    tracker_ticket
+  end
+
+    def create_related_tickets(related_count = 1)
+    related_count.times.collect {|i| 
+      related_ticket = create_ticket
+      related_ticket.update_attributes(association_type: 4)
+      related_ticket
+    }
   end
 
   def assert_link_failure(ticket_id, pattern = nil)

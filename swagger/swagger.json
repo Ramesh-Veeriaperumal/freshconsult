@@ -1324,6 +1324,44 @@
         }
       }
     },
+    "/tickets/{id}/broadcast": {
+      "post": {
+        "tags": [
+          "conversation"
+        ],
+        "description": "Create a Broadcast Note",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/note_broadcast_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/extended_note"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/tickets/{id}/forward_template": {
       "get": {
         "tags": [
@@ -4506,6 +4544,21 @@
         }
       ]
     },
+    "note_broadcast_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/note"
+        },
+        {
+          "properties": {
+            "user_id": {
+              "type": "integer"
+            }
+          }
+        }
+      ]
+    },
     "facebook_reply_input": {
       "type": "object",
       "properties": {
@@ -5265,6 +5318,18 @@
           }
         }
       ]
+    },
+    "broadcast_message": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
     },
     "company": {
       "type": "object",
@@ -6138,6 +6203,19 @@
                   "type": "integer",
                   "format": "int64"
                 },
+                "category": {
+                  "type": "integer",
+                  "enum": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8
+                  ]
+                },
                 "has_quoted_text": {
                   "type": "boolean"
                 },
@@ -6747,6 +6825,9 @@
         },
         "status": {
           "type": "integer"
+        },
+        "broadcast_message": {
+          "$ref": "#/definitions/broadcast_message"
         }
       }
     },

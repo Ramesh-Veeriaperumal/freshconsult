@@ -6,6 +6,7 @@ module Ember
       include HelperConcern
       include AttachmentConcern
       include Helpdesk::ToggleEmailNotification
+      include AssociateTicketsHelper
 
       before_filter :link_tickets_enabled?, only: [:bulk_link]
       before_filter :disable_notification, only: [:bulk_update], if: :notification_not_required?
@@ -53,10 +54,6 @@ module Ember
       end
 
       private
-
-        def link_tickets_enabled?
-          render_request_error(:require_feature, 403, feature: 'Link Tickets') unless Account.current.link_tkts_enabled?
-        end
 
         def validate_items_to_bulk_link
           @items_failed = []

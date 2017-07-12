@@ -23,7 +23,7 @@ class TicketMergeDelegator < BaseDelegator
     end
 
     def validate_source_tickets
-      if invalid_ticket_ids.present? || access_denied_ids.present?
+      if invalid_ticket_ids.present? || access_denied_ids.present? || assoc_tkt_ids.present?
         errors[:ticket_ids] << invalid_error_code
         (self.error_options ||= {}).merge!(invalid_ids_option)
       end
@@ -33,13 +33,19 @@ class TicketMergeDelegator < BaseDelegator
       if invalid_ticket_ids.present?
         return :access_denied_and_invalid_list if access_denied_ids.present?
         :invalid_list
-      else
+      elsif access_denied_ids.present?
         :access_denied_list
+      else
+        :assoc_tkt_list
       end
     end
 
     def access_denied_ids
-      @denied_ids ||= @source_tickets.select { |ticket| !ticket_permission?(ticket) }.map(&:display_id)
+      @denied_ids ||= @source_tickets.reject { |ticket| ticket_permission?(ticket) }.map(&:display_id)
+    end
+
+    def assoc_tkt_ids
+      @assoc_tkt_ids ||= @source_tickets.select(&:association_type).map(&:display_id)
     end
 
     def invalid_ticket_ids
@@ -50,7 +56,8 @@ class TicketMergeDelegator < BaseDelegator
       {
         ticket_ids: {
           list: invalid_ticket_ids.join(', '),
-          denied_ids: access_denied_ids.join(', ')
+          denied_ids: access_denied_ids.join(', '),
+          assoc_tkt_ids: assoc_tkt_ids.join(', ')
         }
       }
     end
@@ -87,7 +94,7 @@ class TicketMergeDelegator < BaseDelegator
     end
 
     def check_source_requester(ticket)
-      ticket.requester_has_email? && !(ticket.requester_id == requester_id)
+      ticket.requester_has_email? && ticket.requester_id != requester_id
     end
 
     def ticket_permission?(ticket)

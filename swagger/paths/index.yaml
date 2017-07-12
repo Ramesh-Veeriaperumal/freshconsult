@@ -69,6 +69,8 @@
   $ref: ./conversations/reply_template.yaml
 /tickets/{id}/forward:
   $ref: ./conversations/forward.yaml
+/tickets/{id}/broadcast:
+  $ref: ./conversations/broadcast.yaml
 /tickets/{id}/forward_template:
   $ref: ./conversations/forward_template.yaml
 /tickets/{id}/latest_note_forward_template:

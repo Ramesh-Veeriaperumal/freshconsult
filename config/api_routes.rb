@@ -186,6 +186,7 @@ Helpkit::Application.routes.draw do
         get :reply_template, to: 'ember/conversations#reply_template'
         post :forward, to: 'ember/conversations#forward'
         get :forward_template, to: 'ember/conversations#forward_template'
+        post :broadcast, to: 'ember/conversations#broadcast'
         # TODO: Should rename this
         get :latest_note_forward_template, to: 'ember/conversations#latest_note_forward_template'
         post :tweet, to: 'ember/conversations#tweet'

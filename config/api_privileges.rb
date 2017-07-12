@@ -36,7 +36,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   reply_ticket do
-    resource :"ember/conversation", only: %i(reply facebook_reply tweet reply_template)
+    resource :"ember/conversation", only: %i(reply facebook_reply tweet reply_template broadcast)
     resource :"ember/tickets/draft", only: %i(save_draft show_draft clear_draft)
     resource :"ember/tickets/bulk_action", only: [:bulk_update]
   end

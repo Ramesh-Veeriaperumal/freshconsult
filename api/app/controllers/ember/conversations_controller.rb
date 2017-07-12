@@ -9,15 +9,17 @@ module Ember
     include ConversationConcern
     include AttachmentConcern
     include Utils::Sanitizer
+    include AssociateTicketsHelper
     decorate_views(
       decorate_objects: [:ticket_conversations],
-      decorate_object: [:create, :update, :reply, :forward, :facebook_reply, :tweet]
+      decorate_object: [:create, :update, :reply, :forward, :facebook_reply, :tweet, :broadcast]
     )
 
-    before_filter :can_send_user?, only: [:forward, :facebook_reply, :tweet]
+    before_filter :can_send_user?, only: [:forward, :facebook_reply, :tweet, :broadcast]
     before_filter :set_defaults, only: [:forward]
+    before_filter :link_tickets_enabled?, only: [:broadcast]
 
-    SINGULAR_RESPONSE_FOR = %w(reply forward create update tweet facebook_reply).freeze
+    SINGULAR_RESPONSE_FOR = %w(reply forward create update tweet facebook_reply broadcast).freeze
 
     def ticket_conversations
       validate_filter_params
@@ -49,6 +51,13 @@ module Ember
       delegator_hash = { parent_attachments: parent_attachments, shared_attachments: shared_attachments,
                          attachment_ids: @attachment_ids, cloud_file_ids: @cloud_file_ids }
       return unless validate_delegator(@item, delegator_hash)
+      save_note_and_respond
+    end
+
+    def broadcast
+      return unless validate_params
+      sanitize_and_build
+      return unless validate_delegator(@item)
       save_note_and_respond
     end
 
@@ -126,6 +135,10 @@ module Ember
 
       def index?
         @index ||= (current_action?('index') || current_action?('ticket_conversations'))
+      end
+
+      def broadcast?
+        @broadcast ||= current_action?('broadcast')
       end
 
       def decorator_options
@@ -295,7 +308,7 @@ module Ember
 
       def set_custom_errors(item = @item)
         fields_to_be_renamed = ConversationConstants::ERROR_FIELD_MAPPINGS
-        fields_to_be_renamed.merge!(ConversationConstants::AGENT_USER_MAPPING) if agent_mapping_required?
+        fields_to_be_renamed = fields_to_be_renamed.merge(ConversationConstants::AGENT_USER_MAPPING) if agent_mapping_required?
         ErrorHelper.rename_error_fields(fields_to_be_renamed, item)
       end
 
@@ -317,7 +330,7 @@ module Ember
       end
 
       def ember_redirect?
-        [:create, :reply, :forward, :facebook_reply].include?(action_name.to_sym)
+        [:create, :reply, :forward, :facebook_reply, :broadcast].include?(action_name.to_sym)
       end
 
       def render_201_with_location(template_name: "conversations/#{action_name}", location_url: 'conversation_url', item_id: @item.id)

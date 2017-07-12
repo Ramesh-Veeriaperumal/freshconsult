@@ -434,20 +434,22 @@ module Ember
         query_hash_params[counter.to_s] = query_hash_param(k.dup, *v)
         counter += 1
       end
-      enable_associate_tickets
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      enable_adv_ticketing(%i(link_ticket parent_child_tickets)) {
+        get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
+        assert_response 200
+        match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      }
     end
 
     30.times.each do |i|
       define_method("test_multiple_filter_case_#{i + 1}") do
         query_hash_params = random_query_hash_params
         Rails.logger.debug "Method: test_multiple_filter_case_#{i + 1} :: params: #{random_query_hash_params.inspect}"
-        enable_associate_tickets
-        get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-        assert_response 200
-        match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+        enable_adv_ticketing(%i(link_ticket parent_child_tickets)) {
+          get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
+          assert_response 200
+          match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+        }
       end
     end
 

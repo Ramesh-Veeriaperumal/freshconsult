@@ -51,6 +51,10 @@ module TicketsMergeTestHelper
     merge_error_pattern([{ field: 'ticket_ids', message: "Permission denied for records with ids : '#{ids.join(', ')}'.", code: 'invalid_value' }])
   end
 
+  def merge_assoc_tkt_pattern(ids)
+    merge_error_pattern([{ field: 'ticket_ids', message: "cant merge an associated tickets for records with ids : '#{ids.join(', ')}'", code: 'invalid_value' }])
+  end
+
   def merge_imperssible_invalid_pattern(imperssible_ids, invalid_ids)
     merge_error_pattern([{ 
       field: 'ticket_ids',

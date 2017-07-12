@@ -10,6 +10,7 @@ module ConversationConstants
   SIDE_LOADING = %w(requester).freeze
 
   REPLY_FIELDS = %w(body full_text user_id from_email send_survey last_note_id).freeze | REPLY_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
+  BROADCAST_FIELDS = %w(body user_id).freeze
   FORWARD_FIELDS = %w(body full_text agent_id from_email include_quoted_text include_original_attachments).freeze | FORWARD_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   CREATE_FIELDS = %w(body private incoming user_id last_note_id).freeze | CREATE_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   TWEET_FIELDS = %w(body tweet_type twitter_handle_id last_note_id).freeze
@@ -19,15 +20,17 @@ module ConversationConstants
   TYPE_FOR_ACTION = {
     'create' => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
     'reply'  => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
-    'forward'  => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['forward_email'],
+    'forward' => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['forward_email'],
     'facebook_reply' => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook'],
-    'tweet'  => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['twitter']
+    'tweet' => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['twitter'],
+    'broadcast' => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
   }.freeze
-  LOAD_OBJECT_EXCEPT = [:ticket_conversations, :create, :reply, :forward, :facebook_reply, :tweet, :reply_template, :forward_template, :latest_note_forward_template].freeze
+  LOAD_OBJECT_EXCEPT = [:ticket_conversations, :create, :reply, :forward, :broadcast,
+                        :facebook_reply, :tweet, :reply_template, :forward_template, :latest_note_forward_template].freeze
 
-  PIPE_REPLY_FIELDS  = REPLY_FIELDS | %w( created_at updated_at )
-  PIPE_CREATE_FIELDS = CREATE_FIELDS | %w( created_at updated_at )
-   
+  PIPE_REPLY_FIELDS  = REPLY_FIELDS | %w(created_at updated_at)
+  PIPE_CREATE_FIELDS = CREATE_FIELDS | %w(created_at updated_at)
+
   ATTRIBUTES_TO_BE_STRIPPED = %w(notify_emails to_emails cc_emails bcc_emails).freeze
 
   # Denotes the email fields in notes.
@@ -43,17 +46,18 @@ module ConversationConstants
     forward: [:json, :multipart_form]
   }.freeze
 
-  ERROR_FIELD_MAPPINGS = { notable_id: :ticket_id, user: :user_id }
-  AGENT_USER_MAPPING = { user: :agent_id }
+  ERROR_FIELD_MAPPINGS = { notable_id: :ticket_id, user: :user_id }.freeze
+  AGENT_USER_MAPPING = { user: :agent_id }.freeze
 
-  PARAMS_MAPPINGS = { notify_emails: :to_emails, agent_id: :user_id }
+  PARAMS_MAPPINGS = { notify_emails: :to_emails, agent_id: :user_id }.freeze
   PARAMS_TO_SAVE_AND_REMOVE = [:note_id, :cloud_files, :attachment_ids, :cloud_file_ids, :include_quoted_text, :include_original_attachments, :tweet_type, :twitter_handle_id].freeze
   PARAMS_TO_REMOVE = [:body, :full_text].freeze
 
-  TICKET_LOAD_REQUIRED = [:create, :reply, :forward, :ticket_conversations, :facebook_reply, :tweet, :reply_template, :forward_template, :latest_note_forward_template].freeze
+  TICKET_LOAD_REQUIRED = [:create, :reply, :forward, :ticket_conversations, :facebook_reply, :tweet,
+                          :reply_template, :forward_template, :latest_note_forward_template, :broadcast].freeze
   TICKET_STATE_CHECK_NOT_REQUIRED = [:ticket_conversations].freeze
-  
+
   VALIDATION_CLASS = 'ConversationValidation'.freeze
   DELEGATOR_CLASS = 'ConversationDelegator'.freeze
-  CARRIAGE_RETURN = "\r"
+  CARRIAGE_RETURN = "\r".freeze
 end.freeze

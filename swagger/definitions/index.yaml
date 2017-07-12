@@ -39,6 +39,8 @@
     $ref: ./request/conversations/reply.yaml
   note_forward_input:
     $ref: ./request/conversations/forward.yaml
+  note_broadcast_input:
+    $ref: ./request/conversations/broadcast.yaml
   facebook_reply_input:
     $ref: ./request/conversations/facebook_reply.yaml
   twitter_reply_input:
@@ -81,6 +83,8 @@
     $ref: ./resource/contact.yaml
   avatar:
     $ref: ./resource/avatar.yaml
+  broadcast_message:
+    $ref: ./resource/broadcast_message.yaml
   company:
     $ref: ./resource/company.yaml
   note:

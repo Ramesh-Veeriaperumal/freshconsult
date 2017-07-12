@@ -12,6 +12,7 @@ class TicketDecorator < ApiDecorator
     @company_name_mapping = options[:company_name_mapping]
     @permission = options[:permission]
     @permissibles = options[:permissibles]
+    @last_broadcast_message = options[:last_broadcast_message]
     @sideload_options = options[:sideload_options] || []
   end
 
@@ -216,7 +217,7 @@ class TicketDecorator < ApiDecorator
   end
 
   def to_prime_association_hash
-    {
+    hash = {
       id: display_id,
       requester_id: requester_id,
       responder_id: responder_id,
@@ -226,6 +227,17 @@ class TicketDecorator < ApiDecorator
       created_at: created_at.try(:utc),
       stats: stats,
       permission: @permission
+    }
+    [hash, broadcast_message_hash].inject(&:merge)
+  end
+
+  def broadcast_message_hash
+    return {} unless @last_broadcast_message.present?
+    {
+      broadcast_message: {
+        body: @last_broadcast_message.body_html,
+        created_at: @last_broadcast_message.created_at.try(:utc)
+      }
     }
   end
 

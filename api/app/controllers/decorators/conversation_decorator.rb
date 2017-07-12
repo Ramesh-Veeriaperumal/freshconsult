@@ -2,8 +2,8 @@ class ConversationDecorator < ApiDecorator
   attr_accessor :ticket
 
   delegate :body, :body_html, :full_text_html, :id, :incoming, :private, :deleted, :user_id, :support_email,
-            :source, :attachments, :attachments_sharable, :schema_less_note, :cloud_files, :last_modified_timestamp,
-            :last_modified_user_id, to: :record
+           :source, :attachments, :attachments_sharable, :schema_less_note, :cloud_files, :last_modified_timestamp,
+           :last_modified_user_id, to: :record
 
   delegate :to_emails, :from_email, :cc_emails, :bcc_emails, to: :schema_less_note, allow_nil: true
 
@@ -23,6 +23,7 @@ class ConversationDecorator < ApiDecorator
       user_id: user_id,
       support_email: support_email,
       source: source,
+      category: schema_less_note.try(:category),
       ticket_id: @ticket.display_id,
       to_emails: to_emails,
       from_email: from_email,
@@ -35,14 +36,14 @@ class ConversationDecorator < ApiDecorator
   end
 
   def to_json
-    construct_json.merge({
+    construct_json.merge(
       deleted: deleted,
       last_edited_at: last_modified_timestamp.try(:utc),
       last_edited_user_id: last_modified_user_id.try(:to_i),
       attachments: attachments_hash,
       cloud_files: cloud_files_hash,
-      has_quoted_text: has_quoted_text?
-    })
+      has_quoted_text: quoted_text?
+    )
   end
 
   def to_hash
@@ -76,7 +77,7 @@ class ConversationDecorator < ApiDecorator
     return {} unless record.tweet? && record.tweet
     {
       tweet: {
-        tweet_id: "#{record.tweet.tweet_id}",
+        tweet_id: record.tweet.tweet_id.to_s,
         tweet_type: record.tweet.tweet_type,
         twitter_handle_id: record.tweet.twitter_handle_id
       }
@@ -104,7 +105,7 @@ class ConversationDecorator < ApiDecorator
     cloud_files.map { |cf| CloudFileDecorator.new(cf).to_hash }
   end
 
-  def has_quoted_text?
+  def quoted_text?
     full_text_html.length > body_html.length
   end
 
