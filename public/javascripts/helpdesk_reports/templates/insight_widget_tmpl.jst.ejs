@@ -112,7 +112,7 @@
                         <% if (widgetType == "1" || widgetType == "2") { %>
                             <div class="config-row">
                                 <div class="config-label">Group</div>
-                                <div class="config-val"> <%= insightGroupsLabel.length != 0 ? insightGroupsLabel.join(",") : '-' %></div>
+                                <div class="config-val"> <%= insightGroupsLabel && insightGroupsLabel.length != 0 ? insightGroupsLabel.join(",") : '-' %></div>
                                 <div class="clear"></div>
                             </div>
                         <% } %>
@@ -292,9 +292,9 @@
                                 <% } %>
                                 <span class="metric-title"><%= display_text %></span>
                             <% } else if (widgetType == "2") { %>
-                                <%= I18n.t('helpdesk_reports.insights_tagline.' + key + '.' + varianceStatus,{ count : metricVal2,total : metricVal1, group : insightGroupsLabel }) %>
+                            <%= I18n.t('helpdesk_reports.insights_tagline.' + key + '.' + varianceStatus,{ count : metricVal2,total : metricVal1, group : insightGroupsLabel }) %>
                             <% } else if (widgetType == "3") { %>
-                                <%= I18n.t('helpdesk_reports.insights_tagline.' + key + '.' + varianceStatus) %>
+                            <%= I18n.t('helpdesk_reports.insights_tagline.' + key + '.' + varianceStatus, { group1: insightGroupsLabel[0] , group2 : insightGroupsLabel[1]}) %>
                             <% } %>
                         </div>
                         <% if (widgetType == "1") { %>

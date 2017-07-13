@@ -658,7 +658,7 @@ HelpdeskReports.Reports_home = (function($){
               }
             });
             //insights save
-            $doc.on('click',"[data-submit='modal']",function(event) {
+            $doc.on('click',"#configure-insight-widget [data-submit='modal']",function(event) {
                 event.preventDefault();
                 _this.saveInsights();
             });
