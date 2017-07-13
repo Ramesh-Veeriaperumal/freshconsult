@@ -10,3 +10,4 @@
 "^/companies/\d+/.+": "/a/companies/"
 "^/agents/.*": "/a/admin/"
 "^/groups/\d+/.+": "/a/admin/"
+"^/support/.*": /a/

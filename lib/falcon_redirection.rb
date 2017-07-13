@@ -8,6 +8,9 @@ class FalconRedirection
     TICKET_SHOW_PATH_REGEX = /^\/helpdesk\/tickets\/(\d+)$/
     TICKET_EDIT_PATH_REGEX = /^\/helpdesk\/tickets\/(\d+)\/edit$/
 
+    IFRAME_PATHS = ['/a/admin/', '/a/forums/', '/a/social/', '/a/solutions/', '/a/reports/', '/a/contacts/new',
+                    '/a/companies/new', '/a/sla_policies/', '/a/scenario_automations/', '/a/canned_responses/'].freeze
+
     def falcon_redirect(options)
       @options = options
       prevent_redirect = options.key?(:prevent_redirect) ? options[:prevent_redirect] : prevent_redirection
@@ -91,12 +94,13 @@ class FalconRedirection
     end
 
     def iframe_paths
-      ['/a/admin/', '/a/forums/', '/a/social/', '/a/solutions/', '/a/reports/', '/a/contacts/new', '/a/companies/new', '/a/sla_policies/'] + get_all_members_in_a_redis_set(FALCON_REDIRECTION_IFRAME_PATHS)
+      IFRAME_PATHS + get_all_members_in_a_redis_set(FALCON_REDIRECTION_IFRAME_PATHS)
     end
 
     def iframe_re_paths
-      ['^/a/contacts/\d+', '^/a/companies/\d+', '^/a/forums/topics/\d+', "^/a/sla_policies/\d+/edit"].freeze
+      ['^/a/contacts/\d+', '^/a/companies/\d+', '^/a/forums/topics/\d+', "^/a/sla_policies/\\d+/edit"].freeze
     end
+
   end
 
 end
