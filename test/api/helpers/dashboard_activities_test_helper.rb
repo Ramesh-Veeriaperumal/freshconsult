@@ -3,7 +3,7 @@ module DashboardActivitiesTestHelper
   def get_activity_pattern(activity, user, type, content={})
     {
       'id' => activity.id,
-      'object_id' => activity.notable_id,
+      'object_id' => activity.notable_type == 'Helpdesk::Ticket' ? activity.notable.display_id : activity.notable_id,
       'object_type' => activity.notable_type,
       'title' => get_title(activity),
       'performer' => performer_type(user),

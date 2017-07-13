@@ -86,7 +86,7 @@ class Dashboard::ActivityDecorator < ApiDecorator
   def to_hash
     {
       id: id,
-      object_id: notable_id,
+      object_id: notable_type == 'Helpdesk::Ticket' ? record.notable.display_id : notable_id,
       object_type: notable_type,
       title: record.notable.nil? ? record.activity_data[:title] : h(record.notable),
       performer: performer,
@@ -151,7 +151,7 @@ class Dashboard::ActivityDecorator < ApiDecorator
 
   def due_by
     due_by_date = activity_data['eval_args']['due_date_updated'][1]
-    { due_by: parse_activity_time(due_by_date.to_i, false) }
+    { due_by: Time.at(due_by_date.to_i).utc }
   end
 
   def group
