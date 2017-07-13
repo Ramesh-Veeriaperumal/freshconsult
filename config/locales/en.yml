@@ -9164,6 +9164,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     insights:
       todays_insights: Today's Insights
       customize: Customize Insights
+      tooltip: Know more about Insights
       customize_helptext: Configure thresholds and set filters for insights to make them relevant to your business operations
       customize_helptext2: An insight or outlier is an indication of an interesting activity in your helpdesk. The threshold indicates how much change on a particular metric would make it an outlier.
       last_update: Last updated %{time}
