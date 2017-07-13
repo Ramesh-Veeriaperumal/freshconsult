@@ -39,7 +39,7 @@
 	      		:class=>"btn", :id=>"ui_toggle", :method => :post %>
 	    <% if current_account.launched?(:falcon) %>
 	    	<%= link_to t('go_to_new_ui'), enable_falcon_path,
-	      		:class=>"btn", :id=>"ui_toggle", :method => :post %>
+	      		:class=>"btn btn-primary", :id=>"ui_toggle", :method => :post %>
 	    <% end %>
 
 			<% if current_user then %>

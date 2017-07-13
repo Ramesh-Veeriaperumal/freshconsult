@@ -1,5 +1,5 @@
 /helpdesk/tickets: /a/tickets
-/helpdesk/tickets/new: /a/tickets
+/helpdesk/tickets/new: /a/tickets/new
 /helpdesk: /a/
 /: /a/
 /helpdesk/dashboard: /a/
