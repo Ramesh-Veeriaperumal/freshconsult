@@ -19,7 +19,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def should_enqueue_sbrr_job?
-    remap_skill? || has_queue_changes?
+    (remap_skill? || has_queue_changes?) && sbrr_enabled?
   end
 
   def map_skill
@@ -172,4 +172,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def agent_available?
       assigned? && responder && responder.available?
     end 
+
+    def sbrr_enabled?
+      (group.present? && group.skill_based_round_robin_enabled?) || (@model_changes.key?(:group_id) && @model_changes[:group_id][0].present? && old_group_has_sbrr?)
+    end
+
+    def old_group_has_sbrr?
+      _group = Account.current.groups.find_by_id @model_changes[:group_id][0]
+      _group.present? && _group.skill_based_round_robin_enabled? 
+    end
+
 end
