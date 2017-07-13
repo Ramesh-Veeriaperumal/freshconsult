@@ -28,7 +28,7 @@ class FalconRedirection
     end
 
     def falcon_whitelisted_paths
-      ['/enable_falcon', '/disable_falcon', '/admin/widget_config', '/logout', '/support/login'] + get_all_members_in_a_redis_set(FALCON_REDIRECTION_WHITELISTED_PATHS)
+      ['/enable_falcon', '/disable_falcon', '/admin/widget_config', '/logout', '/support/login', '/inline/attachment'] + get_all_members_in_a_redis_set(FALCON_REDIRECTION_WHITELISTED_PATHS)
     end
 
     def iframe_path?
