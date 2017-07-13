@@ -8,12 +8,12 @@ module Ember
         @search_context = :requester_autocomplete
         @items = []
         search(esv2_autocomplete_models) do |results|
+          response.api_meta = { count: results.total_entries }
           results.each do |result|
             @items.push(*result.search_data)
           end
         end
-        response.api_root_key = :requesters
-        response.api_meta = { count: @items.total_entries }
+        response.api_root_key = :contacts
       end
 
       def agents
@@ -22,6 +22,7 @@ module Ember
         @items = []
 
         search(esv2_autocomplete_models) do |results|
+          response.api_meta = { count: results.total_entries }
           results.each do |result|
             @items.push(*[{
               id: result.email,
@@ -33,7 +34,6 @@ module Ember
         end
 
         response.api_root_key = :agents
-        response.api_meta = { count: @items.total_entries }
       end
 
       def companies
@@ -42,6 +42,7 @@ module Ember
         @items = []
 
         search(esv2_autocomplete_models) do |results|
+          response.api_meta = { count: results.total_entries }
           results.each do |result|
             @items.push(*[{
               id: result.id,
@@ -51,7 +52,6 @@ module Ember
         end
 
         response.api_root_key = :companies
-        response.api_meta = { count: @items.total_entries }
       end
 
       def tags
@@ -60,6 +60,7 @@ module Ember
         @items = []
 
         search(esv2_autocomplete_models) do |results|
+          response.api_meta = { count: results.total_entries }
           results.each do |result|
             @items.push(*[{
               id: result.id, value: result.name
@@ -68,7 +69,6 @@ module Ember
         end
 
         response.api_root_key = :tags
-        response.api_meta = { count: @items.total_entries }
       end
 
       def company_users
