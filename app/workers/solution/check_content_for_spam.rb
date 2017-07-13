@@ -29,7 +29,7 @@ class Solution::CheckContentForSpam < BaseWorker
   end
    
   def increase_ehawk_spam_score_for_account(spam_score, article_id)
-    mail_recipients = ["mail-alerts@freshdesk.com","noc@freshdesk.com"]
+    mail_recipients = ["mail-alerts@freshdesk.com","noc@freshdesk.com","helpdesk@noc-alerts.freshservice.com"]
     FreshdeskErrorsMailer.error_email(nil, {:domain_name => Account.current.full_domain}, nil, {
               :subject => "Detected suspicious solution spam account :#{Account.current.id} ",
               :recipients => mail_recipients,

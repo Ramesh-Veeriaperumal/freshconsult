@@ -405,13 +405,13 @@ class Helpdesk::ConversationsController < ApplicationController
         if ticket_ids.count == 3
           FreshdeskErrorsMailer.error_email(nil, {:domain_name => current_account.full_domain}, nil, {
                   :subject => "Maximum email threshold crossed third time for Account :#{current_account.id} ", 
-                  :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com"],
+                  :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com","helpdesk@noc-alerts.freshservice.com"],
                   :additional_info => {:info => "Ticket ids #{ticket_ids.join(",")}"}
                   })
         elsif ticket_ids.count == 5
           FreshdeskErrorsMailer.error_email(nil, {:domain_name => current_account.full_domain}, nil, {
                   :subject => "Reached Maximum email threshold limit for a day for Account :#{current_account.id} ", 
-                  :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com"],
+                  :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com","helpdesk@noc-alerts.freshservice.com"],
                   :additional_info => {:info => "Blocking outgoing emails and marked #{current_account.id} as spam. Ticket ids #{ticket_ids.join(",")}"}
                   })
           add_member_to_redis_set(SPAM_EMAIL_ACCOUNTS, current_account.id)

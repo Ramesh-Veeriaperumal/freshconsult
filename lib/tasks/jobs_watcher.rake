@@ -39,7 +39,8 @@ namespace :delayedjobs_watcher do
         )
 
         FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil, {
-          :subject => "#{queue} #{DELAYED_JOBS_MSG} #{failed_jobs_count} failed jobs" 
+          :subject => "#{queue} #{DELAYED_JOBS_MSG} #{failed_jobs_count} failed jobs",
+          :recipients => ["dev-ops@freshdesk.com","helpdesk@noc-alerts.freshservice.com"] 
         }) if failed_jobs_count >= config["failed"]
 
         #For every 5 hours we will init the alert
@@ -64,7 +65,8 @@ namespace :delayedjobs_watcher do
         )
     
         FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil, {
-          :subject => "#{queue} #{DELAYED_JOBS_MSG} #{total_jobs_count} enqueued jobs are in queue" 
+          :subject => "#{queue} #{DELAYED_JOBS_MSG} #{total_jobs_count} enqueued jobs are in queue",
+          :recipients => ["dev-ops@freshdesk.com","helpdesk@noc-alerts.freshservice.com"]
         }) if total_jobs_count >= config["total"]
 
         #For every 5 hours we will init the alert
@@ -89,7 +91,7 @@ namespace :delayedjobs_watcher do
         )
     
         FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil, {
-          :subject => "#{queue} #{DELAYED_JOBS_MSG} #{total_jobs_count} scheduled jobs are in queue" 
+          :subject => "#{queue} #{DELAYED_JOBS_MSG} #{total_jobs_count} scheduled jobs are in queue"
         }) if total_jobs_count >= config["total"]
 
         #For every 5 hours we will init the alert
@@ -112,7 +114,8 @@ namespace :resque_watcher do
 
         failed_jobs_count = Resque::Failure.count
         FreshdeskErrorsMailer.error_email(nil, nil, nil,
-            {  :subject => "Resque needs your attention #{failed_jobs_count} failed jobs" }
+            {  :subject => "Resque needs your attention #{failed_jobs_count} failed jobs",
+               :recipients => ["dev-ops@freshdesk.com","helpdesk@noc-alerts.freshservice.com"] }
         ) if failed_jobs_count >= FAILED_RESQUE_JOBS_THRESHOLD
 
     end

@@ -135,7 +135,7 @@ module Helpdesk::SendAndSetHelper
       elsif(account_created_recently? && (current_account.email_configs.count == 1) && (current_account.email_configs[0].reply_email.end_with?(current_account.full_domain)) && max_to_cc_threshold_crossed?)
         FreshdeskErrorsMailer.error_email(nil, {:domain_name => current_account.full_domain}, nil, {
           :subject => "Maximum thread to, cc, bcc threshold crossed for Account :#{current_account.id} ",
-          :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com"],
+          :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com","helpdesk@noc-alerts.freshservice.com"],
           :additional_info => {:info => "Please check spam activity in Ticket : #{@ticket.id}"}
           })
       end

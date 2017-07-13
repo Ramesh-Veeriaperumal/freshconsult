@@ -142,7 +142,7 @@ class SendgridDomainUpdates < BaseWorker
   def notify_spam_account_detection(account, additional_info)
     FreshdeskErrorsMailer.error_email(nil, {:domain_name => account.full_domain}, nil, {
             :subject => "Detected suspicious spam account :#{account.id} ", 
-            :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com"],
+            :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com", "helpdesk@noc-alerts.freshservice.com"],
             :additional_info => {:info => additional_info}
           })
   end
