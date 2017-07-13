@@ -1577,5 +1577,26 @@ module Ember
         match_json([bad_request_error_pattern('parent_id', nil, append_msg: I18n.t('ticket.parent_child.permission_denied'))])
       end
     end
+
+    def test_merged_tkt_with_adv_features
+      enable_adv_ticketing(%i(link_ticket parent_child_tickets)) do
+        primary_tkt = create_ticket
+        sec_tkt     = create_ticket
+        Helpdesk::Ticket.any_instance.stubs(:parent_ticket).returns(primary_tkt.display_id)
+        get :show, controller_params(version: 'private', id: sec_tkt.display_id)
+        assert_response 200
+        assert_equal false, JSON.parse(response.body)["can_be_associated"]
+        Helpdesk::Ticket.any_instance.unstub(:parent_ticket)
+      end
+    end
+
+    def test_normal_tkt_with_adv_features
+      enable_adv_ticketing(%i(link_ticket parent_child_tickets)) do
+        tkt = create_ticket
+        get :show, controller_params(version: 'private', id: tkt.display_id)
+        assert_response 200
+        assert_equal true, JSON.parse(response.body)["can_be_associated"]
+      end
+    end
   end
 end

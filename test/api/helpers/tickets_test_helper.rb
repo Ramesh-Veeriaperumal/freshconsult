@@ -127,6 +127,7 @@ module TicketsTestHelper
       is_escalated:  (expected_output[:is_escalated] || ticket.isescalated).to_s.to_bool,
       association_type: expected_output[:association_type] || ticket.association_type,
       associated_tickets_count: expected_output[:associated_tickets_count] || ticket.associated_tickets_count,
+      can_be_associated: expected_output[:can_be_associated] || ticket.can_be_associated?,
       spam:  (expected_output[:spam] || ticket.spam).to_s.to_bool,
       email_config_id:  expected_output[:email_config_id] || ticket.email_config_id,
       group_id:  expected_output[:group_id] || ticket.group_id,

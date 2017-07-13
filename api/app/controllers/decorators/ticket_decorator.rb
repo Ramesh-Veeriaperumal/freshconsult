@@ -2,7 +2,7 @@ class TicketDecorator < ApiDecorator
   delegate :ticket_body, :custom_field_via_mapping, :cc_email, :email_config_id, :fr_escalated, :group_id, :priority,
            :requester_id, :responder, :responder_id, :source, :spam, :status, :subject, :display_id, :ticket_type,
            :schema_less_ticket, :deleted, :due_by, :frDueBy, :isescalated, :description,
-           :internal_group_id , :internal_agent_id, :association_type, :associated_tickets_count,
+           :internal_group_id, :internal_agent_id, :association_type, :associated_tickets_count, :can_be_associated?,
            :description_html, :tag_names, :attachments, :attachments_sharable, :company_id, :cloud_files, :ticket_states, to: :record
 
   def initialize(record, options)
@@ -186,12 +186,13 @@ class TicketDecorator < ApiDecorator
       to_emails: schema_less_ticket.try(:to_emails),
       association_type: association_type,
       associated_tickets_count: associated_tickets_count,
+      can_be_associated: can_be_associated?,
       description: ticket_body.description_html,
       description_text: ticket_body.description,
       custom_fields: custom_fields,
       tags: tag_names
     }
-    [hash, simple_hash, feedback_hash , shared_ownership_hash].inject(&:merge)
+    [hash, simple_hash, feedback_hash, shared_ownership_hash].inject(&:merge)
   end
 
   def to_search_hash

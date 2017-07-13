@@ -181,6 +181,28 @@ module Ember
         assert_response 400
         match_json(merge_assoc_tkt_pattern(assoc_tkt_ids.sort))
       end
+
+      def test_secondary_tkt_with_adv_features
+        enable_adv_ticketing(%i(link_ticket parent_child_tickets)) do
+          primary_tkt = create_ticket
+          sec_tkt     = create_ticket
+          request_params = sample_merge_request_params(primary_tkt.display_id, [sec_tkt.display_id])
+          put :merge, construct_params({ version: 'private' }, request_params)
+          assert_response 204
+          assert_equal false, sec_tkt.reload.can_be_associated?
+        end
+      end
+
+      def test_primary_tkt_with_adv_features
+        enable_adv_ticketing(%i(link_ticket parent_child_tickets)) do
+          primary_tkt = create_ticket
+          sec_tkt     = create_ticket
+          request_params = sample_merge_request_params(primary_tkt.display_id, [sec_tkt.display_id])
+          put :merge, construct_params({ version: 'private' }, request_params)
+          assert_response 204
+          assert_equal true, primary_tkt.reload.can_be_associated?
+        end
+      end
     end
   end
 end
