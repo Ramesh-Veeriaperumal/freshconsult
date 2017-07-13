@@ -21,26 +21,27 @@ HelpdeskReports.Reports_home = (function($){
         total_pages : 0,
         visibility: {},
         fetchInsightConfig: function() {
-            var self = this; 
+          var self = this; 
             var config = {
-                url: constants.base_url + constants.insights.config_url,
-                success: function(res) {
+              url: constants.base_url + constants.insights.config_url,
+              success: function(res) {
 
-                    self.insightsConfig = self.populateConfigData(res);
+                self.insightsConfig = self.populateConfigData(res);
 
-                    //Cache the config
-                    if (typeof (Storage) !== "undefined") {
-                      // window.localStorage.setItem("insights_config", Browser.stringify(res));
-                      window.localStorage.setItem("insights_config", JSON.stringify(res));
-                    }
-                    self.fetchInsights(self.insightsConfig);
-                },
-                error: function(res) {
-                    //Unable to fetch insights config
+                //Cache the config
+                if (typeof (Storage) !== "undefined") {
+                  // window.localStorage.setItem("insights_config", Browser.stringify(res));
+                  window.localStorage.setItem("insights_config", JSON.stringify(res));
                 }
-            }
+                self.fetchInsights(self.insightsConfig);
+              },
+              error: function(res) {
+                //Unable to fetch insights config
+              }
+            };
             self.makeAjaxRequest(config);
-        },
+
+                    },
         populateConfigData: function (res) {
 
             var self = this;
@@ -425,6 +426,7 @@ HelpdeskReports.Reports_home = (function($){
           } else if( feature == 'insights') {
             $(".insights-content").html(JST["helpdesk_reports/templates/insight_error_tmpl"]({error:error}));
           }
+          $('.pagination').hide();
         },
         saveInsights : function() {
 
@@ -658,9 +660,11 @@ HelpdeskReports.Reports_home = (function($){
               }
             });
             //insights save
-            $doc.on('click',"#configure-insight-widget [data-submit='modal']",function(event) {
+            $doc.on('click',"[data-submit='modal']",function(event) {
+              if(event.target.id.match(/insights-edit-*/)) {
                 event.preventDefault();
                 _this.saveInsights();
+              }
             });
 
             //recent questions click
