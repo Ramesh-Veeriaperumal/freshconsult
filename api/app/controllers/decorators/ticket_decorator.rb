@@ -205,8 +205,8 @@ class TicketDecorator < ApiDecorator
       requester_id: requester_id,
       group_id: group_id,
       status: status,
-      company_id: company_id,
-      company_name: record.company.try(:name),
+      source: source,
+      priority: priority,
       stats: stats
     }
     requester_hash = requester
