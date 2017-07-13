@@ -11137,7 +11137,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     desktop_notifications_disabled: You've disabled desktop notifications
     toggle_mobile_notifications: Toggle mobile notifications
     toggle_web_notifications: Toggle web notifications
-    silent_notifications: Silent notifications
+    muted: Muted
+    mute: Mute
   trial_plan_downgrade: "Important: You are currently downgrading from %{plan_from} plan to %{plan_to} plan"
   discounted_sum: "After Discount"
   selecting_plan: "Selecting..."
