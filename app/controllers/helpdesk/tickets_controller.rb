@@ -279,12 +279,27 @@ class Helpdesk::TicketsController < ApplicationController
     params[:html_format] = request.format.html?
     tkt = current_account.tickets.permissible(current_user)
     @items = fetch_tickets unless is_native_mobile?
-    @failed_tickets = (flash[:failed_tickets] || []).collect { |id| ticket = @items.find {|item| item.display_id == id}; {:id => ticket.id, :subject => CGI.escape_html(ticket.subject), :display_id => id} }
+    @failed_tickets = []
+    _tickets = []
+    _ids_not_in_view = []
+    (flash[:failed_tickets] || []).each do |_id|
+      _ticket = @items.find {|_item| _item.display_id == _id}
+      if _ticket.present?
+        _tickets << _ticket
+      else
+        _ids_not_in_view << _id
+      end
+    end
+    Rails.logger.debug "Ticket ids not in view #{_ids_not_in_view.inspect}"
+    _tickets += current_account.tickets.where("display_id IN (?)", _ids_not_in_view) if _ids_not_in_view.present?
+    _tickets.each do |_ticket|
+      @failed_tickets << {:id => _ticket.id, :subject => CGI.escape_html(_ticket.subject.to_s), :display_id => _ticket.display_id}
+    end
     if flash[:action]
       title = I18n.t("helpdesk.flash.title_on_#{flash[:action]}_fail") 
       description = I18n.t("helpdesk.flash.description_on_#{flash[:action]}_fail")
     end
-    @failed_tickets_data = {:failed_tickets => @failed_tickets, :title => title, :description => description } if @failed_tickets
+    @failed_tickets_data = {:failed_tickets => @failed_tickets, :title => title, :description => description } if @failed_tickets.present?
     respond_to do |format|
       format.html  do
         #moving this condition inside to redirect to first page in case of close/resolve of only ticket in current page.
