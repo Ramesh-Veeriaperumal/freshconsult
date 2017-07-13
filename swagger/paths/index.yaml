@@ -199,7 +199,7 @@
   $ref: ./integrated_users/crud.yaml
 # Cloud Attachments
 /cloud_files/{id}:
-  $ref: ./cloud_files/crud.yaml  
+  $ref: ./cloud_files/crud.yaml
 #Social
 /twitter_handles:
   $ref: ./social/twitter_handles.yaml
@@ -232,3 +232,7 @@
 
 /dashboards/leaderboard_agents:
   $ref: ./dashboard/leaderboard/agents.yaml
+
+# Product Feedback
+/product_feedback/:
+  $ref: ./product_feedback/create.yaml

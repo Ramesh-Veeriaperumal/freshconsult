@@ -34,6 +34,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/search/ticket", only: [:results]
     resource :"ember/search/autocomplete", only: %i(requesters agents companies tags)
     resource :"ember/leaderboard", only: [:agents]
+    resource :"ember/product_feedback"
   end
 
   reply_ticket do

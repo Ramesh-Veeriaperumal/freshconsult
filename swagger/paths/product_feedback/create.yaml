@@ -1,0 +1,14 @@
+  post:
+    summary: Creates a product feedback.
+    description: Creates a product feedback with the given description. Subject is autopopulated.
+    tags: [product feedback]
+    parameters:
+      - in: body
+        name: product_feedback
+        description: feedback content and meta information
+        schema:
+          $ref: '#/definitions/product_feedback'
+
+    responses:
+      204:
+        description: OK

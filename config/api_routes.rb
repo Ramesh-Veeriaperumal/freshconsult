@@ -91,6 +91,9 @@ Helpkit::Application.routes.draw do
 
     match 'export/ticket_activities' => 'export#ticket_activities', :defaults => { format: 'json' }, :as => :ticket_activities, via: :get
 
+    # Feedbacks about the product
+    resources :product_feedback, controller: 'ember/product_feedback', only: [:create]
+
     # Solution endpoints
     namespace :api_solutions, path: 'solutions' do
       resources :categories, only: [:create, :destroy], constraints: { id: /\d+/ } do
