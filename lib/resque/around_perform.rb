@@ -15,19 +15,29 @@ end
     Account.reset_current_account
   end
 
- def around_perform_with_shard(*args)
-  params_hash = args[0].is_a?(Hash) ? args[0].symbolize_keys! : args[1].symbolize_keys!
-  account_id = (params_hash[:account_id]) || (params_hash[:current_account_id])
-  Sharding.select_shard_of(account_id) do
-    ::NewRelic::Agent.trace_execution_scoped('Custom/Resque/around_perform_with_shard/find_by_id') do
-      account = Account.find_by_id(account_id)
-      if account
-        account.make_current 
-        # $statsd.increment "resque.#{@queue}.#{account.id}" 
+  def around_perform_with_shard(*args)
+    params_hash = args[0].is_a?(Hash) ? args[0].symbolize_keys! : args[1].symbolize_keys!
+    account_id = (params_hash[:account_id]) || (params_hash[:current_account_id])
+    begin
+      Sharding.select_shard_of(account_id) do
+        ::NewRelic::Agent.trace_execution_scoped('Custom/Resque/around_perform_with_shard/find_by_id') do
+          account = Account.find_by_id(account_id)
+          if account
+            account.make_current 
+            # $statsd.increment "resque.#{@queue}.#{account.id}" 
+          end
+          TimeZone.set_time_zone
+        end
+        yield
       end
-      TimeZone.set_time_zone
+    rescue DomainNotReady => e
+        puts "Just ignoring the DomainNotReady , #{e.inspect}"
+    rescue ShardNotFound => e
+        puts "Ignoring ShardNotFound, #{e.inspect}, #{msg['account_id']}"
+    rescue AccountBlocked => e
+        puts "Ignore AccountBlocked, #{e.inspect}"
     end
-    yield
   end
- end
+
+
 end
