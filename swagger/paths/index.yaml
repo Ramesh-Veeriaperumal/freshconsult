@@ -79,6 +79,8 @@
   $ref: ./conversations/facebook_reply.yaml
 /tickets/{id}/tweet:
   $ref: ./conversations/twitter_reply.yaml
+/tickets/{id}/reply_to_forward:
+  $ref: ./conversations/reply_to_forward.yaml
 
 /conversations/{id}:
   $ref: ./conversations/update.yaml
@@ -86,6 +88,8 @@
   $ref: ./conversations/full_text.yaml
 /conversations/{id}/forward_template:
   $ref: ./conversations/note_forward_template.yaml
+/conversations/{id}/reply_to_forward_template:
+  $ref: ./conversations/reply_to_forward_template.yaml
 
 /contacts:
   $ref: ./contacts/list_and_create.yaml

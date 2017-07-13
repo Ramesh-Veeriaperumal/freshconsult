@@ -1,0 +1,14 @@
+get:
+  tags: [conversation]
+  description: Reply to Forward Template
+  parameters:
+    - $ref: '#/parameters/id'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/reply_to_forward_template'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

@@ -141,12 +141,17 @@ module ConversationsTestHelper
     {
       template: expected_output[:template],
       signature: expected_output[:signature],
-      quoted_text: expected_output[:quoted_text] || String
+      quoted_text: expected_output[:quoted_text] || String,
+      bcc_emails: Array
     }
   end
 
   def reply_template_pattern(expected_output)
-    conversation_template_pattern(expected_output).merge(cc_emails: Array, bcc_emails: Array)
+    conversation_template_pattern(expected_output).merge(cc_emails: Array)
+  end
+
+  def reply_to_forward_template_pattern(expected_output)
+    conversation_template_pattern(expected_output).merge(cc_emails: Array, to_emails: Array)
   end
 
   def full_text_pattern(note)

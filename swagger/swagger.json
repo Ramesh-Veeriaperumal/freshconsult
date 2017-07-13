@@ -1486,6 +1486,41 @@
         }
       }
     },
+    "/tickets/{id}/reply_to_forward": {
+      "post": {
+        "tags": [
+          "conversation"
+        ],
+        "description": "Create a Reply to Forward",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/note_reply_to_forward_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/extended_note"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
     "/conversations/{id}": {
       "put": {
         "tags": [
@@ -1573,6 +1608,33 @@
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/conversation_template"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/conversations/{id}/reply_to_forward_template": {
+      "get": {
+        "tags": [
+          "conversation"
+        ],
+        "description": "Reply to Forward Template",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/reply_to_forward_template"
             }
           },
           "400": {
@@ -4635,6 +4697,18 @@
         "data": {
           "type": "object",
           "properties": {
+            "bcc_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cc_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
             "template": {
               "type": "string",
               "format": "HTML"
@@ -4650,6 +4724,58 @@
           }
         }
       }
+    },
+    "note_reply_to_forward_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/note"
+        },
+        {
+          "properties": {
+            "full_text": {
+              "type": "string"
+            },
+            "user_id": {
+              "type": "number"
+            },
+            "attachments": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "format": "byte"
+              }
+            },
+            "attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "from_email": {
+              "type": "string"
+            },
+            "to_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cc_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "bcc_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
     },
     "full_text": {
       "type": "object",
@@ -6236,8 +6362,10 @@
                   }
                 },
                 "source": {
-                  "type": "integer",
-                  "format": "int64"
+                  "type": "integer"
+                },
+                "category": {
+                  "type": "integer"
                 },
                 "category": {
                   "type": "integer",
@@ -7407,6 +7535,41 @@
               "content": {
                 "type": "string"
               }
+    "reply_to_forward_template": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "bcc_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cc_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "to_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "template": {
+              "type": "string",
+              "format": "HTML"
+            },
+            "quoted_text": {
+              "type": "string",
+              "format": "HTML"
+            },
+            "signature": {
+              "type": "string",
+              "format": "HTML"
             }
           }
         }

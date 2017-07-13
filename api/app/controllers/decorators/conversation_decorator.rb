@@ -5,7 +5,7 @@ class ConversationDecorator < ApiDecorator
            :source, :attachments, :attachments_sharable, :schema_less_note, :cloud_files, :last_modified_timestamp,
            :last_modified_user_id, to: :record
 
-  delegate :to_emails, :from_email, :cc_emails, :bcc_emails, to: :schema_less_note, allow_nil: true
+  delegate :to_emails, :from_email, :cc_emails, :bcc_emails, :category, to: :schema_less_note, allow_nil: true
 
   def initialize(record, options)
     super(record)
@@ -38,6 +38,7 @@ class ConversationDecorator < ApiDecorator
   def to_json
     construct_json.merge(
       deleted: deleted,
+      category: category,
       last_edited_at: last_modified_timestamp.try(:utc),
       last_edited_user_id: last_modified_user_id.try(:to_i),
       attachments: attachments_hash,

@@ -2,9 +2,9 @@ class ConversationDelegator < ConversationBaseDelegator
 
   attr_accessor :email_config_id, :email_config, :cloud_file_attachments
 
-  validate :validate_agent_emails, if: -> { note? && to_emails.present? && attr_changed?('to_emails', schema_less_note)}
+  validate :validate_agent_emails, if: -> { (note? && !reply_to_forward?) && to_emails.present? && attr_changed?('to_emails', schema_less_note) }
 
-  validate :validate_from_email, if: -> { email_conversation? && from_email.present? && attr_changed?('from_email', schema_less_note)}
+  validate :validate_from_email, if: -> { (email_conversation? || reply_to_forward?) && from_email.present? && attr_changed?('from_email', schema_less_note) }
 
   validate :validate_agent_id, if: -> { fwd_email? && user_id.present? && attr_changed?('user_id')}
 

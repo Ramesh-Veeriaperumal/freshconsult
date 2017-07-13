@@ -190,6 +190,8 @@ Helpkit::Application.routes.draw do
         post :forward, to: 'ember/conversations#forward'
         get :forward_template, to: 'ember/conversations#forward_template'
         post :broadcast, to: 'ember/conversations#broadcast'
+        post :reply_to_forward, to: 'ember/conversations#reply_to_forward'
+
         # TODO: Should rename this
         get :latest_note_forward_template, to: 'ember/conversations#latest_note_forward_template'
         post :tweet, to: 'ember/conversations#tweet'
@@ -229,6 +231,7 @@ Helpkit::Application.routes.draw do
       member do
         get :full_text
         get :forward_template, to: 'ember/conversations#note_forward_template'
+        get :reply_to_forward_template, to: 'ember/conversations#reply_to_forward_template'
       end
     end
 

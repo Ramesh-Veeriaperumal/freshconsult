@@ -11,6 +11,10 @@ properties:
         type: array
         items:
           type: string
+      to_emails:
+        type: array
+        items:
+          type: string
       template:
         type: string
         format: HTML
@@ -20,4 +24,3 @@ properties:
       signature:
         type: string
         format: HTML
-      

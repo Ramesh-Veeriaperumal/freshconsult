@@ -47,6 +47,9 @@
     $ref: ./request/conversations/twitter_reply.yaml  
   conversation_template:
     $ref: ./resource/conversation_template.yaml
+  note_reply_to_forward_input:
+    $ref: ./request/conversations/reply_to_forward.yaml
+
   full_text:
     $ref: ./resource/full_text.yaml
   ticket_input:
@@ -79,6 +82,8 @@
     $ref: ./request/integrated_resources/integrated_resource.yaml
 
   # RESOURCE
+  conversation_template:
+    $ref: ./resource/conversation_template.yaml
   contact:
     $ref: ./resource/contact.yaml
   product_feedback:
@@ -224,6 +229,8 @@
     allOf:
       - $ref: '#/definitions/extended_canned_response'
       - $ref: ./response/canned_response/show.yaml
+  reply_to_forward_template:
+    $ref: ./resource/reply_to_forward_template.yaml
 
   # Dashboard activities
   dashboard_activities:
@@ -246,4 +253,3 @@
     $ref: './response/dashboard/ticket_metrics.yaml'
   leaderboard_agents_lists:
     $ref: './response/dashboard/leaderboard/agents.yaml'
-
