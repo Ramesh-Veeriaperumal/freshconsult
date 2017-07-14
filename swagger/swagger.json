@@ -3393,11 +3393,36 @@
       }
     },
     "/integrated_resources": {
+      "post": {
+        "tags": [
+          "Integrated Resources"
+        ],
+        "summary": "Create resource",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/integrated_resource_create"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/integrated_resources"
+            }
+          }
+        }
+      },
       "get": {
         "tags": [
           "Integrated Resources"
         ],
-        "summary": "List a particular resource",
+        "summary": "List resources",
         "description": "List the integrated resource of the currently logged in user",
         "parameters": [
           {
@@ -3459,31 +3484,6 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/integrated_resources"
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Integrated Resources"
-        ],
-        "summary": "Create resource",
-        "parameters": [
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "$ref": "#/definitions/integrated_resource_create"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/integrated_resources"
@@ -4059,6 +4059,30 @@
           },
           "403": {
             "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/product_feedback/": {
+      "post": {
+        "summary": "Creates a product feedback.",
+        "description": "Creates a product feedback with the given description. Subject is autopopulated.",
+        "tags": [
+          "product feedback"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "product_feedback",
+            "description": "feedback content and meta information",
+            "schema": {
+              "$ref": "#/definitions/product_feedback"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK"
           }
         }
       }
@@ -5466,6 +5490,14 @@
         }
       }
     },
+    "product_feedback": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        }
+      }
+    },
     "avatar": {
       "type": "object",
       "allOf": [
@@ -6362,10 +6394,8 @@
                   }
                 },
                 "source": {
-                  "type": "integer"
-                },
-                "category": {
-                  "type": "integer"
+                  "type": "integer",
+                  "format": "int64"
                 },
                 "category": {
                   "type": "integer",
@@ -7473,6 +7503,46 @@
         }
       ]
     },
+    "reply_to_forward_template": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "bcc_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cc_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "to_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "template": {
+              "type": "string",
+              "format": "HTML"
+            },
+            "quoted_text": {
+              "type": "string",
+              "format": "HTML"
+            },
+            "signature": {
+              "type": "string",
+              "format": "HTML"
+            }
+          }
+        }
+      }
+    },
     "dashboard_activities": {
       "type": "array",
       "description": "Dashboard activities",
@@ -7535,41 +7605,6 @@
               "content": {
                 "type": "string"
               }
-    "reply_to_forward_template": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object",
-          "properties": {
-            "bcc_emails": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "cc_emails": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "to_emails": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "template": {
-              "type": "string",
-              "format": "HTML"
-            },
-            "quoted_text": {
-              "type": "string",
-              "format": "HTML"
-            },
-            "signature": {
-              "type": "string",
-              "format": "HTML"
             }
           }
         }

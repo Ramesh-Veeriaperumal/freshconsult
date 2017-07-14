@@ -14,21 +14,7 @@ get:
       description: Success
       schema:
         $ref: '#/definitions/integrated_resources'
-post:
-  tags: [Integrated Resources]
-  summary: Create resource
-  parameters:
-    - name: data
-      in: body
-      required: true
-      schema:
-        type: object
-        $ref: '#/definitions/integrated_resource_create'
-  responses:
-    201:
-      description: Success
-      schema:
-        $ref: '#/definitions/integrated_resources'
+
 delete:
   summary: Delete resource
   tags: [Integrated Resources]

@@ -193,7 +193,7 @@
   $ref: ./installed_applications/crud.yaml
 # Integrated Resources
 /integrated_resources:
-  $ref: ./integrated_resources/list.yaml
+  $ref: ./integrated_resources/list_and_create.yaml
 /integrated_resources/{id}:
   $ref: ./integrated_resources/crud.yaml
 # Integrated Users
