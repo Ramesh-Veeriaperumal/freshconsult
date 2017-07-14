@@ -76,6 +76,7 @@ class Dashboard::ActivityDecorator < ApiDecorator
 
   SUMMARY_MAP_TYPE_BY_NAME = Hash[*SUMMARY_MAP.map { |i| [i[0], i[1]] }.flatten]
   SUMMARY_MAP_ACTION_BY_NAME = Hash[*SUMMARY_MAP.map { |i| [i[0], i[2]] }.flatten]
+  SOLUTION_ACTIVITIES = ['Solution::Article', 'Solution::Folder', 'Solution::Category'].freeze
 
   CONTENT_LESS_TYPES = [:deleted].freeze
 
@@ -86,13 +87,24 @@ class Dashboard::ActivityDecorator < ApiDecorator
   def to_hash
     {
       id: id,
-      object_id: notable_type == 'Helpdesk::Ticket' ? record.notable.display_id : notable_id,
+      object_id: object_id,
       object_type: notable_type,
       title: record.notable.nil? ? record.activity_data[:title] : h(record.notable),
       performer: performer,
       performed_at: Time.at(created_at.to_i).utc,
       actions: user_actions.reject { |action| action.empty? }
     }
+  end
+
+  def object_id
+    case notable_type
+    when 'Helpdesk::Ticket'
+      record.notable.display_id
+    when *SOLUTION_ACTIVITIES
+      record.notable.try(:parent_id)
+    else
+      notable_id
+    end
   end
 
   def performer
@@ -248,7 +260,6 @@ class Dashboard::ActivityDecorator < ApiDecorator
   end
 
   def topic_merge_target
-    target_topic = activity_data['eval_args']['target_topic_path'][1]
-    { target_topic_id: target_topic['topic_id'], title: target_topic['subject'] }
+    { target_topic_id: activity_data['eval_args']['target_topic_path'][1] }
   end
 end
