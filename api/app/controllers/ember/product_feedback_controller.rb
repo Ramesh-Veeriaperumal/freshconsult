@@ -26,7 +26,7 @@ class Ember::ProductFeedbackController < ApiApplicationController
         priority: PRIORITY_KEYS_BY_TOKEN[:low],
         description: description,
         source: SOURCE_KEYS_BY_TOKEN[:feedback_widget],
-        tags: ['falcon_feedback']
+        tags: ['falcon_feedback', current_account.id.to_s]
       }
     end
 
