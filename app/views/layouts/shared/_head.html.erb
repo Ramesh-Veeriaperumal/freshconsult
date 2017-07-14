@@ -8,7 +8,7 @@
 	<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
 	     Remove this if you use the .htaccess -->
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  	<title><%= h(page_title) %></title>
+  <title><%= h(page_title) %></title>
 	<meta name="description" content="<%= page_description %>">
 	<meta name="author" content="">
 	<meta name="keywords" content="<%= page_keywords %>">
@@ -35,16 +35,20 @@
 
 	<%= stylesheet_link_tag_with_rtl :'cdn/froala_editor' %>
 
+	<% if current_account.launched?(:falcon) && current_user && current_user.is_falcon_pref? %>
+	  <%= stylesheet_link_tag_with_rtl :'cdn/falcon' %>	
+	<% end %>
+
 	<script type="text/javascript">
-	  /* TODO-RAILS3 need to cross check this area */
-		PROFILE_BLANK_THUMB_PATH = '<%= asset_host_url %>/assets/misc/profile_blank_thumb.jpg';
-		PROFILE_BLANK_MEDIUM_PATH = '<%= asset_host_url %>/assets/misc/profile_blank_medium.jpg';
-		SPACER_IMAGE_PATH = '<%= spacer_image_url %>';
-		FILLER_IMAGES = {
-			imageLoading : '<%= asset_host_url %>/assets/animated/image_upload_placeholder.gif'
-		};
-		cloudfront_version = "<%= CLOUDFRONT_VERSION %>";
-		cloudfront_host_url = "<%= asset_host_url %>";
+	 /* TODO-RAILS3 need to cross check this area */
+	 PROFILE_BLANK_THUMB_PATH = '<%= asset_host_url %>/assets/misc/profile_blank_thumb.jpg';
+	 PROFILE_BLANK_MEDIUM_PATH = '<%= asset_host_url %>/assets/misc/profile_blank_medium.jpg';
+	 SPACER_IMAGE_PATH = '<%= spacer_image_url %>';
+	 FILLER_IMAGES = {
+		 imageLoading : '<%= asset_host_url %>/assets/animated/image_upload_placeholder.gif'
+	 };
+	 cloudfront_version = "<%= CLOUDFRONT_VERSION %>";
+	 cloudfront_host_url = "<%= asset_host_url %>";
 	</script>
 
 	<% if logged_in? %>
