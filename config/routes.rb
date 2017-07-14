@@ -725,6 +725,8 @@ Helpkit::Application.routes.draw do
 
   resource :user_session
 
+  match '/enable_falcon' => 'users#enable_falcon', :as => :enable_falcon, via: :post
+  match '/disable_falcon' => 'users#disable_falcon', :as => :disable_falcon, via: :post
   match '/register/:activation_code' => 'activations#new', :as => :register
   match 'register_new_email/:activation_code' => 'activations#new_email', :as => :register_new_email
   match '/activate/:perishable_token' => 'activations#create', :as => :activate
@@ -1476,6 +1478,8 @@ Helpkit::Application.routes.draw do
           put :enable
           put :disable
           put :update_config
+        end
+        scope ':installed_extension_id' do
           get :app_status
         end
       end
@@ -1675,6 +1679,11 @@ Helpkit::Application.routes.draw do
         post :delete_reports_filter
         post :update_reports_filter
         post :fetch
+        post :fetch_qna_metric
+        post :fetch_insights_metric
+        post :save_insights_config
+        post :fetch_recent_questions
+        post :fetch_insights_config
       end
     end
 

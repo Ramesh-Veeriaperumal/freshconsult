@@ -30,7 +30,8 @@ module Helpdesk::TicketModelExtension::Constants
   ]
 
   CONTACT_FIELDS = [
-    [ "export_data.fields.fb_id",                 "fb_profile_id",           false,  :requester       , 2    , nil]
+    [ "export_data.fields.fb_id",                 "fb_profile_id",           false,  :requester       , 2    , nil],
+    [ "export_data.fields.contact_id",            "contact_id",              false,  :requester       , 3    , nil]
   ]
 
   COMPANY_FIELDS = []

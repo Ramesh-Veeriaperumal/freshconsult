@@ -295,13 +295,13 @@ module Marketplace::ApiMethods
       end
     end
 
-    def fetch_app_status(extension_id = params[:extension_id])
+    def fetch_app_status(installed_extension_id = params[:installed_extension_id])
       begin
         api_payload = account_payload(
           Marketplace::ApiEndpoint::ENDPOINT_URL[:app_status] %
                 { :product_id => PRODUCT_ID,
                   :account_id => Account.current.id,
-                  :extension_id => extension_id },
+                  :installed_extension_id => installed_extension_id },
           Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:app_status])
           get_api(api_payload, MarketplaceConfig::ACC_API_TIMEOUT)
       rescue *FRESH_REQUEST_EXP => e

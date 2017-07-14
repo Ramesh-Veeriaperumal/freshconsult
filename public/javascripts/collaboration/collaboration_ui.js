@@ -2,14 +2,15 @@
 *	For collaboration feature.
 *	DOM related functions fall here.
 *	Expects $ to be loaded before it.
-*	To be included in _collaboration partial
-*
-*/ 
+*   To be included in cdn/collaboration.js
+*/
 
+window.App = window.App || {};
 App.CollaborationUi = (function ($) {
 	
     var CONST = {
         MENTION_RE: /\B@([\S]+)(?!=[\s])/igm,
+        EXTERNAL_URL_RE: /\b(?:(?:(?:(https?:\/\/)|(?:www\d{0,3}\.))[\-a-z0-9+&@#\/%?=~_|!:\.;]+)|(?:([0-9a-z._+\-]+@)?(?:[0-9a-z]+[.\-])+(?:(?:co(?:m|\.[a-z]{2}))|ir|us|cc|biz|mobi|info|uk|org|net|tv|eu|cn|au)(?:[#\/?:][\-a-z0-9+&@#\/%?=~_|!:\.;]*[\-a-z0-9+&@#\/%=~_|]*|\b)))/gim,
         IMAGE_TAG_RE: /<img/igm,
         MENTION_EVERYONE_TAG: "@huddle",
         TYPE_SENT: 'sent',
@@ -115,7 +116,7 @@ App.CollaborationUi = (function ($) {
                 } else if(!reply_in_progress) {
                     _COLLAB_PVT.markAnnotation();
                 }
-            }); 
+            });
             $scrollBox.on("scroll.collab", _COLLAB_PVT.hasChatReachedTop); // scroll doesn't bubble
 
             $collabSidebar.on("change.enabledCollab", "#collab-attachment-input", function(event) {
@@ -601,9 +602,6 @@ App.CollaborationUi = (function ($) {
                     "incremental": true
                 }, CONST.TYPE_SENT);
                 
-                if(!!msg.metadata) {
-                    msg.metadata.notify_version = Collab.notifyVersion;
-                }
                 collabModel.sendMessage(msg, currentConvo.co_id);
                 _COLLAB_PVT.scrollToBottom();
                 $msgBox.focus();
@@ -767,14 +765,18 @@ App.CollaborationUi = (function ($) {
             var $chatBox = $("#collab-sidebar #scroll-box");
             if($chatBox) {
                 var scrollTop = $chatBox.scrollTop();
-                if (scrollTop < 150){
+                var scrollingUp = Collab.scrollBoxScrollTop ? Collab.scrollBoxScrollTop > scrollTop : false;
+                if (scrollingUp && scrollTop < 150){
                     _COLLAB_PVT.savedScrollHeight = $chatBox[0].scrollHeight - $chatBox[0].scrollTop - $chatBox[0].clientHeight;
-                    _COLLAB_PVT.fetchMoreMessages()
+                    _COLLAB_PVT.fetchMoreMessages();
+                
                 }
+                Collab.scrollBoxScrollTop = scrollTop;
             } else {
                 console.log("Could not find the scrollbox; But hasChatReachedTop was called.")
             }
         },
+
         fetchMoreMessages : function(cb){
             var collabModel = App.CollaborationModel;
             var currentConvo = collabModel.currentConversation;
@@ -943,7 +945,7 @@ App.CollaborationUi = (function ($) {
                     _COLLAB_PVT.scrollToMessage(Collab.scrollToMsgId);
                 }
             }
-            
+
             _COLLAB_PVT.disableCollabUiIfNeeded();
 
             if(firstLoad) {
@@ -1316,10 +1318,62 @@ App.CollaborationUi = (function ($) {
             }
         },
 
-        mentionListSorter: function(arr) {
-            return arr.sort(function (a, b) {
-                return (a.username && b.username) ? ( a.username.length - b.username.length || (a.username > b.username ? 1 : -1)) : -1;
-            });
+        mentionListSorter: function(arr, item) {
+            var huddle = "huddle";
+            var collabModel = App.CollaborationModel;
+            var currentConvo = collabModel.conversationsMap[collabModel.currentConversation.co_id];
+            var remove_huddle_mention = false;
+
+            // Decide when to remove huddle_mention
+            if(!currentConvo) {
+                remove_huddle_mention = true;
+            } else {
+                var loopCount = 0;
+                for (var member_id in currentConvo.members) {
+                    if(loopCount > 0) {
+                        remove_huddle_mention = false;
+                        break;
+                    }
+                    if(member_id === collabModel.currentUser.uid) {
+                        remove_huddle_mention = true;
+                    }
+                    loopCount++;
+                }
+            }
+            
+            /*
+                dictionary sort + @huddle on top             => nothing after @
+                dictionary sort + @huddle removed            => nothing after @, no member or only member is me
+                Length+Dictionary sort + @huddle removed     => typed after @, no member or only member is me
+                Length+Dictionary sort                       => typed after @
+            */
+            
+            if(item.length > 0) {
+                // Length+Dictionary sort
+                if(remove_huddle_mention) {
+                    // @huddle brought on top and removed
+                    arr = arr.sort(function (a, b) {
+                        return (a.username && b.username) ? (a.username == huddle ? -1 : b.username == huddle ? 1 : (a.username.length - b.username.length || (a.username > b.username ? 1 : -1))) : -1;
+                    });
+                    if(arr.length && (arr[0].username === huddle)) {
+                        arr.splice(0, 1);
+                    }
+                } else {
+                    // Length+Dictionary sort
+                    arr = arr.sort(function (a, b) {
+                        return (a.username && b.username) ? (a.username.length - b.username.length || (a.username > b.username ? 1 : -1)) : -1;
+                    });
+                }
+            } else {
+                // dictionary sort
+                arr = arr.sort(function (a, b) {
+                    return (a.username && b.username) ? (a.username == huddle ? -1 : b.username == huddle ? 1 : (a.username > b.username ? 1 : -1)) : -1;
+                });
+                if(remove_huddle_mention) {
+                    arr.splice(0, 1);
+                }
+            }
+            return arr;
         },
 
         isCurrentCollabInited: function() {
@@ -1335,11 +1389,21 @@ App.CollaborationUi = (function ($) {
                 }
             }
             return false;
+        },
+
+        showCollabTour: function() {
+            try{
+                if(App.CollaborationModel.features.collabTourEnabled && typeof inline_manual_player !== "undefined" && localStorage.collabTourDone !== "true") {
+                    inline_manual_player.activateTopic("33220");
+                    localStorage.collabTourDone = "true";
+                }
+            } catch(e) {
+                console.log("couldn't show the tour: ", e);
+            }
         }
     };
 
     var Collab = {
-        notifyVersion: "2",
         annotationEvents: [{
             eventName: "mouseenter",
             eventHandler: _COLLAB_PVT.showDiscussionDD
@@ -1471,6 +1535,9 @@ App.CollaborationUi = (function ($) {
                 }
                 Collab.initingPostReconnect = false;
             });
+
+            _COLLAB_PVT.showCollabTour();
+
             Collab.expandCollabOnLoad = config.expandCollabOnLoad;
             Collab.scrollToMsgId = config.scrollToMsgId;
 
@@ -1620,12 +1687,12 @@ App.CollaborationUi = (function ($) {
             // HTMLescape > Smilify > LinkifyUnames > LinkifyAllLinks >
             if(msg.m_type === CONST.MSG_TYPE_CLIENT) {
                 var msg_body, emoji_class_attr, msg_text_content, msg_with_emojis, img_tags;
-                if(typeof smilify !== "undefined") {
-                    msg_with_emojis = smilify(msg.body);
+                if(typeof App.CollaborationEmoji !== "undefined") {
+                    msg_with_emojis = App.CollaborationEmoji.smilify(msg.body);
                     img_tags = msg_with_emojis.match(CONST.IMAGE_TAG_RE) || [];
                     msg_text_content = $("<span>" + msg_with_emojis + "</span>").text().trim();
                     emoji_class_attr = (!!msg_text_content || (img_tags.length > CONST.MAX_JUMBOMOJI_COUNT)) ? "class='emoji'" : "class='jumbo emoji'";
-                    msg_body = smilify(msg.body, emoji_class_attr, CONST.EMOJIS_URL);
+                    msg_body = App.CollaborationEmoji.smilify(msg.body, emoji_class_attr, CONST.EMOJIS_URL);
 
                     var um = collabModel.usersTagMap;
                     var uarr = [];
@@ -1641,7 +1708,7 @@ App.CollaborationUi = (function ($) {
                     for(var name in gnm) {
                         uarr.push(name);
                     }
-                    msg_body = Collab.strongifyUserNames(msg_body, uarr);
+                    msg_body = Collab.linkifyExternalLinks(Collab.strongifyUserNames(msg_body, uarr));
                 } else {
                      msg_body = msg.body;
                 }
@@ -1656,6 +1723,12 @@ App.CollaborationUi = (function ($) {
             
             _COLLAB_PVT.scrollToBottom();
 	    },
+
+        linkifyExternalLinks: function(msg_body) {
+            return msg_body.replace(CONST.EXTERNAL_URL_RE, function(matched, protocol, email_handle, offset, source_string) {
+                return "<a href='" + (!!email_handle ? "mailto:" : (!!protocol ? "" : "http://")) + matched + "' target=_blank title='" + matched + "'><u>" + (matched.length <= 70 ? matched : matched.substring(0, 69) + "..") + "</u></a>";
+            });
+        },
 
         strongifyUserNames: function(text, uarr) {
             var self_name = App.CollaborationModel.currentUser.email.split("@")[0];

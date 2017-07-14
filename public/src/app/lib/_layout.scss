@@ -251,6 +251,20 @@ label.overlabel{
 	}
 }
 
+#ui_toggle{
+	float: left;
+  margin: 3px 20px;
+  font-size: 12px;
+  padding: 7px;
+  background: #02b875;
+  width: 120px;
+  border-radius: 2px;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
+  color: white;
+  font-weight: normal;
+}
+
+
 .fd-branding{
 	@include pie-clearfix;
 	position:absolute;

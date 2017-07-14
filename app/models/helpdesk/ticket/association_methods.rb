@@ -14,6 +14,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
+  alias_method :is_parent, :assoc_parent_ticket? #for mobile
+
   def linked_ticket?
     self.tracker_ticket? || self.related_ticket?
   end

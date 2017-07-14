@@ -8,7 +8,7 @@
     var config = {};
     var rts;
     var DEFAULT_HEARTBEAT_IVAL = 30 * 1000; // 30s.
-    var DEFAULT_MEMBER_PRESENCE_POLL_TIME = 60 * 1000; // 1m.
+    var DEFAULT_MEMBER_PRESENCE_POLL_IVAL = 60 * 1000; // 1m.
     var CONVO_ACCESS_SCOPE = "client";
 
 

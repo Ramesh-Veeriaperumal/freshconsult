@@ -1,125 +1,235 @@
 <%= stylesheet_link_tag_with_rtl :'cdn/reports' %>
 <div class="report-home report ">
+  <div class="left-section <%= enable_qna? ? '' : 'active' %>">
   <div class="admin-header">
-      <div class="report-head report">
-          <div class="report-link-block pull-right">
-            <%if (current_account.auto_ticket_export_enabled? or (current_account.ticket_activity_export_enabled? && privilege?(:manage_account))) and privilege?(:admin_tasks) %>
-                <%= (link_to t('helpdesk_reports.ticket_schedule.schedule_export'), reports_scheduled_exports_path(), :id => "schedule_link", :class => 'schedule-link') %>
-            <% end %>
-            <% if current_account.launched?(:onboarding_inlinemanual) %>
-              <a href="#" rel="guided-inlinemanual" data-topic-id="13753"><%= t('helpdesk_reports.reports_in_action')%></a>
-            <% else %>
-              <a href="#report-demo" rel="freshdialog" id="demo_link" data-backdrop="static"  data-width="680" data-template-footer="false" data-title=""><%= t('helpdesk_reports.reports_in_action')%></a>
-            <% end %>
+    <div class="report-head report">
+      <% if enable_qna? %>
+        <div class="qna-search-bar">
+            <div class="search-field-holder">
+                <div class="selected-queries"></div>
+                <input type="text" class="text" readonly id="search-query" placeholder="Ask me a question about your helpdesk">
+                <div class="clear-query hide" data-action="clear-query">
+                    <i class="ficon-clear-qna"></i>
+                </div>
+                <div class="question-popover">
+                  <div id="wave">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                  </div>
+                  <ul class="questions">
+                  </ul>
+                  <div class="drilldown hide">
+                      <div class="filter-bar">
+                          <i class="ficon-back"></i>
+                          <input type="text" rel="filter-list" id="" />
+                      </div>
+                      <ul class="filter-options"
+
+                      ></ul>
+                  </div>
+                </div>
+            </div>
+            <div class="close-search hide" data-action="close-search">
+                 <a href="javascript:void(0)"class="close-label"><i class="close-icon ficon-arrow-left"></i> Back</a>
+            </div>
+            <div class="clear"></div>
+
+        </div>
+        <% else %>
+      <h3 class="lead"><%=t('adv_reports.reports')%></h3>
+      <% end %>
+
+      <div class="clear"></div>
+    </div>
+  </div>
+  <div class="base-content">
+      <div class="navigation">
+      <% if current_account.advanced_reporting_enabled? || feature?(:enterprise_reporting) %>
+          <div class="report_category odd ataglance ">
+             <h3 class="title"><span><%= t('helpdesk_reports.helpdesk_analysis') %></span></h3>
+                 <ul class="report_icon">
+                    <% if current_account.advanced_reporting_enabled? %>
+                      <li>
+                           <a href="/reports/glance" data-pjax="#body-container" >
+                              <div class="img-outer"><i class="fsize-36 ficon-glance"></i></div>
+                              <div class="report-icon-text"><%= t('helpdesk_reports.glance.index_title').html_safe %></div>
+                           </a>
+                      </li>
+                    <% end %>
+                    <% if feature?(:enterprise_reporting) %>
+                        <li>
+                           <a href="/reports/ticket_volume" data-pjax="#body-container">
+                              <div class="img-outer"><i class="fsize-36 ficon-ticket_volume"></i></div>
+                              <div class="report-icon-text"><%= t('helpdesk_reports.ticket_volume.title') %></div>
+                           </a>
+                        </li>
+                    <% end %>
+                    <% if freshfone_reports? %>
+                      <li>
+                        <a href="<%= reports_freshfone_summary_reports_url %>">
+                              <div class="img-outer"><i class="fsize-36 ficon-phone_summary"></i></div>
+                              <div class="report-icon-text"><%= t('helpdesk_reports.phone_summary.title') %></div>
+                         </a>
+                      </li>
+                    <%end%>
+                    <% if chat_activated? %>
+                      <li>
+                        <a href="<%= reports_freshchat_summary_reports_url %>">
+                              <div class="img-outer"><i class="fsize-36 ficon-live_chat"></i></div>
+                              <div class="report-icon-text"><%= t('helpdesk_reports.chat_summary.title') %></div>
+                         </a>
+                      </li>
+                    <%end%>
+                 </ul>
           </div>
-        <div class="clear"></div>
+        <% end %>
+        <div class="report_category odd summary ">
+             <h3 class="title"><span><%= t('helpdesk_reports.productivity') %></span></h3>
+                 <ul class="report_icon">
+                  <%unless Account.current.hide_agent_metrics_feature? %>
+                    <li>
+                     <a href="/reports/agent_summary" data-pjax="#body-container">
+                        <div class="img-outer"><i class="fsize-36 ficon-agent_summary"></i></div>
+                        <div class="report-icon-text"><%= t('helpdesk_reports.agent_summary.title')%></div>
+                     </a>
+                    </li>
+                  <% end %>
+                  <li>
+                     <a href="/reports/group_summary" data-pjax="#body-container">
+                        <div class="img-outer"><i class="fsize-36 ficon-group_summary"></i></div>
+                        <div class="report-icon-text"><%= t('helpdesk_reports.group_summary.title') %></div>
+                     </a>
+                  </li>
+                   <%if feature?(:enterprise_reporting) %>
+                      <li>
+                         <a href="/reports/performance_distribution" data-pjax="#body-container">
+                            <div class="img-outer"><i class="fsize-36 ficon-performance_distribution"></i></div>
+                            <div class="report-icon-text"><%= t('helpdesk_reports.performance_distribution.title') %></div>
+                         </a>
+                      </li>
+                    <% end %>
+                    <% if current_account.timesheets_enabled? && privilege?(:view_time_entries) %>
+                      <li>
+                        <a href="<%= reports_timesheet_url %>">
+                              <div class="img-outer"><i class="fsize-36 ficon-time_sheet"></i></div>
+                              <div class="report-icon-text"><%= t('helpdesk_reports.timesheet_reports.title') %></div>
+                         </a>
+                      </li>
+                    <%end%>
+                    <% if enable_lifecycle_report? && current_account.launched?(:lifecycle_report) %>
+                      <li>
+                          <a href="/reports/timespent" data-pjax="#body-container">
+                                <div class="img-outer"><i class="fsize-36 ficon-timespent"></i></div>
+                                <div class="report-icon-text"><%= t('helpdesk_reports.timespent.title') %></div>
+                          </a>
+                        </li>
+                    <% end %>
+                 </ul>
+        </div>
+        <% if feature?(:enterprise_reporting) || feature?(:surveys) %>
+          <div class="report_category odd customer ">
+               <h3 class="title"><span><%= t('helpdesk_reports.customer_happiness') %></span></h3>
+                   <ul class="report_icon">
+                     <% if feature?(:enterprise_reporting) %>
+                        <li>
+                           <a href="/reports/customer_report" data-pjax="#body-container">
+                              <div class="img-outer"><i class="fsize-36 ficon-customer_report"></i></div>
+                              <div class="report-icon-text"><%= t('helpdesk_reports.customer_report.title') %></div>
+                           </a>
+                        </li>
+                      <% end %>
+                      <% if feature?(:surveys) %>
+                        <li>
+                           <a href="<%= survey_activity_url %>">
+                                <div class="img-outer"><i class="fsize-36 ficon-customer_satisfaction"></i></div>
+                                <div class="report-icon-text"><%= t('helpdesk_reports.satisfaction_survey.title') %></div>
+                           </a>
+                        </li>
+                      <%end%>
+                   </ul>
+          </div>
+        <% end %>
+        <% if current_account.ticket_activity_export_enabled? && privilege?(:manage_account)%>
+          <div class="report-link-block">
+            <p><%= t('helpdesk_reports.qna.export_question') %></p>
+            <a href="<%= reports_scheduled_exports_path() %>" id="schedule_link">
+              <i class="fsize-15 ficon-onhold"></i>
+              <span><%= t('helpdesk_reports.qna.schedule_an_export') %></span>
+            </a>
+          </div>
+        <% end %>
+  </div>
+  </div> <!-- Base content -->
+
+  <div class="search-results">
+        <div class="answer-section">
+              <div class="response" rel="answer-preview">
+                
+              </div>
+              <div class="graph-preview">
+                    <div id="graph-view"></div>
+              </div>
+              
+              <div class="view-report hide">
+                    <a data-targets = "other" class="hide" href="/reports/v2/glance" data-pjax="#body-container" rel="view_report"><%= t('helpdesk_reports.qna.view_full_report') %></a>
+                    <a data-targets = "3" class="hide" href="/reports/v2/customer_report" data-pjax="#body-container" rel="view_report"><%= t('helpdesk_reports.qna.view_full_report') %></a>
+                    <a data-targets = "4" class="hide" href="/reports/v2/agent_summary" data-pjax="#body-container" rel="view_report"><%= t('helpdesk_reports.qna.view_full_report') %></a>
+                    <a data-targets = "5" class="hide" href="/reports/v2/group_summary" data-pjax="#body-container" rel="view_report"><%= t('helpdesk_reports.qna.view_full_report') %></a>
+              </div>
+        </div>
+        <div class="recent-questions">
+              <div class="title">
+                     <%= t('helpdesk_reports.qna.recently_asked_questions') %>
+              </div>
+              <div rel="raq"></div>
+        </div>
+  </div>
+  </div> <!-- left section -->
+  <% if enable_insights? %>
+    <div class="insights">
+          <div class="insights-title">
+              <div class="pull-left">
+                <h4><%= t('helpdesk_reports.insights.todays_insights') %>
+                  <a class="tooltip" data-original-title="<%= t('helpdesk_reports.insights.tooltip') %>" href=" https://support.freshdesk.com/support/solutions/articles/227836-insights/" target="_blank"><i class="fsize-14 ficon-solution_article_1"></i></a>
+                </h4>
+                <span rel="last_updated" class="last_updated"></span>
+              </div>
+              <div class="insights-customize pull-right" data-action="show-customize">Customize</div>
+              <div class="clear"></div>
+          </div>
+          <div class="insights-content" rel="insights-content">
+
+          </div>
+          <div class="pagination pagination-centered">
+            <ul>
+              <li class="previous disabled"><a data-action="prev"><b class="arrow-left"></b></a></li>
+              <li class="next_page"><a data-action="next"><b class="arrow-right"></b></a></li>
+            </ul>
+          </div>
+    </div>
+  <% end %>
+  <div class="clear"></div>
+</div>
+<div class="configure-insight-widget hide">
+  <div class="insights-title">
+    <div class="pull-left">
+      <h4>
+        <%= t('helpdesk_reports.insights.customize') %>
+        <a class="tooltip" data-original-title="<%= t('helpdesk_reports.insights.tooltip') %>" href=" https://support.freshdesk.com/support/solutions/articles/227836-insights/" target="_blank"><i class="fsize-14 ficon-solution_article_1"></i></a>
+            </h4>
+            <!-- <span class="customize_help"><%= t('helpdesk_reports.insights.customize_helptext') %></span> -->
+              <p>
+                <span class="customize_help"><%= t('helpdesk_reports.insights.customize_helptext2') %></span>
+              </p>
+          </div>
+          <div class="insights-customize pull-right" data-action="close-customize">
+            <i class="close-icon ficon-arrow-left"></i> Back
+          </div>
+          <div class="clear"></div>
       </div>
-  </div>
-  <% if current_account.advanced_reporting_enabled? || feature?(:enterprise_reporting) %>
-    <div class="report_category odd ataglance ">
-       <h3 class="title"><span><%= t('helpdesk_reports.helpdesk_analysis') %></span></h3>
-           <ul class="report_icon">
-              <% if current_account.advanced_reporting_enabled? %>
-                <li>
-                     <a href="/reports/glance" data-pjax="#body-container" >
-                        <div class="img-outer"><i class="fsize-36 ficon-glance"></i></div>
-                        <div class="report-icon-text"><%= t('helpdesk_reports.glance.index_title').html_safe %></div>
-                     </a>
-                </li>
-              <% end %>
-              <% if feature?(:enterprise_reporting) %>
-                  <li>
-                     <a href="/reports/ticket_volume" data-pjax="#body-container">
-                        <div class="img-outer"><i class="fsize-36 ficon-ticket_volume"></i></div>
-                        <div class="report-icon-text"><%= t('helpdesk_reports.ticket_volume.title') %></div>
-                     </a>
-                  </li>
-              <% end %>
-              <% if freshfone_reports? %>
-                <li>
-                  <a href="<%= reports_freshfone_summary_reports_url %>">
-                        <div class="img-outer"><i class="fsize-36 ficon-phone_summary"></i></div>
-                        <div class="report-icon-text"><%= t('helpdesk_reports.phone_summary.title') %></div>
-                   </a>
-                </li>
-              <%end%>
-              <% if chat_activated? %>
-                <li>
-                  <a href="<%= reports_freshchat_summary_reports_url %>">
-                        <div class="img-outer"><i class="fsize-36 ficon-live_chat"></i></div>
-                        <div class="report-icon-text"><%= t('helpdesk_reports.chat_summary.title') %></div>
-                   </a>
-                </li>
-              <%end%>
-           </ul>
-    </div>
-  <% end %>
-  <div class="report_category odd summary ">
-       <h3 class="title"><span><%= t('helpdesk_reports.productivity') %></span></h3>
-           <ul class="report_icon">
-            <%unless Account.current.hide_agent_metrics_feature? %>
-              <li>
-               <a href="/reports/agent_summary" data-pjax="#body-container">
-                  <div class="img-outer"><i class="fsize-36 ficon-agent_summary"></i></div>
-                  <div class="report-icon-text"><%= t('helpdesk_reports.agent_summary.title')%></div>
-               </a>
-              </li>
-            <% end %>
-            <li>
-               <a href="/reports/group_summary" data-pjax="#body-container">
-                  <div class="img-outer"><i class="fsize-36 ficon-group_summary"></i></div>
-                  <div class="report-icon-text"><%= t('helpdesk_reports.group_summary.title') %></div>
-               </a>
-            </li>
-             <%if feature?(:enterprise_reporting) %>
-                <li>
-                   <a href="/reports/performance_distribution" data-pjax="#body-container">
-                      <div class="img-outer"><i class="fsize-36 ficon-performance_distribution"></i></div>
-                      <div class="report-icon-text"><%= t('helpdesk_reports.performance_distribution.title') %></div>
-                   </a>
-                </li>
-              <% end %>
-              <% if current_account.timesheets_enabled? && privilege?(:view_time_entries) %>
-                <li>
-                  <a href="<%= reports_timesheet_url %>">
-                        <div class="img-outer"><i class="fsize-36 ficon-time_sheet"></i></div>
-                        <div class="report-icon-text"><%= t('helpdesk_reports.timesheet_reports.title') %></div>
-                   </a>
-                </li>
-              <%end%>
-              <% if enable_lifecycle_report? && current_account.launched?(:lifecycle_report) %>
-                <li>
-                    <a href="/reports/timespent" data-pjax="#body-container">
-                          <div class="img-outer"><i class="fsize-36 ficon-timespent"></i></div>
-                          <div class="report-icon-text"><%= t('helpdesk_reports.timespent.title') %></div>
-                     </a>
-                  </li>
-              <% end %>
-           </ul>
-  </div>
-  <% if feature?(:enterprise_reporting) || feature?(:surveys) %>
-    <div class="report_category odd customer ">
-         <h3 class="title"><span><%= t('helpdesk_reports.customer_happiness') %></span></h3>
-             <ul class="report_icon">
-               <% if feature?(:enterprise_reporting) %>
-                  <li>
-                     <a href="/reports/customer_report" data-pjax="#body-container">
-                        <div class="img-outer"><i class="fsize-36 ficon-customer_report"></i></div>
-                        <div class="report-icon-text"><%= t('helpdesk_reports.customer_report.title') %></div>
-                     </a>
-                  </li>
-                <% end %>
-                <% if feature?(:surveys) %>
-                  <li>
-                     <a href="<%= survey_activity_url %>">
-                          <div class="img-outer"><i class="fsize-36 ficon-customer_satisfaction"></i></div>
-                          <div class="report-icon-text"><%= t('helpdesk_reports.satisfaction_survey.title') %></div>
-                     </a>
-                  </li>
-                <%end%>
-             </ul>
-    </div>
-  <% end %>
+      <div class="insights-content" rel="customize-insights-content">
+      </div>
 </div>
 
 <% if !current_account.launched?(:onboarding_inlinemanual) %>
@@ -152,3 +262,23 @@
     });
   </script>
 <% end %>
+<script>
+  jQuery('body').one('assetLoaded.fjax', function() {
+    window.HelpdeskReports = window.HelpdeskReports || {};
+    HelpdeskReports.locals = HelpdeskReports.locals || {};
+    HelpdeskReports.locals.date_lag = <%= @date_lag_by_plan %>;
+    HelpdeskReports.locals.groups = <%= @account_groups.to_json.html_safe %>;
+    HelpdeskReports.locals.products = <%= @account_products.to_json.html_safe %>;
+    HelpdeskReports.features = {
+      'timesheet' : false,//<%= feature?(:timesheets) && privilege?(:view_time_entries) %>,
+      'freshfone' : false,
+      'freshchat' : false,//<%= chat_activated? %>,
+      'show_agent_metrics_feature': !<%= @hide_agent_metrics_feature %>
+    }
+    HelpdeskReports.locals.qna_feature_enabled = <%= enable_qna? %>;
+    HelpdeskReports.locals.insights_feature_enabled = <%= enable_insights? %>;
+    HelpdeskReports.locals.is_trail_account = <%= @is_trial_account %>;
+
+    HelpdeskReports.Reports_home.init();
+  });
+</script>

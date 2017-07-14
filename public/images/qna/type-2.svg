@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="290" height="70" viewBox="0 0 290 70">
+    <defs>
+        <rect id="a" width="290" height="70" rx="4"/>
+    </defs>
+    <g fill="none" fill-rule="evenodd">
+        <g>
+            <use fill="#FFF" xlink:href="#a"/>
+            <rect width="289" height="69" x=".5" y=".5" stroke="#DDD" rx="4"/>
+        </g>
+        <text fill="#006064" font-family="HelveticaNeue, Helvetica Neue" font-size="40">
+            <tspan x="17" y="48">12% </tspan>
+        </text>
+        <path stroke="#DDD" d="M115 10v50"/>
+        <text fill="#666" font-family="HelveticaNeue, Helvetica Neue" font-size="13" transform="translate(132 13)">
+            <tspan x="0" y="12">Resolution SLA</tspan>
+        </text>
+    </g>
+</svg>

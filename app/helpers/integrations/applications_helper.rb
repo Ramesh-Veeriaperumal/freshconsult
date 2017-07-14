@@ -2,6 +2,7 @@ module Integrations
   module ApplicationsHelper
 
     include Marketplace::Constants
+    include Marketplace::ApiUtil
 
     def show_edit?(app_name)
       Integrations::Constants::NON_EDITABLE_APPS.exclude?(app_name)

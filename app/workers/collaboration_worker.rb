@@ -39,7 +39,7 @@ class CollaborationWorker
           :collaboration => {
             :notification_data => {
               :client_id => Collaboration::Ticket::HK_CLIENT_ID,
-              :current_domain => current_account.full_domain,
+              :current_domain => noti_info["current_domain"],
               :message_id => noti_info["mid"],
               :message_body => noti_info["mbody"],
               :mentioned_by_id => current_user.id.to_s,

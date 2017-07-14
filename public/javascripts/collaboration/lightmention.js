@@ -242,7 +242,7 @@
         }
         // TODO (mayank): sort this;
         if(self.sort) {
-            res = self.sort(res);
+            res = self.sort(res, item);
         }
         return res.splice(0, self.maxItems);
     }
