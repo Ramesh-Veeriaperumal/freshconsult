@@ -27,11 +27,17 @@ class FalconRedirection
     end
 
     def falcon_whitelisted_path?
-      falcon_whitelisted_paths.include?(@options[:path_info]) || @options[:path_info].start_with?('/support')
+      falcon_whitelisted_paths.include?(@options[:path_info]) || falcon_whitelisted_re_paths || @options[:path_info].start_with?('/support')
     end
 
     def falcon_whitelisted_paths
       ['/enable_falcon', '/disable_falcon', '/admin/widget_config', '/logout', '/support/login', '/inline/attachment'] + get_all_members_in_a_redis_set(FALCON_REDIRECTION_WHITELISTED_PATHS)
+    end
+
+    def falcon_whitelisted_re_paths
+      whitelisted_re_paths = ['^/download_file/', '^/reports/scheduled_exports/\d+/download_file'] + get_all_members_in_a_redis_set(FALCON_REDIRECTION_WHITELISTED_RE_PATHS)
+      whitelisted_re_paths.each { |re_path| return true if @options[:path_info] =~ re_path }
+      return false
     end
 
     def iframe_path?

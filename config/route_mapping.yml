@@ -3,6 +3,7 @@
 /helpdesk: /a/
 /: /a/
 /helpdesk/dashboard: /a/
+/helpdesk/dashboard/unresolved_tickets: /a/dashboard/unresolved_tickets
 /admin/home: /a/admin/
 /support/login: /a/
 /solution/categories: /a/solutions/
