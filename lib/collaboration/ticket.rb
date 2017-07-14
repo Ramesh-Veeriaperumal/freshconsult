@@ -11,7 +11,7 @@ class Collaboration::Ticket
 	SUB_FEATURES = ["group_collab"]
 
 	def initialize(ticket_id=nil)
-		@ticket = Account.current.tickets.find_by_display_id(ticket_id) if ticket_id
+		@ticket = (Account.current.tickets.find_by_display_id(ticket_id)
 	end
   
 	def access_token(for_user = nil, group_id = nil)
