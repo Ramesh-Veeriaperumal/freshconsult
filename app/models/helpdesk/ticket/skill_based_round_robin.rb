@@ -35,25 +35,25 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def ticket_update_skill_alone?
-    model_changes.key?(skill_id_column) && skill_condition_changes_empty?
+    @model_changes.key?(skill_id_column) && skill_condition_changes_empty?
   end
 
   def skill_condition_changes_empty?
-    model_changes.slice(*skill_condition_attributes).empty?
+    @model_changes.slice(*skill_condition_attributes).empty?
   end
 
   def has_ticket_queue_changes?
-    has_user_queue_changes? || model_changes.key?(skill_id_column)
+    has_user_queue_changes? || @model_changes.key?(skill_id_column)
   end
   alias_method :has_queue_changes?, :has_ticket_queue_changes?
 
   def has_user_queue_changes?
     #has_config_changes? has to be before has_round_robin_eligibility_changes? for ticket status delete case
-    has_config_changes? || has_round_robin_eligibility_changes? || model_changes.key?(:responder_id)
+    has_config_changes? || has_round_robin_eligibility_changes? || @model_changes.key?(:responder_id)
   end
 
   def has_round_robin_eligibility_changes?
-    model_changes.key?(:group_id) || stop_sla_timer_changed? || visibility_changed?
+    @model_changes.key?(:group_id) || stop_sla_timer_changed? || visibility_changed?
   end
 
   def has_config_changes?
@@ -155,7 +155,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def merge_skill_change_to_model_changes
       if self.changes.key?(skill_id_column)
-        model_changes = merge_changes model_changes, self.changes
+        @model_changes = merge_changes @model_changes, self.changes
       end
     end
 
