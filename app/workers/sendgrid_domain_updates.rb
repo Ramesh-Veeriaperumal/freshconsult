@@ -14,6 +14,7 @@ class SendgridDomainUpdates < BaseWorker
   sidekiq_options :queue => :sendgrid_domain_updates, :retry => 3, :backtrace => true, :failures => :exhausted
 
   def perform(args)
+    sleep(5)
     return if Rails.env.development?
     begin 
       unless args['action'].blank?
@@ -76,6 +77,8 @@ class SendgridDomainUpdates < BaseWorker
           Rails.logger.info "Response by EmailServ account validate account - #{account.id} ::: email - #{signup_params["account_details"]["email"]} ::: ip - #{signup_params["account_details"]["source_ip"]} ::: status - #{signup_params["api_response"]["status"]} ::: reason - #{signup_params["api_response"]["reason"].to_a.to_sentence} "
         rescue => e
           Rails.logger.error "Error while processing Ehawk Email Verifier \n#{e.message}\n#{e.backtrace.join("\n\t")}"
+        else
+          Rails.logger.error "No signup params received for Account ID: #{account.id}"
         end
       else
           Rails.logger.info "Account - #{account.id} , account_details not found"

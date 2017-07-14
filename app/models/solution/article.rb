@@ -7,6 +7,7 @@ class Solution::Article < ActiveRecord::Base
   
   include Juixe::Acts::Voteable
   include Search::ElasticSearchIndex
+  include Email::Antivirus::EHawk
 
   belongs_to :recent_author, :class_name => 'User', :foreign_key => "modified_by"
   has_one :draft, :dependent => :destroy
@@ -320,16 +321,15 @@ class Solution::Article < ActiveRecord::Base
         article_spam_regex = Regexp.new($redis_others.perform_redis_op("get", ARTICLE_SPAM_REGEX), "i")
 
         article_phone_number_spam_regex = Regexp.new($redis_others.perform_redis_op("get", PHONE_NUMBER_SPAM_REGEX), "i")
-        if (self.title =~ article_spam_regex).present? || check_seo_data_for_spam(article_spam_regex) || (self.title =~ article_phone_number_spam_regex).present?
+        article_content_spam_char_regex = Regexp.new($redis_others.perform_redis_op("get", CONTENT_SPAM_CHAR_REGEX))
+        stripped_title = self.title.gsub(Regexp.new(Solution::Constants::CONTENT_ALPHA_NUMERIC_REGEX), "")
+
+        if (self.title =~ article_spam_regex).present? || check_seo_data_for_spam(article_spam_regex) || (stripped_title =~ article_phone_number_spam_regex).present? || (self.title =~ article_content_spam_char_regex).present? || !self.account.active?
           errors.add(:title, "Possible spam content")
-          Rails.logger.debug ":::::: Suspicious article title in Account ##{self.account_id} with ehawk_reputation_score: #{self.account.ehawk_reputation_score} : #{self.title}"
-          mail_recipients = ["arvinth@freshdesk.com"]
-          mail_recipients = ["mail-alerts@freshdesk.com","helpdesk@noc-alerts.freshservice.com"] if Rails.env.production?
-          FreshdeskErrorsMailer.error_email(nil, {:domain_name => self.account.full_domain}, nil, {
-              :subject => "Detected suspicious solution spam account :#{self.account_id} ",
-              :recipients => mail_recipients,
-              :additional_info => {:info => "Suspicious article title in Account ##{self.account_id} with ehawk_reputation_score: #{self.account.ehawk_reputation_score} : #{self.title}"}
-            })
+          subject = "Detected suspicious solution spam account :#{self.account_id} "
+          additional_info = "Suspicious article title in Account ##{self.account_id} with ehawk_reputation_score: #{self.account.ehawk_reputation_score} : #{self.title}"
+          increase_ehawk_spam_score_for_account(4, self.account, subject, additional_info)
+          Rails.logger.info ":::::: Kbase spam content encountered - increased spam reputation for article ##{self.id} in account ##{self.account.id}  :::::::"
         end
       end
     end
