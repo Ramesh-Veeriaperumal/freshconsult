@@ -104,7 +104,7 @@ class FalconRedirection
     end
 
     def iframe_re_paths
-      ['^/a/contacts/\d+', '^/a/companies/\d+', '^/a/forums/.*', '^/a/solutions/.*', '^/a/sla_policies/\d+/edit', '^/a/tickets/\d+'].freeze
+      ['^/a/contacts/\d+', '^/a/companies/\d+', '^/a/forums/.*', '^/a/solutions/.*', '^/a/sla_policies/\d+/edit', '^/a/tickets/\d+', '^/a/agents/\d+'].freeze
     end
 
   end
