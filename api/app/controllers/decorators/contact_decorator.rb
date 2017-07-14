@@ -108,6 +108,7 @@ class ContactDecorator < ApiDecorator
         name: name,
         phone: phone,
         time_zone: time_zone,
+        local_time: Time.now.in_time_zone(time_zone).strftime('%I:%M %p'),
         avatar: avatar_hash
       }
     end
