@@ -62,7 +62,7 @@ class Helpdesk::CollabTicketsController < ApplicationController
 
   private
     def load_or_show_error
-      @item = @ticket = (current_account.tickets.find_by_display_id(params[:id])
+      @item = @ticket = current_account.tickets.find_by_display_id(params[:id])
       @item || raise(ActiveRecord::RecordNotFound)
     end
 
