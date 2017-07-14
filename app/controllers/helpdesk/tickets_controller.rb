@@ -782,11 +782,53 @@ class Helpdesk::TicketsController < ApplicationController
         flash[:action] = "bulk_close"
           redirect_to helpdesk_tickets_path
         }
+            
         format.xml {  render :xml =>@items.to_xml({:basic=>true}) }
-        format.mobile { render :json => { :success => true , :success_message => t("helpdesk.flash.tickets_closed",
-                                          :tickets => get_updated_ticket_count )}.to_json }
+        
+        format.mobile do
+          response_hash = {}
+          status = mobile_app_versioning? && ios? ? 400 : 200
+          if @items.present?
+            parents_not_closed = @items.length - @closed_tkt_count
+            if @failed_tickets.present?
+              error_code = parents_not_closed > 0 ? 1017 : 1016
+              response_hash = {
+                :success => false,
+                :success_message => t("helpdesk.flash.tickets_close_fail_on_bulk_close_mobile",
+                                          :tickets => get_updated_ticket_count, :failed_tickets => @failed_tickets.length ), 
+                :failed_on_required_fields => @failed_tickets.length, 
+                :failed_on_parent => parents_not_closed,
+                :error => "Sorry your request could not be processed",
+                :error_code => error_code,
+                :closed_tickets => @closed_tkt_count
+              }
+            else
+              error_code, success, status = parents_not_closed > 0 ? [1015, false, status] : [nil, true, 200]
+              response_hash = {
+                :success => success,
+                :success_message => t("helpdesk.flash.tickets_closed",
+                                          :tickets => get_updated_ticket_count ), 
+                :failed_on_required_fields => 0, 
+                :error => "Sorry your request could not be processed",
+                :failed_on_parent => parents_not_closed,
+                :error_code => error_code,
+                :closed_tickets => @closed_tkt_count
+              }
+            end
+          else
+            response_hash = { 
+              :success => false,
+              :error => "Sorry your request could not be processed",
+              :failed_on_required_fields => @failed_tickets.length, 
+              :failed_on_parent => 0,
+              :error_code => 1016,
+              :closed_tickets => @closed_tkt_count
+            }
+          end
+          render :json => response_hash.to_json, :status => status
+        end
+        
         format.json {  render :json =>@items.to_json({:basic=>true}) }
-
     end
   end
 
@@ -2064,8 +2106,10 @@ class Helpdesk::TicketsController < ApplicationController
   def scenario_failure_notification
     message = if @valid_ticket.is_a? FalseClass 
       log_error @item
+      error_code = 1013
       I18n.t("helpdesk.flash.scenario_fail")
     else
+      error_code = 1012
       I18n.t("admin.automations.failure")
     end
     flash[:notice] = render_to_string(:inline => message).html_safe
@@ -2075,8 +2119,13 @@ class Helpdesk::TicketsController < ApplicationController
       }
       format.js
       format.mobile {
-          render :json => { :failure => true,
-             :rule_name => message }.to_json
+        status = mobile_app_versioning? ? 400 : 200
+        render :json => {
+          :failure => true,
+          :success => false,
+          :error_code => error_code,
+          :rule_name => message
+        }.to_json, :status => status
       }
     end
   end
@@ -2366,5 +2415,13 @@ class Helpdesk::TicketsController < ApplicationController
 
   def remove_skill_param
     params[nscname].delete("skill_id")
+  end
+
+  def mobile_app_versioning?
+    request.env["HTTP_REQUEST_ID"] && JSON.parse(request.env["HTTP_REQUEST_ID"])["api_version"].to_i == 1
+  end
+
+  def ios?
+    request.env["HTTP_REQUEST_ID"] && JSON.parse(request.env["HTTP_REQUEST_ID"])["os_name"] == "iOS"
   end
 end
