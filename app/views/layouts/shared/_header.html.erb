@@ -9,7 +9,13 @@
 	window.current_user_id = "<%= current_user.id %>";
 </script>
 <% end %>
-
+<% if current_account.launched?(:falcon) && current_user && current_user.is_falcon_pref? %>
+	<script type="text/javascript">
+		if(top.window.location.href == window.location.href) {
+			location.href = location;
+		}
+	</script>
+<% end %>
 <div class="header">
   <div class="wrapper">
   	<div class="wrapper-shadow">
