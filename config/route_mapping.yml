@@ -50,3 +50,4 @@
 /admin/day_passes: /a/admin/
 /social/welcome: /a/social/
 /helpdesk/tickets/compose_email: /a/tickets
+/search/all: /a/search/tickets
