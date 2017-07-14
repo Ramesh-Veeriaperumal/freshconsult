@@ -39,7 +39,7 @@ class FalconRedirection
     end
 
     def non_falcon_referer?
-      current_referer && !(current_referer.start_with?('/a/') || current_referer.start_with?('/support'))
+      current_referer && !current_referer.start_with?('/a/', '/support')
     end
 
     def current_referer
@@ -98,7 +98,7 @@ class FalconRedirection
     end
 
     def iframe_re_paths
-      ['^/a/contacts/\d+', '^/a/companies/\d+', '^/a/forums/topics/\d+', '^/a/sla_policies/\d+/edit', '^/a/tickets/\d+'].freeze
+      ['^/a/contacts/\d+', '^/a/companies/\d+', '^/a/forums/.*', '^/a/solutions/.*', '^/a/sla_policies/\d+/edit', '^/a/tickets/\d+'].freeze
     end
 
   end
