@@ -36,7 +36,7 @@ class FalconRedirection
 
     def falcon_whitelisted_re_paths
       whitelisted_re_paths = ['^/download_file/', '^/reports/scheduled_exports/\d+/download_file'] + get_all_members_in_a_redis_set(FALCON_REDIRECTION_WHITELISTED_RE_PATHS)
-      whitelisted_re_paths.each { |re_path| return true if @options[:path_info] =~ re_path }
+      whitelisted_re_paths.each { |re_path| return true if @options[:path_info] =~ Regexp.new(re_path) }
       return false
     end
 
