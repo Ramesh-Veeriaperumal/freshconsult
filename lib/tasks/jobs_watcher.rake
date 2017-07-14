@@ -39,8 +39,7 @@ namespace :delayedjobs_watcher do
         )
 
         FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil, {
-          :subject => "#{queue} #{DELAYED_JOBS_MSG} #{failed_jobs_count} failed jobs",
-          :recipients => ["dev-ops@freshdesk.com","helpdesk@noc-alerts.freshservice.com"] 
+          :subject => "#{queue} #{DELAYED_JOBS_MSG} #{failed_jobs_count} failed jobs in #{PodConfig['CURRENT_POD']}"
         }) if failed_jobs_count >= config["failed"]
 
         #For every 5 hours we will init the alert
@@ -65,8 +64,7 @@ namespace :delayedjobs_watcher do
         )
     
         FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil, {
-          :subject => "#{queue} #{DELAYED_JOBS_MSG} #{total_jobs_count} enqueued jobs are in queue",
-          :recipients => ["dev-ops@freshdesk.com","helpdesk@noc-alerts.freshservice.com"]
+          :subject => "#{queue} #{DELAYED_JOBS_MSG} #{total_jobs_count} enqueued jobs are in queue in #{PodConfig['CURRENT_POD']}" 
         }) if total_jobs_count >= config["total"]
 
         #For every 5 hours we will init the alert
@@ -91,7 +89,7 @@ namespace :delayedjobs_watcher do
         )
     
         FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil, {
-          :subject => "#{queue} #{DELAYED_JOBS_MSG} #{total_jobs_count} scheduled jobs are in queue"
+          :subject => "#{queue} #{DELAYED_JOBS_MSG} #{total_jobs_count} scheduled jobs are in queue in #{PodConfig['CURRENT_POD']}" 
         }) if total_jobs_count >= config["total"]
 
         #For every 5 hours we will init the alert
@@ -106,6 +104,22 @@ namespace :delayedjobs_watcher do
       end
     end
 
+  desc "Moving the jobs delayed jobs to backup queue."
+  task :move_delayed_jobs => :environment do
+     count = Delayed::Job.count
+     total = 0
+     while count > 250 do
+       ActiveRecord::Base.connection.execute('UPDATE delayed_jobs SET run_at= NOW() + INTERVAL 1 WEEK ORDER BY ID LIMIT 500;')
+       ActiveRecord::Base.connection.execute('INSERT INTO delayed_jobs3 SELECT * FROM delayed_jobs WHERE run_at > NOW() + INTERVAL 5 DAY ORDER BY ID LIMIT 500;')
+       ActiveRecord::Base.connection.execute('DELETE FROM delayed_jobs WHERE run_at > NOW() + INTERVAL 5 DAY ORDER BY ID LIMIT 500;')
+       total += (count > 500 ? 500 : count)
+       count = Delayed::Job.count
+    end
+    FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil, {
+         :subject => "Moved #{total} delayed jobs to backup queue in #{PodConfig['CURRENT_POD']}"
+       }) if total > 0    
+  end
+
 end
 
 namespace :resque_watcher do 
@@ -114,8 +128,7 @@ namespace :resque_watcher do
 
         failed_jobs_count = Resque::Failure.count
         FreshdeskErrorsMailer.error_email(nil, nil, nil,
-            {  :subject => "Resque needs your attention #{failed_jobs_count} failed jobs",
-               :recipients => ["dev-ops@freshdesk.com","helpdesk@noc-alerts.freshservice.com"] }
+            {  :subject => "Resque needs your attention #{failed_jobs_count} failed jobs in #{PodConfig['CURRENT_POD']}" }
         ) if failed_jobs_count >= FAILED_RESQUE_JOBS_THRESHOLD
 
     end

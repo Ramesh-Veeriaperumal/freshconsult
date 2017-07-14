@@ -67,7 +67,7 @@ production:
         pg_duty_failed: 200
     mailbox:
         total: 800
-        failed: 100
+        failed: 200
         pg_duty_total: 5000
         pg_duty_failed: 200
                                                
