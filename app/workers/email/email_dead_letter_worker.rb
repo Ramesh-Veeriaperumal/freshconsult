@@ -12,27 +12,32 @@ module Email
 		def perform(sqs_msg, args)
 			Rails.logger.info "Dead Letter Queue params : #{args.inspect}"
 			begin
-				return if check_failed_status(sqs_msg, args['uid'])
-				primary_db = Helpdesk::DBStore::MailDBStoreFactory.getDBStoreObject(DBTYPE[:primary])
-				email_obj = fetch_email(primary_db, args['email_path'])
-				push_s3_failed_messages(email_obj)
-				delete_email_in_primary(primary_db, args['email_path'])
-				set_processing_state(EMAIL_PROCESSING_STATE[:failed], Time.now.utc, args['uid'])
+				#return if check_failed_status(sqs_msg, args['uid'])
+				current_state, created_time = get_message_processing_status(args['uid'])
+				unless failed_state?(current_state)
+					primary_db = Helpdesk::DBStore::MailDBStoreFactory.getDBStoreObject(DBTYPE[:primary])
+					email_obj = fetch_email(primary_db, args['email_path'])
+					push_s3_failed_messages(email_obj, current_state)
+					delete_email_in_primary(primary_db, args['email_path'])
+					failed_state = get_failed_state(current_state)
+					set_processing_state(failed_state, Time.now.utc, args['uid'])
+				end
 				sqs_msg.delete
 			rescue Helpdesk::Email::Errors::EmailDBRecordNotFound
 				sqs_msg.delete
 				Rails.logger.info "S3 key not found. Deleting email from dead letter queue"
 			rescue => e
-				Rails.logger.info "Error in EmailDeadLetterWoker : #{e.message}"
+				Rails.logger.info "Error in EmailDeadLetterWoker : #{e.message} - #{e.backtrace}"
 				NewRelic::Agent.notice_error(e, {:description => "Error in EmailDeadLetterWorker"})
 			end
 		end
 
-		def check_failed_status(sqs_msg, uid)
-			state, created_time = get_message_processing_status(uid)
-			failed_status = (state == EMAIL_PROCESSING_STATE[:failed].to_s) ? true : false
-			sqs_msg.delete if failed_status
-			failed_status
+		def get_failed_state(state)
+			if state == EMAIL_PROCESSING_STATE[:finished].to_s
+				return EMAIL_PROCESSING_STATE[:archive_failed]
+			else
+				return EMAIL_PROCESSING_STATE[:processing_failed]
+			end
 		end
 
 		def fetch_email(primary_db, path)
@@ -40,13 +45,25 @@ module Email
 			primary_db.fetch(path)
 		end
 
-		def push_s3_failed_messages(email_obj)
+		def push_s3_failed_messages(email_obj, state)
 			failed_db = Helpdesk::DBStore::MailDBStoreFactory.getDBStoreObject(DBTYPE[:failed])
-			options = email_obj[:metadata]
+			options = get_failed_attributes(email_obj, state)
 			email_content = StringIO.new(email_obj[:eml].read)
-			failed_db.save(email_content, options.with_indifferent_access)
+			failed_db.save(email_content, options)
 			Rails.logger.info "Saved to S3 Failed path - Metadata : #{email_obj[:metadata].inspect}"
 			NewRelic::Agent.notice_error(Exception.new("Failed to process one email"),{:description => "Email Metadata : #{email_obj[:metadata].inspect}"})
+		end
+
+		def get_failed_attributes(email_obj, state) 
+				metadata_attributes = email_obj[:metadata]
+				
+				additional_metadata = {
+					:failed_state => get_failed_state(state).to_s,
+					:failed_time => "#{Time.now.utc}"
+				}
+				
+				metadata_attributes.merge!(additional_metadata)
+				return metadata_attributes.with_indifferent_access
 		end
 
 		def delete_email_in_primary(primary_db, path)
