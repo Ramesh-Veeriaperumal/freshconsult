@@ -12,6 +12,7 @@ module AdminControllerMethods
     base.send :skip_before_filter, :check_account_state
     base.send :skip_before_filter, :ensure_proper_protocol
     base.send :skip_before_filter, :ensure_proper_sts_header
+    base.send :skip_before_filter, :set_ui_preference
     base.send :skip_before_filter, :check_day_pass_usage
     base.send :skip_filter, :select_shard
     base.send :layout, "subscription_admin"

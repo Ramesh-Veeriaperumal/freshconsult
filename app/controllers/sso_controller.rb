@@ -3,7 +3,7 @@ class SsoController < ApplicationController
   include Redis::RedisKeys
   include Redis::OthersRedis
 
-  skip_before_filter :check_privilege, :verify_authenticity_token
+  skip_before_filter :check_privilege, :verify_authenticity_token, :set_ui_preference
   before_filter :check_csrf_token, :only => [:portal_google_sso, :login]
   before_filter :set_current_user, :only =>[:portal_google_sso, :marketplace_google_sso]
   skip_after_filter :set_last_active_time

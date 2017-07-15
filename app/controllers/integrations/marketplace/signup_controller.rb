@@ -7,7 +7,7 @@ class Integrations::Marketplace::SignupController < ApplicationController
   skip_filter :select_shard, :only => [:create_account]
   around_filter :select_latest_shard, :only => [:create_account]
 
-  skip_before_filter :check_privilege, :verify_authenticity_token, :set_current_account, :check_account_state, 
+  skip_before_filter :check_privilege, :verify_authenticity_token, :set_current_account, :set_ui_preference, :check_account_state, 
     :set_time_zone, :check_day_pass_usage, :set_locale
 
   before_filter :initialize_attr, :check_remote_integrations_mapping

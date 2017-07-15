@@ -23,7 +23,7 @@ class AccountsController < ApplicationController
   skip_filter :select_shard, 
 
     :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages, :edit_domain, :validate_domain, :update_domain]
-  skip_before_filter :ensure_proper_protocol, :ensure_proper_sts_header,
+  skip_before_filter :ensure_proper_protocol, :ensure_proper_sts_header, :set_ui_preference
 
     :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages]
   skip_before_filter :determine_pod, 

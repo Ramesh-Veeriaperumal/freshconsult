@@ -18,6 +18,7 @@ class MimeController < Fdadmin::MetalApiController
   before_filter :determine_pod
   before_filter :check_email_size, :check_account_status, :check_user_status
   before_filter :set_default_locale, :set_msg_id
+  skip_before_filter :set_ui_preference
 
   def new
   	render :layout => false
