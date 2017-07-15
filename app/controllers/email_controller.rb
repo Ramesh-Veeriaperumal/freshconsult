@@ -17,7 +17,6 @@ class EmailController < ApplicationController
   skip_before_filter :logging_details
   skip_before_filter :ensure_proper_protocol
   skip_before_filter :ensure_proper_sts_header
-  skip_before_filter :set_ui_preference
   skip_after_filter :set_last_active_time
 
   before_filter :authenticate_request, :only => [:validate_domain]

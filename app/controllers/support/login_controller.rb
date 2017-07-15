@@ -9,7 +9,7 @@ class Support::LoginController < SupportController
 
   skip_before_filter :check_suspended_account
 	before_filter :set_no_ssl_msg, :only => :new
-	skip_before_filter :check_account_state, :set_ui_preference
+	skip_before_filter :check_account_state
 	after_filter :set_domain_cookie, :only => :create
   skip_after_filter :set_last_active_time
   before_filter :set_custom_flash_message

@@ -3,7 +3,6 @@ class Billing::BillingController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token,
                       :set_current_account, :set_time_zone, :set_locale, 
                       :check_account_state, :ensure_proper_protocol, :ensure_proper_sts_header,
-                      :set_ui_preference,
                       :check_day_pass_usage, :redirect_to_mobile_url
 
   skip_after_filter :set_last_active_time

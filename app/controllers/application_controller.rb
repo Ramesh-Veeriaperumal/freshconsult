@@ -281,21 +281,12 @@ class ApplicationController < ActionController::Base
     end
 
     def set_ui_preference
-      if Account.current.nil?
-        Rails.logger.info "Account current nil while setting ui preference... "
-        return true 
-      end
-      
-      if Account.current.launched?(:falcon) && User.current && User.current.is_falcon_pref?
+      if current_account.launched?(:falcon) && current_user && current_user.is_falcon_pref?
         cookies[:falcon_enabled] = true
         handle_falcon_redirection
       else
         cookies[:falcon_enabled] = false
       end
-    rescue Exception => e
-      NewRelic::Agent.notice_error(e)
-      Rails.logger.info "Exception  while setting ui preference... #{e.message}"
-      return true
     end
 
     def handle_falcon_redirection

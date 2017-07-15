@@ -1,6 +1,6 @@
 class Integrations::OnedriveController < ApplicationController 
   skip_before_filter :check_privilege
-  skip_before_filter :set_current_account, :set_ui_preference, :check_account_state, :set_time_zone,
+  skip_before_filter :set_current_account, :check_account_state, :set_time_zone,
                     :check_day_pass_usage, :set_locale, :only => [:callback]
   include Integrations::Onedrive::OnedriveUtil
   include Integrations::Onedrive::Constant
