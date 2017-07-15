@@ -20,7 +20,7 @@ $ticket-lifecycle-color: #183247;
 .report-home.report {
 	border-radius: 4px;
 	background: #fff;
-    padding: 30px;
+	padding: 30px;
 }
 // grid style
 .falcon-grid {
@@ -691,6 +691,205 @@ $link-color-reports: #239cff;
 }
 
 
-.helpkit-glance .glance-chart-wrapper .glance-chart .solution-article {
-    padding-top: 0;
+.admin{
+  &.support-channels{
+    ul{
+    .admin_icons{
+      li {
+        a {
+          i{
+            background-color: #5a91d1 !important;
+          }
+        }
+      }
+  
+      } 
+    } 
+
+    h3{
+      &.title{
+            border-color: #5a91d1 !important;
+      } 
+        border-color: #5a91d1 !important;
+      }
+    }
+
+
+    &.general-settings{
+    ul{
+    .admin_icons{
+      li {
+        a {
+          i{
+            background-color: #52caac !important;
+          }
+        }
+      }
+  
+      } 
+    } 
+
+    h3{
+      &.title{
+            border-color: #52caac !important;
+      } 
+        border-color: #52caac !important;
+      }
+    }
+
+
+    &.helpdesk-productivity{
+    ul{
+    .admin_icons{
+      li {
+        a {
+          i{
+            background-color: #a17abf !important;
+          }
+        }
+      }
+  
+      } 
+    } 
+
+    h3{
+      &.title{
+            border-color: #a17abf !important;
+      } 
+        border-color: #a17abf !important;
+      }
+    } 
+
+ 
+
+}
+
+
+
+.category1 h3.title span, .admin.support-channels h3.title span, .report_category.ataglance h3.title span{
+	border-color: #5a91d1 !important;
+}
+
+.category1 ul.admin_icons li a i, .admin.support-channels ul.admin_icons li a i, .report_category.ataglance ul.admin_icons li a i, .category1 ul.report_icon li a i, .admin.support-channels ul.report_icon li a i, .report_category.ataglance ul.report_icon li a i{
+	    background-color: #5a91d1;
+}
+
+.category2 ul.admin_icons li a i, .admin.general-settings ul.admin_icons li a i, .report_category.summary ul.admin_icons li a i, .category2 ul.report_icon li a i, .admin.general-settings ul.report_icon li a i, .report_category.summary ul.report_icon li a i{
+	background-color: #52caac;
+}
+
+.category2 ul.admin_icons li a:hover i, .admin.general-settings ul.admin_icons li a:hover i, .report_category.summary ul.admin_icons li a:hover i, .category2 ul.report_icon li a:hover i, .admin.general-settings ul.report_icon li a:hover i, .report_category.summary ul.report_icon li a:hover i {
+    background-color: #52caac;
+    -moz-box-shadow: 0 0 0 5px #52caac;
+    -webkit-box-shadow: 0 0 0 5px #52caac;
+    box-shadow: 0 0 0 5px #52caac;
+}
+
+.category2 ul.admin_icons li a:hover .img-outer, .admin.general-settings ul.admin_icons li a:hover .img-outer, .report_category.summary ul.admin_icons li a:hover .img-outer, .category2 ul.report_icon li a:hover .img-outer, .admin.general-settings ul.report_icon li a:hover .img-outer, .report_category.summary ul.report_icon li a:hover .img-outer{
+	background-color: #52caac;
+}
+
+.category2 h3.title span, .admin.general-settings h3.title span, .report_category.summary h3.title span{
+	border-color: #52caac !important;
+}
+
+.admin.helpdesk-productivity h3.title{
+	border-color: #a17abf !important;
+}
+
+.category3 ul.admin_icons li a i, .admin.helpdesk-productivity ul.admin_icons li a i, .report_category.customer ul.admin_icons li a i, .category3 ul.report_icon li a i, .admin.helpdesk-productivity ul.report_icon li a i, .report_category.customer ul.report_icon li a i {
+    background-color: #a17abf;
+}
+
+.category3 h3.title span, .admin.helpdesk-productivity h3.title span, .report_category.customer h3.title span {
+    border-color: #a17abf !important;
+}
+
+
+
+.admin.account-settings ul.admin_icons li a i {
+    background-color: #bfbfbf;
+}
+
+.admin.account-settings h3.title {
+    border-color: #bfbfbf !important;
+}
+
+.admin.account-settings h3.title span {
+	    border-color: #bfbfbf !important;
+}
+
+
+.admin{ 
+	h3.title{
+	color:rgb(154, 161, 166);
+
+	}
+
+	&:hover{
+		h3.title{
+			color:  rgb(24, 50, 71);
+		}
+	}
+
+	ul{
+		li{
+			a{
+				.admin-icon-text{
+					color: rgb(24, 50, 71);
+				}
+			}
+		}
+	}
+}
+
+
+
+
+
+
+@-moz-keyframes HelpdeskProductivity_beat {
+  from {
+    -moz-box-shadow: 0 0 0 0 #52caac;
+    box-shadow: 0 0 0 0 #52caac;
+  }
+  50% {
+    -moz-box-shadow: 0 0 0 7px #52caac;
+    box-shadow: 0 0 0 7px #52caac;
+  }
+  to {
+    -moz-box-shadow: 0 0 0 5px #52caac;
+    box-shadow: 0 0 0 5px #52caac;
+  }
+}
+@-webkit-keyframes HelpdeskProductivity_beat {
+  from {
+    -webkit-box-shadow: 0 0 0 0 #52caac;
+    box-shadow: 0 0 0 0 #52caac;
+  }
+  50% {
+    -webkit-box-shadow: 0 0 0 7px #52caac;
+    box-shadow: 0 0 0 7px #52caac;
+  }
+  to {
+    -webkit-box-shadow: 0 0 0 5px #52caac;
+    box-shadow: 0 0 0 5px #52caac;
+  }
+}
+@keyframes HelpdeskProductivity_beat {
+  from {
+    -moz-box-shadow: 0 0 0 0 #52caac;
+    -webkit-box-shadow: 0 0 0 0 #52caac;
+    box-shadow: 0 0 0 0 #52caac;
+  }
+  50% {
+    -moz-box-shadow: 0 0 0 7px #52caac;
+    -webkit-box-shadow: 0 0 0 7px #52caac;
+    box-shadow: 0 0 0 7px #52caac;
+  }
+  to {
+    -moz-box-shadow: 0 0 0 5px #52caac;
+    -webkit-box-shadow: 0 0 0 5px #52caac;
+    box-shadow: 0 0 0 5px #52caac;
+  }
 }
