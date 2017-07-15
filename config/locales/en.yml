@@ -86,6 +86,7 @@ en:
   reload: Reload
   any: Any
   or: or
+  go_to_new_ui: "SWITCH TO NEW UI"
   email_failure:
     dropped:
       summary_error_text: "Message dropped - Invalid or problematic address"
