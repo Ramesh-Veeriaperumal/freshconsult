@@ -3,8 +3,8 @@ development:
   secret_key: "28f7d044ce559caa0b730360c75ddb2dc529fd9a82a91c151ca381a09f01ae5c"
   ops_alert:
     call:
-      from: "+919840777891"
-      to: ["+919840777891", "+919994269753"]
+      from: "+12345646409"
+      to: ["+919945380200", "+917373157814"]
     mail:
       from: "freshfone@freshdesk.com"
       to: "freshfone@freshdesk.com"
@@ -15,8 +15,8 @@ test:
   secret_key: "28f7d044ce559caa0b730360c75ddb2dc529fd9a82a91c151ca381a09f01ae5c"
   ops_alert:
     call:
-      from: "+919840777891"
-      to: ["+919840777891", "+919994269753"]
+      from: "+12345646409"
+      to: ["+919945380200", "+917373157814"]
     mail:
       from: "freshfone@freshdesk.com"
       to: "freshfone@freshdesk.com"
