@@ -1,0 +1,12 @@
+put:
+  summary: Assume identity
+  tags: [contact]
+  parameters:
+    - $ref: '#/parameters/id'
+  responses:
+    204:
+      description: Success
+    404:
+      description: User not found
+    403:
+      description: Access denied

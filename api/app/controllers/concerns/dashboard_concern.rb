@@ -17,7 +17,7 @@ module DashboardConcern
   end
 
   def sanitize_parameters_type
-    %i[product_id group_id responder_id status].each do |key|
+    %i(product_id group_id responder_id status).each do |key|
       params[key] = params[key].collect(&:to_i) if params[key].present?
     end
     params[:group_by] = params[:group_by].to_s if params[:group_by].present?
@@ -74,8 +74,8 @@ module DashboardConcern
     column_key_mapping.keys.each do |filter|
       next if params[filter].blank?
       filter_values = params[filter]
-      if filter_values.include?('0')
-        filter_values.delete('0')
+      if filter_values.include?(0)
+        filter_values.delete(0)
         filter_values.concat(user_agent_groups.map(&:to_s))
         filter_values.uniq!
       end
@@ -140,18 +140,20 @@ module DashboardConcern
   end
 
   def check_widgets_with_feature(non_sprout_plan)
+    # Marking freshfone and chat as false because the widgets arent ready. When it is ready, it can be uncommented and deployed
     {
       csat: current_account.any_survey_feature_enabled_and_active?,
       gamification: gamification_feature?(current_account),
-      freshfone: non_sprout_plan && current_account.freshfone_active?,
+      freshfone: false, # non_sprout_plan && current_account.freshfone_active?,
       moderation: non_sprout_plan && current_account.features?(:forums) && privilege?(:delete_topic)
     }
   end
 
   def check_chat_related_widgets(non_sprout_plan)
+    # Marking freshfone and chat as false because the widgets arent ready. When it is ready, it can be uncommented and deployed
     chat_feature = current_account.chat_activated? && current_account.chat_setting.active
     {
-      chat: non_sprout_plan && chat_feature,
+      chat: false, # non_sprout_plan && chat_feature,
       agent_status: non_sprout_plan && (round_robin? || current_account.freshfone_active? || chat_feature)
     }
   end
@@ -169,13 +171,24 @@ module DashboardConcern
     build_group_by_list
     res_array = []
     if include_missing
-      res_array << { @group_by.first => -1, 'stats' => statuses_list.inject([]) { |obj, status| obj << { 'status_id' => status, 'count' => ticket_counts[[nil, status]] || 0 } } }
+      total_count = 0
+      stats_hash = statuses_list.inject([]) do |obj, status|
+        status_count = ticket_counts[[nil, status]] || 0
+        total_count += status_count
+        obj << { 'status_id' => status, 'count' => status_count }
+      end
+      stats_hash << { 'status_id' => 0, 'count' => total_count }
+      res_array << { @group_by.first => -1, 'stats' => stats_hash }
     end
     group_by_values.keys.each do |group|
+      total_count = 0
       status_counts = statuses_list.inject([]) do |obj, status|
-        obj << { 'status_id' => status, 'count' => ticket_counts[[group, status]] || 0 }
+        status_count = ticket_counts[[group, status]] || 0
+        total_count += status_count
+        obj << { 'status_id' => status, 'count' => status_count }
       end
-      res_array << { @group_by.first => group, 'stats' => status_counts }
+      status_counts << { 'status_id' => 0, 'count' => total_count } unless params[:widget]
+      res_array << { @group_by.first => group, 'stats' => status_counts } unless total_count.zero? && !valid_row?(group)
     end
     if !params[:widget]
       return res_array
@@ -196,7 +209,7 @@ module DashboardConcern
 
   def assign_and_sanitize_params
     ParamsHelper.assign_and_clean_params(PARAMS_FIELD_NAME_MAPPINGS.dup, params)
-    sanitize_params 
+    sanitize_params
   end
 
   def build_delegator_params

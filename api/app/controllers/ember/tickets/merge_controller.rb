@@ -23,6 +23,7 @@ module Ember
         def load_target_ticket
           @item = scoper.find_by_display_id(params[cname][:primary_id])
           log_and_render_404 unless @item
+          render_request_error(:cant_merge_assoc_tkt, 403) if @item && @item.association_type.present?
         end
 
         def validate_merge_params

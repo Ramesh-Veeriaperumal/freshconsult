@@ -1,8 +1,11 @@
 module Ember
   class CompaniesController < ApiCompaniesController
     include HelperConcern
+    include CustomerActivityConcern
     include BulkActionConcern
     include ContactsCompaniesConcern
+
+    around_filter :run_on_slave, only: [:activities]
 
     def create
       delegator_params = construct_delegator_params
@@ -35,13 +38,6 @@ module Ember
       super
       @sideload_options = @validator.include_array || []
       response.api_meta = { count: @items_count }
-    end
-
-    def activities
-      return unless validate_filter_params
-      @company_activities = (params[:type] == 'archived_tickets' ? archived_ticket_activities : ticket_activities).take(CompanyConstants::MAX_ACTIVITIES_COUNT)
-      response.api_root_key = :activities
-      response.api_meta = { "more_#{params[:type]}" => true } if @total_tickets.length > CompanyConstants::MAX_ACTIVITIES_COUNT
     end
 
     def show
@@ -94,15 +90,6 @@ module Ember
           policy.conditions[:company_id].present? && policy.conditions[:company_id].include?(@item.id)
         end
         @sla_policies = sla.empty? ? current_account.sla_policies.default : sla
-      end
-
-      def ticket_activities
-        @total_tickets = current_account.tickets.permissible(api_current_user).all_company_tickets(@item.id).visible.newest(CompanyConstants::MAX_ACTIVITIES_COUNT + 1).order('created_at DESC')
-      end
-
-      def archived_ticket_activities
-        return [] unless current_account.features_included?(:archive_tickets)
-        @total_tickets = current_account.archive_tickets.permissible(api_current_user).all_company_tickets(@item.id).newest(CompanyConstants::MAX_ACTIVITIES_COUNT + 1).order('created_at DESC')
       end
 
       def decorator_options_hash

@@ -5,6 +5,7 @@ class ConversationsController < ApiApplicationController
   decorate_views(decorate_objects: [:ticket_conversations], decorate_object: [:create, :update, :reply])
 
   before_filter :can_send_user?, only: [:create, :reply]
+  before_filter :check_for_broadcast, only: [:destroy, :update]
 
   COLLECTION_RESPONSE_FOR = ['ticket_conversations'].freeze
   def create
@@ -203,6 +204,10 @@ class ConversationsController < ApiApplicationController
       return true if super
       allowed_content_types = ConversationConstants::ALLOWED_CONTENT_TYPE_FOR_ACTION[action_name.to_sym] || [:json]
       allowed_content_types.include?(request.content_mime_type.ref)
+    end
+
+    def check_for_broadcast
+      render_request_error(:unable_to_perform, 403) if @item.broadcast_note?
     end
 
     # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.

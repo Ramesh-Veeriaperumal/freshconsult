@@ -2,7 +2,7 @@ class Topic < ActiveRecord::Base
   self.primary_key = :id
   include Search::ElasticSearchIndex
   include Mobile::Actions::Topic
-  
+
   include Redis::RedisKeys
   include Redis::OthersRedis
   
@@ -250,6 +250,7 @@ class Topic < ActiveRecord::Base
   }
   STAMPS_BY_KEY = IDEAS_STAMPS_BY_TOKEN.merge(QUESTIONS_STAMPS_BY_TOKEN).merge(PROBLEMS_STAMPS_BY_TOKEN)
   NAMES_BY_KEY = IDEAS_STAMPS_NAMES_BY_TOKEN.merge(QUESTIONS_STAMPS_NAMES_BY_TOKEN).merge(PROBLEMS_STAMPS_NAMES_BY_TOKEN)
+  STAMPS_TOKEN_BY_KEY = IDEAS_STAMPS_TOKEN_BY_KEY.merge(QUESTIONS_STAMPS_TOKEN_BY_KEY).merge(PROBLEMS_STAMPS_TOKEN_BY_KEY)
 
   DEFAULT_STAMPS_BY_FORUM_TYPE = {
     Forum::TYPE_KEYS_BY_TOKEN[:howto] => QUESTIONS_STAMPS_BY_TOKEN[:unanswered],

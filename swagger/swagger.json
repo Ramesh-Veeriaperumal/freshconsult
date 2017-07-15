@@ -1324,6 +1324,44 @@
         }
       }
     },
+    "/tickets/{id}/broadcast": {
+      "post": {
+        "tags": [
+          "conversation"
+        ],
+        "description": "Create a Broadcast Note",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/note_broadcast_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/extended_note"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/tickets/{id}/forward_template": {
       "get": {
         "tags": [
@@ -1448,6 +1486,41 @@
         }
       }
     },
+    "/tickets/{id}/reply_to_forward": {
+      "post": {
+        "tags": [
+          "conversation"
+        ],
+        "description": "Create a Reply to Forward",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/note_reply_to_forward_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/extended_note"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
     "/conversations/{id}": {
       "put": {
         "tags": [
@@ -1535,6 +1608,33 @@
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/conversation_template"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/conversations/{id}/reply_to_forward_template": {
+      "get": {
+        "tags": [
+          "conversation"
+        ],
+        "description": "Reply to Forward Template",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/reply_to_forward_template"
             }
           },
           "400": {
@@ -1924,6 +2024,30 @@
             "schema": {
               "$ref": "#/definitions/contact_activity"
             }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/contacts/{id}/assume_identity": {
+      "put": {
+        "summary": "Assume identity",
+        "tags": [
+          "contact"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied"
           },
           "404": {
             "description": "User not found"
@@ -3269,11 +3393,36 @@
       }
     },
     "/integrated_resources": {
+      "post": {
+        "tags": [
+          "Integrated Resources"
+        ],
+        "summary": "Create resource",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/integrated_resource_create"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/integrated_resources"
+            }
+          }
+        }
+      },
       "get": {
         "tags": [
           "Integrated Resources"
         ],
-        "summary": "List a particular resource",
+        "summary": "List resources",
         "description": "List the integrated resource of the currently logged in user",
         "parameters": [
           {
@@ -3335,31 +3484,6 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/integrated_resources"
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Integrated Resources"
-        ],
-        "summary": "Create resource",
-        "parameters": [
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "$ref": "#/definitions/integrated_resource_create"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/integrated_resources"
@@ -3589,6 +3713,50 @@
             "schema": {
               "$ref": "#/definitions/bad_request_error"
             }
+          }
+        }
+      }
+    },
+    "/dashboards/activities": {
+      "get": {
+        "tags": [
+          "dashboard_activities"
+        ],
+        "summary": "Dashboard activities",
+        "parameters": [
+          {
+            "name": "since_id",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "before_id",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/dashboard_activities"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Activities not found"
           }
         }
       }
@@ -3891,6 +4059,30 @@
           },
           "403": {
             "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/product_feedback/": {
+      "post": {
+        "summary": "Creates a product feedback.",
+        "description": "Creates a product feedback with the given description. Subject is autopopulated.",
+        "tags": [
+          "product feedback"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "product_feedback",
+            "description": "feedback content and meta information",
+            "schema": {
+              "$ref": "#/definitions/product_feedback"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK"
           }
         }
       }
@@ -4462,6 +4654,21 @@
         }
       ]
     },
+    "note_broadcast_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/note"
+        },
+        {
+          "properties": {
+            "user_id": {
+              "type": "integer"
+            }
+          }
+        }
+      ]
+    },
     "facebook_reply_input": {
       "type": "object",
       "properties": {
@@ -4514,6 +4721,18 @@
         "data": {
           "type": "object",
           "properties": {
+            "bcc_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cc_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
             "template": {
               "type": "string",
               "format": "HTML"
@@ -4529,6 +4748,58 @@
           }
         }
       }
+    },
+    "note_reply_to_forward_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/note"
+        },
+        {
+          "properties": {
+            "full_text": {
+              "type": "string"
+            },
+            "user_id": {
+              "type": "number"
+            },
+            "attachments": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "format": "byte"
+              }
+            },
+            "attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "from_email": {
+              "type": "string"
+            },
+            "to_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cc_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "bcc_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
     },
     "full_text": {
       "type": "object",
@@ -4740,6 +5011,18 @@
         },
         "skip_close_notification": {
           "type": "boolean"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "attachment_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
         }
       }
     },
@@ -5207,6 +5490,14 @@
         }
       }
     },
+    "product_feedback": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        }
+      }
+    },
     "avatar": {
       "type": "object",
       "allOf": [
@@ -5221,6 +5512,18 @@
           }
         }
       ]
+    },
+    "broadcast_message": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
     },
     "company": {
       "type": "object",
@@ -6094,6 +6397,19 @@
                   "type": "integer",
                   "format": "int64"
                 },
+                "category": {
+                  "type": "integer",
+                  "enum": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8
+                  ]
+                },
                 "has_quoted_text": {
                   "type": "boolean"
                 },
@@ -6703,6 +7019,9 @@
         },
         "status": {
           "type": "integer"
+        },
+        "broadcast_message": {
+          "$ref": "#/definitions/broadcast_message"
         }
       }
     },
@@ -6810,45 +7129,99 @@
       "type": "object",
       "properties": {
         "data": {
-          "title": "data",
           "type": "object",
           "properties": {
-            "type": {
-              "type": "string",
-              "enum": [
-                "Post",
-                "Ticket"
-              ]
-            },
-            "id": {
-              "type": "integer"
-            },
-            "created_at": {
-              "type": "string"
-            },
-            "topic_id": {
-              "description": "Will be present for Forum Activity",
-              "type": "integer"
-            },
-            "topic_title": {
-              "description": "Will be present for Forum Activity",
-              "type": "string"
-            },
-            "replied": {
-              "description": "Will be present for Forum Activity",
-              "type": "boolean"
-            },
-            "status": {
-              "description": "Will be present for Ticket Activity",
-              "type": "integer"
-            },
-            "agent_id": {
-              "description": "Will be present for Ticket Activity",
-              "type": "integer"
-            },
-            "subject": {
-              "description": "Will be present for Ticket Activity",
-              "type": "string"
+            "post/ticket/archiveticket": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "topic_id": {
+                    "description": "Will be present for Forum Activity",
+                    "type": "integer"
+                  },
+                  "title": {
+                    "description": "Will be present for Forum Activity",
+                    "type": "string"
+                  },
+                  "comment": {
+                    "description": "Will be present for Forum Activity",
+                    "type": "boolean"
+                  },
+                  "forum": {
+                    "description": "Will be present for Forum Activity",
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "description_text": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string"
+                  },
+                  "tags": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "responder_id": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "integer"
+                  },
+                  "due_by": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "requester_id": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string"
+                  },
+                  "subject": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string"
+                  },
+                  "group_id": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string"
+                  },
+                  "status": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string"
+                  },
+                  "fr_due_by": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string"
+                  },
+                  "stats": {
+                    "$ref": "#/definitions/ticket_stats"
+                  },
+                  "created_at": {
+                    "description": "Will be present for all activities",
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "description": "Will be present for all activities",
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "position": {
+                    "description": "Will be present for all activities",
+                    "type": "integer"
+                  }
+                }
+              }
             }
           }
         },
@@ -6865,47 +7238,93 @@
     },
     "company_activity": {
       "type": "object",
-      "description": "Company activities",
       "properties": {
-        "id": {
-          "type": "integer"
-        },
-        "subject": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string"
-        },
-        "agent_id": {
-          "type": "integer"
-        },
-        "created_at": {
-          "type": "string",
-          "format": "date-time"
-        }
-      }
-    },
-    "company_activities_with_meta": {
-      "type": "object",
-      "properties": {
-        "activities": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/company_activity"
+        "data": {
+          "type": "object",
+          "properties": {
+            "ticket/archiveticket": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "description_text": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string"
+                  },
+                  "tags": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "responder_id": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "integer"
+                  },
+                  "due_by": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "requester_id": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string"
+                  },
+                  "subject": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string"
+                  },
+                  "group_id": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string"
+                  },
+                  "status": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string"
+                  },
+                  "fr_due_by": {
+                    "description": "Will be present for Ticket/Archived Activity",
+                    "type": "string"
+                  },
+                  "stats": {
+                    "$ref": "#/definitions/ticket_stats"
+                  },
+                  "created_at": {
+                    "description": "Will be present for all activities",
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "description": "Will be present for all activities",
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "position": {
+                    "description": "Will be present for all activities",
+                    "type": "integer"
+                  }
+                }
+              }
+            }
           }
         },
         "meta": {
+          "title": "meta data",
           "type": "object",
           "properties": {
             "more_tickets": {
-              "type": "boolean"
-            },
-            "more_archived_tickets": {
               "type": "boolean"
             }
           }
         }
       }
+    },
+    "company_activities_with_meta": {
+      "$ref": "#/definitions/company_activity"
     },
     "twitter_handle": {
       "type": "object",
@@ -7083,6 +7502,113 @@
           ]
         }
       ]
+    },
+    "reply_to_forward_template": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "bcc_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cc_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "to_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "template": {
+              "type": "string",
+              "format": "HTML"
+            },
+            "quoted_text": {
+              "type": "string",
+              "format": "HTML"
+            },
+            "signature": {
+              "type": "string",
+              "format": "HTML"
+            }
+          }
+        }
+      }
+    },
+    "dashboard_activities": {
+      "type": "array",
+      "description": "Dashboard activities",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "object_id": {
+            "type": "number"
+          },
+          "object_type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "performer": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "performer_type": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "number"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "avatar": {
+                    "type": "string"
+                  },
+                  "is_agent": {
+                    "type": "boolean"
+                  },
+                  "deleted": {
+                    "type": "boolean"
+                  },
+                  "email": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "performed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "actions": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "content": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
     },
     "dashboard_widget_config": {
       "type": "object",

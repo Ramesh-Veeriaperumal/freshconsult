@@ -31,7 +31,8 @@ module UsersTestHelper
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       custom_fields:  expected_custom_field || contact_custom_field,
-      avatar: expected_output[:avatar] || get_contact_avatar(contact)
+      avatar: expected_output[:avatar] || get_contact_avatar(contact),
+      facebook_id: expected_output[:facebook_id] || contact.fb_profile_id
     }
     result.merge!(
       other_emails: expected_output[:other_emails] ||
@@ -49,7 +50,9 @@ module UsersTestHelper
     result = contact_pattern(expected_output, ignore_extra_keys, contact)
     result.except!(:custom_fields) if result[:custom_fields].empty? || exclude_custom_fields
     result.merge!(whitelisted: contact.whitelisted,
-      facebook_id: (expected_output[:facebook_id] || contact.fb_profile_id))
+      facebook_id: (expected_output[:facebook_id] || contact.fb_profile_id),
+      blocked: contact.blocked?,
+      spam: contact.spam?)
     result.merge!(
         company: company_hash(contact.default_user_company)
         ) if expected_output[:include].eql?('company') && contact.default_user_company.present?
@@ -235,6 +238,19 @@ module UsersTestHelper
     user
   end
 
+  def assume_identity_error_pattern
+    {
+      description: 'Validation failed',
+      errors: [
+        {
+          field: 'assume_identity',
+          message: 'You are not allowed to assume this user.',
+          code: 'invalid_value'
+        }
+      ]
+    }
+  end
+
   def password_change_error_pattern(error_type)
     {
       description: 'Validation failed',
@@ -319,15 +335,16 @@ module UsersTestHelper
   def user_combined_activities(contact)
     sample_user_topics(contact, 5)
     tickets = sample_user_tickets(contact, 5)
-    tickets + contact.recent_posts
+    act = tickets + contact.recent_posts
+    act.sort_by { |item| - item.created_at.to_i }
   end
 
-  def user_activity_response(objects, _meta = false)
-    response_pattern = objects.map do |item|
-      {
-        type: item.class.name.gsub('Helpdesk::', ''),
-        created_at: item.created_at
-      }.merge(object_activity_pattern(item))
+  def user_activity_response(objects, meta = false)
+    response_pattern = {}
+    objects.map do |item|
+      type = item.class.name.gsub('Helpdesk::', '').downcase
+      to_ret = object_activity_pattern(item)
+      (response_pattern[type.to_sym] ||= []).push to_ret
     end
     response_pattern
   end
@@ -337,20 +354,59 @@ module UsersTestHelper
   end
 
   def ticket_activity_pattern(obj)
-    {
+    ret_hash = {
       id: obj.display_id,
+      description_text: obj.description,
+      tags: obj.tag_names,
+      responder_id: obj.responder_id,
+      due_by: archived?(obj) ? parse_time(obj.due_by) : obj.due_by.try(:utc),
       subject: obj.subject,
+      requester_id: obj.requester_id,
+      group_id: obj.group_id,
       status: obj.status,
-      agent_id: obj.responder.try(:id)
+      stats: stats(obj),
+      source: obj.source,
+      created_at: obj.created_at.try(:utc),
+      fr_due_by: archived?(obj) ? parse_time(obj.frDueBy) : obj.frDueBy.try(:utc)
     }
+    ret_hash.merge!(archived: archived?(obj)) if archived?(obj)
+    ret_hash
+  end
+
+  def parse_time(attribute)
+    attribute ? Time.parse(attribute).utc : nil
+  end
+
+  def archived?(obj)
+    @is_archived ||= obj.is_a?(Helpdesk::ArchiveTicket)
   end
 
   def forum_activity_pattern(obj)
     {
       id: obj.id,
       topic_id: obj.topic.id,
-      topic_title: obj.topic.title,
-      replied: obj.original_post? ? false : true
+      title: obj.topic.title,
+      comment: !obj.original_post?,
+      created_at: obj.created_at.try(:utc),
+      updated_at: obj.updated_at.try(:utc),
+      forum: {
+        id: obj.forum.id,
+        name: obj.forum.name 
+      }
+    }
+  end
+
+  def stats(obj)
+    ticket_states = obj.ticket_states
+    {
+      agent_responded_at: ticket_states.agent_responded_at.try(:utc),
+      requester_responded_at: ticket_states.requester_responded_at.try(:utc),
+      resolved_at: ticket_states.resolved_at.try(:utc),
+      first_responded_at: ticket_states.first_response_time.try(:utc),
+      closed_at: ticket_states.closed_at.try(:utc),
+      status_updated_at: ticket_states.status_updated_at.try(:utc),
+      pending_since: ticket_states.pending_since.try(:utc),
+      reopened_at: ticket_states.opened_at.try(:utc)
     }
   end
 

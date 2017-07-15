@@ -13,3 +13,5 @@ properties:
     enum: [1,2,3,4]
   status:
     type: integer
+  broadcast_message:
+    $ref: '#/definitions/broadcast_message'

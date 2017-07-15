@@ -1,7 +1,6 @@
 require_relative '../../test_helper'
 require 'sidekiq/testing'
 Sidekiq::Testing.fake!
-
 ['canned_responses_helper.rb', 'group_helper.rb', 'social_tickets_creation_helper.rb', 'twitter_helper.rb', 'dynamo_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module Ember
   class ConversationsControllerTest < ActionController::TestCase
@@ -84,6 +83,12 @@ module Ember
       email_config = @account.email_configs.where(active: true).first || create_email_config
       params_hash = { body: body, to_emails: to_emails, cc_emails: cc_emails, bcc_emails: bcc_emails, from_email: email_config.reply_email }
       params_hash
+    end
+
+    def broadcast_note_params
+      body = Faker::Lorem.paragraph
+      user_id = @agent.id
+      params_hash = { body: body, user_id: user_id }
     end
 
     def update_note_params_hash
@@ -961,8 +966,11 @@ module Ember
 
     def test_twitter_reply_to_tweet_ticket
       with_twitter_update_stubbed do
+
         ticket = create_twitter_ticket
+
         @account = Account.current
+
         params_hash = {
           body: Faker::Lorem.sentence[0..130],
           tweet_type: 'mention',
@@ -1313,6 +1321,23 @@ module Ember
       get :full_text, construct_params({ version: 'private', id: note.id }, false)
       match_json(full_text_pattern(note))
       assert_response 200
+    end
+
+    def test_add_broadcast_note_to_tracker
+      enable_adv_ticketing([:link_tickets]) do
+        tracker_id = create_tracker_ticket.display_id
+        post :broadcast, construct_params({ version: 'private', id: tracker_id }, broadcast_note_params)
+        assert_response 201
+        match_json(private_note_pattern({}, Helpdesk::Note.last))
+      end
+    end
+
+    def test_add_broadcast_note_without_feature
+      disable_adv_ticketing([:link_tickets]) if Account.current.launched?(:link_tickets)
+      tracker_id = create_tracker_ticket.display_id
+      post :broadcast, construct_params({ version: 'private', id: tracker_id }, broadcast_note_params)
+      assert_response 403
+      match_json(request_error_pattern(:require_feature, feature: 'Link Tickets'))
     end
 
     def test_reply_with_traffic_cop_invalid

@@ -76,9 +76,11 @@ module Ember
               es_params.merge!(transformed_values)
             end
 
-            if current_user.restricted?
-              es_params[:restricted_responder_id] = current_user.id.to_i
-              es_params[:restricted_group_id] = current_user.agent_groups.map(&:group_id) if current_user.group_ticket_permission
+            unless @tracker || @recent_tracker
+              if current_user.restricted?
+                es_params[:restricted_responder_id] = current_user.id.to_i
+                es_params[:restricted_group_id] = current_user.agent_groups.map(&:group_id) if current_user.group_ticket_permission
+              end
             end
 
             unless (@search_sort.to_s == 'relevance') || @suggest

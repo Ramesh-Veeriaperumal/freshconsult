@@ -810,6 +810,48 @@ module Ember
       assert_response 204
     end
 
+    # Tests for assume identity
+
+    # 1. assume identity with valid id
+    # 2. assume identity with invalid id
+    # 3. assume identity without feature
+    # 4. assume identity without manage_users privilege
+
+    def test_assume_identity_with_valid_id
+      contact = add_new_user(@account, deleted: false, active: true)
+      assume_contact = add_new_user(@account, deleted: false, active: true)
+      put :assume_identity, construct_params({ version: 'private', id: assume_contact.id }, nil)
+      assert_response 204
+      assert session['assumed_user'] == assume_contact.id
+    end
+
+    def test_assume_identity_with_invalid_id
+      contact = add_new_user(@account, deleted: false, active: true)
+      assume_contact = add_new_user(@account, deleted: false, active: true)
+      put :assume_identity, construct_params({ version: 'private', id: assume_contact.id + 10 }, nil)
+      assert_response 404
+    end
+
+    def test_assume_identity_without_feature
+      contact = add_new_user(@account, deleted: false, active: true)
+      assume_contact = add_new_user(@account, deleted: false, active: true)
+      Account.any_instance.stubs(:has_feature?).with(:assume_identity).returns(false)
+      put :assume_identity, construct_params({ version: 'private', id: assume_contact.id }, nil)
+      Account.any_instance.unstub(:has_feature?)
+      assert_response 400
+      match_json(assume_identity_error_pattern)
+    end
+
+    def test_assume_identity_without_manage_users_privilege
+      contact = add_new_user(@account, deleted: false, active: true)
+      assume_contact = add_new_user(@account, deleted: false, active: true)
+      User.any_instance.stubs(:privilege?).with(:manage_users).returns(false)
+      put :assume_identity, construct_params({ version: 'private', id: assume_contact.id }, nil)
+      User.any_instance.unstub(:privilege?)
+      assert_response 403
+      match_json(request_error_pattern(:access_denied))
+    end
+
     def test_update_remove_avatar
       file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
       avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
@@ -867,7 +909,7 @@ module Ember
       contact = add_new_user(@account, deleted: false, active: true)
       get :activities, construct_params({ version: 'private', id: contact.id }, nil)
       assert_response 200
-      match_json([])
+      match_json({})
     end
 
     def test_contact_with_forum_activity
@@ -909,7 +951,7 @@ module Ember
         add_new_user(@account)
       end
       contact_form = @account.contact_form
-      post :export_csv, construct_params({version: 'private'}, {})
+      post :export_csv, construct_params({ version: 'private' }, {})
       assert_response 400
       match_json([bad_request_error_pattern(:request, :select_a_field)])
     end
@@ -920,9 +962,9 @@ module Ember
       end
       contact_form = @account.contact_form
       params_hash = { default_fields: [Faker::Lorem.word], custom_fields: [Faker::Lorem.word] }
-      post :export_csv, construct_params({version: 'private'}, params_hash)
+      post :export_csv, construct_params({ version: 'private' }, params_hash)
       assert_response 400
-      match_json([bad_request_error_pattern(:default_fields, :not_included, list: (contact_form.default_fields.map(&:name)-["tag_names"]).join(',')),
+      match_json([bad_request_error_pattern(:default_fields, :not_included, list: (contact_form.default_fields.map(&:name) - ['tag_names']).join(',')),
                   bad_request_error_pattern(:custom_fields, :not_included, list: (contact_form.custom_fields.map(&:name).collect { |x| x[3..-1] }).join(','))])
     end
 
@@ -937,14 +979,14 @@ module Ember
       default_fields = @account.contact_form.default_fields
       custom_fields = @account.contact_form.custom_fields
       Export::ContactWorker.jobs.clear
-      params_hash = { default_fields: default_fields.map(&:name) - ["tag_names"], custom_fields: custom_fields.map(&:name).collect { |x| x[3..-1] } }
-      post :export_csv, construct_params({version: 'private'}, params_hash)
+      params_hash = { default_fields: default_fields.map(&:name) - ['tag_names'], custom_fields: custom_fields.map(&:name).collect { |x| x[3..-1] } }
+      post :export_csv, construct_params({ version: 'private' }, params_hash)
       assert_response 204
       sidekiq_jobs = Export::ContactWorker.jobs
       assert_equal 1, sidekiq_jobs.size
-      csv_hash = (default_fields | custom_fields).collect{ |x| { x.label => x.name } }.inject(&:merge).except("Tags")
-      assert_equal csv_hash, sidekiq_jobs.first["args"][0]["csv_hash"]
-      assert_equal User.current.id, sidekiq_jobs.first["args"][0]["user"]
+      csv_hash = (default_fields | custom_fields).collect { |x| { x.label => x.name } }.inject(&:merge).except('Tags')
+      assert_equal csv_hash, sidekiq_jobs.first['args'][0]['csv_hash']
+      assert_equal User.current.id, sidekiq_jobs.first['args'][0]['user']
       Export::ContactWorker.jobs.clear
     end
   end

@@ -737,6 +737,27 @@ module Ember
       assert_equal update_group.id, ticket.group_id
     end
 
+    def test_update_properties_with_subject_description
+      ticket = create_ticket
+      subject = Faker::Lorem.words(10).join(' ')
+      description = Faker::Lorem.paragraph
+      attachment_ids = []
+      rand(2..10).times do
+        attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      end
+      params_hash = { 
+        subject: subject,
+        description: description,
+        attachment_ids: attachment_ids }
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 200
+      ticket.reload
+      ticket.remove_instance_variable('@ticket_body_content')
+      assert_equal subject, ticket.subject
+      assert_equal description, ticket.description
+      assert_equal attachment_ids, ticket.attachment_ids
+    end
+
     def test_update_properties_closure_of_parent_ticket_failure
       parent_ticket = create_ticket
       child_ticket = create_ticket
@@ -1057,6 +1078,18 @@ module Ember
       match_json(ticket_show_pattern(t.reload))
     ensure
       ticket_field.update_attribute(:required_for_closure, false)
+    end
+
+    def test_update_properties_with_non_required_default_field_blank
+      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: true)
+      group = create_group(@account)
+      t = create_ticket({}, group)
+      params_hash = { group_id: nil }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 200
+      match_json(ticket_show_pattern(t.reload))
+    ensure
+      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: false)
     end
 
     def test_update_properties_with_non_required_default_field_with_incorrect_value
@@ -1482,7 +1515,7 @@ module Ember
     end
 
     def test_tracker_create
-      enable_adv_ticketing(:link_tickets) do
+      enable_adv_ticketing([:link_tickets]) do
         Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
         create_ticket
         agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
@@ -1498,7 +1531,7 @@ module Ember
     end
 
     def test_tracker_create_with_contact_email
-      enable_adv_ticketing(:link_tickets) do
+      enable_adv_ticketing([:link_tickets]) do
         create_ticket
         ticket = Helpdesk::Ticket.last
         params_hash = ticket_params_hash.merge(related_ticket_ids: [ticket.display_id])
@@ -1510,7 +1543,7 @@ module Ember
     end
 
     def test_child_create
-      enable_adv_ticketing(:parent_child_tickets) do
+      enable_adv_ticketing([:parent_child_tickets]) do
         Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
         create_parent_ticket
         parent_ticket = Helpdesk::Ticket.last
@@ -1523,7 +1556,7 @@ module Ember
     end
 
     def test_create_child_to_parent_with_max_children
-      enable_adv_ticketing(:parent_child_tickets) do
+      enable_adv_ticketing([:parent_child_tickets]) do
         Helpdesk::Ticket.any_instance.stubs(:associates).returns((10..21).to_a)
         parent_ticket = create_parent_ticket
         params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
@@ -1534,7 +1567,7 @@ module Ember
     end
 
     def test_create_child_to_a_invalid_parent
-      enable_adv_ticketing(:parent_child_tickets) do
+      enable_adv_ticketing([:parent_child_tickets]) do
         Helpdesk::Ticket.any_instance.stubs(:associates).returns((10..21).to_a)
         parent_ticket = create_parent_ticket
         parent_ticket.update_attributes(spam: true)
@@ -1542,6 +1575,27 @@ module Ember
         post :create, construct_params({ version: 'private' }, params_hash)
         assert_response 400
         match_json([bad_request_error_pattern('parent_id', nil, append_msg: I18n.t('ticket.parent_child.permission_denied'))])
+      end
+    end
+
+    def test_merged_tkt_with_adv_features
+      enable_adv_ticketing(%i(link_ticket parent_child_tickets)) do
+        primary_tkt = create_ticket
+        sec_tkt     = create_ticket
+        Helpdesk::Ticket.any_instance.stubs(:parent_ticket).returns(primary_tkt.display_id)
+        get :show, controller_params(version: 'private', id: sec_tkt.display_id)
+        assert_response 200
+        assert_equal false, JSON.parse(response.body)["can_be_associated"]
+        Helpdesk::Ticket.any_instance.unstub(:parent_ticket)
+      end
+    end
+
+    def test_normal_tkt_with_adv_features
+      enable_adv_ticketing(%i(link_ticket parent_child_tickets)) do
+        tkt = create_ticket
+        get :show, controller_params(version: 'private', id: tkt.display_id)
+        assert_response 200
+        assert_equal true, JSON.parse(response.body)["can_be_associated"]
       end
     end
   end

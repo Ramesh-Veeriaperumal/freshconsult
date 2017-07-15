@@ -2,7 +2,7 @@ class TicketDecorator < ApiDecorator
   delegate :ticket_body, :custom_field_via_mapping, :cc_email, :email_config_id, :fr_escalated, :group_id, :priority,
            :requester_id, :responder, :responder_id, :source, :spam, :status, :subject, :display_id, :ticket_type,
            :schema_less_ticket, :deleted, :due_by, :frDueBy, :isescalated, :description,
-           :internal_group_id , :internal_agent_id, :association_type, :associated_tickets_count,
+           :internal_group_id, :internal_agent_id, :association_type, :associated_tickets_count, :can_be_associated?,
            :description_html, :tag_names, :attachments, :attachments_sharable, :company_id, :cloud_files, :ticket_states, to: :record
 
   def initialize(record, options)
@@ -12,6 +12,7 @@ class TicketDecorator < ApiDecorator
     @company_name_mapping = options[:company_name_mapping]
     @permission = options[:permission]
     @permissibles = options[:permissibles]
+    @last_broadcast_message = options[:last_broadcast_message]
     @sideload_options = options[:sideload_options] || []
   end
 
@@ -185,12 +186,13 @@ class TicketDecorator < ApiDecorator
       to_emails: schema_less_ticket.try(:to_emails),
       association_type: association_type,
       associated_tickets_count: associated_tickets_count,
+      can_be_associated: can_be_associated?,
       description: ticket_body.description_html,
       description_text: ticket_body.description,
       custom_fields: custom_fields,
       tags: tag_names
     }
-    [hash, simple_hash, feedback_hash , shared_ownership_hash].inject(&:merge)
+    [hash, simple_hash, feedback_hash, shared_ownership_hash].inject(&:merge)
   end
 
   def to_search_hash
@@ -215,8 +217,29 @@ class TicketDecorator < ApiDecorator
     ret_hash
   end
 
+  def to_activity_hash
+    ret_hash = {
+      activity_type: (archived? ? "ArchiveTicket" : "Ticket").downcase,
+      id: display_id,
+      description_text: description,
+      tags: tag_names,
+      responder_id: responder_id,
+      source: source,
+      due_by: archived? ? parse_time(due_by) : due_by.try(:utc),
+      created_at: created_at.try(:utc),
+      subject: subject,
+      requester_id: requester_id,
+      group_id: group_id,
+      status: status,
+      stats: stats,
+      fr_due_by: archived? ? parse_time(frDueBy) : frDueBy.try(:utc)
+    }
+    ret_hash.merge!(archived: archived?) if archived?
+    ret_hash
+  end
+
   def to_prime_association_hash
-    {
+    hash = {
       id: display_id,
       requester_id: requester_id,
       responder_id: responder_id,
@@ -226,6 +249,17 @@ class TicketDecorator < ApiDecorator
       created_at: created_at.try(:utc),
       stats: stats,
       permission: @permission
+    }
+    [hash, broadcast_message_hash].inject(&:merge)
+  end
+
+  def broadcast_message_hash
+    return {} unless @last_broadcast_message.present?
+    {
+      broadcast_message: {
+        body: @last_broadcast_message.body_html,
+        created_at: @last_broadcast_message.created_at.try(:utc)
+      }
     }
   end
 

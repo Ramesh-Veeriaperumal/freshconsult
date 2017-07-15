@@ -105,6 +105,10 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
         :conditions => [" owner_id = ?",company_id]
     } 
   }
+  scope :all_user_tickets, lambda { |user_id| { 
+    :conditions => [ "requester_id=? ", user_id ]
+    }
+  }
   scope :contractor_tickets, lambda { |user_id, company_ids, operator|
     if user_id.present?
       self.where("archive_tickets.requester_id = ? #{operator} archive_tickets.owner_id in (?)", 

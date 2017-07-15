@@ -20,10 +20,12 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/agent", only: %i(index me)
     resource :"ember/group", only: [:index]
     resource :"ember/survey", only: [:index]
+    resource :"ember/dashboard/activity", only: [:index]
     resource :"ember/portal", only: [:index]
     resource :"ember/email_config", only: [:index]
     resource :"ember/dashboard", only: %i(scorecard show survey_info)
     resource :"ember/contact_field", only: [:index]
+    resource :"ember/company_field", only: [:index]
     resource :"ember/installed_application"
     resource :"ember/integrated_resource"
     resource :"ember/integrated_user"
@@ -32,16 +34,17 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/search/ticket", only: [:results]
     resource :"ember/search/autocomplete", only: %i(requesters agents companies tags)
     resource :"ember/leaderboard", only: [:agents]
+    resource :"ember/product_feedback"
   end
 
   reply_ticket do
-    resource :"ember/conversation", only: %i(reply facebook_reply tweet reply_template)
+    resource :"ember/conversation", only: %i(reply facebook_reply tweet reply_template broadcast)
     resource :"ember/tickets/draft", only: %i(save_draft show_draft clear_draft)
     resource :"ember/tickets/bulk_action", only: [:bulk_update]
   end
 
   forward_ticket do
-    resource :"ember/conversation", only: %i(forward forward_template note_forward_template latest_note_forward_template)
+    resource :"ember/conversation", only: %i[forward reply_to_forward forward_template note_forward_template latest_note_forward_template reply_to_forward_template]
   end
 
   merge_or_split_ticket do
@@ -74,7 +77,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_users do
-    resource :"ember/contact", only: %i(make_agent send_invite bulk_send_invite)
+    resource :"ember/contact", only: %i(make_agent send_invite bulk_send_invite assume_identity)
     resource :"ember/agent", only: [:show]
   end
 

@@ -222,9 +222,16 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
 
   def test_activities_with_invalid_type
     company =  create_company
+    contact = add_new_user(@account, customer_id: company.id)
+    ticket_ids = []
+    rand(5..10).times do
+      ticket_ids << create_ticket(requester_id: contact.id).id
+    end
     get :activities, controller_params(version: 'private', id: company.id, type: Faker::Lorem.word)
-    assert_response 400
-    match_json([bad_request_error_pattern('type', :not_included, list: 'tickets,archived_tickets')])
+    # It will return ticket activities by default.
+    assert_response 200
+    items = @account.tickets.permissible(@agent).all_company_tickets(company.id).visible.newest(10)
+    match_json(company_activity_response(items))
   end
 
   def test_activities_default
@@ -236,11 +243,8 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     end
     get :activities, controller_params(version: 'private', id: company.id)
     assert_response 200
-    pattern = []
-    Helpdesk::Ticket.where('display_id IN (?)', ticket_ids).order('created_at desc').each do |ticket|
-      pattern << company_activity_pattern(ticket)
-    end
-    match_json(pattern)
+    items = @account.tickets.permissible(@agent).all_company_tickets(company.id).visible.newest(10)
+    match_json(company_activity_response(items))
   end
 
   def test_activities_with_type
@@ -252,8 +256,8 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     end
     get :activities, controller_params(version: 'private', id: company.id, type: 'tickets')
     assert_response 200
-    response = parse_response @response.body
-    assert_equal 10, response.size
+    items = @account.tickets.permissible(@agent).all_company_tickets(company.id).visible.newest(10)
+    match_json(company_activity_response(items))
   end
 
   def test_activities_with_archived_tickets
@@ -267,8 +271,8 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
       create_archive_tickets(ticket_ids)
       get :activities, controller_params(version: 'private', id: company.id, type: 'archived_tickets')
       assert_response 200
-      response = parse_response @response.body
-      assert_equal 10, response.size
+      archive_tickets = @account.archive_tickets.permissible(@agent).all_company_tickets(company.id).newest(10)
+      match_json(company_activity_response(archive_tickets))
     end
   end
 
