@@ -26,7 +26,7 @@ class Helpdesk::DashboardController < ApplicationController
 
   skip_before_filter :check_account_state
   before_filter :check_account_state, :redirect_to_mobile_url, :set_mobile, :show_password_expiry_warning, :only => [:index]  
-  before_filter :check_dashboard_privilege, :only => [:index]
+  before_filter :check_dashboard_privilege, :set_ui_preference, :only => [:index]
   before_filter :set_selected_tab
   before_filter :round_robin_filter, :load_ffone_agents_by_group, :only => [:agent_status]
   around_filter :run_on_slave,            :only => [:latest_activities,:activity_list, :unresolved_tickets_data, :tickets_summary, :trend_count, :overdue, :due_today, :unresolved_tickets_dashboard, :unresolved_tickets_workload, :survey_info, :available_agents]
