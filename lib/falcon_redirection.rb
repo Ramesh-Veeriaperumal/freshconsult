@@ -16,7 +16,7 @@ class FalconRedirection
       prevent_redirect = options.key?(:prevent_redirect) ? options[:prevent_redirect] : prevent_redirection
       result = prevent_redirect ? { redirect: false } : {
                                                           redirect: true,
-                                                          path: falcon_redirection_path
+                                                          path: falcon_redirection_path(map_url)
                                                         }
       return result
     end
@@ -53,9 +53,9 @@ class FalconRedirection
       URI.parse(request_referer).path if request_referer
     end
 
-    def falcon_redirection_path
-      check_tickets_show_path(map_url) || FalconUiRouteMapping[map_url] || check_re_routes ||
-        get_others_redis_hash_value(FALCON_REDIRECTION_ROUTE_MAPPINGS, map_url) || prefix_falcon_path
+    def falcon_redirection_path(curr_path)
+      check_tickets_show_path(curr_path) || FalconUiRouteMapping[curr_path] || check_re_routes ||
+        get_others_redis_hash_value(FALCON_REDIRECTION_ROUTE_MAPPINGS, curr_path) || prefix_falcon_path
     end
 
     def check_tickets_show_path(ref_path)
