@@ -60,9 +60,9 @@ module Redis::OthersRedis
     end
   end
 
-  	def get_others_redis_list(key, start = 0, stop = -1)
-		newrelic_begin_rescue { $redis_others.perform_redis_op("lrange", key,start,stop) }
-	end
+  def get_others_redis_list(key, start = 0, stop = -1)
+    newrelic_begin_rescue { $redis_others.perform_redis_op("lrange", key,start,stop) }
+  end
 
 	def get_others_redis_llen(key)
 		newrelic_begin_rescue { $redis_others.perform_redis_op("llen", key) }
@@ -91,7 +91,11 @@ module Redis::OthersRedis
 	def get_others_redis_hash(key)
 		newrelic_begin_rescue { $redis_others.perform_redis_op("hgetall", key) }
 	end
-  
+
+  def get_others_redis_hash_value(key, member)
+    newrelic_begin_rescue { $redis_others.perform_redis_op("hget", key, member) }
+  end
+
   def add_member_to_redis_set(key, member)
     newrelic_begin_rescue { $redis_others.perform_redis_op("sadd", key, member) }
   end

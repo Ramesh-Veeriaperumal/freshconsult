@@ -9,6 +9,14 @@
 	window.current_user_id = "<%= current_user.id %>";
 </script>
 <% end %>
+
+<% if current_account.launched?(:falcon) && current_user && current_user.is_falcon_pref? %>
+	<script type="text/javascript">
+		if( top.window.location.href == window.location.href) {
+			location.href = "<%= redirect_falcon_path %>";
+		}
+	</script>
+<% end %>
 <div class="header">
   <div class="wrapper">
   	<div class="wrapper-shadow">
@@ -17,8 +25,8 @@
 				<span class="vertical-align logo-image">
 					<i></i>
 					<%= image_tag logo_url, :alt => t('logo'),
-                    :onerror => "default_image_error(this)",
-                    :"data-type" => "logo" %>
+		    :onerror => "default_image_error(this)",
+		    :"data-type" => "logo" %>
 				</span>
 			<% end %>
 			<%= link_to(h(current_portal.name), "/home", :class => "logo_text") %>
@@ -26,7 +34,14 @@
 								"jQuery.cookie('classic_view','false',{path:'/'});location.href='/';",
 								:class => 'mobile_switchBtn') if mobile_agent? && allowed_domain? %>
 		</div>
+
 		<div class="header-wrapper">
+
+	    <% if current_user && current_account.launched?(:falcon) %>
+	    	<%= link_to t('go_to_new_ui'), enable_falcon_path,
+	      		:class=>"btn btn-primary", :id=>"ui_toggle", :method => :post %>
+	    <% end %>
+
 			<% if current_user then %>
 			  	<div class="header-link-wrapper">
 			  		<% if current_account.freshfone_active? %>
