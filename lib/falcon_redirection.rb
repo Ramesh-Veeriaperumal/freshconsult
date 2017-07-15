@@ -54,8 +54,8 @@ class FalconRedirection
     end
 
     def falcon_redirection_path(curr_path)
-      check_tickets_show_path(curr_path) || FalconUiRouteMapping[curr_path] || check_re_routes ||
-        get_others_redis_hash_value(FALCON_REDIRECTION_ROUTE_MAPPINGS, curr_path) || prefix_falcon_path
+      check_tickets_show_path(curr_path) || FalconUiRouteMapping[curr_path] || check_re_routes(curr_path) ||
+        get_others_redis_hash_value(FALCON_REDIRECTION_ROUTE_MAPPINGS, curr_path) || prefix_falcon_path(curr_path)
     end
 
     def check_tickets_show_path(ref_path)
@@ -70,8 +70,8 @@ class FalconRedirection
       current_referer || @options[:env_path]
     end
 
-    def check_re_routes
-      get_re_route(map_url)
+    def check_re_routes(curr_path)
+      get_re_route(curr_path)
     end
 
     def get_re_route(s_key)
@@ -80,10 +80,10 @@ class FalconRedirection
         return value if r_key =~ s_key
       end
       return
-    end
+  end
 
-    def prefix_falcon_path
-      map_url.start_with?('/a/') ? map_url : ('/a' + map_url)
+    def prefix_falcon_path(curr_path)
+      curr_path.start_with?('/a/') ? curr_path : ('/a' + curr_path)
     end
 
     def req_referer

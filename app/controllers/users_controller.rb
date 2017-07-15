@@ -180,8 +180,6 @@ class UsersController < ApplicationController
         path_info: request.path_info
       }
       redirect_to FalconRedirection.falcon_redirect(options)[:path]
-      # redirect_to check_tickets_show_path(get_referer) || FalconUiRouteMapping[get_referer] ||
-      #   check_re_routes || ('/a' + get_referer)
     end
 
     def check_re_routes

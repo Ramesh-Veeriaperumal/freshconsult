@@ -16,6 +16,7 @@
 		if( top.window.location.href == window.location.href) {
 			location.href = "<%= redirect_falcon_path %>";
 		}
+
 	</script>
 <% end %>
 <div class="header">
@@ -36,15 +37,8 @@
 								:class => 'mobile_switchBtn') if mobile_agent? && allowed_domain? %>
 		</div>
 
-
 		<div class="header-wrapper">
 
-	    	<%#= link_to t('go_to_new_ui'), {
-						:action => :enable_falcon,
-						:controller => "/users",
-						:id => current_user.id
-	      					},
-	      		:class=>"btn", :id=>"ui_toggle", :method => :post %>
 	    <% if current_user && current_account.launched?(:falcon) %>
 	    	<%= link_to t('go_to_new_ui'), enable_falcon_path,
 	      		:class=>"btn btn-primary", :id=>"ui_toggle", :method => :post %>
