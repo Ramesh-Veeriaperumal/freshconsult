@@ -13,7 +13,7 @@ class ApplicationController < ActionController::Base
   before_filter :unset_current_account, :unset_current_portal, :unset_shard_for_payload, :set_current_account, :reset_language
   before_filter :set_shard_for_payload
   before_filter :set_default_locale, :set_locale, :set_msg_id
-  before_filter :set_ui_preference
+  # before_filter :set_ui_preference
   include SslRequirement
   include Authority::FreshdeskRails::ControllerHelpers
   before_filter :freshdesk_form_builder
