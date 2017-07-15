@@ -1,0 +1,7 @@
+type: object
+properties:
+  body:
+    type: string
+  created_at:
+    type: string
+    format: date-time

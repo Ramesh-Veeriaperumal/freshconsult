@@ -58,6 +58,7 @@ module TicketsTestHelper
       notes_pattern = notes_pattern.take(10) if limit
       result_pattern[:conversations] = notes_pattern.ordered!
     end
+    result_pattern[:deleted] = true if ticket.deleted
     if requester
       result_pattern[:requester] = ticket.requester ? requester_pattern(ticket.requester) : {}
     end
@@ -126,6 +127,7 @@ module TicketsTestHelper
       is_escalated:  (expected_output[:is_escalated] || ticket.isescalated).to_s.to_bool,
       association_type: expected_output[:association_type] || ticket.association_type,
       associated_tickets_count: expected_output[:associated_tickets_count] || ticket.associated_tickets_count,
+      can_be_associated: expected_output[:can_be_associated] || ticket.can_be_associated?,
       spam:  (expected_output[:spam] || ticket.spam).to_s.to_bool,
       email_config_id:  expected_output[:email_config_id] || ticket.email_config_id,
       group_id:  expected_output[:group_id] || ticket.group_id,
@@ -341,6 +343,15 @@ module TicketsTestHelper
     end
   end
 
+  def private_api_ticket_index_spam_deleted_pattern(spam = false, deleted = false)
+    filter_clause = { created_at: (30.days.ago..Time.zone.now) }
+    filter_clause[:spam] = true if spam
+    filter_clause[:deleted] = true if deleted
+    pattern_array = Helpdesk::Ticket.where(filter_clause).order('created_at desc').limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).map do |ticket|
+      index_ticket_pattern_with_associations(ticket, false, true, false, [:tags])
+    end
+  end
+
   def private_api_ticket_index_query_hash_pattern(query_hash, wf_order = 'created_at')
     per_page = ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
     query_hash_params = {}
@@ -390,6 +401,17 @@ module TicketsTestHelper
       created_at: prime_association.created_at.try(:utc),
       stats: ticket_states_pattern(prime_association.ticket_states),
       permission: User.current.has_ticket_permission?(prime_association)
+    }
+  end
+
+  def latest_broadcast_pattern(tracker_id)
+    last_broadcast = Helpdesk::BroadcastMessage.where(tracker_display_id: tracker_id).last
+    return {} unless last_broadcast.present?
+    {
+      broadcast_message: {
+        body: last_broadcast.body_html,
+        created_at: last_broadcast.created_at
+      }
     }
   end
 
@@ -537,14 +559,22 @@ module TicketsTestHelper
     create_ticket
     parent_ticket = Helpdesk::Ticket.last
     parent_ticket.update_attributes(association_type: 1)
-    parent_ticket.reload
+    parent_ticket
   end
 
   def create_tracker_ticket
     create_ticket
     tracker_ticket = Helpdesk::Ticket.last
     tracker_ticket.update_attributes(association_type: 3)
-    tracker_ticket.reload
+    tracker_ticket
+  end
+
+    def create_related_tickets(related_count = 1)
+    related_count.times.collect {|i| 
+      related_ticket = create_ticket
+      related_ticket.update_attributes(association_type: 4)
+      related_ticket
+    }
   end
 
   def assert_link_failure(ticket_id, pattern = nil)

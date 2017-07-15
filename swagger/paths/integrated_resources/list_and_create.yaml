@@ -1,6 +1,22 @@
+post:
+  tags: [Integrated Resources]
+  summary: Create resource
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        type: object
+        $ref: '#/definitions/integrated_resource_create'
+  responses:
+    201:
+      description: Success
+      schema:
+        $ref: '#/definitions/integrated_resources'
+
 get:
   tags: [Integrated Resources]
-  summary: List a particular resource
+  summary: List resources
   description: List the integrated resource of the currently logged in user 
   parameters:
     - name: installed_application_id

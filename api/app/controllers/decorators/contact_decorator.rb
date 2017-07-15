@@ -108,6 +108,7 @@ class ContactDecorator < ApiDecorator
         name: name,
         phone: phone,
         time_zone: time_zone,
+        local_time: Time.now.in_time_zone(time_zone).strftime('%I:%M %p'),
         avatar: avatar_hash
       }
     end
@@ -125,7 +126,9 @@ class ContactDecorator < ApiDecorator
         whitelisted: whitelisted,
         created_at: created_at.try(:utc),
         updated_at: updated_at.try(:utc),
-        facebook_id: fb_profile_id 
+        facebook_id: fb_profile_id,
+        blocked: record.blocked?,
+        spam: record.spam?
       })
       response_hash[:custom_fields] = custom_fields if custom_fields.present?
       response_hash.merge!(

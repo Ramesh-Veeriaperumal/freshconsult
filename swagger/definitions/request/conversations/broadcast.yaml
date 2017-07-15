@@ -1,0 +1,6 @@
+type: object
+allOf:
+  - $ref: '#/definitions/note'
+  - properties:
+      user_id:
+        type: integer

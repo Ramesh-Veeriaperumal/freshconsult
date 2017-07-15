@@ -103,13 +103,55 @@ module CompaniesTestHelper
     }
   end
 
-  def company_activity_pattern(ticket)
+  def company_activity_response(objects, meta = false)
+    response_pattern = {}
+    objects.map do |item|
+      type = item.class.name.gsub('Helpdesk::', '').downcase
+      to_ret = company_activity_pattern(item)
+      (response_pattern[type.to_sym] ||= []).push to_ret
+    end
+    response_pattern
+  end
+
+  def company_activity_pattern(obj)
+    ret_hash = {
+      id: obj.display_id,
+      description_text: obj.description,
+      tags: obj.tag_names,
+      responder_id: obj.responder_id,
+      due_by: archived?(obj) ? parse_time(obj.due_by) : obj.due_by.try(:utc),
+      subject: obj.subject,
+      requester_id: obj.requester_id,
+      group_id: obj.group_id,
+      status: obj.status,
+      stats: stats(obj),
+      source: obj.source,
+      created_at: obj.created_at.try(:utc),
+      fr_due_by: archived?(obj) ? parse_time(obj.frDueBy) : obj.frDueBy.try(:utc)
+    }
+    ret_hash.merge!(archived: archived?(obj)) if archived?(obj)
+    ret_hash
+  end
+
+  def parse_time(attribute)
+    attribute ? Time.parse(attribute).utc : nil
+  end
+
+  def archived?(obj)
+    @is_archived ||= obj.is_a?(Helpdesk::ArchiveTicket)
+  end
+
+  def stats(obj)
+    ticket_states = obj.ticket_states
     {
-      id: ticket.display_id,
-      subject: ticket.subject,
-      status: ticket.status,
-      agent_id: ticket.responder_id,
-      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+      agent_responded_at: ticket_states.agent_responded_at.try(:utc),
+      requester_responded_at: ticket_states.requester_responded_at.try(:utc),
+      resolved_at: ticket_states.resolved_at.try(:utc),
+      first_responded_at: ticket_states.first_response_time.try(:utc),
+      closed_at: ticket_states.closed_at.try(:utc),
+      status_updated_at: ticket_states.status_updated_at.try(:utc),
+      pending_since: ticket_states.pending_since.try(:utc),
+      reopened_at: ticket_states.opened_at.try(:utc)
     }
   end
 

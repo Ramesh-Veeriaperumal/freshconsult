@@ -118,7 +118,7 @@ module Ember
       end
 
       def test_bulk_link_excess_number_of_tickets
-        enable_adv_ticketing(:link_tickets) do
+        enable_adv_ticketing([:link_tickets]) do
           tracker_id = create_tracker_ticket.display_id
           ticket_ids = []
           (ApiConstants::MAX_ITEMS_FOR_BULK_ACTION + 1).times do
@@ -136,7 +136,7 @@ module Ember
       end
 
       def test_bulk_link_non_existant_tickets_to_tracker
-        enable_adv_ticketing(:link_tickets) do
+        enable_adv_ticketing([:link_tickets]) do
           tracker_id = create_tracker_ticket.display_id
           ticket_ids = []
           rand(3..5).times do
@@ -160,7 +160,7 @@ module Ember
       end
 
       def test_bulk_link_associated_tickets_to_tracker
-        enable_adv_ticketing(:link_tickets) do
+        enable_adv_ticketing([:link_tickets]) do
           tracker_id = create_tracker_ticket.display_id
           asso_tracker_id = create_tracker_ticket.display_id
           ticket_ids = []
@@ -189,7 +189,7 @@ module Ember
       end
 
       def test_bulk_link_spammed_tickets
-        enable_adv_ticketing(:link_tickets) do
+        enable_adv_ticketing([:link_tickets]) do
           tracker_id = create_tracker_ticket.display_id
           ticket_ids = []
           rand(3..5).times do
@@ -216,7 +216,7 @@ module Ember
       end
 
       def test_bulk_link_deleted_tickets
-        enable_adv_ticketing(:link_tickets) do
+        enable_adv_ticketing([:link_tickets]) do
           tracker_id = create_tracker_ticket.display_id
           ticket_ids = []
           rand(3..5).times do
@@ -244,7 +244,7 @@ module Ember
 
       def test_bulk_link_without_mandatory_field
         # Without tracker_id
-        enable_adv_ticketing(:link_tickets) do
+        enable_adv_ticketing([:link_tickets]) do
           ticket_ids = []
           rand(2..4).times do
             ticket_ids << create_ticket.display_id
@@ -261,7 +261,7 @@ module Ember
       end
 
       def test_bulk_link_tickets_without_permission
-        enable_adv_ticketing(:link_tickets) do
+        enable_adv_ticketing([:link_tickets]) do
           tracker_id = create_tracker_ticket.display_id
           ticket_ids = []
           ticket_ids << create_ticket.display_id
@@ -283,7 +283,7 @@ module Ember
       end
 
       def test_bulk_link_for_tracker_with(attribute = {spam: true})
-        enable_adv_ticketing(:link_tickets) do
+        enable_adv_ticketing([:link_tickets]) do
           tracker    = create_tracker_ticket
           tracker_id = tracker.display_id
           tracker.update_attributes(attribute)
@@ -303,7 +303,7 @@ module Ember
       end      
 
       def test_bulk_link_to_deleted_tracker
-        enable_adv_ticketing(:link_tickets) do
+        enable_adv_ticketing([:link_tickets]) do
           tracker    = create_tracker_ticket
           tracker_id = tracker.display_id
           tracker.update_attributes(deleted: true)
@@ -323,7 +323,7 @@ module Ember
       end
 
       def test_bulk_link_to_spammed_tracker
-        enable_adv_ticketing(:link_tickets) do
+        enable_adv_ticketing([:link_tickets]) do
           tracker    = create_tracker_ticket
           tracker_id = tracker.display_id
           tracker.update_attributes(spam: true)
@@ -343,7 +343,7 @@ module Ember
       end
 
       def test_bulk_link_to_invalid_tracker
-        enable_adv_ticketing(:link_tickets) do
+        enable_adv_ticketing([:link_tickets]) do
           tracker_id = create_ticket.display_id
           ticket_ids = []
           rand(2..4).times do
@@ -361,7 +361,7 @@ module Ember
       end
 
       def test_bulk_link_to_valid_tracker
-        enable_adv_ticketing(:link_tickets) do
+        enable_adv_ticketing([:link_tickets]) do
           tracker_id = create_tracker_ticket.display_id
           ticket_ids = []
           rand(2..4).times do
@@ -1169,6 +1169,21 @@ module Ember
         ticket_field.update_attribute(:required_for_closure, false)
       end
 
+      def test_bulk_update_with_non_required_default_field_blank
+        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: true)
+        product = create_product
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket(product_id: product.id).display_id
+        end
+        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.merge(product_id: nil)}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+      ensure
+        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: false)
+      end
+
       def test_bulk_update_with_non_required_default_field_with_incorrect_value
         ticket_ids = []
         rand(2..4).times do
@@ -1238,6 +1253,21 @@ module Ember
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
+      end
+
+      def test_bulk_update_with_non_required_custom_dropdown_field_blank
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+        ticket_field.update_attribute(:required_for_closure, true)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket.display_id
+        end
+        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.merge(custom_fields: { ticket_field.label => nil })}
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+      ensure
+        ticket_field.update_attribute(:required_for_closure, false)
       end
 
       def test_bulk_update_with_non_required_custom_dropdown_field_with_incorrect_value

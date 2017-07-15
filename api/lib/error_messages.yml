@@ -97,6 +97,7 @@ api_error_messages:
   action_restricted: "Cannot perform '%{action}' when %{reason}"
   access_denied_list: "Permission denied for records with ids : '%{denied_ids}'."
   access_denied_and_invalid_list: "There are no records matching the ids: '%{list}'. Permission denied for records with ids : '%{denied_ids}'."
+  assoc_tkt_list: "cant merge an associated tickets for records with ids : '%{assoc_tkt_ids}'"
   contact_merge_validation: "Cannot add more than %{max_value} %{field}"
   unable_to_connect_twitter: "Unable to connect to Twitter servers"
   not_a_twitter_ticket: "Cannot tweet as reply to ticket NOT created from Twitter stream"
@@ -124,5 +125,10 @@ api_error_messages:
   installed_application_id_required: "Installed application id required"
   user_id_required: "User Id required"
   ticket_id_required: "Ticket id required"
+  not_allowed_to_assume: "You are not allowed to assume this user."
+  not_a_related_ticket: "Not a related ticket"
   wrong_internal_agent: "Internal Agent does not belong to the specified Group"
   wrong_internal_group: "Internal group does not belong to the given status of the ticket"
+  cant_merge_assoc_tkt: "Cannot merge an associated ticket."
+  # Dashboard activities
+  either_since_id_or_before_id: "Specify since_id or before_id, not both"

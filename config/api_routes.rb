@@ -91,6 +91,9 @@ Helpkit::Application.routes.draw do
 
     match 'export/ticket_activities' => 'export#ticket_activities', :defaults => { format: 'json' }, :as => :ticket_activities, via: :get
 
+    # Feedbacks about the product
+    resources :product_feedback, controller: 'ember/product_feedback', only: [:create]
+
     # Solution endpoints
     namespace :api_solutions, path: 'solutions' do
       resources :categories, only: [:create, :destroy], constraints: { id: /\d+/ } do
@@ -186,6 +189,9 @@ Helpkit::Application.routes.draw do
         get :reply_template, to: 'ember/conversations#reply_template'
         post :forward, to: 'ember/conversations#forward'
         get :forward_template, to: 'ember/conversations#forward_template'
+        post :broadcast, to: 'ember/conversations#broadcast'
+        post :reply_to_forward, to: 'ember/conversations#reply_to_forward'
+
         # TODO: Should rename this
         get :latest_note_forward_template, to: 'ember/conversations#latest_note_forward_template'
         post :tweet, to: 'ember/conversations#tweet'
@@ -225,6 +231,7 @@ Helpkit::Application.routes.draw do
       member do
         get :full_text
         get :forward_template, to: 'ember/conversations#note_forward_template'
+        get :reply_to_forward_template, to: 'ember/conversations#reply_to_forward_template'
       end
     end
 
@@ -250,6 +257,7 @@ Helpkit::Application.routes.draw do
         put :send_invite
         put :update_password
         get :activities
+        put :assume_identity
       end
     end
 
@@ -270,6 +278,7 @@ Helpkit::Application.routes.draw do
 
     resources :ticket_filters, controller: 'ember/ticket_filters', only: [:index, :show, :create, :update, :destroy]
     resources :contact_fields, controller: 'ember/contact_fields', only: :index
+    resources :company_fields, controller: 'ember/company_fields', only: :index
     resources :scenario_automations, controller: 'ember/scenario_automations', only: :index
     resources :canned_response_folders, controller: 'ember/canned_response_folders', only: [:index, :show]
     resources :canned_responses, controller: 'ember/canned_responses', only: [:show, :index] do
@@ -301,6 +310,7 @@ Helpkit::Application.routes.draw do
         get :ticket_metrics, to: 'ember/dashboard#ticket_metrics'
         get :unresolved_tickets, to: 'ember/dashboard#unresolved_tickets_data'
         get :ticket_summaries, to: 'ember/dashboard#scorecard'
+        get :activities, to: 'ember/dashboard/activities#index'
       end
     end
 

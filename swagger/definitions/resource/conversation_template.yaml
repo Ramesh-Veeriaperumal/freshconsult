@@ -3,6 +3,14 @@ properties:
   data:
     type: object
     properties:
+      bcc_emails:
+        type: array
+        items:
+          type: string
+      cc_emails:
+        type: array
+        items:
+          type: string
       template:
         type: string
         format: HTML

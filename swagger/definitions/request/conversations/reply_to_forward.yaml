@@ -1,0 +1,31 @@
+type: object
+allOf:
+  - $ref: '#/definitions/note'
+  - properties:
+      full_text:
+        type: string
+      user_id:
+        type: number
+      attachments:
+        type: array
+        items:
+          type: number
+          format: byte
+      attachment_ids:
+        type: array
+        items:
+          type: number
+      from_email:
+        type: string
+      to_emails:
+        type: array
+        items:
+          type: string  
+      cc_emails:
+        type: array
+        items:
+          type: string
+      bcc_emails:
+        type: array
+        items:
+          type: string

@@ -69,6 +69,8 @@
   $ref: ./conversations/reply_template.yaml
 /tickets/{id}/forward:
   $ref: ./conversations/forward.yaml
+/tickets/{id}/broadcast:
+  $ref: ./conversations/broadcast.yaml
 /tickets/{id}/forward_template:
   $ref: ./conversations/forward_template.yaml
 /tickets/{id}/latest_note_forward_template:
@@ -77,6 +79,8 @@
   $ref: ./conversations/facebook_reply.yaml
 /tickets/{id}/tweet:
   $ref: ./conversations/twitter_reply.yaml
+/tickets/{id}/reply_to_forward:
+  $ref: ./conversations/reply_to_forward.yaml
 
 /conversations/{id}:
   $ref: ./conversations/update.yaml
@@ -84,6 +88,8 @@
   $ref: ./conversations/full_text.yaml
 /conversations/{id}/forward_template:
   $ref: ./conversations/note_forward_template.yaml
+/conversations/{id}/reply_to_forward_template:
+  $ref: ./conversations/reply_to_forward_template.yaml
 
 /contacts:
   $ref: ./contacts/list_and_create.yaml
@@ -101,6 +107,8 @@
   $ref: ./contacts/whitelist.yaml
 /contacts/{id}/activities:
   $ref: ./contacts/activities.yaml
+/contacts/{id}/assume_identity:
+  $ref: ./contacts/assume_identity.yaml
 /contacts/bulk_delete:
   $ref: ./contacts/bulk_delete.yaml
 /contacts/bulk_restore:
@@ -185,7 +193,7 @@
   $ref: ./installed_applications/crud.yaml
 # Integrated Resources
 /integrated_resources:
-  $ref: ./integrated_resources/list.yaml
+  $ref: ./integrated_resources/list_and_create.yaml
 /integrated_resources/{id}:
   $ref: ./integrated_resources/crud.yaml
 # Integrated Users
@@ -195,7 +203,7 @@
   $ref: ./integrated_users/crud.yaml
 # Cloud Attachments
 /cloud_files/{id}:
-  $ref: ./cloud_files/crud.yaml  
+  $ref: ./cloud_files/crud.yaml
 #Social
 /twitter_handles:
   $ref: ./social/twitter_handles.yaml
@@ -205,6 +213,10 @@
 #Surveys
 /surveys:
   $ref: ./surveys/crud.yaml
+
+#Dashboard activities
+/dashboards/activities:
+  $ref: ./dashboard/activities.yaml
 
 #Dashboard
 /dashboards:
@@ -224,3 +236,7 @@
 
 /dashboards/leaderboard_agents:
   $ref: ./dashboard/leaderboard/agents.yaml
+
+# Product Feedback
+/product_feedback/:
+  $ref: ./product_feedback/create.yaml

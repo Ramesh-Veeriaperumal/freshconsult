@@ -4,7 +4,7 @@ module ConversationsTestHelper
   include TicketHelper
   include EmailConfigsHelper
 
-  def note_pattern(expected_output = {}, note)
+  def note_pattern(expected_output, note)
     body_html = format_ticket_html(note, expected_output[:body]) if expected_output[:body]
     {
       body: body_html || note.body_html,
@@ -16,32 +16,30 @@ module ConversationsTestHelper
       support_email: note.support_email,
       ticket_id: expected_output[:ticket_id] || note.notable.display_id,
       to_emails: expected_output[:notify_emails] || note.to_emails,
+      category: note.category,
       attachments: Array,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
   end
 
-
-  def private_note_pattern(expected_output = {}, note)
+  def private_note_pattern(expected_output, note)
     if expected_output[:from_email]
       email_config = @account.email_configs.where(reply_email: expected_output[:from_email]).first
       expected_output[:from_email] = @account.features?(:personalized_email_replies) ? email_config.friendly_email_personalize(note.user.name) : email_config.friendly_email if email_config
     end
 
-    response_pattern = note_pattern(expected_output, note).merge({
-      deleted: (expected_output[:deleted] || note.deleted).to_s.to_bool,
-      source: (expected_output[:source] || note.source),
-      user_id: (expected_output[:user_id] || expected_output[:agent_id] || note.user_id),
-      from_email: (expected_output[:from_email] || note.from_email),
-      to_emails: expected_output[:notify_emails] || expected_output[:to_emails] || note.to_emails,
-      cc_emails: expected_output[:cc_emails] || note.cc_emails,
-      bcc_emails: expected_output[:bcc_emails] || note.bcc_emails,
-      cloud_files: Array,
-      has_quoted_text: (note.full_text_html.length > note.body_html.length),
-      last_edited_at: note.last_modified_timestamp.try(:utc).try(:iso8601),
-      last_edited_user_id: note.last_modified_user_id.try(:to_i)
-    })
+    response_pattern = note_pattern(expected_output, note).merge(deleted: (expected_output[:deleted] || note.deleted).to_s.to_bool,
+                                                                 source: (expected_output[:source] || note.source),
+                                                                 user_id: (expected_output[:user_id] || expected_output[:agent_id] || note.user_id),
+                                                                 from_email: (expected_output[:from_email] || note.from_email),
+                                                                 to_emails: expected_output[:notify_emails] || expected_output[:to_emails] || note.to_emails,
+                                                                 cc_emails: expected_output[:cc_emails] || note.cc_emails,
+                                                                 bcc_emails: expected_output[:bcc_emails] || note.bcc_emails,
+                                                                 cloud_files: Array,
+                                                                 has_quoted_text: (note.full_text_html.length > note.body_html.length),
+                                                                 last_edited_at: note.last_modified_timestamp.try(:utc).try(:iso8601),
+                                                                 last_edited_user_id: note.last_modified_user_id.try(:to_i))
 
     if note.fb_note? && note.fb_post.present?
       fb_pattern = note.fb_post.post? ? fb_post_pattern({}, note.fb_post) : fb_dm_pattern({}, note.fb_post)
@@ -69,12 +67,12 @@ module ConversationsTestHelper
     }
   end
 
-  def update_note_pattern(expected_output = {}, note)
+  def update_note_pattern(expected_output, note)
     body = expected_output[:body] || note.body_html
     note_pattern(expected_output, note).merge(body: body)
   end
 
-  def private_update_note_pattern(expected_output = {}, note)
+  def private_update_note_pattern(expected_output, note)
     body = expected_output[:body] || note.body_html
     private_note_pattern(expected_output, note).merge(body: body)
   end
@@ -90,7 +88,7 @@ module ConversationsTestHelper
     single_note.merge(index_note)
   end
 
-  def reply_note_pattern(expected_output = {}, note)
+  def reply_note_pattern(expected_output, note)
     body_html = format_ticket_html(note, expected_output[:body]) if expected_output[:body]
     {
       body: body_html || note.body_html,
@@ -103,6 +101,7 @@ module ConversationsTestHelper
       ticket_id: expected_output[:ticket_id] || note.notable.display_id,
       to_emails: note.to_emails,
       attachments: Array,
+      broadcast_note: expected_output[:broadcast_note] || note.broadcast_note?,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
@@ -142,12 +141,17 @@ module ConversationsTestHelper
     {
       template: expected_output[:template],
       signature: expected_output[:signature],
-      quoted_text: expected_output[:quoted_text] || String
+      quoted_text: expected_output[:quoted_text] || String,
+      bcc_emails: Array
     }
   end
 
   def reply_template_pattern(expected_output)
-    conversation_template_pattern(expected_output).merge(cc_emails: Array, bcc_emails: Array)
+    conversation_template_pattern(expected_output).merge(cc_emails: Array)
+  end
+
+  def reply_to_forward_template_pattern(expected_output)
+    conversation_template_pattern(expected_output).merge(cc_emails: Array, to_emails: Array)
   end
 
   def full_text_pattern(note)
@@ -155,5 +159,23 @@ module ConversationsTestHelper
       text: note.note_body.full_text,
       html: note.note_body.full_text_html
     }
+  end
+
+  def create_broadcast_note(ticket_id, params = {})
+    broadcast_params = {
+      ticket_id: ticket_id,
+      source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+      user_id: @agent.id,
+      account_id: @account.id,
+      notable_type: 'Helpdesk::Ticket',
+      body: Faker::Lorem.paragraph,
+      private: true,
+      category: Helpdesk::Note::CATEGORIES[:broadcast]
+    }.merge(params)
+    create_note broadcast_params
+  end
+
+  def create_broadcast_message(tracker_id, note_id)
+    @account.broadcast_messages.create(tracker_display_id: tracker_id, body_html: Faker::Lorem.paragraph, note_id: note_id)
   end
 end

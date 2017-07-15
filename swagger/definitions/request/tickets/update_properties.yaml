@@ -17,3 +17,11 @@ properties:
         type: string
     skip_close_notification:
       type: boolean
+    subject:
+      type: string
+    description:
+      type: string
+    attachment_ids:
+      type: array
+      items:
+        type: integer

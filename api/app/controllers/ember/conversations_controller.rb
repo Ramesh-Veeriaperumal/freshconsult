@@ -9,15 +9,17 @@ module Ember
     include ConversationConcern
     include AttachmentConcern
     include Utils::Sanitizer
+    include AssociateTicketsHelper
     decorate_views(
       decorate_objects: [:ticket_conversations],
-      decorate_object: [:create, :update, :reply, :forward, :facebook_reply, :tweet]
+      decorate_object: %i[create update reply forward facebook_reply tweet reply_to_forward broadcast]
     )
 
-    before_filter :can_send_user?, only: [:forward, :facebook_reply, :tweet]
+    before_filter :can_send_user?, only: %i[forward reply_to_forward facebook_reply tweet broadcast]
     before_filter :set_defaults, only: [:forward]
+    before_filter :link_tickets_enabled?, only: [:broadcast]
 
-    SINGULAR_RESPONSE_FOR = %w(reply forward create update tweet facebook_reply).freeze
+    SINGULAR_RESPONSE_FOR = %w[reply forward create update tweet facebook_reply reply_to_forward broadcast].freeze
 
     def ticket_conversations
       validate_filter_params
@@ -43,12 +45,27 @@ module Ember
       save_note_and_respond
     end
 
+    def reply_to_forward
+      return unless validate_params
+      sanitize_and_build
+      delegator_hash = { attachment_ids: @attachment_ids, shared_attachments: shared_attachments }
+      return unless validate_delegator(@item, delegator_hash)
+      save_note_and_respond
+    end
+
     def forward
       return unless validate_params
       sanitize_and_build
       delegator_hash = { parent_attachments: parent_attachments, shared_attachments: shared_attachments,
                          attachment_ids: @attachment_ids, cloud_file_ids: @cloud_file_ids }
       return unless validate_delegator(@item, delegator_hash)
+      save_note_and_respond
+    end
+
+    def broadcast
+      return unless validate_params
+      sanitize_and_build
+      return unless validate_delegator(@item)
       save_note_and_respond
     end
 
@@ -95,8 +112,8 @@ module Ember
       @item = last_forwardable_note if action_name.to_sym == :latest_note_forward_template
       @agent_signature = signature
       @content = template_content
-      @quoted_text = quoted_text(@item || @ticket, [:forward_template, :note_forward_template, :latest_note_forward_template].include?(action_name.to_sym))
-      fetch_cc_bcc_emails
+      @quoted_text = quoted_text(@item || @ticket, %i[forward_template note_forward_template latest_note_forward_template].include?(action_name.to_sym))
+      fetch_to_cc_bcc_emails
       render action: :template
     end
 
@@ -104,6 +121,7 @@ module Ember
     alias forward_template reply_forward_template
     alias note_forward_template reply_forward_template
     alias latest_note_forward_template reply_forward_template
+    alias reply_to_forward_template reply_forward_template
 
     private
 
@@ -114,11 +132,11 @@ module Ember
 
         conversations = @ticket.notes.visible.exclude_source('meta').preload(conditional_preload_options).order(order_conditions)
         filtered_conversations = if since_id
-                                   last_created_at = @ticket.notes.where(id: since_id).pluck(:created_at).first
-                                   conversations.created_since(since_id, last_created_at)
-                                 else
-                                   conversations
-                                 end
+          last_created_at = @ticket.notes.where(:id => since_id).pluck(:created_at).first
+          conversations.created_since(since_id, last_created_at)
+        else
+          conversations
+        end
 
         @items = paginate_items(filtered_conversations)
         @items_count = conversations.count
@@ -126,6 +144,10 @@ module Ember
 
       def index?
         @index ||= (current_action?('index') || current_action?('ticket_conversations'))
+      end
+
+      def broadcast?
+        @broadcast ||= current_action?('broadcast')
       end
 
       def decorator_options
@@ -189,11 +211,9 @@ module Ember
       end
 
       def assign_note_attributes
-        if @item.user_id
-          @item.user = @user if @user
-        else
-          @item.user = api_current_user
-        end # assign user instead of id as the object is already loaded.
+        # assign user instead of id as the object is already loaded.
+        assign_user @item
+        @item.to_emails = params[cname][:to_emails] if reply_to_forward?
         @item.notable = @ticket # assign notable instead of id as the object is already loaded.
         @item.notable.account = current_account
         load_normal_attachments if forward?
@@ -202,6 +222,14 @@ module Ember
         build_cloud_files(@item, @cloud_files)
         @item.attachments = @item.attachments # assign attachments so that it will not be queried again in model callbacks
         @item.inline_attachments = @item.inline_attachments
+      end
+
+      def assign_user(item)
+        if @item.user_id
+          @item.user = @user if @user
+        else
+          @item.user = api_current_user
+        end
       end
 
       def sanitize_params
@@ -270,7 +298,7 @@ module Ember
       end
 
       def shared_attachments
-        # shared attachments explicitly included in the note
+        # shared attachments explicitly included in the  note
         @shared_attachments ||= begin
           attachments_to_exclude = forward? ? (parent_attachments || []).map(&:id) : []
           shared_attachment_ids = (@attachment_ids || []) - attachments_to_exclude
@@ -295,12 +323,16 @@ module Ember
 
       def set_custom_errors(item = @item)
         fields_to_be_renamed = ConversationConstants::ERROR_FIELD_MAPPINGS
-        fields_to_be_renamed.merge!(ConversationConstants::AGENT_USER_MAPPING) if agent_mapping_required?
+        fields_to_be_renamed = fields_to_be_renamed.merge(ConversationConstants::AGENT_USER_MAPPING) if agent_mapping_required?
         ErrorHelper.rename_error_fields(fields_to_be_renamed, item)
       end
 
       def forward?
         @forward ||= current_action?('forward')
+      end
+
+      def reply_to_forward?
+        @reply_to_forward ||= current_action?('reply_to_forward')
       end
 
       def agent_mapping_required?
@@ -317,7 +349,7 @@ module Ember
       end
 
       def ember_redirect?
-        [:create, :reply, :forward, :facebook_reply].include?(action_name.to_sym)
+        %i[create reply forward facebook_reply reply_to_forward broadcast].include?(action_name.to_sym)
       end
 
       def render_201_with_location(template_name: "conversations/#{action_name}", location_url: 'conversation_url', item_id: @item.id)
@@ -336,6 +368,7 @@ module Ember
       end
 
       def template_content
+        return '' if [:reply_to_forward_template].include?(action_name.to_sym)
         parse_liquid(current_account.email_notifications
           .find_by_notification_type("EmailNotification::DEFAULT_#{notification_template.to_s.upcase}".constantize)
           .try(:"get_#{notification_template.to_s}", @ticket.requester).to_s
@@ -343,13 +376,20 @@ module Ember
       end
 
       def notification_template
-        [:note_forward_template, :latest_note_forward_template].include?(action_name.to_sym) ? :forward_template : action_name.to_sym
+        %i[note_forward_template latest_note_forward_template].include?(action_name.to_sym) ? :forward_template : action_name.to_sym
       end
 
-      def fetch_cc_bcc_emails
-        @cc_emails = reply_cc_emails(@ticket)
+      def fetch_to_cc_bcc_emails
+        if action_name == 'reply_to_forward_template'
+          load_note_reply_cc = @item.load_note_reply_cc
+          @to_emails     = load_note_reply_cc.last
+          @cc_emails     = load_note_reply_cc.first
+        else
+          @cc_emails = reply_cc_emails(@ticket)
+        end
         @bcc_emails = bcc_drop_box_email
       end
+
 
       def parse_liquid(liquid_content)
         Liquid::Template.parse(liquid_content).render(
@@ -365,7 +405,6 @@ module Ember
       def after_load_object
         load_notable_from_item # find ticket in case of APIs which has @item.id in url
         return false if check_ticket_action_permissions
-
         check_agent_note if update? || destroy?
       end
 
@@ -384,7 +423,7 @@ module Ember
       end
 
       def tickets_scoper
-        return super if ConversationConstants::TICKET_STATE_CHECK_NOT_REQUIRED.include?(action_name.to_sym)
+        return super if (ConversationConstants::TICKET_STATE_CHECK_NOT_REQUIRED.include?(action_name.to_sym))
         super.where(ApiTicketConstants::CONDITIONS_FOR_TICKET_ACTIONS)
       end
 

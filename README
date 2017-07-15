@@ -1,5 +1,6 @@
 == Welcome to the Helpdesk Rails Kit
 
+
 This kit contains everything you need to add a fully-functional
 helpdesk to your rails application.
 
@@ -196,4 +197,5 @@ a stripped down web-form. On submission, it displays a thank-you
 message and does not redirect to the user's "my requests" area.
 This is useful if you're incorporating the helpdesk into your
 product using an iframe.
+
 
