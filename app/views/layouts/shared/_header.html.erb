@@ -12,11 +12,9 @@
 
 <% if current_account.launched?(:falcon) && current_user && current_user.is_falcon_pref? %>
 	<script type="text/javascript">
-
 		if( top.window.location.href == window.location.href) {
 			location.href = "<%= redirect_falcon_path %>";
 		}
-
 	</script>
 <% end %>
 <div class="header">
