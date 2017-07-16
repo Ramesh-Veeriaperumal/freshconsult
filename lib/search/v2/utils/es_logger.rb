@@ -68,6 +68,22 @@ module Search
           track(output.join(' '))
         end
 
+        def log_timestamps(timestamps)
+          return if timestamps.blank?
+          output = []
+          end_time = Search::Job.es_version/1000
+          t = timestamps.shift
+          total_timespent = end_time - t
+          output << "start=#{t}"
+          timestamps.each_with_index do |stamp, i|
+            stamp = stamp.to_i
+            output << "h#{i}_pick=#{stamp}, h#{i}_spent=#{stamp - t}"
+            t = stamp
+          end
+          output << "end=#{end_time}, end_spent=#{end_time - t}, total=#{total_timespent}"
+          log(output.join(', '))
+        end
+
         # For easily parseble
         # (*) Log account_id
         # (*) Log cluster_name

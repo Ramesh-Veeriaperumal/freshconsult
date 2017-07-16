@@ -954,6 +954,7 @@ $animation_timing: .1s;
 		 	comparison #b2a39d,
 		 	topn #9f9db2;
 .report-home {
+	position: relative !important;
 	@include padding(0px 0 5px 0);
 	.report-separation{
 		border-top: 2px solid #d9d9d9;
@@ -988,7 +989,6 @@ $animation_timing: .1s;
 		}
 	}
 	ul{
-		width:80%;
 		display: table-cell;
 		@include margin-left(-32px);
 		&.report_icons{
@@ -1275,6 +1275,26 @@ p.visibility {
 	padding: 30px;
 	font-weight:bold;
 	font-style: italic;
+}
+
+.report-link-block {
+    width: 100%;
+    text-align: left;
+    border-top: 1px solid #ccc;
+    padding-top: 8px;
+
+    p {
+        color: #888;
+    }
+
+    a {
+        font-size: 14px;
+        font-weight: 500;
+
+        i {
+            color: inherit;
+        }
+    }
 }
 
 // Deprecated 

@@ -55,6 +55,7 @@ module Email::Antispam
         http_body[:lastName] = @args["account_details"]["last_name"] if @args["account_details"]["last_name"].present?
         http_body[:website] = @args["account_details"]["first_landing_url"] if @args["account_details"]["first_landing_url"].present?
         http_body[:referrer] = @args["account_details"]["first_referrer"] if @args["account_details"]["first_referrer"].present?
+        http_body[:cache_id] = @args["account_details"]["fd_cid"] if @args["account_details"]["fd_cid"].present?
         return http_body.to_json
       end
 

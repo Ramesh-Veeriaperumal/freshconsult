@@ -1,5 +1,6 @@
 var MarketplaceBrowser  = Class.create({
 	initialize: function(settingsLinks, customMsgs ) {
+    var self = this;
 		this.settingsLinks = settingsLinks;
     this.customMessages = customMsgs;
 		this.isMouseInside = false; //flag for checking whether mouse is in app-browser
@@ -26,11 +27,15 @@ var MarketplaceBrowser  = Class.create({
 
     this.pageURL = document.location.toString();
     this.setupSelectedTabs();
-    this.deleteInProgressExt();
+    jQuery(document).ready(function(){
+      self.deleteInProgressExt();
+    });
 	},
 
   deleteInProgressExt: function() {
     var inProgressExt = jQuery('.list-box.mkp-uninstall_in_progress .plug-actions .delete-btn');
+    var installedExtensionId = inProgressExt.attr('data-installed-extn-id');
+    var initialCount = 0;
     if (inProgressExt.length > 0) {
       var plug = {
         element: inProgressExt,
@@ -38,9 +43,14 @@ var MarketplaceBrowser  = Class.create({
         deleteUrl: inProgressExt.attr("data-delete-url"),
         mkpRoute: inProgressExt.attr("data-mkp-route"),
         extensionId: inProgressExt.attr("data-extn-id"),
+        installedExtnId: installedExtensionId,
         versionId: inProgressExt.attr("data-version-id")
       };
-      this.pollAccountApi(plug, 0, this.pollRetryLimit);
+      var el = jQuery("#delete_prog_" + installedExtensionId);
+      el.siblings('.plug-actions').hide();
+      jQuery("#delete_prog_"+ installedExtensionId +" .mkp-prog-spinner").addClass('sloading loading-tiny');
+      el.show();
+      this.pollAccountApi(plug, initialCount, this.pollRetryLimit, installedExtensionId);
     }
   },
 
@@ -136,6 +146,7 @@ var MarketplaceBrowser  = Class.create({
                             deleteUrl: jQuery(e.currentTarget).attr("data-delete-url"),
                             mkpRoute: jQuery(e.currentTarget).attr("data-mkp-route"),
                             extensionId: jQuery(e.currentTarget).attr("data-extn-id"),
+                            installedExtnId: jQuery(e.currentTarget).attr('data-installed-extn-id'),
                             versionId: jQuery(e.currentTarget).attr("data-version-id")
                           };
   },
@@ -186,6 +197,7 @@ var MarketplaceBrowser  = Class.create({
   uninstallApp: function(plug){
     var that = this;
     var el = plug.element;
+    var initialCount = 0;
     jQuery.ajax({
       url: plug.url,
       type: "delete",
@@ -193,8 +205,8 @@ var MarketplaceBrowser  = Class.create({
         var list_box = jQuery(el).parents(".list-box");
         jQuery(list_box).addClass("disabled-app");
         jQuery(el).closest('.plug-actions').hide();
-        jQuery('#delete_prog_'+ plug.extensionId +' .mkp-prog-spinner').addClass('sloading loading-tiny');
-        jQuery('#delete_prog_'+ plug.extensionId).show();
+        jQuery('#delete_prog_'+ plug.installedExtnId +' .mkp-prog-spinner').addClass('sloading loading-tiny');
+        jQuery('#delete_prog_'+ plug.installedExtnId).show();
       },
       success: function(resp_body, statustext, resp){
         jQuery("#toggle-confirm").modal("hide");
@@ -202,8 +214,9 @@ var MarketplaceBrowser  = Class.create({
         if(resp.status == 200){
           that.handleUninstallSuccess(plug);
         } else if (resp.status == 202) {
+          var installedExtensionId = resp_body.installed_extension_id;
           setTimeout( function() {
-        		that.pollAccountApi(plug, 0, that.pollRetryLimit);
+        		that.pollAccountApi(plug, initialCount, that.pollRetryLimit, installedExtensionId);
         	}, that.accApiPollInterval);
         } else {
           that.handleUninstallFailure(plug);
@@ -243,13 +256,13 @@ var MarketplaceBrowser  = Class.create({
     closeableFlash('#noticeajax');
   },
 
-  pollAccountApi: function(plug, count, maxCount) {
+  pollAccountApi: function(plug, count, maxCount, installedExtensionId) {
     var self = this;
     jQuery.ajax({
-      url: '/admin/marketplace/installed_extensions/'+ plug.extensionId +'/app_status',
+      url: '/admin/marketplace/installed_extensions/'+ installedExtensionId +'/app_status',
       type: "GET",
       success: function(resp_body, statustext, resp){
-        self.handlePollSuccess(plug, resp, count, maxCount);
+        self.handlePollSuccess(plug, resp, count, maxCount, installedExtensionId);
       },
       error: function(jqXHR, exception) {
         self.handleUninstallFailure(plug);
@@ -257,12 +270,12 @@ var MarketplaceBrowser  = Class.create({
     });
   },
 
-  handlePollSuccess: function(plug, resp, count, maxCount) {
+  handlePollSuccess: function(plug, resp, count, maxCount, installedExtensionId) {
     var self = this;
     if (resp.status == 202 && count < maxCount) {
       count = count + 1;
       setTimeout( function() {
-        self.pollAccountApi(plug, count, maxCount);
+        self.pollAccountApi(plug, count, maxCount, installedExtensionId);
       }, self.accApiPollInterval);
     } else if (resp.status == 200) {
       response = resp.responseJSON;
@@ -286,8 +299,8 @@ var MarketplaceBrowser  = Class.create({
     var list_box = jQuery(el).parents(".list-box");
     jQuery(list_box).removeClass("disabled-app");
     jQuery(el).closest('.plug-actions').show();
-    jQuery('#delete_prog_'+ plug.extensionId +' .mkp-prog-spinner').removeClass('sloading loading-tiny');
-    jQuery('#delete_prog_'+ plug.extensionId).hide();
+    jQuery('#delete_prog_'+ plug.installedExtnId +' .mkp-prog-spinner').removeClass('sloading loading-tiny');
+    jQuery('#delete_prog_'+ plug.installedExtnId).hide();
   },
 
   onAppBrowserHover: function(e){ //used

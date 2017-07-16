@@ -91,14 +91,14 @@ class MimeController < Fdadmin::MetalApiController
         email = get_user_from_email(params[:from])
         user = account.user_emails.user_for_email(email)
         if (!user.nil? and user.blocked?)
-          Rails.logger.info "Email Processing Failed: User is blocked!"
+          Rails.logger.info "Email Processing Failed: User is blocked!, account_id: #{account.id}"
           head 200, content_type: "text/html"
         end
       else
         if account.nil?
-          Rails.logger.info "Email Processing Failed: Account is nil"
+          Rails.logger.info "Email Processing Failed: Account is nil, envelope_to: #{JSON.parse(params[:envelope])["to"]}"
         else
-          Rails.logger.info "Email Processing Failed: Account is not active"
+          Rails.logger.info "Email Processing Failed: Account is not active, account_id: #{account.id}"
         end
         head 200, content_type: "text/html"
       end
@@ -111,7 +111,7 @@ class MimeController < Fdadmin::MetalApiController
     email_size = params[:email].bytesize
     Rails.logger.info "Email_size : #{email_size} bytes , for envelope : #{params[:envelope]}"
     if (email_size > MAX_EMAIL_SIZE)
-      Rails.logger.info "Email Processing Failed: Email size - #{email_size} is greater than MAX SIZE LIMIT #{MAX_EMAIL_SIZE}"
+      Rails.logger.info "Email Processing Failed: Email size - #{email_size} is greater than MAX SIZE LIMIT #{MAX_EMAIL_SIZE}, account_id: #{account.id}"
       head 200, content_type: "text/html"
     end
   end

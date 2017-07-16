@@ -437,7 +437,9 @@ Authority::Authorization::PrivilegeList.build do
       resource :"reports/timesheet_report", :only => [:index, :report_filter, :save_reports_filter, :update_reports_filter, :delete_reports_filter, :time_entries_list]
       resource :"reports/report_filter"
       resource :"reports/v2/tickets/report", :only =>[ :index, :fetch_metrics, :fetch_ticket_list, :fetch_active_metric,
-                                                        :save_reports_filter, :update_reports_filter, :delete_reports_filter]
+                                                        :save_reports_filter, :update_reports_filter, :delete_reports_filter,
+                                                        :fetch_qna_metric, :fetch_insights_metric, :save_insights_config,
+                                                        :fetch_recent_questions, :fetch_insights_config]
 
       resource :"helpdesk/dashboard", :only => [:unresolved_tickets, :unresolved_tickets_data]
       resource :"reports/scheduled_export"

@@ -1,6 +1,6 @@
 defaults: &defaults
   host: "reports-service-1847906171.us-east-1.elb.amazonaws.com"
-  ticket_reports: "/enterprise_reports/execute/"
+  ticket_reports: "/enterprise_reports/execute/%{priority}"
   timesheet_reports: "/example/execute"
 
 development:

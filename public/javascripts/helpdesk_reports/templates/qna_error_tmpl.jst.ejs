@@ -1,0 +1,18 @@
+<div class="message_container">
+	<div class="message">
+    <% if (error.code == 451) { %>
+      <%= I18n.t('helpdesk_reports.qna.empty_message') %>
+      <% } else { %>
+		<%= error.message %>
+      <% } %>
+	</div>
+	<% if (error.code == 551) { %>
+		<div class="info">
+			<%= I18n.t('helpdesk_reports.qna.sys_error_help') %>
+		</div>
+	<% } else { %>
+		<div class="info">
+			<%= I18n.t('helpdesk_reports.qna.empty_message_info') %>
+		</div>
+    <% } %>
+</div>
