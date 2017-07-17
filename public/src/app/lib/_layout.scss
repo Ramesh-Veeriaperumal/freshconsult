@@ -257,11 +257,15 @@ label.overlabel{
   font-size: 12px;
   padding: 7px;
   background: #02b875;
-  width: 120px;
+  width: 130px;
+  text-align: center;
   border-radius: 2px;
   box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
   color: white;
   font-weight: normal;
+	&:hover{
+    background: #00a367;
+  }
 }
 
 .fd-branding{
