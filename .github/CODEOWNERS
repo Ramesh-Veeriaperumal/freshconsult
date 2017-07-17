@@ -1,0 +1,10 @@
+db/schema.rb @venkatesanmurali @hrishikesh-p @arvindr
+db/migrate/*.rb @venkatesanmurali @hrishikesh-p @arvindr
+
+config/sidekiq*.yml @venkatesanmurali @hrishikesh-p
+config/*routes.rb @thanashyam @venkatesanmurali @abinaya21 @ksashikumar
+lib/rabbit_mq/* @sram2020
+
+swagger/* @thanashyam @venkatesanmurali @abinaya21 @ksashikumar
+
+public/* @rajasegar-c @parsurv @vishnubalajikm
