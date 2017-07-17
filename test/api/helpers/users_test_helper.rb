@@ -50,9 +50,10 @@ module UsersTestHelper
     result = contact_pattern(expected_output, ignore_extra_keys, contact)
     result.except!(:custom_fields) if result[:custom_fields].empty? || exclude_custom_fields
     result.merge!(whitelisted: contact.whitelisted,
-      facebook_id: (expected_output[:facebook_id] || contact.fb_profile_id),
-      blocked: contact.blocked?,
-      spam: contact.spam?)
+                  facebook_id: (expected_output[:facebook_id] || contact.fb_profile_id),
+                  blocked: contact.blocked?,
+                  spam: contact.spam?,
+                  local_time: Time.now.in_time_zone(contact.time_zone).strftime('%I:%M %p'))
     result.merge!(
         company: company_hash(contact.default_user_company)
         ) if expected_output[:include].eql?('company') && contact.default_user_company.present?
