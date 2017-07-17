@@ -135,6 +135,13 @@ module Cache::Memcache::Account
     end
   end
 
+  def agent_groups_from_cache
+    @agent_groups_from_cache ||= begin
+      key = agent_groups_memcache_key
+      MemcacheKeys.fetch(key) { agent_groups.select('user_id,group_id').all }
+    end
+  end
+
   def products_from_cache
     key = ACCOUNT_PRODUCTS % { :account_id => self.id }
     MemcacheKeys.fetch(key) { self.products.find(:all, :order => 'name') }
@@ -495,6 +502,10 @@ module Cache::Memcache::Account
 
     def groups_memcache_key
       ACCOUNT_GROUPS % { :account_id => self.id }
+    end
+
+    def agent_groups_memcache_key
+      ACCOUNT_AGENT_GROUPS % { account_id: id }
     end
 
     def tags_memcache_key
