@@ -1,0 +1,9 @@
+type: object
+allOf:
+  - $ref: '#/definitions/conversation_template'
+  - properties:
+      attachments:
+        type: array
+        items:
+          $ref: '#/definitions/attachment'
+      

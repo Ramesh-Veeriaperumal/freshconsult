@@ -9,6 +9,11 @@ module NoteHelper
                                          :notable_type => 'Helpdesk::Ticket')
     test_note.incoming = params[:incoming] if params[:incoming]
     test_note.private = params[:private] if params[:private]
+    if params[:attachments]
+      test_note.attachments.build(content: params[:attachments][:resource],
+                                  description: params[:attachments][:description],
+                                  account_id: test_note.account_id)
+    end
     test_note.build_note_body(:body => params[:body], :body_html => params[:body])
     test_note.save_note
     test_note

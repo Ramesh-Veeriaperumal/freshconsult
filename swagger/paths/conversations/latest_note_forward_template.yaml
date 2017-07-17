@@ -7,7 +7,7 @@ get:
     200:
       description: Success
       schema:
-        $ref: '#/definitions/conversation_template'
+        $ref: '#/definitions/conversation_forward_template'
     400:
       description: Bad Request Error
       schema:
