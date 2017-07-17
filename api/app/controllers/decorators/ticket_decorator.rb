@@ -212,6 +212,7 @@ class TicketDecorator < ApiDecorator
       stats: stats
     }
     requester_hash = requester
+    ret_hash[:company] = company_hash if company_id.present?
     ret_hash[:requester] = requester_hash if requester_hash
     ret_hash[:archived] = archived? if archived?
     ret_hash
@@ -300,6 +301,10 @@ class TicketDecorator < ApiDecorator
         id: topic.id,
         title: topic.title
       }
+    end
+
+    def company_hash
+      { id: company_id, name: record.company.try(:name) }
     end
 
     def permission?
