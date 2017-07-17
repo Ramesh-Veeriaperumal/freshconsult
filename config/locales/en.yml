@@ -2576,6 +2576,9 @@ en:
         add_blacklist_failure: "Number could not be blocked"
         remove_blacklist_success: "Number unblocked successfully"
         remove_blacklist_failure: "Number could not be unblocked"
+        invalid_address: 'The address you have provided is invalid.'
+        suggested_address: 'The provided address was not valid. Please use the suggested address.'
+        local_address_error: "Unable to purchase number. Kindly make sure you enter a valid local address for purchasing this number."
 
     profile:
       page_unavailable: We are sorry. This page is currently unavailable to you. Please contact the administrator for more information.
