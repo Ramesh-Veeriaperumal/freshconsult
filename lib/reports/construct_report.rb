@@ -45,7 +45,7 @@ module Reports::ConstructReport
     req_params = [ { 'req_params' => params}] 
     
     begin
-      url = ReportsAppConfig::TICKET_REPORTS_URL
+      url = ReportsAppConfig::TICKET_REPORTS_URL % {priority: nil}
       response = RestClient.post url, req_params.to_json, :content_type => :json, :accept => :json
       res = JSON.parse(response.body)
       res.first["result"]
