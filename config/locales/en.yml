@@ -86,6 +86,7 @@ en:
   reload: Reload
   any: Any
   or: or
+  go_to_new_ui: "SWITCH TO NEW UI"
   email_failure:
     dropped:
       summary_error_text: "Message dropped - Invalid or problematic address"
@@ -1870,7 +1871,7 @@ en:
         tour: Help me create a new observer rule
         tour_v2: Help me create a observer rule
         help_title: Observer
-        help_info_1: The Observer lets you trigger specific actions in your support desk as soon as a certain event occurs. For example, you could create an Observer Rule to alert the big man when a customer gives an unfavorable satisfaction rating on any ticket.
+        help_info_1: The Observer lets you trigger specific actions in your support desk as soon as a certain event occurs. For example, you could create an Observer Rule to alert your boss when a customer gives an unfavorable satisfaction rating on any ticket.
         help_title_2a: Events
         help_info_2a: An event may refer to any user-driven change that will trigger a specific Observer rule.
         help_title_2b: Event Performers
@@ -2575,6 +2576,9 @@ en:
         add_blacklist_failure: "Number could not be blocked"
         remove_blacklist_success: "Number unblocked successfully"
         remove_blacklist_failure: "Number could not be unblocked"
+        invalid_address: 'The address you have provided is invalid.'
+        suggested_address: 'The provided address was not valid. Please use the suggested address.'
+        local_address_error: "Unable to purchase number. Kindly make sure you enter a valid local address for purchasing this number."
 
     profile:
       page_unavailable: We are sorry. This page is currently unavailable to you. Please contact the administrator for more information.
@@ -4202,6 +4206,10 @@ en:
     capping_ticket: "ticket"
     capping_tickets: "tickets"
     page_not_found: "This group could not be found. It might have been deleted or the URL mistyped."
+    maximum: Maximum
+    per_agent: per agent
+    sbrr_trial_text: Did you know you can assign tickets based on your agents’ skills? <a href="https://support.freshdesk.com/solution/articles/222692" target="_blank">Learn more</a>
+    sbrr_plan_text: <span class="muted"> Available on the </span> <b> Forest plan </b>
     assigntime:
       half: 30 Minutes
       one: 1 Hour
@@ -5212,10 +5220,12 @@ en:
     role_dashboard: "Role-based dashboards"
     advanced_dkim: "Unlimited DKIM/DMARC"
     ip_whitelisting: "IP whitelisting"
+    skill_based_assignment: "Skill based assignment"
     advanced_phone_integration: "Advanced phone integration"
     machine_learning: "Machine learning"
     custom_data_center: "Data centre location"
     whitelisted_ip_desc: "Whitelisted IP addresses"
+    skill_based_assignment_desc: "Skill based assignment"
     custom_mailbox_desc: "Custom email servers"
     advanced_phone_desc: "Advanced phone features"
     multiple_products_desc: "Multiple product portals/knowledge base"
@@ -7139,6 +7149,7 @@ en:
       comment: "Comment"
       rating: "Rating"
       skill: "Skill"
+      contact_id: "Contact Id"
     call_history:
       info:
         success: We have started exporting your call records. It will be mailed to you once completed.
@@ -7451,10 +7462,11 @@ en:
     account: account
     delete_action:
       success: "App deleted successfully."
-      error: "Error while deleting the App."
+      error: "<span>Error while deleting the App.</span> Please try again. If the error persists, please <a href=https://support.freshdesk.com>contact support.</a>"
     install_action:
       success: "App installed successfully."
       failure: "Could not process the request"
+      app_setup_error: "There was an error during installation."
       auth_error: "Error while authorizing the app"
     update_action:
       success: "App updated successfully."
@@ -9127,8 +9139,44 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     summary: Summary
     chats: Chats
     edit: Edit
-    'yes': 'Yes'
-    'no': 'No'
+    "yes": 'Yes'
+    "no": 'No'
+    qna:
+      view_full_report: Dive into the data
+      recently_asked_questions: RECENTLY ASKED QUESTIONS
+      received_tickets: Received Tickets
+      created_tickets: Created Tickets
+      resolved_tickets: Resolved Tickets
+      unresolved_tickets: Unresolved Tickets
+      reopened_tickets: Reopened Tickets
+      avg_first_response_time: Avg First Response Time
+      avg_response_time: Avg Response Time
+      avg_resolution_time: Avg Resolution Time
+      avg_first_assign_time: Avg First Assign Time
+      response_violated: Response SLA Violated
+      resolution_violated: Resolution SLA Violated
+      resolution_sla: Resolution SLA
+      response_sla: First Response SLA
+      empty_message: Oops! We couldn't find an answer...
+      empty_message_info: likely because there isn't any data
+      sample_text: And just in case you were wondering what an answer would look like, here's a sample...
+      sys_error: Oops! Our servers are not reachable right now…
+      sys_error_help: (Check out our system <a target="_blank" href="http://updates.freshdesk.com/">status</a> for more information)
+      export_question: Want to build custom reports?
+      schedule_an_export: Schedule an export
+    insights:
+      todays_insights: Today's Insights
+      customize: Customize Insights
+      tooltip: Learn more about Insights
+      customize_helptext2: Customize insights by setting thresholds and choosing filters for each metric.
+      customize_helptext: An insight or outlier is an indication of an interesting activity in your helpdesk. The threshold indicates how much change on a particular metric would make it an outlier.
+      last_update: Last updated %{time}
+      no_insights: No outliers today, your helpdesk is running smoothly!
+      current_outliers: Current outliers (as shown in the Reports tab)
+      help: Help me customize insights
+      sys_error: Oops! Our servers are not reachable right now...
+      scope_error: No data to display...
+      sys_error_help: (Check out our system <a target="_blank" href="http://updates.freshdesk.com/">status</a> for more information)
     filter_error_msg: '* You can select a maximum of 10 filters. (Each selected level of nested field counts as one filter)'
     no_data_to_display_msg: No data to display
     something_went_wrong_msg: 'Something went wrong, please try again'
@@ -9211,6 +9259,67 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     customer_responses: Customer responses
     violated_tickets: Violated tickets
     compliant_tickets: Compliant tickets
+    insights_tagline:
+      d0:
+        positive: "It's a good day for your customers, take an extra break!"
+        negative: "Higher ticket volumes today, motivate agents to keep up!"
+        neutral: ''
+        display_text: Received tickets
+      d1:
+        positive: "Your team has worked hard to get through the backlog! It's time for cake!"
+        negative: "All tickets and no break? Consider staffing up to resolve more issues"
+        neutral: ''
+        display_text: Resolved tickets
+      d2:
+        positive: "Good work! Your team has worked hard to get through the backlog!"
+        negative: "Slower day? Consider using day passes to get everyone to pitch in"
+        neutral: ''
+        display_text: Unresolved tickets
+      d3:
+        positive: "You've impressed your customers with your support!"
+        negative: "Hmph! Is this a troublesome trend?"
+        neutral: ''
+        display_text: Reopened tickets
+      d4:
+        positive: "High fives, your team is super responsive today!"
+        negative: "It always helps to make a great first impression"
+        neutral: ''
+        display_text: Average first response time
+      d5:
+        positive: "There's something customers just love about a responsive support team!"
+        negative: "Motivate agents with a bit of game mechanics, maybe?"
+        neutral: ''
+        display_text: Average response time
+      d6:
+        positive: "Your team is on fire today"
+        negative: "Fast resolution takes a synchronised team. Try out <a target='_blank' href='https://freshdesk.com/team-huddle'>Team Huddle</a>"
+        neutral: ''
+        display_text: Average resolution time
+      d7:
+        positive: "Tickets are assigned as quick as a flash around here!"
+        negative: "Having trouble delegating tasks? Dispatch'r rules can help auto-assign "
+        neutral: ''
+        display_text: Average first assign time
+      d8:
+        positive: "Nice work creating great first impressions!"
+        negative: "Do you need to refine your first response SLA?"
+        neutral: ''
+        display_text: First Response SLA
+      d9:
+        positive: "Your team is meeting SLAs left, right and centre!"
+        negative: "Is your team feeling overwhelmed today? Consider adjusting your SLAs"
+        neutral: ''
+        display_text: Resolution SLA
+      d10:
+        positive: "<span class='metric-value'>%{count} out of %{total} </span> agents in <span class='metric-title'>%{group}</span> are super responsive!"
+        negative: "<span class='metric-value'>%{count} out of %{total} </span> agents in <span class='metric-title'>%{group}</span> need to respond quicker!"
+        neutral: "<span class='metric-value'>Compare Agents </span> <span class='metric-title'>( in %{group} )</span>"
+        display_text: Compare agents based on their average first response time
+      d11:
+        positive: "<span class='metric-value'>%{group1}</span> has better average first response time than <span class='metric-value'>%{group2}</span>"
+        negative: "<span class='metric-value'>%{group2}</span> has better average first response time than <span class='metric-value'>%{group1}</span>"
+        neutral: "<span class='metric-value'>Compare Two Groups</span>"
+        display_text: Compare two groups based on their average first response time
     bucket:
       less_than_fifteen_mins: < 15 mins
       fifteen_to_thirty_mins: 15-30 mins
@@ -11032,7 +11141,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     desktop_notifications_disabled: You've disabled desktop notifications
     toggle_mobile_notifications: Toggle mobile notifications
     toggle_web_notifications: Toggle web notifications
-    silent_notifications: Silent notifications
+    muted: Muted
+    mute: Mute
   trial_plan_downgrade: "Important: You are currently downgrading from %{plan_from} plan to %{plan_to} plan"
   discounted_sum: "After Discount"
   selecting_plan: "Selecting..."
