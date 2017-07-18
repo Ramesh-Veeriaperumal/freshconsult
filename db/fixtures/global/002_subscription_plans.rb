@@ -286,7 +286,7 @@ unless Account.current
 									ticket_templates, round_robin_load_balancing ]
 
 	estate_addons  = [custom_mailbox, whitelisted_ips, call_center_advanced, skill_based_round_robin]
-	garden_addons  = all_addons - [ multiple_business_hours, custom_domain, custom_slas, custom_surveys, ticket_templates ]
+	garden_addons  = all_addons + [shared_ownership_toggle] - [ multiple_business_hours, custom_domain, custom_slas, custom_surveys, ticket_templates ]
 	blossom_addons = all_addons + [link_tickets_toggle, parent_child_tickets_toggle] - [ custom_domain ]
 
 	estate_17_addons  = estate_addons

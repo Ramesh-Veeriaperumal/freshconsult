@@ -23,7 +23,7 @@ module TicketValidationMethods
   end
 
   def close_validation_enabled?
-    get_others_redis_key(CLOSE_VALIDATION) || current_account.launched?(:close_validation)
+    current_account.launched?(:close_validation)
   end
 
   def valid_ticket? ticket

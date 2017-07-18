@@ -1,4 +1,5 @@
 //= require report/daterangepicker.jQuery
+//= require frameworks/velocity.min.js
 //= require frameworks/plugins/dataTables.scrollButtons.js
 //= require frameworks/plugins/dataTable.fixedHeaderCustom.js
 //= require helpdesk_reports/highcharts/tooltip_issue
@@ -12,3 +13,6 @@
 //= require app/kissmetrics
 //= require helpdesk_reports/helpdeskreports
 //= require helpdesk_reports/helpdeskreports_metrics
+//= require helpdesk_reports/qna/qna_util
+//= require helpdesk_reports/reports_home
+//= require helpdesk_reports/qna/json_tester.js

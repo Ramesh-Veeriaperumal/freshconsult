@@ -6,7 +6,7 @@ module Helpdesk::Email::Constants
 	NO_OF_RANDOM_S3_PREFIX = 32
 
 
-	EMAIL_PROCESSING_STATE = { :in_process => 0, :finished => 1, :archived => 2, :failed => 3 }
+	EMAIL_PROCESSING_STATE = { :in_process => 0, :finished => 1, :archived => 2, :processing_failed => 3, :archive_failed =>4, :permanent_failed =>5 }
 	PROCESSING_TIMEOUT = Helpdesk::EMAIL[:processing_timeout] # should be same as visibility timeout , move to place where visibilty timeout is set
 
 	DBTYPE = { :primary => :primary , :archive => :archive, :failed => :failed }
@@ -47,5 +47,8 @@ module Helpdesk::Email::Constants
 
 	TRUNCATE_CONTENT = [:text, :html]
 	TRUNCATE_SIZE = 500.kilobyte
+
+	RETRY_FAILED_MESSAGE_PATH = "retry_failed_messages"
+	PERMANENT_FAILED_MESSAGE_PATH = "dead_failed_messages"
 
 end

@@ -122,6 +122,27 @@ class Helpdesk::EmailParser::ProcessedPart
 		self.attachments = processed_attachment.attachments if processed_attachment.attachments.present?
 	end
 
+	def find_atachment_file_name_from_headers
+		filename = ""
+		if(part.header[:content_type].present?)
+			filename = find_file_name_from_content_type
+		end
+		if(!filename.present? && part.header[:content_disposition].present?)
+			filename = find_file_name_from_content_disposition
+		end
+		filename
+	end
+
+	def find_file_name_from_content_type
+		part.header[:content_type].value =~/name=\"(.+)\"/
+		$1
+	end
+
+	def find_file_name_from_content_disposition
+		part.header[:content_disposition].value =~/name=\"(.+)\"/
+		$1
+	end
+
 	def fetch_known_attachment_from_part
 		if(part.content_transfer_encoding && ["UUENCODE", "X-UUENCODE"].include?(part.content_transfer_encoding.upcase))
       		lines = /begin \d\d\d (.*)\r\nend/m.match(part.raw_source)[1].split(/[\r\n]+/)
@@ -135,9 +156,14 @@ class Helpdesk::EmailParser::ProcessedPart
     	if part.filename.present?
     		filename = part.filename.strip
     	else
-    		extension = Rack::Mime::MIME_TYPES.invert[part.mime_type].to_s
-    		extension = ".eml" if extension.downcase == '.mime'
-    		filename = ('attachment' + extension )
+    		filename_from_headers = find_atachment_file_name_from_headers
+    		if filename_from_headers.present?
+    			filename = filename_from_headers
+    		else
+	    		extension = Rack::Mime::MIME_TYPES.invert[part.mime_type].to_s
+	    		extension = ".eml" if extension.downcase == '.mime'
+	    		filename = ('attachment' + extension )
+	    	end
     	end
 
     	attachment.original_filename = filename

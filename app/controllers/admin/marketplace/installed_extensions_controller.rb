@@ -43,7 +43,7 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
   def install
     install_ext = install_extension(install_params(params[:configs]))
     flash[:notice] = t('marketplace.install_action.success') if install_ext.status == 200
-    render :nothing => true, :status => install_ext.status
+    render :json => install_ext.body, :status => install_ext.status
   end
 
   def oauth_configs
@@ -89,7 +89,7 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
 
   def uninstall
     uninstall_ext = uninstall_extension(uninstall_params)
-    render :nothing => true, :status => uninstall_ext.status
+    render :json => uninstall_ext.body, :status => uninstall_ext.status
   end
 
   def enable
@@ -121,7 +121,7 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
   def update_ext(update_ext_params)
     update_ext = update_extension(update_ext_params)
     flash[:notice] = t('marketplace.update_action.success') if update_ext.status == 200
-    render :nothing => true, :status => update_ext.status
+    render :json => update_ext.body, :status => update_ext.status
   end
 
   def oauth_handshake(callback, is_reauthorize = false)

@@ -39,7 +39,7 @@ namespace :delayedjobs_watcher do
         )
 
         FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil, {
-          :subject => "#{queue} #{DELAYED_JOBS_MSG} #{failed_jobs_count} failed jobs" 
+          :subject => "#{queue} #{DELAYED_JOBS_MSG} #{failed_jobs_count} failed jobs in #{PodConfig['CURRENT_POD']}"
         }) if failed_jobs_count >= config["failed"]
 
         #For every 5 hours we will init the alert
@@ -54,15 +54,17 @@ namespace :delayedjobs_watcher do
       end
     end
 
-    desc "Monitoring growing queue of delayed jobs"
+    desc "Monitoring growing queue of enqueued jobs"
     task :total_jobs => :environment do
       DELAYED_JOB_QUEUES.each do |queue,config|
 
         queue = queue.capitalize
-        total_jobs_count = Object.const_get("#{queue}::Job").count
+        total_jobs_count = Object.const_get("#{queue}::Job").count(
+          :conditions => ["created_at = run_at and attempts=0"]
+        )
     
         FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil, {
-          :subject => "#{queue} #{DELAYED_JOBS_MSG} #{total_jobs_count} jobs are in queue" 
+          :subject => "#{queue} #{DELAYED_JOBS_MSG} #{total_jobs_count} enqueued jobs are in queue in #{PodConfig['CURRENT_POD']}" 
         }) if total_jobs_count >= config["total"]
 
         #For every 5 hours we will init the alert
@@ -70,12 +72,54 @@ namespace :delayedjobs_watcher do
           $redis_others.perform_redis_op("get", "#{queue.upcase}_TOTAL_JOBS_ALERTED").blank?
 
           Monitoring::PagerDuty.trigger_incident("delayed_jobs/#{Time.now}",{
-            :description => "#{queue} #{DELAYED_JOBS_MSG} #{total_jobs_count} jobs are in queue"
+            :description => "#{queue} #{DELAYED_JOBS_MSG} #{total_jobs_count} enqueued jobs are in queue"
           })
           $redis_others.perform_redis_op("setex", "#{queue.upcase}_TOTAL_JOBS_ALERTED", PAGER_DUTY_FREQUENCY_SECS, true)
         end
       end
     end
+    
+    desc "Monitoring growing queue of scheduled jobs"
+    task :scheduled_jobs => :environment do
+      DELAYED_JOB_QUEUES.each do |queue,config|
+
+        queue = queue.capitalize
+        total_jobs_count = Object.const_get("#{queue}::Job").count(
+          :conditions => ["created_at != run_at and attempts=0"]
+        )
+    
+        FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil, {
+          :subject => "#{queue} #{DELAYED_JOBS_MSG} #{total_jobs_count} scheduled jobs are in queue in #{PodConfig['CURRENT_POD']}" 
+        }) if total_jobs_count >= config["total"]
+
+        #For every 5 hours we will init the alert
+        if config["pg_duty_total"]  <= total_jobs_count and 
+          $redis_others.perform_redis_op("get", "#{queue.upcase}_TOTAL_JOBS_ALERTED").blank?
+
+          Monitoring::PagerDuty.trigger_incident("delayed_jobs/#{Time.now}",{
+            :description => "#{queue} #{DELAYED_JOBS_MSG} #{total_jobs_count} scheduled jobs are in queue"
+          })
+          $redis_others.perform_redis_op("setex", "#{queue.upcase}_TOTAL_JOBS_ALERTED", PAGER_DUTY_FREQUENCY_SECS, true)
+        end
+      end
+    end
+
+  desc "Moving the jobs delayed jobs to backup queue."
+  task :move_delayed_jobs => :environment do
+     count = Delayed::Job.count
+     total = 0
+     while count > 250 do
+       ActiveRecord::Base.connection.execute('UPDATE delayed_jobs SET run_at= NOW() + INTERVAL 1 WEEK ORDER BY ID LIMIT 500;')
+       ActiveRecord::Base.connection.execute('INSERT INTO delayed_jobs3 SELECT * FROM delayed_jobs WHERE run_at > NOW() + INTERVAL 5 DAY ORDER BY ID LIMIT 500;')
+       ActiveRecord::Base.connection.execute('DELETE FROM delayed_jobs WHERE run_at > NOW() + INTERVAL 5 DAY ORDER BY ID LIMIT 500;')
+       total += (count > 500 ? 500 : count)
+       count = Delayed::Job.count
+    end
+    FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil, {
+         :subject => "Moved #{total} delayed jobs to backup queue in #{PodConfig['CURRENT_POD']}"
+       }) if total > 0    
+  end
+
 end
 
 namespace :resque_watcher do 
@@ -84,7 +128,7 @@ namespace :resque_watcher do
 
         failed_jobs_count = Resque::Failure.count
         FreshdeskErrorsMailer.error_email(nil, nil, nil,
-            {  :subject => "Resque needs your attention #{failed_jobs_count} failed jobs" }
+            {  :subject => "Resque needs your attention #{failed_jobs_count} failed jobs in #{PodConfig['CURRENT_POD']}" }
         ) if failed_jobs_count >= FAILED_RESQUE_JOBS_THRESHOLD
 
     end
