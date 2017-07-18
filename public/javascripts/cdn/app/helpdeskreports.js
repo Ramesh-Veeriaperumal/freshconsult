@@ -1,5 +1,4 @@
 //= require report/daterangepicker.jQuery
-//= require frameworks/velocity.min.js
 //= require frameworks/plugins/dataTables.scrollButtons.js
 //= require frameworks/plugins/dataTable.fixedHeaderCustom.js
 //= require helpdesk_reports/highcharts/tooltip_issue
