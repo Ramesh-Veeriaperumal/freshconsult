@@ -1377,7 +1377,7 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/conversation_template"
+              "$ref": "#/definitions/conversation_forward_template"
             }
           },
           "400": {
@@ -1404,7 +1404,7 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/conversation_template"
+              "$ref": "#/definitions/conversation_forward_template"
             }
           },
           "400": {
@@ -1607,7 +1607,7 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/conversation_template"
+              "$ref": "#/definitions/conversation_forward_template"
             }
           },
           "400": {
@@ -4718,36 +4718,49 @@
     "conversation_template": {
       "type": "object",
       "properties": {
-        "data": {
-          "type": "object",
+        "bcc_emails": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cc_emails": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "template": {
+          "type": "string",
+          "format": "HTML"
+        },
+        "quoted_text": {
+          "type": "string",
+          "format": "HTML"
+        },
+        "signature": {
+          "type": "string",
+          "format": "HTML"
+        }
+      }
+    },
+    "conversation_forward_template": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/conversation_template"
+        },
+        {
           "properties": {
-            "bcc_emails": {
+            "attachments": {
               "type": "array",
               "items": {
-                "type": "string"
+                "$ref": "#/definitions/attachment"
               }
-            },
-            "cc_emails": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "template": {
-              "type": "string",
-              "format": "HTML"
-            },
-            "quoted_text": {
-              "type": "string",
-              "format": "HTML"
-            },
-            "signature": {
-              "type": "string",
-              "format": "HTML"
             }
           }
         }
-      }
+      ]
     },
     "note_reply_to_forward_input": {
       "type": "object",

@@ -33,6 +33,9 @@ module Redis::RedisKeys
 	API_THROTTLER_V2 = "API_THROTTLER_V2:%{account_id}"
 	ACCOUNT_API_LIMIT = "ACCOUNT_API_LIMIT:%{account_id}"
 	DEFAULT_API_LIMIT = "DEFAULT_API_LIMIT"
+  PRIVATE_API_THROTTLER = 'PRIVATE_API_THROTTLER:%{account_id}'.freeze
+  ACCOUNT_PRIVATE_API_LIMIT = 'ACCOUNT_PRIVATE_API_LIMIT:%{account_id}'.freeze
+  DEFAULT_PRIVATE_API_LIMIT = 'DEFAULT_PRIVATE_API_LIMIT'.freeze
 	TAG_BASED_ARTICLE_SEARCH = "TAG_BASED_ARTICLE_SEARCH"
 	PLAN_API_LIMIT = "PLAN_API_LIMIT:%{plan_id}"
 	WEBHOOK_THROTTLER = "WEBHOOK_THROTTLER:%{account_id}"
@@ -334,12 +337,8 @@ module Redis::RedisKeys
   SPAM_FILTERED_NOTIFICATIONS = "SPAM_FILTERED_NOTIFICATIONS"
   HAPROXY_IP_BLACKLIST_KEY = "HAPROXY_IP_BLACKLIST_KEY"
   HAPROXY_IP_BLACKLIST_CHANNEL = "HAPROXY_IP_BLACKLIST_CHANNEL"
-
-
   #JWT api keys
   JWT_API_JTI = "JWT:%{account_id}:%{user_id}:%{jti}"
-
-
   ZENDESK_IMPORT_APP_KEY = "ZENDESK_IMPORT_APP"
 
 	def newrelic_begin_rescue
@@ -351,128 +350,8 @@ module Redis::RedisKeys
 		end
 	end
 
-	# def increment(key)
-	# 	newrelic_begin_rescue { $redis.INCR(key) }
-	# end
-
-	# def get_key(key)
-	# 	newrelic_begin_rescue { $redis.get(key) }
-	# end
-
-	# def remove_key(key)
-	# 	newrelic_begin_rescue { $redis.del(key) }
-	# end
-
-	# def set_key(key, value, expires = 86400)
-	# 	newrelic_begin_rescue do
-	# 		$redis.set(key, value)
-	# 		$redis.expire(key,expires) if expires
-	#   end
-	# end
-
-	# def set_expiry(key, expires)
-	# 	newrelic_begin_rescue do
-	# 		$redis.expire(key, expires)
-	# 	end
-	# end
-
-	# def get_expiry(key)
-	# 	newrelic_begin_rescue { $redis.ttl(key) }
-	# end
-
-	# def add_to_set(key, values, expires = 86400)
-	# 	newrelic_begin_rescue do
-	# 		if values.respond_to?(:each)
-	# 			values.each do |val|
-	# 				$redis.sadd(key, val)
-	# 			end
-	# 		else
-	# 			$redis.sadd(key, values)
-	# 		end
-	# 		# $redis.expire(key,expires) if expires
-	#   end
-	# end
-
-	# def remove_value_from_set(key, value)
-	# 	newrelic_begin_rescue { $redis.srem(key, value) }
-	# end
-
 	def set_members(key)
 		newrelic_begin_rescue { $redis.smembers(key) }
 	end
-
-	# def list_push(key,values,direction = 'right', expires = 3600)
-	# 	newrelic_begin_rescue do
-	# 		command = direction == 'right' ? 'rpush' : 'lpush'
-	# 		unless values.class == Array
-	# 			$redis.send(command, key, values)
-	# 		else
-	# 			values.each do |val|
-	# 				$redis.send(command, key, val)
-	# 			end
-	# 		end
-	# 		$redis.expire(key,expires) if expires
-	#   end
-	# end
-
-	# def list_pull(key,direction = 'left')
-	# 	newrelic_begin_rescue do
-	# 		command = direction == 'right' ? 'rpull' : 'lpull'
-	# 		$redis.send(command, key)
-	#   end
-	# end
-
-	# def list_members(key)
-	# 	count = 0
- #    tries = 3
- #    begin
-	# 		length = $redis.llen(key)
-	# 		$redis.lrange(key,0,length - 1)
-	#   rescue Exception => e
-	#   	NewRelic::Agent.notice_error(e,{:key => key,
- #        :value => length,
- #        :description => "Redis issue",
- #        :count => count})
- #      if count<tries
- #          count += 1
- #          retry
- #      end
-	#   end
-	# end
-
-	# def exists(key)
-	# 	begin
-	# 		$redis.exists(key)
-	# 	rescue Exception => e
- #        	NewRelic::Agent.notice_error(e)
- #    	end
-	# end
-
-	# def array_of_keys(pattern)
-	# 	begin
-	# 		$redis.keys(pattern)
-	# 	rescue Exception => e
- #        	NewRelic::Agent.notice_error(e)
- #    	end
-	# end
-
-	# def publish_to_channel channel, message
-	# 	newrelic_begin_rescue do
-	#   	return $redis.publish(channel, message)
-	#   end
-	# end
-
-	# def add_to_hash(hash, key, value, expires = 86400)
-	# 	newrelic_begin_rescue do
-	# 		$redis.hset(hash, key, value)
-	# 		# $redis.expire(hash, expires)
-	#   end
-	# end
-
-	# def get_hash_value(hash, key)
-	# 	newrelic_begin_rescue do
-	# 		$redis.hget(hash, key)
-	#   end
-	# end
 
 end

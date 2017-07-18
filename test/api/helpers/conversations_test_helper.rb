@@ -150,6 +150,10 @@ module ConversationsTestHelper
     conversation_template_pattern(expected_output).merge(cc_emails: Array)
   end
 
+  def forward_template_pattern(expected_output)
+    reply_template_pattern(expected_output).merge(attachments: Array)
+  end
+
   def reply_to_forward_template_pattern(expected_output)
     conversation_template_pattern(expected_output).merge(cc_emails: Array, to_emails: Array)
   end

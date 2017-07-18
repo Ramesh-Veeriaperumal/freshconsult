@@ -140,9 +140,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
       request_object.build_request
       requests << request_object
     end
-
-    response = bulk_request requests
-    
+    response = bulk_request(requests, true)
     @results = []
     response.each do |res|
       if res["last_dump_time"]
