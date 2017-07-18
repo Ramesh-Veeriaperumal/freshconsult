@@ -14,6 +14,7 @@ class SendgridDomainUpdates < BaseWorker
   sidekiq_options :queue => :sendgrid_domain_updates, :retry => 3, :backtrace => true, :failures => :exhausted
 
   def perform(args)
+    sleep(5)
     return if Rails.env.development?
     begin 
       unless args['action'].blank?
@@ -71,12 +72,16 @@ class SendgridDomainUpdates < BaseWorker
         begin
           signup_params["api_response"] = Email::AntiSpam.scan(signup_params, Account.current.id, account.helpdesk_name, account.full_domain)
           mask_new_response signup_params["api_response"]
-          signup_params["api_response"]["status"] = -1 if (signup_params["api_response"].present? && !signup_params["api_response"]["status"].present?)
+          signup_params["api_response"]["status"] = -1 if (signup_params["api_response"].blank? || signup_params["api_response"]["status"].blank?)
           save_account_sign_up_params(Account.current.id, signup_params)
           Rails.logger.info "Response by EmailServ account validate account - #{account.id} ::: email - #{signup_params["account_details"]["email"]} ::: ip - #{signup_params["account_details"]["source_ip"]} ::: status - #{signup_params["api_response"]["status"]} ::: reason - #{signup_params["api_response"]["reason"].to_a.to_sentence} "
         rescue => e
           Rails.logger.error "Error while processing Ehawk Email Verifier \n#{e.message}\n#{e.backtrace.join("\n\t")}"
+        else
+          Rails.logger.error "No signup params received for Account ID: #{account.id}"
         end
+      else
+          Rails.logger.info "Account - #{account.id} , account_details not found"
       end
         
       if signup_params["api_response"] && signup_params["api_response"]["status"] == 5
@@ -142,7 +147,7 @@ class SendgridDomainUpdates < BaseWorker
   def notify_spam_account_detection(account, additional_info)
     FreshdeskErrorsMailer.error_email(nil, {:domain_name => account.full_domain}, nil, {
             :subject => "Detected suspicious spam account :#{account.id} ", 
-            :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com"],
+            :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com", "helpdesk@noc-alerts.freshservice.com"],
             :additional_info => {:info => additional_info}
           })
   end

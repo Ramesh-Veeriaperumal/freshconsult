@@ -64,6 +64,10 @@ module ApplicationHelper
     "#{asset_host_url}/assets/misc/spacer.gif"
   end
 
+  def redirect_falcon_path
+    FalconRedirection.falcon_redirection_path(request.path_info)
+  end
+
   def trial_expiry_title(trial_days)
     if trial_days == 0
       t('trial_one_more_day').html_safe

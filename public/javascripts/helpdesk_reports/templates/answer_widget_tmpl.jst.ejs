@@ -1,0 +1,55 @@
+  <% if(ans.show_empty_screen) { %>
+    <div class="message_container">
+  <div class="message">
+    <%= I18n.t('helpdesk_reports.qna.empty_message') %>
+  </div>
+  <div class="info">
+    (<%= I18n.t('helpdesk_reports.qna.empty_message_info') %>)
+  </div>
+</div>
+  <% } else { %>
+    <div class="answer-preview" >
+      <div class="left-part pull-left">
+          <div class="profile-img pull-left">
+              <% if(ans.show_pic){ %>
+                  <%= ans.pic_markup %>
+              <% } %>
+          </div>
+          <div class="stat pull-left"><%= ans.val1 %></div>
+          <div class="clear"></div>
+      </div>
+      <div class="right-part pull-left">
+              <div class="title" rel="title"><%= ans.title %></div>
+              <div class="details">
+                      <% if(ans.variance){ %>
+                          <% if (ans.variance.direction == 1) { %>
+                              <i class="ficon-caret-up <%= ans.variance.status %>"></i>
+                          <% } else if (ans.variance.direction == 0) { %>
+                              <i class="ficon-caret-down <%= ans.variance.status %>"></i>
+                          <% } else { %>
+                              <i class="ficon-no_change <%= ans.variance.status %>"></i>
+                          <% } %>
+                      <% } %>
+                      <% if( false){ %>
+                          <div class="preview_pic circle avatar-text text-center thumb bg-6">J</div>
+                      <% } %>
+                      <div class="value"> <%= ans.val2 %></div>
+              </div>
+      </div>
+      <div class="clear"></div>
+    </div>
+  <% } %>
+  <% if (HelpdeskReports.locals.is_trail_account && ans.show_empty_screen) { %>
+    <div class="dot_seperator">
+      
+    </div>
+    <div class="sample_container">
+      <div class="sample_message">
+        <%= I18n.t('helpdesk_reports.qna.sample_text') %>
+      </div>
+      <div class="sample_image">
+        <img src="/assets/qna/type-<%= ans.q_type %>.svg" alt="">
+      </div>
+    </div>
+  <% } %>
+  

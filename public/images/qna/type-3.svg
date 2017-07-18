@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="370" height="70" viewBox="0 0 370 70">
+    <defs>
+        <rect id="a" width="370" height="70" rx="4"/>
+    </defs>
+    <g fill="none" fill-rule="evenodd">
+        <g>
+            <use fill="#FFF" xlink:href="#a"/>
+            <rect width="369" height="69" x=".5" y=".5" stroke="#DDD" rx="4"/>
+        </g>
+        <text fill="#006064" font-family="HelveticaNeue, Helvetica Neue" font-size="24">
+            <tspan x="21" y="42">Freshworks Inc.</tspan>
+        </text>
+        <path stroke="#DDD" d="M210 10v50"/>
+        <g fill="#666">
+            <text font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="20" font-weight="400" transform="translate(227 13)">
+                <tspan x="0" y="40">23 Tickets</tspan>
+            </text>
+            <text font-family="HelveticaNeue, Helvetica Neue" font-size="13" transform="translate(227 13)">
+                <tspan x="0" y="12">Unresolved tickets</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

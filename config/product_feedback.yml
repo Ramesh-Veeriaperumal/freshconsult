@@ -1,2 +1,6 @@
 development: 
-    api_key: "dummy-api-key"
+  api_key: "dummy-api-key"
+staging: 
+  api_key: "dummy-api-key"
+production: 
+  api_key: "dummy-api-key"

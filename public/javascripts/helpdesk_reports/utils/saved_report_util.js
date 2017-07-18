@@ -113,7 +113,7 @@ HelpdeskReports.SavedReportUtil = (function() {
 	    	//Saved Reports
 	        jQuery(document).on('click.save_reports',"#report-dialog-save-submit",function() {  
 
-	        	var field_val = Helpkit.ScheduleUtil.stripTags(jQuery("#filter_name_save").val().trim());   
+	        	var field_val = Helpkit.ScheduleUtil.stripTags(jQuery("#filter_name_save").val().trim()) || "";   
 	         	if(field_val == "") {
 	            	jQuery("#report-dialog-save .missing_field").removeClass('hide');
 	            	jQuery("#report-dialog-save .unavailable_field").addClass('hide');

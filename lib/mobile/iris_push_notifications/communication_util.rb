@@ -13,9 +13,9 @@ module Mobile::IrisPushNotifications::CommunicationUtil
         timeout: 10
       }
       response = HTTParty.post(host, options)
-      raise "IRISAPIException" if response.nil? || ERROR_CODES.include?(response.code)
+      raise "IRISAPIException: Response Code: #{response.code}" if response.nil? || ERROR_CODES.include?(response.code)
       rescue Exception => e
+        Rails.logger.error "IRISAPIException #{e} data: #{data}"
         NewRelic::Agent.notice_error(e)
-        raise "IrisApiError"
     end
 end

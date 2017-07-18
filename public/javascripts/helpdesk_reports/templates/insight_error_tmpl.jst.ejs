@@ -1,0 +1,8 @@
+<div class="no-outliers network_error %>">
+    <div class="message">
+      <%= error.message %>
+    </div>
+    <% if(error.code == 551) { %>
+      <div class="help-text"><%= I18n.t('helpdesk_reports.insights.sys_error_help') %></div>
+    <% } %>
+</div>
