@@ -11,6 +11,12 @@ module Ember
       include ForumsTestHelper
       include SolutionsTestHelper
 
+      def setup
+        super
+        $redis_others.perform_redis_op("set", "ARTICLE_SPAM_REGEX","(gmail|kindle|face.?book|apple|microsoft|google|aol|hotmail|aim|mozilla|quickbooks|norton).*(support|phone|number)")
+        $redis_others.perform_redis_op("set", "PHONE_NUMBER_SPAM_REGEX", "(1|I)..?8(1|I)8..?85(0|O)..?78(0|O)6|(1|I)..?877..?345..?3847|(1|I)..?877..?37(0|O)..?3(1|I)89|(1|I)..?8(0|O)(0|O)..?79(0|O)..?9(1|I)86|(1|I)..?8(0|O)(0|O)..?436..?(0|O)259|(1|I)..?8(0|O)(0|O)..?969..?(1|I)649|(1|I)..?844..?922..?7448|(1|I)..?8(0|O)(0|O)..?75(0|O)..?6584|(1|I)..?8(0|O)(0|O)..?6(0|O)4..?(1|I)88(0|O)|(1|I)..?877..?242..?364(1|I)|(1|I)..?844..?782..?8(0|O)96|(1|I)..?844..?895..?(0|O)4(1|I)(0|O)|(1|I)..?844..?2(0|O)4..?9294|(1|I)..?8(0|O)(0|O)..?2(1|I)3..?2(1|I)7(1|I)|(1|I)..?855..?58(0|O)..?(1|I)8(0|O)8|(1|I)..?877..?424..?6647|(1|I)..?877..?37(0|O)..?3(1|I)89|(1|I)..?844..?83(0|O)..?8555|(1|I)..?8(0|O)(0|O)..?6(1|I)(1|I)..?5(0|O)(0|O)7|(1|I)..?8(0|O)(0|O)..?584..?46(1|I)(1|I)|(1|I)..?844..?389..?5696|(1|I)..?844..?483..?(0|O)332|(1|I)..?844..?78(0|O)..?675(1|I)|(1|I)..?8(0|O)(0|O)..?596..?(1|I)(0|O)65|(1|I)..?888..?573..?5222|(1|I)..?855..?4(0|O)9..?(1|I)555|(1|I)..?844..?436..?(1|I)893|(1|I)..?8(0|O)(0|O)..?89(1|I)..?4(0|O)(0|O)8|(1|I)..?855..?662..?4436")
+      end
+
       PAGE_LIMIT = 30
       PER_PAGE = 20
       def test_activities_create_ticket
@@ -20,7 +26,6 @@ module Ember
         get :index, controller_params(version: 'private')
         assert_response 200
         assert_equal(expected, JSON.parse(@response.body)[0])
-        clean_up(ticket, requester)
       end
 
       def test_activities_add_note
@@ -33,7 +38,6 @@ module Ember
         get :index, controller_params(version: 'private')
         assert_response 200
         assert_equal(expected, JSON.parse(@response.body)[0])
-        clean_up(@agent, ticket, requester)
       end
 
       def test_activities_add_forum_category
@@ -44,7 +48,6 @@ module Ember
         get :index, controller_params(version: 'private')
         assert_response 200
         assert_equal(expected, JSON.parse(@response.body)[0])
-        clean_up(forum_category)
       end
 
       def test_activities_add_forum
@@ -55,7 +58,6 @@ module Ember
         get :index, controller_params(version: 'private')
         assert_response 200
         assert_equal(expected, JSON.parse(@response.body)[0])
-        clean_up(forum, forum_category)
       end
 
       def test_activities_add_topic
@@ -67,7 +69,6 @@ module Ember
         get :index, controller_params(version: 'private')
         assert_response 200
         assert_equal(expected, JSON.parse(@response.body)[0])
-        clean_up(topic, forum, forum_category)
       end
 
       def test_activities_with_no_params
@@ -80,10 +81,6 @@ module Ember
         get :index, controller_params(version: 'private')
         assert_response 200
         assert_equal(PAGE_LIMIT, JSON.parse(@response.body).count)
-        tickets.each do |ticket|
-          ticket.destroy
-        end
-        clean_up(@agent, requester)
       end
 
       def test_activities_with_page_params
@@ -96,11 +93,7 @@ module Ember
         end
         get :index, controller_params({version: 'private', page: 2})
         assert_response 200
-        assert_equal(target_activity.id, JSON.parse(@response.body)[0]["id"])
-        tickets.each do |ticket|
-          ticket.destroy
-        end
-        clean_up(@agent, requester)
+        assert_equal(target_activity.id, JSON.parse(@response.body)[0]['id'])
       end
 
       def test_activities_with_per_page_params
@@ -113,10 +106,6 @@ module Ember
         get :index, controller_params({version: 'private', per_page: PER_PAGE})
         assert_response 200
         assert_equal(PER_PAGE, JSON.parse(@response.body).count)
-        tickets.each do |ticket|
-          ticket.destroy
-        end
-        clean_up(@agent, requester)
       end
 
       def test_activities_with_page_and_per_page_params
@@ -129,10 +118,6 @@ module Ember
         get :index, controller_params({version: 'private', page: 2, per_page: PER_PAGE})
         assert_response 200
         assert_equal(PER_PAGE, JSON.parse(@response.body).count)
-        tickets.each do |ticket|
-          ticket.destroy
-        end
-        clean_up(@agent, requester)
       end
 
       def test_activities_with_before_id
@@ -145,7 +130,6 @@ module Ember
         get :index, controller_params({version: 'private', before_id: last_activity.id})
         assert_response 200
         assert_equal(expected, JSON.parse(@response.body)[0])
-        clean_up(@agent, ticket, requester)
       end
 
       def test_activities_with_page_and_before_id
@@ -159,7 +143,6 @@ module Ember
         get :index, controller_params({version: 'private', page: 1, before_id: last_activity.id})
         assert_response 200
         assert_equal(PAGE_LIMIT, JSON.parse(@response.body).count)
-        clean_up(@agent, ticket, requester)
       end
 
       def test_activities_with_page_per_page_and_before_id
@@ -173,7 +156,6 @@ module Ember
         get :index, controller_params({version: 'private', page: 1, per_page: PER_PAGE, before_id: last_activity.id})
         assert_response 200
         assert_equal(PER_PAGE, JSON.parse(@response.body).count)
-        clean_up(@agent, ticket, requester)
       end
 
       def test_activities_with_since_id
@@ -192,7 +174,6 @@ module Ember
         get :index, controller_params({version: 'private', since_id: since_id})
         assert_response 200
         assert_equal(expected, JSON.parse(@response.body)[2])
-        clean_up(@agent, ticket, requester)
       end
 
       def test_activities_with_since_id_and_before_id
@@ -242,12 +223,6 @@ module Ember
         forum_category = create_test_category
         forum = create_test_forum(forum_category)
         [forum_category, forum]
-      end
-
-      def clean_up(*args)
-        args.each do |arg|
-          arg.destroy
-        end
       end
 
       def last_activity
