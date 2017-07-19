@@ -7,7 +7,7 @@ module Ember
     include ContactsCompaniesConcern
     decorate_views
 
-    around_filter :run_on_slave, only: [:activities]
+    around_filter :run_on_slave, only: [:index, :activities]
     before_filter :can_change_password?, :validate_password_change, only: [:update_password]
 
     def create
