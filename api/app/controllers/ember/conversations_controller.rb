@@ -112,8 +112,9 @@ module Ember
       @item = last_forwardable_note if action_name.to_sym == :latest_note_forward_template
       @agent_signature = signature
       @content = template_content
-      @quoted_text = quoted_text(@item || @ticket, %i[forward_template note_forward_template latest_note_forward_template].include?(action_name.to_sym))
+      @quoted_text = quoted_text(@item || @ticket, forward_template?)
       fetch_to_cc_bcc_emails
+      fetch_attachments
       render action: :template
     end
 
@@ -124,6 +125,14 @@ module Ember
     alias reply_to_forward_template reply_forward_template
 
     private
+      def fetch_attachments
+        return unless forward_template?
+        @attachments = (@item || @ticket).attachments
+      end
+
+      def forward_template?
+        [:forward_template, :note_forward_template, :latest_note_forward_template].include?(action_name.to_sym)
+      end
 
       def load_conversations
         order_type = params[:order_type]

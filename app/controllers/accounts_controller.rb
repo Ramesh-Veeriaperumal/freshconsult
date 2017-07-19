@@ -341,6 +341,7 @@ class AccountsController < ApplicationController
       begin  
         account_obj[:first_referrer] = params[:first_referrer] if params[:first_referrer].present? 
         account_obj[:first_landing_url] = params[:first_landing_url] if params[:first_landing_url].present?
+        account_obj[:fd_cid] = params[:fd_cid] if params[:fd_cid].present?
         if params[:user]
           account_obj[:email] = params[:user][:email]
           account_obj[:first_name] = params[:user][:first_name]

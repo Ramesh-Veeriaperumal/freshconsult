@@ -112,7 +112,7 @@ module DashboardTestHelper
     if params[:widget]
       options[:include_missing] = false
       options[:limit_option] = UNRESOLVED_TICKETS_WIDGET_ROW_LIMIT
-    elsif instance_variable_get("@#{@group_by.first}").present?
+    elsif instance_variable_get("@#{@group_by.first}").present? || User.current.assigned_ticket_permission
       options[:include_missing] = false
     end
     ticket_counts = ::Dashboard::DataLayer.new(es_enabled,options).aggregated_data

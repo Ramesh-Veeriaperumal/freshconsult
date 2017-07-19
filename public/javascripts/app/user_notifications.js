@@ -33,6 +33,7 @@ window.App = window.App || {};
             this.bindPrefClick();
             this.bindEnableDesktopNotifications();
             this.bindMuteChange();
+            this.identifyTab();
         },
         getJwt: function(done){
             jQuery.get('/notification/user_notification/token', function(result){
@@ -520,10 +521,20 @@ window.App = window.App || {};
         },
         notify: function(id, notification){
             var self = this;
-
-            if(!self.muteState){
+            var muteState = localStorage.getItem('irisMuteState') === 'true' || false
+            if(!muteState && localStorage.getItem('activeIrisTab') === this.tabId){
                 // Play the notification sound
                 $('.user-notification-sound')[0].play();
+            }
+
+            if(muteState !== this.muteState){
+                this.muteState = muteState;
+                $('#mute_notification_sound').prop('checked', this.muteState);
+                if(muteState){
+                    $('#mute_notification_sound').siblings('.toggle-button').addClass('active');
+                } else {
+                    $('#mute_notification_sound').siblings('.toggle-button').removeClass('active');
+                }
             }
 
             // Let's check if the browser supports notifications
@@ -560,11 +571,22 @@ window.App = window.App || {};
                 $('.enable-desktop-notifications-button').addClass('disabled');
             }
         },
+        identifyTab: function(){
+            var self = this;
+            function s4() {
+                return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+            }
+            this.tabId = s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+            this.identifyInterval = setInterval(function(){
+                localStorage.setItem('activeIrisTab', self.tabId);
+            }, 3000);
+        },
         safe: function(str){
             return escapeHtml(str);
         },
         destroy: function () {
             $(document).off('.usernotification');
+            clearInterval(this.identifyInterval);
         }
     };
 }(window.jQuery));

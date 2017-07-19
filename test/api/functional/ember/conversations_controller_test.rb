@@ -1206,7 +1206,7 @@ module Ember
 
       get :forward_template, construct_params({ version: 'private', id: t.display_id }, false)
       assert_response 200
-      match_json(reply_template_pattern(template: '', signature: ''))
+      match_json(forward_template_pattern(template: '', signature: ''))
 
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:present?)
@@ -1222,7 +1222,7 @@ module Ember
 
       get :forward_template, construct_params({ version: 'private', id: t.display_id }, false)
       assert_response 200
-      match_json(reply_template_pattern(template: '',
+      match_json(forward_template_pattern(template: '',
                                         signature: "<div><p>Thanks</p><p>#{t.subject}</p></div>"))
 
       Agent.any_instance.unstub(:signature_value)
@@ -1240,15 +1240,15 @@ module Ember
 
       get :forward_template, construct_params({ version: 'private', id: t.display_id }, false)
       assert_response 200
-      match_json(reply_template_pattern(template: "<div>#{t.display_id}</div>",
+      match_json(forward_template_pattern(template: "<div>#{t.display_id}</div>",
                                         signature: ''))
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_forward_template)
     end
 
-    def test_agent_forward_template_with_signature
+    def test_agent_forward_template_with_signature_and_attachments
       remove_wrap_params
-      t = create_ticket
+      t = create_ticket(attachments: { resource: fixture_file_upload('files/attachment.txt', 'plain/text', :binary) })
       notification_template = '<div>{{ticket.id}}</div>'
       agent_signature = '<div><p>Thanks</p><p>{{ticket.subject}}</p></div>'
 
@@ -1258,7 +1258,7 @@ module Ember
       get :forward_template, construct_params({ version: 'private', id: t.display_id }, false)
       assert_response 200
 
-      match_json(reply_template_pattern(template: "<div>#{t.display_id}</div>",
+      match_json(forward_template_pattern(template: "<div>#{t.display_id}</div>",
                                         signature: "<div><p>Thanks</p><p>#{t.subject}</p></div>"))
 
       Agent.any_instance.unstub(:signature_value)
@@ -1272,20 +1272,20 @@ module Ember
       EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
       get :note_forward_template, controller_params(version: 'private', id: note.id)
       assert_response 200
-      match_json(reply_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: ''))
+      match_json(forward_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: ''))
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_forward_template)
     end
 
-    def test_note_forward_template_with_signature
-      note = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
+    def test_note_forward_template_with_signature_and_attachments
+      note = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2, attachments: { resource: fixture_file_upload('files/attachment.txt', 'plain/text', :binary) })
       notification_template = '<div>{{ticket.id}}</div>'
       agent_signature = '<div><p>Thanks</p><p>{{ticket.subject}}</p></div>'
       Agent.any_instance.stubs(:signature_value).returns(agent_signature)
       EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
       get :note_forward_template, controller_params(version: 'private', id: note.id)
       assert_response 200
-      match_json(reply_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: "<div><p>Thanks</p><p>#{ticket.subject}</p></div>"))
+      match_json(forward_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: "<div><p>Thanks</p><p>#{ticket.subject}</p></div>"))
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_forward_template)
     end
@@ -1296,19 +1296,33 @@ module Ember
       EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
       get :latest_note_forward_template, controller_params(version: 'private', id: ticket.display_id)
       assert_response 200
-      match_json(reply_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: ''))
+      match_json(forward_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: ''))
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_forward_template)
     end
 
-    def test_latest_note_forward_template_with_signature
+    def test_latest_note_forward_template_with_signature_and_attachments
+      note = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2, attachments: { resource: fixture_file_upload('files/attachment.txt', 'plain/text', :binary) })
       notification_template = '<div>{{ticket.id}}</div>'
       agent_signature = '<div><p>Thanks</p><p>{{ticket.subject}}</p></div>'
       Agent.any_instance.stubs(:signature_value).returns(agent_signature)
       EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
       get :latest_note_forward_template, controller_params(version: 'private', id: ticket.display_id)
       assert_response 200
-      match_json(reply_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: "<div><p>Thanks</p><p>#{ticket.subject}</p></div>"))
+      match_json(forward_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: "<div><p>Thanks</p><p>#{ticket.subject}</p></div>"))
+      Agent.any_instance.unstub(:signature_value)
+      EmailNotification.any_instance.unstub(:get_forward_template)
+    end
+
+    def test_latest_note_forward_template_without_conversations
+      t = create_ticket(attachments: { resource: fixture_file_upload('files/attachment.txt', 'plain/text', :binary) })
+      notification_template = '<div>{{ticket.id}}</div>'
+      agent_signature = '<div><p>Thanks</p><p>{{ticket.subject}}</p></div>'
+      Agent.any_instance.stubs(:signature_value).returns(agent_signature)
+      EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
+      get :latest_note_forward_template, controller_params(version: 'private', id: t.display_id)
+      assert_response 200
+      match_json(forward_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: "<div><p>Thanks</p><p>#{ticket.subject}</p></div>"))
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_forward_template)
     end

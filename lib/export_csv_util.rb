@@ -35,7 +35,7 @@ module ExportCsvUtil
     flexi_fields = Account.current.ticket_fields.custom_fields(:include => :flexifield_def_entry)
     csv_headers = Helpdesk::TicketModelExtension.csv_headers 
     #Product entry
-    csv_headers = csv_headers + [ {:label => I18n.t("export_data.fields.product"), :value => "product_name", :selected => false, :type => :field_type} ] if Account.current.has_multiple_products?
+    csv_headers = csv_headers + [ {:label => I18n.t("export_data.fields.product"), :value => "product_name", :selected => false, :type => :field_type} ] if Account.current.multi_product_enabled?
     csv_headers = csv_headers + [{:label => I18n.t("export_data.fields.description"), :value => "description", :selected => false}]
     csv_headers = csv_headers + flexi_fields.collect { |ff| { :label => ff.label, :label_in_portal => ff.label_in_portal, :value => ff.name, :type => ff.field_type, :selected => false, :levels => (ff.nested_levels || []) } }
 
@@ -55,7 +55,7 @@ module ExportCsvUtil
 
     flexi_fields , additional_flexi_fields = split_flexifields(flexi_fields)
 
-    default_csv_headers = default_csv_headers + [ {:label => I18n.t("export_data.fields.product"), :value => "product_name", :selected => false, :type => :field_type} ] if Account.current.has_multiple_products?
+    default_csv_headers = default_csv_headers + [ {:label => I18n.t("export_data.fields.product"), :value => "product_name", :selected => false, :type => :field_type} ] if Account.current.multi_product_enabled?
     default_csv_headers = default_csv_headers + generate_headers(flexi_fields)
 
     additional_csv_headers = [{:label => I18n.t("export_data.fields.description"), :value => "description", :selected => false}]
@@ -77,7 +77,7 @@ module ExportCsvUtil
 
     flexi_fields , additional_flexi_fields = split_flexifields(flexi_fields)
 
-    default_csv_headers = default_csv_headers + [ {:label => I18n.t("export_data.fields.product"), :value => "product_name", :selected => false, :type => :field_type} ] if Account.current.has_multiple_products?
+    default_csv_headers = default_csv_headers + [ {:label => I18n.t("export_data.fields.product"), :value => "product_name", :selected => false, :type => :field_type} ] if Account.current.multi_product_enabled?
     default_csv_headers = default_csv_headers + generate_headers(flexi_fields)
   end
 
@@ -104,7 +104,6 @@ module ExportCsvUtil
   end
 
   def contact_company_export_fields type
-    return [] unless Account.current.ticket_contact_export_enabled?
     default_fields = Helpdesk::TicketModelExtension.customer_fields(type)
     (export_customer_fields(type) + default_fields).map { 
         |f| f[:value] unless ALL_TEXT_FIELDS.include?(f[:type])

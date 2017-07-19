@@ -47,6 +47,8 @@
     $ref: ./request/conversations/twitter_reply.yaml  
   conversation_template:
     $ref: ./resource/conversation_template.yaml
+  conversation_forward_template:
+    $ref: ./resource/conversation_forward_template.yaml
   note_reply_to_forward_input:
     $ref: ./request/conversations/reply_to_forward.yaml
 
