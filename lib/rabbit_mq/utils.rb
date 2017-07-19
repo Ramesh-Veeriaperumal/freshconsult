@@ -56,8 +56,7 @@ module RabbitMq::Utils
           valid = construct_message_for_subscriber(f, message, model, action)
           key = generate_routing_key(key, valid)
         rescue => e
-          NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Publisher payload construct Error",
-                                                        :message => message.to_json, :subscriber => f }})
+          Rails.logger.info "Publisher payload construct Error.. #{e.message}, #{message.to_json}"
         end
       }
       message["routing_key"] = key
@@ -93,8 +92,7 @@ module RabbitMq::Utils
         message["#{model}_properties"].deep_merge!(send("mq_#{f}_#{model}_properties", action))
         message["subscriber_properties"].merge!({ f => send("mq_#{f}_subscriber_properties", action)})
       rescue => e
-        NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Manual Publisher payload construct Error",
-                                                        :message => message.to_json, :subscriber => f }})
+        Rails.logger.info "Manual Publisher payload construct Error.. #{e.message}, #{message.to_json}"
       end
     }
     # Currently need options only for reports, so adding all options directly to reports
