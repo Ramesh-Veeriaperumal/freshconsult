@@ -28,10 +28,10 @@ include ParserUtil
         req.options.timeout = EMAIL_SERVICE_TIMEOUT
         req.body = get_email_data params
       end
-  
+
       if response.status != 200
-        Rails.logger.info "Email sending failed due to : #{response.body}"
-        raise EmailDeliveryError, response.body
+        Rails.logger.info "Email sending failed due to : #{response.body["Message"]}"
+        raise EmailDeliveryError, response.body["Message"]
       end
       Rails.logger.info "Email sent from #{params[:from]} to #{params[:to]}"
   end

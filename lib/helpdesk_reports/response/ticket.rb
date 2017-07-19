@@ -1,7 +1,7 @@
 class HelpdeskReports::Response::Ticket
   include HelpdeskReports::Constants
   
-  attr_accessor :result, :metric, :query_type
+  attr_accessor :result, :metric, :query_type, :report_type
   
   def initialize result, params, query_type, report_type, pdf_export = false
     @result     = result

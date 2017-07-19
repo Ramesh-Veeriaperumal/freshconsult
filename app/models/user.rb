@@ -723,6 +723,9 @@ class User < ActiveRecord::Base
     (email) || (twitter_id.presence) || (external_id) || (unique_external_id) || (name)
   end
 
+  #Used in ticket export api
+  alias_method :contact_id, :get_info
+
   def twitter_style_id
     "@#{twitter_id}"
   end

@@ -17,6 +17,7 @@ var MarketplaceIframeHelper = Class.create({
         popups: true
       }
     });
+    this.sandbox.el.sandbox.add("allow-forms");
     jQuery('#fa_iframe_wrapper').append(this.sandbox.el).find('iframe').height('100%').width('100%');
     this.startListening();
   },
