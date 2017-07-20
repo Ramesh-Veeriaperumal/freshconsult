@@ -6,12 +6,14 @@ class ApplicationController < ActionController::Base
   layout Proc.new { |controller| controller.request.headers['X-PJAX'] ? 'maincontent' : 'application' }
 
   include Concerns::ApplicationConcern
+
   around_filter :select_shard
   
   prepend_before_filter :determine_pod
   before_filter :unset_current_account, :unset_current_portal, :unset_shard_for_payload, :set_current_account, :reset_language
   before_filter :set_shard_for_payload
   before_filter :set_default_locale, :set_locale, :set_msg_id
+  # before_filter :set_ui_preference
   include SslRequirement
   include Authority::FreshdeskRails::ControllerHelpers
   before_filter :freshdesk_form_builder
@@ -57,7 +59,7 @@ class ApplicationController < ActionController::Base
 
   # Will set the request url for pjax to change the state
   def set_pjax_url
-    if request.xhr?
+    if is_ajax?
       response.headers['X-PJAX-URL'] = request.url
     end
   end
@@ -278,6 +280,31 @@ class ApplicationController < ActionController::Base
       end
     end
 
+    def set_ui_preference
+      if current_account.launched?(:falcon) && current_user && current_user.is_falcon_pref?
+        cookies[:falcon_enabled] = true
+        handle_falcon_redirection
+      else
+        cookies[:falcon_enabled] = false
+      end
+    end
+
+    def handle_falcon_redirection
+      options = {
+        request_referer: request.referer,
+        not_html: !request.format.html?,
+        path_info: request.path_info,
+        is_ajax: request.xhr?,
+        env_path: env['PATH_INFO']
+      }
+      result = FalconRedirection.falcon_redirect(options)
+      redirect_to result[:path] if result[:redirect]
+    end
+
+    def is_ajax?
+      request.xhr?
+    end
+
     #Clear rails 2 flash TO DO : Remove once migrated completely to rails 3
     def remove_rails_2_flash_before
       if self.flash and self.flash.class == ActionController::Flash::FlashHash
@@ -311,14 +338,13 @@ class ApplicationController < ActionController::Base
       Rails.logger.error "protocol = #{request.protocol}"
     end
 
-  def non_covered_feature
-    redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
-  end
+    def non_covered_feature
+      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+    end
 
-  def non_covered_admin_feature
-    redirect_to admin_home_index_path
-  end
-
+    def non_covered_admin_feature
+      redirect_to admin_home_index_path
+    end
 
 end
 

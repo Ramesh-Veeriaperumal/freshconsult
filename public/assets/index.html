@@ -118,11 +118,11 @@
 
       @font-face {
   font-family: "glyphs";
-  src: url("../../assets/glyphs_12997d03dbe89f188561d2c327c8f136.eot");
-  src: url("../../assets/glyphs_12997d03dbe89f188561d2c327c8f136.eot?#iefix") format("embedded-opentype"),
-       url("../../assets/glyphs_12997d03dbe89f188561d2c327c8f136.woff") format("woff"),
-       url("../../assets/glyphs_12997d03dbe89f188561d2c327c8f136.ttf") format("truetype"),
-       url("../../assets/glyphs_12997d03dbe89f188561d2c327c8f136.svg#glyphs") format("svg");
+  src: url("../../assets/glyphs_eed2fdffa47deeb01ba00ea7e5dd9aa4.eot");
+  src: url("../../assets/glyphs_eed2fdffa47deeb01ba00ea7e5dd9aa4.eot?#iefix") format("embedded-opentype"),
+       url("../../assets/glyphs_eed2fdffa47deeb01ba00ea7e5dd9aa4.woff") format("woff"),
+       url("../../assets/glyphs_eed2fdffa47deeb01ba00ea7e5dd9aa4.ttf") format("truetype"),
+       url("../../assets/glyphs_eed2fdffa47deeb01ba00ea7e5dd9aa4.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -130,7 +130,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: url("../../assets/glyphs_12997d03dbe89f188561d2c327c8f136.svg#glyphs") format("svg");
+    src: url("../../assets/glyphs_eed2fdffa47deeb01ba00ea7e5dd9aa4.svg#glyphs") format("svg");
   }
 }
 
@@ -174,6 +174,7 @@
 .ficon-attachment:before,
 .ficon-attachment-blank:before,
 .ficon-available-on-mobile:before,
+.ficon-bar-chart:before,
 .ficon-bars:before,
 .ficon-bell:before,
 .ficon-billing:before,
@@ -214,7 +215,9 @@
 .ficon-checkmark-thick:before,
 .ficon-child-icon:before,
 .ficon-chrome:before,
+.ficon-clear-qna:before,
 .ficon-clone:before,
+.ficon-close-qna:before,
 .ficon-code:before,
 .ficon-code-snippet:before,
 .ficon-comment-multi:before,
@@ -382,6 +385,7 @@
 .ficon-no-data:before,
 .ficon-no-data-graph:before,
 .ficon-no-network:before,
+.ficon-no_change:before,
 .ficon-notice:before,
 .ficon-notice-o:before,
 .ficon-notification:before,
@@ -403,6 +407,7 @@
 .ficon-phone-disable:before,
 .ficon-phone-disable-thin:before,
 .ficon-phone_summary:before,
+.ficon-pie-chart:before,
 .ficon-plain-text:before,
 .ficon-plus:before,
 .ficon-plus-circle:before,
@@ -413,6 +418,7 @@
 .ficon-preserve-format:before,
 .ficon-pushpin:before,
 .ficon-puzzle:before,
+.ficon-qna:before,
 .ficon-read-all:before,
 .ficon-rearrange:before,
 .ficon-rebranding:before,
@@ -441,6 +447,8 @@
 .ficon-skills:before,
 .ficon-sla:before,
 .ficon-smile-o:before,
+.ficon-solution_article:before,
+.ficon-solution_article_1:before,
 .ficon-sorting-asc:before,
 .ficon-sorting-default:before,
 .ficon-sorting-dsc:before,
@@ -548,6 +556,7 @@
 .ficon-attachment:before { content: "\f22d"; }
 .ficon-attachment-blank:before { content: "\f229"; }
 .ficon-available-on-mobile:before { content: "\f1b6"; }
+.ficon-bar-chart:before { content: "\f281"; }
 .ficon-bars:before { content: "\f23d"; }
 .ficon-bell:before { content: "\f10f"; }
 .ficon-billing:before { content: "\f110"; }
@@ -588,7 +597,9 @@
 .ficon-checkmark-thick:before { content: "\f123"; }
 .ficon-child-icon:before { content: "\f263"; }
 .ficon-chrome:before { content: "\f124"; }
+.ficon-clear-qna:before { content: "\f282"; }
 .ficon-clone:before { content: "\f22a"; }
+.ficon-close-qna:before { content: "\f283"; }
 .ficon-code:before { content: "\f23f"; }
 .ficon-code-snippet:before { content: "\f240"; }
 .ficon-comment-multi:before { content: "\f125"; }
@@ -756,6 +767,7 @@
 .ficon-no-data:before { content: "\f1fe"; }
 .ficon-no-data-graph:before { content: "\f1c6"; }
 .ficon-no-network:before { content: "\f1b4"; }
+.ficon-no_change:before { content: "\f284"; }
 .ficon-notice:before { content: "\f172"; }
 .ficon-notice-o:before { content: "\f173"; }
 .ficon-notification:before { content: "\f270"; }
@@ -777,6 +789,7 @@
 .ficon-phone-disable:before { content: "\f17d"; }
 .ficon-phone-disable-thin:before { content: "\f1b5"; }
 .ficon-phone_summary:before { content: "\f1ee"; }
+.ficon-pie-chart:before { content: "\f285"; }
 .ficon-plain-text:before { content: "\f255"; }
 .ficon-plus:before { content: "\f17e"; }
 .ficon-plus-circle:before { content: "\f1c5"; }
@@ -787,6 +800,7 @@
 .ficon-preserve-format:before { content: "\f256"; }
 .ficon-pushpin:before { content: "\f180"; }
 .ficon-puzzle:before { content: "\f1d7"; }
+.ficon-qna:before { content: "\f286"; }
 .ficon-read-all:before { content: "\f271"; }
 .ficon-rearrange:before { content: "\f181"; }
 .ficon-rebranding:before { content: "\f182"; }
@@ -815,6 +829,8 @@
 .ficon-skills:before { content: "\f262"; }
 .ficon-sla:before { content: "\f191"; }
 .ficon-smile-o:before { content: "\f257"; }
+.ficon-solution_article:before { content: "\f287"; }
+.ficon-solution_article_1:before { content: "\f288"; }
 .ficon-sorting-asc:before { content: "\f1e6"; }
 .ficon-sorting-default:before { content: "\f1e7"; }
 .ficon-sorting-dsc:before { content: "\f1e8"; }
@@ -885,7 +901,7 @@
 
   <body class="characters-off">
     <header>
-      <h1>Font Icons (360)</h1>
+      <h1>Font Icons (368)</h1>
       <p>We can use font icon classes or use helper method as follows <code>&lt;%= font_icon "icon-name", :size => 18 %&gt;</code>, which generates the Markup</p>
     </header>
     <div id="page" class="container">
@@ -1221,6 +1237,15 @@
         </div>
         <div class="usage">
           <span>available-on-mobile</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-bar-chart" class="ficon-bar-chart"></i></span>
+        </div>
+        <div class="usage">
+          <span>bar-chart</span>
         </div>
       </div>
       
@@ -1586,10 +1611,28 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-clear-qna" class="ficon-clear-qna"></i></span>
+        </div>
+        <div class="usage">
+          <span>clear-qna</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-clone" class="ficon-clone"></i></span>
         </div>
         <div class="usage">
           <span>clone</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-close-qna" class="ficon-close-qna"></i></span>
+        </div>
+        <div class="usage">
+          <span>close-qna</span>
         </div>
       </div>
       
@@ -3098,6 +3141,15 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-no_change" class="ficon-no_change"></i></span>
+        </div>
+        <div class="usage">
+          <span>no_change</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-notice" class="ficon-notice"></i></span>
         </div>
         <div class="usage">
@@ -3287,6 +3339,15 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-pie-chart" class="ficon-pie-chart"></i></span>
+        </div>
+        <div class="usage">
+          <span>pie-chart</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-plain-text" class="ficon-plain-text"></i></span>
         </div>
         <div class="usage">
@@ -3372,6 +3433,15 @@
         </div>
         <div class="usage">
           <span>puzzle</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-qna" class="ficon-qna"></i></span>
+        </div>
+        <div class="usage">
+          <span>qna</span>
         </div>
       </div>
       
@@ -3624,6 +3694,24 @@
         </div>
         <div class="usage">
           <span>smile-o</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-solution_article" class="ficon-solution_article"></i></span>
+        </div>
+        <div class="usage">
+          <span>solution_article</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-solution_article_1" class="ficon-solution_article_1"></i></span>
+        </div>
+        <div class="usage">
+          <span>solution_article_1</span>
         </div>
       </div>
       

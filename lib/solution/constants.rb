@@ -67,4 +67,6 @@ module Solution::Constants
 
   COMPANIES_LIMIT = 250
 
+  CONTENT_ALPHA_NUMERIC_REGEX = "[^0-9|S|I|l|O|B|b|q]"
+
 end

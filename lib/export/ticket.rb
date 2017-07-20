@@ -72,11 +72,11 @@ class Export::Ticket < Struct.new(:export_params)
 
   def csv_export
     csv_string = CSVBridge.generate do |csv|
-      csv_headers = @headers.collect {|header| export_params[:export_fields][header]}
-      csv_headers << @contact_headers.collect {|header| 
-                      export_params[:contact_fields][header]} if @contact_headers.present?
-      csv_headers << @company_headers.collect {|header| 
-                      export_params[:company_fields][header]} if @company_headers.present?
+      csv_headers = @headers.collect { |header| export_params[:export_fields][header] }
+      csv_headers << @contact_headers.collect { |header|
+        export_params[:contact_fields][header] } if @contact_headers.present?
+      csv_headers << @company_headers.collect { |header|
+        export_params[:company_fields][header] } if @company_headers.present?
       csv << csv_headers.flatten
       ticket_data(csv)
     end
@@ -85,8 +85,13 @@ class Export::Ticket < Struct.new(:export_params)
 
   def xls_export
     require 'erb'
-    @xls_hash = export_params[:export_fields]
+    contact_fields = export_params[:contact_fields] || {}
+    company_fields = export_params[:company_fields] || {}
+    @contact_headers ||= []
+    @company_headers ||= []
+    @xls_hash = [export_params[:export_fields], contact_fields, company_fields].inject(&:merge)
     ticket_data
+    @headers = @headers + @contact_headers + @company_headers 
     path =  "#{Rails.root}/app/views/support/tickets/export_csv.xls.erb"
     ERB.new(File.read(path)).result(binding)
   end
@@ -198,7 +203,6 @@ class Export::Ticket < Struct.new(:export_params)
   end
 
   def format_contact_company_params
-    return unless Account.current.ticket_contact_export_enabled?
     ["contact", "company"].each do |type|
       next if export_params["#{type}_fields".to_sym].blank?
       reorder_contact_company_fields type
@@ -324,5 +328,4 @@ class Export::Ticket < Struct.new(:export_params)
       hash
     end
   end
-
 end

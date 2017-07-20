@@ -5,10 +5,10 @@ class Reports::NoActivityWorker < BaseWorker
 
   def perform params
     params.symbolize_keys!
-    HelpdeskReports::Logger.log("No-Activity batch #{params[:batch]} started")
+    HelpdeskReports::Logger.log("No-Activity batch #{params[:batch]} started.
+      Shard : #{params[:shard_name]} Accounts : #{params[:account_ids][0]} - #{params[:account_ids][-1]}")
     Sharding.run_on_shard(params[:shard_name]) do
       Sharding.run_on_slave do
-        start_time = Time.now.utc
         params[:account_ids].each do |account_id|
           begin
             Account.find_by_id(account_id).make_current
@@ -21,10 +21,8 @@ class Reports::NoActivityWorker < BaseWorker
             Account.reset_current_account
           end
         end
-        totaltime = ((Time.now.utc - start_time) / 1.hour).round
-        subj = "Helpkit | unresolved No-Activity batch #{params[:batch]} completed"
-        message = "Total Time = #{totaltime}"
-        DevNotification.publish(SNS["reports_notification_topic"], subj, message.to_json)
+        HelpdeskReports::Logger.log("No-Activity batch #{params[:batch]} ended.
+          Shard : #{params[:shard_name]} Accounts : #{params[:account_ids][0]} - #{params[:account_ids][-1]}")
       end
     end   
   end

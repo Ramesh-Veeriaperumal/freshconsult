@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="360" height="70" viewBox="0 0 360 70">
+    <defs>
+        <rect id="a" width="360" height="70" rx="4"/>
+    </defs>
+    <g fill="none" fill-rule="evenodd">
+        <g>
+            <use fill="#FFF" xlink:href="#a"/>
+            <rect width="359" height="69" x=".5" y=".5" stroke="#DDD" rx="4"/>
+        </g>
+        <text fill="#006064" font-family="HelveticaNeue, Helvetica Neue" font-size="40">
+            <tspan x="16" y="50">8h 5m</tspan>
+        </text>
+        <path stroke="#DDD" d="M145 10v50"/>
+        <text fill="#666" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="20" font-weight="400">
+            <tspan x="176" y="53">30%</tspan>
+        </text>
+        <path fill="#2AB866" d="M161 44h10l-5 6z"/>
+        <text fill="#666" font-family="HelveticaNeue, Helvetica Neue" font-size="13">
+            <tspan x="162" y="25">Average First Response Time</tspan>
+        </text>
+    </g>
+</svg>

@@ -79,7 +79,7 @@ module HelpdeskReports::Helper::Ticket
       res.merge!(pdf_export: pdf_export)
     elsif report_type == :ticket_volume
       res.merge!(date_range: @query_params[0][:date_range])
-    elsif report_type == :timespent
+	elsif report_type == :timespent
       grp_by = @query_params[0][:group_by]
       nested_filter = params[:filter].select{|filter_hash| filter_hash.has_key?(:drill_down_filter) } if params[:filter].present?
       if nested_filter.present?
@@ -92,7 +92,16 @@ module HelpdeskReports::Helper::Ticket
         end
       else
         res.merge!(group_by: grp_by)
-      end
+	  end
+	elsif :qna == report_type
+      query_param = @query_params[0]
+      res[:date_range] = query_param[:date_range]
+      res[:q_type] = query_param[:q_type]
+      res[:date_str] =  query_param[:date_str]
+      res[:metric] = query_param[:metric]
+      res[:time_trend_conditions] = query_param[:time_trend_conditions]
+    elsif :insights == report_type
+      res.merge!(query_params: @query_params)
     end
     
     res   
@@ -386,7 +395,19 @@ module HelpdeskReports::Helper::Ticket
   end
 
   def redirect_if_invalid_request
-    render_charts if @filter_err.present?
+
+    if @filter_err.present?
+      case params['report_type']
+      when "qna"
+        @data = {error: { code: 451,  message:I18n.t('helpdesk_reports.insights.scope_error')} }  # 451 custom request error code to handle issue with request params
+        send_json_result
+      when "insights"
+        @data = {error: { code: 451,  message:I18n.t('helpdesk_reports.insights.scope_error')} }
+        send_json_result
+      else 
+        render_charts
+      end
+    end
   end
 
   def get_reports_service_url req_priority
@@ -404,5 +425,4 @@ module HelpdeskReports::Helper::Ticket
     suffix = req_priority ? REPORTS_URL_SUFFIX[plan_priority] : REPORTS_BG_URL_SUFFIX[plan_priority]
     ReportsAppConfig::TICKET_REPORTS_URL % {priority: suffix}
   end
-  
 end

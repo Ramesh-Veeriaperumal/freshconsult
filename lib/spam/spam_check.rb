@@ -206,7 +206,8 @@ module Spam
         nil, 
         params, 
         nil, 
-        {:subject => "Spam detected in ticket notifications"}
+        {:subject => "Spam detected in ticket notifications",
+         :recipients => ["dev-ops@freshdesk.com","helpdesk@noc-alerts.freshservice.com"]}
       ) if is_spam?(result)
     end
     

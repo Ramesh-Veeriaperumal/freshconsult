@@ -52,8 +52,13 @@ module RabbitMq::Utils
       message = subscriber_basic_message(model, action, uuid)
       key = ""
       RabbitMq::Keys.const_get("#{exchange.upcase}_SUBSCRIBERS").each { |f|
-        valid = construct_message_for_subscriber(f, message, model, action)
-        key = generate_routing_key(key, valid)
+        begin
+          valid = construct_message_for_subscriber(f, message, model, action)
+          key = generate_routing_key(key, valid)
+        rescue => e
+          NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Publisher payload construct Error",
+                                                        :message => message.to_json, :subscriber => f }})
+        end
       }
       message["routing_key"] = key
       send_message(uuid, exchange, message.to_json, key)
@@ -79,15 +84,19 @@ module RabbitMq::Utils
   def subscriber_manual_publish(model, action, options, uuid)
     message = subscriber_basic_message(model, action, uuid)
     MANUAL_PUBLISH_SUBCRIBERS.each { |f|
-      next if f == "activities" && !Account.current.features?(:activity_revamp)
-      next if f == "collaboration" && !Account.current.collaboration_enabled?
-      if Account.current.features?(:countv2_writes)
-        next if f == "count" && model != "ticket"
-      else
-        next if f == "count"
+      begin
+        next if f == "activities" && !Account.current.features?(:activity_revamp)
+        if Account.current.features?(:countv2_writes)
+          next if f == "count" && model != "ticket"
+        else
+          next if f == "count"
+        end
+        message["#{model}_properties"].deep_merge!(send("mq_#{f}_#{model}_properties", action))
+        message["subscriber_properties"].merge!({ f => send("mq_#{f}_subscriber_properties", action)})
+      rescue => e
+        NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Manual Publisher payload construct Error",
+                                                        :message => message.to_json, :subscriber => f }})
       end
-      message["#{model}_properties"].deep_merge!(send("mq_#{f}_#{model}_properties", action))
-      message["subscriber_properties"].merge!({ f => send("mq_#{f}_subscriber_properties", action)})
     }
     # Currently need options only for reports, so adding all options directly to reports
     # TODO Need to change options as hash with subscriber name as key and modify the code as generic
