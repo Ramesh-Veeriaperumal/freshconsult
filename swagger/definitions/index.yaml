@@ -144,6 +144,8 @@
     $ref: ./resource/integrated_resources.yaml
   scenario_automation:
     $ref: ./resource/scenario_automation.yaml
+  solution_article:
+    $ref: ./resource/solution_article.yaml
   extension_generic:
     $ref: ./resource/extension/generic.yaml
   extended_contact:

@@ -124,6 +124,7 @@ Authority::Authorization::PrivilegeList.build do
 
   view_solutions do
     resource :"ember/search/solution", only: [:results]
+    resource :"ember/solutions/article", only: [:index]
   end
 
   view_reports do

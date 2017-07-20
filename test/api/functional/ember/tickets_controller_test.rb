@@ -719,6 +719,20 @@ module Ember
       match_json([bad_request_error_pattern('request', :fill_a_mandatory_field, field_names: 'due_by, agent, group, status')])
     end
 
+    def test_update_properties_without_ticket_access
+      ticket = create_ticket
+      User.any_instance.stubs(:has_ticket_permission?).returns(false)
+      dt = 10.days.from_now.utc.iso8601
+      agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+      update_group = create_group_with_agents(@account, agent_list: [agent.id])
+      tags = Faker::Lorem.words(3).uniq
+      params_hash = { due_by: dt, responder_id: agent.id, status: 2, priority: 4, group_id: update_group.id, tags: tags }
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 403
+    ensure
+      User.any_instance.unstub(:has_ticket_permission?)
+    end
+
     def test_update_properties
       ticket = create_ticket
       dt = 10.days.from_now.utc.iso8601

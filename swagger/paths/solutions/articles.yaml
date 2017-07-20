@@ -1,0 +1,19 @@
+get:
+  tags: [solutions]
+  summary: List articles
+  parameters:
+    - name: ids
+      in: query
+      type: string
+      description: comma-separated ids
+    - name: user_id
+      in: query
+      type: integer
+      format: int64
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/solution_article'
+    404:
+      description: Article not found

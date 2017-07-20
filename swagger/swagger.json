@@ -3807,6 +3807,39 @@
         }
       }
     },
+    "/solutions/articles": {
+      "get": {
+        "tags": [
+          "solutions"
+        ],
+        "summary": "List articles",
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "type": "string",
+            "description": "comma-separated ids"
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/solution_article"
+            }
+          },
+          "404": {
+            "description": "Article not found"
+          }
+        }
+      }
+    },
     "/dashboards/activities": {
       "get": {
         "tags": [
@@ -6441,6 +6474,76 @@
           }
         }
       }
+    },
+    "solution_article": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/extension_generic"
+        },
+        {
+          "properties": {
+            "type": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "category_id": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "folder_id": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "thumbs_up": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "thumbs_down": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "hits": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "seo_data": {
+              "type": "object",
+              "properties": {
+                "meta_title": {
+                  "type": "string"
+                },
+                "meta_description": {
+                  "type": "string"
+                },
+                "meta_keywords": {
+                  "type": "string"
+                }
+              }
+            },
+            "agent_id": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "description_text": {
+              "type": "string"
+            },
+            "status": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "visibility": {
+              "type": "object"
+            }
+          }
+        }
+      ]
     },
     "extension_generic": {
       "type": "object",

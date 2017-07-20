@@ -216,6 +216,10 @@
 /surveys:
   $ref: ./surveys/crud.yaml
 
+#Solutions
+/solutions/articles:
+  $ref: ./solutions/articles.yaml
+
 #Dashboard activities
 /dashboards/activities:
   $ref: ./dashboard/activities.yaml
@@ -240,7 +244,6 @@
   $ref: ./dashboard/ticket_trends.yaml
 /dashboards/ticket_metrics:
   $ref: ./dashboard/ticket_metrics.yaml
-
 /dashboards/leaderboard_agents:
   $ref: ./dashboard/leaderboard/agents.yaml
 

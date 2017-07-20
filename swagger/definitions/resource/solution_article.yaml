@@ -1,0 +1,45 @@
+type: object
+allOf:
+  - $ref: '#/definitions/extension_generic'
+  - properties:
+      type:
+        type: integer
+        format: int64
+      category_id:
+        type: integer
+        format: int64
+      folder_id:
+        type: integer
+        format: int64
+      thumbs_up:
+        type: integer
+        format: int64
+      thumbs_down:
+        type: integer
+        format: int64
+      hits:
+        type: integer
+        format: int64
+      seo_data:
+        type: object
+        properties:
+          meta_title:
+            type: string
+          meta_description:
+            type: string
+          meta_keywords:
+            type: string
+      agent_id:
+        type: integer
+        format: int64
+      title:
+        type: string
+      description:
+        type: string
+      description_text:
+        type: string
+      status:
+        type: integer
+        format: int64
+      visibility:
+        type: object
