@@ -17,19 +17,19 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/todo"
     resource :"ember/twitter_handles", only: %i(index check_following)
 
-    resource :"ember/agent", only: %i(index me)
+    resource :"ember/agent", only: %i(index me achievements)
     resource :"ember/group", only: [:index]
     resource :"ember/survey", only: [:index]
     resource :"ember/dashboard/activity", only: [:index]
     resource :"ember/portal", only: [:index]
     resource :"ember/email_config", only: [:index]
     resource :"ember/dashboard", only: %i(scorecard show survey_info)
+    resource :"ember/dashboard/quest", only: %i(index)
     resource :"ember/contact_field", only: [:index]
     resource :"ember/company_field", only: [:index]
     resource :"ember/installed_application"
     resource :"ember/integrated_resource"
     resource :"ember/integrated_user"
-
 
     resource :"ember/search/ticket", only: [:results]
     resource :"ember/search/autocomplete", only: %i(requesters agents companies tags)
@@ -64,7 +64,6 @@ Authority::Authorization::PrivilegeList.build do
   view_contacts do
     resource :"ember/contact", only: %i(index show)
     resource :"ember/company", only: %i(index show activities)
-
     resource :"ember/search/customer", only: [:results]
   end
 
@@ -87,6 +86,7 @@ Authority::Authorization::PrivilegeList.build do
 
   manage_availability do
     resource :"ember/group", only: [:show]
+    resource :"ember/agent", only: [:update]
   end
 
   delete_ticket do
@@ -115,7 +115,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   export_tickets do
-    resource :"ember/ticket", :only => [:export_csv]
+    resource :"ember/ticket", only: [:export_csv]
   end
 
   view_forums do

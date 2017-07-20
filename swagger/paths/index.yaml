@@ -171,6 +171,8 @@
   $ref: ./agents/crud.yaml
 /agents/me:
   $ref: ./agents/me.yaml
+/agents/{id}/achievements:
+  $ref: ./agents/achievements.yaml  
 
 # Scenario Automations
 /scenario_automations:
@@ -217,6 +219,11 @@
 #Dashboard activities
 /dashboards/activities:
   $ref: ./dashboard/activities.yaml
+
+
+#Dashboard Quests
+/dashboards/quests:
+  $ref: ./dashboard/quest.yaml  
 
 #Dashboard
 /dashboards:

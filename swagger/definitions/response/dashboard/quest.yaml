@@ -1,0 +1,29 @@
+type: object
+properties:
+  id:
+    type: integer
+  name:
+    description: Badge name
+    type: string
+  description:
+    description: Badge description
+    type: string
+  points: 
+    description: Points scored on acquiring particular Badge
+    type: integer
+  badge_id:
+    type: integer
+  category:
+    description: Category of the Badge
+    type: integer
+  sub_category:
+    description: Sub-Category of the Badge 
+    type: integer
+  created_at:
+    description: Badge created time
+    type: string
+  updated_at:
+    description: Badge updated time
+    type: string  
+
+

@@ -1,0 +1,19 @@
+get:
+  tags: [agent]
+  summary: Agent Achievements
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      description: User ID of the Agent
+      required: true
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/agent_achievements'
+    404:
+      description: Not found
+    403:
+      description: Access denied

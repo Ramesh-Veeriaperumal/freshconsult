@@ -241,7 +241,6 @@ Helpkit::Application.routes.draw do
     resources :integrated_users, controller: 'ember/integrated_users', only: [:index, :show]
     resources :cloud_files, controller: 'ember/cloud_files', only: [:destroy]
 
-
     resources :contacts, controller: 'ember/contacts', except: [:new, :edit] do
       collection do
         put :bulk_delete
@@ -294,9 +293,12 @@ Helpkit::Application.routes.draw do
     end
     resources :surveys, controller: 'ember/surveys', only: [:index]
     resources :portals, controller: 'ember/portals', only: [:index]
-    resources :agents, controller: 'ember/agents', only: [:index, :show] do
+    resources :agents, controller: 'ember/agents', only: [:index, :show, :update], id: /\d+/ do
       collection do
         get :me
+      end
+      member do
+        get :achievements
       end
     end
 
@@ -311,6 +313,7 @@ Helpkit::Application.routes.draw do
         get :unresolved_tickets, to: 'ember/dashboard#unresolved_tickets_data'
         get :ticket_summaries, to: 'ember/dashboard#scorecard'
         get :activities, to: 'ember/dashboard/activities#index'
+        get :quests, to: 'ember/dashboard/quests#index'
       end
     end
 

@@ -1,6 +1,7 @@
 ['group_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module AgentsTestHelper
   include GroupHelper
+  include Gamification::GamificationUtil
   def agent_pattern(expected_output = {}, agent)
     user = {
       active: agent.user.active,
@@ -45,6 +46,63 @@ module AgentsTestHelper
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
       
     }
+  end
+
+  def agent_availability_pattern(expected_output = {}, agent, rr_groups)
+    agent_hash = private_api_agent_pattern(agent)
+    agent_hash.merge!(agent_availability_hash(agent.group_ids, rr_groups))
+  end
+
+  def agent_availability_hash(group_ids, rr_groups)
+    rr_agent = ((rr_groups || []) & (group_ids || [])).present?
+    return {} unless rr_agent
+    {
+      ticket_assignment: {
+        available: false,
+        round_robin_agent: rr_agent
+      }
+    }
+  end
+
+  def agent_availability_count_pattern
+    {
+      agents: [ 
+      ],
+      meta: {
+        agents_available: {
+          ticket_assignment: 0
+        }
+      }
+    }
+  end
+
+  def agent_achievements_pattern(record)
+    achievements_hash = {}
+    if gamification_feature?(Account.current)
+      next_level = record.next_level || Account.current.scoreboard_levels.next_level_for_points(record.points.to_i).first
+      points_needed = 0
+      points_needed = next_level.points - record.points.to_i if next_level
+      achievements_hash = {
+        id: record.user_id,
+        points: record.points.to_i,
+        current_level_name: record.level.try(:name).to_s,
+        next_level_name: next_level.try(:name).to_s,
+        points_needed: points_needed,
+        badges: record.user.quests.order('achieved_quests.created_at Desc').map(&:badge_id)
+      }
+    end
+    achievements_hash
+  end
+
+  def livechat_agent_availability(agent)
+    [ agent.user.id, 
+      { 
+        "agent_id" => agent.user.id, 
+        "last_activity_at"=> nil, 
+        "available"=> false, 
+        "onGoingChatCount"=> 0
+      }
+    ]
   end
 
   def contact_pattern(contact)
@@ -118,5 +176,14 @@ module AgentsTestHelper
     role_ids = Role.limit(2).pluck(:id).join(',')
     params = { agent: { user: { name: Faker::Name.name, phone: Faker::PhoneNumber.phone_number, job_title: Faker::Name.name, mobile: Faker::PhoneNumber.phone_number, email: Faker::Internet.email, time_zone: 'Central Time (US & Canada)', language: 'hu', role_ids: role_ids }, occasional: false, signature_html: Faker::Lorem.paragraph, ticket_permission: 2 } }
     params.to_json
+  end
+
+  def create_rr_agent
+    agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    group = create_group_with_agents(@account, agent_list: [agent.id])
+    group.ticket_assign_type = 1
+    group.save
+    @account.chat_setting.enabled = true
+    @account.save
   end
 end
