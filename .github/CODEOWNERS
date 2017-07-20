@@ -1,8 +1,12 @@
-db/schema.rb @venkatesanmurali @hrishikesh-p @arvindr
-db/migrate/*.rb @venkatesanmurali @hrishikesh-p @arvindr
+db/schema.rb @venkatesanmurali @hrishikesh-p @arvindr @thanashyam
+db/migrate/*.rb @venkatesanmurali @hrishikesh-p @arvindr @thanashyam
+
+Gemfile @venkatesanmurali @hrishikesh-p @arvindr @thanashyam
+Gemfile.lock @venkatesanmurali @hrishikesh-p @arvindr @thanashyam
 
 config/sidekiq*.yml @venkatesanmurali @hrishikesh-p
-config/*routes.rb @thanashyam @venkatesanmurali @abinaya21 @ksashikumar
+config/api_routes.rb @thanashyam @venkatesanmurali @abinaya21 @ksashikumar
+
 lib/rabbit_mq/* @sram2020
 
 swagger/* @thanashyam @venkatesanmurali @abinaya21 @ksashikumar
