@@ -1316,7 +1316,7 @@ module Ember
     end
 
     def test_update_with_attachment_ids
-      t = ticket
+      t = create_ticket
       attachment_ids = []
       rand(2..10).times do
         attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
@@ -1324,19 +1324,21 @@ module Ember
       params_hash = update_ticket_params_hash.merge(attachment_ids: attachment_ids)
       put :update, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 200
-      match_json(ticket_show_pattern(t.reload))
-      assert ticket.attachments.size == attachment_ids.size
+      t = Account.current.tickets.find_by_display_id(t.display_id)
+      match_json(ticket_show_pattern(t))
+      assert_equal attachment_ids.size, t.attachments.count
     end
 
     def test_update_with_cloud_files
-      t = ticket
+      t = create_ticket
       cloud_file_params = [{ filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 },
                            { filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 }]
       params_hash = update_ticket_params_hash.merge(cloud_files: cloud_file_params)
       put :update, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 200
-      match_json(ticket_show_pattern(t.reload))
-      assert ticket.cloud_files.count == 2
+      t = Account.current.tickets.find_by_display_id(t.display_id)
+      match_json(ticket_show_pattern(t))
+      assert_equal 2, t.cloud_files.count
     end
 
     def test_update_with_shared_attachments
@@ -1350,9 +1352,9 @@ module Ember
       params_hash = update_ticket_params_hash.merge(attachment_ids: canned_response.shared_attachments.map(&:attachment_id))
       put :update, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 200
-      t = Helpdesk::Ticket.last
+      t = Account.current.tickets.find_by_display_id(t.display_id)
       match_json(ticket_show_pattern(t))
-      assert ticket.attachments.count == 1
+      assert_equal 1, t.attachments.count
     end
 
     def test_export_csv_with_no_params

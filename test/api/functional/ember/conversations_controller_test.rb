@@ -1486,8 +1486,10 @@ module Ember
       Account.current.reload
       ticket = create_ticket
       note = create_private_note(ticket)
-      last_note_id = note.id
-      params_hash = create_note_params_hash.merge(last_note_id: last_note_id - 1)
+      rand(1..5).times do
+        create_private_note(ticket)
+      end
+      params_hash = create_note_params_hash.merge(last_note_id: note.id)
       post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
       latest_note = Helpdesk::Note.last
@@ -1496,23 +1498,160 @@ module Ember
       @account.revoke_feature(:traffic_cop)
     end
 
-    def test_tweet_with_traffic_cop_ignoring_public_note
+    def test_tweet_dm_with_traffic_cop_ignoring_public_note
       @account.add_feature(:traffic_cop)
       Account.current.reload
       ticket = create_twitter_ticket
       note = create_public_note(ticket)
-      post :tweet, construct_params({version: 'private', id: ticket.display_id, last_note_id: note.id - 1}, {})
+      rand(1..5).times do
+        create_public_note(ticket)
+      end
+      post :tweet, construct_params({ version: 'private', id: ticket.display_id }, {
+        body: Faker::Lorem.sentence[0..130],
+        tweet_type: 'dm',
+        last_note_id: note.id,
+        twitter_handle_id: get_twitter_handle.id
+      })
       assert_response 400
       @account.revoke_feature(:traffic_cop)
     end
 
-    def test_facebook_reply_with_traffic_cop_ignoring_public_note
+    def test_tweet_mention_with_traffic_cop_ignoring_public_note
+      @account.add_feature(:traffic_cop)
+      Account.current.reload
+      ticket = create_twitter_ticket
+      note = create_public_note(ticket)
+      rand(1..5).times do
+        create_public_note(ticket)
+      end
+      post :tweet, construct_params({ version: 'private', id: ticket.display_id }, {
+        body: Faker::Lorem.sentence[0..130],
+        tweet_type: 'mention',
+        last_note_id: note.id,
+        twitter_handle_id: get_twitter_handle.id
+      })
+      assert_response 400
+      @account.revoke_feature(:traffic_cop)
+    end
+
+    def test_tweet_dm_with_traffic_cop_ignoring_public_note
+      @account.add_feature(:traffic_cop)
+      Account.current.reload
+      ticket = create_twitter_ticket
+      note = create_public_note(ticket)
+      rand(1..5).times do
+        create_public_note(ticket)
+      end
+      post :tweet, construct_params({ version: 'private', id: ticket.display_id }, {
+        body: Faker::Lorem.sentence[0..130],
+        tweet_type: 'dm',
+        last_note_id: note.id,
+        twitter_handle_id: get_twitter_handle.id
+      })
+      assert_response 400
+      @account.revoke_feature(:traffic_cop)
+    end
+
+    def test_tweet_mention_with_traffic_cop_ignoring_reply
+      @account.add_feature(:traffic_cop)
+      Account.current.reload
+      ticket = create_twitter_ticket
+      note = create_twitter_note(ticket)
+      rand(1..5).times do
+        create_public_note(ticket)
+      end
+      post :tweet, construct_params({ version: 'private', id: ticket.display_id },
+      {
+        body: Faker::Lorem.sentence[0..130],
+        tweet_type: 'mention',
+        last_note_id: note.id,
+        twitter_handle_id: get_twitter_handle.id
+      })
+      assert_response 400
+      @account.revoke_feature(:traffic_cop)
+    end
+
+    def test_facebook_reply_to_fb_post_with_traffic_cop_without_new_conversations
       @account.add_feature(:traffic_cop)
       Account.current.reload
       ticket = create_ticket_from_fb_post
       note = create_public_note(ticket)
-      post :facebook_reply, construct_params({version: 'private', id: ticket.display_id, last_note_id: note.id - 1}, {})
+      put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
+      sample_put_comment = { 'id' => put_comment_id }
+      Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
+      params_hash = { body: Faker::Lorem.paragraph, last_note_id: note.id }
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      Koala::Facebook::API.any_instance.unstub(:put_comment)
+      assert_response 201
+      @account.revoke_feature(:traffic_cop)
+    end
+
+    def test_facebook_reply_to_fb_comment_with_traffic_cop_ignoring_public_note
+      @account.add_feature(:traffic_cop)
+      Account.current.reload
+      ticket = create_ticket_from_fb_post(true)
+      note = create_public_note(ticket)
+      rand(1..5).times do
+        create_public_note(ticket)
+      end
+      put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
+      sample_put_comment = { 'id' => put_comment_id }
+      fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).first
+      Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
+      params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id, last_note_id: note.id }
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      Koala::Facebook::API.any_instance.unstub(:put_comment)
       assert_response 400
+      @account.revoke_feature(:traffic_cop)
+    end
+
+    def test_facebook_reply_to_fb_direct_message_with_traffic_cop_ignoring_public_note
+      @account.add_feature(:traffic_cop)
+      Account.current.reload
+      ticket = create_ticket_from_fb_direct_message
+      note = create_public_note(ticket)
+      sample_reply_dm = { 'id' => Time.now.utc.to_i + 5 }
+      rand(1..5).times do
+        create_public_note(ticket)
+      end
+      Koala::Facebook::API.any_instance.stubs(:put_object).returns(sample_reply_dm)
+      params_hash = { body: Faker::Lorem.paragraph, last_note_id: note.id }
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      Koala::Facebook::API.any_instance.unstub(:put_object)
+      assert_response 400
+      @account.revoke_feature(:traffic_cop)
+    end
+
+    def test_facebook_reply_to_fb_post_with_traffic_cop_ignoring_reply
+      @account.add_feature(:traffic_cop)
+      Account.current.reload
+      ticket = create_ticket_from_fb_post
+      note = create_fb_note(ticket)
+      put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
+      sample_put_comment = { 'id' => put_comment_id }
+      rand(1..5).times do
+        create_public_note(ticket)
+      end
+      Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
+      params_hash = { body: Faker::Lorem.paragraph, last_note_id: note.id }
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      Koala::Facebook::API.any_instance.unstub(:put_comment)
+      assert_response 400
+      @account.revoke_feature(:traffic_cop)
+    end
+
+    def test_facebook_reply_to_fb_post_with_traffic_cop_without_new_conversations
+      @account.add_feature(:traffic_cop)
+      Account.current.reload
+      ticket = create_ticket_from_fb_post
+      note = create_public_note(ticket)
+      put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
+      sample_put_comment = { 'id' => put_comment_id }
+      Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
+      params_hash = { body: Faker::Lorem.paragraph, last_note_id: note.id }
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      Koala::Facebook::API.any_instance.unstub(:put_comment)
+      assert_response 201
       @account.revoke_feature(:traffic_cop)
     end
 
