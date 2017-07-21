@@ -48,7 +48,7 @@ function helpdeskReports(opts) {
             var start_date    = new Date(parseInt(HelpdeskReports.locals.startTimestamp));
             var selected_date = new Date(timestamp);
             var current_date  = selected_date > start_date ? selected_date : start_date;
-            return Highcharts.dateFormat('%e %b',current_date);
+            return Highcharts.dateFormat('%e %b',current_date.getTime());
         },
         qtr: function (timestamp) {
             var current_date = new Date(timestamp),
