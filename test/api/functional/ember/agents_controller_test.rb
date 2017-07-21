@@ -12,7 +12,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     end
     get :index, controller_params(version: 'private')
     assert_response 200
-    agents = @account.all_agents.order('users.name')
+    agents = @account.agents.order('users.name')
     pattern = agents.map { |agent| private_api_agent_pattern(agent) }
     match_json(pattern.ordered)
   end
