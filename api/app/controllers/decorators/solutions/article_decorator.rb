@@ -15,50 +15,36 @@ class Solutions::ArticleDecorator < ApiDecorator
     Helpdesk::HTMLSanitizer.plain(html_string)
   end
 
-  def to_search_hash
+  def article_info
     ret_hash = {
       id: parent_id,
-      title: title,
-      description: description,
-      description_text: desc_un_html,
-      status: status,
+      type: parent.art_type,
+      category_id: parent.solution_category_meta.id,
+      folder_id: parent.solution_folder_meta.id,
       agent_id: user_id,
-      type: parent.art_type,
-      category_id: parent.solution_category_meta.id,
-      category_name: category_name,
-      folder_id: parent.solution_folder_meta.id,
-      folder_name: folder_name,
       path: record.to_param,
-      created_at: created_at,
-      updated_at: updated_at,
-      modified_at: modified_at,
-      modified_by: modified_by,
-      attachments: attachments_hash
-    }
-    ret_hash.merge(visibility_hash)
-  end
-
-  def visibility_hash
-    return {} unless @user.present?
-    {
-      visibility: { @user.id => parent.visible?(@user) || false }
-    }
-  end
-
-  def to_hash
-    ret_hash = {
-      id: parent.id,
-      type: parent.art_type,
-      category_id: parent.solution_category_meta.id,
-      folder_id: parent.solution_folder_meta.id,
-      thumbs_up: parent.thumbs_up,
-      thumbs_down: parent.thumbs_down,
-      hits: parent.hits,
-      seo_data: seo_data,
-      agent_id: user_id
+      attachments: attachments_hash,
+      modified_at: modified_at.try(:utc),
+      modified_by: modified_by
     }
     ret_hash.merge!(draft_info(draft || record))
     ret_hash.merge!(visibility_hash)
+  end
+
+  def to_search_hash
+    article_info.merge(
+      category_name: category_name,
+      folder_name: folder_name
+    )
+  end
+
+  def to_hash
+    article_info.merge(
+      thumbs_up: parent.thumbs_up,
+      thumbs_down: parent.thumbs_down,
+      hits: parent.hits,
+      seo_data: seo_data
+    )
   end
 
   def draft_info(item)
@@ -69,6 +55,13 @@ class Solutions::ArticleDecorator < ApiDecorator
       status: item.status,
       created_at: item.created_at.try(:utc),
       updated_at: item.updated_at.try(:utc)
+    }
+  end
+
+  def visibility_hash
+    return {} unless @user.present?
+    {
+      visibility: { @user.id => parent.visible?(@user) || false }
     }
   end
 

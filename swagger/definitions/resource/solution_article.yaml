@@ -41,5 +41,17 @@ allOf:
       status:
         type: integer
         format: int64
+      path:
+        type: string
       visibility:
         type: object
+      attachments:
+        type: array
+        items:
+          $ref: '#/definitions/attachment'
+      modified_at:
+        type: string
+        format: date-time
+      modified_by:
+        type: integer
+        format: int64

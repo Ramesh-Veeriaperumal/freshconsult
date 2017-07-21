@@ -82,7 +82,10 @@ module SolutionsTestHelper
   end
 
   def private_api_solution_article_pattern_index(article, expected_output = {}, ignore_extra_keys = true, user = nil)
-    ret_hash = solution_article_pattern_index(expected_output, ignore_extra_keys, article)
+    ret_hash = solution_article_pattern(expected_output, ignore_extra_keys, article).except(:tags)
+    ret_hash[:path] = expected_output[:path] || article.to_param
+    ret_hash[:modified_at] = %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+    ret_hash[:modified_by] = article.modified_by
     ret_hash[:visibility] = { user.id => article.parent.visible?(user) || false } if user
     ret_hash
   end
