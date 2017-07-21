@@ -320,7 +320,6 @@ module TicketConstants
 
   # Used in redis_display_id feature
   TICKET_START_DISPLAY_ID = -100000000
-  TICKET_DISPLAY_ID_MAX_LOOP = 10
   TICKET_ID_LOCK_EXPIRY = 5 #5 seconds
 
   BACKGROUND_THRESHOLD = 5
