@@ -21,8 +21,11 @@ window.App.Solutions = window.App.Solutions || {};
 
     setupStaticSidebar: function () {
       var $this = this;
-      $this.setSidebarHeight($("#body-container").height() - 20);
 
+      $("#body-container").load(function() {
+      $this.setSidebarHeight($("#body-container").height() - 20);
+      });
+      
       $(document).on("sticky_kit:stick.solutions.sidebar", "#cm-solutions-wrapper", function (ev) {
         $this.setSidebarHeight($(window).height() - 20);
       });
