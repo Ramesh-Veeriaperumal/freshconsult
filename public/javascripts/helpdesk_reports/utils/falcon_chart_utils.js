@@ -232,6 +232,21 @@ helpdeskReports.prototype = {
         x += "</div>";
         return x;
     },
+    qnaTooltip: function() {
+      var x = "<div class='tooltip'>";
+      jQuery.each(this.points, function (i, point) {
+          var y = (point.y) % 1 === 0 ? (this.y) : (this.point.y).toFixed(2);
+          //var metric = I18n.t(point.series.name.toLowerCase(),{scope: "helpdesk_reports", defaultValue: point.series.name.toLowerCase()});
+          if(point.series.userOptions.unit_suffix == "Hours") {
+            y = HelpdeskReports.CoreUtil.timeMetricConversion(y*3600);
+            x += '<p style="margin:0;display:inline-block;color:' + point.series.color + '">' + point.series.name + ' : ' +  y + '</p><br/>';
+          } else {
+            x += '<p style="margin:0;display:inline-block;color:' + point.series.color + '">' + point.series.name + ' : ' +  y + point.series.userOptions.unit_suffix + '</p><br/>';
+          }
+      });
+      x += "</div>";
+      return x;
+    },
     hrPerformancelineTooltip: function () {
         return helpdeskReports.prototype.performancelineTooltip(this,"Hours");
     },
@@ -342,10 +357,12 @@ helpdeskReports.prototype = {
     timeSpentTooltip : function() {
         var point = this.point;
         if( point != undefined) {
-            var tooltip = '<div class="tooltip"><div>' + point.time +' hrs ( '+ point.perc +'% ) </div><div>'+ point.ticket_cnt +' tickets </div>';
+            var tooltip = '<div class="tooltip"><div>' + HelpdeskReports.CoreUtil.timeMetricConversion(point.time) +' ('+ point.perc +'%) </div><div>'+ point.ticket_cnt +' tickets </div>';
+
 
             if(HelpdeskReports.locals.current_type != 'average') {
-                tooltip += '<div>Avg : ' + point.avg + ' hrs/ticket</div>'
+                tooltip += '<div>Avg : ' + HelpdeskReports.CoreUtil.timeMetricConversion(point.avg) + ' per ticket</div>'
+
             }
             tooltip += "</div>"
             return tooltip;
@@ -697,7 +714,7 @@ function lineChart(opts) {
             }
         },
         tooltip: {
-            formatter: this.lineChartTooltip,
+            formatter: opts.qnaChart != undefined ? this.qnaTooltip : this.lineChartTooltip,
             crosshairs: {
                 color: 'gray',
                 dashStyle: 'solid',
@@ -1275,7 +1292,10 @@ function barChartWithAxis(opts){
                             fontWeight : "normal",
                             "fontSize": "12px",
                         },
-                        crop : false
+                        crop : false,
+                        formatter: function(){
+                            return HelpdeskReports.CoreUtil.timeMetricConversion(this.y);
+                        }
                     }
                 },
                 series: {
