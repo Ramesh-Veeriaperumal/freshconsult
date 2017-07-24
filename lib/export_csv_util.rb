@@ -37,7 +37,7 @@ module ExportCsvUtil
     csv_headers = Helpdesk::TicketModelExtension.csv_headers 
     #Product entry
     csv_headers = csv_headers + [ {:label => I18n.t("export_data.fields.product"), :value => "product_name", :selected => false, :type => :field_type} ] if Account.current.multi_product_enabled?
-    description_fields = [{:label => I18n.t("export_data.fields.description"), :value => "description", :selected => false}]
+    description_fields = {:label => I18n.t("export_data.fields.description"), :value => "description", :selected => false}
     csv_headers.insert(2,description_fields)
     csv_headers = csv_headers + flexi_fields.collect { |ff| { :label => ff.label, :label_in_portal => ff.label_in_portal, :value => ff.name, :type => ff.field_type, :selected => false, :levels => (ff.nested_levels || []) } }
 
