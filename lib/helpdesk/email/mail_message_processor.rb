@@ -17,8 +17,10 @@ module Helpdesk
 			def execute
 				Rails.logger.info "Email Fetched with metadata : #{message.except('message_attributes').inspect}"
 				if message[:email_path].nil?
-					msg_queue = Helpdesk::EmailQueue::MailQueueFactory.get_queue_obj(QUEUETYPE[:sqs], message[:message_attributes][:queue_name])
-					msg_queue.delete_message(message[:message_attributes].with_indifferent_access)
+					unless message[:is_failed_retry]
+						msg_queue = Helpdesk::EmailQueue::MailQueueFactory.get_queue_obj(QUEUETYPE[:sqs], message[:message_attributes][:queue_name])
+						msg_queue.delete_message(message[:message_attributes].with_indifferent_access)
+					end
 					return
 				end
 				state, created_time = get_message_processing_status(message[:uid])
@@ -71,14 +73,24 @@ module Helpdesk
 			end
 
 			def fetch_email
-				primary_db = Helpdesk::DBStore::MailDBStoreFactory.getDBStoreObject(DBTYPE[:primary])
+				db_type = get_db_type # selects failed or primary bucket based on message[:is_failed_retry] value
+				primary_db = Helpdesk::DBStore::MailDBStoreFactory.getDBStoreObject(db_type)
 				mail_object = primary_db.fetch(message[:email_path])
 				self.raw_eml = mail_object[:eml].read if mail_object[:eml].present? # check statement validity
 				self.metadata = mail_object[:metadata].with_indifferent_access
 				Rails.logger.info "Primary S3 metadata : #{mail_object[:metadata].inspect}"
 			end
 
+			def get_db_type
+				if message[:is_failed_retry]
+					return DBTYPE[:failed]
+				else
+					return DBTYPE[:primary]
+				end
+			end
+
 			def archive_message(ticket_data)
+
 				Rails.logger.info "Archiving the Email"
 				email_content = StringIO.new(raw_eml)
 				
@@ -119,14 +131,13 @@ module Helpdesk
 
 			def cleanup_message
 				Rails.logger.info "Deleting Email from S3 Primary path"
-				primary_db = Helpdesk::DBStore::MailDBStoreFactory.getDBStoreObject(DBTYPE[:primary])
+				db_type = get_db_type # selects failed or primary bucket based on message[:is_failed_retry] value
+				primary_db = Helpdesk::DBStore::MailDBStoreFactory.getDBStoreObject(db_type)
 				delete_output = primary_db.delete(message[:email_path])
-				unless delete_output.delete_marker #not working right now , if not fetch and check
-					failed_msg_db = Helpdesk::DBStore::MailDBStoreFactory.getDBStoreObject(DBTYPE[:failed])
-					failed_msg_db.delete(message[:email_path])
+				unless message[:is_failed_retry]
+					msg_queue = Helpdesk::EmailQueue::MailQueueFactory.get_queue_obj(QUEUETYPE[:sqs], message[:message_attributes][:queue_name])
+					msg_queue.delete_message(message[:message_attributes].with_indifferent_access)
 				end
-				msg_queue = Helpdesk::EmailQueue::MailQueueFactory.get_queue_obj(QUEUETYPE[:sqs], message[:message_attributes][:queue_name])
-				msg_queue.delete_message(message[:message_attributes].with_indifferent_access)
 			end
 
 			def check_for_spam(params)

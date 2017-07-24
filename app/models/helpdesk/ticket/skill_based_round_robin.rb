@@ -3,10 +3,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def enqueue_skill_based_round_robin
     Rails.logger.debug "Inspecting SBRR job enqueue source for ticket #{display_id}, sbrr inline #{sbrr_inline?} \n #{caller.join("\n")}"
     options = skip_sbrr_assigner ? {:action => "update_multiple_sync"} : {}
-    args = {:model_changes => sbrr_model_changes, :skip_skill_remap => ticket_update_skill_alone?,
-        :ticket_id => display_id, :attributes => sbrr_attributes, :options => options}
+    args = { :model_changes => sbrr_model_changes, :ticket_id => display_id, :skip_skill_remap => ticket_update_skill_alone?, 
+      :attributes => sbrr_attributes, :sbrr_state_attributes => sbrr_state_attributes, :options => options, :parent_jid => Thread.current[:message_uuid] }
     if sbrr_inline?
-      SBRR::Execution.new(args).execute
+      @sbrr_exec_obj = SBRR::Execution.new(args)
+      @sbrr_exec_obj.execute
     else
       SBRR::Assignment.perform_async(args)
     end
@@ -18,7 +19,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def should_enqueue_sbrr_job?
-    remap_skill? || has_queue_changes?
+    (remap_skill? || has_queue_changes?) && sbrr_enabled?
   end
 
   def map_skill
@@ -34,25 +35,25 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def ticket_update_skill_alone?
-    @model_changes.key?(skill_id_column) && skill_condition_changes_empty?
+    model_changes.key?(skill_id_column) && skill_condition_changes_empty?
   end
 
   def skill_condition_changes_empty?
-    @model_changes.slice(*skill_condition_attributes).empty?
+    model_changes.slice(*skill_condition_attributes).empty?
   end
 
   def has_ticket_queue_changes?
-    has_user_queue_changes? || @model_changes.key?(skill_id_column)
+    has_user_queue_changes? || model_changes.key?(skill_id_column)
   end
   alias_method :has_queue_changes?, :has_ticket_queue_changes?
 
   def has_user_queue_changes?
     #has_config_changes? has to be before has_round_robin_eligibility_changes? for ticket status delete case
-    has_config_changes? || has_round_robin_eligibility_changes? || @model_changes.key?(:responder_id)
+    has_config_changes? || has_round_robin_eligibility_changes? || model_changes.key?(:responder_id)
   end
 
   def has_round_robin_eligibility_changes?
-    @model_changes.key?(:group_id) || stop_sla_timer_changed? || visibility_changed?
+    model_changes.key?(:group_id) || stop_sla_timer_changed? || visibility_changed?
   end
 
   def has_config_changes?
@@ -154,7 +155,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def merge_skill_change_to_model_changes
       if self.changes.key?(skill_id_column)
-        @model_changes = merge_changes @model_changes, self.changes
+        @model_changes = merge_changes model_changes, self.changes
       end
     end
 
@@ -171,4 +172,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def agent_available?
       assigned? && responder && responder.available?
     end 
+
+    def sbrr_enabled?
+      (group.present? && group.skill_based_round_robin_enabled?) || (model_changes.key?(:group_id) && model_changes[:group_id][0].present? && old_group_has_sbrr?)
+    end
+
+    def old_group_has_sbrr?
+      _group = Account.current.groups.find_by_id model_changes[:group_id][0]
+      _group.present? && _group.skill_based_round_robin_enabled? 
+    end
+
 end

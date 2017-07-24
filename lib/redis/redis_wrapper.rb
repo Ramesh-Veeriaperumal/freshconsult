@@ -8,12 +8,9 @@ module Redis::RedisWrapper
 
 	Redis.class_eval do
 	  def perform_redis_op(operator, *args)
-	    begin	    	
-	      self.send(operator, *args)
-	    rescue Exception => e
-	    	NewRelic::Agent.notice_error(e)
-	    	return
-	    end
+	    self.send(operator, *args)
+	  rescue Redis::BaseError => e
+	    NewRelic::Agent.notice_error(e)
 	  end
 	end
 

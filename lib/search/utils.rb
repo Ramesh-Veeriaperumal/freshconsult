@@ -124,7 +124,8 @@ class Search::Utils
     company_v2_search:                'companyApiSearch',
     hstickets_dispid:                 'hsTicketsByDisplayId',
     hstickets_subject:                'hsTicketsBySubject',
-    filteredTicketSearch:             'filteredTicketSearch'
+    filteredTicketSearch:             'filteredTicketSearch',
+    search_ticket_api:                'searchTicketApi'
   }
 
   # _Note_: Parent ID to be used for routing.
@@ -155,6 +156,7 @@ class Search::Utils
                                         .constantize
                                         .where(account_id: args[:current_account_id], id: items.map { |h| h['_id'] })
                                         .preload(model_and_assoc[type][:associations])
+                                        .compact
       end
     end
 

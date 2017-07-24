@@ -143,6 +143,7 @@ RSpec.describe Freshfone::CallHistoryController do
       @account.freshfone_calls.create(  :freshfone_number_id => @freshfone_number.id, 
                                         :call_status => TEST_CALL_STATUS, :call_type => TEST_CALL_TYPE, :agent => @agent,
                                         :params => { :CallSid => call_sid } )
+      check_and_create_export "call_history"
       Freshfone::Jobs::CallHistoryExport::CallHistoryExportWorker.new(@export_params).perform
       files = Dir.glob(@out_dir + '/*.csv')
       files.first.should_not be_blank
@@ -163,6 +164,7 @@ RSpec.describe Freshfone::CallHistoryController do
       @parent_call.children.last.update_attributes!( { :call_status => Freshfone::Call::CALL_STATUS_STR_HASH['completed'] })
       @parent_call.reload
       @parent_call.children.last.reload
+      check_and_create_export "call_history"
       Freshfone::Jobs::CallHistoryExport::CallHistoryExportWorker.new(@export_params).perform
       files = Dir.glob(@out_dir + '/*.csv')
       files.first.should_not be_blank

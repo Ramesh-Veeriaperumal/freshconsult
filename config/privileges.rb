@@ -68,6 +68,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/data_pipe"
     resource :"integrations/cloud_elements/crm", :only => [:fetch]
 
+
+    # Used by API V2 Search
+    resource :"api_search/ticket", :only => [:index]
+
     #Freshfone
     resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
     resource :"freshfone/user"
@@ -140,6 +144,7 @@ Authority::Authorization::PrivilegeList.build do
     # Agent who has access to ticket create will obviously know the custom field names.
     # So access to read the list of custom fields for an account through API should also be given at the same level of privilege as ticket create.
     resource :api_ticket_field, :only => [:index]
+    resource :"api_freshfone/call_history", :only => [:export, :export_status]
   end
 
   export_tickets do
@@ -379,7 +384,11 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_contact", :only => [:create, :update]
     resource :"api_company", :only => [:create, :update]
 
-    # This privilege should only be used for API. This should have only read permission.
+    # Used by API V2 Search
+    resource :"api_search/contact", :only => [:index]
+    resource :"api_search/company", :only => [:index]
+
+    # This privilege should only be used for API. This should have only read permission. 
     # Agent who has access to contact/company create will obviously know the custom field names.
     # So access to read the list of custom fields for an account through API should also be given at the same level of privilege as contact/company create.
     resource :api_contact_field, :only => [:index]
@@ -429,7 +438,9 @@ Authority::Authorization::PrivilegeList.build do
       resource :"reports/timesheet_report", :only => [:index, :report_filter, :save_reports_filter, :update_reports_filter, :delete_reports_filter, :time_entries_list]
       resource :"reports/report_filter"
       resource :"reports/v2/tickets/report", :only =>[ :index, :fetch_metrics, :fetch_ticket_list, :fetch_active_metric,
-                                                        :save_reports_filter, :update_reports_filter, :delete_reports_filter]
+                                                        :save_reports_filter, :update_reports_filter, :delete_reports_filter,
+                                                        :fetch_qna_metric, :fetch_insights_metric, :save_insights_config,
+                                                        :fetch_recent_questions, :fetch_insights_config]
 
       resource :"helpdesk/dashboard", :only => [:unresolved_tickets, :unresolved_tickets_data]
       resource :"reports/scheduled_export"

@@ -14,12 +14,14 @@ class Collaboration::Ticket
 		@ticket = Account.current.tickets.find_by_display_id(ticket_id) if ticket_id
 	end
   
-	def access_token(for_user = nil)
-		JWT.encode({
+	def access_token(for_user = nil, group_id = nil)
+		token_data = {
 			:ticketId => @ticket.display_id.to_s, 
 			:userId => for_user || User.current.id.to_s, 
 			:accountId => Account.current.id.to_s
-		}, Account.current.collab_settings.key)
+		}
+		token_data.merge!({:groupId => group_id}) if group_id.present?
+		JWT.encode(token_data, Account.current.collab_settings.key)
 	end
 
 	def valid_token?(jwt_token)

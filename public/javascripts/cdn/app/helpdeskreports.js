@@ -12,3 +12,6 @@
 //= require app/kissmetrics
 //= require helpdesk_reports/helpdeskreports
 //= require helpdesk_reports/helpdeskreports_metrics
+//= require helpdesk_reports/qna/qna_util
+//= require helpdesk_reports/reports_home
+//= require helpdesk_reports/qna/json_tester.js

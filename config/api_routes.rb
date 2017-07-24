@@ -26,6 +26,15 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    namespace :api_freshfone, path: 'phone' do 
+      resources :call_history, only: [:index] do 
+        collection do 
+          post :export
+          get '(export/:id)', to: :export_status, as: :export_status
+        end
+      end
+    end
+
     namespace :api_discussions, path: 'discussions' do
       resources :categories, except: [:new, :edit] do
         member do
@@ -57,6 +66,10 @@ Helpkit::Application.routes.draw do
       resources :comments, as: 'api_comments', controller: 'api_comments', only: [:destroy, :update]
     end
     resources :groups, as: 'api_groups', controller: 'api_groups', except: [:new, :edit]
+
+    namespace :api_search, path: 'search' do
+      resources :tickets, only: [:index]
+    end
 
     resources :contacts, as: 'api_contacts', controller: 'api_contacts', except: [:new, :edit] do
       member do

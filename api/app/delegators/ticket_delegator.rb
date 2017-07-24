@@ -19,9 +19,12 @@ class TicketDelegator < BaseDelegator
                             }
   validate :facebook_id_exists?, if: -> { facebook_id }
   validate :company_presence, if: -> { company_id }
+  validate :validate_internal_agent_group_mapping, if: -> {internal_agent_id && attr_changed?('internal_agent_id') && Account.current.shared_ownership_enabled?}
+  validate :validate_status_group_mapping, if: -> {internal_group_id && attr_changed?('internal_group_id') && Account.current.shared_ownership_enabled?}
 
   def initialize(record, options)
     @ticket_fields = options[:ticket_fields]
+    @ticket = record
     check_params_set(options[:custom_fields]) if options[:custom_fields].is_a?(Hash)
     super record
   end
@@ -85,4 +88,13 @@ class TicketDelegator < BaseDelegator
       errors[:facebook_id] << :invalid_facebook_id
     end
   end
+
+  def validate_internal_agent_group_mapping
+    errors[:internal_agent] << :wrong_internal_agent unless @ticket.valid_internal_agent?
+  end
+
+  def validate_status_group_mapping
+    errors[:internal_group] << :wrong_internal_group unless @ticket.valid_internal_group?
+  end
+
 end

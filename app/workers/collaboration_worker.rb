@@ -6,7 +6,6 @@ class CollaborationWorker
   def perform(noti_info)
     current_user = User.current
     current_account = Account.current
-    group_collab_enabled = current_account.group_collab_enabled?
     ticket = current_account.tickets.find_by_display_id(noti_info["ticket_display_id"])
 
     if ticket.present?
@@ -21,6 +20,12 @@ class CollaborationWorker
         raise e, "Invalid JSON string: #{recipient_info}"
       end
 
+      recipient_info = add_user_details(recipient_info)
+
+      if current_account.group_collab_enabled?
+          recipient_info = tokenify_recipients(recipient_info, ticket.display_id)
+      end 
+
       message = {
         :object => "user_notification",
         :account_id => ticket.account_id,
@@ -34,7 +39,7 @@ class CollaborationWorker
           :collaboration => {
             :notification_data => {
               :client_id => Collaboration::Ticket::HK_CLIENT_ID,
-              :current_domain => current_account.full_domain,
+              :current_domain => noti_info["current_domain"],
               :message_id => noti_info["mid"],
               :message_body => noti_info["mbody"],
               :mentioned_by_id => current_user.id.to_s,
@@ -42,7 +47,7 @@ class CollaborationWorker
               :requester_name => ticket.requester[:name],
               :requester_email => ticket.requester[:email],
               :from_address => from_email,
-              :metadata => tokenify_recipients(recipient_info, ticket.display_id, group_collab_enabled)
+              :metadata => recipient_info
             }
           }
         }
@@ -55,26 +60,76 @@ class CollaborationWorker
     end
   end
 
+  def add_user_details(recipient_info)
+    current_account = Account.current
+    current_user = User.current
+    if recipient_info["reply"].present?
+      reply_to = current_account.users.find_by_id(recipient_info["reply"]["r_id"])
+      recipient_info["reply"].merge!({
+        "name" => reply_to.name,
+        "email" => reply_to.email
+      })
+    end
+
+    if recipient_info["hk_group_notify"].present?
+      group_noti_data = []
+      for group_id in recipient_info["hk_group_notify"] do
+        noti_group = Group.find_by_id(group_id)
+        group_info = {
+          "group_id" => group_id,
+          "group_name" => noti_group.name,
+          "users" => []
+        }
+        for user in noti_group.agents do
+          if current_user.id != user.id
+            group_info["users"] << {
+              "user_id" => user.id.to_s,
+              "name" => user.name,
+              "email" => user.email,
+            }
+          end
+        end
+        group_noti_data << group_info
+      end
+      recipient_info["hk_group_notify"] = group_noti_data
+    end
+
+    if recipient_info["hk_notify"].present?
+      user_noti_data = []
+      for user in recipient_info["hk_notify"] do
+        noti_user = current_account.users.find_by_id(user["user_id"]) 
+        user_noti_data << {
+          "user_id" => user["user_id"],
+          "name" => noti_user.name,
+          "email" => noti_user.email,
+          "invite" => user["invite"]
+        }
+      end
+      recipient_info["hk_notify"] = user_noti_data
+    end
+    recipient_info
+  end
+
   private
-  def tokenify_recipients(recipient_info, ticket_display_id, group_collab_enabled)
+  def tokenify_recipients(recipient_info, ticket_display_id)
     collab_ticket = Collaboration::Ticket.new(ticket_display_id)
     if recipient_info["reply"].present?
-      recipient_info["reply"]["token"] = group_collab_enabled ? collab_ticket.access_token(recipient_info["reply"]["r_id"]).to_s : ""
+      recipient_info["reply"]["token"] = collab_ticket.access_token(recipient_info["reply"]["r_id"]).to_s
     end
 
     if recipient_info["hk_group_notify"].present?
       for group in recipient_info["hk_group_notify"] do
         for user in group["users"] do
-          user["token"] = group_collab_enabled ? collab_ticket.access_token(user["user_id"]).to_s : ""
+          user["token"] = collab_ticket.access_token(user["user_id"], group["group_id"]).to_s
         end
       end
     end
 
     if recipient_info["hk_notify"].present?
       for user in recipient_info["hk_notify"] do
-        user["token"] = group_collab_enabled ? collab_ticket.access_token(user["user_id"]).to_s : ""
+        user["token"] = collab_ticket.access_token(user["user_id"]).to_s
       end
     end
-    return recipient_info
+    recipient_info
   end
 end

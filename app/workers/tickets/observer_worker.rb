@@ -48,6 +48,7 @@ module Tickets
             else
               evaluate_on.model_changes = evaluate_on.merge_changes previous_changes, evaluate_on.model_changes
             end
+            evaluate_on.sbrr_state_attributes = args[:sbrr_state_attributes]
             evaluate_on.enqueue_skill_based_round_robin if evaluate_on.should_enqueue_sbrr_job? && !evaluate_on.skip_sbrr
           else
             if evaluate_on.should_enqueue_sbrr_job? && !evaluate_on.skip_sbrr && !evaluate_on.errors.any?
@@ -56,7 +57,7 @@ module Tickets
           end
         end
         Thread.current[:observer_doer_id] = nil
-        return {:model_changes => evaluate_on.model_changes}
+        return {:sbrr_exec => evaluate_on.sbrr_exec_obj}
       end
     end
   end

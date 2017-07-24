@@ -48,7 +48,7 @@ function helpdeskReports(opts) {
             var start_date    = new Date(parseInt(HelpdeskReports.locals.startTimestamp));
             var selected_date = new Date(timestamp);
             var current_date  = selected_date > start_date ? selected_date : start_date;
-            return Highcharts.dateFormat('%e %b',current_date);
+            return Highcharts.dateFormat('%e %b',current_date.getTime());
         },
         qtr: function (timestamp) {
             var current_date = new Date(timestamp),
@@ -231,6 +231,21 @@ helpdeskReports.prototype = {
         }
         x += "</div>";
         return x;
+    },
+    qnaTooltip: function() {
+      var x = "<div class='tooltip'>";
+      jQuery.each(this.points, function (i, point) {
+          var y = (point.y) % 1 === 0 ? (this.y) : (this.point.y).toFixed(2);
+          //var metric = I18n.t(point.series.name.toLowerCase(),{scope: "helpdesk_reports", defaultValue: point.series.name.toLowerCase()});
+          if(point.series.userOptions.unit_suffix == "Hours") {
+            y = HelpdeskReports.CoreUtil.timeMetricConversion(y*3600);
+            x += '<p style="margin:0;display:inline-block;color:' + point.series.color + '">' + point.series.name + ' : ' +  y + '</p><br/>';
+          } else {
+            x += '<p style="margin:0;display:inline-block;color:' + point.series.color + '">' + point.series.name + ' : ' +  y + point.series.userOptions.unit_suffix + '</p><br/>';
+          }
+      });
+      x += "</div>";
+      return x;
     },
     hrPerformancelineTooltip: function () {
         return helpdeskReports.prototype.performancelineTooltip(this,"Hours");
@@ -697,7 +712,7 @@ function lineChart(opts) {
             }
         },
         tooltip: {
-            formatter: this.lineChartTooltip,
+            formatter: opts.qnaChart != undefined ? this.qnaTooltip : this.lineChartTooltip,
             crosshairs: {
                 color: 'gray',
                 dashStyle: 'solid',
@@ -715,6 +730,7 @@ function lineChart(opts) {
         },
         series: opts['chartData'],
         legend: {
+            enabled : opts['legendDisable'] == 'undefined' ? true : opts['legendDisable'],
             borderWidth: 0,
             itemStyle: {
                 bottom: 0,

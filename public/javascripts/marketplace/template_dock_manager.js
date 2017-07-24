@@ -6,7 +6,11 @@ var TemplateDockManager   = Class.create({
     this.tabName = tabName;
     this.isSearched = false;
     this.appName;
+    this.extensionId;
     this.developedBy;
+    this.action;
+    this.pollRetryLimit = 5;
+    this.accApiPollInterval = customMsgs.accapi_poll_interval;
 
     this.bindTemplateEvents();
     this.setupCarousel();
@@ -341,6 +345,7 @@ var TemplateDockManager   = Class.create({
   
     var isFormValid = true;
     isFormValid = this.isValidForm(e);
+    var initialCount = 0;
 
     if(isFormValid ){
       jQuery.ajax({
@@ -356,45 +361,106 @@ var TemplateDockManager   = Class.create({
         },
         success: function(resp_body, statustext, resp){
           if(resp.status == 200){
-            if(that.appType == app_details.get('custom_app_type')){
-              jQuery(document).trigger({
-                type: "installed_custom_app",
-                app_name: that.appName,
-                time: new Date()
-              });
-            } else {
-              jQuery(document).trigger({
-                type: "successful_installation",
-                app_name: that.appName,
-                developed_by: that.developedBy,
-                time: new Date()
-              });
-            }
-
-            jQuery('.install-form').remove();
-            jQuery('.progress').removeClass('active');
-            jQuery('.bar').css("width", "100%");
-            if (parent.location.hash && parent.location.hash.match('^#[0-9]')) {
-              parent.location.hash = "";
-            }
-            parent.location.reload();
+            that.handleInstallSuccess();
+          } else if (resp.status == 202){
+            var installedExtensionId = resp_body.installed_extension_id;
+            setTimeout( function() {
+              that.pollAccountApi(initialCount, that.pollRetryLimit, installedExtensionId);
+            }, that.accApiPollInterval);
           } else {
-            jQuery("#install-error").show().text(that.customMessages.api_error);
-            jQuery(".progress, .installing-text").hide();
-            jQuery('.backbtn').removeAttr('disabled');
-            jQuery(".install-form").show();
-            jQuery(".progress .bar").css("width", "0");
+            that.handleInstallFailure();
           }
-          clearInterval(that.progressInterval);
         },
         error: function(jqXHR, exception) {
-          that.showErrorMsg(that.customMessages.api_error);
+          that.handleInstallFailure();
         }
       });
     }else{
       this.displayFormFieldError();
     }
   },
+
+  handleInstallSuccess: function() {
+    if(this.appType == app_details.get('custom_app_type')){
+      jQuery(document).trigger({
+        type: "installed_custom_app",
+        app_name: this.appName,
+        time: new Date()
+      });
+    } else {
+      jQuery(document).trigger({
+        type: "successful_installation",
+        app_name: this.appName,
+        developed_by: this.developedBy,
+        time: new Date()
+      });
+    }
+    jQuery('.install-form').remove();
+    jQuery('.progress').removeClass('active');
+    jQuery('.bar').css("width", "100%");
+    if (parent.location.hash && parent.location.hash.match('^#[0-9]')) {
+      parent.location.hash = "";
+    }
+    parent.location.reload();
+    clearInterval(that.progressInterval);
+  },
+
+  handleInstallFailure: function(message) {
+    jQuery(".progress .bar").css("width", "0");
+    clearInterval(this.progressInterval);
+    var progEl = jQuery(".progress, .installing-text");
+    progEl.hide();
+    var backUrl = jQuery('#fa-nav .backbtn').attr('data-url');
+    var html = '<span>'+ this.customMessages.app_setup_error +'</span> ';
+    html += 'Please <a class="backbtn" href data-url='+backUrl+'>try again</a>. ';
+    html += 'If the error persists, please <a href="https://support.freshdesk.com">contact support.</a>';
+    if (message) {
+      html += '<div class="mkp-error-details"><a>View error details<a></div>';
+      jQuery('.fa-installer .fa-hmeta').height('65px');
+    }
+    progEl.siblings('.app-name').html(html);
+    jQuery('.mkp-error-details').click(function() {
+      jQuery('.mkp-error-details').html('<p>'+ message +'<p>');
+    });
+  },
+
+  pollAccountApi: function(count, maxCount, installedExtensionId) {
+    var self = this;
+    jQuery.ajax({
+      url: '/admin/marketplace/installed_extensions/'+ installedExtensionId +'/app_status?event='+ this.action,
+      type: "GET",
+      success: function(resp_body, statustext, resp){
+        self.handlePollSuccess(resp, count, maxCount, installedExtensionId);
+      },
+      error: function(jqXHR, exception) {
+        self.handleInstallFailure();
+      }
+    })
+  },
+
+  handlePollSuccess: function(resp, count, maxCount, installedExtensionId) {
+    var self = this;
+    if (resp.status == 202 && count < maxCount) {
+      count = count + 1;
+      setTimeout( function() {
+        self.pollAccountApi(count, maxCount, installedExtensionId);
+      }, self.accApiPollInterval);
+    } else if( resp.status == 200) {
+      response = resp.responseJSON;
+      switch (response.status) {
+        case 'SUCCESS':
+          self.handleInstallSuccess();
+          break;
+        case 'FAILED':
+        case 'LIMBO':
+          self.handleInstallFailure(response.message);
+          break;
+      }
+    } else {
+      self.handleInstallFailure();
+    }
+  },
+
   buyApp: function(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -406,7 +472,7 @@ var TemplateDockManager   = Class.create({
       type: 'get',
       data: {install_url: jQuery(el).attr("data-install-url")},
       dataType: 'json',
-      
+
       success: function(extension){
         if ( extension.account_suspended ) {
           that.showErrorMsg(that.customMessages.suspended_plan_info);
@@ -446,6 +512,8 @@ var TemplateDockManager   = Class.create({
         that.showLoader();
       },
       success: function(install_extension){
+        that.extensionId = install_extension.extension_id;
+        that.action = install_extension.install_btn['text'].toLowerCase();
         if ( install_extension.account_suspended ) {
           that.showErrorMsg(that.customMessages.suspended_plan_info);
         }

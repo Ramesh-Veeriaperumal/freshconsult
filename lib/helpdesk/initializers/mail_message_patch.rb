@@ -38,7 +38,6 @@ Mail::Body.class_eval do
     
     #Added to set deafult value in Regexp.escape if boundary is nil
     def split!(boundary)
-      # debugger
       self.boundary = boundary
       parts = raw_source.split(/(?:\A|\r\n)--#{Regexp.escape(boundary || "")}(?=(?:--)?\s*$)/)
       # Make the preamble equal to the preamble (if any)

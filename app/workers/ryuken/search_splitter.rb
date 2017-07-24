@@ -2,15 +2,21 @@
 #
 class Ryuken::SearchSplitter
   include Shoryuken::Worker
-  
+
   shoryuken_options queue: ::SQS[:search_etl_queue],
-                    body_parser: :json
-                    # retry_intervals: [360, 1200, 3600] #=> Depends on visibility timeout
-                    # batch: true, #=> Batch processing. Max 10 messages. sqs_msg, args = ARRAY
-                    # auto_delete: true
-  
+    body_parser: :json
+  # retry_intervals: [360, 1200, 3600] #=> Depends on visibility timeout
+  # batch: true, #=> Batch processing. Max 10 messages. sqs_msg, args = ARRAY
+  # auto_delete: true
+
   def perform(sqs_msg, args)
     begin
+      if args["subscriber_properties"]["search"] && args["subscriber_properties"]["search"]["timestamps"]
+        if sqs_msg.attributes["SentTimestamp"]
+          args["subscriber_properties"]["search"]["timestamps"] << sqs_msg.attributes["SentTimestamp"].to_i
+        end
+        args["subscriber_properties"]["search"]["timestamps"] << Search::Job.es_version/1000
+      end
       cluster = Search::V2::Tenant.new(Account.current.id).home_cluster
       if args["#{args['object']}_properties"]['archive'].presence
         Ryuken::SearchPoller.perform_async(args.to_json, queue: ES_V2_QUEUE_KEY % { cluster: (cluster + '-archive') })

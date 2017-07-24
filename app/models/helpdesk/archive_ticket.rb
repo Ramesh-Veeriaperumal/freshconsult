@@ -467,6 +467,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   def archive?
     true
   end
+  alias :archive :archive?
 
   def as_json(options = {}, deep=true)#TODO-RAILS3
     return super(options) unless options[:tailored_json].blank?

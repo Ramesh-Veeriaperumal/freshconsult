@@ -5,6 +5,7 @@ module Freshfone::Jobs
       include ExportCsvUtil
       include Rails.application.routes.url_helpers
       include Export::Util
+
       EXPORT_TYPE = "call_history"
 
       def perform
@@ -14,12 +15,12 @@ module Freshfone::Jobs
         @current_account.freshfone_account.present? ?
           set_current_user : raise("The user #{export_params[:account_id]} doesn't have an active freshfone account")
         begin
-          check_and_create_export EXPORT_TYPE
+          @data_export = @current_account.data_exports.find(export_params[:export_id])
           export_call_history
           mail_options = { :user => @current_user, :number => get_number_string, :account => @current_account,
                :domain => @current_account.host, :export_params => export_params }
           mail_options.merge!({:url => hash_url(@current_account.host)}) unless @calls.blank?
-          CallHistoryMailer.deliver_call_history_export(mail_options)
+          CallHistoryMailer.deliver_call_history_export(mail_options) unless export_params[:api]
         rescue Exception => e
           Rails.logger.error "CallHistoryExport ::: Exception occured while trying to export call history for #{@current_account.id} : #{e.message}\n:\n#{e.backtrace.join('\n')}"
         ensure
@@ -47,7 +48,7 @@ module Freshfone::Jobs
 
         def export_call_history
           run_on_slave { load_calls }
-          return if @calls.empty?
+          return if @calls.empty? && !export_params[:api]
           file_string = send("generate_#{format}") # generate_csv or generate_xls
           build_file file_string, EXPORT_TYPE, format
         end

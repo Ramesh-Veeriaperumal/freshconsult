@@ -1,6 +1,6 @@
 /*
 *   For collaboration feature.
-*   To be included in _head.html.erb
+*   To be included in cdn/collaboration.js
 *
 */ 
 
@@ -25,9 +25,10 @@ App.CollaborationModel = (function ($) {
     var _COLLAB_PVT = {
         ChatApi: {},
         apiInited: function(response) {
-            if(!!response.features) {
-                Collab.features.groupMentionsEnabled = !!response.features.enable_group_mentions;
-                Collab.features.replyToEnabled = !!response.features.enable_reply_to;
+            if(typeof response.features !== "undefined") {
+                Collab.features.groupMentionsEnabled = response.features.enable_group_mentions;
+                Collab.features.replyToEnabled = response.features.enable_reply_to;
+                Collab.features.collabTourEnabled = response.features.show_collab_tour;
             }
         },
         connectionInited : function() {
@@ -105,11 +106,10 @@ App.CollaborationModel = (function ($) {
         },
         onMessageHandler: function(msg) {    
             // Rendering will be handled by addMessageHtml based on message Type
-            var is_open_collab_view = !!$("#collab-sidebar.expand").length;
             var sent_by_me = (msg.s_id === Collab.currentUser.uid);
-            var msg_for_opend_collab = (!!Collab.currentConversation && msg.co_id === Collab.currentConversation.co_id);
+            var msg_for_current_convo = (!!Collab.currentConversation && msg.co_id === Collab.currentConversation.co_id);
 
-            if(is_open_collab_view && msg_for_opend_collab && !sent_by_me) {
+            if(msg_for_current_convo && !sent_by_me) {
                 msg.incremental = true;
                 App.CollaborationUi.addMessageHtml(msg, CONST.TYPE_RECEIVED);
             }
@@ -224,6 +224,7 @@ App.CollaborationModel = (function ($) {
         features: {
             groupMentionsEnabled: false,
             replyToEnabled: false,
+            collabTourEnabled: false
         },
 
         isOnline: function(userId) {
@@ -551,6 +552,9 @@ App.CollaborationModel = (function ($) {
                 console.warn("Annotations sdk not present. couldn't start annotations.");
             }
             window.$kapi = _COLLAB_PVT.ChatApi;
+            if(typeof App.CollaborationEmoji !== "undefined") { 
+                App.CollaborationEmoji.init();
+            }
         }
     };
     return Collab;

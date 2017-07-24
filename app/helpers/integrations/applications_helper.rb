@@ -2,6 +2,7 @@ module Integrations
   module ApplicationsHelper
 
     include Marketplace::Constants
+    include Marketplace::ApiUtil
 
     def show_edit?(app_name)
       Integrations::Constants::NON_EDITABLE_APPS.exclude?(app_name)
@@ -13,6 +14,10 @@ module Integrations
 
     def is_iframe_app?(extension)
       extension["features"].present? and extension['features'].include?('iframe_settings')
+    end
+
+    def is_uninstall_in_progress?(installed_ext)
+      installed_ext['state'] == UNINSTALL_IN_PROGRESS
     end
 
     def generate_mkp_update_button(extension)

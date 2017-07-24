@@ -11,11 +11,13 @@ module HelpdeskReports::Constants::Common
     :phone_summary                 => 1008,
     :timesheet_reports             => 1009,
     :satisfaction_survey           => 1010,
-    :timespent                     => 1011}.freeze
+    :timespent                     => 1011,
+    :qna                           => 1012,
+    :insights                      => 1013}.freeze
 
   DEFAULT_REPORTS     = [ :agent_summary, :group_summary ]
-  ADVANCED_REPORTS    = DEFAULT_REPORTS + [ :glance ]
-  ENTERPRISE_REPORTS  = ADVANCED_REPORTS + [ :ticket_volume, :performance_distribution, :customer_report] 
+  ADVANCED_REPORTS    = DEFAULT_REPORTS + [ :glance  ]
+  ENTERPRISE_REPORTS  = ADVANCED_REPORTS + [ :ticket_volume, :performance_distribution, :customer_report, :qna, :insights] 
 
   REPORT_ENUM_TO_TYPE  = REPORT_TYPE_TO_ENUM.invert.freeze
 

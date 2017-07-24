@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170515122708) do
+ActiveRecord::Schema.define(:version => 20170715062914) do
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -4129,4 +4129,14 @@ ActiveRecord::Schema.define(:version => 20170515122708) do
     t.timestamps
   end
   add_index :scheduled_exports, :account_id, :name => "index_scheduled_exports_on_account_id"
+
+  create_table :qna_insights_reports do |t|
+      t.column      :user_id, "bigint unsigned"
+      t.column      :account_id, "bigint unsigned"
+      t.text        :recent_questions
+      t.text        :insights_config_data
+      t.timestamps
+    end
+  add_index :qna_insights_reports , [:account_id, :user_id], :name => 'index_qna_insights_reports_on_account_id_and_user_id'
+ 
 end

@@ -725,6 +725,8 @@ Helpkit::Application.routes.draw do
 
   resource :user_session
 
+  match '/enable_falcon' => 'users#enable_falcon', :as => :enable_falcon, via: :post
+  match '/disable_falcon' => 'users#disable_falcon', :as => :disable_falcon, via: :post
   match '/register/:activation_code' => 'activations#new', :as => :register
   match 'register_new_email/:activation_code' => 'activations#new_email', :as => :register_new_email
   match '/activate/:perishable_token' => 'activations#create', :as => :activate
@@ -1477,6 +1479,9 @@ Helpkit::Application.routes.draw do
           put :disable
           put :update_config
         end
+        scope ':installed_extension_id' do
+          get :app_status
+        end
       end
     end
 
@@ -1674,6 +1679,11 @@ Helpkit::Application.routes.draw do
         post :delete_reports_filter
         post :update_reports_filter
         post :fetch
+        post :fetch_qna_metric
+        post :fetch_insights_metric
+        post :save_insights_config
+        post :fetch_recent_questions
+        post :fetch_insights_config
       end
     end
 
@@ -1857,6 +1867,7 @@ Helpkit::Application.routes.draw do
   match '/account/forgot' => 'user_sessions#forgot', :as => :forgot_password
   match '/account/reset/:token' => 'user_sessions#reset', :as => :reset_password
   match '/search_user_domain' => 'domain_search#locate_domain', :as => :search_domain
+  match '/email/validate_domain' => 'email#validate_domain', :as => :validate_domain
   match '/helpdesk/tickets/execute_scenario(/:id)' => 'helpdesk/tickets#execute_scenario' # For mobile apps backward compatibility
   match '/helpdesk/dashboard/:freshfone_group_id/agents' => 'helpdesk/dashboard#load_ffone_agents_by_group'
 
@@ -1869,7 +1880,10 @@ Helpkit::Application.routes.draw do
     match '/tickets/archived' => 'archive_tickets#index', :as => :archive_tickets, via: :get
     match '/tickets/archived/filter/tags/:tag_id' => 'archive_tickets#index', :as => :tag_filter
 
+    match '/tickets/collab/:id' => 'collab_tickets#show'
     match '/tickets/collab/:id/notify' => 'collab_tickets#notify', via: :post
+    match '/tickets/collab/:id/prevnext' => 'collab_tickets#prevnext'
+    match '/tickets/collab/:id/latest_note' => 'collab_tickets#latest_note'
 
     resources :archive_tickets, :only => [:index, :show] do
       collection do
@@ -2953,6 +2967,9 @@ Helpkit::Application.routes.draw do
           put :remove_blacklisted_ip
           get :shards
           post :operations_on_shard
+          get :blacklisted_domains
+          put :add_blacklisted_domain
+          put :remove_blacklisted_domain
         end
       end
 

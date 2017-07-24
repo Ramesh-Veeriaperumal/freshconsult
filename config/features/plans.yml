@@ -41,6 +41,7 @@
       - :sitemap
       - :requester_widget
       - :advanced_search
+      - :user_notifications
     :inherits: 
       - :sprout_jan_17
     :exclude: []
@@ -95,6 +96,7 @@
     :features:
       - :mailbox
       - :whitelisted_ips
+      - :skill_based_round_robin
     :inherits: 
       - :estate_jan_17
     :exclude: []

@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "5c4094d1fd8fec04b9e922cfa6caea005433cc303d84e6d0d9ab34370195b59f",
-    "current": "5c4094d1fd8fec04b9e922cfa6caea005433cc303d84e6d0d9ab34370195b59f"
+    "previous": "eed2fdffa47deeb01ba00ea7e5dd9aa4b29fb5f198dbd6a7773f5b28b5d066ce",
+    "current": "eed2fdffa47deeb01ba00ea7e5dd9aa4b29fb5f198dbd6a7773f5b28b5d066ce"
   },
   "fonts": [
-    "public/assets/glyphs_5c4094d1fd8fec04b9e922cfa6caea00.ttf",
-    "public/assets/glyphs_5c4094d1fd8fec04b9e922cfa6caea00.svg",
-    "public/assets/glyphs_5c4094d1fd8fec04b9e922cfa6caea00.woff",
-    "public/assets/glyphs_5c4094d1fd8fec04b9e922cfa6caea00.eot"
+    "public/assets/glyphs_eed2fdffa47deeb01ba00ea7e5dd9aa4.ttf",
+    "public/assets/glyphs_eed2fdffa47deeb01ba00ea7e5dd9aa4.svg",
+    "public/assets/glyphs_eed2fdffa47deeb01ba00ea7e5dd9aa4.woff",
+    "public/assets/glyphs_eed2fdffa47deeb01ba00ea7e5dd9aa4.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -157,6 +157,10 @@
     "available-on-mobile": {
       "codepoint": 61878,
       "source": "public/glyphs/vectors/available-on-mobile.svg"
+    },
+    "bar-chart": {
+      "codepoint": 62081,
+      "source": "public/glyphs/vectors/bar-chart.svg"
     },
     "bars": {
       "codepoint": 62013,
@@ -318,9 +322,17 @@
       "codepoint": 61732,
       "source": "public/glyphs/vectors/chrome.svg"
     },
+    "clear-qna": {
+      "codepoint": 62082,
+      "source": "public/glyphs/vectors/clear-qna.svg"
+    },
     "clone": {
       "codepoint": 61994,
       "source": "public/glyphs/vectors/clone.svg"
+    },
+    "close-qna": {
+      "codepoint": 62083,
+      "source": "public/glyphs/vectors/close-qna.svg"
     },
     "code": {
       "codepoint": 62015,
@@ -329,10 +341,6 @@
     "code-snippet": {
       "codepoint": 62016,
       "source": "public/glyphs/vectors/code-snippet.svg"
-    },
-    "collab-download": {
-      "codepoint": 62073,
-      "source": "public/glyphs/vectors/collab-download.svg"
     },
     "comment-multi": {
       "codepoint": 61733,
@@ -786,22 +794,6 @@
       "codepoint": 62075,
       "source": "public/glyphs/vectors/huddle-logo.svg"
     },
-    "huddle-logo-dark": {
-      "codepoint": 62076,
-      "source": "public/glyphs/vectors/huddle-logo-dark.svg"
-    },
-    "huddle-logo-green": {
-      "codepoint": 62077,
-      "source": "public/glyphs/vectors/huddle-logo-green.svg"
-    },
-    "huddle-thick": {
-      "codepoint": 62078,
-      "source": "public/glyphs/vectors/huddle-thick.svg"
-    },
-    "huddle-thick-filled": {
-      "codepoint": 62079,
-      "source": "public/glyphs/vectors/huddle-thick-filled.svg"
-    },
     "ie": {
       "codepoint": 61785,
       "source": "public/glyphs/vectors/ie.svg"
@@ -1010,6 +1002,10 @@
       "codepoint": 61876,
       "source": "public/glyphs/vectors/no-network.svg"
     },
+    "no_change": {
+      "codepoint": 62084,
+      "source": "public/glyphs/vectors/no_change.svg"
+    },
     "notice": {
       "codepoint": 61810,
       "source": "public/glyphs/vectors/notice.svg"
@@ -1094,6 +1090,10 @@
       "codepoint": 61934,
       "source": "public/glyphs/vectors/phone_summary.svg"
     },
+    "pie-chart": {
+      "codepoint": 62085,
+      "source": "public/glyphs/vectors/pie-chart.svg"
+    },
     "plain-text": {
       "codepoint": 62037,
       "source": "public/glyphs/vectors/plain-text.svg"
@@ -1133,6 +1133,10 @@
     "puzzle": {
       "codepoint": 61911,
       "source": "public/glyphs/vectors/puzzle.svg"
+    },
+    "qna": {
+      "codepoint": 62086,
+      "source": "public/glyphs/vectors/qna.svg"
     },
     "read-all": {
       "codepoint": 62065,
@@ -1245,6 +1249,14 @@
     "smile-o": {
       "codepoint": 62039,
       "source": "public/glyphs/vectors/smile-o.svg"
+    },
+    "solution_article": {
+      "codepoint": 62087,
+      "source": "public/glyphs/vectors/solution_article.svg"
+    },
+    "solution_article_1": {
+      "codepoint": 62088,
+      "source": "public/glyphs/vectors/solution_article_1.svg"
     },
     "sorting-asc": {
       "codepoint": 61926,

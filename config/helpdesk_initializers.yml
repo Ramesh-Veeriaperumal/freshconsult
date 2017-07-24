@@ -97,3 +97,4 @@ helpdesk:
     - clearbit_config
     - freshpipe
     - zendesk_app_config
+    - product_feedback

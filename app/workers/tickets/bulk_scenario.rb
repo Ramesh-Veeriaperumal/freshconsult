@@ -13,13 +13,11 @@ module Tickets
       return if current_user.nil? or current_account.nil? or va_rule.nil?
       ids = args[:ticket_ids]
       ids_join = ids.length > 0 ? ids.join(',') : '1'#'1' is dummy to prevent error
-      tickets = execute_on_db {current_account.tickets.order("field(display_id, #{ids_join})").where(:display_id => ids)}
-      group_ids = Set.new
-      tickets.each do |ticket|
+      @items = execute_on_db {current_account.tickets.order("field(display_id, #{ids_join})").where(:display_id => ids)}
+      @items.each do |ticket|
         begin
           va_rule.trigger_actions(ticket, current_user)
           bulk_update_tickets(ticket) { ticket.save }
-          group_ids.merge (ticket.model_changes[:group_id] || [ticket.group_id])
           Va::RuleActivityLogger.clear_activities
           ticket.create_scenario_activity(va_rule.name)
         rescue Exception => e
@@ -35,7 +33,7 @@ module Tickets
       logger.info "something is wrong: #{e.message}"
       NewRelic::Agent.notice_error(e)
     ensure
-      sbrr_assigner(group_ids, {:jid => self.jid}) 
+      bulk_sbrr_assigner
       User.reset_current_user
       Thread.current[:sbrr_log] = nil
     end
