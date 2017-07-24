@@ -1394,7 +1394,7 @@ module Ember
       post :export_csv, construct_params({ version: 'private' }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern(:ticket_fields, :not_included, list: ticket_export_fields.join(',')),
-                  bad_request_error_pattern(:contact_fields, :not_included, list: %i[name phone mobile fb_profile_id].join(',')),
+                  bad_request_error_pattern(:contact_fields, :not_included, list: %i[name phone mobile fb_profile_id contact_id].join(',')),
                   bad_request_error_pattern(:company_fields, :not_included, list: %i[name].join(',')),
                   bad_request_error_pattern(:format, :not_included, list: %w[csv xls].join(',')),
                   bad_request_error_pattern(:date_filter, :not_included, list: TicketConstants::CREATED_BY_NAMES_BY_KEY.keys.map(&:to_s).join(',')),

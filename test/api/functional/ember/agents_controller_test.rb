@@ -45,6 +45,8 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     json = get :index, controller_params(version: 'private', only: 'wrong_params')
     assert_response 400
     match_json([bad_request_error_pattern('only', :not_included, list: 'available,available_count')])
+  ensure
+    Ember::AgentsController.any_instance.unstub(:available_chat_agents)
   end
 
   def test_update_with_availability
