@@ -1,5 +1,6 @@
 module Freshfone::TicketActions
 	include Freshfone::CallHistory
+	include Freshfone::NumberValidator
 
 	def create_note
 		@ticket = current_account.tickets.find_by_display_id(params[:ticket])
@@ -25,6 +26,7 @@ module Freshfone::TicketActions
 
 	def create_ticket
 		select_current_call
+		return handle_invalid_number if invalid_requester_number?
 		json_response = {}
 		if build_ticket(params.merge!({ :agent => agent })).save
 			@ticket = current_call.notable
@@ -117,5 +119,18 @@ module Freshfone::TicketActions
     def reset_notable
       current_call.notable = @ticket
       current_call.save
+    end
+
+    def invalid_requester_number?
+    	params[:phone_number].present? && fetch_country_code(params[:phone_number]).blank?
+    end
+
+    def handle_invalid_number
+      @invalid_phone = true
+      respond_to do |format|
+        format.xml { return empty_twiml }
+        format.js { }
+        format.nmobile { render json: { success: false, invalid_phone: true } }
+      end
     end
 end

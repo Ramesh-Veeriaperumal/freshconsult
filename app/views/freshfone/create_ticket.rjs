@@ -1,6 +1,5 @@
 show_ajax_flash page
-
-if @current_call.present? && !@current_call.associated_ticket.nil?
+if @current_call.ticket_created?
 	ticket = @current_call.associated_ticket
 	parent = "#freshfone_call_#{@current_call.id}"
 
@@ -13,4 +12,9 @@ if @current_call.present? && !@current_call.associated_ticket.nil?
 
 	page << "jQuery('#{parent} .freshfone_customer .user_name')
 						.html('#{@current_call.customer_name}');" if @current_call.customer_id.present?
+	page << "freshfoneendcall.hideEndCallForm();"
+	page << "freshfoneendcall.$endCallSaveTicketButton.button('reset');"
+elsif @invalid_phone
+	page << "freshfoneendcall.toggleWarning(freshfoneendcall.$invalidNumberMessage, true);"
+	page << "freshfoneendcall.$endCallSaveTicketButton.button('reset');"
 end

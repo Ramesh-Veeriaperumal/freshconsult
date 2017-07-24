@@ -132,7 +132,7 @@ var Ivr;
 			var self = this;
 			$(".number_performer_input").on('blur', function () {
 				var element =  $(this);
-				self.toggleInvalidNumberError(!isValidNumber(element.val()), element.next());
+				self.toggleInvalidNumberError(false, element.next());
 			});
 			$(".number_performer_input").on('focus', function () {
 				self.toggleInvalidNumberError(false, $(this).next());
@@ -150,10 +150,6 @@ var Ivr;
 					formattedNum = formatE164(countryForE164Number(val), val);
 					if(formattedNum && formattedNum != val)
 						element.val(formattedNum);
-				}
-				if ( !isValidNumber(element.val()) ) {
-					self.toggleInvalidNumberError(true, element.next());
-					error = true;
 				}
 			});
 			return error;
