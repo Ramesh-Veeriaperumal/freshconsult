@@ -315,17 +315,4 @@ class Export::Ticket < Struct.new(:export_params)
 
     export_params[:"#{type}_fields"] = sort_fields export_fields, actual_fields
   end
-
-  def sort_fields export_fields, actual_fields
-    param_position_hash = export_fields.keys.inject({}) do |hash, key|
-      hash[key] = actual_fields[key] if actual_fields[key]   
-      hash
-    end
-    sorted_param_list = param_position_hash.sort_by{|k,v| v}
-
-    sorted_param_list.inject({}) do |hash, element|
-      hash[element[0]] = export_fields[element[0]]
-      hash
-    end
-  end
 end

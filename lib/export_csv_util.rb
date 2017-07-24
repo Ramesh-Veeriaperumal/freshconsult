@@ -1,6 +1,7 @@
 # encoding: utf-8
 require 'csv'
 module ExportCsvUtil
+  include Helpdesk::TicketModelExtension
   DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_response_time, :closed_at]
 
   ALL_TEXT_FIELDS = [:default_description, :default_note, :default_address, :custom_paragraph]
@@ -37,6 +38,8 @@ module ExportCsvUtil
     #Product entry
     csv_headers = csv_headers + [ {:label => I18n.t("export_data.fields.product"), :value => "product_name", :selected => false, :type => :field_type} ] if Account.current.multi_product_enabled?
     csv_headers = csv_headers + [{:label => I18n.t("export_data.fields.description"), :value => "description", :selected => false}]
+    description_fields = csv_headers.pop
+    csv_headers.insert(2,description_fields)
     csv_headers = csv_headers + flexi_fields.collect { |ff| { :label => ff.label, :label_in_portal => ff.label_in_portal, :value => ff.name, :type => ff.field_type, :selected => false, :levels => (ff.nested_levels || []) } }
 
     if is_portal
@@ -114,12 +117,11 @@ module ExportCsvUtil
     csv_string = ""
     unless csv_hash.blank?
       csv_string = CSVBridge.generate do |csv|
-        headers = delete_invisible_fields(csv_hash, is_portal)
+        headers = delete_invisible_fields(is_portal)
         csv << headers.collect {|header| csv_hash[header]}
         tickets_data(items, headers, csv)
       end
     end
-    
     send_data csv_string, 
             :type => 'text/csv; charset=utf-8; header=present', 
             :disposition => "attachment; filename=tickets.csv"
@@ -128,7 +130,7 @@ module ExportCsvUtil
   def export_xls(items, xls_hash, is_portal=false)
     unless xls_hash.blank?
       @xls_hash = xls_hash
-      @headers = delete_invisible_fields(xls_hash, is_portal)
+      @headers = delete_invisible_fields(is_portal)
       @records = tickets_data(items, @headers)
     end
   end
@@ -174,8 +176,9 @@ module ExportCsvUtil
     ((data.blank? || (data.is_a? Integer)) ? data : (CGI::unescapeHTML(data.to_s)))
   end
 
-  def delete_invisible_fields(header_hash, is_portal)
-    headers = header_hash.keys.sort
+  def delete_invisible_fields(is_portal)
+    header_hash = reorder_export_params
+    headers = header_hash.keys
     if is_portal
       vfs = visible_fields
       headers.delete_if{|header_key|
@@ -184,6 +187,14 @@ module ExportCsvUtil
       }
     end
     headers
+  end
+
+  def reorder_export_params
+    export_fields = params[:export_fields]
+    return if export_fields.blank?
+    ticket_fields   = default_export_fields_order.merge(custom_export_fields_order)
+    params[:export_fields] = sort_fields export_fields, ticket_fields
+    params[:export_fields]
   end
 
   def fetch_archive_ticket_value(item, val)
