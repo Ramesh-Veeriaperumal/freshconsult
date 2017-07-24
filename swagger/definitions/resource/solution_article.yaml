@@ -1,0 +1,57 @@
+type: object
+allOf:
+  - $ref: '#/definitions/extension_generic'
+  - properties:
+      type:
+        type: integer
+        format: int64
+      category_id:
+        type: integer
+        format: int64
+      folder_id:
+        type: integer
+        format: int64
+      thumbs_up:
+        type: integer
+        format: int64
+      thumbs_down:
+        type: integer
+        format: int64
+      hits:
+        type: integer
+        format: int64
+      seo_data:
+        type: object
+        properties:
+          meta_title:
+            type: string
+          meta_description:
+            type: string
+          meta_keywords:
+            type: string
+      agent_id:
+        type: integer
+        format: int64
+      title:
+        type: string
+      description:
+        type: string
+      description_text:
+        type: string
+      status:
+        type: integer
+        format: int64
+      path:
+        type: string
+      visibility:
+        type: object
+      attachments:
+        type: array
+        items:
+          $ref: '#/definitions/attachment'
+      modified_at:
+        type: string
+        format: date-time
+      modified_by:
+        type: integer
+        format: int64

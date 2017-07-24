@@ -1,0 +1,20 @@
+type: object
+properties:
+  id:
+    description: Agent user id
+    type: integer
+  points:
+    description: Points earned by an Agent in the gamification
+    type: integer
+  current_level_name:
+    description: Current level name of the agent in Gamification
+    type: string
+  next_level_name:
+    description: Next level name of the agent in Gamification
+    type: string
+  points_needed: 
+    description: Points needed to score to reach the next level in Gamification
+    type: integer
+  badges:
+    description: Badges earned by an agent in gamification
+    type: array

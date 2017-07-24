@@ -82,6 +82,8 @@
     $ref: ./request/ticket_filters/ticket_filter.yaml
   integrated_resource_create:
     $ref: ./request/integrated_resources/integrated_resource.yaml
+  agent_input:
+    $ref: ./request/agents/agent.yaml
 
   # RESOURCE
   conversation_template:
@@ -142,6 +144,8 @@
     $ref: ./resource/integrated_resources.yaml
   scenario_automation:
     $ref: ./resource/scenario_automation.yaml
+  solution_article:
+    $ref: ./resource/solution_article.yaml
   extension_generic:
     $ref: ./resource/extension/generic.yaml
   extended_contact:
@@ -238,6 +242,12 @@
   dashboard_activities:
     $ref: './response/dashboard/activities.yaml'
 
+  #dashbord quests
+  dashboard_quests:
+    $ref: './response/dashboard/quest.yaml'  
+  #agent achievements
+  agent_achievements:
+    $ref: './response/agents/achievements.yaml'  
   #dashboard
   dashboard_widget_config: 
     $ref: './response/dashboard/widget_config.yaml'

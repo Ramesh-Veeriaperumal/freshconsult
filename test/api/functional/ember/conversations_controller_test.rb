@@ -352,6 +352,17 @@ module Ember
       t.update_attributes(spam: false)
     end
 
+    def test_reply_with_user_id_invalid_privilege
+      t = create_ticket
+      params_hash = reply_note_params_hash.merge(user_id: other_user.id)
+      @controller.stubs(:is_allowed_to_assume?).returns(false)
+      post :reply, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 403
+      match_json(request_error_pattern('invalid_user', id: other_user.id, name: other_user.name))
+    ensure
+      @controller.unstub(:is_allowed_to_assume?)
+    end
+
     def test_forward_with_invalid_cc_emails_count
       cc_emails = []
       50.times do

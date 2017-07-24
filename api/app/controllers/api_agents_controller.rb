@@ -54,7 +54,8 @@ class ApiAgentsController < ApiApplicationController
       render_errors(@agent_filter.errors, @agent_filter.error_options) unless @agent_filter.valid?
     end
 
-    def load_objects
+    def load_objects(scoper_options = nil)
+      return super(scoper_options) if scoper_options
       super(
         if User.current.privilege?(:manage_users)
           # Preloading user as 'includes' introduces an additional outer join to users table while inner join with user already exists

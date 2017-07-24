@@ -1,1 +1,3 @@
-JSON.generate(@items.map(&:to_hash))
+JSON.generate(@items.map do |agent|
+	( @availability_details.present? ) ? agent.availability_hash(@availability_details[agent.record.user_id]) : agent.to_hash
+end)
