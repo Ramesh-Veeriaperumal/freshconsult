@@ -1,0 +1,19 @@
+get:
+  tags: [dashboard_quests]
+  description: "Available Quests for an agent"
+  parameters:
+    - name: filter
+      in: query
+      type: string
+      description: unachieved to filter Unachieved Quests
+  responses: 
+    200: 
+      description: Success
+      schema:
+        $ref: '#/definitions/dashboard_quests'
+    403:
+      description: Access denied
+    400:
+      description: Bad request error
+      schema:
+        $ref: '#/definitions/bad_request_error'

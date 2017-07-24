@@ -1,0 +1,1 @@
+JSON.generate(@item.agent_achievements_hash)

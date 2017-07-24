@@ -51,9 +51,18 @@ module Ember
         ParamsHelper.assign_and_clean_params(TodoConstants::PARAMS_MAPPINGS, params[cname])
       end
 
+      def after_load_object
+        @ticket = @item.ticket if @item.ticket_id
+        if @ticket
+          verify_ticket_permission(api_current_user, @ticket)
+        else
+          verify_user_permission(api_current_user, @item)
+        end
+      end
+
       def check_privilege
         return false unless super # break if there is no enough privilege.
-        if (create? || update? || index?) && params[:ticket_id]
+        if (create? || index?) && params[:ticket_id]
           @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
           unless @ticket.present?
             log_and_render_404
@@ -65,7 +74,7 @@ module Ember
 
       def constants_class
         :TodoConstants.to_s.freeze
-      end 
+      end
 
       def scoper
         return Helpdesk::Reminder unless index? # to handle validationerrors for update & create
