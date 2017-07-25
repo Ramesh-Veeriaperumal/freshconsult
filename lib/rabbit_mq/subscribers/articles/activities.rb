@@ -13,7 +13,7 @@ module RabbitMq::Subscribers::Articles::Activities
   end
 
   def mq_activities_valid(action, model)
-    false and Account.current.features?(:activity_revamp)
+    false
   end
 
   def valid_changes

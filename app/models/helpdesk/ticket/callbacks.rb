@@ -929,10 +929,8 @@ private
   end
 
   def create_assoc_tkt_activity(action, ticket, id) # => tracker/assoc_parent tkt
-    if Account.current.features?(:activity_revamp)
-      ticket.misc_changes = {action => [id]}
-      ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY)
-    end
+    ticket.misc_changes = {action => [id]}
+    ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY)
   end
 
   def new_outbound_email?
