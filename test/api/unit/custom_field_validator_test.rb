@@ -150,6 +150,41 @@ class CustomFieldValidatorTest < ActionView::TestCase
     end
   end
 
+  class CustomDropdownWithSectionFieldTestValidation < MockTestValidation
+    include ActiveModel::Validations
+
+    attr_accessor :attribute7, :attribute8, :closed_status, :allow_string_param, :custom_dropdown_1, :status, :priority
+
+    validates :custom_dropdown_1, custom_inclusion: { in: %w(Choice2 Choice3 Choice4) }
+    validates :attribute7, :attribute8, data_type: { rules: Hash, allow_nil: true }, custom_field: { attribute7: {
+      validatable_custom_fields: proc { CustomFieldValidatorTestHelper.section_field_for_data_type },
+      required_based_on_status: proc { |x| x.required_for_closure? },
+      required_attribute: :required,
+      section_field_mapping: proc { |x| CustomFieldValidatorTestHelper.section_field_parent_field_mapping_for_data_custom_dropdown }
+    },
+                                                                                                     attribute8: {
+                                                                                                       validatable_custom_fields: proc { CustomFieldValidatorTestHelper.section_field_for_choices },
+                                                                                                       drop_down_choices: proc { CustomFieldValidatorTestHelper.dropdown_choices_by_field_name },
+                                                                                                       nested_field_choices: proc { CustomFieldValidatorTestHelper.nested_fields_choices_by_name },
+                                                                                                       required_based_on_status: proc { |x| x.required_for_closure? },
+                                                                                                       required_attribute: :required,
+                                                                                                       section_field_mapping: proc { |x| CustomFieldValidatorTestHelper.section_field_custom_dropdown_parent_field_mapping_for_choice }
+                                                                                                     }
+    }
+
+
+    def initialize(params = {})
+      params.each { |key, value| instance_variable_set("@#{key}", value) }
+      check_params_set(params[:attribute7]) if params[:attribute7].is_a?(Hash)
+      check_params_set(params[:attribute8]) if params[:attribute8].is_a?(Hash)
+      super
+    end
+
+    def required_for_closure?
+      closed_status == true
+    end
+  end
+
   class SectionFieldTestRequiredValidation < MockTestValidation
     include ActiveModel::Validations
 
@@ -176,6 +211,40 @@ class CustomFieldValidatorTest < ActionView::TestCase
       params.each { |key, value| instance_variable_set("@#{key}", value) }
       check_params_set(params[:attribute1]) if params[:attribute1].is_a?(Hash)
       check_params_set(params[:attribute2]) if params[:attribute2].is_a?(Hash)
+      super
+    end
+
+    def required_for_closure?
+      closed_status == true
+    end
+  end
+
+  class CustomDropdownWithSectionFieldTestRequiredValidation < MockTestValidation
+    include ActiveModel::Validations
+
+    attr_accessor :attribute7, :attribute8, :closed_status, :allow_string_param, :custom_dropdown_1, :status, :priority
+
+    validates :custom_dropdown_1, custom_inclusion: { in: %w(Choice2 Choice3 Choice4) }
+    validates :attribute7, :attribute8, data_type: { rules: Hash, allow_nil: true }, custom_field: { attribute7: {
+      validatable_custom_fields: proc { CustomFieldValidatorTestHelper.section_field_for_data_type_required },
+      required_based_on_status: proc { |x| x.required_for_closure? },
+      required_attribute: :required,
+      section_field_mapping: proc { |x| CustomFieldValidatorTestHelper.section_field_parent_field_mapping_for_data_custom_dropdown }
+    },
+                                                                                                     attribute8: {
+                                                                                                       validatable_custom_fields: proc { CustomFieldValidatorTestHelper.section_field_for_choices_required },
+                                                                                                       drop_down_choices: proc { CustomFieldValidatorTestHelper.dropdown_choices_by_field_name },
+                                                                                                       nested_field_choices: proc { CustomFieldValidatorTestHelper.nested_fields_choices_by_name },
+                                                                                                       required_based_on_status: proc { |x| x.required_for_closure? },
+                                                                                                       required_attribute: :required,
+                                                                                                       section_field_mapping: proc { |x| CustomFieldValidatorTestHelper.section_field_custom_dropdown_parent_field_mapping_for_choice }
+                                                                                                     }
+    }
+
+    def initialize(params = {})
+      params.each { |key, value| instance_variable_set("@#{key}", value) }
+      check_params_set(params[:attribute7]) if params[:attribute7].is_a?(Hash)
+      check_params_set(params[:attribute8]) if params[:attribute8].is_a?(Hash)
       super
     end
 
@@ -364,7 +433,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     assert test.valid?
   end
 
-  def test_section_field_validation_for_data_type_absence_error
+  def test_section_field_with_ticket_type_parent_validation_for_data_type_absence_error
     account = mock
     account.stubs(:id).returns(1)
     Account.stubs(:current).returns(account)
@@ -374,28 +443,59 @@ class CustomFieldValidatorTest < ActionView::TestCase
     assert_equal({ single_1: :section_field_absence_check_error, check1_1: :section_field_absence_check_error, check2_1: :section_field_absence_check_error, date_1: :section_field_absence_check_error, url1_1: :section_field_absence_check_error, phone: :section_field_absence_check_error, multi2_1: :section_field_absence_check_error, number1_1: :section_field_absence_check_error, decimal2_1: :section_field_absence_check_error }.sort.to_h, errors.sort.to_h)
   end
 
-  def test_section_field_validation_for_choices_absence_error
+  def test_section_field_with_custom_dropdown_parent_validation_for_data_type_absence_error
+    account = mock
+    account.stubs(:id).returns(1)
+    Account.stubs(:current).returns(account)
+    test = CustomDropdownWithSectionFieldTestValidation.new(custom_dropdown_1: 'Choice4', status: 3, priority: 4, attribute7: { 'single_1' => 'jkj', 'check1_1' => false, 'check2_1' => true, 'date_1' => Time.now.zone.to_s, 'number1_1' => 23, 'decimal2_1' => '12.4' })
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({ single_1: :section_field_absence_check_error, check1_1: :section_field_absence_check_error, check2_1: :section_field_absence_check_error, date_1: :section_field_absence_check_error, number1_1: :section_field_absence_check_error, decimal2_1: :section_field_absence_check_error }.sort.to_h, errors.sort.to_h)
+  end
+
+  def test_section_field_with_ticket_type_parent_validation_for_choices_absence_error
     test = SectionFieldTestValidation.new(ticket_type: 'Problem', status: 3, priority: 4, attribute2: { 'dropdown1_1' => 'ewee', 'first_1' => 'fsdfsdf', 'country_1' => 'ewrewtrwer' })
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ dropdown1_1: :section_field_absence_check_error, first_1: :section_field_absence_check_error, country_1: :section_field_absence_check_error }.sort.to_h, errors.sort.to_h)
   end
 
-  def test_section_field_validation_for_choices_required
+  def test_section_field_with_custom_dropdown_parent_validation_for_choices_absence_error
+    test = CustomDropdownWithSectionFieldTestValidation.new(custom_dropdown_1: 'Choice4', status: 3, priority: 4, attribute8: { 'dropdown1_1' => 'ewee', 'first_1' => 'fsdfsdf', 'country_1' => 'ewrewtrwer' })
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({ dropdown1_1: :section_field_absence_check_error, first_1: :section_field_absence_check_error, country_1: :section_field_absence_check_error }.sort.to_h, errors.sort.to_h)
+  end
+
+  def test_section_field_with_ticket_type_parent_validation_for_choices_required
     test = SectionFieldTestRequiredValidation.new(ticket_type: 'Question', status: 2, priority: 3, attribute1: { 'single_1' => 'jkj', 'check1_1' => true, 'check2_1' => false, 'date_1' => '2011-09-12', 'phone' => '35345346dgdf', 'multi2_1' => 'efsdff' })
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ dropdown1_1: :not_included, first_1: :not_included, country_1: :not_included }.sort.to_h, errors.sort.to_h)
   end
 
-  def test_section_field_validation_for_data_type_required
+  def test_section_field_with_custom_dropdown_parent_validation_for_choices_required
+    test = CustomDropdownWithSectionFieldTestRequiredValidation.new(custom_dropdown_1: 'Choice3', status: 2, priority: 3, attribute7: { 'single_1' => 'jkj', 'check1_1' => true, 'check2_1' => false, 'date_1' => '2011-09-12', 'phone' => '35345346dgdf', 'multi2_1' => 'efsdff' })
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({ dropdown1_1: :not_included, first_1: :not_included, country_1: :not_included }.sort.to_h, errors.sort.to_h)
+  end
+
+  def test_section_field_with_ticket_type_parent_validation_for_data_type_required
     test = SectionFieldTestRequiredValidation.new(ticket_type: 'Question', status: 2, priority: 3, attribute2: { 'dropdown1_1' => '1st', 'first_1' => 'category 1', 'country_1' => 'Usa' })
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ single_1: :datatype_mismatch, check1_1: :datatype_mismatch, check2_1: :datatype_mismatch, date_1: :invalid_date, phone: :datatype_mismatch, multi2_1: :datatype_mismatch }.sort.to_h, errors.sort.to_h)
   end
 
-  def test_section_field_validation_for_data_type_invalid
+  def test_section_field_with_custom_dropdown_parent_validation_for_data_type_required
+    test = CustomDropdownWithSectionFieldTestRequiredValidation.new(custom_dropdown_1: 'Choice3', status: 2, priority: 3, attribute8: { 'dropdown1_1' => '1st', 'first_1' => 'category 1', 'country_1' => 'Usa' })
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({ single_1: :datatype_mismatch, check1_1: :datatype_mismatch, check2_1: :datatype_mismatch, date_1: :invalid_date}.sort.to_h, errors.sort.to_h)
+  end
+
+  def test_section_field_with_ticket_type_parent_validation_for_data_type_invalid
     account = mock
     account.stubs(:id).returns(1)
     Account.stubs(:current).returns(account)
@@ -405,14 +505,31 @@ class CustomFieldValidatorTest < ActionView::TestCase
     assert_equal({ single_1: :datatype_mismatch, check1_1: :datatype_mismatch, date_1: :invalid_date, phone: :datatype_mismatch, multi2_1: :datatype_mismatch }.sort.to_h, errors.sort.to_h)
   end
 
-  def test_section_field_validation_for_choices_invalid
+  def test_section_field_with_custom_dropdown_parent_validation_for_data_type_invalid
+    account = mock
+    account.stubs(:id).returns(1)
+    Account.stubs(:current).returns(account)
+    test = CustomDropdownWithSectionFieldTestValidation.new(custom_dropdown_1: 'Choice3', status: 2, priority: 3, attribute7: { 'single_1' => 12, 'check1_1' => 'true', 'date_1' => 'sdd'})
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({ single_1: :datatype_mismatch, check1_1: :datatype_mismatch, date_1: :invalid_date}.sort.to_h, errors.sort.to_h)
+  end
+
+  def test_section_field_with_ticket_type_parent_validation_for_choices_invalid
     test = SectionFieldTestValidation.new(ticket_type: 'Question', status: 2, priority: 3, attribute2: { 'dropdown1_1' => 'ewee', 'first_1' => 'fsdfsdf', 'country_1' => 'ewrewtrwer' })
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ dropdown1_1: :not_included, first_1: :not_included, country_1: :not_included }.sort.to_h, errors.sort.to_h)
   end
 
-  def test_section_field_validation_for_data_type_invalid_with_parent_invalid
+  def test_section_field_with_custom_dropdown_parent_validation_for_choices_invalid
+    test = CustomDropdownWithSectionFieldTestValidation.new(custom_dropdown_1: 'Choice3', status: 2, priority: 3, attribute8: { 'dropdown1_1' => 'ewee', 'first_1' => 'fsdfsdf', 'country_1' => 'ewrewtrwer' })
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({ dropdown1_1: :not_included, first_1: :not_included, country_1: :not_included }.sort.to_h, errors.sort.to_h)
+  end
+
+  def test_section_field_with_ticket_type_parent_validation_for_data_type_invalid_with_parent_invalid
     account = mock
     account.stubs(:id).returns(1)
     Account.stubs(:current).returns(account)
@@ -422,25 +539,56 @@ class CustomFieldValidatorTest < ActionView::TestCase
     assert_equal({ ticket_type: :not_included }.sort.to_h, errors.sort.to_h)
   end
 
-  def test_section_field_validation_for_choices_invalid_with_parent_invalid
+  def test_section_field_with_custom_dropdown_validation_for_data_type_invalid_with_parent_invalid
+    account = mock
+    account.stubs(:id).returns(1)
+    Account.stubs(:current).returns(account)
+    test = CustomDropdownWithSectionFieldTestValidation.new('custom_dropdown_1' => 'Option1', attribute7: { 'single_1' => 'jkj', 'check1_1' => true, 'check2_1' => false, 'date_1' => Time.now.zone.to_s, 'url1_1' => 'gh', 'phone' => 'dasfdf', 'multi2_1' => 'efsdff', 'number1_1' => 23, 'decimal2_1' => '12.4' })
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({ custom_dropdown_1: :not_included }.sort.to_h, errors.sort.to_h)
+  end
+
+  def test_section_field_with_ticket_type_parent_validation_for_choices_invalid_with_parent_invalid
     test = SectionFieldTestValidation.new('ticket_type' => 'QuestionType', attribute2: { 'dropdown1_1' => 'ewee', 'first_1' => 'fsdfsdf', 'country_1' => 'ewrewtrwer' })
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ ticket_type: :not_included }.sort.to_h, errors.sort.to_h)
   end
 
-  def test_section_field_validation_for_choices_required_with_parent_invalid
+  def test_section_field_with_custom_dropdown_parent_validation_for_choices_invalid_with_parent_invalid
+    test = CustomDropdownWithSectionFieldTestValidation.new('custom_dropdown_1' => 'Option1', attribute2: { 'dropdown1_1' => 'ewee', 'first_1' => 'fsdfsdf', 'country_1' => 'ewrewtrwer' })
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({ custom_dropdown_1: :not_included }.sort.to_h, errors.sort.to_h)
+  end
+
+  def test_section_field_with_ticket_type_parent_validation_for_choices_required_with_parent_invalid
     test = SectionFieldTestRequiredValidation.new('ticket_type' => 'QuestionType', attribute1: { 'single_1' => 'jkj', 'check1_1' => true, 'check2_1' => false, 'date_1' => '2011-09-12', 'phone' => '35345346dgdf', 'multi2_1' => 'efsdff' })
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ ticket_type: :not_included }.sort.to_h, errors.sort.to_h)
   end
 
-  def test_section_field_validation_for_data_type_required_with_parent_invalid
+  def test_section_field_with_custom_dropdown_parent_validation_for_choices_required_with_parent_invalid
+    test = CustomDropdownWithSectionFieldTestRequiredValidation.new('custom_dropdown_1' => 'Option1', attribute7: { 'single_1' => 'jkj', 'check1_1' => true, 'check2_1' => false, 'date_1' => '2011-09-12',})
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({ custom_dropdown_1: :not_included }.sort.to_h, errors.sort.to_h)
+  end
+
+  def test_section_field_with_ticket_type_parent_validation_for_data_type_required_with_parent_invalid
     test = SectionFieldTestRequiredValidation.new('ticket_type' => 'QuestionType', attribute2: { 'dropdown1_1' => '1st', 'first_1' => 'category 1', 'country_1' => 'Usa' })
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ ticket_type: :not_included }.sort.to_h, errors.sort.to_h)
+  end
+
+  def test_section_field_with_custom_dropdown_parent_validation_for_data_type_required_with_parent_invalid
+    test = CustomDropdownWithSectionFieldTestRequiredValidation.new('custom_dropdown_1' => 'Option1', attribute8: { 'dropdown1_1' => '1st', 'first_1' => 'category 1', 'country_1' => 'Usa' })
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({ custom_dropdown_1: :not_included }.sort.to_h, errors.sort.to_h)
   end
 
   def test_non_existent_validation_method
