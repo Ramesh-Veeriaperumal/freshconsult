@@ -94,7 +94,8 @@ private
     headers = {
       :subject     => (!options.nil? && !options[:subject].nil?) ? options[:subject] : mail_subject,
       :to          => @to_emails,
-      :from        => AppConfig['from_email'],
+      :from        => Account.current.default_friendly_email || AppConfig['from_email'],
+      :bcc         => AppConfig['reports_email'],
       "Reply-to"   => "",
       :sent_on     => Time.now,
       "Auto-Submitted" => "auto-generated",

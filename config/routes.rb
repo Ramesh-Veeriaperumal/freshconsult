@@ -2967,6 +2967,9 @@ Helpkit::Application.routes.draw do
           put :remove_blacklisted_ip
           get :shards
           post :operations_on_shard
+          get :blacklisted_domains
+          put :add_blacklisted_domain
+          put :remove_blacklisted_domain
         end
       end
 

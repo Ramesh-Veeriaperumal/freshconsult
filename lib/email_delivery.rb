@@ -62,8 +62,8 @@ include ParserUtil
 
     result =  {"headers" => header,
                 "to" => to_email,
-                "cc" => cc,
-                "bcc" => bcc,
+                "cc" => (!cc.nil? ? (cc.to_a - to_email.to_a) : cc),
+                "bcc" => (!bcc.nil? ? (bcc.to_a - cc.to_a - to_email.to_a) : bcc),
                 "from" => from_email,
                 "replyTo" => reply_to,
                 "subject" => subject,
