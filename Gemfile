@@ -99,7 +99,7 @@ gem "soap4r-ruby1.9", "~> 2.0.5"
 gem "jira4r", "0.3.0"
 gem "ruby-openid", :git => "git://github.com/freshdesk/ruby-openid.git", :require => "openid"
 gem "ruby-openid-apps-discovery", "1.2.0"
-gem "twilio-ruby", :git => "git://github.com/freshdesk/twilio-ruby.git", :branch => "master"
+gem "twilio-ruby", :git => "git://github.com/sarathprasath/twilio-ruby.git", :branch => "master"
 gem "carmen", :git => "git://github.com/jim/carmen.git", :tag => "ruby-18"
 gem 'postoffice', :git => "git://github.com/chrisbutcher/postoffice.git", :branch => "master"
 
@@ -152,8 +152,7 @@ gem "rinku", :git => "git://github.com/freshdesk/rinku.git"
 gem "namae", '0.8.4'
 gem 'ancestry', '1.3'
 gem 'rubytree'
-gem 'global_phone'
-# gem "global_phone_dbgen", "~> 1.0.0"
+gem "telephone_number", '1.1.1'
 gem "useragent", "~> 0.16.3"
 
 gem 'active_record_shards', '~> 3.2.0', :require => 'active_record_shards'

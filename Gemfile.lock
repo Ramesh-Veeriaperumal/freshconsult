@@ -87,16 +87,6 @@ GIT
       POpen4 (>= 0.1.4)
 
 GIT
-  remote: git://github.com/freshdesk/twilio-ruby.git
-  revision: e0755761a1f363be1cf1fb813525e30d87414fdc
-  branch: master
-  specs:
-    twilio-ruby (3.14.5)
-      builder (>= 2.1.2)
-      jwt (~> 1.0)
-      multi_json (>= 1.3.0)
-
-GIT
   remote: git://github.com/freshdesk/wkhtmltopdf_binary_gem.git
   revision: f9aa831c91a687f29aaeebf8a08ac7b38af79422
   specs:
@@ -134,6 +124,16 @@ GIT
   revision: a2cd95c3e3c1a4f7a9566efdab5ce59c886cb05f
   specs:
     prototype_legacy_helper (0.0.0)
+
+GIT
+  remote: git://github.com/sarathprasath/twilio-ruby.git
+  revision: 512b9888d3f9011d9de61a34a22fa54bdccae20f
+  branch: master
+  specs:
+    twilio-ruby (4.13.0)
+      builder (>= 2.1.2)
+      jwt (~> 1.0)
+      multi_json (>= 1.3.0)
 
 GIT
   remote: git://github.com/sathishfreshdesk/omniauth-salesforce.git
@@ -783,7 +783,6 @@ GEM
       gemoji (>= 2.1.0)
     gherkin (4.0.0)
     git-version-bump (0.15.1)
-    global_phone (1.0.1)
     gnip-rule (0.4.1)
       json (~> 1.8)
       rest-client (~> 1.6.7)
@@ -1190,6 +1189,7 @@ GEM
     syck (1.0.5)
     sys-uname (1.0.2)
       ffi (>= 1.0.0)
+    telephone_number (1.1.1)
     test-unit (3.1.7)
       power_assert
     test-unit-minitest (0.9.1)
@@ -1330,7 +1330,6 @@ DEPENDENCIES
   freshdesk_features!
   fuubar
   gemoji-parser (~> 1.3.1)
-  global_phone
   gnip!
   gnip-rule (= 0.4.1)
   gon (= 6.1.0)
@@ -1456,6 +1455,7 @@ DEPENDENCIES
   strong_parameters (= 0.2.3)
   susy (= 2.1.3)
   syck (= 1.0.5)
+  telephone_number (= 1.1.1)
   test-unit (= 3.1.7)
   test-unit-minitest
   text_data_store!
