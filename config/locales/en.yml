@@ -7458,6 +7458,8 @@ en:
     update_payment_info: Update payment info
     payment_trial_info: This is a paid app with a %{trial_period} day trial period. Once the trial period is over, you will be charged %{price} / %{addon_type} / month. Press Ok to install the app. <br>  %{payment_ok_btn}
     payment_ok: You will be charged %{price} / %{addon_type} / month for this app. This will add up to <b>%{estimate}</b> for your plan period. Press Ok to install the app. <br>  %{payment_ok_btn}
+    platform_not_compatible: "You need to be in the other UI to install the app. Please toggle and install from the app gallery."
+    install_not_allowed: "Paid apps cannot be installed in both UI versions. Your account has already installed this paid app. Please uninstall the existing app to get this app in the current UI. Please contact support if you need assistance."
     agent: agent
     account: account
     delete_action:
