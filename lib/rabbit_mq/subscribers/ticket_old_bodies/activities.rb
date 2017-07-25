@@ -14,7 +14,7 @@ module RabbitMq::Subscribers::TicketOldBodies::Activities
   end
 
   def mq_activities_ticket_old_body_valid(action, model)
-    Account.current.features?(:activity_revamp) and valid_ticket_old_body_model?(model) and ticket_old_body_valid?
+    valid_ticket_old_body_model?(model) && ticket_old_body_valid?
   end
 
   private

@@ -84,7 +84,7 @@ module RabbitMq::Subscribers::Tickets::Activities
   end
 
   def mq_activities_ticket_valid(action, model)
-    Account.current.features?(:activity_revamp) and activity_valid_model?(model) and ticket_valid?(action)
+    activity_valid_model?(model) && ticket_valid?(action)
   end
 
   private

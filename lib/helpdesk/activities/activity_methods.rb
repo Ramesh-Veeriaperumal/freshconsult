@@ -75,7 +75,7 @@ module Helpdesk::Activities
 
     def new_activities(params, ticket, type, archive = false)
       res_hash = DEFAULT_RET_HASH.clone
-      return res_hash if !(ACTIVITIES_ENABLED and Account.current.features?(:activity_revamp))
+      return res_hash if !ACTIVITIES_ENABLED
       begin
         $activities_thrift_transport.open()
         client    = ::HelpdeskActivities::TicketActivities::Client.new($activities_thrift_protocol)
