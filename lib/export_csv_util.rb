@@ -38,7 +38,7 @@ module ExportCsvUtil
     #Product entry
     csv_headers = csv_headers + [ {:label => I18n.t("export_data.fields.product"), :value => "product_name", :selected => false, :type => :field_type} ] if Account.current.multi_product_enabled?
     description_fields = {:label => I18n.t("export_data.fields.description"), :value => "description", :selected => false}
-    csv_headers.insert(2,description_fields)
+    csv_headers.insert(default_export_fields_order["description"] - 1, description_fields)
     csv_headers = csv_headers + flexi_fields.collect { |ff| { :label => ff.label, :label_in_portal => ff.label_in_portal, :value => ff.name, :type => ff.field_type, :selected => false, :levels => (ff.nested_levels || []) } }
 
     if is_portal
@@ -112,11 +112,12 @@ module ExportCsvUtil
     }.compact
   end
 
-  def export_data(items, csv_hash, is_portal=false)
+  def export_data(items, is_portal=false)
     csv_string = ""
+    csv_hash = reorder_export_params
     unless csv_hash.blank?
       csv_string = CSVBridge.generate do |csv|
-        headers = delete_invisible_fields(is_portal)
+        headers = delete_invisible_fields(csv_hash,is_portal)
         csv << headers.collect {|header| csv_hash[header]}
         tickets_data(items, headers, csv)
       end
@@ -126,10 +127,11 @@ module ExportCsvUtil
             :disposition => "attachment; filename=tickets.csv"
   end
 
-  def export_xls(items, xls_hash, is_portal=false)
+  def export_xls(items, is_portal=false)
+    xls_hash = reorder_export_params
     unless xls_hash.blank?
       @xls_hash = xls_hash
-      @headers = delete_invisible_fields(is_portal)
+      @headers = delete_invisible_fields(xls_hash,is_portal)
       @records = tickets_data(items, @headers)
     end
   end
@@ -175,8 +177,7 @@ module ExportCsvUtil
     ((data.blank? || (data.is_a? Integer)) ? data : (CGI::unescapeHTML(data.to_s)))
   end
 
-  def delete_invisible_fields(is_portal)
-    header_hash = reorder_export_params
+  def delete_invisible_fields(header_hash,is_portal)
     headers = header_hash.keys
     if is_portal
       vfs = visible_fields
