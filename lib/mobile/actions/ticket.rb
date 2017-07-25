@@ -86,7 +86,7 @@ module Mobile::Actions::Ticket
       :tailored_json => true,
       :only => [ :id, :display_id, :subject, :priority, :status, :updated_at, :created_at],
       :methods => [ :ticket_subject_style,:ticket_sla_status,:ticket_sla_status_type, :status_name, :priority_name, :source_name, :requester_name,
-                    :responder_name, :company_name,:need_attention, :pretty_updated_date ,:ticket_current_state]
+                    :responder_name, :company_name,:need_attention, :pretty_updated_date ,:ticket_current_state, :is_parent]
     }
   as_json(options,false) 
   end

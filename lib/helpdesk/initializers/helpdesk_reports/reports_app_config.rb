@@ -14,4 +14,6 @@ module ReportsAppConfig
   #Reports constraints for specific report_type/subscription_plan combination
   REPORT_CONSTRAINTS = load_yml('reports_constraints.yml').freeze
 
+  INSIGHTS_DEFAULTS = load_yml('insights_defaults.yml').freeze
+
 end

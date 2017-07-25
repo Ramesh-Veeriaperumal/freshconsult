@@ -1,96 +1,78 @@
-CDN = "https://dwrhyweosjqha.cloudfront.net/";
+/*
+*     For collaboration feature.
+*     Lightweight smiley lib.
+*     To be included in cdn/collaboration.js
+*/ 
 
-// returns a char's Unicode codepoint, of the char at index idx of string str
-// 2013-07-16 from https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/String/charCodeAt
-function fixedCharCodeAt (str, idx) {
-    // ex. fixedCharCodeAt ('\uD800\uDC00', 0); // 65536
-    // ex. fixedCharCodeAt ('\uD800\uDC00', 1); // 65536
-    idx = idx || 0;
-    var code = str.charCodeAt(idx);
-    var hi, low;
-    if (0xD800 <= code && code <= 0xDBFF) { // High surrogate (could change last hex to 0xDB7F to treat high private surrogates as single characters)
-        hi = code;
-        low = str.charCodeAt(idx+1);
-        if (isNaN(low)) {
-            throw 'High surrogate not followed by low surrogate in fixedCharCodeAt()';
-        }
-        return ((hi - 0xD800) * 0x400) + (low - 0xDC00) + 0x10000;
-    }
-    if (0xDC00 <= code && code <= 0xDFFF) { // Low surrogate
-        // We return false to allow loops to skip this iteration since should have already handled high surrogate above in the previous iteration
-        return false;
-        /*hi = str.charCodeAt(idx-1);
-        low = code;
-        return ((hi - 0xD800) * 0x400) + (low - 0xDC00) + 0x10000;*/
-    }
-    return code;
-}
-
-// SO/3055515
-// Should match util.py
-// Note that lhs is html escaped.
-var smileys = {
-    '(:' : 'smile',
-    '(-:' : 'smile',
-    ':)' : 'smile',
-    ':-)' : 'smile',
-    ':(' : 'sad',
-    ':-(' : 'sad',
-    ':D' : 'smiley',
-    ':d' : 'smiley',
-    ':-D' : 'smiley',
-    ':-d' : 'smiley',
-    ';)' : 'wink',
-    ';-)' : 'wink',
-    ':-O' : 'open_mouth',
-    ':-o' : 'open_mouth',
-    ':O' : 'open_mouth',
-    ':o' : 'open_mouth',
-    ':P' : 'tongue',
-    ':p' : 'tongue',
-    ':-P' : 'tongue',
-    ':-p' : 'tongue',
-    '*angry': 'angry',
-    ':@' : 'angry',
-    ':-@' : 'angry',
-    ':$' : 'flushed',
-    ':-$' : 'flushed',
-    '&gt;.&lt;' : 'flushed',
-    '>.<' : 'flushed',
-    ':S' : 'confused',
-    ':s': 'confused',
-    ':-S' : 'confused',
-    ':-s' : 'confused',
-    ':&#39;(' : 'cry',
-    ':\'(' : 'cry',
-    ':|' : 'neutral_face',
-    ':-|' : 'neutral_face',
-    ':-#' : 'quiet',
-    '\\o/' : 'dance',
-    '\\:D/' : 'dance',
-    '\\:d/' : 'dance',
-    '&gt;:)' : 'smiling_imp',
-    '8-|' : 'glasses_nerdy',
-    ':-B' : 'glasses_nerdy',
-    ':-b' : 'glasses_nerdy',
-    'B-)' : 'sunglasses',
-    'b-)' : 'sunglasses',
-    '&lt;:o)' : 'party',
-    '&lt;3' : 'heart',
-    '<3' : 'heart',
-    '&lt;/3' : 'broken_heart',
-    '</3' : 'broken_heart',
-    '8-)' : 'eyeroll',
-    ':*' : 'kiss',
-    ':-*' : 'kiss',
-    'O:-)' : 'angel',
-    ':-/' : 'confused',  // :/ interferes with http://
-    ':-X' : 'shut_mouth',
-    ':X' : 'shut_mouth',
-    ':-x' : 'shut_mouth',
-    ':x' : 'shut_mouth',
-};
-var HEX_TO_EMOJI_NAME = {
+window.App = window.App || {};
+App.CollaborationEmoji = (function () {
+  var CONST = {
+    cdn: "https://dwrhyweosjqha.cloudfront.net/",
+    // SO/3055515
+    // Should match util.py
+    // Note that lhs is html escaped.
+    smileys: {
+      '(:' : 'smile',
+      '(-:' : 'smile',
+      ':)' : 'smile',
+      ':-)' : 'smile',
+      ':(' : 'sad',
+      ':-(' : 'sad',
+      ':D' : 'smiley',
+      ':d' : 'smiley',
+      ':-D' : 'smiley',
+      ':-d' : 'smiley',
+      ';)' : 'wink',
+      ';-)' : 'wink',
+      ':-O' : 'open_mouth',
+      ':-o' : 'open_mouth',
+      ':O' : 'open_mouth',
+      ':o' : 'open_mouth',
+      ':P' : 'tongue',
+      ':p' : 'tongue',
+      ':-P' : 'tongue',
+      ':-p' : 'tongue',
+      '*angry': 'angry',
+      ':@' : 'angry',
+      ':-@' : 'angry',
+      ':$' : 'flushed',
+      ':-$' : 'flushed',
+      '&gt;.&lt;' : 'flushed',
+      '>.<' : 'flushed',
+      ':S' : 'confused',
+      ':s': 'confused',
+      ':-S' : 'confused',
+      ':-s' : 'confused',
+      ':&#39;(' : 'cry',
+      ':\'(' : 'cry',
+      ':|' : 'neutral_face',
+      ':-|' : 'neutral_face',
+      ':-#' : 'quiet',
+      '\\o/' : 'dance',
+      '\\:D/' : 'dance',
+      '\\:d/' : 'dance',
+      '&gt;:)' : 'smiling_imp',
+      '8-|' : 'glasses_nerdy',
+      ':-B' : 'glasses_nerdy',
+      ':-b' : 'glasses_nerdy',
+      'B-)' : 'sunglasses',
+      'b-)' : 'sunglasses',
+      '&lt;:o)' : 'party',
+      '&lt;3' : 'heart',
+      '<3' : 'heart',
+      '&lt;/3' : 'broken_heart',
+      '</3' : 'broken_heart',
+      '8-)' : 'eyeroll',
+      ':*' : 'kiss',
+      ':-*' : 'kiss',
+      'O:-)' : 'angel',
+      ':-/' : 'confused',  // :/ interferes with http://
+      ':-X' : 'shut_mouth',
+      ':X' : 'shut_mouth',
+      ':-x' : 'shut_mouth',
+      ':x' : 'shut_mouth',
+    },
+    hex_to_emoji_name: {
       "2600"  : "sunny",
       "2614"  : "umbrella",
       "2601"  : "cloud",
@@ -919,91 +901,126 @@ var HEX_TO_EMOJI_NAME = {
       "1f6ba" : "womens",
       "274c"  : "x",
       "0030"  : "zero"
-};
-var hex_emoji_map = {};
-for (var key in HEX_TO_EMOJI_NAME) {
-    if (HEX_TO_EMOJI_NAME.hasOwnProperty(key)) {
-        var key_parts = key.split(" ");
-        for (var i = 0; i < key_parts.length; i++) {
-            var key_part = key_parts[i];
-            hex_emoji_map[key_part] = HEX_TO_EMOJI_NAME[key].split(" ")[0];
-        }
+    },
+    smiley_size: 20,
+    smiley_metachars: /[\[\]{}()*+?.\\|\^$\-,&#\s]/g,
+    // Now add extra smileys and recompute regular expression.
+    // cowboy should appear before cow for proper replacing.
+    extra_smileys: "airplane|arrogant|beat_up|beauty|beer|bomb|bowl|boy|brb|bye|cake|call_me|camera|car|cat|chicken|cigarette|clap|clock|cloudy|clown|coffee|coins|computer|console|cowboy|cow|curl_lip|curse|dazed|disappointed|dog|drink|eat|excruciating|film|fingers_crossed|foot_in_mouth|ghost|gift|girl|go_away|hammer|handcuffs|handshake|highfive|hug|hungry|hypnotized|in_love|island|knife|lamp|lashes|laugh|liquor|lying|meeting|mobile|moneymouth|monkey|moon|musical_note|nailbiting|peace|phone|pig|pill|pissed_off|pizza|plate|pray|pumpkin|question|rainbow|rain|rose_dead|rose|rofl|sarcastic|secret|shame|sheep|shout|sick|silly|skeleton|sleepy|snail|soccerball|soldier|starving|sweat|thunder|turtle|tv|vampire|waiting|weep|worship|yawn".split("|"),
+    // Need :emoji: to work
+    extra_emojis: "frowning|innocent|triumph|bowtie|neckbeard|hushed|worried|joy|weary|wink2|no_mouth|yum|sweat|fearful|heart_eyes|smirk|mask|unamused|laughing|pensive|sob|stuck_out_tongue|stuck_out_tongue_closed_eyes|stuck_out_tongue_winking_eye|persevere|tired_face|sleeping|sleepy|satisfied|scream|expressionless|grinning|relaxed|relieved|grimacing|dizzy_face|disappointed|confounded|cold_sweat|sweat_smile|kissing|kissing_closed_eyes|kissing_face|kissing_heart|kissing_smiling_eyes|grin|blush|anguished|astonished|full_moon_with_face|construction_worker|cop|frog|alien|\\+1|-1|100|109|1234|8ball|a|ab|abc|abcd|accept|aerial_tramway|airplane|alarm_clock|ambulance|anchor|angel|anger|angry|ant|apple|aquarius|aries|arrow_backward|arrow_double_down|arrow_double_up|arrow_down|arrow_down_small|arrow_forward|arrow_heading_down|arrow_heading_up|arrow_left|arrow_lower_left|arrow_lower_right|arrow_right|arrow_right_hook|arrow_up|arrow_up_down|arrow_up_small|arrow_upper_left|arrow_upper_right|arrows_clockwise|arrows_counterclockwise|art|articulated_lorry|atm|b|baby|baby_bottle|baby_chick|baby_symbol|baggage_claim|balloon|ballot_box_with_check|bamboo|banana|bangbang|bank|bar_chart|barber|baseball|basketball|bath|bathtub|battery|bear|bee|beer|beers|beetle|beginner|bell|bento|bicyclist|bike|bikini|bird|birthday|black_circle|black_joker|black_nib|black_square|black_square_button|blossom|blowfish|blue_book|blue_car|blue_heart|boar|boat|bomb|book|bookmark|bookmark_tabs|books|boom|boot|bouquet|bow|bowling|boy|bread|bride_with_veil|bridge_at_night|briefcase|broken_heart|bug|bulb|bullettrain_front|bullettrain_side|bus|busstop|bust_in_silhouette|busts_in_silhouette|cactus|cake|calendar|calling|camel|camera|cancer|candy|capital_abcd|capricorn|car|card_index|carousel_horse|cat|cat2|cd|chart|chart_with_downwards_trend|chart_with_upwards_trend|checkered_flag|cherries|cherry_blossom|chestnut|chicken|children_crossing|chocolate_bar|christmas_tree|church|cinema|circus_tent|city_sunrise|city_sunset|cl|clap|clapper|clipboard|clock1|clock10|clock1030|clock11|clock1130|clock12|clock1230|clock130|clock2|clock230|clock3|clock330|clock4|clock430|clock5|clock530|clock6|clock630|clock7|clock730|clock8|clock830|clock9|clock930|closed_book|closed_lock_with_key|closed_umbrella|cloud|clubs|cn|cocktail|coffee|collision|computer|confetti_ball|confused|congratulations|construction|convenience_store|cookie|cool|copyright|corn|couple|couple_with_heart|couplekiss|cow|cow2|credit_card|crocodile|crossed_flags|crown|cry|crying_cat_face|crystal_ball|cupid|curly_loop|currency_exchange|curry|custard|customs|cyclone|dancer|dancers|dango|dart|dash|date|de|deciduous_tree|department_store|diamond_shape_with_a_dot_inside|diamonds|dizzy|do_not_litter|dog|dog2|dollar|dolls|dolphin|door|doughnut|dragon|dragon_face|dress|dromedary_camel|droplet|dvd|e-mail|ear|ear_of_rice|earth_africa|earth_americas|earth_asia|egg|eggplant|eight|eight_pointed_black_star|eight_spoked_asterisk|electric_plug|elephant|email|end|envelope|es|euro|european_castle|european_post_office|evergreen_tree|exclamation|eyeglasses|eyes|facepunch|factory|fallen_leaf|family|fast_forward|fax|feelsgood|feet|ferris_wheel|file_folder|finnadie|fire|fire_engine|fireworks|first_quarter_moon|first_quarter_moon_with_face|fish|fish_cake|fishing_pole_and_fish|fist|five|flags|flashlight|floppy_disk|flower_playing_cards|flushed|foggy|football|fork_and_knife|fountain|four|four_leaf_clover|fr|free|fried_shrimp|fries|fuelpump|full_moon|game_die|gb|gem|gemini|ghost|gift|gift_heart|girl|globe_with_meridians|goat|goberserk|godmode|golf|grapes|green_apple|green_book|green_heart|grey_exclamation|grey_question|guardsman|guitar|gun|haircut|hamburger|hammer|hamster|hand|handbag|hankey|hash|hatched_chick|hatching_chick|headphones|hear_no_evil|heart|heart_decoration|heart_eyes_cat|heartbeat|heartpulse|hearts|heavy_check_mark|heavy_division_sign|heavy_dollar_sign|heavy_exclamation_mark|heavy_minus_sign|heavy_multiplication_x|heavy_plus_sign|helicopter|herb|hibiscus|high_brightness|high_heel|hocho|honey_pot|honeybee|horse|horse_racing|hospital|hotel|hotsprings|hourglass|hourglass_flowing_sand|house|house_with_garden|hurtrealbad|ice_cream|icecream|id|ideograph_advantage|imp|inbox_tray|incoming_envelope|information_desk_person|information_source|interrobang|iphone|it|izakaya_lantern|jack_o_lantern|japan|japanese_castle|japanese_goblin|japanese_ogre|jeans|joy_cat|jp|key|keycap_ten|kimono|kiss|kissing_cat|koala|koko|kr|large_blue_circle|large_blue_diamond|large_orange_diamond|last_quarter_moon|last_quarter_moon_with_face|leaves|ledger|left_luggage|left_right_arrow|leftwards_arrow_with_hook|lemon|leo|leopard|libra|light_rail|link|lips|lipstick|lock|lock_with_ink_pen|lollipop|loop|loudspeaker|love_hotel|love_letter|low_brightness|m|mag|mag_right|mahjong|mailbox|mailbox_closed|mailbox_with_mail|mailbox_with_no_mail|man|man_with_gua_pi_mao|man_with_turban|mans_shoe|maple_leaf|massage|meat_on_bone|mega|melon|memo|mens|metal|metro|microphone|microscope|milky_way|minibus|minidisc|mobile_phone_off|money_with_wings|moneybag|monkey|monkey_face|monorail|moon|mortar_board|mount_fuji|mountain_bicyclist|mountain_cableway|mountain_railway|mouse|mouse2|movie_camera|moyai|muscle|mushroom|musical_keyboard|musical_note|musical_score|mute|nail_care|name_badge|necktie|negative_squared_cross_mark|neutral_face|new|new_moon|new_moon_with_face|newspaper|ng|nine|no_bell|no_bicycles|no_entry|no_entry_sign|no_good|no_mobile_phones|no_pedestrians|no_smoking|non-potable_water|nose|notebook|notebook_with_decorative_cover|notes|nut_and_bolt|o|o2|ocean|octocat|octopus|oden|office|ok|ok_hand|ok_woman|older_man|older_woman|on|oncoming_automobile|oncoming_bus|oncoming_police_car|oncoming_taxi|one|open_file_folder|open_hands|open_mouth|ophiuchus|orange_book|outbox_tray|ox|page_facing_up|page_with_curl|pager|palm_tree|panda_face|paperclip|parking|part_alternation_mark|partly_sunny|passport_control|paw_prints|peach|pear|pencil|pencil2|penguin|performing_arts|person_frowning|person_with_blond_hair|person_with_pouting_face|phone|pig|pig2|pig_nose|pill|pineapple|pisces|pizza|plus1|point_down|point_left|point_right|point_up|point_up_2|police_car|poodle|poop|post_office|postal_horn|postbox|potable_water|pouch|poultry_leg|pound|pouting_cat|pray|princess|punch|purple_heart|purse|pushpin|put_litter_in_its_place|question|rabbit|rabbit2|racehorse|radio|radio_button|rage|rage1|rage2|rage3|rage4|railway_car|rainbow|raised_hand|raised_hands|ram|ramen|rat|recycle|red_car|red_circle|registered|repeat|repeat_one|restroom|revolving_hearts|rewind|ribbon|rice|rice_ball|rice_cracker|rice_scene|ring|rocket|roller_coaster|rooster|rose|rotating_light|round_pushpin|rowboat|ru|rugby_football|runner|running|running_shirt_with_sash|sa|sagittarius|sailboat|sake|sandal|santa|satellite|saxophone|school|school_satchel|scissors|scorpius|scream_cat|scroll|seat|secret|see_no_evil|seedling|seven|shaved_ice|sheep|shell|ship|shipit|shirt|shit|shoe|shower|signal_strength|six|six_pointed_star|ski|skull|slot_machine|small_blue_diamond|small_orange_diamond|small_red_triangle|small_red_triangle_down|smile|smile_cat|smiley|smiley_cat|smiling_imp|smirk_cat|smoking|snail|snake|snowboarder|snowflake|snowman|soccer|soon|sos|sound|space_invader|spades|spaghetti|sparkler|sparkles|sparkling_heart|speak_no_evil|speaker|speech_balloon|speedboat|squirrel|star|star2|stars|station|statue_of_liberty|steam_locomotive|stew|straight_ruler|strawberry|sun_with_face|sunflower|sunglasses|sunny|sunrise|sunrise_over_mountains|surfer|sushi|suspect|suspension_railway|sweat_drops|sweet_potato|swimmer|symbols|syringe|tada|tanabata_tree|tangerine|taurus|taxi|tea|telephone|telephone_receiver|telescope|tennis|tent|thought_balloon|three|thumbsdown|thumbsup|ticket|tiger|tiger2|tm|toilet|tokyo_tower|tomato|tongue|top|tophat|tractor|traffic_light|train|train2|tram|triangular_flag_on_post|triangular_ruler|trident|trolleybus|trollface|trophy|tropical_drink|tropical_fish|truck|trumpet|tshirt|tulip|turtle|tv|twisted_rightwards_arrows|two|two_hearts|two_men_holding_hands|two_women_holding_hands|u5272|u5408|u55b6|u6307|u6708|u6709|u6e80|u7121|u7533|u7981|u7a7a|uk|umbrella|underage|unlock|up|us|v|vertical_traffic_light|vhs|vibration_mode|video_camera|video_game|violin|virgo|volcano|vs|walking|waning_crescent_moon|waning_gibbous_moon|warning|watch|water_buffalo|watermelon|wave|wavy_dash|waxing_crescent_moon|waxing_gibbous_moon|wc|wedding|whale|whale2|wheelchair|white_check_mark|white_circle|white_flower|white_square|white_square_button|wind_chime|wine_glass|wink|wolf|woman|womans_clothes|womans_hat|womens|wrench|x|yellow_heart|yen|zap|zero|zzz".split("|")
+  };
+  
+  var _COLLAB_PVT = {
+    // returns a char's Unicode codepoint, of the char at index idx of string str
+    // 2013-07-16 from https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/String/charCodeAt
+    fixedCharCodeAt: function (str, idx) {
+      // ex. fixedCharCodeAt ('\uD800\uDC00', 0); // 65536
+      // ex. fixedCharCodeAt ('\uD800\uDC00', 1); // 65536
+      idx = idx || 0;
+      var code = str.charCodeAt(idx);
+      var hi, low;
+      if (0xD800 <= code && code <= 0xDBFF) { // High surrogate (could change last hex to 0xDB7F to treat high private surrogates as single characters)
+          hi = code;
+          low = str.charCodeAt(idx+1);
+          if (isNaN(low)) {
+              throw 'High surrogate not followed by low surrogate in fixedCharCodeAt()';
+          }
+          return ((hi - 0xD800) * 0x400) + (low - 0xDC00) + 0x10000;
+      }
+      if (0xDC00 <= code && code <= 0xDFFF) { // Low surrogate
+          // We return false to allow loops to skip this iteration since should have already handled high surrogate above in the previous iteration
+          return false;
+          /*hi = str.charCodeAt(idx-1);
+          low = code;
+          return ((hi - 0xD800) * 0x400) + (low - 0xDC00) + 0x10000;*/
+      }
+      return code;
     }
-}
+  };
 
-var smiley_size = ((typeof(is_webapp) !== "undefined" && is_webapp) ? 20 : 16);
-var smiley_patterns = [];
-var smiley_metachars = /[\[\]{}()*+?.\\|\^$\-,&#\s]/g;
-// build a regex pattern for each defined property
-for (var i in smileys) {
-    if (smileys.hasOwnProperty(i)) {  // escape metacharacters
-        smiley_patterns.push('(' + i.replace(smiley_metachars, "\\$&") + ')');
-    }
-}
-// Now add extra smileys and recompute regular expression.
-// cowboy should appear before cow for proper replacing.
-var extra_smileys = "airplane|arrogant|beat_up|beauty|beer|bomb|bowl|boy|brb|bye|cake|call_me|camera|car|cat|chicken|cigarette|clap|clock|cloudy|clown|coffee|coins|computer|console|cowboy|cow|curl_lip|curse|dazed|disappointed|dog|drink|eat|excruciating|film|fingers_crossed|foot_in_mouth|ghost|gift|girl|go_away|hammer|handcuffs|handshake|highfive|hug|hungry|hypnotized|in_love|island|knife|lamp|lashes|laugh|liquor|lying|meeting|mobile|moneymouth|monkey|moon|musical_note|nailbiting|peace|phone|pig|pill|pissed_off|pizza|plate|pray|pumpkin|question|rainbow|rain|rose_dead|rose|rofl|sarcastic|secret|shame|sheep|shout|sick|silly|skeleton|sleepy|snail|soccerball|soldier|starving|sweat|thunder|turtle|tv|vampire|waiting|weep|worship|yawn".split("|");
+  var Collab = {
+    smiley_patterns: [],
+    hex_emoji_map: {},
+    init: function() {
+      for (var key in CONST.hex_to_emoji_name) {
+          if (CONST.hex_to_emoji_name.hasOwnProperty(key)) {
+              var key_parts = key.split(" ");
+              for (var i = 0; i < key_parts.length; i++) {
+                  var key_part = key_parts[i];
+                  Collab.hex_emoji_map[key_part] = CONST.hex_to_emoji_name[key].split(" ")[0];
+              }
+          }
+      }
 
-// Need :emoji: to work
-var extra_emojis = "frowning|innocent|triumph|bowtie|neckbeard|hushed|worried|joy|weary|wink2|no_mouth|yum|sweat|fearful|heart_eyes|smirk|mask|unamused|laughing|pensive|sob|stuck_out_tongue|stuck_out_tongue_closed_eyes|stuck_out_tongue_winking_eye|persevere|tired_face|sleeping|sleepy|satisfied|scream|expressionless|grinning|relaxed|relieved|grimacing|dizzy_face|disappointed|confounded|cold_sweat|sweat_smile|kissing|kissing_closed_eyes|kissing_face|kissing_heart|kissing_smiling_eyes|grin|blush|anguished|astonished|full_moon_with_face|construction_worker|cop|frog|alien|\\+1|-1|100|109|1234|8ball|a|ab|abc|abcd|accept|aerial_tramway|airplane|alarm_clock|ambulance|anchor|angel|anger|angry|ant|apple|aquarius|aries|arrow_backward|arrow_double_down|arrow_double_up|arrow_down|arrow_down_small|arrow_forward|arrow_heading_down|arrow_heading_up|arrow_left|arrow_lower_left|arrow_lower_right|arrow_right|arrow_right_hook|arrow_up|arrow_up_down|arrow_up_small|arrow_upper_left|arrow_upper_right|arrows_clockwise|arrows_counterclockwise|art|articulated_lorry|atm|b|baby|baby_bottle|baby_chick|baby_symbol|baggage_claim|balloon|ballot_box_with_check|bamboo|banana|bangbang|bank|bar_chart|barber|baseball|basketball|bath|bathtub|battery|bear|bee|beer|beers|beetle|beginner|bell|bento|bicyclist|bike|bikini|bird|birthday|black_circle|black_joker|black_nib|black_square|black_square_button|blossom|blowfish|blue_book|blue_car|blue_heart|boar|boat|bomb|book|bookmark|bookmark_tabs|books|boom|boot|bouquet|bow|bowling|boy|bread|bride_with_veil|bridge_at_night|briefcase|broken_heart|bug|bulb|bullettrain_front|bullettrain_side|bus|busstop|bust_in_silhouette|busts_in_silhouette|cactus|cake|calendar|calling|camel|camera|cancer|candy|capital_abcd|capricorn|car|card_index|carousel_horse|cat|cat2|cd|chart|chart_with_downwards_trend|chart_with_upwards_trend|checkered_flag|cherries|cherry_blossom|chestnut|chicken|children_crossing|chocolate_bar|christmas_tree|church|cinema|circus_tent|city_sunrise|city_sunset|cl|clap|clapper|clipboard|clock1|clock10|clock1030|clock11|clock1130|clock12|clock1230|clock130|clock2|clock230|clock3|clock330|clock4|clock430|clock5|clock530|clock6|clock630|clock7|clock730|clock8|clock830|clock9|clock930|closed_book|closed_lock_with_key|closed_umbrella|cloud|clubs|cn|cocktail|coffee|collision|computer|confetti_ball|confused|congratulations|construction|convenience_store|cookie|cool|copyright|corn|couple|couple_with_heart|couplekiss|cow|cow2|credit_card|crocodile|crossed_flags|crown|cry|crying_cat_face|crystal_ball|cupid|curly_loop|currency_exchange|curry|custard|customs|cyclone|dancer|dancers|dango|dart|dash|date|de|deciduous_tree|department_store|diamond_shape_with_a_dot_inside|diamonds|dizzy|do_not_litter|dog|dog2|dollar|dolls|dolphin|door|doughnut|dragon|dragon_face|dress|dromedary_camel|droplet|dvd|e-mail|ear|ear_of_rice|earth_africa|earth_americas|earth_asia|egg|eggplant|eight|eight_pointed_black_star|eight_spoked_asterisk|electric_plug|elephant|email|end|envelope|es|euro|european_castle|european_post_office|evergreen_tree|exclamation|eyeglasses|eyes|facepunch|factory|fallen_leaf|family|fast_forward|fax|feelsgood|feet|ferris_wheel|file_folder|finnadie|fire|fire_engine|fireworks|first_quarter_moon|first_quarter_moon_with_face|fish|fish_cake|fishing_pole_and_fish|fist|five|flags|flashlight|floppy_disk|flower_playing_cards|flushed|foggy|football|fork_and_knife|fountain|four|four_leaf_clover|fr|free|fried_shrimp|fries|fuelpump|full_moon|game_die|gb|gem|gemini|ghost|gift|gift_heart|girl|globe_with_meridians|goat|goberserk|godmode|golf|grapes|green_apple|green_book|green_heart|grey_exclamation|grey_question|guardsman|guitar|gun|haircut|hamburger|hammer|hamster|hand|handbag|hankey|hash|hatched_chick|hatching_chick|headphones|hear_no_evil|heart|heart_decoration|heart_eyes_cat|heartbeat|heartpulse|hearts|heavy_check_mark|heavy_division_sign|heavy_dollar_sign|heavy_exclamation_mark|heavy_minus_sign|heavy_multiplication_x|heavy_plus_sign|helicopter|herb|hibiscus|high_brightness|high_heel|hocho|honey_pot|honeybee|horse|horse_racing|hospital|hotel|hotsprings|hourglass|hourglass_flowing_sand|house|house_with_garden|hurtrealbad|ice_cream|icecream|id|ideograph_advantage|imp|inbox_tray|incoming_envelope|information_desk_person|information_source|interrobang|iphone|it|izakaya_lantern|jack_o_lantern|japan|japanese_castle|japanese_goblin|japanese_ogre|jeans|joy_cat|jp|key|keycap_ten|kimono|kiss|kissing_cat|koala|koko|kr|large_blue_circle|large_blue_diamond|large_orange_diamond|last_quarter_moon|last_quarter_moon_with_face|leaves|ledger|left_luggage|left_right_arrow|leftwards_arrow_with_hook|lemon|leo|leopard|libra|light_rail|link|lips|lipstick|lock|lock_with_ink_pen|lollipop|loop|loudspeaker|love_hotel|love_letter|low_brightness|m|mag|mag_right|mahjong|mailbox|mailbox_closed|mailbox_with_mail|mailbox_with_no_mail|man|man_with_gua_pi_mao|man_with_turban|mans_shoe|maple_leaf|massage|meat_on_bone|mega|melon|memo|mens|metal|metro|microphone|microscope|milky_way|minibus|minidisc|mobile_phone_off|money_with_wings|moneybag|monkey|monkey_face|monorail|moon|mortar_board|mount_fuji|mountain_bicyclist|mountain_cableway|mountain_railway|mouse|mouse2|movie_camera|moyai|muscle|mushroom|musical_keyboard|musical_note|musical_score|mute|nail_care|name_badge|necktie|negative_squared_cross_mark|neutral_face|new|new_moon|new_moon_with_face|newspaper|ng|nine|no_bell|no_bicycles|no_entry|no_entry_sign|no_good|no_mobile_phones|no_pedestrians|no_smoking|non-potable_water|nose|notebook|notebook_with_decorative_cover|notes|nut_and_bolt|o|o2|ocean|octocat|octopus|oden|office|ok|ok_hand|ok_woman|older_man|older_woman|on|oncoming_automobile|oncoming_bus|oncoming_police_car|oncoming_taxi|one|open_file_folder|open_hands|open_mouth|ophiuchus|orange_book|outbox_tray|ox|page_facing_up|page_with_curl|pager|palm_tree|panda_face|paperclip|parking|part_alternation_mark|partly_sunny|passport_control|paw_prints|peach|pear|pencil|pencil2|penguin|performing_arts|person_frowning|person_with_blond_hair|person_with_pouting_face|phone|pig|pig2|pig_nose|pill|pineapple|pisces|pizza|plus1|point_down|point_left|point_right|point_up|point_up_2|police_car|poodle|poop|post_office|postal_horn|postbox|potable_water|pouch|poultry_leg|pound|pouting_cat|pray|princess|punch|purple_heart|purse|pushpin|put_litter_in_its_place|question|rabbit|rabbit2|racehorse|radio|radio_button|rage|rage1|rage2|rage3|rage4|railway_car|rainbow|raised_hand|raised_hands|ram|ramen|rat|recycle|red_car|red_circle|registered|repeat|repeat_one|restroom|revolving_hearts|rewind|ribbon|rice|rice_ball|rice_cracker|rice_scene|ring|rocket|roller_coaster|rooster|rose|rotating_light|round_pushpin|rowboat|ru|rugby_football|runner|running|running_shirt_with_sash|sa|sagittarius|sailboat|sake|sandal|santa|satellite|saxophone|school|school_satchel|scissors|scorpius|scream_cat|scroll|seat|secret|see_no_evil|seedling|seven|shaved_ice|sheep|shell|ship|shipit|shirt|shit|shoe|shower|signal_strength|six|six_pointed_star|ski|skull|slot_machine|small_blue_diamond|small_orange_diamond|small_red_triangle|small_red_triangle_down|smile|smile_cat|smiley|smiley_cat|smiling_imp|smirk_cat|smoking|snail|snake|snowboarder|snowflake|snowman|soccer|soon|sos|sound|space_invader|spades|spaghetti|sparkler|sparkles|sparkling_heart|speak_no_evil|speaker|speech_balloon|speedboat|squirrel|star|star2|stars|station|statue_of_liberty|steam_locomotive|stew|straight_ruler|strawberry|sun_with_face|sunflower|sunglasses|sunny|sunrise|sunrise_over_mountains|surfer|sushi|suspect|suspension_railway|sweat_drops|sweet_potato|swimmer|symbols|syringe|tada|tanabata_tree|tangerine|taurus|taxi|tea|telephone|telephone_receiver|telescope|tennis|tent|thought_balloon|three|thumbsdown|thumbsup|ticket|tiger|tiger2|tm|toilet|tokyo_tower|tomato|tongue|top|tophat|tractor|traffic_light|train|train2|tram|triangular_flag_on_post|triangular_ruler|trident|trolleybus|trollface|trophy|tropical_drink|tropical_fish|truck|trumpet|tshirt|tulip|turtle|tv|twisted_rightwards_arrows|two|two_hearts|two_men_holding_hands|two_women_holding_hands|u5272|u5408|u55b6|u6307|u6708|u6709|u6e80|u7121|u7533|u7981|u7a7a|uk|umbrella|underage|unlock|up|us|v|vertical_traffic_light|vhs|vibration_mode|video_camera|video_game|violin|virgo|volcano|vs|walking|waning_crescent_moon|waning_gibbous_moon|warning|watch|water_buffalo|watermelon|wave|wavy_dash|waxing_crescent_moon|waxing_gibbous_moon|wc|wedding|whale|whale2|wheelchair|white_check_mark|white_circle|white_flower|white_square|white_square_button|wind_chime|wine_glass|wink|wolf|woman|womans_clothes|womans_hat|womens|wrench|x|yellow_heart|yen|zap|zero|zzz".split("|");
+      
+      // build a regex pattern for each defined property
+      for (var i in CONST.smileys) {
+          if (CONST.smileys.hasOwnProperty(i)) {  // escape metacharacters
+              Collab.smiley_patterns.push('(' + i.replace(CONST.smiley_metachars, "\\$&") + ')');
+          }
+      }
 
-for (var i in smileys) {
-    if (smileys.hasOwnProperty(i)) {  // escape metacharacters
-        var val = smileys[i];
-        smileys[':' + val + ':'] = val;
-      smiley_patterns.unshift("(:" + val + ":)");
-    }
-}
+      for (var i in CONST.smileys) {
+          if (CONST.smileys.hasOwnProperty(i)) {  // escape metacharacters
+              var val = CONST.smileys[i];
+              CONST.smileys[':' + val + ':'] = val;
+            Collab.smiley_patterns.unshift("(:" + val + ":)");
+          }
+      }
 
-var smiley_regexp = new RegExp(smiley_patterns.join('|'), 'g');
-for (var i = 0; i < extra_smileys.length; i++) {
-    var name = extra_smileys[i];
-    smileys['*' + name] = name;
-    smiley_patterns.unshift("(\\*" + name + ")");
-}
+      var smiley_regexp = new RegExp(Collab.smiley_patterns.join('|'), 'g');
+      for (var i = 0; i < CONST.extra_smileys.length; i++) {
+          var name = CONST.extra_smileys[i];
+          CONST.smileys['*' + name] = name;
+          Collab.smiley_patterns.unshift("(\\*" + name + ")");
+      }
 
-for (var i = 0; i < extra_emojis.length; i++) {
-    var name = extra_emojis[i];
-    smileys[':' + name.replace("\\", "") + ':'] = name;
-    smiley_patterns.unshift("(:" + name + ":)");  // unshift so that :p does not override :pig:
-}
-var extended_smiley_regexp = new RegExp(smiley_patterns.join('|'), 'g');
+      for (var i = 0; i < CONST.extra_emojis.length; i++) {
+          var name = CONST.extra_emojis[i];
+          CONST.smileys[':' + name.replace("\\", "") + ':'] = name;
+          Collab.smiley_patterns.unshift("(:" + name + ":)");  // unshift so that :p does not override :pig:
+      }
+      Collab.extended_smiley_regexp = new RegExp(Collab.smiley_patterns.join('|'), 'g');
+    },
 
-function smilify(text, tag_attrs, url) {
-    text = htmlescape(text);
-    /*jshint bitwise:false*/
-    var url = url || (CDN + "/static/images/emojis/");
-    // build the regular expression and replace
-    /*
-      adding alt to img tags: helps emojiArea plugin to convert image objects into
-        plain text since plain text is passed as data to backend.
-    */
-    var out = text.replace(extended_smiley_regexp, function (match) {
-        return typeof(smileys[match]) !== 'undefined' ?
-            '<img ' + tag_attrs + ' alt="' + match + '" title="' + match + '" height="' + smiley_size + '" width="' + smiley_size + '" src="' + url + smileys[match] + '.png"/>' : match;
-    });
-    // Replace unicode smileys now.
-    // Packs are used only to restrict typing, not rendering for simplicity.
-    var out_final = "";
-    for (var i = 0; i < out.length; i++) {
-        var charCode = fixedCharCodeAt(out, i);
+    smilify: function (text, tag_attrs, url) {
+      text = Collab.htmlescape(text);
+      /*jshint bitwise:false*/
+      var url = url || (CONST.cdn + "/static/images/emojis/");
+      // build the regular expression and replace
+      /*
+        adding alt to img tags: helps emojiArea plugin to convert image objects into
+          plain text since plain text is passed as data to backend.
+      */
+      var out = text.replace(Collab.extended_smiley_regexp, function (match) {
+          return typeof(CONST.smileys[match]) !== 'undefined' ?
+              '<img ' + tag_attrs + ' alt="' + match + '" title="' + match + '" height="' + CONST.smiley_size + '" width="' + CONST.smiley_size + '" src="' + url + CONST.smileys[match] + '.png"/>' : match;
+      });
+      // Replace unicode smileys now.
+      // Packs are used only to restrict typing, not rendering for simplicity.
+      var out_final = "";
+      for (var i = 0; i < out.length; i++) {
+        var charCode = _COLLAB_PVT.fixedCharCodeAt(out, i);
         /*
           adding alt to img tags: helps emojiArea plugin to convert image objects into
             plain text since plain text is passed as data to backend.
         */
         if (charCode !== false) {
             var hex = charCode.toString(16);
-            out_final += hex in hex_emoji_map ?
-                '<img alt="' + hex_emoji_map[hex] + '" title="' + hex_emoji_map[hex] + '" height="' + smiley_size + '" width="' + smiley_size + '" src="' + url + hex_emoji_map[hex] + '.png"/>' : out[i];
+            out_final += hex in Collab.hex_emoji_map ?
+                '<img alt="' + Collab.hex_emoji_map[hex] + '" title="' + Collab.hex_emoji_map[hex] + '" height="' + CONST.smiley_size + '" width="' + CONST.smiley_size + '" src="' + url + Collab.hex_emoji_map[hex] + '.png"/>' : out[i];
         }
+      }
+      return out_final;
+    }, 
 
+    htmlescape: function(string) {
+      var pre = document.createElement('pre');
+      var text = document.createTextNode( string );
+      pre.appendChild(text);
+      return pre.innerHTML;
     }
-    return out_final;
-}
-
-function htmlescape(string) {
-  var pre = document.createElement('pre');
-  var text = document.createTextNode( string );
-  pre.appendChild(text);
-  return pre.innerHTML;
-}
+  }
+  return Collab;
+})();

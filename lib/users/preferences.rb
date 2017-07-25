@@ -6,7 +6,8 @@ module Users
         :shortcuts_enabled => true,
         :shortcuts_mapping => [],
         :notification_timestamp => nil,
-        :show_onBoarding => true
+        :show_onBoarding => true, 
+        :falcon_ui => false
         # Add new pref for agents here
       }, 
       :user_preferences => {

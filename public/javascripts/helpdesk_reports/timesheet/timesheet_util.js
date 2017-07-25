@@ -1059,7 +1059,6 @@ var savedReportUtil = (function() {
                       if(is_preset_selected){
                           _this.save_util.controls.showScheduleOptions(false);
                       }else{
-                          debugger;
                          _this.save_util.controls.hideScheduleOptions();
                       }
                   }
