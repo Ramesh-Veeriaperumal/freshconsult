@@ -75,7 +75,8 @@ module Freshfone::Conference::TransferMethods
     end
 
     def transfer_answered
-      @transfer_leg_call.meta.update_pinged_agents_with_response(get_agent_id, 'canceled') if @transfer_leg_call.meta.present?
+      # @transfer_leg_call.meta.update_pinged_agents_with_response(get_agent_id, 'canceled') if @transfer_leg_call.meta.present?
+      set_agent_response(current_account.id, @transfer_leg_call.id, get_agent_id, 'canceled')
       return transfer_answered_twiml if new_notifications?
       render xml: transfer_answered_twiml
     end
