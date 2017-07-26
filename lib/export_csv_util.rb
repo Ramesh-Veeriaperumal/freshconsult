@@ -1,7 +1,6 @@
 # encoding: utf-8
 require 'csv'
 module ExportCsvUtil
-  include Helpdesk::TicketModelExtension
   DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_response_time, :closed_at]
 
   ALL_TEXT_FIELDS = [:default_description, :default_note, :default_address, :custom_paragraph]
@@ -38,7 +37,7 @@ module ExportCsvUtil
     #Product entry
     csv_headers = csv_headers + [ {:label => I18n.t("export_data.fields.product"), :value => "product_name", :selected => false, :type => :field_type} ] if Account.current.multi_product_enabled?
     description_fields = {:label => I18n.t("export_data.fields.description"), :value => "description", :selected => false}
-    csv_headers.insert(default_export_fields_order["description"] - 1, description_fields)
+    csv_headers.insert(Helpdesk::TicketModelExtension.default_export_fields_order["description"] - 1, description_fields)
     csv_headers = csv_headers + flexi_fields.collect { |ff| { :label => ff.label, :label_in_portal => ff.label_in_portal, :value => ff.name, :type => ff.field_type, :selected => false, :levels => (ff.nested_levels || []) } }
 
     if is_portal
@@ -192,7 +191,7 @@ module ExportCsvUtil
   def reorder_export_params
     export_fields = params[:export_fields]
     return {} if export_fields.blank?
-    ticket_fields   = default_export_fields_order.merge(custom_export_fields_order)
+    ticket_fields = Helpdesk::TicketModelExtension.default_export_fields_order.merge(Helpdesk::TicketModelExtension.custom_export_fields_order)
     params[:export_fields] = sort_fields export_fields, ticket_fields
     params[:export_fields]
   end
@@ -218,6 +217,19 @@ module ExportCsvUtil
 
   def generate_headers flexi_fields
     flexi_fields.collect { |ff| { :label => ff.label, :label_in_portal => ff.label_in_portal, :value => ff.name, :type => ff.field_type, :selected => false, :levels => (ff.nested_levels || []) } }
+  end
+
+  def sort_fields export_fields, actual_fields
+    param_position_hash = export_fields.keys.inject({}) do |hash, key|
+      hash[key] = actual_fields[key] if actual_fields[key]   
+      hash
+    end
+    sorted_param_list = param_position_hash.sort_by{|k,v| v}
+
+    sorted_param_list.inject({}) do |hash, element|
+      hash[element[0]] = export_fields[element[0]]
+      hash
+    end
   end
 
 end
