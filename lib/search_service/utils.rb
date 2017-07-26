@@ -3,7 +3,6 @@ module SearchService
     def self.construct_payload(types, template_name, es_params)
       {
         search_term: es_params[:search_term].to_s,
-        account_id: es_params[:account_id],
         documents: types,
         context: template_name,
         params: es_params.except(:search_term, :account_id, :size, :from, :sort_by, :sort_direction),
