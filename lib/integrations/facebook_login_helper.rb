@@ -95,7 +95,7 @@ module Integrations
     end
 
     def fb_profile_id
-      @omniauth["info"]["nickname"]
+      @omniauth["info"]["id"]
     end
 
     def provider

@@ -1,6 +1,15 @@
-development: 
-  api_key: "dummy-api-key"
-staging: 
-  api_key: "dummy-api-key"
-production: 
-  api_key: "dummy-api-key"
+common: &common
+  feedback_path: api/channel/tickets
+
+development:
+  <<: *common
+  api_key: dummy-api-key
+  feedback_account: http://localhost.freshdesk-dev.com:3000
+staging:
+  <<: *common
+  api_key: dummy-api-key
+  feedback_account: https://feedback1.freshpo.com
+production:
+  <<: *common 
+  api_key: dummy-api-key
+  feedback_account: https://support.freshdesk.com

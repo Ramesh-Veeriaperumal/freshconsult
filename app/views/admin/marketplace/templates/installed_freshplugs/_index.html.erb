@@ -1,7 +1,18 @@
-<% installed_extensions.each do |installed| %>
+<% title_set = false %>
+<% installed_extensions.each do |key, installed_list| %>
+
+  <% unsupported_apps = key.eql?(:unsupported_apps) || key.eql?(:unsupported_custom_apps) %>
+  <% if unsupported_apps && installed_list.length > 0 %>
+    <div class="unsupported-apps-box"> <span class="ficon-notice-o notice-o-red-icon fsize-16"></span> <span class="unsupported-apps"> <%= t('marketplace.unsupported_apps') %></span> </div>
+    <% title_set = true %>
+  <% end %>
+
+
+<% installed_list.each do |installed| %>
   <% extension_details = installed[:extension_details] %>
   <% installation_details = installed[:installation_details] %>
   <% is_ni_integration = extension_details['type'] == Marketplace::Constants::EXTENSION_TYPE[:ni] %>
+  <% url_params = installation_details['version_id'].present? ? { version_id: installation_details['version_id'] } : {} %>
   <li class="app-custom apps-wrapper apps installed-listing" id="ext-<%= is_ni_integration ? extension_details['name'] : installation_details['extension_id'] %>">
     <section class="fa-area clear">
       <div class="row-fluid list-box <%if !installation_details['enabled']%> disabled-app <%end%>">
@@ -14,22 +25,23 @@
         </div>
         <div class="desc-box pull-left">
           <div class="plug-data">
-            <a href="" data-url="<%= show_admin_marketplace_extensions_path(installation_details['extension_id']) %>?type=<%=Marketplace::Constants::DEFAULT_EXTENSION_TYPES %>" class="moreinfo-lnk plug-name show_btn">
-              <%= extension_details['display_name'] %>
-            </a>
+            <a href="" data-url="<%= show_admin_marketplace_extensions_path(installation_details['extension_id']) %>?type=<%=Marketplace::Constants::DEFAULT_EXTENSION_TYPES %><%= unsupported_apps && !is_ni_integration ? '&unsupported=true' : '' %>" class="moreinfo-lnk plug-name show_btn">
+              <%= extension_details['display_name'] %></a> 
             <div class="mkp-prog hide" id="delete_prog_<%= installation_details['installed_extension_id']%>">
               <div class="mkp-prog-spinner"></div>
               <div class="mkp-prog-text">Please wait...</div>
             </div>
+
+          <% unless unsupported_apps %>
             <div class="plug-actions">
               <div class="switch-box pull-left <%= is_ni_integration ? 'hide tooltip' : '' %>" data-placement="below" data-original-title= "<%= t('marketplace.coming_soon') %>">
                 <% enabled_or_disabled_path = installation_details['enabled'] ? admin_marketplace_installed_extensions_disable_path(installation_details['extension_id']) : admin_marketplace_installed_extensions_enable_path(installation_details['extension_id']) %>
                 <% toggle_path = !installation_details['enabled'] ? admin_marketplace_installed_extensions_disable_path(installation_details['extension_id']) : admin_marketplace_installed_extensions_enable_path(installation_details['extension_id']) %>
-                <%= check_box_tag '', installation_details['enabled'], installation_details['enabled'], "data-url" => enabled_or_disabled_path,
-              "data-toggle" => toggle_path, :rel => "toggle", :class=>"switch", :name => "onoffswitch", :id => "indplug_#{installation_details['extension_id']}" %>
+                <%= check_box_tag '', installation_details['enabled'], installation_details['enabled'], "data-url" => enabled_or_disabled_path+"?#{url_params.to_query}", 
+              "data-toggle" => toggle_path+"?#{url_params.to_query}", :rel => "toggle", :class=>"switch", :name => "onoffswitch", :id => "indplug_#{installation_details['extension_id']}" %>
               </div>
-              <% if !is_ni_integration && extension_details['version_id'] != installation_details['version_id'] %>
-                  <%= generate_mkp_update_button(extension_details) %>
+              <% if !is_ni_integration && ( extension_details['platform_details'][platform_version].include?(installation_details['version_id']) && extension_details['version_id'] != installation_details['version_id']) %>
+                  <%= generate_mkp_update_button(extension_details, installation_details) %>
               <% end %>
               <% if installation_details['configs'].present? %>
                 <% if is_ni_integration %>
@@ -50,11 +62,14 @@
                   <span class="<%= font_class('keyicon', 16) %>"></span>
                 </a>
               <% end %>
-              <% delete_url = is_ni_integration ? uninstall_integrations_marketplace_app_path(ERB::Util.url_encode(extension_details['name'])) : admin_marketplace_installed_extensions_uninstall_path(installation_details['extension_id']) %>
+              <% delete_url = is_ni_integration ? uninstall_integrations_marketplace_app_path(ERB::Util.url_encode(extension_details['name'])) : admin_marketplace_installed_extensions_uninstall_path(installation_details['extension_id'])+"?#{url_params.to_query}" %>
               <a href="#toggle-confirm" rel="freshdialog" class="btn btn-mini tooltip delete-btn" title="<%= t('integrations.uninstall') %>" data-placement="below" data-original-title="<%= t('integrations.uninstall') %>" data-width="600" data-close-on-submit="true" data-show-close="true" data-destroy-on-close="true"  data-url="<%= delete_url %>" data-extn-id="<%= installation_details['extension_id']%>" data-installed-extn-id="<%= installation_details['installed_extension_id']%>" <% if extension_details['features'].present? && extension_details['features'].include?("db") %> data-delete-url="<%= data_pipe_path(:data_pipe => {"action" => "batchDelete"}, :format => :json)%>" data-mkp-route="<%= Marketplace::Constants::MKP_ROUTE[:db]%>" data-extn-id="<%= installation_details['extension_id']%>" data-version-id="<%=installation_details['version_id']%>" data-confirm-content=" <%= t('marketplace.confirm_data_lose')%> <%= t('marketplace.confirm_uninstall_message', :human_name => t('marketplace.app')) %>" <%end%> data-confirm-content=" <%= t('marketplace.confirm_uninstall_message', :human_name => t('marketplace.app')) %>"  data-close-label="<%= t('plain_no') %>" data-submit-label="<%= t('plain_yes') %>" data-submit-class="btn btn-primary delete-confirm" >
+
                 <span class="<%= font_class('trash-o', 16) %>"></span>
               </a>
             </div>
+          <% end %>
+
           </div>
           <p class="desc"><%= truncate(extension_details['description'], :length => 160, :separator => ' ') %></p>
         </div>
@@ -70,4 +85,10 @@
     <% end %>
   </script>
 
+<% end %>
+<% end %>
+
+<% if !title_set && local_assigns[:unsupported_custom_freshplugs] %>
+  <div class="unsupported-apps-box"> <span class="ficon-notice-o notice-o-red-icon fsize-16"></span> <span class="unsupported-apps"> <%= t('marketplace.unsupported_apps') %></span> </div>
+  <% title_set = true %>
 <% end %>

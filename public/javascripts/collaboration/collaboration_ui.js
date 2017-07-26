@@ -482,7 +482,7 @@ App.CollaborationUi = (function ($) {
             var usersTagMap = collabModel.usersTagMap;
             var msgBody = $msgBox.val().trim();
 
-            var attachmentData = $(".collab-attached-image-section").data("file");
+            var attachmentData = $(".collab-attached-image-section").attr("data-file");
 
             if(!!attachmentData) {
                 _COLLAB_PVT.sendAttachmentMessage(attachmentData);
@@ -992,8 +992,10 @@ App.CollaborationUi = (function ($) {
             var ticketClosed = _COLLAB_PVT.isTicketClosed(currentConversation.co_id);
             var collaboratorMaxOut = _COLLAB_PVT.isCollaboratorMaxOut(currentConversation.co_id);
             var iAmCollaborator = _COLLAB_PVT.isCollaborator(collabModel.currentUser.uid);
+            var accSuspended = currentConversation.acc_suspend;
             
             return ticketClosed ||
+                accSuspended ||
                 (collaboratorMaxOut && !iAmCollaborator) ||
                 Collab.networkDisconnected;
         },
@@ -1520,7 +1522,8 @@ App.CollaborationUi = (function ($) {
 	            "co_id": config.display_id,
                 "owned_by": config.responder_id,
                 "is_closed": config.is_closed,
-                "token": config.convo_token
+                "token": config.convo_token,
+                "acc_suspend": config.account_suspended
 	        }
 
             /*
