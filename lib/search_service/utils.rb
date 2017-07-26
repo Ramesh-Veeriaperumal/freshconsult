@@ -6,8 +6,8 @@ module SearchService
         documents: types,
         context: template_name,
         params: es_params.except(:search_term, :account_id, :size, :from, :sort_by, :sort_direction),
-        size: es_params[:size],
-        from: es_params[:from] || 0,
+        per_page: es_params[:size],
+        page: es_params[:from] ? ( es_params[:from] / es_params[:size] + 1 ) : 1,
         sort_by: es_params[:sort_by],
         sort_direction:  es_params[:sort_direction]
       }.to_json
