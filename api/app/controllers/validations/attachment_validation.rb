@@ -6,12 +6,12 @@ class AttachmentValidation < ApiValidation
   validates :user_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false, ignore_string: :allow_string_param }
   validates :content, required: true, data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: false }, file_size: { max: ApiConstants::ALLOWED_ATTACHMENT_SIZE }, on: :create
   validates :inline, data_type: { rules: 'Boolean', ignore_string: :allow_string_param }
-  validates :user_id, custom_absence: { allow_nil: false, message: :cannot_set_user_id }, if: -> { is_inline? }
-  validates :inline_type, custom_absence: { allow_nil: false, message: :cannot_set_inline_type }, unless: -> { is_inline? }
+  validates :user_id, custom_absence: { allow_nil: false, message: :cannot_set_user_id }, if: -> { inline? }
+  validates :inline_type, custom_absence: { allow_nil: false, message: :cannot_set_inline_type }, unless: -> { inline? }
   validates :inline_type, custom_inclusion: { in: AttachmentConstants::INLINE_ATTACHABLE_NAMES_BY_KEY.keys, ignore_string: :allow_string_param, detect_type: true }, if: -> { errors[:inline_type].blank? }
-  validates :inline_type, required: true, if: -> { is_inline? }
+  validates :inline_type, required: true, if: -> { inline? }
 
-  validate :validate_file_type, if: -> { errors[:content].blank? && is_inline? }
+  validate :validate_file_type, if: -> { errors[:content].blank? && inline? }
 
   validates :attachable_id, required: true, custom_numericality: {
     only_integer: true, greater_than: 0,
@@ -39,10 +39,11 @@ class AttachmentValidation < ApiValidation
 
     def extension_valid?(file)
       ext = File.extname(file.respond_to?(:original_filename) ? file.original_filename : file.content_file_name).downcase
+      ext = AttachmentConstants::BLOB_MAPPING[file.content_type] if ext.blank?
       [AttachmentConstants::INLINE_IMAGE_EXT.include?(ext), ext]
     end
 
-    def is_inline?
+    def inline?
       inline.try(:to_s) == 'true'
     end
 end
