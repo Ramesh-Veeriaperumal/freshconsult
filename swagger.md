@@ -57,6 +57,6 @@ After making the relevant changes, make sure to check if swagger.json is generat
 If it is blank, make a dummy edit-save to generate it.
 
 It is mandatory to check in the `swagger.json` along the changes to the yaml files.
-Before committing, please visit http://editor.swagger.io and import the generated `swagger.json`. The documentation should be generated on the right without any errors/warnings.
+Before committing, please visit https://editor.swagger.io and import the generated `swagger.json`. The documentation should be generated on the right without any errors/warnings.
 
 Go to http://localhost.freshdesk-dev.com:3000/swagger/ to see if the changes are reflected.
