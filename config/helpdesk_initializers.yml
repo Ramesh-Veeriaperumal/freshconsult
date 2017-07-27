@@ -99,3 +99,4 @@ helpdesk:
     - freshpipe
     - zendesk_app_config
     - product_feedback
+    - connection_pool_patch

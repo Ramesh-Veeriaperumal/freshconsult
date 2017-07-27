@@ -2,15 +2,45 @@ module Helpdesk
   module Services
     module Ticket
       include ::Utils::Sanitizer
+      include ::Redis::RedisKeys
+      include ::Redis::DisplayIdRedis
 
       def save_ticket
-        build_ticket_and_sanitize
-        self.save
+        process_save_ticket do
+          build_ticket_and_sanitize
+          self.save
+        end
       end
 
       def save_ticket!
-        build_ticket_and_sanitize
-        self.save!
+        process_save_ticket do
+          build_ticket_and_sanitize
+          self.save!
+        end
+      end
+
+      def process_save_ticket
+        #Handles ticket creation failure due to duplicate display id.
+        tries = 1
+        begin
+          yield
+        rescue ActiveRecord::RecordNotUnique => e
+          if e.message =~ /'index_helpdesk_tickets_on_account_id_and_display_id'/
+            if (tries -= 1) >= 0
+              reset_ticket_display_id(self.account.id)
+              retry
+            end
+          else
+            Rails.logger.error e.backtrace
+            NewRelic::Agent.notice_error(e, {:description => "Error occured when saving ticket"})
+          end
+        end
+      end
+
+      def reset_ticket_display_id(account_id)
+        self.display_id = nil
+        display_id_key = TICKET_DISPLAY_ID % { :account_id => account_id }
+        set_display_id_redis_key(display_id_key, TicketConstants::TICKET_START_DISPLAY_ID)
       end
 
       def update_ticket_attributes(attributes)

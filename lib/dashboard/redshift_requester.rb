@@ -2,6 +2,8 @@ class Dashboard::RedshiftRequester
 
   include HelpdeskReports::Helper::Ticket
 
+  REFRESH_FREQUENCY = 30
+
   def initialize params
     @query_params = query_params params
   end
@@ -43,7 +45,8 @@ class Dashboard::RedshiftRequester
       filter:                 [],
       time_trend:             false,
       time_trend_conditions:  [],
-      dashboard:              true
+      dashboard:              true,
+      refresh_frequency:      REFRESH_FREQUENCY
     }
   end
 
@@ -52,7 +55,7 @@ class Dashboard::RedshiftRequester
   end
 
   def last_redshift_dump_time received
-    (received.present? && (received.last.is_a? Hash) && received.last["last_dump_time"].present?) ? Time.at(received.last["last_dump_time"].to_i) : 4.hours.ago
+    (received.present? && (received.last.is_a? Hash) && received.last["last_dump_time"].present?) ? Time.at(received.last["last_dump_time"].to_i) : dashboard_cache_timeout.ago
   end
 
   def error_in_response? responses
@@ -64,8 +67,12 @@ class Dashboard::RedshiftRequester
   end
 
   def process_cache_expiry dump_time
-    remaining_time = (4.hours.to_i - (Time.now.utc.to_i - dump_time.to_i))
+    remaining_time = (dashboard_cache_timeout.to_i - (Time.now.utc.to_i - dump_time.to_i))
     (remaining_time > MemcacheKeys::DASHBOARD_TIMEOUT) ? remaining_time : MemcacheKeys::DASHBOARD_TIMEOUT
+  end
+
+  def dashboard_cache_timeout
+    REFRESH_FREQUENCY.minutes
   end
 
 end

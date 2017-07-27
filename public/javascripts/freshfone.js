@@ -17,6 +17,7 @@
         $stateList = $buyNumberContainer.find('.search-bar-state'),
         $tollFreeSearchInput = $buyNumberContainer.find('#toll-free #search_input'),
         $localSearchInput = $buyNumberContainer.find('#local #search_input'),
+        $purchasingAgain = false,
         default_numeric_options = {
             'mode': 'numeric'
         },
@@ -192,10 +193,31 @@
             ev.preventDefault();
             $(this).button("loading");
             $buy_numbers_form = $this.parents('form');
-          if (address_required) {
+          if (address_required || $purchasingAgain) {
             $('#freshfone_address_form').submit();  
           } else {
-            $this.parents('form').submit();
+            $('.purchaseErrorExplanation').toggle(false);
+            $this.parents('form').ajaxSubmit({
+                dataType: 'json',
+                async: false,
+                beforeSubmit: function (arr, $form) {
+                  setPostParam($form, "format", "json");
+                },
+                success: function (data) {
+                  if(data.open_form) {
+                    $('#purchase-confirmation .address-required-alert').toggle(true);
+                    $('.purchaseErrorExplanation').toggle(true);
+                    $purchasingAgain = true;
+                    populateErrorMessage(data.errors);
+                    resetPurchaseButton();
+                  }
+                  if(data.redirect_url) {
+                    window.location.href = data.redirect_url;
+                  }
+                  flashNotice(data.flash_message);
+                },
+                error: function (data) { }
+            });
           }
         });
         resetErrorMessages();
@@ -221,11 +243,17 @@
             success: function(data){
                 if(data.success) {
                     $('.purchaseErrorExplanation').toggle(false);
+                    $(".control-group").removeClass("address-suggestion");
                     window.location.href = data.redirect_url;
+                    $purchasingAgain = false;
+                    flashNotice(data.flash_message);
                 } else{
                     resetErrorMessages();
                     $('.purchaseErrorExplanation').toggle(true);
                     populateErrorMessage(data.errors);
+                    if(!$.isEmptyObject(data.suggestion)){
+                      populateSuggentions(data.suggestion);
+                    }
                     resetPurchaseButton();
                 }
             },
@@ -237,11 +265,21 @@
         });
         // return false;
     });
+    function populateSuggentions(suggestion) {
+      Object.keys(suggestion).forEach(function(key) {
+        $("input[id=" + key + "]").parents("div.row-fluid").addClass('address-suggestion');
+        $("input[id=" + key + "]").val(suggestion[key]);
+      });
+    }
     function populateErrorMessage(formErrors) {
       $.map(formErrors, function(error){
-          return $("<label class='error'>"+error+"</label>")
+          return $("<div class='error'>"+error+"</div>")
                   .appendTo($('.purchaseErrorExplanation'));
       });
+    }
+    function flashNotice(msg) {
+      $("#noticeajax").html(msg).show();
+      setTimeout(function() {closeableFlash('#noticeajax');}, 3000);
     }
     function resetPurchaseButton() {
       $('#purchase-confirmation').on('click.submit.modal');
@@ -252,6 +290,8 @@
         $('.purchaseErrorExplanation').empty();
         $('.purchaseErrorExplanation').toggle(false);
         $('.ajaxerrorExplanation').toggle(false);
+        $(".control-group").removeClass("address-suggestion");
+        $purchasingAgain = false;
     }
     function isAddressAlreadyExisit(country_code) {
         var alreadyExist = false, self = this;

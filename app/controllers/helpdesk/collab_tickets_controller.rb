@@ -5,7 +5,7 @@ class Helpdesk::CollabTicketsController < ApplicationController
 
   around_filter :run_on_slave, :only => [:show, :latest_note, :prevnext, :notify]
   before_filter :check_feature
-  before_filter :load_or_show_error, :only => [:show, :latest_note, :prevnext, :notify]
+  before_filter :load_or_show_error, :only => [:show, :latest_note, :prevnext, :notify, :convo_token]
   before_filter :validate_collab_user, :only => [:show]
 
   def show
@@ -50,7 +50,7 @@ class Helpdesk::CollabTicketsController < ApplicationController
           :ticket_display_id => params[:id],
           :current_domain => host_domain
         }
-        CollaborationWorker.perform_async(noti_info)
+        CollabNotificationWorker.perform_async(noti_info)
         head :ok
       else
         head :bad_request
@@ -59,6 +59,15 @@ class Helpdesk::CollabTicketsController < ApplicationController
       head :forbidden
     end
   end
+
+  def convo_token
+    if @ticket.present? && verify_permission?
+      render json: {convo_token: Collaboration::Ticket.new.convo_token(params[:id])}
+    else
+      head :forbidden
+    end
+  end
+
 
   private
     def load_or_show_error

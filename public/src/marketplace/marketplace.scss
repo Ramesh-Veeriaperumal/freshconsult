@@ -1194,6 +1194,21 @@
   box-shadow: inset 0 2px 1px 0 rgba(255, 255, 255, 0.5);
 }
 
-.trial_info {
+.platform_not_compatible {
   padding-top: 8px;
+}
+
+.notice-o-red-icon { 
+  color: $icon-color-red;
+}
+
+.unsupported-apps-box {
+  padding: 1%;
+  width: 100%;
+  clear: both;
+}
+
+.unsupported-apps {
+  padding-left: 5px;
+  vertical-align: top;
 }
