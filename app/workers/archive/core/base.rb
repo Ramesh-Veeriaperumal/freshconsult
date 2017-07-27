@@ -173,12 +173,8 @@ module Archive
 
       def delete_ticket(ticket,archive_ticket)
         ticket.archive = true
-        if Account.current.features?(:activity_revamp)  # for both reports and activities
-          ticket.misc_changes = {:archive => [false, true]}
-          key = RabbitMq::Constants::RMQ_GENERIC_TICKET_KEY 
-        else
-          key = RabbitMq::Constants::RMQ_REPORTS_TICKET_KEY
-        end
+        ticket.misc_changes = {:archive => [false, true]}
+        key = RabbitMq::Constants::RMQ_GENERIC_TICKET_KEY
         ticket.delayed_manual_publish_to_rmq("update", key, {:manual_publish => true})
         ticket.count_es_manual_publish("destroy") if Account.current.features?(:countv2_writes)#for count es, its a delete action and we ll remove document from count cluster.
         if archive_ticket_destroy(ticket)

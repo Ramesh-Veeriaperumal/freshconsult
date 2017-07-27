@@ -17,6 +17,7 @@ include ParserUtil
   def deliver_email(params, attachments)
 
     Rails.logger.info "Email Sending initiated for #{params["Message-ID"]}"
+    start_time = Time.now
     con = Faraday.new(EMAIL_SERVICE_HOST) do |faraday|
             faraday.response :json, :content_type => /\bjson$/ 
             faraday.adapter  :net_http_persistent
@@ -33,7 +34,8 @@ include ParserUtil
         Rails.logger.info "Email sending failed due to : #{response.body["Message"]}"
         raise EmailDeliveryError, response.body["Message"]
       end
-      Rails.logger.info "Email sent from #{params[:from]} to #{params[:to]}"
+      end_time = Time.now
+      Rails.logger.info "Email sent from #{params[:from]} to #{params[:to]} (%1.fms)" %(end_time - start_time)
   end
 
   def get_email_data(params)

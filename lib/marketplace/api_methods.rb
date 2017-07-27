@@ -13,7 +13,7 @@ module Marketplace::ApiMethods
         category = params[:category_id] ? params[:category_id] : 'ALL'
         key = MemcacheKeys::MKP_EXTENSIONS % { 
           :category_id => category, :type => params[:type],:locale_id => curr_user_language,
-          :sort_by => sort_params }
+          :sort_by => sort_params, :platform_version => platform_version }
         api_payload = payload(
                            Marketplace::ApiEndpoint::ENDPOINT_URL[:mkp_extensions] %
                            { :product_id => PRODUCT_ID },
@@ -31,7 +31,8 @@ module Marketplace::ApiMethods
 
     def mkp_custom_apps
       begin
-        key = MemcacheKeys::CUSTOM_APPS % { :account_id => Account.current.id, :locale_id => curr_user_language }
+        key = MemcacheKeys::CUSTOM_APPS % { :account_id => Account.current.id, :locale_id => curr_user_language,
+              :platform_version => platform_version }
 
         api_payload = payload(
                            Marketplace::ApiEndpoint::ENDPOINT_URL[:mkp_custom_apps] %
@@ -77,7 +78,7 @@ module Marketplace::ApiMethods
     def extension_details(extension_id = params[:extension_id])
       begin
         key = MemcacheKeys::EXTENSION_DETAILS % { 
-          :extension_id => extension_id, :locale_id => curr_user_language }
+          :extension_id => extension_id, :locale_id => curr_user_language, :platform_version => platform_version}
         api_payload = payload(
                             Marketplace::ApiEndpoint::ENDPOINT_URL[:extension_details]  % 
                             { 

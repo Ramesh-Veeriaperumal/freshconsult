@@ -18,6 +18,18 @@ module Marketplace::HelperMethods
     @extension['type'] == Marketplace::Constants::EXTENSION_TYPE[:ni]
   end
 
+  def is_versionable?
+    is_plug?
+  end
+
+  def is_non_versionable?
+    is_ni? || is_external_app?
+  end
+
+  def is_plug?
+    @extension['type'] == Marketplace::Constants::EXTENSION_TYPE[:plug]
+  end
+
   def is_external_app?
     @extension['type'] == Marketplace::Constants::EXTENSION_TYPE[:external_app]
   end
