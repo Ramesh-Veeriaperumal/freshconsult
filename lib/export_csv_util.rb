@@ -6,6 +6,7 @@ module ExportCsvUtil
   ALL_TEXT_FIELDS = [:default_description, :default_note, :default_address, :custom_paragraph]
 
   CONTACT         = "contact"
+  DESCRIPTION_DEFAULT_INDEX = Helpdesk::TicketModelExtension.default_export_fields_order["description"] - 1
 
   DEFAULT_SELECTED_FIELDS = {
     CONTACT: [:default_email, :default_phone],
@@ -37,7 +38,7 @@ module ExportCsvUtil
     #Product entry
     csv_headers = csv_headers + [ {:label => I18n.t("export_data.fields.product"), :value => "product_name", :selected => false, :type => :field_type} ] if Account.current.multi_product_enabled?
     description_fields = {:label => I18n.t("export_data.fields.description"), :value => "description", :selected => false}
-    csv_headers.insert(Helpdesk::TicketModelExtension.default_export_fields_order["description"] - 1, description_fields)
+    csv_headers.insert(DESCRIPTION_DEFAULT_INDEX, description_fields)
     csv_headers = csv_headers + flexi_fields.collect { |ff| { :label => ff.label, :label_in_portal => ff.label_in_portal, :value => ff.name, :type => ff.field_type, :selected => false, :levels => (ff.nested_levels || []) } }
 
     if is_portal
@@ -113,7 +114,8 @@ module ExportCsvUtil
 
   def export_data(items, is_portal=false)
     csv_string = ""
-    csv_hash = reorder_export_params
+    csv_hash = params[:export_fields]
+    params[:export_fields] = csv_hash = reorder_export_params csv_hash
     unless csv_hash.blank?
       csv_string = CSVBridge.generate do |csv|
         headers = delete_invisible_fields(csv_hash,is_portal)
@@ -127,7 +129,8 @@ module ExportCsvUtil
   end
 
   def export_xls(items, is_portal=false)
-    xls_hash = reorder_export_params
+    xls_hash = params[:export_fields]
+    params[:export_fields] = xls_hash = reorder_export_params xls_hash
     unless xls_hash.blank?
       @xls_hash = xls_hash
       @headers = delete_invisible_fields(xls_hash,is_portal)
@@ -188,12 +191,11 @@ module ExportCsvUtil
     headers
   end
 
-  def reorder_export_params
-    export_fields = params[:export_fields]
+  def reorder_export_params export_fields
     return {} if export_fields.blank?
-    ticket_fields = Helpdesk::TicketModelExtension.default_export_fields_order.merge(Helpdesk::TicketModelExtension.custom_export_fields_order)
-    params[:export_fields] = sort_fields export_fields, ticket_fields
-    params[:export_fields]
+    ticket_fields = Helpdesk::TicketModelExtension.export_ticket_fields
+    sorted_export_field_list = sort_export_fields export_fields, ticket_fields
+    sorted_export_field_list
   end
 
   def fetch_archive_ticket_value(item, val)
@@ -219,15 +221,16 @@ module ExportCsvUtil
     flexi_fields.collect { |ff| { :label => ff.label, :label_in_portal => ff.label_in_portal, :value => ff.name, :type => ff.field_type, :selected => false, :levels => (ff.nested_levels || []) } }
   end
 
-  def sort_fields export_fields, actual_fields
+  def sort_export_fields export_fields, actual_fields
     param_position_hash = export_fields.keys.inject({}) do |hash, key|
       hash[key] = actual_fields[key] if actual_fields[key]   
       hash
     end
     sorted_param_list = param_position_hash.sort_by{|k,v| v}
-
+    
     sorted_param_list.inject({}) do |hash, element|
-      hash[element[0]] = export_fields[element[0]]
+      field_name       = element[0]
+      hash[field_name] = export_fields[field_name]
       hash
     end
   end

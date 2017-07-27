@@ -52,7 +52,8 @@ class Export::Ticket < Struct.new(:export_params)
   def initialize_params
     export_params.symbolize_keys!
     file_formats = ['csv', 'xls']
-    reorder_export_params
+    export_fields = export_params[:export_fields]
+    export_params[:export_fields] = reorder_export_params export_fields
     export_params[:format] = file_formats[0] unless file_formats.include? export_params[:format]
     delete_invisible_fields
     format_contact_company_params
@@ -299,14 +300,6 @@ class Export::Ticket < Struct.new(:export_params)
     %(archive_tickets.#{export_params[:ticket_state_filter]} 
        between '#{export_params[:start_date]}' and '#{export_params[:end_date]}'
       )
-  end
-
-  def reorder_export_params
-    export_fields = export_params[:export_fields]
-    return if export_fields.blank?
-    ticket_fields   = default_export_fields_order.merge(custom_export_fields_order)
-    
-    export_params[:export_fields] = sort_fields export_fields, ticket_fields
   end
 
   def reorder_contact_company_fields type

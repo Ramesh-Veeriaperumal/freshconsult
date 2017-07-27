@@ -65,6 +65,10 @@ module Helpdesk::TicketModelExtension
     field_mapping
   end
 
+  def self.export_ticket_fields
+    default_export_fields_order.merge(custom_export_fields_order)
+  end
+
   def contact_company_fields_order type
     fields = Account.current.send("#{type}_form")
       .send("#{type}_fields_from_cache")
