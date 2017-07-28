@@ -19,7 +19,7 @@
 			<label class="control-label"><%=t('export_data.filter_label_agent').html_safe%> </label>
 			<div class="controls">
 				<%= select_tag "ticket_state_filter", options_for_select([[t('export_data.created_at').html_safe, :created_at]]), {:class => "select2 span","data-minimum-results-for-search" => "1000"} %>&nbsp; 
-				<%= select_tag "date_filter", options_for_select(TicketConstants::ARCHIVE_EXPORT_OPTIONS), :class => "select2 span2","data-minimum-results-for-search" => "1000" %>
+				<%= select_tag "date_filter", options_for_select(TicketConstants.archive_date_options), :class => "select2 span2","data-minimum-results-for-search" => "1000" %>
 			</div>
 		</li>
 		<div class="controls hide" id="datepicker">

@@ -216,17 +216,17 @@ module TicketConstants
   CREATED_BY_NAMES_BY_SYMBOL = Hash[*CREATED_BY_VALUES.map { |i| [i[0], i[1]] }.flatten]
   
   ARCHIVE_EXPORT_VALUES = [
-    [ :two_months,       I18n.t('two_months'),   60 ], 
-    [ :six_months,       I18n.t('six_months'),   180],
-    [ :set_date,         I18n.t('set_date'),     4  ]
+    [ :two_months,       'two_months',   60 ], 
+    [ :six_months,       'six_months',   180],
+    [ :set_date,         'set_date',     4  ]
   ]
   ARCHIVE_EXPORT_OPTIONS = ARCHIVE_EXPORT_VALUES.map { |i| [i[1], i[2]] }
 
   ARCHIVE_CREATED_WITHIN_VALUES = [
-    [ :any_time,         I18n.t('any_time'),      "any_time"   ],
-    [ :two_months,       I18n.t('two_months'),    "two_months" ], 
-    [ :six_months,       I18n.t('six_months'),    "six_months" ],
-    [ :set_date,         I18n.t('set_date'),      "set_date"   ]
+    [ :any_time,         'any_time',      "any_time"   ],
+    [ :two_months,       'two_months',    "two_months" ], 
+    [ :six_months,       'six_months',    "six_months" ],
+    [ :set_date,         'set_date',      "set_date"   ]
   ]
   ARCHIVE_CREATED_WITHIN_OPTIONS = ARCHIVE_CREATED_WITHIN_VALUES.map { |i| [i[2], i[1]] }
 
@@ -254,9 +254,9 @@ module TicketConstants
   CREATED_AT_OPTIONS = CREATED_WITHIN_VALUES.map { |i| [i[2], i[1]] }
 
   STATES_HASH = {
-    :closed_at => I18n.t("export_data.closed_time"),
-    :resolved_at => I18n.t("export_data.resolved_time"),
-    :created_at => I18n.t("export_data.created_time")
+    :closed_at => "export_data.closed_time",
+    :resolved_at => "export_data.resolved_time",
+    :created_at => "export_data.created_time"
   }
   
   ACTIVITY_HASH = {
@@ -411,6 +411,18 @@ module TicketConstants
 
   def self.created_options
     CREATED_BY_VALUES_EN.map { |i| [I18n.t(i[1]), i[2]] }
+  end
+
+  def self.states_options
+    STATES_HASH.map {|k,v| [I18n.t(v),k]}
+  end
+
+  def self.archive_date_options
+    ARCHIVE_EXPORT_OPTIONS.map {|i| [I18n.t(i[0]),i[1]]}
+  end
+
+  def self.archive_created_date_options
+    ARCHIVE_CREATED_WITHIN_OPTIONS.map {|i| [i[0],I18n.t(i[1])]}
   end
 
   def skill_condition_attributes
