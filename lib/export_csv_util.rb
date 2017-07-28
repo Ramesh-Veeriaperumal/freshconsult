@@ -115,7 +115,7 @@ module ExportCsvUtil
   def export_data(items, is_portal=false)
     csv_string = ""
     csv_hash = params[:export_fields]
-    params[:export_fields] = csv_hash = reorder_export_params csv_hash
+    csv_hash = reorder_export_params csv_hash
     unless csv_hash.blank?
       csv_string = CSVBridge.generate do |csv|
         headers = delete_invisible_fields(csv_hash,is_portal)
@@ -130,7 +130,7 @@ module ExportCsvUtil
 
   def export_xls(items, is_portal=false)
     xls_hash = params[:export_fields]
-    params[:export_fields] = xls_hash = reorder_export_params xls_hash
+    xls_hash = reorder_export_params xls_hash
     unless xls_hash.blank?
       @xls_hash = xls_hash
       @headers = delete_invisible_fields(xls_hash,is_portal)
