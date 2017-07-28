@@ -6022,20 +6022,44 @@
     },
     "draft": {
       "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/draft_create_input"
+      "properties": {
+        "body": {
+          "type": "string",
+          "description": "content of the ticket reply"
         },
-        {
-          "properties": {
-            "saved_at": {
-              "type": "string",
-              "format": "date-time",
-              "description": "Represents the time at which the draft is saved"
-            }
+        "quoted_text": {
+          "type": "string",
+          "description": "quoted text of the ticket reply"
+        },
+        "cc_emails": {
+          "type": "array",
+          "description": "cc_emails for the ticket reply",
+          "items": {
+            "type": "string"
           }
+        },
+        "bcc_emails": {
+          "type": "array",
+          "description": "bcc_emails for the ticket reply",
+          "items": {
+            "type": "string"
+          }
+        },
+        "from_email": {
+          "type": "string"
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/attachment"
+          }
+        },
+        "saved_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Represents the time at which the draft is saved"
         }
-      ]
+      }
     },
     "canned_response": {
       "type": "object",
