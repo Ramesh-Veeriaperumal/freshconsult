@@ -681,7 +681,7 @@ class Freshfone::Call < ActiveRecord::Base
   end
 
   def ticket_created?
-    present? && notable.present? && !associated_ticket.nil?
+    notable.present? && associated_ticket.present?
   end
   
   private

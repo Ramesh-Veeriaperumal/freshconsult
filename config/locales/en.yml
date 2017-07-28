@@ -9962,7 +9962,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       phone_icon: "Phone"
       on_phone: "Available on Phone"
       on_browser: "Available on Browser"
-      invalid_phone_number: "Please update your phone number with '+' prefix and country code in Profile Settings"
+      invalid_phone_number: "Phone number is invalid. Please update your number in Profile Settings."
       no_calls: "No recent calls found"
       available: "Accepting calls"
       unavailable: "Not accepting calls"

@@ -1,5 +1,5 @@
 show_ajax_flash page
-if @current_call.ticket_created?
+if @current_call.present? && @current_call.ticket_created?
 	ticket = @current_call.associated_ticket
 	parent = "#freshfone_call_#{@current_call.id}"
 

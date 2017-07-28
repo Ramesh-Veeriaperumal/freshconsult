@@ -14,8 +14,7 @@ module Freshfone::NumberValidator
   end
 
   def lookup_client
-    ff_account = Account.current.freshfone_account
-    ::Twilio::REST::LookupsClient.new(ff_account.twilio_subaccount_id, ff_account.twilio_subaccount_token)
+    Account.current.freshfone_account.lookup_client
   end
 
   def country_from_telephone(number)
