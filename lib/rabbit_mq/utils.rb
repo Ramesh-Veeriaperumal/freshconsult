@@ -83,7 +83,7 @@ module RabbitMq::Utils
     message = subscriber_basic_message(model, action, uuid)
     MANUAL_PUBLISH_SUBCRIBERS.each { |f|
       begin
-        next if f == "activities" && !Account.current.features?(:activity_revamp)
+        next if f == "activities" && model == "archive_ticket"
         if Account.current.features?(:countv2_writes)
           next if f == "count" && model != "ticket"
         else

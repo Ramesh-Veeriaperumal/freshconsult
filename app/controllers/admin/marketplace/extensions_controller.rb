@@ -35,7 +35,7 @@ class Admin::Marketplace::ExtensionsController <  Admin::AdminController
   def show
     inst_status = install_status
     render_error_response and return if error_status?(inst_status)
-    @install_status = inst_status.body
+    @install_status = inst_status.body.merge(params[:unsupported] ? {:unsupported => true} : {})
     @is_oauth_app = true if @extension['features'] && @extension['features'].include?('oauth')
   end
 

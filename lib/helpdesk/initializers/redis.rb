@@ -28,6 +28,9 @@ $redis_session = Redis.new(:host => redis_session_config["host"], :port => redis
 mobile_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_mobile.yml'))[Rails.env]
 $redis_mobile = Redis.new(:host => mobile_config["host"], :port => mobile_config["port"], :timeout => 5)
 
+#Loading Redis Display Id's Lua script
+Redis::DisplayIdLua.load_display_id_lua_script_to_redis
+
 Redis.class_eval {add_method_tracer :set}
 Redis.class_eval {add_method_tracer :get}
 Redis.class_eval {add_method_tracer :del}

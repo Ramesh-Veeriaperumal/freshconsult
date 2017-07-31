@@ -70,17 +70,13 @@
     - partners_event_queue
     - reset_associations
     - link_tickets
-    - sendgrid_domain_updates
     - dkim_verifier
     - dkim_general
     - bulk_child_tkt_creation
     - activation_worker
     - flush_portal_solution_cache
-    - learn_spam_message
     - s3_retry_worker
     - reopen_tickets
-    - kbase_content_spam_checker
-    - forum_content_spam_checker
     - activity_export
     - skill_import
     - send_signup_activation_mail
@@ -90,6 +86,7 @@
     - facebook_delta
     - twitter_replay_worker
     - contact_export
+    - product_feedback
   :maintainence:
     - select_all_tickets
     - select_all_batcher
@@ -101,11 +98,6 @@
     - reset_internal_agent
     - reset_gamification_score
     - export_agents
-    - archive_ticket_splitter
-    - archive_build_create_ticket
-    - archive_modify_ticket_association
-    - archive_delete_ticket
-    - archive_delete_ticket_dependencies
     - deactivate_monitorship
     - tag_uses_destroy
     - update_users_company_id
@@ -183,3 +175,13 @@
   :spam:
     - email_notification_spam_queue
     - spam_data_migration
+    - kbase_content_spam_checker
+    - forum_content_spam_checker
+    - learn_spam_message
+    - sendgrid_domain_updates
+  :archive:
+    - archive_ticket_splitter
+    - archive_build_create_ticket
+    - archive_modify_ticket_association
+    - archive_delete_ticket
+    - archive_delete_ticket_dependencies

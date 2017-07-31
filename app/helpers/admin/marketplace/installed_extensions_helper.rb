@@ -20,6 +20,7 @@ module Admin::Marketplace::InstalledExtensionsHelper
         }
       end
     else
+      params_hash[:installed_version] = params[:installed_version] if params[:installed_version]
       params_hash[:upgrade] = true if params[:is_oauth_app]
       query_params = "?#{params_hash.to_query}"
       if params[:is_oauth_app]

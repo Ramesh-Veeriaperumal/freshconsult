@@ -11,6 +11,9 @@
     margin-top: 0;
   }
 }
+.configs-form{
+  padding-top:20px;
+}
 .fa-installer{
   &.fa-bg {
     @include margin(0);
