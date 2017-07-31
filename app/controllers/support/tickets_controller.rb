@@ -79,13 +79,14 @@ class Support::TicketsController < SupportController
   def export_csv
     params[:wf_per_page] = "100000"
     params[:page] = "1"
+    csv_hash = params[:export_fields]
     unless params[:a].blank?
       params[:id] = params[:i]
     end
     items = build_tickets
     respond_to do |format|
-      format.csv { export_data items, true }
-      format.xls { export_xls items, true; headers["Content-Disposition"] = "attachment; filename=\"tickets.xls" }
+      format.csv { export_data items, csv_hash, true }
+      format.xls { export_xls items, csv_hash, true; headers["Content-Disposition"] = "attachment; filename=\"tickets.xls" }
     end
    end
 
