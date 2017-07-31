@@ -59,7 +59,7 @@ module Marketplace::ApiUtil
     end
 
     def platform_version
-      @platform_version ||= User.current.is_falcon_pref? ? Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2] : 
+      @platform_version ||= (User.current && User.current.is_falcon_pref?) ? Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2] : 
                             Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v1]
     end
 
