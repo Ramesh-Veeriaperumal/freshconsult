@@ -18,7 +18,7 @@ class Freshfone::ConferenceTransferController < FreshfoneBaseController
   before_filter :transfer_answered, :only => [:transfer_success], unless: :intended_agent_for_transfer?
   after_filter :remove_conf_transfer_job, :only => [:transfer_success]
   before_filter :check_current_call, :only => [:cancel_transfer, :resume_transfer]
-  before_filter :validate_external_number, only: :initiate_transfer, if: :external_transfer?
+  before_filter :validate_external_number, only: :initiate_transfer, if: :external_number?
   
   def initiate_transfer
     initiate_conference_transfer
@@ -121,7 +121,7 @@ class Freshfone::ConferenceTransferController < FreshfoneBaseController
     end
 
     def validate_trial
-      render json: { status: :error } if external_transfer?
+      render json: { status: :error } if external_number?
     end
 
     def validate_transfer_request
@@ -129,11 +129,11 @@ class Freshfone::ConferenceTransferController < FreshfoneBaseController
         return if params[:CallSid].blank? || current_call.blank?
     end
 
-    def external_transfer?
+    def external_number?
       params[:external_number].present?
     end
 
     def validate_external_number
-      render json: { status: :error } if fetch_country_code('+' + params[:target]).blank?
+      render json: { status: :error } if fetch_country_code("+#{params[:target]}").blank?
     end
 end
