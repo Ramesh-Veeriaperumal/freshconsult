@@ -32,7 +32,7 @@ class ContactsController < ApplicationController
   def index
     respond_to do |format|
       format.html do
-        @tags = current_account.tags.with_taggable_type(User.to_s)
+        @tags = current_account.tags.with_taggable_type(User.to_s).all
       end
       format.xml  do
         render :xml => @contacts.to_xml(:root => "users")
@@ -425,20 +425,21 @@ protected
     end
 
     def fetch_contacts
-       # connection_to_be_used =  params[:format].eql?("xml") ? "run_on_slave" : "run_on_master"
-       # temp need to change...
-       per_page =  (params[:per_page].blank? || params[:per_page].to_i > 50) ? 50 :  params[:per_page]
-       order_by =  (!params[:order_by].blank? && params[:order_by].casecmp("id") == 0) ? "Id" : "name"
-       order_by = "#{order_by} DESC" if(!params[:order_type].blank? && params[:order_type].casecmp("desc") == 0)
-       @sort_state = params[:state] || cookies[:contacts_sort] || 'all'
-       begin
-         @contacts = scoper.filter(params[:letter], 
-                                   params[:page],
-                                   params.fetch(:state , @sort_state),
-                                   per_page,order_by).preload(:avatar, :companies, :default_user_company)
-         cookies[:contacts_sort] = @sort_state
+      # connection_to_be_used =  params[:format].eql?("xml") ? "run_on_slave" : "run_on_master"
+      # temp need to change...
+      per_page =  (params[:per_page].blank? || params[:per_page].to_i > 50) ? 50 :  params[:per_page]
+      order_by =  (!params[:order_by].blank? && params[:order_by].casecmp("id") == 0) ? "Id" : "name"
+      order_by = "#{order_by} DESC" if(!params[:order_type].blank? && params[:order_type].casecmp("desc") == 0)
+      @sort_state = params[:state] || cookies[:contacts_sort] || 'all'
+      begin
+        @contacts ||= scoper.filter(params[:letter], 
+                                  params[:page],
+                                  params.fetch(:state , @sort_state),
+                                  per_page,order_by).preload(:avatar, :companies, :default_user_company).all
+        @contacts_count ||= @contacts.length
+        cookies[:contacts_sort] = @sort_state
       rescue Exception => e
-        @contacts = {:error => get_formatted_message(e)}
+       @contacts = {:error => get_formatted_message(e)}
       end
     end
 
