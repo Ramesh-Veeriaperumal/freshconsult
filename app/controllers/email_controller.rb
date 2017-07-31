@@ -18,7 +18,9 @@ class EmailController < ApplicationController
   skip_before_filter :ensure_proper_protocol
   skip_before_filter :ensure_proper_sts_header
   skip_after_filter :set_last_active_time
-  
+
+  before_filter :authenticate_request, :only => [:validate_domain]
+
   def new
     render :layout => false
   end
@@ -42,7 +44,45 @@ class EmailController < ApplicationController
     render :layout => 'email', :status => status
   end
 
+  def validate_domain
+    domain = params[:domain]
+    domain_mapping = DomainMapping.find_by_domain(domain)
+    if domain_mapping.blank?
+      render :json => {:domain_status => 404, :user_status => :not_found, :created_at => nil, :account_type => nil}
+    else
+      shard = ShardMapping.lookup_with_domain(domain)
+      shard_status = shard.status
+      if shard.ok?
+        Sharding.select_shard_of(domain) do
+          Sharding.run_on_slave do
+            account = Account.find_by_full_domain(domain).make_current
+            account_type = account.subscription.state
+            user = account.all_users.find_by_email(params[:email])
+            basic_hash = {:created_at => account.created_at, :account_type => account_type}
+            if user.nil?
+              render :json => {:domain_status => shard_status, :user_status => :not_found}.merge(basic_hash)
+            elsif user.valid_user?
+              render :json => {:domain_status => shard_status, :user_status => :active}.merge(basic_hash)
+            elsif user.deleted?
+              render :json => {:domain_status => shard_status, :user_status => :deleted}.merge(basic_hash)
+            elsif user.blocked?
+              render :json => {:domain_status => shard_status, :user_status => :blocked}.merge(basic_hash)
+            else
+              render :json => {:domain_status => shard_status, :user_status => :not_active}.merge(basic_hash)
+            end
+          end
+        end
+      else
+        render :json => { :domain_status => shard_status, :user_status => :not_found, :created_at => nil, :account_type => nil }
+      end
+    end
+  end
+
   private
+
+  def authenticate_request
+    render_404 unless (params[:username] == "freshdesk" and params[:api_key] == Helpdesk::EMAIL[:domain_validation_key])
+  end
 
   def determine_pod
     pod_infos = find_pods

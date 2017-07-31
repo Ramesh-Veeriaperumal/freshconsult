@@ -257,8 +257,8 @@ class Helpdesk::TicketDrop < BaseDrop
   def before_method(method)
     field_name = "#{method}_#{@source.account_id}"
     required_field_type = @source.custom_field_type_mappings[field_name]
-    return super unless required_field_type
     required_field_value = @source.custom_field[field_name]
+    return super unless required_field_value # required_field_value will be present only for custom field
     formatted_field_value(required_field_type, required_field_value)
   end
 

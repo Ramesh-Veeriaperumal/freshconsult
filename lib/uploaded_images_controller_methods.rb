@@ -9,7 +9,7 @@ module UploadedImagesControllerMethods
 
   def create
     @image = current_account.attachments.build({
-      :description      => !public_upload? && one_hop? ? "private" : "public",
+      :description      => public_upload? || skip_one_hop? ? "public" : "private",
       :content          => params[:image][:uploaded_data],
       :attachable_type  => "#{cname} Upload"
     })
@@ -33,7 +33,7 @@ module UploadedImagesControllerMethods
     data_f.original_filename = "blob" + CGI.escapeHTML(params["_uniquekey"]) + "." + splited_dataURI[:extension]
    
     @image = current_account.attachments.build({
-      :description      => !public_upload? && one_hop? ? "private" : "public",
+      :description      => public_upload? || skip_one_hop? ? "public" : "private",
       :content          => data_f,
       :attachable_type  => "#{cname} Upload"
     })
@@ -77,8 +77,8 @@ module UploadedImagesControllerMethods
       end
     end
 
-    def one_hop?
-      current_account.one_hop_enabled?
+    def skip_one_hop?
+      current_account.skip_one_hop_enabled?
     end
 
     def public_upload?

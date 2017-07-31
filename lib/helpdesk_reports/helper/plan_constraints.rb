@@ -10,11 +10,23 @@ module HelpdeskReports::Helper::PlanConstraints
     :enterprise_reporting => ['estate', 'forest']
   }
 
-  PLAN_BASED_FEATURE_CONSTRAINT_MAPPING = {timespent: :enable_lifecycle_report}
+  PLAN_BASED_FEATURE_CONSTRAINT_MAPPING = {timespent: :enable_lifecycle_report, qna: :enable_qna_insights, insights: :enable_qna_insights}
 
   PLAN_BASED_REPORTS = PLAN_BASED_FEATURE_CONSTRAINT_MAPPING.keys
 
   PLAN_BASED_CONSTRAINTS = PLAN_BASED_FEATURE_CONSTRAINT_MAPPING.values
+
+  REPORTS_PLAN_BASED_URL_MAPPINGS = [
+   [:high,    [:estate, :forest],   'high',   'high_bg'   ],
+   [:medium,  [:blossom, :garden],  'medium', 'medium_bg' ],
+   [:low,     [:sprout],            'low',    'low_bg'    ]
+  ]
+
+  REPORTS_PLAN_PRIORITY = REPORTS_PLAN_BASED_URL_MAPPINGS.map{|arr| [arr[0], arr[1]] }.to_h
+
+  REPORTS_URL_SUFFIX    = REPORTS_PLAN_BASED_URL_MAPPINGS.map{|arr| [arr[0], arr[2]] }.to_h
+
+  REPORTS_BG_URL_SUFFIX = REPORTS_PLAN_BASED_URL_MAPPINGS.map{|arr| [arr[0], arr[3]] }.to_h
 
   def plan_group
     return @plan_group if defined?(@plan_group)

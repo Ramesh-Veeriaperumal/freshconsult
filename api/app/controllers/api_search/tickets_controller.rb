@@ -5,7 +5,7 @@ module ApiSearch
       tree = parser.expression_tree
       record = record_from_expression_tree(tree)
 
-      record = sanitize_custom_fields(record, ApiSearchConstants::TICKET_FIELDS) if custom_fields.any?
+      record = sanitize_custom_fields(record, ApiSearchConstants::TICKET_FIELDS)
 
       validation_params = record.merge({ticket_fields: ticket_fields })
       validation_params.merge!(statuses: Helpdesk::TicketStatus.status_objects_from_cache(current_account))

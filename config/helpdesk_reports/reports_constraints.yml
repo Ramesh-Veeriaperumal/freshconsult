@@ -67,6 +67,9 @@
   enable_lifecycle_report:
     - estate
     - forest
+  enable_qna_insights:
+    - estate
+    - forest
 
 :plan_exclude_filters:
   :glance: 

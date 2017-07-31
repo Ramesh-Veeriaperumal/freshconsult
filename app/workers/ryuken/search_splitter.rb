@@ -11,7 +11,7 @@ class Ryuken::SearchSplitter
 
   def perform(sqs_msg, args)
     begin
-      if args["subscriber_properties"]["search"]
+      if args["subscriber_properties"]["search"] && args["subscriber_properties"]["search"]["timestamps"]
         if sqs_msg.attributes["SentTimestamp"]
           args["subscriber_properties"]["search"]["timestamps"] << sqs_msg.attributes["SentTimestamp"].to_i
         end

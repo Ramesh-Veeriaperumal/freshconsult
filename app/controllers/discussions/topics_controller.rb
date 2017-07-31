@@ -12,6 +12,7 @@ class Discussions::TopicsController < ApplicationController
 	before_filter :require_user, :only => :reply
 	before_filter :find_topic, :except => [:index, :create, :new, :destroy_multiple]
 	before_filter :portal_check, :only => :show
+	before_filter :set_ui_preference, :only => [:show]
 	before_filter :fetch_monitorship, :only => :show
 	before_filter :set_page, :only => :show
 	before_filter :after_destroy_path, :only => :destroy

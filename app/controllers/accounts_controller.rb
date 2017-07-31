@@ -341,6 +341,7 @@ class AccountsController < ApplicationController
       begin  
         account_obj[:first_referrer] = params[:first_referrer] if params[:first_referrer].present? 
         account_obj[:first_landing_url] = params[:first_landing_url] if params[:first_landing_url].present?
+        account_obj[:fd_cid] = params[:fd_cid] if params[:fd_cid].present?
         if params[:user]
           account_obj[:email] = params[:user][:email]
           account_obj[:first_name] = params[:user][:first_name]
@@ -443,9 +444,9 @@ class AccountsController < ApplicationController
 
     def add_to_crm(account_id)
       if (Rails.env.production? or Rails.env.staging?)
-        Resque.enqueue_at(15.minute.from_now, Marketo::AddLead, { :account_id => account_id,
+        Resque.enqueue_at(3.minute.from_now, Marketo::AddLead, { :account_id => account_id,
           :signup_id => params[:signup_id]})
-        Resque.enqueue_at(15.minute.from_now, CRM::Freshsales::Signup, { account_id: account_id,
+        Resque.enqueue_at(5.minute.from_now, CRM::Freshsales::Signup, { account_id: account_id,
          fs_cookie: params[:fs_cookie] })
       end  
     end  

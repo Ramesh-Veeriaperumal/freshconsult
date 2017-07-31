@@ -345,6 +345,7 @@ var TemplateDockManager   = Class.create({
   
     var isFormValid = true;
     isFormValid = this.isValidForm(e);
+    var initialCount = 0;
 
     if(isFormValid ){
       jQuery.ajax({
@@ -362,8 +363,9 @@ var TemplateDockManager   = Class.create({
           if(resp.status == 200){
             that.handleInstallSuccess();
           } else if (resp.status == 202){
+            var installedExtensionId = resp_body.installed_extension_id;
             setTimeout( function() {
-              that.pollAccountApi(0, that.pollRetryLimit);
+              that.pollAccountApi(initialCount, that.pollRetryLimit, installedExtensionId);
             }, that.accApiPollInterval);
           } else {
             that.handleInstallFailure();
@@ -422,13 +424,13 @@ var TemplateDockManager   = Class.create({
     });
   },
 
-  pollAccountApi: function(count, maxCount) {
+  pollAccountApi: function(count, maxCount, installedExtensionId) {
     var self = this;
     jQuery.ajax({
-      url: '/admin/marketplace/installed_extensions/'+ this.extensionId +'/app_status?event='+ this.action,
+      url: '/admin/marketplace/installed_extensions/'+ installedExtensionId +'/app_status?event='+ this.action,
       type: "GET",
       success: function(resp_body, statustext, resp){
-        self.handlePollSuccess(resp, count, maxCount);
+        self.handlePollSuccess(resp, count, maxCount, installedExtensionId);
       },
       error: function(jqXHR, exception) {
         self.handleInstallFailure();
@@ -436,12 +438,12 @@ var TemplateDockManager   = Class.create({
     })
   },
 
-  handlePollSuccess: function(resp, count, maxCount) {
+  handlePollSuccess: function(resp, count, maxCount, installedExtensionId) {
     var self = this;
     if (resp.status == 202 && count < maxCount) {
       count = count + 1;
       setTimeout( function() {
-        self.pollAccountApi(count, maxCount);
+        self.pollAccountApi(count, maxCount, installedExtensionId);
       }, self.accApiPollInterval);
     } else if( resp.status == 200) {
       response = resp.responseJSON;

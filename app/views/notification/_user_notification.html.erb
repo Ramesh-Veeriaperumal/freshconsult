@@ -27,6 +27,7 @@
         <%= font_icon "arrow-left", { :size => 16 } %>
       </a>
       <%= t('user_notifications.notification_preferences') %>
+      <input rel="toggle" type="checkbox" id="mute_notification_sound" data-checked-label="<%= t('user_notifications.muted') %>" data-unchecked-label="<%= t('user_notifications.mute') %>"/>
     </header>
 
     <!-- Notifications Preferences Content -->
@@ -69,13 +70,6 @@
           </div>
         <% end %>
       <% end %>
-
-      <div class="row-fluid silent_notifications">
-        <div class="span8"> <%= t('user_notifications.silent_notifications') %> </div>
-        <div class="span4 align-right">
-          <input rel="toggle" type="checkbox" id="mute_notification_sound" data-checked-label="<%= t('plain_on') %>" data-unchecked-label="<%= t('plain_off') %>"/>
-        </div>
-      </div>
 
       <a class="enable-desktop-notifications-button btn" href="javascript:;">
         <span class="default"><%= t('user_notifications.enable_desktop_notifications') %></span>

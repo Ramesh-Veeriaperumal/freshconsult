@@ -10,16 +10,18 @@ class Ryuken::SearchPoller
   # auto_delete: true
 
   def perform(sqs_msg, args)
-    begin
-      if sqs_msg.attributes["SentTimestamp"]
-        args["subscriber_properties"]["search"]["timestamps"] << sqs_msg.attributes["SentTimestamp"].to_i
-      end
-      args["subscriber_properties"]["search"]["timestamps"] << Search::Job.es_version/1000
-
-
+    begin  
       search_payload = args["#{args['object']}_properties"].merge({
-                                                                    'version' => (args['action_epoch'] * 1000000).ceil
+        'version' => (args['action_epoch'] * 1000000).ceil
       })
+
+      if args["subscriber_properties"]["search"] && args["subscriber_properties"]["search"]["timestamps"]
+        if sqs_msg.attributes["SentTimestamp"]
+          args["subscriber_properties"]["search"]["timestamps"] << sqs_msg.attributes["SentTimestamp"].to_i
+        end
+        args["subscriber_properties"]["search"]["timestamps"] << Search::Job.es_version/1000
+        search_payload.merge!({'timestamps' => args["subscriber_properties"]["search"]})
+      end
 
       case search_payload['action']
       when 'destroy'
