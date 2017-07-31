@@ -3,7 +3,7 @@ class ConversationValidation < ApiValidation
                 :attachments, :cc_emails, :bcc_emails, :item, :from_email
 
   validates :body, data_type: { rules: String, required: true }
-  validates :user_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param, greater_than: 0 }
+  validates :user_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }
   validates :private, :incoming, data_type: { rules: 'Boolean', ignore_string: :allow_string_param }
   validates :from_email, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, accepted: :'valid email address' } 
   validates :notify_emails, :attachments, :cc_emails, :bcc_emails, data_type: { rules: Array }

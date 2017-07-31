@@ -422,34 +422,33 @@ class Helpdesk::Ticket < ActiveRecord::Base
     key      = TICKET_DISPLAY_ID % { :account_id => account_id }
     lock_key = DISPLAY_ID_LOCK % { :account_id => account_id }
 
-    TicketConstants::TICKET_DISPLAY_ID_MAX_LOOP.times do
-      computed_display_id = increment_display_id_redis_key(key).to_i
-      #computed_display_id will be 0 if the redis command fails,
-      #in which case we will keep retrying till we timeout
-
-      #normal workflow
-      if computed_display_id > 1
-        self.display_id = computed_display_id.to_i
+    begin
+      computed_display_id = $redis_display_id.evalsha(Redis::DisplayIdLua.redis_lua_script_sha, [:keys], key.to_a)
+      #computed_display_id will be nil if the redis fails,
+      #in which case we will fallback to the DB for display id generation
+    rescue Redis::BaseError => e
+      NewRelic::Agent.notice_error(e, {:description => "Redis Error"})
+      if e.message =~ /NOSCRIPT No matching script/
+        Redis::DisplayIdLua.load_display_id_lua_script_to_redis
+      end
+    end 
+    
+    #normal workflow
+    if computed_display_id.nil?
+      return
+    elsif computed_display_id.to_i > 1
+      self.display_id = computed_display_id.to_i
+      return
+    #first time, when the key is a huge -ve value
+    elsif computed_display_id.to_i < 0
+      if set_display_id_redis_with_expiry(lock_key, 1, { :ex => TicketConstants::TICKET_ID_LOCK_EXPIRY,
+                                                     :nx => true })
+        computed_display_id = account.get_max_display_id
+        set_display_id_redis_key(key, computed_display_id)
+        self.display_id = computed_display_id
         return
-      #first time, when the key is a huge -ve value
-      elsif computed_display_id < 0
-        if set_display_id_redis_with_expiry(lock_key, 1, { :ex => TicketConstants::TICKET_ID_LOCK_EXPIRY,
-                                                       :nx => true })
-          computed_display_id = account.get_max_display_id
-          set_display_id_redis_key(key, computed_display_id)
-          self.display_id = computed_display_id
-          return
-        end
       end
     end
-    account.features.redis_display_id.destroy
-
-    notification_topic = SNS["dev_ops_notification_topic"]
-    options = { :account_id => account_id, :environment => Rails.env }
-    DevNotification.publish(notification_topic, "Redis Display ID - Retry limit exceeded", options.to_json)
-
-    Rails.logger.debug "Redis Display ID - Retry limit exceeded in #{account_id}"
-    NewRelic::Agent.notice_error("Redis Display ID - Retry limit exceeded in #{account_id}")
   end
 
   # Linked ticket validations...

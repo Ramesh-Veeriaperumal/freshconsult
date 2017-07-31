@@ -94,6 +94,10 @@ class Freshfone::Number < ActiveRecord::Base
 	}
 	scope :expired, :conditions => { :state => 2 }
 	scope :numbers_with_groups, :include => :freshfone_number_groups
+	scope :active_number, lambda{ |number| {
+			:conditions => {:number => number, :state => STATE[:active] }
+		}
+	}
 
 
 	VOICE_HASH.each_pair do |k, v|

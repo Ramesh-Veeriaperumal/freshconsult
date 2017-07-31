@@ -12,6 +12,8 @@ module Concerns::ApplicationConcern
     payload[:account_id] = Account.current ? Account.current.id : ""
     payload[:user_id]    = (Account.current && User.current) ? User.current.id : ""
     payload[:shard_name] = Thread.current[:shard_name_payload]
+    payload[:uuid]    = Thread.current[:message_uuid]
+    payload[:server_name] = ENV["HOSTNAME"] rescue ""
   end
 
   def set_shard_for_payload  # For log

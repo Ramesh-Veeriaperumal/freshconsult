@@ -155,6 +155,10 @@ class RabbitmqWorker
     def collaboration_user_routing_key?(exchange, key)
       (exchange.starts_with?("user") && key[2] == "1")
     end
+
+    def collaboration_account_routing_key?(exchange, key)
+      (exchange.starts_with?("account") && key[6] == "1")
+    end
     
     def autorefresh_routing_key?(exchange, key)
       (exchange.starts_with?("tickets") && key[0] == "1") 
@@ -239,6 +243,11 @@ class RabbitmqWorker
       if collaboration_user_routing_key?(exchange_key, routing_key)
         puts "pushing user in SQS for collab"
         sqs_msg_obj = sqs_v2_push(SQS[:collab_agent_update_queue], message, nil)
+        puts "Collaboration SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{routing_key} :: Exchange - #{exchange_key}"
+      end
+      if collaboration_account_routing_key?(exchange_key, routing_key)
+        puts "pushing account in SQS for collab"
+        sqs_msg_obj = sqs_v2_push(SQS[:collab_ticket_update_queue], message, nil)
         puts "Collaboration SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{routing_key} :: Exchange - #{exchange_key}"
       end
     end

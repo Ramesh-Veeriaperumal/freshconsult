@@ -43,4 +43,14 @@ module Marketplace::InstExtControllerMethods
     exception_logger("Problem in generating the iframe payload: #{e.message}\n#{e.backtrace}")
     render_error_response(:internal_server_error) and return false
   end
+
+  def configs_page_v2
+    s3_id = params[:version_id].to_s.reverse
+    configs_url = "https://#{MarketplaceConfig::CDN_STATIC_ASSETS}/#{s3_id}/#{Marketplace::Constants::IPARAM}"
+    @configs_page = open(configs_url).read
+  end
+
+  def extension_has_config?
+    render 'admin/marketplace/installed_extensions/configs' unless @extension['has_config']
+  end
 end

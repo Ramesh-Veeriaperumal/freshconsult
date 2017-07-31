@@ -99,7 +99,8 @@ class ReportExportMailer < ActionMailer::Base
     headers = {
       :subject     => mail_subject( options ),
       :to             => options[:task_email_ids] || options[:user].email,
-      :from         => AppConfig['from_email'],
+      :from        => Account.current.default_friendly_email || AppConfig['from_email'],
+      :bcc         => AppConfig['reports_email'],
       "Reply-to" => "",
       :sent_on   => Time.now,
       "Auto-Submitted" => "auto-generated",
