@@ -262,8 +262,8 @@
 					data.field_options["section_present"] = false;
 					element = $(this.options.formContainer).find('li[data-id="'+this.options.parent_id + '"]');
 					element.find("li.custom-field").each($.proxy(function(index, dataItem){
-  					element.after(dataItem); 
-  				}, this));
+						element.after(dataItem); 
+					}, this));
 					$(element).html(JST['custom-form/template/dom_field'](data, multi_sections_enabled));
 				}
 				this.options.builder_instance.data.get(data.id).action = 'update';
