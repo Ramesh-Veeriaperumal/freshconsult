@@ -1,13 +1,14 @@
 module SearchService
   class Utils
     def self.construct_payload(types, template_name, es_params)
+      per_page = es_params[:size].to_i <= 0 ? Search::Utils::MAX_PER_PAGE : es_params[:size].to_i
       {
         search_term: es_params[:search_term].to_s,
         documents: types,
         context: template_name,
         params: es_params.except(:search_term, :account_id, :size, :from, :sort_by, :sort_direction),
-        per_page: es_params[:size],
-        page: es_params[:from] ? ( es_params[:from] / es_params[:size] + 1 ) : 1,
+        per_page: per_page,
+        page: (es_params[:from].to_i/per_page) + 1 ,
         sort_by: es_params[:sort_by],
         sort_direction:  es_params[:sort_direction]
       }.to_json
