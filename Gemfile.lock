@@ -784,7 +784,6 @@ GEM
       gemoji (>= 2.1.0)
     gherkin (4.0.0)
     git-version-bump (0.15.1)
-    global_phone (1.0.1)
     gnip-rule (0.4.1)
       json (~> 1.8)
       rest-client (~> 1.6.7)
@@ -1192,6 +1191,7 @@ GEM
     syck (1.0.5)
     sys-uname (1.0.2)
       ffi (>= 1.0.0)
+    telephone_number (1.1.1)
     test-unit (3.1.7)
       power_assert
     test-unit-minitest (0.9.1)
@@ -1334,7 +1334,6 @@ DEPENDENCIES
   freshdesk_features!
   fuubar
   gemoji-parser (~> 1.3.1)
-  global_phone
   gnip!
   gnip-rule (= 0.4.1)
   gon (= 6.1.0)
@@ -1461,6 +1460,7 @@ DEPENDENCIES
   strong_parameters (= 0.2.3)
   susy (= 2.1.3)
   syck (= 1.0.5)
+  telephone_number (= 1.1.1)
   test-unit (= 3.1.7)
   test-unit-minitest
   text_data_store!

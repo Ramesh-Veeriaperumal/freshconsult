@@ -153,8 +153,7 @@ gem "rinku", :git => "git://github.com/freshdesk/rinku.git"
 gem "namae", '0.8.4'
 gem 'ancestry', '1.3'
 gem 'rubytree'
-gem 'global_phone'
-# gem "global_phone_dbgen", "~> 1.0.0"
+gem "telephone_number", '1.1.1'
 gem "useragent", "~> 0.16.3"
 
 gem 'active_record_shards', '~> 3.2.0', :require => 'active_record_shards'
