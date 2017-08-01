@@ -1,0 +1,27 @@
+type: object
+properties:
+  name:
+    type: string
+  email: 
+    type: string
+  phone:
+    type: string
+  mobile:
+    type: string
+  time_zone:
+    type: string
+  job_title:
+    type: string
+  language:
+    type: string
+  signature:
+    type: string
+  ticket_scope:
+    type: string
+  occasional:
+    type: boolean
+  ticket_assignment:
+    type: object
+    properties:
+      available:
+        type: boolean

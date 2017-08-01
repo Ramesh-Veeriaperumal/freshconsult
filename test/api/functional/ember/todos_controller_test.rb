@@ -3,6 +3,7 @@ module Ember
   class TodosControllerTest < ActionController::TestCase
     include TicketsTestHelper
     include TodosTestHelper
+    include AgentHelper
 
     def wrap_cname(params)
       { todo: params }
@@ -83,6 +84,16 @@ module Ember
       assert_response 404
     end
 
+    def test_create_without_ticket_access
+      ticket = create_ticket
+      User.any_instance.stubs(:has_ticket_permission?).returns(false)
+      todo = { body: 'Ticket todo', ticket_id: ticket.display_id }
+      post :create, construct_params(@api_params.merge(todo), false)
+      assert_response 403
+    ensure
+      User.any_instance.stubs(:has_ticket_permission?).returns(false)
+    end
+
     def test_update_with_incorrect_params
       ticket = create_ticket
       reminder = get_new_reminder('Ticket todo for show', ticket.id)
@@ -107,6 +118,23 @@ module Ember
       assert !reminder.deleted
     end
 
+    def test_update_without_ticket_access
+      ticket = create_ticket
+      reminder = get_new_reminder('Ticket todo for update', ticket.id)
+      User.any_instance.stubs(:has_ticket_permission?).returns(false)
+      put :update, construct_params(@api_params.merge(id: reminder.id), body: Faker::Lorem.sentence, completed: true)
+      assert_response 403
+    ensure
+      User.any_instance.unstub(:has_ticket_permission?)
+    end
+
+    def test_update_other_users_todo
+      new_agent = add_agent_to_account(@account, name: Faker::Name.name, active: 1, role: 1)
+      reminder = get_new_reminder('Todo for update', nil, new_agent.user.id)
+      put :update, construct_params(@api_params.merge(id: reminder.id), body: Faker::Lorem.sentence, completed: true)
+      assert_response 403
+    end
+
     def test_show
       ticket = create_ticket
       reminder = get_new_reminder('Ticket todo for show', ticket.id)
@@ -129,6 +157,25 @@ module Ember
       assert_equal true, reminder.deleted # to additionally verify  its a  completed todo
     end
 
+    def test_show_without_ticket_access
+      User.any_instance.stubs(:has_ticket_permission?).returns(false)
+      ticket = create_ticket
+      reminder = get_new_reminder('Ticket todo for show', ticket.id)
+      remove_wrap_params
+      get :show, construct_params(@api_params, false).merge(id: reminder.id)
+      assert_response 403
+    ensure
+      User.any_instance.unstub(:has_ticket_permission?)
+    end
+
+    def test_show_other_users_todo
+      new_agent = add_agent_to_account(@account, name: Faker::Name.name, active: 1, role: 1)
+      reminder = get_new_reminder('Todo for show', nil, new_agent.user.id)
+      remove_wrap_params
+      get :show, construct_params(@api_params, false).merge(id: reminder.id)
+      assert_response 403
+    end
+
     def test_show_invalid_todo
       get :show, construct_params(@api_params, false).merge(id: scoper.last.id + 10)
       assert_response 404
@@ -149,8 +196,11 @@ module Ember
       remove_wrap_params
       ticket = create_ticket
       pattern = []
-      pattern << todo_pattern(get_new_reminder('todo1', ticket.id))
-      pattern << todo_pattern(get_new_reminder('todo2', ticket.id))
+      get_new_reminder('todo1', ticket.id)
+      get_new_reminder('todo2', ticket.id)
+      Helpdesk::Reminder.where(ticket_id: ticket.id).each do |reminder|
+        pattern << todo_pattern(reminder)
+      end
       get :index, construct_params(@api_params, false).merge(ticket_id: ticket.display_id)
       assert_response 200
       match_json(pattern)
@@ -160,6 +210,16 @@ module Ember
       remove_wrap_params
       get :index, construct_params(@api_params, false).merge(ticket_id: Helpdesk::Ticket.last.display_id + 10)
       assert_response 404
+    end
+
+    def test_index_without_ticket_access
+      User.any_instance.stubs(:has_ticket_permission?).returns(false)
+      ticket = create_ticket
+      remove_wrap_params
+      get :index, construct_params(@api_params, false).merge(ticket_id: ticket.display_id)
+      assert_response 403
+    ensure
+      User.any_instance.unstub(:has_ticket_permission?)
     end
 
     def test_delete
@@ -172,6 +232,23 @@ module Ember
     def test_delete_nonexist_todo
       delete :destroy, construct_params(@api_params, false).merge(id: scoper.last.id + 10)
       assert_response 404
+    end
+
+    def test_delete_without_ticket_access
+      ticket = create_ticket
+      reminder = get_new_reminder('test delete', ticket.id)
+      User.any_instance.stubs(:has_ticket_permission?).returns(false)
+      delete :destroy, construct_params(@api_params, false).merge(id: reminder.id)
+      assert_response 403
+    ensure
+      User.any_instance.unstub(:has_ticket_permission?)
+    end
+
+    def test_delete_other_users_todo
+      new_agent = add_agent_to_account(@account, name: Faker::Name.name, active: 1, role: 1)
+      reminder = get_new_reminder('Todo for show', nil, new_agent.user.id)
+      delete :destroy, construct_params(@api_params, false).merge(id: reminder.id)
+      assert_response 403
     end
 
     # able to delete a todo

@@ -15,7 +15,11 @@ module Ember
       end
 
       def show_draft
-        @item = @ticket.draft if @ticket.draft.exists?
+        if @ticket.draft.exists?
+          @item = @ticket.draft
+          attachment_ids = @item.attachment_ids
+          @attachments = attachment_ids.present? ? current_account.attachments.where(id: attachment_ids) : []
+        end
       end
 
       def clear_draft

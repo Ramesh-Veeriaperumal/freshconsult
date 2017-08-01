@@ -15,10 +15,10 @@ module TodosTestHelper
     Helpdesk::Reminder
   end
 
-  def get_new_reminder(body, ticket_id)
+  def get_new_reminder(body, ticket_id, user_id = User.current.id)
     rem = scoper.new(body: body)
     rem.ticket_id = ticket_id
-    rem.user_id = User.current.id
+    rem.user_id = user_id
     rem.save
     rem
   end

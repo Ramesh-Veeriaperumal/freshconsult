@@ -171,6 +171,8 @@
   $ref: ./agents/crud.yaml
 /agents/me:
   $ref: ./agents/me.yaml
+/agents/{id}/achievements:
+  $ref: ./agents/achievements.yaml  
 
 # Scenario Automations
 /scenario_automations:
@@ -214,9 +216,18 @@
 /surveys:
   $ref: ./surveys/crud.yaml
 
+#Solutions
+/solutions/articles:
+  $ref: ./solutions/articles.yaml
+
 #Dashboard activities
 /dashboards/activities:
   $ref: ./dashboard/activities.yaml
+
+
+#Dashboard Quests
+/dashboards/quests:
+  $ref: ./dashboard/quest.yaml  
 
 #Dashboard
 /dashboards:
@@ -233,7 +244,6 @@
   $ref: ./dashboard/ticket_trends.yaml
 /dashboards/ticket_metrics:
   $ref: ./dashboard/ticket_metrics.yaml
-
 /dashboards/leaderboard_agents:
   $ref: ./dashboard/leaderboard/agents.yaml
 

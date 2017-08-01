@@ -5,17 +5,18 @@ module ApiDashboardConstants
                        sprout_17_agent: [:unresolved,:open, :on_hold],
                        sprout_17_supervisor: [:unresolved, :open, :on_hold, :new],
                        sprout_17_admin: [:unresolved, :open, :on_hold, :new] }.freeze
+
   SPROUT_DASHBOARD = [
     # key, widget name, h,w, group by, order by, limit,
     [:todo,         'todo',                                 2, 2],
-    [:activities,   'activity',                             4, 4],  
+    [:activities,   'activity',                             4, 4],
     [:csat,         'csat',                                 2, 2],
     [:gamification, 'gamification',                         2, 2]
   ].freeze
 
   AGENT_DASHBOARD = [
     # key, widget name, h,w, group by, order by, limit,
-    [:todo,         'todo',                                 2, 2],  
+    [:todo,         'todo',                                 2, 2],
     [:gamification, 'gamification',                         2, 2],
     [:csat,         'csat',                                 2, 2]
   ].freeze
@@ -81,15 +82,16 @@ module ApiDashboardConstants
 
   TICKET_TRENDS_FIELDS = %w(group_ids product_ids).freeze
 
+
   SCORECARD_FIELDS = %w(group_ids product_ids).freeze
 
   UNRESOLVED_COLUMN_KEY_MAPPING = {:group_id => "group_id", :responder_id => "responder_id", :status => "status", 
       :internal_group_id => "internal_group_id", :internal_agent_id => "internal_agent_id", :group_ids => "group_id", :responder_ids => "responder_id", :status_ids => "status" }.freeze
 
   UNRESOLVED_FILTER_HEADERS = {
-      UNRESOLVED_COLUMN_KEY_MAPPING[:responder_id]      => "agent_label", 
-      UNRESOLVED_COLUMN_KEY_MAPPING[:group_id]          => "group_label", 
-      UNRESOLVED_COLUMN_KEY_MAPPING[:internal_agent_id] => "internal_agent_label", 
+      UNRESOLVED_COLUMN_KEY_MAPPING[:responder_id]      => "agent_label",
+      UNRESOLVED_COLUMN_KEY_MAPPING[:group_id]          => "group_label",
+      UNRESOLVED_COLUMN_KEY_MAPPING[:internal_agent_id] => "internal_agent_label",
       UNRESOLVED_COLUMN_KEY_MAPPING[:internal_group_id] => "internal_group_label",
       UNRESOLVED_COLUMN_KEY_MAPPING[:status]            => "status_label"
     }.freeze

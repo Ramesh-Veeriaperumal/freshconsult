@@ -28,7 +28,7 @@ module Ember
         def decorator_options
           options = {}
           options.merge!(user: @user) if @user
-          [Solutions::ArticleDecorator, options]
+          [::Solutions::ArticleDecorator, options]
         end
 
         def construct_es_params

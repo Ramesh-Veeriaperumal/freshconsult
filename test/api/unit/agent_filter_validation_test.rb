@@ -3,7 +3,8 @@ require_relative '../unit_test_helper'
 class AgentFilterValidationTest < ActionView::TestCase
   def test_valid
     agent_filter = AgentFilterValidation.new(state: 'fulltime', phone: Faker::PhoneNumber.phone_number,
-                                             mobile: Faker::PhoneNumber.phone_number, email: Faker::Internet.email)
+                                             mobile: Faker::PhoneNumber.phone_number, email: Faker::Internet.email,
+                                             only: 'available')
     assert agent_filter.valid?
   end
 

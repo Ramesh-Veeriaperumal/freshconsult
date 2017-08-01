@@ -352,6 +352,17 @@ module Ember
       t.update_attributes(spam: false)
     end
 
+    def test_reply_with_user_id_invalid_privilege
+      t = create_ticket
+      params_hash = reply_note_params_hash.merge(user_id: other_user.id)
+      @controller.stubs(:is_allowed_to_assume?).returns(false)
+      post :reply, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 403
+      match_json(request_error_pattern('invalid_user', id: other_user.id, name: other_user.name))
+    ensure
+      @controller.unstub(:is_allowed_to_assume?)
+    end
+
     def test_forward_with_invalid_cc_emails_count
       cc_emails = []
       50.times do
@@ -1310,6 +1321,8 @@ module Ember
       get :latest_note_forward_template, controller_params(version: 'private', id: ticket.display_id)
       assert_response 200
       match_json(forward_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: "<div><p>Thanks</p><p>#{ticket.subject}</p></div>"))
+      res = parse_response(response.body)
+      assert_equal 1, res['attachments'].size
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_forward_template)
     end
@@ -1325,6 +1338,25 @@ module Ember
       match_json(forward_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: "<div><p>Thanks</p><p>#{ticket.subject}</p></div>"))
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_forward_template)
+    end
+
+    def test_latest_note_forward_template_with_deleted_conversations
+      t = create_ticket
+      note = create_note(user_id: @agent.id, ticket_id: t.id, source: 2, attachments: { resource: fixture_file_upload('files/attachment.txt', 'plain/text', :binary) })
+      note.update_attribute(:deleted, true)
+      notification_template = '<div>{{ticket.id}}</div>'
+      agent_signature = '<div><p>Thanks</p><p>{{ticket.subject}}</p></div>'
+      Agent.any_instance.stubs(:signature_value).returns(agent_signature)
+      EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
+      get :latest_note_forward_template, controller_params(version: 'private', id: t.display_id)
+      assert_response 200
+      match_json(forward_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: "<div><p>Thanks</p><p>#{ticket.subject}</p></div>"))
+      res = parse_response(response.body)
+      assert_equal 0, res['attachments'].size
+      Agent.any_instance.unstub(:signature_value)
+      EmailNotification.any_instance.unstub(:get_forward_template)
+    ensure
+      note.update_attribute(:deleted, false)
     end
 
     def test_full_text

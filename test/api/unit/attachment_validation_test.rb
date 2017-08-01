@@ -81,9 +81,15 @@ class AttachmentValidationTest < ActionView::TestCase
 
   def test_inline_image_upload
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+
     controller_params = { content: fixture_file_upload('files/image33kb.jpg', 'image/jpg'), inline: 'true', 'inline_type' => 2 }
     attachment_validation = AttachmentValidation.new(controller_params, nil)
     assert attachment_validation.valid?(:create)
+
+    controller_params = { content: fixture_file_upload('files/plainfile', 'image/jpg'), inline: 'true', 'inline_type' => 2 }
+    attachment_validation = AttachmentValidation.new(controller_params, nil)
+    assert attachment_validation.valid?(:create)
+
     DataTypeValidator.any_instance.unstub(:valid_type?)
   end
 

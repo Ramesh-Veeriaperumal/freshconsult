@@ -1,5 +1,4 @@
 class AgentDecorator < ApiDecorator
-
   include Gamification::GamificationUtil
 
   def initialize(record, options)
@@ -32,11 +31,11 @@ class AgentDecorator < ApiDecorator
   end
 
   def to_restricted_hash
-    if record.is_a?(User)
-      user_obj = record
-    else
-      user_obj = record.user
-    end
+    user_obj = if record.is_a?(User)
+                 record
+               else
+                 record.user
+               end
     {
       id: user_obj.id,
       contact: {
@@ -49,6 +48,26 @@ class AgentDecorator < ApiDecorator
 
   def group_ids
     (@group_mapping_ids || record.agent_groups.map(&:group_id) || []).compact.uniq
+  end
+
+  def agent_achievements_hash
+    return {} unless gamification_feature?(Account.current)
+
+    next_level = record.next_level || Account.current.scoreboard_levels.next_level_for_points(record.points.to_i).first
+    points_needed = next_level.points - record.points.to_i if next_level
+
+    {
+      id: record.user_id,
+      points: record.points.to_i,
+      current_level_name: record.level.try(:name),
+      next_level_name: next_level.try(:name),
+      points_needed: (points_needed || 0),
+      badges: record.user.quests.order('`achieved_quests`.`created_at` DESC').pluck(:badge_id)
+    }
+  end
+
+  def availability_hash(all_agent_channels_hash)
+    agent_hash.merge!(all_agent_channels_hash)
   end
 
   private

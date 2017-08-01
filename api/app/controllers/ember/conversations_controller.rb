@@ -15,7 +15,7 @@ module Ember
       decorate_object: %i[create update reply forward facebook_reply tweet reply_to_forward broadcast]
     )
 
-    before_filter :can_send_user?, only: %i[forward reply_to_forward facebook_reply tweet broadcast]
+    before_filter :can_send_user?, only: %i[create reply forward reply_to_forward facebook_reply tweet broadcast]
     before_filter :set_defaults, only: [:forward]
     before_filter :link_tickets_enabled?, only: [:broadcast]
 
@@ -408,7 +408,7 @@ module Ember
       end
 
       def last_forwardable_note
-        @ticket.notes.where(['private = false AND source NOT IN (?)', Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['feedback']]).last
+        @ticket.public_notes.where(['source NOT IN (?)', Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['feedback']]).last
       end
 
       def after_load_object
