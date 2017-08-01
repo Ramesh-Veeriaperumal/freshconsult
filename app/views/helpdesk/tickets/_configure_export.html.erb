@@ -17,7 +17,7 @@
 		<li class="control-group">
 			<label class="control-label"><%=t('export_data.filter_label_agent').html_safe%> </label>
 			<div class="controls">
-				<%= select_tag "ticket_state_filter", options_for_select(TicketConstants::STATES_HASH.map {|k,v| [v,k]}, [:created_at]), {:class => "select2","data-minimum-results-for-search" => "1000"} %>
+				<%= select_tag "ticket_state_filter", options_for_select(TicketConstants.states_options, [:created_at]), {:class => "select2","data-minimum-results-for-search" => "1000"} %>
 				<%= select_tag "date_filter", options_for_select(TicketConstants.created_options), :class => "select2","data-minimum-results-for-search" => "1000" %>
 			</div>
 		</li>
