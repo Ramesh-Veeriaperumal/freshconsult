@@ -109,7 +109,8 @@ module Reports
         :user          => User.current,
         :domain        => extra_options[:portal_url],
         :report_type   => extra_options[:report_type],
-        :date_range    => extra_options[:date_range]
+        :date_range    => extra_options[:date_range],
+        :portal_name => Account.current.portal_name
       }
       options.merge!(extra_options) if extra_options
       if file_path.blank?

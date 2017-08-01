@@ -33,7 +33,7 @@ end
     rescue DomainNotReady => e
         puts "Just ignoring the DomainNotReady , #{e.inspect}"
     rescue ShardNotFound => e
-        puts "Ignoring ShardNotFound, #{e.inspect}, #{msg['account_id']}"
+        puts "Ignoring ShardNotFound, #{e.inspect}"
     rescue AccountBlocked => e
         puts "Ignore AccountBlocked, #{e.inspect}"
     end

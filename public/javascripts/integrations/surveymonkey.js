@@ -46,10 +46,6 @@ SurveyMonkey.prototype = {
 		sm_options.auth_type = "OAuth";
 		sm_options.header_auth = true;
 		sm_options.use_server_password = true;
-		sm_options.useBearer = true;
-		sm_options.url_auth = true;
-		sm_options.url_token_key = 'api_key'
-		sm_options.password = 'smonkey_secret';
 		sm_options.ssl_enabled = true,
 		
 		sm_options.use_placeholders = true;
@@ -57,9 +53,8 @@ SurveyMonkey.prototype = {
 		sm.load_group_list();
 		sm_options.init_requests = [
 			(load_survey_list_req = {
-				body: '{"fields": ["title", "survey_id"]}',
-				method: 'post',
-				rest_url: 'v2/surveys/get_survey_list',
+				method: 'GET',
+				rest_url: 'v3/surveys',
 				use_placeholders: true,
 				on_success: function(resData) {
 					sm.load_survey_list(resData);
@@ -189,8 +184,8 @@ SurveyMonkey.prototype = {
 		data = resData.responseJSON.data;
 		if (!data || data.length==0) { /* No Survey */alert("No data!"); return;}
 		sm.surveys = [];
-		data.surveys.each(function(survey) {
-			sm.surveys.push({name: survey.title, collectors: null, id: survey.survey_id})
+		data.each(function(survey) {
+			sm.surveys.push({name: survey.title, collectors: null, id: survey.id})
 		});
 		/* This block populates the suvey options to the survey select boxes */
 		if (sm.surveys.length) {
@@ -260,15 +255,15 @@ SurveyMonkey.prototype = {
 	},
 
 	fetch_survey_weblink_collectors: function(survey_id, callback) {
+		if(survey_id || survey_id != ""){
 		this.fd.request({
-			rest_url: 'v2/surveys/get_collector_list',
-			method: 'post',
+			rest_url: 'v3/surveys/'+survey_id+'/collectors?include=type,url',
+			method: 'GET',
 			use_placeholders: true,
-			body: '{"survey_id": "'+survey_id+'", "fields": ["id", "name", "type", "url"]}',
 			on_success: function(res){
 				var webLinks = [];
-				res.responseJSON.data.collectors.each(function(collector){
-					if (collector.type=='url') webLinks.push({name: escapeHtml(collector.name), url: collector.url, id: collector.collector_id});
+				res.responseJSON.data.each(function(collector){
+					if (collector.type=='weblink') webLinks.push({name: escapeHtml(collector.name), url: collector.url, id: collector.id});
 				});
 				if (webLinks.length) {
 					callback(webLinks);
@@ -281,7 +276,8 @@ SurveyMonkey.prototype = {
 				alert("Error loading list of collectors. Please refresh the page and try again. Contact support of problem persists.");
 			}
 		});
-	},
+	}
+},
 
 	add_a_group: function() {
 		var row_html = sm.ROW_TEMPLATE.evaluate({});

@@ -69,6 +69,7 @@ run "ln -nfs #{shared_path}/config/autopilot.yml #{node[:rel_path]}/config/autop
 run "ln -nfs #{shared_path}/config/inline_manual.yml #{node[:rel_path]}/config/inline_manual.yml"
 run "ln -nfs #{shared_path}/config/redis_session.yml #{node[:rel_path]}/config/redis_session.yml"
 run "ln -nfs #{shared_path}/config/fd_email_service.yml #{node[:rel_path]}/config/fd_email_service.yml"
+run "ln -nfs #{shared_path}/config/product_feedback.yml #{node[:rel_path]}/config/product_feedback.yml"
 
 #supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"

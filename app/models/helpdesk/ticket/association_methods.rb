@@ -192,7 +192,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def reset_tracker
       remove_prime_associates("tracker")
-      if Account.current.features?(:activity_revamp) and (self.related_tickets_count > 0)
+      if self.related_tickets_count > 0
         self.misc_changes = {:tracker_unlink_all => self.related_tickets_count}
         self.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY)
       end

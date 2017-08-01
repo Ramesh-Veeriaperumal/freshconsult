@@ -1885,6 +1885,7 @@ Helpkit::Application.routes.draw do
     match '/tickets/collab/:id/notify' => 'collab_tickets#notify', via: :post
     match '/tickets/collab/:id/prevnext' => 'collab_tickets#prevnext'
     match '/tickets/collab/:id/latest_note' => 'collab_tickets#latest_note'
+    match '/tickets/collab/:id/convo_token' => 'collab_tickets#convo_token'
 
     resources :archive_tickets, :only => [:index, :show] do
       collection do
@@ -2969,6 +2970,9 @@ Helpkit::Application.routes.draw do
           put :remove_blacklisted_ip
           get :shards
           post :operations_on_shard
+          get :blacklisted_domains
+          put :add_blacklisted_domain
+          put :remove_blacklisted_domain
         end
       end
 

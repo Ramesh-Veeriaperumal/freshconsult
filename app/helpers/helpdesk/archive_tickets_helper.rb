@@ -14,7 +14,7 @@ module Helpdesk::ArchiveTicketsHelper
 
   def set_created_at_options(c_hash)
     if (c_hash[:name] == "created_at")
-      c_hash[:options] = TicketConstants::ARCHIVE_CREATED_WITHIN_OPTIONS
+      c_hash[:options] = TicketConstants.archive_created_date_options
     end
   end
 

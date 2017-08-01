@@ -35,3 +35,15 @@ div#survey-fields-container > div.survey-text-container{ margin-top: 25px;}
 label.checkbox-label span{ position: relative; top: 2px; }
 
 label.last-label{ margin-bottom: 0; }
+
+.surveymonkey_alert{
+	padding: 10px;
+	margin-bottom: 16px;
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+	background-color: #fcf8e3;
+	border: 1px solid #fbeed5;
+	border-radius: 4px;
+	color: #82683c;
+	position: relative;
+	margin: 20px;
+}

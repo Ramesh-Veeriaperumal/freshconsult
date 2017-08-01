@@ -3,12 +3,12 @@ class ProductFeedbackWorker < BaseWorker
 
   def perform(payload)
     payload.symbolize_keys!
-    api_key = PRODUCT_FEEDBACK_TOKENS['api_key']
+    api_key = PRODUCT_FEEDBACK_CONFIG['api_key']
     headers = {
       'Authorization' => "Basic #{Base64.encode64(api_key).strip}",
       'Content-Type' => 'application/json'
     }
-    http_resp = HTTParty.post("#{AppConfig[:feedback_account][Rails.env]}/api/v2/tickets", body: payload.to_json, headers: headers)
+    http_resp = HTTParty.post("#{PRODUCT_FEEDBACK_CONFIG['feedback_account']}/#{PRODUCT_FEEDBACK_CONFIG['feedback_path']}", body: payload.to_json, headers: headers)
     raise 'Feedback creation failed' unless http_resp.code == 201
   end
 end

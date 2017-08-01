@@ -3,6 +3,7 @@ class Freshfone::CallHistoryController < ApplicationController
 	include Freshfone::FreshfoneUtil
 	include Redis::RedisKeys
   include Redis::OthersRedis
+  include Export::Util
 	before_filter :set_native_mobile, :only => [:custom_search, :children]
 	before_filter :cache_filter_params, :only => [:custom_search, :export]
 	before_filter :load_cached_filters, :only => [:index, :export]
@@ -13,6 +14,9 @@ class Freshfone::CallHistoryController < ApplicationController
 	before_filter :check_export_range, :only => [:export]
 	
 	before_filter :fetch_current_call, :only =>[:destroy_recording], if: 'privilege?(:admin_tasks)'
+
+	EXPORT_TYPE = "call_history"
+	
 	def index
 		@all_freshfone_numbers = current_account.all_freshfone_numbers.order("deleted ASC").all
 	end
@@ -61,7 +65,8 @@ class Freshfone::CallHistoryController < ApplicationController
 	end
 
 	def export
-    params.merge!({ :account_id => current_account.id, :user_id => current_user.id })
+	check_and_create_export EXPORT_TYPE
+    params.merge!({ :account_id => current_account.id, :user_id => current_user.id, :export_id => @data_export.id })
     Resque.enqueue(Freshfone::Jobs::CallHistoryExport::CallHistoryExport, params)
     render nothing: true
 	end

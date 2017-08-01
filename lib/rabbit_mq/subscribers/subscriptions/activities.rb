@@ -13,13 +13,13 @@ module RabbitMq::Subscribers::Subscriptions::Activities
   end
 
   def mq_activities_subscription_valid(action, model)
-    Account.current.features?(:activity_revamp) and subscription_valid?
+    subscription_valid?
   end
 
   private
 
   def subscription_valid?
-    User.current and User.current.agent? and !self.ticket.system_changes.present? and !Va::RuleActivityLogger.automation_execution?
+    User.current && User.current.agent? && !self.ticket.system_changes.present? && !Va::RuleActivityLogger.automation_execution?
   end
 
   def watcher_properties(action)
