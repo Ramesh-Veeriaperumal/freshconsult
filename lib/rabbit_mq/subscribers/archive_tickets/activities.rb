@@ -14,7 +14,7 @@ module RabbitMq::Subscribers::ArchiveTickets::Activities
   end
 
   def mq_activities_valid(action, model)
-    false and Account.current.features_included?(:activity_revamp) and activity_valid_model?(model) and update_action?(action) and valid_changes.present?
+    false && activity_valid_model?(model) && update_action?(action) && valid_changes.present?
   end
 
   def activity_valid_model?(model)

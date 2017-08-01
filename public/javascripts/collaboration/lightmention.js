@@ -233,7 +233,7 @@
                         break;
                     }
                 } else {
-                    if(target.match(new RegExp("\\b" + item_to_check, "ig")) !== null) {
+                    if(target.match(new RegExp("(?:^|[\\s])" + escapeRegExp(item_to_check), "ig")) !== null) {
                         res.push(data[user_json_idx]);
                         break;
                     }
@@ -245,6 +245,10 @@
             res = self.sort(res, item);
         }
         return res.splice(0, self.maxItems);
+    }
+
+    function escapeRegExp(text) {
+        return text.replace(/[-[\]{}()<>*+=:;~?.,'"`\\\/^%$|#!&]/g, '\\$&');
     }
 
     function render(event, list) {

@@ -41,6 +41,7 @@
       - :sitemap
       - :requester_widget
       - :advanced_search
+      - :collaboration
       - :user_notifications
     :inherits: 
       - :sprout_jan_17

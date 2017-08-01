@@ -71,12 +71,15 @@ class Search::V2::TicketsController < ApplicationController
            es_params[:sort_direction]  = 'desc'
           end
 
-          es_results  = Search::V2::SearchRequestHandler.new(current_account.id,
-                                                                Search::Utils.get_template_id(:requester_autocomplete, @exact_match),
-                                                                ['user']
-                                                              ).fetch(user_params.merge(ES_V2_BOOST_VALUES[:requester_autocomplete])
-                                                                )
-          @requester_ids  = es_results['hits']['hits'].collect { |doc| doc['_id'].to_i }
+          records = Search::V2::QueryHandler.new({
+            account_id:   current_account.id,
+            context:      :requester_autocomplete,
+            exact_match:  @exact_match,
+            types:        ['user'],
+            es_models:    { 'user' => { model: 'User' } },
+            es_params:    user_params.merge(ES_V2_BOOST_VALUES[:requester_autocomplete])
+          }).query_results
+          @requester_ids  = records.map(&:id)
         end
       rescue Exception => e
         Rails.logger.error "Searchv2 exception - #{e.message} - #{e.backtrace.first}"

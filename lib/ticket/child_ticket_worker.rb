@@ -104,7 +104,7 @@ class Ticket::ChildTicketWorker < BaseWorker
   def consign_values key, value
     if key == "inherit_parent"
       attrbs = if value.is_a?(Array)
-        value
+        value.flatten
       elsif  value == "all"
         all_attrs_from_parent
       end

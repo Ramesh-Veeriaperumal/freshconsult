@@ -21,6 +21,7 @@ class Helpdesk::ConversationsController < ApplicationController
   include Ecommerce::Ebay::ReplyHelper
   include Helpdesk::SpamAccountConstants
   include Redis::OthersRedis
+  include EmailHelper
   
   # Send and set status is handled separately in the tickets_controller.
   # Any changes related to note or reply made in this file should be replicated in 
@@ -313,17 +314,12 @@ class Helpdesk::ConversationsController < ApplicationController
       
       def update_activities
         if params[:showing] == 'activities'
-           if Account.current.features?(:activity_revamp) and !Account.current.launched?(:activity_ui_disable)
-            type = :tkt_activity
-            params[:limit] = ActivityConstants::QUERY_UI_LIMIT
-            params[:event_type] = ::HelpdeskActivities::EventType::ALL
-            @activities_data = new_activities(params, @item.notable, type)
-             if  @activities_data[:activity_list].present?
-              @activities = @activities_data[:activity_list].reverse
-            end
-           else
-            activity_records = @parent.activities.activity_since(params[:since_id])
-            @activities = stacked_activities(@parent, activity_records.reverse)
+          type = :tkt_activity
+          params[:limit] = ActivityConstants::QUERY_UI_LIMIT
+          params[:event_type] = ::HelpdeskActivities::EventType::ALL
+          @activities_data = new_activities(params, @item.notable, type)
+           if  @activities_data[:activity_list].present?
+            @activities = @activities_data[:activity_list].reverse
           end
         end
       end
@@ -403,19 +399,16 @@ class Helpdesk::ConversationsController < ApplicationController
         ticket_ids = email_threshold_crossed_tickets(current_account.id, @parent.id)
         Rails.logger.info "Maximum email threshold crossed #{ticket_ids.count} time for Account :#{current_account.id}. Ticket ids #{ticket_ids.join(",")}" 
         if ticket_ids.count == 3
-          FreshdeskErrorsMailer.error_email(nil, {:domain_name => current_account.full_domain}, nil, {
-                  :subject => "Maximum email threshold crossed third time for Account :#{current_account.id} ", 
-                  :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com","helpdesk@noc-alerts.freshservice.com"],
-                  :additional_info => {:info => "Ticket ids #{ticket_ids.join(",")}"}
-                  })
+          subject = "Alert!! Maximum email threshold crossed third time for Account :#{current_account.id} "
+          additional_info = "Ticket ids #{ticket_ids.join(",")}"
+          notify_account_blocks(current_account, subject, additional_info)
         elsif ticket_ids.count == 5
-          FreshdeskErrorsMailer.error_email(nil, {:domain_name => current_account.full_domain}, nil, {
-                  :subject => "Reached Maximum email threshold limit for a day for Account :#{current_account.id} ", 
-                  :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com","helpdesk@noc-alerts.freshservice.com"],
-                  :additional_info => {:info => "Blocking outgoing emails and marked #{current_account.id} as spam. Ticket ids #{ticket_ids.join(",")}"}
-                  })
           add_member_to_redis_set(SPAM_EMAIL_ACCOUNTS, current_account.id)
           current_account.launch(:spam_blacklist_feature)
+          subject = "Reached Maximum email threshold limit for a day for Account :#{current_account.id} "
+          additional_info = "Blocking outgoing emails and marked #{current_account.id} as spam. Ticket ids #{ticket_ids.join(",")}"
+          notify_account_blocks(current_account, subject, additional_info)
+          update_freshops_activity(current_account, "Outgoing emails blocked", "block_outgoing_email")
         end 
       end 
 
