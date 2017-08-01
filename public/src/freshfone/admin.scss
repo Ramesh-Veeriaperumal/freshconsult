@@ -309,6 +309,15 @@
 #purchase-confirmation-content {
   padding: 10px 20px 7px;
 }
+.address-suggestion{
+  .control-label {
+    color: #FF9F0B;
+    font-weight: bold;
+  }
+  input {
+    border: 1px solid #FF9F0B;
+  }
+}
 .freshfone_alert{
   @include margin-left(0px);
   @include margin-right(0px);
@@ -368,6 +377,9 @@
     margin-top: 10px;
     margin-bottom: 20px;
   }
+}
+.freshfone-address-form {
+  padding: 10px 0;
 }
 .fresfhone_flash_message, .small_note{
   display: block;

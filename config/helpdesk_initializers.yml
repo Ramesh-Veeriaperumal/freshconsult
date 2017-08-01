@@ -1,6 +1,5 @@
 helpdesk:
   initializers:
-    - githooks
     - mri2.1_patches
     - rails3_patches
     - mail_message_patch
@@ -100,3 +99,4 @@ helpdesk:
     - freshpipe
     - zendesk_app_config
     - product_feedback
+    - connection_pool_patch

@@ -425,4 +425,5 @@ module HelpdeskReports::Helper::Ticket
     suffix = req_priority ? REPORTS_URL_SUFFIX[plan_priority] : REPORTS_BG_URL_SUFFIX[plan_priority]
     ReportsAppConfig::TICKET_REPORTS_URL % {priority: suffix}
   end
+  
 end

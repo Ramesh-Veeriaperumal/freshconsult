@@ -20,7 +20,7 @@ module Marketplace::ApiEndpoint
     [:install_extension,        "product/%{product_id}/account/%{account_id}/extensions/%{extension_id}.json", []],
     [:update_extension,         "product/%{product_id}/account/%{account_id}/extensions/%{extension_id}.json", []],
     [:uninstall_extension,      "product/%{product_id}/account/%{account_id}/extensions/%{extension_id}.json", []],
-    [:installed_extension_details, "product/%{product_id}/account/%{account_id}/extensions/%{extension_id}.json", []],
+    [:installed_extension_details, "product/%{product_id}/account/%{account_id}/extensions/%{extension_id}.json", [:installed_version, :version_id]],
     [:installed_extensions,     "product/%{product_id}/account/%{account_id}/extensions.json", [:type]],
     [:app_status,               "product/%{product_id}/account/%{account_id}/installed_extensions/%{installed_extension_id}/app_status.json", []],
 

@@ -122,7 +122,7 @@ class Helpdesk::Activity < ActiveRecord::Base
     def feature_present?
       # Added feature check as a separate method so that activities can reuse 
       # this by adding their feature
-      Account.current.features_included?(:activity_revamp)
+      true  # making it default for all accounts
     end
     
     def set_migration_key

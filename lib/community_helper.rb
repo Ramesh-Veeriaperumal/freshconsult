@@ -4,7 +4,7 @@ module CommunityHelper
     category.portals.collect(&:id) if category.present?
     # Above line added just to preload the portals. The above line is otherwise useless
     return if category.present? && category.portal_ids.empty?
-    %(<span class="tooltip pull-right portal-preview-icon" title="#{t('solution.view_on_portal')}">
+    %(<span class="tooltip pull-right portal-preview-icon" data-placement="left" title="#{t('solution.view_on_portal')}">
       #{link_to('<i class="ficon-open-in-portal fsize-21"></i>'.html_safe, portal_preview_path(relative_path, category), :target => "view-portal")}
     </span>).html_safe
   end

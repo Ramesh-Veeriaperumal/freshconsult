@@ -119,7 +119,7 @@ module HelpdeskReports
         [ :surveyable,                       :requester,    :email            ],
         [ :surveyable,                       :company,      :name             ],
         [ :surveyable,                       :group,        :name             ],
-        [ :surveyable,                       :responder,    :name             ],
+        [ :agent,                            :name                            ],
       ]
 
       SURVEY_CSV_HEADERS_1 = [ I18n.t("export_data.fields.survey_received"), 

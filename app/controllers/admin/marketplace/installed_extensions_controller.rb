@@ -5,27 +5,37 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
   include Marketplace::InstExtControllerMethods
 
   before_filter :verify_oauth_callback , :only => [:oauth_callback]
-  before_filter :extension, :only => [:install, :reinstall, :uninstall, :oauth_callback]
+  before_filter :extension, :only => [:install, :reinstall, :uninstall, :oauth_callback, :new_configs, :edit_configs]
+  before_filter :extension_has_config?, :only => [:new_configs, :edit_configs]
   before_filter :verify_billing_info, :only => [:install, :reinstall], :if => :paid_app?
 
   rescue_from Exception, :with => :mkp_exception
 
   def new_configs
-    extn_configs = extension_configs
-    render_error_response and return if error_status?(extn_configs)
-    @configs = extn_configs.body
-    render 'admin/marketplace/installed_extensions/configs', :status => extn_configs.status
+    if platform_version == Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2]
+      configs_page_v2
+    else
+      extn_configs = extension_configs
+      render_error_response && return if error_status?(extn_configs)
+      @configs = extn_configs.body
+    end
+
+    render 'admin/marketplace/installed_extensions/configs'
   end
 
   def edit_configs
-    extn_configs = extension_configs
-    render_error_response and return if error_status?(extn_configs)
-
     acc_config = account_configs
-    render_error_response and return if error_status?(acc_config)
-
-    @configs = account_configurations(extn_configs.body, acc_config.body)
-    render 'admin/marketplace/installed_extensions/configs', :status => extn_configs.status
+    render_error_response && return if error_status?(acc_config)
+    if platform_version == Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2]
+      configs_page_v2
+      @configs = acc_config.body
+    else
+      extn_configs = extension_configs
+      render_error_response && return if error_status?(extn_configs)
+      @configs = account_configurations(extn_configs.body, acc_config.body)
+    end
+    
+    render 'admin/marketplace/installed_extensions/configs'
   end
 
   def iframe_configs
@@ -50,7 +60,7 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
     $redis_mkp.mapped_hmset(redis_key, params['configs']) unless params['configs'].blank?
     callback_path = "/admin/marketplace/installed_extensions/#{params[:extension_id]}/#{params[:version_id]}/oauth_callback"
     if params['upgrade']
-      callback_path = "#{callback_path}?upgrade=true"
+      callback_path = CGI.escape("#{callback_path}?upgrade=true&installed_version=#{params[:installed_version]}")
     end
     oauth_handshake(callback_path)
   end
@@ -70,9 +80,7 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
     else
       config_params["oauth_configs"].merge!(account_tokens.body)
       if params['upgrade']
-        prev_version_addon = previous_version_addon
-        return unless prev_version_addon
-        update_ext = update_extension(install_params(config_params).deep_merge(prev_version_addon))
+        update_ext = update_extension(install_params(config_params).deep_merge(previous_version_addon))
       else
         install_ext = install_extension(install_params(config_params))
       end
@@ -157,7 +165,9 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
                     :options => @extension['page_options'],
                     :events => @extension['events'] || {},
                     :account_full_domain => current_account.full_domain
-                  }.merge(paid_app_params)
+                  }
+                  .merge(params[:installed_version] ? {:installed_version => params[:installed_version]} : {})
+                  .merge(paid_app_params)
     if configs.present? && configs["oauth_configs"].present?
       inst_params[:oauth_configs] = configs["oauth_configs"]
       inst_params[:configs].except!("oauth_configs")
@@ -167,7 +177,7 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
 
     def uninstall_params
       { :extension_id => params[:extension_id],
-        :version_id => @extension['version_id'],
+        :version_id => params[:version_id],
         :events => @extension['events'] || {},
         :account_full_domain => current_account.full_domain
       }.merge(paid_app_params)
@@ -175,11 +185,13 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
 
     def enable_params
       { :extension_id => params[:extension_id],
+        :version_id => params[:version_id],
         :enabled => Marketplace::Constants::EXTENSION_STATUS[:enabled] }
     end
 
     def disable_params
       { :extension_id => params[:extension_id],
+        :version_id => params[:version_id],
         :enabled => Marketplace::Constants::EXTENSION_STATUS[:disabled] }
     end
 

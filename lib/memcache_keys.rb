@@ -133,17 +133,19 @@ module MemcacheKeys
 
   ACCOUNT_ADDITIONAL_SETTINGS = "v3/ACCOUNT_ADDITIONAL_SETTINGS:%{account_id}"
 
-  INSTALLED_FRESHPLUGS = "v2/FA:%{page}:PLUGS:%{account_id}"
+  INSTALLED_FRESHPLUGS = "v3/FA:%{page}:PLUGS:%{account_id}:%{platform_version}"
+
+  INSTALLED_APPS_V2 = "v1/FA:APPS:%{account_id}"
 
   FRESHPLUG_CODE = "v1/FA:PLUG:%{version_id}"
 
   EXTENSION_CATEGORIES = "v1/FA:EXTENSION_CATEGORIES"
 
-  MKP_EXTENSIONS = "v1/FA:MKP_EXTENSIONS:%{category_id}:%{type}:%{locale_id}:%{sort_by}"
+  MKP_EXTENSIONS = "v1/FA:MKP_EXTENSIONS:%{category_id}:%{type}:%{locale_id}:%{sort_by}:%{platform_version}"
   
-  CUSTOM_APPS = "v2/FA:CUSTOM_APPS:%{account_id}:%{locale_id}"
+  CUSTOM_APPS = "v1/FA:CUSTOM_APPS:%{account_id}:%{locale_id}:%{platform_version}"
 
-  EXTENSION_DETAILS = "v2/FA:EXTENSION:%{extension_id}:%{locale_id}"
+  EXTENSION_DETAILS = "v2/FA:EXTENSION:%{extension_id}:%{locale_id}:%{platform_version}"
 
   VERSION_DETAILS = "v1/FA:VERSION:%{version_id}"
 
