@@ -24,15 +24,18 @@ class Integrations::DataPipeController <  ApplicationController
 
   private 
     def app_installed?
-      extns = installed_extensions({ type: Marketplace::Constants::EXTENSION_TYPE[:plug]})
-      render_error and return if error_status?(extns)
-      extns.body.each do |extn|
-        if(extn["extension_id"] == request.headers["HTTP_MKP_EXTNID"].to_i && extn["version_id"] == request.headers["HTTP_MKP_VERSIONID"].to_i)
-          @installed_extn_id = extn["installed_extension_id"]
+      is_install = (params && params[:data] && params[:data][:isInstall]) ? params[:data][:isInstall] : false
+      unless is_install
+        extns = installed_extensions({ type: Marketplace::Constants::EXTENSION_TYPE[:plug]})
+        render_error and return if error_status?(extns)
+        extns.body.each do |extn|
+          if(extn["extension_id"] == request.headers["HTTP_MKP_EXTNID"].to_i && extn["version_id"] == request.headers["HTTP_MKP_VERSIONID"].to_i)
+            @installed_extn_id = extn["installed_extension_id"]
+          end
         end
-      end
-      if(@installed_extn_id.blank?)
-        return render_error
+        if(@installed_extn_id.blank?)
+          return render_error
+        end
       end
     end
 

@@ -9,16 +9,17 @@ module Marketplace::Constants
   EXTENSION_SORT_TYPES = ['latest','popular']
   ADDON_ID_PREFIX = 'marketplaceapp_'
   ACCOUNT_ADDON_APP_UNITS = 1
+  IPARAM = 'config/iparams.html'.freeze
   
-  EXTENSION_TYPES = [ 
-    [:plug,               1],    
-    [:theme,              2],
-    [:app,                3],
-    [:ni,                 4],
-    [:external_app,       5]
+  EXTENSION_TYPES = [
+    # Extension Type, Extension Type ID, versionable?
+    [:plug,               1, true],    
+    [:ni,                 4, false],
+    [:external_app,       5, '']
   ]
 
   EXTENSION_TYPE = Hash[*EXTENSION_TYPES.map { |i| [i[0], i[1]] }.flatten]
+  VERSIONABLE_EXTENSION = EXTENSION_TYPES.map { |i| i[1] if i[2] }
 
   APP_TYPES = [ 
     [:regular,               1],    
@@ -70,6 +71,13 @@ module Marketplace::Constants
   ]
 
   ADDON_TYPES = Hash[*ADDON_TYPES_ARRAY.map { |i| [i[0], i[1]] }.flatten]
+
+  PLATFORM_VERSIONS_ARRAY = [
+    [:v1, '1.0'],
+    [:v2, '2.0']
+  ]
+
+  PLATFORM_VERSIONS_BY_ID = Hash[*PLATFORM_VERSIONS_ARRAY.map { |i| [i[0], i[1]] }.flatten]
 
   IFRAME_PERMIT_PARAMS =  { 
                             :user => { "name" => "u_name", "email" => "u_email", "single_access_token" => "u_sat", "time_zone" => "u_tz" },

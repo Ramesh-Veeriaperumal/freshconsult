@@ -150,7 +150,7 @@
                    </ul>
           </div>
         <% end %>
-        <% if current_account.ticket_activity_export_enabled? && privilege?(:manage_account)%>
+        <%if (current_account.auto_ticket_export_enabled? or (current_account.ticket_activity_export_enabled? && privilege?(:manage_account))) and privilege?(:admin_tasks) %>
           <div class="report-link-block">
             <p><%= t('helpdesk_reports.qna.export_question') %></p>
             <a href="<%= reports_scheduled_exports_path() %>" id="schedule_link">

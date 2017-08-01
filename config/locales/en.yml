@@ -2576,6 +2576,9 @@ en:
         add_blacklist_failure: "Number could not be blocked"
         remove_blacklist_success: "Number unblocked successfully"
         remove_blacklist_failure: "Number could not be unblocked"
+        invalid_address: 'The address you have provided is invalid.'
+        suggested_address: 'The provided address was not valid. Please use the suggested address.'
+        local_address_error: "Unable to purchase number. Kindly make sure you enter a valid local address for purchasing this number."
 
     profile:
       page_unavailable: We are sorry. This page is currently unavailable to you. Please contact the administrator for more information.
@@ -7455,6 +7458,8 @@ en:
     update_payment_info: Update payment info
     payment_trial_info: This is a paid app with a %{trial_period} day trial period. Once the trial period is over, you will be charged %{price} / %{addon_type} / month. Press Ok to install the app. <br>  %{payment_ok_btn}
     payment_ok: You will be charged %{price} / %{addon_type} / month for this app. This will add up to <b>%{estimate}</b> for your plan period. Press Ok to install the app. <br>  %{payment_ok_btn}
+    platform_not_compatible: "You need to be in the other UI to install the app. Please toggle and install from the app gallery."
+    install_not_allowed: "Paid apps cannot be installed in both UI versions. Your account has already installed this paid app. Please uninstall the existing app to get this app in the current UI. Please contact support if you need assistance."
     agent: agent
     account: account
     delete_action:
@@ -8043,6 +8048,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       label: "SurveyMonkey"
       helptext: "<h4>SurveyMonkey Integration</h4><p>This integration lets you link a custom survey of your choice from your SurveyMonkey account to ticket replies in Freshdesk based on the group that the ticket belongs to. It can be used to replace the default Satisfaction Survey in your helpdesk or be used along with it.</p><p>Once you have linked your SurveyMonkey account, you can pick out the survey and <a href='http://help.surveymonkey.com/articles/en_US/kb/How-do-I-send-my-survey-to-respondents-or-get-responses-to-my-survey' target='_blank'>the collector</a> you want to use by using the drop down boxes and map it to various ticket groups in Freshdesk. </p><p>You also get to decide when you want survey links to be included with replies. For example, it can be configured to append surveys automatically when ticket gets closed or resolved, or set to manual, so that agents get to choose themselves with each ticket. </p>"
       desc: "Integrate Freshdesk with SurveyMonkey and let your agents link any of your customized surveys to their messages when they are replying to tickets."
+      reauth_text_html: "SurveyMonkey has updated authentication process. To make changes in configuration please, <a href=%{link_auth}>Re-authenticate</a>"
       form:
         survey_settings: ""
         survey_settings_info: ""

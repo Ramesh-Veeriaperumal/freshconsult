@@ -46,7 +46,7 @@ HelpdeskReports.Qna_util = (function($){
 					//reset the questions populated count
 					_this.question_prefix_count = 0;
 					//cloes the question dropdown
-				  	$popover.velocity('fadeOut');
+				  $popover.animate({ opacity: 'hide'}, 'slow');
 
 					//Collect the text in the question box;
 					_this.request_param['text'] = $("#search-query").attr('data-text') + '?';
@@ -212,9 +212,9 @@ HelpdeskReports.Qna_util = (function($){
 				var current_position = $popover.position().left;
 
 				var translate_by = width + left_pos - current_position;
-				$popover.velocity({
-					left: width + 35 +"px"
-				});
+        $popover.animate({
+          left: "+=" + translate_by
+        },"slow");
 				
 			},
 			reset : function() {
@@ -226,7 +226,7 @@ HelpdeskReports.Qna_util = (function($){
 				_this.question_prefix_count = 0;
 				_this.request_param = {};
 				
-    			$popover.velocity('fadeOut');
+    		$popover.animate({ opacity: 'hide'},'slow');
     			$(".selected-queries").empty();
     			$popover.css({
     				left : "30px"
@@ -250,7 +250,7 @@ HelpdeskReports.Qna_util = (function($){
 						});
 						this.filtering = false;
 					} else {
-						$(".questions li").not('.search-header').velocity('slideDown');
+						// $(".questions li").not('.search-header').velocity('slideDown');
 						this.filtering = false;
 					}
 				}
@@ -308,7 +308,7 @@ HelpdeskReports.Qna_util = (function($){
     	    			
     	    			if(_this.in_progress) {
     	    				_this.populateQuestionPrefixes(_this.current_level);
-    	    				$popover.velocity('fadeIn')	
+    	    				$popover.animate({ opacity: 'show'}, 'slow');
     	    			}
             }
 	    		})
@@ -380,7 +380,7 @@ HelpdeskReports.Qna_util = (function($){
 						// escape key maps to keycode `27`
 						trigger_event("question-close" + constants.events_namespace);
 					
-						$popover.velocity('fadeOut');	
+						$popover.animate({ opacity: 'hide'}, 'slow');	
 						$('.search-field-holder').removeClass('active');
 						//Remove placeholder
 						$('.search-field-holder input').val('').prop('placeholder','A question about your helpdesk');

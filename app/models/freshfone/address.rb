@@ -19,7 +19,8 @@ class Freshfone::Address < ActiveRecord::Base
       self.address_sid = @address.sid
     rescue Exception => e
       Rails.logger.error "Address creation failed in twilio for #{account.id} \n#{e.message}\n#{e.backtrace.join("\n\t")}"
-      return false
+      self.errors.add(:twilio_error, { message: e.message, code: e.code })
+      false
     end
   end
 

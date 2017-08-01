@@ -16,7 +16,7 @@ module RabbitMq::Subscribers::Notes::Activities
   end
 
   def mq_activities_valid(action, model)
-    Account.current.features?(:activity_revamp) and act_note_valid_model?(model) and act_note_valid?(action)
+    act_note_valid_model?(model) && act_note_valid?(action)
   end
   
   private
@@ -26,7 +26,7 @@ module RabbitMq::Subscribers::Notes::Activities
   end
 
   def act_note_valid?(action)
-    (create_action?(action) or destroy_action?(action)) and human_note_for_ticket?
+    (create_action?(action) || destroy_action?(action)) && human_note_for_ticket?
   end
 
   def activities_note_keys

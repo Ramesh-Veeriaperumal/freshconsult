@@ -49,13 +49,18 @@ module Marketplace::ApiUtil
                                 circuit_breaker: MarketplaceConfig::MKP_CB,
                                 headers: {
                                             'Content-Type' => 'application/json',
-                                            'Accept' => 'application/json; 1.0.0',
+                                            'Accept' => "application/json; #{platform_version}",
                                             'Accept-Language' => curr_user_language,
                                             'Authorization' => generate_md5_digest(url, MarketplaceConfig::API_AUTH_KEY)
                                          },
                                 conn_timeout: timeout[:conn],
                                 read_timeout: timeout[:read]
                               )
+    end
+
+    def platform_version
+      @platform_version ||= (User.current && User.current.is_falcon_pref?) ? Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2] : 
+                            Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v1]
     end
 
     def get_api(url, timeout)
@@ -115,7 +120,8 @@ module Marketplace::ApiUtil
       Marketplace::Constants::DISPLAY_PAGE.each do |page, id|
         page_key = MemcacheKeys::INSTALLED_FRESHPLUGS % { 
           :page => id, 
-          :account_id => Account.current.id
+          :account_id => Account.current.id,
+          :platform_version => platform_version
         }
         MemcacheKeys.delete_from_cache page_key
       end

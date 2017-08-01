@@ -56,8 +56,7 @@ module RabbitMq::Utils
           valid = construct_message_for_subscriber(f, message, model, action)
           key = generate_routing_key(key, valid)
         rescue => e
-          NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Publisher payload construct Error",
-                                                        :message => message.to_json, :subscriber => f }})
+          Rails.logger.info "Publisher payload construct Error.. #{e.message}, #{message.to_json}"
         end
       }
       message["routing_key"] = key
@@ -72,7 +71,6 @@ module RabbitMq::Utils
 
   def construct_message_for_subscriber(s, message, model, action)
     valid = send("mq_#{s}_valid", action, model)
-    Rails.logger.info "activities_debug ::: construct_message_for_subscriber mq_#{s}_valid #{valid}"
     if valid
       message["#{model}_properties"].deep_merge!(send("mq_#{s}_#{model}_properties", action))
       message["subscriber_properties"].merge!({ s => send("mq_#{s}_subscriber_properties", action) })
@@ -85,7 +83,7 @@ module RabbitMq::Utils
     message = subscriber_basic_message(model, action, uuid)
     MANUAL_PUBLISH_SUBCRIBERS.each { |f|
       begin
-        next if f == "activities" && !Account.current.features?(:activity_revamp)
+        next if f == "activities" && model == "archive_ticket"
         if Account.current.features?(:countv2_writes)
           next if f == "count" && model != "ticket"
         else
@@ -94,8 +92,7 @@ module RabbitMq::Utils
         message["#{model}_properties"].deep_merge!(send("mq_#{f}_#{model}_properties", action))
         message["subscriber_properties"].merge!({ f => send("mq_#{f}_subscriber_properties", action)})
       rescue => e
-        NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Manual Publisher payload construct Error",
-                                                        :message => message.to_json, :subscriber => f }})
+        Rails.logger.info "Manual Publisher payload construct Error.. #{e.message}, #{message.to_json}"
       end
     }
     # Currently need options only for reports, so adding all options directly to reports
