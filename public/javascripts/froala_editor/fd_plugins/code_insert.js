@@ -36,6 +36,7 @@
 	  'codeInsert.popup': '[_CUSTOM_LAYER_]'
 	});
 
+	// When you add any new language in codeEditor_lang add the same in Sanitize::Config::CODE_SNIPPET_LANGUAGES
 	$.FE.PLUGINS.codeInsert = function (editor) {
 	  var codeEditor_lang = {
 			html : 'Html',
