@@ -92,7 +92,18 @@ class CustomFieldsController < Admin::AdminController
       custom_field = scoper.find(field_details.delete(:id))
       nested_fields = field_details.delete(:levels)
       unless custom_field.update_attributes(field_details)
+        Rails.logger.debug "Ticket field update failed : #{current_account.id} 
+                            #{custom_field.id} #{custom_field.label} 
+                            #{custom_field.errors.messages}"
         @invalid_fields.push(custom_field)
+        # To allow the ticket field's field_options to have section_present key
+        # when a section/section field is associated but the validation fails
+        # for a ticket field
+        custom_field.reload
+        field_options = field_details[:field_options]
+        unless custom_field.field_options == field_options
+          custom_field.update_attribute(:field_options, field_options)
+        end
       end
       if custom_field.field_type == "nested_field"
         (nested_fields || []).each do |nested_field|
