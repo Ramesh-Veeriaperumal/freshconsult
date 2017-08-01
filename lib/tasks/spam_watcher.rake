@@ -87,7 +87,10 @@ def check_for_spam(table,column_name, id_limit, threshold,shard_name)
       puts "deleted_users::::#{deleted_users.inspect}::::#{deleted_users.blank?}"
 
       # User.update_all({:blocked => true, :blocked_at => Time.zone.now, :deleted => 0 , :deleted_at => nil }, [" id in (?)", blocked_users]) unless blocked_users.blank?
-      User.where(id: blocked_users).update_all_with_publish({ blocked: true, blocked_at: Time.zone.now, deleted: 0 , deleted_at: nil }, ['blocked != ?', true]) unless blocked_users.blank?
+      unless blocked_users.blank?
+        User.where(id: blocked_users).update_all_with_publish({ blocked: true, blocked_at: Time.zone.now, deleted: 0 , deleted_at: nil }, ['blocked != ?', true]) 
+          
+      end
       # User.update_all({:deleted => true , :deleted_at => Time.zone.now }, [" id in (?)", deleted_users]) unless deleted_users.blank?
       User.where(id: deleted_users).update_all_with_publish({ deleted: true , deleted_at: Time.zone.now }, ['deleted != ?', true]) unless deleted_users.blank?
 
@@ -130,4 +133,22 @@ def deliver_spam_alert(table, query_str,additional_info)
       :query => query_str
     }
   )
+end
+
+def deliver_blocked_user_alert(blocked_users)
+
+  subject = "Users blocked by spam watcher - blocked count : #{blocked_users.count} "
+  additional_info = "Abnormal load detected by spam watcher"
+  FreshdeskErrorsMailer.error_email(nil, nil, nil, 
+    {
+      :subject => subject,
+      :recipients => ["block-alerts@freshworks.com"],
+      :additional_info => {
+        :info => additional_info,
+        :blocked_users_in_this_run => blocked_users.inspect
+      },
+      
+    }
+  )
+
 end
