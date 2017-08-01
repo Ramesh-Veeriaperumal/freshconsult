@@ -8,6 +8,11 @@ User-agent: *
 Disallow: /support/search
 Disallow: /support/tickets/
 Disallow: /support/login/
+<% @disallow_languages.each do |lang| %>
+Disallow: <%= lang %>/support/search
+Disallow: <%= lang %>/support/tickets/
+Disallow: <%= lang %>/support/login/
+<% end %>
 Disallow: /login/normal/
 Allow: /helpdesk/attachments
 Disallow: /helpdesk/
