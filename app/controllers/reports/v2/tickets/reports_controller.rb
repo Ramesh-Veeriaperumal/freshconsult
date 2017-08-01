@@ -6,6 +6,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   include HelpdeskReports::Helper::ControllerMethods
   include HelpdeskReports::Helper::ScheduledReports
   include HelpdeskReports::Helper::QnaInsightsReports
+  include Cache::Memcache::Reports::ReportsCache
 
   before_filter :check_account_state, :ensure_report_type_or_redirect,  :lifecycle_launch_party_check,
                 :plan_constraints,                                      :except => [:download_file]              
@@ -119,8 +120,16 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   end
 
   def fetch_insights_metric
-    generate_data
-    @data[:last_dump_time]  = @last_dump_time
+    key = get_key_for_insights(@query_params)
+    cache_data = MemcacheKeys.get_from_cache(key)
+    if cache_data.nil?
+      generate_data
+      @data[:last_dump_time]  = @last_dump_time
+      timeout = get_cache_interval_from_synctime(@last_dump_time)
+      MemcacheKeys.cache(key, @data, timeout) if @data[:error].nil? 
+    else
+      @data = cache_data
+    end
     send_json_result
   end
 
