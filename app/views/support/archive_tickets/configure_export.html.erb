@@ -19,7 +19,7 @@
 	<fieldset class="row-fluid">
 		<div class="span4">
 			<label class="lead-small"><%=t('export_data.filter_label_customer')%></label>
-			<%= select_tag "date_filter", options_for_select(TicketConstants::ARCHIVE_EXPORT_OPTIONS), 
+			<%= select_tag "date_filter", options_for_select(TicketConstants.archive_date_options), 
 				{ :class => "export-custom-select" } %>
 		</div>
 		<div id="datepicker" class="hide">

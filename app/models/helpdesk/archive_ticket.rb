@@ -562,6 +562,26 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     (source == SOURCE_KEYS_BY_TOKEN[:outbound_email]) && Account.current.compose_email_enabled?
   end
 
+    #This method will return the user who initiated the outbound email
+  #If it doesn't exist, returning requester.
+  def outbound_initiator
+    return requester unless outbound_email?
+    begin
+      meta_note = self.archive_notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"])
+      meta = YAML::load(meta_note.body) unless meta_note.blank?
+      if !meta.blank? && meta["created_by"].present?
+        user_id = meta["created_by"]
+        user = account.all_users.find_by_id(user_id) if user_id #searching all_users to handle if the initiator is deleted later.
+        user.present? ? user : requester
+      else
+        requester
+      end
+    rescue ArgumentError => e
+      Rails.logger.info ":::Outbound Email Exception - #{e.message}"
+      requester
+    end
+  end
+
   private
 
     def note_preload_options

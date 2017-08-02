@@ -313,17 +313,12 @@ class Helpdesk::ConversationsController < ApplicationController
       
       def update_activities
         if params[:showing] == 'activities'
-           if Account.current.features?(:activity_revamp) and !Account.current.launched?(:activity_ui_disable)
-            type = :tkt_activity
-            params[:limit] = ActivityConstants::QUERY_UI_LIMIT
-            params[:event_type] = ::HelpdeskActivities::EventType::ALL
-            @activities_data = new_activities(params, @item.notable, type)
-             if  @activities_data[:activity_list].present?
-              @activities = @activities_data[:activity_list].reverse
-            end
-           else
-            activity_records = @parent.activities.activity_since(params[:since_id])
-            @activities = stacked_activities(@parent, activity_records.reverse)
+          type = :tkt_activity
+          params[:limit] = ActivityConstants::QUERY_UI_LIMIT
+          params[:event_type] = ::HelpdeskActivities::EventType::ALL
+          @activities_data = new_activities(params, @item.notable, type)
+           if  @activities_data[:activity_list].present?
+            @activities = @activities_data[:activity_list].reverse
           end
         end
       end

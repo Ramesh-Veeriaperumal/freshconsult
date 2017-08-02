@@ -45,7 +45,7 @@
           <div class="install-button"><%= install_btn %></div>
         </li>
 
-        <% if (typeof app_version != 'undefined') { %>
+        <% if (typeof app_version != 'undefined' && !unsupported) { %>
           <li class="version"><%= translate.get('marketplace_ver') %> <%= app_version %></li>
         <% } %>
         <% if(typeof custom_app == 'undefined'){ %>

@@ -317,7 +317,12 @@
             xhr.open(params.method, params.url);
             params.beforeSend(xhr);
             xhr.onerror = function (e) {
-                params.onerror ? params.onerror(e, xhr) : console.error(e, xhr);
+                if(xhr.status === 403 && typeof params.statusCode !== "undefined"
+                        && typeof params.statusCode[xhr.status] === "function") {
+                    params.statusCode[xhr.status]();
+                } else {
+                    params.onerror ? params.onerror(e, xhr) : console.error(e, xhr);
+                }
             };
             xhr.onreadystatechange = function (e) {
                 if (xhr.readyState === 4) {
@@ -350,6 +355,11 @@
           console.log.apply(console, args);
         }
     };
+
+    function cbStatusForbidden(cb) {
+        response = "";
+        if(typeof cb === "function") {cb(response, true);}
+    }
 
     function conversationLoadCb(response, cb){
         var self = this;
@@ -433,8 +443,10 @@
             data: conversationObj,
             statusCode: {
                 "200": cbStatusOk,
-                "201": cbStatusCreated
+                "201": cbStatusCreated,
+                "403": function() {cbStatusForbidden(cb);}
             }
+
         }, self.clientId, getAuthToken(self.authToken, convo.token));
     }
 
@@ -467,14 +479,17 @@
                 "channelName" : conversation.co_ch,
                 "persist": true
             };
-            rts.publish(params, cb);
+            rts.publish(params, function(response, resp_str) {
+                cb(response);
+            });
         } else {
-            
+
             log("%c- Sending message to ChatAPI: ", LOG_COLOR, logMessage);
             collabHttpAjax({
                 method: "POST",
                 url: MESSAGE_PUBLISH_ROUTE,
                 data: msgObj,
+                statusCode: {"403": function() {cbStatusForbidden(cb);}},
                 success: function(response) {
                     if(typeof response === "string") {response = JSON.parse(response);};
                     log(">> client: message published: ", response);
@@ -495,6 +510,7 @@
             success: function(response){
                 conversationLoadCb.call(self, response, cb);
             },
+            statusCode: {"403": function() {cbStatusForbidden(cb);}},
             onerror: function(){
                 // expecting 204
                 var response = "";
@@ -519,6 +535,7 @@
             method: "POST",
             url: ADD_MEMBER_ROUTE,
             data: data,
+            statusCode: {"403": function() {cbStatusForbidden(cb);}},
             success: function(response){
                 if(typeof response === "string") {response = JSON.parse(response);};
                 log(">> members added in conversation.: ", response);
@@ -541,6 +558,7 @@
             method: "POST",
             url: REMOVE_MEMBER_ROUTE,
             data: data,
+            statusCode: {"403": function() {cbStatusForbidden(cb);}},
             success: function(response){
                 if(typeof response === "string") {response = JSON.parse(response);};
                 log(">> member removed from conversation.: ", response);
@@ -641,6 +659,7 @@
             method: "POST",
             url: CONVERSATION_UPDATE_METADATA_ROUTE,
             data:  convoMeta,
+            statusCode: {"403": function() {cbStatusForbidden(cb);}},
             success:  function(response) {
                 if(typeof response === "string") {response = JSON.parse(response);};
                 log(">> client: updated conversation metadata: ", response);
@@ -664,6 +683,7 @@
         collabHttpAjax({
             method: "GET",
             url: CONVERSATION_MESSAGES_HISTORY_ROUTE + co_id + start + limit,
+            statusCode: {"403": function() {cbStatusForbidden(cb);}},
             success: function(response){
                 if(typeof response === "string"){response = JSON.parse(response);};
                 if(typeof cb === "function"){cb(response);}
@@ -678,6 +698,7 @@
             method: "POST",
             url: CONVERSATION_CLOSE_ROUTE,
             data: {"co_id": convo.co_id},
+            statusCode: {"403": function() {cbStatusForbidden(cb);}},
             success: function(response){
                 if(typeof response === "string"){response = JSON.parse(response);};
                 if(typeof cb === "function"){cb(response);}
@@ -692,6 +713,7 @@
             method: "POST",
             url: CONVERSATION_OPEN_ROUTE,
             data: {"co_id": convo.co_id},
+            statusCode: {"403": function() {cbStatusForbidden(cb);}},
             success: function(response){
                 if(typeof response === "string"){response = JSON.parse(response);};
                 if(typeof cb === "function"){cb(response);}
@@ -706,6 +728,7 @@
             method: "POST",
             url: CONVERSATION_OWNER_SET_ROUTE,
             data: {"co_id": convo.co_id, "uid": uid, "co_name": convo.name},
+            statusCode: {"403": function() {cbStatusForbidden(cb);}},
             success: function(response){
                 if(typeof response === "string"){response = JSON.parse(response);};
                 if(typeof cb === "function"){cb(response);}
@@ -726,6 +749,7 @@
                 if(typeof response === "string"){response = JSON.parse(response);};
                 if (typeof cb === "function"){cb({code: 200, body: response});}
             },
+            statusCode: {"403": function() {cbStatusForbidden(cb);}},
             onerror: function(e, xhr) {
                 // expcting 413 / 415
                 cb({code: xhr.status});
@@ -742,6 +766,7 @@
         collabHttpAjax({
             method: "GET",
             url: CONVERSATION_GET_ATTACHMENT_URL + "?fid=" + fid + "&co_id=" + co_id,
+            statusCode: {"403": function() {cbStatusForbidden(cb);}},
             success: function(response){
                 if(typeof response === "string"){response = JSON.parse(response);};
                 if(typeof cb === "function"){cb(response);}
