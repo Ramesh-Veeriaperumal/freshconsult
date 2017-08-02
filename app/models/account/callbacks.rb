@@ -23,7 +23,7 @@ class Account < ActiveRecord::Base
   after_commit ->(obj) { obj.clear_cache }, on: :update
   after_commit ->(obj) { obj.clear_cache }, on: :destroy
   
-  after_commit :enable_searchv2, :enable_count_es, on: :create
+  after_commit :enable_searchv2, :enable_count_es, :enable_collab, on: :create
   after_commit :disable_searchv2, :disable_count_es, on: :destroy
   after_commit :update_sendgrid, on: :create
   after_commit :remove_email_restrictions, on: :update , :if => :account_verification_changed?
@@ -314,6 +314,10 @@ class Account < ActiveRecord::Base
 
     def update_sendgrid
       SendgridDomainUpdates.perform_async({:action => 'create', :domain => full_domain, :vendor_id => Account::MAIL_PROVIDER[:sendgrid]})
+    end
+
+    def enable_collab
+      CollabPreEnableWorker.perform_async
     end
 
     def update_crm_and_map

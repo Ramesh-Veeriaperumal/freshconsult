@@ -2,7 +2,7 @@
 *   For collaboration feature.
 *   To be included in cdn/collaboration.js
 *
-*/ 
+*/
 
 window.App = window.App || {};
 App.CollaborationModel = (function ($) {
@@ -104,7 +104,7 @@ App.CollaborationModel = (function ($) {
                 "lastActive": response.last_online_at ? Collab.parseUTCDateToLocal(response.last_online_at).getTime() : 0
             }, response.info || {});
         },
-        onMessageHandler: function(msg) {    
+        onMessageHandler: function(msg) {
             // Rendering will be handled by addMessageHtml based on message Type
             var sent_by_me = (msg.s_id === Collab.currentUser.uid);
             var msg_for_current_convo = (!!Collab.currentConversation && msg.co_id === Collab.currentConversation.co_id);
@@ -206,7 +206,53 @@ App.CollaborationModel = (function ($) {
                     "operations": meta_operations,
                     "token": Collab.currentConversation.token
                 };
-                _COLLAB_PVT.ChatApi.updateConvoMeta(metadata);
+
+                _COLLAB_PVT.ChatApi.updateConvoMeta(metadata, function(response, isErr) {
+                    if(isErr) {
+                        _COLLAB_PVT.refreshConvoToken(function() {
+                            metadata.token = Collab.currentConversation.token;
+                            _COLLAB_PVT.ChatApi.updateConvoMeta(metadata);
+                        });
+                    }
+                });
+            }
+        },
+        refreshConvoToken: function(cb) {
+            var ticket_id = Collab.currentConversation.co_id;
+            if(typeof ticket_id !== "undefined") {
+                jQuery.ajax({
+                    url: '/helpdesk/tickets/collab/'+ ticket_id + '/convo_token',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function(response){
+                        if(typeof response !== "undefined") {
+                            _COLLAB_PVT.updateConvoToken(response);
+                            if(typeof cb === "function") {cb()}
+                        }
+                    },
+                    error: function() {
+                        console.log("refresh Convo Token failed!! New token could not be retrieved");
+                    }
+                });
+            } else {
+                console.log("refresh Convo Token failed!! Ticket ID not found!");
+            }
+        },
+
+        updateConvoToken: function(data) {
+            if(typeof data !== "undefined" && typeof Collab.currentconversation !== "undefined") {
+                //update currentconversation token
+                Collab.currentConversation.token = data.convo_token;
+                if(typeof Collab.conversationsMap[Collab.currentConversation.co_id] !== "undefined")
+                {
+                    //update conversion map
+                    Collab.conversationsMap[Collab.currentConversation.co_id].token = data.convo_token;
+                }
+
+                //update dom value
+                var ticket_payload = App.CollaborationUi.parseJson($("#collab-ticket-payload").data("ticketPayload"));
+                ticket_payload.convo_token = data.convo_token;
+                $("#collab-ticket-payload").attr("data-ticket-payload", JSON.stringify(ticket_payload));
             }
         }
     };
@@ -253,7 +299,16 @@ App.CollaborationModel = (function ($) {
                 "fid": fid,
                 "co_id": Collab.currentConversation.co_id
             }
-            _COLLAB_PVT.ChatApi.refreshAttachmentUri(convoObj, cb);
+            _COLLAB_PVT.ChatApi.refreshAttachmentUri(convoObj, function(response, isErr) {
+                if(isErr) {
+                    _COLLAB_PVT.refreshConvoToken(function() {
+                        convoObj.token = Collab.currentConversation.token;
+                        _COLLAB_PVT.ChatApi.refreshAttachmentUri(convoObj, cb);
+                    });
+                } else {
+                    if(typeof cb === "function") {cb(response);}
+                }
+            });
         },
         sendMessage: function(m, co_id, cb) {
             var msg = {
@@ -269,7 +324,17 @@ App.CollaborationModel = (function ($) {
                 "co_id": co_id,
                 "token": Collab.currentConversation.token
             };
-            _COLLAB_PVT.ChatApi.sendMessage(msg, convo, cb);
+
+            _COLLAB_PVT.ChatApi.sendMessage(msg, convo, function(response, isErr) {
+                    if(isErr) {
+                        _COLLAB_PVT.refreshConvoToken(function() {
+                            convo.token = Collab.currentConversation.token;
+                            _COLLAB_PVT.ChatApi.sendMessage(msg, convo, cb);
+                        });
+                    } else {
+                        if(typeof cb === "function") {cb(response);}
+                    }
+            });
         },
         sendNotification: function(msg) {
             var ticket_id = Collab.currentConversation.co_id;
@@ -363,10 +428,23 @@ App.CollaborationModel = (function ($) {
                 "co_id": convoName,
                 "token": Collab.currentConversation.token
             }
-            _COLLAB_PVT.ChatApi.addMember(convo, uid, function(response) {
-                Collab.conversationsMap[response.co_id].members = response.members;
-                Collab.collaboratorsGetPresence();
-                if(typeof cb === "function") cb(response);
+            _COLLAB_PVT.ChatApi.addMember(convo, uid, function(response, isErr) {
+                if(isErr) {
+                    _COLLAB_PVT.refreshConvoToken(function() {
+                        convo.token = Collab.currentConversation.token;
+                        _COLLAB_PVT.ChatApi.addMember(convo, uid, function(response) {
+                            Collab.conversationsMap[response.co_id].members = response.members;
+                            Collab.collaboratorsGetPresence();
+                            if(typeof cb === "function") cb(response);
+                        });
+                    });
+
+                } else {
+                    Collab.conversationsMap[response.co_id].members = response.members;
+                    Collab.collaboratorsGetPresence();
+                    if(typeof cb === "function") cb(response);
+                }
+
             });
         },
         updateTicketCloseStatus: function(is_closed) {
@@ -375,9 +453,23 @@ App.CollaborationModel = (function ($) {
                 "token": Collab.currentConversation.token
             };
             if(is_closed) {
-                _COLLAB_PVT.ChatApi.closeConversation(convo);
+                _COLLAB_PVT.ChatApi.closeConversation(convo, function (response, isErr) {
+                    if(isErr) {
+                        _COLLAB_PVT.refreshConvoToken(function() {
+                            convo.token = Collab.currentConversation.token;
+                            _COLLAB_PVT.ChatApi.closeConversation(convo);
+                        });
+                    }
+                });
             } else {
-                _COLLAB_PVT.ChatApi.openConversation(convo);
+                _COLLAB_PVT.ChatApi.openConversation(convo, function (response, isErr) {
+                    if(isErr) {
+                        _COLLAB_PVT.refreshConvoToken(function() {
+                            convo.token = Collab.currentConversation.token;
+                            _COLLAB_PVT.ChatApi.openConversation(convo);
+                        });
+                    }
+                });
             }
         },
         createConversation: function(c, cb) {
@@ -389,7 +481,16 @@ App.CollaborationModel = (function ($) {
                 "name": Collab.currentConversation.name,
                 "notify_version": App.CollaborationUi.notifyVersion
             };
-            _COLLAB_PVT.ChatApi.createConversation(convo, cb);
+            _COLLAB_PVT.ChatApi.createConversation(convo, function(response, isErr) {
+                    if(isErr) {
+                        _COLLAB_PVT.refreshConvoToken(function() {
+                            convo.token = Collab.currentConversation.token;
+                            _COLLAB_PVT.ChatApi.createConversation(convo, cb);
+                        });
+                    } else {
+                        if(typeof cb === "function") {cb(response);}
+                    }
+            });
         },
         loadConversation: function(cb) {
             var self = this;
@@ -400,7 +501,17 @@ App.CollaborationModel = (function ($) {
             Collab.invalidAnnotationMessages=[];
             _COLLAB_PVT.ChatApi.loadConversation(convo, 
                 Collab.currentUser.uid,
-                cb);
+                function(response, isErr) {
+                    if(isErr) {
+                        _COLLAB_PVT.refreshConvoToken(function() {
+                            convo.token = Collab.currentConversation.token;
+                            _COLLAB_PVT.ChatApi.loadConversation(convo, Collab.currentUser.uid, cb);
+                        });
+                    } else {
+                        if(typeof cb === "function") {cb(response);}
+                    }
+                }
+            );
         },
 
         markNotification: function(notifiactionIds, cb) {
@@ -467,7 +578,16 @@ App.CollaborationModel = (function ($) {
                 "limit": p.limit,
                 "token": Collab.currentConversation.token
             };
-            _COLLAB_PVT.ChatApi.getMessages(param, cb);
+            _COLLAB_PVT.ChatApi.getMessages(param, function(response, isErr) {
+                if(isErr) {
+                    _COLLAB_PVT.refreshConvoToken(function() {
+                        param.token = Collab.currentConversation.token;
+                        _COLLAB_PVT.ChatApi.getMessages(param, cb);
+                    });
+                } else {
+                    if(typeof cb === "function") {cb(response);}
+                }
+            });
         },
         
         uploadAttachment: function(fd, cb){
@@ -475,7 +595,16 @@ App.CollaborationModel = (function ($) {
                 "formData": fd,
                 "token": Collab.currentConversation.token
             };
-            _COLLAB_PVT.ChatApi.uploadAttachment(convo, cb);
+            _COLLAB_PVT.ChatApi.uploadAttachment(convo, function(response, isErr) {
+                if(isErr) {
+                    _COLLAB_PVT.refreshConvoToken(function() {
+                        convo.token = Collab.currentConversation.token;
+                        _COLLAB_PVT.ChatApi.uploadAttachment(convo, cb);
+                    });
+                } else {
+                    if(typeof cb === "function") {cb(response);}
+                }
+            });
         },
 
         setConvoOwner: function(co_id, uid, cb) {
@@ -484,7 +613,16 @@ App.CollaborationModel = (function ($) {
                 "token": Collab.currentConversation.token,
                 "name": Collab.currentConversation.name
             }
-            _COLLAB_PVT.ChatApi.setConvoOwner(convo, uid, cb);
+            _COLLAB_PVT.ChatApi.setConvoOwner(convo, uid, function(response, isErr) {
+                if(isErr) {
+                    _COLLAB_PVT.refreshConvoToken(function() {
+                        convo.token = Collab.currentConversation.token;
+                        _COLLAB_PVT.ChatApi.setConvoOwner(convo, uid, cb);
+                    });
+                } else {
+                    if(typeof cb === "function") {cb(response);}
+                }
+            });
         },
 
         getUserInfo: function(uid, cb) {
@@ -552,7 +690,8 @@ App.CollaborationModel = (function ($) {
                 console.warn("Annotations sdk not present. couldn't start annotations.");
             }
             window.$kapi = _COLLAB_PVT.ChatApi;
-            if(typeof App.CollaborationEmoji !== "undefined") { 
+
+            if(typeof App.CollaborationEmoji !== "undefined") {
                 App.CollaborationEmoji.init();
             }
         }

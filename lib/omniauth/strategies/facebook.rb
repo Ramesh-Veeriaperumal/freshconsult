@@ -27,13 +27,12 @@ module OmniAuth
       
       info do
         prune!({
-          'nickname' => raw_info['username'],
           'email' => raw_info['email'],
           'name' => raw_info['name'],
           'first_name' => raw_info['first_name'],
           'last_name' => raw_info['last_name'],
           'image' => "http://graph.facebook.com/#{uid}/picture?type=square",
-          'description' => raw_info['bio'],
+          'description' => raw_info['about'], #changed in version 2.4 -- https://developers.facebook.com/docs/graph-api/reference/v2.4/user -- 'about' is equivalent to bio field
           'urls' => {
             'Facebook' => raw_info['link'],
             'Website' => raw_info['website']
@@ -56,7 +55,7 @@ module OmniAuth
       end
       
       def raw_info
-        @raw_info ||= access_token.get('/me').parsed
+        @raw_info ||= access_token.get('/v2.6/me?fields=id,email,name,first_name,last_name,about,link,location,website').parsed
       end
 
       def build_access_token

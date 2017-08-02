@@ -193,6 +193,7 @@ defaults: &defaults
     - [email]
     - [trial]
     - [spam]
+    - [archive]
     - [product_feedback]
 
 development:

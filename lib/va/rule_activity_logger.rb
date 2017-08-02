@@ -55,12 +55,8 @@ class Va::RuleActivityLogger
       Thread.current[:scenario_action_log].merge!(log_mesg) if @is_automation
     end
 
-    def activities_enabled?
-      Account.current.features?(:activity_revamp) and @ticket.present? and @ticket.respond_to?(:system_changes)
-    end
-
     def add_system_changes(changes)
-      return if !(changes.present? and activities_enabled?) || is_bulk_scenario?
+      return if !(changes.present? && @ticket.present?) || is_bulk_scenario?
       key = changes.keys.first
       add_misc_changes(changes)
       @ticket.system_changes[@rule_id.to_s][key.to_sym].present? ?
