@@ -8,6 +8,9 @@ class ConversationsController < ApiApplicationController
   before_filter :check_for_broadcast, only: [:destroy, :update]
 
   COLLECTION_RESPONSE_FOR = ['ticket_conversations'].freeze
+
+  SLAVE_ACTIONS = %w(ticket_conversations).freeze
+
   def create
     conversation_delegator = ConversationDelegator.new(@item)
     if conversation_delegator.valid?

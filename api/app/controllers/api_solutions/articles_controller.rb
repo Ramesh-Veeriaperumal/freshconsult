@@ -5,6 +5,8 @@ module ApiSolutions
     include Helpdesk::TagMethods
     include CloudFilesHelper
 
+    SLAVE_ACTIONS = %w(index folder_articles).freeze
+
     decorate_views(decorate_objects: [:folder_articles])
     before_filter :validate_query_params, only: [:folder_articles]
 

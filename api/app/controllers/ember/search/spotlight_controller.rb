@@ -4,6 +4,8 @@ module Ember
       include ::Search::V2::AbstractController
       decorate_views(decorate_objects: [:results])
 
+      around_filter :run_on_slave
+
       COLLECTION_RESPONSE_FOR = %w(results).freeze
 
       private

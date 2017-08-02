@@ -1,4 +1,5 @@
 class ApiAgentsController < ApiApplicationController
+  SLAVE_ACTIONS = %w(index me achievements).freeze
   def me
     render "#{controller_path}/show"
   end
@@ -34,7 +35,7 @@ class ApiAgentsController < ApiApplicationController
     end
 
     def validate_params
-      params[cname].permit(*(AgentConstants::UPDATE_FIELDS))
+      params[cname].permit(*AgentConstants::UPDATE_FIELDS)
       agent = AgentValidation.new(params[cname], @item, string_request_params?)
       render_custom_errors(agent, true)  unless agent.valid?
     end
