@@ -260,13 +260,16 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
     additional_details = {}
     ticket_list_columns = "display_id, subject, responder_id, status, priority, requester_id"
     additional_details[:total_time] = id_list[:total_time] if report_type==:timespent
+    tickets, archive_tickets = [], []
     Sharding.select_shard_of(current_account.id) do
       Sharding.run_on_slave do
         tkt = current_account.tickets.permissible(current_user).newest(TICKET_LIST_LIMIT)
         archive_tkt = current_account.archive_tickets.permissible(current_user).newest(TICKET_LIST_LIMIT)
         begin
-          tickets = tkt.find_all_by_id(id_list[:non_archive], :select => ticket_list_columns)
-          archive_tickets = archive_tkt.find_all_by_ticket_id(id_list[:archive], :select => ticket_list_columns)
+          # tickets = tkt.find_all_by_id(id_list[:non_archive], :select => ticket_list_columns)
+          tickets = tkt.find_all_by_id(id_list[:ticket_id], :select => ticket_list_columns)
+          # archive_tickets = archive_tkt.find_all_by_ticket_id(id_list[:archive], :select => ticket_list_columns)
+          archive_tickets = archive_tkt.find_all_by_ticket_id(id_list[:ticket_id], :select => ticket_list_columns) if tickets.count < id_list[:ticket_id].count
         rescue Exception => e
           Rails.logger.error "#{current_account.id} - Error occurred in Business Intelligence Reports while fetching tickets. \n#{e.inspect}\n#{e.message}\n#{e.backtrace.join("\n\t")}"
           NewRelic::Agent.notice_error(e,{:description => "#{current_account.id} - Error occurred in Business Intelligence Reports while fetching tickets"}) 
