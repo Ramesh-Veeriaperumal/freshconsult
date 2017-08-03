@@ -1,5 +1,7 @@
 class AccountInfoToDynamo < BaseWorker
 
+  include EmailHelper
+
   SKIP_NOTIFICIATION_DOMAINS = ["freshdesk.com"]
 
   sidekiq_options :queue => :account_info_to_dynamo, :retry => 2, :backtrace => true, :failures => :exhausted
@@ -16,6 +18,11 @@ class AccountInfoToDynamo < BaseWorker
     if restricted_domains.any?{|d| d.include?(domain)}
       #@account.subscription.update_attributes(:state => "suspended", :next_renewal_at => Time.now - 10.days)
       ShardMapping.find_by_account_id(@account.id).update_attributes(:status => 403)
+
+      subject = "Account blocked - Account id : #{@account.id}"
+      additional_info = "Customer's admin email domain is restricted from account signup"
+      notify_account_blocks(@account, subject, additional_info)
+      update_freshops_activity(@account, "Account blocked during signup due to restricted domain", "block_account")
             
       Rails.logger.info "Suspending account #{@account.id}"
     else

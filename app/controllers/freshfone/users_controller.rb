@@ -5,6 +5,7 @@ class Freshfone::UsersController < ApplicationController
 	include Freshfone::CallsRedisMethods
 	include Freshfone::SubscriptionsUtil
 	include Freshfone::AcwUtil
+	include Freshfone::NumberValidator
 
 	EXPIRES = 3600
 	before_filter { |c| c.requires_feature :freshfone }
@@ -15,6 +16,7 @@ class Freshfone::UsersController < ApplicationController
 	before_filter :set_native_mobile, :only => [:presence, :in_call, :refresh_token]
 	before_filter :set_meta_info, only: :in_call
 	before_filter :validate_presence, :only => [:presence]
+	before_filter :validate_number, only: :availability_on_phone, if: :changing_to_phone?
 
 	def presence
 		respond_to do |format|
@@ -208,4 +210,11 @@ class Freshfone::UsersController < ApplicationController
 			params[:status].to_i != Freshfone::User::PRESENCE[:busy]
 		end
 
+		def validate_number
+			render json: { update_status: false, invalid_number: true } if fetch_country_code(current_user.available_number).blank?
+		end
+
+		def changing_to_phone?
+			params[:available_on_phone] == 'true'
+		end
 end

@@ -8,6 +8,10 @@ module ReportsAppConfig
   config = load_yml('reports_app.yml')[Rails.env]
   
   TICKET_REPORTS_URL = "#{config['host']}#{config['port']}#{config['ticket_reports']}"
+
+  WEB_REQ_TIMEOUT = (config['web_req_timeout'] || 60).to_i
+
+  BG_REQ_TIMEOUT  = (config['bg_req_timeout'] || 180).to_i
   
   BUCKET_QUERY = load_yml('bucket_query.yml')
   

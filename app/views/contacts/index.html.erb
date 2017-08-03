@@ -39,7 +39,7 @@
 	            		<%= render(:partial => '/shared/company_sub_header', :locals => {:type => "user"}) %>
 	            	<% end %>
 	            	<%= form_tag "", { :id => "contacts-expanded", :method => :put } do %>
-		        		<% if @contacts.present? %>
+		        		<% if @contacts_count > 0 %>
 					        <div class="list-page-body <%= 'mt20' if params[:query].present? %>">
 					        	<!-- Add content here for top of the table-->
 					        	<%= render(:partial => '/shared/customers_toolbar', :locals => {:type => "user", :path => contacts_path}) %>

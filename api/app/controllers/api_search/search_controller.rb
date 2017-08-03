@@ -84,6 +84,7 @@ module ApiSearch
           es_params[:account_id] = current_account.id
           es_params[:offset] = (page - 1) * ApiSearchConstants::DEFAULT_PER_PAGE
           es_params[:size] = ApiSearchConstants::DEFAULT_PER_PAGE
+          es_params[:request_id] = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
 
           if type.include?('ticket')
             if current_user.restricted?
