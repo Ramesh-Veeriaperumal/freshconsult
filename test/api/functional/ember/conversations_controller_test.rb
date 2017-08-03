@@ -1602,6 +1602,7 @@ module Ember
       Account.current.reload
       ticket = create_ticket_from_fb_post(true)
       note = create_public_note(ticket)
+      sleep 1 # delay introduced so that notes are not created at the same time. Fractional seconds are ignored in tests.
       rand(1..5).times do
         create_public_note(ticket)
       end
@@ -1621,6 +1622,7 @@ module Ember
       Account.current.reload
       ticket = create_ticket_from_fb_direct_message
       note = create_public_note(ticket)
+      sleep 1 # delay introduced so that notes are not created at the same time. Fractional seconds are ignored in tests.
       sample_reply_dm = { 'id' => Time.now.utc.to_i + 5 }
       rand(1..5).times do
         create_public_note(ticket)
@@ -1638,6 +1640,7 @@ module Ember
       Account.current.reload
       ticket = create_ticket_from_fb_post
       note = create_fb_note(ticket)
+      sleep 1 # delay introduced so that notes are not created at the same time. Fractional seconds are ignored in tests.
       put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
       sample_put_comment = { 'id' => put_comment_id }
       rand(1..5).times do

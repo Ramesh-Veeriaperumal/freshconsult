@@ -510,8 +510,9 @@ module Ember
         email_config = create_email_config
         reply_hash = { body: Faker::Lorem.paragraph, from_email: email_config.reply_email }
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash, reply: reply_hash }
-        Sidekiq::Testing.inline!
-        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        Sidekiq::Testing.inline! do
+          post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        end
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
       end
@@ -542,8 +543,9 @@ module Ember
         email_config = create_email_config
         reply_hash = { body: Faker::Lorem.paragraph, from_email: email_config.reply_email }
         params_hash = { ids: ticket_ids, reply: reply_hash }
-        Sidekiq::Testing.inline!
-        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        Sidekiq::Testing.inline! do
+          post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        end
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
       ensure
@@ -568,8 +570,9 @@ module Ember
                        attachment_ids: [attachment_id, canned_response.shared_attachments[0].attachment_id], 
                        cloud_files: cloud_file_params }
         params_hash = {ids: ticket_ids, reply: reply_hash}
-        Sidekiq::Testing.inline!
-        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        Sidekiq::Testing.inline! do
+          post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        end
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
         Helpdesk::Note.last(ticket_ids.size).each do |note|
@@ -583,10 +586,11 @@ module Ember
         10.times do
           ticket_ids << create_ticket.display_id
         end
-        Sidekiq::Testing.inline!
         reply_hash = { body: Faker::Lorem.paragraph }
         params_hash = {ids: ticket_ids, properties: update_ticket_params_hash, reply: reply_hash}
-        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        Sidekiq::Testing.inline! do
+          post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        end
         match_json(partial_success_response_pattern(ticket_ids, {}))
         assert_response 202
       end
