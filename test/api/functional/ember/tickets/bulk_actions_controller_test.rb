@@ -579,16 +579,26 @@ module Ember
       end
 
       def test_bulk_update_async
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
         ticket_ids = []
         10.times do
           ticket_ids << create_ticket.display_id
         end
-        Sidekiq::Testing.inline!
+        ::Tickets::BulkTicketActions.jobs.clear
+        ::Tickets::BulkTicketReply.jobs.clear
         reply_hash = { body: Faker::Lorem.paragraph }
-        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash, reply: reply_hash}
+        properties_hash = update_ticket_params_hash.merge(custom_fields: { ticket_field.label => CUSTOM_FIELDS_CHOICES.sample })
+        params_hash = { ids: ticket_ids, properties: properties_hash, reply: reply_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         match_json(partial_success_response_pattern(ticket_ids, {}))
         assert_response 202
+        sidekiq_jobs = ::Tickets::BulkTicketActions.jobs | ::Tickets::BulkTicketReply.jobs
+        assert_equal 2, sidekiq_jobs.size
+        match_custom_json(sidekiq_jobs[0]['args'][0]['helpdesk_ticket'], bg_worker_update_pattern(properties_hash))
+        assert sidekiq_jobs[1]['args'][0]['helpdesk_note'].present?
+        assert sidekiq_jobs[0]['args'][0]['tags'].present?
+        ::Tickets::BulkTicketActions.jobs.clear
+        ::Tickets::BulkTicketReply.jobs.clear
       end
 
       def test_bulk_update_with_required_default_field_blank
