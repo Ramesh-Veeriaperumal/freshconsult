@@ -202,7 +202,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
     end
 
     def parent_value(parent_field, record, values)
-      (record.send(parent_field) || values.try(:[], parent_field))
+      record.respond_to?(parent_field) ? record.send(parent_field) : values.try(:[], parent_field)
     end
 
     def section_field?
@@ -215,7 +215,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
     end
 
     def custom_field?(field)
-      field.ends_with?("_#{Account.current.id}") ? TicketDecorator.display_name(mapping) : nil
+      field.ends_with?("_#{Account.current.id}") ? TicketDecorator.display_name(field) : nil
     end
 
     # should allowed to be validated upon satisfying any of the below conditions

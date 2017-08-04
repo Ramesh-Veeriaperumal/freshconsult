@@ -52,7 +52,8 @@ class Export::Ticket < Struct.new(:export_params)
   def initialize_params
     export_params.symbolize_keys!
     file_formats = ['csv', 'xls']
-    reorder_export_params
+    export_fields = export_params[:export_fields]
+    export_params[:export_fields] = reorder_export_params export_fields
     export_params[:format] = file_formats[0] unless file_formats.include? export_params[:format]
     delete_invisible_fields
     format_contact_company_params
@@ -301,31 +302,10 @@ class Export::Ticket < Struct.new(:export_params)
       )
   end
 
-  def reorder_export_params
-    export_fields = export_params[:export_fields]
-    return if export_fields.blank?
-    ticket_fields   = default_export_fields_order.merge(custom_export_fields_order)
-    
-    export_params[:export_fields] = sort_fields export_fields, ticket_fields
-  end
-
   def reorder_contact_company_fields type
     export_fields = export_params[:"#{type}_fields"]
     actual_fields = contact_company_fields_order(type)
 
-    export_params[:"#{type}_fields"] = sort_fields export_fields, actual_fields
-  end
-
-  def sort_fields export_fields, actual_fields
-    param_position_hash = export_fields.keys.inject({}) do |hash, key|
-      hash[key] = actual_fields[key] if actual_fields[key]   
-      hash
-    end
-    sorted_param_list = param_position_hash.sort_by{|k,v| v}
-
-    sorted_param_list.inject({}) do |hash, element|
-      hash[element[0]] = export_fields[element[0]]
-      hash
-    end
+    export_params[:"#{type}_fields"] = sort_export_fields export_fields, actual_fields
   end
 end

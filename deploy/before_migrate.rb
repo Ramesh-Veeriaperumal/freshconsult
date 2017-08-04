@@ -20,6 +20,7 @@ run "ln -nfs #{shared_path}/config/mailgun.yml #{node[:rel_path]}/config/mailgun
 run "ln -nfs #{shared_path}/config/mailbox.yml #{node[:rel_path]}/config/mailbox.yml"
 run "ln -nfs #{shared_path}/config/freshfone.yml #{node[:rel_path]}/config/freshfone.yml"
 run "ln -nfs #{shared_path}/config/rate_limit.yml #{node[:rel_path]}/config/rate_limit.yml"
+run "ln -nfs #{shared_path}/config/re_route_mapping.yml #{node[:rel_path]}/config/re_route_mapping.yml"
 run "ln -nfs #{shared_path}/config/akismet.yml #{node[:rel_path]}/config/akismet.yml"
 run "ln -nfs #{shared_path}/config/braintree.yml #{node[:rel_path]}/config/braintree.yml"
 run "ln -nfs #{shared_path}/config/rabbitmq.yml #{node[:rel_path]}/config/rabbitmq.yml"
@@ -69,6 +70,7 @@ run "ln -nfs #{shared_path}/config/autopilot.yml #{node[:rel_path]}/config/autop
 run "ln -nfs #{shared_path}/config/inline_manual.yml #{node[:rel_path]}/config/inline_manual.yml"
 run "ln -nfs #{shared_path}/config/redis_session.yml #{node[:rel_path]}/config/redis_session.yml"
 run "ln -nfs #{shared_path}/config/fd_email_service.yml #{node[:rel_path]}/config/fd_email_service.yml"
+run "ln -nfs #{shared_path}/config/product_feedback.yml #{node[:rel_path]}/config/product_feedback.yml"
 
 #supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"

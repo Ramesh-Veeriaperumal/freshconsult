@@ -6,6 +6,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   include HelpdeskReports::Helper::ControllerMethods
   include HelpdeskReports::Helper::ScheduledReports
   include HelpdeskReports::Helper::QnaInsightsReports
+  include Cache::Memcache::Reports::ReportsCache
 
   before_filter :check_account_state, :ensure_report_type_or_redirect,  :lifecycle_launch_party_check,
                 :plan_constraints,                                      :except => [:download_file]              
@@ -119,8 +120,16 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   end
 
   def fetch_insights_metric
-    generate_data
-    @data[:last_dump_time]  = @last_dump_time
+    key = get_key_for_insights(@query_params)
+    cache_data = MemcacheKeys.get_from_cache(key)
+    if cache_data.nil?
+      generate_data
+      @data[:last_dump_time]  = @last_dump_time
+      timeout = get_cache_interval_from_synctime(@last_dump_time)
+      MemcacheKeys.cache(key, @data, timeout) if @data[:error].nil? 
+    else
+      @data = cache_data
+    end
     send_json_result
   end
 
@@ -251,13 +260,16 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
     additional_details = {}
     ticket_list_columns = "display_id, subject, responder_id, status, priority, requester_id"
     additional_details[:total_time] = id_list[:total_time] if report_type==:timespent
+    tickets, archive_tickets = [], []
     Sharding.select_shard_of(current_account.id) do
       Sharding.run_on_slave do
         tkt = current_account.tickets.permissible(current_user).newest(TICKET_LIST_LIMIT)
         archive_tkt = current_account.archive_tickets.permissible(current_user).newest(TICKET_LIST_LIMIT)
         begin
-          tickets = tkt.find_all_by_id(id_list[:non_archive], :select => ticket_list_columns)
-          archive_tickets = archive_tkt.find_all_by_ticket_id(id_list[:archive], :select => ticket_list_columns)
+          # tickets = tkt.find_all_by_id(id_list[:non_archive], :select => ticket_list_columns)
+          tickets = tkt.find_all_by_id(id_list[:ticket_id], :select => ticket_list_columns)
+          # archive_tickets = archive_tkt.find_all_by_ticket_id(id_list[:archive], :select => ticket_list_columns)
+          archive_tickets = archive_tkt.find_all_by_ticket_id(id_list[:ticket_id], :select => ticket_list_columns) if tickets.count < id_list[:ticket_id].count
         rescue Exception => e
           Rails.logger.error "#{current_account.id} - Error occurred in Business Intelligence Reports while fetching tickets. \n#{e.inspect}\n#{e.message}\n#{e.backtrace.join("\n\t")}"
           NewRelic::Agent.notice_error(e,{:description => "#{current_account.id} - Error occurred in Business Intelligence Reports while fetching tickets"}) 

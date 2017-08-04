@@ -88,10 +88,10 @@ GIT
 
 GIT
   remote: git://github.com/freshdesk/twilio-ruby.git
-  revision: e0755761a1f363be1cf1fb813525e30d87414fdc
-  branch: master
+  revision: d45f28ca556724f0b751e779c2953eea638f4c76
+  branch: freshdesk_master
   specs:
-    twilio-ruby (3.14.5)
+    twilio-ruby (4.13.0)
       builder (>= 2.1.2)
       jwt (~> 1.0)
       multi_json (>= 1.3.0)
@@ -278,7 +278,7 @@ PATH
 PATH
   remote: vendor/gems/custom_fields-0.1
   specs:
-    custom_fields (0.1)
+    custom_fields (0.1-x86_64-darwin-14)
       acts_as_list (= 0.1.4)
       rails (~> 3.2.18)
 
@@ -632,6 +632,7 @@ GEM
       sinatra
     faker (1.4.3)
       i18n (~> 0.5)
+    fakeweb (1.3.0)
     faraday (0.9.0)
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.10.0)
@@ -783,7 +784,6 @@ GEM
       gemoji (>= 2.1.0)
     gherkin (4.0.0)
     git-version-bump (0.15.1)
-    global_phone (1.0.1)
     gnip-rule (0.4.1)
       json (~> 1.8)
       rest-client (~> 1.6.7)
@@ -916,6 +916,7 @@ GEM
     namae (0.8.4)
     naught (1.1.0)
     nestful (1.1.1)
+    net-http-persistent (2.9.4)
     newrelic_rpm (3.17.2.327)
     nokogiri (1.5.11)
     nori (2.6.0)
@@ -1190,6 +1191,7 @@ GEM
     syck (1.0.5)
     sys-uname (1.0.2)
       ffi (>= 1.0.0)
+    telephone_number (1.1.1)
     test-unit (3.1.7)
       power_assert
     test-unit-minitest (0.9.1)
@@ -1204,6 +1206,7 @@ GEM
     timecop (0.8.1)
     timers (4.0.4)
       hitimes
+    tnef (1.0.2)
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
@@ -1317,6 +1320,7 @@ DEPENDENCIES
   fake_dynamo
   fake_sqs
   faker (~> 1.4.3)
+  fakeweb (~> 1.3)
   faraday (= 0.9)
   faraday_middleware (~> 0.10.0)
   fd_rate_limiter!
@@ -1330,7 +1334,6 @@ DEPENDENCIES
   freshdesk_features!
   fuubar
   gemoji-parser (~> 1.3.1)
-  global_phone
   gnip!
   gnip-rule (= 0.4.1)
   gon (= 6.1.0)
@@ -1372,6 +1375,7 @@ DEPENDENCIES
   mocha (~> 0.13.0)
   mysql2 (~> 0.3.0)
   namae (= 0.8.4)
+  net-http-persistent (~> 2.9.4)
   newrelic_rpm (~> 3.17.2.327)
   oauth (= 0.4.5)
   oily_png (= 1.1.1)
@@ -1456,6 +1460,7 @@ DEPENDENCIES
   strong_parameters (= 0.2.3)
   susy (= 2.1.3)
   syck (= 1.0.5)
+  telephone_number (= 1.1.1)
   test-unit (= 3.1.7)
   test-unit-minitest
   text_data_store!
@@ -1463,6 +1468,7 @@ DEPENDENCIES
   thrift (~> 0.9.2.0)
   timecop
   tire!
+  tnef (= 1.0.2)
   turbo-sprockets-rails3 (= 0.3.14)
   twilio-ruby!
   twitter (~> 5.16.0)
@@ -1484,4 +1490,4 @@ DEPENDENCIES
   yui-compressor!
 
 BUNDLED WITH
-   1.13.6
+   1.14.6

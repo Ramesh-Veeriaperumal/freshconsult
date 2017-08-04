@@ -3,7 +3,7 @@ module RabbitMq::Keys
   # IMPORTANT!!! - Always add new subscribers for the models at the last
   TICKET_SUBSCRIBERS           =  ["auto_refresh", "reports", "search", "count", "activities", "marketplace_app", "collaboration", "iris", "export"]
   NOTE_SUBSCRIBERS             =  ["auto_refresh", "reports", "search", "activities", "iris"]
-  ACCOUNT_SUBSCRIBERS          =  ["reports", "activities", "iris"]
+  ACCOUNT_SUBSCRIBERS          =  ["reports", "activities", "iris", "collaboration"]
   ARCHIVE_TICKET_SUBSCRIBERS   =  ["reports", "search", "iris"]
   ARCHIVE_NOTE_SUBSCRIBERS     =  ["search"]
   ARTICLE_SUBSCRIBERS          =  ["search", "activities"]
