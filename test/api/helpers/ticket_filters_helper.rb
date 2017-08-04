@@ -1,15 +1,13 @@
 module TicketFiltersHelper
-
   def sample_filter_input_params(options = {})
     {
       name: options[:name] || Faker::Name.name,
       order_by: options[:order] || sort_field_options.sample,
       order_type: options[:order_type] || ApiConstants::ORDER_TYPE.sample,
-      per_page: options[:per_page] || 30,
-    }.merge( {
-        query_hash: query_hash_queries(options)
-      }.merge(visibility_pattern(options))
-    )
+      per_page: options[:per_page] || 30
+    }.merge({
+      query_hash: query_hash_queries(options)
+    }.merge(visibility_pattern(options)))
   end
 
   def visibility_pattern(options = {})
@@ -21,18 +19,18 @@ module TicketFiltersHelper
     }
   end
 
-  def query_hash_queries(options = {})
+  def query_hash_queries(_options = {})
     QueryHash.new(sample_filter_conditions[:data_hash]).to_json
   end
 
-  def get_default_visible_filters
+  def default_visible_filters
     TicketsFilter.default_views.collect do |filter|
       CustomFilterConstants::REMOVE_QUERY_HASH.include?(filter) ? filter :
         filter.merge(query_hash: Helpdesk::Filters::CustomTicketFilter.new.default_filter_query_hash(filter[:id]))
     end
   end
 
-  def get_default_hidden_filters
+  def default_hidden_filters
     TicketsFilter.accessible_filters(TicketFilterConstants::HIDDEN_FILTERS).collect do |filter|
       {
         id: filter,
@@ -52,12 +50,12 @@ module TicketFiltersHelper
     if filter.is_a?(Helpdesk::Filters::CustomTicketFilter)
       basic_pattern.merge!(custom_filter_attributes(filter))
       basic_pattern[:visibility] = filter.accessible.attributes.slice('visibility', 'group_id')
-      basic_pattern.merge!(query_hash: query_hash_pattern_output(filter.data[:data_hash]))
+      basic_pattern[:query_hash] = query_hash_pattern_output(filter.data[:data_hash])
     else
-      basic_pattern.merge!(default: true)
-      basic_pattern.merge!(hidden: true) if TicketsFilter.accessible_filters(TicketFilterConstants::HIDDEN_FILTERS).include?(filter[:id])
+      basic_pattern[:default] = true
+      basic_pattern[:hidden] = true if TicketsFilter.accessible_filters(TicketFilterConstants::HIDDEN_FILTERS).include?(filter[:id])
       if CustomFilterConstants::REMOVE_QUERY_HASH.exclude?(filter[:id])
-        basic_pattern.merge!(query_hash: query_hash_pattern_output(filter[:query_hash]))
+        basic_pattern[:query_hash] = query_hash_pattern_output(filter[:query_hash])
       end
     end
     basic_pattern
@@ -77,33 +75,31 @@ module TicketFiltersHelper
   end
 
   def default_filter_pattern(filter_name)
-    filter = (get_default_visible_filters + get_default_hidden_filters).select { |f| f[:id] == filter_name.to_s }.first
+    filter = (default_visible_filters + default_hidden_filters).select { |f| f[:id] == filter_name.to_s }.first
     ticket_filter_show_pattern(filter)
   end
 
   def create_error_pattern(missing_fields)
-    field_errors = missing_fields.map {|f| bad_request_error_pattern(f.to_s, :missing_field) }
+    field_errors = missing_fields.map { |f| bad_request_error_pattern(f.to_s, :missing_field) }
     {
       description: 'Validation failed',
       errors: field_errors
     }
   end
 
-  def ticket_filter_index_pattern(user=User.current)
+  def ticket_filter_index_pattern(user = User.current)
     all_filters = []
-    (all_custom_ticket_filters(user) + get_default_visible_filters + get_default_hidden_filters).compact.each do |filter|
+    (all_custom_ticket_filters(user) + default_visible_filters + default_hidden_filters).compact.each do |filter|
       all_filters << ticket_filter_show_pattern(filter)
     end
     all_filters
   end
 
-  def all_custom_ticket_filters(user=User.current)
+  def all_custom_ticket_filters(user = User.current)
     Account.current.ticket_filters.my_ticket_filters(user)
   end
 
-
   def sort_field_options
-    TicketsFilter::api_sort_fields_options.map(&:first).map(&:to_s)
+    TicketsFilter.api_sort_fields_options.map(&:first).map(&:to_s)
   end
-
 end

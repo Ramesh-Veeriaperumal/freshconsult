@@ -11,7 +11,7 @@ module Ember
       include PrivilegesHelper
       include CannedResponsesTestHelper
 
-      CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
+      CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date).freeze
       CUSTOM_FIELDS_CHOICES = Faker::Lorem.words(5).uniq.freeze
 
       def setup
@@ -28,7 +28,7 @@ module Ember
         @account.features.freshfone.create
         @account.features.forums.create
         @account.ticket_fields.custom_fields.each(&:destroy)
-        Helpdesk::TicketStatus.find(2).update_column(:stop_sla_timer, false)
+        Helpdesk::TicketStatus.find_by_status_id(2).update_column(:stop_sla_timer, false)
         @@ticket_fields = []
         @@custom_field_names = []
         @@ticket_fields << create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
@@ -55,7 +55,7 @@ module Ember
         @create_group ||= create_group_with_agents(@account, agent_list: [@agent.id])
         params_hash = { email: email, cc_emails: cc_emails, description: description, subject: subject,
                         priority: 2, status: 2, type: 'Problem', responder_id: @agent.id, source: 1, tags: tags,
-                        due_by: 14.days.since.iso8601, fr_due_by: 1.days.since.iso8601, group_id: @create_group.id }
+                        due_by: 14.days.since.iso8601, fr_due_by: 1.day.since.iso8601, group_id: @create_group.id }
         params_hash
       end
 
@@ -65,7 +65,7 @@ module Ember
         description = Faker::Lorem.paragraph
         @update_group ||= create_group_with_agents(@account, agent_list: [agent.id])
         params_hash = { description: description, subject: subject, priority: 4, status: 7, type: 'Incident',
-                        responder_id: agent.id, tags: ['update_tag1', 'update_tag2'],
+                        responder_id: agent.id, tags: %w(update_tag1 update_tag2),
                         due_by: 12.days.since.iso8601, fr_due_by: 4.days.since.iso8601, group_id: @update_group.id }
         params_hash
       end
@@ -78,9 +78,9 @@ module Ember
         end
         invalid_ids = [ticket_ids.last + 20, ticket_ids.last + 30]
         id_list = [*ticket_ids, *invalid_ids]
-        post :bulk_execute_scenario, construct_params({ version: 'private' }, { scenario_id: scenario_id, ids: id_list })
+        post :bulk_execute_scenario, construct_params({ version: 'private' }, scenario_id: scenario_id, ids: id_list)
         failures = {}
-        invalid_ids.each { |id| failures[id] = { :id => :"is invalid" } }
+        invalid_ids.each { |id| failures[id] = { id: :"is invalid" } }
         match_json(partial_success_response_pattern(ticket_ids, failures))
         assert_response 202
       end
@@ -91,7 +91,7 @@ module Ember
         rand(2..10).times do
           ticket_ids << create_ticket(ticket_params_hash).display_id
         end
-        post :bulk_execute_scenario, construct_params({ version: 'private' }, { ids: ticket_ids })
+        post :bulk_execute_scenario, construct_params({ version: 'private' }, ids: ticket_ids)
         assert_response 400
         match_json([bad_request_error_pattern('scenario_id', :missing_field)])
       end
@@ -102,7 +102,7 @@ module Ember
         rand(2..10).times do
           ticket_ids << create_ticket(ticket_params_hash).display_id
         end
-        post :bulk_execute_scenario, construct_params({ version: 'private' }, { scenario_id: scenario_id + 10, ids: ticket_ids })
+        post :bulk_execute_scenario, construct_params({ version: 'private' }, scenario_id: scenario_id + 10, ids: ticket_ids)
         assert_response 400
         match_json([bad_request_error_pattern('scenario_id', :absent_in_db, resource: :scenario, attribute: :scenario_id)])
       end
@@ -113,7 +113,7 @@ module Ember
         rand(2..10).times do
           ticket_ids << create_ticket(ticket_params_hash).display_id
         end
-        post :bulk_execute_scenario, construct_params({ version: 'private' }, { scenario_id: scenario_id, ids: ticket_ids })
+        post :bulk_execute_scenario, construct_params({ version: 'private' }, scenario_id: scenario_id, ids: ticket_ids)
         assert_response 202
       end
 
@@ -282,7 +282,7 @@ module Ember
         test_bulk_link_for_tracker_with(deleted: true)
       end
 
-      def test_bulk_link_for_tracker_with(attribute = {spam: true})
+      def test_bulk_link_for_tracker_with(attribute = { spam: true })
         enable_adv_ticketing([:link_tickets]) do
           tracker    = create_tracker_ticket
           tracker_id = tracker.display_id
@@ -300,7 +300,7 @@ module Ember
             assert !ticket.related_ticket?
           end
         end
-      end      
+      end
 
       def test_bulk_link_to_deleted_tracker
         enable_adv_ticketing([:link_tickets]) do
@@ -389,7 +389,7 @@ module Ember
         rand(2..4).times do
           ticket_ids << create_ticket.display_id
         end
-        post :bulk_update, construct_params({ version: 'private' }, { ids: ticket_ids })
+        post :bulk_update, construct_params({ version: 'private' }, ids: ticket_ids)
         match_json([bad_request_error_pattern('request', :select_a_field)])
         assert_response 400
       end
@@ -401,11 +401,11 @@ module Ember
         end
         statuses = Helpdesk::TicketStatus.status_objects_from_cache(@account).map(&:status_id)
         incorrect_values = { priority: 90, status: statuses.last + 1, type: 'jksadjxyz' }
-        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.merge(incorrect_values) }
+        params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.merge(incorrect_values) }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         match_json([bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
-                  bad_request_error_pattern('status', :not_included, list: statuses.join(',')),
-                  bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request')])
+                    bad_request_error_pattern('status', :not_included, list: statuses.join(',')),
+                    bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request')])
         assert_response 400
       end
 
@@ -414,7 +414,7 @@ module Ember
         rand(2..4).times do
           ticket_ids << create_ticket.display_id
         end
-        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.merge(responder_id: User.last.id + 10) }
+        params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.merge(responder_id: User.last.id + 10) }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         match_json([bad_request_error_pattern('responder_id', :absent_in_db, resource: :agent, attribute: :responder_id)])
         assert_response 400
@@ -426,10 +426,10 @@ module Ember
           ticket_ids << create_ticket.display_id
         end
         invalid_ids = [ticket_ids.last + 10, ticket_ids.last + 20]
-        params_hash = {ids: [*ticket_ids, *invalid_ids], properties: update_ticket_params_hash }
+        params_hash = { ids: [*ticket_ids, *invalid_ids], properties: update_ticket_params_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         failures = {}
-        invalid_ids.each { |id| failures[id] = { :id => :"is invalid" } }
+        invalid_ids.each { |id| failures[id] = { id: :"is invalid" } }
         match_json(partial_success_response_pattern(ticket_ids, failures))
         assert_response 202
       end
@@ -441,10 +441,10 @@ module Ember
         Helpdesk::Ticket.any_instance.stubs(:associates).returns([child_ticket.display_id])
         Helpdesk::Ticket.any_instance.stubs(:association_type).returns(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:assoc_parent])
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5)
-        params_hash = {ids: [parent_ticket.display_id], properties: properties_hash}
+        params_hash = { ids: [parent_ticket.display_id], properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         failures = {}
-        failures[parent_ticket.display_id] = { status: :unresolved_child}
+        failures[parent_ticket.display_id] = { status: :unresolved_child }
         assert_response 202
         match_json(partial_success_response_pattern([], failures))
       end
@@ -455,7 +455,7 @@ module Ember
         Helpdesk::Ticket.any_instance.stubs(:child_ticket?).returns(true)
         Helpdesk::Ticket.any_instance.stubs(:associates).returns([child_ticket.display_id])
         Helpdesk::Ticket.any_instance.stubs(:association_type).returns(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:assoc_parent])
-        params_hash = {ids: [parent_ticket.display_id], properties: { status: 4 }}
+        params_hash = { ids: [parent_ticket.display_id], properties: { status: 4 } }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         match_json(partial_success_response_pattern([parent_ticket.display_id], {}))
@@ -465,7 +465,7 @@ module Ember
 
       def test_bulk_update_closure_status_without_notification
         ticket = create_ticket
-        params_hash = {ids: [ticket.display_id], properties: { status: 5, skip_close_notification: true }}
+        params_hash = { ids: [ticket.display_id], properties: { status: 5, skip_close_notification: true } }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         match_json(partial_success_response_pattern([ticket.display_id], {}))
@@ -480,8 +480,8 @@ module Ember
         rand(2..4).times do
           ticket_ids << create_ticket.display_id
         end
-        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, custom_fields: {ticket_field.label => 'Sample text'})
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, custom_fields: { ticket_field.label => 'Sample text' })
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         match_json(partial_success_response_pattern(ticket_ids, {}))
         assert_response 202
@@ -560,14 +560,15 @@ module Ember
         end
         attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
         canned_response = create_response(
-            title: Faker::Lorem.sentence,
-            content_html: Faker::Lorem.paragraph,
-            visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
-            attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) })
-        cloud_file_params = [{ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 },
-                             { filename: "image.jpg", url: "https://www.dropbox.com/image.jpg", application_id: 20 }]
-        reply_hash = { body: Faker::Lorem.paragraph, 
-                       attachment_ids: [attachment_id, canned_response.shared_attachments[0].attachment_id], 
+          title: Faker::Lorem.sentence,
+          content_html: Faker::Lorem.paragraph,
+          visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+          attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) }
+        )
+        cloud_file_params = [{ filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 },
+                             { filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 }]
+        reply_hash = { body: Faker::Lorem.paragraph,
+                       attachment_ids: [attachment_id, canned_response.shared_attachments[0].attachment_id],
                        cloud_files: cloud_file_params }
         params_hash = {ids: ticket_ids, reply: reply_hash}
         Sidekiq::Testing.inline! do
@@ -587,77 +588,81 @@ module Ember
           ticket_ids << create_ticket.display_id
         end
         reply_hash = { body: Faker::Lorem.paragraph }
+
         params_hash = {ids: ticket_ids, properties: update_ticket_params_hash, reply: reply_hash}
         Sidekiq::Testing.inline! do
           post :bulk_update, construct_params({ version: 'private' }, params_hash)
         end
+
         match_json(partial_success_response_pattern(ticket_ids, {}))
         assert_response 202
       end
 
       def test_bulk_update_with_required_default_field_blank
-        Helpdesk::TicketField.where(name: "product").update_all(required: true)
+        Helpdesk::TicketField.where(name: 'product').update_all(required: true)
         product = create_product
         ticket_ids = []
         rand(2..4).times do
           ticket_ids << create_ticket(product_id: product.id).display_id
         end
-        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.merge(product_id: nil)}
+        params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.merge(product_id: nil) }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
-        match_json([bad_request_error_pattern('product_id', :datatype_mismatch, { expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received })])
+        match_json([bad_request_error_pattern('product_id', :datatype_mismatch, expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received)])
       ensure
-        Helpdesk::TicketField.where(name: "product").update_all(required: false)
+        Helpdesk::TicketField.where(name: 'product').update_all(required: false)
       end
 
       def test_bulk_update_with_required_default_field_blank_in_db
-        Helpdesk::TicketField.where(name: "product").update_all(required: true)
+        Helpdesk::TicketField.where(name: 'product').update_all(required: true)
         ticket_ids = []
         rand(2..4).times do
           ticket_ids << create_ticket.display_id
         end
-        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash}
+        params_hash = { ids: ticket_ids, properties: update_ticket_params_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
       ensure
-        Helpdesk::TicketField.where(name: "product").update_all(required: false)
+        Helpdesk::TicketField.where(name: 'product').update_all(required: false)
       end
 
       def test_bulk_update_closure_status_with_required_for_closure_default_field_blank
-        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: true)
+        Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: true)
         product = create_product
         ticket_ids = []
         rand(2..4).times do
           ticket_ids << create_ticket(product_id: product.id).display_id
         end
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, product_id: nil)
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
-        match_json([bad_request_error_pattern("product_id", :datatype_mismatch, { expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received })])
+        match_json([bad_request_error_pattern('product_id', :datatype_mismatch, expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received)])
       ensure
-        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: false)
+        Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: false)
       end
 
       def test_bulk_update_closure_status_with_required_for_closure_default_field_blank_in_db
-        Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: true)
-        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: true)
+        Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: true)
+        Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: true)
         ticket_ids = []
         rand(2..4).times do
           ticket_ids << create_ticket.display_id
         end
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :group_id).merge(status: 5)
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         failures = {}
-        ticket_ids.each {|id| failures[id] = { "group_id" => [:datatype_mismatch, { expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received}],
-                                               "product_id" => [:datatype_mismatch, { expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received}]}}
+        ticket_ids.each do |id|
+          failures[id] = { 'group_id' => [:datatype_mismatch, { expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received }],
+                           'product_id' => [:datatype_mismatch, { expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received }] }
+        end
         match_json(partial_success_response_pattern([], failures))
       ensure
-        Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: false)
-        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: false)
+        Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: false)
+        Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: false)
       end
 
       def test_bulk_update_closed_tickets_with_required_for_closure_default_field_blank
@@ -666,16 +671,16 @@ module Ember
         rand(2..4).times do
           ticket_ids << create_ticket(status: 5, product_id: product.id).display_id
         end
-        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: true)
+        Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: true)
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :status).merge(product_id: nil)
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         failures = {}
-        ticket_ids.each {|id| failures[id] = { "product_id" => [:datatype_mismatch, { expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received}]}}
+        ticket_ids.each { |id| failures[id] = { 'product_id' => [:datatype_mismatch, { expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received }] } }
         match_json(partial_success_response_pattern([], failures))
       ensure
-        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: false)
+        Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: false)
       end
 
       def test_bulk_update_closed_tickets_with_required_for_closure_default_field_blank_in_db
@@ -683,13 +688,13 @@ module Ember
         rand(2..4).times do
           ticket_ids << create_ticket(status: 5).display_id
         end
-        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: true)
-        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.except(:due_by, :fr_due_by, :status)}
+        Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: true)
+        params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.except(:due_by, :fr_due_by, :status) }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
       ensure
-        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: false)
+        Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: false)
       end
 
       def test_bulk_update_with_required_custom_non_dropdown_field_blank
@@ -699,8 +704,8 @@ module Ember
         rand(2..4).times do
           ticket_ids << create_ticket(custom_field: { ticket_field.name => 'Sample Text' }).display_id
         end
-        properties_hash = update_ticket_params_hash.merge(custom_fields: {ticket_field.label => ''})
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        properties_hash = update_ticket_params_hash.merge(custom_fields: { ticket_field.label => '' })
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
         match_json([bad_request_error_pattern(ticket_field.label, :blank, code: :missing_field)])
@@ -715,7 +720,7 @@ module Ember
         end
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
         ticket_field.update_attribute(:required, true)
-        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash}
+        params_hash = { ids: ticket_ids, properties: update_ticket_params_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
@@ -730,11 +735,11 @@ module Ember
         rand(2..4).times do
           ticket_ids << create_ticket.display_id
         end
-        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, custom_fields: {ticket_field.label => ''})
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, custom_fields: { ticket_field.label => '' })
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
-        match_json([bad_request_error_pattern(ticket_field.label, :blank, { code: :missing_field })])
+        match_json([bad_request_error_pattern(ticket_field.label, :blank, code: :missing_field)])
       ensure
         ticket_field.update_attribute(:required_for_closure, false)
       end
@@ -747,11 +752,11 @@ module Ember
           ticket_ids << create_ticket.display_id
         end
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5)
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         failures = {}
-        ticket_ids.each {|id| failures[id] = { ticket_field.label => [:datatype_mismatch, { expected_data_type: :String, given_data_type: 'Null', prepend_msg: :input_received }]}}
+        ticket_ids.each { |id| failures[id] = { ticket_field.label => [:datatype_mismatch, { expected_data_type: :String, given_data_type: 'Null', prepend_msg: :input_received }] } }
         match_json(partial_success_response_pattern([], failures))
       ensure
         ticket_field.update_attribute(:required_for_closure, false)
@@ -765,10 +770,10 @@ module Ember
         end
         ticket_field.update_attribute(:required_for_closure, true)
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :status).merge(custom_fields: { ticket_field.label => nil })
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
-        match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, { expected_data_type: :String, given_data_type: 'Null', prepend_msg: :input_received })])
+        match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, expected_data_type: :String, given_data_type: 'Null', prepend_msg: :input_received)])
       ensure
         ticket_field.update_attribute(:required_for_closure, false)
       end
@@ -780,7 +785,7 @@ module Ember
         end
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
         ticket_field.update_attribute(:required_for_closure, true)
-        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.except(:due_by, :fr_due_by, :status)}
+        params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.except(:due_by, :fr_due_by, :status) }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
@@ -795,8 +800,8 @@ module Ember
         rand(2..4).times do
           ticket_ids << create_ticket(custom_field: { ticket_field.name => CUSTOM_FIELDS_CHOICES.sample }).display_id
         end
-        properties_hash = update_ticket_params_hash.merge(custom_fields: {ticket_field.label => nil})
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        properties_hash = update_ticket_params_hash.merge(custom_fields: { ticket_field.label => nil })
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
         match_json([bad_request_error_pattern(ticket_field.label, :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
@@ -811,7 +816,7 @@ module Ember
         end
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
         ticket_field.update_attribute(:required, true)
-        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash}
+        params_hash = { ids: ticket_ids, properties: update_ticket_params_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
@@ -826,8 +831,8 @@ module Ember
         rand(2..4).times do
           ticket_ids << create_ticket.display_id
         end
-        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, custom_fields: {ticket_field.label => nil})
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, custom_fields: { ticket_field.label => nil })
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
         match_json([bad_request_error_pattern(ticket_field.label, :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
@@ -843,11 +848,11 @@ module Ember
           ticket_ids << create_ticket.display_id
         end
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5)
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         failures = {}
-        ticket_ids.each {|id| failures[id] = { ticket_field.label => [:not_included, list: CUSTOM_FIELDS_CHOICES.join(',') ]}}
+        ticket_ids.each { |id| failures[id] = { ticket_field.label => [:not_included, list: CUSTOM_FIELDS_CHOICES.join(',')] } }
         match_json(partial_success_response_pattern([], failures))
       ensure
         ticket_field.update_attribute(:required_for_closure, false)
@@ -861,11 +866,11 @@ module Ember
         end
         ticket_field.update_attribute(:required_for_closure, true)
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :status).merge(custom_fields: { ticket_field.label => nil })
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         failures = {}
-        ticket_ids.each {|id| failures[id] = { ticket_field.label => [:not_included, list: CUSTOM_FIELDS_CHOICES.join(',') ]}}
+        ticket_ids.each { |id| failures[id] = { ticket_field.label => [:not_included, list: CUSTOM_FIELDS_CHOICES.join(',')] } }
         match_json(partial_success_response_pattern([], failures))
       ensure
         ticket_field.update_attribute(:required_for_closure, false)
@@ -878,7 +883,7 @@ module Ember
         end
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
         ticket_field.update_attribute(:required_for_closure, true)
-        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.except(:due_by, :fr_due_by, :status)}
+        params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.except(:due_by, :fr_due_by, :status) }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
@@ -887,98 +892,98 @@ module Ember
       end
 
       def test_bulk_update_with_required_default_field_with_incorrect_value
-        Helpdesk::TicketField.where(name: "product").update_all(required: true)
+        Helpdesk::TicketField.where(name: 'product').update_all(required: true)
         product = create_product
         ticket_ids = []
         rand(2..4).times do
           ticket_ids << create_ticket(product_id: product.id).display_id
         end
-        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.merge(product_id: product.id + 10)}
+        params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.merge(product_id: product.id + 10) }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
         match_json([bad_request_error_pattern('product_id', :absent_in_db, resource: :product, attribute: :product_id)])
       ensure
-        Helpdesk::TicketField.where(name: "product").update_all(required: false)
+        Helpdesk::TicketField.where(name: 'product').update_all(required: false)
       end
 
       def test_bulk_update_with_required_default_field_with_incorrect_value_in_db
-        Helpdesk::TicketField.where(name: "product").update_all(required: true)
+        Helpdesk::TicketField.where(name: 'product').update_all(required: true)
         product = create_product
         ticket_ids = []
         rand(2..4).times do
           ticket_ids << create_ticket(product_id: product.id + 10).display_id
         end
-        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash}
+        params_hash = { ids: ticket_ids, properties: update_ticket_params_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
       ensure
-        Helpdesk::TicketField.where(name: "product").update_all(required: false)
+        Helpdesk::TicketField.where(name: 'product').update_all(required: false)
       end
 
       def test_bulk_update_closure_status_with_required_for_closure_default_field_with_incorrect_value
-        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: true)
+        Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: true)
         product = create_product
         ticket_ids = []
         rand(2..4).times do
           ticket_ids << create_ticket(product_id: product.id).display_id
         end
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, product_id: product.id + 10)
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
         match_json([bad_request_error_pattern('product_id', :absent_in_db, resource: :product, attribute: :product_id)])
       ensure
-        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: false)
+        Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: false)
       end
 
       def test_bulk_update_closure_status_with_required_for_closure_default_field_with_incorrect_value_in_db
-        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: true)
+        Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: true)
         product = create_product
         ticket_ids = []
         rand(2..4).times do
           ticket_ids << create_ticket(product_id: product.id + 10).display_id
         end
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5)
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         failures = {}
-        ticket_ids.each {|id| failures[id] = { "product_id" => [:absent_in_db, { resource: :product, attribute: :product_id }]}}
+        ticket_ids.each { |id| failures[id] = { 'product_id' => [:absent_in_db, { resource: :product, attribute: :product_id }] } }
         match_json(partial_success_response_pattern([], failures))
       ensure
-        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: false)
+        Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: false)
       end
 
       def test_bulk_update_closed_tickets_with_required_for_closure_default_field_with_incorrect_value
-        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: true)
+        Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: true)
         product = create_product
         ticket_ids = []
         rand(2..4).times do
           ticket_ids << create_ticket(status: 5, product_id: product.id).display_id
         end
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :status).merge(product_id: product.id + 10)
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
         match_json([bad_request_error_pattern('product_id', :absent_in_db, resource: :product, attribute: :product_id)])
       ensure
-        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: false)
+        Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: false)
       end
 
       def test_bulk_update_closed_tickets_with_required_for_closure_default_field_with_incorrect_value_in_db
-        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: true)
+        Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: true)
         product = create_product
         ticket_ids = []
         rand(2..4).times do
           ticket_ids << create_ticket(status: 5, product_id: product.id + 10).display_id
         end
-        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.except(:due_by, :fr_due_by, :status)}
+        params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.except(:due_by, :fr_due_by, :status) }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
       ensure
-        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: false)
+        Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: false)
       end
 
       def test_bulk_update_with_required_custom_non_dropdown_field_with_incorrect_value
@@ -988,11 +993,11 @@ module Ember
         rand(2..4).times do
           ticket_ids << create_ticket(custom_field: { ticket_field.name => 25 }).display_id
         end
-        properties_hash = update_ticket_params_hash.merge(custom_fields: {ticket_field.label => 'Sample Text'})
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        properties_hash = update_ticket_params_hash.merge(custom_fields: { ticket_field.label => 'Sample Text' })
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
-        match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, { expected_data_type: :Integer, given_data_type: 'String', prepend_msg: :input_received })])
+        match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, expected_data_type: :Integer, given_data_type: 'String', prepend_msg: :input_received)])
       ensure
         ticket_field.update_attribute(:required, false)
       end
@@ -1002,9 +1007,9 @@ module Ember
         ticket_field.update_attribute(:required, true)
         ticket_ids = []
         rand(2..4).times do
-          ticket_ids << create_ticket(custom_field: { ticket_field.name => 'Sample Text'}).display_id
+          ticket_ids << create_ticket(custom_field: { ticket_field.name => 'Sample Text' }).display_id
         end
-        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash}
+        params_hash = { ids: ticket_ids, properties: update_ticket_params_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
@@ -1019,11 +1024,11 @@ module Ember
         rand(2..4).times do
           ticket_ids << create_ticket.display_id
         end
-        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, custom_fields: {ticket_field.label => 'Sample Text'})
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, custom_fields: { ticket_field.label => 'Sample Text' })
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
-        match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, { expected_data_type: :Integer, given_data_type: 'String', prepend_msg: :input_received })])
+        match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, expected_data_type: :Integer, given_data_type: 'String', prepend_msg: :input_received)])
       ensure
         ticket_field.update_attribute(:required_for_closure, false)
       end
@@ -1036,11 +1041,11 @@ module Ember
           ticket_ids << create_ticket(custom_field: { ticket_field.name => 'Sample Text' }).display_id
         end
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5)
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         failures = {}
-        ticket_ids.each {|id| failures[id] = { ticket_field.label => [:invalid_date, { accepted: 'yyyy-mm-dd' }]}}
+        ticket_ids.each { |id| failures[id] = { ticket_field.label => [:invalid_date, { accepted: 'yyyy-mm-dd' }] } }
         match_json(partial_success_response_pattern([], failures))
       ensure
         ticket_field.update_attribute(:required_for_closure, false)
@@ -1054,10 +1059,10 @@ module Ember
           ticket_ids << create_ticket(status: 5, custom_field: { ticket_field.name => 25 }).display_id
         end
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :status).merge(custom_fields: { ticket_field.label => 'Sample Text' })
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
-        match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, { expected_data_type: :Integer, given_data_type: 'String', prepend_msg: :input_received })])
+        match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, expected_data_type: :Integer, given_data_type: 'String', prepend_msg: :input_received)])
       ensure
         ticket_field.update_attribute(:required_for_closure, false)
       end
@@ -1069,7 +1074,7 @@ module Ember
           ticket_ids << create_ticket(status: 5, custom_field: { ticket_field.name => 'Sample Text' }).display_id
         end
         ticket_field.update_attribute(:required_for_closure, true)
-        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.except(:due_by, :fr_due_by, :status)}
+        params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.except(:due_by, :fr_due_by, :status) }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
@@ -1084,8 +1089,8 @@ module Ember
         rand(2..4).times do
           ticket_ids << create_ticket(custom_field: { ticket_field.name => CUSTOM_FIELDS_CHOICES.sample }).display_id
         end
-        properties_hash = update_ticket_params_hash.merge(custom_fields: {ticket_field.label => 'invalid_choice'})
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        properties_hash = update_ticket_params_hash.merge(custom_fields: { ticket_field.label => 'invalid_choice' })
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
         match_json([bad_request_error_pattern(ticket_field.label, :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
@@ -1098,9 +1103,9 @@ module Ember
         ticket_field.update_attribute(:required, true)
         ticket_ids = []
         rand(2..4).times do
-          ticket_ids << create_ticket(custom_field: {ticket_field.name => 'invalid_choice'}).display_id
+          ticket_ids << create_ticket(custom_field: { ticket_field.name => 'invalid_choice' }).display_id
         end
-        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash}
+        params_hash = { ids: ticket_ids, properties: update_ticket_params_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
@@ -1115,8 +1120,8 @@ module Ember
         rand(2..4).times do
           ticket_ids << create_ticket.display_id
         end
-        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, custom_fields: {ticket_field.label => 'invalid_choice'})
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, custom_fields: { ticket_field.label => 'invalid_choice' })
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
         match_json([bad_request_error_pattern(ticket_field.label, :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
@@ -1132,11 +1137,11 @@ module Ember
           ticket_ids << create_ticket(custom_field: { ticket_field.name => 'invalid_choice' }).display_id
         end
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5)
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         failures = {}
-        ticket_ids.each {|id| failures[id] = { ticket_field.label => [:not_included, list: CUSTOM_FIELDS_CHOICES.join(',') ]}}
+        ticket_ids.each { |id| failures[id] = { ticket_field.label => [:not_included, list: CUSTOM_FIELDS_CHOICES.join(',')] } }
         match_json(partial_success_response_pattern([], failures))
       ensure
         ticket_field.update_attribute(:required_for_closure, false)
@@ -1150,7 +1155,7 @@ module Ember
           ticket_ids << create_ticket(status: 5, custom_field: { ticket_field.name => CUSTOM_FIELDS_CHOICES.sample }).display_id
         end
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :status).merge(custom_fields: { ticket_field.label => 'invalid_choice' })
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
         match_json([bad_request_error_pattern(ticket_field.label, :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
@@ -1165,7 +1170,7 @@ module Ember
           ticket_ids << create_ticket(status: 5, custom_field: { ticket_field.name => 'invalid_choice' }).display_id
         end
         ticket_field.update_attribute(:required_for_closure, true)
-        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.except(:due_by, :fr_due_by, :status)}
+        params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.except(:due_by, :fr_due_by, :status) }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
@@ -1174,18 +1179,18 @@ module Ember
       end
 
       def test_bulk_update_with_non_required_default_field_blank
-        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: true)
+        Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: true)
         product = create_product
         ticket_ids = []
         rand(2..4).times do
           ticket_ids << create_ticket(product_id: product.id).display_id
         end
-        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.merge(product_id: nil)}
+        params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.merge(product_id: nil) }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
       ensure
-        Helpdesk::TicketField.where(name: "product").update_all(required_for_closure: false)
+        Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: false)
       end
 
       def test_bulk_update_with_non_required_default_field_with_incorrect_value
@@ -1193,7 +1198,7 @@ module Ember
         rand(2..4).times do
           ticket_ids << create_ticket.display_id
         end
-        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.merge(priority: 1000)}
+        params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.merge(priority: 1000) }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
         match_json([bad_request_error_pattern('priority', :not_included, list: ApiTicketConstants::PRIORITIES.join(','))])
@@ -1204,7 +1209,7 @@ module Ember
         rand(2..4).times do
           ticket_ids << create_ticket(type: 'Sample').display_id
         end
-        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.except(:priority)}
+        params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.except(:priority) }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
@@ -1217,10 +1222,10 @@ module Ember
           ticket_ids << create_ticket.display_id
         end
         properties_hash = update_ticket_params_hash.merge(custom_fields: { ticket_field.label => 'Sample Text' })
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
-        match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, { expected_data_type: :Integer, given_data_type: 'String', prepend_msg: :input_received })])
+        match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, expected_data_type: :Integer, given_data_type: 'String', prepend_msg: :input_received)])
       end
 
       def test_bulk_update_with_non_required_custom_non_dropdown_field_with_incorrect_value_in_db
@@ -1229,7 +1234,7 @@ module Ember
         rand(2..4).times do
           ticket_ids << create_ticket(custom_field: { ticket_field.name => 'Sample Text' }).display_id
         end
-        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash}
+        params_hash = { ids: ticket_ids, properties: update_ticket_params_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
@@ -1241,10 +1246,10 @@ module Ember
         rand(2..4).times do
           ticket_ids << create_ticket(product_id: product.id).display_id
         end
-        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.merge(product_id: product.id + 10)}
+        params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.merge(product_id: product.id + 10) }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
-        match_json([bad_request_error_pattern('product_id', :absent_in_db, { resource: :product, attribute: :product_id })])
+        match_json([bad_request_error_pattern('product_id', :absent_in_db, resource: :product, attribute: :product_id)])
       end
 
       def test_bulk_update_with_non_required_default_field_with_invalid_value_in_db
@@ -1253,7 +1258,7 @@ module Ember
         rand(2..4).times do
           ticket_ids << create_ticket(product_id: product.id + 10).display_id
         end
-        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash}
+        params_hash = { ids: ticket_ids, properties: update_ticket_params_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
@@ -1266,7 +1271,7 @@ module Ember
         rand(2..4).times do
           ticket_ids << create_ticket.display_id
         end
-        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash.merge(custom_fields: { ticket_field.label => nil })}
+        params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.merge(custom_fields: { ticket_field.label => nil }) }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
@@ -1280,8 +1285,8 @@ module Ember
         rand(2..4).times do
           ticket_ids << create_ticket(custom_field: { ticket_field.name => CUSTOM_FIELDS_CHOICES.sample }).display_id
         end
-        properties_hash = update_ticket_params_hash.merge(custom_fields: {ticket_field.label => 'invalid_choice'})
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        properties_hash = update_ticket_params_hash.merge(custom_fields: { ticket_field.label => 'invalid_choice' })
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
         match_json([bad_request_error_pattern(ticket_field.label, :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
@@ -1293,7 +1298,7 @@ module Ember
         rand(2..4).times do
           ticket_ids << create_ticket(custom_field: { ticket_field.name => 'invalid_choice' }).display_id
         end
-        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash}
+        params_hash = { ids: ticket_ids, properties: update_ticket_params_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
@@ -1315,13 +1320,13 @@ module Ember
         end
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :type)
         properties_hash[:type] = 'Incident'
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         match_json(partial_success_response_pattern(ticket_ids, {}))
         assert_response 202
       ensure
         @account.section_fields.last.destroy
-        @account.ticket_fields.find_by_name("test_custom_dropdown_#{@account.id}").update_attributes(required: false, field_options: {section: false})
+        @account.ticket_fields.find_by_name("test_custom_dropdown_#{@account.id}").update_attributes(required: false, field_options: { section: false })
       end
 
       def test_bulk_update_with_mandatory_section_fields
@@ -1339,13 +1344,13 @@ module Ember
         end
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :type)
         properties_hash[:type] = 'Incident'
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         match_json(partial_success_response_pattern(ticket_ids, {}))
         assert_response 202
       ensure
         @account.section_fields.last.destroy
-        @account.ticket_fields.find_by_name("test_custom_text_#{@account.id}").update_attributes(required: false, field_options: {section: false})
+        @account.ticket_fields.find_by_name("test_custom_text_#{@account.id}").update_attributes(required: false, field_options: { section: false })
       end
 
       def test_bulk_update_with_invalid_custom_field
@@ -1355,23 +1360,23 @@ module Ember
         end
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :type)
         properties_hash[:custom_fields] = {
-          'test_invalid_field' => "invalid_value"
+          'test_invalid_field' => 'invalid_value'
         }
-        params_hash = {ids: ticket_ids, properties: properties_hash}
+        params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         match_json([bad_request_error_pattern('test_invalid_field', :invalid_field)])
         assert_response 400
       end
 
       def test_bulk_update_with_tags
-        tag = "#{Faker::Lorem.word}_#{Time.now.to_s}"
+        tag = "#{Faker::Lorem.word}_#{Time.zone.now}"
         ticket = create_ticket
         ticket_ids = [ticket.display_id]
         ticket.tags.create(name: tag)
-        params_hash = {ids: ticket_ids, properties: update_ticket_params_hash}
+        params_hash = { ids: ticket_ids, properties: update_ticket_params_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         match_json(partial_success_response_pattern(ticket_ids, {}))
-        assert ticket.tag_names.include? (tag)
+        assert ticket.tag_names.include? tag
         assert_response 202
       end
     end

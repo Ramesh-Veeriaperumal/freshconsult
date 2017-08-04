@@ -6,18 +6,18 @@ module Channel
 
     CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date).freeze
 
-    VALIDATABLE_CUSTOM_FIELDS =  %w(number checkbox decimal text paragraph date)
+    VALIDATABLE_CUSTOM_FIELDS =  %w(number checkbox decimal text paragraph date).freeze
 
-    CUSTOM_FIELDS_VALUES_INVALID = { 'number' => '1.90', 'decimal' => 'dd', 'checkbox' => 'iu', 'text' => Faker::Lorem.characters(300), 'paragraph' =>  12_345, 'date' => '31-13-09' }
+    CUSTOM_FIELDS_VALUES_INVALID = { 'number' => '1.90', 'decimal' => 'dd', 'checkbox' => 'iu', 'text' => Faker::Lorem.characters(300), 'paragraph' => 12_345, 'date' => '31-13-09' }.freeze
 
-    ERROR_PARAMS =  {
+    ERROR_PARAMS = {
       'number' => [:datatype_mismatch, expected_data_type: 'Integer', prepend_msg: :input_received, given_data_type: String],
       'decimal' => [:datatype_mismatch, expected_data_type: 'Number'],
       'checkbox' => [:datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String],
       'text' => [:'Has 300 characters, it can have maximum of 255 characters'],
       'paragraph' => [:datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer],
       'date' => [:invalid_date, accepted: 'yyyy-mm-dd']
-    }
+    }.freeze
 
     def setup
       super
@@ -30,7 +30,7 @@ module Channel
       @account.sections.map(&:destroy)
       return if @@before_all_run
       @account.ticket_fields.custom_fields.each(&:destroy)
-      Helpdesk::TicketStatus.find(2).update_column(:stop_sla_timer, false)
+      Helpdesk::TicketStatus.find_by_status_id(2).update_column(:stop_sla_timer, false)
       @@ticket_fields = []
       @@custom_field_names = []
       @@ticket_fields << create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
@@ -85,19 +85,19 @@ module Channel
     def test_create_with_all_default_fields_required_invalid
       default_non_required_fields = Helpdesk::TicketField.where(required: false, default: 1)
       default_non_required_fields.map { |x| x.toggle!(:required) }
-      params_hash = { 
-                subject: 1,
-                description: 1,
-                group_id: "z",
-                product_id: "y",
-                responder_id: "x",
-                status: 999,
-                priority: 999,
-                type: "Test",
-                email: Faker::Internet.email
-              }
+      params_hash = {
+        subject: 1,
+        description: 1,
+        group_id: 'z',
+        product_id: 'y',
+        responder_id: 'x',
+        status: 999,
+        priority: 999,
+        type: 'Test',
+        email: Faker::Internet.email
+      }
       post :create, construct_params({ version: 'private' }, params_hash)
-      match_json([bad_request_error_pattern('description',  :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Integer'),
+      match_json([bad_request_error_pattern('description', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Integer'),
                   bad_request_error_pattern('subject',  :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Integer'),
                   bad_request_error_pattern('group_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'String'),
                   bad_request_error_pattern('responder_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'String'),
