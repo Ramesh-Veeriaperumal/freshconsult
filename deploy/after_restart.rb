@@ -70,7 +70,7 @@ if node[:opsworks]
                                      :custom_json => { :deployed_instance_ids => instance_ids }.to_json
         })
 
-        newrelic_key = (node["opsworks"]["environment"] == "production") ? "53e0eade912ffb2c559d6f3c045fe363609df3ee" : "7a4f2f3abfd0f8044580034278816352324a9fb7"
+        newrelic_key = (node["opsworks"]["environment"] == "production") ? "53e0eade912ffb2c559d6f3c045fe363609df3ee" : "7de9fc43e005937140bf898eed"
         long_user_string = node["deploy"][node["opsworks"]["applications"][0]["slug_name"]]["deploying_user"]
         #something like: "arn:aws:iam::(long-number):user/username"
         username = long_user_string.split('/').last
