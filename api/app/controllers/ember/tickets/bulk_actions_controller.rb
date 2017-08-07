@@ -35,7 +35,7 @@ module Ember
         cname_params[:ids] = @ticket_ids
         fetch_objects
         validate_items_to_update
-        execute_bulk_update_action unless update_in_background?
+        update_in_background? ? update_tickets_in_background : execute_bulk_update_action
         render_bulk_action_response(bulk_action_succeeded_items, bulk_action_errors)
       end
 
@@ -171,16 +171,19 @@ module Ember
           @items = items.find_all_by_param(permissible_ticket_ids(cname_params[:ids]))
         end
 
+        def tickets_to_update
+          @tkts_to_update ||= @items - @items_failed
+        end
+
         def execute_bulk_update_action
-          items = @items - @items_failed
           if @params_hash[:properties].present?
-            items.each do |item|
+            tickets_to_update.each do |item|
               @item = item
               assign_attributes_for_update
               @items_failed << item unless @item.update_ticket_attributes(cname_params.except(:ids))
             end
           end
-          queue_replies(items - @items_failed)
+          queue_replies(tickets_to_update - @items_failed)
         end
 
         # code duplicated - update method of API Tickets controller
@@ -197,12 +200,14 @@ module Ember
         end
 
         def update_in_background?
-          items = @items - @items_failed
-          return false if items.length <= ApiTicketConstants::BACKGROUND_THRESHOLD
+          tickets_to_update.length > ApiTicketConstants::BACKGROUND_THRESHOLD
+        end
+
+        def update_tickets_in_background
           if @params_hash[:properties].present?
-            ::Tickets::BulkTicketActions.perform_async(params_for_background_job(items, cname_params.except(:ids)))
+            ::Tickets::BulkTicketActions.perform_async(params_for_background_job(tickets_to_update, @params_hash[:properties]))
           end
-          queue_replies(items)
+          queue_replies(tickets_to_update)
         end
 
         def params_for_background_job(items, properties_hash)
@@ -211,6 +216,7 @@ module Ember
           args['ids'] = items.map(&:display_id)
           args['disable_notification'] = @skip_close_notification if @skip_close_notification
           args[:tags] = tags.join(',') unless tags.nil?
+          ParamsHelper.assign_and_clean_params(ApiTicketConstants::PARAMS_MAPPINGS, args['helpdesk_ticket'])
           args
         end
 

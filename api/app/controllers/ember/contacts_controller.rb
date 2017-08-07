@@ -7,7 +7,7 @@ module Ember
     include ContactsCompaniesConcern
     decorate_views
 
-    around_filter :run_on_slave, only: [:index, :activities]
+    SLAVE_ACTIONS = %w(index activities).freeze
     before_filter :can_change_password?, :validate_password_change, only: [:update_password]
 
     def create
@@ -182,9 +182,10 @@ module Ember
         if update?
           @all_company_ids = @all_companies.map{ |c| c[:id].to_i }.compact.uniq
           current_companies.each do |user_company|
-            company_attributes << { 
-              'id' => user_company.id, 
-              '_destroy' => 1 } if @all_company_ids.exclude? user_company.company_id
+            company_attributes << {
+              'id' => user_company.id,
+              '_destroy' => 1
+            } if @all_company_ids.exclude? user_company.company_id
           end
         end
         @all_companies.each do |comp|

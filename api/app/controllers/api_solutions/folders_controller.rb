@@ -3,11 +3,12 @@ module ApiSolutions
     include SolutionConcern
     include Solution::LanguageControllerMethods
     decorate_views(decorate_objects: [:category_folders])
+    SLAVE_ACTIONS = %w(index category_folders).freeze
     before_filter :validate_filter_params, only: [:category_folders]
 
     def create
       if create_or_update_folder
-        render_201_with_location(item_id: @item.parent_id) 
+        render_201_with_location(item_id: @item.parent_id)
       else
         render_solution_item_errors
       end
@@ -124,7 +125,7 @@ module ApiSolutions
         unless item.respond_to?(:parent)
           bad_customer_ids = item.customer_folders.select { |x| x.errors.present? }.map(&:customer_id)
           item.errors[:company_ids] << :invalid_list if bad_customer_ids.present?
-          @error_options = { remove: :"customer_folders.customer", company_ids: { list: "#{bad_customer_ids.join(', ')}" } }          
+          @error_options = { remove: :"customer_folders.customer", company_ids: { list: bad_customer_ids.join(', ').to_s } }
         end
         @error_options
       end

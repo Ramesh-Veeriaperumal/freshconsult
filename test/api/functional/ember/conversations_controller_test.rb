@@ -1321,6 +1321,8 @@ module Ember
       get :latest_note_forward_template, controller_params(version: 'private', id: ticket.display_id)
       assert_response 200
       match_json(forward_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: "<div><p>Thanks</p><p>#{ticket.subject}</p></div>"))
+      res = parse_response(response.body)
+      assert_equal 1, res['attachments'].size
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_forward_template)
     end
@@ -1336,6 +1338,25 @@ module Ember
       match_json(forward_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: "<div><p>Thanks</p><p>#{ticket.subject}</p></div>"))
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_forward_template)
+    end
+
+    def test_latest_note_forward_template_with_deleted_conversations
+      t = create_ticket
+      note = create_note(user_id: @agent.id, ticket_id: t.id, source: 2, attachments: { resource: fixture_file_upload('files/attachment.txt', 'plain/text', :binary) })
+      note.update_attribute(:deleted, true)
+      notification_template = '<div>{{ticket.id}}</div>'
+      agent_signature = '<div><p>Thanks</p><p>{{ticket.subject}}</p></div>'
+      Agent.any_instance.stubs(:signature_value).returns(agent_signature)
+      EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
+      get :latest_note_forward_template, controller_params(version: 'private', id: t.display_id)
+      assert_response 200
+      match_json(forward_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: "<div><p>Thanks</p><p>#{ticket.subject}</p></div>"))
+      res = parse_response(response.body)
+      assert_equal 0, res['attachments'].size
+      Agent.any_instance.unstub(:signature_value)
+      EmailNotification.any_instance.unstub(:get_forward_template)
+    ensure
+      note.update_attribute(:deleted, false)
     end
 
     def test_full_text

@@ -4,6 +4,7 @@ module Ember
     include Redis::RedisKeys
     include Redis::SortedSetRedis
 
+    around_filter :run_on_slave
     def agents
       if params[:mini_list].present?
         mini_list

@@ -1,6 +1,7 @@
 module ApiDiscussions
   class TopicsController < ApiApplicationController
     include DiscussionMonitorConcern
+    SLAVE_ACTIONS = %w(index forum_topics).freeze
     decorate_views(decorate_objects: [:followed_by, :forum_topics])
 
     before_filter :forum_exists?, only: [:forum_topics]

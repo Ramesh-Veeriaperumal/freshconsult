@@ -3,6 +3,8 @@ module Ember
     class AutocompleteController < ApiApplicationController
       include ::Search::V2::AbstractController
 
+      around_filter :run_on_slave
+
       def requesters
         @klasses        = ['User']
         @search_context = :requester_autocomplete
