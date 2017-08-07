@@ -22,35 +22,209 @@ describe Fdadmin::AccountsController do
 		end
 
 		it "must not return an empty hash" do
-			account_data = JSON.parse(response.body)
+			account_data = JSON.parree(response.body)
 			account_data.should_not be_nil
 		end
 	end
 
+
 	describe "add feature action for accounts controller" do
+		Fdadmin::AccountsController.skip_before_filter :verify_signature
+		Fdadmin::AccountsController.skip_before_filter :permit_internal_tools_ip
+		include Fdadmin::FeatureMethods
 
-		it "must be routabe to add feature action" do
-			{:put=>"fdadmin/accounts/add_feature"}.should be_routable
-		end
+		FEATURE_NAMES_BY_TYPE = {
+			:bitmap => [:gamification, :requester_widget, :split_tickets],
+			:db => [:gamification, :shared_ownership, :multi_dynamic_sections],
+			:launchparty => [:requester_widget, :multi_dynamic_sections, :activity_ui_disable ]
+		}
 
-		it "must throw exception if feature name is not proper" do
-			begin
-				expect(@account.features?("MULTIPRODUCT")).to raise_error
-			rescue
+		before(:all) do 
+			$redis_routes.perform_redis_op("sadd", Redis::RedisKeys::INTERNAL_TOOLS_IP, "127.0.0.1")
+			@account = Account.first
+			FEATURE_NAMES_BY_TYPE.each do |feature_type, feature_names|
+				feature_names.each do |feature_name|
+					send("disable_#{feature_type}_feature", feature_name)
+				end
 			end
+			@account.instance_variable_set("@all_features", nil)
 		end
 
-		it "must add a feature if does not exist before" do
-			if !@account.features?("multi_product")
-				@account.features.send("multi_product").save.should be true
-			end
-		end
-
-		it "must show notice if the feature is already present" do
-			put :add_feature, :account_id => 1 , :feature_name => "multi_product" ,:digest => "5131485a0f3bada04db0931aa8916c6b63d29da94fb01b9263d1dac53a94d3d4"
+		it "must throw an error for invalid feature name while enabling feature" do
+			put :add_feature, :account_id => @account.id , :feature_name => "something", :name_prefix => "fdadmin_", :path_prefix => nil, :format => "json"
 			result_hash = JSON.parse(response.body).symbolize_keys
-			puts "Response Body: #{response.body}"
-			result_hash.should include(:status => "notice")
+			result_hash.should include(:status => "error")
+		end
+
+		it "must throw an error for invalid feature name while disabling feature" do
+			put :remove_feature, :account_id => @account.id , :feature_name => "something", :name_prefix => "fdadmin_", :path_prefix => nil, :format => "json"
+			result_hash = JSON.parse(response.body).symbolize_keys
+			result_hash.should include(:status => "error")
+		end
+
+		FEATURE_NAMES_BY_TYPE.keys.each_with_index do |feature_type, i|
+			other_types = FEATURE_NAMES_BY_TYPE.keys - [feature_type]
+			feature_name = (FEATURE_NAMES_BY_TYPE[feature_type] - FEATURE_NAMES_BY_TYPE.slice(*other_types).values.flatten).first
+			feature_name = feature_name.to_sym
+
+			p "****** #{feature_type.upcase} : #{feature_name} ******"
+			p other_types
+
+			it "must enable valid #{feature_type} feature that falls only under #{feature_type} classification" do 
+				other_types.each do |other_feature_type|
+					send("#{other_feature_type}_feature?", feature_name).should be false
+				end
+				send("#{feature_type}_feature?", feature_name).should be true
+				send("disable_#{feature_type}_feature", feature_name)
+				reload_account
+				send("#{feature_type}_feature_enabled?", feature_name).should be false
+				put :add_feature, :account_id => @account.id , :feature_name => feature_name.to_s, :name_prefix => "fdadmin_", :path_prefix => nil
+				reload_account
+				send("#{feature_type}_feature_enabled?", feature_name).should be true
+			end
+
+			it "must not enable valid #{feature_type} feature that falls only under #{feature_type} classification if it's already enabled" do 
+				reload_account
+				send("#{feature_type}_feature_enabled?", feature_name).should be true
+				put :add_feature, :account_id => @account.id , :feature_name => feature_name.to_s, :name_prefix => "fdadmin_", :path_prefix => nil
+				result_hash = JSON.parse(response.body).symbolize_keys
+				puts "Response Body: #{response.body}"
+				result_hash.should include(:status => "notice")
+			end
+
+			it "must disable valid #{feature_type} feature that falls only under #{feature_type} classification" do 
+				other_types.each do |other_feature_type|
+					send("#{other_feature_type}_feature?", feature_name).should be false
+				end
+				send("#{feature_type}_feature?", feature_name).should be true
+				send("enable_#{feature_type}_feature", feature_name)
+				reload_account
+				send("#{feature_type}_feature_enabled?", feature_name).should be true
+				put :remove_feature, :account_id => @account.id , :feature_name => feature_name.to_s, :name_prefix => "fdadmin_", :path_prefix => nil
+				reload_account
+				send("#{feature_type}_feature_enabled?", feature_name).should be false
+			end
+
+			it "must not disable valid #{feature_type} feature that falls only under #{feature_type} classification if it's already disabled" do 
+				reload_account
+				send("#{feature_type}_feature_enabled?", feature_name).should be false
+				put :remove_feature, :account_id => @account.id , :feature_name => feature_name.to_s, :name_prefix => "fdadmin_", :path_prefix => nil
+				result_hash = JSON.parse(response.body).symbolize_keys
+				puts "Response Body: #{response.body}"
+				result_hash.should include(:status => "notice")
+			end
+		end
+
+		FEATURE_NAMES_BY_TYPE.keys.cycle.each_slice(2).take(3).each do |feature_combination|
+			other_feature_type = (FEATURE_NAMES_BY_TYPE.keys - feature_combination).first
+			common_feature = (FEATURE_NAMES_BY_TYPE[feature_combination.first] & FEATURE_NAMES_BY_TYPE[feature_combination.last]).first
+			p "**** FEATURE COMBINATION #{feature_combination} *****"
+			p common_feature
+
+			it "it must enable valid #{feature_combination.first} and #{feature_combination.last} feature if it's disabled under atleast one of them" do 
+				disabled_feature_type = feature_combination.sample
+				enabled_feature_type = (feature_combination - [disabled_feature_type]).first
+				feature_combination.each do |feature_type|
+					send("#{feature_type}_feature?", common_feature).should be true
+				end
+				send("disable_#{disabled_feature_type}_feature", common_feature)
+				send("enable_#{enabled_feature_type}_feature", common_feature)
+				reload_account
+				send("#{enabled_feature_type}_feature_enabled?", common_feature).should be true
+				send("#{disabled_feature_type}_feature_enabled?", common_feature).should be false
+				put :add_feature, :account_id => @account.id , :feature_name => common_feature.to_s, :name_prefix => "fdadmin_", :path_prefix => nil
+				reload_account
+				feature_combination.each do |feature_type|
+					send("#{feature_type}_feature_enabled?", common_feature).should be true
+				end
+			end
+
+			it "it must enable valid #{feature_combination.first} and #{feature_combination.last} feature if it's disabled under both of them" do 
+				feature_combination.each do |feature_type|
+					send("#{feature_type}_feature?", common_feature).should be true
+					send("disable_#{feature_type}_feature", common_feature)
+					reload_account
+					send("#{feature_type}_feature_enabled?", common_feature).should be false
+				end
+				put :add_feature, :account_id => @account.id , :feature_name => common_feature.to_s, :name_prefix => "fdadmin_", :path_prefix => nil
+				reload_account
+				feature_combination.each do |feature_type|
+					send("#{feature_type}_feature_enabled?", common_feature).should be true
+				end
+			end
+
+			it "it must not enable valid #{feature_combination.first} and #{feature_combination.last} feature if it's already enabled under both of them" do 
+				feature_combination.each do |feature_type|
+					send("#{feature_type}_feature?", common_feature).should be true
+					send("enable_#{feature_type}_feature", common_feature)
+					reload_account
+					send("#{feature_type}_feature_enabled?", common_feature).should be true
+				end
+				put :add_feature, :account_id => @account.id , :feature_name => common_feature.to_s, :name_prefix => "fdadmin_", :path_prefix => nil
+				result_hash = JSON.parse(response.body).symbolize_keys
+				result_hash.should include(:status => "notice")
+			end
+
+			it "it must disable valid #{feature_combination.first} and #{feature_combination.last} feature if it's enabled under atleast one of them" do 
+				disabled_feature_type = feature_combination.sample
+				enabled_feature_type = (feature_combination - [disabled_feature_type]).first
+				feature_combination.each do |feature_type|
+					send("#{feature_type}_feature?", common_feature).should be true
+				end
+				send("disable_#{disabled_feature_type}_feature", common_feature)
+				send("enable_#{enabled_feature_type}_feature", common_feature)
+				reload_account
+				send("#{enabled_feature_type}_feature_enabled?", common_feature).should be true
+				send("#{disabled_feature_type}_feature_enabled?", common_feature).should be false
+				put :remove_feature, :account_id => @account.id , :feature_name => common_feature.to_s, :name_prefix => "fdadmin_", :path_prefix => nil
+				reload_account
+				feature_combination.each do |feature_type|
+					send("#{feature_type}_feature_enabled?", common_feature).should be false
+				end
+			end
+
+			it "it must disable valid #{feature_combination.first} and #{feature_combination.last} feature if it's enabled under both of them" do 
+				feature_combination.each do |feature_type|
+					send("#{feature_type}_feature?", common_feature).should be true
+					send("enable_#{feature_type}_feature", common_feature)
+					reload_account
+					send("#{feature_type}_feature_enabled?", common_feature).should be true
+				end
+				put :remove_feature, :account_id => @account.id , :feature_name => common_feature.to_s, :name_prefix => "fdadmin_", :path_prefix => nil
+				reload_account
+				feature_combination.each do |feature_type|
+					send("#{feature_type}_feature_enabled?", common_feature).should be false
+				end
+			end
+
+			it "it must not disable valid #{feature_combination.first} and #{feature_combination.last} feature if it's already disabled under both of them" do 
+				feature_combination.each do |feature_type|
+					send("#{feature_type}_feature?", common_feature).should be true
+					send("disable_#{feature_type}_feature", common_feature)
+					reload_account
+					send("#{feature_type}_feature_enabled?", common_feature).should be false
+				end
+				put :remove_feature, :account_id => @account.id , :feature_name => common_feature.to_s, :name_prefix => "fdadmin_", :path_prefix => nil
+				result_hash = JSON.parse(response.body).symbolize_keys
+				result_hash.should include(:status => "notice")
+			end
+		end
+
+		def reload_account
+			@account.reload
+			@account.instance_variable_set("@all_features", nil)
+		end
+
+		def db_feature?(feature_name)
+			@account.features.respond_to?(feature_name)
+		end
+
+		def bitmap_feature?(feature_name)
+			Fdadmin::FeatureMethods::BITMAP_FEATURES.include?(feature_name)
+		end
+
+		def launchparty_feature?(feature_name)
+			Account::LAUNCHPARTY_FEATURES.keys.include?(feature_name)
 		end
 	end
 
