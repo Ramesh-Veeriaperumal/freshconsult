@@ -64,8 +64,8 @@ class Support::ArchiveTicketsController < SupportController
     items = build_tickets
 
     respond_to do |format|
-      format.csv { export_data items, csv_hash, true }
-      format.xls { export_xls items, csv_hash, true; headers["Content-Disposition"] = "attachment; filename=\"tickets.xls" }
+      format.csv { export_data items, true }
+      format.xls { export_xls items, true; headers["Content-Disposition"] = "attachment; filename=\"tickets.xls" }
     end
    end
 
