@@ -14,6 +14,7 @@ module Searchv2
     def teardown_searchv2
       @account.send(:disable_searchv2)
       # Searchv2::TestCluster.stop
+      Sidekiq::Testing.disable!
     end
   end
 end

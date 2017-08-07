@@ -57,8 +57,8 @@ class TicketExportValidationTest < ActionView::TestCase
     User.stubs(:current).returns(User.new)
     Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
     Account.any_instance.stubs(:company_form).returns(CompanyForm.new)
-    ContactForm.any_instance.stubs(:contact_fields_from_cache).returns([contact_field('cf_location')])
-    CompanyForm.any_instance.stubs(:company_fields_from_cache).returns([company_field('cf_address')])
+    ContactForm.any_instance.stubs(:custom_contact_fields).returns([contact_field('cf_location')])
+    CompanyForm.any_instance.stubs(:custom_company_fields).returns([company_field('cf_address')])
     User.stubs(:current).returns(User.new)
     User.current.stubs(:privilege?).with(:export_customers).returns(true)
     controller_params = { format: 'csv', date_filter: '1', ticket_state_filter: 'created_at', query_hash: [{ 'condition' => 'status', 'operator' => 'is_n', 'type' => 'dummy', 'ff_name' => 'default' }, { 'condition' => 'responder_id', 'ff_name' => 'default' }], ticket_fields: [], contact_fields: ['location'], company_fields: ['address'] }
@@ -76,8 +76,8 @@ class TicketExportValidationTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.new)
     Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
     Account.any_instance.stubs(:company_form).returns(CompanyForm.new)
-    ContactForm.any_instance.stubs(:contact_fields_from_cache).returns([contact_field('cf_location')])
-    CompanyForm.any_instance.stubs(:company_fields_from_cache).returns([company_field('cf_address')])
+    ContactForm.any_instance.stubs(:custom_contact_fields).returns([contact_field('cf_location')])
+    CompanyForm.any_instance.stubs(:custom_company_fields).returns([company_field('cf_address')])
     User.stubs(:current).returns(User.new)
     User.current.stubs(:privilege?).with(:export_customers).returns(true)
     controller_params = { format: 'csv', date_filter: '1', ticket_state_filter: 'created_at', query_hash: [{ 'condition' => 'created_at', 'operator' => 'is_greater_than', 'ff_name' => 'default', 'value' => 'six_month' }], ticket_fields: ['display_id'], contact_fields: ['location'], company_fields: ['address'] }

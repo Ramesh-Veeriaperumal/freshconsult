@@ -17,7 +17,7 @@ module Pipe
       @account.sections.map(&:destroy)
       return if @@before_all_run
       @account.ticket_fields.custom_fields.each(&:destroy)
-      Helpdesk::TicketStatus.find(2).update_column(:stop_sla_timer, false)
+      Helpdesk::TicketStatus.find_by_status_id(2).update_column(:stop_sla_timer, false)
       @@ticket_fields = []
       @@custom_field_names = []
       @@ticket_fields << create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))

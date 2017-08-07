@@ -358,7 +358,7 @@ module Ember
 
       def sanitize_export_params
         #set_date_filter
-        if !(cname_params[:date_filter].to_i == TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter])
+        if cname_params[:date_filter].to_i != TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter]
           cname_params[:start_date] = cname_params[:date_filter].to_i.days.ago.beginning_of_day.to_s(:db)
           cname_params[:end_date] = Time.now.end_of_day.to_s(:db)
         else

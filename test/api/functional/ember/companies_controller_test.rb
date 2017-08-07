@@ -4,6 +4,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   include CompaniesTestHelper
   include SlaPoliciesTestHelper
   include TicketHelper
+  include ArchiveTicketTestHelper
 
   def setup
     super
@@ -45,23 +46,15 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     ticket_ids.each do |ticket_id|
       @account.make_current
       Sidekiq::Testing.inline! do
-        Archive::BuildCreateTicket.perform_async({ account_id: @account.id, ticket_id: ticket_id })
+        Archive::BuildCreateTicket.perform_async(account_id: @account.id, ticket_id: ticket_id)
       end
     end
   end
 
-  def enable_archive_tickets(&block)
-    @account.enable_ticket_archiving(0)
-    yield
-    @account.account_additional_settings.additional_settings[:archive_days] = nil
-    @account.account_additional_settings.save
-    @account.features.archive_tickets.destroy
-  end
-
-  #Create tests
+  # Create tests
   def test_create_with_incorrect_avatar_type
-    params_hash = company_params_hash.merge({avatar_id: 'ABC'})
-    post :create, construct_params({version: 'private'}, params_hash)
+    params_hash = company_params_hash.merge(avatar_id: 'ABC')
+    post :create, construct_params({ version: 'private' }, params_hash)
     match_json([bad_request_error_pattern(:avatar_id, :datatype_mismatch,
                                           expected_data_type: 'Positive Integer',
                                           prepend_msg: :input_received,
@@ -72,17 +65,17 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   def test_create_with_invalid_avatar_id
     attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
     invalid_id = attachment_id + 10
-    params_hash = company_params_hash.merge({avatar_id: invalid_id})
-    post :create, construct_params({version: 'private'}, params_hash)
+    params_hash = company_params_hash.merge(avatar_id: invalid_id)
+    post :create, construct_params({ version: 'private' }, params_hash)
     match_json([bad_request_error_pattern(:avatar_id, :invalid_list, list: invalid_id.to_s)])
     assert_response 400
   end
 
   def test_create_with_invalid_avatar_size
     attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
-    params_hash = company_params_hash.merge({avatar_id: attachment_id})
+    params_hash = company_params_hash.merge(avatar_id: attachment_id)
     Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(20_000_000)
-    post :create, construct_params({version: 'private'}, params_hash)
+    post :create, construct_params({ version: 'private' }, params_hash)
     Helpdesk::Attachment.any_instance.unstub(:content_file_size)
     match_json([bad_request_error_pattern(:avatar_id, :invalid_size, max_size: '5 MB', current_size: '19.1 MB')])
     assert_response 400
@@ -90,8 +83,8 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
 
   def test_create_with_invalid_avatar_extension
     attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
-    params_hash = company_params_hash.merge({avatar_id: attachment_id})
-    post :create, construct_params({version: 'private'}, params_hash)
+    params_hash = company_params_hash.merge(avatar_id: attachment_id)
+    post :create, construct_params({ version: 'private' }, params_hash)
     match_json([bad_request_error_pattern(:avatar_id, :upload_jpg_or_png_file, current_extension: '.txt')])
     assert_response 400
   end
@@ -99,9 +92,9 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   def test_create_with_errors
     file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
     avatar_id = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
-    params_hash = company_params_hash.merge({avatar_id: avatar_id})
+    params_hash = company_params_hash.merge(avatar_id: avatar_id)
     Company.any_instance.stubs(:save).returns(false)
-    post :create, construct_params({version: 'private'}, params_hash)
+    post :create, construct_params({ version: 'private' }, params_hash)
     Company.any_instance.unstub(:save)
     assert_response 500
   end
@@ -109,8 +102,8 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   def test_create_with_avatar_id
     file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
     avatar_id = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
-    params_hash = company_params_hash.merge({avatar_id: avatar_id})
-    post :create, construct_params({version: 'private'}, params_hash)
+    params_hash = company_params_hash.merge(avatar_id: avatar_id)
+    post :create, construct_params({ version: 'private' }, params_hash)
     assert_response 201
     match_json(company_show_pattern(Company.last))
     assert Company.last.avatar.id == avatar_id
@@ -119,26 +112,26 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   def test_create_with_existing_company_domain
     comp_domain = Faker::Lorem.word
     company = create_company(domains: [comp_domain])
-    params_hash = company_params_hash.merge({domains: [comp_domain]})
-    post :create, construct_params({version: 'private'}, params_hash)
+    params_hash = company_params_hash.merge(domains: [comp_domain])
+    post :create, construct_params({ version: 'private' }, params_hash)
     assert_response 409
   end
 
   def test_show_a_company
-      sample_company = create_company
-      get :show, construct_params({ version: 'private', id: sample_company.id })
-      default_policy = Account.current.sla_policies.default
-      match_json(company_show_pattern({sla_policies: default_policy}, sample_company.reload))
-      assert_response 200
+    sample_company = create_company
+    get :show, construct_params(version: 'private', id: sample_company.id)
+    default_policy = Account.current.sla_policies.default
+    match_json(company_show_pattern({ sla_policies: default_policy }, sample_company.reload))
+    assert_response 200
     end
 
   def test_show_a_company_with_avatar
     file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
     sample_company = create_company
     sample_company.build_avatar(content_content_type: file.content_type, content_file_name: file.original_filename)
-    get :show, construct_params({ version: 'private', id: sample_company.id })
+    get :show, construct_params(version: 'private', id: sample_company.id)
     default_policy = Account.current.sla_policies.default
-    match_json(company_show_pattern({sla_policies: default_policy}, sample_company.reload))
+    match_json(company_show_pattern({ sla_policies: default_policy }, sample_company.reload))
     assert_response 200
   end
 
@@ -147,7 +140,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     get :show, controller_params(version: 'private', id: company.id)
     assert_response 200
     default_policy = Account.current.sla_policies.default
-    match_json(company_show_pattern({sla_policies: default_policy}, company))
+    match_json(company_show_pattern({ sla_policies: default_policy }, company))
   end
 
   def test_show_with_custom_sla_policies
@@ -156,11 +149,11 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     get :show, controller_params(version: 'private', id: company_id)
     assert_response 200
     company = Account.current.companies.find(company_id)
-    match_json(company_show_pattern({sla_policies: [sla_policy.reload]}, company))
+    match_json(company_show_pattern({ sla_policies: [sla_policy.reload] }, company))
   end
 
   def test_show_a_non_existing_company
-    get :show, construct_params({ version: 'private', id: 0 })
+    get :show, construct_params(version: 'private', id: 0)
     assert_response :missing
   end
 
@@ -179,7 +172,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
       company = create_company
       add_avatar_to_company(company)
     end
-    get :index, controller_params({ version: 'private' })
+    get :index, controller_params(version: 'private')
     assert_response 200
     pattern = index_company_pattern
     match_json(pattern.ordered!)
@@ -221,7 +214,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   end
 
   def test_activities_with_invalid_type
-    company =  create_company
+    company = create_company
     contact = add_new_user(@account, customer_id: company.id)
     ticket_ids = []
     rand(5..10).times do
@@ -280,7 +273,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     comp_domain = Faker::Lorem.word
     company = create_company(domains: [comp_domain])
     other_company = create_company
-    post :update, construct_params({version: 'private', id: other_company.id }, {domains: [comp_domain]})
+    post :update, construct_params({ version: 'private', id: other_company.id }, domains: [comp_domain])
     assert_response 409
   end
 
@@ -288,11 +281,11 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
     avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
     company = create_company(avatar: avatar)
-    put :update, construct_params({ version: 'private', id: company.id }, { avatar_id: nil })
+    put :update, construct_params({ version: 'private', id: company.id }, avatar_id: nil)
     assert_response 200
     company.reload
     match_json(company_show_pattern(company))
-    assert company.avatar == nil
+    assert company.avatar.nil?
   end
 
   def test_update_change_avatar
@@ -300,7 +293,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
     company = create_company(avatar: avatar)
     new_avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
-    put :update, construct_params({ version: 'private', id: company.id }, { avatar_id: new_avatar.id })
+    put :update, construct_params({ version: 'private', id: company.id }, avatar_id: new_avatar.id)
     assert_response 200
     company.reload
     match_json(company_show_pattern(company))
@@ -311,7 +304,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
     avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
     company = create_company
-    put :update, construct_params({ version: 'private', id: company.id }, { avatar_id: avatar.id })
+    put :update, construct_params({ version: 'private', id: company.id }, avatar_id: avatar.id)
     assert_response 200
     company.reload
     match_json(company_show_pattern(company))
@@ -331,9 +324,9 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     end
     invalid_ids = [company_ids.last + 20, company_ids.last + 30]
     ids_to_delete = [*company_ids, *invalid_ids]
-    put :bulk_delete, construct_params({ version: 'private' }, {ids: ids_to_delete})
+    put :bulk_delete, construct_params({ version: 'private' }, ids: ids_to_delete)
     failures = {}
-    invalid_ids.each { |id| failures[id] = { :id => :"is invalid" } }
+    invalid_ids.each { |id| failures[id] = { id: :"is invalid" } }
     match_json(partial_success_response_pattern(company_ids, failures))
     assert_response 202
   end
@@ -345,9 +338,9 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     end
     ids_to_delete = companies.map(&:id)
     Company.any_instance.stubs(:destroy).returns(false)
-    put :bulk_delete, construct_params({ version: 'private' }, {ids: ids_to_delete})
+    put :bulk_delete, construct_params({ version: 'private' }, ids: ids_to_delete)
     failures = {}
-    ids_to_delete.each { |id| failures[id] = { :id => :unable_to_perform } }
+    ids_to_delete.each { |id| failures[id] = { id: :unable_to_perform } }
     match_json(partial_success_response_pattern([], failures))
     assert_response 202
   end
@@ -357,7 +350,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     rand(2..10).times do
       company_ids << create_company.id
     end
-    put :bulk_delete, construct_params({ version: 'private' }, {ids: company_ids})
+    put :bulk_delete, construct_params({ version: 'private' }, ids: company_ids)
     assert_response 204
   end
 end

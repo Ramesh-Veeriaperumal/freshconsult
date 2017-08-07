@@ -34,19 +34,19 @@ class ExportCsvValidation < ApiValidation
   end
 
   def default_company_fields
-    Account.current.company_form.company_fields_from_cache.select { |x| x.column_name == 'default' }.map(&:name)
+    Account.current.company_form.default_company_fields.map(&:name)
   end
 
   def custom_company_fields
-    Account.current.company_form.company_fields_from_cache.reject { |x| x.column_name == 'default' }.map(&:name).collect { |x| display_name(x) }
+    Account.current.company_form.custom_company_fields.collect { |x| display_name(x.name) }
   end
 
   def default_contact_fields
-    Account.current.contact_form.contact_fields_from_cache.select { |x| x.column_name == 'default' }.map(&:name) - ['tag_names']
+    Account.current.contact_form.default_contact_fields(true).map(&:name) - ['tag_names']
   end
 
   def custom_contact_fields
-    Account.current.contact_form.contact_fields_from_cache.reject { |x| x.column_name == 'default' }.map(&:name).collect { |x| display_name(x) }
+    Account.current.contact_form.custom_contact_fields.collect { |x| display_name(x.name) }
   end
 
   def customer_export_privilege?
