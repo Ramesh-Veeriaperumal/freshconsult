@@ -1,4 +1,5 @@
 class Freshfone::PulseRate
+	include Freshfone::NumberValidator
 
 	FRESHFONE_CHARGES = YAML::load_file(File.join(Rails.root, 'config/freshfone',
 																									'freshfone_charges.yml'))
@@ -68,7 +69,7 @@ class Freshfone::PulseRate
 
 		def forwarded_cost
 			self.number = call.direct_dial_number || forwarded_number
-			self.country =  GlobalPhone.parse(number).territory.name unless GlobalPhone.parse(number).blank?
+			self.country =  fetch_country_code(number)
 
 			calculate(forwarded_call_type)
 		end
@@ -82,7 +83,7 @@ class Freshfone::PulseRate
 		# Matching will check in the same orderly so that we match most digits first
 		# Always maintain most digits number first in the array(in freshfone_charges.yml)
 		def calculate(call_type)
-			country_from_global if country_invalid?
+			self.country =  fetch_country_code(number) if country_invalid?
 
 			get_matching_country_cost(call_type) unless country_invalid? #if global country code too is invalid
 			return credit
@@ -100,10 +101,6 @@ class Freshfone::PulseRate
 	
 		def country_invalid?
 			(country.blank? || FRESHFONE_CHARGES[country].blank?)
-		end
-	
-		def country_from_global
-			self.country =  GlobalPhone.parse(number).territory.name unless GlobalPhone.parse(self.number).blank?
 		end
 
 		def toll_free_number?

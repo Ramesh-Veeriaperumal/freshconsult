@@ -49,6 +49,7 @@ class SupportController < ApplicationController
   def robots
     @crawl_sitemap = current_account.active? && current_account.sitemap_enabled?
     @url = "#{current_portal.url_protocol}://#{current_portal.host}"
+    @disallow_languages = current_portal.multilingual? ? current_account.all_portal_languages : []
     respond_to do |format| 
       format.text {render 'robots.txt.erb'}
       format.any {render_404}

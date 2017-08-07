@@ -1,4 +1,5 @@
 module Freshfone::CallerLookup
+  include Freshfone::NumberValidator
 
   STRANGE_NUMBERS = {
     :"7378742833"  => 'RESTRICTED',
@@ -50,8 +51,7 @@ module Freshfone::CallerLookup
 
   def invalid_number?(number)
     Rails.logger.info "Invalid Number Check #{number}"
-    parsed_number = GlobalPhone.parse(number)
-    parsed_number.blank? || !parsed_number.valid?
+    fetch_country_code(number).blank?
   end
 
   def browser_caller_id(number)

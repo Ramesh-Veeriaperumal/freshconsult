@@ -69,7 +69,7 @@ module HelpdeskReports
       end
 
       def parse_date(date_time)
-        date_time.strftime("%F %T")
+        date_time.respond_to?(:strftime) ? date_time.strftime("%F %T") : (Time.zone.parse(date_time).strftime("%F %T") rescue date_time)
       end
 
       def escape_html(val)

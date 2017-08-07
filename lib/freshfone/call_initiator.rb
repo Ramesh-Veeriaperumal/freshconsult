@@ -257,7 +257,7 @@ account_id ==> #{current_account.id} :: no of agents called ==> #{agents.size + 
 		end
 
 		def format_number(number)
-			@number = GlobalPhone.parse(number).international_string
+			@number = TelephoneNumber.parse(number).e164_number
 		end
 
 		def get_target_agent(target_agent, call_back)

@@ -72,11 +72,30 @@ class CustomFieldValidatorTestHelper
       }
     end
 
+    def section_field_parent_field_mapping_for_data_custom_dropdown
+      {
+        11 => { 'custom_dropdown_1' => %w(Choice1 Choice2 Choice3)},
+        12 => { 'custom_dropdown_1' => ['Choice3'] },
+        33 => { 'custom_dropdown_1' => ['Choice3'] },
+        28 => { 'custom_dropdown_1' => ['Choice3'] },
+        18 => { 'custom_dropdown_1' => ['Choice2'] },
+        24 => { 'custom_dropdown_1' => ['Choice1'] }
+      }
+    end
+
     def section_field_parent_field_mapping_for_choices
       {
         17 => { 'ticket_type' => %w(Incident Lead Question), 'priority' => [2, 3] },
         13 => { 'ticket_type' => ['Question'] },
         20 => { 'ticket_type' => ['Question'] }
+      }
+    end
+
+    def section_field_custom_dropdown_parent_field_mapping_for_choice
+      {
+        17 => { 'custom_dropdown_1' => %w(Choice1 Choice2 Choice3)},
+        13 => { 'custom_dropdown_1' => ['Choice3'] },
+        20 => { 'custom_dropdown_1' => ['Choice3'] }
       }
     end
 

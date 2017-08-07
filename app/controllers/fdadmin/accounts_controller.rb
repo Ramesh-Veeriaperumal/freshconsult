@@ -3,6 +3,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   include Fdadmin::AccountsControllerMethods
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include EmailHelper
 
   before_filter :check_domain_exists, :only => :change_url , :if => :non_global_pods?
   around_filter :select_slave_shard , :only => [:api_jwt_auth_feature,:sha1_enabled_feature,:select_all_feature,:show, :features, :agents, :tickets, :portal, :user_info,:check_contact_import,:latest_solution_articles]
@@ -366,6 +367,9 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       save_account_sign_up_params(params[:account_id], ehawk_params)
       remove_outgoing_email_block(params[:account_id])
       remove_spam_blacklist(account)
+      subject = "Outgoing email unblocked for Account-id: #{account.id}"
+      additional_info = "Outgoing email unblocked from freshops admin"
+      notify_account_blocks(account, subject, additional_info)
       result[:status] = "success"
       Account.reset_current_account
     end
@@ -406,6 +410,9 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       sub.state="trial"
       result[:status] = "success" if sub.save
       remove_spam_blacklist account
+      subject = "Account unblocked - Account-id: #{account.id}"
+      additional_info = "Account unblocked from freshops admin"
+      notify_account_blocks(account, subject, additional_info)
       Account.reset_current_account
     end
     $spam_watcher.perform_redis_op("set", "#{params[:account_id]}-", "true")
@@ -432,6 +439,9 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
         subscription.state = "suspended"
         subscription.save
       end
+      subject = "Account blocked - Account-id: #{account.id}"
+      additional_info = "Account blocked from freshops admin"
+      notify_account_blocks(account, subject, additional_info)
       result[:status] = "success"
       Account.reset_current_account
     end
