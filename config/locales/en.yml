@@ -7065,6 +7065,7 @@ en:
     seven_days: "Last 7 Days"
     twenty_four: "From yesterday"
     custom_filter: "Set date"
+    today: "Today"
     no_fields_selected: "Please check atleast one of the below fields to proceed."
     created_time: Created time
     resolved_time: Resolved time

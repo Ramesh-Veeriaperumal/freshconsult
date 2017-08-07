@@ -1409,7 +1409,7 @@ module Ember
     def test_export_csv_without_privilege
       User.any_instance.stubs(:privilege?).with(:export_tickets).returns(true)
       User.any_instance.stubs(:privilege?).with(:export_customers).returns(false)
-      export_fields = Helpdesk::TicketModelExtension.allowed_ticket_fields
+      export_fields = Helpdesk::TicketModelExtension.allowed_ticket_export_fields
       params_hash = { ticket_fields: export_fields.map { |i| { i[1] => I18n.t(i[0]) } if i[5] == :ticket }.compact.inject(&:merge),
                       contact_fields: { 'name' => 'Requester Name', 'mobile' => 'Mobile Phone' },
                       company_fields: { 'name' => 'Company Name' },
@@ -1427,7 +1427,7 @@ module Ember
       @account.launch(:ticket_contact_export)
       create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'Address', name: 'cf_address'))
       create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'Location', name: 'cf_location', editable_in_signup: 'true'))
-      contact_fields = @account.contact_form.fields.map(&:name) - %i(name phone mobile fb_profile_id)
+      contact_fields = @account.contact_form.fields.map(&:name) - %i(name phone mobile fb_profile_id contact_id)
       company_fields = @account.company_form.fields.map(&:name) - %i(name)
       params_hash = { ticket_fields: { display_id: rand(2..10) }, contact_fields: { custom_fields: { location: Faker::Lorem.word } },
                       company_fields: { custom_fields: { address: Faker::Lorem.word } },

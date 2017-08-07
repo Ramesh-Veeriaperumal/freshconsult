@@ -50,7 +50,8 @@ class TicketExportValidation < ExportCsvValidation
 
   def ticket_fields_list
     flexi_fields = Account.current.ticket_fields_from_cache.select { |x| x.default == false }.map(&:name).collect { |x| display_name(x, :ticket) }
-    default_fields = Helpdesk::TicketModelExtension.allowed_ticket_fields.map { |i| i[1] }
+    # Use EXP_TICKET_FIELDS once shared ownership fields added to ticket_scheduled_export
+    default_fields = Helpdesk::TicketModelExtension.allowed_ticket_export_fields
     default_fields += ['product_name'] if Account.current.multi_product_enabled? # Changed to feature check as ember validation won't have product presence check
     default_fields + flexi_fields + ['description']
   end

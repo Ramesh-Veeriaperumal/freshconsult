@@ -5214,6 +5214,7 @@
         "ticket_state_filter": {
           "type": "string",
           "enum": [
+            "0",
             "1",
             "4",
             "7",
@@ -5309,6 +5310,12 @@
               "type": "string"
             },
             "first_response_status": {
+              "type": "string"
+            },
+            "internal_agent_name": {
+              "type": "string"
+            },
+            "internal_group_name": {
               "type": "string"
             },
             "custom_fields": {
