@@ -227,6 +227,10 @@ module Spam
         e,
         {:subject => "Account blocked:: #{Account.current.id} due to spam notification"}
       )
+      subject = "Account blocked:: #{Account.current.id} due to spam notification"
+      additional_info = "Spam content detected in email notifications sent"
+      notify_account_blocks(Account.current, subject, additional_info)
+      update_freshops_activity(Account.current, "Account blocked due to spam content detected in email notifications", "block_account")
     end
   end
 end

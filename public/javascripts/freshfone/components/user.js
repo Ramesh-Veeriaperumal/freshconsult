@@ -177,13 +177,8 @@ var FreshfoneUser,
 		
 		toggleAvailabilityOnPhone: function (skipAlert) {
 			if (freshfone.user_phone) {
-				if (this.availableOnPhone || isValidNumber(freshfone.user_phone)) {
-					this.availableOnPhone = !this.availableOnPhone;
-					this.publishAvailabilityOnPhone();	
-				} else {
-					if(!skipAlert) { alert(freshfone.invalid_user_number_text); }
-					this.toggleAvailabilityOnPhoneClass();
-				}
+				this.availableOnPhone = !this.availableOnPhone;
+				this.publishAvailabilityOnPhone();	
 			} else {
 				//added availableOnPhone check to handle click in acw-state as both the options will be clickable
 				//but alert-message should be displayed only when "via Phone" option is clicked.
@@ -216,6 +211,9 @@ var FreshfoneUser,
 				success: function (data) {
 					if (!data.update_status) {
 						self.availableOnPhone = !self.availableOnPhone;
+						if(data.invalid_number){
+							alert(freshfone.invalid_user_number_text);
+						}
 					}
 					self.$userPresenceImage().removeClass('header-spinner'); 
 					self.toggleAvailabilityOnPhoneClass();

@@ -1,8 +1,17 @@
+require 'email_helper'
+
 class SpamWatcherRedisMethods
+  extend EmailHelper
   class << self
     def block_spam_user(user)
       user.blocked = true
       user.blocked_at = Time.zone.now + 10.years
+
+      subject = "User #{user.id} blocked - for Account-id: #{user.account.id}"
+      additional_info = "User blocked due to spam activity"
+      notify_account_blocks(user.account, subject, additional_info)
+      update_freshops_activity(user.account, "User blocked due to spam activity", "block_user")
+
       user.save(:validate => false)
     end
 
@@ -51,6 +60,11 @@ class SpamWatcherRedisMethods
           }
         }
       )
+
+      subject = "Account blocked - Account-id: #{account.id} due to heavy creation of solution articles"
+      additional_info = "Due to heavy creation of solution articles"
+      notify_account_blocks(account, subject, additional_info)
+      update_freshops_activity(account, "Account blocked due to heavy creation of solution articles", "block_account")
     end
 
     def has_cmrr(account)

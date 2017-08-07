@@ -13,7 +13,7 @@ class Account < ActiveRecord::Base
   after_update :update_livechat_url_time_zone, :if => :freshchat_enabled?
   after_update :update_activity_export, :if => :ticket_activity_export_enabled?
 
-  before_save :sync_name_helpdesk_name
+  before_validation :sync_name_helpdesk_name
   
   after_destroy :remove_global_shard_mapping, :remove_from_master_queries
   after_destroy :remove_shard_mapping, :destroy_route_info
