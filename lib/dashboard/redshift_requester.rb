@@ -4,6 +4,8 @@ class Dashboard::RedshiftRequester
   
   REFRESH_FREQUENCY = 30
 
+  REFRESH_FREQUENCY = 30
+
   def initialize params
     @query_params = query_params params
   end

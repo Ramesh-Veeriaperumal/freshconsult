@@ -54,4 +54,12 @@ module AttachmentConstants
 
   VALIDATION_CLASS = 'AttachmentValidation'.freeze
   DELEGATOR_CLASS = 'AttachmentDelegator'.freeze
+
+  BLOB_MAPPING = {
+    'image/jpeg' => '.jpg',
+    'image/jpg' => '.jpg',
+    'image/png' => '.png',
+    'image/gif' => '.gif',
+    'image/tiff' => '.tiff'
+  }.freeze
 end.freeze

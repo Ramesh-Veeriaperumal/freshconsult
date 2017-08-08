@@ -342,7 +342,11 @@ module ChatHelper
         auth_details[:token]   = livechat_partial_token(current_user.id)
       end
       request_data      = params.merge(auth_details)
-      options[:body]    = JSON.generate(request_data)
+      if requestType == "GET"
+        options[:query] = request_data.collect{|k,v| [k.to_sym, v]}.to_h
+      else
+        options[:body] = JSON.generate(request_data)
+      end
       options[:headers] = { "Accept" => accept_type, "Content-Type" => content_type}.delete_if{ |k,v| v.blank? }  # TODO: remove delete_if use and find any better way to do it in single line
       options[:timeout] = params[:timeout] || 15 #Returns status code 504 on timeout expiry 
       begin

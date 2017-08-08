@@ -6,7 +6,7 @@ module ApiSolutions
     include CloudFilesHelper
 
     decorate_views(decorate_objects: [:folder_articles])
-    before_filter :validate_filter_params, only: [:folder_articles]
+    before_filter :validate_query_params, only: [:folder_articles]
 
     def show
       @meta = @item.solution_article_meta
@@ -32,11 +32,7 @@ module ApiSolutions
         @draft.unlock
         language_params = @article_params[language_scoper].extract!(:title, :description)
         @draft.update_attributes(language_params)
-        # Deleting the language_scoper params except seo_data from hash as seo_data
-        # must be updated for article and rest should only be updated for draft
-        unless @article_params[language_scoper].present?
-          @article_params[language_scoper].delete_if { |k, v| k != :seo_data }
-        end
+        remove_lang_scoper_params
       end
       create_or_update_article
     end
@@ -88,6 +84,14 @@ module ApiSolutions
         false
       end
 
+      def remove_lang_scoper_params
+        # Deleting the language_scoper params except seo_data from hash as seo_data
+        # must be updated for article and rest should only be updated for draft
+        unless @article_params[language_scoper].present?
+          @article_params[language_scoper].delete_if { |k, v| k != :seo_data }
+        end
+      end
+
       def construct_article_object
         @meta = Solution::Builder.article(solution_article_meta: @article_params, language_id: @lang_id)
         @item = @meta.send(language_scoper)
@@ -119,14 +123,8 @@ module ApiSolutions
       end
 
       def validate_params
-        if create?
-          return false unless validate_language
-          # Load folder if create endpoint is triggered with primitive language
-          return false if @lang_id == current_account.language_object.id && !load_folder
-        end
-        fields = "SolutionConstants::#{action_name.upcase}_ARTICLE_FIELDS"
-        params[cname].permit(*get_fields(fields))
-
+        return false unless validate_create_params
+        validate_request_keys
         @status = params[cname][:status].to_i if params[cname][:status]
 
         # Maintaining the same flow for attachments as in articles_controller
@@ -141,6 +139,17 @@ module ApiSolutions
         )
         render_errors article.errors,
                       article.error_options unless article.valid?(action_name.to_sym)
+      end
+
+      def validate_create_params
+        return true unless create?
+        return false if !validate_language || (@lang_id == current_account.language_object.id && !load_folder)
+        true
+      end
+
+      def validate_request_keys
+        fields = "SolutionConstants::#{action_name.upcase}_ARTICLE_FIELDS"
+        params[cname].permit(*get_fields(fields))
       end
 
       def sanitize_params
@@ -229,8 +238,8 @@ module ApiSolutions
         end
       end
 
-      def validate_filter_params
-        super(SolutionConstants::INDEX_FIELDS)
+      def validate_query_params
+        validate_filter_params(SolutionConstants::INDEX_FIELDS)
       end
 
       def load_meta(id)

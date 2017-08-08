@@ -10,6 +10,15 @@ module TicketConcern
     true
   end
 
+  def verify_user_permission(user = api_current_user, item = @item)
+    item_user = item && item.user
+    unless item && user && item_user && (user.id == item_user.id)
+      render_request_error :access_denied, 403
+      return false
+    end
+    true
+  end
+
   def permissible_ticket_ids(id_list)
     @permissible_ids ||= begin
       if api_current_user.can_view_all_tickets?

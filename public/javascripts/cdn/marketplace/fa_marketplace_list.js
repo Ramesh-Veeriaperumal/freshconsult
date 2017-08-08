@@ -1,6 +1,7 @@
 //=require marketplace/marketplace_list.jst.ejs
 //=require marketplace/marketplace_show.jst.ejs
 //=require marketplace/marketplace_install.jst.ejs
+//=require marketplace/marketplace_configs_v1.jst.ejs
 //=require marketplace/marketplace_content.jst.ejs
 //=require marketplace/marketplace_iframe_settings.jst.ejs
 //=require marketplace/custom_apps_content.jst.ejs

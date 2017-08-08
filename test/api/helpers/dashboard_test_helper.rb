@@ -3,7 +3,8 @@ module DashboardTestHelper
   include Community::ModerationCount
   include DashboardConcern
   include Dashboard::UtilMethods
-  
+  include Helpdesk::DashboardHelper
+
   def scorecard_pattern(parameter = {})
     set_dashboard_type
     scorecard_fields = ROLE_BASED_SCORECARD_FIELDS[@dashboard_type.to_sym]

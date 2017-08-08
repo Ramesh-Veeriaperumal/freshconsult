@@ -1316,7 +1316,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def activitiesv2
-    if !Account.current.launched?(:activity_ui_disable) and Account.current.features?(:activity_revamp) and request.format != "application/json" and ACTIVITIES_ENABLED
+    if request.format != "application/json" && ACTIVITIES_ENABLED
       type = :tkt_activity
       @activities_data = new_activities(params, @item, type)
       @total_activities  ||=  @activities_data[:total_count]
@@ -1343,11 +1343,9 @@ class Helpdesk::TicketsController < ApplicationController
     if request.format != "application/json"
       activities = {:activity => "Incorrect request format"}
     else
-      if Account.current.features?(:activity_revamp)
-        params[:event_type] = ::HelpdeskActivities::EventType::ALL
-        params[:limit]      = 200
-        activities = new_activities(params, @item, :test_json)
-      end
+      params[:event_type] = ::HelpdeskActivities::EventType::ALL
+      params[:limit]      = 200
+      activities = new_activities(params, @item, :test_json)
     end
     respond_to do |format|
       format.json do

@@ -46,9 +46,9 @@ module Helpdesk::ProcessByMessageId
   def in_reply_to
     @email_in_reply_to ||= lambda do 
       if params[:in_reply_to].present? && params[:in_reply_to] =~ /#{MESSAGE_ID_REGEX}/i
-        $1
+        $1 if valid_message_id?($1)
       elsif params[:headers] =~ /in-reply-to: #{MESSAGE_ID_REGEX}/i
-        $1
+        $1 if valid_message_id?($1)
       end
     end.call
   end
@@ -167,5 +167,8 @@ module Helpdesk::ProcessByMessageId
         end
       end
       return valid_message_ids
+    end
+    def valid_message_id?(msg_id)
+      return msg_id.present? && ( !(msg_id.strip.downcase == "null" || msg_id.strip.downcase == "nil") )
     end
 end

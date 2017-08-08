@@ -1,6 +1,13 @@
 get:
   tags: [agent]
   summary: List all agents
+  parameters:
+    - name: only
+      in: query
+      type: string
+      enum:
+        - available
+        - available_count
   responses:
     200:
       description: Success
@@ -8,3 +15,7 @@ get:
         type: array
         items:
           $ref: '#/definitions/agent'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

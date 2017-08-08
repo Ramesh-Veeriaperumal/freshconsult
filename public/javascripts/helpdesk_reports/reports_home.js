@@ -527,11 +527,9 @@ HelpdeskReports.Reports_home = (function($){
         },
         paginateInsights : function(target_page) {
             var $li = $(".widget-row");
-            //$li.velocity('fadeOut');
             $li.hide();
             var start = (target_page - 1) * constants.insights.page_size;
             $sub = $li.slice(start,start + constants.insights.page_size);
-            //$sub.velocity('fadeIn');
             $sub.show();
 
             //update pagination controls
@@ -591,7 +589,7 @@ HelpdeskReports.Reports_home = (function($){
 
             $doc.on('question-focus.qna',function(ev,data){
                 $input.val('');
-                $results.velocity('fadeIn');
+                $results.show();
                 $base.hide();
                 $insights.hide();
                 $answer_section.hide();
@@ -600,7 +598,7 @@ HelpdeskReports.Reports_home = (function($){
             });
 
             $doc.on('question-close.qna',function(ev,data){
-                $results.velocity('fadeOut');
+                $results.hide();
                 $base.show();
                 $insights.show();
                 $left_section.removeClass('active');
@@ -626,7 +624,6 @@ HelpdeskReports.Reports_home = (function($){
             });
 
             $doc.on('click','[data-action="show-customize"]',function(){
-                //$("[data-action='edit-widget']").velocity('fadeIn');
                 $("[data-action='edit-widget']").show();
                 $(".insights").addClass('hide-section');
                 $(".configure-insight-widget").removeClass('hide');
@@ -634,7 +631,6 @@ HelpdeskReports.Reports_home = (function($){
             });
 
             $doc.on('click','[data-action="close-customize"]',function(){
-                //$("[data-action='edit-widget']").velocity('fadeOut');
                 $(".insights").removeClass('hide-section');
                 $(".insights-headline").addClass('hide');
                 $("[data-action='edit-widget']").hide();

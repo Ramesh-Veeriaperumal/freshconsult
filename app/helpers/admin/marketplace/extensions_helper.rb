@@ -1,142 +1,31 @@
 module Admin::Marketplace::ExtensionsHelper
 
+  include Admin::Marketplace::MarketplaceInstallHelper
   include Admin::Marketplace::CommonHelper
   include SubscriptionsHelper
   include Marketplace::HelperMethods
-
-  def install_url
-    if is_external_app?
-      @extension['options']['redirect_url']
-    elsif is_ni?
-      install_integrations_marketplace_app_path(@extension['name'])
-    elsif is_iframe_app?(@extension)
-      if !@install_status["installed"]
-        admin_marketplace_installed_extensions_iframe_configs_path(@extension['extension_id'],
-          @extension['version_id']) + '?' + configs_url_params(@extension, @install_status)
-      else
-        params_hash = { version_id: @extension['version_id'] }
-        "#{admin_marketplace_installed_extensions_reinstall_path(@extension['extension_id'])}?#{params_hash.to_query}"
-      end
-    else
-      is_oauth = is_oauth_app?(@extension)
-      url_params = configs_url_params(@extension, @install_status, is_oauth)
-      admin_marketplace_installed_extensions_new_configs_path(@extension['extension_id'],
-        @extension['version_id']) + '?' + url_params
-    end
-  end
-
-  def install_btn_text
-    if is_external_app?
-      t('marketplace.visit_site_to_install')
-    elsif @install_status['installed']
-      if is_ni? || @install_status['installed_version'] == @extension['version_id']
-        t('marketplace.installed')
-      else
-        t('marketplace.update')
-      end
-    else
-      t('marketplace.install')
-    end
-  end
-
-  def install_btn_class
-    if @install_status['installed'] && @install_status['installed_version'] == @extension['version_id']
-      "disabled"
-    elsif is_iframe_app?(@extension)
-      if @install_status["installed"] && @install_status['installed_version'] != @extension['version_id']
-        "install-btn"
-      else
-        "install-iframe-settings"
-      end
-    else
-      "install-form-btn"
-    end
-  end
-
+  include Marketplace::ApiUtil
 
   def install_btn(extension, install_status, is_oauth_app)
     @extension = extension
     @install_status = install_status
     @is_oauth_app = is_oauth_app
-    paid_app? && !@install_status['installed'] ? generate_buy_app_btn : generate_install_btn
-  end
-
-  def generate_buy_app_btn
-    _btn = ""
-    if current_account.subscription.trial?
-      _btn << %(<p class="trial_info"> #{t('marketplace.paid_apps_trial_info')} </p>)
+    if paid_app? && installed? && !plug_installed_in_platform? # Same Paid App can't be installed in both UI
+      install_not_allowed
+    elsif app_available_in_platform?
+      paid_app? && !installed? ? generate_buy_app_btn : generate_install_btn
     else
-      _btn << %(<a class="btn btn-default btn-primary buy-app" 
-                data-url="#{payment_info_admin_marketplace_extensions_path(@extension['extension_id'])}" 
-                data-install-url="#{install_url}" >
-                <p class="buy-app-btn"> #{t('marketplace.buy_app')} </p>
-                <p class="app-price"> #{t('marketplace.app_price', :price => format_amount(addon_details['price'], addon_details['currency_code']), :addon_type => addon_type)} </p>
-                </a>)
+      platform_not_compatible
     end
-    _btn
   end
 
-  def generate_install_btn
-    _btn = ""
-    if is_external_app?
-      _btn << %(<a href="#{install_url}" class="btn btn-default btn-primary install-app" 
-                target='_blank' rel="noreferrer"> #{install_btn_text} </a>)
-    elsif !@install_status['installed'] && is_ni?
-      _btn = ni_install_btn
-    elsif is_iframe_app?(@extension) && @install_status["installed"]
-      _btn << %(<a class="btn btn-default btn-primary install-app #{install_btn_class}" 
-                data-method="put" data-url="#{install_url}"> #{install_btn_text} </a>)
-    else
-      _btn << link_to(install_btn_text, '#', 'data-url' => install_url,
-              :class => "btn btn-default btn-primary install-app #{install_btn_class}")
-    end
-    _btn.html_safe
-  end
-
-  def ni_install_btn
-    _btn = ""
-    if @extension['name'] == Integrations::Constants::APP_NAMES[:quickbooks]
-      _btn << %(
-        <div class="text-center" style="margin-top:2px;">
-          <ipp:connectToIntuit></ipp:connectToIntuit>
-        </div>
-        <script src="https://js.appcenter.intuit.com/Content/IA/intuit.ipp.anywhere-1.3.2.js"></script>
-        <script type="text/javascript">
-          var qbInterval = setInterval(function(){ 
-            if(typeof intuit != "undefined"){
-              intuit.ipp.anywhere.setup({
-                grantUrl: "#{AppConfig['integrations_url'][Rails.env]}/auth/quickbooks?origin=id%3D#{current_account.id}",
-                datasources: {
-                  quickbooks : true
-                }
-              });  
-              clearInterval(qbInterval);
-            }
-          }, 700);
-        </script>
-        )
-    elsif @extension['name'] == Integrations::Constants::APP_NAMES[:slack_v2]
-      _btn << %(<form id="nativeapp-form" action="#{install_url}" method="post"> </form>)
-      _btn << %(
-        <a href="javascript:;" onclick="parentNode.submit();" class="install-app #{ni_install_btn_class}"><img alt="Add to Slack" src="https://platform.slack-edge.com/img/add_to_slack.png" style="padding-top: 10px;padding-left: 10px;width: 139px; height: 40px;"></a>
-      )
-    else
-      _btn << link_to(install_btn_text, install_url, :method => :post,
-              :class => "btn btn-default btn-primary install-app #{ni_install_btn_class}").html_safe
-    end
-    _btn
-  end
-
-  def ni_install_btn_class
-    @install_status['installed'] ? "disabled" : "nativeapp"
-  end
-
-  def configs_url_params(extension, install_status, is_oauth_app = false)
+  def configs_url_params(is_oauth_app = false)
     {}.tap do |url_params|
       url_params[:type] = params[:type]
       url_params[:category_id] = params[:category_id] if params[:category_id]
-      url_params[:installation_type] = install_status['installed'] ? 'upgrade' : 'install'
-      url_params[:display_name] = extension['display_name']
+      url_params[:installation_type] = installed? && plug_installed_in_platform? ? 'upgrade' : 'install'
+      url_params[:display_name] = @extension['display_name']
+      url_params[:installed_version] = installed_version.first if installed? && plug_installed_in_platform? && !latest_installed?
       url_params[:is_oauth_app] = is_oauth_app if is_oauth_app
     end.to_query
   end

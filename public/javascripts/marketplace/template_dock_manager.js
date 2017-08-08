@@ -300,13 +300,17 @@ var TemplateDockManager   = Class.create({
     });
   },
 
-  isValidForm: function() {
+  isValidForm: function(platformVersion) {
     var isFormValid = true;
-    jQuery(".installer-form input.fa-textip.required").each(function(index, value){
-      if (jQuery.trim(jQuery(value).val()).length == 0){
-        isFormValid = false;
-      }
-    });
+    if (platformVersion == '2.0') {
+      isFormValid = ((typeof validate == 'function')) ? validate() : true;
+    } else {
+      jQuery(".installer-form input.fa-textip.required").each(function(index, value){
+        if (jQuery.trim(jQuery(value).val()).length == 0){
+          isFormValid = false;
+        }
+      });
+    }
     return isFormValid;
   },
 
@@ -342,16 +346,21 @@ var TemplateDockManager   = Class.create({
     e.stopPropagation();
     var that = this;
     var el = jQuery(e.currentTarget);
+
+    var platformVersion = jQuery(el).attr("data-platform-version")
+    var formData = (platformVersion == '2.0') ? 
+      { configs: (typeof postConfigs == 'function') ? postConfigs() : '' } : 
+      jQuery('#install-form').serialize()
   
     var isFormValid = true;
-    isFormValid = this.isValidForm(e);
+    isFormValid = this.isValidForm(platformVersion);
     var initialCount = 0;
 
-    if(isFormValid ){
+    if(isFormValid == true){
       jQuery.ajax({
         url: jQuery(el).attr("data-url"),
         type: jQuery(el).attr("data-method"),
-        data: jQuery('#install-form').serialize(),
+        data: formData,
         beforeSend: function(){
           jQuery("#install-error").hide();
           jQuery(".progress, .installing-text").show();
@@ -376,7 +385,9 @@ var TemplateDockManager   = Class.create({
         }
       });
     }else{
-      this.displayFormFieldError();
+      if (platform_version == '1.0'){
+        this.displayFormFieldError();
+      }
     }
   },
 
@@ -520,6 +531,9 @@ var TemplateDockManager   = Class.create({
         else {
           jQuery(that.extensionsWrapper).empty()
                                         .append(JST["marketplace/marketplace_install"](install_extension));
+          if ( install_extension.configs_page && install_extension.configs != null ){
+            getConfigs(install_extension.configs);
+          }
 
           that.appName = install_extension.display_name;
 
@@ -534,8 +548,7 @@ var TemplateDockManager   = Class.create({
               time: new Date()
           });
 
-
-          if( !install_extension.configs.length ) { // no config
+          if ( !install_extension.configs_page && (!install_extension.configs ? true : install_extension.configs.length == 0 )) { // no config
             jQuery(".install-form").hide();
             if(install_extension.install_btn['is_oauth_app']) {
               trigger_element = '#oauth_link'

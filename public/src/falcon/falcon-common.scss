@@ -1217,7 +1217,12 @@ div[class$="-toggle"]{
         text-transform: initial;
         padding: 2px 6px;
       }
+      &.btn-flat {
+        padding: 4px 14px;
+        text-transform: capitalize;
+      }
   }
+
   .btn-primary, .uiButton {
     color: $app-btn-text-light;
       background-color: $app-primary-btn-background;
@@ -1258,6 +1263,8 @@ div[class$="-toggle"]{
       border-right: 0px;
       &+ .dropdown-toggle {
         padding: 7px 8.5px;
+        border-radius: 2px;
+        border-right: 1px #03a86b solid;
         margin-left: 0px;
         border-top-left-radius: 0px;
         border-bottom-left-radius: 0px;
@@ -1291,6 +1298,14 @@ div[class$="-toggle"]{
         border-top-right-radius: 2px;
         border-bottom-right-radius: 2px;
         border-right: 1px solid $app-btn-disabled;
+      }
+    }
+
+    .create_new_folder span {
+      vertical-align: middle;
+      display: inline-block;
+      &:before{
+        line-height: 14px;
       }
     }
 
