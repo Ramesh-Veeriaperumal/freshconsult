@@ -27,8 +27,8 @@ class Helpdesk::QuestsController < ApplicationController
 
   private
   	def scoper
-  	  current_account.quests
-  	end
+      current_account.features?(:forums) ? current_account.quests :  current_account.quests.where("category != ?",Gamification::Quests::Constants::GAME_TYPE_KEYS_BY_TOKEN[:forum])
+    end
   	
   	def unachieved_scoper
   	  scoper.available(current_user)
