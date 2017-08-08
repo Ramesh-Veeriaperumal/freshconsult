@@ -1,0 +1,47 @@
+get:
+  tags: [import]
+  summary: Import exists
+  description: Responds with status details of in process import based on type value.
+  parameters:
+    - name: type
+      type: string
+      description: type of import (contact/company)
+      in: query
+      required: true
+  responses:
+    204:
+      description: Import exists
+    404:
+      description: Import not exists
+    400:
+      description: Validation error
+
+post:
+  tags: [import]
+  summary: Create import
+  description: To schedule import of contacts/companies
+  parameters:
+    - name: type
+      in: formData
+      description: Type of import (contact/company)
+      required: true
+      type: string
+    - name: file
+      in: formData
+      description: file to upload
+      required: true
+      type: file
+    - name: fields
+      in: formData
+      required: true
+      schema:
+        $ref: '#/definitions/fields_map'
+  responses:
+    200:
+      description: Success
+    400:
+      description: Validation error
+    401:
+      description: Unauthorized action
+    409:
+      description: Existing import in progress
