@@ -10,13 +10,13 @@ class ContactForm < ActiveRecord::Base
   acts_as_custom_form :custom_field_class => 'ContactField',
                       :custom_fields_cache_method => :custom_contact_fields
 
-  def contact_fields
+  def contact_fields(skip_filter = false)
     # fetching just once per request, reducing memcache calls
-    @contact_fields ||= fetch_contact_fields
+    @contact_fields ||= skip_filter ? all_contact_fields : fetch_contact_fields
   end
 
-  def default_contact_fields
-    contact_fields.select{ |cf| cf.default_field? }
+  def default_contact_fields(skip_filter = false)
+    contact_fields(skip_filter).select { |cf| cf.default_field? }
   end
 
   def custom_contact_fields
@@ -63,18 +63,18 @@ class ContactForm < ActiveRecord::Base
     custom_fields.select { |c| c.field_type == :custom_checkbox }
   end
 
-  def con_fields
+  def all_contact_fields
     @fields ||= contact_fields_from_cache
   end
 
   def fetch_client_manager_field
-    con_fields.find{ |cf| cf.name == "client_manager" }
+    all_contact_fields.find { |cf| cf.name == 'client_manager' }
   end
 
   private
 
     def fetch_contact_fields
-      filter_fields con_fields, contact_field_conditions
+      filter_fields all_contact_fields, contact_field_conditions
     end
 
     def filter_fields(field_list, conditions)

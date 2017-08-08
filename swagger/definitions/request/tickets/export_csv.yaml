@@ -9,7 +9,7 @@ properties:
     enum: ["csv","xls"]
   ticket_state_filter:
     type: string
-    enum: ["1","4","7","30"]
+    enum: ["0", "1","4","7","30"]
   date_filter:
     type: string
     enum: ["created_at","resolved_at","closed_at"]
@@ -69,6 +69,10 @@ properties:
       resolution_status:
         type: string
       first_response_status:
+        type: string
+      internal_agent_name:
+        type: string
+      internal_group_name:
         type: string
       custom_fields:
         $ref: '#/definitions/custom_field'

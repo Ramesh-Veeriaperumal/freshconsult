@@ -1,0 +1,9 @@
+type: object
+properties:
+  type:
+    type: string
+    required: true
+    description: content of the ticket reply
+  fields:
+    type: object
+    $ref: '#/definitions/map_field_to_header'

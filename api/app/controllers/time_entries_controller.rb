@@ -2,6 +2,7 @@ class TimeEntriesController < ApiApplicationController
   include TicketConcern
 
   COLLECTION_RESPONSE_FOR = ['ticket_time_entries'].freeze
+  SLAVE_ACTIONS = %w(index ticket_time_entries).freeze
 
   def create
     # If any validation is introduced in the TimeSheet model,

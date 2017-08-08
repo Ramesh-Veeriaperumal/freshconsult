@@ -113,6 +113,14 @@ module Helpdesk::TicketModelExtension
     end
   end
 
+  def self.allowed_ticket_export_fields
+    fields = []
+    EXPORT_FIELDS.each do |i|
+      fields << i[1] if (!%i[requester company].include?i[3]) && (Export::ExportFields.allow_field? i[5])
+    end
+    fields
+  end
+
   FIELD_NAME_MAPPING = {
     "status_name" => "status",
     "priority_name" => "priority",

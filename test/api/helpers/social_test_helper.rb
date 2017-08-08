@@ -47,34 +47,36 @@ module SocialTestHelper
 
   def create_ticket_from_fb_post(comments = false, reply_to_comments = false)
     #create a facebook page, comment on it, convert comment to ticket and populate the user
-    Sidekiq::Testing.inline!
-    fb_page = create_facebook_page(true)
-    feed_id    = "#{fb_page.page_id}_#{get_social_id}"
-    comment_id = comments || reply_to_comments ? "#{feed_id.split('_').last}_#{get_social_id}" : nil
-    reply_comment_id = reply_to_comments ? "#{feed_id.split('_').last}_#{get_social_id}" : nil
-    sender_id  = "#{get_social_id}"
-    facebook_feed = sample_fb_post_feed(sender_id, feed_id, comment_id, reply_comment_id)
-    #stub the api call for koala
-    Koala::Facebook::API.any_instance.stubs(:get_object).returns(facebook_feed)
-    Facebook::Core::Post.new(fb_page.reload, feed_id).process
-    Koala::Facebook::API.any_instance.unstub(:get_object)
-    @account.facebook_posts.find_by_post_id(feed_id).postable
+    Sidekiq::Testing.inline! do
+      fb_page = create_facebook_page(true)
+      feed_id    = "#{fb_page.page_id}_#{get_social_id}"
+      comment_id = comments || reply_to_comments ? "#{feed_id.split('_').last}_#{get_social_id}" : nil
+      reply_comment_id = reply_to_comments ? "#{feed_id.split('_').last}_#{get_social_id}" : nil
+      sender_id  = "#{get_social_id}"
+      facebook_feed = sample_fb_post_feed(sender_id, feed_id, comment_id, reply_comment_id)
+      #stub the api call for koala
+      Koala::Facebook::API.any_instance.stubs(:get_object).returns(facebook_feed)
+      Facebook::Core::Post.new(fb_page.reload, feed_id).process
+      Koala::Facebook::API.any_instance.unstub(:get_object)
+      @account.facebook_posts.find_by_post_id(feed_id).postable
+    end
   end
 
   def create_ticket_from_fb_direct_message
-    Sidekiq::Testing.inline!
-    fb_page = create_facebook_page(true)
-    thread_id = Time.now.utc.to_i
-    actor_id = thread_id + 1
-    msg_id = thread_id + 2
-    sample_dm = sample_dm_threads(thread_id, actor_id, msg_id)
-    #stub the api call for koala
-    Koala::Facebook::API.any_instance.stubs(:get_connections).returns(sample_dm)
-    fb_message = Facebook::KoalaWrapper::DirectMessage.new(fb_page)
-    fb_message.fetch_messages
-    Koala::Facebook::API.any_instance.unstub(:get_connections)
-    postable = @account.facebook_posts.find_by_post_id(msg_id).postable
-    postable.is_a?(Helpdesk::Ticket) ? postable : postable.notable
+    Sidekiq::Testing.inline! do
+      fb_page = create_facebook_page(true)
+      thread_id = Time.now.utc.to_i
+      actor_id = thread_id + 1
+      msg_id = thread_id + 2
+      sample_dm = sample_dm_threads(thread_id, actor_id, msg_id)
+      #stub the api call for koala
+      Koala::Facebook::API.any_instance.stubs(:get_connections).returns(sample_dm)
+      fb_message = Facebook::KoalaWrapper::DirectMessage.new(fb_page)
+      fb_message.fetch_messages
+      Koala::Facebook::API.any_instance.unstub(:get_connections)
+      postable = @account.facebook_posts.find_by_post_id(msg_id).postable
+      postable.is_a?(Helpdesk::Ticket) ? postable : postable.notable
+    end
   end
 
   def sample_fb_post_feed(sender_id, feed_id, comment_id = nil, reply_comment_id = nil)

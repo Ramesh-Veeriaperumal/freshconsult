@@ -7,8 +7,6 @@ class TicketsController < ApiApplicationController
   include Search::Filters::QueryHelper
   decorate_views(decorate_objects: [:index, :search])
 
-  around_filter :run_on_slave, only: [:index]
-
   before_filter :ticket_permission?, only: [:destroy]
   before_filter :check_search_feature, :validate_search_params, only: [:search]
 
