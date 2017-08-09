@@ -1,6 +1,7 @@
 module ApiSearch
   class SearchController < ApiApplicationController
     include SearchHelper
+    around_filter :run_on_slave
 
     private
 

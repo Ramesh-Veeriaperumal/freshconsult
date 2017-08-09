@@ -240,13 +240,14 @@ private
   end
 
   def closed_at_dirty_fix
-    return nil if tickets.active?
+    return nil unless tickets.closed?
     Sharding.run_on_master { self.update_attribute(:closed_at, updated_at) }
     NewRelic::Agent.notice_error(Exception.new("closed_at is nil. Ticket state id is #{id}"))
     closed_at
   end
 
   def pending_since_dirty_fix
+    return nil unless tickets.pending?
     Sharding.run_on_master do
       self.update_attribute(:pending_since, updated_at)
     end

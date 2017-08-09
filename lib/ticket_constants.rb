@@ -200,14 +200,16 @@ module TicketConstants
     [ :thirt_days,    I18n.t("export_data.thirt_days"),   30 ],
     [ :seven_days,    I18n.t("export_data.seven_days"),    7 ],
     [ :twenty_four,   I18n.t("export_data.twenty_four"),   1 ],
-    [ :custom_filter, I18n.t("export_data.custom_filter"), 4 ]
+    [ :custom_filter, I18n.t("export_data.custom_filter"), 4 ],
+    [ :today,         I18n.t("export_data.today"),         0 ]
   ]
 
   CREATED_BY_VALUES_EN = [
     [ :thirt_days,    "export_data.thirt_days",   30 ],
     [ :seven_days,    "export_data.seven_days",    7 ],
     [ :twenty_four,   "export_data.twenty_four",   1 ],
-    [ :custom_filter, "export_data.custom_filter", 4 ]
+    [ :custom_filter, "export_data.custom_filter", 4 ],
+    [ :today,         "export_data.today",         0 ]
   ]
 
   CREATED_BY_OPTIONS = CREATED_BY_VALUES.map { |i| [i[1], i[2]] }
@@ -426,6 +428,6 @@ module TicketConstants
   end
 
   def skill_condition_attributes
-    SKILL_DEFAULT_CONDITION_FIELDS + Account.current.ticket_custom_dropdown_nested_fields.map{ |x| x.column_name.to_sym}
+    SKILL_DEFAULT_CONDITION_FIELDS + Account.current.ticket_custom_dropdown_nested_fields.map { |x| x.column_name.to_sym }
   end
 end

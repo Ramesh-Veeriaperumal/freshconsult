@@ -1321,6 +1321,8 @@ module Ember
       get :latest_note_forward_template, controller_params(version: 'private', id: ticket.display_id)
       assert_response 200
       match_json(forward_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: "<div><p>Thanks</p><p>#{ticket.subject}</p></div>"))
+      res = parse_response(response.body)
+      assert_equal 1, res['attachments'].size
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_forward_template)
     end
@@ -1336,6 +1338,25 @@ module Ember
       match_json(forward_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: "<div><p>Thanks</p><p>#{ticket.subject}</p></div>"))
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_forward_template)
+    end
+
+    def test_latest_note_forward_template_with_deleted_conversations
+      t = create_ticket
+      note = create_note(user_id: @agent.id, ticket_id: t.id, source: 2, attachments: { resource: fixture_file_upload('files/attachment.txt', 'plain/text', :binary) })
+      note.update_attribute(:deleted, true)
+      notification_template = '<div>{{ticket.id}}</div>'
+      agent_signature = '<div><p>Thanks</p><p>{{ticket.subject}}</p></div>'
+      Agent.any_instance.stubs(:signature_value).returns(agent_signature)
+      EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
+      get :latest_note_forward_template, controller_params(version: 'private', id: t.display_id)
+      assert_response 200
+      match_json(forward_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: "<div><p>Thanks</p><p>#{ticket.subject}</p></div>"))
+      res = parse_response(response.body)
+      assert_equal 0, res['attachments'].size
+      Agent.any_instance.unstub(:signature_value)
+      EmailNotification.any_instance.unstub(:get_forward_template)
+    ensure
+      note.update_attribute(:deleted, false)
     end
 
     def test_full_text
@@ -1602,6 +1623,7 @@ module Ember
       Account.current.reload
       ticket = create_ticket_from_fb_post(true)
       note = create_public_note(ticket)
+      sleep 1 # delay introduced so that notes are not created at the same time. Fractional seconds are ignored in tests.
       rand(1..5).times do
         create_public_note(ticket)
       end
@@ -1621,6 +1643,7 @@ module Ember
       Account.current.reload
       ticket = create_ticket_from_fb_direct_message
       note = create_public_note(ticket)
+      sleep 1 # delay introduced so that notes are not created at the same time. Fractional seconds are ignored in tests.
       sample_reply_dm = { 'id' => Time.now.utc.to_i + 5 }
       rand(1..5).times do
         create_public_note(ticket)
@@ -1638,6 +1661,7 @@ module Ember
       Account.current.reload
       ticket = create_ticket_from_fb_post
       note = create_fb_note(ticket)
+      sleep 1 # delay introduced so that notes are not created at the same time. Fractional seconds are ignored in tests.
       put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
       sample_put_comment = { 'id' => put_comment_id }
       rand(1..5).times do

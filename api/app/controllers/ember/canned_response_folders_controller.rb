@@ -2,6 +2,8 @@ module Ember
   class CannedResponseFoldersController < ApiApplicationController
     include HelpdeskAccessMethods
 
+    SLAVE_ACTIONS = %w(index show).freeze
+
     decorate_views
 
     skip_before_filter :load_objects, only: [:index]

@@ -27,8 +27,11 @@ class ApiApplicationController < MetalApiController
   # All before filters should be here. Should not be moved to concern. As the order varies for API and Web
   around_filter :select_shard
   prepend_before_filter :determine_pod
+
+  around_filter :run_on_slave, if: :on_slave?
+
   before_filter :unset_current_portal, :unset_shard_for_payload, :set_current_account, :set_shard_for_payload
-  before_filter :ensure_proper_fd_domain, :ensure_proper_protocol
+  before_filter :ensure_proper_fd_domain, :ensure_proper_protocol, unless: :private_api?
   include Authority::FreshdeskRails::ControllerHelpers
   before_filter :check_account_state
   before_filter :set_time_zone, :check_day_pass_usage_with_user_time_zone, :set_msg_id
@@ -71,6 +74,9 @@ class ApiApplicationController < MetalApiController
 
   SINGULAR_RESPONSE_FOR = %w(show create update).freeze
   COLLECTION_RESPONSE_FOR = %w(index search).freeze
+
+  SLAVE_ACTIONS = %w(index).freeze
+
   def index
     load_objects
   end
@@ -689,6 +695,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def run_on_slave
+      Rails.logger.debug "---- Running #{self.class.name}##{action_name} on slave db----"
       Sharding.run_on_slave do
         yield
       end
@@ -742,4 +749,7 @@ class ApiApplicationController < MetalApiController
       end
     end
 
+    def on_slave?
+      get_request? && self.class::SLAVE_ACTIONS.include?(action_name)
+    end
 end

@@ -1,6 +1,7 @@
 module Ember::Dashboard
   class ActivitiesController < ApiApplicationController
     include HelperConcern
+    around_filter :run_on_slave
 
     decorate_views(decorate_objects: [:index])
 

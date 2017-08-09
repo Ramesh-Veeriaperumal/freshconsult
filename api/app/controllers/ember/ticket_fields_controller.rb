@@ -1,6 +1,7 @@
 class Ember::TicketFieldsController < ::ApiTicketFieldsController
 
   around_filter :run_on_db, :only => :index
+  skip_around_filter :run_on_slave
 
   PRELOAD_ASSOC = [
     :nested_ticket_fields,

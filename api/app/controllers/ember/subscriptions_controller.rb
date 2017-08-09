@@ -4,6 +4,7 @@ module Ember
     include HelperConcern
     include BulkActionConcern
 
+    SLAVE_ACTIONS = %w(watchers).freeze
     def watchers
       @items = @item.subscriptions.map(&:user_id)
     end
@@ -35,7 +36,7 @@ module Ember
       @items.each do |item|
         subscription = item.subscriptions.build(user_id: params[cname][:user_id])
         unless create_watcher(item, subscription)
-          @items_failed << item 
+          @items_failed << item
           (@validation_errors ||= {}).merge!(item.display_id => subscription)
         end
       end

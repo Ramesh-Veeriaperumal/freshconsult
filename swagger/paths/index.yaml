@@ -119,6 +119,8 @@
   $ref: ./contacts/bulk_whitelist.yaml
 /contacts/merge:
   $ref: ./contacts/merge.yaml
+/contacts/import:
+  $ref: ./contacts/import_crud.yaml
 
 /companies:
   $ref: ./companies/list_and_create.yaml

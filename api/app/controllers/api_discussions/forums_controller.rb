@@ -1,6 +1,7 @@
 module ApiDiscussions
   class ForumsController < ApiApplicationController
     include DiscussionMonitorConcern
+    SLAVE_ACTIONS = %w(index category_forums).freeze
     before_filter :category_exists?, only: [:category_forums]
     COLLECTION_RESPONSE_FOR = ['category_forums'].freeze
     def destroy
