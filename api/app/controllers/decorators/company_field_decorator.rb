@@ -1,6 +1,6 @@
 class CompanyFieldDecorator < ApiDecorator
   delegate :choices, :field_type, :id, :name, :label, :position, :required_for_agent,
-           :default_field?, to: :record
+           :default_field?, :field_options, to: :record
 
   def name
     default_field? ? record.name : CustomFieldDecorator.display_name(record.name)

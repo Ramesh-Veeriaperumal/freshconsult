@@ -21,7 +21,7 @@ module Ember
     before_filter :disable_notification, only: [:update, :update_properties], if: :notification_not_required?
     after_filter  :enable_notification, only: [:update, :update_properties], if: :notification_not_required?
 
-    around_filter :run_on_db, :only => :index
+    around_filter :run_on_db, only: :index
     around_filter :use_time_zone, only: [:index, :export_csv]
 
     def index
@@ -210,7 +210,8 @@ module Ember
       def decorator_options
         options = {}
         if (sideload_options || []).include?('requester')
-          options.merge(contact_name_mapping: contact_name_mapping, company_name_mapping: company_name_mapping)
+          options[:contact_name_mapping] = contact_name_mapping
+          options[:company_name_mapping] = company_name_mapping
         end
         super(options)
       end
@@ -366,8 +367,8 @@ module Ember
           cname_params[:end_date] = Time.zone.parse(cname_params[:end_date]).end_of_day.to_s(:db)
         end
 
-        #set_default_filter
-        cname_params[:filter_name] = "all_tickets" if cname_params[:filter_name].blank? && cname_params[:filter_key].blank? && cname_params[:data_hash].blank?
+        # set_default_filter
+        cname_params[:filter_name] = 'all_tickets' if cname_params[:filter_name].blank? && cname_params[:filter_key].blank? && cname_params[:data_hash].blank?
         # When there is no data hash sent selecting all_tickets instead of new_and_my_open
 
         cname_params[:ticket_fields] = merge_custom_fields(:ticket_fields, true)
@@ -384,7 +385,7 @@ module Ember
         })
       end
 
-      def merge_custom_fields(field_type, prefix=nil)
+      def merge_custom_fields(field_type, prefix = nil)
         if cname_params[field_type]
           request_params = cname_params[field_type].except(:custom_fields)
           return request_params.merge(custom_field_name(field_type)) if prefix
@@ -396,11 +397,11 @@ module Ember
         fields = []
         if cname_params[field_type][:custom_fields]
           cname_params[field_type][:custom_fields].each do |key, value|
-            if field_type == :ticket_fields
-              fields << { "#{key}_#{Account.current.id}" => value }
-            else
-              fields << { "cf_#{key}" => value}
-            end
+            fields << if field_type == :ticket_fields
+                        { "#{key}_#{Account.current.id}" => value }
+                      else
+                        { "cf_#{key}" => value }
+                      end
           end
         end
         fields.inject(:merge) || {}
