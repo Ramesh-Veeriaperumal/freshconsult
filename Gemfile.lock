@@ -278,7 +278,7 @@ PATH
 PATH
   remote: vendor/gems/custom_fields-0.1
   specs:
-    custom_fields (0.1-x86_64-darwin-14)
+    custom_fields (0.1)
       acts_as_list (= 0.1.4)
       rails (~> 3.2.18)
 
@@ -1490,4 +1490,4 @@ DEPENDENCIES
   yui-compressor!
 
 BUNDLED WITH
-   1.14.6
+   1.10.6

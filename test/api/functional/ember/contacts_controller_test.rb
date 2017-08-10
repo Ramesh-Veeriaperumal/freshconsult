@@ -5,6 +5,7 @@ module Ember
     include AttachmentsTestHelper
     include ContactFieldsHelper
     include TicketsTestHelper
+    include ArchiveTicketTestHelper
 
     def setup
       super
@@ -16,7 +17,7 @@ module Ember
     def initial_setup
       @private_api = true
       return if @@initial_setup_run
-      
+
       @account.features.multiple_user_companies.create
       @account.reload
 
@@ -39,17 +40,9 @@ module Ember
       }
     end
 
-    def enable_archive_tickets(&block)
-      @account.enable_ticket_archiving(0)
-      yield
-      @account.account_additional_settings.additional_settings[:archive_days] = nil
-      @account.account_additional_settings.save
-      @account.features.archive_tickets.destroy
-    end
-
     def test_create_with_incorrect_avatar_type
-      params_hash = contact_params_hash.merge({avatar_id: 'ABC'})
-      post :create, construct_params({version: 'private'}, params_hash)
+      params_hash = contact_params_hash.merge(avatar_id: 'ABC')
+      post :create, construct_params({ version: 'private' }, params_hash)
       match_json([bad_request_error_pattern(:avatar_id, :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
       assert_response 400
     end
@@ -57,10 +50,10 @@ module Ember
     def test_create_with_avatar_and_avatar_id
       attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
-      params_hash = contact_params_hash.merge({avatar_id: attachment_id, avatar: file})
+      params_hash = contact_params_hash.merge(avatar_id: attachment_id, avatar: file)
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-      @request.env['CONTENT_TYPE'] = 'multipart/form-data' 
-      post :create, construct_params({version: 'private'}, params_hash)
+      @request.env['CONTENT_TYPE'] = 'multipart/form-data'
+      post :create, construct_params({ version: 'private' }, params_hash)
       DataTypeValidator.any_instance.unstub(:valid_type?)
       match_json([bad_request_error_pattern(:avatar_id, :only_avatar_or_avatar_id)])
       assert_response 400
@@ -69,17 +62,17 @@ module Ember
     def test_create_with_invalid_avatar_id
       attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       invalid_id = attachment_id + 10
-      params_hash = contact_params_hash.merge({avatar_id: invalid_id})
-      post :create, construct_params({version: 'private'}, params_hash)
+      params_hash = contact_params_hash.merge(avatar_id: invalid_id)
+      post :create, construct_params({ version: 'private' }, params_hash)
       match_json([bad_request_error_pattern(:avatar_id, :invalid_list, list: invalid_id.to_s)])
       assert_response 400
     end
 
     def test_create_with_invalid_avatar_size
       attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
-      params_hash = contact_params_hash.merge({avatar_id: attachment_id})
+      params_hash = contact_params_hash.merge(avatar_id: attachment_id)
       Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(20_000_000)
-      post :create, construct_params({version: 'private'}, params_hash)
+      post :create, construct_params({ version: 'private' }, params_hash)
       Helpdesk::Attachment.any_instance.unstub(:content_file_size)
       match_json([bad_request_error_pattern(:avatar_id, :invalid_size, max_size: '5 MB', current_size: '19.1 MB')])
       assert_response 400
@@ -87,8 +80,8 @@ module Ember
 
     def test_create_with_invalid_avatar_extension
       attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
-      params_hash = contact_params_hash.merge({avatar_id: attachment_id})
-      post :create, construct_params({version: 'private'}, params_hash)
+      params_hash = contact_params_hash.merge(avatar_id: attachment_id)
+      post :create, construct_params({ version: 'private' }, params_hash)
       match_json([bad_request_error_pattern(:avatar_id, :upload_jpg_or_png_file, current_extension: '.txt')])
       assert_response 400
     end
@@ -96,9 +89,9 @@ module Ember
     def test_create_with_errors
       file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
       avatar_id = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
-      params_hash = contact_params_hash.merge({avatar_id: avatar_id})
+      params_hash = contact_params_hash.merge(avatar_id: avatar_id)
       User.any_instance.stubs(:save).returns(false)
-      post :create, construct_params({version: 'private'}, params_hash)
+      post :create, construct_params({ version: 'private' }, params_hash)
       User.any_instance.unstub(:save)
       assert_response 500
     end
@@ -106,8 +99,8 @@ module Ember
     def test_create_with_avatar_id
       file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
       avatar_id = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
-      params_hash = contact_params_hash.merge({avatar_id: avatar_id})
-      post :create, construct_params({version: 'private'}, params_hash)
+      params_hash = contact_params_hash.merge(avatar_id: avatar_id)
+      post :create, construct_params({ version: 'private' }, params_hash)
       assert_response 201
       match_json(private_api_contact_pattern(User.last))
       match_json(private_api_contact_pattern(User.last))
@@ -120,17 +113,17 @@ module Ember
       company_ids = Company.first(2).map(&:id)
       @account.features.multiple_user_companies.destroy
       @account.reload
-      post :create, construct_params({version: 'private'},  name: Faker::Lorem.characters(10),
-                                          email: Faker::Internet.email,
-                                          company: {
-                                            id: company_ids[0],
-                                            view_all_tickets: true
-                                          })
+      post :create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
+                                                             email: Faker::Internet.email,
+                                                             company: {
+                                                               id: company_ids[0],
+                                                               view_all_tickets: true
+                                                             })
       assert_response 201
       match_json(private_api_contact_pattern(User.last))
       assert User.last.user_companies.find_by_default(true).company_id == company_ids[0]
       assert User.last.user_companies.find_by_default(true).client_manager == true
-      assert User.last.user_companies.where(:default => false) == []
+      assert User.last.user_companies.where(default: false) == []
       @account.features.multiple_user_companies.create
       @account.reload
     end
@@ -141,34 +134,34 @@ module Ember
       @account.reload
       sample_user = add_new_user(@account)
       company_ids = Company.first(2).map(&:id)
-      put :update, construct_params({version: 'private', id: sample_user.id},
-                                          company: {
-                                            id: company_ids[0],
-                                            view_all_tickets: true
-                                          })
+      put :update, construct_params({ version: 'private', id: sample_user.id },
+                                    company: {
+                                      id: company_ids[0],
+                                      view_all_tickets: true
+                                    })
       assert_response 201
       match_json(private_api_contact_pattern(User.last))
       assert User.last.user_companies.find_by_default(true).company_id == company_ids[0]
       assert User.last.user_companies.find_by_default(true).client_manager == true
-      assert User.last.user_companies.where(:default => false) == []
+      assert User.last.user_companies.where(default: false) == []
       @account.features.multiple_user_companies.create
       @account.reload
     end
 
     def test_create_contact_with_other_companies
       company_ids = Company.first(2).map(&:id)
-      post :create, construct_params({version: 'private'},  name: Faker::Lorem.characters(10),
-                                          email: Faker::Internet.email,
-                                          company: {
-                                            id: company_ids[0],
-                                            view_all_tickets: true
-                                          },
-                                          other_companies: [
-                                              {
-                                                id: company_ids[1],
-                                                view_all_tickets: true
-                                              }
-                                            ])
+      post :create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
+                                                             email: Faker::Internet.email,
+                                                             company: {
+                                                               id: company_ids[0],
+                                                               view_all_tickets: true
+                                                             },
+                                                             other_companies: [
+                                                               {
+                                                                 id: company_ids[1],
+                                                                 view_all_tickets: true
+                                                               }
+                                                             ])
       assert_response 201
       match_json(private_api_contact_pattern(User.last))
       assert User.last.user_companies.find_by_default(true).company_id == company_ids[0]
@@ -180,24 +173,24 @@ module Ember
     def test_create_contact_with_other_companies_name
       comp_name1 = Faker::Lorem.characters(10)
       comp_name2 = Faker::Lorem.characters(10)
-      post :create, construct_params({version: 'private'},  name: Faker::Lorem.characters(10),
-                                          email: Faker::Internet.email,
-                                          company: {
-                                            name: comp_name1,
-                                            view_all_tickets: true
-                                          },
-                                          other_companies: [
-                                              {
-                                                name: comp_name2,
-                                                view_all_tickets: true
-                                              }
-                                            ])
+      post :create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
+                                                             email: Faker::Internet.email,
+                                                             company: {
+                                                               name: comp_name1,
+                                                               view_all_tickets: true
+                                                             },
+                                                             other_companies: [
+                                                               {
+                                                                 name: comp_name2,
+                                                                 view_all_tickets: true
+                                                               }
+                                                             ])
       assert_response 201
       match_json(private_api_contact_pattern(User.last))
       company_1 = Company.find_by_name(comp_name1)
       company_2 = Company.find_by_name(comp_name2)
-      refute company_1 == nil
-      refute company_2 == nil
+      refute company_1.nil?
+      refute company_2.nil?
       assert User.last.user_companies.find_by_default(true).company_id == company_1.id
       assert User.last.user_companies.find_by_default(true).client_manager == true
       assert User.last.user_companies.find_by_default(false).company_id == company_2.id
@@ -210,102 +203,103 @@ module Ember
       @account.reload
       sample_user = add_new_user(@account)
       company_ids = Company.first(2).map(&:id)
-      put :update, construct_params({version: 'private', id: sample_user.id},
-                                          company: {
-                                            id: company_ids[0],
-                                            view_all_tickets: true
-                                          },
-                                          other_companies: [
-                                              {
-                                                id: company_ids[1],
-                                                view_all_tickets: true
-                                              }
-                                            ])
+      put :update, construct_params({ version: 'private', id: sample_user.id },
+                                    company: {
+                                      id: company_ids[0],
+                                      view_all_tickets: true
+                                    },
+                                    other_companies: [
+                                      {
+                                        id: company_ids[1],
+                                        view_all_tickets: true
+                                      }
+                                    ])
       assert_response 400
-      match_json([bad_request_error_pattern(:other_companies, 
-        :require_feature_for_attribute, 
-        code: :inaccessible_field, 
-        attribute: 'other_companies', 
-        feature: :multiple_user_companies)])
+      match_json([bad_request_error_pattern(:other_companies,
+                                            :require_feature_for_attribute,
+                                            code: :inaccessible_field,
+                                            attribute: 'other_companies',
+                                            feature: :multiple_user_companies)])
       @account.features.multiple_user_companies.create
       @account.reload
     end
 
     def test_error_in_create_contact_with_other_companies
       company_ids = Company.first(2).map(&:id)
-      post :create, construct_params({version: 'private'},  name: Faker::Lorem.characters(10),
-                                          email: Faker::Internet.email,
-                                          company: {
-                                            id: company_ids[0],
-                                            view_all_tickets: true
-                                          },
-                                          other_companies: [
-                                              {
-                                                id: company_ids[0],
-                                                view_all_tickets: true
-                                              }
-                                            ])
+      post :create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
+                                                             email: Faker::Internet.email,
+                                                             company: {
+                                                               id: company_ids[0],
+                                                               view_all_tickets: true
+                                                             },
+                                                             other_companies: [
+                                                               {
+                                                                 id: company_ids[0],
+                                                                 view_all_tickets: true
+                                                               }
+                                                             ])
       assert_response 400
       match_json([bad_request_error_pattern(
-        'other_companies', 
+        'other_companies',
         :cant_add_primary_resource_to_others,
-        resource: "#{company_ids[0]}",
-        status: "default company",
-        attribute: 'other_companies')])
+        resource: (company_ids[0]).to_s,
+        status: 'default company',
+        attribute: 'other_companies'
+      )])
     end
 
     def test_error_in_create_contact_with_other_companies_format
       company_ids = Company.first(2).map(&:id)
-      post :create, construct_params({version: 'private'},  name: Faker::Lorem.characters(10),
-                                          email: Faker::Internet.email,
-                                          company: {
-                                            id: company_ids[0],
-                                            view_all_tickets: true
-                                          },
-                                          other_companies: [
-                                              {
-                                                company_id: company_ids[0],
-                                                view_all_tickets: true
-                                              }
-                                            ])
+      post :create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
+                                                             email: Faker::Internet.email,
+                                                             company: {
+                                                               id: company_ids[0],
+                                                               view_all_tickets: true
+                                                             },
+                                                             other_companies: [
+                                                               {
+                                                                 company_id: company_ids[0],
+                                                                 view_all_tickets: true
+                                                               }
+                                                             ])
       assert_response 400
-      match_json([{:field => "company_id", 
-        :message => "Unexpected/invalid field in request", 
-        :code => :invalid_value}])
+      match_json([{ field: 'company_id',
+                    message: 'Unexpected/invalid field in request',
+                    code: :invalid_value }])
     end
 
     def test_error_in_create_contact_with_other_companies_duplicates
       company_ids = Company.first(2).map(&:id)
-      post :create, construct_params({version: 'private'},  name: Faker::Lorem.characters(10),
-                                          email: Faker::Internet.email,
-                                          company: {
-                                            id: company_ids[0],
-                                            view_all_tickets: true
-                                          },
-                                          other_companies: [
-                                              {
-                                                id: company_ids[1],
-                                                view_all_tickets: true
-                                              },
-                                              {
-                                                id: company_ids[1],
-                                                view_all_tickets: true
-                                              }
-                                            ])
+      post :create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
+                                                             email: Faker::Internet.email,
+                                                             company: {
+                                                               id: company_ids[0],
+                                                               view_all_tickets: true
+                                                             },
+                                                             other_companies: [
+                                                               {
+                                                                 id: company_ids[1],
+                                                                 view_all_tickets: true
+                                                               },
+                                                               {
+                                                                 id: company_ids[1],
+                                                                 view_all_tickets: true
+                                                               }
+                                                             ])
       assert_response 400
       match_json([bad_request_error_pattern('other_companies', :duplicate_companies)])
     end
 
     def test_create_contact_without_default_company
       company_ids = Company.first(2).map(&:id)
-      post :create, construct_params({version: 'private'},  name: Faker::Lorem.characters(10),
-                                          email: Faker::Internet.email,
-                                          other_companies: [
-                                              {
-                                                id: company_ids[1],
-                                                view_all_tickets: true
-                                              }
-                                            ])
+      post :create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
+                                                             email: Faker::Internet.email,
+                                                             other_companies: [
+                                                               {
+                                                                 id: company_ids[1],
+                                                                 view_all_tickets: true
+                                                               }
+                                                             ])
       assert_response 201
       match_json(private_api_contact_pattern(User.last))
       assert User.last.user_companies.find_by_default(true).company_id == company_ids[1]
@@ -315,13 +309,13 @@ module Ember
     def test_update_contact_without_default_company
       sample_user = add_new_user(@account)
       company_ids = Company.first(2).map(&:id)
-      put :update, construct_params({version: 'private', id: sample_user.id},
-                                          other_companies: [
-                                              {
-                                                id: company_ids[1],
-                                                view_all_tickets: true
-                                              }
-                                            ])
+      put :update, construct_params({ version: 'private', id: sample_user.id },
+                                    other_companies: [
+                                      {
+                                        id: company_ids[1],
+                                        view_all_tickets: true
+                                      }
+                                    ])
       assert_response 200
       match_json(private_api_contact_pattern(sample_user.reload))
       assert sample_user.user_companies.find_by_default(true).company_id == company_ids[1]
@@ -331,17 +325,17 @@ module Ember
     def test_update_contact_with_default_company
       sample_user = add_new_user(@account)
       company_ids = Company.first(2).map(&:id)
-      put :update, construct_params({version: 'private', id: sample_user.id},
-                                          company: {
-                                            id: company_ids[0],
-                                            view_all_tickets: true
-                                          },
-                                          other_companies: [
-                                              {
-                                                id: company_ids[1],
-                                                view_all_tickets: true
-                                              }
-                                            ])
+      put :update, construct_params({ version: 'private', id: sample_user.id },
+                                    company: {
+                                      id: company_ids[0],
+                                      view_all_tickets: true
+                                    },
+                                    other_companies: [
+                                      {
+                                        id: company_ids[1],
+                                        view_all_tickets: true
+                                      }
+                                    ])
       assert_response 200
       match_json(private_api_contact_pattern(sample_user.reload))
       assert sample_user.user_companies.find_by_default(true).company_id == company_ids[0]
@@ -354,23 +348,23 @@ module Ember
       sample_user = add_new_user(@account)
       comp_name1 = Faker::Lorem.characters(10)
       comp_name2 = Faker::Lorem.characters(10)
-      put :update, construct_params({version: 'private', id: sample_user.id},
-                                          company: {
-                                            name: comp_name1,
-                                            view_all_tickets: true
-                                          },
-                                          other_companies: [
-                                              {
-                                                name: comp_name2,
-                                                view_all_tickets: true
-                                              }
-                                            ])
+      put :update, construct_params({ version: 'private', id: sample_user.id },
+                                    company: {
+                                      name: comp_name1,
+                                      view_all_tickets: true
+                                    },
+                                    other_companies: [
+                                      {
+                                        name: comp_name2,
+                                        view_all_tickets: true
+                                      }
+                                    ])
       assert_response 200
       match_json(private_api_contact_pattern(sample_user.reload))
       company_1 = Company.find_by_name(comp_name1)
       company_2 = Company.find_by_name(comp_name2)
-      refute company_1 == nil
-      refute company_2 == nil
+      refute company_1.nil?
+      refute company_2.nil?
       assert sample_user.user_companies.find_by_default(true).company_id == company_1.id
       assert sample_user.user_companies.find_by_default(true).client_manager == true
       assert sample_user.user_companies.find_by_default(false).company_id == company_2.id
@@ -380,17 +374,17 @@ module Ember
     def test_update_contact_with_default_company_and_client_manager
       sample_user = add_new_user(@account)
       company_ids = Company.first(2).map(&:id)
-      put :update, construct_params({version: 'private', id: sample_user.id},
-                                          company: {
-                                            id: company_ids[0],
-                                            view_all_tickets: false
-                                          },
-                                          other_companies: [
-                                              {
-                                                id: company_ids[1],
-                                                view_all_tickets: false
-                                              }
-                                            ])
+      put :update, construct_params({ version: 'private', id: sample_user.id },
+                                    company: {
+                                      id: company_ids[0],
+                                      view_all_tickets: false
+                                    },
+                                    other_companies: [
+                                      {
+                                        id: company_ids[1],
+                                        view_all_tickets: false
+                                      }
+                                    ])
       assert_response 200
       match_json(private_api_contact_pattern(sample_user.reload))
       assert sample_user.user_companies.find_by_default(true).company_id == company_ids[0]
@@ -402,18 +396,18 @@ module Ember
     def test_create_and_update_contact_with_default_company_and_client_manager
       company_ids = Company.first(2).map(&:id)
       sample_user = create_contact_with_other_companies(@account, company_ids)
-      
-      put :update, construct_params({version: 'private', id: sample_user.id},
-                                          company: {
-                                            id: company_ids[0],
-                                            view_all_tickets: false
-                                          },
-                                          other_companies: [
-                                              {
-                                                id: company_ids[1],
-                                                view_all_tickets: false
-                                              }
-                                            ])
+
+      put :update, construct_params({ version: 'private', id: sample_user.id },
+                                    company: {
+                                      id: company_ids[0],
+                                      view_all_tickets: false
+                                    },
+                                    other_companies: [
+                                      {
+                                        id: company_ids[1],
+                                        view_all_tickets: false
+                                      }
+                                    ])
       assert_response 200
       match_json(private_api_contact_pattern(sample_user.reload))
       assert sample_user.user_companies.find_by_default(true).company_id == company_ids[0]
@@ -425,27 +419,25 @@ module Ember
     def test_update_contact_by_removing_companies
       company_ids = Company.first(2).map(&:id)
       sample_user = create_contact_with_other_companies(@account, company_ids)
-      
-      put :update, construct_params({version: 'private', id: sample_user.id},
-                                          company: {
-                                            id: company_ids[0],
-                                            view_all_tickets: false
-                                          },
-                                          other_companies: [])
+
+      put :update, construct_params({ version: 'private', id: sample_user.id },
+                                    company: {
+                                      id: company_ids[0],
+                                      view_all_tickets: false
+                                    },
+                                    other_companies: [])
       assert_response 200
       match_json(private_api_contact_pattern(sample_user.reload))
       assert sample_user.user_companies.find_by_default(true).company_id == company_ids[0]
       assert sample_user.user_companies.find_by_default(true).client_manager == false
-      assert sample_user.user_companies.find_by_default(false) == nil
-      assert sample_user.user_companies.find_by_company_id(company_ids[1]) == nil
+      assert sample_user.user_companies.find_by_default(false).nil?
+      assert sample_user.user_companies.find_by_company_id(company_ids[1]).nil?
     end
-
-
 
     # Show User
     def test_show_a_contact
       sample_user = add_new_user(@account)
-      get :show, controller_params({ version: 'private', id: sample_user.id })
+      get :show, controller_params(version: 'private', id: sample_user.id)
       match_json(private_api_contact_pattern(sample_user.reload))
       assert_response 200
     end
@@ -454,7 +446,7 @@ module Ember
       file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
       sample_user = add_new_user(@account)
       sample_user.build_avatar(content_content_type: file.content_type, content_file_name: file.original_filename)
-      get :show, controller_params({ version: 'private', id: sample_user.id })
+      get :show, controller_params(version: 'private', id: sample_user.id)
       match_json(private_api_contact_pattern(sample_user.reload))
       assert_response 200
     end
@@ -462,7 +454,7 @@ module Ember
     def test_show_a_contact_with_other_companies
       company_ids = Company.first(2).map(&:id)
       sample_user = create_contact_with_other_companies(@account, company_ids)
-      get :show, controller_params({ version: 'private', id: sample_user.id })
+      get :show, controller_params(version: 'private', id: sample_user.id)
       match_json(private_api_contact_pattern(sample_user.reload))
       assert_response 200
     end
@@ -470,85 +462,85 @@ module Ember
     def test_show_a_contact_with_include_company
       company_ids = Company.first(2).map(&:id)
       sample_user = create_contact_with_other_companies(@account, company_ids)
-      get :show, controller_params({ version: 'private', id: sample_user.id, include: 'company' })
-      match_json(private_api_contact_pattern({:include => 'company'}, true, sample_user.reload))
+      get :show, controller_params(version: 'private', id: sample_user.id, include: 'company')
+      match_json(private_api_contact_pattern({ include: 'company' }, true, sample_user.reload))
       assert_response 200
     end
 
     def test_show_a_contact_with_include_company_other_companies
       sample_user = add_new_user(@account)
-      get :show, controller_params({ version: 'private', id: sample_user.id })
+      get :show, controller_params(version: 'private', id: sample_user.id)
       match_json(private_api_contact_pattern(sample_user.reload))
       assert_response 200
     end
 
     def test_show_a_non_existing_contact
-      get :show, controller_params({ version: 'private', id: 0 })
+      get :show, controller_params(version: 'private', id: 0)
       assert_response :missing
     end
 
     def test_deletion
       contact_id = add_new_user(@account).id
-      delete :destroy, controller_params({version: 'private', id: contact_id})
+      delete :destroy, controller_params(version: 'private', id: contact_id)
       assert_response 204
     end
 
     def test_deletion_of_non_existing_contact
       contact_id = add_new_user(@account).id + 10
-      delete :destroy, controller_params({version: 'private', id: contact_id})
+      delete :destroy, controller_params(version: 'private', id: contact_id)
       assert_response 404
     end
 
     def test_deletion_of_deleted_contact
       contact = add_new_user(@account, deleted: true)
-      delete :destroy, controller_params({version: 'private', id: contact.id})
+      delete :destroy, controller_params(version: 'private', id: contact.id)
       assert_response 405
     end
 
     def test_deletion_with_errors
       contact = add_new_user(@account)
       User.any_instance.stubs(:save).returns(false)
-      User.any_instance.stubs(:errors).returns(:name => 'cannot be nil')
-      delete :destroy, controller_params({version: 'private', id: contact.id})
+      User.any_instance.stubs(:errors).returns(name: 'cannot be nil')
+      delete :destroy, controller_params(version: 'private', id: contact.id)
       User.any_instance.unstub(:save)
       User.any_instance.unstub(:errors)
       assert_response 400
     end
 
     def test_restore
-      contact = add_new_user(@account, {deleted: true})
-      put :restore, controller_params({version: 'private', id: contact.id})
+      contact = add_new_user(@account, deleted: true)
+      put :restore, controller_params(version: 'private', id: contact.id)
       assert_response 204
     end
 
     def test_restoring_non_existing_contact
       contact_id = add_new_user(@account).id + 10
-      put :restore, controller_params({version: 'private', id: contact_id})
+      put :restore, controller_params(version: 'private', id: contact_id)
       assert_response 404
     end
 
     def test_restoring_active_contact
       contact_id = add_new_user(@account).id
-      put :restore, controller_params({version: 'private', id: contact_id})
+      put :restore, controller_params(version: 'private', id: contact_id)
       assert_response 404
     end
 
     def test_send_invite
       contact = add_new_user(@account, active: false)
-      put :send_invite, controller_params({version: 'private', id: contact.id})
+      put :send_invite, controller_params(version: 'private', id: contact.id)
       assert_response 204
     end
 
     def test_send_invite_to_active_contact
       contact = add_new_user(@account)
-      put :send_invite, controller_params({version: 'private', id: contact.id})
+      put :send_invite, controller_params(version: 'private', id: contact.id)
       match_json([bad_request_error_pattern('id', :unable_to_perform)])
       assert_response 400
     end
 
     def test_send_invite_to_deleted_contact
       contact = add_new_user(@account, deleted: true, active: false)
-      put :send_invite, controller_params({version: 'private', id: contact.id})
+      put :send_invite, controller_params(version: 'private', id: contact.id)
       match_json([bad_request_error_pattern('id', :unable_to_perform)])
       assert_response 400
     end
@@ -559,7 +551,7 @@ module Ember
       rand(2..10).times do
         contact_ids << add_new_user(@account, tags: tags.join(', ')).id
       end
-      get :index, controller_params({version: 'private' , tag: tags[0]})
+      get :index, controller_params(version: 'private', tag: tags[0])
       assert_response 200
       assert response.api_meta[:count] == contact_ids.size
     end
@@ -569,7 +561,7 @@ module Ember
       rand(2..10).times do
         contact_ids << add_new_user(@account).id
       end
-      get :index, controller_params({version: 'private', tag: Faker::Lorem.word})
+      get :index, controller_params(version: 'private', tag: Faker::Lorem.word)
       assert_response 200
       assert response.api_meta[:count] == 0
     end
@@ -579,7 +571,7 @@ module Ember
         contact = add_new_user(@account)
         add_avatar_to_user(contact)
       end
-      get :index, controller_params({ version: 'private' })
+      get :index, controller_params(version: 'private')
       assert_response 200
       match_json(private_api_index_contact_pattern)
     end
@@ -597,9 +589,9 @@ module Ember
       end
       invalid_ids = [contact_ids.last + 20, contact_ids.last + 30]
       ids_to_delete = [*contact_ids, *invalid_ids]
-      put :bulk_delete, construct_params({ version: 'private' }, {ids: ids_to_delete})
+      put :bulk_delete, construct_params({ version: 'private' }, ids: ids_to_delete)
       failures = {}
-      invalid_ids.each { |id| failures[id] = { :id => :"is invalid" } }
+      invalid_ids.each { |id| failures[id] = { id: :"is invalid" } }
       match_json(partial_success_response_pattern(contact_ids, failures))
       assert_response 202
     end
@@ -611,9 +603,9 @@ module Ember
       end
       ids_to_delete = contacts.map(&:id)
       User.any_instance.stubs(:save).returns(false)
-      put :bulk_delete, construct_params({ version: 'private' }, {ids: ids_to_delete})
+      put :bulk_delete, construct_params({ version: 'private' }, ids: ids_to_delete)
       failures = {}
-      ids_to_delete.each { |id| failures[id] = { :id => :unable_to_perform } }
+      ids_to_delete.each { |id| failures[id] = { id: :unable_to_perform } }
       match_json(partial_success_response_pattern([], failures))
       assert_response 202
     end
@@ -623,7 +615,7 @@ module Ember
       rand(2..10).times do
         contact_ids << add_new_user(@account).id
       end
-      put :bulk_delete, construct_params({ version: 'private' }, {ids: contact_ids})
+      put :bulk_delete, construct_params({ version: 'private' }, ids: contact_ids)
       assert_response 204
     end
 
@@ -632,7 +624,7 @@ module Ember
       rand(2..10).times do
         contact_ids << add_new_user(@account, deleted: true).id
       end
-      put :bulk_restore, construct_params({ version: 'private' }, {ids: contact_ids})
+      put :bulk_restore, construct_params({ version: 'private' }, ids: contact_ids)
       assert_response 204
     end
 
@@ -641,9 +633,9 @@ module Ember
       rand(2..10).times do
         contact_ids << add_new_user(@account).id
       end
-      put :bulk_restore, construct_params({ version: 'private' }, {ids: contact_ids})
+      put :bulk_restore, construct_params({ version: 'private' }, ids: contact_ids)
       failures = {}
-      contact_ids.each { |id| failures[id] = { :id => :unable_to_perform } }
+      contact_ids.each { |id| failures[id] = { id: :unable_to_perform } }
       match_json(partial_success_response_pattern([], failures))
       assert_response 202
     end
@@ -653,7 +645,7 @@ module Ember
       rand(2..10).times do
         contact_ids << add_new_user(@account, active: false).id
       end
-      put :bulk_send_invite, construct_params({ version: 'private' }, {ids: contact_ids})
+      put :bulk_send_invite, construct_params({ version: 'private' }, ids: contact_ids)
       assert_response 204
     end
 
@@ -663,9 +655,9 @@ module Ember
         contact_ids << add_new_user(@account, active: false, deleted: true).id
       end
       valid_contact = add_new_user(@account, active: false)
-      put :bulk_send_invite, construct_params({ version: 'private' }, {ids: [*contact_ids, valid_contact.id]})
+      put :bulk_send_invite, construct_params({ version: 'private' }, ids: [*contact_ids, valid_contact.id])
       failures = {}
-      contact_ids.each { |id| failures[id] = { :id => :unable_to_perform } }
+      contact_ids.each { |id| failures[id] = { id: :unable_to_perform } }
       match_json(partial_success_response_pattern([valid_contact.id], failures))
       assert_response 202
     end
@@ -673,24 +665,24 @@ module Ember
     # Whitelist user
     def test_whitelist_contact
       sample_user = create_blocked_contact(@account)
-      put :whitelist, construct_params({ version: 'private' }, false).merge({ id: sample_user.id })
+      put :whitelist, construct_params({ version: 'private' }, false).merge(id: sample_user.id)
       assert_response 204
       confirm_user_whitelisting([sample_user.id])
     end
 
     def test_whitelist_an_invalid_contact
-      put :whitelist, construct_params({ version: 'private' }, false).merge({ id: 0 })
+      put :whitelist, construct_params({ version: 'private' }, false).merge(id: 0)
       assert_response 404
     end
 
     def test_whitelist_an_unblocked_contact
       sample_user = add_new_user(@account)
-      put :whitelist, construct_params({ version: 'private' }, false).merge({ id: sample_user.id })
+      put :whitelist, construct_params({ version: 'private' }, false).merge(id: sample_user.id)
       assert_response 400
       match_json([bad_request_error_pattern(:blocked, 'is false. You can whitelist only blocked users.')])
     end
 
-    #bulk whitelist users
+    # bulk whitelist users
     def test_bulk_whitelist_with_no_params
       put :bulk_whitelist, construct_params({ version: 'private' }, {})
       assert_response 400
@@ -705,9 +697,9 @@ module Ember
       last_id = contact_ids.max
       invalid_ids = [last_id + 50, last_id + 100]
       ids_to_whitelist = [*contact_ids, *invalid_ids]
-      put :bulk_whitelist, construct_params({ version: 'private' }, { ids: ids_to_whitelist })
+      put :bulk_whitelist, construct_params({ version: 'private' }, ids: ids_to_whitelist)
       failures = {}
-      invalid_ids.each { |id| failures[id] = { :id => :"is invalid" } }
+      invalid_ids.each { |id| failures[id] = { id: :"is invalid" } }
       match_json(partial_success_response_pattern(contact_ids, failures))
       assert_response 202
       confirm_user_whitelisting(contact_ids)
@@ -720,9 +712,9 @@ module Ember
       end
       ids_to_whitelist = contacts.map(&:id)
       User.any_instance.stubs(:save).returns(false)
-      put :bulk_whitelist, construct_params({ version: 'private' }, { ids: ids_to_whitelist })
+      put :bulk_whitelist, construct_params({ version: 'private' }, ids: ids_to_whitelist)
       failures = {}
-      ids_to_whitelist.each { |id| failures[id] = { :id => :unable_to_perform } }
+      ids_to_whitelist.each { |id| failures[id] = { id: :unable_to_perform } }
       match_json(partial_success_response_pattern([], failures))
       assert_response 202
     end
@@ -732,7 +724,7 @@ module Ember
       rand(2..10).times do
         contact_ids << create_blocked_contact(@account).id
       end
-      put :bulk_whitelist, construct_params({ version: 'private' }, { ids: contact_ids })
+      put :bulk_whitelist, construct_params({ version: 'private' }, ids: contact_ids)
       assert_response 204
       confirm_user_whitelisting(contact_ids)
     end
@@ -752,34 +744,34 @@ module Ember
       contact = add_new_user(@account, deleted: true)
       contact.deleted_at = Time.now
       contact.save
-      put :update_password, construct_params({ version: 'private', id: contact.id }, { password: random_password })
+      put :update_password, construct_params({ version: 'private', id: contact.id }, password: random_password)
       assert_response 400
       match_json(password_change_error_pattern(:not_allowed))
     end
 
     def test_update_password_for_deleted_contact
       contact = add_new_user(@account, deleted: true)
-      put :update_password, construct_params({ version: 'private', id: contact.id }, { password: random_password })
+      put :update_password, construct_params({ version: 'private', id: contact.id }, password: random_password)
       assert_response 400
       match_json(password_change_error_pattern(:not_allowed))
     end
 
     def test_update_password_for_agent
-      agent = add_agent_to_account(@account, { name: Faker::Name.name, email: Faker::Internet.email, active: 1, role: 1 })
-      put :update_password, construct_params({ version: 'private', id: agent.user.id }, { password: random_password })
+      agent = add_agent_to_account(@account, name: Faker::Name.name, email: Faker::Internet.email, active: 1, role: 1)
+      put :update_password, construct_params({ version: 'private', id: agent.user.id }, password: random_password)
       assert_response 404
     end
 
     def test_update_password_for_blocked_contact
       contact = create_blocked_contact(@account)
-      put :update_password, construct_params({ version: 'private', id: contact.id }, { password: random_password })
+      put :update_password, construct_params({ version: 'private', id: contact.id }, password: random_password)
       assert_response 400
       match_json(password_change_error_pattern(:not_allowed))
     end
 
     def test_update_password_for_contact_without_email
       contact = create_tweet_user
-      put :update_password, construct_params({ version: 'private', id: contact.id }, { password: random_password })
+      put :update_password, construct_params({ version: 'private', id: contact.id }, password: random_password)
       assert_response 400
       match_json(password_change_error_pattern(:not_allowed))
     end
@@ -793,20 +785,20 @@ module Ember
 
     def test_update_password_with_nil_value
       contact = add_new_user(@account, deleted: false, active: true)
-      put :update_password, construct_params({ version: 'private', id: contact.id }, { password: nil })
+      put :update_password, construct_params({ version: 'private', id: contact.id }, password: nil)
       assert_response 400
       match_json(password_change_error_pattern(:datatype_mismatch))
     end
 
     def test_update_password_for_password_policy_check
       contact = add_new_user(@account, deleted: false, active: true)
-      put :update_password, construct_params({ version: 'private', id: contact.id }, { password: random_password[0] })
+      put :update_password, construct_params({ version: 'private', id: contact.id }, password: random_password[0])
       assert_response 400
     end
 
     def test_update_password_with_proper_password
       contact = add_new_user(@account, deleted: false, active: true)
-      put :update_password, construct_params({ version: 'private', id: contact.id }, { password: random_password })
+      put :update_password, construct_params({ version: 'private', id: contact.id }, password: random_password)
       assert_response 204
     end
 
@@ -856,11 +848,11 @@ module Ember
       file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
       avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
       contact = add_new_user(@account, avatar: avatar)
-      put :update, construct_params({ version: 'private', id: contact.id }, { avatar_id: nil })
+      put :update, construct_params({ version: 'private', id: contact.id }, avatar_id: nil)
       assert_response 200
       contact.reload
       match_json(private_api_contact_pattern(contact))
-      assert contact.avatar == nil
+      assert contact.avatar.nil?
     end
 
     def test_update_change_avatar
@@ -868,7 +860,7 @@ module Ember
       avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
       contact = add_new_user(@account, avatar: avatar)
       new_avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
-      put :update, construct_params({ version: 'private', id: contact.id }, { avatar_id: new_avatar.id })
+      put :update, construct_params({ version: 'private', id: contact.id }, avatar_id: new_avatar.id)
       assert_response 200
       contact.reload
       match_json(private_api_contact_pattern(contact))
@@ -879,7 +871,7 @@ module Ember
       file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
       avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
       contact = add_new_user(@account)
-      put :update, construct_params({ version: 'private', id: contact.id }, { avatar_id: avatar.id })
+      put :update, construct_params({ version: 'private', id: contact.id }, avatar_id: avatar.id)
       assert_response 200
       contact.reload
       match_json(private_api_contact_pattern(contact))
@@ -891,10 +883,10 @@ module Ember
       avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
       contact = add_new_user(@account)
       other_contact = add_new_user(@account)
-      put :update, construct_params({ version: 'private', id: contact.id }, { avatar_id: avatar.id, email: other_contact.email})
+      put :update, construct_params({ version: 'private', id: contact.id }, avatar_id: avatar.id, email: other_contact.email)
       assert_response 409
       contact.reload
-      assert contact.avatar == nil
+      assert contact.avatar.nil?
     end
 
     # tests for contact activities

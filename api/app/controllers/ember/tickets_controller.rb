@@ -10,6 +10,8 @@ module Ember
 
     decorate_views(decorate_object: [:update_properties], decorate_objects: [:index, :search])
 
+    SLAVE_ACTIONS = %w(latest_note).freeze
+
     INDEX_PRELOAD_OPTIONS = [:ticket_states, :tags, :ticket_old_body, :schema_less_ticket, :flexifield, :ticket_status, { requester: [:avatar, :flexifield, :companies, :user_emails, :tags] }, :custom_survey_results].freeze
     DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
     SINGULAR_RESPONSE_FOR = %w(show create update split_note update_properties).freeze
@@ -352,11 +354,11 @@ module Ember
           contact_fields: (merge_custom_fields(:contact_fields) || {}).keys,
           company_fields: (merge_custom_fields(:company_fields)|| {}).keys
         })
-      end  
+      end
 
       def sanitize_export_params
         #set_date_filter
-        if !(cname_params[:date_filter].to_i == TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter])
+        if cname_params[:date_filter].to_i != TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter]
           cname_params[:start_date] = cname_params[:date_filter].to_i.days.ago.beginning_of_day.to_s(:db)
           cname_params[:end_date] = Time.now.end_of_day.to_s(:db)
         else
@@ -377,7 +379,7 @@ module Ember
         cname_params.merge!({
           export_fields: cname_params[:ticket_fields],
           data_hash: QueryHash.new(cname_params[:query_hash]).to_system_format,
-          current_user_id: api_current_user.id, 
+          current_user_id: api_current_user.id,
           portal_url: portal_url
         })
       end

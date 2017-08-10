@@ -63,6 +63,14 @@ module ImportCsvUtil
     csv_file.read.force_encoding('utf-8').encode('utf-16', :undef => :replace, :invalid => :replace, :replace => '').encode('utf-8')
   end
 
+  def file_name
+    session[:map_fields][:file_name]
+  end
+
+  def file_location
+    session[:map_fields][:file_path]
+  end
+
   def delete_import_file(file_location)
     AwsWrapper::S3Object.delete(file_location, S3_CONFIG[:bucket])
   end

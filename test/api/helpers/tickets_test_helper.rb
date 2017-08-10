@@ -388,6 +388,23 @@ module TicketsTestHelper
     pattern
   end
 
+  def bg_worker_update_pattern(params)
+    custom_fields_hash = {}
+    params[:custom_fields].each { |key, val| custom_fields_hash["#{key}_#{@account.id}".to_sym] = val }
+    {
+      description: params[:description],
+      subject: params[:subject],
+      priority: params[:priority],
+      status: params[:status],
+      ticket_type: params[:type],
+      responder_id: params[:responder_id],
+      due_by: params[:due_by],
+      frDueBy: params[:fr_due_by],
+      group_id: params[:group_id],
+      custom_field: custom_fields_hash
+    }
+  end
+
   def prime_association_pattern(ticket)
     prime_association = ticket.related_ticket? ? ticket.associated_prime_ticket('related') : ticket.associated_prime_ticket('child')
     return unless prime_association.present?

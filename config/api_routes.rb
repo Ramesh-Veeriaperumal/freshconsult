@@ -258,6 +258,8 @@ Helpkit::Application.routes.draw do
         put :bulk_whitelist
         post :merge, to: 'ember/contacts/merge#merge'
         post :export_csv
+        get :import, to: 'ember/customer_imports#index'
+        post :import, to: 'ember/customer_imports#create'
       end
       member do
         put :restore
@@ -339,6 +341,7 @@ Helpkit::Application.routes.draw do
     post '/search/autocomplete/agents/',        to: 'ember/search/autocomplete#agents'
     post '/search/autocomplete/companies/',     to: 'ember/search/autocomplete#companies'
     post '/search/autocomplete/tags/',          to: 'ember/search/autocomplete#tags'
+
   end
 
   pipe_routes = proc do

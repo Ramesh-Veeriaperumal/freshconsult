@@ -2202,6 +2202,80 @@
         }
       }
     },
+    "/contacts/import": {
+      "get": {
+        "tags": [
+          "import"
+        ],
+        "summary": "Import exists",
+        "description": "Responds with status details of in process import based on type value.",
+        "parameters": [
+          {
+            "name": "type",
+            "type": "string",
+            "description": "type of import (contact/company)",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Import exists"
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "404": {
+            "description": "Import not exists"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "import"
+        ],
+        "summary": "Create import",
+        "description": "To schedule import of contacts/companies",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "formData",
+            "description": "Type of import (contact/company)",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "file",
+            "in": "formData",
+            "description": "file to upload",
+            "required": true,
+            "type": "file"
+          },
+          {
+            "name": "fields",
+            "in": "formData",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/fields_map"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "401": {
+            "description": "Unauthorized action"
+          },
+          "409": {
+            "description": "Existing import in progress"
+          }
+        }
+      }
+    },
     "/companies": {
       "get": {
         "tags": [
@@ -5214,6 +5288,7 @@
         "ticket_state_filter": {
           "type": "string",
           "enum": [
+            "0",
             "1",
             "4",
             "7",
@@ -5309,6 +5384,12 @@
               "type": "string"
             },
             "first_response_status": {
+              "type": "string"
+            },
+            "internal_agent_name": {
+              "type": "string"
+            },
+            "internal_group_name": {
               "type": "string"
             },
             "custom_fields": {
@@ -5569,6 +5650,20 @@
               "type": "string"
             }
           }
+        }
+      }
+    },
+    "fields_map": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "required": true,
+          "description": "content of the ticket reply"
+        },
+        "fields": {
+          "type": "object",
+          "$ref": "#/definitions/map_field_to_header"
         }
       }
     },
@@ -7192,6 +7287,14 @@
           }
         }
       ]
+    },
+    "map_field_to_header": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "integer"
+        }
+      }
     },
     "meta": {
       "type": "object",

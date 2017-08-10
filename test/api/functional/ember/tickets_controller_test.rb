@@ -27,7 +27,7 @@ module Ember
       MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
       Account.current.features.es_v2_writes.destroy
       Account.current.reload
-      
+
       before_all
     end
 
@@ -39,7 +39,7 @@ module Ember
       @account.features.freshfone.create
       @account.features.forums.create
       @account.ticket_fields.custom_fields.each(&:destroy)
-      Helpdesk::TicketStatus.find(2).update_column(:stop_sla_timer, false)
+      Helpdesk::TicketStatus.find_by_status_id(2).update_column(:stop_sla_timer, false)
       @@ticket_fields = []
       @@custom_field_names = []
       @@ticket_fields << create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
@@ -47,7 +47,7 @@ module Ember
       @@ticket_fields << create_custom_field_dropdown('test_custom_dropdown', @@dropdown_choices)
       @@choices_custom_field_names = @@ticket_fields.map(&:name)
       CUSTOM_FIELDS.each do |custom_field|
-        next if %w[dropdown country state city].include?(custom_field)
+        next if %w(dropdown country state city).include?(custom_field)
         @@ticket_fields << create_custom_field("test_custom_#{custom_field}", custom_field)
         @@custom_field_names << @@ticket_fields.last.name
       end
@@ -418,21 +418,21 @@ module Ember
     end
 
     def test_create_cloud_files_with_no_app_id
-      cloud_file_params = [{ filename: "image.jpg", url: "https://www.dropbox.com/image.jpg"}]
+      cloud_file_params = [{ filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg' }]
       params = ticket_params_hash.merge(cloud_files: cloud_file_params)
       post :create, construct_params({ version: 'private' }, params)
       assert_response 400
     end
 
-     def test_create_cloud_files_with_no_file_name
-      cloud_file_params = [{ url: "https://www.dropbox.com/image.jpg" , application_id: 20}]
+    def test_create_cloud_files_with_no_file_name
+      cloud_file_params = [{ url: 'https://www.dropbox.com/image.jpg', application_id: 20 }]
       params = ticket_params_hash.merge(cloud_files: cloud_file_params)
       post :create, construct_params({ version: 'private' }, params)
       assert_response 400
     end
 
     def test_create_cloud_files_with_no_file_url
-      cloud_file_params = [{ filename: "image.jpg" , application_id: 20}]
+      cloud_file_params = [{ filename: 'image.jpg', application_id: 20 }]
       params = ticket_params_hash.merge(cloud_files: cloud_file_params)
       post :create, construct_params({ version: 'private' }, params)
       assert_response 400
@@ -759,10 +759,11 @@ module Ember
       rand(2..10).times do
         attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       end
-      params_hash = { 
+      params_hash = {
         subject: subject,
         description: description,
-        attachment_ids: attachment_ids }
+        attachment_ids: attachment_ids
+      }
       put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 200
       ticket.reload
@@ -807,72 +808,72 @@ module Ember
     end
 
     def test_update_properties_with_required_default_field_blank
-      Helpdesk::TicketField.where(name: "group").update_all(required: true)
+      Helpdesk::TicketField.where(name: 'group').update_all(required: true)
       group = create_group(@account)
       t = create_ticket({}, group)
       params_hash = { group_id: nil }
       put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 400
-      match_json([bad_request_error_pattern('group_id', :datatype_mismatch, { expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received })])
+      match_json([bad_request_error_pattern('group_id', :datatype_mismatch, expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received)])
     ensure
-      Helpdesk::TicketField.where(name: "group").update_all(required: false)
+      Helpdesk::TicketField.where(name: 'group').update_all(required: false)
     end
 
     def test_update_properties_with_required_default_field_blank_in_db
-      Helpdesk::TicketField.where(name: "group").update_all(required: true)
+      Helpdesk::TicketField.where(name: 'group').update_all(required: true)
       t = create_ticket
       params_hash = { status: 3 }
       put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 200
       match_json(ticket_show_pattern(t.reload))
     ensure
-      Helpdesk::TicketField.where(name: "group").update_all(required: false)
+      Helpdesk::TicketField.where(name: 'group').update_all(required: false)
     end
 
     def test_update_properties_closure_status_with_required_for_closure_default_field_blank
-      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: true)
+      Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: true)
       group = create_group(@account)
       t = create_ticket({}, group)
       params_hash = { status: 5, group_id: nil }
       put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 400
-      match_json([bad_request_error_pattern("group_id", :datatype_mismatch, { expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received })])
+      match_json([bad_request_error_pattern('group_id', :datatype_mismatch, expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received)])
     ensure
-      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: false)
+      Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: false)
     end
 
     def test_update_properties_closure_status_with_required_for_closure_default_field_blank_in_db
-      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: true)
+      Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: true)
       t = create_ticket
       params_hash = { status: 5 }
       put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 400
-      match_json([bad_request_error_pattern("group_id", :datatype_mismatch, { expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received })])
+      match_json([bad_request_error_pattern('group_id', :datatype_mismatch, expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received)])
     ensure
-      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: false)
+      Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: false)
     end
 
     def test_update_properties_of_closed_tickets_with_required_for_closure_default_field_blank
       group = create_group(@account)
       t = create_ticket({ status: 5 }, group)
-      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: true)
+      Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: true)
       params_hash = { group_id: nil }
       put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 400
-      match_json([bad_request_error_pattern("group_id", :datatype_mismatch, { expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received })])
+      match_json([bad_request_error_pattern('group_id', :datatype_mismatch, expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received)])
     ensure
-      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: false)
+      Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: false)
     end
 
     def test_update_properties_of_closed_tickets_with_required_for_closure_default_field_blank_in_db
       t = create_ticket(status: 5)
-      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: true)
+      Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: true)
       params_hash = { priority: 4 }
       put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 200
       match_json(ticket_show_pattern(t.reload))
     ensure
-      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: false)
+      Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: false)
     end
 
     def test_update_properties_with_required_custom_non_dropdown_field_blank_in_db
@@ -894,7 +895,7 @@ module Ember
       params_hash = { status: 5 }
       put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 400
-      match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, { expected_data_type: :String })])
+      match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, expected_data_type: :String)])
     ensure
       ticket_field.update_attribute(:required_for_closure, false)
     end
@@ -948,7 +949,7 @@ module Ember
     end
 
     def test_update_properties_with_required_default_field_with_incorrect_value
-      Helpdesk::TicketField.where(name: "group").update_all(required: true)
+      Helpdesk::TicketField.where(name: 'group').update_all(required: true)
       group = create_group(@account)
       t = create_ticket({}, group)
       params_hash = { group_id: group.id + 10 }
@@ -956,11 +957,11 @@ module Ember
       assert_response 400
       match_json([bad_request_error_pattern('group_id', :absent_in_db, resource: :group, attribute: :group_id)])
     ensure
-      Helpdesk::TicketField.where(name: "group").update_all(required: false)
+      Helpdesk::TicketField.where(name: 'group').update_all(required: false)
     end
 
     def test_update_properties_with_required_default_field_with_incorrect_value_in_db
-      Helpdesk::TicketField.where(name: "group").update_all(required: true)
+      Helpdesk::TicketField.where(name: 'group').update_all(required: true)
       group = create_group(@account)
       t = create_ticket
       t.update_attributes(group_id: group.id + 10)
@@ -969,11 +970,11 @@ module Ember
       assert_response 200
       match_json(ticket_show_pattern(t.reload))
     ensure
-      Helpdesk::TicketField.where(name: "group").update_all(required: false)
+      Helpdesk::TicketField.where(name: 'group').update_all(required: false)
     end
 
     def test_update_properties_closure_status_with_required_for_closure_default_field_with_incorrect_value
-      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: true)
+      Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: true)
       group = create_group(@account)
       t = create_ticket({}, group)
       params_hash = { status: 5, group_id: group.id + 10 }
@@ -981,24 +982,24 @@ module Ember
       assert_response 400
       match_json([bad_request_error_pattern('group_id', :absent_in_db, resource: :group, attribute: :group_id)])
     ensure
-      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: false)
+      Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: false)
     end
 
     def test_update_properties_closure_status_with_required_for_closure_default_field_with_incorrect_value_in_db
-      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: true)
+      Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: true)
       group = create_group(@account)
       t = create_ticket
       t.update_attributes(group_id: group.id + 10)
       params_hash = { status: 5 }
       put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 400
-      match_json([bad_request_error_pattern("group_id", :absent_in_db, resource: :group, attribute: :group_id)])
+      match_json([bad_request_error_pattern('group_id', :absent_in_db, resource: :group, attribute: :group_id)])
     ensure
-      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: false)
+      Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: false)
     end
 
     def test_update_properties_of_closed_tickets_with_required_for_closure_default_field_with_incorrect_value
-      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: true)
+      Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: true)
       group = create_group(@account)
       t = create_ticket({ status: 5 }, group)
       params_hash = { group_id: group.id + 10 }
@@ -1006,11 +1007,11 @@ module Ember
       assert_response 400
       match_json([bad_request_error_pattern('group_id', :absent_in_db, resource: :group, attribute: :group_id)])
     ensure
-      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: false)
+      Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: false)
     end
 
     def test_update_properties_of_closed_tickets_with_required_for_closure_default_field_with_incorrect_value_in_db
-      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: true)
+      Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: true)
       group = create_group(@account)
       t = create_ticket(status: 5)
       t.update_attributes(group_id: group.id + 10)
@@ -1019,13 +1020,13 @@ module Ember
       assert_response 200
       match_json(ticket_show_pattern(t.reload))
     ensure
-      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: false)
+      Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: false)
     end
 
     def test_update_properties_with_required_custom_non_dropdown_field_blank_with_incorrect_value_in_db
       ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_date_#{@account.id}" }
       ticket_field.update_attribute(:required, true)
-      t = create_ticket(custom_field: { ticket_field.name => 'Sample Text'})
+      t = create_ticket(custom_field: { ticket_field.name => 'Sample Text' })
       params_hash = { priority: 4 }
       put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 200
@@ -1041,7 +1042,7 @@ module Ember
       params_hash = { status: 5 }
       put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 400
-      match_json([bad_request_error_pattern(ticket_field.label, :invalid_date, { code: :missing_field, accepted: 'yyyy-mm-dd' })])
+      match_json([bad_request_error_pattern(ticket_field.label, :invalid_date, code: :missing_field, accepted: 'yyyy-mm-dd')])
     ensure
       ticket_field.update_attribute(:required_for_closure, false)
     end
@@ -1061,7 +1062,7 @@ module Ember
     def test_update_properties_with_required_custom_dropdown_field_blank_with_incorrect_value_in_db
       ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
       ticket_field.update_attribute(:required, true)
-      t = create_ticket(custom_field: {ticket_field.name => 'invalid_choice'})
+      t = create_ticket(custom_field: { ticket_field.name => 'invalid_choice' })
       params_hash = { priority: 4 }
       put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 200
@@ -1095,7 +1096,7 @@ module Ember
     end
 
     def test_update_properties_with_non_required_default_field_blank
-      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: true)
+      Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: true)
       group = create_group(@account)
       t = create_ticket({}, group)
       params_hash = { group_id: nil }
@@ -1103,7 +1104,7 @@ module Ember
       assert_response 200
       match_json(ticket_show_pattern(t.reload))
     ensure
-      Helpdesk::TicketField.where(name: "group").update_all(required_for_closure: false)
+      Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: false)
     end
 
     def test_update_properties_with_non_required_default_field_with_incorrect_value
@@ -1118,7 +1119,7 @@ module Ember
     def test_update_properties_with_non_required_default_field_with_incorrect_value_in_db
       ticket_ids = []
       t = create_ticket(type: 'Sample')
-      params_hash = { priority: 4}
+      params_hash = { priority: 4 }
       put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 200
       match_json(ticket_show_pattern(t.reload))
@@ -1139,7 +1140,7 @@ module Ember
       params_hash = { group_id: group.id + 10 }
       put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 400
-      match_json([bad_request_error_pattern('group_id', :absent_in_db, { resource: :group, attribute: :group_id })])
+      match_json([bad_request_error_pattern('group_id', :absent_in_db, resource: :group, attribute: :group_id)])
     end
 
     def test_update_properties_with_non_required_default_field_with_invalid_value_in_db
@@ -1394,9 +1395,9 @@ module Ember
       post :export_csv, construct_params({ version: 'private' }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern(:ticket_fields, :not_included, list: ticket_export_fields.join(',')),
-                  bad_request_error_pattern(:contact_fields, :not_included, list: %i[name phone mobile fb_profile_id contact_id].join(',')),
-                  bad_request_error_pattern(:company_fields, :not_included, list: %i[name].join(',')),
-                  bad_request_error_pattern(:format, :not_included, list: %w[csv xls].join(',')),
+                  bad_request_error_pattern(:contact_fields, :not_included, list: %i(name phone mobile fb_profile_id contact_id).join(',')),
+                  bad_request_error_pattern(:company_fields, :not_included, list: %i(name).join(',')),
+                  bad_request_error_pattern(:format, :not_included, list: %w(csv xls).join(',')),
                   bad_request_error_pattern(:date_filter, :not_included, list: TicketConstants::CREATED_BY_NAMES_BY_KEY.keys.map(&:to_s).join(',')),
                   bad_request_error_pattern(:ticket_state_filter, :not_included, list: TicketConstants::STATES_HASH.keys.map(&:to_s).join(',')),
                   bad_request_error_pattern(:start_date, :invalid_date, accepted: 'combined date and time ISO8601'),
@@ -1408,13 +1409,13 @@ module Ember
     def test_export_csv_without_privilege
       User.any_instance.stubs(:privilege?).with(:export_tickets).returns(true)
       User.any_instance.stubs(:privilege?).with(:export_customers).returns(false)
-      export_fields = Helpdesk::TicketModelExtension.allowed_ticket_fields
+      export_fields = Helpdesk::TicketModelExtension.allowed_ticket_export_fields
       params_hash = { ticket_fields: export_fields.map { |i| { i[1] => I18n.t(i[0]) } if i[5] == :ticket }.compact.inject(&:merge),
                       contact_fields: { 'name' => 'Requester Name', 'mobile' => 'Mobile Phone' },
                       company_fields: { 'name' => 'Company Name' },
                       format: 'csv', date_filter: '30',
                       ticket_state_filter: 'resolved_at', start_date: 6.days.ago.iso8601, end_date: Time.zone.now.iso8601,
-                      query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w[2 5] }] }
+                      query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w(2 5) }] }
       post :export_csv, construct_params({ version: 'private' }, params_hash)
       assert_response 204
       User.any_instance.unstub(:privilege?)
@@ -1426,8 +1427,8 @@ module Ember
       @account.launch(:ticket_contact_export)
       create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'Address', name: 'cf_address'))
       create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'Location', name: 'cf_location', editable_in_signup: 'true'))
-      contact_fields = @account.contact_form.fields.map(&:name) - %i[name phone mobile fb_profile_id]
-      company_fields = @account.company_form.fields.map(&:name) - %i[name]
+      contact_fields = @account.contact_form.fields.map(&:name) - %i(name phone mobile fb_profile_id contact_id)
+      company_fields = @account.company_form.fields.map(&:name) - %i(name)
       params_hash = { ticket_fields: { display_id: rand(2..10) }, contact_fields: { custom_fields: { location: Faker::Lorem.word } },
                       company_fields: { custom_fields: { address: Faker::Lorem.word } },
                       format: 'csv', date_filter: '30',
@@ -1458,7 +1459,7 @@ module Ember
     # Test when group restricted agent trying to access the ticket which has been assigned to its group
     def test_ticket_access_by_assigned_group_agent
       group = @account.groups.first
-      ticket = create_ticket({:status => 2}, group)
+      ticket = create_ticket({ status: 2 }, group)
       group_restricted_agent = add_agent_to_group(group_id = group.id,
                                                   ticket_permission = 2, role_id = @account.roles.agent.first.id)
       login_as(group_restricted_agent)
@@ -1467,12 +1468,11 @@ module Ember
       assert_match /#{ticket.description_html}/, response.body
     end
 
-
     # Test access of ticket by ticket restricted agent who can view only those tickets which has been assigned to him
     def test_ticket_access_by_assigned_agent
       ticket_restricted_agent = add_agent_to_group(nil,
                                                    ticket_permission = 3, role_id = @account.roles.agent.first.id)
-      ticket = create_ticket({:status => 2, :responder_id => ticket_restricted_agent.id})
+      ticket = create_ticket(status: 2, responder_id: ticket_restricted_agent.id)
       login_as(ticket_restricted_agent)
       get :show, controller_params(version: 'private', id: ticket.display_id)
 
@@ -1486,7 +1486,7 @@ module Ember
 
         group_restricted_agent = add_agent_to_group(group_id = @internal_group.id,
                                                     ticket_permission = 2, role_id = @account.roles.first.id)
-        ticket = create_ticket({:status => @status.status_id}, nil, @internal_group)
+        ticket = create_ticket({ status: @status.status_id }, nil, @internal_group)
         login_as(group_restricted_agent)
         get :show, controller_params(version: 'private', id: ticket.display_id)
         assert_match /#{ticket.description_html}/, response.body
@@ -1498,7 +1498,7 @@ module Ember
       enable_feature(:shared_ownership) do
         initialize_internal_agent_with_default_internal_group
 
-        ticket = create_ticket({:status => @status.status_id, :internal_agent_id => @internal_agent.id}, nil, @internal_group)
+        ticket = create_ticket({ status: @status.status_id, internal_agent_id: @internal_agent.id }, nil, @internal_group)
         login_as(@internal_agent)
         get :show, controller_params(version: 'private', id: ticket.display_id)
 
@@ -1510,16 +1510,16 @@ module Ember
       enable_feature(:shared_ownership) do
         initialize_internal_agent_with_default_internal_group
 
-        ticket = create_ticket({:status => 2, :responder_id => @responding_agent.id}, group = @account.groups.find_by_id(2))
+        ticket = create_ticket({ status: 2, responder_id: @responding_agent.id }, group = @account.groups.find_by_id(2))
         # params = {
         #   :status => @status.status_id,
         #   :internal_group_id => @internal_group.id,
         #   :internal_agent_id => @internal_agent.id
         # }
         params = {
-          :status => @status.status_id,
-          :internal_group_id => @internal_group.id,
-          :internal_agent_id => @internal_agent.id
+          status: @status.status_id,
+          internal_group_id: @internal_group.id,
+          internal_agent_id: @internal_agent.id
         }
         put :update, construct_params({ version: 'private', id: ticket.display_id }, params)
 
@@ -1601,7 +1601,7 @@ module Ember
         Helpdesk::Ticket.any_instance.stubs(:parent_ticket).returns(primary_tkt.display_id)
         get :show, controller_params(version: 'private', id: sec_tkt.display_id)
         assert_response 200
-        assert_equal false, JSON.parse(response.body)["can_be_associated"]
+        assert_equal false, JSON.parse(response.body)['can_be_associated']
         Helpdesk::Ticket.any_instance.unstub(:parent_ticket)
       end
     end
@@ -1611,7 +1611,7 @@ module Ember
         tkt = create_ticket
         get :show, controller_params(version: 'private', id: tkt.display_id)
         assert_response 200
-        assert_equal true, JSON.parse(response.body)["can_be_associated"]
+        assert_equal true, JSON.parse(response.body)['can_be_associated']
       end
     end
   end

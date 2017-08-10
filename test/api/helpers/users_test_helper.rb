@@ -34,15 +34,11 @@ module UsersTestHelper
       avatar: expected_output[:avatar] || get_contact_avatar(contact),
       facebook_id: expected_output[:facebook_id] || contact.fb_profile_id
     }
-    result.merge!(
-      other_emails: expected_output[:other_emails] ||
-      contact.user_emails.where(primary_role: false).map(&:email)
-    )
-    result.merge!(
-      other_companies: expected_output[:other_companies] ||
-      get_other_companies(contact)
-    ) if Account.current.multiple_user_companies_enabled?
-    result.merge!(deleted: true) if contact.deleted
+    result[:other_emails] = expected_output[:other_emails] ||
+                            contact.user_emails.where(primary_role: false).map(&:email)
+    result[:other_companies] = expected_output[:other_companies] ||
+                               get_other_companies(contact) if Account.current.multiple_user_companies_enabled?
+    result[:deleted] = true if contact.deleted
     result
   end
 
@@ -204,8 +200,8 @@ module UsersTestHelper
     new_user = add_new_user(account)
     company_attributes = []
     company_ids.each do |c|
-      h = { :company_id => c, :client_manager => true}
-      h.merge!({:default => true}) if c == company_ids.first 
+      h = { company_id: c, client_manager: true }
+      h[:default] = true if c == company_ids.first
       company_attributes << h
     end
     new_user.user_companies_attributes = Hash[(0...company_attributes.size).zip company_attributes]
@@ -316,10 +312,6 @@ module UsersTestHelper
   end
 
   def sample_user_archived_tickets(contact, count = 1)
-    unless @account.features.archive_tickets?
-      @account.features.archive_tickets.create
-      @account.reload
-    end
     count.times do
       @account.make_current
       temp_ticket = create_ticket(requester_id: contact.id, status: 5)
@@ -337,7 +329,7 @@ module UsersTestHelper
     act.sort_by { |item| - item.created_at.to_i }
   end
 
-  def user_activity_response(objects, meta = false)
+  def user_activity_response(objects, _meta = false)
     response_pattern = {}
     objects.map do |item|
       type = item.class.name.gsub('Helpdesk::', '').downcase
@@ -367,7 +359,7 @@ module UsersTestHelper
       created_at: obj.created_at.try(:utc),
       fr_due_by: archived?(obj) ? parse_time(obj.frDueBy) : obj.frDueBy.try(:utc)
     }
-    ret_hash.merge!(archived: archived?(obj)) if archived?(obj)
+    ret_hash[:archived] = archived?(obj) if archived?(obj)
     ret_hash
   end
 
@@ -389,7 +381,7 @@ module UsersTestHelper
       updated_at: obj.updated_at.try(:utc),
       forum: {
         id: obj.forum.id,
-        name: obj.forum.name 
+        name: obj.forum.name
       }
     }
   end

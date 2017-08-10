@@ -20,6 +20,7 @@ module Ember
     before_filter :link_tickets_enabled?, only: [:broadcast]
 
     SINGULAR_RESPONSE_FOR = %w[reply forward create update tweet facebook_reply reply_to_forward broadcast].freeze
+    SLAVE_ACTIONS = %w(ticket_conversations reply_template forward_template note_forward_template latest_note_forward_template reply_to_forward_template).freeze
 
     def ticket_conversations
       validate_filter_params
@@ -408,7 +409,7 @@ module Ember
       end
 
       def last_forwardable_note
-        @ticket.notes.where(['private = false AND source NOT IN (?)', Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['feedback']]).last
+        @ticket.public_notes.where(['source NOT IN (?)', Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['feedback']]).last
       end
 
       def after_load_object

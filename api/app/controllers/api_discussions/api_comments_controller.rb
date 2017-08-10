@@ -2,6 +2,8 @@ module ApiDiscussions
   class ApiCommentsController < ApiApplicationController
     before_filter :topic_exists?, only: [:topic_comments]
 
+    SLAVE_ACTIONS = %w(index topic_comments).freeze
+
     def topic_comments
       return if validate_filter_params
       @comments = paginate_items(@item.posts)

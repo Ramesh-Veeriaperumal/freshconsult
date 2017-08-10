@@ -5,8 +5,7 @@ module Ember
     include BulkActionConcern
     include ContactsCompaniesConcern
 
-    around_filter :run_on_slave, only: [:activities]
-
+    SLAVE_ACTIONS = %w(index activities).freeze
     def create
       delegator_params = construct_delegator_params
       return unless validate_delegator(@item, delegator_params)

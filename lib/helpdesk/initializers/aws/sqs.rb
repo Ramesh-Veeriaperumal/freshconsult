@@ -1,68 +1,68 @@
-sqs_config = YAML::load(ERB.new(File.read("#{Rails.root}/config/sqs.yml")).result)
+sqs_config = YAML.load(ERB.new(File.read("#{Rails.root}/config/sqs.yml")).result)
 
 SQS = (sqs_config[Rails.env] || sqs_config).symbolize_keys
 
 begin
-  #Global SQS client
+  # Global SQS client
   $sqs_client = AWS::SQS.new.client
-  
-  $sqs_facebook =  AWS::SQS.new.queues.named(SQS[:facebook_realtime_queue])
+
+  $sqs_facebook = AWS::SQS.new.queues.named(SQS[:facebook_realtime_queue])
 
   $sqs_facebook_messages = AWS::SQS.new.queues.named(SQS[:fb_message_realtime_queue])
 
   ##################### SQS RELATED TO TWITTER STARTS #########################
-  
-  #US Polls dircetly from the global queue - No region specific queues
+
+  # US Polls dircetly from the global queue - No region specific queues
   if S3_CONFIG[:region] == 'us-east-1'
     $sqs_twitter  = AWS::SQS.new.queues.named(SQS[:twitter_realtime_queue])
-    
-  #EUC polls from the region specifuc queue pushed from EU
+
+  # EUC polls from the region specifuc queue pushed from EU
   elsif S3_CONFIG[:region] == 'eu-central-1'
-    $sqs_twitter  = AWS::SQS.new.queues.named( S3_CONFIG[:region] + '_' + SQS[:twitter_realtime_queue])
-    
-  #EU polls from the global queue, pushes it to region specific queues EU/EUC
+    $sqs_twitter  = AWS::SQS.new.queues.named(S3_CONFIG[:region] + '_' + SQS[:twitter_realtime_queue])
+
+  # EU polls from the global queue, pushes it to region specific queues EU/EUC
   elsif S3_CONFIG[:region] == 'eu-west-1'
     $sqs_euc = AWS::SQS.new(
-      :access_key_id => S3_CONFIG[:access_key_id_euc],
-      :secret_access_key => S3_CONFIG[:secret_access_key_euc],
-      :region => S3_CONFIG[:region_euc],
-      :s3_signature_version => :v4)
-   
-    # Initializing global variable polling the tweets from sqs - pod specific    
+      access_key_id: S3_CONFIG[:access_key_id_euc],
+      secret_access_key: S3_CONFIG[:secret_access_key_euc],
+      region: S3_CONFIG[:region_euc],
+      s3_signature_version: :v4
+    )
+
+    # Initializing global variable polling the tweets from sqs - pod specific
     $sqs_twitter_global = AWS::SQS.new.queues.named(SQS[:twitter_realtime_queue])
-    $sqs_twitter        = AWS::SQS.new.queues.named( S3_CONFIG[:region] + '_' + SQS[:twitter_realtime_queue])
+    $sqs_twitter        = AWS::SQS.new.queues.named(S3_CONFIG[:region] + '_' + SQS[:twitter_realtime_queue])
     $sqs_twitter_euc    = $sqs_euc.queues.named(S3_CONFIG[:region_euc] + '_' + SQS[:twitter_realtime_queue])
   end
-  
+
   ##################### SQS RELATED TO TWITTER ENDS #########################
- 
+
   # custom mailbox sqs queue
   $sqs_mailbox = AWS::SQS.new.queues.named(SQS[:custom_mailbox_realtime_queue])
 
   # cti ticket creation queue
   $sqs_cti = AWS::SQS.new.queues.named(SQS[:cti_call_queue])
 
-
   # Reports Service Export
   $sqs_reports_service_export = AWS::SQS.new.queues.named(SQS[:reports_service_export_queue])
 
   # Reports helpkit Export
-  $sqs_reports_helpkit_export = AWS::SQS.new.queues.named(SQS[:helpdesk_reports_export_queue])  
-  
+  $sqs_reports_helpkit_export = AWS::SQS.new.queues.named(SQS[:helpdesk_reports_export_queue])
+
   # Freshfone Call Notifier
   $freshfone_call_notifier = AWS::SQS.new.queues.named(SQS[:freshfone_call_notifier_queue])
-  
-  $sqs_es_migration_queue = AWS::SQS.new.queues.named("es_etl_migration_queue_#{Rails.env}") 
-  
-  #Freshfone Call Tracker
+
+  $sqs_es_migration_queue = AWS::SQS.new.queues.named("es_etl_migration_queue_#{Rails.env}")
+
+  # Freshfone Call Tracker
   $sqs_freshfone_tracker = AWS::SQS.new.queues.named(SQS[:freshfone_call_tracker])
 
   # Scheduled Ticket Export
   $sqs_scheduled_ticket_export = AWS::SQS.new.queues.named(SQS[:scheduled_ticket_export_config])
 
-  #Email failure reference from activities service
+  # Email failure reference from activities service
   $sqs_email_failure_reference = AWS::SQS.new.queues.named(SQS[:fd_email_failure_reference])
-  
+
   # Add loop if more queues
   #
   SQS_V2_QUEUE_URLS = {
@@ -90,8 +90,11 @@ begin
     SQS[:scheduled_user_export_queue] => AwsWrapper::SqsV2.queue_url(SQS[:scheduled_user_export_queue]),
     SQS[:scheduled_company_export_queue] => AwsWrapper::SqsV2.queue_url(SQS[:scheduled_company_export_queue]),
     SQS[:scheduled_export_payload_enricher_queue] => AwsWrapper::SqsV2.queue_url(SQS[:scheduled_export_payload_enricher_queue])
-  }
+  }.freeze
 
 rescue => e
-  puts "AWS::SQS connection establishment failed. - #{e.message}"
+  Rails.logger.debug "AWS::SQS connection establishment failed. - #{e.message}"
+  Rails.logger.debug e.backtrace
+ensure
+  SQS_V2_QUEUE_URLS ||= {}.freeze
 end
