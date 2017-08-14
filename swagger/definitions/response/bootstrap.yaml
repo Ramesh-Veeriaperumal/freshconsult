@@ -24,6 +24,10 @@ properties:
                 type: array
                 items:
                   type: string
+              collision_user_hash:
+                type: string
+              autorefresh_user_hash:
+                type: string
               preferences:
                 type: object
                 properties:
@@ -111,4 +115,8 @@ properties:
     type: object
     properties:
       csrf_token:
+        type: string
+      collision_url:
+        type: string
+      autorefresh_url:
         type: string

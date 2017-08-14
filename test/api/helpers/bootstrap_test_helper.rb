@@ -1,6 +1,6 @@
 module BootstrapTestHelper
   include Gamification::GamificationUtil
-  
+
   def index_pattern(agent, account)
     {
       agent: agent_info_pattern(agent),
@@ -9,19 +9,22 @@ module BootstrapTestHelper
   end
 
   def agent_info_pattern(agent)
-    ret_hash = private_api_agent_pattern({}, agent).merge({
+    ret_hash = private_api_agent_pattern({}, agent).merge(
       last_active_at: agent.last_active_at.try(:utc).try(:iso8601),
       abilities: agent.user.abilities,
       assumable_agents: agent.assumable_agents.map(&:id),
       preferences: agent.preferences
-    })
+    )
     if gamification_feature?(Account.current)
-      ret_hash.merge!({
+      ret_hash.merge!(
         points: agent.points,
         scoreboard_level_id: agent.scoreboard_level_id,
         next_level_id: agent.next_level.try(:id)
-      })
+      )
     end
+    ret_hash[:collision_user_hash] = socket_auth_params('agentcollision', agent) if Account.current.features?(:collision)
+    ret_hash[:autorefresh_user_hash] = socket_auth_params('autorefresh', agent) if Account.current.auto_refresh_enabled?
+
     ret_hash
   end
 
@@ -43,12 +46,32 @@ module BootstrapTestHelper
       groups: Array
     }
     if User.current.privilege?(:manage_users) || User.current.privilege?(:manage_account)
-      pattern.merge!(subscription: {
+      pattern[:subscription] = {
         agent_limit: account.subscription.agent_limit,
         state: account.subscription.state,
         subscription_plan: String
-      })
+      }
     end
     pattern
+  end
+
+  def socket_auth_params(connection, agent)
+    aes = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
+    aes.encrypt
+    aes.key = Digest::SHA256.digest(NodeConfig[connection]['key'])
+    aes.iv  = NodeConfig[connection]['iv']
+    user_obj = get_user_object(agent)
+    account_data = {
+      account_id: user_obj.account_id,
+      user_id: user_obj.id,
+      avatar_url: user_obj.avatar_url
+    }.to_json
+    encoded_data = Base64.encode64(aes.update(account_data) + aes.final)
+    encoded_data
+  end
+
+  def get_user_object(agent)
+    return agent if agent.is_a?(User)
+    agent.user
   end
 end
