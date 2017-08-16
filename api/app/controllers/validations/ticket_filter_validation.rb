@@ -7,7 +7,7 @@ class TicketFilterValidation < FilterValidation
   validate :verify_requester, if: -> { errors[:requester_id].blank? && (requester_id || email) }
   validate :verify_company, if: -> { errors[:company_id].blank? && company_id }
   validates :email, data_type: { rules: String }
-  validates :filter, custom_inclusion: { in: ApiTicketConstants::FILTER }, if: -> { !private_api? }
+  validates :filter, custom_inclusion: { in: ApiTicketConstants::FILTER }, if: -> { !private_API? }
   validates :updated_since, date_time: true
   validates :order_by, custom_inclusion: { in: proc { |x| x.sort_field_options } }
   validates :status, array: { custom_inclusion: { in: proc { |x| x.account_statuses }, ignore_string: :allow_string_param, detect_type: true } }
@@ -20,7 +20,7 @@ class TicketFilterValidation < FilterValidation
   validates :query_hash, data_type: { rules: String, allow_nil: false }, unless: -> { query_hash.is_a?(Hash) }
   validates :query_hash, data_type: { rules: Hash, allow_nil: false }, if: -> { errors[:filter].blank? && !query_hash_empty_string? }
   validate :validate_include, if: -> { errors[:include].blank? && include }
-  validate :validate_filter_param, if: -> { errors[:filter].blank? && filter.present? && private_api? }
+  validate :validate_filter_param, if: -> { errors[:filter].blank? && filter.present? && private_API? }
   validate :validate_query_hash, if: -> { errors.blank? && query_hash.present? }
   validates :ids, data_type: { rules: Array, allow_nil: false },
                   array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false, ignore_string: :allow_string_param } },
@@ -135,7 +135,7 @@ class TicketFilterValidation < FilterValidation
 
   private
 
-    def private_api?
+    def private_API?
       @version == 'private'
     end
 end
