@@ -25,14 +25,19 @@ namespace :reports do
           if (account && user)
             account.make_current
             user.make_current
-            current_export = account.data_exports.find(export_id)
-            if (current_export && current_export.status == 1)
-              current_export.file_created!
+            if (message['scheduled_report']!=true && export_id)
+              current_export = account.data_exports.find(export_id)
+              if (current_export && current_export.status == 1)
+                current_export.file_created!
+                list_export = HelpdeskReports::Export::TicketList.new(message)
+                Sharding.run_on_slave { list_export.perform }
+                current_export.completed!
+              else
+                puts "Duplicate Reports Ticket Export task for Account :: #{account_id} : export_id :: #{export_id}"
+              end
+            elsif message['scheduled_report']
               list_export = HelpdeskReports::Export::TicketList.new(message)
               Sharding.run_on_slave { list_export.perform }
-              current_export.completed!
-            else
-              puts "Duplicate Reports Ticket Export task for Account :: #{account_id} : export_id :: #{export_id}"
             end
           end
         end
