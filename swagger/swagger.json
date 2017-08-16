@@ -4493,6 +4493,26 @@
                       "type": "array"
                     }
                   }
+                },
+                "collaboration": {
+                  "type": "object",
+                  "properties": {
+                    "client_account_id": {
+                      "type": "string"
+                    },
+                    "client_id": {
+                      "type": "string"
+                    },
+                    "collab_url": {
+                      "type": "string"
+                    },
+                    "init_auth_token": {
+                      "type": "string"
+                    },
+                    "rts_url": {
+                      "type": "string"
+                    }
+                  }
                 }
               }
             }
@@ -7229,6 +7249,14 @@
                 "time": {
                   "type": "string",
                   "format": "datetime"
+                }
+              }
+            },
+            "collaboration": {
+              "type": "object",
+              "properties": {
+                "convo_token": {
+                  "type": "string"
                 }
               }
             }

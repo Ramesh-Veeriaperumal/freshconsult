@@ -1614,5 +1614,15 @@ module Ember
         assert_equal true, JSON.parse(response.body)['can_be_associated']
       end
     end
+
+    def test_ticket_without_collab
+      Account.current.revoke_feature(:collaboration)
+      ticket = create_ticket
+      get :show, controller_params(version: 'private', id: ticket.display_id)
+      assert_response 200
+      match_json(ticket_show_pattern(ticket))
+    ensure
+      Account.current.add_feature(:collaboration)
+    end
   end
 end

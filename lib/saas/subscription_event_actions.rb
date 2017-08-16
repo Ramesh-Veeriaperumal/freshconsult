@@ -131,7 +131,7 @@ class SAAS::SubscriptionEventActions
     end
 
     def handle_collab_feature
-      CollabPreEnableWorker.perform_async if account.collaboration_enabled?
+      CollabPreEnableWorker.perform_async if account.has_feature?(:collaboration)
     end
 
 end
