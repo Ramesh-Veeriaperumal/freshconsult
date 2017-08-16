@@ -91,12 +91,10 @@ module ParentChildHelper
   end
 
   def prt_tkt_fd_value key
-    if ["product_id","description_html"].include?(key)
-      @assoc_parent_ticket.send(key)
-    elsif key == "tags"
+    if key == "tags"
       @assoc_parent_ticket.tag_names.join(',')
     else
-      @assoc_parent_ticket[key]
+      @assoc_parent_ticket.send(key)
     end
   end
 end

@@ -193,4 +193,8 @@ class Account < ActiveRecord::Base
    @collboration ||= has_feature?(:collaboration) && self.collab_settings.present?
   end
 
+  def collaboration_enabled?
+   @collboration ||= has_feature?(:collaboration) && self.collab_settings.present?
+  end
+
 end

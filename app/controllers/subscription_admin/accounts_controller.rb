@@ -1,6 +1,7 @@
 class SubscriptionAdmin::AccountsController < ApplicationController
  
   include AdminControllerMethods
+  include EmailHelper
   
   around_filter :select_account_shard, :only => [:show]
   before_filter :check_super_admin_role, :only => [:add_day_passes, :add_feature, :change_url, :block_account, :remove_feature, :change_account_name]
@@ -96,6 +97,11 @@ class SubscriptionAdmin::AccountsController < ApplicationController
       sub = @account.subscription
       sub.state="suspended"
       sub.save
+
+      subject = "Account blocked - Account-id: #{@account.id}"
+      additional_info = "Account blocked from subscription admin"
+      notify_account_blocks(@account, subject, additional_info)
+
       Account.reset_current_account
     end
     $spam_watcher.perform_redis_op("del", "#{params[:account_id]}-")

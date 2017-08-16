@@ -8,7 +8,8 @@ class Integrations::SlackV2Controller < Admin::AdminController
   before_filter :load_app, :only => [:new, :install]
   before_filter :load_installed_app, :only => [:edit, :update, :create_ticket, :tkt_create_v3,:add_slack_agent,:help]
   before_filter :check_slash_token, :check_direct_channel, :check_remote_user, :only => [:create_ticket]
-  before_filter :check_slash_token_v3,:check_user_credentials, :check_command_params, :only => [:tkt_create_v3]
+  before_filter :check_slash_token_v3, :only => [:tkt_create_v3, :help]
+  before_filter :check_user_credentials, :check_command_params, :only => [:tkt_create_v3]
   before_filter :init_slack_obj, :only => [:edit, :update]
 
   APP_NAME = Integrations::Constants::APP_NAMES[:slack_v2]

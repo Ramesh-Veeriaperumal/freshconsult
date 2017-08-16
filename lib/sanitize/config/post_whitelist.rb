@@ -1,5 +1,6 @@
 class Sanitize
   module Config
+    CODE_SNIPPET_LANGUAGES = %w(html css js sass xml ruby php java csharp cpp objc perl python vbnet sql text)
     POST_WHITELIST = {
       :elements => HTML_RELAXED[:elements] + ['iframe'],
       :attributes => {
@@ -14,6 +15,10 @@ class Sanitize
 
         node      = env[:node]
         node_name = env[:node_name]
+
+        if node_name == 'pre' && !CODE_SNIPPET_LANGUAGES.include?(node.attributes['data-code-brush'].value)
+          node.attributes['data-code-brush'].value = ''
+        end
 
         return unless node_name == 'iframe'
 

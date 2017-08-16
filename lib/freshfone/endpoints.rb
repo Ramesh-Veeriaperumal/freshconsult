@@ -281,7 +281,7 @@ module Freshfone::Endpoints
     end 
 
     def format_number(number)
-      @number = GlobalPhone.parse(number).international_string
+      @number = TelephoneNumber.parse(number).e164_number
     end
 
 end

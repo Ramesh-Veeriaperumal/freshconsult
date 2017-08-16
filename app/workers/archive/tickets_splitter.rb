@@ -7,6 +7,7 @@ module Archive
     def perform(args)
       begin
         @account = Account.current
+        return unless @account.active?
         execute_on_db do
           @status_id = @account.ticket_statuses.find_by_name(args["ticket_status"].to_s).status_id
           @archive_days = @account.account_additional_settings.archive_days

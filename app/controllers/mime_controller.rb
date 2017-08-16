@@ -111,7 +111,7 @@ class MimeController < Fdadmin::MetalApiController
     email_size = params[:email].bytesize
     Rails.logger.info "Email_size : #{email_size} bytes , for envelope : #{params[:envelope]}"
     if (email_size > MAX_EMAIL_SIZE)
-      Rails.logger.info "Email Processing Failed: Email size - #{email_size} is greater than MAX SIZE LIMIT #{MAX_EMAIL_SIZE}, account_id: #{account.id}"
+      Rails.logger.info "Email Processing Failed: Email size - #{email_size} is greater than MAX SIZE LIMIT #{MAX_EMAIL_SIZE}, for envelope : #{params[:envelope]}"
       head 200, content_type: "text/html"
     end
   end
