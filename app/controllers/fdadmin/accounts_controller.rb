@@ -1,6 +1,7 @@
 class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   include Fdadmin::AccountsControllerMethods
+  include Fdadmin::FeatureMethods
   include Redis::RedisKeys
   include Redis::OthersRedis
   include EmailHelper
@@ -11,6 +12,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   before_filter :validate_params, :only => [ :change_api_limit ]
   before_filter :load_account, :only => [:user_info, :reset_login_count]
   before_filter :load_user_record, :only => [:user_info, :reset_login_count]
+  before_filter :symbolize_feature_name, :only => [:add_feature, :remove_feature]
   
   def show
     account_summary = {}
@@ -151,12 +153,12 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   def add_feature
     result = {}
-    account = Account.find(params[:account_id]) 
-    result[:account_id] = account.id 
-    result[:account_name] = account.name
+    @account = Account.find(params[:account_id]) 
+    result[:account_id] = @account.id 
+    result[:account_name] = @account.name
     begin
-      render :json => {:status => "notice"}.to_json and return if account.features?(params[:feature_name])
-      account.features.send(params[:feature_name]).save
+      render :json => {:status => "notice"}.to_json and return unless enableable?(@feature_name)
+      enable_feature(@feature_name)
       result[:status] = "success"
     rescue Exception => e
       result[:status] = "error"
@@ -169,14 +171,14 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   end
 
   def remove_feature
-    account = Account.find(params[:account_id])
-    result = {:account_id => account.id , :account_name => account.name }
+    @account = Account.find(params[:account_id])
+    result = {:account_id => @account.id , :account_name => @account.name }
     begin
-      render :json => {:status => "notice"}.to_json and return if !account.features?(params[:feature_name])
-      feature = account.features.send(params[:feature_name])
-      result[:status] = "success" if feature.destroy
-      rescue Exception => e
-        result[:error] = "error"
+      render :json => {:status => "notice"}.to_json and return unless disableable?(@feature_name)
+      disable_feature(@feature_name)
+      result[:status] = "success"
+    rescue Exception => e
+      result[:status] = "error"
     end
     respond_to do |format|
       format.json do
@@ -639,6 +641,10 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     def save_account_sign_up_params account_id, args = {}
       key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => account_id}
       set_others_redis_key(key,args.to_json,3888000)
+    end
+
+    def symbolize_feature_name
+      @feature_name = params[:feature_name].to_sym 
     end
 
 end
