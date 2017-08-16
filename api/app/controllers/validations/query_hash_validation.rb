@@ -11,6 +11,7 @@ class QueryHashValidation < FilterValidation
 
   validate :ticket_fields_condition
   validate :valid_params?
+  validate :created_at_value, if: :created_at?
 
   def custom_field_names
     @custom_field_names ||= Account.current.ticket_fields_from_cache
@@ -36,4 +37,11 @@ class QueryHashValidation < FilterValidation
     end
   end
 
+  def created_at_value
+    errors[:value] << :query_hash_dependent_value_missing if value['from'].blank? || value['to'].blank?
+  end
+
+  def created_at?
+    condition == 'created_at' && operator == 'is_greater_than' && value.is_a?(Hash)
+  end
 end

@@ -923,10 +923,12 @@ module Ember
     def test_contact_with_archived_ticket_activity
       enable_archive_tickets do
         contact = add_new_user(@account, deleted: false, active: true)
-        user_archived_tickets = sample_user_archived_tickets(contact)
-        get :activities, construct_params({ version: 'private', id: contact.id, type: 'archived_tickets' }, nil)
-        assert_response 200
-        match_json(user_activity_response(user_archived_tickets))
+        stub_archive_assoc(account_id: @account.id) do
+          user_archived_tickets = sample_user_archived_tickets(contact)
+          get :activities, construct_params({ version: 'private', id: contact.id, type: 'archived_tickets' }, nil)
+          assert_response 200
+          match_json(user_activity_response(user_archived_tickets))
+        end
       end
     end
 
