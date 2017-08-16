@@ -1,0 +1,16 @@
+JSON.generate(@installed_apps.map do |installed_app|
+  extension_details = installed_app[:extension_details]
+  installation_details = installed_app[:installation_details]
+  response_hash = {
+    id: extension_details['extension_id'],
+    display_name: extension_details['display_name'],
+    configs: installation_details['configs'],
+    placeholders: extension_details['placeholders'],
+    enabled: installation_details['enabled']
+  }.merge(Marketplace::Constants::VERSIONABLE_EXTENSION.include?(extension_details['type']) ? {
+    version_id: installation_details['version_id'],
+    features: extension_details['features'],
+    extension_type: extension_details['type']
+  } : {})
+  response_hash
+end)

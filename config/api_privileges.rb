@@ -16,6 +16,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/ticket_field", only: [:index]
     resource :"ember/todo"
     resource :"ember/twitter_handles", only: %i(index check_following)
+    resource :"ember/marketplace_app", only: [:index]
 
     resource :"ember/agent", only: %i(index me achievements)
     resource :"ember/group", only: [:index]

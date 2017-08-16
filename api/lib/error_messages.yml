@@ -130,6 +130,7 @@ api_error_messages:
   wrong_internal_agent: "Internal Agent does not belong to the specified Group"
   wrong_internal_group: "Internal group does not belong to the given status of the ticket"
   cant_merge_assoc_tkt: "Cannot merge an associated ticket."
+  marketplace_service_unavailable: "Marketplace service is currently unavailable"
   query_hash_dependent_value_missing: " 'from' and 'to' values should not be blank"
   # Dashboard activities
   either_since_id_or_before_id: "Specify since_id or before_id, not both"
