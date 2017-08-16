@@ -262,10 +262,12 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
         ticket_ids << create_ticket(requester_id: contact.id, status: 5).id
       end
       create_archive_tickets(ticket_ids)
-      get :activities, controller_params(version: 'private', id: company.id, type: 'archived_tickets')
-      assert_response 200
-      archive_tickets = @account.archive_tickets.permissible(@agent).all_company_tickets(company.id).newest(10)
-      match_json(company_activity_response(archive_tickets))
+      stub_archive_assoc(account_id: @account.id) do
+        get :activities, controller_params(version: 'private', id: company.id, type: 'archived_tickets')
+        assert_response 200
+        archive_tickets = @account.archive_tickets.permissible(@agent).all_company_tickets(company.id).newest(10)
+        match_json(company_activity_response(archive_tickets))
+      end
     end
   end
 
