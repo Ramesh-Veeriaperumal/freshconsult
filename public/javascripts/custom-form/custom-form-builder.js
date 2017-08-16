@@ -106,7 +106,7 @@
       return dom;
     },
 
-    constructFieldDom: function(dataItem, container, cloneItem) {
+    constructFieldDom: function(dataItem, container, cloneItem, notEdited=true) {
       var fieldContainer = container || jQuery('<li/>');
 
       fieldContainer.empty()
@@ -122,7 +122,8 @@
           JST['custom-form/template/dom_field'](dataItem, multi_sections_enabled)
         ).addClass(dataItem.dom_type);
 
-      if(dataItem.has_section){
+      // No need to call this when a field doesn't have any section and is edited
+      if(dataItem.has_section && notEdited){
         var section_dom =  this.section_instance
                             .storedSectionData(
                                 dataItem.id, dataItem.admin_choices,
@@ -568,7 +569,9 @@
               if(vElement.attr('data-fresh')) //Update Label for new Section Fields
                 this.section_instance.updateSectionFields(data, parent_dom);
             } 
-            this.builder_data[data.id] = this.constructFieldDom(data, vElement);
+            this.builder_data[data.id] = this.constructFieldDom(data, vElement, false, false);
+            // To check if the sections limit is reached after editing a dropdown field
+            if (data.has_section) this.section_instance.setNewSection("load");
           }
         }
         this.data.set(data.id, data);
