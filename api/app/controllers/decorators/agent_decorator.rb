@@ -27,15 +27,11 @@ class AgentDecorator < ApiDecorator
   end
 
   def to_full_hash
-    [agent_hash, additional_agent_info, gamification_options].inject(&:merge)
+    [agent_hash, additional_agent_info, gamification_options, socket_authentication_hash].inject(&:merge)
   end
 
   def to_restricted_hash
-    user_obj = if record.is_a?(User)
-                 record
-               else
-                 record.user
-               end
+    user_obj = user_object
     {
       id: user_obj.id,
       contact: {
@@ -44,6 +40,17 @@ class AgentDecorator < ApiDecorator
       },
       group_ids: group_ids
     }
+  end
+
+  def socket_authentication_hash
+    authentication_hash = {}
+    if Account.current.features?(:collision)
+      authentication_hash[:collision_user_hash] = socket_auth_params('agentcollision')
+    end
+    if Account.current.auto_refresh_enabled?
+      authentication_hash[:autorefresh_user_hash] = socket_auth_params('autorefresh')
+    end
+    authentication_hash
   end
 
   def group_ids
@@ -88,5 +95,24 @@ class AgentDecorator < ApiDecorator
         scoreboard_level_id:  record.scoreboard_level_id,
         next_level_id:        record.next_level.try(:id)
       }
+    end
+
+    def user_object
+      record.is_a?(User) ? record : record.user
+    end
+
+    def socket_auth_params(connection)
+      aes = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
+      aes.encrypt
+      aes.key = Digest::SHA256.digest(NodeConfig[connection]['key'])
+      aes.iv  = NodeConfig[connection]['iv']
+      user_obj = user_object
+      account_data = {
+        account_id: user_obj.account_id,
+        user_id: user_obj.id,
+        avatar_url: user_obj.avatar_url
+      }.to_json
+      encoded_data = Base64.encode64(aes.update(account_data) + aes.final)
+      encoded_data
     end
 end

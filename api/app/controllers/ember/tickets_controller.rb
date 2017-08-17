@@ -30,7 +30,7 @@ module Ember
       return unless validate_delegator(nil, params)
       assign_filter_params
       super
-      response.api_meta = { count: @items_count } if params[:only] == 'count' || count_included?
+      response.api_meta = { count: @items_count } if params[:only] == 'count'
       (response.api_meta ||= {}).merge!(background_info)
     end
 
@@ -170,8 +170,6 @@ module Ember
           @items_count = optimized_count(items)
           @items = []
           return
-        elsif count_included?
-          @items_count = optimized_count(items)
         end
         @items = paginate_items(items)
       end

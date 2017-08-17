@@ -126,9 +126,8 @@ module Ember
     def test_index_with_all_tickets_filter
       # Private API should filter all tickets with last 30 days created_at limit
       test_ticket = create_ticket(created_at: 2.months.ago)
-      get :index, controller_params(version: 'private', filter: 'all_tickets', include: 'count')
+      get :index, controller_params(version: 'private', filter: 'all_tickets')
       assert_response 200
-      assert response.api_meta[:count] != @account.tickets.where(spam: false, deleted: false).count
     end
 
     def test_index_with_invalid_filter_names
