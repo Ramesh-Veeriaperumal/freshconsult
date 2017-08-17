@@ -2,6 +2,8 @@ class SubscriptionAdmin::SpamWatchController < ApplicationController
 
   include AdminControllerMethods
   include ReadsToSlave
+  include EmailHelper
+
   around_filter :select_shard
   skip_filter :run_on_slave, :only => [:block_user,:spam_user,:hard_block,:internal_whitelist]
 
@@ -19,6 +21,9 @@ class SubscriptionAdmin::SpamWatchController < ApplicationController
     if params[:user_id]
       User.where({:id => params[:user_id]}).update_all_with_publish({:blocked => true, :blocked_at => Time.now}, {})
       flash[:notice] = "User success fully blocked!"
+      subject = "User #{params[:user_id]} blocked !"
+      additional_info = "User blocked due to spam activity"
+      notify_account_blocks(nil, subject, additional_info)
     end
     redirect_to :back
   end
@@ -27,6 +32,9 @@ class SubscriptionAdmin::SpamWatchController < ApplicationController
     if params[:user_id]
       User.where({:id => params[:user_id]}).update_all_with_publish({:blocked => true, :blocked_at => "2200-01-01 00:00:00"}, {})
       flash[:notice] = "User success fully blocked!"
+      subject = "User #{params[:user_id]} blocked !"
+      additional_info = "User blocked due to spam activity"
+      notify_account_blocks(nil, subject, additional_info)
     end
     redirect_to :back
   end

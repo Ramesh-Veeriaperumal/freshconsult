@@ -6,6 +6,7 @@ class Freshfone::CallController < FreshfoneBaseController
 	include Freshfone::CallsRedisMethods
 	include Freshfone::TicketActions
 	include Freshfone::Call::EndCallActions
+	include Freshfone::NumberValidator
 	
 	include Freshfone::Search
 	before_filter :load_customer, :only => [:caller_data]
@@ -121,7 +122,7 @@ class Freshfone::CallController < FreshfoneBaseController
 
 		def caller_location 
 			return [caller.city , caller.country].compact.reject{|c| c.empty? }.join(", ") if caller.present?
-			GlobalPhone.parse(params[:PhoneNumber]).territory.name 
+			fetch_country_code(params[:PhoneNumber])
 		end 
 
 		def populate_call_details

@@ -16,13 +16,14 @@ module Fdadmin::AccountsControllerMethods
 
 	def fetch_agents_details(account)
 		agent_array = []
-		account.agents.includes(:user).each do |agent|
+		account.agents.includes({:user => :user_emails}).each do |agent|
 			agent_hash = {}
 			agent_hash[:email] = agent.user.email
-			agent_hash[:active] = agent.user.active
+			agent_hash[:active] = (agent.user.active && agent.user.user_emails.first.verified?)
 			agent_hash[:occasional] = agent.occasional
 			agent_hash[:created_at] = agent.created_at
 			agent_hash[:last_active] = agent.last_active_at
+			agent_hash[:is_admin] = agent.user.privilege?(:admin_tasks)
 			agent_array << agent_hash
 		end
 		return {  free_agents: account.subscription.free_agents,

@@ -190,10 +190,6 @@ module Freshfone::FreshfoneUtil
     [ Freshfone::Call::CALL_STATUS_HASH[:busy], Freshfone::Call::CALL_STATUS_HASH[:missed] ].include?(call_status)
   end
 
-  def country_from_global(number)
-    GlobalPhone.parse(number).territory.name unless GlobalPhone.parse(number).blank?
-  end
-
   def format_external_number
     params[:external_number].start_with?("+") ? params[:external_number] : "+#{params[:external_number]}" 
   end

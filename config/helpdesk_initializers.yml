@@ -34,7 +34,6 @@ helpdesk:
     - country_list
     - elasticsearch
     - facebook_config
-    - global_phone
     - gnip_config
     - i18n
     - inflections
