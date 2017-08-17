@@ -2,8 +2,15 @@ require_relative 'helpers/test_files.rb'
 require 'sidekiq/testing'
 class ActionController::TestCase
   rescue_from AWS::DynamoDB::Errors::ResourceNotFoundException do |exception|
-    Rake::Task['forum_moderation:create_tables'].invoke(Time.zone.now.year, Time.zone.now.month) if  Rails.env.test?
-    Rake::Task['forum_moderation:create_tables'].invoke(Time.zone.now.year, (Time.zone.now.month + 1)) if  Rails.env.test?
+    Rake::Task['forum_moderation:create_tables'].invoke(Time.zone.now.year, Time.zone.now.month) if Rails.env.test?
+    Rake::Task['forum_moderation:create_tables'].invoke(Time.zone.now.year, (Time.zone.now.month + 1)) if Rails.env.test?
+  end
+
+  # awk '/START <test_method_name>/,/END <test_method_name>/' log/test.log
+  # Eg: awk '/START test_agent_filter_state/,/END test_agent_filter_state/' log/test.log
+  def initialize(name = nil)
+    @test_name = name
+    super(name) unless name.nil?
   end
 
   def setup
@@ -19,8 +26,14 @@ class ActionController::TestCase
 
     # Enabling Private API
     @account.launch(:falcon)
+
     # To prevent DynamoDB errors.
     SpamCounter.stubs(:count).returns(0)
+    Helpdesk::Attachment.any_instance.stubs(:save_attached_files).returns(true)
+    Helpdesk::Attachment.any_instance.stubs(:prepare_for_destroy).returns(true)
+    Helpdesk::Attachment.any_instance.stubs(:destroy_attached_files).returns(true)
+
+    Rails.logger.debug "START #{@test_name}"
   end
 
   def self.fixture_path(path = File.join(Rails.root, 'test/api/fixtures/'))
@@ -33,6 +46,9 @@ class ActionController::TestCase
       @controller.instance_variable_set(ivar, nil)
     end
     super
+
+    Rails.logger.debug "END #{@test_name}"
+
     clear_instance_variables
   end
   # ActiveRecord::Base.logger.level = 1
@@ -42,12 +58,17 @@ end
 
 class ActionDispatch::IntegrationTest
   rescue_from AWS::DynamoDB::Errors::ResourceNotFoundException do |exception|
-    Rake::Task['forum_moderation:create_tables'].invoke(Time.zone.now.year, Time.zone.now.month) if  Rails.env.test?
-    Rake::Task['forum_moderation:create_tables'].invoke(Time.zone.now.year, (Time.zone.now.month + 1)) if  Rails.env.test?
+    Rake::Task['forum_moderation:create_tables'].invoke(Time.zone.now.year, Time.zone.now.month) if Rails.env.test?
+    Rake::Task['forum_moderation:create_tables'].invoke(Time.zone.now.year, (Time.zone.now.month + 1)) if Rails.env.test?
   end
 
   # For logging query details in a separate folder
   FileUtils.mkdir_p "#{Rails.root}/test/api/query_reports"
+
+  def initialize(name = nil)
+    @test_name = name
+    super(name) unless name.nil?
+  end
 
   def setup
     begin_gc_deferment
@@ -62,11 +83,16 @@ class ActionDispatch::IntegrationTest
     Bullet.add_whitelist type: :n_plus_one_query, class_name: 'ForumCategory', association: :account
     # To prevent DynamoDB errors.
     SpamCounter.stubs(:count).returns(0)
+
+    Rails.logger.debug "START #{@test_name}"
   end
 
   def teardown
     reconsider_gc_deferment
     super
+
+    Rails.logger.debug "END #{@test_name}"
+
     clear_instance_variables
   end
 

@@ -1,4 +1,6 @@
 module AttachmentsTestHelper
+  CLOUD_FILE_IMAGE_URL = 'https://d1z9ryalr1cz6s.cloudfront.net/images/flags/india@2x.png'
+
   def attachment_pattern(attachment)
     ret_hash = {
       id: attachment.id,

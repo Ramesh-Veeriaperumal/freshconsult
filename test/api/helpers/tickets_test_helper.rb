@@ -13,6 +13,7 @@ module TicketsTestHelper
   include SocialTicketsHelper
   include FreshfoneSpecHelper
   include ForumHelper
+  include AttachmentsTestHelper
 
   # Patterns
   def deleted_ticket_pattern(expected_output = {}, ticket)
@@ -319,7 +320,7 @@ module TicketsTestHelper
         description: Faker::Lorem.characters(10),
         account_id: @account.id
       )
-      note.cloud_files.build(filename: "#{Faker::Name.name}.jpg", url: 'https://www.dropbox.com/image.jpg', application_id: 20)
+      note.cloud_files.build(filename: "#{Faker::Name.name}.jpg", url: CLOUD_FILE_IMAGE_URL, application_id: 20)
     end
     note.save
   end
