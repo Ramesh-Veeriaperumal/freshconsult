@@ -20,4 +20,13 @@ module AwsTestHelper
     AWS::S3::S3Object.any_instance.unstub(:write)
     AWS::S3::S3Object.any_instance.unstub(:delete)
   end
+
+  def stub_attachment_to_io
+    @stubbed_file ||= fixture_file_upload('/files/attachment.txt', 'text/plain', :binary)
+    Helpdesk::Attachment.any_instance.stubs(:to_io).returns(@stubbed_file)
+
+    yield
+
+    Helpdesk::Attachment.any_instance.unstub(:to_io)
+  end
 end

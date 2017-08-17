@@ -10,6 +10,7 @@ module Ember
       include CannedResponsesHelper
       include PrivilegesHelper
       include CannedResponsesTestHelper
+      include AwsTestHelper
 
       CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date).freeze
       CUSTOM_FIELDS_CHOICES = Faker::Lorem.words(5).uniq.freeze
@@ -565,20 +566,21 @@ module Ember
           visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
           attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) }
         )
-        cloud_file_params = [{ filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 },
-                             { filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 }]
+        cloud_file_params = [{ filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
         reply_hash = { body: Faker::Lorem.paragraph,
                        attachment_ids: [attachment_id, canned_response.shared_attachments[0].attachment_id],
                        cloud_files: cloud_file_params }
         params_hash = {ids: ticket_ids, reply: reply_hash}
-        Sidekiq::Testing.inline! do
-          post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        stub_attachment_to_io do
+          Sidekiq::Testing.inline! do
+            post :bulk_update, construct_params({ version: 'private' }, params_hash)
+          end
         end
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
         Helpdesk::Note.last(ticket_ids.size).each do |note|
           assert_equal 2, note.attachments.count
-          assert_equal 2, note.cloud_files.count
+          assert_equal 1, note.cloud_files.count
         end
       end
 
