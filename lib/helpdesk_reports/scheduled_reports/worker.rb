@@ -16,6 +16,7 @@ class HelpdeskReports::ScheduledReports::Worker
     build_date_range
     params = old_report? ? build_params_old_report : build_params
     trigger_export(params)
+    report_type==:timespent ? :delayed_processing : true
   end
   
 private
@@ -42,7 +43,7 @@ private
     report_filter.data_hash[:date_range] = date_range
     report_filter.data_hash[:filter_name] = report_filter.filter_name
     param_constructor = "HelpdeskReports::ParamConstructor::#{report_type.to_s.camelcase}".constantize.new(report_filter.data_hash)
-    param_constructor.build_pdf_params
+    param_constructor.build_export_params
   end
   
   def build_date_range

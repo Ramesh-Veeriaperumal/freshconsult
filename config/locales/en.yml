@@ -9193,6 +9193,16 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     average_interactions: "(Average %{count})"
     last_updated: "Last updated <span class='instance'><abbr data-livestamp=%{last_dump_time}> ago </abbr></span>"
     last_updated_at: "Last updated at <span class='instance'>%{time_in_words}</span>"
+    timespent_export:
+      dialog_header: Export Reports
+      dialog_sub_header: We can export only 25 columns of data
+      aggregate_title: Aggregate info
+      aggregate_info: Time spent in group split by Type
+      ticket_title: Ticketwise info
+      ticket_dropdown: 'Include time spent in:'
+      ticket_info: Time spent per ticket split by status
+      button_export: Export
+      export_csv: Export CSV
     saved_report:
       title: Report title
       dialog_header: "Save & Schedule Report"

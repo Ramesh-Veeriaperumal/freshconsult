@@ -85,7 +85,8 @@ module ExportCsvUtil
 
   def export_customer_fields type
     return unless ["contact", "company"].include?(type)
-    custom_fields = Account.current.send("#{type}_form").send("#{type}_fields")
+    custom_form = Account.current.send("#{type}_form")
+    custom_fields = type.eql?("contact") ? custom_form.send("#{type}_fields", true) : custom_form.send("#{type}_fields")
     custom_fields.reject!{|x| ["tag_names"].include?(x.name)} if type.eql?("contact")
     custom_fields.collect { |cf| 
             { :label => cf.label, 

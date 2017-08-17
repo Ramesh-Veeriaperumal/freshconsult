@@ -25,6 +25,7 @@ module HelpdeskReports::Helper::Ticket
         field[:nested_fields].each{|n_field| labels[n_field[:condition]] = n_field[:name]}
       end
     end
+    labels.merge!('group_id' => 'Group', 'agent_id' => 'Agent') if(report_type==:timespent)
     labels
   end
 
@@ -34,7 +35,8 @@ module HelpdeskReports::Helper::Ticket
       next if field[:nested_fields] || field[:section_field] || id.to_s.include?('atleast_once_in_')
       labels[id] = field[:name]
     end
-    labels.delete(:group_id) if hide_agent_reporting?
+    # labels.delete(:group_id) if hide_agent_reporting?
+    labels[:group_id] = DEFAULT_COLUMNS_OPTIONS[:group_id] unless hide_agent_reporting?
     labels.except(*LIFECYCLE_GROUP_BY_SKIP_COLUMNS)
   end
   
@@ -366,11 +368,11 @@ module HelpdeskReports::Helper::Ticket
     @real_time_export = REAL_TIME_REPORTS_EXPORT
   end
   
-  def bulk_request(req_params, req_priority = false)
+  def bulk_request(req_params, web_request = false)
     begin
       # response = RestClient.post url, req_params.to_json, :content_type => :json, :accept => :json
-      url = get_reports_service_url req_priority
-      timeout = req_priority ? 60 : 120
+      url = get_reports_service_url web_request
+      timeout = web_request ? ReportsAppConfig::WEB_REQ_TIMEOUT : ReportsAppConfig::BG_REQ_TIMEOUT
       response = RestClient::Request.new(
         method: :post, 
         url: url, 
@@ -410,7 +412,7 @@ module HelpdeskReports::Helper::Ticket
     end
   end
 
-  def get_reports_service_url req_priority
+  def get_reports_service_url web_request
     plan = account_plan_name.to_sym
     plan_priority = case
                     when (Account.current.subscription.trial? || REPORTS_PLAN_PRIORITY[:medium].include?(plan))
@@ -422,7 +424,7 @@ module HelpdeskReports::Helper::Ticket
                     else
                       :medium
                     end
-    suffix = req_priority ? REPORTS_URL_SUFFIX[plan_priority] : REPORTS_BG_URL_SUFFIX[plan_priority]
+    suffix = web_request ? REPORTS_URL_SUFFIX[plan_priority] : REPORTS_BG_URL_SUFFIX[plan_priority]
     ReportsAppConfig::TICKET_REPORTS_URL % {priority: suffix}
   end
   

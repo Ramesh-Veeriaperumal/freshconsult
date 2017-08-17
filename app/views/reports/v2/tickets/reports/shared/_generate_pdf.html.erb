@@ -17,5 +17,48 @@
       </form>
     </div>
 <% else %>
-  <%= button_tag I18n.translate(anchor_lable), :id => "generate_pdf_async", :class => "generate-pdf-button"%>
+<% if @report_type == :timespent %>
+    <a class="pull-right" 
+        href="#timespent-dialog-export" 
+        id="timespent-export-link"
+        rel="freshdialog" 
+        data-backdrop="static"
+        data-show-close="true" 
+        data-width="400"
+        data-title="<%=t('helpdesk_reports.timespent_export.dialog_header')%>" 
+        data-submit-label="<%=t('helpdesk_reports.timespent_export.button_export')%>" 
+        data-close-label="<%=t('helpdesk_reports.saved_report.cancel')%>" 
+        data-destroy-on-close="true"
+        >
+        <%= t('helpdesk_reports.timespent_export.dialog_header') %>
+      </a>
+  <% else %>
+      <%= button_tag I18n.translate(anchor_lable), :id => "generate_pdf_async", :class => "generate-pdf-button"%>  
+  <% end %>
+<% end %>
+
+<% if @report_type == :timespent %>
+  <!-- Export Report Dialog -->
+  <div id="timespent-dialog-export" class="hide row-fluid">
+    <p class="visibility hide"><%= t('helpdesk_reports.timespent_export.dialog_sub_header') %></p>
+    <div class="dialog_container">
+        <div class="section">
+            <input type="radio" name="export_type" value="0" class="pull-left" checked> 
+            <p class="export-type-title"><%= t('helpdesk_reports.timespent_export.aggregate_title') %></p>
+            <p class="visibility"><%= t('helpdesk_reports.timespent_export.aggregate_info') %></p>
+        </div>
+        <div class="section">
+            <input type="radio" name="export_type" value="1" class="pull-left" >
+            <p class="export-type-title"><%= t('helpdesk_reports.timespent_export.ticket_title') %></p>
+            <p class="visibility"><%= t('helpdesk_reports.timespent_export.ticket_info') %></p>
+        </div>
+        <div class="section hide">
+            <span class="export-type-title"><%= t('helpdesk_reports.timespent_export.ticket_dropdown') %></span>
+            <select class="select2" name="group" id="as">
+                <option value="1">Group</option>
+                <option value="2">Type</option>
+            </select>
+        </div>
+    </div>
+  </div>
 <% end %>

@@ -157,6 +157,8 @@ class HelpdeskReports::Formatter::Ticket::Insight
     agent_vals = value[:actor_id] || {}
     @value1 = agent_vals.length
     @value2 = nil
+    @v_status = nil 
+    @v_direction = nil
     if agent_vals.length > 6
       avg_val = agent_vals.values.sum.to_f / agent_vals.length
       avg_min = 0.9 * avg_val
@@ -167,6 +169,7 @@ class HelpdeskReports::Formatter::Ticket::Insight
         bad += 1 if val > avg_max
         good += 1 if val < avg_min
       end
+      
       threshold = (agent_vals.length * 0.15).ceil
       if good >= threshold && bad >= threshold
         @value2 = good > bad ? good : bad

@@ -139,7 +139,7 @@ module EmailHelper
     end
     FreshdeskErrorsMailer.error_email(nil, {:domain_name => domain}, nil, {
             :subject => subject,
-            :recipients => ["block-alerts@freshworks.com"],
+            :recipients => ["fd-block-alerts@freshworks.com"],
             :additional_info => {:info => description}
           })
   end

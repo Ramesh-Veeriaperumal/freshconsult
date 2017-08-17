@@ -306,6 +306,6 @@ class Export::Ticket < Struct.new(:export_params)
     export_fields = export_params[:"#{type}_fields"]
     actual_fields = contact_company_fields_order(type)
 
-    export_params[:"#{type}_fields"] = sort_fields export_fields, actual_fields
+    export_params[:"#{type}_fields"] = sort_export_fields export_fields, actual_fields
   end
 end

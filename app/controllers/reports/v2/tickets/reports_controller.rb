@@ -6,8 +6,9 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   include HelpdeskReports::Helper::ControllerMethods
   include HelpdeskReports::Helper::ScheduledReports
   include HelpdeskReports::Helper::QnaInsightsReports
+  include Cache::Memcache::Reports::ReportsCache
 
-  before_filter :check_account_state, :ensure_report_type_or_redirect,  :lifecycle_launch_party_check,
+  before_filter :check_account_state, :ensure_report_type_or_redirect,
                 :plan_constraints,                                      :except => [:download_file]              
   before_filter :pdf_export_config, :report_filter_data_hash,           :only   => [:index, :fetch_metrics]
   before_filter :filter_data, :set_selected_tab,                        :only   => [:index, :export_report, :email_reports]
@@ -56,6 +57,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   def export_tickets
     @export_query_params = params[:export_params]
     @query_params = [@export_query_params.delete(:query_hash)]
+    construct_params
     validate_scope
     request_object = HelpdeskReports::Request::Ticket.new(@query_params[0], report_type)
     request_object.build_request
@@ -87,7 +89,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   
   def email_reports
     param_constructor = "HelpdeskReports::ParamConstructor::#{report_type.to_s.camelcase}".constantize.new(params.symbolize_keys)
-    req_params = param_constructor.build_pdf_params
+    req_params = param_constructor.build_export_params
     req_params[:portal_name] = current_portal.name if current_portal
     Reports::Export.perform_async(req_params)
     render json: nil, status: :ok
@@ -119,8 +121,16 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   end
 
   def fetch_insights_metric
-    generate_data
-    @data[:last_dump_time]  = @last_dump_time
+    key = get_key_for_insights(@query_params)
+    cache_data = MemcacheKeys.get_from_cache(key)
+    if cache_data.nil?
+      generate_data
+      @data[:last_dump_time]  = @last_dump_time
+      timeout = get_cache_interval_from_synctime(@last_dump_time)
+      MemcacheKeys.cache(key, @data, timeout) if @data[:error].nil? 
+    else
+      @data = cache_data
+    end
     send_json_result
   end
 
@@ -251,13 +261,16 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
     additional_details = {}
     ticket_list_columns = "display_id, subject, responder_id, status, priority, requester_id"
     additional_details[:total_time] = id_list[:total_time] if report_type==:timespent
+    tickets, archive_tickets = [], []
     Sharding.select_shard_of(current_account.id) do
       Sharding.run_on_slave do
         tkt = current_account.tickets.permissible(current_user).newest(TICKET_LIST_LIMIT)
         archive_tkt = current_account.archive_tickets.permissible(current_user).newest(TICKET_LIST_LIMIT)
         begin
-          tickets = tkt.find_all_by_id(id_list[:non_archive], :select => ticket_list_columns)
-          archive_tickets = archive_tkt.find_all_by_ticket_id(id_list[:archive], :select => ticket_list_columns)
+          # tickets = tkt.find_all_by_id(id_list[:non_archive], :select => ticket_list_columns)
+          tickets = tkt.find_all_by_id(id_list[:ticket_id], :select => ticket_list_columns)
+          # archive_tickets = archive_tkt.find_all_by_ticket_id(id_list[:archive], :select => ticket_list_columns)
+          archive_tickets = archive_tkt.find_all_by_ticket_id(id_list[:ticket_id], :select => ticket_list_columns) if tickets.count < id_list[:ticket_id].count
         rescue Exception => e
           Rails.logger.error "#{current_account.id} - Error occurred in Business Intelligence Reports while fetching tickets. \n#{e.inspect}\n#{e.message}\n#{e.backtrace.join("\n\t")}"
           NewRelic::Agent.notice_error(e,{:description => "#{current_account.id} - Error occurred in Business Intelligence Reports while fetching tickets"}) 
@@ -347,7 +360,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
 
 
   def construct_params
-    return unless report_type == :timespent
+    return unless(report_type == :timespent && @query_params.present?)
     #Currently input to param constructor is hash.
     #hence following the same std for now. Might follow a common input std for all requests in future.
     new_params = []

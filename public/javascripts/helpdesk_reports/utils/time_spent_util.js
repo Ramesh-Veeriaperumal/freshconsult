@@ -131,7 +131,7 @@ HelpdeskReports.ReportUtil.TimeSpent = (function($){
 			
 			var request = [];
 			request.push(param);
-			
+			HelpdeskReports.locals.list_params = request;
 			$("#table_content").show().html("");
 			$("#table_content").addClass('sloading loading-small');
 
@@ -161,8 +161,10 @@ HelpdeskReports.ReportUtil.TimeSpent = (function($){
 						
 						$("#table_content").removeClass('sloading loading-small');
 						$("#table_content").html(tmpl);
+						$(".export_title_status").removeClass('hide');
 					} else {
 						var div = ["table_content"];
+						$(".export_title_status").addClass('hide');
 						HelpdeskReports.CoreUtil.populateEmptyChart(div, 'No Data');
 					}
 					
@@ -217,7 +219,7 @@ HelpdeskReports.ReportUtil.TimeSpent = (function($){
 
 			var req_arr = [];
 			req_arr.push(list_params);
-
+			HelpdeskReports.locals.list_params = req_arr;
 			$("#time_spent_ticket_list").addClass('sloading loading-small');
 			$("#table_content").hide();
 			_FD.core.fetchTickets(req_arr);
@@ -289,7 +291,7 @@ HelpdeskReports.ReportUtil.TimeSpent = (function($){
             HelpdeskReports.locals.current_group_by = 'ticket_type';
             _FD.setDefaultValues();
             _FD.recordAnalytics();
-			_FD.hideScheduleUntilExportIsReady();
+			// _FD.hideScheduleUntilExportIsReady();
             _FD.redraw = HelpdeskReports.ChartsInitializer.TimeSpent.redraw
 		}
 	}
