@@ -38,7 +38,9 @@ module Inherits
 
           def field_name(label)
             # XML attributes shouldn't start with a numeral. Pre-fixed 'cf_' as a simple fix
-            "cf_#{label.strip.gsub(/\s/, '_').gsub(/\W/, '').gsub(/[^ _0-9a-zA-Z]+/,"").downcase}".squeeze("_")
+            label = label.gsub(/[^ _0-9a-zA-Z]+/,"")
+            label = "rand#{rand(999999)}" if label.blank?
+            "cf_#{label.strip.gsub(/\s/, '_').gsub(/\W/, '').downcase}".squeeze("_")
           end
 
       end

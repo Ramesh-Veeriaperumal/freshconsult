@@ -9,7 +9,7 @@ class Helpdesk::InlineAttachmentsController < ApplicationController
   skip_before_filter :set_locale, :force_utf8_params
   skip_before_filter :ensure_proper_protocol, :ensure_proper_sts_header
   around_filter { |&block| Sharding.run_on_slave(&block) }
-  before_filter :redirect_to_referer_host, :if => :global_host?
+  before_filter :redirect_to_host, :if => :global_host?
   before_filter :check_anonymous_user, :if => :private_inline?
   
   def one_hop_url
@@ -40,38 +40,52 @@ class Helpdesk::InlineAttachmentsController < ApplicationController
     end
 
     def request_host
-      @request_host ||= current_domain
-    end
-
-    def current_domain
-      payload[:domain]
+      @request_host ||= global_host? ? image_domain : request.host
     end
 
     def payload
       @payload ||= JSON.parse(JWT.base64url_decode(params[:token].split('.')[1]),{:symbolize_names => true})
     end
 
-    def redirect_host
-      if request.referer
-        referer_uri = URI(request.referer)
-        "#{referer_uri.scheme}://#{referer_uri.host}"
-      else
-        "#{env_config[:protocol]}://#{request_host}"
+    def image_account_id
+      payload[:account_id]
+    end
+
+    def image_domain
+      return payload[:domain] if ShardMapping.fetch_by_domain(payload[:domain]).present?
+      render_404 and return unless image_account_id
+      begin
+        Sharding.select_shard_of(image_account_id) do
+          Sharding.run_on_slave do
+            return Account.find(image_account_id).full_domain
+          end
+        end
+      rescue => e
+        Rails.logger.info("Inline Image Account not found")
+        render_404 and return
       end
     end
 
-    def invalid_referer? referer_host
-      shard_mapping = ShardMapping.fetch_by_domain(referer_host)
-      shard_mapping.nil? || shard_mapping.account_id != current_account.id
+    def image_host
+      "#{current_account.url_protocol}://#{current_account.full_domain}"
     end
 
-    def redirect_to_referer_host
-      referer = redirect_host
-      host = URI(referer).host
-      # Checking the host to ensure its not the same as global host to avoid looping
-      # Also, checking to ensure the host is not a third party referer to avoid a redirect attack
-      render_404 and return if host == global_host || invalid_referer?(host)
-      redirect_to "#{referer}#{env_config[:port]}/inline/attachment?token=#{params[:token]}"
+    def referer_host
+      referer = request.referer
+      return unless referer
+      referer_uri = URI(referer)
+      host = referer_uri.host
+      "#{referer_uri.scheme}://#{host}" if host && image_account?(host)
+    end
+
+    def image_account? host
+      shard_mapping = ShardMapping.fetch_by_domain(host)
+      shard_mapping.present? && shard_mapping.account_id == current_account.id
+    end
+
+    def redirect_to_host
+      redirect_host = referer_host || image_host
+      redirect_to "#{redirect_host}#{env_config[:port]}/inline/attachment?token=#{params[:token]}"
     end
 
     def private_inline?

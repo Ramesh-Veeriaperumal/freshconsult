@@ -253,7 +253,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def encoded_token
-    JWT.encode({ :id => self.id, :domain => Account.current.full_domain }, Account.current.attachment_secret)
+    JWT.encode({ :id => self.id, :domain => Account.current.full_domain, :account_id => Account.current.id }, Account.current.attachment_secret)
   end
 
   Paperclip.interpolates :filename do |attachment, style|

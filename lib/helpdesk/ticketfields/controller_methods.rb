@@ -103,6 +103,7 @@ module Helpdesk::Ticketfields::ControllerMethods
 	  def field_name(label,account=current_account)
 	    invalid_start_char = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "_", " "]
 	    label = label.gsub(/[^ _0-9a-zA-Z]+/,"")
+	    label = "cf_rand#{rand(999999)}" if label.blank?
 	    label = "cf_" + label if invalid_start_char.index(label[0])
 	    "#{label.strip.gsub(/\s/, '_').gsub(/\W/, '').downcase}_#{account.id}".squeeze("_")
 	  end

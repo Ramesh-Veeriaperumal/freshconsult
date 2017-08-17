@@ -15,13 +15,13 @@ module RabbitMq::Subscribers::TimeSheets::Activities
   end
 
   def mq_activities_valid(action, model)
-    Account.current.features?(:activity_revamp) and timesheet_valid?(action)
+    timesheet_valid?(action)
   end
 
   private
 
   def timesheet_valid?(action)
-    self.workable.is_a?(Helpdesk::Ticket) and (valid_changes.any? || destroy_action?(action))
+    self.workable.is_a?(Helpdesk::Ticket) && (valid_changes.any? || destroy_action?(action))
   end
 
   def timesheet_properties(action)

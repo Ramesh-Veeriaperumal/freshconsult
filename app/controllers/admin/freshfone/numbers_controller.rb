@@ -2,6 +2,7 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 	include ::Freshfone::AccountUtil
 	include ::Freshfone::SubscriptionsUtil
 	include PostOffice
+	include Freshfone::NumberValidator
 
 	before_filter :load_numbers, :only => [:index]
 	before_filter :validate_trial, :only => [:index]
@@ -18,27 +19,28 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 	def purchase
 		begin
 			if purchase_number.save
-				flash[:notice] = t('flash.freshfone.number.successful_purchase')
 				respond_to do |format|
 					format.html { redirect_to edit_admin_freshfone_number_path(@purchased_number) }
-					format.json { render :json => { :success => true, :redirect_url => edit_admin_freshfone_number_path(@purchased_number)} }
+					format.json { render json: { success: true, redirect_url: edit_admin_freshfone_number_path(@purchased_number),
+															 flash_message: t('flash.freshfone.number.successful_purchase')} }
 				end
 			else
-				flash[:notice] = (@purchased_number.errors.any?) ?
+				error_message = (@purchased_number.errors.any?) ?
 					@purchased_number.errors.full_messages.to_sentence :
 						t('flash.freshfone.number.unsuccessful_purchase')
-				redirect_to :action => :index
+				render json: { success: false, redirect_url: admin_freshfone_numbers_path,
+											 flash_message: error_message}
 			end
 		rescue Exception => e
 			if e.message == "PhoneNumber Requires a Local Address" || (e.respond_to?(:code) && e.code == 21615) # checking either in case twilio changes the error message
 				Rails.logger.debug "Account #{current_account.id} provided an invalid local address for #{params[:country]}.\nParams:\n#{params.to_json}"
-				flash[:notice] = t('flash.freshfone.number.unsuccessful_purchase')
-				render :json => { :success => false, 
-					:errors => [t('flash.freshfone.number.invalide_address_error', {country: country_name})] } and return
+				return render json: { success: false, open_form: true,
+					errors: [t('flash.freshfone.number.local_address_error')],
+					flash_message: t('flash.freshfone.number.unsuccessful_purchase') }
 			end
-			flash[:notice] = t('flash.freshfone.number.unsuccessful_purchase')
 			Rails.logger.debug "Error purchasing number for account#{current_account.id}.\n#{e.message}\n#{e.backtrace.join("\n\t")}"
-			redirect_to :action => :index
+			render json: { success: false, redirect_url: admin_freshfone_numbers_path,
+										 flash_message: t('flash.freshfone.number.unsuccessful_purchase')}
 		end
 	end
 
@@ -187,12 +189,13 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 
 
 		def address_required?
-      params["address_required"] == "true" && !address_already_exist?
+      params["address_required"] == "true" && (params['city'].present? && !address_already_exist?)
     end
 
     def address_already_exist?
       ff_account = current_account.freshfone_account
-      ff_account.present? && ff_account.freshfone_addresses.find_by_country(params[:country]).present?
+      ff_account.present? && ff_account.freshfone_addresses.where(
+      	country: params['country'], city: params['city']).present?
     end
 
     def new_freshfone_account?
@@ -213,11 +216,9 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 
     def add_freshfone_address
     	unless build_address.save
-				flash[:notice] = (@freshfone_address.errors.any?) ? 
-												@freshfone_address.errors.full_messages.to_sentence :
-												t('flash.freshfone.number.unsuccessful_purchase')
-				render :json => { :success => false, 
-					:errors => @freshfone_address.errors.full_messages } and return
+				flash[:notice] = (@freshfone_address.errors.any?) ? error_message.to_sentence :
+					t('flash.freshfone.number.unsuccessful_purchase')
+				render json: { :success => false, errors: error_message, suggestion: address_suggestion }
 			end
     end
 
@@ -255,5 +256,36 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 
 		def hong_kong?
 			params[:country] == 'HK'
+		end
+
+		def error_message
+			error = @freshfone_address.errors
+			return [t('flash.freshfone.number.suggested_address')] if address_suggested?(error)
+			return [t('flash.freshfone.number.invalid_address')] if address_invalid?(error)
+			@freshfone_address.errors.full_messages
+		end
+
+		def address_suggestion
+			error = @freshfone_address.errors
+			return {} unless address_suggested?(error)
+			message = error.full_messages.first
+			suggestion_hash = address_suggestion_hash(message)
+			suggestion_hash.delete_if { |key, val| params[key].eql?(val) }
+		end
+
+		def address_suggestion_hash(message, suggestion_hash = {})
+			suggestion_hash[:address] = message[/Street: (.*?), Locality:/, 1]
+			suggestion_hash[:city] = message[/Locality: (.*?), Region:/, 1]
+			suggestion_hash[:state] = message[/Region: (.*?), PostalCode:/, 1]
+			suggestion_hash[:postal_code] = message[/PostalCode: (.*?), IsoCountry:/, 1]
+			suggestion_hash
+		end
+
+		def address_invalid?(error)
+			error.has_key?(:twilio_error) && error.messages[:twilio_error].first[:code] == TWILIO_ERROR_CODES[:address_invalid]
+		end
+
+		def address_suggested?(error)
+			error.has_key?(:twilio_error) && error.messages[:twilio_error].first[:code] == TWILIO_ERROR_CODES[:address_suggested]
 		end
 end

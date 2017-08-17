@@ -238,7 +238,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			}
 		},
 		call_validation: function(isOutgoing) {
-			var balance_available = true,country_enabled = true;
+			var balance_available = true,country_enabled = true, invalid_phone = false;
 			$.ajax({
 	   				url: '/freshfone/dial_check',
 	   				dataType: "json",
@@ -247,7 +247,8 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 	   				success: function (outcome) {
 							if(outcome.code == 1001){
 								balance_available = false;  
-							} else if(outcome.code == 1002){
+							}
+							else if(outcome.code == 1002){
 								country_enabled = false;
 							}
 							else if(outcome.code == 1003){
@@ -256,12 +257,16 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 							else if(outcome.code == 1004){
 								freshfone.trialOutgoingExhausted = true;
 							}
+							else if(outcome.code == 1005){
+								invalid_phone = true;
+							}
 						}
 			});
 			if (!balance_available) { this.$infoText().show(); }
 			if (!country_enabled) { this.$restrictedCountryText().show(); }  
 			if (freshfone.trialOutgoingExhausted || freshfone.trialExpired) { 
 				freshfonewidget.showOutgoing(); freshfonewidget.showDialPad(); }
+			if (invalid_phone) { return this.toggleInvalidNumberText(true); }
 			return (balance_available && country_enabled);
 		},
 		addDialCode: function(number){ 
@@ -291,7 +296,6 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			else if(this.freshfoneuser.isAcw()){
 				return this.toggleInAcwText(true);
 			}
-			if (!this.canDialNumber()) { return this.toggleInvalidNumberText(true); }
 
 			var params = { PhoneNumber : this.number, type: "outgoing",
 				phone_country: this.callerLocation(),  agent: this.currentUser,

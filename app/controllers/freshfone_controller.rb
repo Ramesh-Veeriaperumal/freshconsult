@@ -5,6 +5,7 @@ class FreshfoneController < FreshfoneBaseController
 	include Freshfone::NumberMethods
 	include Freshfone::CallValidator
 	include Freshfone::Response
+	include Freshfone::NumberValidator
 
 	attr_accessor :freshfone_users
 	before_filter :indian_number_incoming_fix, :only => [:voice, :ivr_flow]
@@ -82,7 +83,7 @@ class FreshfoneController < FreshfoneBaseController
 		end
 
 		def reset_caller_params
-			params[:FromCountry] = country_from_global(params[:From])
+			params[:FromCountry] = fetch_country_code(params[:From])
 			params[:FromState] = ""
 			params[:ToCity] = ""
 		end

@@ -480,8 +480,18 @@ window.App = window.App || {};
 			if(fieldDetails.parentElement.hasClass('requester-email')){
 			 $('#template_data_requester_id').prop('disabled',status);
 			}
-			fieldDetails.parentElement.find(fieldDetails.fieldType).prop('disabled',status)
-			this.addOrRemoveData(status,source,fieldDetails.fieldName);
+			fieldDetails.parentElement.find(fieldDetails.fieldType).prop('disabled',status);
+			// need to send the dependent fields name while inheriting value from parent
+			if (fieldDetails.fieldTypeName === "nested_field") {
+				var fieldLength = fieldDetails.field.length;
+				for (var i = 0; i < fieldLength; i++) {
+					var fieldName = fieldDetails.field[i].getAttribute('name');
+					this.addOrRemoveData(status,source,fieldName);
+				}
+			} else {
+				this.addOrRemoveData(status,source,fieldDetails.fieldName);
+			}
+
 			this.clearIndividualField(fieldDetails.parentElement,childexisting,fieldDetails.fieldTagName);
 			if(source!=='inherit_parent'){
 				this.editResetField(status,fieldDetails.fieldName.replace(/[\[\]/\s/']+/g,',')

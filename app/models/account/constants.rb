@@ -126,7 +126,7 @@ class Account < ActiveRecord::Base
     :custom_dashboard => false, :updated_twilio_client => false,
     :report_field_regenerate => false, :reports_regenerate_data => false,
     :chat_enable => false, :saml_old_issuer => false, :spam_dynamo => true,
-    :redis_display_id => false, :es_multilang_solutions => false,
+    :redis_display_id => true, :es_multilang_solutions => false,
     :sort_by_customer_response => false, :survey_links => true,
     :tags_filter_reporting => false,
     :saml_unspecified_nameid => false, :euc_hide_agent_metrics => false,
@@ -185,11 +185,16 @@ class Account < ActiveRecord::Base
     :customer_sentiment => false, :countv2_template_write => false, :logout_logs => false, :gnip_2_0 => false, :froala_editor => false,
     :es_v2_splqueries => false, :suggest_tickets => false, :"Freshfone New Notifications" => false, :feedback_widget_captcha => false,
     :es_multilang_solutions => false, :requester_widget => false, :spam_blacklist_feature => false,
-    :custom_timesheet => false, :antivirus_service => false, :hide_api_key => false, :new_sla_logic => false,
+    :custom_timesheet => false, :antivirus_service => false, :hide_api_key => false, :skip_ticket_threading => false, :new_sla_logic => false,
     :multi_dynamic_sections => true, :dashboard_new_alias => false, :attachments_scope => false, :kbase_spam_whitelist => false, 
     :forum_post_spam_whitelist => false, :email_failures => false, :enable_qna => false, :enable_insights => false,
-    :escape_liquid_attributes => true, :escape_liquid_for_reply => true, :escape_liquid_for_portal => true
-    
+    :escape_liquid_attributes => true, :escape_liquid_for_reply => true, :escape_liquid_for_portal => true,
+    :close_validation => false, :new_send_and_set => false, :pjax_reload => false, :one_hop => false, :lifecycle_report => false, 
+    :bulk_security => false, :shared_ownership => false, :service_writes => false, :service_reads => false, :falcon => false, 
+    :send_emails_via_fd_email_service_feature => false, :user_notifications => false, :freshplug_enabled => false, :dkim => false, 
+    :sha1_enabled => false, :disable_archive => false, :sha256_enabled => false, :auto_ticket_export => false, :select_all => false, 
+    :facebook_realtime => false, :"Freshfone Call Tracker" => false, :skip_one_hop => false, :ticket_contact_export => false, 
+    :custom_apps => false, :timesheet => false, :api_jwt_auth => false, :disable_emails => false
   }
 
 end

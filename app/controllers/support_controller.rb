@@ -49,6 +49,7 @@ class SupportController < ApplicationController
   def robots
     @crawl_sitemap = current_account.active? && current_account.sitemap_enabled?
     @url = "#{current_portal.url_protocol}://#{current_portal.host}"
+    @disallow_languages = current_portal.multilingual? ? current_account.all_portal_languages : []
     respond_to do |format| 
       format.text {render 'robots.txt.erb'}
       format.any {render_404}
@@ -278,7 +279,7 @@ class SupportController < ApplicationController
   def set_language
     Language.for_current_account.make_current and return unless current_account.multilingual?
     Language.set_current(
-      request_language: http_accept_language.compatible_language_from(I18n.available_locales), 
+      request_language: http_accept_language.language_region_compatible_from(I18n.available_locales), 
       url_locale: params[:url_locale])
     override_default_locale
   end

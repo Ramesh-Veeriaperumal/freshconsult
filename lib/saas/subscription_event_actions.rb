@@ -39,6 +39,7 @@ class SAAS::SubscriptionEventActions
       end
       account.save
       handle_custom_dasboard_launch
+      handle_collab_feature
       #disable_chat_routing unless account.has_feature?(:chat_routing)
     end
 
@@ -127,6 +128,10 @@ class SAAS::SubscriptionEventActions
       dashboard_plans = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:estate], SubscriptionPlan::SUBSCRIPTION_PLANS[:forest],
                         SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17], SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_17] ]
       dashboard_plans.include?(new_plan.subscription_plan.name)
+    end
+
+    def handle_collab_feature
+      CollabPreEnableWorker.perform_async if account.has_feature?(:collaboration)
     end
 
 end

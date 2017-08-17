@@ -30,20 +30,8 @@
     - freshfone_node
     - livechat_worker
   :scheduled:
-    - supervisor
-    - sla
-    - premium_sla
-    - premium_supervisor
-    - premium_sla_reminders
-    - sla_reminders
-    - tickets_export_queue
-    - premium_ticket_export
-    - long_running_ticket_export
     - scheduled_reports
     - scheduled_reports_cleanup
-    - scheduled_ticket_export
-    - scheduled_ticket_export_config
-    - report_export_queue
     - chargebee_invoice
     - facebook
     - premium_facebook
@@ -52,7 +40,6 @@
     - custom_twitter
   :occasional:
     - plan_change_workerv2
-    - manual_publish
     - merge_contacts
     - plan_change
     - password_expiry
@@ -70,18 +57,13 @@
     - partners_event_queue
     - reset_associations
     - link_tickets
-    - sendgrid_domain_updates
     - dkim_verifier
     - dkim_general
     - bulk_child_tkt_creation
     - activation_worker
     - flush_portal_solution_cache
-    - learn_spam_message
     - s3_retry_worker
     - reopen_tickets
-    - kbase_content_spam_checker
-    - forum_content_spam_checker
-    - activity_export
     - skill_import
     - send_signup_activation_mail
     - upload_avatar_worker
@@ -90,6 +72,7 @@
     - facebook_delta
     - twitter_replay_worker
     - contact_export
+    - product_feedback
   :maintainence:
     - select_all_tickets
     - select_all_batcher
@@ -101,11 +84,6 @@
     - reset_internal_agent
     - reset_gamification_score
     - export_agents
-    - archive_ticket_splitter
-    - archive_build_create_ticket
-    - archive_modify_ticket_association
-    - archive_delete_ticket
-    - archive_delete_ticket_dependencies
     - deactivate_monitorship
     - tag_uses_destroy
     - update_users_company_id
@@ -183,3 +161,29 @@
   :spam:
     - email_notification_spam_queue
     - spam_data_migration
+    - kbase_content_spam_checker
+    - forum_content_spam_checker
+    - learn_spam_message
+    - sendgrid_domain_updates
+  :archive:
+    - manual_publish
+    - archive_ticket_splitter
+    - archive_build_create_ticket
+    - archive_modify_ticket_association
+    - archive_delete_ticket
+    - archive_delete_ticket_dependencies
+  :exports:
+    - scheduled_ticket_export_config
+    - scheduled_ticket_export
+    - tickets_export_queue
+    - long_running_ticket_export
+    - premium_ticket_export
+    - activity_export
+    - report_export_queue
+  :bulk_scheduled:
+    - supervisor
+    - sla
+    - premium_sla
+    - premium_supervisor
+    - premium_sla_reminders
+    - sla_reminders
