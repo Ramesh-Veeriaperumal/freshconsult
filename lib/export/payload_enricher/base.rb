@@ -18,7 +18,7 @@ class Export::PayloadEnricher::Base
         properties_map
       end
     end
-    return response_map
+    response_map
   end
 
   def field_value(object, name)
