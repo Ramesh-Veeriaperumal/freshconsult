@@ -189,4 +189,8 @@ class Account < ActiveRecord::Base
     !subscription.suspended? && features?(:chat) && !!chat_setting.site_id
   end
 
+  def collaboration_enabled?
+   @collboration ||= has_feature?(:collaboration) && self.collab_settings.present?
+  end
+
 end

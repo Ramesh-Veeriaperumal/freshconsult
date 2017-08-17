@@ -288,7 +288,7 @@ module Ember
       end
       get :show, controller_params(version: 'private', id: ticket.display_id, include: 'survey')
       assert_response 200
-      match_json(ticket_show_pattern(ticket, result.last))
+      match_json(ticket_show_pattern(ticket.reload, result.last))
       MixpanelWrapper.unstub(:send_to_mixpanel)
     end
 
@@ -329,7 +329,7 @@ module Ember
       remove_wrap_params
       get :show, construct_params(version: 'private', id: ticket.display_id)
       assert_response 200
-      match_json(ticket_show_pattern(ticket))
+      match_json(ticket_show_pattern(ticket.reload))
     end
 
     def test_create_with_incorrect_attachment_type
@@ -1176,7 +1176,7 @@ module Ember
       ticket = create_twitter_ticket
       get :show, controller_params(version: 'private', id: ticket.display_id)
       assert_response 200
-      match_json(ticket_show_pattern(ticket))
+      match_json(ticket_show_pattern(ticket.reload))
       Account.unstub(:current)
     end
 
@@ -1202,7 +1202,7 @@ module Ember
       Account.current.features.twitter.destroy if twitter_enabled
       get :show, controller_params(version: 'private', id: ticket.display_id)
       assert_response 200
-      match_json(ticket_show_pattern(ticket))
+      match_json(ticket_show_pattern(ticket.reload))
       Account.current.features.twitter.create if twitter_enabled
       MixpanelWrapper.unstub(:send_to_mixpanel)
       Account.unstub(:current)
@@ -1613,6 +1613,16 @@ module Ember
         assert_response 200
         assert_equal true, JSON.parse(response.body)['can_be_associated']
       end
+    end
+
+    def test_ticket_without_collab
+      Account.current.revoke_feature(:collaboration)
+      ticket = create_ticket
+      get :show, controller_params(version: 'private', id: ticket.display_id)
+      assert_response 200
+      match_json(ticket_show_pattern(ticket))
+    ensure
+      Account.current.add_feature(:collaboration)
     end
   end
 end

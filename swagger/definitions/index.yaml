@@ -269,3 +269,7 @@
     $ref: './response/dashboard/ticket_metrics.yaml'
   leaderboard_agents_lists:
     $ref: './response/dashboard/leaderboard/agents.yaml'
+
+  #Marketplace
+  marketplace_apps:
+    $ref: ./resource/marketplace_apps.yaml

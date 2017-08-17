@@ -344,10 +344,9 @@ module TicketsTestHelper
   end
 
   def private_api_ticket_index_spam_deleted_pattern(spam = false, deleted = false)
-    filter_clause = { created_at: (30.days.ago..Time.zone.now) }
-    filter_clause[:spam] = true if spam
-    filter_clause[:deleted] = true if deleted
-    pattern_array = Helpdesk::Ticket.where(filter_clause).order('created_at desc').limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).map do |ticket|
+    filter_clause = { helpdesk_schema_less_tickets: { boolean_tc02: false }, deleted: deleted }
+    filter_clause[:spam] = spam if spam
+    pattern_array = Helpdesk::Ticket.joins(:schema_less_ticket).where(filter_clause).order('created_at desc').limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).map do |ticket|
       index_ticket_pattern_with_associations(ticket, false, true, false, [:tags])
     end
   end
@@ -385,6 +384,7 @@ module TicketsTestHelper
     pattern[:ticket_topic] = ticket_topic if ticket_topic.present?
     pattern[:association_type] = ticket.association_type
     pattern[:requester] = Hash if requester
+    pattern[:collaboration] = collaboration_pattern if @account.collaboration_enabled?
     pattern
   end
 
@@ -620,5 +620,9 @@ module TicketsTestHelper
       ticket = Helpdesk::Ticket.where(display_id: ticket_id).first
       assert ticket.related_ticket?
     end
+  end
+
+  def collaboration_pattern
+    { convo_token: wildcard_matcher }
   end
 end

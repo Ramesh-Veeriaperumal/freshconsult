@@ -1,6 +1,6 @@
 class AccountDecorator < ApiDecorator
   def to_hash
-    {
+    ret_hash = {
       full_domain: record.full_domain,
       helpdesk_name: record.helpdesk_name,
       name: record.name,
@@ -13,6 +13,8 @@ class AccountDecorator < ApiDecorator
       agents: agents_hash,
       groups: groups_hash
     }
+    ret_hash[:collaboration] = collaboration_hash if record.collaboration_enabled?
+    ret_hash
   end
 
   private
@@ -73,5 +75,9 @@ class AccountDecorator < ApiDecorator
 
     def include_survey_manually?
       record.new_survey_enabled? && record.active_custom_survey_from_cache.try(:send_while) == Survey::SPECIFIC_EMAIL_RESPONSE
+    end
+
+    def collaboration_hash
+      Collaboration::Payloads.new.account_payload
     end
 end

@@ -1,0 +1,16 @@
+get:
+  tags: [Marketplace Apps]
+  summary: Installed Marketplace Apps
+  description: List all Installed Marketplace Apps
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          marketplace_apps:
+            type: array
+            items:
+              $ref: '#/definitions/marketplace_apps'
+    503:
+      description: Marketplace Service Not Available

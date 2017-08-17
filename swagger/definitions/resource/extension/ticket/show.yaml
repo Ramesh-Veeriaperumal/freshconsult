@@ -17,6 +17,11 @@
       $ref: '#/definitions/ticket_topic'
     stats:
       $ref: '#/definitions/ticket_stats'
+    collaboration:
+      type: object
+      properties:
+        convo_token:
+          type: string
     meta:
       type: object
       properties:

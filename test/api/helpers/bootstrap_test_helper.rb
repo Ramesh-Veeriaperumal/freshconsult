@@ -25,6 +25,16 @@ module BootstrapTestHelper
     ret_hash
   end
 
+  def collab_pattern
+    {
+      client_id: String,
+      client_account_id: String,
+      init_auth_token: String,
+      collab_url: String,
+      rts_url: String
+    }
+  end
+
   def account_info_pattern(account)
     pattern = {
       full_domain: account.full_domain,
@@ -42,6 +52,8 @@ module BootstrapTestHelper
       agents: Array,
       groups: Array
     }
+
+    pattern[:collaboration] = collab_pattern if account.collaboration_enabled?
     if User.current.privilege?(:manage_users) || User.current.privilege?(:manage_account)
       pattern.merge!(subscription: {
         agent_limit: account.subscription.agent_limit,
