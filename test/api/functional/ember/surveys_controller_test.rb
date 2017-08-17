@@ -18,6 +18,7 @@ class Ember::SurveysControllerTest < ActionController::TestCase
   end
 
   def teardown
+    super
     unstub_custom_survey
   end
 

@@ -14,6 +14,7 @@ module Ember
     include TwitterHelper
     include DynamoHelper
     include SurveysTestHelper
+    include AwsTestHelper
 
     def setup
       super
@@ -32,6 +33,7 @@ module Ember
     end
 
     def teardown
+      super
       MixpanelWrapper.unstub(:send_to_mixpanel)
       Social::CustomTwitterWorker.unstub(:perform_async)
     end
@@ -155,15 +157,14 @@ module Ember
     end
 
     def test_create_with_cloud_files_upload
-      cloud_file_params = [{ filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 },
-                           { filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 }]
+      cloud_file_params = [{ filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
       params = create_note_params_hash.merge(cloud_files: cloud_file_params)
       post :create, construct_params({ version: 'private', id: ticket.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params, latest_note))
       match_json(private_note_pattern({}, latest_note))
-      assert latest_note.cloud_files.count == 2
+      assert latest_note.cloud_files.count == 1
     end
 
     def test_create_with_shared_attachments
@@ -174,7 +175,9 @@ module Ember
         attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) }
       )
       params = create_note_params_hash.merge(attachment_ids: canned_response.shared_attachments.map(&:attachment_id))
-      post :create, construct_params({ version: 'private', id: create_ticket.display_id }, params)
+      stub_attachment_to_io do
+        post :create, construct_params({ version: 'private', id: create_ticket.display_id }, params)
+      end
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params, latest_note))
@@ -282,15 +285,14 @@ module Ember
     end
 
     def test_reply_with_cloud_files_upload
-      cloud_file_params = [{ filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 },
-                           { filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 }]
+      cloud_file_params = [{ filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
       params = reply_note_params_hash.merge(cloud_files: cloud_file_params)
       post :reply, construct_params({ version: 'private', id: ticket.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params, latest_note))
       match_json(private_note_pattern({}, latest_note))
-      assert latest_note.cloud_files.count == 2
+      assert latest_note.cloud_files.count == 1
     end
 
     def test_reply_with_shared_attachments
@@ -301,7 +303,9 @@ module Ember
         attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) }
       )
       params = reply_note_params_hash.merge(attachment_ids: canned_response.shared_attachments.map(&:attachment_id))
-      post :reply, construct_params({ version: 'private', id: create_ticket.display_id }, params)
+      stub_attachment_to_io do
+        post :reply, construct_params({ version: 'private', id: create_ticket.display_id }, params)
+      end
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params, latest_note))
@@ -555,7 +559,9 @@ module Ember
     def test_forward_with_ticket_with_attachment
       t = create_ticket(attachments: { resource: fixture_file_upload('files/attachment.txt', 'plain/text', :binary) })
       params = forward_note_params_hash
-      post :forward, construct_params({ version: 'private', id: t.display_id }, params)
+      stub_attachment_to_io do
+        post :forward, construct_params({ version: 'private', id: t.display_id }, params)
+      end
       assert_response 201
       match_json(private_note_pattern(params, Helpdesk::Note.last))
       match_json(private_note_pattern({}, Helpdesk::Note.last))
@@ -563,7 +569,7 @@ module Ember
     end
 
     def test_forward_with_ticket_with_cloud_attachment
-      t = create_ticket(cloud_files:  [Helpdesk::CloudFile.new(filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20)])
+      t = create_ticket(cloud_files:  [Helpdesk::CloudFile.new(filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20)])
       params = forward_note_params_hash
       post :forward, construct_params({ version: 'private', id: t.display_id }, params)
       assert_response 201
@@ -609,7 +615,9 @@ module Ember
 
     def test_forward_without_quoted_text
       params = forward_note_params_hash.merge(include_quoted_text: false)
-      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params)
+      stub_attachment_to_io do
+        post :forward, construct_params({ version: 'private', id: ticket.display_id }, params)
+      end
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params, latest_note))
@@ -663,7 +671,9 @@ module Ember
     def test_forward_with_ticket_attachment_ids
       t = create_ticket(attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) })
       params = forward_note_params_hash.merge(include_original_attachments: false, attachment_ids: [t.attachments.first.id])
-      post :forward, construct_params({ version: 'private', id: t.display_id }, params)
+      stub_attachment_to_io do
+        post :forward, construct_params({ version: 'private', id: t.display_id }, params)
+      end
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params, latest_note))
@@ -676,7 +686,9 @@ module Ember
       create_shared_attachment(t)
       attachment_ids = t.all_attachments.map(&:id)
       params = forward_note_params_hash.merge(include_original_attachments: true, attachment_ids: attachment_ids)
-      post :forward, construct_params({ version: 'private', id: t.display_id }, params)
+      stub_attachment_to_io do
+        post :forward, construct_params({ version: 'private', id: t.display_id }, params)
+      end
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params, latest_note))
@@ -719,8 +731,7 @@ module Ember
     end
 
     def test_forward_with_cloud_file_ids
-      t = create_ticket(cloud_files:  [Helpdesk::CloudFile.new(filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20),
-                                       Helpdesk::CloudFile.new(filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20)])
+      t = create_ticket(cloud_files:  [Helpdesk::CloudFile.new(filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20)])
       params = forward_note_params_hash.merge(include_original_attachments: false, cloud_file_ids: [t.cloud_files.first.id])
       post :forward, construct_params({ version: 'private', id: t.display_id }, params)
       assert_response 201
@@ -736,12 +747,14 @@ module Ember
       file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
       new_attachments = [file1, file2]
       t = create_ticket(attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) },
-                        cloud_files:  [Helpdesk::CloudFile.new(filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20)])
+                        cloud_files:  [Helpdesk::CloudFile.new(filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20)])
       create_shared_attachment(t)
       params = forward_note_params_hash.merge(include_original_attachments: true,
                                               attachments: new_attachments, attachment_ids: [draft_attachment_id])
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-      post :forward, construct_params({ version: 'private', id: t.display_id }, params)
+      stub_attachment_to_io do
+        post :forward, construct_params({ version: 'private', id: t.display_id }, params)
+      end
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
       latest_note = Helpdesk::Note.last
@@ -753,20 +766,19 @@ module Ember
 
     def test_forward_with_cloud_files_upload
       t = create_ticket
-      cloud_file_params = [{ filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 },
-                           { filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 }]
+      cloud_file_params = [{ filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
       params = forward_note_params_hash.merge(cloud_files: cloud_file_params)
       post :forward, construct_params({ version: 'private', id: t.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params, latest_note))
       match_json(private_note_pattern({}, latest_note))
-      assert latest_note.cloud_files.count == 2
+      assert latest_note.cloud_files.count == 1
     end
 
     def test_forward_with_invalid_cloud_files
       t = create_ticket
-      cloud_file_params = [{ filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 10_000 }]
+      cloud_file_params = [{ filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 10_000 }]
       params = forward_note_params_hash.merge(cloud_files: cloud_file_params)
       post :forward, construct_params({ version: 'private', id: t.display_id }, params)
       assert_response 400
@@ -774,16 +786,15 @@ module Ember
     end
 
     def test_forward_with_existing_and_new_cloud_files
-      t = create_ticket(cloud_files:  [Helpdesk::CloudFile.new(filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20),
-                                       Helpdesk::CloudFile.new(filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20)])
-      cloud_file_params = [{ filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 }]
+      t = create_ticket(cloud_files:  [Helpdesk::CloudFile.new(filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20)])
+      cloud_file_params = [{ filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
       params = forward_note_params_hash.merge(cloud_files: cloud_file_params)
       post :forward, construct_params({ version: 'private', id: t.display_id }, params)
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params, latest_note))
       match_json(private_note_pattern({}, latest_note))
-      assert latest_note.cloud_files.count == 3
+      assert latest_note.cloud_files.count == 2
     end
 
     def test_forward_with_shared_attachments
@@ -794,7 +805,9 @@ module Ember
         attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) }
       )
       params = forward_note_params_hash.merge(attachment_ids: canned_response.shared_attachments.map(&:attachment_id))
-      post :forward, construct_params({ version: 'private', id: create_ticket.display_id }, params)
+      stub_attachment_to_io do
+        post :forward, construct_params({ version: 'private', id: create_ticket.display_id }, params)
+      end
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params, latest_note))
@@ -1142,7 +1155,9 @@ module Ember
       t = create_ticket
       note = create_private_note(t)
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-      put :update, construct_params({ version: 'private', id: note.id }, params_hash)
+      stub_attachment_to_io do
+        put :update, construct_params({ version: 'private', id: note.id }, params_hash)
+      end
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 200
       note = Helpdesk::Note.find(note.id)
@@ -1152,7 +1167,7 @@ module Ember
     end
 
     def test_update_with_cloud_files
-      cloud_file_params = [{ filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 }]
+      cloud_file_params = [{ filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
       params_hash = update_note_params_hash.merge(cloud_files: cloud_file_params)
       t = create_ticket
       note = create_private_note(t)
@@ -1530,24 +1545,6 @@ module Ember
       @account.revoke_feature(:traffic_cop)
     end
 
-    def test_tweet_dm_with_traffic_cop_ignoring_public_note
-      @account.add_feature(:traffic_cop)
-      Account.current.reload
-      ticket = create_twitter_ticket
-      note = create_public_note(ticket)
-      rand(1..5).times do
-        create_public_note(ticket)
-      end
-      post :tweet, construct_params({ version: 'private', id: ticket.display_id }, {
-        body: Faker::Lorem.sentence[0..130],
-        tweet_type: 'dm',
-        last_note_id: note.id,
-        twitter_handle_id: get_twitter_handle.id
-      })
-      assert_response 400
-      @account.revoke_feature(:traffic_cop)
-    end
-
     def test_tweet_mention_with_traffic_cop_ignoring_public_note
       @account.add_feature(:traffic_cop)
       Account.current.reload
@@ -1672,21 +1669,6 @@ module Ember
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       Koala::Facebook::API.any_instance.unstub(:put_comment)
       assert_response 400
-      @account.revoke_feature(:traffic_cop)
-    end
-
-    def test_facebook_reply_to_fb_post_with_traffic_cop_without_new_conversations
-      @account.add_feature(:traffic_cop)
-      Account.current.reload
-      ticket = create_ticket_from_fb_post
-      note = create_public_note(ticket)
-      put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
-      sample_put_comment = { 'id' => put_comment_id }
-      Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
-      params_hash = { body: Faker::Lorem.paragraph, last_note_id: note.id }
-      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
-      Koala::Facebook::API.any_instance.unstub(:put_comment)
-      assert_response 201
       @account.revoke_feature(:traffic_cop)
     end
 

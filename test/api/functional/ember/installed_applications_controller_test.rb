@@ -11,6 +11,7 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
   end
 
   def teardown
+    super
     Integrations::InstalledApplication.unstub(:marketplace_enabled?)
   end
 

@@ -6,6 +6,7 @@ class SendgridDomainUpdates < BaseWorker
   include Redis::RedisKeys
   include Redis::OthersRedis
   include Redis::PortalRedis
+  include EmailHelper
 
   require 'freemail'
 
@@ -131,25 +132,29 @@ class SendgridDomainUpdates < BaseWorker
   end
 
   def notify_blocked_spam_account_detection(account, additional_info)
-    FreshdeskErrorsMailer.error_email(nil, {:domain_name => account.full_domain}, nil, {
-            :subject => "Blocked suspicious spam account :#{account.id} ",
-            :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com"],
-            :additional_info => {:info => additional_info}
-          })
+    subject = "Blocked suspicious spam account :#{account.id} "
+    notify_account_blocks(account, subject, additional_info)
+    update_freshops_activity(account, "Account blocked due to high spam score & support keyword ", "block_account")
   end
 
   def blacklist_spam_account(account, is_spam_email_account, additional_info )
     add_member_to_redis_set(SPAM_EMAIL_ACCOUNTS, account.id) if is_spam_email_account
     account.launch(:spam_blacklist_feature)
-    notify_spam_account_detection(account, additional_info)
+    notify_spam_account_detection(account, additional_info, is_spam_email_account)
   end
 
-  def notify_spam_account_detection(account, additional_info)
-    FreshdeskErrorsMailer.error_email(nil, {:domain_name => account.full_domain}, nil, {
-            :subject => "Detected suspicious spam account :#{account.id} ", 
+  def notify_spam_account_detection(account, additional_info, is_spam_email_account = false)
+    subject = "Detected suspicious spam account :#{account.id} "
+    if is_spam_email_account
+      notify_account_blocks(account, subject, additional_info)
+      update_freshops_activity(account, "Outgoing emails blocked due to high spam score", "block_outgoing_email")
+    else
+      FreshdeskErrorsMailer.error_email(nil, {:domain_name => account.full_domain}, nil, {
+            :subject => subject, 
             :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com", "helpdesk@noc-alerts.freshservice.com"],
             :additional_info => {:info => additional_info}
           })
+    end
   end
 
   def notify_and_update(domain, vendor_id)

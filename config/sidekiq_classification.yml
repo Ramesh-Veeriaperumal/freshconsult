@@ -30,20 +30,8 @@
     - freshfone_node
     - livechat_worker
   :scheduled:
-    - supervisor
-    - sla
-    - premium_sla
-    - premium_supervisor
-    - premium_sla_reminders
-    - sla_reminders
-    - tickets_export_queue
-    - premium_ticket_export
-    - long_running_ticket_export
     - scheduled_reports
     - scheduled_reports_cleanup
-    - scheduled_ticket_export
-    - scheduled_ticket_export_config
-    - report_export_queue
     - chargebee_invoice
     - facebook
     - premium_facebook
@@ -52,7 +40,6 @@
     - custom_twitter
   :occasional:
     - plan_change_workerv2
-    - manual_publish
     - merge_contacts
     - plan_change
     - password_expiry
@@ -77,7 +64,6 @@
     - flush_portal_solution_cache
     - s3_retry_worker
     - reopen_tickets
-    - activity_export
     - skill_import
     - send_signup_activation_mail
     - upload_avatar_worker
@@ -180,8 +166,24 @@
     - learn_spam_message
     - sendgrid_domain_updates
   :archive:
+    - manual_publish
     - archive_ticket_splitter
     - archive_build_create_ticket
     - archive_modify_ticket_association
     - archive_delete_ticket
     - archive_delete_ticket_dependencies
+  :exports:
+    - scheduled_ticket_export_config
+    - scheduled_ticket_export
+    - tickets_export_queue
+    - long_running_ticket_export
+    - premium_ticket_export
+    - activity_export
+    - report_export_queue
+  :bulk_scheduled:
+    - supervisor
+    - sla
+    - premium_sla
+    - premium_supervisor
+    - premium_sla_reminders
+    - sla_reminders

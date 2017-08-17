@@ -194,7 +194,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   # ITIL Related Methods starts here
 
   def add_to_or_create_ticket(account, from_email, to_email, user, email_config)
-    ticket, archive_ticket = process_email_ticket_info(account, from_email, user, email_config)
+    ticket = nil
+    archive_ticket = nil
+    unless account.launched?(:skip_ticket_threading)
+      ticket, archive_ticket = process_email_ticket_info(account, from_email, user, email_config) 
+    end
     if (ticket.present? || archive_ticket.present?) && user.blank?
       if archive_ticket
         parent_ticket = archive_ticket.parent_ticket

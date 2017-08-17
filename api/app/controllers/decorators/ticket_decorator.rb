@@ -220,7 +220,7 @@ class TicketDecorator < ApiDecorator
 
   def to_activity_hash
     ret_hash = {
-      activity_type: (archived? ? "ArchiveTicket" : "Ticket").downcase,
+      activity_type: (archived? ? 'ArchiveTicket' : 'Ticket').downcase,
       id: display_id,
       description_text: description,
       tags: tag_names,
@@ -235,7 +235,7 @@ class TicketDecorator < ApiDecorator
       stats: stats,
       fr_due_by: archived? ? parse_time(frDueBy) : frDueBy.try(:utc)
     }
-    ret_hash.merge!(archived: archived?) if archived?
+    ret_hash[:archived] = archived? if archived?
     ret_hash
   end
 
@@ -277,6 +277,12 @@ class TicketDecorator < ApiDecorator
     def display_name(name)
       name[0..(-Account.current.id.to_s.length - 2)]
     end
+  end
+
+  def collaboration_hash
+    {
+      convo_token: Collaboration::Ticket.new.convo_token(display_id)
+    }
   end
 
   private

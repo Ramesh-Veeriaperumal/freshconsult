@@ -1,6 +1,7 @@
 class Fdadmin::SpamWatchController < Fdadmin::DevopsMainController
 
 	include ReadsToSlave
+  include EmailHelper
 	
 	around_filter :select_shard
 	around_filter :run_on_slave, :only => [:spam_details]
@@ -32,7 +33,12 @@ class Fdadmin::SpamWatchController < Fdadmin::DevopsMainController
 
 	def block_user
 		if params[:user_id]
-      render :json => {:status => "success"} if User.where({:id => params[:user_id]}).update_all_with_publish({:blocked => true, :blocked_at => Time.now}, {})
+       if User.where({:id => params[:user_id]}).update_all_with_publish({:blocked => true, :blocked_at => Time.now}, {})
+        subject = "User #{params[:user_id]} blocked !"
+        additional_info = "User blocked from freshops admin"
+        notify_account_blocks(nil, subject, additional_info)
+        render :json => {:status => "success"}
+      end
     end
 	end
 
@@ -44,13 +50,23 @@ class Fdadmin::SpamWatchController < Fdadmin::DevopsMainController
 
 	def hard_block
     if params[:user_id]
-      render :json => {:status => "success"} if User.where({:id => params[:user_id]}).update_all_with_publish({:blocked => true, :blocked_at => "2200-01-01 00:00:00"}, {})
+      if User.where({:id => params[:user_id]}).update_all_with_publish({:blocked => true, :blocked_at => "2200-01-01 00:00:00"}, {})
+        subject = "User #{params[:user_id]} blocked !"
+        additional_info = "User blocked from freshops admin(hard block)"
+        notify_account_blocks(nil, subject, additional_info)
+        render :json => {:status => "success"}
+      end
     end
   end
 
   def spam_user
     if params[:user_id]
-      render :json => {:status => "success"} if User.where({:id => params[:user_id]}).update_all_with_publish({:deleted => true, :deleted_at => Time.now}, {})
+      if User.where({:id => params[:user_id]}).update_all_with_publish({:deleted => true, :deleted_at => Time.now}, {})
+        subject = "User #{params[:user_id]} deleted !"
+        additional_info = "User deleted from freshops admin"
+        notify_account_blocks(nil, subject, additional_info)
+        render :json => {:status => "success"}
+      end
     end
   end
 

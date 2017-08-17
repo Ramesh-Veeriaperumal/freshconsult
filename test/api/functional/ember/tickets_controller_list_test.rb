@@ -652,6 +652,8 @@ module Ember
     # Tickets list spam / trash should have emptying_on_background flag about background job in its meta
     def test_index_empty_spam_meta_notice
       filter_params = { filter: 'spam' }
+      empty_spam_key = EMPTY_SPAM_TICKETS % { account_id: Account.current.id }
+      remove_others_redis_key(empty_spam_key)
       get :index, controller_params({ version: 'private' }.merge(filter_params))
       assert_response 200
       match_json(private_api_ticket_index_spam_deleted_pattern(true))
@@ -660,6 +662,8 @@ module Ember
 
     def test_index_empty_trash_meta_notice
       filter_params = { filter: 'deleted' }
+      empty_trash_key = EMPTY_TRASH_TICKETS % { account_id: Account.current.id }
+      remove_others_redis_key(empty_trash_key)
       get :index, controller_params({ version: 'private' }.merge(filter_params))
       assert_response 200
       match_json(private_api_ticket_index_spam_deleted_pattern(false, true))

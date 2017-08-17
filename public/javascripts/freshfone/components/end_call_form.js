@@ -177,8 +177,10 @@ var FreshfoneEndCall;
 			ev.preventDefault();
    
 			if((self.$requesterName.val() == self.number) || !self.form_valdation()){
+				if(self.$requesterName.val() == self.number){
+				  self.$requesterEmailDom.hide();
+				}
 				self.hideWarnings();
-				self.$requesterEmailDom.hide();
 				self.$endCallSaveTicketButton.button('loading');
 				self.saveToExisting();
 			}
@@ -238,8 +240,6 @@ var FreshfoneEndCall;
 		saveToExisting: function () {
 			trigger_event('saveticket');
 			this.saveTicket(true);
-			this.hideEndCallForm();
-			this.$endCallSaveTicketButton.button('reset');
 		},
 		resetDefaults: function () {
 			if (this.inCall) {
@@ -420,7 +420,7 @@ var FreshfoneEndCall;
 		},
 		form_valdation: function(){
 			this.hideWarnings();
-			return (this.detailsEmptyCheck() || this.emailFieldValidation() || this.phoneNumberFieldValidation());
+			return (this.detailsEmptyCheck() || this.emailFieldValidation());
 		},
 		detailsEmptyCheck: function(){
 			if(this.requesterEmail().trim() == "" && this.$requesterNumber.val() == ""){
@@ -439,12 +439,6 @@ var FreshfoneEndCall;
 			if(this.emailValidationResult()){
 				this.toggleWarning(this.$invalidEmailMessage, true);
 				return true;  
-			}
-		},
-		phoneNumberFieldValidation: function(){
-			if(this.numberValdationResult()){		 
-				this.toggleWarning(this.$invalidNumberMessage, true);
-				return true;
 			}
 		},
 		emailValidationResult: function(){

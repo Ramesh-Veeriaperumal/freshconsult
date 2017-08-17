@@ -11,5 +11,6 @@ response_hash.merge!(company: full_company_hash) if full_company_hash
 response_hash.merge!(attachments: @item.attachments_hash)
 response_hash.merge!(cloud_files: @item.cloud_files_hash)
 response_hash.merge!(meta: @item.meta)
+response_hash.merge!(collaboration: @item.collaboration_hash) if Account.current.collaboration_enabled?
 
 JSON.generate(response_hash)

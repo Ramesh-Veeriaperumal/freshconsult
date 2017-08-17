@@ -126,6 +126,17 @@ class QueryHashValidationTest < ActionView::TestCase
     assert query_validation.errors.full_messages.include?('Value datatype_mismatch')
   end
 
+  def test_create_at_should_have_from_and_to_value
+    stub_account
+    query = sample_query_params
+    query[:condition] = 'created_at'
+    query[:operator] = 'is_greater_than'
+    query[:value] = { 'from' => Time.now.iso8601 }
+    query_validation = QueryHashValidation.new(query)
+    refute query_validation.valid?
+    assert query_validation.errors.full_messages.include?('Value query_hash_dependent_value_missing')
+  end
+
   def test_valid_query_hash
     stub_account
     query_validation = QueryHashValidation.new(sample_query_params)

@@ -4316,6 +4316,34 @@
           }
         }
       }
+    },
+    "/marketplace_apps": {
+      "get": {
+        "tags": [
+          "Marketplace Apps"
+        ],
+        "summary": "Installed Marketplace Apps",
+        "description": "List all Installed Marketplace Apps",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "marketplace_apps": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/marketplace_apps"
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Marketplace Service Not Available"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -4491,6 +4519,26 @@
                     },
                     "agent_ids": {
                       "type": "array"
+                    }
+                  }
+                },
+                "collaboration": {
+                  "type": "object",
+                  "properties": {
+                    "client_account_id": {
+                      "type": "string"
+                    },
+                    "client_id": {
+                      "type": "string"
+                    },
+                    "collab_url": {
+                      "type": "string"
+                    },
+                    "init_auth_token": {
+                      "type": "string"
+                    },
+                    "rts_url": {
+                      "type": "string"
                     }
                   }
                 }
@@ -7231,6 +7279,14 @@
                   "format": "datetime"
                 }
               }
+            },
+            "collaboration": {
+              "type": "object",
+              "properties": {
+                "convo_token": {
+                  "type": "string"
+                }
+              }
             }
           }
         }
@@ -8343,6 +8399,46 @@
               }
             }
           }
+        }
+      }
+    },
+    "marketplace_apps": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "App Id"
+        },
+        "display_name": {
+          "type": "string",
+          "description": "App Name"
+        },
+        "configs": {
+          "type": "object",
+          "description": "App Iparams"
+        },
+        "placeholder": {
+          "type": "object",
+          "description": "App Placeholders"
+        },
+        "enabled": {
+          "type": "integer",
+          "description": "App Status - Enabled/Disabled"
+        },
+        "version_id": {
+          "type": "integer",
+          "description": "App's Version Id"
+        },
+        "features": {
+          "type": "array",
+          "description": "App Features",
+          "items": {
+            "type": "string"
+          }
+        },
+        "extension_type": {
+          "type": "integer",
+          "description": "App Type - Plug/Native Integration"
         }
       }
     }

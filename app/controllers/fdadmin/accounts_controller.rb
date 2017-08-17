@@ -1,8 +1,10 @@
 class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   include Fdadmin::AccountsControllerMethods
+  include Fdadmin::FeatureMethods
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include EmailHelper
 
   before_filter :check_domain_exists, :only => :change_url , :if => :non_global_pods?
   around_filter :select_slave_shard , :only => [:api_jwt_auth_feature,:sha1_enabled_feature,:select_all_feature,:show, :features, :agents, :tickets, :portal, :user_info,:check_contact_import,:latest_solution_articles]
@@ -10,6 +12,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   before_filter :validate_params, :only => [ :change_api_limit ]
   before_filter :load_account, :only => [:user_info, :reset_login_count]
   before_filter :load_user_record, :only => [:user_info, :reset_login_count]
+  before_filter :symbolize_feature_name, :only => [:add_feature, :remove_feature]
   
   def show
     account_summary = {}
@@ -150,12 +153,12 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   def add_feature
     result = {}
-    account = Account.find(params[:account_id]) 
-    result[:account_id] = account.id 
-    result[:account_name] = account.name
+    @account = Account.find(params[:account_id]) 
+    result[:account_id] = @account.id 
+    result[:account_name] = @account.name
     begin
-      render :json => {:status => "notice"}.to_json and return if account.features?(params[:feature_name])
-      account.features.send(params[:feature_name]).save
+      render :json => {:status => "notice"}.to_json and return unless enableable?(@feature_name)
+      enable_feature(@feature_name)
       result[:status] = "success"
     rescue Exception => e
       result[:status] = "error"
@@ -168,14 +171,14 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   end
 
   def remove_feature
-    account = Account.find(params[:account_id])
-    result = {:account_id => account.id , :account_name => account.name }
+    @account = Account.find(params[:account_id])
+    result = {:account_id => @account.id , :account_name => @account.name }
     begin
-      render :json => {:status => "notice"}.to_json and return if !account.features?(params[:feature_name])
-      feature = account.features.send(params[:feature_name])
-      result[:status] = "success" if feature.destroy
-      rescue Exception => e
-        result[:error] = "error"
+      render :json => {:status => "notice"}.to_json and return unless disableable?(@feature_name)
+      disable_feature(@feature_name)
+      result[:status] = "success"
+    rescue Exception => e
+      result[:status] = "error"
     end
     respond_to do |format|
       format.json do
@@ -366,6 +369,9 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       save_account_sign_up_params(params[:account_id], ehawk_params)
       remove_outgoing_email_block(params[:account_id])
       remove_spam_blacklist(account)
+      subject = "Outgoing email unblocked for Account-id: #{account.id}"
+      additional_info = "Outgoing email unblocked from freshops admin"
+      notify_account_blocks(account, subject, additional_info)
       result[:status] = "success"
       Account.reset_current_account
     end
@@ -406,6 +412,9 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       sub.state="trial"
       result[:status] = "success" if sub.save
       remove_spam_blacklist account
+      subject = "Account unblocked - Account-id: #{account.id}"
+      additional_info = "Account unblocked from freshops admin"
+      notify_account_blocks(account, subject, additional_info)
       Account.reset_current_account
     end
     $spam_watcher.perform_redis_op("set", "#{params[:account_id]}-", "true")
@@ -432,6 +441,9 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
         subscription.state = "suspended"
         subscription.save
       end
+      subject = "Account blocked - Account-id: #{account.id}"
+      additional_info = "Account blocked from freshops admin"
+      notify_account_blocks(account, subject, additional_info)
       result[:status] = "success"
       Account.reset_current_account
     end
@@ -629,6 +641,10 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     def save_account_sign_up_params account_id, args = {}
       key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => account_id}
       set_others_redis_key(key,args.to_json,3888000)
+    end
+
+    def symbolize_feature_name
+      @feature_name = params[:feature_name].to_sym 
     end
 
 end

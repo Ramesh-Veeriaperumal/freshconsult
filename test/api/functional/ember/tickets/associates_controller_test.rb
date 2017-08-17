@@ -109,7 +109,7 @@ module Ember
           ticket.destroy
           tracker_id = create_tracker_ticket.display_id
           put :link, construct_params({ version: 'private', id: ticket_id, tracker_id: tracker_id }, false)
-          assert_response 400
+          assert_response 404
         end
       end
 

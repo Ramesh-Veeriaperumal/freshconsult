@@ -194,6 +194,8 @@ defaults: &defaults
     - [trial]
     - [spam]
     - [archive]
+    - [exports]
+    - [bulk_scheduled]
     - [product_feedback]
 
 development:

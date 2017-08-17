@@ -136,6 +136,14 @@ module Reports
     def fetch_tickets_data(tickets = [], headers, ticket_ids, type)
       tickets_data = (type == 'non_archive' ? non_archive_tickets(ticket_ids) : archive_tickets(ticket_ids))
       generate_ticket_data(tickets, headers, tickets_data, (type != 'non_archive'))
+      
+      # handling archive tickets marked as non-archived in redshift result
+      # hot fix to avoid missing archived tickets marked as non-archive
+      if tickets_data.count < ticket_ids.count
+        retry_type = (type == 'non_archive' ? 'archive' : 'non_archive')
+        tkts_data = (retry_type == 'non_archive' ? non_archive_tickets(ticket_ids) : archive_tickets(ticket_ids))
+        generate_ticket_data(tickets, headers, tkts_data, (retry_type != 'non_archive'))
+      end
     end
 
     def user_download_url(file_name, export_type)
