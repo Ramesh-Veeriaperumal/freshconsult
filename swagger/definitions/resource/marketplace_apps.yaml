@@ -1,0 +1,28 @@
+type: object
+properties:
+  id:
+    type: integer
+    description: App Id
+  display_name:
+    type: string
+    description: App Name
+  configs:
+    type: object
+    description: App Iparams
+  placeholder:
+    type: object
+    description: App Placeholders
+  enabled:
+    type: integer
+    description: App Status - Enabled/Disabled
+  version_id:
+    type: integer
+    description: App's Version Id
+  features:
+    type: array
+    description: App Features
+    items:
+      type: string
+  extension_type:
+    type: integer
+    description: App Type - Plug/Native Integration
