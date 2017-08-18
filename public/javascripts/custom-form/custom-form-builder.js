@@ -106,7 +106,8 @@
       return dom;
     },
 
-    constructFieldDom: function(dataItem, container, cloneItem, notEdited=true) {
+    constructFieldDom: function(dataItem, container, cloneItem, notEdited) {
+      notEdited = (notEdited == undefined) ? true : notEdited;
       var fieldContainer = container || jQuery('<li/>');
 
       fieldContainer.empty()
