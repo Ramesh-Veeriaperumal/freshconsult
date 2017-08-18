@@ -10,6 +10,7 @@ module ActionMailerCallbacks
 
   module ClassMethods
   include ParserUtil
+  include EmailHelper
 
     def set_smtp_settings(mail)
       account_id_field = mail.header["X-FD-Account-Id"]
@@ -35,6 +36,7 @@ module ActionMailerCallbacks
         from_email = ""
       end 
       email_config = Thread.current[:email_config]
+      ip_pool = nil
       if (email_config && email_config.smtp_mailbox)
         smtp_mailbox = email_config.smtp_mailbox
         smtp_settings = {
@@ -53,12 +55,22 @@ module ActionMailerCallbacks
       elsif (email_config && email_config.category)
         Rails.logger.debug "Used EXISTING category : #{email_config.category} in email config : #{email_config.id} while email delivery"
         category_id = email_config.category
+        sender_config = get_sender_config(account_id, category_id, mail_type)
+        unless sender_config.nil?
+          category_id = sender_config["categoryId"]
+          ip_pool = sender_config["ipPoolName"]
+        end
         self.smtp_settings = read_smtp_settings(category_id)
         mail.delivery_method(:smtp, read_smtp_settings(category_id))
-        set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email)
+        set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email, ip_pool)
       else
         params = { :account_id => account_id, :ticket_id => ticket_id, :type => mail_type, :note_id => note_id }
         category_id = get_notification_category_id(mail_type) || check_spam_category(mail, params)
+        sender_config = get_sender_config(account_id, category_id, mail_type)
+        unless sender_config.nil?
+          category_id = sender_config["categoryId"]
+          ip_pool = sender_config["ipPoolName"]
+        end
         if category_id.blank?
           mailgun_traffic = get_mailgun_percentage
           if mailgun_traffic > 0 && Random::DEFAULT.rand(100) < mailgun_traffic
@@ -71,7 +83,7 @@ module ActionMailerCallbacks
           self.smtp_settings = read_smtp_settings(category_id)
           mail.delivery_method(:smtp, read_smtp_settings(category_id))
         end
-        set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email)
+        set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email, ip_pool)
       end
       @email_confg = nil
       mail.header["X-FD-Email-Category"] = nil
@@ -91,7 +103,7 @@ module ActionMailerCallbacks
       return category_id
     end
 
-    def set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email)
+    def set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email, ip_pool= nil)
       if Helpdesk::Email::OutgoingCategory::MAILGUN_PROVIDERS.include?(category_id.to_i)
         Rails.logger.debug "Sending email via mailgun"
         message_id = encrypt_custom_variables(account_id, ticket_id, note_id, mail_type, from_email, category_id)
@@ -99,7 +111,11 @@ module ActionMailerCallbacks
       else
         Rails.logger.debug "Sending email via sendgrid"
         subject = !mail.header[:subject].nil? ? mail.header[:subject].value : "No Subject"
-        mail.header['X-SMTPAPI'] = get_unique_args(from_email, account_id, ticket_id, note_id, mail_type, category_id, subject)
+        smtpapi_hash = {
+          "unique_args" => get_unique_args(from_email, account_id, ticket_id, note_id, mail_type, category_id)
+        }
+        smtpapi_hash.merge!("ip_pool" => ip_pool) if ip_pool.present?
+        mail.header['X-SMTPAPI'] = smtpapi_hash.to_json
       end
     rescue => e
       Rails.logger.debug "Error while setting custom headers - #{e.message} - #{e.backtrace}"
@@ -164,14 +180,20 @@ module ActionMailerCallbacks
        false
     end
 
-    def get_unique_args(from_email, account_id = -1, ticket_id = -1, note_id = -1, mail_type = "", category_id = -1, subject = "")
-      note_id_str = note_id != -1 ? "\"note_id\": #{note_id}," : ""
+    def get_unique_args(from_email, account_id = -1, ticket_id = -1, note_id = -1, mail_type = "", category_id = -1)
       shard = get_shard account_id
-      shard_name = shard.nil? ? "\"shard_info\":\"unknown\"" : "\"shard_info\":\"#{shard.shard_name}\""
-      "{\"unique_args\":{\"account_id\": #{account_id},\"ticket_id\":#{ticket_id}," \
-        "#{note_id_str}" \
-        "\"email_type\":\"#{mail_type}\",\"from_email\":\"#{from_email}\",\"category_id\":\"#{category_id}\"," \
-        "\"pod_info\":\"#{get_pod}\",#{shard_name}}}"
+      unique_args = {
+        "account_id" => account_id,
+        "ticket_id" => ticket_id,
+        "email_type" => mail_type,
+        "from_email" => from_email,
+        "category_id" => category_id,
+        "pod_info" => get_pod,
+        "shard_info" => (shard.nil? ? "unknown" : shard.shard_name)
+      }
+      unique_args.merge!("note_id" => note_id) if(note_id != -1)
+
+      unique_args
     end
 
 

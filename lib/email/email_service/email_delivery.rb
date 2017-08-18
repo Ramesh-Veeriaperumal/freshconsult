@@ -1,9 +1,10 @@
-module EmailDelivery
+module Email::EmailService::EmailDelivery
 
 require 'net/http/persistent'
 include ActionView::Helpers::NumberHelper
 include Helpdesk::Email::OutgoingCategory
 include ParserUtil
+include EmailHelper
 
  FD_EMAIL_SERVICE = (YAML::load_file(File.join(Rails.root, 'config', 'fd_email_service.yml')))[Rails.env]
  EMAIL_SERVICE_AUTHORISATION_KEY = FD_EMAIL_SERVICE["key"]
@@ -57,6 +58,13 @@ include ParserUtil
           category_id = get_category_id
         end
     end
+    ip_pool = nil
+    sender_config = get_sender_config(account_id, category_id, type)
+     Rails.logger.info "Recieved Sender Config: #{sender_config.inspect}"
+    unless sender_config.nil?
+      category_id = sender_config["categoryId"]
+      ip_pool = sender_config["ipPoolName"]
+    end
     properties = construct_properties(params, category_id)
     Rails.logger.info "Sending email: properties: #{properties.inspect}"
     header = construct_headers params
@@ -75,6 +83,8 @@ include ParserUtil
                 "categoryId" => "#{category_id}",
                 "properties"=> properties
               }
+    result.merge!("ip_pool" => ip_pool) unless ip_pool.nil?
+
     return result.to_json
   end
 
