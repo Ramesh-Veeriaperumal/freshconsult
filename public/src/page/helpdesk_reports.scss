@@ -2055,10 +2055,32 @@ p.default_report_name {
 	}
 }
 
+/* Timespent export dialog */
+
+#timespent-dialog-export-content {
+
+	.section {
+		margin : 16px 0;
+		.export-type-title {
+			font-weight: 600;
+		}
+		.visibility {
+			margin-left : 25px;
+		}
+	}
+	input[name="export_type"] {
+		margin-right : 10px;
+	}
+}
+#timespent-export-link{
+	margin-right: 10px;
+	margin-top: 10px;
+}
+
 /* Timespent report */
 .timespent_container {
 	width : 100%;
-
+	
 	.context_info {
 	    
 	    display: flex;
@@ -2192,6 +2214,10 @@ p.default_report_name {
 		position : absolute;
 		right : 26px;
 		top : -17px;
+	}
+	.export_title_status{
+		margin-right : 38px;
+		margin-top: 4px;
 	}
 
 	@extend .ticket-list;

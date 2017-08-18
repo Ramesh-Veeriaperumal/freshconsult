@@ -5,8 +5,12 @@ class HelpdeskReports::Export::Report < HelpdeskReports::Export::Base
 
   def perform
     return email_export(nil) if date_range.nil?
-    file_path = build_export
-    email_export file_path
+    if report_type.to_sym == :timespent && @scheduled_report
+      sqs_export
+    else 
+      file_path = build_export
+      email_export file_path
+    end
   end
 
   private
@@ -15,6 +19,16 @@ class HelpdeskReports::Export::Report < HelpdeskReports::Export::Base
       @query_params = params[:query_hash].each{|k| k.symbolize_keys!}
       generate_report_data
       @data.present? ? generate_file : nil
+    end
+
+    def sqs_export
+      @query_params = [params.delete(:query_hash)]
+      validate_scope
+      request_object = HelpdeskReports::Request::Ticket.new(@query_params[0], report_type)
+      request_object.build_request
+      params[:query_hash] = request_object.fetch_req_params
+      params[:scheduled_task_id] = @scheduled_report.id
+      $sqs_reports_service_export.send_message(params.to_json)
     end
 
     def email_export file_path

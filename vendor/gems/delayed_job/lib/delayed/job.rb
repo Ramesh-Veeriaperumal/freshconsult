@@ -219,7 +219,8 @@ module Delayed
       job_params = { :payload_object => object, 
                      :priority => priority.to_i, 
                      :run_at => run_at, 
-                     :pod_info => pod_info 
+                     :pod_info => pod_info,
+                     :account_id => account_id
                    }
 
       perform_type = run_at.present? ? ["perform_at", run_at] : ["perform_async"]
@@ -236,7 +237,15 @@ module Delayed
           {:job_id => job.id, 
            :account_id => account_id}) if job && job.id && PUSH_QUEUE.include?(job_queue)
       end
-      Rails.logger.info "Job #{job.id} created and pushed to the sidekiq queue #{job_queue} with id #{worker_id}" if job
+      begin
+        if job
+          job.update_attribute(:sidekiq_job_info, "#{worker_id}:#{worker_name}")
+          Rails.logger.info "Job #{job.id} created and pushed to the sidekiq queue #{job_queue} with id #{worker_id}" 
+        end
+      rescue Exception => e
+        Rails.logger.debug "Exception while updating dj for sidekiq_job_id #{e.message}"
+        NewRelic::Agent.notice_error(e)
+      end
       job
     end
 

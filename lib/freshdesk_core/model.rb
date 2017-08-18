@@ -218,6 +218,11 @@ module FreshdeskCore::Model
       :failed => 3
     }
 
+  ARCHIVE_S3_BUCKET_MAPPING = {
+    :archive_tickets => :archive_ticket_body, 
+    :archive_notes => :note_body
+  }
+
   def perform_destroy(account)
     delete_gnip_twitter_rules(account)
     delete_dkim_r53_entries(account)
@@ -226,6 +231,7 @@ module FreshdeskCore::Model
     delete_jira_webhooks(account)
     delete_cloud_element_instances(account)
     clear_attachments(account)
+    clear_archive_data_from_s3(account)
     remove_mobile_registrations(account.id)
     remove_addon_mapping(account)
     remove_card_info(account)
@@ -349,6 +355,26 @@ module FreshdeskCore::Model
             object.delete if object.key.include?(attachment.content_file_name)
           end
         end
+      end
+    end
+
+    def clear_archive_data_from_s3(account)
+      begin
+        ARCHIVE_S3_BUCKET_MAPPING.each do |association_type, s3_bucket|
+          account.send(association_type).find_in_batches do |assn|
+            db_ids = assn.map(&:id)
+            s3_keys = db_ids.inject([]) do |keys,db_id|
+              if association_type == :archive_tickets
+                keys << Helpdesk::S3::ArchiveTicket::Body.generate_file_path(account.id, db_id)
+              elsif association_type == :archive_notes
+                keys << Helpdesk::S3::ArchiveNote::Body.generate_file_path(account.id, db_id)
+              end
+            end
+            AwsWrapper::S3.batch_delete(S3_CONFIG[s3_bucket], s3_keys)
+          end
+        end
+      rescue Exception => e
+        Rails.logger.info "Unable to delete data from S3. #{e.message}"
       end
     end
 

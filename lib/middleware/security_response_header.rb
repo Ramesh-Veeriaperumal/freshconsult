@@ -4,6 +4,7 @@ class Middleware::SecurityResponseHeader
 
   HTML_FORMATS = ['text/html', 'application/xml+html'].freeze
   FEEDBACK_WIDGET_PATHS = ['/widgets/feedback_widget', '/widgets/feedback_widget/new', '/widgets/feedback_widget/thanks'].freeze
+  BYPASS_CHECK_SUBDOMAINS = %w(login signup).freeze
   LOGIN_PATH = 'login'.freeze
   SUPPORT_PATH = 'support'.freeze
 
@@ -27,11 +28,17 @@ class Middleware::SecurityResponseHeader
     FEEDBACK_WIDGET_PATHS.include?(@req_path) || @req_path.include?(SUPPORT_PATH)
   end
 
+  def ignore_domain?
+    sub_domain = @host.split('.')[0]
+    BYPASS_CHECK_SUBDOMAINS.inject(false) { |should_skip, skip_domain| should_skip || sub_domain.include?(skip_domain) }
+  end
+
   def add_security_headers(headers)
     begin
       headers['X-XSS-Protection'] = '1; mode=block'
 
       return headers unless html_response?(headers)
+      return headers if ignore_domain?
 
       if @req_path.include? LOGIN_PATH
         headers['X-Frame-Options'] = 'DENY'
