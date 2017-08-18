@@ -9,6 +9,7 @@ class ContactDecorator < ApiDecorator
 
   def initialize(record, options)
     super(record)
+    @include_company_info = true
     @name_mapping = options[:name_mapping]
     @company_name_mapping = options[:company_name_mapping]
     @sideload_options = options[:sideload_options] || []
@@ -44,7 +45,7 @@ class ContactDecorator < ApiDecorator
         company_hash(c) if c.company.present? && !c.default
       end.compact
     else
-      record.user_companies.map(&:company_id)
+      record.user_companies.map(&:company_id).reject { |x| x == company_id }
     end
   end
 
@@ -72,6 +73,7 @@ class ContactDecorator < ApiDecorator
   end
 
   def full_requester_hash
+    @include_company_info = @sideload_options.include?('company')
     req_hash = to_full_hash.except(:company_id)
     req_hash[:id] = record.id
     req_hash
@@ -128,14 +130,14 @@ class ContactDecorator < ApiDecorator
         updated_at: updated_at.try(:utc),
         facebook_id: fb_profile_id,
         blocked: record.blocked?,
-        spam: record.spam?
+        spam: record.spam?,
+        deleted: record.deleted
       })
       response_hash[:custom_fields] = custom_fields if custom_fields.present?
-      response_hash.merge!(
-        company: company_hash(default_company)
-        ) if @sideload_options.include?('company') && default_company.present? && default_company.company.present?
-      response_hash.merge!(deleted: true) if record.deleted
-      response_hash.merge!(other_companies: other_companies_hash) if multiple_user_companies_enabled?
+      if @include_company_info
+        response_hash[:company] = company_hash(default_company) if @sideload_options.include?('company') && default_company.present? && default_company.company.present?
+        response_hash[:other_companies] = other_companies_hash if multiple_user_companies_enabled?
+      end
       response_hash
     end
 

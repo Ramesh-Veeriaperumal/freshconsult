@@ -26,7 +26,15 @@ module ContactFieldsTestHelper
   def contact_field_pattern(expected_output = {}, contact_field)
     result = contact_field_pattern_without_choices(expected_output, contact_field)
     unless contact_field.choices.blank?
-      result.merge!(choices: choice_list(contact_field))
+      result[:choices] = choice_list(contact_field)
+    end
+    result
+  end
+
+  def private_contact_field_pattern(expected_output = {}, contact_field)
+    result = contact_field_pattern(expected_output, contact_field)
+    if contact_field.field_options.present? && contact_field.field_options.key?('widget_position')
+      result[:widget_position] = contact_field.field_options['widget_position']
     end
     result
   end
@@ -48,7 +56,7 @@ module ContactFieldsTestHelper
     when 'default_language', 'default_time_zone'
       contact_field.choices.map { |x| { label: x[:name], value: x[:value] } }
     when 'custom_dropdown' # not_tested
-      contact_field.choices.map { |x| {  id: x[:id], label: x[:value], value: x[:value] } }
+      contact_field.choices.map { |x| { id: x[:id], label: x[:value], value: x[:value] } }
     else
       []
     end
