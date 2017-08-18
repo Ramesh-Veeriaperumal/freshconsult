@@ -3,95 +3,114 @@ class ReportExportMailer < ActionMailer::Base
   include HelpdeskReports::Constants::Export
   include EmailHelper
   def bi_report_export options ={}
-    headers = mail_headers(options ,"Bi Report Export")
+    begin
+      configure_email_config Account.current.primary_email_config if Account.current.primary_email_config.active?
+      headers = mail_headers(options ,"Bi Report Export")
 
-    if options[:file_path].present?
-      attachment_file_name = get_attachment_file_name(options[:file_path])
-      #encode64 to override the default '990 characters per row' limit on attached files
-      attachments[attachment_file_name] = { :data=> Base64.encode64(File.read(options[:file_path])), :encoding => 'base64' }
-    else
-      @export_url = options[:export_url]
+      if options[:file_path].present?
+        attachment_file_name = get_attachment_file_name(options[:file_path])
+        #encode64 to override the default '990 characters per row' limit on attached files
+        attachments[attachment_file_name] = { :data=> Base64.encode64(File.read(options[:file_path])), :encoding => 'base64' }
+      else
+        @export_url = options[:export_url]
+      end
+
+      @user    = options[:user]
+      @filters = options[:filters]
+      @date_range  = options[:date_range]
+      @report_label = report_name(options[:report_type])
+      @filter_name = options[:filter_name]
+      @ticket_export   = options[:ticket_export].present? ? "ticket" : ""
+      @selected_metric = options[:selected_metric] if options[:selected_metric]
+      @filter_to_display = filter_to_display?(options[:report_type], options[:ticket_export])
+      @report_name = options[:filter_name] ? "#{@report_type} report - #{options[:filter_name]}" : "#{@report_type}"
+      @portal_name = options[:portal_name]
+
+      add_log_info 'bi_report_export'
+
+      mail(headers) do |part|
+        part.text { render "bi_report_export.plain" }
+        part.html { render "bi_report_export.html" }
+      end.deliver
+    ensure
+      remove_email_config
     end
-
-    @user    = options[:user]
-    @filters = options[:filters]
-    @date_range  = options[:date_range]
-    @report_label = report_name(options[:report_type])
-    @filter_name = options[:filter_name]
-    @ticket_export   = options[:ticket_export].present? ? "ticket" : ""
-    @selected_metric = options[:selected_metric] if options[:selected_metric]
-    @filter_to_display = filter_to_display?(options[:report_type], options[:ticket_export])
-    @report_name = options[:filter_name] ? "#{@report_type} report - #{options[:filter_name]}" : "#{@report_type}"
-    @portal_name = options[:portal_name]
-
-    add_log_info 'bi_report_export'
-    
-    mail(headers) do |part|
-      part.text { render "bi_report_export.plain" }
-      part.html { render "bi_report_export.html" }
-    end.deliver
   end
 
   def no_report_data options = {}
-    headers = mail_headers(options, "No Report Data")
+    begin
+      configure_email_config Account.current.primary_email_config if Account.current.primary_email_config.active?
+      headers = mail_headers(options, "No Report Data")
 
-    @user    = options[:user]
-    @filters = options[:filters]
-    @date_range  = options[:date_range]
-    @report_label = report_name(options[:report_type])
-    @filter_to_display = filter_to_display?(options[:report_type], options[:ticket_export])
-    @portal_name = options[:portal_name]
+      @user    = options[:user]
+      @filters = options[:filters]
+      @date_range  = options[:date_range]
+      @report_label = report_name(options[:report_type])
+      @filter_to_display = filter_to_display?(options[:report_type], options[:ticket_export])
+      @portal_name = options[:portal_name]
 
-    add_log_info 'no_report_data'
-    
-    mail(headers) do |part|
-      part.text { render "no_report_data.plain" }
-      part.html { render "no_report_data.html" }
-    end.deliver
+      add_log_info 'no_report_data'
+
+      mail(headers) do |part|
+        part.text { render "no_report_data.plain" }
+        part.html { render "no_report_data.html" }
+      end.deliver
+    ensure
+      remove_email_config
+    end
   end
 
   def exceeds_file_size_limit options = {}
-    headers = mail_headers(options, "Exceeds File Size Limit")
+    begin
+      configure_email_config Account.current.primary_email_config if Account.current.primary_email_config.active?
+      headers = mail_headers(options, "Exceeds File Size Limit")
 
-    @user    = options[:user]
-    @filters = options[:filters]
-    @date_range  = options[:date_range]
-    @report_type = report_name(options[:report_type])
-    @filter_name = options[:filter_name]
-    @portal_name = options[:portal_name]
+      @user    = options[:user]
+      @filters = options[:filters]
+      @date_range  = options[:date_range]
+      @report_type = report_name(options[:report_type])
+      @filter_name = options[:filter_name]
+      @portal_name = options[:portal_name]
 
-    add_log_info 'exceeds_file_size_limit'
+      add_log_info 'exceeds_file_size_limit'
 
-    mail(headers) do |part|
-      part.text { render "exceeds_file_size_limit.plain" }
-      part.html { render "exceeds_file_size_limit.html" }
-    end.deliver
+      mail(headers) do |part|
+        part.text { render "exceeds_file_size_limit.plain" }
+        part.html { render "exceeds_file_size_limit.html" }
+      end.deliver
+    ensure
+      remove_email_config
+    end
   end
 
   def report_export_task options
-    headers = mail_headers(options, "Report Export Task")
-    @date_range = options[:date_range]
-    @invalid_count = options[:invalid_count]
-    @task_start_time = options[:task_start_time]
-    @description = options[:description]
+    begin
+      configure_email_config Account.current.primary_email_config if Account.current.primary_email_config.active?
+      headers = mail_headers(options, "Report Export Task")
+      @date_range = options[:date_range]
+      @invalid_count = options[:invalid_count]
+      @task_start_time = options[:task_start_time]
+      @description = options[:description]
 
-    if options[:file_path].present?
-      if @description
-        attachment_file_name = "#{@description} #{Time.current.strftime("%d-%b-%y-%H:%M")}".gsub(/[-,\s+\/]/,'_').gsub(/_+/,'_').slice(0,235)
+      if options[:file_path].present?
+        if @description
+          attachment_file_name = "#{@description} #{Time.current.strftime("%d-%b-%y-%H:%M")}".gsub(/[-,\s+\/]/,'_').gsub(/_+/,'_').slice(0,235)
+        else
+          attachment_file_name = get_attachment_file_name(options[:file_path])
+        end
+        #encode64 to override the default '990 characters per row' limit on attached files
+        attachments[attachment_file_name] = { :data=> Base64.encode64(File.read(options[:file_path])), :encoding => 'base64' }
       else
-        attachment_file_name = get_attachment_file_name(options[:file_path])
+        @export_url = options[:export_url]
       end
-      #encode64 to override the default '990 characters per row' limit on attached files
-      attachments[attachment_file_name] = { :data=> Base64.encode64(File.read(options[:file_path])), :encoding => 'base64' }
-    else
-      @export_url = options[:export_url]
+
+      mail(headers) do |part|
+        part.text { render "report_export_task.plain" }
+        part.html { render "report_export_task.html" }
+      end.deliver
+    ensure
+      remove_email_config
     end
-
-    mail(headers) do |part|
-      part.text { render "report_export_task.plain" }
-      part.html { render "report_export_task.html" }
-    end.deliver
-
   end
 
   private
@@ -99,7 +118,7 @@ class ReportExportMailer < ActionMailer::Base
     headers = {
       :subject     => mail_subject( options ),
       :to             => options[:task_email_ids] || options[:user].email,
-      :from        => Account.current.default_friendly_email || AppConfig['from_email'],
+      :from        => Account.current.default_friendly_email,
       :bcc         => AppConfig['reports_email'],
       "Reply-to" => "",
       :sent_on   => Time.now,
