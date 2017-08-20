@@ -11263,9 +11263,19 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   more_companies: "%{count} more"
   n_companies: "%{count} companies"
   admin_onboarding:
+    reminder_emails:
+      email1:
+        subject: "Reminder: Activate your Freshdesk account to get full access"
+        heading: "You have limited access to your Freshdesk account"
+        body: "You signed up for a Freshdesk account a couple of days back and it looks like you haven’t activated it yet. Please click on the link below to activate it and get full access to all of our features."
+      email2:
+        subject: "Reminder: Your Freshdesk account is still inactive"
+        heading: "Your Freshdesk account is still inactive"
+        body: "You signed up for a Freshdesk account recently but it looks like you haven’t activated it yet. Please click on the link below to activate it and remove all restrictions."
     account_verification_message:
       non_admin_message: "Your account hasn’t been activated yet. Please contact your administrator."
-      check_inbox_message: "Please check your inbox at <span class='email-wrapper'>%{admin_email}</span>  for your activation email."
+      limited_access: "<span class='limited-access'>LIMITED ACCESS: </span>"
+      check_inbox_message: "Please check your inbox at <b>%{admin_email}</b>  for your activation email."
       helpnote1: "Can't see it?"
       helpnote_or: "or"
       resend_message : "Resend activation"
