@@ -290,7 +290,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
         number2_1: :datatype_mismatch, url1_1: :invalid_format, url2_1: :invalid_format
       },
       errors)
-    assert_equal({ 'single_1' => { expected_data_type: String, prepend_msg: :input_received, given_data_type: Array }, 'check1_1' => { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String }, 'check2_1' => { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null' }, 'decimal1_1' => { expected_data_type: :Number }, 'decimal2_1' => { expected_data_type: :Number }, 'number1_1' => { expected_data_type: :Integer, prepend_msg: :input_received, given_data_type: 'Boolean' }, 'number2_1' => { expected_data_type: :Integer, prepend_msg: :input_received, given_data_type: String }, 'multi_1' => { expected_data_type: String, prepend_msg: :input_received, given_data_type: Float }, 'phone' => { expected_data_type: String, prepend_msg: :input_received, given_data_type: Float }, 'url1_1' => { accepted: 'valid URL' }, 'url2_1' => { accepted: 'valid URL' } }.stringify_keys.merge(attribute2: {}), test.error_options)
+    assert_equal({ 'single_1' => { expected_data_type: String, prepend_msg: :input_received, given_data_type: Array }, 'check1_1' => { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String }, 'check2_1' => { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null' }, 'decimal1_1' => { expected_data_type: :Number, code: :datatype_mismatch }, 'decimal2_1' => { expected_data_type: :Number, code: :datatype_mismatch }, 'number1_1' => { expected_data_type: :Integer, prepend_msg: :input_received, given_data_type: 'Boolean', code: :datatype_mismatch }, 'number2_1' => { expected_data_type: :Integer, prepend_msg: :input_received, given_data_type: String, code: :datatype_mismatch }, 'multi_1' => { expected_data_type: String, prepend_msg: :input_received, given_data_type: Float }, 'phone' => { expected_data_type: String, prepend_msg: :input_received, given_data_type: Float }, 'url1_1' => { accepted: 'valid URL' }, 'url2_1' => { accepted: 'valid URL' } }.stringify_keys.merge(attribute2: {}), test.error_options)
   end
 
   def test_format_validatable_fields_valid
@@ -299,7 +299,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     assert test.errors.empty?
   end
 
-  def test_nested_fields_valid
+  def test_nested_fields_valid 
     test = TestValidation.new(attribute1: { 'country_1' => 'Usa', 'state_1' => 'california', 'city_1' => 'los angeles' })
     assert test.valid?
     assert test.errors.empty?

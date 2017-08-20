@@ -3415,7 +3415,7 @@ class TicketsControllerTest < ActionController::TestCase
     sections = construct_sections('type')
     create_section_fields(3, sections)
     t = create_ticket(ticket_params_hash)
-    params = update_ticket_params_hash.merge(custom_fields: {}, type: 'Incident')
+    params = update_ticket_params_hash.except(:description).merge(custom_fields: {}, type: 'Incident')
     ['paragraph', 'dropdown'].each do |custom_field|
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
