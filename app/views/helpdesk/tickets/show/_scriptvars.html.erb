@@ -46,7 +46,7 @@ TICKET_DETAILS_DATA = {
 	create_tag_privilege : <%= current_user.privilege?(:create_tags) %>,
 	requester_widget_enabled: <%= current_account.requester_widget_enabled? %>,
 	user_valid: <%= @ticket.requester.customer? && @ticket.requester.valid_user? %>,
-	new_send_and_set: <%= current_account.launched?(:new_send_and_set) && [5,6,8,11].exclude?(@ticket.source) # excluding new send and set for twitter, facebook, mobihelp and ecommerce %>,
+	new_send_and_set: <%= current_account.launched?(:new_send_and_set) && [5,6,8,11].exclude?(@ticket.source) %>,
 };
 
 </script>
