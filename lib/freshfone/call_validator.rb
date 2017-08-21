@@ -1,6 +1,7 @@
 module Freshfone::CallValidator
   include Redis::RedisKeys
   include Redis::IntegrationsRedis
+  include Freshfone::NumberValidator
 
   BEYOND_THRESHOLD_PARALLEL_INCOMING = 3 # parallel incomings allowed beyond safe_threshold
   BEYOND_THRESHOLD_PARALLEL_OUTGOING = 1 # parallel incomings allowed beyond safe_threshold
@@ -24,9 +25,8 @@ module Freshfone::CallValidator
 
   def authorized_country?(phone_number, current_account)
     begin
-    country_obj = GlobalPhone.parse(phone_number)
-    return true if country_obj.nil? && isPreviewOrRecord?
-    country = country_obj.present? ? country_obj.territory.name : nil
+    country = fetch_country_code(phone_number)
+    return true if country.blank? && isPreviewOrRecord?
     rescue Exception => e 
     	Rails.logger.debug "Exception when validating country for whitelist :: account :: #{current_account.id}:: "
     	Rails.logger.debug "#{e.message}\n#{e.backtrace.join("\n\t")}"
@@ -54,8 +54,12 @@ module Freshfone::CallValidator
       status = :trial_outgoing_exhausted
     elsif !trial? && !enough_credit?
       status = :low_credit
-    elsif isOutgoing? && !isPreviewOrRecord? && !authorized_country?(params[:phone_number],current_account)
-      status = :dial_restricted_country
+    elsif isOutgoing? && !isPreviewOrRecord?
+      if invalid_phone_number?(params[:phone_number])
+        status = :invalid_phone
+      elsif !authorized_country?(params[:phone_number],current_account)
+        status = :dial_restricted_country
+      end
     end
     status
   end
@@ -93,5 +97,9 @@ module Freshfone::CallValidator
 
     def trial_outgoing_exceeded?
       trial? && freshfone_subscription.outbound_usage_exceeded?
+    end
+
+    def invalid_phone_number?(number)
+      fetch_country_code(number).blank?
     end
 end

@@ -679,6 +679,10 @@ class Freshfone::Call < ActiveRecord::Base
   def disconnect_supervisor_call?
     onhold? && supervisor_controls.any? { |supervisor_call| supervisor_call.default?}
   end
+
+  def ticket_created?
+    notable.present? && associated_ticket.present?
+  end
   
   private
     def called_agent(params)

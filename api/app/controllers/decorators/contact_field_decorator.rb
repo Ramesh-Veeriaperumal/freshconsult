@@ -1,6 +1,7 @@
 class ContactFieldDecorator < ApiDecorator
   delegate :choices, :editable_in_signup, :id, :label, :position, :field_type, :default_field?,
-           :editable_in_portal, :label_in_portal, :required_in_portal, :visible_in_portal, :required_for_agent, to: :record
+           :editable_in_portal, :label_in_portal, :required_in_portal, :visible_in_portal,
+           :required_for_agent, :field_options, to: :record
 
   def name
     default_field? ? record.name : CustomFieldDecorator.display_name(record.name)

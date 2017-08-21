@@ -2,6 +2,7 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 	include ::Freshfone::AccountUtil
 	include ::Freshfone::SubscriptionsUtil
 	include PostOffice
+	include Freshfone::NumberValidator
 
 	before_filter :load_numbers, :only => [:index]
 	before_filter :validate_trial, :only => [:index]
@@ -281,10 +282,10 @@ class Admin::Freshfone::NumbersController < Admin::AdminController
 		end
 
 		def address_invalid?(error)
-			error.has_key?(:twilio_error) && error.messages[:twilio_error].first[:code] == 21628
+			error.has_key?(:twilio_error) && error.messages[:twilio_error].first[:code] == TWILIO_ERROR_CODES[:address_invalid]
 		end
 
 		def address_suggested?(error)
-			error.has_key?(:twilio_error) && error.messages[:twilio_error].first[:code] == 21629
+			error.has_key?(:twilio_error) && error.messages[:twilio_error].first[:code] == TWILIO_ERROR_CODES[:address_suggested]
 		end
 end

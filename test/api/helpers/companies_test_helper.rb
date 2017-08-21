@@ -32,10 +32,8 @@ module CompaniesTestHelper
       id: company.avatar.id
     }
     if @private_api
-      company_avatar.merge!({
-        attachment_url: String,
-        thumb_url: String
-      })
+      company_avatar[:attachment_url] = String
+      company_avatar[:thumb_url] = String
     else
       company_avatar[:avatar_url] = String
     end
@@ -69,14 +67,14 @@ module CompaniesTestHelper
     (expected_output[:sla_policies] || []).each do |sla_policy|
       sla_array << sla_policy_pattern(sla_policy)
     end
-    response_pattern.merge!(sla_policies: sla_array)
+    response_pattern[:sla_policies] = sla_array
     response_pattern
   end
 
   def company_pattern_with_associations(expected_output = {}, company, include_options)
     response_pattern = company_pattern(expected_output, company)
     if include_options.include?('contacts_count')
-      response_pattern.merge!(contacts_count: company.users.count)
+      response_pattern[:contacts_count] = company.users.count
     end
     response_pattern
   end
@@ -84,9 +82,17 @@ module CompaniesTestHelper
   def company_field_pattern(_expected_output = {}, company_field)
     company_field_json = company_field_response_pattern company_field
     unless company_field.choices.blank?
-      company_field_json.merge!(choices: choice_list(company_field))
+      company_field_json[:choices] = choice_list(company_field)
     end
     company_field_json
+  end
+
+  def private_company_field_pattern(expected_output = {}, company_field)
+    result = company_field_pattern(expected_output, company_field)
+    if company_field.field_options.present? && company_field.field_options.key?('widget_position')
+      result[:widget_position] = company_field.field_options['widget_position']
+    end
+    result
   end
 
   def company_field_response_pattern(company_field)
@@ -103,7 +109,7 @@ module CompaniesTestHelper
     }
   end
 
-  def company_activity_response(objects, meta = false)
+  def company_activity_response(objects, _meta = false)
     response_pattern = {}
     objects.map do |item|
       type = item.class.name.gsub('Helpdesk::', '').downcase
@@ -129,7 +135,7 @@ module CompaniesTestHelper
       created_at: obj.created_at.try(:utc),
       fr_due_by: archived?(obj) ? parse_time(obj.frDueBy) : obj.frDueBy.try(:utc)
     }
-    ret_hash.merge!(archived: archived?(obj)) if archived?(obj)
+    ret_hash[:archived] = archived?(obj) if archived?(obj)
     ret_hash
   end
 
@@ -167,7 +173,7 @@ module CompaniesTestHelper
   def choice_list(company_field)
     case company_field.field_type.to_s
     when 'custom_dropdown' # not_tested
-      company_field.choices.map { |x| {  id: x[:id], label: x[:value], value: x[:value] } }
+      company_field.choices.map { |x| { id: x[:id], label: x[:value], value: x[:value] } }
     else
       []
     end
@@ -175,6 +181,6 @@ module CompaniesTestHelper
 
   # private
   def api_company_params
-    { name: Faker::Lorem.characters(10),  description: Faker::Lorem.paragraph, domains: Faker::Lorem.characters(5) }
+    { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, domains: Faker::Lorem.characters(5) }
   end
 end

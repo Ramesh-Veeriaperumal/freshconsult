@@ -74,8 +74,7 @@ Before creating a PR or sending it for review, make sure:
 - Only squash commits. Lets minimize the merge commits and lets resolve all the conflicts in our local branches.
 
 #### Pull Requests
-- Raise PRs against `helpkit-ember` branch
+- Raise PRs against `falcon-prestaging` branch
 - Your branch name to start with `falcon-%{feature-name}`
-- Add **Falcon-API** label to the PR.
 - Make sure the branch is deleted once the PR is merged.
 

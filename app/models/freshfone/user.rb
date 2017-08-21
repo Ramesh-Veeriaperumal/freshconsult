@@ -189,7 +189,7 @@ class Freshfone::User < ActiveRecord::Base
 	private
 
 		def call_agent_on_phone(xml_builder, forward_call_url)
-			@agent_number = GlobalPhone.parse(number).international_string
+			@agent_number = TelephoneNumber.parse(number).e164_number
 			xml_builder.Number @agent_number, :url => forward_call_url
 		end
 		
@@ -199,12 +199,12 @@ class Freshfone::User < ActiveRecord::Base
 		
 		def vaild_phone_number?(current_number)
 			@current_number = current_number.number
-			@agent_number = GlobalPhone.parse(number)
-			@agent_number && authorized_country?(@agent_number,account) && @agent_number.valid? && can_dial_agent_number?
+			@agent_number = TelephoneNumber.parse(number)
+			number.present? && authorized_country?(number, account) && can_dial_agent_number?
 		end
 
 		def can_dial_agent_number?
-			@agent_number.national_string != GlobalPhone.parse(@current_number).national_string
+			@agent_number.valid? && @agent_number.normalized_number != TelephoneNumber.parse(@current_number).normalized_number
 		end
 
 		def self.trial?

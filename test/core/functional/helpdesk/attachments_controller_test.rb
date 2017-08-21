@@ -24,6 +24,7 @@ class Helpdesk::AttachmentsControllerTest < ActionController::TestCase
   end
   
   def teardown
+    super
     FakeWeb.clean_registry
   end
 

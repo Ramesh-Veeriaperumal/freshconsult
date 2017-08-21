@@ -49,6 +49,7 @@ module UsersTestHelper
                   facebook_id: (expected_output[:facebook_id] || contact.fb_profile_id),
                   blocked: contact.blocked?,
                   spam: contact.spam?,
+                  deleted: contact.deleted,
                   local_time: Time.now.in_time_zone(contact.time_zone).strftime('%I:%M %p'))
     result[:company] = company_hash(contact.default_user_company) if expected_output[:include].eql?('company') && contact.default_user_company.present?
     result[:other_companies] = other_companies_hash(expected_output[:include].eql?('company'), contact) if Account.current.multiple_user_companies_enabled?
@@ -418,7 +419,7 @@ module UsersTestHelper
       end
       other_companies
     else
-      contact.user_companies.map(&:company_id)
+      contact.user_companies.reject(&:default).map(&:company_id)
     end
   end
 

@@ -1,6 +1,7 @@
 class Freshfone::Option
   include Freshfone::CallValidator
   include Freshfone::SubscriptionsUtil
+  include Freshfone::NumberValidator
 
   attr_accessor :performer, :performer_id, :respond_to_key, :menu, 
 								:attachment_id, :performer_number
@@ -93,7 +94,7 @@ class Freshfone::Option
 		end
 		
 		def invalid_performer_number?
-			call_number? && !GlobalPhone.validate(performer_number)
+			call_number? && fetch_country_code(performer_number).blank?
 		end
 
 		def restricted_performer_number?

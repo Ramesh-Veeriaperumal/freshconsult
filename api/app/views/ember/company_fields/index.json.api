@@ -1,0 +1,16 @@
+JSON.generate(@items.map do |company_field|
+  response_hash = {
+    id: company_field.id,
+    name: company_field.name,
+    label: company_field.label,
+    position: company_field.position,
+    required_for_agent: company_field.required_for_agent,
+    type: company_field.field_type,
+    default: company_field.default_field?,
+    created_at: company_field.created_at.try(:utc),
+    updated_at: company_field.updated_at.try(:utc)
+  }
+  response_hash[:widget_position] = company_field.field_options['widget_position'] if company_field.field_options.present? && company_field.field_options.key?('widget_position')
+  response_hash[:choices] = company_field.companies_custom_dropdown_choices if company_field.field_type.to_s == 'custom_dropdown'
+  response_hash
+end)
