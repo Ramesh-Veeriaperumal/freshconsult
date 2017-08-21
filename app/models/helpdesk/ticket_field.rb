@@ -6,7 +6,6 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   include Helpdesk::Ticketfields::TicketStatus
   include Cache::Memcache::Helpdesk::TicketField
-  include DataVersioning::Model
   
   self.table_name =  "helpdesk_ticket_fields"
   attr_accessible :name, :label, :label_in_portal, :description, :active, 
@@ -29,7 +28,6 @@ class Helpdesk::TicketField < ActiveRecord::Base
   SECTION_LIMIT = 2
 
   SECTION_DROPDOWNS = ["default_ticket_type", "custom_dropdown"]
-  VERSION_MEMBER_KEY = 'TICKET_FIELD'.freeze
 
   belongs_to_account
   belongs_to :flexifield_def_entry, :dependent => :destroy

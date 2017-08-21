@@ -4,9 +4,6 @@ class CustomSurvey::Survey < ActiveRecord::Base
   
   include Reports::ActivityReport
   include Cache::Memcache::Survey
-  include DataVersioning::Model
-
-  VERSION_MEMBER_KEY = 'SURVEY'.freeze
   
   concerned_with :constants, :associations
   attr_protected :account_id, :active, :default, :deleted
