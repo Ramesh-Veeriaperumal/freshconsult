@@ -5,6 +5,8 @@ module Email::EmailService::IpPoolHelper
 
   FD_EMAIL_SERVICE = (YAML::load_file(File.join(Rails.root, 'config', 'fd_email_service.yml')))[Rails.env]
   SENDER_CONFIG_URLPATH = FD_EMAIL_SERVICE["sender_config_urlpath"]
+  IP_POOL_CATEGORY = FD_EMAIL_SERVICE["ip_pool_category"].to_s
+  IP_POOL_NAMES = FD_EMAIL_SERVICE["ip_pool_names"]
   
   class SenderConfigFetchError < StandardError
   end
@@ -48,7 +50,7 @@ module Email::EmailService::IpPoolHelper
         res = fetch_sender_config account_id, category_id, email_type
         set_sender_config(account_id, res, email_type) if (res.present? && res["canBeSaved"].present? && res["canBeSaved"] == "1")
       end
-      return res
+      return res if(res["categoryId"].present? && res["ipPoolName"].present? && res["categoryId"] == IP_POOL_CATEGORY && IP_POOL_NAMES.include?(res["ipPoolName"]))
     end
   end
 
