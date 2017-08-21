@@ -6,7 +6,7 @@ include Helpdesk::Email::OutgoingCategory
 include ParserUtil
 include EmailHelper
 include EmailCustomLogger
-
+include Email::EmailService::IpPoolHelper
  FD_EMAIL_SERVICE = (YAML::load_file(File.join(Rails.root, 'config', 'fd_email_service.yml')))[Rails.env]
  EMAIL_SERVICE_AUTHORISATION_KEY = FD_EMAIL_SERVICE["key"]
  EMAIL_SERVICE_HOST = FD_EMAIL_SERVICE["host"]
