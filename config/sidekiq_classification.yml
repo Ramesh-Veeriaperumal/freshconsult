@@ -28,6 +28,7 @@
     - collaboration_publish
     - freshfone_notifications
     - freshfone_node
+    - freshfone_trial_worker
     - livechat_worker
   :scheduled:
     - scheduled_reports
@@ -115,7 +116,6 @@
     - dev_notification_worker
     - natero_worker
     - reports_no_activity
-    - twitter_gnip_worker
   :external:
     - code_console_execution
     - integrations
@@ -158,7 +158,6 @@
     - trial_facebook
     - trial_twitter
     - contacts_sync_trial
-    - freshfone_trial_worker
   :spam:
     - email_notification_spam_queue
     - spam_data_migration
