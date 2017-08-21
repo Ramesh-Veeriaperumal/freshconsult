@@ -1,4 +1,5 @@
 module EmailHelper
+  require 'redis/private_api_keys'
   require 'redis/redis_keys'
   require 'redis/others_redis'
 
