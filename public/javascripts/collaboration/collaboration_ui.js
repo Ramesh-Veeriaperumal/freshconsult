@@ -12,6 +12,7 @@ App.CollaborationUi = (function ($) {
         MENTION_RE: /\B@([\S]+)(?!=[\s])/igm,
         EXTERNAL_URL_RE: /\b(?:(?:(?:(https?:\/\/)|(?:www\d{0,3}\.))[\-a-z0-9+&@#\/%?=~_|!:\.;]+)|(?:([0-9a-z._+\-]+@)?(?:[0-9a-z]+[.\-])+(?:(?:co(?:m|\.[a-z]{2}))|ir|us|cc|biz|mobi|info|uk|org|net|tv|eu|cn|au)(?:[#\/?:][\-a-z0-9+&@#\/%?=~_|!:\.;]*[\-a-z0-9+&@#\/%=~_|]*|\b)))/gim,
         IMAGE_TAG_RE: /<img/igm,
+        FILE_EXT_RE: /\.[\w]+$/igm,
         MENTION_EVERYONE_TAG: "@huddle",
         TYPE_SENT: 'sent',
 		TYPE_RECEIVED: 'received',
@@ -36,7 +37,8 @@ App.CollaborationUi = (function ($) {
         DEFAULT_ERR: "unexpected",
         HIDE_ERROR_DURATION: 3000, //ms
         MAX_UPLOAD_SIZE: "15MB",
-        NOTI_KEYS: ["hk_notify", "hk_group_notify", "reply"]
+        NOTI_KEYS: ["hk_notify", "hk_group_notify", "reply"],
+        PREVIEW_SUPPORTED_FILE_TYPES: ["png", "jpg", "jpeg"]
     };
 
     var _COLLAB_PVT = {
@@ -100,8 +102,14 @@ App.CollaborationUi = (function ($) {
                 if(retry_count === "") {
                     retry_count = 0;
                 }
-                _COLLAB_PVT.refreshAttachmentUri(event.target, fid, retry_count);
-            })
+                _COLLAB_PVT.refreshImageAttachmentUri(event.target, fid, retry_count);
+            });
+            $collabSidebar.on("click.collab", ".collab-attachment-msg .image,.collab-attachment-details", function(event) {
+                var elem = $(event.target).parents(".collab-attached-image-section");
+                var fn = $(elem).find(".collab-attachment-details")[0].getAttribute("title");
+                var dl = $(elem).find(".collab-attachment-downloader")[0].getAttribute("href");
+                _COLLAB_PVT.showAttachmentPreview(fn, dl);
+            });
             $pagearea.on("mouseup.collab", ".leftcontent .conversation:not(.activity)", function(event) {
                 var containerEl = event.currentTarget;
                 _COLLAB_PVT.showAnnotationOption(containerEl);
@@ -182,6 +190,10 @@ App.CollaborationUi = (function ($) {
                 // for inside, there is a different handler working.
                 if(!$(event.target).parents(".leftcontent .conversation:not(.activity)").length) {
                     _COLLAB_PVT.hideAnnotationOption();
+                }
+                if(!$(event.target).hasClass("annotation")) {
+                    $("#show-discussion-dd").removeClass('stick-discussion-dd');
+                    _COLLAB_PVT.hideDiscussionDD();
                 }
             });
         },
@@ -356,6 +368,21 @@ App.CollaborationUi = (function ($) {
                     $msgBox.focus();
                 }
             });
+            var collabModel = App.CollaborationModel;
+            var convo = collabModel.conversationsMap[collabModel.currentConversation.co_id];
+            if(!!convo && collabModel.features.markReadEnabled) {
+                var messageList = convo.msgs || [];
+                var read_marker = convo.read_marker || {};
+                var my_id = collabModel.currentUser.uid;
+
+                if ( messageList.length !== 0 ) {
+                    var lastClientMessageId = _COLLAB_PVT.getLastClientMessageId(messageList);
+                    if( !read_marker[my_id] || ( parseInt(read_marker[my_id]) < parseInt(lastClientMessageId) ) ) {
+                        collabModel.updateReadMarker(lastClientMessageId);
+                    }
+                }
+                _COLLAB_PVT.hideUnreadMessageIndicator();
+            }
         },
 
         closeCollabSidebar: function() {
@@ -393,7 +420,11 @@ App.CollaborationUi = (function ($) {
                             $("#collab-attachment-input").replaceWith($("#collab-attachment-input").clone());
                             $("#collab-attachment-name").text(Collab.getFileDisplayName(response.fn));
                             $("#collab-attachment-name").attr("title", response.fn);
-                            $("#collab-attachment-image").prepend("<img class='image' src='"+ response.pl +"'><span class='valign-helper'></span>");
+                            if (typeof(response.pl) !== "undefined") {
+                                $("#collab-attachment-image").prepend("<img class='image' src='"+ response.pl +"'><span class='valign-helper'></span>");
+                            } else {
+                                $("#collab-attachment-image").prepend("<i class='ficon-file fsize-36' size='14'></i><span class='valign-helper'></span>");
+                            }
                             $("#collab-attachment-size").text(response.fs);
                             $(".collab-attached-image-section").attr("data-file", JSON.stringify(response));
                             break;
@@ -426,7 +457,7 @@ App.CollaborationUi = (function ($) {
 
             var attachment_link = {
                 "dl" : msgBodyJSON.dl,
-                "pl": msgBodyJSON.pl
+                "pl" : msgBodyJSON.pl
             }
 
             var msg = {
@@ -438,21 +469,27 @@ App.CollaborationUi = (function ($) {
             function sendAndRender() {
                 var $chatSection = $("#collab-chat-section");
                 $chatSection.removeClass("empty-chat-view");
+                if(!msg.mid) {
+                    msg.ts = msg.ts || Date.now().toString();
+                }
+
                 Collab.addMessageHtml({
                     "body": msgBodyJSON,
                     "s_id": collabModel.currentUser.uid,
                     "metadata": msg.metadata,
                     "mid": msg.mid,
-                    "m_type": CONST.MSG_TYPE_CLIENT_ATTACHMENT
+                    "ts": msg.ts,
+                    "m_type": CONST.MSG_TYPE_CLIENT_ATTACHMENT,
+                    "incremental": true
                 }, CONST.TYPE_SENT);
 
                 delete msgBodyJSON.dl;
                 delete msgBodyJSON.pl;
+                _COLLAB_PVT.resetAttachmentFormView();
+                
                 msg.body = JSON.stringify(msgBodyJSON);
 
-                collabModel.sendMessage(msg, currentConvo.co_id, function(){
-                    _COLLAB_PVT.resetAttachmentFormView();
-                });
+                collabModel.sendMessage(msg, currentConvo.co_id);
                 
                 _COLLAB_PVT.scrollToBottom();
             }
@@ -644,6 +681,26 @@ App.CollaborationUi = (function ($) {
 	        return avatarHtml;
 	    },
 
+        getSelectionVpLoc: function(containerEl) {
+            var range = window.getSelection().getRangeAt(0);
+            var rects=range.getClientRects();
+            var extremeBoundary = {left: Infinity, right:0};
+
+            for(var i=0;i<rects.length;i++) {
+                if(extremeBoundary.left > rects[i].left) {
+                    extremeBoundary.left = rects[i].left;  // minimum left
+                }
+                if(extremeBoundary.right < rects[i].right) {
+                    extremeBoundary.right = rects[i].right;  // maximum right
+                }
+            }
+
+            // First rect has top most range's numbers
+            extremeBoundary.top = rects[0].top;
+            extremeBoundary.center = (extremeBoundary.right - extremeBoundary.left)/2;
+            return extremeBoundary;
+        },
+
         getSelectionEndLoc: function(containerEl) {
             var range = window.getSelection().getRangeAt(0);
             var preSelectionRange = range.cloneRange();
@@ -692,14 +749,14 @@ App.CollaborationUi = (function ($) {
             if(!selectionInfo.isAnnotableSelection) {
                 return;
             }
-            var selectionRectsForVp = _COLLAB_PVT.getSelectionEndLoc(containerEl);
+            var selectionRectsForVp = _COLLAB_PVT.getSelectionVpLoc(containerEl);
             var $collabOptionsDD = $("#collab-option-dd");
             var dropDownWidth = $collabOptionsDD.width();
             if(!!selectionRectsForVp) {
                 var leftcontentRects = $("#Pagearea .leftcontent")[0].getBoundingClientRect();
                 var dropDownPos = {
-                    left: selectionRectsForVp.right - leftcontentRects.left - (dropDownWidth/2),
-                    top: selectionRectsForVp.top - leftcontentRects.top + selectionRectsForVp.height
+                    left: selectionRectsForVp.right - leftcontentRects.left - selectionRectsForVp.center - (dropDownWidth/2),
+                    top: selectionRectsForVp.top - leftcontentRects.top - 41 // collabOptionsDD.height=41(approx)
                 };
                 $collabOptionsDD.css({
                     left: dropDownPos.left,
@@ -875,8 +932,20 @@ App.CollaborationUi = (function ($) {
             if(!!response.start){
                 collabModel.currentConversation.messageStartCursor = response.start;
             }
-            var conversationData = response.conversation;
 
+            var conversationData = response.conversation;
+            var messageList = conversationData.msgs || [];
+
+            if(messageList.length !== 0 && collabModel.features.markReadEnabled) {
+                var my_id = collabModel.currentUser.uid;
+                var read_marker = response.conversation.read_marker || {};
+                var lastClientMessageId = _COLLAB_PVT.getLastClientMessageId(messageList);
+                if( read_marker[my_id] && ( parseInt(read_marker[my_id]) < parseInt(lastClientMessageId) ) ) {
+                    _COLLAB_PVT.showUnreadMessageIndicator();
+                } else {
+                    _COLLAB_PVT.hideUnreadMessageIndicator();
+                }
+            }
             /*
             *   Annotation
             */
@@ -908,7 +977,6 @@ App.CollaborationUi = (function ($) {
             */ 
             if(!!conversationData) {
                 collabModel.conversationsMap[conversationData.co_id] = conversationData;
-                messageList = conversationData.msgs || [];
                 var receiptType;
                 $('#scroll-box').empty();
                 for(var i= 0; i < messageList.length ; i++) {
@@ -1071,24 +1139,49 @@ App.CollaborationUi = (function ($) {
         },
 
         showDiscussionDD: function(event) {
-            if(!$(event.currentTarget).hasClass("collab-temp-annotation")) {
-                var $showDiscussionDD = $("#show-discussion-dd");
-                var dropDownWidth = $showDiscussionDD.width();
-                var leftcontentRects = $("#Pagearea .leftcontent")[0].getBoundingClientRect();
-                var dropDownPos = {
-                    left: event.clientX - leftcontentRects.left - dropDownWidth/2,
-                    top: event.clientY - leftcontentRects.top
-                };
-                $showDiscussionDD.attr('data-message-id', event.currentTarget.getAttribute('data-message-id'));
+            var $showDiscussionDD = $("#show-discussion-dd");
+            if(!(event.type === "mouseenter" && $showDiscussionDD.hasClass('stick-discussion-dd'))) {
+                if(!$(event.currentTarget).hasClass("collab-temp-annotation")) {
 
-                var $annotatorImage = $("#annotator-image");
-                $annotatorImage.html(_COLLAB_PVT.getAvatarHtml(event.currentTarget.getAttribute('data-annotator-id'), "small x-small"));
+                    var message_id = event.currentTarget.getAttribute('data-message-id');
+                    var dropDownWidth = $showDiscussionDD.width();
+                    var leftcontentRects = $("#Pagearea .leftcontent")[0].getBoundingClientRect();
 
-                $showDiscussionDD.css({
-                    left: dropDownPos.left,
-                    top: dropDownPos.top,
-                    display: "block"
-                });   
+                    var annotations = jQuery(".annotation[data-message-id="+ message_id +"]");
+                    var extremeBoundary = {left: Infinity, right: 0, top: Infinity};
+
+                    annotations.each(function(idx, ann) {
+                        var rect = ann.getBoundingClientRect();
+                        if (extremeBoundary.left > rect.left) {
+                            extremeBoundary.left = rect.left;  // minimum left
+                        }
+                        if (extremeBoundary.right < rect.right) {
+                            extremeBoundary.right = rect.right;  // maximum right
+                        }
+                        if (extremeBoundary.top > rect.top) {
+                            extremeBoundary.top = rect.top; // minimum top
+                        }
+                    });
+                    extremeBoundary.center = (extremeBoundary.right - extremeBoundary.left)/2;
+
+                    var dropDownPos = {
+                        left: extremeBoundary.right - leftcontentRects.left - extremeBoundary.center - dropDownWidth/2,
+                        top: extremeBoundary.top - leftcontentRects.top - 40 // dropDownHeight=40(approx)
+                    };
+                    $showDiscussionDD.attr('data-message-id', message_id);
+
+                    var $annotatorImage = $("#annotator-image");
+                    $annotatorImage.html(_COLLAB_PVT.getAvatarHtml(event.currentTarget.getAttribute('data-annotator-id'), "small x-small"));
+
+                    $showDiscussionDD.css({
+                        left: dropDownPos.left,
+                        top: dropDownPos.top,
+                        display: "block"
+                    });   
+                    if(event.type === "click") {
+                        $showDiscussionDD.addClass('stick-discussion-dd');
+                    }
+                }
             }
         },
 
@@ -1100,16 +1193,19 @@ App.CollaborationUi = (function ($) {
         hideDiscussionDD: function(event) {
             // if event doesn't trigger this; force hide it.
             if(!!event) {
-                setTimeout(function() {
-                    if(!_COLLAB_PVT.isMouseOverTarget(event.clientX, event.clientY, "show-discussion-dd", "annotation-" + $("#show-discussion-dd").attr('data-message-id'))) {
-                        $("#show-discussion-dd").attr('data-message-id', "");
-                        $("#show-discussion-dd").css({
-                            left: 0,
-                            top: 0,
-                            display: "none"
-                        });
-                    }
-                });
+                var $showDiscussionDD = $("#show-discussion-dd");
+                if(!$showDiscussionDD.hasClass('stick-discussion-dd')) {
+                    setTimeout(function() {
+                        if(!_COLLAB_PVT.isMouseOverTarget(event.clientX, event.clientY, "show-discussion-dd", "annotation-" + $("#show-discussion-dd").attr('data-message-id'))) {
+                            $("#show-discussion-dd").attr('data-message-id', "");
+                            $("#show-discussion-dd").css({
+                                left: 0,
+                                top: 0,
+                                display: "none"
+                            });
+                        }
+                    });
+                }
             } else {
                 $("#show-discussion-dd").css({
                     left: 0,
@@ -1144,7 +1240,7 @@ App.CollaborationUi = (function ($) {
                 $("#noti-count").addClass("hide");
             }
         },
-        refreshAttachmentUri: function(elem, fid, retry_count) {
+        refreshImageAttachmentUri: function(elem, fid, retry_count) {
             retry_count++;
             // retry max-out
             if(retry_count >= CONST.DEFAULT_FETCH_RETRY) {
@@ -1153,14 +1249,39 @@ App.CollaborationUi = (function ($) {
 
                 var sec = $(elem).parents(".collab-attached-image-section");
                 sec.addClass("collab-download-disabled");
-                sec.removeAttr("href");
-                sec.removeAttr("download");
+                var download_anchor = $(sec).find(".collab-attachment-downloader");
+                download_anchor.removeAttr("href");
+                download_anchor.removeAttr("download");
             } else {
                 App.CollaborationModel.refreshAttachmentUri(fid, function(response) {
-                    $(elem).parents(".collab-attached-image-section").attr("href", response.dl);
+                    $(elem).parents(".collab-attached-image-section").find(".collab-attachment-downloader").attr("href", response.dl);
                     $(elem).attr("src", response.pl);
                     $(elem).attr("data-fetch-retry-count", retry_count);
                 });
+            }
+        },
+        refreshAttachmentUri: function(fid) {
+                App.CollaborationModel.refreshAttachmentUri(fid, function(response) {
+                    var elem = jQuery("[data-fid='" + fid + "']");
+                    $(elem).parents(".collab-attached-image-section").find(".collab-attachment-downloader").attr("href", response.dl);
+                });
+        },
+        showAttachmentPreview: function(file_name, file_link) {
+            var fn = file_name.toLowerCase();
+            var ext = _COLLAB_PVT.checkSupportedImageFile(file_name);
+            if(ext !== "") {
+                var preview_params = {
+                    filename: file_name,
+                    filetype: ext,
+                    filelink: file_link,
+                    multifile: false,
+                    currentPos: 0
+                };
+                var elem_close = document.getElementsByClassName("av-close")[0];
+                if (typeof(elem_close) !== "undefined") {
+                    $(elem_close).trigger("click");
+                }
+                App.TicketAttachmentPreview.showPopup(preview_params);
             }
         },
         getMentionName: function(user_id) {
@@ -1402,6 +1523,32 @@ App.CollaborationUi = (function ($) {
             } catch(e) {
                 console.log("couldn't show the tour: ", e);
             }
+        },
+
+        checkSupportedImageFile: function(file_name) {
+            var file_ext = "";
+            if (typeof(file_name) !== "undefined") {
+                file_ext = (file_name.toLowerCase().match(CONST.FILE_EXT_RE)[0]).substr(1);
+                file_ext =  (CONST.PREVIEW_SUPPORTED_FILE_TYPES.indexOf(file_ext) > -1 ? file_ext : "");
+            }
+            return file_ext;
+        },
+
+        showUnreadMessageIndicator: function() {
+            $(".collab-unread-indicator").addClass("show-collab-unread-indicator");
+        },
+
+        hideUnreadMessageIndicator: function() {
+            $(".collab-unread-indicator").removeClass("show-collab-unread-indicator");
+        },
+
+        getLastClientMessageId: function(messageList) {
+            for(var i=0; i<messageList.length; i++) {
+                if(messageList[i].m_type === CONST.MSG_TYPE_CLIENT || messageList[i].m_type === CONST.MSG_TYPE_CLIENT_ATTACHMENT) {
+                    return messageList[i].mid;
+                }
+            }
+            return "0";
         }
     };
 
@@ -1412,6 +1559,9 @@ App.CollaborationUi = (function ($) {
         }, {
             eventName: "mouseleave",
             eventHandler: _COLLAB_PVT.hideDiscussionDD
+        }, {
+            eventName: "click",
+            eventHandler: _COLLAB_PVT.showDiscussionDD
         }],
         hasExapndedTicket: false,
 
@@ -1616,11 +1766,14 @@ App.CollaborationUi = (function ($) {
 
         updateSentMessage: function(msg) {
             if(!!$("#collab-" + msg.ts).length) {
-               $("#collab-" + msg.ts).attr("id", "collab-" + msg.mid);
-               var ann_elem = $(".annotation[data-message-id=" + msg.ts + "]");
-               if(ann_elem.length) {
-                   ann_elem.attr("id", "annotation-" + msg.mid);
-                   ann_elem.attr("data-message-id", msg.mid);
+                $("#collab-" + msg.ts).attr("id", "collab-" + msg.mid);
+                if(App.CollaborationModel.features.markReadEnabled) {
+                    App.CollaborationModel.updateReadMarker(msg.mid);
+                }
+                var ann_elem = $(".annotation[data-message-id=" + msg.ts + "]");
+                if(ann_elem.length) {
+                    ann_elem.attr("id", "annotation-" + msg.mid);
+                    ann_elem.attr("data-message-id", msg.mid);
                 }
                 // send notification
                 if(!!msg.metadata && _COLLAB_PVT.checkNotiKeys(msg)) {
@@ -1633,6 +1786,8 @@ App.CollaborationUi = (function ($) {
 	        if(!msg.body) {
                 return;
             }
+
+            var collabModel = App.CollaborationModel;
             
             var msg_meta, annotation_meta, is_annotation_invalid, reply_to_meta;
             if(!!msg.metadata) {
@@ -1640,20 +1795,25 @@ App.CollaborationUi = (function ($) {
                 annotation_meta = msg_meta.annotations ? Collab.parseJson(msg_meta.annotations) : null;
                 reply_to_meta = msg_meta.reply ? Collab.parseJson(msg_meta.reply) : null;
 
-                if(App.CollaborationModel.invalidAnnotationMessages.indexOf(msg.mid) >= 0) {
+                if(collabModel.invalidAnnotationMessages.indexOf(msg.mid) >= 0) {
                     is_annotation_invalid = true;
                 }
             }
 
-            var live_msg_by_others = msg.s_id !== App.CollaborationModel.currentUser.uid && msg.incremental;
+            var live_msg_by_others = msg.s_id !== collabModel.currentUser.uid && msg.incremental;
+            if(live_msg_by_others && collabModel.features.markReadEnabled) {
+                if(Collab.isCollabOpen()) {
+                    collabModel.updateReadMarker(msg.mid);
+                } else {
+                    _COLLAB_PVT.showUnreadMessageIndicator();
+                } 
+            }
             if(live_msg_by_others && !!annotation_meta) {
                 annotation_meta.messageId = msg.mid;
-                App.CollaborationModel.restoreAnnotations(annotation_meta);
+                collabModel.restoreAnnotations(annotation_meta);
             }
-
-            var collabModel = App.CollaborationModel;
             
-            if(msg.m_type === CONST.MSG_TYPE_CLIENT && msg.incremental) {
+            if((msg.m_type === CONST.MSG_TYPE_CLIENT || msg.m_type === CONST.MSG_TYPE_CLIENT_ATTACHMENT) && msg.incremental) {
                 // Update total message count for every message added incrementally;
                 _COLLAB_PVT.updateConvoMessageCount(Number($("#collab-btn .collab-message-count").attr("data-message-count"))+1);
             }
@@ -1672,7 +1832,7 @@ App.CollaborationUi = (function ($) {
                     /*
                     *   TODO (mayank): Need to take care of time zone here
                     */
-                    time_stamp_text: collabModel.formatTimestamp(Math.floor((new Date().getTime() - App.CollaborationModel.parseUTCDateToLocal(msg.created_at).getTime()) / 1000)),
+                    time_stamp_text: collabModel.formatTimestamp(Math.floor((new Date().getTime() - collabModel.parseUTCDateToLocal(msg.created_at).getTime()) / 1000)),
                     msg_id: msg.mid || msg.ts,
                     msg_render_type: render_type,
 
@@ -1682,8 +1842,9 @@ App.CollaborationUi = (function ($) {
                     is_attachment: msg_type ? !!msg_type.attachment : false,
                     is_annotation_invalid: !!is_annotation_invalid,
                     invalid_annotation_text: I18n.translate("collaboration.error.highlight_missing"),
-                    enable_reply_to: !!App.CollaborationModel.features.replyToEnabled,
+                    enable_reply_to: !!collabModel.features.replyToEnabled,
                     reply_tooltip: I18n.translate("collaboration.reply"),
+                    is_image_file: _COLLAB_PVT.checkSupportedImageFile(msg_body.fn) !== "",
                 }));
             }
 
@@ -1722,7 +1883,9 @@ App.CollaborationUi = (function ($) {
                 msg_body.pl = msg_body.pl || " ";
                 msg.created_at = msg.created_at || collabModel.getCurrentUTCTimeStamp();
                 renderMsg(msg_body, {"attachment": true});
+                _COLLAB_PVT.refreshAttachmentUri(msg_body.fid);
             }
+
             
             _COLLAB_PVT.scrollToBottom();
 	    },

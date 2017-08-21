@@ -15,18 +15,24 @@
 		
 		<% if (!!is_attachment) { %>
 			<div class="msg collab-attachment-msg"> 
-				<a class="collab-attached-image-section" download href="<%= msg_body.dl %>">
-                    <div class="collab-attachment-image">
-                    	<img class="image" src="<%= msg_body.pl %>" data-fetch-retry-count=""  data-fid="<%= msg_body.fid %>" onerror="App.CollaborationUi.collabImgError(event)"><span class="valign-helper"></span>
-                    </div>
-                    <div class="collab-attachment-details" title="<%= msg_body.fn %>">
-	                    <div class="collab-attachment-name ellipsis"> <%= App.CollaborationUi.getFileDisplayName(msg_body.fn) %> </div>
-	                    <div class="collab-attachment-size"><%= msg_body.fs %></div>
-                    </div>
-                    <div class="collab-dl-link">
-                    	<img class="collab-dl-image" src="/assets/collab/collab-download.svg">
-                    </div>
-                </a>
+				<span class="collab-attached-image-section <%= is_image_file ? 'collab-preview-allowed': '' %>">
+          <div class="collab-attachment-image">
+          	<% if (is_image_file) { %>
+          		<img class="image" src="<%= msg_body.pl %>" data-fetch-retry-count=""  data-fid="<%= msg_body.fid %>" data-fn="<%= msg_body.fn %>" onerror="App.CollaborationUi.collabImgError(event)"><span class="valign-helper"></span>
+          	<% } else { %>
+          		<i class="ficon-file fsize-36" size="14" data-fid="<%= msg_body.fid %>" data-fn="<%= msg_body.fn %>"></i><span class="valign-helper"></span>
+          	<% } %>
+          </div>
+          <div class="collab-attachment-details" title="<%= msg_body.fn %>">
+            <div class="collab-attachment-name ellipsis"> <%= App.CollaborationUi.getFileDisplayName(msg_body.fn) %> </div>
+            <div class="collab-attachment-size"><%= msg_body.fs %></div>
+          </div>
+	        <a class="collab-attachment-downloader" download href="<%= msg_body.dl %>">
+		          <div class="collab-dl-link">
+		          	<img class="collab-dl-image" src="/assets/collab/collab-download.svg">
+		          </div>
+	        </a>
+      </span>
 			</div>
 			<% if(!!enable_reply_to) { %>
 				<span class="collab-reply-btn tooltip" id="btn-reply" data-placement="above" title="<%= reply_tooltip %>" twipsy-content-set="true"> <i class="ficon-reply fsize-14 collab-reply-icon" id="collab-reply-icon" size="14"></i> </span>

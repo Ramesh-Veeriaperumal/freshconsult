@@ -93,7 +93,14 @@ class Group < ActiveRecord::Base
     del_round_robin_redis(agent_key)
     
     capping_key = round_robin_capping_key
-    zrem_round_robin_redis(capping_key, user_id)
+    begin
+      zrem_round_robin_redis(capping_key, user_id)
+    rescue Exception => e
+      desc = "LBRR error #{user_id} #{capping_key} #{current_account.id}"
+      Rails.logger.debug desc
+      Rails.logger.debug "#{e.message} #{e.class} #{e.backtrace}"
+      NewRelic::Agent.notice_error(e,{:description => desc})
+    end
   end
 
   def assign_tickets agent
@@ -118,12 +125,17 @@ class Group < ActiveRecord::Base
   end
 
   def add_or_remove_agent(user_id, add=true)
-    newrelic_begin_rescue {
+    begin
       $redis_others.multi do 
         $redis_others.lrem(round_robin_key,0,user_id)
         $redis_others.lpush(round_robin_key,user_id) if add
       end
-    }
+    rescue Exception => e
+      desc = "RR error #{user_id} #{round_robin_key} #{current_account.id}"
+      Rails.logger.debug desc
+      Rails.logger.debug "#{e.message} #{e.class} #{e.backtrace}"
+      NewRelic::Agent.notice_error(e,{:description => desc})
+    end
   end
 
   def create_round_robin_list

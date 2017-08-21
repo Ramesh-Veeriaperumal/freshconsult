@@ -185,4 +185,8 @@ class Account < ActiveRecord::Base
     SELECTABLE_FEATURES_DATA || {}
   end
 
+  def collaboration_enabled?
+   @collboration ||= has_feature?(:collaboration) && self.collab_settings.present?
+  end
+
 end

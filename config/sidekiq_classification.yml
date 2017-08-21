@@ -38,6 +38,7 @@
     - twitter
     - premium_twitter
     - custom_twitter
+    - send_activation_reminder_mail
   :occasional:
     - plan_change_workerv2
     - merge_contacts

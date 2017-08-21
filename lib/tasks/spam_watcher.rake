@@ -142,7 +142,7 @@ def deliver_blocked_user_alert(blocked_users)
   FreshdeskErrorsMailer.error_email(nil, nil, nil, 
     {
       :subject => subject,
-      :recipients => ["block-alerts@freshworks.com"],
+      :recipients => ["fd-block-alerts@freshworks.com"],
       :additional_info => {
         :info => additional_info,
         :blocked_users_in_this_run => blocked_users.inspect

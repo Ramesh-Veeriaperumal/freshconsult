@@ -1,4 +1,5 @@
 module Redis::RedisKeys
+	include Redis::PrivateApiKeys
 
 	HELPDESK_TICKET_FILTERS = "HELPDESK_TICKET_FILTERS:%{account_id}:%{user_id}:%{session_id}"
 	EXPORT_TICKET_FIELDS = "EXPORT_TICKET_FIELDS:%{account_id}:%{user_id}:%{session_id}"
@@ -239,6 +240,12 @@ module Redis::RedisKeys
   DEFAULT_MAILGUN_TRAFFIC_PERCENTAGE = "DEFAULT_MAILGUN_TRAFFIC_PERCENTAGE"
   SPAM_MAILGUN_TRAFFIC_PERCENTAGE = "SPAM_MAILGUN_TRAFFIC_PERCENTAGE"
 
+  # Email sender config redis key
+  EMAIL_SENDER_CONFIG = "EMAIL_SENDER_CONFIG:%{account_id}:%{email_type}"
+
+  # key for enabling fd email service to all the account
+
+  ROUTE_NOTIFICATIONS_VIA_EMAIL_SERVICE = "ROUTE_NOTIFICATIONS_VIA_EMAIL_SERVICE"
 
   INTERNAL_TOOLS_IP = "INTERNAL_TOOLS_IP"
   ACCOUNT_SETUP = "ACCOUNT_SETUP:%{account_id}"
@@ -339,7 +346,9 @@ module Redis::RedisKeys
   HAPROXY_DOMAIN_BLACKLIST_KEY = "HAPROXY_DOMAIN_BLACKLIST_KEY"
   HAPROXY_IP_BLACKLIST_CHANNEL = "HAPROXY_IP_BLACKLIST_CHANNEL"
 
-
+  # On what days should the activation reminder emails be sent?
+  SIGNUP_ACTIVATION_REMINDER_MAILING_DAYS = "SIGNUP_ACTIVATION_REMINDER_MAILING_DAYS"
+  
   #JWT api keys
   JWT_API_JTI = "JWT:%{account_id}:%{user_id}:%{jti}"
 
