@@ -58,12 +58,12 @@ module ApiFreshfone
 
     def export_params
      {
-      "api": true,
-      "number_id": number_id || 0,
-      "user_id": current_user.id,
-      "export_to": params[:export_format] || 'csv',
-      "export_id": export_id,  
-      "data_hash": data_hash.to_json
+      "api" => true,
+      "number_id" => number_id || 0,
+      "user_id" => current_user.id,
+      "export_to" => params[:export_format] || 'csv',
+      "export_id" => export_id,  
+      "data_hash" => data_hash.to_json
       }.reject{|k,v| v.blank?}
     end
 
@@ -90,27 +90,27 @@ module ApiFreshfone
         value = "#{start_date.strftime('%c')} - #{end_date.strftime('%c')}}" 
       end
       value = default_time_range if no_time_range_given?
-      @create_at_hash ||= {"condition": "created_at", "operator": "is_in_the_range", "value": value} if value.present?
+      @create_at_hash ||= {"condition"=> "created_at", "operator" => "is_in_the_range", "value"=> value} if value.present?
     end
 
     def call_type_hash
-      @call_type_hash ||= {"condition": "call_type", "operator": "is", "value": params[:call_type]} if params[:call_type].present?
+      @call_type_hash ||= {"condition"=> "call_type", "operator"=> "is", "value"=> params[:call_type]} if params[:call_type].present?
     end
 
     def user_id_hash
-      @user_id_hash ||= {"condition": "user_id", "operator": "is_in", "value": params[:user_ids].join(',')} if params[:user_ids].present?
+      @user_id_hash ||= {"condition"=> "user_id", "operator"=> "is_in", "value"=> params[:user_ids].join(',')} if params[:user_ids].present?
     end
 
     def customer_id_hash
-      @customer_id_hash ||= {"condition": "customer_id", "operator": "is", "value": params[:requester_id]} if params[:requester_id].present?
+      @customer_id_hash ||= {"condition"=> "customer_id", "operator"=> "is", "value"=> params[:requester_id]} if params[:requester_id].present?
     end
 
     def group_id_hash
-      @group_id_hash ||= {"condition": "group_id", "operator": "is", "value": params[:group_id]} if params[:group_id].present?
+      @group_id_hash ||= {"condition"=> "group_id", "operator"=> "is", "value"=> params[:group_id]} if params[:group_id].present?
     end
 
     def business_hour_hash
-      @business_hour_hash ||= {"condition": "business_hour_call", "operator": "is", "value": params[:business_hour_call]} if params[:business_hour_call].present?
+      @business_hour_hash ||= {"condition"=> "business_hour_call", "operator"=> "is", "value"=> params[:business_hour_call]} if params[:business_hour_call].present?
     end
 
     def default_time_range

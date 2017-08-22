@@ -115,6 +115,45 @@ module TicketFieldsTestHelper
     parent_custom_field
   end
 
+  def create_custom_field_dropdown_with_sections(name = 'section_custom_dropdown', choices = ['Choice 1', 'Choice 2', 'Choice 3'], required = false)
+    ticket_field_exists = @account.ticket_fields.find_by_name("#{name}_#{@account.id}")
+    return ticket_field_exists if ticket_field_exists
+    # ffs_06 is created here
+    flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry,
+                                             flexifield_def_id: @account.flexi_field_defs.find_by_module('Ticket').id,
+                                             flexifield_alias: "#{name.downcase}_#{@account.id}",
+                                             flexifield_name: 'ffs_06',
+                                             flexifield_order: 7,
+                                             flexifield_coltype: 'dropdown',
+                                             account_id: @account.id)
+    flexifield_def_entry.save
+
+    parent_custom_field = FactoryGirl.build(:ticket_field, account_id: @account.id,
+                                                           name: "#{name.downcase}_#{@account.id}",
+                                                           label: name,
+                                                           label_in_portal: name,
+                                                           field_type: 'custom_dropdown',
+                                                           description: '',
+                                                           required: required,
+                                                           field_options: {'section_present' => true},
+                                                           flexifield_def_entry_id: flexifield_def_entry.id)
+    parent_custom_field.save
+
+    field_choices = choices.map { |x| [x, '0'] }
+    pv_attr = choices.map { |x| { 'value' => x } }
+
+    picklist_vals_l1 = []
+    field_choices.map(&:first).each_with_index do |l1_val, index1|
+      picklist_vals_l1 << FactoryGirl.build(:picklist_value, account_id: @account.id,
+                                                             pickable_type: 'Helpdesk::TicketField',
+                                                             pickable_id: parent_custom_field.id,
+                                                             position: index1 + 1,
+                                                             value: l1_val)
+      picklist_vals_l1.last.save
+    end
+    parent_custom_field
+  end
+
   def create_dependent_custom_field(labels)
     flexifield_def_entry = []
     # ffs_07, ffs_08 and ffs_09 are created here

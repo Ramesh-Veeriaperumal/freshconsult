@@ -69,6 +69,8 @@ Helpkit::Application.configure do
 
   config.after_initialize do
     Sass::Plugin.options[:never_update] = true
+    Bullet.enable         = true
+    Bullet.bullet_logger  = true
   end
 
   # Need to set records for assets1..10.freshdesk.com

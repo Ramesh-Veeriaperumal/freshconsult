@@ -129,5 +129,37 @@ module EmailHelper
     return true if (fetched_account_id and account.id != fetched_account_id.to_i)
     return false
   end
+
+  def notify_account_blocks(account, subject, description)
+    if account.present?
+      domain = account.full_domain
+      description << "\n Account : #{freshops_account_url(account)}"
+    else
+      domain = "not known"
+    end
+    FreshdeskErrorsMailer.error_email(nil, {:domain_name => domain}, nil, {
+            :subject => subject,
+            :recipients => ["fd-block-alerts@freshworks.com"],
+            :additional_info => {:info => description}
+          })
+  end
+
+  def update_freshops_activity(account, reason, action_name)
+    url_params = { :app_name => "helpkit", 
+    :activity => {
+      :email => Helpdesk::EMAIL[:auto_block_user],
+      :reason => reason,
+      :action_name => action_name,
+      :account_id => "#{account.id}",
+      :account_name => "#{account.full_domain}" 
+      }
+    }
+    Fdadmin::APICalls.make_api_request_to_global( :post, url_params, "/api/v1/activity/create_activity", "freshopsadmin.freshdesk.com")
+  end
+
+
+  def freshops_account_url(account)
+      "freshopsadmin.freshdesk.com/accounts/#{account.id}"
+  end
   
 end

@@ -141,6 +141,29 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash
   end
 
+  def construct_sections(field_name)
+    if field_name == 'type'
+      sections = [{ title: 'section1',
+                    value_mapping: %w[Question Problem],
+                    ticket_fields: %w[test_custom_number test_custom_date]
+                  },
+                  { title: 'section2',
+                    value_mapping: ['Incident'],
+                    ticket_fields: %w[test_custom_paragraph test_custom_dropdown] 
+                  }]
+    else
+      sections = [{ title: 'section1',
+                    value_mapping: %w[Choice\ 1 Choice\ 2],
+                    ticket_fields: %w[test_custom_number test_custom_date]
+                  },
+                  { title: 'section2',
+                    value_mapping: ['Choice 3'],
+                    ticket_fields: %w[test_custom_paragraph] 
+                  }]
+    end
+    sections
+  end
+
   def test_search_with_feature_enabled
     warn 'Elastic Search is not enabled. It might cause this test "test_search_with_feature_enabled" to fail.' unless ES_ENABLED
     @account.launch :es_count_writes
@@ -3323,9 +3346,33 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_section_fields
-    create_section_fields
+    sections = construct_sections('type')
+    create_section_fields(3, sections)
     params = ticket_params_hash.merge(custom_fields: {}, type: 'Incident', description: '<b>test</b>')
     %w(paragraph dropdown).each do |custom_field|
+      params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+    end
+    post :create, construct_params({}, params)
+    match_json(ticket_pattern(params, Helpdesk::Ticket.last))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
+    result = parse_response(@response.body)
+    assert_equal true, response.headers.include?('Location')
+    assert_equal "http://#{@request.host}/api/v2/tickets/#{result['id']}", response.headers['Location']
+    assert_response 201
+    assert_equal '<b>test</b>', Helpdesk::Ticket.last.description_html
+    assert_equal 'test', Helpdesk::Ticket.last.description
+  ensure
+    @account.ticket_fields.custom_fields.each do |x|
+      x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
+    end
+  end
+
+  def test_create_with_section_fields_with_custom_dropdown_parent
+    dd_field_id = create_custom_field_dropdown_with_sections.id
+    sections = construct_sections('test_custom_dropdown')
+    create_section_fields(dd_field_id, sections);
+    params = ticket_params_hash.merge(custom_fields: {section_custom_dropdown: 'Choice 3'}, description: '<b>test</b>')
+    ['paragraph'].each do |custom_field|
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({}, params)
@@ -3371,14 +3418,38 @@ class TicketsControllerTest < ActionController::TestCase
     end
   end
 
-  def test_update_with_section_fields
-    create_section_fields
+  def test_update_with_section_fields_ticket_type_parent
+    sections = construct_sections('type')
+    create_section_fields(3, sections)
     t = create_ticket(ticket_params_hash)
     params = update_ticket_params_hash.merge(custom_fields: {}, type: 'Incident')
     %w(paragraph dropdown).each do |custom_field|
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
-    put :update, construct_params({ id: t.display_id }, params)
+    Sidekiq::Testing.inline! do
+      put :update, construct_params({ id: t.display_id }, params)
+    end
+    match_json(ticket_pattern(params, t.reload))
+    assert_response 200
+  ensure
+    @account.ticket_fields.custom_fields.each do |x|
+      x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
+    end
+  end
+
+  def test_update_with_section_fields_with_custom_dropdown_parent
+    dd_field_id = create_custom_field_dropdown_with_sections.id
+    sections = construct_sections('section_custom_dropdown')
+    create_section_fields(dd_field_id, sections);
+    t = create_ticket(ticket_params_hash)
+    params = update_ticket_params_hash.except(:description).merge(custom_fields: {section_custom_dropdown: 'Choice 3'})
+    ['paragraph'].each do |custom_field|
+      params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+    end
+    Sidekiq::Testing.inline! do
+      put :update, construct_params({ id: t.display_id }, params)
+    end
+    match_json(ticket_pattern(params, t.reload))
     assert_response 200
   ensure
     @account.ticket_fields.custom_fields.each do |x|

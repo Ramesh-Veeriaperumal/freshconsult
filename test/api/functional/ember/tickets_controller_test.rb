@@ -17,6 +17,7 @@ module Ember
     include ContactFieldsHelper
     include AccountTestHelper
     include SharedOwnershipTestHelper
+    include AwsTestHelper
 
     CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date).freeze
 
@@ -125,9 +126,8 @@ module Ember
     def test_index_with_all_tickets_filter
       # Private API should filter all tickets with last 30 days created_at limit
       test_ticket = create_ticket(created_at: 2.months.ago)
-      get :index, controller_params(version: 'private', filter: 'all_tickets', include: 'count')
+      get :index, controller_params(version: 'private', filter: 'all_tickets')
       assert_response 200
-      assert response.api_meta[:count] != @account.tickets.where(spam: false, deleted: false).count
     end
 
     def test_index_with_invalid_filter_names
@@ -410,7 +410,7 @@ module Ember
     end
 
     def test_create_with_invalid_cloud_files
-      cloud_file_params = [{ filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 10_000 }]
+      cloud_file_params = [{ filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 10_000 }]
       params = ticket_params_hash.merge(cloud_files: cloud_file_params)
       post :create, construct_params({ version: 'private' }, params)
       assert_response 400
@@ -418,14 +418,14 @@ module Ember
     end
 
     def test_create_cloud_files_with_no_app_id
-      cloud_file_params = [{ filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg' }]
+      cloud_file_params = [{ filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL }]
       params = ticket_params_hash.merge(cloud_files: cloud_file_params)
       post :create, construct_params({ version: 'private' }, params)
       assert_response 400
     end
 
     def test_create_cloud_files_with_no_file_name
-      cloud_file_params = [{ url: 'https://www.dropbox.com/image.jpg', application_id: 20 }]
+      cloud_file_params = [{ url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
       params = ticket_params_hash.merge(cloud_files: cloud_file_params)
       post :create, construct_params({ version: 'private' }, params)
       assert_response 400
@@ -439,13 +439,12 @@ module Ember
     end
 
     def test_create_with_cloud_files
-      cloud_file_params = [{ filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 },
-                           { filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 }]
+      cloud_file_params = [{ filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
       params_hash = ticket_params_hash.merge(cloud_files: cloud_file_params)
       post :create, construct_params({ version: 'private' }, params_hash)
       assert_response 201
       match_json(ticket_show_pattern(Helpdesk::Ticket.last))
-      assert Helpdesk::Ticket.last.cloud_files.count == 2
+      assert Helpdesk::Ticket.last.cloud_files.count == 1
     end
 
     def test_create_with_shared_attachments
@@ -456,7 +455,9 @@ module Ember
         attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) }
       )
       params_hash = ticket_params_hash.merge(attachment_ids: canned_response.shared_attachments.map(&:attachment_id))
-      post :create, construct_params({ version: 'private' }, params_hash)
+      stub_attachment_to_io do
+        post :create, construct_params({ version: 'private' }, params_hash)
+      end
       assert_response 201
       match_json(ticket_show_pattern(Helpdesk::Ticket.last))
       assert Helpdesk::Ticket.last.attachments.count == 1
@@ -466,7 +467,7 @@ module Ember
       # normal attachment
       file = fixture_file_upload('/files/attachment.txt', 'text/plain', :binary)
       # cloud file
-      cloud_file_params = [{ filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 }]
+      cloud_file_params = [{ filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
       # shared attachment
       canned_response = create_response(
         title: Faker::Lorem.sentence,
@@ -481,7 +482,9 @@ module Ember
       params_hash = ticket_params_hash.merge(attachment_ids: attachment_ids, attachments: [file], cloud_files: cloud_file_params)
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
       @request.env['CONTENT_TYPE'] = 'multipart/form-data'
-      post :create, construct_params({ version: 'private' }, params_hash)
+      stub_attachment_to_io do
+        post :create, construct_params({ version: 'private' }, params_hash)
+      end
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
       match_json(ticket_show_pattern(Helpdesk::Ticket.last))
@@ -1346,14 +1349,13 @@ module Ember
 
     def test_update_with_cloud_files
       t = create_ticket
-      cloud_file_params = [{ filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 },
-                           { filename: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 }]
+      cloud_file_params = [{ filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
       params_hash = update_ticket_params_hash.merge(cloud_files: cloud_file_params)
       put :update, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 200
       t = Account.current.tickets.find_by_display_id(t.display_id)
       match_json(ticket_show_pattern(t))
-      assert_equal 2, t.cloud_files.count
+      assert_equal 1, t.cloud_files.count
     end
 
     def test_update_with_shared_attachments
@@ -1365,7 +1367,9 @@ module Ember
         attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) }
       )
       params_hash = update_ticket_params_hash.merge(attachment_ids: canned_response.shared_attachments.map(&:attachment_id))
-      put :update, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      stub_attachment_to_io do
+        put :update, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      end
       assert_response 200
       t = Account.current.tickets.find_by_display_id(t.display_id)
       match_json(ticket_show_pattern(t))

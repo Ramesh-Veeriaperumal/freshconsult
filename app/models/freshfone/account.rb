@@ -252,6 +252,11 @@ class Freshfone::Account < ActiveRecord::Base
 	def in_trial_states?(account_state = state)
 		TRIAL_STATES.include?(account_state)
 	end
+
+	def lookup_client
+		::Twilio::REST::LookupsClient.new(twilio_subaccount_id, twilio_subaccount_token)
+	end
+
 	private
 
 		def delete_numbers

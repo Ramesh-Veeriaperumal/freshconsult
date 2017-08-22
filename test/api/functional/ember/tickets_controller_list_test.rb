@@ -642,11 +642,10 @@ module Ember
 
     # Tickets list without any filter and query_hash should get all tickets without created_at limit
     def test_index_empty_query_hash
-      filter_params = { query_hash: '', include: 'count' }
+      filter_params = { query_hash: '' }
       get :index, controller_params({ version: 'private' }.merge(filter_params))
       assert_response 200
       match_json(private_api_ticket_index_pattern(false, false, false, 'created_at', 'desc', true))
-      assert response.api_meta[:count] == @account.tickets.where(spam: false, deleted: false).count
     end
 
     # Tickets list spam / trash should have emptying_on_background flag about background job in its meta

@@ -113,6 +113,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id
 
+  validates_presence_of :flexifield_def_entry, :if => :custom_field?
+
   before_create :populate_label
 
 
@@ -599,5 +601,9 @@ class Helpdesk::TicketField < ActiveRecord::Base
   private
     def status_field?
       self.field_type.eql?("default_status")
+    end
+
+    def custom_field?
+      self.field_type.starts_with?("custom_")
     end
 end
