@@ -345,9 +345,7 @@ module Redis::RedisKeys
   HAPROXY_DOMAIN_BLACKLIST_KEY = "HAPROXY_DOMAIN_BLACKLIST_KEY"
   HAPROXY_IP_BLACKLIST_CHANNEL = "HAPROXY_IP_BLACKLIST_CHANNEL"
 
-  # On what days should the activation reminder emails be sent?
-  SIGNUP_ACTIVATION_REMINDER_MAILING_DAYS = "SIGNUP_ACTIVATION_REMINDER_MAILING_DAYS"
-  
+
   #JWT api keys
   JWT_API_JTI = "JWT:%{account_id}:%{user_id}:%{jti}"
 
