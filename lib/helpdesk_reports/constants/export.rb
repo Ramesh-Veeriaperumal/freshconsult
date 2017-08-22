@@ -47,7 +47,8 @@ module HelpdeskReports
         :timesheet_reports        => "Time Sheet Summary",
         :chat_summary             => "Chat Summary",
         :phone_summary            => "Phone Summary",
-        :satisfaction_survey      => "Satisfaction Survey"
+        :satisfaction_survey      => "Satisfaction Survey",
+        :timespent                => "Ticket Lifecycle"
       }
 
       VIEW_HELPER_NEW_REPORTS = ['ApplicationHelper']

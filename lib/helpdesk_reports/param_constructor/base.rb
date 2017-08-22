@@ -11,7 +11,7 @@ class HelpdeskReports::ParamConstructor::Base
     @direct_export = options[:direct_export] || false
   end
 
-  def build_pdf_params
+  def build_export_params
     options.merge!(options[:trend].symbolize_keys) if @direct_export
     if date_range.nil?
       return {

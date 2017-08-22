@@ -171,6 +171,7 @@ Helpkit::Application.routes.draw do
         post :notes, to: 'pipe/conversations#create'
       end
     end
+    get "/account/:account_id/info" => 'pipe/account_info#index', constraints: { account_id: /\d+/ }
     namespace :settings do
       resources :helpdesk, controller: 'pipe/helpdesk', only: [:index] do
         collection do
