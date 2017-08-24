@@ -4,7 +4,6 @@ defaults: &defaults
   timeout: 30
   email_send_urlpath: "api/v1/email/send"
   account_validate_urlpath: "api/v1/account/validate/"
-  sender_config_urlpath: "api/v1/account/senderconfig"
 
 development:
   <<: *defaults

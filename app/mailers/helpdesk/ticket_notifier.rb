@@ -5,7 +5,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
   extend ParserUtil
   include EmailHelper
-  include Email::EmailService::EmailDelivery
+  include EmailDelivery
   include Helpdesk::NotifierFormattingMethods
 
   include Redis::RedisKeys
