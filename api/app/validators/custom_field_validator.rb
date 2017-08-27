@@ -202,7 +202,9 @@ class CustomFieldValidator < ActiveModel::EachValidator
     end
 
     def parent_value(parent_field, record, values)
-      record.respond_to?(parent_field) ? record.send(parent_field) : values.try(:[], parent_field)
+      record.respond_to?(parent_field) ? 
+        (record.send(parent_field) rescue values.try(:[], parent_field)) : 
+        values.try(:[], parent_field)
     end
 
     def section_field?

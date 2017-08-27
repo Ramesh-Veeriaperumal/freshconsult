@@ -31,7 +31,7 @@ class ScheduledTaskBase < BaseWorker
       NewRelic::Agent.notice_error(e, {:description => "Error on executing scheduled task #{params}"})
       message = "Error on executing scheduled task: #{task_printable}. Options :#{params.inspect}.\n#{e.message}\n#{e.backtrace.join("\n\t")}"
       logger.error "#{message}"
-      DevNotification.publish(SNS["reports_notification_topic"], "Error on executing scheduled task", message)
+      # DevNotification.publish(SNS["reports_notification_topic"], "Error on executing scheduled task", message)
     ensure
       Account.reset_current_account
       User.reset_current_user
@@ -70,7 +70,7 @@ class ScheduledTaskBase < BaseWorker
 
   def after_execute(exec_status)
     #For handling tasks created by users who no longer hold reports priveleges
-    return if exec_status == :not_permitted
+    return if [:not_permitted, :delayed_processing].include?(exec_status)
     params[:retry_count] = params[:retry_count].to_i
     unless exec_status
       if params[:retry_count] < retry_count
