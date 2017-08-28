@@ -18,6 +18,13 @@ module SearchService
       write_request.response
     end
 
+    def write_multilang_object(entity, version, parent_id, type, locale)
+      uuid = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
+      payload = { payload: entity.to_esv2_json, version: version, parent_id: parent_id, language: locale }.to_json
+      write_request = SearchService::Request.new(write_path(type, entity.id), :post, uuid, payload, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id)
+      write_request.response
+    end
+
     def delete_object(type, id)
       uuid = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
       delete_request = SearchService::Request.new(delete_path(type, id), :delete, uuid, {}.to_json, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id)

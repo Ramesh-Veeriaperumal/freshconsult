@@ -21,7 +21,12 @@ class Search::V2::Operations::DocumentAdd
       #
       Time.use_zone('UTC') do
         if Account.current.service_writes_enabled?
-          SearchService::Client.new(@account_id).write_object(entity, @params[:version], @params[:parent_id], @type)
+          if entity.is_a?(Solution::Article) && Account.current.es_multilang_soln?
+            locale = entity.solution_folder_meta.solution_category_meta.portals.last.try(:language)
+            SearchService::Client.new(@account_id).write_multilang_object(entity, @params[:version], @params[:parent_id], @type, locale)
+          else
+            SearchService::Client.new(@account_id).write_object(entity, @params[:version], @params[:parent_id], @type)
+          end
         else
           @request_object = Search::V2::IndexRequestHandler.new(
                                               @type,
