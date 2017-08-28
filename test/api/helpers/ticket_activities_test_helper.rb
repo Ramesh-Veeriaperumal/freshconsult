@@ -267,25 +267,25 @@ module TicketActivitiesTestHelper
 
   def parent_ticket_linked_activity
     params = {}
-    params[:content] = '{"child_tkt_link":["12457.0"]}'
+    params[:content] = '{"assoc_parent_tkt_link":["12457.0"]}'
     get_activity_data(params)
   end
 
   def parent_ticket_unlinked_activity
     params = {}
-    params[:content] = '{"child_tkt_unlink":["12457.0"]}'
+    params[:content] = '{"assoc_parent_tkt_unlink":["12457.0"]}'
     get_activity_data(params)
   end
 
   def child_ticket_linked_activity
     params = {}
-    params[:content] = '{"assoc_parent_tkt_link":["12457.0"]}'
+    params[:content] = '{"child_tkt_link":["12457.0"]}'
     get_activity_data(params)
   end
 
   def child_ticket_unlinked_activity
     params = {}
-    params[:content] = '{"assoc_parent_tkt_unlink":["12457.0"]}'
+    params[:content] = '{"child_tkt_unlink":["12457.0"]}'
     get_activity_data(params)
   end
 
@@ -893,44 +893,12 @@ module TicketActivitiesTestHelper
     result
   end
 
-  def parent_ticket_linked_activity_pattern(ticket_activity_data)
-    result = []
-    ticket_activity_data.ticket_data.each do |tkt_data|
-      content = JSON.parse(tkt_data.record.content).deep_symbolize_keys
-      performer_type = tkt_data.event_type.to_sym
-      content_hash = content[:child_tkt_link]
-      result << result_common_hash(tkt_data, content).merge(actions: [
-                                                              {
-                                                                type: :parent_ticket_linked,
-                                                                content: content_hash[0].to_i
-                                                              }
-                                                            ])
-    end
-    result
-  end
-
-  def parent_ticket_unlinked_activity_pattern(ticket_activity_data)
-    result = []
-    ticket_activity_data.ticket_data.each do |tkt_data|
-      content = JSON.parse(tkt_data.record.content).deep_symbolize_keys
-      performer_type = tkt_data.event_type.to_sym
-      content_hash = content[:child_tkt_unlink]
-      result << result_common_hash(tkt_data, content).merge(actions: [
-                                                              {
-                                                                type: :parent_ticket_unlinked,
-                                                                content: content_hash[0].to_i
-                                                              }
-                                                            ])
-    end
-    result
-  end
-
   def child_ticket_linked_activity_pattern(ticket_activity_data)
     result = []
     ticket_activity_data.ticket_data.each do |tkt_data|
       content = JSON.parse(tkt_data.record.content).deep_symbolize_keys
       performer_type = tkt_data.event_type.to_sym
-      content_hash = content[:assoc_parent_tkt_link]
+      content_hash = content[:child_tkt_link]
       result << result_common_hash(tkt_data, content).merge(actions: [
                                                               {
                                                                 type: :child_ticket_linked,
@@ -946,10 +914,42 @@ module TicketActivitiesTestHelper
     ticket_activity_data.ticket_data.each do |tkt_data|
       content = JSON.parse(tkt_data.record.content).deep_symbolize_keys
       performer_type = tkt_data.event_type.to_sym
-      content_hash = content[:assoc_parent_tkt_unlink]
+      content_hash = content[:child_tkt_unlink]
       result << result_common_hash(tkt_data, content).merge(actions: [
                                                               {
                                                                 type: :child_ticket_unlinked,
+                                                                content: content_hash[0].to_i
+                                                              }
+                                                            ])
+    end
+    result
+  end
+
+  def parent_ticket_linked_activity_pattern(ticket_activity_data)
+    result = []
+    ticket_activity_data.ticket_data.each do |tkt_data|
+      content = JSON.parse(tkt_data.record.content).deep_symbolize_keys
+      performer_type = tkt_data.event_type.to_sym
+      content_hash = content[:assoc_parent_tkt_link]
+      result << result_common_hash(tkt_data, content).merge(actions: [
+                                                              {
+                                                                type: :parent_ticket_linked,
+                                                                content: content_hash[0].to_i
+                                                              }
+                                                            ])
+    end
+    result
+  end
+
+  def parent_ticket_unlinked_activity_pattern(ticket_activity_data)
+    result = []
+    ticket_activity_data.ticket_data.each do |tkt_data|
+      content = JSON.parse(tkt_data.record.content).deep_symbolize_keys
+      performer_type = tkt_data.event_type.to_sym
+      content_hash = content[:assoc_parent_tkt_unlink]
+      result << result_common_hash(tkt_data, content).merge(actions: [
+                                                              {
+                                                                type: :parent_ticket_unlinked,
                                                                 content: content_hash.map(&:to_i)
                                                               }
                                                             ])
