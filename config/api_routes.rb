@@ -260,6 +260,7 @@ Helpkit::Application.routes.draw do
         post :export_csv
         get :import, to: 'ember/customer_imports#index'
         post :import, to: 'ember/customer_imports#create'
+        post :quick_create
       end
       member do
         put :restore

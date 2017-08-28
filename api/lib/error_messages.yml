@@ -134,3 +134,4 @@ api_error_messages:
   query_hash_dependent_value_missing: " 'from' and 'to' values should not be blank"
   # Dashboard activities
   either_since_id_or_before_id: "Specify since_id or before_id, not both"
+  missing_contact_detail: "Please enter at least one contact detail"

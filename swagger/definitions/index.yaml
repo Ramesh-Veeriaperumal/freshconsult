@@ -27,6 +27,8 @@
     $ref: ./request/companies/company.yaml
   contact_input:
     $ref: ./request/contacts/contact.yaml
+  quick_create_input:
+    $ref: ./request/contacts/quick_create.yaml
   contact_merge_input:
     $ref: ./request/contacts/merge.yaml
   update_password:

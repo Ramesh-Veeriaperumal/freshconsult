@@ -69,7 +69,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_contacts do
-    resource :"ember/contact", only: [:create, :update, :activities]
+    resource :"ember/contact", only: [:create, :update, :activities, :quick_create]
     resource :"ember/company", only: [:create, :update]
     resource :"ember/contacts/merge", only: [:merge]
     resource :"ember/customer_import", only: [:index, :create]

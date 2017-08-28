@@ -434,6 +434,62 @@ module Ember
       assert sample_user.user_companies.find_by_company_id(company_ids[1]).nil?
     end
 
+    def test_quick_create_contact_with_company_name
+      post :quick_create, construct_params({version: 'private'},  name: Faker::Lorem.characters(15),
+                                          email: Faker::Internet.email,
+                                          company_name: Faker::Lorem.characters(10))
+      assert_response 201
+      match_json(private_api_contact_pattern(User.last))
+    end
+
+    def test_quick_create_length_invalid_company_name
+      post :quick_create, construct_params({version: 'private'},
+        name: Faker::Lorem.characters(15),
+        email: Faker::Internet.email,
+        company_name: Faker::Lorem.characters(300)
+      )
+      match_json([bad_request_error_pattern('company_name', :too_long, element_type: :characters, max_count: "#{ApiConstants::MAX_LENGTH_STRING}", current_count: 300)])
+      assert_response 400
+    end
+
+    # Skip validation tests
+    def test_quick_create_contact_without_required_custom_fields
+      cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'code', editable_in_signup: 'true', required_for_agent: 'true'))
+
+      post :quick_create, construct_params({version: 'private'},  name: Faker::Lorem.characters(15),
+                                          email: Faker::Internet.email,
+                                          company_name: Faker::Lorem.characters(15))
+
+      assert_response 201
+      match_json(private_api_contact_pattern(User.last))
+      ensure
+        cf.update_attribute(:required_for_agent, false)
+    end
+
+    def test_quick_create_with_all_default_fields_required_valid
+      default_non_required_fiels = ContactField.where(required_for_agent: false,  column_name: 'default')
+      default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
+      post :quick_create, construct_params({version: 'private'},  name: Faker::Lorem.characters(15),
+                                          email: Faker::Internet.email,
+                                          company_name: Faker::Lorem.characters(15)
+                                    )
+      assert_response 201
+    ensure
+      default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
+    end
+
+    def test_quick_create_contact_without_any_contact_detail
+      post :quick_create, construct_params({version: 'private'},  name: Faker::Lorem.characters(10))
+      match_json([bad_request_error_pattern('email', :missing_contact_detail)])
+      assert_response 400
+    end
+
+    def test_quick_create_without_company
+      post :quick_create, construct_params({version: 'private'},  name: Faker::Lorem.characters(10),
+                                          email: Faker::Internet.email)
+      assert_response 201
+    end
+
     # Show User
     def test_show_a_contact
       sample_user = add_new_user(@account)

@@ -2361,6 +2361,14 @@ class ApiContactsControllerTest < ActionController::TestCase
     @account.revoke_feature(:unique_contact_identifier)
   end
 
+  def test_create_contact_with_quick_create_fields
+    post :create, construct_params({},  name: Faker::Lorem.characters(15),
+                                        email: Faker::Internet.email,
+                                        company_name: Faker::Lorem.characters(10))
+    match_json([bad_request_error_pattern('company_name', :invalid_field)])
+    assert_response 400
+  end
+
   def test_show_a_contact_with_unique_external_id
     @account.add_feature(:unique_contact_identifier)
     sample_user = get_user
