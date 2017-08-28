@@ -18,6 +18,8 @@ module ApiSearch
         create_custom_field("test_custom_#{custom_field}", custom_field)
       end
       create_custom_field_dropdown('test_custom_dropdown', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
+      create_custom_field("priority", "number", "06")
+      create_custom_field("status", "text", "14")
       clear_es(@account.id)
       20.times { create_search_ticket(ticket_params_hash) }
       write_data_to_es(@account.id)
@@ -201,6 +203,13 @@ module ApiSearch
       response = parse_response @response.body
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json({results: pattern, total: tickets.size})
+    end
+
+    def test_tickets_custom_fields_named_after_default_fields
+      tickets = @account.tickets.select { |x|  [1,2].include?(x.priority) }
+      get :index, controller_params(query: '"status:aaa"')
+      assert_response 400
+      match_json([bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7')])
     end
   end
 end

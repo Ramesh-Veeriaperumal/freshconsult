@@ -42,13 +42,13 @@
         CONVERSATION_GET_ROUTE = CHAT_API_SERVER + "/conversations.get";
         ADD_MEMBER_ROUTE = CHAT_API_SERVER + "/conversations.members.add";
         CONVERSATION_UPDATE_METADATA_ROUTE = CHAT_API_SERVER + "/conversations.updateMetadata";
+        CONVERSATION_UPDATE_READ_MARKER = CHAT_API_SERVER + "/conversations.markLastReadMessage";
         REMOVE_MEMBER_ROUTE = CHAT_API_SERVER + "/conversations.members.remove";
         CONVERSATION_CLOSE_ROUTE = CHAT_API_SERVER + "/conversations.close";
         CONVERSATION_OPEN_ROUTE = CHAT_API_SERVER + "/conversations.open";
         CONVERSATION_MESSAGES_HISTORY_ROUTE = CHAT_API_SERVER + "/conversations.messages.history";
         CONVERSATION_OWNER_SET_ROUTE = CHAT_API_SERVER + "/conversations.owner.set";
         CONVERSATION_GET_ATTACHMENT_URL = CHAT_API_SERVER + "/conversations.attachments.geturl";
-        NOTIFICATION_MAIL_URL = CHAT_API_SERVER + "/helpkit/notification.mail";
     }
 
     /*
@@ -498,6 +498,26 @@
             }, self.clientId, getAuthToken(self.authToken, convo.token));
         }
     }
+
+    ChatApi.prototype.updateReadMarker = function(convoId, uid, msgId, cb){
+        var self = this;
+
+        var msg_obj = {
+            "co_id" : convoId,
+            "uid" : uid,
+            "mid" : msgId
+        };
+        log("%c- Sending mark_read to ChatAPI: ", LOG_COLOR, msg_obj);
+        collabHttpAjax({
+            method: "POST",
+            url: CONVERSATION_UPDATE_READ_MARKER,
+            data: msg_obj,
+            success: function(response) {
+                log(">> message[" + msgId + "] marked read: " + response);
+                if(typeof cb === "function") {cb(response);}
+            }
+        }, self.clientId, getAuthToken(self.authToken));
+    };
 
     ChatApi.prototype.loadConversation = function(convo, uid, cb) {
         var self = this;

@@ -125,6 +125,10 @@ module Marketplace::ApiUtil
         }
         MemcacheKeys.delete_from_cache page_key
       end
+      if platform_version == Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2]
+        mkp_memcache_key = MemcacheKeys::INSTALLED_APPS_V2 % { :account_id => Account.current.id }
+        MemcacheKeys.delete_from_cache mkp_memcache_key
+      end
     end
 
     # Memcache for API calls - Checks for API Response Status and Cache only Successful Requests

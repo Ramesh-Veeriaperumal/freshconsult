@@ -29,6 +29,7 @@ App.CollaborationModel = (function ($) {
                 Collab.features.groupMentionsEnabled = response.features.enable_group_mentions;
                 Collab.features.replyToEnabled = response.features.enable_reply_to;
                 Collab.features.collabTourEnabled = response.features.show_collab_tour;
+                Collab.features.markReadEnabled = response.features.enable_mark_read;
             }
         },
         connectionInited : function() {
@@ -240,7 +241,7 @@ App.CollaborationModel = (function ($) {
         },
 
         updateConvoToken: function(data) {
-            if(typeof data !== "undefined" && typeof Collab.currentconversation !== "undefined") {
+            if(typeof data !== "undefined" && typeof Collab.currentConversation !== "undefined") {
                 //update currentconversation token
                 Collab.currentConversation.token = data.convo_token;
                 if(typeof Collab.conversationsMap[Collab.currentConversation.co_id] !== "undefined")
@@ -270,7 +271,8 @@ App.CollaborationModel = (function ($) {
         features: {
             groupMentionsEnabled: false,
             replyToEnabled: false,
-            collabTourEnabled: false
+            collabTourEnabled: false,
+            markReadEnabled: false
         },
 
         isOnline: function(userId) {
@@ -335,6 +337,12 @@ App.CollaborationModel = (function ($) {
                         if(typeof cb === "function") {cb(response);}
                     }
             });
+        },
+        updateReadMarker: function(msgId, cb) {
+            var convo_id = Collab.currentConversation.co_id;
+            var current_user_id = Collab.currentUser.uid;
+
+           _COLLAB_PVT.ChatApi.updateReadMarker(convo_id, current_user_id, msgId, cb);
         },
         sendNotification: function(msg) {
             var ticket_id = Collab.currentConversation.co_id;

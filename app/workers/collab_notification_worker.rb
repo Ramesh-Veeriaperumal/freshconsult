@@ -46,7 +46,7 @@ class CollabNotificationWorker
   private
 
     def message_json
-      from_email = parse_email(@ticket.selected_reply_email)[:email] || parse_email(@current_account.default_friendly_email)[:email]
+      from_info = parse_email(@ticket.selected_reply_email) || parse_email(@current_account.default_friendly_email)
 
       {
         object: 'user_notification',
@@ -68,7 +68,7 @@ class CollabNotificationWorker
               mentioned_by_name: @current_user.name,
               requester_name: @ticket.requester[:name],
               requester_email: @ticket.requester[:email],
-              from_address: from_email
+              from_data: from_info
             }
           }
         }

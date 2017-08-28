@@ -5,7 +5,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
   extend ParserUtil
   include EmailHelper
-  include EmailDelivery
+  include Email::EmailService::EmailDelivery
   include Helpdesk::NotifierFormattingMethods
 
   include Redis::RedisKeys
@@ -271,8 +271,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       if !params[:cc_mails].nil?
          headers[:cc] = params[:cc_mails].join(", ")
       end
-    
-      if params[:ticket].account.launched?(:send_emails_via_fd_email_service_feature)
+      email_config = params[:ticket].reply_email_config
+      if (($redis_others.get(ROUTE_NOTIFICATIONS_VIA_EMAIL_SERVICE) == "1" || params[:ticket].account.launched?(:send_emails_via_fd_email_service_feature)) && !(email_config && email_config.smtp_mailbox))
         text = render_to_string("email_notification.text.plain", {formats: :text})
         html = render_to_string("email_notification.text.html", {formats: :html})
         coder = HTMLEntities.new
