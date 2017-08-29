@@ -21,7 +21,7 @@ HelpdeskReports.CoreUtil = {
         "customer_report":["agent_id","group_id","company_id"]
     },
     global_disabled_filter: ["status","historic_status"],
-    default_available_filter : [ "agent_id","group_id","company_id","atleast_once_in_agent_id","atleast_once_in_group_id","atleast_once_in_status","is_escalated" ],
+    default_available_filter : [ "agent_id","group_id","atleast_once_in_agent_id","atleast_once_in_group_id","atleast_once_in_status","is_escalated" ],
     filter_remote : [ "agent_id","tag_id","company_id","atleast_once_in_agent_id"],
     filter_remote_url : {
             "agent_id" : "agents",
@@ -478,15 +478,33 @@ HelpdeskReports.CoreUtil = {
         });
          
         jQuery('#reports_wrapper').on('click.helpdesk_reports', '#generate_pdf_async', function(){
-            _this.generatePdfAsync();
-            var timeOutSeconds = 5
-            var btn = jQuery(this);
-            btn.prop('disabled', true);
-            setTimeout(function(){
-                btn.prop('disabled', false);
-            }, timeOutSeconds*1000);
-            trigger_event("analytics.export_pdf",{});
+                _this.generatePdfAsync();
+                var timeOutSeconds = 5
+                var btn = jQuery(this);
+                btn.prop('disabled', true);
+                setTimeout(function(){
+                    btn.prop('disabled', false);
+                }, timeOutSeconds*1000);
+                trigger_event("analytics.export_pdf",{});
         });
+        
+        jQuery(document).on('click.helpdesk_reports', '.export_title_status .link', function(){
+                _this.exportCSV();
+                trigger_event("analytics.export_pdf",{});
+        });
+
+        jQuery(document).on("click","#timespent-dialog-export-submit",function(){
+            var export_type = jQuery("[name=export_type]:checked").val();
+            jQuery("#timespent-dialog-export-cancel").trigger('click');
+            _this.exportCSV(export_type);
+        });
+        
+        if(HelpdeskReports.locals.report_type != 'timespent') {
+          HelpdeskReports.CoreUtil.default_available_filter.push('company_id');
+        } else {
+          var company_filter_idx = HelpdeskReports.CoreUtil.default_available_filter.indexOf("company_id");
+          HelpdeskReports.CoreUtil.default_available_filter.splice(company_filter_idx,1);
+        }
         
         _this.addIndexToFields();
         _this.generateReportFiltersMenu();
@@ -1239,13 +1257,23 @@ HelpdeskReports.CoreUtil = {
                 _this.appendTicketList(data);
                 _this.actions.setTicketListFlag();
                 //Show Export Section
-                if( HelpdeskReports.locals.report_type != 'timespent' && data && data.length > 0){
-                    jQuery(".export_title").removeClass('hide');
+                if( HelpdeskReports.locals.report_type != 'timespent'){
+                    if(data && data.length > 0) {
+                        jQuery(".export_title").removeClass('hide');
+                    } else {
+                        jQuery(".export_title").addClass('hide');
+                    }
                 }else{
                     jQuery(".export_title").addClass('hide');
+                    if(data && data.length > 0) {
+                        jQuery(".export_title_status").removeClass('hide');
+                    }else{
+                        jQuery(".export_title_status").addClass('hide');
+                    }
                 }
             },
             error: function (data) {
+                jQuery(".export_title_status").addClass('hide');
                 _this.appendTicketListError();
                 _this.actions.setTicketListFlag();
             }
@@ -1308,12 +1336,17 @@ HelpdeskReports.CoreUtil = {
         var msg = I18n.t('helpdesk_reports.something_went_wrong_msg');
         jQuery("#ticket_fields").removeClass('sloading loading-small');
     },
-    exportCSV : function() {
+    exportCSV : function(export_type) {
         var _this = this;
-
+        var locals = HelpdeskReports.locals;
         //Data for Ajax request
         var export_options = {};
-        export_options.query_hash = HelpdeskReports.locals.list_params[0];
+        if(HelpdeskReports.locals.report_type == 'timespent') {
+            export_options.query_hash = _this.getTimespentExport(export_type);
+        } else {
+            export_options.query_hash = HelpdeskReports.locals.list_params[0];
+        }
+        
         export_options.date_range = HelpdeskReports.locals.date_range,
         export_options.select_hash = HelpdeskReports.locals.select_hash;
         
@@ -1330,6 +1363,20 @@ HelpdeskReports.CoreUtil = {
                 export_options.export_fields[jQuery(el).val()] = jQuery(el).data('label');
         });
 
+        if(HelpdeskReports.locals.report_type == 'timespent') {
+            export_options.query_hash.export = true;
+            export_options.query_hash.export_type = 'status';
+
+            if(export_type == "0") {
+                export_options.query_hash.export_type = 'aggregate_export';
+                export_options.export_fields[locals.current_group_by] = locals.field_name_mapping[locals.current_group_by];
+                var level2 = locals.current_group_by =='group_id' ? 'agent_id' : 'group_id'
+                export_options.export_fields[level2] = locals.field_name_mapping[level2];
+            } else {
+                export_options.query_hash.export_type = 'status';
+            }
+        }
+
         var params = {
             export_params: export_options
         };
@@ -1342,23 +1389,53 @@ HelpdeskReports.CoreUtil = {
                 data : Browser.stringify(params),
                 success: function (data) {
                     _this.actions.flushExportSection();                   
-                   jQuery(".success_message").removeClass("hide");
-                            setTimeout(function() {
-                                jQuery('.success_message').fadeOut('slow');
-                    }, 2500);
-                       
+                    
+                    if(HelpdeskReports.locals.report_type == 'timespent' && export_type != undefined) { 
+                      // this message has to appear in main page
+                      var text = I18n.t('adv_reports.report_export_success');
+                      _this.showResponseMessage(text);
+                    }
+                    else{
+                        // this message has to appear in ticket list section
+                        jQuery(".success_message").removeClass("hide");
+                        setTimeout(function() {
+                            jQuery('.success_message').fadeOut('slow');
+                        }, 2500);
+                    }
                 },
                 error: function (data) {
                     //_this.appendExportError();
                     _this.actions.flushExportSection();
-                    jQuery(".error_message").removeClass("hide");
-                    setTimeout(function() {
-                        jQuery('.error_message').fadeOut('slow');
-                    }, 2500); 
+                    if(HelpdeskReports.locals.report_type == 'timespent' && export_type != undefined) {
+                      var text = I18n.t('helpdesk_reports.export_tickets_error_msg');
+                      _this.showResponseMessage(text);
+                    }
+                    else{
+                        jQuery(".error_message").removeClass("hide");
+                        setTimeout(function() {
+                            jQuery('.error_message').fadeOut('slow');
+                        }, 2500); 
+                    }
                 }
             }
             _this.makeAjaxRequest(opts);
             trigger_event("analytics.export_ticket_list",{});
+    },
+    getTimespentExport : function(export_type) {
+        
+        if(export_type == undefined) { //For export
+          var query = jQuery.extend(true, {}, HelpdeskReports.locals.list_params[0]);
+          query.metric = "LIFECYCLE_TICKET_LIST";
+          return query;
+        } else { //For dialog export
+          var query = jQuery.extend(true, {}, HelpdeskReports.locals.params[0]);
+          if(export_type == "1") {
+              query.metric = "LIFECYCLE_TICKET_LIST";
+          } else {
+              query.metric = "LIFECYCLE_GROUPBY";
+          }
+          return query;
+        }
     },
     bindExportFieldEvents : function() {
 

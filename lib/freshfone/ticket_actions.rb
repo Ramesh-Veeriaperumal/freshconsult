@@ -118,7 +118,8 @@ module Freshfone::TicketActions
     end
 
     def invalid_requester_number?
-    	params[:phone_number].present? && fetch_country_code(params[:phone_number]).blank?
+      params[:custom_requester_id].blank? && params[:phone_number].present? &&
+    		fetch_country_code(params[:phone_number]).blank?
     end
 
     def handle_invalid_number

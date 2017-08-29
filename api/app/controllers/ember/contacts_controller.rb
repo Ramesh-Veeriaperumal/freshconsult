@@ -5,7 +5,7 @@ module Ember
     include CustomerActivityConcern
     include AgentContactConcern
     include ContactsCompaniesConcern
-    decorate_views
+    decorate_views(decorate_object: [:quick_create])
 
     SLAVE_ACTIONS = %w(index activities).freeze
     before_filter :can_change_password?, :validate_password_change, only: [:update_password]
@@ -49,6 +49,21 @@ module Ember
     def index
       super
       response.api_meta = { count: @items_count }
+    end
+
+    def quick_create
+      params_hash = params[cname]
+      params_hash[:action] = params[:action].to_sym
+
+      return unless validate_body_params(nil, params_hash)
+      build_object
+      return unless validate_delegator(@item, {primary_email: params[:email]}) if params[:email]
+
+      if @item.create_contact!(params[cname][:active])
+        render :show, location: api_contact_url(@item.id), status: 201
+      else
+        render_custom_errors
+      end
     end
 
     def send_invite

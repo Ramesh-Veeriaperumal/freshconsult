@@ -1,0 +1,19 @@
+post:
+  summary: Quick Create
+  tags: [contact]
+  description: Quick Create without validations
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/quick_create_input'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/extended_contact'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

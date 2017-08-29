@@ -141,7 +141,12 @@ module Helpdesk
 			end
 
 			def check_for_spam(params)
-				Helpdesk::Email::SpamDetector.new.check_spam(params, metadata[:envelope])
+				begin
+					Helpdesk::Email::SpamDetector.new.check_spam(params, metadata[:envelope])					
+				rescue Exception => e
+					Rails.logger.info "Error during spam_check in mail_mesage_processor. #{e.message} - #{e.backtrace}"
+					NewRelic::Agent.notice_error(e)
+				end
 			end
 
 			def message

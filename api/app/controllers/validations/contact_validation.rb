@@ -10,14 +10,7 @@ class ContactValidation < ApiValidation
     email: { data_type: { rules: String }, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, accepted: :'valid email address' }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
     description: { data_type: { rules: String } },
     unique_external_id: { data_type: { rules: String },  custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
-    company_name: {
-      custom_numericality: {
-        ignore_string: :allow_string_param,
-        greater_than: 0,
-        only_integer: true
-      }
-    }
-  }.freeze
+  }
 
   MANDATORY_FIELD_ARRAY = [:email, :mobile, :phone, :twitter_id, :unique_external_id].freeze
   CHECK_PARAMS_SET_FIELDS = ( MANDATORY_FIELD_ARRAY.map(&:to_s) +
@@ -93,13 +86,13 @@ class ContactValidation < ApiValidation
     other_companies.present? && errors[:other_companies].blank?
   }
 
-  validates :custom_fields, data_type: { rules: Hash }
+  validates :custom_fields, data_type: { rules: Hash }, unless: -> { validation_context == :quick_create }
   validates :custom_fields, custom_field: { custom_fields: {
     validatable_custom_fields: proc { Account.current.contact_form.custom_non_dropdown_fields },
     required_attribute: :required_for_agent,
     ignore_string: :allow_string_param
   }
-  }
+  }, unless: -> { validation_context == :quick_create }
 
   validates :avatar, data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true }, file_size: {
     max: ContactConstants::ALLOWED_AVATAR_SIZE }
@@ -113,10 +106,28 @@ class ContactValidation < ApiValidation
     super(request_params, item, allow_string_param)
     @current_email = item.email if item
     fill_custom_fields(request_params, item.custom_field) if item && item.custom_field.present?
+    company_string_validation = {
+      company_name: {
+        data_type: { rules: String },
+        custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
+      }
+    }
+    company_numerical_validation = {
+      company_name: {
+        custom_numericality: {
+          ignore_string: :allow_string_param,
+          greater_than: 0,
+          only_integer: true
+        }
+      }
+    }
+    DEFAULT_FIELD_VALIDATIONS.merge!(
+      (@action == :quick_create) ? company_string_validation : company_numerical_validation
+    )
   end
 
   def required_default_fields
-    Account.current.contact_form.default_contact_fields.select(&:required_for_agent)
+    (validation_context == :quick_create) ? [] : Account.current.contact_form.default_contact_fields.select(&:required_for_agent)
   end
 
   def other_companies_format

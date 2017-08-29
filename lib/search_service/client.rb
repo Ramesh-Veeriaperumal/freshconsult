@@ -70,7 +70,7 @@ module SearchService
       end
 
       def query_path
-        path = SearchService::Constants::QUERY_PATH % { product_name: ES_V2_CONFIG[:product_name] }
+        path = SearchService::Constants::QUERY_PATH % { product_name: ES_V2_CONFIG[:product_name], account_id: @account_id }
         "#{service_host}/#{path}"
       end
 
