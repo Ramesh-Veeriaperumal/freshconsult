@@ -36,7 +36,7 @@ gem "statsd-ruby", :git => 'git://github.com/sumakumardey/statsd-ruby', :branch 
 
 gem 'sneaky-save', :git => 'git://github.com/partyearth/sneaky-save.git'
 gem 'fresh_request', :git => 'git@github.com:freshdesk/fresh_request.git', :branch => 'v20'
-
+gem 'batch_api', :git => 'git@github.com:freshdesk/batch_api.git', :branch => 'fd-batch-api'
 #for ruby ~> 2.1.0 upgrade
 gem 'iconv', '~> 1.0.4'
 gem 'thrift', '~> 0.9.2.0'

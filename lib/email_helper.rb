@@ -1,5 +1,4 @@
 module EmailHelper
-
 	include ActionView::Helpers::NumberHelper
 
   class NokogiriTimeoutError < Exception
@@ -162,4 +161,5 @@ module EmailHelper
   def freshops_account_url(account)
       "freshopsadmin.freshdesk.com/accounts/#{account.id}"
   end
+  
 end
