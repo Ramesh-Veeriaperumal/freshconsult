@@ -8694,7 +8694,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   email_commands_update_success: "Email Command Settings were successfully updated."
   email_commands_update_failed:  "Failed to update Email Command Settings."
   email_command_settings_heading: "Email Command Settings"
-  email_command_settings_info: "Configure the delimeter used to identify and extract email commands from the mail"
+  email_command_settings_info: "Configure the delimiter used to identify and extract email commands from the mail"
   email_command_setting:
     helpcard:
       heading: " Email Command Settings"
@@ -8704,7 +8704,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       info3: "The rest of your email content will be added as a conversation to Freshdesk and also sent to the Requester via email."
       ticket_type_example: "Question"
       note: "Note"
-  email_command_delimeter_label: "Email Commands Delimeter"
+  email_command_delimeter_label: "Email Commands Delimiter"
   email_command_preview_to_email: "To"
   email_command_preview_to_email_value: "support@acme.freshdesk.com"
   email_command_preview_subject: "Subject"
@@ -8744,7 +8744,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   maximum_agents_msg: "You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to purchase additional agents. "
   contact_without_email_id: "Contact with email id can only be converted to agent"
   no_date_to_display: "No data to display"
-  email_command_delimeter_length_error_msg: " Please provide atleast three characters for the delimeter."
+  email_command_delimeter_length_error_msg: " Please provide atleast three characters for the delimiter."
   email_command_del_info_data: "Tip - Choose a unique delimiter combination of minimum three characters (special characters recommended) that will not conflict the regular email response."
   latest_ticket: "new update"
   latest_tickets: "new updates"
@@ -9194,6 +9194,16 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     average_interactions: "(Average %{count})"
     last_updated: "Last updated <span class='instance'><abbr data-livestamp=%{last_dump_time}> ago </abbr></span>"
     last_updated_at: "Last updated at <span class='instance'>%{time_in_words}</span>"
+    timespent_export:
+      dialog_header: Export Reports
+      dialog_sub_header: We can export only 25 columns of data
+      aggregate_title: Aggregate info
+      aggregate_info: Time spent in group split by Type
+      ticket_title: Ticketwise info
+      ticket_dropdown: 'Include time spent in:'
+      ticket_info: Time spent per ticket split by status
+      button_export: Export
+      export_csv: Export CSV
     saved_report:
       title: Report title
       dialog_header: "Save & Schedule Report"

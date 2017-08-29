@@ -131,7 +131,7 @@
                         <% if (widgetType == "1") { %>
                             <div class="config-row">
                                 <div class="config-label">Product</div>
-                                <div class="config-val"><%= insightProductsLabel.length != 0 ? insightProductsLabel.join(",") : '-' %></div>
+                                <div class="config-val"><%= insightProductsLabel && insightProductsLabel.length != 0 ? insightProductsLabel.join(",") : '-' %></div>
                                 <div class="clear"></div>
                             </div>
                         <% } %>
@@ -315,7 +315,7 @@
                         <% if (widgetType == "1" || widgetType == "2") { %>
                             <div class="config-row">
                                 <div class="config-label">Group</div>
-                                <div class="config-val"> <%= insightGroupsLabel.length != 0 ? insightGroupsLabel.join(",") : '-' %></div>
+                                <div class="config-val"> <%= insightGroupsLabel && insightGroupsLabel.length != 0 ? insightGroupsLabel.join(",") : '-' %></div>
                                 <div class="clear"></div>
                             </div>
                         <% } %>
@@ -334,7 +334,7 @@
                         <% if (widgetType == "1") { %>
                             <div class="config-row">
                                 <div class="config-label">Product</div>
-                                <div class="config-val"><%= insightProductsLabel.length != 0 ? insightProductsLabel.join(",") : '-' %></div>
+                                <div class="config-val"><%= insightProductsLabel && insightProductsLabel.length != 0 ? insightProductsLabel.join(",") : '-' %></div>
                                 <div class="clear"></div>
                             </div>
                         <% } %>

@@ -53,7 +53,7 @@ class Collaboration::Ticket
   		:ConvoId => ticket_id.to_s, 
   		:UserId => User.current.id.to_s, 
   		:exp => (Time.now.to_i + TOKEN_EXPIRY_TIME)
-  	}, CollabConfig['secret_key'])
+	}, Account.current.collab_settings.key)
   end
 
 	def acc_auth_token
@@ -165,6 +165,6 @@ class Collaboration::Ticket
 			:IsServer => (is_server ? "1" : "0"), 
 			:UserId => User.current.id.to_s, 
 			:exp => (Time.now.to_i + TOKEN_EXPIRY_TIME)
-		}, CollabConfig['secret_key'])
+		}, Account.current.collab_settings.key)
 	end
 end
