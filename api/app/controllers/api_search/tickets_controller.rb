@@ -28,12 +28,13 @@ module ApiSearch
       end
 
       def visitor
-        column_names = Account.current.ticket_field_def.ff_alias_column_mapping.each_with_object({}) {|(key,value), hash| hash[TicketDecorator.display_name(key).to_sym] = value if value=~ ApiSearchConstants::TICKET_FIELDS_REGEX }
+        column_names = Account.current.ticket_field_def.ff_alias_column_mapping.each_with_object({}) {|(key,value), hash| hash[TicketDecorator.display_name(key).to_sym] = value if value=~ ApiSearchConstants::TICKET_FIELDS_REGEX }.except(*ApiSearchConstants::TICKET_FIELDS.map(&:to_sym))
         Search::TermVisitor.new(column_names)
       end
 
       def allowed_custom_fields
-        ticket_custom_fields.each_with_object({}) { |ticket_field, hash| hash[ticket_field.name] = TicketDecorator.display_name(ticket_field.name) }
+        # If any custom fields have the name same as that of default fields it will be ignored
+        ticket_custom_fields.each_with_object({}) { |ticket_field, hash| hash[ticket_field.name] = TicketDecorator.display_name(ticket_field.name) unless ApiSearchConstants::TICKET_FIELDS.include?(TicketDecorator.display_name(ticket_field.name)) }
       end
 
       def ticket_custom_fields

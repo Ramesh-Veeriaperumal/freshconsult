@@ -25,6 +25,7 @@ module HelpdeskReports::Helper::Ticket
         field[:nested_fields].each{|n_field| labels[n_field[:condition]] = n_field[:name]}
       end
     end
+    labels.merge!('group_id' => 'Group', 'agent_id' => 'Agent') if(report_type==:timespent)
     labels
   end
 
@@ -34,7 +35,8 @@ module HelpdeskReports::Helper::Ticket
       next if field[:nested_fields] || field[:section_field] || id.to_s.include?('atleast_once_in_')
       labels[id] = field[:name]
     end
-    labels.delete(:group_id) if hide_agent_reporting?
+    # labels.delete(:group_id) if hide_agent_reporting?
+    labels[:group_id] = DEFAULT_COLUMNS_OPTIONS[:group_id] unless hide_agent_reporting?
     labels.except(*LIFECYCLE_GROUP_BY_SKIP_COLUMNS)
   end
   

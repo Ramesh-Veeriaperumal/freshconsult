@@ -26,9 +26,10 @@ module RabbitMq::Subscribers::Tickets::Collaboration
     collab_msg = {}
     new_assignee_present = @model_changes[:responder_id][1].present?
     if new_assignee_present
-      from_email = self.selected_reply_email.scan( /<([^>]*)>/).to_s
+      from_info = parse_email(self.selected_reply_email) || parse_email(Account.current.default_friendly_email)
       collab_msg = {
-        :from_email_address => from_email.blank? ? Account.current.default_friendly_email.scan( /<([^>]*)>/).to_s : from_email,
+        :from_email_address => from_info[:email],
+        :from_name => from_info[:name],
         :client_id => Collaboration::Ticket::HK_CLIENT_ID,
         :to_email_address => self.responder.email,
         :user_id => self.responder_id.to_s,

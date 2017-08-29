@@ -1,6 +1,7 @@
 class ThirdCRM
   PRODUCT_NAME = "Freshdesk"
 
+  ADD_LEAD_WAIT_TIME = 5
   AUTOPILOT_CREDENTIALS = {"autopilotapikey" => AUTOPILOT_TOKENS['access_key'], "Content-Type" => 'application/json'}
 
   REQUEST_TYPES = {

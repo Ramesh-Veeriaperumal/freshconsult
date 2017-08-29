@@ -59,6 +59,8 @@ $disabled_border_color: #e0e0e0;
 
 $highlight_yellow: #fff3b8;
 
+$unread_circle_color: #ff3a3a;
+
 .collab-logo {
     .logo-image {
         max-width: 100%;
@@ -84,9 +86,8 @@ $highlight_yellow: #fff3b8;
         &.thumb,
         .thumb {
             border: 1px solid $border_color;
-            box-sizing: border-box; 
+            box-sizing: border-box;
         }
-
     }
 
     .valign-helper {
@@ -98,8 +99,8 @@ $highlight_yellow: #fff3b8;
     .tag-handle {
         color: $link_color;
         cursor: pointer;
-        
-        &:hover  {
+
+        &:hover {
             color: $link_hover_color;
         }
     }
@@ -120,21 +121,21 @@ $highlight_yellow: #fff3b8;
             cursor: not-allowed;
         }
 
-         .collab-action-btns {
-         		.collab-attachment-help-info,
-                .collab-action-btn {
-                    display: none;
-                }
+        .collab-action-btns {
+            .collab-attachment-help-info,
+            .collab-action-btn {
+                display: none;
             }
+        }
 
         .collab-message-box {
             .collab-reply-btn {
-                display: none;   
+                display: none;
             }
         }
 
         .collab-reply-btn {
-            display: none!important;   
+            display: none!important;
         }
 
         .collab-disabled-reason {
@@ -158,9 +159,8 @@ $highlight_yellow: #fff3b8;
                     display: none;
                 }
                 .agent-details: {
-                    display: none;   
+                    display: none;
                 }
-
             }
         }
     }
@@ -184,10 +184,9 @@ $highlight_yellow: #fff3b8;
                 height: 40px;
             }
         }
-
     }
 
-    .collab-reply-to-text , 
+    .collab-reply-to-text,
     .annotation-text {
         background-color: $annotation_bg_color;
         border: 1px solid $annotation_border_color;
@@ -318,7 +317,7 @@ $highlight_yellow: #fff3b8;
     }
 
     .collab-scroll-bottom-btn {
-        display:none;
+        display: none;
         position: relative;
         bottom: 35px;
         @include left( 45% );
@@ -333,7 +332,7 @@ $highlight_yellow: #fff3b8;
         @include margin(5px 0);
         @include right( 8px );
         background-color: #0066cc;
-          box-shadow: 0 1px 2px 0px rgba(0, 0, 0, 0.14);
+        box-shadow: 0 1px 2px 0px rgba(0, 0, 0, 0.14);
 
         .ficon {
             color: white;
@@ -396,9 +395,9 @@ $highlight_yellow: #fff3b8;
                         background-color: $tab_base_hover;
                         height: 4px;
                         margin-top: 4px;
-                    };
-                };
-            };
+                    }
+                }
+            }
         }
         .collab-close-icon {
             position: absolute;
@@ -455,6 +454,27 @@ $highlight_yellow: #fff3b8;
     }
 }
 
+.collab-unread-indicator {
+    &:after {
+        content: "";
+        position: absolute;
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: $unread_circle_color;
+        border: 1px solid white;
+        right: 5px;
+        top: -6px;
+        display: none;
+    }
+
+    &.show-collab-unread-indicator {
+        &:after {
+            display: inline-block;
+        }
+    }
+}
+
 .collab-hovercard-cover {
     height: 70px;
     background-color: white;
@@ -477,7 +497,7 @@ $highlight_yellow: #fff3b8;
         @include right (-14px);
     }
 
-    &:after{
+    &:after {
         border-left-color: white;
         @include right (-13px);
     }
@@ -513,21 +533,21 @@ $highlight_yellow: #fff3b8;
         .nametag {
             font-weight: 400;
             font-size: $font_size_primary;
-            
+
             .name {
                 max-width: 125px;
             }
-        
+
             .tag-handle {
                 top: 46px;
                 left: 70px;
                 font-size: $font_size_sec;
             }
 
-            .prepend-separator{
+            .prepend-separator {
                 padding: 0;
                 position: absolute;
-                
+
                 &:before {
                     display: none;
                 }
@@ -536,7 +556,7 @@ $highlight_yellow: #fff3b8;
             &.one-line {
                 margin-top: 8px;
                 line-height: 16px;
-                
+
                 .tag-handle {
                     position: static;
                     display: block;
@@ -558,7 +578,6 @@ $highlight_yellow: #fff3b8;
                 width: 48px;
                 height: 48px;
             }
-
         }
     }
 }
@@ -699,7 +718,7 @@ $highlight_yellow: #fff3b8;
             line-height: 25px;
             background-color: white;
             display: inline-block;
-            box-shadow: 0 1px 2px 0 rgba(0,0,0,0.14);
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.14);
             border-radius: 50%;
             border: solid 1px #c8c8c8;
         }
@@ -760,14 +779,19 @@ $highlight_yellow: #fff3b8;
 }
 
 .collab-attached-image-section {
+
     .collab-attachment-image {
         height: 40px;
         width: 40px;
         margin: 10px;
         text-align: center;
-        background-color: $border_color;
+        background-color: transparent;
         @include border-radius($std_border_radius);
         overflow: hidden;
+    }
+
+    &.collab-preview-allowed {
+        cursor: pointer;
     }
 
     &.collab-download-disabled {
@@ -799,6 +823,11 @@ $highlight_yellow: #fff3b8;
             border: 2px solid $border_color;
             box-sizing: border-box;
         }
+        .ficon-file {
+            display: inline-block;
+            position: relative;
+            top: 5%;
+        }
     }
 
     .collab-attachment-details {
@@ -822,12 +851,12 @@ $highlight_yellow: #fff3b8;
         opacity: .6;
         cursor: pointer;
 
-    }
-    &:hover {
-        .collab-dl-link {
+        &:hover {
             opacity: 1;
         }
+    }
 
+    &:hover {
         .collab-attached-image-section {
             &.collab-download-disabled {
                 .collab-dl-link {
@@ -849,7 +878,7 @@ $highlight_yellow: #fff3b8;
 
     &.sent {
         opacity: .6;
-        
+
         &:after {
             content: " ";
             width: 100%;
@@ -892,7 +921,7 @@ $highlight_yellow: #fff3b8;
             vertical-align: middle;
             margin-top: 2px;
         }
-        
+
         .collab-attachment-name {
             line-height: 60px;
             max-width: 140px;
@@ -908,7 +937,7 @@ $highlight_yellow: #fff3b8;
         background-color: white;
         line-height: 30px;
         text-align: center;
-        margin: 15px 10px 15px 0;;
+        margin: 15px 10px 15px 0;
         @include border-radius(50%);
         border: solid 1px $border_color;
         box-sizing: border-box;
@@ -919,7 +948,7 @@ $highlight_yellow: #fff3b8;
             color: $icon_hover_color;
             border-color: $border_color_hover;
             cursor: pointer;
-        };
+        }
     }
 }
 
@@ -942,7 +971,7 @@ $highlight_yellow: #fff3b8;
     border: 1px solid $border_color2;
     @include border-radius($std_border_radius);
 
-    .collab-msg-reply-to , 
+    .collab-msg-reply-to,
     .annotation {
         background-color: $annotation_bg_color;
         border: 1px solid $annotation_border_color;
@@ -1106,7 +1135,7 @@ $highlight_yellow: #fff3b8;
 
 .collab-scroll-box-cover {
     height: calc(100vh - 213px);
-    @include box-sizing( border-box );    
+    @include box-sizing( border-box );
 }
 
 .collaborators-list {
@@ -1367,7 +1396,7 @@ $highlight_yellow: #fff3b8;
                 left: 3px;
                 top: 2px;
             }
-           background-color: #636363; 
+            background-color: #636363;
         }
 
         .huddle-group-icon {
@@ -1377,7 +1406,7 @@ $highlight_yellow: #fff3b8;
             }
         }
     }
-    
+
     .info {
         @include padding(10px);
         border-bottom: 2px solid $border_color;
@@ -1438,10 +1467,37 @@ $highlight_yellow: #fff3b8;
 }
 
 .collab-reply-blink {
-  animation: reply-blinker 4s linear 1;
+    animation: reply-blinker 4s linear 1;
 }
 
-@keyframes reply-blinker {  
+@keyframes pop-on-top {
+    0% {
+        transform: matrix(.97,0,0,1,0,12);
+        opacity: 0
+    }
+
+    20% {
+        transform: matrix(.99,0,0,1,0,2);
+        opacity: .7
+    }
+
+    40% {
+        transform: matrix(1,0,0,1,0,-1);
+        opacity: 1
+    }
+
+    70% {
+        transform: matrix(1,0,0,1,0,0);
+        opacity: 1
+    }
+
+    100% {
+        transform: matrix(1,0,0,1,0,0);
+        opacity: 1
+    }
+}
+
+@keyframes reply-blinker {
     0% {
         background-color: transparent;
         box-shadow: 0 -4px 0 7px transparent;
@@ -1473,10 +1529,10 @@ $highlight_yellow: #fff3b8;
 }
 
 .collab-ann-blink {
-  animation: ann-blinker 4s linear 1;
+    animation: ann-blinker 4s linear 1;
 }
 
-@keyframes ann-blinker {  
+@keyframes ann-blinker {
     0% {
         background-color: transparent;
         box-shadow: 0 -4px 0 7px transparent;
@@ -1525,85 +1581,89 @@ $highlight_yellow: #fff3b8;
 
 
 
+
 /*navFromRightBounceIn  for Convo Panel */
+
 @-webkit-keyframes navFromRightBounceIn {
-  0% {
-    -webkit-transform: translateX(100%);
-    transform: translateX(100%);
-  }
+    0% {
+        -webkit-transform: translateX(100%);
+        transform: translateX(100%);
+    }
 
-  20% {
-    padding-right: 0px;
-    -webkit-transform: translateX(0%);
-    transform: translateX(0%);
-  }
+    20% {
+        padding-right: 0px;
+        -webkit-transform: translateX(0%);
+        transform: translateX(0%);
+    }
 
-  60% {
-    padding-right: 0px;
-  }
+    60% {
+        padding-right: 0px;
+    }
 
-  100% {
-    padding-right: 0px;
-  }
+    100% {
+        padding-right: 0px;
+    }
 }
 
 @-o-keyframes navFromRightBounceIn {
-  0% {
-    -o-transform: translateX(100%);
-    transform: translateX(100%);
-  }
+    0% {
+        -o-transform: translateX(100%);
+        transform: translateX(100%);
+    }
 
-  20% {
-    padding-right: 0px;
-    -o-transform: translateX(0%);
-    transform: translateX(0%);
-  }
+    20% {
+        padding-right: 0px;
+        -o-transform: translateX(0%);
+        transform: translateX(0%);
+    }
 
-  60% {
-    padding-right: 0px;
-  }
+    60% {
+        padding-right: 0px;
+    }
 
-  100% {
-    padding-right: 0px;
-  }
+    100% {
+        padding-right: 0px;
+    }
 }
 
 @keyframes navFromRightBounceIn {
-  0% {
-    -webkit-transform: translateX(100%);
-    -ms-transform: translateX(100%);
-    -o-transform: translateX(100%);
-    transform: translateX(100%);
-  }
+    0% {
+        -webkit-transform: translateX(100%);
+        -ms-transform: translateX(100%);
+        -o-transform: translateX(100%);
+        transform: translateX(100%);
+    }
 
-  20% {
-    padding-right: 0px;
-    -webkit-transform: translateX(0%);
-    -ms-transform: translateX(0%);
-    -o-transform: translateX(0%);
-    transform: translateX(0%);
-  }
+    20% {
+        padding-right: 0px;
+        -webkit-transform: translateX(0%);
+        -ms-transform: translateX(0%);
+        -o-transform: translateX(0%);
+        transform: translateX(0%);
+    }
 
-  60% {
-    padding-right: 0px;
-  }
+    60% {
+        padding-right: 0px;
+    }
 
-  100% {
-    padding-right: 0px;
-  }
+    100% {
+        padding-right: 0px;
+    }
 }
 
 .navFromRightBounceIn {
-  visibility: visible;
-  display: block;
-  -webkit-animation: navFromRightBounceIn 500ms both ease;
-  -o-animation: navFromRightBounceIn 500ms both ease;
-  animation: navFromRightBounceIn 500ms both ease;
+    visibility: visible;
+    display: block;
+    -webkit-animation: navFromRightBounceIn 500ms both ease;
+    -o-animation: navFromRightBounceIn 500ms both ease;
+    animation: navFromRightBounceIn 500ms both ease;
 }
+
 
 /*
     On Helpkit's page:
 */
+
 .ticket-actions .btn.collab-btn {
     height: 26px;
     padding-left: 34px;
@@ -1613,13 +1673,12 @@ $highlight_yellow: #fff3b8;
         position: absolute;
         left: 12px;
         top: 3px;
-
     }
 
     .collab-message-count {
         display: none;
     }
-    
+
     &.collab-inited {
         .collab-message-count {
             display: inline-block;
@@ -1628,8 +1687,10 @@ $highlight_yellow: #fff3b8;
 }
 
 .collab-option-dd {
+    animation: pop-on-top 250ms forwards linear;
+
     .collab-logo {
-            margin-top: 1px;
+        margin-top: 1px;
     }
 }
 
@@ -1701,14 +1762,14 @@ $highlight_yellow: #fff3b8;
         border: solid transparent;
         position: absolute;
         border-width: 7px;
-        border-bottom-color: $border_color;
-        top: -15px;
+        border-top-color: $border_color;
+        top: 25px;
         @include left (33px);
     }
 
     &:after {
-        border-bottom-color: white;
-        top: -14px;
+        border-top-color: white;
+        top: 23px;
     }
 
     .annotator-image {
@@ -1719,7 +1780,7 @@ $highlight_yellow: #fff3b8;
         margin-right: 0px;
 
         .preview_pic {
-            @include margin-right(6px); 
+            @include margin-right(6px);
             margin-bottom: 1px;
 
             &.x-small {
@@ -1750,7 +1811,7 @@ $highlight_yellow: #fff3b8;
             background-color: $border_color;
             right: 0;
             top: 2px;
-        };
+        }
     }
 }
 
@@ -1760,15 +1821,15 @@ $highlight_yellow: #fff3b8;
 
 .show-discussion-dd {
     width: 139px;
-    
+
     .bridge-span {
-        background-color: transparent;
-        height: 24px;
         position: absolute;
-        width: calc(100% + 40px);
-        @include left (-40px);
-        @include box-sizing( border-box );
-        top: -15px;
+        width: calc(100% + 20px);
+        background: transparent;
+        height: 42px;
+        top: -10px;
+        margin: 0;
+        @include left (-10px);
     }
 
     &:before,
