@@ -26,7 +26,7 @@ class HelpdeskReports::Response::Ticket::TicketList < HelpdeskReports::Response:
     processed_result[:ticket_id] = []
     processed_result[:total_time] = {}
     raw_result.each { |row| processed_result[:ticket_id] << row[COLUMN_MAP[:ticket_id]].to_i }
-    processed_result[:total_time][row['display_id'].to_i] = row['total_time'] if report_type.to_sym==:timespent
+    raw_result.each { |row| processed_result[:total_time][row['display_id'].to_i] = row['total_time'] } if report_type.to_sym==:timespent
   end
   
 end

@@ -90,12 +90,26 @@
 					<i class="ficon-cross fsize-20 " size="20"></i> 
 				</span>	
 				<% if current_user.privilege?(:export_reports) %>
-					<div class="export_title pull-right hide">
-						<a class="link" href="javascript:void(0);" ><%= t('export_data.view_all_tickets') %></a>
-						<span class="title hide"><%= t('export_data.view_all_tickets') %></span> 
-					</div>
+					<% if @report_type == :timespent%>
+						<div class="export_title_status pull-right hide">
+							<a class="link" href="javascript:void(0);" ><%= t('helpdesk_reports.timespent_export.export_csv') %></a>
+						</div>
+					<% else %>
+						<div class="export_title pull-right hide">
+							<a class="link" href="javascript:void(0);" ><%= t('export_data.view_all_tickets') %></a>
+							<span class="title hide"><%= t('export_data.view_all_tickets') %></span> 
+						</div>
+					<% end %>
 				<% end %>
 			</div>
+			<% if @report_type == :timespent%>
+				<div class="success_message hide">
+					<strong><%= t("helpdesk_reports.export_tickets_success_msg") %></strong>
+				</div>
+				<div class="error_message hide">
+					<strong><%= t("helpdesk_reports.export_tickets_error_msg") %></strong>
+				</div>
+		    <% end %>
 			<div id="table_content"></div>
 			<div id="time_spent_ticket_list"></div> 
 		</div>

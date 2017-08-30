@@ -68,7 +68,11 @@ module ArchiveTicketExportParams
   end
 
   def ticket_survey_results
-    survey_results.sort_by(&:id).last.try(:text)
+    if Account.current.new_survey_enabled?
+      custom_survey_results.sort_by(&:id).last.try(:text)
+    else
+      survey_results.sort_by(&:id).last.try(:text)
+    end
   end
 
   def time_tracked

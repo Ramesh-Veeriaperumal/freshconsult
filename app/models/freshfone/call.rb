@@ -368,7 +368,8 @@ class Freshfone::Call < ActiveRecord::Base
       :responder => params[:agent],
       :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone],
       :subject => ticket_subject,
-      :group => group
+      :group => group,
+      :cc_email => ::Helpdesk::Ticket.default_cc_hash
     }
     self.notable.build_ticket_and_sanitize
     self

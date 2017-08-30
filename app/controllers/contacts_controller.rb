@@ -32,7 +32,8 @@ class ContactsController < ApplicationController
   def index
     respond_to do |format|
       format.html do
-        @tags = current_account.tags.with_taggable_type(User.to_s).all
+        tag_ids = current_account.tag_uses.where("taggable_type = 'User'").pluck(:tag_id).uniq
+        @tags = current_account.tags.where("id in (?)", tag_ids).all
       end
       format.xml  do
         render :xml => @contacts.to_xml(:root => "users")

@@ -299,7 +299,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     assert test.errors.empty?
   end
 
-  def test_nested_fields_valid
+  def test_nested_fields_valid 
     test = TestValidation.new(attribute1: { 'country_1' => 'Usa', 'state_1' => 'california', 'city_1' => 'los angeles' })
     assert test.valid?
     assert test.errors.empty?

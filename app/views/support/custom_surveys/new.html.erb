@@ -67,7 +67,7 @@
 					</div>
 				<%end%>
 				<%if @survey_handle.survey.can_comment? %>
-					<textarea autocomplete="off" class="input-comment required" id="survey_feedback" name="feedback" rel="ghostwriter" type="text" width="100%" maxlength="200"
+					<textarea autocomplete="off" class="input-comment required" id="survey_feedback" name="feedback" rel="ghostwriter" type="text" width="100%"
 						placeholder= "<%= @survey_handle.survey.comments_text %>" ></textarea>
 				<% end %>
 				<% if !@survey_handle.survey.feedback_questions.blank? || @survey_handle.survey.can_comment? %>

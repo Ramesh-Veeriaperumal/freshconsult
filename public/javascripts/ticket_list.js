@@ -64,6 +64,7 @@ window.App.Tickets = window.App.Tickets || {};
 			  		e.preventDefault();
 			  		jQuery('#failed-tickets-popup').remove();
 			  		if(jQuery(this).data('tickets')){
+			  			failedTicketData = failedTicketData ? failedTicketData : {};
 			  			failedTicketData.failed_tickets = jQuery(this).data('tickets'); 
 			  			failedTicketData.title = jQuery(this).data('title'); 
 			  			failedTicketData.description = jQuery(this).data('description'); 

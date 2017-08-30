@@ -28,7 +28,7 @@ module ApiSearch
         record.permit(*fields | allowed_custom_fields.values)
 
         record[:custom_fields] = {}
-        custom_fields.each do |field_name, display_name|
+        allowed_custom_fields.each do |field_name, display_name|
           if record.key?(display_name)
             record[:custom_fields][field_name] = record.delete(display_name)
           end
@@ -46,7 +46,7 @@ module ApiSearch
 
       # For the users we wont be displaying the custom_field name with account_id
       def set_custom_errors(item)
-        ErrorHelper.rename_error_fields(@custom_fields, item)
+        ErrorHelper.rename_error_fields(custom_fields, item)
       end
 
       def validate_filter_params
