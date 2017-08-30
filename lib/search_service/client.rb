@@ -11,17 +11,11 @@ module SearchService
       query_request.response
     end
 
-    def write_object(entity, version, parent_id, type)
+    def write_object(entity, version, parent_id, type, locale = nil)
       uuid = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
-      payload = { payload: entity.to_esv2_json, version: version, parent_id: parent_id }.to_json
-      write_request = SearchService::Request.new(write_path(type, entity.id), :post, uuid, payload, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id)
-      write_request.response
-    end
-
-    def write_multilang_object(entity, version, parent_id, type, locale)
-      uuid = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
-      payload = { payload: entity.to_esv2_json, version: version, parent_id: parent_id, language: locale }.to_json
-      write_request = SearchService::Request.new(write_path(type, entity.id), :post, uuid, payload, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id)
+      payload = { payload: entity.to_esv2_json, version: version, parent_id: parent_id }
+      payload.merge!({ language: locale }) if locale.present?
+      write_request = SearchService::Request.new(write_path(type, entity.id), :post, uuid, payload.to_json, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id)
       write_request.response
     end
 
