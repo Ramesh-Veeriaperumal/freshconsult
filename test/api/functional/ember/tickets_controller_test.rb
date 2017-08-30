@@ -138,7 +138,7 @@ module Ember
         monitored_by new_and_my_open all_tickets unresolved
         article_feedback my_article_feedback
         watching on_hold
-        raised_by_me shared_by_me shared_with_me
+        raised_by_me shared_by_me shared_with_me ongoing_collab
       )
       match_json([bad_request_error_pattern(:filter, :not_included, list: valid_filters.join(', '))])
     end
@@ -176,6 +176,26 @@ module Ember
       get :index, controller_params(version: 'private', filter: 'raised_by_me')
       assert_response 200
       match_json(private_api_ticket_index_pattern)
+    end
+
+    def test_index_with_filter_name_ongoing_collab
+      collab_tickets_ids = []
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| collab_tickets_ids << create_ticket.display_id }
+      Account.current.stubs(:collab_settings).returns(Collab::Setting.new)
+      Collaboration::Ticket.any_instance.stubs(:fetch_tickets).returns(collab_tickets_ids)
+      Collaboration::Ticket.any_instance.stubs(:fetch_count).returns(collab_tickets_ids.size())
+
+      feature_flag = Account.current.has_feature?(:collaboration)
+      Account.current.set_feature(:collaboration) unless !feature_flag
+
+      get :index, controller_params(version: 'private', filter: 'ongoing_collab')
+      assert_response 200
+      match_json(private_api_ticket_index_pattern)
+    ensure
+      Account.current.reset_feature(:collaboration) unless !feature_flag
+      Account.current.unstub(:collab_settings)
+      Collaboration::Ticket.any_instance.unstub(:fetch_tickets)
+      Collaboration::Ticket.any_instance.unstub(:fetch_count)
     end
 
     def test_index_with_query_hash
