@@ -86,13 +86,12 @@ class Export::Ticket < Struct.new(:export_params)
 
   def xls_export
     require 'erb'
-    contact_fields = export_params[:contact_fields] || {}
-    company_fields = export_params[:company_fields] || {}
+    @xls_hash = export_params[:export_fields]
+    @contact_hash = export_params[:contact_fields] || {}
+    @company_hash = export_params[:company_fields] || {}
     @contact_headers ||= []
     @company_headers ||= []
-    @xls_hash = [export_params[:export_fields], contact_fields, company_fields].inject(&:merge)
     ticket_data
-    @headers = @headers + @contact_headers + @company_headers 
     path =  "#{Rails.root}/app/views/support/tickets/export_csv.xls.erb"
     ERB.new(File.read(path)).result(binding)
   end
