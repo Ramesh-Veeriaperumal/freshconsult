@@ -134,8 +134,8 @@ class Export::Ticket < Struct.new(:export_params)
           record << format_data(val, data)
         end
         ['contact', 'company'].each do |type|
+          assoc = type.eql?('contact') ? 'requester' : 'company'
           instance_variable_get("@#{type}_headers").each do |val|
-            assoc = type.eql?('contact') ? 'requester' : 'company'
             data = item.send(assoc).respond_to?(val) ? item.send(assoc).send(val) : ""
             record << format_data(val, data)
           end
@@ -206,9 +206,10 @@ class Export::Ticket < Struct.new(:export_params)
     ["contact", "company"].each do |type|
       next if export_params["#{type}_fields".to_sym].blank?
       reorder_contact_company_fields type
+      allowed_fields = contact_company_export_fields(type)
       instance_variable_set("@#{type}_headers", 
         export_params["#{type}_fields".to_sym].keys.delete_if{|header_key|
-          !contact_company_export_fields(type).include?(header_key.to_s)
+          !allowed_fields.include?(header_key.to_s)
       })
     end
   end
