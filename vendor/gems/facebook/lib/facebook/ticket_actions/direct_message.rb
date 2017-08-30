@@ -24,6 +24,10 @@ module Facebook
           else
             add_as_ticket(thread)
           end
+
+          if fb_msg.thread_key.nil?
+            @account.facebook_posts.where(:thread_id => thread[:id], :facebook_page_id => @fan_page.id).update_all({:thread_key => thread[:thread_key]})
+          end
         end
       end
 
@@ -51,7 +55,8 @@ module Facebook
               :facebook_page_id =>  @fan_page.id,
               :account_id       =>  @account.id,
               :msg_type         =>  'dm',
-              :thread_id        =>  thread_id
+              :thread_id        =>  thread_id,
+              :thread_key       =>  thread[:thread_key]
             }
           )
           body_html = html_content_from_message(message, @note)
@@ -94,7 +99,8 @@ module Facebook
             :facebook_page_id   =>  @fan_page.id,
             :account_id         =>  @account.id,
             :msg_type           =>  'dm',
-            :thread_id          =>  thread[:id]
+            :thread_id          =>  thread[:id],
+            :thread_key         =>  thread[:thread_key]
           }
         )
         description_html = html_content_from_message(message, @ticket)
