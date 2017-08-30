@@ -136,6 +136,7 @@
     - update_sentiment
     - update_notes_sentiment
     - github
+    - mixpanel_queue
   :free:
     - free_sla
     - free_supervisor
