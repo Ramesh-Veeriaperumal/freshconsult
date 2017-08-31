@@ -468,10 +468,10 @@ HelpdeskReports.Reports_home = (function($){
           if ( widgetType == "1" || widgetType == "2" ) {
             //When no option is selected pass empty array instead of -1
             var group_select = $(".edit-row[data-index=" + parentIndex + "] .js-insightGroups");
-            var val = group_select.select2('val');
+            var val = parseInt(group_select.select2('val'));
             req.config[index].groups = [];
             req.config[index].groups_label = [];
-            if( val != null && val != -1) {
+            if(!isNaN(val)) {
               req.config[index].groups.push(val);
               req.config[index].groups_label = group_select.find('option:selected').map(function () {
                                                      return this.text;

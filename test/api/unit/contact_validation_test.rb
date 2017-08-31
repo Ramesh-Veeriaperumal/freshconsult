@@ -36,6 +36,65 @@ class ContactValidationTest < ActionView::TestCase
     assert contact.valid?
   end
 
+  def test_quick_create_with_company_valid
+    Account.stubs(:current).returns(Account.new)
+    Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
+    ContactForm.any_instance.stubs(:default_contact_fields).returns([])
+    controller_params = {
+      name: Faker::Lorem.characters(15),
+      email: Faker::Internet.email,
+      action: :quick_create,
+      company_name: Faker::Lorem.characters(200)
+    }
+    item = nil
+    contact = ContactValidation.new(controller_params, item)
+    assert contact.valid?
+  end
+
+  def test_quick_create_with_company_length_invalid
+    Account.stubs(:current).returns(Account.new)
+    Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
+    ContactForm.any_instance.stubs(:default_contact_fields).returns([])
+    controller_params = {
+      name: Faker::Lorem.characters(15),
+      email: Faker::Internet.email,
+      action: :quick_create,
+      company_name: Faker::Lorem.characters(300)
+    }
+    item = nil
+    contact = ContactValidation.new(controller_params, item)
+    refute contact.valid?
+  end
+
+  def test_quick_create_with_company_invalid
+    Account.stubs(:current).returns(Account.new)
+    Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
+    ContactForm.any_instance.stubs(:default_contact_fields).returns([])
+    controller_params = {
+      name: Faker::Lorem.characters(15),
+      email: Faker::Internet.email,
+      action: :quick_create,
+      company_name: 1
+    }
+    item = nil
+    contact = ContactValidation.new(controller_params, item)
+    refute contact.valid?
+  end
+
+  def test_quick_create_without_skip_company
+    Account.stubs(:current).returns(Account.new)
+    Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
+    ContactForm.any_instance.stubs(:default_contact_fields).returns([])
+    controller_params = {
+      name: Faker::Lorem.characters(15),
+      email: Faker::Internet.email,
+      company_id: 1
+    }
+    item = nil
+    contact = ContactValidation.new(controller_params, item)
+    assert contact.valid?
+  end
+
   def test_tags_multiple_errors
     Account.stubs(:current).returns(Account.new)
     Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
@@ -65,7 +124,7 @@ class ContactValidationTest < ActionView::TestCase
     assert errors.count == 1
     String.any_instance.unstub(:size)
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-    controller_params = { 'name' => 'test', :email => Faker::Internet.email, avatar: fixture_file_upload('files/attachment.txt', 'plain/text', :binary), avatar_id: 10}
+    controller_params = { 'name' => 'test', :email => Faker::Internet.email, avatar: fixture_file_upload('files/attachment.txt', 'plain/text', :binary), avatar_id: 10 }
     contact = ContactValidation.new(controller_params, item)
     refute contact.valid?
     DataTypeValidator.any_instance.unstub(:valid_type?)
@@ -85,7 +144,7 @@ class ContactValidationTest < ActionView::TestCase
     errors = contact.errors.full_messages
     assert errors.include?('Tags datatype_mismatch')
     assert errors.include?('Custom fields datatype_mismatch')
-    assert_equal({ email: {}, tags: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null'  }, name: {}, custom_fields: { expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: 'Null'  } }, contact.error_options)
+    assert_equal({ email: {}, tags: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null' }, name: {}, custom_fields: { expected_data_type: 'key/value pair', prepend_msg: :input_received, given_data_type: 'Null' } }, contact.error_options)
     Account.unstub(:current)
   end
 

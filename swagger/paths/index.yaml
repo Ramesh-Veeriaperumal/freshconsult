@@ -121,6 +121,8 @@
   $ref: ./contacts/merge.yaml
 /contacts/import:
   $ref: ./contacts/import_crud.yaml
+/contacts/quick_create:
+  $ref: ./contacts/quick_create.yaml
 
 /companies:
   $ref: ./companies/list_and_create.yaml

@@ -265,12 +265,19 @@ class ApiContactsController < ApiApplicationController
           other_companies: { list: "#{bad_customer_ids.join(', ')}" }
         }
       end
-      ErrorHelper.rename_error_fields(ContactConstants::FIELD_MAPPINGS.merge(@name_mapping || {}), item)
+      mappings = field_mappings
+      ErrorHelper.rename_error_fields(mappings, item)
       @error_options
     end
 
     def error_options_mappings
-      (@name_mapping || {}).merge(ContactConstants::FIELD_MAPPINGS)
+      field_mappings
+    end
+
+    def field_mappings
+      mappings = (@name_mapping || {}).merge(ContactConstants::FIELD_MAPPINGS)
+      mappings.merge!(company_name: :company_name) if (action_name.to_sym == :quick_create)
+      mappings
     end
 
     def assign_protected

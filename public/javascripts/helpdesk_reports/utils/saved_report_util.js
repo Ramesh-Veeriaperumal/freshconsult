@@ -262,6 +262,10 @@ HelpdeskReports.SavedReportUtil = (function() {
 
 			if(locals.report_type == "timespent") {
 				params.data_hash.active_timespent_group_by = HelpdeskReports.locals.current_group_by;
+				params.data_hash.export_fields = {};
+				params.data_hash.export_fields[locals.current_group_by] = locals.field_name_mapping[locals.current_group_by];
+				var level2 = locals.current_group_by =='group_id' ? 'agent_id' : 'group_id'
+				params.data_hash.export_fields[level2] = locals.field_name_mapping[level2];
 			}
 
 	        var opts = {
@@ -691,6 +695,10 @@ HelpdeskReports.SavedReportUtil = (function() {
 			
 			if(locals.report_type == "timespent") {
 				params.data_hash.active_timespent_group_by = HelpdeskReports.locals.current_group_by;
+				params.data_hash.export_fields = {};
+				params.data_hash.export_fields[locals.current_group_by] = locals.field_name_mapping[locals.current_group_by];
+				var level2 = locals.current_group_by =='group_id' ? 'agent_id' : 'group_id'
+				params.data_hash.export_fields[level2] = locals.field_name_mapping[level2];
 			}
 
 	        var opts = {

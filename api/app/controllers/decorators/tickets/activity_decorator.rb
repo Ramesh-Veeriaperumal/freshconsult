@@ -47,11 +47,11 @@ module Tickets
       rel_tkt_unlink:          :ticket_unlinked,
       tracker_link:            :tracker_linked,
       tracker_unlink:          :tracker_unlinked,
-      assoc_parent_tkt_link:   :child_ticket_linked,
-      assoc_parent_tkt_unlink: :child_ticket_unlinked,
+      child_tkt_link:          :child_ticket_linked,
+      child_tkt_unlink:        :child_ticket_unlinked,
       assoc_parent_tkt_open:   :parent_ticket_reopened,
-      child_tkt_link:          :parent_ticket_linked,
-      child_tkt_unlink:        :parent_ticket_unlinked,
+      assoc_parent_tkt_link:   :parent_ticket_linked,
+      assoc_parent_tkt_unlink: :parent_ticket_unlinked,
       watcher:                 :add_watcher
     }.freeze
 

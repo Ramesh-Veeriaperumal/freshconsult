@@ -7,7 +7,8 @@ class HelpdeskReports::ParamConstructor::Timespent < HelpdeskReports::ParamConst
 
   def build_params
     params = {}
-    params.merge!(options)
+    opt = options[:scheduled] ? @export_params : options
+    params.merge!(opt)
     params[:filter] ||= []
     if params[:filter].present?
       params[:atleast_once_filter], params[:filter] = params[:filter].partition {|filter_hash| filter_hash[:operator] == "atleast_once_in"}
@@ -17,6 +18,7 @@ class HelpdeskReports::ParamConstructor::Timespent < HelpdeskReports::ParamConst
     end
     params.merge!(add_to_std_filter(params,:list_conditions, :filter)) if params[:list_conditions].present?
     params[:filter] = modify_filter(params[:filter]) if params[:filter].present?
+    params.merge!(export_info(params)) if params[:export]
     params
   end
 
@@ -36,6 +38,38 @@ class HelpdeskReports::ParamConstructor::Timespent < HelpdeskReports::ParamConst
   def modify_atleast_once_filter(atleast_once_filter_arr=[])
     atleast_once_filter_arr.each{|f_h| f_h[:condition].slice!('atleast_once_in_')}
     atleast_once_filter_arr
+  end
+
+  def export_info params
+    if params[:export_type]=='aggregate_export'
+      { details: {l1: params[:group_by].first, l2: ( (params[:group_by].first=='group_id') ? 'agent_id' : 'group_id') } }
+    elsif params[:list_conditions].present?
+      status = params[:list_conditions].collect{|h| h[:value] if h[:condition]=='status'}.compact.first
+      {details: {status_value: status}}
+    else
+      {}
+    end
+  end
+
+  def build_export_params
+    options[:scheduled] = true
+    @export_params = basic_param_structure
+    @export_params[:model]  = 'TICKET_LIFECYCLE'
+    @export_params[:metric] = 'LIFECYCLE_GROUPBY'
+    @export_params[:export] = true
+    @export_params[:export_type] = 'aggregate_export'
+    @export_params[:group_by] = [options[:active_timespent_group_by]]
+    params = {} 
+    params[:date_range] = date_range
+    params[:filter_name] = options[:filter_name]
+    params[:report_type] = :timespent
+    params[:export_fields] = options[:export_fields]
+    params[:export_fields].merge!('group_id' => 'Group', 'agent_id' => 'Agent')
+    params[:query_hash] = build_params
+    params[:account_id] = Account.current.id
+    params[:user_id] = User.current.id
+    params[:records_limit] = HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:export][:csv]
+    params
   end
   
 end
