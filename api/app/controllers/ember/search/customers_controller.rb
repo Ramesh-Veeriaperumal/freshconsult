@@ -1,7 +1,6 @@
 module Ember
   module Search
     class CustomersController < SpotlightController
-
       def results
         if params[:context] == 'spotlight'
           @search_sort = params[:search_sort].presence

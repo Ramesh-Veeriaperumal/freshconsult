@@ -5,7 +5,7 @@ class BaseDelegator < SimpleDelegator
 
   validate :validate_draft_attachments, :validate_attachment_size, if: -> { @attachment_ids }
 
-  def initialize(record, options={})
+  def initialize(record, options = {})
     super(record)
     @error_options = {}
     @attachment_ids = options[:attachment_ids]
@@ -31,16 +31,16 @@ class BaseDelegator < SimpleDelegator
     invalid_attachment_ids = @attachment_ids - @draft_attachments.map(&:id)
     if invalid_attachment_ids.any?
       errors[:attachment_ids] << :invalid_list
-      @error_options.merge!({ attachment_ids: { list: "#{invalid_attachment_ids.join(', ')}" } })
+      @error_options.merge!(attachment_ids: { list: invalid_attachment_ids.join(', ').to_s })
     end
   end
 
   def validate_attachment_size
-    all_attachments = @draft_attachments | (self.respond_to?(:attachments) ? self.attachments : [] )
-    total_attachment_size = all_attachments.collect{ |a| a.content_file_size }.sum
+    all_attachments = @draft_attachments | (self.respond_to?(:attachments) ? self.attachments : [])
+    total_attachment_size = all_attachments.collect(&:content_file_size).sum
     if total_attachment_size > attachment_size
-      errors[:attachment_ids] << :'invalid_size'
-      @error_options.merge!({ attachment_ids: { current_size: number_to_human_size(total_attachment_size), max_size: number_to_human_size(attachment_size) } })
+      errors[:attachment_ids] << :invalid_size
+      @error_options.merge!(attachment_ids: { current_size: number_to_human_size(total_attachment_size), max_size: number_to_human_size(attachment_size) })
     end
   end
 

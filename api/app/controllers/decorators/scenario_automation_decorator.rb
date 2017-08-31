@@ -1,7 +1,7 @@
 class ScenarioAutomationDecorator < ApiDecorator
   delegate :id, :name, :description, :action_data, :visible_to_only_me?, to: :record
 
-  def initialize(record, options)
+  def initialize(record, _options)
     super(record)
   end
 

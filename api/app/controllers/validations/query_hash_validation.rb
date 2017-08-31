@@ -1,5 +1,4 @@
 class QueryHashValidation < FilterValidation
-  
   attr_accessor :condition, :operator, :value, :type
 
   validates :condition, required: true, data_type: { rules: String }
@@ -15,8 +14,8 @@ class QueryHashValidation < FilterValidation
 
   def custom_field_names
     @custom_field_names ||= Account.current.ticket_fields_from_cache
-      .select { |field|  !field.default }
-      .map { |field| TicketDecorator.display_name(field.name) }
+                                   .select { |field| !field.default }
+                                   .map { |field| TicketDecorator.display_name(field.name) }
   end
 
   def ticket_fields_condition
@@ -26,7 +25,7 @@ class QueryHashValidation < FilterValidation
       unless TicketsFilter.accessible_filter?(condition, CustomFilterConstants::FEATURES_KEYS_BY_FIELD)
         errors[:condition] << :require_feature
         error_options.merge!(condition: { feature: CustomFilterConstants::FEATURES_NAMES_BY_FILED[condition],
-            code: :access_denied })
+                                          code: :access_denied })
       end
     end
   end

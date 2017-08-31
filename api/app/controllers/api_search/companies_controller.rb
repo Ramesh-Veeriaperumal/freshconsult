@@ -1,13 +1,12 @@
 module ApiSearch
   class CompaniesController < SearchController
-
     def index
       tree = parser.expression_tree
       record = record_from_expression_tree(tree)
 
       record = sanitize_custom_fields(record, ApiSearchConstants::COMPANY_FIELDS) if custom_fields.any?
 
-      validation_params = record.merge({company_fields: company_fields })
+      validation_params = record.merge(company_fields: company_fields)
 
       validation = Search::CompanyValidation.new(validation_params)
 
@@ -24,7 +23,7 @@ module ApiSearch
     private
 
       def custom_fields
-        @custom_fields ||= company_custom_fields.each_with_object({}) { |field, hash| hash[field.name] =  CustomFieldDecorator.display_name(field.name) }
+        @custom_fields ||= company_custom_fields.each_with_object({}) { |field, hash| hash[field.name] = CustomFieldDecorator.display_name(field.name) }
       end
 
       def visitor
@@ -33,7 +32,7 @@ module ApiSearch
       end
 
       def company_custom_fields
-        company_fields.select{|x| ApiSearchConstants::ALLOWED_CUSTOM_FIELD_TYPES.include? x.field_type.to_s }
+        company_fields.select { |x| ApiSearchConstants::ALLOWED_CUSTOM_FIELD_TYPES.include? x.field_type.to_s }
       end
 
       def company_fields

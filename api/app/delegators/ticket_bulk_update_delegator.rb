@@ -7,11 +7,11 @@ class TicketBulkUpdateDelegator < BaseDelegator
                                 field_validations: proc { |x| x.default_field_validations }
                               }
 
-  validate :group_presence, if: -> { group_id && errors[:group].blank? && status_set_to_closed? && !request_params.include?('group_id')}
-  validate :product_presence, if: -> { product_id && errors[:product].blank? && status_set_to_closed? && !request_params.include?('product_id')}
-  validate :responder_presence, if: -> { responder_id && errors[:responder].blank? && status_set_to_closed? && !request_params.include?('responder_id')}
+  validate :group_presence, if: -> { group_id && errors[:group].blank? && status_set_to_closed? && !request_params.include?('group_id') }
+  validate :product_presence, if: -> { product_id && errors[:product].blank? && status_set_to_closed? && !request_params.include?('product_id') }
+  validate :responder_presence, if: -> { responder_id && errors[:responder].blank? && status_set_to_closed? && !request_params.include?('responder_id') }
 
-  validates :custom_field_via_mapping,  custom_field: { custom_field_via_mapping:
+  validates :custom_field_via_mapping, custom_field: { custom_field_via_mapping:
                               {
                                 validatable_custom_fields: proc { |x| x.fields_to_validate(false) },
                                 drop_down_choices: proc { TicketsValidationHelper.custom_dropdown_field_choices },
@@ -19,8 +19,7 @@ class TicketBulkUpdateDelegator < BaseDelegator
                                 required_based_on_status: proc { |x| x.closure_status? },
                                 required_attribute: :required,
                                 section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
-                              }
-                            }
+                              } }
   validate :validate_closure, if: -> { status_set_to_closed? }
 
   def initialize(record, options = {})
@@ -54,7 +53,7 @@ class TicketBulkUpdateDelegator < BaseDelegator
       product: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param } },
       subject: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
       description: { data_type: { rules: String } }
-    }.slice(*fields_to_validate(true).collect{ |x| x.name.to_sym })
+    }.slice(*fields_to_validate(true).collect { |x| x.name.to_sym })
   end
 
   def required_default_fields
@@ -62,12 +61,12 @@ class TicketBulkUpdateDelegator < BaseDelegator
   end
 
   def fields_to_validate(default)
-    ticket_fields.select { |x| x.default == default && (validate_field?(x) || (x.required_for_closure && status_set_to_closed? )) }
+    ticket_fields.select { |x| x.default == default && (validate_field?(x) || (x.required_for_closure && status_set_to_closed?)) }
   end
 
   def group_presence # this is a custom validate method so that group cache can be used.
     return unless required_for_closure_field?('group')
-    errors[:group] << :"can't be blank" unless Account.current.groups_from_cache.detect{ |x| group_id == x.id }
+    errors[:group] << :"can't be blank" unless Account.current.groups_from_cache.detect { |x| group_id == x.id }
   end
 
   def product_presence
@@ -81,7 +80,7 @@ class TicketBulkUpdateDelegator < BaseDelegator
     errors[:responder] << :"can't be blank" unless Account.current.agents_details_from_cache.detect { |x| responder_id == x.id }
   end
 
-  def required_for_closure_field?(x)
+  def required_for_closure_field?(_x)
     ticket_fields.select { |x| x.name == x && x.required_for_closure }
   end
 
@@ -92,7 +91,7 @@ class TicketBulkUpdateDelegator < BaseDelegator
   private
 
     def validate_field?(x)
-      if x.default? 
+      if x.default?
         request_params.include?((ApiTicketConstants::FIELD_MAPPINGS[x.name.to_sym] || x.name).to_s)
       else
         instance_variable_get("@#{x.name}_set")

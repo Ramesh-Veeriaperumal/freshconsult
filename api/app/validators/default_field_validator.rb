@@ -23,9 +23,9 @@ class DefaultFieldValidator < ActiveModel::EachValidator
     super
 
     # Assign empty array after validate_each of all attributes are over as validator object will be reused in subsequent calls.
-    ensure
-      @required_fields = []
-      @default_field_validations = []
+  ensure
+    @required_fields = []
+    @default_field_validations = []
   end
 
   private
@@ -59,7 +59,7 @@ class DefaultFieldValidator < ActiveModel::EachValidator
           required_validator(record, attribute) if required
           string_rejection_validator(record, options_hash)
         else
-          fail ArgumentError.new("No validator with this #{validator} name exists in #{self.class}")
+          raise ArgumentError, "No validator with this #{validator} name exists in #{self.class}"
         end
       end
     end

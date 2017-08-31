@@ -1,5 +1,4 @@
 class CloudFileValidation < ApiValidation
-
   attr_accessor :url, :filename, :application_id
 
   validates :url, required: true, data_type: { rules: String }

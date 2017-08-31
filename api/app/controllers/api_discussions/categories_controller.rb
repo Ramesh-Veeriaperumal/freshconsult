@@ -7,7 +7,7 @@ module ApiDiscussions
       end
 
       def validate_params
-        params[cname].permit(*(DiscussionConstants::CATEGORY_FIELDS))
+        params[cname].permit(*DiscussionConstants::CATEGORY_FIELDS)
         category = ApiDiscussions::CategoryValidation.new(params[cname], @item)
         render_errors category.errors, category.error_options unless category.valid?
       end

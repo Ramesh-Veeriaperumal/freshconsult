@@ -22,17 +22,16 @@ class ApiCompanyValidation < ApiValidation
   validates :custom_fields, custom_field: { custom_fields: {
     validatable_custom_fields: proc { Account.current.company_form.custom_non_dropdown_fields },
     required_attribute: :required_for_agent
-  }
-  }
+  } }
 
   validates :avatar, data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true }, file_size: {
-    max: CompanyConstants::ALLOWED_AVATAR_SIZE }
+    max: CompanyConstants::ALLOWED_AVATAR_SIZE
+  }
   validate :validate_avatar, if: -> { avatar && errors[:avatar].blank? }
   validate :validate_avatar_id_or_avatar, if: -> { avatar && avatar_id }
   validates :avatar_id, custom_numericality: { only_integer: true, greater_than: 0,
                                                allow_nil: true,
                                                ignore_string: :allow_string_param }
-
 
   def initialize(request_params, item)
     super(request_params, item)

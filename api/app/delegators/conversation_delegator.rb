@@ -1,12 +1,11 @@
 class ConversationDelegator < ConversationBaseDelegator
-
   attr_accessor :email_config_id, :email_config, :cloud_file_attachments
 
   validate :validate_agent_emails, if: -> { (note? && !reply_to_forward?) && to_emails.present? && attr_changed?('to_emails', schema_less_note) }
 
   validate :validate_from_email, if: -> { (email_conversation? || reply_to_forward?) && from_email.present? && attr_changed?('from_email', schema_less_note) }
 
-  validate :validate_agent_id, if: -> { fwd_email? && user_id.present? && attr_changed?('user_id')}
+  validate :validate_agent_id, if: -> { fwd_email? && user_id.present? && attr_changed?('user_id') }
 
   validate :validate_tracker_id, if: -> { broadcast_note? }
 
@@ -17,7 +16,7 @@ class ConversationDelegator < ConversationBaseDelegator
   validate :validate_send_survey, unless: -> { send_survey.nil? }
 
   validate :validate_unseen_replies, on: :reply, if: :traffic_cop_required?
-  validate :validate_unseen_replies_for_public_notes, on: :create, if: -> { public_note? and traffic_cop_required? }
+  validate :validate_unseen_replies_for_public_notes, on: :create, if: -> { public_note? && traffic_cop_required? }
 
   def initialize(record, options = {})
     options[:attachment_ids] = skip_existing_attachments(options) if options[:attachment_ids]
@@ -27,15 +26,15 @@ class ConversationDelegator < ConversationBaseDelegator
   end
 
   def validate_agent_emails
-    invalid_emails = to_emails - Account.current.agents_details_from_cache.map { |x| x.email }
+    invalid_emails = to_emails - Account.current.agents_details_from_cache.map(&:email)
     unless invalid_emails.empty?
       errors[:notify_emails] << :invalid_agent_emails
-      (self.error_options ||= {}).merge!(notify_emails: { invalid_emails: "#{invalid_emails.join(', ')}" })
+      (self.error_options ||= {}).merge!(notify_emails: { invalid_emails: invalid_emails.join(', ').to_s })
     end
   end
 
   def validate_from_email
-  	email_config = Account.current.email_configs.where(reply_email: from_email).first
+    email_config = Account.current.email_configs.where(reply_email: from_email).first
     if email_config
       self.email_config_id = email_config.id
       self.email_config = email_config
@@ -57,7 +56,7 @@ class ConversationDelegator < ConversationBaseDelegator
     invalid_file_ids = @cloud_file_ids - @cloud_file_attachments.map(&:id)
     if invalid_file_ids.any?
       errors[:cloud_file_ids] << :invalid_list
-      (self.error_options ||= {}).merge!({ cloud_file_ids: { list: "#{invalid_file_ids.join(', ')}" } })
+      (self.error_options ||= {}).merge!(cloud_file_ids: { list: invalid_file_ids.join(', ').to_s })
     end
   end
 
@@ -65,7 +64,7 @@ class ConversationDelegator < ConversationBaseDelegator
     unless Account.current.new_survey_enabled? && Account.current.active_custom_survey_from_cache.try(:can_send?, notable, Survey::SPECIFIC_EMAIL_RESPONSE)
       errors[:send_survey] << :should_be_blank
     end
-    self.send_survey = self.send_survey ? "1" : "0"
+    self.send_survey = self.send_survey ? '1' : '0'
   end
 
   def validate_application_id
@@ -74,11 +73,11 @@ class ConversationDelegator < ConversationBaseDelegator
     invalid_ids = application_ids - applications.map(&:id)
     if invalid_ids.any?
       errors[:application_id] << :invalid_list
-      (self.error_options ||= {}).merge!({ application_id: { list: "#{invalid_ids.join(', ')}" } })
+      (self.error_options ||= {}).merge!(application_id: { list: invalid_ids.join(', ').to_s })
     end
   end
 
-  alias :validate_unseen_replies_for_public_notes :validate_unseen_replies
+  alias validate_unseen_replies_for_public_notes validate_unseen_replies
   # We need an alias method here, because a custom validator method can be used only for one action
 
   private
@@ -93,6 +92,6 @@ class ConversationDelegator < ConversationBaseDelegator
     end
 
     def public_note?
-      !self.private.nil? and !self.private
+      !self.private.nil? && !self.private
     end
 end

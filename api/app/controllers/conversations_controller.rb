@@ -98,7 +98,6 @@ class ConversationsController < ApiApplicationController
       @item.save_note
     end
 
-
     def render_response(success)
       if success
         render_201_with_location
@@ -144,7 +143,7 @@ class ConversationsController < ApiApplicationController
 
     def validate_params
       field = "ConversationConstants::#{action_name.upcase}_FIELDS".constantize
-      params[cname].permit(*(field))
+      params[cname].permit(*field)
       @conversation_validation = ConversationValidation.new(params[cname], @item, string_request_params?)
       valid = @conversation_validation.valid?(action_name.to_sym)
       render_errors @conversation_validation.errors, @conversation_validation.error_options unless valid

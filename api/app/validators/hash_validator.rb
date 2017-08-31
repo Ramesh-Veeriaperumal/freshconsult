@@ -11,7 +11,7 @@ class HashValidator < ApiValidator
     valid_options = options.except(*record.class.send(:_validates_default_keys))
     # the delimiter could be a proc (eg: SatisfactionRatingValidation) in
     # some cases. So the proc has to be invoked for those cases.
-    valid_options = call_block(delimeter) if delimeter and delimeter.is_a? Proc
+    valid_options = call_block(delimeter) if delimeter && delimeter.is_a?(Proc)
     valid_options.keys.each do |nested_field|
       validations = valid_options[nested_field]
       validations.each do |key, args|
@@ -27,12 +27,12 @@ class HashValidator < ApiValidator
           validator.validate_value(record, element_value)
         else
           raise DefaultValidatorNotImplementedError,
-                  "API Validators are developed to provide enhanced error
-                  messages and custom_codes to the users for clear understanding.
-                  Validations that are possible in default validators
-                  can be achieved using the API Validators, as a result
-                  API Validators wont support the default ones.
-                  Please extend if you have such requirement."
+                "API Validators are developed to provide enhanced error
+                messages and custom_codes to the users for clear understanding.
+                Validations that are possible in default validators
+                can be achieved using the API Validators, as a result
+                API Validators wont support the default ones.
+                Please extend if you have such requirement."
         end
       end
     end

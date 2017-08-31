@@ -113,7 +113,7 @@ class TicketFilterValidation < FilterValidation
       (self.error_options ||= {}).merge!(filter: { list: TicketFilterConstants::FILTER.join(', ') })
     elsif !TicketsFilter.accessible_filter?(filter)
       errors[:filter] << :require_feature
-      error_options.merge!(filter: 
+      error_options.merge!(filter:
         { feature: TicketsFilter::FEATURES_NAMES_BY_FILTER_KEY[filter], code: :access_denied })
     end
   end
@@ -131,7 +131,6 @@ class TicketFilterValidation < FilterValidation
   def sort_field_options
     TicketsFilter.api_sort_fields_options.map(&:first).map(&:to_s)
   end
-
 
   private
 

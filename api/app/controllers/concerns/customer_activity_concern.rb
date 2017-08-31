@@ -3,16 +3,16 @@ module CustomerActivityConcern
 
   def activities
     activities = case params[:type]
-                    when 'tickets'
-                      ticket_activities
-                    when 'archived_tickets'
-                      @type = 'archive_tickets'
-                      ticket_activities
-                    when 'forums'
-                      forum_activities
-                    else
-                      combined_activities
-                  end
+                 when 'tickets'
+                   ticket_activities
+                 when 'archived_tickets'
+                   @type = 'archive_tickets'
+                   ticket_activities
+                 when 'forums'
+                   forum_activities
+                 else
+                   combined_activities
+                 end
     activities = decorate_activites(activities)
     @activities = activities.each_with_object({}) do |a, ret|
       (ret[a.delete(:activity_type).to_sym.downcase] ||= []).push(a)
@@ -26,7 +26,7 @@ module CustomerActivityConcern
   private
 
     def ticket_scope
-      @item.is_a?(User) ? "all_user_tickets" : "all_company_tickets"
+      @item.is_a?(User) ? 'all_user_tickets' : 'all_company_tickets'
     end
 
     def ticket_preload_options
@@ -65,10 +65,10 @@ module CustomerActivityConcern
     def decorate_activites(activities)
       activities.map do |act|
         case act.class.name
-          when "Helpdesk::Ticket", "Helpdesk::ArchiveTicket"
-            TicketDecorator.new(act, {}).to_activity_hash
-          when "Post"
-            Discussions::CommentDecorator.new(act, {}).to_activity_hash
+        when 'Helpdesk::Ticket', 'Helpdesk::ArchiveTicket'
+          TicketDecorator.new(act, {}).to_activity_hash
+        when 'Post'
+          Discussions::CommentDecorator.new(act, {}).to_activity_hash
         end
       end
     end

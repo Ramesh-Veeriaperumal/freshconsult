@@ -7,7 +7,7 @@ class SlaPolicyDelegator < BaseDelegator
       invalid_company_ids = company_ids - Account.current.companies.where(id: company_ids).pluck(:id)
       if invalid_company_ids.present?
         errors[:company_ids] << :invalid_list
-        @error_options = { company_ids: { list: "#{invalid_company_ids.join(', ')}" } }
+        @error_options = { company_ids: { list: invalid_company_ids.join(', ').to_s } }
       end
     else
       errors[:company_ids] << :blank if conditions.empty?

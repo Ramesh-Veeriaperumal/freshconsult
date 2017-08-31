@@ -7,6 +7,7 @@ module Ember
     end
 
     private
+
       def load_objects
         @items = current_account.portals.all
       end

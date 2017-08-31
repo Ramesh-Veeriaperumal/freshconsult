@@ -1,6 +1,6 @@
 class TimeEntryDecorator < ApiDecorator
   delegate :id, :billable, :note, :timer_running, :time_spent, :executed_at, :start_time, :created_at, :updated_at, :user_id, to: :record
-  
+
   class << self
     def format_time_spent(time_spent)
       if time_spent.is_a? Numeric
@@ -11,12 +11,12 @@ class TimeEntryDecorator < ApiDecorator
       end
     end
   end
-  
+
   def initialize(record, options)
     super
     @ticket = options[:ticket]
   end
-  
+
   def to_hash
     {
       billable: billable,

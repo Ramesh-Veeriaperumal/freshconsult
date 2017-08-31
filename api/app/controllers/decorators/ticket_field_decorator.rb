@@ -1,5 +1,5 @@
 class TicketFieldDecorator < ApiDecorator
-  delegate :id, :default, :description, :label, :position, :required_for_closure,
+  delegate :id, :default, :description, :label, :position, :required_for_closure, :has_section?,
            :field_type, :required, :required_in_portal, :label_in_portal, :editable_in_portal, :visible_in_portal,
            :level, :ticket_field_id, :picklist_values, to: :record
 
@@ -13,15 +13,11 @@ class TicketFieldDecorator < ApiDecorator
   def portalcc_to
     record.field_options.try(:[], 'portalcc_to')
   end
-  
-  def has_section?
-    record.has_section?
-  end
-  
+
   def belongs_to_section?
     record.field_options.try(:[], 'section').present?
   end
-  
+
   def default_requester?
     @field_type ||= field_type == 'default_requester'
   end
@@ -73,27 +69,27 @@ class TicketFieldDecorator < ApiDecorator
     # Many of these are fetched from cache, which will not work properly in production
     # TODO-EMBER Fix caching issue
     @choices_by_id ||= case record.field_type
-      when 'custom_dropdown'
-        choices_by_id(Hash[record.picklist_values.map { |pv| [pv.id, pv.value] }])
-      when 'nested_field'
-        nested_field_choices_by_id(record.picklist_values)
-      when *DEFAULT_FIELDS
-        send(:"#{record.field_type}_choices")
-      else
-        []
-    end
+                       when 'custom_dropdown'
+                         choices_by_id(Hash[record.picklist_values.map { |pv| [pv.id, pv.value] }])
+                       when 'nested_field'
+                         nested_field_choices_by_id(record.picklist_values)
+                       when *DEFAULT_FIELDS
+                         send(:"#{record.field_type}_choices")
+                       else
+                         []
+                       end
   end
 
   private
 
     def nested_field_choices_by_id(pvs)
-      pvs.collect { |c|
+      pvs.collect do |c|
         {
           label: c.value,
           value: c.value,
           choices: nested_field_choices_by_id(c.sub_picklist_values)
         }
-      }
+      end
     end
 
     def choices_by_id(list)
@@ -104,7 +100,7 @@ class TicketFieldDecorator < ApiDecorator
         }
       end
     end
-    
+
     def choices_by_name_id(list)
       list.map do |item|
         {
@@ -135,10 +131,8 @@ class TicketFieldDecorator < ApiDecorator
     def default_status_choices
       # TODO-EMBER This is a cached method. Not expected work properly in production
       Helpdesk::TicketStatus.statuses_list(Account.current).map do |status|
-        status.slice(:customer_display_name, :stop_sla_timer, :deleted , :group_ids).merge({
-          label: status[:name],
-          value: status[:status_id]
-          })
+        status.slice(:customer_display_name, :stop_sla_timer, :deleted, :group_ids).merge(label: status[:name],
+                                                                                          value: status[:status_id])
       end
     end
 

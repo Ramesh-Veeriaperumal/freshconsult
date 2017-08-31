@@ -24,7 +24,7 @@ class ApiSlaPoliciesController < ApiApplicationController
     end
 
     def validate_params
-      params[cname].permit(*(SlaPolicyConstants::UPDATE_FIELDS))
+      params[cname].permit(*SlaPolicyConstants::UPDATE_FIELDS)
       sla_policy = ApiSlaPolicyValidation.new(params[cname], @item)
       render_errors sla_policy.errors, sla_policy.error_options unless sla_policy.valid?
     end

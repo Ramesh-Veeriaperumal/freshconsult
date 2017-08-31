@@ -1,19 +1,19 @@
 class ExportCsvValidation < ApiValidation
   attr_accessor :default_fields, :custom_fields
-  
-  validates :default_fields, 
-    data_type: { rules: Array, allow_nil: false }, 
-    array: { 
-      data_type: { rules: String }, 
-      custom_inclusion: { in: proc { |x| x.default_field_names } }
-    }
 
-  validates :custom_fields, 
-    data_type: { rules: Array, allow_nil: false }, 
-    array: { 
-      data_type: { rules: String }, 
-      custom_inclusion: { in: proc { |x| x.custom_field_names } }
-    }
+  validates :default_fields,
+            data_type: { rules: Array, allow_nil: false },
+            array: {
+              data_type: { rules: String },
+              custom_inclusion: { in: proc { |x| x.default_field_names } }
+            }
+
+  validates :custom_fields,
+            data_type: { rules: Array, allow_nil: false },
+            array: {
+              data_type: { rules: String },
+              custom_inclusion: { in: proc { |x| x.custom_field_names } }
+            }
 
   validate :validate_request_params, if: -> { errors.blank? }
 

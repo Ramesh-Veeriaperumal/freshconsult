@@ -17,7 +17,7 @@ class SearchUrlValidation < ApiValidation
       errors[:query] << :query_format_invalid
     else
       begin
-        @query = @parser.parse(@query[1, query.length-2].strip)
+        @query = @parser.parse(@query[1, query.length - 2].strip)
       rescue Exception => e
         errors[:query] << :query_format_invalid
       end

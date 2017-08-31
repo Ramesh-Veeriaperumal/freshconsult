@@ -1,7 +1,6 @@
 module Ember
   module Search
     class TicketsController < SpotlightController
-
       def results
         @tracker = params[:context] == 'tracker'
         @recent_tracker = params[:context] == 'recent_tracker'
@@ -21,20 +20,20 @@ module Ember
           @klasses = ['Helpdesk::Ticket']
 
           @search_context = case @search_field
-            when 'display_id'
-              @search_sort = 'display_id'
-              @sort_direction = 'asc'
-              @tracker ? :assoc_tickets_display_id : :merge_display_id
-            when 'subject'
-              @search_sort = 'created_at'
-              @sort_direction = 'desc'
-              @tracker ? :assoc_tickets_subject : :merge_subject
-            when 'requester'
-              @search_sort = 'created_at'
-              @sort_direction = 'desc'
-              @requester_ids = params[:requester_ids] if params[:requester_ids].present?
-              @tracker ? :assoc_tickets_requester : :merge_requester
-            end
+                            when 'display_id'
+                              @search_sort = 'display_id'
+                              @sort_direction = 'asc'
+                              @tracker ? :assoc_tickets_display_id : :merge_display_id
+                            when 'subject'
+                              @search_sort = 'created_at'
+                              @sort_direction = 'desc'
+                              @tracker ? :assoc_tickets_subject : :merge_subject
+                            when 'requester'
+                              @search_sort = 'created_at'
+                              @sort_direction = 'desc'
+                              @requester_ids = params[:requester_ids] if params[:requester_ids].present?
+                              @tracker ? :assoc_tickets_requester : :merge_requester
+                            end
         elsif @recent_tracker
           @search_sort      = 'created_at'
           @sort_direction   = 'desc'
@@ -44,7 +43,7 @@ module Ember
 
         @items = esv2_query_results(esv2_agent_models)
         response.api_meta = { count: @items.total_entries }
-        @items.reject! { |x| x.nil? }
+        @items.reject!(&:nil?)
       end
 
       private
@@ -105,7 +104,7 @@ module Ember
         def map_date
           @filter_params[:created_at] = @filter_params[:created_at].to_i.days.ago.beginning_of_day.to_s
         end
-          
+
         def cf_alias_mapping
           @cf_mapping ||= Account.current.ticket_field_def.ff_alias_column_mapping
         end

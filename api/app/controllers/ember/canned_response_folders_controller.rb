@@ -53,7 +53,7 @@ module Ember
       def fetch_ca_responses_from_db(folder_id = nil)
         options = folder_id ? [{ folder_id: folder_id }] : [nil, [:folder]]
         ca_responses = accessible_elements(current_account.canned_responses,
-            query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', *options))
+                                           query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', *options))
         (ca_responses || []).compact
       end
 

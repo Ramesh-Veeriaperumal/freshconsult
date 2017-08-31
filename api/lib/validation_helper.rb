@@ -29,6 +29,5 @@ class ValidationHelper
     def attachment_size(item)
       item.try(:attachments).try(:sum, &:content_file_size).to_i
     end
-
   end
 end
