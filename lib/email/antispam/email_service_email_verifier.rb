@@ -27,11 +27,11 @@ module Email::Antispam
 
       def validate_request(account_id, account_name, account_domain)
         @parameters = construct_params(account_name, account_domain)
-        headers = { "Authorization"  => EmailDelivery::EMAIL_SERVICE_AUTHORISATION_KEY, "Content-Type" => "application/json" }
+        headers = { "Authorization"  => Email::EmailService::EmailDelivery::EMAIL_SERVICE_AUTHORISATION_KEY, "Content-Type" => "application/json" }
         parsed_response = {}
         begin
-          Timeout.timeout(EmailDelivery::EMAIL_SERVICE_TIMEOUT) do 
-            response = HTTParty.send('post', "#{EmailDelivery::EMAIL_SERVICE_HOST}/#{EmailDelivery::ACCOUNT_VALIDATE_URLPATH}", :body => @parameters,:headers => headers)
+          Timeout.timeout(Email::EmailService::EmailDelivery::EMAIL_SERVICE_TIMEOUT) do 
+            response = HTTParty.send('post', "#{Email::EmailService::EmailDelivery::EMAIL_SERVICE_HOST}/#{Email::EmailService::EmailDelivery::ACCOUNT_VALIDATE_URLPATH}", :body => @parameters,:headers => headers)
             Rails.logger.info "Response from EmailServ for parameters :#{@parameters.inspect}  ---  #{response.body}"
             parsed_response = parse_response(response.body)
           end
