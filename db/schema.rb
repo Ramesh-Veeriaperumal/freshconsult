@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170715062914) do
+ActiveRecord::Schema.define(:version => 20170829152515) do
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -1488,6 +1488,16 @@ ActiveRecord::Schema.define(:version => 20170715062914) do
   add_index "free_account_jobs", ["pod_info"], :name => "index_free_account_jobs_on_pod_info"
   add_index "free_account_jobs", ["account_id"], :name => "index_free_account_jobs_on_account_id"
 
+  create_table "freshcaller_accounts", :force => true do |t|
+    t.integer  "account_id",             :limit => 8
+    t.integer  "freshcaller_account_id", :limit => 8
+    t.string   "domain"
+    t.datetime "created_at",                          :null => false
+    t.datetime "updated_at",                          :null => false
+  end
+
+  add_index "freshcaller_accounts", ["account_id"], :name => "index_freshcaller_accounts_on_account_id"
+
   create_table "freshfone_accounts", :force => true do |t|
     t.integer  "account_id",              :limit => 8
     t.string   "friendly_name"
@@ -1547,6 +1557,17 @@ ActiveRecord::Schema.define(:version => 20170715062914) do
     t.datetime "created_at",               :null => false
     t.datetime "updated_at",               :null => false
   end
+  
+  create_table "freshcaller_agents", :force => true do |t|
+    t.integer  "account_id",  :limit => 8
+    t.integer  "agent_id",    :limit => 8
+    t.integer  "fc_agent_id", :limit => 8
+    t.boolean  "fc_enabled",               :default => false
+    t.datetime "created_at",                                  :null => false
+    t.datetime "updated_at",                                  :null => false
+  end
+
+  add_index "freshcaller_agents", ["account_id", "agent_id"], :name => "index_freshcaller_agents_on_account_id_and_agent_id"
 
   add_index "freshfone_caller_ids", ["account_id"], :name => "index_freshfone_caller_ids_on_account_id"
 

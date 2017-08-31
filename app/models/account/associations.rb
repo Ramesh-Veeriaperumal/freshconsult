@@ -267,6 +267,7 @@ class Account < ActiveRecord::Base
   delegate :active_groups_in_account, :to => :groups, :allow_nil => true
   #Freshfone
   has_one  :freshfone_account, :class_name => 'Freshfone::Account', :dependent => :destroy
+  has_one  :freshcaller_account, :class_name => 'Freshcaller::Account', :dependent => :destroy
   has_many :freshfone_numbers, :conditions =>{:deleted => false}, :class_name => "Freshfone::Number"
   has_many :all_freshfone_numbers, :class_name => 'Freshfone::Number', :dependent => :delete_all
   has_many :ivrs, :class_name => 'Freshfone::Ivr'

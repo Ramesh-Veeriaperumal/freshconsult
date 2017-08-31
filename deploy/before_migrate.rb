@@ -19,6 +19,7 @@ run "ln -nfs #{shared_path}/config/text_datastore.yml #{node[:rel_path]}/config/
 run "ln -nfs #{shared_path}/config/mailgun.yml #{node[:rel_path]}/config/mailgun.yml"
 run "ln -nfs #{shared_path}/config/mailbox.yml #{node[:rel_path]}/config/mailbox.yml"
 run "ln -nfs #{shared_path}/config/freshfone.yml #{node[:rel_path]}/config/freshfone.yml"
+run "ln -nfs #{shared_path}/config/freshcaller.yml #{node[:rel_path]}/config/freshcaller.yml"
 run "ln -nfs #{shared_path}/config/rate_limit.yml #{node[:rel_path]}/config/rate_limit.yml"
 run "ln -nfs #{shared_path}/config/re_route_mapping.yml #{node[:rel_path]}/config/re_route_mapping.yml"
 run "ln -nfs #{shared_path}/config/akismet.yml #{node[:rel_path]}/config/akismet.yml"

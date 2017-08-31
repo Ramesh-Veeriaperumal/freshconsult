@@ -1108,6 +1108,12 @@ Helpkit::Application.routes.draw do
   match '/http_request_proxy/fetch',
       :controller => 'http_request_proxy', :action => 'fetch', :as => :http_proxy
   match '/mkp/data-pipe.:format', :controller => 'integrations/data_pipe', :action => 'router', :method => :post, :as => :data_pipe
+
+  constraints RouteConstraints::Freshcaller.new do
+    match '/admin/phone', controller: 'admin/freshcaller', action: 'index'
+    match '/admin/phone/redirect_to_freshcaller', controller: 'admin/freshcaller', action: 'redirect_to_freshcaller'
+  end
+
   namespace :admin do
     resources :home, :only => :index
     resources :contact_fields, :only => :index do
@@ -3001,6 +3007,7 @@ Helpkit::Application.routes.draw do
           put :launch_feature
           get :launched_feature_details
           put :activate_onboarding
+          post :freshcaller_migration
         end
       end
 

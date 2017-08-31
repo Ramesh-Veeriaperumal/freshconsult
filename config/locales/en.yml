@@ -9864,6 +9864,11 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       save: "Save"
       call_notes: "notes"
       notes: "Notes"
+  freshcaller:
+    admin:
+      title_text: "Freshcaller"
+      manage_settings_text: "Manage settings at Freshcaller"
+
   freshfone:
     recording_on_process: "The recording is being processed. <a href='#' target='_parent' id='checkfreshfoneaudio'>Check</a> again in a few minutes"
     not_enough_credit: "Not Enough Credit!"
