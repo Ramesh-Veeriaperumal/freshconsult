@@ -1,7 +1,6 @@
 module Ember
   module Search
     class TopicsController < SpotlightController
-
       def results
         @klasses = ['Topic']
         @category_id = params[:category_id].to_i if params[:category_id].present?

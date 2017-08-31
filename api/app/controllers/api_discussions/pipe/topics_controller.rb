@@ -1,6 +1,5 @@
 module ApiDiscussions::Pipe
   class TopicsController < ApiDiscussions::TopicsController
-
     def create
       user_id = params[cname][:user_id]
       @item.user_id = user_id
@@ -22,7 +21,7 @@ module ApiDiscussions::Pipe
 
       def validate_params
         return false if create? && !load_forum
-        params[cname].permit(*(get_fields("DiscussionConstants::PIPE_CREATE_TOPIC_FIELDS")))
+        params[cname].permit(*get_fields('DiscussionConstants::PIPE_CREATE_TOPIC_FIELDS'))
         @topic_validation = ApiDiscussions::Pipe::TopicValidation.new(params[cname], @item)
         valid = @topic_validation.valid?
         render_errors @topic_validation.errors, @topic_validation.error_options unless valid

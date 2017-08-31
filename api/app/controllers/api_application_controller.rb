@@ -11,7 +11,7 @@ class ApiApplicationController < MetalApiController
 
   protect_from_forgery
   skip_before_filter :verify_authenticity_token
-  before_filter :verify_authenticity_token, :if => :csrf_check_reqd?
+  before_filter :verify_authenticity_token, if: :csrf_check_reqd?
 
   # Do not change the order as record_not_unique is inheriting from statement invalid error
   rescue_from ActiveRecord::RecordNotUnique, with: :duplicate_value_error
@@ -136,7 +136,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def render_500(e)
-      fail e if Rails.env.development? || Rails.env.test?
+      raise e if Rails.env.development? || Rails.env.test?
       notify_new_relic_agent(e, description: 'Error occured while processing api request')
       Rails.logger.error("API 500 error: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
       render_base_error(:internal_error, 500)
@@ -375,7 +375,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def nscname # namespaced controller name
-      controller_path.gsub(/pipe\/|channel\//, '').gsub('/', '_').singularize
+      controller_path.gsub(/pipe\/|channel\//, '').tr('/', '_').singularize
     end
 
     def set_custom_errors(_item = @item)
@@ -449,11 +449,11 @@ class ApiApplicationController < MetalApiController
       if $infra['PRIVATE_API'] || (get_request? && !request.authorization)
         session_auth
       else
-         if current_account.launched? :api_jwt_auth and request.env["HTTP_AUTHORIZATION"][/^Token (.*)/]
+        if current_account.launched?(:api_jwt_auth) && request.env['HTTP_AUTHORIZATION'][/^Token (.*)/]
           # authenticate using JWT token
           authenticate_with_http_token do |token|
-              @current_user = FdJWTAuth.new(token).decode_jwt_token
-            end
+            @current_user = FdJWTAuth.new(token).decode_jwt_token
+          end
         else
           basic_auth
         end
@@ -571,7 +571,7 @@ class ApiApplicationController < MetalApiController
     def paginate_options(is_array = false)
       options = {}
       @per_page = per_page # user given/defualt page number
-      options[:per_page] =  is_array ? @per_page : @per_page + 1 # + 1 to find next link unless scoper is array
+      options[:per_page] = is_array ? @per_page : @per_page + 1 # + 1 to find next link unless scoper is array
       options[:offset] = @per_page * (page - 1) unless is_array # assign offset unless scoper is array
       options[:page] = page
       options[:total_entries] = options[:page] * options[:per_page] unless is_array # To prevent paginate from firing count query unless scoper is array
@@ -664,7 +664,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def notify_new_relic_agent(exception, custom_params = {})
-      options_hash =  { uri: request.original_url, custom_params: custom_params.merge(method: request.method, params: params, x_request_id: request.uuid) }
+      options_hash = { uri: request.original_url, custom_params: custom_params.merge(method: request.method, params: params, x_request_id: request.uuid) }
       NewRelic::Agent.notice_error(exception, options_hash)
     end
 
@@ -708,19 +708,19 @@ class ApiApplicationController < MetalApiController
 
     def handle_unverified_request
       render_request_error :invalid_credentials, 401
-      #TODO-EMBERAPI Need to decide what exactly to send back
+      # TODO-EMBERAPI Need to decide what exactly to send back
     end
 
     def set_root_key
       return unless params[:version] == 'private' && response.api_root_key.blank?
-      case action_name
-      when *self.class::SINGULAR_RESPONSE_FOR
-        response.api_root_key = api_root_key.singularize
-      when *self.class::COLLECTION_RESPONSE_FOR
-        response.api_root_key = api_root_key.pluralize
-      else
-        response.api_root_key = :data
-      end
+      response.api_root_key = case action_name
+                              when *self.class::SINGULAR_RESPONSE_FOR
+                                api_root_key.singularize
+                              when *self.class::COLLECTION_RESPONSE_FOR
+                                api_root_key.pluralize
+                              else
+                                :data
+                              end
     end
 
     def api_root_key
@@ -742,7 +742,7 @@ class ApiApplicationController < MetalApiController
       head 404
     end
 
-    def run_on_db(&block)
+    def run_on_db
       db_type = current_account.master_queries? ? :run_on_master : :run_on_slave
       Sharding.send(db_type) do
         yield

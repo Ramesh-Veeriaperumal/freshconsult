@@ -1,16 +1,15 @@
 class Ember::ContactValidation < ContactValidation
-
   attr_accessor :company
 
   def check_duplicates_multiple_companies
-    ids = other_companies.collect{|x| x[:id]}.compact
-    if company && ids.any?{|id| id == company[:id]}
+    ids = other_companies.collect { |x| x[:id] }.compact
+    if company && ids.any? { |id| id == company[:id] }
       errors[:other_companies] << :cant_add_primary_resource_to_others
       self.error_options.merge!(other_companies: {
-        resource: "#{company[:id]}",
-        status: "default company",
-        attribute: 'other_companies'
-      })
+                                  resource: company[:id].to_s,
+                                  status: 'default company',
+                                  attribute: 'other_companies'
+                                })
     elsif ids.length != ids.uniq.length
       errors[:other_companies] << :duplicate_companies
     end
@@ -21,7 +20,7 @@ class Ember::ContactValidation < ContactValidation
   end
 
   def other_companies_format
-     {
+    {
       id: {
         custom_numericality: {
           ignore_string: :allow_string_param,
@@ -46,5 +45,4 @@ class Ember::ContactValidation < ContactValidation
   def view_all_tickets_present?
     false
   end
-
 end

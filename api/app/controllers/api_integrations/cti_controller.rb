@@ -19,14 +19,14 @@ module ApiIntegrations
 
       def validate_params
         allowed_fields = nil
-        if params[cname][:call_info].is_a?(Hash)
-          allowed_fields = ApiIntegrations::CtiConstants::SCREEN_POP_FIELDS | [call_info: params[cname][:call_info].keys] # small hack to allow dynamic hashes
-        else
-          allowed_fields = ApiIntegrations::CtiConstants::SCREEN_POP_FIELDS | [:call_info]
-        end
-        params[cname].permit(*(allowed_fields))
+        allowed_fields = if params[cname][:call_info].is_a?(Hash)
+                           ApiIntegrations::CtiConstants::SCREEN_POP_FIELDS | [call_info: params[cname][:call_info].keys] # small hack to allow dynamic hashes
+                         else
+                           ApiIntegrations::CtiConstants::SCREEN_POP_FIELDS | [:call_info]
+                         end
+        params[cname].permit(*allowed_fields)
         cti_call = ApiIntegrations::CtiValidation.new(params[cname], @item)
-        render_custom_errors(cti_call, true)  unless cti_call.valid?
+        render_custom_errors(cti_call, true) unless cti_call.valid?
       end
 
       def validate_filter_params

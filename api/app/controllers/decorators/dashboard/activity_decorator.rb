@@ -92,7 +92,7 @@ class Dashboard::ActivityDecorator < ApiDecorator
       title: record.notable.nil? ? record.activity_data[:title] : h(record.notable),
       performer: performer,
       performed_at: Time.at(created_at.to_i).utc,
-      actions: user_actions.reject { |action| action.empty? }
+      actions: user_actions.reject(&:empty?)
     }
   end
 
@@ -156,7 +156,7 @@ class Dashboard::ActivityDecorator < ApiDecorator
   def activity_name
     action_long = description.split(ACTIVITIES_PREFIX)
     action = action_long[1].chomp('.long').chomp('_none')
-    action.gsub!('.', '_')
+    action.tr!('.', '_')
   end
 
   # Ticket Methods

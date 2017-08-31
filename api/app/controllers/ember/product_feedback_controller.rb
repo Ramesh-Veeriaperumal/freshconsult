@@ -18,7 +18,7 @@ class Ember::ProductFeedbackController < ApiApplicationController
       description = simple_format(params[:description]) +
                     '<br><br>'.html_safe +
                     account_details.html_safe
-      
+
       {
         email: current_user.email,
         subject: "Falcon feedback from #{current_user.name}(#{current_user.email})",

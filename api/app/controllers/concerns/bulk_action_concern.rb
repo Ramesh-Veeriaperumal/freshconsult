@@ -42,19 +42,19 @@ module BulkActionConcern
     end
 
     def retrieve_error_code(id)
-      ret_hash = { :id => id, :errors => {}, :error_options => {} }
+      ret_hash = { id: id, errors: {}, error_options: {} }
       if bulk_action_failed_items.include?(id)
         if @validation_errors && @validation_errors.key?(id)
           ret_hash[:validation_errors] = @validation_errors[id]
         else
-          ret_hash[:errors].merge!({:id => :unable_to_perform })
+          ret_hash[:errors][:id] = :unable_to_perform
         end
       elsif !bulk_action_succeeded_items.include?(id)
-        ret_hash[:errors].merge!({:id => :"is invalid" })
+        ret_hash[:errors][:id] = :"is invalid"
       else
         return {}
       end
-      return ret_hash
+      ret_hash
     end
 
     def bulk_action_succeeded_items
@@ -66,8 +66,8 @@ module BulkActionConcern
     end
 
     def id_param
-      @identifier ||= (@items || @items_failed || []).first.is_a?(Helpdesk::Ticket) ? (:display_id) : (:id)
-    end 
+      @identifier ||= (@items || @items_failed || []).first.is_a?(Helpdesk::Ticket) ? :display_id : :id
+    end
 
     def async_process?
       ApiConstants::BULK_ACTION_ASYNC_METHODS.include?(action_name.to_sym)

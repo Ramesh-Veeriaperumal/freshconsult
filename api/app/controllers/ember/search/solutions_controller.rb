@@ -1,13 +1,12 @@
 module Ember
   module Search
     class SolutionsController < SpotlightController
-
       ROOT_KEY = :article
 
       def results
         @klasses = ['Solution::Article']
-        @category_id  = params[:category_id].to_i if params[:category_id].present?
-        @folder_id  = params[:folder_id].to_i if params[:folder_id].present?
+        @category_id = params[:category_id].to_i if params[:category_id].present?
+        @folder_id = params[:folder_id].to_i if params[:folder_id].present?
         @sort_direction = 'desc'
         @search_sort  = params[:search_sort] if params[:search_sort].present?
         @language_id  = params[:language] if params[:language].present? && current_account.es_multilang_soln?
@@ -19,7 +18,7 @@ module Ember
           @search_context = :agent_insert_solution
         end
 
-        @items  = esv2_query_results(esv2_agent_models)
+        @items = esv2_query_results(esv2_agent_models)
         response.api_meta = { count: @items.total_entries }
       end
 
@@ -27,7 +26,7 @@ module Ember
 
         def decorator_options
           options = {}
-          options.merge!(user: @user) if @user
+          options[:user] = @user if @user
           [::Solutions::ArticleDecorator, options]
         end
 

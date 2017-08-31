@@ -1,5 +1,5 @@
 class ApiSolutions::CategoryValidation < ApiValidation
-	CHECK_PARAMS_SET_FIELDS = %w(visible_in_portals).freeze
+  CHECK_PARAMS_SET_FIELDS = %w(visible_in_portals).freeze
   attr_accessor :name, :description, :visible_in_portals
   validates :name, data_type: { rules: String, required: true }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :description, data_type: { rules: String, allow_nil: true }

@@ -4,5 +4,4 @@ class CannedResponses::FolderDecorator < ApiDecorator
   def name
     record.display_name
   end
-
 end

@@ -11,7 +11,7 @@ module ApiIntegrations
 
     validates :requester_phone, :responder_phone, :call_url, :requester_unique_external_id, :requester_email,
               :responder_unique_external_id, :responder_email,
-              data_type: {rules: String, allow_nil: false }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
+              data_type: { rules: String, allow_nil: false }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
 
     validates :responder_id, :requester_id, :ticket_id, custom_numericality: { only_integer: true }, allow_nil: true
     validates :call_reference_id, data_type: { rules: String, required: true }

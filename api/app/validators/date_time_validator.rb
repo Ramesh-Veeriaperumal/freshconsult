@@ -1,14 +1,14 @@
 class DateTimeValidator < ApiValidator
-  ISO_DATE_DELIMITER     = 'T'
-  TIME_EXCEPTION_MSG     = 'invalid_sec_or_zone'
-  UNHANDLED_HOUR_VALUE   = '24'
-  UNHANDLED_SECOND_VALUE = ':60'
-  ZONE_PLUS_PREFIX       = '+'
-  ZONE_MINUS_PREFIX      = '-'
-  ISO_TIME_DELIMITER     = ':'
-  FORMAT_EXCEPTION_MSG   = 'invalid_format'
-  DATE_FORMAT            = 'yyyy-mm-dd'
-  DATE_TIME_FORMAT       = 'yyyy-mm-ddThh:mm:ss±hh:mm'
+  ISO_DATE_DELIMITER     = 'T'.freeze
+  TIME_EXCEPTION_MSG     = 'invalid_sec_or_zone'.freeze
+  UNHANDLED_HOUR_VALUE   = '24'.freeze
+  UNHANDLED_SECOND_VALUE = ':60'.freeze
+  ZONE_PLUS_PREFIX       = '+'.freeze
+  ZONE_MINUS_PREFIX      = '-'.freeze
+  ISO_TIME_DELIMITER     = ':'.freeze
+  FORMAT_EXCEPTION_MSG   = 'invalid_format'.freeze
+  DATE_FORMAT            = 'yyyy-mm-dd'.freeze
+  DATE_TIME_FORMAT       = 'yyyy-mm-ddThh:mm:ss±hh:mm'.freeze
   DATE_TIME_REGEX        = /^\d{4}-\d{2}-\d{2}/
   DATE_REGEX             = /^\d{4}-\d{2}-\d{2}$/
 
@@ -42,13 +42,13 @@ class DateTimeValidator < ApiValidator
       DateTime.iso8601(value) && DateTime.parse(value) && iso8601_format
       parse_sec_hour_and_zone(get_time_and_zone) if time_info? # avoid extra call if only date is present
       return true
-      rescue => e
-        Rails.logger.error("API Parse Time Error Value: #{value} Exception: #{e.class} Exception Message: #{e.message}")
-        return false
+    rescue => e
+      Rails.logger.error("API Parse Time Error Value: #{value} Exception: #{e.class} Exception Message: #{e.message}")
+      return false
     end
 
     def iso8601_format
-      fail(ArgumentError, FORMAT_EXCEPTION_MSG) unless value =~ date_time_regex_for_value
+      raise(ArgumentError, FORMAT_EXCEPTION_MSG) unless value =~ date_time_regex_for_value
       true
     end
 
@@ -65,7 +65,7 @@ class DateTimeValidator < ApiValidator
     end
 
     def parse_sec_hour_and_zone(tz_value) # time_and_zone_value
-      fail(ArgumentError, TIME_EXCEPTION_MSG) unless valid_time(tz_value) && valid_zone(tz_value)
+      raise(ArgumentError, TIME_EXCEPTION_MSG) unless valid_time(tz_value) && valid_zone(tz_value)
     end
 
     def valid_time(tz_value)

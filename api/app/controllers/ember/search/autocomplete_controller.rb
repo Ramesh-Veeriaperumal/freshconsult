@@ -12,7 +12,7 @@ module Ember
         search(esv2_autocomplete_models) do |results|
           response.api_meta = { count: results.total_entries }
           results.each do |result|
-            @items.push(*result.search_data)
+            @items.concat(result.search_data)
           end
         end
         response.api_root_key = :contacts
@@ -26,12 +26,12 @@ module Ember
         search(esv2_autocomplete_models) do |results|
           response.api_meta = { count: results.total_entries }
           results.each do |result|
-            @items.push(*[{
-              id: result.email,
-              value: result.name,
-              user_id: result.id,
-              profile_img: result.avatar.nil? ? false : result.avatar.expiring_url(:thumb, 300)
-            }])
+            @items.concat([{
+                            id: result.email,
+                            value: result.name,
+                            user_id: result.id,
+                            profile_img: result.avatar.nil? ? false : result.avatar.expiring_url(:thumb, 300)
+                          }])
           end
         end
 
@@ -46,10 +46,10 @@ module Ember
         search(esv2_autocomplete_models) do |results|
           response.api_meta = { count: results.total_entries }
           results.each do |result|
-            @items.push(*[{
-              id: result.id,
-              value: result.name
-            }])
+            @items.concat([{
+                            id: result.id,
+                            value: result.name
+                          }])
           end
         end
 
@@ -64,9 +64,9 @@ module Ember
         search(esv2_autocomplete_models) do |results|
           response.api_meta = { count: results.total_entries }
           results.each do |result|
-            @items.push(*[{
-              id: result.id, value: result.name
-            }])
+            @items.concat([{
+                            id: result.id, value: result.name
+                          }])
           end
         end
 
@@ -74,19 +74,17 @@ module Ember
       end
 
       def company_users
-
       end
 
       private
 
         def esv2_autocomplete_models
           @@esv2_agent_autocomplete ||= {
-            'user'    => { model: 'User',           associations: [{ :account => :features }, :user_emails] },
+            'user'    => { model: 'User',           associations: [{ account: :features }, :user_emails] },
             'company' => { model: 'Company',        associations: [] },
             'tag'     => { model: 'Helpdesk::Tag',  associations: [] }
           }
         end
-
     end
   end
 end

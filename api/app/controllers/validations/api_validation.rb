@@ -4,13 +4,13 @@ class ApiValidation
   attr_accessor :error_options, :allow_string_param, :ids, :attachment_ids, :skip_bulk_validations, :skip_hash_params_set
 
   before_validation :trim_attributes
-  validates :ids, required: true, data_type: { rules: Array, allow_nil: false }, 
-            array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false, ignore_string: :allow_string_param} },
-            custom_length: { maximum: ApiConstants::MAX_ITEMS_FOR_BULK_ACTION, message_options: { element_type: :values } }, if: :is_bulk_action?, unless: :skip_bulk_validations
-  validates :attachment_ids, data_type: { rules: Array, allow_nil: false }, array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false, ignore_string: :allow_string_param} }
+  validates :ids, required: true, data_type: { rules: Array, allow_nil: false },
+                  array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false, ignore_string: :allow_string_param } },
+                  custom_length: { maximum: ApiConstants::MAX_ITEMS_FOR_BULK_ACTION, message_options: { element_type: :values } }, if: :is_bulk_action?, unless: :skip_bulk_validations
+  validates :attachment_ids, data_type: { rules: Array, allow_nil: false }, array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false, ignore_string: :allow_string_param } }
 
-  FORMATTED_TYPES = [ActiveSupport::TimeWithZone]
-  CHECK_PARAMS_SET_FIELDS = []
+  FORMATTED_TYPES = [ActiveSupport::TimeWithZone].freeze
+  CHECK_PARAMS_SET_FIELDS = [].freeze
 
   # Set instance variables of validation class from request params or items. so that manual assignment is not needed.
   def initialize(request_params, item = nil, allow_string_param = false)

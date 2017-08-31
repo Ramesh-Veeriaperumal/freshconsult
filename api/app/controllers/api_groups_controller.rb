@@ -27,7 +27,7 @@ class ApiGroupsController < ApiApplicationController
 
     def validate_params
       group_params = Account.current.features?(:round_robin) ? GroupConstants::FIELDS : GroupConstants::FIELDS_WITHOUT_TICKET_ASSIGN
-      params[cname].permit(*(group_params))
+      params[cname].permit(*group_params)
       group = ApiGroupValidation.new(params[cname], @item)
       render_errors group.errors, group.error_options unless group.valid?
     end

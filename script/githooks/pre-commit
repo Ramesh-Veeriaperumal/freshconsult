@@ -70,7 +70,7 @@ do
     else
       while [ $noOfLines -gt 0 ]
       do
-        echo "$currentFileName:$currentLine:" >> $changedLinesFile
+        echo "$currentFileName:$currentLine: C:" >> $changedLinesFile
         currentLine=`expr $currentLine + 1`
         noOfLines=`expr $noOfLines - 1`
       done

@@ -2,7 +2,6 @@ class ContactFilterValidation < FilterValidation
   attr_accessor :state, :phone, :mobile, :email, :company_id, :conditions, :tag, :_updated_since, :unique_external_id,
                 :include, :include_array
 
-
   validates :state, custom_inclusion: { in: ContactConstants::STATES }
   validates :email, data_type: { rules: String }
   validates :email, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, accepted: :'valid email address', allow_nil: true }
@@ -29,7 +28,7 @@ class ContactFilterValidation < FilterValidation
   end
 
   def check_unique_external_id
-    errors[:unique_external_id] << :"can't be used" if !Account.current.unique_contact_identifier_enabled?
+    errors[:unique_external_id] << :"can't be used" unless Account.current.unique_contact_identifier_enabled?
   end
 
   def validate_include
@@ -39,5 +38,4 @@ class ContactFilterValidation < FilterValidation
       (self.error_options ||= {}).merge!(include: { list: ContactConstants::SIDE_LOADING.join(', ') })
     end
   end
-
 end

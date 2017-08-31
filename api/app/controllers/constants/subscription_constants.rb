@@ -5,7 +5,7 @@ module SubscriptionConstants
   WRAP_PARAMS = [:subscription, exclude: [], format: [:json]].freeze
 
   TICKET_PERMISSION_REQUIRED = [:watch, :unwatch, :watchers].freeze
-   # Routes that doesn't accept any params
+  # Routes that doesn't accept any params
   NO_PARAM_ROUTES = %w(unwatch).freeze
 
   NO_CONTENT_TYPE_REQUIRED = [:watch, :unwatch].freeze
@@ -14,7 +14,6 @@ module SubscriptionConstants
 
   LOAD_OBJECT_EXCEPT = BULK_ACTION_METHODS.freeze
 
-  VALIDATION_CLASS = 'SubscriptionValidation'
-  DELEGATOR_CLASS = 'SubscriptionDelegator'
-
+  VALIDATION_CLASS = 'SubscriptionValidation'.freeze
+  DELEGATOR_CLASS = 'SubscriptionDelegator'.freeze
 end.freeze

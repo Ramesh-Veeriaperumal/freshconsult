@@ -6,7 +6,7 @@ module ApiSolutions
     validates :category_name, custom_absence: { message: :translation_available_already }, if: -> { secondary_language? && category_exists? }
     validates :folder_name, required: { message: :translation_not_available }, if: -> { secondary_language? && !folder_exists? }
     validates :category_name, required: { message: :translation_not_available }, if: -> { secondary_language? && !category_exists? }
-    
+
     def initialize(params)
       @agent_id = params[:user_id]
       @folder_name = params[:folder_name]

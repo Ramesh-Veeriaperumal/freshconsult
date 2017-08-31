@@ -3,17 +3,17 @@ class ContactValidation < ApiValidation
     job_title:  { data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
     language: { custom_inclusion: { in: ContactConstants::LANGUAGES } },
     time_zone: { custom_inclusion: { in: ContactConstants::TIMEZONES } },
-    phone: { data_type: { rules: String },  custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
-    mobile: { data_type: { rules: String },  custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
-    address: { data_type: { rules: String },  custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
-    twitter_id: { data_type: { rules: String },  custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
+    phone: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
+    mobile: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
+    address: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
+    twitter_id: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
     email: { data_type: { rules: String }, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, accepted: :'valid email address' }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
     description: { data_type: { rules: String } },
     unique_external_id: { data_type: { rules: String },  custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
   }
 
   MANDATORY_FIELD_ARRAY = [:email, :mobile, :phone, :twitter_id, :unique_external_id].freeze
-  CHECK_PARAMS_SET_FIELDS = ( MANDATORY_FIELD_ARRAY.map(&:to_s) +
+  CHECK_PARAMS_SET_FIELDS = (MANDATORY_FIELD_ARRAY.map(&:to_s) +
                               %w(time_zone language custom_fields other_companies active)
                             ).freeze
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
@@ -68,21 +68,21 @@ class ContactValidation < ApiValidation
     }
   }, unless: -> { Account.current.multiple_user_companies_enabled? }
 
-  validate :check_for_default_company_before_adding_other_companies, if: -> {
+  validate :check_for_default_company_before_adding_other_companies, if: lambda {
     other_companies && !other_companies.empty? && company_id.nil? && errors[:company_id].blank?
   }
 
   validates :other_companies, data_type: { rules: Array }, array: {
     data_type: { rules: Hash },
     allow_nil: true,
-    hash: -> {  other_companies_format }
+    hash: -> { other_companies_format }
   }
 
   validates :other_companies, custom_length: {
     maximum: ContactConstants::MAX_OTHER_COMPANIES_COUNT,
     message_options: { element_type: :elements }
   }
-  validate :check_duplicates_multiple_companies, if: -> {
+  validate :check_duplicates_multiple_companies, if: lambda {
     other_companies.present? && errors[:other_companies].blank?
   }
 
@@ -91,11 +91,11 @@ class ContactValidation < ApiValidation
     validatable_custom_fields: proc { Account.current.contact_form.custom_non_dropdown_fields },
     required_attribute: :required_for_agent,
     ignore_string: :allow_string_param
-  }
-  }, unless: -> { validation_context == :quick_create }
+  } }, unless: -> { validation_context == :quick_create }
 
   validates :avatar, data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true }, file_size: {
-    max: ContactConstants::ALLOWED_AVATAR_SIZE }
+    max: ContactConstants::ALLOWED_AVATAR_SIZE
+  }
   validate :validate_avatar, if: -> { avatar && errors[:avatar].blank? }
   validate :validate_avatar_id_or_avatar, if: -> { avatar && avatar_id }
   validates :avatar_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }
@@ -166,7 +166,7 @@ class ContactValidation < ApiValidation
       (error_options[field] ||= {}).merge!(field_names: mandatory_fields_string)
     end
 
-    alias_method :contact_detail_missing_update, :contact_detail_missing
+    alias contact_detail_missing_update contact_detail_missing
 
     def validate_avatar
       valid_extension, extension = ApiUserHelper.avatar_extension_valid?(avatar)
@@ -191,10 +191,10 @@ class ContactValidation < ApiValidation
       if email && other_emails.include?(email) && errors[:other_emails].blank?
         errors[:other_emails] << :cant_add_primary_resource_to_others
         self.error_options.merge!(other_emails: {
-          resource: "#{email}",
-          attribute: 'other_emails',
-          status: 'primary email'
-        })
+                                    resource: email.to_s,
+                                    attribute: 'other_emails',
+                                    status: 'primary email'
+                                  })
       end
     end
 
@@ -220,14 +220,14 @@ class ContactValidation < ApiValidation
     end
 
     def check_duplicates_multiple_companies
-      ids = other_companies.collect{|x| x[:company_id]}
-      if other_companies.any?{|hash| hash[:company_id] == company_id}
+      ids = other_companies.collect { |x| x[:company_id] }
+      if other_companies.any? { |hash| hash[:company_id] == company_id }
         errors[:other_companies] << :cant_add_primary_resource_to_others
         self.error_options.merge!(other_companies: {
-          resource: "#{company_id}",
-          status: "default company",
-          attribute: 'other_companies'
-        })
+                                    resource: company_id.to_s,
+                                    status: 'default company',
+                                    attribute: 'other_companies'
+                                  })
       elsif ids.length != ids.uniq.length
         errors[:other_companies] << :duplicate_companies
       end

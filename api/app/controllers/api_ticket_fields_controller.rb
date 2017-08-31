@@ -1,9 +1,10 @@
 class ApiTicketFieldsController < ApiApplicationController
   decorate_views
 
-  PRELOAD_ASSOC = [ :nested_ticket_fields ]
+  PRELOAD_ASSOC = [:nested_ticket_fields].freeze
 
   private
+
     def validate_filter_params
       params.permit(:type, *ApiConstants::DEFAULT_INDEX_FIELDS) # We will allow pagination options, but they will be ignored, to be consistent with contact/company fields.
       errors = [[:type, :not_included]] if params.key?(:type) && allowed_field_types.exclude?(params[:type])
@@ -22,9 +23,9 @@ class ApiTicketFieldsController < ApiApplicationController
     end
 
     def allowed_field_types
-      current_account.shared_ownership_enabled? ? 
+      current_account.shared_ownership_enabled? ?
           ApiTicketConstants::FIELD_TYPES :
-          ApiTicketConstants::FIELD_TYPES - ["default_internal_group", "default_internal_agent"]
+          ApiTicketConstants::FIELD_TYPES - ['default_internal_group', 'default_internal_agent']
     end
 
     def load_objects(items = scoper)

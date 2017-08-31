@@ -2,7 +2,7 @@ class DataTypeValidator < ApiValidator
   include ErrorOptions
 
   # Introduced this as the error message should show layman terms.
-  DATA_TYPE_MAPPING = { Hash => 'key/value pair', ActionDispatch::Http::UploadedFile => 'valid file format', NilClass => NULL_TYPE, TrueClass => 'Boolean', FalseClass => 'Boolean' }
+  DATA_TYPE_MAPPING = { Hash => 'key/value pair', ActionDispatch::Http::UploadedFile => 'valid file format', NilClass => NULL_TYPE, TrueClass => 'Boolean', FalseClass => 'Boolean' }.freeze
 
   private
 
@@ -35,19 +35,20 @@ class DataTypeValidator < ApiValidator
     def skip_input_info?
       required_attribute_not_defined? || blank_when_required? || array_value? || string_input_and_allow_string?
     end
+
     # check if value class is same as type. case & when uses === operator which compares the type first.
     # Faster than is_a? check
     def valid_type?(type = options[:rules])
       return internal_values[:valid_type] if internal_values.key?(:valid_type)
       internal_values[:valid_type] = case value
-      when type
-        true
-      when TrueClass, FalseClass
-        type == 'Boolean'
-      when 'true', 'false'
-        type == 'Boolean' && allow_string?
-      else
-        false
-      end
+                                     when type
+                                       true
+                                     when TrueClass, FalseClass
+                                       type == 'Boolean'
+                                     when 'true', 'false'
+                                       type == 'Boolean' && allow_string?
+                                     else
+                                       false
+                                     end
     end
 end

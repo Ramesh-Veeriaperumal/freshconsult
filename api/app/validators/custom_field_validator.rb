@@ -1,5 +1,5 @@
 class CustomFieldValidator < ActiveModel::EachValidator
-  ATTRS = [:current_field, :parent, :is_required, :required_attribute, :closure_status, :custom_fields, :current_field_defined, :nested_fields, :attribute, :section_field_mapping]
+  ATTRS = [:current_field, :parent, :is_required, :required_attribute, :closure_status, :custom_fields, :current_field_defined, :nested_fields, :attribute, :section_field_mapping].freeze
   attr_accessor(*ATTRS)
   NAME_MAPPING = { 'ticket_type' => 'type' }.freeze
 
@@ -19,7 +19,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
         @current_field = custom_field
         field_name = custom_field.name # assign field name
         value = values.try(:[], custom_field.name) # assign value
-        @parent =  nested_field? && parent_exists? ? get_parent(values) : {} # get parent if nested_field for computing required
+        @parent = nested_field? && parent_exists? ? get_parent(values) : {} # get parent if nested_field for computing required
         @is_required = required_field?(record, values) # find if the field is required
         @current_field_defined = key_exists?(values, field_name) # check if the field is defined for required validator
         next unless validate?(record, field_name, values) # check if it can be validated
@@ -76,7 +76,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
     # Inclusion validator for nested field level 0
     def validate_nested_field_level_0(record, field_name)
       choices = get_choices(record, field_name, nil, nil, 0)
-      CustomInclusionValidator.new(options.merge(attributes: field_name, in: choices, allow_nil: !@is_required,  required: @is_required)).validate(record)
+      CustomInclusionValidator.new(options.merge(attributes: field_name, in: choices, allow_nil: !@is_required, required: @is_required)).validate(record)
     end
 
     # Inclusion validator for nested field level 2
@@ -108,7 +108,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
     # Format validator for url field
     def validate_custom_url(record, field_name)
       # REGEX is taken from jquery.validate.js
-      format_options = construct_options(attributes: field_name, with: ApiConstants::URL_REGEX,  allow_nil: !@is_required, required: @is_required, accepted: 'valid URL')
+      format_options = construct_options(attributes: field_name, with: ApiConstants::URL_REGEX, allow_nil: !@is_required, required: @is_required, accepted: 'valid URL')
       CustomFormatValidator.new(format_options).validate(record)
     end
 
@@ -145,7 +145,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
       values.each do |value|
         boolean_options = construct_options(ignore_string: :allow_string_param, attributes: field_name, rules: 'Boolean', required: @is_required)
         DataTypeValidator.new(boolean_options).validate_value(record, value)
-      end      
+      end
     end
 
     def absence_validator_check(record, field_name, values)
@@ -243,7 +243,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
       children.each do |child|
         next if values[child.name].blank?
         record.errors[field_name] << :conditional_not_blank
-        (record.error_options ||= {}).merge!(field_name => { child: TicketDecorator.display_name(child.name) }) # we are explicitly calling decorator here, instead of handling this in the controller, in order to avoid unnecessary looping across all ticket fields.
+        (record.error_options ||= {})[field_name] = { child: TicketDecorator.display_name(child.name) } # we are explicitly calling decorator here, instead of handling this in the controller, in order to avoid unnecessary looping across all ticket fields.
         return true
       end
       true
@@ -252,7 +252,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
     def method_name
       method = "validate_#{@current_field.field_type}"
       method += "_level_#{@current_field.level.to_i}" if nested_field?
-      method += "_array" if search_validation?
+      method += '_array' if search_validation?
       method.freeze
     end
 

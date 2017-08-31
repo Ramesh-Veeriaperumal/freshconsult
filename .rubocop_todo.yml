@@ -52,6 +52,10 @@ Style/BlockDelimiters:
   AutoCorrect: true
   Enabled: true
 
+Style/SingleLineBlockParams:
+  AutoCorrect: false
+  Enabled: false
+
 # Offense count: 2
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
@@ -186,7 +190,7 @@ Style/PredicateName:
 # Offense count: 3
 # Cop supports --auto-correct.
 Style/RedundantSelf:
-  AutoCorrect: true
+  AutoCorrect: false
   Enabled: true
 
 # Offense count: 1
@@ -202,7 +206,7 @@ Style/RegexpLiteral:
 Style/SignalException:
   AutoCorrect: true
   Enabled: true
-  
+
 # Offense count: 5
 # Cop supports --auto-correct.
 Style/SpaceAfterComma:
@@ -280,7 +284,16 @@ Style/TrailingWhitespace:
 # Cop supports --auto-correct.
 # Configuration parameters: WordRegex.
 Style/WordArray:
-  MinSize: 2
+  Enabled: false
+  # This is regarding %w()
+
+Style/SymbolArray:
+  Enabled: false
+  # This is regarding %i()
+
+Style/DoubleNegation:
+  Enabled: false
+  # Regarding use !! double bang to convert
 
 Style/RegexpLiteral:
   Enabled: false
@@ -292,6 +305,14 @@ Metrics/CyclomaticComplexity:
 Metrics/PerceivedComplexity:
   Exclude:
    - test/**/*.rb
+
+Metrics/ModuleLength:
+  Max: 150
+  # Test if this works pre-commit hooks
+
+Metrics/ClassLength:
+  Max: 150
+  # Test if this works pre-commit hooks
 
 Lint/UselessAssignment:
   Exclude:

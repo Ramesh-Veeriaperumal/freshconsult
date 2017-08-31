@@ -1,10 +1,13 @@
 module ErrorOptions
-  UNIDENTIFIED_TYPE = 'Unidentified Type'
-  NULL_TYPE = 'Null'
+  UNIDENTIFIED_TYPE = 'Unidentified Type'.freeze
+  NULL_TYPE = 'Null'.freeze
 
   def custom_error_options
     error_options = { expected_data_type: expected_data_type }
-    error_options.merge!(prepend_msg: :input_received, given_data_type: infer_data_type(value, internal_values)) unless skip_input_info?
+    unless skip_input_info?
+      error_options[:prepend_msg] = :input_received
+      error_options[:given_data_type] = infer_data_type(value, internal_values)
+    end
     error_options
   end
 

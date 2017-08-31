@@ -10,29 +10,29 @@ class ApiFreshfone::CallHistoryFilterValidation < FilterValidation
   validates :export_format, data_type: { rules: String, allow_nil: true }
   validates :export_format, custom_inclusion: { in: ApiFreshfone::CallHistoryConstants::EXPORT_FORMAT }
 
-  validate :date_range, if: -> {@start_date || @end_date}
-  validate :active_freshfone_number, if: -> {@number}
+  validate :date_range, if: -> { @start_date || @end_date }
+  validate :active_freshfone_number, if: -> { @number }
 
-  def initialize request_params
+  def initialize(request_params)
     @start_date = request_params[:start_date]
     @end_date = request_params[:end_date]
     @number = request_params[:number]
     super(request_params, nil, true)
   end
 
-  def date_range 
-    errors[:start_date] << :"Either both start_date and end_date or none are expected" unless @start_date.present? && @end_date.present? 
+  def date_range
+    errors[:start_date] << :"Either both start_date and end_date or none are expected" unless @start_date.present? && @end_date.present?
     errors[:start_date] << :"date_range should be within 6 months" if max_date_range_exceeded?
-    errors[:end_date] << :"end_date can't be less than start_date" if (@start_date.present? && @end_date.present? ) && ( @end_date < @start_date )
+    errors[:end_date] << :"end_date can't be less than start_date" if (@start_date.present? && @end_date.present?) && (@end_date < @start_date)
   end
 
   def max_date_range_exceeded?
     return unless @start_date.present? && @end_date.present?
-    number_of_days = @end_date.to_date.mjd - @start_date.to_date.mjd 
+    number_of_days = @end_date.to_date.mjd - @start_date.to_date.mjd
     number_of_days >= Freshfone::Call::EXPORT_RANGE_LIMIT_IN_MONTHS * 31
   end
 
   def active_freshfone_number
-    errors[:number] << :"Number is either not found or not active" unless Account.current.freshfone_numbers.active_number(@number).present? 
+    errors[:number] << :"Number is either not found or not active" unless Account.current.freshfone_numbers.active_number(@number).present?
   end
 end

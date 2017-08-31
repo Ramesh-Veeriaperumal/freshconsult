@@ -92,7 +92,7 @@ class SatisfactionRatingsController < ApiApplicationController
       else
         fields |= ['ratings' => ['default_question']]
       end
-      params[cname].permit(*(fields))
+      params[cname].permit(*fields)
       survey = SatisfactionRatingValidation.new(params[cname], @item, allowed_custom_choices, allowed_default_choices)
       render_custom_errors(survey, true) unless survey.valid?
     end
@@ -104,7 +104,7 @@ class SatisfactionRatingsController < ApiApplicationController
       if custom_survey?
         rating  = custom_rating(ratings[:default_question])
         params[cname][:rating] = CustomSurvey::Survey.old_rating rating.to_i
-        params[cname]['custom_field'] = { "#{current_account.survey.default_question.name}" => rating }
+        params[cname]['custom_field'] = { current_account.survey.default_question.name.to_s => rating }
         # converting Custom Rating hash keys from survey_question_id to survey_question_name
         ratings.each_pair { |key, value| params[cname]['custom_field'][@question_id_name_mapping[key]] = value }
       end

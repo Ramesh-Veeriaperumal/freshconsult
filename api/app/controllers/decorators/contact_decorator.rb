@@ -116,32 +116,28 @@ class ContactDecorator < ApiDecorator
     end
 
     def customer_info
-      response_hash = agent_info.merge({
-        id: id,
-        address: address,
-        company_id: company_id,
-        view_all_tickets: client_manager,
-        description: description,
-        twitter_id: twitter_id,
-        other_emails: other_emails,
-        tags: tags,
-        whitelisted: whitelisted,
-        created_at: created_at.try(:utc),
-        updated_at: updated_at.try(:utc),
-        facebook_id: fb_profile_id,
-        blocked: record.blocked?,
-        spam: record.spam?,
-        deleted: record.deleted
-      })
+      response_hash = agent_info.merge(id: id,
+                                       address: address,
+                                       company_id: company_id,
+                                       view_all_tickets: client_manager,
+                                       description: description,
+                                       twitter_id: twitter_id,
+                                       other_emails: other_emails,
+                                       tags: tags,
+                                       whitelisted: whitelisted,
+                                       created_at: created_at.try(:utc),
+                                       updated_at: updated_at.try(:utc),
+                                       facebook_id: fb_profile_id,
+                                       blocked: record.blocked?,
+                                       spam: record.spam?,
+                                       deleted: record.deleted)
       response_hash[:custom_fields] = custom_fields if custom_fields.present?
-      if @include_company_info
-        response_hash[:company] = company_hash(default_company) if @sideload_options.include?('company') && default_company.present? && default_company.company.present?
-        response_hash[:other_companies] = other_companies_hash if multiple_user_companies_enabled?
-      end
+      response_hash[:company] = company_hash(default_company) if @sideload_options.include?('company') && default_company.present? && default_company.company.present?
+      response_hash[:other_companies] = other_companies_hash if multiple_user_companies_enabled?
       response_hash
     end
 
-    def company_hash uc
+    def company_hash(uc)
       {
         id: uc.company_id,
         view_all_tickets: uc.client_manager,

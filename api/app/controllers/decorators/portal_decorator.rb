@@ -1,6 +1,6 @@
 class PortalDecorator < ApiDecorator
   delegate :id, :name, :host, :product_id, :main_portal?, :ssl_enabled?, :language,
-    :created_at, :updated_at, to: :record
+           :created_at, :updated_at, to: :record
 
   def to_hash
     {

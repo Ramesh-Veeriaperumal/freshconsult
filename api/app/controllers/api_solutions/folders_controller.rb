@@ -76,8 +76,8 @@ module ApiSolutions
       end
 
       def validate_params
-        return false unless validate_language && load_category if create?
-        params[cname].permit(*(SolutionConstants::FOLDER_FIELDS))
+        return false if create? && !validate_language && !load_category
+        params[cname].permit(*SolutionConstants::FOLDER_FIELDS)
         folder = ApiSolutions::FolderValidation.new(params[cname], @item, @lang_id)
         render_errors folder.errors, folder.error_options unless folder.valid?(action_name.to_sym)
       end

@@ -9,7 +9,7 @@ class TicketsValidationHelper
     end
 
     def custom_dropdown_fields(delegator)
-      delegator.ticket_fields.select { |c| (['custom_dropdown', 'nested_field'].include?(c.field_type)) }
+      delegator.ticket_fields.select { |c| ['custom_dropdown', 'nested_field'].include?(c.field_type) }
     end
 
     def custom_non_dropdown_fields(delegator)
@@ -39,7 +39,7 @@ class TicketsValidationHelper
     end
 
     def sections_fields_group_by_parent_field_value_mapping(section_fields)
-      section_fields.group_by { |x| { x.parent_ticket_field.name =>  x.section.section_picklist_mappings.map { |y| y.picklist_value.value } } }
+      section_fields.group_by { |x| { x.parent_ticket_field.name => x.section.section_picklist_mappings.map { |y| y.picklist_value.value } } }
     end
 
     def custom_nested_field_choices

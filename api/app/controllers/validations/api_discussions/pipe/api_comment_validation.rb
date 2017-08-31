@@ -8,6 +8,5 @@ module ApiDiscussions::Pipe
     include TimestampsValidationConcern
 
     validates :user_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false, ignore_string: :allow_string_param, required: true }
-
   end
 end
