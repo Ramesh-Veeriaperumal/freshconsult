@@ -5,7 +5,7 @@ include ActionView::Helpers::NumberHelper
 include Helpdesk::Email::OutgoingCategory
 include ParserUtil
 include EmailHelper
-
+include EmailCustomLogger
 include Email::EmailService::IpPoolHelper
  FD_EMAIL_SERVICE = (YAML::load_file(File.join(Rails.root, 'config', 'fd_email_service.yml')))[Rails.env]
  EMAIL_SERVICE_AUTHORISATION_KEY = FD_EMAIL_SERVICE["key"]
@@ -31,24 +31,23 @@ include Email::EmailService::IpPoolHelper
         req.options.timeout = EMAIL_SERVICE_TIMEOUT
         req.body = get_email_data params
       end
-
       if response.status != 200
         Rails.logger.info "Email sending failed due to : #{response.body["Message"]}"
         raise EmailDeliveryError, response.body["Message"]
       end
       end_time = Time.now
+      Rails.logger.info "Email Service Response: #{response.body.inspect}"
       Rails.logger.info "Email sent from #{params[:from]} to #{params[:to]} (%1.fms)" %(end_time - start_time)
   end
 
   def get_email_data(params)
-    subject = !params[:subject].nil? ? params[:subject] : "No Subject"
+    subject = params[:subject].present? ? params[:subject] : "(no subject)"
     from_email = (!(params[:from]).nil? && (params[:from]).kind_of?(Array)) ? construct_email_json(params[:from][0] ): construct_email_json(params[:from])
     to_email = construct_email_json_array params[:to]
     cc = params[:cc].present? ? (construct_email_json_array params[:cc] ): nil
     bcc = params[:bcc].present? ? (construct_email_json_array params[:bcc]) : nil
     reply_to = construct_email_json params["Reply-To"]
     account_id = params["X-FD-Account-Id"].present? ? params["X-FD-Account-Id"] : -1
-    subject = params[:subject]
     type = (params["X-FD-Type"].present?) ? params["X-FD-Type"] : "empty"
     category_id = get_notification_category_id(params, type) || check_spam_category(params, type)
     if category_id.blank?
@@ -73,8 +72,8 @@ include Email::EmailService::IpPoolHelper
 
     result =  {"headers" => header,
                 "to" => to_email,
-                "cc" => (!cc.nil? ? (cc.to_a - to_email.to_a) : cc),
-                "bcc" => (!bcc.nil? ? (bcc.to_a - cc.to_a - to_email.to_a) : bcc),
+                "cc" => (!cc.nil? ? (remove_duplicate_emails(to_email.to_a, cc.to_a)) : cc),
+                "bcc" => (!bcc.nil? ? (remove_duplicate_emails(to_email.to_a, cc.to_a, bcc.to_a)) : bcc),
                 "from" => from_email,
                 "replyTo" => reply_to,
                 "subject" => subject,
@@ -85,7 +84,7 @@ include Email::EmailService::IpPoolHelper
                 "properties"=> properties
               }
     result.merge!("ipPool" => ip_pool) unless ip_pool.nil?
-
+    email_logger.debug(result.inspect)
     return result.to_json
   end
 
@@ -106,7 +105,6 @@ include Email::EmailService::IpPoolHelper
       from_email_text = from_email.nil? ? "" : from_email[:email]
       shard_info = get_shard account_id
       pod_info = get_pod
-      
       result_hash = {
                       "account_id" => "#{account_id}",
                       "ticket_id" => "#{ticket_id}", 
@@ -187,5 +185,17 @@ include Email::EmailService::IpPoolHelper
       return Helpdesk::Email::OutgoingCategory::CATEGORY_BY_TYPE["#{key}_email_notification".to_sym]
     end
   end
+
+  def remove_duplicate_emails( to, cc, bcc=[])
+    res = []
+    unique_emails = (to.map{|pair| pair[:email]} + (bcc.empty? ? [] : (cc.map{|pair| pair[:email]}))).uniq
+    if bcc.empty?
+      cc.map{|pair| res<<pair if !unique_emails.include?(pair[:email])}
+    else
+      bcc.map{|pair| res<<pair if !unique_emails.include?(pair[:email])}
+    end
+    return res
+  end
+
 
 end
