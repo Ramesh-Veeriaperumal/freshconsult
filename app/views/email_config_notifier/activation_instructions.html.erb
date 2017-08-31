@@ -9,6 +9,6 @@
   <div>Regards,</div>
   <div><%= @email_config.account.portal_name %></div>
   <% if @activation_url && Account.current.launched?(:email_actions) %>
-    <%= confirm_action(url: @activation_url, name: 'Activate') %>
+    <%= view_action(url: @activation_url, name: 'Activate') %>
   <% end %>
 </div>
