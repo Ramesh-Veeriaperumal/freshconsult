@@ -130,7 +130,7 @@ class CompaniesController < ApplicationController
 
       if current_account.features_included?(:archive_tickets)
         @total_company_archive_tickets = 
-          current_account.archive_tickets.permissible(current_user).all_company_tickets(@company.id).newest(10).preload(:ticket_status, :responder, :requester)
+          current_account.archive_tickets.permissible(current_user).all_company_tickets(@company.id).newest(11).preload(:ticket_status, :responder, :requester)
         @company_archive_tickets = @total_company_archive_tickets.sort_by {|item| -item.created_at.to_i}.take(10)
       end
 
