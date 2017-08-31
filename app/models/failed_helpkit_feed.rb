@@ -8,7 +8,7 @@ class FailedHelpkitFeed < ActiveRecord::Base
   		RabbitmqWorker.perform_async(exchange.pluralize, payload, routing_key, Account.current.launched?(:lambda_exchange))
   		Account.reset_current_account
 		end
-	rescue ActiveRecord::RecordNotFound, ShardNotFound, DomainNotReady => e
+	rescue ActiveRecord::RecordNotFound, ShardNotFound, DomainNotReady, AccountBlocked => e
 		puts "#{e.inspect} -- #{account_id}"
 	end
 end
