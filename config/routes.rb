@@ -2950,6 +2950,8 @@ Helpkit::Application.routes.draw do
           get :single_sign_on
           put :change_account_name
           put :ublock_account
+          put :suspend_account
+          put :reactivate_account
           put :remove_feature
           put :whitelist
           put :block_account

@@ -197,4 +197,6 @@ class Account < ActiveRecord::Base
     :custom_apps => false, :timesheet => false, :api_jwt_auth => false, :disable_emails => false
   }
 
+  BLOCK_GRACE_PERIOD = 90.days
+
 end

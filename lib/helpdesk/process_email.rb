@@ -91,7 +91,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     return shardmapping.status unless shardmapping.ok?
     Sharding.select_shard_of(to_email[:domain]) do
     account = Account.find_by_full_domain(to_email[:domain])
-    if !account.nil? and account.active?
+    if account && account.allow_incoming_emails?
       # clip_large_html
       account.make_current
       email_spam_watcher_counter(account)
@@ -287,6 +287,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   end
 
   private
+
     def encode_stuffs
       charsets = params[:charsets].blank? ? {} : ActiveSupport::JSON.decode(params[:charsets])
       [ :html, :text, :subject, :headers, :from ].each do |t_format|

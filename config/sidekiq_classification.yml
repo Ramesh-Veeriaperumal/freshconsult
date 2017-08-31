@@ -40,6 +40,7 @@
     - premium_twitter
     - custom_twitter
     - send_activation_reminder_mail
+    - block_account
   :occasional:
     - plan_change_workerv2
     - merge_contacts
