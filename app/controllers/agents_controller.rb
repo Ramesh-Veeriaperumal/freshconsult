@@ -8,6 +8,7 @@ class AgentsController < ApplicationController
   
   include Gamification::GamificationUtil
   include MemcacheKeys
+  include EmailHelper
 
   skip_before_filter :check_account_state, :only => :destroy
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:info_for_node]
@@ -185,9 +186,16 @@ class AgentsController < ApplicationController
     # @agent.user.attributes = params[:user]
     #for live chat sync
     # @agent.agent_role_ids = params[:user][:role_ids]
-
     if @agent.update_attributes(params[nscname])
         if @user.update_attributes(params[:user])
+          begin
+            if @user.role_ids.include?(current_account.roles.find_by_name("Account Administrator").id)
+              call_location = "Agent Update"
+              SpamDetection::SignupRestrictedDomainValidation.perform_async({:account_id=>current_account.id, :email=>@user.email, :call_location=>call_location})
+            end
+          rescue Exception => e
+            Rails.logger.info "SignupRestrictedDomainValidation failed. #{current_account.id}, #{e.message}, #{e.backtrace}"
+          end
           respond_to do |format|
             format.html { flash[:notice] = t(:'flash.general.update.success', :human_name => 'Agent')
                           redirect_to :action => 'index'

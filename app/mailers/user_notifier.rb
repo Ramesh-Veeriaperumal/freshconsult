@@ -5,6 +5,14 @@ class UserNotifier < ActionMailer::Base
   layout "email_font"
   include EmailHelper
   def user_activation(user, params, reply_email_config)
+    begin 
+      if (user.role_ids.include?(reply_email_config.account.roles.find_by_name("Account Administrator").id))
+        call_location = "Agent Creation"
+        SpamDetection::SignupRestrictedDomainValidation.perform_async({:account_id=>reply_email_config.account.id, :email=>user.email, :call_location=>call_location})
+      end
+    rescue Exception => e
+      Rails.logger.info "SignupRestrictedDomainValidation failed #{reply_email_config.account.id} #{e.messsage}, #{e.backtrace}"
+    end
     begin
       configure_email_config reply_email_config
       send_the_mail(user, params[:subject], params[:email_body], params[:reply_email], EmailNotification::USER_ACTIVATION)
