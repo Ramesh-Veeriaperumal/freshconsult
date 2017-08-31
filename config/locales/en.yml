@@ -9197,7 +9197,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       dialog_header: Export Reports
       dialog_sub_header: We can export only 25 columns of data
       aggregate_title: Aggregate info
-      aggregate_info: Time spent in group split by Type
+      aggregate_info: Time spent distribution across selected categorisation
       ticket_title: Ticketwise info
       ticket_dropdown: 'Include time spent in:'
       ticket_info: Time spent per ticket split by status
