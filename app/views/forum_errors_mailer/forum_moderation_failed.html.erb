@@ -1,0 +1,9 @@
+<p>
+  <%= "Error: #{@error.message}" if @error %>
+  <br/>
+  <br/>
+  <%= "Trace: #{@error.backtrace.join("\n")}" if @error %>
+  <br/>
+  <br/>
+  <%= "Message: #{@message}" if @message %>
+</p>
