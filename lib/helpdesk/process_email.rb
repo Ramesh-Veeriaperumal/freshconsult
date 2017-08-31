@@ -115,7 +115,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
         email_config = account.email_configs.find_by_to_email(to_email[:email])
-        if email_config && (from_email[:email].to_s.downcase == email_config.reply_email.to_s.downcase)
+        if email_config && (!params[:migration_enable_outgoing]) && (from_email[:email].to_s.downcase == email_config.reply_email.to_s.downcase)
           email_processing_log "Email Processing Failed: From-email and reply-email are same!", to_email[:email]
           return processed_email_data(PROCESSED_EMAIL_STATUS[:self_email], account.id)
         end
@@ -468,13 +468,25 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def fetch_ticket(account, from_email, user, email_config)
       display_id = Helpdesk::Ticket.extract_id_token(params[:subject], account.ticket_id_delimiter)
       ticket = account.tickets.find_by_display_id(display_id) if display_id
-      return ticket if can_be_added_to_ticket?(ticket, user, from_email)
+      if can_be_added_to_ticket?(ticket, user, from_email)
+        Rails.logger.info "Found existing ticket by display id present in subject"
+        return ticket 
+      end
       ticket = ticket_from_headers(from_email, account, email_config)
-      return ticket if can_be_added_to_ticket?(ticket, user, from_email)
+      if can_be_added_to_ticket?(ticket, user, from_email)
+        Rails.logger.info "Found existing ticket by references(reference, in-reply-to) present in header"
+        return ticket 
+      end
       ticket = ticket_from_email_body(account)
-      return ticket if can_be_added_to_ticket?(ticket, user, from_email)
+      if can_be_added_to_ticket?(ticket, user, from_email)
+        Rails.logger.info "Found existing ticket by fd_tkt_identifier present in HTML content"
+        return ticket 
+      end
       ticket = ticket_from_id_span(account)
-      return ticket if can_be_added_to_ticket?(ticket, user, from_email)
+      if can_be_added_to_ticket?(ticket, user, from_email)
+        Rails.logger.info "Found existing ticket by fdtktid present in HTML content"
+        return ticket 
+      end
     end
 
     def fetch_archived_ticket(account, from_email, user, email_config)
@@ -550,13 +562,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           end
           if params[:migration_tags]
             tags_hash = JSON.parse(params[:migration_tags])
-            if tags_hash.present?
-              tags_hash.each do |tag_name|
-                custom_tag = account.tags.find_by_name(tag_name)
-                custom_tag = account.tags.create(:name => tag_name) if custom_tag.nil?
-                ticket.tags << custom_tag 
-              end
-            end
+            add_tags(tags_hash, account, ticket)
           end
           ticket.save_ticket!
           email_processing_log "Email Processing Successful: Email Successfully created as Ticket!!", to_email[:email]
@@ -583,6 +589,16 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
       # ticket
       return processed_email_data(PROCESSED_EMAIL_STATUS[:success], account.id, ticket)
+    end
+
+    def add_tags tags_hash, account, ticket
+      if tags_hash.present?
+        tags_hash.each do |tag_name|
+          custom_tag = account.tags.find_by_name(tag_name)
+          custom_tag = account.tags.create(:name => tag_name) if custom_tag.nil?
+          ticket.tags << custom_tag unless (ticket.tags.include? custom_tag)
+        end
+      end
     end
 
     def build_ticket_params account, user, to_email, global_cc, email_config
@@ -633,7 +649,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def check_for_auto_responders(model)
-      model.skip_notification = true if(auto_generated?(params[:headers]))
+      model.skip_notification = true if (params[:migration_skip_notification] || auto_generated?(params[:headers]))
     end
     
     def auto_generated?(headers)
@@ -769,6 +785,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                                                   params[:subject], 
                                                   message_id)
           return processed_email_data(PROCESSED_EMAIL_STATUS[:duplicate], ticket.account_id)
+        end
+        if params[:migration_tags]
+          tags_hash = JSON.parse(params[:migration_tags])
+          add_tags(tags_hash, ticket.account, ticket)
         end
         note.save_note
         email_processing_log "Email Processing Successful: Email Successfully created as Note!!", to_email[:email]

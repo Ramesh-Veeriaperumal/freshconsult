@@ -7,7 +7,7 @@ require 'tzinfo'
 
 class Helpdesk::Email::MigrationMailProcessor
 
-  attr_accessor :imap, :uid, :tags_name, :gmail_tags, :envelope_address, :raw_eml
+  attr_accessor :imap, :uid, :tags_name, :gmail_tags, :envelope_address, :raw_eml, :custom_status, :skip_notification, :enable_outgoing
 
   def initialize(args={})
     initialise_attributes(args)
@@ -33,17 +33,18 @@ class Helpdesk::Email::MigrationMailProcessor
   def process_email
     ticket_params = Helpdesk::EmailParser::EmailProcessor.new(raw_eml).process_mail
     ticket_params.merge! ({
-      :envelope                => "{\"to\":[\"#{envelope_address}\"]}",
-      :migration_status        => get_status(imap, uid),
-      :migration_internal_date => internal_date(uid),
-      :migration_tags          => tags_name,
-      :request_url             => "EmailMigrationModule"
+      :envelope                    => "{\"to\":[\"#{envelope_address}\"]}",
+      :migration_status            => get_status(imap, uid),
+      :migration_internal_date     => internal_date(uid),
+      :migration_tags              => tags_name,
+      :migration_skip_notification => skip_notification,
+      :migration_enable_outgoing   => enable_outgoing,
+      :request_url                 => "EmailMigrationModule"
     })
     
     if gmail_tags
-      flags = imap.uid_fetch(uid, 'X-GM-LABELS').first.attr["X-GM-LABELS"] if gmail_tags
-      flags ||= []
-      flags.each_with_index do |flag, index|
+      labels = (imap.uid_fetch(uid, 'X-GM-LABELS').first.attr["X-GM-LABELS"]) || []
+      labels.each_with_index do |flag, index|
         if flag.is_a? Symbol
           flag = flag.to_s
         end
@@ -57,6 +58,7 @@ class Helpdesk::Email::MigrationMailProcessor
   end
 
   def get_status(imap, uid)
+    return custom_status if custom_status.present?
     flags = imap.uid_fetch(uid, 'FLAGS').first.attr["FLAGS"]
     flags.include?(:Seen) ? 5 : 2
   rescue Exception => e

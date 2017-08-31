@@ -180,6 +180,10 @@ class Helpdesk::TicketTemplate < ActiveRecord::Base
     templ_ids
   end
 
+  def self.max_limit
+    Account.current.max_template_limit || TOTAL_SHARED_TEMPLATES
+  end
+
   private
 
   def set_default_type
