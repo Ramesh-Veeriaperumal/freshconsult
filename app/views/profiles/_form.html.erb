@@ -17,6 +17,7 @@
           		jQuery(this).groupPlaceholders();
   			});			
   	});
+
 	//Hiding Testing UI language for production env
   	var is_prod_env = <%= Rails.env.production? %>;
   	if(is_prod_env) {

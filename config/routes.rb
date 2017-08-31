@@ -275,6 +275,13 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  resources :email_preview do 
+    collection do
+      post :generate_preview
+      post :send_test_email
+    end
+  end
+
   # contacts and companies import
   resources :customers_import do
     collection do

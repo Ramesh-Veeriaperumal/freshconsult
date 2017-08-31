@@ -11,7 +11,8 @@ jQuery(document).ready(function(){
 	else{
 		jQuery('#admin_canned_response_visibility_group_id').attr('disabled','disabled');
 	}
-	
+
+
 	jQuery('.l_placeholder').bind("click", function(ev){
 			active_email_body = jQuery("#ca-content");
 			jQuery('#place-dialog').slideDown('fast', function(){
@@ -121,6 +122,9 @@ function toggleGroup(access_id)
 	</li>
 </ul>
 <div class="button-container">
+	<% if Account.current.verified? &&  User.current.active? %>
+  	<a href="#email-preview" class="email-preview"><%= t('preview')%></a>
+  <% end %>
 	<%= f.submit t('save'), :class => "btn btn-primary" %>	      	
 	<%= link_to(t('cancel'), helpdesk_canned_responses_folder_path(:id => params[:folder_id]) , :class => "btn" ) %>
 </div>
