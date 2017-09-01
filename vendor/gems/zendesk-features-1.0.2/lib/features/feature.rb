@@ -135,6 +135,9 @@ module Features
 
     def clear_features_from_cache
       Account.current.try(:reset_feature_from_cache_variable)
+      # update the version timestamp to reflect any feature addition to falcon apis.
+      # revisit later to write it better.
+      Account.current.try(:versionize_timestamp)
       
       key = ::MemcacheKeys::FEATURES_LIST % { :account_id => self.account_id }
       ::MemcacheKeys.delete_from_cache key

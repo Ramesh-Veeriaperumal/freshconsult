@@ -1,55 +1,59 @@
 account = Account.current 
 
-contact_form = account.contact_form
-no_of_current_fields = contact_form.contact_fields.count
-
 def self.contact_fields_data
   [
     { :name               => "mobile", 
       :label              => "Mobile Phone", 
       :visible_in_portal  => true, 
       :editable_in_portal => true,
-      :field_options      => {"widget_position" => 3} },
+      :field_options      => {"widget_position" => 3},
+      :position           => 5 },
       
     { :name               => "twitter_id", 
       :label              => "Twitter", 
       :visible_in_portal  => true, 
       :editable_in_portal => true,
-      :field_options      => {"widget_position" => 4} },
+      :field_options      => {"widget_position" => 4},
+      :position           => 6  },
 
-    { :name               => "client_manager", 
-      :label              => "Can see all tickets from his company"},
-      
     { :name               => "address", 
-      :label              => "Address" },
+      :label              => "Address",
+      :position           => 8 },
 
     { :name               => "tag_names", 
-      :label              => "Tags" },
+      :label              => "Tags",
+      :position           => 11 },
     
-    { :name               => "description", 
-      :label              => "Background Information" }
+    { :name               => "description",
+      :label              => "Background Information",
+      :position           => 12  },
+
+    { :name               => "client_manager", 
+      :label              => "Can see all tickets from his company",
+      :position           => 13 }
+      
   ]
 end
 
-ContactField.seed_many(:account_id, :name, 
-  contact_fields_data.each_with_index.map do |f, i|
-    {
-      :account_id         => account.id,
-      :contact_form_id    => contact_form.id,
-      :name               => f[:name],
-      :column_name        => 'default',
-      :label              => f[:label],
-      :label_in_portal    => f[:label],
-      :deleted            => false,
-      :field_type         => :"default_#{f[:name]}",
-      :position           => i + no_of_current_fields + 1,
-      :required_for_agent => f[:required_for_agent] || false,
-      :visible_in_portal  => f[:visible_in_portal]  || false,
-      :editable_in_portal => f[:editable_in_portal] || false,
-      :editable_in_signup => f[:editable_in_signup] || false,
-      :required_in_portal => f[:required_in_portal] || false,
-      :field_options      => f[:field_options]
-    }
-  end
-)
-contact_form.clear_cache
+contact_fields_data.each do |f|
+  contact_field = ContactField.new(
+    :label              => f[:label],
+    :label_in_portal    => f[:label],
+    :deleted            => false,
+    :field_type         => :"default_#{f[:name]}",
+    :position           => f[:position],
+    :required_for_agent => f[:required_for_agent] || false,
+    :visible_in_portal  => f[:visible_in_portal]  || false,
+    :editable_in_portal => f[:editable_in_portal] || false,
+    :editable_in_signup => f[:editable_in_signup] || false,
+    :required_in_portal => f[:required_in_portal] || false,
+    :field_options      => f[:field_options],
+    :position           => f[:position]
+  )
+  contact_field.column_name = 'default'
+  contact_field.name = f[:name]
+  contact_field.contact_form_id = account.contact_form.id
+  contact_field.sneaky_save #To avoid the callbacks of acts-as-list which is changing the other field positions.
+end
+
+account.contact_form.clear_cache

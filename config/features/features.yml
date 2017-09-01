@@ -84,6 +84,7 @@
       :auto_ticket_export: 79
       :skill_based_round_robin: 80
       :user_notifications: 81
+      :freshcaller: 82
 :selectable_features:
       :branding: true
       :gamification_enable: false

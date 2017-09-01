@@ -1,0 +1,64 @@
+# Used for subscription emails (subscription_notifier.rb)
+ticket.id: 1234
+ticket.subject: Defective boomerangs getting lost
+ticket.description: "Hello team, 
+<br><br>
+Over the past 6 months, you’ve been our sole manufacturing partner for boomerangs of various sizes and materials. We’ve been packaging and selling them to our customers as Acme certified products, with the tagline “a guaranteed return on your investment”. 
+<br><br>
+Recently, we’ve had our customers tell us that their boomerangs don’t return to them as expected. This is quite embarrassing for a company like Acme Corporation known for it’s highly reliable products. Can you please explain how this is possible? Our team is concerned that the Prodigal Child tracking chip in these boomerangs may not be working properly. But there’s no way to be sure because the boomerangs have disappeared and we cannot get them returned for inspection.  
+<br><br>
+Can you please help us identify the problem and advise us on how to proceed?
+<br><br>
+Regards,<br>
+Rachel Doe,<br>
+Vendor Management,<br>
+Acme Inc.<br>"
+ticket.group.name: Quality Assurance
+ticket.agent.name: current agent’s name
+ticket.agent.email: current agent’s email
+ticket.internal_group.name: Sales
+ticket.internal_agent.name: current agent’s name
+ticket.internal_agent.email: current agent’s email
+ticket.tags: boomerang, defective, acmecorp
+ticket.url: http://<yourdomain>.freshdesk.com/helpdesk/tickets/1234
+ticket.portal_url: http://<yourdomain>.freshdesk.com/support/tickets/1234
+ticket.due_by_time: 12:00PM, September 17, 1949
+ticket.group.assign_time_mins: 60
+ticket.fr_due_by_hrs: 09:00 AM EDT
+ticket.due_by_hrs: 07:00 PM EDT
+ticket.latest_public_comment: "Hello Rachel, 
+<br><br>
+We are sorry to hear that our boomerangs haven’t been working properly. 
+<br><br>
+Can you please help me identify if this issue was reported with a specific batch of boomerangs that were sold to your customers? If you have a set of serial numbers, manufacturing dates or consignment numbers for them, send them over to me and we’ll investigate if something went wrong at our end.  
+<br><br>
+Please stay assured that we will do everything we can to get this solved as soon as possible. I will personally keep you posted on updates from our end. 
+<br><br>
+Thank you for your patience, <br>
+<current agent’s name><br>
+Technical Support<br>"
+ticket.satisfaction_survey: "http://<yourdomain>.freshdesk.com/support/surveys/ea1697f05116e0064343bfd7c03e74447/neutral/new"
+ticket.public_url: http://<yourdomain>.freshdesk.com/public/tickets/6a04e86972da4dc5ca8335eddbe6891d759514c"
+ticket.status: Overdue
+ticket.latest_private_comment: "Team, 
+<br><br>
+Can you please check if there was something wrong with Acme shipment of boomerangs in the past couple of months?  Acme is one of our biggest customers, and we need to make sure that we don’t lose them. <br>"
+ticket.priority: Medium
+ticket.source: Email
+ticket.ticket_type: Question
+ticket.requester.name: Rachel Doe
+ticket.requester.firstname: Rachel 
+ticket.requester.lastname: Doe
+ticket.from_email: rachel@freshdesk.com
+ticket.requester.phone: +1 866 832 3090 
+ticket.company.name: Acme Inc.
+ticket.requester.address: "123 Fantasy Blvd. 
+Boringtown, Far Far Away 54321"
+ticket.company.description: "Acme Inc. is a global conglomerate and a manufacturer of every product imaginable, no matter how simple or extravagant. Their service is known to be second to none - with deliveries guaranteed and completed within seconds after order completion."
+ticket.company.note: One of our biggest buyers of boomerangs. Recently reported an issue related to boomerangs not returning to the owners as expected. Please handle with care.
+ticket.company.domains: "acme.com, acmecorp.com"
+ticket.product_description: State of the art boomerangs that come in all sizes with a built-in Prodigal Child tracking chip
+comment.commenter.name: Charlie Black
+comment.body: Thank you for looking into this. We'd appreciate a quick resolution - our customers tell us they are tired of fetching the misdirected boomerangs.
+contact.name: Rachel Doe
+activation_url: http://<yourdomain>.freshdesk.com/register/kyNE6yMjDDSzNkseqYspo

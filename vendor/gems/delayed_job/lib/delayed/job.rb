@@ -220,7 +220,9 @@ module Delayed
                      :priority => priority.to_i, 
                      :run_at => run_at, 
                      :pod_info => pod_info,
-                     :account_id => account_id
+                     :account_id => account_id,
+                     :sidekiq_job_info => worker_name
+
                    }
 
       perform_type = run_at.present? ? ["perform_at", run_at] : ["perform_async"]
@@ -239,7 +241,7 @@ module Delayed
       end
       begin
         if job
-          job.update_attribute(:sidekiq_job_info, "#{worker_id}:#{worker_name}")
+          #job.update_attribute(:sidekiq_job_info, "#{worker_id}:#{worker_name}")
           Rails.logger.info "Job #{job.id} created and pushed to the sidekiq queue #{job_queue} with id #{worker_id}" 
         end
       rescue Exception => e

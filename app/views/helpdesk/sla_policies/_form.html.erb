@@ -172,8 +172,12 @@
 	updateInSeconds = function(field) {
 		var value = jQuery("#text_"+field).val().replace(' ','');
 		var seconds_multiplier = jQuery("#select_"+field).val();
-		if(/^\d+$/.test(value)) {
-			value = value * seconds_multiplier;
+    if(/^\d+$/.test(value)) {
+      value = value * seconds_multiplier;
+    // hack to keep hours as hours when it is a multiple of 86400
+      if(seconds_multiplier == 3600 && value%86400 == 0){
+        value += 1;
+    }
 			jQuery("#SlaDetails_"+field).val(value).blur();
 		}
 		else {

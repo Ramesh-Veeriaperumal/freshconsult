@@ -358,7 +358,8 @@
      */
     function insert (rows, cols) {
       // Create table HTML.
-      var table = '<table style="width: 100%;"><tbody>';
+      var tableid = Math.floor(Math.random() * 99999);
+      var table = '<table id="table' + tableid + '" style="width: 100%; border-collapse:collapse; border:1px solid #afafaf;width:100%;" border="1" cellspacing="0" cellpadding="0"><tbody>';
       var cell_width = 100 / cols;
       var i;
       var j;
@@ -520,7 +521,8 @@
             }
 
           } else {
-            tr += '<td><br></td>';
+            var styles = $(map[ref_row][i]).attr('style');
+            tr += '<td style="' + styles + '"><br></td>';
           }
         }
 
