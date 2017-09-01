@@ -25,6 +25,7 @@ module EmailActionsHelper
         "@type" => "ViewAction",
         "name" => options[:name],
         "url" => options[:url]
+        }
       }
     }
     content_tag :script, type: 'application/ld+json' do
