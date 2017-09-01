@@ -6,8 +6,8 @@ module ContactConstants
   CONTACT_FIELDS = %w(active address avatar avatar_id view_all_tickets company_id description
                       email job_title language mobile name other_companies
                       other_emails phone time_zone twitter_id unique_external_id).freeze |
-                    ARRAY_FIELDS | HASH_FIELDS |
-                    ['other_companies' =>  ALLOWED_OTHER_COMPANIES_FIELDS]
+                   ARRAY_FIELDS | HASH_FIELDS |
+                   ['other_companies' => ALLOWED_OTHER_COMPANIES_FIELDS]
   MAKE_AGENT_FIELDS = %w(occasional group_ids role_ids ticket_scope signature).freeze
   STATES = %w(verified unverified deleted blocked).freeze
   QUICK_CREATE_FIELDS = %w(name email phone company_name).freeze
@@ -93,7 +93,7 @@ module ContactConstants
     bulk_restore: [:user_emails, { user_companies: [:company] }, :default_user_company, :flexifield, :primary_email, :roles],
     bulk_send_invite: [:flexifield, :user_companies, :avatar, :default_user_company, :roles],
     bulk_whitelist: []
-  }
+  }.freeze
 
   SIDE_LOADING = %w(company).freeze
 

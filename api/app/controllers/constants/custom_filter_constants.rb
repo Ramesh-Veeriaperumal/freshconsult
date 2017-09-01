@@ -1,5 +1,4 @@
 module CustomFilterConstants
-
   OPERATORS = %w(is is_in is_greater_than due_by_op).freeze
   EXCLUDED_CONDITIONS = %w(spam deleted).freeze
   QUERY_TYPE_OPTIONS = %w(default custom_field).freeze
@@ -11,11 +10,11 @@ module CustomFilterConstants
                         'internal_agent_id', 'internal_group_id', 'any_agent_id', 'any_group_id'].freeze
 
   FEATURE_BASED_CONDITIONAL_FIELDS = [
-    ["internal_agent_id", :shared_ownership, "Shared Ownership"],
-    ["internal_group_id", :shared_ownership, "Shared Ownership"],
-    ["any_agent_id",      :shared_ownership, "Shared Ownership"],
-    ["any_group_id",      :shared_ownership, "Shared Ownership"]
-  ]
+    ['internal_agent_id', :shared_ownership, 'Shared Ownership'],
+    ['internal_group_id', :shared_ownership, 'Shared Ownership'],
+    ['any_agent_id',      :shared_ownership, 'Shared Ownership'],
+    ['any_group_id',      :shared_ownership, 'Shared Ownership']
+  ].freeze
 
   FEATURES_KEYS_BY_FIELD   = Hash[*FEATURE_BASED_CONDITIONAL_FIELDS.map { |i| [i[0], i[1]] }.flatten]
   FEATURES_NAMES_BY_FILED  = Hash[*FEATURE_BASED_CONDITIONAL_FIELDS.map { |i| [i[0], i[2]] }.flatten]
@@ -27,10 +26,9 @@ module CustomFilterConstants
     order: :order_by,
     order_type: :order_type,
     per_page: :per_page
-    }.freeze
+  }.freeze
 
   ARRAY_VALUED_OPERATORS = ['is_in', 'due_by_op'].freeze
 
   QUERY_HASH_PARAMS = [:condition, :operator, :type, :value, :ff_name].freeze
-
 end

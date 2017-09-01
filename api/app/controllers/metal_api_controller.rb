@@ -13,7 +13,7 @@ class MetalApiController < ActionController::Metal
   include ActionController::Caching
   include Rails.application.routes.url_helpers # Need for location header in response
   include ActiveSupport::Rescuable # Dependency with strong params
-  include ActionController::MimeResponds  # Needed for respond_to/redirect_to
+  include ActionController::MimeResponds # Needed for respond_to/redirect_to
   include ActionController::ImplicitRender
   include ActionController::StrongParameters
   include ActionController::Cookies
@@ -22,7 +22,7 @@ class MetalApiController < ActionController::Metal
   include AbstractController::Callbacks # before filters
   include ActionController::Rescue
   include ActionController::ParamsWrapper
-  include ActionController::Instrumentation  # need this for active support instrumentation.
+  include ActionController::Instrumentation # need this for active support instrumentation.
   include ActionController::RequestForgeryProtection
 
   # Inorder to make NewRelic work for ActionController::Metal

@@ -3,7 +3,7 @@ class ApiValidator < ActiveModel::EachValidator
     datatype_mismatch: :array_datatype_mismatch,
     too_long: :array_too_long,
     invalid_format: :array_invalid_format
-  }
+  }.freeze
 
   attr_reader :record, :attribute, :value, :internal_values
 
@@ -48,7 +48,7 @@ class ApiValidator < ActiveModel::EachValidator
 
     def attribute_defined?
       @value != ApiConstants::VALUE_NOT_DEFINED &&
-                  record.instance_variable_defined?("@#{attribute}")
+        record.instance_variable_defined?("@#{attribute}")
     end
 
     def skip_validation?(validator_options = options)
@@ -98,9 +98,9 @@ class ApiValidator < ActiveModel::EachValidator
     def base_error_options
       error_options = (options[:message_options] ? options[:message_options].dup : {})
       code = options[:code] || error_code
-      error_options.merge!(code: code) if code
+      error_options[:code] = code if code
       nested_field = child_field_name
-      error_options.merge!(nested_field: nested_field) if nested_field
+      error_options[:nested_field] = nested_field if nested_field
       error_options
     end
 

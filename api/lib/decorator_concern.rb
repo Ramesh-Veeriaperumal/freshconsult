@@ -4,7 +4,7 @@ module DecoratorConcern
   ACTION_MAPPING = {
     decorate_object: [:create, :update, :show],
     decorate_objects: [:index]
-  }
+  }.freeze
   DECORATOR_METHOD_MAPPING = ACTION_MAPPING.each_with_object({}) { |(k, v), inverse| v.each { |e| inverse[e] = k } }
 
   module ClassMethods
@@ -24,9 +24,9 @@ module DecoratorConcern
   end
 
   def decorator_method
-    @decorator_method ||= 
-        (self.class.decorator_method_mapping || 
-          self.class.superclass.decorator_method_mapping)[action_name.to_sym]
+    @decorator_method ||=
+      (self.class.decorator_method_mapping ||
+        self.class.superclass.decorator_method_mapping)[action_name.to_sym]
   end
 
   def render_with_before_render_action(*options, &block)

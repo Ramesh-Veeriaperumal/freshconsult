@@ -8,7 +8,7 @@ class BadRequestError < BaseError
     :translation_available_already => :translation_available_already,
     :translation_not_available => :translation_not_available,
     :"is invalid" => :absent_in_db
-  }
+  }.freeze
 
   ATTRIBUTE_RESOURCE_MAP = {
     requester_id: :contact,
@@ -36,7 +36,7 @@ class BadRequestError < BaseError
     group_ids: :group,
     product_ids: :product,
     status_ids: :status
-  }
+  }.freeze
 
   def initialize(attribute, value, params_hash = {})
     placeholders = params_hash.key?(attribute) ? params_hash[attribute] : params_hash

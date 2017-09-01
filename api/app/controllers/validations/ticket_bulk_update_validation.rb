@@ -12,7 +12,7 @@ class TicketBulkUpdateValidation < ApiValidation
   validate :validate_ticket_properties, if: -> { errors.blank? && properties.present? }
   validate :validate_reply_hash, if: -> { errors.blank? && reply.present? }
 
-  def initialize(request_params, item = nil, allow_string_param = false)
+  def initialize(request_params, _item = nil, _allow_string_param = false)
     super(request_params)
     @statuses = request_params[:statuses]
     @ticket_fields = request_params[:ticket_fields]

@@ -10,7 +10,7 @@ class AttachmentDecorator < ApiDecorator
       size: content_file_size,
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc),
-      attachment_url: record.inline_image? ? inline_url : attachment_url_for_api #See if this is needed in all cases
+      attachment_url: record.inline_image? ? inline_url : attachment_url_for_api # See if this is needed in all cases
     }
     ret_hash[:inline_url] = inline_url if record.inline_image?
 

@@ -6,7 +6,7 @@ module Ember
       @installed_apps = []
       platform_version = Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2]
       key = MemcacheKeys::INSTALLED_APPS_V2 % { account_id: current_account.id }
-      installed_params = { type: INSTALLED_LIST_EXTENSION_TYPES }
+      installed_params = { type: INSTALLED_APP_TYPES_V2 }
       begin
         installed_list ||= mkp_memcache_fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
           installed_extensions(installed_params)

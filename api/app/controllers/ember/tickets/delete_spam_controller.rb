@@ -19,10 +19,10 @@ module Ember
         bulk_action do
           @items_failed = []
           @items.each do |item|
-            @items_failed << item unless (item.deleted || item.spam)
+            @items_failed << item unless item.deleted || item.spam
           end
           clear_selected(false, @items.select { |x| !x.spam }.map(&:id) - @items_failed.map(&:id))
-          clear_selected(true, @items.select { |x| x.spam }.map(&:id) - @items_failed.map(&:id))
+          clear_selected(true, @items.select(&:spam).map(&:id) - @items_failed.map(&:id))
         end
       end
 

@@ -51,7 +51,7 @@ module ApiDiscussions
       def validate_params
         return false if create? && !load_category
         fields = "DiscussionConstants::#{action_name.upcase}_FORUM_FIELDS".constantize
-        params[cname].permit(*(fields))
+        params[cname].permit(*fields)
         forum_val = ApiDiscussions::ForumValidation.new(params[cname], @item)
         render_errors forum_val.errors, forum_val.error_options unless forum_val.valid?(action_name.to_sym)
       end
@@ -59,7 +59,7 @@ module ApiDiscussions
       def set_custom_errors(_item = @item)
         bad_customer_ids = @item.customer_forums.select { |x| x.errors.present? }.map(&:customer_id)
         @item.errors[:company_ids] << :invalid_list if bad_customer_ids.present?
-        @error_options = { remove: :customer_forums, company_ids: { list: "#{bad_customer_ids.join(', ')}" } }
+        @error_options = { remove: :customer_forums, company_ids: { list: bad_customer_ids.join(', ').to_s } }
         ErrorHelper.rename_error_fields({ forum_category: :forum_category_id }, @item)
         @error_options
       end

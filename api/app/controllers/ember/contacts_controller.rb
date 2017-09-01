@@ -146,7 +146,7 @@ module Ember
 
       def preload_with_sideload
         if sideload_options.present? && sideload_options.include?('company')
-          [:user_emails, :tags, :avatar, {user_companies: [:company]}]
+          [:user_emails, :tags, :avatar, { user_companies: [:company] }]
         else
           [:user_emails, :tags, :avatar, :user_companies]
         end
@@ -195,7 +195,7 @@ module Ember
       def build_other_companies
         company_attributes = []
         if update?
-          @all_company_ids = @all_companies.map{ |c| c[:id].to_i }.compact.uniq
+          @all_company_ids = @all_companies.map { |c| c[:id].to_i }.compact.uniq
           current_companies.each do |user_company|
             company_attributes << {
               'id' => user_company.id,
@@ -216,7 +216,7 @@ module Ember
       end
 
       def user_company_hash(company, cm, default = false)
-        uc_id = current_companies.find{|uc| uc.company_id.to_s == company[:id].to_s}.try(:id) if update?
+        uc_id = current_companies.find { |uc| uc.company_id.to_s == company[:id].to_s }.try(:id) if update?
         {
           id: uc_id,
           company_id: company[:id],
@@ -246,12 +246,12 @@ module Ember
         custom_fields = @name_mapping.empty? ? [nil] : @name_mapping.values
 
         field = Ember::ContactConstants::CONTACT_FIELDS | ['custom_fields' => custom_fields]
-        params[cname].permit(*(field))
+        params[cname].permit(*field)
         ParamsHelper.modify_custom_fields(params[cname][:custom_fields], @name_mapping.invert)
         contact = Ember::ContactValidation.new(params[cname], @item, string_request_params?)
-        render_custom_errors(contact, true)  unless contact.valid?(action_name.to_sym)
+        render_custom_errors(contact, true) unless contact.valid?(action_name.to_sym)
       end
-
+      
       def validate_url_params
         params.permit(*ContactConstants::SHOW_FIELDS, *ApiConstants::DEFAULT_PARAMS)
         @include_validation = ContactFilterValidation.new(params, nil, string_request_params?)

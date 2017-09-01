@@ -77,7 +77,8 @@ module DiscussionMonitorConcern
 
     def fetch_active_monitorship_for_user
       @monitorship = Monitorship.find_by_user_id_and_monitorable_id_and_monitorable_type_and_active(
-        params[:user_id], params[:id], cname.capitalize, true)
+        params[:user_id], params[:id], cname.capitalize, true
+      )
     end
 
     def validate_toggle_params

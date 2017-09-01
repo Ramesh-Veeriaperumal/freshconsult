@@ -12,14 +12,14 @@ module Ember
     include AssociateTicketsHelper
     decorate_views(
       decorate_objects: [:ticket_conversations],
-      decorate_object: %i[create update reply forward facebook_reply tweet reply_to_forward broadcast]
+      decorate_object: %i(create update reply forward facebook_reply tweet reply_to_forward broadcast)
     )
 
-    before_filter :can_send_user?, only: %i[create reply forward reply_to_forward facebook_reply tweet broadcast]
+    before_filter :can_send_user?, only: %i(create reply forward reply_to_forward facebook_reply tweet broadcast)
     before_filter :set_defaults, only: [:forward]
     before_filter :link_tickets_enabled?, only: [:broadcast]
 
-    SINGULAR_RESPONSE_FOR = %w[reply forward create update tweet facebook_reply reply_to_forward broadcast].freeze
+    SINGULAR_RESPONSE_FOR = %w(reply forward create update tweet facebook_reply reply_to_forward broadcast).freeze
     SLAVE_ACTIONS = %w(ticket_conversations reply_template forward_template note_forward_template latest_note_forward_template reply_to_forward_template).freeze
 
     def ticket_conversations
@@ -126,6 +126,7 @@ module Ember
     alias reply_to_forward_template reply_forward_template
 
     private
+
       def fetch_attachments
         return unless forward_template?
         @attachments = (@item || @ticket).attachments
@@ -142,11 +143,11 @@ module Ember
 
         conversations = @ticket.notes.visible.exclude_source('meta').preload(conditional_preload_options).order(order_conditions)
         filtered_conversations = if since_id
-          last_created_at = @ticket.notes.where(:id => since_id).pluck(:created_at).first
-          conversations.created_since(since_id, last_created_at)
-        else
-          conversations
-        end
+                                   last_created_at = @ticket.notes.where(id: since_id).pluck(:created_at).first
+                                   conversations.created_since(since_id, last_created_at)
+                                 else
+                                   conversations
+                                 end
 
         @items = paginate_items(filtered_conversations)
         @items_count = conversations.count
@@ -234,7 +235,7 @@ module Ember
         @item.inline_attachments = @item.inline_attachments
       end
 
-      def assign_user(item)
+      def assign_user(_item)
         if @item.user_id
           @item.user = @user if @user
         else
@@ -359,7 +360,7 @@ module Ember
       end
 
       def ember_redirect?
-        %i[create reply forward facebook_reply reply_to_forward broadcast].include?(action_name.to_sym)
+        %i(create reply forward facebook_reply reply_to_forward broadcast).include?(action_name.to_sym)
       end
 
       def render_201_with_location(template_name: "conversations/#{action_name}", location_url: 'conversation_url', item_id: @item.id)
@@ -386,7 +387,7 @@ module Ember
       end
 
       def notification_template
-        %i[note_forward_template latest_note_forward_template].include?(action_name.to_sym) ? :forward_template : action_name.to_sym
+        %i(note_forward_template latest_note_forward_template).include?(action_name.to_sym) ? :forward_template : action_name.to_sym
       end
 
       def fetch_to_cc_bcc_emails
@@ -399,7 +400,6 @@ module Ember
         end
         @bcc_emails = bcc_drop_box_email
       end
-
 
       def parse_liquid(liquid_content)
         Liquid::Template.parse(liquid_content).render(
@@ -433,7 +433,7 @@ module Ember
       end
 
       def tickets_scoper
-        return super if (ConversationConstants::TICKET_STATE_CHECK_NOT_REQUIRED.include?(action_name.to_sym))
+        return super if ConversationConstants::TICKET_STATE_CHECK_NOT_REQUIRED.include?(action_name.to_sym)
         super.where(ApiTicketConstants::CONDITIONS_FOR_TICKET_ACTIONS)
       end
 

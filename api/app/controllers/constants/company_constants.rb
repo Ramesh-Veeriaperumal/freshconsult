@@ -3,7 +3,6 @@ module CompanyConstants
   HASH_FIELDS = ['custom_fields'].freeze
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
 
-
   FIELDS = %w(name description note avatar_id avatar).freeze | ARRAY_FIELDS | HASH_FIELDS
   INDEX_FIELDS = %w(include letter).freeze
   ACTIVITIES_FIELDS = %w(type).freeze
@@ -20,8 +19,8 @@ module CompanyConstants
   ACTIVITY_TYPES = %w(tickets archived_tickets).freeze
   LOAD_OBJECT_EXCEPT = %w(bulk_delete).freeze
 
-  FIELD_MAPPINGS = { 
-    :"company_domains.base" => :domains, 
+  FIELD_MAPPINGS = {
+    :"company_domains.base" => :domains,
     :"company_domains.domain" => :domains,
     attachment_ids: :avatar_id
   }.freeze
@@ -32,5 +31,4 @@ module CompanyConstants
   MAX_ACTIVITIES_COUNT = 10
   ALLOWED_AVATAR_SIZE = 5 * 1024 * 1024
   DELEGATOR_CLASS = 'CompanyDelegator'.freeze
-
 end.freeze

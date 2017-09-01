@@ -3,25 +3,21 @@ module Pipe
     include Helpdesk::ToggleEmailNotification
 
     def create
-      begin
-        disable_user_activation
-        disable_notification
-        super
-      ensure
-        enable_user_activation
-        enable_notification
-      end
+      disable_user_activation
+      disable_notification
+      super
+    ensure
+      enable_user_activation
+      enable_notification
     end
 
     def update
-      begin
-        disable_user_activation
-        disable_notification
-        super
-      ensure
-        enable_user_activation
-        enable_notification
-      end
+      disable_user_activation
+      disable_notification
+      super
+    ensure
+      enable_user_activation
+      enable_notification
     end
   end
 end

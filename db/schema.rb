@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170715062914) do
+ActiveRecord::Schema.define(:version => 20170814173356) do
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -87,8 +87,11 @@ ActiveRecord::Schema.define(:version => 20170715062914) do
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
     t.string   "pod_info",   :default => "poduseast1", :null => false
+    t.string   "sidekiq_job_info"
+    t.integer  "account_id",       :limit => 8
   end
 
+  add_index "active_account_jobs", ["account_id"], :name => "index_active_account_jobs_on_account_id"
   add_index "active_account_jobs", ["locked_by"], :name => "index_active_account_jobs_on_locked_by"
   add_index "active_account_jobs", ["pod_info"], :name => "index_active_account_jobs_on_pod_info"
 
@@ -1054,8 +1057,11 @@ ActiveRecord::Schema.define(:version => 20170715062914) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "pod_info",   :default => 'poduseast1', :null => false
+    t.string   "sidekiq_job_info"
+    t.integer  "account_id",       :limit => 8
   end
 
+  add_index "delayed_jobs", ["account_id"], :name => "index_delayed_jobs_on_account_id"
   add_index "delayed_jobs", ["locked_by"], :name => "index_delayed_jobs_on_locked_by"
   add_index "delayed_jobs", ["pod_info"], :name => "index_delayed_jobs_on_pod_info"
 
@@ -1474,8 +1480,11 @@ ActiveRecord::Schema.define(:version => 20170715062914) do
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
     t.string   "pod_info",   :default => 'poduseast1', :null => false
+    t.string   "sidekiq_job_info"
+    t.integer  "account_id",       :limit => 8
   end
 
+  add_index "free_account_jobs", ["account_id"], :name => "index_free_account_jobs_on_account_id"
   add_index "free_account_jobs", ["locked_by"], :name => "index_free_account_jobs_on_locked_by"
   add_index "free_account_jobs", ["pod_info"], :name => "index_free_account_jobs_on_pod_info"
 
@@ -2519,8 +2528,11 @@ ActiveRecord::Schema.define(:version => 20170715062914) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "pod_info",   :default => 'poduseast1', :null => false
+    t.string   "sidekiq_job_info"
+    t.integer  "account_id",       :limit => 8
   end
 
+  add_index "mailbox_jobs", ["account_id"], :name => "index_mailbox_jobs_on_account_id"
   add_index "mailbox_jobs", ["locked_by"], :name => "index_mailbox_jobs_on_locked_by"
   add_index "mailbox_jobs", ["pod_info"], :name => "index_mailbox_jobs_on_pod_info"
 
@@ -2803,8 +2815,11 @@ ActiveRecord::Schema.define(:version => 20170715062914) do
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
     t.string   "pod_info",   :default => "poduseast1", :null => false
+    t.string   "sidekiq_job_info"
+    t.integer  "account_id",       :limit => 8
   end
 
+  add_index "premium_account_jobs", ["account_id"], :name => "index_premium_account_jobs_on_account_id"
   add_index "premium_account_jobs", ["locked_by"], :name => "index_premium_account_jobs_on_locked_by"
   add_index "premium_account_jobs", ["pod_info"], :name => "index_premium_account_jobs_on_pod_info"
 
@@ -3822,8 +3837,11 @@ ActiveRecord::Schema.define(:version => 20170715062914) do
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
     t.string   "pod_info",   :default => 'poduseast1', :null => false
+    t.string   "sidekiq_job_info"
+    t.integer  "account_id",       :limit => 8
   end
 
+  add_index "trial_account_jobs", ["account_id"], :name => "index_trial_account_jobs_on_account_id"
   add_index "trial_account_jobs", ["locked_by"], :name => "index_trial_account_jobs_on_locked_by"
   add_index "trial_account_jobs", ["pod_info"], :name => "index_trial_accout_jobs_on_pod_info"
 
@@ -4136,7 +4154,7 @@ ActiveRecord::Schema.define(:version => 20170715062914) do
       t.text        :recent_questions
       t.text        :insights_config_data
       t.timestamps
-    end
+  end
   add_index :qna_insights_reports , [:account_id, :user_id], :name => 'index_qna_insights_reports_on_account_id_and_user_id'
  
 end

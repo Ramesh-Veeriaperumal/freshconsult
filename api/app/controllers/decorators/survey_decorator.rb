@@ -14,12 +14,16 @@ class SurveyDecorator < ApiDecorator
   def questions
     survey_questions.map do |q|
       survey = { id: "question_#{q.id}", label: q.label, accepted_ratings: question_choices(q) }
-      survey.merge!(default: true, id: 'default_question') if q.default
+      if q.default
+        survey[:default] = true
+        survey[:id] = 'default_question'
+      end
       survey
     end
   end
 
   private
+
     def question_choices(q)
       @version == 'private' ? q.choices.map { |c| { label: c[:value], value: c[:face_value] } } : q.face_values
     end

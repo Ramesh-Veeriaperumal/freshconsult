@@ -1,7 +1,7 @@
 class CustomFieldDecorator < BaseDelegator
   class << self
     def display_name(name)
-      "#{name[3..-1]}"
+      (name[3..-1]).to_s
     end
 
     def name_mapping(fields)

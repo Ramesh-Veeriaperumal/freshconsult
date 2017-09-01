@@ -1,10 +1,9 @@
 class QueryHash
-
   attr_accessor :query_hash, :format
   REMOVE_FFNAME_FOR = %w(spam deleted).freeze
 
-  SPAM_CONDITION = { 'condition' => 'spam', 'operator' => 'is', 'value' => false }
-  DELETED_CONDITION = { 'condition' => 'deleted', 'operator' => 'is', 'value' => false }
+  SPAM_CONDITION = { 'condition' => 'spam', 'operator' => 'is', 'value' => false }.freeze
+  DELETED_CONDITION = { 'condition' => 'deleted', 'operator' => 'is', 'value' => false }.freeze
   ARRAY_VALUED_OPERATORS = ['is_in', 'due_by_op'].freeze
 
   def initialize(params)
@@ -25,7 +24,7 @@ class QueryHash
 
     def transform
       result = query_hash.dup.select { |q| !deleted_custom_field_or_spam?(q) }.map { |q| transform_query(q) }
-      result +=  (format == :system ? spam_deleted_conditions : [])
+      result += (format == :system ? spam_deleted_conditions : [])
     end
 
     def transform_query(query)
@@ -41,9 +40,9 @@ class QueryHash
     end
 
     def skip_transform?(query)
-      ((format == :presentable) && query.has_key?("type")) ||
-        ((format == :system) && !query.has_key?("type")) || 
-        (!query.has_key?("type") && !query.has_key?("ff_name"))
+      ((format == :presentable) && query.key?('type')) ||
+        ((format == :system) && !query.key?('type')) ||
+        (!query.key?('type') && !query.key?('ff_name'))
     end
 
     def transform_value(query)
@@ -119,7 +118,7 @@ class QueryHash
     end
 
     def spam_deleted_conditions
-      [ SPAM_CONDITION, DELETED_CONDITION ]
+      [SPAM_CONDITION, DELETED_CONDITION]
     end
 
     def deleted_custom_field_or_spam?(query)
@@ -138,11 +137,10 @@ class QueryHash
     end
 
     def ff_alias_name_map
-      @alias_name_map ||= Hash[all_ff_fields.map {|fields| [fields['flexifield_alias'], fields['flexifield_name']]}]
+      @alias_name_map ||= Hash[all_ff_fields.map { |fields| [fields['flexifield_alias'], fields['flexifield_name']] }]
     end
 
     def ff_name_alias_map
-      @name_alias_map ||= Hash[all_ff_fields.map {|fields| [fields['flexifield_name'], fields['flexifield_alias']]}]
+      @name_alias_map ||= Hash[all_ff_fields.map { |fields| [fields['flexifield_name'], fields['flexifield_alias']] }]
     end
-
 end

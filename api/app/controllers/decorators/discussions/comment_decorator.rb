@@ -1,10 +1,10 @@
 class Discussions::CommentDecorator < ApiDecorator
   delegate :id, :user_id, :topic_id, :body, :forum_id, :body_html, :topic, :original_post?,
-            :account_id, :answer, :published, :spam, :trash, :user_votes, to: :record
+           :account_id, :answer, :published, :spam, :trash, :user_votes, to: :record
 
   def to_activity_hash
     ret = {
-      activity_type: "Post".downcase,
+      activity_type: 'Post'.downcase,
       id: id,
       topic_id: topic.id,
       title: topic.title,
@@ -15,7 +15,7 @@ class Discussions::CommentDecorator < ApiDecorator
     }
   end
 
-  def forum_hash forum
+  def forum_hash(forum)
     {
       id: forum.id,
       name: forum.name

@@ -45,6 +45,8 @@ Helpkit::Application.configure do
   # Expands the lines which load the assets
   config.assets.debug = false
 
+  #Enable Redis access tracking
+  config.middleware.insert_before 0, Middleware::LogRedisCalls
   config.middleware.insert_before Rails::Rack::Logger, Middleware::DisableAssetsLogger
   config.reload_plugins = true
   config.after_initialize do
