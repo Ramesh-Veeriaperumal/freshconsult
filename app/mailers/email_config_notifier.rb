@@ -1,7 +1,6 @@
 class EmailConfigNotifier < ActionMailer::Base
   
-  include EmailHelper
-  include EmailActionsHelper
+  include EmailHelper  
   layout "email_font", :except => [:activation_instructions]
 
   def activation_instructions(email_config)
