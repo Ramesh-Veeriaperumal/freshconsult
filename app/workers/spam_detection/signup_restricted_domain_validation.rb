@@ -22,7 +22,7 @@ module SpamDetection
             additional_info = "Customer's admin email domain is restricted: Account activity #{call_location} : Attempted email_address: #{email}"
             # notify_account_blocks(account, subject, additional_info)
             # update_freshops_activity(account, "Account blocked during #{call_location} due to restricted domain", "block_account")
-            increase_ehawk_spam_score_for_account(4, @account, subject, additional_info)      
+            increase_ehawk_spam_score_for_account(4, account, subject, additional_info)      
             Rails.logger.info "Suspending account #{account.id}"
         end
       rescue Exception => e
