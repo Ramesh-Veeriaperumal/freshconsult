@@ -40,7 +40,7 @@ module Freshcaller
     end
 
     def account_migration_location
-      MIGRATION_LOCATION.join(params[:account_id].to_s, '')
+      MIGRATION_LOCATION.join(current_account.id.to_s, '')
     end
 
     def retrieve_account_details
