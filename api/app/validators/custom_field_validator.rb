@@ -148,6 +148,14 @@ class CustomFieldValidator < ActiveModel::EachValidator
       end      
     end
 
+    def validate_custom_date_array(record, field_name)
+      values = record.send(field_name)
+      values.each do |value|
+        date_options = construct_options(attributes: field_name, allow_nil: !@is_required, only_date: true, required: @is_required)
+        DateTimeValidator.new(date_options).validate_value(record, value)
+      end
+    end
+
     def absence_validator_check(record, field_name, values)
       if section_field? && !section_parent_present?(record, values)
         parent = section_parent_list.keys.first

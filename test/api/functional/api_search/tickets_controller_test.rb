@@ -21,7 +21,7 @@ module ApiSearch
       create_custom_field("priority", "number", "06")
       create_custom_field("status", "text", "14")
       clear_es(@account.id)
-      20.times { create_search_ticket(ticket_params_hash) }
+      30.times { create_search_ticket(ticket_params_hash) }
       write_data_to_es(@account.id)
       @@initial_setup_run = true
     end
@@ -39,11 +39,11 @@ module ApiSearch
       tags = [Faker::Name.name, Faker::Name.name]
       priority = rand(4) + 1
       status = ticket_statuses[rand(ticket_statuses.size)]
-      custom_fields = { test_custom_number_1: rand(10) - 5, test_custom_checkbox_1: rand(5) % 2 ? true : false, test_custom_text_1: Faker::Lorem.word + " " + special_chars.shuffle[0..8].join, test_custom_paragraph_1: Faker::Lorem.paragraph }
+      custom_fields = { test_custom_date_1: rand(10).days.until, test_custom_number_1: rand(10) - 5, test_custom_checkbox_1: rand(5) % 2 ? true : false, test_custom_text_1: Faker::Lorem.word + " " + special_chars.shuffle[0..8].join, test_custom_paragraph_1: Faker::Lorem.paragraph }
       group = create_group_with_agents(@account, agent_list: [@agent.id])
       params_hash = { email: email, cc_emails: cc_emails, description: description, subject: subject,
                       priority: priority, status: status, type: 'Problem', responder_id: @agent.id, source: 1, tags: tags,
-                      due_by: 14.days.since.iso8601, fr_due_by: 1.days.since.iso8601, group_id: group.id, custom_field: custom_fields }
+                      due_by: 14.days.since.iso8601, fr_due_by: 1.days.since.iso8601, group_id: group.id, custom_field: custom_fields, created_at: rand(10).days.until.iso8601  }
       params_hash
     end
 
@@ -211,5 +211,75 @@ module ApiSearch
       assert_response 400
       match_json([bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7')])
     end
+
+    def test_tickets_invalid_date_format
+      tickets = @account.tickets.select { |x|  [1,2].include?(x.priority) }
+      get :index, controller_params(query: '"created_at>\'20170707\'"')
+      assert_response 400
+      match_json([bad_request_error_pattern('query', :query_format_invalid)])
+    end    
+
+    def test_tickets_invalid_date_format
+      tickets = @account.tickets.select { |x|  [1,2].include?(x.priority) }
+      get :index, controller_params(query: '"ddate>\'2017-07-07\'"')
+      assert_response 400
+      match_json([bad_request_error_pattern('ddate', :invalid_field)])
+    end
+
+    def test_tickets_valid_date
+      d1 = (Date.today-1).iso8601
+      tickets = @account.tickets.select { |x|  x.created_at < d1 }
+      get :index, controller_params(query: '"created_at < \'' + d1 + '\'"')
+      assert_response 200
+      response = parse_response @response.body
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json({results: pattern, total: tickets.size})
+    end
+
+    def test_tickets_created_on_a_day
+      d1 = (Date.today-2).iso8601
+      d2 = (Date.today-1).iso8601
+      tickets = @account.tickets.select { |x|  x.created_at.to_date.iso8601 == d1 }
+      get :index, controller_params(query: '"created_at > \'' + d1 + '\' AND created_at < \'' + d2 +'\'"')
+      assert_response 200
+      response = parse_response @response.body
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json({results: pattern, total: tickets.size})
+    end
+
+    def test_tickets_valid_range
+      d1 = (Date.today-8).iso8601
+      d2 = (Date.today-1).iso8601
+      tickets = @account.tickets.select { |x| x.created_at.to_date.iso8601 >= d1 && x.created_at.to_date.iso8601 < d2 }
+      get :index, controller_params(query: '"(created_at > \'' + d1 + '\' AND created_at < \'' + d2 +'\')"')
+      assert_response 200
+      response = parse_response @response.body
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json({results: pattern, total: tickets.size})
+    end
+
+    def test_tickets_valid_range_and_filter
+      d1 = (Date.today-8).iso8601
+      d2 = (Date.today-1).iso8601
+      tickets = @account.tickets.select { |x|  (x.created_at.to_date.iso8601 >= d1 && x.created_at.to_date.iso8601 < d2) && x.priority == 2 }
+      get :index, controller_params(query: '"(created_at > \'' + d1 + '\' AND created_at < \'' + d2 +'\') AND priority:2 "')
+      assert_response 200
+      response = parse_response @response.body
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json({results: pattern, total: tickets.size})
+    end
+
+    def test_tickets_custom_date_valid_range_and_filter
+      d1 = (Date.today-8).iso8601
+      d2 = (Date.today-1).iso8601
+      tickets = @account.tickets.select { |x| x.custom_field["test_custom_date_1"] && (x.custom_field["test_custom_date_1"].to_date.iso8601 >= d1 && x.custom_field["test_custom_date_1"].to_date.iso8601 < d2) && x.priority == 2 }
+      get :index, controller_params(query: '"(test_custom_date > \'' + d1 + '\' AND test_custom_date < \'' + d2 +'\') AND priority:2 "')
+      assert_response 200
+      response = parse_response @response.body
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json({results: pattern, total: tickets.size})
+    end
+
+
   end
 end
