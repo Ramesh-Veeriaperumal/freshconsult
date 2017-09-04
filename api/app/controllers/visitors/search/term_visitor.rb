@@ -16,16 +16,12 @@ module Search
 
 		def reduce_level(data, left, right)
 			if [data, left.type, right.type] == ['OR', :operand, :operand] && left.key == right.key
-				{ operator(data) => [ terms_filter(construct_key(left), [left.value, right.value]) ] }
+				{ ApiSearchConstants::ES_OPERATORS[data] => [ terms_filter(construct_key(left), [left.value, right.value]) ] }
 			else
-				{ operator(data) => [left.accept(self), right.accept(self)] }
+				{ ApiSearchConstants::ES_OPERATORS[data] => [left.accept(self), right.accept(self)] }
 			end
 		end
-
-		def operator(data)
-			data == 'OR' ? :should : :must
-		end
-
+		
 		def visit_operand(node)
 			# Currently no such attribute is supported. If ticket search supports 'email' then uncomment the lines
 			# if ApiSearchConstants::PRE_FETCH[@resource] && ApiSearchConstants::PRE_FETCH[@resource].keys.include?(node.key)
@@ -47,6 +43,14 @@ module Search
 						})
 					]
 				})
+			elsif ["<", ">"].include?(node.action)
+				bool_filter(
+					range_filter({ 
+						construct_key(node) => {
+							ApiSearchConstants::ES_OPERATORS[node.action] => node.value
+						}
+					})
+				)
 			else
 				terms_filter(construct_key(node),[node.value])
 			end
@@ -77,5 +81,9 @@ module Search
 		def bool_filter(cond_block)
       { bool: cond_block }
     end
+
+    def range_filter(cond_block)
+    	{ filter: { range: cond_block } }
+		end
 	end
 end

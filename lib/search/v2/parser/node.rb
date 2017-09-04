@@ -14,13 +14,7 @@ module Search
 			class Node
 				include Enumerable
 
-				attr_accessor :data, :left, :right
-
-				def initialize(data, left = nil, right = nil)
-					@data = data
-					@left = left
-					@right = right
-				end
+				attr_accessor :data, :left, :right, :ope
 
 				def each(&block)
 			    left.each(&block) if left
@@ -39,6 +33,12 @@ module Search
 
 			# Node which holds the operators AND, OR ...
 			class OperatorNode < Node
+				def initialize(data, left, right)
+					@data = data
+					@left = left
+					@right = right
+				end
+
 				def type
 					:operator
 				end
@@ -50,6 +50,11 @@ module Search
 
 			# Node holds the conditions given by the user eg: priority = 2, checked = false
 			class OperandNode < Node
+				def initialize(data, ope = ":")
+					@data = data
+					@ope = ope
+				end
+
 				def type
 					:operand
 				end
@@ -60,6 +65,10 @@ module Search
 
 				def key
 					@data.first[0]
+				end
+
+				def action
+					@ope
 				end
 
 				def value

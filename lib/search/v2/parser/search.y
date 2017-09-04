@@ -1,6 +1,8 @@
 class SearchParser
   prechigh
     left ':'
+    left '>'
+    left '<'
     left 'AND'
     left 'OR'
   preclow
@@ -34,8 +36,10 @@ end
 def make_tokens(scanner)
   keyword_x = "([a-zA-Z][a-zA-Z0-9_]*)[\s]*"
   seperator_x = ":"
+  relational_x = "(>|<)"
+  date_x = "[\s]*\\d{4}-\\d{2}-\\d{2}"
   value_x = "[\s]*([a-zA-Z0-9_\@]+|'[^']+'|[-]?[0-9]+)"
-  regex_string = /(#{keyword_x}#{seperator_x}#{value_x})/
+  regex_string = /(#{keyword_x}(#{seperator_x}#{value_x}|#{relational_x}#{date_x}))/
   until scanner.empty?
     case
       when match = scanner.scan(/\([\s]*/)
@@ -73,7 +77,7 @@ end
       element = infix[current]
       if is_operand?(element)
         postfix << element
-      elsif (stack.length == 0 or stack.last == '(') and (is_relational_operator?(element))
+      elsif (stack.length == 0 or stack.last == '(') and (is_logical_operator?(element))
         stack << element
       elsif element == '('
         stack << element
@@ -83,11 +87,11 @@ end
           postfix << top
         end
         stack.pop
-      elsif is_relational_operator?(element) and is_relational_operator?(stack.last) and precedence(element) > precedence(stack.last)
+      elsif is_logical_operator?(element) and is_logical_operator?(stack.last) and precedence(element) > precedence(stack.last)
         stack << element
       elsif element == stack.last
         postfix << element
-      elsif is_relational_operator?(element) and is_relational_operator?(stack.last) and precedence(element) < precedence(stack.last)
+      elsif is_logical_operator?(element) and is_logical_operator?(stack.last) and precedence(element) < precedence(stack.last)
         top = stack.pop
         postfix << top
         current -=  1
@@ -106,9 +110,11 @@ end
     stack = []
     postfix.each do |element|
       if is_operand?(element)
-        condition = element.split(':')
+        ope = element[/:|\>|\</ =~ element]
+        condition = element.split(ope)
+        # condition = element.split(':')
         keyword = condition[0].strip.downcase
-        value = (condition[1, condition.length].join(':')).strip
+        value = (condition[1, condition.length].join(ope)).strip
         value = is_integer?(value) ? value.to_i : value  #update logic and add comments
         value = value =~ /\'(.*)\'/ ? value[1,value.length-2] : value
         data = { keyword.to_sym => value }
@@ -125,12 +131,12 @@ end
     root = stack.pop
   end
 
-  def is_relational_operator?(element)
+  def is_logical_operator?(element)
     ['AND','OR'].include?(element)
   end
 
   def is_operator?(element)
-    is_relational_operator?(element) || ['(',')'].include?(element)
+    is_logical_operator?(element) || ['(',')'].include?(element)
   end
 
   def is_operand?(element)
