@@ -39,11 +39,8 @@
     - twitter
     - premium_twitter
     - custom_twitter
-<<<<<<< HEAD
     - send_activation_reminder_mail
     - block_account
-=======
->>>>>>> parent of 6be8ee6179... FDCORE-3970:Reminder emails for account activation
   :occasional:
     - plan_change_workerv2
     - merge_contacts
