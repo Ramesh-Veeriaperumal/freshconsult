@@ -21,12 +21,17 @@ module Freshcaller
     end
 
     def save_freshcaller_account(response)
-      Rails.logger.info "Save Freshcaller account :: Account :: #{current_account.id}"
+      Rails.logger.info "Save Freshcaller account :: Account :: #{current_account.id}" 
       Freshcaller::Account.create(
         account_id: current_account.id,
         freshcaller_account_id: params[:freshcaller_account_id] || response[:freshcaller_account_id],
-        domain:  params[:freshcaller_account_domain] || response[:freshcaller_account_domain]
+        domain: freshcaller_domain(response)
       )
+    end
+
+    def freshcaller_domain(response)
+      return "#{FreshcallerConfig['domain_prefix']}#{params[:freshcaller_account_domain]}" if params[:freshcaller_account_domain].present?
+      "#{FreshcallerConfig['domain_prefix']}#{response[:freshcaller_account_domain]}"
     end
 
     def disable_freshfone_feature
@@ -73,8 +78,7 @@ module Freshcaller
                             requestor: params[:email],
                             helpkit_domain: current_account.full_domain,
                             account_id: params[:freshcaller_account_id] || account_detail[:freshcaller_account_id] },
-                            #"#{protocol}#{FreshcallerConfig['domain_prefix']}#{params[:freshcaller_account_domain] || account_detail[:freshcaller_account_domain]}/migrate"
-                            "#{protocol}#{FreshcallerConfig['domain_prefix']}d2badcff.ngrok.io:3000/migrate",
+                            "#{protocol}#{FreshcallerConfig['domain_prefix']}#{params[:freshcaller_account_domain] || account_detail[:freshcaller_account_domain]}/migrate",
                             :post)
     end
   end
