@@ -12,7 +12,7 @@ class TimeEntriesController < ApiApplicationController
   end
 
   def update
-    user_stop_timer =  params[cname].key?(:user_id) ? params[cname][:user_id] : @item.user_id
+    user_stop_timer = params[cname].key?(:user_id) ? params[cname][:user_id] : @item.user_id
     # Should stop other timers for the above user_stop_timer
     # if the timer is on for this time_entry in this update call
     # or this user_stop_timer is newly assigned to this time_entry in this update call
@@ -23,7 +23,7 @@ class TimeEntriesController < ApiApplicationController
   def toggle_timer
     timer_running = @item.timer_running
     changed = fetch_changed_attributes(timer_running)
-    changed.merge!(timer_running: !timer_running)
+    changed[:timer_running] = !timer_running
     render_errors @item.errors unless @item.update_attributes(changed)
   end
 

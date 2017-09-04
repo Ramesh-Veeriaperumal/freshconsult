@@ -32,12 +32,12 @@ module ApiConstants
                        ContactConstants::LOAD_OBJECT_EXCEPT +
                        ApiTicketConstants::LOAD_OBJECT_EXCEPT +
                        DraftConstants::LOAD_OBJECT_EXCEPT +
-                       SubscriptionConstants::LOAD_OBJECT_EXCEPT+
+                       SubscriptionConstants::LOAD_OBJECT_EXCEPT +
                        SpotlightConstants::LOAD_OBJECT_EXCEPT +
                        AutocompleteConstants::LOAD_OBJECT_EXCEPT +
-                       AttachmentConstants::LOAD_OBJECT_EXCEPT + 
-                       ApiLeaderboardConstants::LOAD_OBJECT_EXCEPT+
-                       Pipe::HelpdeskConstants::LOAD_OBJECT_EXCEPT+
+                       AttachmentConstants::LOAD_OBJECT_EXCEPT +
+                       ApiLeaderboardConstants::LOAD_OBJECT_EXCEPT +
+                       Pipe::HelpdeskConstants::LOAD_OBJECT_EXCEPT +
                        ExportConstants::LOAD_OBJECT_EXCEPT +
                        DashboardConstants::LOAD_OBJECT_EXCEPT
 
@@ -75,7 +75,7 @@ module ApiConstants
                         SubscriptionConstants::BULK_ACTION_METHODS
   BULK_ACTION_ASYNC_METHODS = ApiTicketConstants::BULK_ACTION_ASYNC_METHODS
 
-  TWITTER_REPLY_TYPES = %w[mention dm].freeze
+  TWITTER_REPLY_TYPES = %w(mention dm).freeze
   TWEET_MAX_LENGTH = 140
   TWITTER_DM_MAX_LENGTH = 10_000
 end.freeze

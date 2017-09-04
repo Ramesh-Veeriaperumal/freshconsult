@@ -279,16 +279,14 @@ module Ember
         end
 
         def spam_key
-          begin
-            Timeout::timeout(SpamConstants::SPAM_TIMEOUT) do
-              key = "#{current_user.account_id}-#{current_user.id}"
-              value = Time.now.to_i.to_s
-              $spam_watcher.perform_redis_op('setex', key, 24.hours, value)
-              return "#{key}:#{value}"
-            end
-          rescue Exception => e
-            NewRelic::Agent.notice_error(e, description: 'error occured while adding key in redis')
+          Timeout.timeout(SpamConstants::SPAM_TIMEOUT) do
+            key = "#{current_user.account_id}-#{current_user.id}"
+            value = Time.now.to_i.to_s
+            $spam_watcher.perform_redis_op('setex', key, 24.hours, value)
+            return "#{key}:#{value}"
           end
+        rescue Exception => e
+          NewRelic::Agent.notice_error(e, description: 'error occured while adding key in redis')
         end
         wrap_parameters(*wrap_params)
     end

@@ -7,8 +7,7 @@ module ApiTicketConstants
   CREATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id internal_group_id priority
                      email phone twitter_id facebook_id requester_id name
                      responder_id internal_agent_id source status subject type product_id company_id
-                     parent_id
-                  ).freeze | ARRAY_FIELDS | HASH_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
+                     parent_id).freeze | ARRAY_FIELDS | HASH_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
 
   # removed source since update of ticket source should not be allowed. - Might break API v2
   UPDATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id internal_group_id priority
@@ -57,7 +56,7 @@ module ApiTicketConstants
   ATTRIBUTES_TO_BE_STRIPPED = %w(email phone name subject type tags cc_emails twitter_id custom_fields).freeze
 
   EXPORT_CSV_HASH_FIELDS = %w(ticket_fields contact_fields company_fields).freeze
-  EXPORT_CSV_FIELDS =  %w(format date_filter ticket_state_filter start_date end_date query_hash).freeze | EXPORT_CSV_HASH_FIELDS
+  EXPORT_CSV_FIELDS = %w(format date_filter ticket_state_filter start_date end_date query_hash).freeze | EXPORT_CSV_HASH_FIELDS
 
   CLOSED = Helpdesk::Ticketfields::TicketStatus::CLOSED
   RESOLVED = Helpdesk::Ticketfields::TicketStatus::RESOLVED
@@ -93,7 +92,6 @@ module ApiTicketConstants
 
   FIELD_MAPPINGS = { group: :group_id, agent: :responder_id, responder: :responder_id, requester: :requester_id, email_config: :email_config_id,
                      product: :product_id, ticket_type: :type }.freeze
-
 
   SEARCH_ALLOWED_DEFAULT_FIELDS = ['status'].freeze
 

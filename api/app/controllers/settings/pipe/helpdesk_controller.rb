@@ -1,6 +1,5 @@
 module Settings::Pipe
   class HelpdeskController < ::Settings::HelpdeskController
-
     include Redis::RedisKeys
     include Redis::DisplayIdRedis
     include Redis::RateLimitRedis
@@ -10,12 +9,11 @@ module Settings::Pipe
 
     def toggle_email
       if params[:disabled] == true
-          Account.current.launch(:disable_emails)
+        Account.current.launch(:disable_emails)
       else
-          Account.current.rollback(:disable_emails)
+        Account.current.rollback(:disable_emails)
       end
-      @item = {disabled: Account.current.launched?(:disable_emails)}
-      
+      @item = { disabled: Account.current.launched?(:disable_emails) }
     end
 
     def change_api_v2_limit
@@ -26,33 +24,33 @@ module Settings::Pipe
       set_account_api_limit(limit)
       new_limit = get_account_api_limit
       new_limit = new_limit.to_i if new_limit
-      @item = {old_limit: old_limit, limit: new_limit}
+      @item = { old_limit: old_limit, limit: new_limit }
     end
-
 
     def toggle_fast_ticket_creation
       account = Account.current
       if params[:disabled] == true
-          account.features.redis_display_id.destroy if account.features?(:redis_display_id)
+        account.features.redis_display_id.destroy if account.features?(:redis_display_id)
       else
-        key = TICKET_DISPLAY_ID % { :account_id => Account.current.id }
+        key = TICKET_DISPLAY_ID % { account_id: Account.current.id }
         set_display_id_redis_key(key, TicketConstants::TICKET_START_DISPLAY_ID)
         account.features.redis_display_id.create unless account.features?(:redis_display_id)
       end
       Account.current.reload
-      @item = {disabled: !Account.current.features?(:redis_display_id)}
+      @item = { disabled: !Account.current.features?(:redis_display_id) }
     end
 
-    private 
+    private
+
       def validate_params
-          field = "disabled"
-          params[cname].permit(*field)
-          toggle = Pipe::HelpdeskValidation.new(params)
-          render_custom_errors(toggle, true) unless toggle.valid?
+        field = 'disabled'
+        params[cname].permit(*field)
+        toggle = Pipe::HelpdeskValidation.new(params)
+        render_custom_errors(toggle, true) unless toggle.valid?
       end
 
       def validate_api_limit_params
-        field = "limit"
+        field = 'limit'
         params[cname].permit(*field)
         toggle = Pipe::HelpdeskValidation.new(params)
         render_custom_errors(toggle, true) unless toggle.valid?
@@ -61,7 +59,5 @@ module Settings::Pipe
       def account_api_limit_key
         ACCOUNT_API_LIMIT % { account_id: Account.current.id }
       end
-
-
   end
 end

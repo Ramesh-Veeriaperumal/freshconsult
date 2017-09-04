@@ -3,7 +3,7 @@ class TicketDelegator < BaseDelegator
   attr_accessor :ticket_fields
   validate :group_presence, if: -> { group_id && (attr_changed?('group_id') || (property_update? && required_for_closure_field?('group') && status_set_to_closed?)) }
   validate :responder_presence, if: -> { responder_id && (attr_changed?('responder_id') || (property_update? && required_for_closure_field?('agent') && status_set_to_closed?)) }
-  validate :email_config_presence,  if: -> {  !property_update? && email_config_id && outbound_email? }
+  validate :email_config_presence,  if: -> { !property_update? && email_config_id && outbound_email? }
   validates :email_config, presence: true, if: -> { errors[:email_config_id].blank? && email_config_id && attr_changed?('email_config_id') }
   validate :product_presence, if: -> { product_id && (attr_changed?('product_id', schema_less_ticket) || (property_update? && required_for_closure_field?('product') && status_set_to_closed?)) }
   validate :user_blocked?, if: -> { requester_id && errors[:requester].blank? && attr_changed?('requester_id') }
@@ -15,8 +15,7 @@ class TicketDelegator < BaseDelegator
                                 required_based_on_status: proc { |x| x.closure_status? },
                                 required_attribute: :required,
                                 section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
-                              }
-                            }, unless: -> { property_update? || bulk_update? }
+                              } }, unless: -> { property_update? || bulk_update? }
   validates :custom_field_via_mapping,  custom_field: { custom_field_via_mapping:
                               {
                                 validatable_custom_fields: proc { |x| x.custom_fields_to_validate },
@@ -25,8 +24,7 @@ class TicketDelegator < BaseDelegator
                                 required_based_on_status: proc { |x| x.closure_status? },
                                 required_attribute: :required,
                                 section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
-                              }
-                            }, if: :bulk_update?
+                              } }, if: :bulk_update?
 
   validates :custom_field_via_mapping,  custom_field: { custom_field_via_mapping:
                               {
@@ -35,8 +33,7 @@ class TicketDelegator < BaseDelegator
                                 nested_field_choices: proc { TicketsValidationHelper.custom_nested_field_choices },
                                 required_based_on_status: proc { |x| x.closure_status? },
                                 section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
-                              }
-                            }, if: :property_update?
+                              } }, if: :property_update?
 
   validate :facebook_id_exists?, if: -> { !property_update? && facebook_id }
 
@@ -46,8 +43,8 @@ class TicketDelegator < BaseDelegator
 
   validate :company_presence, if: -> { company_id }
 
-  validate :validate_internal_agent_group_mapping, if: -> {internal_agent_id && attr_changed?('internal_agent_id') && Account.current.shared_ownership_enabled?}
-  validate :validate_status_group_mapping, if: -> {internal_group_id && attr_changed?('internal_group_id') && Account.current.shared_ownership_enabled?}
+  validate :validate_internal_agent_group_mapping, if: -> { internal_agent_id && attr_changed?('internal_agent_id') && Account.current.shared_ownership_enabled? }
+  validate :validate_status_group_mapping, if: -> { internal_group_id && attr_changed?('internal_group_id') && Account.current.shared_ownership_enabled? }
 
   def initialize(record, options)
     @ticket_fields = options[:ticket_fields]
@@ -113,7 +110,7 @@ class TicketDelegator < BaseDelegator
   end
 
   def facebook_id_exists?
-    unless Account.current.all_users.exists?(['fb_profile_id = ?', "#{facebook_id}"])
+    unless Account.current.all_users.exists?(['fb_profile_id = ?', facebook_id.to_s])
       errors[:facebook_id] << :invalid_facebook_id
     end
   end
@@ -124,14 +121,13 @@ class TicketDelegator < BaseDelegator
     invalid_ids = application_ids - applications.map(&:id)
     if invalid_ids.any?
       errors[:application_id] << :invalid_list
-      (self.error_options ||= {}).merge!({ application_id: { list: "#{invalid_ids.join(', ')}" } })
+      (self.error_options ||= {}).merge!(application_id: { list: invalid_ids.join(', ').to_s })
     end
   end
 
   def validate_closure
     errors[:status] << :unresolved_child if self.assoc_parent_ticket? && self.validate_assoc_parent_tkt_status
   end
-
 
   def custom_fields_to_validate
     custom_drodpowns = TicketsValidationHelper.custom_dropdown_fields(self)
@@ -142,7 +138,7 @@ class TicketDelegator < BaseDelegator
     end
   end
 
-  def required_for_closure_field?(x)
+  def required_for_closure_field?(_x)
     ticket_fields.select { |x| x.name == x && x.required_for_closure }
   end
 

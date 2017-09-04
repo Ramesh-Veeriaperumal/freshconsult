@@ -10,7 +10,7 @@ class FacebookPageDecorator < ApiDecorator
       page_image_url: page_img_url,
       page_link: page_link,
       enable_page: enable_page,
-      product_id:product_id
+      product_id: product_id
     }
   end
 end

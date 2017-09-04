@@ -5,13 +5,22 @@
 #  	   $redis_tickets.perform_redis_op('lrange', list, start_range, end_range)
 
 module Redis::RedisWrapper
+  include Redis::RedisTracker
 
-	Redis.class_eval do
-	  def perform_redis_op(operator, *args)
-	    self.send(operator, *args)
-	  rescue Redis::BaseError => e
-	    NewRelic::Agent.notice_error(e)
-	  end
-	end
-
+  Redis.class_eval do
+    if Rails.env.production?
+      def perform_redis_op(operator, *args)
+        send(operator, *args)
+      rescue Redis::BaseError => e
+        NewRelic::Agent.notice_error(e)
+      end
+    else
+      def perform_redis_op(operator, *args)
+        track_redis_calls(operator, *args)
+        send(operator, *args)
+      rescue Redis::BaseError => e
+        NewRelic::Agent.notice_error(e)
+      end
+    end
+  end
 end

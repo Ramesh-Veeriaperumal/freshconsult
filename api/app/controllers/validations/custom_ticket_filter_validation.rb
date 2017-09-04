@@ -31,11 +31,11 @@ class CustomTicketFilterValidation < FilterValidation
 
   def group_id_validation
     unless Account.current.groups_from_cache.map(&:id).include?(group_id)
-      errors[:group_id] << :"invalid_group_id"
+      errors[:group_id] << :invalid_group_id
     end
   end
 
   def sort_field_options
-    TicketsFilter::api_sort_fields_options.map(&:first).map(&:to_s)
+    TicketsFilter.api_sort_fields_options.map(&:first).map(&:to_s)
   end
 end

@@ -1,6 +1,6 @@
 module Integrations
   class CtiDecorator < ApiDecorator
-    delegate :id, :requester_id,  :responder_id, to: :record
+    delegate :id, :requester_id, :responder_id, to: :record
 
     def ticket_id
       if record.recordable.is_a?(Helpdesk::Ticket)

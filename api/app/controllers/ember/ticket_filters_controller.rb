@@ -17,7 +17,7 @@ module Ember
     def create
       @item.validate!
       if @item.errors?
-        render_errors(@item.errors, meta = {}) and return
+        render_errors(@item.errors, meta = {}) && return
       else
         @item.save
         create_helpdesk_accessible(@item, :ticket_filter)
@@ -33,7 +33,7 @@ module Ember
       if @item.save
         update_helpdesk_accessible(@item, :ticket_filter) if visibility_present?
       else
-        render_errors(@item.errors, meta = {}) and return
+        render_errors(@item.errors, meta = {}) && return
       end
       @item = transform_single_response(required_attributes(@item))
     end
@@ -138,10 +138,10 @@ module Ember
 
       def is_num?(str)
         Integer(str.to_s)
-        rescue ArgumentError
-          false
-        else
-          true
+      rescue ArgumentError
+        false
+      else
+        true
       end
 
       def transform_response(items)
@@ -159,9 +159,9 @@ module Ember
 
       def remove_query_conditions(item)
         # This is to be done in QueryHash
-        item[:query_hash].select { |query|
+        item[:query_hash].select do |query|
           !CustomFilterConstants::REMOVE_QUERY_CONDITIONS.include?(query['condition'])
-        }
+        end
       end
 
       def default_visibility

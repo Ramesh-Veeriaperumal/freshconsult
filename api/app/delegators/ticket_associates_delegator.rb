@@ -1,7 +1,7 @@
 class TicketAssociatesDelegator < BaseDelegator
   validate :related_ticket, on: :unlink
   validate :ticket_for_linking, if: :link_or_bulk_link
-  
+
   def ticket_for_linking
     errors[:id] << :unable_to_perform if association_type.present? || !can_be_associated?
   end

@@ -10,6 +10,6 @@ class Solutions::FolderDecorator < ApiDecorator
   end
 
   def company_ids
-  	parent.customer_folders.map(&:customer_id)
+    parent.customer_folders.map(&:customer_id)
   end
 end

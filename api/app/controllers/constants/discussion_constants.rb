@@ -16,7 +16,7 @@ module DiscussionConstants
       QUESTION_STAMPS.first => [QUESTION_STAMPS.last],
       QUESTION_STAMPS.last => [QUESTION_STAMPS.first]
     }
-  }
+  }.freeze
 
   # If :all option is added to this hash, have to assign privilege for this action in privileges.rb
   UPDATE_COMMENT_FIELDS = { edit_topic: %w(body), view_forums: %w(answer) }.freeze
@@ -28,8 +28,8 @@ module DiscussionConstants
   FOLLOWED_BY_FIELDS = FOLLOW_FIELDS + ApiConstants::PAGINATE_FIELDS
 
   # Pipe constants
-  PIPE_CREATE_COMMENT_FIELDS = { all: CREATE_COMMENT_FIELDS[:all] | %w(created_at updated_at user_id)}.freeze
-  PIPE_CREATE_TOPIC_FIELDS = { all: CREATE_TOPIC_FIELDS[:all] | %w(created_at updated_at user_id)}.freeze
+  PIPE_CREATE_COMMENT_FIELDS = { all: CREATE_COMMENT_FIELDS[:all] | %w(created_at updated_at user_id) }.freeze
+  PIPE_CREATE_TOPIC_FIELDS = { all: CREATE_TOPIC_FIELDS[:all] | %w(created_at updated_at user_id) }.freeze
 
   # ValidationConstants
   FORUM_VISIBILITY_KEYS_BY_TOKEN = Forum::VISIBILITY_KEYS_BY_TOKEN

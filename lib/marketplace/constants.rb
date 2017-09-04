@@ -32,6 +32,8 @@ module Marketplace::Constants
 
   INSTALLED_LIST_EXTENSION_TYPES = "#{EXTENSION_TYPE[:plug]},#{EXTENSION_TYPE[:ni]}"
 
+  INSTALLED_APP_TYPES_V2 = "#{EXTENSION_TYPE[:plug]}"
+
   FORM_FIELD_TYPES = [
     [:text, 1],
     [:dropdown, 2]

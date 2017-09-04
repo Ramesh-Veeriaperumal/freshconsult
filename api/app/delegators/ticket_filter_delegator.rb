@@ -1,5 +1,4 @@
 class TicketFilterDelegator < BaseDelegator
-
   attr_accessor :ticket_filter, :filter
 
   validate :validate_filter, if: -> { filter.present? }

@@ -3,8 +3,8 @@ class TicketValidation < ApiValidation
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
   CHECK_PARAMS_SET_FIELDS = (MANDATORY_FIELD_ARRAY.map(&:to_s) +
                             %w(fr_due_by due_by subject description skip_close_notification
-                              custom_fields company_id internal_group_id internal_agent_id)
-                          ).freeze
+                               custom_fields company_id internal_group_id internal_agent_id)
+                            ).freeze
 
   attr_accessor :id, :cc_emails, :description, :due_by, :email_config_id, :fr_due_by, :group, :internal_group_id, :internal_agent_id, :priority, :email,
                 :phone, :twitter_id, :facebook_id, :requester_id, :name, :agent, :source, :status, :subject, :ticket_type,
@@ -41,7 +41,7 @@ class TicketValidation < ApiValidation
                               }, on: :compose_email
 
   validates :source, custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :allow_string_param, detect_type: true, allow_nil: true }, on: :create
-  validates :requester_id, :email_config_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param  }
+  validates :requester_id, :email_config_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }
 
   validates :company_id, custom_absence: {
     message: :require_feature_for_attribute,
@@ -78,26 +78,26 @@ class TicketValidation < ApiValidation
   }
 
   validates :internal_group_id, custom_absence: {
-      message: :require_feature_for_attribute,
-      code: :inaccessible_field,
-      message_options: {
-          attribute: 'internal_group_id',
-          feature: :shared_ownership
-      }
-  }, unless: -> { Account.current.shared_ownership_enabled?  }
+    message: :require_feature_for_attribute,
+    code: :inaccessible_field,
+    message_options: {
+      attribute: 'internal_group_id',
+      feature: :shared_ownership
+    }
+  }, unless: -> { Account.current.shared_ownership_enabled? }
 
   validates :internal_agent_id, custom_absence: {
-      message: :require_feature_for_attribute,
-      code: :inaccessible_field,
-      message_options: {
-          attribute: 'internal_agent_id',
-          feature: :shared_ownership
-      }
-  }, unless: -> { Account.current.shared_ownership_enabled?  }
+    message: :require_feature_for_attribute,
+    code: :inaccessible_field,
+    message_options: {
+      attribute: 'internal_agent_id',
+      feature: :shared_ownership
+    }
+  }, unless: -> { Account.current.shared_ownership_enabled? }
 
   validate :requester_detail_missing, if: -> { create_or_update? && requester_id_mandatory? }
   # validates :requester_id, required: { allow_nil: false, message: :fill_a_mandatory_field, message_options: { field_names: 'requester_id, phone, email, twitter_id, facebook_id' } }, if: :requester_id_mandatory? # No
-  validates :name, required: { allow_nil: false, message: :phone_mandatory }, if: -> { create_or_update? && name_required? }  # No
+  validates :name, required: { allow_nil: false, message: :phone_mandatory }, if: -> { create_or_update? && name_required? } # No
   validates :name, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
 
   # Due by and First response due by validations
@@ -137,7 +137,7 @@ class TicketValidation < ApiValidation
 
   # Custom fields validations
   validates :custom_fields, data_type: { rules: Hash }
-  # TODO EMBER - error messages to be changed for validations that require values for fields on status change
+  # TODO: EMBER - error messages to be changed for validations that require values for fields on status change
   validates :custom_fields, custom_field: { custom_fields:
                               {
                                 validatable_custom_fields: proc { |x| x.custom_fields_to_validate },
@@ -145,8 +145,7 @@ class TicketValidation < ApiValidation
                                 required_attribute: :required,
                                 ignore_string: :allow_string_param,
                                 section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
-                              }
-                           }, if: -> { errors[:custom_fields].blank? && (create_or_update? || is_bulk_update?) }
+                              } }, if: -> { errors[:custom_fields].blank? && (create_or_update? || is_bulk_update?) }
   validates :twitter_id, :phone, :name, data_type: { rules: String, allow_nil: true }
   validates :twitter_id, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :phone, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
@@ -296,7 +295,7 @@ class TicketValidation < ApiValidation
   end
 
   def validate_field?(x)
-    if x.default? 
+    if x.default?
       request_params.key?(ApiTicketConstants::FIELD_MAPPINGS[x.name.to_sym] || x.name.to_sym)
     else
       request_params[:custom_fields] ? request_params[:custom_fields].key?(x.name) : false

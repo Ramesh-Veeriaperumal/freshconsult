@@ -1,10 +1,10 @@
 class CustomNumericalityValidator < ApiValidator
   include ErrorOptions
 
-  NOT_A_NUMBER = 'is not a number'
-  NOT_AN_INTEGER = 'is not an integer'
-  MUST_BE_GREATER_THAN = 'must be greater than'
-  MUST_BE_LESS_THAN = 'must be less than'
+  NOT_A_NUMBER = 'is not a number'.freeze
+  NOT_AN_INTEGER = 'is not an integer'.freeze
+  MUST_BE_GREATER_THAN = 'must be greater than'.freeze
+  MUST_BE_LESS_THAN = 'must be less than'.freeze
 
   def initialize(options = {})
     validator_options = options.dup # options would get modified and frozen in the next step.
@@ -82,10 +82,10 @@ class CustomNumericalityValidator < ApiValidator
     def expected_data_type
       return internal_values[:expected_data_type] if internal_values.key?(:expected_data_type)
       # it is assumed that greater_than will always mean greater_than 0, when this assumption is invalidated, we have to revisit this method
-      if options[:only_integer]
-        internal_values[:expected_data_type] = options[:greater_than] ? :'Positive Integer' : :Integer
-      else
-        internal_values[:expected_data_type] = options[:greater_than] ? :'Positive Number' : :Number
-      end
+      internal_values[:expected_data_type] = if options[:only_integer]
+                                               options[:greater_than] ? :'Positive Integer' : :Integer
+                                             else
+                                               options[:greater_than] ? :'Positive Number' : :Number
+                                             end
     end
 end

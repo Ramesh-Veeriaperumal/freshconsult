@@ -10,7 +10,7 @@ module ApiSolutions
 
     def create
       if create_or_update_category
-        render_201_with_location(item_id: @item.parent_id) 
+        render_201_with_location(item_id: @item.parent_id)
       else
         render_solution_item_errors
       end
@@ -55,7 +55,7 @@ module ApiSolutions
         if create?
           return false unless validate_language
         end
-        params[cname].permit(*(SolutionConstants::CATEGORY_FIELDS))
+        params[cname].permit(*SolutionConstants::CATEGORY_FIELDS)
         category = ApiSolutions::CategoryValidation.new(params[cname], @item)
         render_errors category.errors, category.error_options unless category.valid?
       end
@@ -86,7 +86,7 @@ module ApiSolutions
       end
 
       def load_objects(items = scoper)
-        super(items.where(language_id: @lang_id).joins(:solution_category_meta, {solution_category_meta: :portal_solution_categories}).where('solution_category_meta.is_default = false').order('portal_solution_categories.position').preload(:solution_category_meta))
+        super(items.where(language_id: @lang_id).joins(:solution_category_meta, solution_category_meta: :portal_solution_categories).where('solution_category_meta.is_default = false').order('portal_solution_categories.position').preload(:solution_category_meta))
       end
 
       def load_meta(id)
@@ -99,7 +99,7 @@ module ApiSolutions
         unless item.respond_to?(:parent)
           bad_portal_ids = item.portal_solution_categories.select { |x| x.errors.present? }.map(&:portal_id)
           item.errors[:visible_in_portals] << :invalid_list if bad_portal_ids.present?
-          @error_options = { remove: :"category.portal_solution_categories", visible_in_portals: { list: "#{bad_portal_ids.join(', ')}" } }
+          @error_options = { remove: :"category.portal_solution_categories", visible_in_portals: { list: bad_portal_ids.join(', ').to_s } }
         end
         @error_options
       end

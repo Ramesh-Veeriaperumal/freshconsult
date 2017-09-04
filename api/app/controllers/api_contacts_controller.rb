@@ -16,7 +16,7 @@ class ApiContactsController < ApiApplicationController
     else
       build_user_emails_attributes if @email_objects.any?
       build_other_companies if @all_companies
-      if @item.create_contact!(params["active"])
+      if @item.create_contact!(params['active'])
         render_201_with_location(item_id: @item.id)
       else
         render_custom_errors
@@ -42,10 +42,10 @@ class ApiContactsController < ApiApplicationController
     end
     build_user_emails_attributes if @email_objects.any?
     build_other_companies if @all_companies
-    unless @item.update_attributes(params[cname])
-      render_custom_errors
-    else
+    if @item.update_attributes(params[cname])
       @item.reload
+    else
+      render_custom_errors
     end
   end
 
@@ -81,12 +81,17 @@ class ApiContactsController < ApiApplicationController
     # Same as http://apidock.com/rails/Hash/extract! without the shortcomings in http://apidock.com/rails/Hash/extract%21#1530-Non-existent-key-semantics-changed-
     # extract the keys from the hash & delete the same in the original hash to avoid repeat assignments
     def validatable_delegator_attributes
-      params[cname].select { |key, value| (params[cname].delete(key); true) if ContactConstants::VALIDATABLE_DELEGATOR_ATTRIBUTES.include?(key) }
+      params[cname].select do |key, value|
+        if ContactConstants::VALIDATABLE_DELEGATOR_ATTRIBUTES.include?(key)
+          params[cname].delete(key)
+          true
+        end
+      end
     end
 
     def decorator_options
       super({ name_mapping: (@name_mapping || get_name_mapping),
-          sideload_options: sideload_options})
+              sideload_options: sideload_options })
     end
 
     def sideload_options
@@ -110,14 +115,13 @@ class ApiContactsController < ApiApplicationController
       action_scopes = ContactConstants::SCOPE_BASED_ON_ACTION[action_name] || {}
       action_scopes.each_pair do |scope_attribute, value|
         item_value = @item.send(scope_attribute)
-        if item_value != value
-          Rails.logger.debug "Contact id: #{@item.id} with #{scope_attribute} is #{item_value}"
-          # Render 405 in case of update/delete as it acts on contact endpoint itself
-          # And User will be able to GET the same contact via Show
-          # other URLs such as contacts/id/make_agent will result in 404 as it is a separate endpoint
-          update? || destroy? ? render_405_error(['GET']) : head(404)
-          return false
-        end
+        next unless item_value != value
+        Rails.logger.debug "Contact id: #{@item.id} with #{scope_attribute} is #{item_value}"
+        # Render 405 in case of update/delete as it acts on contact endpoint itself
+        # And User will be able to GET the same contact via Show
+        # other URLs such as contacts/id/make_agent will result in 404 as it is a separate endpoint
+        update? || destroy? ? render_405_error(['GET']) : head(404)
+        return false
       end
     end
 
@@ -136,7 +140,7 @@ class ApiContactsController < ApiApplicationController
 
     # returns true if it fails params validation either in data type validation or in delegator validation.
     def invalid_params?
-      params[cname].permit(*(ContactConstants::MAKE_AGENT_FIELDS))
+      params[cname].permit(*ContactConstants::MAKE_AGENT_FIELDS)
       make_agent = MakeAgentValidation.new(params[cname], @item)
       if make_agent.valid?
         ParamsHelper.assign_and_clean_params({ ticket_scope: :ticket_permission, signature: :signature_html }, params[cname])
@@ -162,10 +166,10 @@ class ApiContactsController < ApiApplicationController
       custom_fields = @name_mapping.empty? ? [nil] : @name_mapping.values
 
       field = ContactConstants::CONTACT_FIELDS | ['custom_fields' => custom_fields]
-      params[cname].permit(*(field))
+      params[cname].permit(*field)
       ParamsHelper.modify_custom_fields(params[cname][:custom_fields], @name_mapping.invert)
       contact = ContactValidation.new(params[cname], @item, string_request_params?)
-      render_custom_errors(contact, true)  unless contact.valid?(action_name.to_sym)
+      render_custom_errors(contact, true) unless contact.valid?(action_name.to_sym)
     end
 
     def sanitize_params
@@ -198,9 +202,9 @@ class ApiContactsController < ApiApplicationController
       ) if params_hash[:custom_fields]
 
       ParamsHelper.assign_and_clean_params({
-        custom_fields: :custom_field,
-        view_all_tickets: :client_manager
-      }, params_hash)
+                                             custom_fields: :custom_field,
+                                             view_all_tickets: :client_manager
+                                           }, params_hash)
     end
 
     def construct_all_companies
@@ -223,8 +227,8 @@ class ApiContactsController < ApiApplicationController
 
       all_emails.map!(&:downcase).uniq!
 
-      @email_objects[:old_email_objects]  = current_account.user_emails.where(email: all_emails)
-      @email_objects[:new_emails]  = all_emails - @email_objects[:old_email_objects].collect(&:email)
+      @email_objects[:old_email_objects] = current_account.user_emails.where(email: all_emails)
+      @email_objects[:new_emails] = all_emails - @email_objects[:old_email_objects].collect(&:email)
     end
 
     def validate_filter_params
@@ -262,7 +266,7 @@ class ApiContactsController < ApiApplicationController
         @item.errors[:other_companies] << :invalid_list if bad_customer_ids.present?
         @error_options = {
           remove: :"user_companies.company",
-          other_companies: { list: "#{bad_customer_ids.join(', ')}" }
+          other_companies: { list: bad_customer_ids.join(', ').to_s }
         }
       end
       mappings = field_mappings
@@ -306,7 +310,7 @@ class ApiContactsController < ApiApplicationController
 
       # emails to be destroyed
       if update?
-        emails_to_be_destroyed =  (@item.user_emails - @email_objects[:old_email_objects])
+        emails_to_be_destroyed = (@item.user_emails - @email_objects[:old_email_objects])
         emails_to_be_destroyed.each do |user_email|
           email_attributes << { 'email' => user_email.email, 'id' => user_email.id, '_destroy' => 1 }
         end

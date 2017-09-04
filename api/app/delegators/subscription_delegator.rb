@@ -1,7 +1,7 @@
 class SubscriptionDelegator < BaseDelegator
   validate :validate_user_id, if: :user_id
 
-  def initialize(record, options = {})
+  def initialize(record, _options = {})
     super(record)
   end
 

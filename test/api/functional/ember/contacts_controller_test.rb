@@ -185,6 +185,7 @@ module Ember
                                                                  view_all_tickets: true
                                                                }
                                                              ])
+
       assert_response 201
       match_json(private_api_contact_pattern(User.last))
       company_1 = Company.find_by_name(comp_name1)

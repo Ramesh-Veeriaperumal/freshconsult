@@ -2,6 +2,7 @@ module ConversationConcern
   extend ActiveSupport::Concern
 
   private
+
     def sanitize_note_params
       sanitize_body_params
       assign_default_values

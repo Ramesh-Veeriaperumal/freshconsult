@@ -13,19 +13,19 @@ module Ember::Dashboard
       else
         @items = Helpdesk::Activity.freshest(current_account).activity_since(since_id).permissible(current_user).includes(:notable, user: :avatar).limit(DashboardConstants::DEFAULT_PAGE_LIMIT)
       end
-      rescue Exception => e
-        NewRelic::Agent.notice_error(e, { description: 'Error occoured in dashboard activities' })
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e, description: 'Error occoured in dashboard activities')
     end
 
     def per_page
       per_page_params = (params[:per_page] || DashboardConstants::DEFAULT_PAGE_LIMIT).to_i
       items_per_page = if per_page_params > DashboardConstants::MAX_PAGE_LIMIT
-        DashboardConstants::MAX_PAGE_LIMIT
-      elsif per_page_params < DashboardConstants::MIN_PAGE_LIMIT
-        DashboardConstants::MIN_PAGE_LIMIT
-      else
-        per_page_params
-      end
+                         DashboardConstants::MAX_PAGE_LIMIT
+                       elsif per_page_params < DashboardConstants::MIN_PAGE_LIMIT
+                         DashboardConstants::MIN_PAGE_LIMIT
+                       else
+                         per_page_params
+                       end
       items_per_page
     end
 

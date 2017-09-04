@@ -5,8 +5,7 @@ class ContactDelegator < BaseDelegator
     validatable_custom_fields: proc { Account.current.contact_form.custom_drop_down_fields },
     drop_down_choices: proc { Account.current.contact_form.custom_dropdown_field_choices },
     required_attribute: :required_for_agent
-  }
-  }
+  } }
   validate :user_emails_validation, if: -> { @other_emails }
   validate :validate_user_activation, on: :send_invite
   validate :validate_avatar_ext, if: -> { @avatar_attachment && errors[:attachment_ids].blank? }
@@ -31,7 +30,7 @@ class ContactDelegator < BaseDelegator
     invalid_other_emails = unassociated_emails - [@primary_email]
     if invalid_other_emails.any?
       errors[:other_emails] << :email_already_taken
-      (self.error_options ||= {}).merge!(other_emails: { invalid_emails: "#{invalid_other_emails.join(', ')}" })
+      (self.error_options ||= {})[:other_emails] = { invalid_emails: invalid_other_emails.join(', ').to_s }
     end
     errors[:email] << :"Email has already been taken" if unassociated_emails.include?(@primary_email)
   end
