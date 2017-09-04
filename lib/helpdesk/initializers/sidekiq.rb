@@ -189,7 +189,6 @@ Sidekiq.configure_server do |config|
       "PasswordExpiryWorker",
       "WebhookV1Worker",
       "SendSignupActivationMail",
-      "SendActivationReminderMail",
       "DevNotificationWorker",
       "SearchV2::Manager::DisableSearch",
       "CountES::IndexOperations::DisableCountES",

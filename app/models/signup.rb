@@ -11,13 +11,11 @@ class Signup < ActivePresenter::Base
   
   before_validation :create_global_shard
 
-  after_save :make_user_current, :populate_seed_data, :schedule_activation_reminder_mail
+  after_save :make_user_current, :populate_seed_data
 
   MAX_ACCOUNTS_COUNT = 10
   #Using this as the version of Rack::Utils we are using doesn't have support for 429
   SIGNUP_RESPONSE_STATUS_CODES = {:too_many_requests => 429, :precondition_failed => 412}
-  SIGNUP_ACTIVATION_REMINDER_DAYS = [3, 5]
-
 
   def locale=(language)
     @locale = (language.blank? ? I18n.default_locale : language).to_s
@@ -34,20 +32,6 @@ class Signup < ActivePresenter::Base
   end
 
   private
-
-    # schedules the activation reminder mails for days set in SIGNUP_ACTIVATION_REMINDER_MAILING_DAYS array in redis
-    def schedule_activation_reminder_mail
-      reminder_days.each_with_index do |n,i|
-        # reminder_count is used to get the right email from the translation file.
-        SendActivationReminderMail.perform_in(n.to_i.days.from_now, {account_id: account.id, user_id: user.id, reminder_count: i+1})
-      end
-    end
-
-    def reminder_days
-      remind_on_days = get_all_members_in_a_redis_set(SIGNUP_ACTIVATION_REMINDER_MAILING_DAYS)  # returns empty array if key not present
-      remind_on_days.empty? ? SIGNUP_ACTIVATION_REMINDER_DAYS : remind_on_days
-    end
-
     def build_primary_email
       account.build_primary_email_config(
         :to_email => support_email,

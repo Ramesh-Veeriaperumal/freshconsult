@@ -38,38 +38,6 @@ class UserNotifier < ActionMailer::Base
       remove_email_config
     end
   end
-
-  def activation_reminder(admin, reminder_count)
-    # Safe way to include name with email address 
-    address = Mail::Address.new AppConfig['from_email'] 
-    # Should we dup or are we using the latest mail gem?
-    # (latest mail gem does dup already)
-    address.display_name = AppConfig['app_name'].dup
-
-    # get the right email content and subject from translation file.
-    @email = t("admin_onboarding.reminder_emails.email#{reminder_count}")
-
-    headers = {
-      :from           => address.format,
-      :to             => admin.email,
-      :subject        => @email[:subject],
-      :sent_on        => Time.now
-    }
-   headers.merge!(make_header(nil, nil, admin.account.id, "Admin Activation"))
-   @admin          = admin
-    @activation_url = register_url( 
-      :activation_code => admin.perishable_token, 
-      :host => admin.account.host , 
-      :protocol => admin.url_protocol 
-    )
-    @account = admin.account
-
-    mail(headers) do |part|
-      part.text { render "activation_reminder.text.plain" }
-      part.html { render "activation_reminder.text.html" }
-    end.deliver
-
-  end
   
   def admin_activation(admin)
     # Safe way to include name with email address 
