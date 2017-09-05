@@ -11,21 +11,16 @@ module Freshfone
 
       begin
         params.symbolize_keys!
-        return if params[:account_id].blank?
-        ::Account.reset_current_account
-        account = ::Account.find params[:account_id]
-        raise ActiveRecord::RecordNotFound if account.blank?
-        account.make_current
-
+        self.current_account = ::Account.current
+        raise ActiveRecord::RecordNotFound if self.current_account.blank?
         self.params = params
-        self.current_account = account
         migrate_account
       rescue => e
         FreshdeskErrorsMailer.error_email(
           nil, nil, e.to_s,
           additional_info: { trace: e.backtrace, message: e.message },
           recipients: [FreshfoneConfig['ops_alert']['mail']['to']],
-          subject: "Error in freshcaller migration for account :: #{account_id}"
+          subject: "Error in freshcaller migration for account :: #{self.current_account.try(:id)}"
         )
       ensure
         ::Account.reset_current_account

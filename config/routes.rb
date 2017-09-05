@@ -1117,8 +1117,9 @@ Helpkit::Application.routes.draw do
   match '/mkp/data-pipe.:format', :controller => 'integrations/data_pipe', :action => 'router', :method => :post, :as => :data_pipe
 
   constraints RouteConstraints::Freshcaller.new do
-    match '/admin/phone', controller: 'admin/freshcaller', action: 'index'
     match '/admin/phone/redirect_to_freshcaller', controller: 'admin/freshcaller', action: 'redirect_to_freshcaller'
+    match '/admin/phone', controller: 'admin/freshcaller', action: 'index'
+    match '/admin/phone/*a', controller: 'admin/freshcaller', action: 'index'
   end
 
   namespace :admin do
