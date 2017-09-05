@@ -63,7 +63,7 @@ module Search
 		end
 
 		def not_analyzed
-			@not_analyzed ||= Flexifield.column_names.select{|x| x if x =~ /^ffs/}
+			@not_analyzed ||= Flexifield.column_names.select{|x| x if x =~ /^ffs/} + ["tag_names"]
 		end
 
 		def term_filter(field_name, value)
