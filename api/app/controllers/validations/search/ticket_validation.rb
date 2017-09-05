@@ -4,12 +4,13 @@ module Search
 		CHECK_PARAMS_SET_FIELDS = (%w( custom_fields )).freeze
 
 		attr_accessor :group_id, :priority, :status, :custom_fields, :ticket_fields, :status_ids, :ticket_custom_fields,
-									:created_at, :due_by, :fr_due_by
+									:created_at, :due_by, :fr_due_by, :type
 
 	  validates :status, data_type: { rules: Array }, array: { custom_inclusion: { in: proc { |x| x.status_ids }, detect_type: true } }
     validates :priority, data_type: { rules: Array }, array: { custom_inclusion: { in: ApiTicketConstants::PRIORITIES, detect_type: true } }
     validates :group_id, array: { custom_numericality: { only_integer: true, greater_than: 0 } }
     validates :created_at, :fr_due_by, :due_by, data_type: { rules: Array }, array: { date_time: true }
+    validates :type, data_type: { rules: Array }, array: { custom_inclusion: { in: proc { TicketsValidationHelper.ticket_type_values } } }
 
 	  validates :custom_fields, custom_field: { custom_fields:
 	                          {
