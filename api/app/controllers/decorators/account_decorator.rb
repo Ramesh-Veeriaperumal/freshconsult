@@ -6,7 +6,7 @@ class AccountDecorator < ApiDecorator
       name: record.name,
       time_zone: record.time_zone,
       date_format: date_format,
-      features: features_list,
+      features: record.enabled_features_list,
       launched: launch_party_features,
       subscription: subscription_hash,
       settings: settings_hash,
@@ -22,10 +22,6 @@ class AccountDecorator < ApiDecorator
     def date_format
       date_format = Account::DATEFORMATS[record.account_additional_settings.date_format]
       Account::DATA_DATEFORMATS[date_format]
-    end
-
-    def features_list
-      (record.features.map(&:to_sym) + record.features_list).uniq
     end
 
     def launch_party_features
