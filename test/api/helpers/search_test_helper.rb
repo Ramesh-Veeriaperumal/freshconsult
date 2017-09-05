@@ -23,6 +23,7 @@ module SearchTestHelper
                                        :custom_field => params[:custom_field])
     test_ticket.build_ticket_body(:description => Faker::Lorem.paragraph)
     test_ticket.group_id = params[:group_id]
+    test_ticket.tag_names =  params[:tags].join(",")
     test_ticket.save_ticket
     test_ticket
   end
