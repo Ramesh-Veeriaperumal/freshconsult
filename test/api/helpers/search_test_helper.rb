@@ -16,6 +16,7 @@ module SearchTestHelper
                                        :subject => params[:subject],
                                        :responder_id => params[:responder_id],
                                        :source => params[:source],
+                                       :ticket_type => params[:type],
                                        :cc_email => Helpdesk::Ticket.default_cc_hash.merge(cc_emails: cc_emails, fwd_emails: fwd_emails),
                                        :created_at => params[:created_at],
                                        :account_id => @account.id,

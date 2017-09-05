@@ -31,6 +31,7 @@ module ApiSearch
     end
 
     def ticket_params_hash
+      types = ["Question", "Incident", "Problem", "Feature Request"]
       special_chars = ['!', '#', '$', '%', '&', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~']
       cc_emails = [Faker::Internet.email, Faker::Internet.email]
       subject = Faker::Lorem.words(10).join(' ')
@@ -42,7 +43,7 @@ module ApiSearch
       custom_fields = { test_custom_date_1: rand(10).days.until, test_custom_number_1: rand(10) - 5, test_custom_checkbox_1: rand(5) % 2 ? true : false, test_custom_text_1: Faker::Lorem.word + " " + special_chars.shuffle[0..8].join, test_custom_paragraph_1: Faker::Lorem.paragraph }
       group = create_group_with_agents(@account, agent_list: [@agent.id])
       params_hash = { email: email, cc_emails: cc_emails, description: description, subject: subject,
-                      priority: priority, status: status, type: 'Problem', responder_id: @agent.id, source: 1, tags: tags,
+                      priority: priority, status: status, type: types[rand(4)], responder_id: @agent.id, source: 1, tags: tags,
                       due_by: 14.days.since.iso8601, fr_due_by: 1.days.since.iso8601, group_id: group.id, custom_field: custom_fields, created_at: rand(10).days.until.iso8601  }
       params_hash
     end
@@ -280,6 +281,29 @@ module ApiSearch
       match_json({results: pattern, total: tickets.size})
     end
 
+    def test_tickets_valid_type
+      tickets = @account.tickets.select { |x| ['Question', 'Feature Request'].include?(x.ticket_type) }
+      get :index, controller_params(query: '"type: \'Feature Request\' OR type:Question"')
+      assert_response 200
+      response = parse_response @response.body
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json({results: pattern, total: tickets.size})
+    end
+
+    def test_tickets_invalid_type
+      get :index, controller_params(query: '"type: \'Feature Request\' OR type:Question123"')
+      assert_response 400
+      match_json([bad_request_error_pattern('type', :not_included, list: @account.ticket_type_values.map(&:value).join(","))])
+    end 
+
+    def test_tickets_valid_type_and_priority
+      tickets = @account.tickets.select { |x| ['Question', 'Feature Request'].include?(x.ticket_type) && x.priority == 2 }
+      get :index, controller_params(query: '"(type: \'Feature Request\' OR type:Question) AND priority:2"')
+      assert_response 200
+      response = parse_response @response.body
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json({results: pattern, total: tickets.size})
+    end    
 
   end
 end

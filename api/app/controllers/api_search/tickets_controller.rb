@@ -29,7 +29,7 @@ module ApiSearch
 
       def visitor
         column_names = Account.current.ticket_field_def.ff_alias_column_mapping.each_with_object({}) {|(key,value), hash| hash[TicketDecorator.display_name(key).to_sym] = value if value=~ ApiSearchConstants::TICKET_FIELDS_REGEX }.except(*ApiSearchConstants::TICKET_FIELDS.map(&:to_sym))
-        column_names.merge!({ fr_due_by: :frDueBy })
+        column_names.merge!({ fr_due_by: :frDueBy, type: :ticket_type })
         Search::TermVisitor.new(column_names)
       end
 

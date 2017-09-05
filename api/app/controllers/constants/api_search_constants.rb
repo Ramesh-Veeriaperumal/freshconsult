@@ -7,7 +7,7 @@ module ApiSearchConstants
   DEFAULT_PAGE = 1
   MAX_PAGE = 10
 
-  TICKET_FIELDS = %w( priority status group_id created_at due_by fr_due_by ).freeze
+  TICKET_FIELDS = %w( priority status group_id created_at due_by fr_due_by type ).freeze
   TICKET_FIELDS_REGEX = /^ff(s|_boolean|_int|_date)/
   CUSTOMER_FIELDS_REGEX = /^cf_(str|boolean|int)/
   CONTACT_FIELDS = %w( company_id twitter_id email mobile phone ).freeze
