@@ -4,6 +4,7 @@ module ApiSearch
     include SearchTestHelper
 
     CUSTOM_FIELDS = %w(number checkbox decimal text paragraph date)
+    CHOICES =  ['Get Smart', 'Pursuit of Happiness', 'Armaggedon']
 
     def setup
       super
@@ -18,7 +19,7 @@ module ApiSearch
       CUSTOM_FIELDS.each do |custom_field|
         create_custom_field("test_custom_#{custom_field}", custom_field)
       end
-      create_custom_field_dropdown('test_custom_dropdown', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
+      create_custom_field_dropdown('test_custom_dropdown', CHOICES)
       create_custom_field("priority", "number", "06")
       create_custom_field("status", "text", "14")
       clear_es(@account.id)
@@ -41,7 +42,7 @@ module ApiSearch
       email = Faker::Internet.email
       priority = rand(4) + 1
       status = ticket_statuses[rand(ticket_statuses.size)]
-      custom_fields = { test_custom_date_1: rand(10).days.until, test_custom_number_1: rand(10) - 5, test_custom_checkbox_1: rand(5) % 2 ? true : false, test_custom_text_1: Faker::Lorem.word + " " + special_chars.shuffle[0..8].join, test_custom_paragraph_1: Faker::Lorem.paragraph }
+      custom_fields = { test_custom_dropdown_1: CHOICES[rand(3)], test_custom_date_1: rand(10).days.until, test_custom_number_1: rand(10) - 5, test_custom_checkbox_1: rand(5) % 2 ? true : false, test_custom_text_1: Faker::Lorem.word + " " + special_chars.shuffle[0..8].join, test_custom_paragraph_1: Faker::Lorem.paragraph }
       group = create_group_with_agents(@account, agent_list: [@agent.id])
       n = rand(10)
       params_hash = { email: email, cc_emails: cc_emails, description: description, subject: subject,
@@ -330,6 +331,30 @@ module ApiSearch
       get :index, controller_params(query: '"tag:'+"a"*33+'"')
       assert_response 400
       match_json([bad_request_error_pattern('tag', :array_too_long, max_count: ApiConstants::TAG_MAX_LENGTH_STRING, element_type: :characters )])
+    end
+
+    def test_tickets_custom_dropdown_valid_choice
+      choice = CHOICES[rand(3)]
+      tickets = @account.tickets.select { |x| x.custom_field["test_custom_dropdown_1"] == choice }
+      get :index, controller_params(query: '"test_custom_dropdown:\''+choice+'\'"')
+      assert_response 200
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json({results: pattern, total: tickets.size})
+    end
+
+    def test_tickets_custom_dropdown_invalid_choice
+      get :index, controller_params(query: '"test_custom_dropdown:aaabbbccc"')
+      assert_response 400
+      match_json([bad_request_error_pattern('test_custom_dropdown', :not_included, list: CHOICES.join(","))])
+    end
+
+    def test_tickets_custom_dropdown_combined_condition
+      choice = CHOICES[rand(3)]
+      tickets = @account.tickets.select { |x| x.custom_field["test_custom_dropdown_1"] == choice && [3,4].include?(x.status) && [2,3].include?(x.priority) }
+      get :index, controller_params(query: '"test_custom_dropdown:\''+choice+'\' AND (status:3 OR status:4) AND (priority:2 OR priority:3)"')
+      assert_response 200
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json({results: pattern, total: tickets.size})
     end
 
   end

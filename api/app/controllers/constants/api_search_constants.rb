@@ -12,7 +12,7 @@ module ApiSearchConstants
   CUSTOMER_FIELDS_REGEX = /^cf_(str|boolean|int)/
   CONTACT_FIELDS = %w( company_id twitter_id email mobile phone ).freeze
   COMPANY_FIELDS = %w( domain ).freeze
-  ALLOWED_CUSTOM_FIELD_TYPES = %w( custom_text custom_number custom_checkbox custom_date ).freeze
+  ALLOWED_CUSTOM_FIELD_TYPES = %w( custom_text custom_number custom_checkbox custom_date custom_dropdown ).freeze
 
   ES_KEYS = { email: :emails, company_id: :company_ids, domain: :domains }.freeze
   ES_OPERATORS = { "<" => "lt", ">" => "gt", "OR" => "should", "AND" => "must" }.freeze
