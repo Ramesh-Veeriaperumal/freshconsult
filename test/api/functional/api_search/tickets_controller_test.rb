@@ -46,7 +46,7 @@ module ApiSearch
       group = create_group_with_agents(@account, agent_list: [@agent.id])
       n = rand(10)
       params_hash = { email: email, cc_emails: cc_emails, description: description, subject: subject,
-                      priority: priority, status: status, type: types[rand(4)], responder_id: @agent.id, source: 1, tags: [tags[rand(6)],tags[rand(6)]].uniq,
+                      priority: priority, status: status, type: types[rand(4)], responder_id: rand(4) + 1, source: 1, tags: [tags[rand(6)],tags[rand(6)]].uniq,
                       due_by: (n+14).days.since.iso8601, fr_due_by: (n+1).days.since.iso8601, group_id: group.id, custom_field: custom_fields, created_at: n.days.until.iso8601  }
       params_hash
     end
@@ -356,6 +356,37 @@ module ApiSearch
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json({results: pattern, total: tickets.size})
     end
+
+    def test_tickets_agent_id
+      agent_id = rand(4) + 1
+      tickets = @account.tickets.select { |x| x.responder_id == agent_id }
+      get :index, controller_params(query: '"agent_id:'+agent_id.to_s+'"')
+      assert_response 200
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json({results: pattern, total: tickets.size})
+    end
+
+    def test_tickets_agent_id_combined_condition
+      tickets = @account.tickets.select { |x| [1,3].include?(x.responder_id) && x.priority > 2 }
+      get :index, controller_params(query: '"(agent_id:1 OR agent_id:3) AND (priority:3 OR priority:4)"')
+      assert_response 200
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json({results: pattern, total: tickets.size})
+    end
+
+    def test_tickets_invalid_agent_id
+      get :index, controller_params(query: '"agent_id:100"')
+      assert_response 200
+      response = parse_response @response.body
+      assert response["total"] == 0
+    end
+
+    def test_tickets_invalid_agent_id_format
+      get :index, controller_params(query: '"agent_id:abc"')
+      assert_response 400
+      match_json([bad_request_error_pattern('agent_id', :array_datatype_mismatch, expected_data_type: 'Positive Integer' )])
+    end
+
 
   end
 end
