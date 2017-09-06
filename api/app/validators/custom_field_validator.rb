@@ -156,6 +156,14 @@ class CustomFieldValidator < ActiveModel::EachValidator
       end
     end
 
+    def validate_custom_dropdown_array(record, field_name)
+      values = record.send(field_name)
+      values.each do |value|
+        choices = proc_to_object(@drop_down_choices, record)
+        CustomInclusionValidator.new(options.merge(attributes: field_name, in: choices[field_name], allow_nil: !@is_required, required: @is_required)).validate_value(record, value)
+      end      
+    end
+
     def absence_validator_check(record, field_name, values)
       if section_field? && !section_parent_present?(record, values)
         parent = section_parent_list.keys.first
