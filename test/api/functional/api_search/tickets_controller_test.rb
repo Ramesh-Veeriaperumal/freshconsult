@@ -264,14 +264,14 @@ module ApiSearch
       match_json(results: pattern, total: tickets.size)
     end
 
-    def test_tickets_custom_date_on_a_day
-      d1 = Date.today.to_date.iso8601
-      tickets = @account.tickets.select { |x| x.test_custom_date_1 && x.test_custom_date_1.to_date.iso8601 == d1 }
-      get :index, controller_params(query: '"test_custom_date: \'' + d1 + '\'"')
-      assert_response 200
-      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
-      match_json(results: pattern, total: tickets.size)
-    end
+    # def test_tickets_custom_date_on_a_day
+    #   d1 = Date.today.to_date.iso8601
+    #   tickets = @account.tickets.select { |x| x.test_custom_date_1 && x.test_custom_date_1.to_date.iso8601 == d1 }
+    #   get :index, controller_params(query: '"test_custom_date: \'' + d1 + '\'"')
+    #   assert_response 200
+    #   pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+    #   match_json(results: pattern, total: tickets.size)
+    # end
 
     def test_tickets_updated_on_a_day
       d1 = Date.today.to_date.iso8601
@@ -302,15 +302,15 @@ module ApiSearch
       match_json(results: pattern, total: tickets.size)
     end
 
-    def test_tickets_custom_date_valid_range_and_filter
-      d1 = (Date.today - 8).iso8601
-      d2 = (Date.today - 1).iso8601
-      tickets = @account.tickets.select { |x| x.custom_field['test_custom_date_1'] && (x.custom_field['test_custom_date_1'].to_date.iso8601 >= d1 && x.custom_field['test_custom_date_1'].to_date.iso8601 <= d2) && x.priority == 2 }
-      get :index, controller_params(query: '"(test_custom_date :> \'' + d1 + '\' AND test_custom_date :< \'' + d2 + '\') AND priority:2 "')
-      assert_response 200
-      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
-      match_json(results: pattern, total: tickets.size)
-    end
+    # def test_tickets_custom_date_valid_range_and_filter
+    #   d1 = (Date.today - 8).iso8601
+    #   d2 = (Date.today - 1).iso8601
+    #   tickets = @account.tickets.select { |x| x.custom_field['test_custom_date_1'] && (x.custom_field['test_custom_date_1'].to_date.iso8601 >= d1 && x.custom_field['test_custom_date_1'].to_date.iso8601 <= d2) && x.priority == 2 }
+    #   get :index, controller_params(query: '"(test_custom_date :> \'' + d1 + '\' AND test_custom_date :< \'' + d2 + '\') AND priority:2 "')
+    #   assert_response 200
+    #   pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+    #   match_json(results: pattern, total: tickets.size)
+    # end
 
     def test_tickets_valid_range_fr_due_by
       d1 = (Date.today - 8).iso8601
@@ -369,7 +369,7 @@ module ApiSearch
       assert response['total'] == 0
     end
 
-    def test_tickets_tag_case_sensitive
+    def test_tickets_tag_invalid_length
       get :index, controller_params(query: '"tag:' + 'a' * 33 + '"')
       assert_response 400
       match_json([bad_request_error_pattern('tag', :array_too_long, max_count: ApiConstants::TAG_MAX_LENGTH_STRING, element_type: :characters)])
@@ -454,13 +454,13 @@ module ApiSearch
       match_json(results: pattern, total: tickets.size)
     end
 
-    def test_custom_date_null
-      tickets = @account.tickets.select { |x| x.test_custom_date_1.nil? }
-      get :index, controller_params(query: '"test_custom_date: null"')
-      assert_response 200
-      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
-      match_json(results: pattern, total: tickets.size)
-    end
+    # def test_custom_date_null
+    #   tickets = @account.tickets.select { |x| x.test_custom_date_1.nil? }
+    #   get :index, controller_params(query: '"test_custom_date: null"')
+    #   assert_response 200
+    #   pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+    #   match_json(results: pattern, total: tickets.size)
+    # end
 
     def test_group_id_null
       tickets = @account.tickets.select { |x| x.group_id.nil? }
@@ -502,6 +502,14 @@ module ApiSearch
       get :index, controller_params(query: 'created_at <: 123')
       assert_response 400
       match_json([bad_request_error_pattern('query', :query_format_invalid)])
+    end
+
+    # custom date and section not allowed
+    def test_tickets_custom_date_section_date
+      d1 = Date.today.to_date.iso8601
+      get :index, controller_params(query: '"sample_date: \'' + d1 + '\' or section_date: \'' + d1 + '\' "')
+      assert_response 400
+      match_json([bad_request_error_pattern('sample_date', :invalid_field), bad_request_error_pattern('section_date', :invalid_field)])
     end
   end
 end
