@@ -111,4 +111,5 @@
   :spam_ticket: 110
   :manage_availability: 111
   :contractor: 112
-:max_value: 111
+  :manage_calls: 113
+:max_value: 113

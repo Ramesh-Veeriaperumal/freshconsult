@@ -48,7 +48,7 @@ class ConversationDecorator < ApiDecorator
   end
 
   def to_hash
-    [to_json, freshfone_call, tweet_hash, facebook_hash, feedback_hash, requester_hash].inject(&:merge)
+    [to_json, freshfone_call, freshcaller_call, tweet_hash, facebook_hash, feedback_hash, requester_hash].inject(&:merge)
   end
 
   def facebook_hash
@@ -67,6 +67,21 @@ class ConversationDecorator < ApiDecorator
           id: call.id,
           duration: call.call_duration,
           recording: AttachmentDecorator.new(call.recording_audio).to_hash
+        }
+      }
+    else
+      {}
+    end
+  end
+  
+  def freshcaller_call
+    if freshcaller_enabled? && record.freshcaller_call
+      call = record.freshcaller_call
+      {
+        freshcaller_call: {
+          id: call.id,
+          fc_call_id: call.fc_call_id,
+          recording_status: call.recording_status
         }
       }
     else
@@ -122,5 +137,9 @@ class ConversationDecorator < ApiDecorator
 
     def freshfone_enabled?
       Account.current.freshfone_enabled?
+    end
+
+    def freshcaller_enabled?
+      Account.current.freshcaller_enabled?
     end
 end

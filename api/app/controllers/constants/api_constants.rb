@@ -39,6 +39,8 @@ module ApiConstants
                        ApiLeaderboardConstants::LOAD_OBJECT_EXCEPT +
                        Pipe::HelpdeskConstants::LOAD_OBJECT_EXCEPT +
                        ExportConstants::LOAD_OBJECT_EXCEPT +
+                       Freshcaller::SearchConstants::LOAD_OBJECT_EXCEPT +
+                       Freshcaller::SettingsConstants::LOAD_OBJECT_EXCEPT +
                        DashboardConstants::LOAD_OBJECT_EXCEPT
 
 

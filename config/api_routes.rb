@@ -170,6 +170,12 @@ Helpkit::Application.routes.draw do
     resources :groups, controller: 'ember/groups', only: [:index, :show]
     resources :email_configs, controller: 'ember/email_configs', only: [:index, :show]
     resources :bootstrap, controller: 'ember/bootstrap', only: :index
+    resources 'freshcaller_desktop_notification_settings', path: 'freshcaller/settings', controller: 'ember/freshcaller/settings' do
+      collection do
+        put :desktop_notification
+      end
+    end
+
     resources :tickets, controller: 'ember/tickets', only: [:index, :create, :update, :show] do
       collection do
         put :bulk_delete, to: 'ember/tickets/delete_spam#bulk_delete'
@@ -386,6 +392,7 @@ Helpkit::Application.routes.draw do
   end
 
   channel_routes = proc do
+    resources :freshcaller_calls, controller: 'channel/freshcaller/calls', only: %i[create update]
     resources :tickets, controller: 'channel/tickets', only: [:create]
   end
 

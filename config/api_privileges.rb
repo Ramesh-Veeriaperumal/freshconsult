@@ -1,4 +1,8 @@
 Authority::Authorization::PrivilegeList.build do
+  manage_calls do
+    resource :"ember/freshcaller/call", only: [:create]
+  end
+
   manage_tickets do
     resource :"ember/bootstrap"
     resource :"ember/tickets/delete_spam", only: %i(spam bulk_spam unspam bulk_unspam)
@@ -11,6 +15,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/tickets/associate", only: [:link, :unlink, :associated_tickets, :prime_association]
     resource :"ember/ticket_filter", only: [:index, :show, :create, :update, :destroy]
     resource :"ember/attachment", only: [:create]
+    resource :"ember/freshcaller/setting", only: [:desktop_notification]
     resource :"ember/conversation", only: %i(create ticket_conversations full_text)
     resource :"ember/subscription"
     resource :"ember/ticket_field", only: [:index]

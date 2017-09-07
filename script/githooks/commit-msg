@@ -8,7 +8,7 @@ printMsg(){
   echo "----------------------------"
 }
 
-jiraIssuePattern="(FDCORE|FRESHPIPE|TH)-(\\d+)"
+jiraIssuePattern="(FDCORE|FRESHPIPE|FRESHCALL|TH)-(\\d+)"
 commitMsgFile=$1
 
 numIssueIdsInMsg=`cat $1 | head -n 1 | egrep -o "${jiraIssuePattern}" | wc -l`

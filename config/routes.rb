@@ -433,6 +433,7 @@ Helpkit::Application.routes.draw do
   match '/zendesk/import' => 'admin/zen_import#index', :as => :zendesk_import
   match '/twitter/authdone' => 'social/twitter_handles#authdone', :as => :tauth
   match '/download_file/:source/:token' => 'admin/data_export#download', :as => :download_file
+
   namespace :freshfone do
     resources :ivrs do
       member do
@@ -1108,7 +1109,15 @@ Helpkit::Application.routes.draw do
 
   match '/http_request_proxy/fetch',
       :controller => 'http_request_proxy', :action => 'fetch', :as => :http_proxy
+  match '/freshcaller_proxy',
+       :controller => 'freshcaller_proxy', :action => 'fetch', :as => :freshcaller_proxy
   match '/mkp/data-pipe.:format', :controller => 'integrations/data_pipe', :action => 'router', :method => :post, :as => :data_pipe
+
+  constraints RouteConstraints::Freshcaller.new do
+    match '/admin/phone', controller: 'admin/freshcaller', action: 'index'
+    match '/admin/phone/redirect_to_freshcaller', controller: 'admin/freshcaller', action: 'redirect_to_freshcaller'
+  end
+
   namespace :admin do
     resources :home, :only => :index
     resources :contact_fields, :only => :index do
