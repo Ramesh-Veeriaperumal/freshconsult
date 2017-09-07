@@ -37,7 +37,7 @@ def make_tokens(scanner)
   keyword_x = "([a-zA-Z][a-zA-Z0-9_]*)[\s]*"
   seperator_x = ":"
   relational_x = "(>|<)"
-  date_x = "[\s]*\\d{4}-\\d{2}-\\d{2}"
+  date_x = "[\s]*'\\d{4}-\\d{2}-\\d{2}'"
   value_x = "[\s]*([a-zA-Z0-9_\@]+|'[^']+'|[-]?[0-9]+)"
   regex_string = /(#{keyword_x}(#{seperator_x}#{value_x}|#{relational_x}#{date_x}))/
   until scanner.empty?
@@ -117,7 +117,7 @@ end
         value = (condition[1, condition.length].join(ope)).strip
         value = is_integer?(value) ? value.to_i : value  #update logic and add comments
         value = value =~ /\'(.*)\'/ ? value[1,value.length-2] : value
-        data = { keyword.to_sym => value }
+        data = { keyword => value }
         node = OperandNode.new(data)
         stack << node
       else

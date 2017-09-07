@@ -46,8 +46,14 @@ module ApiSearch
       group = create_group_with_agents(@account, agent_list: [@agent.id])
       n = rand(10)
       params_hash = { email: email, cc_emails: cc_emails, description: description, subject: subject,
+<<<<<<< HEAD
                       priority: priority, status: status, type: types[rand(4)], responder_id: @agent.id, source: 1, tags: [tags[rand(6)],tags[rand(6)]].uniq,
                       due_by: (n+14).days.since.iso8601, fr_due_by: (n+1).days.since.iso8601, group_id: group.id, custom_field: custom_fields, created_at: n.days.until.iso8601  }
+=======
+                      priority: priority, status: status, type: types[rand(4)], responder_id: @agent.id, source: 1, tags: [tags[rand(6)],tags[rand(6)]].uniq,
+                      due_by: (n+14).days.since.iso8601, fr_due_by: (n+1).days.since.iso8601, group_id: group.id, custom_field: custom_fields,
+                      created_at: n.days.until.iso8601, updated_at: (n+2).days.until.iso8601 }
+>>>>>>> d3b350d... [SEARCH275]
       params_hash
     end
 
@@ -223,7 +229,7 @@ module ApiSearch
 
     def test_tickets_valid_date
       d1 = (Date.today-1).iso8601
-      tickets = @account.tickets.select { |x|  x.created_at < d1 }
+      tickets = @account.tickets.select { |x| x.created_at.to_date.iso8601 <= d1 }
       get :index, controller_params(query: '"created_at < \'' + d1 + '\'"')
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
@@ -231,10 +237,18 @@ module ApiSearch
     end
 
     def test_tickets_created_on_a_day
-      d1 = (Date.today-2).iso8601
-      d2 = (Date.today-1).iso8601
+      d1 = Date.today.to_date.iso8601
       tickets = @account.tickets.select { |x|  x.created_at.to_date.iso8601 == d1 }
-      get :index, controller_params(query: '"created_at > \'' + d1 + '\' AND created_at < \'' + d2 +'\'"')
+      get :index, controller_params(query: '"created_at: \'' + d1 + '\'"')
+      assert_response 200
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json({results: pattern, total: tickets.size})
+    end
+
+    def test_tickets_updated_on_a_day
+      d1 = Date.today.to_date.iso8601
+      tickets = @account.tickets.select { |x|  x.updated_at.to_date.iso8601 == d1 }
+      get :index, controller_params(query: '"updated_at: \'' + d1 + '\'"')
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json({results: pattern, total: tickets.size})
@@ -243,7 +257,7 @@ module ApiSearch
     def test_tickets_valid_range
       d1 = (Date.today-8).iso8601
       d2 = (Date.today-1).iso8601
-      tickets = @account.tickets.select { |x| x.created_at.to_date.iso8601 >= d1 && x.created_at.to_date.iso8601 < d2 }
+      tickets = @account.tickets.select { |x| x.created_at.to_date.iso8601 >= d1 && x.created_at.to_date.iso8601 <= d2 }
       get :index, controller_params(query: '"(created_at > \'' + d1 + '\' AND created_at < \'' + d2 +'\')"')
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
@@ -253,7 +267,7 @@ module ApiSearch
     def test_tickets_valid_range_and_filter
       d1 = (Date.today-8).iso8601
       d2 = (Date.today-1).iso8601
-      tickets = @account.tickets.select { |x|  (x.created_at.to_date.iso8601 >= d1 && x.created_at.to_date.iso8601 < d2) && x.priority == 2 }
+      tickets = @account.tickets.select { |x|  (x.created_at.to_date.iso8601 >= d1 && x.created_at.to_date.iso8601 <= d2) && x.priority == 2 }
       get :index, controller_params(query: '"(created_at > \'' + d1 + '\' AND created_at < \'' + d2 +'\') AND priority:2 "')
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
@@ -263,7 +277,7 @@ module ApiSearch
     def test_tickets_custom_date_valid_range_and_filter
       d1 = (Date.today-8).iso8601
       d2 = (Date.today-1).iso8601
-      tickets = @account.tickets.select { |x| x.custom_field["test_custom_date_1"] && (x.custom_field["test_custom_date_1"].to_date.iso8601 >= d1 && x.custom_field["test_custom_date_1"].to_date.iso8601 < d2) && x.priority == 2 }
+      tickets = @account.tickets.select { |x| x.custom_field["test_custom_date_1"] && (x.custom_field["test_custom_date_1"].to_date.iso8601 >= d1 && x.custom_field["test_custom_date_1"].to_date.iso8601 <= d2) && x.priority == 2 }
       get :index, controller_params(query: '"(test_custom_date > \'' + d1 + '\' AND test_custom_date < \'' + d2 +'\') AND priority:2 "')
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
@@ -273,7 +287,7 @@ module ApiSearch
     def test_tickets_valid_range_fr_due_by
       d1 = (Date.today-8).iso8601
       d2 = (Date.today-1).iso8601
-      tickets = @account.tickets.select { |x| x.frDueBy.to_date.iso8601 >= d1 && x.frDueBy.to_date.iso8601 < d2 }
+      tickets = @account.tickets.select { |x| x.frDueBy.to_date.iso8601 >= d1 && x.frDueBy.to_date.iso8601 <= d2 }
       get :index, controller_params(query: '"(fr_due_by > \'' + d1 + '\' AND fr_due_by < \'' + d2 +'\')"')
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
@@ -283,7 +297,7 @@ module ApiSearch
     def test_tickets_valid_range_due_by
       d1 = (Date.today-8).iso8601
       d2 = (Date.today-1).iso8601
-      tickets = @account.tickets.select { |x| x.due_by.to_date.iso8601 >= d1 && x.due_by.to_date.iso8601 < d2 }
+      tickets = @account.tickets.select { |x| x.due_by.to_date.iso8601 >= d1 && x.due_by.to_date.iso8601 <= d2 }
       get :index, controller_params(query: '"(due_by > \'' + d1 + '\' AND due_by < \'' + d2 +'\')"')
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
@@ -356,6 +370,5 @@ module ApiSearch
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json({results: pattern, total: tickets.size})
     end
-
   end
 end

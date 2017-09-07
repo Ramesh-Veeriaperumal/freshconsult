@@ -50,7 +50,7 @@ module SearchService
         end if item['highlight'].present?
 
         detected
-      end
+      end.compact
 
       result_set
      end
