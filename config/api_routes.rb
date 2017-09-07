@@ -340,6 +340,13 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resource :onboarding, controller: 'ember/admin/onboarding', only: [:index] do
+      collection do
+        put :update_activation_email
+        get :resend_activation_email
+      end
+    end
+
     # Search routes
     post '/search/tickets/',      to: 'ember/search/tickets#results'
     post '/search/customers/',    to: 'ember/search/customers#results'

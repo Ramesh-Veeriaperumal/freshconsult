@@ -11,7 +11,8 @@ class AccountDecorator < ApiDecorator
       subscription: subscription_hash,
       settings: settings_hash,
       agents: agents_hash,
-      groups: groups_hash
+      groups: groups_hash,
+      verified: record.verified?
     }
     ret_hash[:collaboration] = collaboration_hash if record.collaboration_enabled?
     ret_hash

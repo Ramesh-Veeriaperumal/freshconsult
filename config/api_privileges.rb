@@ -43,6 +43,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/product_feedback"
   end
 
+  manage_account do
+    resource :"ember/admin/onboarding", only: %i[update_activation_email resend_activation_email]
+  end
+
   reply_ticket do
     resource :"ember/conversation", only: %i(reply facebook_reply tweet reply_template broadcast)
     resource :"ember/tickets/draft", only: %i(save_draft show_draft clear_draft)

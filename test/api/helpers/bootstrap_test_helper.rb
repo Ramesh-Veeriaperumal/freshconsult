@@ -53,7 +53,8 @@ module BootstrapTestHelper
         include_survey_manually: wildcard_matcher
       },
       agents: Array,
-      groups: Array
+      groups: Array,
+      verified: account.verified?
     }
 
     pattern[:collaboration] = collab_pattern if account.collaboration_enabled?

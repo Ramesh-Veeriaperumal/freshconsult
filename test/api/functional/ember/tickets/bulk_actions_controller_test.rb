@@ -563,7 +563,7 @@ module Ember
         canned_response = create_response(
           title: Faker::Lorem.sentence,
           content_html: Faker::Lorem.paragraph,
-          visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+          visibility: ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
           attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) }
         )
         cloud_file_params = [{ filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
