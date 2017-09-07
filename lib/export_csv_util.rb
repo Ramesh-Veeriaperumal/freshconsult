@@ -94,10 +94,16 @@ module ExportCsvUtil
               :type => cf.field_type, :selected => false} }
   end
 
+  def export_contact_company_fields(type)
+    fields = export_customer_fields(type)
+    fields.reject!{ |x| ['client_manager'].include?(x[:value]) } if type.eql?('contact')
+    fields
+  end
+
   def customer_export_fields type   
     default_fields = Helpdesk::TicketModelExtension.customer_fields(type)
     customer_fields = []
-    (export_customer_fields(type) + default_fields).each do |f|
+    (export_contact_company_fields(type) + default_fields).each do |f|
       f[:selected] = true if DEFAULT_SELECTED_FIELDS[type.upcase.to_sym].include?(f[:type])
       unless (ALL_TEXT_FIELDS.include?(f[:type]) || REJECTED_FIELDS[type.upcase.to_sym].include?(f[:type]))
         customer_fields << f
@@ -108,7 +114,7 @@ module ExportCsvUtil
 
   def contact_company_export_fields type
     default_fields = Helpdesk::TicketModelExtension.customer_fields(type)
-    (export_customer_fields(type) + default_fields).map { 
+    (export_contact_company_fields(type) + default_fields).map { 
         |f| f[:value] unless ALL_TEXT_FIELDS.include?(f[:type])
     }.compact
   end

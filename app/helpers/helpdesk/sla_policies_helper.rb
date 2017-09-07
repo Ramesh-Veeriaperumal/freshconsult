@@ -56,6 +56,10 @@ module Helpdesk::SlaPoliciesHelper
 		elsif !(seconds/SECONDS_IN_MINUTE).zero? and (seconds/SECONDS_IN_MINUTE) % 1 == 0
 			return SECONDS_IN_MINUTE if select_field
 			return (seconds/SECONDS_IN_MINUTE).to_i
+			#really bad hack should not be done !
+		elsif (seconds%SECONDS_IN_DAY) == 1 and seconds > SECONDS_IN_DAY
+			return SECONDS_IN_HOUR if select_field
+			return (seconds/SECONDS_IN_HOUR).to_i
 		end
 	end
 

@@ -37,18 +37,14 @@ class Helpdesk::Email::Process
       return
     end
     return shardmapping.status  unless shardmapping.ok?
-    Sharding.select_shard_of(to_email[:domain]) do 
-      if get_active_account
+    Sharding.select_shard_of(to_email[:domain]) do
+      self.account = Account.find_by_full_domain(to_email[:domain])
+      if account && account.allow_incoming_emails?
         accept_email
       else
         email_processing_log "Email Processing Failed: No active Account found!", to_email[:email]
       end
     end
-  end
-
-  def get_active_account
-    self.account = Account.find_by_full_domain(to_email[:domain])
-    return (account and account.active?)
   end
 
   def accept_email

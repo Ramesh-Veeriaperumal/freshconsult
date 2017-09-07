@@ -1,0 +1,1 @@
+MESSAGE_PREVIEW_DATA = YAML.load(File.read("config/email_notification_templates.yml")).freeze

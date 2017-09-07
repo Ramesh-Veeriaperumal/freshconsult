@@ -10,6 +10,7 @@ class Solution::CategoriesController < ApplicationController
   
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:index, :show]
   before_filter :portal_check, :only => [:index, :show]
+  before_filter :set_ui_preference, :only => [:show]
   before_filter :set_selected_tab, :page_title
   before_filter :load_meta, :only => [:edit, :update, :destroy]
   before_filter :load_category_with_folders, :only => [:show]

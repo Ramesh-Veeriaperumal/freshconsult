@@ -22,4 +22,4 @@
 	<i class="ficon-help fsize-20"></i>
 </div>
 <input type="hidden" id="template_previlage" value="<%= privilege?(:manage_ticket_templates) %>" />
-<input type="hidden" id="template_count" value="<%= templates_count_from_cache < Helpdesk::TicketTemplate::TOTAL_SHARED_TEMPLATES %>" />
+<input type="hidden" id="template_count" value="<%= templates_count_from_cache < Helpdesk::TicketTemplate.max_limit %>" />

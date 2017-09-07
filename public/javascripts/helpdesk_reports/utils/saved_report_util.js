@@ -244,7 +244,7 @@ HelpdeskReports.SavedReportUtil = (function() {
 	        }
 	       
 	       	params.data_hash.select_hash = locals.select_hash;
-	        params.data_hash.report_filters = locals.local_hash.splice(0);
+	        params.data_hash.report_filters = locals.local_hash.slice(0);
 	        params.filter_name = _this.escapeString(jQuery("#filter_name_save").val());
 
 	        _FD.attachExtraParamsPerReport(params.data_hash);

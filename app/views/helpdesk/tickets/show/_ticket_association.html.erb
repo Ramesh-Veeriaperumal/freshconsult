@@ -152,7 +152,7 @@
 
 <% if Account.current.parent_child_tkts_enabled? %>
   <input type="hidden" id="template_previlage" value="<%= privilege?(:manage_ticket_templates) %>" />
-  <input type="hidden" id="template_count" value="<%= templates_count_from_cache < Helpdesk::TicketTemplate::TOTAL_SHARED_TEMPLATES %>" />
+  <input type="hidden" id="template_count" value="<%= templates_count_from_cache < Helpdesk::TicketTemplate.max_limit %>" />
 
   <%= render(:partial => "helpdesk/tickets/show/add_child_template") %>
 <% end %>

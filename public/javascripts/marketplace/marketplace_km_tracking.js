@@ -1,12 +1,20 @@
 // For Marketplace -- Kissmetrics tracking
-  var mktplace_domain, selected_app;
+  var mktplace_domain, selected_app, product = 'Freshdesk';
   // viewed integrations home - Number of visits to the top level Apps page
   jQuery(document).on("script_loaded", function (ev, data) {
     if(window.location.hash && window.location.hash == "#custom_apps") {
-      App.Marketplace.Metrics.push_event("Clicked custom apps tab", mktplace_domain);
+      App.Marketplace.Metrics.push_event("Clicked custom apps tab", 
+        { "Domain Name": mktplace_domain,
+          "Product": product
+        }
+      );
     }
     else {
-      App.Marketplace.Metrics.push_event("Viewed Apps Home Page", mktplace_domain);
+      App.Marketplace.Metrics.push_event("Viewed Apps Home Page", 
+        { "Domain Name": mktplace_domain,
+          "Product": product
+        }
+      );
     }
   });
 
@@ -15,7 +23,8 @@
     App.Marketplace.Metrics.push_event(
       "Opened App Gallery",
       { "Domain Name": mktplace_domain,
-        "Opened App Gallery from" : "Browse apps button"
+        "Opened App Gallery from" : "Browse apps button",
+        "Product": product
       }
     );
   });
@@ -24,28 +33,19 @@
     App.Marketplace.Metrics.push_event(
       "Opened App Gallery",
       { "Domain Name": mktplace_domain,
-        "Opened App Gallery from" : "Blank state browse apps button"
+        "Opened App Gallery from" : "Blank state browse apps button",
+        "Product": product
       }
     );
   });
-
-  //clicked blank slate browse apps button - Number of visits to the App Gallery
-  jQuery(document).on("click.km_track_evt", ".fa-dd .category" , function(e){
-    App.Marketplace.Metrics.push_event(
-      "Filtered App Gallery",
-      { "Domain Name": mktplace_domain,
-        "App Category" : e.target.innerText.trim()
-      }
-    );
-  });
-
 
   //clicked category links in app gallery - Number of visits to each category page
   jQuery(document).on("click.km_track_evt", ".category", function(e){
     App.Marketplace.Metrics.push_event(
       "Clicked app category",
       { "Domain Name": mktplace_domain,
-        "App Category selected" : e.target.innerText.trim()
+        "App Category selected" : e.target.innerText.trim(),
+        "Product": product
       }
     );
   });
@@ -72,7 +72,8 @@
       "Viewed app description",
       { "Domain Name": mktplace_domain,
         "App Name": e.app_name,
-        "Viewed app description page from": _viewedAppFrom
+        "Viewed app description page from": _viewedAppFrom,
+        "Product": product
       }
     );
   });
@@ -83,7 +84,8 @@
       "Clicked Install App Button in Description Page", 
       { "Domain Name": mktplace_domain, 
         "App Name": templateDockManager.appName,
-        "Developed By": templateDockManager.developedBy
+        "Developed By": templateDockManager.developedBy,
+        "Product": product
       } 
     );
   });
@@ -93,7 +95,8 @@
     App.Marketplace.Metrics.push_event(
       "Clicked Buy App Button in Description page", 
       { "Domain Name": mktplace_domain, 
-        "App Name": templateDockManager.appName
+        "App Name": templateDockManager.appName,
+        "Product": product
       }
     );
   });
@@ -103,7 +106,8 @@
       "Viewed Installation Config Page", 
       { "Domain Name": mktplace_domain, 
         "App Name": e.app_name,
-        "Developed By": e.developed_by
+        "Developed By": e.developed_by,
+        "Product": product
       }
     );
   });
@@ -115,7 +119,8 @@
       "Installed App from Config Page", 
       { "Domain Name": mktplace_domain, 
         "App Name": templateDockManager.appName,
-        "Developed By": templateDockManager.developedBy
+        "Developed By": templateDockManager.developedBy,
+        "Product": product
       }
     );
   });
@@ -125,7 +130,8 @@
       "Successful Installation", 
       { "Domain Name": mktplace_domain, 
         "App Name": e.app_name,
-        "Developed By": e.developed_by
+        "Developed By": e.developed_by,
+        "Product": product
       }
     );
   });
@@ -135,7 +141,8 @@
     App.Marketplace.Metrics.push_event(
       "Installed custom app", 
       { "Domain Name": mktplace_domain, 
-        "App Name": e.app_name
+        "App Name": e.app_name,
+        "Product": product
       }
     );
   });
@@ -145,7 +152,8 @@
     App.Marketplace.Metrics.push_event(
       "Enabled App", 
       { "Domain Name" : mktplace_domain, 
-        "Enabled App Named" : e.app_name 
+        "Enabled App Named" : e.app_name,
+        "Product": product
       } 
     );
   });
@@ -155,7 +163,8 @@
     App.Marketplace.Metrics.push_event(
       "Disabled App", 
       { "Domain Name" : mktplace_domain, 
-        "Disabled App Named" : e.app_name 
+        "Disabled App Named" : e.app_name,
+        "Product": product
       } 
     );
   });
@@ -165,7 +174,8 @@
     var search_term = jQuery(e.target).find("#query").val();
     App.Marketplace.Metrics.push_event(
       "Searched App Gallery",
-      { "Searched Term": search_term
+      { "Searched Term": search_term,
+        "Product": product
       }
     );
   });
@@ -181,28 +191,45 @@
       App.Marketplace.Metrics.push_event(
         "Uninstalled App",
         { "Domain Name": mktplace_domain,
-          "App uninstalled": selected_app
+          "App uninstalled": selected_app,
+          "Product": product
         } 
       );
     }
   });
   //create new plug button clicked -additional
   jQuery(document).on("click.km_track_evt", ".new-customapp", function(){
-    App.Marketplace.Metrics.push_event( "Clicked Create New Custom App Button", mktplace_domain);
+    App.Marketplace.Metrics.push_event( "Clicked Create New Custom App Button", 
+      { "Domain Name": mktplace_domain,
+        "Product": product
+      }
+    );
   });
 
   //Clicked get custom apps button
   jQuery(document).on("click.km_track_evt", ".get-custom-apps", function(){
-    App.Marketplace.Metrics.push_event( "Clicked get custom apps button", mktplace_domain);
+    App.Marketplace.Metrics.push_event( "Clicked get custom apps button", 
+      { "Domain Name": mktplace_domain,
+        "Product": product
+      }
+    );
   });
 
   jQuery(document).on("click.km_track_evt", ".get-custom-apps-blank-state", function() {
-    App.Marketplace.Metrics.push_event( "Clicked get custom apps button from blank state", mktplace_domain);
+    App.Marketplace.Metrics.push_event( "Clicked get custom apps button from blank state", 
+      { "Domain Name": mktplace_domain,
+        "Product": product
+      }
+    );
   });
 
   //Clicked custom apps tab
   jQuery(document).on("click.km_track_evt", ".cla-plugs", function(){
-    App.Marketplace.Metrics.push_event( "Clicked custom apps tab", mktplace_domain);
+    App.Marketplace.Metrics.push_event( "Clicked custom apps tab", 
+      { "Domain Name": mktplace_domain,
+        "Product": product
+      }
+    );
   });
 
   /* Kissmetrics tracking code block ends */

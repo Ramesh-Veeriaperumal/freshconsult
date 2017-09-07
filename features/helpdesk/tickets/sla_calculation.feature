@@ -170,3 +170,36 @@ Feature: Sla calculations
     Then the ticket's time spent in on state should be "3" "hours"
     And the ticket's due by should be recalculated to "22:00"
     And the ticket's first response due by should be recalculated to "20:00"
+#edge cases
+  @db_clean
+  @sla_policy8
+  Scenario: Updating a ticket and due falls on a non working day before adjusting business minutes
+    Given a ticket created on "Thursday" at "22:45", priority "low", type "Incident", status "open" and group "Sales"
+  # @sla_policy8 is applied
+    And I update the ticket's priority to "medium" on "Friday" at "16:30"
+    And the ticket's due by should be recalculated to "Friday" at "23:46"
+  @db_clean
+  @sla_policy9
+  Scenario: Updating a ticket and due falls on a working day after business hours before adjusting business minutes
+    Given a ticket created on "Thursday" at "22:15", priority "low", type "Incident", status "open" and group "Sales"
+  # @sla_policy9 is applied
+    And I update the ticket's priority to "medium" on "Friday" at "16:30"
+    And the ticket's due by should be recalculated to "Friday" at "23:16"
+  @db_clean
+  @sla_policy10
+  Scenario: Updating a ticket and due falls before business hours
+    Given a ticket created on "Thursday" at "22:15", priority "low", type "Incident", status "open" and group "Sales"
+# @sla_policy10 is applied
+    And I update the ticket's priority to "medium" on "Friday" at "16:30"
+    And the ticket's due by should be recalculated to "Friday" at "23:16"
+  @db_clean
+  @sla_policy11
+  Scenario: Adding one sec to multiples of 24 hours in seconds,sla should be in business hours
+    Given a ticket created on "Monday" at "9:15", priority "low", type "Incident", status "open" and group "Sales"
+# @sla_policy11 is applied
+    Then the ticket's due by should be on "Friday" at "9:15"
+
+  Scenario: no one sec to multiples of 24 hours in seconds,sla should be in business days
+    Given a ticket created on "Monday" at "9:15", priority "Medium", type "Incident", status "open" and group "Sales"
+# @sla_policy11 is applied
+    Then the ticket's due by should be on "Tuesday" at "9:15"

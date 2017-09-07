@@ -8,3 +8,32 @@
 	    <%= render_placeholders(placeholders) %>
 	</div> 
 </div>
+
+<div id="email-preview" class="hide" >
+  <div>
+    <%= t('preview_message_info')%>
+  </div>
+  <div class="email-preview-content-container">
+    <div id="email-preview-subject-holder" class="email-preview-holder hide">
+      <div id="email-preview-subject-title">
+        <strong><%= t('subject')%></strong>
+      </div>
+      <div id="email-preview-subject" class="hide">
+      </div>    
+    </div>
+    <p></p>
+    <p></p>
+    <p></p>
+    <div class="email-preview-holder">
+      <div id="email-preview-container-title">
+        <strong><%= t('message')%></strong>
+      </div>
+      <div id="email-preview-container">
+      </div>
+    </div>
+  </div>
+  <div class="pull-right email-preview-footer modal-footer">
+    <span class="muted"><%= current_user.email %> : </span>
+    <button id="send-email-preview" class="btn btn-default"><strong><%= t('send_test_email')%></strong>
+  </div>
+</div>

@@ -2,6 +2,7 @@ class AgentObserver < ActiveRecord::Observer
 
   include MemcacheKeys
   include RoundRobinCapping::Methods
+  include Freshcaller::AgentUtil
 
   def before_create(agent)
     set_default_values(agent)
@@ -14,6 +15,9 @@ class AgentObserver < ActiveRecord::Observer
   def after_commit(agent)
     if agent.send(:transaction_include_action?, :create)
       update_crm(agent) 
+    end
+    if %i[create update].any? { |act| agent.send(:transaction_include_action?, act) }
+      create_update_fc_agent(agent)
     end
     true
   end
@@ -28,7 +32,6 @@ class AgentObserver < ActiveRecord::Observer
   end
 
   protected
-
     def set_default_values(agent)
       agent.account_id = agent.user.account_id
       agent.ticket_permission = Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets] if agent.ticket_permission.blank?

@@ -43,7 +43,8 @@ module Fdadmin::AccountsControllerMethods
 			next_renewal: account.subscription.next_renewal_at,
 			amount: account.subscription.amount,
 			billing_cycle: account.subscription.renewal_period,
-			subscription_plan_id: account.subscription.subscription_plan_id
+			subscription_plan_id: account.subscription.subscription_plan_id,
+			paid_account: account.subscription.non_new_sprout? && account.subscription_payments.count != 0
 		}
 	end
 
