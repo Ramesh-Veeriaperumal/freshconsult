@@ -115,10 +115,14 @@ end
         # condition = element.split(':')
         keyword = condition[0].strip.downcase
         value = (condition[1, condition.length].join(ope)).strip
-        value = is_integer?(value) ? value.to_i : value  #update logic and add comments
-        value = value =~ /\'(.*)\'/ ? value[1,value.length-2] : value
+        if value == "null"
+          value = nil
+        else
+          value = is_integer?(value) ? value.to_i : value  #update logic and add comments
+          value = value =~ /\'(.*)\'/ ? value[1,value.length-2] : value
+        end
         data = { keyword => value }
-        node = OperandNode.new(data)
+        node = OperandNode.new(data, ope)
         stack << node
       else
         right = stack.pop

@@ -8,9 +8,9 @@ module Search
 
 	  validates :status, data_type: { rules: Array }, array: { custom_inclusion: { in: proc { |x| x.status_ids }, detect_type: true } }
     validates :priority, data_type: { rules: Array }, array: { custom_inclusion: { in: ApiTicketConstants::PRIORITIES, detect_type: true } }
-    validates :group_id, array: { custom_numericality: { only_integer: true, greater_than: 0 } }
-    validates :created_at, :updated_at, :fr_due_by, :due_by, data_type: { rules: Array }, array: { date_time: { only_date: true } }
-    validates :type, data_type: { rules: Array }, array: { custom_inclusion: { in: proc { TicketsValidationHelper.ticket_type_values } } }
+    validates :group_id, :agent_id, array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true } }
+    validates :created_at, :updated_at, :fr_due_by, :due_by, data_type: { rules: Array }, array: { date_time: { only_date: true, allow_nil: true } }
+    validates :type, data_type: { rules: Array }, array: { custom_inclusion: { in: proc { TicketsValidationHelper.ticket_type_values }, allow_nil: true } }
     validates :tag, data_type: { rules: Array }, array: { data_type: { rules: String, allow_nil: true }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } }
 
 	  validates :custom_fields, custom_field: { custom_fields:
