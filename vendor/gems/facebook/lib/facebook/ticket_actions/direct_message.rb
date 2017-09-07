@@ -25,7 +25,7 @@ module Facebook
             add_as_ticket(thread)
           end
 
-          if fb_msg.thread_key.nil?
+          if fb_msg.present? && fb_msg.thread_key.nil?
             @account.facebook_posts.where({:thread_id => thread[:id], :facebook_page_id => @fan_page.id}).update_all({:thread_key => thread[:thread_key]})
           end
         end
