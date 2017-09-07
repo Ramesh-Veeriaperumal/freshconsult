@@ -64,7 +64,7 @@ Helpkit::Application.configure do
   config.active_support.deprecation = :notify
 
   #Enable Redis access tracking
-  config.middleware.insert_before 0, ::Middleware::LogRedisCalls
+  config.middleware.insert_before 0, 'Middleware::LogRedisCalls'
 
   # Log the query plan for queries taking more than this (works
   # with SQLite, MySQL, and PostgreSQL)
