@@ -8,12 +8,12 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   before_filter :check_domain_exists, :only => :change_url , :if => :non_global_pods?
   around_filter :select_slave_shard , :only => [:api_jwt_auth_feature,:sha1_enabled_feature,:select_all_feature,:show, :features, :agents, :tickets, :portal, :user_info,:check_contact_import,:latest_solution_articles]
-  around_filter :select_master_shard , :only => [:collab_feature,:add_day_passes, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name, :change_api_limit, :reset_login_count,:contact_import_destroy, :change_currency, :extend_trial]
+  around_filter :select_master_shard , :only => [:collab_feature,:add_day_passes, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name, :change_api_limit, :reset_login_count,:contact_import_destroy, :change_currency, :extend_trial, :reactivate_account, :suspend_account]
   before_filter :validate_params, :only => [ :change_api_limit ]
   before_filter :load_account, :only => [:user_info, :reset_login_count]
   before_filter :load_user_record, :only => [:user_info, :reset_login_count]
   before_filter :symbolize_feature_name, :only => [:add_feature, :remove_feature]
-  
+
   def show
     account_summary = {}
     account = Account.find_by_id(params[:account_id])
@@ -153,8 +153,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   def add_feature
     result = {}
-    @account = Account.find(params[:account_id]) 
-    result[:account_id] = @account.id 
+    @account = Account.find(params[:account_id])
+    result[:account_id] = @account.id
     result[:account_name] = @account.name
     begin
       render :json => {:status => "notice"}.to_json and return unless enableable?(@feature_name)
@@ -455,6 +455,14 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end
   end
 
+  def suspend_account
+    change_account_state(Subscription::SUSPENDED)
+  end
+
+  def reactivate_account
+    change_account_state(Subscription::ACTIVE)
+  end
+
   def whitelist
     result = {:account_id => params[:account_id]}
     $spam_watcher.perform_redis_op("set", "#{params[:account_id]}-", "true")
@@ -643,8 +651,50 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       set_others_redis_key(key,args.to_json,3888000)
     end
 
+    def change_account_state(state)
+      account_id = params[:account_id]
+      result = {}
+      begin
+        account = Account.find(account_id)
+        account.make_current
+        account.subscription.state = state
+        subscription_state_change_error_response(account.subscription.errors.messages) unless account.subscription.valid?
+        subscription_state_change_error_response("Subscription state not updated in chargebee") unless update_chargebee_subscription(state)
+        account.subscription.save!
+        unblock_account(account_id) if state == Subscription::ACTIVE
+        Rails.logger.debug("Account state changed to #{state} from freshops admin for account_id: #{account.id}")
+        result[:status] = 'success'
+      rescue Exception => e
+        Rails.logger.debug("FDAdmin Error while trying to #{state} account ##{account.id} : \n#{e}")
+        result[:status] = 'error'
+      ensure
+        Account.reset_current_account
+      end
+      render :json => result
+    end
+
+    def subscription_state_change_error_response(error_msg)
+      Rails.logger.debug("FDAdmin Error while trying to #{action_name.humanize} ##{Account.current.id} : \n#{error_msg}")
+      render :json => {:status => "error"}
+    end
+
+    def update_chargebee_subscription(state)
+      chargebee_action_name = ((state == Subscription::ACTIVE) ? 'reactivate_subscription' : 'cancel_subscription')
+      billing_data = Billing::ChargebeeWrapper.new.send(chargebee_action_name, Account.current.id)
+      chargebee_state =  ((state == Subscription::ACTIVE) ? 'active' : 'cancelled')
+      billing_data.subscription.status == chargebee_state
+    end
+
+    def unblock_account(account_id)
+      shard_mapping = ShardMapping.find(account_id)
+      return if shard_mapping.ok?
+      shard_mapping.status = ShardMapping::STATUS_CODE[:ok]
+      shard_mapping.save
+      remove_outgoing_email_block account_id
+    end
+
     def symbolize_feature_name
-      @feature_name = params[:feature_name].to_sym 
+      @feature_name = params[:feature_name].to_sym
     end
 
 end

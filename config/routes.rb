@@ -276,6 +276,13 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  resources :email_preview do 
+    collection do
+      post :generate_preview
+      post :send_test_email
+    end
+  end
+
   # contacts and companies import
   resources :customers_import do
     collection do
@@ -1114,8 +1121,9 @@ Helpkit::Application.routes.draw do
   match '/mkp/data-pipe.:format', :controller => 'integrations/data_pipe', :action => 'router', :method => :post, :as => :data_pipe
 
   constraints RouteConstraints::Freshcaller.new do
-    match '/admin/phone', controller: 'admin/freshcaller', action: 'index'
     match '/admin/phone/redirect_to_freshcaller', controller: 'admin/freshcaller', action: 'redirect_to_freshcaller'
+    match '/admin/phone', controller: 'admin/freshcaller', action: 'index'
+    match '/admin/phone/*a', controller: 'admin/freshcaller', action: 'index'
   end
 
   namespace :admin do
@@ -2948,6 +2956,8 @@ Helpkit::Application.routes.draw do
           get :single_sign_on
           put :change_account_name
           put :ublock_account
+          put :suspend_account
+          put :reactivate_account
           put :remove_feature
           put :whitelist
           put :block_account
@@ -3012,6 +3022,7 @@ Helpkit::Application.routes.draw do
           put :launch_feature
           get :launched_feature_details
           put :activate_onboarding
+          post :freshcaller_migration
         end
       end
 

@@ -1,11 +1,10 @@
 class Middleware::SecurityResponseHeader
-  include Redis::RedisKeys
-  include Redis::OthersRedis
 
   HTML_FORMATS = ['text/html', 'application/xml+html'].freeze
   FEEDBACK_WIDGET_PATHS = ['/widgets/feedback_widget', '/widgets/feedback_widget/new', '/widgets/feedback_widget/thanks'].freeze
   BYPASS_CHECK_SUBDOMAINS = %w(login signup).freeze
   LOGIN_PATH = 'login'.freeze
+  SSO_PATHS = ['/login/sso', '/login/saml', '/login/sso_v2', '/logout'].freeze
   SUPPORT_PATH = 'support'.freeze
 
   def initialize(app)
@@ -25,7 +24,11 @@ class Middleware::SecurityResponseHeader
   end
 
   def ignore_path?
-    FEEDBACK_WIDGET_PATHS.include?(@req_path) || @req_path.include?(SUPPORT_PATH)
+    FEEDBACK_WIDGET_PATHS.include?(@req_path) || @req_path.include?(SUPPORT_PATH) || SSO_PATHS.include?(@req_path)
+  end
+
+  def login_path?
+    @req_path.include?(LOGIN_PATH) && !SSO_PATHS.include?(@req_path)
   end
 
   def ignore_domain?
@@ -40,7 +43,7 @@ class Middleware::SecurityResponseHeader
       return headers unless html_response?(headers)
       return headers if ignore_domain?
 
-      if @req_path.include? LOGIN_PATH
+      if login_path?
         headers['X-Frame-Options'] = 'DENY'
       else
         headers['X-Frame-Options'] = 'SAMEORIGIN' unless ignore_path?

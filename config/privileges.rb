@@ -599,6 +599,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"satisfaction_rating", :only => [:index]
     resource :"api_role", :only => [:index, :show]
     resource :"api_integrations/cti", :only => [:create, :index]
+    resource :"email_preview"
   end
 
   manage_account do

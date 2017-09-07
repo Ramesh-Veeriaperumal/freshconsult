@@ -108,7 +108,8 @@ class Company < ActiveRecord::Base
           account_id: account_id,
           request_id: uuid,
           size: per_page,
-          offset: per_page * (page.to_i - 1)
+          offset: per_page * (page.to_i - 1),
+          from: per_page * (page.to_i - 1) # offset should be removed once all the accounts migrated to Service
         })
       }).query_results
     else

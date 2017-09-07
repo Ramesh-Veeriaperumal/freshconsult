@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170814173356) do
+ActiveRecord::Schema.define(:version => 20170829152515) do
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -84,6 +84,8 @@ ActiveRecord::Schema.define(:version => 20170814173356) do
     t.datetime "locked_at"
     t.datetime "failed_at"
     t.string   "locked_by"
+    t.string   "account_id"
+    t.text     "sidekiq_job_info"
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
     t.string   "pod_info",   :default => "poduseast1", :null => false
@@ -94,6 +96,7 @@ ActiveRecord::Schema.define(:version => 20170814173356) do
   add_index "active_account_jobs", ["account_id"], :name => "index_active_account_jobs_on_account_id"
   add_index "active_account_jobs", ["locked_by"], :name => "index_active_account_jobs_on_locked_by"
   add_index "active_account_jobs", ["pod_info"], :name => "index_active_account_jobs_on_pod_info"
+  add_index "active_account_jobs", ["account_id"], :name => "index_active_account_jobs_on_account_id"
 
   create_table "addresses", :force => true do |t|
     t.string   "first_name"
@@ -1054,6 +1057,8 @@ ActiveRecord::Schema.define(:version => 20170814173356) do
     t.datetime "locked_at"
     t.datetime "failed_at"
     t.string   "locked_by"
+    t.string   "account_id"
+    t.text     "sidekiq_job_info"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "pod_info",   :default => 'poduseast1', :null => false
@@ -1064,6 +1069,7 @@ ActiveRecord::Schema.define(:version => 20170814173356) do
   add_index "delayed_jobs", ["account_id"], :name => "index_delayed_jobs_on_account_id"
   add_index "delayed_jobs", ["locked_by"], :name => "index_delayed_jobs_on_locked_by"
   add_index "delayed_jobs", ["pod_info"], :name => "index_delayed_jobs_on_pod_info"
+  add_index "delayed_jobs", ["account_id"], :name => "index_delayed_jobs_on_account_id"
 
   create_table "deleted_customers", :force => true do |t|
     t.string   "full_domain"
@@ -1477,6 +1483,8 @@ ActiveRecord::Schema.define(:version => 20170814173356) do
     t.datetime "locked_at"
     t.datetime "failed_at"
     t.string   "locked_by"
+    t.string   "account_id"
+    t.text     "sidekiq_job_info"
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
     t.string   "pod_info",   :default => 'poduseast1', :null => false
@@ -1487,6 +1495,7 @@ ActiveRecord::Schema.define(:version => 20170814173356) do
   add_index "free_account_jobs", ["account_id"], :name => "index_free_account_jobs_on_account_id"
   add_index "free_account_jobs", ["locked_by"], :name => "index_free_account_jobs_on_locked_by"
   add_index "free_account_jobs", ["pod_info"], :name => "index_free_account_jobs_on_pod_info"
+  add_index "free_account_jobs", ["account_id"], :name => "index_free_account_jobs_on_account_id"
 
   create_table "freshcaller_accounts", :force => true do |t|
     t.integer  "account_id",             :limit => 8
@@ -1570,6 +1579,17 @@ ActiveRecord::Schema.define(:version => 20170814173356) do
     t.datetime "created_at",               :null => false
     t.datetime "updated_at",               :null => false
   end
+  
+  create_table "freshcaller_agents", :force => true do |t|
+    t.integer  "account_id",  :limit => 8
+    t.integer  "agent_id",    :limit => 8
+    t.integer  "fc_agent_id", :limit => 8
+    t.boolean  "fc_enabled",               :default => false
+    t.datetime "created_at",                                  :null => false
+    t.datetime "updated_at",                                  :null => false
+  end
+
+  add_index "freshcaller_agents", ["account_id", "agent_id"], :name => "index_freshcaller_agents_on_account_id_and_agent_id"
 
   add_index "freshfone_caller_ids", ["account_id"], :name => "index_freshfone_caller_ids_on_account_id"
 
@@ -2548,6 +2568,8 @@ ActiveRecord::Schema.define(:version => 20170814173356) do
     t.datetime "locked_at"
     t.datetime "failed_at"
     t.string   "locked_by"
+    t.string   "account_id"
+    t.text     "sidekiq_job_info"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "pod_info",   :default => 'poduseast1', :null => false
@@ -2558,6 +2580,8 @@ ActiveRecord::Schema.define(:version => 20170814173356) do
   add_index "mailbox_jobs", ["account_id"], :name => "index_mailbox_jobs_on_account_id"
   add_index "mailbox_jobs", ["locked_by"], :name => "index_mailbox_jobs_on_locked_by"
   add_index "mailbox_jobs", ["pod_info"], :name => "index_mailbox_jobs_on_pod_info"
+  add_index "mailbox_jobs", ["account_id"], :name => "index_mailbox_jobs_on_account_id"
+  
 
   create_table "mobihelp_apps", :force => true do |t|
     t.integer  "account_id", :limit => 8,                    :null => false
@@ -2835,6 +2859,8 @@ ActiveRecord::Schema.define(:version => 20170814173356) do
     t.datetime "locked_at"
     t.datetime "failed_at"
     t.string   "locked_by"
+    t.string   "account_id"
+    t.text     "sidekiq_job_info"
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
     t.string   "pod_info",   :default => "poduseast1", :null => false
@@ -2845,6 +2871,7 @@ ActiveRecord::Schema.define(:version => 20170814173356) do
   add_index "premium_account_jobs", ["account_id"], :name => "index_premium_account_jobs_on_account_id"
   add_index "premium_account_jobs", ["locked_by"], :name => "index_premium_account_jobs_on_locked_by"
   add_index "premium_account_jobs", ["pod_info"], :name => "index_premium_account_jobs_on_pod_info"
+  add_index "premium_account_jobs", ["account_id"], :name => "index_premium_account_jobs_on_account_id"
 
   create_table "products", :force => true do |t|
     t.string   "name"
@@ -3857,6 +3884,8 @@ ActiveRecord::Schema.define(:version => 20170814173356) do
     t.datetime "locked_at"
     t.datetime "failed_at"
     t.string   "locked_by"
+    t.string   "account_id"
+    t.text     "sidekiq_job_info"
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
     t.string   "pod_info",   :default => 'poduseast1', :null => false
@@ -3867,6 +3896,7 @@ ActiveRecord::Schema.define(:version => 20170814173356) do
   add_index "trial_account_jobs", ["account_id"], :name => "index_trial_account_jobs_on_account_id"
   add_index "trial_account_jobs", ["locked_by"], :name => "index_trial_account_jobs_on_locked_by"
   add_index "trial_account_jobs", ["pod_info"], :name => "index_trial_accout_jobs_on_pod_info"
+  add_index "trial_account_jobs", ["account_id"], :name => "index_trial_account_jobs_on_account_id"
 
   create_table "user_accesses", :id => false, :force => true do |t|
     t.integer "user_id",    :limit => 8, :null => false
