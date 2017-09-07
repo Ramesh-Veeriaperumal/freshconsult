@@ -38,8 +38,8 @@ module Search
 					must: [
 						bool_filter({
 							should: [
-								term_filter(@column_names[node.key], false),
-								not_exists_filter(@column_names[node.key])
+								term_filter(key, false),
+								not_exists_filter(key)
 							]
 						})
 					]
@@ -53,6 +53,8 @@ module Search
 						}
 					})
 				)
+			elsif node.value.nil?
+				not_exists_filter(key)
 			elsif @date_fields.include?(key)
 				bool_filter(
 					range_filter({ 

@@ -135,7 +135,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
     def validate_custom_number_array(record, field_name)
       values = record.send(field_name)
       values.each do |value|
-        numericality_options = construct_options(only_integer: true, attributes: field_name, allow_nil: !@is_required, required: @is_required)
+        numericality_options = construct_options(only_integer: true, attributes: field_name, allow_nil: true)
         CustomNumericalityValidator.new(numericality_options).validate_value(record, value)
       end
     end
@@ -151,7 +151,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
     def validate_custom_date_array(record, field_name)
       values = record.send(field_name)
       values.each do |value|
-        date_options = construct_options(attributes: field_name, allow_nil: !@is_required, only_date: true, required: @is_required)
+        date_options = construct_options(attributes: field_name, allow_nil: true, only_date: true)
         DateTimeValidator.new(date_options).validate_value(record, value)
       end
     end
@@ -160,7 +160,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
       values = record.send(field_name)
       values.each do |value|
         choices = proc_to_object(@drop_down_choices, record)
-        CustomInclusionValidator.new(options.merge(attributes: field_name, in: choices[field_name], allow_nil: !@is_required, required: @is_required)).validate_value(record, value)
+        CustomInclusionValidator.new(options.merge(attributes: field_name, in: choices[field_name], allow_nil: true)).validate_value(record, value)
       end      
     end
 

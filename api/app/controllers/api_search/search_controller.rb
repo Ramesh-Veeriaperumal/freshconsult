@@ -4,7 +4,7 @@ module ApiSearch
 
     private
 
-      # Contructs a hash by collecting all values in the expression in the following format for validation
+      # Constructs a hash by collecting all values in the expression in the following format for validation
       # {
       #   priority: [2,3,4]
       #   status: [1,2]
