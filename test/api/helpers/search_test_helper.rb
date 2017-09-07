@@ -19,6 +19,7 @@ module SearchTestHelper
                                        :ticket_type => params[:type],
                                        :cc_email => Helpdesk::Ticket.default_cc_hash.merge(cc_emails: cc_emails, fwd_emails: fwd_emails),
                                        :created_at => params[:created_at],
+                                       :updated_at => params[:updated_at],
                                        :account_id => @account.id,
                                        :custom_field => params[:custom_field])
     test_ticket.build_ticket_body(:description => Faker::Lorem.paragraph)

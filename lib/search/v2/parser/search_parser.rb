@@ -111,7 +111,7 @@ end
         value = (condition[1, condition.length].join(ope)).strip
         value = is_integer?(value) ? value.to_i : value  #update logic and add comments
         value = value =~ /\'(.*)\'/ ? value[1,value.length-2] : value
-        data = { keyword.to_sym => value }
+        data = { keyword => value }
         node = OperandNode.new(data, ope)
         stack << node
       else
