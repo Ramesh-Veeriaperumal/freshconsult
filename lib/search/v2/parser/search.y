@@ -39,7 +39,7 @@ def make_tokens(scanner)
   relational_x = "(>|<)"
   date_x = "[\s]*'\\d{4}-\\d{2}-\\d{2}'"
   value_x = "[\s]*([a-zA-Z0-9_\@]+|'[^']+'|[-]?[0-9]+)"
-  regex_string = /(#{keyword_x}(#{seperator_x}#{value_x}|#{relational_x}#{date_x}))/
+  regex_string = /(#{keyword_x}#{seperator_x}(#{value_x}|#{relational_x}#{date_x}))/
   until scanner.empty?
     case
       when match = scanner.scan(/\([\s]*/)
@@ -110,11 +110,10 @@ end
     stack = []
     postfix.each do |element|
       if is_operand?(element)
-        ope = element[/:|\>|\</ =~ element]
-        condition = element.split(ope)
-        # condition = element.split(':')
+        condition = element.split(":")
         keyword = condition[0].strip.downcase
-        value = (condition[1, condition.length].join(ope)).strip
+        ope, condition[1] = get_operator(condition[1])
+        value = (condition[1, condition.length].join(":")).strip
         if value == "null"
           value = nil
         else
@@ -133,6 +132,17 @@ end
       end
     end
     root = stack.pop
+  end
+
+  def get_operator(value)
+    ope = value[0]
+    case
+      when [">","<"].include?(ope)
+        value[0] = ''
+        return [ope, value]
+      else
+        return [":", value]
+    end
   end
 
   def is_logical_operator?(element)
