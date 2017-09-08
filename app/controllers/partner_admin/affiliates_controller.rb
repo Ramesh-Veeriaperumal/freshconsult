@@ -28,7 +28,6 @@ class PartnerAdmin::AffiliatesController < ApplicationController
   TIME_ALLOWED = 1800
   RESELLER_TOKEN = "FDRES"
   AFFILIATE = "Share A Sale"
-  US_REGION = "podus"
 
   #Shareasale methods
   def select_account_shard(&block)
@@ -238,14 +237,12 @@ class PartnerAdmin::AffiliatesController < ApplicationController
       domains.each do |domain|
         domain_mapping = DomainMapping.find_by_domain(domain)
         if domain_mapping and domain_mapping.shard.status == 200
-          if domain_mapping.shard.pod_info.start_with?(US_REGION)
+          if domain_mapping.shard.pod_info == PodConfig['CURRENT_POD']
             Sharding.select_shard_of(domain) do 
               account = Account.find_by_full_domain(domain)
               SubscriptionAffiliate.add_affiliate(account, affiliate.token)
               mapped_accounts << account_info(account)
             end
-          else
-            unmapped_accounts << "#{domain} - EU"
           end
         else          
           unmapped_accounts << domain
