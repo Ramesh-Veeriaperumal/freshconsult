@@ -1,5 +1,7 @@
 class CompanyField < ActiveRecord::Base
 
+  include DataVersioning::Model
+  
   self.primary_key = :id
   self.table_name= "company_fields"
 
@@ -26,6 +28,8 @@ class CompanyField < ActiveRecord::Base
     :date_time    => { :column_name => "cf_date",     :column_limits => 10 }, 
     :tiny_int_1   => { :column_name => "cf_boolean",  :column_limits => 10 }
   }
+
+  VERSION_MEMBER_KEY = 'COMPANY_FIELD'.freeze
 
   inherits_custom_field :form_class => 'CompanyForm', :form_id => :company_form_id,
                         :custom_form_method => :default_company_form,

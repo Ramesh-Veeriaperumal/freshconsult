@@ -88,6 +88,10 @@ module Redis::OthersRedis
 		newrelic_begin_rescue { $redis_others.perform_redis_op("mapped_hmset", key,value) }
 	end
 
+	def set_others_redis_hash_set(key, member, value)
+		newrelic_begin_rescue { $redis_others.perform_redis_op("hset", key, member, value) }
+	end
+
 	def get_others_redis_hash(key)
 		newrelic_begin_rescue { $redis_others.perform_redis_op("hgetall", key) }
 	end

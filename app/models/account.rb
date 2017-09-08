@@ -594,6 +594,19 @@ class Account < ActiveRecord::Base
     remove_others_redis_key(account_activation_job_status_key)
   end
 
+  # This method is used to update version of available entities which is consumed in falcon.
+  def versionize_timestamp
+    begin
+      entity_keys = get_others_redis_hash(version_key).keys
+      return if entity_keys.blank?
+      hash_set = Hash[entity_keys.collect { |key| [key, Time.now.utc.to_i] }]
+      set_others_redis_hash(version_key, hash_set)
+    rescue Exception => e
+      Rails.logger.debug "Unable to update version timestamp::: #{e.message}, Account:: #{id}"
+      NewRelic::Agent.notice_error(e)
+    end
+  end
+
   # update domain name at Portal, Forum & Activities and support email
 
   def update_default_domain_and_email_config(new_domain_name, support_email_name)
