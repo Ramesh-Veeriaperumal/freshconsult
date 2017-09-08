@@ -48,14 +48,10 @@ module SlaPolicyTestHelper
     end
   end
 
-  def get_datetime(time)
-    if Date.today.saturday?
-      Time.zone.parse(time).advance(:days => 2)
-    elsif Date.today.sunday?
-      Time.zone.parse(time).advance(:days => 1)
-    else
-      Time.zone.parse(time)
-    end
+
+  def get_datetime(time, day = "Mon")
+    date = Date.parse(day)
+    Time.zone.parse("#{date} #{time}")
   end
 
 end

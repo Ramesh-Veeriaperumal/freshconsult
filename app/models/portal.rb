@@ -14,6 +14,7 @@ class Portal < ActiveRecord::Base
   validates_uniqueness_of :portal_url, :allow_blank => true, :allow_nil => true, :if => :portal_url_changed?
   validates_format_of :portal_url, :with => %r"^(?!.*\.#{Helpdesk::HOST[Rails.env.to_sym]}$)[/\w\.-]+$",
   :allow_nil => true, :allow_blank => true
+  validate :cname_owner, :if => :portal_url_changed?
   validates_inclusion_of :language, :in => Language.all_codes, :if => :language_changed?
   validate :validate_preferences
   before_update :backup_portal_changes , :if => :main_portal
@@ -351,4 +352,23 @@ class Portal < ActiveRecord::Base
       end
     end
   # * * * POD Operation Methods End * * *
+
+    # As a security measure, we expect the CNAME entry to match the freshdesk account's domain 
+    # This can match either the Freshdesk full domain or the elb domain for SSL enabled accounts
+
+    def cname_owner
+      return if portal_url.blank? || Account.current.launched?(:skip_portal_cname_chk)
+      cname_validator = CustomDomain::CnameValidator.new(portal_url, domains_for_account)
+      errors.add(:base, I18n.t('flash.portal.update.invalid_cname')) unless cname_validator.allow?
+    end
+    
+    def domains_for_account
+      valid_domains = [Account.current.full_domain]
+      valid_domains << elb_dns_name if elb_dns_name.present?
+      unless main_portal
+        account_main_portal = Account.current.main_portal_from_cache
+        valid_domains << account_main_portal.elb_dns_name if account_main_portal.elb_dns_name.present?
+      end
+      valid_domains.map { |d| d.chomp('.') }
+    end
 end

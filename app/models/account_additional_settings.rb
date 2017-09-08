@@ -55,6 +55,10 @@ class AccountAdditionalSettings < ActiveRecord::Base
     additional_settings.blank? ? false : additional_settings[:trial_extension_requested] == true
   end
 
+  def max_template_limit
+    additional_settings[:max_template_limit] unless additional_settings.blank?
+  end
+
   private
 
   def clear_cache

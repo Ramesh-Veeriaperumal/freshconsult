@@ -64,3 +64,6 @@ reports.csv
 reports.html
 reports.json
 features/cucumber_statistics
+
+#byebug
+.byebug_history
