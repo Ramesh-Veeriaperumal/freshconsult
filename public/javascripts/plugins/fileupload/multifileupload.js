@@ -200,7 +200,17 @@ Helpdesk = Helpdesk || {};
                                 form.find(".existing-file-list input[name='helpdesk_note[attachments][][resource]']").remove();
                                 form.find(".existing-file-list input[name='[cloud_file_attachments][]']").remove();
                             }
-                            form.submit();
+                            if(App.namespace.indexOf('solution/articles/') > -1) {
+                                var selectedAction;
+                                $(solutionActionButtons).each(function() {
+                                    if($(this).data('selected')) {
+                                        selectedAction = $(this);
+                                    }
+                                });
+                                selectedAction.trigger('click');
+                            } else {
+                                form.submit();
+                            }
                             $("#attachment-modal").remove();
                         }
                     }
@@ -264,6 +274,14 @@ Helpdesk = Helpdesk || {};
                     _this.addToRply.revertAll();
                     e.stopImmediatePropagation();
                 }   
+            });
+            // solutions draft fix
+            var solutionActionButtons = '[data-target-btn="#save-as-draft-btn"],[data-target-btn="#article-publish-btn"]';
+            $("body.solutions").on('click', solutionActionButtons, function(e) {
+                $(solutionActionButtons).each(function() {
+                    var se = $(this).data('selected', false);
+                });
+                $(this).data('selected', true);
             });
 
             form.on("submit", function(event) {
@@ -1098,7 +1116,6 @@ Helpdesk = Helpdesk || {};
             }
         }
     };  
-
 }(jQuery));
 
 //Ticket page sticky active handler

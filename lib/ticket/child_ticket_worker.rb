@@ -104,7 +104,9 @@ class Ticket::ChildTicketWorker < BaseWorker
   def consign_values key, value
     if key == "inherit_parent"
       attrbs = if value.is_a?(Array)
-        value.flatten
+        value.flatten!
+        value = merge_section_fields(value) if @account.multi_dynamic_sections_enabled?
+        value
       elsif  value == "all"
         all_attrs_from_parent
       end
@@ -211,6 +213,41 @@ class Ticket::ChildTicketWorker < BaseWorker
     end
     @item.requester_id = (@assoc_parent_ticket.responder_id.nil? ? @current_user.id :
       @assoc_parent_ticket.responder_id) if @item.requester_id.nil? and !@item.email
+  end
+
+  def merge_section_fields values
+    execute_on_db {
+      section_parent_fds = @account.section_parent_fields.select {|fd| values.include?(fd.name)}
+      if section_parent_fds.present?
+        pl_section_fd_ids = []
+        section_parent_fds.each do |section_field|
+          key = section_field.name
+          parent_field_value = @assoc_parent_ticket.send(key)
+          next if parent_field_value.nil?
+          picklist = section_field.picklist_values_with_sections.find_by_value(parent_field_value)
+          if picklist and (pl_section = picklist.section)
+            pl_section_fd_ids << pl_section.section_fields.pluck(:ticket_field_id)
+          end
+        end
+        pl_section_fd_ids.flatten!
+        @section_fields_name = section_fields_name(pl_section_fd_ids)
+      end
+    }
+    values | (@section_fields_name || [])
+  end
+
+  def section_fields_name pl_section_fd_ids
+    section_fields_name = []
+    ticket_fields_with_nested_fields = @account.ticket_fields_with_nested_fields
+    ticket_fields_with_nested_fields.where('id IN (?) and field_options like (?)', pl_section_fd_ids,'%section: true%').each do |tf|
+      section_fields_name << tf.name
+      child_levels = if tf.nested_field?
+        ticket_fields_with_nested_fields.select { |field| field.parent_id == tf.id }
+      end
+      section_fields_name << child_levels.map(&:name) unless child_levels.blank?
+      section_fields_name.flatten!
+    end
+    section_fields_name
   end
 
   def exception_sandbox exp

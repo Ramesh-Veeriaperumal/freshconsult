@@ -219,25 +219,35 @@ module Delayed
       job_params = { :payload_object => object, 
                      :priority => priority.to_i, 
                      :run_at => run_at, 
-                     :pod_info => pod_info 
+                     :pod_info => pod_info,
+                     :account_id => account_id,
+                     :sidekiq_job_info => worker_name
+
                    }
 
       perform_type = run_at.present? ? ["perform_at", run_at] : ["perform_async"]
 
-      #Note: Right now if any smtp_mailbox for the current account is active ,it is added to
-      #mailbox::Job queue. In Future we should check each individual smtp_mailbox based on the ticket and change the queue. 
-      if smtp_mailboxes.any?{|smtp_mailbox| smtp_mailbox.enabled?}
-        job = Mailbox::Job.create(job_params)
-        worker_id = DelayedJobs::MailboxJob.send(*perform_type, 
-          {:job_id => job.id, :account_id => account_id}) if job && job.id
-      else
-        job = Object.const_get("#{job_queue}::Job").create(job_params)
-        worker_id = Object.const_get("DelayedJobs::#{job_queue}AccountJob").send(*perform_type, 
-          {:job_id => job.id, 
-           :account_id => account_id}) if job && job.id && PUSH_QUEUE.include?(job_queue)
+      begin
+        #Note: Right now if any smtp_mailbox for the current account is active ,it is added to
+        #mailbox::Job queue. In Future we should check each individual smtp_mailbox based on the ticket and change the queue. 
+        if smtp_mailboxes.any?{|smtp_mailbox| smtp_mailbox.enabled?}
+          job = Mailbox::Job.create(job_params)
+          worker_id = DelayedJobs::MailboxJob.send(*perform_type, 
+            {:job_id => job.id, :account_id => account_id}) if job && job.id
+        else
+          job = Object.const_get("#{job_queue}::Job").create(job_params)
+          worker_id = Object.const_get("DelayedJobs::#{job_queue}AccountJob").send(*perform_type, 
+            {:job_id => job.id, 
+             :account_id => account_id}) if job && job.id && PUSH_QUEUE.include?(job_queue)
+        end
+        if job
+          #job.update_attribute(:sidekiq_job_info, "#{worker_id}:#{worker_name}")
+          Rails.logger.info "Job #{job.id} created and pushed to the sidekiq queue #{job_queue} with id #{worker_id}" 
+        end
+        job
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
       end
-      Rails.logger.info "Job #{job.id} created and pushed to the sidekiq queue #{job_queue} with id #{worker_id}" if job
-      job
     end
 
     # Find a few candidate jobs to run (in case some immediately get locked by others).

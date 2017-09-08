@@ -8,12 +8,13 @@ class Reports::ScheduledReports < ScheduledTaskBase
 
   def execute_task task
     @task = task
+    status = true
     if task_permitted?
       Sharding.run_on_slave do
         logger.info "Calling Export on Scheduled Report #{task.id} : #{task.inspect}"
-        HelpdeskReports::ScheduledReports::Worker.new(task).perform
+        status = HelpdeskReports::ScheduledReports::Worker.new(task).perform
       end
-      return true
+      return status
     else
       return :not_permitted
     end

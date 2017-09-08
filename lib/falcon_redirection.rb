@@ -2,14 +2,26 @@ class FalconRedirection
 
   class << self
 
-    include Redis::OthersRedis
-    include Redis::RedisKeys
-
     TICKET_SHOW_PATH_REGEX = /^\/helpdesk\/tickets\/(\d+)$/
     TICKET_EDIT_PATH_REGEX = /^\/helpdesk\/tickets\/(\d+)\/edit$/
 
     IFRAME_PATHS = ['/a/admin/', '/a/forums/', '/a/social/', '/a/solutions/', '/a/reports/', '/a/contacts/new',
                     '/a/companies/new', '/a/sla_policies/', '/a/scenario_automations/', '/a/canned_responses/'].freeze
+    IFRAME_RE_PATHS = ['^/a/contacts/\d+', '^/a/companies/\d+', '^/a/forums/.*', '^/a/solutions/.*',
+                        '^/a/sla_policies/\d+/edit', '^/a/tickets/\d+', '^/a/agents/\d+'].freeze
+
+    DYNAMIC_PATHS = {
+                      /^\/helpdesk\/tickets\/(\d+)/ => '/a/tickets/:id',
+                      # /^\/helpdesk\/tickets\/(\d+)\/edit$/ => '/a/tickets/:id',
+                      /^\/solution\/articles\/(\d+)/ => '/a/solutions/articles/:id',
+                      /^\/discussions\/topics\/(\d+)/ => '/a/forums/topics/:id',
+                      /^\/users\/(\d+)/ => '/a/contacts/:id',
+                      /^\/contacts\/(\d+)/ => '/a/contacts/:id',
+                      /^\/solution\/folders\/(\d+)/ => '/a/solutions/folders/:id',
+                      /^\/solution\/categories\/(\d+)/ => '/a/solutions/categories/:id',
+                      /^\/discussions\/(\d+)/ => '/a/forums/categories/:id',
+                      /^\/discussions\/forums\/(\d+)/ => '/a/forums/folders/:id'
+                    }.freeze
 
     def falcon_redirect(options)
       @options = options
@@ -22,8 +34,8 @@ class FalconRedirection
     end
 
     def prevent_redirection
-      (falcon_whitelisted_path? || iframe_path? || @options[:is_ajax] ||
-        @options[:not_html] || non_falcon_referer?)
+      # falcon_whitelisted_path? || 
+      iframe_path? || @options[:is_ajax] || @options[:not_html] || non_falcon_referer?
     end
 
     def falcon_whitelisted_path?
@@ -31,11 +43,11 @@ class FalconRedirection
     end
 
     def falcon_whitelisted_paths
-      ['/enable_falcon', '/disable_falcon', '/admin/widget_config', '/logout', '/support/login', '/inline/attachment'] + get_all_members_in_a_redis_set(FALCON_REDIRECTION_WHITELISTED_PATHS)
+      ['/enable_falcon', '/disable_falcon', '/admin/widget_config', '/logout', '/support/login', '/inline/attachment']
     end
 
     def falcon_whitelisted_re_paths
-      whitelisted_re_paths = ['^/download_file/', '^/reports/scheduled_exports/\d+/download_file', '^/helpdesk/attachments/\d+'] + get_all_members_in_a_redis_set(FALCON_REDIRECTION_WHITELISTED_RE_PATHS)
+      whitelisted_re_paths = ['^/download_file/', '^/reports/scheduled_exports/\d+/download_file', '^/helpdesk/attachments/\d+']
       whitelisted_re_paths.each { |re_path| return true if @options[:path_info] =~ Regexp.new(re_path) }
       return false
     end
@@ -49,21 +61,21 @@ class FalconRedirection
     end
 
     def current_referer
-      request_referer = @options[:request_referer]
-      URI.parse(request_referer).path if request_referer
+      request_referer = @options[:request_referer] ? URI.parse(@options[:request_referer]).path : nil
+      request_referer unless request_referer.to_s.start_with?('/support/')
     end
 
     def falcon_redirection_path(curr_path)
-      check_tickets_show_path(curr_path) || FalconUiRouteMapping[curr_path] || check_re_routes(curr_path) ||
-        get_others_redis_hash_value(FALCON_REDIRECTION_ROUTE_MAPPINGS, curr_path) || prefix_falcon_path(curr_path)
+      check_member_paths(curr_path) || FalconUiRouteMapping[curr_path] || check_re_routes(curr_path) || prefix_falcon_path(curr_path)
     end
 
-    def check_tickets_show_path(ref_path)
-      return unless ref_path.start_with?('/helpdesk/tickets/')
-      if (ref_path =~ TICKET_SHOW_PATH_REGEX) ||
-         (ref_path =~ TICKET_EDIT_PATH_REGEX)
-        return '/a/tickets/' + $1
+    def check_member_paths(ref_path)
+      DYNAMIC_PATHS.each do |k,v|
+        if ref_path =~ k
+          return v.sub(':id',$1)
+        end
       end
+      false
     end
 
     def map_url
@@ -80,7 +92,7 @@ class FalconRedirection
         return value if r_key =~ s_key
       end
       return
-  end
+    end
 
     def prefix_falcon_path(curr_path)
       curr_path.start_with?('/a/') ? curr_path : ('/a' + curr_path)
@@ -91,20 +103,12 @@ class FalconRedirection
     end
 
     def check_pathlist
-      iframe_paths.include?(map_url) || match_re_iframe(map_url)
+      IFRAME_PATHS.include?(map_url) || match_re_iframe(map_url)
     end
 
     def match_re_iframe(path)
-      iframe_re_paths.each { |re| return true if Regexp.new(re) =~ path}
+      IFRAME_RE_PATHS.each { |re| return true if Regexp.new(re) =~ path}
       return false
-    end
-
-    def iframe_paths
-      IFRAME_PATHS + get_all_members_in_a_redis_set(FALCON_REDIRECTION_IFRAME_PATHS)
-    end
-
-    def iframe_re_paths
-      ['^/a/contacts/\d+', '^/a/companies/\d+', '^/a/forums/.*', '^/a/solutions/.*', '^/a/sla_policies/\d+/edit', '^/a/tickets/\d+', '^/a/agents/\d+'].freeze
     end
 
   end

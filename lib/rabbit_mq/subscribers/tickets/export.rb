@@ -2,8 +2,11 @@ module RabbitMq::Subscribers::Tickets::Export
 
   include RabbitMq::Constants
 
+  VALID_MODELS = ["ticket"]
+
   def mq_export_valid(action, model)
-    Account.current.has_any_scheduled_ticket_export?
+    export_valid_model?(model) && 
+      Account.current.has_any_scheduled_ticket_export? && model_changes?
   end
 
   def mq_export_subscriber_properties(action)
@@ -13,5 +16,11 @@ module RabbitMq::Subscribers::Tickets::Export
   def mq_export_ticket_properties(action)
     to_rmq_json(EXPORT_TICKET_KEYS, action)
   end
+
+  private
+
+    def export_valid_model?(model)
+      VALID_MODELS.include?(model)
+    end
 
 end

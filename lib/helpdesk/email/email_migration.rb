@@ -1,13 +1,15 @@
-#args = {:user_name=>"user@gmail.com", :password=>"password", :notify_email=>"notify@gmail.com", :envelope_address=>"envelope@local.freshdesk.com", :server_name=>"imap.gmail.com", :folder=>"INBOX", :tags_name=>"email_import", :gmail_tags=false}
+#args = {:user_name=>"user@gmail.com", :password=>"password", :notify_email=>"notify@gmail.com", :envelope_address=>"envelope@local.freshdesk.com", :server_name=>"imap.gmail.com", :folder=>"INBOX", :tags_name=>"email_import", :gmail_tags=>false, :start_time=>"DD-MMM-YYYY HH-MM-SS +0000", :end_time=>"DD-MMM-YYYY HH-MM-SS +0000"}
 #Helpdesk::Email::EmailMigration.new(args)
 
 require 'net/imap'
 require 'timeout'
+require 'date'
 
 module Helpdesk::Email
   class EmailMigration
     attr_accessor :user_name, :password, :notify_email, :server_name, :start_uid, :end_uid, :start_date, :end_date, :from_address, :to_address, 
-                  :subject, :envelope_address, :port, :ssl, :authentication, :folder, :gmail_tags, :tags_name, :uid_list 
+                  :subject, :envelope_address, :ssl, :authentication, :folder, :gmail_tags, :tags_name, :uid_list, :custom_status, :uid_array,
+                  :start_time, :end_time, :imap, :enable_outgoing, :skip_notification, :port
 
     MAX_UID = "99999999"
 
@@ -17,13 +19,11 @@ module Helpdesk::Email
       self.ssl ||= true
       self.folder ||= "INBOX"
       self.gmail_tags ||= false
+      self.skip_notification ||= true
+      self.enable_outgoing ||= true
       retrieve_tags_name
-      if mandatory_data_available?
-        response = convert_emails_to_tickets
-      else
-        mailbox_log "Provide all mandatory data in a Hash during initialize.  Mandatory : envelope_address, user_name, password, notify_email, server_name.  Optional : start_uid, end_uid, start_date, port, ssl, authentication"
-      end
-      response
+      parse_time
+      connect_imap_server
     end
 
     def initialise_attributes(attributes = {})
@@ -32,10 +32,6 @@ module Helpdesk::Email
           send("#{name}=", value)
         end
       end
-    end
-
-    def mandatory_data_available?
-      (server_name && envelope_address && user_name && password && notify_email)
     end
 
     def retrieve_tags_name
@@ -47,9 +43,21 @@ module Helpdesk::Email
       end
     end
 
-    def get_imap
+    def parse_time
+      mailbox_log "Sample start_time/end_time DD-MMM-YYYY HH-MM-SS +0000"
+      if start_time.present?
+        DateTime.strptime(self.start_time, '%d-%b-%Y %H:%M:%S %z')
+        self.start_date = start_time[0..10]
+      end 
+      if end_time.present? 
+        DateTime.strptime(self.end_time, '%d-%b-%Y %H:%M:%S %z')
+        self.end_date = end_time[0..10] 
+      end
+    end 
+
+    def connect_imap_server
       Timeout.timeout(15) do
-        imap = Net::IMAP.new(server_name, port, ssl)
+        self.imap = Net::IMAP.new(server_name, port, ssl)
         unless authentication
           imap.login(user_name, password)
         else
@@ -57,32 +65,43 @@ module Helpdesk::Email
         end
         imap.examine(folder)
         mailbox_log "Successfully Logged in customer mailbox"
-        return imap
       end
     rescue => e
       mailbox_log "Error occurred While logining customer mailbox #{e.class}, #{e.message}, #{e.backtrace}"
-      return nil
+      raise e
+    end
+
+    def process
+      if mandatory_data_available?
+        response = convert_emails_to_tickets
+      else
+        mailbox_log "Provide all mandatory data in a Hash during initialize.  Mandatory : envelope_address, user_name, password, notify_email, 
+                     server_name.  Optional : start_uid, end_uid, start_date, port, ssl, authentication"
+      end
+      response
+    end
+
+    def mandatory_data_available?
+      (server_name && envelope_address && user_name && password && notify_email)
     end
 
     def convert_emails_to_tickets
       start_time = Time.zone.now
 
-      imap = get_imap
-      if imap.nil?
-        mailbox_log "Imap connection is not available"
-        return 0
-      end
       failed_uids = []
       @latest_uid = nil
 
-      MaigrationMailer.send_mail(notify_email, "Migration started for folder - #{folder}, email address : #{user_name}")
+      MigrationMailer.send_mail(notify_email, "Migration started for folder - #{folder}, email address : #{user_name}")
 
       begin
         @uids_processed = []
         thread_ids = []
         @tickets_info = []
-        uids = imap.uid_search(uid_search_array)
-
+        uids = uids_list
+        if imap.nil?
+          mailbox_log "Imap connection is not available"
+          return 0
+        end
         mailbox_log "Start proccessing message for uids : #{uids.inspect} "
         uids.each_with_index do |uid, i|
           break unless uid
@@ -96,32 +115,33 @@ module Helpdesk::Email
                 imap.disconnect
               end
               sleep(5)
-              imap = get_imap
+              connect_imap_server
             end
             mail = Mail.new(imap.uid_fetch(uid, 'RFC822').first.attr['RFC822'])
-            args = {:imap=>imap,:uid=>uid,:tags_name=>tags_name,:gmail_tags=>gmail_tags,:envelope_address=>envelope_address}
+            args = {:imap=>imap,:uid=>uid,:tags_name=>tags_name,:gmail_tags=>gmail_tags,:envelope_address=>envelope_address,
+                    :custom_status=>custom_status, :skip_notification=>skip_notification,:enable_outgoing=>enable_outgoing}
             tkt_params = Helpdesk::Email::MigrationMailProcessor.new(args).process_email
             response = Helpdesk::ProcessEmail.new(tkt_params.with_indifferent_access).perform
             mailbox_log "Email is been processed successfully, ticket display id : #{response[:display_id]}, ticket id : #{response[:ticket_id]}, note id : #{response[:note_id]} "
             @uids_processed << uid
-            @tickets_info << "#{uid}::#{response[:display_id]}::#{response[:ticket_id]}::#{response[:note_id]},  "
+            @tickets_info << "UID-#{uid} DisplayID-#{response[:display_id]} TicketID-#{response[:ticket_id]} NoteID-#{response[:note_id]},            "
           rescue Exception => e
             Rails.logger.debug "#{e}, #{e.backtrace}"
             mailbox_log "Exceptions occurred during migration #{e}, #{e.backtrace}"
-            MaigrationMailer.send_mail(notify_email, "Migration error. UID - #{@latest_uid} Folder - #{folder} ERROR - #{e.class}, #{e.message}, #{e.backtrace}")
+            MigrationMailer.send_mail(notify_email, "Migration error. UID - #{@latest_uid} Folder - #{folder} ERROR - #{e.class}, #{e.message}, #{e.backtrace}")
             failed_uids.push uid
             unless imap.disconnected?
               imap.logout
               imap.disconnect
             end
             sleep(60)
-            imap = get_imap
+            connect_imap_server
           end
         end
       rescue Exception => e
         Rails.logger.debug "#{e}, #{e.backtrace}"
         mailbox_log "Exceptions occurred #{e}, #{e.backtrace}"
-        MaigrationMailer.send_mail(notify_email, "Migration stopped for folder #{folder}.
+        MigrationMailer.send_mail(notify_email, "Migration stopped for folder #{folder}.
                                                    Latest UID #{@latest_uid} failed_uids - #{failed_uids.inspect}
                                                    start_time - #{start_time}".squish!)
         return
@@ -129,23 +149,46 @@ module Helpdesk::Email
         imap.logout
       end
       end_time = Time.zone.now
-      MaigrationMailer.send_mail(notify_email, "Migration completed for folder #{folder}.
+      MigrationMailer.send_mail(notify_email, "Migration completed for folder #{folder}.
                                                 Failed_uids - #{failed_uids.inspect}
                                                 Start_time - #{start_time} end_time - #{end_time}
                                                 Processed tickets info #{@tickets_info}")
     end
 
-    def uid_search_array
-      uid_arr = []
-      uid_arr += ["FROM", from_address] if from_address
-      uid_arr += ["TO", to_address] if to_address
-      uid_arr += ["SINCE", start_date] if start_date
-      uid_arr += ["BEFORE", end_date] if end_date
-      uid_arr += ["SUBJECT", subject] if subject
-      uid_arr += ["UID", "#{start_uid}:#{end_uid}"] if start_uid && end_uid
-      uid_arr += ["UID", "1:#{MAX_UID}"] unless uid_arr.present?
-      mailbox_log "uid array : #{uid_arr}"
+    def uids_list
+      if uid_array.present?
+        mailbox_log "Uid list is been provided by customer -- #{uid_array.join(", ")}"
+        return uid_array 
+      end
+      uid_search_arr = []
+      uid_search_arr += ["FROM", from_address] if from_address
+      uid_search_arr += ["TO", to_address] if to_address
+      uid_search_arr += ["SINCE", start_date] if start_date
+      uid_search_arr += ["BEFORE", end_date] if end_date
+      uid_search_arr += ["SUBJECT", subject] if subject
+      uid_search_arr += ["UID", "#{start_uid}:#{end_uid}"] if start_uid && end_uid
+      uid_search_arr += ["UID", "1:#{MAX_UID}"] unless uid_search_arr.present?
+      mailbox_log "uid search array : #{uid_search_arr.join(", ")}"
+      uid_arr = imap.uid_search(uid_search_arr)
+      mailbox_log "uid_arr : #{uid_arr.join(", ")}"
+      valid_uids = []
+      if start_time.present? && end_time.present?
+        start_datetime = DateTime.parse(start_time)
+        end_datetime = DateTime.parse(end_time)
+        mailbox_log "start_datetime : #{start_datetime}, end_datetime : #{end_datetime}"
+        uid_arr.each do |uid|
+          uid_datetime =  DateTime.parse(internal_date(uid))
+          mailbox_log "uid : #{uid}, datetime : #{uid_datetime}"
+          valid_uids << uid if ((start_datetime <= uid_datetime) && (end_datetime >= uid_datetime)) 
+        end
+        uid_arr = valid_uids
+      end
+      mailbox_log "Valid Uids list from #{start_time} to #{end_time} : #{uid_arr.join(", ")}"
       uid_arr
+    end
+
+    def internal_date(uid)
+      imap.uid_fetch(uid, "INTERNALDATE")[0].attr["INTERNALDATE"]
     end
 
     def mailbox_log msg
@@ -154,7 +197,7 @@ module Helpdesk::Email
     end
   end
 
-  class MaigrationMailer < ActionMailer::Base
+  class MigrationMailer < ActionMailer::Base
     def send_mail(notify_email,text="")
       headers = {:subject =>       "Mail from console",
                   :to =>            notify_email,

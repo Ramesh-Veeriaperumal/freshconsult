@@ -65,3 +65,4 @@
 //= require app/realtime_dashboard/plugins/solid-gauge
 //= require app/realtime_dashboard_persist.js
 //= require frameworks/plugins/prism.js
+//= require frameworks/velocity.min.js
