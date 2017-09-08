@@ -49,7 +49,7 @@ module Search
         )
       elsif node.value.nil?
         not_exists_filter(key)
-      elsif @date_fields.include?(key)
+      elsif @date_fields.include?(node.key)
         bool_filter(
           range_filter(key => on_a_date(node.value))
         )
