@@ -19,7 +19,7 @@ gem "mysql2", "~> 0.3.0"
 
 gem "connection_pool"
 gem "clamav-client", "3.1.0", require: "clamav/client"
-gem "rate-limiting", :git =>"git://github.com/freshdesk/rate-limiting.git", :branch => 'staging'
+gem "rate-limiting", :git =>"git://github.com/freshdesk/rate-limiting.git", :tag => 'v1.1'
 gem 'fd_rate_limiter', :git => 'git@github.com:freshdesk/fd_rate_limiter.git', :branch => 'dynamic_rules'
 gem "white_list", :git =>"git://github.com/neubloc/white_list.git"
 gem "will_paginate", "3.0.6"
