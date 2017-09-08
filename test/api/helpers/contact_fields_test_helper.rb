@@ -17,9 +17,9 @@ module ContactFieldsTestHelper
       position: expected_output[:position] || contact_field.position,
       required_for_agents: expected_output[:required_for_agents] || contact_field.required_for_agent,
       required_for_customers: expected_output[:required_for_customers] || contact_field.required_in_portal,
-      displayed_for_customers: expected_output[:displayed_for_customers] || contact_field.visible_in_portal,
-      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
-      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+      displayed_for_customers: expected_output[:displayed_for_customers] || contact_field.visible_in_portal
+      # created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      # updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
   end
 
