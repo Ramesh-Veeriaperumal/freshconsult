@@ -28,13 +28,13 @@ module Ember
     end
 
     def test_index_with_existing_contact_import
-      @account.create_contact_import({ import_status: Admin::DataImport::IMPORT_STATUS[:started] }) if @account.reload.contact_import.nil?
+      @account.create_contact_import(import_status: ::Admin::DataImport::IMPORT_STATUS[:started]) if @account.reload.contact_import.nil?
       get :index, controller_params({version: 'private', type: "contact"})
       assert_response 204
     end
 
     def test_index_with_existing_company_import
-      @account.create_company_import({ import_status: Admin::DataImport::IMPORT_STATUS[:started] }) if @account.reload.company_import.nil?
+      @account.create_company_import(import_status: ::Admin::DataImport::IMPORT_STATUS[:started]) if @account.reload.company_import.nil?
       get :index, controller_params({version: 'private', type: "company"})
       assert_response 204
     end
@@ -71,7 +71,7 @@ module Ember
     end
 
     def test_upload_csv_for_409_on_existing_import_in_progress
-      @account.create_contact_import({ import_status: Admin::DataImport::IMPORT_STATUS[:started] }) if @account.reload.contact_import.nil?
+      @account.create_contact_import(import_status: ::Admin::DataImport::IMPORT_STATUS[:started]) if @account.reload.contact_import.nil?
       @account.reload
       post :create, construct_params(import_contacts_params)
       assert_response 409

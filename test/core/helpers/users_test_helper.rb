@@ -49,21 +49,34 @@ module UsersTestHelper
     new_user.reload
   end
 
-  def add_new_user(account, options={})
+  def build_tags(tag_names)
+    tags = []
+    existing_tags = Helpdesk::Tag.where(account_id: @account.id)
+    tag_names_taken = existing_tags.map(&:name)
+    tag_names -= tag_names_taken if tag_names.present?
+    tag_names.each do |tag_name|
+      tags << Helpdesk::Tag.new(name: tag_name)
+    end
+    [*tags, *existing_tags]
+  end
 
+  def add_new_user(account, options={})
     if options[:email]
       user = User.find_by_email(options[:email])
       return user if user
     end
-    new_user = FactoryGirl.build(:user, :account => account,
-                                    :name => options[:name] || Faker::Name.name,
-                                    :email => options[:email] || Faker::Internet.email,
-                                    :time_zone => options[:time_zone] || "Chennai",
-                                    :delta => 1,
-                                    :deleted => options[:deleted] || 0,
-                                    :blocked => options[:blocked] || 0,
-                                    :company_id => options[:customer_id] || nil,
-                                    :language => "en")
+    new_user = FactoryGirl.build(:user,
+                                  account: account,
+                                  name: options[:name] || Faker::Name.name,
+                                  email: options[:email] || Faker::Internet.email,
+                                  time_zone: options[:time_zone] || 'Chennai',
+                                  delta: 1,
+                                  deleted: options[:deleted] || 0,
+                                  blocked: options[:blocked] || 0,
+                                  company_id: options[:customer_id] || nil,
+                                  language: 'en',
+                                  active: options[:active] || false,
+                                  tags: build_tags(options[:tags]))
     new_user.custom_field = options[:custom_fields] if options.key?(:custom_fields)
     new_user.save
     new_user.reload

@@ -409,6 +409,39 @@
 .purchase-footer .address-required-alert {
   color: #888;
 }
+.freshcaller-account-settings {
+  height: 86px;
+  border-radius: 6px;
+  background-color: #f8f8f8;
+  border: solid 1px #e4e4e4;
+  display: flex;
+  align-items: center;
+  padding-left: 25px;
+}
+.freshcaller-dew-copy {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+.freshcaller-settings-link-container {
+  height: 15px;
+  font-family: HelveticaNeue;
+  font-size: 13px;
+  text-align: left;
+  margin-left: auto;
+  padding-right: 30px;
+}
+.freshcaller-settings-link{
+  color: #0066cc;
+}
+.freshcaller-account-url {
+  height: 21px;
+  font-family: HelveticaNeue;
+  font-size: 18px;
+  text-align: left;
+  color: #333333;
+  padding-left: 10px;
+}
 .freshfone_video {
   display: block;
   border: 1px solid #ccc;

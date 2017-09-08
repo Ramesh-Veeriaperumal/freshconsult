@@ -9865,6 +9865,11 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       save: "Save"
       call_notes: "notes"
       notes: "Notes"
+  freshcaller:
+    admin:
+      title_text: "Freshcaller"
+      manage_settings_text: "Manage settings at Freshcaller"
+
   freshfone:
     recording_on_process: "The recording is being processed. <a href='#' target='_parent' id='checkfreshfoneaudio'>Check</a> again in a few minutes"
     not_enough_credit: "Not Enough Credit!"
@@ -11365,7 +11370,20 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       wrong_file_format: "Unsupported file format!"
       unexpected: "Something went wrong!"
       highlight_missing: "Highlight missing"
-      
+
+  call:
+    duration_html: "<br><br> <b>Call Duration:</b> %{call_duration}"
+    note_html: "<br><br> <b>Call Notes:</b> <br> %{call_note}"
+    ticket:
+      completed_title: "Call with %{customer} on %{date} at %{time}"
+      voicemail_title: "Voicemail from %{customer}"
+      noanswer_title: "Missed Call from %{customer}"
+
+      completed_description: "Conversation with %{customer} and %{agent}"
+      voicemail_description: "Voicemail from %{customer} to %{agent}"
+      noanswer_description: "Missed Call from %{customer} to %{agent}"
+
+
   default:
     ticket:
       email:

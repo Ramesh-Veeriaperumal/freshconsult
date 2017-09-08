@@ -61,6 +61,10 @@ module Ember
 
     private
 
+      def feature_name
+        FeatureConstants::WATCHERS
+      end
+
       def scoper
         current_account.tickets.where(ApiTicketConstants::CONDITIONS_FOR_TICKET_ACTIONS)
       end

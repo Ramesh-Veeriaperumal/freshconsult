@@ -863,6 +863,7 @@ GEM
     json-compare (0.1.8)
     json_expressions (0.8.3)
     json_pure (1.8.3)
+    jwe (0.3.0)
     jwt (1.5.4)
     koala (1.10.1)
       addressable
@@ -1359,6 +1360,7 @@ DEPENDENCIES
   json (= 1.8.3)
   json-compare (= 0.1.8)
   json_expressions
+  jwe (= 0.3.0)
   jwt (= 1.5.4)
   koala (= 1.10.1)
   launchparty!

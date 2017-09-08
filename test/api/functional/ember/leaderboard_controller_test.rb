@@ -36,14 +36,14 @@ module Ember
     end
 
     def test_mini_list_without_gamification_feature
-      Account.first.make_current
-      Account.any_instance.stubs(:features?).with(:gamification).returns(false)
-      Account.any_instance.stubs(:has_feature?).with(:gamification).returns(false)
+      @account.features.gamification.destroy
+      @account.revoke_feature(:gamification)
+      @account.reload
       get :agents, construct_params(mini_list: true, version: 'private')
       assert_response 403
     ensure
-      Account.any_instance.unstub(:features?)
-      Account.any_instance.unstub(:has_feature?)
+      @account.features.gamification.create
+      @account.add_feature(:gamification)
     end
 
     def test_mini_list_with_new_leaderboard_feature_for_mvp_without_current_user_values

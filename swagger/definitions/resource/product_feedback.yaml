@@ -1,5 +1,13 @@
-  
+
 type: object
 properties:
-  description:
-    type: string
+  product_feedback:
+    type: object
+    properties:
+      description:
+        type: string
+      attachment_ids:
+        type: array
+        description: array of attachment IDs
+        items:
+          type: integer

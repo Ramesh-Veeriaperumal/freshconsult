@@ -28,19 +28,19 @@ module Ember
       @ca_folder_personal = @account.canned_response_folders.personal_folder.first
 
       # responses in visible to all folder
-      @ca_response_1 = create_canned_response(@ca_folder_all.id)
+      @ca_response1 = create_canned_response(@ca_folder_all.id)
 
       # responses in personal folder
-      @ca_response_2 = create_canned_response(@ca_folder_personal.id, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me])
+      @ca_response2 = create_canned_response(@ca_folder_personal.id, ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me])
 
       # responses based on groups
       # @test_group = create_group(@account)
-      @ca_response_3 = create_canned_response(@ca_folder_all.id, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents])
+      @ca_response3 = create_canned_response(@ca_folder_all.id, ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents])
 
-      @ca_response_4 = create_response(
+      @ca_response4 = create_response(
         title: Faker::Lorem.sentence,
         content_html: 'Hi {{ticket.requester.name}}, Faker::Lorem.paragraph Regards, {{ticket.agent.name}}',
-        visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+        visibility: ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
         attachments: {
           resource: file,
           description: ''
@@ -58,29 +58,29 @@ module Ember
 
     def test_show_response
       login_as(@agent)
-      get :show, controller_params(version: 'private', id: @ca_response_1.id)
+      get :show, controller_params(version: 'private', id: @ca_response1.id)
       assert_response 200
-      match_json(ca_response_show_pattern(@ca_response_1.id))
+      match_json(ca_response_show_pattern(@ca_response1.id))
     end
 
     def test_show_responses_in_personal_folder
       login_as(@agent)
-      get :show, controller_params(version: 'private', id: @ca_response_2.id)
+      get :show, controller_params(version: 'private', id: @ca_response2.id)
       assert_response 200
-      match_json(ca_response_show_pattern(@ca_response_2.id))
+      match_json(ca_response_show_pattern(@ca_response2.id))
     end
 
     def test_show_personal_responses_of_other_agents
       new_agent = add_agent_to_account(@account, name: Faker::Name.name, active: 1, role: 1)
       login_as(new_agent.user)
-      get :show, controller_params(version: 'private', id: @ca_response_2.id)
+      get :show, controller_params(version: 'private', id: @ca_response2.id)
       assert_response 403
     end
 
     def test_show_with_group_visibility_response
       new_agent = add_agent_to_account(@account, name: Faker::Name.name, active: 1, role: 1)
       login_as(new_agent.user)
-      get :show, controller_params(version: 'private', id: @ca_response_3.id)
+      get :show, controller_params(version: 'private', id: @ca_response3.id)
       assert_response 403
     end
 
@@ -95,7 +95,7 @@ module Ember
     end
 
     def test_show_with_invalid_ticket_id
-      get :show, controller_params(version: 'private', id: @ca_response_1.id, ticket_id: 10_000, include: 'evaluated_response')
+      get :show, controller_params(version: 'private', id: @ca_response1.id, ticket_id: 10_000, include: 'evaluated_response')
       assert_response 404
     end
 
@@ -106,58 +106,58 @@ module Ember
 
     def test_show_with_unauthorized_ticket_id
       user_stub_ticket_permission
-      get :show, controller_params(version: 'private', id: @ca_response_4.id, ticket_id: @sample_ticket.display_id, include: 'evaluated_response')
+      get :show, controller_params(version: 'private', id: @ca_response4.id, ticket_id: @sample_ticket.display_id, include: 'evaluated_response')
       user_unstub_ticket_permission
       assert_response 403
       match_json(request_error_pattern(:access_denied))
     end
 
     def test_show_with_unauthorized_response_id
-      Admin::CannedResponses::Response.any_instance.stubs(:visible_to_me?).returns(false)
-      get :show, controller_params(version: 'private', id: @ca_response_1.id, ticket_id: @sample_ticket.display_id, include: 'evaluated_response')
-      Admin::CannedResponses::Response.any_instance.unstub(:visible_to_me?)
+      ::Admin::CannedResponses::Response.any_instance.stubs(:visible_to_me?).returns(false)
+      get :show, controller_params(version: 'private', id: @ca_response1.id, ticket_id: @sample_ticket.display_id, include: 'evaluated_response')
+      ::Admin::CannedResponses::Response.any_instance.unstub(:visible_to_me?)
       assert_response 403
       match_json(request_error_pattern(:access_denied))
     end
 
     def test_show_with_evaluated_response
       login_as(@agent)
-      get :show, controller_params(version: 'private', id: @ca_response_2.id, ticket_id: @sample_ticket.display_id, include: 'evaluated_response')
+      get :show, controller_params(version: 'private', id: @ca_response2.id, ticket_id: @sample_ticket.display_id, include: 'evaluated_response')
       assert_response 200
-      match_json(ca_response_show_pattern_evaluated_content(@ca_response_2.id, @sample_ticket))
+      match_json(ca_response_show_pattern_evaluated_content(@ca_response2.id, @sample_ticket))
     end
 
     def test_show_with_evaluated_response_new_ticket
       login_as(@agent)
-      get :show, controller_params(version: 'private', id: @ca_response_2.id, include: 'evaluated_response')
+      get :show, controller_params(version: 'private', id: @ca_response2.id, include: 'evaluated_response')
       assert_response 200
-      match_json(ca_response_show_pattern_new_ticket(@ca_response_2.id))
+      match_json(ca_response_show_pattern_new_ticket(@ca_response2.id))
     end
 
     def test_show_with_attachments
       login_as(@agent)
-      get :show, controller_params(version: 'private', id: @ca_response_4.id, ticket_id: @sample_ticket.display_id, include: 'evaluated_response')
+      get :show, controller_params(version: 'private', id: @ca_response4.id, ticket_id: @sample_ticket.display_id, include: 'evaluated_response')
       assert_response 200
-      match_json(ca_response_show_pattern_evaluated_content(@ca_response_4.id, @sample_ticket, @ca_response_4.attachments_sharable))
+      match_json(ca_response_show_pattern_evaluated_content(@ca_response4.id, @sample_ticket, @ca_response4.attachments_sharable))
     end
 
     def test_show_with_empty_include
       login_as(@agent)
-      get :show, controller_params(version: 'private', id: @ca_response_2.id, ticket_id: @sample_ticket.display_id, include: '')
+      get :show, controller_params(version: 'private', id: @ca_response2.id, ticket_id: @sample_ticket.display_id, include: '')
       assert_response 400
       match_json([bad_request_error_pattern('include', :not_included, list: CannedResponseConstants::ALLOWED_INCLUDE_PARAMS)])
     end
 
     def test_show_with_wrong_type_include
       login_as(@agent)
-      get :show, controller_params(version: 'private', id: @ca_response_2.id, ticket_id: @sample_ticket.display_id, include: ['test'])
+      get :show, controller_params(version: 'private', id: @ca_response2.id, ticket_id: @sample_ticket.display_id, include: ['test'])
       assert_response 400
       match_json([bad_request_error_pattern('include', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: 'Array')])
     end
 
     def test_show_with_invalid_params
       login_as(@agent)
-      get :show, controller_params(version: 'private', id: @ca_response_2.id, ticket_id: @sample_ticket.display_id, includ: 'test')
+      get :show, controller_params(version: 'private', id: @ca_response2.id, ticket_id: @sample_ticket.display_id, includ: 'test')
       assert_response 400
       match_json([bad_request_error_pattern('includ', :invalid_field)])
     end
@@ -182,54 +182,54 @@ module Ember
     end
 
     def test_index_for_one_ca
-      get :index, controller_params(version: 'private', ids: @ca_response_1.id)
+      get :index, controller_params(version: 'private', ids: @ca_response1.id)
       assert_response 200
-      match_json([ca_response_search_pattern(@ca_response_1.id)])
+      match_json([ca_response_search_pattern(@ca_response1.id)])
     end
 
     def test_index_for_multiple_ca
       login_as(@agent)
-      get :index, controller_params(version: 'private', ids: [@ca_response_1, @ca_response_2].map(&:id).join(', '))
+      get :index, controller_params(version: 'private', ids: [@ca_response1, @ca_response2].map(&:id).join(', '))
       assert_response 200
       pattern = []
-      [@ca_response_1, @ca_response_2].each do |ca|
+      [@ca_response1, @ca_response2].each do |ca|
         pattern << ca_response_search_pattern(ca.id)
       end
       match_json(pattern)
     end
 
     def test_index_for_multiple_ca_with_inaccessible_ids
-      get :index, controller_params(version: 'private', ids: [@ca_response_1, @ca_response_2, @ca_response_3].map(&:id).join(', '))
+      get :index, controller_params(version: 'private', ids: [@ca_response1, @ca_response2, @ca_response3].map(&:id).join(', '))
       assert_response 200
       pattern = []
-      [@ca_response_1, @ca_response_2].each do |ca|
+      [@ca_response1, @ca_response2].each do |ca|
         pattern << ca_response_search_pattern(ca.id)
       end
       match_json(pattern)
-      # @ca_response_3 will not be present here.
+      # @ca_response3 will not be present here.
     end
 
     def test_index_with_just_inaccessible_ids
-      get :index, controller_params(version: 'private', ids: [@ca_response_3].map(&:id).join(', '))
+      get :index, controller_params(version: 'private', ids: [@ca_response3].map(&:id).join(', '))
       assert_response 404
     end
 
     def test_index_for_multiple_ca_with_invalid_ids
-      get :index, controller_params(version: 'private', ids: [@ca_response_1, @ca_response_2, @ca_response_3].map(&:id).join(', ') << ',a,b,c')
+      get :index, controller_params(version: 'private', ids: [@ca_response1, @ca_response2, @ca_response3].map(&:id).join(', ') << ',a,b,c')
       assert_response 200
       pattern = []
-      [@ca_response_1, @ca_response_2].each do |ca|
+      [@ca_response1, @ca_response2].each do |ca|
         pattern << ca_response_search_pattern(ca.id)
       end
       match_json(pattern)
-      # @ca_response_3 will not be present here.
+      # @ca_response3 will not be present here.
     end
 
     def test_index_for_limit_in_ids
       ca_responses = Array.new(15) { create_canned_response(@ca_folder_all.id) }
 
       ids_passed = ca_responses.first(10).collect(&:id)
-      ids_passed.insert(3, @ca_response_3.id)
+      ids_passed.insert(3, @ca_response3.id)
       get :index, controller_params(version: 'private', ids: ids_passed.join(','))
       assert_response 200
       pattern = []
@@ -252,10 +252,13 @@ module Ember
     end
 
     def test_search
-      ca_responses = Array.new(20) { create_response(
+      ca_responses = Array.new(20) do
+        create_response(
           title: 'Test Canned Response search',
           content_html: Faker::Lorem.paragraph,
-          visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]) }
+          visibility: ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]
+        )
+      end
       get :search, controller_params(version: 'private', ticket_id: @sample_ticket.display_id, search_string: 'Canned Response')
       assert_response 200
       pattern = []
