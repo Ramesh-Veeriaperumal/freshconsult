@@ -84,8 +84,8 @@ ActiveRecord::Schema.define(:version => 20170829152515) do
     t.datetime "locked_at"
     t.datetime "failed_at"
     t.string   "locked_by"
-    t.string   "account_id"
-    t.text     "sidekiq_job_info"
+    t.integer  "account_id", :limit => 8
+    t.string   "sidekiq_job_info"
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
     t.string   "pod_info",   :default => "poduseast1", :null => false
@@ -1054,8 +1054,8 @@ ActiveRecord::Schema.define(:version => 20170829152515) do
     t.datetime "locked_at"
     t.datetime "failed_at"
     t.string   "locked_by"
-    t.string   "account_id"
-    t.text     "sidekiq_job_info"
+    t.integer  "account_id", :limit => 8
+    t.string   "sidekiq_job_info"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "pod_info",   :default => 'poduseast1', :null => false
@@ -1477,8 +1477,8 @@ ActiveRecord::Schema.define(:version => 20170829152515) do
     t.datetime "locked_at"
     t.datetime "failed_at"
     t.string   "locked_by"
-    t.string   "account_id"
-    t.text     "sidekiq_job_info"
+    t.integer  "account_id", :limit => 8
+    t.string   "sidekiq_job_info"
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
     t.string   "pod_info",   :default => 'poduseast1', :null => false
@@ -2546,8 +2546,8 @@ ActiveRecord::Schema.define(:version => 20170829152515) do
     t.datetime "locked_at"
     t.datetime "failed_at"
     t.string   "locked_by"
-    t.string   "account_id"
-    t.text     "sidekiq_job_info"
+    t.integer  "account_id", :limit => 8
+    t.string   "sidekiq_job_info"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "pod_info",   :default => 'poduseast1', :null => false
@@ -2834,8 +2834,8 @@ ActiveRecord::Schema.define(:version => 20170829152515) do
     t.datetime "locked_at"
     t.datetime "failed_at"
     t.string   "locked_by"
-    t.string   "account_id"
-    t.text     "sidekiq_job_info"
+    t.integer  "account_id", :limit => 8
+    t.string   "sidekiq_job_info"
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
     t.string   "pod_info",   :default => "poduseast1", :null => false
@@ -3856,8 +3856,8 @@ ActiveRecord::Schema.define(:version => 20170829152515) do
     t.datetime "locked_at"
     t.datetime "failed_at"
     t.string   "locked_by"
-    t.string   "account_id"
-    t.text     "sidekiq_job_info"
+    t.integer  "account_id", :limit => 8
+    t.string   "sidekiq_job_info"
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
     t.string   "pod_info",   :default => 'poduseast1', :null => false
