@@ -246,6 +246,33 @@ module ApiSearch
       match_json(results: pattern, total: tickets.size)
     end
 
+    def test_tickets_fr_due_by_on_a_day
+      d1 = Date.today.to_date.iso8601
+      tickets = @account.tickets.select { |x| x.frDueBy.to_date.iso8601 == d1 }
+      get :index, controller_params(query: '"fr_due_by: \'' + d1 + '\'"')
+      assert_response 200
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json(results: pattern, total: tickets.size)
+    end
+
+    def test_tickets_due_by_on_a_day
+      d1 = Date.today.to_date.iso8601
+      tickets = @account.tickets.select { |x| x.due_by.to_date.iso8601 == d1 }
+      get :index, controller_params(query: '"due_by: \'' + d1 + '\'"')
+      assert_response 200
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json(results: pattern, total: tickets.size)
+    end
+
+    def test_tickets_custom_date_on_a_day
+      d1 = Date.today.to_date.iso8601
+      tickets = @account.tickets.select { |x| x.test_custom_date_1 && x.test_custom_date_1.to_date.iso8601 == d1 }
+      get :index, controller_params(query: '"test_custom_date: \'' + d1 + '\'"')
+      assert_response 200
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json(results: pattern, total: tickets.size)
+    end
+
     def test_tickets_updated_on_a_day
       d1 = Date.today.to_date.iso8601
       tickets = @account.tickets.select { |x| x.updated_at.to_date.iso8601 == d1 }
