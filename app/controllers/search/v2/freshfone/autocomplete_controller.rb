@@ -45,9 +45,9 @@ class Search::V2::Freshfone::AutocompleteController < ApplicationController
     
     search_by_context(:contact)
     respond_to do |format|
-			format.html { 
-        render :partial => 'layouts/shared/freshfone/freshfone_search_results' , :object => search_results[:results] 
-      }
+        format.html { 
+          render :partial => 'layouts/shared/freshfone/freshfone_search_results' , :object => search_results[:results] 
+        }  
 		end
   end
 

@@ -197,6 +197,10 @@ class Account < ActiveRecord::Base
     default_in_op_fields.stringify_keys!
   end
 
+  def enabled_features_list
+    (features.map(&:to_sym) + features_list).uniq
+  end
+
   class << self # class methods
 
     def reset_current_account

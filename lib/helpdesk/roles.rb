@@ -111,7 +111,8 @@ module Helpdesk
       :livechat_shadow_chat,
       :livechat_export_transcripts,
       :livechat_manage_shortcodes,
-      :livechat_view_reports
+      :livechat_view_reports,
+      :manage_calls
     ]
     
     ADMINISTRATOR = [
@@ -218,7 +219,8 @@ module Helpdesk
       :livechat_shadow_chat,
       :livechat_export_transcripts,
       :livechat_manage_shortcodes,
-      :livechat_view_reports
+      :livechat_view_reports,
+      :manage_calls
     ]
     
     SUPERVISOR = [
@@ -304,7 +306,8 @@ module Helpdesk
       :livechat_shadow_chat,
       :livechat_export_transcripts,
       :livechat_manage_shortcodes,
-      :livechat_view_reports
+      :livechat_view_reports,
+      :manage_calls
     ]
     
     AGENT = [
@@ -362,7 +365,8 @@ module Helpdesk
       :livechat_accept_chat,
       :livechat_initiat_agent_chat,
       :livechat_view_visitors,
-      :livechat_intiate_visitor_chat
+      :livechat_intiate_visitor_chat,
+      :manage_calls
     ]
     
     
@@ -401,7 +405,8 @@ module Helpdesk
       :livechat_edit_transcripts,
       :livechat_accept_chat,
       :livechat_initiat_agent_chat,
-      :create_tags
+      :create_tags,
+      :manage_calls
     ]
 
     DEFAULT_ROLES_LIST = 

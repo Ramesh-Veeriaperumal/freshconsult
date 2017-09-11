@@ -16,6 +16,10 @@ module Ember
           @source_user_id	= params[:source_user_id]
           @search_context = :contact_merge
           @items = esv2_query_results(esv2_contact_merge_models)
+        elsif params[:context] == 'freshcaller'
+          @klasses = ['User']
+          @search_context = :ff_contact_by_numfields
+          @items = esv2_query_results(esv2_contact_merge_models)
         end
 
         response.api_meta = { count: @items.total_entries }

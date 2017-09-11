@@ -176,7 +176,7 @@
 /agents/me:
   $ref: ./agents/me.yaml
 /agents/{id}/achievements:
-  $ref: ./agents/achievements.yaml  
+  $ref: ./agents/achievements.yaml
 
 # Scenario Automations
 /scenario_automations:
@@ -231,7 +231,7 @@
 
 #Dashboard Quests
 /dashboards/quests:
-  $ref: ./dashboard/quest.yaml  
+  $ref: ./dashboard/quest.yaml
 
 #Dashboard
 /dashboards:
@@ -254,6 +254,12 @@
 # Product Feedback
 /product_feedback/:
   $ref: ./product_feedback/create.yaml
+
+# Onboarding
+/onboarding/resend_activation_email:
+  $ref: ./onboarding/resend_activation_email.yaml
+/onboarding/update_activation_email:
+  $ref: ./onboarding/update_activation_email.yaml
 
 #Marketplace
 /marketplace_apps:

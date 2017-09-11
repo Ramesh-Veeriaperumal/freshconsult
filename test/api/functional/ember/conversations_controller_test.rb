@@ -171,7 +171,7 @@ module Ember
       canned_response = create_response(
         title: Faker::Lorem.sentence,
         content_html: Faker::Lorem.paragraph,
-        visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+        visibility: ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
         attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) }
       )
       params = create_note_params_hash.merge(attachment_ids: canned_response.shared_attachments.map(&:attachment_id))
@@ -299,7 +299,7 @@ module Ember
       canned_response = create_response(
         title: Faker::Lorem.sentence,
         content_html: Faker::Lorem.paragraph,
-        visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+        visibility: ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
         attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) }
       )
       params = reply_note_params_hash.merge(attachment_ids: canned_response.shared_attachments.map(&:attachment_id))
@@ -801,7 +801,7 @@ module Ember
       canned_response = create_response(
         title: Faker::Lorem.sentence,
         content_html: Faker::Lorem.paragraph,
-        visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+        visibility: ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
         attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) }
       )
       params = forward_note_params_hash.merge(attachment_ids: canned_response.shared_attachments.map(&:attachment_id))
@@ -1147,7 +1147,7 @@ module Ember
       canned_response = create_response(
         title: Faker::Lorem.sentence,
         content_html: Faker::Lorem.paragraph,
-        visibility: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+        visibility: ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
         attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) }
       )
       params_hash = update_note_params_hash.merge('attachments' => [file],

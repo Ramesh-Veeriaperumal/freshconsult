@@ -589,7 +589,7 @@ module Ember
     end
 
     def test_send_invite_to_active_contact
-      contact = add_new_user(@account)
+      contact = add_new_user(@account, active: true)
       put :send_invite, controller_params(version: 'private', id: contact.id)
       match_json([bad_request_error_pattern('id', :unable_to_perform)])
       assert_response 400
@@ -606,7 +606,7 @@ module Ember
       tags = Faker::Lorem.words(3).uniq
       contact_ids = []
       rand(2..10).times do
-        contact_ids << add_new_user(@account, tags: tags.join(', ')).id
+        contact_ids << add_new_user(@account, tags: tags).id
       end
       get :index, controller_params(version: 'private', tag: tags[0])
       assert_response 200
