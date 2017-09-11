@@ -10,6 +10,16 @@
       	<% @headers.each do |header| %>
         	<ss:Cell><ss:Data ss:Type="String"><%= @xls_hash[header] %></ss:Data></ss:Cell>
         <% end %>
+        <% if @contact_headers.present? %>
+          <% @contact_headers.each do |header| %>
+            <ss:Cell><ss:Data ss:Type="String"><%= @contact_hash[header] %></ss:Data></ss:Cell>
+          <% end %>
+        <% end %>
+        <% if @company_headers.present? %>
+          <% @company_headers.each do |header| %>
+            <ss:Cell><ss:Data ss:Type="String"><%= @company_hash[header] %></ss:Data></ss:Cell>
+          <% end %>
+        <% end %>
       </ss:Row>
       <% @records.each do |data| %>
       <ss:Row>

@@ -2,13 +2,17 @@
 module Helpdesk
   module ProcessAgentForwardedEmail
     include AccountConstants
+    include Redis::RedisKeys
+    include Redis::OthersRedis
 
     def identify_original_requestor(content)
       if content
         t_content = decode_brackets_in_text(content.gsub("\r\n", "\n"))
+        from_regex = "?:From\s?:|De\s?:|Desde\s?:|Von\s?:|Van\s?:"
+        from_regex = $redis_others.get(AGENT_FORWARD_FROM_REGEX) || from_regex
         regex_arr = [
-          Regexp.new(/^\s*\*?(?:From\s?:|De\s?:|Desde\s?:|Von\s?:|Van\s?:)\*?\s(.*)\s+\[mailto:(.*)\]/), # From: Sample <mailto:sample@example.com>
-          Regexp.new(/^>*\s*\*?(?:From\s?:|De\s?:|Desde\s?:|Von\s?:|Van\s?:)\*?\s*(.*)\s+<(.*)>$/), # From: Sample <sample@example.com>
+          Regexp.new(/^\s*\*?(#{from_regex})\*?\s(.*)\s+\[mailto:(.*)\]/), # From: Sample <mailto:sample@example.com>
+          Regexp.new(/^>*\s*\*?(#{from_regex})\*?\s*(.*)\s+<(.*)>$/), # From: Sample <sample@example.com>
           Regexp.new(/^>>>+\s(.*)\s+<(.*)>$/), # >>> From:  sample <sample@example.com>
           Regexp.new(/From\s?:\s?(.*)/) #For cases with only email address- From: sample@example.com
         ]

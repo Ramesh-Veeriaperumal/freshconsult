@@ -61,7 +61,7 @@ class Helpdesk::CollabTicketsController < ApplicationController
   end
 
   def convo_token
-    if @ticket.present? && verify_permission?
+    if @ticket.present? && (verify_permission? || (Account.current.group_collab_enabled? && valid_token?))
       render json: {convo_token: Collaboration::Ticket.new.convo_token(params[:id])}
     else
       head :forbidden

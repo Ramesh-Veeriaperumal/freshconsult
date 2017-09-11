@@ -59,7 +59,8 @@ Sidekiq.configure_client do |config|
       "DelayedJobs::MailboxJob",
       "Email::S3RetryWorker",
       "Tickets::Schedule",
-      "Tickets::Dump"
+      "Tickets::Dump",
+      "BlockAccount"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "AccountCreation::PopulateSeedData",
@@ -138,7 +139,8 @@ Sidekiq.configure_server do |config|
       "DelayedJobs::MailboxJob",
       "Email::S3RetryWorker",
       "Tickets::Schedule",
-      "Tickets::Dump"
+      "Tickets::Dump",
+      "BlockAccount"
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "AccountCreation::PopulateSeedData",
@@ -208,7 +210,8 @@ Sidekiq.configure_server do |config|
       "Email::S3RetryWorker",
       "AccountCreation::PopulateSeedData",
       "Tickets::Schedule",
-      "Tickets::Dump"
+      "Tickets::Dump",
+      "BlockAccount"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",

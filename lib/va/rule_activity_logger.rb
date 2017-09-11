@@ -136,7 +136,7 @@ class Va::RuleActivityLogger
     def responder_id(responder = nil)
       if responder.nil?
         r_id = value.to_i
-        responder = (r_id == EVENT_PERFORMER) ? event_performing_agent(doer) : Account.current.users.find_by_id(value.to_i)
+        responder = (r_id == EVENT_PERFORMER) ? event_performing_agent(doer) : Account.current.technicians.find_by_id(value.to_i)
       end
 
       if responder || value.blank?
@@ -153,7 +153,7 @@ class Va::RuleActivityLogger
     def internal_agent_id(internal_agent = nil)
       if internal_agent.nil?
         ia_id = value.to_i
-        internal_agent = (ia_id == EVENT_PERFORMER) ? event_performing_agent(doer) : Account.current.users.find_by_id(value.to_i)
+        internal_agent = (ia_id == EVENT_PERFORMER) ? event_performing_agent(doer) : Account.current.technicians.find_by_id(value.to_i)
       end
 
       if internal_agent || value.blank?

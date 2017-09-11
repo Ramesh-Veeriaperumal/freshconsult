@@ -87,7 +87,7 @@ class MimeController < Fdadmin::MetalApiController
   def check_user_status
     Sharding.run_on_shard(@shard.shard_name) do
       account = Account.find_by_full_domain(@domain)
-      if (!account.nil? and account.active?)
+      if (!account.nil? and account.allow_incoming_emails?)
         email = get_user_from_email(params[:from])
         user = account.user_emails.user_for_email(email)
         if (!user.nil? and user.blocked?)
