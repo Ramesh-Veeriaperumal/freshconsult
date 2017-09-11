@@ -25,6 +25,8 @@ HelpdeskReports.ChartsInitializer.TimeSpent = (function ($) {
 				}else{
 					jQuery("[rel=suffix]").html('with each agent')
 				}
+				var help_msg = HelpdeskReports.CoreUtil.getTimespentExportHelpText();
+				jQuery('#timespent_aggregate_help_msg').text(help_msg);
 			},
 			construct : function() {
 				var groups = _FD.chart_data;
