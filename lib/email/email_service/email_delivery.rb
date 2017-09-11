@@ -6,7 +6,7 @@ include Helpdesk::Email::OutgoingCategory
 include ParserUtil
 include EmailHelper
 include EmailCustomLogger
-
+include Email::EmailService::IpPoolHelper
  FD_EMAIL_SERVICE = (YAML::load_file(File.join(Rails.root, 'config', 'fd_email_service.yml')))[Rails.env]
  EMAIL_SERVICE_AUTHORISATION_KEY = FD_EMAIL_SERVICE["key"]
  EMAIL_SERVICE_HOST = FD_EMAIL_SERVICE["host"]
@@ -72,8 +72,8 @@ include EmailCustomLogger
 
     result =  {"headers" => header,
                 "to" => to_email,
-                "cc" => (!cc.nil? ? (cc.to_a - to_email.to_a) : cc),
-                "bcc" => (!bcc.nil? ? (bcc.to_a - cc.to_a - to_email.to_a) : bcc),
+                "cc" => (!cc.nil? ? (remove_duplicate_emails(to_email.to_a, cc.to_a)) : cc),
+                "bcc" => (!bcc.nil? ? (remove_duplicate_emails(to_email.to_a, cc.to_a, bcc.to_a)) : bcc),
                 "from" => from_email,
                 "replyTo" => reply_to,
                 "subject" => subject,
@@ -83,7 +83,7 @@ include EmailCustomLogger
                 "categoryId" => "#{category_id}",
                 "properties"=> properties
               }
-    result.merge!("ip_pool" => ip_pool) unless ip_pool.nil?
+    result.merge!("ipPool" => ip_pool) unless ip_pool.nil?
     email_logger.debug(result.inspect)
     return result.to_json
   end
@@ -185,5 +185,17 @@ include EmailCustomLogger
       return Helpdesk::Email::OutgoingCategory::CATEGORY_BY_TYPE["#{key}_email_notification".to_sym]
     end
   end
+
+  def remove_duplicate_emails( to, cc, bcc=[])
+    res = []
+    unique_emails = (to.map{|pair| pair[:email]} + (bcc.empty? ? [] : (cc.map{|pair| pair[:email]}))).uniq
+    if bcc.empty?
+      cc.map{|pair| res<<pair if !unique_emails.include?(pair[:email])}
+    else
+      bcc.map{|pair| res<<pair if !unique_emails.include?(pair[:email])}
+    end
+    return res
+  end
+
 
 end

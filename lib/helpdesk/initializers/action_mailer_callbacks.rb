@@ -11,6 +11,7 @@ module ActionMailerCallbacks
   module ClassMethods
   include ParserUtil
   include EmailHelper
+  include Email::EmailService::IpPoolHelper
 
     def set_smtp_settings(mail)
       account_id_field = mail.header["X-FD-Account-Id"]

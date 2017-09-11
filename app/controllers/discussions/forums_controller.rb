@@ -13,6 +13,7 @@ class Discussions::ForumsController < ApplicationController
 	before_filter { |c| c.requires_forums_feature }
 	before_filter { |c| c.check_portal_scope :open_forums }
 
+	before_filter :set_ui_preference, :only => [:show]
 	before_filter :set_selected_tab
 	before_filter :find_or_initialize_forum, :except => [:index, :new, :create, :reorder]
 	before_filter :fetch_monitorship, :load_topics, :only => :show

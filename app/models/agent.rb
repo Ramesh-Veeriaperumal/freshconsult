@@ -30,7 +30,7 @@ class Agent < ActiveRecord::Base
   attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled,
     :scoreboard_level_id, :user_attributes, :group_ids
 
-  attr_accessor :agent_role_ids
+  attr_accessor :agent_role_ids, :freshcaller_enabled
 
   scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
   scope :full_time_agents, :conditions => { :occasional => false, 'users.deleted' => false}

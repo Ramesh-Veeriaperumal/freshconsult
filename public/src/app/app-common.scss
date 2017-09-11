@@ -4788,6 +4788,46 @@ input.date {
 	}
 }
 
+a.email-preview{
+	font-weight: 500;
+  @include margin-right(5px);
+}
+
+.preview_div{
+	a.email-preview{
+		font-weight: 500;
+		@include margin-right(12%);
+		@include float(right);
+	}
+}
+.s_email{
+	.preview_div{
+		a.email-preview{
+			@include float(left);
+			@include margin-left(15.8%);
+		}
+	}
+}
+
+
+div.email-preview-holder{
+  background: #f5f5f5;
+  padding: 10px;
+}
+
+span.email-preview-footer{
+  margin-top: 10px;
+}
+
+#email-preview-content{
+	overflow-y: hidden;
+	.email-preview-content-container{
+		overflow-y: scroll;
+		height: 350px;
+	}	
+}
+
+
 /*-----------------New Tag Create differentiation in Select2-----------------------*/
 .new-tag-create{
 	border-top:1px solid #eee;
@@ -4796,4 +4836,3 @@ input.date {
 		color: #aaa;
 	}
 }
-

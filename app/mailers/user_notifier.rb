@@ -5,6 +5,14 @@ class UserNotifier < ActionMailer::Base
   layout "email_font"
   include EmailHelper
   def user_activation(user, params, reply_email_config)
+    begin 
+      if (user.role_ids.include?(reply_email_config.account.roles.find_by_name("Account Administrator").id))
+        call_location = "Agent Creation"
+        SpamDetection::SignupRestrictedDomainValidation.perform_async({:account_id=>reply_email_config.account.id, :email=>user.email, :call_location=>call_location})
+      end
+    rescue Exception => e
+      Rails.logger.info "SignupRestrictedDomainValidation failed #{reply_email_config.account.id} #{e.messsage}, #{e.backtrace}"
+    end
     begin
       configure_email_config reply_email_config
       send_the_mail(user, params[:subject], params[:email_body], params[:reply_email], EmailNotification::USER_ACTIVATION)
@@ -29,38 +37,6 @@ class UserNotifier < ActionMailer::Base
     ensure
       remove_email_config
     end
-  end
-
-  def activation_reminder(admin, reminder_count)
-    # Safe way to include name with email address 
-    address = Mail::Address.new AppConfig['from_email'] 
-    # Should we dup or are we using the latest mail gem?
-    # (latest mail gem does dup already)
-    address.display_name = AppConfig['app_name'].dup
-
-    # get the right email content and subject from translation file.
-    @email = t("admin_onboarding.reminder_emails.email#{reminder_count}")
-
-    headers = {
-      :from           => address.format,
-      :to             => admin.email,
-      :subject        => @email[:subject],
-      :sent_on        => Time.now
-    }
-   headers.merge!(make_header(nil, nil, admin.account.id, "Admin Activation"))
-   @admin          = admin
-    @activation_url = register_url( 
-      :activation_code => admin.perishable_token, 
-      :host => admin.account.host , 
-      :protocol => admin.url_protocol 
-    )
-    @account = admin.account
-
-    mail(headers) do |part|
-      part.text { render "activation_reminder.text.plain" }
-      part.html { render "activation_reminder.text.html" }
-    end.deliver
-
   end
   
   def admin_activation(admin)

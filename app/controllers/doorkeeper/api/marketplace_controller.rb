@@ -8,6 +8,7 @@ class Doorkeeper::Api::MarketplaceController < Doorkeeper::Api::ApiController
       render :json => 
         { :product_user_id => current_resource_owner.id,
           :product_account_id => current_resource_owner.account_id,
+          :product_id => Marketplace::Constants::PRODUCT_ID,
           :pod_info => PodConfig['CURRENT_POD']
         }
     else

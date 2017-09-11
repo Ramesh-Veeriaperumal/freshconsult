@@ -8,6 +8,7 @@ class UsersController < ApplicationController
   # include ActionView::AssetPaths
 
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:revert_identity, :profile_image, :profile_image_no_blank, :enable_falcon, :disable_falcon]
+  before_filter :set_ui_preference, :only => [:show]
   before_filter :set_selected_tab
   skip_before_filter :load_object , :only => [ :show, :edit ]
   before_filter(:only => [:assume_identity]) { |c| c.requires_this_feature :assume_identity }

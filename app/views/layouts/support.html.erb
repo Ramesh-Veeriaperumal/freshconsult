@@ -34,7 +34,7 @@
 
 		<!-- Access portal settings information via javascript -->
 		<%= portal_access_varibles %>
-		<% if current_account.ehawk_spam? %>
+		<% if current_account.ehawk_spam? || current_account.subscription.trial? %>
 			<meta name="robots" content="noindex, nofollow">
 		<% end %>
 	</head>
