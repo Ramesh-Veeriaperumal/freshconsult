@@ -2784,7 +2784,7 @@ pt-BR:
         tracker_success: "O controlador foi criado, e os tickets relacionados estão associados a ele"
         compose_email_success: "Seu e-mail foi enviado e um novo ticket foi criado."
       update:
-        success: "O %{human_name} foi atualizado."
+        success: "O nome %{human_name} foi atualizado"
         failure: "Não foi possível atualizar o nome %{human_name}"
       password_expired: "Sua senha expirou. Faça login para atualizar sua senha antiga."
     post:
@@ -7389,7 +7389,7 @@ pt-BR:
     results: resultados
     field_blank: "Preencha todos os campos obrigatórios."
     installed: Instalados
-    helpnote1: "Aplicativos no Freshdesk permitem você compartilhar dados com soluções e serviços de terceiros que você utiliza regularmente. Eles também permitem que você adicione recursos adicionais para a página de tickets e detalhes de contatos. Freshdesk oferece vários aplicativo para você. Para ver a nossa seleção de aplicativos, clique no botão \"Obter mais Aplicativos\"."
+    helpnote1: "Os aplicativos no Freshdesk permitem que você compartilhe dados com as soluções e os serviços de terceiros que mais usa. Eles também permitem que você adicione recursos às páginas que contêm informações de tickets e contatos. O Freshdesk oferece vários aplicativos de uso imediato. Para conhecer nossa seleção de aplicativos, clique no botão \"Baixar mais aplicativos\"."
     helpnote_custom_apps_html: "Não encontrou um aplicativo que atenda às suas necessidades? Com os nossos aplicativos personalizados (que antes chamávamos de Freshplugs), você pode incorporar informações contextuais de qualquer solução de terceiros, sistema herdado ou banco de dados. Esses aplicativos personalizados também podem ser usados para alterar a aparência e aumentar a produtividade do seu helpdesk. Clique <a href='https://support.freshdesk.com/support/solutions/articles/121846' target='_blank'>aqui</a> para saber mais!"
     helpnote2: "Além dos aplicativos, você pode trazer dados de qualquer solução de terceiros, sistemas obsoletos, ou banco de dados para os tickets e pagina de contatos com aplicativos personalizados. Você pode customizar o seu aplicativo personalizado, levando as informações relevantes do Freshdesk para a sua fonte de dados com uma chamada de AJAX, e formatar e exibir informações com HTML, CSS e Javascript."
     no_configs: "Este aplicativo não necessita configurações."

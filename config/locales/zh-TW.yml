@@ -7380,7 +7380,7 @@ zh-TW:
     results: 結果
     field_blank: 請填寫必填欄位。
     installed: 已安裝的
-    helpnote1: "Apps in Freshdesk let you share data with third party solutions and services that you use regularly. They also enable you to add additional features to the ticket and contact details page. Freshdesk offers several apps out-of-the-box. To browse our selection of apps, click on the “Get more Apps” button."
+    helpnote1: "Freshdesk 中的應用程式可讓您與您經常使用的第三方解決方案和服務分享資料。這也能讓您將其他功能新增至工單和聯絡人詳細資訊頁面。Freshdesk 提供幾個立即可用的應用程式。若要瀏覽我們的應用程式選項，請按一下「取得更多應用程式」按鈕。"
     helpnote_custom_apps_html: "找不到符合您需求的應用程式？透過我們的自訂應用程式（之前稱為 Freshplug），您可以從任何第三方解決方案、舊版系統或資料庫取得內容相關資訊。這些自訂應用程式也能用來為您的幫助台進行視覺上的變更並提升生產力。按一下<a href='https://support.freshdesk.com/support/solutions/articles/121846' target='_blank'>這裡</a>瞭解更多！"
     helpnote2: "除了應用程式外，您還可以使用自訂應用程式將任何其他第三方解決方案、舊版系統或資料庫的資料傳送至工單和聯絡人頁面中。您可以將相關資訊從 Freshdesk 推播至 AJAX 請求的資料來源，以及推播至 HTML、CSS 和 Javascript 的格式化和顯示資訊，藉此自訂您的自訂應用程式小工具。"
     no_configs: 此應用程式不需要任何設定。
