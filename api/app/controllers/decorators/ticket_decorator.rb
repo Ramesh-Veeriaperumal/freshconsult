@@ -5,6 +5,12 @@ class TicketDecorator < ApiDecorator
            :internal_group_id, :internal_agent_id, :association_type, :associated_tickets_count, :can_be_associated?,
            :description_html, :tag_names, :attachments, :attachments_sharable, :company_id, :cloud_files, :ticket_states, to: :record
 
+  DIRTY_FIX_MAPPING = {
+    resolved_at: [Helpdesk::Ticketfields::TicketStatus::RESOLVED, Helpdesk::Ticketfields::TicketStatus::CLOSED],
+    closed_at: [Helpdesk::Ticketfields::TicketStatus::CLOSED],
+    pending_since: [Helpdesk::Ticketfields::TicketStatus::PENDING]
+  }.freeze
+
   def initialize(record, options)
     super(record)
     @name_mapping = options[:name_mapping]
@@ -62,13 +68,10 @@ class TicketDecorator < ApiDecorator
     {
       agent_responded_at: ticket_states.agent_responded_at.try(:utc),
       requester_responded_at: ticket_states.requester_responded_at.try(:utc),
-      resolved_at: ticket_states.resolved_at_dirty.try(:utc),
       first_responded_at: ticket_states.first_response_time.try(:utc),
-      closed_at: ticket_states.closed_at_dirty.try(:utc),
       status_updated_at: ticket_states.status_updated_at.try(:utc),
-      pending_since: ticket_states.pending_since_dirty.try(:utc),
       reopened_at: ticket_states.opened_at.try(:utc)
-    }
+    }.merge(dirty_fixed_stats)
   end
 
   def fb_post
@@ -198,10 +201,8 @@ class TicketDecorator < ApiDecorator
   def to_search_hash
     ret_hash = {
       id: display_id,
-      description_text: description,
       tags: tag_names,
       responder_id: responder_id,
-      due_by: archived? ? parse_time(due_by) : due_by.try(:utc),
       created_at: created_at.try(:utc),
       subject: subject,
       requester_id: requester_id,
@@ -209,9 +210,12 @@ class TicketDecorator < ApiDecorator
       status: status,
       source: source,
       priority: priority,
-      stats: stats
+      archived: archived?
     }
     requester_hash = requester
+
+    ret_hash.merge!(whitelisted_properties)
+
     ret_hash[:company] = company_hash if company_id.present?
     ret_hash[:requester] = requester_hash if requester_hash
     ret_hash[:archived] = archived? if archived?
@@ -323,5 +327,24 @@ class TicketDecorator < ApiDecorator
 
     def archived?
       @is_archived ||= record.is_a?(Helpdesk::ArchiveTicket)
+    end
+
+    def whitelisted_properties
+      # For an archive ticket, these are properties which are fetched from s3 object
+      # For regular Helpdesk::Ticket they are in the DB.
+      # To avoid S3 fetches in search, we are doing this.
+      return {} if archived?
+      {
+        description_text: description,
+        due_by: due_by.try(:utc),
+        stats: stats
+      }
+    end
+
+    def dirty_fixed_stats
+      DIRTY_FIX_MAPPING.each_with_object({}) do |(key, value), res|
+        res[key] = ticket_states.send(key).try(:utc) || (value.include?(status) ? ticket_states.updated_at.try(:utc) : nil)
+        res
+      end
     end
 end
