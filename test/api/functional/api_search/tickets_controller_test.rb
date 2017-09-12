@@ -517,20 +517,28 @@ module ApiSearch
       match_json(results: pattern, total: tickets.size)
     end
 
+    def test_tickets_type_null
+      tickets = @account.tickets.select { |x| x.ticket_type.nil? }
+      get :index, controller_params(query: '"type: null"')
+      assert_response 200
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json(results: pattern, total: tickets.size)
+    end
+
     def test_tickets_invalid_query_format_with_date
-      get :index, controller_params(query: 'created_at < : \'2017-01-01\'')
+      get :index, controller_params(query: '"created_at < : \'2017-01-01\'"')
       assert_response 400
       match_json([bad_request_error_pattern('query', :query_format_invalid)])
     end
 
     def test_tickets_invalid_query_format_with_string
-      get :index, controller_params(query: 'created_at < : \'aaa\'')
+      get :index, controller_params(query: '"created_at < : \'aaa\'"')
       assert_response 400
       match_json([bad_request_error_pattern('query', :query_format_invalid)])
     end
 
     def test_tickets_invalid_query_format_with_number
-      get :index, controller_params(query: 'created_at <: 123')
+      get :index, controller_params(query: '"created_at <: 123"')
       assert_response 400
       match_json([bad_request_error_pattern('query', :query_format_invalid)])
     end
