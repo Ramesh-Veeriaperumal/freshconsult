@@ -6,6 +6,7 @@ class DiscussionsController < ApplicationController
 
 	skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:index, :show]
 	before_filter :portal_check, :only => [:index, :show]
+	before_filter :set_ui_preference, :only => [:show]
 	before_filter :check_no_topics, :only => [:index]
 
 	rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler

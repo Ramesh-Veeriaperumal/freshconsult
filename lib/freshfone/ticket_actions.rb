@@ -34,13 +34,17 @@ module Freshfone::TicketActions
 				{ :human_name => t(:'freshfone.ticket.human_name'),
 					:link => view_context.link_to(t(:'freshfone.ticket.view'),
 						helpdesk_ticket_path(@ticket), :'data-pjax' => "#body-container") }).html_safe
+			json_response = { success: true, ticket: { display_id: @ticket.display_id,
+				subject: @ticket.subject, status_name: @ticket.status_name, priority: @ticket.priority } }
 		else
 			flash[:notice] = t(:'flash.general.create.failure',
 													{ :human_name => t(:'freshfone.ticket.human_name') })
-			json_response = {:success => false}
+			json_response = { success: false }
 		end
 		respond_to do |format|
+			format.xml { return empty_twiml }
 			format.js { }
+			format.nmobile { render json: json_response }
 		end
 	ensure
 		update_user_presence unless call_history?
@@ -125,7 +129,9 @@ module Freshfone::TicketActions
     def handle_invalid_number
       @invalid_phone = true
       respond_to do |format|
+      	format.xml { return empty_twiml }
         format.js { }
+        format.nmobile { render json: { success: false }}
       end
     end
 end

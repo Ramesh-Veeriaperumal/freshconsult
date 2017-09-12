@@ -218,15 +218,14 @@ module TicketConstants
   CREATED_BY_NAMES_BY_SYMBOL = Hash[*CREATED_BY_VALUES.map { |i| [i[0], i[1]] }.flatten]
   
   ARCHIVE_EXPORT_VALUES = [
-    [ :two_months,       'two_months',   60 ], 
     [ :six_months,       'six_months',   180],
     [ :set_date,         'set_date',     4  ]
   ]
+  ARCHIVE_CREATED_BY_KEYS_BY_TOKEN = Hash[*ARCHIVE_EXPORT_VALUES.map { |i| [i[0], i[2]] }.flatten]
   ARCHIVE_EXPORT_OPTIONS = ARCHIVE_EXPORT_VALUES.map { |i| [i[1], i[2]] }
 
   ARCHIVE_CREATED_WITHIN_VALUES = [
     [ :any_time,         'any_time',      "any_time"   ],
-    [ :two_months,       'two_months',    "two_months" ], 
     [ :six_months,       'six_months',    "six_months" ],
     [ :set_date,         'set_date',      "set_date"   ]
   ]

@@ -64,7 +64,7 @@
           <div class='timeline' id='timeline'>
             <ul class='timeline-list'>
               <% no_tickets_shown = 0 %>
-              <% @total_company_archive_tickets.each do |item| %>
+              <% @company_archive_tickets.each do |item| %>
                 <li class='timeline-item'>
                   <% no_tickets_shown = no_tickets_shown + 1 %>
                   <%= ticket_activity(item, true) %>
