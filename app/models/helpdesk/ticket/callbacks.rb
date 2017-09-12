@@ -666,7 +666,8 @@ private
   def create_requester
     if can_add_requester?
       portal = self.product.try(:portal)
-      language = portal.language if (portal and self.source!=SOURCE_KEYS_BY_TOKEN[:email]) #Assign languages only for non-email tickets
+      detect_language = SOURCES_FOR_LANG_DETECTION.include?(self.source) && account.features?(:dynamic_content)
+      language = portal.language if (portal and self.source!=SOURCE_KEYS_BY_TOKEN[:email] and !detect_language) #Assign languages only for non-email tickets
       requester = account.users.new
       requester.account = account
       requester.signup!({:user => {
@@ -674,14 +675,15 @@ private
         :twitter_id => twitter_id, :external_id => external_id,
         :name => name || twitter_id || @requester_name || external_id || unique_external_id,
         :helpdesk_agent => false, :active => email.blank?,
-        :phone => phone, :language => language, :unqiue_external_id => unique_external_id
+        :phone => phone, :language => language, :unqiue_external_id => unique_external_id,
+        :detect_language => detect_language
         }},
         portal, !outbound_email?) # check @requester_name and active
 
       self.requester = requester
     end
   end
-
+  
   def can_add_requester?
     email.present? || twitter_id.present? || external_id.present? || phone.present? || unique_external_id.present?
   end
