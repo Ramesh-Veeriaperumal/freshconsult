@@ -9,7 +9,7 @@
     </h3>
     <div class="pull-right">
       <% templ_count     = templates_count_from_cache
-         total_templ     = Helpdesk::TicketTemplate::TOTAL_SHARED_TEMPLATES
+         total_templ     = Helpdesk::TicketTemplate.max_limit
          # templates_count = @all_items.count
          %>
       <% if templ_count < total_templ %>

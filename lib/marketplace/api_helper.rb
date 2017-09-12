@@ -32,11 +32,13 @@ module Marketplace::ApiHelper
       supported_mkp_apps, unsupported_mkp_apps, supported_custom_apps, unsupported_custom_apps = [], [], [], []
       @installed_list.body.try(:each) do |installed_mkp_app|
         extension_details = extension_details(installed_mkp_app['extension_id']).body
-        installed_extension_details = { :extension_details => extension_details }
-                                        .merge({:installation_details => installed_mkp_app})
-        app_type = custom_app?(extension_details['app_type']) ? :custom : :mkp
-        (supported_apps?(extension_details, installed_mkp_app['version_id']) ? 
-          eval("supported_#{app_type}_apps") : eval("unsupported_#{app_type}_apps")) << installed_extension_details
+        unless hidden_app?(extension_details['app_type'])
+          installed_extension_details = { :extension_details => extension_details }
+                                          .merge({:installation_details => installed_mkp_app})
+          app_type = custom_app?(extension_details['app_type']) ? :custom : :mkp
+          (supported_apps?(extension_details, installed_mkp_app['version_id']) ? 
+            eval("supported_#{app_type}_apps") : eval("unsupported_#{app_type}_apps")) << installed_extension_details
+        end
       end
       { :installed_mkp_apps => {:supported_apps => supported_mkp_apps, :unsupported_apps => unsupported_mkp_apps},
         :installed_custom_apps => {:supported_custom_apps => supported_custom_apps, :unsupported_custom_apps => unsupported_custom_apps} }
@@ -50,6 +52,10 @@ module Marketplace::ApiHelper
 
     def custom_app?(app_type)
       app_type == Marketplace::Constants::APP_TYPE[:custom]
+    end
+
+    def hidden_app?(app_type)
+      app_type == Marketplace::Constants::APP_TYPE[:hidden]
     end
 
     def installed_params(page)

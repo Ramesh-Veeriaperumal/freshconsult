@@ -150,7 +150,7 @@ class VaRule < ActiveRecord::Base
     Va::RuleActivityLogger.initialize_activities if automation_rule?
     return false unless check_user_privilege
     @triggered_event ||= TICKET_CREATED_EVENT
-    add_rule_to_system_changes(evaluate_on)
+    add_rule_to_system_changes(evaluate_on) if evaluate_on.respond_to?(:system_changes)
     actions.each { |a| a.trigger(evaluate_on, doer, triggered_event) }
   end
 

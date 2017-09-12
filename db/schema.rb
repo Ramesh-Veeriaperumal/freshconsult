@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170814173356) do
+ActiveRecord::Schema.define(:version => 20170829152515) do
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -1570,6 +1570,17 @@ ActiveRecord::Schema.define(:version => 20170814173356) do
     t.datetime "created_at",               :null => false
     t.datetime "updated_at",               :null => false
   end
+  
+  create_table "freshcaller_agents", :force => true do |t|
+    t.integer  "account_id",  :limit => 8
+    t.integer  "agent_id",    :limit => 8
+    t.integer  "fc_agent_id", :limit => 8
+    t.boolean  "fc_enabled",               :default => false
+    t.datetime "created_at",                                  :null => false
+    t.datetime "updated_at",                                  :null => false
+  end
+
+  add_index "freshcaller_agents", ["account_id", "agent_id"], :name => "index_freshcaller_agents_on_account_id_and_agent_id"
 
   add_index "freshfone_caller_ids", ["account_id"], :name => "index_freshfone_caller_ids_on_account_id"
 
@@ -2558,6 +2569,7 @@ ActiveRecord::Schema.define(:version => 20170814173356) do
   add_index "mailbox_jobs", ["account_id"], :name => "index_mailbox_jobs_on_account_id"
   add_index "mailbox_jobs", ["locked_by"], :name => "index_mailbox_jobs_on_locked_by"
   add_index "mailbox_jobs", ["pod_info"], :name => "index_mailbox_jobs_on_pod_info"
+  
 
   create_table "mobihelp_apps", :force => true do |t|
     t.integer  "account_id", :limit => 8,                    :null => false
@@ -3094,12 +3106,14 @@ ActiveRecord::Schema.define(:version => 20170814173356) do
     t.string   "thread_id"
     t.text     "post_attributes"
     t.string   "ancestry"
+    t.string   'thread_key'
   end
 
   add_index "social_fb_posts", ["account_id", "postable_id", "postable_type"], :name => "index_social_fb_posts_account_id_postable_id_postable_type", :length => {"account_id"=>nil, "postable_id"=>nil, "postable_type"=>15}
   add_index "social_fb_posts", ["account_id", "ancestry"], :name => "account_ancestry_index", :length => {"account_id"=>nil, "ancestry"=>30}
   add_index "social_fb_posts", ["account_id", "post_id"], :name => "index_social_fb_posts_on_post_id", :length => {"account_id"=>nil, "post_id"=>30}
   add_index "social_fb_posts", ["account_id", "thread_id", "postable_type"], :name => "account_thread_postable_type", :length => {"account_id"=>nil, "thread_id"=>30, "postable_type"=>30}
+  add_index 'social_fb_posts', ['account_id', 'thread_key', 'postable_type', 'facebook_page_id'], name: 'index_on_thread_key'
 
   create_table "social_streams", :force => true do |t|
     t.string   "name"

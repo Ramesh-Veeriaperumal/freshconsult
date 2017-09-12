@@ -56,7 +56,7 @@ class EmailController < ApplicationController
         Sharding.select_shard_of(domain) do
           Sharding.run_on_slave do
             account = Account.find_by_full_domain(domain).make_current
-            account_type = account.subscription.state
+            account_type = account.email_subscription_state
             user = account.all_users.find_by_email(params[:email])
             basic_hash = {:created_at => account.created_at, :account_type => account_type}
             if user.nil?

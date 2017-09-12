@@ -108,6 +108,94 @@ Before('@sla_policy7') do
   create_sla_policy(true, conditions, {}, {}, { :resolution_time => resolution_time, :response_time => response_time, :override_bhrs => override_bhrs })
 end
 
+Before('@sla_policy8') do
+  group = @account.groups.where(:name => "Sales").first
+  business_calendar = create_business_calendar({
+                                                   :name => "BH for #{group.name}",
+                                                   :business_time_data => { :working_hours => {
+                                                       1 => {:beginning_of_workday => "12:00 am", :end_of_workday => "11:59:59 pm"},
+                                                       2 => {:beginning_of_workday => "12:00 am", :end_of_workday => "11:59:59 pm"},
+                                                       3 => {:beginning_of_workday => "12:00 am", :end_of_workday => "11:59:59 pm"},
+                                                       4 => {:beginning_of_workday => "12:00 am", :end_of_workday => "11:59:59 pm"},
+                                                       5 => {:beginning_of_workday => "12:00 am", :end_of_workday => "11:59:59 pm"}
+                                                   },
+                                                                            :weekdays => [1, 2, 3, 4, 5],
+                                                                            :fullweek => false
+                                                   }
+                                               })
+  group.update_attributes({:business_calendar_id => business_calendar.id})
+  conditions = { "group_id" => [group.id] }
+  resolution_time = [1500, 2100, 90000, 262800] #[urgent, high, medium, low]
+  response_time = [1200, 1800, 2400, 3000] #[urgent, high, medium, low]
+  create_sla_policy(true, conditions, {}, {}, { :resolution_time => resolution_time, :response_time => response_time })
+end
+
+Before('@sla_policy9') do
+  group = @account.groups.where(:name => "Sales").first
+  business_calendar = create_business_calendar({
+                                                   :name => "BH for #{group.name}",
+                                                   :business_time_data => { :working_hours => {
+                                                       1 => {:beginning_of_workday => "12:00 am", :end_of_workday => "11:59:59 pm"},
+                                                       2 => {:beginning_of_workday => "12:00 am", :end_of_workday => "11:59:59 pm"},
+                                                       3 => {:beginning_of_workday => "12:00 am", :end_of_workday => "11:59:59 pm"},
+                                                       4 => {:beginning_of_workday => "12:00 am", :end_of_workday => "11:59:59 pm"},
+                                                       5 => {:beginning_of_workday => "12:00 am", :end_of_workday => "11:30:00 pm"}
+                                                   },
+                                                                            :weekdays => [1, 2, 3, 4, 5],
+                                                                            :fullweek => false
+                                                   }
+                                               })
+  group.update_attributes({:business_calendar_id => business_calendar.id})
+  conditions = { "group_id" => [group.id] }
+  resolution_time = [1500, 2100, 90000, 262800] #[urgent, high, medium, low]
+  response_time = [1200, 1800, 2400, 3000] #[urgent, high, medium, low]
+  create_sla_policy(true, conditions, {}, {}, { :resolution_time => resolution_time, :response_time => response_time })
+end
+
+Before('@sla_policy10') do
+  group = @account.groups.where(:name => "Sales").first
+  business_calendar = create_business_calendar({
+                                                   :name => "BH for #{group.name}",
+                                                   :business_time_data => { :working_hours => {
+                                                       1 => {:beginning_of_workday => "12:30 am", :end_of_workday => "11:59:59 pm"},
+                                                       2 => {:beginning_of_workday => "12:00 am", :end_of_workday => "11:59:59 pm"},
+                                                       3 => {:beginning_of_workday => "12:00 am", :end_of_workday => "11:59:59 pm"},
+                                                       4 => {:beginning_of_workday => "12:00 am", :end_of_workday => "11:59:59 pm"},
+                                                       5 => {:beginning_of_workday => "12:00 am", :end_of_workday => "11:30:00 pm"}
+                                                   },
+                                                                            :weekdays => [1, 2, 3, 4, 5],
+                                                                            :fullweek => false
+                                                   }
+                                               })
+  group.update_attributes({:business_calendar_id => business_calendar.id})
+  conditions = { "group_id" => [group.id] }
+  resolution_time = [1500, 2100, 90000, 262800] #[urgent, high, medium, low]
+  response_time = [1200, 1800, 2400, 3000] #[urgent, high, medium, low]
+  create_sla_policy(true, conditions, {}, {}, { :resolution_time => resolution_time, :response_time => response_time })
+end
+
+Before('@sla_policy11') do
+  group = @account.groups.where(:name => "Sales").first
+  business_calendar = create_business_calendar({
+                                                   :name => "BH for #{group.name}",
+                                                   :business_time_data => { :working_hours => {
+                                                       1 => {:beginning_of_workday => "9:00 am", :end_of_workday => "9:00 pm"},
+                                                       2 => {:beginning_of_workday => "9:00 am", :end_of_workday => "9:00 pm"},
+                                                       3 => {:beginning_of_workday => "9:00 am", :end_of_workday => "9:00 pm"},
+                                                       4 => {:beginning_of_workday => "9:00 am", :end_of_workday => "9:00 pm"},
+                                                       5 => {:beginning_of_workday => "9:00 am", :end_of_workday => "9:00 pm"}
+                                                   },
+                                                                            :weekdays => [1, 2, 3, 4, 5],
+                                                                            :fullweek => false
+                                                   }
+                                               })
+  group.update_attributes({:business_calendar_id => business_calendar.id})
+  conditions = { "group_id" => [group.id] }
+  resolution_time = [1500, 2100, 86400, 172801] #[urgent, high, medium, low]
+  response_time = [1200, 1800, 86400, 3300] #[urgent, high, medium, low]
+  create_sla_policy(true, conditions, {}, {}, { :resolution_time => resolution_time, :response_time => response_time })
+end
+
 After do
   logout
 end

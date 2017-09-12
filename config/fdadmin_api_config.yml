@@ -7,7 +7,7 @@ common: &common
   resource_import_api: "resources/import"
   authorization_username: "freshdesk"
   authorization_password: "$FD$DEVOPS$ADMIN$15"
-
+  activity_url: "/api/v1/activity/create_activity"
 development:
   <<: *common
   url: "http://localhost:3001/"
