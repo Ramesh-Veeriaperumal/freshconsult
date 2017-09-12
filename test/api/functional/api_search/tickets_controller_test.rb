@@ -59,6 +59,23 @@ module ApiSearch
       params_hash
     end
 
+    def construct_sections(field_name)
+      sections = []
+      if field_name == 'type'
+        create_custom_field('section_number', 'number', '19')
+        create_custom_field('section_checkbox', 'checkbox', '09')
+        create_custom_field('section_decimal', 'decimal', '19')
+        create_custom_field('section_text', 'text', '79')
+        create_custom_field('section_paragraph', 'paragraph', '09')
+        create_custom_field('section_date', 'date', '09')
+        sections = [{ title: 'section1',
+                      value_mapping: %w[Question],
+                      ticket_fields: %w[section_number section_checkbox section_decimal section_text section_paragraph section_date]
+                    }]
+      end
+      sections
+    end
+
     def test_tickets_invalid_query_format
       get :index, controller_params(query: 'priority:1 OR priority:2')
       assert_response 400
@@ -495,21 +512,32 @@ module ApiSearch
     end
 
     def test_tickets_invalid_query_format_with_date
-      get :index, controller_params(query: 'created_at < : \'2017-01-01\'')
+      get :index, controller_params(query: '"created_at < : \'2017-01-01\'"')
       assert_response 400
       match_json([bad_request_error_pattern('query', :query_format_invalid)])
     end
 
     def test_tickets_invalid_query_format_with_string
-      get :index, controller_params(query: 'created_at < : \'aaa\'')
+      get :index, controller_params(query: '"created_at < : \'aaa\'"')
       assert_response 400
       match_json([bad_request_error_pattern('query', :query_format_invalid)])
     end
 
     def test_tickets_invalid_query_format_with_number
-      get :index, controller_params(query: 'created_at <: 123')
+      get :index, controller_params(query: '"created_at <: 123"')
       assert_response 400
       match_json([bad_request_error_pattern('query', :query_format_invalid)])
     end
+
+    def test_deprecate_section_fields
+      sections = construct_sections('type')
+      create_section_fields(3, sections)
+      get :index, controller_params(query: '"section_number:123 or section_checkbox:true or section_text:aaa or section_date:\'2017-01-01\'"')
+      assert_response 400
+      match_json([bad_request_error_pattern('section_number', :invalid_field),
+                  bad_request_error_pattern('section_checkbox', :invalid_field),
+                  bad_request_error_pattern('section_text', :invalid_field),
+                  bad_request_error_pattern('section_date', :invalid_field)])
+    end    
   end
 end
