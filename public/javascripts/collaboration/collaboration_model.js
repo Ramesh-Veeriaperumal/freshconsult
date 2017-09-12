@@ -218,12 +218,18 @@ App.CollaborationModel = (function ($) {
                 });
             }
         },
+
         refreshConvoToken: function(cb) {
             var ticket_id = Collab.currentConversation.co_id;
-            if(typeof ticket_id !== "undefined") {
+            if(typeof ticket_id !== "undefined" && ticket_id !== null) {
+                var collab_access_token = App.CollaborationUi.getUrlParameter("token");
+                var refreshUrl = '/helpdesk/tickets/collab/'+ ticket_id + '/convo_token'
+                if(collab_access_token) {
+                    refreshUrl +=  "?token=" + collab_access_token;
+                }
                 jQuery.ajax({
-                    url: '/helpdesk/tickets/collab/'+ ticket_id + '/convo_token',
-                    type: 'POST',
+                    url: refreshUrl,
+                    type: 'GET',
                     contentType: 'application/json; charset=utf-8',
                     success: function(response){
                         if(typeof response !== "undefined") {

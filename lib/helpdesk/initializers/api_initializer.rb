@@ -14,6 +14,24 @@ if $infra['API_LAYER']
       config.middleware.insert_before 'Middleware::ApiRequestInterceptor', 'Middleware::FdApiThrottler', max: 1000
     end
 
+    if $infra['PIPE_LAYER']
+      config.middleware.insert_before 'Middleware::ApiRequestInterceptor', 'Middleware::ApiPipeAuthenticator'
+      config.middleware.use BatchApi::RackMiddleware do |batch_config|
+        # you can set various configuration options:
+        batch_config.verb = :post # default :post
+        batch_config.endpoint = "/api/pipe/batch" # default /batch
+        batch_config.limit = 20 # how many operations max per request, default 50
+
+        # default middleware stack run for each batch request
+        batch_config.batch_middleware = Proc.new { use Middleware::BatchApiRateLimiter }
+        # default middleware stack run for each individual operation
+        batch_config.operation_middleware = Proc.new {
+          use BatchApi::InternalMiddleware::DecodeJsonBody
+          use BatchApi::InternalMiddleware::DependencyResolver
+          use Middleware::BatchApiRequestIdInjector
+        }
+      end
+    end
     # This middleware will attempt to return the contents of a file's body from disk in the response.
     # If a file is not found on disk, the request will be delegated to the application stack.
     # This middleware is commonly initialized to serve assets from a server's `public/` directory.

@@ -90,7 +90,8 @@ module Helpdesk
 				domain = parse_email_with_domain(to_envelope)[:domain]
 				Sharding.select_shard_of(domain) do
 					account = Account.find_by_full_domain(domain)
-					queue_type = (account.present? && account.subscription.present? ? account.subscription.state : 'default')
+					queue_type = (account.present? && account.subscription.present? && EMAIL_QUEUE.include?(account.subscription.state) ?
+							account.subscription.state : 'default')
 					sqs_queue = Helpdesk::EmailQueue::MailQueueFactory.get_queue_obj(QUEUETYPE[:sqs], EMAIL_QUEUE[queue_type])
 					sqs_queue.send_message(metadata_attributes.to_json)
 					Rails.logger.info "Email pushed into the queue: #{EMAIL_QUEUE[queue_type]}"

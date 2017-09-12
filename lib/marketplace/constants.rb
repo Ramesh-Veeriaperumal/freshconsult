@@ -23,7 +23,8 @@ module Marketplace::Constants
 
   APP_TYPES = [ 
     [:regular,               1],    
-    [:custom,                2]
+    [:custom,                2],
+    [:hidden,                3],
   ]
 
   APP_TYPE = Hash[*APP_TYPES.map { |i| [i[0], i[1]] }.flatten]

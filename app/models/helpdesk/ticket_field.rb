@@ -31,6 +31,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   VERSION_MEMBER_KEY = 'TICKET_FIELD'.freeze
 
   SECTION_DROPDOWNS = ["default_ticket_type", "custom_dropdown"]
+  VERSION_MEMBER_KEY = 'TICKET_FIELD'.freeze
 
   belongs_to_account
   belongs_to :flexifield_def_entry, :dependent => :destroy

@@ -5,6 +5,8 @@ class CompanyField < ActiveRecord::Base
   self.primary_key = :id
   self.table_name= "company_fields"
 
+  include DataVersioning::Model
+
   serialize :field_options
 
   belongs_to_account
