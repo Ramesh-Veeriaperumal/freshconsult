@@ -34,9 +34,17 @@ class Support::Solutions::FoldersController < SupportController
       }
     end
 
-		def check_folder_permission
-	    return redirect_to support_solutions_path if !@folder.nil? and !@folder.visible?(current_user)	    	
-	  end
+    def check_folder_permission
+      unless @folder.nil? || @folder.visible?(current_user)
+        unless logged_in?
+          store_location
+          redirect_to support_login_path
+        else
+          flash[:warning] = t(:'flash.general.access_denied')
+          redirect_to support_solutions_path
+        end
+      end
+    end
 
     def folder_visible?
       @folder && @folder.visible_in?(current_portal)
