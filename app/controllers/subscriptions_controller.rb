@@ -10,7 +10,7 @@ class SubscriptionsController < ApplicationController
   before_filter :admin_selected_tab
   before_filter :load_objects, :load_subscription_plan, :cache_objects
   before_filter :load_coupon, :only => [ :calculate_amount, :plan ]
-  before_filter :load_billing, :only => :billing
+  before_filter :load_billing, :validate_subscription, :only => :billing
   before_filter :load_freshfone_credits, :only => [:show]
   before_filter :valid_currency?, :only => :plan
 
@@ -155,6 +155,13 @@ class SubscriptionsController < ApplicationController
     def load_billing
       @creditcard = ActiveMerchant::Billing::CreditCard.new(params[:creditcard])
       @address = SubscriptionAddress.new(params[:address])
+    end
+
+    def validate_subscription
+      return unless @subscription.agent_limit.blank?
+      flash[:notice] = t("subscription.error.lesser_agents",
+        { :agent_count => current_account.full_time_agents.count} )
+      redirect_to subscription_url
     end
 
     def cache_objects
