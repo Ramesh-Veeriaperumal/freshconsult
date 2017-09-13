@@ -58,12 +58,12 @@ module Facebook
         desc = feed[:description] || ""
         thumbnail, inline_attachment = create_inline_attachment_and_get_url(feed[:picture], item, 0)
         html_content = FEED_VIDEO % { :target_url => feed[:link], :thumbnail => thumbnail, 
-          :att_url => feed[:link], :name => feed[:name], :html_content => html_content, :desc => desc }
+          :att_url => feed[:link], :name => feed[:name], :html_content => html_content, :desc => desc } if thumbnail.present?
 
       elsif "photo".eql?(feed[:type])
         photo_url, inline_attachment = create_inline_attachment_and_get_url(feed[:picture], item, 0)
         html_content = FEED_PHOTO % { :html_content => html_content, :link => feed[:link],
-         :photo_url => photo_url, :height => "" }
+         :photo_url => photo_url, :height => "" } if photo_url.present?
       elsif "link".eql?(feed[:type])
         link_story   = "<a href=\"#{feed[:link]}\">#{feed[:name]}</a>" if feed[:name]
         html_content = FEED_LINK % {:html_content => html_content, :link_story => link_story}
@@ -88,7 +88,7 @@ module Facebook
           height = attachment[:type] == "sticker" ? "200px" : ""
           photo_url, inline_attachment = create_inline_attachment_and_get_url(attachment[:media][:image][:src], item, 0)
           html_content = COMMENT_PHOTO % { :html_content => html_content, :link => attachment[:target][:url],
-           :photo_url => photo_url, :height => height }
+           :photo_url => photo_url, :height => height } if photo_url.present?
         end
       rescue => e
         Rails.logger.debug("Error while parsing attachment in comment:: #{feed[:id]} :: #{feed[:attachment]}")
@@ -117,7 +117,7 @@ module Facebook
                 inline_attachments.push(inline_attachment) if attachment_present?(inline_attachment)                 
  
                 html_content = MESSAGE_IMAGE % {:html_content => html_content, :url => attached_url,
-                 :height => "300px" }
+                 :height => "300px" } if attached_url
               else
                 url = (attachment[:video_data].present?) ? attachment[:video_data][:url] : attachment[:file_url]
                 content_objects << get_options(url, attachment)
@@ -138,7 +138,7 @@ module Facebook
               inline_attachments.push(inline_attachment) if attachment_present?(inline_attachment)
               
               html_content = MESSAGE_SHARE % {:html_content => html_content, :url => stickers_url,
-               :height => "200px"}
+               :height => "200px"} if stickers_url
             end
           end
           html_content = "#{html_content} </p></div>"
@@ -150,9 +150,12 @@ module Facebook
 
     def create_inline_attachment_and_get_url url, item, i
       options = get_options(url)
-      inline_attachment = create_inline_attachment(item, i, options)
-      attached_url = attachment_url inline_attachment, url
-      [attached_url, inline_attachment]
+      if options.is_a? Hash
+        inline_attachment = create_inline_attachment(item, i, options)
+        attached_url = attachment_url inline_attachment, url
+        return [attached_url, inline_attachment]
+      end
+      return [nil,nil]
     end
 
     def attachment_present? attachment
@@ -173,15 +176,21 @@ module Facebook
 
     def get_options(url, attachment_params = {})
       file = open(url)
-      file_name = attachment_params[:name] || url.split(URL_DELIMITER).first[url.rindex(URL_PATH_DELIMITER)+1, url.length]
-      content_type = file_name.split(FILENAME_DELIMITER).last
-      {
-        :file_content => file,
-        :filename     => file_name,
-        :content_type => content_type,
-        :content_size => file.size,
-        :resource     => file
-      }
+      if INLINE_FILE_FORMATS.include? file.content_type.split('/').last
+        file_name = attachment_params[:name] || url.split(URL_DELIMITER).first[url.rindex(URL_PATH_DELIMITER)+1, url.length]
+        content_type = file_name.split(FILENAME_DELIMITER).last
+        return {
+          :file_content => file,
+          :filename     => file_name,
+          :content_type => content_type,
+          :content_size => file.size,
+          :resource     => file
+        }
+      # else
+      #   @addl_text = "#{@addl_text}<p> #{url} </p>" if @fan_page.launched?(:shop)
+      end
+    rescue RuntimeError, Exception => e
+      Rails.logger.debug "#{e.message} A: #{@fan_page.account_id} Page ID: #{@fan_page.page_id} Page Obj ID:#{@fan_page.id} U:#{url}"
     end
 
     def build_normal_attachments model, attachments, html_content
@@ -224,6 +233,16 @@ module Facebook
     
     def social_revamp_enabled?
       @social_revamp_enabled ||= Account.current.features?(:social_revamp)
+    end
+
+    def latest_message(thread_key = nil,thread_id = nil, msg_ids = nil)
+      fb_msg = nil
+      Sharding.run_on_slave do 
+        fb_msg = @account.facebook_posts.latest_thread_for_key(thread_key, 1, @fan_page.id).first if thread_key && @fan_page.use_thread_key?
+        fb_msg ||= @account.facebook_posts.latest_thread_for_id(thread_id, 1).first if thread_id
+        fb_msg ||= @account.facebook_posts.where("post_id IN (?)",msg_ids).first if msg_ids && @fan_page.use_msg_ids?
+      end
+      fb_msg
     end
     
   end

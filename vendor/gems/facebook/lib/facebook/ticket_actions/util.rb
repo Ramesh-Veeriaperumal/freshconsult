@@ -91,9 +91,9 @@ module Facebook
       
       #reply to a message in fb
       def send_dm(rest, ticket, note, fan_page)
-        thread_id  = ticket.fb_post.thread_id
-        if thread_id.include? MESSAGE_THREAD_ID_DELIMITER
-          page_scoped_user_id = thread_id.split(MESSAGE_THREAD_ID_DELIMITER)[1]
+        thread_identifier  = get_thread_key(fan_page, ticket)
+        if thread_identifier.include? MESSAGE_THREAD_ID_DELIMITER
+          page_scoped_user_id = thread_identifier.split(MESSAGE_THREAD_ID_DELIMITER)[1]
           page_token = fan_page.page_token
           message = nil
           begin
@@ -116,19 +116,29 @@ module Facebook
             return false
           end
         else
-          message    = rest.put_object(thread_id, 'messages', :message => note.body)
+          message    = rest.put_object(thread_identifier, 'messages', :message => note.body)
           message.symbolize_keys!
         end
 
         #Create fb_post for this note
         unless message.blank?
-          note.create_fb_post({
+          params = {
             :post_id            => message[:id],
             :facebook_page_id   => ticket.fb_post.facebook_page_id,
             :account_id         => ticket.account_id,
-            :thread_id          => ticket.fb_post.thread_id,
             :msg_type           => 'dm'
-          })
+          }
+          thread = if ticket.fb_post.thread_key.present?
+            {
+              :thread_id        => ticket.fb_post.thread_key,
+              :thread_key       => ticket.fb_post.thread_key,
+            }
+          else
+            {
+              :thread_id        => ticket.fb_post.thread_id
+            }
+          end
+          note.create_fb_post(params.merge(thread))
         end
       end
 
@@ -142,7 +152,15 @@ module Facebook
           return false
         end
       end
-    
+
+      def get_thread_key(fan_page, fb_post)
+        use_thread_key?(fan_page, fb_post) ? fb_post.thread_key : fb_post.thread_id
+      end
+
+      def use_thread_key?(fan_page, fb_post)
+        fan_page.use_thread_key? || fb_post.thread_key.present?
+      end
+
     end
   end
 end
