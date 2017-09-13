@@ -2861,7 +2861,7 @@ Helpkit::Application.routes.draw do
   match '/chat/agents', :controller => 'chats', :action => 'agents', :method => :get
 
 
-  #  constraints(lambda {|req| req.subdomain == AppConfig['partner_subdomain'] }) do
+  constraints(lambda {|req| PartnerSubdomains.include?(req.subdomain) })  do
   namespace :partner_admin, :as => 'partner' do
     resources :affiliates do
       collection do
@@ -2878,7 +2878,7 @@ Helpkit::Application.routes.draw do
       end
     end
   end
-  #  end
+  end
 
   constraints(lambda {|req| req.subdomain == AppConfig['billing_subdomain'] }) do
     # namespace :billing do

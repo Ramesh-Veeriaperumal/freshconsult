@@ -178,7 +178,7 @@ class PartnerAdmin::AffiliatesController < ApplicationController
     end
       
     def partner_subdomain?
-      request.subdomains.first == AppConfig['partner_subdomain']
+      PartnerSubdomains.include?(request.subdomains.first)
     end
 
     #Reseller API checks

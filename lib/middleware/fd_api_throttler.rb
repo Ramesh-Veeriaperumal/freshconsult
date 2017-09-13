@@ -5,7 +5,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
   include Redis::RateLimitRedis
 
   FRESHDESK_DOMAIN = 'freshdesk'
-  SKIPPED_SUBDOMAINS =  %w(admin billing partner signup freshsignup email login emailparser mailboxparser freshops) + FreshopsSubdomains
+  SKIPPED_SUBDOMAINS =  %w(admin billing signup freshsignup email login emailparser mailboxparser freshops) + FreshopsSubdomains + PartnerSubdomains 
   THROTTLE_PERIOD    =  1.hour
   API_LIMIT = 3000
   DEFAULT_USED_LIMIT = 1
