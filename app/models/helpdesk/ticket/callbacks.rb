@@ -440,7 +440,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       self.display_id = computed_display_id.to_i
       return
     #first time, when the key is a huge -ve value
-    elsif computed_display_id.to_i < 0
+    elsif computed_display_id.to_i <= 0
       if set_display_id_redis_with_expiry(lock_key, 1, { :ex => TicketConstants::TICKET_ID_LOCK_EXPIRY,
                                                      :nx => true })
         computed_display_id = account.get_max_display_id
