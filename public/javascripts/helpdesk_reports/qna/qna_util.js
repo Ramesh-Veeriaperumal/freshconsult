@@ -17,7 +17,7 @@ HelpdeskReports.Qna_util = (function($){
 				"1" : "autocomplete_es", // include endpoint in json
 				"2" : "autocomplete" // include key of object in json
 			},
-			question_prefixs : QLANG[I18n.locale],
+			question_prefixs : QLANG[I18n.locale] || QLANG['en'],
 			events_namespace : '.qna',
 			debug_mode : 0, // 0 for off, 1 for on,
 			question_colors : ["rgba(229,78,66,0.2)","rgba(231,174,31,0.2)","rgba(123,182,46,0.2)","rgba(69,147,226,0.2)"]
