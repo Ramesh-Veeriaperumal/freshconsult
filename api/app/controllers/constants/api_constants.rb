@@ -43,7 +43,6 @@ module ApiConstants
                        Freshcaller::SettingsConstants::LOAD_OBJECT_EXCEPT +
                        DashboardConstants::LOAD_OBJECT_EXCEPT
 
-
   NO_CONTENT_TYPE_REQUIRED = ApiTicketConstants::NO_CONTENT_TYPE_REQUIRED +
                              ContactConstants::NO_CONTENT_TYPE_REQUIRED +
                              SubscriptionConstants::NO_CONTENT_TYPE_REQUIRED +

@@ -3,7 +3,7 @@ class Survey < ActiveRecord::Base
   self.primary_key = :id
   include Reports::ActivityReport
   include DataVersioning::Model
-  
+
   VERSION_MEMBER_KEY = 'SURVEY'.freeze
   ANY_EMAIL_RESPONSE = 1
   RESOLVED_NOTIFICATION = 2
