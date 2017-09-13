@@ -92,9 +92,8 @@ class Freshfone::CallMeta < ActiveRecord::Base
 
   def all_agents_missed?
     agents_response = get_response_meta(account_id, call_id)
-    missed_response_statuses = MISSED_RESPONSE_HASH.keys.map { |k| k.to_s}
     agents_response.length ==  pinged_agents.length &&
-      (agents_response.values - missed_response_statuses).blank?
+      (agents_response.values - missed_agent_response_hash).blank?
   end
 
   def update_mobile_agent_call(user_id, call_sid) # Spreadheet L 27
@@ -137,7 +136,7 @@ class Freshfone::CallMeta < ActiveRecord::Base
 
   def missed_response_present?(user_id)
     agent_response = get_agent_response(account_id, call_id, user_id)
-    MISSED_RESPONSE_HASH.values.include?(agent_response)
+    missed_agent_response_hash.include?(agent_response)
   end
 
   def any_agent_accepted?
@@ -228,5 +227,9 @@ class Freshfone::CallMeta < ActiveRecord::Base
     def missed_agent?(agent, agent_response, device)
       on_device?(agent, device) && agent[:id] != freshfone_call.user_id &&
         agent_response.blank?
+    end
+
+    def missed_agent_response_hash
+      MISSED_RESPONSE_HASH.keys.map { |k| k.to_s}
     end
 end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170829152515) do
+ActiveRecord::Schema.define(:version => 20170913020955) do
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -1561,10 +1561,10 @@ ActiveRecord::Schema.define(:version => 20170829152515) do
   create_table "freshcaller_agents", :force => true do |t|
     t.integer  "account_id",  :limit => 8
     t.integer  "agent_id",    :limit => 8
-    t.integer  "fc_agent_id", :limit => 8
     t.boolean  "fc_enabled",               :default => false
     t.datetime "created_at",                                  :null => false
     t.datetime "updated_at",                                  :null => false
+    t.integer  "fc_user_id", :limit => 8
   end
 
   add_index "freshcaller_agents", ["account_id", "agent_id"], :name => "index_freshcaller_agents_on_account_id_and_agent_id"

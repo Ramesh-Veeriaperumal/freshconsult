@@ -1377,6 +1377,13 @@ Helpkit::Application.routes.draw do
         post :request_freshfone_feature
       end
     end
+    namespace :freshcaller, :path => 'freshcaller' do
+      resources :signup do 
+        member do 
+          get :index
+        end
+      end
+    end
 
     namespace :freshfone, :path => 'phone' do
       resources :numbers do
