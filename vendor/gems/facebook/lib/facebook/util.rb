@@ -120,11 +120,12 @@ module Facebook
                  :height => "300px" } if attached_url
               else
                 url = (attachment[:video_data].present?) ? attachment[:video_data][:url] : attachment[:file_url]
-                content_objects << get_options(url, attachment)
+                content_objects << get_options(url, attachment, false)
               end
             end
           end
           html_content = "#{html_content} </p></div>"
+          content_objects = content_objects.reject { |obj| obj.nil? }
           html_content = build_normal_attachments(item, content_objects, html_content)
           html_content
         end
@@ -149,7 +150,7 @@ module Facebook
     end
 
     def create_inline_attachment_and_get_url url, item, i
-      options = get_options(url)
+      options = get_options(url, {}, true)
       if options.is_a? Hash
         inline_attachment = create_inline_attachment(item, i, options)
         attached_url = attachment_url inline_attachment, url
@@ -174,9 +175,9 @@ module Facebook
       end
     end
 
-    def get_options(url, attachment_params = {})
+    def get_options(url, attachment_params = {}, inline = false)
       file = open(url)
-      if INLINE_FILE_FORMATS.include? file.content_type.split('/').last
+      if !inline || INLINE_FILE_FORMATS.include?(file.content_type.split('/').last)
         file_name = attachment_params[:name] || url.split(URL_DELIMITER).first[url.rindex(URL_PATH_DELIMITER)+1, url.length]
         content_type = file_name.split(FILENAME_DELIMITER).last
         return {
@@ -191,6 +192,7 @@ module Facebook
       end
     rescue RuntimeError, Exception => e
       Rails.logger.debug "#{e.message} A: #{@fan_page.account_id} Page ID: #{@fan_page.page_id} Page Obj ID:#{@fan_page.id} U:#{url}"
+      return nil
     end
 
     def build_normal_attachments model, attachments, html_content
