@@ -30,6 +30,7 @@ module ApiConstants
                        SolutionConstants::LOAD_OBJECT_EXCEPT +
                        SurveyConstants::LOAD_OBJECT_EXCEPT +
                        ContactConstants::LOAD_OBJECT_EXCEPT +
+                       CompanyConstants::LOAD_OBJECT_EXCEPT +
                        ApiTicketConstants::LOAD_OBJECT_EXCEPT +
                        DraftConstants::LOAD_OBJECT_EXCEPT +
                        SubscriptionConstants::LOAD_OBJECT_EXCEPT +
@@ -78,5 +79,6 @@ module ApiConstants
 
   TWITTER_REPLY_TYPES = %w(mention dm).freeze
   TWEET_MAX_LENGTH = 140
-  TWITTER_DM_MAX_LENGTH = 10_000
+  TWITTER_DM_MAX_LENGTH = 10000
+  MAX_CUSTOMER_EXPORT_FIELDS = 100
 end.freeze

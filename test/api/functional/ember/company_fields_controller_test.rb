@@ -22,7 +22,11 @@ module Ember
         pattern << private_company_field_pattern(CompanyField.find(cf.id))
       end
       assert_response 200
-      match_json(pattern.ordered!)
+      parsed_response = parse_response(response.body)
+      parsed_response.each do |company_field|
+        company_field.except!(*["created_at", "updated_at"])
+      end
+      match_custom_json(parsed_response.to_json, pattern.ordered!)
     end
 
     def test_index_ignores_pagination

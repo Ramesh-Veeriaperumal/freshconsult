@@ -122,6 +122,7 @@ Authority::Authorization::PrivilegeList.build do
 
   export_customers do
     resource :"ember/contact", only: [:export_csv]
+    resource :"ember/company", only: [:export_csv]
   end
 
   export_tickets do
