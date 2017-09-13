@@ -159,8 +159,7 @@ class SubscriptionsController < ApplicationController
 
     def validate_subscription
       return unless @subscription.agent_limit.blank?
-      flash[:notice] = t("subscription.error.lesser_agents",
-        { :agent_count => current_account.full_time_agents.count} )
+      flash[:notice] = t("subscription.error.choose_plan")
       redirect_to subscription_url
     end
 
