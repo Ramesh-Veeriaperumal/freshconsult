@@ -1853,6 +1853,7 @@ Helpkit::Application.routes.draw do
       get :edit_domain
       put :update_domain
       get :validate_domain
+      get :signup_validate_domain
     end
   end
 
