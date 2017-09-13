@@ -25,6 +25,7 @@ class Account < ActiveRecord::Base
   has_one :account_additional_settings, :class_name => 'AccountAdditionalSettings'
   delegate :supported_languages, :to => :account_additional_settings
   delegate :secret_keys, to: :account_additional_settings
+  delegate :max_template_limit, to: :account_additional_settings
   has_one  :whitelisted_ip
   has_one :contact_password_policy, :class_name => 'PasswordPolicy',
     :conditions => {:user_type => PasswordPolicy::USER_TYPE[:contact]}, :dependent => :destroy

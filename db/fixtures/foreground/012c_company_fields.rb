@@ -9,25 +9,27 @@ def self.company_fields_data
   [
     { :name               => "name", 
       :label              => "Company Name",
-      :required_for_agent => true },
+      :required_for_agent => true,
+      :position           => 1 },
 
     { :name               => "domains", 
-      :label              => "Domain Names for this company" }
+      :label              => "Domain Names for this company",
+      :position           => 4 }
   ]
 end
 
-CompanyField.seed_many(:account_id, :name, 
-  company_fields_data.each_with_index.map do |f, i|
-    {
-      :account_id         => account.id,
-      :company_form_id    => account.company_form.id,
-      :name               => f[:name],
-      :column_name        => 'default',
-      :label              => f[:label],
-      :deleted            => false,
-      :field_type         => :"default_#{f[:name]}",
-      :position           => i+1,
-      :required_for_agent => f[:required_for_agent] || false
-    }
-  end
-)
+company_fields_data.each do |f|
+  company_field = CompanyField.new(
+    :label              => f[:label],
+    :deleted            => false,
+    :field_type         => :"default_#{f[:name]}",
+    :position           => f[:position],
+    :required_for_agent => f[:required_for_agent] || false,
+  )
+  company_field.column_name = 'default'
+  company_field.name = f[:name]
+  company_field.company_form_id = account.company_form.id
+  company_field.sneaky_save #To avoid the callbacks of acts-as-list which is changing the other field positions.
+end
+
+account.company_form.clear_cache

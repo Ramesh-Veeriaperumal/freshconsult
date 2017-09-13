@@ -1,5 +1,6 @@
 module Portal::Helpers::DiscussionsVotingHelper
 
+  URL_HELPER = Rails.application.routes.url_helpers
   VOTE_BUTTON = {
     true => {
       :status => 'voted',
@@ -140,8 +141,7 @@ module Portal::Helpers::DiscussionsVotingHelper
 
 
   def like_url object
-    return object.is_a?(Topic) ? "/support/discussions/topics/#{object.id}/like" : 
-                                  "/support/discussions/topics/#{object.topic.id}/posts/#{object.id}/like"  
+    return object.is_a?(Topic) ? URL_HELPER.like_support_discussions_topic_path(object.topic) : URL_HELPER.like_support_discussions_topic_post_path(object.topic,object.id)
   end
   
   def users_vote_list_url object

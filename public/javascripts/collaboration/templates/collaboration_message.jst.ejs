@@ -2,7 +2,7 @@
 	<div class="avatar-cover" data-sender-id="<%= sender_id %>"> <%= avatar_html %> </div>
 	<div class="msg-cover">
 		<% if (!!annotation_body) { %>
-			<div class="annotation-text <%= is_annotation_invalid ? 'invalid-annotation': '' %>" title="<%= annotation_body %>">&quot;<%= annotation_body %>&quot;</div>
+			<div class="annotation-text <%= is_annotation_invalid ? 'invalid-annotation': '' %>" title="<%- annotation_body %>">&quot;<%- annotation_body %>&quot;</div>
 		<% } %>
 		<% if (!!reply_to_meta) { %>
 			<div class="collab-reply-to-text" data-reply-to-id="<%= reply_to_meta.msg_id %>" title="<%= App.CollaborationModel.usersMap[reply_to_meta.r_id] ? App.CollaborationModel.usersMap[reply_to_meta.r_id].name : '~' %> : <%- reply_to_meta.msg_body %>"> 

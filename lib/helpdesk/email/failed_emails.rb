@@ -29,6 +29,7 @@ module Helpdesk
 			        Timeout.timeout(300) do
 			        	mmp = Helpdesk::Email::MailMessageProcessor.new(params)
 			        	mmp.execute
+			        	Portal.reset_current_portal
 			        end
 			        Rails.logger.info "Sucessfully prpocessed mail from failed path : #{params.inspect}"
 			    rescue => e

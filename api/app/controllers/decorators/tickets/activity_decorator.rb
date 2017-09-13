@@ -109,6 +109,13 @@ module Tickets
             name: '',
             exists: true
           }
+        else # Fallback: few system performed activities does not have rule associated with it.
+          {
+            id: 0,
+            type: 'default_system',
+            name: '',
+            exists: true
+          }
         end
       end
 

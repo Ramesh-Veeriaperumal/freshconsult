@@ -1,6 +1,8 @@
 <script type="text/javascript">
 	jQuery(document).ready(function(ev){
+		var freshcallerAgentElem = '.freshcaller_agent_toggle';
     invokeRedactor('<%= "user_binfo" %>','signature');
+		jQuery(freshcallerAgentElem).itoggle();
 	});
 </script>
 
@@ -211,6 +213,22 @@
 				</ul>
 		</li>
     <% end %>
+
+		<%  if current_account.has_feature?(:freshcaller) && current_account.launched?(:falcon) %>
+		<li class="seperator"></li>
+		<li class="row-fluid">
+			<h5 class="lead">
+				Phone Channel
+			</h5>
+		</li>
+		<li class="agent-role control-group">
+			<label class="control-label" for="agent_roles">Freshcaller Agent</label>
+			<span >
+				<%= check_box_tag 'freshcaller_agent', true, @agent.try(:freshcaller_agent).try(:fc_enabled) , :class => 'freshcaller_agent_toggle' %>
+			</span>
+		</li>
+		<% end %>
+
     <% if(@groups.any?) %>
       <li class="seperator"></li>
       <li class="row-fluid">

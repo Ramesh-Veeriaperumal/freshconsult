@@ -8,7 +8,7 @@ class Solution::FoldersController < ApplicationController
   include Solution::ControllerMethods
 
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
-  before_filter :portal_check, :only => :show
+  before_filter :portal_check, :set_ui_preference, :only => [:show]
   before_filter :set_selected_tab
   before_filter :load_meta, :only => [:edit, :update, :show]
   # to be done!

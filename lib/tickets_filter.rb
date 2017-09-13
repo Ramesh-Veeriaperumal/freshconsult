@@ -5,7 +5,7 @@ module TicketsFilter
   DEFAULT_FILTER = "new_and_my_open"
   DEFAULT_VISIBLE_FILTERS = %w( new_and_my_open ongoing_collab shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by archived spam deleted )
   DEFAULT_FILTERS_FEATURES = [
-    ["archived",       :archive_tickets,  "Archive Tickets"],
+    ['archived',       :archive_tickets_feature,  'Archive Tickets'],
     ["shared_by_me",   :shared_ownership, "Shared ownership"],
     ["shared_with_me", :shared_ownership, "Shared ownership"],
     ["ongoing_collab", :collaboration,    "Collaboration"],
