@@ -109,6 +109,7 @@ defaults: &defaults
     - [contact_import]
     - [company_import]
     - [contact_export]
+    - [company_export]
     - [data_export]
     - [delete_spam_tickets]
     - [suspended_accounts_deletion]
