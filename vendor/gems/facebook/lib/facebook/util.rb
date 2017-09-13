@@ -240,7 +240,9 @@ module Facebook
       Sharding.run_on_slave do 
         fb_msg = @account.facebook_posts.latest_thread_for_key(thread_key, 1, @fan_page.id).first if thread_key && @fan_page.use_thread_key?
         fb_msg ||= @account.facebook_posts.latest_thread_for_id(thread_id, 1).first if thread_id
-        fb_msg ||= @account.facebook_posts.where("post_id IN (?)",msg_ids).first if msg_ids && @fan_page.use_msg_ids?
+        # To be removed later
+        fb_msg ||= @account.facebook_posts.where("post_id IN (?) and postable_type = (?)",msg_ids,'Helpdesk::Ticket').first if msg_ids && @fan_page.use_msg_ids?
+        fb_msg = fb_msg.postable.notable.fb_post if fb_msg.present? && fb_msg.postable_type == 'Helpdesk::Note'
       end
       fb_msg
     end
