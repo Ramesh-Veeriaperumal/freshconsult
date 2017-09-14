@@ -17,7 +17,7 @@ if [ -f ~/.jira_auth ]; then
 else 
   echo "Missing JIRA auth file.Run the following command to setup.
 
-bash scripts/githooks/setupGit
+bash script/githooks/setupGit
 "
   exit 1;
 fi
