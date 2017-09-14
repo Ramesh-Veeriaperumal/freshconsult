@@ -91,7 +91,7 @@ module Facebook
       
       #reply to a message in fb
       def send_dm(rest, ticket, note, fan_page)
-        thread_identifier  = get_thread_key(fan_page, ticket)
+        thread_identifier  = get_thread_key(fan_page, ticket.fb_post)
         if thread_identifier.include? MESSAGE_THREAD_ID_DELIMITER
           page_scoped_user_id = thread_identifier.split(MESSAGE_THREAD_ID_DELIMITER)[1]
           page_token = fan_page.page_token
