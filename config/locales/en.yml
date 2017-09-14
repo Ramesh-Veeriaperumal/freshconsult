@@ -475,7 +475,7 @@ en:
     section:
       remove_type: Section is associated with this type
       new_section: New Section
-      confirm_text: Please Confirm...
+      confirm_text: Please confirm...
       oops_btn: Oops!
       move_keep_copy: Copy field to target section
       delete_field_section: Delete field from this section

@@ -488,6 +488,12 @@ left: 88%;
   }
 }
 
+.edit_helpdesk_ticket_field {
+   .custom-field-form {
+     margin : 20px 10px 20px 60px;
+   }
+}
+
 .toggle-button{
   width: 27px;
     border: 0px;
@@ -1221,6 +1227,11 @@ div[class$="-toggle"]{
         padding: 4px 14px;
         text-transform: capitalize;
       }
+
+  }
+
+  #sectionCancelBtn, #sectionSubmitBtn {
+    margin-bottom: 10px;
   }
 
   .btn-primary, .uiButton {
@@ -1429,10 +1440,6 @@ div[class$="-toggle"]{
           top: 0px;
   }
 }
-}
-
-.ticket_fields .custom-field-form .options-wrapper{
-  left:-25px;
 }
 
 .helpkit-glance .glance-chart-wrapper .glance-chart .solution-article {
