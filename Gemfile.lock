@@ -995,8 +995,6 @@ GEM
       git-version-bump (~> 0.15)
       rack (~> 1.4)
     rack-cors (0.3.1)
-    rack-mini-profiler (0.10.1)
-      rack (>= 1.2.0)
     rack-protection (1.5.3)
       rack
     rack-test (0.6.3)
@@ -1405,7 +1403,6 @@ DEPENDENCIES
   pry-nav
   rack-cache (~> 1.2)
   rack-cors (~> 0.3.1)
-  rack-mini-profiler
   rack-openid!
   rack-ssl!
   rack-test (~> 0.6.2)

@@ -72,7 +72,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   view_contacts do
-    resource :"ember/contact", only: %i(index show)
+    resource :"ember/contact", only: %i(index show send_invite bulk_send_invite)
     resource :"ember/company", only: %i(index show activities)
     resource :"ember/search/customer", only: [:results]
   end
@@ -86,7 +86,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_users do
-    resource :"ember/contact", only: %i(make_agent send_invite bulk_send_invite assume_identity)
+    resource :"ember/contact", only: %i(make_agent assume_identity)
     resource :"ember/agent", only: [:show]
   end
 
@@ -122,6 +122,7 @@ Authority::Authorization::PrivilegeList.build do
 
   export_customers do
     resource :"ember/contact", only: [:export_csv]
+    resource :"ember/company", only: [:export_csv]
   end
 
   export_tickets do

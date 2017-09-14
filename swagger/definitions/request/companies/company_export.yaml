@@ -1,0 +1,14 @@
+type: object
+properties:
+  default_fields:
+    type: array
+    items: 
+      type : string
+      enum: ["name", "description", "domains", "notes"] 
+      uniqueItems: true
+  custom_fields:
+    type: array
+    items:
+      type: string
+      uniqueItems: true
+  

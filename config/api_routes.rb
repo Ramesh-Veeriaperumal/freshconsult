@@ -281,6 +281,7 @@ Helpkit::Application.routes.draw do
     resources :companies, controller: 'ember/companies', only: [:index, :show, :create, :update] do
       collection do
         put :bulk_delete
+        post :export_csv
       end
       member do
         get :activities

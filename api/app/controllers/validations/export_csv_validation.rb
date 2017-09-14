@@ -1,19 +1,21 @@
 class ExportCsvValidation < ApiValidation
   attr_accessor :default_fields, :custom_fields
 
-  validates :default_fields,
-            data_type: { rules: Array, allow_nil: false },
-            array: {
-              data_type: { rules: String },
-              custom_inclusion: { in: proc { |x| x.default_field_names } }
-            }
+  CUSTOMER_EXPORT_EXCLUDE_FIELDS = %w(tag_names).freeze
 
-  validates :custom_fields,
-            data_type: { rules: Array, allow_nil: false },
-            array: {
-              data_type: { rules: String },
-              custom_inclusion: { in: proc { |x| x.custom_field_names } }
-            }
+  validates :default_fields, 
+    data_type: { rules: Array, allow_nil: false }, 
+    array: { 
+      data_type: { rules: String }, 
+      custom_inclusion: { in: proc { |x| x.default_field_names } }
+    }
+
+  validates :custom_fields, 
+    data_type: { rules: Array, allow_nil: false }, 
+    array: { 
+      data_type: { rules: String }, 
+      custom_inclusion: { in: proc { |x| x.custom_field_names } }
+    }
 
   validate :validate_request_params, if: -> { errors.blank? }
 
@@ -22,15 +24,21 @@ class ExportCsvValidation < ApiValidation
   end
 
   def default_field_names
-    Account.current.contact_form.default_fields.map(&:name) - ['tag_names']
+    Account.current.send("#{@export_type}_form").
+        send("default_#{@export_type}_fields").map(&:name) - CUSTOMER_EXPORT_EXCLUDE_FIELDS
   end
 
   def custom_field_names
-    Account.current.contact_form.custom_fields.map(&:name).collect { |x| x[3..-1] }
+    Account.current.send("#{@export_type}_form").
+        send("custom_#{@export_type}_fields").map(&:name).collect { |x| x[3..-1] }
   end
 
   def validate_request_params
     errors[:request] << :select_a_field if [*default_fields, *custom_fields].empty?
+    if [*default_fields, *custom_fields].length > ApiConstants::MAX_CUSTOMER_EXPORT_FIELDS
+      errors[:request] << :fields_limit_exceeded
+      error_options.merge!(request: { max_count: ApiConstants::MAX_CUSTOMER_EXPORT_FIELDS })
+    end
   end
 
   def default_company_fields

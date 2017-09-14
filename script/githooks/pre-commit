@@ -97,10 +97,9 @@ if [ `cat $matchingChangesFile | wc -l` -gt 0 ]
 then
   printMsg "Rubocop reported the below listed errors in the files(/lines) you changed. Kindly fix it and commit"
   cat $matchingChangesFile
-  printMsg "Tip : You can use rubocop to quickly fix it as follows. Take a backup before you do.
+  printMsg "Tip : You can use rubocop to quickly fix NEW files as follows. Take a backup before you do.
 
 rubocop -a `cat $changedRubyFiles | xargs echo`
-
-if you want to proceed anyway try 'git commit --no-verify' from the command line [ not recommended :) ]"
+"
   exit 1;
 fi

@@ -25,7 +25,11 @@ module Ember
       assert_response 200
       contact_fields = @account.contact_form.contact_fields
       pattern = contact_fields.map { |contact_field| private_contact_field_pattern(contact_field) }
-      match_json(pattern.ordered!)
+      parsed_response = parse_response(response.body)
+      parsed_response.each do |contact_field|
+        contact_field.except!(*["created_at", "updated_at"])
+      end
+      match_custom_json(parsed_response.to_json, pattern.ordered!)
     end
 
     def test_index_without_privilege

@@ -14,8 +14,8 @@ module Ember
           @@esv2_agent_spotlight ||= {
             'company'       => { model: 'Company',            associations: [] },
             'topic'         => { model: 'Topic',              associations: [{ forum: :forum_category }, :user] },
-            'ticket'        => { model: 'Helpdesk::Ticket',   associations: [{ flexifield: :flexifield_def }, { requester: %i[avatar tags user_emails user_companies] }, { ticket_states: :tickets }, :ticket_old_body, :ticket_status, :responder, :group, :company, :tags] },
-            'archiveticket' => { model: 'Helpdesk::ArchiveTicket', associations: [] },
+            'ticket'        => { model: 'Helpdesk::Ticket',   associations: [{ flexifield: :flexifield_def }, { requester: %i[avatar tags user_emails user_companies] }, { ticket_states: :tickets }, :ticket_old_body, :ticket_status, :company, :tags] },
+            'archiveticket' => { model: 'Helpdesk::ArchiveTicket', associations: [{ requester: %i[avatar tags user_emails user_companies] }, :tags] },
             # TODO: When mulitlingual solutions are to be supported, the associations preloading has to be changed accordingly.
             'article'       => { model: 'Solution::Article',  associations: [:user, :article_body, :recent_author, { solution_article_meta: { solution_category_meta: :"#{Language.for_current_account.to_key}_category" } }, { solution_folder_meta: [:customer_folders, :"#{Language.for_current_account.to_key}_folder"] }] },
             'user'          => { model: 'User',               associations: [:avatar, :customer, :default_user_company, :companies] }

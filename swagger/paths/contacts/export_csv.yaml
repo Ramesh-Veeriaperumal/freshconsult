@@ -1,0 +1,17 @@
+post:
+  tags: [contact]
+  description: Export contacts to a csv file
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/contact_export_input'
+  responses:
+    responses:
+    204:
+      description: Success
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

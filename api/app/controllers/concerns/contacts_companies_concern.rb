@@ -1,5 +1,44 @@
 module ContactsCompaniesConcern
   extend ActiveSupport::Concern
+  include Redis::RedisKeys
+  include Redis::OthersRedis
+
+  EXPORT_WORKERS = {
+    "contact" => Export::ContactWorker,
+    "company" => Export::CompanyWorker
+  }
+
+  def export_field_mappings
+    current_account.send("#{cname}_form").send("#{cname}_fields_from_cache").inject({}) do |a, e|
+      fields_to_export.include?(e.name) ? a.merge!(e.label => e.name) : a
+    end
+  end
+
+  def fields_to_export
+    @export_fields ||= [*params[cname][:default_fields],
+                        *(params[cname][:custom_fields] ||
+                          []).collect { |field| "cf_#{field}" }]
+  end
+
+  def portal_url
+    main_portal? ? current_account.host : current_portal.portal_url
+  end
+
+  def contact_company_export_csv export_type
+    @validation_klass = 'ExportCsvValidation'
+    params_hash = params[cname].merge("export_type"=>cname)
+    return false unless validate_body_params(nil, params_hash)
+    sanitize_body_params
+    args = { :csv_hash => export_field_mappings, 
+             :user => api_current_user.id,
+             :portal_url => portal_url }
+    if !redis_key_exists?(COMPANIES_EXPORT_SIDEKIQ_ENABLED) &&
+        export_type == EXPORT_WORKERS.keys[1]
+      Resque.enqueue(Workers::ExportCompany, args)
+    else
+      EXPORT_WORKERS[export_type].perform_async(args)
+    end
+  end
 
   def assign_avatar
     given_avatar_id = params[cname][:avatar_id]

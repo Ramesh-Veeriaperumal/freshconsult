@@ -1,5 +1,7 @@
 class CompanyField < ActiveRecord::Base
 
+  include DataVersioning::Model
+  
   self.primary_key = :id
   self.table_name= "company_fields"
 
