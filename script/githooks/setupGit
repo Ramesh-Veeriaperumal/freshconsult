@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo -n "Please enter your JIRA user name(emailId) : "
+read email
+echo -n "Please enter your JIRA password           : "
+read password
+
+echo "JIRA_AUTH='${email}:${password}'" > ~/.jira_auth
+chmod +x ~/.jira_auth
+echo "You are all set to commit"

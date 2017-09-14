@@ -11,10 +11,29 @@ printMsg(){
 jiraIssuePattern="(FDCORE|FRESHPIPE|FRESHCALL|TH)-(\\d+)"
 commitMsgFile=$1
 
-numIssueIdsInMsg=`cat $1 | head -n 1 | egrep -o "${jiraIssuePattern}" | wc -l`
+if [ -f ~/.jira_auth ]; then
+  chmod +x ~/.jira_auth
+  . ~/.jira_auth
+else 
+  echo "Missing JIRA auth file.Run the following command to setup.
+
+bash scripts/githooks/setupGit
+"
+  exit 1;
+fi
+
+
+jiraId=`cat $1 | head -n 1 | egrep -o -m 1 "${jiraIssuePattern}"`
 msgWordCount=`cat $1 | head -n 1 | tr -s ' ' '\n' | egrep -v "${jiraIssuePattern}" | wc -l`
 
+#merge commit
 if [ `git rev-parse -q --verify MERGE_HEAD | wc -c` -gt 1 ]
+then 
+  exit 0;
+fi
+
+#Sos for override
+if [ `cat $1 | head -n 1 | grep SoS | wc -l` -gt 0 ] 
 then 
   exit 0;
 fi
@@ -22,9 +41,10 @@ fi
 if [ $msgWordCount -lt 3 ] 
 then 
   printMsg "Please enter a decriptive commit msg title" 
+  exit 1;
 fi
 
-if [ $numIssueIdsInMsg -eq 0 ] 
+if [ "$jiraId" == "" ] 
 then 
   numIssueIdsInDesc=`cat $1 | egrep -o  "${jiraIssuePattern}" | wc -l | awk '{print $1}'`
   if [ $numIssueIdsInDesc -gt 0 ] 
@@ -48,3 +68,37 @@ then
   printMsg "Missing description. Please add a description to your commit." 
   exit 1;
 fi
+
+command -v osascript &> /dev/null  && osascript -e 'display notification "Validating JIRA ID for commit" with title "Hang in there"'
+
+curl -u "${JIRA_AUTH}" "Content-Type: application/json" -s "https://freshwave.atlassian.net/rest/api/2/issue/${jiraId}" > /tmp/jiraIssueResult.txt
+
+if [ $? -ne 0  -o `cat /tmp/jiraIssueResult.txt | grep errorMessages | wc -l` -gt 0 ]
+then
+  echo "Error accessing Jira issues status. Could not complete commit."
+  cat /tmp/jiraIssueResult.txt
+  exit 1;
+fi;
+
+jiraAssigneeEmail=`cat /tmp/jiraIssueResult.txt | ruby -r rubygems -r json -e "puts (JSON[STDIN.read])['fields']['assignee']['emailAddress'];"`
+jiraIssueStatus=`cat /tmp/jiraIssueResult.txt | ruby -r rubygems -r json -e "puts (JSON[STDIN.read])['fields']['status']['name'];"`
+
+gitUserEmail=`git var GIT_AUTHOR_IDENT | egrep -o "<.*?@.*?.com>" | sed -e 's/[<>]//g'`
+
+if [ "$jiraIssueStatus" != "In Progress" ] 
+then 
+  printMsg "Jira Issue $jiraId is in Status[$jiraIssueStatus]. It needs to be [In Progress]. 
+Kindly update the status before the commit"
+exit 1;
+fi;
+
+if [ "$jiraAssigneeEmail" != "$gitUserEmail" ] 
+then 
+  printMsg "You are not the assignee on the Jira Issue [$jiraId]. 
+Jira Assignee: '$jiraAssigneeEmail'
+Your Email (git): '$gitUserEmail'
+
+Tip : If your git email is incorrect, update your email in git using the following command 
+git config user.email ${jiraAssigneeEmail}"
+exit 1;
+fi;
