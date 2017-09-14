@@ -10,6 +10,7 @@ class AccountDecorator < ApiDecorator
       launched: launch_party_features,
       subscription: subscription_hash,
       settings: settings_hash,
+      ssl_enabled: record.ssl_enabled?,
       agents: agents_hash,
       groups: groups_hash,
       verified: record.verified?
