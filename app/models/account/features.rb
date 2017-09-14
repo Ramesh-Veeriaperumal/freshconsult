@@ -2,7 +2,7 @@ class Account < ActiveRecord::Base
 
   LP_FEATURES   = [:link_tickets, :select_all, :round_robin_capping, :suggest_tickets, :customer_sentiment_ui,
                    :dkim, :bulk_security, :scheduled_ticket_export, :ticket_contact_export,
-                   :email_failures, :disable_emails, :skip_one_hop]
+                   :email_failures, :disable_emails, :skip_one_hop, :archive_ghost]
   DB_FEATURES   = [:shared_ownership, :custom_survey, :requester_widget, :archive_tickets, :sitemap]
   BITMAP_FEATURES = [
       :split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management,
@@ -101,6 +101,10 @@ class Account < ActiveRecord::Base
     features?(:freshfone) and freshfone_account.present?
   end
 
+  def freshcaller_enabled?
+    has_feature?(:freshcaller) && freshcaller_account.present?
+  end
+
   def freshchat_enabled?
     features?(:chat) and !chat_setting.site_id.blank?
   end
@@ -195,6 +199,10 @@ class Account < ActiveRecord::Base
 
   def collaboration_enabled?
    @collboration ||= has_feature?(:collaboration) && self.collab_settings.present?
+  end
+
+  def archive_tickets_feature_enabled?
+    archive_tickets_enabled? || archive_ghost_enabled?
   end
 
 end

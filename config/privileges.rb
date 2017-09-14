@@ -69,7 +69,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/data_pipe"
     resource :"integrations/cloud_elements/crm", :only => [:fetch]
 
-
     # Used by API V2 Search
     resource :"api_search/ticket", :only => [:index]
 
@@ -549,6 +548,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/freshfone"
     resource :"admin/freshfone/number"
     resource :"freshfone/ivr"
+    resource :"admin/freshcaller"
     resource :"admin/gamification"
     resource :"admin/quest"
     resource :"helpdesk/sla_policy"
@@ -599,6 +599,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"satisfaction_rating", :only => [:index]
     resource :"api_role", :only => [:index, :show]
     resource :"api_integrations/cti", :only => [:create, :index]
+    resource :"email_preview"
   end
 
   manage_account do

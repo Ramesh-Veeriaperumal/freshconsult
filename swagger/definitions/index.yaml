@@ -46,7 +46,7 @@
   facebook_reply_input:
     $ref: ./request/conversations/facebook_reply.yaml
   twitter_reply_input:
-    $ref: ./request/conversations/twitter_reply.yaml  
+    $ref: ./request/conversations/twitter_reply.yaml
   conversation_template:
     $ref: ./resource/conversation_template.yaml
   conversation_forward_template:
@@ -82,12 +82,18 @@
     $ref: ./request/ticket_filters/query_hash.yaml
   ticket_filter_input:
     $ref: ./request/ticket_filters/ticket_filter.yaml
+  contact_export_input:
+    $ref: ./request/contacts/contact_export.yaml
+  company_export_input:
+    $ref: ./request/companies/company_export.yaml
   fields_map:
     $ref: ./request/contacts/fields_map.yaml
   integrated_resource_create:
     $ref: ./request/integrated_resources/integrated_resource.yaml
   agent_input:
     $ref: ./request/agents/agent.yaml
+  onboarding_update_activation_email_input:
+    $ref: ./request/onboarding/update_activation_email.yaml
 
   # RESOURCE
   conversation_template:
@@ -186,7 +192,7 @@
     allOf:
       - $ref: '#/definitions/extension_generic'
       - $ref: '#/definitions/survey'
-      
+
   ticket_index:
     type: array
     items:
@@ -250,14 +256,14 @@
 
   #dashbord quests
   dashboard_quests:
-    $ref: './response/dashboard/quest.yaml'  
+    $ref: './response/dashboard/quest.yaml'
   #agent achievements
   agent_achievements:
-    $ref: './response/agents/achievements.yaml'  
+    $ref: './response/agents/achievements.yaml'
   #dashboard
-  dashboard_widget_config: 
+  dashboard_widget_config:
     $ref: './response/dashboard/widget_config.yaml'
-  scorecard: 
+  scorecard:
     $ref: './response/dashboard/scorecard.yaml'
   satisfaction_survey_widget:
     $ref: './response/dashboard/satisfaction_survey.yaml'

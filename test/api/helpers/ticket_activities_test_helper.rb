@@ -295,6 +295,13 @@ module TicketActivitiesTestHelper
     get_activity_data(params)
   end
 
+  def default_system_activity
+    params = {}
+    params[:content] = '{"assoc_parent_tkt_open":["12457.0"]}'
+    params[:event_type] = 'system'
+    get_activity_data(params)
+  end
+
   def empty_user_activity
     params = {}
     params[:content] = "{\"responder_id\":[null,\"#{@ticket.responder_id}.0\"]}"
@@ -971,6 +978,20 @@ module TicketActivitiesTestHelper
     result
   end
 
+  def default_system_activity_pattern(ticket_activity_data)
+    result = []
+    ticket_activity_data.ticket_data.each do |tkt_data|
+      content = JSON.parse(tkt_data.record.content).deep_symbolize_keys
+      performer_type = tkt_data.event_type.to_sym
+      result << result_common_hash(tkt_data, content).merge(actions: [
+                                                              {
+                                                                type: :parent_ticket_reopened
+                                                              }
+                                                            ])
+    end
+    result
+  end
+
   # HELPERS
   def get_activity_data(params = {})
     activity_data = TestActivityData.new
@@ -1033,6 +1054,13 @@ module TicketActivitiesTestHelper
                           {
                             id: 0,
                             type: ActivityConstants::RULE_LIST[-1],
+                            name: '',
+                            exists: true
+                          }
+                        else
+                          {
+                            id: 0,
+                            type: 'default_system',
                             name: '',
                             exists: true
                           }

@@ -149,14 +149,16 @@ module Ember
 
     def test_satisfaction_survey_without_feature
       Account.any_instance.stubs(:any_survey_feature_enabled_and_active?).returns(false)
-      Account.any_instance.stubs(:features?).with(:surveys, :survey_links).returns(false)
-      Account.any_instance.stubs(:features?).with(:surveys).returns(false)
-      Account.any_instance.stubs(:has_feature?).with(:surveys).returns(false)
+      @account.features.surveys.destroy
+      @account.features.survey_links.destroy
+      @account.revoke_feature(:surveys)
+      @account.reload
       get :survey_info, controller_params(version: 'private')
       assert_response 403
-      Account.any_instance.unstub(:any_survey_feature_enabled_and_active?)
-      Account.any_instance.unstub(:has_feature?)
-      Account.any_instance.unstub(:features?)
+    ensure
+      @account.features.surveys.create
+      @account.features.survey_links.create
+      @account.add_feature(:surveys)
     end
 
     # Forum moderation
@@ -171,13 +173,14 @@ module Ember
     end
 
     def test_moderation_count_without_feature
-      Account.any_instance.stubs(:features?).with(:forums).returns(false)
-      Account.any_instance.stubs(:has_feature?).with(:forums).returns(false)
+      @account.features.forums.destroy
+      @account.revoke_feature(:forums)
+      @account.reload
       get :moderation_count, controller_params(version: 'private')
       assert_response 403
     ensure
-      Account.unstub(:features?)
-      Account.unstub(:has_feature?)
+      @account.features.forums.create
+      @account.add_feature(:forums)
     end
 
     def test_moderation_count

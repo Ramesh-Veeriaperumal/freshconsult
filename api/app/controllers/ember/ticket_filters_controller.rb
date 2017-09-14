@@ -153,7 +153,7 @@ module Ember
         # remove the spam & deleted conditions from query hash
         item[:query_hash] = remove_query_conditions(item)
         # transform query hash to a presentable form
-        item[:query_hash] = QueryHash.new(item[:query_hash]).to_json
+        item[:query_hash] = QueryHash.new(item[:query_hash], ff_entries: ff_entries).to_json
         item
       end
 
@@ -175,7 +175,7 @@ module Ember
 
       def set_model_query_hash
         params[:ticket_filter][:wf_model] = 'Helpdesk::Ticket'
-        params[:ticket_filter][:data_hash] = QueryHash.new(params[:ticket_filter][:query_hash]).to_system_format
+        params[:ticket_filter][:data_hash] = QueryHash.new(params[:ticket_filter][:query_hash], ff_entries: ff_entries).to_system_format
       end
 
       def visibility_present?
@@ -193,6 +193,10 @@ module Ember
         new_params = params[:ticket_filter].to_h.with_indifferent_access.slice(:wf_model, :filter_name, :wf_order, :wf_order_type, :wf_per_page, :data_hash, :visibility)
         new_params[:data_hash].map!(&:to_h).map(&:with_indifferent_access)
         new_params
+      end
+
+      def ff_entries
+        @ff_entries_cache ||= Account.current.flexifield_def_entries.find(:all, select: [:flexifield_alias, :flexifield_name]).map(&:attributes)
       end
 
       wrap_parameters(*wrap_params)

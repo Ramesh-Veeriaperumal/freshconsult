@@ -1,4 +1,8 @@
 Authority::Authorization::PrivilegeList.build do
+  manage_calls do
+    resource :"ember/freshcaller/call", only: [:create]
+  end
+
   manage_tickets do
     resource :"ember/bootstrap"
     resource :"ember/tickets/delete_spam", only: %i(spam bulk_spam unspam bulk_unspam)
@@ -11,6 +15,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/tickets/associate", only: [:link, :unlink, :associated_tickets, :prime_association]
     resource :"ember/ticket_filter", only: [:index, :show, :create, :update, :destroy]
     resource :"ember/attachment", only: [:create]
+    resource :"ember/freshcaller/setting", only: [:desktop_notification]
     resource :"ember/conversation", only: %i(create ticket_conversations full_text)
     resource :"ember/subscription"
     resource :"ember/ticket_field", only: [:index]
@@ -38,6 +43,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/product_feedback"
   end
 
+  manage_account do
+    resource :"ember/admin/onboarding", only: %i[update_activation_email resend_activation_email]
+  end
+
   reply_ticket do
     resource :"ember/conversation", only: %i(reply facebook_reply tweet reply_template broadcast)
     resource :"ember/tickets/draft", only: %i(save_draft show_draft clear_draft)
@@ -63,7 +72,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   view_contacts do
-    resource :"ember/contact", only: %i(index show)
+    resource :"ember/contact", only: %i(index show send_invite bulk_send_invite)
     resource :"ember/company", only: %i(index show activities)
     resource :"ember/search/customer", only: [:results]
   end
@@ -77,7 +86,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_users do
-    resource :"ember/contact", only: %i(make_agent send_invite bulk_send_invite assume_identity)
+    resource :"ember/contact", only: %i(make_agent assume_identity)
     resource :"ember/agent", only: [:show]
   end
 
@@ -113,6 +122,7 @@ Authority::Authorization::PrivilegeList.build do
 
   export_customers do
     resource :"ember/contact", only: [:export_csv]
+    resource :"ember/company", only: [:export_csv]
   end
 
   export_tickets do

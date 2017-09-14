@@ -119,6 +119,10 @@
   $ref: ./contacts/bulk_whitelist.yaml
 /contacts/merge:
   $ref: ./contacts/merge.yaml
+/contacts/export_csv:
+  $ref: ./contacts/export_csv.yaml
+/contacts/quick_create:
+  $ref: ./contacts/quick_create.yaml
 /contacts/import:
   $ref: ./contacts/import_crud.yaml
 /contacts/quick_create:
@@ -130,6 +134,8 @@
   $ref: ./companies/crud.yaml
 /companies/{id}/activities:
   $ref: ./companies/activities.yaml
+/companies/export_csv:
+  $ref: ./companies/export_csv.yaml
 /companies/bulk_delete:
   $ref: ./companies/bulk_delete.yaml
 
@@ -176,7 +182,7 @@
 /agents/me:
   $ref: ./agents/me.yaml
 /agents/{id}/achievements:
-  $ref: ./agents/achievements.yaml  
+  $ref: ./agents/achievements.yaml
 
 # Scenario Automations
 /scenario_automations:
@@ -231,7 +237,7 @@
 
 #Dashboard Quests
 /dashboards/quests:
-  $ref: ./dashboard/quest.yaml  
+  $ref: ./dashboard/quest.yaml
 
 #Dashboard
 /dashboards:
@@ -254,6 +260,12 @@
 # Product Feedback
 /product_feedback/:
   $ref: ./product_feedback/create.yaml
+
+# Onboarding
+/onboarding/resend_activation_email:
+  $ref: ./onboarding/resend_activation_email.yaml
+/onboarding/update_activation_email:
+  $ref: ./onboarding/update_activation_email.yaml
 
 #Marketplace
 /marketplace_apps:

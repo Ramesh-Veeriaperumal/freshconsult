@@ -21,4 +21,59 @@
       </tr>
     </thead>
   </table>
+
+  <%= javascript_tag do -%>
+    setExportCreatedRange = function(){
+    var startDate, endDate,temp;
+      if(jQuery('#created_date_range').is(':visible')){
+
+          jQuery("#date_filter").val(<%=TicketConstants::ARCHIVE_CREATED_BY_KEYS_BY_TOKEN[:set_date]%>);
+          var dateFormat = getDateFormat('mediumDate');
+          var createdDateRange = jQuery('#created_date_range').val().split(' - ');
+          startDate = (new Date(createdDateRange[0])).toString(dateFormat);
+          endDate = (new Date(createdDateRange[1])).toString(dateFormat);
+
+          jQuery("#date_filter").trigger('change');
+          jQuery('#start_date').attr("value", startDate);
+          jQuery('#end_date').attr("value", endDate);
+          var dateTypeVarStart = new Date(jQuery('#start_date').val());
+          var setStart_date_Clone = jQuery.datepicker.formatDate('yy-mm-dd', dateTypeVarStart);
+          jQuery('#start_export_clone').val(setStart_date_Clone);
+          var dateTypeVarEnd = new Date(jQuery('#end_date').val());
+          var setend_date_Clone = jQuery.datepicker.formatDate('yy-mm-dd', dateTypeVarEnd);
+          jQuery('#end_export_clone').val(setend_date_Clone);
+
+      }else{
   
+          jQuery("#date_filter").val(<%=TicketConstants::ARCHIVE_CREATED_BY_KEYS_BY_TOKEN[:six_months]%>);
+          startDate = "<%= formated_date(6.month.ago, Helpdesk::TicketsExportHelper::EXPORT_DATE_FORMAT)%>";
+          endDate = "<%= formated_date(Time.now, Helpdesk::TicketsExportHelper::EXPORT_DATE_FORMAT)%>";
+
+          jQuery("#date_filter").trigger('change');
+          jQuery('#start_date').attr("value", startDate);
+          jQuery('#end_date').attr("value", endDate);
+          var dateTypeVarStart = new Date(jQuery('#start_date').val());
+          var setStart_date_Clone = jQuery.datepicker.formatDate('yy-mm-dd', dateTypeVarStart);
+          jQuery('#start_export_clone').val(setStart_date_Clone);
+          var dateTypeVarEnd = new Date(jQuery('#end_date').val());
+          var setend_date_Clone = jQuery.datepicker.formatDate('yy-mm-dd', dateTypeVarEnd);
+          jQuery('#end_export_clone').val(setend_date_Clone);
+      }
+
+      //logic check : startdate <= enddate
+              var startISO = jQuery("#start_export_clone").val();
+              var endISO = jQuery("#end_export_clone").val();
+                if(jQuery.datepicker.parseDate('yy-mm-dd', startISO) > jQuery.datepicker.parseDate('yy-mm-dd', endISO))
+                {
+                  jQuery('#start_date_clone').datepicker( "setDate", endISO );
+                  var datepickerEnd = jQuery('#end_date').val();
+                  jQuery('#start_date').datepicker( "setDate", datepickerEnd );
+                }
+    };
+
+    jQuery('#export_tickets').click(function(){
+         if(jQuery('#exportFilter').length > 0){
+        setExportCreatedRange();
+      }
+    });
+  <%- end %>

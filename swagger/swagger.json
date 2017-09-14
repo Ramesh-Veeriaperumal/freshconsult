@@ -2202,6 +2202,71 @@
         }
       }
     },
+
+    "/contacts/export_csv": {
+      "post": {
+        "tags": [
+          "contact"
+        ],
+        "description": "Export contacts to a csv file",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/contact_export_input"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "responses": null
+        }
+      }
+    },
+          
+    "/contacts/quick_create": {
+      "post": {
+        "summary": "Quick Create",
+        "tags": [
+          "contact"
+        ],
+        "description": "Quick Create without validations",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/quick_create_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/extended_contact"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
     "/contacts/import": {
       "get": {
         "tags": [
@@ -2504,6 +2569,36 @@
               "$ref": "#/definitions/bad_request_error"
             }
           }
+        }
+      }
+    },
+    "/companies/export_csv": {
+      "post": {
+        "tags": [
+          "company"
+        ],
+        "description": "Export companies to a csv file",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/company_export_input"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "responses": null
         }
       }
     },
@@ -5708,6 +5803,79 @@
               "type": "integer"
             }
           }
+        }
+      }
+    },
+    "contact_export_input": {
+      "type": "object",
+      "properties": {
+        "default_fields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "address",
+              "company_id",
+              "description",
+              "email",
+              "job_title",
+              "language",
+              "mobile",
+              "name",
+              "phone",
+              "time_zone",
+              "twitter_id",
+              "other_emails",
+              "tags"
+            ],
+            "uniqueItems": true
+          }
+        },
+        "custom_fields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "uniqueItems": true
+          }
+        }
+      }
+    },
+    "company_export_input": {
+      "type": "object",
+      "properties": {
+        "default_fields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "name",
+              "description",
+              "domains",
+              "notes"
+            ],
+            "uniqueItems": true
+          }
+        },
+        "custom_fields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "uniqueItems": true
+          }
+        }
+      }
+    },
+    "fields_map": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "required": true,
+          "description": "content of the ticket reply"
+        },
+        "fields": {
+          "type": "object",
+          "$ref": "#/definitions/map_field_to_header"
         }
       }
     },

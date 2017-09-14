@@ -1,3 +1,4 @@
+
 Given(/^"([^"]*)" feature is launched for the account$/) do |feature|
   @account.launch feature.to_sym
 end
@@ -40,6 +41,10 @@ Then(/^the ticket's due by should be "([^"]*)"$/) do |time|
   assert_equal get_datetime(time), @ticket.due_by
 end
 
+Then(/^the ticket's due by should be on "([^"]*)" at "([^"]*)"$/) do |day,time|
+  assert_equal get_datetime(time,day), @ticket.due_by
+end
+
 Then(/^the ticket's first response due by should be "([^"]*)"$/) do |time|
   assert_equal get_datetime(time), @ticket.frDueBy
 end
@@ -71,6 +76,10 @@ end
 
 Then(/^the ticket's due by should be recalculated to "([^"]*)"$/) do |time|
   assert_equal get_datetime(time), @ticket.due_by
+end
+
+Then(/^the ticket's due by should be recalculated to "([^"]*)" at "([^"]*)"$/) do |day,time|
+  assert_equal get_datetime(time,day), @ticket.due_by
 end
 
 Then(/^the ticket's first response due by should be recalculated to "([^"]*)"$/) do |time|
@@ -106,6 +115,19 @@ When(/^I update the ticket's priority to "([^"]*)" at "([^"]*)"$/) do |priority,
   end
 end
 
+#============================================================================================================
+# Scenario: Updating a ticket's priority
+
+When(/^I update the ticket's priority to "([^"]*)" on "([^"]*)" at "([^"]*)"$/) do |priority, day, time|
+  Timecop.freeze(get_datetime(time,day)) do
+    put helpdesk_ticket_path(@ticket), { :helpdesk_ticket => {
+        :priority => TicketConstants::PRIORITY_KEYS_BY_TOKEN[:"#{priority}"],
+        :status => @ticket.status
+    }
+    }, @headers
+    @ticket.reload
+  end
+end
 #============================================================================================================
 # Scenario: Updating a ticket's type
 
@@ -199,6 +221,21 @@ Given(/^a ticket created at "([^"]*)", priority "([^"]*)", type "([^"]*)", statu
                 :status => Helpdesk::TicketStatus.status_keys_by_name(@account)["#{status}"],
                 :ticket_type => type
               }, group)
+  end
+end
+
+#============================================================================================================
+# Scenario: Updating a ticket's group to a group with different business hours
+
+Given(/^a ticket created on "([^"]*)" at "([^"]*)", priority "([^"]*)", type "([^"]*)", status "([^"]*)" and group "([^"]*)"$/) do |day, time, priority, type, status, group|
+  group = @account.groups.where(:name => group).first
+  Timecop.freeze(get_datetime(time,day)) do
+    @ticket = create_ticket({
+                                :subject => "sla testing #{Time.now.to_i}",
+                                :priority => TicketConstants::PRIORITY_KEYS_BY_TOKEN[:"#{priority}"],
+                                :status => Helpdesk::TicketStatus.status_keys_by_name(@account)["#{status}"],
+                                :ticket_type => type
+                            }, group)
   end
 end
 

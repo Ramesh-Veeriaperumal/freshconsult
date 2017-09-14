@@ -863,6 +863,7 @@ GEM
     json-compare (0.1.8)
     json_expressions (0.8.3)
     json_pure (1.8.3)
+    jwe (0.3.0)
     jwt (1.5.4)
     koala (1.10.1)
       addressable
@@ -994,8 +995,6 @@ GEM
       git-version-bump (~> 0.15)
       rack (~> 1.4)
     rack-cors (0.3.1)
-    rack-mini-profiler (0.10.1)
-      rack (>= 1.2.0)
     rack-protection (1.5.3)
       rack
     rack-test (0.6.3)
@@ -1359,6 +1358,7 @@ DEPENDENCIES
   json (= 1.8.3)
   json-compare (= 0.1.8)
   json_expressions
+  jwe (= 0.3.0)
   jwt (= 1.5.4)
   koala (= 1.10.1)
   launchparty!
@@ -1403,7 +1403,6 @@ DEPENDENCIES
   pry-nav
   rack-cache (~> 1.2)
   rack-cors (~> 0.3.1)
-  rack-mini-profiler
   rack-openid!
   rack-ssl!
   rack-test (~> 0.6.2)

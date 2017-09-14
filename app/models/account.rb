@@ -60,7 +60,7 @@ class Account < ActiveRecord::Base
   scope :premium_accounts, {:conditions => {:premium => true}}
               
   scope :non_premium_accounts, {:conditions => {:premium => false}}
-  
+
   Limits = {
     'agent_limit' => Proc.new {|a| a.full_time_agents.count }
   }
@@ -195,6 +195,10 @@ class Account < ActiveRecord::Base
     default_in_op_fields[:company].flatten!
 
     default_in_op_fields.stringify_keys!
+  end
+
+  def enabled_features_list
+    (features.map(&:to_sym) + features_list).uniq
   end
 
   class << self # class methods
@@ -590,6 +594,19 @@ class Account < ActiveRecord::Base
     remove_others_redis_key(account_activation_job_status_key)
   end
 
+  # This method is used to update version of available entities which is consumed in falcon.
+  def versionize_timestamp
+    begin
+      entity_keys = get_others_redis_hash(version_key).keys
+      return if entity_keys.blank?
+      hash_set = Hash[entity_keys.collect { |key| [key, Time.now.utc.to_i] }]
+      set_others_redis_hash(version_key, hash_set)
+    rescue Exception => e
+      Rails.logger.debug "Unable to update version timestamp::: #{e.message}, Account:: #{id}"
+      NewRelic::Agent.notice_error(e)
+    end
+  end
+
   # update domain name at Portal, Forum & Activities and support email
 
   def update_default_domain_and_email_config(new_domain_name, support_email_name)
@@ -612,6 +629,25 @@ class Account < ActiveRecord::Base
 
   def email_signup?
     "email_signup" == self.signup_method.to_s
+  end
+
+  def trial_suspended?
+    @trial_suspended ||= begin
+      key = TRIAL_SUSPENDED % {:account_id => self.id}
+      get_others_redis_key(key) == true.to_s
+    end
+  end
+
+  def allow_incoming_emails?
+    self.active? || !self.trial_suspended?
+  end
+
+  def email_subscription_state
+    #If the account is in suspended state the email service will not create the tickets for incoming mails. So, inorder to create the
+    #tickets for state which  moved from paid(not trial) to suspended we are sending non_trial_suspended state. The email service will block only
+    #if the account state is suspended.
+    return self.subscription.state if (!self.subscription.suspended? || self.trial_suspended?)
+    'non_trial_suspended'
   end
 
   protected

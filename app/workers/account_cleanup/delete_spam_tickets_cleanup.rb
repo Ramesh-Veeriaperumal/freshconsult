@@ -49,7 +49,7 @@ module AccountCleanup
     end
      
     def perform_delete_tickets(account_id, batch_size = 50)
-      Sharding.select_shard_of(account_id) do
+      Sharding.admin_select_shard_of(account_id) do
         account = Account.find(account_id)
         account.make_current
         while true

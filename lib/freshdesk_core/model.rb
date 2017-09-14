@@ -181,6 +181,8 @@ module FreshdeskCore::Model
                         "freshfone_subscriptions",
                         "freshfone_supervisor_controls",
                         "freshfone_caller_ids",
+                        
+                        "freshcaller_accounts",
 
                         "survey_questions",
                         "survey_question_choices",

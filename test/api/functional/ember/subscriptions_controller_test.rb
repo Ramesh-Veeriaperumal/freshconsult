@@ -7,6 +7,16 @@ module Ember
       { subscription: params }
     end
 
+    def test_watch_without_feature
+      @account.revoke_feature(:add_watcher)
+      ticket = create_ticket
+      post :watch, construct_params({version: 'private', id: ticket.display_id}, {})
+      assert_response 403
+      match_json(request_error_pattern(:require_feature, feature: 'Add Watcher'))
+    ensure
+      @account.add_feature(:add_watcher)
+    end
+
     def test_watch_ticket_with_invalid_ticket_id
       ticket = create_ticket
       post :watch, construct_params({version: 'private', id: ticket.display_id + 10}, {})
@@ -49,6 +59,16 @@ module Ember
       assert_equal agent.id, latest_subscription.user_id
     end
 
+    def test_unwatch_without_feature
+      @account.revoke_feature(:add_watcher)
+      ticket = create_ticket
+      put :unwatch, controller_params(version: 'private', id: ticket.display_id)
+      assert_response 403
+      match_json(request_error_pattern(:require_feature, feature: 'Add Watcher'))
+    ensure
+      @account.add_feature(:add_watcher)
+    end
+
     def test_unwatch_ticket_with_no_watchers
       ticket = create_ticket
       put :unwatch, controller_params(version: 'private', id: ticket.display_id)
@@ -87,6 +107,16 @@ module Ember
       assert ticket.subscriptions.count == 0
     end
 
+    def test_list_watchers_without_feature
+      @account.revoke_feature(:add_watcher)
+      ticket = create_ticket
+      get :watchers, controller_params(version: 'private', id: ticket.display_id)
+      assert_response 403
+      match_json(request_error_pattern(:require_feature, feature: 'Add Watcher'))
+    ensure
+      @account.add_feature(:add_watcher)
+    end
+
     def test_list_watchers
       ticket = create_ticket
       ticket.subscriptions.build(user_id: User.current.id)
@@ -95,6 +125,17 @@ module Ember
       assert_response 200
       response = parse_response @response.body
       assert_equal 1, response.size
+    end
+
+    def test_bulk_watch_without_feature
+      @account.revoke_feature(:add_watcher)
+      ticket = create_ticket
+      params_hash = { ids: [ticket.display_id], user_id: @agent.id }
+      post :bulk_watch, construct_params({version: 'private'}, params_hash)
+      assert_response 403
+      match_json(request_error_pattern(:require_feature, feature: 'Add Watcher'))
+    ensure
+      @account.add_feature(:add_watcher)
     end
 
     def test_bulk_watch_with_no_params
@@ -153,6 +194,16 @@ module Ember
       failures = {}
       invalid_ids.each { |id| failures[id] = { :id => :"is invalid" } }
       match_json(partial_success_response_pattern(ticket_ids, failures))
+    end
+
+    def test_bulk_unwatch_without_feature
+      @account.revoke_feature(:add_watcher)
+      ticket = create_ticket
+      put :bulk_unwatch, construct_params({ version: 'private' }, {ids: [ticket.display_id]})
+      assert_response 403
+      match_json(request_error_pattern(:require_feature, feature: 'Add Watcher'))
+    ensure
+      @account.add_feature(:add_watcher)
     end
 
     def test_bulk_unwatch_with_no_params

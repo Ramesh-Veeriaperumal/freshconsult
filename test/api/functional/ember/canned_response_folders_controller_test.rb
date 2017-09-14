@@ -25,16 +25,16 @@ module Ember
       @ca_folder_personal = @account.canned_response_folders.personal_folder.first
 
       # responses in visible to all folder
-      @ca_response_1 = create_canned_response(@ca_folder_all.id)
-      @ca_response_2 = create_canned_response(@ca_folder_all.id)
+      @ca_response1 = create_canned_response(@ca_folder_all.id)
+      @ca_response2 = create_canned_response(@ca_folder_all.id)
 
       # responses in personal folder
-      @ca_response_3 = create_canned_response(@ca_folder_personal.id, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me])
-      @ca_response_4 = create_canned_response(@ca_folder_personal.id, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me])
+      @ca_response3 = create_canned_response(@ca_folder_personal.id, ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me])
+      @ca_response4 = create_canned_response(@ca_folder_personal.id, ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me])
 
       # responses based on groups
       # @test_group = create_group(@account)
-      @ca_response_5 = create_canned_response(@ca_folder_all.id, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents])
+      @ca_response5 = create_canned_response(@ca_folder_all.id, ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents])
     end
 
     # Only 2 actions : index & show
@@ -82,8 +82,8 @@ module Ember
       match_json(ca_responses_pattern(@ca_folder_personal))
 
       responses = ActiveSupport::JSON.decode(response.body)['canned_responses']
-      assert responses.include?(single_ca_response_pattern(@ca_response_3))
-      assert responses.include?(single_ca_response_pattern(@ca_response_4))
+      assert responses.include?(single_ca_response_pattern(@ca_response3))
+      assert responses.include?(single_ca_response_pattern(@ca_response4))
     end
 
     def test_show_personal_responses_of_other_agents
@@ -97,8 +97,8 @@ module Ember
       assert_response 200
       match_json(ca_responses_pattern(@ca_folder_personal))
       responses = ActiveSupport::JSON.decode(response.body)['canned_responses']
-      refute responses.include?(single_ca_response_pattern(@ca_response_3))
-      refute responses.include?(single_ca_response_pattern(@ca_response_4))
+      refute responses.include?(single_ca_response_pattern(@ca_response3))
+      refute responses.include?(single_ca_response_pattern(@ca_response4))
     end
 
     def test_show_with_group_visibility_response
@@ -112,9 +112,9 @@ module Ember
       assert_response 200
       match_json(ca_responses_pattern(@ca_folder_all))
       responses = ActiveSupport::JSON.decode(response.body)['canned_responses']
-      assert responses.include?(single_ca_response_pattern(@ca_response_1))
-      assert responses.include?(single_ca_response_pattern(@ca_response_2))
-      refute responses.include?(single_ca_response_pattern(@ca_response_5))
+      assert responses.include?(single_ca_response_pattern(@ca_response1))
+      assert responses.include?(single_ca_response_pattern(@ca_response2))
+      refute responses.include?(single_ca_response_pattern(@ca_response5))
     end
 
     def test_show_invalid_folder_id

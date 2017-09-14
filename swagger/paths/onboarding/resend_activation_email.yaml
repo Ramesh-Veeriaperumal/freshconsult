@@ -1,0 +1,9 @@
+  get:
+    summary: Resend activation email.
+    description: Send an email for activating the account.
+    tags: [onboarding]
+
+    responses:
+      204:
+        description: Success
+

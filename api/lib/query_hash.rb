@@ -6,8 +6,9 @@ class QueryHash
   DELETED_CONDITION = { 'condition' => 'deleted', 'operator' => 'is', 'value' => false }.freeze
   ARRAY_VALUED_OPERATORS = ['is_in', 'due_by_op'].freeze
 
-  def initialize(params)
+  def initialize(params, other_options = {})
     @query_hash = params
+    @ff_entries_cached = other_options[:ff_entries]
   end
 
   def to_system_format
@@ -133,7 +134,7 @@ class QueryHash
     end
 
     def all_ff_fields
-      @all_ff_fields ||= Account.current.flexifield_def_entries.find(:all, select: [:flexifield_alias, :flexifield_name]).map(&:attributes)
+      @all_ff_fields ||= @ff_entries_cached || Account.current.flexifield_def_entries.find(:all, select: [:flexifield_alias, :flexifield_name]).map(&:attributes)
     end
 
     def ff_alias_name_map

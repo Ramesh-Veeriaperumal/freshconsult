@@ -1,31 +1,32 @@
 account = Account.current
-company_form = account.company_form
-no_of_current_fields = company_form.company_fields.count
 
 def self.company_fields_data
   [
     { :name               => "description", 
-      :label              => "Description" },
+      :label              => "Description",
+      :position           => 2 },
       
     { :name               => "note", 
-      :label              => "Notes" }
+      :label              => "Notes",
+      :position           => 3 }
   ]
 end
 
-CompanyField.seed_many(:account_id, :name, 
-  company_fields_data.each_with_index.map do |f, i|
-    {
-      :account_id         => account.id,
-      :company_form_id    => company_form.id,
-      :name               => f[:name],
-      :column_name        => 'default',
-      :label              => f[:label],
-      :deleted            => false,
-      :field_type         => :"default_#{f[:name]}",
-      :position           => i + no_of_current_fields + 1,
-      :required_for_agent => f[:required_for_agent] || false
-    }
-  end
-)
+company_fields_data.each do |f|
+  company_field = CompanyField.new(
+    :label              => f[:label],
+    :deleted            => false,
+    :field_type         => :"default_#{f[:name]}",
+    :position           => f[:position],
+    :required_for_agent => f[:required_for_agent] || false,
+  )
 
-company_form.clear_cache
+  # The following are attribute protected.
+  company_field.column_name = 'default'
+  company_field.name = f[:name]
+  company_field.company_form_id = account.company_form.id
+  
+  company_field.sneaky_save #To avoid the callbacks of acts-as-list which is changing the other field positions.
+end
+
+account.company_form.clear_cache

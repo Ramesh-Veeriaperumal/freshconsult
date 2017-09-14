@@ -1,0 +1,9 @@
+type: object
+properties:
+  onboarding:
+    type: object
+    required: [new_email]
+    properties:
+      new_email: 
+        type: string
+        description: New email

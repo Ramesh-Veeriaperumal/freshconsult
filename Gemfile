@@ -36,7 +36,7 @@ gem "statsd-ruby", :git => 'git://github.com/sumakumardey/statsd-ruby', :branch 
 
 gem 'sneaky-save', :git => 'git://github.com/partyearth/sneaky-save.git'
 gem 'fresh_request', :git => 'git@github.com:freshdesk/fresh_request.git', :branch => 'v20'
-
+gem 'batch_api', :git => 'git@github.com:freshdesk/batch_api.git', :branch => 'fd-batch-api'
 #for ruby ~> 2.1.0 upgrade
 gem 'iconv', '~> 1.0.4'
 gem 'thrift', '~> 0.9.2.0'
@@ -59,7 +59,8 @@ group :development, :test do
   gem 'fake_dynamo'
 end
 
-gem "rack-mini-profiler", :group => [:development]
+#commenting it out as rack mini profiler strips out etag response headers. Using it for falcon apis.
+#gem "rack-mini-profiler", :group => [:development]
 gem "brakeman", :require => false, :group => [:development]
 gem "bullet", :group => [:development, :test, :staging]
 gem "mail"
@@ -198,6 +199,7 @@ gem "add_pod_support", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/ad
 gem "custom_fields", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/custom_fields-0.1"
 
 gem "jwt", "1.5.4"
+gem "jwe", "0.3.0"
 gem "jose", "1.1.2"
 
 group :production, :test, :staging do
