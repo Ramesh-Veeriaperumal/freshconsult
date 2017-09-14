@@ -356,6 +356,11 @@ class ApiApplicationController < MetalApiController
       response.headers['X-Search-Results-Count'] = total_items.to_s
     end
 
+    def add_etag_to_response_header(timestamp)
+      response.headers['ETag'] = EtagGenerator.generate_etag(timestamp)
+      response.headers['Cache-Control'] = 'private'
+    end
+
     # Construct link header for paginated collection
     def construct_link_header(updated_query_parameters)
       query_string = '?'

@@ -48,7 +48,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   def shared_with_me_filter
-    status_groups = Account.current.account_status_groups_from_cache.select{|sg| User.current.group_ids.include?(sg.group_id)}
+    user_group_ids = User.current.group_ids
+    status_groups = Account.current.account_status_groups_from_cache.select{|sg| user_group_ids.include?(sg.group_id)}
     shared_filter_condition(status_groups, TicketConstants::INTERNAL_AGENT_ID)
   end
 

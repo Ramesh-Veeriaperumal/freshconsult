@@ -106,10 +106,7 @@ module Ember
     end
 
     def export_csv
-      @validation_klass = 'ExportCsvValidation'
-      return unless validate_body_params
-      Export::ContactWorker.perform_async(csv_hash: export_field_mappings, user: api_current_user.id, portal_url: portal_url)
-      head 204
+      head 204 if contact_company_export_csv(cname)
     end
 
     def self.wrap_params
@@ -278,24 +275,9 @@ module Ember
         item.save
       end
 
-      def export_field_mappings
-        current_account.contact_form.fields.inject({}) do |a, e|
-          fields_to_export.include?(e.name) ? a.merge!(e.label => e.name) : a
-        end
-      end
-
-      def fields_to_export
-        @export_fields ||= [*params[cname][:default_fields], *(params[cname][:custom_fields] || []).collect { |field| "cf_#{field}" }]
-      end
-
-      def portal_url
-        main_portal? ? current_account.host : current_portal.portal_url
-      end
-
       def constants_class
         ::Ember::ContactConstants.to_s.freeze
       end
-
       wrap_parameters(*wrap_params)
   end
 end
