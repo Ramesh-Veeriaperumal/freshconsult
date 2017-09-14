@@ -5,7 +5,7 @@
       <div class="row-fluid">
         <h3 class="lead span6"><%=t('.title')%></h3>
         <div class="span6 pull-right align-right">
-          <%= link_to t('admin.getting_started.index.social_twitter_add'), @auth_redirect_url, :class => "btn btn-primary" %> 
+          <a onclick="<%= onclick_strategy(@auth_redirect_url)%>" class="btn btn-primary"><%= t('admin.getting_started.index.social_twitter_add')%></a>
         </div>
       </div>
     </div>
@@ -17,20 +17,20 @@
               <div class="preview_pic">
                 <span class="tweet_pic"></span>
                 <%= image_tag(s3_twitter_avatar(twitter_handle), :alt => twitter_handle.screen_name) %>
-              </div>    
+              </div>
             </td>
             <td>
               <h2 class="sub-lead">
-                <%= link_to "@#{twitter_handle.screen_name}", edit_social_twitter_url(twitter_handle) %> 
-                &nbsp;<%if twitter_handle.reauth_required? %><span class="label label-important align-fix"> <%=t(".reauth_required")%></span><%end%> 
+                <%= link_to "@#{twitter_handle.screen_name}", edit_social_twitter_url(twitter_handle) %>
+                &nbsp;<%if twitter_handle.reauth_required? %><span class="label label-important align-fix"> <%=t(".reauth_required")%></span><%end%>
               </h2>
-              <div class="muted"> <%= twitter_handle.product.name if twitter_handle.product%> </div> 
+              <div class="muted"> <%= twitter_handle.product.name if twitter_handle.product%> </div>
             </td>
             <td class="align-right">
               <div class="item_actions">
-                <%= link_to(t(".reauthorize"), @auth_redirect_url , :class => "btn") if twitter_handle.reauth_required? %>
+                <%if twitter_handle.reauth_required? %><a onclick="<%= onclick_strategy(@auth_redirect_url)%>" class="btn"><%= t('.reauthorize')%></a><%end%>
                 <%= link_to t("edit"),  edit_social_twitter_url(twitter_handle), :class => "btn btn-mini" %>
-                <%= link_to("<i class='icon-trash'></i>".html_safe, social_twitter_path(twitter_handle), :method => 'delete', :confirm => t('.remove_handle_msg'), :class => "btn btn-mini" ) %>    
+                <%= link_to("<i class='icon-trash'></i>".html_safe, social_twitter_path(twitter_handle), :method => 'delete', :confirm => t('.remove_handle_msg'), :class => "btn btn-mini" ) %>
               </div>
             </td>
           </tr>

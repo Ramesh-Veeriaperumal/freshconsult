@@ -1,26 +1,26 @@
-<% content_for :sidebar do -%>&nbsp;<%-end %>
+<% content_for :sidebar do -%>&nbsp;
+<%- end %>
 
 <% content_for :helpcard do %>
-  <%= render :partial => "helpnote" %>
+    <%= render :partial => "helpnote" %>
 <% end %>
+<div id="admin-social-tab">
+  <% unless @twitter_handles.empty? %>
+      <div class="floatr">
+        <% if @add_new_handle %>
+            <a onclick="<%= onclick_strategy(@auth_redirect_url) %>" class="btn btn-primary mrt"><%= t('.new_account') %></a>
+        <% end %>
+        <% if @add_new_stream %>
+            <%= link_to t('.new_stream'), new_admin_social_twitter_stream_url, :class => "btn btn-primary" %>
+        <% end %>
+      </div>
+      <h3 class="lead"><%= t('.title') %></h3>
+      <hr/>
+      <% unless @twitter_streams.empty? %>
+          <%= render :partial => "twitter_streams", :locals => {:streams => @twitter_streams} %>
+      <% end %>
 
-<% unless @twitter_handles.empty? %>
-  <div class="floatr">
-    <% if @add_new_handle %>
-      <%= link_to t('.new_account'), @auth_redirect_url , :class => "btn btn-primary mrt" %> 
-    <% end %>
-    <% if @add_new_stream %>
-      <%= link_to t('.new_stream'), new_admin_social_twitter_stream_url , :class => "btn btn-primary" %> 
-    <% end %>
-  </div>
-  <h3 class="lead"><%=t('.title')%></h3><hr />
-  <% unless @twitter_streams.empty? %>
-    <%= render :partial => "twitter_streams", :locals => { :streams => @twitter_streams } %>
+  <% else %>
+      <%= render :partial => "signin_info", :locals => {:product => @current_product} %>
   <% end %>
-
-<% else %>
-  <%= render :partial => "signin_info", :locals => { :product => @current_product } %>
-<% end %>
-
-
-
+</div>
