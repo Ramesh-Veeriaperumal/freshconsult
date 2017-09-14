@@ -1,5 +1,7 @@
 class ContactField < ActiveRecord::Base
 
+  include DataVersioning::Model
+  
   self.primary_key = :id
 
   include DataVersioning::Model

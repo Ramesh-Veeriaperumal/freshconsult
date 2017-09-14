@@ -59,7 +59,8 @@ group :development, :test do
   gem 'fake_dynamo'
 end
 
-gem "rack-mini-profiler", :group => [:development]
+#commenting it out as rack mini profiler strips out etag response headers. Using it for falcon apis.
+#gem "rack-mini-profiler", :group => [:development]
 gem "brakeman", :require => false, :group => [:development]
 gem "bullet", :group => [:development, :test, :staging]
 gem "mail"

@@ -82,6 +82,10 @@
     $ref: ./request/ticket_filters/query_hash.yaml
   ticket_filter_input:
     $ref: ./request/ticket_filters/ticket_filter.yaml
+  contact_export_input:
+    $ref: ./request/contacts/contact_export.yaml
+  company_export_input:
+    $ref: ./request/companies/company_export.yaml
   fields_map:
     $ref: ./request/contacts/fields_map.yaml
   integrated_resource_create:

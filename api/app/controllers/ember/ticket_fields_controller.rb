@@ -1,4 +1,6 @@
 class Ember::TicketFieldsController < ::ApiTicketFieldsController
+  include DataVersioning::Controller
+
   around_filter :run_on_db, :only => :index
   skip_around_filter :run_on_slave
 

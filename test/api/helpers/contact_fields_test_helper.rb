@@ -18,8 +18,8 @@ module ContactFieldsTestHelper
       required_for_agents: expected_output[:required_for_agents] || contact_field.required_for_agent,
       required_for_customers: expected_output[:required_for_customers] || contact_field.required_in_portal,
       displayed_for_customers: expected_output[:displayed_for_customers] || contact_field.visible_in_portal,
-      created_at: nil, #Will be fixed in next helpkit release
-      updated_at: nil  #Will be fixed in next helpkit release
+      #created_at: nil, #Will be fixed in next helpkit release
+      #updated_at: nil  #Will be fixed in next helpkit release
     }
   end
 

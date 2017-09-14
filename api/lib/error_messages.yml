@@ -103,6 +103,7 @@ api_error_messages:
   not_a_twitter_ticket: "Cannot tweet as reply to ticket NOT created from Twitter stream"
   only_query_hash_or_filter: "Cannot set both query hash and filter"
   select_a_field: "Atleast one of the fields is required"
+  fields_limit_exceeded: "Cannot export more than %{max_count} fields"
   no_reply_privilege: "Cannot be set, no reply privilege"
   no_edit_privilege: "Cannot be set, no edit privilege"
   unresolved_child: 'Ticket cannot be closed or resolved since one or more of the child tickets associated with this ticket are unresolved.'
@@ -118,6 +119,7 @@ api_error_messages:
   cant_add_primary_resource_to_others: "Cannot add %{resource} to %{attribute} since it is %{status}"
   invalid_company_id: "There is no record matching the id %{company_id}"
   unable_to_perform: "Unable to perform"
+  missing_contact_detail: "Please enter at least one contact detail"
   wrong_internal_agent: "Internal Agent does not belong to the specified Group"
   wrong_internal_group: "Internal group does not belong to the given status of the ticket"
   traffic_cop_alert: "Ticket has been updated with new conversations"
