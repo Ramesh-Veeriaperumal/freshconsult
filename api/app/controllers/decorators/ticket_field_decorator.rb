@@ -131,9 +131,16 @@ class TicketFieldDecorator < ApiDecorator
     def default_status_choices
       # TODO-EMBER This is a cached method. Not expected work properly in production
       Helpdesk::TicketStatus.statuses_list(Account.current).map do |status|
-        status.slice(:customer_display_name, :stop_sla_timer, :deleted, :group_ids).merge(label: status[:name],
-                                                                                          value: status[:status_id])
+        status.slice(:customer_display_name, :stop_sla_timer, :deleted , :group_ids).merge({
+          label: status[:name],
+          value: status[:status_id],
+          default: default_status?(status[:status_id])
+        })
       end
+    end
+
+    def default_status?(status_id)
+      Helpdesk::Ticketfields::TicketStatus::DEFAULT_STATUSES.keys.include?(status_id)
     end
 
     def default_product_choices
