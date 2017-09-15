@@ -2,10 +2,10 @@ class ContactDelegator < BaseDelegator
   include ActiveRecord::Validations
 
   validates :custom_field, custom_field: { custom_field: {
-    validatable_custom_fields: proc { Account.current.contact_form.custom_drop_down_fields },
-    drop_down_choices: proc { Account.current.contact_form.custom_dropdown_field_choices },
-    required_attribute: :required_for_agent
-  } }
+    validatable_custom_fields:  proc { |x| x.valid_custom_fields },
+    drop_down_choices: proc { |x| x.valid_custom_field_choices },
+    required_attribute: :required_for_agent }
+  }
   validate :user_emails_validation, if: -> { @other_emails }
   validate :validate_user_activation, on: :send_invite
   validate :validate_avatar_ext, if: -> { @avatar_attachment && errors[:attachment_ids].blank? }
@@ -57,9 +57,25 @@ class ContactDelegator < BaseDelegator
     end
   end
 
+  def valid_custom_fields
+    requester_update? ? contact_form.custom_drop_down_widget_fields : contact_form.custom_drop_down_fields
+  end
+
+  def valid_custom_field_choices
+    requester_update? ? contact_form.custom_dropdown_widget_field_choices : contact_form.custom_dropdown_field_choices
+  end
+
   private
 
     def attachment_size
       ContactConstants::ALLOWED_AVATAR_SIZE
+    end
+
+    def contact_form
+      @contact_form ||= Account.current.contact_form
+    end
+
+    def requester_update?
+      [:requester_update].include?(validation_context)
     end
 end

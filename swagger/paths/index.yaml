@@ -42,6 +42,8 @@
   $ref: ./tickets/split_note.yaml
 /tickets/{id}/draft:
   $ref: ./drafts/crud.yaml
+/tickets/{id}/requester:
+  $ref: ./tickets/requester.yaml
 /tickets/merge:
   $ref: ./tickets/merge.yaml
 /tickets/empty_spam:

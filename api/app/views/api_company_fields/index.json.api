@@ -4,7 +4,7 @@ JSON.generate(@items.map do |api_company_field|
     name: api_company_field.name,
     label: api_company_field.label,
     position: api_company_field.position,
-    required_for_agent: api_company_field.required_for_agent,
+    required_for_agents: api_company_field.required_for_agent,
     type: api_company_field.field_type,
     default: api_company_field.default_field?,
     created_at: api_company_field.created_at.try(:utc),

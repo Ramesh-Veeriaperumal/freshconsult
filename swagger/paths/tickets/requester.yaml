@@ -1,0 +1,19 @@
+put:
+  summary: Update Requester
+  tags: [ticket]
+  parameters:
+    - $ref: '#/parameters/id'
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/requester_input'
+  responses:
+    204:
+      description: Success
+      schema:
+        $ref: '#/definitions/requester'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
