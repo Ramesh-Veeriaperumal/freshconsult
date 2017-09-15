@@ -6,26 +6,32 @@ module Facebook
 			include Facebook::Util
 			include Facebook::TicketActions::Util
 
-			def create_tickets(message,thread_id)
-	    	  fb_msg = Sharding.run_on_slave { @account.facebook_posts.latest_thread(thread_id, 1).first }
-	    	  previous_ticket = fb_msg.try(:postable)
-	    	  last_reply = unless previous_ticket.blank?
-	    	    if (!previous_ticket.notes.blank? && !previous_ticket.notes.latest_facebook_message.blank?)
-	    	      previous_ticket.notes.latest_facebook_message.first
-	    	    else
-	    	      previous_ticket
-	    	    end
-	    	  end
-	    	  if last_reply && (Time.zone.now < (last_reply.created_at + @fan_page.dm_thread_time.seconds))
-	    	    add_as_note(thread_id, message, previous_ticket)
-	    	  else
-	    	    add_as_ticket(thread_id, message)
-	    	  end
+      def create_tickets(message,thread_key)
+        fb_msg = latest_message(thread_key, thread_key)
+        previous_ticket = fb_msg.try(:postable)
+        last_reply = unless previous_ticket.blank?
+          if (!previous_ticket.notes.blank? && !previous_ticket.notes.latest_facebook_message.blank?)
+            previous_ticket.notes.latest_facebook_message.first
+          else
+            previous_ticket
+          end
+        end
+        if last_reply && (Time.zone.now < (last_reply.created_at + @fan_page.dm_thread_time.seconds))
+          add_as_note(thread_key, message, previous_ticket)
+        else
+          add_as_ticket(thread_key, message)
+        end
+
+        if fb_msg.present? && fb_msg.thread_key.nil?
+          @account.facebook_posts.where({:thread_id => thread_key, :facebook_page_id => @fan_page.id, :thread_key => nil}).find_each do |fb_post| 
+            fb_post.update_attributes({:thread_key => thread_key})
+          end
+        end
 			end
 
 			private
 
-			def add_as_note(thread_id, message, ticket)
+			def add_as_note(thread_key, message, ticket)
 			  message.symbolize_keys!
 			  return if @account.facebook_posts.exists?(:post_id => message[:id])
 			  user = facebook_user(message[:from])
@@ -43,7 +49,8 @@ module Facebook
 			      :facebook_page_id =>  @fan_page.id,
 			      :account_id       =>  @account.id,
 			      :msg_type         =>  'dm',
-			      :thread_id        =>  thread_id
+			      :thread_id        =>  thread_key,
+			      :thread_key       =>  thread_key
 			    }
 			  )
         body_html = html_content_from_message(message, @note)
@@ -61,7 +68,7 @@ module Facebook
 			  end
 			end
 
-			def add_as_ticket(thread_id,message)
+			def add_as_ticket(thread_key,message)
 			  message.symbolize_keys!
 			  group_id = Account.current.features?(:social_revamp) ? @fan_page.dm_stream.ticket_rules.first.group_id : @fan_page.group_id
 			  
@@ -82,7 +89,8 @@ module Facebook
 			      :facebook_page_id   =>  @fan_page.id,
 			      :account_id         =>  @account.id,
 			      :msg_type           =>  'dm',
-			      :thread_id          =>  thread_id
+			      :thread_id          =>  thread_key,
+			      :thread_key         =>  thread_key
 			    }
 			  )
         description_html = html_content_from_message(message, @ticket)

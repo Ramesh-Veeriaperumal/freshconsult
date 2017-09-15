@@ -72,6 +72,8 @@ HelpdeskReports.ReportUtil.TimeSpent = (function($){
 	            $doc.on("change","[name=group_by]",function(){
 	            	HelpdeskReports.locals.current_group_by = $("[name=group_by]").val();
 					HelpdeskReports.locals.params[0]['group_by'] = [HelpdeskReports.locals.current_group_by];
+								var help_msg = HelpdeskReports.CoreUtil.getTimespentExportHelpText();
+								jQuery('#timespent_aggregate_help_msg').text(help_msg);
 	            	_FD.closeViewMorePane();
 	            	_FD.closeDrillDownPane();
 	            	setTimeout(function(){

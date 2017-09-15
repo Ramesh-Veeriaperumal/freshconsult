@@ -32,18 +32,13 @@ module Freshcaller::JwtAuthentication
     jwt = JWT.encode(payload, FreshcallerConfig['signing_key'])
     JWE.encrypt(jwt, FreshcallerConfig['signing_key'], alg: 'dir')
   end
-
-  # def signed_payload(expiration = FreshcallerConfig['jwt_default_expiry'])
-  #   payload = { email: ::User.current.email }
-  #   'Helpkit token=' + sign_payload(payload, expiration)
-  # end
   
   def freshcaller_request(params, path, request_type, payload = {})
     options = {
       :headers => {
         'Accept' => 'application/json',
         'Content-Type' => 'application/json',
-        'Authorization' => "Helpkit token=#{sign_payload(payload)}"
+        'Authorization' => "Freshdesk token=#{sign_payload(payload)}"
       },
       :query => params
     }

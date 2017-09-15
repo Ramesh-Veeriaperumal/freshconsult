@@ -75,6 +75,7 @@
     - facebook_delta
     - twitter_replay_worker
     - contact_export
+    - company_export
     - product_feedback
   :maintainence:
     - select_all_tickets
