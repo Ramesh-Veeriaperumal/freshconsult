@@ -5,6 +5,7 @@ module ApiSearch
 
     CUSTOM_FIELDS = %w(number checkbox decimal text paragraph date).freeze
     CHOICES = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'].freeze
+    SECTION_CHOICES = ["Batman Begins", "The Dark Knight", "The Dark Knight Rises"]
 
     def setup
       super
@@ -22,6 +23,7 @@ module ApiSearch
       create_custom_field_dropdown('test_custom_dropdown', CHOICES)
       create_custom_field('priority', 'number', '06')
       create_custom_field('status', 'text', '14')
+      construct_sections('type')
       clear_es(@account.id)
       30.times { create_search_ticket(ticket_params_hash) }
       write_data_to_es(@account.id)
@@ -49,8 +51,19 @@ module ApiSearch
       custom_fields[:test_custom_dropdown_1] = nil if n == 8
       custom_fields[:test_custom_number_1] = nil if n == 7
       custom_fields[:test_custom_text_1] = nil if n == 6
+
+      type = types[rand(4)]
+
+      if %w[Question Incident].include?(type)
+        custom_fields[:section_number_1]    = rand(10)
+        custom_fields[:section_checkbox_1]  = n % 2 == 0
+        custom_fields[:section_text_1] = Faker::Lorem.words(3).join(' ')
+        custom_fields[:section_date_1] = (n + 2).days.until.iso8601
+        custom_fields[:section_dropdown_1] = SECTION_CHOICES[rand(3)]
+      end
+
       params_hash = { email: email, cc_emails: cc_emails, description: description, subject: subject,
-                      priority: priority, status: status, type: types[rand(4)], responder_id: rand(4) + 1, source: 1, tags: [tags[rand(6)], tags[rand(6)]].uniq,
+                      priority: priority, status: status, type: type, responder_id: rand(4) + 1, source: 1, tags: [tags[rand(6)], tags[rand(6)]].uniq,
                       due_by: (n + 14).days.since.iso8601, fr_due_by: (n + 1).days.since.iso8601, group_id: group.id, custom_field: custom_fields,
                       created_at: n.days.until.iso8601, updated_at: (n + 2).days.until.iso8601 }
       params_hash[:tags] = [] if n == 5
@@ -64,12 +77,13 @@ module ApiSearch
       if field_name == 'type'
         create_custom_field('section_number', 'number', '19')
         create_custom_field('section_checkbox', 'checkbox', '09')
-        create_custom_field('section_decimal', 'decimal', '19')
+        create_custom_field('section_decimal', 'decimal', '09')
         create_custom_field('section_text', 'text', '79')
         create_custom_field('section_paragraph', 'paragraph', '09')
         create_custom_field('section_date', 'date', '09')
+        create_custom_field_dropdown('section_dropdown', SECTION_CHOICES, "78")
         sections = [{ title: 'section1',
-                      value_mapping: %w[Question],
+                      value_mapping: %w[Question Incident],
                       ticket_fields: %w[section_number section_checkbox section_decimal section_text section_paragraph section_date]
                     }]
       end
@@ -529,15 +543,91 @@ module ApiSearch
       match_json([bad_request_error_pattern('query', :query_format_invalid)])
     end
 
-    def test_deprecate_section_fields
-      sections = construct_sections('type')
-      create_section_fields(3, sections)
-      get :index, controller_params(query: '"section_number:123 or section_checkbox:true or section_text:aaa or section_date:\'2017-01-01\'"')
+    def test_section_field_number
+      tickets = @account.tickets.select { |x| x.custom_field['section_number_1'] && x.custom_field['section_number_1'] >= 5 && x.custom_field['section_number_1'] <= 8 }
+      get :index, controller_params(query: '"section_number: 5 or section_number: 6 or section_number: 7 or section_number: 8"')
+      assert_response 200
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json(results: pattern, total: tickets.size)
+    end
+
+    def test_section_field_number_invalid_value
+      get :index, controller_params(query: '"section_number:\'aaa\'"')
       assert_response 400
-      match_json([bad_request_error_pattern('section_number', :invalid_field),
-                  bad_request_error_pattern('section_checkbox', :invalid_field),
-                  bad_request_error_pattern('section_text', :invalid_field),
-                  bad_request_error_pattern('section_date', :invalid_field)])
-    end    
+      match_json([bad_request_error_pattern('section_number', :array_datatype_mismatch, expected_data_type: 'Integer')])
+    end
+
+    def test_section_field_checkbox
+      tickets = @account.tickets.select { |x| x.custom_field['section_checkbox_1'] == true }
+      get :index, controller_params(query: '"section_checkbox: true"')
+      assert_response 200
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json(results: pattern, total: tickets.size)
+    end
+
+    def test_section_field_checkbox_invalid_value
+      get :index, controller_params(query: '"section_checkbox:\'aaa\'"')
+      assert_response 400
+      match_json([bad_request_error_pattern('section_checkbox', :array_datatype_mismatch, expected_data_type: 'Boolean')])
+    end
+
+    def test_section_field_text
+      text = @account.tickets.where('ticket_type = "Question"').first.custom_field["section_text_1"]
+      tickets = @account.tickets.select { |x| x.custom_field['section_text_1'] == text }
+      get :index, controller_params(query: '"section_text:\''+text+'\' "')
+      assert_response 200
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json(results: pattern, total: tickets.size)
+    end
+
+    def test_section_field_text_invalid_value
+      get :index, controller_params(query: '"section_text:\'aaa\'"')
+      assert_response 200
+      response = parse_response @response.body
+      assert response['total'] == 0
+    end
+
+    def test_section_field_date
+      date = 3.days.until.iso8601
+      tickets = @account.tickets.select { |x| x.custom_field['section_date_1'] && x.custom_field['section_date_1'].to_date.iso8601 == date.to_date.iso8601 }
+      get :index, controller_params(query: '"section_date:\'' + date.to_date.iso8601 + '\' "')
+      assert_response 200
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json(results: pattern, total: tickets.size)
+    end
+
+    def test_section_field_date_range
+      d1 = 3.days.until.iso8601
+      d2 = 5.days.until.iso8601
+      tickets = @account.tickets.select { |x| x.custom_field['section_date_1'] && x.custom_field['section_date_1'].to_date.iso8601 >= d1 && x.custom_field['section_date_1'].to_date.iso8601 <= d2 }
+      get :index, controller_params(query: '"section_date:>\'' + d1.to_date.iso8601 + '\' AND section_date:<\'' + d2.to_date.iso8601 + '\'"')
+      assert_response 200
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json(results: pattern, total: tickets.size)
+    end
+
+    def test_section_field_dropdown
+      tickets = @account.tickets.select { |x| x.custom_field['section_dropdown_1'] == SECTION_CHOICES.first }
+      get :index, controller_params(query: '"section_dropdown:\'' + SECTION_CHOICES.first + '\' "')
+      assert_response 200
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json(results: pattern, total: tickets.size)
+    end
+
+    def test_section_field_dropdown_invalid_value
+      get :index, controller_params(query: '"section_dropdown:\'aaa\'"')
+      assert_response 400
+      match_json([bad_request_error_pattern('section_dropdown', :not_included, list: SECTION_CHOICES.join(','))])
+    end
+
+    def test_section_field_invalid_combo
+      tickets = @account.tickets.select { |x| [true,false].include?(x.custom_field['section_checkbox_1'] == true) && ['Problem', 'Feature Request'].include?(x.ticket_type) }
+      get :index, controller_params(query: '"(section_checkbox: true) AND (type:Problem OR type:\'Feature Request\')"')
+      assert_response 200
+      response = parse_response @response.body
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      assert response['total'] == 0      
+    end
+
   end
 end

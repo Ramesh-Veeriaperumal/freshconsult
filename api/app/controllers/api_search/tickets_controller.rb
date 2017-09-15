@@ -38,7 +38,7 @@ module ApiSearch
       end
 
       def ticket_custom_fields
-        ticket_fields.select { |x| ApiSearchConstants::ALLOWED_CUSTOM_FIELD_TYPES.include?(x.field_type) && !x.section_field? }
+        ticket_fields.select { |x| ApiSearchConstants::ALLOWED_CUSTOM_FIELD_TYPES.include?(x.field_type) }
       end
 
       def ticket_fields

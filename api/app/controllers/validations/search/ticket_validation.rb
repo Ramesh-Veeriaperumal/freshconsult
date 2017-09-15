@@ -17,7 +17,8 @@ module Search
                                validatable_custom_fields: proc { |x| x.ticket_custom_fields },
                                required_attribute: :required,
                                search_validation: :true,
-                               drop_down_choices: proc { TicketsValidationHelper.custom_dropdown_field_choices }
+                               drop_down_choices: proc { TicketsValidationHelper.custom_dropdown_field_choices },
+                               section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
                              } }
 
     def initialize(request_params, ticket_custom_fields)
