@@ -42,7 +42,7 @@ module DataVersioning
 
       def etag_matched?
         header_version = request.headers['If-None-Match']
-        header_version.present? && header_version == EtagGenerator.generate_etag(version_entity_value)
+        header_version.present? && header_version == EtagGenerator.generate_etag(version_entity_value, self.class::CURRENT_VERSION)
       end
   end
 end
