@@ -6,7 +6,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
   include Redis::OthersRedis
   include MemcacheKeys
   
-  SKIPPED_SUBDOMAINS = ["admin", "billing", "partner","signup", "email","login", "emailparser", "mailboxparser","freshops"] + FreshopsSubdomains
+  SKIPPED_SUBDOMAINS = ["admin", "billing", "signup", "email","login", "emailparser", "mailboxparser","freshops"] + FreshopsSubdomains + PartnerSubdomains
   SKIPPED_PATHS      = ["/reports/v2","/reports","/suggest/tickets", "/sentiment_feedback"]
   API_FORMATS        = ['.xml', '.json', 'format=json', 'format=xml']
   THROTTLED_TYPES    = ["application/json", "application/x-javascript", "text/javascript",
