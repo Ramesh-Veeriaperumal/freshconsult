@@ -5,10 +5,8 @@
     </script>
     <%= render :partial => 'layouts/shared/freshfone' %>
   <% end %>
-  <% unless current_user.is_falcon_pref? %>
-    <%= render :partial => "layouts/chat" %>
-    <%= render :partial => "layouts/shared/chat/chat_support" if in_app_support? %>
-  <% end %>
+  <%= render :partial => "layouts/chat" %>
+  <%= render :partial => "layouts/shared/chat/chat_support" if in_app_support? && !current_user.is_falcon_pref? %>
 
 </div>
 
