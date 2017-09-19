@@ -64,10 +64,11 @@ window.liveChat.URL = _url;
         <%end%>
     });
 </script>
-    <% if current_user.is_falcon_pref? %>
-        <div id="livechat_layout" class="fc-layout-falcon"></div>
-    <% else %>
-        <div id="livechat_layout" class="fc-layout"></div>
-    <% end %>
+  <div
+    id="livechat_layout"
+    class="fc-layout"
+    <%= 'style="display: none;"'.html_safe if current_user.is_falcon_pref? %>
+  ></div>
+
 <%end%>
 <!-- Chat related contents ends -->
