@@ -1,4 +1,5 @@
 @import "../fonts/proximanova-fonts";
+@import "../pattern/lib/rtl-mixins";
 
 $font-family-normal:  'Proxima Nova Rg', "Helvetica Neue", Helvetica, Arial !default; 
 $font-family-bold:        'Proxima Nova bold', "Helvetica Neue", Helvetica, Arial !default;
@@ -19,6 +20,11 @@ $app-primary-btn-background: #02b875;
 $app-primary-btn-border: #03a86b;
 $app-primary-btn-hover: #00a367;
 $app-primary-btn-disabled: #b7e5d6;
+
+$app-solution-outdated-label: #239cff;
+$app-solution-outdated-label-hover: #004080;
+$app-solution-language-outdated: #DE3431;
+
 
 $app-primary-color: #02b875;
 
@@ -485,6 +491,65 @@ left: 88%;
     .pagearea {
       background: #fff;
     }
+  }
+}
+
+.edit_helpdesk_ticket_field, .edit_company_field {
+   .custom-field-form {
+     @include margin-left(60px); 
+     @include margin-right(10px);
+     margin-top: 20px;
+     margin-bottom: 20px
+
+   }
+}
+
+#body-container {
+  .update-section, .outdate-section {
+    @include border-radius(3px);
+    
+    .btn {
+      border: none;
+      box-shadow: none;
+      text-transform: none;
+      background-color: $app-btn-text-light;
+      width: 100%;
+      @include margin-left(0px);
+
+      .outdate-label { 
+        color: $app-solution-outdated-label;
+      }
+
+      .outdate-label:hover {
+        color: $app-solution-outdated-label-hover;
+      }
+    }
+
+    .outdate-uptodate:hover {
+      background-color: $app-btn-text-light;
+    }
+  
+    .sloading.loading-small {
+      @include float(left);
+      @include margin-left(10%);
+    }
+  }
+}
+
+#sectionCancelBtn, #sectionSubmitBtn {
+  margin-bottom: 10px;
+}
+
+
+body.community { 
+  .language_symbol.outdated {
+    color: $app-solution-language-outdated;
+  }
+}
+
+.contact_fields_dialog {
+  .field-label {
+    margin-bottom: -7px;
   }
 }
 
@@ -1221,6 +1286,7 @@ div[class$="-toggle"]{
         padding: 4px 14px;
         text-transform: capitalize;
       }
+
   }
 
   .btn-primary, .uiButton {
@@ -1429,10 +1495,6 @@ div[class$="-toggle"]{
           top: 0px;
   }
 }
-}
-
-.ticket_fields .custom-field-form .options-wrapper{
-  left:-25px;
 }
 
 .helpkit-glance .glance-chart-wrapper .glance-chart .solution-article {

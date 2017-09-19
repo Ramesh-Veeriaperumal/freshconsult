@@ -46,7 +46,7 @@
 	<% if (item.field_type == 'default_status' && item.id != 2 && item.id != 4 && item.id != 5) { %>
 		<input rel="toggle" type="checkbox" 
 				name="stop_sla_timer" 
-				data-inverted=true 
+				data-inverted=false 
 				<% if(item.stop_sla_timer){ %> checked="checked" <% } %> 
 				value=true />
 	<% } %>
