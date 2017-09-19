@@ -1,0 +1,18 @@
+type: object
+properties:
+    contact:
+        type: object
+        allOf:
+          - $ref: '#/definitions/contact'
+          - properties:
+              view_all_tickets:
+                type: boolean
+              id:
+                type: integer
+    company:
+        type: object
+        allOf:
+          - $ref: '#/definitions/company'
+          - properties:
+              id:
+                type: integer

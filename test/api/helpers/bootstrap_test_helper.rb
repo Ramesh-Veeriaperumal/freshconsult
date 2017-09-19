@@ -54,7 +54,8 @@ module BootstrapTestHelper
       },
       agents: Array,
       groups: Array,
-      verified: account.verified?
+      verified: account.verified?,
+      ssl_enabled: account.ssl_enabled?
     }
 
     pattern[:collaboration] = collab_pattern if account.collaboration_enabled?

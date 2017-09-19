@@ -74,6 +74,7 @@ class ApiApplicationController < MetalApiController
 
   SINGULAR_RESPONSE_FOR = %w(show create update).freeze
   COLLECTION_RESPONSE_FOR = %w(index search).freeze
+  CURRENT_VERSION = 'private-v1'.freeze
 
   SLAVE_ACTIONS = %w(index).freeze
 
@@ -357,7 +358,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def add_etag_to_response_header(timestamp)
-      response.headers['ETag'] = EtagGenerator.generate_etag(timestamp)
+      response.headers['ETag'] = EtagGenerator.generate_etag(timestamp, self.class::CURRENT_VERSION)
       response.headers['Cache-Control'] = 'private'
     end
 

@@ -11,4 +11,6 @@ class Ember::TicketFieldsController < ::ApiTicketFieldsController
       section: [:section_fields, section_picklist_mappings: :picklist_value]
     ]
   ].freeze
+
+  CURRENT_VERSION = 'private-v1'.freeze
 end

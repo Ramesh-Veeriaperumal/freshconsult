@@ -27,6 +27,7 @@ module Helpdesk::RequesterWidgetHelper
                                             :loading_icon     => ["name"]
                                           }
                                         }
+  VALUE_MAPPING                     = { 'tag_names' => 'tags' }.freeze
 
   def requester_widget_fields
     key = REQUESTER_WIDGET_FIELDS % { :account_id => current_account.id }
@@ -162,6 +163,16 @@ module Helpdesk::RequesterWidgetHelper
     end
     CustomFields::View::DomElement.new(form_builder, obj_name, class_name, field, field.label,
       field.dom_type, required, enabled, value, placeholder, field.bottom_note, args).construct
+  end
+
+  def requester_contact_fields
+    fields = requester_widget_contact_fields.map { |x| x.name if x.column_name == 'default' && !CONTACT_FIELDS_EXCLUDE_TYPES.include?(x.field_type) } - FIELDS_INFO[:contact][:disabled_fields]
+    fields.map! { |field| field.eql?('tag_names') ? VALUE_MAPPING[field] : field } if fields.include?('tag_names')
+    fields
+  end
+
+  def requester_company_fields
+    requester_widget_company_fields.map { |x| x.name if x.column_name == 'default' && !COMPANY_FIELDS_EXCLUDE_TYPES.include?(x.field_type) } - FIELDS_INFO[:company][:disabled_fields]
   end
 
   private
