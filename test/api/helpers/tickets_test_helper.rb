@@ -573,6 +573,15 @@ module TicketsTestHelper
     @child_ticket  = create_ticket(assoc_parent_id: @parent_ticket.display_id)
   end
 
+  def create_ticket_with_attachments(min = 0, max = 1)
+    ticket = create_ticket
+    rand(min..max).times do
+      ticket.attachments << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id)
+    end
+    ticket.save
+    ticket
+  end
+
   def create_parent_ticket
     create_ticket
     parent_ticket = Helpdesk::Ticket.last

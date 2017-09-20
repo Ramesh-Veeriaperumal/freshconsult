@@ -225,6 +225,8 @@ Helpkit::Application.routes.draw do
         put :link, to: 'ember/tickets/associates#link'
         put :unlink, to: 'ember/tickets/associates#unlink'
         get :associated_tickets, to: 'ember/tickets/associates#associated_tickets'
+
+        put :requester, to: 'ember/tickets/requester#update'
       end
       resources :activities, controller: 'ember/tickets/activities', only: [:index]
 
@@ -358,7 +360,6 @@ Helpkit::Application.routes.draw do
     post '/search/autocomplete/agents/',        to: 'ember/search/autocomplete#agents'
     post '/search/autocomplete/companies/',     to: 'ember/search/autocomplete#companies'
     post '/search/autocomplete/tags/',          to: 'ember/search/autocomplete#tags'
-
   end
 
   pipe_routes = proc do

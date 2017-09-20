@@ -46,10 +46,15 @@ class TicketDelegator < BaseDelegator
   validate :validate_internal_agent_group_mapping, if: -> { internal_agent_id && attr_changed?('internal_agent_id') && Account.current.shared_ownership_enabled? }
   validate :validate_status_group_mapping, if: -> { internal_group_id && attr_changed?('internal_group_id') && Account.current.shared_ownership_enabled? }
 
+  validate :validate_parent_ticket, if: -> { child_ticket? && @parent.present? }
+
   def initialize(record, options)
     @ticket_fields = options[:ticket_fields]
-    @ticket = record
     check_params_set(options[:custom_fields]) if options[:custom_fields].is_a?(Hash)
+    if options[:parent_attachment_params].present?
+      @parent = options[:parent_attachment_params][:parent_ticket]
+      @parent_attachments = options[:parent_attachment_params][:parent_attachments]
+    end
     options[:attachment_ids] = skip_existing_attachments(options) if options[:attachment_ids]
     super(record, options)
     @ticket = record
@@ -154,6 +159,15 @@ class TicketDelegator < BaseDelegator
     errors[:internal_group] << :wrong_internal_group unless @ticket.valid_internal_group?
   end
 
+  def validate_parent_ticket
+    if @parent.cannot_add_child? || !@parent.can_be_associated?
+      errors[:parent_id] << :invalid_parent
+    elsif @parent.assoc_parent_ticket? && @parent.child_tkts_count >= TicketConstants::CHILD_TICKETS_PER_ASSOC_PARENT
+      errors[:parent_id] << :exceeds_limit
+      @error_options[:limit] = TicketConstants::CHILD_TICKETS_PER_ASSOC_PARENT
+    end
+  end
+
   private
 
     def property_update?
@@ -166,6 +180,6 @@ class TicketDelegator < BaseDelegator
 
     # skip shared attachments
     def skip_existing_attachments(options)
-      options[:attachment_ids] - (options[:shared_attachments] || []).map(&:id)
+      options[:attachment_ids] - (options[:shared_attachments] || []).map(&:id) - (@parent_attachments.present? ? @parent_attachments : []).map(&:id)
     end
 end

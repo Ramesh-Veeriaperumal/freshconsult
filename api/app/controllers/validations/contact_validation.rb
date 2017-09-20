@@ -88,7 +88,7 @@ class ContactValidation < ApiValidation
 
   validates :custom_fields, data_type: { rules: Hash }, unless: -> { validation_context == :quick_create }
   validates :custom_fields, custom_field: { custom_fields: {
-    validatable_custom_fields: proc { Account.current.contact_form.custom_non_dropdown_fields },
+    validatable_custom_fields: proc { |x| x.valid_custom_fields },
     required_attribute: :required_for_agent,
     ignore_string: :allow_string_param
   } }, unless: -> { validation_context == :quick_create }
@@ -127,7 +127,14 @@ class ContactValidation < ApiValidation
   end
 
   def required_default_fields
-    (validation_context == :quick_create) ? [] : Account.current.contact_form.default_contact_fields.select(&:required_for_agent)
+    case validation_context
+    when :quick_create
+      []
+    when :requester_update
+      contact_form.default_widget_fields.select(&:required_for_agent)
+    else
+      contact_form.default_contact_fields.select(&:required_for_agent)
+    end
   end
 
   def other_companies_format
@@ -151,6 +158,10 @@ class ContactValidation < ApiValidation
 
   def view_all_tickets_present?
     view_all_tickets.to_s == 'true'
+  end
+
+  def valid_custom_fields
+    requester_update? ? contact_form.custom_non_dropdown_widget_fields : contact_form.custom_non_dropdown_fields
   end
 
   private
@@ -247,5 +258,13 @@ class ContactValidation < ApiValidation
       else
         MANDATORY_FIELD_ARRAY - [:unique_external_id]
       end
+    end
+
+    def contact_form
+      @contact_form ||= Account.current.contact_form
+    end
+
+    def requester_update?
+      [:requester_update].include?(validation_context)
     end
 end

@@ -148,6 +148,29 @@ class ContactValidationTest < ActionView::TestCase
     Account.unstub(:current)
   end
 
+  def test_complex_fields_with_invalid_datatype
+    Account.stubs(:current).returns(Account.new)
+    Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
+    ContactForm.any_instance.stubs(:custom_non_dropdown_fields).returns([contact_field('cf_custom_text')])
+    controller_params = { 'name' => 'test', 'custom_fields' => { 'cf_custom_text' => 123 } }
+    contact = ContactValidation.new(controller_params, nil)
+    refute contact.valid?
+    errors = contact.errors.full_messages
+    assert errors.include?('Cf custom text datatype_mismatch')
+    Account.unstub(:current)
+  end
+
+  def test_complex_fields_with_valid_datatype
+    Account.stubs(:current).returns(Account.new)
+    Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
+    ContactForm.any_instance.stubs(:default_contact_fields).returns([])
+    ContactForm.any_instance.stubs(:custom_non_dropdown_fields).returns([contact_field('cf_custom_text')])
+    controller_params = { 'name' => 'test', 'custom_fields' => { 'cf_custom_text' => 'text' } }
+    contact = ContactValidation.new(controller_params, nil)
+    assert contact.valid?
+    Account.unstub(:current)
+  end
+
   def test_update_contact_with_fb_profile_id
     Account.stubs(:current).returns(Account.new)
     Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
@@ -172,4 +195,13 @@ class ContactValidationTest < ActionView::TestCase
     assert_equal({ name: {}, email: { field_names: 'email, mobile, phone, twitter_id' } }, contact.error_options)
     Account.unstub(:current)
   end
+
+  private
+
+    def contact_field(name)
+      contact_field = ContactField.new
+      contact_field.name = name
+      contact_field.field_type = 'custom_text'
+      contact_field
+    end
 end

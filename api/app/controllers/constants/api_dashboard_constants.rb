@@ -76,7 +76,7 @@ module ApiDashboardConstants
                moderation_count: :moderation_counts,
                unresolved_tickets_data: :unresolved_tickets }.freeze
 
-  UNRESOLVED_TICKETS_DATA_FIELDS = %w(group_by group_ids responder_ids status_ids widget).freeze
+  UNRESOLVED_TICKETS_DATA_FIELDS = %w(group_by group_ids product_ids responder_ids status_ids widget).freeze
 
   TICKET_METRICS_FIELDS = %w(group_ids product_ids).freeze
 
@@ -84,8 +84,9 @@ module ApiDashboardConstants
 
   SCORECARD_FIELDS = %w(group_ids product_ids).freeze
 
-  UNRESOLVED_COLUMN_KEY_MAPPING = { group_id: 'group_id', responder_id: 'responder_id', status: 'status',
-                                    internal_group_id: 'internal_group_id', internal_agent_id: 'internal_agent_id', group_ids: 'group_id', responder_ids: 'responder_id', status_ids: 'status' }.freeze
+  UNRESOLVED_COLUMN_KEY_MAPPING = {:group_id => "group_id", :responder_id => "responder_id", :status => "status", 
+      :internal_group_id => "internal_group_id", :internal_agent_id => "internal_agent_id", :group_ids => "group_id",
+      :product_id => "helpdesk_schema_less_tickets.product_id", :responder_ids => "responder_id", :status_ids => "status" }.freeze
 
   UNRESOLVED_FILTER_HEADERS = {
     UNRESOLVED_COLUMN_KEY_MAPPING[:responder_id] => 'agent_label',
@@ -101,4 +102,5 @@ module ApiDashboardConstants
 
   VALIDATION_CLASS = 'DashboardValidation'.freeze
   DELEGATOR_CLASS = 'DashboardDelegator'.freeze
+  INTEGER_LIMIT_WITH_NONE_OPTION = -2
 end

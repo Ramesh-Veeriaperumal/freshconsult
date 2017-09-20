@@ -33,5 +33,17 @@ module Ember
       refute agent_field['choices'].present?
       refute group_field['choices'].present?
     end
+
+    def test_index_with_default_status_choices
+      status = create_custom_status # Just in case custom statuses dont exist
+      get :index, controller_params(version: 'private')
+      assert_response 200   
+      response = parse_response @response.body
+      status_field = response.find { |x| x['type'] == 'default_status' }
+      status_field['choices'].each do |choice|
+        # choice[default] should be only true for default statuses
+        assert_equal Helpdesk::Ticketfields::TicketStatus::DEFAULT_STATUSES.keys.include?( choice['value']), choice['default']
+      end
+    end
   end
 end
