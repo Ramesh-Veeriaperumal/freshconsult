@@ -447,7 +447,7 @@ module Fdadmin
     end
 
     def freshcaller_migration
-      Freshfone::FreshcallerMigrationWorker.perform_async(account_id: @account.id, email: params[:email])
+      Freshfone::FreshcallerMigrationWorker.perform_async(account_id: @account.id, email: params[:email], account_creation: true)
       result[:status] = 'success'
       respond_to do |format|
         format.json do

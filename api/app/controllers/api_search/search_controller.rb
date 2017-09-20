@@ -4,7 +4,7 @@ module ApiSearch
 
     private
 
-      # Contructs a hash by collecting all values in the expression in the following format for validation
+      # Constructs a hash by collecting all values in the expression in the following format for validation
       # {
       #   priority: [2,3,4]
       #   status: [1,2]
@@ -60,7 +60,7 @@ module ApiSearch
 
       def query_results(search_terms, page, associations, type)
         begin
-          @records = Search::V2::QueryHandler.new({
+          @records = Search::V2::QueryHandler.new(
             account_id:   current_account.id,
             context:      fetch_context(type),
             exact_match:  false,
@@ -69,7 +69,7 @@ module ApiSearch
             offset:       ApiSearchConstants::DEFAULT_PER_PAGE,
             types:        type,
             es_params:    construct_es_params(search_terms, type, page)
-          }).query_results
+        ).query_results
         rescue Exception => e
           Rails.logger.error "Searchv2 exception - #{e.message} - #{e.backtrace.first}"
           NewRelic::Agent.notice_error(e)
@@ -79,7 +79,7 @@ module ApiSearch
       end
 
       def construct_es_params(search_terms, type, page)
-        Hash.new.tap do |es_params|
+        {}.tap do |es_params|
           es_params[:search_terms] = search_terms.to_json
           es_params[:account_id] = current_account.id
           es_params[:offset] = (page - 1) * ApiSearchConstants::DEFAULT_PER_PAGE
@@ -101,9 +101,7 @@ module ApiSearch
       end
 
       def fetch_context(type)
-        if type.include?('ticket')
-          :search_ticket_api
-        end
+        :search_ticket_api if type.include?('ticket')
       end
   end
 end

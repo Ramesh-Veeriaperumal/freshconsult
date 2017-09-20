@@ -183,6 +183,7 @@ module FreshdeskCore::Model
                         "freshfone_caller_ids",
                         
                         "freshcaller_accounts",
+                        "freshcaller_agents",
 
                         "survey_questions",
                         "survey_question_choices",

@@ -101,3 +101,4 @@ helpdesk:
     - product_feedback
     - connection_pool_patch
     - imap_patch
+    - threaded_init

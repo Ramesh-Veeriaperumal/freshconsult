@@ -2617,6 +2617,8 @@ en:
         not_allowed: You don't have access to delete it!
       create:
         success: The Agent has been created and activation instructions sent to %{email}!
+        freshcaller_limit: Phone capabilities have not been enabled for this agent as you have reached your agent limit in Freshcaller. Please buy additional licences in <a href='%{fc_billing_url}' target='_blank'>Freshcaller</a> to enable phone for additional agents.
+        fcagent_already_present: There was an issue in enabling phone capabilities for this agent. Please reach out to <a href="mailto:support@freshdesk.com" target="_top">support@freshdesk.com</a> to resolve this.
       edit:
         not_allowed: You cannot edit this agent
     roles:
@@ -4600,6 +4602,7 @@ en:
   subscription:
     error:
       lesser_agents: Your freshdesk account currently has %{agent_count} agents, you cannot subscribe to a lesser number of agents. Please delete some agents and try again.
+      choose_plan: Please choose a plan to proceed.
       card_update_limit_exceeded: You've exceeded the hourly limit for updating your credit card. Please try again later.
       invalid_currency: The currency you have chosen is invalid.
       invoice_delay: Unable to fetch this invoice right now. Please try again after sometime.
@@ -9207,6 +9210,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       dialog_sub_header: We can export only 25 columns of data
       aggregate_title: Aggregate info
       aggregate_info: Time spent distribution across selected categorisation
+      aggregate_help_text: 'Time spent in %{group_by} split by %{type}'
       ticket_title: Ticketwise info
       ticket_dropdown: 'Include time spent in:'
       ticket_info: Time spent per ticket split by status
@@ -9873,10 +9877,22 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       save: "Save"
       call_notes: "notes"
       notes: "Notes"
+
   freshcaller:
     admin:
       title_text: "Freshcaller"
       manage_settings_text: "Manage settings at Freshcaller"
+      sidebar_title: "Phone"
+      sidebar_content: "Freshdesk’s phone channel is powered by Freshcaller. You can make/receive calls directly from Freshdesk, as well as record all your calls and convert calls and voicemails into tickets.<br/><br/> <b> Call center setup </b> <br/>You can purchase phone credits from your Freshcaller admin account. You can purchase phone numbers from <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>over 40 countries</a>, using your phone credits. You can purchase toll-free phone numbers in U.S, U.K, Canada, and Australia. You do not have to purchase any hardware or install any software. You only need a web browser and a working internet connection. <br/> <br/> <b>Call center capabilities </b> <br/> You can answer calls on your browser, forward calls to your mobile, or transfer calls to any agent, use IVRs to receive calls, monitor calls, barge when needed, set business hour rules, and much more.<br/> <br/> <a href='https://www.freshworks.com/freshcaller-cloud-pbx/call-center-features/' target='_blank'>Learn more</a> about Freshcaller - the integrated phone solution for Freshdesk."
+      freshcaller_not_available: "Freshcaller is only available in the new UI. Please switch to the new UI to use Freshcaller."
+      phone_not_available: "Phone channel is available only in the old UI. Please reach out to <a href='mailto:support@freshcaller.com'>support@freshcaller.com</a> to use phone in the new UI."
+      freshcaller_signup_text: "Freshdesk provides an integated phone channel through Freshcaller. Enable your phone channel by creating a new Freshcaller account with 14-day free trial."
+      feature_request_content:
+        create_new_account: "Create new account" 
+        processing: "Creating your Freshcaller account"
+        success: "Your freshcaller account has been created"
+        domain_taken: "Looks like you already have a Freshcaller account. Please reach out to <a href='mailto:support@freshcaller.com'>support@freshcaller.com</a>  to link it to your helpdesk."
+        error: "Looks like there was an issue creating your account. Please reach out to <a href='mailto:support@freshcaller.com'>support@freshcaller.com</a> to help you enable phone for your helpdesk."
 
   freshfone:
     recording_on_process: "The recording is being processed. <a href='#' target='_parent' id='checkfreshfoneaudio'>Check</a> again in a few minutes"

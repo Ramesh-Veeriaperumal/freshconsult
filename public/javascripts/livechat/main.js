@@ -291,7 +291,8 @@
     	if(!fromDate) return false;
     	fromDate = new Date(fromDate);
     	var dateLimit = jQuery('.chat_archive_export').attr("data-export-date-limit");
-	   	return (new Date() < fromDate.setMonth(fromDate.getMonth() + dateLimit));
+    	fromDate.setMonth(fromDate.getMonth() + parseInt(dateLimit));
+	   	return (new Date() < fromDate);
     };
 
     var showProgress = function(progress) {
