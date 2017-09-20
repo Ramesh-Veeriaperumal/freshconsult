@@ -23,10 +23,6 @@ module DashboardConcern
     params[:group_by] = params[:group_by].to_s if params[:group_by].present?
   end
 
-  def unresolved_column_key_mapping
-    UNRESOLVED_COLUMN_KEY_MAPPING.clone
-  end
-
   def load_unresolved_filter
     group_by_key = [params[:group_by].to_sym, :status]
     column_key_mapping = unresolved_column_key_mapping
@@ -38,6 +34,28 @@ module DashboardConcern
                       column_key_mapping[:group_id]
                     end
     load_filter_conditions
+  end
+
+  def unresolved_column_key_mapping
+    UNRESOLVED_COLUMN_KEY_MAPPING.clone
+  end
+
+  def load_filter_conditions
+    @filter_condition = {}
+
+    column_key_mapping = unresolved_column_key_mapping
+    column_key_mapping.keys.each do |filter|
+      next if params[filter].blank?
+      filter_values = params[filter]
+      if filter_values.include?(0)
+        filter_values.delete(0)
+        filter_values.concat(user_agent_groups.map(&:to_s))
+        filter_values.uniq!
+      end
+      instance_var = get_filter_type(filter)
+      instance_variable_set("@#{instance_var}", filter_values)
+      @filter_condition.merge!(column_key_mapping[filter] => filter_values) if filter_values.present?
+    end
   end
 
   def get_filter_type(filter)
@@ -67,22 +85,46 @@ module DashboardConcern
     build_response(ticket_counts, options[:include_missing])
   end
 
-  def load_filter_conditions
-    @filter_condition = {}
-
-    column_key_mapping = unresolved_column_key_mapping
-    column_key_mapping.keys.each do |filter|
-      next if params[filter].blank?
-      filter_values = params[filter]
-      if filter_values.include?(0)
-        filter_values.delete(0)
-        filter_values.concat(user_agent_groups.map(&:to_s))
-        filter_values.uniq!
+  def build_response(ticket_counts, include_missing = false)
+    statuses_list = status_list_from_cache.keys
+    build_group_by_list
+    res_array = []
+    if include_missing
+      total_count = 0
+      stats_hash = statuses_list.inject([]) do |obj, status|
+        status_count = ticket_counts[[nil, status]] || 0
+        total_count += status_count
+        obj << { 'status_id' => status, 'count' => status_count }
       end
-      instance_var = get_filter_type(filter)
-
-      instance_variable_set("@#{instance_var}", filter_values)
-      @filter_condition.merge!(column_key_mapping[filter] => filter_values) if filter_values.present?
+      stats_hash << { 'status_id' => 0, 'count' => total_count }
+      res_array << { @group_by.first => -1, 'stats' => stats_hash }
+    end
+    group_by_values.keys.each do |group|
+      total_count = 0
+      status_counts = statuses_list.inject([]) do |obj, status|
+        status_count = ticket_counts[[group, status]] || 0
+        total_count += status_count
+        obj << { 'status_id' => status, 'count' => status_count }
+      end
+      status_counts << { 'status_id' => 0, 'count' => total_count } unless params[:widget]
+      res_array << { @group_by.first => group, 'stats' => status_counts } unless total_count.zero? && !valid_row?(group)
+    end
+    if !params[:widget]
+      return res_array
+    elsif @group_id.present?
+      return [] if res_array.empty?
+      status_counts = res_array[0]['stats']
+      res_array[0]['stats'] = status_counts.sort_by { |k, v|
+          k['count']
+        }.reverse[0..(UNRESOLVED_TICKETS_WIDGET_ROW_LIMIT - 1)].reject { |k,v|
+          k['count'] == 0
+        }
+    else
+      return res_array.sort_by { |k, v|
+          k['stats'][0]['count']
+        }.reverse[0..(UNRESOLVED_TICKETS_WIDGET_ROW_LIMIT - 1)].reject { |k,v|
+          k['stats'][0]['count'] == 0
+        }
     end
   end
 
@@ -164,41 +206,6 @@ module DashboardConcern
 
   def set_root_key
     response.api_root_key = ROOT_KEY[action_name.to_sym]
-  end
-
-  def build_response(ticket_counts, include_missing = false)
-    statuses_list = status_list_from_cache.keys
-    build_group_by_list
-    res_array = []
-    if include_missing
-      total_count = 0
-      stats_hash = statuses_list.inject([]) do |obj, status|
-        status_count = ticket_counts[[nil, status]] || 0
-        total_count += status_count
-        obj << { 'status_id' => status, 'count' => status_count }
-      end
-      stats_hash << { 'status_id' => 0, 'count' => total_count }
-      res_array << { @group_by.first => -1, 'stats' => stats_hash }
-    end
-    group_by_values.keys.each do |group|
-      total_count = 0
-      status_counts = statuses_list.inject([]) do |obj, status|
-        status_count = ticket_counts[[group, status]] || 0
-        total_count += status_count
-        obj << { 'status_id' => status, 'count' => status_count }
-      end
-      status_counts << { 'status_id' => 0, 'count' => total_count } unless params[:widget]
-      res_array << { @group_by.first => group, 'stats' => status_counts } unless total_count.zero? && !valid_row?(group)
-    end
-    if !params[:widget]
-      return res_array
-    elsif @group_id.present?
-      return [] if res_array.empty?
-      status_counts = res_array[0]['stats']
-      res_array[0]['stats'] = status_counts.sort_by { |k, v| k['count'] }.reverse[0..(UNRESOLVED_TICKETS_WIDGET_ROW_LIMIT - 1)]
-    else
-      return res_array.sort_by { |k, v| k['stats'][0]['count'] }.reverse[0..(UNRESOLVED_TICKETS_WIDGET_ROW_LIMIT - 1)]
-    end
   end
 
   def validate_dashboard_delegator

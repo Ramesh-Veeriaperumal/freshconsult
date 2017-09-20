@@ -1,4 +1,5 @@
 JSON.generate({
   agent: AgentDecorator.new(current_user.agent, {}).to_full_hash,
-  account: AccountDecorator.new(current_account).to_hash
+  account: AccountDecorator.new(current_account).to_hash,
+  portal: PortalDecorator.new(current_portal).to_hash
 })

@@ -6,7 +6,7 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
   def test_index
     get :index, controller_params(version: 'private')
     assert_response 200
-    match_json(index_pattern(@agent.agent, Account.current))
+    match_json(index_pattern(@agent.agent, Account.current, Account.current.portals.first))
   end
 
   def test_collision_autorefresh_keys

@@ -2,6 +2,10 @@ class Dashboard::DataLayer < Dashboard
   include MemcacheKeys
   include Cache::Memcache::Dashboard::CacheData
 
+  ASSOCIATED_FIELDS = {
+    product_id: "helpdesk_schema_less_tickets.product_id"
+  }
+
   attr_accessor :es_enabled, :filter_condition, :group_by, :workload_name, :cache_available, :include_missing
 
   def initialize(es_enabled, options = {})
@@ -12,7 +16,6 @@ class Dashboard::DataLayer < Dashboard
     @cache_available = options[:cache_data] || false
     @include_missing = options[:include_missing] || false
     @limit_option = options[:limit_option] || first_group_by_limit
-
   end
 
   def fetch_aggregation
@@ -51,12 +54,19 @@ class Dashboard::DataLayer < Dashboard
     es_res_hash
   end
 
-
-
   def aggregation_from_db
     if include_missing
-      #this is for unresolved dashboard. We dont need to do an order by from this page. 
-      default_scoper.where(filter_condition).group(group_by).count
+      #this is for unresolved dashboard. We dont need to do an order by from this page.
+      if filter_condition[ASSOCIATED_FIELDS[:product_id]]
+        default_scoper.where(filter_condition.except(ASSOCIATED_FIELDS[:product_id])).
+        joins(:schema_less_ticket).where(filter_condition.slice(ASSOCIATED_FIELDS[:product_id])).group(group_by).count
+      else
+        default_scoper.where(filter_condition).group(group_by).count
+      end
+    elsif filter_condition[ASSOCIATED_FIELDS[:product_id]]
+      default_scoper.where(filter_condition.except(ASSOCIATED_FIELDS[:product_id])).where("#{workload_name} is not NULL").
+        joins(:schema_less_ticket).where(filter_condition.slice(ASSOCIATED_FIELDS[:product_id])).
+        group(group_by).order("count(*) desc").limit(@limit_option).count
     else
       #Need to order by count as we are showing by descending order in UI. ES returns data by count desc always by default
       default_scoper.where(filter_condition).where("#{workload_name} is not NULL").group(group_by).order("count(*) desc").limit(@limit_option).count
