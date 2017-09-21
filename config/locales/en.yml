@@ -321,7 +321,7 @@ en:
     photo: Photo
     title: Title
     info1: A Profile image of the person, it's best if the picture has the same length and height
-    back_info: Background information
+    back_info: About
     background: Background
     mobile: Mobile
     twitter_id: Twitter
@@ -1045,7 +1045,7 @@ en:
         twitter_id: Twitter
         time_zone: Time Zone
         language: Language
-        description: Background Information
+        description: About
         multiple_company: Associate one contact with multiple companies
       untitled: Untitled
       first_choice: First Choice

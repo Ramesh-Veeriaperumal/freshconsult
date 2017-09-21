@@ -25,7 +25,7 @@ def self.contact_fields_data
       :position           => 11 },
     
     { :name               => "description",
-      :label              => "Background Information",
+      :label              => "About",
       :position           => 12  },
 
     { :name               => "client_manager", 
