@@ -1,0 +1,16 @@
+  type: object
+  properties:  
+    account_setup:
+      type: object
+      properties:
+        tasks:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: Step name
+              isComplete:
+                type: boolean
+                description: Status of completion

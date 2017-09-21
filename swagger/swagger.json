@@ -4445,6 +4445,77 @@
         }
       }
     },
+    "/onboarding/resend_activation_email": {
+      "get": {
+        "summary": "Resend activation email.",
+        "description": "Send an email for activating the account.",
+        "tags": [
+          "onboarding"
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/onboarding/update_activation_email": {
+      "put": {
+        "summary": "Update activation email.",
+        "description": "Updates the activation email address with the given email address.",
+        "tags": [
+          "onboarding"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "description": "New activation email",
+            "schema": {
+              "$ref": "#/definitions/onboarding_update_activation_email_input"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/trial_widget": {
+      "post": {
+        "summary": "Trial Widget Steps",
+        "description": "Account setup steps and their status",
+        "tags": [
+          "trial widget"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/trial_widget_index"
+            }
+          }
+        }
+      }
+    },
+    "/trial_widget/sales_manager": {
+      "post": {
+        "summary": "Sales Manager",
+        "description": "Sales manager information.",
+        "tags": [
+          "trial widget"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/trial_widget_sales_manager"
+            }
+          }
+        }
+      }
+    },
     "/marketplace_apps": {
       "get": {
         "tags": [
@@ -5971,6 +6042,23 @@
           "properties": {
             "available": {
               "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "onboarding_update_activation_email_input": {
+      "type": "object",
+      "properties": {
+        "onboarding": {
+          "type": "object",
+          "required": [
+            "new_email"
+          ],
+          "properties": {
+            "new_email": {
+              "type": "string",
+              "description": "New email"
             }
           }
         }
@@ -8617,6 +8705,45 @@
               }
             }
           }
+        }
+      }
+    },
+    "trial_widget_index": {
+      "type": "object",
+      "properties": {
+        "account_setup": {
+          "type": "object",
+          "properties": {
+            "tasks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Step name"
+                  },
+                  "isComplete": {
+                    "type": "boolean",
+                    "description": "Status of completion"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "trial_widget_sales_manager": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of sales manager"
+        },
+        "avatar": {
+          "type": "string",
+          "description": "URL of the sales manager's avatar"
         }
       }
     },
