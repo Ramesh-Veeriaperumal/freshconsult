@@ -30,6 +30,12 @@ get:
       in: query
       items:
         type: number
+    - name: product_ids
+      description: Selected products for filtering
+      type: array
+      in: query
+      items:
+        type: number
   responses:
     200:
       description: Success

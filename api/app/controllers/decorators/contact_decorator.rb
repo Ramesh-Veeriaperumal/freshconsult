@@ -147,15 +147,16 @@ class ContactDecorator < ApiDecorator
 
     def construct_hash(req_widget_fields, obj)
       default_fields = req_widget_fields.select(&:default_field?)
-      custom_fields = req_widget_fields.reject { |x| !x.default_field? }
+      custom_fields = req_widget_fields.reject(&:default_field?)
       ret_hash = widget_fields_hash(obj, default_fields)
-      ret_hash[:custom_fields] = widget_fields_hash(obj, custom_fields) if custom_fields.present?
+      ret_hash[:custom_fields] = widget_fields_hash(obj, custom_fields, true) if custom_fields.present?
       ret_hash[:id] = obj.id
       ret_hash
     end
 
-    def widget_fields_hash(obj, fields)
-      fields.inject({}) { |hash, field| hash.merge(field.name => obj.send(field.name)) }
+    def widget_fields_hash(obj, fields, name_mapping = false)
+      return fields.inject({}) { |a, e| a.merge(e.name => obj.send(e.name)) } unless name_mapping
+      fields.inject({}) { |a, e| a.merge(CustomFieldDecorator.display_name(e.name) => obj.send(e.name)) }
     end
 
     def current_account

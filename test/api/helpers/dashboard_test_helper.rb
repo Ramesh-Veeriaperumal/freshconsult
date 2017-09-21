@@ -96,6 +96,8 @@ module DashboardTestHelper
             :responder_id
           when :status_ids
             :status
+          when :product_ids
+            :product_id
           else
             filter
           end
@@ -159,9 +161,17 @@ module DashboardTestHelper
       return res_array
     elsif @group_id.present?
       status_counts = res_array[0]["stats"]
-      res_array[0]["stats"] = status_counts.sort_by{|k,v| k["count"]}.reverse[0..(UNRESOLVED_TICKETS_WIDGET_ROW_LIMIT-1)]
+      res_array[0]['stats'] = status_counts.sort_by { |k, v|
+          k['count']
+        }.reverse[0..(UNRESOLVED_TICKETS_WIDGET_ROW_LIMIT - 1)].reject { |k,v|
+          k['count'] == 0
+        }
     else
-      return res_array.sort_by{|k,v|  k["stats"][0]["count"]}.reverse[0..(UNRESOLVED_TICKETS_WIDGET_ROW_LIMIT-1)] 
-    end   
+      return res_array.sort_by { |k, v|
+          k['stats'][0]['count']
+        }.reverse[0..(UNRESOLVED_TICKETS_WIDGET_ROW_LIMIT - 1)].reject { |k,v|
+          k['stats'][0]['count'] == 0
+        }
+    end
   end
 end

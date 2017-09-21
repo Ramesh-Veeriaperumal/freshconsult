@@ -7,6 +7,6 @@ class CompanyFieldDecorator < ApiDecorator
   end
 
   def companies_custom_dropdown_choices
-    @choices ||= choices.map { |x| x[:value] }
+    @choices ||= choices.map { |x| { id: x[:id], label: x[:value], value: x[:value] } }
   end
 end

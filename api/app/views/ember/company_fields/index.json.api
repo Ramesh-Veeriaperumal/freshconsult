@@ -4,7 +4,7 @@ JSON.generate(@items.map do |company_field|
     name: company_field.name,
     label: company_field.label,
     position: company_field.position,
-    required_for_agent: company_field.required_for_agent,
+    required_for_agents: company_field.required_for_agent,
     type: company_field.field_type,
     default: company_field.default_field?,
     created_at: company_field.created_at.try(:utc),

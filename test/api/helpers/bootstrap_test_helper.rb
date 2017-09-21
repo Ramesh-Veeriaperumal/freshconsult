@@ -1,10 +1,13 @@
+['portals_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 module BootstrapTestHelper
   include Gamification::GamificationUtil
+  include PortalsTestHelper
 
-  def index_pattern(agent, account)
+  def index_pattern(agent, account, portal)
     {
       agent: agent_info_pattern(agent),
-      account: account_info_pattern(account)
+      account: account_info_pattern(account),
+      portal: portal_pattern(portal)
     }
   end
 
@@ -54,7 +57,8 @@ module BootstrapTestHelper
       },
       agents: Array,
       groups: Array,
-      verified: account.verified?
+      verified: account.verified?,
+      ssl_enabled: account.ssl_enabled?
     }
 
     pattern[:collaboration] = collab_pattern if account.collaboration_enabled?

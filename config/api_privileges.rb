@@ -83,6 +83,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/contacts/merge", only: [:merge]
     resource :"ember/customer_import", only: [:index, :create]
     resource :"ember/search/autocomplete", only: [:companies]
+
+    resource :"ember/tickets/requester", only: [:update]
   end
 
   manage_users do
