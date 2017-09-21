@@ -12,7 +12,8 @@ class Account < ActiveRecord::Base
       :advanced_reporting, :timesheets, :multiple_emails, :custom_domain, :gamification, :gamification_enable,
       :auto_refresh, :branding, :advanced_dkim, :basic_dkim, :shared_ownership_toggle, :unique_contact_identifier_toggle,
       :system_observer_events, :unique_contact_identifier, :ticket_activity_export, :caching, :private_inline, :collaboration,
-      :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :user_notifications
+      :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :user_notifications, 
+      :multiple_companies_toggle, :multiple_user_companies
     ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   LP_FEATURES.each do |item|

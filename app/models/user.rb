@@ -134,7 +134,7 @@ class User < ActiveRecord::Base
   end
 
   def has_multiple_companies_feature?
-    account.features?(:multiple_user_companies)
+    account.multiple_user_companies_enabled?
   end
 
   attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, :sbrr_fresh_user,

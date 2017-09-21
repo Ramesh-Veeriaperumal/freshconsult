@@ -22,7 +22,7 @@ class UserCompany < ActiveRecord::Base
 
   def remove_tickets_company_id
     # Tickets::UpdateCompanyId.perform_async({ :user_ids => user_id,
-    #   :company_id => nil }) unless account.features?(:multiple_user_companies)
+    #   :company_id => nil }) unless account.multiple_user_companies_enabled?
   end
 
   def set_default_company
