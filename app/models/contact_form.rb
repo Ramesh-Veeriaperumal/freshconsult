@@ -19,6 +19,10 @@ class ContactForm < ActiveRecord::Base
     contact_fields(skip_filter).select { |cf| cf.default_field? }
   end
 
+  def default_widget_fields
+    contact_fields.select { |cf| cf.default_field? && cf.field_options.present? && cf.field_options.key?('widget_position') }
+  end
+
   def custom_contact_fields
     contact_fields.select{ |cf| cf.custom_field? }
   end
@@ -57,6 +61,22 @@ class ContactForm < ActiveRecord::Base
 
   def custom_dropdown_field_choices
     custom_drop_down_fields.map { |x| [x.name, x.choices.map { |t| t[:value] }] }.to_h
+  end
+
+  def custom_fields_in_widget
+    contact_fields.select { |cf| cf.custom_field? && cf.field_options.present? && cf.field_options.key?('widget_position') }
+  end
+
+  def custom_non_dropdown_widget_fields
+    custom_contact_fields.select { |c| c.field_type != :custom_dropdown && c.field_options.present? && c.field_options.key?('widget_position') }
+  end
+
+  def custom_drop_down_widget_fields
+    custom_fields.select { |c| c.field_type == :custom_dropdown && c.field_options.present? && c.field_options.key?('widget_position') }
+  end
+
+  def custom_dropdown_widget_field_choices
+    custom_drop_down_widget_fields.map { |x| [x.name, x.choices.map { |t| t[:value] }] }.to_h
   end
 
   def custom_checkbox_fields

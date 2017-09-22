@@ -76,6 +76,8 @@
     $ref: ./request/tickets/execute_scenario.yaml
   link_input:
     $ref: ./request/tickets/link_input.yaml
+  requester_input:
+    $ref: ./request/tickets/requester.yaml
   cloud_file_input:
     $ref: ./request/cloud_files/cloud_file.yaml
   query_hash:
@@ -277,6 +279,8 @@
     $ref: './response/dashboard/ticket_metrics.yaml'
   leaderboard_agents_lists:
     $ref: './response/dashboard/leaderboard/agents.yaml'
+  requester:
+    $ref: './response/tickets/requester.yaml'
 
   #Marketplace
   marketplace_apps:

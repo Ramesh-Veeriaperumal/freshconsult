@@ -951,9 +951,9 @@ module Ember
         product = create_product
         ticket_ids = []
         rand(2..4).times do
-          ticket_ids << create_ticket(product_id: product.id + 10).display_id
+          ticket_ids << create_ticket(product_id: product.id + 10, responder_id: @agent.id + 100).display_id
         end
-        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5)
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :responder_id).merge(status: 5)
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 202

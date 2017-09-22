@@ -20,8 +20,12 @@ module DataVersioning
       end
 
       def versionize_latest_timestamp
-        add_etag_to_response_header(latest_timestamp)
-        set_others_redis_hash_set(version_key, version_entity_key, latest_timestamp) if version_entity_value.nil? || version_entity_value.to_i < latest_timestamp.to_i
+        if version_entity_value
+          add_etag_to_response_header(version_entity_value)
+        else
+          add_etag_to_response_header(latest_timestamp)
+          set_others_redis_hash_set(version_key, version_entity_key, latest_timestamp)
+        end
       end
 
       def version_entity_value
@@ -38,7 +42,7 @@ module DataVersioning
 
       def etag_matched?
         header_version = request.headers['If-None-Match']
-        header_version.present? && header_version == EtagGenerator.generate_etag(version_entity_value)
+        header_version.present? && header_version == EtagGenerator.generate_etag(version_entity_value, self.class::CURRENT_VERSION)
       end
   end
 end

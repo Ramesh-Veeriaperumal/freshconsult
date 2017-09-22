@@ -103,7 +103,7 @@ module CompaniesTestHelper
       label: company_field.label,
       type: company_field.field_type.to_s,
       position: company_field.position,
-      required_for_agent: company_field.required_for_agent
+      required_for_agents: company_field.required_for_agent,
       # created_at: nil, #Will be fixed in next helpkit release
       # updated_at: nil  #Will be fixed in next helpkit release
     }

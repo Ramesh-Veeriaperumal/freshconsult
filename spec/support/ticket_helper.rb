@@ -4,6 +4,7 @@ module TicketHelper
     unless requester_id
       user = add_new_user(@account)
       requester_id = user.id
+      user.user_companies.create(company_id: params[:company_id], default: true) if params[:company_id]
     end
     cc_emails = params[:cc_emails] || []
     fwd_emails = params[:fwd_emails] || []
@@ -23,7 +24,8 @@ module TicketHelper
                                          :spam => params[:spam] || 0,
                                          :custom_field => params[:custom_field],
                                          :tag_names => params[:tag_names],
-                                         :product_id =>params[:product_id])
+                                         :product_id => params[:product_id],
+                                         :company_id => params[:company_id])
     test_ticket.build_ticket_body(:description => Faker::Lorem.paragraph)
     if params[:attachments]
       test_ticket.attachments.build(content: params[:attachments][:resource],

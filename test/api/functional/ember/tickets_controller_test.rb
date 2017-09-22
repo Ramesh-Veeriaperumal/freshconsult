@@ -138,7 +138,7 @@ module Ember
         monitored_by new_and_my_open all_tickets unresolved
         article_feedback my_article_feedback
         watching on_hold
-        raised_by_me shared_by_me shared_with_me
+        raised_by_me shared_by_me shared_with_me ongoing_collab
       )
       match_json([bad_request_error_pattern(:filter, :not_included, list: valid_filters.join(', '))])
     end
@@ -176,6 +176,26 @@ module Ember
       get :index, controller_params(version: 'private', filter: 'raised_by_me')
       assert_response 200
       match_json(private_api_ticket_index_pattern)
+    end
+
+    def test_index_with_filter_name_ongoing_collab
+      collab_tickets_ids = []
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| collab_tickets_ids << create_ticket.display_id }
+      Account.current.stubs(:collab_settings).returns(Collab::Setting.new)
+      Collaboration::Ticket.any_instance.stubs(:fetch_tickets).returns(collab_tickets_ids)
+      Collaboration::Ticket.any_instance.stubs(:fetch_count).returns(collab_tickets_ids.size())
+
+      feature_flag = Account.current.has_feature?(:collaboration)
+      Account.current.set_feature(:collaboration) unless !feature_flag
+
+      get :index, controller_params(version: 'private', filter: 'ongoing_collab')
+      assert_response 200
+      match_json(private_api_ticket_index_pattern)
+    ensure
+      Account.current.reset_feature(:collaboration) unless !feature_flag
+      Account.current.unstub(:collab_settings)
+      Collaboration::Ticket.any_instance.unstub(:fetch_tickets)
+      Collaboration::Ticket.any_instance.unstub(:fetch_count)
     end
 
     def test_index_with_query_hash
@@ -1575,6 +1595,18 @@ module Ember
       end
     end
 
+    def test_create_child_to_inaccessible_parent
+      enable_adv_ticketing([:parent_child_tickets]) do
+        Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
+        parent_ticket = create_parent_ticket
+        User.any_instance.stubs(:has_ticket_permission?).returns(false)
+        params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
+        post :create, construct_params({ version: 'private' }, params_hash)
+        assert_response 403
+        User.any_instance.unstub(:has_ticket_permission?)
+      end
+    end
+
     def test_create_child_to_parent_with_max_children
       enable_adv_ticketing([:parent_child_tickets]) do
         Helpdesk::Ticket.any_instance.stubs(:associates).returns((10..21).to_a)
@@ -1582,19 +1614,78 @@ module Ember
         params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
         post :create, construct_params({ version: 'private' }, params_hash)
         assert_response 400
-        match_json([bad_request_error_pattern('parent_id', nil, append_msg: I18n.t('ticket.parent_child.count_exceeded', count: TicketConstants::CHILD_TICKETS_PER_ASSOC_PARENT))])
+        match_json([bad_request_error_pattern('parent_id', :exceeds_limit, limit: TicketConstants::CHILD_TICKETS_PER_ASSOC_PARENT)])
       end
     end
 
-    def test_create_child_to_a_invalid_parent
+    def test_create_child_to_a_spam_parent
       enable_adv_ticketing([:parent_child_tickets]) do
-        Helpdesk::Ticket.any_instance.stubs(:associates).returns((10..21).to_a)
         parent_ticket = create_parent_ticket
         parent_ticket.update_attributes(spam: true)
         params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
         post :create, construct_params({ version: 'private' }, params_hash)
         assert_response 400
-        match_json([bad_request_error_pattern('parent_id', nil, append_msg: I18n.t('ticket.parent_child.permission_denied'))])
+        match_json([bad_request_error_pattern('parent_id', :invalid_parent)])
+      end
+    end
+
+    def test_create_child_to_a_invalid_parent
+      enable_adv_ticketing([:parent_child_tickets]) do
+        parent_ticket = create_parent_ticket
+        parent_ticket.update_attributes(association_type: 4) #Related
+        params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
+        post :create, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern('parent_id', :invalid_parent)])
+      end
+    end
+
+    def test_create_child_with_parent_attachments
+      enable_adv_ticketing([:parent_child_tickets]) do
+        parent = create_ticket_with_attachments
+        params = ticket_params_hash.merge(parent_id: parent.display_id, attachment_ids: parent.attachments.map(&:id))
+        post :create, construct_params({ version: 'private' }, params)
+        child = Account.current.tickets.last
+        match_json(ticket_show_pattern(child))
+        assert child.attachments.count == parent.attachments.count
+      end
+    end
+
+    def test_create_child_with_some_parent_attachments
+      enable_adv_ticketing([:parent_child_tickets]) do
+        parent = create_ticket_with_attachments(1, 5)
+        params = ticket_params_hash.merge(parent_id: parent.display_id, attachment_ids: parent.attachments.map(&:id).first(1))
+        post :create, construct_params({ version: 'private' }, params)
+        child = Account.current.tickets.last
+        match_json(ticket_show_pattern(child))
+        assert child.attachments.count == 1
+      end
+    end
+
+    def test_create_child_with_some_parent_attachments_some_new_attachments
+      enable_adv_ticketing([:parent_child_tickets]) do
+        parent = create_ticket_with_attachments(1, 5)
+        parent_attachment_ids = parent.attachments.map(&:id).first(1)
+        child_attachment_ids = []
+        child_attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
+        params = ticket_params_hash.merge(parent_id: parent.display_id, attachment_ids: parent_attachment_ids + child_attachment_ids)
+        post :create, construct_params({ version: 'private' }, params)
+        child = Account.current.tickets.last
+        match_json(ticket_show_pattern(child))
+        assert child.attachments.count == 2
+      end
+    end
+
+    def test_create_child_with_no_parent_attachments_only_new_attachments
+      enable_adv_ticketing([:parent_child_tickets]) do
+        parent = create_ticket_with_attachments
+        child_attachment_ids = []
+        child_attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
+        params = ticket_params_hash.merge(parent_id: parent.display_id, attachment_ids: child_attachment_ids)
+        post :create, construct_params({ version: 'private' }, params)
+        child = Account.current.tickets.last
+        match_json(ticket_show_pattern(child))
+        assert child.attachments.count == 1
       end
     end
 

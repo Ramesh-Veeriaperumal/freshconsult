@@ -20,7 +20,7 @@ class ApiCompanyValidation < ApiValidation
   # Shouldn't be clubbed as allow nil may have some impact on custom fields validator.
   validates :custom_fields, data_type: { rules: Hash }
   validates :custom_fields, custom_field: { custom_fields: {
-    validatable_custom_fields: proc { Account.current.company_form.custom_non_dropdown_fields },
+    validatable_custom_fields: proc { |x| x.valid_custom_fields },
     required_attribute: :required_for_agent
   } }
 
@@ -44,7 +44,7 @@ class ApiCompanyValidation < ApiValidation
   end
 
   def required_default_fields
-    Account.current.company_form.default_company_fields.select(&:required_for_agent)
+    requester_update? ? company_form.default_widget_fields.select(&:required_for_agent) : company_form.default_company_fields.select(&:required_for_agent)
   end
 
   def validate_avatar
@@ -58,4 +58,18 @@ class ApiCompanyValidation < ApiValidation
   def validate_avatar_id_or_avatar
     errors[:avatar_id] << :only_avatar_or_avatar_id
   end
+
+  def valid_custom_fields
+    requester_update? ? company_form.custom_non_dropdown_widget_fields : company_form.custom_non_dropdown_fields
+  end
+
+  private
+
+    def company_form 
+      @company_form ||= Account.current.company_form 
+    end 
+
+    def requester_update?
+      [:requester_update].include?(validation_context)
+    end
 end

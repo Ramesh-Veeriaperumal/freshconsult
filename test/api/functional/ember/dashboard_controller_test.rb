@@ -198,7 +198,14 @@ module Ember
       match_json(unresolved_tickets_pattern(widget: 1, group_ids: [group.id], group_by: 'group_id'))
     end
 
-    def test_unresolved_tickets_widget_without_group_filter
+    def test_unresolved_tickets_widget_with_product_filter
+      product = create_product()
+      get :unresolved_tickets_data, controller_params(version: 'private', widget: 1, product_ids: [product.id], group_by: 'group_id')
+      assert_response 200
+      match_json(unresolved_tickets_pattern(widget: 1, product_ids: [product.id], group_by: 'group_id'))
+    end
+
+    def test_unresolved_tickets_widget_without_filter
       get :unresolved_tickets_data, controller_params(version: 'private', widget: 1, group_by: 'group_id', status_ids: [2])
       assert_response 200
       match_json(unresolved_tickets_pattern(widget: 1, group_by: 'group_id', status_ids: [2]))

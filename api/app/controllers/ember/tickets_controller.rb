@@ -17,6 +17,7 @@ module Ember
     SINGULAR_RESPONSE_FOR = %w(show create update split_note update_properties).freeze
 
     before_filter :ticket_permission?, only: [:latest_note, :split_note]
+    before_filter :parent_permission, only: [:create]
     before_filter :load_note, only: [:split_note]
     before_filter :disable_notification, only: [:update, :update_properties], if: :notification_not_required?
     after_filter  :enable_notification, only: [:update, :update_properties], if: :notification_not_required?
@@ -36,8 +37,9 @@ module Ember
 
     def create
       assign_protected
-      delegator_hash = { ticket_fields: @ticket_fields, custom_fields: cname_params[:custom_field],
-                         attachment_ids: @attachment_ids, shared_attachments: shared_attachments }
+      delegator_hash = { ticket_fields: @ticket_fields, custom_fields: cname_params[:custom_field], 
+                          attachment_ids: @attachment_ids, shared_attachments: shared_attachments,
+                          parent_attachment_params: parent_attachment_params }
       return unless validate_delegator(@item, delegator_hash)
       save_ticket_and_respond
     end
@@ -128,13 +130,14 @@ module Ember
         @item.build_schema_less_ticket unless @item.schema_less_ticket
         @item.account = current_account
         @item.cc_email = @cc_emails unless @cc_emails.nil?
+        assign_association_type
         assign_attachments
         assign_attributes_for_create if create?
         assign_ticket_status
-        assign_association_type
       end
 
       def assign_attachments
+        load_normal_attachments
         build_normal_attachments(@item, cname_params[:attachments])
         build_shared_attachments(@item, shared_attachments)
         build_cloud_files(@item, @cloud_files)
@@ -172,6 +175,26 @@ module Ember
           return
         end
         @items = paginate_items(items)
+      end
+
+      def load_normal_attachments
+        attachments_array = cname_params[:attachments] || []
+        (parent_attachments || []).each do |attach|
+          attachments_array.push(resource: attach.to_io)
+        end
+        cname_params[:attachments] = attachments_array
+      end
+
+      def parent_attachments
+        @parent_attachments ||=  if @attachment_ids.present? && parent_ticket.present?
+          @parent_ticket.all_attachments.select { |x| @attachment_ids.include?(x.id) }
+        else
+          []
+        end
+      end
+
+      def parent_ticket
+        @parent_ticket ||= current_account.tickets.find_by_display_id(cname_params[:assoc_parent_tkt_id])
       end
 
       def count_included?
@@ -321,6 +344,12 @@ module Ember
         log_and_render_404 unless @note
       end
 
+      def parent_permission
+        if cname_params[:assoc_parent_tkt_id].present?
+          render_request_error :access_denied, 403 if !parent_ticket || !current_user.has_ticket_permission?(parent_ticket)
+        end
+      end
+
       def notification_not_required?
         @skip_close_notification ||= cname_params.try(:[], :skip_close_notification)
       end
@@ -399,6 +428,13 @@ module Ember
           end
         end
         fields.inject(:merge) || {}
+      end
+
+      def parent_attachment_params
+        {
+          parent_ticket:       parent_ticket,
+          parent_attachments:  parent_attachments
+        }
       end
 
       def portal_url

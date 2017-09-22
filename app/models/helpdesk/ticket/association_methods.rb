@@ -40,6 +40,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     !(deleted || spam || parent_ticket.present?)
   end
 
+  def cannot_add_child?
+    association_type.present? && !assoc_parent_ticket?
+  end
+
   def child_tkt_limit_reached?
     association_type.nil? || (assoc_parent_ticket?  && asstn_obj_count < TicketConstants::CHILD_TICKETS_PER_ASSOC_PARENT)
   end

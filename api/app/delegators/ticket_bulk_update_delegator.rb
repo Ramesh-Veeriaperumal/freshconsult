@@ -80,8 +80,8 @@ class TicketBulkUpdateDelegator < BaseDelegator
     errors[:responder] << :"can't be blank" unless Account.current.agents_details_from_cache.detect { |x| responder_id == x.id }
   end
 
-  def required_for_closure_field?(_x)
-    ticket_fields.select { |x| x.name == x && x.required_for_closure }
+  def required_for_closure_field?(field)
+    ticket_fields.any? { |x| x.name == field && x.required_for_closure }
   end
 
   def status_set_to_closed?
