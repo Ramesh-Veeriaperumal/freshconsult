@@ -1,4 +1,5 @@
 class AccountDecorator < ApiDecorator
+  include Social::Util
   def to_hash
     ret_hash = {
       full_domain: record.full_domain,
@@ -16,6 +17,7 @@ class AccountDecorator < ApiDecorator
       verified: record.verified?
     }
     ret_hash[:collaboration] = collaboration_hash if record.collaboration_enabled?
+    ret_hash[:social_options] = social_options_hash if record.features?(:twitter) || record.basic_twitter_enabled?
     ret_hash
   end
 
@@ -45,6 +47,13 @@ class AccountDecorator < ApiDecorator
         personalized_email_replies: record.features.personalized_email_replies?,
         compose_email_enabled: record.compose_email_enabled?,
         include_survey_manually: include_survey_manually?
+      }
+    end
+
+    def social_options_hash
+      {
+        handles_associated: handles_associated?,
+        social_enabled: social_enabled?
       }
     end
 
