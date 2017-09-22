@@ -40,7 +40,7 @@ module SearchService
         end if item['highlight'].present?
 
         detected
-      end
+      end.compact
 
       Search::V2::PaginationWrapper.new(result_set, paginate_params.merge(total_entries: total_entries))
     end

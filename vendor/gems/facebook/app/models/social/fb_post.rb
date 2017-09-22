@@ -20,9 +20,13 @@ class Social::FbPost < ActiveRecord::Base
   
   serialize :post_attributes, Hash
   
-  scope :latest_thread, lambda {|thread_id , num| {:conditions => ["social_fb_posts.thread_id=? and postable_type=?", thread_id,'Helpdesk::Ticket'],
+  scope :latest_thread_for_id, lambda {|thread_id , num| {:conditions => ["social_fb_posts.thread_id=? and postable_type=?", thread_id,'Helpdesk::Ticket'],
                                                    :order => 'created_at DESC',
                                                    :limit => num}}
+
+  scope :latest_thread_for_key, lambda {|thread_key , num, page_id| {:conditions => ["social_fb_posts.thread_key=? and postable_type=? and facebook_page_id=?", thread_key, 'Helpdesk::Ticket', page_id],
+                                                   :order => 'created_at DESC',
+                                                   :limit => num}}                                                 
                                                                                                    
                                                    
   def post?

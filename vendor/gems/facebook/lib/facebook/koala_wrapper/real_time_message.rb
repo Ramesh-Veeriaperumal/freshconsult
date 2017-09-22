@@ -22,13 +22,13 @@ module Facebook
         @message    = @rest.get_object(@message_id, :fields => MESSAGE_FIELDS)
       end
 
-      def thread_id
+      def thread_key
         "#{@fan_page.page_id.to_s}#{MESSAGE_THREAD_ID_DELIMITER}#{@sender_id}" if @sender_id
       end
 
       def process
         fetch()
-        create_tickets(@message, thread_id) if thread_id
+        create_tickets(@message, thread_key) if thread_key
       end
     end
   end

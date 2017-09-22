@@ -155,6 +155,7 @@ module HelpdeskReports::Helper::Ticket
   end
 
   def export_summary_report
+    csv_headers_hash = get_csv_headers_master_hash
     csv_row_limit = params[:scheduled_report] ? HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:schedule][:csv] : HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:export][:csv]
     csv_size = @data.size
     if (csv_size > csv_row_limit)
@@ -163,7 +164,7 @@ module HelpdeskReports::Helper::Ticket
     end 
     csv_headers = ["#{report_type.to_s.split("_").first}_name"] + (@data.first.keys & METRIC_DISPLAY_NAME.keys)
     csv_string = CSVBridge.generate do |csv|
-      csv << csv_headers.collect{|i| METRIC_DISPLAY_NAME[i] || i.capitalize.gsub("_", " ") } # CSV Headers
+      csv << csv_headers.collect{|i| csv_headers_hash[i] } # CSV Headers
       @data.each do |row|
         res = []
         csv_headers.each { |i| res << (row[i] == NA_PLACEHOLDER_SUMMARY ? nil : presentable_format(row[i], i))}
@@ -427,5 +428,28 @@ module HelpdeskReports::Helper::Ticket
     suffix = web_request ? REPORTS_URL_SUFFIX[plan_priority] : REPORTS_BG_URL_SUFFIX[plan_priority]
     ReportsAppConfig::TICKET_REPORTS_URL % {priority: suffix}
   end
-  
+
+  def get_csv_headers_master_hash
+    {
+      "agent_name":I18n.t('helpdesk_reports.agent_summary.agent'),
+      "group_name":I18n.t('helpdesk_reports.group_summary.group'),
+      "AGENT_ASSIGNED_TICKETS":I18n.t('helpdesk_reports.agent_summary.ticket_assigned') ,
+      "RESOLVED_TICKETS":I18n.t('helpdesk_reports.agent_summary.ticket_resolved') ,
+      "REOPENED_TICKETS":I18n.t('helpdesk_reports.agent_summary.tickets_reopened') ,
+      "GROUP_ASSIGNED_TICKETS":I18n.t('helpdesk_reports.agent_summary.ticket_assigned') ,
+      "AGENT_REASSIGNED_TICKETS":I18n.t('helpdesk_reports.agent_summary.ticket_reasigned'),
+      "GROUP_REASSIGNED_TICKETS":I18n.t('helpdesk_reports.agent_summary.ticket_reasigned'),
+      "CUSTOMER_INTERACTIONS":I18n.t('helpdesk_reports.customer_report.customer_interactions'),
+      "AGENT_INTERACTIONS":I18n.t('helpdesk_reports.customer_report.agent_interactions'),
+      "RESPONSE_SLA":I18n.t('helpdesk_reports.agent_summary.reports_sla'),
+      "RESOLUTION_SLA":I18n.t('helpdesk_reports.agent_summary.res_sla'),
+      "FCR_TICKETS":I18n.t('helpdesk_reports.agent_summary.fcr'),
+      "PRIVATE_NOTES":I18n.t('helpdesk_reports.agent_summary.private_note'),
+      "RESPONSES":I18n.t('helpdesk_reports.agent_summary.responses'),
+      "AVG_FIRST_RESPONSE_TIME":I18n.t('helpdesk_reports.agent_summary.avg_first_res_time'),
+      "AVG_RESPONSE_TIME":I18n.t('helpdesk_reports.agent_summary.avg_res_time'),
+      "AVG_RESOLUTION_TIME":I18n.t('helpdesk_reports.agent_summary.avg_resolution_time')
+    }.with_indifferent_access
+  end
+
 end
