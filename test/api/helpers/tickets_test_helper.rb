@@ -375,11 +375,11 @@ module TicketsTestHelper
     pattern = ticket_pattern_with_association(ticket, false, false, false, false, true).merge(cloud_files: Array)
     ticket_topic = ticket_topic_pattern(ticket)
     pattern[:freshfone_call] = freshfone_call_pattern(ticket) if freshfone_call_pattern(ticket).present?
-    if Account.current.features?(:facebook) && ticket.facebook?
+    if (Account.current.features?(:facebook) || Account.current.basic_facebook_enabled?) && ticket.facebook?
       fb_pattern = ticket.fb_post.post? ? fb_post_pattern({}, ticket.fb_post) : fb_dm_pattern({}, ticket.fb_post)
       pattern[:fb_post] = fb_pattern
     end
-    pattern[:tweet] = tweet_pattern({}, ticket.tweet) if Account.current.features?(:twitter) && ticket.twitter?
+    pattern[:tweet] = tweet_pattern({}, ticket.tweet) if (Account.current.features?(:twitter) || Account.current.basic_twitter_enabled?) && ticket.twitter?
     pattern[:meta] = ticket_meta_pattern(ticket)
     pattern[:survey_result] = feedback_pattern(survey_result) if survey_result
     pattern[:ticket_topic] = ticket_topic if ticket_topic.present?
