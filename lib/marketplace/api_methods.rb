@@ -95,6 +95,27 @@ module Marketplace::ApiMethods
       end
     end
 
+    def extension_details_v2(extension_id, version_id)
+      begin
+        key = MemcacheKeys::EXTENSION_DETAILS_V2 % { 
+          :extension_id => extension_id, :version_id => version_id, :locale_id => curr_user_language }
+        api_payload = payload(
+                            Marketplace::ApiEndpoint::ENDPOINT_URL[:extension_details]  % 
+                            { 
+                              :product_id => PRODUCT_ID,
+                              :extension_id => extension_id
+                            },
+                            Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:extension_details],
+                            :version_id => version_id
+                          )
+        mkp_memcache_fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
+          get_api(api_payload, MarketplaceConfig::GLOBAL_API_TIMEOUT)
+        end
+      rescue *FRESH_REQUEST_EXP => e
+        exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
+      end
+    end
+
     def version_details(version_id = params[:version_id])
       begin
         key = MemcacheKeys::VERSION_DETAILS % { :version_id => version_id }
