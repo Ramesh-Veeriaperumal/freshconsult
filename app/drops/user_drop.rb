@@ -41,6 +41,10 @@ class UserDrop < BaseDrop
 	def all_emails
 		source.user_emails.pluck("email").join(",")
 	end
+	
+	def primary_email
+		@source.primary_email.try(:email)
+	end
 
 	def recent_tickets
 		source.tickets.visible.newest(5)
