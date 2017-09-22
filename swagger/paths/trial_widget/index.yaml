@@ -1,0 +1,10 @@
+  post:
+    summary: Trial Widget Steps
+    description: Account setup steps and their status
+    tags: [trial widget]
+
+    responses:
+      200:
+        description: OK
+        schema:
+          $ref: '#/definitions/trial_widget_index'

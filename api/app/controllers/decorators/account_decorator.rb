@@ -35,7 +35,8 @@ class AccountDecorator < ApiDecorator
       {
         agent_limit: subscription.agent_limit,
         state: subscription.state,
-        subscription_plan: subscription.subscription_plan.name
+        subscription_plan: subscription.subscription_plan.name,
+        trial_days: subscription.trial_days
       }
     end
 

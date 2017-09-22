@@ -66,7 +66,8 @@ module BootstrapTestHelper
       pattern[:subscription] = {
         agent_limit: account.subscription.agent_limit,
         state: account.subscription.state,
-        subscription_plan: String
+        subscription_plan: String,
+        trial_days: account.subscription.trial_days
       }
     end
     pattern
