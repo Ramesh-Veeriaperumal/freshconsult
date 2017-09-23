@@ -67,6 +67,7 @@ module BootstrapTestHelper
       agents: Array,
       groups: Array,
       verified: account.verified?,
+      created_at: account.created_at.try(:utc),
       ssl_enabled: account.ssl_enabled?
     }
 

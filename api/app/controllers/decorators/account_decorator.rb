@@ -14,7 +14,8 @@ class AccountDecorator < ApiDecorator
       ssl_enabled: record.ssl_enabled?,
       agents: agents_hash,
       groups: groups_hash,
-      verified: record.verified?
+      verified: record.verified?,
+      created_at: record.created_at.try(:utc)
     }
     ret_hash[:collaboration] = collaboration_hash if record.collaboration_enabled?
     ret_hash[:social_options] = social_options_hash if record.features?(:twitter) || record.basic_twitter_enabled?
