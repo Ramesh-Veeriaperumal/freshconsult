@@ -19,7 +19,7 @@ class User < ActiveRecord::Base
   after_update  :send_alert_email, :if => [:email_changed?,:agent?]
 
   before_save :set_time_zone, :set_default_company
-  before_save :set_language, :unless => :created_from_email
+  before_save :set_language, :unless => :detect_language?
   before_save :set_contact_name, :update_user_related_changes
   before_save :set_customer_privilege, :set_contractor_privilege, :if => :customer?
   before_save :restrict_domain, :if => :email_changed?
@@ -86,6 +86,10 @@ class User < ActiveRecord::Base
 
   def set_language
     self.language = account.language if language.nil? || validate_language(language)
+  end
+
+  def detect_language?
+    self.created_from_email || self.detect_language
   end
 
   def discard_contact_field_data

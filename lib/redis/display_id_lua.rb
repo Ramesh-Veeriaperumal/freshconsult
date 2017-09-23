@@ -12,7 +12,8 @@ module Redis::DisplayIdLua
           key = redis.call('INCR', ARGV[1])
           return key
         else
-          key = redis.call('SET', ARGV[1],'#{TicketConstants::TICKET_START_DISPLAY_ID}')
+          redis.call('SET', ARGV[1],'#{TicketConstants::TICKET_START_DISPLAY_ID}')
+          key = redis.call('GET', ARGV[1])
           return key
         end
       LUA

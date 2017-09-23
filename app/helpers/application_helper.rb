@@ -65,7 +65,7 @@ module ApplicationHelper
   end
 
   def redirect_falcon_path
-    FalconRedirection.falcon_redirection_path(request.path_info)
+    FalconRedirection.falcon_redirection_path request.path_info, request.query_string
   end
 
   def trial_expiry_title(trial_days)

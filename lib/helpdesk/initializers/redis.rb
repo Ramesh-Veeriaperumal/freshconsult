@@ -10,23 +10,23 @@ redis_session_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_se
 
 #$redis_secondary = Redis.new(:host => config["host"], :port => config["port"])
 
-$redis_tickets = Redis.new(:host => config["host"], :port => config["port"], :timeout => 5)
-$redis_reports = Redis.new(:host => config["host"], :port => config["port"], :timeout => 5)
-$redis_integrations = Redis.new(:host => config["host"], :port => config["port"], :timeout => 5)
-$redis_portal = Redis.new(:host => config["host"], :port => config["port"], :timeout => 5)
-$redis_others = Redis.new(:host => config["host"], :port => config["port"], :timeout => 5)
-$spam_watcher = Redis.new(:host => rate_limit["host"], :port => rate_limit["port"], :timeout => 0.5)
-$rate_limit = Redis.new(:host => rate_limit["host"], :port => rate_limit["port"], :timeout => 0.5) # Used by fd_api_throttler.
-$redis_routes = Redis.new(:host => routes_config["host"], :port => routes_config["port"], :timeout => 5)
-$redis_display_id = Redis.new(:host => display_id_config["host"], :port => display_id_config["port"], :timeout => 5)
-$redis_mkp = Redis.new(:host => config["host"], :port => config["port"], :timeout => 5)
-$redis_round_robin = Redis.new(:host => round_robin_config["host"], :port => round_robin_config["port"], :timeout => 5)
-$redis_session = Redis.new(:host => redis_session_config["host"], :port => redis_session_config["port"],:timeout => 5)
+$redis_tickets = Redis.new(:host => config["host"], :port => config["port"], :timeout => config["timeout"], :tcp_keepalive => config["keepalive"])
+$redis_reports = Redis.new(:host => config["host"], :port => config["port"], :timeout => config["timeout"], :tcp_keepalive => config["keepalive"])
+$redis_integrations = Redis.new(:host => config["host"], :port => config["port"], :timeout => config["timeout"], :tcp_keepalive => config["keepalive"])
+$redis_portal = Redis.new(:host => config["host"], :port => config["port"], :timeout => config["timeout"], :tcp_keepalive => config["keepalive"])
+$redis_others = Redis.new(:host => config["host"], :port => config["port"], :timeout => config["timeout"], :tcp_keepalive => config["keepalive"])
+$spam_watcher = Redis.new(:host => rate_limit["host"], :port => rate_limit["port"], :timeout => rate_limit["timeout"], :tcp_keepalive => rate_limit["keepalive"])
+$rate_limit = Redis.new(:host => rate_limit["host"], :port => rate_limit["port"], :timeout => rate_limit["timeout"], :tcp_keepalive => rate_limit["keepalive"]) # Used by fd_api_throttler.
+$redis_routes = Redis.new(:host => routes_config["host"], :port => routes_config["port"], :timeout => routes_config["timeout"], :tcp_keepalive => routes_config["keepalive"])
+$redis_display_id = Redis.new(:host => display_id_config["host"], :port => display_id_config["port"], :timeout => display_id_config["timeout"], :tcp_keepalive => display_id_config["keepalive"])
+$redis_mkp = Redis.new(:host => config["host"], :port => config["port"], :timeout => config["timeout"], :tcp_keepalive => config["keepalive"])
+$redis_round_robin = Redis.new(:host => round_robin_config["host"], :port => round_robin_config["port"], :timeout => round_robin_config["timeout"], :tcp_keepalive => round_robin_config["keepalive"])
+$redis_session = Redis.new(:host => redis_session_config["host"], :port => redis_session_config["port"],:timeout => redis_session_config["timeout"], :tcp_keepalive => redis_session_config["keepalive"])
 
 
 
 mobile_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_mobile.yml'))[Rails.env]
-$redis_mobile = Redis.new(:host => mobile_config["host"], :port => mobile_config["port"], :timeout => 5)
+$redis_mobile = Redis.new(:host => mobile_config["host"], :port => mobile_config["port"], :timeout => mobile_config["timeout"], :tcp_keepalive => mobile_config["keepalive"])
 
 #Loading Redis Display Id's Lua script
 Redis::DisplayIdLua.load_display_id_lua_script_to_redis

@@ -47,24 +47,39 @@ class CRM::FreshsalesUtility
   end
 
   def push_signup_data(data)
-    result = search({ entities: 'lead,contact', field: 'email', query: @account.admin_email,
-                      includes: 'owner,lead_stage' })
-    lead = recently_updated(result[:leads])
-    contact = result[:contacts].first
     @source_and_campaign_info = get_lead_source_and_campaign_id
-    if contact
-      status, response = create_lead_with_same_owner(contact[:owner_id], contact[:updated_at])
-    elsif lead
-      status, response = create_or_update_lead(lead, result[:lead_stages])
+
+    # assign leads based on email domain and farming account flag.
+    # If the leads email domain is already associated with an account & if it is farming account, 
+    # then assign new lead to the owner of the respective account.
+    # user_domain = @account.admin_email.gsub(/.+@([^.]+).+/, '\1')
+
+    farming_account = get_farming_account(@account.admin_email)
+    
+    if farming_account
+      # Updating the sales account's owner ID to leads if its the farming account, irrespective of the account's updated_at value.
+      updated_at = Time.now.strftime("%Y-%m-%dT%H:%M:%S%:z") # To reuse the create_lead_with_same_owner method, Adding updated_at value as current datatime. 
+      status,response = create_lead_with_same_owner(farming_account[:owner_id], updated_at)
     else
-      sales_account = search_accounts_by_name(@account.name, 'owner')[:sales_accounts].first
-      if sales_account
-        status, response = create_lead_with_same_owner(sales_account[:owner_id], sales_account[:updated_at])
+      result = search({ entities: 'lead,contact', field: 'email', query: @account.admin_email,
+                      includes: 'owner,lead_stage' })
+      lead = recently_updated(result[:leads])
+      contact = result[:contacts].first
+
+      if contact
+        status, response = create_lead_with_same_owner(contact[:owner_id], contact[:updated_at])
+      elsif lead
+        status, response = create_or_update_lead(lead, result[:lead_stages])
       else
-        company_leads = search_leads_by_company_name(@account.name, 'owner')[:leads]
-        company_lead  = recent_lead_by_account_and_product(company_leads, @account.id, @deal_product_id)
-        status, response = company_lead ? create_lead_with_same_owner(company_lead[:owner_id], company_lead[:updated_at]) : 
-                                          fs_create('lead', new_lead_params)
+        sales_account = search_accounts_by_name(@account.name, 'owner')[:sales_accounts].first
+        if sales_account
+          status, response = create_lead_with_same_owner(sales_account[:owner_id], sales_account[:updated_at])
+        else
+          company_leads = search_leads_by_company_name(@account.name, 'owner')[:leads]
+          company_lead  = recent_lead_by_account_and_product(company_leads, @account.id, @deal_product_id)
+          status, response = company_lead ? create_lead_with_same_owner(company_lead[:owner_id], company_lead[:updated_at]) : 
+                                            fs_create('lead', new_lead_params)
+        end
       end
     end
 
@@ -73,6 +88,20 @@ class CRM::FreshsalesUtility
       config = { rest_url: "/leads/#{response[:lead][:id]}/associate_to_visitor", method: 'post', body: visitor_info }
       request_freshsales(config)
     end
+  end
+
+  # Freshsales search by the field email_domain (cf_email_domain)
+
+  def search_accounts_by_email_domain(email)
+    user_domain = "@" + Mail::Address.new(email).domain
+    sales_account_by_email_domain = search({ entities: 'sales_account', field: 'cf_email_domain', query: user_domain,  includes: "" })[:sales_accounts]
+  end
+
+  # Get the recently updated farming account for the given email domain.
+
+  def get_farming_account(email)
+    sales_account_by_email_domain = search_accounts_by_email_domain(email)
+    account_data = sales_account_by_email_domain.select {|x| x[:custom_field][:cf_is_farming_account] == true }.last
   end
 
   def update_admin_info

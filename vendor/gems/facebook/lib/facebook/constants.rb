@@ -98,6 +98,8 @@ module Facebook
 
     ACCESS_TOKEN_PARAMS = "client_id=%{client_id}&client_secret=%{client_secret}&redirect_uri=%{redirect_uri}&code=%{code}"
 
+    INLINE_FILE_FORMATS = ['png', 'jpeg', 'gif', 'tiff']
+
   end
 end
   
