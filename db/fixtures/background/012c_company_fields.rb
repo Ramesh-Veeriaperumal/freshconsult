@@ -3,7 +3,7 @@ account = Account.current
 def self.company_fields_data
   [
     { :name               => "description", 
-      :label              => "Description",
+      :label              => "About",
       :position           => 2 },
       
     { :name               => "note", 
