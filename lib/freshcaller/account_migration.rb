@@ -8,6 +8,7 @@ module Freshcaller
           if account.present? || account.freshfone_account.present?
             account.make_current
             return if account_admin.blank?
+            protocol = Rails.env.development? ? 'http://' : 'https://'
             signup_params = {
               signup: {
                 user_name: account_admin.name,
@@ -21,7 +22,8 @@ module Freshcaller
                 api: {
                   activation_required: false,
                   account_name: account.name,
-                  account_id: account_id
+                  account_id: account_id,
+                  freshdesk_calls_url: "#{protocol}#{account.full_domain}/api/channel/freshcaller_calls"
                 }
               }
             }
