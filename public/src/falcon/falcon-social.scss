@@ -1,0 +1,79 @@
+$link-text-color: #254d6d;
+$link-text-active-color: #02b875;
+$hover-bg-color: #f3f3f3;
+
+$font-family-normal: 'Proxima Nova Rg', "Helvetica Neue", Helvetica, Arial !default;
+$font-family-bold: 'Proxima Nova bold', "Helvetica Neue", Helvetica, Arial !default;
+$font-family-semibold: 'Proxima Nova sbold', "Helvetica Neue", Helvetica, Arial !default;
+
+#admin-social-tab {
+  .list-page-body {
+    padding: 0;
+    .table {
+      border-radius: inherit;
+    }
+  }
+}
+
+#social-tab-falcon-identifier {
+
+  .select2-container-multi .select2-choices {
+    background: #fff !important;
+  }
+
+  a {
+    font-family: $font-family-semibold !important
+  }
+
+  .tw-accs {
+    .title {
+      border-top: none;
+      padding-bottom: 0;
+    }
+
+    ul {
+      margin-bottom: 25px;
+    }
+
+    li a {
+      color: $link-text-color;
+      border: none;
+      background: inherit;
+      padding: 5px 5px;
+      font-weight: 400;
+
+      &.active:after, .active.after:hover {
+        color: $link-text-active-color;
+        visibility: visible !important;
+      }
+
+      &.active {
+        color: $link-text-active-color;
+        background: inherit;
+        border: none;
+
+        :after, :after:hover {
+          color: $link-text-active-color;
+          visibility: visible !important;
+        }
+      }
+
+      &:after {
+        visibility: hidden;
+
+      }
+
+      &:hover {
+        color: $link-text-color;
+        background-color: #f3f3f3;
+        text-decoration: none;
+        border-radius: 0;
+      }
+    }
+
+  }
+
+  #more_stream_feeds {
+    margin: 20px;
+  }
+}

@@ -150,4 +150,14 @@ module Social::Util
   def tokenize(message)
     message.to_s.tokenize_emoji.gsub(EMOJI_UNICODE_REGEX," ")
   end
+
+  def social_enabled?
+    settings = Account.current.account_additional_settings.additional_settings
+    settings.blank? || settings[:enable_social].nil? || settings[:enable_social]
+  end
+
+  def handles_associated?
+    !Account.current.twitter_handles_from_cache.blank?
+  end
+
 end

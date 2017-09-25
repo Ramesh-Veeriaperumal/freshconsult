@@ -107,6 +107,7 @@ Authority::Authorization::PrivilegeList.build do
 
   admin_tasks do
     resource :"ember/contact", only: [:update_password]
+    resource :'ember/trial_widget', only: %i[index sales_manager]
   end
 
   edit_ticket_properties do

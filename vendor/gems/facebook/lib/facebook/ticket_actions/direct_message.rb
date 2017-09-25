@@ -9,7 +9,8 @@ module Facebook
       def create_tickets(threads)
         threads.each do |thread|
           thread.symbolize_keys!
-          fb_msg = Sharding.run_on_slave { @account.facebook_posts.latest_thread(thread[:id], 1).first }
+          msg_ids = thread[:messages]["data"].map { |msg| msg["id"]}
+          fb_msg = latest_message(thread[:thread_key], thread[:id], msg_ids)
           previous_ticket = fb_msg.try(:postable)
 
           last_reply = unless previous_ticket.blank?
@@ -26,7 +27,7 @@ module Facebook
           end
 
           if fb_msg.present? && fb_msg.thread_key.nil?
-            @account.facebook_posts.where({:thread_id => thread[:id], :facebook_page_id => @fan_page.id}).find_each do |fb_post| 
+            @account.facebook_posts.where({:thread_id => thread[:id], :facebook_page_id => @fan_page.id, :thread_key => nil}).find_each do |fb_post| 
               fb_post.update_attributes({:thread_key => thread[:thread_key]})
             end
           end

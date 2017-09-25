@@ -102,7 +102,7 @@ class Account < ActiveRecord::Base
   end
 
   def freshcaller_enabled?
-    has_feature?(:freshcaller) && freshcaller_account.present?
+    has_feature?(:freshcaller) and freshcaller_account.present?
   end
 
   def freshchat_enabled?

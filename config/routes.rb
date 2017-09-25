@@ -1381,6 +1381,13 @@ Helpkit::Application.routes.draw do
         post :request_freshfone_feature
       end
     end
+    namespace :freshcaller, :path => 'freshcaller' do
+      resources :signup do 
+        member do 
+          get :index
+        end
+      end
+    end
 
     namespace :freshfone, :path => 'phone' do
       resources :numbers do
@@ -1857,6 +1864,7 @@ Helpkit::Application.routes.draw do
       get :edit_domain
       put :update_domain
       get :validate_domain
+      get :signup_validate_domain
     end
   end
 
@@ -2866,7 +2874,7 @@ Helpkit::Application.routes.draw do
   match '/chat/agents', :controller => 'chats', :action => 'agents', :method => :get
 
 
-  #  constraints(lambda {|req| req.subdomain == AppConfig['partner_subdomain'] }) do
+  constraints(lambda {|req| PartnerSubdomains.include?(req.subdomain) })  do
   namespace :partner_admin, :as => 'partner' do
     resources :affiliates do
       collection do
@@ -2883,7 +2891,7 @@ Helpkit::Application.routes.draw do
       end
     end
   end
-  #  end
+  end
 
   constraints(lambda {|req| req.subdomain == AppConfig['billing_subdomain'] }) do
     # namespace :billing do

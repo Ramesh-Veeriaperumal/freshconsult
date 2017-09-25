@@ -247,7 +247,7 @@ class Account < ActiveRecord::Base
     unless max_dis_id.nil?
       return  ticket_dis_id > max_dis_id ? ticket_dis_id : max_dis_id+1
     end
-    return 0
+    return 1
   end
 
   def max_display_id
