@@ -12,6 +12,7 @@ module Freshcaller
               @account[:numbers] ||= []
               caller_id_sid = freshfone_number.freshfone_caller_id.present? ? freshfone_number.freshfone_caller_id.number_sid : nil
               number_hash = { number: freshfone_number.number, display_number: freshfone_number.display_number,
+                              name: freshfone_number.name,
                               region: freshfone_number.region,
                               country: freshfone_number.country,
                               number_sid: freshfone_number.number_sid,
@@ -22,7 +23,8 @@ module Freshcaller
                               voicemail_active: freshfone_number.voicemail_active,
                               recording_active: freshfone_number.record,
                               deleted: freshfone_number.deleted,
-                              caller_id_sid: caller_id_sid }
+                              caller_id_sid: caller_id_sid,
+                              accessibility_groups: fetch_accessibity_group(freshfone_number) }
               @account[:numbers] << number_hash
             end
             numbers << @account
@@ -55,6 +57,12 @@ module Freshcaller
       end
       Rails.logger.info "Caller id migration for account :: #{account_id} completed"
       ::Account.reset_current_account
+    end
+
+    def fetch_accessibity_group(number)
+      number.freshfone_number_groups.map { |number_group| 
+        number_group.group.try(:name)
+      }
     end
   end
 end

@@ -92,4 +92,25 @@ class Social::FacebookPage < ActiveRecord::Base
   def default_ticket_rule
     self.default_stream.ticket_rules.first
   end
+
+  def use_thread_key?
+    enabled?(:thread_key)
+  end
+
+  def use_msg_ids?
+    enabled?(:msg_ids)
+  end
+
+  def page_key feature_name
+    "SOCIAL_FACEBOOK_PAGE:#{feature_name.to_s.upcase}:#{id}"
+  end
+
+  def everyone_key feature_name
+    "SOCIAL_FACEBOOK_PAGE:#{feature_name.to_s.upcase}"
+  end
+
+  def enabled? feature_name
+    get_multiple_redis_keys(everyone_key(feature_name), page_key(feature_name)).any? { |value| value.to_s == "true" }
+  end
+
 end

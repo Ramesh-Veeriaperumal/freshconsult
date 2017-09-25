@@ -479,10 +479,10 @@ HelpdeskReports.Reports_home = (function($){
             }
             if(widgetType == "1") {
                 var product_select = $(".edit-row[data-index=" + parentIndex + "] .js-insightProducts");                                      
-                var product_val = product_select.select2('val');
+                var product_val = parseInt(product_select.select2('val'));
                 req.config[index].products = [];
                 req.config[index].products_label = [];
-                if( product_val != null && product_val != -1) {
+                if(!isNaN(product_val)) {
                   req.config[index].products.push(product_val);
                   req.config[index].products_label = product_select.find('option:selected').map(function () {
                                                       return this.text;
@@ -491,16 +491,20 @@ HelpdeskReports.Reports_home = (function($){
             }
           } else if ( widgetType == "3" ) {
               var first_group_select = $(".edit-row[data-index=" + parentIndex + "] .js-insightGroup1");
-              req.config[index].groups = new Array(first_group_select.select2('val'));
-              req.config[index].groups_label = first_group_select.find('option:selected').map(function () {
-                                                        return this.text;
-                                                    }).get();
-
+              var group_selected_1 = parseInt(first_group_select.select2('val'));
               var second_group_select = $(".edit-row[data-index=" + parentIndex + "] .js-insightGroup2");
-              req.config[index].groups = req.config[index].groups.concat(second_group_select.select2('val'));
-              req.config[index].groups_label = req.config[index].groups_label.concat(second_group_select.find('option:selected').map(function () {
-                                                        return this.text;
-                                                    }).get());
+              var group_selected_2 = parseInt(second_group_select.select2('val'));
+              
+                if ((!isNaN(group_selected_1)) && (!isNaN(group_selected_2))) {
+                    req.config[index].groups = [group_selected_1];
+                    req.config[index].groups_label = first_group_select.find('option:selected').map(function() {
+                        return this.text;
+                    }).get();
+                    req.config[index].groups = req.config[index].groups.concat(group_selected_2);
+                    req.config[index].groups_label = req.config[index].groups_label.concat(second_group_select.find('option:selected').map(function() {
+                        return this.text;
+                    }).get());
+                }
           }
 
           jQuery("[rel=customize-insights-content]").html('<div class="sloading loading-small loading-block"></div>');

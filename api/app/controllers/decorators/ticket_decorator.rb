@@ -75,12 +75,12 @@ class TicketDecorator < ApiDecorator
   end
 
   def fb_post
-    return unless Account.current.features?(:facebook) && record.facebook?
+    return unless (Account.current.features?(:facebook) || Account.current.basic_facebook_enabled?) && record.facebook?
     FacebookPostDecorator.new(record.fb_post).to_hash
   end
 
   def tweet
-    return unless Account.current.features?(:twitter) && record.twitter?
+    return unless (Account.current.features?(:twitter) || Account.current.basic_twitter_enabled?) && record.twitter?
     {
       tweet_id: record.tweet.tweet_id.to_s,
       tweet_type: record.tweet.tweet_type,

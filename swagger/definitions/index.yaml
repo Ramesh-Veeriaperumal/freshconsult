@@ -282,6 +282,12 @@
   requester:
     $ref: './response/tickets/requester.yaml'
 
+  # Trial Widget
+  trial_widget_index:
+    $ref: './response/trial_widget/index.yaml'
+  trial_widget_sales_manager:
+    $ref: './response/trial_widget/sales_manager.yaml'
+
   #Marketplace
   marketplace_apps:
     $ref: ./resource/marketplace_apps.yaml

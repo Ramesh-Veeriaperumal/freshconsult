@@ -202,6 +202,7 @@
 				}
 
 				if(this.$parentElem){
+					this.$parentElem.find('.close').prop("disabled", false);
 					this.$parentElem.find('.close').trigger('click');
 				}
 			},
@@ -224,6 +225,7 @@
 						visitor_os: this.visitor.host_os_family + " " + this.visitor.host_os_version
 					};																							
 					$(event.target).val(CHAT_I18n.saving).attr('disabled','true');
+					this.$parentElem.find('.close').attr("disabled", "disabled");
 					this.getMessagesFromLivechat('ticket',this.createTicketHelpkit.bind(this));
 				}
 							
@@ -283,21 +285,20 @@
 	    	},
 	    	// whenever the close button is clicked, all referenced nodes will be removed.
 	    	cleanUp: function(event){
-	    		if(event && event.type === "keyup" && event.keyCode !== 27) {
+	    		if((event && event.type === "keyup" && event.keyCode !== 27) || this.$parentElem.find('.close').prop("disabled") ) {
 	    			return;
 	    		};
 	    		$(document).off("keyup", window.liveChatTempCloseFunc);
 	    		window.liveChatTempCloseFunc = null;
 	    		// If the user clicks the close button directly
-	    		if(event && event.isTrigger !== true){
-					window.chatCollection.disableChatTab(this.chat.chat_id,false);
+	    		if(event && !event.isTrigger){
+					window.chatCollection.disableChatTab(this.chat.chat_id, false);
 	    		}
 	    		this.$parentElem = null;
 	    		this.$ticketOptionElem = null;
 	    		this.$newTicketElem = null;
 	    		this.$existingTicketElem = null;
 	    		this.ticket = {};
-
 	    	},
 			createTicketHelpkit: function(data){
 				if(!data){

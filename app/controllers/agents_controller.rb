@@ -9,6 +9,7 @@ class AgentsController < ApplicationController
   include Gamification::GamificationUtil
   include MemcacheKeys
   include EmailHelper
+  include Freshcaller::AgentHelper
 
   skip_before_filter :check_account_state, :only => :destroy
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:info_for_node]
@@ -130,10 +131,11 @@ class AgentsController < ApplicationController
     if @user.signup!(:user => params[:user])       
       @agent.user_id = @user.id
       @agent.scoreboard_level_id = params[:agent][:scoreboard_level_id]
-      @agent.freshcaller_enabled = params[:freshcaller_agent]
+      @agent.freshcaller_enabled = params[:freshcaller_agent].try(:to_bool)
       if @agent.save
-         flash[:notice] = t(:'flash.agents.create.success', :email => @user.email)
-         redirect_to :action => 'index'
+        flash[:notice] = t(:'flash.agents.create.success', :email => @user.email)
+        freshcaller_alerts
+        redirect_to :action => 'index'
       else
         set_skill_data
         render :action => :new
@@ -183,7 +185,7 @@ class AgentsController < ApplicationController
     #check_agent_limit
     @agent.scoreboard_level_id = params[:agent][:scoreboard_level_id] if gamification_feature?(current_account)
     @user = current_account.all_users.find(@agent.user_id)
-    @agent.freshcaller_enabled = params[:freshcaller_agent]
+    @agent.freshcaller_enabled = params[:freshcaller_agent].try(:to_bool)
     # @user = @agent.user
     # @agent.user.attributes = params[:user]
     #for live chat sync
@@ -199,9 +201,11 @@ class AgentsController < ApplicationController
             Rails.logger.info "SignupRestrictedDomainValidation failed. #{current_account.id}, #{e.message}, #{e.backtrace}"
           end
           respond_to do |format|
-            format.html { flash[:notice] = t(:'flash.general.update.success', :human_name => 'Agent')
-                          redirect_to :action => 'index'
-                        }        
+            format.html do
+              flash[:notice] = t(:'flash.general.update.success', :human_name => 'Agent')
+              freshcaller_alerts
+              redirect_to :action => 'index'
+            end
             format.json {head :ok}
             format.xml {head :ok } 
           end  

@@ -43,6 +43,7 @@
       - :advanced_search
       - :collaboration
       - :user_notifications
+      - :quick_reply
     :inherits: 
       - :sprout_jan_17
     :exclude: []

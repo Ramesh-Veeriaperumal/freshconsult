@@ -49,3 +49,5 @@ ArchiveSikdekiqConfig = YAML::load_file(File.join(Rails.root, 'config', 'archive
 FalconUiRouteMapping = YAML.load_file(File.join(Rails.root, 'config', 'route_mapping.yml'))
 
 FalconUiReRouteMapping = YAML.load_file(File.join(Rails.root, 'config', 're_route_mapping.yml'))
+
+PartnerSubdomains =  AppConfig['partner_subdomain'].map { |k,v| v }.flatten

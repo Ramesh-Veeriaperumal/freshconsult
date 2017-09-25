@@ -39,9 +39,7 @@ module Helpdesk::Ticketfields::ControllerMethods
         type = nested_field[:type]
         nested_ff_def_entry = FlexifieldDefEntry.new ff_meta_data(nested_field, account)
         is_saved = create_nested_field(nested_ff_def_entry, ticket_field, nested_field.merge(type: type), account)
-        if is_saved
-          construct_child_levels(nested_ff_def_entry, ticket_field, nested_field) 
-        else
+        if !is_saved || !construct_child_levels(nested_ff_def_entry, ticket_field, nested_field)
           ticket_field.destroy
           @tkt_field_id_alias_hash = nil
           current_account.reload
@@ -113,11 +111,7 @@ module Helpdesk::Ticketfields::ControllerMethods
 	    child_level = ticket_field.child_levels.build(nested_field_details)
 	    child_level.name = nested_ff_def_entry.flexifield_alias
 	    child_level.flexifield_def_entry = nested_ff_def_entry
-	    unless child_level.save
-	      NewRelic::Agent.notice_error("Error in saving the child levels of the nested field", :params => {
-	          account_id: Account.current.id, ticket_field_id: ticket_field.id
-	        })
-	    end
+	    child_level.save
     end
 
 end

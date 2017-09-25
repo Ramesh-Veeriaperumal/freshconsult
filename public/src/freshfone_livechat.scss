@@ -32,6 +32,9 @@
     @include float(left);
     display: inline-block;
   }
+  .fc-layout-falcon {
+    display: none;
+  }
   .freshfone_widget {
     height: 26px;
     @include padding-left(10px);

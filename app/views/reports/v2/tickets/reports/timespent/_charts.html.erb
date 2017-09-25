@@ -29,6 +29,8 @@
             HelpdeskReports.ChartsInitializer.TimeSpent.init(locals.chart_hash);
         } else if (!err && locals.chart_hash.data.length === 0) {
             var div = ['timespent_container'];
+            var help_msg = HelpdeskReports.CoreUtil.getTimespentExportHelpText();
+            jQuery('#timespent_aggregate_help_msg').text(help_msg);
             HelpdeskReports.CoreUtil.populateEmptyChart(div, I18n.t('helpdesk_reports.no_data_to_display_msg'));
         } else {
             var div = ["timespent_container"];

@@ -191,7 +191,10 @@ freshops_subdomain:
   podeuwest: freshopspodeuwest
   podeucentral: freshopspodeucentral
 
-partner_subdomain: partner
+partner_subdomain:
+  poduseast1: partner
+  podeuwest1: partnereu
+  podeucentral1: partnereuc  
 
 billing_subdomain: billing
 

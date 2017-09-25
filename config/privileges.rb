@@ -549,6 +549,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/freshfone/number"
     resource :"freshfone/ivr"
     resource :"admin/freshcaller"
+    resource :"admin/freshcaller/signup"
     resource :"admin/gamification"
     resource :"admin/quest"
     resource :"helpdesk/sla_policy"

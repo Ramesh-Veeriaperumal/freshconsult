@@ -124,6 +124,9 @@ properties:
                 type: string
               agent_ids:
                 type: array
+          created_at:
+            type: string
+            format: date-time
   meta:
     type: object
     properties:
