@@ -1,7 +1,4 @@
 module Community::DynamoTables
-
-  include Community::Moderation::Constants
-
   MODERATION_CLASSES	= [
     [ForumSpam , ForumSpamMethods],
     [ForumUnpublished, ForumSpamMethods],
@@ -76,7 +73,8 @@ module Community::DynamoTables
 
   def self.increase_throughput(table_class)
     puts "** increasing throughput for table ** #{table_class.table_name} **"
-    if table_class.update_throughput(DYNAMO_THROUGHPUT[:read], DYNAMO_THROUGHPUT[:write])
+    current_class = table_class.instance_variable_get(:@current_class)
+    if table_class.update_throughput(current_class.read_capacity, current_class.write_capacity)
       puts "** Done ** #{table_class.table_name} **"
     else
       puts "** Increase throughput Failed ** #{table_class.table_name} **"
@@ -88,7 +86,8 @@ module Community::DynamoTables
 
   def self.decrease_throughput(table_class)
     puts "** decreasing throughput for table ** #{table_class.table_name} **"
-    if table_class.update_throughput(DYNAMO_THROUGHPUT[:inactive], DYNAMO_THROUGHPUT[:inactive])
+    current_class = table_class.instance_variable_get(:@current_class)
+    if table_class.update_throughput(current_class.inactive_capacity, current_class.inactive_capacity)
       puts "** decrease throughput Done ** #{table_class.table_name} **"
     else
       puts "** Decrease throughput Failed ** #{table_class.table_name} **"
