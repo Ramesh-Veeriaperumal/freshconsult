@@ -8261,7 +8261,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       get_custom_apps: Get Custom Apps
       edit_custom_app: "Edit Custom app"
       desc: "You can add a custom widget to display any detail using your own custom script."
-      helpnote: "<h4>Custom Apps</h4><p><br/> You can develop your own custom app using HTML, CSS and JavaScript, and bring data from any 3rd party app or database right into your tickets and contacts. <br/><br/> To create a custom app, first give it a name and description. Then enter your code in the ‘Script’ area. You can pass any ticket or requester field, including the custom fields you have created, as JSONP objects.<br/><br/>You can click <b>‘Show Preview’</b> to view how your widget will look like both in the ticket and contact pages.<br/>"
+      helpnote: "<h4>Custom Apps</h4><p><br/> You can develop your own custom apps using HTML, CSS and JavaScript, and bring data from any third party app or database right into your Freshdesk tickets and contacts. <br/><br/> To create a custom app, give it a name and description. Then enter your code in the ‘Script’ area. You can pass any ticket or contact field, including the custom fields you've created, as JSONP objects.<br/><br/>You can click <b>‘Show Preview’</b> to view how your widget will look like both in the ticket and contact pages.<br/>"
       form:
         widget_title: "Widget Name"
         widget_script: "Widget code snippet"
