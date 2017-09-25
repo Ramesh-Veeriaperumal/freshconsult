@@ -1,9 +1,19 @@
-@import "../fonts/proximanova-fonts";
+// @import "../fonts/proximanova-fonts";
 @import "../pattern/lib/rtl-mixins";
 
-$font-family-normal:  'Proxima Nova Rg', "Helvetica Neue", Helvetica, Arial !default;
-$font-family-bold:        'Proxima Nova bold', "Helvetica Neue", Helvetica, Arial !default;
-$font-family-semibold:    'Proxima Nova sbold', "Helvetica Neue", Helvetica, Arial !default;
+$font-stack-sans: -apple-system,
+  BlinkMacSystemFont,
+  "Segoe UI",
+  "Roboto",
+  "Oxygen-Sans",
+  "Ubuntu",
+  "Helvetica Neue",
+  Arial,
+  sans-serif !default;
+
+$font-family-normal:   $font-stack-sans !default;
+$font-family-bold:     $font-stack-sans !default;
+$font-family-semibold: $font-stack-sans !default;
 
 $border-color: #dadfe3;
 $app-btn-text-light: #ffffff;
@@ -38,14 +48,21 @@ $select-sprite-bg-url: "/assets/plugins/select2/select2.png";
 $fields-font-size: 13px;
 $app-delete-bg-color: #ff5959;
 
-.header{
+.header,
+#footer {
   display: none;
 }
 
-.wrapper .wrapper-shadow{
+.wrapper {
+  width:100%;
+  padding:0;
+}
+
+.wrapper .wrapper-shadow {
   background: #fff;
+
   &:before {
-      display: none;
+    display: none;
   }
 }
 /* tabs */

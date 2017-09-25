@@ -26,15 +26,13 @@ module Freshcaller
 
     def fetch_freshfone_users(account_id)
       Sharding.select_shard_of(account_id) do
-        Sharding.run_on_slave do
-          account = ::Account.find(account_id)
-          account_admin.make_current
-          if account.present? && account.users.present?
-            account.make_current
-            account.agents.each do |agent|
-              next if agent == account_admin.agent
-              agent.update_attribute(:freshcaller_enabled, true)
-            end
+        account = ::Account.find(account_id)
+        account_admin.make_current
+        if account.present? && account.users.present?
+          account.make_current
+          account.agents.each do |agent|
+            next if agent == account_admin.agent
+            agent.update_attribute(:freshcaller_enabled, true)
           end
         end
       end
