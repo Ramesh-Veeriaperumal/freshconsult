@@ -23,6 +23,7 @@ class Search::V2::Operations::DocumentAdd
         if Account.current.service_writes_enabled?
           if entity.is_a?(Solution::Article) && Account.current.es_multilang_soln?
             locale = entity.solution_folder_meta.solution_category_meta.portals.last.try(:language)
+            locale = SearchService::Utils.valid_locale([@type], locale)
             SearchService::Client.new(@account_id).write_object(entity, @params[:version], @params[:parent_id], @type, locale)
           else
             SearchService::Client.new(@account_id).write_object(entity, @params[:version], @params[:parent_id], @type)

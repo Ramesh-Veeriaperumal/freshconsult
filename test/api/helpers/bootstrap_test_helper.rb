@@ -1,7 +1,9 @@
 ['portals_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 module BootstrapTestHelper
   include Gamification::GamificationUtil
+  include Social::Util
   include PortalsTestHelper
+
 
   def index_pattern(agent, account, portal)
     {
@@ -41,6 +43,13 @@ module BootstrapTestHelper
     }
   end
 
+  def social_options_hash
+    social_hash = Hash.new
+    social_hash[:handles_associated] = handles_associated? ? TrueClass : FalseClass
+    social_hash[:social_enabled] = social_enabled? ? TrueClass : FalseClass
+    social_hash
+  end
+
   def account_info_pattern(account)
     pattern = {
       full_domain: account.full_domain,
@@ -58,15 +67,18 @@ module BootstrapTestHelper
       agents: Array,
       groups: Array,
       verified: account.verified?,
+      created_at: account.created_at.try(:utc),
       ssl_enabled: account.ssl_enabled?
     }
 
     pattern[:collaboration] = collab_pattern if account.collaboration_enabled?
+    pattern[:social_options] = social_options_hash if account.features?(:twitter) || account.basic_twitter_enabled?
     if User.current.privilege?(:manage_users) || User.current.privilege?(:manage_account)
       pattern[:subscription] = {
         agent_limit: account.subscription.agent_limit,
         state: account.subscription.state,
-        subscription_plan: String
+        subscription_plan: String,
+        trial_days: account.subscription.trial_days
       }
     end
     pattern

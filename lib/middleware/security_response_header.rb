@@ -40,6 +40,8 @@ class Middleware::SecurityResponseHeader
     begin
       headers['X-XSS-Protection'] = '1; mode=block'
 
+      # TODO : revisit X-Frame-Options 
+      return headers # don't process X-Frame-Options
       return headers unless html_response?(headers)
       return headers if ignore_domain?
 

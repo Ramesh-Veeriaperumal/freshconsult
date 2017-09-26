@@ -14,11 +14,9 @@ class AgentObserver < ActiveRecord::Observer
   
   def after_commit(agent)
     if agent.send(:transaction_include_action?, :create)
-      update_crm(agent) 
+      update_crm(agent)
     end
-    if %i[create update].any? { |act| agent.send(:transaction_include_action?, act) }
-      create_update_fc_agent(agent)
-    end
+    create_update_fc_agent(agent) if save_fc_agent?(agent)
     true
   end
 

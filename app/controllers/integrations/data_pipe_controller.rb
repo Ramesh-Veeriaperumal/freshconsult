@@ -16,9 +16,9 @@ class Integrations::DataPipeController <  ApplicationController
       resp = make_request(request_body) 
       render :json => resp.body, :status => resp.status
     rescue => e
-      exception_logger("Data Pipe params: #{params}, mkpRoute: #{request.headers["HTTP_MKP_ROUTE"]}, 
-                        Exception: #{e.message}\n#{e.backtrace}");
-      render :nothing => true, :status => 500
+      Rails.logger.error("Data Pipe params: #{params}, mkpRoute: #{request.headers["HTTP_MKP_ROUTE"]},
+                        Exception: #{e.message}\n#{e.backtrace}")
+      render :json => { status: 500, headers: {}, response: INTERNAL_SERVER_ERROR, errorSource: PLATFORM_SOURCE }, :status => :ok
     end
   end
 

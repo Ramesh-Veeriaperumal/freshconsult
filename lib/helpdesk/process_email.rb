@@ -20,6 +20,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include Cache::Memcache::AccountWebhookKeyCache
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include Helpdesk::LanguageDetection
 
   class UserCreationError < StandardError
   end
@@ -893,18 +894,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           raise e
         end
         if params[:text]
-          text = text_for_detection
+          text = text_for_detection(params[:text])
           if language.nil? and signup_status
-            if redis_key_exists?(DETECT_USER_LANGUAGE_SIDEKIQ_ENABLED)
-              Users::DetectLanguage.perform_async({:user_id => user.id, 
-                                                   :text => text })
-            else
-              Resque::enqueue_at(1.minute.from_now, 
-                                 Workers::DetectUserLanguage, 
-                                 {:user_id => user.id, 
-                                  :text => text, 
-                                  :account_id => Account.current.id})
-            end
+            language_detection(user.id, Account.current.id, text)
           end
         end
       else
@@ -924,12 +916,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def set_current_user(user)
       user.make_current if user.present?
     end
-
-    def text_for_detection
-      text = params[:text][0..200]
-      text.squish.split.first(15).join(" ")
-    end
-
+    
     def create_attachments(item, account)
       attachments = []
       inline_attachments = []

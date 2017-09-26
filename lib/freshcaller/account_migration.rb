@@ -7,18 +7,19 @@ module Freshcaller
           account = ::Account.find(account_id)
           if account.present? || account.freshfone_account.present?
             account.make_current
-            roles = account.roles.where(name: 'Account Administrator').first
-            users = account.users.where(privileges: roles.privileges).reorder('id asc')
-            return if users.blank?
-            user = users.first
+            return if account_admin.blank?
             signup_params = {
               signup: {
-                user_name: user.name,
-                user_email: user.email,
+                user_name: account_admin.name,
+                user_email: account_admin.email,
                 account_name: account.name,
-                account_domain: account.domain,
+                time_zone:  ActiveSupport::TimeZone[account.time_zone].utc_offset,
+                account_domain: "#{FreshcallerConfig['domain_prefix']}#{account.domain}",
+                skip_provider: true,
+                plan_name: 'Standard',
+                subscription_period: 'monthly',
                 api: {
-                  activation_required: true,
+                  activation_required: false,
                   account_name: account.name,
                   account_id: account_id
                 }

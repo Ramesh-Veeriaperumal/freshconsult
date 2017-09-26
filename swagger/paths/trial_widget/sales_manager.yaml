@@ -1,0 +1,10 @@
+  post:
+    summary: Sales Manager
+    description: Sales manager information.
+    tags: [trial widget]
+
+    responses:
+      200:
+        description: OK
+        schema:
+          $ref: '#/definitions/trial_widget_sales_manager'

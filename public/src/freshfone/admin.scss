@@ -357,6 +357,30 @@
   }
 }
 
+.freshcaller-admin {
+  max-width: 640px;
+  margin: 0 auto;
+  .freshcaller-signup {
+    text-align: center;
+    padding: 25px 0px 5px 0px;
+  }
+  .freshcaller-signup-processing, .freshcaller-content-text{
+    text-align: center;
+    .freshcaller-loader{
+      height: 30px;
+      width: 30px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+  .freshcaller-logo {
+    margin-right: 10px;
+  }
+  .freshcaller-admin-content {
+    line-height: 1.5;
+  }
+}
+
 .freshfone_admin_content {
   p{
     font-size: 13px;
@@ -417,6 +441,10 @@
   display: flex;
   align-items: center;
   padding-left: 25px;
+}
+.freshcaller-alert {
+  margin-left: 0px;
+  margin-right: 0px;
 }
 .freshcaller-dew-copy {
   width: 36px;

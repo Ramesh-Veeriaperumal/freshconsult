@@ -6,8 +6,17 @@ properties:
     properties:
       description:
         type: string
+        description: Support email description
       attachment_ids:
         type: array
         description: array of attachment IDs
+        items:
+          type: integer
+      subject:
+        type: string
+        description: Support email subject
+      tags:
+        type: array
+        description: Tags to be added to the email
         items:
           type: integer

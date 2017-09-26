@@ -3,6 +3,7 @@ class Admin::FreshfoneController < Admin::AdminController
 	include Redis::RedisKeys
 	include Redis::IntegrationsRedis
 
+	before_filter :render_freshcaller, :only => [:index]
 	before_filter :load_numbers, :only => [:index, :search]
 	before_filter :trial_render, :only => [:index]
 	before_filter :validate_freshfone_state, :only => [:search]
@@ -61,6 +62,40 @@ class Admin::FreshfoneController < Admin::AdminController
 
 	private
 
+    def render_freshcaller
+      return unless current_account.launched?(:falcon)
+      return if old_ui? && old_account?
+      return render 'admin/freshcaller/signup/signup_error', 
+        :locals => { 
+          :error => t('freshcaller.admin.phone_not_available').html_safe 
+        } if new_ui_old_account_phone_channel?
+      return render :freshcaller_signup , locals: { :old_ui => old_ui? } 
+    end 
+
+    def freshcaller_enabled_account?
+      current_account.has_feature?(:freshcaller) 
+    end
+
+    def old_account? 
+      !freshcaller_enabled_account?
+    end
+
+    def new_ui?
+      current_user.is_falcon_pref?
+    end
+
+    def old_ui?
+      !new_ui?
+    end
+
+    def new_ui_old_account_phone_channel?
+      new_ui? && old_account? && has_only_phone_account?
+    end
+
+    def has_only_phone_account?
+      current_account.freshfone_enabled? && current_account.freshcaller_account.blank?
+    end
+	 
 		def validate_params
 			@freshfone_subscription = 'trial' if onboarding_enabled? ||
 					trial_numbers_empty?
