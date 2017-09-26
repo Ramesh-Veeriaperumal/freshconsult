@@ -83,6 +83,7 @@ module Marketplace::Constants
   ]
 
   PLATFORM_VERSIONS_BY_ID = Hash[*PLATFORM_VERSIONS_ARRAY.map { |i| [i[0], i[1]] }.flatten]
+  PLATFORM_ID_BY_VERSION = Hash[*PLATFORM_VERSIONS_ARRAY.map { |i| [i[1], i[0]] }.flatten]
 
   IFRAME_PERMIT_PARAMS =  { 
                             :user => { "name" => "u_name", "email" => "u_email", "single_access_token" => "u_sat", "time_zone" => "u_tz" },

@@ -24,8 +24,11 @@
       <%= freshcaller_domain %>
     </span>
     <span class="freshcaller-settings-link-container">
-      <span class="ficon-open-in-new-window pr5 fsize-14"></span>
-      <a href="/admin/phone/redirect_to_freshcaller" target="_blank" class="freshcaller-settings-link"><%= t('freshcaller.admin.manage_settings_text') %></a>
+      <span class="ficon-open-in-new-window pr5 fsize-14 freshcaller-link"></span>
+      <a href="/admin/phone/redirect_to_freshcaller" target="_blank" class="freshcaller-settings-link"><%= t('freshcaller.admin.manage_settings_text') %></a> <br/>
+      <span class="freshcaller-link-subtext">
+        <%= t('freshcaller.admin.freshcaller_subtext')%>
+      </span>
     </span> 
   </div>
 </div>

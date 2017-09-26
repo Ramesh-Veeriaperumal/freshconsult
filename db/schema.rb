@@ -4185,7 +4185,7 @@ ActiveRecord::Schema.define(:version => 20170913020955) do
   end
   add_index :scheduled_exports, :account_id, :name => "index_scheduled_exports_on_account_id"
 
-  create_table :qna_insights_reports do |t|
+  create_table :qna_insights_reports, :force => true do |t|
       t.column      :user_id, "bigint unsigned"
       t.column      :account_id, "bigint unsigned"
       t.text        :recent_questions

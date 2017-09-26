@@ -20,4 +20,23 @@ module FreshcallerSpecHelper
     @account.make_current.add_feature :freshcaller
     @account.reload
   end
+
+  def freshcaller_account_signup
+    {
+      :freshcaller_account_id => 1,
+      :freshcaller_account_domain => "aljgalaskgh.ngrok.io",
+      :agent =>{
+        :id => 1,
+        :email => "test@freshdesk.com"
+      }
+    }
+  end
+
+  def freshcaller_domain_error
+    {
+      :errors => {
+        :account_full_domain => "Domain already taken"
+      }
+    }
+  end
 end
