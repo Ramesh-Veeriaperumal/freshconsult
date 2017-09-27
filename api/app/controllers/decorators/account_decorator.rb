@@ -7,6 +7,7 @@ class AccountDecorator < ApiDecorator
       name: record.name,
       time_zone: record.time_zone,
       date_format: record.account_additional_settings.date_format,
+      language: record.language,
       features: record.enabled_features_list,
       launched: launch_party_features,
       subscription: subscription_hash,

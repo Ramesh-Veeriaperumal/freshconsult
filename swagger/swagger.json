@@ -4629,6 +4629,9 @@
                 "time_zone": {
                   "type": "string"
                 },
+                "language": {
+                  "type": "string"
+                },
                 "date_format": {
                   "type": "object",
                   "properties": {
