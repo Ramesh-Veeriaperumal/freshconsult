@@ -4423,8 +4423,8 @@
     },
     "/product_feedback/": {
       "post": {
-        "summary": "Creates a product feedback.",
-        "description": "Creates a product feedback with the given description. Subject is autopopulated.",
+        "summary": "Create product feedback",
+        "description": "Creates a product feedback with the given data.",
         "tags": [
           "product feedback"
         ],
@@ -6158,8 +6158,32 @@
     "product_feedback": {
       "type": "object",
       "properties": {
-        "description": {
-          "type": "string"
+        "product_feedback": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string",
+              "description": "Support email description"
+            },
+            "attachment_ids": {
+              "type": "array",
+              "description": "Array of attachment IDs",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "subject": {
+              "type": "string",
+              "description": "Support email subject"
+            },
+            "tags": {
+              "type": "array",
+              "description": "Tags to be added to the email",
+              "items": {
+                "type": "integer"
+              }
+            }
+          }
         }
       }
     },
