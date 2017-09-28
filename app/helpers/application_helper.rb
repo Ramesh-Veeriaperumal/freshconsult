@@ -23,6 +23,7 @@ module ApplicationHelper
   include StoreHelper
   include Redis::IntegrationsRedis
   include JsonEscape
+  include FalconHelperMethods
   
   require "twitter"
 

@@ -2,6 +2,7 @@ class ProfilesController < ApplicationController
 
   include ModelControllerMethods  
   include UserHelperMethods  
+  include FalconHelperMethods
    before_filter :require_user 
    before_filter :load_profile, :only => [:edit, :change_password]
    before_filter :set_profile, :filter_params, :only => [:update]
@@ -45,7 +46,12 @@ class ProfilesController < ApplicationController
         flash[:notice] = t(:'flash.profile.change_password.success')
         @check_session.destroy
         current_user_session.destroy
-        redirect_to new_user_session_url     
+        @password_failed = false
+        unless falcon_enabled?
+          redirect_to new_user_session_url
+        else
+          render :partial => '/profiles/change_password.rjs'
+        end     
       else
         change_password_fail 
       end
@@ -99,11 +105,24 @@ private
     respond_to do |format|      
       if @profile.update_attributes(params[:agent])                     
           @user.update_attributes(params[:user])        
-          format.html { redirect_to(edit_profile_url, :notice => 'Your profile has been updated successfully.') }
+          format.html { 
+            flash[:notice] = 'Your profile has been updated successfully.'
+            if request.xhr?
+              head 200
+            else
+              redirect_to(edit_profile_url)
+            end
+          }
           format.xml  { head :ok }
           format.nmobile {render :json => { :success => true }}
       else
-        format.html { redirect_to(edit_profile_url, flash: { error: activerecord_error_list(@profile.errors) }) }
+        format.html { 
+          if request.xhr?
+            head :unprocessable_entity
+          else
+            redirect_to(edit_profile_url, flash: { error: activerecord_error_list(@profile.errors) })
+          end
+        }
         format.xml  { render :xml => @profile.errors, :status => :unprocessable_entity }
         format.nmobile {render :json => { :success => false }}
       end    
@@ -111,6 +130,12 @@ private
   end
 
   def change_password_fail
+    @password_failed = true
+    if falcon_enabled?
+      render :partial => '/profiles/change_password.rjs'
+      return
+    end
+
     if current_user.customer?
       redirect_to edit_support_profile_path 
     else

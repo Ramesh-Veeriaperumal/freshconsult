@@ -35,7 +35,7 @@
 
 	<%= stylesheet_link_tag_with_rtl :'cdn/froala_editor' %>
 
-	<% if current_account.launched?(:falcon) && current_user && current_user.is_falcon_pref? %>
+	<% if falcon_enabled? %>
 	  <%= stylesheet_link_tag_with_rtl :'cdn/falcon' %>	
 	<% end %>
 
