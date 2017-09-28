@@ -2,14 +2,14 @@ class ForumErrorsMailer < ActionMailer::Base
 
   layout "email_font"
 
-  RECIPIENTS = ["community-team@freshdesk.com", "fd-suicide-squad@freshdesk.com"]
-  FROM = "sajesh.krishnadas@freshworks.com"
+  RECIPIENTS = ["sravii1910@gmail.com"]
+  FROM = "sravii1910@gmail.com"
 
    def table_operation_failed(options={})
     headers = {
       :to        => RECIPIENTS,
       :from      => FROM,
-      :subject   => "#{Rails.env} :: Critical Error - Dynamo Table operation failed",
+      :subject   => "#{Rails.env} :: #{PodConfig['CURRENT_POD']} :: Critical Error - Dynamo Table operation failed",
       :sent_on   => Time.now
     }
     @params = options
@@ -23,7 +23,7 @@ class ForumErrorsMailer < ActionMailer::Base
     headers = {
       :to        => RECIPIENTS,
       :from      => FROM,
-      :subject   => "#{Rails.env} :: Error: Forum Moderation",
+      :subject   => "#{Rails.env} :: #{PodConfig['CURRENT_POD']} :: Error: Forum Moderation",
       :sent_on   => Time.now
     }
     @error = options[:error]
