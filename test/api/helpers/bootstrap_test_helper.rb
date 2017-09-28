@@ -56,7 +56,7 @@ module BootstrapTestHelper
       helpdesk_name: account.helpdesk_name,
       name: account.name,
       time_zone: account.time_zone,
-      date_format: Hash,
+      date_format: account.account_additional_settings.date_format,
       features: Array,
       launched: Array,
       settings: {

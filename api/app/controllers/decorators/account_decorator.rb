@@ -6,7 +6,7 @@ class AccountDecorator < ApiDecorator
       helpdesk_name: record.helpdesk_name,
       name: record.name,
       time_zone: record.time_zone,
-      date_format: date_format,
+      date_format: record.account_additional_settings.date_format,
       features: record.enabled_features_list,
       launched: launch_party_features,
       subscription: subscription_hash,
@@ -23,11 +23,6 @@ class AccountDecorator < ApiDecorator
   end
 
   private
-
-    def date_format
-      date_format = Account::DATEFORMATS[record.account_additional_settings.date_format]
-      Account::DATA_DATEFORMATS[date_format]
-    end
 
     def launch_party_features
       LaunchParty.new.launched_for(record)
