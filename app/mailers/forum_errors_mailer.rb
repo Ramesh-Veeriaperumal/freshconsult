@@ -2,8 +2,8 @@ class ForumErrorsMailer < ActionMailer::Base
 
   layout "email_font"
 
-  RECIPIENTS = ["sravii1910@gmail.com"]
-  FROM = "sravii1910@gmail.com"
+  RECIPIENTS = ["community-team@freshdesk.com", "fd-suicide-squad@freshdesk.com"]
+  FROM = "sajesh.krishnadas@freshworks.com"
 
    def table_operation_failed(options={})
     headers = {
