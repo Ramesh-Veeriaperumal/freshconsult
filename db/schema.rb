@@ -4170,7 +4170,7 @@ ActiveRecord::Schema.define(:version => 20170913020955) do
   add_index :dkim_category_change_activities, [:account_id, :outgoing_email_domain_category_id, :changed_on], 
             :name => 'index_dkim_activities_on_account_email_domain_changed_on'
 
-  create_table :scheduled_exports do |t|
+  create_table :scheduled_exports, :force => true do |t|
     t.string  :name
     t.text    :description
     t.column  :user_id, "bigint unsigned"
