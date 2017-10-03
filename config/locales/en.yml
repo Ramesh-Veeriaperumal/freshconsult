@@ -11341,6 +11341,12 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         title: Getting started with Freshdesk
         message: Before you get started, here's a 2 minute video overview of your helpdesk.
         forward_link: Let’s get started
+    falcon_invite:
+      greetings: We've got an upgrade
+      invite_msg: Hey %{user_name}, we can't wait to show you the all new Freshdesk. We've upgraded to a modern <br/>experience which is faster, easier to use and crafted with love.
+      post_script: "PS: You can switch back any time you like!"
+      try_new_look: TRY THE NEW LOOK
+      maybe_later: MAYBE LATER 
   multifile_attachments:
     label: "Attach files"
     sending: "Sending..."

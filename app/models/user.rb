@@ -415,8 +415,18 @@ class User < ActiveRecord::Base
     save!
   end
 
+  def disable_falcon_ui
+    new_pref = { :falcon_ui => false }
+    self.merge_preferences = { :agent_preferences => new_pref }
+    save!
+  end
+
   def is_falcon_pref?
     self.preferences[:agent_preferences][:falcon_ui]
+  end
+
+  def falcon_invite_eligible?
+    (account.launched?(:falcon) && self.preferences_without_defaults.try(:[], :agent_preferences).try(:[],:falcon_ui).nil?)
   end
 
   def update_attributes(params) # Overriding to normalize params at one place

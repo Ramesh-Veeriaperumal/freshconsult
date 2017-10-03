@@ -148,7 +148,7 @@ class UsersController < ApplicationController
 
   def disable_falcon
     # render nothing: true, status: 400 unless get_referer.start_with?('/a/')
-    current_user.toggle_ui_preference if current_user.is_falcon_pref?
+    current_user.disable_falcon_ui if (current_user.is_falcon_pref? || current_user.falcon_invite_eligible?)
     cookies[:falcon_enabled] = false
     return head :no_content
   end
