@@ -60,8 +60,8 @@ module Ember
 
     def execute_scenario
       return unless validate_body_params
-      @delegator_klass = 'ScenarioDelegator'
-      return unless validate_delegator(@item, scenario_id: cname_params[:scenario_id])
+      fetch_ticket_fields_mapping
+      return unless validate_scenario_execution
       va_rule = @delegator.va_rule
       va_rule.trigger_actions(@item, api_current_user)
       @item.save
@@ -114,10 +114,20 @@ module Ember
 
     private
 
+      def validate_scenario_execution
+        @delegator_klass = 'ScenarioDelegator'
+        delegator_hash = {
+          scenario_id: cname_params[:scenario_id],
+          user: api_current_user,
+          ticket_fields: @ticket_fields,
+          statuses: @statuses
+        }
+        validate_delegator(@item, delegator_hash)
+      end
+
       def validate_update_property_params
-        @ticket_fields = Account.current.ticket_fields_from_cache
-        @name_mapping = TicketsValidationHelper.name_mapping(@ticket_fields)
-        params_hash = cname_params.merge(statuses: Helpdesk::TicketStatus.status_objects_from_cache(current_account), ticket_fields: @ticket_fields)
+        fetch_ticket_fields_mapping
+        params_hash = cname_params.merge(statuses: @statuses, ticket_fields: @ticket_fields)
         @validation_klass = 'TicketUpdatePropertyValidation'
         validate_body_params(@item, params_hash)
       end

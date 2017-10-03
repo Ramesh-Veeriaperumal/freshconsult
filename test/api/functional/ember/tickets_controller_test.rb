@@ -20,6 +20,7 @@ module Ember
     include AwsTestHelper
 
     CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date).freeze
+    CUSTOM_FIELDS_CHOICES = Faker::Lorem.words(5).uniq.freeze
 
     def setup
       super
@@ -44,8 +45,7 @@ module Ember
       @@ticket_fields = []
       @@custom_field_names = []
       @@ticket_fields << create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
-      @@dropdown_choices = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon']
-      @@ticket_fields << create_custom_field_dropdown('test_custom_dropdown', @@dropdown_choices)
+      @@ticket_fields << create_custom_field_dropdown('test_custom_dropdown', CUSTOM_FIELDS_CHOICES)
       @@choices_custom_field_names = @@ticket_fields.map(&:name)
       CUSTOM_FIELDS.each do |custom_field|
         next if %w(dropdown country state city).include?(custom_field)
@@ -600,6 +600,69 @@ module Ember
       match_json([bad_request_error_pattern('scenario_id', :inaccessible_value, resource: :scenario, attribute: :scenario_id)])
     end
 
+    def test_execute_scenario_failure_with_closure_action
+      scenario_id = create_scn_automation_rule(scenario_automation_params.merge(close_action_params)).id
+      Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: true)
+      ticket_field1 = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
+      ticket_field2 = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+      [ticket_field1, ticket_field2].map { |x| x.update_attribute(:required_for_closure, true) }
+      t = create_ticket
+      put :execute_scenario, construct_params({ version: 'private', id: t.display_id }, scenario_id: scenario_id)
+      assert_response 400
+      match_json([bad_request_error_pattern('group_id', :datatype_mismatch, expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received),
+                  bad_request_error_pattern(ticket_field1.label, :datatype_mismatch, expected_data_type: :String, given_data_type: 'Null', prepend_msg: :input_received),
+                  bad_request_error_pattern(ticket_field2.label, :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
+    ensure
+      Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: false)
+      [ticket_field1, ticket_field2].map { |x| x.update_attribute(:required_for_closure, false) }
+    end
+
+    def test_execute_scenario_success_with_closure_action
+      scenario_id = create_scn_automation_rule(scenario_automation_params.merge(close_action_params)).id
+      Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: true)
+      ticket_field1 = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
+      ticket_field2 = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+      [ticket_field1, ticket_field2].map { |x| x.update_attribute(:required_for_closure, true) }
+      group = create_group(@account)
+      t = create_ticket({custom_field: { ticket_field1.name => 'Sample Text', ticket_field2.name => CUSTOM_FIELDS_CHOICES.sample }}, group)
+      put :execute_scenario, construct_params({ version: 'private', id: t.display_id }, scenario_id: scenario_id)
+      assert_response 204
+    ensure
+      Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: false)
+      [ticket_field1, ticket_field2].map { |x| x.update_attribute(:required_for_closure, false) }
+    end
+
+    def test_execute_scenario_with_closure_of_parent_ticket_failure
+      scenario_id = create_scn_automation_rule(scenario_automation_params.merge(close_action_params)).id
+      parent_ticket = create_ticket
+      child_ticket = create_ticket
+      Helpdesk::Ticket.any_instance.stubs(:child_ticket?).returns(true)
+      Helpdesk::Ticket.any_instance.stubs(:associates).returns([child_ticket.display_id])
+      Helpdesk::Ticket.any_instance.stubs(:association_type).returns(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:assoc_parent])
+      put :execute_scenario, construct_params({ version: 'private', id: parent_ticket.display_id }, scenario_id: scenario_id)
+      assert_response 400
+      match_json([bad_request_error_pattern('status', :unresolved_child)])
+    ensure
+      Helpdesk::Ticket.any_instance.unstub(:child_ticket?)
+      Helpdesk::Ticket.any_instance.unstub(:associates)
+      Helpdesk::Ticket.any_instance.unstub(:association_type)
+    end
+
+    def test_execute_scenario_with_closure_of_parent_ticket_success
+      scenario_id = create_scn_automation_rule(scenario_automation_params.merge(close_action_params)).id
+      parent_ticket = create_ticket
+      child_ticket = create_ticket(status: 5)
+      Helpdesk::Ticket.any_instance.stubs(:child_ticket?).returns(true)
+      Helpdesk::Ticket.any_instance.stubs(:associates).returns([child_ticket.display_id])
+      Helpdesk::Ticket.any_instance.stubs(:association_type).returns(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:assoc_parent])
+      put :execute_scenario, construct_params({ version: 'private', id: parent_ticket.display_id }, scenario_id: scenario_id)
+      assert_response 204
+    ensure
+      Helpdesk::Ticket.any_instance.unstub(:child_ticket?)
+      Helpdesk::Ticket.any_instance.unstub(:associates)
+      Helpdesk::Ticket.any_instance.unstub(:association_type)
+    end
+
     def test_execute_scenario
       scenario_id = create_scn_automation_rule(scenario_automation_params).id
       ticket_id = create_ticket(ticket_params_hash).display_id
@@ -954,7 +1017,7 @@ module Ember
       params_hash = { status: 5 }
       put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 400
-      match_json([bad_request_error_pattern(ticket_field.label, :not_included, list: @@dropdown_choices.join(','))])
+      match_json([bad_request_error_pattern(ticket_field.label, :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
     ensure
       ticket_field.update_attribute(:required_for_closure, false)
     end
@@ -1101,7 +1164,7 @@ module Ember
       params_hash = { status: 5 }
       put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 400
-      match_json([bad_request_error_pattern(ticket_field.label, :not_included, list: @@dropdown_choices.join(','))])
+      match_json([bad_request_error_pattern(ticket_field.label, :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
     ensure
       ticket_field.update_attribute(:required_for_closure, false)
     end

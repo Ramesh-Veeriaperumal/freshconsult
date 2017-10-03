@@ -33,6 +33,12 @@ module TicketConcern
     end
   end
 
+  def fetch_ticket_fields_mapping
+    @ticket_fields = Account.current.ticket_fields_from_cache
+    @name_mapping = TicketsValidationHelper.name_mapping(@ticket_fields) # -> {:text_1 => :text}
+    @statuses = Helpdesk::TicketStatus.status_objects_from_cache(Account.current)
+  end
+
   private
 
     def ticket_permission?

@@ -5,6 +5,8 @@ class TicketDecorator < ApiDecorator
            :internal_group_id, :internal_agent_id, :association_type, :associated_tickets_count, :can_be_associated?,
            :description_html, :tag_names, :attachments, :attachments_sharable, :company_id, :cloud_files, :ticket_states, to: :record
 
+  delegate :multiple_user_companies_enabled?, to: 'Account.current'
+
   DIRTY_FIX_MAPPING = {
     resolved_at: [Helpdesk::Ticketfields::TicketStatus::RESOLVED, Helpdesk::Ticketfields::TicketStatus::CLOSED],
     closed_at: [Helpdesk::Ticketfields::TicketStatus::CLOSED],
@@ -28,8 +30,8 @@ class TicketDecorator < ApiDecorator
     custom_fields_hash
   end
 
-  def requester(include_company_info = false)
-    private_api? ? privilege_based_requester_info(include_company_info) : requester_v2
+  def requester
+    private_api? ? requester_info : requester_v2
   end
 
   def requester_v2
@@ -45,10 +47,11 @@ class TicketDecorator < ApiDecorator
     end
   end
 
-  def privilege_based_requester_info(include_company_info)
+  def requester_info
     return unless @sideload_options.include?('requester')
-    contact_decorator = ContactDecorator.new(record.requester, name_mapping: @contact_name_mapping, sideload_options: (include_company_info ? ['company'] : []))
-    User.current.privilege?(:view_contacts) ? contact_decorator.full_requester_hash : contact_decorator.restricted_requester_hash
+    options = { name_mapping: @contact_name_mapping }
+    options[:sideload_options] = ['company'] if multiple_user_companies_enabled?
+    ContactDecorator.new(record.requester, options).requester_hash
   end
 
   def freshfone_call
@@ -95,18 +98,11 @@ class TicketDecorator < ApiDecorator
     end
   end
 
-  def full_company_hash
+  def company_hash
     if @sideload_options.include?('company')
       company = record.company
       return unless company
-      CompanyDecorator.new(company, name_mapping: @company_name_mapping).to_hash
-    end
-  end
-
-  def company
-    if @sideload_options.include?('company')
-      company = record.company
-      company ? { id: company.id, name: company.name } : {}
+      CompanyDecorator.new(company, name_mapping: @company_name_mapping).company_hash
     end
   end
 
@@ -216,7 +212,7 @@ class TicketDecorator < ApiDecorator
 
     ret_hash.merge!(whitelisted_properties)
 
-    ret_hash[:company] = company_hash if company_id.present?
+    ret_hash[:company] = company_search_hash if company_id.present?
     ret_hash[:requester] = requester_hash if requester_hash
     ret_hash[:archived] = archived? if archived?
     ret_hash
@@ -313,7 +309,7 @@ class TicketDecorator < ApiDecorator
       }
     end
 
-    def company_hash
+    def company_search_hash
       { id: company_id, name: record.company.try(:name) }
     end
 

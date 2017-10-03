@@ -9,7 +9,6 @@ class ContactDecorator < ApiDecorator
 
   def initialize(record, options)
     super(record)
-    @include_company_info = true
     @name_mapping = options[:name_mapping]
     @company_name_mapping = options[:company_name_mapping]
     @sideload_options = options[:sideload_options] || []
@@ -72,17 +71,17 @@ class ContactDecorator < ApiDecorator
     }
   end
 
-  def full_requester_hash
-    @include_company_info = @sideload_options.include?('company')
-    req_hash = to_full_hash.except(:company_id)
-    req_hash[:id] = record.id
+  def restricted_requester_hash
+    req_hash = construct_hash(requester_widget_contact_fields, record)
+    req_hash[:has_email] = record.email.present? if !req_hash.key?(:email)
+    req_hash[:twitter_id] = twitter_id if !req_hash.key?(:twitter_id) && twitter_id.present?
     req_hash
   end
 
-  def restricted_requester_hash
-    req_hash = construct_hash(requester_widget_contact_fields, record)
-    req_hash[:has_email] = record.email.present?
-    req_hash[:twitter_id] = twitter_id if !req_hash.key(:twitter_id) && twitter_id.present?
+  def requester_hash
+    return agent_info.merge(id: id) if record.agent?
+    req_hash = restricted_requester_hash.merge(company_info)
+    req_hash[:avatar] = avatar_hash
     req_hash
   end
 
@@ -132,9 +131,14 @@ class ContactDecorator < ApiDecorator
                                        spam: record.spam?,
                                        deleted: record.deleted)
       response_hash[:custom_fields] = custom_fields if custom_fields.present?
-      response_hash[:company] = company_hash(default_company) if @sideload_options.include?('company') && default_company.present? && default_company.company.present?
-      response_hash[:other_companies] = other_companies_hash if multiple_user_companies_enabled?
-      response_hash
+      response_hash.merge(company_info)
+    end
+
+    def company_info
+      ret_hash = {}
+      ret_hash[:company] = company_hash(default_company) if @sideload_options.include?('company') && default_company.present? && default_company.company.present?
+      ret_hash[:other_companies] = other_companies_hash if multiple_user_companies_enabled? && company_id.present?
+      ret_hash
     end
 
     def company_hash(uc)

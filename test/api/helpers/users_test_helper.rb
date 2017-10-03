@@ -44,6 +44,7 @@ module UsersTestHelper
 
   def private_api_contact_pattern(expected_output = {}, ignore_extra_keys = true, exclude_custom_fields = false, contact)
     result = contact_pattern(expected_output, ignore_extra_keys, contact)
+    result.except!(:other_companies)
     result.except!(:custom_fields) if result[:custom_fields].empty? || exclude_custom_fields
     result.merge!(whitelisted: contact.whitelisted,
                   facebook_id: (expected_output[:facebook_id] || contact.fb_profile_id),
@@ -52,7 +53,7 @@ module UsersTestHelper
                   deleted: contact.deleted,
                   local_time: Time.now.in_time_zone(contact.time_zone).strftime('%I:%M %p'))
     result[:company] = company_hash(contact.default_user_company) if expected_output[:include].eql?('company') && contact.default_user_company.present?
-    result[:other_companies] = other_companies_hash(expected_output[:include].eql?('company'), contact) if Account.current.multiple_user_companies_enabled?
+    result[:other_companies] = other_companies_hash(expected_output[:include].eql?('company'), contact) if Account.current.multiple_user_companies_enabled? && contact.default_user_company.present?
     result
   end
 
