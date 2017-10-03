@@ -27,28 +27,20 @@ $caret-down-color: #989e9d;
 $white: #fff;
 $bread-crumbs-active: #000;
 $list-selected: #fffef7;
+$app-icon-color: #6f7c87;
 
-
-/*a {
-    color: $link-color;
-
-	&:hover{
-		text-decoration: underline;
-		color: $link-color;
-	}
-}*/
 
 body.community{
 	.community-wrapper {
-	    background-color: #fff;
+	    background-color: $white;
 	}
 	/* style changes in sticky header */
 	&.single {
 		#inner .pagearea{
-			background: #fff;
+			background: $white;
 		}
 		.ficon-cube:before {
-		    color: #fff;
+		    color: $white;
 		}
 	}
 	.pagearea{
@@ -523,26 +515,20 @@ body.community.solutions {
 
 
     #sticky_redactor_toolbar {
-
- 		.fr-toolbar.fr-desktop.fr-top {
+ 		.fr-toolbar {
 			left: 12px;
 		}
-
     }  
 
-	.is_stuck {
-		#sticky_redactor_toolbar {
-
- 			.fr-toolbar.fr-desktop.fr-top {
-				left: 0;
-			}
-
-    	}  
+	.is_stuck #sticky_redactor_toolbar{
+ 		.fr-toolbar {
+			left: 0;
+		}
 	}
 
 	#solution-properties {
 		.select2-choices {
-			background-color: #fff !important;
+			background-color: $white !important;
 		}
 	}
 
@@ -554,22 +540,15 @@ body.community.solutions {
 		background-color: $list-selected;
 	}
 
-	#drafts-section .solution-drafts .draft-list-item .main-details .multilingual_draft {
+	.draft-list-item .multilingual_draft {
 		margin-top: 7px;
 	}
 
-	.delete-confirm-warning-message {
-		p {
-			color: $white;
-		}
-	}
 	/* icon */
 	.sol-details-left {
 		margin-top: 10px;
-		.list-actions-left  {
-			.ficon-category {
-				line-height: 30px;
-			}
+		.ficon-category  {
+			line-height: 30px;
 		}
 	}
 
@@ -628,34 +607,32 @@ body.community.solutions {
 body.community.moderation {
 	.comm-item-main-content {
 	 	.label {
-			font-size: 11px;
+			font-size: 12px;
 		}
 		.post-desc {
-			font-size :13px;
+			font-size :14px;
 		}
 	}
 }
 
 body.community {
 
-	#redactor_btn_modal_close {
+	.redactor_btns_box #redactor_btn_modal_close {
 		margin-right: 8px;
 	}
 
 	.muted {
-		font-size: 13px;
+		font-size: 12px;
 	}
 
 	.modal {
-		.delete-confirm-warning-message {
-			p {
-				color: $white;
-			}
+		.delete-confirm-warning-message .info {
+			color: $white;
 		}
+
 		.delete-confirm-form {
 			margin-bottom: 8px;
 		}
-
 	}
 	.breadcrumb {
 		li:last-child {
@@ -666,36 +643,31 @@ body.community {
 
 	.sticky_left {
 		a.active, a.selected-tab {
-			border-bottom: 3px solid rgba(2,184,117,1);
-			color : rgba(2,184,117,1);
+			border-bottom: 3px solid $app-primary-color;
+			color : $app-primary-color;
 		}
 
 		a {
-			color: #6f7c87;
+			color: $app-icon-color;
 		}
         
         a:hover {
-        	border-bottom : 3px solid rgba(2,184,117,0.5);
+        	border-bottom : 3px solid $app-primary-color;
         }
 
         a.active, a.selcted-tab:hover {
-        	border-bottom : 3px solid rgba(2,184,117,1);
+        	border-bottom : 3px solid $app-primary-color;
         }
-
 	}
 
     .all-post-heading {
-    	a, .tooltip {
+    	.tooltip {
     		padding-bottom: 17px;
     	}
 
     }
-
-   /* .select2-result-label {
-    	font-family: $font-stack-sans !important;
-    }*/
-
-    .visible-to-btn a.nav-trigger {
+    /* dropdown arrows */
+    .visible-to-btn .nav-trigger {
     	&:before {
     		top: 12px;
     		left: 88%;
@@ -707,10 +679,8 @@ body.community {
     	}
     }
 
-    .select2-results li.select2-result-with-children > .select2-result-label {
-    	&:hover {
-    		color: $bread-crumbs-active;
-    	}
+    .select2-result-with-children > .select2-result-label:hover {
+		color: $bread-crumbs-active;
     }
     
 }
