@@ -170,9 +170,10 @@ Helpkit::Application.routes.draw do
     resources :groups, controller: 'ember/groups', only: [:index, :show]
     resources :email_configs, controller: 'ember/email_configs', only: [:index, :show]
     resources :bootstrap, controller: 'ember/bootstrap', only: :index
-    resources 'freshcaller_desktop_notification_settings', path: 'freshcaller/settings', controller: 'ember/freshcaller/settings' do
+    resources 'freshcaller_desktop_notification_settings', path: 'freshcaller/settings', controller: 'ember/freshcaller/settings', only: [:index] do
       collection do
         put :desktop_notification
+        get :redirect_url
       end
     end
 

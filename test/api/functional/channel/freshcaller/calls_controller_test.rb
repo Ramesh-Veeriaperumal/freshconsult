@@ -9,6 +9,11 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     initial_setup
   end
 
+  def teardown
+    super
+    @account.revoke_feature(:freshcaller)
+  end
+
   @initial_setup_run = false
 
   def initial_setup
@@ -31,8 +36,8 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
 
   def test_create_with_update_field
     set_auth_header
-    post :create, construct_params(version: 'private', fc_call_id: Random.rand(100), ticket_id: 1)
-    match_json([bad_request_error_pattern('ticket_id', :invalid_field)])
+    post :create, construct_params(version: 'private', fc_call_id: Random.rand(100), ticket_display_id: 1)
+    match_json([bad_request_error_pattern('ticket_display_id', :invalid_field)])
     assert_response 400
   end
 
@@ -108,7 +113,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
                 bad_request_error_pattern(:customer_location, :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer),
                 bad_request_error_pattern(:duration, :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String),
                 bad_request_error_pattern(:note, :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer),
-                bad_request_error_pattern(:ticket_id, :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer),
+                bad_request_error_pattern(:ticket_display_id, :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer),
                 bad_request_error_pattern(:agent_email, :invalid_format, accepted: 'valid email address')])
     assert_response 400
   end

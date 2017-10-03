@@ -1,5 +1,4 @@
 class Channel::Freshcaller::CallsController < ApiApplicationController
-  include Freshfone::FreshfoneUtil
   include ::Freshcaller::JwtAuthentication
   include ::Freshcaller::CallConcern
   skip_before_filter :check_privilege, :verify_authenticity_token, :set_current_account, :check_day_pass_usage_with_user_time_zone
@@ -16,13 +15,19 @@ class Channel::Freshcaller::CallsController < ApiApplicationController
   end
 
   def update
-    handle_call_status_flows
-    @item.recording_status = params[:recording_status] if params[:recording_status].present?
-    if @item.save
-      response.api_root_key = 'freshcaller_call'
-      render_201_with_location(location_url: 'freshcaller_calls_url')
+    call_delegator = CallDelegator.new(@item, @options.slice(:ticket_display_id, :agent_email, :contact_id))
+    if call_delegator.valid?
+      load_call_attributes call_delegator
+      handle_call_status_flows
+      @item.recording_status = params[:recording_status] if params[:recording_status].present?
+      if @item.save
+        response.api_root_key = 'freshcaller_call'
+        render_201_with_location(location_url: 'freshcaller_calls_url')
+      else
+        render_custom_errors(@item)
+      end
     else
-      render_custom_errors(@item)
+      render_custom_errors(call_delegator, true)
     end
   end
 
@@ -33,17 +38,18 @@ class Channel::Freshcaller::CallsController < ApiApplicationController
     end
 
     def handle_call_status_flows
-      if missed_call?
-        create_and_link_ticket
-      elsif voicemail? || completed?
-        create_ticket if @ticket.blank?
-        create_and_link_note
-      end
+      create_and_link_ticket if incoming_missed_call?
+      create_ticket_add_note if voicemail? || completed? || outgoing_missed_call?
     end
 
     def create_and_link_ticket
       create_ticket
       @item.notable = @ticket
+    end
+
+    def create_ticket_add_note
+      create_ticket if @ticket.blank?
+      create_and_link_note
     end
 
     def create_ticket
@@ -66,9 +72,6 @@ class Channel::Freshcaller::CallsController < ApiApplicationController
 
     def sanitize_params
       @options = params[cname].dup
-      @ticket = current_account.tickets.where(display_id: @options[:ticket_id]).first if @options[:ticket_id].present?
-      @contact = find_customer_by_number(@options[:customer_number])
-      @agent = current_account.technicians.where(email: @options[:agent_email]).first
       ParamsHelper.save_and_remove_params(self, ::Freshcaller::CallConstants::EXCLUDE_FIELDS, cname_params)
     end
 
@@ -78,5 +81,11 @@ class Channel::Freshcaller::CallsController < ApiApplicationController
       call_validation = ::Freshcaller::CallValidation.new(params[cname], @item, string_request_params?)
       valid = call_validation.valid?(action_name.to_sym)
       render_errors call_validation.errors, call_validation.error_options unless valid
+    end
+
+    def load_call_attributes(delegator)
+      @ticket = delegator.ticket
+      @agent = delegator.agent
+      @contact = delegator.contact || load_contact_from_search
     end
 end

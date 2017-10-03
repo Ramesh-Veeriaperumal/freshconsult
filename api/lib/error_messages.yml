@@ -139,3 +139,4 @@ api_error_messages:
   # Dashboard activities
   either_since_id_or_before_id: "Specify since_id or before_id, not both"
   missing_contact_detail: "Please enter at least one contact detail"
+  no_freshcaller_account: "No Freshcaller account exists"

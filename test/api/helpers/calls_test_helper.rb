@@ -4,7 +4,7 @@ module Freshcaller::CallsTestHelper
       id: call.id,
       fc_call_id: call.fc_call_id,
       recording_status: call.recording_status,
-      ticket_id: nil,
+      ticket_display_id: nil,
       note_id: nil
     }
   end
@@ -14,7 +14,7 @@ module Freshcaller::CallsTestHelper
       id: call.id,
       fc_call_id: call.fc_call_id,
       recording_status: call.recording_status,
-      ticket_id: call.notable.notable.id,
+      ticket_display_id: call.notable.notable.id,
       note_id: call.notable.id
     }
   end
@@ -24,7 +24,7 @@ module Freshcaller::CallsTestHelper
       id: call.id,
       fc_call_id: call.fc_call_id,
       recording_status: call.recording_status,
-      ticket_id: call.notable.id,
+      ticket_display_id: call.notable.id,
       note_id: nil
     }
   end
@@ -44,7 +44,7 @@ module Freshcaller::CallsTestHelper
   def convert_call_to_note_params(call_id, status)
     ticket = create_ticket
     params = convert_call_params(call_id, status)
-    params.merge(ticket_id: ticket.id,
+    params.merge(ticket_display_id: ticket.id,
                  duration: Faker::Number.between(1, 3000),
                  note: Faker::Lorem.sentence(3))
     params
@@ -59,7 +59,7 @@ module Freshcaller::CallsTestHelper
       customer_location: 1,
       call_created_at: 1,
       agent_number: 1_234_567,
-      ticket_id: 1,
+      ticket_display_id: 1,
       duration: '10',
       note: 1,
       agent_email: 'invalid_email',
