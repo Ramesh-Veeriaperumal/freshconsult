@@ -1,0 +1,19 @@
+post:
+  tags: [agent]
+  description: Bulk agent creation
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/bulk_agent_input'
+
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/agent_partial_success_response'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

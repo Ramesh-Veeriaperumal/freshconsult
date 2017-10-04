@@ -16,14 +16,18 @@ class AgentValidation < ApiValidation
   validates :signature, data_type: { rules: String, allow_nil: true }
   validates :ticket_scope, custom_inclusion: { in: AgentConstants::TICKET_SCOPES, detect_type: true }
   validates :group_ids, data_type: { rules: Array }, array: { custom_numericality: { only_integer: true, greater_than: 0 } }
-  validates :role_ids, required: true, data_type: { rules: Array }, array: { custom_numericality: { only_integer: true, greater_than: 0 } }
+  validates :role_ids, required: true, data_type: { rules: Array }, array: { custom_numericality: { only_integer: true, greater_than: 0 } }, unless: :bulk_create?
   validate :check_agent_limit, if: -> { @occasional_set && @previous_occasional && @occasional == false }
 
   def initialize(request_params, item, allow_string_param = false)
-    user = item.user
-    @previous_occasional = item.occasional
-    @role_ids = user.roles.map(&:id) if user
-    super(request_params, user, allow_string_param)
+    if item
+      user = item.user
+      @previous_occasional = item.occasional
+      @role_ids = user.roles.map(&:id) if user
+      super(request_params, user, allow_string_param)
+    else
+      super(request_params, nil, allow_string_param)
+    end
   end
 
   def check_agent_limit
@@ -41,4 +45,8 @@ class AgentValidation < ApiValidation
   def multi_timezone_enabled?
     Account.current.multi_timezone_enabled?
   end
+
+  def bulk_create?
+    [:create_multiple].include?(validation_context)
+  end 
 end

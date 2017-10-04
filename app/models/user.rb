@@ -1,4 +1,5 @@
 # encoding: utf-8
+
 class User < ActiveRecord::Base
   self.primary_key= :id
 
@@ -502,6 +503,10 @@ class User < ActiveRecord::Base
           user_skill["skill_id"] }
     end
     return false unless save_without_session_maintenance
+    enqueue_activation_email(params, portal, send_activation)
+  end
+
+  def enqueue_activation_email(params, portal = nil, send_activation = true)
     portal.make_current if portal
     if (!deleted and !email.blank? and send_activation)
       if self.language.nil?

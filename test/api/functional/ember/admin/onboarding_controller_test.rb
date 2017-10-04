@@ -5,6 +5,7 @@ require Rails.root.join('test', 'core', 'helpers', 'users_test_helper.rb')
 class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
   include AccountTestHelper
   include UsersTestHelper
+  include OnboardingTestHelper
 
   def setup
     super
@@ -13,6 +14,30 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
 
   def before_all
     @user = create_test_account
+  end
+
+  def channels_params
+    @channels ||= %w[phone forums social]
+  end
+
+  def test_channel_update_with_valid_channels
+    @account.set_account_onboarding_pending
+    post :update_channel_config, construct_params(version: 'private', channels: channels_params)
+    assert_response 204
+    assert_channel_selection(channels_params)
+  end
+
+  def test_channel_update_with_invalid_channels
+    channels_params << 'emai'
+    post :update_channel_config, construct_params(version: 'private', channels: channels_params)
+    assert_response 400
+  end
+
+  def test_channel_update_after_onboarding_complete
+    Account.current.complete_account_onboarding
+    post :update_channel_config, construct_params(version: 'private', channels: channels_params)
+    assert_response 404
+    Account.current.set_account_onboarding_pending
   end
 
   def test_update_activation_email_with_valid_email

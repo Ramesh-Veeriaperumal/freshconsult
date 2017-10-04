@@ -1,0 +1,8 @@
+type: object
+properties:
+  email:
+    type: string
+  errors:
+    type: array
+    items:
+      $ref: '#/definitions/request_error'

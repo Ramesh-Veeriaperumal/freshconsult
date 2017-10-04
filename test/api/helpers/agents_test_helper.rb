@@ -186,4 +186,29 @@ module AgentsTestHelper
     @account.chat_setting.enabled = true
     @account.save
   end
+
+  def failure_pattern(failures = {})
+    failures.map do |rec_email, errors|
+      {
+        email: rec_email,
+        errors: errors.map do |field, value|
+          agent_bad_request_error_pattern(field, *value)
+        end,
+        error_options: {}
+      }
+      end
+  end
+
+  def agent_bad_request_error_pattern(field, value, params_hash = {})
+    code = params_hash[:code] || ErrorConstants::API_ERROR_CODES_BY_VALUE[value] || ErrorConstants::DEFAULT_CUSTOM_CODE
+    message = retrieve_message(params_hash[:prepend_msg]) + retrieve_message(value) + retrieve_message(params_hash[:append_msg])
+    {
+      code: code,
+      field: "#{field}",
+      nested_field: nil,
+      http_code: ErrorConstants::API_HTTP_ERROR_STATUS_BY_CODE[code] || ErrorConstants::DEFAULT_HTTP_CODE,
+      message: message % params_hash
+    }
+  end
+
 end

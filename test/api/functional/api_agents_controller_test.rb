@@ -25,7 +25,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
     get :index, controller_params
     assert_response 200
     agents = @account.all_agents.order('users.name')
-    pattern = agents.map { |agent| agent_pattern(agent) }
+    pattern = agents.map { |agent| private_api_agent_pattern(agent) }
     match_json(pattern.ordered)
   end
 

@@ -15,6 +15,8 @@
     $ref: ./error/bad_request.yaml
   request_error:
     $ref: ./error/request.yaml
+  agents_bulk_action_error:
+    $ref: ./response/agents/bulk_error.yaml
 
   # REQUEST
   bulk_action_input:
@@ -94,8 +96,12 @@
     $ref: ./request/integrated_resources/integrated_resource.yaml
   agent_input:
     $ref: ./request/agents/agent.yaml
+  bulk_agent_input:
+    $ref: ./request/agents/bulk_agent.yaml  
   onboarding_update_activation_email_input:
     $ref: ./request/onboarding/update_activation_email.yaml
+  update_channels_input:
+    $ref: ./request/onboarding/update_channels.yaml
 
   # RESOURCE
   conversation_template:
@@ -223,8 +229,12 @@
       $ref: '#/definitions/extended_note'
   partial_success_response:
     $ref: ./response/bulk_partial_success.yaml
+
   make_agent_response:
     $ref: ./response/make_agent.yaml
+  agent_partial_success_response:
+    $ref: ./response/agents/create_multiple.yaml
+
   watchers:
     $ref: ./response/tickets/watchers.yaml
   latest_note:
