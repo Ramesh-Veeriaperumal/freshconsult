@@ -115,7 +115,6 @@ module AgentsTestHelper
       name: contact.name,
       phone: contact.phone,
       time_zone: contact.time_zone,
-      local_time: Time.now.in_time_zone(contact.time_zone).strftime('%I:%M %p'),
       avatar: get_contact_avatar(contact)
     }
   end
