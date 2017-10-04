@@ -6360,6 +6360,9 @@
             "inline_url": {
               "type": "string"
             },
+            "thumb_url": {
+              "type": "string"
+            },
             "is_shared": {
               "type": "boolean"
             }
