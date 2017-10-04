@@ -24,7 +24,7 @@ $hover-text-color: #6f7c87;
 $border-color: #d3dbda;
 $close-icon-color: #5a6670;
 $caret-down-color: #989e9d;
-$white: #fff;
+$app-btn-background: #fff;
 $bread-crumbs-active: #000;
 $list-selected: #fffef7;
 $list-option-selected: #ebedf0;
@@ -33,15 +33,15 @@ $app-icon-color: #6f7c87;
 
 body.community{
 	.community-wrapper {
-	    background-color: $white;
+	    background-color: $app-btn-background;
 	}
 	/* style changes in sticky header */
 	&.single {
 		#inner .pagearea{
-			background: $white;
+			background: $app-btn-background;
 		}
 		.ficon-cube:before {
-		    color: $white;
+		    color: $app-btn-background;
 		}
 	}
 	.pagearea{
@@ -558,7 +558,7 @@ body.community.solutions {
 
 	#solution-properties {
 		.select2-choices {
-			background-color: $white !important;
+			background-color: $app-btn-background !important;
 		}
 	}
 
@@ -677,7 +677,7 @@ body.community {
 
 	.modal {
 		.delete-confirm-warning-message .info {
-			color: $white;
+			color: $app-btn-background;
 		}
 
 		.delete-confirm-form {
