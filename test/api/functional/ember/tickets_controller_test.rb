@@ -21,6 +21,7 @@ module Ember
 
     CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date).freeze
     CUSTOM_FIELDS_CHOICES = Faker::Lorem.words(5).uniq.freeze
+    CUSTOM_FIELDS_VALUES = { 'country' => 'USA', 'state' => 'California', 'city' => 'Burlingame', 'number' => 32_234, 'decimal' => '90.89', 'checkbox' => true, 'text' => Faker::Name.name, 'paragraph' => Faker::Lorem.paragraph, 'dropdown' => 'Pursuit of Happiness', 'date' => '2015-09-09' }.freeze
 
     def setup
       super
@@ -57,6 +58,20 @@ module Ember
 
     def wrap_cname(params)
       { ticket: params }
+    end
+
+    def construct_sections(field_name)
+      if field_name == 'type'
+        return SECTIONS_FOR_TYPE
+      else
+        return SECTIONS_FOR_CUSTOM_DROPDOWN
+      end
+    end
+
+    def clear_field_options
+      @account.ticket_fields.custom_fields.each do |x|
+        x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
+      end
     end
 
     def get_user_with_multiple_companies
@@ -564,6 +579,36 @@ module Ember
       assert_response 201
     ensure
       Account.any_instance.unstub(:multiple_user_companies_enabled?)
+    end
+
+    def test_create_with_section_fields_with_type_as_parent
+      sections = construct_sections('type')
+      type_field_id = @account.ticket_fields.find_by_field_type('default_ticket_type').id
+      create_section_fields(type_field_id, sections)
+      params = ticket_params_hash.merge(custom_fields: {}, type: 'Incident', description: '<b>test</b>')
+      %w(paragraph dropdown).each do |custom_field|
+        params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+      end
+      post :create, construct_params({ version: 'private' }, params)
+      match_json(ticket_show_pattern(Helpdesk::Ticket.last))
+      assert_response 201
+    ensure
+      clear_field_options
+    end
+
+    def test_create_with_section_fields_with_custom_dropdown_as_parent
+      dd_field_id = create_custom_field_dropdown_with_sections.id
+      sections = construct_sections('section_custom_dropdown')
+      create_section_fields(dd_field_id, sections)
+      params = ticket_params_hash.merge(custom_fields: { section_custom_dropdown: 'Choice 3' }, description: '<b>test</b>')
+      ['paragraph'].each do |custom_field|
+        params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+      end
+      post :create, construct_params({ version: 'private' }, params)
+      match_json(ticket_show_pattern(Helpdesk::Ticket.last))
+      assert_response 201
+    ensure
+      clear_field_options
     end
 
     def test_execute_scenario_without_params
@@ -1457,6 +1502,42 @@ module Ember
       t = Account.current.tickets.find_by_display_id(t.display_id)
       match_json(ticket_show_pattern(t))
       assert_equal 1, t.attachments.count
+    end
+
+    def test_update_with_section_fields_type_as_parent
+      sections = construct_sections('type')
+      type_field_id = @account.ticket_fields.find_by_field_type('default_ticket_type').id
+      create_section_fields(type_field_id, sections)
+      t = create_ticket
+      params = { custom_fields: {}, type: 'Incident' }
+      %w(paragraph dropdown).each do |custom_field|
+        params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+      end
+      params_hash = update_ticket_params_hash.merge(params)
+      put :update, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      t = Helpdesk::Ticket.last
+      match_json(ticket_show_pattern(t))
+      assert_response 200
+    ensure
+      clear_field_options
+    end
+
+    def test_update_with_section_fields_custom_dropdown_as_parent
+      dd_field_id = create_custom_field_dropdown_with_sections.id
+      sections = construct_sections('section_custom_dropdown')
+      create_section_fields(dd_field_id, sections)
+      t = create_ticket
+      params = { custom_fields: { section_custom_dropdown: 'Choice 3' } }
+      ['paragraph'].each do |custom_field|
+        params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+      end
+      params_hash = update_ticket_params_hash.merge(params)
+      put :update, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      t = Helpdesk::Ticket.last
+      match_json(ticket_show_pattern(t))
+      assert_response 200
+    ensure
+      clear_field_options
     end
 
     def test_export_csv_with_no_params

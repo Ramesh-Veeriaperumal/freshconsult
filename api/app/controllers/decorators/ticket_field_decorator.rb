@@ -96,7 +96,8 @@ class TicketFieldDecorator < ApiDecorator
       list.map do |k, v|
         {
           label: v,
-          value: v
+          value: v,
+          id: k # Needed as it is used in section data.
         }
       end
     end
