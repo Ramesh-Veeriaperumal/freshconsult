@@ -1431,6 +1431,9 @@ div[class$="-toggle"]{
   textarea:focus, input[type="text"]:focus, input[type="password"]:focus, input[type="datetime"]:focus, input[type="datetime-local"]:focus, input[type="date"]:focus, input[type="month"]:focus, input[type="time"]:focus, input[type="week"]:focus, input[type="number"]:focus, input[type="email"]:focus, input[type="url"]:focus, input[type="search"]:focus, input[type="tel"]:focus .uneditable-input:focus{
     border-color: $app-primary-color;
   }
+  select:focus, .btn:focus, input[type="file"]:focus{
+    outline: none;
+  }
   .discussionPanel {
       border: none;
       box-shadow: 0 -1px 0 0 #f1f1f1;
@@ -1518,6 +1521,24 @@ div[class$="-toggle"]{
   padding: 0px 20px 0 0;
 }
 
+.edit_agent .ui-form, form[action*="change_password"] .ui-form {
+    border-color: transparent;
+    background-color: transparent;
+}
+.edit_agent{
+  li.overlabel-wrapper label{
+    line-height: 24px;
+  }
+}
+#email-preview{
+  .modal-body{
+    padding-bottom: 20px;
+  }
+  .modal-footer{
+    padding-bottom: 0px;
+    background: none;
+  }
+}
 
 
 @import "falcon-community";

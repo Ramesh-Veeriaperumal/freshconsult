@@ -9,7 +9,7 @@ class ForumErrorsMailer < ActionMailer::Base
     headers = {
       :to        => RECIPIENTS,
       :from      => FROM,
-      :subject   => "#{Rails.env} :: Critical Error - Dynamo Table operation failed",
+      :subject   => "#{Rails.env} :: #{PodConfig['CURRENT_POD']} :: Critical Error - Dynamo Table operation failed",
       :sent_on   => Time.now
     }
     @params = options
@@ -23,7 +23,7 @@ class ForumErrorsMailer < ActionMailer::Base
     headers = {
       :to        => RECIPIENTS,
       :from      => FROM,
-      :subject   => "#{Rails.env} :: Error: Forum Moderation",
+      :subject   => "#{Rails.env} :: #{PodConfig['CURRENT_POD']} :: Error: Forum Moderation",
       :sent_on   => Time.now
     }
     @error = options[:error]

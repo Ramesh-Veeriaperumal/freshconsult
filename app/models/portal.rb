@@ -243,7 +243,7 @@ class Portal < ActiveRecord::Base
 
     def ticket_field_conditions
       { 'product' => (main_portal && !account.products.empty?), 
-        'company' => account.features?(:multiple_user_companies) && User.current.present? && 
+        'company' => account.multiple_user_companies_enabled? && User.current.present? &&
                       (User.current.agent? || User.current.contractor?) }
     end
 

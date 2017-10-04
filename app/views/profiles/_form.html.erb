@@ -66,6 +66,22 @@ jQuery('.email').on('keyup', function(){
 	if(a.length)
 		jQuery('#add_new_mail').toggleClass('disabled', !jQuery.trim(a.last().val()));
 });
+
+	<% if current_account.falcon_ui_enabled?(current_user) %>
+		jQuery('.edit_agent').submit(function(event){
+			var form = this,
+				form_data = jQuery(form).serialize(),
+				url = form.action;
+			event.preventDefault();
+			var posting = jQuery.post( url , form_data);
+			posting.success(function( data ) {
+				parent.location.reload();
+			});
+			posting.fail(function( data ) {
+				window.location.reload();
+			});
+		});
+	<% end %>
 <% end %>
 
 <% user = @profile %>

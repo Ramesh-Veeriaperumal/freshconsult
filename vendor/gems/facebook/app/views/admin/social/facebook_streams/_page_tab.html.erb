@@ -35,7 +35,11 @@
   <!-- This condition is for new Users -->
   <% if @page_tab.nil? && @facebook_page.page_token_tab.nil? %>
     <%unless @edit_tab%>
-    <p class="pt10 pl20"><%= t('.configure_tab_auth' ,:page_tab_url => @page_tab_url ).html_safe%> </p>
+    <p class="pt10 pl20">
+      <a onclick="<%= onclick_strategy(@page_tab_url)%>" href="javascript:void(0)">
+        <%= t('facebook_tab.configure_tab').html_safe %>
+      </a>
+    </p>
     <div class="fb_tab_pic"></div>
     <%end%>
 

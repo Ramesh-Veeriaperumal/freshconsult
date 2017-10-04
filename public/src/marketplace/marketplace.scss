@@ -540,7 +540,7 @@
   }
   .app-desc{
     display: inline-block;
-    width: calc(76vw - 250px);
+    width: calc(75vw - 250px);
     @include padding(30px 10px 10px 35px);
     .carousel{
       border: solid 1px #ddd;

@@ -150,10 +150,6 @@ class Account < ActiveRecord::Base
 
   #Temporary feature check methods - using redis keys - ends here
 
-  def multiple_user_companies_enabled?
-    features?(:multiple_user_companies)
-  end
-
   def round_robin_capping_enabled?
     features?(:round_robin_load_balancing)
   end
@@ -163,7 +159,7 @@ class Account < ActiveRecord::Base
   end
 
   def freshfone_active?
-    features?(:freshfone) and freshfone_numbers.present?
+    features?(:freshfone) && freshfone_numbers.present? && !falcon_ui_enabled?(User.current)
   end
   
   def es_multilang_soln?
