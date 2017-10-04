@@ -55,3 +55,5 @@ properties:
           type: string
         view_all_tickets:
           type: boolean
+        avatar:
+          $ref: '#/definitions/avatar'

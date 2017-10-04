@@ -151,10 +151,6 @@ class Account < ActiveRecord::Base
 
   #Temporary feature check methods - using redis keys - ends here
 
-  def multiple_user_companies_enabled?
-    features?(:multiple_user_companies)
-  end
-
   def round_robin_capping_enabled?
     features?(:round_robin_load_balancing)
   end
@@ -199,7 +195,8 @@ class Account < ActiveRecord::Base
   end
 
   def enabled_features_list
-    (features.map(&:to_sym) + features_list).uniq
+    (features.map(&:to_sym) - BITMAP_FEATURES + features_list).uniq
+    # (features.map(&:to_sym) + features_list).uniq
   end
 
   class << self # class methods

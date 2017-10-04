@@ -109,6 +109,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/admin/onboarding", only: %i[update_channel_config]
     resource :"ember/contact", only: [:update_password]
     resource :'ember/trial_widget', only: %i[index sales_manager]
+    resource :'ember/contact_password_policy', only: [:index]
+    resource :'ember/agent_password_policy', only: [:index] # Not using it now.
   end
 
   edit_ticket_properties do

@@ -1,0 +1,1 @@
+JSON.generate(PasswordPolicyDecorator.new(@password_policy).to_hash)

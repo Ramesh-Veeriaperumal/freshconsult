@@ -130,7 +130,7 @@ include Mobile::Actions::Push_Notifier
       @current_user = current_account.users.new unless @current_user
       saved = update_user_for_jwt_sso(current_account, @current_user, user, user_custom_fields || {}, @current_user.new_record? || user_overwrite)
 
-      if saved && user_companies.present? && current_account.features?(:multiple_user_companies)
+      if saved && user_companies.present? && Account.current.multiple_user_companies_enabled?
         saved = set_user_companies_for_jwt_sso(current_account, @current_user, user_companies, user_companies_overwrite)
       end
       

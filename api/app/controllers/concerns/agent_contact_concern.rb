@@ -9,4 +9,10 @@ module AgentContactConcern
       render_errors(assume_identity: :not_allowed_to_assume)
     end
   end
+
+  def password_policy type
+    policy = type==PasswordPolicy::USER_TYPE[:agent] ? 
+                current_account.agent_password_policy_from_cache : 
+                current_account.contact_password_policy_from_cache
+  end
 end

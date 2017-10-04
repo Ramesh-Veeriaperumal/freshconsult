@@ -109,7 +109,6 @@ class ContactDecorator < ApiDecorator
         name: name,
         phone: phone,
         time_zone: time_zone,
-        local_time: Time.now.in_time_zone(time_zone).strftime('%I:%M %p'),
         avatar: avatar_hash
       }
     end
@@ -145,7 +144,8 @@ class ContactDecorator < ApiDecorator
       {
         id: uc.company_id,
         view_all_tickets: uc.client_manager,
-        name: uc.company.name
+        name: uc.company.name,
+        avatar: CompanyDecorator.new(uc.company, {}).avatar_hash
       }
     end
 

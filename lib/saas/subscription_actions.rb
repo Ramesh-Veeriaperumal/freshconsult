@@ -4,11 +4,13 @@ class SAAS::SubscriptionActions
     :facebook, :twitter, :custom_domain, :css_customization,
     :custom_roles, :dynamic_content, :mailbox, :dynamic_sections, :custom_survey,
     :round_robin, :multi_language, :helpdesk_restriction_toggle, :ticket_templates,
-    :multiple_companies_toggle, :round_robin_load_balancing ]
+    :round_robin_load_balancing]
 
   ADD_DATA_FEATURES   = [ :round_robin ]
   
-  ONLY_BITMAP_FEATURES = (Account::ADVANCED_FEATURES_TOGGLE + [:shared_ownership_toggle, :skill_based_round_robin, :auto_ticket_export, :ticket_activity_export])
+  ONLY_BITMAP_FEATURES = (Account::ADVANCED_FEATURES_TOGGLE + [
+    :shared_ownership_toggle, :skill_based_round_robin, :auto_ticket_export, :ticket_activity_export,
+    :multiple_companies_toggle, :multiple_user_companies])
 
   DROP  = "drop"
   ADD   = "add"

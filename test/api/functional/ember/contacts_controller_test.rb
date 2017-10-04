@@ -18,7 +18,7 @@ module Ember
       @private_api = true
       return if @@initial_setup_run
 
-      @account.features.multiple_user_companies.create
+      @account.add_feature(:multiple_user_companies)
       @account.reload
 
       20.times do
@@ -111,7 +111,7 @@ module Ember
 
     def test_create_contact_with_default_company
       company_ids = Company.first(2).map(&:id)
-      @account.features.multiple_user_companies.destroy
+      @account.revoke_feature(:multiple_user_companies)
       @account.reload
       post :create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
                                                              email: Faker::Internet.email,
@@ -124,13 +124,13 @@ module Ember
       assert User.last.user_companies.find_by_default(true).company_id == company_ids[0]
       assert User.last.user_companies.find_by_default(true).client_manager == true
       assert User.last.user_companies.where(default: false) == []
-      @account.features.multiple_user_companies.create
+      @account.add_feature(:multiple_user_companies)
       @account.reload
     end
 
     def test_update_contact_with_default_company
       company_ids = Company.first(2).map(&:id)
-      @account.features.multiple_user_companies.destroy
+      @account.revoke_feature(:multiple_user_companies)
       @account.reload
       sample_user = add_new_user(@account)
       company_ids = Company.first(2).map(&:id)
@@ -144,7 +144,7 @@ module Ember
       assert User.last.user_companies.find_by_default(true).company_id == company_ids[0]
       assert User.last.user_companies.find_by_default(true).client_manager == true
       assert User.last.user_companies.where(default: false) == []
-      @account.features.multiple_user_companies.create
+      @account.add_feature(:multiple_user_companies)
       @account.reload
     end
 
@@ -256,7 +256,7 @@ module Ember
 
     def test_error_in_create_contact_without_feature
       company_ids = Company.first(2).map(&:id)
-      @account.features.multiple_user_companies.destroy
+      @account.revoke_feature(:multiple_user_companies)
       @account.reload
       sample_user = add_new_user(@account)
       company_ids = Company.first(2).map(&:id)
@@ -277,7 +277,7 @@ module Ember
                                             code: :inaccessible_field,
                                             attribute: 'other_companies',
                                             feature: :multiple_user_companies)])
-      @account.features.multiple_user_companies.create
+      @account.add_feature(:multiple_user_companies)
       @account.reload
     end
 
