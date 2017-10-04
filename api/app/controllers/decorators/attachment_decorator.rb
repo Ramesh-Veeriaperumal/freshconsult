@@ -13,6 +13,8 @@ class AttachmentDecorator < ApiDecorator
       attachment_url: record.inline_image? ? inline_url : attachment_url_for_api # See if this is needed in all cases
     }
     ret_hash[:inline_url] = inline_url if record.inline_image?
+    ret_hash[:thumb_url] = attachment_url_for_api(true, :thumb) if record.image? &&
+                                                           !record.inline_image?
 
     ret_hash[:is_shared] = true if attachable_type == 'Account'
     ret_hash
