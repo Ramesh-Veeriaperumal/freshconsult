@@ -10,7 +10,7 @@
 </script>
 <% end %>
 
-<% if falcon_enabled? %>
+<% if current_account.falcon_ui_enabled?(current_user) %>
 	<script type="text/javascript">
 		if( top.window.location.href == window.location.href) {
 			location.href = "<%= redirect_falcon_path %>";
@@ -37,7 +37,7 @@
 
 		<div class="header-wrapper">
 
-	    <% if current_user && current_account.launched?(:falcon) %>
+	    <% if current_user && current_account.falcon_ui_enabled? %>
 	    	<%= link_to t('go_to_new_ui'), enable_falcon_path,
 						:id=>"ui_toggle", :method => :post %>
 	    <% end %>

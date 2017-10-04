@@ -86,6 +86,7 @@
       :user_notifications: 81
       :freshcaller: 82
       :quick_reply: 83
+      :falcon: 84
 :selectable_features:
       :branding: true
       :gamification_enable: false
@@ -94,3 +95,5 @@
       :advanced_search_bulk_actions: false
       :caching: false
       :private_inline: false
+      :freshcaller: false
+      :falcon: false

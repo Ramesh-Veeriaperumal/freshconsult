@@ -52,7 +52,7 @@ include FalconHelperMethods
         </script>
         )
     elsif @extension['name'] == Integrations::Constants::APP_NAMES[:slack_v2]
-      if falcon_enabled?
+      if current_account.falcon_ui_enabled?(current_user)
         on_click_url=falcon_redirect_check("/auth/slack?origin=id=#{current_account.id}%26portal_id=#{current_portal.id}%26user_id=#{current_user.id}")
       else
         on_click_url="parentNode.submit();"

@@ -1,16 +1,10 @@
 module FalconHelperMethods
   def falcon_redirect_check(root_path)
-    if falcon_enabled?
+    if current_account && current_account.falcon_ui_enabled?(current_user)
       "parent.location.href='#{root_path}'"
     else
       "window.location.href='#{root_path}'"
     end
-    end
+  end
 
-  def falcon_enabled?
-    current_account && current_account.launched?(:falcon) && current_user && current_user.is_falcon_pref?
 end
-end
-
-
-

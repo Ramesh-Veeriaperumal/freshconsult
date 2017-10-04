@@ -32,7 +32,4 @@ module Admin::Social::StreamsHelper
     handle.twitter_streams.select {|stream| stream.default_stream? }.first
   end
 
-  def falcon_enabled?
-    current_account && current_account.launched?(:falcon) && current_user && current_user.is_falcon_pref?
-  end
 end

@@ -67,7 +67,7 @@ jQuery('.email').on('keyup', function(){
 		jQuery('#add_new_mail').toggleClass('disabled', !jQuery.trim(a.last().val()));
 });
 
-	<% if falcon_enabled? %>
+	<% if current_account.falcon_ui_enabled?(current_user) %>
 		jQuery('.edit_agent').submit(function(event){
 			var form = this,
 				form_data = jQuery(form).serialize(),

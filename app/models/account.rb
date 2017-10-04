@@ -159,8 +159,7 @@ class Account < ActiveRecord::Base
   end
 
   def freshfone_active?
-    features?(:freshfone) && freshfone_numbers.present? &&
-      !(launched?(:falcon) && User.current.is_falcon_pref?)
+    features?(:freshfone) && freshfone_numbers.present? && !falcon_ui_enabled?(User.current)
   end
   
   def es_multilang_soln?

@@ -9,7 +9,7 @@ module Freshcaller
     }
 
     def falcon_and_freshcaller_enabled?(agent)
-      agent.account.freshcaller_enabled? && agent.account.launched?(:falcon)
+      agent.account.freshcaller_enabled? && agent.account.falcon_ui_enabled?
     end
 
     def save_fc_agent?(agent)

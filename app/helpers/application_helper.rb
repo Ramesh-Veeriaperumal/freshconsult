@@ -1642,7 +1642,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     end
 
     def onclick_strategy(auth_redirect_url)
-      if falcon_enabled?
+      if current_account.falcon_ui_enabled?(current_user)
         "parent.location.href='#{auth_redirect_url}'"
       else
         "window.location.href='#{auth_redirect_url}'"
@@ -2036,7 +2036,4 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     current_account.collaboration_enabled? and @collab_context
   end
 
-  def falcon_enabled?
-    current_account && current_account.launched?(:falcon) && current_user && current_user.is_falcon_pref?
-  end
 end
