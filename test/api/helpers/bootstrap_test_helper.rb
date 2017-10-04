@@ -57,6 +57,7 @@ module BootstrapTestHelper
       name: account.name,
       time_zone: account.time_zone,
       date_format: account.account_additional_settings.date_format,
+      language: account.language,
       features: Array,
       launched: Array,
       settings: {
