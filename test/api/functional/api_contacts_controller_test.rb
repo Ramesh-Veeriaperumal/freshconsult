@@ -12,7 +12,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   def initial_setup
     @account.reload
     return if @@initial_setup_run
-    @account.features.multiple_user_companies.create
+    @account.add_feature(:multiple_user_companies)
     @account.reload
 
     20.times do

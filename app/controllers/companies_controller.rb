@@ -141,11 +141,8 @@ class CompaniesController < ApplicationController
         @company_archive_tickets = @total_company_archive_tickets.sort_by {|item| -item.created_at.to_i}.take(10)
       end
 
-      if current_account.features?(:multiple_user_companies)
-        company_user_list      = @company.users
-      else
-        company_user_list      = current_account.users.company_users_via_customer_id(@company.id)
-      end
+      company_user_list = Account.current.multiple_user_companies_enabled? ? @company.users : 
+                            current_account.users.company_users_via_customer_id(@company.id)
       @company_users         = company_user_list.limit(6)
       @company_users_size    = company_user_list.count("1")
     end
