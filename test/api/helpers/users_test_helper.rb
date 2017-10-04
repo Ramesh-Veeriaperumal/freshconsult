@@ -387,6 +387,19 @@ module UsersTestHelper
     }
   end
 
+  def password_policy_pattern type
+    policy = type=="agent" ? Account.current.agent_password_policy_from_cache : 
+                             Account.current.contact_password_policy_from_cache
+    return { policies: nil } unless policy.present?
+    ret_hash = { 
+      policies: policy.configs
+    }
+    policy.policies.map(&:to_s).each do |policy|
+      ret_hash[:policies][policy] = true unless ret_hash[:policies].key?(policy)
+    end
+    ret_hash
+  end
+
   def stats(obj)
     ticket_states = obj.ticket_states
     {

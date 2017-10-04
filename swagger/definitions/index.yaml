@@ -261,6 +261,8 @@
       - $ref: ./response/canned_response/show.yaml
   reply_to_forward_template:
     $ref: ./resource/reply_to_forward_template.yaml
+  password_policy:
+    $ref: ./resource/password_policy.yaml
 
   # Dashboard activities
   dashboard_activities:

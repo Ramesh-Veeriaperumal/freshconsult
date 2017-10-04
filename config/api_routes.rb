@@ -361,6 +361,11 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :contact_password_policy, controller: 'ember/contact_password_policies', 
+                                        only: [:index]
+    resources :agent_password_policy, controller: 'ember/agent_password_policies', 
+                                        only: [:index]
+
     # Search routes
     post '/search/tickets/',      to: 'ember/search/tickets#results'
     post '/search/customers/',    to: 'ember/search/customers#results'

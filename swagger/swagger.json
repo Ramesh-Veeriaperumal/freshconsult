@@ -2202,7 +2202,6 @@
         }
       }
     },
-
     "/contacts/export_csv": {
       "post": {
         "tags": [
@@ -2233,7 +2232,6 @@
         }
       }
     },
-          
     "/contacts/quick_create": {
       "post": {
         "summary": "Quick Create",
@@ -2337,39 +2335,6 @@
           },
           "409": {
             "description": "Existing import in progress"
-          }
-        }
-      }
-    },
-    "/contacts/quick_create": {
-      "post": {
-        "summary": "Quick Create",
-        "tags": [
-          "contact"
-        ],
-        "description": "Quick Create without validations",
-        "parameters": [
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/quick_create_input"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/extended_contact"
-            }
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
           }
         }
       }
@@ -2757,6 +2722,46 @@
           },
           "404": {
             "description": "Attachment not found"
+          }
+        }
+      }
+    },
+    "/contact_password_policies": {
+      "get": {
+        "tags": [
+          "Contact Password Policy"
+        ],
+        "summary": "Contact Password Policy",
+        "description": "Lists the password policy for contacts",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/password_policy"
+            }
+          },
+          "403": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    },
+    "/agent_password_policies": {
+      "get": {
+        "tags": [
+          "Agent Password Policy"
+        ],
+        "summary": "Agent Password Policy",
+        "description": "Lists the password policy for agents",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/password_policy"
+            }
+          },
+          "403": {
+            "description": "Access Denied"
           }
         }
       }
@@ -5994,20 +5999,6 @@
         }
       }
     },
-    "fields_map": {
-      "type": "object",
-      "properties": {
-        "type": {
-          "type": "string",
-          "required": true,
-          "description": "content of the ticket reply"
-        },
-        "fields": {
-          "type": "object",
-          "$ref": "#/definitions/map_field_to_header"
-        }
-      }
-    },
     "agent_input": {
       "type": "object",
       "properties": {
@@ -8357,6 +8348,42 @@
             "signature": {
               "type": "string",
               "format": "HTML"
+            }
+          }
+        }
+      }
+    },
+    "password_policy": {
+      "title": "password_policies",
+      "type": "object",
+      "description": "Password policy response",
+      "properties": {
+        "policies": {
+          "type": "object",
+          "properties": {
+            "minimum_characters": {
+              "type": "string"
+            },
+            "session_expiry": {
+              "type": "string"
+            },
+            "password_expiry": {
+              "type": "string"
+            },
+            "cannot_be_same_as_past_passwords": {
+              "type": "string"
+            },
+            "cannot_contain_user_name": {
+              "type": "string"
+            },
+            "atleast_an_alphabet_and_number": {
+              "type": "string"
+            },
+            "have_mixed_case": {
+              "type": "string"
+            },
+            "have_special_character": {
+              "type": "string"
             }
           }
         }
