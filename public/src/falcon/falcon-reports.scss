@@ -73,6 +73,12 @@ $ticket-lifecycle-color: #183247;
   text-shadow: none;
 }
 
+
+.reports-main .helpkit-glance .glance-chart-wrapper .glance-chart .solution-article {
+  padding-top: 0;
+  padding-right: 10px;
+}
+
 .helpkit-glance .glance-chart-wrapper .glance-chart .solution-article,
 .helpkit-glance .glance-chart-wrapper .glance-chart .view-all-container {
   display: inline-block;
