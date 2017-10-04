@@ -321,30 +321,30 @@ en:
     photo: Photo
     title: Title
     info1: A Profile image of the person, it's best if the picture has the same length and height
-    back_info: Background information
+    back_info: About
     background: Background
     mobile: Mobile
     twitter_id: Twitter
     facebook: Facebook
-    full_name: Full Name
-    first_name: First Name
-    last_name: Last Name
-    phone_number: Phone Number
-    company_name: Company Name
-    job_title: Job Title
+    full_name: Full name
+    first_name: First name
+    last_name: Last name
+    phone_number: Phone number
+    company_name: Company
+    job_title: Job title
     industry: Industry
     name: Name
     secondary: secondary
-    phone_no: Phone No
-    work_phone: Work Phone
-    profile_picture: Profile Picture
-    mobile_phone: Mobile Phone
+    phone_no: Phone number
+    work_phone: Work phone
+    profile_picture: Profile picture
+    mobile_phone: Mobile phone
     mobile: Mobile
     address: Address
     work: Work
     email: Email
     emails: Emails
-    unique_external_id: Unique External Id
+    unique_external_id: Unique external ID
     choose_another_photo: "Choose another photo"
     add_photo: "Add Photo"
     change_photo: "Change photo"
@@ -1045,7 +1045,7 @@ en:
         twitter_id: Twitter
         time_zone: Time Zone
         language: Language
-        description: Background Information
+        description: About
         multiple_company: Associate one contact with multiple companies
       untitled: Untitled
       first_choice: First Choice
@@ -6168,23 +6168,23 @@ en:
     updated: Company was successfully updated.
     created_view: Company was successfully created. <a href="%{company_url}" data-pjax="#body-container"> View company. </a>
     info9: Freshdesk will automatically associate Contacts with this company if email ids contain these domains
-    sla_policy_name: SLA Policy
-    name: Company name
-    new: New Company
-    edit: Edit Company
-    quick_company: Quick Company
+    sla_policy_name: SLA policy
+    name: Company
+    new: New company
+    edit: Edit company
+    quick_company: Quick company
     title: Companies
     title1: companies?
     title2: company?
-    description: Description
+    description: About
     notes: Notes
     edit_notes: Edit
-    add_notes: Add Notes
-    delete_company: Delete Company
+    add_notes: Add notes
+    delete_company: Delete company
     info1: Are you sure you want to delete this company?
     info11: Are you sure you want to delete
     info10: "Note: Deleting a company will not delete its contacts."
-    info2: Domain Names for this company
+    info2: Domains for this company
     info5: Add specific notes regarding this company. example - we are negotiating a 100K deal with this company
     info6: People in %{name}
     info7: No tickets have been created by the people in this company
@@ -6273,7 +6273,7 @@ en:
     info4: The next ticket ID counter will start with this number (Should be greater than the last ticket ID created). This affects tickets created henceforth.
     info6: Add other languages that you support customers in here. You can then customize email notification templates for each supported language separately.
     save: Save
-    time_zone: Time Zone
+    time_zone: Time zone
     date_format: Date Format
     non_us: DAY-MONTH-YEAR
     us: MONTH-DAY-YEAR
