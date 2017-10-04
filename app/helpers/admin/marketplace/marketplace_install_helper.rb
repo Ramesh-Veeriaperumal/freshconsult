@@ -1,4 +1,5 @@
 module Admin::Marketplace::MarketplaceInstallHelper
+include FalconHelperMethods
 
   def generate_install_btn
     _btn = ""
@@ -51,9 +52,14 @@ module Admin::Marketplace::MarketplaceInstallHelper
         </script>
         )
     elsif @extension['name'] == Integrations::Constants::APP_NAMES[:slack_v2]
+      if falcon_enabled?
+        on_click_url=falcon_redirect_check("/auth/slack?origin=id=#{current_account.id}%26portal_id=#{current_portal.id}%26user_id=#{current_user.id}")
+      else
+        on_click_url="parentNode.submit();"
+      end
       _btn << %(<form id="nativeapp-form" action="#{install_url}" method="post"> </form>)
       _btn << %(
-        <a href="javascript:;" onclick="parentNode.submit();" class="install-app #{ni_install_btn_class}"><img alt="Add to Slack" src="https://platform.slack-edge.com/img/add_to_slack.png" style="padding-top: 10px;padding-left: 10px;width: 139px; height: 40px;"></a>
+        <a href="javascript:;" onclick="#{on_click_url}" class="install-app #{ni_install_btn_class}"><img alt="Add to Slack" src="https://platform.slack-edge.com/img/add_to_slack.png" style="padding-top: 10px;padding-left: 10px;width: 139px; height: 40px;"></a>
       )
     else
       _btn << link_to(install_btn_text, install_url, :method => :post,

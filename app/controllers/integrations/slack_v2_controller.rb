@@ -1,5 +1,5 @@
 class Integrations::SlackV2Controller < Admin::AdminController
-
+  include ApplicationHelper
   ssl_required :create_ticket, :tkt_create_v3
   skip_filter :select_shard, :only => [:tkt_create_v3, :help]
   prepend_around_filter :select_shard_slack, :only => [:tkt_create_v3, :help]
@@ -17,7 +17,7 @@ class Integrations::SlackV2Controller < Admin::AdminController
   MINIMUM_LINES = 0
 
   def oauth
-    redirect_to "#{AppConfig['integrations_url'][Rails.env]}/auth/slack?origin=id%3D#{current_account.id}%26portal_id%3D#{current_portal.id}%26user_id%3D#{current_user.id}"
+    redirect_to "#{AppConfig['integrations_url'][Rails.env]}/auth/slack?origin=id%3D#{current_account.id}%26portal_id%3D#{current_portal.id}%26user_id%3D#{current_user.id}%26falcon_enabled%3D#{falcon_enabled?.to_s}"
   end
 
   def new

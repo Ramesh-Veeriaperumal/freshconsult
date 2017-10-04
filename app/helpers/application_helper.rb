@@ -1641,6 +1641,14 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
       current_account.features_included?(:forums) && allowed_in_portal?(:open_forums) && privilege?(:view_forums)
     end
 
+    def onclick_strategy(auth_redirect_url)
+      if falcon_enabled?
+        "parent.location.href='#{auth_redirect_url}'"
+      else
+        "window.location.href='#{auth_redirect_url}'"
+      end
+    end
+
     def social_tab
       view_social_tab = can_view_social?
       handles_present = handles_associated?
@@ -2028,4 +2036,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     current_account.collaboration_enabled? and @collab_context
   end
 
+  def falcon_enabled?
+    current_account && current_account.launched?(:falcon) && current_user && current_user.is_falcon_pref?
+  end
 end
