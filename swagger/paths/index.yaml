@@ -185,6 +185,9 @@
   $ref: ./agents/me.yaml
 /agents/{id}/achievements:
   $ref: ./agents/achievements.yaml
+/agents/create_multiple:
+  $ref: ./agents/create_multiple.yaml
+
 
 # Scenario Automations
 /scenario_automations:
@@ -268,6 +271,9 @@
   $ref: ./onboarding/resend_activation_email.yaml
 /onboarding/update_activation_email:
   $ref: ./onboarding/update_activation_email.yaml
+/onboarding_update_channel_config:
+  $ref: ./onboarding/update_channel_config.yaml
+
 
 # Trial Widget
 /trial_widget:

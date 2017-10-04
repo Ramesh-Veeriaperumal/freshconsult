@@ -45,7 +45,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_account do
-    resource :"ember/admin/onboarding", only: %i[update_activation_email resend_activation_email]
+    resource :"ember/admin/onboarding", only: %i[update_activation_email resend_activation_email update_channel_config]
   end
 
   reply_ticket do
@@ -73,7 +73,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   view_contacts do
-    resource :"ember/contact", only: %i(index show send_invite bulk_send_invite)
+    resource :"ember/contact", only: %i[index show send_invite bulk_send_invite]
     resource :"ember/company", only: %i(index show activities)
     resource :"ember/search/customer", only: [:results]
   end
@@ -84,13 +84,12 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/contacts/merge", only: [:merge]
     resource :"ember/customer_import", only: [:index, :create]
     resource :"ember/search/autocomplete", only: [:companies]
-
     resource :"ember/tickets/requester", only: [:update]
   end
 
   manage_users do
-    resource :"ember/contact", only: %i(make_agent assume_identity)
-    resource :"ember/agent", only: [:show]
+    resource :"ember/contact", only: %i[make_agent assume_identity]
+    resource :"ember/agent", only: %i[show create_multiple]
   end
 
   delete_topic do
@@ -99,7 +98,7 @@ Authority::Authorization::PrivilegeList.build do
 
   manage_availability do
     resource :"ember/group", only: [:show]
-    resource :"ember/agent", only: [:update]
+    resource :"ember/agent", only: %i[update]
   end
 
   delete_ticket do
@@ -107,6 +106,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   admin_tasks do
+    resource :"ember/admin/onboarding", only: %i[update_channel_config]
     resource :"ember/contact", only: [:update_password]
     resource :'ember/trial_widget', only: %i[index sales_manager]
   end

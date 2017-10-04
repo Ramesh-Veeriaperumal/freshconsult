@@ -6,6 +6,70 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     { agent: params }
   end
 
+  def create_multiple_emails emails, other_params = {}
+    email_params = []
+    1..2.times do |loop_number|
+      email_params.push({ email: emails[loop_number] })
+    end
+    email_params
+  end
+
+  def test_multiple_agent_creation_with_valid_emails_and_no_role
+    valid_emails = [Faker::Internet.email, Faker::Internet.email]
+    invalid_emails = []
+    post :create_multiple, construct_params(version: 'private', agents: create_multiple_emails(valid_emails))
+    assert_response 202
+    @account.reload
+
+    agents = []
+    valid_emails.each do |email|
+      agents << @account.users.find_by_email(email).agent
+    end
+
+    success_pattern = agents.map { |agent| private_api_agent_pattern(agent) }
+    failure_pattern = failure_pattern()
+
+    pattern = {:succeeded => success_pattern.ordered, :failed => failure_pattern.ordered}
+    match_json(pattern)
+  end
+
+  def test_multiple_agent_creation_with_valid_email_and_role
+    valid_email = Faker::Internet.email
+    request_params = [ {:email => valid_email, :role_ids => [ @account.roles.admin.first.id ]} ]
+    post :create_multiple, construct_params(version: 'private', agents: request_params)
+
+    assert_response 202
+    agent = @account.users.find_by_email(valid_email).agent
+    success_pattern = [ private_api_agent_pattern(agent) ]
+    pattern = {:succeeded => success_pattern.ordered, :failed => failure_pattern().ordered}
+    match_json(pattern)
+    success_pattern[0][:contact][:name] = success_pattern[0][:contact][:email].split('@')[0]
+    pattern = {:succeeded => success_pattern.ordered, :failed => failure_pattern().ordered}
+    match_json(pattern)
+  end
+
+  def test_multiple_agent_creation_with_invalid_emails
+    invalid_emails = [Faker::Name.name, Faker::Name.name]
+    post :create_multiple, construct_params(version: 'private', agents: create_multiple_emails(invalid_emails))
+    assert_response 400
+  end
+
+  def test_multiple_agent_creation_with_duplicate_emails
+    agents = []
+    email = Faker::Internet.email
+    duplicate_emails = [email, email]
+    post :create_multiple, construct_params(version: 'private', agents: create_multiple_emails(duplicate_emails))
+    assert_response 202
+    @account.reload
+    failures = {}
+    failures[email] = { "primary_email.email": "Email has already been taken".to_sym,
+                        "base": "Email has already been taken".to_sym }
+    agents << @account.users.find_by_email(email).agent
+    success_pattern = agents.map { |agent| private_api_agent_pattern(agent) }
+    failure_pattern = failure_pattern(failures)
+    match_json({:succeeded => success_pattern.ordered, :failed => failure_pattern})
+  end
+
   def test_agent_index
     3.times do
       add_test_agent(@account, role: Role.find_by_name('Agent').id)

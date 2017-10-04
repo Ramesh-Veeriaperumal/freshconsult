@@ -43,7 +43,8 @@ class AccountDecorator < ApiDecorator
       {
         personalized_email_replies: record.features.personalized_email_replies?,
         compose_email_enabled: record.compose_email_enabled?,
-        include_survey_manually: include_survey_manually?
+        include_survey_manually: include_survey_manually?,
+        show_on_boarding: record.account_onboarding_pending?
       }
     end
 

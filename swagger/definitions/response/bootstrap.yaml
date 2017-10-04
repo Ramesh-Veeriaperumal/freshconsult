@@ -93,6 +93,8 @@ properties:
                 type: boolean
               include_survey_manually:
                 type: boolean
+              show_on_boarding:
+                type: boolean
           agents:
             type: object
             properties:

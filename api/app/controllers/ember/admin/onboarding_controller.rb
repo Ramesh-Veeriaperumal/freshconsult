@@ -2,8 +2,12 @@ module Ember
   module Admin
     class OnboardingController < ApiApplicationController
       include HelperConcern
-      before_filter :validate_body_params, :set_user_email_config, only: [:update_activation_email]
+      include Onboarding::OnboardingHelperMethods
 
+      before_filter :validate_body_params, only: [:update_activation_email, :update_channel_config]
+      before_filter :set_user_email_config, only: [:update_activation_email]
+      before_filter :check_onboarding_finished, only: [:update_channel_config]
+      
       def update_activation_email
         @item.email = @user_email_config[:new_email]
         @item.keep_user_active = true
@@ -17,12 +21,39 @@ module Ember
         end
       end
 
+      def update_channel_config
+        apply_account_channel_config
+        disable_disablable_channels
+        complete_admin_onboarding
+        head 204
+      end
+
       def resend_activation_email
         @item.send_activation_email
         head 204
       end
 
       private
+
+        def check_onboarding_finished
+          head 404 unless current_account.onboarding_pending?
+        end
+
+        def apply_account_channel_config
+          channels_config = params[cname][:channels]
+
+          channels_config.each do |channel|
+            current_account.send("enable_#{channel}_channel")
+          end
+        end
+
+        def disable_disablable_channels
+          unselected_channels = (OnboardingConstants::CHANNELS - params[cname][:channels])
+          disableable_channels = (unselected_channels & OnboardingConstants::DISABLEABLE_CHANNELS)
+          disableable_channels.each do |channel|
+            current_account.send("disable_#{channel}_channel")
+          end
+        end
 
         def constants_class
           :OnboardingConstants.to_s.freeze

@@ -1,0 +1,16 @@
+post:
+  tags: [onboarding]
+  description: Update Channel Config
+  parameters:
+    - name: data
+      in: body
+      schema:
+        $ref: '#/definitions/update_channels_input'
+
+  responses:
+    204:
+      description: OK
+    400:
+      description: Bad request error
+      schema:
+        $ref: '#/definitions/bad_request_error'
