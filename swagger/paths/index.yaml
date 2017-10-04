@@ -146,6 +146,12 @@
 /attachments/{id}/unlink:
   $ref: ./attachments/unlink.yaml
 
+# password policies
+/contact_password_policies:
+  $ref: ./password_policies/contact_password_policies.yaml
+/agent_password_policies: 
+  $ref: ./password_policies/agent_password_policies.yaml
+
 # Ticket Filters
 /ticket_filters:
   $ref: ./ticket_filters/list_and_create.yaml

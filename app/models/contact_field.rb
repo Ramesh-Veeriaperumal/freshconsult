@@ -75,11 +75,11 @@ class ContactField < ActiveRecord::Base
 
   def toggle_multiple_companies_feature
     if self.name == "company_name" && self.multiple_companies_contact
-      if Account.current.features?(:multiple_user_companies)
-        Account.current.features.multiple_user_companies.destroy
+      if Account.current.multiple_user_companies_enabled?
+        Account.current.revoke_feature(:multiple_user_companies)
         Users::RemoveSecondaryCompanies.perform_async
       else
-        Account.current.features.multiple_user_companies.create        
+        Account.current.add_feature(:multiple_user_companies)
       end
     end
   end

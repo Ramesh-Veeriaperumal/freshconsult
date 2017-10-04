@@ -13,7 +13,7 @@ module Ember
 
       def before_all
         return if @@before_all_run
-        @account.features.multiple_user_companies.create
+        @account.add_feature(:multiple_user_companies)
         @@before_all_run = true
       end
 
