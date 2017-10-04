@@ -131,6 +131,17 @@ class ApiApplicationController < MetalApiController
       render_request_error(:require_feature, 403, feature: f.join(',').titleize)
     end
 
+    def render_partial_success(succeeded, failed, render_path=nil)
+      @succeeded = succeeded
+      @failed = failed
+      (@failed || []).each do |item|
+        item[:errors], item[:error_options] = format_custom_errors(item[:validation_errors], item[:validation_errors].respond_to?(:error_options)) if item[:validation_errors]
+        item[:errors] = ErrorHelper.format_error(item[:errors], item[:error_options] || {})
+      end
+      log_error_response @failed
+      render_path ? render(render_path, status: 202) : render('/partial_success', status: 202)
+    end
+
   private
 
     def response_info
@@ -424,17 +435,6 @@ class ApiApplicationController < MetalApiController
         notify_new_relic_agent(StandardError, description: 'API Error Hash empty', params: params)
         render_base_error(:internal_error, 500)
       end
-    end
-
-    def render_partial_success(succeeded, failed)
-      @succeeded = succeeded
-      @failed = failed
-      (@failed || []).each do |item|
-        item[:errors], item[:error_options] = format_custom_errors(item[:validation_errors], item[:validation_errors].respond_to?(:error_options)) if item[:validation_errors]
-        item[:errors] = ErrorHelper.format_error(item[:errors], item[:error_options] || {})
-      end
-      log_error_response @failed
-      render '/partial_success', status: 202
     end
 
     def cname

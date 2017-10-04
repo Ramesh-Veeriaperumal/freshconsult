@@ -16,6 +16,7 @@ class Account < ActiveRecord::Base
   include Onboarding::OnboardingRedisMethods
   include FreshdeskFeatures::Feature
   include Helpdesk::SharedOwnershipMigrationMethods
+  include Account::ChannelUtils
 
   has_many_attachments
   

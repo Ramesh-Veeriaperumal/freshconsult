@@ -322,9 +322,11 @@ Helpkit::Application.routes.draw do
     end
     resources :surveys, controller: 'ember/surveys', only: [:index]
     resources :portals, controller: 'ember/portals', only: [:index]
+
     resources :agents, controller: 'ember/agents', only: [:index, :show, :update], id: /\d+/ do
       collection do
         get :me
+        post :create_multiple
       end
       member do
         get :achievements
@@ -355,6 +357,7 @@ Helpkit::Application.routes.draw do
       collection do
         put :update_activation_email
         get :resend_activation_email
+        post :update_channel_config
       end
     end
 

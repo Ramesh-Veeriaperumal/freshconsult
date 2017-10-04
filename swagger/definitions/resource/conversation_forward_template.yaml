@@ -6,4 +6,3 @@ allOf:
         type: array
         items:
           $ref: '#/definitions/attachment'
-      
