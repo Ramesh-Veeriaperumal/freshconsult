@@ -440,7 +440,8 @@ module UsersTestHelper
     {
       id: user_comp.company_id,
       name: user_comp.company.name,
-      view_all_tickets: user_comp.client_manager
+      view_all_tickets: user_comp.client_manager,
+      avatar: CompanyDecorator.new(user_comp.company, {}).avatar_hash
     }
   end
 

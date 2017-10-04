@@ -144,7 +144,8 @@ class ContactDecorator < ApiDecorator
       {
         id: uc.company_id,
         view_all_tickets: uc.client_manager,
-        name: uc.company.name
+        name: uc.company.name,
+        avatar: CompanyDecorator.new(uc.company, {}).avatar_hash
       }
     end
 
