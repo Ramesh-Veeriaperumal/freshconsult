@@ -420,6 +420,10 @@ class User < ActiveRecord::Base
     self.preferences[:agent_preferences][:falcon_ui]
   end
 
+  def falcon_invite_eligible?
+    (account.falcon_ui_enabled? && self.preferences_without_defaults.try(:[], :agent_preferences).try(:[],:falcon_ui).nil?)
+  end
+
   def update_attributes(params) # Overriding to normalize params at one place
     normalize_params(params) # hack to facilitate contact_fields & deprecate customer
     self.active = params["active"] if params["active"]

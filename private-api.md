@@ -14,15 +14,15 @@ Set `API_LAYER` to `true`
 
 SET `PRIVATE_API` to `true`
 
-The private API can be turned ON only when the launchparty feature :falcon is launched.
+The private API can be turned ON only when the bitmap feature :falcon is enabled.
 
 ```ruby
-Account.find(%{id}).launch(:falcon)
+Account.find(%{id}).add_feature(:falcon)
 ```
 or
 ```ruby
 Sharding.select_shard_of('%{domain}') do
-    Account.find_by_full_domain('%{domain}').launch(:falcon)
+    Account.find_by_full_domain('%{domain}').add_feature(:falcon)
 end
 ```
 *API is accessible only over HTTPS.*

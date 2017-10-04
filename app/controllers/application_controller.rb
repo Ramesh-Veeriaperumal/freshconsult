@@ -281,7 +281,7 @@ class ApplicationController < ActionController::Base
     end
 
     def set_ui_preference
-      if current_account.launched?(:falcon) && current_user && current_user.is_falcon_pref?
+      if current_account.falcon_ui_enabled?(current_user)
         cookies[:falcon_enabled] = true
         handle_falcon_redirection
       else

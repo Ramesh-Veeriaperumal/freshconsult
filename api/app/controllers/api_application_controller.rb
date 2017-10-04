@@ -744,7 +744,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def check_falcon
-      return if current_account.launched?(:falcon)
+      return if current_account.falcon_ui_enabled?
       Rails.logger.debug "Private API attempted without enabling FalconUI. Domain: #{current_account.full_domain} | Controller: #{params[:controller]} | Action: #{params[:action]} "
       head 404
     end

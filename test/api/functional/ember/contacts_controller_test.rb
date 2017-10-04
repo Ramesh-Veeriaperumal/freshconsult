@@ -941,6 +941,7 @@ module Ember
       contact = add_new_user(@account, deleted: false, active: true)
       assume_contact = add_new_user(@account, deleted: false, active: true)
       Account.any_instance.stubs(:has_feature?).with(:assume_identity).returns(false)
+      Account.any_instance.stubs(:has_feature?).with(:falcon).returns(true)
       put :assume_identity, construct_params({ version: 'private', id: assume_contact.id }, nil)
       Account.any_instance.unstub(:has_feature?)
       assert_response 400

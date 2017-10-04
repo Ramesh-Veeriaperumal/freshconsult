@@ -75,7 +75,7 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
   end
   
   def fb_client
-    if falcon_enabled?
+    if current_account.falcon_ui_enabled?(current_user)
      falcon_uri =admin_social_facebook_streams_url.gsub("/admin/social/facebook_streams","/a/admin/social/facebook_streams")
       @fb_client = Facebook::Oauth::FbClient.new(falcon_uri)
     else
