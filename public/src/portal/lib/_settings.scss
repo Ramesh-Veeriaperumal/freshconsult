@@ -31,7 +31,7 @@ $blue:                  #049cdb !default;
 $blueDark:              #0064cd !default;
 $green:                 #006063 !default;
 $red:                   #9d261d !default;
-$greenDark:				#4c4b4b !default;
+$greenDark:				#4c4b4b  !default;
 $yellow:                #ffc40d !default;
 $orange:                #f4af1a !default;
 $pink:                  #c3325f !default;
@@ -88,7 +88,9 @@ $media-mobile-tablet: 	0 60em 12; 		// Applying styles for mobile and tablet
 $break-tablet:			45em 12; 		// Applying styles for Tablets to Medium & Large desktops 
 $break-desktop:			60em 12; 		// Applying styles for Medium & Large desktops 
 $break-large:			75em 16; 		// Applying styles for Large desktops and above
-
+$media-mobile-tablets:   300px 720px;	// Applying for mobiles and tablets
+$media-medium-tablets:   640px 720px;
+$media-tablet-desktop:  721px 960px; 	// Applying styles for large tablet to medium desktops;
 // Links
 // -------------------------
 $linkColor:             $blue !default; //#08c

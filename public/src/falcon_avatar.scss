@@ -1,0 +1,71 @@
+@import "settings/settings";
+
+$colors: #c7e8bc, #ffb8bd, #ead0f5, #ffd2b8, #c7deff, #d4cef3, #eeebeb, #ffb8bd, #fae86f, #c7deff;
+
+@for $i from 1 through length($colors) {
+   $color: lighten(nth($colors, $i), 2%);
+
+   .bg-#{$i - 1} {
+     background-color: $color;
+     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+     color: rgba(0, 0, 0, 0.3);
+   }
+}
+div.avatar-text{
+	color: #fff;
+	text-transform: uppercase;
+	@include user-select(none);
+	cursor: default;
+	text-align: center;
+}
+div.thumb{
+	border-radius: 10%;
+	width: 47px;
+	height: 47px;
+	line-height: 47px;
+	font-size: 18px;
+	font-weight: 200;
+	color: #638699;
+}
+div.medium{
+	border-radius: 10%;
+	width: 127px;
+	height: 127px;
+	line-height: 127px;
+	font-size: 60px;
+	font-weight: 100;
+	text-align: right;
+	@include padding( 25px 20px 0 0 );
+	@include box-sizing(border-box);
+	color: rgba(255,255,255,0.6);
+	text-shadow: 0 0 8px #fff;
+}
+div.small{
+	border-radius: 10%;
+	width: 25px;
+	height: 25px;
+	line-height: 25px;
+	font-size: 14px;
+	font-weight: 400;
+}
+.circle{
+	@include border-radius(50% !important);
+	img{
+		@include border-radius(50% !important);
+	}
+}
+img.preview_pic{
+	margin-left: 0;
+}
+img.thumb{
+	width: 40px;
+	height: 40px;
+}
+img.medium{
+	width: 127px;
+	height: 127px;
+}
+img.small{
+	width: 25px;
+	height: 25px;
+}
