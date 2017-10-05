@@ -1,4 +1,5 @@
 require_relative '../../test_helper'
+
 module Ember
   class ContactsControllerTest < ActionController::TestCase
     include UsersTestHelper

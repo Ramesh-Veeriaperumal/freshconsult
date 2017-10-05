@@ -528,7 +528,13 @@ class User < ActiveRecord::Base
   def create_contact!(status)
     self.avatar = self.avatar
     self.active = status if status
-    return false unless save_without_session_maintenance
+    begin
+      return false unless save_without_session_maintenance
+    rescue ActiveRecord::RecordNotUnique => e
+      self.errors.add(:base, I18n.t("activerecord.errors.messages.email_not_unique")) if self[:email] and self[:account_id].present?
+      Rails.logger.debug('::::::::API v2:#{e.message} error in contact create::::::::')
+      return false
+    end
     if (!self.deleted and !self.email.blank?)
       portal = nil
       force_notification = false

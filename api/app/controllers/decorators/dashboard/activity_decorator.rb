@@ -85,6 +85,7 @@ class Dashboard::ActivityDecorator < ApiDecorator
   ACTIVITIES_PREFIX = 'activities.'.freeze
 
   def to_hash
+    record.activity_data = HashWithIndifferentAccess.new(activity_data)
     {
       id: id,
       object_id: object_id,
