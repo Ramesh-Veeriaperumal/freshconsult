@@ -160,7 +160,7 @@ class Agent < ActiveRecord::Base
     reason = {:delete_agent => [self.user_id]}
     Helpdesk::ResetResponder.perform_async({:user_id => self.user_id, :reason => reason})
   end
-  
+
   def reset_gamification
     destroy_achieved_quests
     destroy_support_scores

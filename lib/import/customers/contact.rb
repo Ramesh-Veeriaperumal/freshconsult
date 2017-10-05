@@ -12,7 +12,7 @@ class Import::Customers::Contact < Import::Customers::Base
     company_param = clean_company_param item_param[:company_name]
     first_valid_company = company_param.compact[0]
 
-    if is_user? && Account.current.features?(:multiple_user_companies)
+    if is_user? && Account.current.multiple_user_companies_enabled?
       item_param[:client_manager] = cm_param.join(COMPANY_DELIMITER)
       item_param[:first_company_name] = first_valid_company
       item_param[:company_name] = company_param.join(COMPANY_DELIMITER)

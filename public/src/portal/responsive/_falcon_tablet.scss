@@ -1,0 +1,93 @@
+// Applying styles for Tablets to Medium & Large desktops 
+@include at-breakpoint($break-tablet){  
+    // jQuery responsive for Tablets
+    // --------------------------------------
+    /* multiple calenders will be responsive */
+    .ui-datepicker.ui-datepicker-multi { width:auto; }
+    .ui-datepicker-multi .ui-datepicker-group { @include float(left); }
+    .ui-datepicker-multi .ui-datepicker-group table { width:95%; margin:0 auto .4em; }
+    .ui-datepicker-multi-2 .ui-datepicker-group { width:50%; }
+    .ui-datepicker-multi-3 .ui-datepicker-group { width:33.3%; }
+    .ui-datepicker-multi-4 .ui-datepicker-group { width:25%; }
+    .ui-datepicker-multi .ui-datepicker-group-last .ui-datepicker-header { @include border-left-width(0); }
+    .ui-datepicker-multi .ui-datepicker-group-middle .ui-datepicker-header { @include border-left-width(0); }
+    .ui-datepicker-multi .ui-datepicker-buttonpane { @include clear(left); }
+    .ui-datepicker-row-break { @include clear(both); width:100%; font-size:0em; }
+    //Layout
+    @include layout(4) {
+      .cs-g{ @include span-columns(2); width: 46%; margin-bottom: 10px; @include margin-right(4.7037%); @include clear(left);}
+      .cs-g:nth-child(even){ @include span-columns(2 omega); @include clear(right); width: 46%; margin-bottom: 10px; @include float(left); }
+    }
+
+    @include layout(3) {
+        .cs-g-3{  @include span-columns(1); }
+        .cs-g-3:nth-child(3n+3){ @include span-columns(1 omega); }
+        .cs-g-3:nth-child(3n+1){ @include clear(left); }
+    }
+}
+
+@include at-breakpoint($media-mobile-tablet){
+    #new_topic{
+        .related-topics{
+            overflow: scroll;
+            height: 100%
+        }
+        .title{ @include padding(10px 0 5px 0); }
+        .topic-title{ font-size: 14px; }
+    }
+    //Modals
+    .modal {    
+        top: 12%;
+        margin-top: 0;
+        &.fade.in { top: 10%; }
+    }  
+    // wrapper 
+    .c-wrapper{
+        @include box-shadow(none);
+        @include border-radius(0);
+        border: 0;
+    } 
+    //Layout
+    .main, .sidebar { 
+        @include reset-columns; 
+        border: 1px solid $border-color;
+        @include box-shadow(0 1px 2px 0 rgba(63, 63, 68, 0.15));
+        @include border-radius(6px);
+        background: $white;
+        @include padding(16px 26px);
+    }
+    .main{
+        margin-bottom: 20px;
+    }
+    .signup-wrapper{
+        width: 80%;
+    }
+}
+@include at-breakpoint($media-tablet-desktop){
+    #login-container{
+        min-height: 340px;
+    }
+    .alt-login-button{
+        @include float(left);
+        margin-left: 30px;
+    }
+}
+@include at-breakpoint($break-desktop){
+    .min-height-on-desktop{ @include min-height(630px); }
+     .ui-datepicker select.ui-datepicker-month, .ui-datepicker select.ui-datepicker-year{ height: auto;}
+    .sidebar{
+      .cs-g{  @include reset-columns; }
+      .cs-g-3{  
+        @include reset-columns; 
+        a{
+            font-size: 14px;
+            font-weight: 400;
+        }
+       }
+    }
+    .help-text a{
+        font-size: 13px;
+        font-weight: 400;
+        color: $blue;
+    }
+}

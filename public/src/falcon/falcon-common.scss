@@ -1,8 +1,19 @@
-@import "../fonts/proximanova-fonts";
+// @import "../fonts/proximanova-fonts";
+@import "../pattern/lib/rtl-mixins";
 
-$font-family-normal:  'Proxima Nova Rg', "Helvetica Neue", Helvetica, Arial !default;
-$font-family-bold:        'Proxima Nova bold', "Helvetica Neue", Helvetica, Arial !default;
-$font-family-semibold:    'Proxima Nova sbold', "Helvetica Neue", Helvetica, Arial !default;
+$font-stack-sans: -apple-system,
+  BlinkMacSystemFont,
+  "Segoe UI",
+  "Roboto",
+  "Oxygen-Sans",
+  "Ubuntu",
+  "Helvetica Neue",
+  Arial,
+  sans-serif !default;
+
+$font-family-normal:   $font-stack-sans !default;
+$font-family-bold:     $font-stack-sans !default;
+$font-family-semibold: $font-stack-sans !default;
 
 $border-color: #dadfe3;
 $app-btn-text-light: #ffffff;
@@ -20,6 +31,11 @@ $app-primary-btn-border: #03a86b;
 $app-primary-btn-hover: #00a367;
 $app-primary-btn-disabled: #b7e5d6;
 
+$app-solution-outdated-label: #239cff;
+$app-solution-outdated-label-hover: #004080;
+$app-solution-language-outdated: #DE3431;
+
+
 $app-primary-color: #02b875;
 
 $app-selected-background-color: #f3f5f7;
@@ -32,14 +48,21 @@ $select-sprite-bg-url: "/assets/plugins/select2/select2.png";
 $fields-font-size: 13px;
 $app-delete-bg-color: #ff5959;
 
-.header{
+.header,
+#footer {
   display: none;
 }
 
-.wrapper .wrapper-shadow{
+.wrapper {
+  width:100%;
+  padding:0;
+}
+
+.wrapper .wrapper-shadow {
   background: #fff;
+
   &:before {
-      display: none;
+    display: none;
   }
 }
 /* tabs */
@@ -485,6 +508,65 @@ left: 88%;
     .pagearea {
       background: #fff;
     }
+  }
+}
+
+.edit_helpdesk_ticket_field, .edit_company_field {
+   .custom-field-form {
+     @include margin-left(60px); 
+     @include margin-right(10px);
+     margin-top: 20px;
+     margin-bottom: 20px
+
+   }
+}
+
+#body-container {
+  .update-section, .outdate-section {
+    @include border-radius(3px);
+    
+    .btn {
+      border: none;
+      box-shadow: none;
+      text-transform: none;
+      background-color: $app-btn-text-light;
+      width: 100%;
+      @include margin-left(0px);
+
+      .outdate-label { 
+        color: $app-solution-outdated-label;
+      }
+
+      .outdate-label:hover {
+        color: $app-solution-outdated-label-hover;
+      }
+    }
+
+    .outdate-uptodate:hover {
+      background-color: $app-btn-text-light;
+    }
+  
+    .sloading.loading-small {
+      @include float(left);
+      @include margin-left(10%);
+    }
+  }
+}
+
+#sectionCancelBtn, #sectionSubmitBtn {
+  margin-bottom: 10px;
+}
+
+
+body.community { 
+  .language_symbol.outdated {
+    color: $app-solution-language-outdated;
+  }
+}
+
+.contact_fields_dialog {
+  .field-label {
+    margin-bottom: -7px;
   }
 }
 
@@ -1221,6 +1303,7 @@ div[class$="-toggle"]{
         padding: 4px 14px;
         text-transform: capitalize;
       }
+
   }
 
   .btn-primary, .uiButton {
@@ -1348,6 +1431,9 @@ div[class$="-toggle"]{
   textarea:focus, input[type="text"]:focus, input[type="password"]:focus, input[type="datetime"]:focus, input[type="datetime-local"]:focus, input[type="date"]:focus, input[type="month"]:focus, input[type="time"]:focus, input[type="week"]:focus, input[type="number"]:focus, input[type="email"]:focus, input[type="url"]:focus, input[type="search"]:focus, input[type="tel"]:focus .uneditable-input:focus{
     border-color: $app-primary-color;
   }
+  select:focus, .btn:focus, input[type="file"]:focus{
+    outline: none;
+  }
   .discussionPanel {
       border: none;
       box-shadow: 0 -1px 0 0 #f1f1f1;
@@ -1431,14 +1517,46 @@ div[class$="-toggle"]{
 }
 }
 
-.ticket_fields .custom-field-form .options-wrapper{
-  left:-25px;
-}
-
 .helpkit-glance .glance-chart-wrapper .glance-chart .solution-article {
   padding: 0px 20px 0 0;
 }
 
+.edit_agent .ui-form, form[action*="change_password"] .ui-form {
+    border-color: transparent;
+    background-color: transparent;
+}
+.edit_agent{
+  li.overlabel-wrapper label{
+    line-height: 24px;
+  }
+}
+#email-preview{
+  .modal-body{
+    padding-bottom: 20px;
+  }
+  .modal-footer{
+    padding-bottom: 0px;
+    background: none;
+  }
+}
+
+.sidebar-help{
+  position: relative;
+}
+
+/* admin pages changes */
+
+.customer-portal {
+  .controls.multiple-check {
+    margin-left: 318px;
+  }
+}
+
+.manage-languages-body {
+  .portal-language-visibility {
+    width: 138px;
+  }
+}
 
 
 @import "falcon-community";

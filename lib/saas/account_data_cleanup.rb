@@ -287,6 +287,10 @@ end
     account.scheduled_ticket_exports.destroy_all
   end
 
+  def handle_multiple_companies_toggle_drop_data
+    account.remove_secondary_companies
+  end
+
   private
 
   def default_portal_preferences

@@ -50,6 +50,7 @@ class Admin::Freshcaller::SignupController < Admin::AdminController
   end
 
   def signup_params
+    protocol = Rails.env.development? ? 'http://' : 'https://'
     {
       :signup => {
         :user_name => current_user.name,
@@ -58,7 +59,8 @@ class Admin::Freshcaller::SignupController < Admin::AdminController
         :account_domain => "#{FreshcallerConfig['domain_prefix']}#{current_account.domain}",
         :api => {
           :account_name => current_account.name,
-          :account_id => current_account.id
+          :account_id => current_account.id,
+          :freshdesk_calls_url => "#{protocol}#{current_account.full_domain}/api/channel/freshcaller_calls"
         }
       }
     }

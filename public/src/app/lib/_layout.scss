@@ -241,31 +241,31 @@ label.overlabel{
 	@include margin-right(10px);
 	.header-upgrade-link{
 		border: 2px solid;
-		@include border-radius(4px);
+		@include border-radius(2px);
 		font-weight: 500;
 		font-size: 13px;
-		padding-top: 4px;
-		padding-bottom: 4px;
+		padding-top: 5px;
+		padding-bottom: 8px;
 		@include padding-right(8px);
 		@include padding-left(8px);
 	}
 }
 
 #ui_toggle{
-	float: left;
+  float: left;
   margin: 3px 20px;
-  font-size: 12px;
   padding: 7px;
-  background: #02b875;
-  width: 130px;
+  background-color: rgba(216, 216, 216, 0.18);
+  width: 180px;
   text-align: center;
   border-radius: 2px;
-  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
+  border: solid 2px rgba(151, 151, 151, 0.37);
+  &:hover{
+    background-color: rgba(236, 238, 239, 0.25);
+  }
   color: white;
   font-weight: normal;
-	&:hover{
-    background: #00a367;
-  }
+  font-size: 13px;
 }
 
 .fd-branding{

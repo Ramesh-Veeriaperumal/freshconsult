@@ -1,7 +1,4 @@
 module ForumSpamMethods
-
-	include Community::Moderation::Constants
-
 	def self.included(base)
 		base.extend(ClassMethods)
 		base.send(:include, Community::Moderation::ForumSpamTables)
@@ -11,8 +8,7 @@ module ForumSpamMethods
 
 		base.local_secondary_index(:topic_timestamp, :n)
 		base.local_secondary_index(:user_timestamp, :n)
-		
-		base.provisioned_throughput(DYNAMO_THROUGHPUT[:inactive], DYNAMO_THROUGHPUT[:write])
+		base.provisioned_throughput(base.inactive_capacity, base.write_capacity)
 	end
 
 	def account

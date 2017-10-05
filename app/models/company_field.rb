@@ -13,7 +13,7 @@ class CompanyField < ActiveRecord::Base
 
   DEFAULT_FIELD_PROPS = {
     :default_name           => { :type => 1, :dom_type => :text, :label => 'company.name' },
-    :default_description    => { :type => 2, :dom_type => :paragraph, :label => 'description', :dom_placeholder =>  'company.info8' },
+    :default_description    => { :type => 2, :dom_type => :paragraph, :label => 'company.description', :dom_placeholder =>  'company.info8' },
     :default_note           => { :type => 3, :dom_type => :paragraph, :label => 'company.notes', :dom_placeholder => 'company.info5' },
     :default_domains        => { :type => 4, :dom_type => :text, :label => 'company.info2', :dom_placeholder => 'company.info12', :bottom_note => 'company.info13' }
   }

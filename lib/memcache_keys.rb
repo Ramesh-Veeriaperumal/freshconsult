@@ -147,6 +147,8 @@ module MemcacheKeys
 
   EXTENSION_DETAILS = "v2/FA:EXTENSION:%{extension_id}:%{locale_id}:%{platform_version}"
 
+  EXTENSION_DETAILS_V2 = "v1/FA:EXTENSION_VERSION:%{extension_id}:%{version_id}:%{locale_id}"
+
   VERSION_DETAILS = "v1/FA:VERSION:%{version_id}"
 
   CONFIGURATION_DETAILS = "v1/FA:CONFIGURATIONS:%{version_id}:%{locale_id}"

@@ -323,6 +323,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     enabled = false
     account = Account.find(params[:account_id]).make_current
     if params[:operation] == "launch"
+      CollabPreEnableWorker.perform_async
       account.add_feature(:collaboration)
       enabled = account.has_feature?(:collaboration)
     elsif params[:operation] == "rollback"

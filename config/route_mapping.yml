@@ -50,5 +50,5 @@
 /subscription/billing: /a/admin/
 /admin/day_passes: /a/admin/
 /social/welcome: /a/social/
-/helpdesk/tickets/compose_email: /a/tickets
+/helpdesk/tickets/compose_email: /a/tickets/compose-email
 /search/all: /a/search/tickets

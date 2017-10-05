@@ -1,4 +1,4 @@
-<section class="content rounded-6 min-height-on-desktop" id="forum-{{ forum.id }}">
+<section class="content rounded-6 min-height-on-desktop fc-forum-list" id="forum-{{ forum.id }}">
 	{% if forum.type_name != 'announcement' %}
 		<b class="pull-right">{{ portal | link_to_start_topic }}</b>
 	{% endif %}

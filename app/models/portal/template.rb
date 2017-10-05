@@ -32,36 +32,75 @@ class Portal::Template < ActiveRecord::Base
     [:head,    "portal/head", :portal]
   ]
 
+
+  TEMPLATE_MAPPING_FALCON = [ 
+    [:header,  "portal/falcon_header.portal"],    
+    [:footer,  "portal/falcon_footer.portal"],
+    [:layout,  "portal/falcon_layout.portal"],
+    [:head,    "portal/head.portal"]
+  ]
+
+  TEMPLATE_MAPPING_RAILS3_FALCON = [ 
+    [:header,  "portal/falcon_header", :portal],    
+    [:footer,  "portal/falcon_footer", :portal],
+    [:layout,  "portal/falcon_layout", :portal],
+    [:head,    "portal/head", :portal]
+  ]
+
   TEMPLATE_MAPPING_FILE_BY_TOKEN = Hash[*TEMPLATE_MAPPING.map { |i| [i[0], i[1]] }.flatten]
   TEMPLATE_OPTIONS = Portal::Template::TEMPLATE_MAPPING.map { |i| i[0] }
 
+  TEMPLATE_MAPPING_FILE_BY_TOKEN_FALCON = Hash[*TEMPLATE_MAPPING_FALCON.map { |i| [i[0], i[1]] }.flatten]
+  TEMPLATE_OPTIONS_FALCON = Portal::Template::TEMPLATE_MAPPING_FALCON.map { |i| i[0] }
+
   # Set of prefrences data that will be used during template creation
   def default_preferences
-    {
-      :bg_color => "#ffffff", 
-      :header_color => "#4c4b4b", 
-      :help_center_color => "#f9f9f9", 
-      :footer_color => "#777777",
-      :tab_color => "#006063", 
-      :tab_hover_color => "#4c4b4b",
-      :btn_background => "#ffffff", 
-      :btn_primary_background => "#6c6a6a",
-      :baseFont => "Helvetica Neue", 
-      :textColor => "#333333",
-      :headingsFont => "Open Sans Condensed", 
-      :headingsColor => "#333333",
-      :linkColor => "#049cdb", 
-      :linkColorHover => "#036690",
-      :inputFocusRingColor => "#f4af1a",
-      :nonResponsive => false
-    }.merge(self.get_portal_pref)
+    if Account.current and Account.current.falcon_support_portal_theme_enabled?
+      {
+        :bg_color => "#f3f5f7", 
+        :header_color => "#ffffff", 
+        :help_center_color => "#ffffff", 
+        :footer_color => "#183247",
+        :tab_color => "#ffffff", 
+        :tab_hover_color => "#ffffff",
+        :btn_background => "#ffffff", 
+        :btn_primary_background => "#02b875",
+        :baseFont => "Source Sans Pro", 
+        :textColor => "#183247",
+        :headingsFont => "Poppins", 
+        :headingsColor => "#183247",
+        :linkColor => "#183247", 
+        :linkColorHover => "#2753d7",
+        :inputFocusRingColor => "#dadfe3",
+        :nonResponsive => false
+      }.merge(self.get_portal_pref)
+    else
+      {
+        :bg_color => "#ffffff", 
+        :header_color => "#4c4b4b", 
+        :help_center_color => "#f9f9f9", 
+        :footer_color => "#777777",
+        :tab_color => "#006063", 
+        :tab_hover_color => "#4c4b4b",
+        :btn_background => "#ffffff", 
+        :btn_primary_background => "#6c6a6a",
+        :baseFont => "Helvetica Neue", 
+        :textColor => "#333333",
+        :headingsFont => "Source Sans Pro", 
+        :headingsColor => "#333333",
+        :linkColor => "#049cdb", 
+        :linkColorHover => "#036690",
+        :inputFocusRingColor => "#f4af1a",
+        :nonResponsive => false
+      }.merge(self.get_portal_pref)
+    end
   end
 
   # Merge with default params for specific portal
   def get_portal_pref
-    pref = self.portal.preferences.presence || self.account.main_portal.preferences
-    # Selecting only bg_color, tab_color, header_color from the portals preferences
-    Hash[*[:bg_color, :tab_color, :header_color].map{ |a| [ a, pref[a] ] }.flatten]
+      pref = self.portal.preferences.presence || self.account.main_portal.preferences
+      # Selecting only bg_color, tab_color, header_color from the portals preferences
+      Hash[*[:bg_color, :tab_color, :header_color].map{ |a| [ a, pref[a] ] }.flatten]    
   end
   
   def reset_to_default

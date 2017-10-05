@@ -13,10 +13,14 @@ var google_fonts = [{
         "700",
         "700italic",
         "900",
-        "900italic"],
-    "subsets": [
-        "latin-ext",
-        "latin"]
+        "900italic"]
+},{
+    "kind": "webfonts#webfont",
+    "family": "Poppins",
+    "variants": [
+        "regular",
+        "600",
+        "700"]
 }, {
     "kind": "webfonts#webfont",
     "family": "Droid Sans",

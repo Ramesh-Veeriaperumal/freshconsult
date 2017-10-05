@@ -1,0 +1,136 @@
+.user-pic-thumb, .user-pic-normal{
+	display:inline;
+	@include float(left);
+	@include margin-right(10px);
+	@include margin-left(-3px);
+	@include border-radius(3em);
+	border:0;
+	padding:2px;
+	background-color:$white;
+    position: relative;
+    line-height: 0;
+    border: 1px solid $grey_hover;
+	img{
+		@include border-radius(3em);
+		height:auto;
+	}
+}
+.user-pic-thumb img{ width:40px; }
+.user-pic-normal img{ width:auto; }
+.uv-user-thumb .user-pic-thumb img{ width:40px; }
+.c-user-thumb .user-pic-thumb img{ width:40px; }
+
+.user-pic-original img{
+	border:1px solid #dddddd; 
+	padding:3px; 
+	@include border-radius(3px);
+	margin-bottom: 10px;
+}
+
+.c-user-thumb .user-pic-thumb {
+	padding: 2px;
+	@include margin-left(10px);
+	@include margin-right(16px);
+	border: solid 1px $box-border;
+	margin-top: -6px;
+}
+.uv-user-thumb .user-pic-thumb { @include margin-left(-40px); }
+.image-lazy-load img{
+  opacity: .5;
+  @include transition(opacity .1s ease-in);
+}
+h4.user-name{
+	font-size: 16px;
+}
+.avatar-pic {
+	margin-bottom: 10px;
+	position: relative;
+	img{
+		max-width: 130px;
+		min-width: 90px;
+		max-height: 160px;
+		@include box-shadow(#dfdfdf 0 1px 3px);
+		@include border-radius(6px);
+	}
+	.ie9-file-change-msg {
+		position: absolute;
+		@include padding(5px);
+		max-width: 120px;
+		display: block;
+		background-color: rgba(255, 209, 109, 0.3);
+		@include border-radius(5px);
+		@include margin-left(5px);
+		bottom: -1px;
+		display: none;
+		font-size: 12px;
+		line-height: 17px;
+	}
+}
+
+.avatar-options {
+	.option {
+		@include padding(3px 24px);
+		&.uplink {
+			@extend .file-holder;
+		}
+	}
+	input[type=file] {
+		@extend .file-tag;
+	}
+}
+
+.default-pic {
+	margin-bottom: 5px;
+	@extend .file-holder;
+	input[type=file] {
+		@extend .file-tag;
+	}
+}
+
+.avatar-span {
+	.dropdown {
+		margin-bottom: 5px;
+	}
+}
+
+.file-holder {
+	cursor: default;
+	position: relative;
+	overflow: hidden;
+}
+
+.file-tag {
+	position: absolute;
+	@include opacity(0);
+	top: 0;
+	width: 100%;
+	left: 0;
+	height: 100%;
+	font-size: 10000px;
+}
+
+input.date.datepicker_popover {
+	@include padding(8px 10px 8px 36px);
+	height: auto;
+	width: 100%;
+}
+
+.form-horizontal {
+	.control-group.date {
+		.controls {
+			position: relative;
+		}
+	}
+}
+
+.info-data {
+	color: #888888;
+	font-size: 12px;
+	line-height: 18px;
+	padding-bottom: 6px;
+}
+.user-comment{
+	.user-pic-thumb{
+		background: transparent;
+	}
+}

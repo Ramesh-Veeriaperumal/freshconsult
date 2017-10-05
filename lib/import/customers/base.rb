@@ -60,7 +60,7 @@ class Import::Customers::Base
   def save_item row
     @item = current_account.send("#{@type.pluralize}").new if @item.blank?
     set_validatable_custom_fields
-    construct_company_params if is_user? && Account.current.features?(:multiple_user_companies)
+    construct_company_params if is_user? && Account.current.multiple_user_companies_enabled?
     unless @item.new_record?
       @item.update_attributes(@params_hash[:"#{@type}"]) ? @updated+=1 : failed_item(row)
     else
