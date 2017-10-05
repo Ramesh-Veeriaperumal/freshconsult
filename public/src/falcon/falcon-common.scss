@@ -1540,6 +1540,20 @@ div[class$="-toggle"]{
   }
 }
 
+/* admin pages changes */
+
+.customer-portal {
+  .controls.multiple-check {
+    margin-left: 318px;
+  }
+}
+
+.manage-languages-body {
+  .portal-language-visibility {
+    width: 138px;
+  }
+}
+
 
 @import "falcon-community";
 @import "falcon-reports";
