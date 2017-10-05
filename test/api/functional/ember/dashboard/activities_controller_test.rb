@@ -34,43 +34,43 @@ module Ember
         @agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
         note = create_private_note(ticket)
         action_type = 'note'
-        action_content = {'note_id'=>note.id}
+        action_content = { 'note' => { 'id' => note.id, 'source' => nil, 'incoming' => nil } }
         expected = get_activity_pattern(last_activity, @agent,action_type,action_content)
         get :index, controller_params(version: 'private')
         assert_response 200
         assert_equal(expected, JSON.parse(@response.body)[0])
       end
 
-      def test_activities_add_forum_category
-        forum_category = create_test_category
-        action_type = 'new_forum_category'
-        action_content = {}
-        expected = get_activity_pattern(last_activity, User.current,action_type,action_content)
-        get :index, controller_params(version: 'private')
-        assert_response 200
-        assert_equal(expected, JSON.parse(@response.body)[0])
-      end
+      # def test_activities_add_forum_category
+      #   forum_category = create_test_category
+      #   action_type = 'new_forum_category'
+      #   action_content = {}
+      #   expected = get_activity_pattern(last_activity, User.current,action_type,action_content)
+      #   get :index, controller_params(version: 'private')
+      #   assert_response 200
+      #   assert_equal(expected, JSON.parse(@response.body)[0])
+      # end
 
-      def test_activities_add_forum
-        forum_category, forum = create_new_forum
-        action_type = 'new_forum'
-        action_content = {'category_name'=>forum_category.name}
-        expected = get_activity_pattern(last_activity, User.current,action_type,action_content)
-        get :index, controller_params(version: 'private')
-        assert_response 200
-        assert_equal(expected, JSON.parse(@response.body)[0])
-      end
+      # def test_activities_add_forum
+      #   forum_category, forum = create_new_forum
+      #   action_type = 'new_forum'
+      #   action_content = {'category_name'=>forum_category.name}
+      #   expected = get_activity_pattern(last_activity, User.current,action_type,action_content)
+      #   get :index, controller_params(version: 'private')
+      #   assert_response 200
+      #   assert_equal(expected, JSON.parse(@response.body)[0])
+      # end
 
-      def test_activities_add_topic
-        forum_category, forum = create_new_forum
-        topic = create_test_topic(forum, User.current)
-        action_type = 'new_topic'
-        action_content = {'forum_name'=>forum.name}
-        expected = get_activity_pattern(last_activity, User.current,action_type,action_content)
-        get :index, controller_params(version: 'private')
-        assert_response 200
-        assert_equal(expected, JSON.parse(@response.body)[0])
-      end
+      # def test_activities_add_topic
+      #   forum_category, forum = create_new_forum
+      #   topic = create_test_topic(forum, User.current)
+      #   action_type = 'new_topic'
+      #   action_content = {'forum_name'=>forum.name}
+      #   expected = get_activity_pattern(last_activity, User.current,action_type,action_content)
+      #   get :index, controller_params(version: 'private')
+      #   assert_response 200
+      #   assert_equal(expected, JSON.parse(@response.body)[0])
+      # end
 
       def test_activities_with_no_params
         requester = add_new_user(@account)
@@ -113,7 +113,7 @@ module Ember
         requester = add_new_user(@account)
         @agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
         tickets = []
-        60.times do
+        20.times do
           tickets << create_ticket(:requester_id => requester.id)
         end
         get :index, controller_params({version: 'private', page: 2, per_page: PER_PAGE})
@@ -170,7 +170,7 @@ module Ember
           activities << @account.activities.last
         end
         action_type = 'note'
-        action_content = {"note_id"=>notes[0].id}
+        action_content = { 'note' => { 'id' => notes[0].id, 'source' => nil, 'incoming' => nil } }
         expected = get_activity_pattern(activities[0], @agent,action_type,action_content)
         get :index, controller_params({version: 'private', since_id: since_id})
         assert_response 200
