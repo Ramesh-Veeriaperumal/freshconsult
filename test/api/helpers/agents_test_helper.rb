@@ -32,7 +32,7 @@ module AgentsTestHelper
 
   def private_api_agent_pattern(expected_output = {}, agent)
     {
-      
+
       available: expected_output[:available] || agent.available,
       occasional: expected_output[:occasional] || agent.occasional,
       id: Fixnum,
@@ -44,7 +44,7 @@ module AgentsTestHelper
       contact: contact_pattern(expected_output[:user] || agent.user),
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
-      
+
     }
   end
 
@@ -66,7 +66,7 @@ module AgentsTestHelper
 
   def agent_availability_count_pattern
     {
-      agents: [ 
+      agents: [
       ],
       meta: {
         agents_available: {
@@ -85,8 +85,8 @@ module AgentsTestHelper
       achievements_hash = {
         id: record.user_id,
         points: record.points.to_i,
-        current_level_name: record.level.try(:name).to_s,
-        next_level_name: next_level.try(:name).to_s,
+        current_level_name: record.level.try(:name),
+        next_level_name: next_level.try(:name),
         points_needed: points_needed,
         badges: record.user.quests.order('achieved_quests.created_at Desc').map(&:badge_id)
       }
@@ -95,11 +95,11 @@ module AgentsTestHelper
   end
 
   def livechat_agent_availability(agent)
-    [ agent.user.id, 
-      { 
-        "agent_id" => agent.user.id, 
-        "last_activity_at"=> nil, 
-        "available"=> false, 
+    [ agent.user.id,
+      {
+        "agent_id" => agent.user.id,
+        "last_activity_at"=> nil,
+        "available"=> false,
         "onGoingChatCount"=> 0
       }
     ]

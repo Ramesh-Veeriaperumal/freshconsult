@@ -1,4 +1,7 @@
 class ContactFieldDecorator < ApiDecorator
+  # Whenever we change the Structure (add/modify/remove keys),
+  # we will have to modify the CURRENT_VERSION constant in the controller
+
   delegate :choices, :editable_in_signup, :id, :label, :position, :field_type, :default_field?,
            :editable_in_portal, :label_in_portal, :required_in_portal, :visible_in_portal,
            :required_for_agent, :field_options, to: :record

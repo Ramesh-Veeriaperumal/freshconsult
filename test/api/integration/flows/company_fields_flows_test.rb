@@ -4,13 +4,13 @@ class CompanyFieldsFlowsTest < ActionDispatch::IntegrationTest
   include Redis::RedisKeys
   include Redis::OthersRedis
   CURRENT_VERSION = 'private-v1'.freeze
-  
+
   def sample_user
     @account.all_agents.first
   end
 
   @@before_all = false
-  
+
   def setup
     super
     before_all
@@ -55,4 +55,5 @@ class CompanyFieldsFlowsTest < ActionDispatch::IntegrationTest
   def version_redis_key
     DATA_VERSIONING_SET % { account_id: @account.id }
   end
+
 end

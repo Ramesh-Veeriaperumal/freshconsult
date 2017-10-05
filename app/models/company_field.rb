@@ -1,9 +1,6 @@
 class CompanyField < ActiveRecord::Base
-
-  include DataVersioning::Model
-  
   self.primary_key = :id
-  self.table_name= "company_fields"
+  self.table_name = "company_fields"
 
   include DataVersioning::Model
 
@@ -24,10 +21,10 @@ class CompanyField < ActiveRecord::Base
                               :custom_dropdown, :custom_phone_number, :custom_url, :custom_date ]
 
   DB_COLUMNS = {
-    :text         => { :column_name => "cf_text",     :column_limits => 10 }, 
-    :varchar_255  => { :column_name => "cf_str",      :column_limits => 70 }, 
-    :integer_11   => { :column_name => "cf_int",      :column_limits => 20 }, 
-    :date_time    => { :column_name => "cf_date",     :column_limits => 10 }, 
+    :text         => { :column_name => "cf_text",     :column_limits => 10 },
+    :varchar_255  => { :column_name => "cf_str",      :column_limits => 70 },
+    :integer_11   => { :column_name => "cf_int",      :column_limits => 20 },
+    :date_time    => { :column_name => "cf_date",     :column_limits => 10 },
     :tiny_int_1   => { :column_name => "cf_boolean",  :column_limits => 10 }
   }
 

@@ -3,7 +3,7 @@ require_relative '../../test_helper'
 class TicketFieldsFlowsTest < ActionDispatch::IntegrationTest
   include Redis::RedisKeys
   include Redis::OthersRedis
-  CURRENT_VERSION = 'private-v1'.freeze
+  CURRENT_VERSION = 'private-v2'.freeze
   def sample_user
     @account.all_agents.first
   end

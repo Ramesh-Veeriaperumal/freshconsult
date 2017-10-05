@@ -1836,7 +1836,7 @@ module Ember
     end
 
     def test_merged_tkt_with_adv_features
-      enable_adv_ticketing(%i(link_ticket parent_child_tickets)) do
+      enable_adv_ticketing(%i(link_tickets parent_child_tickets)) do
         primary_tkt = create_ticket
         sec_tkt     = create_ticket
         Helpdesk::Ticket.any_instance.stubs(:parent_ticket).returns(primary_tkt.display_id)
@@ -1848,7 +1848,7 @@ module Ember
     end
 
     def test_normal_tkt_with_adv_features
-      enable_adv_ticketing(%i(link_ticket parent_child_tickets)) do
+      enable_adv_ticketing(%i(link_tickets parent_child_tickets)) do
         tkt = create_ticket
         get :show, controller_params(version: 'private', id: tkt.display_id)
         assert_response 200

@@ -1,4 +1,7 @@
 class TicketFieldDecorator < ApiDecorator
+  # Whenever we change the Structure (add/modify/remove keys),
+  # we will have to modify the CURRENT_VERSION constant in the controller
+
   delegate :id, :default, :description, :label, :position, :required_for_closure, :has_section?,
            :field_type, :required, :required_in_portal, :label_in_portal, :editable_in_portal, :visible_in_portal,
            :level, :ticket_field_id, :picklist_values, to: :record

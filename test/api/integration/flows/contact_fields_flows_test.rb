@@ -9,7 +9,7 @@ class ContactFieldsFlowsTest < ActionDispatch::IntegrationTest
   end
 
   @@before_all = false
-  
+
   def setup
     super
     before_all

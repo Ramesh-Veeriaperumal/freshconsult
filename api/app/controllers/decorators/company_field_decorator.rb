@@ -1,4 +1,7 @@
 class CompanyFieldDecorator < ApiDecorator
+  # Whenever we change the Structure (add/modify/remove keys),
+  # we will have to modify the CURRENT_VERSION constant in the controller
+
   delegate :choices, :field_type, :id, :name, :label, :position, :required_for_agent,
            :default_field?, :field_options, to: :record
 
