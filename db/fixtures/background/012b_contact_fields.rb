@@ -35,6 +35,8 @@ def self.contact_fields_data
   ]
 end
 
+last_contact_field = nil
+
 contact_fields_data.each do |f|
   contact_field = ContactField.new(
     :label              => f[:label],
@@ -56,6 +58,8 @@ contact_fields_data.each do |f|
   contact_field.created_at = Time.zone.now #The important callbacks.
   contact_field.updated_at = Time.zone.now  #The important callbacks.
   contact_field.sneaky_save #To avoid the callbacks of acts-as-list which is changing the other field positions.
+  last_contact_field = contact_field
 end
 
 account.contact_form.clear_cache
+last_contact_field.update_version_timestamp
