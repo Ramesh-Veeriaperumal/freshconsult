@@ -1303,6 +1303,7 @@ div[class$="-toggle"]{
         padding: 4px 14px;
         text-transform: capitalize;
       }
+
   }
 
   .btn-primary, .uiButton {
@@ -1542,6 +1543,21 @@ div[class$="-toggle"]{
 .sidebar-help{
   position: relative;
 }
+
+/* admin pages changes */
+
+.customer-portal {
+  .controls.multiple-check {
+    margin-left: 318px;
+  }
+}
+
+.manage-languages-body {
+  .portal-language-visibility {
+    width: 138px;
+  }
+}
+
 
 @import "falcon-community";
 @import "falcon-reports";
