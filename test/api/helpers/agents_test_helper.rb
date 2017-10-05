@@ -48,6 +48,14 @@ module AgentsTestHelper
     }
   end
 
+  def private_api_restriced_agent_hash(expected_output ={}, agent)
+    {
+      id: Fixnum,
+      contact: restricted_agent_contact_pattern(expected_output[:user] || agent.user),
+      group_ids: expected_output[:group_ids] || agent.group_ids,
+    }
+  end
+
   def agent_availability_pattern(expected_output = {}, agent, rr_groups)
     agent_hash = private_api_agent_pattern(agent)
     agent_hash.merge!(agent_availability_hash(agent.group_ids, rr_groups))
@@ -118,6 +126,13 @@ module AgentsTestHelper
       avatar: get_contact_avatar(contact)
     }
   end
+
+  def restricted_agent_contact_pattern(contact)
+    {
+      name: contact.name,
+      email: contact.email,
+    }
+  end 
 
   def get_contact_avatar(contact)
     return nil unless contact.avatar

@@ -46,6 +46,9 @@ class TicketDelegator < BaseDelegator
   validate :validate_internal_agent_group_mapping, if: -> { internal_agent_id && attr_changed?('internal_agent_id') && Account.current.shared_ownership_enabled? }
   validate :validate_status_group_mapping, if: -> { internal_group_id && attr_changed?('internal_group_id') && Account.current.shared_ownership_enabled? }
 
+  validate :parent_template_id_permissible?, if: -> { @parent_template_id }
+
+  validate :child_template_ids_permissible?, if: -> { @child_template_ids }
   validate :validate_parent_ticket, if: -> { child_ticket? && @parent.present? }
 
   validate :parent_template_id_permissible?, if: -> { @parent_template_id }

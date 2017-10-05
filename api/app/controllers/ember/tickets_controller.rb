@@ -37,9 +37,10 @@ module Ember
 
     def create
       assign_protected
-      delegator_hash = { ticket_fields: @ticket_fields, custom_fields: cname_params[:custom_field], 
-                          attachment_ids: @attachment_ids, shared_attachments: shared_attachments,
-                          parent_child_params: parent_child_params, parent_attachment_params: parent_attachment_params }
+      delegator_hash = { ticket_fields: @ticket_fields, custom_fields: cname_params[:custom_field],
+                         attachment_ids: @attachment_ids, shared_attachments: shared_attachments,
+                         parent_child_params: parent_child_params, parent_attachment_params: parent_attachment_params }
+
       return unless validate_delegator(@item, delegator_hash)
       save_ticket_and_respond
     end
@@ -265,7 +266,6 @@ module Ember
                                                       parent_templ_id: parent_child_params[:parent_template_id],
                                                       child_ids: parent_child_params[:child_template_ids])
       end
-
 
       def decorate_objects
         return if @errors || @error
@@ -494,6 +494,15 @@ module Ember
 
       def portal_url
         main_portal? ? current_account.host : current_portal.portal_url
+      end
+
+      def parent_child_params
+        @parent_child_params ||= begin
+          {
+            parent_template_id:  @parent_template_id,
+            child_template_ids:  @child_template_ids
+          }
+        end
       end
 
       wrap_parameters(*wrap_params)

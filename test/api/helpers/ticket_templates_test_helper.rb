@@ -47,14 +47,11 @@ module TicketTemplatesTestHelper
     template_data.stringify_keys!
   end
 
-
   def to_hash_and_child_template_pattern
     templt_obj = {}
     templt_obj[:child_templates] = child_templates if @template.parent_template? 
     to_hash_pattern(@template).merge(templt_obj)
   end
-
-
 
   private
 

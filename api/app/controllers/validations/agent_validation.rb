@@ -1,6 +1,6 @@
 class AgentValidation < ApiValidation
   attr_accessor :name, :phone, :mobile, :email, :time_zone, :language, :occasional, :signature, :ticket_scope,
-                :role_ids, :group_ids, :job_title, :id
+                :role_ids, :group_ids, :job_title, :id, :shorcuts_enabled
 
   CHECK_PARAMS_SET_FIELDS = %w(time_zone language occasional role_ids ticket_scope).freeze
 
@@ -18,7 +18,8 @@ class AgentValidation < ApiValidation
   validates :group_ids, data_type: { rules: Array }, array: { custom_numericality: { only_integer: true, greater_than: 0 } }
   validates :role_ids, required: true, data_type: { rules: Array }, array: { custom_numericality: { only_integer: true, greater_than: 0 } }, unless: :bulk_create?
   validate :check_agent_limit, if: -> { @occasional_set && @previous_occasional && @occasional == false }
-
+  validates :shorcuts_enabled, data_type: { rules: 'Boolean' }
+  
   def initialize(request_params, item, allow_string_param = false)
     if item
       user = item.user

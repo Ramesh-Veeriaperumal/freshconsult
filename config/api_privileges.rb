@@ -23,7 +23,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/twitter_handles", only: %i(index check_following)
     resource :"ember/marketplace_app", only: [:index]
 
-    resource :"ember/agent", only: %i(index me achievements)
+    resource :"ember/agent", only: %i(index me achievements update)
     resource :"ember/group", only: [:index]
     resource :"ember/survey", only: [:index]
     resource :"ember/dashboard/activity", only: [:index]

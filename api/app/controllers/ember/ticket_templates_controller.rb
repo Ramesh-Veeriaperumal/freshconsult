@@ -20,7 +20,7 @@ module Ember
 
     def index
       @items = []
-      if params[:filter] == 'accessible'
+      if params[:filter] == "accessible"
         handle_type_params
         size = Helpdesk::TicketTemplate::TOTAL_SHARED_TEMPLATES
         @items = fetch_templates(["`ticket_templates`.id NOT IN (?) and

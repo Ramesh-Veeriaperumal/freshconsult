@@ -4,7 +4,6 @@ module BootstrapTestHelper
   include Social::Util
   include PortalsTestHelper
 
-
   def index_pattern(agent, account, portal)
     {
       agent: agent_info_pattern(agent),

@@ -138,8 +138,6 @@ module Ember
       end
     end
 
-
-
     def test_simple_index_for_primary_templates_with_parent_templates
       enable_adv_ticketing(%i(parent_child_tickets)) do
         3.times do

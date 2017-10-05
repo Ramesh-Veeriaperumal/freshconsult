@@ -4545,7 +4545,7 @@
           "ticket_template"
         ],
         "description": "Listing all ticket templates",
-        "summary": "List all",
+        "summary": "List all ticket templates",
         "parameters": [
           {
             "name": "filter",
@@ -6270,6 +6270,9 @@
               "type": "boolean"
             }
           }
+        },
+        "shortcuts_enabled": {
+          "type": "boolean"
         }
       }
     },

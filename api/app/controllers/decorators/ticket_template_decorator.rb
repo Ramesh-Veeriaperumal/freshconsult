@@ -25,7 +25,7 @@ class TicketTemplateDecorator < ApiDecorator
 
   def to_hash_and_child_templates
     templt_obj = {}
-    templt_obj[:child_templates] = child_templates if parent_template?  
+    templt_obj[:child_templates] = child_templates if parent_template?
     to_hash.merge(templt_obj)
   end
 
@@ -62,7 +62,7 @@ class TicketTemplateDecorator < ApiDecorator
           tkt_obj[TEMPLATE_TO_TICKET_MAPPING[k] || k] = v
         end
       end
-      tkt_obj[:attachments] = attachments.exists? ? attachments_hash : [] 
+      tkt_obj[:attachments] = attachments.exists? ? attachments_hash : []
       tkt_obj[:cloud_files] = cloud_files.exists? ? cloud_files_hash : []
       tkt_obj[:child_templates] = child_templates if parent_template?
       tkt_obj
