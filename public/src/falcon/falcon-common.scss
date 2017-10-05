@@ -1555,6 +1555,23 @@ div[class$="-toggle"]{
 }
 
 
+/* child template icon fix */
+
+.ticket-template-list .tkt-template-table .action-btn {
+  padding-left: 0px;
+}
+
+#ticket-template-wrapper .child-form {
+    width: 92%;
+    margin: auto;
+    
+    .default_subject, .default_tags {
+      .options-wrapper {
+        left: 0;
+      }
+    }
+}
+
 @import "falcon-community";
 @import "falcon-reports";
 @import "falcon-livechat";
