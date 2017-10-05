@@ -156,9 +156,9 @@
 
         // mobile search box focus style
         if (Modernizr.mq('only screen and (max-width: 768px)')) {
-			$(".help-center input[rel='page-search']").focus(function () {
+			$(".help-center input[rel='page-search'],.help-center-sc input[rel='page-search']").focus(function () {
 				$(".hc-search").addClass("onfocus-mobile")
-				$(".hc-nav").hide('fast')
+				$(".hc-nav").hide()
 			}).blur(function(){
 		    	$(".hc-search").removeClass("onfocus-mobile")
 		    	$(".hc-nav").show()

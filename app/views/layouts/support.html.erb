@@ -13,9 +13,13 @@
 
 		<!-- Base stylesheet -->
 
- 
-		<%= stylesheet_link_tag_with_rtl :'cdn/portal_utils' %>
+ 		
 		<%= stylesheet_link_tag_with_rtl :'cdn/portal_print',  :media => "print" %>
+		<% if current_account.falcon_support_portal_theme_enabled?%>
+	  		<%= stylesheet_link_tag_with_rtl :'cdn/falcon_portal_utils' %>	
+	  	<% else %>
+	  		<%= stylesheet_link_tag_with_rtl :'cdn/portal_utils' %>
+		<% end %>
 
 		
 		<!-- Theme stylesheet -->

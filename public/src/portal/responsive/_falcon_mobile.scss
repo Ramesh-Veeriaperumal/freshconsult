@@ -1,0 +1,377 @@
+@if $nonResponsive == false {
+    @include at-breakpoint($media-mobile){
+        // Body reset
+        // ----------
+        /* Applying font size for mobile */          
+        body {  
+            font-size: $baseFontSizeForMobile;
+            line-height: $baseLineHeightForMobile;
+        }
+
+
+        // BODY TEXT
+        // ---------
+        p {
+            margin: 0 0 $baseLineHeightForMobile / 2;
+            small {
+                font-size: $baseFontSizeForMobile - 2;
+            }
+        }
+
+        .lead, .lead-small, .list-lead {
+            line-height: $baseLineHeightForMobile * 1.3;
+        }
+        .lead-small { font-size: 14px; }
+
+        /* List lead is used as title for titles inside the portal */
+        /*.list-lead { margin: $baseLineHeightForMobile / 3 0; }*/
+
+        h1 {
+            font-size: 26px;
+            line-height: $baseLineHeightForMobile * 2;
+            small {
+                font-size: 18px;
+            }
+        }
+        h2 {
+            font-size: 18px;
+            line-height: $baseLineHeightForMobile * 1.6;
+            small {
+                font-size: 16px;
+            }
+        }
+        h3 {
+            font-size: 18px;
+            line-height: $baseLineHeightForMobile * 1.4;
+            small {
+                font-size: 13px;
+            }
+        }
+        h4, h5, h6 {
+            line-height: $baseLineHeightForMobile;
+        }
+        h4 {
+            font-size: 13px;
+            small {
+                font-size: 11px;
+            }
+        }
+        h5 {
+            font-size: 11px;
+        }
+        h6 {
+            font-size: 10px; 
+        }
+
+        // Page header
+        .page-header {
+            padding-bottom: $baseLineHeightForMobile - 1;
+            margin: $baseLineHeightForMobile 0;
+        }
+
+
+        // LISTS
+        // -----
+
+        // Unordered and Ordered lists
+        ul, ol {
+            padding: 0;
+            @include margin(0 0 $baseLineHeightForMobile / 2 15px);
+        }
+        li {
+            line-height: $baseLineHeightForMobile;
+        }
+        // Description Lists
+        dl {
+            margin-bottom: $baseLineHeightForMobile;
+        }
+        dt,
+        dd {
+            line-height: $baseLineHeightForMobile;
+        }
+        dt {
+            line-height: $baseLineHeightForMobile - 1; // fix jank Helvetica Neue font bug
+        }
+        dd {
+            @include margin-left($baseLineHeightForMobile / 2);
+        }
+        // MISC
+        // ----
+
+        // Horizontal rules
+        hr {
+            margin: $baseLineHeightForMobile/1.3 0;
+        }
+        // Blockquotes
+        blockquote {
+            margin: 0 0 $baseLineHeightForMobile;
+            p {
+              @include font-shorthand(16px,300,$baseLineHeightForMobile * 1.25);
+            }
+            small {
+              line-height: $baseLineHeightForMobile;
+            }
+        }
+        // Utilities
+        // ---------
+        .rounded-6{ @include border-radius(0); }
+        .show-in-mobile, .hide-tablet{ display: block; }
+        .hide-in-mobile { display: none; }
+
+        // Addresses
+        address {
+            margin-bottom: $baseLineHeightForMobile;
+            line-height: $baseLineHeightForMobile;
+        }
+
+        .min-height-on-desktop{ @include min-height(auto); }
+
+        // jQuery ui-datepicker
+        /* Overriding position parameters to handle mobile sizing */    
+        .ui-datepicker.ui-widget-content{
+            width: auto !important;
+            @include left(25px !important);
+            @include right(25px !important);
+        }
+        // Ticket list & detail styles
+        // ---------------------------
+        .c-ticket-row .label{ @include float(none); }
+        .agent-details{
+            padding: $content-padding-mobile;
+            margin-top: -$content-padding-mobile;
+            @include margin-left(-$content-padding-mobile);
+            @include margin-right(-$content-padding-mobile);
+            @include border-top-radius(none);
+        }
+        .ticket-brief{ padding-top: 5px; }
+        // Login
+        // -----
+        .btn-signup, .btn-newticket, .btn-login{ width: 100%; }
+        .btn-login{ @include float(none); margin-top: 4px; margin-bottom: 4px; }
+        .login-form{ 
+            max-width: none; 
+            button[type="submit"]{
+                width: 100% !important;
+                margin: 15px 0;
+            }
+            button.btn.btn-primary{
+                width: auto;
+            }
+        }
+        .alt-login-button{ 
+            @include border-left(0); 
+            @include padding-left(0); 
+            @include box-shadow(none); 
+        }
+        a.btn-signup{
+            width: 100%;
+        }
+        section#signup-container p.info-text{
+            width: 100%;
+        }
+        .alt-login-button{
+            width: 100%;
+            padding: 0;
+            float: none;
+            padding-top: 16px;
+            a.btn{
+                display: inline-block;
+                background-color: $white;
+                border: 1px solid $border-color;
+                color: $black;
+                width: 30%;
+                font-size: 13px;
+                font-weight: normal;
+                text-transform: none;
+                padding: 22px 4px 22px;
+                text-align: center;
+                margin-right: 10px;
+                box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+                text-align: center;
+                &:hover{
+                    color: $black;
+                }
+                &:last-child{
+                    margin-right: 0;
+                }
+                &:before{
+                    display: block;
+                    padding-bottom: 8px;
+                    margin: 0 auto;
+                    width: 24px;
+                    height: 22px;
+                    font-size: 30px;
+                }
+                &.btn-google{
+                    background-color: $white;
+                    &:before{
+                        color: #d34836;
+                    }
+                }
+                &.btn-twitter{
+                    background-color: $white;
+                    &:before{
+                        color: #24a9e6;
+                    }
+                }
+                 &.btn-facebook{
+                    background-color: $white;
+                     &:before{
+                        color: #3b5998;
+                    }
+                }
+            }
+        }
+
+
+
+        .login-form, .alt-login-button{ width:auto; @include float(none); border: 0; @include padding(0); }
+        // Sprite
+        // -----
+        .page-stamp{ display: none; }   
+        // Layout
+        // -----
+        .span1, .span2, .span3, .span4, 
+        .span5, .span6, .span7, .span8,
+        .span9, .span10, .span11, .span12 { 
+          @include reset-columns; display: block; 
+        }
+        .page{ padding: 10px; }
+        // labels
+        // ------
+        .label{ @include border-radius(3px); }
+        // Modals
+        // ------
+        .modal { 
+          position: absolute; 
+          top:   10px;
+          @include left(10px);
+          @include right(10px);
+
+          /* Resetting width and margin so it will be calculated during the dialog wapper */    
+          width:auto !important; 
+          @include margin-left(0 !important);
+
+          &.fade.in { top: 10px; margin-top: 0; border-top-left-radius: 6px; }
+        }
+
+        .modal-body{
+          @include padding(20px 20px 30px);
+          height: auto;
+          max-height: none;
+        }
+        .modal-header h3 {
+          min-height: 45px;
+          line-height: 2.1em;
+        }
+        .modal-header .close {
+          &, &:focus, &:hover {        
+            @include left(auto);
+            background: none;
+            @include box-shadow(none);
+            font-size: 18px;
+            font-weight: bold;
+            padding: 0;
+            height: 50px;
+            width: 50px;
+            @include right(0);
+            top: 92%;
+            @include left(40%);
+            background: $black;
+            @include border-radius(50px);
+            color: $white;
+          }
+          &:before{ content:none; background: none; width: 0; height: 0;}
+        }
+
+        .modal-footer{
+            padding-bottom: 50px;
+            .btn:first-child{
+                display: none;
+            }
+            .btn.btn-primary{
+                width: 100%;
+            }
+        }
+
+        #export-modal{
+            .close{
+                top: 96%;
+            }
+        }
+        .modal-backdrop{
+            background-color: rgba(24, 50, 71, 0.5);
+        }
+
+        // Pagination - Hiding other links from mobile
+        // -------------------------------------------
+        .pagination li:first-child a, .pagination li:last-child a, .pagination .active a 
+        .pagination li:first-child span, .pagination li:last-child span{
+            display: block;
+        }
+
+        .ellipsis{
+            white-space: initial;
+        }
+        .c-row .help-text{
+            margin-left: 76px;
+        }
+        .c-row.c-article-row{
+            .description-text,.help-text{
+                margin-left: 36px;
+                font-size: 13px;
+            }
+        }
+        .c-row.c-ticket-row{
+            .description-text,.help-text{
+                margin-left: 46px;
+                font-size: 13px;
+            }
+        }
+
+        // Input fields
+        // ----------------------------------
+
+        input#post-submit-button{
+            @include padding(5px 10px);
+        }
+        input[type="checkbox"]:before{
+            top: 0px;
+            left: -1px;
+        }
+        // signup page
+        .signup-wrapper{
+            @include box-shadow(none);
+            width: 100% !important;
+        }
+        // Page related styles - Contents
+        // ------------------------------
+        .toolbar-actions{ margin-top: 3px; margin-bottom: 15px; }
+
+        .toolbar-actions, .topic-list .topic-labels{ @include float(none); }
+
+        #topic-toolbar .btn{ 
+            @include padding-left(10px); 
+            @include padding-right(10px); 
+        }
+        .cs-s{
+            margin:0.5em 0;
+            h3{ border-top-width:4px; }
+        }
+        .content, .content-form, .content-light{ 
+            margin-top: 0; 
+            padding: $content-padding-mobile;
+        }
+        .user-comment .user-pic-thumb{
+            @include clear(right);
+        }
+        hr.content-divider{ 
+            @include margin-left(0);
+            @include margin-right(0);
+        }
+        .main, .sidebar{
+            padding: 10px 16px !important;
+        }
+
+    }
+}

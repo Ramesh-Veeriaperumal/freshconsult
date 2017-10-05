@@ -198,7 +198,7 @@ class Account < ActiveRecord::Base
     valid_user = (current_user == :no_user ? true : (current_user && current_user.is_falcon_pref?))
     valid_user && (launched?(:falcon) || falcon_enabled?)
   end
-  
+
   def falcon_support_portal_theme_enabled?
     falcon_ui_enabled? && falcon_portal_theme_enabled?
   end

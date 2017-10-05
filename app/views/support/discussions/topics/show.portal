@@ -1,7 +1,7 @@
 {% assign forum = topic.forum %}
 {% assign forum_category = forum.forum_category %}
 
-<section class="content main rounded-6 min-height-on-desktop">
+<section class="content main rounded-6 min-height-on-desktop fc-topic-view">
 	{% if forum.type_name != 'announcement' %}
 		<b class="pull-right">{{ portal | link_to_start_topic }}</b>
 	{% endif %}
@@ -126,7 +126,7 @@
 	{% endif %}
 </section>
 {% if forum.topics_display_count > 1 or topic.locked? or topic.has_merged_topics? %}
-	<section class="sidebar content rounded-6 min-height-on-desktop">	
+	<section class="sidebar content rounded-6 min-height-on-desktop fc-merge-topic">	
 		<div class="cs-g-c">
 			<section class="topic-list" id="merged-topics-list">
 				

@@ -23,7 +23,7 @@ class Account < ActiveRecord::Base
   after_commit ->(obj) { obj.clear_cache }, on: :update
   after_commit ->(obj) { obj.clear_cache }, on: :destroy
   
-  after_commit :enable_searchv2, :enable_count_es, :enable_collab, on: :create
+  after_commit :enable_searchv2, :enable_count_es, :enable_collab, :set_falcon_preferences, on: :create
   after_commit :disable_searchv2, :disable_count_es, on: :destroy
   after_commit :update_sendgrid, on: :create
   after_commit :remove_email_restrictions, on: :update , :if => :account_verification_changed?
@@ -330,6 +330,15 @@ class Account < ActiveRecord::Base
 
     def enable_collab
       CollabPreEnableWorker.perform_async
+    end
+
+    def set_falcon_preferences
+      if falcon_ui_applicable?
+        self.main_portal.preferences = HashWithIndifferentAccess.new({:bg_color => "#f3f5f7",:header_color => "#ffffff", :tab_color => "#ffffff", :personalized_articles => true})
+        self.main_portal.save!
+        self.main_portal.template.reload
+        self.main_portal.template.reset_to_default
+      end
     end
 
     def update_crm_and_map
