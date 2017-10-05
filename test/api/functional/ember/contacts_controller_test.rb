@@ -171,6 +171,37 @@ module Ember
       assert User.last.user_companies.find_by_default(false).client_manager == true
     end
 
+    def test_create_contact_with_mandatory_company_field
+      company_ids = Company.first(2).map(&:id)
+      company_field = Account.current.contact_form.default_contact_fields.find { |cf| cf.name == "company_name" }
+      company_field.update_attributes({:required_for_agent => true})
+      post :create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
+                                                             email: Faker::Internet.email,
+                                                             company: {
+                                                               id: company_ids[0],
+                                                               view_all_tickets: true
+                                                             })
+      assert_response 201
+      match_json(private_api_contact_pattern(User.last))
+      assert User.last.user_companies.find_by_default(true).company_id == company_ids[0]
+      assert User.last.user_companies.find_by_default(true).client_manager == true
+      company_field.update_attributes({:required_for_agent => false})
+    end
+
+    def test_error_in_create_contact_with_mandatory_company
+      company_ids = Company.first(2).map(&:id)
+      company_field = Account.current.contact_form.default_contact_fields.find { |cf| cf.name == "company_name" }
+      company_field.update_attributes({:required_for_agent => true})
+      post :create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
+                                                             email: Faker::Internet.email)
+      assert_response 400
+      match_json([bad_request_error_pattern(
+        'company_id', :datatype_mismatch,
+        expected_data_type: 'key/value pair')]
+      )
+      company_field.update_attributes({:required_for_agent => false})
+    end
+
     def test_quick_create_contact_with_company_name
       post :quick_create, construct_params({version: 'private'},  name: Faker::Lorem.characters(15),
                                           email: Faker::Internet.email,

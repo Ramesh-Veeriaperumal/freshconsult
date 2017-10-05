@@ -1,6 +1,19 @@
 class Ember::ContactValidation < ContactValidation
   attr_accessor :company
 
+  alias_attribute :company, :company_name
+
+  def initialize(request_params, item, allow_string_param = false)
+    super(request_params, item, allow_string_param)
+    company_hash_validation = {
+      company_name: {
+        data_type: { rules: Hash }
+      }
+    }
+    DEFAULT_FIELD_VALIDATIONS.merge!(company_hash_validation) unless \
+      [:quick_create, :requester_update].include?(@action)
+  end
+
   def check_duplicates_multiple_companies
     ids = other_companies.collect { |x| x[:id] }.compact
     if company && ids.any? { |id| id == company[:id] }
