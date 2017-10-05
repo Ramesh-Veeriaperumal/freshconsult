@@ -10,7 +10,7 @@ class TicketValidation < ApiValidation
                 :phone, :twitter_id, :facebook_id, :requester_id, :name, :agent, :source, :status, :subject, :ticket_type,
                 :product, :tags, :custom_fields, :attachments, :request_params, :item, :statuses, :status_ids, :ticket_fields, :company_id, :scenario_id,
                 :primary_id, :ticket_ids, :note_in_primary, :note_in_secondary, :convert_recepients_to_cc, :cloud_files, :skip_close_notification,
-                :related_ticket_ids, :assoc_parent_tkt_id, :internal_group_id, :internal_agent_id
+                :related_ticket_ids, :assoc_parent_tkt_id, :internal_group_id, :internal_agent_id, :parent_template_id, :child_template_ids
 
   alias_attribute :type, :ticket_type
   alias_attribute :product_id, :product
@@ -69,6 +69,24 @@ class TicketValidation < ApiValidation
       feature: :parent_child_tickets
     }
   }, unless: -> { Account.current.parent_child_tkts_enabled? }
+
+  validates :parent_template_id, custom_absence: {
+    message: :require_feature_for_attribute,
+    code: :inaccessible_field,
+    message_options: {
+      attribute: 'parent_template_id',
+      feature: :parent_child_tickets
+    }
+  }, unless: -> { parent_child_enabled? }
+
+  validates :child_template_ids, custom_absence: {
+    message: :require_feature_for_attribute,
+    code: :inaccessible_field,
+    message_options: {
+      attribute: 'child_template_ids',
+      feature: :parent_child_tickets
+    }
+  }, unless: -> { parent_child_enabled? }
 
   validates :company_id, custom_numericality: {
     only_integer: true,
@@ -278,6 +296,10 @@ class TicketValidation < ApiValidation
       body: { data_type: { rules: String }, required: true },
       private: { custom_inclusion: { in: [true, false] }, required: true }
     }
+  end
+
+  def parent_child_enabled?
+    Account.current.parent_child_tkts_enabled?
   end
 
   def validate_cloud_files

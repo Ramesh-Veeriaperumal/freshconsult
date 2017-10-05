@@ -78,6 +78,8 @@
     $ref: ./request/tickets/execute_scenario.yaml
   link_input:
     $ref: ./request/tickets/link_input.yaml
+  create_child_with_template:
+    $ref: ./request/tickets/create_child_with_template.yaml
   requester_input:
     $ref: ./request/tickets/requester.yaml
   cloud_file_input:
@@ -299,6 +301,12 @@
     $ref: './response/trial_widget/index.yaml'
   trial_widget_sales_manager:
     $ref: './response/trial_widget/sales_manager.yaml'
+
+  #Ticket Templates
+  ticket_templates_index:
+    $ref: './response/ticket_templates/index.yaml'
+  ticket_templates_show:
+    $ref: './response/ticket_templates/show.yaml'
 
   #Marketplace
   marketplace_apps:

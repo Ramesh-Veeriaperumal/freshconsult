@@ -39,7 +39,7 @@ module Ember
       assign_protected
       delegator_hash = { ticket_fields: @ticket_fields, custom_fields: cname_params[:custom_field], 
                           attachment_ids: @attachment_ids, shared_attachments: shared_attachments,
-                          parent_attachment_params: parent_attachment_params }
+                          parent_child_params: parent_child_params, parent_attachment_params: parent_attachment_params }
       return unless validate_delegator(@item, delegator_hash)
       save_ticket_and_respond
     end
@@ -56,6 +56,15 @@ module Ember
       else
         render_errors(@item.errors)
       end
+    end
+
+    def create_child_with_template
+      @validation_klass = 'CreateChildWithTemplateValidation'
+      return unless validate_body_params
+      @delegator_klass = 'CreateChildWithTemplateDelegator'
+      return unless validate_delegator(@item, parent_child_params: parent_child_params)
+      create_child_template_tickets
+      head 204
     end
 
     def execute_scenario
@@ -192,6 +201,9 @@ module Ember
         (parent_attachments || []).each do |attach|
           attachments_array.push(resource: attach.to_io)
         end
+        (parent_template_attachments || []).each do |attach|
+          attachments_array.push(resource: attach.to_io)
+        end
         cname_params[:attachments] = attachments_array
       end
 
@@ -201,6 +213,18 @@ module Ember
         else
           []
         end
+      end
+
+      def parent_template_attachments
+        @template_attachments ||= if @attachment_ids.present? && parent_template.present?
+          parent_template.attachments.select { |x| @attachment_ids.include?(x.id) }
+        else
+          []
+        end
+      end
+
+      def parent_template
+        @parent_template ||= current_account.prime_templates.find_by_id(@parent_template_id) if @parent_template_id.present?
       end
 
       def parent_ticket
@@ -220,6 +244,7 @@ module Ember
       def save_ticket_and_respond
         if create_ticket
           @ticket = @item # Dirty hack. Should revisit.
+          create_child_template_tickets
           render 'ember/tickets/show', status: 201
           notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank? || compose_email?
         else
@@ -231,6 +256,16 @@ module Ember
         @item.attachments = @item.attachments + @delegator.draft_attachments if @delegator.draft_attachments
         @item.save_ticket
       end
+
+      def create_child_template_tickets
+        return if parent_child_params[:child_template_ids].blank?
+        ::Tickets::BulkChildTktCreation.perform_async(user_id: current_user.id,
+                                                      portal_id: current_portal.id,
+                                                      assoc_parent_tkt_id: @item.display_id,
+                                                      parent_templ_id: parent_child_params[:parent_template_id],
+                                                      child_ids: parent_child_params[:child_template_ids])
+      end
+
 
       def decorate_objects
         return if @errors || @error
@@ -440,10 +475,20 @@ module Ember
         fields.inject(:merge) || {}
       end
 
+      def parent_child_params
+        @parent_child_params ||= begin
+          {
+            parent_template_id:  (params[:parent_template_id] || @parent_template_id),
+            child_template_ids:  (params[:child_template_ids] || @child_template_ids)
+          }
+        end
+      end
+
       def parent_attachment_params
         {
           parent_ticket:       parent_ticket,
-          parent_attachments:  parent_attachments
+          parent_attachments:  parent_attachments,
+          parent_template_attachments: parent_template_attachments
         }
       end
 

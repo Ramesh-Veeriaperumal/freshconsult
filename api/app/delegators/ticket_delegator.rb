@@ -48,14 +48,22 @@ class TicketDelegator < BaseDelegator
 
   validate :validate_parent_ticket, if: -> { child_ticket? && @parent.present? }
 
+  validate :parent_template_id_permissible?, if: -> { @parent_template_id }
+  validate :child_template_ids_permissible?, if: -> { @child_template_ids }
+
   def initialize(record, options)
     @ticket_fields = options[:ticket_fields]
     check_params_set(options[:custom_fields]) if options[:custom_fields].is_a?(Hash)
     if options[:parent_attachment_params].present?
       @parent = options[:parent_attachment_params][:parent_ticket]
       @parent_attachments = options[:parent_attachment_params][:parent_attachments]
+      @parent_template_attachments = options[:parent_attachment_params][:parent_template_attachments]
     end
     options[:attachment_ids] = skip_existing_attachments(options) if options[:attachment_ids]
+    if options[:parent_child_params].present?
+      @parent_template_id = options[:parent_child_params][:parent_template_id]
+      @child_template_ids = options[:parent_child_params][:child_template_ids]
+    end
     super(record, options)
     @ticket = record
   end
@@ -108,6 +116,24 @@ class TicketDelegator < BaseDelegator
 
   def user_blocked?
     errors[:requester_id] << :user_blocked if requester && requester.blocked?
+  end
+
+  def parent_template_id_permissible?
+    @parent_template = Account.current.prime_templates.find_by_id(@parent_template_id)
+    if @parent_template.blank? || !@parent_template.visible_to_me?
+      errors[:parent_template_id] << :"is invalid"
+    end    
+  end
+
+  def child_template_ids_permissible?
+    if @parent_template.present? && @child_template_ids.present?
+      valid_child_template_ids = @parent_template.child_templates.pluck(:id)
+      invalid_child_template_ids = @child_template_ids.to_a - valid_child_template_ids
+      if invalid_child_template_ids.length > 0
+        errors[:child_template_ids] << :child_template_list 
+        (self.error_options ||= {}).merge!({ child_template_ids: { invalid_ids: "#{invalid_child_template_ids.join(', ')}" } })
+      end
+    end
   end
 
   def closure_status?
@@ -180,6 +206,8 @@ class TicketDelegator < BaseDelegator
 
     # skip shared attachments
     def skip_existing_attachments(options)
-      options[:attachment_ids] - (options[:shared_attachments] || []).map(&:id) - (@parent_attachments.present? ? @parent_attachments : []).map(&:id)
+      attachment_ids_list = (options[:attachment_ids] - (options[:shared_attachments] || []).map(&:id) - (@parent_attachments.present? ? @parent_attachments : []).map(&:id))
+      attachment_ids_list = attachment_ids_list - @parent_template_attachments.map(&:id) if @parent_template_attachments.present?
+      attachment_ids_list
     end
 end

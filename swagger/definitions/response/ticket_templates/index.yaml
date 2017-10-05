@@ -1,0 +1,17 @@
+type: object
+properties:
+  templates:
+    type: array
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+        id:
+          type: number
+        assoc_type:
+          type: number
+          enum: [1,2,3]
+        type:
+          type: string
+          enum: ['personal', 'shared']

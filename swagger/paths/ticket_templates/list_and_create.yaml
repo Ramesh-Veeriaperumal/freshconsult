@@ -1,0 +1,24 @@
+get:
+  tags: [ticket_template]
+  description: Listing all ticket templates
+  summary: List all
+  parameters:
+      - name: filter
+        in: query
+        type: string
+        description: Filtering templates
+        enum: ["accessible"]
+      - name: type
+        in: query
+        type: string
+        description: Fetching only primary templates
+        enum: ["prime", "only_parent"]
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/ticket_templates_index'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

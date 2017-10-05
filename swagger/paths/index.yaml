@@ -14,6 +14,8 @@
   $ref: ./tickets/unspam.yaml
 /tickets/{id}/execute_scenario:
   $ref: ./tickets/execute_scenario.yaml
+/tickets/{id}/create_child_with_template:
+  $ref: ./tickets/create_child_with_template.yaml
 /tickets/{id}/link:
   $ref: ./tickets/link.yaml
 /tickets/{id}/unlink:
@@ -271,6 +273,12 @@
 # Product Feedback
 /product_feedback/:
   $ref: ./product_feedback/create.yaml
+
+#Ticket Templates
+/ticket_templates:
+  $ref: ./ticket_templates/list_and_create.yaml
+/ticket_templates/{id}:
+  $ref: ./ticket_templates/crud.yaml
 
 # Onboarding
 /onboarding/resend_activation_email:

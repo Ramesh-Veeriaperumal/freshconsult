@@ -7,7 +7,7 @@ module ApiTicketConstants
   CREATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id internal_group_id priority
                      email phone twitter_id facebook_id requester_id name
                      responder_id internal_agent_id source status subject type product_id company_id
-                     parent_id).freeze | ARRAY_FIELDS | HASH_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
+                     parent_id parent_template_id child_template_ids).freeze | ARRAY_FIELDS | HASH_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
 
   # removed source since update of ticket source should not be allowed. - Might break API v2
   UPDATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id internal_group_id priority
@@ -35,6 +35,8 @@ module ApiTicketConstants
 
   PIPE_CREATE_FIELDS = CREATE_FIELDS | %w(pending_since created_at updated_at on_state_time)
   PIPE_UPDATE_FIELDS = UPDATE_FIELDS | %w(pending_since created_at updated_at)
+
+  CREATE_CHILD_WITH_TEMPLATE_FIELDS = %w(parent_template_id child_template_ids)
 
   SCOPE_BASED_ON_ACTION = {
     'restore' => { deleted: true, spam: false },
@@ -80,7 +82,7 @@ module ApiTicketConstants
     bulk_execute_scenario: [:json]
   }.freeze
 
-  PERMISSION_REQUIRED = [:show, :update, :execute_scenario, :spam, :unspam, :restore, :destroy, :search, :update_properties].freeze
+  PERMISSION_REQUIRED = [:show, :update, :execute_scenario, :spam, :unspam, :restore, :destroy, :search, :update_properties, :create_child_with_template].freeze
 
   REQUIRE_PRELOAD = [:bulk_delete, :bulk_spam, :bulk_unspam, :bulk_restore].freeze
   BULK_ACTION_ASYNC_METHODS = [:bulk_execute_scenario, :bulk_update, :delete_forever].freeze
@@ -106,7 +108,7 @@ module ApiTicketConstants
 
   PARAMS_TO_REMOVE = [:cc_emails, :description, :parent_id].freeze
   PARAMS_MAPPINGS = { custom_fields: :custom_field, fr_due_by: :frDueBy, type: :ticket_type }.freeze
-  PARAMS_TO_SAVE_AND_REMOVE = [:status, :cloud_files, :attachment_ids, :skip_close_notification].freeze
+  PARAMS_TO_SAVE_AND_REMOVE = [:status, :cloud_files, :attachment_ids, :skip_close_notification, :parent_template_id, :child_template_ids].freeze
 
   ALLOWED_ONLY_PARAMS = %w(count).freeze
 end.freeze

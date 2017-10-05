@@ -1,8 +1,8 @@
 module TicketTemplateHelper
 
-  def create_sample_tkt_templates
+  def create_sample_tkt_templates(count = 3)
     @groups = []
-    3.times { @groups << create_group(@account) }
+    count.times { @groups << create_group(@account) }
     @all_agents_template = create_tkt_template({:name => "Template - All agents",:account_id => @account.id,
       :accessible_attributes => {:access_type=>Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]}})
     @user_template = create_personal_template(@agent.id)
@@ -11,9 +11,12 @@ module TicketTemplateHelper
   end
 
   def create_tkt_template options
+    options.symbolize_keys!
+    options = template_default_options.merge(options)
     tkt_template = FactoryGirl.build(:ticket_templates, :name=>options[:name], :description=>Faker::Lorem.sentence(2),
-                          :template_data => {:subject=>"sample tkt", :status=>"2", :ticket_type=>"Lead", :group_id=> @groups[0].id, :responder_id=> @agent.id, :priority=>"1", :product_id=>""},
-                          :account_id=>options[:account_id])
+                          :template_data => {"subject" => options[:subject], "status" => options[:status], "ticket_type" => options[:ticket_type], "group_id" => options[:group_id], "responder_id" => options[:responder_id], "priority" => options[:priority], "product_id" => options[:product_id]},
+                          :account_id=>options[:account_id],
+                          :association_type => options[:association_type])
     (options[:attachments] || []).each do |att|
       tkt_template.attachments.build(:content => att[:resource],:description => Faker::Lorem.characters(10),:account_id => tkt_template.account_id)
     end
@@ -28,8 +31,37 @@ module TicketTemplateHelper
   end
 
   def create_personal_template agent_id
+    @groups = []
+    @groups << create_group(@account)
     create_tkt_template({:name => "Template - Only Me",:account_id => @account.id,
       :accessible_attributes => {:access_type=>Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users],:user_ids=>[agent_id]}})
+  end
+
+  def create_parent_child_template(count)
+    @agent = get_admin
+    @groups = []
+    @child_templates = []
+    3.times { @groups << create_group(@account) }
+    @parent_template = create_tkt_template(name: Faker::Name.name,
+                        association_type: Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:parent],
+                        account_id: @account.id,
+                        accessible_attributes: {
+                                                access_type: Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
+                                              })
+    count.times { @child_templates << create_child_template(@parent_template) }
+  end
+
+  def create_child_template(parent_templ)
+    child_template = create_tkt_template(name: Faker::Name.name,
+                    subject: 'Create child ticket using template',
+                    association_type: Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:child],
+                    account_id: @account.id,
+                    accessible_attributes: {
+                    access_type: Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
+                                          })
+    child_template.build_parent_assn_attributes(parent_templ.id)
+    child_template.save
+    return child_template
   end
 
   def create_ticket_fields
@@ -59,5 +91,17 @@ module TicketTemplateHelper
       { :type => "custom_decimal", :ff_name => "ff_decimal07", :ff_coltype => "decimal", :name=> "average" },
       { :type => "custom_checkbox", :ff_name => "ff_boolean07", :ff_coltype => "checkbox", :name=> "availability" }
     ]
+  end
+
+  def template_default_options
+    {
+      subject:        "sample tkt",
+      status:         "2",
+      ticket_type:    "Lead",
+      group_id:       @groups[0].id,
+      responder_id:   @agent.id,
+      priority:       "1",
+      product_id:     ""
+    }
   end
 end

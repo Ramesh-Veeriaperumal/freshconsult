@@ -1,0 +1,13 @@
+type: object
+required:
+  - parent_template_id
+  - child_template_ids
+properties:
+  parent_template_id:
+    type: number
+    description: Parent template ID
+  child_template_ids:
+    type: array
+    description: Child template IDs
+    items:
+      type: number

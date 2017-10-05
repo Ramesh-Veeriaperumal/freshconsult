@@ -1,5 +1,5 @@
 require_relative '../../test_helper'
-['canned_responses_helper.rb', 'group_helper.rb', 'social_tickets_creation_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['canned_responses_helper.rb', 'group_helper.rb', 'social_tickets_creation_helper.rb', 'ticket_template_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 ['account_test_helper.rb', 'shared_ownership_test_helper'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 
 module Ember
@@ -17,7 +17,9 @@ module Ember
     include ContactFieldsHelper
     include AccountTestHelper
     include SharedOwnershipTestHelper
+    include TicketTemplateHelper
     include AwsTestHelper
+    include TicketTemplateHelper
 
     CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date).freeze
     CUSTOM_FIELDS_CHOICES = Faker::Lorem.words(5).uniq.freeze
@@ -1730,11 +1732,11 @@ module Ember
       enable_adv_ticketing([:parent_child_tickets]) do
         Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
         create_parent_ticket
-        parent_ticket = Helpdesk::Ticket.last
+        parent_ticket = Account.current.tickets.last
         params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
         post :create, construct_params({ version: 'private' }, params_hash)
         assert_response 201
-        latest_ticket = Helpdesk::Ticket.last
+        latest_ticket = Account.current.tickets.last
         match_json(ticket_show_pattern(latest_ticket))
       end
     end
@@ -1854,6 +1856,176 @@ module Ember
       end
     end
 
+    def test_new_ticket_with_parent_child
+      enable_adv_ticketing(%i(parent_child_tickets)) do
+        Sidekiq::Testing.inline! do
+          @account = Account.first.make_current
+          @agent = get_admin
+          @groups = []
+          3.times { @groups << create_group(@account) }
+          @current_user = User.current
+          parent_template = create_tkt_template(name: Faker::Name.name,
+                                                association_type: Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:parent],
+                                                account_id: @account.id,
+                                                accessible_attributes: {
+                                                  access_type: Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
+                                                })
+          child_template = create_tkt_template(name: Faker::Name.name,
+                                               subject: 'Test new ticket with parent and single child',
+                                               association_type: Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:child],
+                                               account_id: @account.id,
+                                               accessible_attributes: {
+                                                 access_type: Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
+                                               })
+          child_template.build_parent_assn_attributes(parent_template.id)
+          child_template.save
+
+          params_hash = ticket_params_hash.merge(parent_template_id: parent_template.id, child_template_ids: [child_template.id])
+          current_ticket_id = Helpdesk::Ticket.last.id
+          post :create, construct_params({ version: 'private' }, params_hash)
+          assert_response 201
+          last_ticket_id = Helpdesk::Ticket.last.id
+          assert_equal Helpdesk::Ticket.last.subject, 'Test new ticket with parent and single child'
+          assert_equal current_ticket_id, (last_ticket_id - 2)
+        end
+      end
+    end
+
+    def test_new_ticket_with_parent_multiple_child
+      enable_adv_ticketing(%i(parent_child_tickets)) do
+        
+          @account = Account.first.make_current
+          @agent = get_admin
+          @groups = []
+          3.times { @groups << create_group(@account) }
+          @current_user = User.current
+          child_template_ids = []
+          parent_template = create_tkt_template(name: Faker::Name.name,
+                                                association_type: Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:parent],
+                                                account_id: @account.id,
+                                                accessible_attributes: {
+                                                  access_type: Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
+                                                })
+          2.times do |i|
+            child_template = create_tkt_template(name: Faker::Name.name,
+                                                 subject: "Test child multiple #{i}",
+                                                 association_type: Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:child],
+                                                 account_id: @account.id,
+                                                 accessible_attributes: {
+                                                   access_type: Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
+                                                 })
+
+            child_template.build_parent_assn_attributes(parent_template.id)
+            child_template.save
+            child_template_ids << child_template.id
+          end
+
+          params_hash = ticket_params_hash.merge(parent_template_id: parent_template.id, child_template_ids: child_template_ids)
+          current_ticket_id = Helpdesk::Ticket.last.id
+          Sidekiq::Testing.inline! do
+            post :create, construct_params({ version: 'private' }, params_hash)
+          end
+          assert_response 201
+          Helpdesk::Ticket.last(2).each do |ticket|
+            assert ticket.subject.include?('Test child multiple')
+          end
+          last_ticket_id = Helpdesk::Ticket.last.id
+          assert_equal current_ticket_id, (last_ticket_id - 3)
+      end
+    end
+
+    def test_new_ticket_with_parent_child_with_invalid_child
+      enable_adv_ticketing(%i(parent_child_tickets)) do
+        Sidekiq::Testing.inline! do
+          @account = Account.first.make_current
+          @agent = get_admin
+          @groups = []
+          3.times { @groups << create_group(@account) }
+          @current_user = User.current
+          parent_template = create_tkt_template(name: Faker::Name.name,
+                                                association_type: Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:parent],
+                                                account_id: @account.id,
+                                                accessible_attributes: {
+                                                  access_type: Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
+                                                })
+          child_template = create_tkt_template(name: Faker::Name.name,
+                                               subject: 'Test new ticket with parent and single child',
+                                               association_type: Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:child],
+                                               account_id: @account.id,
+                                               accessible_attributes: {
+                                                 access_type: Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
+                                               })
+          child_template.build_parent_assn_attributes(parent_template.id)
+          child_template.save
+
+          params_hash = ticket_params_hash.merge(parent_template_id: parent_template.id, child_template_ids: [9999])
+          current_ticket_id = Helpdesk::Ticket.last.id
+          post :create, construct_params({ version: 'private' }, params_hash)
+          assert_response 400
+          last_ticket_id = Helpdesk::Ticket.last.id
+        end
+      end
+    end
+
+    def test_new_ticket_with_parent_child_with_invalid_parent
+      enable_adv_ticketing(%i(parent_child_tickets)) do
+        Sidekiq::Testing.inline! do
+          @account = Account.first.make_current
+          @agent = get_admin
+          @groups = []
+          3.times { @groups << create_group(@account) }
+          @current_user = User.current
+
+          params_hash = ticket_params_hash.merge(parent_template_id: 99_999, child_template_ids: [9999])
+          old_ticket_id = Helpdesk::Ticket.last.id
+          post :create, construct_params({ version: 'private' }, params_hash)
+          assert_response 400
+          match_json([bad_request_error_pattern('parent_template_id', :absent_in_db, resource: :parent_template, attribute: :parent_template_id)])
+          last_ticket_id = Helpdesk::Ticket.last.id
+          assert_equal old_ticket_id, last_ticket_id
+        end
+      end
+    end
+
+    def test_new_ticket_with_parent_child_with_inaccessible_parent
+      enable_adv_ticketing(%i(parent_child_tickets)) do
+        Sidekiq::Testing.inline! do
+          @account = Account.first.make_current
+          @agent = get_admin
+          @groups = []
+          3.times { @groups << create_group(@account) }
+          existing_current_user = User.current
+          agent = add_test_agent(@account)
+
+          parent_template = create_tkt_template(name: Faker::Name.name,
+                                                account_id: @account.id,
+                                                association_type: Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:parent],
+                                                accessible_attributes: { access_type: Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users],
+                                                                         user_ids: [existing_current_user.id] })
+
+          child_template = create_tkt_template(name: Faker::Name.name,
+                                               subject: 'Test new ticket with parent and single child',
+                                               association_type: Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:child],
+                                               account_id: @account.id,
+                                               accessible_attributes: {
+                                                 access_type: Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
+                                               })
+          child_template.build_parent_assn_attributes(parent_template.id)
+          child_template.save
+
+          login_as(agent)
+          params_hash = ticket_params_hash.merge(parent_template_id: parent_template.id, child_template_ids: [child_template.id])
+          old_ticket_id = Helpdesk::Ticket.last.id
+          post :create, construct_params({ version: 'private' }, params_hash)
+          assert_response 400
+          match_json([bad_request_error_pattern('parent_template_id', :absent_in_db, resource: :parent_template, attribute: :parent_template_id)])
+          # match_json([bad_request_error_pattern('parent_template_id', :inaccessible_value, resource: :parent_template, attribute: :parent_template_id)])
+          last_ticket_id = Helpdesk::Ticket.last.id
+          login_as(existing_current_user)
+        end
+      end
+    end
+
     def test_ticket_without_collab
       Account.current.revoke_feature(:collaboration)
       ticket = create_ticket
@@ -1862,6 +2034,158 @@ module Ember
       match_json(ticket_show_pattern(ticket))
     ensure
       Account.current.add_feature(:collaboration)
+    end
+
+    def test_create_child_with_template
+      enable_adv_ticketing([:parent_child_tickets]) do
+        create_parent_child_template(2)
+        child_template_ids = @child_templates.map(&:id)
+        parent_ticket = create_ticket
+        Sidekiq::Testing.inline! do
+          put :create_child_with_template, construct_params({ version: 'private', id: parent_ticket.display_id, parent_template_id: @parent_template.id, child_template_ids: child_template_ids }, false)
+        end
+        assert_response 204
+        child_ticket = Account.current.tickets.last
+        assert child_ticket.child_ticket?
+        assert parent_ticket.reload.assoc_parent_ticket?
+        assert_equal parent_ticket.child_tkts_count, 2
+        assert_equal child_ticket.associated_prime_ticket('child'), parent_ticket
+      end
+    end
+
+    def test_create_child_with_invalid_parent_template
+      enable_adv_ticketing([:parent_child_tickets]) do
+        create_parent_child_template(1)
+        child_template_ids = @child_templates.map(&:id)
+        parent_ticket = Account.current.tickets.last
+        Sidekiq::Testing.inline! do
+          put :create_child_with_template, construct_params({ version: 'private', id: parent_ticket.display_id, parent_template_id: @child_templates.first.id, child_template_ids: child_template_ids }, false)
+        end
+        assert_response 400
+        match_json([bad_request_error_pattern('parent_template_id', :invalid_parent_template)])
+      end
+    end
+
+    def test_create_child_with_inaccessible_parent_template
+      enable_adv_ticketing([:parent_child_tickets]) do
+        agent = add_test_agent(@account)
+        @groups = []
+        @groups << create_group(@account)
+        parent_template = create_tkt_template(name: Faker::Name.name,
+                                        account_id: @account.id,
+                                        association_type: Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:parent],
+                                        accessible_attributes: { access_type: Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users], user_ids: [agent.id] })
+        child_template = create_tkt_template(name: Faker::Name.name,
+                                        account_id: @account.id,
+                                        association_type: Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:child],
+                                        accessible_attributes: { access_type: Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users], user_ids: [agent.id] })
+        child_template.build_parent_assn_attributes(parent_template.id)
+        child_template.save
+        parent_ticket = Account.current.tickets.last
+        Sidekiq::Testing.inline! do
+          put :create_child_with_template, construct_params({ version: 'private', id: parent_ticket.display_id, parent_template_id: parent_template.id, child_template_ids: [child_template.id] }, false)
+        end
+        assert_response 400
+        match_json([bad_request_error_pattern('parent_template_id', :inaccessible_parent_template)])
+      end
+    end
+
+    def test_create_child_with_invalid_child_template
+      enable_adv_ticketing([:parent_child_tickets]) do
+        create_parent_child_template(1)
+        child_template_ids = @child_templates.map(&:id)
+        parent_ticket = Account.current.tickets.last
+        Sidekiq::Testing.inline! do
+          put :create_child_with_template, construct_params({ version: 'private', id: parent_ticket.display_id, parent_template_id: @parent_template.id, child_template_ids: [@parent_template.id] }, false)
+        end
+        assert_response 400
+        match_json([bad_request_error_pattern('child_template_ids', :child_template_list, invalid_ids: @parent_template.id)])
+      end
+    end
+ 
+    def test_create_child_with_template_to_invalid_parent
+      enable_adv_ticketing([:parent_child_tickets]) do
+        ticket = create_ticket
+        ticket.update_attributes(association_type: 4) #Related
+        create_parent_child_template(1)
+        child_template_ids = @child_templates.map(&:id)
+        Sidekiq::Testing.inline! do
+          put :create_child_with_template, construct_params({ version: 'private', id: ticket.id, parent_template_id: @parent_template.id, child_template_ids: child_template_ids }, false)
+        end
+        assert_response 400
+        match_json([bad_request_error_pattern('parent_id', :invalid_parent)])
+      end
+    end
+
+    def test_create_child_with_template_to_spam_parent
+      enable_adv_ticketing([:parent_child_tickets]) do
+        create_parent_child_template(1)
+        child_template_ids = @child_templates.map(&:id)
+        parent_ticket = create_ticket
+        parent_ticket.update_attributes(spam: true)
+        parent_ticket.reload
+        Sidekiq::Testing.inline! do
+          put :create_child_with_template, construct_params({ version: 'private', id: parent_ticket.display_id, parent_template_id: @parent_template.id, child_template_ids: child_template_ids }, false)
+        end
+        assert_response 404
+      end
+    end
+
+    def test_create_child_with_template_to_inaccessible_parent
+      enable_adv_ticketing([:parent_child_tickets]) do
+        ticket_id = create_ticket(ticket_params_hash).display_id
+        create_parent_child_template(1)
+        child_template_ids = @child_templates.map(&:id)
+        User.any_instance.stubs(:has_ticket_permission?).returns(false)
+        Sidekiq::Testing.inline! do
+          put :create_child_with_template, construct_params({ version: 'private', id: ticket_id, parent_template_id: @parent_template.id, child_template_ids: child_template_ids }, false)
+        end
+        User.any_instance.unstub(:has_ticket_permission?)
+        assert_response 403
+      end
+    end
+
+    def test_create_child_with_template_to_parent_with_max_children
+      enable_adv_ticketing([:parent_child_tickets]) do
+        Helpdesk::Ticket.any_instance.stubs(:associates).returns((10..19).to_a)
+        parent_ticket = create_parent_ticket
+        create_parent_child_template(1)
+        child_template_ids = @child_templates.map(&:id)
+        Sidekiq::Testing.inline! do
+          put :create_child_with_template, construct_params({ version: 'private', id: parent_ticket.display_id, parent_template_id: @parent_template.id, child_template_ids: child_template_ids }, false)
+        end
+        assert_response 400
+        match_json([bad_request_error_pattern('parent_id', :exceeds_limit, limit: TicketConstants::CHILD_TICKETS_PER_ASSOC_PARENT )])
+      end
+    end
+
+    def test_create_child_with_template_exceeds_max_children
+      enable_adv_ticketing([:parent_child_tickets]) do
+        Helpdesk::Ticket.any_instance.stubs(:associates).returns((10..17).to_a)
+        parent_ticket = create_parent_ticket
+        create_parent_child_template(3)
+        child_template_ids = @child_templates.map(&:id)
+        Sidekiq::Testing.inline! do
+          put :create_child_with_template, construct_params({ version: 'private', id: parent_ticket.display_id, parent_template_id: @parent_template.id, child_template_ids: child_template_ids }, false)
+        end
+        assert_response 400
+        match_json([bad_request_error_pattern('parent_id', :exceeds_limit, limit: TicketConstants::CHILD_TICKETS_PER_ASSOC_PARENT )])
+      end
+    end
+
+    def test_create_child_with_template_feature_disabled
+      enable_adv_ticketing([:parent_child_tickets]) do
+        create_parent_child_template(1)
+      end
+      disable_adv_ticketing([:parent_child_tickets])
+      child_template_ids = @child_templates.map(&:id)
+      Account.current.instance_variable_set('@pc', false) # Memoize is used. Hence setting it to false once the feature is disabled.
+      parent_ticket = create_ticket
+      Sidekiq::Testing.inline! do
+        put :create_child_with_template, construct_params({ version: 'private', id: parent_ticket.display_id, parent_template_id: @parent_template.id, child_template_ids: child_template_ids }, false)
+      end
+      assert_response 400
+      match_json([bad_request_error_pattern('feature', :require_feature, feature: 'Parent Child Tickets')])
     end
   end
 end

@@ -35,7 +35,9 @@ class BadRequestError < BaseError
     responder_ids: :agent,
     group_ids: :group,
     product_ids: :product,
-    status_ids: :status
+    status_ids: :status,
+    parent_template_id: :parent_template,
+    child_template_ids: :child_template
   }.freeze
 
   def initialize(attribute, value, params_hash = {})

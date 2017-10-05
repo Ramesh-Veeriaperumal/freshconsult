@@ -408,6 +408,51 @@
         }
       }
     },
+    "/tickets/{id}/create_child_with_template": {
+      "put": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Create Child Using Template",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/create_child_with_template"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      }
+    },
     "/tickets/{id}/link": {
       "put": {
         "tags": [
@@ -948,6 +993,41 @@
           },
           "404": {
             "description": "Ticket not found"
+          }
+        }
+      }
+    },
+    "/tickets/{id}/requester": {
+      "put": {
+        "summary": "Update Requester",
+        "tags": [
+          "ticket"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/requester_input"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/requester"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
           }
         }
       }
@@ -4282,6 +4362,15 @@
             "items": {
               "type": "number"
             }
+          },
+          {
+            "name": "product_ids",
+            "description": "Selected products for filtering",
+            "type": "array",
+            "in": "query",
+            "items": {
+              "type": "number"
+            }
           }
         ],
         "responses": {
@@ -4450,6 +4539,85 @@
         }
       }
     },
+    "/ticket_templates": {
+      "get": {
+        "tags": [
+          "ticket_template"
+        ],
+        "description": "Listing all ticket templates",
+        "summary": "List all",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "type": "string",
+            "description": "Filtering templates",
+            "enum": [
+              "accessible"
+            ]
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "type": "string",
+            "description": "Fetching only primary templates",
+            "enum": [
+              "prime",
+              "only_parent"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ticket_templates_index"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/ticket_templates/{id}": {
+      "get": {
+        "tags": [
+          "ticket_template"
+        ],
+        "summary": "Show Ticket templates",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "Id of ticket template",
+            "required": true
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "type": "string",
+            "description": "parent template,child template or general template"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ticket_templates_show"
+            }
+          },
+          "404": {
+            "description": "Template not found"
+          }
+        }
+      }
+    },
     "/onboarding/resend_activation_email": {
       "get": {
         "summary": "Resend activation email.",
@@ -4597,6 +4765,12 @@
                         "type": "string"
                       }
                     },
+                    "collision_user_hash": {
+                      "type": "string"
+                    },
+                    "autorefresh_user_hash": {
+                      "type": "string"
+                    },
                     "preferences": {
                       "type": "object",
                       "properties": {
@@ -4715,20 +4889,6 @@
                     }
                   }
                 },
-                "groups": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "integer"
-                    },
-                    "name": {
-                      "type": "string"
-                    },
-                    "agent_ids": {
-                      "type": "array"
-                    }
-                  }
-                },
                 "collaboration": {
                   "type": "object",
                   "properties": {
@@ -4749,6 +4909,20 @@
                     }
                   }
                 },
+                "groups": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "agent_ids": {
+                      "type": "array"
+                    }
+                  }
+                },
                 "created_at": {
                   "type": "string",
                   "format": "date-time"
@@ -4761,6 +4935,12 @@
           "type": "object",
           "properties": {
             "csrf_token": {
+              "type": "string"
+            },
+            "collision_url": {
+              "type": "string"
+            },
+            "autorefresh_url": {
               "type": "string"
             }
           }
@@ -5820,6 +6000,54 @@
         }
       }
     },
+    "create_child_with_template": {
+      "type": "object",
+      "required": [
+        "parent_template_id",
+        "child_template_ids"
+      ],
+      "properties": {
+        "parent_template_id": {
+          "type": "number",
+          "description": "Parent template ID"
+        },
+        "child_template_ids": {
+          "type": "array",
+          "description": "Child template IDs",
+          "items": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "requester_input": {
+      "type": "object",
+      "properties": {
+        "contact": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/contact"
+            },
+            {
+              "properties": {
+                "view_all_tickets": {
+                  "type": "boolean"
+                }
+              }
+            }
+          ]
+        },
+        "company": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/company"
+            }
+          ]
+        }
+      }
+    },
     "cloud_file_input": {
       "type": "object",
       "properties": {
@@ -6329,6 +6557,15 @@
           "items": {
             "type": "string",
             "format": "byte"
+          }
+        },
+        "parent_template_id": {
+          "type": "integer"
+        },
+        "child_template_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
           }
         }
       }
@@ -7596,6 +7833,14 @@
             "stats": {
               "$ref": "#/definitions/ticket_stats"
             },
+            "collaboration": {
+              "type": "object",
+              "properties": {
+                "convo_token": {
+                  "type": "string"
+                }
+              }
+            },
             "meta": {
               "type": "object",
               "properties": {
@@ -7611,14 +7856,6 @@
                 "time": {
                   "type": "string",
                   "format": "datetime"
-                }
-              }
-            },
-            "collaboration": {
-              "type": "object",
-              "properties": {
-                "convo_token": {
-                  "type": "string"
                 }
               }
             }
@@ -8772,6 +9009,44 @@
         }
       }
     },
+    "requester": {
+      "type": "object",
+      "properties": {
+        "contact": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/contact"
+            },
+            {
+              "properties": {
+                "view_all_tickets": {
+                  "type": "boolean"
+                },
+                "id": {
+                  "type": "integer"
+                }
+              }
+            }
+          ]
+        },
+        "company": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/company"
+            },
+            {
+              "properties": {
+                "id": {
+                  "type": "integer"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
     "trial_widget_index": {
       "type": "object",
       "properties": {
@@ -8808,6 +9083,95 @@
         "avatar": {
           "type": "string",
           "description": "URL of the sales manager's avatar"
+        }
+      }
+    },
+    "ticket_templates_index": {
+      "type": "object",
+      "properties": {
+        "templates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "id": {
+                "type": "number"
+              },
+              "assoc_type": {
+                "type": "number",
+                "enum": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "personal",
+                  "shared"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "ticket_templates_show": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "assoc_type": {
+          "type": "number",
+          "enum": [
+            1,
+            2,
+            3
+          ]
+        },
+        "custom_fields": {
+          "type": "object"
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/attachment"
+          }
+        },
+        "cloud_file": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cloud_file_input"
+          }
+        },
+        "subject": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "status": {
+          "type": "number"
+        },
+        "priority": {
+          "type": "number"
+        },
+        "group_id": {
+          "type": "number"
+        },
+        "responder_id": {
+          "type": "number"
+        },
+        "product_id": {
+          "type": "number"
         }
       }
     },
