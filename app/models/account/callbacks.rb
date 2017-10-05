@@ -76,6 +76,7 @@ class Account < ActiveRecord::Base
     if falcon_ui_applicable?
       self.launch(:falcon_signup)           # To track falcon signup accounts
       self.launch(:falcon_portal_theme)     # Falcon customer portal
+      self.launch(:archive_ghost)           # enabling archive ghost feature
     end
   end
 
