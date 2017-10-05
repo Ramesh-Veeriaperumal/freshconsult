@@ -336,7 +336,7 @@ module Ember
       end
 
       def conditional_preload_options
-        INDEX_PRELOAD_OPTIONS
+        params['include'].to_s.include?('company') ? INDEX_PRELOAD_OPTIONS.dup.push(:company) : INDEX_PRELOAD_OPTIONS
       end
 
       def constants_class

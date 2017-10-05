@@ -420,6 +420,10 @@ class User < ActiveRecord::Base
     self.preferences[:agent_preferences][:falcon_ui]
   end
 
+  def falcon_invite_eligible?
+    (account.falcon_ui_enabled? && self.preferences_without_defaults.try(:[], :agent_preferences).try(:[],:falcon_ui).nil?)
+  end
+
   def update_attributes(params) # Overriding to normalize params at one place
     normalize_params(params) # hack to facilitate contact_fields & deprecate customer
     self.active = params["active"] if params["active"]
@@ -524,7 +528,13 @@ class User < ActiveRecord::Base
   def create_contact!(status)
     self.avatar = self.avatar
     self.active = status if status
-    return false unless save_without_session_maintenance
+    begin
+      return false unless save_without_session_maintenance
+    rescue ActiveRecord::RecordNotUnique => e
+      self.errors.add(:base, I18n.t("activerecord.errors.messages.email_not_unique")) if self[:email] and self[:account_id].present?
+      Rails.logger.debug('::::::::API v2:#{e.message} error in contact create::::::::')
+      return false
+    end
     if (!self.deleted and !self.email.blank?)
       portal = nil
       force_notification = false

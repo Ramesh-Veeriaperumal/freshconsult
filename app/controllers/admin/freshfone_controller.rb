@@ -63,7 +63,7 @@ class Admin::FreshfoneController < Admin::AdminController
 	private
 
     def render_freshcaller
-      return unless current_account.launched?(:falcon)
+      return unless current_account.falcon_ui_enabled?
       return if old_ui? && old_account?
       return render 'admin/freshcaller/signup/signup_error', 
         :locals => { 

@@ -25,7 +25,7 @@ class ActionController::TestCase
     set_key(default_key, 100, nil)
 
     # Enabling Private API
-    @account.launch(:falcon)
+    @account.add_feature(:falcon)
 
     # To prevent DynamoDB errors.
     SpamCounter.stubs(:count).returns(0)

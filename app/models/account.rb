@@ -137,10 +137,6 @@ class Account < ActiveRecord::Base
     self.helpdesk_permissible_domains_attributes = CustomNestedAttributes.new(list, self).helpdesk_permissible_domains_attributes if list.present?
   end
 
-  def master_queries?
-    ismember?(MASTER_QUERIES, self.id)
-  end
-
   def public_ticket_token
     self.secret_keys[:public_ticket_token]
   end
@@ -280,16 +276,21 @@ class Account < ActiveRecord::Base
     self.subscription && !self.subscription.suspended?
   end
 
+  #https://chrisarcand.com/null-coalescing-operators-and-rubys-conditional-assignments/
+  def master_queries?
+    @master_queries_enabled = defined?(@master_queries_enabled) ? @master_queries_enabled : ismember?(MASTER_QUERIES, id)
+  end
+
   def spam_email?
-    ismember?(SPAM_EMAIL_ACCOUNTS, self.id)
+    @spam_email_account = defined?(@spam_email_account) ? @spam_email_account : ismember?(SPAM_EMAIL_ACCOUNTS, id)
   end
 
   def premium_email?
-    ismember?(PREMIUM_EMAIL_ACCOUNTS, self.id)
+    @premium_email_account = defined?(@premium_email_account) ? @premium_email_account : ismember?(PREMIUM_EMAIL_ACCOUNTS, id)
   end
 
   def premium_gamification_account?
-    ismember?(PREMIUM_GAMIFICATION_ACCOUNT, self.id)
+    @premium_gamification_account = defined?(@premium_gamification_account) ? @premium_gamification_account : ismember?(PREMIUM_GAMIFICATION_ACCOUNT, id)
   end
 
   def plan_name

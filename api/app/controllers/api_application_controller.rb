@@ -5,8 +5,8 @@ class ApiApplicationController < MetalApiController
   rescue_from ActionController::UnpermittedParameters, with: :invalid_field_handler
   rescue_from ShardNotFound, with: :record_not_found
   rescue_from DomainNotReady, with: :record_not_found
-  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
-  rescue_from ActiveRecord::StatementInvalid, with: :db_query_error
+  # rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
+  # rescue_from ActiveRecord::StatementInvalid, with: :db_query_error
   rescue_from RangeError, with: :range_error
 
   protect_from_forgery
@@ -14,7 +14,9 @@ class ApiApplicationController < MetalApiController
   before_filter :verify_authenticity_token, if: :csrf_check_reqd?
 
   # Do not change the order as record_not_unique is inheriting from statement invalid error
-  rescue_from ActiveRecord::RecordNotUnique, with: :duplicate_value_error
+  # rescue_from ActiveRecord::RecordNotUnique, with: :duplicate_value_error
+  rescue_from Mysql2::Error, with: :activerecord_error_handler
+
   rescue_from ConsecutiveFailedLoginError, with: :login_error_handler
 
   # Check if content-type is appropriate for specific endpoints.
@@ -151,13 +153,13 @@ class ApiApplicationController < MetalApiController
     def render_500(e)
       raise e if Rails.env.development? || Rails.env.test?
       notify_new_relic_agent(e, description: 'Error occured while processing api request')
-      Rails.logger.error("API 500 error: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
+      Rails.logger.error("API 500 error: #{params.inspect} \n#{e.message}\n#{e.backtrace.to_a.join("\n")}")
       render_base_error(:internal_error, 500)
     end
 
     def duplicate_value_error(e)
       notify_new_relic_agent(e, description: 'Duplicate Record Error.')
-      Rails.logger.error("Duplicate Entry Error: #{params.inspect} \n#{e.original_exception} \n#{e.message}\n#{e.backtrace.join("\n")}")
+      Rails.logger.error("Duplicate Entry Error: #{params.inspect} \n#{e.original_exception} \n#{e.message}\n#{e.backtrace.to_a.join("\n")}")
       render_request_error(:duplicate_value, 409)
     end
 
@@ -178,7 +180,7 @@ class ApiApplicationController < MetalApiController
 
     def db_query_error(e)
       notify_new_relic_agent(e, description: 'Invalid/malformed query error occured while processing api request')
-      Rails.logger.error("DB Query Invalid Error: #{params.inspect} \n#{e.message} \n#{e.backtrace.join("\n")}")
+      Rails.logger.error("DB Query Invalid Error: #{params.inspect} \n#{e.message} \n#{e.backtrace.to_a.join("\n")}")
       render_base_error(:internal_error, 500)
     end
 
@@ -191,8 +193,23 @@ class ApiApplicationController < MetalApiController
         render_base_error(:domain_not_ready, 404)
       else
         notify_new_relic_agent(e, description: 'ActiveRecord::RecordNotFound error occured while processing api request')
-        Rails.logger.error("Record not found error. Domain: #{request.domain} \n params: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
+        Rails.logger.error("Record not found error. Domain: #{request.domain} \n params: #{params.inspect} \n#{e.message}\n#{e.backtrace.to_a.join("\n")}")
         render_base_error(:internal_error, 500)
+      end
+    end
+
+    def activerecord_error_handler(e)
+      err = ActiveRecord::Base.connection.send(:translate_exception, e, e.message)
+      err.instance_variable_set :@original_exception, nil
+      case err.class.to_s
+      when 'ActiveRecord::RecordNotUnique'
+        duplicate_value_error(err)
+      when 'ActiveRecord::StatementInvalid'
+        db_query_error(err)
+      when 'ActiveRecord::RecordNotFound'
+        record_not_found(err)
+      else
+        render_500(err)
       end
     end
 
@@ -744,7 +761,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def check_falcon
-      return if current_account.launched?(:falcon)
+      return if current_account.falcon_ui_enabled?
       Rails.logger.debug "Private API attempted without enabling FalconUI. Domain: #{current_account.full_domain} | Controller: #{params[:controller]} | Action: #{params[:action]} "
       head 404
     end

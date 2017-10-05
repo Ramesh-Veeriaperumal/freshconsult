@@ -2,7 +2,7 @@ class Account < ActiveRecord::Base
 
   LP_FEATURES   = [:link_tickets, :select_all, :round_robin_capping, :suggest_tickets, :customer_sentiment_ui,
                    :dkim, :bulk_security, :scheduled_ticket_export, :ticket_contact_export,
-                   :email_failures, :disable_emails, :skip_one_hop, :archive_ghost]
+                   :email_failures, :disable_emails, :skip_one_hop, :archive_ghost, :falcon_portal_theme]
   DB_FEATURES   = [:shared_ownership, :custom_survey, :requester_widget, :archive_tickets, :sitemap]
   BITMAP_FEATURES = [
       :split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management,
@@ -12,7 +12,7 @@ class Account < ActiveRecord::Base
       :advanced_reporting, :timesheets, :multiple_emails, :custom_domain, :gamification, :gamification_enable,
       :auto_refresh, :branding, :advanced_dkim, :basic_dkim, :shared_ownership_toggle, :unique_contact_identifier_toggle,
       :system_observer_events, :unique_contact_identifier, :ticket_activity_export, :caching, :private_inline, :collaboration,
-      :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :user_notifications, 
+      :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :user_notifications, :falcon,
       :multiple_companies_toggle, :multiple_user_companies
     ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
@@ -198,12 +198,17 @@ class Account < ActiveRecord::Base
    @collboration ||= has_feature?(:collaboration) && self.collab_settings.present?
   end
 
-  def collaboration_enabled?
-   @collboration ||= has_feature?(:collaboration) && self.collab_settings.present?
-  end
-
   def archive_tickets_feature_enabled?
     archive_tickets_enabled? || archive_ghost_enabled?
+  end
+
+  def falcon_ui_enabled?(current_user = :no_user)
+    valid_user = (current_user == :no_user ? true : (current_user && current_user.is_falcon_pref?))
+    valid_user && (launched?(:falcon) || falcon_enabled?)
+  end
+  
+  def falcon_support_portal_theme_enabled?
+    falcon_ui_enabled? && falcon_portal_theme_enabled?
   end
 
 end
