@@ -102,7 +102,7 @@
 		createWarningDiv: function(){
 			this.warning_div = $('<div />').attr('class', 'delete-confirm-warning');
 			var warning_msg = $('<div />').attr('class', 'delete-confirm-warning-message').
-												append($('<p />').html(this.data.warningMessage+"<br/>"+this.data.detailsMessage)).attr('class', 'info');
+												append($('<p />').html(this.data.warningMessage+"<br/>"+this.data.detailsMessage).attr('class', 'info'));
 			var warning_icon = $('<div />').attr('class', 'delete-confirm-warning-icon delete-notice');
 			this.warning_div.append(warning_icon).append(warning_msg);
 		},
