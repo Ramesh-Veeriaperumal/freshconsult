@@ -2036,4 +2036,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     current_account.collaboration_enabled? and @collab_context
   end
 
+  def falcon_enabled?
+    current_account && current_account.launched?(:falcon) && current_user && current_user.is_falcon_pref?
+  end
 end
