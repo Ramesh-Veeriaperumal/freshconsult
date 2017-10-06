@@ -42,6 +42,12 @@
 	p.intro,div a[href*="topics/new"]{
 		display: none;
 	}
+	.no-results {
+		a[href*="topics/new"]{
+			display: inline-block;
+			color: $blue;
+		}
+	}
 }
 
 .export-custom-select{

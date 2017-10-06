@@ -133,6 +133,9 @@ $header_border_color: #ebeef0 !default;
             background: $white;
             border: 0;
             font-size: 12px;
+            font-family: $baseFontFamily;
+            text-transform: capitalize;
+            font-weight: normal;
 			&:hover{
 				background-color: $grey_hover;
 			}
@@ -299,7 +302,7 @@ $header_border_color: #ebeef0 !default;
             }
             .banner-language-selector{
                 position: relative;
-                top: 40px;
+                top: 42px;
                 .dropdown-menu {
                     a{
                         background-color: transparent;

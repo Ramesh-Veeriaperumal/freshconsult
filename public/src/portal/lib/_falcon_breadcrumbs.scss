@@ -7,7 +7,7 @@
     padding: 0 5px;
     color: $grayLight;
   }
-  a{ @include margin-right(7px); font-size: 14px; color: $linkColor; }
+  a{ @include margin-right(7px); font-size: 14px; color: $blue; }
   a:hover{ color: $textColor; text-decoration: inherit; }
   a:before, span:before{ 
     content: "/";
