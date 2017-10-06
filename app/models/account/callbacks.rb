@@ -335,9 +335,7 @@ class Account < ActiveRecord::Base
 
     def set_falcon_preferences
       if falcon_ui_applicable?
-        new_ui_hash = self.main_portal.template.preferences.merge({:bg_color=>"#f3f5f7", 
-          :header_color=>"#ffffff", :tab_color=>"#ffffff", :personalized_articles=>true}).dup
-        self.main_portal.template.preferences = new_ui_hash
+        self.main_portal.template.preferences = self.main_portal.template.default_preferences.merge({:personalized_articles=>true})
         self.main_portal.template.save!
       end
     end
