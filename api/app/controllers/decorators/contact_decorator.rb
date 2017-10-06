@@ -100,7 +100,7 @@ class ContactDecorator < ApiDecorator
     end
 
     def agent_info
-      {
+      info = {
         active: active,
         email: email,
         job_title: job_title,
@@ -111,6 +111,12 @@ class ContactDecorator < ApiDecorator
         time_zone: time_zone,
         avatar: avatar_hash
       }
+      info.merge!({
+        id: id,
+        deleted_agent: true,
+        deleted: true
+      }) if record.deleted?
+      info
     end
 
     def customer_info
