@@ -496,15 +496,6 @@ module Ember
         main_portal? ? current_account.host : current_portal.portal_url
       end
 
-      def parent_child_params
-        @parent_child_params ||= begin
-          {
-            parent_template_id:  @parent_template_id,
-            child_template_ids:  @child_template_ids
-          }
-        end
-      end
-
       wrap_parameters(*wrap_params)
   end
 end

@@ -1,1 +1,1 @@
-JSON.generate(@result.to_full_hash)
+JSON.generate(@result)
