@@ -63,12 +63,7 @@ module Fdadmin::FeatureMethods
     end
 
     def enable_bitmap_feature(feature_name)
-      #hack. but couldnt find a better way at the last moment. will remove the check later.
-      if feature_name.to_sym == :falcon
-        @account.enable_falcon_ui
-      else
-        @account.add_feature(feature_name)
-      end
+      @account.add_feature(feature_name)
     end
 
     def enable_db_feature(feature_name)
