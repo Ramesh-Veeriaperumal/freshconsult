@@ -587,6 +587,14 @@ module Ember
       assert_response 200
     end
 
+    # Show deleted agent(comes from contact show endpoint)
+    def test_show_a_deleted_agent
+      sample_user = Account.current.all_users.where(deleted: true, helpdesk_agent: true).first
+      get :show, controller_params(version: 'private', id: sample_user.id)
+      match_json(deleted_agent_pattern(sample_user.reload))
+      assert_response 200
+    end
+
     def test_show_a_contact_with_avatar
       file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
       sample_user = add_new_user(@account)

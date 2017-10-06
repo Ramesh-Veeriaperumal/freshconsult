@@ -118,6 +118,23 @@ module UsersTestHelper
     }
   end
 
+  def deleted_agent_pattern(expected_output = {}, agent_user)
+    {
+      active: expected_output[:active] || agent_user.active,
+      email: expected_output[:email] || agent_user.email,
+      job_title: expected_output[:job_title] || agent_user.job_title,
+      language: expected_output[:language] || agent_user.language,
+      mobile: expected_output[:mobile] || agent_user.mobile,
+      name: expected_output[:name] || agent_user.name,
+      phone: expected_output[:phone] || agent_user.phone,
+      time_zone: expected_output[:time_zone] || agent_user.time_zone,
+      avatar: expected_output[:avatar] || agent_user.avatar,
+      id: expected_output[:id] || agent_user.id,
+      deleted: expected_output[:deleted] || agent_user.deleted,
+      deleted_agent: true
+    }
+  end
+
   def index_contact_pattern(contact)
     keys = [
       :avatar, :tags, :other_emails, :deleted,

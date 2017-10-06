@@ -3480,6 +3480,38 @@
         }
       }
     },
+    "/agents/create_multiple": {
+      "post": {
+        "tags": [
+          "agent"
+        ],
+        "description": "Bulk agent creation",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bulk_agent_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/agent_partial_success_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
     "/scenario_automations": {
       "get": {
         "tags": [
@@ -4655,6 +4687,34 @@
         }
       }
     },
+    "/onboarding_update_channel_config": {
+      "post": {
+        "tags": [
+          "onboarding"
+        ],
+        "description": "Update Channel Config",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/update_channels_input"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad request error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
     "/trial_widget": {
       "post": {
         "summary": "Trial Widget Steps",
@@ -4869,6 +4929,9 @@
                     },
                     "include_survey_manually": {
                       "type": "boolean"
+                    },
+                    "show_on_boarding": {
+                      "type": "boolean"
                     }
                   }
                 },
@@ -4987,6 +5050,20 @@
         },
         "code": {
           "type": "string"
+        }
+      }
+    },
+    "agents_bulk_action_error": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/request_error"
+          }
         }
       }
     },
@@ -6276,6 +6353,18 @@
         }
       }
     },
+    "bulk_agent_input": {
+      "type": "object",
+      "properties": {
+        "agents": {
+          "type": "array",
+          "description": "array of agents",
+          "items": {
+            "$ref": "#/definitions/agent_input"
+          }
+        }
+      }
+    },
     "onboarding_update_activation_email_input": {
       "type": "object",
       "properties": {
@@ -6289,6 +6378,26 @@
               "type": "string",
               "description": "New email"
             }
+          }
+        }
+      }
+    },
+    "update_channels_input": {
+      "type": "object",
+      "description": "Channels Array",
+      "properties": {
+        "channels": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              [
+                "phone",
+                "forums",
+                "live_chat",
+                "social"
+              ]
+            ]
           }
         }
       }
@@ -6328,6 +6437,9 @@
         },
         "twitter_id": {
           "type": "string"
+        },
+        "deleted_agent": {
+          "type": "boolean"
         },
         "other_emails": {
           "type": "array",
@@ -7342,6 +7454,9 @@
                 "whitelisted": {
                   "type": "boolean"
                 },
+                "deleted_agent": {
+                  "type": "boolean"
+                },
                 "avatar": {
                   "$ref": "#/definitions/avatar"
                 }
@@ -8019,6 +8134,25 @@
         },
         "agent": {
           "$ref": "#/definitions/agent"
+        }
+      }
+    },
+    "agent_partial_success_response": {
+      "title": "data",
+      "type": "object",
+      "description": "Agents Partial Success Response",
+      "properties": {
+        "succeeded": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/agent"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/agents_bulk_action_error"
+          }
         }
       }
     },
