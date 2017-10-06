@@ -48,6 +48,16 @@ $select-sprite-bg-url: "/assets/plugins/select2/select2.png";
 $fields-font-size: 13px;
 $app-delete-bg-color: #ff5959;
 
+$survey-options-color: (
+  strongly-disagree: #ff5959,
+  some-what-disagree: #fa7543,
+  disagree: #ffaa59,
+  satisfaction-neutral: #ffd012,
+  agree: #9cd807,
+  some-what-agree: #6bb437,
+  strongly-agree: #189e00);
+
+
 .header,
 #footer {
   display: none;
@@ -1051,6 +1061,9 @@ div[class$="-toggle"]{
 
 .survey_rating_order {
   .rating_order_select {
+    .dropdown-menu {
+      min-width: 260px;
+    }
       width: 260px;
       .bad_to_good, .good_to_bad{
             width: 147px;
@@ -1128,32 +1141,31 @@ div[class$="-toggle"]{
 
 .form-horizontal{
 
-  #survey_rating_options{
-
-
-  .empty-survey-card {
-    border: dashed 1px $app-btn-text-disabled;
-    background-color: #f9f9f9;
-    border-radius: 4px;
+  .sub-container.cust-feedback-survey {
+    border: 0;
   }
 
-  textarea{
-    height: 48px;
-    border: solid 1px $border-color;
-    border-top: 4px solid $border-color;
-    border-radius: 4px;
-    overflow: hidden;
-    &.border-strongly-agree {
-      border-top-color: #00b97e;
-    }
-        &.border-satisfaction-neutral  {
-      border-top-color: #ffd012;
-    }
-        &.border-strongly-disagree {
-      border-top-color: $app-delete-bg-color;
-    }
-  }
+  #survey_rating_options, #question_rating_options{
 
+    .empty-survey-card {
+      border: dashed 1px $app-btn-text-disabled;
+      background-color: #f9f9f9;
+      border-radius: 4px;
+    }
+
+    textarea{
+      height: 48px;
+      border: solid 1px $border-color;
+      border-top: 4px solid $border-color;
+      border-radius: 4px;
+      overflow: hidden;
+
+      @each $opt,$col in $survey-options-color{
+        &.border-#{$opt}{
+          border-top: 5px solid #{$col};
+        }
+      }
+    }
   }
 
 }
