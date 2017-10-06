@@ -2037,6 +2037,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def falcon_enabled?
-    current_account && current_account.launched?(:falcon) && current_user && current_user.is_falcon_pref?
+    current_account && current_account.falcon_ui_enabled? && 
+      current_user && current_user.is_falcon_pref?
   end
 end
