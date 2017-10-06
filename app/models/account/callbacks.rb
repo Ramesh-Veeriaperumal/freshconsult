@@ -75,7 +75,7 @@ class Account < ActiveRecord::Base
     # Enable customer portal by default
     if falcon_ui_applicable?
       self.launch(:falcon_signup)           # To track falcon signup accounts
-      self.launch(:falcon_portal_theme)     # Falcon customer portal
+      self.launch(:falcon_portal_theme)  unless redis_key_exists?(DISABLE_PORTAL_NEW_THEME)   # Falcon customer portal
       self.launch(:archive_ghost)           # enabling archive ghost feature
     end
   end
@@ -335,10 +335,10 @@ class Account < ActiveRecord::Base
 
     def set_falcon_preferences
       if falcon_ui_applicable?
-        self.main_portal.preferences = HashWithIndifferentAccess.new({:bg_color => "#f3f5f7",:header_color => "#ffffff", :tab_color => "#ffffff", :personalized_articles => true})
-        self.main_portal.save!
-        self.main_portal.template.reload
-        self.main_portal.template.reset_to_default
+        new_ui_hash = self.main_portal.template.preferences.merge({:bg_color=>"#f3f5f7", 
+          :header_color=>"#ffffff", :tab_color=>"#ffffff", :personalized_articles=>true}).dup
+        self.main_portal.template.preferences = new_ui_hash
+        self.main_portal.template.save!
       end
     end
 
