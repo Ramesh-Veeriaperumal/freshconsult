@@ -11342,10 +11342,10 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         message: Before you get started, here's a 2 minute video overview of your helpdesk.
         forward_link: Let’s get started
     falcon_invite:
-      greetings: We've got an upgrade
-      invite_msg: Hey %{user_name}, we can't wait to show you the all new Freshdesk. We've upgraded to a modern <br/>experience which is faster, easier to use and crafted with love.
-      post_script: "PS: You can switch back any time you like!"
-      try_new_look: TRY THE NEW LOOK
+      greetings: Say hello to Freshdesk Mint
+      invite_msg: We've upgraded to a modern experience which is fresher, faster and easier to use.<br/>Freshdesk Mint is crafted with love, just for you!
+      post_script: "PS: You can switch back any time you like."
+      try_new_look: TRY IT OUT
       maybe_later: MAYBE LATER 
   multifile_attachments:
     label: "Attach files"
