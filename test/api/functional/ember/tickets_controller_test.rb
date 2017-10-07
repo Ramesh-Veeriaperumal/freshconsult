@@ -2187,5 +2187,54 @@ module Ember
       assert_response 400
       match_json([bad_request_error_pattern('feature', :require_feature, feature: 'Parent Child Tickets')])
     end
+
+    def test_compose_email_with_trial_limit
+      email_config = create_email_config
+      Account.any_instance.stubs(:compose_email_enabled?).returns(true)
+      @controller.stubs(:trial_outbound_limit_exceeded?).returns(true)
+      params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(email_config_id: email_config.id)
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      assert_response 429
+      match_json(request_error_pattern(:outbound_limit_exceeded))
+    ensure
+      Account.any_instance.unstub(:compose_email_enabled?)
+      @controller.unstub(:trial_outbound_limit_exceeded?)
+    end
+
+    def test_compose_email_with_unverified_account
+      email_config = create_email_config
+      Account.any_instance.stubs(:compose_email_enabled?).returns(true)
+      Account.any_instance.stubs(:verified?).returns(false)
+      params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(email_config_id: email_config.id)
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      assert_response 403
+      match_json(request_error_pattern(:access_denied))
+    ensure
+      Account.any_instance.unstub(:compose_email_enabled?)
+      Account.any_instance.unstub(:verified?)
+    end
+
+    def test_compose_email_with_max_emails_limit
+      email_config = create_email_config
+      Account.any_instance.stubs(:compose_email_enabled?).returns(true)
+      @controller.stubs(:recipients_limit_exceeded?).returns(true)
+      params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(email_config_id: email_config.id)
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      assert_response 429
+      match_json(request_error_pattern(:recipient_limit_exceeded))
+    ensure
+      Account.any_instance.unstub(:compose_email_enabled?)
+      @controller.unstub(:recipients_limit_exceeded?)
+    end
+
+    def test_create_with_email_limit
+      @controller.stubs(:recipients_limit_exceeded?).returns(true)
+      params = ticket_params_hash
+      post :create, construct_params({ version: 'private' }, params)
+      assert_response 429
+      match_json(request_error_pattern(:recipient_limit_exceeded))
+    ensure
+      @controller.unstub(:recipients_limit_exceeded?)
+    end
   end
 end

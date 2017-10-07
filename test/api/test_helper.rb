@@ -26,6 +26,8 @@ class ActionController::TestCase
 
     # Enabling Private API
     @account.add_feature(:falcon)
+    @account.reputation = 1
+    @account.save
 
     # To prevent DynamoDB errors.
     SpamCounter.stubs(:count).returns(0)
@@ -78,6 +80,9 @@ class ActionDispatch::IntegrationTest
     set_key(account_key, 500, nil)
     set_key(default_key, 400, nil)
     @account.make_current
+
+    @account.reputation = 1
+    @account.save
     set_key(plan_key(@account.subscription.subscription_plan_id), 200, nil)
     Bullet.add_whitelist type: :unused_eager_loading, class_name: 'ForumCategory', association: :forums
     Bullet.add_whitelist type: :n_plus_one_query, class_name: 'ForumCategory', association: :account
