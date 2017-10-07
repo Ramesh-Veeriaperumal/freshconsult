@@ -41,7 +41,6 @@ module Ember
         assign_avatar
       end
       @item.reload
-      render :show
     rescue
       render_custom_errors
     end
