@@ -14,7 +14,7 @@ class ApiContactFieldsControllerTest < ActionController::TestCase
 
   def initial_setup
     return if @@initial_setup_run
-    @account.features.multiple_user_companies.create
+    @account.add_feature(:multiple_user_companies)
     @account.reload
     @@initial_setup_run = true
   end

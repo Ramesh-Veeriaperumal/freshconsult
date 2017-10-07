@@ -2,6 +2,11 @@ module TicketFieldsTestHelper
   include Helpdesk::Ticketfields::ControllerMethods
 
   FIELD_MAPPING = { 'number' => 'int', 'checkbox' => 'boolean', 'paragraph' => 'text', 'decimal' => 'decimal', 'date' => 'date' }.freeze
+  SECTIONS_FOR_TYPE = [ { title: 'section1', value_mapping: %w(Question Problem), ticket_fields: %w(test_custom_number test_custom_date) },
+                        { title: 'section2', value_mapping: ['Incident'], ticket_fields: %w(test_custom_paragraph test_custom_dropdown) } ]
+  SECTIONS_FOR_CUSTOM_DROPDOWN = [ { title: 'section1', value_mapping: %w(Choice\ 1 Choice\ 2), ticket_fields: %w(test_custom_number test_custom_date) },
+                                   { title: 'section2', value_mapping: ['Choice 3'], ticket_fields: %w(test_custom_paragraph) } ]
+
 
   def create_custom_field(name, type, required = false)
     ticket_field_exists = @account.ticket_fields.find_by_name("#{name}_#{@account.id}")
@@ -46,7 +51,7 @@ module TicketFieldsTestHelper
     status_values
   end
 
-  def create_section_fields(parent_ticket_field_id = 3, sections = [{ title: 'section1', value_mapping: %w[Question Problem], ticket_fields: %w[test_custom_number test_custom_date] }, { title: 'section2', value_mapping: ['Incident'], ticket_fields: %w[test_custom_paragraph test_custom_dropdown] }], required = false)
+  def create_section_fields(parent_ticket_field_id = 3, sections = SECTIONS_FOR_TYPE, required = false)
     sections.each do |section|
       sections_fields = section[:ticket_fields].each_with_object([]) do |field, array|
         pos = 0

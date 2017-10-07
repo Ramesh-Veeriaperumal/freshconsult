@@ -1,4 +1,5 @@
 # encoding: utf-8
+
 class User < ActiveRecord::Base
   self.primary_key= :id
 
@@ -134,7 +135,7 @@ class User < ActiveRecord::Base
   end
 
   def has_multiple_companies_feature?
-    account.features?(:multiple_user_companies)
+    account.multiple_user_companies_enabled?
   end
 
   attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, :sbrr_fresh_user,
@@ -419,6 +420,10 @@ class User < ActiveRecord::Base
     self.preferences[:agent_preferences][:falcon_ui]
   end
 
+  def falcon_invite_eligible?
+    (account.falcon_ui_enabled? && self.preferences_without_defaults.try(:[], :agent_preferences).try(:[],:falcon_ui).nil?)
+  end
+
   def update_attributes(params) # Overriding to normalize params at one place
     normalize_params(params) # hack to facilitate contact_fields & deprecate customer
     self.active = params["active"] if params["active"]
@@ -502,6 +507,10 @@ class User < ActiveRecord::Base
           user_skill["skill_id"] }
     end
     return false unless save_without_session_maintenance
+    enqueue_activation_email(params, portal, send_activation)
+  end
+
+  def enqueue_activation_email(params, portal = nil, send_activation = true)
     portal.make_current if portal
     if (!deleted and !email.blank? and send_activation)
       if self.language.nil?
@@ -519,7 +528,13 @@ class User < ActiveRecord::Base
   def create_contact!(status)
     self.avatar = self.avatar
     self.active = status if status
-    return false unless save_without_session_maintenance
+    begin
+      return false unless save_without_session_maintenance
+    rescue ActiveRecord::RecordNotUnique => e
+      self.errors.add(:base, I18n.t("activerecord.errors.messages.email_not_unique")) if self[:email] and self[:account_id].present?
+      Rails.logger.debug('::::::::API v2:#{e.message} error in contact create::::::::')
+      return false
+    end
     if (!self.deleted and !self.email.blank?)
       portal = nil
       force_notification = false

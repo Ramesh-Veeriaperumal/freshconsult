@@ -140,7 +140,7 @@ class UsersController < ApplicationController
   end
 
   def enable_falcon
-    return unless current_account.launched?(:falcon)
+    return unless current_account.falcon_ui_enabled?
     current_user.toggle_ui_preference unless current_user.is_falcon_pref?
     cookies[:falcon_enabled] = true
     redirect_to_falcon

@@ -11,7 +11,7 @@ module Ember::Dashboard
         load_items
         response.api_root_key = :recent_activities
       else
-        @items = Helpdesk::Activity.freshest(current_account).activity_since(since_id).permissible(current_user).includes(:notable, user: :avatar).limit(DashboardConstants::DEFAULT_PAGE_LIMIT)
+        @items = Helpdesk::Activity.freshest(current_account).only_tickets.activity_since(since_id).permissible(current_user).includes(:notable, user: :avatar).limit(DashboardConstants::DEFAULT_PAGE_LIMIT)
       end
     rescue Exception => e
       NewRelic::Agent.notice_error(e, description: 'Error occoured in dashboard activities')
@@ -49,9 +49,9 @@ module Ember::Dashboard
 
       def recent_activities(before_id)
         if before_id.to_i > 0
-          Helpdesk::Activity.freshest(current_account).activity_before(before_id).permissible(current_user).includes(:notable, user: :avatar)
+          Helpdesk::Activity.freshest(current_account).only_tickets.activity_before(before_id).permissible(current_user).includes(:notable, user: :avatar)
         else
-          Helpdesk::Activity.freshest(current_account).permissible(current_user).includes(:notable, user: :avatar)
+          Helpdesk::Activity.freshest(current_account).only_tickets.permissible(current_user).includes(:notable, user: :avatar)
         end
       end
   end

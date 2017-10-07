@@ -3,7 +3,7 @@ require_relative '../../test_helper'
 class TicketFieldsFlowsTest < ActionDispatch::IntegrationTest
   include Redis::RedisKeys
   include Redis::OthersRedis
-  CURRENT_VERSION = 'private-v1'.freeze
+  CURRENT_VERSION = 'private-v2'.freeze
   def sample_user
     @account.all_agents.first
   end
@@ -18,7 +18,7 @@ class TicketFieldsFlowsTest < ActionDispatch::IntegrationTest
   def before_all
     return if @@before_all
     @@before_all = true
-    @account.launch(:falcon)
+    @account.add_feature(:falcon)
   end
 
   def test_index_without_timestamp

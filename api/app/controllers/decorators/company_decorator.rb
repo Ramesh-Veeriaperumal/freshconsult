@@ -58,7 +58,7 @@ class CompanyDecorator < ApiDecorator
     }
   end
 
-  def restricted_company_hash
+  def company_hash
     construct_hash(requester_widget_company_fields, record)
   end
 

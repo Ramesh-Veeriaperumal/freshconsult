@@ -9,7 +9,7 @@ properties:
         description: Support email description
       attachment_ids:
         type: array
-        description: array of attachment IDs
+        description: Array of attachment IDs
         items:
           type: integer
       subject:

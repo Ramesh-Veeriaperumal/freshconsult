@@ -14,6 +14,8 @@
   $ref: ./tickets/unspam.yaml
 /tickets/{id}/execute_scenario:
   $ref: ./tickets/execute_scenario.yaml
+/tickets/{id}/create_child_with_template:
+  $ref: ./tickets/create_child_with_template.yaml
 /tickets/{id}/link:
   $ref: ./tickets/link.yaml
 /tickets/{id}/unlink:
@@ -146,6 +148,12 @@
 /attachments/{id}/unlink:
   $ref: ./attachments/unlink.yaml
 
+# password policies
+/contact_password_policies:
+  $ref: ./password_policies/contact_password_policies.yaml
+/agent_password_policies: 
+  $ref: ./password_policies/agent_password_policies.yaml
+
 # Ticket Filters
 /ticket_filters:
   $ref: ./ticket_filters/list_and_create.yaml
@@ -185,6 +193,9 @@
   $ref: ./agents/me.yaml
 /agents/{id}/achievements:
   $ref: ./agents/achievements.yaml
+/agents/create_multiple:
+  $ref: ./agents/create_multiple.yaml
+
 
 # Scenario Automations
 /scenario_automations:
@@ -263,11 +274,20 @@
 /product_feedback/:
   $ref: ./product_feedback/create.yaml
 
+#Ticket Templates
+/ticket_templates:
+  $ref: ./ticket_templates/list_and_create.yaml
+/ticket_templates/{id}:
+  $ref: ./ticket_templates/crud.yaml
+
 # Onboarding
 /onboarding/resend_activation_email:
   $ref: ./onboarding/resend_activation_email.yaml
 /onboarding/update_activation_email:
   $ref: ./onboarding/update_activation_email.yaml
+/onboarding_update_channel_config:
+  $ref: ./onboarding/update_channel_config.yaml
+
 
 # Trial Widget
 /trial_widget:

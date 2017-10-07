@@ -1,0 +1,7 @@
+type: object
+properties:
+  agents:
+    type: array
+    description: array of agents
+    items:
+      $ref: '#/definitions/agent_input'

@@ -8,4 +8,5 @@ module FeatureConstants
   SURVEYS = [:surveys].freeze
   SATISFACTION_RATINGS = [:surveys].freeze
   SATISFACTION_RATINGS_WITH_LINK = SATISFACTION_RATINGS | [:survey_links]
+  TICKET_TEMPLATES = [:ticket_templates]
 end

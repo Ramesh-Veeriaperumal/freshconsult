@@ -42,14 +42,14 @@ Make sure all the email related SQS queues have proper names and are created. Th
 For staging and prestaging environments, in stack setting lookout for this key: `ember_frontend_s3`. It has to be set to the S3 bucket's url where the build will uploaded to. It has to be in sync with the Frontend build settings (`config/deploy.js` and `config/stack-settings.js` in **helpkit-ember** repo)
 
 ##### Enabling Falcon
-At the moment of writing this, the private API can be turned ON only when the launchparty feature :falcon is launched.
+At the moment of writing this, the private API can be turned ON only when the bitmap feature :falcon is enabled.
 ```ruby
-Account.find(%{id}).launch(:falcon)
+Account.find(%{id}).add_feature(:falcon)
 ```
 or
 ```ruby
 Sharding.select_shard_of('%{domain}') do
-    Account.find_by_full_domain('%{domain}').launch(:falcon)
+    Account.find_by_full_domain('%{domain}').add_feature(:falcon)
 end
 ```
 

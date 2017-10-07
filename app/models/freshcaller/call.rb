@@ -11,10 +11,9 @@ class Freshcaller::Call < ActiveRecord::Base
 
   validates :fc_call_id, uniqueness: true
 
-  def ticket_id
-    return if notable_id.blank?
-    return notable_id if notable_type.eql?('Helpdesk::Ticket')
-    notable.notable.display_id
+  def ticket_display_id
+    return notable.display_id if notable_id.present? && notable_type.eql?('Helpdesk::Ticket')
+    return notable.notable.display_id if notable_id.present? && notable_type.eql?('Helpdesk::Note')
   end
 
   def note_id

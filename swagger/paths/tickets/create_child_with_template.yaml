@@ -1,0 +1,24 @@
+  put:
+    tags: [ticket]
+    summary: Create Child Using Template
+    parameters:
+    - $ref: '#/parameters/id'
+    - name: data
+      in: body
+      required: true
+      schema:
+        allOf:
+          - $ref: '#/definitions/create_child_with_template'
+    responses:
+      202:
+        description: Accepted
+        schema:
+          $ref: '#/definitions/partial_success_response'
+      400:
+        description: Bad Request Error
+        schema:
+          $ref: '#/definitions/bad_request_error'
+      404:
+        description: Ticket not found
+      403:
+        description: Access denied

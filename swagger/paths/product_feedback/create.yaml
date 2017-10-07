@@ -1,6 +1,6 @@
   post:
-    summary: Creates a product feedback.
-    description: Creates a product feedback with the given description. Subject is autopopulated.
+    summary: Create product feedback
+    description: Creates a product feedback with the given data.
     tags: [product feedback]
     parameters:
       - in: body

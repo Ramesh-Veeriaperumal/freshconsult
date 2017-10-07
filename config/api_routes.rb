@@ -170,9 +170,11 @@ Helpkit::Application.routes.draw do
     resources :groups, controller: 'ember/groups', only: [:index, :show]
     resources :email_configs, controller: 'ember/email_configs', only: [:index, :show]
     resources :bootstrap, controller: 'ember/bootstrap', only: :index
-    resources 'freshcaller_desktop_notification_settings', path: 'freshcaller/settings', controller: 'ember/freshcaller/settings' do
+    resources :chatsetting, controller: 'ember/livechat_setting', only: :index
+    resources 'freshcaller_desktop_notification_settings', path: 'freshcaller/settings', controller: 'ember/freshcaller/settings', only: [:index] do
       collection do
         put :desktop_notification
+        get :redirect_url
       end
     end
 
@@ -225,7 +227,7 @@ Helpkit::Application.routes.draw do
         put :link, to: 'ember/tickets/associates#link'
         put :unlink, to: 'ember/tickets/associates#unlink'
         get :associated_tickets, to: 'ember/tickets/associates#associated_tickets'
-
+        put :create_child_with_template
         put :requester, to: 'ember/tickets/requester#update'
       end
       resources :activities, controller: 'ember/tickets/activities', only: [:index]
@@ -313,6 +315,8 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :ticket_templates, controller: 'ember/ticket_templates', only: [:show, :index]
+
     resources :twitter_handles, controller: 'ember/twitter_handles', only: [:index] do
       member do
         get :check_following
@@ -320,9 +324,11 @@ Helpkit::Application.routes.draw do
     end
     resources :surveys, controller: 'ember/surveys', only: [:index]
     resources :portals, controller: 'ember/portals', only: [:index]
+
     resources :agents, controller: 'ember/agents', only: [:index, :show, :update], id: /\d+/ do
       collection do
         get :me
+        post :create_multiple
       end
       member do
         get :achievements
@@ -353,8 +359,14 @@ Helpkit::Application.routes.draw do
       collection do
         put :update_activation_email
         get :resend_activation_email
+        post :update_channel_config
       end
     end
+
+    resources :contact_password_policy, controller: 'ember/contact_password_policies', 
+                                        only: [:index]
+    resources :agent_password_policy, controller: 'ember/agent_password_policies', 
+                                        only: [:index]
 
     # Search routes
     post '/search/tickets/',      to: 'ember/search/tickets#results'

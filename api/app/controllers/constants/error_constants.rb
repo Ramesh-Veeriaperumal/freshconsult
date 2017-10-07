@@ -10,7 +10,8 @@ module ErrorConstants
     inaccessible_value: ['inaccessible_value'],
     unable_to_perform: ['unable_to_perform'],
     access_denied: ['access_denied'],
-    traffic_cop_alert: ['traffic_cop_alert']
+    traffic_cop_alert: ['traffic_cop_alert'],
+    unresolved_child: ['unresolved_child']
 
   }.freeze
 

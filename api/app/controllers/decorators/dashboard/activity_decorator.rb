@@ -84,7 +84,19 @@ class Dashboard::ActivityDecorator < ApiDecorator
 
   ACTIVITIES_PREFIX = 'activities.'.freeze
 
+  UNWANTED_FIELDS = [:updated_at, :created_at, :size, :content_type]
+
+  DEFAULT_PROPERTIES = ['status_name', 'priority_name']
+  
+    PRIORITIES = {
+      "low" => 1,
+      "medium" => 2,
+      "high" => 3,
+      "urgent" => 4
+    }
+
   def to_hash
+    record.activity_data = HashWithIndifferentAccess.new(activity_data)
     {
       id: id,
       object_id: object_id,
@@ -129,7 +141,7 @@ class Dashboard::ActivityDecorator < ApiDecorator
 
   def avatar_hash(avatar)
     return nil if avatar.blank?
-    AttachmentDecorator.new(avatar).to_hash.merge(thumb_url: avatar.attachment_url_for_api(true, :thumb))
+    AttachmentDecorator.new(avatar).to_hash.merge(thumb_url: avatar.attachment_url_for_api(true, :thumb)).except(*UNWANTED_FIELDS)
   end
 
   def user_actions
@@ -147,7 +159,9 @@ class Dashboard::ActivityDecorator < ApiDecorator
     if !CONTENT_LESS_TYPES.include?(type) && data['eval_args'].nil?
       data.each_pair do |k, v|
         key = k.to_s.split('_').last
-        content[k] = h v if key.present? && ALLOWED_CONTENT_SUFFIX.include?(key)
+        if key.present? && ALLOWED_CONTENT_SUFFIX.include?(key)
+          content[k] = (DEFAULT_PROPERTIES.include?(k) ? send(k, v) : h(v))
+        end
       end
     end
     [type, content]
@@ -177,45 +191,45 @@ class Dashboard::ActivityDecorator < ApiDecorator
   end
 
   def responder_id
-    return { responder_id: nil } if @activity_name.include?('assigned_to_nobody')
+    return { responder: { id: nil } } if @activity_name.include?('assigned_to_nobody')
     responder = activity_data['eval_args']['responder_path'][1]
-    { responder_id: responder['id'], responder_name: responder['name'] }
+    { responder: { id: responder['id'], data: responder['name'] } }
   end
 
   def timesheet_new
-    { time_spent: [nil, '*'] }
+    { timesheet: { new_sheet: true, time_spent: [nil, '*'] } }
   end
 
   def timesheet_timer_started
-    { timer_running: true }
+    { timesheet: { new_sheet: false, timer_running: true } }
   end
 
   def timesheet_timer_stopped
-    { timer_running: false }
+    { timesheet: { new_sheet: false, timer_running: false } }
   end
 
   def conversation_out_email
-    { note_id: activity_data['eval_args']['reply_path'][1]['comment_id'], source: 'email', incoming: false }
+    { note: { id: activity_data['eval_args']['reply_path'][1]['comment_id'], source: 'email', incoming: false, private: nil, to_emails: nil } }
   end
 
   def conversation_out_email_private
-    { note_id: activity_data['eval_args']['fwd_path'][1]['comment_id'], source: 'email', incoming: false, private: true, to_emails: activity_data['to_emails'] }
+    { note: { id: activity_data['eval_args']['fwd_path'][1]['comment_id'], source: 'email', incoming: false, private: true, to_emails: activity_data['to_emails'] } }
   end
 
   def conversation_in_email
-    { note_id: activity_data['eval_args']['email_response_path'][1]['comment_id'], source: 'email', incoming: true }
+    { note: { id: activity_data['eval_args']['email_response_path'][1]['comment_id'], source: 'email', incoming: true } }
   end
 
   def conversation_note
-    { note_id: activity_data['eval_args']['comment_path'][1]['comment_id'] }
+    { note: { id: activity_data['eval_args']['comment_path'][1]['comment_id'], source: nil, incoming: nil } }
   end
 
   def conversation_twitter
-    { note_id: activity_data['eval_args']['twitter_path'][1]['comment_id'], source: 'twitter' }
+    { note: { id: activity_data['eval_args']['twitter_path'][1]['comment_id'], source: 'twitter', incoming: nil } }
   end
 
   def conversation_ecommerce
-    { note_id: activity_data['eval_args']['ecommerce_path'][1]['comment_id'], source: 'ecommerce' }
+    { note: { id: activity_data['eval_args']['ecommerce_path'][1]['comment_id'], source: 'ecommerce', incoming: nil } }
   end
 
   def ticket_merge_target
@@ -231,6 +245,14 @@ class Dashboard::ActivityDecorator < ApiDecorator
   def ticket_split_target
     target_ticket = activity_data['eval_args']['split_ticket_path'][1]
     { target_ticket_id: target_ticket['ticket_id'], title: target_ticket['subject'] }
+  end
+
+  def status_name(value)
+    {:id => ticket_statuses[value][0], :data => h(value), :default => ticket_statuses[value][1]}
+  end
+
+  def priority_name(value)
+    {:id => PRIORITIES[value.downcase], :data => h(value), :default => true}
   end
 
   # Solution Methods
@@ -262,4 +284,11 @@ class Dashboard::ActivityDecorator < ApiDecorator
   def topic_merge_target
     { target_topic_id: activity_data['eval_args']['target_topic_path'][1] }
   end
+
+  private
+    def ticket_statuses
+      @ticket_statuses ||= Account.current.ticket_status_values_from_cache.each_with_object({}) {|_status, _collector|
+        _collector[_status.name] = [_status.id, _status.is_default]
+      }
+    end
 end

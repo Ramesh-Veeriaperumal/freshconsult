@@ -1,8 +1,12 @@
+
+# Whenever we change the Structure (add/modify/remove keys),
+# we will have to modify the CURRENT_VERSION constant in the controller
+
 JSON.generate(@items.map do |company_field|
   response_hash = {
     id: company_field.id,
     name: company_field.name,
-    label: company_field.label,
+    label: company_field.send('label'),
     position: company_field.position,
     required_for_agents: company_field.required_for_agent,
     type: company_field.field_type,

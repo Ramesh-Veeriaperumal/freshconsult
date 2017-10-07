@@ -408,6 +408,51 @@
         }
       }
     },
+    "/tickets/{id}/create_child_with_template": {
+      "put": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Create Child Using Template",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/create_child_with_template"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      }
+    },
     "/tickets/{id}/link": {
       "put": {
         "tags": [
@@ -948,6 +993,41 @@
           },
           "404": {
             "description": "Ticket not found"
+          }
+        }
+      }
+    },
+    "/tickets/{id}/requester": {
+      "put": {
+        "summary": "Update Requester",
+        "tags": [
+          "ticket"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/requester_input"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/requester"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
           }
         }
       }
@@ -2202,7 +2282,6 @@
         }
       }
     },
-
     "/contacts/export_csv": {
       "post": {
         "tags": [
@@ -2233,7 +2312,6 @@
         }
       }
     },
-          
     "/contacts/quick_create": {
       "post": {
         "summary": "Quick Create",
@@ -2337,39 +2415,6 @@
           },
           "409": {
             "description": "Existing import in progress"
-          }
-        }
-      }
-    },
-    "/contacts/quick_create": {
-      "post": {
-        "summary": "Quick Create",
-        "tags": [
-          "contact"
-        ],
-        "description": "Quick Create without validations",
-        "parameters": [
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/quick_create_input"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/extended_contact"
-            }
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
           }
         }
       }
@@ -2757,6 +2802,46 @@
           },
           "404": {
             "description": "Attachment not found"
+          }
+        }
+      }
+    },
+    "/contact_password_policies": {
+      "get": {
+        "tags": [
+          "Contact Password Policy"
+        ],
+        "summary": "Contact Password Policy",
+        "description": "Lists the password policy for contacts",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/password_policy"
+            }
+          },
+          "403": {
+            "description": "Access Denied"
+          }
+        }
+      }
+    },
+    "/agent_password_policies": {
+      "get": {
+        "tags": [
+          "Agent Password Policy"
+        ],
+        "summary": "Agent Password Policy",
+        "description": "Lists the password policy for agents",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/password_policy"
+            }
+          },
+          "403": {
+            "description": "Access Denied"
           }
         }
       }
@@ -3391,6 +3476,38 @@
           },
           "404": {
             "description": "Not found"
+          }
+        }
+      }
+    },
+    "/agents/create_multiple": {
+      "post": {
+        "tags": [
+          "agent"
+        ],
+        "description": "Bulk agent creation",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bulk_agent_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/agent_partial_success_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
           }
         }
       }
@@ -4277,6 +4394,15 @@
             "items": {
               "type": "number"
             }
+          },
+          {
+            "name": "product_ids",
+            "description": "Selected products for filtering",
+            "type": "array",
+            "in": "query",
+            "items": {
+              "type": "number"
+            }
           }
         ],
         "responses": {
@@ -4423,8 +4549,8 @@
     },
     "/product_feedback/": {
       "post": {
-        "summary": "Creates a product feedback.",
-        "description": "Creates a product feedback with the given description. Subject is autopopulated.",
+        "summary": "Create product feedback",
+        "description": "Creates a product feedback with the given data.",
         "tags": [
           "product feedback"
         ],
@@ -4441,6 +4567,85 @@
         "responses": {
           "204": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/ticket_templates": {
+      "get": {
+        "tags": [
+          "ticket_template"
+        ],
+        "description": "Listing all ticket templates",
+        "summary": "List all ticket templates",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "type": "string",
+            "description": "Filtering templates",
+            "enum": [
+              "accessible"
+            ]
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "type": "string",
+            "description": "Fetching only primary templates",
+            "enum": [
+              "prime",
+              "only_parent"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ticket_templates_index"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/ticket_templates/{id}": {
+      "get": {
+        "tags": [
+          "ticket_template"
+        ],
+        "summary": "Show Ticket templates",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "Id of ticket template",
+            "required": true
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "type": "string",
+            "description": "parent template,child template or general template"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ticket_templates_show"
+            }
+          },
+          "404": {
+            "description": "Template not found"
           }
         }
       }
@@ -4478,6 +4683,34 @@
         "responses": {
           "204": {
             "description": "Success"
+          }
+        }
+      }
+    },
+    "/onboarding_update_channel_config": {
+      "post": {
+        "tags": [
+          "onboarding"
+        ],
+        "description": "Update Channel Config",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/update_channels_input"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad request error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
           }
         }
       }
@@ -4592,6 +4825,12 @@
                         "type": "string"
                       }
                     },
+                    "collision_user_hash": {
+                      "type": "string"
+                    },
+                    "autorefresh_user_hash": {
+                      "type": "string"
+                    },
                     "preferences": {
                       "type": "object",
                       "properties": {
@@ -4627,6 +4866,9 @@
                   "type": "string"
                 },
                 "time_zone": {
+                  "type": "string"
+                },
+                "language": {
                   "type": "string"
                 },
                 "date_format": {
@@ -4687,6 +4929,9 @@
                     },
                     "include_survey_manually": {
                       "type": "boolean"
+                    },
+                    "show_on_boarding": {
+                      "type": "boolean"
                     }
                   }
                 },
@@ -4703,20 +4948,6 @@
                       "type": "string"
                     },
                     "group_ids": {
-                      "type": "array"
-                    }
-                  }
-                },
-                "groups": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "integer"
-                    },
-                    "name": {
-                      "type": "string"
-                    },
-                    "agent_ids": {
                       "type": "array"
                     }
                   }
@@ -4741,6 +4972,20 @@
                     }
                   }
                 },
+                "groups": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "agent_ids": {
+                      "type": "array"
+                    }
+                  }
+                },
                 "created_at": {
                   "type": "string",
                   "format": "date-time"
@@ -4753,6 +4998,12 @@
           "type": "object",
           "properties": {
             "csrf_token": {
+              "type": "string"
+            },
+            "collision_url": {
+              "type": "string"
+            },
+            "autorefresh_url": {
               "type": "string"
             }
           }
@@ -4799,6 +5050,20 @@
         },
         "code": {
           "type": "string"
+        }
+      }
+    },
+    "agents_bulk_action_error": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/request_error"
+          }
         }
       }
     },
@@ -5812,6 +6077,54 @@
         }
       }
     },
+    "create_child_with_template": {
+      "type": "object",
+      "required": [
+        "parent_template_id",
+        "child_template_ids"
+      ],
+      "properties": {
+        "parent_template_id": {
+          "type": "number",
+          "description": "Parent template ID"
+        },
+        "child_template_ids": {
+          "type": "array",
+          "description": "Child template IDs",
+          "items": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "requester_input": {
+      "type": "object",
+      "properties": {
+        "contact": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/contact"
+            },
+            {
+              "properties": {
+                "view_all_tickets": {
+                  "type": "boolean"
+                }
+              }
+            }
+          ]
+        },
+        "company": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/company"
+            }
+          ]
+        }
+      }
+    },
     "cloud_file_input": {
       "type": "object",
       "properties": {
@@ -5994,20 +6307,6 @@
         }
       }
     },
-    "fields_map": {
-      "type": "object",
-      "properties": {
-        "type": {
-          "type": "string",
-          "required": true,
-          "description": "content of the ticket reply"
-        },
-        "fields": {
-          "type": "object",
-          "$ref": "#/definitions/map_field_to_header"
-        }
-      }
-    },
     "agent_input": {
       "type": "object",
       "properties": {
@@ -6048,6 +6347,21 @@
               "type": "boolean"
             }
           }
+        },
+        "shortcuts_enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "bulk_agent_input": {
+      "type": "object",
+      "properties": {
+        "agents": {
+          "type": "array",
+          "description": "array of agents",
+          "items": {
+            "$ref": "#/definitions/agent_input"
+          }
         }
       }
     },
@@ -6064,6 +6378,26 @@
               "type": "string",
               "description": "New email"
             }
+          }
+        }
+      }
+    },
+    "update_channels_input": {
+      "type": "object",
+      "description": "Channels Array",
+      "properties": {
+        "channels": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              [
+                "phone",
+                "forums",
+                "live_chat",
+                "social"
+              ]
+            ]
           }
         }
       }
@@ -6103,6 +6437,9 @@
         },
         "twitter_id": {
           "type": "string"
+        },
+        "deleted_agent": {
+          "type": "boolean"
         },
         "other_emails": {
           "type": "array",
@@ -6149,6 +6486,9 @@
               },
               "view_all_tickets": {
                 "type": "boolean"
+              },
+              "avatar": {
+                "$ref": "#/definitions/avatar"
               }
             }
           }
@@ -6158,8 +6498,32 @@
     "product_feedback": {
       "type": "object",
       "properties": {
-        "description": {
-          "type": "string"
+        "product_feedback": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string",
+              "description": "Support email description"
+            },
+            "attachment_ids": {
+              "type": "array",
+              "description": "Array of attachment IDs",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "subject": {
+              "type": "string",
+              "description": "Support email subject"
+            },
+            "tags": {
+              "type": "array",
+              "description": "Tags to be added to the email",
+              "items": {
+                "type": "integer"
+              }
+            }
+          }
         }
       }
     },
@@ -6309,6 +6673,15 @@
             "type": "string",
             "format": "byte"
           }
+        },
+        "parent_template_id": {
+          "type": "integer"
+        },
+        "child_template_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
         }
       }
     },
@@ -6334,6 +6707,9 @@
               "type": "string"
             },
             "inline_url": {
+              "type": "string"
+            },
+            "thumb_url": {
               "type": "string"
             },
             "is_shared": {
@@ -7078,6 +7454,9 @@
                 "whitelisted": {
                   "type": "boolean"
                 },
+                "deleted_agent": {
+                  "type": "boolean"
+                },
                 "avatar": {
                   "$ref": "#/definitions/avatar"
                 }
@@ -7572,6 +7951,14 @@
             "stats": {
               "$ref": "#/definitions/ticket_stats"
             },
+            "collaboration": {
+              "type": "object",
+              "properties": {
+                "convo_token": {
+                  "type": "string"
+                }
+              }
+            },
             "meta": {
               "type": "object",
               "properties": {
@@ -7587,14 +7974,6 @@
                 "time": {
                   "type": "string",
                   "format": "datetime"
-                }
-              }
-            },
-            "collaboration": {
-              "type": "object",
-              "properties": {
-                "convo_token": {
-                  "type": "string"
                 }
               }
             }
@@ -7755,6 +8134,25 @@
         },
         "agent": {
           "$ref": "#/definitions/agent"
+        }
+      }
+    },
+    "agent_partial_success_response": {
+      "title": "data",
+      "type": "object",
+      "description": "Agents Partial Success Response",
+      "properties": {
+        "succeeded": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/agent"
+          }
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/agents_bulk_action_error"
+          }
         }
       }
     },
@@ -8335,6 +8733,42 @@
         }
       }
     },
+    "password_policy": {
+      "title": "password_policies",
+      "type": "object",
+      "description": "Password policy response",
+      "properties": {
+        "policies": {
+          "type": "object",
+          "properties": {
+            "minimum_characters": {
+              "type": "string"
+            },
+            "session_expiry": {
+              "type": "string"
+            },
+            "password_expiry": {
+              "type": "string"
+            },
+            "cannot_be_same_as_past_passwords": {
+              "type": "string"
+            },
+            "cannot_contain_user_name": {
+              "type": "string"
+            },
+            "atleast_an_alphabet_and_number": {
+              "type": "string"
+            },
+            "have_mixed_case": {
+              "type": "string"
+            },
+            "have_special_character": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "dashboard_activities": {
       "type": "array",
       "description": "Dashboard activities",
@@ -8712,6 +9146,44 @@
         }
       }
     },
+    "requester": {
+      "type": "object",
+      "properties": {
+        "contact": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/contact"
+            },
+            {
+              "properties": {
+                "view_all_tickets": {
+                  "type": "boolean"
+                },
+                "id": {
+                  "type": "integer"
+                }
+              }
+            }
+          ]
+        },
+        "company": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/company"
+            },
+            {
+              "properties": {
+                "id": {
+                  "type": "integer"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
     "trial_widget_index": {
       "type": "object",
       "properties": {
@@ -8748,6 +9220,95 @@
         "avatar": {
           "type": "string",
           "description": "URL of the sales manager's avatar"
+        }
+      }
+    },
+    "ticket_templates_index": {
+      "type": "object",
+      "properties": {
+        "templates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "id": {
+                "type": "number"
+              },
+              "assoc_type": {
+                "type": "number",
+                "enum": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "personal",
+                  "shared"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "ticket_templates_show": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "assoc_type": {
+          "type": "number",
+          "enum": [
+            1,
+            2,
+            3
+          ]
+        },
+        "custom_fields": {
+          "type": "object"
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/attachment"
+          }
+        },
+        "cloud_file": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cloud_file_input"
+          }
+        },
+        "subject": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "status": {
+          "type": "number"
+        },
+        "priority": {
+          "type": "number"
+        },
+        "group_id": {
+          "type": "number"
+        },
+        "responder_id": {
+          "type": "number"
+        },
+        "product_id": {
+          "type": "number"
         }
       }
     },

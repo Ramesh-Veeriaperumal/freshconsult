@@ -17,7 +17,7 @@ module TicketFilterConstants
   FEATURES_KEYS_BY_SIDE_LOAD_KEY   = Hash[*SIDE_LOADING_FEATURES.map { |i| [i[0], i[1]] }.flatten]
   FEATURES_NAMES_BY_SIDE_LOAD_KEY  = Hash[*SIDE_LOADING_FEATURES.map { |i| [i[0], i[2]] }.flatten]
 
-  VISIBILITY_ATTRIBUTES_NEEDED = %w(visibility group_id).freeze
+  VISIBILITY_ATTRIBUTES_NEEDED = %w(visibility group_id user_id).freeze
 
   WRAP_PARAMS = [:ticket_filter, exclude: [], format: [:json]].freeze
 end.freeze

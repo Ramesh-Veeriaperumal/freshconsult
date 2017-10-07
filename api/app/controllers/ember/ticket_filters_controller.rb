@@ -28,8 +28,11 @@ module Ember
     def update
       set_model_query_hash
       prefix_ff_params
-      @item.deserialize_from_params(hasherized_params)
+      set_user_visibility
+
+      @item.deserialize_from_params(hasherized_params)      
       @item.visibility = params[:ticket_filter][:visibility]
+
       if @item.save
         update_helpdesk_accessible(@item, :ticket_filter) if visibility_present?
       else
@@ -99,7 +102,9 @@ module Ember
           order_type: obj.data[:wf_order_type],
           per_page: obj.data[:wf_per_page],
           query_hash: obj.data[:data_hash],
-          visibility: visibility_attributes(obj)
+          visibility: visibility_attributes(obj),
+          created_at: obj[:created_at].try(:utc),
+          updated_at: obj[:updated_at].try(:utc)
         }
       end
 
@@ -131,7 +136,8 @@ module Ember
       end
 
       def has_permission?
-        unless @item.is_a?(Helpdesk::Filters::CustomTicketFilter) && @item.accessible.user_id == api_current_user.id
+        unless @item.is_a?(Helpdesk::Filters::CustomTicketFilter) &&
+            (privilege?(:admin_tasks) or @item.accessible.user_id == api_current_user.id)
           render_request_error :access_denied, 403
         end
       end
@@ -167,10 +173,10 @@ module Ember
       def default_visibility
         params[:ticket_filter][:visibility][:user_id] = api_current_user.id
         unless privilege?(:manage_users)
-          params[:ticket_filter][:visibility][:visibility] = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]
+          params[:ticket_filter][:visibility][:visibility] = ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]
           params[:ticket_filter][:visibility][:group_id] = nil
         end
-        params[:ticket_filter][:visibility][:visibility] ||= Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me] if params[:ticket_filter][:visibility].present?
+        params[:ticket_filter][:visibility][:visibility] ||= ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me] if params[:ticket_filter][:visibility].present?
       end
 
       def set_model_query_hash
@@ -197,6 +203,12 @@ module Ember
 
       def ff_entries
         @ff_entries_cache ||= Account.current.flexifield_def_entries.find(:all, select: [:flexifield_alias, :flexifield_name]).map(&:attributes)
+      end
+
+      def set_user_visibility
+        if visibility_present?
+          params[:ticket_filter][:visibility][:user_id] = api_current_user.id
+        end
       end
 
       wrap_parameters(*wrap_params)

@@ -51,6 +51,8 @@ class Helpdesk::Activity < ActiveRecord::Base
     }
   }
 
+  scope :only_tickets, { :conditions => ["notable_type = ?", "Helpdesk::Ticket"] }
+
   scope :limit, lambda { |num| { :limit => num } }
 
   scope :status, lambda { |name| {

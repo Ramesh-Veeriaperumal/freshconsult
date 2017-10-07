@@ -32,7 +32,7 @@ module AgentsTestHelper
 
   def private_api_agent_pattern(expected_output = {}, agent)
     {
-      
+
       available: expected_output[:available] || agent.available,
       occasional: expected_output[:occasional] || agent.occasional,
       id: Fixnum,
@@ -44,7 +44,15 @@ module AgentsTestHelper
       contact: contact_pattern(expected_output[:user] || agent.user),
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
-      
+
+    }
+  end
+
+  def private_api_restriced_agent_hash(expected_output ={}, agent)
+    {
+      id: Fixnum,
+      contact: restricted_agent_contact_pattern(expected_output[:user] || agent.user),
+      group_ids: expected_output[:group_ids] || agent.group_ids,
     }
   end
 
@@ -66,7 +74,7 @@ module AgentsTestHelper
 
   def agent_availability_count_pattern
     {
-      agents: [ 
+      agents: [
       ],
       meta: {
         agents_available: {
@@ -85,8 +93,8 @@ module AgentsTestHelper
       achievements_hash = {
         id: record.user_id,
         points: record.points.to_i,
-        current_level_name: record.level.try(:name).to_s,
-        next_level_name: next_level.try(:name).to_s,
+        current_level_name: record.level.try(:name),
+        next_level_name: next_level.try(:name),
         points_needed: points_needed,
         badges: record.user.quests.order('achieved_quests.created_at Desc').map(&:badge_id)
       }
@@ -95,11 +103,11 @@ module AgentsTestHelper
   end
 
   def livechat_agent_availability(agent)
-    [ agent.user.id, 
-      { 
-        "agent_id" => agent.user.id, 
-        "last_activity_at"=> nil, 
-        "available"=> false, 
+    [ agent.user.id,
+      {
+        "agent_id" => agent.user.id,
+        "last_activity_at"=> nil,
+        "available"=> false,
         "onGoingChatCount"=> 0
       }
     ]
@@ -115,10 +123,16 @@ module AgentsTestHelper
       name: contact.name,
       phone: contact.phone,
       time_zone: contact.time_zone,
-      local_time: Time.now.in_time_zone(contact.time_zone).strftime('%I:%M %p'),
       avatar: get_contact_avatar(contact)
     }
   end
+
+  def restricted_agent_contact_pattern(contact)
+    {
+      name: contact.name,
+      email: contact.email,
+    }
+  end 
 
   def get_contact_avatar(contact)
     return nil unless contact.avatar
@@ -186,4 +200,29 @@ module AgentsTestHelper
     @account.chat_setting.enabled = true
     @account.save
   end
+
+  def failure_pattern(failures = {})
+    failures.map do |rec_email, errors|
+      {
+        email: rec_email,
+        errors: errors.map do |field, value|
+          agent_bad_request_error_pattern(field, *value)
+        end,
+        error_options: {}
+      }
+      end
+  end
+
+  def agent_bad_request_error_pattern(field, value, params_hash = {})
+    code = params_hash[:code] || ErrorConstants::API_ERROR_CODES_BY_VALUE[value] || ErrorConstants::DEFAULT_CUSTOM_CODE
+    message = retrieve_message(params_hash[:prepend_msg]) + retrieve_message(value) + retrieve_message(params_hash[:append_msg])
+    {
+      code: code,
+      field: "#{field}",
+      nested_field: nil,
+      http_code: ErrorConstants::API_HTTP_ERROR_STATUS_BY_CODE[code] || ErrorConstants::DEFAULT_HTTP_CODE,
+      message: message % params_hash
+    }
+  end
+
 end

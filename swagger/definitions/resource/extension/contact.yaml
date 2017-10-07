@@ -9,5 +9,7 @@ allOf:
         type: boolean
       whitelisted:
         type: boolean
+      deleted_agent:
+        type: boolean
       avatar:
         $ref: '#/definitions/avatar'

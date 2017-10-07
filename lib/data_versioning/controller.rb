@@ -4,45 +4,64 @@ module DataVersioning
     include Redis::OthersRedis
     extend ActiveSupport::Concern
 
-    included do
-      before_filter :verify_data_version, only: :index
-      after_filter  :versionize_latest_timestamp, only: :index
+    module ClassMethods
+      def send_etags_along(entity_key)
+        # This is the method that has to be called
+
+        before_filter :verify_data_version, only: :index
+        after_filter  :versionize_latest_timestamp, only: :index
+
+        define_method "version_entity_key" do
+          entity_key
+        end
+      end
     end
 
-    private
+    module InstanceMethods
 
-      def verify_data_version
-        if etag_matched?
-          Rails.logger.debug "Data not changed:: #{version_entity_value}, klass:: #{self.class.name}"
-          add_etag_to_response_header(version_entity_value)
-          head 304
+      private
+
+        def verify_data_version
+          if etag_matched?
+            Rails.logger.debug "Data not changed:: #{version_entity_value}, klass:: #{self.class.name}"
+            add_etag_to_response_header(version_entity_value)
+            head 304
+          end
         end
-      end
 
-      def versionize_latest_timestamp
-        if version_entity_value
-          add_etag_to_response_header(version_entity_value)
-        else
-          add_etag_to_response_header(latest_timestamp)
-          set_others_redis_hash_set(version_key, version_entity_key, latest_timestamp)
+        def versionize_latest_timestamp
+          if version_entity_value
+            add_etag_to_response_header(version_entity_value)
+          else
+            add_etag_to_response_header(latest_timestamp_for_versions)
+            set_others_redis_hash_set(version_key, version_entity_key, latest_timestamp_for_versions)
+          end
         end
-      end
 
-      def version_entity_value
-        @version_entity_value ||= get_others_redis_hash_value(version_key, version_entity_key)
-      end
+        def version_entity_value
+          version_set[version_entity_key]
+        end
 
-      def version_entity_key
-        @version_entity_key ||= "#{cname.upcase}_LIST"
-      end
+        def latest_timestamp_for_versions
+          @latest_timestamp_for_versions ||= Time.now.utc.to_i
+        end
 
-      def latest_timestamp
-        @latest_timestamp ||= Time.now.utc.to_i
-      end
+        def etag_matched?
+          header_version = request.headers['If-None-Match']
+          header_version.present? && header_version == EtagGenerator.generate_etag(version_entity_value, self.class::CURRENT_VERSION)
+        end
 
-      def etag_matched?
-        header_version = request.headers['If-None-Match']
-        header_version.present? && header_version == EtagGenerator.generate_etag(version_entity_value, self.class::CURRENT_VERSION)
-      end
+        def set_app_data_version
+          response.headers['X-Account-Data-Version'] = overall_data_version
+        end
+
+        def overall_data_version
+          Digest::MD5.hexdigest(version_set.values.join)
+        end
+
+        def version_set
+          @version_set ||= get_others_redis_hash(version_key)
+        end
+    end
   end
 end

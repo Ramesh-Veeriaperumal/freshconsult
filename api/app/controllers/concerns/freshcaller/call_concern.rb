@@ -1,6 +1,8 @@
 module Freshcaller::CallConcern
   extend ActiveSupport::Concern
 
+  include Search::V2::AbstractController
+
   def ticket_params
     params_hash = { source: TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone],
                 subject: ticket_title,
@@ -23,8 +25,24 @@ module Freshcaller::CallConcern
     }
   end
 
+  def load_contact_from_search
+    @klasses = ['User']
+    @search_context = :ff_contact_by_numfields
+    @es_search_term = @options[:customer_number]
+    results = esv2_query_results({'user' => { model: 'User' }})
+    results.first if results.length > 0
+  end
+
   def account_admin_id
     current_account.roles.account_admin.first.users.first.id
+  end
+
+  def incoming_missed_call?
+    missed_call? && @options[:call_type] == 'incoming'
+  end
+  
+  def outgoing_missed_call?
+    missed_call? && @options[:call_type] == 'outgoing'
   end
 
   def missed_call?

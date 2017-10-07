@@ -41,7 +41,6 @@ module Ember
         assign_avatar
       end
       @item.reload
-      render :show
     rescue
       render_custom_errors
     end
@@ -122,6 +121,18 @@ module Ember
         end
         super
       end
+
+      def load_object(items = scoper)
+        @item = items.find_by_id(params[:id])
+        @item ||= deleted_agent
+
+        log_and_render_404 unless @item
+      end
+
+      def deleted_agent
+        @deleted_agent ||= current_account.all_users.where(deleted: true, helpdesk_agent:true).find_by_id(params[:id])
+      end
+       
 
       def construct_delegator_params
         {

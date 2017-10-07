@@ -4,7 +4,6 @@ module BootstrapTestHelper
   include Social::Util
   include PortalsTestHelper
 
-
   def index_pattern(agent, account, portal)
     {
       agent: agent_info_pattern(agent),
@@ -56,13 +55,15 @@ module BootstrapTestHelper
       helpdesk_name: account.helpdesk_name,
       name: account.name,
       time_zone: account.time_zone,
-      date_format: Hash,
+      date_format: account.account_additional_settings.date_format,
+      language: account.language,
       features: Array,
       launched: Array,
       settings: {
         personalized_email_replies: wildcard_matcher,
         compose_email_enabled: wildcard_matcher,
-        include_survey_manually: wildcard_matcher
+        include_survey_manually: wildcard_matcher,
+        show_on_boarding: account.account_onboarding_pending?
       },
       agents: Array,
       groups: Array,

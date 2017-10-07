@@ -24,7 +24,7 @@ module UserEmailsHelper
     end
 
     def construct_text
-      return construct_company_field if @account.features?(:multiple_user_companies) && 
+      return construct_company_field if @account.multiple_user_companies_enabled? &&
                                         @field_name == "company_name"
       super
     end

@@ -22,7 +22,7 @@ class ApiAgentsController < ApiApplicationController
   private
 
     def after_load_object
-      if ((update? || destroy?) && !User.current.can_edit_agent?(@item)) || (destroy? && User.current.id == @item.user_id)
+      if (update? && (!User.current.can_edit_agent?(@item) || !agent_update_allowed?)) || (destroy? && (!User.current.can_edit_agent?(@item) || current_user_update?))
         Rails.logger.error "API V2 AgentsController Action: #{action_name}, UserId: #{@item.user_id}, CurrentUser: #{User.current.id}"
         render_request_error(:access_denied, 403)
       end
@@ -90,6 +90,14 @@ class ApiAgentsController < ApiApplicationController
 
     def me?
       @me ||= current_action?('me')
+    end
+
+    def current_user_update?
+      (@item.user_id == User.current.id)
+    end
+
+    def agent_update_allowed?
+      User.current.privilege?(:manage_availability) ? true : current_user_update?
     end
 
     def allowed_to_access?

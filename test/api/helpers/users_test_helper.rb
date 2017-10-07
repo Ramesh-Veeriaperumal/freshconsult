@@ -44,15 +44,15 @@ module UsersTestHelper
 
   def private_api_contact_pattern(expected_output = {}, ignore_extra_keys = true, exclude_custom_fields = false, contact)
     result = contact_pattern(expected_output, ignore_extra_keys, contact)
+    result.except!(:other_companies)
     result.except!(:custom_fields) if result[:custom_fields].empty? || exclude_custom_fields
     result.merge!(whitelisted: contact.whitelisted,
                   facebook_id: (expected_output[:facebook_id] || contact.fb_profile_id),
                   blocked: contact.blocked?,
                   spam: contact.spam?,
-                  deleted: contact.deleted,
-                  local_time: Time.now.in_time_zone(contact.time_zone).strftime('%I:%M %p'))
+                  deleted: contact.deleted)
     result[:company] = company_hash(contact.default_user_company) if expected_output[:include].eql?('company') && contact.default_user_company.present?
-    result[:other_companies] = other_companies_hash(expected_output[:include].eql?('company'), contact) if Account.current.multiple_user_companies_enabled?
+    result[:other_companies] = other_companies_hash(expected_output[:include].eql?('company'), contact) if Account.current.multiple_user_companies_enabled? && contact.default_user_company.present?
     result
   end
 
@@ -115,6 +115,23 @@ module UsersTestHelper
       time_zone: agent_user.time_zone,
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       agent: agent_pattern
+    }
+  end
+
+  def deleted_agent_pattern(expected_output = {}, agent_user)
+    {
+      active: expected_output[:active] || agent_user.active,
+      email: expected_output[:email] || agent_user.email,
+      job_title: expected_output[:job_title] || agent_user.job_title,
+      language: expected_output[:language] || agent_user.language,
+      mobile: expected_output[:mobile] || agent_user.mobile,
+      name: expected_output[:name] || agent_user.name,
+      phone: expected_output[:phone] || agent_user.phone,
+      time_zone: expected_output[:time_zone] || agent_user.time_zone,
+      avatar: expected_output[:avatar] || agent_user.avatar,
+      id: expected_output[:id] || agent_user.id,
+      deleted: expected_output[:deleted] || agent_user.deleted,
+      deleted_agent: true
     }
   end
 
@@ -386,6 +403,19 @@ module UsersTestHelper
     }
   end
 
+  def password_policy_pattern type
+    policy = type=="agent" ? Account.current.agent_password_policy_from_cache : 
+                             Account.current.contact_password_policy_from_cache
+    return { policies: nil } unless policy.present?
+    ret_hash = { 
+      policies: policy.configs
+    }
+    policy.policies.map(&:to_s).each do |policy|
+      ret_hash[:policies][policy] = true unless ret_hash[:policies].key?(policy)
+    end
+    ret_hash
+  end
+
   def stats(obj)
     ticket_states = obj.ticket_states
     {
@@ -427,7 +457,8 @@ module UsersTestHelper
     {
       id: user_comp.company_id,
       name: user_comp.company.name,
-      view_all_tickets: user_comp.client_manager
+      view_all_tickets: user_comp.client_manager,
+      avatar: CompanyDecorator.new(user_comp.company, {}).avatar_hash
     }
   end
 

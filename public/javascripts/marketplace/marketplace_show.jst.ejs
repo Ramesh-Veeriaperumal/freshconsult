@@ -51,7 +51,9 @@
         <% if(typeof custom_app == 'undefined'){ %>
           <li class="dev"><%= translate.get('developed_by') %><span class="bold"><%= account %></span></li>
         <% } %>
-        <li class="published"><%= published_date %> <%= translate.get('time_ago') %> </li>
+        <% if (published_date){ %>
+          <li class="published"><%= published_date %> <%= translate.get('time_ago') %> </li>
+        <% } %>
         
         <% if(typeof custom_app == 'undefined' && categories.length > 0){ %>
           <li class="text-center"><%= translate.get('published_in') %>

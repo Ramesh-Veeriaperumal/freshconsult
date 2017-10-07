@@ -1,0 +1,1 @@
+JSON.generate(@settings.to_hash)
