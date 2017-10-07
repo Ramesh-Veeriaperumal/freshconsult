@@ -2,11 +2,12 @@ class SAAS::SubscriptionEventActions
 
   attr_accessor :account, :old_plan, :add_ons, :new_plan, :existing_add_ons
 
-  DROP_DATA_FEATURES_V2 = [:create_observer, :supervisor, :add_watcher, :custom_ticket_views, :custom_apps, :custom_ticket_fields, 
-                            :custom_company_fields, :custom_contact_fields, :occasional_agent, :basic_twitter, :basic_facebook,
-                            :rebranding, :customer_slas, :multiple_business_hours, :multi_product, :multiple_emails, :link_tickets_toggle,
-                            :parent_child_tickets_toggle, :shared_ownership_toggle, :skill_based_round_robin, :ticket_activity_export,
-                            :auto_ticket_export]
+  DROP_DATA_FEATURES_V2 = [:create_observer, :supervisor, :add_watcher, :custom_ticket_views, :custom_apps, 
+                           :custom_ticket_fields, :custom_company_fields, :custom_contact_fields, :occasional_agent, 
+                           :basic_twitter, :basic_facebook, :rebranding, :customer_slas, :multiple_business_hours, 
+                           :multi_product, :multiple_emails, :link_tickets_toggle, :parent_child_tickets_toggle, 
+                           :shared_ownership_toggle, :skill_based_round_robin, :ticket_activity_export,
+                           :auto_ticket_export, :multiple_companies_toggle]
 
   ADD_DATA_FEATURES_V2  = [:link_tickets_toggle, :parent_child_tickets_toggle]
 

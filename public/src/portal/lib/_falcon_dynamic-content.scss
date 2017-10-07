@@ -1,0 +1,138 @@
+.content, .content-form, .content-light{
+	margin-top: 0px;
+	@include box-shadow(none);
+	position: relative;
+    padding: 10px 40px; 
+    background-color: $white;
+}
+.sidebar{
+	background-color: $gray;	
+}
+.cs-s{
+	border-top: 0;
+	h3{
+		font-size: 18px;
+	    border-bottom: solid 1px $inputFocusRingColor;
+	    border-top: 0;
+	    width: 100%;
+	    a{
+	    	color: $grayDark;
+	    	&:hover{
+	    		color: darken($grayDark, 10%);
+	    	}
+	    }
+	}
+}
+.ellipsis{
+	a{
+		font-size: 14px;
+    	line-height: 1.6;
+	}
+}
+
+.fc-solution-category,.fc-discussion-category{
+	h2{
+	    font-weight: 400;
+	    border-bottom: 1px solid $inputFocusRingColor;
+	}
+}
+.fc-community-content{
+	.start-topic{
+		margin-top: -25px;
+	}
+}
+.fc-forum-list .list-lead{
+	font-weight: 600;
+}
+div#related_articles{
+	margin-top: 20px;
+}
+.see-more{ font-size: 13px; color: $blue; @include padding-left(30px); }
+.help-text, .p-info, .info-text, .list-noinfo, .description-text{
+	font-size: 12px;
+    line-height: 1.9;
+    color: $grayLight;
+}
+.item-count{ 
+	font-size: 16px;
+    color: $grayDark;
+    font-weight: normal;
+    font-family: $sansFontFamily;
+}
+/* A small colen is added in front of the 
+   up-vote button if its next to atleast one user voted label */
+#topic-vote-up-button:nth-child(3):before{ color: $textColor; }
+.p-content{
+	background-color: $gray;
+    @include border-radius(4px);
+    @include box-shadow(none);
+    border: solid 1px $border-color;
+    padding: 10px 16px;
+	hr{
+		@include margin-left(-$comments-padding-side);
+		@include margin-right(-$comments-padding-side);
+	}
+	a{
+		color: $blue;
+	}
+	form{
+		a.btn{
+			color: $black;
+		}
+	}
+}
+
+.comment-by-agent .p-content{
+	background-color: $gray;
+    @include border-radius(4px);
+    @include box-shadow(none);
+    border: solid 1px $border-color;
+    padding: 10px 16px;
+}
+.c-list{	border-bottom: 1px solid $row-border-color;	}
+.c-row{	border-top:1px solid $row-border-color; }
+.uv-row{	border-bottom: 1px solid $row-border-color; }
+hr.content-divider{
+	@include margin-left(-$content-padding-side);
+	@include margin-right(-$content-padding-side); 
+}
+
+.fc-new-ticket{
+    border-right: 1px solid $border-color;
+	h3{
+		font-size: 18px;
+    	font-weight: 600;
+    	margin: 16px 0 26px 0;
+	}
+}
+
+.ticket-search{
+	h4{
+		font-size: 18px;
+    	font-weight: 600;
+    	margin: 16px 0;
+	}
+}
+.recaptcha_input_area{
+	input{
+		height: auto;
+	}
+}
+
+// new ticket page
+.fc-new-topic{
+	@include border-right(1px solid $border-color);
+	h3{
+		margin: 20px 0;
+	}
+	input{
+		height: auto;
+	}
+	.clearfix{
+		display: none;
+	}
+	#attachment-type{
+		margin: 0;
+		@include padding(0);
+	}
+}

@@ -13,7 +13,7 @@ def self.company_fields_data
       :position           => 1 },
 
     { :name               => "domains", 
-      :label              => "Domain Names for this company",
+      :label              => "Domains",
       :position           => 4 }
   ]
 end

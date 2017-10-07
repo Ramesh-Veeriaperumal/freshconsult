@@ -19,10 +19,8 @@ class Auth::SlackAuthenticator < Auth::Authenticator
   end
 
   def get_redirect_url
-    if @state_params == "agent"
-      return "#{@portal_url}/integrations/slack_v2/add_slack_agent"   
-    end
-    "#{@portal_url}/integrations/slack_v2/new"
+    url = @state_params == 'agent' ? 'integrations/slack_v2/add_slack_agent' : 'integrations/slack_v2/new'
+    @falcon_enabled == 'true' ? "#{@portal_url}/a/#{url}" : "#{@portal_url}/#{url}"
   end
 
   def set_redis_key(config_params, expire_time = nil)

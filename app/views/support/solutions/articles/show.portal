@@ -1,4 +1,4 @@
-<section class="main content rounded-6 min-height-on-desktop" id="article-show-{{ article.id }}">
+<section class="main content rounded-6 min-height-on-desktop fc-article-show" id="article-show-{{ article.id }}">
 	<div class="breadcrumb">
 		<a href="{{ portal.solutions_home_url }}"> {% translate portal.solutions_home %} </a>
 		<a href="{{ article.category.url }}">{{ article.category.name | h}}</a>
@@ -34,6 +34,6 @@
 		{{article | article_voting }}
 		
 </section>
-<section class="sidebar content rounded-6">
+<section class="sidebar content rounded-6 fc-related-articles">
 	{{ article | related_articles: 10, 'related_articles' }}
 </section>

@@ -262,6 +262,8 @@ module Redis::RedisKeys
 
   ACCOUNT_ADMIN_ACTIVATION_JOB_ID = "ACCOUNT_ADMIN_ACTIVATION_JOB_ID:%{account_id}"
 
+  # Languages available for falcon signup 
+  FALCON_ENABLED_LANGUAGES = "FALCON_ENABLED_LANGUAGES"
   # Search Service Keys
   SEARCH_SERVICE_SIGNUP = "SEARCH_SERVICE_SIGNUP"
 
@@ -359,6 +361,7 @@ module Redis::RedisKeys
 
 
   ZENDESK_IMPORT_APP_KEY = "ZENDESK_IMPORT_APP"
+  DISABLE_PORTAL_NEW_THEME = "DISABLE_PORTAL_NEW_THEME"
 
 
 	def newrelic_begin_rescue

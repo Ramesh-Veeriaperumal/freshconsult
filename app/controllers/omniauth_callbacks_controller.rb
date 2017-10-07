@@ -18,6 +18,7 @@ class OmniauthCallbacksController < ApplicationController
       :app => app,
       :omniauth => @omniauth,
       :user_id => @user_id,
+      :falcon_enabled => @falcon_enabled,
       :state_params => @state_params
     )
     
@@ -67,6 +68,7 @@ class OmniauthCallbacksController < ApplicationController
     @portal_id = origin['portal_id'][0].to_i if origin.has_key?('portal_id')
     @user_id = origin['user_id'][0].to_i if origin.has_key?('user_id')
     @state_params = origin['state_params'][0] if origin.has_key?('state_params')
+    @falcon_enabled = origin['falcon_enabled'][0] if origin.has_key?('falcon_enabled')
   end
 
   def assign_state_variables origin

@@ -154,6 +154,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   def add_feature
     result = {}
     @account = Account.find(params[:account_id])
+    @account.make_current
     result[:account_id] = @account.id
     result[:account_name] = @account.name
     begin
@@ -323,6 +324,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     enabled = false
     account = Account.find(params[:account_id]).make_current
     if params[:operation] == "launch"
+      CollabPreEnableWorker.perform_async
       account.add_feature(:collaboration)
       enabled = account.has_feature?(:collaboration)
     elsif params[:operation] == "rollback"

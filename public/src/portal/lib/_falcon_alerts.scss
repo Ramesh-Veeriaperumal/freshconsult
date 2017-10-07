@@ -1,0 +1,147 @@
+// ALERT STYLES
+// ------------
+
+// Base alert styles
+.alert, .errorExplanation {
+  @include padding(8px 35px 8px 14px);
+  margin-bottom: $baseLineHeight;
+  text-shadow: 0 1px 0 rgba(255,255,255,.5);
+  background-color: $warningBackground;
+  border: 1px solid $warningBorder;
+  @include border-radius(4px);
+  color: $black;
+  font-weight: 600;
+}
+.alert-heading {
+  color: inherit;
+}
+
+.alert-page{
+  margin: 10px 0 0;
+}
+
+.errorExplanation{
+  h2{ font-size: 1em; }
+}
+
+// Adjust close link position
+.alert .close {
+  position: relative;
+  top: -2px;
+  @include right(-21px);
+  line-height: 18px;
+}
+
+// Alternate styles
+// ----------------
+
+.alert-success, .alert-notice {
+  background-color: $successBackground;
+  border-color: $successBorder;
+  color: $successText;
+}
+.alert-danger,
+.alert-error,
+.errorExplanation {
+  background-color: $errorBackground;
+  border-color: $errorBorder;
+  color: $errorText;
+}
+.alert-info {
+  background-color: $infoBackground;
+  border-color: $infoBorder;
+  color: $infoText;
+}
+
+.errorExplanation.alert-danger-dark {
+  background-color: #B56463;
+  border-color: #9B4A49;
+  color: #FFF;
+}
+
+.errorExplanation.credentialError ul {
+  list-style:none;
+  text-align:center;
+  text-shadow:none;
+}
+
+// Block alerts
+// ------------------------
+.alert-block {
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+.alert-block > p,
+.alert-block > ul {
+  margin-bottom: 0;
+}
+.alert-block p + p {
+  margin-top: 5px;
+}
+
+.alert-solid{
+  @include text-align(center);
+  margin: 0;  
+  @include border-radius(0);
+}
+
+.alert-ticket-status{
+  margin-top: 10px;
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 15px;
+  font-weight: 300;
+}
+
+.alert-assume-agent {
+  @include padding(8px 0px 8px 0px);
+  margin-bottom: 10px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  background-color: #FCF8E3;
+  color: #82683C;
+  font-size: 13px;
+  a{
+    color: $blue;
+  }
+}
+
+// Alternate Alert styles
+// -------------------------
+
+.alert-invalid{
+  text-decoration:line-through;
+  color: #888;
+  background: transparent;
+  border: 0;
+  padding-left: 0;
+}
+.alert-invalid-text{
+  color:$errorText;
+  @include float(right);
+}
+
+.alert-invalid-attach-text{
+  color:$errorText;
+}
+
+
+// Hack for portal forum page
+// -----------------------------
+
+.alert-with-close{
+  position: relative;
+  margin-top: 10px;
+  margin-bottom: 0px;
+  a.close{
+    position: absolute;
+    top: 8px;
+    right: 20px;
+    line-height: 18px;
+  }
+  a.close::before{
+    content: "\00d7";
+    font-size: 18px;
+    font-weight: bold;
+    color: #888;
+  }
+}

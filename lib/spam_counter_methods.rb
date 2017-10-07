@@ -1,7 +1,4 @@
 module SpamCounterMethods
-
-	include Community::Moderation::Constants
-
 	TYPES = [:spam, :unpublished]
 
 	def self.included(base)
@@ -9,7 +6,7 @@ module SpamCounterMethods
 		base.send(:include, Community::Moderation::ForumSpamTables)
 		base.hash_key(:account_id, :n)
 		base.range(:type_and_date, :s)
-		base.provisioned_throughput(DYNAMO_THROUGHPUT[:inactive], DYNAMO_THROUGHPUT[:write])
+		base.provisioned_throughput(base.inactive_capacity, base.write_capacity)
 	end
 
 	def account

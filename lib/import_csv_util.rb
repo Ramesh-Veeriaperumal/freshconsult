@@ -18,7 +18,7 @@ module ImportCsvUtil
       :name  => f.name, 
       :label => f.label
     }}
-    if params[:type] == "contact" && current_account.features?(:multiple_user_companies)
+    if params[:type] == 'contact' && Account.current.multiple_user_companies_enabled?
       cm_field = current_account.contact_form.fetch_client_manager_field
       @fields.append({:name  => cm_field.name,
                        :label => cm_field.label})

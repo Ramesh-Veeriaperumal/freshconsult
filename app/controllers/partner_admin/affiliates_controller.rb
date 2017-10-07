@@ -243,9 +243,9 @@ class PartnerAdmin::AffiliatesController < ApplicationController
               SubscriptionAffiliate.add_affiliate(account, affiliate.token)
               mapped_accounts << account_info(account)
             end
+          else          
+            unmapped_accounts << domain
           end
-        else          
-          unmapped_accounts << domain
         end
       end
       
