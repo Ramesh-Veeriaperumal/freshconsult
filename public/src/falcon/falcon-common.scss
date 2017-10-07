@@ -623,35 +623,35 @@ left: 88%;
 
 
 
-.nav-tabs{
-  li{
+.nav-tabs {
+  li {
+    &.active {
+      a {
+        border: 0;
+        border-bottom: 3px solid $app-primary-btn-background;
+        color: $app-primary-btn-background;
 
-    &.active{
-      a{
-      border: 0px;
-      border-bottom: 3px solid $app-primary-btn-background;
-      color: $app-primary-btn-background;
-
-      &:hover{
-      border:0px;
-      border-bottom: 3px solid rgba(2, 184, 117, 1);
-      background-color: #fff;
-      color: rgba(2, 184, 117, 1);
-      }
-
+        &:hover{
+          border: 0;
+          border-bottom: 3px solid rgba(2, 184, 117, 1);
+          background-color: #fff;
+          color: rgba(2, 184, 117, 1);
+        }
       }
     }
-    a{
+
+    a {
       border: 0px;
       background-color: transparent;
       color: #6f7c87;
       border-bottom: 0px;
        &:hover{
-      border:0px;
-      border-bottom: 3px solid rgba(2, 184, 117, 0.3);
-      background-color: #fff;
-      color: rgba(2, 184, 117, 0.6);
-      }
+        text-decoration: none;
+        border:0px;
+        border-bottom: 3px solid rgba(2, 184, 117, 0.3);
+        background-color: #fff;
+        color: rgba(2, 184, 117, 0.6);
+       }
     }
 
   }
@@ -1441,11 +1441,11 @@ div[class$="-toggle"]{
 
 .reports-title{
   .ticket-view-cancel{
-    &:after{
+    &:after {
       font-style: normal;
-          top: 0px;
+      top: 0px;
+    }
   }
-}
 }
 
 .ticket_fields .custom-field-form .options-wrapper{
@@ -1456,7 +1456,22 @@ div[class$="-toggle"]{
   padding: 0px 20px 0 0;
 }
 
+.customer-portal .portal-section .captcha {
+  margin-left: 144px;
+}
 
+.customer-portal .portal-section .controls {
+  margin-left: 350px;
+}
+
+.customer-portal .portal-section .control-label {
+  width: 350px;
+}
+
+.customer-portal .portal-section .heading {
+  border-top: 1px solid #ebeef0;
+  padding: 15px 0 15px;
+}
 
 @import "falcon-community";
 @import "falcon-reports";
