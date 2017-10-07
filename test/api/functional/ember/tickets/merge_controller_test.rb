@@ -183,7 +183,7 @@ module Ember
       end
 
       def test_secondary_tkt_with_adv_features
-        enable_adv_ticketing(%i(link_ticket parent_child_tickets)) do
+        enable_adv_ticketing(%i(link_tickets parent_child_tickets)) do
           primary_tkt = create_ticket
           sec_tkt     = create_ticket
           request_params = sample_merge_request_params(primary_tkt.display_id, [sec_tkt.display_id])
@@ -194,7 +194,7 @@ module Ember
       end
 
       def test_primary_tkt_with_adv_features
-        enable_adv_ticketing(%i(link_ticket parent_child_tickets)) do
+        enable_adv_ticketing(%i(link_tickets parent_child_tickets)) do
           primary_tkt = create_ticket
           sec_tkt     = create_ticket
           request_params = sample_merge_request_params(primary_tkt.display_id, [sec_tkt.display_id])

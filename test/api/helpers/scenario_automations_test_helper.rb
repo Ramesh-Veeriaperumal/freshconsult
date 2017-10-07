@@ -12,6 +12,14 @@ module ScenarioAutomationsTestHelper
     }
   end
 
+  def close_action_params
+    {
+      action_data: [
+        { name: 'status', value: ApiTicketConstants::CLOSED }
+      ]
+    }
+  end
+
   def private_api_index_pattern
     pattern_array = Account.current.scn_automations.map do |scenario|
       {

@@ -23,8 +23,13 @@ class Ember::AttachmentsControllerTest < ActionController::TestCase
   end
 
   def inline_attachment_params_hash
-    file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+    file = fixture_file_upload('files/image33kb.jpg', 'image/jpeg')
     params_hash = { content: file, inline: true, inline_type: 1 }
+  end
+
+  def jpeg_attachment_params_hash
+    file = fixture_file_upload('files/image33kb.jpg', 'image/jpeg')
+    params_hash = { content: file }
   end
 
   def test_create_with_no_params
@@ -113,6 +118,17 @@ class Ember::AttachmentsControllerTest < ActionController::TestCase
     match_json(attachment_pattern(latest_attachment))
     assert_equal latest_attachment.attachable_type, 'Tickets Image Upload'
     assert latest_attachment.inline_url.present?
+    Helpdesk::Attachment.any_instance.unstub(:valid_image?)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+  end
+
+  def test_create_jpeg_image
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    Helpdesk::Attachment.any_instance.stubs(:valid_image?).returns(true)
+    post :create, construct_params({version: 'private'}, jpeg_attachment_params_hash)
+    assert_response 200
+    latest_attachment = Helpdesk::Attachment.last
+    match_json(attachment_pattern(latest_attachment))
     Helpdesk::Attachment.any_instance.unstub(:valid_image?)
     DataTypeValidator.any_instance.unstub(:valid_type?)
   end

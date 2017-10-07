@@ -15,6 +15,8 @@
     $ref: ./error/bad_request.yaml
   request_error:
     $ref: ./error/request.yaml
+  agents_bulk_action_error:
+    $ref: ./response/agents/bulk_error.yaml
 
   # REQUEST
   bulk_action_input:
@@ -76,6 +78,8 @@
     $ref: ./request/tickets/execute_scenario.yaml
   link_input:
     $ref: ./request/tickets/link_input.yaml
+  create_child_with_template:
+    $ref: ./request/tickets/create_child_with_template.yaml
   requester_input:
     $ref: ./request/tickets/requester.yaml
   cloud_file_input:
@@ -94,8 +98,12 @@
     $ref: ./request/integrated_resources/integrated_resource.yaml
   agent_input:
     $ref: ./request/agents/agent.yaml
+  bulk_agent_input:
+    $ref: ./request/agents/bulk_agent.yaml  
   onboarding_update_activation_email_input:
     $ref: ./request/onboarding/update_activation_email.yaml
+  update_channels_input:
+    $ref: ./request/onboarding/update_channels.yaml
 
   # RESOURCE
   conversation_template:
@@ -223,8 +231,12 @@
       $ref: '#/definitions/extended_note'
   partial_success_response:
     $ref: ./response/bulk_partial_success.yaml
+
   make_agent_response:
     $ref: ./response/make_agent.yaml
+  agent_partial_success_response:
+    $ref: ./response/agents/create_multiple.yaml
+
   watchers:
     $ref: ./response/tickets/watchers.yaml
   latest_note:
@@ -251,6 +263,8 @@
       - $ref: ./response/canned_response/show.yaml
   reply_to_forward_template:
     $ref: ./resource/reply_to_forward_template.yaml
+  password_policy:
+    $ref: ./resource/password_policy.yaml
 
   # Dashboard activities
   dashboard_activities:
@@ -287,6 +301,12 @@
     $ref: './response/trial_widget/index.yaml'
   trial_widget_sales_manager:
     $ref: './response/trial_widget/sales_manager.yaml'
+
+  #Ticket Templates
+  ticket_templates_index:
+    $ref: './response/ticket_templates/index.yaml'
+  ticket_templates_show:
+    $ref: './response/ticket_templates/show.yaml'
 
   #Marketplace
   marketplace_apps:

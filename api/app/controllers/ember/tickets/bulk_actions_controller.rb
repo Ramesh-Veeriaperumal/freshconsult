@@ -35,7 +35,7 @@ module Ember
         cname_params[:ids] = @ticket_ids
         fetch_objects
         validate_items_to_update
-        update_in_background? ? update_tickets_in_background : execute_bulk_update_action
+        update_tickets_in_background
         render_bulk_action_response(bulk_action_succeeded_items, bulk_action_errors)
       end
 
@@ -45,6 +45,7 @@ module Ember
         @delegator_klass = 'ScenarioDelegator'
         return unless validate_delegator(@item, scenario_id: cname_params[:scenario_id])
         fetch_objects
+        validate_scenario_execution if actions_contain_close?(@delegator.va_rule)
         execute_scenario
         render_bulk_action_response(bulk_action_succeeded_items, bulk_action_errors)
       end
@@ -72,12 +73,6 @@ module Ember
         def execute_bulk_link
           items = @items - @items_failed
           ::Tickets::LinkTickets.perform_async(related_ticket_ids: items.map(&:display_id), tracker_id: params[:tracker_id]) if items.present?
-        end
-
-        # code duplicated - validate_params method of API Tickets controller
-        def fetch_ticket_fields_mapping
-          @ticket_fields = Account.current.ticket_fields_from_cache
-          @name_mapping = TicketsValidationHelper.name_mapping(@ticket_fields) # -> {:text_1 => :text}
         end
 
         def validate_update_params(item, validation_context)
@@ -163,8 +158,38 @@ module Ember
           end
         end
 
+        def actions_contain_close?(va_rule)
+          status_action = va_rule.action_data.find {|x| x.symbolize_keys!; x[:name] == 'status'} 
+          status_action && close_action?(status_action[:value].to_i)
+        end
+
+        def close_action? status
+          [CLOSED, RESOLVED].include? status.to_i
+        end
+
+        def validate_scenario_execution
+          @items_failed = []
+          @validation_errors = {}
+          fetch_ticket_fields_mapping
+          va_rule = @delegator.va_rule
+          @items.each do |item| 
+            unless validate_rule_execution(va_rule, item)
+              @items_failed << item
+              @validation_errors.merge!(item.display_id => @delegator)
+            end
+          end
+        end
+
+        def validate_rule_execution(va_rule, item)
+          va_rule.trigger_actions_for_validation(item, api_current_user)
+          delegator_hash = { ticket_fields: @ticket_fields, statuses: @statuses, request_params: [:status] }
+          @delegator = TicketBulkUpdateDelegator.new(item, delegator_hash)
+          @delegator.valid?
+        end
+
         def execute_scenario
-          ::Tickets::BulkScenario.perform_async(ticket_ids: @items.map(&:display_id), scenario_id: cname_params[:scenario_id])
+          return unless bulk_action_succeeded_items.present?
+          ::Tickets::BulkScenario.perform_async(ticket_ids: bulk_action_succeeded_items, scenario_id: cname_params[:scenario_id])
         end
 
         def fetch_objects(items = scoper)
@@ -173,17 +198,6 @@ module Ember
 
         def tickets_to_update
           @tkts_to_update ||= @items - @items_failed
-        end
-
-        def execute_bulk_update_action
-          if @params_hash[:properties].present?
-            tickets_to_update.each do |item|
-              @item = item
-              assign_attributes_for_update
-              @items_failed << item unless @item.update_ticket_attributes(cname_params.except(:ids))
-            end
-          end
-          queue_replies(tickets_to_update - @items_failed)
         end
 
         # code duplicated - update method of API Tickets controller
@@ -199,10 +213,6 @@ module Ember
           @item.assign_description_html(cname_params[:ticket_body_attributes]) if cname_params[:ticket_body_attributes]
         end
 
-        def update_in_background?
-          tickets_to_update.length > ApiTicketConstants::BACKGROUND_THRESHOLD
-        end
-
         def update_tickets_in_background
           if @params_hash[:properties].present?
             ::Tickets::BulkTicketActions.perform_async(params_for_background_job(tickets_to_update, @params_hash[:properties]))
@@ -214,7 +224,7 @@ module Ember
           tags = properties_hash.delete(:tags)
           args = { 'action' => :update_multiple, 'helpdesk_ticket' => properties_hash }
           args['ids'] = items.map(&:display_id)
-          args['disable_notification'] = @skip_close_notification if @skip_close_notification
+          args['disable_notification'] = @skip_close_notification.to_s if @skip_close_notification
           args[:tags] = tags.join(',') unless tags.nil?
           ParamsHelper.assign_and_clean_params(ApiTicketConstants::PARAMS_MAPPINGS, args['helpdesk_ticket'])
           args

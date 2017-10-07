@@ -1,11 +1,8 @@
 class ContactField < ActiveRecord::Base
-
-  include DataVersioning::Model
-  
   self.primary_key = :id
 
   include DataVersioning::Model
-  
+
   serialize :field_options
 
   belongs_to_account
@@ -18,7 +15,7 @@ class ContactField < ActiveRecord::Base
 
   scope :customer_visible, :conditions => { :visible_in_portal => true }
   scope :customer_editable, :conditions => { :editable_in_portal => true }
-  
+
   DEFAULT_FIELD_PROPS = {
     :default_name                 => { :type => 1,  :dom_type => :text, :label => 'user.full_name' },
     :default_job_title            => { :type => 2,  :dom_type => :text, :label => 'user.title' },
@@ -41,9 +38,9 @@ class ContactField < ActiveRecord::Base
                               :custom_dropdown, :custom_phone_number, :custom_url, :custom_date ]
 
   DB_COLUMNS = {
-    :varchar_255  => { :column_name => "cf_str",      :column_limits => 70 }, 
-    :integer_11   => { :column_name => "cf_int",      :column_limits => 20 }, 
-    :date_time    => { :column_name => "cf_date",     :column_limits => 10 }, 
+    :varchar_255  => { :column_name => "cf_str",      :column_limits => 70 },
+    :integer_11   => { :column_name => "cf_int",      :column_limits => 20 },
+    :date_time    => { :column_name => "cf_date",     :column_limits => 10 },
     :tiny_int_1   => { :column_name => "cf_boolean",  :column_limits => 10 },
     :text         => { :column_name => "cf_text",     :column_limits => 10 }
   }
@@ -75,11 +72,11 @@ class ContactField < ActiveRecord::Base
 
   def toggle_multiple_companies_feature
     if self.name == "company_name" && self.multiple_companies_contact
-      if Account.current.features?(:multiple_user_companies)
-        Account.current.features.multiple_user_companies.destroy
+      if Account.current.multiple_user_companies_enabled?
+        Account.current.revoke_feature(:multiple_user_companies)
         Users::RemoveSecondaryCompanies.perform_async
       else
-        Account.current.features.multiple_user_companies.create        
+        Account.current.add_feature(:multiple_user_companies)
       end
     end
   end

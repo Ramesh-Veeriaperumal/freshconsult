@@ -49,7 +49,7 @@ module TicketFiltersHelper
     }
     if filter.is_a?(Helpdesk::Filters::CustomTicketFilter)
       basic_pattern.merge!(custom_filter_attributes(filter))
-      basic_pattern[:visibility] = filter.accessible.attributes.slice('visibility', 'group_id')
+      basic_pattern[:visibility] = filter.accessible.attributes.slice('visibility', 'group_id', 'user_id')
       basic_pattern[:query_hash] = query_hash_pattern_output(filter.data[:data_hash])
     else
       basic_pattern[:default] = true
@@ -66,6 +66,8 @@ module TicketFiltersHelper
       default: false,
       order_by: filter.data[:wf_order],
       order_type: filter.data[:wf_order_type],
+      created_at: filter[:created_at].try(:utc).try(:iso8601),
+      updated_at: filter[:updated_at].try(:utc).try(:iso8601),
       per_page: 30
     }
   end

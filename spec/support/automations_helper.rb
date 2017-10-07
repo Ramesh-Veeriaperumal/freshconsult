@@ -2,10 +2,10 @@ module AutomationsHelper
   include VAConfig
 
   def create_scn_automation_rule (params={})
-    va_rule=FactoryGirl.build(:scn_automation, :name=>"created by #{Faker::Name.name}", :description=>Faker::Lorem.sentence(2),
-                          :action_data => [{:name=> "priority", :value=>"3"}],
-                          :account_id=>params[:account_id],
-                          :rule_type=>VAConfig::SCENARIO_AUTOMATION)
+    va_rule=FactoryGirl.build(:scn_automation, name: "created by #{Faker::Name.name}", description: Faker::Lorem.sentence(2),
+                          action_data: params[:action_data] || [{ name: 'priority', value: '3' }],
+                          account_id: params[:account_id],
+                          rule_type: VAConfig::SCENARIO_AUTOMATION)
     va_rule.save(validate: false)
     accessible=va_rule.create_accessible(:access_type=>params[:accessible_attributes][:access_type])
     if(params[:accessible_attributes][:access_type]== Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:groups])

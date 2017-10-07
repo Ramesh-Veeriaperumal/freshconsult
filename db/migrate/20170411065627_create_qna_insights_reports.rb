@@ -1,7 +1,7 @@
 class CreateQnaInsightsReports < ActiveRecord::Migration
   shard :all
   def up
-    create_table :qna_insights_reports do |t|
+    create_table :qna_insights_reports, :force => true do |t|
       t.column      :user_id, "bigint unsigned"
       t.column      :account_id, "bigint unsigned"
       t.text        :recent_questions

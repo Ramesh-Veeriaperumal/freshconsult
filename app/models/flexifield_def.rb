@@ -21,6 +21,15 @@ class FlexifieldDef < ActiveRecord::Base
   TEXT_COL_TYPES  = ["text",    "paragraph"]
   NUM_COL_TYPES   = ["number",  "decimal"]
 
+  CUSTOM_FF_ALIAS_TYPES = [:boolean, :integer]
+
+  CUSTOM_FF_ALIAS_TYPES.each do |type|
+    define_method "#{type}_ff_aliases" do
+      flexifield_column_hash =  self.account.flexifields.columns_hash
+      ff_alias_column_mapping.map { |key, value| key if flexifield_column_hash[value].type == type }.compact
+    end
+  end
+
   def to_ff_field ff_alias
     idx = nil
     ffa = "#{ff_alias}"
@@ -45,11 +54,6 @@ class FlexifieldDef < ActiveRecord::Base
 
   def ff_alias_column_mapping
     @mapping ||= flexifield_def_entries.each_with_object({}) { |ff_def_entry, hash| hash[ff_def_entry.flexifield_alias] = ff_def_entry.flexifield_name }
-  end
-
-  def boolean_ff_aliases
-    flexifield_column_hash =  self.account.flexifields.columns_hash
-    ff_alias_column_mapping.map { |key, value| key if flexifield_column_hash[value].type == :boolean }.compact
   end
   
   def non_text_ff_aliases

@@ -99,8 +99,8 @@ module Ember
                   bad_request_error_pattern('visibility_id', :not_included, list: ::Admin::UserAccess::VISIBILITY_NAMES_BY_KEY.keys.join(','))])
     end
 
-    def test_create_with_empty_query_hash
-      filter_params = sample_filter_input_params
+    def test_create_with_empty_query_hash      
+      filter_params = sample_filter_input_params      
       new_name = "#{Faker::Name.name} - #{Time.now.to_s}"
       filter_params[:name] = new_name
       post :create, construct_params({ version: 'private' },  filter_params.merge(query_hash: []))

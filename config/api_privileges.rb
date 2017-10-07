@@ -10,12 +10,12 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/scenario_automation", only: [:index]
     resource :"ember/canned_response_folder", only: %i(index show)
     resource :"ember/canned_response", only: %i(show index search)
-    resource :"ember/ticket", only: %i(index show create execute_scenario spam latest_note)
+    resource :"ember/ticket", only: %i(index show create execute_scenario spam latest_note create_child_with_template)
     resource :"ember/tickets/bulk_action", only: %i(bulk_execute_scenario bulk_link)
     resource :"ember/tickets/associate", only: [:link, :unlink, :associated_tickets, :prime_association]
     resource :"ember/ticket_filter", only: [:index, :show, :create, :update, :destroy]
     resource :"ember/attachment", only: [:create]
-    resource :"ember/freshcaller/setting", only: [:desktop_notification]
+    resource :"ember/freshcaller/setting", only: %i[index desktop_notification redirect_url]
     resource :"ember/conversation", only: %i(create ticket_conversations full_text)
     resource :"ember/subscription"
     resource :"ember/ticket_field", only: [:index]
@@ -23,7 +23,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/twitter_handles", only: %i(index check_following)
     resource :"ember/marketplace_app", only: [:index]
 
-    resource :"ember/agent", only: %i(index me achievements)
+    resource :"ember/agent", only: %i(index me achievements update)
     resource :"ember/group", only: [:index]
     resource :"ember/survey", only: [:index]
     resource :"ember/dashboard/activity", only: [:index]
@@ -33,6 +33,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/dashboard/quest", only: %i(index)
     resource :"ember/contact_field", only: [:index]
     resource :"ember/company_field", only: [:index]
+    resource :"ember/livechat_setting", only: [:index]
     resource :"ember/installed_application"
     resource :"ember/integrated_resource"
     resource :"ember/integrated_user"
@@ -41,10 +42,11 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/search/autocomplete", only: %i(requesters agents companies tags)
     resource :"ember/leaderboard", only: [:agents]
     resource :"ember/product_feedback"
+    resource :"ember/ticket_template", only: %i(show index)
   end
 
   manage_account do
-    resource :"ember/admin/onboarding", only: %i[update_activation_email resend_activation_email]
+    resource :"ember/admin/onboarding", only: %i[update_activation_email resend_activation_email update_channel_config]
   end
 
   reply_ticket do
@@ -72,7 +74,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   view_contacts do
-    resource :"ember/contact", only: %i(index show send_invite bulk_send_invite)
+    resource :"ember/contact", only: %i[index show send_invite bulk_send_invite]
     resource :"ember/company", only: %i(index show activities)
     resource :"ember/search/customer", only: [:results]
   end
@@ -83,13 +85,12 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/contacts/merge", only: [:merge]
     resource :"ember/customer_import", only: [:index, :create]
     resource :"ember/search/autocomplete", only: [:companies]
-
     resource :"ember/tickets/requester", only: [:update]
   end
 
   manage_users do
-    resource :"ember/contact", only: %i(make_agent assume_identity)
-    resource :"ember/agent", only: [:show]
+    resource :"ember/contact", only: %i[make_agent assume_identity]
+    resource :"ember/agent", only: %i[show create_multiple]
   end
 
   delete_topic do
@@ -98,7 +99,7 @@ Authority::Authorization::PrivilegeList.build do
 
   manage_availability do
     resource :"ember/group", only: [:show]
-    resource :"ember/agent", only: [:update]
+    resource :"ember/agent", only: %i[update]
   end
 
   delete_ticket do
@@ -106,8 +107,11 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   admin_tasks do
+    resource :"ember/admin/onboarding", only: %i[update_channel_config]
     resource :"ember/contact", only: [:update_password]
     resource :'ember/trial_widget', only: %i[index sales_manager]
+    resource :'ember/contact_password_policy', only: [:index]
+    resource :'ember/agent_password_policy', only: [:index] # Not using it now.
   end
 
   edit_ticket_properties do

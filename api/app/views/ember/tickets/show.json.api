@@ -1,13 +1,11 @@
 response_hash = @item.to_hash
-full_company_hash = @item.full_company_hash
+company_hash = @item.company_hash
 
-[:stats, :conversations, :deleted, :freshfone_call, :fb_post, :tweet, :ticket_topic].each do |attribute|
+[:requester, :stats, :conversations, :deleted, :freshfone_call, :fb_post, :tweet, :ticket_topic].each do |attribute|
   value = @item.send(attribute)
   response_hash.merge!(attribute => value) if value
 end
-requester_hash = @item.requester(true)
-response_hash[:requester] = requester_hash if requester_hash
-response_hash.merge!(company: full_company_hash) if full_company_hash
+response_hash.merge!(company: company_hash) if company_hash
 response_hash.merge!(attachments: @item.attachments_hash)
 response_hash.merge!(cloud_files: @item.cloud_files_hash)
 response_hash.merge!(meta: @item.meta)

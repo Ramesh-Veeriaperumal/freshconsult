@@ -72,7 +72,7 @@ module Freshcaller
 
       def create_recording_file(account, message)
         if message.message_type == Freshfone::MessageMethods::MESSAGE_TYPES[:recording] && message.recording_url.present?
-          @url = message.recording_url
+          @url = "#{message.recording_url}.mp3"
           @file_name = File.basename(@url)
         else
           attachment = account.attachments.where(id: message.attachment_id).first

@@ -44,3 +44,9 @@
       items:
         type: string
         format: byte
+    parent_template_id:
+      type: integer
+    child_template_ids:
+      type: array
+      items:
+        type: integer

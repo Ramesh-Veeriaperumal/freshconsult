@@ -1,11 +1,21 @@
-$font-family-normal:  'Proxima Nova Rg', "Helvetica Neue", Helvetica, Arial !default; 
-$font-family-bold:        'Proxima Nova bold', "Helvetica Neue", Helvetica, Arial !default;
-$font-family-semibold:    'Proxima Nova sbold', "Helvetica Neue", Helvetica, Arial !default;
+$font-stack-sans: -apple-system,
+  BlinkMacSystemFont,
+  "Segoe UI",
+  "Roboto",
+  "Oxygen-Sans",
+  "Ubuntu",
+  "Helvetica Neue",
+  Arial,
+  sans-serif !default;
+
+$font-family-normal:   $font-stack-sans !default;
+$font-family-bold:     $font-stack-sans !default;
+$font-family-semibold: $font-stack-sans !default;
 
 $text-color: #183247;
 $app-primary-color: #02b875;
 $app-selected-background-color: #f3f5f7;
-$link-color: #239cff;
+$link-color: #448ee1;
 $link-hover: #004080;
 $hover-bg-color: #f8f9fa;
 $normal-font-size: 13px;
@@ -17,6 +27,11 @@ $caret-down-color: #989e9d;
 
 a {
     color: $link-color;
+
+	&:hover{
+		text-decoration: underline;
+		color: $link-color;
+	}
 }
 
 body.community{
@@ -253,8 +268,9 @@ body.community{
 		}
 		.comm-item-main {
 			.comm-item-title {
-    			font-size: 13px;
-			    padding-bottom: 0px;
+				font-size: 14px;
+				font-weight: 500;
+				padding-bottom: 0px;
 			    .muted{
 			    	color: $link-color;
 			    }
@@ -263,7 +279,7 @@ body.community{
 				}
     		}
     		.comm-item-details {
-			    font-size: 11px;
+			    font-size: 12px;
 			    .hover-link{
 			    	color: $text-color;
 			    	&:hover{

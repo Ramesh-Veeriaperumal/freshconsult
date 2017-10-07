@@ -102,6 +102,7 @@ module Ember
         end
 
         def contact_validation
+          cname_params[:contact][:action] = :requester_update
           ContactValidation.new(cname_params[:contact], @contact, string_request_params?)
         end
 

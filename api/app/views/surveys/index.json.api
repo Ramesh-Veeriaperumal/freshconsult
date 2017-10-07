@@ -1,3 +1,8 @@
+
+# Whenever we change the Structure (add/modify/remove keys),
+# we will have to modify the CURRENT_VERSION constant in the controller
+
+
 JSON.generate(@items.map do |item|
   response_hash = {
     id: item.id,

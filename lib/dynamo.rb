@@ -18,6 +18,24 @@ class Dynamo
 		:s => [String]
 	}
 
+  DYNAMO_THROUGHPUT = {
+    read: 10,
+    write: 10,
+    inactive: 1
+  }.freeze
+
+  def self.read_capacity
+    DYNAMO_THROUGHPUT[:read]
+  end
+
+  def self.write_capacity
+    DYNAMO_THROUGHPUT[:write]
+  end
+
+  def self.inactive_capacity
+    DYNAMO_THROUGHPUT[:inactive]
+  end
+
 	def self.hash_key(name, type)
 		@hash = { :name => name.to_s, :type => assign_type(type)}
 	end

@@ -1,0 +1,12 @@
+title: data
+type: object
+description: Agents Partial Success Response
+properties:
+  succeeded:
+    type: array
+    items:
+      $ref: '#/definitions/agent'
+  failed:
+    type: array
+    items:
+      $ref: '#/definitions/agents_bulk_action_error'

@@ -32,18 +32,18 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
   end
 
   def test_launchparty
-    Account.current.launch(:falcon)
+    Account.current.add_feature(:falcon)
     Account.current.reload
     get :index, controller_params(version: 'private')
     assert_response 200
 
-    Account.current.rollback(:falcon)
+    Account.current.revoke_feature(:falcon)
     Account.current.reload
 
     get :index, controller_params(version: 'private')
     assert_response 404
 
-    Account.current.launch(:falcon)
+    Account.current.add_feature(:falcon)
     Account.current.reload
   end
 end

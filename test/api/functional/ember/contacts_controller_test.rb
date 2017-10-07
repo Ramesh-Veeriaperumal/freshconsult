@@ -1,4 +1,5 @@
 require_relative '../../test_helper'
+
 module Ember
   class ContactsControllerTest < ActionController::TestCase
     include UsersTestHelper
@@ -18,7 +19,7 @@ module Ember
       @private_api = true
       return if @@initial_setup_run
 
-      @account.features.multiple_user_companies.create
+      @account.add_feature(:multiple_user_companies)
       @account.reload
 
       20.times do
@@ -111,7 +112,7 @@ module Ember
 
     def test_create_contact_with_default_company
       company_ids = Company.first(2).map(&:id)
-      @account.features.multiple_user_companies.destroy
+      @account.revoke_feature(:multiple_user_companies)
       @account.reload
       post :create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
                                                              email: Faker::Internet.email,
@@ -124,13 +125,13 @@ module Ember
       assert User.last.user_companies.find_by_default(true).company_id == company_ids[0]
       assert User.last.user_companies.find_by_default(true).client_manager == true
       assert User.last.user_companies.where(default: false) == []
-      @account.features.multiple_user_companies.create
+      @account.add_feature(:multiple_user_companies)
       @account.reload
     end
 
     def test_update_contact_with_default_company
       company_ids = Company.first(2).map(&:id)
-      @account.features.multiple_user_companies.destroy
+      @account.revoke_feature(:multiple_user_companies)
       @account.reload
       sample_user = add_new_user(@account)
       company_ids = Company.first(2).map(&:id)
@@ -144,7 +145,7 @@ module Ember
       assert User.last.user_companies.find_by_default(true).company_id == company_ids[0]
       assert User.last.user_companies.find_by_default(true).client_manager == true
       assert User.last.user_companies.where(default: false) == []
-      @account.features.multiple_user_companies.create
+      @account.add_feature(:multiple_user_companies)
       @account.reload
     end
 
@@ -168,6 +169,37 @@ module Ember
       assert User.last.user_companies.find_by_default(true).client_manager == true
       assert User.last.user_companies.find_by_default(false).company_id == company_ids[1]
       assert User.last.user_companies.find_by_default(false).client_manager == true
+    end
+
+    def test_create_contact_with_mandatory_company_field
+      company_ids = Company.first(2).map(&:id)
+      company_field = Account.current.contact_form.default_contact_fields.find { |cf| cf.name == "company_name" }
+      company_field.update_attributes({:required_for_agent => true})
+      post :create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
+                                                             email: Faker::Internet.email,
+                                                             company: {
+                                                               id: company_ids[0],
+                                                               view_all_tickets: true
+                                                             })
+      assert_response 201
+      match_json(private_api_contact_pattern(User.last))
+      assert User.last.user_companies.find_by_default(true).company_id == company_ids[0]
+      assert User.last.user_companies.find_by_default(true).client_manager == true
+      company_field.update_attributes({:required_for_agent => false})
+    end
+
+    def test_error_in_create_contact_with_mandatory_company
+      company_ids = Company.first(2).map(&:id)
+      company_field = Account.current.contact_form.default_contact_fields.find { |cf| cf.name == "company_name" }
+      company_field.update_attributes({:required_for_agent => true})
+      post :create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
+                                                             email: Faker::Internet.email)
+      assert_response 400
+      match_json([bad_request_error_pattern(
+        'company_id', :datatype_mismatch,
+        expected_data_type: 'key/value pair')]
+      )
+      company_field.update_attributes({:required_for_agent => false})
     end
 
     def test_quick_create_contact_with_company_name
@@ -256,7 +288,7 @@ module Ember
 
     def test_error_in_create_contact_without_feature
       company_ids = Company.first(2).map(&:id)
-      @account.features.multiple_user_companies.destroy
+      @account.revoke_feature(:multiple_user_companies)
       @account.reload
       sample_user = add_new_user(@account)
       company_ids = Company.first(2).map(&:id)
@@ -277,7 +309,7 @@ module Ember
                                             code: :inaccessible_field,
                                             attribute: 'other_companies',
                                             feature: :multiple_user_companies)])
-      @account.features.multiple_user_companies.create
+      @account.add_feature(:multiple_user_companies)
       @account.reload
     end
 
@@ -552,6 +584,14 @@ module Ember
       sample_user = add_new_user(@account)
       get :show, controller_params(version: 'private', id: sample_user.id)
       match_json(private_api_contact_pattern(sample_user.reload))
+      assert_response 200
+    end
+
+    # Show deleted agent(comes from contact show endpoint)
+    def test_show_a_deleted_agent
+      sample_user = Account.current.all_users.where(deleted: true, helpdesk_agent: true).first
+      get :show, controller_params(version: 'private', id: sample_user.id)
+      match_json(deleted_agent_pattern(sample_user.reload))
       assert_response 200
     end
 
@@ -941,6 +981,7 @@ module Ember
       contact = add_new_user(@account, deleted: false, active: true)
       assume_contact = add_new_user(@account, deleted: false, active: true)
       Account.any_instance.stubs(:has_feature?).with(:assume_identity).returns(false)
+      Account.any_instance.stubs(:has_feature?).with(:falcon).returns(true)
       put :assume_identity, construct_params({ version: 'private', id: assume_contact.id }, nil)
       Account.any_instance.unstub(:has_feature?)
       assert_response 400
