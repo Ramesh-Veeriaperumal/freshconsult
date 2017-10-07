@@ -513,7 +513,7 @@ left: 88%;
 
 .edit_helpdesk_ticket_field, .edit_company_field {
    .custom-field-form {
-     @include margin-left(60px); 
+     @include margin-left(60px);
      @include margin-right(10px);
      margin-top: 20px;
      margin-bottom: 20px
@@ -524,7 +524,7 @@ left: 88%;
 #body-container {
   .update-section, .outdate-section {
     @include border-radius(3px);
-    
+
     .btn {
       border: none;
       box-shadow: none;
@@ -533,7 +533,7 @@ left: 88%;
       width: 100%;
       @include margin-left(0px);
 
-      .outdate-label { 
+      .outdate-label {
         color: $app-solution-outdated-label;
       }
 
@@ -545,7 +545,7 @@ left: 88%;
     .outdate-uptodate:hover {
       background-color: $app-btn-text-light;
     }
-  
+
     .sloading.loading-small {
       @include float(left);
       @include margin-left(10%);
@@ -558,7 +558,7 @@ left: 88%;
 }
 
 
-body.community { 
+body.community {
   .language_symbol.outdated {
     color: $app-solution-language-outdated;
   }
@@ -688,35 +688,35 @@ body.community {
 
 
 
-.nav-tabs{
-  li{
+.nav-tabs {
+  li {
+    &.active {
+      a {
+        border: 0;
+        border-bottom: 3px solid $app-primary-btn-background;
+        color: $app-primary-btn-background;
 
-    &.active{
-      a{
-      border: 0px;
-      border-bottom: 3px solid $app-primary-btn-background;
-      color: $app-primary-btn-background;
-
-      &:hover{
-      border:0px;
-      border-bottom: 3px solid rgba(2, 184, 117, 1);
-      background-color: #fff;
-      color: rgba(2, 184, 117, 1);
-      }
-
+        &:hover{
+          border: 0;
+          border-bottom: 3px solid rgba(2, 184, 117, 1);
+          background-color: #fff;
+          color: rgba(2, 184, 117, 1);
+        }
       }
     }
-    a{
+
+    a {
       border: 0px;
       background-color: transparent;
       color: #6f7c87;
       border-bottom: 0px;
        &:hover{
-      border:0px;
-      border-bottom: 3px solid rgba(2, 184, 117, 0.3);
-      background-color: #fff;
-      color: rgba(2, 184, 117, 0.6);
-      }
+        text-decoration: none;
+        border:0px;
+        border-bottom: 3px solid rgba(2, 184, 117, 0.3);
+        background-color: #fff;
+        color: rgba(2, 184, 117, 0.6);
+       }
     }
 
   }
@@ -1510,11 +1510,11 @@ div[class$="-toggle"]{
 
 .reports-title{
   .ticket-view-cancel{
-    &:after{
+    &:after {
       font-style: normal;
-          top: 0px;
+      top: 0px;
+    }
   }
-}
 }
 
 .helpkit-glance .glance-chart-wrapper .glance-chart .solution-article {
@@ -1545,7 +1545,6 @@ div[class$="-toggle"]{
 }
 
 /* admin pages changes */
-
 .customer-portal {
   .controls.multiple-check {
     margin-left: 318px;
@@ -1558,6 +1557,22 @@ div[class$="-toggle"]{
   }
 }
 
+.customer-portal .portal-section .captcha {
+  margin-left: 144px;
+}
+
+.customer-portal .portal-section .controls {
+  margin-left: 350px;
+}
+
+.customer-portal .portal-section .control-label {
+  width: 350px;
+}
+
+.customer-portal .portal-section .heading {
+  border-top: 1px solid #ebeef0;
+  padding: 15px 0 15px;
+}
 
 @import "falcon-community";
 @import "falcon-reports";
