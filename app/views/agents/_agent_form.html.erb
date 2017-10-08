@@ -115,7 +115,7 @@
     				</li>
     			<% end %>
   		    <% if feature?(:multi_language) %>
-            <% if current_account.falcon_ui_enabled?(current_user) and current_user.id == @agent.user_id%>
+            <% if current_account.falcon_ui_enabled?(current_user) %>
               <li class="control-group">
                 <%= label(:user, :language, t('account.language'), :class => "control-label") %>
                 <div class="controls  margin-bottom">
@@ -124,7 +124,7 @@
                     <i class="info help-icon-language ficon-help-icon fsize-24" size="14"></i>
                   </a>
                   <%= render partial:'ui/falcon_languages_alert' %>
-                </div>                
+                </div>
               </li>
             <% else %>
     					<li class="control-group">
