@@ -115,12 +115,25 @@
     				</li>
     			<% end %>
   		    <% if feature?(:multi_language) %>
-  					<li class="control-group">
-  						<%= label(:user, :language, t('account.language'), :class => "control-label") %>
-  						<div class="controls  margin-bottom">
-  							<%= select(:user, :language, I18n.available_locales_with_name , {:selected => @agent.user.language.to_sym()}, {:class => "input-xlarge select2"})%>
-  						</div>
-  					</li>
+            <% if current_account.falcon_ui_enabled?(current_user) and current_user.id == @agent.user_id%>
+              <li class="control-group">
+                <%= label(:user, :language, t('account.language'), :class => "control-label") %>
+                <div class="controls  margin-bottom">
+                  <%= select(:user, :language, I18n.available_locales_with_name, {:selected => @agent.user.language.to_sym()}, {:disabled => true})%>
+                  <a href="javascript:toggleMessage()">
+                    <i class="info help-icon-language ficon-help-icon fsize-24" size="14"></i>
+                  </a>
+                  <%= render partial:'ui/falcon_languages_alert' %>
+                </div>                
+              </li>
+            <% else %>
+    					<li class="control-group">
+    						<%= label(:user, :language, t('account.language'), :class => "control-label") %>
+    						<div class="controls  margin-bottom">
+    							<%= select(:user, :language, I18n.available_locales_with_name , {:selected => @agent.user.language.to_sym()}, {:class => "input-xlarge select2"})%>
+    						</div>
+    					</li>
+            <% end %>
   	     	<% end %>
   				<li class="control-group">
   					<%= label(:agent, :signature_html, t('agent.signature'), :class => "control-label") %>
