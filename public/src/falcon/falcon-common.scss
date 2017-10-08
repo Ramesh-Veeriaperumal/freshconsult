@@ -1574,6 +1574,14 @@ div[class$="-toggle"]{
   padding: 15px 0 15px;
 }
 
+.help-icon-language {
+  color: #797979;
+  font-size: 20px;
+  position: relative;
+  top: 1px;
+  left: 4px;
+}
+
 @import "falcon-community";
 @import "falcon-reports";
 @import "falcon-livechat";

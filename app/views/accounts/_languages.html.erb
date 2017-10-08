@@ -1,7 +1,7 @@
 <div class="control-group">
-	<%= portal.label :language, 
-				"#{@account.multilingual? ? t('account.languages') : t('account.primary_language')}", 
-				:class => "control-label"  
+	<%= portal.label :language,
+				"#{@account.multilingual? ? t('account.languages') : t('account.primary_language')}",
+				:class => "control-label"
 	%>
 	<div class="controls">
 		<% if @account.multilingual? %>
@@ -43,15 +43,22 @@
 			</div>
 		<% else %>
 			<div class="span3">
-				<%= portal.select :language, 
-							I18n.available_locales_with_name , 
-							{
-								:selected =>  @account.main_portal.language.to_sym() 
-							},
-							{
-								:class => "select2 input-medium"
-							}
-				%>
+				<% if current_account.falcon_ui_enabled?(current_user) %>
+					<%= select(:user, :language, I18n.available_locales_with_name, {}, {:disabled => true})%>
+					<a href="javascript:toggleMessage()">
+						<i class="info help-icon-language ficon-help-icon fsize-24" size="14"></i>
+					</a>
+				<% else %>
+					<%= portal.select :language,
+								I18n.available_locales_with_name ,
+								{
+									:selected =>  @account.main_portal.language.to_sym()
+								},
+								{
+									:class => "select2 input-medium"
+								}
+					%>
+				<% end %>
 			</div>
 			<% if @account.multilingual_available? %>
 				<div class="span4 enable-link">
@@ -63,3 +70,12 @@
 		<% end %>
 	</div>
 </div>
+
+<% if current_account.falcon_ui_enabled?(current_user) %>
+	<div class="control-group">
+		<div class="control-label"></div>
+		<div class="controls">
+			<%= render partial:'ui/falcon_languages_alert' %>
+		</div>
+	</div>
+<% end %>
