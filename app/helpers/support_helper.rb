@@ -14,17 +14,17 @@ module SupportHelper
   # and ignore all rails helpers in portal_view
   include Liquid::StandardFilters
 
-	FONT_INCLUDES = { "Source Sans Pro" => "Source+Sans+Pro:regular,italic,700,700italic",
+	FONT_INCLUDES = { "Source Sans Pro" => "Source+Sans+Pro:200,300,regular,italic,600,700,700italic",
 					  "Droid Sans" => "Droid+Sans:regular,700",
-					  "Lato" => "Lato:regular,italic,900,900italic",
+					  "Lato" => "Lato:100,300,regular,italic,700,900,900italic",
 					  "Arvo" => "Arvo:regular,italic,700,700italic",
 					  "Droid Serif" => "Droid+Serif:regular,italic,700,700italic",
-					  "Oswald" => "Oswald:regular,700",
+					  "Oswald" => "Oswald:300,regular,700",
 					  "Open Sans Condensed" => "Open+Sans+Condensed:300,300italic,700",
-					  "Open Sans" => "Open+Sans:regular,italic,700,700italic",
-					  "Merriweather" => "Merriweather:regular,700",
-					  "Roboto Condensed" => "Roboto+Condensed:regular,italic,700,700italic",
-					  "Roboto" => "Roboto:regular,italic,700,700italic",
+					  "Open Sans" => "Open+Sans:300,regular,italic,600,700,700italic",
+					  "Merriweather" => "Merriweather:300,regular,700,900",
+					  "Roboto Condensed" => "Roboto+Condensed:300,regular,italic,700,700italic",
+					  "Roboto" => "Roboto:300,regular,italic,500,700,700italic",
 					  "Varela Round" => "Varela+Round:regular",
 					  "Poppins" => "Poppins:regular,600,700",
 					  # "Helvetica Neue" => "Helvetica+Neue:regular,italic,700,700italic"
