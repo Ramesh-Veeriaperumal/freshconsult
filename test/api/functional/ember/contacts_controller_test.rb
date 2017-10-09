@@ -140,8 +140,10 @@ module Ember
                                       id: company_ids[0],
                                       view_all_tickets: true
                                     })
-      assert_response 201
-      match_json(private_api_contact_pattern(User.last))
+      assert_response 200
+      pattern = private_api_contact_pattern(User.last)
+      pattern.delete(:other_companies)
+      match_json(pattern)
       assert User.last.user_companies.find_by_default(true).company_id == company_ids[0]
       assert User.last.user_companies.find_by_default(true).client_manager == true
       assert User.last.user_companies.where(default: false) == []
@@ -406,12 +408,14 @@ module Ember
                                       }
                                     ])
       assert_response 200
-      match_json(private_api_contact_pattern(sample_user.reload))
+      pattern = private_api_contact_pattern(sample_user.reload)
+      pattern.delete(:other_companies)
+      match_json(pattern)
       assert sample_user.user_companies.find_by_default(true).company_id == company_ids[1]
       assert sample_user.user_companies.find_by_default(true).client_manager == true
     end
 
-    def test_update_contact_with_default_company
+    def test_update_contact_with_default_company_2
       sample_user = add_new_user(@account)
       company_ids = Company.first(2).map(&:id)
       put :update, construct_params({ version: 'private', id: sample_user.id },
@@ -426,7 +430,9 @@ module Ember
                                       }
                                     ])
       assert_response 200
-      match_json(private_api_contact_pattern(sample_user.reload))
+      pattern = private_api_contact_pattern(sample_user.reload)
+      pattern.delete(:other_companies)
+      match_json(pattern)
       assert sample_user.user_companies.find_by_default(true).company_id == company_ids[0]
       assert sample_user.user_companies.find_by_default(true).client_manager == true
       assert sample_user.user_companies.find_by_default(false).company_id == company_ids[1]
@@ -449,7 +455,9 @@ module Ember
                                       }
                                     ])
       assert_response 200
-      match_json(private_api_contact_pattern(sample_user.reload))
+      pattern = private_api_contact_pattern(sample_user.reload)
+      pattern.delete(:other_companies)
+      match_json(pattern)
       company_1 = Company.find_by_name(comp_name1)
       company_2 = Company.find_by_name(comp_name2)
       refute company_1.nil?
@@ -475,7 +483,9 @@ module Ember
                                       }
                                     ])
       assert_response 200
-      match_json(private_api_contact_pattern(sample_user.reload))
+      pattern = private_api_contact_pattern(sample_user.reload)
+      pattern.delete(:other_companies)
+      match_json(pattern)
       assert sample_user.user_companies.find_by_default(true).company_id == company_ids[0]
       assert sample_user.user_companies.find_by_default(true).client_manager == false
       assert sample_user.user_companies.find_by_default(false).company_id == company_ids[1]
@@ -498,7 +508,9 @@ module Ember
                                       }
                                     ])
       assert_response 200
-      match_json(private_api_contact_pattern(sample_user.reload))
+      pattern = private_api_contact_pattern(sample_user.reload)
+      pattern.delete(:other_companies)
+      match_json(pattern)
       assert sample_user.user_companies.find_by_default(true).company_id == company_ids[0]
       assert sample_user.user_companies.find_by_default(true).client_manager == false
       assert sample_user.user_companies.find_by_default(false).company_id == company_ids[1]
@@ -516,7 +528,9 @@ module Ember
                                     },
                                     other_companies: [])
       assert_response 200
-      match_json(private_api_contact_pattern(sample_user.reload))
+      pattern = private_api_contact_pattern(sample_user.reload)
+      pattern.delete(:other_companies)
+      match_json(pattern)
       assert sample_user.user_companies.find_by_default(true).company_id == company_ids[0]
       assert sample_user.user_companies.find_by_default(true).client_manager == false
       assert sample_user.user_companies.find_by_default(false).nil?
