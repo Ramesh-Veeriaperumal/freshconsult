@@ -7,4 +7,8 @@ module FalconHelperMethods
     end
   end
 
+  def account_and_user_in_en?
+    current_account.language == "en" && current_user && current_user.language == "en"
+  end
+
 end

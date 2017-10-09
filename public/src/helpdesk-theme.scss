@@ -149,3 +149,7 @@ a.new_ticket:hover, .new_ticket_button:hover { color: lighten($tab_ctxt_color, 3
 	border-color:#a4a4a4;
 	text-shadow: 0 0 0 rgba(0, 0, 0, 0);
 }
+
+#ui_toggle {
+  color: $header_ctxt_color;
+}
