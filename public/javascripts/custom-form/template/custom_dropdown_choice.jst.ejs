@@ -44,11 +44,14 @@
 		</span>
 	<% } %>
 	<% if (item.field_type == 'default_status' && item.id != 2 && item.id != 4 && item.id != 5) { %>
-		<input rel="toggle" type="checkbox" 
-				name="stop_sla_timer" 
-				data-inverted=false 
-				<% if(item.stop_sla_timer){ %> checked="checked" <% } %> 
-				value=true />
+		<input
+      rel="toggle"
+      type="checkbox"
+      name="stop_sla_timer"
+      data-inverted=true
+      <% if(item.stop_sla_timer){ %> checked="checked" <% } %>
+      value=true
+    />
 	<% } %>
 	<% if(isDisabled === 'delete_choice_btn' && item.field_type == "default_status" && shared_ownership_enabled) {%>
 
