@@ -37,6 +37,7 @@ module Ember
 
     def create
       assign_protected
+      return render_request_error(:recipient_limit_exceeded, 429) if recipients_limit_exceeded?
       delegator_hash = { ticket_fields: @ticket_fields, custom_fields: cname_params[:custom_field],
                          attachment_ids: @attachment_ids, shared_attachments: shared_attachments,
                          parent_child_params: parent_child_params, parent_attachment_params: parent_attachment_params }

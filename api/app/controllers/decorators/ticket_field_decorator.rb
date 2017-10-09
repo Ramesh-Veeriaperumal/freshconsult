@@ -2,6 +2,8 @@ class TicketFieldDecorator < ApiDecorator
   # Whenever we change the Structure (add/modify/remove keys),
   # we will have to modify the CURRENT_VERSION constant in the controller
 
+  include Helpdesk::Ticketfields::TicketStatus
+
   delegate :id, :default, :description, :label, :position, :required_for_closure, :has_section?,
            :field_type, :required, :required_in_portal, :label_in_portal, :editable_in_portal, :visible_in_portal,
            :level, :ticket_field_id, :picklist_values, to: :record
@@ -136,7 +138,7 @@ class TicketFieldDecorator < ApiDecorator
       # TODO-EMBER This is a cached method. Not expected work properly in production
       Helpdesk::TicketStatus.statuses_list(Account.current).map do |status|
         status.slice(:customer_display_name, :stop_sla_timer, :deleted , :group_ids).merge({
-          label: status[:name],
+          label: default_status?(status[:status_id]) ? DEFAULT_STATUSES[status[:status_id]] : status[:name],
           value: status[:status_id],
           default: default_status?(status[:status_id])
         })
@@ -144,7 +146,7 @@ class TicketFieldDecorator < ApiDecorator
     end
 
     def default_status?(status_id)
-      Helpdesk::Ticketfields::TicketStatus::DEFAULT_STATUSES.keys.include?(status_id)
+      DEFAULT_STATUSES.keys.include?(status_id)
     end
 
     def default_product_choices

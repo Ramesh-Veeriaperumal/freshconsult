@@ -5,6 +5,10 @@ class TicketsController < ApiApplicationController
   include TicketConcern
   include SearchHelper
   include Search::Filters::QueryHelper
+  include Helpdesk::SpamAccountConstants
+  include Redis::RedisKeys
+  include Redis::OthersRedis
+
   decorate_views(decorate_objects: [:index, :search])
 
   before_filter :ticket_permission?, only: [:destroy]
@@ -12,6 +16,7 @@ class TicketsController < ApiApplicationController
 
   def create
     assign_protected
+    return render_request_error(:recipient_limit_exceeded, 429) if recipients_limit_exceeded?
     ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields, custom_fields: params[cname][:custom_field])
     if !ticket_delegator.valid?(:create)
       render_custom_errors(ticket_delegator, true)
@@ -71,8 +76,13 @@ class TicketsController < ApiApplicationController
   protected
 
     def requires_feature(feature)
-      return if !compose_email? || Account.current.compose_email_enabled?
-      render_request_error(:require_feature, 403, feature: feature.to_s.titleize)
+      return if !compose_email?
+      if Account.current.compose_email_enabled?
+        return render_request_error(:outbound_limit_exceeded, 429) if trial_outbound_limit_exceeded?
+        return render_request_error(:access_denied, 403) unless Account.current.verified?
+      else
+        render_request_error(:require_feature, 403, feature: feature.to_s.titleize)
+      end
     end
 
   private
@@ -327,6 +337,30 @@ class TicketsController < ApiApplicationController
       neg_conditions = [Helpdesk::Filters::CustomTicketFilter.deleted_condition(true), Helpdesk::Filters::CustomTicketFilter.spam_condition(true)]
       conditions = params[:search_conditions].collect { |s_c| { 'condition' => s_c.first, 'operator' => 'is_in', 'value' => s_c.last.join(',') } }
       Search::Tickets::Docs.new(conditions, neg_conditions).records('Helpdesk::Ticket', es_options)
+    end
+
+    def trial_outbound_limit_exceeded?
+      if ((current_account.id > get_spam_account_id_threshold) && (current_account.subscription.trial?) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)))
+        outbound_per_day_key = OUTBOUND_EMAIL_COUNT_PER_DAY % {:account_id => current_account.id }
+        total_outbound_per_day = get_others_redis_key(outbound_per_day_key).to_i
+        return total_outbound_per_day >= 5
+      end
+      return false
+    end
+
+    def recipients_limit_exceeded?
+      if ((current_account.id > get_spam_account_id_threshold) && (current_account.subscription.trial?) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)) && (Freemail.free?(current_account.admin_email)))
+        if (@item.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email] || @item.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone])
+          return max_cc_threshold_crossed?
+        end
+      end
+      return false
+    end
+
+    def max_cc_threshold_crossed?
+      # In all cases requester or email will be single. So checking cc_emails count makes sense
+      cc_emails = @cc_emails[:cc_emails]
+      return (cc_emails.count >= get_trial_account_max_to_cc_threshold)
     end
 
     # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.
