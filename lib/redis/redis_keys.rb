@@ -361,6 +361,7 @@ module Redis::RedisKeys
 
 
   ZENDESK_IMPORT_APP_KEY = "ZENDESK_IMPORT_APP"
+  DISABLE_PORTAL_NEW_THEME = "DISABLE_PORTAL_NEW_THEME"
 
 
 	def newrelic_begin_rescue

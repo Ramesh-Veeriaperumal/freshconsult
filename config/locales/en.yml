@@ -86,7 +86,7 @@ en:
   reload: Reload
   any: Any
   or: or
-  go_to_new_ui: "Switch to the new look"
+  go_to_new_ui: "Switch to the Mint experience"
   email_failure:
     dropped:
       summary_error_text: "Message dropped - Invalid or problematic address"
@@ -6169,7 +6169,7 @@ en:
     created_view: Company was successfully created. <a href="%{company_url}" data-pjax="#body-container"> View company. </a>
     info9: Freshdesk will automatically associate Contacts with this company if email ids contain these domains
     sla_policy_name: SLA policy
-    name: Company
+    name: Company Name
     new: New company
     edit: Edit company
     quick_company: Quick company
@@ -11342,10 +11342,10 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         message: Before you get started, here's a 2 minute video overview of your helpdesk.
         forward_link: Let’s get started
     falcon_invite:
-      greetings: We've got an upgrade
-      invite_msg: Hey %{user_name}, we can't wait to show you the all new Freshdesk. We've upgraded to a modern <br/>experience which is faster, easier to use and crafted with love.
-      post_script: "PS: You can switch back any time you like!"
-      try_new_look: TRY THE NEW LOOK
+      greetings: Say hello to Freshdesk Mint
+      invite_msg: We've upgraded to a modern experience which is fresher, faster and easier to use.<br/>Freshdesk Mint is crafted with love, just for you!
+      post_script: "PS: You can switch back any time you like."
+      try_new_look: TRY IT OUT
       maybe_later: MAYBE LATER 
   multifile_attachments:
     label: "Attach files"
@@ -11410,5 +11410,5 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     ticket:
       email:
         subject: You lost my cat!
-        body: "<p>Dear Customer Relations,</p><br /><p>I recently flew Upper Class from Heathrow to JFK and whilst some bits were great,one bit in particular was really really bad.I flew with my cat* and you froze** it and it died*** which made me sad****.</p><br /><p>* I use the word 'cat' in the sense of 'suitcase'.\n<br />** I use the word 'froze' in the sense of 'lost'.\n<br />*** I use the word 'died' in the sense of 'didn't turn up for 2 days'.\n<br />**** I use the word 'sad' correctly.</p><br /><p>We all lose things. I once went for a pint with the late Keith Floyd and he lost an entire week.Another time I worked out an equation for cold fusion and gave it to my cat on a memory stick,which she lost. Keith Floyd, me, my cat, and you are all only human, so these things happen.What separates humans from super humans is the way they deal with these hiccups.</p><br /><p>I won't bore you with the details. The only question is how can we make it right?</p><br /><p>Yours ever,\n<br />James Dean</p><p><hr></p><p>P.S. This is a sample email that’s been converted into a ticket by Freshdesk.<a onclick='%{onclick}' href='javascript:void(0)'> See how you can start converting email</a> from customers into tickets in your helpdesk.</p>"
-        reply: "<p>Dear Mr James Dean (Like the Actor),</p><br /><p>Thank you for your email detailing your unfortunate events following the delay of your luggage. Please accept my sincerest apologies for this, and for the unexpected inconveniences caused as a result. I do hope that despite this, you had a pleasant trip.</p><br /><p>Thankfully, the following morning, it was me that you spoke to,and I advised you that your cat hadbeen found and was on its way to you. On a serious note though James,I'm happy to give you a Tier Point. I hope you cherish it. Like it's Magic.I have also added the mileage and remaining tier points from your most recentflight with us, which means that you are now a Gold Member (not like the movie).</p><br /><p>Please once again accept my sincerest apologies. This experience is not typical of us, and I hope it has not discouraged you from travelling with us again, as it would certainlybe a pleasure to welcome you back on board.</p><br /><p>Yours sincerely,\n<br />The Lady in Red\n<br />Baggage Services Advisor</p>"
+        body: "<p>Dear Customer Relations,</p><br /><p>I recently flew Upper Class from Heathrow to JFK and whilst some bits were great, one bit in particular was really really bad. I flew with my cat* and you froze** it and it died*** which made me sad****.</p><br /><p>* I use the word 'cat' in the sense of 'suitcase'.\n<br />** I use the word 'froze' in the sense of 'lost'.\n<br />*** I use the word 'died' in the sense of 'didn't turn up for 2 days'.\n<br />**** I use the word 'sad' correctly.</p><br /><p>We all lose things. I once went for a pint with the late Keith Floyd and he lost an entire week. Another time I worked out an equation for cold fusion and gave it to my cat on a memory stick, which she lost. Keith Floyd, me, my cat, and you are all only human, so these things happen. What separates humans from super humans is the way they deal with these hiccups.</p><br /><p>I won't bore you with the details. The only question is how can we make it right?</p><br /><p>Yours ever,\n<br />James Dean</p><p><hr></p><p>P.S. This is a sample email that’s been converted into a ticket by Freshdesk. <a href='https://support.freshdesk.com/support/solutions/articles/37541-forward-and-convert-your-support-emails-to-tickets-in-freshdesk' target='_blank'>See how you can start converting emails</a> from customers into tickets in your helpdesk.</p>"
+        reply: "<p>Dear Mr James Dean (Like the Actor),</p><br /><p>Thank you for your email detailing your unfortunate events following the delay of your luggage. Please accept my sincerest apologies for this, and for the unexpected inconveniences caused as a result. I do hope that despite this, you had a pleasant trip.</p><br /><p>Thankfully, the following morning, it was me that you spoke to, and I advised you that your cat had been found and was on its way to you. On a serious note though James, I'm happy to give you a Tier Point. I hope you cherish it. Like it's Magic. I have also added the mileage and remaining tier points from your most recent flight with us, which means that you are now a Gold Member (not like the movie).</p><br /><p>Please once again accept my sincerest apologies. This experience is not typical of us, and I hope it has not discouraged you from travelling with us again, as it would certainly be a pleasure to welcome you back on board.</p><br /><p>Yours sincerely,\n<br />The Lady in Red\n<br />Baggage Services Advisor</p>"

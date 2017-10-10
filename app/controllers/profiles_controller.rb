@@ -107,8 +107,8 @@ private
           @user.update_attributes(params[:user])        
           format.html { 
             flash[:notice] = 'Your profile has been updated successfully.'
-            if request.xhr?
-              head 200
+            if request.xhr? || current_account.falcon_ui_enabled?(current_user)
+              render :nothing => true
             else
               redirect_to(edit_profile_url)
             end
@@ -117,7 +117,7 @@ private
           format.nmobile {render :json => { :success => true }}
       else
         format.html { 
-          if request.xhr?
+          if request.xhr? || current_account.falcon_ui_enabled?(current_user)
             head :unprocessable_entity
           else
             redirect_to(edit_profile_url, flash: { error: activerecord_error_list(@profile.errors) })

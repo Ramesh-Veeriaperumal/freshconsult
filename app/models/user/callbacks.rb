@@ -79,7 +79,7 @@ class User < ActiveRecord::Base
   end
 
   def set_falcon_ui_preference
-    new_pref = {:falcon_ui => true}
+    new_pref = {:falcon_ui => (language == "en")}
     self.merge_preferences = { :agent_preferences => new_pref }
   end
 

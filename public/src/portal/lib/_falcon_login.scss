@@ -1,6 +1,9 @@
 .login-form input.special{ width: 100%; }
 .login-form{ 
-	width:65%; @include float(left); max-width: 400px; @include padding-right(40px); border-right: 1px solid $box-border; 
+	width:65%; 
+	@include float(left); 
+	max-width: 400px; 
+	@include padding-right(40px); 
 	h2{
 		font-size: 20px;
     	font-weight: 600
@@ -12,7 +15,9 @@
 .alt-login-button{ 
 	width:32%;
 	@include float(right);
-	@include min-height(230px);	
+	@include min-height(300px);	
+	@include border-left(1px solid #ebeef0);
+    @include padding-left(18px);
 	@if $rtl { @include box-shadow(#fff 1px 0 0); }
 	@else { @include box-shadow(#fff -1px 0 0); }
 	h2{
@@ -73,13 +78,13 @@
 .login-c-wrapper{
 	margin: 8% 0;
 }
-div#login-page-wrapper {
-    display: inline-block;
-    @include box-shadow(0 1px 2px 0 rgba(63,63,68,0.15));
-    background-color: $gray;
-}
 section#login-container,section#signup-container{
 	padding: 20px;
+	&:after{
+		content: '';
+	    display: table;
+	    clear: both;
+	}
 }
 
 section#signup-container{

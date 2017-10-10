@@ -20,7 +20,7 @@
 	<!-- Notification Messages -->
 	{{ page_message }}
 
-	{% if portal.current_page != "user_signup" and portal.current_page != "submit_ticket" and portal.current_page !="user_login" %}
+	{% if portal.current_page != "user_signup" and portal.current_page != "submit_ticket" %}
 	<div class="c-wrapper">		
 		{{ content_for_layout }}
 	</div>
@@ -29,10 +29,6 @@
 		<div class="new_ticket_page">
 		{{ content_for_layout }}
 		</div>
-	</div>
-	{% elsif portal.current_page == "user_login" %}
-	<div class="login-c-wrapper">
-		{{ content_for_layout }}
 	</div>
 	{% else %}
 	<div class="signup-page">

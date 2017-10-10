@@ -59,7 +59,7 @@ class Portal::Template < ActiveRecord::Base
       {
         :bg_color => "#f3f5f7", 
         :header_color => "#ffffff", 
-        :help_center_color => "#ffffff", 
+        :help_center_color => "#f3f5f7", 
         :footer_color => "#183247",
         :tab_color => "#ffffff", 
         :tab_hover_color => "#ffffff",
@@ -98,7 +98,11 @@ class Portal::Template < ActiveRecord::Base
 
   # Merge with default params for specific portal
   def get_portal_pref
-      pref = self.portal.preferences.presence || self.account.main_portal.preferences
+      if Account.current && Account.current.falcon_support_portal_theme_enabled?
+        pref = {:bg_color=>"#f3f5f7", :header_color=>"#ffffff", :tab_color=>"#ffffff", :personalized_articles=>true}
+      else
+        pref = self.portal.preferences.presence || self.account.main_portal.preferences
+      end
       # Selecting only bg_color, tab_color, header_color from the portals preferences
       Hash[*[:bg_color, :tab_color, :header_color].map{ |a| [ a, pref[a] ] }.flatten]    
   end

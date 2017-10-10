@@ -20,7 +20,7 @@ class ThemeController < ApplicationController
 	private
 
 		def scoper_cache_key
-			if current_account.falcon_support_portal_theme_enabled?
+			if current_account.falcon_support_portal_theme_enabled? && defined?(self.class::THEME_TIMESTAMP_FALCON).present?
 				[self.class::THEME_TIMESTAMP_FALCON, scoper.id, scoper.updated_at.to_i].join("/") if(scoper.respond_to?(:updated_at))
 			else
 			[self.class::THEME_TIMESTAMP, scoper.id, scoper.updated_at.to_i].join("/") if(scoper.respond_to?(:updated_at))
@@ -70,10 +70,10 @@ class ThemeController < ApplicationController
 			_output << theme_settings(scoper.preferences) if(scoper.respond_to?(:preferences))
 
 			# Appending Data from base css file 
-			if current_account.falcon_support_portal_theme_enabled?
+			if current_account.falcon_support_portal_theme_enabled? && defined?(self.class::THEME_URL_FALCON).present?
 				_output << read_scss_file(self.class::THEME_URL_FALCON) if(File.exists?(self.class::THEME_URL_FALCON))
 			else
-			_output << read_scss_file(self.class::THEME_URL) if(File.exists?(self.class::THEME_URL))
+				_output << read_scss_file(self.class::THEME_URL) if(File.exists?(self.class::THEME_URL))
 			end
 
 			# Appending custom css if it is a portal theme
