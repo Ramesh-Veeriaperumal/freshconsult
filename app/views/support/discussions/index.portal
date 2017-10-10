@@ -1,4 +1,4 @@
-<section class="main content rounded-6 min-height-on-desktop">
+<section class="main content rounded-6 min-height-on-desktop fc-community-content">
 	<h2 class="heading">{% translate portal.community_forums %}</h2>
 	<div class="start-topic">{{ portal | link_to_start_topic }}</div>
 	{% for category in portal.forum_categories %}
@@ -22,7 +22,7 @@
 	{% endfor %}
 </section>
 
-<section class="sidebar content rounded-6">
+<section class="sidebar content rounded-6 fc-topics-content">
 	{% if portal.recent_popular_topics.size > 0 %}
 		<section class="cs-g-c topic-list">
 			<div class="list-lead">{% translate portal.popular_topics %}</div>

@@ -67,3 +67,7 @@ features/cucumber_statistics
 
 #byebug
 .byebug_history
+
+#intellij
+.idea/
+*.iml

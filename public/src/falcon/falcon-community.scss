@@ -1,11 +1,21 @@
-$font-family-normal:  'Proxima Nova Rg', "Helvetica Neue", Helvetica, Arial !default; 
-$font-family-bold:        'Proxima Nova bold', "Helvetica Neue", Helvetica, Arial !default;
-$font-family-semibold:    'Proxima Nova sbold', "Helvetica Neue", Helvetica, Arial !default;
+$font-stack-sans: -apple-system,
+  BlinkMacSystemFont,
+  "Segoe UI",
+  "Roboto",
+  "Oxygen-Sans",
+  "Ubuntu",
+  "Helvetica Neue",
+  Arial,
+  sans-serif !default;
+
+$font-family-normal:   $font-stack-sans !default;
+$font-family-bold:     $font-stack-sans !default;
+$font-family-semibold: $font-stack-sans !default;
 
 $text-color: #183247;
 $app-primary-color: #02b875;
 $app-selected-background-color: #f3f5f7;
-$link-color: #239cff;
+$link-color: #448ee1;
 $link-hover: #004080;
 $hover-bg-color: #f8f9fa;
 $normal-font-size: 13px;
@@ -14,22 +24,24 @@ $hover-text-color: #6f7c87;
 $border-color: #d3dbda;
 $close-icon-color: #5a6670;
 $caret-down-color: #989e9d;
+$app-btn-background: #fff;
+$bread-crumbs-active: #000;
+$list-selected: #fffef7;
+$list-option-selected: #ebedf0;
+$app-icon-color: #6f7c87;
 
-a {
-    color: $link-color;
-}
 
 body.community{
 	.community-wrapper {
-	    background-color: #fff;
+	    background-color: $app-btn-background;
 	}
 	/* style changes in sticky header */
 	&.single {
 		#inner .pagearea{
-			background: #fff;
+			background: $app-btn-background;
 		}
 		.ficon-cube:before {
-		    color: #fff;
+		    color: $app-btn-background;
 		}
 	}
 	.pagearea{
@@ -95,8 +107,8 @@ body.community{
 		    }
 		}
 		.dropdown-menu {
+			  right: 0px;
 		    min-width: 100px;
-		    right: 0px;
 		    border-radius: 2px;
 		    left: 8px;
 		}
@@ -253,8 +265,9 @@ body.community{
 		}
 		.comm-item-main {
 			.comm-item-title {
-    			font-size: 13px;
-			    padding-bottom: 0px;
+				font-size: 14px;
+				font-weight: 500;
+				padding-bottom: 0px;
 			    .muted{
 			    	color: $link-color;
 			    }
@@ -263,7 +276,7 @@ body.community{
 				}
     		}
     		.comm-item-details {
-			    font-size: 11px;
+			    font-size: 13px;
 			    .hover-link{
 			    	color: $text-color;
 			    	&:hover{
@@ -378,8 +391,8 @@ body.community{
 		    background-color: #f8f9fa;
 		}
 		& > div:not(.avatar-text):not(.text) {
-		    padding: 10px;
-		    background: #fff;
+		    padding-left: 10px;
+		    padding-top: 5px;
 		}
 		.avatar-text{
         	width: $avatar-thumb-size;
@@ -466,7 +479,7 @@ body.community{
 	        border-bottom: 10px solid #dadfe3;
 		}
 		.follower-close {
-			line-height: 16px;
+			line-height: 13px;
 		}
 	}
 	/* end of followers tooltip customisation */
@@ -482,7 +495,7 @@ body.community{
 	}
 
 	.sol-visibility, .comm-item-details .visibilty-label ~ span {
-	    font-family: $font-family-bold;
+		font-family: $font-family-bold;
 	}
 	.comm-item-title {
 		font-family: $font-family-semibold;
@@ -492,3 +505,228 @@ body.community{
 	}
 }
 
+/* solutions alignment issues */
+
+body.community.solutions {
+
+	.title-dropdown .dropdown-menu {
+		.selected {
+			padding-right: 30px;
+			color: $app-primary-color;
+			background: $list-option-selected;
+		}
+		.ticksymbol {
+			left: 80%;
+		}
+
+		li a:hover {
+			background: $list-option-selected;
+		}
+	}
+
+	.sticky_left {
+		.heading.active {
+			border-bottom: 3px solid $app-primary-color;
+			color : $app-primary-color;
+		}
+
+		.heading {
+		  color: $app-icon-color;
+			padding-bottom: 8px;
+		}
+	      
+	  .heading:hover {
+	    border-bottom : 3px solid $app-primary-color;
+	  }
+	}
+
+	.visible-to-selected, .drop-right {
+	 	padding : 2px 21px 2px 6px;
+	}
+
+	#sticky_redactor_toolbar {
+		.fr-toolbar {
+			left: 12px;
+		}
+	}  
+
+	.is_stuck #sticky_redactor_toolbar{
+			.fr-toolbar {
+				left: 0;
+			}
+		}
+
+	#solution-properties {
+		.select2-choices {
+			background-color: $app-btn-background !important;
+		}
+	}
+
+	.sticky_redactor_toolbar .redactor_toolbar {
+	  left: 9px;
+	}
+
+	.comm-item.active {
+		background-color: $list-selected;
+	}
+
+	.draft-list-item .multilingual_draft {
+		margin-top: 7px;
+	}
+
+	/* icon */
+	.sol-details-left {
+		margin-top: 10px;
+		.ficon-category  {
+			line-height: 30px;
+		}
+	}
+
+	.solutions-widget {
+		.sidebar-list-item {
+			font-size: 12px;
+		}
+
+		.widget-filter.active:before {
+			right: -2px;
+			padding-right: 10px;
+		}
+
+		.dropdown-menu {
+			min-width: 132px;
+
+			li a:hover {
+				color: $app-primary-color;
+				background: $list-option-selected;
+			}
+
+			li:before {
+				color: $app-primary-color;
+				font-weight: normal;
+			}
+
+			li.active a {
+				background : $list-option-selected;
+				color: $app-primary-color;
+			}
+		}
+	}
+
+	.sol-details-right {
+		.action-btns-bar {
+			padding-top: 9px;
+		}
+
+		.title-dropdown  {
+			.dropdown-menu {
+				right: inherit;
+			}
+			.dropdown .dropdown-toggle .change-portal	{
+	      font-size: 14px;
+			}
+		}
+	}
+
+	/* Solution details*/
+	.solution-details .sidebar-section {
+		.title-wrapper .leads {
+		    font-size: 16px;
+		}
+	} 
+	/*break crumbs*/
+	/* modals */
+	.modal {
+		.modal-body {
+	    padding: 25px 10px 20px 20px;
+      
+      input#solution_folder_meta_primary_folder_name {
+				font-size: 12px;
+			}
+			input#create-category-text {
+				font-size: 12px;
+				padding-left: 4px;
+			}
+		}
+	}
+
+	.select2-search-choice-close::after{
+			top: -4px;
+	}
+}
+
+
+	body.community.moderation {
+	.comm-item-main-content {
+	 	.label {
+			font-size: 12px;
+		}
+		.post-desc {
+			font-size :14px;
+		}
+	}
+}
+
+body.community {
+	.redactor_btns_box #redactor_btn_modal_close {
+		margin-right: 8px;
+	}
+
+	.muted {
+		font-size: 14px;
+	}
+
+	.modal {
+		.delete-confirm-warning-message .info {
+			color: $app-btn-background;
+		}
+
+		.delete-confirm-form {
+			margin-bottom: 8px;
+		}
+	}
+	.breadcrumb {
+		li:last-child {
+			color: $bread-crumbs-active;
+		}
+
+	}
+
+	.sticky_left {
+		.all-post-heading {
+			a.active, a.selected-tab {
+				border-bottom: 3px solid $app-primary-color;
+				color : $app-primary-color;
+			}
+
+			a {
+				color: $app-icon-color;
+				padding-bottom: 17px;
+			}
+	      
+	  	a:hover {
+	    	border-bottom : 3px solid $app-primary-color;
+	  	}
+
+	  	a.active, a.selcted-tab:hover {
+	    	border-bottom : 3px solid $app-primary-color;
+	  	}
+		}
+	}
+	  /* dropdown arrows */
+	.visible-to-btn .nav-trigger {
+	  &:before {
+	  	top: 12px;
+	  	left: 88%;
+	  }
+
+	  &:after {
+	  	top: 7px;
+	  	left: 75%;
+	  }
+	}
+
+	.select2-result-with-children > .select2-result-label:hover {
+		color: $bread-crumbs-active;
+	}
+	  
+}

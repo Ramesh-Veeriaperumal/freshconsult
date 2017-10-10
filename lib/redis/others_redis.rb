@@ -130,4 +130,9 @@ module Redis::OthersRedis
   def remove_members_others_sorted_set_rank(key, start, stop)
     newrelic_begin_rescue { $redis_others.perform_redis_op("zremrangebyrank", key, start, stop) }  	
   end
+
+  def get_multiple_redis_keys(*keys)
+    newrelic_begin_rescue { $redis_others.perform_redis_op("mget", *keys) }
+  end
+
 end

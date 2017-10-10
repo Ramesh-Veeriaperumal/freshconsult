@@ -2,6 +2,8 @@ class SpamCounter < Dynamo
 
 	include SpamCounterMethods
 
+  DYNAMO_READ_CAPACITY = 15
+
 	def self.table_name
 		"spam_counter_#{Rails.env[0..3]}_#{Time.now.utc.strftime('%Y_%m')}"
 	end
@@ -54,4 +56,8 @@ class SpamCounter < Dynamo
 	def self.unpublished_count
 		count(0, "unpublished")
 	end
+
+  def self.read_capacity
+    DYNAMO_READ_CAPACITY
+  end
 end

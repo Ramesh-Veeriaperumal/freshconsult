@@ -1,8 +1,19 @@
-@import "../fonts/proximanova-fonts";
+// @import "../fonts/proximanova-fonts";
+@import "../pattern/lib/rtl-mixins";
 
-$font-family-normal:  'Proxima Nova Rg', "Helvetica Neue", Helvetica, Arial !default; 
-$font-family-bold:        'Proxima Nova bold', "Helvetica Neue", Helvetica, Arial !default;
-$font-family-semibold:    'Proxima Nova sbold', "Helvetica Neue", Helvetica, Arial !default;
+$font-stack-sans: -apple-system,
+  BlinkMacSystemFont,
+  "Segoe UI",
+  "Roboto",
+  "Oxygen-Sans",
+  "Ubuntu",
+  "Helvetica Neue",
+  Arial,
+  sans-serif !default;
+
+$font-family-normal:   $font-stack-sans !default;
+$font-family-bold:     $font-stack-sans !default;
+$font-family-semibold: $font-stack-sans !default;
 
 $border-color: #dadfe3;
 $app-btn-text-light: #ffffff;
@@ -20,6 +31,11 @@ $app-primary-btn-border: #03a86b;
 $app-primary-btn-hover: #00a367;
 $app-primary-btn-disabled: #b7e5d6;
 
+$app-solution-outdated-label: #239cff;
+$app-solution-outdated-label-hover: #004080;
+$app-solution-language-outdated: #DE3431;
+
+
 $app-primary-color: #02b875;
 
 $app-selected-background-color: #f3f5f7;
@@ -32,17 +48,34 @@ $select-sprite-bg-url: "/assets/plugins/select2/select2.png";
 $fields-font-size: 13px;
 $app-delete-bg-color: #ff5959;
 
-.header{
+$survey-options-color: (
+  strongly-disagree: #ff5959,
+  some-what-disagree: #fa7543,
+  disagree: #ffaa59,
+  satisfaction-neutral: #ffd012,
+  agree: #9cd807,
+  some-what-agree: #6bb437,
+  strongly-agree: #189e00);
+
+
+.header,
+#footer {
   display: none;
 }
 
-.wrapper .wrapper-shadow{
+.wrapper {
+  width:100%;
+  padding:0;
+}
+
+.wrapper .wrapper-shadow {
   background: #fff;
+
   &:before {
-      display: none;
+    display: none;
   }
 }
-/* tabs */ 
+/* tabs */
 .nav-tabs{
   li{
 
@@ -50,10 +83,10 @@ $app-delete-bg-color: #ff5959;
       a{
       border: 0px;
       border-bottom: 3px solid $app-primary-btn-background;
-      color: $app-primary-btn-background; 
-      
+      color: $app-primary-btn-background;
+
       &:hover{
-      border:0px; 
+      border:0px;
       border-bottom: 3px solid rgba(2, 184, 117, 1);
       background-color: #fff;
       color: rgba(2, 184, 117, 1);
@@ -67,7 +100,7 @@ $app-delete-bg-color: #ff5959;
       color: #6f7c87;
       border-bottom: 0px;
        &:hover{
-      border:0px; 
+      border:0px;
       border-bottom: 3px solid rgba(2, 184, 117, 0.3);
       background-color: #fff;
       color: rgba(2, 184, 117, 0.6);
@@ -95,7 +128,7 @@ $app-delete-bg-color: #ff5959;
       }
       i{
       border-radius: 40px;
-        box-shadow: none;   
+        box-shadow: none;
         &:before{
           position:relative;
           top: 1px;
@@ -108,7 +141,7 @@ $app-delete-bg-color: #ff5959;
       background: $app-primary-btn-background;
       }
     }
-  }  
+  }
 }
 
 .user_comp .uc_actions{
@@ -116,7 +149,7 @@ $app-delete-bg-color: #ff5959;
   padding: 1px 4px;
     background: $app-delete-bg-color;
   &.add_pad{
-   padding: 1px 5px; 
+   padding: 1px 5px;
     background: $app-primary-color;
   }
 }
@@ -221,7 +254,7 @@ li.active > a:focus{
               &:hover{
               &:before{
               color: $app-primary-color;
-              } 
+              }
               }
             }
 
@@ -293,7 +326,7 @@ li.active > a:focus{
       top: 9px;
     }
       }
-      } 
+      }
   }
 
 
@@ -324,7 +357,7 @@ li.active > a:focus{
 
         li{
           padding: 4px;
-          
+
           a{
           padding: 6px 10px;
           font-size: $fields-font-size;
@@ -348,7 +381,7 @@ li.active > a:focus{
               &:hover{
               &:before{
               color: $app-primary-color;
-              } 
+              }
               }
             }
             &:hover{
@@ -384,8 +417,8 @@ li.active > a:focus{
         border-width: 7px;
         margin-left: -7px;
       }
-    
-  } 
+
+  }
 
 .solutions {
   .solution-bulk-actions {
@@ -465,26 +498,85 @@ left: 88%;
         background: #f8f9fa;
         table{
           border-top: solid 1px $border-color;
-          border-bottom: solid 1px $border-color;         
+          border-bottom: solid 1px $border-color;
         }
   }
-} 
+}
 
 
 .btn-primary, .btn-primary:hover{
   background-color: $app-primary-btn-background;
-  border: solid 1px $app-primary-btn-border;  
+  border: solid 1px $app-primary-btn-border;
   color: #fff;
 
 }
 
 
 
-.single{ 
-  #inner{ 
+.single{
+  #inner{
     .pagearea {
       background: #fff;
     }
+  }
+}
+
+.edit_helpdesk_ticket_field, .edit_company_field {
+   .custom-field-form {
+     @include margin-left(60px);
+     @include margin-right(10px);
+     margin-top: 20px;
+     margin-bottom: 20px
+
+   }
+}
+
+#body-container {
+  .update-section, .outdate-section {
+    @include border-radius(3px);
+
+    .btn {
+      border: none;
+      box-shadow: none;
+      text-transform: none;
+      background-color: $app-btn-text-light;
+      width: 100%;
+      @include margin-left(0px);
+
+      .outdate-label {
+        color: $app-solution-outdated-label;
+      }
+
+      .outdate-label:hover {
+        color: $app-solution-outdated-label-hover;
+      }
+    }
+
+    .outdate-uptodate:hover {
+      background-color: $app-btn-text-light;
+    }
+
+    .sloading.loading-small {
+      @include float(left);
+      @include margin-left(10%);
+    }
+  }
+}
+
+#sectionCancelBtn, #sectionSubmitBtn {
+  margin-bottom: 10px;
+}
+
+
+body.community {
+  .language_symbol.outdated {
+    color: $app-solution-language-outdated;
+  }
+}
+
+.contact_fields_dialog {
+  .field-label {
+    margin-bottom: -7px;
   }
 }
 
@@ -583,7 +675,7 @@ left: 88%;
       span{
         display: none;
       }
-      
+
     }
     .off-label{
       span{
@@ -593,7 +685,7 @@ left: 88%;
 
 
   }
-} 
+}
 
 
 .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active{
@@ -606,35 +698,35 @@ left: 88%;
 
 
 
-.nav-tabs{
-  li{
+.nav-tabs {
+  li {
+    &.active {
+      a {
+        border: 0;
+        border-bottom: 3px solid $app-primary-btn-background;
+        color: $app-primary-btn-background;
 
-    &.active{
-      a{
-      border: 0px;
-      border-bottom: 3px solid $app-primary-btn-background;
-      color: $app-primary-btn-background; 
-      
-      &:hover{
-      border:0px; 
-      border-bottom: 3px solid rgba(2, 184, 117, 1);
-      background-color: #fff;
-      color: rgba(2, 184, 117, 1);
-      }
-
+        &:hover{
+          border: 0;
+          border-bottom: 3px solid rgba(2, 184, 117, 1);
+          background-color: #fff;
+          color: rgba(2, 184, 117, 1);
+        }
       }
     }
-    a{
+
+    a {
       border: 0px;
       background-color: transparent;
       color: #6f7c87;
       border-bottom: 0px;
        &:hover{
-      border:0px; 
-      border-bottom: 3px solid rgba(2, 184, 117, 0.3);
-      background-color: #fff;
-      color: rgba(2, 184, 117, 0.6);
-      }
+        text-decoration: none;
+        border:0px;
+        border-bottom: 3px solid rgba(2, 184, 117, 0.3);
+        background-color: #fff;
+        color: rgba(2, 184, 117, 0.6);
+       }
     }
 
   }
@@ -642,7 +734,7 @@ left: 88%;
 
 textarea:focus, input[type="text"]:focus, input[type="password"]:focus, input[type="datetime"]:focus, input[type="datetime-local"]:focus, input[type="date"]:focus, input[type="month"]:focus, input[type="time"]:focus, input[type="week"]:focus, input[type="number"]:focus, input[type="email"]:focus, input[type="url"]:focus, input[type="search"]:focus, input[type="tel"]:focus, .uneditable-input:focus{
        box-shadow: 0 0 2px 0 rgba(2, 184, 117, 0.3), inset 0 1px 2px 0 rgba(0, 0, 0, 0.1);
-      border-color:rgba(2, 184, 117, 0.5); 
+      border-color:rgba(2, 184, 117, 0.5);
 }
 
 
@@ -657,7 +749,7 @@ input[type='radio']
     border-radius: 50%;
     padding: 2px;
     &:hover{
-    border: solid 1px $app-btn-text-disabled;      
+    border: solid 1px $app-btn-text-disabled;
     }
 
 
@@ -709,7 +801,7 @@ input[type='checkbox']
     }
 
     &:hover{
-    border: solid 1px $app-btn-text-disabled;      
+    border: solid 1px $app-btn-text-disabled;
     }
 
     &:checked{
@@ -761,7 +853,7 @@ input[type='checkbox']
     background-image: none;
     }
   }
-} 
+}
 
 
 .select2-container-multi.select2-container-active {
@@ -774,20 +866,20 @@ input[type='checkbox']
 }
 
 
-.select2-container{ 
+.select2-container{
 
 &.inline-block{
 
   &.select2-dropdown-open{
     .select2-choice{
-  
+
   .select2-arrow{
     b::after, b::before{
     display:none;
     }
   }
 
- } 
+ }
   }
 
  .select2-choice{
@@ -803,11 +895,11 @@ input[type='checkbox']
     }
   }
 
- } 
+ }
 }
 
   .select2-choice{
-  border: 1px solid $border-color;  
+  border: 1px solid $border-color;
 
 .select2-arrow{
 
@@ -829,7 +921,7 @@ input[type='checkbox']
       transform: rotate(135deg);
     }
 
-  } 
+  }
 
   }
 }
@@ -855,15 +947,15 @@ input[type='checkbox']
       }
     }
   }
-    
-  
+
+
 }
 
 
 
 
 input[type="text"]:not(.color_field):not(.select2-search-field .select2-input) {
-  box-shadow: none;  
+  box-shadow: none;
   border-radius: 3px;
   background-color: $app-btn-text-light;
   border-color:$border-color;
@@ -883,7 +975,7 @@ div.color{
   box-shadow:0 0 0 1px $border-color, 0px 0px 0px $border-color inset;
   font-size: $fields-font-size;
   }
-} 
+}
 
 .form-horizontal textarea{
     height: 80px;
@@ -910,15 +1002,15 @@ select{
     background-image: none;
     background-color:#fff;
   }
-} 
+}
 
 .select2-container{
 
   .select2-choice > .select2-chosen{
-   font-size: $fields-font-size; 
+   font-size: $fields-font-size;
   }
 
-} 
+}
 .select2-drop-active {
     border: 1px solid $border-color;
     border-top: none;
@@ -939,7 +1031,7 @@ select{
     }
 }
 
-.select2-results{ 
+.select2-results{
   .select2-result-label{
     &:hover{
     color: $app-primary-color;
@@ -958,7 +1050,7 @@ div[class$="-toggle"]{
     background-color: $app-btn-hover;
   box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1), 0 0 1px 0 rgba(24, 50, 71, 0.6);
   text-transform: capitalize;
-  padding: 7px $fields-font-size; 
+  padding: 7px $fields-font-size;
   border:0px;
   span[class^='ficon-']{
   padding-right: 8px;
@@ -969,6 +1061,9 @@ div[class$="-toggle"]{
 
 .survey_rating_order {
   .rating_order_select {
+    .dropdown-menu {
+      min-width: 260px;
+    }
       width: 260px;
       .bad_to_good, .good_to_bad{
             width: 147px;
@@ -993,11 +1088,11 @@ div[class$="-toggle"]{
       &:before {
         transform: rotate(135deg);
         right: 9px;
-      }  
+      }
     }
-    
+
     }
-  }  
+  }
 }
 
 .cust-satisfaction-rating{
@@ -1017,7 +1112,7 @@ div[class$="-toggle"]{
       font-size: 13px;
       color: #183247;
     }
-  } 
+  }
 
 .sub-container{
   background-color: #f8f9fa;
@@ -1046,32 +1141,31 @@ div[class$="-toggle"]{
 
 .form-horizontal{
 
-  #survey_rating_options{
-
-
-  .empty-survey-card {
-    border: dashed 1px $app-btn-text-disabled;
-    background-color: #f9f9f9;
-    border-radius: 4px;
-  }
-  
-  textarea{
-    height: 48px;
-    border: solid 1px $border-color;
-    border-top: 4px solid $border-color;
-    border-radius: 4px;
-    overflow: hidden;
-    &.border-strongly-agree {
-      border-top-color: #00b97e;
-    }
-        &.border-satisfaction-neutral  {
-      border-top-color: #ffd012;
-    }
-        &.border-strongly-disagree {
-      border-top-color: $app-delete-bg-color;
-    }
+  .sub-container.cust-feedback-survey {
+    border: 0;
   }
 
+  #survey_rating_options, #question_rating_options{
+
+    .empty-survey-card {
+      border: dashed 1px $app-btn-text-disabled;
+      background-color: #f9f9f9;
+      border-radius: 4px;
+    }
+
+    textarea{
+      height: 48px;
+      border: solid 1px $border-color;
+      border-top: 4px solid $border-color;
+      border-radius: 4px;
+      overflow: hidden;
+
+      @each $opt,$col in $survey-options-color{
+        &.border-#{$opt}{
+          border-top: 5px solid #{$col};
+        }
+      }
+    }
   }
 
 }
@@ -1089,7 +1183,7 @@ div[class$="-toggle"]{
   .seperator{
     display: none;
   }
-  
+
   background: #fff;
   /*box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.14);*/
   /*border: solid 1px $app-btn-disabled;*/
@@ -1221,6 +1315,7 @@ div[class$="-toggle"]{
         padding: 4px 14px;
         text-transform: capitalize;
       }
+
   }
 
   .btn-primary, .uiButton {
@@ -1348,6 +1443,9 @@ div[class$="-toggle"]{
   textarea:focus, input[type="text"]:focus, input[type="password"]:focus, input[type="datetime"]:focus, input[type="datetime-local"]:focus, input[type="date"]:focus, input[type="month"]:focus, input[type="time"]:focus, input[type="week"]:focus, input[type="number"]:focus, input[type="email"]:focus, input[type="url"]:focus, input[type="search"]:focus, input[type="tel"]:focus .uneditable-input:focus{
     border-color: $app-primary-color;
   }
+  select:focus, .btn:focus, input[type="file"]:focus{
+    outline: none;
+  }
   .discussionPanel {
       border: none;
       box-shadow: 0 -1px 0 0 #f1f1f1;
@@ -1375,7 +1473,7 @@ div[class$="-toggle"]{
     border-color: $border-color;
     a{
       color: $app-text-color;
-    } 
+    }
     & > .active > a, & > .active > a:hover{
         color: rgb(2, 184, 117);
         border-bottom-color: rgb(2, 184, 117);
@@ -1424,22 +1522,79 @@ div[class$="-toggle"]{
 
 .reports-title{
   .ticket-view-cancel{
-    &:after{
+    &:after {
       font-style: normal;
-          top: 0px;
+      top: 0px;
+    }
   }
-}
-}
-
-.ticket_fields .custom-field-form .options-wrapper{
-  left:-25px;
 }
 
 .helpkit-glance .glance-chart-wrapper .glance-chart .solution-article {
   padding: 0px 20px 0 0;
 }
 
+.edit_agent .ui-form, form[action*="change_password"] .ui-form {
+    border-color: transparent;
+    background-color: transparent;
+}
+.edit_agent{
+  li.overlabel-wrapper label{
+    line-height: 24px;
+  }
+}
+#email-preview{
+  .modal-body{
+    padding-bottom: 20px;
+  }
+  .modal-footer{
+    padding-bottom: 0px;
+    background: none;
+  }
+}
 
+.sidebar-help{
+  position: relative;
+}
+
+/* admin pages changes */
+.customer-portal {
+  .controls.multiple-check {
+    margin-left: 318px;
+  }
+}
+
+.manage-languages-body {
+  .portal-language-visibility {
+    width: 138px;
+  }
+}
+
+.customer-portal .portal-section .captcha {
+  margin-left: 144px;
+}
+
+.customer-portal .portal-section .controls {
+  margin-left: 350px;
+}
+
+.customer-portal .portal-section .control-label {
+  width: 350px;
+}
+
+.customer-portal .portal-section .heading {
+  border-top: 1px solid #ebeef0;
+  padding: 15px 0 15px;
+}
+
+.help-icon-language {
+  color: #797979;
+  font-size: 20px;
+  position: relative;
+  top: 1px;
+  left: 4px;
+}
 
 @import "falcon-community";
 @import "falcon-reports";
+@import "falcon-livechat";
+@import "falcon-social";

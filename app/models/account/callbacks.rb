@@ -23,7 +23,7 @@ class Account < ActiveRecord::Base
   after_commit ->(obj) { obj.clear_cache }, on: :update
   after_commit ->(obj) { obj.clear_cache }, on: :destroy
   
-  after_commit :enable_searchv2, :enable_count_es, :enable_collab, on: :create
+  after_commit :enable_searchv2, :enable_count_es, :enable_collab, :set_falcon_preferences, on: :create
   after_commit :disable_searchv2, :disable_count_es, on: :destroy
   after_commit :update_sendgrid, on: :create
   after_commit :remove_email_restrictions, on: :update , :if => :account_verification_changed?
@@ -71,7 +71,13 @@ class Account < ActiveRecord::Base
     TEMPORARY_FEATURES.each { |key,value| features.send(key).create  if value}
     ADMIN_CUSTOMER_PORTAL_FEATURES.each { |key,value| features.send(key).create  if value}
     LAUNCHPARTY_FEATURES.select{|k,v| v}.each_key {|feature| self.launch(feature)}
-    #self.launch(:disable_old_sso)
+    # Temp for falcon signup
+    # Enable customer portal by default
+    if falcon_ui_applicable?
+      self.launch(:falcon_signup)           # To track falcon signup accounts
+      self.launch(:falcon_portal_theme)  unless redis_key_exists?(DISABLE_PORTAL_NEW_THEME)   # Falcon customer portal
+      self.launch(:archive_ghost)           # enabling archive ghost feature
+    end
   end
 
   def update_activity_export
@@ -157,6 +163,13 @@ class Account < ActiveRecord::Base
         end
         self.selectable_features_list.each do |feature_name, enable_on_signup|
           bitmap_value = enable_on_signup ? self.set_feature(feature_name) : bitmap_value
+        end 
+        # Temp for falcon signup
+        # Enable falcon UI for helpdesk by default
+        if falcon_ui_applicable?
+          [:falcon, :freshcaller].each do |feature_key|
+            bitmap_value = self.set_feature(feature_key)
+          end
         end
         self.plan_features = bitmap_value
       rescue Exception => e
@@ -320,10 +333,21 @@ class Account < ActiveRecord::Base
       CollabPreEnableWorker.perform_async
     end
 
+    def set_falcon_preferences
+      if falcon_ui_applicable?
+        self.main_portal.template.preferences = self.main_portal.template.default_preferences.merge({:personalized_articles=>true})
+        self.main_portal.template.save!
+      end
+    end
+
     def update_crm_and_map
       if (Rails.env.production? or Rails.env.staging?)
         Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::UpdateAdmin, {:account_id => self.id})
         Resque.enqueue_at(15.minutes.from_now, Marketo::AddLead, {:account_id => self.id})
       end
+    end
+
+    def falcon_ui_applicable?
+      ismember?(FALCON_ENABLED_LANGUAGES, self.language)
     end
 end

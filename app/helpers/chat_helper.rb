@@ -269,6 +269,7 @@ module ChatHelper
             :missed_chat => t('livechat.missed_chat'),
             :visitor_initiated_chat => t('livechat.visitor_initiated_chat'),
             :agent_initiated_chat => t('livechat.agent_initiated_chat'),
+            :proactive_chat => t('reports.livechat.chat_type_proactive'),
             :view_chat_link => t('livechat.view_chat_link'),
             :and => t('livechat.and'),
             :via_widget => t('livechat.via_widget'),

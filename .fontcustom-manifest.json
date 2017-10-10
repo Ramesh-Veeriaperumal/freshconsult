@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "eed2fdffa47deeb01ba00ea7e5dd9aa4b29fb5f198dbd6a7773f5b28b5d066ce",
-    "current": "eed2fdffa47deeb01ba00ea7e5dd9aa4b29fb5f198dbd6a7773f5b28b5d066ce"
+    "previous": "77e4ebe91dc56ea4be9d2f4f53d3ad2e6b11f555e1f1ec9c78c5ea503d36d2d4",
+    "current": "77e4ebe91dc56ea4be9d2f4f53d3ad2e6b11f555e1f1ec9c78c5ea503d36d2d4"
   },
   "fonts": [
-    "public/assets/glyphs_eed2fdffa47deeb01ba00ea7e5dd9aa4.ttf",
-    "public/assets/glyphs_eed2fdffa47deeb01ba00ea7e5dd9aa4.svg",
-    "public/assets/glyphs_eed2fdffa47deeb01ba00ea7e5dd9aa4.woff",
-    "public/assets/glyphs_eed2fdffa47deeb01ba00ea7e5dd9aa4.eot"
+    "public/assets/glyphs_77e4ebe91dc56ea4be9d2f4f53d3ad2e.ttf",
+    "public/assets/glyphs_77e4ebe91dc56ea4be9d2f4f53d3ad2e.svg",
+    "public/assets/glyphs_77e4ebe91dc56ea4be9d2f4f53d3ad2e.woff",
+    "public/assets/glyphs_77e4ebe91dc56ea4be9d2f4f53d3ad2e.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -78,6 +78,14 @@
       "codepoint": 61699,
       "source": "public/glyphs/vectors/android.svg"
     },
+    "announcement-new": {
+      "codepoint": 62119,
+      "source": "public/glyphs/vectors/announcement-new.svg"
+    },
+    "announcements": {
+      "codepoint": 62110,
+      "source": "public/glyphs/vectors/announcements.svg"
+    },
     "answer-checked": {
       "codepoint": 61700,
       "source": "public/glyphs/vectors/answer-checked.svg"
@@ -145,6 +153,10 @@
     "article": {
       "codepoint": 61956,
       "source": "public/glyphs/vectors/article.svg"
+    },
+    "assign-to": {
+      "codepoint": 62097,
+      "source": "public/glyphs/vectors/assign-to.svg"
     },
     "attachment": {
       "codepoint": 61997,
@@ -294,9 +306,17 @@
       "codepoint": 61939,
       "source": "public/glyphs/vectors/chat-source.svg"
     },
+    "chat-ticket": {
+      "codepoint": 62134,
+      "source": "public/glyphs/vectors/chat-ticket.svg"
+    },
     "checkbox": {
       "codepoint": 61727,
       "source": "public/glyphs/vectors/checkbox.svg"
+    },
+    "checkbox-tick": {
+      "codepoint": 62120,
+      "source": "public/glyphs/vectors/checkbox-tick.svg"
     },
     "checkmark": {
       "codepoint": 61728,
@@ -333,6 +353,10 @@
     "close-qna": {
       "codepoint": 62083,
       "source": "public/glyphs/vectors/close-qna.svg"
+    },
+    "close-ticket": {
+      "codepoint": 62095,
+      "source": "public/glyphs/vectors/close-ticket.svg"
     },
     "code": {
       "codepoint": 62015,
@@ -377,6 +401,14 @@
     "conversation": {
       "codepoint": 61736,
       "source": "public/glyphs/vectors/conversation.svg"
+    },
+    "create-ticket": {
+      "codepoint": 62103,
+      "source": "public/glyphs/vectors/create-ticket.svg"
+    },
+    "create-ticket-new": {
+      "codepoint": 62123,
+      "source": "public/glyphs/vectors/create-ticket-new.svg"
     },
     "cross": {
       "codepoint": 61737,
@@ -426,6 +458,10 @@
       "codepoint": 61930,
       "source": "public/glyphs/vectors/customer_satisfaction.svg"
     },
+    "customers-new": {
+      "codepoint": 62132,
+      "source": "public/glyphs/vectors/customers-new.svg"
+    },
     "date": {
       "codepoint": 61741,
       "source": "public/glyphs/vectors/date.svg"
@@ -469,6 +505,10 @@
     "delete": {
       "codepoint": 61973,
       "source": "public/glyphs/vectors/delete.svg"
+    },
+    "delete_items": {
+      "codepoint": 62129,
+      "source": "public/glyphs/vectors/delete_items.svg"
     },
     "deleted": {
       "codepoint": 61875,
@@ -522,9 +562,17 @@
       "codepoint": 61922,
       "source": "public/glyphs/vectors/ecommerce.svg"
     },
+    "ecommerce-new": {
+      "codepoint": 62130,
+      "source": "public/glyphs/vectors/ecommerce-new.svg"
+    },
     "edit": {
       "codepoint": 61750,
       "source": "public/glyphs/vectors/edit.svg"
+    },
+    "edit-article": {
+      "codepoint": 62122,
+      "source": "public/glyphs/vectors/edit-article.svg"
     },
     "edit-strike-thru": {
       "codepoint": 61751,
@@ -537,6 +585,10 @@
     "email": {
       "codepoint": 61753,
       "source": "public/glyphs/vectors/email.svg"
+    },
+    "email-new": {
+      "codepoint": 62113,
+      "source": "public/glyphs/vectors/email-new.svg"
     },
     "email-notifications": {
       "codepoint": 61754,
@@ -582,6 +634,10 @@
       "codepoint": 61758,
       "source": "public/glyphs/vectors/facebook-lock.svg"
     },
+    "facebook-new": {
+      "codepoint": 62111,
+      "source": "public/glyphs/vectors/facebook-new.svg"
+    },
     "facebook-setting": {
       "codepoint": 61759,
       "source": "public/glyphs/vectors/facebook-setting.svg"
@@ -590,6 +646,18 @@
       "codepoint": 61940,
       "source": "public/glyphs/vectors/facebook-source.svg"
     },
+    "facebook-ticket-new": {
+      "codepoint": 62133,
+      "source": "public/glyphs/vectors/facebook-ticket-new.svg"
+    },
+    "feature-request": {
+      "codepoint": 62100,
+      "source": "public/glyphs/vectors/feature-request.svg"
+    },
+    "feature-request-new": {
+      "codepoint": 62125,
+      "source": "public/glyphs/vectors/feature-request-new.svg"
+    },
     "feedback": {
       "codepoint": 61760,
       "source": "public/glyphs/vectors/feedback.svg"
@@ -597,6 +665,10 @@
     "feedback-new": {
       "codepoint": 61918,
       "source": "public/glyphs/vectors/feedback-new.svg"
+    },
+    "feedback-widget": {
+      "codepoint": 62131,
+      "source": "public/glyphs/vectors/feedback-widget.svg"
     },
     "ff-add-note": {
       "codepoint": 61761,
@@ -698,9 +770,21 @@
       "codepoint": 62024,
       "source": "public/glyphs/vectors/font.svg"
     },
+    "forum-feature-request": {
+      "codepoint": 62126,
+      "source": "public/glyphs/vectors/forum-feature-request.svg"
+    },
+    "forum-new": {
+      "codepoint": 62137,
+      "source": "public/glyphs/vectors/forum-new.svg"
+    },
     "forum-source": {
       "codepoint": 61941,
       "source": "public/glyphs/vectors/forum-source.svg"
+    },
+    "forum-topic": {
+      "codepoint": 62094,
+      "source": "public/glyphs/vectors/forum-topic.svg"
     },
     "forward": {
       "codepoint": 61775,
@@ -738,6 +822,10 @@
       "codepoint": 61980,
       "source": "public/glyphs/vectors/glance.svg"
     },
+    "google": {
+      "codepoint": 62112,
+      "source": "public/glyphs/vectors/google.svg"
+    },
     "googleplus": {
       "codepoint": 61780,
       "source": "public/glyphs/vectors/googleplus.svg"
@@ -765,6 +853,10 @@
     "header": {
       "codepoint": 62025,
       "source": "public/glyphs/vectors/header.svg"
+    },
+    "headphone": {
+      "codepoint": 62127,
+      "source": "public/glyphs/vectors/headphone.svg"
     },
     "help": {
       "codepoint": 61784,
@@ -930,6 +1022,10 @@
       "codepoint": 61801,
       "source": "public/glyphs/vectors/map-marker.svg"
     },
+    "menu": {
+      "codepoint": 62138,
+      "source": "public/glyphs/vectors/menu.svg"
+    },
     "merge": {
       "codepoint": 61802,
       "source": "public/glyphs/vectors/merge.svg"
@@ -945,6 +1041,10 @@
     "mobihelp": {
       "codepoint": 61805,
       "source": "public/glyphs/vectors/mobihelp.svg"
+    },
+    "mobihelp-new": {
+      "codepoint": 62135,
+      "source": "public/glyphs/vectors/mobihelp-new.svg"
     },
     "mobile": {
       "codepoint": 61806,
@@ -1031,16 +1131,24 @@
       "source": "public/glyphs/vectors/onhold.svg"
     },
     "open-in-new-window": {
-      "codepoint": 61814,
+      "codepoint": 62098,
       "source": "public/glyphs/vectors/open-in-new-window.svg"
     },
     "open-in-portal": {
       "codepoint": 61920,
       "source": "public/glyphs/vectors/open-in-portal.svg"
     },
+    "open-new-tab": {
+      "codepoint": 62121,
+      "source": "public/glyphs/vectors/open-new-tab.svg"
+    },
     "opera": {
       "codepoint": 61815,
       "source": "public/glyphs/vectors/opera.svg"
+    },
+    "outbound-email": {
+      "codepoint": 62136,
+      "source": "public/glyphs/vectors/outbound-email.svg"
     },
     "outdent": {
       "codepoint": 62035,
@@ -1086,6 +1194,10 @@
       "codepoint": 61877,
       "source": "public/glyphs/vectors/phone-disable-thin.svg"
     },
+    "phone-new": {
+      "codepoint": 62115,
+      "source": "public/glyphs/vectors/phone-new.svg"
+    },
     "phone_summary": {
       "codepoint": 61934,
       "source": "public/glyphs/vectors/phone_summary.svg"
@@ -1093,6 +1205,10 @@
     "pie-chart": {
       "codepoint": 62085,
       "source": "public/glyphs/vectors/pie-chart.svg"
+    },
+    "pin": {
+      "codepoint": 62128,
+      "source": "public/glyphs/vectors/pin.svg"
     },
     "plain-text": {
       "codepoint": 62037,
@@ -1126,6 +1242,10 @@
       "codepoint": 62038,
       "source": "public/glyphs/vectors/preserve-format.svg"
     },
+    "print": {
+      "codepoint": 62109,
+      "source": "public/glyphs/vectors/print.svg"
+    },
     "pushpin": {
       "codepoint": 61824,
       "source": "public/glyphs/vectors/pushpin.svg"
@@ -1137,6 +1257,10 @@
     "qna": {
       "codepoint": 62086,
       "source": "public/glyphs/vectors/qna.svg"
+    },
+    "questions": {
+      "codepoint": 62102,
+      "source": "public/glyphs/vectors/questions.svg"
     },
     "read-all": {
       "codepoint": 62065,
@@ -1169,6 +1293,10 @@
     "reply": {
       "codepoint": 61830,
       "source": "public/glyphs/vectors/reply.svg"
+    },
+    "report-a-problem": {
+      "codepoint": 62101,
+      "source": "public/glyphs/vectors/report-a-problem.svg"
     },
     "reports-sorting": {
       "codepoint": 61921,
@@ -1218,9 +1346,17 @@
       "codepoint": 61837,
       "source": "public/glyphs/vectors/search.svg"
     },
+    "search-new": {
+      "codepoint": 62116,
+      "source": "public/glyphs/vectors/search-new.svg"
+    },
     "security": {
       "codepoint": 61838,
       "source": "public/glyphs/vectors/security.svg"
+    },
+    "see-more": {
+      "codepoint": 62093,
+      "source": "public/glyphs/vectors/see-more.svg"
     },
     "settings-outline": {
       "codepoint": 61996,
@@ -1249,6 +1385,10 @@
     "smile-o": {
       "codepoint": 62039,
       "source": "public/glyphs/vectors/smile-o.svg"
+    },
+    "solution-article-new": {
+      "codepoint": 62091,
+      "source": "public/glyphs/vectors/solution-article-new.svg"
     },
     "solution_article": {
       "codepoint": 62087,
@@ -1290,6 +1430,10 @@
       "codepoint": 62041,
       "source": "public/glyphs/vectors/strikethrough.svg"
     },
+    "suggested-solution": {
+      "codepoint": 62106,
+      "source": "public/glyphs/vectors/suggested-solution .svg"
+    },
     "supervisor": {
       "codepoint": 61845,
       "source": "public/glyphs/vectors/supervisor.svg"
@@ -1330,6 +1474,14 @@
       "codepoint": 62043,
       "source": "public/glyphs/vectors/text-height.svg"
     },
+    "thumbs-down": {
+      "codepoint": 62108,
+      "source": "public/glyphs/vectors/thumbs-down.svg"
+    },
+    "thumbs-up": {
+      "codepoint": 62107,
+      "source": "public/glyphs/vectors/thumbs-up.svg"
+    },
     "tick": {
       "codepoint": 61975,
       "source": "public/glyphs/vectors/tick.svg"
@@ -1341,6 +1493,22 @@
     "ticket-fields": {
       "codepoint": 61850,
       "source": "public/glyphs/vectors/ticket-fields.svg"
+    },
+    "ticket-new": {
+      "codepoint": 62118,
+      "source": "public/glyphs/vectors/ticket-new.svg"
+    },
+    "ticket-reply": {
+      "codepoint": 62096,
+      "source": "public/glyphs/vectors/ticket-reply.svg"
+    },
+    "ticket-status": {
+      "codepoint": 62104,
+      "source": "public/glyphs/vectors/ticket-status.svg"
+    },
+    "ticket-status-new": {
+      "codepoint": 62124,
+      "source": "public/glyphs/vectors/ticket-status-new.svg"
     },
     "ticket-thin": {
       "codepoint": 61992,
@@ -1402,6 +1570,10 @@
       "codepoint": 61857,
       "source": "public/glyphs/vectors/twitter-lock.svg"
     },
+    "twitter-new": {
+      "codepoint": 62105,
+      "source": "public/glyphs/vectors/twitter-new.svg"
+    },
     "twitter-o": {
       "codepoint": 61858,
       "source": "public/glyphs/vectors/twitter-o.svg"
@@ -1409,6 +1581,10 @@
     "twitter-source": {
       "codepoint": 61947,
       "source": "public/glyphs/vectors/twitter-source.svg"
+    },
+    "twitter-ticket": {
+      "codepoint": 62114,
+      "source": "public/glyphs/vectors/twitter-ticket.svg"
     },
     "underline": {
       "codepoint": 62045,
@@ -1465,6 +1641,10 @@
     "web-disabled": {
       "codepoint": 62071,
       "source": "public/glyphs/vectors/web-disabled.svg"
+    },
+    "web-new": {
+      "codepoint": 62117,
+      "source": "public/glyphs/vectors/web-new.svg"
     },
     "web-page": {
       "codepoint": 61864,

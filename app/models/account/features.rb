@@ -2,7 +2,7 @@ class Account < ActiveRecord::Base
 
   LP_FEATURES   = [:link_tickets, :select_all, :round_robin_capping, :suggest_tickets, :customer_sentiment_ui,
                    :dkim, :bulk_security, :scheduled_ticket_export, :ticket_contact_export,
-                   :email_failures, :disable_emails, :skip_one_hop]
+                   :email_failures, :disable_emails, :skip_one_hop, :falcon_portal_theme]
   DB_FEATURES   = [:shared_ownership, :custom_survey, :requester_widget, :archive_tickets, :sitemap]
   BITMAP_FEATURES = [
       :split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management,
@@ -12,8 +12,16 @@ class Account < ActiveRecord::Base
       :advanced_reporting, :timesheets, :multiple_emails, :custom_domain, :gamification, :gamification_enable,
       :auto_refresh, :branding, :advanced_dkim, :basic_dkim, :shared_ownership_toggle, :unique_contact_identifier_toggle,
       :system_observer_events, :unique_contact_identifier, :ticket_activity_export, :caching, :private_inline, :collaboration,
-      :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :user_notifications
+      :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :user_notifications, :falcon,
+      :multiple_companies_toggle, :multiple_user_companies
     ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
+
+  COMBINED_VERSION_ENTITY_KEYS = [
+    Helpdesk::TicketField::VERSION_MEMBER_KEY,
+    ContactField::VERSION_MEMBER_KEY,
+    CompanyField::VERSION_MEMBER_KEY,
+    CustomSurvey::Survey::VERSION_MEMBER_KEY
+  ]
 
   LP_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
@@ -99,6 +107,10 @@ class Account < ActiveRecord::Base
 
   def freshfone_enabled?
     features?(:freshfone) and freshfone_account.present?
+  end
+
+  def freshcaller_enabled?
+    has_feature?(:freshcaller) and freshcaller_account.present?
   end
 
   def freshchat_enabled?
@@ -189,4 +201,19 @@ class Account < ActiveRecord::Base
    @collboration ||= has_feature?(:collaboration) && self.collab_settings.present?
   end
 
+  def falcon_ui_enabled?(current_user = :no_user)
+    valid_user = (current_user == :no_user ? true : (current_user && current_user.is_falcon_pref?))
+    valid_user && (launched?(:falcon) || falcon_enabled?)
+  end
+
+  def falcon_support_portal_theme_enabled?
+    falcon_ui_enabled? && falcon_portal_theme_enabled?
+  end
+
+  #this must be called instead of using launchparty in console or from freshops to set all necessary things needed
+  def enable_falcon_ui
+    hash_set = Hash[COMBINED_VERSION_ENTITY_KEYS.collect { |key| ["#{key}_LIST", Time.now.utc.to_i] }]
+    set_others_redis_hash(version_key, hash_set)
+    self.add_feature(:falcon)
+  end
 end

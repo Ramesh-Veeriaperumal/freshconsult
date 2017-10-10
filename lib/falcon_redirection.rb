@@ -7,6 +7,7 @@ class FalconRedirection
 
     IFRAME_PATHS = ['/a/admin/', '/a/forums/', '/a/social/', '/a/solutions/', '/a/reports/', '/a/contacts/new',
                     '/a/companies/new', '/a/sla_policies/', '/a/scenario_automations/', '/a/canned_responses/'].freeze
+
     IFRAME_RE_PATHS = ['^/a/contacts/\d+', '^/a/companies/\d+', '^/a/forums/.*', '^/a/solutions/.*',
                         '^/a/sla_policies/\d+/edit', '^/a/tickets/\d+', '^/a/agents/\d+'].freeze
 
@@ -20,9 +21,11 @@ class FalconRedirection
                       /^\/solution\/folders\/(\d+)/ => '/a/solutions/folders/:id',
                       /^\/solution\/categories\/(\d+)/ => '/a/solutions/categories/:id',
                       /^\/discussions\/(\d+)/ => '/a/forums/categories/:id',
-                      /^\/discussions\/forums\/(\d+)/ => '/a/forums/folders/:id'
+                      /^\/discussions\/forums\/(\d+)/ => '/a/forums/folders/:id',
                     }.freeze
 
+    SOCIAL_STREAMS_PATH = ['admin/social/facebook_streams','integrations/slack_v2/add_slack_agent','integrations/slack_v2/new'].freeze
+    
     def falcon_redirect(options)
       @options = options
       prevent_redirect = options.key?(:prevent_redirect) ? options[:prevent_redirect] : prevent_redirection
@@ -65,8 +68,8 @@ class FalconRedirection
       request_referer unless request_referer.to_s.start_with?('/support/')
     end
 
-    def falcon_redirection_path(curr_path)
-      check_member_paths(curr_path) || FalconUiRouteMapping[curr_path] || check_re_routes(curr_path) || prefix_falcon_path(curr_path)
+    def falcon_redirection_path(curr_path,query_string = '')
+      check_member_paths(curr_path)  || append_query_string_to_url(curr_path, query_string)||FalconUiRouteMapping[curr_path] || check_re_routes(curr_path) || prefix_falcon_path(curr_path)
     end
 
     def check_member_paths(ref_path)
@@ -109,6 +112,16 @@ class FalconRedirection
     def match_re_iframe(path)
       IFRAME_RE_PATHS.each { |re| return true if Regexp.new(re) =~ path}
       return false
+    end
+
+    def social_redirect_check?(curr_path)
+      SOCIAL_STREAMS_PATH.inject(false) { |skip_social, social_path| skip_social || curr_path.include?(social_path) }
+    end
+
+    def append_query_string_to_url(curr_path, query_string)
+      if social_redirect_check?(curr_path) && !curr_path.start_with?('/a/')
+        query_string.blank? ? '/a' + curr_path : '/a' + curr_path + '?' + query_string
+      end
     end
 
   end

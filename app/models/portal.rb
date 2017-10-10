@@ -70,7 +70,7 @@ class Portal < ActiveRecord::Base
 
   concerned_with :solution_associations
 
-  APP_CACHE_VERSION = "FD75"
+  APP_CACHE_VERSION = "FD76"
 
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr
@@ -243,7 +243,7 @@ class Portal < ActiveRecord::Base
 
     def ticket_field_conditions
       { 'product' => (main_portal && !account.products.empty?), 
-        'company' => account.features?(:multiple_user_companies) && User.current.present? && 
+        'company' => account.multiple_user_companies_enabled? && User.current.present? &&
                       (User.current.agent? || User.current.contractor?) }
     end
 

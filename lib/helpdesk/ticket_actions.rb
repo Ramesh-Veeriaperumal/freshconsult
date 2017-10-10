@@ -9,6 +9,7 @@ module Helpdesk::TicketActions
   include Facebook::Constants
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include Helpdesk::LanguageDetection
 
   def create_the_ticket(need_captcha = nil, skip_notifications = nil)
 
@@ -31,6 +32,10 @@ module Helpdesk::TicketActions
     
     return false unless @ticket.save_ticket
 
+    if @ticket.requester.language.nil?
+      text = text_for_detection(@ticket.ticket_body.description)
+      language_detection(@ticket.requester_id, @ticket.account_id, text)
+    end
     notify_cc_people cc_emails unless cc_emails.blank?
     @ticket
     

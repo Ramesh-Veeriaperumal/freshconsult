@@ -8,11 +8,11 @@ class Account < ActiveRecord::Base
 
   RESERVED_DOMAINS = %W(  blog help chat smtp mail www ftp imap pop faq docs doc team people india us talk
                           upload download info lounge community forums ticket tickets tour about pricing bugs in out
-                          logs projects itil marketing partner store channel reseller resellers online
+                          logs projects itil marketing store channel reseller resellers online
                           contact admin #{AppConfig['admin_subdomain']} girish shan vijay parsu kiran shihab
                           productdemo resources static static0 static1 static2 static3 static4 static5
                           static6 static7 static8 static9 static10 dev apps freshapps fone
-                          elb elb1 elb2 elb3 elb4 elb5 elb6 elb7 elb8 elb9 elb10 attachment euattachment eucattachment agent-hermes) + FreshopsSubdomains
+                          elb elb1 elb2 elb3 elb4 elb5 elb6 elb7 elb8 elb9 elb10 attachment euattachment eucattachment agent-hermes) + FreshopsSubdomains + PartnerSubdomains
 
   PLANS_AND_FEATURES = {
     :basic => { :features => [ :twitter, :custom_domain, :multiple_emails ] },
@@ -166,7 +166,7 @@ class Account < ActiveRecord::Base
 
   # List of Launchparty features available in code. Set it to true if it has to be enabled when signing up a new account
   LAUNCHPARTY_FEATURES = {
-    :activity_ui_disable => false, :admin_dashboard => false, :agent_conference => false, :agent_dashboard => false,
+    :admin_dashboard => false, :agent_conference => false, :agent_dashboard => false,
     :agent_new_ticket_cache => false, :api_search_beta => false, :autopilot_headsup => false, :autoplay => false,
     :bi_reports => false, :cache_new_tkt_comps_forms => false, :delayed_dispatchr_feature => false,
     :disable_old_sso => false, :enable_old_sso => false, :es_count_reads => false, :es_count_writes => false,
@@ -194,7 +194,8 @@ class Account < ActiveRecord::Base
     :send_emails_via_fd_email_service_feature => false, :user_notifications => false, :freshplug_enabled => false, :dkim => false, 
     :sha1_enabled => false, :disable_archive => false, :sha256_enabled => false, :auto_ticket_export => false, :select_all => false, 
     :facebook_realtime => false, :"Freshfone Call Tracker" => false, :skip_one_hop => false, :ticket_contact_export => false, 
-    :custom_apps => false, :timesheet => false, :api_jwt_auth => false, :disable_emails => false, :skip_portal_cname_chk => false
+    :custom_apps => false, :timesheet => false, :api_jwt_auth => false, :disable_emails => false, :skip_portal_cname_chk => false,
+    :falcon_signup => false, :falcon_portal_theme => false
   }
 
   BLOCK_GRACE_PERIOD = 90.days

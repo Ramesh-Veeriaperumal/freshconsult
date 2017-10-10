@@ -370,6 +370,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
     source == SOURCE_KEYS_BY_TOKEN[:twitter] and (tweet) and (tweet.twitter_handle)
   end
 
+  def show_facebook_reply?
+    facebook? && !thread_key_nil?
+  end
+
+  def thread_key_nil?
+    fb_post.message? && fb_post.facebook_page.use_thread_key? && fb_post.thread_key.nil?
+  end
+
   def facebook?
      source == SOURCE_KEYS_BY_TOKEN[:facebook] and (fb_post) and (fb_post.facebook_page)
   end
@@ -388,7 +396,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def fb_replies_allowed?
-    facebook? and !fb_post.reply_to_comment?
+    facebook? and !fb_post.reply_to_comment? and !thread_key_nil?
   end
 
   def is_fb_message?

@@ -2,7 +2,7 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
   
   include Facebook::Constants
   helper Admin::Social::UIHelper
-  
+  include Admin::Social::StreamsHelper
   before_filter { access_denied unless current_account.basic_facebook_enabled? }
 
   before_filter :social_revamp_enabled?
@@ -12,7 +12,7 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
   before_filter :load_item,         :only => [:edit, :update]
   before_filter :load_page_tab,     :only => [:edit]
   before_filter :handle_tab,        :only => :update, :if => [:tab_edited?, :facebook_page_tab?]
-  
+
   def index
     @facebook_pages    = enabled_facebook_pages
     @auth_redirect_url = @fb_client.authorize_url(session[:state])
@@ -75,10 +75,15 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
   end
   
   def fb_client
-    @fb_client     = Facebook::Oauth::FbClient.new(admin_social_facebook_streams_url)
+    if current_account.falcon_ui_enabled?(current_user)
+     falcon_uri =admin_social_facebook_streams_url.gsub("/admin/social/facebook_streams","/a/admin/social/facebook_streams")
+      @fb_client = Facebook::Oauth::FbClient.new(falcon_uri)
+    else
+      @fb_client = Facebook::Oauth::FbClient.new(admin_social_facebook_streams_url)
+    end
     @fb_client_tab = Facebook::Oauth::FbClient.new(fb_call_back_url(params[:action]), true)
   end
-  
+
   def set_session_state
     session[:state] = Digest::MD5.hexdigest("#{Helpdesk::SECRET_3}#{Time.now.to_f}")
   end
@@ -194,5 +199,6 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
   def social_revamp_enabled?
     redirect_to social_facebook_index_url unless current_account.features?(:social_revamp)
   end
-  
+
+
 end

@@ -1,21 +1,21 @@
 <%= javascript_tag do %>
-  jQuery(document).ready(function(){  
+  jQuery(document).ready(function(){
  invokeRedactor('<%= "user_binfo" %>','signature');
-    jQuery("#password_confirmation").rules("add", {  
+    jQuery("#password_confirmation").rules("add", {
 	          equalTo: "#password"
-          });   
-    
+          });
+
     // Code for inserting placeholders in agent signature
     var content = jQuery('label[for=agent_signature_html]').html();
     jQuery('label[for=agent_signature_html]')
       .attr('class','placeholder_wrapper')
       .html(content + '<a class="l_placeholder btn btn-mini btn-flat pull-right"><%= t('agent.insert_placeholder') %></a>');
-    
+
     jQuery('.l_placeholder').bind("click", function(ev){
         active_email_body = jQuery("#user_binfo");
   			jQuery('#place-dialog').slideDown('fast', function(){
           		jQuery(this).groupPlaceholders();
-  			});			
+  			});
   	});
 
 	//Hiding Testing UI language for production env
@@ -66,13 +66,29 @@ jQuery('.email').on('keyup', function(){
 	if(a.length)
 		jQuery('#add_new_mail').toggleClass('disabled', !jQuery.trim(a.last().val()));
 });
+
+	<% if current_account.falcon_ui_enabled?(current_user) %>
+		jQuery('.edit_agent').submit(function(event){
+			var form = jQuery(this),
+				url = form.action;
+			event.preventDefault();
+            form.ajaxSubmit({
+			    success: function(data){
+			       top.location.reload();
+			    },
+			    error: function(data){
+			       window.location.reload();
+				}
+			});
+		});
+	<% end %>
 <% end %>
 
 <% user = @profile %>
 <% user = @profile.user unless current_user.customer? %>
- 
+
 <%= fields_for "user", @profile do |usr| %>
-    <%= error_messages_for :user %> 
+    <%= error_messages_for :user %>
  	<ul class="ui-form">
 		<li>
 			<%= label(:user, :name, t("user.full_name") ) %>
@@ -81,23 +97,23 @@ jQuery('.email').on('keyup', function(){
 		<li>
 			<%= label(:user, :job_title, t("user.title")) %>
 			<%= text_field(:user, :job_title, :class => "text", :value => user.job_title ) %>
-		</li>	
+		</li>
 		<li class="medium">
-			<%= label(:user, :email, t("user.email")) %>			
+			<%= label(:user, :email, t("user.email")) %>
 			<%= text_field(:user, :email, :class => "text required email disabled", :id => "email_primary" , :value => user.email , :disabled =>true) %>
 		</li>
 		<li class="small">
-			<%= label(:user, :phone, t("user.phone_no")) %>	
+			<%= label(:user, :phone, t("user.phone_no")) %>
 			<div>
 				<label class="overlabel" for="phone_work">Work</label>
-				<%= text_field(:user, :phone, :class => "text", :id => "phone_work", :value => user.phone ) %> 
+				<%= text_field(:user, :phone, :class => "text", :id => "phone_work", :value => user.phone ) %>
 			</div>
 			<div>
 				<label class="overlabel" for="phone_mobile">Mobile</label>
 				<%= text_field(:user, :mobile, :class => "text", :id => "phone_mobile" ,:value => user.mobile  ) %>
 			</div>
 		</li>
-		
+
 		<% if current_user.customer?%>
 			<li class="small">
 				<%= label(:user, :twitter_id, t("user.twitter_id")) %>
@@ -108,29 +124,40 @@ jQuery('.email').on('keyup', function(){
 				<%= text_field(:user, :company_name, :class => "text disabled", :id => "contact_customer", :disabled =>true ) %>
 			</li>
 		<%end%>
-		
+
 			<li>
 				<%= render :partial => "/shared/profileavatar", :locals => { :user => user, :type => "edit" } %>
 			</li>
 			<% if current_account.multi_timezone_enabled? %>
 			<li>
-				<%= label(:user , :time_zone, t("account.time_zone")) %>			
+				<%= label(:user , :time_zone, t("account.time_zone")) %>
 				<%= time_zone_select(:user, :time_zone, ActiveSupport::TimeZone.all, :default => user.time_zone) %>
 			</li>
 			<% end %>
 			<% if feature?(:multi_language) %>
-				<li>
-					<%= label(:user, :language, t('account.language')) %>
-					<%= select(:user, :language, I18n.available_locales_with_name , {:selected => user.language.to_sym()})%>
-				</li>
+        <% if current_account.falcon_ui_enabled?(current_user) %>
+          <li>
+            <%= label(:user, :language, t('account.language')) %>
+  					<%= select(:user, :language, I18n.available_locales_with_name, {:selected => user.language.to_sym()} , {:disabled => true})%>
+            <a href="javascript:toggleMessage()">
+              <i class="info help-icon-language ficon-help-icon fsize-24" size="14"></i>
+            </a>
+            <%= render partial:'ui/falcon_languages_alert' %>
+          </li>
+        <% else %>
+  				<li>
+  					<%= label(:user, :language, t('account.language')) %>
+  					<%= select(:user, :language, I18n.available_locales_with_name , {:selected => user.language.to_sym()})%>
+  				</li>
+        <% end %>
 			<% end %>
-		
+
 		<%unless current_user.customer?%>
 			<li>
 				<%= label(:agent, :signature_html, t("agent.signature")) %>
 				<label class="overlabel" for="user_binfo">
 				</label>
-				<%= text_area(:agent, :signature_html, :class => "text desc_info", :id => "user_binfo" , :value =>@profile.signature_value  ) %>			
+				<%= text_area(:agent, :signature_html, :class => "text desc_info", :id => "user_binfo" , :value =>@profile.signature_value  ) %>
 				<%= hidden_field(:agent, :user_id, :id => "user_id", :value =>@profile.user_id  ) %>
 		</li>
 		<%end%>

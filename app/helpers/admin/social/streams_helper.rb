@@ -31,4 +31,5 @@ module Admin::Social::StreamsHelper
   def fetch_default_stream(handle)
     handle.twitter_streams.select {|stream| stream.default_stream? }.first
   end
+
 end

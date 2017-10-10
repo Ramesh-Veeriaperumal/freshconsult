@@ -19,11 +19,12 @@ class User < ActiveRecord::Base
   after_update  :send_alert_email, :if => [:email_changed?,:agent?]
 
   before_save :set_time_zone, :set_default_company
-  before_save :set_language, :unless => :created_from_email
+  before_save :set_language, :unless => :detect_language?
   before_save :set_contact_name, :update_user_related_changes
   before_save :set_customer_privilege, :set_contractor_privilege, :if => :customer?
   before_save :restrict_domain, :if => :email_changed?
   before_save :sanitize_contact_name, :backup_customer_id
+  before_save :set_falcon_ui_preference, :if => :falcon_ui_applicable?
 
   after_commit :clear_agent_caches, on: :create, :if => :agent?
   after_commit :update_agent_caches, on: :update
@@ -73,6 +74,15 @@ class User < ActiveRecord::Base
     end
   end
 
+  def falcon_ui_applicable?
+    account.falcon_ui_enabled? && helpdesk_agent_changed? && agent?
+  end
+
+  def set_falcon_ui_preference
+    new_pref = {:falcon_ui => (language == "en")}
+    self.merge_preferences = { :agent_preferences => new_pref }
+  end
+
   def populate_privileges
     self.privileges = union_privileges(self.roles).to_s
     @role_change_flag = false
@@ -86,6 +96,10 @@ class User < ActiveRecord::Base
 
   def set_language
     self.language = account.language if language.nil? || validate_language(language)
+  end
+
+  def detect_language?
+    self.created_from_email || self.detect_language
   end
 
   def discard_contact_field_data

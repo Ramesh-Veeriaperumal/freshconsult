@@ -115,12 +115,25 @@
     				</li>
     			<% end %>
   		    <% if feature?(:multi_language) %>
-  					<li class="control-group">
-  						<%= label(:user, :language, t('account.language'), :class => "control-label") %>
-  						<div class="controls  margin-bottom">
-  							<%= select(:user, :language, I18n.available_locales_with_name , {:selected => @agent.user.language.to_sym()}, {:class => "input-xlarge select2"})%>
-  						</div>
-  					</li>
+            <% if current_account.falcon_ui_enabled?(current_user) %>
+              <li class="control-group">
+                <%= label(:user, :language, t('account.language'), :class => "control-label") %>
+                <div class="controls  margin-bottom">
+                  <%= select(:user, :language, I18n.available_locales_with_name, {:selected => @agent.user.language.to_sym()}, {:disabled => true})%>
+                  <a href="javascript:toggleMessage()">
+                    <i class="info help-icon-language ficon-help-icon fsize-24" size="14"></i>
+                  </a>
+                  <%= render partial:'ui/falcon_languages_alert' %>
+                </div>
+              </li>
+            <% else %>
+    					<li class="control-group">
+    						<%= label(:user, :language, t('account.language'), :class => "control-label") %>
+    						<div class="controls  margin-bottom">
+    							<%= select(:user, :language, I18n.available_locales_with_name , {:selected => @agent.user.language.to_sym()}, {:class => "input-xlarge select2"})%>
+    						</div>
+    					</li>
+            <% end %>
   	     	<% end %>
   				<li class="control-group">
   					<%= label(:agent, :signature_html, t('agent.signature'), :class => "control-label") %>
@@ -214,7 +227,7 @@
 		</li>
     <% end %>
 
-		<%  if current_account.has_feature?(:freshcaller) && current_account.launched?(:falcon) %>
+		<%  if current_account.freshcaller_enabled? && current_account.falcon_ui_enabled? %>
 		<li class="seperator"></li>
 		<li class="row-fluid">
 			<h5 class="lead">
@@ -224,7 +237,7 @@
 		<li class="agent-role control-group">
 			<label class="control-label" for="agent_roles">Freshcaller Agent</label>
 			<span >
-				<%= check_box_tag 'freshcaller_agent', true, @agent.try(:freshcaller_agent).try(:fc_enabled) , :class => 'freshcaller_agent_toggle' %>
+				<%= check_box_tag 'freshcaller_agent', true, @agent.freshcaller_agent.present? ? @agent.freshcaller_agent.try(:fc_enabled) : false, :class => 'freshcaller_agent_toggle' %>
 			</span>
 		</li>
 		<% end %>

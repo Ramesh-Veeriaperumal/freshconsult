@@ -4,6 +4,7 @@ module Helpdesk::Email::ParseEmailData
 	include AccountConstants
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include Helpdesk::LanguageDetection
 
 	MAXIMUM_CONTENT_LIMIT = 300.kilobytes
 	attr_accessor :reply_to_email, :recipients
@@ -181,24 +182,10 @@ module Helpdesk::Email::ParseEmailData
   def detect_user_language signup_status, email_body
     text = text_for_detection(email_body)
     if user.language.nil? and signup_status
-      if redis_key_exists?(DETECT_USER_LANGUAGE_SIDEKIQ_ENABLED)
-        Users::DetectLanguage.perform_async({:user_id => user.id, 
-                                             :text => text })
-      else
-        Resque::enqueue_at(1.minute.from_now, 
-                           Workers::DetectUserLanguage, 
-                           {:user_id => user.id, 
-                            :text => text, 
-                            :account_id => Account.current.id})
-      end
+      language_detection(user.id, Account.current.id, text)
     end
   end
-
-	def text_for_detection email_body
-	  text = email_body[0..200]
-	  text.squish.split.first(15).join(" ")
-	end
-
+  
 	def get_portal email_config
 		(email_config && email_config.product) ? email_config.product.portal : account.main_portal
 	end

@@ -14,7 +14,7 @@
 
 	<%= content_tag( :div,  t('.signup_login'),	   :class => "heading border-none" ) %>
 	<div class="row">
-		<div class="span8">
+		<div class="span9">
 			<div class="control-group">
 				<div class="control-label"><%= t('.allow_signup') %></div>
 				<div class="controls">
@@ -39,7 +39,7 @@
 		<% if @restricted_helpdesk %>
 			<div class="span4 moderation-info alert-text">
 				<div class="bold">
-					<span class="ficon ficon-warning"></span> 
+					<span class="ficon ficon-warning"></span>
 					<strong> <%= t(".important")%> </strong>
 				</div>
 				<div>
@@ -143,7 +143,7 @@
 <% end %>
 
 <%= javascript_tag do %>
-	jQuery(document).ready(function(){ 
+	jQuery(document).ready(function(){
 		<% if @restricted_helpdesk %>
 			var twitter_signin = jQuery("#twitter_signin")
 			if(twitter_signin.length > 0){
@@ -151,5 +151,5 @@
 				jQuery("label[for='twitter_signin']").addClass("muted");
 			}
 		<% end %>
-	}); 
+	});
 <% end %>

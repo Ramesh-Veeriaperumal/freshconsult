@@ -134,11 +134,11 @@ class User < ActiveRecord::Base
   end
 
   def has_multiple_companies_feature?
-    account.features?(:multiple_user_companies)
+    account.multiple_user_companies_enabled?
   end
 
   attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, :sbrr_fresh_user,
-                :primary_email_attributes, :tags_updated, :keep_user_active, :escape_liquid_attributes, :role_ids_changed # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there.
+                :primary_email_attributes, :tags_updated, :keep_user_active, :escape_liquid_attributes, :role_ids_changed, :detect_language # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there.
   # As role_ids are not part of user_model(it is an association_reader), agent.update_attributes won't trigger user callbacks since user doesn't have any change.
   # Hence user.send(:attribute_will_change!, :role_ids_changed) is being called in api_agents_controller.)
 
@@ -415,8 +415,18 @@ class User < ActiveRecord::Base
     save!
   end
 
+  def disable_falcon_ui
+    new_pref = { :falcon_ui => false }
+    self.merge_preferences = { :agent_preferences => new_pref }
+    save!
+  end
+
   def is_falcon_pref?
     self.preferences[:agent_preferences][:falcon_ui]
+  end
+
+  def falcon_invite_eligible?
+    (account.falcon_ui_enabled? && self.preferences_without_defaults.try(:[], :agent_preferences).try(:[],:falcon_ui).nil?)
   end
 
   def update_attributes(params) # Overriding to normalize params at one place
@@ -495,6 +505,7 @@ class User < ActiveRecord::Base
     self.user_emails_attributes = params[:user][:user_emails_attributes] if params[:user][:user_emails_attributes].present?
     self.deleted = true if (email.present? && email =~ /MAILER-DAEMON@(.+)/i)
     self.created_from_email = params[:user][:created_from_email]
+    self.detect_language = params[:user][:detect_language]
     if params[:user][:user_skills_attributes] && Account.current.skill_based_round_robin_enabled?
       self.skill_ids = params[:user][:user_skills_attributes].sort_by { |user_skill| 
         user_skill["rank"] }.map { |user_skill| 

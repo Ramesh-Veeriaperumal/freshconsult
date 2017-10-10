@@ -35,8 +35,8 @@
 
 	<%= stylesheet_link_tag_with_rtl :'cdn/froala_editor' %>
 
-	<% if current_account.launched?(:falcon) && current_user && current_user.is_falcon_pref? %>
-	  <%= stylesheet_link_tag_with_rtl :'cdn/falcon' %>	
+	<% if current_account.falcon_ui_enabled?(current_user) %>
+	  <%= stylesheet_link_tag :'cdn/falcon' %>	
 	<% end %>
 
 	<script type="text/javascript">
@@ -71,7 +71,7 @@
 	<% end %>
 
 	<!-- The following is the remote CDN file managed by Freshapps Team. It is to exec freshapps one by one -->
-	<%= javascript_include_tag :"#{MarketplaceConfig::FRESHAPPS_JS_URL}/js/common-0.5.0.min.js" %>
+	<%= javascript_include_tag :"#{MarketplaceConfig::FRESHAPPS_JS_URL}/js/common-0.6.0.min.js" %>
 
 	<% if current_account.features?(:freshfone) ||
 	  (current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?)) %>

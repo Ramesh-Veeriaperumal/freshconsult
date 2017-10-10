@@ -1437,6 +1437,12 @@ HelpdeskReports.CoreUtil = {
           return query;
         }
     },
+    getTimespentExportHelpText : function() {
+        var type = HelpdeskReports.locals.lifecycle_group_by_options[HelpdeskReports.locals.current_group_by]
+        var grp = (HelpdeskReports.locals.current_group_by != 'group_id') ? 'groups' : 'agents'
+        var help_msg = I18n.t('helpdesk_reports.timespent_export.aggregate_help_text',{group_by: grp, type: type, defaultValue: 'Time spent in '+grp+' split by '+type});
+        return help_msg;
+    },
     bindExportFieldEvents : function() {
 
         var _this = this;

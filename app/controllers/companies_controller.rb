@@ -4,6 +4,8 @@ class CompaniesController < ApplicationController
   include HelpdeskControllerMethods
   include ExportCsvUtil
   include CompaniesHelperMethods
+  include Redis::RedisKeys
+  include Redis::OthersRedis 
   
   before_filter :set_selected_tab
   before_filter :load_item,  :only => [:show, :edit, :update, :update_company, :update_notes, :sla_policies]
@@ -114,9 +116,14 @@ class CompaniesController < ApplicationController
 
   def export_csv
     portal_url = main_portal? ? current_account.host : current_portal.portal_url
-    Resque.enqueue(Workers::ExportCompany, {:csv_hash => params[:export_fields], 
-                                            :user => current_user.id, 
-                                            :portal_url => portal_url})
+    args = { :csv_hash => params[:export_fields],
+             :user => current_user.id,
+             :portal_url => portal_url }
+    if redis_key_exists?(COMPANIES_EXPORT_SIDEKIQ_ENABLED)
+      Export::CompanyWorker.perform_async(args)
+    else
+      Resque.enqueue(Workers::ExportCompany, args)
+    end
     flash[:notice] = t(:'companies.export_start')
     redirect_to :back
   end
@@ -134,11 +141,8 @@ class CompaniesController < ApplicationController
         @company_archive_tickets = @total_company_archive_tickets.sort_by {|item| -item.created_at.to_i}.take(10)
       end
 
-      if current_account.features?(:multiple_user_companies)
-        company_user_list      = @company.users
-      else
-        company_user_list      = current_account.users.company_users_via_customer_id(@company.id)
-      end
+      company_user_list = Account.current.multiple_user_companies_enabled? ? @company.users : 
+                            current_account.users.company_users_via_customer_id(@company.id)
       @company_users         = company_user_list.limit(6)
       @company_users_size    = company_user_list.count("1")
     end

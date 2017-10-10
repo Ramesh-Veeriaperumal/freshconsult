@@ -52,7 +52,7 @@ module TicketConstants
   SOURCE_KEYS_BY_TOKEN = Hash[*SOURCES.map { |i| [i[0], i[2]] }.flatten]
   SOURCE_KEYS_BY_NAME = Hash[*SOURCES.map { |i| [i[1], i[2]] }.flatten]
   SOURCE_TOKEN_BY_KEY = Hash[*SOURCES.map { |i| [i[2], i[0]] }.flatten]
-
+  SOURCES_FOR_LANG_DETECTION = [SOURCE_KEYS_BY_TOKEN[:portal], SOURCE_KEYS_BY_TOKEN[:feedback_widget]]
   ### Bump the version of "TICKETS_LIST_PAGE_FILTERS" key in fragment_cache/keys.rb when PRIORITIES are modified.
   PRIORITIES = [
     [ :low,       'low',         1,    '#7ebf00' ],

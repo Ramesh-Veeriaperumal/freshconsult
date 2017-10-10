@@ -31,9 +31,11 @@
 							<%=CHAT_I18n.via_widget %> <%= window.liveChat.widgetList[chatData.widget_id] %> |
 							<% if(chatData.initiated_by == '2'){ %>
 									<%= CHAT_I18n.agent_initiated_chat %> |
-							<%} else {%>
-										<%= CHAT_I18n.visitor_initiated_chat %> |
-							<% }%>
+							<%} else if(chatData.initiated_by == '3'){%>
+										<%= CHAT_I18n.proactive_chat %> |
+							<% }else{%>
+							  <%= CHAT_I18n.visitor_initiated_chat %> |
+							<% } %>
 							<span class="lc-grey"><%= CHAT_I18n.waited_for %> </span> : <%= chatData.queueTime %> mins |
 							<span class="lc-grey"><%= CHAT_I18n.duration %></span> : <%= chatData.handleTime %> mins
 						</div>

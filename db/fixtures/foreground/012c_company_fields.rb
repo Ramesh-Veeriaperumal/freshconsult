@@ -13,7 +13,7 @@ def self.company_fields_data
       :position           => 1 },
 
     { :name               => "domains", 
-      :label              => "Domain Names for this company",
+      :label              => "Domains",
       :position           => 4 }
   ]
 end
@@ -29,6 +29,8 @@ company_fields_data.each do |f|
   company_field.column_name = 'default'
   company_field.name = f[:name]
   company_field.company_form_id = account.company_form.id
+  company_field.created_at = Time.zone.now #The important callbacks.
+  company_field.updated_at = Time.zone.now  #The important callbacks.
   company_field.sneaky_save #To avoid the callbacks of acts-as-list which is changing the other field positions.
 end
 

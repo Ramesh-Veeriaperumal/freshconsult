@@ -205,7 +205,7 @@ class Search::Utils
   end
 
   def self.get_template_id(context, exact_match, locale=nil)
-    template_key = template_context(context, exact_match, locale=nil)
+    template_key = template_context(context, exact_match, locale)
     if(Account.current.launched?(:es_v2_splqueries) && Search::Utils::SPECIAL_TEMPLATES.has_key?(template_key))
       Search::Utils::SPECIAL_TEMPLATES[template_key]
     else
