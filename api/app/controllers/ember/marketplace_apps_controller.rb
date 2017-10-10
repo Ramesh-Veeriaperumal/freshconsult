@@ -12,7 +12,7 @@ module Ember
           installed_extensions(installed_params)
         end
         installed_list.body.try(:each) do |installed_mkp_app|
-          extn_detail = extension_details(installed_mkp_app['extension_id']).body
+          extn_detail = extension_details_v2(installed_mkp_app['extension_id'], installed_mkp_app['version_id']).body
           if extn_detail['platform_details'][platform_version.to_s].include?(installed_mkp_app['version_id'])
             @installed_apps << { extension_details:  extn_detail }
                                .merge(installation_details: installed_mkp_app)
