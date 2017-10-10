@@ -101,7 +101,11 @@ module ApiSearch
       end
 
       def fetch_context(type)
-        :search_ticket_api if type.include?('ticket')
+        if type.include?('ticket')
+          return :search_ticket_api
+        elsif type.include?('user')
+          return :search_contact_api
+        end
       end
   end
 end

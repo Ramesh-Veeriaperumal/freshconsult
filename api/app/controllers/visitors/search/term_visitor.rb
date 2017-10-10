@@ -2,11 +2,13 @@ module Search
   class TermVisitor < Search::V2::Parser::NodeVisitor
     include SearchHelper
 
-    attr_accessor :column_names, :resource, :not_analyzed, :date_fields
+    attr_accessor :column_names, :resource, :not_analyzed, :date_fields, :es_keys
 
-    def initialize(column_names, date_fields)
+    def initialize(column_names, es_keys, date_fields, not_analyzed)
       @column_names = column_names
       @date_fields = date_fields
+      @es_keys = es_keys
+      @not_analyzed = not_analyzed
       # Currently pre fetch is not required
       # @resource = resource
     end
@@ -59,13 +61,9 @@ module Search
     end
 
     def construct_key(node)
-      key = (@column_names[node.key] || ApiSearchConstants::ES_KEYS[node.key] || node.key)
-      key = "#{key}.not_analyzed" if not_analyzed.include?(key)
+      key = (@column_names[node.key] || @es_keys[node.key] || node.key)
+      key = "#{key}.not_analyzed" if @not_analyzed.include?(key)
       key
-    end
-
-    def not_analyzed
-      @not_analyzed ||= Flexifield.column_names.select { |x| x if x =~ /^ffs/ } + ['tag_names']
     end
 
     def term_filter(field_name, value)

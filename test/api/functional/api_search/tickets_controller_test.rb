@@ -5,7 +5,7 @@ module ApiSearch
 
     CUSTOM_FIELDS = %w(number checkbox decimal text paragraph date).freeze
     CHOICES = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'].freeze
-    SECTION_CHOICES = ["Batman Begins", "The Dark Knight", "The Dark Knight Rises"]
+    SECTION_CHOICES = ['Batman Begins', 'The Dark Knight', 'The Dark Knight Rises'].freeze
 
     def setup
       super
@@ -16,6 +16,8 @@ module ApiSearch
 
     def initial_setup
       return if @@initial_setup_run
+      @account.launch(:service_reads)
+      @account.launch(:service_writes)
       @account.tags.destroy_all
       CUSTOM_FIELDS.each do |custom_field|
         create_custom_field("test_custom_#{custom_field}", custom_field)
@@ -54,9 +56,9 @@ module ApiSearch
 
       type = types[rand(4)]
 
-      if %w[Question Incident].include?(type)
+      if %w(Question Incident).include?(type)
         custom_fields[:section_number_1]    = rand(10)
-        custom_fields[:section_checkbox_1]  = n % 2 == 0
+        custom_fields[:section_checkbox_1]  = n.even?
         custom_fields[:section_text_1] = Faker::Lorem.words(3).join(' ')
         custom_fields[:section_date_1] = (n + 2).days.until.iso8601
         custom_fields[:section_dropdown_1] = SECTION_CHOICES[rand(3)]
@@ -81,11 +83,10 @@ module ApiSearch
         create_custom_field('section_text', 'text', '79')
         create_custom_field('section_paragraph', 'paragraph', '09')
         create_custom_field('section_date', 'date', '09')
-        create_custom_field_dropdown('section_dropdown', SECTION_CHOICES, "78")
+        create_custom_field_dropdown('section_dropdown', SECTION_CHOICES, '78')
         sections = [{ title: 'section1',
-                      value_mapping: %w[Question Incident],
-                      ticket_fields: %w[section_number section_checkbox section_decimal section_text section_paragraph section_date]
-                    }]
+                      value_mapping: %w(Question Incident),
+                      ticket_fields: %w(section_number section_checkbox section_decimal section_text section_paragraph section_date) }]
       end
       sections
     end
@@ -295,14 +296,14 @@ module ApiSearch
       match_json(results: pattern, total: tickets.size)
     end
 
-    def test_tickets_custom_date_on_a_day
-      d1 = Date.today.to_date.iso8601
-      tickets = @account.tickets.select { |x| x.test_custom_date_1 && x.test_custom_date_1.utc.to_date.iso8601 == d1 }
-      get :index, controller_params(query: '"test_custom_date: \'' + d1 + '\'"')
-      assert_response 200
-      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
-      match_json(results: pattern, total: tickets.size)
-    end
+    # def test_tickets_custom_date_on_a_day
+    #   d1 = Date.today.to_date.iso8601
+    #   tickets = @account.tickets.select { |x| x.test_custom_date_1 && x.test_custom_date_1.utc.to_date.iso8601 == d1 }
+    #   get :index, controller_params(query: '"test_custom_date: \'' + d1 + '\'"')
+    #   assert_response 200
+    #   pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+    #   match_json(results: pattern, total: tickets.size)
+    # end
 
     def test_tickets_updated_on_a_day
       d1 = Date.today.to_date.iso8601
@@ -333,15 +334,15 @@ module ApiSearch
       match_json(results: pattern, total: tickets.size)
     end
 
-    def test_tickets_custom_date_valid_range_and_filter
-      d1 = (Date.today - 8).iso8601
-      d2 = (Date.today - 1).iso8601
-      tickets = @account.tickets.select { |x| x.custom_field['test_custom_date_1'] && (x.custom_field['test_custom_date_1'].to_date.iso8601 >= d1 && x.custom_field['test_custom_date_1'].to_date.iso8601 <= d2) && x.priority == 2 }
-      get :index, controller_params(query: '"(test_custom_date :> \'' + d1 + '\' AND test_custom_date :< \'' + d2 + '\') AND priority:2 "')
-      assert_response 200
-      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
-      match_json(results: pattern, total: tickets.size)
-    end
+    # def test_tickets_custom_date_valid_range_and_filter
+    #   d1 = (Date.today - 8).iso8601
+    #   d2 = (Date.today - 1).iso8601
+    #   tickets = @account.tickets.select { |x| x.custom_field['test_custom_date_1'] && (x.custom_field['test_custom_date_1'].to_date.iso8601 >= d1 && x.custom_field['test_custom_date_1'].to_date.iso8601 <= d2) && x.priority == 2 }
+    #   get :index, controller_params(query: '"(test_custom_date :> \'' + d1 + '\' AND test_custom_date :< \'' + d2 + '\') AND priority:2 "')
+    #   assert_response 200
+    #   pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+    #   match_json(results: pattern, total: tickets.size)
+    # end
 
     def test_tickets_valid_range_fr_due_by
       d1 = (Date.today - 8).iso8601
@@ -400,7 +401,7 @@ module ApiSearch
       assert response['total'] == 0
     end
 
-    def test_tickets_tag_case_sensitive
+    def test_tickets_tag_invalid_length
       get :index, controller_params(query: '"tag:' + 'a' * 33 + '"')
       assert_response 400
       match_json([bad_request_error_pattern('tag', :array_too_long, max_count: ApiConstants::TAG_MAX_LENGTH_STRING, element_type: :characters)])
@@ -485,13 +486,13 @@ module ApiSearch
       match_json(results: pattern, total: tickets.size)
     end
 
-    def test_custom_date_null
-      tickets = @account.tickets.select { |x| x.test_custom_date_1.nil? }
-      get :index, controller_params(query: '"test_custom_date: null"')
-      assert_response 200
-      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
-      match_json(results: pattern, total: tickets.size)
-    end
+    # def test_custom_date_null
+    #   tickets = @account.tickets.select { |x| x.test_custom_date_1.nil? }
+    #   get :index, controller_params(query: '"test_custom_date: null"')
+    #   assert_response 200
+    #   pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+    #   match_json(results: pattern, total: tickets.size)
+    # end
 
     def test_group_id_null
       tickets = @account.tickets.select { |x| x.group_id.nil? }
@@ -572,9 +573,9 @@ module ApiSearch
     end
 
     def test_section_field_text
-      text = @account.tickets.where('ticket_type = "Question"').first.custom_field["section_text_1"]
+      text = @account.tickets.where('ticket_type = "Question"').first.custom_field['section_text_1']
       tickets = @account.tickets.select { |x| x.custom_field['section_text_1'] == text }
-      get :index, controller_params(query: '"section_text:\''+text+'\' "')
+      get :index, controller_params(query: '"section_text:\'' + text + '\' "')
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -587,24 +588,24 @@ module ApiSearch
       assert response['total'] == 0
     end
 
-    def test_section_field_date
-      date = 3.days.until.iso8601
-      tickets = @account.tickets.select { |x| x.custom_field['section_date_1'] && x.custom_field['section_date_1'].utc.to_date.iso8601 == date.to_date.iso8601 }
-      get :index, controller_params(query: '"section_date:\'' + date.to_date.iso8601 + '\' "')
-      assert_response 200
-      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
-      match_json(results: pattern, total: tickets.size)
-    end
+    # def test_section_field_date
+    #   date = 3.days.until.iso8601
+    #   tickets = @account.tickets.select { |x| x.custom_field['section_date_1'] && x.custom_field['section_date_1'].utc.to_date.iso8601 == date.to_date.iso8601 }
+    #   get :index, controller_params(query: '"section_date:\'' + date.to_date.iso8601 + '\' "')
+    #   assert_response 200
+    #   pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+    #   match_json(results: pattern, total: tickets.size)
+    # end
 
-    def test_section_field_date_range
-      d1 = 3.days.until.iso8601
-      d2 = 5.days.until.iso8601
-      tickets = @account.tickets.select { |x| x.custom_field['section_date_1'] && x.custom_field['section_date_1'].to_date.iso8601 >= d1 && x.custom_field['section_date_1'].to_date.iso8601 <= d2 }
-      get :index, controller_params(query: '"section_date:>\'' + d1.to_date.iso8601 + '\' AND section_date:<\'' + d2.to_date.iso8601 + '\'"')
-      assert_response 200
-      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
-      match_json(results: pattern, total: tickets.size)
-    end
+    # def test_section_field_date_range
+    #   d1 = 3.days.until.iso8601
+    #   d2 = 5.days.until.iso8601
+    #   tickets = @account.tickets.select { |x| x.custom_field['section_date_1'] && x.custom_field['section_date_1'].to_date.iso8601 >= d1 && x.custom_field['section_date_1'].to_date.iso8601 <= d2 }
+    #   get :index, controller_params(query: '"section_date:>\'' + d1.to_date.iso8601 + '\' AND section_date:<\'' + d2.to_date.iso8601 + '\'"')
+    #   assert_response 200
+    #   pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+    #   match_json(results: pattern, total: tickets.size)
+    # end
 
     def test_section_field_dropdown
       tickets = @account.tickets.select { |x| x.custom_field['section_dropdown_1'] == SECTION_CHOICES.first }
@@ -621,13 +622,20 @@ module ApiSearch
     end
 
     def test_section_field_invalid_combo
-      tickets = @account.tickets.select { |x| [true,false].include?(x.custom_field['section_checkbox_1'] == true) && ['Problem', 'Feature Request'].include?(x.ticket_type) }
+      tickets = @account.tickets.select { |x| [true, false].include?(x.custom_field['section_checkbox_1'] == true) && ['Problem', 'Feature Request'].include?(x.ticket_type) }
       get :index, controller_params(query: '"(section_checkbox: true) AND (type:Problem OR type:\'Feature Request\')"')
       assert_response 200
       response = parse_response @response.body
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
-      assert response['total'] == 0      
+      assert response['total'] == 0
     end
 
+    # custom date and section not allowed
+    def test_tickets_custom_date_section_date
+      d1 = Date.today.to_date.iso8601
+      get :index, controller_params(query: '"sample_date: \'' + d1 + '\' or section_date: \'' + d1 + '\' "')
+      assert_response 400
+      match_json([bad_request_error_pattern('sample_date', :invalid_field), bad_request_error_pattern('section_date', :invalid_field)])
+    end
   end
 end

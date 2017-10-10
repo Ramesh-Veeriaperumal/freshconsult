@@ -1,15 +1,14 @@
 module ApiSearch
   class ContactsController < SearchController
-
     def index
       tree = parser.expression_tree
       record = record_from_expression_tree(tree)
 
-      record = sanitize_custom_fields(record, ApiSearchConstants::CONTACT_FIELDS) if custom_fields.any?
+      record = sanitize_custom_fields(record, ApiSearchConstants::CONTACT_FIELDS)
 
       validation_params = record.merge({contact_fields: contact_fields })
 
-      validation = Search::ContactValidation.new(validation_params)
+      validation = Search::ContactValidation.new(validation_params, contact_custom_fields)
 
       if validation.valid?
         @name_mapping = custom_fields
@@ -28,12 +27,20 @@ module ApiSearch
       end
 
       def visitor
-        column_names = Account.current.contact_form.custom_contact_fields.each_with_object({}){|field,hash| hash[CustomFieldDecorator.display_name(field.name).to_sym] = field.column_name if field.column_name =~ ApiSearchConstants::CUSTOMER_FIELDS_REGEX }
-        Search::TermVisitor.new(column_names)
+        column_names = Account.current.contact_form.custom_contact_fields.each_with_object({}){|field,hash| hash[CustomFieldDecorator.display_name(field.name)] = field.column_name if field.column_name =~ ApiSearchConstants::CUSTOMER_FIELDS_REGEX }.except(*ApiSearchConstants::CONTACT_FIELDS)
+        es_keys = ApiSearchConstants::CONTACT_KEYS
+        # date_fields = contact_fields.map(&:column_name).select { |x| x if x =~ /^cf_date/ } + ApiSearchConstants::CONTACT_DATE_FIELDS.map{|x| es_keys.fetch(x,x) }
+        date_fields = ApiSearchConstants::CONTACT_DATE_FIELDS.map{|x| es_keys.fetch(x,x) }
+        Search::TermVisitor.new(column_names, es_keys, date_fields, ApiSearchConstants::CUSTOMER_NOT_ANALYZED)
+      end
+
+      def allowed_custom_fields
+        # If any custom fields have the name same as that of default fields it will be ignored
+        contact_custom_fields.each_with_object({}) { |contact_field, hash| hash[contact_field.name] = CustomFieldDecorator.display_name(contact_field.name) unless ApiSearchConstants::CONTACT_FIELDS.include?(CustomFieldDecorator.display_name(contact_field.name)) }
       end
 
       def contact_custom_fields
-        contact_fields.select{|x| ApiSearchConstants::ALLOWED_CUSTOM_FIELD_TYPES.include? x.field_type.to_s }
+        contact_fields.select { |x| ApiSearchConstants::ALLOWED_CUSTOM_FIELD_TYPES.include?(x.field_type.to_s) }
       end
 
       def contact_fields
