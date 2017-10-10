@@ -62,6 +62,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     feature_info[:freshfone] = account.features?(:freshfone)
     feature_info[:domain_restricted_access] = account.features?(:domain_restricted_access)
     feature_info[:restricted_helpdesk] = account.restricted_helpdesk?
+    feature_info[:falcon] = account.has_feature?(:falcon) || account.launched?(:falcon)
     respond_to do |format|
       format.json do
         render :json => feature_info
