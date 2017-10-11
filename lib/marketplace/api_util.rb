@@ -1,4 +1,5 @@
 module Marketplace::ApiUtil
+  include Marketplace::Constants
 
   def curr_user_language
     if User.current
@@ -24,8 +25,9 @@ module Marketplace::ApiUtil
       "#{MarketplaceConfig::API_URL}/#{api_endpoint}#{payload_params}"
     end
 
-    def mkp_oauth_payload(api_endpoint, url_params, optional_params = {})
-      payload_params = payload_params(url_params, optional_params)
+    def mkp_oauth_payload(api_endpoint)
+      params_hash = { 'code' => "tokens:freshapps:#{PRODUCT_ID}:#{Account.current.id}:#{params[:version_id]}" }
+      payload_params = "?#{params_hash.to_query}"
       "#{MarketplaceConfig::MKP_OAUTH_URL}/#{api_endpoint}#{payload_params}"
     end
 
