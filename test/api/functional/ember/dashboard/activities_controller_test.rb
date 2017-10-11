@@ -11,15 +11,25 @@ module Ember
       include ForumsTestHelper
       include SolutionsTestHelper
 
+      PAGE_LIMIT = 30
+      PER_PAGE   = 20
+      @@before_all_run = false
+
       def setup
         super
         $redis_others.perform_redis_op("set", "ARTICLE_SPAM_REGEX","(gmail|kindle|face.?book|apple|microsoft|google|aol|hotmail|aim|mozilla|quickbooks|norton).*(support|phone|number)")
         $redis_others.perform_redis_op("set", "PHONE_NUMBER_SPAM_REGEX", "(1|I)..?8(1|I)8..?85(0|O)..?78(0|O)6|(1|I)..?877..?345..?3847|(1|I)..?877..?37(0|O)..?3(1|I)89|(1|I)..?8(0|O)(0|O)..?79(0|O)..?9(1|I)86|(1|I)..?8(0|O)(0|O)..?436..?(0|O)259|(1|I)..?8(0|O)(0|O)..?969..?(1|I)649|(1|I)..?844..?922..?7448|(1|I)..?8(0|O)(0|O)..?75(0|O)..?6584|(1|I)..?8(0|O)(0|O)..?6(0|O)4..?(1|I)88(0|O)|(1|I)..?877..?242..?364(1|I)|(1|I)..?844..?782..?8(0|O)96|(1|I)..?844..?895..?(0|O)4(1|I)(0|O)|(1|I)..?844..?2(0|O)4..?9294|(1|I)..?8(0|O)(0|O)..?2(1|I)3..?2(1|I)7(1|I)|(1|I)..?855..?58(0|O)..?(1|I)8(0|O)8|(1|I)..?877..?424..?6647|(1|I)..?877..?37(0|O)..?3(1|I)89|(1|I)..?844..?83(0|O)..?8555|(1|I)..?8(0|O)(0|O)..?6(1|I)(1|I)..?5(0|O)(0|O)7|(1|I)..?8(0|O)(0|O)..?584..?46(1|I)(1|I)|(1|I)..?844..?389..?5696|(1|I)..?844..?483..?(0|O)332|(1|I)..?844..?78(0|O)..?675(1|I)|(1|I)..?8(0|O)(0|O)..?596..?(1|I)(0|O)65|(1|I)..?888..?573..?5222|(1|I)..?855..?4(0|O)9..?(1|I)555|(1|I)..?844..?436..?(1|I)893|(1|I)..?8(0|O)(0|O)..?89(1|I)..?4(0|O)(0|O)8|(1|I)..?855..?662..?4436")
         $redis_others.perform_redis_op('set', 'CONTENT_SPAM_CHAR_REGEX', 'ℴ|ℕ|ℓ|ℳ|ℱ|ℋ|ℝ|ⅈ|ℯ|ℂ|○|ℬ|ℂ|ℙ|ℹ|ℒ|ⅉ|ℐ')
+
+        before_all
       end
 
-      PAGE_LIMIT = 30
-      PER_PAGE = 20
+      def before_all
+        return if @@before_all_run
+        create_n_tickets(PAGE_LIMIT*2)
+        @@before_all_run = true
+      end
+
       def test_activities_create_ticket
         requester, ticket = create_new_ticket
         action_type = 'new_ticket'
@@ -75,10 +85,6 @@ module Ember
       def test_activities_with_no_params
         requester = add_new_user(@account)
         @agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
-        tickets = []
-        PAGE_LIMIT.times do
-          tickets << create_ticket(:requester_id => requester.id)
-        end
         get :index, controller_params(version: 'private')
         assert_response 200
         assert_equal(PAGE_LIMIT, JSON.parse(@response.body).count)
@@ -87,11 +93,7 @@ module Ember
       def test_activities_with_page_params
         requester = add_new_user(@account)
         @agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
-        target_activity = @account.activities.last
-        tickets = []
-        PAGE_LIMIT.times do
-          tickets << create_ticket(:requester_id => requester.id)
-        end
+        target_activity = @account.activities.last(PAGE_LIMIT + 1).first
         get :index, controller_params({version: 'private', page: 2})
         assert_response 200
         assert_equal(target_activity.id, JSON.parse(@response.body)[0]['id'])
@@ -100,10 +102,6 @@ module Ember
       def test_activities_with_per_page_params
         requester = add_new_user(@account)
         @agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
-        tickets = []
-        25.times do
-          tickets << create_ticket(:requester_id => requester.id)
-        end
         get :index, controller_params({version: 'private', per_page: PER_PAGE})
         assert_response 200
         assert_equal(PER_PAGE, JSON.parse(@response.body).count)
@@ -112,10 +110,6 @@ module Ember
       def test_activities_with_page_and_per_page_params
         requester = add_new_user(@account)
         @agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
-        tickets = []
-        20.times do
-          tickets << create_ticket(:requester_id => requester.id)
-        end
         get :index, controller_params({version: 'private', page: 2, per_page: PER_PAGE})
         assert_response 200
         assert_equal(PER_PAGE, JSON.parse(@response.body).count)
@@ -126,7 +120,7 @@ module Ember
         @agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
         action_type = 'new_ticket'
         action_content = {}
-        expected = get_activity_pattern(last_activity, requester,action_type,action_content)
+        expected = get_activity_pattern(last_activity, requester, action_type, action_content)
         note = create_private_note(ticket)
         get :index, controller_params({version: 'private', before_id: last_activity.id})
         assert_response 200
@@ -136,11 +130,6 @@ module Ember
       def test_activities_with_page_and_before_id
         requester, ticket = create_new_ticket
         @agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
-        PAGE_LIMIT.times do
-          note = create_private_note(ticket)
-        end
-        action_type = 'new_ticket'
-        action_content = {}
         get :index, controller_params({version: 'private', page: 1, before_id: last_activity.id})
         assert_response 200
         assert_equal(PAGE_LIMIT, JSON.parse(@response.body).count)
@@ -149,11 +138,6 @@ module Ember
       def test_activities_with_page_per_page_and_before_id
         requester, ticket = create_new_ticket
         @agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
-        PAGE_LIMIT.times do
-          note = create_private_note(ticket)
-        end
-        action_type = 'new_ticket'
-        action_content = {}
         get :index, controller_params({version: 'private', page: 1, per_page: PER_PAGE, before_id: last_activity.id})
         assert_response 200
         assert_equal(PER_PAGE, JSON.parse(@response.body).count)
@@ -171,7 +155,7 @@ module Ember
         end
         action_type = 'note'
         action_content = { 'note' => { 'id' => notes[0].id, 'source' => nil, 'incoming' => nil } }
-        expected = get_activity_pattern(activities[0], @agent,action_type,action_content)
+        expected = get_activity_pattern(activities[0], @agent, action_type, action_content)
         get :index, controller_params({version: 'private', since_id: since_id})
         assert_response 200
         assert_equal(expected, JSON.parse(@response.body)[2])

@@ -113,7 +113,7 @@ module TicketsTestHelper
 
   def ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
     expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
-    custom_field = ticket.custom_field.map { |k, v| [TicketDecorator.display_name(k), v.respond_to?(:utc) ? v.strftime('%F') : v] }.to_h
+    custom_field = ticket.custom_field_via_mapping.map { |k, v| [TicketDecorator.display_name(k), v.respond_to?(:utc) ? v.strftime('%F') : v] }.to_h
     ticket_custom_field = (custom_field && ignore_extra_keys) ? custom_field.as_json.ignore_extra_keys! : custom_field.as_json
     description_html = format_ticket_html(ticket, expected_output[:description]) if expected_output[:description]
 
@@ -335,7 +335,11 @@ module TicketsTestHelper
   def private_api_ticket_index_pattern(survey = false, requester = false, company = false, order_by = 'created_at', order_type = 'desc', all_tickets = false)
     filter_clause = all_tickets ? ['spam = ? AND deleted = ?', false, false] : ['created_at > ?', 30.days.ago]
 
-    pattern_array = Helpdesk::Ticket.where(*filter_clause).order("#{order_by} #{order_type}").limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).map do |ticket|
+    preload_options = [:tags, :ticket_states, :ticket_old_body, :schema_less_ticket, :flexifield]
+    preload_options << :requester if requester
+    preload_options << :company if company
+
+    pattern_array = Helpdesk::Ticket.where(*filter_clause).order("#{order_by} #{order_type}").limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).preload(preload_options).map do |ticket|
       pattern = index_ticket_pattern_with_associations(ticket, requester, true, false, [:tags])
       pattern[:requester] = Hash if requester
       pattern[:company] = Hash if company && ticket.company

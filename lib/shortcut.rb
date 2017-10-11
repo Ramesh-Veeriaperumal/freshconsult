@@ -57,7 +57,6 @@ class Shortcut
 			:delete				=> "#",
 			:show_activities_toggle	=> "}",
 			:properties			=> "p",
-			:expand				=> "]",
 			:undo				=> "z",
 			:expand 			=> "]",
 			:select_watcher		=> "shift+w",

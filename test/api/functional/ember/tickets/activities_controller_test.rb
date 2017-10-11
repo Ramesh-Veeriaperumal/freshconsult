@@ -14,29 +14,31 @@ module Ember
         before_all
       end
 
-      @before_all_run = false
+      @@before_all_run = false
+      @@ticket = nil
 
       def before_all
+        # Every test is stubbed so no need to create tickets and agents repeatedly
+        @agent   = @account.agents.full_time_agents.first.user
+        @ticket  = @@ticket || create_ticket(responder_id: @agent.id)
+        @rule    = @account.account_va_rules.first
+
+        return if @@before_all_run
+
         @account.sections.map(&:destroy)
-        @agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
-        @ticket = create_ticket(responder_id: @agent.id)
-        @target_ticket = create_ticket(responder_id: @agent.id)
-        @note = create_private_note(@ticket)
-        @timesheet = create_timesheet
-        @rule = @account.account_va_rules.first
-        return if @before_all_run
         @account.ticket_fields.custom_fields.each(&:destroy)
-        @ticket_fields = []
-        @custom_field_labels = []
-        @ticket_fields << create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
-        @ticket_fields << create_custom_field_dropdown('test_custom_dropdown', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
-        @choices_custom_field_labels = @ticket_fields.map(&:label)
+        ticket_fields = []
+        custom_field_labels = []
+        ticket_fields << create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
+        ticket_fields << create_custom_field_dropdown('test_custom_dropdown', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
+        choices_custom_field_labels = ticket_fields.map(&:label)
         CUSTOM_FIELDS.each do |custom_field|
           next if %w(dropdown country state city).include?(custom_field)
-          @ticket_fields << create_custom_field("test_custom_#{custom_field}", custom_field)
-          @custom_field_labels << @ticket_fields.last.label
+          ticket_fields << create_custom_field("test_custom_#{custom_field}", custom_field)
+          custom_field_labels << ticket_fields.last.label
         end
-        @before_all_run = true
+        @@before_all_run = true
+        @@ticket = @ticket
       end
 
       def wrap_cname(params)
@@ -95,6 +97,7 @@ module Ember
       end
 
       def test_add_note_activity
+        @note = create_private_note(@ticket)
         stub_data = add_note_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
         get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
@@ -255,6 +258,7 @@ module Ember
       end
 
       def test_ticket_merge_target_activity
+        @target_ticket = create_ticket(responder_id: @agent.id)
         stub_data = ticket_merge_target_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
         get :index, controller_params(version: 'private', ticket_id: @target_ticket.display_id)
@@ -265,6 +269,7 @@ module Ember
       end
 
       def test_ticket_merge_source_activity
+        @target_ticket = create_ticket(responder_id: @agent.id)
         stub_data = ticket_merge_source_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
         get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
@@ -275,6 +280,7 @@ module Ember
       end
 
       def test_ticket_split_target_activity
+        @target_ticket = create_ticket(responder_id: @agent.id)
         stub_data = ticket_split_target_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
         get :index, controller_params(version: 'private', ticket_id: @target_ticket.display_id)
@@ -285,6 +291,7 @@ module Ember
       end
 
       def test_ticket_split_source_activity
+        @target_ticket = create_ticket(responder_id: @agent.id)
         stub_data = ticket_split_source_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
         get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
@@ -315,6 +322,7 @@ module Ember
       end
 
       def test_timesheet_create_activity
+        @timesheet = create_timesheet
         stub_data = timesheet_create_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
         get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
@@ -325,6 +333,7 @@ module Ember
       end
 
       def test_timesheet_edit_activity
+        @timesheet = create_timesheet
         stub_data = timesheet_edit_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
         get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
@@ -335,6 +344,7 @@ module Ember
       end
 
       def test_timesheet_delete_activity
+        @timesheet = create_timesheet
         stub_data = timesheet_delete_activity
         @controller.stubs(:fetch_activities).returns(stub_data)
         get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)

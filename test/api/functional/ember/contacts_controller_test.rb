@@ -8,6 +8,8 @@ module Ember
     include TicketsTestHelper
     include ArchiveTicketTestHelper
 
+    BULK_CONTACT_CREATE_COUNT = 2
+
     def setup
       super
       initial_setup
@@ -22,11 +24,6 @@ module Ember
       @account.add_feature(:multiple_user_companies)
       @account.reload
 
-      20.times do
-        @account.companies.build(name: Faker::Name.name)
-      end
-      @account.save
-
       @@initial_setup_run = true
     end
 
@@ -39,6 +36,14 @@ module Ember
         name: Faker::Lorem.characters(15),
         email: Faker::Internet.email
       }
+    end
+
+    def create_n_users(count, account, params={})
+      contact_ids = []
+      count.times do
+        contact_ids << add_new_user(account, params).id
+      end
+      contact_ids
     end
 
     def test_create_with_incorrect_avatar_type
@@ -202,62 +207,6 @@ module Ember
         expected_data_type: 'key/value pair')]
       )
       company_field.update_attributes({:required_for_agent => false})
-    end
-
-    def test_quick_create_contact_with_company_name
-      post :quick_create, construct_params({version: 'private'},  name: Faker::Lorem.characters(15),
-                                          email: Faker::Internet.email,
-                                          company_name: Faker::Lorem.characters(10))
-      assert_response 201
-      match_json(private_api_contact_pattern(User.last))
-    end
-
-    def test_quick_create_length_invalid_company_name
-      post :quick_create, construct_params({version: 'private'},
-        name: Faker::Lorem.characters(15),
-        email: Faker::Internet.email,
-        company_name: Faker::Lorem.characters(300)
-      )
-      match_json([bad_request_error_pattern('company_name', :too_long, element_type: :characters, max_count: "#{ApiConstants::MAX_LENGTH_STRING}", current_count: 300)])
-      assert_response 400
-    end
-
-    # Skip validation tests
-    def test_quick_create_contact_without_required_custom_fields
-      cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'code', editable_in_signup: 'true', required_for_agent: 'true'))
-
-      post :quick_create, construct_params({version: 'private'},  name: Faker::Lorem.characters(15),
-                                          email: Faker::Internet.email,
-                                          company_name: Faker::Lorem.characters(15))
-
-      assert_response 201
-      match_json(private_api_contact_pattern(User.last))
-      ensure
-        cf.update_attribute(:required_for_agent, false)
-    end
-
-    def test_quick_create_with_all_default_fields_required_valid
-      default_non_required_fiels = ContactField.where(required_for_agent: false,  column_name: 'default')
-      default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
-      post :quick_create, construct_params({version: 'private'},  name: Faker::Lorem.characters(15),
-                                          email: Faker::Internet.email,
-                                          company_name: Faker::Lorem.characters(15)
-                                    )
-      assert_response 201
-    ensure
-      default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
-    end
-
-    def test_quick_create_contact_without_any_contact_detail
-      post :quick_create, construct_params({version: 'private'},  name: Faker::Lorem.characters(10))
-      match_json([bad_request_error_pattern('email', :missing_contact_detail)])
-      assert_response 400
-    end
-
-    def test_quick_create_without_company
-      post :quick_create, construct_params({version: 'private'},  name: Faker::Lorem.characters(10),
-                                          email: Faker::Internet.email)
-      assert_response 201
     end
 
     def test_create_contact_with_other_companies_name
@@ -714,27 +663,21 @@ module Ember
 
     def test_index_with_tags
       tags = Faker::Lorem.words(3).uniq
-      contact_ids = []
-      rand(2..10).times do
-        contact_ids << add_new_user(@account, tags: tags).id
-      end
+      contact_ids = create_n_users(BULK_CONTACT_CREATE_COUNT, @account, tags: tags)
       get :index, controller_params(version: 'private', tag: tags[0])
       assert_response 200
       assert response.api_meta[:count] == contact_ids.size
     end
 
     def test_index_with_invalid_tags
-      contact_ids = []
-      rand(2..10).times do
-        contact_ids << add_new_user(@account).id
-      end
+      contact_ids = create_n_users(BULK_CONTACT_CREATE_COUNT, @account)
       get :index, controller_params(version: 'private', tag: Faker::Lorem.word)
       assert_response 200
       assert response.api_meta[:count] == 0
     end
 
     def test_index_with_contacts_having_avatar
-      rand(2..10).times do
+      BULK_CONTACT_CREATE_COUNT.times do
         contact = add_new_user(@account)
         add_avatar_to_user(contact)
       end
@@ -750,10 +693,7 @@ module Ember
     end
 
     def test_bulk_delete_with_invalid_ids
-      contact_ids = []
-      rand(2..10).times do
-        contact_ids << add_new_user(@account).id
-      end
+      contact_ids = create_n_users(1, @account)
       invalid_ids = [contact_ids.last + 20, contact_ids.last + 30]
       ids_to_delete = [*contact_ids, *invalid_ids]
       put :bulk_delete, construct_params({ version: 'private' }, ids: ids_to_delete)
@@ -764,11 +704,7 @@ module Ember
     end
 
     def test_bulk_delete_with_errors_in_deletion
-      contacts = []
-      rand(2..10).times do
-        contacts << add_new_user(@account)
-      end
-      ids_to_delete = contacts.map(&:id)
+      ids_to_delete = create_n_users(BULK_CONTACT_CREATE_COUNT, @account)
       User.any_instance.stubs(:save).returns(false)
       put :bulk_delete, construct_params({ version: 'private' }, ids: ids_to_delete)
       failures = {}
@@ -778,28 +714,19 @@ module Ember
     end
 
     def test_bulk_delete_with_valid_ids
-      contact_ids = []
-      rand(2..10).times do
-        contact_ids << add_new_user(@account).id
-      end
+      contact_ids = create_n_users(BULK_CONTACT_CREATE_COUNT, @account)
       put :bulk_delete, construct_params({ version: 'private' }, ids: contact_ids)
       assert_response 204
     end
 
     def bulk_restore
-      contact_ids = []
-      rand(2..10).times do
-        contact_ids << add_new_user(@account, deleted: true).id
-      end
+      contact_ids = create_n_users(BULK_CONTACT_CREATE_COUNT, @account, deleted: true)
       put :bulk_restore, construct_params({ version: 'private' }, ids: contact_ids)
       assert_response 204
     end
 
     def test_bulk_restore_of_active_contacts
-      contact_ids = []
-      rand(2..10).times do
-        contact_ids << add_new_user(@account).id
-      end
+      contact_ids = create_n_users(BULK_CONTACT_CREATE_COUNT, @account)
       put :bulk_restore, construct_params({ version: 'private' }, ids: contact_ids)
       failures = {}
       contact_ids.each { |id| failures[id] = { id: :unable_to_perform } }
@@ -808,19 +735,13 @@ module Ember
     end
 
     def test_bulk_send_invite
-      contact_ids = []
-      rand(2..10).times do
-        contact_ids << add_new_user(@account, active: false).id
-      end
+      contact_ids = create_n_users(BULK_CONTACT_CREATE_COUNT, @account, active: false)
       put :bulk_send_invite, construct_params({ version: 'private' }, ids: contact_ids)
       assert_response 204
     end
 
     def test_bulk_send_invite_to_deleted_contacts
-      contact_ids = []
-      rand(2..10).times do
-        contact_ids << add_new_user(@account, active: false, deleted: true).id
-      end
+      contact_ids = create_n_users(BULK_CONTACT_CREATE_COUNT, @account, deleted: true)
       valid_contact = add_new_user(@account, active: false)
       put :bulk_send_invite, construct_params({ version: 'private' }, ids: [*contact_ids, valid_contact.id])
       failures = {}
@@ -857,10 +778,7 @@ module Ember
     end
 
     def test_bulk_whitelist_with_invalid_ids
-      contact_ids = []
-      rand(2..10).times do
-        contact_ids << create_blocked_contact(@account).id
-      end
+      contact_ids = create_n_users(1, @account, blocked: true, blocked_at: Time.zone.now)
       last_id = contact_ids.max
       invalid_ids = [last_id + 50, last_id + 100]
       ids_to_whitelist = [*contact_ids, *invalid_ids]
@@ -873,11 +791,7 @@ module Ember
     end
 
     def test_bulk_whitelist_with_errors_in_whitelisting
-      contacts = []
-      rand(2..10).times do
-        contacts << create_blocked_contact(@account)
-      end
-      ids_to_whitelist = contacts.map(&:id)
+      ids_to_whitelist = create_n_users(BULK_CONTACT_CREATE_COUNT, @account, blocked: true, blocked_at: Time.zone.now)
       User.any_instance.stubs(:save).returns(false)
       put :bulk_whitelist, construct_params({ version: 'private' }, ids: ids_to_whitelist)
       failures = {}
@@ -887,10 +801,7 @@ module Ember
     end
 
     def test_bulk_whitelist_with_valid_ids
-      contact_ids = []
-      rand(2..10).times do
-        contact_ids << create_blocked_contact(@account).id
-      end
+      contact_ids = create_n_users(BULK_CONTACT_CREATE_COUNT, @account, blocked: true, blocked_at: Time.zone.now)
       put :bulk_whitelist, construct_params({ version: 'private' }, ids: contact_ids)
       assert_response 204
       confirm_user_whitelisting(contact_ids)
@@ -985,7 +896,6 @@ module Ember
     end
 
     def test_assume_identity_with_invalid_id
-      contact = add_new_user(@account, deleted: false, active: true)
       assume_contact = add_new_user(@account, deleted: false, active: true)
       put :assume_identity, construct_params({ version: 'private', id: assume_contact.id + 10 }, nil)
       assert_response 404
@@ -1109,9 +1019,7 @@ module Ember
     end
 
     def test_export_csv_with_no_params
-      rand(2..10).times do
-        add_new_user(@account)
-      end
+      create_n_users(BULK_CONTACT_CREATE_COUNT, @account)
       contact_form = @account.contact_form
       post :export_csv, construct_params({ version: 'private' }, {})
       assert_response 400
@@ -1119,9 +1027,7 @@ module Ember
     end
 
     def test_export_csv_with_invalid_params
-      rand(2..10).times do
-        add_new_user(@account)
-      end
+      create_n_users(BULK_CONTACT_CREATE_COUNT, @account)
       contact_form = @account.contact_form
       params_hash = { default_fields: [Faker::Lorem.word], custom_fields: [Faker::Lorem.word] }
       post :export_csv, construct_params({ version: 'private' }, params_hash)
@@ -1135,9 +1041,7 @@ module Ember
       create_contact_field(cf_params(type: 'boolean', field_type: 'custom_checkbox', label: 'Metropolitian City', editable_in_signup: 'true'))
       create_contact_field(cf_params(type: 'date', field_type: 'custom_date', label: 'Joining date', editable_in_signup: 'true'))
 
-      rand(2..10).times do
-        add_new_user(@account)
-      end
+      create_n_users(BULK_CONTACT_CREATE_COUNT, @account)
       default_fields = @account.contact_form.default_contact_fields
       custom_fields = @account.contact_form.custom_contact_fields
       Export::ContactWorker.jobs.clear
