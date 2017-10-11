@@ -269,7 +269,6 @@ module Ember
       end
 
       def decorate_objects
-        return if @errors || @error
         decorator, options = decorator_options
         @items.map! { |item| decorator.new(item, options) } if @items
       end

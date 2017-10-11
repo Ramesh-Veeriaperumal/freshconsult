@@ -30,19 +30,17 @@ module DecoratorConcern
   end
 
   def render_with_before_render_action(*options, &block)
-    send(decorator_method) if decorator_method
+    send(decorator_method) if errors_empty? && decorator_method
     render_without_before_render_action(*options, &block)
   end
 
   def decorate_objects
-    return if @errors || @error
     # To create multiple decorator objects if the views involve considerable cosmetic manipulations.
     decorator, options = decorator_options
     @items.map! { |item| decorator.new(item, options) }
   end
 
   def decorate_object
-    return if @errors || @error
     # To create decorator object if the views involve considerable cosmetic manipulations.
     if decorator_options
       decorator, options = decorator_options
@@ -52,5 +50,9 @@ module DecoratorConcern
 
   def decorator_options(options = {})
     [self.class.decorator_name, options]
+  end
+
+  def errors_empty?
+    !(@errors || @error)
   end
 end

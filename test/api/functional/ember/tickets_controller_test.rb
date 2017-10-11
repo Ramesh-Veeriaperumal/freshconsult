@@ -166,6 +166,13 @@ module Ember
       match_json([bad_request_error_pattern(:only, :not_included, list: 'count')])
     end
 
+    def test_index_without_user_access
+      @controller.stubs(:api_current_user).raises(ActiveSupport::MessageVerifier::InvalidSignature)
+      get :index, controller_params(version: 'private', only: Faker::Lorem.word)
+      assert_response 401
+      assert_equal request_error_pattern(:credentials_required).to_json, response.body
+    end
+
     def test_index_with_invalid_query_hash
       get :index, controller_params(version: 'private', query_hash: Faker::Lorem.word)
       assert_response 400
