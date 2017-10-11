@@ -49,7 +49,7 @@
                   <% if show_edit?(extension_details['name']) %>
                     <%= link_to "<span class='#{font_class('settings1', 16)}'></span>".html_safe, edit_integrations_marketplace_app_path(ERB::Util.url_encode(extension_details['name'])), :class => "btn btn-mini btn-settings tooltip", "data-placement" => "below", "data-original-title" => t('application.tooltip.settings') %>
                   <% end %>
-                <% else %>
+                <% elsif !is_oauth_app?(extension_details) %>
                   <%= generate_mkp_edit_button(extension_details, installation_details)%>
                 <% end %>
               <% elsif is_iframe_app?(extension_details)%>
