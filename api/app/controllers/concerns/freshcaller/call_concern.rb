@@ -59,8 +59,7 @@ module Freshcaller::CallConcern
 
   def ticket_title
     call_date = DateTime.parse(@options[:call_created_at]).in_time_zone(current_account.time_zone)
-    return I18n.t("call.ticket.#{@options[:call_type]}_#{call_status_string}_title", customer: customer_title) if missed_call?
-    return I18n.t("call.ticket.#{call_status_string}_title", customer: customer_title) if voicemail?
+    return I18n.t("call.ticket.#{call_status_string}_title", customer: customer_title) if voicemail? || missed_call?
     I18n.t("call.ticket.#{call_status_string}_title", customer: customer_title, date: call_date.strftime('%a, %b %d'),
                                                       time: call_date.strftime('%I:%M:%S %p'))
   end
@@ -81,7 +80,6 @@ module Freshcaller::CallConcern
   end
 
   def description
-    return I18n.t("call.ticket.#{@options[:call_type]}_#{call_status_string}_description", customer: customer_details, agent: agent_details) if missed_call?
     I18n.t("call.ticket.#{call_status_string}_description", customer: customer_details, agent: agent_details)
   end
 
