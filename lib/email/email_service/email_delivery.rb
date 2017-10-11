@@ -188,11 +188,11 @@ include Email::EmailService::IpPoolHelper
 
   def remove_duplicate_emails( to, cc, bcc=[])
     res = []
-    unique_emails = (to.map{|pair| pair[:email]} + (bcc.empty? ? [] : (cc.map{|pair| pair[:email]}))).uniq
+    unique_emails = (to.map{|pair| pair["email"]} + (bcc.empty? ? [] : (cc.map{|pair| pair["email"]}))).uniq
     if bcc.empty?
-      cc.map{|pair| res<<pair if !unique_emails.include?(pair[:email])}
+      cc.map{|pair| res<<pair if !unique_emails.include?(pair["email"])}
     else
-      bcc.map{|pair| res<<pair if !unique_emails.include?(pair[:email])}
+      bcc.map{|pair| res<<pair if !unique_emails.include?(pair["email"])}
     end
     return res
   end
