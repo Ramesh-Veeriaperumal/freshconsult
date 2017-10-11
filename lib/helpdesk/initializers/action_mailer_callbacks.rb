@@ -246,13 +246,17 @@ module ActionMailerCallbacks
         spam_params = {:headers => mail.header.to_s, :text => mail.text_part.to_s, :html => mail.html_part.to_s }
         email = Helpdesk::Email::SpamDetector.construct_raw_mail(spam_params)
         response = FdSpamDetectionService::Service.new(Helpdesk::EMAIL[:outgoing_spam_account], email).check_spam
-        category = Helpdesk::Email::OutgoingCategory::CATEGORY_BY_TYPE[:spam] if response.spam?
+        if response.spam?
+          category = Helpdesk::Email::OutgoingCategory::CATEGORY_BY_TYPE[:spam] 
+          check_spam_rules(response)
+        end
         Rails.logger.info "Spam check response for outgoing email with Account ID : #{params[:account_id]}, Ticket ID: #{params[:ticket_id]}, Note ID: #{params[:note_id]} - #{response.spam?}"
       end
       return category
     rescue => e
       Rails.logger.info "Error in outgoing email spam check: #{e.message} - #{e.backtrace}"
-    end
+    end 
+
   end
 end
 

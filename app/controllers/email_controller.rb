@@ -19,7 +19,7 @@ class EmailController < ApplicationController
   skip_before_filter :ensure_proper_sts_header
   skip_after_filter :set_last_active_time
 
-  before_filter :authenticate_request, :only => [:validate_domain]
+  before_filter :authenticate_request, :only => [:validate_domain, :account_details]
 
   def new
     render :layout => false
@@ -76,6 +76,20 @@ class EmailController < ApplicationController
         render :json => { :domain_status => shard_status, :user_status => :not_found, :created_at => nil, :account_type => nil }
       end
     end
+  end
+
+  def account_details
+    account_id = params[:account_id]
+    Sharding.admin_select_shard_of(account_id) do
+      Sharding.run_on_slave do
+        account = Account.find_by_id(account_id).make_current
+        account_type = account.email_subscription_state
+        #user = account.all_users.find_by_email(params[:email])
+        render :json => { :status => 200, :created_at => account.created_at, :account_type => account_type, :mrr => account.subscription.cmrr, :ehawk_score => account.ehawk_reputation_score}
+      end
+    end
+  rescue => e
+    render :json => { :status => 404, :created_at => nil, :account_type => nil, :mrr => nil, :ehawk_score => nil }
   end
 
   private
