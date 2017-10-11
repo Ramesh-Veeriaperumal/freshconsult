@@ -11407,13 +11407,12 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     ticket:
       completed_title: "Call with %{customer} on %{date} at %{time}"
       voicemail_title: "Voicemail from %{customer}"
-      outgoing_noanswer_title: "Missed Call to %{customer}"
-      incoming_noanswer_title: "Missed Call from %{customer}"
+      noanswer_title: "Missed Call from %{customer}"
 
       completed_description: "Conversation with %{customer} and %{agent}"
       voicemail_description: "Voicemail from %{customer} to %{agent}"
-      incoming_noanswer_description: "Missed Call from %{customer} to %{agent}"
-      outgoing_noanswer_description: "Missed Call from %{agent} to %{customer}"
+      noanswer_description: "Missed Call from %{customer} to %{agent}"
+
 
   default:
     ticket:
