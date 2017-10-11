@@ -4,7 +4,7 @@ class Ember::MarketplaceAppsControllerTest < ActionController::TestCase
 
   def test_index
     Ember::MarketplaceAppsController.any_instance.stubs(:installed_extensions).returns(installed_extensions_v2)
-    Ember::MarketplaceAppsController.any_instance.stubs(:extension_details).returns(extension_details_v2)
+    Ember::MarketplaceAppsController.any_instance.stubs(:extension_details_v2).returns(extension_details_v2)
     get :index, controller_params(version: 'private')
     assert_response 200
     match_json(marketplace_apps_pattern)
