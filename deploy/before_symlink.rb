@@ -2,7 +2,7 @@ require 'aws-sdk'
 require 'logger'
 AWS.config(:logger => Logger.new($stdout),:log_level => :debug, :s3_signature_version => :v4)
 
-unless node[:opsworks][:instance][:hostname].include?("-falcon-app-")
+unless node[:opsworks][:instance][:hostname].include?('falcon-app-')
   if node[:new_asset_compilation]
     # Asset compilation / download only on instance setup. 
     if node[:opsworks][:instance][:hostname].include?("-app-") && !::File.exists?("#{release_path}/config/database.yml")
