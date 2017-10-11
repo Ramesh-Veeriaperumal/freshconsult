@@ -104,7 +104,6 @@ module Integrations::Constants
     'google_gadget' => '',
     'quickbooks' => 'quickbooks',
     'nimble' => 'nimble',
-    'surveymonkey' => 'surveymonkey',
     'box' => 'box',
     'mailchimp' => 'mailchimp',
     'constantcontact' => 'constantcontact',

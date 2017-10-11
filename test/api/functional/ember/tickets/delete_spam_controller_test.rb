@@ -4,6 +4,8 @@ module Ember
     class DeleteSpamControllerTest < ActionController::TestCase
       include TicketsTestHelper
 
+      BULK_CREATE_TICKET_COUNT = 2
+
       def wrap_cname(params)
         { delete_spam: params }
       end
@@ -38,10 +40,7 @@ module Ember
       end
 
       def test_delete_forever_with_invalid_tickets
-        ticket_ids = []
-        rand(5..10).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(2)
         invalid_ids = [ticket_ids.last + 10, ticket_ids.last + 20]
         put :delete_forever, construct_params({ version: 'private' }, {ids: [*ticket_ids, *invalid_ids]})
         assert_response 202
@@ -52,13 +51,9 @@ module Ember
       end
 
       def test_delete_forever_success
-        ticket_ids = []
-        rand(5..10).times do
-          ticket_ids << create_ticket(deleted: true).display_id
-        end
-        rand(5..10).times do
-          ticket_ids << create_ticket(spam: true).display_id
-        end
+        deleted_ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash.merge(deleted: true))
+        spam_ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash.merge(spam: true))
+        ticket_ids = deleted_ticket_ids + spam_ticket_ids
         put :delete_forever, construct_params({ version: 'private' }, {ids: ticket_ids})
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
@@ -185,10 +180,7 @@ module Ember
       end
 
       def test_bulk_delete_with_invalid_ids
-        ticket_ids = []
-        rand(2..10).times do
-          ticket_ids << create_ticket(ticket_params_hash).display_id
-        end
+        ticket_ids = create_n_tickets(2)
         invalid_ids = [ticket_ids.last + 20, ticket_ids.last + 30]
         ids_to_delete = [*ticket_ids, *invalid_ids]
         put :bulk_delete, construct_params({ version: 'private' }, {ids: ids_to_delete})
@@ -199,20 +191,13 @@ module Ember
       end
 
       def test_bulk_delete_with_valid_ids
-        ticket_ids = []
-        rand(2..10).times do
-          ticket_ids << create_ticket(ticket_params_hash).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash)
         put :bulk_delete, construct_params({ version: 'private' }, {ids: ticket_ids})
         assert_response 204
       end
 
       def test_bulk_delete_with_errors_in_deletion
-        tickets = []
-        rand(2..10).times do
-          tickets << create_ticket(ticket_params_hash)
-        end
-        ids_to_delete = tickets.map(&:display_id)
+        ids_to_delete = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash)
         Helpdesk::Ticket.any_instance.stubs(:save).returns(false)
         put :bulk_delete, construct_params({ version: 'private' }, {ids: ids_to_delete})
         Helpdesk::Ticket.any_instance.unstub(:save)
@@ -223,10 +208,7 @@ module Ember
       end
 
       def test_bulk_delete_tickets_without_access
-        ticket_ids = []
-        rand(2..10).times do
-          ticket_ids << create_ticket(ticket_params_hash).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash)
         User.any_instance.stubs(:can_view_all_tickets?).returns(false)
         put :bulk_delete, construct_params({ version: 'private' }, {ids: ticket_ids})
         User.any_instance.unstub(:can_view_all_tickets?)
@@ -241,10 +223,7 @@ module Ember
         User.any_instance.stubs(:group_ticket_permission).returns(true).at_most_once
         User.any_instance.stubs(:assigned_ticket_permission).returns(false).at_most_once
         group = create_group_with_agents(@account, agent_list: [@agent.id])
-        ticket_ids = []
-        rand(2..10).times do
-          ticket_ids << create_ticket(ticket_params_hash.merge(group_id: group.id)).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash.merge(group_id: group.id))
         put :bulk_delete, construct_params({ version: 'private' }, {ids: ticket_ids})
         User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
         assert_response 204
@@ -255,10 +234,7 @@ module Ember
         User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
         User.any_instance.stubs(:assigned_ticket_permission).returns(true).at_most_once
         Helpdesk::Ticket.any_instance.stubs(:responder_id).returns(@agent.id)
-        ticket_ids = []
-        rand(2..10).times do
-          ticket_ids << create_ticket(ticket_params_hash).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash)
         put :bulk_delete, construct_params({ version: 'private' }, {ids: ticket_ids})
         User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
         Helpdesk::Ticket.any_instance.unstub(:responder_id)
@@ -272,10 +248,7 @@ module Ember
       end
 
       def test_bulk_spam_with_invalid_ids
-        ticket_ids = []
-        rand(2..10).times do
-          ticket_ids << create_ticket(ticket_params_hash).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash)
         invalid_ids = [ticket_ids.last + 20, ticket_ids.last + 30]
         ids_list = [*ticket_ids, *invalid_ids]
         put :bulk_spam, construct_params({ version: 'private' }, {ids: ids_list})
@@ -286,20 +259,13 @@ module Ember
       end
 
       def test_bulk_spam_with_valid_ids
-        ticket_ids = []
-        rand(2..10).times do
-          ticket_ids << create_ticket(ticket_params_hash).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash)
         put :bulk_spam, construct_params({ version: 'private' }, {ids: ticket_ids})
         assert_response 204
       end
 
       def test_bulk_spam_with_errors
-        tickets = []
-        rand(2..10).times do
-          tickets << create_ticket(ticket_params_hash)
-        end
-        ids_list = tickets.map(&:display_id)
+        ids_list = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash)
         Helpdesk::Ticket.any_instance.stubs(:save).returns(false)
         put :bulk_spam, construct_params({ version: 'private' }, {ids: ids_list})
         Helpdesk::Ticket.any_instance.unstub(:save)
@@ -310,10 +276,7 @@ module Ember
       end
 
       def test_bulk_spam_tickets_without_access
-        ticket_ids = []
-        rand(2..10).times do
-          ticket_ids << create_ticket(ticket_params_hash).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash)
         User.any_instance.stubs(:can_view_all_tickets?).returns(false)
         put :bulk_spam, construct_params({ version: 'private' }, {ids: ticket_ids})
         User.any_instance.unstub(:can_view_all_tickets?)
@@ -328,10 +291,7 @@ module Ember
         User.any_instance.stubs(:group_ticket_permission).returns(true).at_most_once
         User.any_instance.stubs(:assigned_ticket_permission).returns(false).at_most_once
         group = create_group_with_agents(@account, agent_list: [@agent.id])
-        ticket_ids = []
-        rand(2..10).times do
-          ticket_ids << create_ticket(ticket_params_hash.merge(group_id: group.id)).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash.merge(group_id: group.id))
         put :bulk_spam, construct_params({ version: 'private' }, {ids: ticket_ids})
         User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
         assert_response 204
@@ -342,10 +302,7 @@ module Ember
         User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
         User.any_instance.stubs(:assigned_ticket_permission).returns(true).at_most_once
         Helpdesk::Ticket.any_instance.stubs(:responder_id).returns(@agent.id)
-        ticket_ids = []
-        rand(2..10).times do
-          ticket_ids << create_ticket(ticket_params_hash).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash)
         put :bulk_spam, construct_params({ version: 'private' }, {ids: ticket_ids})
         User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
         Helpdesk::Ticket.any_instance.unstub(:responder_id)
@@ -353,10 +310,7 @@ module Ember
       end
 
       def test_bulk_spam_partial_success
-        ticket_ids = []
-        rand(2..10).times do
-          ticket_ids << create_ticket(ticket_params_hash).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash)
         invalid_ticket = create_ticket(ticket_params_hash.merge(spam: true))
         put :bulk_spam, construct_params({ version: 'private' }, {ids: [*ticket_ids, invalid_ticket.display_id]})
         failures = {}
@@ -366,10 +320,7 @@ module Ember
       end
 
       def test_bulk_restore_with_errors
-        ticket_ids = []
-        rand(2..10).times do
-          ticket_ids << create_ticket(ticket_params_hash).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash)
         valid_ticket = create_ticket(ticket_params_hash.merge(deleted: true))
         put :bulk_restore, construct_params({ version: 'private' }, {ids: [*ticket_ids, valid_ticket.display_id]})
         failures = {}
@@ -379,19 +330,13 @@ module Ember
       end
 
       def test_bulk_restore_valid
-        ticket_ids = []
-        rand(2..10).times do
-          ticket_ids << create_ticket(ticket_params_hash.merge(deleted: true)).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash.merge(deleted: true))
         put :bulk_restore, construct_params({ version: 'private' }, {ids: ticket_ids})
         assert_response 204
       end
 
       def test_bulk_unspam_with_errors
-        ticket_ids = []
-        rand(2..10).times do
-          ticket_ids << create_ticket(ticket_params_hash).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash)
         valid_ticket = create_ticket(ticket_params_hash.merge(spam: true))
         put :bulk_unspam, construct_params({ version: 'private' }, {ids: [*ticket_ids, valid_ticket.display_id]})
         failures = {}
@@ -401,10 +346,7 @@ module Ember
       end
 
       def test_bulk_unspam_valid
-        ticket_ids = []
-        rand(2..10).times do
-          ticket_ids << create_ticket(ticket_params_hash.merge(spam: true)).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash.merge(spam: true))
         put :bulk_unspam, construct_params({ version: 'private' }, {ids: ticket_ids})
         assert_response 204
       end

@@ -172,67 +172,65 @@ module Ember
       match_json([bad_request_error_pattern(:query_hash, :datatype_mismatch, expected_data_type: 'key/value pair', given_data_type: String, prepend_msg: :input_received)])
     end
 
-    def test_index_with_no_params
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| create_ticket }
-      get :index, controller_params(version: 'private')
-      assert_response 200
-      refute response.api_meta.present?
-      match_json(private_api_ticket_index_pattern)
-    end
+    # def test_index_with_no_params
+    #   create_n_tickets(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
+    #   get :index, controller_params(version: 'private')
+    #   assert_response 200
+    #   refute response.api_meta.present?
+    #   match_json(private_api_ticket_index_pattern)
+    # end
 
-    def test_index_with_filter_id
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| create_ticket(priority: 4) }
-      ticket_filter = @account.ticket_filters.find_by_name('Urgent and High priority Tickets')
-      get :index, controller_params(version: 'private', filter: ticket_filter.id)
-      assert_response 200
-      match_json(private_api_ticket_index_pattern)
-    end
+    # def test_index_with_filter_id
+    #   create_n_tickets(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page], priority: 4)
+    #   ticket_filter = @account.ticket_filters.find_by_name('Urgent and High priority Tickets')
+    #   get :index, controller_params(version: 'private', filter: ticket_filter.id)
+    #   assert_response 200
+    #   match_json(private_api_ticket_index_pattern)
+    # end
 
-    def test_index_with_filter_name
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| create_ticket(requester_id: @agent.id) }
-      get :index, controller_params(version: 'private', filter: 'raised_by_me')
-      assert_response 200
-      match_json(private_api_ticket_index_pattern)
-    end
+    # def test_index_with_filter_name
+    #   create_n_tickets(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page], requester_id: @agent.id)
+    #   get :index, controller_params(version: 'private', filter: 'raised_by_me')
+    #   assert_response 200
+    #   match_json(private_api_ticket_index_pattern)
+    # end
 
-    def test_index_with_filter_name_ongoing_collab
-      collab_tickets_ids = []
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| collab_tickets_ids << create_ticket.display_id }
-      Account.current.stubs(:collab_settings).returns(Collab::Setting.new)
-      Collaboration::Ticket.any_instance.stubs(:fetch_tickets).returns(collab_tickets_ids)
-      Collaboration::Ticket.any_instance.stubs(:fetch_count).returns(collab_tickets_ids.size())
+    # def test_index_with_filter_name_ongoing_collab
+    #   collab_tickets_ids = create_n_tickets(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page], requester_id: @agent.id)
+    #   Account.current.stubs(:collab_settings).returns(Collab::Setting.new)
+    #   Collaboration::Ticket.any_instance.stubs(:fetch_tickets).returns(collab_tickets_ids)
+    #   Collaboration::Ticket.any_instance.stubs(:fetch_count).returns(collab_tickets_ids.size())
 
-      feature_flag = Account.current.has_feature?(:collaboration)
-      Account.current.set_feature(:collaboration) unless !feature_flag
+    #   feature_flag = Account.current.has_feature?(:collaboration)
+    #   Account.current.set_feature(:collaboration) unless !feature_flag
 
-      get :index, controller_params(version: 'private', filter: 'ongoing_collab')
-      assert_response 200
-      match_json(private_api_ticket_index_pattern)
-    ensure
-      Account.current.reset_feature(:collaboration) unless !feature_flag
-      Account.current.unstub(:collab_settings)
-      Collaboration::Ticket.any_instance.unstub(:fetch_tickets)
-      Collaboration::Ticket.any_instance.unstub(:fetch_count)
-    end
+    #   get :index, controller_params(version: 'private', filter: 'ongoing_collab')
+    #   assert_response 200
+    #   match_json(private_api_ticket_index_pattern)
+    # ensure
+    #   Account.current.reset_feature(:collaboration) unless !feature_flag
+    #   Account.current.unstub(:collab_settings)
+    #   Collaboration::Ticket.any_instance.unstub(:fetch_tickets)
+    #   Collaboration::Ticket.any_instance.unstub(:fetch_count)
+    # end
 
-    def test_index_with_query_hash
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| create_ticket(priority: 2, requester_id: @agent.id) }
-      query_hash_params = {
-        '0' => { 'condition' => 'priority', 'operator' => 'is', 'value' => 2, 'type' => 'default' },
-        '1' => { 'condition' => 'requester_id', 'operator' => 'is_in', 'value' => [@agent.id], 'type' => 'default' }
-      }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_pattern)
-    end
+    # def test_index_with_query_hash
+    #   create_n_tickets(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page], priority: 2, requester_id: @agent.id)
+    #   query_hash_params = {
+    #     '0' => { 'condition' => 'priority', 'operator' => 'is', 'value' => 4, 'type' => 'default' },
+    #     '1' => { 'condition' => 'requester_id', 'operator' => 'is_in', 'value' => [@agent.id], 'type' => 'default' }
+    #   }
+    #   get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
+    #   assert_response 200
+    #   match_json(private_api_ticket_index_pattern)
+    # end
 
-    def test_index_with_ids
-      ticket_ids = []
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| ticket_ids << create_ticket(priority: 2, requester_id: @agent.id).display_id }
-      get :index, controller_params({ version: 'private', ids: ticket_ids.join(',') }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_pattern)
-    end
+    # def test_index_with_ids
+    #   ticket_ids = create_n_tickets(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page], priority: 2, requester_id: @agent.id)
+    #   get :index, controller_params({ version: 'private', ids: ticket_ids.join(',') }, false)
+    #   assert_response 200
+    #   match_json(private_api_ticket_index_pattern)
+    # end
 
     def test_index_with_dates
       get :index, controller_params({ version: 'private', updated_since: Time.zone.now.iso8601 }, false)
@@ -280,28 +278,28 @@ module Ember
       MixpanelWrapper.unstub(:send_to_mixpanel)
     end
 
-    def test_index_with_full_requester_info
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| create_ticket }
-      get :index, controller_params(version: 'private', include: 'requester')
-      assert_response 200
-      match_json(private_api_ticket_index_pattern(false, true))
-    end
+    # def test_index_with_full_requester_info
+    #   create_n_tickets(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
+    #   get :index, controller_params(version: 'private', include: 'requester')
+    #   assert_response 200
+    #   match_json(private_api_ticket_index_pattern(false, true))
+    # end
 
-    def test_index_with_restricted_requester_info
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| create_ticket }
-      remove_privilege(User.current, :view_contacts)
-      get :index, controller_params(version: 'private', include: 'requester')
-      assert_response 200
-      match_json(private_api_ticket_index_pattern(false, true))
-      add_privilege(User.current, :view_contacts)
-    end
+    # def test_index_with_restricted_requester_info
+    #   create_n_tickets(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
+    #   remove_privilege(User.current, :view_contacts)
+    #   get :index, controller_params(version: 'private', include: 'requester')
+    #   assert_response 200
+    #   match_json(private_api_ticket_index_pattern(false, true))
+    #   add_privilege(User.current, :view_contacts)
+    # end
 
-    def test_index_with_agent_as_requester
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page].times { |i| create_ticket(requester_id: add_test_agent(@account, role: Role.find_by_name('Agent').id).id) }
-      get :index, controller_params(version: 'private', include: 'requester')
-      assert_response 200
-      match_json(private_api_ticket_index_pattern(false, true))
-    end
+    # def test_index_with_agent_as_requester
+    #   create_n_tickets(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page], requester_id: @agent.id)
+    #   get :index, controller_params(version: 'private', include: 'requester')
+    #   assert_response 200
+    #   match_json(private_api_ticket_index_pattern(false, true))
+    # end
 
     def test_index_with_company_side_load
       get :index, controller_params(version: 'private', include: 'company')
@@ -1801,7 +1799,9 @@ module Ember
       enable_adv_ticketing([:parent_child_tickets]) do
         parent = create_ticket_with_attachments(1, 5)
         params = ticket_params_hash.merge(parent_id: parent.display_id, attachment_ids: parent.attachments.map(&:id).first(1))
-        post :create, construct_params({ version: 'private' }, params)
+        stub_attachment_to_io do
+          post :create, construct_params({ version: 'private' }, params)
+        end
         child = Account.current.tickets.last
         match_json(ticket_show_pattern(child))
         assert child.attachments.count == 1
@@ -1815,7 +1815,9 @@ module Ember
         child_attachment_ids = []
         child_attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
         params = ticket_params_hash.merge(parent_id: parent.display_id, attachment_ids: parent_attachment_ids + child_attachment_ids)
-        post :create, construct_params({ version: 'private' }, params)
+        stub_attachment_to_io do
+          post :create, construct_params({ version: 'private' }, params)
+        end
         child = Account.current.tickets.last
         match_json(ticket_show_pattern(child))
         assert child.attachments.count == 2

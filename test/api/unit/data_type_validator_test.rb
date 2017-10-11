@@ -61,8 +61,8 @@ class DataTypeValidatorTest < ActionView::TestCase
     test.allow_string_boolean = 'false'
     refute test.valid?
     assert_equal({ allow_unset_param: :datatype_mismatch }, test.errors.to_h)
-    assert_equal({ allow_unset_param: {  expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null',
-                                         prepend_msg: :input_received }, boolean: {}, allow_string_boolean: {}, multi_error: {}, required_param: {} },  test.error_options.to_h)
+    assert_equal({ allow_unset_param: {  expected_data_type: String, given_data_type: 'Null', prepend_msg: :input_received }, 
+                                            boolean: {}, allow_string_boolean: {}, multi_error: {}, required_param: {} },  test.error_options.to_h)
   end
 
   def test_attributes_multiple_error
@@ -100,7 +100,7 @@ class DataTypeValidatorTest < ActionView::TestCase
     errors = test.errors.to_h.sort
     error_options = test.error_options.to_h.sort
     assert_equal({ set_boolean: :datatype_mismatch }.sort, errors)
-    assert_equal({ set_boolean:  {  expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null',
-                                    prepend_msg: :input_received }, boolean: {}, array: {}, hash: {}, multi_error: {}, required_param: {} }.sort, error_options)
+    assert_equal({ set_boolean:  {  expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null'}, 
+                                      boolean: {}, array: {}, hash: {}, multi_error: {}, required_param: {} }.sort, error_options)
   end
 end

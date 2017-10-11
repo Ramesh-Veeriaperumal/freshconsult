@@ -5,6 +5,8 @@ Sidekiq::Testing.fake!
 class Ember::ProductFeedbackControllerTest < ActionController::TestCase
   include TicketConstants
 
+  BULK_ATTACHMENT_CREATE_COUNT = 3
+
   # test cases
   def test_create_global_feedback_with_given_description
     params_hash = { description: Faker::Lorem.paragraph }
@@ -20,7 +22,7 @@ class Ember::ProductFeedbackControllerTest < ActionController::TestCase
 
   def test_create_global_feedback_with_desc_and_attachments
     attachments = []
-    rand(2..10).times do
+    BULK_ATTACHMENT_CREATE_COUNT.times do
       attachments << rand(1_000_000)
     end
     params_hash = { description: Faker::Lorem.paragraph, attachment_ids: attachments }
@@ -30,7 +32,7 @@ class Ember::ProductFeedbackControllerTest < ActionController::TestCase
 
   def test_create_global_feedback_with_desc_and_invalid_attachments
     attachments = []
-    rand(2..10).times do
+    BULK_ATTACHMENT_CREATE_COUNT.times do
       attachments << rand(1_000_000)
     end
     attachments << Faker::Lorem.word
@@ -41,7 +43,7 @@ class Ember::ProductFeedbackControllerTest < ActionController::TestCase
 
   def test_create_global_feedback_with_subject
     attachments = []
-    rand(2..10).times do
+    BULK_ATTACHMENT_CREATE_COUNT.times do
       attachments << rand(1_000_000)
     end
     params_hash = { description: Faker::Lorem.paragraph, attachment_ids: attachments, subject: Faker::Lorem.paragraph }
@@ -51,7 +53,7 @@ class Ember::ProductFeedbackControllerTest < ActionController::TestCase
 
   def test_create_global_feedback_with_invalid_subject
     attachments = []
-    rand(2..10).times do
+    BULK_ATTACHMENT_CREATE_COUNT.times do
       attachments << rand(1_000_000)
     end
     params_hash = { description: Faker::Lorem.paragraph, attachment_ids: attachments, subject: rand(1_000_000) }
@@ -61,11 +63,11 @@ class Ember::ProductFeedbackControllerTest < ActionController::TestCase
 
   def test_create_global_feedback_with_tags
     attachments = []
-    rand(2..10).times do
+    BULK_ATTACHMENT_CREATE_COUNT.times do
       attachments << rand(1_000_000)
     end
     tags = []
-    rand(2..10).times do
+    BULK_ATTACHMENT_CREATE_COUNT.times do
       tags << Faker::Lorem.word
     end
     params_hash = { description: Faker::Lorem.paragraph, attachment_ids: attachments, subject: Faker::Lorem.paragraph, tags: tags }
@@ -75,11 +77,11 @@ class Ember::ProductFeedbackControllerTest < ActionController::TestCase
 
   def test_create_global_feedback_with_invalid_tags
     attachments = []
-    rand(2..10).times do
+    BULK_ATTACHMENT_CREATE_COUNT.times do
       attachments << rand(1_000_000)
     end
     tags = []
-    rand(2..10).times do
+    BULK_ATTACHMENT_CREATE_COUNT.times do
       tags << Faker::Lorem.word
     end
     tags << rand(1_000_000)
@@ -92,7 +94,7 @@ class Ember::ProductFeedbackControllerTest < ActionController::TestCase
     ProductFeedbackWorker.clear
     assert_equal 0, ProductFeedbackWorker.jobs.size
     params_hash = { description: Faker::Lorem.paragraph }
-    n = rand(1..10)
+    n = BULK_ATTACHMENT_CREATE_COUNT
     n.times do
       ProductFeedbackWorker.perform_async(params_hash)
     end

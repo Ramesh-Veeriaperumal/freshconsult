@@ -16,8 +16,8 @@ class CRM::FreshsalesUtility
   
   CUSTOMER_STATUS         = { trial: 'Trial', suspended: 'Trial Expired', free: 'Free', 
                               paid: 'Customer', deleted: 'Deleted', active: 'Active', 
-                              no_payment_suspended: 'Suspended', trial_extended: 'Trial Extended',
-                              deleted: "Deleted" }
+                              no_payment_suspended: 'Suspended', trial_extended: 'Trial Extended'
+                            }
   
   DEAL_TYPES              = { new_business: 'New Business', upgrade: 'Existing Business-Upgrade', 
                               downgrade: 'Existing Business-Downgrade', 

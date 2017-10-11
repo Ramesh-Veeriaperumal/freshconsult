@@ -7,7 +7,7 @@ class Ember::ScenarioAutomationsControllerTest < ActionController::TestCase
   end
 
   def test_index
-    10.times do
+    2.times do
       create_scn_automation_rule(scenario_automation_params)
     end
     get :index, controller_params(version: 'private')

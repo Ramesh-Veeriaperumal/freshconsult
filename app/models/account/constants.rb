@@ -189,7 +189,6 @@ class Account < ActiveRecord::Base
     :multi_dynamic_sections => true, :dashboard_new_alias => false, :attachments_scope => false, :kbase_spam_whitelist => false, 
     :forum_post_spam_whitelist => false, :email_failures => false, :enable_qna => false, :enable_insights => false,
     :escape_liquid_attributes => true, :escape_liquid_for_reply => true, :escape_liquid_for_portal => true,
-    :falcon => false,
     :close_validation => false, :new_send_and_set => false, :pjax_reload => false, :one_hop => false, :lifecycle_report => false, 
     :bulk_security => false, :shared_ownership => false, :service_writes => false, :service_reads => false, :falcon => false, 
     :send_emails_via_fd_email_service_feature => false, :user_notifications => false, :freshplug_enabled => false, :dkim => false, 

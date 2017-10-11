@@ -12,8 +12,9 @@ module Ember
       include CannedResponsesTestHelper
       include AwsTestHelper
 
-      CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date).freeze
-      CUSTOM_FIELDS_CHOICES = Faker::Lorem.words(5).uniq.freeze
+      CUSTOM_FIELDS             = %w(number checkbox decimal text paragraph dropdown country state city date).freeze
+      CUSTOM_FIELDS_CHOICES     = Faker::Lorem.words(5).uniq.freeze
+      BULK_CREATE_TICKET_COUNT  = 2
 
       def setup
         super
@@ -28,6 +29,7 @@ module Ember
         return if @@before_all_run
         @account.features.freshfone.create
         @account.features.forums.create
+        @account.features.es_v2_writes.destroy
         @account.ticket_fields.custom_fields.each(&:destroy)
         Helpdesk::TicketStatus.find_by_status_id(2).update_column(:stop_sla_timer, false)
         @@ticket_fields = []
@@ -73,10 +75,7 @@ module Ember
 
       def test_bulk_execute_scenario_with_invalid_ticket_ids
         scenario_id = create_scn_automation_rule(scenario_automation_params).id
-        ticket_ids = []
-        rand(2..10).times do
-          ticket_ids << create_ticket(ticket_params_hash).display_id
-        end
+        ticket_ids = create_n_tickets(1, ticket_params_hash)
         invalid_ids = [ticket_ids.last + 20, ticket_ids.last + 30]
         id_list = [*ticket_ids, *invalid_ids]
         post :bulk_execute_scenario, construct_params({ version: 'private' }, scenario_id: scenario_id, ids: id_list)
@@ -87,22 +86,15 @@ module Ember
       end
 
       def test_bulk_execute_scenario_without_scenario_id
-        scenario_id = create_scn_automation_rule(scenario_automation_params).id
-        ticket_ids = []
-        rand(2..10).times do
-          ticket_ids << create_ticket(ticket_params_hash).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash)
         post :bulk_execute_scenario, construct_params({ version: 'private' }, ids: ticket_ids)
         assert_response 400
         match_json([bad_request_error_pattern('scenario_id', :missing_field)])
       end
 
       def test_bulk_execute_scenario_with_invalid_scenario_id
-        scenario_id = create_scn_automation_rule(scenario_automation_params).id
-        ticket_ids = []
-        rand(2..10).times do
-          ticket_ids << create_ticket(ticket_params_hash).display_id
-        end
+        scenario_id = @account.scn_automations.last.try(:id) || 1
+        ticket_ids  = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash)
         post :bulk_execute_scenario, construct_params({ version: 'private' }, scenario_id: scenario_id + 10, ids: ticket_ids)
         assert_response 400
         match_json([bad_request_error_pattern('scenario_id', :absent_in_db, resource: :scenario, attribute: :scenario_id)])
@@ -110,10 +102,7 @@ module Ember
 
       def test_bulk_execute_scenario_with_valid_ids
         scenario_id = create_scn_automation_rule(scenario_automation_params).id
-        ticket_ids = []
-        rand(2..10).times do
-          ticket_ids << create_ticket(ticket_params_hash).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash)
         post :bulk_execute_scenario, construct_params({ version: 'private' }, scenario_id: scenario_id, ids: ticket_ids)
         assert_response 202
       end
@@ -127,7 +116,7 @@ module Ember
         group = create_group(@account)
         invalid_tickets = []
         valid_tickets = []
-        rand(2..10).times do
+        BULK_CREATE_TICKET_COUNT.times do
           invalid_tickets << create_ticket
           valid_tickets << create_ticket({custom_field: { ticket_field1.name => 'Sample Text', ticket_field2.name => CUSTOM_FIELDS_CHOICES.sample }}, group)
         end
@@ -187,10 +176,7 @@ module Ember
       def test_bulk_link_excess_number_of_tickets
         enable_adv_ticketing([:link_tickets]) do
           tracker_id = create_tracker_ticket.display_id
-          ticket_ids = []
-          (ApiConstants::MAX_ITEMS_FOR_BULK_ACTION + 1).times do
-            ticket_ids << create_ticket.display_id
-          end
+          ticket_ids = create_n_tickets(ApiConstants::MAX_ITEMS_FOR_BULK_ACTION + 1)
           Sidekiq::Testing.inline! do
             put :bulk_link, construct_params({ version: 'private', ids: ticket_ids, tracker_id: tracker_id }, false)
           end
@@ -205,10 +191,7 @@ module Ember
       def test_bulk_link_non_existant_tickets_to_tracker
         enable_adv_ticketing([:link_tickets]) do
           tracker_id = create_tracker_ticket.display_id
-          ticket_ids = []
-          rand(3..5).times do
-            ticket_ids << create_ticket.display_id
-          end
+          ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
           non_existant_tickets = []
           non_existant_tickets << Helpdesk::Ticket.last
           non_existant_ticket = non_existant_tickets.last
@@ -230,10 +213,7 @@ module Ember
         enable_adv_ticketing([:link_tickets]) do
           tracker_id = create_tracker_ticket.display_id
           asso_tracker_id = create_tracker_ticket.display_id
-          ticket_ids = []
-          rand(3..5).times do
-            ticket_ids << create_ticket.display_id
-          end
+          ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
           associated_tickets = Helpdesk::Ticket.find_all_by_display_id([ticket_ids[0], ticket_ids[1]])
           associated_tickets.each do |associated_ticket|
             attributes = { association_type: 4, associates_rdb: asso_tracker_id }
@@ -258,10 +238,7 @@ module Ember
       def test_bulk_link_spammed_tickets
         enable_adv_ticketing([:link_tickets]) do
           tracker_id = create_tracker_ticket.display_id
-          ticket_ids = []
-          rand(3..5).times do
-            ticket_ids << create_ticket.display_id
-          end
+          ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
           spammed_tickets = Helpdesk::Ticket.find_all_by_display_id([ticket_ids[0], ticket_ids[1]])
           spammed_tickets.each do |spammed_ticket|
             spammed_ticket.update_attributes(spam: true)
@@ -285,10 +262,7 @@ module Ember
       def test_bulk_link_deleted_tickets
         enable_adv_ticketing([:link_tickets]) do
           tracker_id = create_tracker_ticket.display_id
-          ticket_ids = []
-          rand(3..5).times do
-            ticket_ids << create_ticket.display_id
-          end
+          ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
           deleted_tickets = Helpdesk::Ticket.find_all_by_display_id([ticket_ids[0], ticket_ids[1]])
           deleted_tickets.each do |deleted_ticket|
             deleted_ticket.update_attributes(deleted: true)
@@ -312,10 +286,7 @@ module Ember
       def test_bulk_link_without_mandatory_field
         # Without tracker_id
         enable_adv_ticketing([:link_tickets]) do
-          ticket_ids = []
-          rand(2..4).times do
-            ticket_ids << create_ticket.display_id
-          end
+          ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
           Sidekiq::Testing.inline! do
             put :bulk_link, construct_params({ version: 'private', ids: ticket_ids }, false)
           end
@@ -354,10 +325,7 @@ module Ember
           tracker    = create_tracker_ticket
           tracker_id = tracker.display_id
           tracker.update_attributes(attribute)
-          ticket_ids = []
-          rand(2..4).times do
-            ticket_ids << create_ticket.display_id
-          end
+          ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
           Sidekiq::Testing.inline! do
             put :bulk_link, construct_params({ version: 'private', ids: ticket_ids, tracker_id: tracker_id }, false)
           end
@@ -374,10 +342,7 @@ module Ember
           tracker    = create_tracker_ticket
           tracker_id = tracker.display_id
           tracker.update_attributes(deleted: true)
-          ticket_ids = []
-          rand(2..4).times do
-            ticket_ids << create_ticket.display_id
-          end
+          ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
           Sidekiq::Testing.inline! do
             put :bulk_link, construct_params({ version: 'private', ids: ticket_ids, tracker_id: tracker_id }, false)
           end
@@ -394,10 +359,7 @@ module Ember
           tracker    = create_tracker_ticket
           tracker_id = tracker.display_id
           tracker.update_attributes(spam: true)
-          ticket_ids = []
-          rand(2..4).times do
-            ticket_ids << create_ticket.display_id
-          end
+          ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
           Sidekiq::Testing.inline! do
             put :bulk_link, construct_params({ version: 'private', ids: ticket_ids, tracker_id: tracker_id }, false)
           end
@@ -412,10 +374,7 @@ module Ember
       def test_bulk_link_to_invalid_tracker
         enable_adv_ticketing([:link_tickets]) do
           tracker_id = create_ticket.display_id
-          ticket_ids = []
-          rand(2..4).times do
-            ticket_ids << create_ticket.display_id
-          end
+          ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
           Sidekiq::Testing.inline! do
             put :bulk_link, construct_params({ version: 'private', ids: ticket_ids, tracker_id: tracker_id }, false)
           end
@@ -430,10 +389,7 @@ module Ember
       def test_bulk_link_to_valid_tracker
         enable_adv_ticketing([:link_tickets]) do
           tracker_id = create_tracker_ticket.display_id
-          ticket_ids = []
-          rand(2..4).times do
-            ticket_ids << create_ticket.display_id
-          end
+          ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
           Sidekiq::Testing.inline! do
             put :bulk_link, construct_params({ version: 'private', ids: ticket_ids, tracker_id: tracker_id }, false)
           end
@@ -452,20 +408,14 @@ module Ember
       end
 
       def test_bulk_update_with_no_properties_or_reply
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         post :bulk_update, construct_params({ version: 'private' }, ids: ticket_ids)
         match_json([bad_request_error_pattern('request', :select_a_field)])
         assert_response 400
       end
 
       def test_bulk_update_with_incorrect_values
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         statuses = Helpdesk::TicketStatus.status_objects_from_cache(@account).map(&:status_id)
         incorrect_values = { priority: 90, status: statuses.last + 1, type: 'jksadjxyz' }
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.merge(incorrect_values) }
@@ -477,10 +427,7 @@ module Ember
       end
 
       def test_bulk_update_with_invalid_params
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.merge(responder_id: User.last.id + 10) }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         match_json([bad_request_error_pattern('responder_id', :absent_in_db, resource: :agent, attribute: :responder_id)])
@@ -488,10 +435,7 @@ module Ember
       end
 
       def test_bulk_update_with_invalid_ids
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(1)
         invalid_ids = [ticket_ids.last + 10, ticket_ids.last + 20]
         params_hash = { ids: [*ticket_ids, *invalid_ids], properties: update_ticket_params_hash }
         Sidekiq::Testing.inline! do
@@ -551,10 +495,7 @@ module Ember
       def test_bulk_update_success
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
         ticket_field.update_attribute(:required_for_closure, true)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, custom_fields: { ticket_field.label => 'Sample text' })
         params_hash = { ids: ticket_ids, properties: properties_hash }
         Sidekiq::Testing.inline! do
@@ -567,10 +508,7 @@ module Ember
       end
 
       def test_bulk_reply_without_body
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         email_config = create_email_config
         reply_hash = { from_email: email_config.reply_email }
         params_hash = { ids: ticket_ids, reply: reply_hash }
@@ -580,10 +518,7 @@ module Ember
       end
 
       def test_bulk_update_with_reply
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         email_config = create_email_config
         reply_hash = { body: Faker::Lorem.paragraph, from_email: email_config.reply_email }
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash, reply: reply_hash }
@@ -597,10 +532,7 @@ module Ember
       def test_bulk_update_without_reply_privilege
         User.stubs(:current).returns(@agent)
         remove_privilege(User.current, :reply_ticket)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash }
         Sidekiq::Testing.inline! do
           post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -615,10 +547,7 @@ module Ember
       def test_bulk_update_without_edit_privilege
         User.stubs(:current).returns(@agent)
         remove_privilege(User.current, :edit_ticket_properties)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         email_config = create_email_config
         reply_hash = { body: Faker::Lorem.paragraph, from_email: email_config.reply_email }
         params_hash = { ids: ticket_ids, reply: reply_hash }
@@ -633,10 +562,7 @@ module Ember
       end
 
       def test_bulk_reply_with_attachments
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
         canned_response = create_response(
           title: Faker::Lorem.sentence,
@@ -648,7 +574,7 @@ module Ember
         reply_hash = { body: Faker::Lorem.paragraph,
                        attachment_ids: [attachment_id, canned_response.shared_attachments[0].attachment_id],
                        cloud_files: cloud_file_params }
-        params_hash = {ids: ticket_ids, reply: reply_hash}
+        params_hash = { ids: ticket_ids, reply: reply_hash }
         stub_attachment_to_io do
           Sidekiq::Testing.inline! do
             post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -664,10 +590,7 @@ module Ember
 
       def test_bulk_update_queued_jobs
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
-        ticket_ids = []
-        5.times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(5)
         ::Tickets::BulkTicketActions.jobs.clear
         ::Tickets::BulkTicketReply.jobs.clear
         reply_hash = { body: Faker::Lorem.paragraph }
@@ -688,10 +611,7 @@ module Ember
       def test_bulk_update_with_required_default_field_blank
         Helpdesk::TicketField.where(name: 'product').update_all(required: true)
         product = create_product
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(product_id: product.id).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, product_id: product.id)
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.merge(product_id: nil) }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
@@ -702,10 +622,7 @@ module Ember
 
       def test_bulk_update_with_required_default_field_blank_in_db
         Helpdesk::TicketField.where(name: 'product').update_all(required: true)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash }
         Sidekiq::Testing.inline! do
           post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -719,10 +636,7 @@ module Ember
       def test_bulk_update_closure_status_with_required_for_closure_default_field_blank
         Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: true)
         product = create_product
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(product_id: product.id).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, product_id: product.id)
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, product_id: nil)
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -735,10 +649,7 @@ module Ember
       def test_bulk_update_closure_status_with_required_for_closure_default_field_blank_in_db
         Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: true)
         Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: true)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :group_id).merge(status: 5)
         params_hash = { ids: ticket_ids, properties: properties_hash }
         Sidekiq::Testing.inline! do
@@ -758,10 +669,7 @@ module Ember
 
       def test_bulk_update_closed_tickets_with_required_for_closure_default_field_blank
         product = create_product
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(status: 5, product_id: product.id).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, status: 5, product_id: product.id)
         Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: true)
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :status).merge(product_id: nil)
         params_hash = { ids: ticket_ids, properties: properties_hash }
@@ -777,10 +685,7 @@ module Ember
       end
 
       def test_bulk_update_closed_tickets_with_required_for_closure_default_field_blank_in_db
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(status: 5).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, status: 5)
         Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: true)
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.except(:due_by, :fr_due_by, :status) }
         Sidekiq::Testing.inline! do
@@ -795,10 +700,7 @@ module Ember
       def test_bulk_update_with_required_custom_non_dropdown_field_blank
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
         ticket_field.update_attribute(:required, true)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(custom_field: { ticket_field.name => 'Sample Text' }).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, custom_field: { ticket_field.name => 'Sample Text' })
         properties_hash = update_ticket_params_hash.merge(custom_fields: { ticket_field.label => '' })
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -809,10 +711,7 @@ module Ember
       end
 
       def test_bulk_update_with_required_custom_non_dropdown_field_blank_in_db
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
         ticket_field.update_attribute(:required, true)
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash }
@@ -828,10 +727,7 @@ module Ember
       def test_bulk_update_closure_status_with_required_for_closure_custom_non_dropdown_field_blank
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
         ticket_field.update_attribute(:required_for_closure, true)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, custom_fields: { ticket_field.label => '' })
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -844,10 +740,7 @@ module Ember
       def test_bulk_update_closure_status_with_required_for_closure_custom_non_dropdown_field_blank_in_db
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
         ticket_field.update_attribute(:required_for_closure, true)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5)
         params_hash = { ids: ticket_ids, properties: properties_hash }
         Sidekiq::Testing.inline! do
@@ -863,10 +756,7 @@ module Ember
 
       def test_bulk_update_closed_tickets_with_required_for_closure_custom_non_dropdown_field_blank
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(status: 5, custom_field: { ticket_field.name => 'Sample Text' }).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, status: 5, custom_field: { ticket_field.name => 'Sample Text' })
         ticket_field.update_attribute(:required_for_closure, true)
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :status).merge(custom_fields: { ticket_field.label => nil })
         params_hash = { ids: ticket_ids, properties: properties_hash }
@@ -878,10 +768,7 @@ module Ember
       end
 
       def test_bulk_update_closed_tickets_with_required_for_closure_custom_non_dropdown_field_blank_in_db
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(status: 5).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, status: 5)
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
         ticket_field.update_attribute(:required_for_closure, true)
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.except(:due_by, :fr_due_by, :status) }
@@ -897,10 +784,7 @@ module Ember
       def test_bulk_update_with_required_custom_dropdown_field_blank
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
         ticket_field.update_attribute(:required, true)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(custom_field: { ticket_field.name => CUSTOM_FIELDS_CHOICES.sample }).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, custom_field: { ticket_field.name => CUSTOM_FIELDS_CHOICES.sample })
         properties_hash = update_ticket_params_hash.merge(custom_fields: { ticket_field.label => nil })
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -911,10 +795,7 @@ module Ember
       end
 
       def test_bulk_update_with_required_custom_dropdown_field_blank_in_db
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
         ticket_field.update_attribute(:required, true)
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash }
@@ -930,10 +811,7 @@ module Ember
       def test_bulk_update_closure_status_with_required_for_closure_custom_dropdown_field_blank
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
         ticket_field.update_attribute(:required_for_closure, true)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, custom_fields: { ticket_field.label => nil })
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -946,10 +824,7 @@ module Ember
       def test_bulk_update_closure_status_with_required_for_closure_custom_dropdown_field_blank_in_db
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
         ticket_field.update_attribute(:required_for_closure, true)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5)
         params_hash = { ids: ticket_ids, properties: properties_hash }
         Sidekiq::Testing.inline! do
@@ -965,10 +840,7 @@ module Ember
 
       def test_bulk_update_closed_tickets_with_required_for_closure_custom_dropdown_field_blank
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(status: 5, custom_field: { ticket_field.name => CUSTOM_FIELDS_CHOICES.sample }).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, status: 5, custom_field: { ticket_field.name => CUSTOM_FIELDS_CHOICES.sample })
         ticket_field.update_attribute(:required_for_closure, true)
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :status).merge(custom_fields: { ticket_field.label => nil })
         params_hash = { ids: ticket_ids, properties: properties_hash }
@@ -984,10 +856,7 @@ module Ember
       end
 
       def test_bulk_update_closed_tickets_with_required_for_closure_custom_dropdown_field_blank_in_db
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(status: 5).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, status: 5)
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
         ticket_field.update_attribute(:required_for_closure, true)
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.except(:due_by, :fr_due_by, :status) }
@@ -1003,10 +872,7 @@ module Ember
       def test_bulk_update_with_required_default_field_with_incorrect_value
         Helpdesk::TicketField.where(name: 'product').update_all(required: true)
         product = create_product
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(product_id: product.id).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, product_id: product.id)
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.merge(product_id: product.id + 10) }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
@@ -1017,11 +883,8 @@ module Ember
 
       def test_bulk_update_with_required_default_field_with_incorrect_value_in_db
         Helpdesk::TicketField.where(name: 'product').update_all(required: true)
-        product = create_product
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(product_id: product.id + 10).display_id
-        end
+        product_id = @account.products.last.try(:id) || 1
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, product_id: product_id + 10)
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash }
         Sidekiq::Testing.inline! do
           post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -1035,10 +898,7 @@ module Ember
       def test_bulk_update_closure_status_with_required_for_closure_default_field_with_incorrect_value
         Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: true)
         product = create_product
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(product_id: product.id).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, product_id: product.id)
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, product_id: product.id + 10)
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -1050,11 +910,8 @@ module Ember
 
       def test_bulk_update_closure_status_with_required_for_closure_default_field_with_incorrect_value_in_db
         Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: true)
-        product = create_product
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(product_id: product.id + 10, responder_id: @agent.id + 100).display_id
-        end
+        product_id = @account.products.last.try(:id) || 1
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, product_id: product_id + 10, responder_id: @agent.id + 100)
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :responder_id).merge(status: 5)
         params_hash = { ids: ticket_ids, properties: properties_hash }
         Sidekiq::Testing.inline! do
@@ -1071,10 +928,7 @@ module Ember
       def test_bulk_update_closed_tickets_with_required_for_closure_default_field_with_incorrect_value
         Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: true)
         product = create_product
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(status: 5, product_id: product.id).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, status: 5, product_id: product.id)
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :status).merge(product_id: product.id + 10)
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -1086,11 +940,8 @@ module Ember
 
       def test_bulk_update_closed_tickets_with_required_for_closure_default_field_with_incorrect_value_in_db
         Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: true)
-        product = create_product
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(status: 5, product_id: product.id + 10).display_id
-        end
+        product_id = @account.products.last.try(:id) || 1
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, status: 5, product_id: product_id + 10)
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.except(:due_by, :fr_due_by, :status) }
         Sidekiq::Testing.inline! do
           post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -1104,10 +955,7 @@ module Ember
       def test_bulk_update_with_required_custom_non_dropdown_field_with_incorrect_value
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_number_#{@account.id}" }
         ticket_field.update_attribute(:required, true)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(custom_field: { ticket_field.name => 25 }).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, custom_field: { ticket_field.name => 25 })
         properties_hash = update_ticket_params_hash.merge(custom_fields: { ticket_field.label => 'Sample Text' })
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -1120,10 +968,7 @@ module Ember
       def test_bulk_update_with_required_custom_non_dropdown_field_blank_with_incorrect_value_in_db
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_date_#{@account.id}" }
         ticket_field.update_attribute(:required, true)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(custom_field: { ticket_field.name => 'Sample Text' }).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, custom_field: { ticket_field.name => 'Sample Text' })
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash }
         Sidekiq::Testing.inline! do
           post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -1137,10 +982,7 @@ module Ember
       def test_bulk_update_closure_status_with_required_for_closure_custom_non_dropdown_field_with_incorrect_value
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_number_#{@account.id}" }
         ticket_field.update_attribute(:required_for_closure, true)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, custom_fields: { ticket_field.label => 'Sample Text' })
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -1153,10 +995,7 @@ module Ember
       def test_bulk_update_closure_status_with_required_for_closure_custom_non_dropdown_field_blank_with_incorrect_value_in_db
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_date_#{@account.id}" }
         ticket_field.update_attribute(:required_for_closure, true)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(custom_field: { ticket_field.name => 'Sample Text' }).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, custom_field: { ticket_field.name => 'Sample Text' })
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5)
         params_hash = { ids: ticket_ids, properties: properties_hash }
         Sidekiq::Testing.inline! do
@@ -1173,10 +1012,7 @@ module Ember
       def test_bulk_update_closed_tickets_with_required_for_closure_custom_non_dropdown_field_with_incorrect_value
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_number_#{@account.id}" }
         ticket_field.update_attribute(:required_for_closure, true)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(status: 5, custom_field: { ticket_field.name => 25 }).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, status: 5, custom_field: { ticket_field.name => 25 })
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :status).merge(custom_fields: { ticket_field.label => 'Sample Text' })
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -1188,10 +1024,7 @@ module Ember
 
       def test_bulk_update_closed_tickets_with_required_for_closure_custom_non_dropdown_field_with_incorrect_value_in_db
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_date_#{@account.id}" }
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(status: 5, custom_field: { ticket_field.name => 'Sample Text' }).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, status: 5, custom_field: { ticket_field.name => 'Sample Text' })
         ticket_field.update_attribute(:required_for_closure, true)
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.except(:due_by, :fr_due_by, :status) }
         Sidekiq::Testing.inline! do
@@ -1206,10 +1039,7 @@ module Ember
       def test_bulk_update_with_required_custom_dropdown_field_with_incorrect_value
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
         ticket_field.update_attribute(:required, true)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(custom_field: { ticket_field.name => CUSTOM_FIELDS_CHOICES.sample }).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, custom_field: { ticket_field.name => CUSTOM_FIELDS_CHOICES.sample })
         properties_hash = update_ticket_params_hash.merge(custom_fields: { ticket_field.label => 'invalid_choice' })
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -1222,10 +1052,7 @@ module Ember
       def test_bulk_update_with_required_custom_dropdown_field_blank_with_incorrect_value_in_db
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
         ticket_field.update_attribute(:required, true)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(custom_field: { ticket_field.name => 'invalid_choice' }).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, custom_field: { ticket_field.name => 'invalid_choice' })
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash }
         Sidekiq::Testing.inline! do
           post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -1239,10 +1066,7 @@ module Ember
       def test_bulk_update_closure_status_with_required_for_closure_custom_dropdown_field_with_incorrect_value
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
         ticket_field.update_attribute(:required_for_closure, true)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5, custom_fields: { ticket_field.label => 'invalid_choice' })
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -1255,10 +1079,7 @@ module Ember
       def test_bulk_update_closure_status_with_required_for_closure_custom_dropdown_field_blank_with_incorrect_value_in_db
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
         ticket_field.update_attribute(:required_for_closure, true)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(custom_field: { ticket_field.name => 'invalid_choice' }).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, custom_field: { ticket_field.name => 'invalid_choice' })
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5)
         params_hash = { ids: ticket_ids, properties: properties_hash }
         Sidekiq::Testing.inline! do
@@ -1275,10 +1096,7 @@ module Ember
       def test_bulk_update_closed_tickets_with_required_for_closure_custom_dropdown_field_with_incorrect_value
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
         ticket_field.update_attribute(:required_for_closure, true)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(status: 5, custom_field: { ticket_field.name => CUSTOM_FIELDS_CHOICES.sample }).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, status: 5, custom_field: { ticket_field.name => CUSTOM_FIELDS_CHOICES.sample })
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :status).merge(custom_fields: { ticket_field.label => 'invalid_choice' })
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -1290,10 +1108,7 @@ module Ember
 
       def test_bulk_update_closed_tickets_with_required_for_closure_custom_dropdown_field_with_incorrect_value_in_db
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(status: 5, custom_field: { ticket_field.name => 'invalid_choice' }).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, status: 5, custom_field: { ticket_field.name => 'invalid_choice' })
         ticket_field.update_attribute(:required_for_closure, true)
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.except(:due_by, :fr_due_by, :status) }
         Sidekiq::Testing.inline! do
@@ -1308,10 +1123,7 @@ module Ember
       def test_bulk_update_with_non_required_default_field_blank
         Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: true)
         product = create_product
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(product_id: product.id).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, product_id: product.id)
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.merge(product_id: nil) }
         Sidekiq::Testing.inline! do
           post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -1323,10 +1135,7 @@ module Ember
       end
 
       def test_bulk_update_with_non_required_default_field_with_incorrect_value
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.merge(priority: 1000) }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
@@ -1334,10 +1143,7 @@ module Ember
       end
 
       def test_bulk_update_with_non_required_default_field_with_incorrect_value_in_db
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(type: 'Sample').display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, type: 'Sample')
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.except(:priority) }
         Sidekiq::Testing.inline! do
           post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -1348,10 +1154,7 @@ module Ember
 
       def test_bulk_update_with_non_required_custom_non_dropdown_field_with_incorrect_value
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_number_#{@account.id}" }
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         properties_hash = update_ticket_params_hash.merge(custom_fields: { ticket_field.label => 'Sample Text' })
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -1361,10 +1164,7 @@ module Ember
 
       def test_bulk_update_with_non_required_custom_non_dropdown_field_with_incorrect_value_in_db
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_date_#{@account.id}" }
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(custom_field: { ticket_field.name => 'Sample Text' }).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, custom_field: { ticket_field.name => 'Sample Text' })
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash }
         Sidekiq::Testing.inline! do
           post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -1375,10 +1175,7 @@ module Ember
 
       def test_bulk_update_with_non_required_default_field_with_invalid_value
         product = create_product
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(product_id: product.id).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, product_id: product.id)
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.merge(product_id: product.id + 10) }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
@@ -1386,11 +1183,8 @@ module Ember
       end
 
       def test_bulk_update_with_non_required_default_field_with_invalid_value_in_db
-        product = create_product
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(product_id: product.id + 10).display_id
-        end
+        product_id = @account.products.last.try(:id) || 1
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, product_id: product_id + 10)
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash }
         Sidekiq::Testing.inline! do
           post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -1402,10 +1196,7 @@ module Ember
       def test_bulk_update_with_non_required_custom_dropdown_field_blank
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
         ticket_field.update_attribute(:required_for_closure, true)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.merge(custom_fields: { ticket_field.label => nil }) }
         Sidekiq::Testing.inline! do
           post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -1418,10 +1209,7 @@ module Ember
 
       def test_bulk_update_with_non_required_custom_dropdown_field_with_incorrect_value
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(custom_field: { ticket_field.name => CUSTOM_FIELDS_CHOICES.sample }).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, custom_field: { ticket_field.name => CUSTOM_FIELDS_CHOICES.sample })
         properties_hash = update_ticket_params_hash.merge(custom_fields: { ticket_field.label => 'invalid_choice' })
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -1431,10 +1219,7 @@ module Ember
 
       def test_bulk_update_with_non_required_custom_dropdown_field_with_incorrect_value_in_db
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket(custom_field: { ticket_field.name => 'invalid_choice' }).display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, custom_field: { ticket_field.name => 'invalid_choice' })
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash }
         Sidekiq::Testing.inline! do
           post :bulk_update, construct_params({ version: 'private' }, params_hash)
@@ -1453,10 +1238,7 @@ module Ember
           }
         ]
         create_section_fields(3, sections, true)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :type)
         properties_hash[:type] = 'Incident'
         params_hash = { ids: ticket_ids, properties: properties_hash }
@@ -1479,10 +1261,7 @@ module Ember
           }
         ]
         create_section_fields(3, sections, true)
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :type)
         properties_hash[:type] = 'Incident'
         params_hash = { ids: ticket_ids, properties: properties_hash }
@@ -1497,10 +1276,7 @@ module Ember
       end
 
       def test_bulk_update_with_invalid_custom_field
-        ticket_ids = []
-        rand(2..4).times do
-          ticket_ids << create_ticket.display_id
-        end
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :type)
         properties_hash[:custom_fields] = {
           'test_invalid_field' => 'invalid_value'
