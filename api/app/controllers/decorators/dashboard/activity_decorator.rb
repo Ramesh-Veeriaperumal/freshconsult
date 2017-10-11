@@ -248,11 +248,11 @@ class Dashboard::ActivityDecorator < ApiDecorator
   end
 
   def status_name(value)
-    {:id => ticket_statuses[value][0], :data => h(value), :default => ticket_statuses[value][1]}
+    { id: ticket_statuses[value].try(:[], 0), data: h(value), default: ticket_statuses[value].try(:[], 1) }
   end
 
   def priority_name(value)
-    {:id => PRIORITIES[value.downcase], :data => h(value), :default => true}
+    { id: PRIORITIES[value.downcase], data: h(value), default: (PRIORITIES[value.downcase] ? true : false) } # to identify english or non-english language
   end
 
   # Solution Methods
