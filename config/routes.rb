@@ -1490,9 +1490,9 @@ Helpkit::Application.routes.draw do
           get :oauth_callback
           get :edit_oauth_configs
           get :iframe_configs
+          get :oauth_install
         end
         scope ':extension_id' do
-          get :oauth_configs
           post :install
           put :reinstall
           delete :uninstall
