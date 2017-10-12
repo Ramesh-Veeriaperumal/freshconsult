@@ -38,6 +38,7 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     assert_response 200
 
     Account.current.revoke_feature(:falcon)
+    Account.current.rollback(:falcon)
     Account.current.reload
 
     get :index, controller_params(version: 'private')

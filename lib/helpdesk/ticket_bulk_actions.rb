@@ -44,7 +44,7 @@ class Helpdesk::TicketBulkActions
         :unspam          => { :spam => false },
         :restore          => { :deleted => false }
       }
-      puts change_hash[action.to_sym]
+      # puts change_hash[action.to_sym]
       change_hash[action.to_sym]
     end
 end

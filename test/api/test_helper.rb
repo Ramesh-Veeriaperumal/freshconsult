@@ -25,7 +25,9 @@ class ActionController::TestCase
     set_key(default_key, 100, nil)
 
     # Enabling Private API
-    @account.add_feature(:falcon)
+    @account.launch(:falcon)
+    @account.add_feature(:falcon)    
+    @account.features.es_v2_writes.destroy
     @account.reputation = 1
     @account.save
 
@@ -34,6 +36,12 @@ class ActionController::TestCase
     Helpdesk::Attachment.any_instance.stubs(:save_attached_files).returns(true)
     Helpdesk::Attachment.any_instance.stubs(:prepare_for_destroy).returns(true)
     Helpdesk::Attachment.any_instance.stubs(:destroy_attached_files).returns(true)
+
+    #Stub all memcache calls
+    Dalli::Client.any_instance.stubs(:get).returns(nil)
+    Dalli::Client.any_instance.stubs(:delete).returns(true)
+    Dalli::Client.any_instance.stubs(:set).returns(true)
+
 
     Rails.logger.debug "START #{@test_name}"
   end

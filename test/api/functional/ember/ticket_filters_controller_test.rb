@@ -2,7 +2,6 @@ require_relative '../../test_helper'
 
 module Ember
   class TicketFiltersControllerTest < ActionController::TestCase
-
     include QueryHashHelper
     include TicketFiltersHelper
     include GroupsTestHelper
@@ -19,20 +18,6 @@ module Ember
     def before_all
       @account = Account.first.make_current
       @agent = get_admin.make_current
-      # create two filters
-      @filter1 = create_filter
-      @filter2 = create_filter
-
-      group = create_group(@account)
-      @inaccessible_filter = create_filter(nil, {
-        custom_ticket_filter: {
-          visibility: {
-            visibility: 2,
-            group_id: group.id
-          }
-        }
-      })
-
     end
 
     # Tests
@@ -52,18 +37,33 @@ module Ember
     end
 
     def test_show_single_filter
-      get :show, construct_params({ version: 'private' }, false).merge(id: @filter1.id)
+      filter1 = create_filter
+      get :show, construct_params({ version: 'private' }, false).merge(id: filter1.id)
       assert_response 200
-      match_custom_json(response.body, ticket_filter_show_pattern(@filter1))
+      match_custom_json(response.body, ticket_filter_show_pattern(filter1))
     end
 
     def test_show_inaccessible_filter
-      get :show, construct_params({ version: 'private' }, false).merge(id: @inaccessible_filter.id)
+      group = create_group(@account)
+      inaccessible_filter = create_filter(nil, custom_ticket_filter: {
+                                            visibility: {
+                                              visibility: 2,
+                                              group_id: group.id
+                                            }
+                                          })
+      get :show, construct_params({ version: 'private' }, false).merge(id: inaccessible_filter.id)
       assert_response 404
     end
 
     def test_show_invalid_filter
-      get :show, construct_params({ version: 'private' }, false).merge(id: @inaccessible_filter.id + 100)
+      group = create_group(@account)
+      inaccessible_filter = create_filter(nil, custom_ticket_filter: {
+                                            visibility: {
+                                              visibility: 2,
+                                              group_id: group.id
+                                            }
+                                          })
+      get :show, construct_params({ version: 'private' }, false).merge(id: inaccessible_filter.id + 100)
       assert_response 404
     end
 
@@ -83,7 +83,7 @@ module Ember
 
     def test_create_with_invalid_params
       filter_params = sample_filter_input_params
-      post :create, construct_params({ version: 'private' },  filter_params.except(:query_hash, :name))
+      post :create, construct_params({ version: 'private' }, filter_params.except(:query_hash, :name))
       assert_response 400
       match_json([bad_request_error_pattern('query_hash', :datatype_mismatch, expected_data_type: Array),
                   bad_request_error_pattern('name', :missing_field)])
@@ -93,17 +93,17 @@ module Ember
       filter_params = sample_filter_input_params
       filter_params[:order_by] = 'agent_responded_at'
       filter_params[:visibility][:visibility] = ::Admin::UserAccess::VISIBILITY_NAMES_BY_KEY.keys.max + 1 # invalid visibility
-      post :create, construct_params({ version: 'private' },  filter_params)
+      post :create, construct_params({ version: 'private' }, filter_params)
       assert_response 400
       match_json([bad_request_error_pattern('order_by', :not_included, list: sort_field_options.join(',')),
                   bad_request_error_pattern('visibility_id', :not_included, list: ::Admin::UserAccess::VISIBILITY_NAMES_BY_KEY.keys.join(','))])
     end
 
-    def test_create_with_empty_query_hash      
-      filter_params = sample_filter_input_params      
-      new_name = "#{Faker::Name.name} - #{Time.now.to_s}"
+    def test_create_with_empty_query_hash
+      filter_params = sample_filter_input_params
+      new_name = "#{Faker::Name.name} - #{Time.zone.now}"
       filter_params[:name] = new_name
-      post :create, construct_params({ version: 'private' },  filter_params.merge(query_hash: []))
+      post :create, construct_params({ version: 'private' }, filter_params.merge(query_hash: []))
       assert_response 200
       filter = Helpdesk::Filters::CustomTicketFilter.find_by_name(new_name)
       match_custom_json(response.body, ticket_filter_show_pattern(filter))
@@ -111,27 +111,29 @@ module Ember
 
     def test_create_with_valid_params
       filter_params = sample_filter_input_params
-      new_name = "#{Faker::Name.name} - #{Time.now.to_s}"
+      new_name = "#{Faker::Name.name} - #{Time.zone.now}"
       filter_params[:name] = new_name
-      post :create, construct_params({ version: 'private' },  filter_params)
+      post :create, construct_params({ version: 'private' }, filter_params)
       assert_response 200
       filter = Helpdesk::Filters::CustomTicketFilter.find_by_name(new_name)
       match_custom_json(response.body, ticket_filter_show_pattern(filter))
     end
 
     def test_update_with_invalid_params
+      filter1 = create_filter
       filter_params = sample_filter_input_params
-      put :update, construct_params({ version: 'private', id: @filter1.id },  filter_params.except(:query_hash, :name))
+      put :update, construct_params({ version: 'private', id: filter1.id }, filter_params.except(:query_hash, :name))
       assert_response 400
       match_json([bad_request_error_pattern('query_hash', :datatype_mismatch, expected_data_type: Array),
                   bad_request_error_pattern('name', :missing_field)])
     end
 
     def test_update_with_invalid_values
+      filter1 = create_filter
       filter_params = sample_filter_input_params
       filter_params[:order_by] = 'requester_responded_at'
       filter_params[:visibility][:visibility] = ::Admin::UserAccess::VISIBILITY_NAMES_BY_KEY.keys.max + 1 # invalid visibility
-      put :update, construct_params({ version: 'private', id: @filter1.id },  filter_params)
+      put :update, construct_params({ version: 'private', id: filter1.id }, filter_params)
       assert_response 400
       match_json([bad_request_error_pattern('order_by', :not_included, list: sort_field_options.join(',')),
                   bad_request_error_pattern('visibility_id', :not_included, list: ::Admin::UserAccess::VISIBILITY_NAMES_BY_KEY.keys.join(','))])
@@ -139,35 +141,38 @@ module Ember
 
     def test_update_default_filter
       default_filter_id = TicketsFilter.default_views.map { |a| a[:id] }.sample
-      put :update, construct_params({ version: 'private', id: default_filter_id },  sample_filter_input_params)
+      put :update, construct_params({ version: 'private', id: default_filter_id }, sample_filter_input_params)
       assert_response 403
     end
 
     def test_update_with_empty_query_hash
+      filter1 = create_filter
       filter_params = sample_filter_input_params
-      new_name = "#{Faker::Name.name} - #{Time.now.to_s}"
+      new_name = "#{Faker::Name.name} - #{Time.zone.now}"
       filter_params[:name] = new_name
-      post :update, construct_params({ version: 'private', id: @filter1.id},  filter_params.merge(query_hash: []))
+      post :update, construct_params({ version: 'private', id: filter1.id }, filter_params.merge(query_hash: []))
       assert_response 200
       filter = Helpdesk::Filters::CustomTicketFilter.find_by_name(new_name)
       match_custom_json(response.body, ticket_filter_show_pattern(filter))
     end
 
     def test_update_with_valid_params
+      filter1 = create_filter
       filter_params = sample_filter_input_params
-      new_name = "#{Faker::Name.name} - #{Time.now.to_s}"
+      new_name = "#{Faker::Name.name} - #{Time.zone.now}"
       filter_params[:name] = new_name
-      put :update, construct_params({ version: 'private', id: @filter1.id },  filter_params)
+      put :update, construct_params({ version: 'private', id: filter1.id }, filter_params)
       assert_response 200
       filter = Helpdesk::Filters::CustomTicketFilter.find_by_name(new_name)
       match_custom_json(response.body, ticket_filter_show_pattern(filter))
     end
 
     def test_update_with_valid_params_without_visibility
+      filter1 = create_filter
       filter_params = sample_filter_input_params
-      new_name = "#{Faker::Name.name} - #{Time.now.to_s}"
+      new_name = "#{Faker::Name.name} - #{Time.zone.now}"
       filter_params[:name] = new_name
-      put :update, construct_params({ version: 'private', id: @filter1.id },  filter_params.except(:visibility))
+      put :update, construct_params({ version: 'private', id: filter1.id }, filter_params.except(:visibility))
       assert_response 200
       filter = Helpdesk::Filters::CustomTicketFilter.find_by_name(new_name)
       match_custom_json(response.body, ticket_filter_show_pattern(filter))
@@ -187,9 +192,9 @@ module Ember
     end
 
     def test_destroy_valid_filter
-      put :destroy, construct_params({ version: 'private', id: @filter2.id }, false)
+      filter2 = create_filter
+      put :destroy, construct_params({ version: 'private', id: filter2.id }, false)
       assert_response 204
     end
-
   end
 end

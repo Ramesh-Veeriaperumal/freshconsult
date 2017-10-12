@@ -41,4 +41,15 @@ class DecoratedControllerTest < ActionController::TestCase
     actual = @controller.send(:test_method_2)
     @controller.unstub(:action_name)
   end
+
+  def test_decorate_object_with_error
+    response = ActionDispatch::TestResponse.new
+    @controller.response = response
+    @controller.stubs(:action_name).returns('test_method_2')
+    @controller.instance_variable_set('@error', RequestError.new(:invalid_credentials))
+    @controller.expects(:decorate_object).never
+    @controller.expects(:decorate_objects).never
+    actual = @controller.send(:test_method_2)
+    @controller.unstub(:action_name)
+  end
 end

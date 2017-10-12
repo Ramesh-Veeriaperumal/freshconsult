@@ -9,7 +9,7 @@ class Ember::PortalsControllerTest < ActionController::TestCase
   end
 
   def test_index
-    5.times do
+    3.times do
       create_portal
     end
     get :index, controller_params(version: 'private')

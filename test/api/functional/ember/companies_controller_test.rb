@@ -10,6 +10,8 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   include Redis::RedisKeys
   include Redis::OthersRedis
 
+  BULK_CREATE_COMPANY_COUNT = 2
+
   def setup
     super
     initial_setup
@@ -162,7 +164,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   end
 
   def test_index
-    rand(2..5).times do
+    BULK_CREATE_COMPANY_COUNT.times do
       create_company
     end
     get :index, controller_params(version: 'private')
@@ -172,7 +174,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   end
 
   def test_index_with_companies_having_avatar
-    rand(2..5).times do
+    BULK_CREATE_COMPANY_COUNT.times do
       company = create_company
       add_avatar_to_company(company)
     end
@@ -183,7 +185,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   end
 
   def test_index_with_invalid_include_associations
-    rand(2..5).times do
+    BULK_CREATE_COMPANY_COUNT.times do
       create_company
     end
     invalid_include_list = Faker::Lorem.words(3).uniq
@@ -193,9 +195,9 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   end
 
   def test_index_with_contacts_count
-    rand(2..5).times do
+    BULK_CREATE_COMPANY_COUNT.times do
       company = create_company
-      rand(2..5).times do
+      BULK_CREATE_COMPANY_COUNT.times do
         add_new_user(@account, customer_id: company.id)
       end
     end
@@ -208,7 +210,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
 
   def test_index_with_filter
     letter = 'A'
-    rand(2..5).times do
+    BULK_CREATE_COMPANY_COUNT.times do
       company =  create_company(name: "#{letter}#{Faker::Lorem.characters(10)}", description: Faker::Lorem.paragraph)
     end
     get :index, controller_params(version: 'private', letter: letter)
@@ -220,10 +222,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   def test_activities_with_invalid_type
     company = create_company
     contact = add_new_user(@account, customer_id: company.id)
-    ticket_ids = []
-    rand(5..10).times do
-      ticket_ids << create_ticket(requester_id: contact.id).id
-    end
+    ticket_ids = create_n_tickets(2, requester_id: contact.id)
     get :activities, controller_params(version: 'private', id: company.id, type: Faker::Lorem.word)
     # It will return ticket activities by default.
     assert_response 200
@@ -234,10 +233,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   def test_activities_default
     company =  create_company
     contact = add_new_user(@account, customer_id: company.id)
-    ticket_ids = []
-    rand(5..10).times do
-      ticket_ids << create_ticket(requester_id: contact.id).id
-    end
+    ticket_ids = create_n_tickets(2, requester_id: contact.id)
     get :activities, controller_params(version: 'private', id: company.id)
     assert_response 200
     items = @account.tickets.permissible(@agent).all_company_tickets(company.id).visible.newest(10)
@@ -247,13 +243,10 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   def test_activities_with_type
     company =  create_company
     contact = add_new_user(@account, customer_id: company.id)
-    ticket_ids = []
-    11.times do
-      ticket_ids << create_ticket(requester_id: contact.id).id
-    end
+    ticket_ids = create_n_tickets(3, requester_id: contact.id)
     get :activities, controller_params(version: 'private', id: company.id, type: 'tickets')
     assert_response 200
-    items = @account.tickets.permissible(@agent).all_company_tickets(company.id).visible.newest(10)
+    items = @account.tickets.permissible(@agent).all_company_tickets(company.id).visible.newest(3)
     match_json(company_activity_response(items))
   end
 
@@ -261,15 +254,12 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     enable_archive_tickets do
       company =  create_company
       contact = add_new_user(@account, customer_id: company.id)
-      ticket_ids = []
-      11.times do
-        ticket_ids << create_ticket(requester_id: contact.id, status: 5).id
-      end
+      ticket_ids = create_n_tickets(3, requester_id: contact.id)
       create_archive_tickets(ticket_ids)
       stub_archive_assoc(account_id: @account.id) do
         get :activities, controller_params(version: 'private', id: company.id, type: 'archived_tickets')
         assert_response 200
-        archive_tickets = @account.archive_tickets.permissible(@agent).all_company_tickets(company.id).newest(10)
+        archive_tickets = @account.archive_tickets.permissible(@agent).all_company_tickets(company.id).newest(3)
         match_json(company_activity_response(archive_tickets))
       end
     end
@@ -325,7 +315,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
 
   def test_bulk_delete_with_invalid_ids
     company_ids = []
-    rand(2..10).times do
+    BULK_CREATE_COMPANY_COUNT.times do
       company_ids << create_company.id
     end
     invalid_ids = [company_ids.last + 20, company_ids.last + 30]
@@ -339,7 +329,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
 
   def test_bulk_delete_with_errors_in_deletion
     companies = []
-    rand(2..10).times do
+    BULK_CREATE_COMPANY_COUNT.times do
       companies << create_company
     end
     ids_to_delete = companies.map(&:id)
@@ -353,7 +343,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
 
   def test_bulk_delete_with_valid_ids
     company_ids = []
-    rand(2..10).times do
+    BULK_CREATE_COMPANY_COUNT.times do
       company_ids << create_company.id
     end
     put :bulk_delete, construct_params({ version: 'private' }, ids: company_ids)
@@ -361,7 +351,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   end
 
   def test_export_csv_with_no_params
-    rand(2..10).times do
+    BULK_CREATE_COMPANY_COUNT.times do
       create_company
     end
     company_form = @account.company_form
@@ -371,7 +361,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   end
 
   def test_export_csv_with_invalid_params
-    rand(2..10).times do
+    BULK_CREATE_COMPANY_COUNT.times do
       create_company
     end
     company_form = @account.company_form
@@ -386,7 +376,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'Location', editable_in_signup: 'true'))
     create_company_field(company_params(type: 'boolean', field_type: 'custom_checkbox', label: 'Area of specification', editable_in_signup: 'true'))
 
-    rand(2..10).times do
+    BULK_CREATE_COMPANY_COUNT.times do
       create_company(@account)
     end
 
@@ -410,7 +400,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'Location', editable_in_signup: 'true'))
     create_company_field(company_params(type: 'boolean', field_type: 'custom_checkbox', label: 'Area of specification', editable_in_signup: 'true'))
 
-    rand(2..10).times do
+    BULK_CREATE_COMPANY_COUNT.times do
       create_company(@account)
     end
 

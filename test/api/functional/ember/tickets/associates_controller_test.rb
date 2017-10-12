@@ -104,11 +104,8 @@ module Ember
 
       def test_link_non_existant_ticket_to_tracker
         enable_adv_ticketing([:link_tickets]) do
-          ticket = create_ticket
-          ticket_id = ticket.display_id
-          ticket.destroy
           tracker_id = create_tracker_ticket.display_id
-          put :link, construct_params({ version: 'private', id: ticket_id, tracker_id: tracker_id }, false)
+          put :link, construct_params({ version: 'private', id: tracker_id + 100, tracker_id: tracker_id }, false)
           assert_response 404
         end
       end

@@ -8,6 +8,8 @@ module Ember
       include TicketsMergeTestHelper
       include SocialTicketsCreationHelper
 
+      BULK_TICKET_CREATE_COUNT = 2
+
       def wrap_cname(params)
         { merge: params }
       end
@@ -31,8 +33,8 @@ module Ember
 
       def test_merge_with_invalid_field_in_notes
         primary_ticket = create_ticket
-        source_tickets = rand(5..7).times.inject([]) { |arr, i| arr << create_ticket }
-        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets.map(&:display_id))
+        source_tickets_ids = create_n_tickets(BULK_TICKET_CREATE_COUNT)
+        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets_ids)
         request_params[:note_in_primary][:invalid_field] = Faker::Lorem.paragraph
         request_params[:note_in_secondary][:invalid_field] = Faker::Lorem.paragraph
         put :merge, construct_params({ version: 'private' }, request_params)
@@ -41,15 +43,15 @@ module Ember
       end
 
       def test_merge_with_invalid_primary_id
-        source_tickets = rand(5..7).times.inject([]) { |arr, i| arr << create_ticket }
-        request_params = sample_merge_request_params(@account.tickets.last.id + 1000, source_tickets.map(&:display_id))
+        source_tickets_ids = create_n_tickets(BULK_TICKET_CREATE_COUNT)
+        request_params = sample_merge_request_params(source_tickets_ids.last + 1000, source_tickets_ids)
         put :merge, construct_params({ version: 'private' }, request_params)
         assert_response 404
       end
 
       def test_merge_with_invalid_ticket_ids
         primary_ticket = create_ticket
-        invalid_ids = [@account.tickets.last.id + 100, @account.tickets.last.id + 200, @account.tickets.last.id + 300]
+        invalid_ids = [primary_ticket.display_id + 100, primary_ticket.display_id + 200]
         request_params = sample_merge_request_params(primary_ticket.display_id, invalid_ids)
         put :merge, construct_params({ version: 'private' }, request_params)
         assert_response 400
@@ -58,9 +60,9 @@ module Ember
 
       def test_merge_with_invalid_and_valid_ticket_ids
         primary_ticket = create_ticket
-        source_tickets = rand(5..7).times.inject([]) { |arr, i| arr << create_ticket }
-        invalid_ids = [@account.tickets.last.id + 100, @account.tickets.last.id + 200, @account.tickets.last.id + 300]
-        request_params = sample_merge_request_params(primary_ticket.display_id, (invalid_ids + source_tickets.map(&:display_id)))
+        source_tickets_ids = create_n_tickets(BULK_TICKET_CREATE_COUNT)
+        invalid_ids = [primary_ticket.id + 100, primary_ticket.id + 200]
+        request_params = sample_merge_request_params(primary_ticket.display_id, (invalid_ids + source_tickets_ids))
         put :merge, construct_params({ version: 'private' }, request_params)
         assert_response 400
         match_json(merge_invalid_ids_pattern(invalid_ids))
@@ -68,9 +70,9 @@ module Ember
 
       def test_merge_with_primary_ticket_without_permission
         primary_ticket = create_ticket
-        source_tickets = rand(5..7).times.inject([]) { |arr, i| arr << create_ticket }
+        source_tickets_ids = create_n_tickets(BULK_TICKET_CREATE_COUNT)
         user_stub_ticket_permission
-        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets.map(&:display_id))
+        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets_ids)
         put :merge, construct_params({ version: 'private' }, request_params)
         assert_response 403
         user_unstub_ticket_permission
@@ -78,32 +80,32 @@ module Ember
 
       def test_merge_with_secondary_tickets_without_permission
         primary_ticket = create_ticket
-        source_tickets = rand(5..7).times.inject([]) { |arr, i| arr << create_ticket }
-        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets.map(&:display_id))
+        source_tickets_ids = create_n_tickets(BULK_TICKET_CREATE_COUNT)
+        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets_ids)
         TicketMergeDelegator.any_instance.stubs(:ticket_permission?).returns(false)
         put :merge, construct_params({ version: 'private' }, request_params)
         assert_response 400
         TicketMergeDelegator.any_instance.unstub(:ticket_permission?)
-        match_json(merge_imperssible_ids_pattern(source_tickets.map(&:display_id)))
+        match_json(merge_imperssible_ids_pattern(source_tickets_ids))
       end
 
       def test_merge_with_invalid_and_permission_denined_tickets
-        primary_ticket = create_ticket
-        invalid_ids = [@account.tickets.last.id + 100, @account.tickets.last.id + 200, @account.tickets.last.id + 300]
-        source_tickets = rand(5..7).times.inject([]) { |arr, i| arr << create_ticket }
-        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets.map(&:display_id) + invalid_ids)
+        primary_ticket     = create_ticket
+        invalid_ids        = [primary_ticket.id + 100, primary_ticket.id + 200]
+        source_tickets_ids = create_n_tickets(BULK_TICKET_CREATE_COUNT)
+        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets_ids + invalid_ids)
         TicketMergeDelegator.any_instance.stubs(:ticket_permission?).returns(false)
         put :merge, construct_params({ version: 'private' }, request_params)
         assert_response 400
         TicketMergeDelegator.any_instance.unstub(:ticket_permission?)
-        match_json(merge_imperssible_invalid_pattern(source_tickets.map(&:display_id), invalid_ids))
+        match_json(merge_imperssible_invalid_pattern(source_tickets_ids, invalid_ids))
       end
 
       def test_merge_with_with_reply_cc_limit
         primary_ticket = create_ticket
-        source_tickets = rand(5..7).times.inject([]) { |arr, i| arr << create_ticket }
-        add_reply_cc_emails_to_ticket(source_tickets + [primary_ticket])
-        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets.map(&:display_id))
+        source_ticket = create_ticket 
+        add_reply_cc_emails_to_ticket([source_ticket] + [primary_ticket], 30..35)
+        request_params = sample_merge_request_params(primary_ticket.display_id, [source_ticket.display_id])
         request_params[:convert_recepients_to_cc] = true
         put :merge, construct_params({ version: 'private' }, request_params)
         assert_response 400
@@ -112,8 +114,8 @@ module Ember
 
       def test_merge_incompletion
         primary_ticket = create_ticket
-        source_tickets = rand(5..7).times.inject([]) { |arr, i| arr << create_ticket }
-        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets.map(&:display_id))
+        source_tickets_ids = create_n_tickets(BULK_TICKET_CREATE_COUNT)
+        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets_ids)
         TicketMerge.any_instance.stubs(:perform).returns(false)
         put :merge, construct_params({ version: 'private' }, request_params)
         TicketMerge.any_instance.unstub(:perform)
@@ -123,7 +125,7 @@ module Ember
 
       def test_merge_success
         primary_ticket = create_ticket
-        source_tickets = rand(5..7).times.inject([]) { |arr, i| arr << create_ticket }
+        source_tickets = 2.times.inject([]) { |arr, i| arr << create_ticket }
         add_reply_cc_emails_to_ticket(source_tickets + [primary_ticket], 2..5)
         add_timesheets_to_ticket(source_tickets)
 
@@ -141,8 +143,8 @@ module Ember
 
       def test_merge_spammed_ticket
         primary_ticket = create_ticket(spam: true)
-        source_tickets = rand(5..7).times.inject([]) { |arr, i| arr << create_ticket }
-        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets.map(&:display_id))
+        source_tickets_ids = create_n_tickets(BULK_TICKET_CREATE_COUNT)
+        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets_ids)
         put :merge, construct_params({ version: 'private' }, request_params)
         assert_response 404
       end
@@ -161,9 +163,9 @@ module Ember
         tracker_ticket   = create_tracker_ticket
         related_ticket   = create_related_tickets.first
 
-        source_tickets   = rand(2..4).times.inject([]) { |arr, i| arr << create_ticket }
+        source_tickets_ids = create_n_tickets(BULK_TICKET_CREATE_COUNT)
         [tracker_ticket, related_ticket, @child_ticket, @parent_ticket].each do |assoc_ticket|
-          request_params = sample_merge_request_params(assoc_ticket.display_id, source_tickets.map(&:display_id))
+          request_params = sample_merge_request_params(assoc_ticket.display_id, source_tickets_ids)
           put :merge, construct_params({ version: 'private' }, request_params)
           assert_response 403
         end
