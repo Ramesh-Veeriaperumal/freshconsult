@@ -69,7 +69,7 @@ module ApiSearch
             offset:       ApiSearchConstants::DEFAULT_PER_PAGE,
             types:        type,
             es_params:    construct_es_params(search_terms, type, page)
-        ).query_results
+          ).query_results
         rescue Exception => e
           Rails.logger.error "Searchv2 exception - #{e.message} - #{e.backtrace.first}"
           NewRelic::Agent.notice_error(e)
@@ -105,6 +105,8 @@ module ApiSearch
           return :search_ticket_api
         elsif type.include?('user')
           return :search_contact_api
+        elsif type.include?('company')
+          return :search_company_api
         end
       end
   end

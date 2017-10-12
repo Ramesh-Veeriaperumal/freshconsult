@@ -1,5 +1,6 @@
 module ApiSearch
   class TicketsController < SearchController
+    decorate_views
     def index
       tree = parser.expression_tree
       record = record_from_expression_tree(tree)
@@ -11,7 +12,6 @@ module ApiSearch
       validation = Search::TicketValidation.new(validation_params, ticket_custom_fields)
 
       if validation.valid?
-        @name_mapping = custom_fields
         search_terms = tree.accept(visitor)
         page = params[:page] ? params[:page].to_i : ApiSearchConstants::DEFAULT_PAGE
         @items = query_results(search_terms, page, ApiSearchConstants::TICKET_ASSOCIATIONS, ['ticket'])
@@ -29,7 +29,8 @@ module ApiSearch
       def visitor
         column_names = Account.current.ticket_field_def.ff_alias_column_mapping.each_with_object({}) { |(key, value), hash| hash[TicketDecorator.display_name(key)] = value if value =~ ApiSearchConstants::TICKET_FIELDS_REGEX }.except(*ApiSearchConstants::TICKET_FIELDS)
         es_keys = ApiSearchConstants::TICKET_KEYS
-        date_fields = Flexifield.column_names.select { |x| x if x =~ /^ff_date/ } + ApiSearchConstants::TICKET_DATE_FIELDS.map{|x| es_keys.fetch(x,x) }
+        # date_fields = Flexifield.column_names.select { |x| x if x =~ /^ff_date/ } + ApiSearchConstants::TICKET_DATE_FIELDS.map { |x| es_keys.fetch(x, x) }
+        date_fields = ApiSearchConstants::TICKET_DATE_FIELDS.map { |x| es_keys.fetch(x, x) }
         Search::TermVisitor.new(column_names, es_keys, date_fields, ApiSearchConstants::TICKET_NOT_ANALYZED)
       end
 
@@ -44,6 +45,10 @@ module ApiSearch
 
       def ticket_fields
         Account.current.ticket_fields_from_cache
+      end
+
+      def decorator_options
+        super({ name_mapping: custom_fields })
       end
   end
 end

@@ -28,6 +28,6 @@ module Search
 
     def custom_dropdown_field_choices
       Account.current.contact_form.custom_dropdown_field_choices
-     end
+    end
   end
 end

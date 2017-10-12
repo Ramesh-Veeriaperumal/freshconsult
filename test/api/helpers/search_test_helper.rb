@@ -54,7 +54,9 @@ module SearchTestHelper
                                description: params[:description],
                                domains: params[:domains],
                                account_id: @account.id,
-                               custom_field: params[:custom_field])
+                               custom_field: params[:custom_field],
+                               created_at: params[:created_at],
+                               updated_at: params[:updated_at])
     test_company.save
     test_company
   end
@@ -107,6 +109,6 @@ module SearchTestHelper
         tags.map(&:sqs_manual_publish_without_feature_check)
       end
     end
-    sleep(5)
+    sleep(10)
   end
 end
