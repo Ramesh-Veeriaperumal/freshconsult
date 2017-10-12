@@ -3,6 +3,8 @@ module Ember
   class SubscriptionsControllerTest < ActionController::TestCase
     include TicketHelper
 
+    BULK_TICKET_CREATE_COUNT = 2
+
     def wrap_cname(params)
       { subscription: params }
     end
@@ -145,10 +147,7 @@ module Ember
     end
 
     def test_bulk_watch_with_invalid_user_id
-      ticket_ids = []
-      rand(5..10).times do
-        ticket_ids << create_ticket.display_id
-      end
+      ticket_ids = create_n_tickets(BULK_TICKET_CREATE_COUNT)
       params_hash = { ids: ticket_ids, user_id: @agent.id + 100 }
       post :bulk_watch, construct_params({version: 'private'}, params_hash)
       assert_response 400
@@ -156,10 +155,7 @@ module Ember
     end
 
     def test_bulk_watch_with_valid_user_id
-      ticket_ids = []
-      rand(5..10).times do
-        ticket_ids << create_ticket.display_id
-      end
+      ticket_ids = create_n_tickets(BULK_TICKET_CREATE_COUNT)
       agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
       params_hash = { ids: ticket_ids, user_id: agent.id }
       put :bulk_watch, construct_params({ version: 'private' }, params_hash)
@@ -167,10 +163,7 @@ module Ember
     end
 
     def test_bulk_watch_failure
-      ticket_ids = []
-      rand(5..10).times do
-        ticket_ids << create_ticket.display_id
-      end
+      ticket_ids = create_n_tickets(BULK_TICKET_CREATE_COUNT)
       params_hash = { ids: ticket_ids }
       Helpdesk::Subscription.any_instance.stubs(:save).returns(false)
       put :bulk_watch, construct_params({ version: 'private' }, params_hash)
@@ -182,10 +175,7 @@ module Ember
     end
 
     def test_bulk_watch
-      ticket_ids = []
-      rand(5..10).times do
-        ticket_ids << create_ticket.display_id
-      end
+      ticket_ids = create_n_tickets(BULK_TICKET_CREATE_COUNT)
       spam_ticket = create_ticket(spam: true)
       invalid_ids = [ticket_ids.last + 10, ticket_ids.last + 20, spam_ticket.display_id]
       params_hash = {  ids: [*ticket_ids, *invalid_ids] }
@@ -213,10 +203,7 @@ module Ember
     end
 
     def test_bulk_unwatch_failure
-      ticket_ids = []
-      rand(5..10).times do
-        ticket_ids << create_ticket.display_id
-      end
+      ticket_ids = create_n_tickets(BULK_TICKET_CREATE_COUNT)
       params_hash = {  ids: ticket_ids }
       put :bulk_unwatch, construct_params({ version: 'private' }, params_hash)
       assert_response 202
@@ -227,7 +214,7 @@ module Ember
 
     def test_bulk_unwatch
       ticket_ids = []
-      rand(5..10).times do
+      BULK_TICKET_CREATE_COUNT.times do
         ticket = create_ticket
         ticket.subscriptions.build(user_id: User.current.id)
         ticket.save

@@ -99,7 +99,7 @@ class Dashboard::ActivityDecorator < ApiDecorator
     record.activity_data = HashWithIndifferentAccess.new(activity_data)
     {
       id: id,
-      object_id: object_id,
+      object_id: object_identifier,
       object_type: notable_type,
       title: record.notable.nil? ? record.activity_data[:title] : h(record.notable),
       performer: performer,
@@ -108,7 +108,7 @@ class Dashboard::ActivityDecorator < ApiDecorator
     }
   end
 
-  def object_id
+  def object_identifier
     case notable_type
     when 'Helpdesk::Ticket'
       record.notable.display_id

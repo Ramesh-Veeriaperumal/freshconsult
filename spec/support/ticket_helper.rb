@@ -50,6 +50,14 @@ module TicketHelper
     test_ticket
   end
 
+  def create_n_tickets(count, params={})
+    ticket_ids = []
+    count.times do
+      ticket_ids << create_ticket(params).display_id
+    end    
+    ticket_ids
+  end    
+
   def ticket_incremented?(ticket_size)
     @account.reload
     @account.tickets.size.should eql ticket_size + 1

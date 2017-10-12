@@ -8,7 +8,7 @@ module AccountCleanup
     # :tag_uses => "taggable", :tags, :parent
     POLYMORPHIC_ASSOCATION = {
       :helpdesk_tickets => { :helpdesk_dropboxes => "droppable", :helpdesk_activities  => "notable", :survey_results => "surveyable",
-                              :support_scores => "scorable", :survey_results => "surveyable", :helpdesk_time_sheets => "workable", :social_tweets => "tweetable",
+                              :support_scores => "scorable", :helpdesk_time_sheets => "workable", :social_tweets => "tweetable",
                               :ticket_topics => "ticketable",:social_fb_posts => "postable", :freshfone_calls=> "notable", :helpdesk_tag_uses => "taggable", :article_tickets => "ticketable",:integrated_resources => "local_integratable",
                               :flexifields => "flexifield_set", :ebay_questions =>  "questionable"},
       :helpdesk_notes => {:social_tweets => "tweetable", :social_fb_posts => "postable", :freshfone_calls => "notable", :helpdesk_dropboxes => "droppable", :helpdesk_shared_attachments => "shared_attachable", :ebay_questions => "questionable" }
