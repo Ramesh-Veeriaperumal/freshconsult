@@ -36,6 +36,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:spam_details] = ehawk_spam_details
     account_summary[:disable_emails] = account.launched?(:disable_emails)
     account_summary[:saml_sso_enabled] = account.is_saml_sso?
+    account_summary[:falcon_enabled] = account.has_feature?(:falcon) || account.launched?(:falcon)
     respond_to do |format|
       format.json do
         render :json => account_summary
