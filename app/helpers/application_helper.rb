@@ -25,7 +25,7 @@ module ApplicationHelper
   include Redis::IntegrationsRedis
   include JsonEscape
   include Concerns::AppConfigurationConcern
-
+  include FalconHelperMethods
   require "twitter"
 
   # Methods: get_app_config, is_application_installed?, get_app_details, installed_apps - moved to Concerns::AppConfigurationConcern
@@ -1608,6 +1608,14 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
       current_account.features_included?(:forums) && allowed_in_portal?(:open_forums) && privilege?(:view_forums)
     end
 
+    def onclick_strategy(auth_redirect_url)
+      if current_account.falcon_ui_enabled?(current_user)
+        "parent.location.href='#{auth_redirect_url}'"
+      else
+        "window.location.href='#{auth_redirect_url}'"
+      end
+    end
+
     def social_tab
       view_social_tab = can_view_social?
       handles_present = handles_associated?
@@ -1983,7 +1991,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
       :created  => current_account.created_at.to_i,
       :updated  => current_user.last_login_at.to_i,
       :plan     => Subscription.fetch_by_account_id(current_account.id).subscription_plan.display_name,
-      :roles    => (current_user.privilege?(:admin_tasks)) ? 'admin' : 'agent'
+      :roles    => (current_user.privilege?(:admin_tasks)) ? ['admin'] : ['agent']
     }
   end
 
@@ -1995,4 +2003,8 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     current_account.collaboration_enabled? and @collab_context
   end
 
+  def falcon_enabled?
+    current_account && current_account.falcon_ui_enabled? && 
+      current_user && current_user.is_falcon_pref?
+  end
 end

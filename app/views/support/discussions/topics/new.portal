@@ -1,4 +1,4 @@
-<section class="main content rounded-6">
+<section class="main content rounded-6 fc-new-topic">
 	<!-- To set topic title based on edit or delete -->
 	<h3 class="heading">
 		{% if topic.id %}

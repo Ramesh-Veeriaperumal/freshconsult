@@ -16,6 +16,13 @@ class Account < ActiveRecord::Base
       :multiple_companies_toggle, :multiple_user_companies
     ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
+  COMBINED_VERSION_ENTITY_KEYS = [
+    Helpdesk::TicketField::VERSION_MEMBER_KEY,
+    ContactField::VERSION_MEMBER_KEY,
+    CompanyField::VERSION_MEMBER_KEY,
+    CustomSurvey::Survey::VERSION_MEMBER_KEY
+  ]
+
   LP_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
       launched?(item)
@@ -206,9 +213,15 @@ class Account < ActiveRecord::Base
     valid_user = (current_user == :no_user ? true : (current_user && current_user.is_falcon_pref?))
     valid_user && (launched?(:falcon) || falcon_enabled?)
   end
-  
+
   def falcon_support_portal_theme_enabled?
     falcon_ui_enabled? && falcon_portal_theme_enabled?
   end
 
+  #this must be called instead of using launchparty in console or from freshops to set all necessary things needed
+  def enable_falcon_ui
+    hash_set = Hash[COMBINED_VERSION_ENTITY_KEYS.collect { |key| ["#{key}_LIST", Time.now.utc.to_i] }]
+    set_others_redis_hash(version_key, hash_set)
+    self.add_feature(:falcon)
+  end
 end

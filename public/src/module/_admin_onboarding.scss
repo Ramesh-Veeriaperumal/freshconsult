@@ -312,3 +312,65 @@
     }
   }
 }
+#falcon-invite-modal {
+  position: fixed;
+  top: 50%;
+  @include left(50%);
+  z-index: 1050;
+  background: #fff;
+  border: none;
+  box-shadow: 1px 3px 10px 0px #aaa;
+  height:560px;
+  width: 720px;
+  @include margin(-250px 0 0 -355px);
+  @include border-radius(5px);
+  .horizontal-split{
+    float:none;
+    width:100%;
+    box-sizing: border-box;
+  }
+  #falcon-invite-image{
+    height:43%;
+    background: url('/assets/onboarding/falcon_invite.gif');
+    background-size: cover;
+  }
+  #falcon-invite-message{
+    height:57%;
+    padding:20px 10px 10px;
+    text-align: center;
+    color:#1a3448;
+    .muted{
+        color:#78848e;
+    }
+    p{
+      margin-top: 20px;
+      font-size: 14px;
+      line-height: 22px;
+      a{
+        font-weight: 500;
+      }
+      &.muted{
+        margin-top:13px;
+      }
+    }
+    #falcon_toggle {
+      float: left;
+      margin: 30px 242px 25px;
+      padding: 13px;
+      background: #00ad71;
+      width: 215px;
+      height: 44px;
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+      border: 0.3px outset #598473;
+      border-radius: 20px;
+      box-sizing: border-box;
+      box-shadow: 0px 0px 0px 0.5px #73c4a8;
+    }
+    span.muted{
+      cursor: pointer;
+      font-size: 14px;
+    }
+  }
+}

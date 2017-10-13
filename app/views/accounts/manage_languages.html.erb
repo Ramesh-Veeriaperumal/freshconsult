@@ -26,15 +26,28 @@
 									<% if multilingual_flag %>
 										<div class="mt5"><%= Language.find_by_code(@account.main_portal.language).name %></div>
 									<% else %>
-										<%= portal.select :language, I18n.available_locales_with_name , 
-													{ :selected =>  @account.main_portal.language.to_sym() },
-													{ :class => "select2 input-medium" } 
-										%>
+										<% if current_account.falcon_ui_enabled?(current_user) %>
+											<%= select(:user, :language, I18n.available_locales_with_name, {:selected =>  @account.main_portal.language.to_sym()}, {:disabled => true})%>
+											<a href="javascript:toggleMessage()">
+												<i class="info help-icon-language ficon-help-icon fsize-24" size="14"></i>
+											</a>
+										<% else %>
+											<%= portal.select :language, I18n.available_locales_with_name ,
+														{ :selected =>  @account.main_portal.language.to_sym() },
+														{ :class => "select2 input-medium" }
+											%>
+										<% end %>
 									<% end %>
 								</div>
-								<div class="row-fluid multilingual-warning mt5">
-									<%= t('accounts.multilingual_support.warning_msg') %>
-								</div>
+								<% if current_account.falcon_ui_enabled?(current_user) %>
+									<div class="row-fluid multilingual-warning mt5">
+										<%= render partial:'ui/falcon_languages_alert' %>
+									</div>
+								<% else %>
+									<div class="row-fluid multilingual-warning mt5">
+										<%= t('accounts.multilingual_support.warning_msg') %>
+									</div>
+								<% end %>
 							</div>
 						</div>
 						<%= f.fields_for :account_additional_settings do |settings| %>
@@ -43,11 +56,11 @@
 								<div class="controls">
 									<div class="row-fluid">
 										<div class="rounded-add-icon"> </div>
-										<%= settings.select :supported_languages, 
-													options_for_select( I18n.available_locales_with_name.reject { |lang, sym| sym == @account.main_portal.language.to_sym() }, 
-													:selected => @account.reload.supported_languages), 
-													{}, 
-													{ 
+										<%= settings.select :supported_languages,
+													options_for_select( I18n.available_locales_with_name.reject { |lang, sym| sym == @account.main_portal.language.to_sym() },
+													:selected => @account.reload.supported_languages),
+													{},
+													{
 														:multiple => true,
 														:class => "input-xxlarge clear-left-margin secondary-languages-field",
 														"data-placeholder" => t('accounts.multilingual_support.add_languages'),
@@ -59,7 +72,7 @@
 										<%= t('accounts.multilingual_support.add_more_languages_msg') %>
 									</div>
 									<div class="row-fluid selected-languages mt20"></div>
-								</div>					
+								</div>
 							</div>
 						<% end %>
 					</div>

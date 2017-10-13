@@ -1,0 +1,922 @@
+@import "../src/fonts/_glyphs.scss";
+@import "../src/portal/rating.scss";
+
+.c-wrapper, .cs-g-c{ @include pie-clearfix; }
+.cs-g-c{
+	margin-top: 6px;
+}
+.c-wrapper{
+	margin: 16px 0;
+    @include box-shadow(0 1px 2px 0 rgba(63,63,68,0.15));
+    @include border-radius(6px);
+    border: 1px solid $border-color;
+}
+.content, .content-form, .content-light{
+	margin-top: 0px;
+	@include box-shadow(none);
+	position: relative;
+    padding: 10px 40px;
+}
+
+.content{ 
+	@include word-hyphernate;
+	.lead{
+		font-weight: 500;
+	}
+}
+
+.content{
+	h2{
+	    font-weight: 600;
+	    font-size: 22px;
+	}
+}
+
+.cs-s{
+	margin:16px 0;
+	h3{
+		@include inline-block;
+	}
+}
+
+.max-search-content{
+	max-height: 62px;
+	overflow: hidden;
+}
+
+.article-list, .topic-list, .ticket-list{	
+	ul{ 
+		margin-bottom: 0; 
+		@include margin-left(0); 
+		margin-top: 10px;
+	}	
+}
+
+.user-thumb-image{
+	@include border-radius(5px);
+	@include float(left);
+	overflow: hidden;
+	border: none;
+	img{
+		width: 25px;
+		border-radius: 5px;
+	}	
+}
+
+.best-answer-info{
+	@include margin(-11px -13px -11px -13px);
+	@include padding(11px 14px 1px 14px);
+	background: #fffffa;
+	@include border-radius(0px 0px 5px 5px);
+	.answer-comment{
+		@include border-left(1px solid #E2E2E2);
+		@include margin-left(34px);
+		@include padding-left(12px);
+		.user-info .user-details{
+			@include margin-left(34px);
+			margin-top: 5px;
+			.p-info{
+				font-size: 13px;
+			}
+		}
+		.answer-desc hr{
+			margin: 10px 0px;
+		}
+	}
+}
+
+.best-answer-tick{
+	background: #0B8500;
+	width: 23px;
+	height: 23px;
+	border-radius: 50px;
+	.icon-best-answer{
+		@include margin(1px 3px 3px 4px);
+	}
+}
+
+.best-badge{
+	background: #FEFFDA;
+	display: inline-block;
+	@include padding(0px 8px 0px 8px);
+	border: 1px solid #F1F0D4;
+	border-radius: 14px;
+	margin-bottom: 10px;
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.article-body{
+	@include text-formatting;
+	@include editor-text-formating;
+	big{ font-size: inherit; }
+	overflow-x: auto;
+	table{ 
+		@extend .table !optional; 
+	}
+}
+
+.article-list li, .topic-list li, .ticket-list li,
+li.article-item, li.topic-item, li.ticket-item, li.note-item {
+	list-style: none;	
+	position: relative;
+	@include padding-left(30px);
+	&:before{
+		@include left(0);
+		content:"";
+		position: absolute;			
+		vertical-align: text-top;
+	}
+}
+.article-list li, .topic-list li, .ticket-list li{	
+	margin-bottom: 10px;
+}
+li.article-item, li.topic-item, li.ticket-item, li.note-item {
+	@include padding-right(10px);
+}
+.article-list, .topic-list{ margin-bottom: 20px; }
+.cs-g-c.topic-list{
+	margin-top: 14px
+}
+
+.start-topic{
+	@include float(right);
+	font-weight: 400;
+	margin-top: -35px;
+	@if $rtl { 
+		margin-top: 0; 
+		@include float(left);
+	}
+	a{color: $blue;}
+}
+
+.tabbed{
+	@include margin-left(15px);
+}
+
+
+
+.help-text, .p-info, .info-text, .list-noinfo, .description-text{
+	font-weight: 200;
+}
+
+.article-body, .help-text, .p-info, .info-text, .list-noinfo, .description-text{
+	max-height: 999999px; // Hack to make fonts not zoom out in android
+}
+
+.item-count{ 
+	display: inline-block; // Needed for RTL
+	&:before{ content: "("; }
+	&:after{ content: ")"; }
+}
+
+.help-text{	
+	font-size: 12px;
+	a{
+		color: $blue;
+	}
+}
+.company-users-filter{
+	display: inline-block;
+}
+.p-info strong{ color: $grayDark; }
+.list-noinfo{ @include text-align(center); }
+
+.topic-stamp{ margin-top: 10px; }
+
+/* Forum and ticket details style */
+
+.vote-bar .tooltip-inner {
+	line-height: 1.5em;
+	@include text-align(left);
+}
+
+.vote-like-btn {
+	border: 1px solid #ccc;
+	padding-bottom: 3px;
+	border-radius: 5px;
+	@include margin-right(10px);
+
+	&.disabled {
+		pointer-events: none;
+		opacity: 0.2;
+		}
+
+	&:hover{
+		text-decoration:none;
+		color: #727374;
+		}
+}
+
+/* A small colen is added in front of the 
+   up-vote button if its next to atleast one user voted label */
+#topic-vote-up-button:nth-child(3){
+	@include margin-left(10px);
+	position: relative;
+	&:before{
+		content: " : ";
+		position: absolute;
+		@include margin-left(-8px);
+		top: -3px;
+	}
+}
+
+
+.vote-count {
+	&:hover{ text-decoration:none; }
+}
+
+.post-sort .dropdown-toggle a {
+	text-decoration: none;
+}
+
+.post-sort .dropdown-toggle a .caret{
+	margin-top: 9px;
+}
+
+.voted{
+	background-color: #8B8883;
+}
+
+/* Background for a sticky topic in the list view */
+.c-topic-sticky{ background-color: #fffff6; }
+
+.user-comment{
+	margin:5px 0 20px;
+	.user-pic-thumb{
+		@include clear(none);
+		margin: 0;
+		z-index: 3;
+	}	
+}
+
+.user-info{
+	@include clearfix;
+	margin-bottom: 10px;
+	.user-details{ @include margin-left(55px); margin-top: 6px; }
+}
+
+.p-content{
+	@include border-radius(5px);
+	position: relative;
+	margin: 0 0 10px;
+	/* To handle the paragraph tags coming in from redactor */
+	p{ margin: 0; }
+	hr{
+		margin-top: 10px;
+		margin-bottom: 10px;
+		border-top: 1px solid #efefef;
+	}
+
+}
+
+.p-desc{
+	word-break: normal; 
+	word-wrap: break-word; 
+	overflow-x: auto;
+	// Fix for elements breaking layout with inline styles	
+	div, p, ol, ul, li, article, aside,
+	details, figcaption, figure, footer,
+	header, hgroup, nav, section{
+		max-width: 100%;
+	}
+
+}
+/* Custom Survey portal note styles begin*/
+.survey_questions_wrap{
+	margin:0;
+	font-weight: 500;
+	font-size: 13px;
+	.title{
+		color:#a2a19f;
+		line-height: 45px;
+	}
+	.survey-additional-questions{
+		@include padding-left(0px);
+		list-style: disc inside;
+		margin: 15px 0;
+		.input-survy-ques{
+		  width:440px;
+		  @include margin-right(15px);
+		}
+		li{
+		  width: 100%;
+		  padding: 15px 0;
+		  border-top: 1px solid #eee;
+		  @include float(left);
+		}
+	}
+	.ques-desc, .ques-ans{
+		display: inline-block;
+		vertical-align: middle;
+		font-weight: normal;
+	}
+	.ques-desc{
+		width: 65%
+	}
+	.ques-ans{
+		width:30%;
+		@include text-align(right);
+		@include float(right);
+		label{padding-bottom: 5px}
+		.ticket-rating-label{
+			width: 81%;
+			vertical-align: middle;
+			display: inline-block;
+			@include margin-right(5px);
+		}
+	}
+	.default_question{
+		.ques-desc, .ques-ans{
+			font-weight:500;
+		}
+	}
+}
+/* Custom Survey portal note styles end*/
+
+#ticket-comments .freshdesk_quote{ display: none; }
+
+.freshdesk_quote blockquote{ 
+	@include border-left-width(1px);
+	@include border-left-style(dotted);
+}
+
+.comment-by-agent .p-content{
+	@include box-shadow(rgba(0, 0, 0, 0.05) 0 3px 3px);
+}
+
+.c-list{
+	margin-bottom: 12px;
+	margin-top: 5px;
+	margin-bottom: 1em;
+}
+
+.c-row{
+	@include pie-clearfix;
+	padding:10px;
+	.description-text{ font-size: 14px; }
+	.help-text{ 
+		font-size: 12px;
+		b{
+			color: $black;
+		}
+	}
+  	&:hover{ background-color:rgba(#f1efec, 0.3); }
+}
+
+.c-user-thumb{ padding: 16px 0; } 
+.uv-user-thumb{ @include padding-left(45px); } 
+
+.ellipsis .c-link{ 
+	font-size: 16px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+/* Solutions table row */
+.c-article-row{
+	padding: 16px 0;
+  .article-title{
+    margin-top: 6px;
+    a{
+    	font-size: 16px;
+	    font-weight: 600;
+	    line-height: 16px;
+    }
+  }
+	.icon-article-table-row{
+		@include margin-left(0px);
+		@include margin-right(12px);
+		@include float(left);
+	}	
+}
+
+/* Solution voting button */
+.vote-up, .vote-down{
+	font-weight: bold;
+	@include margin-left(10px);
+	&:hover{
+		text-decoration: none;
+	}
+}
+.vote-down-container:before{
+	content: "-";
+	color: #e5e5e5;
+	@include margin-left(10px);
+}
+
+.vote-feedback{
+	@include margin-left(55px);
+}
+
+/* Print button in Solutions Page */
+.solution-print-icon {
+	@include float(right);
+	width: auto;
+}
+
+/* User voted list in topic details page */
+.user-list{
+	margin-top: -10px;
+}
+.uv-row{
+	@include pie-clearfix;
+	padding-top: 7px;
+	padding-bottom: 7px;
+	&:last-child{
+		border-bottom: 0;
+	}
+	.lead-small{
+		margin-top: 7px;
+		margin-bottom: 0;
+	}
+}
+
+/* Merged topics list in topic details page */
+.merged-topics-list a{
+	color: #049cdb;
+}
+
+.sol-feedback-message{
+	padding-left: 20px;
+}
+
+.align-feedback{
+	padding-top: 7px;
+	textarea{
+		@include float(none);
+	}
+}
+
+/* Pointer that shows up near the user pic in Ticket and Topic details page */
+.user-pointer-bottom, .user-pointer-right{
+   	&:before, &:after{
+		content: "";
+		border: 8px solid transparent;		
+		line-height: 0;
+		height: 0;
+		position: absolute;			
+		z-index: 1;
+    }
+    &:after{		
+		border-width: 7px;
+		z-index: 2;
+    }
+}
+.user-pointer-bottom{	
+	&:before, &:after{
+		bottom: -12px;
+		@include right(14px);
+		border-bottom-color: #ebebeb;
+	}
+	&:after{ 
+		@include right(15px); 
+		border-bottom-color: #fafafa;
+	}
+}
+
+.user-pointer-right{	
+	&:before{
+		top: 14px;
+		@include right(-18px);
+		@include border-right-color(#ebebeb);
+	}
+	&:after{ 
+		top: 15px;
+		@include right(-19px); 
+		@include border-right-color(#fafafa);
+	}
+}
+
+.comment-by-agent{
+	.user-pointer-bottom{
+		&:before{ border-bottom-color:#cccccc; }
+		&:after{ border-bottom-color:#fffdf8; }
+	}
+	.user-pointer-right{
+		&:before{ @include border-right-color(#cccccc); }
+		&:after{ @include border-right-color(#fffdf8); }	
+	}
+}
+
+hr.content-divider{
+	margin-top: 30px;
+	margin-bottom: 20px;
+	border-bottom-color:#f6f6f6;
+}
+
+/* Post edit and delete dropdown styles */
+.post-actions{
+	@include opacity(0);
+	.icon-delete, .icon-edit{
+	 	width: 34px;
+	}
+}
+.user-comment:hover .post-actions{
+		@include opacity(1); 
+		a{
+			text-decoration: none;
+			vertical-align: bottom;
+		}
+	}
+
+/* Topic label styles in forum list view */
+.topic-list .topic-labels .label{ @extend .label-small !optional; }
+
+.lock-merge-topic-text{
+	font-size: 14px;
+	font-weight: normal;
+}
+
+.avatar-span{ margin-bottom: 15px; }
+.attach-wrapper, .attachments-list-form{ margin-top: 5px; }
+.dropbox_div{
+	@include border-left(1px solid #AAAAAA); @include float(left); margin: 10px; @include padding-left(20px); margin-top:1px;
+	.db-chooser .dropbox_button{ cursor: pointer; }
+}
+.attach_file{ @include float(left); @include padding-right(20px) }
+
+.db-chooser{
+	label{ @include margin-right(50%); }
+	.dropbox_button{
+		background-color: #f3f2f2;
+	    height: 26px;
+	    @include padding-left(90px);
+	    border:1px solid #d6d6d6;
+	    border-radius:4px;
+		cursor:pointer;
+		text-shadow: 1px 1px 0px #fff;
+	    &:hover{ background-color:darken(#f2f2f2, 5%); }
+	}
+}
+
+.toolbar-actions{
+	@include float(right);
+	margin-bottom: -50px;
+	margin-top: 15px;
+}
+
+.topic-list .topic-labels{ @include float(right); }
+
+@include at-breakpoint($break-desktop){
+	.sidebar .community-sidebar{
+		.cs-s{ border-top:0; margin: 0; }
+		h3.heading{ display: none; }
+		.topic-list:nth-child(n+3) ul{ display: none; }
+		.start-topic{ margin-top: 0; @include float(none); }
+	}
+}
+
+.help-text .my_topics_right{
+	display: none;
+}
+
+/* Recapcha hack fixes */
+.recaptcha_only_if_privacy{
+	position: relative !important;
+	top: -4px !important;
+}
+
+// for rendering contact_fields in profile
+.required_star {
+	color: #d00;
+	font-size: 20px;
+	font-weight: bold;
+	position: relative;
+	top: 2px;
+	margin-left: 3px;
+	margin-right: 1px;
+	line-height: 0;
+	display:inline;
+}
+
+.profile-edit-form{
+	input[type=text], input[type=url], input[type=email], textarea{
+		width:100%;
+	}
+	label{
+		display:inline;	
+		word-wrap: break-word;
+	}
+}
+
+// Forum answer styles
+.answer_previous{ 
+	border: solid 1px #dddddd;
+	padding: 10px;
+	border-radius: 5px;
+	background: #fafafa;
+	max-height: 210px;
+	overflow: hidden;
+	margin-top: 15px;
+	.user-details{
+		@include margin-left(10px);
+	}
+}
+
+.helpdesk_view{
+	.agent_view{
+		position: fixed;
+		top: 250px;
+		background: $green;
+		border: 1px solid $green;
+		@include border-left(none);
+		border-radius: 0 5px 5px 0;
+		@if $rtl { border-radius: 5px 0 0 5px ; }
+		padding: 3px 10px;
+		cursor: pointer;
+		z-index: 10;
+	}
+	.agent_actions {
+		border: 1px solid #b5b5b5;
+		min-width: 170px;
+		min-height: 60px;
+		position: fixed;
+		background: #fff;
+		top: 250px;
+		@include left(47px);
+		z-index: 10;
+		border-radius: 5px;
+		@include padding(10px 15px 8px 15px);
+		font-weight: 200;
+		@include box-shadow(-1px 2px 10px rgba(0, 0, 0, 0.1));
+		.action_title{
+			color: #CCC;
+		}
+		.agent_options{
+			@include margin(3px -15px 0 -15px);
+			@include padding(5px 15px 0 15px);
+			display: block;
+			color: #000;
+			text-decoration: none;
+			.icon-agent-edit, .icon-agent-preview{
+				@include margin(-8px 0px 0px -8px);
+			}
+
+			&:hover {
+				background: #EEE;
+			}
+		}
+	}
+	.agent_actions:after, .agent_actions:before {
+		@include right(100%);
+		top: 20px;
+		border: solid transparent;
+		content: " ";
+		height: 0;
+		width: 0;
+		position: absolute;
+		pointer-events: none;
+	}
+
+	.agent_actions:after {
+		border-color: rgba(243, 243, 243, 0);
+		@include border-right-color(#fff);
+		border-width: 8px;
+		margin-top: -8px;
+	}
+	.agent_actions:before {
+		border-color: rgba(153, 153, 153, 0);
+		@include border-right-color(#999);
+		border-width: 9px;
+		margin-top: -9px;
+	}
+}
+
+@include at-breakpoint($media-mobile-tablet){
+	.helpdesk_view {
+		display: none;
+	}
+	.toolbar-actions{
+		span{
+			margin-top: 0;
+		}
+	}
+}
+
+#new_topic {
+	.title{
+		font-size: 16px;
+		font-weight: 600;
+		font-family: $headingsFontFamily;
+	}
+	.topic-title{
+		margin-top: 10px;
+		@include padding-left(25px);
+		a{
+			color: $black;
+			font-weight: 600;
+			&:hover{
+				color: $blue;
+			}
+		}
+	}
+	.desc{
+		color: #7E7E7E;
+		font-size: 12px;
+		line-height: 16px;
+	}
+	.forum-name{
+		line-height: 9px;
+		color: #ccc;
+		font-size: 11px;
+		padding-bottom: 5px;
+	}
+}
+
+.icon-sticky-small {
+	vertical-align: middle;
+	@include padding-right(18px);
+}
+
+#sticky-topic-icon{
+	@include float(left);
+	padding-top: 5px;
+	@include padding-right(5px);
+}
+
+#sticky-small-topic-icon{
+	@include float(left);
+	@include margin-right(5px);
+}
+.content .post-title.heading{
+	clear: none;
+}
+
+.lock-merge-topic-text{
+	a{ color: #049CDB; }
+	a:hover{ color: #036690; }
+}
+
+//----------------------------------------------------------------------------------------------------------
+//											 Fresh Suggestions styles
+//----------------------------------------------------------------------------------------------------------
+
+.suggestions .popover{
+	@include margin-left(0);
+	width: 400px;
+	.arrow{ top: 34px; }
+	.popover-title { display: none; }
+	.close-popover, .close-popover-mobile
+	{
+	    width: 20px;
+	    height: 20px;
+		background-color: #000;
+		border-radius: 50px;
+		cursor:pointer;
+		@include margin(-2px 4px 0 0);
+		&:after{
+			position: absolute;
+			@include margin(-1px 0 0 6px);
+			color: #fff;
+			content: "\00d7";
+			font-size: 14px;
+		}
+	}
+	.close-popover-mobile{ display: none; }
+	.show_results{ display: none; }
+}
+.hide-desktop{ display: none; }
+
+@include at-breakpoint($media-mobile-tablet){
+	.hide-desktop{ display: block; }
+	.suggestions .popover{
+		position: fixed;
+		width: 100%;
+		height: 100%;
+		@include margin-left(100%);
+		top: 0 !important;
+		@include left(0 !important);
+		padding: 0;
+		@include padding-left(25px);
+		.popover-title { display: none; }
+		.popover-inner{
+			height: 100%;
+			padding: 0;
+			border-radius: 0;
+			@include box-shadow(-5px 0 20px 0 rgba(0, 0, 0, 0.2));
+		}
+		.popover-content{
+			padding: 0 15px;
+			border-radius: 0;
+			height: 100%;
+		}
+		.arrow { display: none; }
+		.show_results{ display: block; }
+		.close-popover{ display: none; }
+		.close-popover-mobile{ 
+			display: block;
+			width: 25px;
+			height: 25px;
+			@include margin(10px 0 0 0);
+			&:after{
+				@include margin(1px 0 0 8px);
+			}
+		}
+	}
+}
+
+//----------------------------------------------------------------------------------------------------------
+//											Fresh Suggestions styles end
+//----------------------------------------------------------------------------------------------------------
+
+
+
+.ticket-main{
+	@include word-hyphernate;
+	.user-details{
+		h4.user-name{
+			display: inline;
+			font-size: 16px;
+		}
+		.popover{
+			left: 22px !important;
+			max-height: 180px;
+			overflow: auto;
+		}
+		.ticket_cc, .note_cc{
+			max-width: 75%;
+			cursor: pointer;
+			display: inline-block;
+		}
+		.arrow{
+			top: -2px;
+		    @include left(50%);
+		    @include margin-left(-8px);
+		    @include border-left(9px solid transparent);
+		    @include border-right(9px solid transparent);
+		    border-bottom: 9px solid #ccc;
+		    &:after{
+				content: " ";
+			    display: block;
+			    position: absolute;
+			    width: 0px;
+			    height: 0px;
+			    @include border-left(8px solid transparent);
+			    @include border-right(8px solid transparent);
+			    border-bottom: 9px solid #fff;
+			    @include left(-8px);
+			    top: 1px;
+			}
+		}
+
+		.popover-inner{
+		    background: white;
+	    	border: 1px solid #ccc;
+		}
+		.popover-title{
+			display: none;
+		}
+	}
+
+	.email-details{
+		max-height: 200px;
+		max-width: 400px;
+		word-wrap: break-word;
+		overflow: auto;
+		margin: 0 -14px;
+		padding: 0 10px;
+		color: #333;
+		position: relative;
+		box-sizing: border-box;
+		.emailcc{
+			position: absolute;
+			left: 10px;
+		}
+		.emaillist{
+			@include padding-left(24px);
+			display: block;
+		}
+		
+		del{
+			color: #999;
+		}
+	}
+
+}
+
+@if $nonResponsive == false {
+    @include at-breakpoint($media-mobile){
+    	.description-text,.help-text{
+    		overflow: hidden;
+		    white-space: nowrap;
+		    @include text-overflow();
+    	}
+    	.solution-print-icon{
+    		position: initial;
+    		@include margin-left(50px);
+    		&:before{
+    			margin-top: 5px;
+    		}
+    	}
+    	.breadcrumb a{
+    		font-size: 13px;
+    	}
+    	.content h2{
+    		font-size: 18px;
+    	}
+    	.start-topic{
+    		margin-top: -30px;
+    	}
+    }
+}

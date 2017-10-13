@@ -261,7 +261,7 @@ module SolutionHelper
     												  	:class => "view-all",
     												  	:"data-parallel-url" => "/helpdesk/tickets/filter_options?filter_name=#{filter}",
     												  	:"data-parallel-placeholder" => "#ticket-leftFilter"
-    												  }) if feedbacks_array.length > 3
+    												  }) if feedbacks_array.length > 3 && !current_user.is_falcon_pref?
 
 		content << %{</div>}
 		content.html_safe

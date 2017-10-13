@@ -1,0 +1,142 @@
+@if $rtl {
+	section.help-center-sc{
+		.hc-search{
+			width: 50%;
+		}
+		.hc-nav {
+			width: 48%;	
+		}
+	}
+	.c-wrapper{
+		.content{
+			padding: 20px 40px;
+			.cs-g-c{
+				.cs-g.article-list{
+					width: 48.14815%;
+				    float: right;
+				    margin:  0 0 10px 3.7037%;	    
+				    &:nth-child(even){
+					    width: 48.14815%;
+					    float: right;
+					    margin: 0 0 10px 0;
+					    clear: left;
+				    }
+			    }
+			}		
+		}
+		.sidebar{
+			padding: 20px 40px;
+		}
+	}
+	.ficon-print, .solution-print-icon{
+		margin-left: 50px;
+	}
+	.fc-discussion-category .start-topic{
+		margin-top: 20px;
+	}
+	.fc-topic-view .user-comment .user-pic-thumb{
+		margin: 0 16px;
+	}
+	#sticky-small-topic-icon{
+		float: none;
+		margin-left: 16px;
+	}
+	#sticky-topic-icon{
+		float: none;
+		padding-right: 0;
+		.icon-sticky{
+			text-align: right;
+		    display: block;
+		    position: relative;
+		    top: 6px;
+		    right: 25px;
+		}
+	}
+	.ticket-page .c-ticket-row .status-source{
+		    margin: 0 16px 0 16px;
+	}
+	input[type="radio"]:checked:after{
+		right: -10px;
+	}
+	.fc-topic-view section.topic-header h2.post-title{
+	    text-align: right;
+	    margin: 20px 46px 0 0;
+	}
+	.fc-forum-list{
+		.list-lead{
+			margin-top: 50px;
+		}
+		div#forum-topic-list{
+		 	.c-row{
+		 		 .user-pic-thumb{
+		 		 	margin: 0 16px 0 16px;
+		 		}
+		 	}
+		 }
+	}
+	.avatar-span{
+		width: 20%;
+		float: right;
+    	margin-left: 0;
+	}
+
+	@include at-breakpoint($media-mobile-tablets){
+		section.help-center{
+			margin: 55px 5px 10px 5px;
+			.hc-search{
+				.hc-search-c{
+					form.hc-search-form{
+						.hc-search-button{
+							right: auto;
+						}
+					}
+				}
+			}
+		}
+		section.help-center-sc{
+			margin: 45px 10px;
+			.hc-search{
+				.hc-search-c{
+					form.hc-search-form{
+						.hc-search-button{
+							right: auto;
+						}
+					}
+				}
+			}
+			.hc-nav{
+				float: left;
+			}
+		}
+		.c-wrapper{
+			.content{
+				.cs-g-c {
+					.cs-g.article-list{
+						width: 100%;
+					}
+				}
+			}
+		}
+		.breadcrumb{
+			margin: 10px 0;
+		}
+		.avatar-span{
+			width: 20%;
+			float: right;
+    		margin-left: 0;
+		}
+		.fc-topic-view section.topic-header h2.post-title{
+			margin: 20px 26px 0 0;
+		}
+		#sticky-topic-icon .icon-sticky{
+			right: 0;
+		}
+		.solution-print-icon{
+			margin-left: 0;
+		    margin-top: 2px;
+		    margin-right: 26px;
+		    top: 0;
+		    float: none;
+		}
+	}
+}

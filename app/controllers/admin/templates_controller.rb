@@ -8,7 +8,11 @@ class Admin::TemplatesController < Admin::AdminController
   before_filter(:only => :update) do |c| #validating the syntax before persisting.
     custom_css = c.request.params[:portal_template][:custom_css]
     c.send(:css_syntax?, custom_css) unless custom_css.nil?
-    Portal::Template::TEMPLATE_MAPPING_FILE_BY_TOKEN.each do |key,file|
+    if current_account.falcon_support_portal_theme_enabled?
+      Portal::Template::TEMPLATE_MAPPING_FILE_BY_TOKEN_FALCON
+    else
+      Portal::Template::TEMPLATE_MAPPING_FILE_BY_TOKEN
+    end.each do |key,file|
       c.send(:liquid_syntax?, c.request.params[:portal_template][key.to_sym])
     end
   end
@@ -76,7 +80,11 @@ class Admin::TemplatesController < Admin::AdminController
 
     def default_liquids
       @show_raw_liquid = true
-      Portal::Template::TEMPLATE_MAPPING.each {
+      if current_account.falcon_support_portal_theme_enabled?
+        Portal::Template::TEMPLATE_MAPPING_FALCON
+      else
+        Portal::Template::TEMPLATE_MAPPING
+      end.each {
         |t| @portal_template[t[0]] = render_to_string(:partial => t[1]) if (@portal_template[t[0]].nil?)
       }  
     end

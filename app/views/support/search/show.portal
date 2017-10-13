@@ -1,4 +1,4 @@
-<section class="content rounded-6 min-height-desktop">
+<section class="content rounded-6 min-height-desktop fc-search-page">
 	<h2 class="heading">{% translate portal.search.results_for %} "{{ search.term | escape_once }}"</h2>	
 	{{ search | default_filters }}
 	<hr />

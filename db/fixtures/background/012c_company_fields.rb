@@ -3,7 +3,7 @@ account = Account.current
 def self.company_fields_data
   [
     { :name               => "description", 
-      :label              => "Description",
+      :label              => "About",
       :position           => 2 },
       
     { :name               => "note", 
@@ -11,6 +11,8 @@ def self.company_fields_data
       :position           => 3 }
   ]
 end
+
+last_company_field = nil
 
 company_fields_data.each do |f|
   company_field = CompanyField.new(
@@ -28,6 +30,8 @@ company_fields_data.each do |f|
   company_field.created_at = Time.zone.now #The important callbacks.
   company_field.updated_at = Time.zone.now  #The important callbacks.
   company_field.sneaky_save #To avoid the callbacks of acts-as-list which is changing the other field positions.
+  last_company_field = company_field
 end
 
 account.company_form.clear_cache
+last_company_field.update_version_timestamp
