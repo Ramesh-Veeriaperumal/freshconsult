@@ -317,7 +317,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
             end
           end
           replacement_char = "\uFFFD"
-          if t_format.to_s == "subject" and (params[t_format] =~ /^=\?(.+)\?[BQ]?(.+)\?=/ or params[t_format].include? replacement_char)
+          if t_format.to_s == "subject" and (params[t_format] =~ /=\?(.+)\?[BQ]?(.+)\?=/ or params[t_format].include? replacement_char)
             params[t_format] = decode_subject
           else
             begin
