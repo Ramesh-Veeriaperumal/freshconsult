@@ -1676,7 +1676,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def check_twitter_reauth_required
-    twt_handle= current_account.twitter_reauth_check_from_cache
+    twt_handle = current_account.twitter_reauth_check_from_cache
     if twt_handle
       return content_tag('div', "<a href='javascript:void(0)'></a> #{t('twitter_reauth')} <a href='/admin/social/streams' target='_blank'> #{t('reauthorize_twitter')} </a>".html_safe, :class =>
         "alert-message block-message warning full-width")

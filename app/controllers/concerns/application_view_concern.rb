@@ -19,4 +19,20 @@ module Concerns::ApplicationViewConcern
     end
     final_date = options[:translate] ? (I18n.l date_time , :format => time_format) : (date_time.strftime(time_format))
   end
+
+  def facebook_reauth_link 
+    "/a/admin/social/facebook_streams";
+  end
+
+  def twitter_reauth_link 
+    "/a/admin/social/streams";
+  end
+
+  def facebook_reauth_required?
+    Account.current.fb_reauth_check_from_cache
+  end
+
+  def twitter_reauth_required?
+    Account.current.twitter_reauth_check_from_cache
+  end
 end
