@@ -16,6 +16,9 @@ module Ember
     include SurveysTestHelper
     include AwsTestHelper
 
+    BULK_ATTACHMENT_CREATE_COUNT = 2
+    BULK_NOTE_CREATE_COUNT       = 2
+
     def setup
       super
       MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
@@ -26,10 +29,6 @@ module Ember
 
       @twitter_handle = get_twitter_handle
       @default_stream = @twitter_handle.default_stream
-
-      3.times do
-        add_test_agent(@account, role: Role.find_by_name('Agent').id)
-      end
     end
 
     def teardown
@@ -129,7 +128,7 @@ module Ember
 
     def test_create_with_attachment_ids
       attachment_ids = []
-      rand(2..10).times do
+      BULK_ATTACHMENT_CREATE_COUNT.times do
         attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       end
       params_hash = create_note_params_hash.merge(attachment_ids: attachment_ids)
@@ -257,7 +256,7 @@ module Ember
 
     def test_reply_with_attachment_ids
       attachment_ids = []
-      rand(2..10).times do
+      BULK_ATTACHMENT_CREATE_COUNT.times do
         attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       end
       params_hash = reply_note_params_hash.merge(attachment_ids: attachment_ids, user_id: @agent.id)
@@ -645,7 +644,7 @@ module Ember
 
     def test_forward_with_draft_attachment_ids
       attachment_ids = []
-      rand(2..10).times do
+      BULK_ATTACHMENT_CREATE_COUNT.times do
         attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       end
       params_hash = forward_note_params_hash.merge(attachment_ids: attachment_ids, agent_id: @agent.id)
@@ -1533,7 +1532,7 @@ module Ember
       Account.current.reload
       ticket = create_ticket
       note = create_private_note(ticket)
-      rand(1..5).times do
+      BULK_NOTE_CREATE_COUNT.times do
         create_private_note(ticket)
       end
       params_hash = create_note_params_hash.merge(last_note_id: note.id)
@@ -1550,7 +1549,7 @@ module Ember
       Account.current.reload
       ticket = create_twitter_ticket
       note = create_public_note(ticket)
-      rand(1..5).times do
+      BULK_NOTE_CREATE_COUNT.times do
         create_public_note(ticket)
       end
       post :tweet, construct_params({ version: 'private', id: ticket.display_id }, {
@@ -1568,7 +1567,7 @@ module Ember
       Account.current.reload
       ticket = create_twitter_ticket
       note = create_public_note(ticket)
-      rand(1..5).times do
+      BULK_NOTE_CREATE_COUNT.times do
         create_public_note(ticket)
       end
       post :tweet, construct_params({ version: 'private', id: ticket.display_id }, {
@@ -1586,7 +1585,7 @@ module Ember
       Account.current.reload
       ticket = create_twitter_ticket
       note = create_twitter_note(ticket)
-      rand(1..5).times do
+      BULK_NOTE_CREATE_COUNT.times do
         create_public_note(ticket)
       end
       post :tweet, construct_params({ version: 'private', id: ticket.display_id },
@@ -1621,7 +1620,7 @@ module Ember
       ticket = create_ticket_from_fb_post(true)
       note = create_public_note(ticket)
       sleep 1 # delay introduced so that notes are not created at the same time. Fractional seconds are ignored in tests.
-      rand(1..5).times do
+      BULK_NOTE_CREATE_COUNT.times do
         create_public_note(ticket)
       end
       put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
@@ -1642,7 +1641,7 @@ module Ember
       note = create_public_note(ticket)
       sleep 1 # delay introduced so that notes are not created at the same time. Fractional seconds are ignored in tests.
       sample_reply_dm = { 'id' => Time.now.utc.to_i + 5 }
-      rand(1..5).times do
+      BULK_NOTE_CREATE_COUNT.times do
         create_public_note(ticket)
       end
       Koala::Facebook::API.any_instance.stubs(:put_object).returns(sample_reply_dm)
@@ -1661,7 +1660,7 @@ module Ember
       sleep 1 # delay introduced so that notes are not created at the same time. Fractional seconds are ignored in tests.
       put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
       sample_put_comment = { 'id' => put_comment_id }
-      rand(1..5).times do
+      BULK_NOTE_CREATE_COUNT.times do
         create_public_note(ticket)
       end
       Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
