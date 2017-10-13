@@ -17,12 +17,12 @@ module SpamDetection
         domain = email.split("@").last
         if ismember?(SIGNUP_RESTRICTED_EMAIL_DOMAINS, domain)
             
-            subject = "Suspicious Sapm Account id : #{account.id}"
+            subject = "Suspicious Spam Account id : #{account.id}"
             additional_info = "Customer's admin email domain is restricted: Account activity #{call_location} : Attempted email_address: #{email}"
             increase_ehawk_spam_score_for_account(4, account, subject, additional_info)      
             Rails.logger.info "Suspending account #{account.id}"
             is_spam_email_account = true
-            additional_info = "Reason: Domain url contains support and signup using free or spam email domains"
+            additional_info = "Reason: Sign up email changed to a spam email domain"
             SendgridDomainUpdates.new().blacklist_spam_account account, is_spam_email_account, additional_info
         end
       rescue Exception => e
