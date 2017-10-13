@@ -15,7 +15,11 @@
   </script>
 
   <%= stylesheet_link_tag_with_rtl :'cdn/common' %>
-  <%= stylesheet_link_tag_with_rtl :'cdn/activations' %>
+  <% if current_account.falcon_support_portal_theme_enabled?%>
+    <%= stylesheet_link_tag_with_rtl :'cdn/falcon_activations' %>
+    <% else %>
+    <%= stylesheet_link_tag_with_rtl :'cdn/activations' %>
+  <% end %>
 
   <%= javascript_include_tag :'cdn/defaults'  %>
   <%= javascript_include_tag :'cdn/frameworks' %>

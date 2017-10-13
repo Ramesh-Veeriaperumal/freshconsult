@@ -1,0 +1,133 @@
+.login-form input.special{ width: 100%; }
+.login-form{ 
+	width:65%; 
+	@include float(left); 
+	max-width: 400px; 
+	@include padding-right(40px); 
+	h2{
+		font-size: 20px;
+    	font-weight: 600
+	}
+	p{
+		margin: 16px 0;
+	}
+}
+.alt-login-button{ 
+	width:32%;
+	@include float(right);
+	@include min-height(300px);	
+	@include border-left(1px solid #ebeef0);
+    @include padding-left(18px);
+	@if $rtl { @include box-shadow(#fff 1px 0 0); }
+	@else { @include box-shadow(#fff -1px 0 0); }
+	h2{
+		font-size: 20px;
+	    font-weight: 600;
+	    margin-bottom: 20px;
+	}
+	.btn{
+		@include text-align(left);
+		display:block;
+		margin:$baseLineHeight 0;
+		color: $white;
+		@include text-shadow(none);
+		margin: 10px 0 0px 0;
+		@include box-shadow(none);
+		&.btn-google{
+		  background-color: $red;
+		  &:hover{
+			color: $white;
+		  }
+		}
+
+		&.btn-facebook{
+		  background-color: $dark-blue;
+		  &:hover{
+			color: $white;
+		  }
+		}
+		&.btn-twitter{
+		  background-color: $light-blue;
+		  &:hover{
+			color: $white;
+		  }
+		}
+	} 
+}
+
+.btn-login{	
+	text-transform: uppercase;
+	margin: -20px 0 10px;
+	display: block;
+    @include float(left !important);
+    margin: 16px 0 0 0;
+}
+.btn-login, .btn-signup, .btn-newticket{ width: auto; }
+.btn-newticket, .btn-signup{ font-weight: bold; }
+.btn-login, .btn-newticket{ @include float(right); }
+.btn-signup{ margin: 16px 0; }
+
+.btn-google:before, .btn-facebook:before, .btn-twitter:before{
+	content: "";	
+	display: inline-block;
+	@include ie7-restore-right-whitespace();
+	vertical-align: text-top;
+	@if $rtl{ margin: -2px 5px 0 8px; }
+	@else{ margin: -2px 5px 0 -8px; }
+}
+.login-c-wrapper{
+	margin: 8% 0;
+}
+section#login-container,section#signup-container{
+	padding: 20px;
+	&:after{
+		content: '';
+	    display: table;
+	    clear: both;
+	}
+}
+
+section#signup-container{
+	h2{
+		font-size: 20px;
+	    font-weight: 600;
+	    color: $black;
+	    margin-bottom: 6px;
+	    b{
+	    	font-weight: 600;
+	    }
+	}
+	p.info-text{
+		font-size: 14px;
+	    line-height: 18px;
+	    color: $header_text_color;
+	    width: 85%
+	}
+}
+
+.signup-page{
+	margin: 26px 0;
+}
+.signup-wrapper{
+	@include box-shadow(0 1px 2px 0 rgba(63,63,68,0.15));
+    border-radius: 6px;
+    width: 60%;
+    display: inline-block;
+    .fc-signup-container{
+    	width: 100%;
+    }
+    h3{
+    	font-size: 16px;
+	    font-weight: 600;
+	    line-height: 20px;
+	    color: $black;
+	    @include padding(20px 0 25px 0);
+    }
+    ul.unstyled li{
+    	@include padding(0);
+    	border-bottom: 0;
+    }
+    input{
+    	height: auto !important;
+    }
+}

@@ -1,0 +1,432 @@
+//--------------------------------------------------------------------
+// Adding icons
+//--------------------------------------------------------------------
+
+.ficon-solution-article-new,.ficon-forum-new,.ficon-ticket-new{
+    background: none;
+    &:before{
+        background: none;
+        padding: 0;
+        width: 12px;
+        height: 12px;
+        margin: 5px 0 0 3px;
+        color: $black;
+    }
+}
+
+
+.ficon-close-ticket,.ficon-assign-to,.ficon-ticket-reply{
+	background: none;
+	&:before{
+		color: $black;
+		width: 12px;
+    	height: 12px;
+    	font-size:14px;
+	}
+}
+
+.ficon-announcement-new,.ficon-forum-feature-request,.ficon-report-a-problem,.ficon-questions{
+    &:before,&:after{
+        background: none;
+        padding: 0;
+        width: 26px;
+        height: 26px;
+        font-size:22px;
+        color: $green;
+        margin: 3px 0 0 1px;
+    }
+}
+
+.ficon-create-ticket-new,.ficon-ticket-status-new{
+    &:before{
+        background: none;
+        padding: 0;
+        width: 24px;
+        height: 20px;
+        font-size: 20px;
+        color: $green;
+        margin: 0;
+    }
+}
+
+.ficon-google{
+    @include padding(6px 0 6px 8px);
+    text-transform: uppercase;    
+    &:before{
+        background: none;
+        padding: 0;
+        margin: -1px 5px 0 0;
+        width: 20px;
+        height: 17px;
+        font-size:20px;
+        color: $white;
+    }
+}
+
+.ficon-twitter-new,.ficon-facebook-new{
+    @include padding(6px 0 0 8px);
+    text-transform: uppercase;  
+    &:before{
+        background: none;
+        @include padding(0);
+        @include margin(0 5px 0 0);
+        width: 20px;
+        height: 17px;
+        font-size:17px;
+        color: $white;
+    }
+}
+
+.ficon-suggested-solution{
+    background: none;
+    margin: 0 5px 0 0;
+    padding: 0;
+    width: 24px;
+    height: 84px;
+    font-size: 28px;
+    color: $grayDark;
+    line-height: 84px;
+    @include box-shadow(-8px 0 10px -10px rgba(0,0,0, 0.5) inset);
+    overflow: hidden;
+    &:before{
+        position: relative;
+        left: 8px;
+        @include transform(rotate(-37deg));
+    }
+}
+
+.ficon-thumbs-up{
+    margin: 0 10px;
+    color: $blue;
+    font-weight: normal;
+    &:before{
+        margin: 0 2px 0 0;
+        color: $grayLight;
+    }
+    &:hover{
+        &:before{
+        text-decoration: none;
+        }
+    }
+}
+
+.ficon-thumbs-down{
+    margin: 0 0 0 5px;
+    padding:0;
+    color: $blue;
+    font-weight: normal;
+    &:before{
+        margin: 0 2px 0 0;
+        color: $grayLight;
+    }
+    &:hover{
+        &:before{
+        text-decoration: none;
+        }
+    }
+
+}
+
+.vote-down-container:before{
+    content:'';
+}
+
+.ficon-print{
+    background: none;
+    position: relative;
+    margin-top: 2px;
+    margin-left: 20px;
+    &:before{
+        color: $grayLight;
+        font-size: 21px;
+        display: inline-block;
+        @include float(left);
+        @include margin-left(-23px);
+        top: 2px;
+        position: relative;
+    }
+    &:after{
+        content: 'Print';
+        font-size: 13px;
+        float: left;
+        width: 40px;
+        @include margin-right(10px);
+        color: $dark_blue;
+    }
+    &:hover{
+        text-decoration: none;
+        &:after{
+            text-decoration: underline;
+        }
+    }
+}
+
+.ticket-page .c-ticket-row .status-source{
+    background: none;
+    margin: 0 16px 0 0;
+    padding: 0;
+    width: 28px;
+    height: 64px;
+    font-size: 28px;
+    color: $grayDark;
+    line-height: 64px;
+    @include box-shadow(-8px 0 10px -10px #7f7f7f inset);
+    overflow: hidden;
+}
+
+.ficon-email-new,.ficon-outbound-email{
+     &:before{
+        position: relative;
+        left: 6px;
+        @include transform(rotate(-33deg));
+    }
+}
+
+.ficon-phone-new,.ficon-mobihelp-new{
+      &:before{
+        position: relative;
+        left: 6px;
+        @include transform(rotate(10deg));
+    }
+}
+
+.ficon-twitter-ticket,.ficon-web-new,.ficon-ecommerce-new,.ficon-feedback-widget,.ficon-customers-new,.ficon-facebook-ticket-new,.ficon-chat-ticket{
+      &:before{
+        position: relative;
+        left: 6px;
+    }
+}
+
+.ficon-search-new{
+    &:before{
+        background: none;
+        color: rgba(0,0,0,0.3);;
+        font-size:16px;
+    }
+    &:hover{
+        @include text-shadow(none);
+    }
+}
+
+.ficon-checkbox-tick{
+    color: $white;
+    font-size: 12px;
+    text-align: center;
+}
+
+.ficon-open-in-new-window,.ficon-edit-article{
+    background: none;
+    &:before{
+        padding-top: 11px;
+        padding-left: 10px;
+    }
+}
+
+.ficon-headphone{
+    background: none;
+    &:before{
+        color: $white;
+        font-size: 22px;
+        margin: 5px 0 0 6px;
+    }
+}
+
+.ficon-pin{
+    background: none;
+    &:before{
+        font-size: 16px;
+        color: $grayLight;
+        margin: 3px 0 0 6px;
+    }
+}
+
+.icon-sticky-small{
+    &:before{
+         margin-left: 0;
+        margin-top: 0;
+    }
+}
+
+.ficon-delete_items{
+        background: none;
+        &:before{
+            font-size: 16px;
+            margin-top: 10px;
+            color: $grayLight;
+        }
+}
+
+.ficon-menu{
+    background: none;
+    &:before{
+            background: none;
+            font-size: 20px;
+            color: $grayLight;
+    }
+}
+
+.page-tabs .mobile-icon-nav-menu{
+    background: none;
+    &:before{
+        background: none;
+        font-size: 20px;
+        color: $grayLight;
+    }
+}
+
+//----------------------------------------------------------------
+// Extending the exisiting icon class
+//----------------------------------------------------------------
+
+
+.article-list ul li, .search-results-list li.article-item,ul.ui-autocomplete li.article-item{
+	@extend .ficon-solution-article-new;
+}
+
+.topic-list ul li,.search-results-list li.topic-item,ul.ui-autocomplete li.topic-item,.suggested_results .icon-topic-list{
+	@extend .ficon-forum-new;
+}
+
+.search-results-list li.ticket-item,ul.ui-autocomplete li.ticket-item{
+    @extend .ficon-ticket-new;
+}
+
+.icon-close-ticket{
+	@extend .ficon-close-ticket;
+}
+
+.icon-reply{
+	@extend .ficon-ticket-reply;
+}
+
+.icon-add-people{
+	@extend .ficon-assign-to;
+}
+
+.topic-list .badge-announcement{
+    @extend .ficon-announcement-new;
+}
+
+.topic-list .badge-ideas{
+    @extend .ficon-forum-feature-request;
+}
+
+.topic-list .badge-problems{
+    @extend .ficon-report-a-problem;
+}
+
+.topic-list .badge-questions{
+    @extend .ficon-questions;
+}
+
+.mobile-icon-nav-newticket.new-ticket{
+    @extend .ficon-create-ticket-new;
+}
+
+.mobile-icon-nav-status.check-status{
+    @extend .ficon-ticket-status-new;
+}
+
+.btn-twitter{
+    @extend .ficon-twitter-new;
+}
+
+.btn-facebook{
+    @extend .ficon-facebook-new;
+}
+
+.btn-google{
+    @extend .ficon-google;
+}
+
+.icon-article-table-row{
+    @extend .ficon-suggested-solution;
+}
+
+.article-vote .vote-up{
+    @extend .ficon-thumbs-up;
+}
+
+.article-vote .vote-down{
+    @extend .ficon-thumbs-down;
+}
+
+.solution-print-icon{
+    @extend .ficon-print;
+}
+
+.ticket-page .c-ticket-row .sources-detailed-email{
+    @extend .ficon-email-new;
+}
+
+.ticket-page .c-ticket-row .sources-detailed-twitter{
+    @extend .ficon-twitter-ticket;
+}
+
+.ticket-page .c-ticket-row .sources-detailed-phone{
+    @extend .ficon-phone-new;
+}
+
+.ticket-page .c-ticket-row .sources-detailed-portal{
+    @extend .ficon-web-new;
+}
+
+.ticket-page .c-ticket-row .sources-detailed-ecommerce{
+    @extend .ficon-ecommerce-new;
+}
+
+.ticket-page .c-ticket-row .sources-detailed-feedback_widget{
+    @extend .ficon-feedback-widget;
+}
+
+.ticket-page .c-ticket-row .sources-detailed-forum{
+    @extend .ficon-customers-new;
+}
+
+.ticket-page .c-ticket-row .sources-detailed-facebook{
+    @extend .ficon-facebook-ticket-new;
+}
+
+.ticket-page .c-ticket-row .sources-detailed-chat{
+    @extend .ficon-chat-ticket;
+}
+
+.ticket-page .c-ticket-row .sources-detailed-mobihelp{
+    @extend .ficon-mobihelp-new;
+}
+
+.ticket-page .c-ticket-row .sources-detailed-outbound_email{
+    @extend .ficon-outbound-email;
+}
+
+.btn .mobile-icon-search{
+    @extend .ficon-search-new;
+}
+
+.checkbox input[type="checkbox"]:checked,.align-feedback input[type="checkbox"]:checked{
+    @extend .ficon-checkbox-tick;
+}
+
+.icon-agent-preview{
+    @extend .ficon-open-in-new-window;
+}
+
+.icon-agent-edit{
+    @extend .ficon-edit-article;
+}
+    
+.icon-agent-actions{
+    @extend .ficon-headphone;
+}
+
+.icon-sticky,.icon-sticky-small{
+    @extend .ficon-pin;
+}
+
+.icon-delete-post{ 
+    @extend .ficon-delete_items;
+}
+
+.page-tabs .mobile-icon-nav-menu{
+    @extend .ficon-menu;
+}

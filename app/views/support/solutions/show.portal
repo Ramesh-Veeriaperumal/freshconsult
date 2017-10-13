@@ -1,4 +1,4 @@
-<section class="main content rounded-6 min-height-on-desktop" id="solutions-category-{{ category.id }}">
+<section class="main content rounded-6 min-height-on-desktop fc-solution-category" id="solutions-category-{{ category.id }}">
 	<div class="breadcrumb">
 		<a href="{{ portal.solutions_home_url }}">{% translate portal.solutions_home %}</a>
 	</div>

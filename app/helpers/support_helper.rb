@@ -14,44 +14,45 @@ module SupportHelper
   # and ignore all rails helpers in portal_view
   include Liquid::StandardFilters
 
-  FONT_INCLUDES = { "Source Sans Pro" => "Source+Sans+Pro:regular,italic,700,700italic",
-            "Droid Sans" => "Droid+Sans:regular,700",
-            "Lato" => "Lato:regular,italic,900,900italic",
-            "Arvo" => "Arvo:regular,italic,700,700italic",
-            "Droid Serif" => "Droid+Serif:regular,italic,700,700italic",
-            "Oswald" => "Oswald:regular,700",
-            "Open Sans Condensed" => "Open+Sans+Condensed:300,300italic,700",
-            "Open Sans" => "Open+Sans:regular,italic,700,700italic",
-            "Merriweather" => "Merriweather:regular,700",
-            "Roboto Condensed" => "Roboto+Condensed:regular,italic,700,700italic",
-            "Roboto" => "Roboto:regular,italic,700,700italic",
-            "Varela Round" => "Varela+Round:regular",
-            # "Helvetica Neue" => "Helvetica+Neue:regular,italic,700,700italic"
-          }
+	FONT_INCLUDES = { "Source Sans Pro" => "Source+Sans+Pro:200,300,regular,italic,600,700,700italic",
+					  "Droid Sans" => "Droid+Sans:regular,700",
+					  "Lato" => "Lato:100,300,regular,italic,700,900,900italic",
+					  "Arvo" => "Arvo:regular,italic,700,700italic",
+					  "Droid Serif" => "Droid+Serif:regular,italic,700,700italic",
+					  "Oswald" => "Oswald:300,regular,700",
+					  "Open Sans Condensed" => "Open+Sans+Condensed:300,300italic,700",
+					  "Open Sans" => "Open+Sans:300,regular,italic,600,700,700italic",
+					  "Merriweather" => "Merriweather:300,regular,700,900",
+					  "Roboto Condensed" => "Roboto+Condensed:300,regular,italic,700,700italic",
+					  "Roboto" => "Roboto:300,regular,italic,500,700,700italic",
+					  "Varela Round" => "Varela+Round:regular",
+					  "Poppins" => "Poppins:regular,600,700",
+					  # "Helvetica Neue" => "Helvetica+Neue:regular,italic,700,700italic"
+					}
 
-  def time_ago(date_time)
-    %( <span class='timeago' title='#{short_day_with_time(date_time)}' data-timeago='#{date_time}' data-livestamp='#{date_time}'>
-      #{distance_of_time_in_words_to_now date_time} #{I18n.t('date.ago')}
-       </span> ).html_safe unless date_time.nil?
-  end
+	def time_ago(date_time)
+		%( <span class='timeago' title='#{short_day_with_time(date_time)}' data-timeago='#{date_time}' data-livestamp='#{date_time}'>
+			#{distance_of_time_in_words_to_now date_time} #{I18n.t('date.ago')}
+		   </span> ).html_safe unless date_time.nil?
+	end
 
-  def short_day_with_time(date_time)
-    formated_date(date_time,{:include_year => true})
-  end
+	def short_day_with_time(date_time)
+		formated_date(date_time,{:include_year => true})
+	end
 
-  def formated_date(date_time, options={})
-      default_options = {
-        :format => :short_day_with_time,
-        :include_year => false,
-        :translate => true
-      }
-      options = default_options.merge(options)
-      time_format = Account.current.date_type(options[:format])
-      unless options[:include_year]
-        time_format = time_format.gsub(/,\s.\b[%Yy]\b/, "") if (date_time.year == Time.now.year)
-      end
-      final_date = options[:translate] ? (I18n.l date_time , :format => time_format) : (date_time.strftime(time_format))
-  end
+	def formated_date(date_time, options={})
+	    default_options = {
+	      :format => :short_day_with_time,
+	      :include_year => false,
+	      :translate => true
+	    }
+	    options = default_options.merge(options)
+	    time_format = Account.current.date_type(options[:format])
+	    unless options[:include_year]
+	      time_format = time_format.gsub(/,\s.\b[%Yy]\b/, "") if (date_time.year == Time.now.year)
+	    end
+	    final_date = options[:translate] ? (I18n.l date_time , :format => time_format) : (date_time.strftime(time_format))
+	end
 
   def default_meta meta
     output = []

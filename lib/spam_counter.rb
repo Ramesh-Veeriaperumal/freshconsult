@@ -2,7 +2,7 @@ class SpamCounter < Dynamo
 
 	include SpamCounterMethods
 
-  DYNAMO_READ_CAPACITY = 20
+  DYNAMO_READ_CAPACITY = 15
 
 	def self.table_name
 		"spam_counter_#{Rails.env[0..3]}_#{Time.now.utc.strftime('%Y_%m')}"

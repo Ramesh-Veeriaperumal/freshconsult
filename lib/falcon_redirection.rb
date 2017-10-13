@@ -21,10 +21,10 @@ class FalconRedirection
                       /^\/solution\/folders\/(\d+)/ => '/a/solutions/folders/:id',
                       /^\/solution\/categories\/(\d+)/ => '/a/solutions/categories/:id',
                       /^\/discussions\/(\d+)/ => '/a/forums/categories/:id',
-                      /^\/discussions\/forums\/(\d+)/ => '/a/forums/folders/:id'
+                      /^\/discussions\/forums\/(\d+)/ => '/a/forums/folders/:id',
                     }.freeze
 
-    SOCIAL_STREAMS_PATH = ['admin/social/facebook_streams'].freeze
+    SOCIAL_STREAMS_PATH = ['admin/social/facebook_streams','integrations/slack_v2/add_slack_agent','integrations/slack_v2/new'].freeze
     
     def falcon_redirect(options)
       @options = options

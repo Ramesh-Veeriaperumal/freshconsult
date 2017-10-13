@@ -75,6 +75,9 @@
   &.pull-right {
     @include right(0);
     @include left(auto);
+    a{
+      color: $blue;
+    }
   }
 
   // Dividers (basically an hr) within the dropdown
