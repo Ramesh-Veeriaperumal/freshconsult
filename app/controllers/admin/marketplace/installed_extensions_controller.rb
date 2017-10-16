@@ -51,48 +51,30 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
   end
 
   def install
-    install_ext = install_extension(install_params(params[:configs]))
+    install_ext = install_extension(install_params(account_configs_values))
     flash[:notice] = t('marketplace.install_action.success') if install_ext.status == 200
     render :json => install_ext.body, :status => install_ext.status
   end
 
-  def oauth_configs
-    $redis_mkp.mapped_hmset(redis_key, params['configs']) unless params['configs'].blank?
-    callback_path = "/admin/marketplace/installed_extensions/#{params[:extension_id]}/#{params[:version_id]}/oauth_callback"
-    if params['upgrade']
-      callback_path = CGI.escape("#{callback_path}?upgrade=true&installed_version=#{params[:installed_version]}")
-    end
-    oauth_handshake(callback_path)
+  def oauth_install
+    oauth_handshake
   end
 
   def edit_oauth_configs
-    callback_path = "/admin/marketplace/installed_extensions/#{params[:extension_id]}/#{params[:version_id]}/oauth_callback"
-    oauth_handshake(callback_path, true)
+    oauth_handshake
   end
 
   def oauth_callback
-    config_params = {}
-    config_params = $redis_mkp.hgetall(redis_key)
-    config_params["oauth_configs"] = {}
-    account_tokens = fetch_tokens
-    if error_status?(account_tokens)
-      notice_message = t('marketplace.install_action.failure')
-    else
-      config_params["oauth_configs"].merge!(account_tokens.body)
-      if params['upgrade']
-        update_ext = update_extension(install_params(config_params).deep_merge(previous_version_addon))
-      else
-        install_ext = install_extension(install_params(config_params))
-      end
-      notice_message = t('marketplace.install_action.success')
-    end
-    redirect_to('/integrations/applications', :flash => {:notice => notice_message})
+    redirect_url = "/integrations/applications/##{params[:extension_id]}_configs"
+    referer_host = request.env['HTTP_REFERER'] ? URI.parse(request.env['HTTP_REFERER']).host : ''
+    redirect_url = platform_version == Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2] ? "/a#{redirect_url}" : redirect_url
+    redirect_to redirect_url
   end
 
   def reinstall
     prev_version_addon = previous_version_addon
     return unless prev_version_addon
-    update_ext(install_params(params[:configs]).deep_merge(prev_version_addon))
+    update_ext(install_params(account_configs_values).deep_merge(prev_version_addon))
   end
 
   def uninstall
@@ -132,7 +114,11 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
     render :json => update_ext.body, :status => update_ext.status
   end
 
-  def oauth_handshake(callback, is_reauthorize = false)
+  def oauth_handshake(is_reauthorize = false)
+    callback = Marketplace::ApiEndpoint::ENDPOINT_URL[:oauth_callback] % {
+      :extension_id => params[:extension_id],
+      :version_id => params[:version_id]
+    }
     oauth_callback_url =  "#{request.protocol}#{request.host_with_port}" + callback
     mkp_oauth_endpoint = Marketplace::ApiEndpoint::ENDPOINT_URL[:oauth_install] % {
       :product_id => PRODUCT_ID.to_s,
@@ -141,7 +127,13 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
     }
     reauth_param = is_reauthorize ? "&edit_oauth=true&installed_extn_id=" + params[:installed_extn_id] : ""
     redirect_url = "#{MarketplaceConfig::MKP_OAUTH_URL}/" + mkp_oauth_endpoint + "?callback=" + oauth_callback_url + reauth_param
-    redirect_to redirect_url + "&fdcode=" + CGI.escape(generate_md5_digest(redirect_url, MarketplaceConfig::API_AUTH_KEY))
+    redirect_url = redirect_url + "&fdcode=" + CGI.escape(generate_md5_digest(redirect_url, MarketplaceConfig::API_AUTH_KEY))
+    if platform_version == Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2]
+      html_content = "<html><script>parent.location='" + redirect_url + "'</script></html>"
+      render :text => html_content, :content_type => :html  
+    else
+      redirect_to redirect_url
+    end
   end
 
   def update_params
@@ -168,9 +160,9 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
                   }
                   .merge(params[:installed_version] ? {:installed_version => params[:installed_version]} : {})
                   .merge(paid_app_params)
-    if configs.present? && configs["oauth_configs"].present?
-      inst_params[:oauth_configs] = configs["oauth_configs"]
-      inst_params[:configs].except!("oauth_configs")
+    if configs.present? && configs[:oauth_configs].present?
+      inst_params[:oauth_configs] = configs[:oauth_configs]
+      inst_params[:configs].except!(:oauth_configs)
     end
     inst_params
   end
@@ -236,6 +228,19 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
         end
         redirect_to('/integrations/applications', :flash => {:notice => notice_message}) and return
       end
+    end
+
+    def account_configs_values
+      if is_oauth_app?(@extension)
+        account_tokens = fetch_tokens
+        if error_status?(account_tokens)
+          notice_message = t('marketplace.install_action.failure')
+        end
+      end
+      configs = params[:configs].blank? ? {} : params[:configs]
+      oauth_configs = is_oauth_app?(@extension) ? { :oauth_configs => account_tokens.body } : {}
+      configs = configs.merge(is_oauth_app?(@extension) ? { :oauth_configs => account_tokens.body } : {})
+      configs
     end
 
     def previous_version_addon

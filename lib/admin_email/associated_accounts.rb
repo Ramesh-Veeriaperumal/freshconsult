@@ -90,6 +90,19 @@ class AdminEmail::AssociatedAccounts < Dynamo
     }))
   end
 
+  def self.remove email, account_id, time_stamp
+    CLIENT.update_item(query_hash(email).merge({
+      attribute_updates: {
+        "accounts" => {
+          value: {
+            "SS" => ["#{account_id},#{time_stamp}"]
+          },
+          action: "DELETE"
+        }
+      }
+    }))
+  end
+
   private
     def self.query_hash email
       {

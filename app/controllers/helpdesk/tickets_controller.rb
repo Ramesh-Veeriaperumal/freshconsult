@@ -1892,12 +1892,26 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def check_trial_outbound_limit
-      if ((current_account.id > get_spam_account_id_threshold) && (current_account.subscription.trial?) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)))
+      if ((current_account.id > get_spam_account_id_threshold) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)))
         outbound_per_day_key = OUTBOUND_EMAIL_COUNT_PER_DAY % {:account_id => current_account.id }
         total_outbound_per_day = get_others_redis_key(outbound_per_day_key).to_i
-        if (total_outbound_per_day >=5 )
-          @outbound_limit_crossed = true
-          flash.now[:error] = t(:'flash.general.outbound_limit_per_day_exceeded', :limit => get_trial_account_max_to_cc_threshold )
+        if (current_account.subscription.trial?) 
+          if (total_outbound_per_day >=5 )
+            @outbound_limit_crossed = true
+            flash.now[:error] = t(:'flash.general.outbound_limit_per_day_exceeded', :limit => get_trial_account_max_to_cc_threshold )
+          end
+        elsif(current_account.subscription.free?)
+          if (current_account.created_at >= (Time.zone.now - 30.days))
+            if (total_outbound_per_day >= get_free_account_30_days_threshold )
+              @outbound_limit_crossed = true
+              flash.now[:error] = t(:'flash.general.outbound_limit_per_day_30_days_free_exceeded', :limit => get_free_account_30_days_threshold )
+            end
+          else
+            if (total_outbound_per_day >= get_free_account_outbound_threshold )
+              @outbound_limit_crossed = true
+              flash.now[:error] = t(:'flash.general.outbound_limit_per_day_free_exceeded', :limit => get_free_account_outbound_threshold )
+            end
+          end
         end
       end
     end
