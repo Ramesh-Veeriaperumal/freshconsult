@@ -319,6 +319,8 @@ gem 'typhoeus'
 
 gem 'i18nema', :git => 'https://github.com/freshdesk/i18nema', :require => false
 
+gem 'semian', require: %w(semian semian/mysql2), :git => "git://github.com/freshdesk/semian.git", :branch => "fd_master"
+
 # For debugging app in staging/production
 gem 'rbtrace', :require => false
 

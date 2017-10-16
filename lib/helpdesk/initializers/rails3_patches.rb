@@ -30,6 +30,38 @@ module ActiveRecord
   end
 end
 
+# Patch for Reconnect not releasing connection. - https://github.com/rails/rails/pull/18417
+# Fix is a workaround to achieve the equivalent of Rails 4.2 patch - https://github.com/rails/rails/commit/1997f7bf0e5c0bfbf2245c6d795271fc502e2b33
+module ActiveRecord
+  module ConnectionAdapters
+    class Mysql2Adapter
+      def reconnect!
+        begin
+          disconnect!
+          connect
+        rescue
+          @in_use = false
+          raise
+        end
+      end
+    end
+
+    class ConnectionPool
+      def checkout_and_verify(c)
+          c.run_callbacks :checkout do
+            c.verify!
+          end
+          c
+        rescue
+          # checkin(c) should be sufficient but it is throwing error in Rails 3.2 for stale connection objects so working around to get the equivalent actions.
+          release c
+          c.disconnect!
+          raise
+      end
+    end
+  end
+end
+
 #https://github.com/rails/rails/issues/3205, showing exception trace for transacational callbacks
 module Foo
   module CommittedWithExceptions

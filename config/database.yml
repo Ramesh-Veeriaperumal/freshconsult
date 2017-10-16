@@ -9,11 +9,26 @@ development:
   host: 127.0.0.1
   username: root
   password:
+  reconnect: true
+  semian:
+    enable: false
+    success_threshold: 3
+    error_threshold: 3
+    error_timeout: 20
+    bulkhead: false
+    dryrun: false
   shards:
     shard_1:
       host: 127.0.0.1
       database: helpkit1
       not_a_shard: false
+      semian:
+        enable: false
+        success_threshold: 3
+        error_threshold: 3
+        error_timeout: 20
+        bulkhead: false
+        dryrun: false
 
 
 
@@ -32,11 +47,26 @@ staging:
   host: 127.0.0.1
   username: root
   password:
+  reconnect: true
+  semian:
+    enable: false
+    success_threshold: 3
+    error_threshold: 3
+    error_timeout: 20
+    bulkhead: false
+    dryrun: false
   shards:
     shard_1:
       host: 127.0.0.1
       database: helpkit1
       not_a_shard: false
+      semian:
+        enable: false
+        success_threshold: 3
+        error_threshold: 3
+        error_timeout: 20
+        bulkhead: false
+        dryrun: false
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -50,11 +80,26 @@ test:
   database: helpkit_test_rails3
   username: root
   password:
+  reconnect: true
+  semian:
+    enable: false
+    success_threshold: 3
+    error_threshold: 3
+    error_timeout: 20
+    bulkhead: false
+    dryrun: false
   shards:
     shard_1:
       host: 127.0.0.1
       database: helpkit_test_rails3
       not_a_shard: false
+      semian:
+        enable: false
+        success_threshold: 3
+        error_threshold: 3
+        error_timeout: 20
+        bulkhead: false
+        dryrun: false
 
 production:
   adapter: sqlite3
