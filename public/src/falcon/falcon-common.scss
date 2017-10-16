@@ -203,6 +203,18 @@ $survey-options-color: (
   }
 }
 
+.child-form .ticket-template-form {
+  width: 97%;
+  margin: auto;
+  .compose-new-ticket {
+    li.field.default_tags, li.field.default_subject, li.field.custom_text, li.field.custom_paragraph, li.field.custom_checkbox, li.field.custom_number, li.field.custom_date, li.field.custom_decimal {
+      .options-wrapper {
+        left: -8px
+      }
+    }
+  }
+}
+
 .list-query-panel .dropdown-menu li > a:hover, .list-query-panel .dropdown-menu li > a:focus, .list-query-panel .dropdown-menu li.active > a:hover
 
 li.active > a:focus{
