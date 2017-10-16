@@ -37,7 +37,7 @@ include Email::EmailService::IpPoolHelper
       end
       end_time = Time.now
       Rails.logger.info "Email Service Response: #{response.body.inspect}"
-      Rails.logger.info "Email sent from #{params[:from]} to #{params[:to]} (%1.fms)" %(end_time - start_time)
+      Rails.logger.info "Email sent from #{params[:from]} to #{params[:to]} #{(end_time - start_time).round(3)}ms"
   end
 
   def get_email_data(params)

@@ -10,6 +10,10 @@ class Admin::OnboardingController < Admin::AdminController
   def update_activation_email
     current_user.email = @user_email_config[:new_email]
     current_user.keep_user_active = true
+    # Add new email & combo to dynamo db and Remove the old combo.
+    AccountInfoToDynamo.new().add_account_info_to_dynamo @user_email_config[:new_email], current_user.account_id, current_user.account.created_at.getutc
+    AccountInfoToDynamo.new().remove_account_info_to_dynamo @user_email_config[:old_email], current_user.account_id, current_user.account.created_at.getutc
+    AccountInfoToDynamo.new().check_associated_account_count @user_email_config[:new_email]
     if current_user.save
       update_account_config
     end

@@ -1,3 +1,9 @@
+<% if (platform_version == '2.0') { %>
+  <script>
+    mkp.set("<%= extension_id %>", "<%= version_id %>")
+  </script>
+<% } %>
+
 <div id="app-window" class="container fa-installer fa-bg">
 
   <div id="fa-nav" class="fa-sidehead">
@@ -64,22 +70,11 @@
             <a href="<%= translate.get('marketplace_terms') %>" target="_blank" class="read-more"><%= translate.get('mkp_terms_of_use') %></a>.
           </p>
         <% } %>
-       -->
-      <% if(install_btn['is_oauth_app']) { %>
-       <button id="oauth_link" class="col-md-6 btn btn-primary" data-url="<%= install_btn['url'] %>" data-method="<%= install_btn['method'] %>" data-platform-version="<%= platform_version %>"> <%= install_btn['text'] %> </button>
-      <% } else { %>
-       <button class="col-md-6 btn btn-primary install-btn" data-url="<%= install_btn['url'] %>" data-method="<%= install_btn['method'] %>" data-platform-version="<%= platform_version %>"> <%= install_btn['text'] %></button>
-      <% } %>
-      
-      <button class="show_btn btn btn-default" style="margin-left: 10px;" data-url="<%= back_url %>"><%= translate.get('cancel') %></button>
+      -->
+      <button class="col-md-6 btn btn-primary install-btn" data-url="<%= install_btn['url'] %>" data-method="<%= install_btn['method'] %>" data-platform-version="<%= platform_version %>"> <%= install_btn['text'] %></button>
+      <button class="cancel_btn btn btn-default" style="margin-left: 10px;" data-url="<%= back_url %>"><%= translate.get('cancel') %></button>
     </div>
 
   </div>
 
 </div>
-
-<% if (platform_version == '2.0') { %>
-  <script>
-    mkp.set("<%= extension_id %>", "<%= version_id %>")
-  </script>
-<% } %>

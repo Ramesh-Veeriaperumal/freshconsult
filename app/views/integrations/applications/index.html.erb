@@ -86,6 +86,7 @@
                 activationSwitch: ".switch",
                 deleteBtn: ".delete-btn",
                 reauthorizeBtn: ".reauthorize-btn",
+                updateOAuth: ".update-oauth",
                 accApiPollInterval: "<%= MarketplaceConfig::ACCOUNT_API_POLL_INTERVAL %>"
               }
     var customMessages  = {
@@ -107,8 +108,10 @@
     jQuery(document).ready(function(){
       jQuery(jQuery('#myTab > li.active > a').attr('href')).addClass('active');
       var hash = window.location.hash,
-          app_id = window.location.hash.substring(1);
+          hash_value = window.location.hash.substring(1);
 
+      var app_info = hash_value.split('_');
+      app_id = app_info[0]
 
       if(app_id == "<%= ZendeskAppConfig::APP_ID %>" && jQuery('#ext-<%=ZendeskAppConfig::APP_ID %>').length != 0) {
         jQuery('#ext-<%=ZendeskAppConfig::APP_ID %>').find('.btn-settings').trigger('click');
