@@ -105,6 +105,11 @@
 	<% end %>
 <% end %>
 
+<% if current_user.falcon_invite_eligible? %>
+	<%= javascript_include_tag :'cdn/falcon_invite' %>
+	<%= render partial: "admin_onboarding/falcon_invite" %>
+<% end %>
+
 <script >
 	//TODO: Migrate to i18n Js
 	window.feedback_subject_required_error = "<%= t('footer.errors.feedback_subject_required') %>"

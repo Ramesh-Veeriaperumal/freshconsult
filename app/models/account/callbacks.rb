@@ -23,7 +23,7 @@ class Account < ActiveRecord::Base
   after_commit ->(obj) { obj.clear_cache }, on: :update
   after_commit ->(obj) { obj.clear_cache }, on: :destroy
   
-  after_commit :enable_searchv2, :enable_count_es, :enable_collab, on: :create
+  after_commit :enable_searchv2, :enable_count_es, :enable_collab, :set_falcon_preferences, on: :create
   after_commit :disable_searchv2, :disable_count_es, on: :destroy
   after_commit :update_sendgrid, on: :create
   after_commit :remove_email_restrictions, on: :update , :if => :account_verification_changed?
@@ -75,7 +75,8 @@ class Account < ActiveRecord::Base
     # Enable customer portal by default
     if falcon_ui_applicable?
       self.launch(:falcon_signup)           # To track falcon signup accounts
-      self.launch(:falcon_portal_theme)     # Falcon customer portal
+      self.launch(:falcon_portal_theme)  unless redis_key_exists?(DISABLE_PORTAL_NEW_THEME)   # Falcon customer portal
+      self.launch(:archive_ghost)           # enabling archive ghost feature
     end
   end
 
@@ -330,6 +331,13 @@ class Account < ActiveRecord::Base
 
     def enable_collab
       CollabPreEnableWorker.perform_async
+    end
+
+    def set_falcon_preferences
+      if falcon_ui_applicable?
+        self.main_portal.template.preferences = self.main_portal.template.default_preferences.merge({:personalized_articles=>true})
+        self.main_portal.template.save!
+      end
     end
 
     def update_crm_and_map

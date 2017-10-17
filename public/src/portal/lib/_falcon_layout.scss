@@ -1,0 +1,83 @@
+// Container
+@include border-box-sizing;
+
+.page{
+  @include container($total-columns);
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.main{ 
+	width: 66%; 
+	margin: 0; 
+	border: 0; 
+	@include box-shadow(none); 
+	@include border-radius(6px); 
+	@include border-bottom-right-radius(0);
+	@include border-top-right-radius(0); 
+	@include float(left); 
+	@include border-right(1px solid #dadfe3);
+	background-color: $white;
+}
+.sidebar{
+ 	width: 34%;
+    float: left;
+    @include box-shadow(none);
+    @include border-bottom-left-radius(0);
+	@include border-top-left-radius(0); 
+	background-color: $gray;
+	margin: 0;
+}
+
+.fc-portal-solution-home,.fc-community-sidebar,.fc-solution-home,.fc-community-content{
+	h2{
+		margin-top: 16px;
+	}
+}
+.fc-article-show p{
+	padding-top: 4px;
+	color: $textColor;
+}
+.fc-community-sidebar{
+	p.intro,div a[href*="topics/new"]{
+		display: none;
+	}
+	.no-results {
+		a[href*="topics/new"]{
+			display: inline-block;
+			color: $blue;
+		}
+	}
+}
+
+.export-custom-select{
+	width: 100%;
+}
+
+
+// Generic Grid classes
+.row-fluid{ @include pie-clearfix; }
+.span1{ @include span-columns(1); }
+.span2{ @include span-columns(2); }
+.span3{ @include span-columns(3); }
+.span4{ 
+	@include span-columns(4); 
+	margin-bottom: 6px; 
+}
+.span5{ @include span-columns(5); }
+.span6{ @include span-columns(6); }
+.span7{ @include span-columns(7); }
+.span8{ @include span-columns(8); }
+.span9{ @include span-columns(9); }
+.span10{ @include span-columns(10); }
+.span11{ @include span-columns(11); }
+.span12{ @include span-columns(12); }
+.omega{ 
+  @include omega;
+  	float: left;
+	@include margin-right(0);
+	display: inline;
+  @if $rtl {
+    float: left;
+  }
+}

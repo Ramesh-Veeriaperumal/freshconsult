@@ -1,0 +1,450 @@
+$header_border_color: #ebeef0 !default;
+
+// Banner header and footer
+// -------------------------------
+
+.no-padding {
+    padding: 0 20px 0 10px;
+}
+
+.banner{
+	@include text-align(left);
+	background-color: $header_color;
+	padding: 10px 0;
+	color: $header_text_color;
+	border-bottom-width: 0;
+	@include border-top-radius($no-border-radius);
+	@include box-shadow(none);
+	@include clearfix;
+	border: 1px solid $header_border_color;
+	@include text-shadow(none);   
+	a{ color: $blue; font-size: 14px; }
+    a:hover{ color: $blue; }
+
+    .banner-title{ @include span-columns(9); width: 60%; }
+	.banner-nav{ 
+		@include span-columns(3 omega);
+		margin-top: 6px;
+        width: 38%;
+        @if $rtl {
+            @include float(left);
+        }
+		.welcome{ display: block; }
+	}
+	nav{ @include text-align(right); }
+}
+
+.banner-title .heading{ color: $grayLight; font-size: 20px; font-weight: normal;}
+
+.banner-nav{
+	font-size: 14px;
+	line-height: 1.3em;
+    color: $header_color;
+	.welcome{ 
+        display: inline-block; 
+        color: $black;
+        font-size: 14px;
+        margin-top: -20px;
+        padding-bottom: 10px;
+
+    }
+	a{ 
+    color: $blue;
+    &:after{
+        content: '|';
+        padding: 0 0 0 12px;
+        color: $border-color;
+        display: inline-block;
+    }
+    }
+    b:last-child{
+        a{
+            &:last-child{
+                &:after{
+                    content:'';
+                }
+            }
+        }
+    }
+    a[href*="/login"] {
+            &:after{
+                content:'';
+                padding-left:0; 
+            }
+            &:hover{
+                text-decoration:none;
+            }
+            b{
+                font-size: 12px;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                color: $white;
+            }
+    }
+    a[href*="/signup"] {
+        border: solid 1px $border_color;
+        background-color: $white;
+        padding: 5px 20px;
+        border-radius: 2px;
+        text-transform: uppercase;
+        font-family: $headingsFontFamily;
+        letter-spacing: 1.2;
+        &:after{
+            content:'';
+            padding-left:0; 
+        }
+        &:hover{
+            background-color: $grey_hover;
+            text-decoration: none;
+        }
+        b{
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: $black;
+        }
+     }
+.banner-language-selector {
+    background-color: none;
+    color: $blue;
+    cursor: pointer;
+    @include padding(0);
+    @include margin-left(10px);
+    @include border-radius(0);
+    border: 0;
+    margin: 7px;
+    .language-options {
+      list-style: none;
+      @include margin-left(0px);
+      margin: 0;
+      .dropdown-toggle{
+        font-size: 14px;
+        color: $black;
+      }
+      .dropdown-menu {
+      	background-color: $white;
+        min-width: 0px;
+        @include right(-13px);
+        top: 35px;
+        @include text-align(left);
+        a{
+			color: $black;
+			text-shadow: none;
+            background: $white;
+            border: 0;
+            font-size: 12px;
+            font-family: $baseFontFamily;
+            text-transform: capitalize;
+            font-weight: normal;
+			&:hover{
+				background-color: $grey_hover;
+			}
+            &:after{
+                content: '';
+            }
+			&.active{
+				font-weight: 500;
+			}
+			.icon-dd-tick-dark{
+				position: absolute;
+				@include left(2px);
+			}
+		}
+      }
+    }
+  }
+} 
+
+.page-tabs{
+	@include clearfix;
+	background-color: $tab_color;
+	color: $header_text_color;
+	line-height: 35px;
+	@include min-height(17px);	
+	@include border-radius(0);
+    @include box-shadow(0 1px 2px 0 $box-shadow);
+    border: 0 !important;
+	&, .nav-link a{ border: 1px solid rgba($tab_text_color, 0.2); }
+	.nav-link{
+        margin: -2px 0 0 0;
+         a{
+    		@include float(left);
+    		border-width: 0 1px 0 0;
+    		@include text-align(center);
+    		margin: 0 30px 0 0;
+            padding: 6px;
+    		color: inherit;
+    		@include min-width(80px);
+            font-size: 14px;
+            border: 0;
+            min-width: 90px;
+		&:first-child{ @include border-bottom-left-radius(0); }
+    		&.active{
+    			text-decoration: none;
+    			background: $tab_hover_color;
+                border-top: 3px solid $green;
+    			color: $black;
+                padding: 3px 6px 6px 6px;
+                font-weight: 600;
+    		}
+            &:hover{
+                text-decoration: none;
+                background: $tab_hover_color;
+                color: $black; 
+                border-top: 3px solid rgba(2,184,117,0.3);
+                padding: 3px 6px 6px 6px;
+                font-weight: 600;
+            }
+	   }
+    }	
+	@include mobile-icon(nav-menu, $tab_color);	
+}
+
+.logo, .portal-logo{
+	display: inline;
+	@include float(left);
+	@include margin(-3px 10px 0 -5px);
+	@include text-align(center);
+	width: auto;
+}
+
+.portal-img {
+    display: table-cell;
+    vertical-align: middle;
+    height: 50px;
+}
+.portal-img * {
+    vertical-align: middle;
+}
+
+.footer{
+	background-color: $footer_color;
+	padding: 20px 30px;
+	border: 0;
+	color: $footer_text_color;
+	@include pie-clearfix;
+	margin: 0;
+    @include border-radius(0);
+	a{ 
+    color: $white; 
+    @include margin(0 10px); 
+    }
+	a:hover{ color: inherit; }
+}
+
+.footer-links{
+    a{ @include opacity(1); @if $rtl {@include float(right);}}
+    a:hover{ @include opacity(1); }
+	a:before{ 
+		content: "-";
+		position: absolute;
+		@include margin-left(-15px);
+        opacity: 0.5;
+	}
+	a:first-child{
+        margin: 0 10px 0 0;
+        &:before{ content: none; }
+    }
+	a:last-child{ @include margin-right(0); }
+}
+
+.copyright{
+	padding: 8px;
+	@include text-align(center);
+	color: $white;
+    font-size: 12px;
+    letter-spacing: 0.2px;
+    @include border-radius(0);
+    border: 0;
+    background: $dark_black;
+    a{
+        color: $black_light;
+        padding-right: 4px;
+    }
+}
+@include at-breakpoint($break-tablet){
+    .footer-links {
+        .privacy-link{
+            @include float(right); @include margin-left(25px);}
+        .cookie-link{
+            @include float(right);
+            &:before{content: "";}
+        }
+    }
+}
+
+@if $nonResponsive == false {
+    @include at-breakpoint($media-mobile){
+        .portal-img { 
+            display: block;
+            height: auto;
+            img{
+                max-width: 80%;
+            }
+        }
+		// Banner and Tab styles        
+        .banner{
+        	@include border-top-radius(0);        	
+            border:0;
+            box-shadow:none;
+			@include text-align(center);
+            display: table;
+            width: 100%;
+            @include padding(0);
+            border-bottom: 1px solid $border-color;
+            a{
+                @include float(left);
+            }
+            .banner-wrapper{
+                height: 143px; 
+                display: table-cell;
+                vertical-align: middle; 
+            }
+            .banner-language-selector{
+                position: relative;
+                top: 42px;
+                .dropdown-menu {
+                    a{
+                        background-color: transparent;
+                        border: 0;
+                    }
+                }
+            }
+            .banner-title, .banner-nav{ 
+            	@include reset-columns; 
+            	@include text-align(center);
+                width: 100%;
+                display: block;
+                clear: both;
+                color: $black;
+            }
+            .banner-title .heading{ 
+                max-width:275px;
+                margin:0 auto;
+                @include float(left);
+            }
+            .banner-nav {
+            	margin-top: 11px;
+                color: $header_color;
+                .welcome{
+                    display: block;
+                    margin-bottom:11px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    @include text-align(left);
+                    padding-top: 12px;
+                    @include padding-left(10px);
+                    margin: 5px 0px;
+                }                
+                a{
+                    @include border-radius(4px);
+                    padding: 1px 10px;
+                    padding-bottom: 3px;
+                    border: 1px solid $border-color;  
+                    margin-left: 7px;
+                    font-size: 12px;
+                    &:after{
+                        content: '';
+                        @include padding(0);
+                    }
+                }
+                a[href*="/login"], a[href*="/signup"]{
+                    padding: 5px 20px;
+                }
+            }
+        }
+        .banner-language-selector{
+            color: $white;
+        }
+
+        .page-tabs{
+            padding: 0;             
+            @include text-align(right);
+            cursor: pointer;
+            position:relative; // fix for bottom box shadow
+            z-index:2; // fix for bottom box shadow     
+            border-width:1px 0;
+            @include box-shadow(0 3px 4px 0 #eeeeee);
+            &, .nav-link a:first-child{ @include border-bottom-radius(0); }
+            .mobile-icon-nav-menu{
+                z-index: 3;
+                @include padding(6px);
+                @include padding-left(6px);
+                display: inline-block;
+                &:hover{
+                    text-decoration: none;
+                }
+                &:before{
+                    @include inline-block;
+                    background: none;
+                    font-size: 20px;
+                    color: $grayLight;
+                    content: "\f2ba";
+                }
+            }
+            .nav-link{                
+                display: none;
+                margin-top: 10px;
+                margin: 0;
+                position: absolute;
+                width: 100%;
+                margin-top: 12px;
+                @include box-shadow(0 1px 2px 0 rgba(63,63,68,0.15));
+                @include margin-left(-10px);
+                background-color: $bg_color;
+                &, a.active, a:hover{ 
+                        background-color:$tab_color; 
+                    }
+                a{	
+                	@include float(none);
+                    font-weight: 300;
+                    border-width: 1px 0 0 0;
+                    display: block;
+                    @include min-width(auto);
+                    @include text-align(left);
+                    background: $bg_color;
+                    color: #183247;
+                    margin: 0;
+                    @include padding(3px 16px);
+                    border-bottom: solid 1px rgba(24,50,71,0.17);
+                    font-size: 16px;
+                    &:last-child{ padding-bottom:0; }
+                    &:hover,&.active{
+                        @include padding(3px 16px);
+                        background: $border-color;
+                        border-top: 0px;
+                    }
+                }
+            }
+        }   
+        .logo, .portal-logo{
+            display:block;
+            @include float(none);
+            margin: 0 auto; 
+            @include text-align(center);
+        }
+
+        .footer{ 
+            margin-top: 0;
+            padding:$content-padding-mobile $content-padding-mobile/2;
+            a{
+                @include padding-left(10px);
+                @include padding(0 10px);
+                @include margin-right(4px);
+                @include margin-left(4px);
+                line-height: 24px;
+                display: inline-block;
+                margin-bottom:10px;
+                &, &:hover{ color:$footer_color; }
+            }
+            .footer-links{
+                a{
+                    color: $white;
+                }
+            }
+        }
+        .footer-links{@include text-align(center);}
+        .footer-links a:before{ content: none; }
+    }
+}

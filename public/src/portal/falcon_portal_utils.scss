@@ -1,0 +1,43 @@
+// Base settings for portal styles
+@import "lib/falcon_settings";
+@import "lib/mixins";
+// CSS Reset
+@import "lib/reset";
+// Patterns
+@import "lib/falcon_dropdowns";
+@import "lib/labels";
+@import "lib/popover";
+@import "lib/falcon_modals";
+@import "lib/falcon_pagination";
+@import "lib/component-animations";
+@import "lib/tooltip";
+@import "lib/falcon_profile"; // Profile image styles
+@import "lib/attachments"; // Module related styles
+@import "lib/jquery-ui"; // Date picker
+@import "lib/falcon_sprites";
+@import "lib/widget-icons";
+@import "lib/extend-sprites";
+@import "lib/falcon_icons";
+// !PORTALCSS Existing styles from app
+// Need to be optimised
+@import "lib/falcon_ticket";
+@import "lib/falcon_survey";
+// Page related styles
+@import "lib/falcon_login";
+@import "lib/falcon_search";
+@import "lib/falcon_content";
+// Chat Transcript UI
+@import "../page/tkt_details/chat-transcript";
+@import "lib/falcon_utilities";
+// Plugins for portal 
+// Redactor rich text editor
+@import "../plugins/falcon_redactor";
+@import "../plugins/select2";
+// Syntax Highlighting for portal 
+@import "../plugins/prism";
+@import "../plugins/falcon_zpluginhack";
+// IE based fixes
+@import "lib/ie";
+// RTL Styles
+@import "lib/rtl-styles"; 
+

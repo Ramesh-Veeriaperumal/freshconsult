@@ -73,6 +73,12 @@ $ticket-lifecycle-color: #183247;
   text-shadow: none;
 }
 
+
+.reports-main .helpkit-glance .glance-chart-wrapper .glance-chart .solution-article {
+  padding-top: 0;
+  padding-right: 10px;
+}
+
 .helpkit-glance .glance-chart-wrapper .glance-chart .solution-article,
 .helpkit-glance .glance-chart-wrapper .glance-chart .view-all-container {
   display: inline-block;
@@ -738,29 +744,55 @@ $admin-colors: // background hover  icon-fill
       border-color: nth($admin-color, 2) !important;
     }
     ul.admin_icons {
-      li a {
-        color: #183247;
-        i {
-          background-color: nth($admin-color, 2);
-          color: nth($admin-color, 4);
-          text-shadow: none;
-          font-size: 26px;
+      li {
+        a {
+          color: #183247;
+          i {
+            background-color: nth($admin-color, 2);
+            color: nth($admin-color, 4);
+            text-shadow: none;
+            font-size: 26px;
 
-          &::before {
-            position: relative;
-            top: 6px;
+            &::before {
+              position: relative;
+              top: 6px;
 
+            }
+          }
+          &:hover {
+            color: #183247;
+            .img-outer {
+              background-color: nth($admin-color, 3);
+            }
+            i {
+              background-color: nth($admin-color, 3);
+              @include animation(#{nth($admin-color,1)}_animation $animation_timing);
+              @include box-shadow($hover_boxshadow_final nth($admin-color, 3));
+            }
           }
         }
-        &:hover {
-          color: #183247;
-          .img-outer {
-            background-color: nth($admin-color, 3);
+        &.related-match {
+          opacity : 1;
+          a .img-outer {
+            background-color: transparent;
           }
-          i {
-            background-color: nth($admin-color, 3);
-            @include animation(#{nth($admin-color,1)}_animation $animation_timing);
-            @include box-shadow($hover_boxshadow_final nth($admin-color, 3));
+          i{
+            background-color: darken(nth($admin-color, 2), 20%);
+            color: darken(nth($admin-color, 4), 20%);
+            @include animation(none);
+            @include box-shadow(none);
+          }
+        }
+        &.exact-match {
+          opacity : 1;
+          a .img-outer {
+            background-color: transparent;
+          }
+          i{
+            background-color: darken(nth($admin-color, 2), 30%);
+            color: darken(nth($admin-color, 4), 30%);
+            @include animation(none);
+            @include box-shadow(none);
           }
         }
       }

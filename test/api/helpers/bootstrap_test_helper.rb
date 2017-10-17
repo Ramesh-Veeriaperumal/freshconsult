@@ -1,14 +1,16 @@
 ['portals_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
+['config_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 module BootstrapTestHelper
   include Gamification::GamificationUtil
   include Social::Util
   include PortalsTestHelper
-
+  include ConfigTestHelper
   def index_pattern(agent, account, portal)
     {
       agent: agent_info_pattern(agent),
       account: account_info_pattern(account),
-      portal: portal_pattern(portal)
+      portal: portal_pattern(portal),
+      config: config_pattern
     }
   end
 

@@ -217,7 +217,11 @@ class SupportController < ApplicationController
     end
 
     def process_template_liquid
-      Portal::Template::TEMPLATE_MAPPING_RAILS3.each do |t|
+      if current_account.falcon_support_portal_theme_enabled?
+        Portal::Template::TEMPLATE_MAPPING_RAILS3_FALCON
+      else
+        Portal::Template::TEMPLATE_MAPPING_RAILS3
+      end.each do |t|
         dynamic_template = template_data(t[0]) if current_account.layout_customization_enabled?
         _content = render_to_string(:partial => t[1], :layout => false, :handlers => [t[2]],
                     :locals => { :dynamic_template => dynamic_template }) if dynamic_template.nil? || !dynamic_template.blank?
