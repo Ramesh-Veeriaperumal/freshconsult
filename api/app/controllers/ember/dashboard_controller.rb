@@ -8,6 +8,7 @@ module Ember
 
     before_filter :set_dashboard_type
     around_filter :run_on_slave
+    around_filter :use_time_zone, only: [:scorecard]
     skip_before_filter :load_object
 
     attr_accessor :dashboard_type, :widget_privileges

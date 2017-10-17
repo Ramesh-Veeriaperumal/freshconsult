@@ -62,6 +62,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     feature_info[:freshfone] = account.features?(:freshfone)
     feature_info[:domain_restricted_access] = account.features?(:domain_restricted_access)
     feature_info[:restricted_helpdesk] = account.restricted_helpdesk?
+    feature_info[:falcon] = account.has_feature?(:falcon) || account.launched?(:falcon)
     respond_to do |format|
       format.json do
         render :json => feature_info
@@ -154,6 +155,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   def add_feature
     result = {}
     @account = Account.find(params[:account_id])
+    @account.make_current
     result[:account_id] = @account.id
     result[:account_name] = @account.name
     begin
@@ -323,6 +325,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     enabled = false
     account = Account.find(params[:account_id]).make_current
     if params[:operation] == "launch"
+      CollabPreEnableWorker.perform_async
       account.add_feature(:collaboration)
       enabled = account.has_feature?(:collaboration)
     elsif params[:operation] == "rollback"

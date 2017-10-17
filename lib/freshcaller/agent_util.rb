@@ -14,7 +14,7 @@ module Freshcaller
 
     def save_fc_agent?(agent)
       %i[create update].any? { |transact_type| agent.send(:transaction_include_action?, transact_type) } &&
-        falcon_and_freshcaller_enabled?(agent) &&
+        falcon_and_freshcaller_enabled?(agent) && !agent.freshcaller_enabled.nil? &&
         agent.freshcaller_agent.try(:fc_enabled) != agent.freshcaller_enabled
     end
 

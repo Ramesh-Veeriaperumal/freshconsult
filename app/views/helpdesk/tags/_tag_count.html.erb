@@ -23,11 +23,11 @@
           <span class="cnt-label"><%= count %></span>
           </span>
       <% else %>
-        <span class="oval-border tooltip" data-delayIn="2000" title="<%= tooltip %>">
-          <a href="<%= link %>">
-          <%= font_icon(image, :size => 16, :class => "", :id => "cm-sb-toggle").html_safe %>
-          <span class="cnt-label"><%= count %></span>
-          </a>
+          <span class="oval-border tooltip" data-delayIn="2000" title="<%= tooltip %>">
+            <% unless falcon_enabled? %> <a href="<%= link %>"> <% end %>
+            <%= font_icon(image, :size => 16, :class => "", :id => "cm-sb-toggle").html_safe %>
+            <span class="cnt-label"><%= count %></span>
+            <% unless falcon_enabled? %> </a> <% end %>
           <span>
       <% end %>
   <% else %>

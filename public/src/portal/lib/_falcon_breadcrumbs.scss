@@ -1,0 +1,38 @@
+// BREADCRUMBS
+// -----------
+
+.breadcrumb {
+  margin: 20px 0 10px 0;
+  .divider {
+    padding: 0 5px;
+    color: $grayLight;
+  }
+  a{ @include margin-right(7px); font-size: 14px; color: $blue; }
+  a:hover{ color: $textColor; text-decoration: inherit; }
+  a:before, span:before{ 
+    content: "/";
+    @include margin-right(10px);
+    color: #bbbbbb;
+    font-size: 16px;
+    font-weight: 200;
+    position: relative;
+    top:1px;
+  }
+  a:before:hover{
+    text-decoration: none;
+  }
+  a:first-child:before{
+    content: none;
+  }
+  span{ color:#888; }
+}
+
+@if $rtl{
+  .breadcrumb {
+    @include float(none);
+    @extend .clearfix;
+    a{
+      @include float(right);
+    }
+  }
+}

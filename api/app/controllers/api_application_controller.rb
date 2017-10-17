@@ -563,10 +563,11 @@ class ApiApplicationController < MetalApiController
     def set_current_account
       if Account.current # This would be present because of fd_api_throttler.
         @current_account = Account.current # setting instance variables
-        @current_portal = @current_account.main_portal_from_cache # setting instance variables
       else
         current_account.make_current
       end
+      set_current_portal
+      
       User.current = api_current_user
       Thread.current[:message_uuid] = request.try(:uuid).to_a
     rescue ActiveRecord::RecordNotFound, ShardNotFound
@@ -574,6 +575,10 @@ class ApiApplicationController < MetalApiController
       head 404
     rescue ActiveSupport::MessageVerifier::InvalidSignature # Authlogic throw this error if signed_cookie is tampered.
       render_request_error :credentials_required, 401
+    end
+
+    def set_current_portal
+      @current_portal ||= Portal.fetch_by_url(request_host) || @current_account.main_portal_from_cache
     end
 
     def get_request?
@@ -718,6 +723,12 @@ class ApiApplicationController < MetalApiController
     def check_day_pass_usage_with_user_time_zone
       user_zone = TimeZone.find_time_zone
       Time.use_zone(user_zone) { check_day_pass_usage }
+    end
+
+    def use_time_zone
+      Time.use_zone(TimeZone.set_time_zone) do
+        yield
+      end
     end
 
     def run_on_slave

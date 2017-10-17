@@ -7,7 +7,7 @@
       <a href="#email-preview" class="email-preview" ><%= t("preview")%></a>
     <% end %>
    	<%= f.submit t('save_changes'), { :class => "btn btn-primary" } %>
-		<%= link_to t('cancel'), root_path, :class => "btn" %>
+      <a href="<%= current_account.falcon_ui_enabled?(current_user) ? '/a/' : '/' %>" target="_top" class="btn"><%= t('cancel') %></a>
 	</div>	  
 <%end%>
 
@@ -16,27 +16,15 @@
   <% unless current_account.sso_enabled? %>	
 	<div class="sidepanel">
 		<%= content_tag( :h3, t("profile.change_password"), :class => "title" ) %>
-		<%= form_tag :action => :change_password, :controller => 'profiles', :method => :put do |f| %>
-  			<%= hidden_field_tag 'user_id', params[:id] %>
-			<ul class="ui-form">
-				<li> 
-					<label for="current_password"><%= t("profile.current_password") %></label> 
-					<input class="text required" id="current_password" name="user[current_password]" size="30" type="password" value="" autocomplete="off" /> 
-				</li> 
-				<li> 
-					<label for="password"><%= t("profile.new_password") %></label> 
-					<input class="text required" id="password" name="user[password]" size="30" type="password" value="" 
-						autocomplete="off" data-content="<%= password_policies_for_popover %>" title="Password must contain" /> 
-				</li>  
-				<li> 
-					<label for="password_confirmation"><%= t("profile.confirm_password") %></label> 
-					<input class="text required" id="password_confirmation" name="user[password_confirmation]" size="30" type="password" value="" autocomplete="off" /> 
-				</li>
-  			</ul>
-			<div class="button-container">
-  				<%= submit_tag t("profile.change_password"), :class => "btn" %>
-			</div>
-		<% end %>
+    <% if current_account.falcon_ui_enabled?(current_user) %>
+      <%= form_for "not_resource", :remote => true, :url => { :action => :change_password, :controller => 'profiles', :method => :put} do |f| %>
+        <%= render :partial => "change_password_form", :locals => { :f => f } %>
+      <% end %>
+    <% else %>
+      <%= form_tag :action => :change_password, :controller => 'profiles', :method => :put do |f| %>
+          <%= render :partial => "change_password_form", :locals => { :f => f } %>
+      <% end %>
+    <% end %>
 	</div>
   <% end %>	
   	<% if current_account.verified? && current_user.agent? && !current_account.launched?(:hide_api_key) %>
@@ -57,7 +45,8 @@
       <p>
         <%= t('integrations.slack_v3.slack_connect_desc') %>
       </p>
-      <a class="btn pull-right" href= <%= @slack_url %>><%= @authorized.present? ? t('integrations.slack_v3.slack_reauth_btn') : t('integrations.slack_v3.slack_auth_btn')%></a>
+      <a class="btn pull-right" onclick="<%= onclick_strategy(@slack_url) %>"><%= @authorized.present? ? t('integrations.slack_v3.slack_reauth_btn') : t('integrations.slack_v3.slack_auth_btn')%>
+      </a>
     </div>
   <% end %>
 

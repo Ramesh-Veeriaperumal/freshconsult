@@ -310,14 +310,20 @@ class AccountsController < ApplicationController
         locale = I18n.default_locale if locale.blank?
       rescue
         locale =  I18n.default_locale
-      end    
-      @account.build_main_portal(:name => @account.helpdesk_name || @account.name, :preferences => default_preferences, 
+      end
+      portal_preferences = (@account.falcon_portal_theme_enabled?) ? default_falcon_preferences : default_preferences
+
+      @account.build_main_portal(:name => @account.helpdesk_name || @account.name, :preferences => portal_preferences, 
                                :language => locale.to_s() , :account => @account, :main_portal => true)
      
     end
  
     def default_preferences
       HashWithIndifferentAccess.new({:bg_color => "#efefef",:header_color => "#252525", :tab_color => "#006063", :personalized_articles => true})
+    end
+
+    def default_falcon_preferences
+      HashWithIndifferentAccess.new({:bg_color => "#f3f5f7",:header_color => "#ffffff", :tab_color => "#ffffff", :personalized_articles => true})
     end
   
     def redirect_url

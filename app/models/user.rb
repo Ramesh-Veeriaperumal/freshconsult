@@ -416,6 +416,12 @@ class User < ActiveRecord::Base
     save!
   end
 
+  def disable_falcon_ui
+    new_pref = { :falcon_ui => false }
+    self.merge_preferences = { :agent_preferences => new_pref }
+    save!
+  end
+
   def is_falcon_pref?
     self.preferences[:agent_preferences][:falcon_ui]
   end

@@ -1,0 +1,74 @@
+// UTILITY CLASSES
+// ---------------
+
+// Quick floats
+.pull-right {
+  @include float(right);
+  margin-top: 22px;
+  a{
+    color: $blue;
+  }
+}
+.pull-left {
+  @include float(left);
+}
+
+// Toggling content
+.hide {
+  display: none;
+}
+.show {
+  display: block;
+}
+
+// Visibility
+.invisible {
+  visibility: hidden;
+}
+
+// Alignment options
+.align-right{
+  @include text-align(right);
+  margin: 0;
+}
+
+.align-left{
+  @include text-align(left);
+}
+
+.inline-block{
+	@include inline-block;
+}
+
+// Loading styles
+.loading, .loading-right, .loading-left{ 
+  background-image:image-url('/assets/animated/ajax-loader.gif');   
+  background-repeat: no-repeat; 
+}
+
+.loading-box{ height: 200px; }
+.loading{ background-position: center; }
+.loading-right{
+  @if $rtl {  background-position: 2% center; }
+  @else { background-position: 98% center; }
+}
+.loading-left{ 
+  @if $rtl {  background-position: 98% center; }
+  @else { background-position: 2% center; }
+}
+
+// Rounded options only for tablet and desktop
+.rounded-6{ @include border-radius($content-border-radius); }
+
+// Ellipsis
+.ellipsis{ @include ellipsis; }
+
+// Responsive utilities
+.show-in-mobile{ display: none; }
+.hide-in-mobile{ display: block; }
+.hide-tablet{ display: none; }
+
+// Margin based classes
+.mt10{
+  margin-top: 10px;
+}

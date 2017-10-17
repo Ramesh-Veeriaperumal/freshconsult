@@ -1,0 +1,81 @@
+.ticket-filters{
+	margin-top:3px;
+	@include left(2px);
+}
+div#ticket-filter-container{
+	margin-top: 20px;
+}
+.c-row.c-ticket-row{ 
+	@include padding(16px 0);
+	.status-source{ 
+		@include float(left);
+		@include margin-left(0px);
+	}
+	.help-text{
+		font-size: 13px;
+	}
+	.label{ 
+		@include float(right);
+		@include border-radius(2px);
+	    background-color: $bg_color;
+	    border: solid 1px $border-color;
+	    font-size: 14px;
+	    font-weight: 600;
+	    line-height: 10px;
+	    color: $black;
+	    @include text-shadow(none);
+	    padding: 6px 10px 7px 10px;
+	    text-transform: initial;
+	    margin: 20px 16px;
+	}
+}
+.ticket-toolbar{ 
+	position: relative; z-index: 1; 
+	a{ font-weight: bold; }
+}
+.sidebar.ticket-form-sidebar{
+	padding-top: 26px;
+}
+.widget{ margin-bottom: 20px; }
+
+#user-list-dropdown, #company-list-dropdown { 
+	@include margin-left(20px);
+	@include margin-right(20px);
+	.dropdown-menu {
+		max-height: 300px;
+		overflow: auto;
+	}
+}
+.name_label{ font-weight: bold; margin-top: 4px; }
+.value_label{ margin-bottom: 10px; }
+
+.ticket-form-sidebar .control-label{
+	margin-top: 8px;
+	margin-bottom: 0;
+	line-height: 28px;
+	font-weight: 600;
+}
+
+.ticket-form-sidebar label.checkbox{
+	font-weight: normal;
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+
+.agent-details{
+	border-bottom: $content-border;
+	background-color: #fafafa;	
+	@include padding (20px 2em 35px);
+	margin-top: -$content-padding-top;
+	@include margin-left(-$content-padding-side);
+	@include margin-right(-$content-padding-side);
+	@include border-top-radius($content-border-radius);
+	padding-bottom: 30px;
+	.lead{ margin-bottom: 10px; }
+	.agent_name_text{
+		padding-top: 20px;
+		font-size: 14px;
+	}
+}
+
+.ticket-brief{ padding-top: 7px; }
