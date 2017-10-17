@@ -10,7 +10,7 @@ class Middleware::TrustedIp
     env['CLIENT_IP'] ||= Rack::Request.new(env).ip()
     req_path = env['PATH_INFO']
     # Skip valid ip check if the request is from skipped subdomains
-    return execute_request(env) if skipped_subdomain?(env) || bypass_ip_check?(env)
+    return execute_request(env) if skipped_subdomain?(env)
     env['SHARD'] ||= ShardMapping.lookup_with_domain(env["SERVER_NAME"])
     # Skip valid ip check if the request is for nil shard.
     return execute_request(env) if (env['SHARD'].nil? or PodConfig['CURRENT_POD'] != env['SHARD'].pod_info) && !Rails.env.development?
@@ -122,9 +122,6 @@ class Middleware::TrustedIp
 
   def skipped_subdomain?(env)
     SKIPPED_SUBDOMAINS.include?(env["HTTP_HOST"].split(".")[0]) 
-  end
-  def bypass_ip_check?(env)
-    SKIP_MIDDLEWARES["skipped_routes"].include?(env['PATH_INFO'])
   end
 end
 
