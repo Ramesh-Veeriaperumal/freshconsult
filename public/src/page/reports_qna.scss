@@ -1,227 +1,244 @@
 @import "../fonts/glyphs-variables";
 
+$initialInputBoxLeftOffset: 40px;
+$initialInputBoxRightOffset: 45px;
+
 .report-home {
-	.qna-search-bar {
-		width: 100%;
-		z-index: 3;
+  .qna-search-bar {
+    width: 100%;
+    z-index: 3;
 
-		.search-field-holder {
-			margin:4px 0 20px 0;
-			position : relative;
-			float : left;
-			width : 85%;
-			z-index: 3;
+    .search-field-holder {
+      margin: 4px 0 20px 0;
+      position: relative;
+      float: left;
+      width: 85%;
+      height: 52px;
+      z-index: 3;
+      border: 1px solid #d3dbda;
+      border-radius: 3px;
 
-			&.active{
-				transform: translateX(33%);
-				width: 58%;
-			} 
+      &.active {
+        transform: translateX(33%);
+        width: 58%;
+        border: 1px solid #02b875;
+      }
 
-			&:before{
-			    content : $font-glyphs-qna;
-			    position: absolute;
-			    color: #999;
-			    top: 13px;
-			    left: 10px;
-			    z-index: 1;
-			    font-size : 20px;
-			    font-family : "glyphs";
-			}
+      &:before {
+        content: $font-glyphs-qna;
+        position: absolute;
+        color: #999;
+        top: 16px;
+        left: 10px;
+        z-index: 1;
+        font-size: 20px;
+        font-family: "glyphs";
+      }
 
-			.clear-query{
-			    position: absolute;
-			    color: #999;
-			    top: 13px;
-			    right: -30px;
-			    z-index: 1;
-			    font-size: 22px;
-			}
-			
-			div.selected-queries{
-				position: absolute;
-			    top: 0px;
-			    left: 40px;
-			    height: 44px;
-			    display: flex;
-			    justify-content: center;
-			    align-items: center;
+      .clear-query {
+        position: absolute;
+        color: #999;
+        top: 16px;
+        right: 14px;
+        z-index: 1;
+        font-size: 22px;
+      }
 
-			    .value-block {
-				    display: inline-block;
-				    width: auto;
-				    font-size: 13px;
-						padding: 2px;
-						cursor: default;
-				}
-			}
+      div.selected-queries {
+        position: relative;
+        top: 0px;
+        left: 40px;
+        height: 44px;
+        line-height: 44px;
+        display: inline-block;
+        justify-content: center;
+        align-items: center;
 
-			div.question-popover{
-				position: absolute;
-			    left: 40px;
-			    top: 10px;
-			    z-index: 3;
-				display: none;
+        .value-block {
+          display: inline-block;
+          width: auto;
+          font-size: 13px;
+          padding: 2px;
+          cursor: default;
+        }
+      }
+
+      div.question-popover {
+        position: absolute;
+        left: 40px;
+        top: 10px;
+        z-index: 3;
+        display: none;
 
         div#wave {
-	          position:relative;
-	          width:40px;
-	          height:8px;
-            margin-left: 10px;
-            margin-top: 4px;
-	          .dot {
-		            display:inline-block;
-		            width:8px;
-		            height:8px;
-		            border-radius:50%;
-		            background:#76A9AC;
-		            animation: wave 1.3s linear infinite;
+          position: relative;
+          width: 40px;
+          height: 8px;
+          margin-left: 10px;
+          margin-top: 4px;
+          .dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #76a9ac;
+            animation: wave 1.3s linear infinite;
 
-		            &:nth-child(2) {
-			              animation-delay: -1.1s;
-			              background:#bbd5d6;
-		            }
+            &:nth-child(2) {
+              animation-delay: -1.1s;
+              background: #bbd5d6;
+            }
 
-		            &:nth-child(3) {
-			              animation-delay: -0.9s;
-			              background:#deeaeb;
-		            }
-	          }
+            &:nth-child(3) {
+              animation-delay: -0.9s;
+              background: #deeaeb;
+            }
+          }
         }
 
         @keyframes wave {
-	          0%, 60%, 100% {
-		            transform: initial;
-	          }
+          0%,
+          60%,
+          100% {
+            transform: initial;
+          }
 
-	          30% {
-		            transform: translateY(-5px);
-	          }
+          30% {
+            transform: translateY(-5px);
+          }
         }
 
-				ul.questions {
+        ul.questions {
+          background: #fff;
+          border: 1px solid #efefef;
+          box-shadow: 2px 2px 2px 0px #efefef;
+          position: relative;
+          top: 25px;
+          border-radius: 5px;
 
-				    background: #fff;
-				    border: 1px solid #efefef;
-				    box-shadow: 2px 2px 2px 0px #efefef;
-				    position : relative;
-					top : 25px;
-					border-radius: 5px;
+          li {
+            color: #000;
+            font-size: 12px;
+            padding: 8px 8px;
+            cursor: pointer;
+            width: 160px;
+            .icon-next {
+              font-size: 15px;
+              float: right;
+            }
 
-				    li{
-					    color: #000;
-					    font-size: 12px;
-					    padding : 8px 8px;
-					    cursor : pointer;
-						width : 160px;
-						.icon-next{
-							font-size: 15px;
-							float: right;
-						}
+            .hovered,
+            &:not(.search-header).active {
+              background: #5897fb;
+              color: #fff;
+            }
 
-						&:not(.search-header):hover,.hovered{
-							background : #5897fb;
-							color : #fff;
-						}
+            &.search-header {
+              border-bottom: 1px solid #e9e9e9;
+              padding-bottom: 0;
+              input {
+                float: left;
+                width: 225px;
+              }
+              &::after {
+                font-family: "glyphs";
+                font-size: 14px;
+                content: "\f18d";
+                position: absolute;
+                right: 20px;
+                top: 12px;
+                color: #999;
+              }
+              /* Removing dropdown arrow */
+              .select2-container .select2-choice .select2-arrow b::after {
+                content: none;
+              }
+              .select2-search input {
+                background: none !important;
+              }
+            }
 
-						&.search-header{
-                border-bottom: 1px solid #e9e9e9;
-                padding-bottom: 0;
-							input{
-                  float: left;
-                  width: 225px;
-							}
-							&::after {
-								font-family: "glyphs";
-								font-size : 14px;
-								content: "\f18d";
-								position: absolute;
-								right: 20px;
-								top: 12px;
-								color : #999;
-							}
-							/* Removing dropdown arrow */
-							.select2-container .select2-choice .select2-arrow b::after{
-								content : none;
-							}
-							.select2-search input{
-								background: none !important;
-							}
-						}
-
-						.back-nav{
-							color : #666;
-							margin-right : 10px;
+            .back-nav {
+              color: #666;
+              margin-right: 10px;
               float: left;
               margin-top: 5px;
-						}
+            }
 
-						&.wide-width {
-							width : 250px;
-						}
-				    }
+            &.wide-width {
+              width: 250px;
+            }
+          }
 
-				    &:after{
-				       content: '';
-					   position: absolute;
-					   border-style: solid;
-					   border-width: 0 5px 8px;
-					   border-color: #fff transparent;
-					   display: block;
-					   width: 0;
-					   z-index: 1;
-					   top: -8px;
-					   left: 18px;
-				    }
-						
-						&:before{
-							content: '';
-							position: absolute;
-							border-style: solid;
-							border-width: 0 5px 8px;
-							border-color: #eee transparent;
-							display: block;
-							width: 0;
-							z-index: 0;
-							top: -9px;
-							left: 18px;
-						}
-				}
-			}
-			
-      .ficon-clear-qna {
-          font-size: 16px;
+          &:after {
+            content: '';
+            position: absolute;
+            border-style: solid;
+            border-width: 0 5px 8px;
+            border-color: #fff transparent;
+            display: block;
+            width: 0;
+            z-index: 1;
+            top: -8px;
+            left: 18px;
+          }
+
+          &:before {
+            content: '';
+            position: absolute;
+            border-style: solid;
+            border-width: 0 5px 8px;
+            border-color: #eee transparent;
+            display: block;
+            width: 0;
+            z-index: 0;
+            top: -9px;
+            left: 18px;
+          }
+        }
       }
-		}
 
-		input#search-query{
-			width: 100%;
-			height: 35px;
-			padding-left : 35px;
-			background: #fff;
-			cursor: auto;
-		}
+      .ficon-clear-qna {
+        font-size: 16px;
+      }
+    }
 
-		div.close-search{
-			float : right;
-			cursor : pointer;
+    input#search-query {
+      // accomodate buuble icon inside parent
+      width: calc(100% - #{$initialInputBoxLeftOffset} - #{$initialInputBoxRightOffset});
+      position: absolute;
+      // accomadate bubble icon in parent
+      left: 40px;
+      // accomodate reset icon in parent
+      right: 14px;
+      height: 40px;
+      padding-left: 5px;
+      background: #fff;
+      cursor: auto;
+      border: none;
+    }
+
+    div.close-search {
+      float: right;
+      cursor: pointer;
       margin-top: 14px;
 
-			.close-icon{
-				font-size : 16px;
-				margin-right: 2px;
-				color: #06c;
-				vertical-align: middle;
-			}
-			.close-label{
-				display : inline;
-				font-size: 14px;
-			}
-		}
-	}	
+      .close-icon {
+        font-size: 16px;
+        margin-right: 2px;
+        color: #06c;
+        vertical-align: middle;
+      }
+      .close-label {
+        display: inline;
+        font-size: 14px;
+      }
+    }
+  }
 }
 
 .include-clear {
-	clear: both;
-	content : '';
-	display: block;
+  clear: both;
+  content: '';
+  display: block;
 }
