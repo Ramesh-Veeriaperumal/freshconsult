@@ -420,6 +420,7 @@ class ApiApplicationController < MetalApiController
         end
       else
          if current_account.launched? :api_jwt_auth and request.env["HTTP_AUTHORIZATION"][/^Token (.*)/]
+          Rails.logger.info "FRESHID API V2 auth_type :: JWT_TOKEN"
           # authenticate using JWT token
           authenticate_with_http_token do |token|
               @current_user = FdJWTAuth.new(token).decode_jwt_token
