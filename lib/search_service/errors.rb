@@ -15,9 +15,6 @@ module SearchService
     class DefaultSearchException < StandardError
     end
 
-    class GatewayTimeoutException < StandardError
-    end
-
     class AuthorizationException < StandardError
     end
 
@@ -31,12 +28,16 @@ module SearchService
     class InvalidFieldException < BadRequestException
     end
 
+    # Invalid value for an attribute in the JSON
+    class InvalidValueException < BadRequestException
+    end
+
     # Trieggered to create duplicate data
     class DuplicateValueException < BadRequestException
     end
 
     # value doesnt match with expected datatype
-    class DatatypeMistmatchException < BadRequestException
+    class DatatypeMismatchException < BadRequestException
     end
 
     # Mandatory attribute is missing in the json
@@ -55,10 +56,40 @@ module SearchService
     class MissingTemplateParamException < BadRequestException
     end
 
+    # Query Template
+    class QueryTemplateException < BadRequestException
+    end
+
+    # Invalid Template Definition
+    class InvalidTemplateDefinitionException < BadRequestException
+    end
+
+    # Account is suspended
+    class AccountSupendedException < StandardError
+    end
+
     # 500 Errors
 
     # Unable to render template or template doesnt exist
     class TemplateRenderException < DefaultSearchException
+    end
+
+    class CircuitBreakerOpenedException < DefaultSearchException
+    end
+
+    class ServiceUnavailableException < DefaultSearchException
+    end
+
+    class GatewayTimeoutException < DefaultSearchException
+    end
+
+    class BadGatewayException < DefaultSearchException
+    end
+
+    class OperationTimeoutException < DefaultSearchException
+    end
+
+    class BadResponseException < DefaultSearchException
     end
   end
 end
