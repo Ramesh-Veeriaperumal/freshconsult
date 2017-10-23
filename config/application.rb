@@ -238,11 +238,11 @@ require 'active_record/connection_adapters/abstract_mysql_adapter'
 ActiveRecord::ConnectionAdapters::AbstractMysqlAdapter::NATIVE_DATABASE_TYPES[:primary_key] = "BIGINT UNSIGNED NOT NULL auto_increment PRIMARY KEY"
 
 
-# Captcha API Keys
-ENV['RECAPTCHA_PUBLIC_KEY']  = '6LfNCb8SAAAAACxs6HxOshDa4nso_gyk0sxKcwAI'
-ENV['RECAPTCHA_PRIVATE_KEY'] = '6LfNCb8SAAAAANC5TxzpWerRTLrxP3Hsfxw0hTNk'
-
-
+# reCAPTCHA API Keys
+recaptcha_file = File.join(Rails.root, 'config', 'recaptcha_v2.yml')
+YAML.load(File.open(recaptcha_file)).each do |key, value|
+  ENV[key]  = value
+end if File.exists? recaptcha_file
 
 
 GC::Profiler.enable if defined?(GC) && defined?(GC::Profiler) && GC::Profiler.respond_to?(:enable)
