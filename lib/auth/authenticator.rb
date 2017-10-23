@@ -26,6 +26,7 @@ class Auth::Authenticator
     @omniauth = options[:omniauth]
     @user_id = options[:user_id]
     @state_params = options[:state_params]
+    @falcon_enabled = options[:falcon_enabled]
   end
 
   def name

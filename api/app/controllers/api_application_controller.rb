@@ -725,6 +725,12 @@ class ApiApplicationController < MetalApiController
       Time.use_zone(user_zone) { check_day_pass_usage }
     end
 
+    def use_time_zone
+      Time.use_zone(TimeZone.set_time_zone) do
+        yield
+      end
+    end
+
     def run_on_slave
       Rails.logger.debug "---- Running #{self.class.name}##{action_name} on slave db----"
       Sharding.run_on_slave do

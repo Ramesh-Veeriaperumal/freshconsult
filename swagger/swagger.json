@@ -4991,6 +4991,28 @@
                   "format": "date-time"
                 }
               }
+            },
+            "config": {
+              "type": "object",
+              "properties": {
+                "social": {
+                  "type": "object",
+                  "properties": {
+                    "facebook_reauth_required": {
+                      "type": "boolean"
+                    },
+                    "facebook_reauth_link": {
+                      "type": "string"
+                    },
+                    "twitter_reauth_required": {
+                      "type": "boolean"
+                    },
+                    "twitter_reauth_link": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
             }
           }
         },

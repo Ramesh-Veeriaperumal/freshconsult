@@ -48,7 +48,7 @@ $SELECT2_DROP_ZINDEX: 99999;
 
 //For portal page's
 .custom-select{
-    @include min-width(300px);
+    @include min-width(250px);
     max-width: 100%;
 }
 

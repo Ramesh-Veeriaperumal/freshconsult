@@ -1,4 +1,4 @@
-<section class="main content rounded-6 min-height-on-desktop" id="solutions-home">
+<section class="main content rounded-6 min-height-on-desktop fc-solution-home" id="solutions-home">
 	<h2 class="heading">{% translate portal.knowledge_base %}</h2>
 	{% for category in portal.solution_categories %}
 		{% if category.folders_count > 0 %}

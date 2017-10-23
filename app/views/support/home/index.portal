@@ -1,5 +1,5 @@
 {% if portal.has_solutions %}
-<section class="main content rounded-6 min-height-on-desktop" id="solutions-index-home">
+<section class="main content rounded-6 min-height-on-desktop fc-portal-solution-home" id="solutions-index-home">
 	<h2 class="heading">{% translate portal.knowledge_base %}</h2>
 	{% for category in portal.solution_categories %}
 		{% if category.folders_count > 0 %}
@@ -24,7 +24,7 @@
 {% endif %}
 
 {% if portal.has_forums %}
-<section class="sidebar content community-sidebar rounded-6 min-height-on-desktop" id="home-community-sidebar">
+<section class="sidebar content community-sidebar rounded-6 min-height-on-desktop fc-community-sidebar" id="home-community-sidebar">
 	<h2 class="heading">{% translate portal.community_forums %}</h2>
 	{% if portal.topics_count > 0 %}
 		<p class="intro">{% translate portal.showing_recent_updates %}</p>

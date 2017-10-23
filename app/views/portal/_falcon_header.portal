@@ -1,0 +1,52 @@
+{% if  portal.current_page != 'csat_survey' %}
+	<header class="banner">
+		<div class="banner-wrapper page">
+			<div class="banner-title">
+				{{ portal | logo }}
+				<h1 class="ellipsis heading">{{portal.name|h}}</h1>
+			</div>
+			<nav class="banner-nav">
+				{{ portal | welcome_navigation }}
+			</nav>
+		</div>
+	</header>
+	<nav class="page-tabs">
+	<div class="page no-padding">
+		{% if portal.tabs.size > 0 %}
+			<a data-toggle-dom="#header-tabs" href="#" data-animated="true" class="mobile-icon-nav-menu show-in-mobile"></a>
+			<div class="nav-link" id="header-tabs">
+				{% for tab in portal.tabs %}
+					{% if tab.url %}
+						<a href="{{tab.url}}" class="{% if tab.tab_type == portal.current_tab %}active{% endif %}">{{ tab.label }}</a>
+					{% endif %}
+				{% endfor %}
+			</div>
+		{% endif %}
+		</div>
+	</nav>
+
+<!-- Search and page links for the page -->
+{% if portal.current_tab and portal.current_tab != "home" %}
+	<section class="help-center-sc rounded-6">	
+		<div class="page no-padding">
+		<div class="hc-search">
+			<div class="hc-search-c">
+				{% snippet search_form %}
+			</div>
+		</div>
+		<div class="hc-nav {% if portal.contact_info %} nav-with-contact {% endif %}">				
+			{{ portal | helpcenter_navigation }}
+		</div>
+		</div>
+	</section>
+{% endif %}
+{% else %} 
+	<header class="banner">
+		<div class="banner-wrapper">
+			<div class="banner-title">
+				{{ portal | logo : true }}
+				<h1 class="ellipsis heading">{{portal.name|h}}</h1>
+			</div>
+		</div>
+	</header>
+{% endif %}

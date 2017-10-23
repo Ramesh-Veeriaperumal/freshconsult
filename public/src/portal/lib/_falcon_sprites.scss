@@ -1,0 +1,104 @@
+// SPRITES
+// Glyphs and icons for buttons, nav, and more
+// -------------------------------------------
+
+// ICONS
+// -----
+
+// All icons receive the styles of the <i> tag with a base class
+// of .i and are then given a unique class to add width, height,
+// and background-position. Your resulting HTML will look like
+// <i class="icon-inbox"></i>.
+
+// For the white version of the icons, just add the .icon-white class:
+// <i class="icon-inbox icon-white"></i>
+
+/* Importing admin icons */
+@import "cdn-ignored/sprites/portal/icon/*.png";
+$icon-sprite-dimensions:true;
+$icon-layout:horizontal;
+$icon-clean-up:false;
+@include all-icon-sprites;
+
+@import "cdn-ignored/sprites/portal/sources/*.png";
+$sources-layout:smart;
+$sources-sprite-dimensions:true;
+$sources-clean-up:false;
+@include all-sources-sprites;
+
+[class^="icon-"],
+[class*=" icon-"]{
+  display: inline-block;
+  @include ie7-restore-right-whitespace();
+  vertical-align: text-top;
+}
+
+$article-color: #a249c5;
+$forum-announcement-color: #008b00;
+$forum-ideas-color: #f4af1a;
+$forum-problems-color: #ff5959;
+$forum-questions-color: #00aad5;
+$forum-neutral-color: #888888;
+
+.page-stamp{
+	position: absolute;
+	width: 26px;
+	@include left(-6px);
+	@include padding(4px 0 5px 2px);
+	margin-top:5px;	
+	&:after{
+		content: "";
+		position: absolute;
+		bottom: -6px;
+		@include left(0);
+		border: 3px solid transparent;
+		border-top-color: #333333;
+		@include border-right-color(#333333);
+	}
+}
+
+/*
+.page-stamp-article{ background-color: $article-color; }
+.badge-announcement:before, .page-stamp-announcement{ background-color: $forum-announcement-color; }
+.badge-ideas:before, .page-stamp-ideas{ background-color: $forum-ideas-color; }
+.badge-problems:before, .page-stamp-problems{ background-color: $forum-problems-color; }
+.badge-questions:before, .page-stamp-questions{ background-color: $forum-questions-color; }*/
+
+.badge-announcement:before, .page-stamp-announcement,
+.badge-ideas:before, .page-stamp-ideas,
+.badge-problems:before, .page-stamp-problems,
+.badge-questions:before, .page-stamp-questions, .page-stamp-article{
+	display: none;
+}
+
+.badge-announcement, .badge-ideas, .badge-problems, .badge-questions, 
+{
+	position: relative;
+	@include margin-left(30px);
+	&:before, &:after{
+		content:"";	
+		vertical-align: text-top;
+		position: absolute;		
+		@include left(-32px);
+		top: 1px;
+	}
+	&:before{			
+		width: 26px;
+		height: 26px;
+		@include border-radius(2em);
+	}	
+	&:after{
+		@if $rtl { margin: 3px 2px; }
+		@else {	margin: 3px 4px;	}
+	}
+}
+
+.list-lead{
+	&.badge-announcement, &.badge-ideas, &.badge-problems, &.badge-questions{
+		@include margin-left(30px);
+		margin-top: 12px;
+		a{
+			font-weight: 600;
+		}
+	}
+}

@@ -6,7 +6,11 @@
 	<% else %>
 
 		<div class="muted"><%= t('.title') %></div>
-		<strong><%= link_to @topic.ticket, @topic.ticket %></strong>
+		<% if falcon_enabled? %>
+			<strong><%= @topic.ticket %></strong>
+		<% else %>
+			<strong><%= link_to @topic.ticket, @topic.ticket %></strong>
+		<% end %>
 		<div>
 			<% if @topic.ticket.responder_id? %>
 			<div><%= t('.agent') %>: <%= @topic.ticket.responder.name %></div>

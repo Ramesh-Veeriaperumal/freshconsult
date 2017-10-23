@@ -1,0 +1,83 @@
+.search-autocomplete{
+	position:absolute;
+	z-index:9999;
+	width:100%;
+}
+
+ul.ui-autocomplete{ 
+	background-color: $white;
+    @include box-shadow(0 1px 2px 0 rgba(63,63,68,0.15));
+	margin: 0;
+	li.article-item, li.topic-item, li.ticket-item, li.note-item {
+		@include padding-left(35px);
+		&:before{ @include left(10px); }
+	}
+	li{
+		padding: 14px 0 14px 40px;
+		a{
+			font-size: 14px;
+		    color: $black;
+		}
+		.label-light{
+			background-color: transparent;
+		    color: $black;
+		    @include text-shadow(none);
+		    border: 1px solid $border-color;
+		    padding: 2px 10px;
+		    font-size: 10px;
+		}
+		&:hover{
+			background: $grey_hover;
+			color: $black;
+			a{
+				background: $grey_hover;
+				color: $black;
+			}
+		}
+		&.ui-state-focus{
+			background: $grey_hover;
+			color: $black;
+		}
+	}
+
+}
+
+.article-item.ui-state-focus{
+	background: $grey_hover;
+	a{
+	color: $black;
+	}
+}
+.search-results-list{ 
+	margin: 0; 
+	li{
+		padding: 16px 30px;
+    	border-bottom: 1px solid $box-border;
+	}
+	a{
+		font-size: 16px;
+    	font-weight: 600;
+	}
+    .label-small{
+		font-size: 10px;
+	    background-color: $white;
+	    border: 1px solid $border-color;
+	    padding: 1px 12px;
+	    margin: -3px 0 0 7px;
+	    color: $black;
+	}
+	div{
+		line-height: 24px;
+    	color: $header_text_color;
+	}
+}
+
+.fc-search-page{
+	padding: 26px 40px !important;
+	.lead {
+	    height: 200px;
+	    text-align: center;
+	    vertical-align: middle;
+	    padding-top: 70px;
+	}
+}

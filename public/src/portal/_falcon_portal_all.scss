@@ -1,0 +1,39 @@
+// CSS Reset
+// Type and some util functions
+@import "lib/falcon_type";
+
+// Layout and scaffolding
+@import "lib/falcon_scaffolding";
+@import "lib/falcon_layout";
+
+// Patterns
+@import "lib/falcon_forms";
+@import "lib/falcon_buttons";
+@import "lib/falcon_button-groups";
+@import "lib/dynamic-sprites";
+@import "lib/falcon_navs";
+@import "lib/tables";
+
+// Components: Misc
+@import "lib/falcon_breadcrumbs";
+@import "lib/close";
+@import "lib/falcon_alerts";
+
+// Page related styles
+@import "lib/falcon_header-footer";
+@import "lib/falcon_help-center";
+@import "lib/falcon_dynamic-content";
+
+// Responsive styles for mobile and tablet
+@import "responsive/falcon_mobile";
+@import "responsive/falcon_tablet";
+
+// Debug styles
+/*@import "lib/debug";*/
+
+//Avatar related styles
+@import "../falcon_avatar";
+
+/*for multifile template*/
+@import "lib/falcon_multifile-attachments";
+

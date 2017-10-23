@@ -378,12 +378,6 @@ module Ember
         :ApiTicketConstants.to_s.freeze
       end
 
-      def use_time_zone
-        Time.use_zone(TimeZone.set_time_zone) do
-          yield
-        end
-      end
-
       def load_note
         @note = @item.notes.find_by_id(params[:note_id])
         log_and_render_404 unless @note

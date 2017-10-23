@@ -120,7 +120,7 @@
 						:method => :put
 					} do |f| %>
 					<%= f.error_messages %>
-					<h4 class="conv-title"><%=t('user.background')%></h4>
+					<h4 class="conv-title"><%=t('user.back_info')%></h4>
 					<%= f.text_area :description, :class=> "sp_paragraph",:cols => 0,:rows => 0, :placeholder => t("contacts.form_placeholder.description") %>
 					<%= f.hidden_field :id, :value => @user.id, :id => 'userid' %>
 					<div class='tags-wrapper clearfix hide'>
