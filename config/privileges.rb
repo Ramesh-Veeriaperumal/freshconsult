@@ -13,7 +13,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/quest"
     resource :"helpdesk/leaderboard"
     resource :"helpdesk/note", :only => [:index, :agents_autocomplete,:public_conversation]
-    resource :user, :only => [:delete_avatar, :block, :me]
+    resource :user, :only => [:delete_avatar, :me]
     resource :"helpdesk/reminder"
     resource :"helpdesk/authorization"
     resource :"search/autocomplete", :only => [:requesters, :agents, :companies, :tags]
@@ -400,7 +400,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :customer, :only => [:destroy] #should deprecate
     resource :company, :only => [:destroy]
     # is this the correct place to put this ?
-    resource :user, :only => [:destroy]
+    resource :user, :only => [:destroy, :block]
 
     # Used by V2 API
     resource :"api_contact", :only => [:destroy, :restore]
