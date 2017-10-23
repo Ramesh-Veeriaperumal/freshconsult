@@ -21,6 +21,22 @@ module FreshcallerSpecHelper
     @account.reload
   end
 
+  def freshcaller_proxy_params
+    {
+      method: 'get',
+      rest_url: 'freshcaller_endpoint',
+      params: {}
+    }
+  end
+
+  def valid_freshcaller_proxy_response
+    {
+      text: "{}",
+      content_type: 'application/json',
+      status: Rack::Utils::SYMBOL_TO_STATUS_CODE[:ok]
+    }
+  end
+
   def freshcaller_account_signup
     {
       :freshcaller_account_id => 1,
