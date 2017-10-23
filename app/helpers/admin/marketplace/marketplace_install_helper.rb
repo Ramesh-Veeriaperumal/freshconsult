@@ -31,8 +31,10 @@ include FalconHelperMethods
               <p class="buy-app-btn"> #{t('marketplace.buy_app')} </p>
               <p class="app-price"> #{t('marketplace.app_price', :price => format_amount(addon_details['price'], addon_details['currency_code']), :addon_type => addon_type)} </p>
               </a>)
-    _btn << link_to(install_btn_text, '#', 'data-url' => oauth_settings_url,
+    if @is_oauth_app
+     _btn << link_to(install_btn_text, '#', 'data-url' => oauth_settings_url,
             :class => "btn btn-default btn-primary install-app hide install-form-btn")
+    end
     _btn
   end
 
