@@ -408,6 +408,10 @@ module TicketConstants
     TICKET_ASSOCIATION_FILTER.map { |i| [i[1], i[2].join(',')] }
   end
 
+  def self.translate_association_type_name(association_type)
+    I18n.t(TICKET_ASSOCIATION_TOKEN_BY_KEY[association_type])
+  end
+
   def self.created_options
     CREATED_BY_VALUES_EN.map { |i| [I18n.t(i[1]), i[2]] }
   end
