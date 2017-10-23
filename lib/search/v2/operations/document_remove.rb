@@ -13,17 +13,7 @@ class Search::V2::Operations::DocumentRemove
   end
 
   def perform
-    if Account.current.service_writes_enabled?
-      SearchService::Client.new(@account_id).delete_object(@type, @doc_id)
-    else
-      @request_object = Search::V2::IndexRequestHandler.new(
-                                          @type, 
-                                          @account_id, 
-                                          @doc_id,
-                                          @timestamps
-                                        )
-      @request_object.remove_from_es
-    end
+    SearchService::Client.new(@account_id).delete_object(@type, @doc_id)
     # Multiplexing for pinnacle sports currently
     #=> Entity will not be available to find out the locale
     # if entity.is_a?(Solution::Article) && Account.current.es_multilang_soln?
