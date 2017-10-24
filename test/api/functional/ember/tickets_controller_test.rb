@@ -911,6 +911,112 @@ module Ember
       assert_equal attachment_ids, ticket.attachment_ids
     end
 
+    def test_update_properties_with_subject_description_requester
+      ticket = create_ticket
+      subject = Faker::Lorem.words(10).join(' ')
+      description = Faker::Lorem.paragraph
+      user = add_new_user(@account)
+      requester_id = user.id
+      params_hash = {
+        subject: subject,
+        description: description,
+        requester_id: requester_id
+      }
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 200
+      ticket.reload
+      ticket.remove_instance_variable('@ticket_body_content')
+      assert_equal subject, ticket.subject
+      assert_equal description, ticket.description
+      assert_equal requester_id, ticket.requester_id
+    end
+
+    def test_update_properties_with_subject_description_requester_with_default_company
+      ticket = create_ticket
+      subject = Faker::Lorem.words(10).join(' ')
+      description = Faker::Lorem.paragraph
+      sample_requester = get_user_with_default_company
+      requester_id = sample_requester.id
+      company_id = sample_requester.user_companies.first.company_id if sample_requester.user_companies.first.present?
+      params_hash = {
+        subject: subject,
+        description: description,
+        requester_id: requester_id
+      }
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 200
+      ticket.reload
+      ticket.remove_instance_variable('@ticket_body_content')
+      assert_equal subject, ticket.subject
+      assert_equal description, ticket.description
+      assert_equal requester_id, ticket.requester_id
+      assert_equal ticket.company_id, sample_requester.company_id
+      assert_equal company_id, ticket.company_id
+    end
+
+    def test_update_properties_with_subject_description_requester_with_multiple_company
+      Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
+      ticket = create_ticket
+      subject = Faker::Lorem.words(10).join(' ')
+      description = Faker::Lorem.paragraph
+      sample_requester = get_user_with_multiple_companies
+      requester_id = sample_requester.id
+      company_id = sample_requester.user_companies.where(default: false).first.company.id
+      params_hash = {
+        subject: subject,
+        description: description,
+        requester_id: requester_id,
+        company_id: company_id
+      }
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 200
+      ticket.reload
+      ticket.remove_instance_variable('@ticket_body_content')
+      assert_equal subject, ticket.subject
+      assert_equal description, ticket.description
+      assert_equal requester_id, ticket.requester_id
+      assert_equal company_id, ticket.company_id
+      ensure
+        Account.any_instance.unstub(:multiple_user_companies_enabled?)
+    end
+
+    def test_update_properties_with_subject_description_invalid_requester
+      ticket = create_ticket
+      subject = Faker::Lorem.words(10).join(' ')
+      description = Faker::Lorem.paragraph
+      sample_requester = add_new_user(@account)
+      requester_id = sample_requester.id + 10
+      params_hash = {
+        subject: subject,
+        description: description,
+        requester_id: requester_id
+      }
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern(:requester_id,'There is no contact matching the given requester_id')])
+    end
+
+    def test_update_properties_with_subject_description_requester_with_invalid_company
+      Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
+      ticket = create_ticket
+      subject = Faker::Lorem.words(10).join(' ')
+      description = Faker::Lorem.paragraph
+      sample_requester = get_user_with_multiple_companies
+      requester_id = sample_requester.id
+      company_id = Company.create(name: Faker::Name.name, account_id: @account.id).id
+      params_hash = {
+        subject: subject,
+        description: description,
+        requester_id: requester_id,
+        company_id: company_id
+      }
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern(:company_id,'The requester does not belong to the specified company')])
+      ensure
+        Account.any_instance.unstub(:multiple_user_companies_enabled?)
+    end
+
     def test_update_properties_closure_of_parent_ticket_failure
       parent_ticket = create_ticket
       child_ticket = create_ticket
