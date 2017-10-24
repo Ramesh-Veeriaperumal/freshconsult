@@ -37,7 +37,7 @@ include Email::EmailService::IpPoolHelper
       end
       end_time = Time.now
       Rails.logger.info "Email Service Response: #{response.body.inspect}"
-      Rails.logger.info "Email sent from #{params[:from]} to #{params[:to]} (%1.fms)" %(end_time - start_time)
+      Rails.logger.info "Email sent from #{params[:from]} to #{params[:to]} #{(end_time - start_time).round(3)}ms"
   end
 
   def get_email_data(params)
@@ -188,11 +188,11 @@ include Email::EmailService::IpPoolHelper
 
   def remove_duplicate_emails( to, cc, bcc=[])
     res = []
-    unique_emails = (to.map{|pair| pair[:email]} + (bcc.empty? ? [] : (cc.map{|pair| pair[:email]}))).uniq
+    unique_emails = (to.map{|pair| pair["email"]} + (bcc.empty? ? [] : (cc.map{|pair| pair["email"]}))).uniq
     if bcc.empty?
-      cc.map{|pair| res<<pair if !unique_emails.include?(pair[:email])}
+      cc.map{|pair| res<<pair if !unique_emails.include?(pair["email"])}
     else
-      bcc.map{|pair| res<<pair if !unique_emails.include?(pair[:email])}
+      bcc.map{|pair| res<<pair if !unique_emails.include?(pair["email"])}
     end
     return res
   end

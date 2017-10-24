@@ -81,9 +81,10 @@ var TemplateDockManager   = Class.create({
   bindTemplateEvents: function(){
     jQuery(document).on("click.tmpl_events", ".browse-btn, .category, .back2list_btn, .back2catg_btn, #appGalleryLogo, .view-all", this.loadApps.bindAsEventListener(this))
                     .on("click.tmpl_events", ".fplugs-box,.backbtn, .show_btn" , this.loadAppInfo.bindAsEventListener(this))
+                    .on("click.tmpl_events", ".cancel_btn" , this.cancelInstall.bindAsEventListener(this))
                     .on("click.tmpl_events", ".install-btn" , this.installApp.bindAsEventListener(this))
                     .on("click.tmpl_events", ".install-form-btn, .update" , this.updateApp.bindAsEventListener(this))
-                    .on("click.tmpl_events", "#oauth_link", this.installOAuthApp.bindAsEventListener(this))
+                    .on("click.tmpl_events", ".oauth-app", this.installOAuthApp.bindAsEventListener(this))
                     .on("click.tmpl_events", ".install-iframe-settings, .update-iframe-settings" , this.updateIframeApp.bindAsEventListener(this))
                     .on("click.tmpl_events", ".nativeapp" , this.installNativeApp.bindAsEventListener(this))
                     .on("submit.tmpl_events", "form#extension-search-form" , this.onSearch.bindAsEventListener(this))
@@ -199,6 +200,10 @@ var TemplateDockManager   = Class.create({
     jQuery(that.extensionsWrapper).empty();
     jQuery(that.extensionsWrapper).append("<div class='alert alert-error'>"+ error_msg + "</div>");
   },
+  cancelInstall: function(e) {
+    window.location.hash = "";
+    this.loadAppInfo(e);
+  },
   loadAppInfo: function(e){
     e.preventDefault();
     e.stopPropagation();
@@ -276,7 +281,7 @@ var TemplateDockManager   = Class.create({
         lesstext = "less",
         content  = jQuery(".descript").html();
  
-    if(content.length > showChar) {
+    if(content && content.length > showChar) {
 
         var c = content.substr(0, showChar);
         var h = content.substr(showChar, content.length - showChar);
@@ -320,24 +325,8 @@ var TemplateDockManager   = Class.create({
   },
 
   installOAuthApp: function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    var that = this;
-    var parameters = "";
-    var elements = jQuery('.fa-elements');
-    if(this.isValidForm()) {
-      for( var i = 0; i < elements.length; i++ ){
-        if(elements[i].name && elements[i].value) {
-          parameters += parameters + '&' + elements[i].name + '=' + elements[i].value;
-        }
-      }
-      var url = jQuery('#oauth_link').attr('data-url');
-      window.location = url + parameters;
-    }
-    else {
-      this.displayFormFieldError();
-
-    }
+    var url = jQuery('.oauth-app').attr('data-url');
+    window.location = url;
   },
 
   //install button in install config page
@@ -532,7 +521,7 @@ var TemplateDockManager   = Class.create({
           jQuery(that.extensionsWrapper).empty()
                                         .append(JST["marketplace/marketplace_install"](install_extension));
           if ( install_extension.configs_page && install_extension.configs != null ){
-            getConfigs(install_extension.configs);
+            that.whenAvailable('getConfigs', install_extension.configs);
           }
 
           that.appName = install_extension.display_name;
@@ -550,13 +539,7 @@ var TemplateDockManager   = Class.create({
 
           if ( !install_extension.configs_page && (!install_extension.configs ? true : install_extension.configs.length == 0 )) { // no config
             jQuery(".install-form").hide();
-            if(install_extension.install_btn['is_oauth_app']) {
-              trigger_element = '#oauth_link'
-            }
-            else {
-              trigger_element = '.install-btn'
-            }
-            setTimeout( that.installTrigger(trigger_element), 1000);
+            setTimeout( that.installTrigger('.install-btn'), 1000);
           }
 
           if(jQuery(el).hasClass("btn-settings")){
@@ -577,6 +560,18 @@ var TemplateDockManager   = Class.create({
       }
     });
     
+  },
+
+  whenAvailable: function(methodName, configs) {
+    var interval = 10;
+    window.setTimeout(function(){
+      if(window[methodName]) {
+        getConfigs(configs)
+      }
+      else {
+        window.setTimeout(arguments.callee, interval);
+      }
+    }, interval);
   },
 
 

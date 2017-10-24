@@ -55,7 +55,8 @@ class Subscription < ActiveRecord::Base
   after_update :update_reseller_subscription
   after_commit :update_social_subscription, :add_free_freshfone_credit, :update_crm, :dkim_category_change, :update_ticket_activity_export, on: :update
   after_commit :clear_account_susbcription_cache
-  after_commit :suspend_tenant, :schedule_account_block,  on: :update, :if => :suspended?
+  after_commit :schedule_account_block,  on: :update, :if => :suspended?
+  after_commit :suspend_tenant,  on: :update, :if => :trial_to_suspended?
   after_commit :activate_account, on: :update, :if => :non_suspended?
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
@@ -582,12 +583,16 @@ class Subscription < ActiveRecord::Base
     end
 
     def trial_to_suspended?
-      @old_subscription.state.eql?(TRIAL) && self.state.eql?(SUSPENDED) && self.subscription_payments.count.zero?
+      @old_subscription.state.eql?(TRIAL) && self.state.eql?(SUSPENDED)
+    end
+
+    def active_to_suspended?
+      (@old_subscription.state.eql?(FREE) || @old_subscription.state.eql?(ACTIVE)) && self.state.eql?(SUSPENDED)
     end
 
     def schedule_account_block
-      if trial_to_suspended?
-        key = TRIAL_SUSPENDED % {:account_id => self.account.id}
+      if active_to_suspended?
+        key = ACTIVE_SUSPENDED % {:account_id => self.account.id}
         set_others_redis_key(key, true, Account::BLOCK_GRACE_PERIOD)
         Rails.logger.debug("Added trial suspended redis key for account_id: #{self.account.id}")
       end

@@ -11,6 +11,11 @@ include FalconHelperMethods
     elsif is_iframe_app?(@extension) && installed?
       _btn << %(<a class="btn btn-default btn-primary install-app #{install_btn_class}" 
                 data-method="put" data-url="#{install_url}"> #{install_btn_text} </a>)
+    elsif @is_oauth_app
+      _btn << link_to(install_btn_text, '#', 'data-url' => install_url, :id => 'oauth_link',
+              :class => "btn btn-default btn-primary install-app #{install_btn_class} oauth-app")
+      _btn << link_to(install_btn_text, '#', 'data-url' => oauth_settings_url,
+              :class => "btn btn-default btn-primary install-app hide install-form-btn")
     else
       _btn << link_to(install_btn_text, '#', 'data-url' => install_url,
               :class => "btn btn-default btn-primary install-app #{install_btn_class}")
@@ -26,6 +31,8 @@ include FalconHelperMethods
               <p class="buy-app-btn"> #{t('marketplace.buy_app')} </p>
               <p class="app-price"> #{t('marketplace.app_price', :price => format_amount(addon_details['price'], addon_details['currency_code']), :addon_type => addon_type)} </p>
               </a>)
+    _btn << link_to(install_btn_text, '#', 'data-url' => oauth_settings_url,
+            :class => "btn btn-default btn-primary install-app hide install-form-btn")
     _btn
   end
 
@@ -82,9 +89,10 @@ include FalconHelperMethods
         params_hash.merge!({installed_version: installed_version.first}) if !latest_installed?
         "#{admin_marketplace_installed_extensions_reinstall_path(@extension['extension_id'])}?#{params_hash.to_query}"
       end
+    elsif is_oauth_app?(@extension)
+      admin_marketplace_installed_extensions_oauth_install_path(@extension['extension_id'], @extension['version_id'])
     else
-      is_oauth = is_oauth_app?(@extension)
-      url_params = configs_url_params(is_oauth)
+      url_params = configs_url_params
       admin_marketplace_installed_extensions_new_configs_path(@extension['extension_id'],
         @extension['version_id']) + '?' + url_params
     end
@@ -108,6 +116,8 @@ include FalconHelperMethods
       else
         "install-iframe-settings"
       end
+    elsif is_oauth_app?(@extension)
+      "install-oauth-btn"
     else
       "install-form-btn"
     end
@@ -146,6 +156,18 @@ include FalconHelperMethods
 
   def install_not_allowed
     %(<p class="platform_not_compatible"> #{t('marketplace.install_not_allowed')} </p>).html_safe
+  end
+
+  def oauth_settings_url
+    url_params = configs_url_params(true)
+    if(installed? && @install_status['installed_versions'].include?(@extension['version_id']))
+      settings_url = admin_marketplace_installed_extensions_edit_configs_path(@extension['extension_id'],
+      @extension['version_id'])
+    else
+      settings_url = admin_marketplace_installed_extensions_new_configs_path(@extension['extension_id'],
+      @extension['version_id'])
+    end
+    settings_url = settings_url + '?' + url_params
   end
 
 end

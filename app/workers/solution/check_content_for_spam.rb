@@ -18,16 +18,21 @@ class Solution::CheckContentForSpam < BaseWorker
 
   def check_description_for_spam article_id
     article = @account.solution_articles.find(article_id)
+    spam_content = false
     article_spam_regex = Regexp.new($redis_others.perform_redis_op("get", ARTICLE_SPAM_REGEX), "i")
     article_phone_number_spam_regex = Regexp.new($redis_others.perform_redis_op("get", PHONE_NUMBER_SPAM_REGEX), "i")
     article_content_spam_char_regex = Regexp.new($redis_others.perform_redis_op("get", CONTENT_SPAM_CHAR_REGEX))
     stripped_article_content = article.desc_un_html.gsub(Regexp.new(Solution::Constants::CONTENT_ALPHA_NUMERIC_REGEX), "")
-    desc_un_html_lines = article.desc_un_html.split("\n")
-    spam_content = false
-    desc_un_html_lines.each do |desc_line|
-      spam_content = true and break if ((desc_line =~ article_spam_regex).present? || (desc_line =~ article_content_spam_char_regex).present?)
+    response = FdSpamDetectionService::Service.new(@account.id, article.desc_un_html).check_spam_content(@account.created_at.iso8601)
+    spam_content = response.spam?
+    unless spam_content
+      desc_un_html_lines = article.desc_un_html.split("\n")
+      desc_un_html_lines.each do |desc_line|
+        spam_content = true and break if ((desc_line =~ article_spam_regex).present? || (desc_line =~ article_content_spam_char_regex).present?)
+      end
+      spam_content = true if (stripped_article_content=~ article_phone_number_spam_regex).present?
     end
-    spam_content = true if (stripped_article_content=~ article_phone_number_spam_regex).present?
+    Rails.logger.info "Article is spam? #{spam_content}"
     if spam_content
       subject = "Detected suspicious solution spam account :#{Account.current.id} "
       additional_info = "Suspicious article in Account ##{Account.current.id} with ehawk_reputation_score: #{Account.current.ehawk_reputation_score} , Article id : #{article_id}"
