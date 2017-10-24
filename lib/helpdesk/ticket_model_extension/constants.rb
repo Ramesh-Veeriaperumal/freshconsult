@@ -26,7 +26,10 @@ module Helpdesk::TicketModelExtension::Constants
     [ "export_data.fields.fr_time",               "first_res_time_bhrs",     false,  :ticket_states   , 22    , "sla_management_enabled?"], 
     [ "export_data.fields.resolution_time",       "resolution_time_bhrs",    false,  :ticket_states   , 23    , "sla_management_enabled?"],
     [ "export_data.fields.resolution_status",     "resolution_status",       false,  :ticket_states   , 26    , "sla_management_enabled?"],
-    [ "export_data.fields.first_response_status", "first_response_status",   false,  :ticket_states   , 27    , "sla_management_enabled?"]
+    [ "export_data.fields.first_response_status", "first_response_status",   false,  :ticket_states   , 27    , "sla_management_enabled?"],
+    [ "export_data.fields.association_type",      "association_type_name",   false,  nil              , 31    , "link_tkts_enabled?" || "parent_child_tkts_enabled?"],
+    [ "export_data.fields.internal_agent",        "internal_agent_name",     false,  :internal_agent  , 32    , "shared_ownership_enabled?"],
+    [ "export_data.fields.internal_group",        "internal_group_name",     false,  :internal_group  , 33    , "shared_ownership_enabled?"]
   ]
 
   CONTACT_FIELDS = [

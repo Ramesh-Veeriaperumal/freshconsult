@@ -112,6 +112,7 @@ module AuthenticationSystem
             api_key_with_x = Base64.decode64(basic_auth_match[1])
             api_key_split = api_key_with_x.split(":")
             params['k'] = api_key_split[0]
+            log_authentication_type(params['k'], params['format']) unless params['k'].blank?
             # Assume identity
             if api_key_split.size > 1
               matched = /assume=(.*)/.match(api_key_split[1])
@@ -253,6 +254,11 @@ module AuthenticationSystem
     # Check qualify_for_day_pass? method in api_applciation_controller if this method is modified.
     def qualify_for_day_pass?
       current_user && current_user.occasional_agent? && !current_account.subscription.trial? && !is_assumed_user?
+    end
+    
+    def log_authentication_type(auth_token, format)
+      auth_type = auth_token.include?('@') ? "UN_PASS" : "API_KEY"
+      Rails.logger.info "FRESHID API V1 auth_type :: #{auth_type}, format :: #{format}"
     end
 
     SUPPORTED_API_KEY_FORMATS = ['xml', 'json', 'widget']
