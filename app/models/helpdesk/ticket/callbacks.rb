@@ -57,10 +57,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   after_commit :trigger_observer, on: :update, :if => :execute_observer?
   after_commit :update_ticket_states, :notify_on_update, :update_activity,
-               :stop_timesheet_timers, :fire_update_event, 
-               :push_update_notification, on: :update
+               :stop_timesheet_timers, :fire_update_event, on: :update
   #after_commit :regenerate_reports_data, on: :update, :if => :regenerate_data?
-  after_commit :push_create_notification, on: :create
   after_commit :update_group_escalation, on: :create, :if => :model_changes?
   after_commit :publish_to_update_channel, on: :update, :if => :model_changes?
   after_commit :subscribe_event_create, on: :create, :if => :allow_api_webhook?, :unless => :spam_or_deleted?
@@ -555,32 +553,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
 private
-
-  def push_create_notification
-	push_mobile_notification(:new)
-  end
-
-  def push_update_notification
-    if @model_changes.key?(:responder_id)
-      return unless send_agent_assigned_notification?
-    end
-    push_mobile_notification(:update) unless spam? || deleted?
-  end
-
-  def push_mobile_notification(type)
-	return unless @model_changes.key?(:responder_id) || @model_changes.key?(:group_id) || @model_changes.key?(:status)
-
-    message = {
-                :ticket_id => display_id,
-                :group => group_name,
-                :status_name => status_name,
-                :requester => requester_name,
-                :subject => truncate(subject, :length => 100),
-                :priority => priority,
-                :time => updated_at.to_i
-              }
-	send_mobile_notification(type,message)
-  end
 
   def model_changes?
     @model_changes.present?
