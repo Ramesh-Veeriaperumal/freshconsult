@@ -7,7 +7,7 @@
     
     <div class="span11 pl20">
       <div>
-        <div class="profile-name pull-left"><%= link_to "#{twitter_handle.screen_name}", "http://twitter.com/#{twitter_handle.screen_name}", :target => "_blank", :class => "title" %> <span>@<%= twitter_handle.screen_name %></span><p>This stream will contain all your @mentions</p></div>
+        <div class="profile-name pull-left"><%= link_to "@#{twitter_handle.screen_name}", "http://twitter.com/#{twitter_handle.screen_name}", :target => "_blank", :class => "title" %> <p>This stream will contain all your @mentions</p></div>
         <div class="social-brand pull-right"><%= font_icon "twitter", :size => 48 %></div>
       </div>
       
