@@ -9,10 +9,12 @@ module I18n
      end
     
       def self.available_locales_with_name
-         I18n.available_locales.inject({}) {|ha, (k, v)| ha[I18n.name_for_locale(k)] = k ; ha}.sort_by {|p,q| p.to_s }
+        available_locales = if Rails.env.production?
+                              I18n.available_locales - [:"test-ui"]
+                            else
+                              I18n.available_locales
+                            end
+        available_locales.inject({}) {|ha, (k, v)| ha[I18n.name_for_locale(k)] = k ; ha}.sort_by {|p,q| p.to_s }
       end
-    
-    
-
 end
 
