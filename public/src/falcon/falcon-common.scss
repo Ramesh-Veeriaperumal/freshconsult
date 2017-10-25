@@ -469,6 +469,15 @@ left: 88%;
   }
 }
 
+#ConfigureApplication .button-container .btn {
+  text-transform: capitalize;
+  border-radius: 4px;
+}
+
+#search_social button#settings-btn {
+    margin-left: 0;
+}
+
 
 .alert-admin-account-verification{
   display: none;
