@@ -192,19 +192,9 @@ module Ember
 
       def test_bulk_delete_with_valid_ids
         ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash)
-        put :bulk_delete, construct_params({ version: 'private' }, {ids: ticket_ids})
-        assert_response 204
-      end
-
-      def test_bulk_delete_with_errors_in_deletion
-        ids_to_delete = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash)
-        Helpdesk::Ticket.any_instance.stubs(:save).returns(false)
-        put :bulk_delete, construct_params({ version: 'private' }, {ids: ids_to_delete})
-        Helpdesk::Ticket.any_instance.unstub(:save)
-        failures = {}
-        ids_to_delete.each { |id| failures[id] = { :id => :unable_to_perform } }
-        match_json(partial_success_response_pattern([], failures))
+        put :bulk_delete, construct_params({ version: 'private' }, ids: ticket_ids)
         assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
       end
 
       def test_bulk_delete_tickets_without_access
@@ -225,8 +215,10 @@ module Ember
         group = create_group_with_agents(@account, agent_list: [@agent.id])
         ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash.merge(group_id: group.id))
         put :bulk_delete, construct_params({ version: 'private' }, {ids: ticket_ids})
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+      ensure
         User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
-        assert_response 204
       end
 
       def test_bulk_delete_tickets_with_assigned_access
@@ -236,9 +228,11 @@ module Ember
         Helpdesk::Ticket.any_instance.stubs(:responder_id).returns(@agent.id)
         ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash)
         put :bulk_delete, construct_params({ version: 'private' }, {ids: ticket_ids})
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+      ensure
         User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
         Helpdesk::Ticket.any_instance.unstub(:responder_id)
-        assert_response 204
       end
 
       def test_bulk_spam_with_no_params
@@ -260,19 +254,9 @@ module Ember
 
       def test_bulk_spam_with_valid_ids
         ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash)
-        put :bulk_spam, construct_params({ version: 'private' }, {ids: ticket_ids})
-        assert_response 204
-      end
-
-      def test_bulk_spam_with_errors
-        ids_list = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash)
-        Helpdesk::Ticket.any_instance.stubs(:save).returns(false)
-        put :bulk_spam, construct_params({ version: 'private' }, {ids: ids_list})
-        Helpdesk::Ticket.any_instance.unstub(:save)
-        failures = {}
-        ids_list.each { |id| failures[id] = { :id => :unable_to_perform } }
-        match_json(partial_success_response_pattern([], failures))
+        put :bulk_spam, construct_params({ version: 'private' }, ids: ticket_ids)
         assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
       end
 
       def test_bulk_spam_tickets_without_access
@@ -293,8 +277,10 @@ module Ember
         group = create_group_with_agents(@account, agent_list: [@agent.id])
         ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash.merge(group_id: group.id))
         put :bulk_spam, construct_params({ version: 'private' }, {ids: ticket_ids})
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+      ensure
         User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
-        assert_response 204
       end
 
       def test_bulk_spam_tickets_with_assigned_access
@@ -304,43 +290,36 @@ module Ember
         Helpdesk::Ticket.any_instance.stubs(:responder_id).returns(@agent.id)
         ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash)
         put :bulk_spam, construct_params({ version: 'private' }, {ids: ticket_ids})
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+      ensure
         User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
         Helpdesk::Ticket.any_instance.unstub(:responder_id)
-        assert_response 204
       end
 
-      def test_bulk_spam_partial_success
-        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash)
-        invalid_ticket = create_ticket(ticket_params_hash.merge(spam: true))
-        put :bulk_spam, construct_params({ version: 'private' }, {ids: [*ticket_ids, invalid_ticket.display_id]})
-        failures = {}
-        failures[invalid_ticket.display_id] = { :id => :unable_to_perform }
-        match_json(partial_success_response_pattern(ticket_ids, failures))
-        assert_response 202
-      end
-
-      def test_bulk_restore_with_errors
-        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash)
+      def test_bulk_restore_with_invalid_ids
         valid_ticket = create_ticket(ticket_params_hash.merge(deleted: true))
+        ticket_ids = [valid_ticket.display_id + 10, valid_ticket.display_id + 20]
         put :bulk_restore, construct_params({ version: 'private' }, {ids: [*ticket_ids, valid_ticket.display_id]})
         failures = {}
-        ticket_ids.each { |id| failures[id] = { :id => :unable_to_perform } }
-        match_json(partial_success_response_pattern([valid_ticket.display_id], failures))
+        ticket_ids.each { |id| failures[id] = { id: :"is invalid" } }
         assert_response 202
+        match_json(partial_success_response_pattern([valid_ticket.display_id], failures))
       end
 
       def test_bulk_restore_valid
         ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash.merge(deleted: true))
         put :bulk_restore, construct_params({ version: 'private' }, {ids: ticket_ids})
-        assert_response 204
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
       end
 
-      def test_bulk_unspam_with_errors
-        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash)
+      def test_bulk_unspam_with_invalid_ids
         valid_ticket = create_ticket(ticket_params_hash.merge(spam: true))
+        ticket_ids = [valid_ticket.display_id + 10, valid_ticket.display_id + 20]
         put :bulk_unspam, construct_params({ version: 'private' }, {ids: [*ticket_ids, valid_ticket.display_id]})
         failures = {}
-        ticket_ids.each { |id| failures[id] = { :id => :unable_to_perform } }
+        ticket_ids.each { |id| failures[id] = { id: :"is invalid" } }
         match_json(partial_success_response_pattern([valid_ticket.display_id], failures))
         assert_response 202
       end
@@ -348,7 +327,8 @@ module Ember
       def test_bulk_unspam_valid
         ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash.merge(spam: true))
         put :bulk_unspam, construct_params({ version: 'private' }, {ids: ticket_ids})
-        assert_response 204
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
       end
     end
   end

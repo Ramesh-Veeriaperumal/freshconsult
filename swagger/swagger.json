@@ -593,8 +593,11 @@
               "$ref": "#/definitions/partial_success_response"
             }
           },
-          "204": {
-            "description": "Success"
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
           }
         }
       }
@@ -622,8 +625,11 @@
               "$ref": "#/definitions/partial_success_response"
             }
           },
-          "204": {
-            "description": "Success"
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
           }
         }
       }
@@ -652,8 +658,11 @@
               "$ref": "#/definitions/partial_success_response"
             }
           },
-          "204": {
-            "description": "Success"
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
           }
         }
       }
@@ -681,8 +690,11 @@
               "$ref": "#/definitions/partial_success_response"
             }
           },
-          "204": {
-            "description": "Success"
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
           }
         }
       }

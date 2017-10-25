@@ -9,8 +9,10 @@ put:
       schema:
         $ref: '#/definitions/bulk_action_input'
   responses:
-    204:
-      description: Success
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
     202:
       description: Accepted
       schema:

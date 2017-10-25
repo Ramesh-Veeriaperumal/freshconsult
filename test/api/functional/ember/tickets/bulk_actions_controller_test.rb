@@ -1229,7 +1229,7 @@ module Ember
       end
 
       # There was a bug when we try to bulk update with type set without mandatory section fields
-      def test_bulk_update_with_mandatory_dropdown_section_field
+      def test_bulk_update_with_mandatory_dropdown_section_field_for_default_type_field
         sections = [
           {
             title: 'section1',
@@ -1252,7 +1252,7 @@ module Ember
         @account.ticket_fields.find_by_name("test_custom_dropdown_#{@account.id}").update_attributes(required: false, field_options: { section: false })
       end
 
-      def test_bulk_update_with_mandatory_section_fields
+      def test_bulk_update_with_mandatory_section_fields_for_default_type_field
         sections = [
           {
             title: 'section1',
@@ -1273,6 +1273,79 @@ module Ember
       ensure
         @account.section_fields.last.destroy
         @account.ticket_fields.find_by_name("test_custom_text_#{@account.id}").update_attributes(required: false, field_options: { section: false })
+      end
+
+      def test_bulk_update_closure_with_mandatory_section_field_for_non_required_custom_dropdown
+        dropdown_value = CUSTOM_FIELDS_CHOICES.sample
+        sections = [
+          {
+            title: 'section1',
+            value_mapping: [dropdown_value],
+            ticket_fields: ['test_custom_text']
+          }
+        ]
+        cust_dropdown_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+        create_section_fields(cust_dropdown_field.id, sections, false, true)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket({custom_field: { cust_dropdown_field.name => dropdown_value }}).display_id
+        end
+        properties_hash = { status: 5 }
+        params_hash = { ids: ticket_ids, properties: properties_hash }
+        Sidekiq::Testing.inline! do
+          post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        end
+        section_field_id = cust_dropdown_field.dynamic_section_fields.first.ticket_field_id
+        section_field = @account.ticket_fields.find_by_id(section_field_id)
+        failures = {}
+        ticket_ids.each do |tkt_id|
+          failures[tkt_id] = {
+            section_field.label => [:datatype_mismatch, { expected_data_type: :String, given_data_type: 'Null', prepend_msg: :input_received }]
+          }
+        end
+        match_json(partial_success_response_pattern([], failures))
+        assert_response 202
+      ensure
+        @account.section_fields.last.destroy
+        section_field.update_attributes(required_for_closure: false, field_options: { section: false })
+        cust_dropdown_field.update_attribute(:required_for_closure, false)
+      end
+
+      def test_bulk_update_closure_with_mandatory_section_field_for_required_custom_dropdown
+        dropdown_value = CUSTOM_FIELDS_CHOICES.sample
+        sections = [
+          {
+            title: 'section1',
+            value_mapping: [dropdown_value],
+            ticket_fields: ['test_custom_text']
+          }
+        ]
+        cust_dropdown_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+        cust_dropdown_field.update_attribute(:required_for_closure, true)
+        create_section_fields(cust_dropdown_field.id, sections, false, true)
+        ticket_ids = []
+        rand(2..4).times do
+          ticket_ids << create_ticket({custom_field: { cust_dropdown_field.name => dropdown_value }}).display_id
+        end
+        properties_hash = { status: 5 }
+        params_hash = { ids: ticket_ids, properties: properties_hash }
+        Sidekiq::Testing.inline! do
+          post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        end
+        section_field_id = cust_dropdown_field.dynamic_section_fields.first.ticket_field_id
+        section_field = @account.ticket_fields.find_by_id(section_field_id)
+        failures = {}
+        ticket_ids.each do |tkt_id|
+          failures[tkt_id] = {
+            section_field.label => [:datatype_mismatch, { expected_data_type: :String, given_data_type: 'Null', prepend_msg: :input_received }]
+          }
+        end
+        match_json(partial_success_response_pattern([], failures))
+        assert_response 202
+      ensure
+        @account.section_fields.last.destroy
+        section_field.update_attributes(required_for_closure: false, field_options: { section: false })
+        cust_dropdown_field.update_attribute(:required_for_closure, false)
       end
 
       def test_bulk_update_with_invalid_custom_field

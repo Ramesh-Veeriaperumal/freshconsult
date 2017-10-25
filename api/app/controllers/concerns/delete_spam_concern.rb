@@ -12,15 +12,6 @@ module DeleteSpamConcern
     end
   end
 
-  def bulk_spam
-    bulk_action do
-      @items_failed = []
-      @items.each do |item|
-        @items_failed << item unless spam_item(item)
-      end
-    end
-  end
-
   def bulk_restore
     bulk_action do
       @items_failed = []
@@ -30,12 +21,9 @@ module DeleteSpamConcern
     end
   end
 
-  def bulk_unspam
+  def bulk_ticket_action
     bulk_action do
-      @items_failed = []
-      @items.each do |item|
-        @items_failed << item unless unspam_item(item)
-      end
+      update_tickets_in_background
     end
   end
 
@@ -116,6 +104,12 @@ module DeleteSpamConcern
     end
 
   private
+
+    def update_tickets_in_background
+      action = ApiTicketConstants::BG_WORKER_ACTION_MAPPING[action_name.to_sym]
+      args = { 'action' => action, 'ids' => @items.map(&:display_id) }
+      ::Tickets::BulkTicketActions.perform_async(args)
+    end
 
     def destroy_item(item)
       # TODO-EMBERAPI "Deleted_at" not populated on User - use of field to be verified

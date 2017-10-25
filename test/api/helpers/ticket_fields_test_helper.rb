@@ -8,10 +8,10 @@ module TicketFieldsTestHelper
                                    { title: 'section2', value_mapping: ['Choice 3'], ticket_fields: %w(test_custom_paragraph) } ]
 
 
-  def create_custom_field(name, type, required = false)
+  def create_custom_field(name, type, required = false, required_for_closure = false)
     ticket_field_exists = @account.ticket_fields.find_by_name("#{name}_#{@account.id}")
     if ticket_field_exists
-      ticket_field_exists.update_attributes(required: required)
+      ticket_field_exists.update_attributes(required: required, required_for_closure: required_for_closure)
       return ticket_field_exists
     end
     flexifield_mapping = type == 'text' ? 'ffs_13' : "ff_#{FIELD_MAPPING[type]}05"
@@ -31,6 +31,7 @@ module TicketFieldsTestHelper
                                                            field_type: "custom_#{type}",
                                                            description: '',
                                                            required: required,
+                                                           required_for_closure: required_for_closure,
                                                            column_name: flexifield_def_entry.flexifield_name,
                                                            flexifield_def_entry_id: flexifield_def_entry.id)
     parent_custom_field.save
@@ -51,11 +52,11 @@ module TicketFieldsTestHelper
     status_values
   end
 
-  def create_section_fields(parent_ticket_field_id = 3, sections = SECTIONS_FOR_TYPE, required = false)
+  def create_section_fields(parent_ticket_field_id = 3, sections = SECTIONS_FOR_TYPE, required = false, required_for_closure = false)
     sections.each do |section|
       sections_fields = section[:ticket_fields].each_with_object([]) do |field, array|
         pos = 0
-        ticket_field = field == 'dropdown' ? create_custom_field_dropdown('test_custom_dropdown', Faker::Lorem.words(5), required) : create_custom_field(field, field, required)
+        ticket_field = field == 'dropdown' ? create_custom_field_dropdown('test_custom_dropdown', Faker::Lorem.words(5), required, required_for_closure) : create_custom_field(field, field, required, required_for_closure)
         ticket_field.update_attributes(field_options: { section: true })
         array << { ticket_field_id: ticket_field.id, parent_ticket_field_id: parent_ticket_field_id, position: (pos + 1) }
       end
@@ -82,9 +83,12 @@ module TicketFieldsTestHelper
     end
   end
 
-  def create_custom_field_dropdown(name = 'test_custom_dropdown', choices = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'], required = false)
+  def create_custom_field_dropdown(name = 'test_custom_dropdown', choices = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'], required = false, required_for_closure = false)
     ticket_field_exists = @account.ticket_fields.find_by_name("#{name}_#{@account.id}")
-    return ticket_field_exists if ticket_field_exists
+    if ticket_field_exists
+      ticket_field_exists.update_attributes(required: required, required_for_closure: required_for_closure)
+      return ticket_field_exists
+    end
     # ffs_04 is created here
     flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry,
                                              flexifield_def_id: @account.flexi_field_defs.find_by_module('Ticket').id,
@@ -102,6 +106,7 @@ module TicketFieldsTestHelper
                                                            field_type: 'custom_dropdown',
                                                            description: '',
                                                            required: required,
+                                                           required_for_closure: required_for_closure,
                                                            flexifield_def_entry_id: flexifield_def_entry.id)
     parent_custom_field.save
 
