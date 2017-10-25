@@ -30,6 +30,8 @@
 
             _checkIframeSandbox(iframe, opts);
           }
+        } else if(cmd == 'linkInsert') {
+            $('.fr-element a').attr('rel', 'noreferrer noopener');
         }
 
       });
