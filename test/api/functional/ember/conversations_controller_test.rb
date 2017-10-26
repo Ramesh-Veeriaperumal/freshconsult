@@ -822,6 +822,22 @@ module Ember
       t.update_attributes(spam: false)
     end
 
+
+    def test_forward_with_existing_attachment
+      conversation = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
+      attachment = create_attachment(attachable_type: 'Helpdesk::Note', attachable_id: conversation.id)
+      params_hash = forward_note_params_hash.merge(attachment_ids: [attachment.id], include_original_attachments: false)
+      stub_attachment_to_io do
+        post :forward, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      end
+      assert_response 201
+      match_json(private_note_pattern(params_hash, Helpdesk::Note.last))
+      match_json(private_note_pattern({}, Helpdesk::Note.last))
+      note_attachment = Helpdesk::Note.last.attachments.first
+      refute note_attachment.id == attachment.id
+      assert attachment_content_hash(note_attachment) == attachment_content_hash(attachment)
+    end
+
     def test_ticket_conversations_with_fone_call
       # while creating freshfone account during tests MixpanelWrapper was throwing error, so stubing that
       MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
@@ -1194,14 +1210,18 @@ module Ember
       notification_template = '<div>{{ticket.id}}</div>'
       Agent.any_instance.stubs(:signature_value).returns('')
       EmailNotification.any_instance.stubs(:get_reply_template).returns(notification_template)
-
+      bcc_emails = "#{Faker::Internet.email};#{Faker::Internet.email}"
+      Account.any_instance.stubs(:bcc_email).returns(bcc_emails)
       get :reply_template, construct_params({ version: 'private', id: t.display_id }, false)
       assert_response 200
       match_json(reply_template_pattern(template: "<div>#{t.display_id}</div>",
-                                        signature: ''))
+                                        signature: '',
+                                        bcc_emails: bcc_emails.split(';')))
 
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_reply_template)
+    ensure
+      Account.any_instance.unstub(:bcc_email)
     end
 
     def test_agent_reply_template_with_signature
@@ -1212,14 +1232,18 @@ module Ember
       agent_signature = '<div><p>Thanks</p><p>{{ticket.subject}}</p></div>'
       Agent.any_instance.stubs(:signature_value).returns(agent_signature)
       EmailNotification.any_instance.stubs(:get_reply_template).returns(notification_template)
-
+      bcc_emails = "#{Faker::Internet.email},#{Faker::Internet.email}"
+      Account.any_instance.stubs(:bcc_email).returns(bcc_emails)
       get :reply_template, construct_params({ version: 'private', id: t.display_id }, false)
       assert_response 200
 
       match_json(reply_template_pattern(template: "<div>#{t.display_id}</div>",
-                                        signature: "<div><p>Thanks</p><p>#{t.subject}</p></div>"))
+                                        signature: "<div><p>Thanks</p><p>#{t.subject}</p></div>",
+                                        bcc_emails: bcc_emails.split(',')))
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_reply_template)
+    ensure
+      Account.any_instance.unstub(:bcc_email)
     end
 
     def test_agent_forward_emplate_with_empty_template_and_empty_signature
@@ -1499,6 +1523,21 @@ module Ember
       match_json(private_note_pattern({}, latest_note))
     end
 
+    def test_reply_with_existing_attachment
+      conversation = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
+      attachment = create_attachment(attachable_type: 'Helpdesk::Note', attachable_id: conversation.id)
+      params_hash = reply_note_params_hash.merge(attachment_ids: [attachment.id])
+      stub_attachment_to_io do
+        post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      end
+      assert_response 201
+      match_json(private_note_pattern(params_hash, Helpdesk::Note.last))
+      match_json(private_note_pattern({}, Helpdesk::Note.last))
+      note_attachment = Helpdesk::Note.last.attachments.first
+      refute note_attachment.id == attachment.id
+      assert attachment_content_hash(note_attachment) == attachment_content_hash(attachment)
+    end
+
     def test_public_note_without_traffic_cop_with_last_note_id
       @account.revoke_feature(:traffic_cop)
       ticket = create_ticket
@@ -1525,6 +1564,21 @@ module Ember
       match_json(private_note_pattern(params_hash, latest_note))
       match_json(private_note_pattern({}, latest_note))
       @account.revoke_feature(:traffic_cop)
+    end
+
+    def test_private_note_with_existing_attachment
+      conversation = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
+      attachment = create_attachment(attachable_type: 'Helpdesk::Note', attachable_id: conversation.id)
+      params_hash = create_note_params_hash.merge(private: true, attachment_ids: [attachment.id])
+      stub_attachment_to_io do
+        post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      end
+      assert_response 201
+      match_json(private_note_pattern(params_hash, Helpdesk::Note.last))
+      match_json(private_note_pattern({}, Helpdesk::Note.last))
+      note_attachment = Helpdesk::Note.last.attachments.first
+      refute note_attachment.id == attachment.id
+      assert attachment_content_hash(note_attachment) == attachment_content_hash(attachment)
     end
 
     def test_public_note_with_traffic_cop_ignoring_private_note

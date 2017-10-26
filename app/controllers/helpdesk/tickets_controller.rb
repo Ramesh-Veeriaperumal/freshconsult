@@ -31,6 +31,8 @@ class Helpdesk::TicketsController < ApplicationController
   include Redis::TicketsRedis
   include Helpdesk::SendAndSetHelper
 
+  ALLOWED_QUERY_PARAMS = ['collab', 'message']
+
   before_filter :redirect_to_mobile_url
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:show,:suggest_tickets]
   before_filter :portal_check, :verify_format_and_tkt_id, :only => :show
@@ -1566,6 +1568,25 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   private
+
+    def handle_falcon_redirection
+      options = {
+        request_referer: request.referer,
+        not_html: !request.format.html?,
+        path_info: request.path_info,
+        is_ajax: request.xhr?,
+        env_path: env['PATH_INFO']
+      }
+      result = FalconRedirection.falcon_redirect(options)
+      redirect_to (result[:path] + get_valid_query_string) if result[:redirect]
+    end
+
+    def get_valid_query_string
+      query_params = Rack::Utils.parse_nested_query(request.query_string)
+      query = query_params.slice(*ALLOWED_QUERY_PARAMS).to_query
+      return "?#{query}" if query
+      ""
+    end
 
     def outbound_email_allowed?
       return unless params[:helpdesk_ticket].present?

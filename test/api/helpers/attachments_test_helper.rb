@@ -29,4 +29,8 @@ module AttachmentsTestHelper
                                                    account_id: @account.id)
     item.save
   end
+
+  def attachment_content_hash(attachment)
+     attachment.attributes.symbolize_keys.except!(:id, :description, :content_updated_at, :attachable_id, :attachable_type, :created_at, :updated_at)
+  end
 end

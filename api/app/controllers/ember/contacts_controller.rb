@@ -287,7 +287,7 @@ module Ember
       end
 
       def constants_class
-        ::Ember::ContactConstants.to_s.freeze
+        :ContactConstants.to_s.freeze
       end
       wrap_parameters(*wrap_params)
   end

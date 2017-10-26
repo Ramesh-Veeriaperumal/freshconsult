@@ -70,6 +70,8 @@ module BulkActionConcern
     end
 
     def async_process?
-      ApiConstants::BULK_ACTION_ASYNC_METHODS.include?(action_name.to_sym)
+      constants_string = "#{constants_class}::BULK_ACTION_ASYNC_METHODS"
+      async_actions = Object.const_defined?(constants_string) ? constants_string.constantize : []
+      async_actions.include?(action_name.to_sym)
     end
 end

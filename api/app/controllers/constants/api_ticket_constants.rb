@@ -19,7 +19,7 @@ module ApiTicketConstants
   EXECUTE_SCENARIO_FIELDS = BULK_EXECUTE_SCENARIO_FIELDS = %w(scenario_id).freeze
   COMPOSE_EMAIL_FIELDS = (CREATE_FIELDS - %w(source product_id responder_id requester_id phone twitter_id facebook_id)).freeze
   SHOW_FIELDS = ['include'].freeze
-  UPDATE_PROPERTIES_FIELDS = %w(due_by responder_id group_id status priority tags skip_close_notification subject description attachment_ids).freeze
+  UPDATE_PROPERTIES_FIELDS = %w(due_by responder_id group_id status priority tags skip_close_notification subject description attachment_ids requester_id company_id).freeze
 
   ALLOWED_INCLUDE_PARAMS = %w(conversations requester company stats survey).freeze
   SIDE_LOADING = %w(requester stats company survey).freeze
@@ -85,8 +85,8 @@ module ApiTicketConstants
   PERMISSION_REQUIRED = [:show, :update, :execute_scenario, :spam, :unspam, :restore, :destroy, :search, :update_properties, :create_child_with_template].freeze
 
   REQUIRE_PRELOAD = [:bulk_delete, :bulk_spam, :bulk_unspam, :bulk_restore].freeze
-  BULK_ACTION_ASYNC_METHODS = [:bulk_execute_scenario, :bulk_update, :delete_forever].freeze
-  BULK_ACTION_METHODS = [:bulk_delete, :bulk_spam, :bulk_restore, :bulk_unspam, :bulk_link] + BULK_ACTION_ASYNC_METHODS
+  BULK_ACTION_ASYNC_METHODS = [:bulk_execute_scenario, :bulk_update, :delete_forever, :bulk_delete, :bulk_spam, :bulk_restore, :bulk_unspam].freeze
+  BULK_ACTION_METHODS = [:bulk_link] + BULK_ACTION_ASYNC_METHODS
 
   LOAD_OBJECT_EXCEPT = (BULK_ACTION_METHODS + [:merge, :empty_trash, :empty_spam]).freeze
 
@@ -105,6 +105,13 @@ module ApiTicketConstants
   DELEGATOR_CLASS = 'TicketDelegator'.freeze
 
   MERGE_PARAMS = [:primary_id, :ticket_ids, :convert_recepients_to_cc, note_in_primary: [:body, :private], note_in_secondary: [:body, :private]].freeze
+
+  BG_WORKER_ACTION_MAPPING = {
+    bulk_delete: :destroy,
+    bulk_restore: :restore,
+    bulk_spam: :spam,
+    bulk_unspam: :unspam
+  }.freeze
 
   PARAMS_TO_REMOVE = [:cc_emails, :description, :parent_id].freeze
   PARAMS_MAPPINGS = { custom_fields: :custom_field, fr_due_by: :frDueBy, type: :ticket_type }.freeze
