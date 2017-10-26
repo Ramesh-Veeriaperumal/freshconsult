@@ -1,98 +1,99 @@
 module Freshcaller
   module AccountMigration
-    def create_freshcaller_account(account_id)
+    def create_freshcaller_account
       response_data = {}
-      Sharding.select_shard_of(account_id) do
-        Sharding.run_on_slave do
-          account = ::Account.find(account_id)
-          if account.present? || account.freshfone_account.present?
-            account.make_current
-            return if account_admin.blank?
-            protocol = Rails.env.development? ? 'http://' : 'https://'
-            signup_params = {
-              signup: {
-                user_name: account_admin.name,
-                user_email: account_admin.email,
-                account_name: account.name,
-                time_zone:  ActiveSupport::TimeZone[account.time_zone].utc_offset,
-                account_domain: "#{FreshcallerConfig['domain_prefix']}#{account.domain}",
-                skip_provider: true,
-                plan_name: 'Standard',
-                subscription_period: 'monthly',
-                api: {
-                  activation_required: false,
-                  account_name: account.name,
-                  account_id: account_id,
-                  freshdesk_calls_url: "#{protocol}#{account.full_domain}/api/channel/freshcaller_calls"
-                }
-              }
-            }
-            Rails.logger.info "Signup params :: #{signup_params.inspect}"
-            response_data = freshcaller_request(signup_params, "#{FreshcallerConfig['signup_domain']}/accounts", :post)
-            response_data.symbolize_keys!
-            Rails.logger.info "Signup Response for Account - #{account_id} :: #{response_data}"
-          end
-        end
-      end
-      ::Account.reset_current_account
+      account = ::Account.current
+      return unless account_admin
+      signup_params = {
+        signup: {
+          user_name: account_admin.name,
+          user_email: account_admin.email,
+          account_name: account.name,
+          time_zone:  ActiveSupport::TimeZone[account.time_zone].utc_offset,
+          account_domain: "#{FreshcallerConfig['domain_prefix']}#{account.domain}",
+          skip_provider: true,
+          plan_name: plan_name,
+          subscription_period: subscription_period,
+          api: {
+            activation_required: false,
+            account_name: account.name,
+            account_id: account.id,
+            app: 'Freshdesk'
+          }
+        }
+      }
+      Rails.logger.info "Signup params :: #{signup_params.inspect}"
+      response_data = freshcaller_request(signup_params, "#{FreshcallerConfig['signup_domain']}/accounts", :post)
+      response_data.symbolize_keys!
+      Rails.logger.info "Signup Response for Account - #{account.id} :: #{response_data}"
       response_data
     end
 
-    def fetch_freshfone_credits(account_id)
+    def fetch_freshfone_credits
       freshfone_credit = {}
-      Sharding.select_shard_of(account_id) do
-        account = ::Account.find(account_id)
-        return unless account.present? || account.freshfone_account.present?
-        credit = account.freshfone_credit
-        recharge_quantity = credit.recharge_quantity == 25 ? 50 : credit.recharge_quantity
-        freshfone_credit = {
-          available_credit: credit.available_credit,
-          auto_recharge: credit.auto_recharge,
-          recharge_quantity: recharge_quantity
-        }
-        credit.update_attributes(available_credit: 0)
-      end
+      account = ::Account.current
+      credit = account.freshfone_credit
+      recharge_quantity = credit.recharge_quantity == 25 ? 50 : credit.recharge_quantity
+      freshfone_credit = {
+        available_credit: credit.available_credit,
+        auto_recharge: credit.auto_recharge,
+        recharge_quantity: recharge_quantity
+      }
+      credit.update_attributes(available_credit: 0)
       File.open("#{account_migration_location}/freshfone_credit.json", 'w') do |f|
         f.write(freshfone_credit.to_json)
       end
-      Rails.logger.info "Credit migration for account :: #{account_id} completed"
-      ::Account.reset_current_account
+      Rails.logger.info "Credit migration for account :: #{account.id} completed"
     end
 
-    def fetch_business_calendars(account_id)
+    def fetch_agent_limits
+      agent_limits = {}
+      account = ::Account.current
+      limit = { agent_limit: account.subscription.agent_limit }
+      File.open("#{account_migration_location}/agent_limit.json", 'w') do |f|
+        f.write(limit.to_json)
+      end
+      Rails.logger.info "Agent limit for account :: #{account.id} completed"
+    end
+
+    def fetch_business_calendars
       business_calendars = []
       duplicates = {}
-      Sharding.select_shard_of(account_id) do
-        Sharding.run_on_slave do
-          account = ::Account.find(account_id)
-          if account.present? && account.business_calendar.present?
-            account.make_current
-            account.business_calendar.each do |business_calendar|
-              business_calendar_name = business_calendar.name.downcase
-              if duplicates[business_calendar_name].nil?
-                duplicates[business_calendar_name] = 0
-              else
-                duplicates[business_calendar_name] += 1
-              end
-
-              calendar_name = duplicates[business_calendar_name] > 1 ? "#{business_calendar.name}_#{duplicates[business_calendar_name] - 1}" : business_calendar.name
-              duplicates[calendar_name] = 1 if duplicates[business_calendar_name] > 1
-              business_calendar_hash = { name: calendar_name,
-                                         business_time_data: business_calendar.business_time_data,
-                                         holiday_data: business_calendar.holiday_data,
-                                         description: business_calendar.description,
-                                         time_zone: business_calendar.time_zone,
-                                         is_default: business_calendar.is_default }
-              business_calendars << business_calendar_hash
-            end
+      account = ::Account.current
+      if account.business_calendar.present?
+        account.business_calendar.each do |business_calendar|
+          business_calendar_name = business_calendar.name.downcase
+          if duplicates[business_calendar_name].nil?
+            duplicates[business_calendar_name] = 0
+          else
+            duplicates[business_calendar_name] += 1
           end
+
+          calendar_name = duplicates[business_calendar_name] > 1 ? "#{business_calendar.name}_#{duplicates[business_calendar_name] - 1}" : business_calendar.name
+          duplicates[calendar_name] = 1 if duplicates[business_calendar_name] > 1
+          business_calendar_hash = { name: calendar_name,
+                                     business_time_data: business_calendar.business_time_data,
+                                     holiday_data: business_calendar.holiday_data,
+                                     description: business_calendar.description,
+                                     time_zone: business_calendar.time_zone,
+                                     is_default: business_calendar.is_default }
+          business_calendars << business_calendar_hash
         end
       end
       File.open("#{account_migration_location}/business_calendars.json", 'w') do |f|
         f.write(business_calendars.to_json)
       end
-      Rails.logger.info "Business calendar migration for account :: #{account_id} completed"
-      ::Account.reset_current_account
+      Rails.logger.info "Business calendar migration for account :: #{account.id} completed"
+    end
+
+    def plan_name
+      return 'Advance' if ::Account.current.subscription.addons.where(name: "Call Center Advanced").present?
+      'Standard'
+    end
+
+    def subscription_period
+      return 'annual' if ::Account.current.subscription.renewal_period == 12
+      'monthly'
     end
   end
 end

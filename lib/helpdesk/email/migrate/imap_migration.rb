@@ -5,11 +5,11 @@ require 'net/imap'
 require 'timeout'
 require 'date'
 
-module Helpdesk::Email
-  class EmailMigration
+module Helpdesk::Email::Migrate
+  class ImapMigration
     attr_accessor :user_name, :password, :notify_email, :server_name, :start_uid, :end_uid, :start_date, :end_date, :from_address, :to_address, 
-                  :subject, :envelope_address, :ssl, :authentication, :folder, :gmail_tags, :tags_name, :uid_list, :custom_status, :uid_array,
-                  :start_time, :end_time, :imap, :enable_outgoing, :skip_notification, :port
+                  :uid_array, :subject, :envelope_address, :port, :ssl, :authentication, :folder, :gmail_tags, :tags_name, :uid_list, 
+                  :custom_status, :skip_notification, :start_time, :end_time, :imap, :enable_outgoing, :raise_error, :account_id, :email_config_id 
 
     MAX_UID = "99999999"
 
@@ -19,9 +19,6 @@ module Helpdesk::Email
       self.ssl ||= true
       self.folder ||= "INBOX"
       self.gmail_tags ||= false
-      self.skip_notification ||= true
-      self.enable_outgoing ||= true
-      retrieve_tags_name
       parse_time
       connect_imap_server
     end
@@ -34,17 +31,8 @@ module Helpdesk::Email
       end
     end
 
-    def retrieve_tags_name
-      if tags_name.present?
-        self.tags_name = tags_name.split(",") if tags_name.is_a? String
-        self.tags_name = tags_name if tags_name.is_a? Array
-      else
-        self.tags_name = []
-      end
-    end
-
     def parse_time
-      mailbox_log "Sample start_time/end_time DD-MMM-YYYY HH-MM-SS +0000"
+      mailbox_log "Sample start_time/end_time DD-MMM-YYYY HH:MM:SS +0000"
       if start_time.present?
         DateTime.strptime(self.start_time, '%d-%b-%Y %H:%M:%S %z')
         self.start_date = start_time[0..10]
@@ -76,27 +64,32 @@ module Helpdesk::Email
         response = convert_emails_to_tickets
       else
         mailbox_log "Provide all mandatory data in a Hash during initialize.  Mandatory : envelope_address, user_name, password, notify_email, 
-                     server_name.  Optional : start_uid, end_uid, start_date, port, ssl, authentication"
+                     account_id, email_config_id, server_name.  Optional : start_uid, end_uid, start_date, port, ssl, authentication"
       end
       response
     end
 
     def mandatory_data_available?
-      (server_name && envelope_address && user_name && password && notify_email)
+      (server_name && envelope_address && user_name && password && notify_email && account_id && email_config_id)
     end
 
     def convert_emails_to_tickets
       start_time = Time.zone.now
 
-      failed_uids = []
-      @latest_uid = nil
+      @mail_fetch_start_time = Time.zone.now
+      @tickets_info = []
+      Helpdesk::Email::Migrate::Mailer.send_mail(notify_email, "Migration started for folder - #{folder}, email address : #{user_name}")
+      fetch_email_through_imap if imap.present?
+      Helpdesk::Email::Migrate::Mailer.send_mail(notify_email, "Migration completed for folder #{folder}. Failed uids - #{@failed_uids.inspect}
+                                                Start_time - #{@mail_fetch_start_time} end_time - #{Time.zone.now}. Processed tickets info #{@tickets_info}")
+    end
 
-      MigrationMailer.send_mail(notify_email, "Migration started for folder - #{folder}, email address : #{user_name}")
-
+    def fetch_email_through_imap
       begin
+        @failed_uids = []
+        @latest_uid = nil
         @uids_processed = []
         thread_ids = []
-        @tickets_info = []
         uids = uids_list
         if imap.nil?
           mailbox_log "Imap connection is not available"
@@ -117,42 +110,35 @@ module Helpdesk::Email
               sleep(5)
               connect_imap_server
             end
-            mail = Mail.new(imap.uid_fetch(uid, 'RFC822').first.attr['RFC822'])
-            args = {:imap=>imap,:uid=>uid,:tags_name=>tags_name,:gmail_tags=>gmail_tags,:envelope_address=>envelope_address,
-                    :custom_status=>custom_status, :skip_notification=>skip_notification,:enable_outgoing=>enable_outgoing}
-            tkt_params = Helpdesk::Email::MigrationMailProcessor.new(args).process_email
-            response = Helpdesk::ProcessEmail.new(tkt_params.with_indifferent_access).perform
-            mailbox_log "Email is been processed successfully, ticket display id : #{response[:display_id]}, ticket id : #{response[:ticket_id]}, note id : #{response[:note_id]} "
-            @uids_processed << uid
-            @tickets_info << "UID-#{uid} DisplayID-#{response[:display_id]} TicketID-#{response[:ticket_id]} NoteID-#{response[:note_id]},            "
+            args = {:imap=>imap,:uid=>uid,:tags_name=>tags_name,:gmail_tags=>gmail_tags,:envelope_address=>envelope_address, :notify_email=>notify_email,
+                    :custom_status=>custom_status, :skip_notification=>skip_notification,:enable_outgoing=>enable_outgoing,:account_id=>account_id, :email_config_id=>email_config_id}
+            response = Helpdesk::Email::Migrate::MailProcessor.new(args).process
+            @uids_processed << uid if uid.present?
+            @tickets_info << "UID-#{uid} DisplayID-#{response[:display_id]} TicketID-#{response[:ticket_id]} NoteID-#{response[:note_id]}, "
           rescue Exception => e
             Rails.logger.debug "#{e}, #{e.backtrace}"
-            mailbox_log "Exceptions occurred during migration #{e}, #{e.backtrace}"
-            MigrationMailer.send_mail(notify_email, "Migration error. UID - #{@latest_uid} Folder - #{folder} ERROR - #{e.class}, #{e.message}, #{e.backtrace}")
-            failed_uids.push uid
+            mailbox_log "Exceptions occurred during migration via imap #{e}, #{e.backtrace}"
+            Helpdesk::Email::Migrate::Mailer.send_mail(notify_email, "Migration error. UID - #{@latest_uid} Folder - #{folder} ERROR - #{e.class}, #{e.message}, #{e.backtrace}")
+            @failed_uids.push uid
             unless imap.disconnected?
               imap.logout
               imap.disconnect
             end
             sleep(60)
+            raise e if raise_error # stop futher processing when error is occured
             connect_imap_server
           end
         end
       rescue Exception => e
         Rails.logger.debug "#{e}, #{e.backtrace}"
         mailbox_log "Exceptions occurred #{e}, #{e.backtrace}"
-        MigrationMailer.send_mail(notify_email, "Migration stopped for folder #{folder}.
-                                                   Latest UID #{@latest_uid} failed_uids - #{failed_uids.inspect}
-                                                   start_time - #{start_time}".squish!)
+        Helpdesk::Email::Migrate::Mailer.send_mail(notify_email, "Migration stopped for folder #{folder}.
+                                                   Latest UID #{@latest_uid} Failed uids - #{@failed_uids.inspect}
+                                                   start_time - #{@mail_fetch_start_time}".squish!)
         return
       ensure
         imap.logout
       end
-      end_time = Time.zone.now
-      MigrationMailer.send_mail(notify_email, "Migration completed for folder #{folder}.
-                                                Failed_uids - #{failed_uids.inspect}
-                                                Start_time - #{start_time} end_time - #{end_time}
-                                                Processed tickets info #{@tickets_info}")
     end
 
     def uids_list
@@ -192,20 +178,8 @@ module Helpdesk::Email
     end
 
     def mailbox_log msg
-      puts "#{Time.now.utc} - #{Thread.current.object_id} - EmailMigration - #{msg} "
-      Rails.logger.info "#{Time.now.utc} - #{Thread.current.object_id} - EmailMigration - #{msg} "
-    end
-  end
-
-  class MigrationMailer < ActionMailer::Base
-    def send_mail(notify_email,text="")
-      headers = {:subject =>       "Mail from console",
-                  :to =>            notify_email,
-                  :from =>          AppConfig['from_email'],
-                  :sent_on =>       Time.now,
-                  :content_type =>  "text/html",
-                  :body =>           text}
-      mail(headers).deliver
+      puts "#{Time.now.utc} - #{Thread.current.object_id} - ImapMigration - #{msg} "
+      Rails.logger.info "#{Time.now.utc} - #{Thread.current.object_id} - ImapMigration - #{msg} "
     end
   end
 end

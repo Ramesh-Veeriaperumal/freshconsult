@@ -19,6 +19,7 @@ module Redis::RedisKeys
 	HELPDESK_ARCHIVE_TICKET_ADJACENTS_META	 	= "HELPDESK_ARCHIVE_TICKET_ADJACENTS_META:%{account_id}:%{user_id}:%{session_id}"
 
 	EMAIL_TICKET_ID = "EMAIL_TICKET_ID:%{account_id}:%{message_id}"
+	MIGRATED_EMAIL_TICKET_ID = "MIGRATED_EMAIL_TICKET_ID:%{account_id}:%{email_config_id}:%{message_id}"
 	PORTAL_PREVIEW = "PORTAL_PREVIEW:%{account_id}:%{user_id}:%{template_id}:%{label}"
 	IS_PREVIEW = "IS_PREVIEW:%{account_id}:%{user_id}:%{portal_id}"
 	PREVIEW_URL = "PREVIEW_URL:%{account_id}:%{user_id}:%{portal_id}"
@@ -349,7 +350,7 @@ module Redis::RedisKeys
 
   BACKGROUND_FIXTURES_ENABLED = "BACKGROUND_FIXTURES_ENABLED"
   BACKGROUND_FIXTURES_STATUS = "BACKGROUND_FIXTURES_STATUS:%{account_id}"
-  TRIAL_SUSPENDED = "TRIAL_SUSPENDED:%{account_id}"
+  ACTIVE_SUSPENDED = "ACTIVE_SUSPENDED:%{account_id}"
   CLEARBIT_NOTIFICATION = "CLEARBIT_NOTIFICATION"
 
   CLAMAV_CONNECTION_ERROR_TIMEOUT = "CLAMAV_CONNECTION_ERROR_TIMEOUT"

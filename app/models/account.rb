@@ -615,23 +615,23 @@ class Account < ActiveRecord::Base
     "email_signup" == self.signup_method.to_s
   end
 
-  def trial_suspended?
-    @trial_suspended ||= begin
-      key = TRIAL_SUSPENDED % {:account_id => self.id}
+  def active_suspended?
+    @active_suspended ||= begin
+      key = ACTIVE_SUSPENDED % {:account_id => self.id}
       get_others_redis_key(key) == true.to_s
     end
   end
 
   def allow_incoming_emails?
-    self.active? || !self.trial_suspended?
+    self.active? || self.active_suspended?
   end
 
   def email_subscription_state
     #If the account is in suspended state the email service will not create the tickets for incoming mails. So, inorder to create the
     #tickets for state which  moved from paid(not trial) to suspended we are sending non_trial_suspended state. The email service will block only
     #if the account state is suspended.
-    return self.subscription.state if (!self.subscription.suspended? || self.trial_suspended?)
-    'non_trial_suspended'
+    return self.subscription.state unless (self.subscription.suspended? && self.active_suspended?)
+    'active_suspended'
   end
 
   protected
