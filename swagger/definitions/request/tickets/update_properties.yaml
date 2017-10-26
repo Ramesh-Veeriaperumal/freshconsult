@@ -7,6 +7,10 @@ properties:
       type: integer
     group_id:
       type: integer
+    company_id:
+      type: integer
+    requester_id:
+      type: integer
     status:
       type: integer
     priority:

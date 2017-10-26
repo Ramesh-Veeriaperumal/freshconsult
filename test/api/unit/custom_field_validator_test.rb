@@ -153,23 +153,31 @@ class CustomFieldValidatorTest < ActionView::TestCase
   class CustomDropdownWithSectionFieldTestValidation < MockTestValidation
     include ActiveModel::Validations
 
-    attr_accessor :attribute7, :attribute8, :closed_status, :allow_string_param, :custom_dropdown_1, :status, :priority
+    attr_accessor :attribute7, :attribute8, :attribute9, :closed_status, :allow_string_param, :status, :priority
 
-    validates :custom_dropdown_1, custom_inclusion: { in: %w(Choice2 Choice3 Choice4) }
-    validates :attribute7, :attribute8, data_type: { rules: Hash, allow_nil: true }, custom_field: { attribute7: {
+    validates :attribute7, :attribute8, :attribute9, data_type: { rules: Hash, allow_nil: true }, custom_field: {
+    attribute7: {
       validatable_custom_fields: proc { CustomFieldValidatorTestHelper.section_field_for_data_type },
       required_based_on_status: proc { |x| x.required_for_closure? },
       required_attribute: :required,
       section_field_mapping: proc { |x| CustomFieldValidatorTestHelper.section_field_parent_field_mapping_for_data_custom_dropdown }
     },
-                                                                                                     attribute8: {
-                                                                                                       validatable_custom_fields: proc { CustomFieldValidatorTestHelper.section_field_for_choices },
-                                                                                                       drop_down_choices: proc { CustomFieldValidatorTestHelper.dropdown_choices_by_field_name },
-                                                                                                       nested_field_choices: proc { CustomFieldValidatorTestHelper.nested_fields_choices_by_name },
-                                                                                                       required_based_on_status: proc { |x| x.required_for_closure? },
-                                                                                                       required_attribute: :required,
-                                                                                                       section_field_mapping: proc { |x| CustomFieldValidatorTestHelper.section_field_custom_dropdown_parent_field_mapping_for_choice }
-                                                                                                     }
+    attribute8: {
+     validatable_custom_fields: proc { CustomFieldValidatorTestHelper.custom_section_field_for_choices },
+     drop_down_choices: proc { CustomFieldValidatorTestHelper.dropdown_choices_by_field_name },
+     nested_field_choices: proc { CustomFieldValidatorTestHelper.nested_fields_choices_by_name },
+     required_based_on_status: proc { |x| x.required_for_closure? },
+     required_attribute: :required,
+     section_field_mapping: proc { |x| CustomFieldValidatorTestHelper.section_field_custom_dropdown_parent_field_mapping_for_choice }
+    },
+    attribute9: {
+     validatable_custom_fields: proc { CustomFieldValidatorTestHelper.custom_section_field_for_choices | CustomFieldValidatorTestHelper.section_field_for_data_type },
+     drop_down_choices: proc { CustomFieldValidatorTestHelper.dropdown_choices_by_field_name },
+     nested_field_choices: proc { CustomFieldValidatorTestHelper.nested_fields_choices_by_name },
+     required_based_on_status: proc { |x| x.required_for_closure? },
+     required_attribute: :required,
+     section_field_mapping: proc { |x| CustomFieldValidatorTestHelper.section_field_parent_field_mapping_for_data_custom_dropdown }
+    }
     }
 
 
@@ -177,6 +185,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
       params.each { |key, value| instance_variable_set("@#{key}", value) }
       check_params_set(params[:attribute7]) if params[:attribute7].is_a?(Hash)
       check_params_set(params[:attribute8]) if params[:attribute8].is_a?(Hash)
+      check_params_set(params[:attribute9]) if params[:attribute9].is_a?(Hash)
       super
     end
 
@@ -222,29 +231,38 @@ class CustomFieldValidatorTest < ActionView::TestCase
   class CustomDropdownWithSectionFieldTestRequiredValidation < MockTestValidation
     include ActiveModel::Validations
 
-    attr_accessor :attribute7, :attribute8, :closed_status, :allow_string_param, :custom_dropdown_1, :status, :priority
+    attr_accessor :attribute7, :attribute8, :attribute9, :closed_status, :allow_string_param, :status, :priority
 
-    validates :custom_dropdown_1, custom_inclusion: { in: %w(Choice2 Choice3 Choice4) }
-    validates :attribute7, :attribute8, data_type: { rules: Hash, allow_nil: true }, custom_field: { attribute7: {
+    validates :attribute7, :attribute8, :attribute9, data_type: { rules: Hash, allow_nil: true }, custom_field: { attribute7: {
       validatable_custom_fields: proc { CustomFieldValidatorTestHelper.section_field_for_data_type_required },
       required_based_on_status: proc { |x| x.required_for_closure? },
       required_attribute: :required,
       section_field_mapping: proc { |x| CustomFieldValidatorTestHelper.section_field_parent_field_mapping_for_data_custom_dropdown }
     },
-                                                                                                     attribute8: {
-                                                                                                       validatable_custom_fields: proc { CustomFieldValidatorTestHelper.section_field_for_choices_required },
-                                                                                                       drop_down_choices: proc { CustomFieldValidatorTestHelper.dropdown_choices_by_field_name },
-                                                                                                       nested_field_choices: proc { CustomFieldValidatorTestHelper.nested_fields_choices_by_name },
-                                                                                                       required_based_on_status: proc { |x| x.required_for_closure? },
-                                                                                                       required_attribute: :required,
-                                                                                                       section_field_mapping: proc { |x| CustomFieldValidatorTestHelper.section_field_custom_dropdown_parent_field_mapping_for_choice }
-                                                                                                     }
+    attribute8: {
+    validatable_custom_fields: proc { CustomFieldValidatorTestHelper.custom_section_field_for_choices_required },
+    drop_down_choices: proc { CustomFieldValidatorTestHelper.dropdown_choices_by_field_name },
+    nested_field_choices: proc { CustomFieldValidatorTestHelper.nested_fields_choices_by_name },
+    required_based_on_status: proc { |x| x.required_for_closure? },
+    required_attribute: :required,
+    section_field_mapping: proc { |x| CustomFieldValidatorTestHelper.section_field_custom_dropdown_parent_field_mapping_for_choice }
+    },
+    attribute9: {
+    validatable_custom_fields: proc { CustomFieldValidatorTestHelper.section_field_for_data_type_required | CustomFieldValidatorTestHelper.custom_section_field_for_choices_required },
+    drop_down_choices: proc { CustomFieldValidatorTestHelper.dropdown_choices_by_field_name },
+    nested_field_choices: proc { CustomFieldValidatorTestHelper.nested_fields_choices_by_name },
+    required_based_on_status: proc { |x| x.required_for_closure? },
+    required_attribute: :required,
+    section_field_mapping: proc { |x| CustomFieldValidatorTestHelper.section_field_parent_field_mapping_for_data_custom_dropdown }
+    }
+
     }
 
     def initialize(params = {})
       params.each { |key, value| instance_variable_set("@#{key}", value) }
       check_params_set(params[:attribute7]) if params[:attribute7].is_a?(Hash)
       check_params_set(params[:attribute8]) if params[:attribute8].is_a?(Hash)
+      check_params_set(params[:attribute9]) if params[:attribute9].is_a?(Hash)
       super
     end
 
@@ -398,13 +416,13 @@ class CustomFieldValidatorTest < ActionView::TestCase
                    country_1: :not_included, date_1: :invalid_date, decimal1_1: :datatype_mismatch,
                    decimal2_1: :datatype_mismatch, decimal3_1: :datatype_mismatch, decimal4_1: :datatype_mismatch,
                    dropdown1_1: :not_included, dropdown2_1: :not_included, dropdown3_1: :not_included,
-                   dropdown4_1: :not_included, first_1: :not_included, multi2_1: :datatype_mismatch,
+                   dropdown4_1: :not_included, custom_dropdown_1: :not_included, first_1: :not_included, multi2_1: :datatype_mismatch,
                    multi3_1: :datatype_mismatch, multi_1: :datatype_mismatch, number1_1: :datatype_mismatch,
                    number2_1: :datatype_mismatch, number3_1: :datatype_mismatch, number4_1: :datatype_mismatch,
                    phone: :datatype_mismatch, phone2_1: :datatype_mismatch, phone_1: :datatype_mismatch,
                    single2_1: :datatype_mismatch, single3_1: :datatype_mismatch, single_1: :datatype_mismatch,
                    url1_1: :invalid_format, url2_1: :invalid_format }, errors)
-    assert_equal({ country_1: { list: '...,Usa,india', code: :missing_field }, first_1: { list: 'category 1,category 2', code: :missing_field }, dropdown1_1: { list: '1st,2nd', code: :missing_field }, dropdown2_1: { list: 'first11,second22,third33,four44', code: :missing_field }, dropdown3_1: { list: 'first,second', code: :missing_field }, dropdown4_1: { list: 'third,fourth', code: :missing_field }, single_1: { expected_data_type: String, code: :missing_field }, single2_1: { expected_data_type: String, code: :missing_field }, single3_1: { expected_data_type: String, code: :missing_field }, check1_1: { expected_data_type: 'Boolean', code: :missing_field }, check2_1: { expected_data_type: 'Boolean', code: :missing_field }, check3_1: { expected_data_type: 'Boolean', code: :missing_field }, decimal1_1: { expected_data_type: :Number, code: :missing_field }, decimal2_1: { expected_data_type: :Number, code: :missing_field }, decimal3_1: { expected_data_type: :Number, code: :missing_field }, decimal4_1: { expected_data_type: :Number, code: :missing_field }, number1_1: { expected_data_type: :Integer, code: :missing_field }, number2_1: { expected_data_type: :Integer, code: :missing_field }, number3_1: { expected_data_type: :Integer, code: :missing_field }, number4_1: { expected_data_type: :Integer, code: :missing_field }, multi_1: { expected_data_type: String, code: :missing_field }, multi2_1: { expected_data_type: String, code: :missing_field }, multi3_1: { expected_data_type: String, code: :missing_field }, phone: { expected_data_type: String, code: :missing_field }, phone_1: { expected_data_type: String, code: :missing_field }, phone2_1: { expected_data_type: String, code: :missing_field }, url1_1: { accepted: 'valid URL', code: :missing_field }, url2_1: { accepted: 'valid URL', code: :missing_field }, date_1: { accepted: :'yyyy-mm-dd', code: :missing_field } }.stringify_keys, test.error_options)
+    assert_equal({ country_1: { list: '...,Usa,india', code: :missing_field }, first_1: { list: 'category 1,category 2', code: :missing_field }, dropdown1_1: { list: '1st,2nd', code: :missing_field }, dropdown2_1: { list: 'first11,second22,third33,four44', code: :missing_field }, dropdown3_1: { list: 'first,second', code: :missing_field }, dropdown4_1: { list: 'third,fourth', code: :missing_field }, custom_dropdown_1: { :list=>"Choice2,Choice3,Choice4", :code=>:missing_field }, single_1: { expected_data_type: String, code: :missing_field }, single2_1: { expected_data_type: String, code: :missing_field }, single3_1: { expected_data_type: String, code: :missing_field }, check1_1: { expected_data_type: 'Boolean', code: :missing_field }, check2_1: { expected_data_type: 'Boolean', code: :missing_field }, check3_1: { expected_data_type: 'Boolean', code: :missing_field }, decimal1_1: { expected_data_type: :Number, code: :missing_field }, decimal2_1: { expected_data_type: :Number, code: :missing_field }, decimal3_1: { expected_data_type: :Number, code: :missing_field }, decimal4_1: { expected_data_type: :Number, code: :missing_field }, number1_1: { expected_data_type: :Integer, code: :missing_field }, number2_1: { expected_data_type: :Integer, code: :missing_field }, number3_1: { expected_data_type: :Integer, code: :missing_field }, number4_1: { expected_data_type: :Integer, code: :missing_field }, multi_1: { expected_data_type: String, code: :missing_field }, multi2_1: { expected_data_type: String, code: :missing_field }, multi3_1: { expected_data_type: String, code: :missing_field }, phone: { expected_data_type: String, code: :missing_field }, phone_1: { expected_data_type: String, code: :missing_field }, phone2_1: { expected_data_type: String, code: :missing_field }, url1_1: { accepted: 'valid URL', code: :missing_field }, url2_1: { accepted: 'valid URL', code: :missing_field }, date_1: { accepted: :'yyyy-mm-dd', code: :missing_field } }.stringify_keys, test.error_options)
   end
 
   def test_nested_fields_without_required_closure_fields
@@ -415,13 +433,13 @@ class CustomFieldValidatorTest < ActionView::TestCase
                    country_1: :not_included, date_1: :invalid_date, decimal1_1: :datatype_mismatch,
                    decimal2_1: :datatype_mismatch, decimal3_1: :datatype_mismatch, decimal4_1: :datatype_mismatch,
                    dropdown1_1: :not_included, dropdown2_1: :not_included, dropdown3_1: :not_included,
-                   dropdown4_1: :not_included, first_1: :not_included, multi2_1: :datatype_mismatch,
+                   dropdown4_1: :not_included, custom_dropdown_1: :not_included, first_1: :not_included, multi2_1: :datatype_mismatch,
                    multi3_1: :datatype_mismatch, multi_1: :datatype_mismatch, number1_1: :datatype_mismatch,
                    number2_1: :datatype_mismatch, number3_1: :datatype_mismatch, number4_1: :datatype_mismatch,
                    phone: :datatype_mismatch, phone2_1: :datatype_mismatch, phone_1: :datatype_mismatch,
                    single2_1: :datatype_mismatch, single3_1: :datatype_mismatch, single_1: :datatype_mismatch,
                    url1_1: :invalid_format, url2_1: :invalid_format }, errors)
-    assert_equal({ country_1: { list: '...,Usa,india', code: :missing_field }, first_1: { list: 'category 1,category 2', code: :missing_field }, dropdown1_1: { list: '1st,2nd', code: :missing_field }, dropdown2_1: { list: 'first11,second22,third33,four44', code: :missing_field }, dropdown3_1: { list: 'first,second', code: :missing_field }, dropdown4_1: { list: 'third,fourth', code: :missing_field }, single_1: { expected_data_type: String, code: :missing_field }, single2_1: { expected_data_type: String, code: :missing_field }, single3_1: { expected_data_type: String, code: :missing_field }, check1_1: { expected_data_type: 'Boolean', code: :missing_field }, check2_1: { expected_data_type: 'Boolean', code: :missing_field }, check3_1: { expected_data_type: 'Boolean', code: :missing_field }, decimal1_1: { expected_data_type: :Number, code: :missing_field }, decimal2_1: { expected_data_type: :Number, code: :missing_field }, decimal3_1: { expected_data_type: :Number, code: :missing_field }, decimal4_1: { expected_data_type: :Number, code: :missing_field }, number1_1: { expected_data_type: :Integer, code: :missing_field }, number2_1: { expected_data_type: :Integer, code: :missing_field }, number3_1: { expected_data_type: :Integer, code: :missing_field }, number4_1: { expected_data_type: :Integer, code: :missing_field }, multi_1: { expected_data_type: String, code: :missing_field }, multi2_1: { expected_data_type: String, code: :missing_field }, multi3_1: { expected_data_type: String, code: :missing_field }, phone: { expected_data_type: String, code: :missing_field }, phone_1: { expected_data_type: String, code: :missing_field }, phone2_1: { expected_data_type: String, code: :missing_field }, url1_1: { accepted: 'valid URL', code: :missing_field }, url2_1: { accepted: 'valid URL', code: :missing_field }, date_1: { accepted: :'yyyy-mm-dd', code: :missing_field } }.stringify_keys, test.error_options)
+    assert_equal({ country_1: { list: '...,Usa,india', code: :missing_field }, first_1: { list: 'category 1,category 2', code: :missing_field }, dropdown1_1: { list: '1st,2nd', code: :missing_field }, dropdown2_1: { list: 'first11,second22,third33,four44', code: :missing_field }, dropdown3_1: { list: 'first,second', code: :missing_field }, dropdown4_1: { list: 'third,fourth', code: :missing_field }, custom_dropdown_1: { :list=>"Choice2,Choice3,Choice4", :code=>:missing_field },single_1: { expected_data_type: String, code: :missing_field }, single2_1: { expected_data_type: String, code: :missing_field }, single3_1: { expected_data_type: String, code: :missing_field }, check1_1: { expected_data_type: 'Boolean', code: :missing_field }, check2_1: { expected_data_type: 'Boolean', code: :missing_field }, check3_1: { expected_data_type: 'Boolean', code: :missing_field }, decimal1_1: { expected_data_type: :Number, code: :missing_field }, decimal2_1: { expected_data_type: :Number, code: :missing_field }, decimal3_1: { expected_data_type: :Number, code: :missing_field }, decimal4_1: { expected_data_type: :Number, code: :missing_field }, number1_1: { expected_data_type: :Integer, code: :missing_field }, number2_1: { expected_data_type: :Integer, code: :missing_field }, number3_1: { expected_data_type: :Integer, code: :missing_field }, number4_1: { expected_data_type: :Integer, code: :missing_field }, multi_1: { expected_data_type: String, code: :missing_field }, multi2_1: { expected_data_type: String, code: :missing_field }, multi3_1: { expected_data_type: String, code: :missing_field }, phone: { expected_data_type: String, code: :missing_field }, phone_1: { expected_data_type: String, code: :missing_field }, phone2_1: { expected_data_type: String, code: :missing_field }, url1_1: { accepted: 'valid URL', code: :missing_field }, url2_1: { accepted: 'valid URL', code: :missing_field }, date_1: { accepted: :'yyyy-mm-dd', code: :missing_field } }.stringify_keys, test.error_options)
   end
 
   def test_nested_fields_with_changed_child_value
@@ -447,7 +465,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     account = mock
     account.stubs(:id).returns(1)
     Account.stubs(:current).returns(account)
-    test = CustomDropdownWithSectionFieldTestValidation.new(custom_dropdown_1: 'Choice4', status: 3, priority: 4, attribute7: { 'single_1' => 'jkj', 'check1_1' => false, 'check2_1' => true, 'date_1' => Time.now.zone.to_s, 'number1_1' => 23, 'decimal2_1' => '12.4' })
+    test = CustomDropdownWithSectionFieldTestValidation.new(status: 3, priority: 4, attribute7: { 'custom_dropdown_1' => 'Choice4', 'single_1' => 'jkj', 'check1_1' => false, 'check2_1' => true, 'date_1' => Time.now.zone.to_s, 'number1_1' => 23, 'decimal2_1' => '12.4' })
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ single_1: :section_field_absence_check_error, check1_1: :section_field_absence_check_error, check2_1: :section_field_absence_check_error, date_1: :section_field_absence_check_error, number1_1: :section_field_absence_check_error, decimal2_1: :section_field_absence_check_error }.sort.to_h, errors.sort.to_h)
@@ -461,7 +479,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
   end
 
   def test_section_field_with_custom_dropdown_parent_validation_for_choices_absence_error
-    test = CustomDropdownWithSectionFieldTestValidation.new(custom_dropdown_1: 'Choice4', status: 3, priority: 4, attribute8: { 'dropdown1_1' => 'ewee', 'first_1' => 'fsdfsdf', 'country_1' => 'ewrewtrwer' })
+    test = CustomDropdownWithSectionFieldTestValidation.new(status: 3, priority: 4, attribute8: { 'custom_dropdown_1' => 'Choice4', 'dropdown1_1' => 'ewee', 'first_1' => 'fsdfsdf', 'country_1' => 'ewrewtrwer' })
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ dropdown1_1: :section_field_absence_check_error, first_1: :section_field_absence_check_error, country_1: :section_field_absence_check_error }.sort.to_h, errors.sort.to_h)
@@ -475,21 +493,21 @@ class CustomFieldValidatorTest < ActionView::TestCase
   end
 
   def test_section_field_with_custom_dropdown_parent_validation_for_choices_required
-    test = CustomDropdownWithSectionFieldTestRequiredValidation.new(custom_dropdown_1: 'Choice3', status: 2, priority: 3, attribute7: { 'single_1' => 'jkj', 'check1_1' => true, 'check2_1' => false, 'date_1' => '2011-09-12', 'phone' => '35345346dgdf', 'multi2_1' => 'efsdff' })
+    test = CustomDropdownWithSectionFieldTestRequiredValidation.new(status: 2, priority: 3, attribute8: { 'custom_dropdown_1' => 'Choice3', 'single_1' => 'jkj', 'check1_1' => true, 'check2_1' => false, 'date_1' => '2011-09-12', 'phone' => '35345346dgdf', 'multi2_1' => 'efsdff' })
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ dropdown1_1: :not_included, first_1: :not_included, country_1: :not_included }.sort.to_h, errors.sort.to_h)
   end
 
   def test_section_field_with_ticket_type_parent_validation_for_data_type_required
-    test = SectionFieldTestRequiredValidation.new(ticket_type: 'Question', status: 2, priority: 3, attribute2: { 'dropdown1_1' => '1st', 'first_1' => 'category 1', 'country_1' => 'Usa' })
+    test = SectionFieldTestRequiredValidation.new(ticket_type: 'Question', status: 2, priority: 3, attribute2: { 'custom_dropdown_1' => 'Choice3', 'dropdown1_1' => '1st', 'first_1' => 'category 1', 'country_1' => 'Usa' })
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ single_1: :datatype_mismatch, check1_1: :datatype_mismatch, check2_1: :datatype_mismatch, date_1: :invalid_date, phone: :datatype_mismatch, multi2_1: :datatype_mismatch }.sort.to_h, errors.sort.to_h)
   end
 
   def test_section_field_with_custom_dropdown_parent_validation_for_data_type_required
-    test = CustomDropdownWithSectionFieldTestRequiredValidation.new(custom_dropdown_1: 'Choice3', status: 2, priority: 3, attribute8: { 'dropdown1_1' => '1st', 'first_1' => 'category 1', 'country_1' => 'Usa' })
+    test = CustomDropdownWithSectionFieldTestRequiredValidation.new(status: 2, priority: 3, attribute9: { 'custom_dropdown_1' => 'Choice3', 'dropdown1_1' => '1st', 'first_1' => 'category 1', 'country_1' => 'Usa' })
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ single_1: :datatype_mismatch, check1_1: :datatype_mismatch, check2_1: :datatype_mismatch, date_1: :invalid_date}.sort.to_h, errors.sort.to_h)
@@ -509,7 +527,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     account = mock
     account.stubs(:id).returns(1)
     Account.stubs(:current).returns(account)
-    test = CustomDropdownWithSectionFieldTestValidation.new(custom_dropdown_1: 'Choice3', status: 2, priority: 3, attribute7: { 'single_1' => 12, 'check1_1' => 'true', 'date_1' => 'sdd'})
+    test = CustomDropdownWithSectionFieldTestValidation.new(status: 2, priority: 3, attribute9: { 'custom_dropdown_1' => 'Choice3', 'single_1' => 12, 'check1_1' => 'true', 'date_1' => 'sdd' })
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ single_1: :datatype_mismatch, check1_1: :datatype_mismatch, date_1: :invalid_date}.sort.to_h, errors.sort.to_h)
@@ -523,7 +541,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
   end
 
   def test_section_field_with_custom_dropdown_parent_validation_for_choices_invalid
-    test = CustomDropdownWithSectionFieldTestValidation.new(custom_dropdown_1: 'Choice3', status: 2, priority: 3, attribute8: { 'dropdown1_1' => 'ewee', 'first_1' => 'fsdfsdf', 'country_1' => 'ewrewtrwer' })
+    test = CustomDropdownWithSectionFieldTestValidation.new(status: 2, priority: 3, attribute8: { 'custom_dropdown_1' => 'Choice3', 'dropdown1_1' => 'ewee', 'first_1' => 'fsdfsdf', 'country_1' => 'ewrewtrwer' })
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ dropdown1_1: :not_included, first_1: :not_included, country_1: :not_included }.sort.to_h, errors.sort.to_h)
@@ -543,7 +561,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     account = mock
     account.stubs(:id).returns(1)
     Account.stubs(:current).returns(account)
-    test = CustomDropdownWithSectionFieldTestValidation.new('custom_dropdown_1' => 'Option1', attribute7: { 'single_1' => 'jkj', 'check1_1' => true, 'check2_1' => false, 'date_1' => Time.now.zone.to_s, 'url1_1' => 'gh', 'phone' => 'dasfdf', 'multi2_1' => 'efsdff', 'number1_1' => 23, 'decimal2_1' => '12.4' })
+    test = CustomDropdownWithSectionFieldTestValidation.new(attribute9: { 'custom_dropdown_1' => 'Option1', 'single_1' => 'jkj', 'check1_1' => 'adga', 'check2_1' => false, 'date_1' => Time.now.zone.to_s, 'url1_1' => 'gh', 'phone' => 'dasfdf', 'multi2_1' => 'efsdff', 'number1_1' => 23, 'decimal2_1' => '12.4' })
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ custom_dropdown_1: :not_included }.sort.to_h, errors.sort.to_h)
@@ -557,10 +575,14 @@ class CustomFieldValidatorTest < ActionView::TestCase
   end
 
   def test_section_field_with_custom_dropdown_parent_validation_for_choices_invalid_with_parent_invalid
-    test = CustomDropdownWithSectionFieldTestValidation.new('custom_dropdown_1' => 'Option1', attribute2: { 'dropdown1_1' => 'ewee', 'first_1' => 'fsdfsdf', 'country_1' => 'ewrewtrwer' })
+    test = CustomDropdownWithSectionFieldTestValidation.new(attribute8: { 'custom_dropdown_1' => 'Option1', 'dropdown1_1' => 'ewee', 'first_1' => 'fsdfsdf', 'country_1' => 'ewrewtrwer' })
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ custom_dropdown_1: :not_included }.sort.to_h, errors.sort.to_h)
+    assert_equal({ 
+    :country_1=>:section_field_absence_check_error,
+    :custom_dropdown_1=>:not_included,
+    :dropdown1_1=>:section_field_absence_check_error,
+    :first_1=>:section_field_absence_check_error }.sort.to_h, errors.sort.to_h)
   end
 
   def test_section_field_with_ticket_type_parent_validation_for_choices_required_with_parent_invalid
@@ -571,21 +593,21 @@ class CustomFieldValidatorTest < ActionView::TestCase
   end
 
   def test_section_field_with_custom_dropdown_parent_validation_for_choices_required_with_parent_invalid
-    test = CustomDropdownWithSectionFieldTestRequiredValidation.new('custom_dropdown_1' => 'Option1', attribute7: { 'single_1' => 'jkj', 'check1_1' => true, 'check2_1' => false, 'date_1' => '2011-09-12',})
+    test = CustomDropdownWithSectionFieldTestRequiredValidation.new(attribute8: { 'custom_dropdown_1' => 'Option1', 'single_1' => 'jkj', 'check1_1' => true, 'check2_1' => false, 'date_1' => '2011-09-12' })
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ custom_dropdown_1: :not_included }.sort.to_h, errors.sort.to_h)
   end
 
   def test_section_field_with_ticket_type_parent_validation_for_data_type_required_with_parent_invalid
-    test = SectionFieldTestRequiredValidation.new('ticket_type' => 'QuestionType', attribute2: { 'dropdown1_1' => '1st', 'first_1' => 'category 1', 'country_1' => 'Usa' })
+    test = SectionFieldTestRequiredValidation.new('ticket_type' => 'QuestionType', attribute2: { 'custom_dropdown_1' => 'Choice3', 'dropdown1_1' => '1st', 'first_1' => 'category 1', 'country_1' => 'Usa' })
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ ticket_type: :not_included }.sort.to_h, errors.sort.to_h)
   end
 
   def test_section_field_with_custom_dropdown_parent_validation_for_data_type_required_with_parent_invalid
-    test = CustomDropdownWithSectionFieldTestRequiredValidation.new('custom_dropdown_1' => 'Option1', attribute8: { 'dropdown1_1' => '1st', 'first_1' => 'category 1', 'country_1' => 'Usa' })
+    test = CustomDropdownWithSectionFieldTestRequiredValidation.new(attribute9: { 'custom_dropdown_1' => 'Option1', 'dropdown1_1' => '1st', 'first_1' => 'category 1', 'country_1' => 'Usa' })
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ custom_dropdown_1: :not_included }.sort.to_h, errors.sort.to_h)

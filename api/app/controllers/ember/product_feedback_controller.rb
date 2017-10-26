@@ -20,15 +20,14 @@ class Ember::ProductFeedbackController < ApiApplicationController
 
     def request_payload
       description = simple_format(params[cname][:description]) + '<br><br>'.html_safe + account_details.html_safe
-      tags = params[cname][:tags] || ['falcon_feedback']
       {
         email: current_user.email,
-        subject: params[cname][:subject] || "Falcon feedback from #{current_user.name}(#{current_user.email})",
+        subject: params[cname][:subject] || "Feedback from #{current_user.name}(#{current_user.email})",
         status: Helpdesk::Ticketfields::TicketStatus::OPEN,
         priority: PRIORITY_KEYS_BY_TOKEN[:low],
         description: description,
         source: SOURCE_KEYS_BY_TOKEN[:feedback_widget],
-        tags: [*tags, current_account.id.to_s],
+        tags: params[cname][:tags],
         attachment_ids: params[cname][:attachment_ids]
       }
     end

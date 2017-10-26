@@ -142,7 +142,7 @@ module ConversationsTestHelper
       template: expected_output[:template],
       signature: expected_output[:signature],
       quoted_text: expected_output[:quoted_text] || String,
-      bcc_emails: Array
+      bcc_emails: expected_output[:bcc_emails] || Array
     }
   end
 

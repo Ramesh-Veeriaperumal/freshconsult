@@ -3,16 +3,10 @@ class FreshcallerProxyController < ApplicationController
 
   skip_before_filter :check_privilege, :verify_authenticity_token
   before_filter :authenticated_agent_check
-
-  HTTP_METHOD_TO_CLASS_MAPPING = {
-  :get => Net::HTTP::Get,
-  :post => Net::HTTP::Post,
-  :put => Net::HTTP::Put,
-  :delete => Net::HTTP::Delete,
-  :patch => Net::HTTP::Patch
-  }
+  before_filter :check_freshcaller_account, :validate_params
 
   REQUEST_TIMEOUT = 10 #in seconds
+  REQUIRED_PARAMS = [:method, :rest_url, :params].freeze
 
   def fetch
     httpRequestProxy = HttpRequestProxy.new
@@ -22,7 +16,7 @@ class FreshcallerProxyController < ApplicationController
 
   def fetch_response(params)
     domain = current_account.freshcaller_account.domain #nrok.io:port
-    response_code = 200
+    response_code = Rack::Utils::SYMBOL_TO_STATUS_CODE[:ok]
     content_type = "application/json"
     accept_type = "application/json"
     response_type = "application/json"
@@ -43,8 +37,7 @@ class FreshcallerProxyController < ApplicationController
         #   options[:http_proxyaddr] = Integrations::PROXY_SERVER["host"]
         #   options[:http_proxyport] = Integrations::PROXY_SERVER["port"]
         # end
-        net_http_method = HTTP_METHOD_TO_CLASS_MAPPING[method.to_sym]
-        proxy_request   = HTTParty::Request.new(net_http_method, remote_url, options)
+        proxy_request = HTTParty::Request.new("Net::HTTP::#{params[:method].to_s.titleize}".constantize, remote_url, options)
         Rails.logger.debug "Sending request: #{proxy_request.inspect}"
         proxy_response = proxy_request.perform
         # Rails.logger.debug "Response Body: #{proxy_response.body}"
@@ -57,16 +50,16 @@ class FreshcallerProxyController < ApplicationController
       rescue Timeout::Error
         Rails.logger.error("Timeout trying to complete the request. \n#{params.inspect}")
         response_body = '{"result":"timeout"}'
-        response_code = 504  # Timeout
+        response_code = Rack::Utils::SYMBOL_TO_STATUS_CODE[:gateway_timeout]
       rescue => e
         Rails.logger.error("Error during #{method.to_s}ing #{remote_url.to_s}. \n#{e.message}\n#{e.backtrace.join("\n")}")  # TODO make sure any password/apikey sent in the url is not printed here.
         response_body = '{"result":"error"}'
-        response_code = 502  # Bad Gateway
+        response_code = Rack::Utils::SYMBOL_TO_STATUS_CODE[:bad_gateway]  # Bad Gateway
       end
     rescue => e
       Rails.logger.error("Error while processing proxy request #{params.inspect}. \n#{e.message}\n#{e.backtrace.join("\n")}")  # TODO make sure any password/apikey sent in the url is not printed here.
       response_body = '{"result":"error"}'
-      response_code = 500  # Internal server errorx
+      response_code = Rack::Utils::SYMBOL_TO_STATUS_CODE[:internal_server_error]
       NewRelic::Agent.notice_error(e)
     end
     response_type = accept_type if response_type.blank?
@@ -84,6 +77,18 @@ class FreshcallerProxyController < ApplicationController
   
   private
     def authenticated_agent_check
-      render :status => 401 if current_user.blank? || !current_user.agent?
+      render :status => Rack::Utils::SYMBOL_TO_STATUS_CODE[:unauthorized] if current_user.blank? || !current_user.agent?
+    end
+
+    def validate_params
+      render :json => {error: "missing parameters" }, :status => Rack::Utils::SYMBOL_TO_STATUS_CODE[:bad_request] unless params_present?
+    end
+
+    def check_freshcaller_account
+      render :json => {error: "No Freshcaller account exists" }, :status => Rack::Utils::SYMBOL_TO_STATUS_CODE[:bad_request] unless current_account.freshcaller_account.present?
+    end
+
+    def params_present?
+      REQUIRED_PARAMS.all? {|each_param| params.include?(each_param)}
     end
 end

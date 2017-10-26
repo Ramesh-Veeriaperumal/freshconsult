@@ -32,7 +32,6 @@ module Ember
 
     def create
       assign_note_attributes
-      delegator_hash = { attachment_ids: @attachment_ids, shared_attachments: shared_attachments }
       return unless validate_delegator(@item, delegator_hash)
       is_success = save_note
       render_response(is_success)
@@ -41,7 +40,6 @@ module Ember
     def reply
       return unless validate_params
       sanitize_and_build
-      delegator_hash = { attachment_ids: @attachment_ids, shared_attachments: shared_attachments }
       return unless validate_delegator(@item, delegator_hash)
       save_note_and_respond
     end
@@ -49,7 +47,6 @@ module Ember
     def reply_to_forward
       return unless validate_params
       sanitize_and_build
-      delegator_hash = { attachment_ids: @attachment_ids, shared_attachments: shared_attachments }
       return unless validate_delegator(@item, delegator_hash)
       save_note_and_respond
     end
@@ -57,9 +54,7 @@ module Ember
     def forward
       return unless validate_params
       sanitize_and_build
-      delegator_hash = { parent_attachments: parent_attachments, shared_attachments: shared_attachments,
-                         attachment_ids: @attachment_ids, cloud_file_ids: @cloud_file_ids }
-      return unless validate_delegator(@item, delegator_hash)
+      return unless validate_delegator(@item, delegator_hash.merge(cloud_file_ids: @cloud_file_ids))
       save_note_and_respond
     end
 
@@ -227,7 +222,7 @@ module Ember
         @item.to_emails = params[cname][:to_emails] if reply_to_forward?
         @item.notable = @ticket # assign notable instead of id as the object is already loaded.
         @item.notable.account = current_account
-        load_normal_attachments if forward?
+        load_normal_attachments
         build_normal_attachments(@item, cname_params[:attachments])
         build_shared_attachments(@item, shared_attachments)
         build_cloud_files(@item, @cloud_files)
@@ -357,6 +352,10 @@ module Ember
 
       def constants_class
         :ConversationConstants.to_s.freeze
+      end
+
+      def delegator_hash
+        { parent_attachments: parent_attachments, attachment_ids: @attachment_ids, shared_attachments: shared_attachments }
       end
 
       def ember_redirect?

@@ -8,7 +8,7 @@ printMsg(){
   echo "----------------------------"
 }
 
-jiraIssuePattern="(FDCORE|FRESHPIPE|FRESHCALL|TH)-(\\d+)"
+jiraIssuePattern="(FDCORE|FRESHPIPE|FRESHCALL|TH|FD)-(\\d+)"
 commitMsgFile=$1
 
 if [ -f ~/.jira_auth ]; then
