@@ -201,7 +201,7 @@ class Portal < ActiveRecord::Base
   end
 
   def cname_verification_hash
-    @verification_hash ||= OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('MD5'),
+    @cname_verification_hash ||= OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('MD5'),
                               "#{VERIFICATION_HASH_SECRET}-%{#{Account.current.id}}",
                                 %{#{Account.current.id}})
   end
@@ -366,8 +366,8 @@ class Portal < ActiveRecord::Base
     def cname_owner
       return if portal_url.blank? || Account.current.launched?(:skip_portal_cname_chk)
       cname_validator = CustomDomain::CnameValidator.new(portal_url, domains_for_account, cname_verification_hash)
-      error = cname_validator.mapping_error
-      errors.add(:base, I18n.t(error)) if error
+      errors.add(:base, I18n.t('flash.portal.update.invalid_cname')) unless cname_validator.cname_mapping?
+      errors.add(:base, I18n.t('flash.portal.update.invalid_hash_mapping')) unless cname_validator.txt_mapping?
     end
     
     def domains_for_account

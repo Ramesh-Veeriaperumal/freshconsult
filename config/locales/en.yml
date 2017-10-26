@@ -2549,7 +2549,7 @@ en:
         success: "Portal has been updated"
         failure: "Portal could not be updated"
         invalid_cname: "Invalid Portal URL: CNAME mapping is missing or invalid. Please check CNAME DNS record in your DNS Zone file."
-        invalid_hash_mapping: "The validation record is missing in your DNS.Please check TXT DNS record in your DNS Zone file."
+        invalid_hash_mapping: "The validation record is missing in your DNS. Please check TXT DNS record in your DNS Zone file."
       destroy:
         success: "Portal of '%{product_name}' has been disabled"
         failure: "Main portal can not be disabled"

@@ -11,24 +11,19 @@ module CustomDomain
       @verification_hash = verification_hash
     end
 
-    def mapping_error
-      return 'flash.portal.update.invalid_cname' unless cname_mapping_present
-      return 'flash.portal.update.invalid_hash_mapping' unless hash_mapping_present
+    def cname_mapping?
+      dns_response = retrieve_dns_records(@domain, Types.CNAME)
+      return false unless dns_response.present?
+      dns_response.any? { |dns_rec| @valid_fd_domains.include?(dns_rec.cname.to_s.chomp('.')) }
+    end
+
+    def txt_mapping?
+      dns_response = retrieve_dns_records(FDKEY_PREFIX + @domain, Types.TXT)
+      return false unless dns_response.present?
+      dns_response.any? { |dns_rec| dns_rec.rdata.to_s.include?(@verification_hash) }
     end
 
     private
-
-      def cname_mapping_present()
-        dns_response = retrieve_dns_records(@domain, Types.CNAME)
-        return false unless dns_response.present?
-        dns_response.any? { |dns_rec| @valid_fd_domains.include?(dns_rec.cname.to_s.chomp('.')) }
-      end
-
-      def hash_mapping_present
-        dns_response = retrieve_dns_records(FDKEY_PREFIX + @domain, Types.TXT)
-        return false unless dns_response.present?
-        dns_response.any? { |dns_rec| dns_rec.rdata.to_s.include?(@verification_hash) }
-      end
 
       def retrieve_dns_records(domain, type)
         dns = Dnsruby::Resolver.new(do_caching: false, query_timeout: DNS_QUERY_TIMEOUT_SECS)
