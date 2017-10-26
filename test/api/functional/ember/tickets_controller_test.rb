@@ -618,6 +618,28 @@ module Ember
       clear_field_options
     end
 
+    def test_create_with_section_fields_with_parent_custom_dropdown_and_child_dependent
+      dropdown_value = CUSTOM_FIELDS_CHOICES.sample
+      sections = [
+        {
+          title: 'section1',
+          value_mappingvalue_mapping: [dropdown_value],
+          ticket_fields: ['dependent']
+        }
+      ]
+      cust_dropdown_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+      create_section_fields(cust_dropdown_field.id, sections, false)
+      params = ticket_params_hash.merge(custom_fields: { test_custom_dropdown: dropdown_value }, description: '<b>test</b>')
+      ['paragraph'].each do |custom_field|
+        params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+      end
+      post :create, construct_params({ version: 'private' }, params)
+      match_json(ticket_show_pattern(Helpdesk::Ticket.last))
+      assert_response 201
+    ensure
+      clear_field_options
+    end
+
     def test_execute_scenario_without_params
       scenario_id = create_scn_automation_rule(scenario_automation_params).id
       ticket_id = create_ticket(ticket_params_hash).display_id
@@ -1641,6 +1663,32 @@ module Ember
       create_section_fields(dd_field_id, sections)
       t = create_ticket
       params = { custom_fields: { section_custom_dropdown: 'Choice 3' } }
+      ['paragraph'].each do |custom_field|
+        params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+      end
+      params_hash = update_ticket_params_hash.merge(params)
+      put :update, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      t = Helpdesk::Ticket.last
+      match_json(ticket_show_pattern(t))
+      assert_response 200
+    ensure
+      clear_field_options
+    end
+
+    def test_update_with_section_fields_parent_custom_dropdown_and_child_dependent
+      dropdown_value = CUSTOM_FIELDS_CHOICES.sample
+      sections = [
+        {
+          title: 'section1',
+          value_mappingvalue_mapping: [dropdown_value],
+          ticket_fields: ['dependent']
+        }
+      ]
+      cust_dropdown_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+      create_section_fields(cust_dropdown_field.id, sections, false)
+     
+      t = create_ticket
+      params = { custom_fields: { test_custom_dropdown: dropdown_value } }
       ['paragraph'].each do |custom_field|
         params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
       end

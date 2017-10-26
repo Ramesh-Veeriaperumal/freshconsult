@@ -56,7 +56,14 @@ module TicketFieldsTestHelper
     sections.each do |section|
       sections_fields = section[:ticket_fields].each_with_object([]) do |field, array|
         pos = 0
-        ticket_field = field == 'dropdown' ? create_custom_field_dropdown('test_custom_dropdown', Faker::Lorem.words(5), required, required_for_closure) : create_custom_field(field, field, required, required_for_closure)
+        ticket_field = case field
+        when 'dropdown'
+          create_custom_field_dropdown('test_custom_dropdown', Faker::Lorem.words(5), required, required_for_closure)
+        when 'dependent'
+          create_dependent_custom_field(['test_custom_dependent_one',  'test_custom_dependent_two', 'test_custom_dependent_three'], 2)
+        else
+          create_custom_field(field, field, required, required_for_closure)
+        end
         ticket_field.update_attributes(field_options: { section: true })
         array << { ticket_field_id: ticket_field.id, parent_ticket_field_id: parent_ticket_field_id, position: (pos + 1) }
       end
@@ -164,7 +171,7 @@ module TicketFieldsTestHelper
     parent_custom_field
   end
 
-  def create_dependent_custom_field(labels)
+  def create_dependent_custom_field(labels, id = nil)
     flexifield_def_entry = []
     # ffs_07, ffs_08 and ffs_09 are created here
     ticket_field_exists = @account.ticket_fields.find_by_name("#{labels[0].downcase}_#{@account.id}")
@@ -173,7 +180,7 @@ module TicketFieldsTestHelper
     flexifield_def_entry[0] = FactoryGirl.build(:flexifield_def_entry,
                                                 flexifield_def_id: @account.flexi_field_defs.find_by_name("Ticket_#{@account.id}").id,
                                                 flexifield_alias: "#{labels[0].downcase}_#{@account.id}",
-                                                flexifield_name: "ffs_0#{0 + 7}",
+                                                flexifield_name: "ffs_0#{id || 7}",
                                                 flexifield_order: 6,
                                                 flexifield_coltype: 'dropdown',
                                                 account_id: @account.id)
@@ -192,7 +199,7 @@ module TicketFieldsTestHelper
       flexifield_def_entry[nested_field_id] = FactoryGirl.build(:flexifield_def_entry,
                                                                 flexifield_def_id: @account.flexi_field_defs.find_by_name("Ticket_#{@account.id}").id,
                                                                 flexifield_alias: "#{labels[nested_field_id].downcase}_#{@account.id}",
-                                                                flexifield_name: "ffs_0#{nested_field_id + 7}",
+                                                                flexifield_name: "ffs_0#{nested_field_id + (id || 7)}",
                                                                 flexifield_order: 6,
                                                                 flexifield_coltype: 'dropdown',
                                                                 account_id: @account.id)
@@ -222,6 +229,12 @@ module TicketFieldsTestHelper
                                                 ['USA', '0',
                                                  [['California', '0', [%w[Burlingame 0], ['Los Angeles', '0']]],
                                                   ['Texas', '0', [%w[Houston 0], %w[Dallas 0]]]]]],
+                      'test_custom_dependent_one' => [['Australia', '0',
+                                                   [['New South Wales', '0', [%w[Sydney 0]]],
+                                                    ['Queensland', '0', [%w[Brisbane 0]]]]],
+                                                  ['USA', '0',
+                                                   [['California', '0', [%w[Burlingame 0], ['Los Angeles', '0']]],
+                                                    ['Texas', '0', [%w[Houston 0], %w[Dallas 0]]]]]],
                       'First' => [['001', '0',
                                    [['011', '0', [%w[111 0]]],
                                     ['012', '0', [%w[121 0]]]]],
