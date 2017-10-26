@@ -36,9 +36,9 @@ module ContactsCompaniesHelper
 
   def ticket_desc(ticket)
     if ticket.class.eql?(Helpdesk::Ticket)
-      escape_javascript(sanitize(ticket.ticket_body.description))
+      CGI::escapeHTML(ticket.ticket_body.description)
     elsif ticket.class.eql?(Helpdesk::ArchiveTicket)
-      escape_javascript(sanitize(ticket.description))
+      CGI::escapeHTML(ticket.description)
     else
       ""
     end

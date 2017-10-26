@@ -71,3 +71,6 @@ features/cucumber_statistics
 #intellij
 .idea/
 *.iml
+
+#ctags
+tags

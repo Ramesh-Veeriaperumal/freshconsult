@@ -563,11 +563,11 @@ class Subscription < ActiveRecord::Base
     end
 
     def suspend_tenant
-      SearchService::Client.new(self.account_id).tenant_rollback if self.account.service_reads_enabled?
+      SearchService::Client.new(self.account_id).tenant_rollback
     end
 
     def activate_account
-      SearchService::Client.new(self.account_id).activate if self.account.service_reads_enabled?
+      SearchService::Client.new(self.account_id).activate
     end
 
     def autopilot_fields_changed?
