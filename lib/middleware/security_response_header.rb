@@ -1,4 +1,5 @@
 class Middleware::SecurityResponseHeader
+  include Cache::LocalCache
 
   HTML_FORMATS = ['text/html', 'application/xml+html'].freeze
   FEEDBACK_WIDGET_PATHS = ['/widgets/feedback_widget', '/widgets/feedback_widget/new', '/widgets/feedback_widget/thanks'].freeze
@@ -6,9 +7,12 @@ class Middleware::SecurityResponseHeader
   LOGIN_PATH = 'login'.freeze
   SSO_PATHS = ['/login/sso', '/login/saml', '/login/sso_v2', '/logout'].freeze
   SUPPORT_PATH = 'support'.freeze
+  SEC_MIDDLEWARE_IGNORED_DOMAINS_KEY = 'IGNORED_CLICKJACK_DOMAINS'.freeze
 
   def initialize(app)
     @app = app
+    # force clear on startup. Rails.cache can be backed by a external cache
+    clear_lcached(SEC_MIDDLEWARE_IGNORED_DOMAINS_KEY)
   end
 
   def call(env)
@@ -31,19 +35,25 @@ class Middleware::SecurityResponseHeader
     @req_path.include?(LOGIN_PATH) && !SSO_PATHS.include?(@req_path)
   end
 
-  def ignore_domain?
+  def ignore_subdomain?
     sub_domain = @host.split('.')[0]
     BYPASS_CHECK_SUBDOMAINS.inject(false) { |should_skip, skip_domain| should_skip || sub_domain.include?(skip_domain) }
+  end
+
+  def ignore_domain?
+    domains = fetch_lcached_set(SEC_MIDDLEWARE_IGNORED_DOMAINS_KEY, 2.hours)
+    domains.include?(@host)
+  end
+
+  def ignore_x_frame_options?(headers)
+    !html_response?(headers) || ignore_subdomain? || ignore_domain?
   end
 
   def add_security_headers(headers)
     begin
       headers['X-XSS-Protection'] = '1; mode=block'
 
-      # TODO : revisit X-Frame-Options 
-      return headers # don't process X-Frame-Options
-      return headers unless html_response?(headers)
-      return headers if ignore_domain?
+      return headers if ignore_x_frame_options?(headers)
 
       if login_path?
         headers['X-Frame-Options'] = 'DENY'
