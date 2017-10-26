@@ -205,14 +205,21 @@ $survey-options-color: (
 
 .child-form .ticket-template-form {
   width: 97%;
-  margin: auto;
+  margin: 0 auto;
   .compose-new-ticket {
     li.field {
       .options-wrapper {
         left: -40px
       }
     }
-    li.field.default_tags, li.field.default_subject, li.field.custom_text, li.field.custom_paragraph, li.field.custom_checkbox, li.field.custom_number, li.field.custom_date, li.field.custom_decimal {
+    li.field.default_tags,
+    li.field.default_subject,
+    li.field.custom_text,
+    li.field.custom_paragraph,
+    li.field.custom_checkbox,
+    li.field.custom_number,
+    li.field.custom_date,
+    li.field.custom_decimal {
       .options-wrapper {
         left: -8px
       }
@@ -222,7 +229,7 @@ $survey-options-color: (
 
 .list-page.ticket-template-list{
   .list-page-body{
-    td.template-desc.ticket-details{
+    .template-desc.ticket-details{
       width: 80%;
     }
   }
