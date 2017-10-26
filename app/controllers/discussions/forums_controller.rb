@@ -129,7 +129,7 @@ class Discussions::ForumsController < ApplicationController
 		end
 
 		def load_topics
-
+			params[:order] = nil unless ['popular', 'recent'].include?(params[:order])
 			@topics = params[:order].eql?('popular') ? @forum.topics.as_list_view.sort_by_popular : @forum.topics.as_list_view.newest
 
 			unless params[:filter].blank?
