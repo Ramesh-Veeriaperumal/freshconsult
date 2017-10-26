@@ -8,7 +8,7 @@ module CompanyConstants
   FIELDS = %w(name description note avatar_id avatar).freeze | ARRAY_FIELDS | HASH_FIELDS
   INDEX_FIELDS = %w(include letter).freeze
   ACTIVITIES_FIELDS = %w(type).freeze
-  BULK_ACTION_METHODS = %w(bulk_delete).freeze
+  BULK_ACTION_METHODS = [:bulk_delete].freeze
 
   AVATAR_EXT = %w(.jpg .jpeg .jpe .png).freeze
   AVATAR_CONTENT = {

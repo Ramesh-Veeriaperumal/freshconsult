@@ -3,7 +3,7 @@ module Ember
     include HelperConcern
     include TicketConcern
     include Helpdesk::Accessible::ElasticSearchMethods
-    SLAVE_ACTIONS = %w(index show search).freeze
+    SLAVE_ACTIONS = %w[index search].freeze
     decorate_views(decorate_objects: [:search])
 
     before_filter :canned_response_permission?, :load_ticket, only: [:show]

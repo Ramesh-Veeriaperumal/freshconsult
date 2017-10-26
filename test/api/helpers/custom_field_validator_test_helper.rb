@@ -25,7 +25,8 @@ class CustomFieldValidatorTestHelper
         CustomFieldValidatorTestHelper.new(id: 17, account_id: 1, name: 'dropdown1_1', label: 'dropdown1', label_in_portal: 'dropdown1', description: '', active: true, field_type: 'custom_dropdown', position: 11, required: false, visible_in_portal: true, editable_in_portal: true, required_in_portal: false, required_for_closure: false, flexifield_def_entry_id: 7, created_at: '2015-08-10 09:19:28', updated_at: '2015-08-10 09:24:42', field_options: {}, default: false, level: nil, parent_id: nil, prefered_ff_col: nil, import_id: nil),
         CustomFieldValidatorTestHelper.new(id: 25, account_id: 1, name: 'dropdown2_1', label: 'dropdown2', label_in_portal: 'dropdown2', description: '', active: true, field_type: 'custom_dropdown', position: 7, required: false, visible_in_portal: true, editable_in_portal: true, required_in_portal: false, required_for_closure: true, flexifield_def_entry_id: 15, created_at: '2015-08-10 09:24:39', updated_at: '2015-08-11 05:40:01', field_options: {}, default: false, level: nil, parent_id: nil, prefered_ff_col: nil, import_id: nil),
         CustomFieldValidatorTestHelper.new(id: 29, account_id: 1, name: 'dropdown3_1', label: 'dropdown3_1', field_type: 'custom_dropdown', position: 29, created_at: '2015-08-10 09:24:39', updated_at: '2015-08-11 05:40:01', field_options: {}, company_form_id: 1, required_for_agent: false),
-        CustomFieldValidatorTestHelper.new(id: 30, account_id: 1, name: 'dropdown4_1', label: 'dropdown4_1', label_in_portal: 'dropdown4', field_type: 'custom_dropdown', position: 30, required_for_agent: false, visible_in_portal: true, editable_in_portal: true, required_in_portal: false, created_at: '2015-08-10 09:24:39', updated_at: '2015-08-11 05:40:01', field_options: {}, contact_form_id: 1)
+        CustomFieldValidatorTestHelper.new(id: 30, account_id: 1, name: 'dropdown4_1', label: 'dropdown4_1', label_in_portal: 'dropdown4', field_type: 'custom_dropdown', position: 30, required_for_agent: false, visible_in_portal: true, editable_in_portal: true, required_in_portal: false, created_at: '2015-08-10 09:24:39', updated_at: '2015-08-11 05:40:01', field_options: {}, contact_form_id: 1),
+        CustomFieldValidatorTestHelper.new(id: 45, account_id: 1, name: 'custom_dropdown_1', label: 'custom_dropdown_1', label_in_portal: 'custom_dropdown_1', field_type: 'custom_dropdown', position: 45, created_at: '2015-08-10 09:24:39', updated_at: '2015-08-11 05:40:01', field_options: {section_present: true}, company_form_id: 1, required_for_agent: false, required: false),
       ]
     end
 
@@ -131,8 +132,16 @@ class CustomFieldValidatorTestHelper
       section_field_for_choices.each { |x| x.required = true }
     end
 
+    def custom_section_field_for_choices
+      choices_validatable_custom_fields.each { |x| x.section_field = true  if x.name != 'custom_dropdown_1' }
+    end
+
+    def custom_section_field_for_choices_required
+      custom_section_field_for_choices.each { |x| x.required = true if x.name != 'custom_dropdown_1' }
+    end
+
     def dropdown_choices_by_field_name
-      { dropdown2_1: %w(first11 second22 third33 four44), dropdown1_1: ['1st', '2nd'], dropdown3_1: ['first', 'second'], dropdown4_1: ['third', 'fourth'] }.stringify_keys
+      { custom_dropdown_1: %w(Choice2 Choice3 Choice4), dropdown2_1: %w(first11 second22 third33 four44), dropdown1_1: ['1st', '2nd'], dropdown3_1: ['first', 'second'], dropdown4_1: ['third', 'fourth'] }.stringify_keys
     end
 
     def nested_fields_choices_by_name=(custom_nested_choices)

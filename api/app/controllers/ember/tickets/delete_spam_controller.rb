@@ -26,6 +26,11 @@ module Ember
         end
       end
 
+      alias_method :bulk_spam, :bulk_ticket_action
+      alias_method :bulk_unspam, :bulk_ticket_action
+      alias_method :bulk_delete, :bulk_ticket_action
+      alias_method :bulk_restore, :bulk_ticket_action
+
       private
 
         def scoper
@@ -81,6 +86,10 @@ module Ember
 
         def post_destroy_actions(item)
           ::Search::RecentTickets.new(item.display_id).delete
+        end
+
+        def constants_class
+          :ApiTicketConstants.to_s.freeze
         end
     end
   end
