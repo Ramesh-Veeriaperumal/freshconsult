@@ -2089,7 +2089,7 @@ en:
         invalid_linkback_url: Please enter a valid linkback url.
         select_forum_category: Select a forum category...
         portal_rebranding: Portal rebranding
-        cname_configure_info: Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point <strong>help.<b id="domain_info_name">yourcompany</b>.com</strong> to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly
+        cname_configure_info: Please ensure that you have created a CNAME DNS record in your DNS Zone file to point <strong>help.<b id="domain_info_name">yourcompany</b>.com</strong> to %{full_domain} and a TXT DNS record to point <strong>fdkey.help.<b id="domain_info_name">yourcompany</b>.com</strong> to %{verification_hash}. Your Webmaster or Server administrator should be able to help you set this up correctly
         select_solution_category: Select a Solution Category...
         solution_categories_info: You can associate multiple solution categories to this product. All other solutions will not be shown to the customers, when viewing the solutions tab in this product portal.
         forum_categories_info: You can associate multiple forum categories to this product. All other forums will not be shown to the customers, when viewing the forums tab in this product portal.
@@ -2549,6 +2549,7 @@ en:
         success: "Portal has been updated"
         failure: "Portal could not be updated"
         invalid_cname: "Invalid Portal URL: CNAME mapping is missing or invalid. Please check CNAME DNS record in your DNS Zone file."
+        invalid_hash_mapping: "The validation record is missing in your DNS.Please check TXT DNS record in your DNS Zone file."
       destroy:
         success: "Portal of '%{product_name}' has been disabled"
         failure: "Main portal can not be disabled"

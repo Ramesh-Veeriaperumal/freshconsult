@@ -4,6 +4,7 @@ class Portal < ActiveRecord::Base
 
   self.primary_key = :id
   HEX_COLOR_REGEX = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
+  VERIFICATION_HASH_SECRET = 'f1cb366f-c4e7-4fde-b761-995fd5e5fbf7'.freeze
 
   serialize :preferences, Hash
 
@@ -199,6 +200,12 @@ class Portal < ActiveRecord::Base
     main_portal ? "#{Account.current.full_url}/support/tickets" : "#{url_protocol}://#{portal_url}/support/tickets"
   end
 
+  def cname_verification_hash
+    @verification_hash ||= OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('MD5'),
+                              "#{VERIFICATION_HASH_SECRET}-%{#{Account.current.id}}",
+                                %{#{Account.current.id}})
+  end
+
   private
 
     ### MULTILINGUAL SOLUTIONS - META READ HACK!! - shouldn't be necessary after we let users decide the language
@@ -358,8 +365,9 @@ class Portal < ActiveRecord::Base
 
     def cname_owner
       return if portal_url.blank? || Account.current.launched?(:skip_portal_cname_chk)
-      cname_validator = CustomDomain::CnameValidator.new(portal_url, domains_for_account)
-      errors.add(:base, I18n.t('flash.portal.update.invalid_cname')) unless cname_validator.allow?
+      cname_validator = CustomDomain::CnameValidator.new(portal_url, domains_for_account, cname_verification_hash)
+      error = cname_validator.mapping_error
+      errors.add(:base, I18n.t(error)) if error
     end
     
     def domains_for_account
