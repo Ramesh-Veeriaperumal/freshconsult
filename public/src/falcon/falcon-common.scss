@@ -212,14 +212,14 @@ $survey-options-color: (
         left: -40px
       }
     }
-    li.field.default_tags,
-    li.field.default_subject,
-    li.field.custom_text,
-    li.field.custom_paragraph,
-    li.field.custom_checkbox,
-    li.field.custom_number,
-    li.field.custom_date,
-    li.field.custom_decimal {
+    .field.default_tags,
+    .field.default_subject,
+    .field.custom_text,
+    .field.custom_paragraph,
+    .field.custom_checkbox,
+    .field.custom_number,
+    .field.custom_date,
+    .field.custom_decimal {
       .options-wrapper {
         left: -8px
       }
