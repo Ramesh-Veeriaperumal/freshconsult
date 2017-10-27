@@ -1,5 +1,7 @@
 class PlanChangeWorker
   include Sidekiq::Worker
+  include Cache::FragmentCache::Base
+
 
   sidekiq_options :queue => :plan_change, :retry => 0, :backtrace => true, :failures => :exhausted
 
@@ -31,20 +33,22 @@ class PlanChangeWorker
   end
 
   def add_multiple_companies_toggle_data(account)
-    account.ticket_fields.create(:name => "company",
-                                 :label => "Company",
-                                 :label_in_portal => "Company",
-                                 :description => "Ticket Company",
-                                 :field_type => "default_company",
-                                 :position => 8,
-                                 :default => true,
-                                 :required => true,
-                                 :visible_in_portal => true, 
-                                 :editable_in_portal => true,
-                                 :required_in_portal => true,
-                                 :ticket_form_id => account.ticket_field_def.id)
+    unless account.ticket_fields.default_company_field.present?
+      account.ticket_fields.create(:name => "company",
+                                   :label => "Company",
+                                   :label_in_portal => "Company",
+                                   :description => "Ticket Company",
+                                   :field_type => "default_company",
+                                   :position => account.ticket_fields.length+1,
+                                   :default => true,
+                                   :required => true,
+                                   :visible_in_portal => true, 
+                                   :editable_in_portal => true,
+                                   :required_in_portal => true,
+                                   :ticket_form_id => account.ticket_field_def.id)
+      clear_fragment_caches
+    end
   end
-
 
   def drop_facebook_data(account)
     fb_count = 0

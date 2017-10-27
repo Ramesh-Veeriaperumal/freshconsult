@@ -279,12 +279,12 @@ unless Account.current
     a.addon_type = addon_types[:agent_quantity]
  	end
 
- 	one_contact_multiple_companies = Subscription::Addon.seed(:name) do |a|
-    a.name = 'One Contact Multiple Companies'
-    a.amount = 69.0
-    a.renewal_period = 1
-    a.addon_type = addon_types[:on_off]
-  end
+	one_contact_multiple_companies = Subscription::Addon.seed(:name) do |a|
+	  a.name = 'One Contact Multiple Companies'
+	  a.amount = 69.0
+	  a.renewal_period = 1
+	  a.addon_type = addon_types[:on_off]
+	end
 
 	all_addons = [ agent_collision, custom_ssl, custom_roles, gamification, layout_customization,
 									multiple_business_hours, round_robin, chat, enterprise_reporting, custom_domain,
