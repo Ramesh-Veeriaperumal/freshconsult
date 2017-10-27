@@ -19,6 +19,9 @@ Custom Ssl:
 Dynamic Sections:
   - :dynamic_sections
   - :multi_dynamic_sections
+One Contact Multiple Companies:
+  - :multiple_user_companies
+  - :multiple_companies_toggle
 Enterprise Reporting:
   - :enterprise_reporting
   - :surveys

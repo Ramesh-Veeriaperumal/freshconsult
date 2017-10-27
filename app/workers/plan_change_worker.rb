@@ -30,6 +30,22 @@ class PlanChangeWorker
     Role.remove_manage_availability_privilege account
   end
 
+  def add_multiple_companies_toggle_data(account)
+    account.ticket_fields.create(:name => "company",
+                                 :label => "Company",
+                                 :label_in_portal => "Company",
+                                 :description => "Ticket Company",
+                                 :field_type => "default_company",
+                                 :position => 8,
+                                 :default => true,
+                                 :required => true,
+                                 :visible_in_portal => true, 
+                                 :editable_in_portal => true,
+                                 :required_in_portal => true,
+                                 :ticket_form_id => account.ticket_field_def.id)
+  end
+
+
   def drop_facebook_data(account)
     fb_count = 0
     account.facebook_pages.order("created_at asc").find_each do |fb|
