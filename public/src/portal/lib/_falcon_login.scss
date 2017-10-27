@@ -79,7 +79,8 @@
 	margin: 8% 0;
 }
 section#login-container,section#signup-container{
-	padding: 20px;
+	@include padding(40px);
+	height: 500px;
 	&:after{
 		content: '';
 	    display: table;

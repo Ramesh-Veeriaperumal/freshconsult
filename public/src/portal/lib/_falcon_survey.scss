@@ -12,14 +12,14 @@
             margin-bottom: 5px;
             text-decoration: none;
             @include border-radius(2em);
-            i{ 
+            i{
                 margin-top: -1px;
-                @include margin-right(3px); 
+                @include margin-right(3px);
             }
-            &:hover{ text-decoration: none; }    
+            &:hover{ text-decoration: none; }
             .survey-rating{
-                height:15px; 
-                width:15px; 
+                height:15px;
+                width:15px;
                 border: 1px solid #000;
                 margin-top: 3px;
                 @include float(left);
@@ -28,6 +28,9 @@
                 @include margin-left(25px);
             }
         }
+    }
+    .survey-again .rate-again{
+      color: $blue;
     }
     .rating-text,.default_question{
         font-weight: 600;
@@ -53,11 +56,11 @@
     font-weight:300;
     font-size: 16px;
     @include border-radius(2em);
-    i{ 
+    i{
         margin-top: -1px;
-        @include margin-right(3px); 
+        @include margin-right(3px);
     }
-    &:hover{ background-color: #f9f9f9; }    
+    &:hover{ background-color: #f9f9f9; }
     &.active{
         background-color: #a5a5a5;
         color: #fff;
