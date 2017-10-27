@@ -1,5 +1,5 @@
 class AddMultipleUserCompaniesToSubscriptionAddons < ActiveRecord::Migration
-  shard :shard_1
+  shard :none
 
   def migrate(direction)
     send(direction)
