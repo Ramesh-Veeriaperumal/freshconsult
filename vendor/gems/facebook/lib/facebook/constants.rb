@@ -59,6 +59,8 @@ module Facebook
 
     FACEBOOK_GRAPH_URL          = "https://graph.facebook.com"
 
+    LIMIT_PER_REQUEST           = 100
+
     GRAPH_API_VERSION           = "v2.6"
 
     FB_MESSAGE_PREFIX           = "m_"

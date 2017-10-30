@@ -205,6 +205,7 @@ group :production, :test, :staging do
   gem "tire", :git => "git@github.com:freshdesk/retire.git"
 end
 
+gem "recaptcha", "4.4.1", require: "recaptcha/rails"
 
 
 gem "freshdesk_authority", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/freshdesk_authority-0.1"
@@ -221,7 +222,6 @@ gem "log_filter", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/log_fil
 gem "gnip", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/gnip"
 gem "dev_notification", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/dev_notification"
 gem "sharding", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/sharding"
-gem "recaptcha", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/recaptcha"
 gem "sentient_user", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/sentient_user"
 gem "business_time", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/business_time"
 gem "paperclip_ext", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/paperclip_ext"

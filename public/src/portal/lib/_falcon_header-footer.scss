@@ -398,7 +398,7 @@ $header_border_color: #ebeef0 !default;
                     }
                 a{	
                 	@include float(none);
-                    font-weight: 300;
+                    font-weight: normal;
                     border-width: 1px 0 0 0;
                     display: block;
                     @include min-width(auto);

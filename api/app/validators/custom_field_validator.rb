@@ -165,7 +165,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
     end
 
     def absence_validator_check(record, field_name, values)
-      if section_field? && !section_parent_present?(record, values)
+      if section_field? && !section_parent_present?(record, values) && !search_validation?
         parent = section_parent_list.keys.first
         message_options = { field: parent_name_mapping(parent.to_s), value: parent_value(parent, record, values) }
         CustomAbsenceValidator.new(attributes: field_name, message: :section_field_absence_check_error, message_options: message_options).validate(record)
@@ -241,7 +241,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
     # 2. value present?
     # 3. nested parent field with children not set
     def validate?(record, field_name, values)
-      return false if section_field? && section_parent_has_errors?(record, values)
+      return false if section_field? && section_parent_has_errors?(record, values) && !search_validation?
       @is_required || record.instance_variable_get("@#{field_name}_set") || (values.present? && !values.try(:[], field_name) && nested_field? && !children_set_or_blank?(record, field_name, values))
     end
 

@@ -14,7 +14,7 @@ class Helpdesk::Note < ActiveRecord::Base
   # So that note count will be reflected if the rmq publish happens via ticket states queue
   after_commit ->(obj) { obj.send(:update_note_count_for_reports)  }, on: :create , :if => :report_note_metrics?
   after_commit :update_ticket_states, on: :create, :unless => :send_and_set?
-  after_commit :notify_ticket_monitor, :push_mobile_notification, on: :create
+  after_commit :notify_ticket_monitor, on: :create
 
   after_commit :send_notifications, on: :create, :if => :human_note_for_ticket?
 
@@ -296,16 +296,6 @@ class Helpdesk::Note < ActiveRecord::Base
               :current_user_id =>  user_id }
             ) unless zendesk_import?
     end
-
-  def push_mobile_notification
-
-      message = { :ticket_id => notable.display_id,
-                  :status_name => notable.status_name,
-                  :subject => truncate(notable.subject, :length => 100),
-                  :priority => notable.priority,
-                  :time => created_at.to_i }
-      send_mobile_notification(:response,message) unless notable.spam? || notable.deleted?
-  end
 
     def notify_ticket_monitor
       return if meta?
