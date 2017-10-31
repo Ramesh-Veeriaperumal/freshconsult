@@ -989,6 +989,18 @@ HelpdeskReports.Qna_util = (function($) {
       $(container).remove();
     },
     init: function() {
+      // if the current users's language is not English
+      // hide the qna search bar
+      try {
+        if (DataStore.store.current_user.user.language !== 'en') {
+          $('.report-head').hide();
+          return;
+        }
+      } catch (e) {
+        $('.report-head').hide();
+        return;
+      }
+
       this.bindEvents();
       this.reset();
       if (constants.debug_mode == 1) {
