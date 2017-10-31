@@ -34,10 +34,10 @@ HelpdeskReports.Qna_util = (function($) {
       DELETE: 46,
       BACKSPACE: 8
     },
-    get navigationalKeys () {
+    get navigationalKeys() {
       if (!_.isObject(this._navigationalKeys)) {
         var navigationalKeys = {};
-        _.each(constants.keyCodes, function (val, key) {
+        _.each(constants.keyCodes, function(val, key) {
           var excludedKeys = ['DELETE', 'BACKSPACE'];
 
           if (excludedKeys.indexOf(key) === -1) {
@@ -50,7 +50,7 @@ HelpdeskReports.Qna_util = (function($) {
 
         return navigationalKeys;
       } else {
-        return this._navigationalKeys
+        return this._navigationalKeys;
       }
     },
     // this accomodates the speech bubble as part
@@ -59,7 +59,8 @@ HelpdeskReports.Qna_util = (function($) {
     initialInputBoxLeftOffset: 40,
     // this accomodates the clear query as part of the qna
     // search container
-    initialInputBoxRightOffset: 45
+    initialInputBoxRightOffset: 45,
+    emptyQuestionPrefixesInPopOverMessage: 'No results found'
   };
 
   var _q = {
@@ -87,7 +88,6 @@ HelpdeskReports.Qna_util = (function($) {
 
       $input.val('');
       this.resizeSearchInput();
-
     },
     populateQuestionPrefixes: function(current_level, selected_breadcrumb) {
       var source = {},
@@ -322,7 +322,7 @@ HelpdeskReports.Qna_util = (function($) {
       _this.question_prefix_count = 0;
       _this.request_param = {};
 
-      $popover.animate({ opacity: 'hide'}, {duration: 0});
+      $popover.animate({ opacity: 'hide' }, { duration: 0 });
       $('.selected-queries').empty();
       $popover.css({
         left: '30px'
@@ -330,8 +330,10 @@ HelpdeskReports.Qna_util = (function($) {
 
       var $container = $('.search-field-holder');
       var containerWidth = $container.width();
-      var inputWidth = containerWidth - constants.initialInputBoxLeftOffset - constants.initialInputBoxRightOffset;
-
+      var inputWidth =
+        containerWidth -
+        constants.initialInputBoxLeftOffset -
+        constants.initialInputBoxRightOffset;
 
       $input
         .css({
@@ -421,9 +423,8 @@ HelpdeskReports.Qna_util = (function($) {
       });
     },
     filterQuestionPrefixesFromPopup: function(labelsToFilterWith) {
-      $questionsInPopover = $(
-        '.question-popover .questions li'
-      );
+      $questionsPopoverContainer = $('.question-popover .questions');
+      $questionsInPopover = $('.question-popover .questions li');
 
       var orderedPrefixesList = [];
       var lastMatchedItemIndex = -1;
@@ -433,26 +434,42 @@ HelpdeskReports.Qna_util = (function($) {
       $questionsInPopover.each(function(index, el) {
         var $el = $(el);
         var labelForQuestionPrefix = $el.text();
-        var matchedItemIndex = labelsToFilterWith.indexOf(labelForQuestionPrefix);
+        var matchedItemIndex = labelsToFilterWith.indexOf(
+          labelForQuestionPrefix
+        );
 
-        if ( matchedItemIndex === -1) {
+        if (matchedItemIndex === -1) {
           $el.hide();
         } else {
           // lets preserve the order as returned by match-sorter
           if (matchedItemIndex < lastMatchedItemIndex) {
-            orderedPrefixesList.splice(0, 0, $el)
+            orderedPrefixesList.splice(0, 0, $el);
           } else {
-            orderedPrefixesList.push($el)
+            orderedPrefixesList.push($el);
           }
           lastMatchedItemIndex = matchedItemIndex;
         }
       });
 
+      if (orderedPrefixesList.length === 0) {
+        if ($('.question-prefixes-empty-message').length === 0) {
+          $questionsPopoverContainer.append(
+            $(
+              '<span class="question-prefixes-empty-message">' +
+                constants.emptyQuestionPrefixesInPopOverMessage +
+                '</span>'
+            )
+          );
+        }
+      } else {
+        $('.question-prefixes-empty-message').remove();
+      }
+
       // lets match the sorting order provided by match-sorter
       // arrange the items within the popover with the given sort order
       if (orderedPrefixesList.length > 1) {
         orderedPrefixesList.reverse();
-        _.each(orderedPrefixesList, function ($el) {
+        _.each(orderedPrefixesList, function($el) {
           $el.insertBefore('.question-popover .questions li:eq(0)');
         });
       }
@@ -460,10 +477,12 @@ HelpdeskReports.Qna_util = (function($) {
       // highlight the first item in the newly *filtered* popover list
       if ($('.question-popover .questions li:not(:hidden)').length > 0) {
         $('.question-popover .questions li').removeClass('active');
-        $('.question-popover .questions li:not(:hidden)').first().addClass('active');
+        $('.question-popover .questions li:not(:hidden)')
+          .first()
+          .addClass('active');
       }
     },
-    resizeSearchInput: function () {
+    resizeSearchInput: function() {
       // the search input box and the selected queries element(the parts of
       // question prefixes which the user has already selected) are placed
       // side by side, when a user selects a questions prefix the selected
@@ -475,7 +494,11 @@ HelpdeskReports.Qna_util = (function($) {
       var $container = $('.search-field-holder');
       var containerWidth = $container.width();
       var reduceInputByWidth = $selectedQuery.width();
-      var reducedSearchInputWidth = containerWidth - reduceInputByWidth - constants.initialInputBoxLeftOffset - constants.initialInputBoxRightOffset;
+      var reducedSearchInputWidth =
+        containerWidth -
+        reduceInputByWidth -
+        constants.initialInputBoxLeftOffset -
+        constants.initialInputBoxRightOffset;
 
       $searchInput.css({
         left: reduceInputByWidth + constants.initialInputBoxLeftOffset,
@@ -483,13 +506,13 @@ HelpdeskReports.Qna_util = (function($) {
       });
     },
     resetQuestionsPopover: function() {
-      $questionsInPopover = $(
-        '.question-popover .questions li'
-      );
+      $questionsInPopover = $('.question-popover .questions li');
+      $noQuestionPrefixesMessage = $('.question-prefixes-empty-message');
 
       // show all the items in the popover
       $questionsInPopover.show();
       $questionsInPopover.removeClass('active').first().addClass('active');
+      $noQuestionPrefixesMessage.remove();
     },
     handleKeyupOnSearchBox: function(e) {
       var keyCode = e.keyCode;
@@ -577,7 +600,6 @@ HelpdeskReports.Qna_util = (function($) {
 
         // emulate click event on the highlighted item
         $activeItem.click();
-
       }
     },
     handleTextEntryToFilterQuestionPrefixes: function(e) {
@@ -607,19 +629,21 @@ HelpdeskReports.Qna_util = (function($) {
         // text to be blank for the first time, but we reset it after the user
         // hits DELETE or BACKSPACE the subsequent time
         if (!_.isFunction(this._clearQueryAfterInvokedTwice)) {
-          var clearQueryFn = function () {
+          var clearQueryFn = function() {
             $('[data-action="clear-query"]').click();
-          }
+          };
           this._clearQueryAfterInvokedTwice = invokeAfterNth(clearQueryFn, 2);
         }
 
-        if (e.keyCode === constants.keyCodes.DELETE || e.keyCode === constants.keyCodes.BACKSPACE) {
+        if (
+          e.keyCode === constants.keyCodes.DELETE ||
+          e.keyCode === constants.keyCodes.BACKSPACE
+        ) {
           this._clearQueryAfterInvokedTwice();
         }
 
         return;
       }
-
 
       this._clearQueryAfterInvokedTwice = undefined;
 
@@ -645,8 +669,8 @@ HelpdeskReports.Qna_util = (function($) {
       // used to track two consecutive backspace/delete on
       // input boxes. the qna search bar only resets when a user
       // hits DELETE twice on an empty search box
-      var toggleBackspaceForSecondaryInputFilter= 0;
-      var toggleBackspaceForSecondaryRemoteSearchFilter=0;
+      var toggleBackspaceForSecondaryInputFilter = 0;
+      var toggleBackspaceForSecondaryRemoteSearchFilter = 0;
 
       var $doc = $(document),
         $input = $('#search-query'),
@@ -684,20 +708,26 @@ HelpdeskReports.Qna_util = (function($) {
         }
       );
 
-      $doc.on('keyup' + constants.events_namespace, '#search-query, .search-header>input', function(
-        e
-      ) {
-        _this.handleKeyupOnSearchBox(e);
-      });
+      $doc.on(
+        'keyup' + constants.events_namespace,
+        '#search-query, .search-header>input',
+        function(e) {
+          _this.handleKeyupOnSearchBox(e);
+        }
+      );
 
       // highlight the question prefix options as one hovers over them
       // the addition of a class instead of a CSS rule for hover state makes it
       // possible to enable the highlighting through keyboard navigation as well
-      $doc.on('mouseover' + constants.events_namespace, '.question-popover li:not(search-header)', function (e) {
-        $('.question-popover li').removeClass('active');
+      $doc.on(
+        'mouseover' + constants.events_namespace,
+        '.question-popover li:not(search-header)',
+        function(e) {
+          $('.question-popover li').removeClass('active');
 
-        $(e.target).addClass('active');
-      })
+          $(e.target).addClass('active');
+        }
+      );
 
       $doc.on(
         'click' + constants.events_namespace,
@@ -728,7 +758,7 @@ HelpdeskReports.Qna_util = (function($) {
           _this.clear_params();
           trigger_event('question-cleared' + constants.events_namespace);
 
-          setTimeout(function () {
+          setTimeout(function() {
             $searchInput.focus();
             _this.resetQuestionsPopover();
           }, 100);
@@ -793,7 +823,7 @@ HelpdeskReports.Qna_util = (function($) {
         function(ev) {
           var $el = $(this);
 
-          var clearQueryFn = function () {
+          var clearQueryFn = function() {
             if (toggleBackspaceForSecondaryRemoteSearchFilter === 1) {
               $('[data-action=backnav]').click();
               toggleBackspaceForSecondaryRemoteSearchFilter = 0;
@@ -802,8 +832,10 @@ HelpdeskReports.Qna_util = (function($) {
             }
           };
 
-
-          if (ev.keyCode === constants.keyCodes.BACKSPACE || ev.keyCode === constants.keyCodes.DELETE) {
+          if (
+            ev.keyCode === constants.keyCodes.BACKSPACE ||
+            ev.keyCode === constants.keyCodes.DELETE
+          ) {
             // when a user presses a backspace or a delete on an empty filter
             // list, lets navigate back to the previous menu
             if ($(ev.target).val() === '') {
@@ -836,7 +868,7 @@ HelpdeskReports.Qna_util = (function($) {
         'keyup' + constants.events_namespace,
         '[rel=filter_content]',
         function(e) {
-          var clearQueryFn = function () {
+          var clearQueryFn = function() {
             if (toggleBackspaceForSecondaryInputFilter === 1) {
               $('[data-action=backnav]').click();
               toggleBackspaceForSecondaryInputFilter = 0;
@@ -847,7 +879,10 @@ HelpdeskReports.Qna_util = (function($) {
 
           // when a user presses a backspace or a delete on an empty filter
           // list, lets navigate back to the previous menu
-          if (e.keyCode === constants.keyCodes.BACKSPACE || e.keyCode === constants.keyCodes.DELETE) {
+          if (
+            e.keyCode === constants.keyCodes.BACKSPACE ||
+            e.keyCode === constants.keyCodes.DELETE
+          ) {
             if ($(e.target).val() === '') {
               clearQueryFn();
               return;
