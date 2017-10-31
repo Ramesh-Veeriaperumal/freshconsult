@@ -335,12 +335,16 @@ HelpdeskReports.Qna_util = (function($) {
         constants.initialInputBoxLeftOffset -
         constants.initialInputBoxRightOffset;
 
-      $input
-        .css({
-          width: inputWidth,
-          left: constants.initialInputBoxLeftOffset
-        })
-        .removeAttr('readonly');
+      $container.removeAttr('readonly');
+
+      if ($container.hasClass('active')) {
+        $input
+          .css({
+            width: inputWidth,
+            left: constants.initialInputBoxLeftOffset
+          });
+      }
+
     },
     filterList: function() {
       var filter_text = $('[rel=filter_content]').val();
