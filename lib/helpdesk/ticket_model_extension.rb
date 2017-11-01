@@ -41,11 +41,13 @@ module Helpdesk::TicketModelExtension
 
   ASSOCIATION_BY_VALUE = Hash[*EXPORT_FIELDS.map { |i| [i[1], i[3]] }.flatten ]
 
+  DESCRIPTION_INDEX_DEFAULT = 3
+
   def self.default_export_fields_order
     @default_export_fields ||= begin
       exportable_fields = Helpdesk::TicketModelExtension.allowed_fields
       fields = Hash[*exportable_fields.map { |i| [i[1], i[4]] }.flatten ]
-      fields["description"]   = 3
+      fields["description"]   = DESCRIPTION_INDEX_DEFAULT
       fields["product_name"]  = fields.keys.length+1
       fields
     end
