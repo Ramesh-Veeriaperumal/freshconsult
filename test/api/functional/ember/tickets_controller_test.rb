@@ -933,16 +933,22 @@ module Ember
       assert_equal attachment_ids, ticket.attachment_ids
     end
 
-    def test_update_properties_with_subject_description_requester
-      ticket = create_ticket
+    def test_update_properties_with_subject_description_requester_source_phone
+      ticket = create_ticket(source: TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone])
       subject = Faker::Lorem.words(10).join(' ')
       description = Faker::Lorem.paragraph
       user = add_new_user(@account)
       requester_id = user.id
+      sender_email = user.email
+      attachment_ids = []
+      rand(2..10).times do
+        attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      end
       params_hash = {
         subject: subject,
         description: description,
-        requester_id: requester_id
+        requester_id: requester_id,
+        attachment_ids: attachment_ids
       }
       put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 200
@@ -951,14 +957,44 @@ module Ember
       assert_equal subject, ticket.subject
       assert_equal description, ticket.description
       assert_equal requester_id, ticket.requester_id
+      assert_equal sender_email, ticket.sender_email
+      assert_equal attachment_ids, ticket.attachment_ids      
     end
 
+    def test_update_properties_with_subject_description_requester_source_email
+      ticket = create_ticket(source: TicketConstants::SOURCE_KEYS_BY_TOKEN[:email])
+      subject = Faker::Lorem.words(10).join(' ')
+      description = Faker::Lorem.paragraph
+      user = add_new_user(@account)
+      requester_id = user.id
+      sender_email = user.email
+      attachment_ids = []
+      rand(2..10).times do
+        attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      end
+      params_hash = {
+        subject: subject,
+        description: description,
+        requester_id: requester_id,
+        attachment_ids: attachment_ids
+      }
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 200
+      ticket.reload
+      ticket.remove_instance_variable('@ticket_body_content')
+      assert_equal subject, ticket.subject
+      assert_equal description, ticket.description
+      assert_equal requester_id, ticket.requester_id
+      assert_equal sender_email, ticket.sender_email
+      assert_equal attachment_ids, ticket.attachment_ids      
+    end
     def test_update_properties_with_subject_description_requester_with_default_company
       ticket = create_ticket
       subject = Faker::Lorem.words(10).join(' ')
       description = Faker::Lorem.paragraph
       sample_requester = get_user_with_default_company
       requester_id = sample_requester.id
+      sender_email = sample_requester.email      
       company_id = sample_requester.user_companies.first.company_id if sample_requester.user_companies.first.present?
       params_hash = {
         subject: subject,
@@ -974,6 +1010,7 @@ module Ember
       assert_equal requester_id, ticket.requester_id
       assert_equal ticket.company_id, sample_requester.company_id
       assert_equal company_id, ticket.company_id
+      assert_equal sender_email, ticket.sender_email
     end
 
     def test_update_properties_with_subject_description_requester_with_multiple_company
@@ -983,6 +1020,7 @@ module Ember
       description = Faker::Lorem.paragraph
       sample_requester = get_user_with_multiple_companies
       requester_id = sample_requester.id
+      sender_email = sample_requester.email      
       company_id = sample_requester.user_companies.where(default: false).first.company.id
       params_hash = {
         subject: subject,
@@ -998,6 +1036,7 @@ module Ember
       assert_equal description, ticket.description
       assert_equal requester_id, ticket.requester_id
       assert_equal company_id, ticket.company_id
+      assert_equal sender_email, ticket.sender_email
       ensure
         Account.any_instance.unstub(:multiple_user_companies_enabled?)
     end

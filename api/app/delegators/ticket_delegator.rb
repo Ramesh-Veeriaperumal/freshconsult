@@ -6,7 +6,7 @@ class TicketDelegator < BaseDelegator
   validate :email_config_presence,  if: -> { !property_update? && email_config_id && outbound_email? }
   validates :email_config, presence: true, if: -> { errors[:email_config_id].blank? && email_config_id && attr_changed?('email_config_id') }
   validate :product_presence, if: -> { product_id && (attr_changed?('product_id', schema_less_ticket) || (property_update? && required_for_closure_field?('product') && status_set_to_closed?)) }
-  validate :user_blocked?, if: -> { requester_id && errors[:requester].blank? && attr_changed?('requester_id') }
+  validate :validate_user, if: -> { requester_id && errors[:requester].blank? && attr_changed?('requester_id') }
   validates :custom_field_via_mapping,  custom_field: { custom_field_via_mapping:
                               {
                                 validatable_custom_fields: proc { |x| TicketsValidationHelper.custom_dropdown_fields(x) },
@@ -117,8 +117,14 @@ class TicketDelegator < BaseDelegator
     end
   end
 
-  def user_blocked?
-    errors[:requester_id] << :user_blocked if requester && requester.blocked?
+  def validate_user
+    if requester
+      if requester.blocked?
+        errors[:requester_id] << :user_blocked
+      elsif requester.email.present?
+          @ticket.email = requester.email
+      end
+    end
   end
 
   def parent_template_id_permissible?
