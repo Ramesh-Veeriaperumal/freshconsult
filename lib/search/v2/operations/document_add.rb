@@ -20,39 +20,12 @@ class Search::V2::Operations::DocumentAdd
       # All dates to be stored in UTC
       #
       Time.use_zone('UTC') do
-        if Account.current.service_writes_enabled?
-          if entity.is_a?(Solution::Article) && Account.current.es_multilang_soln?
-            locale = entity.solution_folder_meta.solution_category_meta.portals.last.try(:language)
-            locale = SearchService::Utils.valid_locale([@type], locale)
-            SearchService::Client.new(@account_id).write_object(entity, @params[:version], @params[:parent_id], @type, locale)
-          else
-            SearchService::Client.new(@account_id).write_object(entity, @params[:version], @params[:parent_id], @type)
-          end
+        if entity.is_a?(Solution::Article) && Account.current.es_multilang_soln?
+          locale = entity.solution_folder_meta.solution_category_meta.portals.last.try(:language)
+          locale = SearchService::Utils.valid_locale([@type], locale)
+          SearchService::Client.new(@account_id).write_object(entity, @params[:version], @params[:parent_id], @type, locale)
         else
-          @request_object = Search::V2::IndexRequestHandler.new(
-                                              @type,
-                                              @account_id,
-                                              @doc_id,
-                                              @timestamps
-                                            )
-          @request_object.send_to_es(
-                                      @params[:version],
-                                      @params[:routing_id],
-                                      @params[:parent_id],
-                                      entity.to_esv2_json
-                                    )
-          
-          # Multiplexing for pinnacle sports currently
-          if entity.is_a?(Solution::Article) && Account.current.es_multilang_soln?
-            locale = entity.solution_folder_meta.solution_category_meta.portals.last.try(:language)
-            @request_object.send_to_multilang_es(
-                                                  @params[:version],
-                                                  @params[:routing_id],
-                                                  @params[:parent_id],
-                                                  entity.to_esv2_json,
-                                                  locale
-                                                )
-          end
+          SearchService::Client.new(@account_id).write_object(entity, @params[:version], @params[:parent_id], @type)
         end
       end
     end

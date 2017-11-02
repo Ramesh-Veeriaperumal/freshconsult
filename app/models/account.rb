@@ -120,14 +120,6 @@ class Account < ActiveRecord::Base
     # (ES_ENABLED && launched?(:es_v1_enabled))
   end
 
-  def service_reads_enabled?
-    launched?(:service_reads)
-  end
-
-  def service_writes_enabled?
-    launched?(:service_writes)
-  end
-
   def permissible_domains
     helpdesk_permissible_domains.pluck(:domain).join(",")
   end

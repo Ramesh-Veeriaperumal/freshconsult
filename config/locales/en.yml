@@ -2191,7 +2191,7 @@ en:
       cancel_label: Cancel
       new: New Role
       edit: Edit Role
-      default_role: Default Role
+      default_role_with_name: %{role_name} (Default Role)
       default_role_edit: This is a default system role. It cannot be edited or removed. You can view its permissions here, or %{go_back}.
       role_name: Role Name
       role_description: Description
