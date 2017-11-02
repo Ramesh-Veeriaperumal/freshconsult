@@ -675,13 +675,13 @@ module Ember
     end
 
     def test_execute_scenario_failure_with_closure_action
-      scenario_id = create_scn_automation_rule(scenario_automation_params.merge(close_action_params)).id
+      scenario = create_scn_automation_rule(scenario_automation_params.merge(close_action_params))
       Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: true)
       ticket_field1 = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
       ticket_field2 = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
       [ticket_field1, ticket_field2].map { |x| x.update_attribute(:required_for_closure, true) }
       t = create_ticket
-      put :execute_scenario, construct_params({ version: 'private', id: t.display_id }, scenario_id: scenario_id)
+      put :execute_scenario, construct_params({ version: 'private', id: t.display_id }, scenario_id: scenario.id)
       assert_response 400
       match_json([bad_request_error_pattern('group_id', :datatype_mismatch, expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received),
                   bad_request_error_pattern(ticket_field1.label, :datatype_mismatch, expected_data_type: :String, given_data_type: 'Null', prepend_msg: :input_received),
@@ -692,28 +692,36 @@ module Ember
     end
 
     def test_execute_scenario_success_with_closure_action
-      scenario_id = create_scn_automation_rule(scenario_automation_params.merge(close_action_params)).id
+      scenario = create_scn_automation_rule(scenario_automation_params.merge(close_action_params))
       Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: true)
       ticket_field1 = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
       ticket_field2 = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
       [ticket_field1, ticket_field2].map { |x| x.update_attribute(:required_for_closure, true) }
       group = create_group(@account)
       t = create_ticket({custom_field: { ticket_field1.name => 'Sample Text', ticket_field2.name => CUSTOM_FIELDS_CHOICES.sample }}, group)
-      put :execute_scenario, construct_params({ version: 'private', id: t.display_id }, scenario_id: scenario_id)
-      assert_response 204
+      put :execute_scenario, construct_params({ version: 'private', id: t.display_id }, scenario_id: scenario.id)
+      assert_response 200
+      match_json(ticket_show_pattern(t.reload))
+      scenario_activities = scenario[:action_data]
+      scenario_activities.map do |hash|
+        if hash[:comment] 
+          hash.delete(:comment)
+        end
+      end
+      assert_json_match response.api_meta[:activities], scenario_activities
     ensure
       Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: false)
       [ticket_field1, ticket_field2].map { |x| x.update_attribute(:required_for_closure, false) }
     end
 
     def test_execute_scenario_with_closure_of_parent_ticket_failure
-      scenario_id = create_scn_automation_rule(scenario_automation_params.merge(close_action_params)).id
+      scenario = create_scn_automation_rule(scenario_automation_params.merge(close_action_params))
       parent_ticket = create_ticket
       child_ticket = create_ticket
       Helpdesk::Ticket.any_instance.stubs(:child_ticket?).returns(true)
       Helpdesk::Ticket.any_instance.stubs(:associates).returns([child_ticket.display_id])
       Helpdesk::Ticket.any_instance.stubs(:association_type).returns(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:assoc_parent])
-      put :execute_scenario, construct_params({ version: 'private', id: parent_ticket.display_id }, scenario_id: scenario_id)
+      put :execute_scenario, construct_params({ version: 'private', id: parent_ticket.display_id }, scenario_id: scenario.id)
       assert_response 400
       match_json([bad_request_error_pattern('status', :unresolved_child)])
     ensure
@@ -723,14 +731,22 @@ module Ember
     end
 
     def test_execute_scenario_with_closure_of_parent_ticket_success
-      scenario_id = create_scn_automation_rule(scenario_automation_params.merge(close_action_params)).id
+      scenario = create_scn_automation_rule(scenario_automation_params.merge(close_action_params))
       parent_ticket = create_ticket
       child_ticket = create_ticket(status: 5)
       Helpdesk::Ticket.any_instance.stubs(:child_ticket?).returns(true)
       Helpdesk::Ticket.any_instance.stubs(:associates).returns([child_ticket.display_id])
       Helpdesk::Ticket.any_instance.stubs(:association_type).returns(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:assoc_parent])
-      put :execute_scenario, construct_params({ version: 'private', id: parent_ticket.display_id }, scenario_id: scenario_id)
-      assert_response 204
+      put :execute_scenario, construct_params({ version: 'private', id: parent_ticket.display_id }, scenario_id: scenario.id)
+      assert_response 200
+      match_json(ticket_show_pattern(parent_ticket.reload))
+      scenario_activities = scenario[:action_data]
+      scenario_activities.map do |hash|
+        if hash[:comment] 
+          hash.delete(:comment)
+        end
+      end
+      assert_json_match response.api_meta[:activities], scenario_activities
     ensure
       Helpdesk::Ticket.any_instance.unstub(:child_ticket?)
       Helpdesk::Ticket.any_instance.unstub(:associates)
@@ -738,10 +754,22 @@ module Ember
     end
 
     def test_execute_scenario
-      scenario_id = create_scn_automation_rule(scenario_automation_params).id
-      ticket_id = create_ticket(ticket_params_hash).display_id
-      put :execute_scenario, construct_params({ version: 'private', id: ticket_id }, scenario_id: scenario_id)
-      assert_response 204
+      scenario = create_scn_automation_rule(scenario_automation_params.merge({action_data: [{:name=>"ticket_type", :value=>"Question"}, 
+                                                                                            {:name=>"add_comment", :comment=>"hey test1"}, 
+                                                                                            {:name=>"add_tag", :value=>"hey,tag1,tag2"}, 
+                                                                                            {:name=>"add_watcher", :value=>[8, 1]}, 
+                                                                                            {:name=>"add_comment", :comment=>"hey test3"}]}));
+      ticket = create_ticket(ticket_params_hash)
+      put :execute_scenario, construct_params({ version: 'private', id: ticket.display_id }, scenario_id: scenario.id)
+      assert_response 200
+      match_json(ticket_show_pattern(ticket.reload))
+      scenario_activities = scenario[:action_data]
+      scenario_activities.map do |hash|
+        if hash[:comment] 
+          hash.delete(:comment)
+        end
+      end
+      assert_json_match response.api_meta[:activities], scenario_activities
     end
 
     # tests for latest note
