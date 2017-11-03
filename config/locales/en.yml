@@ -6197,6 +6197,10 @@ en:
     info12: "eg: mycompany1.com, mycompany2.com"
     add_company: "Add company information"
     load_company: "Loading company details"
+    health_score: "Health score"
+    account_tier: "Account tier"
+    renewal_date: "Renewal date"
+    industry: "Industry"
     errors:
       required_field: cannot be blank
       custom_text : is not valid
@@ -6204,6 +6208,7 @@ en:
       custom_phone_number : is not a valid phone number
       custom_url : is not a valid URL
       custom_date : is not a valid date
+      default_dropdown: should only contain one of the dropdown options
     requester_not_associated: "This company is no longer associated to this requester"
   import_zendesk_summary_info: Zendesk data has been successfully imported.
   one: 1 Hour

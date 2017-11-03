@@ -11,11 +11,29 @@ class Company < ActiveRecord::Base
 
   validates_presence_of :name,:account
   validates_uniqueness_of :name, :scope => :account_id , :case_sensitive => false
-  attr_accessible :name,:description,:note,:domains ,:sla_policy_id, :import_id, :domain_name
-  attr_accessor :highlight_name, :escape_liquid_attributes
+  attr_accessible :name,:description,:note,:domains ,:sla_policy_id, :import_id,
+                  :domain_name, :health_score, :account_tier, :renewal_date, :industry
+  attr_accessor :highlight_name, :escape_liquid_attributes, :validatable_default_fields
 
   xss_sanitize  :only => [:name], :plain_sanitizer => [:name]
   alias_attribute :domain_name, :domains
+
+  validate :format_of_default_fields, :if => :validatable_default_fields
+
+  DEFAULT_DROPDOWN_FIELDS = [:default_health_score, :default_account_tier, :default_industry]
+  TAM_DEFAULT_FIELDS = [:default_health_score, :default_account_tier, :default_industry, :default_renewal_date]
+
+
+  TAM_DEFAULT_FIELD_MAPPINGS = {
+    :string_cc01        =>    :health_score,
+    :string_cc02        =>    :account_tier,
+    :string_cc03        =>    :industry,
+    :datetime_cc01      =>    :renewal_date
+  }
+
+  TAM_DEFAULT_FIELD_MAPPINGS.keys.each do |key|
+    alias_attribute(TAM_DEFAULT_FIELD_MAPPINGS[key], key)
+  end
   
   concerned_with :associations, :callbacks, :esv2_methods, :rabbitmq
 
@@ -102,6 +120,54 @@ class Company < ActiveRecord::Base
 
   def tickets
     all_tickets.joins(:requester).where('users.deleted =?', false)
+  end
+
+  def format_of_default_fields
+    error_label = validatable_default_fields[:error_label]
+    fields      = validatable_default_fields[:fields]
+
+    fields.each do |field|
+      if DEFAULT_DROPDOWN_FIELDS.include?(field.field_type)
+        validation_method = "validate_format_of_default_dropdown"
+      else
+        validation_method = "no_op"
+      end
+      if respond_to?(validation_method, true)
+        send(validation_method, field, error_label) if send(field.name).present?
+      else
+        warn :"Validation Method #{validation_method} is not present for the #{field.field_type} - #{field.inspect}"
+      end
+    end
+  end
+
+  def validate_format_of_default_dropdown field, error_label
+    add_error_to_self(field, error_label) unless field.choices_value.include? send(field.name)
+  end
+
+  def no_op field, error_label
+  end
+
+  def add_error_to_self field, error_label
+    self.errors.add( field.send(error_label), 
+      I18n.t("#{self.class.to_s.downcase}.errors.default_dropdown"))
+  end
+
+  def choices_value
+    custom_field_choices.map{|choice| choice[:value]}
+  end
+
+  TAM_DEFAULT_FIELD_MAPPINGS.keys.each do |attribute|
+    define_method("#{attribute}") do
+      self.flexifield.send(attribute)
+    end
+
+    define_method("#{attribute}?") do
+      self.flexifield.send(attribute)
+    end
+
+    define_method("#{attribute}=") do |value|
+      self.flexifield.send("#{attribute}=", value)
+    end
   end
 
   private

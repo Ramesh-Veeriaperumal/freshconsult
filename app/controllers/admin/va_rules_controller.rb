@@ -353,7 +353,22 @@ class Admin::VaRulesController < Admin::AdminController
         { :name => "name", :value => t('company_name'), :domtype => "autocomplete_multiple", 
           :data_url => companies_search_autocomplete_index_path, :operatortype => "choicelist" },
         { :name => "domains", :value => t('company_domain'), :domtype => "text", 
-          :operatortype => "choicelist" }
+          :operatortype => "choicelist" },
+        { :name => "health_score", :value => t('company.health_score'),
+          :domtype => dropdown_domtype, :operatortype => "choicelist",
+          :choices => none_option + company_field_choices(Company::DEFAULT_DROPDOWN_FIELDS[0]),
+          :condition => tam_default_company_fields_account? },
+        { :name => "account_tier", :value => t('company.account_tier'),
+          :domtype => dropdown_domtype, :operatortype => "choicelist",
+          :choices => none_option + company_field_choices(Company::DEFAULT_DROPDOWN_FIELDS[1]),
+          :condition => tam_default_company_fields_account? },
+        { :name => "industry", :value => t('company.industry'),
+          :domtype => dropdown_domtype, :operatortype => "choicelist",
+          :choices => none_option + company_field_choices(Company::DEFAULT_DROPDOWN_FIELDS[2]),
+          :condition => tam_default_company_fields_account? },
+        { :name => "renewal_date", :value => t('company.renewal_date'),
+          :domtype => "date", :operatortype => "date",
+          :condition => tam_default_company_fields_account?}
       ]
       add_customer_custom_fields filter_hash['company'], "company"
     end
@@ -397,4 +412,8 @@ class Admin::VaRulesController < Admin::AdminController
       supervisor_rules_controller? ? "dropdown" : "multiple_select"
     end
 
+    def company_field_choices field_type
+      current_account.company_form.default_drop_down_fields(field_type.to_sym).
+        first.custom_field_choices.collect { |c| [c.value, c.value ] }
+    end
 end

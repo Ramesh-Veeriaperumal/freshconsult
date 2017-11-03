@@ -370,6 +370,9 @@ module Redis::RedisKeys
   ZENDESK_IMPORT_APP_KEY = "ZENDESK_IMPORT_APP"
   DISABLE_PORTAL_NEW_THEME = "DISABLE_PORTAL_NEW_THEME"
 
+  # Key for enabling TAM company fields
+  TAM_FIELDS_ENABLED = "TAM_FIELDS_ENABLED"
+
 
 	def newrelic_begin_rescue
 		begin

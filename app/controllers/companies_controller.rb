@@ -12,6 +12,7 @@ class CompaniesController < ApplicationController
   before_filter :build_item, :only => [:quick, :new, :create, :create_company]
   before_filter :set_required_fields, :only => [:create_company, :update_company]
   before_filter :set_validatable_custom_fields, :only => [:create, :update, :create_company, :update_company]
+  before_filter :set_validatable_default_fields, only: [:create, :update, :create_company, :update_company]
   before_filter :set_native_mobile, :only => [:update]
 
   def index

@@ -1,5 +1,7 @@
 class CompanyDecorator < ApiDecorator
-  delegate :id, :name, :description, :note, to: :record
+  delegate :id, :name, :description, :note, :health_score,
+           :account_tier, :industry, to: :record
+  delegate :tam_default_company_fields_enabled?, to: 'Account.current'
 
   def initialize(record, options)
     super(record)
@@ -11,6 +13,10 @@ class CompanyDecorator < ApiDecorator
     custom_fields_hash = {}
     record.custom_field.each { |k, v| custom_fields_hash[@name_mapping[k]] = v }
     custom_fields_hash
+  end
+
+  def renewal_date
+    utc_format(record.renewal_date)
   end
 
   def domains

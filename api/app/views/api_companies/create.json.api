@@ -1,0 +1,17 @@
+response_hash = {
+  id: @item.id,
+  name: @item.name,
+  description: @item.description,
+  note: @item.note,
+  domains: @item.domains,
+  custom_fields: @item.custom_fields,
+  created_at: @item.created_at.try(:utc),
+  updated_at: @item.updated_at.try(:utc)
+}
+response_hash.merge!(
+  health_score: @item.health_score,
+  account_tier: @item.account_tier,
+  industry: @item.industry,
+  renewal_date: @item.renewal_date
+) if @item.tam_default_company_fields_enabled?
+JSON.generate(response_hash)

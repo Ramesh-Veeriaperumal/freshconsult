@@ -1,5 +1,5 @@
 JSON.generate(@items.map do |api_company|
-  {
+  response_hash = {
     id: api_company.id,
     name: api_company.name,
     description: api_company.description,
@@ -9,4 +9,11 @@ JSON.generate(@items.map do |api_company|
     updated_at: api_company.updated_at.try(:utc),
     custom_fields: api_company.custom_fields
   }
+  response_hash.merge!(
+      health_score: api_company.health_score,
+      account_tier: api_company.account_tier,
+      industry: api_company.industry,
+      renewal_date: api_company.renewal_date
+  ) if api_company.tam_default_company_fields_enabled?
+  response_hash
 end)
