@@ -119,7 +119,7 @@
 	</div>
 	<span class="seperator"></span> 
 	<div class="alignright modal-footer">
-		<% if (field_type == 'custom_dropdown' || field_type == 'default_account_tier' || field_type == 'default_industry' || field_type == 'default_health_score') { %>
+		<% if (field_type == 'custom_dropdown' || tamDropdownFields.includes(field_type)) { %>
 			<a class="add-choice" id="addchoice" href="#"> 
 				<span class='ficon-plus'></span> 
 				<span><%= translate.get('addNewChoice') %> </span>
