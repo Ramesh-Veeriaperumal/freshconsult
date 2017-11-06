@@ -3,9 +3,9 @@
 
   <% unsupported_apps = key.eql?(:unsupported_apps) || key.eql?(:unsupported_custom_apps) %>
   <% if unsupported_apps && installed_list.length > 0 %>
-    <% tooltip = "marketplace.unsupported_apps_tooltip_" + Marketplace::Constants::PLATFORM_ID_BY_VERSION[@platform_version].to_s %>
-    <div class="unsupported-apps-box"> <span class="ficon-notice-o notice-o-red-icon fsize-16"></span> <span class="unsupported-apps tooltip" data-placement="belowRight" data-original-title="<%= t("#{tooltip}") %>"> <%= t('marketplace.unsupported_apps') %></span> </div>
-    <% title_set = true %>
+    <% display_text = "marketplace.unsupported_apps_" + Marketplace::Constants::PLATFORM_ID_BY_VERSION[@platform_version].to_s %>
+    <div class="unsupported-apps-box"> <span class="ficon-notice-o notice-o-red-icon fsize-16"></span> <span class="unsupported-apps" data-placement="belowRight"> <%= t("#{display_text}") %></span> </div>
+    <% title_set = false %>
   <% end %>
 
 
@@ -90,7 +90,7 @@
 <% end %>
 
 <% if !title_set && local_assigns[:unsupported_custom_freshplugs] %>
-  <% tooltip = "marketplace.unsupported_apps_tooltip_" + Marketplace::Constants::PLATFORM_ID_BY_VERSION[@platform_version].to_s %>
-  <div class="unsupported-apps-box"> <span class="ficon-notice-o notice-o-red-icon fsize-16"></span> <span class="unsupported-apps tooltip" data-placement="belowRight" data-original-title="<%= t("#{tooltip}") %>"> <%= t('marketplace.unsupported_apps') %></span> </div>
+  <% display_text = "marketplace.unsupported_apps_" + Marketplace::Constants::PLATFORM_ID_BY_VERSION[@platform_version].to_s %>
+  <div class="unsupported-apps-box"> <span class="ficon-notice-o notice-o-red-icon fsize-16"></span> <span class="unsupported-apps" data-placement="belowRight"> <%= t("#{display_text}") %></span> </div>
   <% title_set = true %>
 <% end %>

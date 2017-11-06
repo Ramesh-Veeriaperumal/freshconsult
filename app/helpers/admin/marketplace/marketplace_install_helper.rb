@@ -153,7 +153,7 @@ include FalconHelperMethods
 
   def platform_not_compatible
     platform = Marketplace::Constants::PLATFORM_ID_BY_VERSION[platform_version].to_s
-    %(<p class="platform_not_compatible"> #{t("marketplace.platform_not_compatible_#{platform}")} </p>).html_safe
+    %(<p class="platform_not_compatible"> #{t("marketplace.#{platform}_incompatible")} </p>).html_safe
   end
 
   def install_not_allowed
