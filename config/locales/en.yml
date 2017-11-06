@@ -7165,7 +7165,6 @@ en:
       rating: "Rating"
       skill: "Skill"
       contact_id: "Contact Id"
-      association_type: "Association Type"
     call_history:
       info:
         success: We have started exporting your call records. It will be mailed to you once completed.

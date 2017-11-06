@@ -6,6 +6,7 @@ module ExportCsvUtil
   ALL_TEXT_FIELDS = [:default_description, :default_note, :default_address, :custom_paragraph]
 
   CONTACT         = "contact"
+  DESCRIPTION_DEFAULT_INDEX = Helpdesk::TicketModelExtension.default_export_fields_order["description"] - 1
 
   DEFAULT_SELECTED_FIELDS = {
     CONTACT: [:default_email, :default_phone],
@@ -37,7 +38,7 @@ module ExportCsvUtil
     #Product entry
     csv_headers = csv_headers + [ {:label => I18n.t("export_data.fields.product"), :value => "product_name", :selected => false, :type => :field_type} ] if Account.current.multi_product_enabled?
     description_fields = {:label => I18n.t("export_data.fields.description"), :value => "description", :selected => false}
-    csv_headers.insert((Helpdesk::TicketModelExtension::DESCRIPTION_INDEX_DEFAULT - 1), description_fields)
+    csv_headers.insert(DESCRIPTION_DEFAULT_INDEX, description_fields)
     csv_headers = csv_headers + flexi_fields.collect { |ff| { :label => ff.label, :label_in_portal => ff.label_in_portal, :value => ff.name, :type => ff.field_type, :selected => false, :levels => (ff.nested_levels || []) } }
 
     if is_portal
