@@ -203,6 +203,38 @@ $survey-options-color: (
   }
 }
 
+.child-form .ticket-template-form {
+  width: 97%;
+  margin: 0 auto;
+  .compose-new-ticket {
+    li.field {
+      .options-wrapper {
+        left: -40px
+      }
+    }
+    .field.default_tags,
+    .field.default_subject,
+    .field.custom_text,
+    .field.custom_paragraph,
+    .field.custom_checkbox,
+    .field.custom_number,
+    .field.custom_date,
+    .field.custom_decimal {
+      .options-wrapper {
+        left: -8px
+      }
+    }
+  }
+}
+
+.list-page.ticket-template-list{
+  .list-page-body{
+    .template-desc.ticket-details{
+      width: 80%;
+    }
+  }
+}
+
 .list-query-panel .dropdown-menu li > a:hover, .list-query-panel .dropdown-menu li > a:focus, .list-query-panel .dropdown-menu li.active > a:hover
 
 li.active > a:focus{
