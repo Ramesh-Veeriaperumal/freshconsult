@@ -11,7 +11,7 @@ class Va::Action
   EVENT_PERFORMER = -2
   ASSIGNED_AGENT = ASSIGNED_GROUP = 0
 
-  attr_accessor :action_key, :act_hash, :doer, :triggered_event, :va_rule, :skip_record_action
+  attr_accessor :action_key, :act_hash, :doer, :triggered_event, :va_rule, :skip_record_action, :logger_actions
 
   IRREVERSIBLE_ACTIONS = [:add_comment, :add_watcher, :send_email_to_agent, :send_email_to_group, :send_email_to_requester, :add_tag, :delete_ticket, :mark_as_spam, :internal_group_id, :internal_agent_id]
 
@@ -78,13 +78,17 @@ class Va::Action
                         :rule_id => @va_rule.id,
                         :is_automation_rule => is_automation_rule?
                         }) if @va_rule.present?
-    Va::RuleActivityLogger.new(act_hash, performer, false, activity_params).record_activity(params)
+    va_rule_logger = Va::RuleActivityLogger.new(act_hash, performer, false, activity_params)
+    @logger_actions = va_rule_logger.act_hash
+    va_rule_logger.record_activity(params)
   end
 
   def record_action_for_bulk(user)
     return if !is_automation_rule?
     performer = user
-    Va::RuleActivityLogger.new(act_hash, performer, true).record_activity
+    va_rule_logger = Va::RuleActivityLogger.new(act_hash, performer, true)
+    @logger_actions = va_rule_logger.act_hash
+    va_rule_logger.record_activity
   end
 
   def group_id(act_on)

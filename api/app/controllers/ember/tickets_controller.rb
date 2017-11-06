@@ -8,13 +8,13 @@ module Ember
     include Redis::RedisKeys
     include Redis::OthersRedis
 
-    decorate_views(decorate_object: [:update_properties], decorate_objects: [:index, :search])
+    decorate_views(decorate_object: [:update_properties, :execute_scenario], decorate_objects: [:index, :search])
 
     SLAVE_ACTIONS = %w(latest_note).freeze
 
     INDEX_PRELOAD_OPTIONS = [:ticket_states, :tags, :ticket_old_body, :schema_less_ticket, :flexifield, :ticket_status, { requester: [:avatar, :flexifield, :companies, :user_emails, :tags] }, :custom_survey_results].freeze
     DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
-    SINGULAR_RESPONSE_FOR = %w(show create update split_note update_properties).freeze
+    SINGULAR_RESPONSE_FOR = %w(show create update split_note update_properties execute_scenario).freeze
 
     before_filter :ticket_permission?, only: [:latest_note, :split_note]
     before_filter :parent_permission, only: [:create]
@@ -74,13 +74,24 @@ module Ember
       fetch_ticket_fields_mapping
       return unless validate_scenario_execution
       va_rule = @delegator.va_rule
-      va_rule.trigger_actions(@item, api_current_user)
-      @item.save
-      # TODO-LongTerm create_scenario_activity should ideally be inside va_rule model and not in the controllers
-      @item.create_scenario_activity(va_rule.name)
-      # TODO: Need to revisit. Find a better way to unset scenario_action_log thread variable.
-      Va::RuleActivityLogger.clear_activities
-      head 204
+      if va_rule.trigger_actions(@item, api_current_user)
+        @item.save
+        @item.create_scenario_activity(va_rule.name)
+        scenario_activities = va_rule.actions.collect { |a| a.logger_actions}.compact
+        scenario_activities.each do |hash|
+          if @item.custom_field && CustomFieldDecorator.custom_field?(hash[:name])
+            custom_string = "custom_fields."
+            hash[:name] = custom_string << TicketDecorator.display_name(hash[:name])
+          elsif hash[:comment] 
+            hash.delete(:comment)
+          end
+        end
+        response.api_meta = { activities: scenario_activities}
+        Va::RuleActivityLogger.clear_activities
+        render 'ember/tickets/show'
+      else
+        render_errors(@item.errors)
+      end
     end
 
     def latest_note
