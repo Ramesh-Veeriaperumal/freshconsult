@@ -32,23 +32,20 @@ module Helpdesk::TicketModelExtension
     [ "export_data.fields.resolution_time",       "resolution_time_bhrs",    false,  nil              , 23    , "sla_management_enabled?"],
     [ "export_data.fields.resolution_status",     "resolution_status",       false,  nil              , 26    , "sla_management_enabled?"],
     [ "export_data.fields.first_response_status", "first_response_status",   false,  nil              , 27    , "sla_management_enabled?"],
-    [ "export_data.fields.association_type",      "association_type_name",   false,  nil              , 31    , "link_tkts_enabled?" || "parent_child_tkts_enabled?"],
-    [ "export_data.fields.internal_agent",        "internal_agent_name",     false,  :internal_agent  , 32    , "shared_ownership_enabled?"],
-    [ "export_data.fields.internal_group",        "internal_group_name",     false,  :internal_group  , 33    , "shared_ownership_enabled?"]
+    [ "export_data.fields.internal_agent",        "internal_agent_name",     false,  :internal_agent  , 31    , "shared_ownership_enabled?"],
+    [ "export_data.fields.internal_group",        "internal_group_name",     false,  :internal_group  , 32    , "shared_ownership_enabled?"]
   ]
 
-  ARCHIVE_TICKETS_FIELDS_TO_IGNORE = ["association_type_name", "internal_agent_name", "internal_group_name"]
+  ARCHIVE_TICKETS_FIELDS_TO_IGNORE = ["internal_agent_name", "internal_group_name"]
 
   ASSOCIATION_BY_VALUE = Hash[*EXPORT_FIELDS.map { |i| [i[1], i[3]] }.flatten ]
 
   def self.default_export_fields_order
-    @default_export_fields ||= begin
-      exportable_fields = Helpdesk::TicketModelExtension.allowed_fields
-      fields = Hash[*exportable_fields.map { |i| [i[1], i[4]] }.flatten ]
-      fields["description"]   = 3
-      fields["product_name"]  = fields.keys.length+1
-      fields
-    end
+    exportable_fields = Helpdesk::TicketModelExtension.allowed_fields
+    fields = Hash[*exportable_fields.map { |i| [i[1], i[4]] }.flatten ]
+    fields["description"]   = 3
+    fields["product_name"]  = fields.keys.length+1
+    fields
   end
 
   def self.custom_export_fields_order account = Account.current
