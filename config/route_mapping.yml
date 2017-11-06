@@ -52,3 +52,4 @@
 /social/welcome: /a/social/
 /helpdesk/tickets/compose_email: /a/tickets/compose-email
 /search/all: /a/search/tickets
+/helpdesk/dashboard/agent_status: /a/dashboard/agent_status/
