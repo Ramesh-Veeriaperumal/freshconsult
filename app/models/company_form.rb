@@ -40,7 +40,7 @@ class CompanyForm < ActiveRecord::Base
     default_company_fields.select { |c| Company::TAM_DEFAULT_FIELDS.include?(c.field_type) }
   end
 
-  def default_drop_down_fields field_type=nil
+  def default_drop_down_fields(field_type)
     default_company_fields.select { |c| c.field_type == field_type }
   end
 

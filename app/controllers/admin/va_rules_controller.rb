@@ -353,23 +353,9 @@ class Admin::VaRulesController < Admin::AdminController
         { :name => "name", :value => t('company_name'), :domtype => "autocomplete_multiple", 
           :data_url => companies_search_autocomplete_index_path, :operatortype => "choicelist" },
         { :name => "domains", :value => t('company_domain'), :domtype => "text", 
-          :operatortype => "choicelist" },
-        { :name => "health_score", :value => t('company.health_score'),
-          :domtype => dropdown_domtype, :operatortype => "choicelist",
-          :choices => none_option + company_field_choices(Company::DEFAULT_DROPDOWN_FIELDS[0]),
-          :condition => tam_default_company_fields_account? },
-        { :name => "account_tier", :value => t('company.account_tier'),
-          :domtype => dropdown_domtype, :operatortype => "choicelist",
-          :choices => none_option + company_field_choices(Company::DEFAULT_DROPDOWN_FIELDS[1]),
-          :condition => tam_default_company_fields_account? },
-        { :name => "industry", :value => t('company.industry'),
-          :domtype => dropdown_domtype, :operatortype => "choicelist",
-          :choices => none_option + company_field_choices(Company::DEFAULT_DROPDOWN_FIELDS[2]),
-          :condition => tam_default_company_fields_account? },
-        { :name => "renewal_date", :value => t('company.renewal_date'),
-          :domtype => "date", :operatortype => "date",
-          :condition => tam_default_company_fields_account?}
+          :operatortype => "choicelist" }
       ]
+      add_tam_company_fields filter_hash['company'] if tam_default_company_fields_account?
       add_customer_custom_fields filter_hash['company'], "company"
     end
 
@@ -393,6 +379,22 @@ class Admin::VaRulesController < Admin::AdminController
           })
         end
       end
+    end
+
+    def add_tam_company_fields filter_hash
+      filter_hash.push(
+        { :name => "health_score", :value => t('company.health_score'),
+          :domtype => dropdown_domtype, :operatortype => "choicelist",
+          :choices => none_option + company_field_choices(Company::DEFAULT_DROPDOWN_FIELDS[0])},
+        { :name => "account_tier", :value => t('company.account_tier'),
+          :domtype => dropdown_domtype, :operatortype => "choicelist",
+          :choices => none_option + company_field_choices(Company::DEFAULT_DROPDOWN_FIELDS[1])},
+        { :name => "industry", :value => t('company.industry'),
+          :domtype => dropdown_domtype, :operatortype => "choicelist",
+          :choices => none_option + company_field_choices(Company::DEFAULT_DROPDOWN_FIELDS[2])},
+        { :name => "renewal_date", :value => t('company.renewal_date'),
+          :domtype => "date", :operatortype => "date"}
+        )
     end
 
     def hide_password_in_webhook
