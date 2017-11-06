@@ -1534,6 +1534,12 @@ div[class$="-toggle"]{
         color: $app-btn-text-disabled;
     }
   }
+  .ticket-template-list .ticket-details {
+    width: 80%;
+  }
+  .edit_agent .redactor_editor{
+    min-height: 320px;
+  }
 
 }
 
