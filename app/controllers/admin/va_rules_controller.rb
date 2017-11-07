@@ -306,7 +306,8 @@ class Admin::VaRulesController < Admin::AdminController
 
     def add_custom_filters filter_hash
       nested_special_case = [['--', t('any_val.any_value')], ['', t('none')]]
-      cf = current_account.ticket_fields.custom_fields
+      cf = current_account.ticket_fields.custom_fields.preload(:flexifield_def_entry)
+      cf.select!{|field| field.flexifield_def_entry.flexifield_name.starts_with?('ff') } if supervisor_rules_controller?
       unless cf.blank?
         filter_hash.push({ :name => -1,
                            :value => "---------------------"
