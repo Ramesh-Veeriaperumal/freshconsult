@@ -11,7 +11,8 @@ App.CollaborationModel = (function ($) {
         TYPE_RECEIVED: "received",
         MSG_TYPE_CLIENT: "1", // Msg from Client
         MSG_TYPE_SERVER_MADD: "2", // Msg from Server, denotes addition of member
-        MSG_TYPE_SERVER_MREMOVE: "3", // Msg from Server, denotes removal of member        
+        MSG_TYPE_SERVER_MREMOVE: "3", // Msg from Server, denotes removal of member
+        MSG_TYPE_CLIENT_ATTACHMENT: '4', // Attachment Msg from Client     
         JUST_NOW_TEXT: "Now",
         LONG_AGO_TEXT: "Long ago",
         MAX_ONLINE_SEC: 60,
@@ -116,8 +117,7 @@ App.CollaborationModel = (function ($) {
                 msg.incremental = true;
                 App.CollaborationUi.addMessageHtml(msg, CONST.TYPE_RECEIVED);
             }
-            if(sent_by_me) {
-                Collab.sendNotification(msg);
+            if (msg_for_current_convo && sent_by_me) {
                 App.CollaborationUi.updateSentMessage(msg);
                 _COLLAB_PVT.updateConvoMeta(msg); /* stores metadata per convo */
             }
@@ -389,13 +389,9 @@ App.CollaborationModel = (function ($) {
             if(!!ticket_id) {
                 var collab_access_token = App.CollaborationUi.getUrlParameter("token");
                 var currentConvo = Collab.conversationsMap[ticket_id];
-                message_data = {
-                    mid: msg.mid,
-                    body: msg.body
+                var message_data = {
+                    mid: msg.mid
                 };
-                if (msg.metadata && Collab.checkNotiKeys(msg)) {
-                    message_data.metadata = App.CollaborationUi.parseJson(msg.metadata);
-                }
                 if(collab_access_token) {
                     message_data.token = collab_access_token;
                 }
@@ -423,12 +419,20 @@ App.CollaborationModel = (function ($) {
                             topCount--;
                         }
                     }
+                    if (msg.metadata) {
+                        message_data.metadata = App.CollaborationUi.parseJson(msg.metadata);
+                    }
                     message_data.metadata = message_data.metadata || {};
                     message_data.metadata.follower_notify = followersInfo;
                     message_data.top_members = App.CollaborationUi.stringify(topMembersInfo);
                     message_data.m_ts = Date.now().toString();
                     message_data.m_type = msg.m_type;
+                    message_data.body = msg.m_type === CONST.MSG_TYPE_CLIENT_ATTACHMENT ? JSON.parse(msg.body).fn : msg.body;
+                } else if (msg.metadata && Collab.checkNotiKeys(msg)) {
+                    message_data.metadata = App.CollaborationUi.parseJson(msg.metadata);
+                    message_data.body = msg.body;
                 }
+
                 if (message_data.metadata) {
                     message_data.metadata = App.CollaborationUi.stringify(message_data.metadata);
                     var jsonData = App.CollaborationUi.stringify(message_data);

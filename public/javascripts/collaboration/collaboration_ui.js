@@ -1764,6 +1764,8 @@ App.CollaborationUi = (function ($) {
                     ann_elem.attr("id", "annotation-" + msg.mid);
                     ann_elem.attr("data-message-id", msg.mid);
                 }
+                // send notification
+                App.CollaborationModel.sendNotification(msg);
             }
         },
 
