@@ -19,7 +19,8 @@ App.CollaborationModel = (function ($) {
         TIME_CHUNKS: [[60 * 60 * 24, "d"], [60 * 60, "h"], [60, "m"]],
         NOTIFICATION_POPUP_CARD_TEMPLATE: "collaboration/templates/notification_popup_card",
         DUMMY_USER: {name: "New user"},
-        ANNOTATION: {bg_color: "#b4ebdf", shadow_color: "#7ec7b7", border_color: "#96dbcc"}
+        ANNOTATION: {bg_color: "#b4ebdf", shadow_color: "#7ec7b7", border_color: "#96dbcc"},
+        NOTI_KEYS: ["hk_notify", "hk_group_notify", "reply"]
     };
 
     var _COLLAB_PVT = {
@@ -30,6 +31,7 @@ App.CollaborationModel = (function ($) {
                 Collab.features.replyToEnabled = response.features.enable_reply_to;
                 Collab.features.collabTourEnabled = response.features.show_collab_tour;
                 Collab.features.markReadEnabled = response.features.enable_mark_read;
+                Collab.features.followerEnabled = response.features.enable_follower;
             }
         },
         connectionInited : function() {
@@ -115,6 +117,7 @@ App.CollaborationModel = (function ($) {
                 App.CollaborationUi.addMessageHtml(msg, CONST.TYPE_RECEIVED);
             }
             if(sent_by_me) {
+                Collab.sendNotification(msg);
                 App.CollaborationUi.updateSentMessage(msg);
                 _COLLAB_PVT.updateConvoMeta(msg); /* stores metadata per convo */
             }
@@ -150,6 +153,27 @@ App.CollaborationModel = (function ($) {
             var members = Collab.conversationsMap[response.co_id].members;
             if(!!members[userIdToRemove]){
                 App.CollaborationUi.removeCollaboratorsFromList(userIdToRemove);
+            }
+        },
+        onFollowerAdd: function(response) {
+            var currentConvo = Collab.conversationsMap[response.co_id];
+            var userIdToAdd = App.CollaborationUi.parseJson(response.body).user_id;
+            var addedAt = App.CollaborationUi.parseJson(response.body).added_at;
+            var followers = currentConvo.followers || {};
+            var followerToAdd = {
+                added_at: addedAt
+            };
+            if (!followers[userIdToAdd]) {
+                followers[userIdToAdd] = followerToAdd;
+                currentConvo.followers = followers;
+            }
+        },
+        onFollowerRemove: function(response) {
+            var currentConvo = Collab.conversationsMap[response.co_id];
+            var userIdToRemove = App.CollaborationUi.parseJson(response.body).user_id;
+            var followers = currentConvo.followers;
+            if (followers && followers[userIdToRemove]) {
+                delete currentConvo.followers[userIdToRemove];
             }
         },
         onNotifyHandler: function(response) {
@@ -278,7 +302,8 @@ App.CollaborationModel = (function ($) {
             groupMentionsEnabled: false,
             replyToEnabled: false,
             collabTourEnabled: false,
-            markReadEnabled: false
+            markReadEnabled: false,
+            followerEnabled: false
         },
 
         isOnline: function(userId) {
@@ -350,26 +375,71 @@ App.CollaborationModel = (function ($) {
 
            _COLLAB_PVT.ChatApi.updateReadMarker(convo_id, current_user_id, msgId, cb);
         },
+        checkNotiKeys: function(msg) {
+            meta = JSON.parse(msg.metadata)
+            for(var i in CONST.NOTI_KEYS) {
+                if(meta.hasOwnProperty(CONST.NOTI_KEYS[i])){
+                    return true;
+                }
+            }
+            return false;
+        },
         sendNotification: function(msg) {
             var ticket_id = Collab.currentConversation.co_id;
             if(!!ticket_id) {
                 var collab_access_token = App.CollaborationUi.getUrlParameter("token");
+                var currentConvo = Collab.conversationsMap[ticket_id];
                 message_data = {
                     mid: msg.mid,
-                    body: msg.body,
-                    metadata: msg.metadata
+                    body: msg.body
                 };
+                if (msg.metadata && Collab.checkNotiKeys(msg)) {
+                    message_data.metadata = App.CollaborationUi.parseJson(msg.metadata);
+                }
                 if(collab_access_token) {
                     message_data.token = collab_access_token;
                 }
-                var jsonData = JSON.stringify(message_data);
-                jQuery.ajax({
-                    url: '/helpdesk/tickets/collab/' + ticket_id + '/notify',
-                    type: 'POST',
-                    dataType: 'json',                  
-                    data: jsonData,
-                    contentType: 'application/json; charset=utf-8'
-                }); 
+                if (Collab.features.followerEnabled && Object.keys(currentConvo.followers).length !== 0) {
+                    var followers = currentConvo.followers;
+                    var followersInfo = [];
+                    for (var userId in followers) {
+                        if (followers.hasOwnProperty(userId)) {
+                            followersInfo.push({
+                                follower_id: userId
+                            });
+                        }
+                    }
+                    var members = currentConvo.members;
+                    var topMembersInfo = [];
+                    var topCount = 3;
+                    for (var memberId in members) {
+                        if (topCount === 0) {
+                            break;
+                        }
+                        if (members.hasOwnProperty(memberId)) {
+                            topMembersInfo.push({
+                                member_id: memberId
+                            });
+                            topCount--;
+                        }
+                    }
+                    message_data.metadata = message_data.metadata || {};
+                    message_data.metadata.follower_notify = followersInfo;
+                    message_data.top_members = App.CollaborationUi.stringify(topMembersInfo);
+                    message_data.m_ts = Date.now().toString();
+                    message_data.m_type = msg.m_type;
+                }
+                if (message_data.metadata) {
+                    message_data.metadata = App.CollaborationUi.stringify(message_data.metadata);
+                    var jsonData = App.CollaborationUi.stringify(message_data);
+                    jQuery.ajax({
+                        url: '/helpdesk/tickets/collab/' + ticket_id + '/notify',
+                        type: 'POST',
+                        dataType: 'json',                  
+                        data: jsonData,
+                        contentType: 'application/json; charset=utf-8'
+                    });
+                } 
             } else {
                 console.log("Sending notification failed!! Ticket ID not found!");
             }
@@ -435,7 +505,7 @@ App.CollaborationModel = (function ($) {
             });
         },
         notify: function(userId, notifyBody, ticketId) {
-            _COLLAB_PVT.ChatApi.notifyUser(userId, notifyBody, ticketId)
+            _COLLAB_PVT.ChatApi.notifyUser(userId, notifyBody, ticketId);
         },
         addMember: function(convoName, uid, cb) {
             var convo = {
@@ -691,6 +761,8 @@ App.CollaborationModel = (function ($) {
                 "onheartbeat": _COLLAB_PVT.onHeartBeat,
                 "onmemberadd": _COLLAB_PVT.onMemberAdd,
                 "onmemberremove": _COLLAB_PVT.onMemberRemove,
+                "onfolloweradd": _COLLAB_PVT.onFollowerAdd,
+                "onfollowerremove": _COLLAB_PVT.onFollowerRemove,
                 "onerror": _COLLAB_PVT.onErrorHandler,
                 "apiinited": _COLLAB_PVT.apiInited
             });
