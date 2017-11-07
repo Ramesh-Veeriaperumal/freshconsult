@@ -78,6 +78,7 @@
     - company_export
     - product_feedback
     - freshcaller_migration_worker
+    - ner_worker
   :maintainence:
     - select_all_tickets
     - select_all_batcher

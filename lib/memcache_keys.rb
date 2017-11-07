@@ -191,6 +191,8 @@ module MemcacheKeys
 
   ACCOUNT_DASHBOARD_SHARD_NAME = "v1/ACCOUNT_DASHBOARD_SHARD_NAME:%{account_id}"
 
+  NER_ENRICHED_NOTE = "NER_ENRICHED_NOTE:%{account_id}:%{ticket_id}"
+
   SUBSCRIPTION_PLANS = 'v1/SUBSCRIPTION_PLANS'
 
   class << self
