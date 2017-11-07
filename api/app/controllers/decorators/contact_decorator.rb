@@ -74,6 +74,7 @@ class ContactDecorator < ApiDecorator
   def restricted_requester_hash
     req_hash = construct_hash(requester_widget_contact_fields, record)
     req_hash[:has_email] = record.email.present? if !req_hash.key?(:email)
+    req_hash[:active] = record.active
     req_hash[:twitter_id] = twitter_id if !req_hash.key?(:twitter_id) && twitter_id.present?
     req_hash
   end
