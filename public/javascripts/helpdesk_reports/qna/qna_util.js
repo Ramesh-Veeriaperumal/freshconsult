@@ -114,11 +114,6 @@ HelpdeskReports.Qna_util = (function($) {
           'question-complete' + constants.events_namespace,
           _this.request_param
         );
-
-        // the question series is complete
-        // stop user to enter any further text in the
-        // input box
-        $input.attr('readonly', true);
       } else {
         if (current_level == 0) {
           selected_breadcrumb = 'start';
