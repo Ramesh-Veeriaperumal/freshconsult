@@ -8,6 +8,12 @@ $initialInputBoxRightOffset: 45px;
     width: 100%;
     z-index: 3;
 
+    &:hover {
+      .search-field-holder {
+        border-color: gray;
+      }
+    }
+
     .search-field-holder {
       margin: 4px 0 20px 0;
       position: relative;
@@ -22,6 +28,10 @@ $initialInputBoxRightOffset: 45px;
         transform: translateX(33%);
         width: 58%;
         border: 1px solid #02b875;
+
+        &:before, .clear-query .ficon-clear-qna:before {
+          color: #02b875;
+        }
       }
 
       &:before {
@@ -37,6 +47,7 @@ $initialInputBoxRightOffset: 45px;
 
       .clear-query {
         position: absolute;
+        cursor: pointer;
         color: #999;
         top: 16px;
         right: 14px;
@@ -57,7 +68,11 @@ $initialInputBoxRightOffset: 45px;
         .value-block {
           display: inline-block;
           width: auto;
-          font-size: 13px;
+          font-size: 18px;
+          line-height: 1.5;
+          vertical-align: middle;
+          color: #333333;
+          font-weight: 500;
           padding: 2px;
           cursor: default;
         }
@@ -66,7 +81,7 @@ $initialInputBoxRightOffset: 45px;
       div.question-popover {
         position: absolute;
         left: 40px;
-        top: 10px;
+        top: 20px;
         z-index: 3;
         display: none;
 
@@ -229,8 +244,11 @@ $initialInputBoxRightOffset: 45px;
       box-shadow: unset;
     }
 
+
+
     div.close-search {
-      float: right;
+      position: absolute;
+      left: 0;
       cursor: pointer;
       margin-top: 14px;
 

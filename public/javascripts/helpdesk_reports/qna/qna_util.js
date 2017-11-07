@@ -101,7 +101,7 @@ HelpdeskReports.Qna_util = (function($) {
         //reset the questions populated count
         _this.question_prefix_count = 0;
         //cloes the question dropdown
-        $popover.animate({ opacity: 'hide' }, 'slow');
+        $popover.animate({ opacity: 'hide' }, 'fast');
 
         //Collect the text in the question box;
         _this.request_param['text'] =
@@ -309,7 +309,8 @@ HelpdeskReports.Qna_util = (function($) {
         {
           left: '+=' + translate_by
         },
-        'slow'
+        300,
+        'swing'
       );
     },
     reset: function() {
