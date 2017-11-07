@@ -21,3 +21,6 @@
     <div>Freshdesk, Inc. 1250 Bayhill Drive, Suite 315, San Bruno, CA 94066</div>
   </div>
 </div>
+<% if @activation_url && Account.current.launched?(:email_actions) %>
+  <%= view_action(url: @activation_url, name: 'Activate') %>
+<% end %>
