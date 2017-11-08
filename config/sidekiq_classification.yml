@@ -78,6 +78,7 @@
     - company_export
     - product_feedback
     - freshcaller_migration_worker
+    - ner_worker
   :maintainence:
     - select_all_tickets
     - select_all_batcher
@@ -133,6 +134,7 @@
     - cloud_elements_logger_email
     - populate_account_setup
     - data_enrichment
+    - email_service_provider
     - ebay_worker
     - ebay_message_worker
     - ebay_user_worker

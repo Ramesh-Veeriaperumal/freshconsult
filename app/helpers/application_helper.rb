@@ -2023,7 +2023,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
       :name     => current_user.name,
       :created  => current_account.created_at.to_i,
       :updated  => current_user.last_login_at.to_i,
-      :plan     => Subscription.fetch_by_account_id(current_account.id).subscription_plan.display_name,
+      :plan     => Subscription.fetch_by_account_id(current_account.id).subscription_plan_from_cache.display_name,
       :roles    => (current_user.privilege?(:admin_tasks)) ? ['admin'] : ['agent']
     }
   end

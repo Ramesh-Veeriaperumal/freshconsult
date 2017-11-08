@@ -570,7 +570,7 @@ private
     @model_changes = self.changes.to_hash
     @model_changes.merge!(:round_robin_assignment => [nil, true]) if round_robin_assignment
     @model_changes.merge!(schema_less_ticket.changes) unless schema_less_ticket.nil?
-    @model_changes.merge!(flexifield.changes) unless flexifield.nil?
+    @model_changes.merge!(flexifield.before_save_changes) unless flexifield.nil?
     @model_changes.merge!({ tags: [] }) if self.tags_updated #=> Hack for when only tags are updated to trigger ES publish
     @model_changes.symbolize_keys!
   end
