@@ -71,11 +71,11 @@ HelpdeskReports.Qna_util = (function($) {
     filtering: false,
     populateSearchBox: function(selected_item) {
       var bg_color = '#fff'; //constants.question_colors[this.question_prefix_count];
+      var $alreadySelectedQuestionPrefix = $('.qna-search-bar .selected-queries');
+
       var mkup =
         '<div class="value-block" data-level="' +
         this.current_level +
-        '" style="background:' +
-        bg_color +
         '">' +
         (selected_item.attr('data-prefix') || '') +
         selected_item.html() +
@@ -87,6 +87,15 @@ HelpdeskReports.Qna_util = (function($) {
       var $input = $('#search-query');
 
       $input.val('');
+
+      // if the selected question prefixes were highlighted to indicate that
+      // it would be reset in its entirety upon another keypress of
+      // delete/backspace, and then user starts typing to select a prefix,
+      // we should unhighlighted the already selected prefixes
+      if ($alreadySelectedQuestionPrefix.hasClass('highlighted')) {
+        $alreadySelectedQuestionPrefix.removeClass('highlighted')
+      }
+
       this.resizeSearchInput();
     },
     populateQuestionPrefixes: function(current_level, selected_breadcrumb) {
@@ -334,13 +343,11 @@ HelpdeskReports.Qna_util = (function($) {
       $container.removeAttr('readonly');
 
       if ($container.hasClass('active')) {
-        $input
-          .css({
-            width: inputWidth,
-            left: constants.initialInputBoxLeftOffset
-          });
+        $input.css({
+          width: inputWidth,
+          left: constants.initialInputBoxLeftOffset
+        });
       }
-
     },
     filterList: function() {
       var filter_text = $('[rel=filter_content]').val();
@@ -614,6 +621,7 @@ HelpdeskReports.Qna_util = (function($) {
 
       var $input = $('#search-query');
       var inputText = $input.val();
+      var $alreadySelectedQuestionPrefix = $('.qna-search-bar .selected-queries');
 
       // when question prefixes is filtered against an empty string
       // we need to show all of them, this happens when a user deletes
@@ -623,7 +631,7 @@ HelpdeskReports.Qna_util = (function($) {
         this.resetQuestionsPopover();
 
         // we want to reset the entire search box after the user hits
-        // DELETE twice on an input box, its very intuitive to clear the
+        // DELETE **twice** on an input box, its very intuitive to clear the
         // search box of all letters and type the query again
         // hence we do not reset the search when we find the input
         // text to be blank for the first time, but we reset it after the user
@@ -639,6 +647,10 @@ HelpdeskReports.Qna_util = (function($) {
           e.keyCode === constants.keyCodes.DELETE ||
           e.keyCode === constants.keyCodes.BACKSPACE
         ) {
+          // highlight all question prefixes already selected to indicate
+          // the next delete/backspace will reset to an empty search instead
+          // of only deleteing the previous prefix(intuitively people will expect that)
+          $alreadySelectedQuestionPrefix.addClass('highlighted');
           this._clearQueryAfterInvokedTwice();
         }
 
@@ -646,6 +658,10 @@ HelpdeskReports.Qna_util = (function($) {
       }
 
       this._clearQueryAfterInvokedTwice = undefined;
+
+      if ($alreadySelectedQuestionPrefix.hasClass('highlighted')) {
+        $alreadySelectedQuestionPrefix.removeClass('highlighted')
+      }
 
       var questionPrefixes = constants.question_prefixs;
       var currentLevel = this.current_level;

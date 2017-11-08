@@ -65,6 +65,12 @@ $initialInputBoxRightOffset: 45px;
         justify-content: center;
         align-items: center;
 
+        &.highlighted {
+          .value-block {
+            background-color: lighten(#5897fb, 20%);
+          }
+        }
+
         .value-block {
           display: inline-block;
           width: auto;
@@ -231,6 +237,10 @@ $initialInputBoxRightOffset: 45px;
       width: calc(
         100% - #{$initialInputBoxLeftOffset} - #{$initialInputBoxRightOffset}
       );
+      font-size: 18px;
+      list-style: 1.5;
+      vertical-align: middle;
+      color: gray;
       position: absolute;
       // accomadate bubble icon in parent
       left: 40px;
