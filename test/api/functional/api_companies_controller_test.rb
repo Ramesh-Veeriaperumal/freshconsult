@@ -289,7 +289,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     get :index, controller_params
     pattern = []
     Account.current.companies.order(:name).all.each do |company|
-      pattern << company_pattern(Company.find(company.id))
+      pattern << public_api_company_pattern(Company.find(company.id))
     end
     assert_response 200
     match_json(pattern.ordered!)

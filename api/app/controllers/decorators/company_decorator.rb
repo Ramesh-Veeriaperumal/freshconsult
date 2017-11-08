@@ -19,6 +19,10 @@ class CompanyDecorator < ApiDecorator
     utc_format(record.renewal_date)
   end
 
+  def utc_format(value)
+    value.respond_to?(:utc) ? value.utc : value
+  end
+
   def domains
     record.domains.nil? ? [] : record.domains.split(',')
   end

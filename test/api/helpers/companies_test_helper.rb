@@ -42,7 +42,7 @@ module CompaniesTestHelper
   end
 
   def format_renewal_date renewal_date
-    renewal_date.respond_to?(:utc) ? renewal_date.strftime('%F') : renewal_date
+    renewal_date.respond_to?(:utc) ? renewal_date.utc : renewal_date
   end
 
   def company_field_pattern(_expected_output = {}, company_field)
