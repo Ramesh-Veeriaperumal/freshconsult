@@ -142,7 +142,7 @@ class CustomFieldsController < Admin::AdminController
     end
 
     def check_ticket_field_count
-      field_data_group = field_data.group_by { |c_f_d| c_f_d["type"]}
+      field_data_group = custom_field_data.group_by { |c_f_d| c_f_d["type"]}
       field_data_count_by_type = {
                                 :string =>  calculate_string_fields_count(field_data_group),
                                 :text => field_data_group["paragraph"].length,
@@ -213,7 +213,13 @@ class CustomFieldsController < Admin::AdminController
 
     def field_data
       @field_data ||= begin
-        ActiveSupport::JSON.decode(params[:jsonData]).reject { |f_d| f_d["field_type"].include?("default_") }.compact
+        ActiveSupport::JSON.decode(params[:jsonData]).compact
+      end
+    end
+
+    def custom_field_data
+      custom_field_data ||= begin
+        field_data.reject { |f_d| f_d["field_type"].include?("default_") }
       end
     end
 
