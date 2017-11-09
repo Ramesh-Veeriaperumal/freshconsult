@@ -5568,7 +5568,7 @@ es-LA:
     success_signin: "Se asoció correctamente @%{twitter_screen_name} con %{helpdesk}."
     user_exists: "Esta cuenta de Twitter ya está asociada con otro producto."
     not_authorized: "No fuiste autorizado por Twitter."
-    not_valid: "El estado tiene más de 140 caracteres."
+    not_valid: "El estado tiene más de 280 caracteres."
     deleted: "Se quitó la cuenta de Twitter @%{twitter_screen_name}."
     sent: "El tuiteo se envió correctamente."
     error_sending: "Error al enviar el tuiteo. Es posible que Twitter esté inestable. Vuelve a intentarlo."

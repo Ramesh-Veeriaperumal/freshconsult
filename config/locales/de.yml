@@ -5585,7 +5585,7 @@ de:
     success_signin: "@%{twitter_screen_name} wurde erfolgreich mit %{helpdesk} verknüpft."
     user_exists: "Twitter-Konto ist mit anderem Produkt verknüpft."
     not_authorized: "Autorisierung durch Twitter fehlgeschlagen"
-    not_valid: "Status hat mehr als 140 Zeichen."
+    not_valid: "Status hat mehr als 280 Zeichen."
     deleted: "Das Twitter-Konto @%{twitter_screen_name} wurde entfernt."
     sent: "Tweet erfolgreich gesendet"
     error_sending: "Fehler beim Senden des Tweets! Bitte versuchen Sie es erneut."
