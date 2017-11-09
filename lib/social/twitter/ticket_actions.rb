@@ -115,7 +115,7 @@ module Social::Twitter::TicketActions
     end
 
     def construct_item_body(account, item, twt, options)
-      tweet_body = options[:tweet] ? twt[:body] : twt.text
+      tweet_body = options[:tweet] ? tweet_body(twt) : twt.text
       if twt.respond_to?("media?") && twt.media?
         media_url_hash = construct_media_url_hash(account, item, twt, options[:oauth_credential])
         if media_url_hash.present?

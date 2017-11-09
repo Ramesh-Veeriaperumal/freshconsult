@@ -12,7 +12,7 @@ module Social::Gnip::Util
         if stream
           @twitter_handle = stream.twitter_handle
           stream.update_volume_in_redis
-          convert_hash = stream.check_ticket_rules(@tweet_obj[:body])
+          convert_hash = stream.check_ticket_rules(tweet_body(@tweet_obj))
         end
       else
         @twitter_handle = account.twitter_handles.find_by_id(args[:stream_id])

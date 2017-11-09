@@ -3691,7 +3691,7 @@ zh-CN:
     success_signin: "已成功将 @%{twitter_screen_name}关联到%{helpdesk}。"
     user_exists: Twitter账号已关联到另一个产品。
     not_authorized: 您未获得Twitter授权
-    not_valid: 状态超过140个字符。
+    not_valid: 状态超过280个字符。
     deleted: "Twitter账号@%{twitter_screen_name}已移除。"
     sent: 推文发送成功
     error_sending: 发送推文时出错！Twitter可能不太稳定。请稍后重试。

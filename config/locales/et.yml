@@ -3632,7 +3632,7 @@ et:
     success_signin: "Twitteri konto @%{twitter_screen_name} on edukalt seotud kasutajatoega %{helpdesk}."
     user_exists: "Twitteri konto on juba teise tootega seotud."
     not_authorized: "Twitter ei andnud sulle volitusi."
-    not_valid: "Status is over 140 characters."
+    not_valid: "Status is over 280 characters."
     deleted: "Twitteri konto @%{twitter_screen_name} on eemaldatud."
     sent: "Säuts on edukalt saadetud"
     error_sending: "Viga säutsu saatmisel! Twitter võib olla ebastabiilne. Palun proovi uuesti."
