@@ -34,15 +34,7 @@
 </div>
 
 <% content_for :onload_script do %>
-  jQuery(document).ready(function(){
-  console.log('---> Document Loaded');
-  setTimeout(function(){
-  console.log('---> Inside timeout function');
-  if(jQuery('#got_pages').length){
-  console.log('---> Triggerring click');
-  jQuery('#new_page_dialog').trigger('click');
-  }
-  }, 1000)
-  })
-
+    if(jQuery('#got_pages').length){
+    jQuery('#new_page_dialog').trigger('click');
+    }
 <% end %>
