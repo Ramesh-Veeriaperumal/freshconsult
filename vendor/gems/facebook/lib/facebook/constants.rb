@@ -49,7 +49,7 @@ module Facebook
 
     MESSAGE_FIELDS              = FETCH_FIELDS[:message].join(',') #Used while fetching object of a message got through webhook
     
-    DM_FIELDS                   = "thread_key,messages.fields(id,message,from,created_time,attachments.fields(id,image_data,mime_type,name,size,video_data,file_url.fields(mime_type,name,id,size)),shares.fields(description,id,link,name))" #Used while fetching all messages of a page for non realtime enabled
+    DM_FIELDS                   = "thread_key,messages.fields(id,message,from,to,created_time,attachments.fields(id,image_data,mime_type,name,size,video_data,file_url.fields(mime_type,name,id,size)),shares.fields(description,id,link,name))" #Used while fetching all messages of a page for non realtime enabled
     
     PROFILE_NAME_FIELDS         = FETCH_FIELDS[:profile_name].join(',')
 

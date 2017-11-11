@@ -87,7 +87,8 @@ module Facebook
         return if !message or @account.facebook_posts.exists?(:post_id => message[:id])
 
         message.symbolize_keys!
-        requester         = facebook_user(message[:from])
+        profile = is_a_page?(message[:from],@fan_page.page_id) ? message[:to] : message[:from]
+        requester = facebook_user(profile)
         message[:message] = tokenize(message[:message])
 
         @ticket = @account.tickets.build(

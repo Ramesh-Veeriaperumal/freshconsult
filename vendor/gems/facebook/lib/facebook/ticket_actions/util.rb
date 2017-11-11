@@ -24,8 +24,8 @@ module Facebook
       def facebook_user(profile)
         profile ||= {}
         profile.symbolize_keys!
-        profile_id   = profile[:id]
-        profile_name = profile[:name]
+        profile_id   = profile[:id] || profile[:data][0]["id"]
+        profile_name = profile[:name] || profile[:data][0]["name"]
 
         user = Account.current.all_users.find_by_fb_profile_id(profile_id)
 

@@ -248,6 +248,11 @@ module Facebook
       end
       fb_msg
     end
+
+    def is_a_page?(profile,fan_page_id)
+      profile.symbolize_keys!
+      profile[:id] == fan_page_id.to_s
+    end
     
   end
 end
