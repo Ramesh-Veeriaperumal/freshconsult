@@ -2,10 +2,12 @@
 // Adding icons
 //--------------------------------------------------------------------
 
-.ficon-solution-article-new,.ficon-forum-new,.ficon-ticket-new{
-    background: none;
+.ficon-solution-article-new,
+.ficon-forum-new,
+.ficon-ticket-new{
+    background-image: none;
     &:before{
-        background: none;
+        background-image: none;
         padding: 0;
         width: 12px;
         height: 12px;
@@ -15,8 +17,11 @@
 }
 
 
-.ficon-close-ticket,.ficon-assign-to,.ficon-ticket-reply{
-	background: none;
+.ficon-close-ticket,
+.ficon-assign-to,
+.ficon-ticket-reply{
+	background-image: none;
+    background-color: transparent;
 	&:before{
 		color: $black;
 		width: 12px;
@@ -25,9 +30,12 @@
 	}
 }
 
-.ficon-announcement-new,.ficon-forum-feature-request,.ficon-report-a-problem,.ficon-questions{
+.ficon-announcement-new,
+.ficon-forum-feature-request,
+.ficon-report-a-problem,
+.ficon-questions{
     &:before,&:after{
-        background: none;
+        background-image: none;
         padding: 0;
         width: 26px;
         height: 26px;
@@ -37,9 +45,11 @@
     }
 }
 
-.ficon-create-ticket-new,.ficon-ticket-status-new{
+.ficon-create-ticket-new,
+.ficon-ticket-status-new{
     &:before{
-        background: none;
+        background-image: none;
+        background-color: transparent;
         padding: 0;
         width: 24px;
         height: 20px;
@@ -63,7 +73,8 @@
     }
 }
 
-.ficon-twitter-new,.ficon-facebook-new{
+.ficon-twitter-new,
+.ficon-facebook-new{
     @include padding(6px 0 0 8px);
     text-transform: uppercase;  
     &:before{
@@ -174,7 +185,7 @@
     overflow: hidden;
 }
 
-.ficon-email-new,.ficon-outbound-email{
+.ficon-email-new, .ficon-outbound-email{
      &:before{
         position: relative;
         left: 6px;
@@ -182,7 +193,7 @@
     }
 }
 
-.ficon-phone-new,.ficon-mobihelp-new{
+.ficon-phone-new, .ficon-mobihelp-new{
       &:before{
         position: relative;
         left: 6px;
@@ -190,7 +201,13 @@
     }
 }
 
-.ficon-twitter-ticket,.ficon-web-new,.ficon-ecommerce-new,.ficon-feedback-widget,.ficon-customers-new,.ficon-facebook-ticket-new,.ficon-chat-ticket{
+.ficon-twitter-ticket,
+.ficon-web-new,
+.ficon-ecommerce-new,
+.ficon-feedback-widget,
+.ficon-customers-new,
+.ficon-facebook-ticket-new,
+.ficon-chat-ticket{
       &:before{
         position: relative;
         left: 6px;
@@ -214,8 +231,10 @@
     text-align: center;
 }
 
-.ficon-open-in-new-window,.ficon-edit-article{
-    background: none;
+.ficon-open-in-new-window,
+.ficon-edit-article{
+    background-image: none;
+    background-color: transparent;
     &:before{
         padding-top: 11px;
         padding-left: 10px;
@@ -265,12 +284,22 @@
     }
 }
 
-.page-tabs .mobile-icon-nav-menu{
-    background: none;
+.ficon-call_phone{
     &:before{
-        background: none;
-        font-size: 20px;
-        color: $grayLight;
+    background-image: none;
+    background-color: transparent;
+    @include padding(0);
+    font-size: 20px;
+    color: $green;
+    margin: 0;        
+   }
+}
+
+.ficon-calender_new{
+    background-image: none;
+    font-size: 18px;
+    &:before{
+        color: $grayDark;
     }
 }
 
@@ -403,7 +432,9 @@
     @extend .ficon-search-new;
 }
 
-.checkbox input[type="checkbox"]:checked,.align-feedback input[type="checkbox"]:checked{
+.checkbox input[type="checkbox"]:checked,
+.align-feedback input[type="checkbox"]:checked,
+.redactor_tab input[type="checkbox"]:checked{
     @extend .ficon-checkbox-tick;
 }
 
@@ -429,4 +460,12 @@
 
 .page-tabs .mobile-icon-nav-menu{
     @extend .ficon-menu;
+}
+
+.hc-nav .mobile-icon-nav-contact{
+    @extend .ficon-call_phone;
+}
+
+.icon-calendar{
+    @extend .ficon-calender_new;
 }

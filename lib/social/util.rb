@@ -160,4 +160,7 @@ module Social::Util
     !Account.current.twitter_handles_from_cache.blank?
   end
 
+  def tweet_body(tweet)
+    tweet[:long_object].try(:[], "body") || tweet[:body]
+  end
 end

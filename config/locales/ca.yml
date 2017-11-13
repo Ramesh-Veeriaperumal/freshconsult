@@ -3636,7 +3636,7 @@ ca:
     success_signin: "S'ha associat correctament @%{twitter_screen_name} amb %{helpdesk}."
     user_exists: "El compte de Twitter ja està associat a un altre producte."
     not_authorized: "No estàs autoritzat per Twitter"
-    not_valid: "Status is over 140 characters."
+    not_valid: "Status is over 280 characters."
     deleted: "S'ha eliminat el compte de Twitter @%{twitter_screen_name}."
     sent: "Piulada enviada correctament"
     error_sending: "Error enviant la piulada! Twitter pot ser inestable. Si us plau, torna-ho a provar."

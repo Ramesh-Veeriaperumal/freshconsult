@@ -4,6 +4,8 @@ class UserNotifier < ActionMailer::Base
 
   layout "email_font"
   include EmailHelper
+  helper EmailActionsHelper
+
   def user_activation(user, params, reply_email_config)
     begin 
       if (user.role_ids.include?(reply_email_config.account.roles.find_by_name("Account Administrator").id))
@@ -15,6 +17,7 @@ class UserNotifier < ActionMailer::Base
     end
     begin
       configure_email_config reply_email_config
+      @activation_url = params[:activation_url] if params.has_key?(:activation_url)
       send_the_mail(user, params[:subject], params[:email_body], params[:reply_email], EmailNotification::USER_ACTIVATION)
     ensure
       remove_email_config
@@ -24,6 +27,7 @@ class UserNotifier < ActionMailer::Base
   def email_activation(email_id, params, reply_email_config)
     begin
       configure_email_config reply_email_config
+      @activation_url = params[:activation_url] if params.has_key?(:activation_url)
       send_the_mail(email_id, params[:subject], params[:email_body], params[:reply_email], "Email Activation")
     ensure
       remove_email_config

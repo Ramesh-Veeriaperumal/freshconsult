@@ -11,15 +11,25 @@ module Freshcaller
 
     def migrate_account
       FileUtils.mkdir_p account_migration_location
-      response = create_freshcaller_account(current_account.id) if params[:account_creation]
-      return unless response.code == 200
+      return unless has_freshfone_account?
+      response = freshcaller_signup if params[:account_creation]
       save_freshcaller_account(response)
-      disable_freshfone_feature
       enable_freshcaller_feature
       save_freshcaller_agents(response)
       retrieve_account_details
+      expire_freshfone_account
       upload_to_s3
       initiate_migration
+    end
+
+    def has_freshfone_account?
+      ::Account.current && ::Account.current.freshfone_account
+    end
+
+    def freshcaller_signup
+      signup_response = create_freshcaller_account
+      return unless signup_response.code == 200
+      signup_response
     end
 
     def save_freshcaller_account(response)
@@ -31,9 +41,8 @@ module Freshcaller
       )
     end
 
-    def disable_freshfone_feature
-      Rails.logger.info "Disable Freshfone feature :: Account :: #{current_account.id}"
-      current_account.features.freshfone.destroy
+    def expire_freshfone_account
+      current_account.freshfone_account.update_column(:state, Freshfone::Account::STATE_HASH[:expired])
     end
 
     def enable_freshcaller_feature
@@ -44,8 +53,17 @@ module Freshcaller
     def save_freshcaller_agents(response)
       Rails.logger.info "Save freshcaller agents :: Account :: #{current_account.id}"
       current_account.make_current
+      return create_freshcaller_agent if params[:fc_user_id].present?
       account_admin.agent.create_freshcaller_agent(
-        fc_user_id: params[:fc_user_id] || response[:agent]['id'],
+        fc_user_id: response[:user]['id'],
+        fc_enabled: true
+      )
+    end
+
+    def create_freshcaller_agent
+      agent = current_account.users.where(email: params[:fc_user_email]).first.agent
+      agent.create_freshcaller_agent(
+        fc_user_id: params[:fc_user_id],
         fc_enabled: true
       )
     end
@@ -61,13 +79,14 @@ module Freshcaller
     end
 
     def retrieve_account_details
-      fetch_business_calendars(current_account.id)
-      fetch_freshfone_groups(current_account.id)
-      fetch_freshfone_numbers(current_account.id)
-      fetch_caller_ids(current_account.id)
-      fetch_freshfone_users(current_account.id)
-      fetch_freshfone_objects(current_account.id)
-      fetch_freshfone_credits(current_account.id)
+      fetch_business_calendars
+      fetch_freshfone_groups
+      fetch_freshfone_numbers
+      fetch_caller_ids
+      fetch_freshfone_users
+      fetch_freshfone_objects
+      fetch_freshfone_credits
+      fetch_agent_limits
     end
 
     def upload_to_s3

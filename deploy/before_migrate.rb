@@ -75,6 +75,8 @@ run "ln -nfs #{shared_path}/config/product_feedback.yml #{node[:rel_path]}/confi
 run "ln -nfs #{shared_path}/config/sidekiq_classification.yml #{node[:rel_path]}/config/sidekiq_classification.yml"
 run "ln -nfs #{shared_path}/config/fdadmin_api_config.yml #{node[:rel_path]}/config/fdadmin_api_config.yml"
 run "ln -nfs #{shared_path}/config/hashed_data.yml #{node[:rel_path]}/config/hashed_data.yml"
+run "ln -nfs #{shared_path}/config/recaptcha_v2.yml #{node[:rel_path]}/config/recaptcha_v2.yml"
+run "ln -nfs #{shared_path}/config/ner_api.yml #{node[:rel_path]}/config/ner_api.yml"
 
 #supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"

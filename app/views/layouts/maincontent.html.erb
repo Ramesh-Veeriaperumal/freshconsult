@@ -39,7 +39,10 @@
 					<div class="alert notice" id="noticeajax" style="display:none;"></div>
 					<%= yield :pagetop %>
 					<div class="pagearea" id="Pagearea">
-						<%= check_email_disabled_by_pipe %>
+            <% unless current_account.falcon_ui_enabled?(current_user) %>
+              <%= check_email_disabled_by_pipe %>
+            <% end %>
+
 						<%= yield %>
 					</div>
 				</div>

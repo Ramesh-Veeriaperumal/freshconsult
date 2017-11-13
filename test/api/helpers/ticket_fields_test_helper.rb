@@ -90,7 +90,7 @@ module TicketFieldsTestHelper
     end
   end
 
-  def create_custom_field_dropdown(name = 'test_custom_dropdown', choices = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'], required = false, required_for_closure = false)
+  def create_custom_field_dropdown(name = 'test_custom_dropdown', choices = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'], field_name = "05", required = false, required_for_closure = false)
     ticket_field_exists = @account.ticket_fields.find_by_name("#{name}_#{@account.id}")
     if ticket_field_exists
       ticket_field_exists.update_attributes(required: required, required_for_closure: required_for_closure)
@@ -100,7 +100,7 @@ module TicketFieldsTestHelper
     flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry,
                                              flexifield_def_id: @account.flexi_field_defs.find_by_module('Ticket').id,
                                              flexifield_alias: "#{name.downcase}_#{@account.id}",
-                                             flexifield_name: 'ffs_05',
+                                             flexifield_name: "ffs_#{field_name}",
                                              flexifield_order: 5,
                                              flexifield_coltype: 'dropdown',
                                              account_id: @account.id)

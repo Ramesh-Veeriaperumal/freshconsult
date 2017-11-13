@@ -3,6 +3,7 @@ class SubscriptionPlan < ActiveRecord::Base
   not_sharded
   
   include ActionView::Helpers::NumberHelper
+  include Cache::Memcache::SubscriptionPlan
   serialize :price, Hash
   
   has_many :subscriptions
@@ -22,6 +23,8 @@ class SubscriptionPlan < ActiveRecord::Base
   OLD_PLANS = ["Sprout", "Blossom", "Garden", "Estate", "Forest"]
   
   scope :current, :conditions => { :classic => false }, :order => 'amount asc'
+
+  after_commit :clear_cache
   
   SUBSCRIPTION_PLANS = { 
     :basic => "Basic", 

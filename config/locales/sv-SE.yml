@@ -4300,7 +4300,7 @@ sv-SE:
     success_signin: "Associerade @%{twitter_screen_name} med %{helpdesk}."
     user_exists: "Twitter-kontot är redan associerat med en annan produkt."
     not_authorized: "Du har inte auktoriserats av Twitter"
-    not_valid: "Status är längre än 140 tecken."
+    not_valid: "Status är längre än 280 tecken."
     deleted: "Twitter-kontot @%{twitter_screen_name} har tagits bort."
     sent: "Din tweet har skickats"
     error_sending: "Det gick inte att skicka detta tweet Twitter kan vara instabilt. Prova igen."

@@ -41,6 +41,10 @@ module Marketplace::HelperMethods
   def paid_app?
     @extension['addon']
   end
+  
+  def is_oauth_app?(extension)
+    extension["features"].present? and extension['features'].include?('oauth')
+  end
 
   def addon_details
     @addon_details ||= @extension['addon']['metadata'].find { |data| data['currency_code'] == Account.current.currency_name }

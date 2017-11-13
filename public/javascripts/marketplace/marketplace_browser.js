@@ -15,6 +15,7 @@ var MarketplaceBrowser  = Class.create({
          						.on("change.nc_apps_evt", this.settingsLinks.activationSwitch, this.activationSwitchOnOFF.bindAsEventListener(this))
                     .on("click.nc_apps_evt", this.settingsLinks.deleteBtn, this.onDeleteApp.bindAsEventListener(this))
                     .on("click.nc_apps_evt", this.settingsLinks.reauthorizeBtn, this.onReauthorizeApp.bindAsEventListener(this))
+                    .on("click.nc_apps_evt", this.settingsLinks.updateOAuth, this.onUpdateOAuth.bindAsEventListener(this))
                     .on("click.nc_apps_evt", ".delete-confirm", this.onConfirmDelete.bindAsEventListener(this))
                     .on("click.nc_apps_evt", ".reauthorize-confirm", this.onReauthorizeConfirm.bindAsEventListener(this))
                     .on("click.nc_apps_evt", "#integrations-list .mkt-apps, #integrations-list .cla-plugs, #integrations-list .nat-apps", this.showActions.bindAsEventListener(this));
@@ -66,6 +67,11 @@ var MarketplaceBrowser  = Class.create({
     }else{
       jQuery(".tab-actions .create-new").show();
     }
+  },
+  onUpdateOAuth: function(e) {
+    e.preventDefault();
+    var url = jQuery('.update-oauth').attr('data-url');
+    window.location = url;
   },
   setupSelectedTabs: function(){
     var tabSelected = this.pageURL.split('#')[1];

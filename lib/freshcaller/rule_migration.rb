@@ -1,33 +1,29 @@
 module Freshcaller
   module RuleMigration
-    def fetch_freshfone_objects(account_id)
+    def fetch_freshfone_objects
       @numbers = []
-      Sharding.select_shard_of(account_id) do
-        Sharding.run_on_slave do
-          account = ::Account.find(account_id)
-          if account.present? && account.all_freshfone_numbers.present?
-            account.make_current
-            account.freshfone_numbers.each do |number|
-              @messages = []
-              voice_type = number.female_voice? ? 0 : 1
-              fetch_message_type(number, voice_type)
-              fetch_messages_from_ivr(number, voice_type, account)
-              fetch_business_calendars_hash(account)
-              business_calendar_name = @s_duplicates[number.business_calendar_id]
-              @numbers << { number: number.number, queue_wait_time: number.queue_wait_time, max_queue_length: number.max_queue_length,
-                            voicemail_active: number.voicemail_active, hunt_type: number.hunt_type, rr_timeout: number.rr_timeout,
-                            ringing_time: number.ringing_time, queue_position_preference: number.queue_position_preference,
-                            queue_position_message: number.queue_position_message, message_type: number.ivr.message_type,
-                            business_calendar_name: business_calendar_name, group_name: group_name(account, number), messages: @messages }
-            end
-          end
+      account = ::Account.current
+      if account.all_freshfone_numbers.present?
+        account.freshfone_numbers.each do |number|
+          @messages = []
+          voice_type = number.female_voice? ? 0 : 1
+          fetch_message_type(number, voice_type)
+          fetch_messages_from_ivr(number, voice_type, account)
+          fetch_business_calendars_hash(account)
+          business_calendar_name = @s_duplicates[number.business_calendar_id]
+          @numbers << { number: number.number, queue_wait_time: number.queue_wait_time, max_queue_length: number.max_queue_length,
+                        voicemail_active: number.voicemail_active, hunt_type: number.hunt_type, rr_timeout: number.rr_timeout,
+                        ringing_time: number.ringing_time, queue_position_preference: number.queue_position_preference,
+                        queue_position_message: number.queue_position_message, message_type: number.ivr.message_type,
+                        business_calendar_name: business_calendar_name, group_name: group_name(account, number), messages: @messages }
+
+          number.update_column(:deleted, true)
         end
       end
       File.open("#{account_migration_location}/rules.json", 'w') do |f|
         f.write(@numbers.to_json)
       end
-      Rails.logger.info "Rule Migration for account :: #{account_id} completed"
-      ::Account.reset_current_account
+      Rails.logger.info "Rule Migration for account :: #{account.id} completed"
     end
 
     private
