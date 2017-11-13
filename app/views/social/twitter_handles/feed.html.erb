@@ -184,7 +184,7 @@
 
 	    jQuery("#tweet_text_area").val("@"+user+" ").trigger("focus");
       jQuery("#tweet_in_reply_to").val(this.getAttribute("data-id"));	  
-	    jQuery('#SendTweetCounter').html(140 - jQuery.trim($('tweet_text_area').value.length));
+	    jQuery('#SendTweetCounter').html(280 - jQuery.trim($('tweet_text_area').value.length));
 	  });
 	 
 			
@@ -252,7 +252,7 @@
    </div>
   </div>  
   <div class="button-container">  
-    <span class="tweet-counter" id="SendTweetCounter">140</span>   
+    <span class="tweet-counter" id="SendTweetCounter">280</span>
     <%= submit_tag "Tweet", :class => "uiButton" %>
   </div>
   <% end %>

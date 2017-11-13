@@ -31,6 +31,8 @@ class Helpdesk::Note < ActiveRecord::Base
 
   after_commit :update_sentiment, on: :create
 
+  after_commit  :enqueue_for_NER, on: :create, :if => :incoming?
+
   # Callbacks will be executed in the order in which they have been included.
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher
@@ -424,6 +426,13 @@ class Helpdesk::Note < ActiveRecord::Base
         :body_html => note_body.body_html
       }
       build_broadcast_message(params)
+    end
+
+    # Trigger background job for NER API on creation of incoming notes
+
+    def enqueue_for_NER
+      user_email = self.user.email
+      NERWorker.perform_async({:obj_id => self.id, :user_email => user_email, :obj_type => :notes, :text => self.body_html})
     end
 end
 

@@ -5568,7 +5568,7 @@ fr:
     success_signin: "Vous avez bien associé le compte @%{twitter_screen_name} à %{helpdesk}."
     user_exists: "Ce compte Twitter est déjà associé à un autre produit."
     not_authorized: "Autorisation refusée par Twitter."
-    not_valid: "Le statut dépasse 140 caractères."
+    not_valid: "Le statut dépasse 280 caractères."
     deleted: "Le compte Twitter @%{twitter_screen_name} a été supprimé."
     sent: "Tweet envoyé"
     error_sending: "Erreur pendant l'envoi du tweet ! Twitter est peut-être instable. Veuillez réessayer."

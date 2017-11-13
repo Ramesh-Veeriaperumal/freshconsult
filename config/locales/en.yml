@@ -706,6 +706,7 @@ en:
       portal_home: "Portal home"
       user_signup: "New user signup"
       user_login: "Login page"
+      agent_login: "Agent Login page"
       forgot_password: "Forgot password"
       profile_edit: "User profile"
       search: "Search results"
@@ -730,6 +731,7 @@ en:
       password_reset: "Reset password"
       user_signup: "Signup for a new account"
       user_login: "Sign into"
+      helpdesk_login: "Sign into"
       forgot_password: "Forgot password"
       activation_form: "Activate your account"
       profile_edit: "Edit your profile"
@@ -2466,6 +2468,7 @@ en:
     follower:
       title: "Forum Followers"
       description: "Agents added as followers receives email alerts when a new topic is posted"
+  agent_invitation_email: Agent Invitation Email
   password_reset_email: Password Reset Email
   default_reply_template: Agent Reply Template
   default_forward_template: Agent Forward Template
@@ -4668,6 +4671,11 @@ en:
     login: Login
     login_portal: "Login to the support portal"
     login_details: "Enter the details below"
+    agent_login_info: "Are you an agent?"
+    customer_signin: "Sign in as customer?"
+    agent_signin: "SignIn here"
+    helpdesk_login_portal: "Welcome back Agent"
+    agent_login_details: "Enter the details below"
     login_options: "...or login using"
     reset_password: "Give us your email address and instructions to reset your password will be emailed to you."
     signup: Signup
@@ -5171,6 +5179,8 @@ en:
     confirm_password: Confirm password
     new_password: New password
     confirm_password_message: "Must be same as password"
+    freshid_profile_link: "Change your profile info or password"
+    freshid_profile_info: "You will be redirected to your freshworks account page"
     api_key:
       title: "Your API Key"
       reset: "Reset API Key"
@@ -5625,7 +5635,7 @@ en:
     success_signin: Successfully associated @%{twitter_screen_name} with %{helpdesk}.
     user_exists: Twitter account already associated with another product.
     not_authorized: You were not authorized by Twitter
-    not_valid: Status is over 140 characters.
+    not_valid: Status is over 280 characters.
     deleted: The twitter account @%{twitter_screen_name} has been removed.
     sent: Tweet successfully sent
     error_sending: Error sending the tweet! Twitter might be unstable. Please try again.
@@ -6380,6 +6390,17 @@ en:
   export_to_CSV: Export to CSV
   back_to_reports: "&larr; Back to reports"
   helpdesk:
+    login:
+      form:
+        email: "Email"
+        password: "Password"
+        remember: "Remember me on this computer"
+        login: "Login"
+        forgot: "Forgot your password?"
+        sign_in_using: "Sign In"
+        sign_in_using_google: "Sign in using your Google account"
+        help: "Help"
+        password_reminder: "Password field cannot be blank"
     collab: Discussion
     start_collab: Discuss
     add_requester: Add Requester
@@ -11162,6 +11183,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     collab_group_mention_multi: "mentioned your group - %{group_name} in {{count}} messages on ticket %{object}"
     collab_reply: "replied to your message on ticket %{object}"
     collab_reply_multi: "replied to your message on ticket %{object}"
+    collab_follower: "1 new message on ticket %{object}"
+    collab_follower_many: "%{count} new messages on ticket %{object}"
     generic_notification: "%{title}"
     types:
       private_note_created: "Private Note Created"
@@ -11176,6 +11199,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       collab_first_mention: "Team Huddle"
       collab_reply: "Team Huddle"
       collab_reply_multi: "Team Huddle"
+      collab_follower: "Team Huddle"
+      collab_follower_multi: "Team Huddle"
       ticket_assigned_to_group: "Ticket Assigned to Group"
       ticket_created: "New Ticket"
       generic_notification: "%{type}"

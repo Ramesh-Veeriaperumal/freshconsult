@@ -655,6 +655,18 @@ class ConversationsControllerTest < ActionController::TestCase
     match_json(request_error_pattern(:access_denied))
   end
 
+  def test_update_private_note
+    user = add_new_user(@account)
+    n = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2, private: true)
+    params = update_note_params_hash
+    put :update, construct_params({ id: n.id }, params)
+    assert_response 200
+    latest_note = Helpdesk::Note.find(n.id)
+    assert latest_note.private
+    match_json(update_note_pattern(params, latest_note))
+    match_json(update_note_pattern({}, latest_note))
+  end
+
   def test_destroy
     n = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
     delete :destroy, construct_params(id: n.id)

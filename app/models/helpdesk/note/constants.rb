@@ -33,5 +33,7 @@ class Helpdesk::Note < ActiveRecord::Base
     :customer_feedback => 7,
     :broadcast => 8
   }
+
+  NER_DATA_TIMEOUT = 30.days.to_i
 	
 end

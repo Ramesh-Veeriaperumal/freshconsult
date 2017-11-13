@@ -66,9 +66,7 @@ include Email::EmailService::IpPoolHelper
       ip_pool = sender_config["ipPoolName"]
     end
     properties = construct_properties(params, category_id)
-    Rails.logger.info "Sending email: properties: #{properties.inspect}"
     header = construct_headers params
-    Rails.logger.info "Sending email: Headers: #{header.inspect}"
 
     result =  {"headers" => header,
                 "to" => to_email,
@@ -84,6 +82,7 @@ include Email::EmailService::IpPoolHelper
                 "properties"=> properties
               }
     result.merge!("ipPool" => ip_pool) unless ip_pool.nil?
+    Rails.logger.info "Sending email: Headers: #{result.except(:text, :html).inspect}"
     email_logger.debug(result.inspect)
     return result.to_json
   end

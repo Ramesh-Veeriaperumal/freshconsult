@@ -5564,7 +5564,7 @@ zh-TW:
     success_signin: "成功地關聯＠%{twitter_screen_name}和%{helpdesk}"
     user_exists: Twitter的帳號已經關聯到其他產品。
     not_authorized: 您沒有被Twitter授權
-    not_valid: 狀態超過140個字符。
+    not_valid: 狀態超過280個字符。
     deleted: "Twitter帳號＠%{twitter_screen_name}已經被移除。"
     sent: 推文成功地發送出去
     error_sending: 發送推文出現錯誤！Twitter可能系統不穩定，請再試一次。
