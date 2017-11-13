@@ -89,6 +89,7 @@ class Account < ActiveRecord::Base
   has_many :user_emails, :class_name => 'UserEmail'
 
   has_many :technicians, :class_name => "User", :conditions => { :helpdesk_agent => true, :deleted => false }, :order => "name desc"
+  has_many :all_technicians, :class_name => "User", :conditions => { :helpdesk_agent => true }
 
   has_one :subscription
   has_many :subscription_payments

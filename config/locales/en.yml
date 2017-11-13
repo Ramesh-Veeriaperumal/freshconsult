@@ -706,6 +706,7 @@ en:
       portal_home: "Portal home"
       user_signup: "New user signup"
       user_login: "Login page"
+      agent_login: "Agent Login page"
       forgot_password: "Forgot password"
       profile_edit: "User profile"
       search: "Search results"
@@ -730,6 +731,7 @@ en:
       password_reset: "Reset password"
       user_signup: "Signup for a new account"
       user_login: "Sign into"
+      helpdesk_login: "Sign into"
       forgot_password: "Forgot password"
       activation_form: "Activate your account"
       profile_edit: "Edit your profile"
@@ -2466,6 +2468,7 @@ en:
     follower:
       title: "Forum Followers"
       description: "Agents added as followers receives email alerts when a new topic is posted"
+  agent_invitation_email: Agent Invitation Email
   password_reset_email: Password Reset Email
   default_reply_template: Agent Reply Template
   default_forward_template: Agent Forward Template
@@ -4668,6 +4671,11 @@ en:
     login: Login
     login_portal: "Login to the support portal"
     login_details: "Enter the details below"
+    agent_login_info: "Are you an agent?"
+    customer_signin: "Sign in as customer?"
+    agent_signin: "SignIn here"
+    helpdesk_login_portal: "Welcome back Agent"
+    agent_login_details: "Enter the details below"
     login_options: "...or login using"
     reset_password: "Give us your email address and instructions to reset your password will be emailed to you."
     signup: Signup
@@ -5171,6 +5179,8 @@ en:
     confirm_password: Confirm password
     new_password: New password
     confirm_password_message: "Must be same as password"
+    freshid_profile_link: "Change your profile info or password"
+    freshid_profile_info: "You will be redirected to your freshworks account page"
     api_key:
       title: "Your API Key"
       reset: "Reset API Key"
@@ -6380,6 +6390,17 @@ en:
   export_to_CSV: Export to CSV
   back_to_reports: "&larr; Back to reports"
   helpdesk:
+    login:
+      form:
+        email: "Email"
+        password: "Password"
+        remember: "Remember me on this computer"
+        login: "Login"
+        forgot: "Forgot your password?"
+        sign_in_using: "Sign In"
+        sign_in_using_google: "Sign in using your Google account"
+        help: "Help"
+        password_reminder: "Password field cannot be blank"
     collab: Discussion
     start_collab: Discuss
     add_requester: Add Requester

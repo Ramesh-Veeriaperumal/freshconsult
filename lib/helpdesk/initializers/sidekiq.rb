@@ -60,7 +60,8 @@ Sidekiq.configure_client do |config|
       "Email::S3RetryWorker",
       "Tickets::Schedule",
       "Tickets::Dump",
-      "BlockAccount"
+      "BlockAccount",
+      "Freshid::ProcessEvents"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "AccountCreation::PopulateSeedData",
@@ -85,7 +86,8 @@ Sidekiq.configure_client do |config|
       "Import::SkillWorker",
       "ExportAgents",
       "CollabNotificationWorker",
-      "ProductFeedbackWorker"
+      "ProductFeedbackWorker",
+      "Freshid::ProcessEvents"
     ]
   end
 end
@@ -141,7 +143,8 @@ Sidekiq.configure_server do |config|
       "Email::S3RetryWorker",
       "Tickets::Schedule",
       "Tickets::Dump",
-      "BlockAccount"
+      "BlockAccount",
+      "Freshid::ProcessEvents"
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "AccountCreation::PopulateSeedData",
@@ -213,7 +216,8 @@ Sidekiq.configure_server do |config|
       "AccountCreation::PopulateSeedData",
       "Tickets::Schedule",
       "Tickets::Dump",
-      "BlockAccount"
+      "BlockAccount",
+      "Freshid::ProcessEvents"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
