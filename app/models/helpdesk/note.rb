@@ -9,6 +9,7 @@ class Helpdesk::Note < ActiveRecord::Base
   include Helpdesk::Services::Note
   include ApiWebhooks::Methods
   include BusinessHoursCalculation
+  include MemcacheKeys
 
   SCHEMA_LESS_ATTRIBUTES = ['from_email', 'to_emails', 'cc_emails', 'bcc_emails', 'header_info', 'category', 
                             'response_time_in_seconds', 'response_time_by_bhrs', 'email_config_id', 'subject',
@@ -374,6 +375,22 @@ class Helpdesk::Note < ActiveRecord::Base
       email_addrs += cc_emails
     end
     email_addrs
+  end
+
+  # Store NER API response in memcache
+  # Whenever the customer note is created with timedata information, memcache key needs to be updated.
+
+  def store_ner_data(data)
+    ner_data = data.merge({"note_id"=>self.id})
+    key = NER_ENRICHED_NOTE % { :account_id => self.account_id , :ticket_id => self.notable_id }
+    MemcacheKeys.cache(key, ner_data, NER_DATA_TIMEOUT)
+  end
+
+  # Fetch NER data from cache.
+
+  def fetch_ner_data()
+    key = NER_ENRICHED_NOTE % { :account_id => self.account_id , :ticket_id => self.notable_id }
+    MemcacheKeys.get_from_cache(key)
   end
   
   # Instance level spam watcher condition

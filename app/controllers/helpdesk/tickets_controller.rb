@@ -31,6 +31,8 @@ class Helpdesk::TicketsController < ApplicationController
   include Redis::TicketsRedis
   include Helpdesk::SendAndSetHelper
 
+  ALLOWED_QUERY_PARAMS = ['collab', 'message']
+
   before_filter :redirect_to_mobile_url
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:show,:suggest_tickets]
   before_filter :portal_check, :verify_format_and_tkt_id, :only => :show
@@ -59,9 +61,9 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :filter_params_ids, :only =>[:destroy,:assign,:close_multiple,:spam,:pick_tickets, :delete_forever, :delete_forever_spam, :execute_bulk_scenario, :unspam, :restore]
   before_filter :validate_bulk_scenario, :only => [:execute_bulk_scenario], :if => :close_validation_enabled?
   before_filter :validate_ticket_close, :only => [:close_multiple], :if => :close_validation_enabled?
-  
-  #Set Native mobile is above scoper ticket actions, because, we send mobile response in scoper ticket actions, and 
-  #the nmobile format has to be set. Else we will get a missing template error. 
+
+  #Set Native mobile is above scoper ticket actions, because, we send mobile response in scoper ticket actions, and
+  #the nmobile format has to be set. Else we will get a missing template error.
   before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever,:change_due_by,:reply_to_forward, :save_draft, :clear_draft, :assign]
 
   before_filter :load_items, :only => [ :destroy, :restore, :spam, :unspam, :assign,
@@ -253,11 +255,11 @@ class Helpdesk::TicketsController < ApplicationController
       ticket_ids =  @items.map(&:id)
 
       sentiment_sql_array = ["select notable_id,int_nc04 from helpdesk_notes n inner join helpdesk_schema_less_notes sn
-                    on n.id=sn.note_id and n.account_id=sn.account_id 
-                    where n.account_id = %s and n.notable_type = '%s' and n.notable_id in (%s) and sn.int_nc04 is not null 
+                    on n.id=sn.note_id and n.account_id=sn.account_id
+                    where n.account_id = %s and n.notable_type = '%s' and n.notable_id in (%s) and sn.int_nc04 is not null
                     order by n.created_at;",
                     Account.current.id, 'Helpdesk::Ticket', ticket_ids.join(',')]
-      
+
       sentiment_sql = ActiveRecord::Base.send(:sanitize_sql_array, sentiment_sql_array)
 
       note_senti = ActiveRecord::Base.connection.execute(sentiment_sql).collect{|i| i}.to_h
@@ -297,7 +299,7 @@ class Helpdesk::TicketsController < ApplicationController
       @failed_tickets << {:id => _ticket.id, :subject => CGI.escape_html(_ticket.subject.to_s), :display_id => _ticket.display_id}
     end
     if flash[:action]
-      title = I18n.t("helpdesk.flash.title_on_#{flash[:action]}_fail") 
+      title = I18n.t("helpdesk.flash.title_on_#{flash[:action]}_fail")
       description = I18n.t("helpdesk.flash.description_on_#{flash[:action]}_fail")
     end
     @failed_tickets_data = {:failed_tickets => @failed_tickets, :title => title, :description => description } if @failed_tickets.present?
@@ -319,7 +321,7 @@ class Helpdesk::TicketsController < ApplicationController
         flash[:notice] = t(:'flash.tickets.empty_trash.delay_delete') if @current_view == "deleted" and key_exists?(empty_trash_key)
         flash[:notice] = t(:'flash.tickets.empty_spam.delay_delete') if @current_view == "spam" and key_exists?(empty_spam_key)
         @is_default_filter = (!is_num?(view_context.current_filter))
-        
+
         #Changes for customer sentiment - Beta feature
         #@sentiments = {:ticket_id => sentiment_value}
         if Account.current.customer_sentiment_ui_enabled? && @items.size > 0
@@ -690,7 +692,7 @@ class Helpdesk::TicketsController < ApplicationController
     params[nscname][:tag_names] = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].blank?
     verify_update_properties_permission if @item.assign_ticket_attributes(params[nscname])
     if @note.save_note
-      enqueue_send_set_observer    
+      enqueue_send_set_observer
       if is_reply?
         @note.send_survey = params[:send_survey]
         @note.include_surveymonkey_link = params[:include_surveymonkey_link]
@@ -734,7 +736,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
     if company_save_success
       set_contact_validatable_custom_fields
-      requester_success = @requester.update_attributes(@filtered_contact_params) 
+      requester_success = @requester.update_attributes(@filtered_contact_params)
       ticket_success = (@ticket.company.blank? && @company.present? && requester_success ? @ticket.update_attributes(:owner_id => @company.id) : true)
       flash_message = if !requester_success
           activerecord_error_list(@requester.errors)
@@ -743,7 +745,7 @@ class Helpdesk::TicketsController < ApplicationController
         else
           t(:'flash.general.update.success', :human_name => t('requester_widget_human_name'))
         end
-        
+
       flash[:notice] = flash_message
     end
     @ticket.reload
@@ -791,16 +793,16 @@ class Helpdesk::TicketsController < ApplicationController
       format.html {
         flash[:notice] = (@failed_tickets.length == 0) ? render_to_string(:inline => t("helpdesk.flash.tickets_closed", :tickets => get_updated_ticket_count )) :
           render_to_string(
-            :inline => t("helpdesk.flash.tickets_close_fail_on_bulk_close", 
+            :inline => t("helpdesk.flash.tickets_close_fail_on_bulk_close",
             :tickets => get_updated_ticket_count,
             :failed_tickets => "<%= link_to( t('helpdesk.flash.tickets_failed', :failed_count => @failed_tickets.count), '',  id: 'failed-tickets') %>" )).html_safe
         flash[:failed_tickets] = @failed_tickets
         flash[:action] = "bulk_close"
           redirect_to helpdesk_tickets_path
         }
-            
+
         format.xml {  render :xml =>@items.to_xml({:basic=>true}) }
-        
+
         format.mobile do
           response_hash = {}
           status = mobile_app_versioning? && ios? ? 400 : 200
@@ -811,8 +813,8 @@ class Helpdesk::TicketsController < ApplicationController
               response_hash = {
                 :success => false,
                 :success_message => t("helpdesk.flash.tickets_close_fail_on_bulk_close_mobile",
-                                          :tickets => get_updated_ticket_count, :failed_tickets => @failed_tickets.length ), 
-                :failed_on_required_fields => @failed_tickets.length, 
+                                          :tickets => get_updated_ticket_count, :failed_tickets => @failed_tickets.length ),
+                :failed_on_required_fields => @failed_tickets.length,
                 :failed_on_parent => parents_not_closed,
                 :error => "Sorry your request could not be processed",
                 :error_code => error_code,
@@ -823,8 +825,8 @@ class Helpdesk::TicketsController < ApplicationController
               response_hash = {
                 :success => success,
                 :success_message => t("helpdesk.flash.tickets_closed",
-                                          :tickets => get_updated_ticket_count ), 
-                :failed_on_required_fields => 0, 
+                                          :tickets => get_updated_ticket_count ),
+                :failed_on_required_fields => 0,
                 :error => "Sorry your request could not be processed",
                 :failed_on_parent => parents_not_closed,
                 :error_code => error_code,
@@ -832,10 +834,10 @@ class Helpdesk::TicketsController < ApplicationController
               }
             end
           else
-            response_hash = { 
+            response_hash = {
               :success => false,
               :error => "Sorry your request could not be processed",
-              :failed_on_required_fields => @failed_tickets.length, 
+              :failed_on_required_fields => @failed_tickets.length,
               :failed_on_parent => 0,
               :error_code => 1016,
               :closed_tickets => @closed_tkt_count
@@ -843,7 +845,7 @@ class Helpdesk::TicketsController < ApplicationController
           end
           render :json => response_hash.to_json, :status => status
         end
-        
+
         format.json {  render :json =>@items.to_json({:basic=>true}) }
     end
   end
@@ -884,7 +886,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def execute_scenario
     @va_rule ||= current_account.scn_automations.find_by_id(params[:scenario_id])
-    if @valid_ticket || (@va_rule.present? and @va_rule.visible_to_me? and @valid_ticket.nil?) 
+    if @valid_ticket || (@va_rule.present? and @va_rule.visible_to_me? and @valid_ticket.nil?)
       if @va_rule.trigger_actions(@item, current_user)
         @item.save
         @item.create_scenario_activity(@va_rule.name)
@@ -910,7 +912,7 @@ class Helpdesk::TicketsController < ApplicationController
       else
         scenario_failure_notification
       end
-    else 
+    else
       scenario_failure_notification
     end
   end
@@ -1580,6 +1582,25 @@ class Helpdesk::TicketsController < ApplicationController
 
   private
 
+    def handle_falcon_redirection
+      options = {
+        request_referer: request.referer,
+        not_html: !request.format.html?,
+        path_info: request.path_info,
+        is_ajax: request.xhr?,
+        env_path: env['PATH_INFO']
+      }
+      result = FalconRedirection.falcon_redirect(options)
+      redirect_to (result[:path] + get_valid_query_string) if result[:redirect]
+    end
+
+    def get_valid_query_string
+      query_params = Rack::Utils.parse_nested_query(request.query_string)
+      query = query_params.slice(*ALLOWED_QUERY_PARAMS).to_query
+      return "?#{query}" if query
+      ""
+    end
+
     def outbound_email_allowed?
       return unless params[:helpdesk_ticket].present?
       access_denied if (!current_account.verified? && params[:helpdesk_ticket][:source].to_i == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email])
@@ -1624,7 +1645,7 @@ class Helpdesk::TicketsController < ApplicationController
               flash[:failed_tickets] = @failed_tickets
               flash[:action] = "bulk_close"
               flash[:notice] = render_to_string(
-              :inline => t("helpdesk.flash.tickets_close_fail_on_bulk_close", 
+              :inline => t("helpdesk.flash.tickets_close_fail_on_bulk_close",
               :tickets => get_updated_ticket_count,
               :failed_tickets => "<%= link_to( t('helpdesk.flash.tickets_failed', :failed_count => @failed_tickets.count), '',  id: 'failed-tickets') %>" )).html_safe
             end
@@ -1895,7 +1916,7 @@ class Helpdesk::TicketsController < ApplicationController
       if ((current_account.id > get_spam_account_id_threshold) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)))
         outbound_per_day_key = OUTBOUND_EMAIL_COUNT_PER_DAY % {:account_id => current_account.id }
         total_outbound_per_day = get_others_redis_key(outbound_per_day_key).to_i
-        if (current_account.subscription.trial?) 
+        if (current_account.subscription.trial?)
           if (total_outbound_per_day >=5 )
             @outbound_limit_crossed = true
             flash.now[:error] = t(:'flash.general.outbound_limit_per_day_exceeded', :limit => get_trial_account_max_to_cc_threshold )
@@ -2118,7 +2139,7 @@ class Helpdesk::TicketsController < ApplicationController
         current_account.tickets.preload({requester: [:avatar]}, :company, :schema_less_ticket, survey_association).permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
       else
         current_account.tickets.preload({requester: [:avatar]}, :company).permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
-      end 
+      end
     end
   end
 
@@ -2132,7 +2153,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def scenario_failure_notification
-    message = if @valid_ticket.is_a? FalseClass 
+    message = if @valid_ticket.is_a? FalseClass
       log_error @item
       error_code = 1013
       I18n.t("helpdesk.flash.scenario_fail")
@@ -2399,7 +2420,7 @@ class Helpdesk::TicketsController < ApplicationController
         load_items
         @items.each do |ticket|
           @va_rule.trigger_actions_for_validation(ticket, current_user)
-          
+
           unless valid_ticket?(ticket)
             remove_from_params ticket
           end
@@ -2417,7 +2438,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def actions_contains_close?
-    status_action = @va_rule.action_data.find {|x| x.symbolize_keys!; x[:name] == 'status'} 
+    status_action = @va_rule.action_data.find {|x| x.symbolize_keys!; x[:name] == 'status'}
     status_action && close_action?(status_action[:value].to_i)
   end
 
@@ -2429,7 +2450,7 @@ class Helpdesk::TicketsController < ApplicationController
       render :json => {
         :success => false,
         :message => render_to_string(
-            :inline => t("helpdesk.flash.tickets_close_fail_on_quick_close", 
+            :inline => t("helpdesk.flash.tickets_close_fail_on_quick_close",
             :tickets => 0,
             :failed_tickets => "<%= link_to( t('helpdesk.flash.tickets_failed', :failed_count => 1), '',  id: 'failed-tickets', 'data-tickets' => @item_id_and_subject.to_json, 'data-title' => t('helpdesk.flash.title_on_quick_close_fail'), 'data-description' => t('helpdesk.flash.description_on_quick_close_fail')) %>" ))}.to_json
     end

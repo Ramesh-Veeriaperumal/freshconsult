@@ -8,7 +8,7 @@ class Helpdesk::EmailParser::ProcessedMail
 
 	attr_accessor :raw_eml, :mail, :from, :to, :cc , :subject, :text, :html, :header, :header_string, :attachments, :message_id, :references, :in_reply_to, :date, :mail_header_default_charset
 
-	SUBJECT_PATTERN = /(=\?.*?\?[QB]\?.*?\?=)/
+	SUBJECT_PATTERN = /(=\?.*?\?[QB]\?.*?\?=)/i
 	ENCODED_VALUE = /\=\?([^?]+)\?([QB])\?[^?]*?\?\=/mi
 
 	def initialize(raw_eml)
