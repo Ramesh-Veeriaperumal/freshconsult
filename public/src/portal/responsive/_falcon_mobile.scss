@@ -224,6 +224,12 @@
             }
         }
 
+        .freshid_login{
+            .alt-login-button{
+                @include min-height(auto);
+            }
+        }
+
         .ui-datepicker {
             .ui-datepicker-header{
             @include padding(0);
