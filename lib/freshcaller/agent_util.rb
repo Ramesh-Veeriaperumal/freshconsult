@@ -22,7 +22,7 @@ module Freshcaller
       if agent.freshcaller_enabled
         add_response = add_agent_to_freshcaller(agent)
         parsed_response = add_response.parsed_response
-        if fc_agent_created?(add_response)
+        if fc_agent_created?(add_response) && agent.freshcaller_agent.blank?
           return create_freshcaller_agent(agent, parsed_response)
         elsif fc_agent_limit?(parsed_response)
           return agent.errors[:base] << :freshcaller_agent_limit
@@ -66,7 +66,7 @@ module Freshcaller
     end
 
     def fc_agent_created?(result)
-      result.code == ::Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+      [200, 201].include?(result.code)
     end
 
     def create_freshcaller_agent(agent, result)
