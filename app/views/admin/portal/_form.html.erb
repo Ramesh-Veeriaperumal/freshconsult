@@ -34,8 +34,9 @@
               :"data-domain" => Helpdesk::HOST[Rails.env.to_sym],
               :data => {:source => 'portal'} %>   
     	      <span class="portal_url_if_long">
-              <%= content_tag(:div, t('admin.products.portal.cname_configure_info', 
-                              :full_domain => current_account.full_domain, :verification_hash => portal.cname_verification_hash).html_safe, :class => "info-data") %>
+              <%= content_tag(:div, t('admin.products.portal.cname_configure', 
+                              :full_domain => current_account.full_domain, :verification_hash => portal.cname_verification_hash,
+                              :solution_link => "https://support.freshdesk.com/support/solutions/articles/37590").html_safe, :class => "info-data") %>
             </span>
           <% end %>
         </div> 
