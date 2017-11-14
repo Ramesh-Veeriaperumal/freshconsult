@@ -905,6 +905,7 @@ HelpdeskReports.Qna_util = (function($) {
             }
           }
           _this.filterList();
+          return false;
         }
       );
 
@@ -914,12 +915,14 @@ HelpdeskReports.Qna_util = (function($) {
           // escape key maps to keycode `27`
           trigger_event('question-close' + constants.events_namespace);
 
+          _this.reset();
+
           $popover.animate({ opacity: 'hide' }, 'slow');
           $('.search-field-holder').removeClass('active');
           //Remove placeholder
           $('.search-field-holder input')
             .val('')
-            .prop('placeholder', 'A question about your helpdesk')
+            .prop('placeholder', 'Ask me a question about your helpdesk')
             .blur();
           //Show the clear icon
           $('.clear-query').addClass('hide');
@@ -927,8 +930,9 @@ HelpdeskReports.Qna_util = (function($) {
 
           $(this).addClass('hide');
           _this.clear_params();
-          _this.reset();
         }
+
+        return false;
       });
     },
     remoteSearch: function(
