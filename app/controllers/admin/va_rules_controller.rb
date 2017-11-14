@@ -355,7 +355,7 @@ class Admin::VaRulesController < Admin::AdminController
         { :name => "domains", :value => t('company_domain'), :domtype => "text", 
           :operatortype => "choicelist" }
       ]
-      add_tam_company_fields filter_hash['company'] if tam_default_company_fields_account?
+      add_tam_company_fields filter_hash['company'] if current_account.tam_default_company_fields_enabled?
       add_customer_custom_fields filter_hash['company'], "company"
     end
 

@@ -137,10 +137,6 @@ module AutomationControllerMethods
     current_account.features?(:multi_language)
   end
 
-  def tam_default_company_fields_account?
-    current_account.tam_default_company_fields_enabled?
-  end
-
   def add_custom_actions action_hash
     special_case = none_option
     current_account.ticket_fields.custom_fields.each do |field|

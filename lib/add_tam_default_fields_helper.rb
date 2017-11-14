@@ -1,7 +1,6 @@
 module AddTamDefaultFieldsHelper
 
-  NEW_DEFAULT_FIELDS = [ :default_health_score, :default_account_tier,
-                        :default_renewal_date, :default_industry ]
+  include CompanyFieldsConstants
 
   DEFAULT_FIELDS =
     [
@@ -18,83 +17,6 @@ module AddTamDefaultFieldsHelper
         :label              => "Industry" }
     ]
 
-  DEFAULT_ACCOUNT_TIER_VALUES = 
-    [
-      { :value     => "Platinum" },
-      { :value     => "Gold" },
-      { :value     => "Silver" }
-    ]
-
-  DEFAULT_HEALTH_SCORE_VALUES = 
-    [
-      { :value     => "At risk" },
-      { :value     => "Pretty OK" },
-      { :value     => "Happy" }
-    ]
-
-  DEFAULT_INDUSTRY_VALUES = 
-    [
-      { :value     => "Automotive" },
-      { :value     => "Consumer Durables & Apparel" },
-      { :value     => "Diversified Consumer Services" },
-      { :value     => "Hotels, Restaurants & Leisure" },
-      { :value     => "Consumer Goods" },
-      { :value     => "Household Durables" },
-      { :value     => "Leisure Products" },
-      { :value     => "Textiles, Apparel & Luxury Goods" },
-      { :value     => "Education Services" },
-      { :value     => "Family Services" },
-      { :value     => "Specialized Consumer Services" },
-      { :value     => "Media" },
-      { :value     => "Distributors" },
-      { :value     => "Specialty Retail" },
-      { :value     => "Beverages" },
-      { :value     => "Food Products" },
-      { :value     => "Food & Staples Retailing" },
-      { :value     => "Personal Products" },
-      { :value     => "Tobacco" },
-      { :value     => "Gas Utilities" },
-      { :value     => "Banks" },
-      { :value     => "Capital Markets" },
-      { :value     => "Diversified Financial Services" },
-      { :value     => "Insurance" },
-      { :value     => "Real Estate" },
-      { :value     => "Health Care Equipment & Supplies" },
-      { :value     => "Health Care Providers & Services" },
-      { :value     => "Biotechnology" },
-      { :value     => "Pharmaceuticals" },
-      { :value     => "Professional Services" },
-      { :value     => "Aerospace & Defense" },
-      { :value     => "Air Freight & Logistics" },
-      { :value     => "Airlines" },
-      { :value     => "Commercial Services & Supplies" },
-      { :value     => "Construction & Engineering" },
-      { :value     => "Electrical Equipment" },
-      { :value     => "Industrial Conglomerates" },
-      { :value     => "Machinery" },
-      { :value     => "Marine" },
-      { :value     => "Road & Rail" },
-      { :value     => "Trading Companies & Distributors" },
-      { :value     => "Transportation" },
-      { :value     => "Internet Software & Services" },
-      { :value     => "IT Services" },
-      { :value     => "Software" },
-      { :value     => "Communications Equipment" },
-      { :value     => "Electronic Equipment, Instruments & Components" },
-      { :value     => "Technology Hardware, Storage & Peripherals" },
-      { :value     => "Building Materials" },
-      { :value     => "Chemicals" },
-      { :value     => "Containers & Packaging" },
-      { :value     => "Metals & Mining" },
-      { :value     => "Paper & Forest Products" },
-      { :value     => "Diversified Telecommunication Services" },
-      { :value     => "Wireless Telecommunication Services" },
-      { :value     => "Renewable Electricity" },
-      { :value     => "Electric Utilities" },
-      { :value     => "Utilities" },
-      { :value     => "Other" }
-    ]
-
   def populate_tam_fields_data
     begin
       company_fields_data(account).each do |field_data|
@@ -102,7 +24,7 @@ module AddTamDefaultFieldsHelper
         column_name = field_data.delete(:column_name)
         deleted = field_data.delete(:deleted)
         unless field_name == "renewal_date"
-          field_data[:custom_field_choices_attributes] = send("#{field_name}_data") 
+          field_data[:custom_field_choices_attributes] = TAM_FIELDS_DATA["#{field_name}_data"]
         end
         field = CompanyField.new(field_data)
         field.name = field_name
@@ -139,37 +61,5 @@ module AddTamDefaultFieldsHelper
       }
     end
   end
-
-  def account_tier_data
-    DEFAULT_ACCOUNT_TIER_VALUES.each_with_index.map do |f, i|
-      {
-        :name               => f[:value],
-        :value              => f[:value],
-        :position           => i + 1,
-        :_destroy            => 0
-      }
-    end
-  end
-
-  def industry_data
-    DEFAULT_INDUSTRY_VALUES.each_with_index.map do |f, i|
-      {
-        :name               => f[:value],
-        :value              => f[:value],
-        :position           => i + 1,
-        :_destroy            => 0
-      }
-    end
-  end
-
-  def health_score_data
-    DEFAULT_HEALTH_SCORE_VALUES.each_with_index.map do |f, i|
-      {
-        :name               => f[:value],
-        :value              => f[:value],
-        :position           => i + 1,
-        :_destroy            => 0
-      }
-    end
   end
 end
