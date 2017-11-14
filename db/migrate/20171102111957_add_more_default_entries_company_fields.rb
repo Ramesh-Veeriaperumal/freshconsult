@@ -23,35 +23,33 @@ class AddMoreDefaultEntriesCompanyFields < ActiveRecord::Migration
     failed_accounts = []
     valid_plan_ids = SubscriptionPlan.where(:name => VALID_PLANS).pluck(:id)
     Account.preload(:subscription).find_each(:batch_size => 500) do |acc|
-      if acc.id == 11
-        begin
-          next if acc.subscription.state == 'suspended' && valid_plan_ids.exclude?(acc.subscription.subscription_plan_id)
-          account = acc.make_current
-          unless account.has_feature? :tam_default_fields
-            account.set_feature(:tam_default_fields) 
-            account.save
-          end
-          company_fields_data(account).each do |field_data|
-            field_name = field_data.delete(:name)
-            column_name = field_data.delete(:column_name)
-            deleted = field_data.delete(:deleted)
-            unless field_name == "renewal_date"
-              field_data[:custom_field_choices_attributes] = TAM_FIELDS_DATA["#{field_name}_data"]
-            end
-            field = CompanyField.new(field_data)
-            field.name = field_name
-            field.column_name = column_name
-            field.deleted = deleted
-            field.company_form_id = account.company_form.id
-            field.save
-          end
-        rescue Exception => e
-          puts ":::::::::::#{e}:::::::::::::"
-          failed_accounts << account.id
-        ensure
-          account.company_form.clear_cache
-          Account.reset_current_account
+      begin
+        next if acc.subscription.state == 'suspended' && valid_plan_ids.exclude?(acc.subscription.subscription_plan_id)
+        account = acc.make_current
+        unless account.has_feature? :tam_default_fields
+          account.set_feature(:tam_default_fields) 
+          account.save
         end
+        company_fields_data(account).each do |field_data|
+          field_name = field_data.delete(:name)
+          column_name = field_data.delete(:column_name)
+          deleted = field_data.delete(:deleted)
+          unless field_name == "renewal_date"
+            field_data[:custom_field_choices_attributes] = TAM_FIELDS_DATA["#{field_name}_data"]
+          end
+          field = CompanyField.new(field_data)
+          field.name = field_name
+          field.column_name = column_name
+          field.deleted = deleted
+          field.company_form_id = account.company_form.id
+          field.save
+        end
+      rescue Exception => e
+        puts ":::::::::::#{e}:::::::::::::"
+        failed_accounts << account.id
+      ensure
+        account.company_form.clear_cache
+        Account.reset_current_account
       end
     end
     puts failed_accounts.inspect
@@ -61,30 +59,29 @@ class AddMoreDefaultEntriesCompanyFields < ActiveRecord::Migration
   def self.down
     failed_accounts = []
     valid_plan_ids = SubscriptionPlan.where(:name => VALID_PLANS).pluck(:id)
+    
     Account.preload(:subscription).find_each(:batch_size => 500) do |acc|
-      if acc.id == 11
-        begin
-          next if acc.subscription.state == 'suspended' && valid_plan_ids.exclude?(acc.subscription.subscription_plan_id)
-          account = acc.make_current
-          if account.has_feature? :tam_default_fields
-            account.set_feature(:tam_default_fields) 
-            account.save
-          end
-          account.company_form.company_fields.each do |field|
-            if (NEW_DEFAULT_FIELDS.include?(field.field_type))
-              field.destroy
-            end
-          end
-        rescue Exception => e
-          puts ":::::::::::#{e}:::::::::::::"
-          failed_accounts << account.id
-        ensure
-          Account.reset_current_account
+      begin
+        next if acc.subscription.state == 'suspended' && valid_plan_ids.exclude?(acc.subscription.subscription_plan_id)
+        account = acc.make_current
+        if account.has_feature? :tam_default_fields
+          account.set_feature(:tam_default_fields) 
+          account.save
         end
+        account.company_form.company_fields.each do |field|
+          if (NEW_DEFAULT_FIELDS.include?(field.field_type))
+            field.destroy
+          end
+        end
+      rescue Exception => e
+        puts ":::::::::::#{e}:::::::::::::"
+        failed_accounts << account.id
+      ensure
+        Account.reset_current_account
       end
-      puts failed_accounts.inspect
-      failed_accounts
     end
+    puts failed_accounts.inspect
+    failed_accounts
   end
 
   def self.company_fields_data account
