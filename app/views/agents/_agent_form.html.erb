@@ -67,13 +67,19 @@
      					 <%= t('agent_info_title') %>
 					  </h5>
      			 </li>
-     			<li class="control-group">
-					  <%= label(:user, :name, t('user.full_name'), :class => "control-label" ) %>
-					  <div class="controls">
-						  <%= text_field(:user, :name, :class => "text required input-xlarge",
-                    :value => "#{@agent.user.name}", :placeholder => t('user.name'))  %>
-					  </div>
-				  </li>
+          <% if (freshid_enabled? && !@agent.new_record?) || !freshid_enabled? %>
+       			<li class="control-group">
+  					  <%= label(:user, :name, t('user.full_name'), :class => "control-label" )%>
+  					  <div class="controls">
+                <% if freshid_enabled? %>
+                  <span class="form_value"><%= @agent.user.name %></span>
+                <% else %>
+                  <%= text_field(:user, :name, :class => "text required name input-xlarge",
+                      :value => @agent.user.name, :placeholder => t('user.name')) %>
+                <% end %>
+  					  </div>
+  				  </li>
+          <% end %>
             <li class="control-group">
               <%= label(:user, :email, t('user.email'), :class => "control-label" ) %>
               <div class="controls">
@@ -88,15 +94,26 @@
                   :value => "#{@agent.user.job_title}", :placeholder => t('user.title')) %>
   					</div>
   				</li>
-  				<li class="control-group">
-  					<%= label(:user, :phone, "#{t('user.phone_no')}.", :class => "control-label" ) %>
-  				  <div class="controls">
-  					  <%= text_field(:user, :phone, :class => "text input-medium margin-bottom",
-                 :value => "#{@agent.user.phone}", :placeholder => t('user.work') ) %>
-              <%= text_field(:user, :mobile, :class => "text input-medium ",
-                    :value => "#{@agent.user.mobile}", :placeholder => t('user.mobile')) %>
-            </div>
-  				</li>
+          <% if (freshid_enabled? && !@agent.new_record?) || !freshid_enabled? %>
+       			<li class="control-group">
+  					  <%= label(:user, :phone, t('user.phone_no'), :class => "control-label" )%>
+  					  <div class="controls">
+                <% if freshid_enabled? %>
+                  <%= label(:user, :phone, t('user.work'), :class => "fid-phone-label" )%>
+                  <%= text_field(:user, :phone, :class => "text margin-bottom uneditable-input fid-phone-input",
+                     :value => "#{@agent.user.phone}", :placeholder => t('user.work'), :title => t('user.work') ) %>
+                  <%= label(:user, :mobile, t('user.mobile'), :class => "fid-phone-label" )%>
+                  <%= text_field(:user, :mobile, :class => "text uneditable-input fid-phone-input",
+                         :value => "#{@agent.user.mobile}", :placeholder => t('user.mobile'), :title => t('user.mobile')) %>
+                <% else %>
+                  <%= text_field(:user, :phone, :class => "text input-medium margin-bottom",
+                     :value => "#{@agent.user.phone}", :placeholder => t('user.work') ) %>
+                  <%= text_field(:user, :mobile, :class => "text input-medium ",
+                        :value => "#{@agent.user.mobile}", :placeholder => t('user.mobile')) %>
+                <% end %>
+  					  </div>
+  				  </li>
+          <% end %>
     			<% if gamification_feature?(current_account) %>
     				<li class="control-group">
     					<%= label(:agent , :scoreboard_level_id, t('level_label'), :class => "control-label")%>
@@ -119,7 +136,7 @@
               <li class="control-group">
                 <%= label(:user, :language, t('account.language'), :class => "control-label") %>
                 <div class="controls  margin-bottom">
-                  <%= select(:user, :language, I18n.available_locales_with_name, {:selected => @agent.user.language.to_sym()}, {:disabled => true})%>
+                  <%= select(:user, :language, I18n.available_locales_with_name, {:selected => @agent.user.language.to_sym()}, {:class => "disabled"})%>
                   <a href="javascript:toggleMessage()">
                     <i class="info help-icon-language ficon-help-icon fsize-24" size="14"></i>
                   </a>

@@ -6,6 +6,7 @@ development:
   activities_notification_topic: activities_notification_dev
   freshdesk_team_notification_topic: freshdesk_team_notification_dev
   associated_tickets_fallback_topic: associated_tickets_fallback_dev
+  freshid_notification_topic: freshid_notification_dev
 staging:
   social_notification_topic: social_notification_staging
   reports_notification_topic: reports_notification_staging
@@ -14,6 +15,7 @@ staging:
   activities_notification_topic: activities_notification_staging
   freshdesk_team_notification_topic: freshdesk_team_notification_staging
   associated_tickets_fallback_topic: associated_tickets_fallback_staging
+  freshid_notification_topic: freshid_notification_staging
 production:
   social_notification_topic: social_notification_production
   reports_notification_topic: reports_notification_production
@@ -22,6 +24,7 @@ production:
   activities_notification_topic: activities_notification_production
   freshdesk_team_notification_topic: freshdesk_team_notification_production
   associated_tickets_fallback_topic: associated_tickets_fallback_production
+  freshid_notification_topic: freshid_notification_production
 test:
   social_notification_topic: social_notification_test
   reports_notification_topic: reports_notification_test
@@ -30,3 +33,4 @@ test:
   activities_notification_topic: activities_notification_test
   freshdesk_team_notification_topic: freshdesk_team_notification_test
   associated_tickets_fallback_topic: associated_tickets_fallback_test
+  freshid_notification_topic: freshid_notification_test

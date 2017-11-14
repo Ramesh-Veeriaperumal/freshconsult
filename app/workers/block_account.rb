@@ -11,7 +11,7 @@ class BlockAccount < BaseWorker
       shard_mapping.status = ShardMapping::STATUS_CODE[:blocked]
       shard_mapping.save!
       $spam_watcher.perform_redis_op('del', "#{account.id}-")
-      SearchService::Client.new(account.id).tenant_rollback if account.service_reads_enabled?
+      SearchService::Client.new(account.id).tenant_rollback
       Fdadmin::APICalls.make_api_request_to_global(:post, url_params,
                                                    AdminApiConfig[Rails.env]['activity_url'],
                                                    AdminApiConfig[Rails.env]['url'].sub(/^https?\:\/\//,'')[0..-2])

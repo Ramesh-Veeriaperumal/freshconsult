@@ -207,6 +207,12 @@ module AuthenticationSystem
       session[:return_to] = nil
     end
 
+    def freshid_auth_failure_redirect_back(flash_message_key=nil, default = '/')
+      redirect_path = session.delete(:freshid_auth_failure_return_to)
+      session[:flash_message] = I18n.t(flash_message_key) if flash_message_key.present?
+      redirect_to(redirect_path || default)
+    end
+
     def authenticate_admin
       authenticate_or_request_with_http_basic do |user, password|
         password_hash = Digest::MD5.hexdigest(password)
@@ -238,7 +244,7 @@ module AuthenticationSystem
       end
     end
     
-    def grant_day_pass(dont_redirect = false)#Need to refactor this code..
+    def grant_day_pass(dont_redirect = false) #Need to refactor this code..
       if (qualify_for_day_pass? && !current_user.day_pass_granted_on)
         unless current_account.day_pass_config.grant_day_pass(current_user, params)
           log_out!
@@ -255,10 +261,11 @@ module AuthenticationSystem
     def qualify_for_day_pass?
       current_user && current_user.occasional_agent? && !current_account.subscription.trial? && !is_assumed_user?
     end
-    
+
+    #Differentiate API Key and Email Authentication
     def log_authentication_type(auth_token, format)
       auth_type = auth_token.include?('@') ? "UN_PASS" : "API_KEY"
-      Rails.logger.info "FRESHID API V1 auth_type :: #{auth_type}, format :: #{format}"
+      Rails.logger.info "FRESHID API V1 auth_type :: #{auth_type}, format :: #{format}, a=#{current_account.id}"
     end
 
     SUPPORTED_API_KEY_FORMATS = ['xml', 'json', 'widget']

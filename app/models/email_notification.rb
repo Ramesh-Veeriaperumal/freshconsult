@@ -37,6 +37,7 @@ class EmailNotification < ActiveRecord::Base
 
   #2nd batch
   USER_ACTIVATION               = 10
+  AGENT_INVITATION              = 25
   TICKET_UNATTENDED_IN_GROUP    = 11
   FIRST_RESPONSE_SLA_VIOLATION  = 12
   RESOLUTION_TIME_SLA_VIOLATION = 13
@@ -66,7 +67,8 @@ class EmailNotification < ActiveRecord::Base
     #TICKET_REOPENED              =>  {:agent_notification => false},
     REPLIED_BY_REQUESTER          =>  {:agent_notification => false},
     USER_ACTIVATION               =>  {:requester_notification => false},
-    ADDITIONAL_EMAIL_VERIFICATION =>  {:requester_notification => false}
+    ADDITIONAL_EMAIL_VERIFICATION =>  {:requester_notification => false},
+    AGENT_INVITATION              =>  {:requester_notification => false}
   }
 
 
@@ -83,6 +85,7 @@ class EmailNotification < ActiveRecord::Base
   # notification_token, notification_type, visibility
   EMAIL_NOTIFICATIONS = [
     [:user_activation_email,          USER_ACTIVATION,                VISIBILITY[:AGENT_AND_REQUESTER]],
+    [:agent_invitation_email,         AGENT_INVITATION,               VISIBILITY[:AGENT_ONLY]],
     [:password_reset_email,           PASSWORD_RESET,                 VISIBILITY[:AGENT_AND_REQUESTER]],
     [:new_ticket_created,             NEW_TICKET,                     VISIBILITY[:AGENT_AND_REQUESTER]],
     [:tkt_assigned_to_group,          TICKET_ASSIGNED_TO_GROUP,       VISIBILITY[:AGENT_ONLY]         ],
@@ -105,12 +108,15 @@ class EmailNotification < ActiveRecord::Base
   ]
 
   # List of notfications to agents which cannot be turned off
-  AGENT_MANDATORY_LIST = [ :user_activation_email, :password_reset_email, :notify_comment ]
+  AGENT_MANDATORY_LIST = [ :user_activation_email, :password_reset_email, :notify_comment, :agent_invitation_email]
   # List of notfications to requester which cannot be turned off
   REQUESTER_MANDATORY_LIST = [ :password_reset_email ]
 
   TOKEN_BY_KEY  = Hash[*EMAIL_NOTIFICATIONS.map { |i| [i[1], i[0]] }.flatten]
   VISIBILITY_BY_KEY  = Hash[*EMAIL_NOTIFICATIONS.map { |i| [i[1], i[2]] }.flatten]
+  
+  AGENT_MANDATORY_KEYS = AGENT_MANDATORY_LIST.map{ |i| TOKEN_BY_KEY.key(i)}
+  REQUESTER_MANDATORY_KEYS = REQUESTER_MANDATORY_LIST.map{ |i| TOKEN_BY_KEY.key(i)}
 
   BCC_DISABLED_NOTIFICATIONS = [NOTIFY_COMMENT, PUBLIC_NOTE_CC, NEW_TICKET_CC]
 
@@ -129,6 +135,8 @@ class EmailNotification < ActiveRecord::Base
   end
 
   def visible_to_agent?
+    return false if token == :password_reset_email and account.freshid_enabled?
+    return false if token == :agent_invitation_email and !account.freshid_enabled?
     [ VISIBILITY[:AGENT_AND_REQUESTER], VISIBILITY[:AGENT_ONLY] ].include? VISIBILITY_BY_KEY[self.notification_type]
   end
 
@@ -174,7 +182,11 @@ class EmailNotification < ActiveRecord::Base
   def requester_notification?
     requester_notification && allowed_in_thread_local?(:requester_notification)
   end
-  
+
+  def requester_notification_updated?
+    previous_changes.has_key?(:requester_notification)
+  end
+
   def formatted_agent_template
     agent_template
   end

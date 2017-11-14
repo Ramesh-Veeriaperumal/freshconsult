@@ -102,3 +102,5 @@ helpdesk:
     - connection_pool_patch
     - imap_patch
     - threaded_init
+    - ner_api_config
+    - freshid
