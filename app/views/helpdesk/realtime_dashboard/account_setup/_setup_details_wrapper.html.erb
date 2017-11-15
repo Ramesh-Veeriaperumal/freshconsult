@@ -10,6 +10,7 @@
 	<div class="setup-details-container clearfix">
 		<ul id="setup-details" class="row-fluid">
 			<% current_account.current_setup_keys.each do |setup_key| %>
+				<% next unless Helpdesk::DashboardHelper::SETUP_KEY_UTILS.key?(setup_key) %> <!-- To prevent falcon redirection issue  -->
 				<% current_key_setup = current_account.send("#{setup_key}_setup?") %>
 				<li>
 
