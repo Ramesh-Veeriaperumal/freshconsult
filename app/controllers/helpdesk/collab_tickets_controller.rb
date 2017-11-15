@@ -51,7 +51,7 @@ class Helpdesk::CollabTicketsController < ApplicationController
           :current_domain => host_domain
         }
         CollabNotificationWorker.perform_async(noti_info)
-        head :ok
+        head :no_content
       else
         head :bad_request
       end

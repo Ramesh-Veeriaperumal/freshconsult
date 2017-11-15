@@ -11159,6 +11159,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     collab_group_mention_multi: "mentioned your group - %{group_name} in {{count}} messages on ticket %{object}"
     collab_reply: "replied to your message on ticket %{object}"
     collab_reply_multi: "replied to your message on ticket %{object}"
+    collab_follower: "1 new message on ticket %{object}"
+    collab_follower_multi: "{{count}} new messages on ticket %{object}"
     generic_notification: "%{title}"
     types:
       private_note_created: "Private Note Created"
@@ -11173,6 +11175,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       collab_first_mention: "Team Huddle"
       collab_reply: "Team Huddle"
       collab_reply_multi: "Team Huddle"
+      collab_follower: "Team Huddle"
+      collab_follower_multi: "Team Huddle"
       ticket_assigned_to_group: "Ticket Assigned to Group"
       ticket_created: "New Ticket"
       generic_notification: "%{type}"
