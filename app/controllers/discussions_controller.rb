@@ -3,6 +3,7 @@ class DiscussionsController < ApplicationController
 	include ModelControllerMethods
 	include Helpdesk::ReorderUtility
 	include Community::ModerationCount
+  	track_account_setup :categories
 
 	skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:index, :show]
 	before_filter :portal_check, :only => [:index, :show]

@@ -1,8 +1,7 @@
 class Account::Setup::UpdatedObjectsObserver < ActiveRecord::Observer
+  include Account::Setup::ObserverUtils
 
-	include Account::Setup::ObserverUtils
-
-	observe Account, EmailConfig, VaRule
+  observe Account, EmailConfig, VaRule, EmailNotification
 
 	def after_commit(object)
 		if object.send(:transaction_include_action?, :update)
@@ -14,14 +13,15 @@ class Account::Setup::UpdatedObjectsObserver < ActiveRecord::Observer
 
 	protected
 
-	def setup_keys_for_model
-		{
-			"Account" => "account_admin_email",
-			"EmailConfig" => "support_email",
-			"VaRule" => "automation",
-			"ScenarioAutomation" => "automation",
-		}
-	end
+    def setup_keys_for_model
+      {
+        'Account' => 'account_admin_email',
+        'EmailConfig' => 'support_email',
+        'VaRule' => 'automation',
+        'ScenarioAutomation' => 'automation',
+        'EmailNotification' => 'email_notification'
+      }
+    end
 
 	private
 
@@ -36,6 +36,11 @@ class Account::Setup::UpdatedObjectsObserver < ActiveRecord::Observer
 	def additional_check_for_automation(va_rule)
 		on_activation_changes = ["active", "updated_at"]
 		va_rule.previous_changes.keys != on_activation_changes
+	end
+
+	def additional_check_for_email_notification(email_notification)
+		#This step is related to update email requester notification
+		email_notification.account.verified? && email_notification.requester_notification_updated?
 	end
 
 end

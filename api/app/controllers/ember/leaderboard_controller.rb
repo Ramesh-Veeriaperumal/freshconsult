@@ -76,8 +76,13 @@ module Ember
       def user_id_avatar_hash(user)
         {
           user_id: user.id,
-          avatar: user.avatar ? user.avatar.attachment_url_for_api : nil
+          avatar: user.avatar ? user_avatar(user) : nil
         }
+      end
+
+      def user_avatar(user)
+        thumb_url = user.avatar.attachment_url_for_api(true, :thumb)
+        AttachmentDecorator.new(user.avatar).to_hash.merge(thumb_url: thumb_url)
       end
   end
 end

@@ -1011,9 +1011,9 @@ module Ember
         @account = Account.current
 
         params_hash = {
-          body: Faker::Lorem.sentence[0..130],
-          tweet_type: 'mention',
-          twitter_handle_id: @twitter_handle.id
+            body: Faker::Lorem.sentence[0..130],
+            tweet_type: 'mention',
+            twitter_handle_id: @twitter_handle.id
         }
         post :tweet, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
         assert_response 201
@@ -1021,6 +1021,24 @@ module Ember
         match_json(private_note_pattern(params_hash, latest_note))
       end
     end
+
+    def test_twitter_reply_to_tweet_ticket_more_than_280_limit
+      with_twitter_update_stubbed do
+
+        ticket = create_twitter_ticket
+
+        @account = Account.current
+
+        params_hash = {
+            body: Faker::Lorem.paragraphs(5).join[0..500],
+            tweet_type: 'mention',
+            twitter_handle_id: @twitter_handle.id
+        }
+        post :tweet, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+        assert_response 400
+      end
+    end
+
 
     def test_twitter_dm_reply_to_tweet_ticket
       ticket = create_twitter_ticket
