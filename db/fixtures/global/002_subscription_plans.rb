@@ -273,11 +273,11 @@ unless Account.current
 	end
 
 	skill_based_round_robin = Subscription::Addon.seed(:name) do |a|
-    a.name = 'Skill Based Round Robin'
-    a.amount = 8.0
-    a.renewal_period = 1
-    a.addon_type = addon_types[:agent_quantity]
- 	end
+	  a.name = 'Skill Based Round Robin'
+	  a.amount = 8.0
+	  a.renewal_period = 1
+	  a.addon_type = addon_types[:agent_quantity]
+	end
 
 	one_contact_multiple_companies = Subscription::Addon.seed(:name) do |a|
 	  a.name = 'One Contact Multiple Companies'
@@ -287,10 +287,10 @@ unless Account.current
 	end
 
 	all_addons = [ agent_collision, custom_ssl, custom_roles, gamification, layout_customization,
-									multiple_business_hours, round_robin, chat, enterprise_reporting, custom_domain,
-									custom_slas, custom_mailbox, whitelisted_ips, chat_routing, dynamic_sections,
-									custom_surveys, call_center_advanced, helpdesk_restriction,
-									ticket_templates, round_robin_load_balancing, one_contact_multiple_companies ]
+	               multiple_business_hours, round_robin, chat, enterprise_reporting, custom_domain,
+	               custom_slas, custom_mailbox, whitelisted_ips, chat_routing, dynamic_sections,
+	               custom_surveys, call_center_advanced, helpdesk_restriction,
+	               ticket_templates, round_robin_load_balancing, one_contact_multiple_companies ]
 
 	estate_addons  = [custom_mailbox, whitelisted_ips, call_center_advanced, skill_based_round_robin]
 	garden_addons  = all_addons + [shared_ownership_toggle] - [ multiple_business_hours, custom_domain, custom_slas, custom_surveys, ticket_templates ]
