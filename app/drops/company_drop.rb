@@ -2,7 +2,8 @@ class CompanyDrop < BaseDrop
   
   include DateHelper
   
-  self.liquid_attributes += [:name, :description, :note, :domains] 
+  self.liquid_attributes += [:name, :description, :note, :domains,
+                             :health_score, :account_tier, :industry, :renewal_date]
 
   def initialize(source)
     super source
