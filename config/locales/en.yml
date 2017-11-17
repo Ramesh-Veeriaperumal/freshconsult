@@ -11164,6 +11164,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     collab_reply_multi: "replied to your message on ticket %{object}"
     collab_follower: "1 new message on ticket %{object}"
     collab_follower_many: "%{count} new messages on ticket %{object}"
+    collab_follower_multi: "{{count}} new messages on ticket %{object}"
     generic_notification: "%{title}"
     types:
       private_note_created: "Private Note Created"

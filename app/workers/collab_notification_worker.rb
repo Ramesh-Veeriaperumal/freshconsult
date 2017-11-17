@@ -7,7 +7,7 @@ class CollabNotificationWorker
   GROUP_NOTI_USER_BATCH_SIZE = 30
   HK_GROUP_NOTIFY = 'hk_group_notify'
   HK_NOTIFY = 'hk_notify'
-  FOLLOWER_NOTIFY = 'follower_notify'
+  FOLLOWER_NOTIFY = 'follower_notify'.freeze
 
   def perform(noti_info)
     @noti_info = noti_info
