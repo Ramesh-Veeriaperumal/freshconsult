@@ -1,15 +1,20 @@
-prechigh
-  left ':'
-  left '>'
-  left '<'
-  left 'AND'
-  left 'OR'
-preclow
+class SearchParser
+	prechigh
+	  left ':'
+	  left '>'
+	  left '<'
+	  left 'AND'
+	  left 'OR'
+	preclow
 
-token PAIR OR AND LPAREN RPAREN
+	token PAIR OR AND LPAREN RPAREN
 
-rule 
-  expr: LPAREN expr RPAREN { result = val.join(' ') }
-  |     expr OR expr { result = val.join(' ') }
-  |     expr AND expr { result = val.join(' ') }
-  |     PAIR { }
+	rule 
+	  expr:  		or_expr  { }
+	  or_expr: 	or_expr OR and_expr { }
+	  |       	and_expr { }
+	  and_expr: and_expr AND pair { }
+	  |       	pair { }
+	  pair:   	PAIR { }
+	  |       	LPAREN expr RPAREN { }
+end

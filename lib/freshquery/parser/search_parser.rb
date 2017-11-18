@@ -33,27 +33,21 @@ module_eval(<<'...end search.y/module_eval...', 'search.y', 20)
     relational_x = "(>|<)"
     date_x = "[\s]*'\\d{4}-\\d{2}-\\d{2}'"
     value_x = "[\s]*([a-zA-Z0-9_\@]+|'[^']+'|[-]?[0-9]+)"
-    regex_string = /(#{keyword_x}#{seperator_x}(#{value_x}|#{relational_x}#{date_x}))/
+    term_x = "(#{value_x}|#{relational_x}#{date_x})"
+    regex_string = /(#{keyword_x}#{seperator_x}#{term_x})/
     until scanner.empty?
+      scanner.skip(/(\t|\r|\n|\s)+/)
       case
-        when match = scanner.scan(/\([\s]*/)
+        when match = scanner.scan(/\(/)
           @tokens.push [:LPAREN, match.strip]    
-        when match = scanner.scan(/[\s]*\)/)
+        when match = scanner.scan(/\)/)
           @tokens.push [:RPAREN, match.strip]
-        when match = scanner.scan(/[\s]+(AND|OR)[\s]+/i)
+        when match = scanner.scan(/(AND|OR)/i)
           @tokens.push [match.strip.upcase.to_sym, match.strip.upcase]
         when match = scanner.scan(regex_string) # match any keyword:value
           @tokens.push [:PAIR, match]
         else
-          current_pos = scanner.pos
-          rest = scanner.rest
-          error_scanner = StringScanner.new rest
-          [/#{keyword_x}/,/#{seperator_x}/,/#{value_x}/].each { |x|
-            unless error_scanner.scan(x)
-              current_pos += error_scanner.pos
-              raise ParseError, "Unable to parse the query, << #{error_scanner.rest[0,8]} >> at #{current_pos}, Allowed format is keyword:value or keyword:'value'"
-            end
-          }
+          raise ParseError
       end
     end
   end
@@ -173,93 +167,99 @@ module_eval(<<'...end search.y/module_eval...', 'search.y', 20)
 ##### State transition tables begin ###
 
 racc_action_table = [
-   4,     3,     3,     3,     2,     2,     2,     8,     5,     6,
-   5,     6,     3,    11,   nil,     2,     5,     6,     5,     6 ]
+     5,     5,     5,     6,     6,     6,     5,    11,     9,     6,
+     8,     7,    14,     9 ]
 
 racc_action_check = [
-   1,     2,     0,     6,     2,     0,     6,     4,     1,     1,
-   7,     7,     5,     7,   nil,     5,    10,    10,     9,     9 ]
+     0,     9,     8,     0,     9,     8,     6,     7,     3,     6,
+     2,     1,    10,    12 ]
 
 racc_action_pointer = [
-  -5,     0,    -6,   nil,     7,     5,    -4,     2,   nil,    10,
-   8,   nil ]
+    -7,    11,     2,    -1,   nil,   nil,    -1,     7,    -5,    -6,
+     1,   nil,     4,   nil,   nil ]
 
 racc_action_default = [
-  -5,    -5,    -5,    -4,    -5,    -5,    -5,    -5,    12,    -2,
-  -3,    -1 ]
+    -8,    -8,    -1,    -3,    -5,    -6,    -8,    -8,    -8,    -8,
+    -8,    15,    -2,    -4,    -7 ]
 
 racc_goto_table = [
-   1,   nil,     7,   nil,   nil,     9,    10 ]
+     1,    12,    13,   nil,   nil,   nil,    10 ]
 
 racc_goto_check = [
-   1,   nil,     1,   nil,   nil,     1,     1 ]
+     1,     3,     4,   nil,   nil,   nil,     1 ]
 
 racc_goto_pointer = [
- nil,     0 ]
+   nil,     0,   nil,    -7,    -7 ]
 
 racc_goto_default = [
- nil,   nil ]
+   nil,   nil,     2,     3,     4 ]
 
 racc_reduce_table = [
-0, 0, :racc_error,
-3, 13, :_reduce_1,
-3, 13, :_reduce_2,
-3, 13, :_reduce_3,
-1, 13, :_reduce_4 ]
+  0, 0, :racc_error,
+  1, 13, :_reduce_1,
+  3, 14, :_reduce_2,
+  1, 14, :_reduce_3,
+  3, 15, :_reduce_4,
+  1, 15, :_reduce_5,
+  1, 16, :_reduce_6,
+  3, 16, :_reduce_7 ]
 
-racc_reduce_n = 5
+racc_reduce_n = 8
 
-racc_shift_n = 12
+racc_shift_n = 15
 
 racc_token_table = {
-false => 0,
-:error => 1,
-":" => 2,
-">" => 3,
-"<" => 4,
-"AND" => 5,
-"OR" => 6,
-:PAIR => 7,
-:OR => 8,
-:AND => 9,
-:LPAREN => 10,
-:RPAREN => 11 }
+  false => 0,
+  :error => 1,
+  ":" => 2,
+  ">" => 3,
+  "<" => 4,
+  "AND" => 5,
+  "OR" => 6,
+  :PAIR => 7,
+  :OR => 8,
+  :AND => 9,
+  :LPAREN => 10,
+  :RPAREN => 11 }
 
 racc_nt_base = 12
 
 racc_use_result_var = true
 
 Racc_arg = [
-racc_action_table,
-racc_action_check,
-racc_action_default,
-racc_action_pointer,
-racc_goto_table,
-racc_goto_check,
-racc_goto_default,
-racc_goto_pointer,
-racc_nt_base,
-racc_reduce_table,
-racc_token_table,
-racc_shift_n,
-racc_reduce_n,
-racc_use_result_var ]
+  racc_action_table,
+  racc_action_check,
+  racc_action_default,
+  racc_action_pointer,
+  racc_goto_table,
+  racc_goto_check,
+  racc_goto_default,
+  racc_goto_pointer,
+  racc_nt_base,
+  racc_reduce_table,
+  racc_token_table,
+  racc_shift_n,
+  racc_reduce_n,
+  racc_use_result_var ]
 
 Racc_token_to_s_table = [
-"$end",
-"error",
-"\":\"",
-"\">\"",
-"\"<\"",
-"\"AND\"",
-"\"OR\"",
-"PAIR",
-"OR",
-"AND",
-"LPAREN",
-"RPAREN",
-"$start",
-"expr" ]
+  "$end",
+  "error",
+  "\":\"",
+  "\">\"",
+  "\"<\"",
+  "\"AND\"",
+  "\"OR\"",
+  "PAIR",
+  "OR",
+  "AND",
+  "LPAREN",
+  "RPAREN",
+  "$start",
+  "expr",
+  "or_expr",
+  "and_expr",
+  "pair" ]
 
 Racc_debug_parser = false
 
@@ -268,35 +268,56 @@ Racc_debug_parser = false
 # reduce 0 omitted
 
 module_eval(<<'.,.,', 'search.y', 12)
-def _reduce_1(val, _values, result)
-   result = val.join(' ') 
-  result
-end
+  def _reduce_1(val, _values, result)
+     
+    result
+  end
 .,.,
 
 module_eval(<<'.,.,', 'search.y', 13)
-def _reduce_2(val, _values, result)
-   result = val.join(' ') 
-  result
-end
+  def _reduce_2(val, _values, result)
+     
+    result
+  end
 .,.,
 
 module_eval(<<'.,.,', 'search.y', 14)
-def _reduce_3(val, _values, result)
-   result = val.join(' ') 
-  result
-end
+  def _reduce_3(val, _values, result)
+     
+    result
+  end
 .,.,
 
 module_eval(<<'.,.,', 'search.y', 15)
-def _reduce_4(val, _values, result)
-   
-  result
-end
+  def _reduce_4(val, _values, result)
+     
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'search.y', 16)
+  def _reduce_5(val, _values, result)
+     
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'search.y', 17)
+  def _reduce_6(val, _values, result)
+     
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'search.y', 18)
+  def _reduce_7(val, _values, result)
+     
+    result
+  end
 .,.,
 
 def _reduce_none(val, _values, result)
-val[0]
+  val[0]
 end
 
 end   # class SearchParser
