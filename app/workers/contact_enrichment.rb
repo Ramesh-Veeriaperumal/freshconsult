@@ -3,7 +3,6 @@ class ContactEnrichment
   include Sidekiq::Worker
   include Redis::RedisKeys
   include Redis::OthersRedis
-
   sidekiq_options :queue => :data_enrichment, :retry => 0, :backtrace => true, :failures => :exhausted
 
   def perform(args = {})
@@ -13,7 +12,7 @@ class ContactEnrichment
       email_id = account.contact_info[:email]
       result = Clearbit::Enrichment.find(email: email_id, stream: true)
       account.account_configuration.contact_info = generate_clearbit_contact_info(result, email_update)
-      account.account_configuration.company_info = generate_clearbit_company_info(result)
+      account.account_configuration.company_info.merge!(generate_clearbit_company_info(result))
       account.account_configuration.save
     rescue Nestful::ClientError, Nestful::ResourceInvalid,Nestful::ResourceNotFound  => e
       error_log = "CLEARBIT ERROR. Account: #{account.full_domain}, Id: #{account.id}, error: #{e}"

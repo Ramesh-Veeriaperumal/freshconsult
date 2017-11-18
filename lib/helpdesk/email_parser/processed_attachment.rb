@@ -40,7 +40,7 @@ class Helpdesk::EmailParser::ProcessedAttachment
       	elsif(part.content_transfer_encoding && part.content_transfer_encoding.upcase == "QUOTED-PRINTABLE")
       		attachment = Helpdesk::EmailParser::MailAttachment.new(part.body.raw_source.unpack("M")[0])
     	else
-      		attachment = Helpdesk::EmailParser::MailAttachment.new(part.decoded)
+      		attachment = Helpdesk::EmailParser::MailAttachment.new(part.body.decoded)
     	end
 
     	filename = ""

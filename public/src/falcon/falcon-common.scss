@@ -203,6 +203,38 @@ $survey-options-color: (
   }
 }
 
+.child-form .ticket-template-form {
+  width: 97%;
+  margin: 0 auto;
+  .compose-new-ticket {
+    li.field {
+      .options-wrapper {
+        left: -40px
+      }
+    }
+    .field.default_tags,
+    .field.default_subject,
+    .field.custom_text,
+    .field.custom_paragraph,
+    .field.custom_checkbox,
+    .field.custom_number,
+    .field.custom_date,
+    .field.custom_decimal {
+      .options-wrapper {
+        left: -8px
+      }
+    }
+  }
+}
+
+.list-page.ticket-template-list{
+  .list-page-body{
+    .template-desc.ticket-details{
+      width: 80%;
+    }
+  }
+}
+
 .list-query-panel .dropdown-menu li > a:hover, .list-query-panel .dropdown-menu li > a:focus, .list-query-panel .dropdown-menu li.active > a:hover
 
 li.active > a:focus{
@@ -321,7 +353,7 @@ li.active > a:focus{
 
       &:before {
       left: 4px;
-      transform: rotate(135deg);
+      transform: rotate(140deg);
       width: 11px;
       top: 9px;
     }
@@ -332,9 +364,9 @@ li.active > a:focus{
 
   .dropdown-menu, .fd-menu{
 
-    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.14);
-       border:1px solid $border-color;
-      border-radius: 0px;
+      box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 12px, rgba(0, 0, 0, 0.15) 0px 1px 4px;
+      border:0;
+      border-radius: 2px;
       padding:6px;
 
       .tick{
@@ -356,12 +388,12 @@ li.active > a:focus{
 
 
         li{
-          padding: 4px;
+          padding: 2px;
 
           a{
-          padding: 6px 10px;
+          padding: 4px 10px;
           font-size: $fields-font-size;
-          line-height: 1.17;
+          line-height: 1.42857;
           color: $app-text-color;
 
             .ticksymbol{
@@ -386,7 +418,8 @@ li.active > a:focus{
             }
             &:hover{
                 background: $app-btn-hover;
-                color: $app-primary-btn-background;
+                color:  $app-text-color;
+                border-radius: 2px;
                 &:before{
                   color: $app-primary-color;
                 }
@@ -467,6 +500,15 @@ left: 88%;
     }
     }
   }
+}
+
+#ConfigureApplication .button-container .btn {
+  text-transform: capitalize;
+  border-radius: 4px;
+}
+
+#search_social button#settings-btn {
+    margin-left: 0;
 }
 
 
@@ -1260,6 +1302,24 @@ div[class$="-toggle"]{
 /* Style for button */
   color: $app-text-color;
   font-family: $font-family-normal;
+
+  .rule_list{
+    .condn-group-selection{
+      a{
+        &.active, &:hover{
+        background: #d7dce0;
+        }
+      }
+      a:hover{
+        border-top: 1px solid #d7dce0;
+        border-bottom: 1px solid #d7dce0;
+        border-left-color: #d7dce0;
+        border-right-color: #d7dce0;
+      }
+    }
+  }
+
+
   .btn {
     font-size: 12px;
       border: none;
@@ -1507,6 +1567,12 @@ div[class$="-toggle"]{
         color: $app-btn-text-disabled;
     }
   }
+  .ticket-template-list .ticket-details {
+    width: 80%;
+  }
+  .edit_agent .redactor_editor{
+    min-height: 320px;
+  }
 
 }
 
@@ -1593,6 +1659,152 @@ div[class$="-toggle"]{
   top: 1px;
   left: 4px;
 }
+
+
+/* Agent availabilty */
+#Pagearea
+{
+  p.mb20.clearfix {
+    display: none;
+  }
+}
+.availabilty-status {
+  .tab-chat, .tab-phone, div#lc-availability, div#phone {
+    display: none;
+  }
+  h5.lead {
+    display: none;
+  }
+  ul.tabs.nav-tabs.roundrobin-tabs.sleek-tab {
+    /* background-color: $app-selected-background-color; */
+    border-radius: 2px;
+    border-bottom: 1px #dadfe3 solid;
+    padding: 0;
+    margin: 0;
+    li a {
+      background: transparent;
+      font-size: 12px;
+      padding: 10px;
+      text-decoration: none;
+      font-weight: 500;
+    }
+  }
+  .nav-tabs.sleek-tab > .active > a {
+    border-bottom: 2px solid;
+  }
+  .tab-pane {
+    div.list-page .list-page-header {
+      padding: 10px;
+      margin: 0;
+    }
+    div.list-page-body {
+      background-color: transparent;
+    }
+    li {
+      span#tickets_accepting_count,
+      span#tickets_not_accepting_count {
+        font-weight: bold;
+      }
+      span#tickets_accepting_count:before,
+      span#tickets_not_accepting_count:before {
+        content: "(";
+      }
+      span#tickets_accepting_count:after,
+      span#tickets_not_accepting_count:after {
+        content: ")";
+      }
+    }
+    li.tab-link {
+      border-radius: 2px;
+      padding-top: 5px;
+      padding-bottom: 5px;
+      font-size: 12px;
+    }
+    li.tab-link.current, li.tab-link.current:hover {
+      background-color: $app-primary-btn-background;
+      border: 1px $app-primary-btn-background solid;
+    }
+    ul.ticket-minimal-swap li:hover {
+      background-color: #ebedf0;
+      border: 1px #dadfe3 solid;
+    }
+    .agents-filter {
+      ul.dropdown-menu {
+        min-width: 180px;
+        padding-right: 8px;
+        padding-left: 8px;
+        max-height: 300px;
+        overflow-y:auto;
+        li {
+          span.icon.ticksymbol {
+            left: auto;
+            left: unset;
+            right: 8px;
+          }
+        }
+        li a {
+          font-size: 12px;
+        }
+        li.selected{
+          a {
+            padding-right: 15px;
+            color: $app-primary-color;
+            font-weight: normal;
+            &:hover {
+              color: $app-primary-color;
+            }
+          }
+        }
+      }
+      li {
+        a.dropdown-toggle {
+          font-size: 12px;
+          color: #183247;
+        }
+        a.dropdown-toggle:hover {
+          text-decoration: none;
+        }
+      }
+      li.dropdown {
+        margin-left: 10px;
+      }
+      b.caret {
+        border-top: 4px solid #748491;
+      }
+    }
+    .list-page .list-page-body table {
+      border-top: solid 1px #eeeeee;
+      border-bottom: solid 1px #eeeeee;
+    }
+    .list-page-body.list-page-body-sleek {
+      border: none;
+      .preview_pic.avatar-text.text-center.thumb {
+        border-radius: 2px;
+      }
+      .cust-list-avatar .preview_pic img.thumb {
+        border-radius: 2px;
+      }
+      tr {
+        text-transform: capitalize;
+        font-size: 12px;
+        td:first-child {
+          text-align: center;
+        }
+        td {
+          padding-left: 0px;
+        }
+      }
+      .list-noinfo {
+        background: #fff;
+        font-size: 14px
+      }
+    }
+    b {
+      font-weight: 500;
+    }
+  }
+}
+/* End of Agent availabilty*/
 
 @import "falcon-community";
 @import "falcon-reports";

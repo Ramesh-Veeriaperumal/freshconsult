@@ -42,10 +42,23 @@ module Facebook
       # Gets the access token and page token once code is passed
       def auth(code)
         access_token code
-        graph              = Koala::Facebook::API.new(@oauth_access_token)
-        pages              = graph.get_connections("me", "accounts")
-        pages              = pages.collect{|p| p  unless p["category"].eql?("Application")}.compact
-        REALTIME_BLOCK.call(pages, @oauth_access_token)
+        REALTIME_BLOCK.call(fetch_facebook_pages, @oauth_access_token)
+      end
+
+      def generate_url(offset)
+        "#{FACEBOOK_GRAPH_URL}/#{GRAPH_API_VERSION}/me/accounts?access_token=#{@oauth_access_token}&limit=#{LIMIT_PER_REQUEST}&offset=#{offset}"
+      end
+
+      def fetch_facebook_pages
+        pages = []  
+        offset = 0
+        loop do 
+          response = JSON.parse(RestClient.get(generate_url(offset), {:accept => :json}))
+          pages += response['data']
+          break if response['paging'].nil? || response['paging']['next'].nil? 
+          offset += response['data'].length
+        end
+        pages.select{|p| !p["category"].eql?("Application")}
       end
 
       def access_token code

@@ -61,14 +61,15 @@ module Users
         template = agent_template.last
         subj_template = agent_template.first
       end
+      activation_url = register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, :protocol => url_protocol)
       activation_params = { :email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
                                   'helpdesk_name' =>  account.helpdesk_name, 
-                                  'activation_url' => register_url(perishable_token, 
-                                                          :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, 
-                                                          :protocol=> url_protocol)), 
+                                  'activation_url' => activation_url),
                             :subject => Liquid::Template.parse(subj_template).render(
                                   'portal_name' => (!portal.name.blank?) ? portal.name : account.portal_name) , 
-                            :reply_email => reply_email}
+                            :reply_email => reply_email,
+                            :activation_url => activation_url
+                          }
       UserNotifier.send_later(:deliver_user_activation, self, activation_params, email_config)
     end
     
@@ -81,11 +82,13 @@ module Users
     
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
         requester_template = e_notification.get_requester_template(self)
+        activation_url = register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, :protocol => url_protocol)
         UserNotifier.send_later(:deliver_user_activation, self,
           { :email_body => Liquid::Template.parse(e_notification.requester_template).render('contact' => self, 
-              'helpdesk_name' =>  account.helpdesk_name , 'activation_url' => register_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, :protocol=> url_protocol)), 
+              'helpdesk_name' =>  account.helpdesk_name , 'activation_url' => activation_url),
             :subject => Liquid::Template.parse(e_notification.requester_subject_template).render , 
-            :reply_email => reply_email
+            :reply_email => reply_email,
+            :activation_url => activation_url
           },
           email_config)
       end
@@ -99,10 +102,14 @@ module Users
       unless verified?
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::ADDITIONAL_EMAIL_VERIFICATION)
         return unless e_notification.requester_notification? and @user.customer?
+        activation_url = register_new_email_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, :protocol=> @user.url_protocol)
         UserNotifier.send_later(:deliver_email_activation, self,
-            {:email_body => Liquid::Template.parse(e_notification.requester_template).render('contact' => @user, 
-              'helpdesk_name' =>  account.helpdesk_name , 'email' => self.email, 'activation_url' => register_new_email_url(perishable_token, :host => (!portal.portal_url.blank?) ? portal.portal_url : account.host, :protocol=> @user.url_protocol)), 
-            :subject => Liquid::Template.parse(e_notification.requester_subject_template).render('helpdesk_name' =>  account.helpdesk_name) , :reply_email => reply_email}, email_config)
+            {
+              :email_body => Liquid::Template.parse(e_notification.requester_template).render('contact' => @user,
+                'helpdesk_name' =>  account.helpdesk_name , 'email' => self.email, 'activation_url' => activation_url),
+              :subject => Liquid::Template.parse(e_notification.requester_subject_template).render('helpdesk_name' =>  account.helpdesk_name) , :reply_email => reply_email,
+              :activation_url => activation_url
+            }, email_config)
       end
     end
   

@@ -456,7 +456,7 @@ ul.ffone-minimal-swap li, ul.ticket-minimal-swap li, ul.lc-minimal-swap li{
 }
 .ffone-minimal-tab, .ticket-minimal-tab{
  display: none;
- &.current{display: table;}
+ &.current{display: table;margin: 0 auto;}
  td{ line-height: 24px;}
 }
 

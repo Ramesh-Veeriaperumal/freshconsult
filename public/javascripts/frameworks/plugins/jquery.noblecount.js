@@ -219,7 +219,7 @@
 								// 		when characters remaining is positive
 		on_update: null,		// FUNCTION that is called when characters remaining 
 								// 		changes
-		max_chars: 140,			// maximum number of characters
+		max_chars: 280,			// maximum number of characters
 		block_negative: false,  // if true, then all attempts are made to block entering 
 								//		more than max_characters
 		cloak: false,			// if true, then no visual updates of characters 

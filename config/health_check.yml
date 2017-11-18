@@ -1,5 +1,5 @@
 defaults: &defaults
-  skipped_routes: ["/health_checkup"]
+  allowed_routes: ["/health_checkup"]
 
 development:
   <<: *defaults

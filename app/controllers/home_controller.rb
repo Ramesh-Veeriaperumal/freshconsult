@@ -8,6 +8,7 @@ class HomeController < ApplicationController
   def index
     # redirect_to MOBILE_URL and return if (current_user && mobile?)
     if (current_user && privilege?(:manage_tickets))
+      redirect_to '/a/' and return if current_account.falcon_ui_enabled?(current_user)
       redirect_to helpdesk_dashboard_path and return
     else
       flash.keep(:notice)

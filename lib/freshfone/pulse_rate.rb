@@ -25,8 +25,9 @@ class Freshfone::PulseRate
 	end
 
 	def pulse_charge
+		return forwarded_cost if call_forwarded?
 		return outgoing_cost if outgoing?
-		call_forwarded? ? forwarded_cost : incoming_cost
+		incoming_cost
 	end
 
 	def voicemail_cost
@@ -71,10 +72,12 @@ class Freshfone::PulseRate
 			self.number = call.direct_dial_number || forwarded_number
 			self.country =  fetch_country_code(number)
 
+			return calculate(:outgoing) if outgoing?
 			calculate(forwarded_call_type)
 		end
 
 		def forwarded_number
+			return call.agent.available_number if call.meta.available_on_phone?
 			(call.meta.meta_info.is_a?(Hash) ? call.meta.meta_info[:agent_info] : call.meta.meta_info) unless call.meta.blank?
 		end
 
@@ -85,7 +88,7 @@ class Freshfone::PulseRate
 		def calculate(call_type)
 			self.country =  fetch_country_code(number) if country_invalid?
 
-			get_matching_country_cost(call_type) unless country_invalid? #if global country code too is invalid
+			calculate_pulse_rate(get_matching_country_cost, call_type) unless country_invalid? #if global country code too is invalid
 			return credit
 		end
 
@@ -111,7 +114,7 @@ class Freshfone::PulseRate
 			number.gsub(/\D/, '')#returns just the number. hyphens, blank space, leading plus everthing is removed.
 		end
 
-		def get_matching_country_cost(call_type)
+		def get_matching_country_cost
 			formatted_number = ignore_format(number)
 			max_length = FRESHFONE_CHARGES[country][:max_digits]
 			max_length.times do |index|
@@ -119,20 +122,19 @@ class Freshfone::PulseRate
 				FRESHFONE_CHARGES[country][:numbers].each_pair do |number_array, source_prefix|
 					number_array = number_array.split(',')
 					if number_array.include? shortened_number
-						return self.credit = calculate_pulse_rate(source_prefix,
-							call_type).round(3)
+						return source_prefix['DEFAULT']
 					end
 				end
 			end
 		end
 
-		def calculate_pulse_rate(source_prefix, call_type)
+		def calculate_pulse_rate(source_prefix_cost, call_type)
 			multiplier = cost_multiplier(call_type)
 			offset = cost_offset(call_type)
-			source_prefix.each_pair do |prefix, cost|
-				return (cost + offset) * multiplier if caller_prefix_match?(prefix)
-			end
-			(source_prefix['DEFAULT'] + offset) * multiplier
+			# source_prefix_cost.each_pair do |prefix, cost|
+			# 	return (cost + offset) * multiplier if caller_prefix_match?(prefix)
+			# end
+			return self.credit = ((source_prefix_cost + offset) * multiplier).round(3)
 		end
 
 		def cost_multiplier(call_type)
@@ -140,7 +142,28 @@ class Freshfone::PulseRate
 		end
 
 		def cost_offset(call_type)
+			return forwarded_offset(call.parent) if external_transfer?
 			FRESHFONE_CHARGES['COST_CONSTANTS'][:offset][call_type]
+		end
+
+		def external_transfer?
+			call_forwarded? && call.parent.present?
+		end
+
+		def forwarded_offset(parent)
+			self.country = offset_country(parent)
+			self.number = offset_number(parent)
+			get_matching_country_cost
+		end
+
+		def offset_country(parent)
+			return parent.caller_country if parent.outgoing?
+			parent.freshfone_number.country
+		end
+
+		def offset_number(parent)
+			return parent.caller_number if parent.outgoing?
+			parent.freshfone_number.number
 		end
 
 		def caller_prefix_match?(key)

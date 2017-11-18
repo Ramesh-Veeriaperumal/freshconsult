@@ -2089,7 +2089,7 @@ en:
         invalid_linkback_url: Please enter a valid linkback url.
         select_forum_category: Select a forum category...
         portal_rebranding: Portal rebranding
-        cname_configure_info: Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point <strong>help.<b id="domain_info_name">yourcompany</b>.com</strong> to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly
+        cname_configure_info: Create a CNAME DNS record in your DNS Zone file to point <strong>help.<b id="domain_info_name">yourcompany</b>.com</strong> to %{full_domain} and a TXT DNS record to point <strong>fdkey.help.<b id="domain_info_name">yourcompany</b>.com</strong> to %{verification_hash}. Your Webmaster or Server administrator should be able to help you set this up.
         select_solution_category: Select a Solution Category...
         solution_categories_info: You can associate multiple solution categories to this product. All other solutions will not be shown to the customers, when viewing the solutions tab in this product portal.
         forum_categories_info: You can associate multiple forum categories to this product. All other forums will not be shown to the customers, when viewing the forums tab in this product portal.
@@ -2191,7 +2191,7 @@ en:
       cancel_label: Cancel
       new: New Role
       edit: Edit Role
-      default_role: Default Role
+      default_role_with_name: %{role_name} (Default Role)
       default_role_edit: This is a default system role. It cannot be edited or removed. You can view its permissions here, or %{go_back}.
       role_name: Role Name
       role_description: Description
@@ -2549,6 +2549,7 @@ en:
         success: "Portal has been updated"
         failure: "Portal could not be updated"
         invalid_cname: "Invalid Portal URL: CNAME mapping is missing or invalid. Please check CNAME DNS record in your DNS Zone file."
+        invalid_hash_mapping: "The validation record is missing in your DNS. Please check TXT DNS record in your DNS Zone file."
       destroy:
         success: "Portal of '%{product_name}' has been disabled"
         failure: "Main portal can not be disabled"
@@ -5624,7 +5625,7 @@ en:
     success_signin: Successfully associated @%{twitter_screen_name} with %{helpdesk}.
     user_exists: Twitter account already associated with another product.
     not_authorized: You were not authorized by Twitter
-    not_valid: Status is over 140 characters.
+    not_valid: Status is over 280 characters.
     deleted: The twitter account @%{twitter_screen_name} has been removed.
     sent: Tweet successfully sent
     error_sending: Error sending the tweet! Twitter might be unstable. Please try again.
@@ -7472,11 +7473,11 @@ en:
     update_payment_info: Update payment info
     payment_trial_info: This is a paid app with a %{trial_period} day trial period. Once the trial period is over, you will be charged %{price} / %{addon_type} / month. Press Ok to install the app. <br>  %{payment_ok_btn}
     payment_ok: You will be charged %{price} / %{addon_type} / month for this app. This will add up to <b>%{estimate}</b> for your plan period. Press Ok to install the app. <br>  %{payment_ok_btn}
-    platform_not_compatible_v1: "This app is currently available only in the new look."
-    platform_not_compatible_v2: "This app is currently available only in the old look."
+    v1_incompatible: "Not compatible in Old Freshdesk"
+    v2_incompatible: "Not compatible in Mint Experience"
     unsupported_apps: "Unavailable apps"
-    unsupported_apps_tooltip_v1: "These apps are currently available only in the new look."
-    unsupported_apps_tooltip_v2: "These apps are currently available only in the old look."
+    unsupported_apps_v1: "These apps are currently available only in the Mint Experience"
+    unsupported_apps_v2: "These apps are currently available only in the old Freshdesk"
     install_not_allowed: "Paid apps cannot be installed in both UI versions. Your account has already installed this paid app. Please uninstall the existing app to get this app in the current UI. Please contact support if you need assistance."
     agent: agent
     account: account
@@ -9887,12 +9888,12 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   freshcaller:
     admin:
       title_text: "Phone"
-      manage_settings_text: "Manage settings at Freshcaller"
+      manage_settings_text: "Manage settings in Freshcaller"
       sidebar_title: "Phone"
-      sidebar_content: "Freshdesk’s phone channel is powered by Freshcaller. You can make/receive calls directly from Freshdesk, as well as record all your calls and convert calls and voicemails into tickets.<br/><br/> <b> Call center setup </b> <br/>You can purchase phone credits from your Freshcaller admin account. You can purchase phone numbers from <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>over 40 countries</a>, using your phone credits. You can purchase toll-free phone numbers in U.S, U.K, Canada, and Australia. You do not have to purchase any hardware or install any software. You only need a web browser and a working internet connection. <br/> <br/> <b>Call center capabilities </b> <br/> You can answer calls on your browser, forward calls to your mobile, or transfer calls to any agent, use IVRs to receive calls, monitor calls, barge when needed, set business hour rules, and much more.<br/> <br/> <a href='https://www.freshworks.com/freshcaller-cloud-pbx/call-center-features/' target='_blank'>Learn more</a> about Freshcaller - the integrated phone solution for Freshdesk."
+      sidebar_content: "Freshdesk’s phone channel is powered by Freshcaller. You can make/receive calls directly from Freshdesk, as well as record all your calls and convert calls and voicemails into tickets.<br/><br/> <b> Call center setup </b> <br/>You can purchase phone credits from your Freshcaller admin account. You can purchase phone numbers from <a href='https://support.freshcaller.com/support/solutions/articles/229257' target='_blank'>over 40 countries</a>, using your phone credits. You can purchase toll-free phone numbers in U.S, U.K, Canada, and Australia. You do not have to purchase any hardware or install any software. You only need a web browser and a working internet connection. <br/> <br/> <b>Call center capabilities </b> <br/> You can answer calls on your browser, forward calls to your mobile, or transfer calls to any agent, use IVRs to receive calls, monitor calls, barge when needed, set business hour rules, and much more.<br/> <br/> <a href='https://www.freshworks.com/freshcaller-cloud-pbx/call-center-features/' target='_blank'>Learn more</a> about Freshcaller - the integrated phone solution for Freshdesk."
       freshcaller_not_available: "Freshcaller is only available in the new UI. Please switch to the new UI to use Freshcaller."
       phone_not_available: "Phone channel is available only in the old UI. Please reach out to <a href='mailto:support@freshcaller.com'>support@freshcaller.com</a> to use phone in the new UI."
-      freshcaller_signup_text: "Freshdesk provides an integated phone channel through Freshcaller. Enable your phone channel by creating a new Freshcaller account with 14-day free trial."
+      freshcaller_signup_text: "Freshdesk provides an integrated phone channel through Freshcaller. Enable your phone channel by creating a new Freshcaller account with a 14-day free trial."
       freshcaller_subtext: "Buy numbers, setup call queues, IVRs, etc"
       feature_request_content:
         create_new_account: "Create new account" 
@@ -11160,6 +11161,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     collab_group_mention_multi: "mentioned your group - %{group_name} in {{count}} messages on ticket %{object}"
     collab_reply: "replied to your message on ticket %{object}"
     collab_reply_multi: "replied to your message on ticket %{object}"
+    collab_follower: "1 new message on ticket %{object}"
+    collab_follower_many: "%{count} new messages on ticket %{object}"
     generic_notification: "%{title}"
     types:
       private_note_created: "Private Note Created"
@@ -11174,6 +11177,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       collab_first_mention: "Team Huddle"
       collab_reply: "Team Huddle"
       collab_reply_multi: "Team Huddle"
+      collab_follower: "Team Huddle"
+      collab_follower_multi: "Team Huddle"
       ticket_assigned_to_group: "Ticket Assigned to Group"
       ticket_created: "New Ticket"
       generic_notification: "%{type}"

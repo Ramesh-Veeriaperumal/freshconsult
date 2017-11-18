@@ -1,3 +1,6 @@
 <%= @body.html_safe %>
 <br/>
 <%= render :partial => '/shared/free_plan_message' %>
+<% if @activation_url && Account.current.launched?(:email_actions) %>
+  <%= view_action(url: @activation_url, name: 'Activate') %>
+<% end %>

@@ -150,4 +150,8 @@ module Social::Util
   def tokenize(message)
     message.to_s.tokenize_emoji.gsub(EMOJI_UNICODE_REGEX," ")
   end
+
+  def tweet_body(tweet)
+    tweet[:long_object].try(:[], "body") || tweet[:body]
+  end
 end

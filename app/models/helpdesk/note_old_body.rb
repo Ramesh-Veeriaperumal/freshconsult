@@ -16,5 +16,4 @@ class Helpdesk::NoteOldBody < ActiveRecord::Base
   def attributes_changed?
     false
   end
-
 end

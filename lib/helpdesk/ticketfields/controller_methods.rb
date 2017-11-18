@@ -1,5 +1,7 @@
 module Helpdesk::Ticketfields::ControllerMethods
 
+  include FlexifieldConstants
+
   CHARACTER_FIELDS = (1..80).collect { |n| "ffs_#{"%02d" % n}" }
   NUMBER_FIELDS = (1..20).collect { |n| "ff_int#{"%02d" % n}" }
   DATE_FIELDS = (1..10).collect { |n| "ff_date#{"%02d" % n}" }
@@ -82,11 +84,18 @@ module Helpdesk::Ticketfields::ControllerMethods
 	  def ff_meta_data(field_details, account=current_account)
 	    type = field_details.delete(:type)
 	    ff_def = account.ticket_field_def
-	    ff_def_entries = ff_def.flexifield_def_entries.all(:conditions => {
-	      :flexifield_coltype => FIELD_COLUMN_MAPPING[type][0] })
 
-	    used_columns = ff_def_entries.collect { |ff_entry| ff_entry.flexifield_name }
-	    available_columns = FIELD_COLUMN_MAPPING[type][1] - used_columns
+      if Account.current.has_feature?(:denormalized_flexifields) && SERIALIZED_TYPES.include?(type) 
+        ff_def_entries = ff_def.flexifield_def_entries.all(:conditions => {
+          :flexifield_coltype => type })
+        used_columns = ff_def_entries.collect(&:flexifield_name)
+        available_columns = SERIALIZED_COLUMN_MAPPING_BY_TYPE[type] - used_columns
+      else
+  	    ff_def_entries = ff_def.flexifield_def_entries.all(:conditions => {
+  	      :flexifield_coltype => FIELD_COLUMN_MAPPING[type][0] })
+  	    used_columns = ff_def_entries.collect(&:flexifield_name)
+  	    available_columns = FIELD_COLUMN_MAPPING[type][1] - used_columns
+      end
 
 	    {
 	      :flexifield_def_id => ff_def.id,
@@ -101,8 +110,8 @@ module Helpdesk::Ticketfields::ControllerMethods
 	  def field_name(label,account=current_account)
 	    invalid_start_char = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "_", " "]
 	    label = label.gsub(/[^ _0-9a-zA-Z]+/,"")
-	    label = "cf_rand#{rand(999999)}" if label.blank?
-	    label = "cf_" + label if invalid_start_char.index(label[0])
+	    label = "rand#{rand(999999)}" if label.blank?
+	    label = "cf_" + label
 	    "#{label.strip.gsub(/\s/, '_').gsub(/\W/, '').downcase}_#{account.id}".squeeze("_")
 	  end
 

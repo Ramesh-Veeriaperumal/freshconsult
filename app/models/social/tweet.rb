@@ -14,7 +14,7 @@ class Social::Tweet < ActiveRecord::Base
   
   after_destroy :remove_fd_link_in_dynamo
 
-  TWEET_LENGTH = 140
+  TWEET_LENGTH = 280
   DM_LENGTH    = 10000
  
 

@@ -5019,7 +5019,7 @@ ja-JP:
     success_signin: "%{helpdesk}と@%{twitter_screen_name} の関連付けに成功しました。"
     user_exists: Twitterアカウントが既に他の商品と関連づけられています。
     not_authorized: Twitterの認証を得られませんでした
-    not_valid: "状況が140 文字を超えています。"
+    not_valid: "状況が280 文字を超えています。"
     deleted: "Twitterアカウント@%{twitter_screen_name}は削除されました。"
     sent: ツィートが送信されました
     error_sending: ツィート送信中にエラーが発生しました！Twitterが復旧中である可能性があります。また後で試してください。

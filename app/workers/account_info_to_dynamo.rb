@@ -1,6 +1,8 @@
 class AccountInfoToDynamo < BaseWorker
 
   include EmailHelper
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   SKIP_NOTIFICIATION_DOMAINS = ["freshdesk.com"]
 
