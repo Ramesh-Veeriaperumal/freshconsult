@@ -98,10 +98,10 @@ module ApiSearch
     end
 
     def test_tickets_max_query_length
-      q = '"' + 'a' * 512 + '"'
+      q = '"' + 'a' * 513 + '"'
       get :index, controller_params(query: q)
       assert_response 400
-      match_json([bad_request_error_pattern('query', :too_long, max_count: ApiSearchConstants::QUERY_SIZE, current_count: q.length, element_type: :characters)])
+      match_json([bad_request_error_pattern('query', :too_long, max_count: ApiSearchConstants::QUERY_SIZE, current_count: q.length - 2 , element_type: :characters)])
     end
 
     def test_tickets_query_without_operators
@@ -151,8 +151,8 @@ module ApiSearch
       get :index, controller_params(query: '"(test_custom_number:a OR test_custom_checkbox:b) OR priority:c OR test_custom_checkbox:d OR test_custom_checkbox:e"')
       assert_response 400
       match_json([bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
-                  bad_request_error_pattern('test_custom_number', :array_datatype_mismatch, expected_data_type: 'Integer'),
-                  bad_request_error_pattern('test_custom_checkbox', :array_datatype_mismatch, expected_data_type: 'Boolean')])
+                  bad_request_error_pattern('test_custom_number', :datatype_mismatch, expected_data_type: 'Integer'),
+                  bad_request_error_pattern('test_custom_checkbox', :datatype_mismatch, expected_data_type: 'Boolean')])
     end
 
     def test_tickets_custom_fields_string_value_for_custom_number
@@ -253,7 +253,7 @@ module ApiSearch
       match_json([bad_request_error_pattern('query', :query_format_invalid)])
     end
 
-    def test_tickets_invalid_date_format
+    def test_tickets_invalid_date_field
       tickets = @account.tickets.select { |x| [1, 2].include?(x.priority) }
       get :index, controller_params(query: '"ddate:>\'2017-07-07\'"')
       assert_response 400
@@ -267,6 +267,12 @@ module ApiSearch
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
+    end
+
+    def test_tickets_created_on_a_day_invalid_format
+      get :index, controller_params(query: '"created_at: \'20171010\'"')
+      assert_response 400
+      match_json([bad_request_error_pattern('created_at', :invalid_date, accepted: 'yyyy-mm-dd')])
     end
 
     def test_tickets_created_on_a_day
@@ -401,11 +407,11 @@ module ApiSearch
       assert response['total'] == 0
     end
 
-    def test_tickets_tag_invalid_length
-      get :index, controller_params(query: '"tag:' + 'a' * 33 + '"')
-      assert_response 400
-      match_json([bad_request_error_pattern('tag', :array_too_long, max_count: ApiConstants::TAG_MAX_LENGTH_STRING, element_type: :characters)])
-    end
+    # def test_tickets_tag_invalid_length
+    #   get :index, controller_params(query: '"tag:' + 'a' * 33 + '"')
+    #   assert_response 400
+    #   match_json([bad_request_error_pattern('tag', :array_too_long, max_count: ApiConstants::TAG_MAX_LENGTH_STRING, element_type: :characters)])
+    # end
 
     def test_tickets_custom_dropdown_valid_choice
       choice = CHOICES[rand(3)]
@@ -458,7 +464,7 @@ module ApiSearch
     def test_tickets_invalid_agent_id_format
       get :index, controller_params(query: '"agent_id:abc"')
       assert_response 400
-      match_json([bad_request_error_pattern('agent_id', :array_datatype_mismatch, expected_data_type: 'Positive Integer')])
+      match_json([bad_request_error_pattern('agent_id', :datatype_mismatch, expected_data_type: 'Positive Integer')])
     end
 
     # Null Checks
@@ -555,7 +561,7 @@ module ApiSearch
     def test_section_field_number_invalid_value
       get :index, controller_params(query: '"section_number:\'aaa\'"')
       assert_response 400
-      match_json([bad_request_error_pattern('section_number', :array_datatype_mismatch, expected_data_type: 'Integer')])
+      match_json([bad_request_error_pattern('section_number', :datatype_mismatch, expected_data_type: 'Integer')])
     end
 
     def test_section_field_checkbox
@@ -569,7 +575,7 @@ module ApiSearch
     def test_section_field_checkbox_invalid_value
       get :index, controller_params(query: '"section_checkbox:\'aaa\'"')
       assert_response 400
-      match_json([bad_request_error_pattern('section_checkbox', :array_datatype_mismatch, expected_data_type: 'Boolean')])
+      match_json([bad_request_error_pattern('section_checkbox', :datatype_mismatch, expected_data_type: 'Boolean')])
     end
 
     def test_section_field_text

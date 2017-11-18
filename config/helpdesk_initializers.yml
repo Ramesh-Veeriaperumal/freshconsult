@@ -102,3 +102,4 @@ helpdesk:
     - connection_pool_patch
     - imap_patch
     - threaded_init
+    - fql

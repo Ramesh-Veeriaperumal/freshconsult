@@ -188,7 +188,7 @@ module ApiSearch
     def test_contacts_invalid_email
       get :index, controller_params(query: '"email:\'aabbccdd\'"')
       assert_response 400
-      match_json([bad_request_error_pattern('email', "It should contain elements that are in the 'valid email address' format")])
+      match_json([bad_request_error_pattern('email', "It should be in the 'valid email' format")])
     end
 
     def test_contacts_email_filter
@@ -210,12 +210,6 @@ module ApiSearch
       assert_response 200
       response = parse_response @response.body
       assert response['total'] == contacts.size
-    end
-
-    def test_contacts_invalid_email
-      get :index, controller_params(query: '"email:\'aabbccdd\'"')
-      assert_response 400
-      match_json([bad_request_error_pattern('email', "It should contain elements that are in the 'valid email address' format")])
     end
 
     def test_contacts_email_null
@@ -241,11 +235,11 @@ module ApiSearch
       assert response['total'] == 0
     end
 
-    def test_contacts_tag_invalid_length
-      get :index, controller_params(query: '"tag:' + 'a' * 33 + '"')
-      assert_response 400
-      match_json([bad_request_error_pattern('tag', :array_too_long, max_count: ApiConstants::TAG_MAX_LENGTH_STRING, element_type: :characters)])
-    end
+    # def test_contacts_tag_invalid_length
+    #   get :index, controller_params(query: '"tag:' + 'a' * 33 + '"')
+    #   assert_response 400
+    #   match_json([bad_request_error_pattern('tag', :array_too_long, max_count: ApiConstants::TAG_MAX_LENGTH_STRING, element_type: :characters)])
+    # end
 
     def test_contacts_tag_null
       contacts = @account.contacts.select { |x| x.tags.empty? }
