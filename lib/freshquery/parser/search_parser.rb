@@ -33,8 +33,7 @@ module_eval(<<'...end search.y/module_eval...', 'search.y', 20)
     relational_x = "(>|<)"
     date_x = "[\s]*'\\d{4}-\\d{2}-\\d{2}'"
     value_x = "[\s]*([a-zA-Z0-9_\@]+|'[^']+'|[-]?[0-9]+)"
-    term_x = "(#{value_x}|#{relational_x}#{date_x})"
-    regex_string = /(#{keyword_x}#{seperator_x}#{term_x})/
+    regex_string = /(#{keyword_x}#{seperator_x}(#{value_x}|#{relational_x}#{date_x}))/
     until scanner.empty?
       case
         when match = scanner.scan(/\([\s]*/)
@@ -49,7 +48,7 @@ module_eval(<<'...end search.y/module_eval...', 'search.y', 20)
           current_pos = scanner.pos
           rest = scanner.rest
           error_scanner = StringScanner.new rest
-          [/#{keyword_x}/,/#{seperator_x}/,/#{term_x}/].each { |x|
+          [/#{keyword_x}/,/#{seperator_x}/,/#{value_x}/].each { |x|
             unless error_scanner.scan(x)
               current_pos += error_scanner.pos
               raise ParseError, "Unable to parse the query, << #{error_scanner.rest[0,8]} >> at #{current_pos}, Allowed format is keyword:value or keyword:'value'"
