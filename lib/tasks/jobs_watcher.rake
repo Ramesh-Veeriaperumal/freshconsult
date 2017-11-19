@@ -116,7 +116,8 @@ namespace :delayedjobs_watcher do
        count = Delayed::Job.count
     end
     FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil, {
-         :subject => "Moved #{total} delayed jobs to backup queue in #{PodConfig['CURRENT_POD']}"
+         :subject => "Moved #{total} delayed jobs to backup queue in #{PodConfig['CURRENT_POD']}",
+         :recipients => "mail-alerts@freshdesk.com"
        }) if total > 0    
   end
 
