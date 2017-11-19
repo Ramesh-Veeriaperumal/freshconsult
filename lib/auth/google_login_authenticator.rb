@@ -1,6 +1,8 @@
 class Auth::GoogleLoginAuthenticator < Auth::Authenticator
   include GoogleLoginHelper
   include Helpdesk::Permission::User
+  include ActionController::Helpers
+  include Freshid::ControllerMethods
 
   def after_authenticate(params)
     @origin_account.make_current
@@ -14,6 +16,7 @@ class Auth::GoogleLoginAuthenticator < Auth::Authenticator
       return @result
     end
     return google_login_invalid_redirect if domain_user.blank?
+    return google_login_freshid_redirect if freshid_agent?(domain_user.email, @origin_account)
     random_key = SecureRandom.hex
     set_redis_for_sso(random_key)
     domain_arg = domain
@@ -71,6 +74,15 @@ class Auth::GoogleLoginAuthenticator < Auth::Authenticator
     def google_login_invalid_redirect
       @result.redirect_url = "#{@portal_url}/support/login?restricted_helpdesk_login_fail=true"
       @result.invalid_nmobile = true
+      @result
+    end
+
+    def google_login_freshid_redirect
+      account = Account.current
+      url_options_with_protocol = { host: account.host, protocol: account.url_protocol }
+      authorize_callback_url = Rails.application.routes.url_helpers.freshid_authorize_callback_url(url_options_with_protocol)
+      logout_url = Rails.application.routes.url_helpers.freshid_logout_url(url_options_with_protocol)
+      @result.redirect_url = Freshid::Config.login_url(authorize_callback_url, logout_url)
       @result
     end
 

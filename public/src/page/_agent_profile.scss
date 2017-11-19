@@ -1,0 +1,115 @@
+/* Css for agent profile edit page - FreshID feature */
+.profile-edit-header {
+	.title {
+    	padding-top: 0px;
+	}
+}
+.profile-edit {
+    margin: 0 -20px -40px -20px;
+    display: table;
+    height: 640px;
+	.profile-leftcontent{
+		width: 260px;
+		margin: 0px;
+	    display: table-cell;
+	    vertical-align: top;
+		& > div{
+			padding: 20px;
+		}
+		.separator{
+			border-bottom: 1px solid #cccccc;
+		    padding: 0px;
+		    margin: 0px;
+		    width: 100%;
+		    display: block;
+		}
+		.upload-avatar{
+			.avatar-options .option{
+				padding: 0px;
+			}
+		}
+		.freshID-details{
+			.title{
+				font-size: 13px;
+			}
+			li{
+				font-size: 12px;
+				line-height: 24px;
+			}
+		}
+		.link-to-freshID{
+			font-size: 12px;
+			line-height: 18px;
+		}
+		
+	}
+
+	.profile-rightcontent{
+		display: table-cell;
+	    padding: 20px 20px 40px;
+	    width: 700px;
+	}
+	.profile-sidebar{
+		.ui-form{
+		    padding: 0px;
+		    border: 1px solid #ccc;
+		    border-radius: 3px;
+		}
+		label[for="api_key"] {
+		    padding: 4px 6px;
+		}
+	}
+	.sidepanel.api-key-form {
+	    padding: 28px 20px 20px;
+	    line-height: 18px;
+	}
+	.edit_agent {
+		.ui-form {
+		    background: none;
+		    border: none;
+	        padding-top: 0px;
+		    li{
+		    	& > label{
+	    		    font-weight: 500;
+				    line-height: 18px;
+				    padding: 4px 0px;
+		    	}
+		    	.placeholder_wrapper{
+		    		padding-bottom: 10px;
+		    	}
+		    }
+		    li.phone-num-field{
+		    	width: 96%;
+		    	& > div {
+		    		width: 48%;
+		    		display: inline-block;
+		    		&:last-child{
+		    			@include margin-left(3%);
+			    	}
+		    		input{
+		    			width:	100%;
+		    		}
+		    	}
+		    }
+	    }
+	    .avatar-options .option {
+			@include padding-left(0px);
+	    }
+	    .freshid_field {
+	    	input, select{
+		    	width: 67%;
+		    }
+		}
+	}
+
+	.strong{
+		font-weight: 500;
+	}
+}
+.single #inner .profile-edit .profile-sidebar {
+    display: table-cell;
+    vertical-align: top;
+    @include float(none);
+    background-color: #fcfcfc;
+    border-left: 1px solid #eee;
+}

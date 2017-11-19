@@ -2232,6 +2232,10 @@ a.mobile_switchBtn {
 	    @include margin-left(20px);
 	}
 }
+.row-fluid .notify-divider:first-child {
+    border: none;
+    @include padding-left(0px);
+}
 
 .password-policy-section{
     .info-data{

@@ -72,6 +72,15 @@ class UserNotifier < ActionMailer::Base
 
   end
   alias :account_admin_activation :admin_activation 
+  
+  def agent_invitation(user, params, reply_email_config)
+    begin
+      configure_email_config reply_email_config  
+      send_the_mail(user, params[:subject], params[:email_body], params[:reply_email], EmailNotification::AGENT_INVITATION)
+    ensure
+      remove_email_config
+    end
+  end
 
   def custom_ssl_activation(account, portal_url, elb_name)
     headers = {
