@@ -32,7 +32,6 @@ module Helpdesk::Email::OutgoingCategory
   MAILGUN_CATEGORY_BY_TYPE = Hash[*MAILGUN_CATEGORIES.flatten]
   CATEGORY_SET = CATEGORIES.map{|a| a[0]}
   MAILGUN_PROVIDERS = MAILGUN_CATEGORY_BY_TYPE.values.select do |value| value > 10 end 
-
   
   def get_subscription
     state = nil
@@ -96,4 +95,39 @@ module Helpdesk::Email::OutgoingCategory
     end
     return $spam_filtered_notifications
   end
+
+  def spam_blacklisted_rules
+    if ($spam_blacklisted_rules.blank? || $spam_rules_checked_time.blank? || $spam_rules_checked_time < 5.minutes.ago)
+      rules_list = get_all_members_in_a_redis_set(SPAM_BLACKLISTED_RULES)
+      $spam_blacklisted_rules = (rules_list.present? ? 
+                  rules_list : ["test_rule"])
+      $spam_rules_checked_time = Time.now
+    end
+    return $spam_blacklisted_rules
+  end
+
+  def check_spam_rules(spam_response)
+    blacklisted_rules = spam_blacklisted_rules
+    if spam_response.rules.blank? || blacklisted_rules.blank?
+      return
+    end 
+    spam_response.rules.each do |rule|
+      if blacklisted_rules.include?(rule)
+        if Account.current.present?
+          add_member_to_redis_set(SPAM_EMAIL_ACCOUNTS, Account.current.id) if !(Account.current.subscription.active?)
+          notify_outgoing_block(Account.current, rule) 
+          break
+        end
+      end
+    end
+  end
+
+  def notify_outgoing_block(account, rules)
+    subject = "Detected suspicious spam account :#{account.id}" #should be called only when account object is set
+    additional_info = "Emails sent by the account has suspicious content . Contains content blacklisted by rule : #{rules} ."
+    additional_info << "Outgoing emails blocked!!" if !(Account.current.subscription.active?)
+    notify_account_blocks(account, subject, additional_info)
+    update_freshops_activity(account, "Outgoing emails blocked due to blacklisted spam rules match", "block_outgoing_email") if !(Account.current.subscription.active?)
+  end
+
 end

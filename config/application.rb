@@ -103,8 +103,11 @@ module Helpkit
     # config.middleware.use "Statsd::Rack::Middleware", statsd
 
     # Please check api_initializer.rb, for compatibility with the version 2 APIs, if any middleware related changes are being done.
+    # Adding health check from haproxy as the first middleware.
+    # If there are more than 2 middlewares with config.middleware.insert_before 0, the last one gets the precedence.
     config.middleware.insert_before 0, "Middleware::CorsEnabler"
     config.middleware.insert_before 0, "Middleware::SecurityResponseHeader"
+    config.middleware.insert_before 0, "Middleware::HealthCheck"
     config.middleware.insert_before "ActionDispatch::Session::CookieStore","Rack::SSL"
     config.middleware.use "Middleware::GlobalRestriction"
     config.middleware.use "Middleware::ApiThrottler", :max =>  1000
@@ -235,11 +238,11 @@ require 'active_record/connection_adapters/abstract_mysql_adapter'
 ActiveRecord::ConnectionAdapters::AbstractMysqlAdapter::NATIVE_DATABASE_TYPES[:primary_key] = "BIGINT UNSIGNED NOT NULL auto_increment PRIMARY KEY"
 
 
-# Captcha API Keys
-ENV['RECAPTCHA_PUBLIC_KEY']  = '6LfNCb8SAAAAACxs6HxOshDa4nso_gyk0sxKcwAI'
-ENV['RECAPTCHA_PRIVATE_KEY'] = '6LfNCb8SAAAAANC5TxzpWerRTLrxP3Hsfxw0hTNk'
-
-
+# reCAPTCHA API Keys
+recaptcha_file = File.join(Rails.root, 'config', 'recaptcha_v2.yml')
+YAML.load(File.open(recaptcha_file)).each do |key, value|
+  ENV[key]  = value
+end if File.exists? recaptcha_file
 
 
 GC::Profiler.enable if defined?(GC) && defined?(GC::Profiler) && GC::Profiler.respond_to?(:enable)

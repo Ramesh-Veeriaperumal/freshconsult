@@ -1195,7 +1195,14 @@
 }
 
 .platform_not_compatible {
-  padding-top: 8px;
+  color: #4f4f4f;
+  border: 1px solid #cccccc;
+  padding: 2px 4px;
+  margin-top: 10px;
+  display: block;
+  text-align: center;
+  font-weight: 500;
+  font-size: 11px;
 }
 
 .notice-o-red-icon { 

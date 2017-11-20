@@ -89,7 +89,7 @@ helpdesk:
     - fd_spam_filter
     - sendgrid_webhook_config
     - message_preview
-    - skip_all_middlewares
+    - health_check_path
     - api_config_internal_tools
     - sandbox
     - clamav_config
@@ -102,3 +102,4 @@ helpdesk:
     - connection_pool_patch
     - imap_patch
     - threaded_init
+    - ner_api_config

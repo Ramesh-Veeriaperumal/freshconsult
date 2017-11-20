@@ -85,6 +85,25 @@
   }
 }
 
+.redactor_btns_box .btn{
+  @include border-radius(2px);
+  background-color: $btn_background;
+  border: solid 1px $btnBorder;
+  background-image: none;
+  @include box-shadow(none);
+  font-family: $headingsFontFamily;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  color: $btnTextColor;
+  padding: 5px 20px;
+  text-transform: uppercase;
+  @include margin-left(10px);
+  &:hover{
+    background-color: $btnBackgroundHighlight;
+  }
+}
+
 // Button Sizes
 // --------------------------------------------------
 

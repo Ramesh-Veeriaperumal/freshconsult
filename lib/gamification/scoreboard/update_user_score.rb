@@ -21,7 +21,7 @@ module Gamification
         return if user.customer?
         total_score = nil
         Sharding.run_on_slave do
-          total_score = user.support_scores.force_index("index_support_scores_on_accid_and_uid_and_created_at").sum(:score)
+          total_score = user.support_scores.sum(:score)
         end
         unless (user.agent.points.eql? total_score)
           user.agent.update_attribute(:points, total_score)

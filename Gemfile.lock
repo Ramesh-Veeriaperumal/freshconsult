@@ -88,6 +88,13 @@ GIT
       POpen4 (>= 0.1.4)
 
 GIT
+  remote: git://github.com/freshdesk/semian.git
+  revision: fbf4042c3ca9fa4cd250b6e9f14636dacb162e03
+  branch: fd_master
+  specs:
+    semian (0.7.1)
+
+GIT
   remote: git://github.com/freshdesk/twilio-ruby.git
   revision: d45f28ca556724f0b751e779c2953eea638f4c76
   branch: freshdesk_master
@@ -1441,6 +1448,7 @@ DEPENDENCIES
   sass-rails (= 3.2.6)
   sax-machine (~> 0.1.0)
   seed-fu!
+  semian!
   sentient_user!
   sharding!
   shoryuken (= 2.0.4)

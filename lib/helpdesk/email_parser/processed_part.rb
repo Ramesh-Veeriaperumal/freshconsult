@@ -181,28 +181,32 @@ class Helpdesk::EmailParser::ProcessedPart
 	    action = get_delivery_status_data_values('action')
 	    final_recipient = get_delivery_status_data_values('final-recipient')
 	    diagnostic_code = get_delivery_status_data_values('diagnostic-code')
-	    error_status = get_delivery_status_data_values('status')
-	    if action.is_a?(Array)
-	      count = action.length
-	      index = 0
-	      while index < count do
-	        report_data << "Action: "+action[index]+"\r\n" if (action && action[index].present?)
-	        report_data << "Final-Recipient: "+final_recipient[index]+"\r\n" if (final_recipient && final_recipient[index].present?)
-	        report_data << "Diagnostic-Code: "+diagnostic_code[index]+"\r\n" if (diagnostic_code && diagnostic_code[index].present?)
-	        report_data << "Status: "+error_status[index]+"\r\n" if (error_status && error_status[index].present?)
-	        report_data << "\r\n"
-	        index += 1
-	      end
+	    status = get_delivery_status_data_values('status')
+
+	    report_data << report_email_header(action,"Action")
+	    report_data << report_email_header(final_recipient,"Final-Recipient")
+	    report_data << report_email_header(diagnostic_code,"Diagnostic-Code")
+	    report_data << report_email_header(status,"Status")
+        
+        self.text = report_data
+        # self.html = text_to_html(report_data)
+    rescue => e
+        raise_parse_error "Error while processing delivery status part data: #{e.message} - #{e.backtrace}"
+    end
+
+	def report_email_header content, key
+	    header_str = ""
+        if content.is_a?(Array)
+            count = content.length
+	        index = 0
+	        while index < count do
+	            header_str << "#{key}: "+content[index]+"\r\n" if (content && content[index].present?)
+	            index += 1
+	        end
 	    else
-	      report_data << "Action: "+action+"\r\n" if action
-	      report_data << "Final-Recipient: "+final_recipient+"\r\n" if final_recipient
-	      report_data << "Diagnostic-Code: "+diagnostic_code+"\r\n" if diagnostic_code
-	      report_data << "Status: "+error_status+"\r\n" if error_status
+	        header_str << "#{key}: "+content+"\r\n" if content
 	    end
-	    self.text = report_data
-	    # self.html = text_to_html(report_data)
-	rescue => e
-	    raise_parse_error "Error while processing delivery status part data: #{e.message} - #{e.backtrace}"
+	    header_str
 	end
 
 	#workaround to get key values from delivery_status_data instead of direct calls to action,diagnostic_code,

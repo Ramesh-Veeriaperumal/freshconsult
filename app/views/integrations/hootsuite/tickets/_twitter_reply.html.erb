@@ -20,7 +20,7 @@
         <span id="tweet_type_selector" class="pull-right">
             <%= select_tag :tweet_type , options_for_select(Social::Tweet::TWEET_TYPES, @ticket.tweet ? @ticket.tweet.tweet_type.to_sym : :mention ) ,{}%>
         </span>
-        <span class="tweet-counter" id="SendTweetCounter">140</span>
+        <span class="tweet-counter" id="SendTweetCounter">280</span>
     </div>
     <div class="fields">
         <label class="error hide" id="twitter_count_exceed">

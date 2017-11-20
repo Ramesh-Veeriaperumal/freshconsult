@@ -47,6 +47,9 @@ class Helpdesk::CollabTicketsController < ApplicationController
           :mid => params[:mid],
           :mbody => params[:body],
           :metadata => params[:metadata],
+          :m_ts => params[:m_ts],
+          :m_type => params[:m_type],
+          :top_members => params[:top_members],
           :ticket_display_id => params[:id],
           :current_domain => host_domain
         }

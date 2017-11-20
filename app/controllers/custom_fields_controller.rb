@@ -4,8 +4,9 @@ class CustomFieldsController < Admin::AdminController
   include Cache::FragmentCache::Base
   include Helpdesk::CustomFields::CustomFieldMethods
   include Cache::Memcache::Helpdesk::Section
+  include FlexifieldConstants
 
-  before_filter :check_ticket_field_count, :only => [ :update ]
+  before_filter :check_ticket_field_count, :only => [ :update ], :unless => :denormalized_flexifields_enabled?
 
   MAX_ALLOWED_COUNT = { 
     :string => 80,
@@ -31,7 +32,7 @@ class CustomFieldsController < Admin::AdminController
       end
     end
 
-    @field_data.each do |f_d|
+    field_data.each do |f_d|
       f_d.symbolize_keys!
 
       next if f_d[:action] == "create" && !current_account.custom_ticket_fields_enabled?
@@ -210,9 +211,16 @@ class CustomFieldsController < Admin::AdminController
       end
     end
 
+    def field_data
+      @field_data ||= begin
+        ActiveSupport::JSON.decode(params[:jsonData]).compact
+      end
+    end
+
     def custom_field_data
-      @field_data = ActiveSupport::JSON.decode params[:jsonData]
-      @field_data.reject { |f_d| f_d["field_type"].include?("default_") }.compact
+      custom_field_data ||= begin
+        field_data.reject { |f_d| f_d["field_type"].include?("default_") }
+      end
     end
 
     def calculate_string_fields_count field_data_group
@@ -340,4 +348,8 @@ class CustomFieldsController < Admin::AdminController
       end
     end
     # Section related changes - end
+
+    def denormalized_flexifields_enabled?
+      Account.current.denormalized_flexifields_enabled?
+    end
 end

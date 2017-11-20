@@ -5573,7 +5573,7 @@ pt-BR:
     success_signin: "@%{twitter_screen_name} foi associado com sucesso ao %{helpdesk}."
     user_exists: "Conta do Twitter já associada a outro produto."
     not_authorized: "Você não foi autorizado pelo Twitter"
-    not_valid: "O conteúdo do campo Status tem mais de 140 caracteres."
+    not_valid: "O conteúdo do campo Status tem mais de 280 caracteres."
     deleted: "A conta do twitter @%{twitter_screen_name} foi removida."
     sent: "Tweet enviado"
     error_sending: "Ocorreu um erro no envio do tweet! O Twitter pode estar instável. Tente de novo."
