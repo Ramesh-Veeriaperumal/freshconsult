@@ -158,8 +158,7 @@ class Freshfone::Number < ActiveRecord::Base
 	end
 	
 	def self.find_due(renew_at = Time.now)
-		find(:all, :conditions => { :state => STATE[:active], :deleted => false,
-											 :next_renewal_at => (renew_at.beginning_of_day .. renew_at.end_of_day) })
+		where("next_renewal_at <= ? AND state = ? AND deleted = ?", renew_at.end_of_day, STATE[:active], false)
 	end
 
 	def self.find_trial_account_due(renew_at = Time.now)

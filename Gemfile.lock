@@ -89,7 +89,7 @@ GIT
 
 GIT
   remote: git://github.com/freshdesk/semian.git
-  revision: fbf4042c3ca9fa4cd250b6e9f14636dacb162e03
+  revision: b9efc464ba48a4e60fffa19f18cbdbfe9163a11e
   branch: fd_master
   specs:
     semian (0.7.1)
