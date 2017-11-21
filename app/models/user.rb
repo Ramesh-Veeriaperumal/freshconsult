@@ -444,7 +444,10 @@ class User < ActiveRecord::Base
     if has_multiple_companies_feature?
       if params[:user][:removed_companies].present?
         to_be_removed = JSON.parse params[:user][:removed_companies]
-        remove_ids = to_be_removed.map{ |company_name| companies.find { |c| c.name.downcase == company_name.downcase}.id }
+        remove_ids = to_be_removed.map{ |company_name| 
+          c = companies.find { |c| c.name.downcase == company_name.downcase}
+          c.id if c.present?
+        }.compact
         UserCompany.destroy_all(:account_id => account_id,
                                 :user_id => id,
                                 :company_id => remove_ids) if remove_ids.any?
@@ -496,7 +499,7 @@ class User < ActiveRecord::Base
     self.time_zone = params[:user][:time_zone]
     self.import_id = params[:user][:import_id]
     self.fb_profile_id = params[:user][:fb_profile_id]
-    self.email = params[:user][:email]
+    self.email = params[:user][:email].strip if params[:user][:email].present?
     self.language = params[:user][:language]
     self.address = params[:user][:address]
     self.tag_names = params[:user][:tag_names] # update tags in the user object
