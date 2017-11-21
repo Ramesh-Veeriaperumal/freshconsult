@@ -1,5 +1,8 @@
 class UriParser
 
+  DEFAULT_URL_SCHEMES = SUPPORTED_URL_SCHEMES = %w(https http ftp).freeze
+  HTTPS_URL_ONLY = %w(https).freeze
+
   def initialize urls
     urls  = urls.split(",") if urls.is_a? String
     @urls = urls
@@ -12,6 +15,12 @@ class UriParser
     {:errors => I18n.t('enter_valid_domains')}
   end
 
+  def self.valid_url?(url,schemes=DEFAULT_URL_SCHEMES)
+    uri = URI.parse(url)
+    uri && uri.host && schemes.include?(uri.scheme)
+  rescue
+    false
+  end
 
   private
 
