@@ -298,8 +298,8 @@ unless Account.current
 
 	estate_17_addons  = estate_addons
 	garden_17_addons  = all_addons + [shared_ownership_toggle] - [custom_domain, custom_surveys, ticket_templates]
-	blossom_17_addons = all_addons + [link_tickets_toggle, parent_child_tickets_toggle] - [custom_domain]
-	sprout_17_addons  = [custom_domain, call_center_advanced, one_contact_multiple_companies]
+	blossom_17_addons = all_addons + [link_tickets_toggle, parent_child_tickets_toggle] - [custom_domain, one_contact_multiple_companies]
+	sprout_17_addons  = [custom_domain, call_center_advanced]
 
   SubscriptionPlan.seed_many(:name, plan_list(all_addons, estate_addons, garden_addons, blossom_addons, estate_17_addons, garden_17_addons, blossom_17_addons, sprout_17_addons))
 
