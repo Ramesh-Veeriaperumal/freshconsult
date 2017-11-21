@@ -32,11 +32,9 @@ class CallDelegator < BaseDelegator
   end
 
   def validate_contact
-    contact = Account.current.users.find @contact_id
+    contact = Account.current.users.where(id: @contact_id).first
     if contact
       self.contact = contact
-    else
-      errors[:contact_id] << :"is invalid"
     end
   end
 end

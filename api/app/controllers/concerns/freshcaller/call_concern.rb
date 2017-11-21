@@ -33,6 +33,12 @@ module Freshcaller::CallConcern
     results.first if results.length > 0
   end
 
+  def load_contact_from_number
+    Sharding.run_on_slave do
+      current_account.all_users.where(phone: @customer_number).first
+    end
+  end
+
   def account_admin_id
     current_account.roles.account_admin.first.users.first.id
   end
