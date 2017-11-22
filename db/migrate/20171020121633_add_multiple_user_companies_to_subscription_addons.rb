@@ -18,14 +18,8 @@ class AddMultipleUserCompaniesToSubscriptionAddons < ActiveRecord::Migration
         (subscription_plan_id, subscription_addon_id) VALUES
         ((SELECT id FROM subscription_plans WHERE name = 'Blossom'), 
         (SELECT id FROM subscription_addons WHERE name = 'One Contact Multiple Companies')), 
-        ((SELECT id FROM subscription_plans WHERE name = 'Sprout'), 
-        (SELECT id FROM subscription_addons WHERE name = 'One Contact Multiple Companies')), 
         ((SELECT id FROM subscription_plans WHERE name = 'Garden'), 
         (SELECT id FROM subscription_addons WHERE name = 'One Contact Multiple Companies')),
-        ((SELECT id FROM subscription_plans WHERE name = 'Blossom Jan 17'), 
-        (SELECT id FROM subscription_addons WHERE name = 'One Contact Multiple Companies')), 
-        ((SELECT id FROM subscription_plans WHERE name = 'Sprout Jan 17'), 
-        (SELECT id FROM subscription_addons WHERE name = 'One Contact Multiple Companies')), 
         ((SELECT id FROM subscription_plans WHERE name = 'Garden Jan 17'), 
         (SELECT id FROM subscription_addons WHERE name = 'One Contact Multiple Companies'))
     SQL
