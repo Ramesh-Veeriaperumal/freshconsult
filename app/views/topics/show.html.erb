@@ -10,7 +10,7 @@
 			<% if @forum.ideas? %>
 				<%= content_tag(:h4, t(".mark_this_idea_as"), :class => "title") %>
 				<div class="mark_action">
-					<% Topic::IDEAS_STAMPS_OPTIONS.each do |k,v| %>
+					<% Topic.ideas_stamps_list.each do |k,v| %>
 					 	<% class_name = "stamp_type_#{v}" %>
 					 	<%if @topic.stamp_type != v %>
 							<%= link_to(k , update_stamp_category_forum_topic_path(@forum_category,@forum,@topic,:stamp_type => v),  :method=>:put, :class => class_name )   %>
