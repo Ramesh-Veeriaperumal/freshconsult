@@ -122,7 +122,7 @@ class Forum < ActiveRecord::Base
     VISIBILITY.map { |i| [I18n.t(i[1]), i[2]] }
   end
 
-  def self.visibility_names
+  def self.visibility_keys
     Hash[*VISIBILITY.map { |i| [i[2], I18n.t(i[1])] }.flatten]
   end
 
@@ -252,7 +252,7 @@ class Forum < ActiveRecord::Base
   end
 
   def visibility_name
-    visibility_names[forum_visibility]
+    self.class.visibility_keys[forum_visibility]
   end
 
   def to_liquid
