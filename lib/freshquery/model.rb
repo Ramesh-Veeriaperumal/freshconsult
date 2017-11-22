@@ -6,7 +6,7 @@ module Freshquery::Model
 
     TYPES = %w(integer positive_integer negative_integer date boolean string).freeze
     CUSTOM_TYPES = %w(integer date boolean string).freeze
-    VALID_OPTIONS = %i(type choices regex transform mappings).freeze
+    VALID_OPTIONS = %w(type choices regex transform mappings).freeze
 
     @@all_mappings = {}
     @@query_length
@@ -21,12 +21,11 @@ module Freshquery::Model
       @boolean_fields = []
       @custom_proc = {}
       @custom_choices = {}
-      @query_length = query_length > 512 ? 512 : query_length
+      @query_length = [Freshquery::Constants::DEFAULT_QUERY_LENGTH, query_length].min
     end
 
     def sanitize_options(options)
-      result = {}
-      options.map{ |k, v| result[k.downcase.to_sym] = v }
+      result = ActiveSupport::HashWithIndifferentAccess.new(options)
       if (result.keys - VALID_OPTIONS).present?
         raise "Invalid option(s) '#{(options.keys - VALID_OPTIONS).join(', ')}', should be any one of '#{VALID_OPTIONS.join(', ')}'"
       end
@@ -234,11 +233,10 @@ module Freshquery::Model
   end # Instance methods
 
   module ClassMethods
-    def fq_mappings(document_type, fqhelper, query_length = 512, &block)
+    def fq_schema(document_type, fqhelper, query_length = 512, &block)
       raise 'Attibutes block required' unless block_given?
       mapping = Mappings.get(document_type, fqhelper, query_length )
       mapping.instance_eval(&block)
     end
-    alias mappings fq_mappings
   end
 end
