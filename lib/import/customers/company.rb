@@ -12,6 +12,10 @@ class Import::Customers::Company < Import::Customers::Base
   def create_imported_company
     @item.attributes = @params_hash[:company]
     @item.save
+  rescue => e
+    Rails.logger.debug "Error importing company : #{Account.current.id} #{@params_hash.inspect}
+                        #{e.message} #{e.backtrace}"
+    false
   end
 
   private

@@ -3221,4 +3221,9 @@ Helpkit::Application.routes.draw do
       end
     end
   end
+
+  match '/freshid/authorize_callback', :controller => 'freshid', :action => 'authorize_callback', :method => :get
+  match '/freshid/event_callback', :controller => 'freshid', :action => 'event_callback', :method => :post
+  match '/freshid/logout', :controller => 'user_sessions', :action => 'freshid_destroy', :method => :get 
+
 end

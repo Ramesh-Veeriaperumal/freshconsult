@@ -109,10 +109,10 @@ module Helpkit
     config.middleware.insert_before 0, "Middleware::SecurityResponseHeader"
     config.middleware.insert_before 0, "Middleware::HealthCheck"
     config.middleware.insert_before "ActionDispatch::Session::CookieStore","Rack::SSL"
-    config.middleware.use "Middleware::GlobalRestriction"
+    config.middleware.use "Middleware::GlobalRestriction" if ENV['ENABLE_GLOBAL_RESTRICTION_MIDDLEWARE'] == 'true'
     config.middleware.use "Middleware::ApiThrottler", :max =>  1000
     config.middleware.use "Middleware::TrustedIp"
-    config.middleware.insert_after "Middleware::GlobalRestriction",RateLimiting do |r|
+    config.middleware.insert_before "Middleware::ApiThrottler",RateLimiting do |r|
       # during the ddos attack uncomment the below line
       # r.define_rule(:match => ".*", :type => :frequency, :metric => :rph, :limit => 200, :frequency_limit => 12, :per_ip => true ,:per_url => true )
       r.define_rule( :match => "^/(mobihelp)/.*", :type => :fixed, :metric => :rph, :limit => 300,:per_ip => true ,:per_url => true )

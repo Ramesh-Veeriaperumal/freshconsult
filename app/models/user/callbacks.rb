@@ -1,7 +1,7 @@
 class User < ActiveRecord::Base
 
   before_validation :discard_blank_email, :unless => :email_available?
-  before_validation :set_password, :if => [:active?, :email_available?, :no_password?]
+  before_validation :set_password, :if => [:active?, :email_available?, :no_password?, :freshid_disabled_and_customer?]
   before_validation :remove_white_space
   
   before_create :set_company_name, :unless => :helpdesk_agent?
@@ -13,7 +13,6 @@ class User < ActiveRecord::Base
 
   before_update :backup_user_changes, :clear_redis_for_agent
 
-
   after_update  :destroy_scheduled_ticket_exports, :if => :privileges_changed?
 
   after_update  :send_alert_email, :if => [:email_changed?,:agent?]
@@ -22,7 +21,7 @@ class User < ActiveRecord::Base
   before_save :set_language, :unless => :detect_language?
   before_save :set_contact_name, :update_user_related_changes
   before_save :set_customer_privilege, :set_contractor_privilege, :if => :customer?
-  before_save :restrict_domain, :if => :email_changed?
+  before_save :restrict_domain, :reset_freshid_user, :if => :email_changed?
   before_save :sanitize_contact_name, :backup_customer_id
   before_save :set_falcon_ui_preference, :if => :falcon_ui_applicable?
 
@@ -135,8 +134,19 @@ class User < ActiveRecord::Base
   
   def set_contact_name 
     if self.name.blank? && email_obtained.present?
-      self.name = (email_obtained.split("@")[0]).capitalize
+      self.name = name_from_email
     end
+  end
+  
+  def reset_freshid_user
+    if Account.current.present? && Account.current.freshid_enabled?
+      self.name = name_from_email
+      self.phone = self.mobile = nil
+    end
+  end
+  
+  def name_from_email
+    (email_obtained.split("@")[0]).capitalize
   end
 
   def email_obtained
