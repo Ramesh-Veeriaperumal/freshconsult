@@ -14,7 +14,7 @@ module ApiSearch
     private
 
       def decorator_options
-        super({ name_mapping: Account.current.contact_form.custom_contact_fields.each_with_object({}) { |field, hash| hash[field.name] = CustomFieldDecorator.display_name(field.name) if field.column_name =~ ApiSearchConstants::CUSTOMER_FIELDS_REGEX } })
+        super({ name_mapping: Account.current.contact_form.custom_contact_fields.each_with_object({}) { |field, hash| hash[field.name] = CustomFieldDecorator.display_name(field.name) } })
       end
   end
 end

@@ -192,7 +192,6 @@ module Freshquery::Model
       parser = Freshquery::Parser::SearchParser.new
       mapping = get_mapping(type)
       tree = construct_expression_tree(query.strip, parser, mapping.query_length)
-      # record = construct_record(tree)
       record = parser.record      
       valid = valid?(mapping, record)
       if valid == true

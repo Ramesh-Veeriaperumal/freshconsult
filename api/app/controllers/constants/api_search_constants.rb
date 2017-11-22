@@ -6,9 +6,6 @@ module ApiSearchConstants
   DEFAULT_PER_PAGE = 30
   DEFAULT_PAGE = 1
   MAX_PAGE = 10
-
-  TICKET_FIELDS_REGEX = /^ff(s|_boolean|_int|_date)/
-  CUSTOMER_FIELDS_REGEX = /^cf_(str|boolean|int|date)/
   
   TICKET_ASSOCIATIONS = { 'ticket' => { model: 'Helpdesk::Ticket', associations: [{ flexifield: :flexifield_def }, :ticket_old_body, :schema_less_ticket, :flexifield] } }.freeze
   CONTACT_ASSOCIATIONS = { 'user' => { model: 'User', associations: [:flexifield, :default_user_company] } }.freeze

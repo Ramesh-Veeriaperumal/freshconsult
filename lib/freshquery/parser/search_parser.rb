@@ -17,7 +17,6 @@ module_eval(<<'...end search.y/module_eval...', 'search.y', 20)
     scanner = StringScanner.new str
     @tokens = []
     @record = {}
-    @input = {}
     make_tokens(scanner)
     @input_array = (1..(@tokens.flatten.length)).step(2).map{|x| @tokens.flatten[x].strip }
     do_parse
