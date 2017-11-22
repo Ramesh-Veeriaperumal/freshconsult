@@ -40,8 +40,9 @@ module Facebook
         thread_id = thread[:id]
         messages  = thread[:messages].symbolize_keys!
         messages[:data].reverse.each do |message|
+
           message.symbolize_keys!
-          next if ((@fan_page.created_at > Time.zone.parse(message[:created_time])) || @account.facebook_posts.exists?(:post_id => message[:id]))
+          next if note_skip_conditions(message, ticket)
           user = facebook_user(message[:from])
           message[:message] = tokenize(message[:message])
 
@@ -84,20 +85,27 @@ module Facebook
         group_id = Account.current.features?(:social_revamp) ? @fan_page.dm_stream.ticket_rules.first.group_id : @fan_page.group_id
         
         return if !message or @account.facebook_posts.exists?(:post_id => message[:id])
-
+        first_message_from_customer = message
         message.symbolize_keys!
-        requester         = facebook_user(message[:from])
-        message[:message] = tokenize(message[:message])
+        profile = if is_a_page?(message[:from], @fan_page.page_id)
+                    first_message_from_customer, notes_to_be_skipped = find_user_with_skipped_messages(messages)
+                    return unless first_message_from_customer
+                    first_message_from_customer[:from]
+                  else
+                    message[:from]
+                  end
+        requester = facebook_user(profile)
+        first_message_from_customer[:message] = tokenize(first_message_from_customer[:message])
 
         @ticket = @account.tickets.build(
-          :subject      =>  truncate_subject(message[:message], 100),
+          :subject      =>  truncate_subject(first_message_from_customer[:message], 100),
           :requester    =>  requester,
           :product_id   =>  @fan_page.product_id,
           :group_id     =>  group_id,
           :source       =>  Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook],
-          :created_at   =>  Time.zone.parse(message[:created_time]),
+          :created_at   =>  Time.zone.parse(first_message_from_customer[:created_time]),
           :fb_post_attributes => {
-            :post_id            =>  message[:id],
+            :post_id            =>  first_message_from_customer[:id],
             :facebook_page_id   =>  @fan_page.id,
             :account_id         =>  @account.id,
             :msg_type           =>  'dm',
@@ -105,7 +113,7 @@ module Facebook
             :thread_key         =>  thread[:thread_key]
           }
         )
-        description_html = html_content_from_message(message, @ticket)
+        description_html = html_content_from_message(first_message_from_customer, @ticket)
         @ticket.ticket_body_attributes = {
           :description_html => description_html
         }
@@ -116,7 +124,11 @@ module Facebook
           Rails.logger.debug "error while saving the ticket:: #{@ticket.errors.to_json}"
         end
       end
-      
+
+      def note_skip_conditions(message, ticket)
+        note_created_at = message[:created_time]
+        ((@fan_page.created_at > Time.zone.parse(note_created_at)) || (ticket.created_at > Time.zone.parse(note_created_at)) || @account.facebook_posts.exists?(:post_id => message[:id]))
+      end
     end
   end
 end

@@ -232,7 +232,7 @@ module Facebook
       existing_msg_arr = Account.current.facebook_posts.where(:post_id => message_id_arr).pluck(:post_id)
       data_set[:data].reject {|message| ((existing_msg_arr.include? message['id']) || @fan_page.created_at > Time.zone.parse(message['created_time']))}
     end
-    
+
     def social_revamp_enabled?
       @social_revamp_enabled ||= Account.current.features?(:social_revamp)
     end

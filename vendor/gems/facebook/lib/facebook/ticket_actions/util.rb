@@ -45,6 +45,21 @@ module Facebook
         end
         user
       end
+
+      def find_user_with_skipped_messages(messages)
+        skip_note_array =Array.new
+        return_message = nil
+        messages.reverse.each do |message|
+          message.symbolize_keys!
+          if is_a_page?(message[:from], @fan_page.page_id)
+            skip_note_array.push(message[:id])
+          else
+            return_message = message
+            break
+          end
+        end
+        [return_message,skip_note_array]
+      end
             
       def send_facebook_reply(parent_post_id = nil)
         fb_page     = @parent.fb_post.facebook_page
@@ -159,6 +174,11 @@ module Facebook
 
       def use_thread_key?(fan_page, fb_post)
         fan_page.use_thread_key? || fb_post.thread_key.present?
+      end
+
+      def is_a_page?(profile,fan_page_id)
+        profile.symbolize_keys!
+        profile[:id] == fan_page_id.to_s
       end
 
     end
