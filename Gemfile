@@ -57,6 +57,12 @@ group :development, :test do
   gem 'meta_request'
   gem 'fake_sqs'
   gem 'fake_dynamo'
+
+  gem 'pronto'
+  gem 'pronto-rubocop', require: false
+  gem 'pronto-rails_best_practices', require: false
+  gem 'pronto-brakeman', require: false
+  gem 'pronto-reek', require: false
 end
 
 #commenting it out as rack mini profiler strips out etag response headers. Using it for falcon apis.

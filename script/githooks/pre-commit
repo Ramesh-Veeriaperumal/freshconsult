@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#disabling this script 
+exit 0;
+
 # This script validates the commit for the following
 #   - commit contains a JIRA Id as part of the commit message
 #   - commit is not a merge commit on the following branches [ master, staging, prestaging ]
