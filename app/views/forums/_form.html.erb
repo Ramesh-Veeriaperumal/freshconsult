@@ -25,13 +25,13 @@
 	<div class="control-group" id="forum_descripion">
 		<%= form.label :forum_type, t('.type'), :class => "control-label" %>
 		<div class="controls">
-			<%= form.select :forum_type, Forum::TYPE_OPTIONS, :class => "select" %>
+			<%= form.select :forum_type, Forum.type_list, :class => "select" %>
 		</div>
 	</div>
 	<div class="control-group" id="forum_descripion">
 		<%= form.label :forum_visibility, t('.visible_to'), :class => "control-label" %>
 		<div class="controls">
-			<%= form.select :forum_visibility, Forum::VISIBILITY_OPTIONS, :class => "select" %>
+			<%= form.select :forum_visibility, Forum.visibility_list, :class => "select" %>
 			<br/><br/>
 			<%= form.fields_for :customer_forums_attributes do |cust| %>
     	    	<span id="company_forums">
