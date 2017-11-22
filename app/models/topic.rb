@@ -279,7 +279,7 @@ class Topic < ActiveRecord::Base
     Hash[*NAMES_BY_KEY.map { |i| [i[0], I18n.t(i[1])] }.flatten]
   end
 
-  def all_tokens_for_filters
+  def self.all_tokens_for_filters
     Hash[*ALL_TOKENS_FOR_FILTER.map {|i| [i[0],  Hash[*i[1].map { |k| [k[0], I18n.t(k[1])] }.flatten]]}.flatten]
   end
 
@@ -308,7 +308,7 @@ class Topic < ActiveRecord::Base
   end
 
   def stamp_name
-    ideas_stamp_keys[stamp_type]
+    self.class.ideas_stamp_keys[stamp_type]
   end
 
   def stamp_key
@@ -316,13 +316,14 @@ class Topic < ActiveRecord::Base
   end
 
   def stamp?
-    stamp_type? && Topic.all_tokens_for_filters[forum.forum_type].present? && all_tokens_for_filters[forum.forum_type].keys.include?(stamp_type)
+    (stamp_type? && self.class.all_tokens_for_filters[forum.forum_type].present? && 
+      self.class.all_tokens_for_filters[forum.forum_type].keys.include?(stamp_type))
   end
 
   def stamp
     stamp? ? 
-      all_tokens_for_filters[forum.forum_type][stamp_type] : 
-      all_tokens_for_filters[forum.forum_type][DEFAULT_STAMPS_BY_FORUM_TYPE[forum.forum_type]]
+      self.class.all_tokens_for_filters[forum.forum_type][stamp_type] : 
+      self.class.all_tokens_for_filters[forum.forum_type][DEFAULT_STAMPS_BY_FORUM_TYPE[forum.forum_type]]
   end
 
   def reply_count
