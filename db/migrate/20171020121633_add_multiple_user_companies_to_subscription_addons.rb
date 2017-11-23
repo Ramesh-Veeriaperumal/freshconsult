@@ -10,7 +10,7 @@ class AddMultipleUserCompaniesToSubscriptionAddons < ActiveRecord::Migration
     execute <<-SQL 
       INSERT INTO subscription_addons 
         (name, amount, renewal_period, addon_type, created_at, updated_at) VALUES 
-        ('One Contact Multiple Companies', 69.0, 1, #{addon_types[:on_off]}, NOW(), NOW())
+        ('One Contact Multiple Companies', 69.0, 1, #{addon_types[:for_account]}, NOW(), NOW())
     SQL
 
     execute <<-SQL
