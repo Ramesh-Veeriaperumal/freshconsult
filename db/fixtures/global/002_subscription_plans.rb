@@ -283,7 +283,7 @@ unless Account.current
 	  a.name = 'One Contact Multiple Companies'
 	  a.amount = 69.0
 	  a.renewal_period = 1
-	  a.addon_type = addon_types[:on_off]
+	  a.addon_type = addon_types[:for_account]
 	end
 
 	all_addons = [ agent_collision, custom_ssl, custom_roles, gamification, layout_customization,
