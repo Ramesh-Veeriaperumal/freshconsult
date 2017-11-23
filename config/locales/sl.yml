@@ -3681,7 +3681,7 @@ sl:
     success_signin: "Uspešno povezano @%{twitter_screen_name} z %{helpdesk}"
     user_exists: "Twitter račun že povezan z drugim produktom"
     not_authorized: "Niste avtorizirani s strani Twitterja"
-    not_valid: "Status is over 140 characters."
+    not_valid: "Status is over 280 characters."
     deleted: "Račun Twitterja @ %{twitter_screen_name} je odstranjen"
     sent: "Tweet uspešno objavljen"
     error_sending: "Napaka pri objavi Tweeta! Twitter morebiti ne deluje, Prosimo poiskusite še enkrat."

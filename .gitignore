@@ -78,3 +78,6 @@ tags
 #intellij
 .idea/
 *.iml
+
+#ctags
+tags

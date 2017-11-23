@@ -35,6 +35,7 @@
     cursor: default;
     background-color: $gray;
     text-decoration: none;
+    font-weight: 600;
   }
 }
 .pagination .disabled span,
@@ -61,14 +62,17 @@
       padding: 0px 7px;
       }
     }
-    li.previous, li.next_page {
+    .previous, 
+    .prev, 
+    .next_page, 
+    .next {
     span, a {
       color: transparent;
       font-size: 0;
       height: 43px;
     }
     }
-    li.next_page {
+    .next_page, .next {
       span, a{
         &:before{
         content: '>';
@@ -78,7 +82,7 @@
         }
       }
     }
-    li.previous {
+    .previous, .prev {
       span, a{
         &:before{
         content: '<';

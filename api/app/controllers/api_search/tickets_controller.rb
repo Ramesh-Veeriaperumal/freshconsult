@@ -28,7 +28,8 @@ module ApiSearch
 
       def visitor
         column_names = Account.current.ticket_field_def.ff_alias_column_mapping.each_with_object({}) { |(key, value), hash| hash[TicketDecorator.display_name(key)] = value if value =~ ApiSearchConstants::TICKET_FIELDS_REGEX }.except(*ApiSearchConstants::TICKET_FIELDS)
-        date_fields = Flexifield.column_names.select { |x| x if x =~ /^ff_date/ } + ApiSearchConstants::TICKET_DATE_FIELDS.map{|x| ApiSearchConstants::ES_KEYS.fetch(x,x) }
+        es_keys = ApiSearchConstants::ES_KEYS
+        date_fields = ApiSearchConstants::TICKET_DATE_FIELDS.map{|x| es_keys.fetch(x,x) }
         Search::TermVisitor.new(column_names, date_fields)
       end
 

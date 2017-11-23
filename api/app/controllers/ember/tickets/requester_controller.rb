@@ -7,7 +7,7 @@ module Ember
 
       before_filter :ticket_permission?, :validate_requester_delegator
 
-      REQUESTER_FIELDS = %w(contact company).freeze
+      REQUESTER_FIELDS = %w[company contact].freeze
       ACTION = :requester_update
 
       def update
@@ -15,10 +15,14 @@ module Ember
           REQUESTER_FIELDS.each do |type|
             object = instance_variable_get("@#{type}")
             next if object.blank?
+            cname_params[type.to_sym][:customer_id] = @company.id if type.eql?('contact') && @contact.companies.blank? && add_company
             render_errors(object.errors) unless object.update_attributes(cname_params[type.to_sym])
             send("#{type}_decorator")
           end
+          @item.update_attributes(owner_id: @company.id) if add_company
         end
+      rescue Exception => e
+        Rails.logger.error "Error while updating requester, Param: #{cname_params.inspect}, Error - #{e.message}"
       end
 
       private
@@ -34,14 +38,22 @@ module Ember
         def load_object
           @item = scoper.find_by_param(params[:id], current_account)
           if @item
-            @contact = @item.requester
-            @company = @item.company
-            company_name = cname_params[:company].try(:[], :name)
-            @company ||= current_account.companies.find_by_name(company_name) if company_name
-            @errors = []
+            load_ticket_contact_data
           else
             log_and_render_404
           end
+          @errors = []
+        end
+
+        def load_ticket_contact_data
+          @contact = @item.requester
+          render_request_error(:action_restricted, 403, action: ACTION, reason: 'requester is agent') unless @contact.try(:customer?)
+          @company = @item.company
+          company_deleted = @item.owner_id.present? && @company.blank?
+          # Need to check unassociated_company use case in old behaviour
+          # @unassociated_company = @company.blank? ? false : @item.requester.companies.exclude?(@company)
+          company_name = cname_params[:company].try(:[], :name)
+          @company ||= current_account.companies.find_by_name(company_name) || current_account.companies.new if company_name && !company_deleted
         end
 
         def validate_params
@@ -129,6 +141,10 @@ module Ember
         def render_requester_errors
           log_error_response @errors.flatten!
           render '/bad_request_error', status: ErrorHelper.find_http_error_code(@errors)
+        end
+
+        def add_company
+          @add_company ||= @company.present? && @item.company.blank?
         end
 
         wrap_parameters(*wrap_params)

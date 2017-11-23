@@ -65,6 +65,8 @@ module SocialTestHelper
   def create_ticket_from_fb_direct_message
     Sidekiq::Testing.inline! do
       fb_page = create_facebook_page(true)
+      # todo find the root cause and fix it
+      sleep(1)
       thread_id = Time.now.utc.to_i
       actor_id = thread_id + 1
       msg_id = thread_id + 2

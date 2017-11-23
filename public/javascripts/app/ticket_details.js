@@ -805,7 +805,7 @@ var scrollToError = function(){
 
 	function getTweetTypeAndBind(){
 		var reply_type = $('#tweet_type').val(),
-	  		count = (reply_type == 'dm') ? 10000 : 140;
+	  		count = (reply_type == 'dm') ? 10000 : 280;
 
 	  bindNobleCount(count);
 	}

@@ -1011,9 +1011,9 @@ module Ember
         @account = Account.current
 
         params_hash = {
-          body: Faker::Lorem.sentence[0..130],
-          tweet_type: 'mention',
-          twitter_handle_id: @twitter_handle.id
+            body: Faker::Lorem.sentence[0..130],
+            tweet_type: 'mention',
+            twitter_handle_id: @twitter_handle.id
         }
         post :tweet, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
         assert_response 201
@@ -1021,6 +1021,24 @@ module Ember
         match_json(private_note_pattern(params_hash, latest_note))
       end
     end
+
+    def test_twitter_reply_to_tweet_ticket_more_than_280_limit
+      with_twitter_update_stubbed do
+
+        ticket = create_twitter_ticket
+
+        @account = Account.current
+
+        params_hash = {
+            body: Faker::Lorem.paragraphs(5).join[0..500],
+            tweet_type: 'mention',
+            twitter_handle_id: @twitter_handle.id
+        }
+        post :tweet, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+        assert_response 400
+      end
+    end
+
 
     def test_twitter_dm_reply_to_tweet_ticket
       ticket = create_twitter_ticket
@@ -1314,6 +1332,47 @@ module Ember
       EmailNotification.any_instance.unstub(:get_forward_template)
     end
 
+    def test_agent_note_forward_template_with_signature_and_attachments_empty_cc
+      note = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2, attachments: { resource: fixture_file_upload('files/attachment.txt', 'plain/text', :binary) })
+      notification_template = '<div>{{ticket.id}}</div>'
+      agent_signature = '<div><p>Thanks</p><p>{{ticket.subject}}</p></div>'
+      Agent.any_instance.stubs(:signature_value).returns(agent_signature)
+      EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
+      Helpdesk::Ticket.any_instance.stubs(:current_cc_emails).returns([Faker::Internet.email])
+      Helpdesk::Ticket.any_instance.stubs(:reply_to_all_emails).returns([Faker::Internet.email])
+      get :note_forward_template, controller_params(version: 'private', id: note.id)
+      res = parse_response(response.body)
+      assert_equal 0, res['cc_emails'].size
+      assert_response 200
+      match_json(forward_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: "<div><p>Thanks</p><p>#{ticket.subject}</p></div>"))
+      Agent.any_instance.unstub(:signature_value)
+      EmailNotification.any_instance.unstub(:get_forward_template)
+      Helpdesk::Ticket.any_instance.unstub(:current_cc_emails)
+      Helpdesk::Ticket.any_instance.unstub(:reply_to_all_emails)
+    end
+
+    def test_agent_forward_template_with_signature_and_attachments_empty_cc
+      remove_wrap_params
+      t = create_ticket(attachments: { resource: fixture_file_upload('files/attachment.txt', 'plain/text', :binary) })
+      notification_template = '<div>{{ticket.id}}</div>'
+      agent_signature = '<div><p>Thanks</p><p>{{ticket.subject}}</p></div>'
+
+      Agent.any_instance.stubs(:signature_value).returns(agent_signature)
+      EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
+      Helpdesk::Ticket.any_instance.stubs(:current_cc_emails).returns([Faker::Internet.email])
+      Helpdesk::Ticket.any_instance.stubs(:reply_to_all_emails).returns([Faker::Internet.email])
+      get :forward_template, construct_params({ version: 'private', id: t.display_id }, false)
+      assert_response 200
+      res = parse_response(response.body)
+      assert_equal 0, res['cc_emails'].size
+      match_json(forward_template_pattern(template: "<div>#{t.display_id}</div>",
+                                          signature: "<div><p>Thanks</p><p>#{t.subject}</p></div>"))
+      Agent.any_instance.unstub(:signature_value)
+      EmailNotification.any_instance.unstub(:get_forward_template)
+      Helpdesk::Ticket.any_instance.unstub(:current_cc_emails)
+      Helpdesk::Ticket.any_instance.unstub(:reply_to_all_emails)
+    end
+    
     def test_note_forward_template_with_empty_signature
       note = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
       notification_template = '<div>{{ticket.id}}</div>'
@@ -1395,6 +1454,54 @@ module Ember
       EmailNotification.any_instance.unstub(:get_forward_template)
     ensure
       note.update_attribute(:deleted, false)
+    end
+
+    def test_note_reply_template_with_signature_and_attachments_and_with_cc
+      remove_wrap_params
+      t = create_ticket
+
+      notification_template = '<div>{{ticket.id}}</div>'
+      agent_signature = '<div><p>Thanks</p><p>{{ticket.subject}}</p></div>'
+      Agent.any_instance.stubs(:signature_value).returns(agent_signature)
+      EmailNotification.any_instance.stubs(:get_reply_template).returns(notification_template)
+      Helpdesk::Ticket.any_instance.stubs(:current_cc_emails).returns([Faker::Internet.email])
+      Helpdesk::Ticket.any_instance.stubs(:reply_to_all_emails).returns([Faker::Internet.email])
+      bcc_emails = "#{Faker::Internet.email},#{Faker::Internet.email}"
+      Account.any_instance.stubs(:bcc_email).returns(bcc_emails)
+      get :reply_template, construct_params({ version: 'private', id: t.display_id }, false)
+      res = parse_response(response.body)
+      assert_equal 1, res['cc_emails'].size
+      assert_response 200
+
+      match_json(reply_template_pattern(template: "<div>#{t.display_id}</div>",
+                                        signature: "<div><p>Thanks</p><p>#{t.subject}</p></div>",
+                                        bcc_emails: bcc_emails.split(',')))
+      Agent.any_instance.unstub(:signature_value)
+      EmailNotification.any_instance.unstub(:get_reply_template)
+      Helpdesk::Ticket.any_instance.unstub(:current_cc_emails)
+      Helpdesk::Ticket.any_instance.unstub(:reply_to_all_emails)
+    ensure
+      Account.any_instance.unstub(:bcc_email)
+    end
+
+    def test_latest_note_forward_template_with_signature_and_attachments_and_empty_cc
+      note = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2, attachments: { resource: fixture_file_upload('files/attachment.txt', 'plain/text', :binary) })
+      notification_template = '<div>{{ticket.id}}</div>'
+      agent_signature = '<div><p>Thanks</p><p>{{ticket.subject}}</p></div>'
+      Agent.any_instance.stubs(:signature_value).returns(agent_signature)
+      Helpdesk::Ticket.any_instance.stubs(:current_cc_emails).returns([Faker::Internet.email])
+      Helpdesk::Ticket.any_instance.stubs(:reply_to_all_emails).returns([Faker::Internet.email])
+      EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
+      get :latest_note_forward_template, controller_params(version: 'private', id: ticket.display_id)
+      assert_response 200
+      match_json(forward_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: "<div><p>Thanks</p><p>#{ticket.subject}</p></div>"))
+      res = parse_response(response.body)
+      assert_equal 1, res['attachments'].size
+      assert_equal 0, res['cc_emails'].size
+      Agent.any_instance.unstub(:signature_value)
+      EmailNotification.any_instance.unstub(:get_forward_template)
+      Helpdesk::Ticket.any_instance.unstub(:current_cc_emails)
+      Helpdesk::Ticket.any_instance.unstub(:reply_to_all_emails)
     end
 
     def test_full_text

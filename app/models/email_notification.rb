@@ -174,7 +174,11 @@ class EmailNotification < ActiveRecord::Base
   def requester_notification?
     requester_notification && allowed_in_thread_local?(:requester_notification)
   end
-  
+
+  def requester_notification_updated?
+    previous_changes.has_key?(:requester_notification)
+  end
+
   def formatted_agent_template
     agent_template
   end

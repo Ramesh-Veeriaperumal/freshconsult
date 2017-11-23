@@ -16,7 +16,9 @@
     var ERROR_LOG_COLOR = "color: red; font-weight: 700;";
     var WARNING_LOG_COLOR = "color: orange; font-weight: 700;";
     var MSG_TYPE_SERVER_MADD = "2"; // Msg from Server, denotes addition of member
-    var MSG_TYPE_SERVER_MREMOVE= "3"; // Msg from Server, denotes removal of member
+    var MSG_TYPE_SERVER_MREMOVE = "3"; // Msg from Server, denotes removal of member
+    var MSG_TYPE_SERVER_FADD = "5"; // Msg from Server, denotes addition of follower
+    var MSG_TYPE_SERVER_FREMOVE = "6"; // Msg from Server, denotes removal of follower
 
     var CHAT_API_SERVER, RTS_SERVER, MESSAGE_PUBLISH_ROUTE, USER_MARK_ONLINE_ROUTE,
         USER_UPDATE_ROUTE, CONVERSATION_GET_ROUTE, ADD_MEMBER_ROUTE, REMOVE_MEMBER_ROUTE,
@@ -201,6 +203,8 @@
         self.apiinited = config.apiinited || function (){log(">> client: apiinited called.");};
         self.onmemberadd = config.onmemberadd || function(){log(">> client: onmemberadd called.");};
         self.onmemberremove = config.onmemberremove || function(){log(">> client: onmemberremove called.");};
+        self.onfolloweradd = config.onfolloweradd || function(){log(">> client: onfolloweradd called.");};
+        self.onfollowerremove = config.onfollowerremove || function(){log(">> client: onfolloweremove called.");};
         self.onerror = config.onerror || function(){log(">> client: on error called.");};
     };
 
@@ -255,11 +259,17 @@
                         msg.nid = String(data.id); /* quick fix for notification use case */
                         self.onnotify(msg);
                     }
-                    else if (msg.m_type === MSG_TYPE_SERVER_MADD){
+                    else if (msg.m_type === MSG_TYPE_SERVER_MADD) {
                         self.onmemberadd(msg);
                     }
-                    else if (msg.m_type === MSG_TYPE_SERVER_MREMOVE){
+                    else if (msg.m_type === MSG_TYPE_SERVER_MREMOVE) {
                         self.onmemberremove(msg);
+                    }
+                    else if (msg.m_type === MSG_TYPE_SERVER_FADD) {
+                        self.onfolloweradd(msg);
+                    }
+                    else if (msg.m_type === MSG_TYPE_SERVER_FREMOVE) {
+                        self.onfollowerremove(msg);
                     }
                     else {
                         self.onmessage(msg);
@@ -346,7 +356,7 @@
         if(typeof data === "string") {
             return data;
         }
-        return window.Prototype ? Object.toJSON(data) : JSON.stringify(data);
+        return (Prototype && Prototype.Version < '1.7' && Array.prototype.toJSON && Object.toJSON) ? Object.toJSON(data) : JSON.stringify(data);
     }
 
     function log(){
@@ -477,7 +487,7 @@
             var params = {
                 "message" : msgObj,
                 "channelName" : conversation.co_ch,
-                "persist": true
+                "persist": typeof(msg.persist) === "boolean" ? msg.persist : true
             };
             rts.publish(params, function(response, resp_str) {
                 cb(response);

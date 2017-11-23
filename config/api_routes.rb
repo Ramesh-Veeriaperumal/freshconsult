@@ -219,6 +219,7 @@ Helpkit::Application.routes.draw do
         post :draft, to: 'ember/tickets/drafts#save_draft'
         get :draft, to: 'ember/tickets/drafts#show_draft'
         delete :draft, to: 'ember/tickets/drafts#clear_draft'
+        post :notify_collab, to: 'ember/tickets/collab#notify'
         match '/split_note/:note_id' => 'ember/tickets#split_note', via: :put
         # This alternate route is to handle limitation in ember route generation : api/_/tickets/:ticket_id/split_note?note_id=Number
         match '/split_note' => 'ember/tickets#split_note', via: :put

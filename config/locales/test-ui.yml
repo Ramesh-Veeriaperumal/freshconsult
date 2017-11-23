@@ -5453,7 +5453,7 @@ test-ui:
     success_signin: "Successfully associated @%{twitter_screen_name} with %{helpdesk}. Sit delectus nam non velit "
     user_exists: Twitter account already associated with another product. Sit delectus nam non ve
     not_authorized: You were not authorized by Twitter Sit delectus n
-    not_valid: "Status is over 140 characters. Sit delectus "
+    not_valid: "Status is over 280 characters. Sit delectus "
     deleted: The twitter account @%{twitter_screen_name} has been removed. Sit delectus nam non veli
     sent: Tweet successfully sent Sit delect
     error_sending: Error sending the tweet! Twitter might be unstable. Please try again. Sit delectus nam non velit d

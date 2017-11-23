@@ -801,9 +801,9 @@ class Helpdesk::TicketsController < ApplicationController
         flash[:action] = "bulk_close"
           redirect_to helpdesk_tickets_path
         }
-            
+
         format.xml {  render :xml =>@items.to_xml({:basic=>true}) }
-        
+
         format.mobile do
           response_hash = {}
           status = mobile_app_versioning? && ios? ? 400 : 200
@@ -814,8 +814,8 @@ class Helpdesk::TicketsController < ApplicationController
               response_hash = {
                 :success => false,
                 :success_message => t("helpdesk.flash.tickets_close_fail_on_bulk_close_mobile",
-                                          :tickets => get_updated_ticket_count, :failed_tickets => @failed_tickets.length ), 
-                :failed_on_required_fields => @failed_tickets.length, 
+                                          :tickets => get_updated_ticket_count, :failed_tickets => @failed_tickets.length ),
+                :failed_on_required_fields => @failed_tickets.length,
                 :failed_on_parent => parents_not_closed,
                 :error => "Sorry your request could not be processed",
                 :error_code => error_code,
@@ -826,8 +826,8 @@ class Helpdesk::TicketsController < ApplicationController
               response_hash = {
                 :success => success,
                 :success_message => t("helpdesk.flash.tickets_closed",
-                                          :tickets => get_updated_ticket_count ), 
-                :failed_on_required_fields => 0, 
+                                          :tickets => get_updated_ticket_count ),
+                :failed_on_required_fields => 0,
                 :error => "Sorry your request could not be processed",
                 :failed_on_parent => parents_not_closed,
                 :error_code => error_code,
@@ -835,10 +835,10 @@ class Helpdesk::TicketsController < ApplicationController
               }
             end
           else
-            response_hash = { 
+            response_hash = {
               :success => false,
               :error => "Sorry your request could not be processed",
-              :failed_on_required_fields => @failed_tickets.length, 
+              :failed_on_required_fields => @failed_tickets.length,
               :failed_on_parent => 0,
               :error_code => 1016,
               :closed_tickets => @closed_tkt_count
@@ -846,7 +846,7 @@ class Helpdesk::TicketsController < ApplicationController
           end
           render :json => response_hash.to_json, :status => status
         end
-        
+
         format.json {  render :json =>@items.to_json({:basic=>true}) }
     end
   end
@@ -1900,12 +1900,26 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def check_trial_outbound_limit
-      if ((current_account.id > get_spam_account_id_threshold) && (current_account.subscription.trial?) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)))
+      if ((current_account.id > get_spam_account_id_threshold) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)))
         outbound_per_day_key = OUTBOUND_EMAIL_COUNT_PER_DAY % {:account_id => current_account.id }
         total_outbound_per_day = get_others_redis_key(outbound_per_day_key).to_i
-        if (total_outbound_per_day >=5 )
-          @outbound_limit_crossed = true
-          flash.now[:error] = t(:'flash.general.outbound_limit_per_day_exceeded', :limit => get_trial_account_max_to_cc_threshold )
+        if (current_account.subscription.trial?)
+          if (total_outbound_per_day >=5 )
+            @outbound_limit_crossed = true
+            flash.now[:error] = t(:'flash.general.outbound_limit_per_day_exceeded', :limit => get_trial_account_max_to_cc_threshold )
+          end
+        elsif(current_account.subscription.free?)
+          if (current_account.created_at >= (Time.zone.now - 30.days))
+            if (total_outbound_per_day >= get_free_account_30_days_threshold )
+              @outbound_limit_crossed = true
+              flash.now[:error] = t(:'flash.general.outbound_limit_per_day_30_days_free_exceeded', :limit => get_free_account_30_days_threshold )
+            end
+          else
+            if (total_outbound_per_day >= get_free_account_outbound_threshold )
+              @outbound_limit_crossed = true
+              flash.now[:error] = t(:'flash.general.outbound_limit_per_day_free_exceeded', :limit => get_free_account_outbound_threshold )
+            end
+          end
         end
       end
     end
@@ -2290,8 +2304,7 @@ class Helpdesk::TicketsController < ApplicationController
       :locals => { :req_list => @req_list.uniq } )
 
     notice_msg =  msg1
-    notice_msg << " <br />#{t("block_users")} #{link}".html_safe unless @req_list.blank?
-
+    notice_msg << " <br />#{t("block_users")} #{link}".html_safe if @req_list.present? and privilege?(:delete_contact)
     flash[:notice] =  notice_msg
     respond_to do |format|
       format.html { redirect_to redirect_url  }

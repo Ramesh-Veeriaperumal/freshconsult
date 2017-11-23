@@ -8,7 +8,7 @@ class SearchV2::Manager
     def perform
       Search::V2::Tenant.new(Account.current.id).bootstrap unless Rails.env.development?
 
-      SearchService::Client.new(Account.current.id).tenant_bootstrap if Account.current.service_reads_enabled?
+      SearchService::Client.new(Account.current.id).tenant_bootstrap
       
       # Push initially bootstrapped data to ES
       #
@@ -57,7 +57,7 @@ class SearchV2::Manager
       Search::V2::Tenant.new(args[:account_id]).rollback unless Rails.env.development?
 
       # Since Account.current is unavailable we shall use LaunchParty to check for service_reads
-      SearchService::Client.new(args[:account_id]).tenant_rollback if LaunchParty.new.launched?(feature: :service_reads, account: args[:account_id])
+      SearchService::Client.new(args[:account_id]).tenant_rollback
     end
   end
 end

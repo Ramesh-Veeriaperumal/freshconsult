@@ -88,8 +88,13 @@ module TicketTemplatesTestHelper
     end
 
     def handle_value_type_change(k, v)
-      return v.to_i if string_to_integer_mapping.key?(k) || integer_custom_fields.include?(k)
-      v
+      if string_to_integer_mapping.key?(k) || integer_custom_fields.include?(k)
+        v.to_i
+      elsif string_to_array_mapping.key?(k)
+        v.split(',')
+      else
+        v
+      end
     end
 
     def integer_custom_fields
@@ -103,6 +108,12 @@ module TicketTemplatesTestHelper
         'responder_id'  => true,
         'group_id'      => true,
         'product_id'    => true
+      }
+    end
+
+    def string_to_array_mapping
+      {
+          'tags' => true
       }
     end
 end

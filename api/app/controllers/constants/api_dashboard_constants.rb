@@ -51,8 +51,8 @@ module ApiDashboardConstants
                                  product_ids: :product_id,
                                  status_ids: :status,
                                  responder_ids: :responder_id,
-                                 internal_groups: :internal_group_id,
-                                 internal_agents: :internal_agent_id }.freeze
+                                 internal_group_ids: :internal_group_id,
+                                 internal_agent_ids: :internal_agent_id }.freeze
 
   ERROR_FIELD_NAME_MAPPINGS = { group_id: :group_ids,
                                 product_id: :product_ids,
@@ -76,7 +76,7 @@ module ApiDashboardConstants
                moderation_count: :moderation_counts,
                unresolved_tickets_data: :unresolved_tickets }.freeze
 
-  UNRESOLVED_TICKETS_DATA_FIELDS = %w(group_by group_ids product_ids responder_ids status_ids widget).freeze
+  UNRESOLVED_TICKETS_DATA_FIELDS = %w(group_by group_ids product_ids internal_group_ids internal_agent_ids responder_ids status_ids widget).freeze
 
   TICKET_METRICS_FIELDS = %w(group_ids product_ids).freeze
 
@@ -96,7 +96,7 @@ module ApiDashboardConstants
     UNRESOLVED_COLUMN_KEY_MAPPING[:status]            => 'status_label'
   }.freeze
 
-  UNRESOLVED_GROUP_BY_OPTIONS = ['group_id', 'responder_id'].freeze
+  UNRESOLVED_GROUP_BY_OPTIONS = ['group_id', 'responder_id', 'internal_group_id', 'internal_agent_id'].freeze
 
   UNRESOLVED_TICKETS_WIDGET_ROW_LIMIT = 4
 

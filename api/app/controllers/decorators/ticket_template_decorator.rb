@@ -2,6 +2,7 @@ class TicketTemplateDecorator < ApiDecorator
   delegate :id, :name, :attachments, :template_data, :description, :data_description_html, :association_type, :cloud_files, :parent_template?, to: :record
 
   STRING_TO_INTEGER_MAPPING = ['status', 'priority', 'responder_id', 'group_id', 'product_id'].freeze
+  STRING_TO_ARRAY_MAPPING = ['tags'].freeze
 
   TEMPLATE_TO_TICKET_MAPPING =   {
                                   'ticket_type' => 'type'
@@ -69,8 +70,13 @@ class TicketTemplateDecorator < ApiDecorator
     end
 
     def handle_value_type_change(k, v)
-      return v.to_i if STRING_TO_INTEGER_MAPPING.include?(k) || integer_custom_fields.include?(k)
-      v
+      if STRING_TO_INTEGER_MAPPING.include?(k) || integer_custom_fields.include?(k)
+        v.to_i
+      elsif STRING_TO_ARRAY_MAPPING.include?(k)
+        v.split(',')
+      else
+        v
+      end
     end
 
     def integer_custom_fields

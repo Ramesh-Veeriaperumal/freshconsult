@@ -59,7 +59,11 @@
     def execute_rules
       evaluate_on = @ticket
       @account.va_rules.each do |vr|
-        evaluate_on = vr.pass_through(@ticket,nil,@user)
+        begin
+          evaluate_on = vr.pass_through(@ticket,nil,@user)
+        rescue Exception => e
+          Rails.logger.error "pass_through failed - T=#{@ticket.id} :: R=#{vr.id}"
+        end
         next if @account.features?(:cascade_dispatchr)
         return unless evaluate_on.nil?
       end

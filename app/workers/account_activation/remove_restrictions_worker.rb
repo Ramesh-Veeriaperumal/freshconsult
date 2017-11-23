@@ -17,10 +17,11 @@ class AccountActivation::RemoveRestrictionsWorker < BaseWorker
 		notifications.select{|n| n.visible_to_agent? && n.notification_type != EmailNotification::NEW_TICKET}.each do |n|
 			n.update_attribute(:agent_notification,true)
 		end
+		# Commenting this as users will be prompted to turn them on through the trial widget
 		# make all requested related notifications true upon activation
-		notifications.select{|n|  !n.visible_only_to_agent?}.each do |n|
-			n.update_attribute(:requester_notification,true)
-		end
+		# notifications.select{|n|  !n.visible_only_to_agent?}.each do |n|
+		# 	n.update_attribute(:requester_notification,true)
+		# end
 	end
 
 	def activate_restricted_rules

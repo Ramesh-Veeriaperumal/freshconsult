@@ -4203,7 +4203,7 @@ he:
     success_signin: "@%{twitter_screen_name} שויך בהצלחה ל- %{helpdesk}."
     user_exists: "חשבון Twitter כבר משויך למוצר אחר."
     not_authorized: "לא אושרת על-ידי Twitter"
-    not_valid: "הסטטוס כולל יותר מ-140 תווים."
+    not_valid: "הסטטוס כולל יותר מ-280 תווים."
     deleted: "חשבון ה-Twitter‏ @%{twitter_screen_name} הוסר."
     sent: "הציוץ נשלח בהצלחה"
     error_sending: "שגיאה בעת שליחת הציוץ! ייתכן ש-Twitter אינו יציב. נסה שוב."

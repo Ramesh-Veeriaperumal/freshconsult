@@ -17,6 +17,13 @@ module Account::Setup
 
   SETUP_EXPIRY = 60.days
 
+  CONTROLLER_SETUP_KEYS = {
+  	'discussions' => 'forums',
+  	'reports' => 'reports'
+   }
+
+  FALCON_SETUP_KEYS = [:reports, :email_notification]
+
   included do |base|
     base.include Binarize
     base.binarize :setup, flags: SETUP_KEYS, not_a_model_column: true
@@ -57,6 +64,16 @@ module Account::Setup
 
   def twitter_eligible?
     social_channel_enabled?
+  end
+
+  def forums_eligible?
+    self.falcon_ui_enabled?(User.current) && self.features_included?(:forums)
+  end
+
+  FALCON_SETUP_KEYS.each do |setup_key|
+    define_method "#{setup_key}_eligible?" do
+      self.falcon_ui_enabled?(User.current)
+    end
   end
 
   def sort_setup_keys(setup_keys)

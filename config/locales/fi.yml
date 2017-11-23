@@ -3689,7 +3689,7 @@ fi:
     success_signin: "Twitter-tili @%{twitter_screen_name} on yhdistetty help deskiin %{helpdesk}."
     user_exists: "Twitter-tili on jo liitetty toiseen tuotteeseen."
     not_authorized: "Twitter ei hyväksynyt"
-    not_valid: "Status is over 140 characters."
+    not_valid: "Status is over 280 characters."
     deleted: "Twitter-tili @%{twitter_screen_name} on poistettu."
     sent: "Uusi twiitti lähetetty"
     error_sending: "Virhe lähetettäessä twiittiä! Twitterissä voi olla hetkellinen häiriö, yritä uudelleen."

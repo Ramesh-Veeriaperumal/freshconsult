@@ -4,7 +4,7 @@ class ReportsController < ApplicationController
 
   before_filter :check_old_reports_visibility, :only => [:old, :show]
   before_filter :report_list,:set_selected_tab, :only => [ :index, :show, :old ]
- 
+  track_account_setup :index
 
   include Reports::ConstructReport
   include Reports::ReportTimes

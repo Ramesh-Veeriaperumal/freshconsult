@@ -34,14 +34,14 @@ Metrics/MethodLength:
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/AccessModifierIndentation:
+Layout/AccessModifierIndentation:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 3
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/AlignParameters:
+Layout/AlignParameters:
   AutoCorrect: true
   Enabled: true
 
@@ -71,7 +71,7 @@ Style/ClassAndModuleChildren:
 
 # Offense count: 3
 # Cop supports --auto-correct.
-Style/CommentIndentation:
+Layout/CommentIndentation:
   AutoCorrect: true
   Enabled: true
 
@@ -81,34 +81,34 @@ Style/Documentation:
 
 # Offense count: 1
 # Cop supports --auto-correct.
-Style/EmptyLines:
+Layout/EmptyLines:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 3
 # Cop supports --auto-correct.
-Style/EmptyLinesAroundAccessModifier:
+Layout/EmptyLinesAroundAccessModifier:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/EmptyLinesAroundClassBody:
+Layout/EmptyLinesAroundClassBody:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/EmptyLinesAroundModuleBody:
+Layout/EmptyLinesAroundModuleBody:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/FirstParameterIndentation:
+Layout/FirstParameterIndentation:
   AutoCorrect: true
   Enabled: true
 
@@ -134,14 +134,14 @@ Style/IfUnlessModifier:
 # Offense count: 4
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/IndentHash:
+Layout/IndentHash:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 54
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/IndentationConsistency:
+Layout/IndentationConsistency:
   AutoCorrect: true
   Enabled: true
   EnforcedStyle: rails
@@ -149,7 +149,7 @@ Style/IndentationConsistency:
 # Offense count: 10
 # Cop supports --auto-correct.
 # Configuration parameters: Width.
-Style/IndentationWidth:
+Layout/IndentationWidth:
   AutoCorrect: true
   Enabled: true
 
@@ -163,7 +163,7 @@ Style/LambdaCall:
 
 # Offense count: 3
 # Cop supports --auto-correct.
-Style/LeadingCommentSpace:
+Layout/LeadingCommentSpace:
   AutoCorrect: true
   Enabled: true
 
@@ -183,7 +183,7 @@ Style/ParenthesesAroundCondition:
 
 # Offense count: 1
 # Configuration parameters: NamePrefix, NamePrefixBlacklist.
-Style/PredicateName:
+Naming/PredicateName:
   AutoCorrect: true
   Enabled: true
 
@@ -209,48 +209,48 @@ Style/SignalException:
 
 # Offense count: 5
 # Cop supports --auto-correct.
-Style/SpaceAfterComma:
+Layout/SpaceAfterComma:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/SpaceAroundEqualsInParameterDefault:
+Layout/SpaceAroundEqualsInParameterDefault:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 2
 # Cop supports --auto-correct.
 # Configuration parameters: MultiSpaceAllowedForOperators.
-Style/SpaceAroundOperators:
+Layout/SpaceAroundOperators:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 8
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/SpaceBeforeBlockBraces:
+Layout/SpaceBeforeBlockBraces:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 16
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles, EnforcedStyleForEmptyBraces, SpaceBeforeBlockParameters.
-Style/SpaceInsideBlockBraces:
-  AutoCorrect: true
+Layout/SpaceInsideBlockBraces:
+  EAutoCorrect: true
   Enabled: true
 
 # Offense count: 4
 # Cop supports --auto-correct.
-Style/SpaceInsideBrackets:
+Layout/SpaceInsideBrackets:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 24
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, EnforcedStyleForEmptyBraces, SupportedStyles.
-Style/SpaceInsideHashLiteralBraces:
+Layout/SpaceInsideHashLiteralBraces:
   AutoCorrect: true
   Enabled: true
 
@@ -263,20 +263,20 @@ Style/StringLiterals:
 
 # Offense count: 12
 # Cop supports --auto-correct.
-Style/Tab:
+Layout/Tab:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 38
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/TrailingBlankLines:
+Layout/TrailingBlankLines:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 56
 # Cop supports --auto-correct.
-Style/TrailingWhitespace:
+Layout/TrailingWhitespace:
   AutoCorrect: true
   Enabled: true
 
@@ -322,7 +322,7 @@ Lint/HandleExceptions:
   Exclude:
    - test/**/*.rb
 
-Style/AccessorMethodName:
+Name/AccessorMethodName:
   Exclude:
    - test/**/*.rb
 

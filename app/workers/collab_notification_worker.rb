@@ -7,6 +7,7 @@ class CollabNotificationWorker
   GROUP_NOTI_USER_BATCH_SIZE = 30
   HK_GROUP_NOTIFY = 'hk_group_notify'
   HK_NOTIFY = 'hk_notify'
+  FOLLOWER_NOTIFY = 'follower_notify'.freeze
 
   def perform(noti_info)
     @noti_info = noti_info
@@ -39,6 +40,10 @@ class CollabNotificationWorker
     message = message_json
     message[:subscriber_properties][:collaboration][:notification_data][:metadata] = recipient_info
 
+    if recipient_info[FOLLOWER_NOTIFY].present?
+      message = add_additional_follower_notification_details(message)
+    end
+
     sqs_resp = AwsWrapper::SqsV2.send_message(SQS[:collab_ticket_update_queue], message.to_json)
     Rails.logger.info "Collab: SQS: notification resp: #{sqs_resp[:message_id]}"
   end
@@ -47,7 +52,6 @@ class CollabNotificationWorker
 
     def message_json
       from_info = parse_email(@ticket.selected_reply_email) || parse_email(@current_account.default_friendly_email)
-
       {
         object: 'user_notification',
         account_id: @ticket.account_id,
@@ -94,7 +98,55 @@ class CollabNotificationWorker
         end
         recipient_info[HK_NOTIFY] = user_noti_data
       end
+
+      if recipient_info[FOLLOWER_NOTIFY].present?
+        follower_noti_data = []
+        recipient_info[FOLLOWER_NOTIFY].each do |follower|
+          noti_follower = agents_from_cache.find {|agent| follower['follower_id'] == agent.id.to_s}
+          follower_noti_data << {
+            'follower_id' => follower['follower_id'],
+            'name' => noti_follower.name,
+            'email' => noti_follower.email
+          } if noti_follower.present?
+        end
+        recipient_info[FOLLOWER_NOTIFY] = follower_noti_data
+      end
       recipient_info
+    end
+
+    def add_additional_follower_notification_details(message)
+      topmembers_info = []
+      begin
+        topmembers_info = JSON.parse(@noti_info['top_members'])
+      rescue JSON::ParserError => e
+        raise e, "Invalid JSON string: #{topmembers_info}"
+      end
+      notiUpdates = {}
+      if topmembers_info.any?
+        topmembers_info = add_top_members_details(topmembers_info)
+        notiUpdates.merge!({:top_members => topmembers_info})
+      end
+      sender_imgurl = user_image_url(@noti_info['current_domain'], @current_user)
+      notiUpdates.merge!(
+                        {:message_sender_imgurl => sender_imgurl,
+                         :message_type => @noti_info['m_type'],
+                         :message_ts => @noti_info['m_ts']
+                        })
+      message[:subscriber_properties][:collaboration][:notification_data].merge!(notiUpdates)
+      message
+    end
+
+    def add_top_members_details(topmembers_info)
+      top_members_data = []
+      topmembers_info.each do |member|
+        top_member = agents_from_cache.find {|agent| member['member_id'] == agent.id.to_s}
+        imgUrl = user_image_url(@noti_info['current_domain'], top_member)
+        top_members_data << {
+          'member_name' => top_member.name,
+          'member_img_url' => imgUrl
+        } if top_member.present?
+      end
+      topmembers_info = top_members_data
     end
 
     def batchify_groups(recipient_info)
@@ -178,6 +230,12 @@ class CollabNotificationWorker
           user['token'] = collab_ticket.access_token(user['user_id']).to_s
         end
       end
+
+      if recipient_info[FOLLOWER_NOTIFY].present?
+        recipient_info[FOLLOWER_NOTIFY].each do |follower|
+          follower['token'] = collab_ticket.access_token(follower['follower_id']).to_s
+        end
+      end
       recipient_info
     end
 
@@ -195,6 +253,10 @@ class CollabNotificationWorker
 
     def group_agents_from_cache
       @group_agents ||= map_group_agents
+    end
+
+    def user_image_url(current_domain, user)
+      (user.present? && user.avatar.present?) ? "#{current_domain}/users/#{user.id.to_s}/profile_image_no_blank" : ""
     end
 
     def map_group_agents
