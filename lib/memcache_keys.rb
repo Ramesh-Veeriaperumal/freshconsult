@@ -193,6 +193,10 @@ module MemcacheKeys
 
   LEADERBOARD_MINILIST_REALTIME_FALCON = 'v1/LEADERBOARD_MINILIST_REALTIME_FALCON:%{account_id}:%{user_id}'.freeze
 
+  NER_ENRICHED_NOTE = "NER_ENRICHED_NOTE:%{account_id}:%{ticket_id}"
+
+  SUBSCRIPTION_PLANS = 'v1/SUBSCRIPTION_PLANS'
+
   class << self
 
     include MemcacheReadWriteMethods

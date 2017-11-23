@@ -34,14 +34,15 @@
         width: 50%;
         margin: 0;
         float: right;
-        nav{
+        .sub-nav{
             @include float(right);
-            display: block;
-            @include clear(right);
             div{
                 @include float(left);
                 @include clear(right);
                 @include padding-left(12px);
+                a{
+                    @include margin-right(15px);
+                }
             }
         }
     }
@@ -240,7 +241,7 @@
             .hc-search{ 
                 position: absolute; 
                 @include border-right(0); 
-                width: 56%;  
+                width: 50%;  
                 background-color: $gray;
                 margin-top: 2px;
                 border: 1px solid $box-border;
@@ -293,7 +294,7 @@
         .hc-nav{
             opacity: 1;
             @include transition(opacity 1s ease-in-out);
-            width: 38%;
+            width: 48%;
             nav{ 
                 span{ display:none; }
                 a{
@@ -301,15 +302,15 @@
                     padding: 0;
                     width:20%; 
                     display: inline-block;
+                    @include margin-right(16px);
                 }
             }
-            &.nav-with-contact nav a{ width:32.5%; }
         }
         .help-center-sc{
             .hc-search{
                 position: absolute;
                 border-right: 0;
-                width: 56%;
+                width: 50%;
                 background-color: $gray;
                 margin-top: 2px;
                 border: 1px solid $box-border;
@@ -339,12 +340,16 @@
                 }
             }
             .hc-nav{
-                width: 39%;
+                width: 48%;
                 margin: 0;
                 @include float(right);
                 margin-top: 10px;
-                a{
-                    width: 60%;
+                .sub-nav{
+                    @include float(none);
+                    div{
+                        @include padding-left(6px);
+                        float: none;
+                    }
                 }
             }
         }
@@ -366,7 +371,28 @@
         // @include mobile-icon(nav-newticket, $tab_color);
         // @include mobile-icon(nav-status, $tab_color);
 	}
+
+    @include at-breakpoint($media-tablet-desktop){
+        .help-center-sc{
+            .hc-search{
+                width: 35%;
+                .hc-search-input{
+                    input.special{
+                        @include padding(0 0px 3px 25px);
+                    }
+                }
+            }
+            .hc-nav{
+                width: 65%;
+                nav div{
+                    @include padding-left(6px);
+                }
+            }
+        }
+    }
 }
+
+
 
 .attach-link-wrap{
     position:relative;

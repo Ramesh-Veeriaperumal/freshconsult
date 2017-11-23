@@ -1564,6 +1564,20 @@ module Ember
       match_json(ticket_show_pattern(ticket, nil, true))
     end
 
+    def test_show_with_requester
+      user_tags = ['tag1','tags2']
+      tag_field = @account.contact_form.default_fields.find_by_name(:tag_names)
+      tag_field.update_attributes(field_options: { 'widget_position' => 10 })
+      user = add_new_user(@account, tags: user_tags.join(','))
+      user.reload
+      t = create_ticket(requester_id: user.id)
+      get :show, controller_params(version: 'private', id: t.display_id, include: 'requester')
+      assert_response 200
+      match_json(ticket_show_pattern(ticket, nil, true))
+      assert_equal user_tags.size, t.requester.tags.size
+      tag_field.update_attributes(field_options: nil)
+    end
+
     def test_show_with_valid_meta
       t = create_ticket(requester_id: add_test_agent(@account, role: Role.find_by_name('Agent').id).id)
 

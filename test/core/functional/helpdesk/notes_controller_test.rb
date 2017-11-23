@@ -145,4 +145,100 @@ class Helpdesk::NotesControllerTest < ActionController::TestCase
     assert_equal notification_count, Delayed::Job.where(COMMENT_ADDED_UNIQ_STRING).all.count
   end
 
+  def test_public_note_with_datetime_info
+    Sidekiq::Testing.inline! do
+      # Create a ticket and add an incoming note with datetime information
+      # memcache will store the datatimeinfo & note id.
+
+      ticket = create_ticket({:subject => "TEST_TICKET", :description => "FRESH WORKS Test Ticket"})
+      note = create_note({:incoming => 1, :private => false, :body => "Lets meet at 5pm today", :body => "<div>Lets meet at 5pm today</div>"})
+
+      keys = MemcacheKeys::NER_ENRICHED_NOTE % { :account_id => @account.id , :ticket_id => ticket.id }
+      stored_data =  MemcacheKeys.fetch(keys)
+
+      assert_equal stored_data["datetimes"][0]["value"]["time"], "17:00:00"
+      assert_equal stored_data["note_id"], note.id
+    end
+  end
+
+  def test_public_note_without_datetime_info
+    Sidekiq::Testing.inline! do
+      ticket = create_ticket({:subject => "TEST_TICKET", :description => "FRESH WORKS Test Ticket"})
+
+      keys = MemcacheKeys::NER_ENRICHED_NOTE % { :account_id => @account.id , :ticket_id => ticket.id }
+      MemcacheKeys.delete_from_cache keys
+
+      # An incoming note without datetime information -> memcache will not be updated.
+      # Memcache will still have last incoming note's datetime info or nil (if there is none). 
+
+      note = create_note({:incoming => 1, :private => false, :body => "This is sample note", :body => "<div>This is sample note</div>"})
+      stored_data =  MemcacheKeys.get_from_cache(keys)
+      assert_equal stored_data, nil
+    end
+  end
+
+  def test_agent_note_with_datetime_info
+    Sidekiq::Testing.inline! do
+      user = add_test_agent
+
+      # create ticket as agent
+
+      ticket = create_ticket({:subject => "TEST_TICKET", :description => "FRESH WORKS Test Ticket", :requester_id => user.id})
+      keys = MemcacheKeys::NER_ENRICHED_NOTE % { :account_id => @account.id , :ticket_id => ticket.id }
+      MemcacheKeys.delete_from_cache keys
+
+      # An outgoing agent note with datetime information -> memcache will not be updated.
+      # Memcache will still have last incoming note's datetime info or nil (if there is none). 
+
+      note = create_note({:incoming => 0, :private => false, :body => "Lets meet at 5pm today", :body => "<div>Lets meet at 5pm today</div>"})
+      stored_data =  MemcacheKeys.get_from_cache(keys)
+      assert_equal stored_data, nil
+    end
+  end
+
+  def test_note_with_updated_datetime_info
+    Sidekiq::Testing.inline! do
+      user = add_new_user(@account)
+
+      # create ticket as customer
+
+      ticket = create_ticket({:subject => "TEST_TICKET", :description => "FRESH WORKS Test Ticket", :requester_id => user.id})
+      keys = MemcacheKeys::NER_ENRICHED_NOTE % { :account_id => @account.id , :ticket_id => ticket.id }
+      MemcacheKeys.delete_from_cache keys
+
+      # customer incoming note with datetime information - datetime info will be stored in memcache
+
+      note1 = create_note({:incoming => 1, :private => false, :body => "Lets meet at 5.30pm today", :body => "<div>Lets meet at 5.30pm today</div>", :user_id => user.id})
+      stored_data =  MemcacheKeys.get_from_cache(keys)
+      assert_equal stored_data["datetimes"][0]["value"]["time"], "17:30:00"
+      assert_equal stored_data["note_id"], note1.id
+
+      # customer incoming note without datetime information.
+      # memcache will not be updated and retain the last incoming note's value (which is having datetime infomration)
+      # Here, memcache will still be having note1's id & its date time info
+
+      note2 = create_note({:incoming => 1, :private => false, :body => "This is sample note", :body => "<div>This is sample note</div>", :user_id => user.id})
+      stored_data =  MemcacheKeys.get_from_cache(keys)
+      assert_equal stored_data["datetimes"][0]["value"]["time"], "17:30:00"
+      assert_not_match stored_data["note_id"], note2.id
+      assert_equal stored_data["note_id"], note1.id
+
+      # Agent's outgoing note with datetime information.
+      # memcache will not be updated and retain the last incoming note's value (which is having datetime infomration)
+      # Here, memcache will still be having note1's id & its date time info
+
+      note3 = create_note({:incoming => 0, :private => false, :body => "Lets meet at 6.34pm today", :body => "<div>Lets meet at 6.34pm today</div>"})
+      stored_data =  MemcacheKeys.get_from_cache(keys)
+      assert_equal stored_data["datetimes"][0]["value"]["time"], "17:30:00"
+      assert_not_match stored_data["note_id"], note3.id
+      assert_equal stored_data["note_id"], note1.id
+
+      # customer incoming note with datetime information - datetime info & note id will be updated in memcache.
+
+      note4 = create_note({:incoming => 1, :private => false, :body => "Lets meet at 7.30pm today", :body => "<div>Lets meet at 7.30pm today</div>", :user_id => user.id})
+      stored_data =  MemcacheKeys.get_from_cache(keys)
+      assert_equal stored_data["datetimes"][0]["value"]["time"], "19:30:00"
+      assert_equal stored_data["note_id"], note4.id
+    end
+  end
 end

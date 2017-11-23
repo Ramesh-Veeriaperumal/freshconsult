@@ -14,7 +14,8 @@ module TicketTemplateHelper
     options.symbolize_keys!
     options = template_default_options.merge(options)
     tkt_template = FactoryGirl.build(:ticket_templates, :name=>options[:name], :description=>Faker::Lorem.sentence(2),
-                          :template_data => {"subject" => options[:subject], "status" => options[:status], "ticket_type" => options[:ticket_type], "group_id" => options[:group_id], "responder_id" => options[:responder_id], "priority" => options[:priority], "product_id" => options[:product_id]},
+                          :template_data => {"subject" => options[:subject], "status" => options[:status], "ticket_type" => options[:ticket_type],
+                                             "group_id" => options[:group_id], "responder_id" => options[:responder_id], "priority" => options[:priority], "product_id" => options[:product_id], "tags" => options[:tags]},
                           :account_id=>options[:account_id],
                           :association_type => options[:association_type])
     (options[:attachments] || []).each do |att|
@@ -101,7 +102,8 @@ module TicketTemplateHelper
       group_id:       @groups[0].id,
       responder_id:   @agent.id,
       priority:       "1",
-      product_id:     ""
+      product_id:     "",
+      tags:           "tag1,tag2,tag3"
     }
   end
 end

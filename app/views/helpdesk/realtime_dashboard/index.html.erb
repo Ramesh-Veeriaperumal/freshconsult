@@ -1,5 +1,5 @@
 <% @page_title = "Dashboard" %>
-<% if current_user && current_user.privilege?(:admin_tasks) %>
+<% if current_user && current_user.privilege?(:admin_tasks) && current_account && !current_account.falcon_ui_enabled?(current_user) %>
     <%= check_fb_reauth_required  %>
     <%= check_twitter_reauth_required %>
 <% end %>

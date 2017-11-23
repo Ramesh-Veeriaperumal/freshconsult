@@ -23,7 +23,7 @@ class Account < ActiveRecord::Base
   after_commit ->(obj) { obj.clear_cache }, on: :update
   after_commit ->(obj) { obj.clear_cache }, on: :destroy
   
-  after_commit :enable_searchv2, :enable_count_es, :enable_collab, :set_falcon_preferences, on: :create
+  after_commit :enable_searchv2, :enable_count_es, :enable_collab, :set_falcon_preferences, :set_email_service_provider, on: :create
   after_commit :disable_searchv2, :disable_count_es, on: :destroy
   after_commit :update_sendgrid, on: :create
   after_commit :remove_email_restrictions, on: :update , :if => :account_verification_changed?
@@ -349,5 +349,9 @@ class Account < ActiveRecord::Base
 
     def falcon_ui_applicable?
       ismember?(FALCON_ENABLED_LANGUAGES, self.language)
+    end
+
+    def set_email_service_provider
+      EmailServiceProvider.perform_async
     end
 end

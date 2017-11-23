@@ -26,7 +26,10 @@ module Marketplace::ApiEndpoint
 
     # Marketplace OAuth
     [:oauth_install,            "product/%{product_id}/account/%{account_id}/versions/%{version_id}/oauth_install", []],
-    [:fetch_tokens,             "fetch_tokens", [:code]],
+    [:fetch_tokens,             'fetch_tokens', []],
+
+    #Helpkit OAuth callback url
+    [:oauth_callback,           '/admin/marketplace/installed_extensions/%{extension_id}/%{version_id}/oauth_callback', []]
 
   ]
 

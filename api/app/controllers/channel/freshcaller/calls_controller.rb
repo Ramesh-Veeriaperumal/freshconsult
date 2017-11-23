@@ -86,6 +86,6 @@ class Channel::Freshcaller::CallsController < ApiApplicationController
     def load_call_attributes(delegator)
       @ticket = delegator.ticket
       @agent = delegator.agent
-      @contact = delegator.contact || load_contact_from_search
+      @contact = delegator.contact || load_contact_from_search || load_contact_from_number
     end
 end

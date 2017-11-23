@@ -172,7 +172,9 @@ module Helpdesk::RequesterWidgetHelper
   end
 
   def requester_company_fields
-    requester_widget_company_fields.map { |x| x.name if x.column_name == 'default' && !COMPANY_FIELDS_EXCLUDE_TYPES.include?(x.field_type) } - FIELDS_INFO[:company][:disabled_fields]
+    fields = requester_widget_company_fields.map { |x| x.name if x.column_name == 'default' && !COMPANY_FIELDS_EXCLUDE_TYPES.include?(x.field_type) }
+    fields.reject! { |field| FIELDS_INFO[:company][:disabled_fields].include? field } unless add_company
+    fields
   end
 
   private

@@ -78,6 +78,27 @@ class ConversationsControllerTest < ActionController::TestCase
     match_json(note_pattern({}, Helpdesk::Note.last))
   end
 
+  # Note content having the protocol 'notes://' will also be auto-linked like 'http://'
+  # Test case 1 - lotes notes protocol (notes://)
+  def test_create_public_note_for_lotes_notes
+    body = 'notes://domino02/C1258106002EBFEA/4B75A35B5C1FE7DE482572F4002B516C/CF870A2907AA7CBCC12581AF00254B9F'
+    params_hash = { body: body }
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
+    autolinked_custom = "<a href=\\\"notes://domino02/C1258106002EBFEA/4B75A35B5C1FE7DE482572F4002B516C/CF870A2907AA7CBCC12581AF00254B9F\\\">notes://domino02/C1258106002EBFEA/4B75A35B5C1FE7DE482572F4002B516C/CF870A2907AA7CBCC12581AF00254B9F</a>"
+    assert_response 201
+    assert response.body.include?(autolinked_custom)
+  end
+
+  # Test case 2 - lotes notes protocol (notes://) doesn't break existing protocols (http://)
+  def test_create_public_note_for_lotes_notes_http
+    body = 'notes://domino02/C1258106002EBFEA/4B75A35B5C1FE7DE482572F4002B516C/CF870A2907AA7CBCC12581AF00254B9F http://google.com'
+    params_hash = { body: body }
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
+    autolinked_normal = "<a href=\\\"http://google.com\\\" rel=\\\"noreferrer\\\">http://google.com</a>"
+    assert_response 201
+    assert response.body.include?(autolinked_normal)
+  end
+
   def test_create_with_user_id_valid
     params_hash = create_note_params_hash.merge(user_id: user.id)
     post :create, construct_params({ id: ticket.display_id }, params_hash)
@@ -632,6 +653,18 @@ class ConversationsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: n.id }, params)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
+  end
+
+  def test_update_private_note
+    user = add_new_user(@account)
+    n = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2, private: true)
+    params = update_note_params_hash
+    put :update, construct_params({ id: n.id }, params)
+    assert_response 200
+    latest_note = Helpdesk::Note.find(n.id)
+    assert latest_note.private
+    match_json(update_note_pattern(params, latest_note))
+    match_json(update_note_pattern({}, latest_note))
   end
 
   def test_destroy

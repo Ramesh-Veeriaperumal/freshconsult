@@ -92,4 +92,18 @@ describe Admin::Marketplace::InstalledExtensionsController do
     end
   end
 
+  describe "GET oauth_install" do
+    it "redirects to oauth service" do
+      get :oauth_install, { extension_id: 1, version_id: 2 }
+      expect(response.status).to eq(302)
+    end
+  end
+
+  describe "GET oauth_callback" do
+    it "redirects to settings page of app" do
+      get :oauth_callback, { extension_id: 1, version_id: 1 }
+      expect(response.status).to eq(302)
+    end
+  end
+
 end

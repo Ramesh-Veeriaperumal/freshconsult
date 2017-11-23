@@ -8,7 +8,7 @@
 <% end %>
 <%= form_for @role, :url => admin_role_path(@role), :html => { :id => 'role_form' , :method => :put, :rel => "validate" } do |role_form| %>
   <h3 class="lead itil-hide">
-        <%= @role.default_role? ? t('admin.roles.default_role') : t('admin.roles.edit') %>
+        <%= @role.default_role? ? t('admin.roles.default_role_with_name', {role_name: @role[:name]}) : t('admin.roles.edit') %>
       <% unless @role.default_role? %>
         <div class="pull-right">
           <%= link_to t('cancel'), admin_roles_path, :class => "btn"%>

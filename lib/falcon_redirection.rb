@@ -24,7 +24,7 @@ class FalconRedirection
                       /^\/discussions\/forums\/(\d+)/ => '/a/forums/folders/:id',
                     }.freeze
 
-    SOCIAL_STREAMS_PATH = ['admin/social/facebook_streams','integrations/slack_v2/add_slack_agent','integrations/slack_v2/new'].freeze
+    SOCIAL_STREAMS_PATH = ['admin/social/facebook_streams','admin/social/twitter_streams','integrations/slack_v2/add_slack_agent','integrations/slack_v2/new'].freeze
     
     def falcon_redirect(options)
       @options = options

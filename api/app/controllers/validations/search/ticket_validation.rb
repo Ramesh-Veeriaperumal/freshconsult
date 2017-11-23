@@ -9,7 +9,7 @@ module Search
     validates :priority, data_type: { rules: Array }, array: { custom_inclusion: { in: ApiTicketConstants::PRIORITIES, detect_type: true } }
     validates :group_id, :agent_id, array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true } }
     validates :created_at, :updated_at, :fr_due_by, :due_by, data_type: { rules: Array }, array: { date_time: { only_date: true, allow_nil: true } }
-    validates :type, data_type: { rules: Array }, array: { custom_inclusion: { in: proc { TicketsValidationHelper.ticket_type_values } } }
+    validates :type, data_type: { rules: Array }, array: { custom_inclusion: { in: proc { TicketsValidationHelper.ticket_type_values }, allow_nil: true } }
     validates :tag, data_type: { rules: Array }, array: { data_type: { rules: String, allow_nil: true }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } }
 
     validates :custom_fields, custom_field: { custom_fields:
@@ -17,7 +17,8 @@ module Search
                                validatable_custom_fields: proc { |x| x.ticket_custom_fields },
                                required_attribute: :required,
                                search_validation: :true,
-                               drop_down_choices: proc { TicketsValidationHelper.custom_dropdown_field_choices }
+                               drop_down_choices: proc { TicketsValidationHelper.custom_dropdown_field_choices },
+                               section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
                              } }
 
     def initialize(request_params, ticket_custom_fields)

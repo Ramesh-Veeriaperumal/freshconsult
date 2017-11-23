@@ -122,7 +122,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   def set_content_type
     file_ext = File.extname(self.content_file_name).gsub('.','').downcase
-    self.content_content_type = BINARY_TYPE if !ATTACHMENT_WHITELIST.keys.include?(file_ext) || ATTACHMENT_WHITELIST[file_ext] != self.content_content_type.downcase
+    self.content_content_type = BINARY_TYPE if !ATTACHMENT_WHITELIST.keys.include?(file_ext) || !(self.content_content_type.present? && ATTACHMENT_WHITELIST[file_ext] == self.content_content_type.downcase)
   end
 
   def set_content_dispositon

@@ -5007,7 +5007,7 @@ lv-LV:
     success_signin: "Veiksmīgi savienots @%{twitter_screen_name} ar %{helpdesk}."
     user_exists: "Twitter konts ir jau savienots ar citu produktu."
     not_authorized: "Jūs netikāt autorizēts caur Twitter"
-    not_valid: "Status pārsniedz 140 simbolus."
+    not_valid: "Status pārsniedz 280 simbolus."
     deleted: "Twitera konts @%{twitter_screen_name} ir noņemts."
     sent: "Tvīts ir veiksmīgi nosūtīts"
     error_sending: "Kļūda nosūtot tvītu! Twitter darbībā iespējami traucējumi. Lūdzu pamēģini vēlreiz."
