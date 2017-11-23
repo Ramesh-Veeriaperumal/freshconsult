@@ -39,8 +39,8 @@ module Facebook
       def add_as_note(thread, ticket)
         thread_id = thread[:id]
         messages  = thread[:messages].symbolize_keys!
-
-        messages[:data].reverse.each do |message|
+        messages  = messages[:data].reject{|message| (@fan_page.created_at > Time.zone.parse(message['created_time'])) }
+        messages.reverse.each do |message|
           message.symbolize_keys!
           next if @account.facebook_posts.exists?(:post_id => message[:id])
           user = facebook_user(message[:from])
@@ -80,7 +80,7 @@ module Facebook
 
       def add_as_ticket(thread)
         messages = thread[:messages].symbolize_keys!
-        messages = new_data_set(messages)
+        messages = filter_messages_from_data_set(messages)
         message  = messages.last
         group_id = Account.current.features?(:social_revamp) ? @fan_page.dm_stream.ticket_rules.first.group_id : @fan_page.group_id
         

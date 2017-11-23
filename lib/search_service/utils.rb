@@ -1,6 +1,6 @@
 module SearchService
   class Utils
-      SUPPORTED_LOCALES = %w(ja-JP ko ru-RU zh-CN) 
+      SUPPORTED_LOCALES = %w(ja-JP ko ru-RU zh-CN en) 
       SUPPORTED_TYPES   = %w(article)
       DEFAULT_LOCALE    = 'default'
 

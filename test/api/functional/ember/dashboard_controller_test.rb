@@ -246,7 +246,7 @@ module Ember
     def test_unresolved_tickets_with_invalid_group_by_values
       get :unresolved_tickets_data, controller_params(version: 'private', group_by: 'requester_id')
       assert_response 400
-      pattern = bad_request_error_pattern('group_by', :not_included, list: 'group_id,responder_id')
+      pattern = bad_request_error_pattern('group_by', :not_included, list: 'group_id,responder_id,internal_group_id,internal_agent_id')
       match_json [pattern]
     end
 

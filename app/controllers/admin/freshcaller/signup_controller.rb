@@ -32,7 +32,7 @@ class Admin::Freshcaller::SignupController < Admin::AdminController
 
   def add_freshcaller_agent
     current_user.agent.create_freshcaller_agent(:agent => current_user.agent, 
-	    :fc_enabled => true, :fc_user_id => @response[:agent]["id"])
+	    :fc_enabled => true, :fc_user_id => @response[:user]["id"])
   end
 
   def enable_freshcaller
@@ -60,7 +60,8 @@ class Admin::Freshcaller::SignupController < Admin::AdminController
         :api => {
           :account_name => current_account.name,
           :account_id => current_account.id,
-          :freshdesk_calls_url => "#{protocol}#{current_account.full_domain}/api/channel/freshcaller_calls"
+          :freshdesk_calls_url => "#{protocol}#{current_account.full_domain}/api/channel/freshcaller_calls",
+          :app => 'Freshdesk'
         }
       }
     }

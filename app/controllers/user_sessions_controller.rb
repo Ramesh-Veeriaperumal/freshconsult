@@ -229,7 +229,6 @@ include Mobile::Actions::Push_Notifier
     session.delete :original_user if session.has_key?(:original_user)
     reset_session #Required to expire the CSRF token
     flash.clear if mobile?
-    remove_logged_out_user_mobile_registrations if is_native_mobile?
 
     if current_user_session
       current_user_session.web_session = true unless is_native_mobile?

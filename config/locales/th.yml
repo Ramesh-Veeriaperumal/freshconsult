@@ -4071,7 +4071,7 @@ th:
     success_signin: "เชื่อมบัญชี @%{twitter_screen_name} กับ %{helpdesk} สำเร็จแล้ว"
     user_exists: "บัญชี twitters นี้เชื่อมกับผลิตภัณฑ์อื่นแล้ว"
     not_authorized: "คุณไม่ได้รับการยอมรับจาก Twitter"
-    not_valid: "ข้อความยาวเกิน 140 ตัวอักษร"
+    not_valid: "ข้อความยาวเกิน 280 ตัวอักษร"
     deleted: "บัญชี twitters @%{twitter_screen_name}  ถูกลบออกไปแล้ว"
     sent: ทวิตส่งเสร็จแล้ว
     error_sending: "เกิดข้อผิดพลาดในการส่งข้อความ! twitters อาจไม่เสถียร กรุณาลองใหม่อีกครั้ง"

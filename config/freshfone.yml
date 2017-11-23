@@ -6,8 +6,8 @@ development:
   jwt_default_expiry: 10
   ops_alert:
     call:
-      from: "+919945380200"
-      to: ["+919945380200", "+917373157814"]
+      from: "+12345646409"
+      to: ["+918056045905", "+917373157814"]
     mail:
       from: "freshfone@freshdesk.com"
       to: "freshfone@freshdesk.com"
@@ -21,8 +21,8 @@ test:
   jwt_default_expiry: 100
   ops_alert:
     call:
-      from: "+919945380200"
-      to: ["+919945380200", "+917373157814"]
+      from: "+12345646409"
+      to: ["+918056045905", "+917373157814"]
     mail:
       from: "freshfone@freshdesk.com"
       to: "freshfone@freshdesk.com"

@@ -25,6 +25,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   class UserCreationError < StandardError
   end
 
+  class ShardMappingError < StandardError
+  end
+
   MESSAGE_LIMIT = 10.megabytes
   MAXIMUM_CONTENT_LIMIT = 300.kilobytes
   VIRUS_CHECK_ENABLED = false
@@ -89,7 +92,15 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       email_processing_log("Email Processing Failed: No Shard Mapping found!")
       return processed_email_data(PROCESSED_EMAIL_STATUS[:shard_mapping_failed])
     end
-    return shardmapping.status unless shardmapping.ok?
+    unless shardmapping.ok?
+      if shardmapping.status == MAINTENANCE_STATUS
+        email_processing_log("Email Processing Failed: Account in maintenance")
+        raise ShardMappingError("Account in maintenance")
+      else
+        email_processing_log("Email Processing Failed: invalid shard mapping status")
+        return processed_email_data(PROCESSED_EMAIL_STATUS[:inactive_account])
+      end
+    end
     Sharding.select_shard_of(to_email[:domain]) do
     account = Account.find_by_full_domain(to_email[:domain])
     if account && account.allow_incoming_emails?
@@ -306,7 +317,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
             end
           end
           replacement_char = "\uFFFD"
-          if t_format.to_s == "subject" and (params[t_format] =~ /^=\?(.+)\?[BQ]?(.+)\?=/ or params[t_format].include? replacement_char)
+          if t_format.to_s == "subject" and (params[t_format] =~ /=\?(.+)\?[BQ]?(.+)\?=/ or params[t_format].include? replacement_char)
             params[t_format] = decode_subject
           else
             begin

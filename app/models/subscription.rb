@@ -1,6 +1,7 @@
 class Subscription < ActiveRecord::Base
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include Cache::Memcache::SubscriptionPlan
   
   self.primary_key = :id
   SUBSCRIPTION_TYPES = ["active", "trial", "free", "suspended"]
@@ -55,7 +56,8 @@ class Subscription < ActiveRecord::Base
   after_update :update_reseller_subscription
   after_commit :update_social_subscription, :add_free_freshfone_credit, :update_crm, :dkim_category_change, :update_ticket_activity_export, on: :update
   after_commit :clear_account_susbcription_cache
-  after_commit :suspend_tenant, :schedule_account_block,  on: :update, :if => :suspended?
+  after_commit :schedule_account_block,  on: :update, :if => :suspended?
+  after_commit :suspend_tenant,  on: :update, :if => :trial_to_suspended?
   after_commit :activate_account, on: :update, :if => :non_suspended?
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
@@ -219,27 +221,31 @@ class Subscription < ActiveRecord::Base
   end
 
   def sprout?
-    subscription_plan.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout]
+    subscription_plan_from_cache.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout]
   end
   
   def sprout_classic?
-    subscription_plan.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout_classic]
+    subscription_plan_from_cache.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout_classic]
   end
 
   def new_sprout?
-    subscription_plan.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout_jan_17]
+    subscription_plan_from_cache.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout_jan_17]
   end
 
   def new_blossom?
-    subscription_plan.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:blossom_jan_17]
+    subscription_plan_from_cache.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:blossom_jan_17]
   end
   
   def blossom?
-    subscription_plan.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:blossom]
+    subscription_plan_from_cache.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:blossom]
   end
   
   def blossom_classic?
-    subscription_plan.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:blossom_classic]
+    subscription_plan_from_cache.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:blossom_classic]
+  end
+
+  def subscription_plan_from_cache
+    subscription_plans_from_cache.select {|s_plan| s_plan.id == self.plan_id}.first
   end
 
   def classic?
@@ -354,7 +360,7 @@ class Subscription < ActiveRecord::Base
     freshchat_plans = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:garden], SubscriptionPlan::SUBSCRIPTION_PLANS[:estate],
                         SubscriptionPlan::SUBSCRIPTION_PLANS[:forest], SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_classic],
                         SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic], SubscriptionPlan::SUBSCRIPTION_PLANS[:premium] ]
-    freshchat_plans.include?(self.subscription_plan.name)
+    freshchat_plans.include?(subscription_plan_from_cache.name)
   end
 
   def set_next_renewal_at(billing_subscription)
@@ -393,7 +399,7 @@ class Subscription < ActiveRecord::Base
   end
   
   def plan_name
-    subscription_plan.name
+    subscription_plan_from_cache.name
   end
   
   def non_sprout_plan?
@@ -464,7 +470,7 @@ class Subscription < ActiveRecord::Base
     end
 
     def free_plan?
-      self.subscription_plan.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:free]
+      subscription_plan_from_cache.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:free]
     end
     
     def update_features
@@ -563,11 +569,11 @@ class Subscription < ActiveRecord::Base
     end
 
     def suspend_tenant
-      SearchService::Client.new(self.account_id).tenant_rollback if self.account.service_reads_enabled?
+      SearchService::Client.new(self.account_id).tenant_rollback
     end
 
     def activate_account
-      SearchService::Client.new(self.account_id).activate if self.account.service_reads_enabled?
+      SearchService::Client.new(self.account_id).activate
     end
 
     def autopilot_fields_changed?
@@ -582,12 +588,16 @@ class Subscription < ActiveRecord::Base
     end
 
     def trial_to_suspended?
-      @old_subscription.state.eql?(TRIAL) && self.state.eql?(SUSPENDED) && self.subscription_payments.count.zero?
+      @old_subscription.state.eql?(TRIAL) && self.state.eql?(SUSPENDED)
+    end
+
+    def active_to_suspended?
+      (@old_subscription.state.eql?(FREE) || @old_subscription.state.eql?(ACTIVE)) && self.state.eql?(SUSPENDED)
     end
 
     def schedule_account_block
-      if trial_to_suspended?
-        key = TRIAL_SUSPENDED % {:account_id => self.account.id}
+      if active_to_suspended?
+        key = ACTIVE_SUSPENDED % {:account_id => self.account.id}
         set_others_redis_key(key, true, Account::BLOCK_GRACE_PERIOD)
         Rails.logger.debug("Added trial suspended redis key for account_id: #{self.account.id}")
       end

@@ -14,7 +14,7 @@ class Helpdesk::Note < ActiveRecord::Base
   # So that note count will be reflected if the rmq publish happens via ticket states queue
   after_commit ->(obj) { obj.send(:update_note_count_for_reports)  }, on: :create , :if => :report_note_metrics?
   after_commit :update_ticket_states, on: :create, :unless => :send_and_set?
-  after_commit :notify_ticket_monitor, :push_mobile_notification, on: :create
+  after_commit :notify_ticket_monitor, on: :create
 
   after_commit :send_notifications, on: :create, :if => :human_note_for_ticket?
 
@@ -30,6 +30,8 @@ class Helpdesk::Note < ActiveRecord::Base
   after_update ->(obj) { obj.notable.update_timestamp }, :if => :human_note_for_ticket?
 
   after_commit :update_sentiment, on: :create
+
+  after_commit  :enqueue_for_NER, on: :create, :if => :incoming?
 
   # Callbacks will be executed in the order in which they have been included.
   # Included rabbitmq callbacks at the last
@@ -297,16 +299,6 @@ class Helpdesk::Note < ActiveRecord::Base
             ) unless zendesk_import?
     end
 
-  def push_mobile_notification
-
-      message = { :ticket_id => notable.display_id,
-                  :status_name => notable.status_name,
-                  :subject => truncate(notable.subject, :length => 100),
-                  :priority => notable.priority,
-                  :time => created_at.to_i }
-      send_mobile_notification(:response,message) unless notable.spam? || notable.deleted?
-  end
-
     def notify_ticket_monitor
       return if meta?
       notable.subscriptions.each do |subscription|
@@ -434,6 +426,13 @@ class Helpdesk::Note < ActiveRecord::Base
         :body_html => note_body.body_html
       }
       build_broadcast_message(params)
+    end
+
+    # Trigger background job for NER API on creation of incoming notes
+
+    def enqueue_for_NER
+      user_email = self.user.email
+      NERWorker.perform_async({:obj_id => self.id, :user_email => user_email, :obj_type => :notes, :text => self.body_html})
     end
 end
 

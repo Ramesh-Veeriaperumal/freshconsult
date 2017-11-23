@@ -1494,9 +1494,9 @@ Helpkit::Application.routes.draw do
           get :oauth_callback
           get :edit_oauth_configs
           get :iframe_configs
+          get :oauth_install
         end
         scope ':extension_id' do
-          get :oauth_configs
           post :install
           put :reinstall
           delete :uninstall
@@ -1894,6 +1894,7 @@ Helpkit::Application.routes.draw do
   match '/account/reset/:token' => 'user_sessions#reset', :as => :reset_password
   match '/search_user_domain' => 'domain_search#locate_domain', :as => :search_domain
   match '/email/validate_domain' => 'email#validate_domain', :as => :validate_domain
+  match '/email/account_details' => 'email#account_details', :as => :account_details
   match '/helpdesk/tickets/execute_scenario(/:id)' => 'helpdesk/tickets#execute_scenario' # For mobile apps backward compatibility
   match '/helpdesk/dashboard/:freshfone_group_id/agents' => 'helpdesk/dashboard#load_ffone_agents_by_group'
 

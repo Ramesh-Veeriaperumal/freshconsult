@@ -147,6 +147,7 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 
 .article-body, .help-text, .p-info, .info-text, .list-noinfo, .description-text{
 	max-height: 999999px; // Hack to make fonts not zoom out in android
+	font-weight: normal;
 }
 
 .item-count{ 
