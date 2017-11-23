@@ -40,9 +40,8 @@ module Facebook
         thread_id = thread[:id]
         messages  = thread[:messages].symbolize_keys!
         messages[:data].reverse.each do |message|
-
           message.symbolize_keys!
-          next if note_skip_conditions(message, ticket)
+          next if ((@fan_page.created_at > Time.zone.parse(message[:created_time])) || @account.facebook_posts.exists?(:post_id => message[:id]))
           user = facebook_user(message[:from])
           message[:message] = tokenize(message[:message])
 
