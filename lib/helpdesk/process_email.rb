@@ -859,20 +859,25 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def text_part
-      Timeout.timeout(LARGE_TEXT_TIMEOUT) do
-        if(params[:text].nil? || params[:text].empty?) 
-          if params[:html].size < MAXIMUM_CONTENT_LIMIT
-            params[:text] = Helpdesk::HTMLSanitizer.html_to_plain_text(params[:html])
-          else
-            email_processing_log "Large Email deducted . Content exceeding maximum content limit #{MAXIMUM_CONTENT_LIMIT} . "
-            params[:text] = Helpdesk::HTMLSanitizer.html_to_plain_text(truncate(params[:html], :length => MAXIMUM_CONTENT_LIMIT))
+      begin
+        Timeout.timeout(LARGE_TEXT_TIMEOUT) do
+          if(params[:text].nil? || params[:text].empty?) 
+            if params[:html].size < MAXIMUM_CONTENT_LIMIT
+              params[:text] = Helpdesk::HTMLSanitizer.html_to_plain_text(params[:html])
+            else
+              email_processing_log "Large Email deducted . Content exceeding maximum content limit #{MAXIMUM_CONTENT_LIMIT} . "
+              params[:text] = Helpdesk::HTMLSanitizer.html_to_plain_text(truncate(params[:html], :length => MAXIMUM_CONTENT_LIMIT))
+            end
           end
         end
-      end
-      return params[:text]
+        return params[:text]
+      rescue SystemStackError => e
+        result = handle_system_stack_error e
+        return result
       rescue => e
         Rails.logger.info "Exception while getting text_part , message :#{e.message} - #{e.backtrace}"
-        params[:text] = ""
+      end
+      params[:text] = ""
     end
     
     def get_user(account, from_email, email_config, force_create = false)
@@ -1109,12 +1114,18 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def cleansed_html
-      @cleaned_html_body ||= begin
-        cleansed_html = run_with_timeout(HtmlSanitizerTimeoutError) { 
-           Helpdesk::HTMLSanitizer.clean params[:html]
-        }
-      end 
-    end
+     @cleaned_html_body ||= begin
+       cleansed_html = run_with_timeout(HtmlSanitizerTimeoutError) { 
+         begin
+           result = nil
+           result = Helpdesk::HTMLSanitizer.clean params[:html]
+         rescue SystemStackError => e
+          result = handle_system_stack_error e
+         end
+         result
+       }
+     end 
+   end
 
     def remove_survey_div parsed_html
       survey_div = parsed_html.css("div[title='freshdesk_satisfaction_survey']")
@@ -1239,6 +1250,21 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     data.merge!(:message_id => message_id) if (account_id == -1)
     data.with_indifferent_access      
+  end
+
+  # to handle the div tag issue. Makes the text part as content. saves html part as attachment.
+  def handle_system_stack_error e
+    Rails.logger.info "Error during html sanitize : #{e.message}, #{e.backtrace}"
+    account = Account.current
+    email_cmds_regex = get_email_cmd_regex(account) 
+    result = ((params[:text].nil? || params[:text].empty?) ? "" : body_html_with_formatting(params[:text],email_cmds_regex)) 
+    result = "<br><p style=\"color:#FF2625;\"><b> *** Warning: This email might have some content missing. Please open the attached file original_email.html to see the entire message. *** </b></p><br>" + result
+    original_email_content = StringIO.new(params[:html])
+    original_email_content.content_type = "text/html"
+    original_email_content.original_filename = "original_email.html"
+    params[:attachments] = params[:attachments] + 1
+    params["attachment#{params[:attachments]}"] = original_email_content
+    result
   end
  
   alias_method :parse_cc_email, :parse_cc_email_new

@@ -18,17 +18,18 @@ class Import::Customers::Base
     read_file @customer_params[:file_location]
     mapped_fields
     build_csv_file unless @failed_items.blank?
-    notify_and_cleanup
   rescue CSVBridge::MalformedCSVError => e
     NewRelic::Agent.notice_error(e, {:description => "Error in CSV file format :: #{@params[:type]}_import :: #{current_account.id}"})
     @wrong_csv = e.to_s
-    notify_and_cleanup
   rescue => e
     NewRelic::Agent.notice_error(e, {:description => "Error in #{@params[:type]}_import :: account_id :: #{current_account.id}"})
     puts "Error in #{@params[:type]}_import ::#{e.message}\n#{e.backtrace.join("\n")}"
+    Rails.logger.debug "Error during #{@params[:type]} import : 
+          #{Account.current.id} #{e.message} #{e.backtrace}"
     customer_import.failure!(e.message + "\n" + e.backtrace.join("\n"))
-    notify_mailer(true)
+    corrupted = true
   ensure
+    notify_and_cleanup(corrupted)
     Thread.current["customer_import_#{current_account.id}"] = false
     enable_user_activation(current_account)
     cleanup_file
@@ -62,7 +63,13 @@ class Import::Customers::Base
     set_validatable_custom_fields
     construct_company_params if is_user? && Account.current.multiple_user_companies_enabled?
     unless @item.new_record?
-      @item.update_attributes(@params_hash[:"#{@type}"]) ? @updated+=1 : failed_item(row)
+      begin
+        @item.update_attributes(@params_hash[:"#{@type}"]) ? @updated+=1 : failed_item(row)
+      rescue Exception => e
+        Rails.logger.debug "Error importing contact during update : 
+          #{Account.current.id} #{@params_hash.inspect} #{e.message} #{e.backtrace}"
+        failed_item(row)
+      end
     else
       send("create_imported_#{@params[:type]}") ? @created+=1 : failed_item(row)
     end
@@ -151,9 +158,9 @@ class Import::Customers::Base
     File.size(failed_file_path)
   end
 
-  def notify_and_cleanup
+  def notify_and_cleanup(corrupted = false)
     customer_import && customer_import.destroy
-    notify_mailer
+    notify_mailer corrupted
   end
 
   def notify_mailer param = false

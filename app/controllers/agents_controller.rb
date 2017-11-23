@@ -30,6 +30,7 @@ class AgentsController < ApplicationController
   before_filter :check_occasional_agent_params, :only => [:index]
   before_filter :set_filter_data, :only => [ :update,  :create]
   before_filter :set_skill_data, :only => [:new, :edit]
+  before_filter :access_denied, only: :reset_password, if: :freshid_enabled?
 
   def load_object
     @agent = scoper.find(params[:id])
@@ -128,7 +129,7 @@ class AgentsController < ApplicationController
     #for live chat sync
     # @agent.agent_role_ids = params[:user][:role_ids]
     #check_agent_limit
-    if @user.signup!(:user => params[:user])       
+    if @user.signup!({:user => params[:user]}, nil, !freshid_enabled?)       
       @agent.user_id = @user.id
       @agent.scoreboard_level_id = params[:agent][:scoreboard_level_id]
       @agent.freshcaller_enabled = (params[:freshcaller_agent].try(:to_bool) || false)
@@ -160,11 +161,11 @@ class AgentsController < ApplicationController
       @agent_emails.each do |agent_email|
         next if agent_email.blank?        
         @user  = current_account.users.new
-        if @user.signup!(:user => { 
+        if @user.signup!({:user => { 
             :email => agent_email,
             :helpdesk_agent => true,
             :role_ids => [current_account.roles.find_by_name("Agent").id]
-            })
+            }}, nil, !freshid_enabled?)
           @user.create_agent
           @new_users << @user
         # Has no use in getting started

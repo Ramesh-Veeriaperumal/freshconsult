@@ -1,7 +1,7 @@
 class Support::HomeController < SupportController
 
   before_filter :load_page_meta, :unless => :facebook?
-
+  
   def index
     flash.keep(:notice)
   	redirect_to support_login_path and return unless (allowed_in_portal?(:open_solutions) || forums_enabled?)

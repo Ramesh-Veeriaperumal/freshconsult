@@ -30,17 +30,14 @@ class User < ActiveRecord::Base
   #------User email callbacks ends here------------------------------
 
   before_update :make_inactive, if: -> { self.email_changed? && !@keep_user_active }
-
   after_commit :send_activation_email, on: :update, :if => [:email_updated?]
 
   def drop_authorization
-    authorizations.each do |auth|
-      auth.destroy
-    end
+    authorizations.authorizations_without_freshid.destroy_all
   end
 
   def send_activation_email
-    self.deliver_activation_instructions!(account.main_portal,false) if self.email.present? and (!self.primary_email.verified?)
+    self.deliver_activation_instructions!(account.main_portal,false) if self.email.present? && !self.primary_email.verified? && freshid_disabled_and_customer?
   end
 
   private

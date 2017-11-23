@@ -1,5 +1,5 @@
 <div id="login-page-wrapper">
-	<section id="login-container" class="content-form rounded-6 main">
+	<section id="login-container" class="content-form rounded-6 main {% if portal.freshid_feature? %} freshid_login{% endif %}">
 		<div class="login-form">
 			<div id="login-form">
 				<h2 class="heading">{% translate portal.login_portal %}</h2>
@@ -12,7 +12,7 @@
 				{% snippet forgot_password_form %}
 			</div>
 			{% if portal.can_submit_ticket_without_login %}
-				{% unless portal.has_forums or portal.has_solutions %}				
+				{% unless portal.has_forums or portal.has_solutions %}
 				<hr />
 				<div>
 					<a href="{{ portal.new_ticket_url }}" class="btn btn-newticket">
@@ -21,7 +21,7 @@
 					<h3 class="heading">
 						{% translate portal.submit_new_ticket %}
 					</h3>
-				</div>				
+				</div>
 				{% endunless %}
 			{% endif %}
 		</div>
@@ -33,6 +33,13 @@
 				{{ "Twitter" | login_via_twitter }}
 			</div>
 		{% endif %}
+		{% if portal.freshid_feature? %}
+			<div class="agent-login-link">
+				<i class="ficon-helpdesk_new agent-login-icon"></i>
+				<div class="link-content"><span>{% translate portal.agent_login_info %} </span><a href="{{ portal.freshid_login_url }}">{% translate portal.agent_signin %}</a></div>
+			</div>
+		{% endif %}
+		
 	</section>
 	{% if portal.can_signup_feature %}
 		<section id="signup-container" class="sidebar content-form rounded-6">
