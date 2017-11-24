@@ -20,7 +20,7 @@ module Freshquery
 
         def valid_type?
           return internal_values[:valid_type] if internal_values.key?(:valid_type)
-          internal_values[:valid_type] = case value
+          internal_values[:valid_type] = case value.downcase
           when 'true', 'false'
             true
           else

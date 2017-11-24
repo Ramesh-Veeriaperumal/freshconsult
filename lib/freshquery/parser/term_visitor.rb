@@ -30,12 +30,17 @@ module Freshquery
                                     ])
                       ])
         elsif node.action == '<' || node.action == '>'
-          value = (node.action == '<') ? end_of_day(node.value) : beginning_of_day(node.value)
-          bool_filter(
-            range_filter(key => {
-                           Freshquery::Constants::ES_OPERATORS[node.action] => value
-                         })
-          )
+          operator = Freshquery::Constants::ES_OPERATORS[node.action]
+          if @date_fields.include?(key)
+            value = (node.action == '<') ? end_of_day(node.value) : beginning_of_day(node.value)
+            bool_filter(
+              range_filter(key => { operator  => value })
+            )
+          else
+            bool_filter(
+              range_filter(key => { operator  => node.value })
+            )
+          end
         elsif node.value.nil?
           not_exists_filter(key)
         elsif @date_fields.include?(key)

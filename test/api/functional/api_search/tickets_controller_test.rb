@@ -643,5 +643,33 @@ module ApiSearch
       assert_response 400
       match_json([bad_request_error_pattern('sample_date', :invalid_field), bad_request_error_pattern('section_date', :invalid_field)])
     end
+
+    def test_tickets_custom_number_valid_range_and_filter
+      n1 = 1
+      n2 = 8
+      tickets = @account.tickets.select { |x| x.custom_field['test_custom_number_1'] && (x.custom_field['test_custom_number_1'] >= n1 && x.custom_field['test_custom_number_1'] <= n2) && x.priority == 2 }
+      get :index, controller_params(query: '"(test_custom_number :> ' + n1.to_s + ' AND test_custom_number :< ' + n2.to_s + ') AND priority:2 "')
+      assert_response 200
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json(results: pattern, total: tickets.size)
+    end
+
+    def test_tickets_custom_number_valid_range
+      n1 = -3
+      n2 = 0
+      tickets = @account.tickets.select { |x| x.custom_field['test_custom_number_1'] && (x.custom_field['test_custom_number_1'] >= n1 && x.custom_field['test_custom_number_1'] <= n2) }
+      get :index, controller_params(query: '"(test_custom_number :>  '+ n1.to_s + ' AND test_custom_number :< ' + n2.to_s + ')"')
+      assert_response 200
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json(results: pattern, total: tickets.size)
+    end
+
+    def test_tickets_priority_status_valid_range
+      tickets = @account.tickets.select { |x| [1, 2, 3].include?(x.priority) and [3,4,5,6].include?(x.status) }
+      get :index, controller_params(query: '"(priority :> 1 and priority :< 3) and (status :> 3 and status :< 6)"')
+      assert_response 200
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json(results: pattern, total: tickets.size)
+    end
   end
 end

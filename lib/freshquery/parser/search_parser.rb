@@ -27,13 +27,14 @@ module_eval(<<'...end search.y/module_eval...', 'search.y', 20)
   end
 
   def make_tokens(scanner)
-    keyword_x = "([a-zA-Z][a-zA-Z0-9_]*)[\s]*"
+    keyword_x = "([a-zA-Z][a-zA-Z0-9_]*)"
     seperator_x = ":"
     relational_x = "(>|<)"
-    date_x = "[\s]*'\\d{4}-\\d{2}-\\d{2}'"
+    date_x = "'\\d{4}-\\d{2}-\\d{2}'"
     value_x = "[\s]*([a-zA-Z0-9_\@]+|'[^']+'|[-]?[0-9]+)"
-    term_x = "(#{value_x}|#{relational_x}#{date_x})"
-    regex_string = /(#{keyword_x}#{seperator_x}#{term_x})/
+    integer_x = "[-]?[0-9]+"
+    term_x = "(#{value_x}|#{relational_x}[\s]*(#{date_x}|#{integer_x}))"
+    regex_string = /(#{keyword_x}[\s]*#{seperator_x}#{term_x})/
     until scanner.empty?
       scanner.skip(/(\t|\r|\n|\s)+/)
       case
