@@ -23,7 +23,6 @@ class Social::Dynamo::Feed::Base
   def insert_feed(posted_time, args, attributes, feed_obj, options = {})
     source = feed_obj.source
     parent_feed_id_hash = {}
-    
     execute_on_table(posted_time) do |table_name, time|
       key = "#{args[:account_id]}_#{args[:stream_id]}"
 
@@ -127,7 +126,11 @@ class Social::Dynamo::Feed::Base
     new_hash = {}
     keys.each do |key|
       if key.class.name == "String"
-        new_hash[key] = hash[key.to_sym] unless hash[key.to_sym].blank?
+        if key == "body"
+          new_hash[key] = tweet_body(hash)
+        else 
+          new_hash[key] = hash[key.to_sym] unless hash[key.to_sym].blank?
+        end
       elsif key.class.name == "Hash"
         current_key = key.keys.first
         if !hash[current_key.to_sym].nil?

@@ -167,3 +167,13 @@
     </div>
   </div>
 </div>
+
+<script>
+  if(window.location.hash) {
+    var hash_value = window.location.hash.substring(1);
+    var info = hash_value.split('_');
+    if(info.length > 1 && info[1] == 'configs') {
+      jQuery('.install-form-btn').click()  
+    }
+  }
+</script>

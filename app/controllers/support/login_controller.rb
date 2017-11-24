@@ -28,7 +28,7 @@ class Support::LoginController < SupportController
 	def create
 		@user_session = current_account.user_sessions.new(params[:user_session])
     @user_session.web_session = true
-   	@verify_captcha = (params[:recaptcha_challenge_field] ? verify_recaptcha : true )
+   	@verify_captcha = (params['g-recaptcha-response'.to_sym] ? verify_recaptcha : true )
    	if @verify_captcha && @user_session.save 
 
       @current_user_session = current_account.user_sessions.find
@@ -76,7 +76,7 @@ class Support::LoginController < SupportController
           @show_recaptcha = true
           return
         end
-        if params[:recaptcha_challenge_field] || has_reached_max_attempt?
+        if params['g-recaptcha-response'.to_sym] || has_reached_max_attempt?
           @show_recaptcha = true
         end
       end

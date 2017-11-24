@@ -59,7 +59,7 @@ module RabbitMq::Subscribers::Tickets::Activities
     elsif delete_status?   # delete status
       ticket_changes.merge!(misc_changes) if misc_changes?
     else
-      changes = create_action?(action) ? flexifield.previous_changes : @model_changes
+      changes = create_action?(action) ? flexifield.before_save_changes : @model_changes
       custom_field_changes = process_flexifields(changes, "flexifield_name") unless destroy_action?(action)
       ticket_changes.merge!(custom_field_changes) if custom_field_changes.present?
       ticket_changes.merge!(misc_changes) if misc_changes?

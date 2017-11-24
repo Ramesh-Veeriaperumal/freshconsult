@@ -6828,7 +6828,7 @@ ar:
     success_signin: "تم إقران @%{twitter_screen_name} بـ %{helpdesk} بنجاح."
     user_exists: "حساب Twitter مقترن بمنتج آخر بالفعل."
     not_authorized: "أنت غير مصادق من قبل Twitter"
-    not_valid: "الحالة أكثر من 140 حرفاً."
+    not_valid: "الحالة أكثر من 280 حرفاً."
     deleted: "تمت إزالة حساب @%{twitter_screen_name}."
     sent: "تم إرسال التغريدة بنجاح"
     error_sending: "خطأ في إرسال التغريدة! قد يكون Twitter غير مستقر. يرجى المحاولة مرة أخرى."
@@ -9078,7 +9078,7 @@ ar:
         requester: "مقدم الطلب"
         already_converted: "تم تحويل هذه الرسالة إلى بطاقة بالفعل"
         successfully_converted: "تم إنشاء البطاقة بنجاح"
-        twitter_limit_exceed: "تجاوزت تغريدتك 140 حرفًا. ينبغي أن تكون أكثر مهارة."
+        twitter_limit_exceed: "تجاوزت تغريدتك 280 حرفًا. ينبغي أن تكون أكثر مهارة."
         plugin_error: "Please login to Freshdesk stream to use this plugin"
       note:
         human_name: ملاحظة

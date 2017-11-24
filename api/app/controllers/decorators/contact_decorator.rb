@@ -7,6 +7,10 @@ class ContactDecorator < ApiDecorator
   delegate :company_id, :client_manager, to: :default_company, allow_nil: true
   delegate :multiple_user_companies_enabled?, :unique_contact_identifier_enabled?, to: 'Account.current'
 
+  FIELD_NAME_MAPPING = {
+    'tag_names' => 'tags'
+  }
+
   def initialize(record, options)
     super(record)
     @name_mapping = options[:name_mapping]
@@ -166,8 +170,13 @@ class ContactDecorator < ApiDecorator
     end
 
     def widget_fields_hash(obj, fields, name_mapping = false)
-      return fields.inject({}) { |a, e| a.merge(e.name => obj.send(e.name)) } unless name_mapping
+      return fields.inject({}) { |a, e| a.merge(field_mapping(e)) } unless name_mapping
       fields.inject({}) { |a, e| a.merge(CustomFieldDecorator.display_name(e.name) => obj.send(e.name)) }
+    end
+
+    def field_mapping(field)
+      mapped_field = FIELD_NAME_MAPPING[field.name.to_s]
+      mapped_field ? { mapped_field => send("#{mapped_field}") } : {field.name => record.send(field.name)}
     end
 
     def current_account

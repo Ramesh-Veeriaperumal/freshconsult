@@ -4143,7 +4143,7 @@ uk:
     success_signin: "@%{twitter_screen_name} і %{helpdesk} зв'язані успішно."
     user_exists: "Обіковий запис Twitter вже зв'язаний з іншим продуктом."
     not_authorized: "Ви не авторизовані у Twitter"
-    not_valid: "Status is over 140 characters."
+    not_valid: "Status is over 280 characters."
     deleted: "Обліковий запис @%{twitter_screen_name} видалено."
     sent: "Твіт успішно надіслано"
     error_sending: "Помилка при відправці твіта! Twitter може бути тимчасово недоступний. Повторіть спробу."

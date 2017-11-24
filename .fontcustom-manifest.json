@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "77e4ebe91dc56ea4be9d2f4f53d3ad2e6b11f555e1f1ec9c78c5ea503d36d2d4",
-    "current": "77e4ebe91dc56ea4be9d2f4f53d3ad2e6b11f555e1f1ec9c78c5ea503d36d2d4"
+    "previous": "58162c745893d91f33eabc2de13cfa2c110249eb2c5579ebc1f4d138621510c9",
+    "current": "58162c745893d91f33eabc2de13cfa2c110249eb2c5579ebc1f4d138621510c9"
   },
   "fonts": [
-    "public/assets/glyphs_77e4ebe91dc56ea4be9d2f4f53d3ad2e.ttf",
-    "public/assets/glyphs_77e4ebe91dc56ea4be9d2f4f53d3ad2e.svg",
-    "public/assets/glyphs_77e4ebe91dc56ea4be9d2f4f53d3ad2e.woff",
-    "public/assets/glyphs_77e4ebe91dc56ea4be9d2f4f53d3ad2e.eot"
+    "public/assets/glyphs_58162c745893d91f33eabc2de13cfa2c.ttf",
+    "public/assets/glyphs_58162c745893d91f33eabc2de13cfa2c.svg",
+    "public/assets/glyphs_58162c745893d91f33eabc2de13cfa2c.woff",
+    "public/assets/glyphs_58162c745893d91f33eabc2de13cfa2c.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -245,6 +245,14 @@
     "calendar": {
       "codepoint": 61884,
       "source": "public/glyphs/vectors/calendar.svg"
+    },
+    "calender_new": {
+      "codepoint": 62141,
+      "source": "public/glyphs/vectors/calender_new.svg"
+    },
+    "call_phone": {
+      "codepoint": 62139,
+      "source": "public/glyphs/vectors/call_phone.svg"
     },
     "calling": {
       "codepoint": 61718,
@@ -1485,6 +1493,10 @@
     "tick": {
       "codepoint": 61975,
       "source": "public/glyphs/vectors/tick.svg"
+    },
+    "tick-new": {
+      "codepoint": 62140,
+      "source": "public/glyphs/vectors/tick-new.svg"
     },
     "ticket": {
       "codepoint": 61849,

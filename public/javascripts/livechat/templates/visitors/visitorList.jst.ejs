@@ -10,7 +10,7 @@
     <span class="<%=(userDetails.length > 17) ? 'tooltip': ''%>">
     	<%=visitor.name%><b><%=" "+CHAT_I18n.chatting_with + " "%> </b> <%=userCollection.get(visitor.agent).get('name')%>
     </span>
-    <%}else if(visitor.agent)
+    <%}else if(visitor.agent && userCollection.get(visitor.agent))
     { var visitorName = visitor.name || visitor.msg;
      var userDetails=visitor.name+ " "+CHAT_I18n.chatted_with + " "+userCollection.get(visitor.agent).get( 'name') %>
     <td class="<%=visitor.sclass%> <%=(userDetails.length > 17) ? 'tooltip': ''%>" data-original-title="<%=userDetails%>"><i class="ficon-user" title="<%=visitor.tip%>"></i>

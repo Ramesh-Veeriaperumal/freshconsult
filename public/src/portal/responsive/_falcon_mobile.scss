@@ -151,11 +151,12 @@
         .login-form{ 
             max-width: none; 
             button[type="submit"]{
-                width: 100% !important;
-                margin: 15px 0;
+                width: 100%;
+                @include margin(15px 0);
             }
-            button.btn.btn-primary{
-                width: auto;
+            button[type="button"]{
+                width: 100%;
+                margin-bottom: 10px;
             }
         }
         .alt-login-button{ 
@@ -223,7 +224,19 @@
             }
         }
 
+        .ui-datepicker {
+            .ui-datepicker-header{
+            @include padding(0);
+            }
+            .ui-datepicker-month,
+            .ui-datepicker-year{
+               height: auto;
+            }
+        }
 
+        .show_results{
+            color: $blue;
+        }
 
         .login-form, .alt-login-button{ width:auto; @include float(none); border: 0; @include padding(0); }
         // Sprite

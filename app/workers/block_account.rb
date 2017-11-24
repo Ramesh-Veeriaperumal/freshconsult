@@ -11,9 +11,12 @@ class BlockAccount < BaseWorker
       shard_mapping.status = ShardMapping::STATUS_CODE[:blocked]
       shard_mapping.save!
       $spam_watcher.perform_redis_op('del', "#{account.id}-")
+      SearchService::Client.new(account.id).tenant_rollback
       Fdadmin::APICalls.make_api_request_to_global(:post, url_params,
                                                    AdminApiConfig[Rails.env]['activity_url'],
-                                                   AdminApiConfig[Rails.env]['url'])
+                                                   AdminApiConfig[Rails.env]['url'].sub(/^https?\:\/\//,'')[0..-2])
+      #Removing protocol part from url as it's explicitly prepended in make_api_request_to_global. Removed trailing backslash as the path includes that already
+      #Need to revisit fdadmin_api_config
     end
   end
 
