@@ -858,7 +858,12 @@ HelpdeskReports.Qna_util = (function($) {
               clearQueryFn();
               return;
             }
-          } else if (ev.keyCode != 40) {
+          } else if (
+            !(
+              ev.keyCode === constants.keyCodes.DOWNARROW ||
+              ev.keyCode === constants.keyCodes.ENTER
+            )
+          ) {
             var url = $el.attr('data-url');
             var condition = $el.attr('id');
             var next_breadcrumb = $el.attr('data-next-breadcrumb');
@@ -962,7 +967,12 @@ HelpdeskReports.Qna_util = (function($) {
             q: text
           },
           success: function(data, params) {
-            $('.questions li').not('.search-header').remove();
+            // arbitary safety mechanism to not overwrite question popover
+            // list if the user has already moved passed the remote search phase
+            if (!$('.questions li.search-header').length) {
+              return;
+            }
+
 
             $.each(data.results, function(index, item) {
               var $li = $('<li class="wide-width">' + item.value + '</li>');
