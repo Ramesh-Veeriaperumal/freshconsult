@@ -372,6 +372,8 @@ module Redis::RedisKeys
   DISABLE_PORTAL_NEW_THEME = "DISABLE_PORTAL_NEW_THEME"
 
 
+  FRESHID_CLIENT_CREDS_TOKEN_KEY = 'FRESHID_CLIENT_CREDS_TOKEN'
+
 	def newrelic_begin_rescue
 		begin
 		  yield

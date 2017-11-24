@@ -4,6 +4,7 @@ module Freshcaller
       response_data = {}
       account = ::Account.current
       return unless account_admin
+      protocol = Rails.env.development? ? 'http://' : 'https://'
       signup_params = {
         signup: {
           user_name: account_admin.name,
@@ -18,6 +19,7 @@ module Freshcaller
             activation_required: false,
             account_name: account.name,
             account_id: account.id,
+            freshdesk_calls_url: "#{protocol}#{account.full_domain}/api/channel/freshcaller_calls",
             app: 'Freshdesk'
           }
         }
