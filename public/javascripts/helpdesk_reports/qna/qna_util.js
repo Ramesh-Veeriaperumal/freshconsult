@@ -71,7 +71,9 @@ HelpdeskReports.Qna_util = (function($) {
     filtering: false,
     populateSearchBox: function(selected_item) {
       var bg_color = '#fff'; //constants.question_colors[this.question_prefix_count];
-      var $alreadySelectedQuestionPrefix = $('.qna-search-bar .selected-queries');
+      var $alreadySelectedQuestionPrefix = $(
+        '.qna-search-bar .selected-queries'
+      );
 
       var mkup =
         '<div class="value-block" data-level="' +
@@ -93,7 +95,7 @@ HelpdeskReports.Qna_util = (function($) {
       // delete/backspace, and then user starts typing to select a prefix,
       // we should unhighlighted the already selected prefixes
       if ($alreadySelectedQuestionPrefix.hasClass('highlighted')) {
-        $alreadySelectedQuestionPrefix.removeClass('highlighted')
+        $alreadySelectedQuestionPrefix.removeClass('highlighted');
       }
 
       this.resizeSearchInput();
@@ -360,7 +362,10 @@ HelpdeskReports.Qna_util = (function($) {
             i,
             el
           ) {
-            var innerHtml = $(el).html().trim().toLowerCase();
+            var innerHtml = $(el)
+              .html()
+              .trim()
+              .toLowerCase();
             if (innerHtml.indexOf(filter_text) > -1) {
               $(el).show();
             } else {
@@ -368,6 +373,14 @@ HelpdeskReports.Qna_util = (function($) {
             }
           });
           this.filtering = false;
+
+          // highlight the first choice automatically
+          $('.questions li:not(".search-header")').removeClass('active');
+
+          $('.questions li:not(".search-header")')
+            .filter(':not(:hidden)')
+            .first()
+            .addClass('active');
         } else {
           // $(".questions li").not('.search-header').velocity('slideDown');
           this.filtering = false;
@@ -518,7 +531,10 @@ HelpdeskReports.Qna_util = (function($) {
 
       // show all the items in the popover
       $questionsInPopover.show();
-      $questionsInPopover.removeClass('active').first().addClass('active');
+      $questionsInPopover
+        .removeClass('active')
+        .first()
+        .addClass('active');
       $noQuestionPrefixesMessage.remove();
     },
     handleKeyupOnSearchBox: function(e) {
@@ -621,7 +637,9 @@ HelpdeskReports.Qna_util = (function($) {
 
       var $input = $('#search-query');
       var inputText = $input.val();
-      var $alreadySelectedQuestionPrefix = $('.qna-search-bar .selected-queries');
+      var $alreadySelectedQuestionPrefix = $(
+        '.qna-search-bar .selected-queries'
+      );
 
       // when question prefixes is filtered against an empty string
       // we need to show all of them, this happens when a user deletes
@@ -660,7 +678,7 @@ HelpdeskReports.Qna_util = (function($) {
       this._clearQueryAfterInvokedTwice = undefined;
 
       if ($alreadySelectedQuestionPrefix.hasClass('highlighted')) {
-        $alreadySelectedQuestionPrefix.removeClass('highlighted')
+        $alreadySelectedQuestionPrefix.removeClass('highlighted');
       }
 
       var questionPrefixes = constants.question_prefixs;
@@ -909,7 +927,11 @@ HelpdeskReports.Qna_util = (function($) {
               return;
             }
           }
-          _this.filterList();
+
+          if (_.values(constants.navigationalKeys).indexOf(e.keyCode) === -1) {
+            _this.filterList();
+          }
+
           return false;
         }
       );
@@ -950,7 +972,9 @@ HelpdeskReports.Qna_util = (function($) {
       prefix
     ) {
       var _this = this;
-      $('.questions li').not('.search-header').remove();
+      $('.questions li')
+        .not('.search-header')
+        .remove();
 
       var text = $('[rel=remote-search]').val();
       if (text != undefined && text != '' && text.length >= 2) {
@@ -973,6 +997,9 @@ HelpdeskReports.Qna_util = (function($) {
               return;
             }
 
+            $('.questions li')
+              .not('.search-header')
+              .remove();
 
             $.each(data.results, function(index, item) {
               var $li = $('<li class="wide-width">' + item.value + '</li>');
@@ -992,13 +1019,22 @@ HelpdeskReports.Qna_util = (function($) {
             if (data.results.length == 0) {
               var $emptyli = $('<li class="wide-width">No results found</li>');
               $('.questions').append($emptyli);
+            } else {
+              // highlight the first choice automatically
+              $('.questions li:not(".search-header")').removeClass('active');
+
+              $('.questions li:not(".search-header")')
+                .first()
+                .addClass('active');
             }
           },
           cache: true
         };
         this.makeAjaxRequest(config);
       } else {
-        $('.questions li').not('.search-header').remove();
+        $('.questions li')
+          .not('.search-header')
+          .remove();
       }
     },
     makeAjaxRequest: function(args) {
