@@ -420,7 +420,7 @@ var TemplateDockManager   = Class.create({
     }
     progEl.siblings('.app-name').html(html);
     jQuery('.mkp-error-details').click(function() {
-      jQuery('.mkp-error-details').html('<p>'+ message +'<p>');
+      jQuery('.mkp-error-details').html('<p>'+ escapeHtml(message) +'<p>');
     });
   },
 
