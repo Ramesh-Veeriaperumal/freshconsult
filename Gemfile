@@ -75,7 +75,7 @@ gem "oauth", "0.4.5"
 gem "tzinfo", "~> 0.3.29"
 gem 'rails_autolink', '1.1.6'
 
-gem "omniauth-oauth2", "1.1.1"
+gem "omniauth-oauth2", "1.0"
 gem "omniauth-openid", "1.0.1"
 # TODO-RAILS3 need check are we still using this
 gem "omniauth-google", "1.0.2"
@@ -189,6 +189,7 @@ gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 gem 'freshdesk_features', :git => 'git@github.com:freshdesk/freshdesk-features.git', :branch => "freshdesk", :require => true
 gem 'launchparty', :git => 'git@github.com:freshdesk/launch-party.git', :tag => 'v0.1.4'
 gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branch => 'not_a_model_column'
+gem 'freshid', "1.0.0", :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :branch => "master", :require => true
 
 gem 'net-http-persistent', '~> 2.9.4'
 
@@ -287,10 +288,10 @@ end
 
   # TODO_RAILS3 Remove the default asset pipeline
   gem "jammit",         "0.6.5"
-  gem "uglifier",         "~> 2.7.2"
+  gem "uglifier",         "~> 2.1.2"
   gem "yui-compressor",     :git => "git://github.com/freshdesk/ruby-yui-compressor.git"
 
-  gem "sprockets",              "2.2.3"
+  gem "sprockets",              "2.2.2"
   gem "asset_sync",             "1.1.0"
   gem "turbo-sprockets-rails3", "0.3.14"  
   gem "ejs",                    "1.1.1"

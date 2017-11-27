@@ -1,5 +1,6 @@
 defaults: &defaults
   app_id: 157
+  falcon_app_id: 158
 
 development:
   <<: *defaults

@@ -83,8 +83,8 @@ class SpamWatcherRedisMethods
     end
 
     def send_notification(account, user, table_name)
-      operation = "auto blocked"
-      subject = "Ignore the mail , user has been autoblocked"
+      operation = "noticed spamming,"
+      subject = "Spam Watcher - Detected Suspicious activity in #{account.id}"
       spam_alert(account,user,table_name,operation,subject,0)
       deleted_users = [user]
       #SubscriptionNotifier.deliver_admin_spam_watcher(account, deleted_users, 1)

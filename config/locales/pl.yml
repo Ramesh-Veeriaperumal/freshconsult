@@ -4203,7 +4203,7 @@ pl:
     success_signin: "Powiązano @%{twitter_screen_name} z %{helpdesk}."
     user_exists: "Konto Twitter jest już powiązane z innym produktem."
     not_authorized: "Brak autoryzacji z serwisu Twitter"
-    not_valid: "Liczba znaków w statusie przekroczyła 140."
+    not_valid: "Liczba znaków w statusie przekroczyła 280."
     deleted: "Konto Twitter @%{twitter_screen_name} zostało usunięte."
     sent: "Wiadomość tweet została pomyślnie wysłana"
     error_sending: "Podczas wysyłania wiadomości tweet wystąpił błąd! Serwis Twitter może być niestabilny. Spróbuj ponownie."

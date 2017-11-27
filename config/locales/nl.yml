@@ -5025,7 +5025,7 @@ nl:
     success_signin: "@%{twitter_screen_name} is aan %{helpdesk} gekoppeld."
     user_exists: "Het twitter-account is al aan een ander product gekoppeld."
     not_authorized: "Geen toestemming van Twitter"
-    not_valid: "Status is langer dan 140 tekens."
+    not_valid: "Status is langer dan 280 tekens."
     deleted: "Het Twitter-account @%{twitter_screen_name} is verwijderd."
     sent: "De tweet is verstuurd."
     error_sending: "Er is een fout opgetreden bij het versturen van de tweet. Mogelijk is Twitter instabiel. Probeer het opnieuw."

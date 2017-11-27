@@ -555,6 +555,12 @@ input.search-query {
   .hide {
     display: none;
   }
+  .uneditable-input{
+    background-color: $wellBackground;
+    border-color: #ddd;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
 }
 .form-search label,
 .form-inline label,

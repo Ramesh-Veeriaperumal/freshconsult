@@ -673,7 +673,8 @@ module ApplicationHelper
         }
       avatar_image_generator(img_tag_options, profile_size, profile_class)
     else
-        avatar_generator(user.name, profile_size, profile_class, options)
+      name = Account.current.freshid_enabled? && user.name.nil? ? "" : user.name
+      avatar_generator(name, profile_size, profile_class, options)
     end
   end
 

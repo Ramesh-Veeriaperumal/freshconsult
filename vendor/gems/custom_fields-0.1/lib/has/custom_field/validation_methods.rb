@@ -6,6 +6,7 @@ module Has
       VALIDATION_REGEX = {
         :custom_url => /\A(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?\z/i
       }
+      SUPPORTED_URL_SCHEMES = %w(https http ftp).freeze
 
       private
         def presence_of_required_fields
@@ -50,7 +51,17 @@ module Has
         end
 
         def validate_format_of_custom_url field, error_label
-          validate_format_using_regex field, error_label
+          valid = true
+          url = send(field.name)
+          begin
+            if url.present?
+              uri = URI.parse(url)
+              valid = uri && uri.host && SUPPORTED_URL_SCHEMES.include?(uri.scheme)
+            end
+          rescue
+            valid = false
+          end
+          add_error_to_self(field, error_label) unless valid
         end
 
         def validate_format_using_regex field, error_label

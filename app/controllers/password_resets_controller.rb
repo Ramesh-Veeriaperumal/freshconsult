@@ -5,6 +5,12 @@ class PasswordResetsController < SupportController
   before_filter :load_user_using_perishable_token, :only => [:edit, :update]
   before_filter :load_password_policy, :only => :edit
   before_filter :set_native_mobile
+  before_filter :only => :create do |c|
+    redirect_to_freshid_login if freshid_agent?(params[:email]) && !is_native_mobile?
+  end
+  before_filter :only => [:edit, :update] do |c|
+    access_denied if freshid_agent?(@user.email)
+  end
  
   def new
     redirect_to support_login_path(:anchor => "forgot_password")
@@ -14,7 +20,7 @@ class PasswordResetsController < SupportController
     @user = current_account.user_emails.user_for_email(params[:email])
     if @user
       if (@user.active? || @user.agent? || user_activation_enabled) && @user.allow_password_reset?
-        @user.deliver_password_reset_instructions! current_portal 
+        deliver_password_reset_instructions
         message      = t(:'flash.password_resets.email.success')
         redirect_url = root_url
       else
@@ -31,7 +37,7 @@ class PasswordResetsController < SupportController
         }
       end	    
     else
-	  message = t(:'flash.password_resets.email.success')
+      message = t(:'flash.password_resets.email.success')
       respond_to do |format|
         format.html {
           flash[:notice] = message	  
@@ -63,6 +69,12 @@ class PasswordResetsController < SupportController
   end
 
   private
+
+    def deliver_password_reset_instructions
+      freshid_agent?(params[:email]) ? Freshid::ApiCalls.deliver_password_reset_instructions!(@user.email, current_portal.full_url) :
+        @user.deliver_password_reset_instructions!(current_portal)
+    end
+
     def load_user_using_perishable_token
       @user = current_account.users.find_using_perishable_token(params[:id],1.weeks)
       if @user
