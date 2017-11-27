@@ -402,7 +402,7 @@ var TemplateDockManager   = Class.create({
       parent.location.hash = "";
     }
     parent.location.reload();
-    clearInterval(that.progressInterval);
+    clearInterval(this.progressInterval);
   },
 
   handleInstallFailure: function(message) {
