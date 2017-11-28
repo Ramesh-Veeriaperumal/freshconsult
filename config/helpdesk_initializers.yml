@@ -104,4 +104,4 @@ helpdesk:
     - threaded_init
     - ner_api_config
     - freshid
-    - fql
+    - freshquery

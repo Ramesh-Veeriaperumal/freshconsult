@@ -101,7 +101,7 @@ module ApiSearch
       q = '"' + 'a' * 513 + '"'
       get :index, controller_params(query: q)
       assert_response 400
-      match_json([bad_request_error_pattern('query', :too_long, max_count: ApiSearchConstants::QUERY_SIZE, current_count: q.length - 2 , element_type: :characters)])
+      match_json([bad_request_error_pattern('query', :too_long, max_count: 512, current_count: q.length - 2 , element_type: :characters)])
     end
 
     def test_tickets_query_without_operators
@@ -134,9 +134,9 @@ module ApiSearch
     end
 
     def test_tickets_with_invalid_page
-      get :index, controller_params(query: '"priority:111 OR status:1111 OR group_id:1111"', page: 11)
+      get :index, controller_params(query: '"priority:111 OR status:1111 OR group_id:1111"', page: 111)
       assert_response 400
-      match_json([bad_request_error_pattern('page', :per_page_invalid, max_value: 10)])
+      match_json([bad_request_error_pattern('page', :per_page_invalid, max_value: ApiSearchConstants::MAX_PAGE)])
     end
 
     def test_tickets_custom_fields

@@ -1,4 +1,4 @@
-module Fql
+module Freshquery
   class FqTicketHelper
     include Freshquery::ValidationHelper
 

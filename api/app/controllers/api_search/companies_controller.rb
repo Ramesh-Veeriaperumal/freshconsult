@@ -2,7 +2,7 @@ module ApiSearch
   class CompaniesController < SearchController
     decorate_views
     def index
-      response = Fql::Runner.instance.construct_es_query('company',params[:query])
+      response = Freshquery::Runner.instance.construct_es_query('company',params[:query])
       if response.valid?
         page = params[:page] ? params[:page].to_i : ApiSearchConstants::DEFAULT_PAGE
         @items = query_results(response.terms, page, ApiSearchConstants::COMPANY_ASSOCIATIONS, ['company'])

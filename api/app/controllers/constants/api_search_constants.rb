@@ -1,7 +1,5 @@
 module ApiSearchConstants
   FIELDS = ['query'].freeze
-  QUERY_SIZE = 512
-  STRING_WITHIN_QUOTES = /\"(.*)\"/
   DEFAULT_INDEX_FIELDS = ApiConstants::DEFAULT_INDEX_FIELDS - %w(per_page).freeze
   DEFAULT_PER_PAGE = 30
   DEFAULT_PAGE = 1

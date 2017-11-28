@@ -2,7 +2,7 @@ module ApiSearch
   class ContactsController < SearchController
     decorate_views
     def index
-      response = Fql::Runner.instance.construct_es_query('user',params[:query])
+      response = Freshquery::Runner.instance.construct_es_query('user',params[:query])
       if response.valid?
         page = params[:page] ? params[:page].to_i : ApiSearchConstants::DEFAULT_PAGE
         @items = query_results(response.terms, page, ApiSearchConstants::CONTACT_ASSOCIATIONS, ['user'])
