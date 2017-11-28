@@ -2130,7 +2130,7 @@ class Helpdesk::TicketsController < ApplicationController
   def fetch_tickets(tkt=nil)
     if collab_filter_enabled_for?(view_context.current_filter)
       fetch_collab_tickets
-    elsif es_tickets_enabled? and params[:html_format] and non_indexed_columns_query?
+    elsif es_tickets_enabled? and params[:html_format]
       #_Note_: Fetching from ES based on feature and only for web
       tickets_from_es(params)
     else
