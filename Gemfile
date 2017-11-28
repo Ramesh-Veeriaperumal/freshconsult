@@ -57,7 +57,9 @@ group :development, :test do
   gem 'meta_request'
   gem 'fake_sqs'
   gem 'fake_dynamo'
+end
 
+group :development do
   gem 'pronto'
   gem 'pronto-rubocop', require: false
   gem 'pronto-rails_best_practices', require: false
