@@ -469,6 +469,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     TicketConstants.translate_source_name(source)
   end
 
+  def association_type_name
+    TicketConstants.translate_association_type_name(association_type) unless association_type.nil?
+  end
+
   def nickname
     subject
   end
