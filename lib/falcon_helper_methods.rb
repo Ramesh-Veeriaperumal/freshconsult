@@ -7,8 +7,22 @@ module FalconHelperMethods
     end
   end
 
-  def account_and_user_in_en?
-    current_account.language == "en" && current_user && current_user.language == "en"
+  def mint_supported_languages
+    @mint_langs ||= $redis_others.perform_redis_op("smembers", "FALCON_ENABLED_LANGUAGES")
+  end
+
+  def account_and_user_in_mint_langs?
+    mint_langs = mint_supported_languages
+    mint_langs.include?(current_account.language) && current_user && mint_langs.include?(current_user.language)
+  end
+
+  def mint_languages_hash(alert=false)
+    @mint_languages ||= I18n.available_locales_with_name.select {|loc| mint_supported_languages.include?(loc[1].to_s)}
+    if alert
+      @mint_languages.concat([["-----", {:disabled => true}], 
+              ["Coming soon in your language", {:disabled => true}]])
+    end
+    @mint_languages
   end
 
 end

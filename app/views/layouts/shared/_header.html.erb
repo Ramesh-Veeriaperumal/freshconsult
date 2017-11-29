@@ -37,7 +37,7 @@
 
 		<div class="header-wrapper">
 
-	    <% if current_user && current_account.falcon_ui_enabled? && account_and_user_in_en? %>
+	    <% if current_user && current_account.falcon_ui_enabled? && account_and_user_in_mint_langs? %>
 	    	<%= link_to t('go_to_new_ui'), enable_falcon_path,
 						:id=>"ui_toggle", :method => :post %>
 	    <% end %>

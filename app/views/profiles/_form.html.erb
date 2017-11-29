@@ -155,7 +155,7 @@ jQuery('.email').on('keyup', function(){
         <% if current_account.falcon_ui_enabled?(current_user) %>
           <li <% if freshid_enabled? %> class="freshid_field" <% end %>>
             <%= label(:user, :language, t('account.language')) %>
-  					<%= select(:user, :language, I18n.available_locales_with_name, {:selected => user.language.to_sym()} , {:disabled => true})%>
+            <%= select(:user, :language, mint_languages_hash(true), {:selected => user.language.to_sym()})%>
             <a href="javascript:toggleMessage()">
               <i class="info help-icon-language ficon-help-icon fsize-24" size="14"></i>
             </a>
