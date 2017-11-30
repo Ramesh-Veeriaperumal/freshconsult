@@ -1,7 +1,7 @@
 class Channel::Freshcaller::CallsController < ApiApplicationController
   include ::Freshcaller::JwtAuthentication
   include ::Freshcaller::CallConcern
-  skip_before_filter :check_privilege, :verify_authenticity_token, :set_current_account, :check_day_pass_usage_with_user_time_zone
+  skip_before_filter :check_privilege, :set_current_account, :check_day_pass_usage_with_user_time_zone
   before_filter :custom_authenticate_request
   decorate_views(decorate_object: [:create])
 
