@@ -691,6 +691,7 @@ class Helpdesk::TicketsController < ApplicationController
     @item.schedule_observer = true
     params[nscname][:tag_names] = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].blank?
     verify_update_properties_permission if @item.assign_ticket_attributes(params[nscname])
+    build_attachments @note, :helpdesk_note
     if @note.save_note
       enqueue_send_set_observer
       if is_reply?
