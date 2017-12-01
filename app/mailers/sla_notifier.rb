@@ -43,9 +43,9 @@ class SlaNotifier < ActionMailer::Base
       headers = {
         :subject                   => params[:subject],
         :to                        => agent.email,
-        :from                      => ticket.account.default_friendly_email,
+        :from                      => ticket.reply_email_config.reply_email,
         :sent_on                   => Time.now,
-        "Reply-to"                 => "#{ticket.account.default_friendly_email}",
+        "Reply-to"                 => "#{ticket.reply_email_config.reply_email}",
         "Auto-Submitted"           => "auto-generated", 
         "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
       }
