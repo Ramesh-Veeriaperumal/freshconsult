@@ -13,7 +13,7 @@ namespace :failed_email_poller do
           Sharding.select_shard_of(@args[:account_id]) do
             if valid_params? && valid_message?
               email_failure = Helpdesk::Email::FailedEmailMsg.new(@args)
-              email_failure.save! is_note       
+              email_failure.save! note?       
               email_failure.notify
               email_failure.trigger_observer_system_events
             else
@@ -48,13 +48,13 @@ def email_failure_feature_enabled?
   @account.email_failures_enabled?
 end
 
-def is_note
+def note?
   @args[:note_id] != "UNKNOWN"
 end
 
 def email_in_to_or_cc?
   @args[:ticket] = Account.current.tickets.find_by_display_id(@args[:ticket_id])
-  @args[:object] = is_note ? Account.current.notes.where(id: @args[:note_id]).first : @args[:ticket]
+  @args[:object] = note? ? Account.current.notes.where(id: @args[:note_id]).first : @args[:ticket]
   to_emails,cc_emails = @args[:object].to_cc_emails
   to_emails.include?(@args[:email]) || cc_emails.include?(@args[:email])
 end

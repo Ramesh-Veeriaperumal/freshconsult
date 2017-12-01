@@ -9911,19 +9911,36 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     admin:
       title_text: "Phone"
       manage_settings_text: "Manage settings in Freshcaller"
+      no_access_text: "You do not have acces to Freshcaller"
       sidebar_title: "Phone"
       sidebar_content: "Freshdesk’s phone channel is powered by Freshcaller. You can make/receive calls directly from Freshdesk, as well as record all your calls and convert calls and voicemails into tickets.<br/><br/> <b> Call center setup </b> <br/>You can purchase phone credits from your Freshcaller admin account. You can purchase phone numbers from <a href='https://support.freshcaller.com/support/solutions/articles/229257' target='_blank'>over 40 countries</a>, using your phone credits. You can purchase toll-free phone numbers in U.S, U.K, Canada, and Australia. You do not have to purchase any hardware or install any software. You only need a web browser and a working internet connection. <br/> <br/> <b>Call center capabilities </b> <br/> You can answer calls on your browser, forward calls to your mobile, or transfer calls to any agent, use IVRs to receive calls, monitor calls, barge when needed, set business hour rules, and much more.<br/> <br/> <a href='https://www.freshworks.com/freshcaller-cloud-pbx/call-center-features/' target='_blank'>Learn more</a> about Freshcaller - the integrated phone solution for Freshdesk."
       freshcaller_not_available: "Freshcaller is only available in the new UI. Please switch to the new UI to use Freshcaller."
       phone_not_available: "Phone channel is available only in the old UI. Please reach out to <a href='mailto:support@freshcaller.com'>support@freshcaller.com</a> to use phone in the new UI."
       freshcaller_signup_text: "Freshdesk provides an integrated phone channel through Freshcaller. Enable your phone channel by creating a new Freshcaller account with a 14-day free trial."
       freshcaller_subtext: "Buy numbers, setup call queues, IVRs, etc"
+      freshcaller_enable_subtext: "You can enable access from your Agent setting page."
       feature_request_content:
         create_new_account: "Create new account" 
         processing: "Creating your Freshcaller account"
         success: "Your freshcaller account has been created"
         domain_taken: "Looks like you already have a Freshcaller account. Please reach out to <a href='mailto:support@freshcaller.com'>support@freshcaller.com</a>  to link it to your helpdesk."
         error: "Looks like there was an issue creating your account. Please reach out to <a href='mailto:support@freshcaller.com'>support@freshcaller.com</a> to help you enable phone for your helpdesk."
-
+        spam_email: "Thank you for creating a Freshcaller account. Please reach out to <a href='mailto:support@freshcaller.com'>support@freshcaller.com</a> for any questions."
+      link_account_request_content: 
+        account_url: "Freshcaller Account URL"
+        email: "Email"
+        password: "Password"
+        continue: "Continue"
+        cancel: "Cancel"
+        freshcaller_domain: ".freshcaller.com"
+        settings_text: "Please enter Freshcaller account details to link it to your Freshdesk account"
+        connect_existing_account: "Connect Existing Account"
+        processing: "Linking your Freshcaller account"
+        link_errors:
+          validation_error: "This field is required"
+          authentication_error: "The email or password provided is not valid."
+          access_error: "You need to be an admin in both Freshcaller and Freshdesk to link your accounts."
+          api_error: "This Freshcaller account does not exist. Please provide a valid URL or create a new Freshcaller account."
   freshfone:
     recording_on_process: "The recording is being processed. <a href='#' target='_parent' id='checkfreshfoneaudio'>Check</a> again in a few minutes"
     not_enough_credit: "Not Enough Credit!"
