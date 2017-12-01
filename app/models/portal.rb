@@ -243,7 +243,8 @@ class Portal < ActiveRecord::Base
         elsif key == 'contact_info'
           preferences[key] = RailsFullSanitizer.sanitize(value)
         elsif key == 'logo_link' && preferences[key].present?
-          errors.add(:base, I18n.t('admin.products.portal.invalid_linkback_url')) unless value =~ AccountConstants::VALID_URL_REGEX
+          sanitized_value = RailsFullSanitizer.sanitize(value) #Prevent Xss
+          errors.add(:base, I18n.t('admin.products.portal.invalid_linkback_url')) unless sanitized_value == value && UriParser.valid_url?(value)
         end
       end
     end

@@ -445,7 +445,10 @@ class User < ActiveRecord::Base
     if has_multiple_companies_feature?
       if params[:user][:removed_companies].present?
         to_be_removed = JSON.parse params[:user][:removed_companies]
-        remove_ids = to_be_removed.map{ |company_name| companies.find { |c| c.name.downcase == company_name.downcase}.id }
+        remove_ids = to_be_removed.map{ |company_name| 
+          c = companies.find { |c| c.name.downcase == company_name.downcase}
+          c.id if c.present?
+        }.compact
         UserCompany.destroy_all(:account_id => account_id,
                                 :user_id => id,
                                 :company_id => remove_ids) if remove_ids.any?
@@ -497,7 +500,7 @@ class User < ActiveRecord::Base
     self.time_zone = params[:user][:time_zone]
     self.import_id = params[:user][:import_id]
     self.fb_profile_id = params[:user][:fb_profile_id]
-    self.email = params[:user][:email]
+    self.email = params[:user][:email].strip if params[:user][:email].present?
     self.language = params[:user][:language]
     self.address = params[:user][:address]
     self.tag_names = params[:user][:tag_names] # update tags in the user object
@@ -512,7 +515,9 @@ class User < ActiveRecord::Base
         user_skill["rank"] }.map { |user_skill| 
           user_skill["skill_id"] }
     end
+
     return false unless save_without_session_maintenance
+    create_freshid_user
     enqueue_activation_email(params, portal, send_activation)
   end
 
@@ -579,6 +584,7 @@ class User < ActiveRecord::Base
     }
   }
 
+  #Used for importing google contacts
   def signup(portal=nil)
     return false unless save_without_session_maintenance
     deliver_activation_instructions!(portal,false) if (!deleted and self.email.present?)
@@ -607,7 +613,7 @@ class User < ActiveRecord::Base
   end
 
   def update_account_info_and_verify(user_params)
-    self.account.update_attributes!({:name => user_params[:company_name]})
+    self.account.update_attributes!({:name => user_params[:company_name]}) if user_params.key?(:company_name) 
     self.account.main_portal.update_attributes!({:name => user_params[:company_name]})
     self.account.account_configuration.update_contact_company_info!(user_params)
   end
@@ -915,6 +921,8 @@ class User < ActiveRecord::Base
       subscriptions.destroy_all
       self.cti_phone = nil
       agent.destroy
+      destroy_freshid_user
+      deliver_password_reset_instructions!(nil) if account.freshid_enabled?
       freshfone_user.destroy if freshfone_user
       email_notification_agents.destroy_all
 
@@ -946,7 +954,10 @@ class User < ActiveRecord::Base
       expiry_period = self.user_policy ? FDPasswordPolicy::Constants::GRACE_PERIOD : FDPasswordPolicy::Constants::NEVER.to_i.days
       self.set_password_expiry({:password_expiry_date =>
           (Time.now.utc + expiry_period).to_s}, false)
-      save ? true : (raise ActiveRecord::Rollback)
+      reset_persistence_token
+      success = save
+      success ? create_freshid_user : (raise ActiveRecord::Rollback)
+      success
     end
   end
 
@@ -1081,7 +1092,33 @@ class User < ActiveRecord::Base
     !account.verified? && self.privilege?(:admin_tasks)
   end
 
+  def create_freshid_user
+    return unless freshid_enabled_and_agent?
+    freshid_user = Freshid::User.create({ first_name: name, email: email, phone: phone, mobile: mobile, domain: account.full_domain })
+    if freshid_user.present?
+      self.active = freshid_user.active?
+      self.save if self.active_changed?
+      self.create_freshid_authorization(uid: freshid_user.uuid)
+      freshid_user.active? ? deliver_agent_invitation! : deliver_activation_instructions!(nil, false)
+    end
+  end
+
+  def destroy_freshid_user
+    if account.freshid_enabled? && freshid_authorization.present?
+      Freshid::User.new({ uuid: freshid_authorization.uid, domain: account.full_domain }).destroy
+      freshid_authorization.destroy
+    end
+  end
+
   private
+
+    def freshid_enabled_and_agent?
+      agent? && account.freshid_enabled?
+    end
+
+    def freshid_disabled_and_customer?
+      !freshid_enabled_and_agent?
+    end
 
     def name_part(part)
       part = parsed_name[part].blank? ? "particle" : part unless parsed_name.blank? and part == "family"

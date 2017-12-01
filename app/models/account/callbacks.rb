@@ -29,6 +29,8 @@ class Account < ActiveRecord::Base
   after_commit :remove_email_restrictions, on: :update , :if => :account_verification_changed?
 
   after_commit :update_crm_and_map, on: :update, :if => :account_domain_changed?
+
+  after_commit :update_account_details_in_freshid, on: :update, :if => :update_freshid?
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher 
@@ -105,6 +107,14 @@ class Account < ActiveRecord::Base
 
     def account_domain_changed?
       @all_changes.key?("full_domain")
+    end
+
+    def account_name_changed?
+      @all_changes.key?("name")
+    end
+
+    def update_freshid?
+      freshid_enabled? && (account_domain_changed? || account_name_changed?)
     end
 
     def remove_email_restrictions
@@ -345,6 +355,14 @@ class Account < ActiveRecord::Base
         Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::UpdateAdmin, {:account_id => self.id})
         Resque.enqueue_at(15.minutes.from_now, Marketo::AddLead, {:account_id => self.id})
       end
+    end
+
+    def update_account_details_in_freshid
+      account = self.make_current
+      account_details_params = { name: account.name, account_id: account.id }
+      account_details_params[:domain] = account_domain_changed? ? @all_changes[:full_domain].first : account.full_domain
+      account_details_params[:new_domain] = account_domain_changed? ? account.full_domain : nil
+      Freshid::AccountDetailsUpdate.perform_async(account_details_params)
     end
 
     def falcon_ui_applicable?

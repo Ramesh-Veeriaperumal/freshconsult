@@ -24,7 +24,7 @@ module Freshcaller::CallsTestHelper
       id: call.id,
       fc_call_id: call.fc_call_id,
       recording_status: call.recording_status,
-      ticket_display_id: call.notable.id,
+      ticket_display_id: call.notable.display_id,
       note_id: nil
     }
   end
@@ -39,6 +39,10 @@ module Freshcaller::CallsTestHelper
       call_created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}.to_s,
       agent_number: Faker::PhoneNumber.phone_number.to_s
     }
+  end
+
+  def convert_incoming_call_params(call_id, status)
+    convert_call_params(call_id, status).update({ call_type: 'incoming' })
   end
 
   def convert_call_to_note_params(call_id, status)
