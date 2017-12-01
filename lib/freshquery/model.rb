@@ -199,17 +199,9 @@ module Freshquery::Model
         Freshquery::Response.new(false, nil, valid)
       end
     rescue Freshquery::Errors::QueryLengthException => e
-      errors = ActiveModel::Errors.new(Object.new)
-      errors.messages[:query] = [Freshquery::Constants::QUERY_LENGTH_INVALID % {current_count: e.to_s, max_count: mapping.query_length}]
-      response = Freshquery::Response.new(false, nil, nil)
-      response.errors = errors
-      response
+      Freshquery::Utils.error_response(nil, :query, Freshquery::Constants::QUERY_LENGTH_INVALID % {current_count: e.to_s, max_count: mapping.query_length})
     rescue Freshquery::Errors::QueryFormatException => e
-      errors = ActiveModel::Errors.new(Object.new)
-      errors.messages[:query] = [Freshquery::Constants::QUERY_FORMAT_INVALID]
-      response = Freshquery::Response.new(false, nil, nil)
-      response.errors = errors
-      response
+      Freshquery::Utils.error_response(nil, :query, Freshquery::Constants::QUERY_FORMAT_INVALID)
     end
 
     def construct_expression_tree(query, parser, length)

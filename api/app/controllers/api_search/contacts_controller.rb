@@ -2,10 +2,17 @@ module ApiSearch
   class ContactsController < SearchController
     decorate_views
     def index
-      response = Freshquery::Runner.instance.construct_es_query('user',params[:query])
+      fq_builder = Freshquery::Builder.new.query do |builder|
+        builder[:account_id]    = current_account.id
+        builder[:context]       = :search_contact_api
+        builder[:current_page]  = params[:page] ? params[:page].to_i : ApiSearchConstants::DEFAULT_PAGE
+        builder[:types]         = ['user']
+        builder[:es_models]     = ApiSearchConstants::CONTACT_ASSOCIATIONS
+        builder[:query]         = params[:query]
+      end
+      response = fq_builder.records
       if response.valid?
-        page = params[:page] ? params[:page].to_i : ApiSearchConstants::DEFAULT_PAGE
-        @items = query_results(response.terms, page, ApiSearchConstants::CONTACT_ASSOCIATIONS, ['user'])
+        @items = response.items
       else
         render_errors response.errors, response.error_options
       end

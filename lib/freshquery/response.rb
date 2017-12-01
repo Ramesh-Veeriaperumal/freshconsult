@@ -1,6 +1,6 @@
 module Freshquery
   class Response
-    attr_accessor :terms, :errors, :error_options
+    attr_accessor :terms, :errors, :error_options, :items
 
     def initialize(valid, terms, obj = nil)
       @valid = valid

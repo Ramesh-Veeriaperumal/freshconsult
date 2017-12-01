@@ -1,3 +1,4 @@
+# Freshquery Initializer
 module Freshquery
   class FqTicketHelper
     include Freshquery::ValidationHelper

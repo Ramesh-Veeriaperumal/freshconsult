@@ -2,10 +2,17 @@ module ApiSearch
   class CompaniesController < SearchController
     decorate_views
     def index
-      response = Freshquery::Runner.instance.construct_es_query('company',params[:query])
+      fq_builder = Freshquery::Builder.new.query do |builder|
+        builder[:account_id]    = current_account.id
+        builder[:context]       = :search_company_api
+        builder[:current_page]  = params[:page] ? params[:page].to_i : ApiSearchConstants::DEFAULT_PAGE
+        builder[:types]         = ['company']
+        builder[:es_models]     = ApiSearchConstants::COMPANY_ASSOCIATIONS
+        builder[:query]         = params[:query]
+      end
+      response = fq_builder.records
       if response.valid?
-        page = params[:page] ? params[:page].to_i : ApiSearchConstants::DEFAULT_PAGE
-        @items = query_results(response.terms, page, ApiSearchConstants::COMPANY_ASSOCIATIONS, ['company'])
+        @items = response.items
       else
         render_errors response.errors, response.error_options
       end
