@@ -25,10 +25,17 @@
     </span>
     <span class="freshcaller-settings-link-container">
       <span class="ficon-open-in-new-window pr5 fsize-14 freshcaller-link"></span>
-      <a href="/admin/phone/redirect_to_freshcaller" target="_blank" class="freshcaller-settings-link"><%= t('freshcaller.admin.manage_settings_text') %></a> <br/>
-      <span class="freshcaller-link-subtext">
-        <%= t('freshcaller.admin.freshcaller_subtext')%>
-      </span>
+      <% if current_user.agent.freshcaller_agent %>
+        <a href="/admin/phone/redirect_to_freshcaller" target="_blank" class="freshcaller-settings-link"><%= t('freshcaller.admin.manage_settings_text') %></a> <br/>
+        <span class="freshcaller-link-subtext">
+         <%= t('freshcaller.admin.freshcaller_subtext')%>
+        </span>
+      <% else %>
+        <span><%= t('freshcaller.admin.no_access_text') %></span> <br/>
+        <span class="freshcaller-link-subtext">
+         <%= t('freshcaller.admin.freshcaller_enable_subtext')%>
+        </span>
+      <% end %>
     </span> 
   </div>
 </div>
