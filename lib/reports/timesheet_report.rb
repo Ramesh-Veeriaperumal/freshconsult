@@ -56,7 +56,7 @@ module Reports::TimesheetReport
       billable_type: I18n.t('helpdesk.time_sheets.billalblenonbillable'),
       priority_name: I18n.t('helpdesk.time_sheets.priority'),
       status_name:I18n.t('helpdesk.time_sheets.status'),
-      created_at: I18n.t('helpdesk.time_sheets.createdAt')}
+    created_at: I18n.t('helpdesk.time_sheets.createdAt')}
 
     default_colset[:agent_name] = I18n.t('helpdesk.time_sheets.agent') unless  Account.current.hide_agent_metrics_feature?
     default_colset[:product_name] = I18n.t('helpdesk.time_sheets.product') if Account.current.products.any?
@@ -320,12 +320,12 @@ module Reports::TimesheetReport
     flexifields_hash = {}
 
     Account.current.custom_dropdown_fields_from_cache.each do |col|
-     flexifields_hash[col.flexifield_def_entry.flexifield_name.to_sym] = col.label
+      flexifields_hash[col.flexifield_def_entry.flexifield_name.to_sym] = col.label
     end
 
     Account.current.nested_fields_from_cache.each do |col|
       col.nested_ticket_fields(:include => :flexifield_def_entry).each do |nested_col|
-         flexifields_hash[nested_col.flexifield_def_entry.flexifield_name.to_sym] = nested_col.label
+        flexifields_hash[nested_col.flexifield_def_entry.flexifield_name.to_sym] = nested_col.label
       end
       flexifields_hash[col.flexifield_def_entry.flexifield_name.to_sym] = col.label
     end
@@ -525,12 +525,17 @@ module Reports::TimesheetReport
       params[:version] = params[:current_params][:version] if params[:current_params][:version].present?
     end
     validate_chosen_custom_fields(@time_sheet_columns.select { |column| column.start_with?('ffs')})
+
     report_filter_request_params.each do |filter|
       if params[:version].present?
         if filter[:label].present?
           label = filter[:condition]+"_label"
           @filter_conditions[filter[:condition]] = filter[:value].split(',')
-          @filter_conditions["#{label}"] = filter[:label]
+          filter_lables = filter[:label] 
+          @filter_conditions[filter[:condition]].each_with_index { |v, i| filter_lables[i] = nil if v.to_i == -1 }
+          encoded_lables = filter_lables.map { |item|  item.nil? ? item : HTMLEntities.new.encode(item) }
+          @filter_conditions["#{label}"] = encoded_lables
+          filter[:label] = encoded_lables
         else
           @filter_conditions[filter[:condition]] = filter[:value].split(',')
         end
@@ -538,8 +543,10 @@ module Reports::TimesheetReport
         @filter_conditions[filter[:name]] = filter[:value].split(',')
       end
     end
+
     @filter_conditions = @filter_conditions.with_indifferent_access
     @filter_conditions[:user_id] =  @filter_conditions[:agent_id] if @filter_conditions[:agent_id]
+
     @current_params = {
       :start_date  => start_date,
       :end_date    => end_date,
@@ -748,6 +755,7 @@ module Reports::TimesheetReport
 
   def construct_timesheet_entries
     params[:current_params].each { |name, value| instance_variable_set("@#{name}", (value || [])) }
+    @ticket_type.map!{|b| nil if b.nil? || b.empty? } if @ticket_type
     @billable.map!{|b| b.to_s.to_bool} if @billable
     offset = params[:scroll_position].to_i * TIMESHEET_ROWS_LIMIT
     @current_group = [group_by_caluse]
