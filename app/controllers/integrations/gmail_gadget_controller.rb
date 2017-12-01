@@ -1,6 +1,6 @@
 require 'oauth/request_proxy/rack_request'
 
-class Integrations::GmailGadgetController < ApplicationController
+class Integrations::GmailGadgetsController < ApplicationController
   include Redis::RedisKeys
 
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:spec, :open_social_auth]
