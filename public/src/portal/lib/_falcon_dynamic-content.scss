@@ -2,11 +2,11 @@
 	margin-top: 0px;
 	@include box-shadow(none);
 	position: relative;
-    padding: 10px 40px; 
+    padding: 10px 40px;
     background-color: $white;
 }
 .sidebar{
-	background-color: $gray;	
+	background-color: $gray;
 }
 .cs-s{
 	border-top: 0;
@@ -53,13 +53,13 @@ div#related_articles{
     line-height: 1.9;
     color: $grayLight;
 }
-.item-count{ 
+.item-count{
 	font-size: 16px;
     color: $grayDark;
     font-weight: normal;
     font-family: $sansFontFamily;
 }
-/* A small colen is added in front of the 
+/* A small colen is added in front of the
    up-vote button if its next to atleast one user voted label */
 #topic-vote-up-button:nth-child(3):before{ color: $textColor; }
 .p-content{
@@ -77,7 +77,7 @@ div#related_articles{
 	}
 	form{
 		a.btn{
-			color: $black;
+			color: $secondary_button_color;
 		}
 	}
 }
@@ -94,7 +94,7 @@ div#related_articles{
 .uv-row{	border-bottom: 1px solid $row-border-color; }
 hr.content-divider{
 	@include margin-left(-$content-padding-side);
-	@include margin-right(-$content-padding-side); 
+	@include margin-right(-$content-padding-side);
 }
 
 .fc-new-ticket{

@@ -10,7 +10,7 @@ $rtl: false !default;
 // --------------------------------------------------
 
 // Application mode is either debug if its in developement mode
-$app-debug-mode: 		false !default; 
+$app-debug-mode: 		false !default;
 $nonResponsive: 		false !default;
 $pagePattern: 			true !default;
 
@@ -25,7 +25,7 @@ $gray:                  #f8f9fa !default;
 $grayLight:             #6f7c87 !default;
 $grayLighter:           #dcdcdc !default;
 $white:                 #fff !default;
-
+$grayThick:								#DADFE3 !default;
 
 // Accent colors
 // -------------------------
@@ -59,12 +59,12 @@ $tab_color:					$white !default;
 
 $tab_text_color: 			if(lightness($tab_color) > 50, black, white) !default;
 
-$tab_hover_color: 			$white !default;
+$tab_hover_color: 			$green !default;
 $tab_hover_text_color: 		$black !default;
 
 $footer_color: 				$black !default;
 $footer_text_color: 		$white !default;
-$border-color:				#dadfe3	!default;
+$border-color:				$grayThick	!default;
 $help_center_color: 		$grey_hover !default;
 $help_center_text_color: 	if(lightness($help_center_color) > 50, black, white) !default;
 $help_center_icons_bg: 		if(lightness($help_center_color) > 50, darken($help_center_color, 8%), lighten($help_center_color, 8%)) !default;
@@ -95,8 +95,8 @@ $container-width: $default-container-width;
 
 $media-mobile: 			0 45em 4; 		// Applying styles only for mobile
 $media-mobile-tablet: 	0 60em 12; 		// Applying styles for mobile and tablet
-$break-tablet:			45em 12; 		// Applying styles for Tablets to Medium & Large desktops 
-$break-desktop:			60em 12; 		// Applying styles for Medium & Large desktops 
+$break-tablet:			45em 12; 		// Applying styles for Tablets to Medium & Large desktops
+$break-desktop:			60em 12; 		// Applying styles for Medium & Large desktops
 $break-large:			75em 16; 		// Applying styles for Large desktops and above
 $media-mobile-tablets:   300px 720px;	// Applying for mobiles and tablets
 $media-medium-tablets:   640px 720px;
@@ -162,7 +162,7 @@ $inputDisabledBackground:       $grayLighter !default;
 $formActionsBackground:         #f5f5f5 !default;
 
 $selectBorderRadius:			4px !default;
-$inputFocusRingColor:  			$border-color !default;
+$inputFocusRingColor:  			$green !default;
 
 $autocomplete-highlight:		#cccccc !default;
 $autocomplete-highlight-text:	if(lightness($autocomplete-highlight) > 50, black, white) !default;
@@ -195,7 +195,7 @@ $infoBorder:              darken(adjust-hue($infoBackground, -10), 7%) !default;
 
 // Buttons
 // -------------------------
-$btn_background: 					$white !default;
+$btn_background: 										$grey_hover !default;
 $btnBackground:                     $btn_background;
 $btnBackgroundHighlight:            darken($btnBackground, 5%);
 $btnBorder:                         darken($btnBackground, 15%);
@@ -205,7 +205,7 @@ $btnShadowColor: 					if(lightness($btnBackground) > 50, 0 1px 1px rgba(255,255,
 $btn_primary_background:			$green !default;
 $btnPrimaryBackground:              $btn_primary_background;
 $btnPrimaryBackgroundHighlight:     darken($btnPrimaryBackground, 5%);
-$btnPrimaryTextColor:				if(lightness($btnPrimaryBackground) > 50, $grayDark, white) !default;
+$btnPrimaryTextColor:				if(lightness($btnPrimaryBackground) > 50, black, white) !default;
 $btnPrimaryShadowColor: 			if(lightness($btnPrimaryBackground) > 50, 0 1px 1px rgba(255,255,255,.75), 0 -1px 0 rgba(0,0,0,.25));
 
 $btnDangerBackground:              	$red;
@@ -213,6 +213,18 @@ $btnDangerBackgroundHighlight:     	darken($btnDangerBackground, 10%);
 $btnDangerTextColor:				if(lightness($btnDangerBackground) > 50, $grayDark, white) !default;
 $btnDangerShadowColor: 				if(lightness($btnDangerBackground) > 50, 0 1px 1px rgba(255,255,255,.75), 0 -1px 0 rgba(0,0,0,.25));
 
+$primary_button_color: if(lightness($btnPrimaryBackgroundHighlight) > 50, $black, white) !default;
+$secondary_button_color: if(lightness($btn_background) > 50, $black, white) !default;
+$btnSecondaryHover: if(lightness($btnBackground) > 50, darken($btnBackground, 5%), lighten($btnBackground, 5%));
+$btnPrimaryHover: if(lightness($btn_primary_background) > 50, darken($btn_primary_background, 5%), lighten($btn_primary_background, 5%));
+$header_area_text_color: if(lightness($header_color) > 50, $grayLight, white) !default;
+$language_text_color: if(lightness($header_color) > 50, black, white) !default;
+$tab_text_color: if(lightness($tab_color) > 50, $grayLight, white) !default;
+$footer_area_text_color: if(lightness($footer_color) > 50, black, white) !default;
+$copyright_text_color: if(lightness($footer_color) > 50, rgba(black,0.5), rgba(255,255,255,0.5)) !default;
+$banner_nav_text_color: if(lightness($header_color) > 50, $blue, white) !default;
+$secondaryBtn_border_color: if(lightness($btn_background) > 50, darken($btnBackground, 30%), darken($btnBackground, 20%));
+$primaryBtn_border_color: if(lightness($btnPrimaryBackground) > 50, darken($btnPrimaryBackground, 30%), darken($btnPrimaryBackground, 20%)) !default;
 // COMPONENT VARIABLES
 // --------------------------------------------------
 
