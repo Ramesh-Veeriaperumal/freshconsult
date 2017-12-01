@@ -10,7 +10,7 @@ module Facebook
         threads.each do |thread|
           thread.symbolize_keys!
           msg_ids = thread[:messages]["data"].map { |msg| msg["id"]}
-          fb_msg = latest_message(thread[:thread_key], thread[:id], msg_ids)
+          fb_msg = latest_message( thread[:id])
           previous_ticket = fb_msg.try(:postable)
 
           last_reply = unless previous_ticket.blank?
