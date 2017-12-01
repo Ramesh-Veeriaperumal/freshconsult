@@ -31,8 +31,8 @@ class Ember::Freshcaller::SettingsControllerTest < ActionController::TestCase
     get :index, controller_params(version: 'private')
     match_json({:freshcaller_account_enabled => true, :freshcaller_agent_enabled => false})
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:ok]
-    delete_freshcaller_account
   ensure
+    delete_freshcaller_account
     Account.current.revoke_feature(:freshcaller)
   end
 
@@ -43,8 +43,8 @@ class Ember::Freshcaller::SettingsControllerTest < ActionController::TestCase
     get :index, controller_params(version: 'private')
     match_json({:freshcaller_account_enabled => false, :freshcaller_agent_enabled => true})
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:ok]
-    delete_freshcaller_agent
   ensure
+    delete_freshcaller_agent
     Account.current.revoke_feature(:freshcaller)
   end
 
@@ -55,8 +55,8 @@ class Ember::Freshcaller::SettingsControllerTest < ActionController::TestCase
     get :index, controller_params(version: 'private')
     match_json({:freshcaller_account_enabled => false, :freshcaller_agent_enabled => false})
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:ok]
-    delete_freshcaller_agent
   ensure
+    delete_freshcaller_agent
     Account.current.revoke_feature(:freshcaller)
   end
 
@@ -116,8 +116,8 @@ class Ember::Freshcaller::SettingsControllerTest < ActionController::TestCase
     get :redirect_url, controller_params(version: 'private')
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:ok]
     assert_match("#{@account.freshcaller_account.domain}\/sso\/freshdesk", JSON.parse(response.body)['redirect_url'])
-    delete_freshcaller_account
   ensure
+    delete_freshcaller_account
     Account.current.revoke_feature(:freshcaller)
   end
 end

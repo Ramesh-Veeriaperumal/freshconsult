@@ -39,13 +39,12 @@ module Facebook
       def add_as_note(thread, ticket)
         thread_id = thread[:id]
         messages  = thread[:messages].symbolize_keys!
-        messages  = messages[:data].reject{|message| (@fan_page.created_at > Time.zone.parse(message['created_time'])) }
-        messages.reverse.each do |message|
+        messages[:data].reverse.each do |message|
           message.symbolize_keys!
-          next if @account.facebook_posts.exists?(:post_id => message[:id])
+          next if ((@fan_page.created_at > Time.zone.parse(message[:created_time])) || @account.facebook_posts.exists?(:post_id => message[:id]))
           user = facebook_user(message[:from])
           message[:message] = tokenize(message[:message])
-          
+
           @note = ticket.notes.build(
             :private    =>  true ,
             :incoming   =>  true,

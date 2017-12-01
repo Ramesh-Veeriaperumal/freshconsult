@@ -1,23 +1,23 @@
 require "digest"
 class UserSessionsController < ApplicationController
 
-require 'gapps_openid'
-require 'rack/openid'
-require 'uri'
-require 'openid'
+  require 'gapps_openid'
+  require 'rack/openid'
+  require 'uri'
+  require 'openid'
 
-include Redis::RedisKeys
-include Redis::TicketsRedis
-include Redis::OthersRedis
-include SsoUtil
-include Mobile::Actions::Push_Notifier
+  include Redis::RedisKeys
+  include Redis::TicketsRedis
+  include Redis::OthersRedis
+  include SsoUtil
+  include Mobile::Actions::Push_Notifier
 
   skip_before_filter :check_privilege, :verify_authenticity_token  
-  skip_before_filter :require_user, :except => :destroy
+  skip_before_filter :require_user, :except => [:destroy, :freshid_destroy]
   skip_before_filter :check_account_state
   before_filter :check_sso_params, :only => :sso_login
   skip_before_filter :check_day_pass_usage
-  before_filter :set_native_mobile, :only => [:create, :destroy]
+  before_filter :set_native_mobile, :only => [:create, :destroy, :freshid_destroy]
   skip_after_filter :set_last_active_time
   before_filter :decode_jwt_payload, :check_jwt_required_fields, :only => [:jwt_sso_login]
 
@@ -168,8 +168,13 @@ include Mobile::Actions::Push_Notifier
     redirect_to :action => :new
   end
   
-  def create  
-    @user_session = current_account.user_sessions.new(params[:user_session])
+  def create
+    if is_native_mobile? && freshid_enabled?
+      freshid_user_authentication
+      return if @freshid_login_errors.present?
+    else
+      @user_session = current_account.user_sessions.new(params[:user_session])
+    end
     @user_session.web_session = true unless is_native_mobile?
     if @user_session.save
       #Temporary hack due to current_user not returning proper value
@@ -221,6 +226,35 @@ include Mobile::Actions::Push_Notifier
   end
   
   def destroy
+    logout_user
+    return if current_account.sso_enabled? and current_account.sso_logout_url.present? and !is_native_mobile?
+    redirect_to freshid_logout(support_home_url) and return if current_user.present? && freshid_agent?(current_user.email)
+    respond_to do |format|
+      format.html  {
+        redirect_to root_url
+      }
+      format.nmobile{
+        render :json => {:logout => 'success'}.to_json
+      }
+    end
+  end
+
+  def freshid_user_authentication
+    freshid_login = Freshid::Login.new(params[:user_session])
+    create_user_session and return unless freshid_login.credentials_provided?
+
+    uuid = freshid_login.authenticate_user
+    user = uuid.present? ? current_account.all_technicians.find_by_freshid_uuid(uuid) : nil
+    !freshid_login.invalid_credentials? && user.present? ? create_user_session(user) : render_failed_login_template
+  end
+
+  def freshid_destroy
+    logout_user
+    return if current_account.sso_enabled? and current_account.sso_logout_url.present? and !is_native_mobile?
+    redirect_to params[:redirect_uri]
+  end
+
+  def logout_user
     remove_old_filters if current_user && current_user.agent?
 
     mark_agent_unavailable if can_turn_off_round_robin?
@@ -239,17 +273,8 @@ include Mobile::Actions::Push_Notifier
       sso_redirect_url = generate_sso_url(current_account.sso_logout_url)
       redirect_to sso_redirect_url and return
     end
-    
-    respond_to do |format|
-        format.html  {
-          redirect_to root_url
-        }
-        format.nmobile{
-          render :json => {:logout => 'success'}.to_json
-        }
-      end
   end
-  
+
   def signup_complete
     @current_user = current_account.users.find_by_perishable_token(params[:token]) 
     if @current_user.nil?
@@ -279,6 +304,15 @@ include Mobile::Actions::Push_Notifier
   # ITIL Related Methods ends here
 
   private
+
+    def render_failed_login_template
+      respond_to do |format|
+        format.nmobile{
+          @freshid_login_errors = { login: "failed", attr: :base, message: "The email and password you entered does not match" }
+          render :json => @freshid_login_errors
+        } 
+      end
+    end
 
     def remove_old_filters
       remove_tickets_redis_key(HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => request.session_options[:id]})
@@ -414,6 +448,10 @@ include Mobile::Actions::Push_Notifier
       else
         return false
       end
+    end
+
+    def create_user_session user={}
+      @user_session = current_account.user_sessions.new(user)
     end
 
 end

@@ -8,6 +8,9 @@ class ProfilesController < ApplicationController
    before_filter :set_profile, :filter_params, :only => [:update]
    before_filter :load_password_policy, :check_apps ,:only => :edit
    before_filter :set_native_mobile, :only => [:update]
+   before_filter :only => :change_password do |c|
+     access_denied if freshid_agent?(current_user.email)
+   end
 
    skip_before_filter :check_privilege, :except => [:edit, :update, :reset_api_key]
 

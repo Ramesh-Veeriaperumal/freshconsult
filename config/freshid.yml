@@ -1,0 +1,25 @@
+#freshdesk_web_integration
+
+defaults: &defaults
+  base_url: https://qa1.fid.freshworksapi.com
+  ui_url:  http://qa1.fid.freshworksapi.com
+  client_id: d0780a2a-a78e-4b82-8fe3-4b5d9820a187
+  client_secret: 0dxmXW2EAF3y3v0JtaOxcvVb9w35Xw1G
+  product: 2  
+  callback_api_secret: 7ceea591dc0a9c9797606cb684d796105197a0cdbd29c654e18750a5c337f9f7
+  central_url: ""
+
+development:
+  <<: *defaults
+
+slave:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults
