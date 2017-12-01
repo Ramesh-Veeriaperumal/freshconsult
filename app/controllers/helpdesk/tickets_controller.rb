@@ -31,7 +31,7 @@ class Helpdesk::TicketsController < ApplicationController
   include Redis::TicketsRedis
   include Helpdesk::SendAndSetHelper
 
-  ALLOWED_QUERY_PARAMS = ['collab', 'message']
+  ALLOWED_QUERY_PARAMS = ['collab', 'message', 'follow']
 
   before_filter :redirect_to_mobile_url
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:show,:suggest_tickets]

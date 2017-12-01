@@ -3470,10 +3470,10 @@ en:
     edit_domain:
       title1: Thank you for choosing Freshdesk.
       title2: Please confirm your account details to get started.
-      url_label: Your Freshdesk URL (you can access your account from here) 
-      url_error1: Sorry, this URL is already taken. 
+      url_label: Your Freshdesk URL (you can access your account from here)
+      url_error1: Sorry, this URL is already taken.
       email_error: Please enter at least 3 characters.
-      email_label: Your Freshdesk Email (you can share this with your customers) 
+      email_label: Your Freshdesk Email (you can share this with your customers)
       email_info_text: You can change this or add your own later.
       submit_button_text: Take me to my account
       account_url_defaulted: Due to inactivity, we've defaulted to an auto-generated URL for your account. Redirecting you to your dashboard now...
@@ -9920,7 +9920,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       freshcaller_subtext: "Buy numbers, setup call queues, IVRs, etc"
       freshcaller_enable_subtext: "You can enable access from your Agent setting page."
       feature_request_content:
-        create_new_account: "Create new account" 
+        create_new_account: "Create new account"
         processing: "Creating your Freshcaller account"
         success: "Your freshcaller account has been created"
         domain_taken: "Looks like you already have a Freshcaller account. Please reach out to <a href='mailto:support@freshcaller.com'>support@freshcaller.com</a>  to link it to your helpdesk."
@@ -11217,7 +11217,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       collab_reply: "Team Huddle"
       collab_reply_multi: "Team Huddle"
       collab_follower: "Team Huddle"
-      collab_follower_multi: "Team Huddle"
+      collab_follower_many: "Team Huddle"
       ticket_assigned_to_group: "Ticket Assigned to Group"
       ticket_created: "New Ticket"
       generic_notification: "%{type}"
@@ -11392,7 +11392,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       invite_msg: We've upgraded to a modern experience which is fresher, faster and easier to use.<br/>Freshdesk Mint is crafted with love, just for you!
       post_script: "PS: You can switch back any time you like."
       try_new_look: TRY IT OUT
-      maybe_later: MAYBE LATER 
+      maybe_later: MAYBE LATER
   multifile_attachments:
     label: "Attach files"
     sending: "Sending..."
@@ -11419,6 +11419,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     help: What's this?
     feed_back_survery: Help us with some feedback?
   collaboration:
+    highlight_mode_on: "Highlight mode on"
+    highlight_mode_off: "Highlight mode off"
+    follow_discussion: "Follow this discussion"
     my_open_discussions: "My Active Huddles"
     notifications: "Notifications"
     no_notifications: "No new notifications"
@@ -11439,6 +11442,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     collab_motto: "Collaborate with your team to resolve issues faster"
     collab_motto_slogan1: "@mention a teammate to invite them."
     collab_motto_slogan2: "Highlight in the ticket and discuss."
+    collab_is_typing: "is typing"
     attach_file: "Attach file"
     remove_file: "Remove file"
     reply: "Reply"
@@ -11451,7 +11455,10 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       wrong_file_format: "Unsupported file format!"
       unexpected: "Something went wrong!"
       highlight_missing: "Highlight missing"
-      
+    info:
+      follow_flash: "Hey there!<br>You are now following this Team Huddle and will be notified of all new messages in-app and via email."
+      unfollow_flash: "See you later 'gator!<br>You will still be notified when a teammate mentions you and groups that you are a part of and when someone replies to your message."
+
   default:
     ticket:
       email:
