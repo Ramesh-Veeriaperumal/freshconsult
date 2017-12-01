@@ -3,6 +3,7 @@ module MetaHelperMethods
   def metainfo(ticket)
     info = ""
     meta = load_meta(ticket)
+    meta_html_escape meta
     if !meta.blank? && meta['user_agent'].present?
       meta['user_agent'] = UserAgent.parse(meta['user_agent'])
       info = metainfo_element(meta, ticket)
@@ -23,7 +24,7 @@ module MetaHelperMethods
     content_tag(:span, t("helpdesk.tickets.show.meta"), 
           :class => "meta_icon", :rel => 'hover-popover', 
           "data-widget-container" => 'ticket_meta_info') +
-      content_tag(:textarea, content.join("").html_safe, 
+      content_tag(:textarea, content.join(""), 
           :class => 'hide', :id => 'ticket_meta_info')
   end
 
@@ -72,7 +73,7 @@ module MetaHelperMethods
     %(<div>
         <span class="meta-referrer tooltip" title="Referring page">Referring Page</span>
         <label>
-          <a href="#{referrer}" target="_blank" title="#{referrer}">
+          <a href="#{referrer}" rel="noreferrer noopener" target="_blank" title="#{referrer}">
             #{short_referrer(referrer)}
           </a>
         </label>
@@ -141,4 +142,10 @@ module MetaHelperMethods
       ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) 
     end
   end
+
+  def meta_html_escape(meta)
+    meta.each do |k,v|
+      meta[k] = h(v) if v.is_a? String
+    end
+  end  
 end
