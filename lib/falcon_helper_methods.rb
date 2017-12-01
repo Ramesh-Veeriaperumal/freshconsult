@@ -17,13 +17,13 @@ module FalconHelperMethods
     @mint_langs_name ||= I18n.available_locales_with_name.select {|loc| available_mint_locales.include?(loc[1].to_s)}
   end
 
-  def account_and_user_in_mint_langs?
+  def account_and_user_in_mint_supported_langs?
     mint_langs = available_mint_locales
     mint_langs.include?(current_account.language) && current_user && mint_langs.include?(current_user.language)
   end
 
   def mint_locales_with_separator
-    mint_locale_names + [["----------", {:disabled => true}], 
+    @locale_names ||= mint_locale_names + [["----------", {:disabled => true}], 
             ["Coming soon in your language", {:disabled => true}]]
   end
 
