@@ -291,6 +291,24 @@ end
     account.remove_secondary_companies
   end
 
+  def handle_multiple_companies_toggle_add_data
+    unless account.ticket_fields_from_cache.find { |tf| tf.name == "company"}.present?
+      account.ticket_fields.create(:name => "company",
+                                   :label => "Company",
+                                   :label_in_portal => "Company",
+                                   :description => "Ticket Company",
+                                   :field_type => "default_company",
+                                   :position => account.ticket_fields_from_cache.length+1,
+                                   :default => true,
+                                   :required => true,
+                                   :visible_in_portal => true, 
+                                   :editable_in_portal => true,
+                                   :required_in_portal => true,
+                                   :ticket_form_id => account.ticket_field_def.id)
+      clear_fragment_caches
+    end
+  end
+
   private
 
   def default_portal_preferences

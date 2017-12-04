@@ -7,6 +7,11 @@ class SAAS::SubscriptionActions
     :round_robin_load_balancing]
 
   ADD_DATA_FEATURES   = [ :round_robin ]
+
+  ADD_DATA_BITMAP_FEATURES = [ :multiple_companies_toggle]
+
+  DROP_DATA_BITMAP_FEATURES = [ :multiple_companies_toggle]
+
   
   ONLY_BITMAP_FEATURES = (Account::ADVANCED_FEATURES_TOGGLE + [
     :shared_ownership_toggle, :skill_based_round_robin, :auto_ticket_export, :ticket_activity_export,
@@ -20,9 +25,15 @@ class SAAS::SubscriptionActions
 
     drop_data_features = DROP_DATA_FEATURES.select { |feature| feature unless account.features?(feature) }
     add_data_features = ADD_DATA_FEATURES.select { |feature| feature if account.features?(feature) }
+    add_data_bitmap_features = ADD_DATA_BITMAP_FEATURES.select { |feature| feature if account.has_features?(feature) }
+    drop_data_bitmap_features = DROP_DATA_BITMAP_FEATURES.select { |feature| feature unless account.has_features?(feature) }
+
 
     drop_feature_data(drop_data_features)
     add_feature_data(add_data_features)
+    add_bitmap_feature_data(add_data_bitmap_features) if add_data_bitmap_features.present?
+    drop_bitmap_feature_data(drop_data_bitmap_features) if drop_data_bitmap_features.present?
+
     #for new pricing plan. we ll remove basic social and basic twitter if facebook or twitter feature isnt available after downgrade annd
     #add back when they upgrade.
     [:facebook, :twitter].each do |f|
@@ -41,6 +52,14 @@ class SAAS::SubscriptionActions
 
   def add_feature_data(add_data_features)
     PlanChangeWorker.perform_async({:features => add_data_features, :action => ADD})
+  end
+
+  def add_bitmap_feature_data(add_data_bitmap_features)
+    NewPlanChangeWorker.perform_async({:features => add_data_bitmap_features, :action => ADD})
+  end
+
+  def drop_bitmap_feature_data(drop_data_bitmap_features)
+    NewPlanChangeWorker.perform_async({:features => drop_data_bitmap_features, :action => DROP})
   end
 
   private
