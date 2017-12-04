@@ -12,10 +12,10 @@ class Forum < ActiveRecord::Base
   belongs_to_account
 
   TYPES = [
-    [ :howto,    I18n.t("forum.types.howto"),    1 ],
-    [ :ideas,    I18n.t("forum.types.ideas"),    2 ],
-    [ :problem,  I18n.t("forum.types.problem"),  3 ],
-    [ :announce, I18n.t("forum.types.announce"), 4 ]
+    [ :howto,    "forum.types.howto",    1 ],
+    [ :ideas,    "forum.types.ideas",    2 ],
+    [ :problem,  "forum.types.problem",  3 ],
+    [ :announce, "forum.types.announce", 4 ]
   ]
 
   TYPE_OPTIONS = TYPES.map { |i| [i[1], i[2]] }
@@ -24,10 +24,10 @@ class Forum < ActiveRecord::Base
   TYPE_SYMBOL_BY_KEY = Hash[*TYPES.map { |i| [i[2], i[0]] }.flatten]
 
   VISIBILITY = [
-    [ :anyone ,       I18n.t("forum.visibility.all"),       1 ],
-    [ :logged_users, I18n.t("forum.visibility.logged_users"), 2 ],
-    [ :agents,       I18n.t("forum.visibility.agents"),       3 ],
-    [ :company_users , I18n.t("forum.visibility.select_company") , 4]
+    [ :anyone ,      "forum.visibility.all",       1 ],
+    [ :logged_users, "forum.visibility.logged_users", 2 ],
+    [ :agents,       "forum.visibility.agents",       3 ],
+    [ :company_users,"forum.visibility.select_company", 4]
   ]
 
   VISIBILITY_OPTIONS = VISIBILITY.map { |i| [i[1], i[2]] }
@@ -114,6 +114,18 @@ class Forum < ActiveRecord::Base
 
   include RabbitMq::Publisher
 
+  def self.type_list
+    TYPES.map { |i| [I18n.t(i[1]), i[2]] }
+  end
+
+  def self.visibility_list
+    VISIBILITY.map { |i| [I18n.t(i[1]), i[2]] }
+  end
+
+  def self.visibility_keys
+    Hash[*VISIBILITY.map { |i| [i[2], I18n.t(i[1])] }.flatten]
+  end
+
   def add_activity_new_and_clear_cache
     create_activity('new_forum')
     account.clear_forum_categories_from_cache
@@ -181,7 +193,7 @@ class Forum < ActiveRecord::Base
   def stamp_filter
     filter_arr = []
     filter_arr << {"id" => "-", "text" => I18n.t('topic.filter_-')} if ideas?
-    Topic::ALL_TOKENS_FOR_FILTER[forum_type].each do |k,v|
+    Topic.all_tokens_for_filters[forum_type].each do |k,v|
       filter_arr << { "id" => k, "text" => v }
     end
     filter_arr
@@ -198,7 +210,7 @@ class Forum < ActiveRecord::Base
   end
 
   def type_name
-    TYPE_NAMES_BY_KEY[forum_type]
+    I18n.t(TYPE_NAMES_BY_KEY[forum_type])
   end
 
   def type_symbol
@@ -240,7 +252,7 @@ class Forum < ActiveRecord::Base
   end
 
   def visibility_name
-    VISIBILITY_NAMES_BY_KEY[forum_visibility]
+    self.class.visibility_keys[forum_visibility]
   end
 
   def to_liquid
