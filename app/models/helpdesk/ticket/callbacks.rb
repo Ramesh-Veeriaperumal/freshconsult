@@ -251,7 +251,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def create_meta_note
       # Added for storing metadata from MobiHelp
       if meta_data.present?
-        sanitize_meta_data
         meta_note = self.notes.build(
           :note_body_attributes => {:body => meta_data.map { |k, v| "#{k}: #{v}" }.join("\n")},
           :private => true,
@@ -984,11 +983,5 @@ private
   def log_dueby sla_detail, logic
     sla_policy = self.sla_policy
     Rails.logger.debug "SLA :::: Account id #{self.account_id} :: #{self.new_record? ? 'New' : self.id} ticket :: Calculated due time using #{logic} :: sla_policy #{sla_policy.id} - #{sla_policy.name} sla_detail :: #{sla_detail.id} - #{sla_detail.name} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy}"
-  end
-
-  def sanitize_meta_data
-    meta_data.each do |k,v|
-      meta_data[k] = RailsFullSanitizer.sanitize v if v.is_a? String
-    end
   end
 end
