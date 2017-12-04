@@ -1378,8 +1378,8 @@ Helpkit::Application.routes.draw do
     end
     namespace :freshcaller, :path => 'freshcaller' do
       resources :signup do 
-        member do 
-          get :index
+        collection do
+          post :link
         end
       end
     end

@@ -7,16 +7,11 @@
         <div class="qna-search-bar">
             <div class="search-field-holder">
                 <div class="selected-queries"></div>
-                <input type="text" class="text" readonly id="search-query" placeholder="Ask me a question about your helpdesk">
+                <input type="text" class="text" id="search-query" placeholder="Ask me a question about your helpdesk" readonly>
                 <div class="clear-query hide" data-action="clear-query">
                     <i class="ficon-clear-qna"></i>
                 </div>
                 <div class="question-popover">
-                  <div id="wave">
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                  </div>
                   <ul class="questions">
                   </ul>
                   <div class="drilldown hide">
@@ -165,12 +160,12 @@
   <div class="search-results">
         <div class="answer-section">
               <div class="response" rel="answer-preview">
-                
+
               </div>
               <div class="graph-preview">
                     <div id="graph-view"></div>
               </div>
-              
+
               <div class="view-report hide">
                     <a data-targets = "other" class="hide" href="/reports/v2/glance" data-pjax="#body-container" rel="view_report"><%= t('helpdesk_reports.qna.view_full_report') %></a>
                     <a data-targets = "3" class="hide" href="/reports/v2/customer_report" data-pjax="#body-container" rel="view_report"><%= t('helpdesk_reports.qna.view_full_report') %></a>

@@ -5,9 +5,9 @@ class CollabNotificationWorker
   sidekiq_options queue: :collaboration_publish, retry: 5, dead: true, failures: :exhausted
 
   GROUP_NOTI_USER_BATCH_SIZE = 30
-  HK_GROUP_NOTIFY = 'hk_group_notify'
-  HK_NOTIFY = 'hk_notify'
-  FOLLOWER_NOTIFY = 'follower_notify'
+  HK_GROUP_NOTIFY = 'hk_group_notify'.freeze
+  HK_NOTIFY = 'hk_notify'.freeze
+  FOLLOWER_NOTIFY = 'follower_notify'.freeze
 
   def perform(noti_info)
     @noti_info = noti_info
@@ -27,6 +27,9 @@ class CollabNotificationWorker
 
     if recipient_info[HK_GROUP_NOTIFY].present?
       send_group_notification(recipient_info)
+      if recipient_info[FOLLOWER_NOTIFY].present?
+        recipient_info = add_group_info_for_followers(recipient_info)
+      end
       recipient_info.delete(HK_GROUP_NOTIFY)
     end
 
@@ -102,12 +105,16 @@ class CollabNotificationWorker
       if recipient_info[FOLLOWER_NOTIFY].present?
         follower_noti_data = []
         recipient_info[FOLLOWER_NOTIFY].each do |follower|
-          noti_follower = agents_from_cache.find {|agent| follower['follower_id'] == agent.id.to_s}
-          follower_noti_data << {
-            'follower_id' => follower['follower_id'],
-            'name' => noti_follower.name,
-            'email' => noti_follower.email
-          } if noti_follower.present?
+          noti_follower = agents_from_cache.find { |agent| follower['follower_id'] == agent.id.to_s }
+          next unless noti_follower.present?
+          follower_data = {}
+          follower_data.merge!(
+            follower_id: follower['follower_id'],
+            name: noti_follower.name,
+            email: noti_follower.email
+          )
+          follower_data[:group_ids] = follower['group_ids'] if follower.key?('group_ids')
+          follower_noti_data << follower_data
         end
         recipient_info[FOLLOWER_NOTIFY] = follower_noti_data
       end
@@ -146,7 +153,27 @@ class CollabNotificationWorker
           'member_img_url' => imgUrl
         } if top_member.present?
       end
-      topmembers_info = top_members_data
+      top_members_data
+    end
+
+    def add_group_info_for_followers(recipient_info)
+      @mentioned_groups = @current_account.groups_from_cache.select { |grp| recipient_info[HK_GROUP_NOTIFY].include?(grp.id) }
+      @mentioned_groups.each do |group_info|
+        @group_users_map = agents_for_groups(recipient_info[HK_GROUP_NOTIFY])
+        @group_users_map[group_info.id].each do |user|
+          follower_noti_data = []
+          recipient_info[FOLLOWER_NOTIFY].each do |follower|
+            if follower['follower_id'] == user[:id].to_s
+              groups_ids = follower['group_ids'] || []
+              groups_ids << group_info.id.to_s
+              follower['group_ids'] = groups_ids
+            end
+            follower_noti_data << follower
+          end
+          recipient_info[FOLLOWER_NOTIFY] = follower_noti_data
+        end
+      end
+      recipient_info
     end
 
     def batchify_groups(recipient_info)
@@ -256,7 +283,7 @@ class CollabNotificationWorker
     end
 
     def user_image_url(current_domain, user)
-      (user.present? && user.avatar.present?) ? "#{current_domain}/users/#{user.id.to_s}/profile_image_no_blank" : ""
+      (user.present? && user.avatar.present?) ? "#{current_domain}/users/#{user.id}/profile_image_no_blank" : ""
     end
 
     def map_group_agents

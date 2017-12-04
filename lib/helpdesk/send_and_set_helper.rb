@@ -26,8 +26,9 @@ module Helpdesk::SendAndSetHelper
 
   def build_conversation_for_ticket
     @note = @ticket.notes.build(params[:helpdesk_note])
+    @note.send_survey = params[:send_survey]
+    @note.include_surveymonkey_link = params[:include_surveymonkey_link]
     @note.user ||= current_user if current_user
-    build_attachments @note, :helpdesk_note
     @note.changes_for_observer = {}
   end
 
@@ -110,9 +111,10 @@ module Helpdesk::SendAndSetHelper
   end
 
   def traffic_cop_warning
-    return unless traffic_cop_feature_enabled? and @note.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"] and has_unseen_notes?
+    return unless traffic_cop_feature_enabled? and has_unseen_notes?
     @notes = @ticket.conversation_since(params[:since_id]).reverse
     @public_notes = @notes.select{ |note| note.private == false || note.incoming == true }
+    @parent ||= @ticket
     respond_to do |format|
       format.js {
         render :file => "helpdesk/notes/traffic_cop.rjs" and return true
