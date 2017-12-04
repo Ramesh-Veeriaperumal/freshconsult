@@ -26,10 +26,6 @@ module Freshquery
           return internal_values[:list] if internal_values.key?(:list)
           internal_values[:list] = call_block(options[:in])
         end
-
-        # def custom_error_options
-        #   { list: inclusion_list.map(&:to_s).uniq.join(',') }
-        # end
     end
   end
 end

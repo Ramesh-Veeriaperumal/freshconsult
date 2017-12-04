@@ -11,10 +11,6 @@ module Freshquery
           regexp = call_block(options[:with])
           value !~ regexp
         end
-
-        # def custom_error_options
-        #   { accepted: "valid #{attribute}" }
-        # end
     end
   end
 end
