@@ -57,7 +57,7 @@ class SearchV2::Manager
       Search::V2::Tenant.new(args[:account_id]).rollback unless Rails.env.development?
 
       # Since Account.current is unavailable we shall use LaunchParty to check for service_reads
-      SearchService::Client.new(args[:account_id]).tenant_rollback
+      SearchService::Client.new(args[:account_id]).tenant_destroy
     end
   end
 end

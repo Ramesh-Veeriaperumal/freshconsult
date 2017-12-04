@@ -71,7 +71,7 @@ class Portal < ActiveRecord::Base
 
   concerned_with :solution_associations
 
-  APP_CACHE_VERSION = "FD76"
+  APP_CACHE_VERSION = "FD77"
 
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr
@@ -243,7 +243,8 @@ class Portal < ActiveRecord::Base
         elsif key == 'contact_info'
           preferences[key] = RailsFullSanitizer.sanitize(value)
         elsif key == 'logo_link' && preferences[key].present?
-          errors.add(:base, I18n.t('admin.products.portal.invalid_linkback_url')) unless value =~ AccountConstants::VALID_URL_REGEX
+          sanitized_value = RailsFullSanitizer.sanitize(value) #Prevent Xss
+          errors.add(:base, I18n.t('admin.products.portal.invalid_linkback_url')) unless sanitized_value == value && UriParser.valid_url?(value)
         end
       end
     end

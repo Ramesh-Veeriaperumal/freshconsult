@@ -26,14 +26,14 @@
 	<div class="control-group">
 		<%= form.label :forum_type, t('forum.type'), :class => "control-label" %>
 		<div class="controls">
-			<%= form.select :forum_type, Forum::TYPE_OPTIONS, {}, {:class => "select2 input-xlarge"} %>
+			<%= form.select :forum_type, Forum.type_list, {}, {:class => "select2 input-xlarge"} %>
 		</div>
 	</div>
 	<% end %>
 	<div class="control-group">
 		<%= form.label :forum_visibility, t('forum.visible_to'), :class => "control-label" %>
 		<div class="controls">
-			<%= form.select :forum_visibility, Forum::VISIBILITY_OPTIONS, {}, { :class => "select2 input-xlarge" } %>
+			<%= form.select :forum_visibility, Forum.visibility_list, {}, { :class => "select2 input-xlarge" } %>
 			<br/><br/>
 			<span id="company_forums">
 				<%= render_autocomplete({ :selected_values => selected_companies(@customer_id), :type => :companies, 

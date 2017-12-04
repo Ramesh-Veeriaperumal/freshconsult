@@ -11,6 +11,9 @@
 
 <div class="list-page-body ">
   <h3 class="lead"> <%= t('freshcaller.admin.title_text').html_safe %> </h3>
+  <div class="errorExplanation hide" id="errorExplanation">
+    
+  </div>
   <ul class="ui-form row-fluid">
     <li class="inline-field">
       <div class="row-fluid admin_help_image ff_welcome_page trial">
@@ -20,26 +23,7 @@
               <%= t('freshcaller.admin.freshcaller_not_available').html_safe %>
             </div>
           <% else %>
-            <div class = "freshcaller-signup-request">
-              <div class="span1 image-centered freshcaller-logo">
-                <img src="/images/freshcaller//freshcaller-dew-copy.png"
-                  srcset="/images/freshcaller//freshcaller-dew-copy@2x.png 2x,
-                    /images/freshcaller//freshcaller-dew-copy@3x.png 3x"
-                      class="freshcaller-dew-copy">
-              </div>
-              <div class="freshcaller-admin-content">
-                <%= t('freshcaller.admin.freshcaller_signup_text').html_safe %>
-              </div>
-              <div class="freshcaller-signup">
-                <%= link_to t("freshcaller.admin.feature_request_content.create_new_account").html_safe, "/admin/freshcaller/signup", :method => 'get', :class => "btn btn-primary btn-large freshcaller_signup_btn" %>
-              </div>
-            </div>
-            <div class="freshcaller-signup-processing hide ">
-              <img src="/images/animated/ajax-loader.gif" class="freshcaller-loader">
-              <div class="freshcaller-content-text">
-                <%= t('freshcaller.admin.feature_request_content.processing').html_safe %>
-              </div>
-            </div>
+            <%= render :partial => 'create_or_link_account' %>               
           <% end %>
         </div>
       </div>
@@ -49,5 +33,8 @@
 <%= javascript_tag do %> 
   if (typeof freshfone === "undefined") { freshfone = {}; }
   if (typeof freshcaller === "undefined") { freshcaller = {}; }
+  authenticationError ="<%= t('freshcaller.admin.link_account_request_content.link_errors.authentication_error') %>";
+  accessError ="<%= t('freshcaller.admin.link_account_request_content.link_errors.access_error') %>";
+  apiError ="<%= t('freshcaller.admin.link_account_request_content.link_errors.api_error') %>";
 <% end %>
 <%= javascript_include_tag :'cdn/freshcaller' %>
