@@ -18,7 +18,7 @@ describe Admin::Freshcaller::SignupController do
     end
   	it 'should show freshfone signup on navigating to admin/phone' do 
       controller.stubs(:freshcaller_request).returns(freshcaller_account_signup)
-      get :index
+      post :create
       response.should redirect_to admin_phone_path
       expect(@account.freshcaller_account.present?).to be true 
       expect(@agent.agent.freshcaller_agent.present?).to be true
@@ -34,12 +34,46 @@ describe Admin::Freshcaller::SignupController do
     end
     it 'should show freshfone signup on navigating to admin/phone' do 
       controller.stubs(:freshcaller_request).returns(freshcaller_domain_error)
-      get :index
+      post :create
       response.status.should eql(Rack::Utils::SYMBOL_TO_STATUS_CODE[:ok])
       response.should render_template("admin/freshcaller/signup/signup_error")
       controller.unstub(:freshcaller_request)
     end
   end
 
+  context 'When freshcaller linking is initiated' do
+    before(:each) do 
+      @account.add_feature(:freshcaller)
+      Freshcaller::Account.where({:account_id => @account.id}).destroy_all
+    end
+
+    after(:each) do
+      controller.unstub(:freshcaller_request)
+    end
+    
+    it 'should show freshfone linked account on navigating to admin/phone' do 
+      controller.stubs(:freshcaller_request).returns(freshcaller_account_linking)
+      post :link , {:email => 'sample@freshdesk.com'}
+      expect(Freshcaller::Account.where({:account_id => @account.id}).present?).to be true 
+    end
+
+    it 'should show access error on linking account' do 
+      post :link, {:email => Faker::Internet.email}
+      @freshcaller_response = JSON.parse response.body
+      expect(@freshcaller_response.present?).to be true 
+      expect(@freshcaller_response['error'].present?).to be true
+      @freshcaller_response['error'].should eq("No Access to link Account")
+    end
+
+    it 'should show error on linking account' do 
+      controller.stubs(:freshcaller_request).returns(freshcaller_account_linking_error)
+      post :link, {:email => 'sample@freshdesk.com'}
+      @freshcaller_response = JSON.parse response.body
+      expect(@freshcaller_response.present?).to be true 
+      expect(@freshcaller_response['error'].present?).to be true
+      @freshcaller_response['error'].should eq("Account Not found")
+    end
+
+  end
 
 end

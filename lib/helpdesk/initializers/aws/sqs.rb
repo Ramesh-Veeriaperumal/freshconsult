@@ -11,13 +11,9 @@ begin
   $sqs_facebook_messages = AWS::SQS.new.queues.named(SQS[:fb_message_realtime_queue])
 
   ##################### SQS RELATED TO TWITTER STARTS #########################
-  
-  #US Polls dircetly from the global queue - No region specific queues
-  if S3_CONFIG[:region] == 'us-east-1'
-    $sqs_twitter  = AWS::SQS.new.queues.named(SQS[:twitter_realtime_queue])
     
   #EUC polls from the region specifuc queue pushed from EU
-  elsif S3_CONFIG[:region] == 'eu-central-1'
+  if S3_CONFIG[:region] == 'eu-central-1'
     $sqs_twitter  = AWS::SQS.new.queues.named( S3_CONFIG[:region] + '_' + SQS[:twitter_realtime_queue])
     
   #EU polls from the global queue, pushes it to region specific queues EU/EUC
@@ -32,6 +28,9 @@ begin
     $sqs_twitter_global = AWS::SQS.new.queues.named(SQS[:twitter_realtime_queue])
     $sqs_twitter        = AWS::SQS.new.queues.named( S3_CONFIG[:region] + '_' + SQS[:twitter_realtime_queue])
     $sqs_twitter_euc    = $sqs_euc.queues.named(S3_CONFIG[:region_euc] + '_' + SQS[:twitter_realtime_queue])
+  else
+    #US & AU Polls dircetly from the global queue - No region specific queues
+    $sqs_twitter  = AWS::SQS.new.queues.named(SQS[:twitter_realtime_queue])
   end
   
   ##################### SQS RELATED TO TWITTER ENDS #########################

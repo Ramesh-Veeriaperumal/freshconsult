@@ -15,61 +15,53 @@ module Helpdesk::Activities
     def fetch_errored_email_details
       res_hash = DEFAULT_RET_HASH.clone
       params.symbolize_keys
-      $activities_thrift_transport.open()
-      client     = ::HelpdeskActivities::TicketActivities::Client.new($activities_thrift_protocol)
-      note                 = current_account.notes.where(id:params[:note]).first
-      act_param            = ::HelpdeskActivities::TicketDetail.new
-      act_param.account_id = current_account.id
-      act_param.object     = "ticket"
-      act_param.object_id  = @ticket.display_id 
-      act_param.event_type = ::HelpdeskActivities::EventType::ALL
-      act_param.comparator = ActivityConstants::EQUAL_TO  
-      act_param.shard_name = ActiveRecord::Base.current_shard_selection.shard
-      act_param.range_key  = note.dynamodb_range_key
-      response             = client.get_activities(act_param, 1)
+      @ticket = @item
+      object = params[:note_id].present? ? current_account.notes.where(id:params[:note_id]).first : @ticket
+      response = get_object_activities object
+      if response.error_message.present?
+        private_api? ? render_errors(res_hash) : (return res_hash)
+      end
       email_failures = if response.ticket_data[0].present?
         JSON.parse(response.ticket_data[0].email_failures)
       else
         []
       end    
       email_failures = email_failures.reduce Hash.new, :merge
-      to_emails      = parse_addresses(note.to_emails)[:plain_emails] || []
-      cc_emails      = parse_addresses(note.cc_emails)[:plain_emails] || []
-      to_list        = []
-      cc_list        = [] 
+      to_emails,cc_emails = object.to_cc_emails
+      @to_list        = []
+      @cc_list        = []
       regret_failure_count = 0
       email_failures.each do |email,error|
         user_email = current_account.users.where(email:email).first
         item_obj = {
           "email" => email,
-          "type"  => FAILURE_CATEGORY[error.to_i],
-          "user"  => user_email.nil? ? "" : user_email
+          "type"  => FAILURE_CATEGORY[error.to_i]
         }
-        to_list.push(item_obj) if to_emails.include?(email)
-        cc_list.push(item_obj) if cc_emails.include?(email)
+        item_obj.merge!("user"  => user_email.nil? ? "" : user_email) unless private_api?
+        @to_list.push(item_obj) if to_emails.include?(email)
+        @cc_list.push(item_obj) if cc_emails.include?(email)
         regret_failure_count+=1 if !to_emails.include?(email) && !cc_emails.include?(email)
       end
       failure_count = email_failures.count - regret_failure_count
-      if failure_count != note.failure_count
-        note.failure_count = failure_count
-        note.save
+      if failure_count != object.failure_count
+        object.failure_count = failure_count
+        object.save
       end
     rescue Exception => e
       Rails.logger.error e.backtrace.join("\n")
       Rails.logger.error e.message
-      return res_hash
+      private_api? ? render_errors(res_hash) : (return res_hash)
     ensure
-      render :partial => "fetch_errored_email_details", :locals => {:to_list => to_list, :cc_list => cc_list, :ticket_display_id => @ticket.display_id, :admin_emails => play_god_admin_emails} 
-      $activities_thrift_transport.close()
+      render :partial => "fetch_errored_email_details", :locals => {:to_list => @to_list, :cc_list => @cc_list, :ticket_display_id => @ticket.display_id, :admin_emails => play_god_admin_emails} unless private_api?
     end
 
     def suppression_list_alert
       dropped_address = params['drop_email']
       if dropped_address.present?
-        Helpdesk::TicketNotifier.send_later(:suppression_list_alert, current_user, dropped_address, @ticket.display_id)
-        render :json => { :message => "success"}
+        Helpdesk::TicketNotifier.send_later(:suppression_list_alert, current_user, dropped_address, @item.display_id)
+        private_api? ? (head 204) : (render :json => { :message => "success"})
       else
-        render :json => { :message => "failure"}
+        private_api? ? render_errors(DEFAULT_RET_HASH): (render :json => { :message => "failure" })
       end
     end
 
@@ -156,6 +148,27 @@ module Helpdesk::Activities
         end
         result
       end
+    end
+
+    def private_api?
+      params[:version] == "private" && current_user.preferences[:agent_preferences][:falcon_ui]
+    end
+
+    def get_object_activities object
+      $activities_thrift_transport.open()
+      client = ::HelpdeskActivities::TicketActivities::Client.new($activities_thrift_protocol)
+      activity_params = ::HelpdeskActivities::TicketDetail.new
+      activity_params.account_id = current_account.id
+      activity_params.object     = "ticket"
+      activity_params.object_id  = @ticket.display_id
+      activity_params.event_type = ::HelpdeskActivities::EventType::ALL
+      activity_params.comparator = ActivityConstants::EQUAL_TO
+      activity_params.shard_name = ActiveRecord::Base.current_shard_selection.shard
+      activity_params.range_key  = object.dynamodb_range_key
+      response = client.get_activities(activity_params, 1)
+    ensure
+      $activities_thrift_transport.close()
+      response
     end
 
     def parse_query_hash(query_hash, ticket, archive)

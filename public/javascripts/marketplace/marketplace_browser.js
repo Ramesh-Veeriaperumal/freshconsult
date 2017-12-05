@@ -257,7 +257,7 @@ var MarketplaceBrowser  = Class.create({
     }
     jQuery("#noticeajax").html(html).show().addClass("alert-danger");
     jQuery('.mkp-error-details').click(function() {
-      jQuery('.mkp-error-details').html('<p>'+ message +'<p>');
+      jQuery('.mkp-error-details').html('<p>'+ escapeHtml(message) +'<p>');
     });
     closeableFlash('#noticeajax');
   },

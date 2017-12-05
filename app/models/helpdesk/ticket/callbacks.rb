@@ -55,7 +55,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :pass_thro_biz_rules, on: :create, :unless => :skip_dispatcher?
   after_commit :send_outbound_email, :update_capping_on_create, :update_count_for_skill,on: :create, :if => :outbound_email?
 
-  after_commit :trigger_observer, on: :update, :if => :execute_observer?
+  after_commit :trigger_observer_events, on: :update, :if => :execute_observer?
   after_commit :update_ticket_states, :notify_on_update, :update_activity,
                :stop_timesheet_timers, :fire_update_event, on: :update
   #after_commit :regenerate_reports_data, on: :update, :if => :regenerate_data?
@@ -862,7 +862,7 @@ private
     true
   end
 
-  def trigger_observer
+  def trigger_observer_events
     filter_observer_events(true)
   end
 

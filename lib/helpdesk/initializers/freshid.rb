@@ -2,7 +2,7 @@ infra_config = YAML.load_file(File.join(Rails.root, 'config', 'infra_layer.yml')
 
 if infra_config['FRESHID_LAYER']
   Helpkit::Application.configure do
-    config.middleware.insert_after "Middleware::GlobalRestriction", "Middleware::FreshidCallbackApiAuthenticator"
+    config.middleware.insert_before "Middleware::TrustedIp", "Middleware::FreshidCallbackApiAuthenticator"
   end
 end
 

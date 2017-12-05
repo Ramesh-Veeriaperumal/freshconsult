@@ -65,7 +65,7 @@ module Helpdesk
       end
 
       def extract_email_from_text(text)
-        text.to_s.split(",").map{|eml| $1 if (eml =~ EMAIL_REGEX)}.compact.uniq
+        text.to_s.split(/,|;/).map{|eml| $1 if (eml =~ EMAIL_REGEX)}.compact.uniq
       end
 
       def decode_brackets_in_text(content)
