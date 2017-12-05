@@ -302,7 +302,8 @@ class User < ActiveRecord::Base
           joins: :user_companies,
           conditions: {
             user_companies:  {
-              company_id: contact_filter.company_id
+              company_id: contact_filter.company_id,
+              account_id: Account.current.id
             }
           }
         },
