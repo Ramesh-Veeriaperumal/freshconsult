@@ -237,10 +237,14 @@ module Facebook
       @social_revamp_enabled ||= Account.current.features?(:social_revamp)
     end
 
-    def latest_message(thread_key = nil)
+    def latest_message(thread_key = nil,thread_id = nil, msg_ids = nil)
       fb_msg = nil
       Sharding.run_on_slave do 
-        fb_msg = @account.facebook_posts.latest_thread(thread_key, 1, @fan_page.id).first if thread_key
+        fb_msg = @account.facebook_posts.latest_thread_for_key(thread_key, 1, @fan_page.id).first if thread_key && @fan_page.use_thread_key?
+        fb_msg ||= @account.facebook_posts.latest_thread_for_id(thread_id, 1).first if thread_id
+        # To be removed later
+        fb_msg ||= @account.facebook_posts.where("post_id IN (?) and postable_type = (?)",msg_ids,'Helpdesk::Ticket').first if msg_ids && @fan_page.use_msg_ids?
+        fb_msg = fb_msg.postable.notable.fb_post if fb_msg.present? && fb_msg.postable_type == 'Helpdesk::Note'
       end
       fb_msg
     end
