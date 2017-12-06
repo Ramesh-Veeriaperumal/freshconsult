@@ -1,5 +1,7 @@
 module Marketplace::HelperMethods
 
+  OAUTH_IPARAM_FEATURE = 'oauth_iparams'
+
   private
 
   def categories
@@ -46,12 +48,9 @@ module Marketplace::HelperMethods
     extension["features"].present? and extension['features'].include?('oauth')
   end
 
-  def has_oauth_iparams?(extension)
-    extension['features'].include?('oauth_iparams')
-  end
-
-  def is_pre_oauth_form?(action)
-    action == 'new_oauth_iparams' || action == 'edit_oauth_iparams'
+  def has_oauth_iparams?(extn=nil)
+    extension = extn || @extension
+    extension['features'].include?(OAUTH_IPARAM_FEATURE)
   end
 
   def addon_details

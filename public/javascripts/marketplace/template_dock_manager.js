@@ -352,7 +352,7 @@ var TemplateDockManager   = Class.create({
     var el = jQuery(e.currentTarget);
 
     var url = jQuery('.install-oauth-btn').attr('data-url');
-    if (jQuery(el).attr("data-oauth-iparams")) {
+    if (jQuery(el).attr("data-page") == "oauth_iparams") {
       url += "?oauth_iparams=" + JSON.stringify(postConfigs());
     }
     window.location = url;

@@ -12,6 +12,7 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
   rescue_from Exception, :with => :mkp_exception
 
   def new_configs
+    params[:page] = "iparams"
     if platform_version == Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2]
       configs_page_v2
     else
@@ -26,20 +27,26 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
   # Gets called only for the v2 apps with ouath_iparams.
   def new_oauth_iparams
     oauth_iparams_page
+    params[:page] = "oauth_iparams"
     render 'admin/marketplace/installed_extensions/configs'
+  rescue => e
+    render_error_response
   end
 
   # Gets called When oauth app reauthorize and is having oauth iparams.
   def edit_oauth_iparams
-    params[:has_oauth_iparams] = true
+    params[:page] = "oauth_iparams"
     acc_config = account_configs
     render_error_response && return if error_status?(acc_config)
     oauth_iparams_page
     @configs = acc_config.body['oauth_iparams']
     render 'admin/marketplace/installed_extensions/configs'
+  rescue => e
+    render_error_response
   end
 
   def edit_configs
+    params[:page] = 'iparams'
     acc_config = account_configs
     render_error_response && return if error_status?(acc_config)
     if platform_version == Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2]

@@ -16,15 +16,15 @@
   <div class="fa-hmeta head-spacer">
     <h3 class="app-name">
       <span class="status">
-        <% if(installation_type == "settings" && install_btn['has_oauth_iparams']) { %>
-          <span style="font-weight: 400;"><%= translate.get('reauthorize_header') %></span>
+        <% if(installation_type == "settings" && install_btn['page'] == "oauth_iparams") { %>
+          <span><%= translate.get('reauthorize_header') %></span>
         <% } else if (installation_type == "settings") { %>
           <%= translate.get('install_setting') %>:
         <% } else { %>
           <%= translate.get('install_txt') %>:
         <% } %>
       </span>
-      <% if(installation_type == "settings" && install_btn['has_oauth_iparams']) { %>
+      <% if(installation_type == "settings" && install_btn['page'] == "oauth_iparams") { %>
       <% } else { %>
         <span> <%- display_name %></span>
       <% } %>
@@ -49,10 +49,10 @@
 
   <div class="row-fluid fa-settings install-form">
     <div class="span10 fa-info">
-      <% if (installation_type != "settings" && !install_btn['has_oauth_iparams']) { %>
+      <% if (installation_type != "settings" && !install_btn['page'] == "oauth_iparams") { %>
         <h4 class="install-status"><%= translate.get('install_almost_done') %></h4>
       <% } %>
-      <% if (installation_type == "settings" && install_btn['has_oauth_iparams']) { %>
+      <% if (installation_type == "settings" && install_btn['page'] == "oauth_iparams") { %>
         <p style="font-weight: 100;"><%= translate.get('reauthorize_oauth_app') %></p>
       <% } %>
 
@@ -80,7 +80,7 @@
         <% } %>
       -->
   
-      <button class="col-md-6 btn btn-primary <%= install_btn['install_button'] %>" data-url="<%= install_btn['url'] %>" data-method="<%= install_btn['method'] %>" data-oauth-iparams="<%= install_btn['has_oauth_iparams']%>" data-platform-version="<%= platform_version %>"> <%= install_btn['text'] %></button>
+      <button class="col-md-6 btn btn-primary <%= install_btn['install_button'] %>" data-url="<%= install_btn['url'] %>" data-method="<%= install_btn['method'] %>" data-page="<%= install_btn['page']%>" data-platform-version="<%= platform_version %>"> <%= install_btn['text'] %></button>
       <button class="cancel_btn btn btn-default" style="margin-left: 10px;" data-url="<%= back_url %>"><%= translate.get('cancel') %></button>
     </div>
 

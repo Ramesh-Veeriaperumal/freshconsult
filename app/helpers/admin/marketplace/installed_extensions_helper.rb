@@ -5,9 +5,7 @@ module Admin::Marketplace::InstalledExtensionsHelper
     params_hash = params[:version_id] ? { version_id: params[:version_id] } : {}
     query_params = params_hash.blank? ? '' : "?#{params_hash.to_query}"
     if params[:installation_type] == 'install'
-      if is_pre_oauth_form?(params[:action]) && has_oauth_iparams?(@extension)
-        return oauth_iparams_continue_btn
-      end
+      return oauth_iparams_continue_btn if params[:page] == 'oauth_iparams'
       {
         :url => admin_marketplace_installed_extensions_install_path(params[:extension_id])+query_params,
         :method => :post,
@@ -19,9 +17,7 @@ module Admin::Marketplace::InstalledExtensionsHelper
       params_hash[:upgrade] = true if params[:is_oauth_app]
       query_params = "?#{params_hash.to_query}"
       if params[:installation_type] == 'settings'
-        if is_pre_oauth_form?(params[:action]) && has_oauth_iparams?(@extension)
-          return oauth_iparams_reauthorize_btn
-        end
+        return oauth_iparams_reauthorize_btn if params[:page] == 'oauth_iparams'
         url = admin_marketplace_installed_extensions_update_config_path(params[:extension_id])
       else 
         url = admin_marketplace_installed_extensions_reinstall_path(params[:extension_id])
@@ -41,7 +37,7 @@ module Admin::Marketplace::InstalledExtensionsHelper
     {
       :url => admin_marketplace_installed_extensions_oauth_install_path(params[:extension_id], params[:version_id]),
       :text => t('marketplace.oauth_install_continue'),
-      :has_oauth_iparams => true,
+      :page => params[:page],
       :install_button => 'install-oauth-btn'
     }
   end
@@ -52,7 +48,7 @@ module Admin::Marketplace::InstalledExtensionsHelper
       :url => admin_marketplace_installed_extensions_edit_oauth_configs_path(params[:extension_id], params[:version_id]),
       :method => :put,
       :text => t('marketplace.reauthorize').upcase,
-      :has_oauth_iparams => true,
+      :page => params[:page],
       :install_button => 'install-oauth-btn'
     }
   end

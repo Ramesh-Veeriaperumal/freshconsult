@@ -96,7 +96,7 @@ include FalconHelperMethods
         "#{admin_marketplace_installed_extensions_reinstall_path(@extension['extension_id'])}?#{params_hash.to_query}"
       end
     elsif is_oauth_app?(@extension)
-      if has_oauth_iparams?(@extension)
+      if has_oauth_iparams?
         admin_marketplace_installed_extensions_new_oauth_iparams_path(@extension['extension_id'], 
           @extension['version_id']) + '?' + configs_url_params(true)
       else
@@ -128,7 +128,7 @@ include FalconHelperMethods
         "install-iframe-settings"
       end
     elsif is_oauth_app?(@extension)
-      has_oauth_iparams?(@extension) ? "oauth-iparams-btn" : "install-oauth-btn"
+      has_oauth_iparams? ? "oauth-iparams-btn" : "install-oauth-btn"
     else
       "install-form-btn"
     end

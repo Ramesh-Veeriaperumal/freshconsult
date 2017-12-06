@@ -220,13 +220,13 @@ module Marketplace::ApiMethods
 
     def account_configs
       begin
+        endpoint_name = params[:page] == "oauth_iparams" ? "account_oauth_iparams" : "account_configs"
         api_payload = account_payload(
-          Marketplace::ApiEndpoint::ENDPOINT_URL[:account_configs] %
+          Marketplace::ApiEndpoint::ENDPOINT_URL[endpoint_name.to_sym] %
                 { :product_id => PRODUCT_ID,
                   :account_id => Account.current.id,
                   :version_id => params[:version_id] },
-          Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:account_configs] )
-        api_payload += "?include=oauth_iparams" if params[:has_oauth_iparams]
+          Marketplace::ApiEndpoint::ENDPOINT_PARAMS[endpoint_name.to_sym] )
         @account_configs ||= get_api(api_payload, MarketplaceConfig::ACC_API_TIMEOUT)
       rescue *FRESH_REQUEST_EXP => e
         exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
