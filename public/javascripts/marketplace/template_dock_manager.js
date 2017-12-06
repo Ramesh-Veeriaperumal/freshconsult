@@ -84,7 +84,8 @@ var TemplateDockManager   = Class.create({
                     .on("click.tmpl_events", ".cancel_btn" , this.cancelInstall.bindAsEventListener(this))
                     .on("click.tmpl_events", ".install-btn" , this.installApp.bindAsEventListener(this))
                     .on("click.tmpl_events", ".install-form-btn, .update" , this.updateApp.bindAsEventListener(this))
-                    .on("click.tmpl_events", ".oauth-app", this.installOAuthApp.bindAsEventListener(this))
+                    .on("click.tmpl_events", ".oauth-iparams-btn" , this.getOauthIparams.bindAsEventListener(this))
+                    .on("click.tmpl_events", ".install-oauth-btn", this.installOAuthApp.bindAsEventListener(this))
                     .on("click.tmpl_events", ".install-iframe-settings, .update-iframe-settings" , this.updateIframeApp.bindAsEventListener(this))
                     .on("click.tmpl_events", ".nativeapp" , this.installNativeApp.bindAsEventListener(this))
                     .on("submit.tmpl_events", "form#extension-search-form" , this.onSearch.bindAsEventListener(this))
@@ -274,6 +275,26 @@ var TemplateDockManager   = Class.create({
     });
   },
 
+  getOauthIparams: function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var that = this;
+    var el = jQuery(e.currentTarget);
+    jQuery.ajax({
+      url: jQuery(el).attr("data-url"),
+      type: "GET",
+      beforeSend: function(){
+        that.showLoader();
+      },
+      success: function(extension) {
+        jQuery(that.extensionsWrapper).empty().append(JST["marketplace/marketplace_install"](extension));
+      },
+      error: function(jqXHR, exception) {
+        that.showErrorMsg(that.customMessages.no_connection);
+      }
+    })
+  },
+
   manageShowMore: function(){
     var showChar = 600,  // How many characters are shown by default
         ellipsis = "...",
@@ -325,7 +346,15 @@ var TemplateDockManager   = Class.create({
   },
 
   installOAuthApp: function(e) {
-    var url = jQuery('.oauth-app').attr('data-url');
+    e.preventDefault();
+    e.stopPropagation();
+    var that = this;
+    var el = jQuery(e.currentTarget);
+
+    var url = jQuery('.install-oauth-btn').attr('data-url');
+    if (jQuery(el).attr("data-oauth-iparams")) {
+      url += "?oauth_iparams=" + JSON.stringify(postConfigs());
+    }
     window.location = url;
   },
 

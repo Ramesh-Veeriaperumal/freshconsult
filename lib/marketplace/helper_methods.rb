@@ -46,6 +46,14 @@ module Marketplace::HelperMethods
     extension["features"].present? and extension['features'].include?('oauth')
   end
 
+  def has_oauth_iparams?(extension)
+    extension['features'].include?('oauth_iparams')
+  end
+
+  def is_pre_oauth_form?(action)
+    action == 'new_oauth_iparams' || action == 'edit_oauth_iparams'
+  end
+
   def addon_details
     @addon_details ||= @extension['addon']['metadata'].find { |data| data['currency_code'] == Account.current.currency_name }
   end

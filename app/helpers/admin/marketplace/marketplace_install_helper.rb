@@ -13,7 +13,7 @@ include FalconHelperMethods
                 data-method="put" data-url="#{install_url}"> #{install_btn_text} </a>)
     elsif @is_oauth_app
       _btn << link_to(install_btn_text, '#', 'data-url' => install_url, :id => 'oauth_link',
-              :class => "btn btn-default btn-primary install-app #{install_btn_class} oauth-app")
+              :class => "btn btn-default btn-primary install-app #{install_btn_class}")
       _btn << link_to(install_btn_text, '#', 'data-url' => oauth_settings_url,
               :class => "btn btn-default btn-primary install-app hide install-form-btn")
     else
@@ -96,7 +96,12 @@ include FalconHelperMethods
         "#{admin_marketplace_installed_extensions_reinstall_path(@extension['extension_id'])}?#{params_hash.to_query}"
       end
     elsif is_oauth_app?(@extension)
-      admin_marketplace_installed_extensions_oauth_install_path(@extension['extension_id'], @extension['version_id'])
+      if has_oauth_iparams?(@extension)
+        admin_marketplace_installed_extensions_new_oauth_iparams_path(@extension['extension_id'], 
+          @extension['version_id']) + '?' + configs_url_params(true)
+      else
+        admin_marketplace_installed_extensions_oauth_install_path(@extension['extension_id'], @extension['version_id'])
+      end
     else
       url_params = configs_url_params
       admin_marketplace_installed_extensions_new_configs_path(@extension['extension_id'],
@@ -123,7 +128,7 @@ include FalconHelperMethods
         "install-iframe-settings"
       end
     elsif is_oauth_app?(@extension)
-      "install-oauth-btn"
+      has_oauth_iparams?(@extension) ? "oauth-iparams-btn" : "install-oauth-btn"
     else
       "install-form-btn"
     end
