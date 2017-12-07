@@ -71,6 +71,11 @@
       <%= content_tag :div, multiple_emails_container(@ticket.cc_email_hash[:cc_emails], "Cc: ") unless @ticket.cc_email_hash.blank? %>
         </div> 
   </div>
+
+  <div class="failed_emails">
+    <%= render :partial => "/helpdesk/tickets/show/email_failure_count.html.erb", :locals => {:item => @ticket, :display_id => @ticket.display_id} %>
+  </div>
+
   <div rel="image-enlarge" id="ticket_original_request" class="request_mail">
       <%= @ticket.description_html.html_safe %>
   </div>

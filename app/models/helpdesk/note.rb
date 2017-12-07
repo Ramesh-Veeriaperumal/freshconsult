@@ -205,6 +205,10 @@ class Helpdesk::Note < ActiveRecord::Base
     email? or fwd_email?
   end
   
+  def to_cc_emails
+    [to_emails,cc_emails]
+  end
+
   def can_split?
     return false unless Account.current.split_tickets_enabled?
      human_note_for_ticket? and (self.incoming and self.notable) and !user.blocked? and (self.private ? user.customer? : true) and
@@ -302,16 +306,6 @@ class Helpdesk::Note < ActiveRecord::Base
         end
       end 
       ticket_state.save
-    end
-  end
-
-  def trigger_observer model_changes, inline = false, system_event = false
-    @model_changes = model_changes.symbolize_keys unless model_changes.nil?
-    @system_event = system_event
-    if user_present?
-      filter_observer_events(true, inline)
-    else
-      Rails.logger.debug "@model_changes #{@model_changes.inspect}, User.current #{User.current}, survey_result? #{survey_result?}, system_event? #{system_event?}, zendesk_import? #{zendesk_import?}, freshdesk_webhook? #{freshdesk_webhook?}, sent_for_enrichment? #{sent_for_enrichment?}"
     end
   end
 

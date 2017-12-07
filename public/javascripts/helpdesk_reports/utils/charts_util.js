@@ -705,6 +705,7 @@ function lineChart(opts) {
                 }
             },
             line: {
+                linecap: 'square',
                 marker: {
                     enabled: true,
                     radius: 1

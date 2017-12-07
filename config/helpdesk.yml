@@ -75,13 +75,21 @@ USER_FACING_TITLE: FreshDesk
 #
 
 AGENT:
-    name: "Customer Service"
+    name: Customer Service
     email: custserv@freshdesk.com
 
-DEFAULT_TICKET_REQUESTER:
+DEFAULT_TICKET_PROPERTIES:
     email_ticket:
         email: james.dean@freshdesk.com
-        name: "James Dean"
+        name: James Dean
+
+    feedback_widget_ticket:
+        email: lily.robinson@freshdesk.com
+        name: Lily Robinson
+        meta:
+            user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/62.0.3202.62
+            referrer: http://www.sainsburys.co.uk/shop/gb/groceries/sainsburys-giraffe-bread-(tiger)-800g
+# end 
 
 EMAIL: 
 

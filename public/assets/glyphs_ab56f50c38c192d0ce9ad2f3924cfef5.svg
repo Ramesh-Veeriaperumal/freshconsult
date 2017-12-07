@@ -1,13 +1,13 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
 <!--
-2017-11-2: Created with FontForge (http://fontforge.org)
+2017-11-24: Created with FontForge (http://fontforge.org)
 -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
 <metadata>
-Created by FontForge 20170925 at Thu Nov  2 14:15:53 2017
- By Yasaswini
-Copyright (c) 2017, Yasaswini
+Created by FontForge 20170103 at Fri Nov 24 11:40:54 2017
+ By Mayank
+Copyright (c) 2017, Mayank
 </metadata>
 <defs>
 <font id="glyphs" horiz-adv-x="478" >
@@ -22,7 +22,7 @@ Copyright (c) 2017, Yasaswini
     bbox="-0.572668 -65 1343 476"
     underline-thickness="25.6"
     underline-position="-51.2"
-    unicode-range="U+F100-F2BE"
+    unicode-range="U+F100-F2BF"
   />
     <missing-glyph />
     <glyph glyph-name="uniF23F" unicode="&#xf23f;" horiz-adv-x="507" 
@@ -290,6 +290,9 @@ c-42 0 -65 -20 -65 -59v-41c0 -2 -1 -4 -2 -6c-2 -2 -4 -7 -4 -12c0 -6 3 -12 8 -15c
 c0 -11 -9 -20 -20 -20h-86c-6 0 -10 4 -10 10s4 11 10 11h86l-1 33c-87 34 -97 48 -100 58c0 1 -1 2 -1 3v14c0 3 1 5 3 7c8 8 14 20 18 33c1 2 2 5 4 6c3 2 4 6 4 10c0 3 -1 5 -2 7s-2 5 -2 7v31c0 29 -16 43 -47 43s-47 -15 -47 -43v-31c0 -2 -1 -5 -2 -7s-3 -4 -3 -7
 c0 -4 2 -8 5 -10c2 -1 3 -4 4 -6c4 -13 9 -25 17 -33c4 -4 4 -11 0 -15s-10 -4 -14 0c-10 10 -17 24 -22 39c-7 6 -11 16 -11 25c0 6 2 12 5 17v28c0 40 26 64 68 64c43 0 67 -23 67 -64v-28c3 -5 5 -11 5 -17c0 -9 -4 -19 -11 -25c-4 -14 -10 -25 -18 -35v-8
 c3 -4 17 -16 88 -44z" />
+    <glyph glyph-name="uniF2BF" unicode="&#xf2bf;" horiz-adv-x="480" 
+d="M227 147l29 3l179 179c7 7 6 19 -1 26s-19 7 -26 0l-179 -179zM462 383c24 -23 25 -62 2 -84l-188 -187c-1 -1 -2 -2 -4 -2l-69 -5c-9 -1 -18 6 -19 15v4l5 69c0 2 1 3 2 4l187 188c23 23 60 22 84 -2zM54 19v152h-7c-11 0 -20 9 -20 20s9 19 20 19h7v153h-34
+c-11 0 -20 8 -20 19s9 20 20 20h105c11 0 20 -9 20 -20s-9 -19 -20 -19h-30v-153h7c11 0 20 -8 20 -19s-9 -20 -20 -20h-7v-152h30c11 0 20 -9 20 -20s-9 -19 -20 -19h-105c-11 0 -20 8 -20 19s9 20 20 20h34z" />
     <glyph glyph-name="uniF1E3" unicode="&#xf1e3;" horiz-adv-x="406" 
 d="M88 39l-88 118h177zM0 225l88 118l89 -118h-177zM229 69h177v-40h-177v40zM370 140v-39h-141v39h141zM334 212v-40h-105v40h105zM298 284v-40h-69v40h69zM262 355v-39h-33v39h33z" />
     <glyph glyph-name="uniF115" unicode="&#xf115;" horiz-adv-x="491" 

@@ -402,7 +402,7 @@ var TemplateDockManager   = Class.create({
       parent.location.hash = "";
     }
     parent.location.reload();
-    clearInterval(that.progressInterval);
+    clearInterval(this.progressInterval);
   },
 
   handleInstallFailure: function(message) {
@@ -420,7 +420,7 @@ var TemplateDockManager   = Class.create({
     }
     progEl.siblings('.app-name').html(html);
     jQuery('.mkp-error-details').click(function() {
-      jQuery('.mkp-error-details').html('<p>'+ message +'<p>');
+      jQuery('.mkp-error-details').html('<p>'+ escapeHtml(message) +'<p>');
     });
   },
 

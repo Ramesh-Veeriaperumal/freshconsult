@@ -251,7 +251,7 @@ function helpdesk_submit(url, method, params){
     });
    }
 
-   form.action = url;      
+   form.action = url;
    form.submit();
 }
 
@@ -262,7 +262,7 @@ function reply_multiple_submit( url, method, params){
   if(current_page.indexOf("search/tickets") > -1) {
      selector = '#search-page-results [name="ids[]"]';
   }
-  
+
   (params.concat(jQuery(selector).get()) || []).each(function(item){
     item = $(item);
 
@@ -833,7 +833,7 @@ jQuery.fn.serializeObject = function(){
               merge = parseFloat(merge);
             }
             while((k = keys.pop()) !== undefined){
-                
+
                 // adjust reverse_key
                 reverse_key = reverse_key.replace(new RegExp("\\[" + k + "\\]$"), '');
 
@@ -960,7 +960,7 @@ function hashTabSelect(){
   if(window.location.hash != '') {
     hash = window.location.hash.split('/');
     jQuery.each(hash, function(index, value){
-      setTimeout(function(){ 
+      setTimeout(function(){
         catchException(function(){
           jQuery('#Pagearea').find(value + "-tab").trigger('click')
         }, "Error in method hashTabSelect");
@@ -974,7 +974,7 @@ function storeInLocalStorage(key, value) {
 }
 
 function storeBrowserLocalStorage(key, value){
-  localStorage.setItem(key, Browser.stringify(value));  
+  localStorage.setItem(key, Browser.stringify(value));
 }
 
 function getFromLocalStorage(key_name) {
@@ -1047,15 +1047,15 @@ var GetCannedResponse = {
     var params = "?ca_resp_id="+ca_resp_id+"&tkt_cr=true"
 
     var url = ticket_id ? (path+"/"+ticket_id+params ) : (path+params);
-    
+
     jQuery(element).addClass("response-loading");
-    jQuery.ajax({   
+    jQuery.ajax({
       type: 'POST',
       url: url,
       contentType: 'application/text',
       dataType: "script",
       async: true,
-      success: function(data){     
+      success: function(data){
         jQuery(element).removeClass("response-loading");
         jQuery(element).qtip('hide');
         jQuery('[data-dismiss="modal"]').trigger('click')
@@ -1079,7 +1079,7 @@ function pjax_form_submit (element, ev) {
     var _form = jQuery(element);
 
     if(_form.valid()) {
-      
+
       jQuery.pjax({
         container: "#body-container",
         type: _form.attr('method'),
@@ -1091,5 +1091,18 @@ function pjax_form_submit (element, ev) {
     ev.preventDefault();
     ev.stopImmediatePropagation();
     return false;
+  }
+}
+
+// make a function invokable only after being called n times
+function invokeAfterNth (fn, n) {
+  var invoked = 0;
+  return function () {
+    if (invoked === n - 1) {
+      fn();
+      invoked = 0;
+    } else {
+      invoked += 1;
+    }
   }
 }

@@ -205,7 +205,7 @@ class Admin::VaRulesController < Admin::AdminController
         { :name => "status", :value => t('ticket.status'), :domtype => dropdown_domtype, 
           :choices => Helpdesk::TicketStatus.status_names(current_account), :operatortype => "choicelist"},
         { :name => "source", :value => t('ticket.source'), :domtype => dropdown_domtype, 
-          :choices => TicketConstants.source_list.sort, :operatortype => "choicelist" },
+          :choices => source_choices.sort, :operatortype => "choicelist" },
         { :name => "product_id", :value => t('admin.products.product_label_msg'), :domtype => dropdown_domtype, 
           :choices => none_option+@products, :operatortype => "choicelist",
           :condition => multi_product_account? },
@@ -396,6 +396,13 @@ class Admin::VaRulesController < Admin::AdminController
 
     def dropdown_domtype
       supervisor_rules_controller? ? "dropdown" : "multiple_select"
+    end
+
+    def source_choices
+      # Since we don't enqueue the ticket in Dispatchr when the ticket is created through Outbound email, there is no need to show the option 'Outbound email' for 'Ticket Source' in the Dispatchr's Create/Edit page
+      va_rules_controller? ? 
+        TicketConstants.source_list.except(TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]) :
+                TicketConstants.source_list
     end
 
 end

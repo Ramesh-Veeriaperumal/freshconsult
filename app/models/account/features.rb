@@ -84,6 +84,10 @@ class Account < ActiveRecord::Base
       features?(:surveys, :survey_links)
   end
 
+  def link_tkts_or_parent_child_enabled?
+    link_tkts_enabled? || parent_child_tkts_enabled?
+  end
+
   def survey_enabled?
     features?(:surveys)
   end

@@ -1,76 +1,83 @@
 .help-center{
-	z-index: 3; 
+	z-index: 3;
 	background-color: $help_center_color;
 	border: 0;
 	color: $black;
 	@include clearfix;
-    @include border-radius(0);
-    border-bottom: 1px solid $border-color;
+	@include border-radius(6px);
+	border-bottom: 1px solid $grayThick;
 }
 
 .help-center-sc{
-    background-color: $white;
-    border: solid 1px rgba(2, 184, 117,0.5);
-    @include border-radius(0);
-    padding: 2px 0;
-    .hc-search{
-        width: 50%;
-        border-right: 0;
-        .hc-search-input{
-            width: 88%;
-            float: right;
-            input.special{
-                padding: 0 0 3px 0;
-            }
-        }
-        .hc-search-button{
-            position: absolute;
-            width: 4%;
-            float: left;
-            @include margin-left(32px);
-        }
-    }
-    .hc-nav{
-        width: 50%;
-        margin: 0;
-        float: right;
-        .sub-nav{
-            @include float(right);
-            div{
-                @include float(left);
-                @include clear(right);
-                @include padding-left(12px);
-                a{
-                    @include margin-right(15px);
-                }
-            }
-        }
-    }
+	background-color: $white;
+	border: solid 1px $tab_hover_color;
+	@include border-radius(0);
+	padding: 2px 0;
+	.hc-search{
+		width: 50%;
+		border-right: 0;
+		.hc-search-input{
+			width: 88%;
+			float: right;
+			input.special{
+				padding: 0 0 3px 0;
+			}
+		}
+		.hc-search-button{
+			position: absolute;
+			width: 4%;
+			float: left;
+			@include margin-left(32px);
+			.btn-primary{
+				background-color: white;
+			}
+		}
+	}
+	.hc-nav{
+		width: 50%;
+		margin: 0;
+		float: right;
+		.sub-nav{
+			@include float(right);
+			div{
+				@include float(left);
+				@include clear(right);
+				@include padding-left(12px);
+				a{
+					@include margin-right(15px);
+				}
+			}
+		}
+	}
 }
 
-.help-center{ 
+.help-center{
 	padding: 15px 0 15px 20px;
-    margin-bottom: 26px;
+	margin-bottom: 26px;
 }
 
 // PORTAL BASED SEARCH CSS
-.hc-search{	
-    position: relative; 
-    h2{
-        margin-bottom: 20px;
-    }
+.hc-search{
+	position: relative;
+	h2{
+		margin-bottom: 20px;
+	}
 }
 
 .help-center .hc-search-form{
 	padding:0;
 	@include border-radius(4px);
-    width: 80%;
-    background: transparent;
-    padding: 0;
-    border: 1px solid $green;
+	width: 80%;
+	background: transparent;
+	padding: 0;
+	border: 1px solid $grayThick;
+	&:focus-within{
+		border: 1px solid $inputFocusRingColor;
+		box-shadow: 0px 0px 5px rgba($inputFocusRingColor,0.6);
+	}
 }
 
-.hc-search-form{	
+.hc-search-form{
 	@include pie-clearfix;
 }
 
@@ -79,7 +86,9 @@
 	@include border-radius(6px 6px 0 0);
 }
 
-.hc-search-input{ position: relative; }
+.hc-search-input{
+	position: relative;
+}
 .hc-search-input input, .hc-search-button .btn{	height: 40px; }
 .hc-search-input input{	width: 100%; }
 .hc-search-button .btn{
@@ -88,17 +97,17 @@
 	padding: 5px;
 }
 
-.hc-nav	nav{ 
-    @include clearfix;
+.hc-nav	nav{
+	@include clearfix;
 }
 .new-ticket, .check-status{ font-weight: bold; }
-.new-ticket, .check-status, .contact-info{ 	
+.new-ticket, .check-status, .contact-info{
 	@include padding(3px 8px 3px 2px);
 	@include float(left);
 	@include margin-right(15px);
 	&:before{
 		content:"";
-		@include inline-block;		
+		@include inline-block;
 		@include margin-right(5px);
 		@include border-radius(2em);
 		margin-top: -1px;
@@ -112,300 +121,319 @@
 @include mobile-icon(nav-newticket, $help_center_icons_bg);
 @include mobile-icon(nav-status, $help_center_icons_bg);
 
-.hc-search-input{ 
-	width:90%; 
-    @include float(left);
+.hc-search-input{
+	width:90%;
+	@include float(left);
 	input.special{
+		padding: 6px 13px;
+		@include box-shadow(none);
+		font-size: 14px;
+		border: 0;
+		color: $black;
+		@include border-radius(4px);
 		@include border-top-right-radius(0);
 		@include border-bottom-right-radius(0);
-        padding: 6px 13px;
-        @include box-shadow(none);
-        font-size: 14px;
-        border: 0;
-        color: $black;
 	}
 }
-.hc-search-button{ 
+.hc-search-button{
 	position: relative;
-	width:10%; 
-    @include float(left); 	
+	width:10%;
+	@include float(left);
+	&:focus{
+		outline: 0;
+		box-shadow: 0px 0px 5px rgba($inputFocusRingColor,0.6);
+	}
 	.btn{
+		background-color: $white;
+		@include box-shadow(none);
+		background-image: none;
+		border: 0;
+		padding: 10px 16px 7px 0;
+		@include border-radius(4px);
 		@include border-top-left-radius(0);
 		@include border-bottom-left-radius(0);
-        background-color: $white;
-        @include box-shadow(none);  
-        background-image: none;
-        border: 0;
-        padding: 10px 16px 7px 0;
-        &:hover{
-            @include text-shadow(none);
-            background-color: $white;
-        }
-        .hide-in-mobile{
-            display: none;
-            @include text-shadow(none);
-        }
-        .hide-tablet {
-            display: block;
-        }
+		&:hover{
+			@include text-shadow(none);
+			background-color: $white;
+		}
+		&:focus{
+			outline: 0;
+			box-shadow: 0px 0px 5px rgba($inputFocusRingColor,0.6);
+		}
+		.hide-in-mobile{
+			display: none;
+			@include text-shadow(none);
+		}
+		.hide-tablet {
+			display: block;
+		}
+		&.btn-primary{
+			border: 0;
+			width: 100%;
+			padding: 0;
+			background-color: white;
+			&:hover{
+				background-color: white;
+			}
+		}
 	}
 }
 
-.hc-search{ 
+.hc-search{
 	width: 68%;
 	@include padding-right(2%);
 	@include border-right(1px solid $help_center_icons_bg);
 }
 .hc-nav{
 	display: block;
-    width: 100%;
-    margin: 12px 0 6px 0;
-    padding: 0;
+	width: 100%;
+	margin: 12px 0 6px 0;
+	padding: 0;
 	a{
-        @include inline-block;
-        font-size: 14px;
-        color: $linkColor;
-        font-weight: normal;
-        padding: 6px 0;
-        @include margin-right(30px);
-        background: none;
-        border: 0;
-        text-transform: capitalize;
-        span{ 
-            @include inline-block; 
-            &:hover{
-                color: $linkColorHover;
-                text-decoration: underline;
-            }
-        }
-    }
-    a[href*="/login"],a[href*="/signup"]{
-        @include margin-right(0);
-        font-family: $baseFontFamily;
-        color: $blue;
-        font-weight: 600;
-        @include margin(0 2px);
-        letter-spacing: 0.5px;
-        &:hover{
-            background-color: transparent;
-            color: $linkColorHover;
-        }
-    }
+		@include inline-block;
+		font-size: 14px;
+		color: $linkColor;
+		font-weight: normal;
+		padding: 6px 0;
+		@include margin-right(30px);
+		background: none;
+		border: 0;
+		text-transform: capitalize;
+		span{
+			@include inline-block;
+			&:hover{
+				color: $linkColorHover;
+				text-decoration: underline;
+			}
+		}
+	}
+	a[href*="/login"],a[href*="/signup"]{
+		@include margin-right(0);
+		font-family: $baseFontFamily;
+		color: $blue;
+		font-weight: 600;
+		@include margin(0 2px);
+		letter-spacing: 0.5px;
+		&:hover{
+			background-color: transparent;
+			color: $linkColorHover;
+		}
+	}
 }
 .hc-search, .hc-nav{
 	display: inline-block; /* It will overwrite mobile focus inline style*/
 	vertical-align: middle;
-    border: 0;
+	border: 0;
 }
 
 .ui-state-focus{
-    color: $black;
+	color: $black;
 }
 
 /* Applying styles for tablet and above */
-@include at-breakpoint($break-tablet){    
-	
-	
+@include at-breakpoint($break-tablet){
+
+
 }
 @if $nonResponsive == false {
 	@include at-breakpoint($media-mobile){
-	    /* Applying styles only for mobile */
-        .help-center,.help-center-sc {
-            border:0;
-            @include padding(0);
-            background-color: transparent;
-            position: absolute;
-            width: 85%;
-            margin: 0;
-            z-index: 3;
-            margin-top: -66px;
-            .page{
-                @include padding(0);
-            }
-        }
-        .help-center-sc{
-            @include margin-left(12px); 
-            margin-top: -56px;       
-        }
-        @include layout(12) {
-            .hc-search{ @include span-columns(7); }
-            .hc-nav{ @include span-columns(5 omega); }
-        }
-        .help-center{
-            .hc-search-form{
-                background-color: transparent;
-                border:0;
-                padding:0;
-                @include border-radius(0px);
-            }
-            .hc-search{ 
-                position: absolute; 
-                @include border-right(0); 
-                width: 50%;  
-                background-color: $gray;
-                margin-top: 2px;
-                border: 1px solid $box-border;
-                @include border-radius(4px);
-            }
-            .hc-nav{ 
-                @include float(right); 
-            }
-            .hc-search-input{ width: 100%; }
-            .hc-search-input input{
-                width: 100%;
-                @include padding-right(15px);
-                @include border-radius(0);
-                background: transparent;
-            }
-            .hc-search-button{ 
-                width: 30px;
-                position: absolute;
-                @if $rtl {
-                    left: 13px;
-                }@else{
-                    right:0px;
-                }
-                top: 0;
-                height: 40px;
-            } 
-            .hc-search-button .btn-primary {
-                height: 40px;
-                border: 0;
-                margin: 0;
-                @include box-shadow(none);
-                background: transparent;
-            }
-            .mobile-icon-search{ display:none; }
-        }
-        .hc-search-button .btn{ font-size: 12px; }         
-        .onfocus-hide{
-            opacity: 0;
-            display:none;
-        }
-        .onfocus-mobile-button{
-            border-color: rgba($inputFocusRingColor, 0.8);
-            outline: 0;
-            outline: thin dotted 9; 
-            @include box-shadow(inset 0 1px 1px rgba($inputFocusRingColor, 0.075));
-        }
-        .hc-search, .onfocus-mobile{
-            @include transition(width 0.2s ease);
-        }
-        .hc-nav{
-            opacity: 1;
-            @include transition(opacity 1s ease-in-out);
-            width: 48%;
-            nav{ 
-                span{ display:none; }
-                a{
-                    @include text-align(center);
-                    padding: 0;
-                    width:20%; 
-                    display: inline-block;
-                    @include margin-right(16px);
-                }
-            }
-        }
-        .help-center-sc{
-            .hc-search{
-                position: absolute;
-                border-right: 0;
-                width: 50%;
-                background-color: $gray;
-                margin-top: 2px;
-                border: 1px solid $box-border;
-                border-radius: 4px;
-                margin: 0;
-                @include padding(0);
-                margin-top: 2px;
-                .hc-search-input{
-                    width: 95%;
-                }
-                input{
-                    @include padding(6px 12px);
-                    background: transparent;
-                }
-                .hc-search-button{
-                    position: absolute;
-                    width: 20%;
-                    @include float(right);
-                    right: 0px;
-                    background: transparent;
-                    .btn{
-                        @include padding(10px 0 7px 0);
-                        background-color: $gray;
-                        @include padding(0);
-                        @include padding-left(0);
-                    }
-                }
-            }
-            .hc-nav{
-                width: 48%;
-                margin: 0;
-                @include float(right);
-                margin-top: 10px;
-                .sub-nav{
-                    @include float(none);
-                    div{
-                        @include padding-left(6px);
-                        float: none;
-                    }
-                }
-            }
-        }
-        .onfocus-mobile{ width:95% !important; }
-        .ficon-create-ticket-new:before, .mobile-icon-nav-newticket.new-ticket:before, .ficon-ticket-status-new:before, .mobile-icon-nav-status.check-status:before{
-            width: 20px;
-        }
-        .new-ticket, .check-status, .contact-info {
-            @include margin-right(0);
-            &:before{   
-                @include margin-right(0px);
-                @include border-radius(0);
-                margin-top: 0px;
-                background-color: transparent;
-            }
-        }
-        /* TODO_RAILS3 Migrate this in to a sprite helper than a sprite include */
-        // @include mobile-icon(nav-contact, $tab_color);
-        // @include mobile-icon(nav-newticket, $tab_color);
-        // @include mobile-icon(nav-status, $tab_color);
+		/* Applying styles only for mobile */
+		.help-center,.help-center-sc {
+			border:0;
+			@include padding(0);
+			background-color: transparent;
+			position: absolute;
+			width: 85%;
+			margin: 0;
+			z-index: 3;
+			margin-top: -66px;
+			.page{
+				@include padding(0);
+			}
+		}
+		.help-center-sc{
+			@include margin-left(12px);
+			margin-top: -56px;
+		}
+		@include layout(12) {
+			.hc-search{ @include span-columns(7); }
+			.hc-nav{ @include span-columns(5 omega); }
+		}
+		.help-center{
+			.hc-search-form{
+				background-color: transparent;
+				border:0;
+				padding:0;
+				@include border-radius(0px);
+			}
+			.hc-search{
+				position: absolute;
+				@include border-right(0);
+				width: 50%;
+				background-color: $gray;
+				margin-top: 2px;
+				border: 1px solid $box-border;
+				@include border-radius(4px);
+			}
+			.hc-nav{
+				@include float(right);
+			}
+			.hc-search-input{ width: 100%; }
+			.hc-search-input input{
+				width: 100%;
+				@include padding-right(15px);
+				@include border-radius(0);
+				background: transparent;
+			}
+			.hc-search-button{
+				width: 30px;
+				position: absolute;
+				@if $rtl {
+					left: 13px;
+				}@else{
+					right:0px;
+				}
+				top: 0;
+				height: 40px;
+			}
+			.hc-search-button .btn-primary {
+				height: 40px;
+				border: 0;
+				margin: 0;
+				@include box-shadow(none);
+				background: transparent;
+			}
+			.mobile-icon-search{ display:none; }
+		}
+		.hc-search-button .btn{ font-size: 12px; }
+		.onfocus-hide{
+			opacity: 0;
+			display:none;
+		}
+		.onfocus-mobile-button{
+			border-color: rgba($inputFocusRingColor, 0.8);
+			outline: 0;
+			outline: thin dotted 9;
+			@include box-shadow(inset 0 1px 1px rgba($inputFocusRingColor, 0.075));
+		}
+		.hc-search, .onfocus-mobile{
+			@include transition(width 0.2s ease);
+		}
+		.hc-nav{
+			opacity: 1;
+			@include transition(opacity 1s ease-in-out);
+			width: 48%;
+			nav{
+				span{ display:none; }
+				a{
+					@include text-align(center);
+					padding: 0;
+					width:20%;
+					display: inline-block;
+					@include margin-right(16px);
+				}
+			}
+		}
+		.help-center-sc{
+			.hc-search{
+				position: absolute;
+				border-right: 0;
+				width: 50%;
+				background-color: $gray;
+				margin-top: 2px;
+				border: 1px solid $box-border;
+				border-radius: 4px;
+				margin: 0;
+				@include padding(0);
+				margin-top: 2px;
+				.hc-search-input{
+					width: 95%;
+				}
+				input{
+					@include padding(6px 12px);
+					background: transparent;
+				}
+				.hc-search-button{
+					position: absolute;
+					width: 20%;
+					@include float(right);
+					right: 0px;
+					background: transparent;
+					.btn{
+						@include padding(10px 0 7px 0);
+						background-color: $gray;
+						@include padding(0);
+						@include padding-left(0);
+					}
+				}
+			}
+			.hc-nav{
+				width: 48%;
+				margin: 0;
+				@include float(right);
+				margin-top: 10px;
+				.sub-nav{
+					@include float(none);
+					div{
+						@include padding-left(6px);
+						float: none;
+					}
+				}
+			}
+		}
+		.onfocus-mobile{ width:95% !important; }
+		.ficon-create-ticket-new:before, .mobile-icon-nav-newticket.new-ticket:before, .ficon-ticket-status-new:before, .mobile-icon-nav-status.check-status:before{
+			width: 20px;
+		}
+		.new-ticket, .check-status, .contact-info {
+			@include margin-right(0);
+			&:before{
+				@include margin-right(0px);
+				@include border-radius(0);
+				margin-top: 0px;
+				background-color: transparent;
+			}
+		}
+		/* TODO_RAILS3 Migrate this in to a sprite helper than a sprite include */
+		// @include mobile-icon(nav-contact, $tab_color);
+		// @include mobile-icon(nav-newticket, $tab_color);
+		// @include mobile-icon(nav-status, $tab_color);
 	}
 
-    @include at-breakpoint($media-tablet-desktop){
-        .help-center-sc{
-            .hc-search{
-                width: 35%;
-                .hc-search-input{
-                    input.special{
-                        @include padding(0 0px 3px 25px);
-                    }
-                }
-            }
-            .hc-nav{
-                width: 65%;
-                nav div{
-                    @include padding-left(6px);
-                }
-            }
-        }
-    }
+	@include at-breakpoint($media-tablet-desktop){
+		.help-center-sc{
+			.hc-search{
+				width: 35%;
+				.hc-search-input{
+					input.special{
+						@include padding(0 0px 3px 25px);
+					}
+				}
+			}
+			.hc-nav{
+				width: 65%;
+				nav div{
+					@include padding-left(6px);
+				}
+			}
+		}
+	}
 }
 
 
 
 .attach-link-wrap{
-    position:relative;
-    cursor:pointer;
-    .attach-link-file, input[type="file"]{
-        @include opacity(0);
-        position: absolute;
-        top: 0;
-        left:0;
-        height: 26px;
-        z-index:99999;
-        width:100%;
-        cursor:pointer;
-    }
-    .attach-link-file{ width: 20px;}
+	position:relative;
+	cursor:pointer;
+	.attach-link-file, input[type="file"]{
+		@include opacity(0);
+		position: absolute;
+		top: 0;
+		left:0;
+		height: 26px;
+		z-index:99999;
+		width:100%;
+		cursor:pointer;
+	}
+	.attach-link-file{ width: 20px;}
 }

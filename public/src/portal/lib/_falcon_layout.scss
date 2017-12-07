@@ -5,17 +5,18 @@
   @include container($total-columns);
   padding-top: 10px;
   padding-bottom: 10px;
+  min-height: 78%;
 }
 
-.main{ 
-	width: 66%; 
-	margin: 0; 
-	border: 0; 
-	@include box-shadow(none); 
-	@include border-radius(6px); 
+.main{
+	width: 66%;
+	margin: 0;
+	border: 0;
+	@include box-shadow(none);
+	@include border-radius(6px);
 	@include border-bottom-right-radius(0);
-	@include border-top-right-radius(0); 
-	@include float(left); 
+	@include border-top-right-radius(0);
+	@include float(left);
 	@include border-right(1px solid #dadfe3);
 	background-color: $white;
 }
@@ -24,7 +25,7 @@
     float: left;
     @include box-shadow(none);
     @include border-bottom-left-radius(0);
-	@include border-top-left-radius(0); 
+	@include border-top-left-radius(0);
 	background-color: $gray;
 	margin: 0;
 }
@@ -60,9 +61,9 @@
 .span1{ @include span-columns(1); }
 .span2{ @include span-columns(2); }
 .span3{ @include span-columns(3); }
-.span4{ 
-	@include span-columns(4); 
-	margin-bottom: 6px; 
+.span4{
+	@include span-columns(4);
+	margin-bottom: 6px;
 }
 .span5{ @include span-columns(5); }
 .span6{ @include span-columns(6); }
@@ -72,7 +73,7 @@
 .span10{ @include span-columns(10); }
 .span11{ @include span-columns(11); }
 .span12{ @include span-columns(12); }
-.omega{ 
+.omega{
   @include omega;
   	float: left;
 	@include margin-right(0);

@@ -12,7 +12,8 @@ App.CollaborationModel = (function ($) {
         MSG_TYPE_CLIENT: "1", // Msg from Client
         MSG_TYPE_SERVER_MADD: "2", // Msg from Server, denotes addition of member
         MSG_TYPE_SERVER_MREMOVE: "3", // Msg from Server, denotes removal of member
-        MSG_TYPE_CLIENT_ATTACHMENT: '4', // Attachment Msg from Client     
+        MSG_TYPE_CLIENT_ATTACHMENT: '4', // Attachment Msg from Client
+        MSG_TYPE_TYPING: 'typing', // not known to server
         JUST_NOW_TEXT: "Now",
         LONG_AGO_TEXT: "Long ago",
         MAX_ONLINE_SEC: 60,
@@ -21,8 +22,9 @@ App.CollaborationModel = (function ($) {
         NOTIFICATION_POPUP_CARD_TEMPLATE: "collaboration/templates/notification_popup_card",
         DUMMY_USER: {name: "New user"},
         ANNOTATION: {bg_color: "#b4ebdf", shadow_color: "#7ec7b7", border_color: "#96dbcc"},
-        NOTI_KEYS: ["hk_notify", "hk_group_notify", "reply"]
-    };
+        NOTI_KEYS: ["hk_notify", "hk_group_notify", "reply"],
+        RESPONSE_ERROR_ACTION_NOT_AUTHORIZED: "Action not authorized" // Response Error String
+   };
 
     var _COLLAB_PVT = {
         ChatApi: {},
@@ -38,9 +40,9 @@ App.CollaborationModel = (function ($) {
         connectionInited : function() {
             Collab.MEMBER_PRESENCE_POLL_TIME = _COLLAB_PVT.ChatApi.memberPresencePollTime;
             // TODO(mayank): mergo updates DB with nil data
-            // This is supposed to update latest self_info; Avoiding this temporarily; 
+            // This is supposed to update latest self_info; Avoiding this temporarily;
             // _COLLAB_PVT.updateUser(Collab.currentUser.uid, Collab.currentUser.name, Collab.currentUser.email)
-            
+
             function uiIniter() {
                 Collab.initedWithData = true;
                 // call initUI if pending config found
@@ -89,21 +91,21 @@ App.CollaborationModel = (function ($) {
         },
         // TODO (mayank): This Call will be moved to Rails Backend
         updateUser: function(id, name, mail, cb) {
-            var userData = { 
+            var userData = {
               "uid": String(id),
               "info": {
                   "name": name,
                   "email": mail || name + "@freshdesk.com",
-              }   
-            };  
+              }
+            };
             _COLLAB_PVT.ChatApi.updateUser(userData, function(response) {
                 _COLLAB_PVT.updateLocalUserModel(response);
                 if(typeof cb === "function") {cb(response);}
-            }); 
+            });
         },
         updateLocalUserModel: function(response) {
             Collab.usersMap[response.uid] = jQuery.extend(Collab.usersMap[response.uid] || {}, {
-                "uid": response.uid, 
+                "uid": response.uid,
                 "name": response.info.name,
                 "lastActive": response.last_online_at ? Collab.parseUTCDateToLocal(response.last_online_at).getTime() : 0
             }, response.info || {});
@@ -114,10 +116,14 @@ App.CollaborationModel = (function ($) {
             var msg_for_current_convo = (!!Collab.currentConversation && msg.co_id === Collab.currentConversation.co_id);
 
             if(msg_for_current_convo && !sent_by_me) {
-                msg.incremental = true;
-                App.CollaborationUi.addMessageHtml(msg, CONST.TYPE_RECEIVED);
+                if(msg.m_type === CONST.MSG_TYPE_TYPING) {
+                    App.CollaborationUi.addTypingHtml(msg, CONST.TYPE_RECEIVED);
+                } else {
+                    msg.incremental = true;
+                    App.CollaborationUi.addMessageHtml(msg, CONST.TYPE_RECEIVED);
+                }
             }
-            if (msg_for_current_convo && sent_by_me) {
+            if (msg_for_current_convo && sent_by_me && msg.m_type !== CONST.MSG_TYPE_TYPING) {
                 App.CollaborationUi.updateSentMessage(msg);
                 _COLLAB_PVT.updateConvoMeta(msg); /* stores metadata per convo */
             }
@@ -157,15 +163,17 @@ App.CollaborationModel = (function ($) {
         },
         onFollowerAdd: function(response) {
             var currentConvo = Collab.conversationsMap[response.co_id];
-            var userIdToAdd = App.CollaborationUi.parseJson(response.body).user_id;
-            var addedAt = App.CollaborationUi.parseJson(response.body).added_at;
+            var respBody = App.CollaborationUi.parseJson(response.body);
             var followers = currentConvo.followers || {};
             var followerToAdd = {
-                added_at: addedAt
+                added_at: respBody.added_at
             };
-            if (!followers[userIdToAdd]) {
-                followers[userIdToAdd] = followerToAdd;
+            if (!followers[respBody.user_id]) {
+                followers[respBody.user_id] = followerToAdd;
                 currentConvo.followers = followers;
+            }
+            if(respBody.user_id === Collab.currentUser.uid) {
+              App.CollaborationUi.updateFollowConvoUi(true);
             }
         },
         onFollowerRemove: function(response) {
@@ -174,6 +182,9 @@ App.CollaborationModel = (function ($) {
             var followers = currentConvo.followers;
             if (followers && followers[userIdToRemove]) {
                 delete currentConvo.followers[userIdToRemove];
+            }
+            if(userIdToRemove === Collab.currentUser.uid) {
+              App.CollaborationUi.updateFollowConvoUi(false);
             }
         },
         onNotifyHandler: function(response) {
@@ -187,7 +198,7 @@ App.CollaborationModel = (function ($) {
             Collab.unreadNotiCount++;
 
             response.body = App.CollaborationUi.parseJson(response.body);
-            
+
             var notificationIsForOpenedCollab = (!!Collab.currentConversation && Collab.currentConversation.co_id === response.body.co_id);
             if(App.CollaborationUi.isCollabOpen() && notificationIsForOpenedCollab) {
                 Collab.markNotification([response.nid]);
@@ -221,10 +232,10 @@ App.CollaborationModel = (function ($) {
             if(!!annotationData) {
                 annotationData.messageId = msg.mid;
                 var meta_operations = [ {
-                        "operator": "add", 
-                        "property": "annotations", 
-                        "type": "string_set", 
-                        "value": [JSON.stringify(annotationData)]} 
+                        "operator": "add",
+                        "property": "annotations",
+                        "type": "string_set",
+                        "value": [JSON.stringify(annotationData)]}
                     ];
                 var metadata = {
                     "co_id": msg.co_id,
@@ -350,9 +361,10 @@ App.CollaborationModel = (function ($) {
                 "body": m.body,
                 "m_type": m.m_type,
                 "attachment_link": m.attachment_link,
-                "ts": m.ts
+                "ts": m.ts,
+                "persist": m.persist
             };
-            
+
             var convo = {
                 "co_id": co_id,
                 "token": Collab.currentConversation.token
@@ -360,9 +372,23 @@ App.CollaborationModel = (function ($) {
 
             _COLLAB_PVT.ChatApi.sendMessage(msg, convo, function(response, isErr) {
                     if(isErr) {
+                        // Refresh Convo Token
                         _COLLAB_PVT.refreshConvoToken(function() {
                             convo.token = Collab.currentConversation.token;
-                            _COLLAB_PVT.ChatApi.sendMessage(msg, convo, cb);
+                            if (typeof response === 'string' && response === CONST.RESPONSE_ERROR_ACTION_NOT_AUTHORIZED) {
+                                // This situation will arise only for created conversations after 24 hrs of inactivity and we have to refresh rtstoken
+                                var convoRTSTokenRefresh = {
+                                  'co_id': convo.co_id,
+                                  'token': convo.token
+                                };
+                                var myId = Collab.currentUser.uid;
+                                _COLLAB_PVT.ChatApi.getRtsAuthToken(convoRTSTokenRefresh, myId, function(response, isErr) {
+                                    // convo token is already refreshed so no need to refresh here again
+                                    _COLLAB_PVT.ChatApi.sendMessage(msg, convo, cb);
+                                })
+                            } else {
+                                _COLLAB_PVT.ChatApi.sendMessage(msg, convo, cb);
+                            }
                         });
                     } else {
                         if(typeof cb === "function") {cb(response);}
@@ -439,11 +465,11 @@ App.CollaborationModel = (function ($) {
                     jQuery.ajax({
                         url: '/helpdesk/tickets/collab/' + ticket_id + '/notify',
                         type: 'POST',
-                        dataType: 'json',                  
+                        dataType: 'json',
                         data: jsonData,
                         contentType: 'application/json; charset=utf-8'
                     });
-                } 
+                }
             } else {
                 console.log("Sending notification failed!! Ticket ID not found!");
             }
@@ -467,14 +493,14 @@ App.CollaborationModel = (function ($) {
                 var convoMembers = convo.members;
                 for(var id in convoMembers) {
                     if(convoMembers.hasOwnProperty(id)) {
-                        collaborators.push(id);    
+                        collaborators.push(id);
                     }
                 }
 
                 _COLLAB_PVT.ChatApi.getPresence(collaborators, function(response) {
                     if(typeof response === "string") { response = App.CollaborationUi.parseJson(response); }
                     for (var i = response.length - 1; i >= 0 && !!response[i].uid && Collab.usersMap[response[i].uid]; i--) {
-                        Collab.usersMap[response[i].uid].lastActive = response[i].last_online_at ? 
+                        Collab.usersMap[response[i].uid].lastActive = response[i].last_online_at ?
                             Collab.parseUTCDateToLocal(response[i].last_online_at).getTime() : 0 ;
                         collaboratorsMap[response[i].uid] = response[i];
                     }
@@ -511,6 +537,45 @@ App.CollaborationModel = (function ($) {
         notify: function(userId, notifyBody, ticketId) {
             _COLLAB_PVT.ChatApi.notifyUser(userId, notifyBody, ticketId);
         },
+
+        followConvo: function(follow) {
+            var convo = {
+                "co_id": Collab.currentConversation.co_id,
+                "token": Collab.currentConversation.token
+            }
+            var followCb = function(resp) {
+              _COLLAB_PVT.onFollowerAdd({co_id: convo.co_id, body: {user_id: Collab.currentUser.uid, added_at: new Date()}});
+            }
+            var unfollowCb =  function(resp) {
+              _COLLAB_PVT.onFollowerRemove({co_id: convo.co_id, body: {user_id: Collab.currentUser.uid}});
+            }
+            if(follow) {
+              _COLLAB_PVT.ChatApi.addFollower(convo, Collab.currentUser.uid, function(response, isErr) {
+
+                if(isErr) {
+                    _COLLAB_PVT.refreshConvoToken(function() {
+                        convo.token = Collab.currentConversation.token;
+                        _COLLAB_PVT.ChatApi.addFollower(convo, Collab.currentUser.uid, followCb)
+                    })
+                } else {
+                    followCb(response);
+                }
+              });
+            } else {
+              _COLLAB_PVT.ChatApi.removeFollower(convo, Collab.currentUser.uid, function(response, isErr) {
+                if(isErr) {
+                    _COLLAB_PVT.refreshConvoToken(function() {
+                        convo.token = Collab.currentConversation.token;
+                        _COLLAB_PVT.ChatApi.removeFollower(convo, Collab.currentUser.uid, unfollowCb)
+                    })
+                } else {
+                    unfollowCb(response);
+                }
+
+              });
+            }
+        },
+
         addMember: function(convoName, uid, cb) {
             var convo = {
                 "co_id": convoName,
@@ -587,7 +652,7 @@ App.CollaborationModel = (function ($) {
                 "token": Collab.currentConversation.token
             };
             Collab.invalidAnnotationMessages=[];
-            _COLLAB_PVT.ChatApi.loadConversation(convo, 
+            _COLLAB_PVT.ChatApi.loadConversation(convo,
                 Collab.currentUser.uid,
                 function(response, isErr) {
                     if(isErr) {
@@ -618,7 +683,7 @@ App.CollaborationModel = (function ($) {
                 cb();
             }
         },
-        
+
         markAnnotation: function() {
             return _COLLAB_PVT.Annotations.markAnnotation();
         },
@@ -677,7 +742,7 @@ App.CollaborationModel = (function ($) {
                 }
             });
         },
-        
+
         uploadAttachment: function(fd, cb){
             var convo = {
                 "formData": fd,
@@ -743,12 +808,12 @@ App.CollaborationModel = (function ($) {
                 });
             }
         },
-        
+
         init: function() {
             var config = App.CollaborationUi.parseJson($("#collab-account-payload").data("accountPayload"));
             // TODO(aravind): Add all fields.
             Collab.currentUser = config.user;
-            
+
             _COLLAB_PVT.ChatApi = new ChatApi({
                 "clientId": config.client_id,
                 "clientAccountId": config.client_account_id,
