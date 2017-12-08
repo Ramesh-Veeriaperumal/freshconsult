@@ -8222,6 +8222,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         push_to_slack: "Push to Slack"
         no_agent: "No Agent"
         help_command: "1. /create_fd_ticket  - This command will use the last 200 chat messages to create a ticket on Freshdesk.\n 2. freshdeskbot - You will receive Freshdesk notification from this Bot."
+        invalid_request: "Invalid request. Team_id/Slash_token is not present/mismatch"
       subject:
         chat: "Chat Conversation with"
         default_chat: "Chat Conversation of"
