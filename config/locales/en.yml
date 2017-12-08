@@ -7423,7 +7423,7 @@ en:
     get_more_apps: Get More Apps
     confirm_data_lose: "Your data will be lost."
     confirm_uninstall_message: "Are you sure you want to uninstall the %{human_name}?"
-    reauthorize_oauth_app: "If your app has stopped working, try re-authorizing the app to access information from the third-party"
+    reauthorize_oauth_app: "If your app has stopped working, try re-authorizing the app to access information from the third-party applications."
     reauthorize_header: "Reauthorize the app"
     cancel: "Cancel"
     reauthorize: "Reauthorize"
