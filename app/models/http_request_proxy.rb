@@ -30,7 +30,7 @@ class HttpRequestProxy
   def fetch(params, request)
     unless(request.blank?)
       method = request.env["REQUEST_METHOD"].downcase
-      auth_header = request.headers['HTTP_AUTHORIZATION']
+      auth_header = request.headers['HTTP_AUTHORIZATION'] || params[:oauth_token]
       user_agent = request.headers['HTTP_USER_AGENT']
     end
     requestParams = {:method => method, :auth_header => auth_header, :user_agent => user_agent}
