@@ -179,6 +179,9 @@ class HttpRequestProxy
     rescue => e
      Rails.logger.error("Error while parsing remote response.\n#{e.message}\n#{e.backtrace.join('\n')}")
     end
+    if response_type.include?('json') && !response_body.present?
+      response_body = {}.to_json
+    end
     return {:text=>response_body, :content_type => response_type, :status => response_code, 'x-headers' => x_headers}
   end
 
