@@ -33,8 +33,10 @@ class Account < ActiveRecord::Base
   after_commit :update_account_details_in_freshid, on: :update, :if => :update_freshid?
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
-  include RabbitMq::Publisher 
-  
+  include RabbitMq::Publisher
+
+  after_launchparty_change :trigger_feature_change_callbacks
+
   def downcase_full_domain
     self.full_domain.downcase!
   end
@@ -122,6 +124,15 @@ class Account < ActiveRecord::Base
     end
 
   private
+
+    # define your callback method in this format ->
+    # eg:  on launch  feature_name => falcon, method_name => def falcon_on_launch ; end
+    #      on rollback feature_name => falcon, method_name => def falcon_on_rollback ; end
+    def trigger_feature_change_callbacks(changes)
+      self.make_current
+      changes[:account_id] = self.id
+      LaunchPartyActionWorker.perform_async(changes)
+    end
 
     def sync_name_helpdesk_name
       self.name = self.helpdesk_name if helpdesk_name_changed?
