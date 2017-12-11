@@ -105,3 +105,4 @@ helpdesk:
     - ner_api_config
     - freshid
     - smart_filter_config
+    - freshquery
