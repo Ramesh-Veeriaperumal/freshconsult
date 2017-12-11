@@ -9,7 +9,7 @@ module Freshcaller::TestHelper
   end
 
   def delete_freshcaller_account
-    @account.freshcaller_account.delete
+    ::Freshcaller::Account.where(account_id: @account.id).destroy_all
     @account.reload
   end
 

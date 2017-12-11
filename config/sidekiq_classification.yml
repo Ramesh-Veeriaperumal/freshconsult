@@ -142,6 +142,8 @@
     - update_sentiment
     - update_notes_sentiment
     - github
+    - freshid_events
+    - freshid_account_details_update
   :free:
     - free_sla
     - free_supervisor

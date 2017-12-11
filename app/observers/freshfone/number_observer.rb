@@ -72,7 +72,8 @@ class Freshfone::NumberObserver < ActiveRecord::Observer
 		def add_number_to_twilio(freshfone_number, account)
 			number = account.freshfone_subaccount.incoming_phone_numbers.create(
 														:phone_number => freshfone_number.number, 
-														:voice_application_sid => account.freshfone_account.app_id )
+														:voice_application_sid => account.freshfone_account.app_id,
+														:sms_url => nil, :sms_application_sid => nil, :sms_fallback_url => nil)
 			freshfone_number.number_sid = number.sid unless number.blank?
 		end
 

@@ -29,6 +29,10 @@ class Import::Customers::Contact < Import::Customers::Base
   def create_imported_contact
     @params_hash[:user][:helpdesk_agent] = false #To make already deleted user active
     @item.signup!(@params_hash)
+  rescue => e
+    Rails.logger.debug "Error importing contact : #{Account.current.id} #{@params_hash.inspect}
+                        #{e.message} #{e.backtrace}"
+    false
   end
 
   private
