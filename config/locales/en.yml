@@ -907,6 +907,9 @@ en:
         dm_info: "Multiple messages with same person within this time interval will be merged into one ticket"
         include_helptext: "example: support, \"System down\", @insideapple"
         brief_desc: "Tweets will get converted to tickets automatically based on first matching rule"
+      smart_filter:
+        header: "Enable Smart Filters"
+        desc: "Automatically convert relevant tweets to tickets. Turn this on if you get a lot of noise on Twitter. Works on tweets in English." 
       facebook_streams:
         index:
           new_account: "New Account"

@@ -30,6 +30,7 @@
     - freshfone_node
     - freshfone_trial_worker
     - livechat_worker
+    - smart_filter_tweet_to_ticket
   :scheduled:
     - scheduled_reports
     - scheduled_reports_cleanup
@@ -79,6 +80,8 @@
     - product_feedback
     - freshcaller_migration_worker
     - ner_worker
+    - smart_filter_initialise
+    - smart_filter_feedback
   :maintainence:
     - select_all_tickets
     - select_all_batcher
