@@ -126,7 +126,9 @@ class Signup < ActivePresenter::Base
           :email => user.email,
           :phone => user.phone 
         },
-      
+        :company_info => {
+          :name => account.name
+        },
         :billing_emails => { :invoice_emails => [ user.email ] }
       }
     end

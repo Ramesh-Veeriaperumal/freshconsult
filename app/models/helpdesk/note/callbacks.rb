@@ -432,7 +432,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def enqueue_for_NER
       NERWorker.perform_async({:obj_id => self.id, :user_email => self.user.email, 
-        :obj_type => :notes, :text => self.body_html}) if account.launched?(:ner)
+        :obj_type => :notes, :text => self.body, :html => self.body_html}) if account.launched?(:ner)
     end
 end
 

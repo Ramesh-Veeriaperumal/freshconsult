@@ -1,0 +1,20 @@
+<div class="list-page-body" id="smart_filter_head">
+  <table class="table table-striped">
+    <tbody>
+      <tr>
+        <td>
+          <div class='span1 mt6' id="smart_filter_button">
+            <%= f.check_box(:private, :checked => @twitter_handle.smart_filter_enabled, :id => 'smart_filter_toggle', :class => 'tooltip', :name => 'smart_filter_enabled', "rel" => "toggle",  "data-checked-label" => t("plain_yes"), "data-unchecked-label" => t("plain_no") )  %>
+          </div>
+        </td>
+        <td>
+          <div class='form_data span11 mlt'>
+            <label class="label-bold"><%= t('admin.social.smart_filter.header') %></label>
+            <label><%= t('admin.social.smart_filter.desc') %></label>
+          </div>
+        </td>
+
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -14,6 +14,7 @@ App.CollaborationModel = (function ($) {
         MSG_TYPE_SERVER_MREMOVE: "3", // Msg from Server, denotes removal of member
         MSG_TYPE_CLIENT_ATTACHMENT: '4', // Attachment Msg from Client
         MSG_TYPE_TYPING: 'typing', // not known to server
+        MSG_TYPE_READ_RECEIPT: 'read_receipt', // not known to server
         JUST_NOW_TEXT: "Now",
         LONG_AGO_TEXT: "Long ago",
         MAX_ONLINE_SEC: 60,
@@ -35,6 +36,7 @@ App.CollaborationModel = (function ($) {
                 Collab.features.collabTourEnabled = response.features.show_collab_tour;
                 Collab.features.markReadEnabled = response.features.enable_mark_read;
                 Collab.features.followerEnabled = response.features.enable_follower;
+                Collab.features.readReceiptEnabled = response.features.enable_read_receipt;
             }
         },
         connectionInited : function() {
@@ -80,6 +82,7 @@ App.CollaborationModel = (function ($) {
                     });
                 }
                 uiIniter();
+                _COLLAB_PVT.ChatApi.markOnline(_COLLAB_PVT.onHeartBeat);
             });
 
         },
@@ -117,13 +120,15 @@ App.CollaborationModel = (function ($) {
 
             if(msg_for_current_convo && !sent_by_me) {
                 if(msg.m_type === CONST.MSG_TYPE_TYPING) {
-                    App.CollaborationUi.addTypingHtml(msg, CONST.TYPE_RECEIVED);
+                    App.CollaborationUi.addTypingHtml(msg);
+                } else if(msg.m_type === CONST.MSG_TYPE_READ_RECEIPT) {
+                    App.CollaborationUi.updateReadReceipt(msg);
                 } else {
                     msg.incremental = true;
                     App.CollaborationUi.addMessageHtml(msg, CONST.TYPE_RECEIVED);
                 }
             }
-            if (msg_for_current_convo && sent_by_me && msg.m_type !== CONST.MSG_TYPE_TYPING) {
+            if (msg_for_current_convo && sent_by_me && msg.m_type !== CONST.MSG_TYPE_TYPING && msg.m_type !== CONST.MSG_TYPE_READ_RECEIPT) {
                 App.CollaborationUi.updateSentMessage(msg);
                 _COLLAB_PVT.updateConvoMeta(msg); /* stores metadata per convo */
             }
@@ -296,6 +301,24 @@ App.CollaborationModel = (function ($) {
                 ticket_payload.convo_token = data.convo_token;
                 $("#collab-ticket-payload").attr("data-ticket-payload", JSON.stringify(ticket_payload));
             }
+        },
+  
+        sendReadReceipt: function(msgId) {
+            var currentConvo = Collab.currentConversation;
+            if (!Collab.conversationsMap[currentConvo.co_id]) {
+                // Conversation doesn't exists or there is no message in msgBody
+                return;
+            }
+
+            var msg = {
+                "body": JSON.stringify({
+                    "mid": msgId
+                }),
+                "m_type": CONST.MSG_TYPE_READ_RECEIPT,
+                "ts": Date.now().toString(),
+                "persist": false
+            }
+            Collab.sendMessage(msg, currentConvo.co_id);
         }
     };
 
@@ -309,12 +332,14 @@ App.CollaborationModel = (function ($) {
         unreadNotiCount: 0,
         invalidAnnotationMessages: [],
         profileImages: {},
+        selectionInfo: {},
         features: {
             groupMentionsEnabled: false,
             replyToEnabled: false,
             collabTourEnabled: false,
             markReadEnabled: false,
-            followerEnabled: false
+            followerEnabled: false,
+            readReceiptEnabled: false
         },
 
         isOnline: function(userId) {
@@ -400,6 +425,9 @@ App.CollaborationModel = (function ($) {
             var current_user_id = Collab.currentUser.uid;
 
            _COLLAB_PVT.ChatApi.updateReadMarker(convo_id, current_user_id, msgId, cb);
+           if(Collab.features.readReceiptEnabled) {
+             _COLLAB_PVT.sendReadReceipt(msgId);
+           }
         },
         checkNotiKeys: function(msg) {
             meta = JSON.parse(msg.metadata)
@@ -719,9 +747,18 @@ App.CollaborationModel = (function ($) {
             }
         },
 
-        getSelectionInfo: function() {
+        getSelectionInfo: function () {
+            return Collab.selectionInfo;
+        },
+
+        setSelectionInfo: function() {
             var annotatorId = Collab.currentUser.uid;
-            return _COLLAB_PVT.Annotations.getSelectionInfo(annotatorId);
+            Collab.selectionInfo = _COLLAB_PVT.Annotations.getSelectionInfo(annotatorId);
+            return Collab.selectionInfo;
+        },
+
+        resetSelectionInfo: function () {
+            Collab.selectionInfo = {};
         },
 
         fetchMoreMessages: function(p, cb){

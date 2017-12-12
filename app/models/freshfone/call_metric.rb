@@ -70,7 +70,7 @@ class Freshfone::CallMetric < ActiveRecord::Base
     self.talk_time = ((self.hangup_at - self.answered_at).to_i.abs - self.hold_duration) if 
           talk_time.blank? && hangup_at && answered_at
     self.ringing_at = created_at if call.ancestry.present?
-    self.total_ringing_time = update_total_ring_time unless self.call.voicemail?
+    update_total_ring_time
     self.handle_time = calculate_handle_time
   end
 
@@ -140,7 +140,10 @@ class Freshfone::CallMetric < ActiveRecord::Base
 
     def calculate_ring_time(queued_at = nil)
       disconnected_at = queued_at || answered_at || hangup_at
-      return (disconnected_at - self.ringing_at).to_i.abs if ringing_at.present?
+      return if skip_ringing_time_calculation?
+      ringing_duration = (disconnected_at - self.ringing_at).to_i.abs
+      return ringing_duration unless voicemail_call?
+      ringing_duration - self.call.call_duration.to_i - self.ivr_time.to_i
     end
 
     def update_total_ring_time(queued_at = nil)
@@ -171,7 +174,19 @@ class Freshfone::CallMetric < ActiveRecord::Base
     def queued_call?
       self.ringing_at.present? &&  (call_changes[:call_status].present? &&
         call_changes[:call_status].first == Freshfone::Call::CALL_STATUS_HASH[:default] &&
-        call_changes[:call_status].last == Freshfone::Call::CALL_STATUS_HASH[:queued]) || 
-        self.call.voicemail_initiated
+        call_changes[:call_status].last == Freshfone::Call::CALL_STATUS_HASH[:queued])
+    end
+
+    def voicemail_call?
+      call_changes[:call_status].present? &&
+        call_changes[:call_status].last == Freshfone::Call::CALL_STATUS_HASH[:voicemail]
+    end
+
+    def skip_ringing_time_calculation?
+      ringing_at.blank? || disconnected_from_queue?
+    end
+
+    def disconnected_from_queue?
+      call_disconnected? && (call_changes[:call_status].first == Freshfone::Call::CALL_STATUS_HASH[:queue])
     end
 end

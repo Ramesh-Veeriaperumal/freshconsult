@@ -50,6 +50,12 @@ module Marketplace::InstExtControllerMethods
     @configs_page = open(configs_url).read
   end
 
+  def oauth_iparams_page
+    s3_id = params[:version_id].to_s.reverse
+    oauth_iparams_url = "https://#{MarketplaceConfig::CDN_STATIC_ASSETS}/#{s3_id}/#{Marketplace::Constants::OAUTH_IPARAM}"
+    @configs_page = open(oauth_iparams_url).read
+  end
+
   def extension_has_config?
     render 'admin/marketplace/installed_extensions/configs' unless @extension['has_config']
   end

@@ -69,6 +69,15 @@ module Va
 
     AVAILABLE_TIMEZONES = ActiveSupport::TimeZone.all.map { |time_zone| [time_zone.name.to_sym, time_zone.to_s] }
 
-    MAX_CUSTOM_HEADERS = 5 
+    MAX_CUSTOM_HEADERS = 5
+
+    QUERY_OPERATOR = {
+        :is => 'IS', :is_not => 'IS NOT', :in => 'IN',
+        :not_in => 'NOT IN', :equal => '=', :not_equal => '!=',
+        :greater_than => '>', :less_than => '<',
+        :greater_than_equal_to => '>=', :less_than_equal_to => '<=',
+        :not_equal_to => '<>', :like => 'LIKE', :not => 'NOT', :or => 'OR',
+        :AND => 'AND'
+    }
   end
 end

@@ -21,6 +21,7 @@ App.CollaborationUi = (function ($) {
         MSG_TYPE_SERVER_MREMOVE: "3", // Msg from Server, denotes removal of member
         MSG_TYPE_CLIENT_ATTACHMENT: "4",
         MSG_TYPE_TYPING: "typing", // not known to server
+        MSG_TYPE_READ_RECEIPT: "read_receipt", // not known to server
 
         DEFAULT_PRESENCE_IVAL: 60 * 1000 * 1, // 1 minute
         RETRY_DELAY_FOR_PENDING_DP_REQ: 1000 * 5, // 5sec
@@ -63,7 +64,11 @@ App.CollaborationUi = (function ($) {
             $collabSidebar.on("mouseover.collab", ".avatar-cover", _COLLAB_PVT.showHoverCard);
             $collabSidebar.on("mouseleave.collab", ".avatar-cover", _COLLAB_PVT.hideHoverCard);
             $collabBtn.on("click.collab", "#collab-btn", function() {
-                Collab.loadConversation(_COLLAB_PVT.openCollabSidebar);
+                if (App.CollaborationModel.getSelectionInfo().isAnnotableSelection) {
+                    _COLLAB_PVT.askToMarkAnnotation();
+                } else {
+                    Collab.loadConversation(_COLLAB_PVT.openCollabSidebar);
+                }
             });
             $pagearea.on("click.collab", ".pseudo_reply #DiscussButton", function() {
                 Collab.loadConversation(_COLLAB_PVT.openCollabSidebar);
@@ -107,20 +112,13 @@ App.CollaborationUi = (function ($) {
             });
             $pagearea.on("mouseup.collab", ".leftcontent .conversation:not(.activity)", function(event) {
                 var containerEl = event.currentTarget;
-                if(Collab.highlightMode && Collab.isCollabOpen()) {
-                  _COLLAB_PVT.showAnnotationOption(containerEl);
-                }
+                setTimeout(function () {
+                    _COLLAB_PVT.showAnnotationOption(containerEl);
+                });
             });
             $pagearea.on("mouseleave.collab", "#show-discussion-dd", _COLLAB_PVT.hideDiscussionDD);
             $pagearea.on("click.collab", "#collab-option-dd", function(){
-                var reply_in_progress = $("#collab-msg-reply-to").attr("data-reply");
-                if (_COLLAB_PVT.collabDisabled()){
-                    if(!Collab.isCollabOpen()) {
-                        _COLLAB_PVT.openCollabSidebar();
-                    }
-                } else if(!reply_in_progress) {
-                    _COLLAB_PVT.markAnnotation();
-                }
+                _COLLAB_PVT.askToMarkAnnotation();
             });
             $scrollBox.on("scroll.collab", _COLLAB_PVT.hasChatReachedTop); // scroll doesn't bubble
 
@@ -220,6 +218,17 @@ App.CollaborationUi = (function ($) {
             $("#collaborators-tab-btn").removeClass("active");
         },
 
+        askToMarkAnnotation: function() {
+            var reply_in_progress = $("#collab-msg-reply-to").attr("data-reply");
+            if (_COLLAB_PVT.collabDisabled()) {
+                if (!Collab.isCollabOpen()) {
+                    _COLLAB_PVT.openCollabSidebar();
+                }
+            } else if (!reply_in_progress) {
+                _COLLAB_PVT.markAnnotation();
+            }
+        },
+
         markAnnotation: function() {
             _COLLAB_PVT.hideAnnotationOption();
             _COLLAB_PVT.cancelTempAnnotationIfAny();
@@ -285,6 +294,7 @@ App.CollaborationUi = (function ($) {
             if(msg_id) {
                 $("#send-message-box").focus();
             }
+            App.CollaborationModel.resetSelectionInfo();
         },
 
         setCollabSelectableStyle: function(state) {
@@ -631,6 +641,7 @@ App.CollaborationUi = (function ($) {
             $annotationHolder.attr("data-annotation", "");
             $annotationHolder.find(".text").empty();
             $chatSection.removeClass("annotated");
+            collabModel.resetSelectionInfo();
 
             $replyHolder.attr("data-reply", "");
             $replyHolder.find(".text").empty();
@@ -811,8 +822,8 @@ App.CollaborationUi = (function ($) {
             _COLLAB_PVT.hideAnnotationOption();
 
             var s_id = App.CollaborationModel.currentUser.uid;
-            var selectionInfo = App.CollaborationModel.getSelectionInfo(s_id);
-            if(!selectionInfo.isAnnotableSelection) {
+            var selectionInfo = App.CollaborationModel.setSelectionInfo(s_id);
+            if (!selectionInfo.isAnnotableSelection || !Collab.highlightMode || !Collab.isCollabOpen()) {
                 return;
             }
             var selectionRectsForVp = _COLLAB_PVT.getSelectionVpLoc(containerEl);
@@ -1868,7 +1879,11 @@ App.CollaborationUi = (function ($) {
             }
         },
 
-        addTypingHtml: function(msg, render_type) {
+        updateReadReceipt: function() {
+          // UI code for updating read receipt for [TH-1059] YTD 
+        },
+
+        addTypingHtml: function(msg) {
             if(!Collab.isCollabOpen() || !msg.body || Collab.shouldBlockTypingStatusShow) {
                 return;
             }
