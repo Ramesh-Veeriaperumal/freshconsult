@@ -50,7 +50,7 @@ module Marketplace::HelperMethods
 
   def has_oauth_iparams?(extn=nil)
     extension = extn || @extension
-    extension['features'].include?(OAUTH_IPARAM_FEATURE)
+    extension["features"].present? and extension['features'].include?(OAUTH_IPARAM_FEATURE)
   end
 
   def addon_details
