@@ -128,6 +128,16 @@ module Ember
         match_json(pattern)
       end
 
+      def test_index_with_valid_ids_array
+        article_ids = []
+        article_ids = @account.solution_articles.all.collect(&:parent_id)
+        get :index, controller_params(version: 'private', ids: article_ids)
+        articles = @account.solution_articles.find_all_by_parent_id(article_ids)
+        assert_response 200
+        pattern = articles.map { |article| private_api_solution_article_pattern_index(article) }
+        match_json(pattern)
+      end
+
       def test_index_with_valid_ids_and_user_id
         article_ids = []
         article_ids = @account.solution_articles.all.collect(&:parent_id)

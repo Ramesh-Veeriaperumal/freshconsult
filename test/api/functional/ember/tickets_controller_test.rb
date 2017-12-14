@@ -588,6 +588,81 @@ module Ember
       Account.any_instance.unstub(:multiple_user_companies_enabled?)
     end
 
+    def test_parse_template
+      t = create_ticket
+      params = {
+        id: t.display_id,
+        template_text: 'test # {{ticket.id}}',
+        version: 'private'
+      }
+      post :parse_template, construct_params(params, false)
+      assert_response 200
+      str = "test # #{t.display_id}"
+      match_json({ evaluated_text: str })
+    end
+
+    def test_parse_template_malformed
+      t = create_ticket
+      params = {
+        id: t.display_id,
+        template_text: 'test # {% if my_variable == blank %}',
+        version: 'private'
+      }
+      post :parse_template, construct_params(params, false)
+      assert_response 400
+      match_json([bad_request_error_pattern('template_text', :"is invalid")])
+    end
+
+    def test_parse_template_without_param
+      t = create_ticket
+      params = {
+        id: t.display_id,
+        version: 'private'
+      }
+      post :parse_template, construct_params(params, false)
+      assert_response 400
+    end
+
+    def test_parse_template_custom_field
+      ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
+      t = create_ticket(custom_field: { ticket_field.name => 'Sample Text' })
+      params = {
+        id: t.display_id,
+        template_text: 'test # {{ticket.id}} {{ticket.test_custom_text}}',
+        version: 'private'
+      }
+      post :parse_template, construct_params(params, false)
+      assert_response 200
+      str = "test # #{t.id} Sample Text"
+      match_json({ evaluated_text: str })
+    end
+
+    def test_parse_template_with_nested_placeholders
+      agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+      t = create_ticket({ responder_id: agent.id, requester_id: agent.id })
+      params = {
+        id: t.display_id,
+        template_text: 'test # {{ticket.requester.email}} {{ticket.agent.email}}',
+        version: 'private'
+      }
+      post :parse_template, construct_params(params, false)
+      assert_response 200
+      str = "test # #{t.requester.email} #{t.agent.email}"
+      match_json({ evaluated_text: str })
+    end
+
+    def test_parse_template_without_placeholders
+      t = create_ticket
+      params = {
+        id: t.display_id,
+        template_text: 'test #',
+        version: 'private'
+      }
+      post :parse_template, construct_params(params, false)
+      assert_response 200
+      match_json({ evaluated_text: 'test #' })
+    end
+
     def test_create_with_section_fields_with_type_as_parent
       sections = construct_sections('type')
       type_field_id = @account.ticket_fields.find_by_field_type('default_ticket_type').id

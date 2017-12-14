@@ -21,6 +21,8 @@ class PrivateApiFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def before_all
+    UserSession.any_instance.stubs(:cookie_credentials).returns([sample_user.user.persistence_token, sample_user.user.id])
+    @headers.except!('HTTP_AUTHORIZATION')
     return if @@before_all
     @@before_all = true
     @account.add_feature(:falcon)
@@ -92,6 +94,21 @@ class PrivateApiFlowsTest < ActionDispatch::IntegrationTest
     assert_response 404
     assert_equal ' ', @response.body
     ShardMapping.any_instance.unstub(:not_found?)
+  end
+
+  def test_private_api_basic_auth
+    auth = ActionController::HttpAuthentication::Basic.encode_credentials(@agent.email, 'test')
+    get 'api/_/bootstrap', nil, @headers.merge('HTTP_AUTHORIZATION' => auth)
+    assert_response 403
+    response.body.must_match_json_expression(request_error_pattern('access_denied'))
+  end
+
+  def test_private_api_jwt_auth
+    @account.launch(:api_jwt_auth)
+    token = generate_jwt_token(1, 1, Time.now.to_i, Time.now.to_i)
+    auth = ActionController::HttpAuthentication::Token.encode_credentials(token)
+    get 'api/_/bootstrap', nil, @headers.merge('HTTP_AUTHORIZATION' => auth)
+    assert_response 200
   end
 
   def test_account_version_header

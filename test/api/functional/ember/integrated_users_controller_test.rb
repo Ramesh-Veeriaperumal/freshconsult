@@ -100,4 +100,77 @@ class Ember::IntegratedUsersControllerTest < ActionController::TestCase
     assert_response 200
     assert_equal '[]', response.body
   end
+
+  def test_user_credentials_add
+    agent = add_test_agent(@account)
+    harvest_app = Integrations::InstalledApplication.find_by_application_id(Integrations::Application.find_by_name('harvest').id)
+    post :user_credentials_add, controller_params({ version: 'private', username: 'ttt', password: Base64.encode64('fff'), installed_application_id: harvest_app.id }, true)
+    assert_response 204
+  end
+
+  def test_user_credentials_add_without_installed_app_id
+    agent = add_test_agent(@account)
+    harvest_app = Integrations::InstalledApplication.find_by_application_id(Integrations::Application.find_by_name('harvest').id)
+    post :user_credentials_add, controller_params({ version: 'private', username: 'ttt', password: Base64.encode64('fff') }, true)
+    match_json([bad_request_error_pattern('installed_application_id', :installed_application_id_required, code: :missing_field)])
+    assert_response 400
+  end
+
+  def test_user_credentials_add_without_username
+    agent = add_test_agent(@account)
+    harvest_app = Integrations::InstalledApplication.find_by_application_id(Integrations::Application.find_by_name('harvest').id)
+    post :user_credentials_add, controller_params({ version: 'private', password: Base64.encode64('fff'), installed_application_id: harvest_app.id }, true)
+    match_json([bad_request_error_pattern('username', :username_required, code: :missing_field)])
+    assert_response 400
+  end
+
+  def test_user_credentials_add_without_password
+    agent = add_test_agent(@account)
+    harvest_app = Integrations::InstalledApplication.find_by_application_id(Integrations::Application.find_by_name('harvest').id)
+    post :user_credentials_add, controller_params({ version: 'private', username: 'ttt', installed_application_id: harvest_app.id }, true)
+    match_json([bad_request_error_pattern('password', :password_required, code: :missing_field)])
+    assert_response 400
+  end
+
+  def test_user_credentials_remove
+    agent = add_test_agent(@account)
+    agent.make_current
+    user_params = {
+      app_name: 'harvest',
+      user_id: agent.id,
+      remote_user_id: 6,
+      auth_info: {
+        username: 'freshdesk.3@gmail.com',
+        password: 'RnJlc2hkZXNrQDEyMw=='
+      }
+    }
+    integ_user = create_integ_user_credentials(user_params)
+    harvest_app = Integrations::InstalledApplication.find_by_application_id(Integrations::Application.find_by_name('harvest').id)
+    delete :user_credentials_remove, controller_params({ version: 'private', installed_application_id: harvest_app.id }, true)
+    assert_response 204
+  end
+
+  def test_user_credentials_remove_without_installed_app_id
+    agent = add_test_agent(@account)
+    user_params = {
+      app_name: 'harvest',
+      user_id: agent.id,
+      remote_user_id: 7,
+      auth_info: {
+        username: 'freshdesk.3@gmail.com',
+        password: 'RnJlc2hkZXNrQDEyMw=='
+      }
+    }
+    integ_user = create_integ_user_credentials(user_params)
+    harvest_app = Integrations::InstalledApplication.find_by_application_id(Integrations::Application.find_by_name('harvest').id)
+    delete :user_credentials_remove, controller_params({ version: 'private' }, true)
+    match_json([bad_request_error_pattern('installed_application_id', :installed_application_id_required, code: :missing_field)])
+    assert_response 400
+  end
+
+  def test_user_credentials_with_invalid_installed_app_id
+    delete :user_credentials_remove, controller_params({ version: 'private', installed_application_id: 1234 }, true)
+    match_json([bad_request_error_pattern('installed_application_id', :"is invalid")])
+    assert_response 400
+  end
 end
