@@ -43,6 +43,7 @@ class ApplicationController < ActionController::Base
   include SubscriptionSystem
   include Mobile::MobileHelperMethods
   include ActionView::Helpers::DateHelper
+  include Freshid::ControllerMethods
   include AccountSetup
   
   # See ActionController::RequestForgeryProtection for details

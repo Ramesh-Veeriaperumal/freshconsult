@@ -24,6 +24,7 @@ class User < ActiveRecord::Base
   belongs_to :parent, :class_name =>'User', :foreign_key => :string_uc04
 
   has_many :authorizations, :dependent => :destroy
+
   has_many :votes, :dependent => :destroy
   has_many :day_pass_usages, :dependent => :destroy
   has_custom_fields :class_name => 'ContactFieldData', :discard_blank => false # coz of schema_less_user_columns

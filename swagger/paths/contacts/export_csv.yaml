@@ -8,7 +8,6 @@ post:
       schema:
         $ref: '#/definitions/contact_export_input'
   responses:
-    responses:
     204:
       description: Success
     400:

@@ -913,79 +913,6 @@
         }
       }
     },
-    "/tickets/{id}/notify_collab": {
-      "post": {
-        "tags": [
-            "ticket"
-          ],
-        "summary": "Send collab notifications",
-        "description": "Send notifications for collab related activity.",
-        "parameters": [
-          {
-            "$ref": "#/parameters/id"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "type": "string",
-            "required": true
-          },
-          {
-            "name": "m_ts",
-            "in": "body",
-            "type": "string",
-            "required": true
-          },
-          {
-            "name": "m_type",
-            "in": "body",
-            "type": "string",
-            "required": true
-          },
-          {
-            "name": "metadata",
-            "in": "body",
-            "type": "string",
-            "required": true
-          },
-          {
-            "name": "mid",
-            "in": "body",
-            "type": "string",
-            "required": true
-          },
-          {
-            "name": "token",
-            "in": "body",
-            "type": "string",
-            "required": true
-          },
-          {
-            "name": "top_members",
-            "in": "body",
-            "type": "string",
-            "required": true
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Success"
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          },
-          "404": {
-            "description": "Ticket not found"
-          }
-        }
-      }
-    },
     "/tickets/{id}/draft": {
       "post": {
         "tags": [
@@ -2392,8 +2319,7 @@
             "schema": {
               "$ref": "#/definitions/bad_request_error"
             }
-          },
-          "responses": null
+          }
         }
       }
     },
@@ -2464,6 +2390,9 @@
         ],
         "summary": "Create import",
         "description": "To schedule import of contacts/companies",
+        "consumes": [
+          "multipart/form-data"
+        ],
         "parameters": [
           {
             "name": "type",
@@ -2482,10 +2411,7 @@
           {
             "name": "fields",
             "in": "formData",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/fields_map"
-            }
+            "type": "string"
           }
         ],
         "responses": {
@@ -2727,8 +2653,7 @@
             "schema": {
               "$ref": "#/definitions/bad_request_error"
             }
-          },
-          "responses": null
+          }
         }
       }
     },
@@ -4758,6 +4683,7 @@
         ],
         "parameters": [
           {
+            "name": "data",
             "in": "body",
             "description": "New activation email",
             "schema": {
@@ -6363,20 +6289,6 @@
             "type": "string",
             "uniqueItems": true
           }
-        }
-      }
-    },
-    "fields_map": {
-      "type": "object",
-      "properties": {
-        "type": {
-          "type": "string",
-          "required": true,
-          "description": "content of the ticket reply"
-        },
-        "fields": {
-          "type": "object",
-          "$ref": "#/definitions/map_field_to_header"
         }
       }
     },
@@ -8145,14 +8057,6 @@
           }
         }
       ]
-    },
-    "map_field_to_header": {
-      "type": "object",
-      "properties": {
-        "email": {
-          "type": "integer"
-        }
-      }
     },
     "meta": {
       "type": "object",

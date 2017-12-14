@@ -53,9 +53,28 @@ module Freshcaller::JwtAuthentication
   end
 
   def custom_authenticate_request
+    render_request_error :credentials_required, Rack::Utils::SYMBOL_TO_STATUS_CODE[:unauthorized] if nil_headers?
+    custom_auth_headers? ? authenticate_jwt_request : fallback_to_app_authentication
+  end
+
+  def nil_headers?
+    request.headers['Authorization'].blank?
+  end
+
+  def custom_auth_headers?
+    !request.headers['Authorization'].starts_with?('Basic')
+  end
+
+  def authenticate_jwt_request
     auth_secret = request.headers['Authorization']
     auth_secret = auth_secret.match(TOKEN_REGEX) unless auth_secret.nil?
     auth_secret = auth_secret[1].strip if !auth_secret.nil? and auth_secret.length > 1
-    render_request_error(:access_denied, 403) unless verify(auth_secret)
+    render_request_error :invalid_credentials, Rack::Utils::SYMBOL_TO_STATUS_CODE[:unauthorized] unless verify(auth_secret)
+  end
+
+  def fallback_to_app_authentication
+    check_privilege
+    check_day_pass_usage_with_user_time_zone
+    set_current_account
   end
 end

@@ -103,3 +103,4 @@ helpdesk:
     - imap_patch
     - threaded_init
     - ner_api_config
+    - freshid
