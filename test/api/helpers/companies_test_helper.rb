@@ -79,9 +79,9 @@ module CompaniesTestHelper
     response_pattern
   end
 
-  def index_company_pattern(expected_output = {}, company)
-    company_pattern(expected_output, company)
-  end
+  # def index_company_pattern(expected_output = {}, company)
+  #   company_pattern(expected_output, company)
+  # end
 
   def company_field_pattern(_expected_output = {}, company_field)
     company_field_json = company_field_response_pattern company_field
