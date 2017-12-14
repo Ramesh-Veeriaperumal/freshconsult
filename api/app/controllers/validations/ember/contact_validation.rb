@@ -11,7 +11,7 @@ class Ember::ContactValidation < ContactValidation
       }
     }
     DEFAULT_FIELD_VALIDATIONS.merge!(company_hash_validation) unless \
-      [:quick_create, :requester_update, :update_password].include?(@action.to_sym)
+      [:quick_create, :requester_update, :update_password].include?(@action.try(:to_sym))
   end
 
   def check_duplicates_multiple_companies
