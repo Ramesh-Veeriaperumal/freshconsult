@@ -1,7 +1,6 @@
 class TicketDecorator < ApiDecorator
   delegate :ticket_body, :custom_field_via_mapping, :cc_email, :email_config_id, :fr_escalated, :group_id, :priority,
-    <<<<<<< HEAD
-  :requester_id, :responder, :responder_id, :source, :spam, :status, :subject, :display_id, :ticket_type,
+    :requester_id, :responder, :responder_id, :source, :spam, :status, :subject, :display_id, :ticket_type,
     :schema_less_ticket, :deleted, :due_by, :frDueBy, :isescalated, :description,
     :internal_group_id, :internal_agent_id, :association_type,:associates, :associated_ticket?, :associated_tickets_count, :can_be_associated?,
     :description_html, :tag_names, :attachments, :attachments_sharable, :company_id, :cloud_files, :ticket_states, to: :record
