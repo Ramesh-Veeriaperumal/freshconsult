@@ -1,0 +1,14 @@
+<% note_id ||= nil  
+  query = '?note_id='+note_id.to_s if note_id
+%>
+<% if item.failure_count.present? && item.failure_count > 0 %>
+  <span class="email_failure"><%= t('email_failure.note_display.title') %></span>
+  <a href ='/helpdesk/tickets/<%= display_id %>/fetch_errored_email_details<%= query %>' id="email_failure_information" title="<%= I18n.t('email_failure.note_display.title') %>" data-target="#email_failure" data-template-footer="false" rel="freshdialog"" data-width="560px">
+    <% if item.failure_count > 1 %>
+      <%= item.failure_count %> <%= t('email_failure.note_display.failed_recipients') %>
+    <% else %>
+      <%= item.failure_count %> <%= t('email_failure.note_display.failed_recipient') %>
+    <% end %>
+  </a>
+<% end %>
+

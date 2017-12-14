@@ -4,7 +4,7 @@ namespace :failed_email_poller do
   task :poll => :environment do
 
     include EmailParser
-    
+
     begin
       $sqs_email_failure_reference.poll(:initial_timeout => false, :batch_size => 10) do |sqs_msg|
         begin
@@ -13,7 +13,7 @@ namespace :failed_email_poller do
           Sharding.select_shard_of(@args[:account_id]) do
             if valid_params? && valid_message?
               email_failure = Helpdesk::Email::FailedEmailMsg.new(@args)
-              email_failure.save!
+              email_failure.save! note?       
               email_failure.notify
               email_failure.trigger_observer_system_events
             else
@@ -35,28 +35,28 @@ end
 
 
 def valid_params?
-  @args[:account_id].present? && @args[:note_id].present? && @args[:email].present? && @args[:published_time].present? && @args[:failure_category].present?
+  @args[:account_id].present? && @args[:note_id].present? && @args[:email].present? && @args[:published_time].present? && @args[:failure_category].present? && @args[:ticket_id].present?
 end
 
 def valid_message?
   return false unless (@account = Account.find_by_id(@args[:account_id]))
   @account.make_current
-  email_failure_feature_enabled? && valid_note? && valid_failure_category?
+  email_failure_feature_enabled? && valid_failure_category? && email_in_to_or_cc?
 end
 
 def email_failure_feature_enabled?
   @account.email_failures_enabled?
 end
 
-def valid_note?
-  note = Account.current.notes.where(id: @args[:note_id]).first
-  if note
-    to_emails = parse_addresses(note.to_emails)[:plain_emails] || []
-    cc_emails = parse_addresses(note.cc_emails)[:plain_emails] || []
-    to_emails.include?(@args[:email]) || cc_emails.include?(@args[:email])
-  else
-    false
-  end
+def note?
+  @args[:note_id] != "UNKNOWN"
+end
+
+def email_in_to_or_cc?
+  @args[:ticket] = Account.current.tickets.find_by_display_id(@args[:ticket_id])
+  @args[:object] = note? ? Account.current.notes.where(id: @args[:note_id]).first : @args[:ticket]
+  to_emails,cc_emails = @args[:object].to_cc_emails
+  to_emails.include?(@args[:email]) || cc_emails.include?(@args[:email])
 end
 
 def valid_failure_category?

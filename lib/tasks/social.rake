@@ -8,7 +8,7 @@ namespace :social do
     include AwsWrapper::CloudWatchConstants
 
     #Create the tables for next week
-    time = Time.now + 9.days #second table needed for wednesday
+    time = Time.now + 16.days #second table needed for wednesday
     TABLES.keys.each do |table|
       schema = TABLES[table][:schema]
       properties = DYNAMO_DB_CONFIG[table]
@@ -41,7 +41,7 @@ namespace :social do
     include Social::Constants
     include Social::Util
 
-    time = Time.now - 9.days #2 weeks old table
+    time = Time.now - 16.days #2 weeks old table
     TABLES.keys.each do |table|
       schema = TABLES[table][:schema]
       properties = DYNAMO_DB_CONFIG[table]
@@ -101,7 +101,7 @@ namespace :social do
     include Social::Constants
     include Social::Util
 
-    time   = Time.now - 9.days #2 weeks old table
+    time   = Time.now - 16.days #2 weeks old table
     alarms = []
     TABLES.keys.each do |table|
       name = Social::DynamoHelper.select_table(table, time)

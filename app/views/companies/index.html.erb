@@ -34,7 +34,7 @@
 										<strong><%= link_to(h(company.name), company_path(company), :class => "item_info", :'data-pjax' => "#body-container" ) %> <br/>
 										</strong>
 										<% if Account.current.multiple_user_companies_enabled?
-												 company_user_size = company.users.size %>
+												 company_user_size = company.user_companies.size %>
 										<% else
 												 company_user_size = current_account.users.contacts.company_users_via_customer_id(company.id).size %>
 										<% end %>

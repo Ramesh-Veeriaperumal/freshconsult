@@ -303,7 +303,8 @@ class User < ActiveRecord::Base
           joins: :user_companies,
           conditions: {
             user_companies:  {
-              company_id: contact_filter.company_id
+              company_id: contact_filter.company_id,
+              account_id: Account.current.id
             }
           }
         },
@@ -1096,9 +1097,8 @@ class User < ActiveRecord::Base
     return unless freshid_enabled_and_agent?
     freshid_user = Freshid::User.create({ first_name: name, email: email, phone: phone, mobile: mobile, domain: account.full_domain })
     if freshid_user.present?
-      self.active = freshid_user.active?
-      self.save if self.active_changed?
       self.create_freshid_authorization(uid: freshid_user.uuid)
+      update_user_with_freshid_attributes freshid_user
       freshid_user.active? ? deliver_agent_invitation! : deliver_activation_instructions!(nil, false)
     end
   end
@@ -1118,6 +1118,18 @@ class User < ActiveRecord::Base
 
     def freshid_disabled_and_customer?
       !freshid_enabled_and_agent?
+    end
+    
+    def update_user_with_freshid_attributes freshid_user
+      user_params = {}
+      freshid_full_name = [freshid_user.first_name, freshid_user.last_name].join(' ')
+      user_params[:name] = freshid_full_name if self.name != freshid_full_name
+      user_params[:phone] = freshid_user.phone if self.phone != freshid_user.phone
+      user_params[:mobile] = freshid_user.mobile if self.mobile != freshid_user.mobile
+      user_params[:active] = freshid_user.active? if self.active != freshid_user.active?
+      self.update_attributes!(new_user_params) if user_params.present?
+    rescue Exception => e
+      Rails.logger.error "FRESHID Error updating user with FreshID attributes -- #{e.inspect}"
     end
 
     def name_part(part)

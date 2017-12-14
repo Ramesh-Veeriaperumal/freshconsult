@@ -25,7 +25,8 @@ class UserSessionsController < ApplicationController
     flash.keep
     # Login normal supersets all login access (can be used by agents)
     if request.path == "/login/normal"
-      @user_session = current_account.user_sessions.new
+      @user_session = current_account.user_sessions.new 
+      redirect_to_freshid_login if freshid_enabled?
     elsif current_account.sso_enabled?
       sso_login_page_redirect
     else

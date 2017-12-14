@@ -1,11 +1,10 @@
 $agent-signin-link-color: #02b875;
 
 .login-form input.special{ width: 100%; }
-.login-form{ 
-	width:65%; 
-	@include float(left); 
-	max-width: 400px; 
-	@include padding-right(40px); 
+.login-form{
+	width:65%;
+	@include float(left);
+	@include padding-right(20px);
 	h2{
 		font-size: 20px;
     	font-weight: 600
@@ -14,10 +13,10 @@ $agent-signin-link-color: #02b875;
 		margin: 16px 0;
 	}
 }
-.alt-login-button{ 
+.alt-login-button{
 	width:32%;
 	@include float(right);
-	@include min-height(300px);	
+	@include min-height(300px);
 	@include border-left(1px solid #ebeef0);
     @include padding-left(18px);
 	@if $rtl { @include box-shadow(#fff 1px 0 0); }
@@ -35,6 +34,7 @@ $agent-signin-link-color: #02b875;
 		@include text-shadow(none);
 		margin: 10px 0 0px 0;
 		@include box-shadow(none);
+		border: 0;
 		&.btn-google{
 		  background-color: $red;
 		  &:hover{
@@ -54,10 +54,10 @@ $agent-signin-link-color: #02b875;
 			color: $white;
 		  }
 		}
-	} 
+	}
 }
 
-.btn-login{	
+.btn-login{
 	text-transform: uppercase;
 	margin: -20px 0 10px;
 	display: block;
@@ -70,7 +70,7 @@ $agent-signin-link-color: #02b875;
 .btn-signup{ margin: 16px 0; }
 
 .btn-google:before, .btn-facebook:before, .btn-twitter:before{
-	content: "";	
+	content: "";
 	display: inline-block;
 	@include ie7-restore-right-whitespace();
 	vertical-align: text-top;
@@ -133,7 +133,7 @@ section#login-container,section#signup-container{
 }
 
 section#signup-container{
-	h2{
+.login-form	h2{
 		font-size: 20px;
 	    font-weight: 600;
 	    color: $black;
@@ -160,6 +160,7 @@ section#signup-container{
     display: inline-block;
     .fc-signup-container{
     	width: 100%;
+			@include border-radius(6px);
     }
     h3{
     	font-size: 16px;

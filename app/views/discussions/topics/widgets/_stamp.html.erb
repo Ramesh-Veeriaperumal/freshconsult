@@ -26,7 +26,7 @@
 					</a>
 				</li>
 			<% end %>
-			<% Topic::ALL_TOKENS_FOR_FILTER[@topic.forum.forum_type].each do |val, text|%>
+			<% Topic.all_tokens_for_filters[@topic.forum.forum_type].each do |val, text|%>
 			<li>
 				<a role="menuitem" tabindex="-1" href="#" id="stamp_change_<%= val%>" data-value="<%= val %>">
 					<% if stamped &&  @topic.stamp_type == val %>

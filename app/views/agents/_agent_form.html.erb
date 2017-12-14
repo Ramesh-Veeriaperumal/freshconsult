@@ -136,7 +136,7 @@
               <li class="control-group">
                 <%= label(:user, :language, t('account.language'), :class => "control-label") %>
                 <div class="controls  margin-bottom">
-                  <%= select(:user, :language, I18n.available_locales_with_name, {:selected => @agent.user.language.to_sym()}, {:class => "disabled"})%>
+                  <%= select(:user, :language, mint_locales_with_separator, {:selected => @agent.user.language.to_sym()})%>
                   <a href="javascript:toggleMessage()">
                     <i class="info help-icon-language ficon-help-icon fsize-24" size="14"></i>
                   </a>

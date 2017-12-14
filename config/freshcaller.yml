@@ -5,6 +5,7 @@ development:
   signup_domain: 'http://d2badcff.ngrok.io:3000'
   s3_bucket: 'helpkit-freshcaller-migration'
   domain_prefix: ''
+  domain_suffix: ''
 test:
   signing_key: "iM6YIMpv7N3G4EsCTFTsCgN3GPwshizpsfnYo--4dvw"
   verification_keys: ["iM6YIMpv7N3G4EsCTFTsCgN3GPwshizpsfnYo--4dvw"]

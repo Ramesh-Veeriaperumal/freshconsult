@@ -21,6 +21,7 @@ module CompaniesTestHelper
     }
   end
 
+  <<<<<<< HEAD
   def get_contact_avatar(company)
     return nil unless company.avatar
     company_avatar = {
@@ -53,7 +54,7 @@ module CompaniesTestHelper
   def index_company_pattern(expected_output = {}, include_options = [])
     pattern = []
     companies = include_options.blank? ? Account.current.companies.order(:name).limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]) :
-                          Account.current.companies.preload(:user_companies).order(:name).limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
+      Account.current.companies.preload(:user_companies).order(:name).limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
     companies.all.each do |company|
       pattern << company_pattern_with_associations(expected_output,
                                                    company, include_options)
@@ -77,6 +78,9 @@ module CompaniesTestHelper
       response_pattern[:contacts_count] = company.users.count
     end
     response_pattern
+  end
+  def index_company_pattern(expected_output = {}, company)
+    company_pattern(expected_output, company)
   end
 
   def company_field_pattern(_expected_output = {}, company_field)

@@ -183,10 +183,10 @@
           if (doAnimate) this.$backdrop[0].offsetWidth // force reflow
 
           this.$backdrop.addClass('in')
-
-          doAnimate ?
-            this.$backdrop.one($.support.transition.end, callback) :
-            callback()
+          // skipping transitionEnd event listener when modal loaded in iframe
+          if(doAnimate && window.top==window.self) {
+            this.$backdrop.one($.support.transition.end, callback);
+          } else callback();
 
         } else if (!this.isShown && this.$backdrop) {
           this.$backdrop.removeClass('in')

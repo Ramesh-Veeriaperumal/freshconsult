@@ -24,6 +24,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.assoc_parent_ticket? || self.child_ticket?
   end
 
+  def associated_ticket?
+    self.association_type.present? && TICKET_ASSOCIATION_TOKEN_BY_KEY.key?(self.association_type)
+  end
+
   def associated_prime_ticket type #prime => parent or tracker ticket
     return false unless ["child", "related"].include? type
     if self.send("#{type}_ticket?") and self.associates.present?
