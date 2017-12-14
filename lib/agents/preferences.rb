@@ -40,6 +40,17 @@ module Agents
       update_preferences({:show_onBoarding => enabled})
     end
 
+    # Helpers for getting and setting Freshchat token
+    def freshchat_token
+      preferences[:freshchat_token]
+    end
+
+    def freshchat_token=(token)
+      update_preferences(freshchat_token: token)
+    end
+
+
+
     private
 
       def update_preferences(settings = {})
