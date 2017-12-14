@@ -3,7 +3,7 @@ module Social::Gnip::Util
   include Social::Util
   include Social::Twitter::Constants
 
-  def can_convert(account, args)
+  def apply_ticket_rules(account, args)
     twitter_handles = account.twitter_handles
     convert_hash = {}
     unless twitter_handles.blank?
@@ -13,6 +13,9 @@ module Social::Gnip::Util
           @twitter_handle = stream.twitter_handle
           stream.update_volume_in_redis
           convert_hash = stream.check_ticket_rules(tweet_body(@tweet_obj))
+          if stream.should_check_smart_filter?(convert_hash)
+            convert_hash.merge!(:check_smart_filter => true)
+          end
         end
       else
         @twitter_handle = account.twitter_handles.find_by_id(args[:stream_id])
@@ -75,6 +78,11 @@ module Social::Gnip::Util
   def self_tweeted?
     return false if @twitter_handle.nil?
     @sender.downcase.strip().eql?(@twitter_handle.screen_name.downcase.strip) if @twitter_handle
-  end      
+  end   
 
+  def apply_smart_filter(account, args)
+    stream = account.twitter_streams.find_by_id(args[:stream_id].gsub(TAG_PREFIX, ""))
+    @twitter_handle = stream.twitter_handle
+    convert_hash = stream.check_smart_filter(tweet_body(@tweet_obj), @tweet_obj[:id].split(":").last.to_i, @twitter_handle.twitter_user_id)
+  end 
 end

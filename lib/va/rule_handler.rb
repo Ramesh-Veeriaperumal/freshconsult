@@ -1,4 +1,6 @@
 class Va::RuleHandler
+  include Va::Constants
+
   attr_accessor :condition, :rule_hash, :value_key
   
   def initialize(condition, rule_hash)

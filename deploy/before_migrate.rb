@@ -78,7 +78,7 @@ run "ln -nfs #{shared_path}/config/hashed_data.yml #{node[:rel_path]}/config/has
 run "ln -nfs #{shared_path}/config/recaptcha_v2.yml #{node[:rel_path]}/config/recaptcha_v2.yml"
 run "ln -nfs #{shared_path}/config/freshid.yml #{node[:rel_path]}/config/freshid.yml"
 run "ln -nfs #{shared_path}/config/ner_api.yml #{node[:rel_path]}/config/ner_api.yml"
-run "ln -nfs #{shared_path}/config/freshid.yml #{node[:rel_path]}/config/freshid.yml"
+run "ln -nfs #{shared_path}/config/smart_filter.yml #{node[:rel_path]}/config/smart_filter.yml"
 
 #supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"
