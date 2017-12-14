@@ -21,7 +21,6 @@ module CompaniesTestHelper
     }
   end
 
-  <<<<<<< HEAD
   def get_contact_avatar(company)
     return nil unless company.avatar
     company_avatar = {
@@ -79,6 +78,7 @@ module CompaniesTestHelper
     end
     response_pattern
   end
+
   def index_company_pattern(expected_output = {}, company)
     company_pattern(expected_output, company)
   end
