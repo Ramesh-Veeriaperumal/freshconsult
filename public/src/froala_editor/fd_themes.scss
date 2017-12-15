@@ -626,3 +626,10 @@ body .fr-overlay {
   0% {background-color:#F7EEC0;}
   100%  {background-color:#fff;}
 }
+
+
+.edit_topic, .new_topic, .topic-reply, .post-edit {
+  .fr-element.fr-view {
+    min-height: 320px;
+  }
+}
