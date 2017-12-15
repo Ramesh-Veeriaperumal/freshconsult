@@ -131,7 +131,7 @@ class User < ActiveRecord::Base
 
   def max_user_companies
     self.errors.add(:base, I18n.t('activerecord.errors.messages.max_user_companies')) \
-      if (self.user_companies.reject(&:marked_for_destruction?).length > MAX_USER_COMPANIES)
+      if (self.user_companies.length > MAX_USER_COMPANIES)
   end
 
   def has_multiple_companies_feature?
@@ -902,16 +902,11 @@ class User < ActiveRecord::Base
     achieved_quest(quest).updated_at
   end
 
-  def reset_primary_email(primary = nil, primary_user_email = nil)
+  def reset_primary_email primary
     # Web does not allow a new email to be the primary_email for a contact, but it should be allowed via API
-    return true if primary.nil? && primary_user_email.nil?
+    return true if primary.nil?
 
-    if primary_user_email
-      new_primary = primary_user_email
-    else
-      new_primary = self.user_emails.find(primary.to_i)
-    end
-
+    new_primary = self.user_emails.find(primary.to_i)
     if new_primary
       self.user_emails.update_all(:primary_role => false)
       new_primary.toggle!(:primary_role) #can refactor
