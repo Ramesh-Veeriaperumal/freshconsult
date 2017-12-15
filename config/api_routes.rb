@@ -232,6 +232,7 @@ Helpkit::Application.routes.draw do
         get :associated_tickets, to: 'ember/tickets/associates#associated_tickets'
         put :create_child_with_template
         put :requester, to: 'ember/tickets/requester#update'
+        post :parse_template, to: 'ember/tickets#parse_template'
       end
       resources :activities, controller: 'ember/tickets/activities', only: [:index]
 
@@ -260,7 +261,12 @@ Helpkit::Application.routes.draw do
     resources :todos, controller: 'ember/todos', except: [:new, :edit]
     resources :installed_applications, controller: 'ember/installed_applications', only: [:index, :show]
     resources :integrated_resources, controller: 'ember/integrated_resources', except: [:new, :edit]
-    resources :integrated_users, controller: 'ember/integrated_users', only: [:index, :show]
+    resources :integrated_users, controller: 'ember/integrated_users', only: [:index, :show] do
+      collection do
+        post :credentials, to: 'ember/integrated_users#user_credentials_add'
+        delete :credentials, to: 'ember/integrated_users#user_credentials_remove'
+      end
+    end
     resources :cloud_files, controller: 'ember/cloud_files', only: [:destroy]
 
     resources :trial_widget, controller: 'ember/trial_widget', only: [:index] do

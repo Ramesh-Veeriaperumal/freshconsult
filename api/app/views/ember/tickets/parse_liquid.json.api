@@ -1,0 +1,5 @@
+response_hash = {
+	evaluated_text: @response_text
+}
+
+JSON.generate(response_hash)

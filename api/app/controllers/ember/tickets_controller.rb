@@ -60,6 +60,20 @@ module Ember
       end
     end
 
+    def parse_template
+      ticket = @item.to_liquid
+      @validation_klass = 'TicketValidation'
+      return unless validate_body_params(@item, params)
+      
+      begin
+        @response_text = Liquid::Template.parse(params[:template_text]).render({ ticket: ticket }.stringify_keys)
+        render 'ember/tickets/parse_liquid'
+      rescue Exception => e
+        @item.errors[:template_text] << :"is invalid"
+        render_custom_errors(@item)
+      end
+    end
+
     def create_child_with_template
       @validation_klass = 'CreateChildWithTemplateValidation'
       return unless validate_body_params

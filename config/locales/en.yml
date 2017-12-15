@@ -11296,8 +11296,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     special_characters: "Password must have special characters"
     mixed_case: "Password must have both uppercase and lowercase alphabets"
     username: "Password cannot contain username"
-    history: "New password should be different from last %{history_depth} password"
-    history_plural: "New password should be different from last %{history_depth} passwords"
+    history: "Cannot be same as the last password"
+    history_plural: "Cannot be same as the last %{history_depth} passwords"
     min_length: "Password must have atleast %{min_length} characters"
     wrong_password_length: Please enter a valid minimum no of characters.
     wrong_no_of_past_password: Please enter a valid number of past passwords.

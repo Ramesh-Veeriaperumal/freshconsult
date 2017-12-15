@@ -913,6 +913,79 @@
         }
       }
     },
+    "/tickets/{id}/notify_collab": {
+      "post": {
+        "tags": [
+            "ticket"
+          ],
+        "summary": "Send collab notifications",
+        "description": "Send notifications for collab related activity.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "m_ts",
+            "in": "body",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "m_type",
+            "in": "body",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "metadata",
+            "in": "body",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "mid",
+            "in": "body",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "token",
+            "in": "body",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "top_members",
+            "in": "body",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      }
+    },
     "/tickets/{id}/draft": {
       "post": {
         "tags": [
@@ -4857,6 +4930,9 @@
                         },
                         "show_onBoarding": {
                           "type": "boolean"
+                        },
+                        "freshchat_token": {
+                          "type": "string"
                         }
                       }
                     }
@@ -5241,11 +5317,51 @@
           "items": {
             "type": "integer"
           }
+        },
+        "contact": {
+          "description": "Values of contacts that will be merged into the Primary contact",
+          "type": "object",
+          "properties": {
+            "phone": {
+              "type": "string"
+            },
+            "mobile": {
+              "type": "string"
+            },
+            "twitter_id": {
+              "type": "string"
+            },
+            "fb_profile_id": {
+              "type": "string"
+            },
+            "external_id": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "other_emails": {
+              "type": "array",
+              "minItems": 0,
+              "items": {
+                "type": "string"
+              }
+            },
+            "company_ids": {
+              "type": "array",
+              "minItems": 0,
+              "items": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          }
         }
       },
       "required": [
         "primary_id",
-        "target_ids"
+        "target_ids",
+        "contact"
       ]
     },
     "update_password": {

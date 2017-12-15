@@ -91,7 +91,7 @@ class ContactValidation < ApiValidation
     validatable_custom_fields: proc { |x| x.valid_custom_fields },
     required_attribute: :required_for_agent,
     ignore_string: :allow_string_param
-  } }, unless: -> { validation_context == :quick_create }
+  } }, unless: -> { [:quick_create, :update_password].include?(validation_context) }
 
   validates :avatar, data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true }, file_size: {
     max: ContactConstants::ALLOWED_AVATAR_SIZE
@@ -128,6 +128,8 @@ class ContactValidation < ApiValidation
 
   def required_default_fields
     case validation_context
+    when :update_password
+      []
     when :quick_create
       []
     when :requester_update

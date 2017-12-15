@@ -10,7 +10,7 @@ class TicketValidation < ApiValidation
                 :phone, :twitter_id, :facebook_id, :requester_id, :name, :agent, :source, :status, :subject, :ticket_type,
                 :product, :tags, :custom_fields, :attachments, :request_params, :item, :statuses, :status_ids, :ticket_fields, :company_id, :scenario_id,
                 :primary_id, :ticket_ids, :note_in_primary, :note_in_secondary, :convert_recepients_to_cc, :cloud_files, :skip_close_notification,
-                :related_ticket_ids, :assoc_parent_tkt_id, :internal_group_id, :internal_agent_id, :parent_template_id, :child_template_ids
+                :related_ticket_ids, :assoc_parent_tkt_id, :internal_group_id, :internal_agent_id, :parent_template_id, :child_template_ids, :template_text
 
   alias_attribute :type, :ticket_type
   alias_attribute :product_id, :product
@@ -39,6 +39,8 @@ class TicketValidation < ApiValidation
                                 required_fields: proc { |x| x.required_default_fields },
                                 field_validations: proc { |x| x.default_field_validations }
                               }, on: :compose_email
+
+  validates :template_text, data_type: { rules: String, required: true }, on: :parse_template
 
   validates :source, custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :allow_string_param, detect_type: true, allow_nil: true }, on: :create
   validates :requester_id, :email_config_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }

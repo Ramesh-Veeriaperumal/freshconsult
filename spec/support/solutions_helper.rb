@@ -231,6 +231,7 @@ module SolutionsHelper
                       :name=> params[:portal_name] || Faker::Name.name, 
                       :portal_url => params[:portal_url] || "", 
                       :language=>"en",
+                      :product_id => params[:product_id] || nil,
                       :forum_category_ids => (params[:forum_category_ids] || [""]),
                       :solution_category_metum_ids => (params[:solution_category_ids] || [""]),
                       :solution_category_metum_ids => (params[:solution_category_metum_ids] || 
