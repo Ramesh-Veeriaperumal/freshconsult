@@ -58,7 +58,7 @@ module Social::Constants
           :attribute_type => "S"
         }
       },
-      :retention_period  => 7.days,
+      :retention_period  => 14.days,
       :db_reference_date => "2010-10-13 00:00:00 UTC"
     },
 
@@ -74,7 +74,7 @@ module Social::Constants
           :attribute_type => "S"
         }
       },
-      :retention_period  => 7.days,
+      :retention_period  => 14.days,
       :db_reference_date => "2010-10-13 00:00:00 UTC"
     },
     
@@ -90,7 +90,7 @@ module Social::Constants
           :attribute_type => "N"
         }
       },
-      :retention_period  => 7.days,
+      :retention_period  => 14.days,
       :db_reference_date => "2010-10-13 00:00:00 UTC"
     },
   }
@@ -111,7 +111,7 @@ module Social::Constants
     }
   }
   
-  NUMERIC_KEYS = ["likes", "comments_count", "shares"]
+  NUMERIC_KEYS = ["likes", "comments_count", "shares", "smart_filter_response"]
 
   TWITTER_TIMEOUT = {
     :search => 5,
@@ -142,4 +142,11 @@ module Social::Constants
  
   NEW_LINE_CHARACTER = "\n"
 
+  SMART_FILTER_FEEDBACK_TYPE = {
+    :spam => 1,
+    :new_ticket => 2
+  }
+  SMART_FILTER_DETECTED_AS_TICKET = 1;
+  SMART_FILTER_DETECTED_AS_SPAM = 0;
+  SMART_FILTER_FEEDBACK_GIVEN = -1;
 end

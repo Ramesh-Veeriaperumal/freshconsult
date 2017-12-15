@@ -2,19 +2,19 @@ class Account < ActiveRecord::Base
 
   LP_FEATURES   = [:link_tickets, :select_all, :round_robin_capping, :suggest_tickets, :customer_sentiment_ui,
                    :dkim, :bulk_security, :scheduled_ticket_export, :ticket_contact_export,
-                   :email_failures, :disable_emails, :skip_one_hop, :archive_ghost, :falcon_portal_theme, :freshid, :freshchat_token]
+                   :email_failures, :disable_emails, :skip_one_hop, :falcon_portal_theme, :freshid, :freshchat_integration, :smart_filter, :archive_ghost]
   DB_FEATURES   = [:shared_ownership, :custom_survey, :requester_widget, :archive_tickets, :sitemap]
   BITMAP_FEATURES = [
-      :split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management,
-      :email_commands, :assume_identity, :rebranding, :custom_apps, :custom_ticket_fields, :custom_company_fields,
-      :custom_contact_fields, :occasional_agent, :allow_auto_suggest_solutions, :basic_twitter, :basic_facebook,
-      :multi_product,:multiple_business_hours, :multi_timezone, :customer_slas, :layout_customization,
-      :advanced_reporting, :timesheets, :multiple_emails, :custom_domain, :gamification, :gamification_enable,
-      :auto_refresh, :branding, :advanced_dkim, :basic_dkim, :shared_ownership_toggle, :unique_contact_identifier_toggle,
-      :system_observer_events, :unique_contact_identifier, :ticket_activity_export, :caching, :private_inline, :collaboration,
-      :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :user_notifications, :falcon,
-      :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields
-    ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
+    :split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management,
+    :email_commands, :assume_identity, :rebranding, :custom_apps, :custom_ticket_fields, :custom_company_fields,
+    :custom_contact_fields, :occasional_agent, :allow_auto_suggest_solutions, :basic_twitter, :basic_facebook,
+    :multi_product,:multiple_business_hours, :multi_timezone, :customer_slas, :layout_customization,
+    :advanced_reporting, :timesheets, :multiple_emails, :custom_domain, :gamification, :gamification_enable,
+    :auto_refresh, :branding, :advanced_dkim, :basic_dkim, :shared_ownership_toggle, :unique_contact_identifier_toggle,
+    :system_observer_events, :unique_contact_identifier, :ticket_activity_export, :caching, :private_inline, :collaboration,
+    :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :user_notifications, :falcon,
+    :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields
+  ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [
     Helpdesk::TicketField::VERSION_MEMBER_KEY,
@@ -84,6 +84,10 @@ class Account < ActiveRecord::Base
       features?(:surveys, :survey_links)
   end
 
+  def link_tkts_or_parent_child_enabled?
+    link_tkts_enabled? || parent_child_tkts_enabled?
+  end
+
   def survey_enabled?
     features?(:surveys)
   end
@@ -130,7 +134,7 @@ class Account < ActiveRecord::Base
   end
 
   def helpdesk_restriction_enabled?
-     features?(:helpdesk_restriction_toggle) || launched?(:restricted_helpdesk)
+    features?(:helpdesk_restriction_toggle) || launched?(:restricted_helpdesk)
   end
 
   def dashboard_disabled?
@@ -138,7 +142,7 @@ class Account < ActiveRecord::Base
   end
 
   def dashboardv2_enabled?
-   launched?(:admin_dashboard) || launched?(:supervisor_dashboard) || launched?(:agent_dashboard)
+    launched?(:admin_dashboard) || launched?(:supervisor_dashboard) || launched?(:agent_dashboard)
   end
 
   def restricted_compose_enabled?
@@ -159,6 +163,10 @@ class Account < ActiveRecord::Base
 
   def advanced_twitter?
     features? :twitter
+  end
+
+  def twitter_smart_filter_enabled?
+    advanced_twitter? && smart_filter_enabled?
   end
 
   def on_new_plan?
@@ -196,13 +204,13 @@ class Account < ActiveRecord::Base
   def selectable_features_list
     SELECTABLE_FEATURES_DATA || {}
   end
- 
+
   def chat_activated?
     !subscription.suspended? && features?(:chat) && !!chat_setting.site_id
   end
 
   def collaboration_enabled?
-   @collboration ||= has_feature?(:collaboration) && self.collab_settings.present?
+    @collboration ||= has_feature?(:collaboration) && self.collab_settings.present?
   end
 
   def archive_tickets_feature_enabled?

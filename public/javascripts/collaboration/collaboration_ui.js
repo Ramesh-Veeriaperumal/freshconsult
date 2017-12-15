@@ -20,11 +20,15 @@ App.CollaborationUi = (function ($) {
         MSG_TYPE_SERVER_MADD: "2", // Msg from Server, denotes addition of member
         MSG_TYPE_SERVER_MREMOVE: "3", // Msg from Server, denotes removal of member
         MSG_TYPE_CLIENT_ATTACHMENT: "4",
+        MSG_TYPE_TYPING: "typing", // not known to server
+        MSG_TYPE_READ_RECEIPT: "read_receipt", // not known to server
+
         DEFAULT_PRESENCE_IVAL: 60 * 1000 * 1, // 1 minute
         RETRY_DELAY_FOR_PENDING_DP_REQ: 1000 * 5, // 5sec
         AVATAR_TEMPLATE: "collaboration/templates/avatar",
         COLLABORATORS_LIST_ITEM_TEMPLATE: "collaboration/templates/collaborators_list_item",
         COLLABORATION_MESSAGE_TEMPLATE: "collaboration/templates/collaboration_message",
+        COLLABORATION_TYPING_MESSAGE_TEMPLATE: "collaboration/templates/collaboration_typing_message",
         NOTIFICATION_LIST_ITEM_TEMPLATE: "collaboration/templates/notification_list_item",
         FETCH_MESSAGE_LIMIT: 50,
         DEFAULT_FETCH_RETRY: 5,
@@ -34,29 +38,16 @@ App.CollaborationUi = (function ($) {
         HELPKIT_MAX_COLLABORATORS: 20,
         HIDE_ANIMATION_DURATION: 1000, //ms
         DUMMY_USER: {name: "---"},
-        DEFAULT_ERR: "unexpected",
-        HIDE_ERROR_DURATION: 3000, //ms
+        HIDE_FLASH_DURATION: 3000, //ms
         MAX_UPLOAD_SIZE: "15MB",
-        PREVIEW_SUPPORTED_FILE_TYPES: ["png", "jpg", "jpeg"]
+        PREVIEW_SUPPORTED_FILE_TYPES: ["png", "jpg", "jpeg"],
+        MAX_TYPINGMSG_SENDING_STATUS_AGE: '2000',
+        MAX_TYPING_STATUS_AGE: '2000'
     };
 
     var _COLLAB_PVT = {
         savedScrollHeight:0,
         bellEvents: function() {
-            var $collabBell = $("#collab-bell");
-            $collabBell.on("mouseenter.collab", ".collab-notification-list", function(event) {
-               var el = event.currentTarget;
-                _COLLAB_PVT.showScrollBar(el);
-            });
-            $collabBell.on("click.collab", ".collab-notification-list .collab-notification-link", function(event) {
-                event.preventDefault();
-                var noti_ids = $(event.currentTarget).attr("data-noti-ids").split(",");
-
-                App.CollaborationModel.markNotification(noti_ids, function() {
-                    _COLLAB_PVT.updateNotiCount();
-                    window.open(event.currentTarget.getAttribute("data-href"), "_self");
-                });
-            });
             jQuery(document).on("collabNoti", function(event){
                 App.CollaborationModel.markNotiReadForCollabOpen(event.detail);
             });
@@ -73,10 +64,20 @@ App.CollaborationUi = (function ($) {
             $collabSidebar.on("mouseover.collab", ".avatar-cover", _COLLAB_PVT.showHoverCard);
             $collabSidebar.on("mouseleave.collab", ".avatar-cover", _COLLAB_PVT.hideHoverCard);
             $collabBtn.on("click.collab", "#collab-btn", function() {
-                Collab.loadConversation(_COLLAB_PVT.openCollabSidebar);
+                if (App.CollaborationModel.getSelectionInfo().isAnnotableSelection) {
+                    _COLLAB_PVT.askToMarkAnnotation();
+                } else {
+                    Collab.loadConversation(_COLLAB_PVT.openCollabSidebar);
+                }
             });
             $pagearea.on("click.collab", ".pseudo_reply #DiscussButton", function() {
                 Collab.loadConversation(_COLLAB_PVT.openCollabSidebar);
+            });
+            $collabSidebar.on("change.collab", ".collab-follow-btn input", function(event) {
+              _COLLAB_PVT.followConvo(event.target.checked);
+            });
+            $collabSidebar.on("click.enabledCollab", ".collab-highlightmode-icon", function() {
+              _COLLAB_PVT.setHighlightMode(!$(event.target).closest('.collab-highlightmode-btn').hasClass('collab-active'));
             });
             $collabSidebar.on("click.collab", ".collab-reply-btn", function(event){
                 var annotation_in_progress = $("#annotation").attr("data-annotation");
@@ -111,18 +112,13 @@ App.CollaborationUi = (function ($) {
             });
             $pagearea.on("mouseup.collab", ".leftcontent .conversation:not(.activity)", function(event) {
                 var containerEl = event.currentTarget;
-                _COLLAB_PVT.showAnnotationOption(containerEl);
+                setTimeout(function () {
+                    _COLLAB_PVT.showAnnotationOption(containerEl);
+                });
             });
             $pagearea.on("mouseleave.collab", "#show-discussion-dd", _COLLAB_PVT.hideDiscussionDD);
             $pagearea.on("click.collab", "#collab-option-dd", function(){
-                var reply_in_progress = $("#collab-msg-reply-to").attr("data-reply");
-                if (_COLLAB_PVT.collabDisabled()){
-                    if(!Collab.isCollabOpen()) {
-                        _COLLAB_PVT.openCollabSidebar();
-                    }
-                } else if(!reply_in_progress) {
-                    _COLLAB_PVT.markAnnotation();
-                }
+                _COLLAB_PVT.askToMarkAnnotation();
             });
             $scrollBox.on("scroll.collab", _COLLAB_PVT.hasChatReachedTop); // scroll doesn't bubble
 
@@ -161,14 +157,25 @@ App.CollaborationUi = (function ($) {
                 }
             });
             $collabSidebar.on("keydown.enabledCollab", "#send-message-box", function(event) {
-                if(event.which === 13 && !event.shiftKey) {
+                var key = event.which || event.keyCode;
+                if(key === 13 && !event.shiftKey) {
                     event.preventDefault();
                     _COLLAB_PVT.sendMessageSubmit();
-                } else if(event.which === 27 && !event.shiftKey) {
+                } else if(key === 27 && !event.shiftKey) {
                     event.preventDefault();
                     _COLLAB_PVT.closeCollabSidebar();
                 }
-            })
+            });
+            $collabSidebar.on("keypress.enabledCollab", "#send-message-box", function(event) {
+                var key = event.which || event.keyCode;
+                if(!Collab.shouldBlockTypingMsgSend && key !== 13) {
+                    Collab.shouldBlockTypingMsgSend = true;
+                    _COLLAB_PVT.sendTypingMessage();
+                    setTimeout(function() {
+                        Collab.shouldBlockTypingMsgSend = false;
+                    }, CONST.MAX_TYPINGMSG_SENDING_STATUS_AGE);
+                }
+            });
             $collabSidebar.on("click.collab", ".collab-reply-to-text", function(event) {
                 var data_reply_to_id = event.currentTarget.getAttribute('data-reply-to-id');
                 var animation_class = "collab-reply-blink";
@@ -209,6 +216,17 @@ App.CollaborationUi = (function ($) {
             $("#collaborators-list").removeClass("active");
             $("#discussion-tab-btn").addClass("active");
             $("#collaborators-tab-btn").removeClass("active");
+        },
+
+        askToMarkAnnotation: function() {
+            var reply_in_progress = $("#collab-msg-reply-to").attr("data-reply");
+            if (_COLLAB_PVT.collabDisabled()) {
+                if (!Collab.isCollabOpen()) {
+                    _COLLAB_PVT.openCollabSidebar();
+                }
+            } else if (!reply_in_progress) {
+                _COLLAB_PVT.markAnnotation();
+            }
         },
 
         markAnnotation: function() {
@@ -276,6 +294,31 @@ App.CollaborationUi = (function ($) {
             if(msg_id) {
                 $("#send-message-box").focus();
             }
+            App.CollaborationModel.resetSelectionInfo();
+        },
+
+        setCollabSelectableStyle: function(state) {
+          if(state && Collab.highlightMode) {
+            $('.conversation #ticket_original_request, .conversation [id^="note_details_"]').addClass('collab-selectable');
+          } else {
+            $('.conversation #ticket_original_request, .conversation [id^="note_details_"]').removeClass('collab-selectable');
+          }
+        },
+
+        setHighlightMode: function(state) {
+          if(state) {
+            Collab.highlightMode = true;
+            $('#collab-sidebar .collab-highlightmode-btn').addClass('collab-active').attr('data-original-title', I18n.translate("collaboration.highlight_mode_on"));
+            if(Collab.isCollabOpen()) {
+              _COLLAB_PVT.setCollabSelectableStyle(true);
+            }
+          } else {
+            Collab.highlightMode = false;
+            $('#collab-sidebar .collab-highlightmode-btn').removeClass('collab-active').attr('data-original-title', I18n.translate("collaboration.highlight_mode_off"));
+            if(Collab.isCollabOpen()) {
+              _COLLAB_PVT.setCollabSelectableStyle(false);
+            }
+          }
         },
 
         cancelReply: function() {
@@ -286,6 +329,17 @@ App.CollaborationUi = (function ($) {
 
             var $chatSection = $("#collab-chat-section");
             $chatSection.removeClass("reply-added");
+        },
+
+        followConvo: function(follow) {
+          var collabModel = App.CollaborationModel;
+          collabModel.followConvo(follow);
+
+          if(follow) {
+            Collab.showFlash('info.follow_flash', {duration: 6000, addl_class: 'collab-flash-3-lines'});
+          } else {
+            Collab.showFlash('info.unfollow_flash', {duration: 6000, addl_class: 'collab-flash-4-lines'});
+          }
         },
 
         resetAttachmentFormView: function() {
@@ -382,6 +436,8 @@ App.CollaborationUi = (function ($) {
                 }
                 _COLLAB_PVT.hideUnreadMessageIndicator();
             }
+
+            _COLLAB_PVT.setCollabSelectableStyle(true);
         },
 
         closeCollabSidebar: function() {
@@ -390,6 +446,7 @@ App.CollaborationUi = (function ($) {
 
             $collabSidebar.removeClass("expand navFromRightBounceIn");
             $msgBox.blur();
+            _COLLAB_PVT.setCollabSelectableStyle(false);
         },
 
         uploadFile: function(files) {
@@ -429,12 +486,12 @@ App.CollaborationUi = (function ($) {
                             break;
                         }
                         case 413: {
-                            Collab.showError("size_exceeded", {max_size: CONST.MAX_UPLOAD_SIZE});
+                            Collab.showFlash("error.size_exceeded", {max_size: CONST.MAX_UPLOAD_SIZE});
                             _COLLAB_PVT.resetAttachmentFormView();
                             break;
                         }
                         case 415: {
-                            Collab.showError("wrong_file_format");
+                            Collab.showFlash("error.wrong_file_format");
                             _COLLAB_PVT.resetAttachmentFormView();
                             break;
                         }
@@ -506,6 +563,26 @@ App.CollaborationUi = (function ($) {
             }
         },
 
+        sendTypingMessage: function() {
+            var collabModel = App.CollaborationModel;
+            var currentConvo = collabModel.currentConversation;
+            var convoObject = collabModel.conversationsMap[currentConvo.co_id];
+            if (!convoObject) {
+                // Conversation doesn't exists or there is no message in msgBody
+                return
+            }
+
+            var msg = {
+                "body": JSON.stringify({
+                    "t_id": collabModel.currentUser.uid
+                }),
+                "m_type": CONST.MSG_TYPE_TYPING,
+                "ts": Date.now().toString(),
+                "persist": false
+            }
+            collabModel.sendMessage(msg, currentConvo.co_id);
+        },
+
 	    sendMessageSubmit: function() {
             var $chatSection = $("#collab-sidebar #collab-chat-section");
 
@@ -564,6 +641,7 @@ App.CollaborationUi = (function ($) {
             $annotationHolder.attr("data-annotation", "");
             $annotationHolder.find(".text").empty();
             $chatSection.removeClass("annotated");
+            collabModel.resetSelectionInfo();
 
             $replyHolder.attr("data-reply", "");
             $replyHolder.find(".text").empty();
@@ -744,8 +822,8 @@ App.CollaborationUi = (function ($) {
             _COLLAB_PVT.hideAnnotationOption();
 
             var s_id = App.CollaborationModel.currentUser.uid;
-            var selectionInfo = App.CollaborationModel.getSelectionInfo(s_id);
-            if(!selectionInfo.isAnnotableSelection) {
+            var selectionInfo = App.CollaborationModel.setSelectionInfo(s_id);
+            if (!selectionInfo.isAnnotableSelection || !Collab.highlightMode || !Collab.isCollabOpen()) {
                 return;
             }
             var selectionRectsForVp = _COLLAB_PVT.getSelectionVpLoc(containerEl);
@@ -775,7 +853,7 @@ App.CollaborationUi = (function ($) {
             if(!!msg_e.length) {
                 // TODO (kshitij) : find a way to optimize the scroll to msg animation
                 $("#scroll-box").animate({
-                    scrollTop: msg_e[0].offsetTop - 30
+                    scrollTop: msg_e[0].offsetTop - 60
                 }, 500, function() {
                     msg_e.addClass(animation_class);
                     setTimeout(function(){msg_e.removeClass(animation_class);}, 5000); /* this time has to be in sync with animation timing; */
@@ -1002,6 +1080,13 @@ App.CollaborationUi = (function ($) {
                 }
             }
 
+            var followersList = collabModel.conversationsMap[collabModel.currentConversation.co_id].followers;
+            var iAmFollower = followersList && followersList[collabModel.currentUser.uid];
+
+            if(iAmFollower) {
+              jQuery('#collab-sidebar').find('input').prop('checked', true);
+            }
+
             /*
             *   Collab expand or not
             */
@@ -1010,6 +1095,11 @@ App.CollaborationUi = (function ($) {
                 Collab.expandCollabOnLoad = false;
                 if(typeof Collab.scrollToMsgId !== "undefined") {
                     _COLLAB_PVT.scrollToMessage(Collab.scrollToMsgId);
+                }
+
+                if (Collab.followAction === "false" && iAmFollower) {
+                    _COLLAB_PVT.followConvo(false);
+                    Collab.updateFollowConvoUi(false);
                 }
             }
 
@@ -1553,6 +1643,9 @@ App.CollaborationUi = (function ($) {
             eventHandler: _COLLAB_PVT.showDiscussionDD
         }],
         hasExapndedTicket: false,
+        highlightMode: true,
+        shouldBlockTypingMsgSend: false,
+        shouldBlockTypingStatusShow: false,
 
         unbindEvents: function() {
             _COLLAB_PVT.unbindEvents();
@@ -1610,13 +1703,23 @@ App.CollaborationUi = (function ($) {
             _COLLAB_PVT.setCollaboratorsCount();
         },
 
-        showError: function(error_i18n_kind, params) {
-            error_i18n_kind = error_i18n_kind || CONST.DEFAULT_ERR;
-            $("#collab-error-text").text(I18n.translate("collaboration.error." + error_i18n_kind, params));
-            $("#collab-chat-section").addClass("collab-error-shown");
+        showFlash: function(i18n_kind, params) {
+            params = params || {};
+            $("#collab-flash-text").html(I18n.translate("collaboration." + i18n_kind, params));
+            $("#collab-chat-section").addClass(params.addl_class + " collab-flash-shown");
+            $("#collab-chat-section").attr('data-flash-set-time', new Date().getTime());
+            var timeout = params.duration || CONST.HIDE_FLASH_DURATION;
             setTimeout(function() {
-                $("#collab-chat-section").removeClass("collab-error-shown");
-            }, CONST.HIDE_ERROR_DURATION);
+                if((new Date().getTime() - $("#collab-chat-section").attr('data-flash-set-time')) >= timeout) {
+                  $("#collab-chat-section").removeClass("collab-flash-shown collab-flash-3-lines collab-flash-4-lines");
+                  $("#collab-flash-popup").removeClass("collab-flash-shown collab-error collab-info");
+                }
+            }, timeout);
+            $("#collab-flash-popup").addClass('collab-' + i18n_kind.split('.')[0]);
+        },
+
+        updateFollowConvoUi: function(state) {
+          $('#collab-sidebar .collab-follow-btn input').attr('checked', state);
         },
 
         removeCollaboratorsFromList: function(id){
@@ -1641,6 +1744,7 @@ App.CollaborationUi = (function ($) {
 
             config.expandCollabOnLoad = !!Collab.getUrlParameter("collab");
             config.scrollToMsgId = Collab.getUrlParameter("message");
+            config.followAction = Collab.getUrlParameter("follow");
 
             if(!!App.CollaborationModel.initedWithData) {
                 Collab.initUi(config);
@@ -1682,9 +1786,15 @@ App.CollaborationUi = (function ($) {
 
             Collab.expandCollabOnLoad = config.expandCollabOnLoad;
             Collab.scrollToMsgId = config.scrollToMsgId;
+            Collab.followAction = config.followAction;
 
             _COLLAB_PVT.unbindEvents();
 	        _COLLAB_PVT.events();
+            if(App.CollaborationModel.features.followerEnabled) {
+              $('#collab-sidebar .collab-scroll-box-cover').addClass('follower-enabled');
+            }
+
+            _COLLAB_PVT.setHighlightMode(true);
             console.log("Started collaboration.");
 
 	    },
@@ -1768,6 +1878,30 @@ App.CollaborationUi = (function ($) {
                 App.CollaborationModel.sendNotification(msg);
             }
         },
+
+        updateReadReceipt: function() {
+          // UI code for updating read receipt for [TH-1059] YTD 
+        },
+
+        addTypingHtml: function(msg) {
+            if(!Collab.isCollabOpen() || !msg.body || Collab.shouldBlockTypingStatusShow) {
+                return;
+            }
+            var collabModel = App.CollaborationModel;
+            var msg_body = Collab.parseJson(msg.body);
+            var typer_name = collabModel.usersMap[msg_body.t_id] ? collabModel.usersMap[msg_body.t_id].name : CONST.DUMMY_USER.name;
+
+            Collab.shouldBlockTypingStatusShow = true;
+            $("#collab-typing-status").empty().append(JST[CONST.COLLABORATION_TYPING_MESSAGE_TEMPLATE]({
+                    current_typer: typer_name,
+            }));
+
+            setTimeout(function() {
+                Collab.shouldBlockTypingStatusShow = false;
+                $("#collab-typing-status").empty();
+            }, CONST.MAX_TYPING_STATUS_AGE);
+        },
+
 
         addMessageHtml: function(msg, render_type) {
 	        if(!msg.body) {
@@ -1999,7 +2133,7 @@ App.CollaborationUi = (function ($) {
         onDisconnectHandler: function(response) {
             Collab.networkDisconnected = true;
             _COLLAB_PVT.disableCollabUiIfNeeded();
-            Collab.showError("network_err");
+            Collab.showFlash("error.network_err");
         },
         onReconnecthandler: function(response) {
             Collab.networkDisconnected = false;

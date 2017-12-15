@@ -49,8 +49,6 @@ module Agents
       update_preferences(freshchat_token: token)
     end
 
-
-
     private
 
       def update_preferences(settings = {})

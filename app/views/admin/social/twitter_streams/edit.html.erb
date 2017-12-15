@@ -25,12 +25,21 @@
   <div class="adm-social sts">
    <h4 class="adm-title"><%= t('admin.social.ticket_rules.title') %></h3>
     <p><%= t('admin.social.ticket_rules.brief_desc') %></p>
+
     <div class="rules-wrapper">
         <%= render :partial => 'ticket_rules_header', :locals => { :twitter_stream => @twitter_stream } %>
         <div id = "ticket_rules" class="adm-social sts adm-bg c-tkt">
           <%= render :partial => 'ticket_rules', :locals => { :ticket_rules => @ticket_rules } %>
         </div>
-    </div>
+    </div>       
+    <% if @twitter_stream.default_stream? and @twitter_stream.account.twitter_smart_filter_enabled?%>
+      <div class="smart-filter-wrapper">
+        <%= render :partial => 'smart_filter_header', :locals => { :twitter_handle => @twitter_handle, :f => f } %>
+      <div id = "smart_filter_rules" class="adm-social sts adm-bg c-tkt">
+          <%= render :partial => 'smart_filter', :locals => { :smart_filter_rule => @smart_filter_rule } %>
+      </div>
+      </div>
+    <% end %>
     <% if @twitter_stream.default_stream? and @twitter_handle.capture_dm_as_ticket%>
       <div class="rules-wrapper">
           <%= render :partial => 'convert_dm',  :locals => { :twitter_handle => @twitter_handle } %>
@@ -40,6 +49,10 @@
 <% end %>
 
 <script  type="text/javascript">
+  smartFilterToggle();
+  jQuery('#smart_filter_button').click(function(){
+    smartFilterToggle();
+  });
   jQuery(".twt-stream-name").trigger('click');
   jQuery(function() {
     if(jQuery("#social_twitter_handle_capture_mention_as_ticket").prop('checked')){
@@ -53,6 +66,17 @@
   jQuery('#social_twitter_handle_capture_mention_as_ticket').click(function(){
     jQuery('#ticket_rules').toggle();
   });
+
+  function smartFilterToggle() {
+    if(jQuery("#smart_filter_toggle").prop('checked')){
+      jQuery('#smart_filter_rules').show();
+    }else{
+      jQuery("#smart_filter_rules").hide();
+     }
+
+  }
+
+
   
 </script>
 

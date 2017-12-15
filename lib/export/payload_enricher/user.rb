@@ -23,7 +23,7 @@ class Export::PayloadEnricher::User < Export::PayloadEnricher::Base
   private
 
   def fetch_object
-    @user ||= Account.current.users.find_by_id(@user_id)
+    @user ||= Account.current.all_users.find_by_id(@user_id)
   end
   
 end

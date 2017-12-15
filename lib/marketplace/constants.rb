@@ -10,6 +10,7 @@ module Marketplace::Constants
   ADDON_ID_PREFIX = 'marketplaceapp_'
   ACCOUNT_ADDON_APP_UNITS = 1
   IPARAM = 'config/iparams.html'.freeze
+  OAUTH_IPARAM = 'config/oauth_iparams.html'.freeze
   INTERNAL_SERVER_ERROR = 'Internal server error'
   PLATFORM_SOURCE = 'PLATFORM'
   

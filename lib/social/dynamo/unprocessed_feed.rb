@@ -9,7 +9,8 @@ module Social
       RECORDS_FETCH_LIMIT = 50
       
       def insert_facebook_feed(hash_key, range_key, feed)
-        times = [Time.now.utc, Time.now.utc + 7.days]
+        retention_period = TABLES[TABLE][:retention_period]
+        times = [Time.now.utc, Time.now.utc + retention_period]
         feed_hash = JSON.parse(feed)
         if feed_hash["entry"] && feed_hash["entry"]["changes"].kind_of?(Array)
           item_hash  = facebook_feed_hash(hash_key, range_key, feed)
@@ -38,7 +39,8 @@ module Social
           :hash_key   => data["page_id"][:n],
           :range_key  => data["timestamp"][:n]
         }
-        times = [Time.now.utc, Time.now.utc + 7.days]
+        retention_period = TABLES[TABLE][:retention_period]
+        times = [Time.now.utc, Time.now.utc + retention_period]
         times.each do |time|
           table_name = Social::DynamoHelper.select_table(TABLE, time)
           Social::DynamoHelper.delete_item(table_name, item, SCHEMA)

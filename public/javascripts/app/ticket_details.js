@@ -1451,15 +1451,15 @@ var scrollToError = function(){
 			    App.Tickets.LimitEmails.appendErrorMessage(_form,'.cc_fields:visible:last' ,msg);
 
 			    _unblockForm();
-			    _saveDraft();
 
 			    $.scrollTo(jQuery('.redactor.conversation_thread'));
 			    return false;
 			  }
-			  if($('#response_added_alert').length > 0 && !isNotesVisible){
+			  if($('#response_added_alert').length > 0 && _form.parents('#all_notes').length < 1){
 			    // if activities shown
 
 			    _unblockPanel();
+			    _saveDraft();
 
 			    _form.trigger('focusin.keyboard_shortcuts');
 

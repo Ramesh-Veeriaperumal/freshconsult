@@ -7,9 +7,11 @@ class Freshfone::NotificationFailureRecovery
 
 	def self.perform(params)
 		begin
+			Rails.logger.info "Inside NotificationFailureRecovery Job. Params: #{params.inspect}"
 			@current_account = Account.current
 			@call = @current_account.freshfone_calls.find(params[:call_id])
 			return unless @call.ringing?
+			Rails.logger.info "Account: #{@current_account.id} Call: #{@call.id} moved to non-availability from NotificationFailureRecovery Job."
 			telephony(params).redirect_call(@call.call_sid, redirect_caller_to_voicemail(@call.freshfone_number.id)) if @call.is_root?
 			notify_ops
 		rescue Exception => e

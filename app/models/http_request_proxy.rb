@@ -30,7 +30,7 @@ class HttpRequestProxy
   def fetch(params, request)
     unless(request.blank?)
       method = request.env["REQUEST_METHOD"].downcase
-      auth_header = request.headers['HTTP_AUTHORIZATION']
+      auth_header = request.headers['HTTP_AUTHORIZATION'] || params[:oauth_token]
       user_agent = request.headers['HTTP_USER_AGENT']
     end
     requestParams = {:method => method, :auth_header => auth_header, :user_agent => user_agent}
@@ -178,6 +178,9 @@ class HttpRequestProxy
       end
     rescue => e
      Rails.logger.error("Error while parsing remote response.\n#{e.message}\n#{e.backtrace.join('\n')}")
+    end
+    if response_type.include?('json') && !response_body.present?
+      response_body = {}.to_json
     end
     return {:text=>response_body, :content_type => response_type, :status => response_code, 'x-headers' => x_headers}
   end

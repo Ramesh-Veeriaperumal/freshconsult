@@ -245,7 +245,7 @@ WorkflowMaxWidget.prototype = {
 										job_id: $("workflow-max-timeentry-jobs").value,
 										task_id: task_id,
 										notes: $("workflow-max-timeentry-notes").value,
-										hours: Math.ceil($("workflow-max-timeentry-hours").value*60),
+										hours: Math.round($("workflow-max-timeentry-hours").value*60),
 										date: this.executed_date.toString("yyyyMMdd")
 									});
 
@@ -275,7 +275,7 @@ WorkflowMaxWidget.prototype = {
 								job_id: $("workflow-max-timeentry-jobs").value,
 								task_id: $("workflow-max-timeentry-tasks").value,
 								notes: $("workflow-max-timeentry-notes").value,
-								hours: Math.ceil($("workflow-max-timeentry-hours").value*60),
+								hours: Math.round($("workflow-max-timeentry-hours").value*60),
 								date: this.executed_date.toString("yyyyMMdd")
 							});
 
@@ -428,7 +428,7 @@ WorkflowMaxWidget.prototype = {
 						job_id: this.get_time_entry_prop_value(resXml, ['Job', 'ID']),
 						task_id: this.get_time_entry_prop_value(resXml, ['Task', 'ID']),
 						notes: this.get_time_entry_prop_value(resXml, 'Note'),
-						hours: Math.ceil((hours*60))+"",
+						hours: Math.round((hours*60))+"",
 						date: Date.parse(this.get_time_entry_prop_value(resXml, 'Date')).toString('yyyyMMdd')
 					});
 					this.freshdeskWidget.request({
@@ -458,7 +458,7 @@ WorkflowMaxWidget.prototype = {
 					job_id: $("workflow-max-timeentry-jobs").value,
 					task_id: $("workflow-max-timeentry-tasks").value,
 					notes: $("workflow-max-timeentry-notes").value,
-					hours: Math.ceil($("workflow-max-timeentry-hours").value*60),
+					hours: Math.round($("workflow-max-timeentry-hours").value*60),
 					date: this.executed_date.toString("yyyyMMdd")
 					// start_time: this.format_time(this.executed_date, 0),
 					// end_time: this.format_time(this.executed_date, $("workflow-max-timeentry-hours").value*60)

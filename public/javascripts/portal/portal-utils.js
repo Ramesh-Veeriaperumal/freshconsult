@@ -143,6 +143,18 @@ function closeableFlash(flash){
   }, 20000);
 }
 
+window.storeToSessionStorage = function(key, value){
+  sessionStorage.setItem(key, Browser.stringify(value));  
+}
+
+window.getFromSessionStorage = function(key_name) {
+  return sessionStorage.getItem(key_name) ? JSON.parse(sessionStorage.getItem(key_name)) : undefined;
+}
+
+window.removeFromSessionStorage = function(key) {
+  sessionStorage.removeItem(key);
+}
+
 jQuery(document).ready(function(){
   
   var widgetPopup;

@@ -21,8 +21,8 @@
   cursor: pointer;
   position: relative;
   z-index: 1;
-  @include buttonBackground($btnBackground, $btnBackgroundHighlight);
-  border: 1px solid $btnBorder;
+  background-color: $btnBackground;
+  border: 1px solid $secondaryBtn_border_color;
   *border: 0; // Remove the border to prevent IE7's black border on input:focus
   border-bottom-color: darken($btnBorder, 10%);
   @include border-radius(6px);
@@ -32,11 +32,9 @@
 
 // Hover state
 .btn:hover {
-  color: $btnTextColor;
+  color: $secondary_button_color;
   text-decoration: none;
-  background-color: darken($btnBackground, 10%);
-  *background-color: darken($btnBackground, 15%); /* Buttons in IE7 don't get borders, so darken on hover */
-  background-position: 0 -15px;
+  background-color: $btnBackgroundHighlight;
 
   // transition is only when going to hover, otherwise the background
   // behind the gradient (there for IE<=9 fallback) gets mismatched
@@ -69,15 +67,15 @@
 
 .btn{
   @include border-radius(2px);
-  background-color: $btn_background;
-  border: solid 1px $btnBorder;
+  background-color: $btnBackground;
+  border: solid 1px $secondaryBtn_border_color;
   background-image: none;
   @include box-shadow(none);
   font-family: $headingsFontFamily;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 1.2px;
-  color: $btnTextColor;
+  color: $secondary_button_color;
   padding: 5px 20px;
   text-transform: uppercase;
   &:hover{
@@ -158,7 +156,7 @@
   @include margin-left(-3px);
 }
 
-// Quoted button 
+// Quoted button
 // This button has content in it
 .btn-quoted{
   @include padding(0 7px 0 8px);
@@ -176,23 +174,21 @@
 .btn.default-pic {
   @include padding(6px 6px 6px 8px);
 }
-.btn.btn-signup{
-  color: $white;
-}
+
 .dropdown-toggle.btn{
   padding: 6px;
 }
 
 // Icon buttons
 .btn-icon{
-  padding: 3px 6px; 
+  padding: 3px 6px;
 }
 #datepicker{
   input[type="text"]{
     height: 40px;
     @include box-shadow(none);
     color: $black;
-  } 
+  }
 }
 // Alternate buttons
 // --------------------------------------------------
@@ -252,6 +248,41 @@ input[type="submit"].btn {
   &.btn-small {
     *padding-top: 3px;
     *padding-bottom: 3px;
+    @include border-radius(2px);
+    background-color: $btnBackground;
+    border: solid 1px $secondaryBtn_border_color;
+    background-image: none;
+    @include box-shadow(none);
+    font-family: $headingsFontFamily;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    color: $secondary_button_color;
+    padding: 5px 20px;
+    text-transform: uppercase;
+    &:hover{
+      background-color: $btnBackgroundHighlight;
+    }
+  }
+  &.btn-primary{
+    width: auto;
+    font-family: $headingsFontFamily;
+    @include border-radius(2px);
+    background-color: $btn_primary_background;
+    border: solid 1px $primaryBtn_border_color;
+    background-image: none;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    @include text-shadow(none);
+    text-transform: uppercase;
+    @include box-shadow(none);
+    padding: 5px 20px;
+    color: $btnPrimaryTextColor;
+    &:hover{
+      background-color: $btnPrimaryHover;
+      text-decoration: none;
+    }
   }
   &.btn-mini {
     *padding-top: 1px;

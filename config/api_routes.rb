@@ -69,6 +69,8 @@ Helpkit::Application.routes.draw do
 
     namespace :api_search, path: 'search' do
       resources :tickets, only: [:index]
+      resources :contacts, only: [:index]
+      resources :companies, only: [:index]
     end
 
     resources :contacts, as: 'api_contacts', controller: 'api_contacts', except: [:new, :edit] do

@@ -28,8 +28,7 @@ class Agent < ActiveRecord::Base
   # validate :only_primary_email, :on => [:create, :update] moved to user.rb
 
   attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled,
-                  :scoreboard_level_id, :user_attributes, :group_ids, :freshchat_token
-
+    :scoreboard_level_id, :user_attributes, :group_ids, :freshchat_token
   attr_accessor :agent_role_ids, :freshcaller_enabled
 
   scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
