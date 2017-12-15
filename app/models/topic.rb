@@ -192,6 +192,7 @@ class Topic < ActiveRecord::Base
   }
 
   attr_protected :forum_id , :account_id, :published
+  
   # to help with the create form
   attr_accessor :body_html, :highlight_title, :sort_by
 
