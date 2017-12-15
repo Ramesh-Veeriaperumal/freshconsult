@@ -5,7 +5,7 @@ class ContactDelegator < BaseDelegator
     validatable_custom_fields:  proc { |x| x.valid_custom_fields },
     drop_down_choices: proc { |x| x.valid_custom_field_choices },
     required_attribute: :required_for_agent }
-  }, unless: -> { [:quick_create, :update_password].include?(validation_context) }
+  }
   validate :user_emails_validation, if: -> { @other_emails }
   validate :validate_user_activation, on: :send_invite
   validate :validate_avatar_ext, if: -> { @avatar_attachment && errors[:attachment_ids].blank? }

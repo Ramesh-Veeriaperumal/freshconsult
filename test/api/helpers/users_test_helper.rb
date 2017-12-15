@@ -48,12 +48,9 @@ module UsersTestHelper
     result.except!(:custom_fields) if result[:custom_fields].empty? || exclude_custom_fields
     result.merge!(whitelisted: contact.whitelisted,
                   facebook_id: (expected_output[:facebook_id] || contact.fb_profile_id),
-                  external_id: (expected_output[:external_id] || contact.external_id),
-                  unique_external_id: (expected_output[:unique_external_id] || contact.unique_external_id),
                   blocked: contact.blocked?,
                   spam: contact.spam?,
-                  deleted: contact.deleted,
-                  parent_id: contact.parent_id)
+                  deleted: contact.deleted)
     result[:company] = company_hash(contact.default_user_company) if expected_output[:include].eql?('company') && contact.default_user_company.present?
     result[:other_companies] = other_companies_hash(expected_output[:include].eql?('company'), contact) if Account.current.multiple_user_companies_enabled? && contact.default_user_company.present?
     result

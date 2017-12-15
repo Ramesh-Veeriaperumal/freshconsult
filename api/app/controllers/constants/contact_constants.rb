@@ -17,7 +17,7 @@ module ContactConstants
   INDEX_FIELDS = %w(state email phone mobile company_id tag _updated_since unique_external_id include).freeze
   SHOW_FIELDS = %w(include).freeze
   MERGE_ARRAY_FIELDS = ['target_ids'].freeze
-  MERGE_FIELDS = %w(primary_id contact).freeze | MERGE_ARRAY_FIELDS
+  MERGE_FIELDS = %w(primary_id).freeze | MERGE_ARRAY_FIELDS
   EXPORT_CSV_ARRAY_FIELDS = %w(default_fields custom_fields).freeze
   EXPORT_CSV_FIELDS = EXPORT_CSV_ARRAY_FIELDS
 
@@ -60,10 +60,6 @@ module ContactConstants
                        ['phone', 1, 'work phone']].freeze
   # [Attribute, limit, message] ["phone", 1, "Phone User"]
   # Routes that doesn't accept any params
-  MERGE_KEYS = [:phone, :mobile, :twitter_id, :fb_profile_id, :external_id].freeze
-  MERGE_ARRAY_KEYS = [:other_emails, :company_ids].freeze
-  MERGE_CONTACT_FIELDS = MERGE_KEYS | MERGE_ARRAY_KEYS | [:email]
-
   NO_PARAM_ROUTES = %w(restore).freeze
 
   ATTRIBUTES_TO_BE_STRIPPED = %w(address email job_title language name mobile phone time_zone tags twitter_id custom_fields other_emails unique_external_id).freeze
@@ -88,10 +84,6 @@ module ContactConstants
     company: :company_id,
     :"primary_email.email" => :email, base: :email,
     attachment_ids: :avatar_id
-  }.freeze
-
-  MERGE_FIELD_MAPPINGS = {
-    emails: :other_emails
   }.freeze
 
   NO_CONTENT_TYPE_REQUIRED = [:restore, :send_invite].freeze
