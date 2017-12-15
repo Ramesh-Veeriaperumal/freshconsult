@@ -145,7 +145,6 @@ class Topic < ActiveRecord::Base
   scope :sort_by_popular,
       :order => "#{Topic.table_name}.user_votes DESC, hits DESC, replied_at DESC"
 
-
   # The below named scopes are used in fetching topics with a specific stamp used for portal topic list
   scope :by_stamp, lambda { |stamp_type|
     { :conditions => ["stamp_type = ?", stamp_type] }
