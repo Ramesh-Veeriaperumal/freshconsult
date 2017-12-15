@@ -1,4 +1,4 @@
-beforrequire 'aws-sdk'
+require 'aws-sdk'
 require 'logger'
 AWS.config(:logger => Logger.new($stdout),:log_level => :debug, :s3_signature_version => :v4)
 
