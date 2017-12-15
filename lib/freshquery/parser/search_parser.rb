@@ -27,22 +27,21 @@ module_eval(<<'...end search.y/module_eval...', 'search.y', 20)
   end
 
   def make_tokens(scanner)
-    keyword_x = "([a-zA-Z][a-zA-Z0-9_]*)"
+    keyword_x = "([a-zA-Z][a-zA-Z0-9_]*)[\s]*"
     seperator_x = ":"
     relational_x = "(>|<)"
-    date_x = "'\\d{4}-\\d{2}-\\d{2}'"
+    date_x = "[\s]*'\\d{4}-\\d{2}-\\d{2}'"
     value_x = "[\s]*([a-zA-Z0-9_\@]+|'[^']+'|[-]?[0-9]+)"
     integer_x = "[-]?[0-9]+"
     term_x = "(#{value_x}|#{relational_x}[\s]*(#{date_x}|#{integer_x}))"
-    regex_string = /(#{keyword_x}[\s]*#{seperator_x}#{term_x})/
+    regex_string = /(#{keyword_x}#{seperator_x}#{term_x})/
     until scanner.empty?
-      scanner.skip(/(\t|\r|\n|\s)+/)
       case
-        when match = scanner.scan(/\(/)
+        when match = scanner.scan(/\([\s]*/)
           @tokens.push [:LPAREN, match.strip]    
-        when match = scanner.scan(/\)/)
+        when match = scanner.scan(/[\s]*\)/)
           @tokens.push [:RPAREN, match.strip]
-        when match = scanner.scan(/(AND|OR)/i)
+        when match = scanner.scan(/[\s]+(AND|OR)[\s]+/i)
           @tokens.push [match.strip.upcase.to_sym, match.strip.upcase]
         when match = scanner.scan(regex_string) # match any keyword:value
           @tokens.push [:PAIR, match]
