@@ -25,6 +25,7 @@ class CallDelegator < BaseDelegator
   def validate_agent_email
     agent = Account.current.technicians.where(email: @agent_email).first
     if agent
+      agent.make_current
       self.agent = agent
     else
       errors[:agent_email] << :"is invalid"
