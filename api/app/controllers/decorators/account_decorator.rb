@@ -22,7 +22,7 @@ class AccountDecorator < ApiDecorator
     ret_hash[:social_options] = social_options_hash if record.features?(:twitter) || record.basic_twitter_enabled?
     ret_hash
   end
-
+ 
   private
 
     def launch_party_features
