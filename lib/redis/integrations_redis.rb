@@ -24,6 +24,10 @@ module Redis::IntegrationsRedis
 	def remove_key(key)
 		$redis_integrations.perform_redis_op("del", key)
 	end
+
+	def key_exists?(key)
+		$redis_integrations.perform_redis_op('exists', key)
+	end
 	
 	def remove_from_set(key, values)
 		newrelic_begin_rescue do

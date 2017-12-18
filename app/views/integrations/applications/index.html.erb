@@ -113,9 +113,10 @@
       var app_info = hash_value.split('_');
       app_id = app_info[0]
 
-      if(app_id == "<%= ZendeskAppConfig::APP_ID %>" && jQuery('#ext-<%=ZendeskAppConfig::APP_ID %>').length != 0) {
-        jQuery('#ext-<%=ZendeskAppConfig::APP_ID %>').find('.btn-settings').trigger('click');
-      }else if(hash.match('^#[0-9]')) {    
+      <% zendesk_app_id = current_account.falcon_ui_enabled?(User.current) ? ZendeskAppConfig::FALCON_APP_ID : ZendeskAppConfig::APP_ID%>
+      if(app_id == <%= zendesk_app_id.to_s %> && jQuery('#ext-<%=zendesk_app_id%>').length != 0) {
+        jQuery('#ext-<%=zendesk_app_id%>').find('.btn-settings').trigger('click');
+      }else if(hash.match('^#[0-9]')) {
         jQuery('.app-dtl').attr('href',hash);
         jQuery('.app-dtl').attr('data-url','/admin/marketplace/extensions/' + app_id + '?type=1,4,5');
       };

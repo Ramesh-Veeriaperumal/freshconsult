@@ -1,9 +1,9 @@
 class TicketDecorator < ApiDecorator
   delegate :ticket_body, :custom_field_via_mapping, :cc_email, :email_config_id, :fr_escalated, :group_id, :priority,
-           :requester_id, :responder, :responder_id, :source, :spam, :status, :subject, :display_id, :ticket_type,
-           :schema_less_ticket, :deleted, :due_by, :frDueBy, :isescalated, :description,
-           :internal_group_id, :internal_agent_id, :association_type, :associated_tickets_count, :can_be_associated?,
-           :description_html, :tag_names, :attachments, :attachments_sharable, :company_id, :cloud_files, :ticket_states, to: :record
+    :requester_id, :responder, :responder_id, :source, :spam, :status, :subject, :display_id, :ticket_type,
+    :schema_less_ticket, :deleted, :due_by, :frDueBy, :isescalated, :description,
+    :internal_group_id, :internal_agent_id, :association_type,:associates, :associated_ticket?, :associated_tickets_count, :can_be_associated?,
+    :description_html, :tag_names, :attachments, :attachments_sharable, :company_id, :cloud_files, :ticket_states, to: :record
 
   delegate :multiple_user_companies_enabled?, to: 'Account.current'
 
@@ -287,60 +287,60 @@ class TicketDecorator < ApiDecorator
 
   private
 
-    def handle_timestamps(meta_info)
-      if meta_info.is_a?(Hash) && meta_info.keys.include?('time')
-        meta_info['time'] = Time.parse(meta_info['time']).utc.iso8601
-      end
-      meta_info
+  def handle_timestamps(meta_info)
+    if meta_info.is_a?(Hash) && meta_info.keys.include?('time')
+      meta_info['time'] = Time.parse(meta_info['time']).utc.iso8601
     end
+    meta_info
+  end
 
-    def freshfone_enabled?
-      Account.current.features?(:freshfone)
-    end
+  def freshfone_enabled?
+    Account.current.features?(:freshfone)
+  end
 
-    def forums_enabled?
-      Account.current.features?(:forums)
-    end
+  def forums_enabled?
+    Account.current.features?(:forums)
+  end
 
-    def topic_hash(topic)
-      {
-        id: topic.id,
-        title: topic.title
-      }
-    end
+  def topic_hash(topic)
+    {
+      id: topic.id,
+      title: topic.title
+    }
+  end
 
-    def company_search_hash
-      { id: company_id, name: record.company.try(:name) }
-    end
+  def company_search_hash
+    { id: company_id, name: record.company.try(:name) }
+  end
 
-    def permission?
-      @permissibles.find { |perm| perm[:display_id] == display_id }.present?
-    end
+  def permission?
+    @permissibles.find { |perm| perm[:display_id] == display_id }.present?
+  end
 
-    def parse_time(attribute)
-      attribute ? Time.parse(attribute).utc : nil
-    end
+  def parse_time(attribute)
+    attribute ? Time.parse(attribute).utc : nil
+  end
 
-    def archived?
-      @is_archived ||= record.is_a?(Helpdesk::ArchiveTicket)
-    end
+  def archived?
+    @is_archived ||= record.is_a?(Helpdesk::ArchiveTicket)
+  end
 
-    def whitelisted_properties
-      # For an archive ticket, these are properties which are fetched from s3 object
-      # For regular Helpdesk::Ticket they are in the DB.
-      # To avoid S3 fetches in search, we are doing this.
-      return {} if archived?
-      {
-        description_text: description,
-        due_by: due_by.try(:utc),
-        stats: stats
-      }
-    end
+  def whitelisted_properties
+    # For an archive ticket, these are properties which are fetched from s3 object
+    # For regular Helpdesk::Ticket they are in the DB.
+    # To avoid S3 fetches in search, we are doing this.
+    return {} if archived?
+    {
+      description_text: description,
+      due_by: due_by.try(:utc),
+      stats: stats
+    }
+  end
 
-    def dirty_fixed_stats
-      DIRTY_FIX_MAPPING.each_with_object({}) do |(key, value), res|
-        res[key] = ticket_states.send(key).try(:utc) || (value.include?(status) ? ticket_states.updated_at.try(:utc) : nil)
-        res
-      end
+  def dirty_fixed_stats
+    DIRTY_FIX_MAPPING.each_with_object({}) do |(key, value), res|
+      res[key] = ticket_states.send(key).try(:utc) || (value.include?(status) ? ticket_states.updated_at.try(:utc) : nil)
+      res
     end
+  end
 end

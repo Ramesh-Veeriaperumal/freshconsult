@@ -33,7 +33,8 @@ module Helpdesk::Email::Constants
 								:invalid_account => "Invalid account",
 								:inactive_account => "Inactive account",
 								:failed_article => "Article creation failed",
-								:max_email_limit => "Reached max allowed email limit in Ticket/Note"
+								:max_email_limit => "Reached max allowed email limit in Ticket/Note",
+								:noop_collab_email_reply => "No Operation: Collab Email Reply "
 							} # add according to need
 	PROCESSED_EMAIL_TYPE = { :ticket => "ticket", :note => "note", :article => "article", :invalid => "invalid" }
 

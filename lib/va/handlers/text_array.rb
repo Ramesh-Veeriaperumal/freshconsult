@@ -1,8 +1,13 @@
 class Va::Handlers::TextArray < Va::RuleHandler
 
   private
+
     def non_blank_values(arr)
       arr.reject{|s| s.blank?}
+    end
+
+    def values_in_downcase
+      [*value].map(&:downcase)
     end
 
     def is(evaluate_on_value)
@@ -18,11 +23,11 @@ class Va::Handlers::TextArray < Va::RuleHandler
     end
 
     def in(evaluate_on_value)
-      (evaluate_on_value.map(&:downcase) & [*value].map(&:downcase)).size > 0
+      (evaluate_on_value.map(&:downcase) & values_in_downcase).size > 0
     end
 
     def not_in(evaluate_on_value)
-      (evaluate_on_value.map(&:downcase) & [*value].map(&:downcase)).size == 0
+      !in_local evaluate_on_value
     end
 
     def contains(evaluate_on_value)
@@ -53,11 +58,11 @@ class Va::Handlers::TextArray < Va::RuleHandler
     end
     
     def filter_query_is
-      construct_query('=', value)
+      construct_query(QUERY_OPERATOR[:equal])
     end
     
     def filter_query_is_not
-      construct_query('!=', value)
+      construct_query(QUERY_OPERATOR[:not_equal])
     end
     
     def filter_query_contains
@@ -75,10 +80,21 @@ class Va::Handlers::TextArray < Va::RuleHandler
     def filter_query_ends_with
       construct_query('like', "%#{value}")
     end
-    
-    def construct_query(q_operator, q_value)
+
+    def filter_query_in
+      construct_query QUERY_OPERATOR[:in], values_in_downcase, '(?)'
+    end
+
+    def filter_query_not_in
+      construct_query QUERY_OPERATOR[:not_in], values_in_downcase, '(?)'
+    end
+
+    def construct_query(q_operator, q_value = value, replacement_operator = '?')
       columns = condition.db_column
-      q_str = columns.collect { |db_column| "#{db_column} #{q_operator} ?" }.join(' or ')
+      q_str = columns.collect { |db_column| "#{db_column} #{q_operator} #{replacement_operator}" }.join(' or ')
       columns.size.times.collect { |n| q_value }.unshift("(#{q_str})")
     end
+
+    alias_method :in_local, :in
+
 end

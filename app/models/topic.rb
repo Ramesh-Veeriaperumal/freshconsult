@@ -145,7 +145,6 @@ class Topic < ActiveRecord::Base
   scope :sort_by_popular,
       :order => "#{Topic.table_name}.user_votes DESC, hits DESC, replied_at DESC"
 
-
   # The below named scopes are used in fetching topics with a specific stamp used for portal topic list
   scope :by_stamp, lambda { |stamp_type|
     { :conditions => ["stamp_type = ?", stamp_type] }
@@ -197,11 +196,11 @@ class Topic < ActiveRecord::Base
   attr_accessor :body_html, :highlight_title, :sort_by
 
   IDEAS_STAMPS = [
-    [ :planned,      I18n.t("topic.ideas_stamps.planned"),       1 ],
-    [ :inprogress,   I18n.t("topic.ideas_stamps.inprogress"),    4 ],
-    [ :deferred,     I18n.t("topic.ideas_stamps.deferred"),      5 ],
-    [ :implemented,  I18n.t("topic.ideas_stamps.implemented"),   2 ],
-    [ :nottaken,     I18n.t("topic.ideas_stamps.nottaken"),      3 ]
+    [ :planned,      "topic.ideas_stamps.planned",       1 ],
+    [ :inprogress,   "topic.ideas_stamps.inprogress",    4 ],
+    [ :deferred,     "topic.ideas_stamps.deferred",      5 ],
+    [ :implemented,  "topic.ideas_stamps.implemented",   2 ],
+    [ :nottaken,     "topic.ideas_stamps.nottaken",      3 ]
   ]
 
   IDEAS_STAMPS_OPTIONS = IDEAS_STAMPS.map { |i| [i[1], i[2]] }
@@ -212,8 +211,8 @@ class Topic < ActiveRecord::Base
   IDEAS_TOKENS = IDEAS_STAMPS.map { |i| i[0] }
 
   QUESTIONS_STAMPS = [
-    [ :answered,     I18n.t("topic.questions.answered"),      6 ],
-    [ :unanswered,   I18n.t("topic.questions.unanswered"),    7 ]
+    [ :answered,     "topic.questions.answered",      6 ],
+    [ :unanswered,   "topic.questions.unanswered",    7 ]
   ]
 
   QUESTIONS_STAMPS_OPTIONS = QUESTIONS_STAMPS.map { |i| [i[1], i[2]] }
@@ -224,8 +223,8 @@ class Topic < ActiveRecord::Base
   QUESTIONS_TOKENS = QUESTIONS_STAMPS.map { |i| i[0] }
 
   PROBLEMS_STAMPS = [
-    [ :solved,     I18n.t("topic.problems.solved"),      8 ],
-    [ :unsolved,   I18n.t("topic.problems.unsolved"),    9 ]
+    [ :solved,     "topic.problems.solved",      8 ],
+    [ :unsolved,   "topic.problems.unsolved",    9 ]
   ]
 
   PROBLEMS_STAMPS_OPTIONS = PROBLEMS_STAMPS.map { |i| [i[1], i[2]] }
@@ -268,6 +267,22 @@ class Topic < ActiveRecord::Base
     Forum::TYPE_KEYS_BY_TOKEN[:howto] => QUESTIONS_STAMPS_BY_KEY.keys
   }
 
+  def self.ideas_stamps_list
+    IDEAS_STAMPS.map { |i| [I18n.t(i[1]), i[2]] }
+  end
+
+  def self.ideas_stamp_keys
+    Hash[*IDEAS_STAMPS.map { |i| [i[2], I18n.t(i[1])] }.flatten]
+  end
+
+  def self.names_by_keys
+    Hash[*NAMES_BY_KEY.map { |i| [i[0], I18n.t(i[1])] }.flatten]
+  end
+
+  def self.all_tokens_for_filters
+    Hash[*ALL_TOKENS_FOR_FILTER.map {|i| [i[0],  Hash[*i[1].map { |k| [k[0], I18n.t(k[1])] }.flatten]]}.flatten]
+  end
+
   def check_stamp_type
     if forum
       is_valid = FORUM_TO_STAMP_TYPE[forum.forum_type].include?(stamp_type)
@@ -293,7 +308,7 @@ class Topic < ActiveRecord::Base
   end
 
   def stamp_name
-    IDEAS_STAMPS_BY_KEY[stamp_type]
+    self.class.ideas_stamp_keys[stamp_type]
   end
 
   def stamp_key
@@ -301,13 +316,14 @@ class Topic < ActiveRecord::Base
   end
 
   def stamp?
-    stamp_type? && Topic::ALL_TOKENS_FOR_FILTER[forum.forum_type].present? && ALL_TOKENS_FOR_FILTER[forum.forum_type].keys.include?(stamp_type)
+    (stamp_type? && self.class.all_tokens_for_filters[forum.forum_type].present? && 
+      self.class.all_tokens_for_filters[forum.forum_type].keys.include?(stamp_type))
   end
 
   def stamp
     stamp? ? 
-      ALL_TOKENS_FOR_FILTER[forum.forum_type][stamp_type] : 
-      ALL_TOKENS_FOR_FILTER[forum.forum_type][DEFAULT_STAMPS_BY_FORUM_TYPE[forum.forum_type]]
+      self.class.all_tokens_for_filters[forum.forum_type][stamp_type] : 
+      self.class.all_tokens_for_filters[forum.forum_type][DEFAULT_STAMPS_BY_FORUM_TYPE[forum.forum_type]]
   end
 
   def reply_count
@@ -387,7 +403,6 @@ class Topic < ActiveRecord::Base
     options[:except] = ((options[:except] || []) +  TOPIC_ATTR_TO_REMOVE).uniq
     super(options)
   end
-
 
   # Added for portal customisation drop
   def self.filter(_per_page = self.per_page, _page = 1)

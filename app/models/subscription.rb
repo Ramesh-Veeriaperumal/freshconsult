@@ -58,7 +58,7 @@ class Subscription < ActiveRecord::Base
   after_commit :clear_account_susbcription_cache
   after_commit :schedule_account_block,  on: :update, :if => :suspended?
   after_commit :suspend_tenant,  on: :update, :if => :trial_to_suspended?
-  after_commit :activate_account, on: :update, :if => :non_suspended?
+  after_commit :reactivate_account, on: :update, :if => :non_suspended?
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
   
@@ -569,11 +569,11 @@ class Subscription < ActiveRecord::Base
     end
 
     def suspend_tenant
-      SearchService::Client.new(self.account_id).tenant_rollback
+      SearchService::Client.new(self.account_id).tenant_suspend
     end
 
-    def activate_account
-      SearchService::Client.new(self.account_id).activate
+    def reactivate_account
+      SearchService::Client.new(self.account_id).tenant_reactivate
     end
 
     def autopilot_fields_changed?

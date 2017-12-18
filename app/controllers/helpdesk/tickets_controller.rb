@@ -31,7 +31,7 @@ class Helpdesk::TicketsController < ApplicationController
   include Redis::TicketsRedis
   include Helpdesk::SendAndSetHelper
 
-  ALLOWED_QUERY_PARAMS = ['collab', 'message']
+  ALLOWED_QUERY_PARAMS = ['collab', 'message', 'follow']
 
   before_filter :redirect_to_mobile_url
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:show,:suggest_tickets]
@@ -692,6 +692,7 @@ class Helpdesk::TicketsController < ApplicationController
     @item.schedule_observer = true
     params[nscname][:tag_names] = params[:helpdesk][:tags] unless params[:helpdesk].blank? or params[:helpdesk][:tags].blank?
     verify_update_properties_permission if @item.assign_ticket_attributes(params[nscname])
+    build_attachments @note, :helpdesk_note
     if @note.save_note
       enqueue_send_set_observer
       if is_reply?
@@ -2117,7 +2118,7 @@ class Helpdesk::TicketsController < ApplicationController
   def fetch_tickets(tkt=nil)
     if collab_filter_enabled_for?(view_context.current_filter)
       fetch_collab_tickets
-    elsif es_tickets_enabled? and params[:html_format] and non_indexed_columns_query?
+    elsif es_tickets_enabled? and params[:html_format]
       #_Note_: Fetching from ES based on feature and only for web
       tickets_from_es(params)
     else

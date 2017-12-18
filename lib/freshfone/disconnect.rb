@@ -149,7 +149,7 @@ module Freshfone::Disconnect
     end
 
     def no_response_present?
-      current_call.meta.agent_pinged_and_no_response?(
+      current_call.conference_sid.present? && current_call.meta.agent_pinged_and_no_response?(
         (params[:agent_id] || params[:agent]).to_i)
     end
 end

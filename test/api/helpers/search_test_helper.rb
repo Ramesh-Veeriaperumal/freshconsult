@@ -33,12 +33,19 @@ module SearchTestHelper
     test_contact = User.new(name: params[:name],
                             email: params[:email],
                             customer_id: params[:customer_id],
+                            twitter_id: params[:twitter_id],
                             mobile: params[:mobile],
                             phone: params[:phone],
-                            helpdesk_agent: params[:helpdesk_agent] || false,
+                            time_zone: params[:time_zone],
+                            language: params[:language],
+                            helpdesk_agent: false,
                             account_id: @account.id,
-                            custom_field: params[:custom_field])
+                            custom_field: params[:custom_field],
+                            created_at: params[:created_at],
+                            updated_at: params[:updated_at])
+    test_contact.tag_names = params[:tags].join(',') if params[:tags]
     test_contact.save
+    test_contact.update_attribute(:active, params[:active])
     test_contact
   end
 
@@ -47,7 +54,9 @@ module SearchTestHelper
                                description: params[:description],
                                domains: params[:domains],
                                account_id: @account.id,
-                               custom_field: params[:custom_field])
+                               custom_field: params[:custom_field],
+                               created_at: params[:created_at],
+                               updated_at: params[:updated_at])
     test_company.save
     test_company
   end
@@ -62,7 +71,7 @@ module SearchTestHelper
 
   def clear_es(acid)
     ES_V2_SUPPORTED_TYPES.keys.each do |es_type|
-      Search::V2::IndexRequestHandler.new(es_type, 1, nil).remove_by_query(account_id: acid)
+      Search::V2::IndexRequestHandler.new(es_type, acid, nil).remove_by_query(account_id: acid)
     end
   end
 
@@ -100,6 +109,6 @@ module SearchTestHelper
         tags.map(&:sqs_manual_publish_without_feature_check)
       end
     end
-    sleep(5)
+    sleep(10)
   end
 end

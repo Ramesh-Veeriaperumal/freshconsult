@@ -336,8 +336,6 @@ module TicketConstants
   CHILD_DEFAULT_FD_MAPPING = ["email", "requester_id", "subject", "status", "ticket_type", "group_id", "responder_id",
     "priority", "product_id", "description_html", "tags"]
 
-  DB_INDEXED_QUERY_COLUMNS = ["requester_id", "responder_id", "group_id", "created_at", "status"]
-
   SKILL_BASED_TICKET_ATTRIBUTES = [:sbrr_ticket_dequeued, :sbrr_user_score_incremented, :sbrr_fresh_ticket, :skip_sbrr, :sbrr_turned_on, :status_sla_toggled_to, :skip_sbrr_assigner, :skip_sbrr_save]
 
   LBRR_REFLECTION_KEYS = [:deleted, :spam, :status, :responder_id, :group_id]
@@ -406,6 +404,10 @@ module TicketConstants
 
   def self.association_type_filter_names
     TICKET_ASSOCIATION_FILTER.map { |i| [i[1], i[2].join(',')] }
+  end
+
+  def self.translate_association_type_name(association_type)
+    I18n.t(TICKET_ASSOCIATION_TOKEN_BY_KEY[association_type])
   end
 
   def self.created_options
