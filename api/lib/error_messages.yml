@@ -143,6 +143,7 @@ api_error_messages:
   # Dashboard activities
   either_since_id_or_before_id: "Specify since_id or before_id, not both"
   missing_contact_detail: "Please enter at least one contact detail"
+  unassociated_values: "Values unassociated with the given users found, %{invalid_values}"
   no_freshcaller_account: "No Freshcaller account exists"
   outbound_limit_exceeded: "You can send a maximum of 5 outbound emails a day per account during the trial period"
   recipient_limit_exceeded: "You cannot email more than five people at once when you're on trial"
