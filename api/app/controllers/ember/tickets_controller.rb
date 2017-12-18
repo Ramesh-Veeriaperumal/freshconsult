@@ -7,6 +7,7 @@ module Ember
     include Helpdesk::ToggleEmailNotification
     include Redis::RedisKeys
     include Redis::OthersRedis
+    include Helpdesk::Activities::ActivityMethods
 
     decorate_views(decorate_object: [:update_properties, :execute_scenario], decorate_objects: [:index, :search])
 

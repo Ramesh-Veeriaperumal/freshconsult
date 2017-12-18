@@ -241,6 +241,8 @@ Helpkit::Application.routes.draw do
         put :unwatch, to: 'ember/subscriptions#unwatch'
         get :watchers, to: 'ember/subscriptions#watchers'
         put :update_properties, to: 'ember/tickets#update_properties'
+        get :failed_email_details, to: 'ember/tickets#fetch_errored_email_details'
+        post :suppression_list_alert, to: 'ember/tickets#suppression_list_alert'
       end
     end
 

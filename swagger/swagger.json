@@ -1276,6 +1276,77 @@
         }
       }
     },
+    "/tickets/{id}/failed_email_details": {
+      "get": {
+        "tags": [
+          "ticket"
+        ],
+        "description": "Retrieving the details of failed emails",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "note_id",
+            "in": "query",
+            "type": "number",
+            "description": "Note Id corresponding to the conversation of failed email"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/email_failures"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      }
+    },
+    "/tickets/{id}/suppression_list_alert": {
+      "post": {
+        "tags": [
+          "ticket"
+        ],
+        "description": "Sending the request to unblock recipient",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/suppression_list"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      }
+    },
     "/tickets/{id}/activities": {
       "get": {
         "tags": [
@@ -6543,6 +6614,18 @@
         }
       }
     },
+    "suppression_list": {
+      "type": "object",
+      "required": [
+        "drop_email"
+      ],
+      "properties": {
+        "drop_email": {
+          "type": "string",
+          "description": "Email Id which has to be unblocked"
+        }
+      }
+    },
     "contact": {
       "type": "object",
       "properties": {
@@ -7689,6 +7772,10 @@
                     "type": "string"
                   }
                 },
+                "email_failure_count": {
+                  "type": "integer",
+                  "format": "int64"
+                },
                 "source": {
                   "type": "integer",
                   "format": "int64"
@@ -7804,6 +7891,10 @@
                 },
                 "associated_tickets_count": {
                   "type": "integer"
+                },
+                "email_failure_count": {
+                  "type": "integer",
+                  "format": "int64"
                 },
                 "description_text": {
                   "type": "string"
@@ -8038,6 +8129,10 @@
                   },
                   "associated_tickets_count": {
                     "type": "integer"
+                  },
+                  "email_failure_count": {
+                    "type": "integer",
+                    "format": "int64"
                   },
                   "description_text": {
                     "type": "string"
@@ -8315,6 +8410,39 @@
           }
         }
       ]
+    },
+    "email_failures": {
+      "type": "object",
+      "properties": {
+        "to_list": {
+          "type": "object",
+          "description": "List of To emails which have failed",
+          "properties": {
+            "email": {
+              "type": "string",
+              "description": "Failed email Id"
+            },
+            "type": {
+              "type": "string",
+              "description": "Type of email failure"
+            }
+          }
+        },
+        "cc_list": {
+          "type": "object",
+          "description": "List of Cc emails which have failed",
+          "properties": {
+            "email": {
+              "type": "string",
+              "description": "Failed email Id"
+            },
+            "type": {
+              "type": "string",
+              "description": "Type of email failure"
+            }
+          }
+        }
+      }
     },
     "prime_association": {
       "type": "object",

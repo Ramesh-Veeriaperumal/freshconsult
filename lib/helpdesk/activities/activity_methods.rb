@@ -28,6 +28,7 @@ module Helpdesk::Activities
       end
       email_failures = email_failures.reduce Hash.new, :merge
       to_emails,cc_emails = object.to_cc_emails
+      to_emails = to_emails.to_a if to_emails.is_a?(String)
       @to_list        = []
       @cc_list        = []
       regret_failure_count = 0

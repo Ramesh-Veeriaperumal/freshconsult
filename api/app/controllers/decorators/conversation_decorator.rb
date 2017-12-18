@@ -29,6 +29,7 @@ class ConversationDecorator < ApiDecorator
       from_email: from_email,
       cc_emails: cc_emails,
       bcc_emails: bcc_emails,
+      email_failure_count: schema_less_note.failure_count,
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc),
       attachments: attachments.map { |att| AttachmentDecorator.new(att).to_hash }

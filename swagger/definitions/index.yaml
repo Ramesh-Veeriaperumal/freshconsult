@@ -102,6 +102,8 @@
     $ref: ./request/onboarding/update_activation_email.yaml
   update_channels_input:
     $ref: ./request/onboarding/update_channels.yaml
+  suppression_list:
+    $ref: ./request/tickets/suppression_list.yaml
 
   # RESOURCE
   conversation_template:
@@ -237,6 +239,8 @@
     $ref: ./response/tickets/watchers.yaml
   latest_note:
     $ref: './response/conversations/latest_note.yaml'
+  email_failures:
+    $ref: ./response/tickets/email_failures.yaml
   prime_association:
     $ref: ./response/tickets/prime_association.yaml
   associated_tickets:

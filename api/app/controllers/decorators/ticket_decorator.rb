@@ -168,7 +168,8 @@ class TicketDecorator < ApiDecorator
       fr_due_by: frDueBy.try(:utc),
       is_escalated: isescalated,
       created_at: created_at.try(:utc),
-      updated_at: updated_at.try(:utc)
+      updated_at: updated_at.try(:utc),
+      email_failure_count: schema_less_ticket.failure_count
     }
   end
 
