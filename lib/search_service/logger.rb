@@ -71,11 +71,11 @@ module SearchService
       end
 
       def log_request_payload?
-        log_payload? || (@log_data == Search::Utils::SEARCH_LOGGING[:request])
+        log_payload? # || (@log_data == Search::Utils::SEARCH_LOGGING[:request])
       end
 
       def log_response_payload?
-        log_payload? || (@log_data == Search::Utils::SEARCH_LOGGING[:response])
+        log_payload? # || (@log_data == Search::Utils::SEARCH_LOGGING[:response])
       end
   end
 end
