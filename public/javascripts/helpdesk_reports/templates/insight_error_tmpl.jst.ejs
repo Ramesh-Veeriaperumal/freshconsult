@@ -1,8 +1,10 @@
 <div class="no-outliers network_error %>">
-    <div class="message">
-      <%= error.message %>
-    </div>
-    <% if(error.code == 551) { %>
-      <div class="help-text"><%= I18n.t('helpdesk_reports.insights.sys_error_help') %></div>
+  <div class="no-data-section  text-center">
+    <i class="ficon-no-data-graph"></i>
+    <% if (error.code == 551) { %>
+      <h4 class="text-center"> <%= I18n.t('helpdesk_reports.something_went_wrong_msg') %> </h4>
+    <% } else {%>
+      <h4 class="text-center"> <%= I18n.t('helpdesk_reports.no_data_to_display_msg') %> </h4>
     <% } %>
+  </div>
 </div>

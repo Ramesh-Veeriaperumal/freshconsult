@@ -1,5 +1,4 @@
 class Helpdesk::Ticket < ActiveRecord::Base
-
   # rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['helpdesk_tickets'] }, :if => lambda{|obj| obj.rl_enabled? }
 
 	before_validation :populate_requester, :load_ticket_status, :set_default_values
@@ -69,7 +68,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :enqueue_skill_based_round_robin, :on => :update, :if => :enqueue_sbrr_job?
   after_commit :save_sentiment, on: :create 
   after_commit :update_spam_detection_service, :if => :model_changes?
-  
+  after_commit :spam_feedback_to_smart_filter, :on => :update, :if => :twitter_ticket_spammed?
+
   # Callbacks will be executed in the order in which they have been included. 
 
   # Included rabbitmq callbacks at the last
@@ -559,6 +559,10 @@ private
     @model_changes.present?
   end
 
+  def twitter_ticket_spammed?
+    self.twitter? && @model_changes.key?(:spam) && @model_changes[:spam][1] == true
+  end
+
   def auto_refresh_allowed?
     Account.current.auto_refresh_enabled?
   end
@@ -984,6 +988,10 @@ private
   def log_dueby sla_detail, logic
     sla_policy = self.sla_policy
     Rails.logger.debug "SLA :::: Account id #{self.account_id} :: #{self.new_record? ? 'New' : self.id} ticket :: Calculated due time using #{logic} :: sla_policy #{sla_policy.id} - #{sla_policy.name} sla_detail :: #{sla_detail.id} - #{sla_detail.name} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy}"
+  end
+  
+  def spam_feedback_to_smart_filter
+    Social::SmartFilterFeedbackWorker.perform_async({ :ticket_id => id, :type_of_feedback => Social::Constants::SMART_FILTER_FEEDBACK_TYPE[:spam], :account_id => Account.current.id }) 
   end
 
   def sanitize_meta_data

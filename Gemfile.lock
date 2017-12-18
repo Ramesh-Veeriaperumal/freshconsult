@@ -64,6 +64,8 @@ GIT
   remote: git://github.com/freshdesk/rate-limiting.git
   revision: f43173165c95b5ba9f72a1298050d2b2431d7606
   tag: v1.1
+  revision: 5ae767dc1454d9b9669a381b7ca0674d3c813f59
+  tag: v1.2
   specs:
     rate-limiting (1.0.4)
       json
@@ -220,10 +222,10 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/launch-party.git
-  revision: edbb362ebaf1c84e2745270435cf4a93bbeb3149
-  tag: v0.1.4
+  revision: 6d9aedd39a847c2c579a8baedbf5d36312ccf498
+  tag: v0.2
   specs:
-    launchparty (0.1.1)
+    launchparty (0.2)
       newrelic_rpm (>= 3.17.2.327)
       redis (>= 3)
       redis-namespace (>= 1)

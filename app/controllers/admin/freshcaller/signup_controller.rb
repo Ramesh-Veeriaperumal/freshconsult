@@ -8,8 +8,7 @@ class Admin::Freshcaller::SignupController < Admin::AdminController
     response_data = freshcaller_request(signup_params, "#{FreshcallerConfig['signup_domain']}/accounts", :post)
     @freshcaller_response = response_data.deep_symbolize_keys
     return activate_freshcaller if @freshcaller_response.present? && @freshcaller_response[:freshcaller_account_id].present?
-    return render_domain_error if domain_already_taken?
-    render :signup_error, :locals => {:error => I18n.t('freshcaller.admin.feature_request_content.error').html_safe }
+    render_error
   end
 
   def link
@@ -109,6 +108,7 @@ class Admin::Freshcaller::SignupController < Admin::AdminController
           :account_id => current_account.id,
           :freshdesk_calls_url => "#{protocol}#{current_account.full_domain}/api/channel/freshcaller_calls",
           :app => 'Freshdesk',
+          :client_ip => request.remote_ip,
           :domain_url => "#{protocol}#{current_account.full_domain}",
           :access_token => current_user.single_access_token
         }

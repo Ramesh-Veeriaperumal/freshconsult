@@ -50,7 +50,7 @@ class ContactEnrichment
 
     }
     person_contact_info.reject! { |k, v| v.nil? || v.empty? }
-    merge_type = email_update ? :merge : :reverse_merge
+    merge_type = (email_update || Account.current.email_signup?)  ? :merge : :reverse_merge
     account_contact_info = Account.current.contact_info
     account_contact_info.reject! { |k,v| v.nil? || v.empty? }
     account_contact_info.send(merge_type, person_contact_info)

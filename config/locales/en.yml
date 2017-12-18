@@ -907,6 +907,9 @@ en:
         dm_info: "Multiple messages with same person within this time interval will be merged into one ticket"
         include_helptext: "example: support, \"System down\", @insideapple"
         brief_desc: "Tweets will get converted to tickets automatically based on first matching rule"
+      smart_filter:
+        header: "Enable Smart Filters"
+        desc: "Automatically convert relevant tweets to tickets. Turn this on if you get a lot of noise on Twitter. Works on tweets in English." 
       facebook_streams:
         index:
           new_account: "New Account"
@@ -7423,7 +7426,8 @@ en:
     get_more_apps: Get More Apps
     confirm_data_lose: "Your data will be lost."
     confirm_uninstall_message: "Are you sure you want to uninstall the %{human_name}?"
-    reauthorize_oauth_app: "If your app stopped working please try reauthorizing it by clicking on reauthorize button"
+    reauthorize_oauth_app: "If your app has stopped working, try re-authorizing the app to access information from the third-party applications."
+    reauthorize_header: "Reauthorize the app"
     cancel: "Cancel"
     reauthorize: "Reauthorize"
     app: app
@@ -7523,6 +7527,7 @@ en:
     third_party_app_policy: "You are downloading an App that has not been developed by Freshdesk. By downloading this App you understand that you are bound by the terms and privacy policies provided by its developer. For more details about such terms and privacy policies, please contact the developer or visit the developer's page."
     policy_on_custom_apps: "Policy on custom apps"
     custom_app_policy: "\"Custom App\" is an application developed specifically for a Freshdesk customer and not listed in the App Gallery. Custom Apps may be developed by Freshdesk or any other developer who may or may not be registered with Freshdesk as a Developer. Please note that the Custom App is provided on an \"AS IS\" basis without any warranties of any kind to the fullest extent permitted by applicable law. Freshdesk expressly disclaims any and all conditions, representations, warranties or other terms, whether express or implied, including, but not limited to, any implied warranties of merchantability, title, fitness for a particular purpose, and non-infringement. By installing the Custom App, you understand and acknowledge that Freshdesk does not warrant that the Custom App will be uninterrupted, timely, secure, error-free or free from viruses or other malicious software. Freshdesk shall not be liable to you or any person claiming through you for any direct, indirect, incidental, special, punitive, or consequential damages for your use of the Custom Apps."
+    oauth_install_continue: "Continue"
   integrations:
     native_integrations: Native Integrations
     cti_app_title: CTI Integrations
@@ -8222,6 +8227,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         push_to_slack: "Push to Slack"
         no_agent: "No Agent"
         help_command: "1. /create_fd_ticket  - This command will use the last 200 chat messages to create a ticket on Freshdesk.\n 2. freshdeskbot - You will receive Freshdesk notification from this Bot."
+        invalid_request: "Invalid request. Team_id/Slash_token is not present/mismatch"
       subject:
         chat: "Chat Conversation with"
         default_chat: "Chat Conversation of"

@@ -7,7 +7,7 @@ module Facebook
 			include Facebook::TicketActions::Util
 
       def create_tickets(message,thread_key)
-        fb_msg = latest_message(thread_key, thread_key)
+        fb_msg = latest_message(thread_key)
         previous_ticket = fb_msg.try(:postable)
         last_reply = unless previous_ticket.blank?
           if (!previous_ticket.notes.blank? && !previous_ticket.notes.latest_facebook_message.blank?)
