@@ -64,6 +64,7 @@ module BootstrapTestHelper
       settings: {
         personalized_email_replies: wildcard_matcher,
         compose_email_enabled: wildcard_matcher,
+        restricted_compose_email_enabled: wildcard_matcher,
         include_survey_manually: wildcard_matcher,
         show_on_boarding: account.account_onboarding_pending?
       },
