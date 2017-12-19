@@ -9,7 +9,6 @@ var TwitterActions = Class.create({
             rt_btn: ".rt-btn",
             show_retweets: ".show-retweets",
         };
-        this.viewPortHeight = j(document).height();
         this.registerCustEvent();
         j(document).on('mousewheel DOMMouseScroll', this.twitterBoxEle.convo_wrapper, function(ev) {
             if (ev.originalEvent) ev = ev.originalEvent;
@@ -19,10 +18,11 @@ var TwitterActions = Class.create({
         });
     },
     onConvoLoaded: function(e) {
+        this.viewPortHeight = j('#conv-panel').height();
         this.destroy();
         this.registerCustEvent();
         j(this.twitterBoxEle.convo_wrapper).css({
-            "height": this.viewPortHeight - j(".tw-wrapper .pane-head").height() - 10 + "px"
+            "height": this.viewPortHeight - j(".tw-wrapper .pane-head").height() - 20 + "px"
         });
         //settings events for twitter convo
         j(this.twitterBoxEle.convo_panel).on('click.twitter_evt', this.twitterBoxEle.reply_btn, this.toggleReplyBox.bindAsEventListener(this)); //toggle Reply button

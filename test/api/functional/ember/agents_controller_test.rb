@@ -134,6 +134,17 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     login_as(currentuser)
   end
 
+  def test_update_freshchat_token
+    token = Faker::Number.number(10)
+    params_hash = { freshchat_token: token }
+    currentuser = User.current
+    put :update, construct_params({ version: 'private', id: currentuser.id }, params_hash)
+    currentuser.reload
+    assert_equal currentuser.text_uc01[:agent_preferences][:freshchat_token],token
+    assert_response 200
+    match_json(private_api_agent_pattern(currentuser.agent))
+  end
+
   def test_update_others_with_toggle_shortcuts_for_agent
     user = add_test_agent(@account, role: Role.find_by_name('Agent').id)
     remove_privilege(User.current, :manage_availability)

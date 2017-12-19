@@ -15,7 +15,7 @@ class Social::TicketRule < ActiveRecord::Base
   serialize :filter_data, Hash
   serialize :action_data, Hash
 
-  attr_accessible :filter_data, :action_data, :position
+  attr_accessible :filter_data, :action_data, :position, :rule_type
   acts_as_list :scope => :stream
 
   def apply(feed, source = SOURCE[:twitter])

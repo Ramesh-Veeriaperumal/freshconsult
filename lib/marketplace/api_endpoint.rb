@@ -17,6 +17,7 @@ module Marketplace::ApiEndpoint
     # Account API's
     [:install_status,           "product/%{product_id}/account/%{account_id}/extensions/%{extension_id}/status.json", []],
     [:account_configs,          "product/%{product_id}/account/%{account_id}/extensions/%{version_id}/configurations.json", []],
+    [:account_oauth_iparams,    "product/%{product_id}/account/%{account_id}/extensions/%{version_id}/configurations.json?include=oauth_iparams", []],
     [:install_extension,        "product/%{product_id}/account/%{account_id}/extensions/%{extension_id}.json", []],
     [:update_extension,         "product/%{product_id}/account/%{account_id}/extensions/%{extension_id}.json", []],
     [:uninstall_extension,      "product/%{product_id}/account/%{account_id}/extensions/%{extension_id}.json", []],

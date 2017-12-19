@@ -5,13 +5,14 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
   include Marketplace::InstExtControllerMethods
 
   before_filter :verify_oauth_callback , :only => [:oauth_callback]
-  before_filter :extension, :only => [:install, :reinstall, :uninstall, :oauth_callback, :new_configs, :edit_configs]
+  before_filter :extension, :only => [:install, :reinstall, :uninstall, :oauth_callback, :new_configs, :edit_configs, :new_oauth_iparams, :edit_oauth_iparams]
   before_filter :extension_has_config?, :only => [:new_configs, :edit_configs]
   before_filter :verify_billing_info, :only => [:install, :reinstall], :if => :paid_app?
 
   rescue_from Exception, :with => :mkp_exception
 
   def new_configs
+    params[:page] = "iparams"
     if platform_version == Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2]
       configs_page_v2
     else
@@ -23,7 +24,29 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
     render 'admin/marketplace/installed_extensions/configs'
   end
 
+  # Gets called only for the v2 apps with ouath_iparams.
+  def new_oauth_iparams
+    oauth_iparams_page
+    params[:page] = "oauth_iparams"
+    render 'admin/marketplace/installed_extensions/configs'
+  rescue => e
+    render_error_response
+  end
+
+  # Gets called When oauth app reauthorize and is having oauth iparams.
+  def edit_oauth_iparams
+    params[:page] = "oauth_iparams"
+    acc_config = account_configs
+    render_error_response && return if error_status?(acc_config)
+    oauth_iparams_page
+    @configs = acc_config.body['oauth_iparams']
+    render 'admin/marketplace/installed_extensions/configs'
+  rescue => e
+    render_error_response
+  end
+
   def edit_configs
+    params[:page] = 'iparams'
     acc_config = account_configs
     render_error_response && return if error_status?(acc_config)
     if platform_version == Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2]
@@ -128,6 +151,7 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
     reauth_param = is_reauthorize ? "&edit_oauth=true&installed_extn_id=" + params[:installed_extn_id] : ""
     redirect_url = "#{MarketplaceConfig::MKP_OAUTH_URL}/" + mkp_oauth_endpoint + "?callback=" + oauth_callback_url + reauth_param
     redirect_url = redirect_url + "&fdcode=" + CGI.escape(generate_md5_digest(redirect_url, MarketplaceConfig::API_AUTH_KEY))
+    redirect_url += "&oauth_iparams=#{params[:oauth_iparams]}" if params[:oauth_iparams].present?
     if platform_version == Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2]
       html_content = "<html><script>parent.location='" + redirect_url + "'</script></html>"
       render :text => html_content, :content_type => :html  

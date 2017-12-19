@@ -1276,6 +1276,77 @@
         }
       }
     },
+    "/tickets/{id}/failed_email_details": {
+      "get": {
+        "tags": [
+          "ticket"
+        ],
+        "description": "Retrieving the details of failed emails",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "note_id",
+            "in": "query",
+            "type": "number",
+            "description": "Note Id corresponding to the conversation of failed email"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/email_failures"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      }
+    },
+    "/tickets/{id}/suppression_list_alert": {
+      "post": {
+        "tags": [
+          "ticket"
+        ],
+        "description": "Sending the request to unblock recipient",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/suppression_list"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      }
+    },
     "/tickets/{id}/activities": {
       "get": {
         "tags": [
@@ -2392,8 +2463,7 @@
             "schema": {
               "$ref": "#/definitions/bad_request_error"
             }
-          },
-          "responses": null
+          }
         }
       }
     },
@@ -2464,6 +2534,9 @@
         ],
         "summary": "Create import",
         "description": "To schedule import of contacts/companies",
+        "consumes": [
+          "multipart/form-data"
+        ],
         "parameters": [
           {
             "name": "type",
@@ -2482,10 +2555,7 @@
           {
             "name": "fields",
             "in": "formData",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/fields_map"
-            }
+            "type": "string"
           }
         ],
         "responses": {
@@ -2727,8 +2797,7 @@
             "schema": {
               "$ref": "#/definitions/bad_request_error"
             }
-          },
-          "responses": null
+          }
         }
       }
     },
@@ -4758,6 +4827,7 @@
         ],
         "parameters": [
           {
+            "name": "data",
             "in": "body",
             "description": "New activation email",
             "schema": {
@@ -4931,6 +5001,9 @@
                         },
                         "show_onBoarding": {
                           "type": "boolean"
+                        },
+                        "freshchat_token": {
+                          "type": "string"
                         }
                       }
                     }
@@ -5315,11 +5388,51 @@
           "items": {
             "type": "integer"
           }
+        },
+        "contact": {
+          "description": "Values of contacts that will be merged into the Primary contact",
+          "type": "object",
+          "properties": {
+            "phone": {
+              "type": "string"
+            },
+            "mobile": {
+              "type": "string"
+            },
+            "twitter_id": {
+              "type": "string"
+            },
+            "fb_profile_id": {
+              "type": "string"
+            },
+            "external_id": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "other_emails": {
+              "type": "array",
+              "minItems": 0,
+              "items": {
+                "type": "string"
+              }
+            },
+            "company_ids": {
+              "type": "array",
+              "minItems": 0,
+              "items": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          }
         }
       },
       "required": [
         "primary_id",
-        "target_ids"
+        "target_ids",
+        "contact"
       ]
     },
     "update_password": {
@@ -6366,20 +6479,6 @@
         }
       }
     },
-    "fields_map": {
-      "type": "object",
-      "properties": {
-        "type": {
-          "type": "string",
-          "required": true,
-          "description": "content of the ticket reply"
-        },
-        "fields": {
-          "type": "object",
-          "$ref": "#/definitions/map_field_to_header"
-        }
-      }
-    },
     "integrated_resource_create": {
       "type": "object",
       "required": [
@@ -6512,6 +6611,18 @@
               ]
             ]
           }
+        }
+      }
+    },
+    "suppression_list": {
+      "type": "object",
+      "required": [
+        "drop_email"
+      ],
+      "properties": {
+        "drop_email": {
+          "type": "string",
+          "description": "Email Id which has to be unblocked"
         }
       }
     },
@@ -7661,6 +7772,10 @@
                     "type": "string"
                   }
                 },
+                "email_failure_count": {
+                  "type": "integer",
+                  "format": "int64"
+                },
                 "source": {
                   "type": "integer",
                   "format": "int64"
@@ -7776,6 +7891,10 @@
                 },
                 "associated_tickets_count": {
                   "type": "integer"
+                },
+                "email_failure_count": {
+                  "type": "integer",
+                  "format": "int64"
                 },
                 "description_text": {
                   "type": "string"
@@ -8011,6 +8130,10 @@
                   "associated_tickets_count": {
                     "type": "integer"
                   },
+                  "email_failure_count": {
+                    "type": "integer",
+                    "format": "int64"
+                  },
                   "description_text": {
                     "type": "string"
                   },
@@ -8145,14 +8268,6 @@
           }
         }
       ]
-    },
-    "map_field_to_header": {
-      "type": "object",
-      "properties": {
-        "email": {
-          "type": "integer"
-        }
-      }
     },
     "meta": {
       "type": "object",
@@ -8295,6 +8410,39 @@
           }
         }
       ]
+    },
+    "email_failures": {
+      "type": "object",
+      "properties": {
+        "to_list": {
+          "type": "object",
+          "description": "List of To emails which have failed",
+          "properties": {
+            "email": {
+              "type": "string",
+              "description": "Failed email Id"
+            },
+            "type": {
+              "type": "string",
+              "description": "Type of email failure"
+            }
+          }
+        },
+        "cc_list": {
+          "type": "object",
+          "description": "List of Cc emails which have failed",
+          "properties": {
+            "email": {
+              "type": "string",
+              "description": "Failed email Id"
+            },
+            "type": {
+              "type": "string",
+              "description": "Type of email failure"
+            }
+          }
+        }
+      }
     },
     "prime_association": {
       "type": "object",

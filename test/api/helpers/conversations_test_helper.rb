@@ -18,6 +18,7 @@ module ConversationsTestHelper
       to_emails: expected_output[:notify_emails] || note.to_emails,
       category: note.category,
       attachments: Array,
+      email_failure_count: note.schema_less_note.failure_count,    
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }

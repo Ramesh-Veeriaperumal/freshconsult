@@ -17,6 +17,19 @@ describe Admin::FreshcallerController do
       get :index
       response.status.should eql(Rack::Utils::SYMBOL_TO_STATUS_CODE[:ok])
     end
+    
+    it 'should not contain access link to navigate to freshcaller' do
+      get :index
+      response.body.should =~ /You do not have acces to Freshcaller/
+      response.body.should =~ /You can enable access from your Agent setting page./
+    end
+
+    it 'should contain access link to navigate to freshcaller' do
+      create_test_freshcaller_agent
+      get :index
+      response.body.should =~ /Manage settings in Freshcaller/
+      response.body.should =~ /Buy numbers, setup call queues, IVRs, etc/
+    end
   end
 
   context 'redirect_to_freshcaller' do

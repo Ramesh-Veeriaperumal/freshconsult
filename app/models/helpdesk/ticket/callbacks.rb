@@ -1,5 +1,4 @@
 class Helpdesk::Ticket < ActiveRecord::Base
-
   # rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['helpdesk_tickets'] }, :if => lambda{|obj| obj.rl_enabled? }
 
 	before_validation :populate_requester, :load_ticket_status, :set_default_values
@@ -40,7 +39,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   after_update :start_recording_timestamps, :unless => :model_changes?
 
-  before_save :update_on_state_time, :if => Proc.new { new_sla_logic? && update_on_state_time? }
+  before_save :update_on_state_time, :if => Proc.new { update_on_state_time? }
 
   before_save :update_dueby, :unless => :manual_sla?
 
@@ -55,7 +54,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :pass_thro_biz_rules, on: :create, :unless => :skip_dispatcher?
   after_commit :send_outbound_email, :update_capping_on_create, :update_count_for_skill,on: :create, :if => :outbound_email?
 
-  after_commit :trigger_observer, on: :update, :if => :execute_observer?
+  after_commit :trigger_observer_events, on: :update, :if => :execute_observer?
   after_commit :update_ticket_states, :notify_on_update, :update_activity,
                :stop_timesheet_timers, :fire_update_event, on: :update
   #after_commit :regenerate_reports_data, on: :update, :if => :regenerate_data?
@@ -69,7 +68,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :enqueue_skill_based_round_robin, :on => :update, :if => :enqueue_sbrr_job?
   after_commit :save_sentiment, on: :create 
   after_commit :update_spam_detection_service, :if => :model_changes?
-  
+  after_commit :spam_feedback_to_smart_filter, :on => :update, :if => :twitter_ticket_spammed?
+
   # Callbacks will be executed in the order in which they have been included. 
 
   # Included rabbitmq callbacks at the last
@@ -251,6 +251,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def create_meta_note
       # Added for storing metadata from MobiHelp
       if meta_data.present?
+        sanitize_meta_data
         meta_note = self.notes.build(
           :note_body_attributes => {:body => meta_data.map { |k, v| "#{k}: #{v}" }.join("\n")},
           :private => true,
@@ -277,18 +278,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def skip_dispatcher?
-    import_id || outbound_email? || !requester.valid_user?
+    import_id || outbound_email? || !requester.valid_user? || Account.current.skip_dispatcher?
   end
 
   def pass_thro_biz_rules
-    return if Account.current.skip_dispatcher?
-    #Remove redis check if no issues after deployment
-    if Account.current.launched?(:delayed_dispatchr_feature)
-      send_later(:delayed_rule_check, User.current, freshdesk_webhook?)
-    else
-      # This queue includes dispatcher_rules, auto_reply, round_robin.
-      Helpdesk::Dispatcher.enqueue(self.id, (User.current.blank? ? nil : User.current.id), freshdesk_webhook?)
-    end
+    Helpdesk::Dispatcher.enqueue(self.id, (User.current.blank? ? nil : User.current.id), freshdesk_webhook?)
   end
 
   #To be removed after dispatcher redis check removed
@@ -342,59 +336,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
                                                                             86400*7)
     end
   end
-
-
-  #SLA Related changes..
-
-  def set_sla_policy
-    return if !(changed_condition? || self.sla_policy.nil?)
-    new_match = nil
-    account.sla_policies.rule_based.active.each do |sp|
-      if sp.matches? self
-        new_match = sp
-        break
-      end
-    end
-
-    self.sla_policy = (new_match || account.sla_policies.default.first)
-    self
-  end
-
-  def changed_condition?
-    group_id_changed? || source_changed? || has_product_changed? || ticket_type_changed? || company_id_changed?
-  end
-
-  def has_product_changed?
-    self.schema_less_ticket.changes.key?('product_id')
-  end
-
-  def update_dueby(ticket_status_changed=false)
-    Rails.logger.info "Created at::: #{self.created_at}"
-    BusinessCalendar.execute(self) { set_sla_time(ticket_status_changed) }
-    #Hack - trying to recalculte again if it gives a wrong value on ticket creation.
-    if self.new_record? and ((due_by < created_at) || (frDueBy < created_at))
-      old_time_zone = Time.zone
-      TimeZone.set_time_zone
-      NewRelic::Agent.notice_error(Exception.new("Wrong SLA calculation:: Account::: #{account.id}, Old timezone ==> #{old_time_zone}, Now ===> #{Time.zone}"))
-      BusinessCalendar.execute(self) { set_sla_time(ticket_status_changed) }
-    end
-  end
-
-  #shihab-- date format may need to handle later. methode will set both due_by and first_resp
-  def set_sla_time(ticket_status_changed)
-    if new_sla_logic? && update_dueby?
-      sla_detail = self.sla_policy.sla_details.where(:priority => priority).first
-      set_dueby(sla_detail)
-      log_dueby(sla_detail, "New SLA logic")
-    elsif !new_sla_logic? && (self.new_record? || priority_changed? || changed_condition? || status_changed? || ticket_status_changed)
-      sla_detail = self.sla_policy.sla_details.where(:priority => priority).first
-      set_dueby_on_priority_change(sla_detail) if (self.new_record? || priority_changed? || changed_condition?)
-      set_dueby_on_status_change(sla_detail) if !self.new_record? && (status_changed? || ticket_status_changed)
-      log_dueby(sla_detail, "Old SLA logic")
-    end
-  end
-
-  #end of SLA
 
   def set_account_time_zone
     self.account.make_current
@@ -560,6 +501,10 @@ private
 
   def model_changes?
     @model_changes.present?
+  end
+
+  def twitter_ticket_spammed?
+    self.twitter? && @model_changes.key?(:spam) && @model_changes[:spam][1] == true
   end
 
   def auto_refresh_allowed?
@@ -739,68 +684,6 @@ private
     publish_to_tickets_channel("tickets:#{self.account.id}:#{self.id}", message)
   end
 
-  def set_dueby_on_priority_change(sla_detail)
-    created_time = self.created_at.in_time_zone(Time.zone.name) || time_zone_now
-    business_calendar = Group.default_business_calendar(group)
-    self.due_by = sla_detail.calculate_due_by_time_on_priority_change(created_time, business_calendar)
-    self.frDueBy = sla_detail.calculate_frDue_by_time_on_priority_change(created_time, business_calendar) unless ticket_states && ticket_states.first_response_time.present?
-  end
-
-  def set_dueby_on_status_change(sla_detail)
-    if calculate_dueby_and_frdueby?
-      business_calendar = Group.default_business_calendar(group)
-      self.due_by = sla_detail.calculate_due_by_time_on_status_change(self,business_calendar)
-      self.frDueBy = sla_detail.calculate_frDue_by_time_on_status_change(self,business_calendar) unless ticket_states && ticket_states.first_response_time.present?
-      if changed_to_closed_or_resolved?
-        update_ticket_state_sla_timer
-      end
-    end
-  end
-
-  def set_dueby(sla_detail)
-    created_time = self.created_at || time_zone_now
-    total_time_worked = ticket_states.on_state_time.to_i
-    business_calendar = Group.default_business_calendar(group)
-    self.due_by = sla_detail.calculate_due_by(created_time, total_time_worked, business_calendar)
-    self.frDueBy = sla_detail.calculate_frDue_by(created_time, total_time_worked, business_calendar) if self.ticket_states.first_response_time.nil?
-  end
-
-  def calculate_dueby_and_frdueby?
-    changed_to_sla_timer_calculated_status? || changed_from_sla_timer_stopped_status_to_closed_or_resolved?
-  end
-
-  def changed_to_sla_timer_calculated_status?
-    !(ticket_status.stop_sla_timer or ticket_states.sla_timer_stopped_at.nil?)
-  end
-
-  def changed_from_sla_timer_stopped_status_to_closed_or_resolved?
-    changed_to_closed_or_resolved? && previous_state_was_sla_stop_state? && !previous_state_was_resolved_or_closed?
-  end
-
-  def changed_to_closed_or_resolved?
-    [CLOSED, RESOLVED].include?(ticket_status.status_id)
-  end
-
-  def previous_state_was_resolved_or_closed?
-    tkt_status = @model_changes ? @model_changes[:status][0] : self.changes[:status][0]
-    [RESOLVED,CLOSED].include?(tkt_status)
-  end
-
-  def previous_state_was_sla_stop_state?
-    previous_ticket_status.stop_sla_timer? 
-  end
-
-  def previous_ticket_status
-    previous_status_id = @model_changes[:status][0]
-    Helpdesk::TicketStatus.status_objects_from_cache(account).find{ |x| x.status_id == previous_status_id } || 
-      account.ticket_statuses.where(:status_id => previous_status_id).first
-  end
-    
-  def update_ticket_state_sla_timer
-    ticket_states.sla_timer_stopped_at = time_zone_now
-    ticket_states.save
-  end
-
   def regenerate_reports_data
     set_reports_redis_key(account_id, created_at)
     set_reports_redis_key(account_id, self.ticket_states.resolved_at) if is_resolved_or_closed?
@@ -822,11 +705,7 @@ private
     end
     regenerate_fields
   end
-
-  def manual_sla?
-    self.manual_dueby && self.due_by && self.frDueBy
-  end
-
+  
   def assign_flexifield
     build_flexifield
     self.flexifield_def = Account.current.ticket_field_def
@@ -866,7 +745,7 @@ private
     true
   end
 
-  def trigger_observer
+  def trigger_observer_events
     filter_observer_events(true)
   end
 
@@ -914,33 +793,8 @@ private
     outbound_email? && new_record?
   end
 
-  def stop_sla_timer_changed?
-    @stop_sla_timer_changed ||= @model_changes.key?(:status) && 
-      (previous_ticket_status.stop_sla_timer != ticket_status.stop_sla_timer)
-  end
-
   def visibility_changed?
     @model_changes.key?(:deleted) || @model_changes.key?(:spam)
-  end
-
-  def check_due_by_change
-    due_by_changed? and self.due_by > time_zone_now and self.isescalated
-  end
-
-  def update_isescalated
-    self.isescalated = false
-    self.escalation_level = nil
-    true
-  end
-
-  def check_frdue_by_change
-    frDueBy_changed? and self.frDueBy > time_zone_now and
-    self.fr_escalated and first_response_time.nil?
-  end
-
-  def update_fr_escalated
-    self.fr_escalated = false
-    true
   end
 
   def update_spam_detection_service
@@ -958,34 +812,14 @@ private
   def reopen_tickets item
     ::Tickets::ReopenTickets.perform_async({:ticket_ids=>[item.display_id]})
   end
-
-  def new_sla_logic?
-    self.account.launched?(:new_sla_logic) && (self.new_record? || self.ticket_states.resolution_time_updated_at.present?)
+  
+  def spam_feedback_to_smart_filter
+    Social::SmartFilterFeedbackWorker.perform_async({ :ticket_id => id, :type_of_feedback => Social::Constants::SMART_FILTER_FEEDBACK_TYPE[:spam], :account_id => Account.current.id }) 
   end
 
-  def common_updation_condition
-    self.new_record? || priority_changed? || group_id_changed? || self.schema_less_ticket.sla_policy_id_changed?
-  end
-
-  def update_on_state_time?
-    common_updation_condition || (status_changed? && stop_sla_timer_changed?)
-  end
-
-  def update_dueby?
-    common_updation_condition || (status_changed? && calculate_dueby_and_frdueby?)
-  end
-
-  def update_on_state_time
-    self.ticket_states ||= Helpdesk::TicketState.new
-    self.ticket_states.resolution_time_updated_at = time_zone_now
-    Rails.logger.debug "SLA :::: Account id #{self.account_id} :: #{self.new_record? ? 'New' : self.id} ticket :: Updating resolution time :: resolution_time_updated_at :: #{self.ticket_states.resolution_time_updated_at}"
-    if self.ticket_states.sla_timer_stopped_at.nil? && !self.new_record?
-      ticket_states.change_on_state_time(ticket_states.resolution_time_updated_at_was, ticket_states.resolution_time_updated_at)
+  def sanitize_meta_data
+    meta_data.each do |k,v|
+      meta_data[k] = RailsFullSanitizer.sanitize v if v.is_a? String
     end
-  end
-
-  def log_dueby sla_detail, logic
-    sla_policy = self.sla_policy
-    Rails.logger.debug "SLA :::: Account id #{self.account_id} :: #{self.new_record? ? 'New' : self.id} ticket :: Calculated due time using #{logic} :: sla_policy #{sla_policy.id} - #{sla_policy.name} sla_detail :: #{sla_detail.id} - #{sla_detail.name} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy}"
   end
 end

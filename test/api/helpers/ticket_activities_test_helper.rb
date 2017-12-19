@@ -28,6 +28,20 @@ module TicketActivitiesTestHelper
     get_activity_data(params)
   end
 
+  def email_failures_note_activity
+    params = {}
+    params[:members] = "{\"user_ids\":[\"#{@ticket.requester_id}\",\"#{@ticket.responder_id}\"],\"rule_ids\":[],\"note_ids\":[\"#{@note.id}\"],\"status_ids\":[\"#{@ticket.status}\"],\"ticket_ids\":[]}"
+    params[:email_failures] = "[{\"#{@note.to_emails.first}\":\"{rand(0..3)}\"}]"
+    get_activity_data(params)
+  end
+
+   def email_failures_ticket_activity
+    params = {}
+    params[:members] = "{\"user_ids\":[\"#{@ticket.requester_id}\",\"#{@ticket.responder_id}\"],\"rule_ids\":[],\"status_ids\":[\"#{@ticket.status}\"],\"ticket_ids\":[]}"
+    params[:email_failures] = "[{\"#{@ticket.to_email.first}\":\"{rand(0..3)}\"}]"
+    get_activity_data(params)
+  end
+
   def spam_ticket_activity(flag)
     params = {}
     params[:summary] = flag ? '3.0' : '5.0'
@@ -1008,7 +1022,7 @@ module TicketActivitiesTestHelper
     ticket_data.object_id       = "#{@ticket.display_id}.0"
     ticket_data.summary         = params[:summary] || '0.0'
     ticket_data.kind            = 0
-    ticket_data.email_failures  = 'null'
+    ticket_data.email_failures  = params[:email_failures] || 'null'
     # Hard coded the content for now
     ticket_data.content         = params[:content] || "{\"test_custom_country\":[null,\"USA\"],\"test_custom_state\":[null,\"California\"],\"test_custom_city\":[null,\"Burlingame\"],\"test_custom_number\":[null,\"32_234\"],\"test_custom_decimal\":[null,\"90.89\"],\"test_custom_text\":[null,\"*\"],\"test_custom_paragraph\":[null,\"*\"],\"checked\":[\"test_custom_checkbox\"],\"test_custom_dropdown\":[null,\"Pursuit of Happiness\"],\"test_custom_date\":[null,\"2015-09-09\"],\"add_tag\":[\"create_tag1\",\"create_tag2\"],\"ticket_type\":[null,\"Problem\"],\"source\":[\"*\",\"2.0\"],\"status\":[\"3.0\",\"Pending\"],\"group_id\":[null,\"Product Management\"],\"responder_id\":[null,\"#{@ticket.responder_id}.0\"],\"requester_id\":[null,\"#{@ticket.requester_id}.0\"],\"priority\":[null,\"2.0\"]}"
     activity_data.ticket_data   = [ticket_data]

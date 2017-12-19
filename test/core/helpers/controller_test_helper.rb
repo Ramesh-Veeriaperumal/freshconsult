@@ -26,8 +26,12 @@ module ControllerTestHelper
   end
 
   def set_request_auth_headers(user = nil)
-    auth = ActionController::HttpAuthentication::Basic.encode_credentials((user || @agent).single_access_token, 'X')
-    @request.env['HTTP_AUTHORIZATION'] = auth
+    if $infra['PRIVATE_API']
+      UserSession.any_instance.stubs(:cookie_credentials).returns([(user || @agent).persistence_token, (user || @agent).id])
+    else
+      auth = ActionController::HttpAuthentication::Basic.encode_credentials((user || @agent).single_access_token, 'X')
+      @request.env['HTTP_AUTHORIZATION'] = auth
+    end
   end
 
   def login_as(user)

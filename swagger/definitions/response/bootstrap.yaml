@@ -40,6 +40,8 @@ properties:
                     format: date-time
                   show_onBoarding:
                     type: boolean
+                  freshchat_token:
+                    type: string
       account:
         type: object
         properties:

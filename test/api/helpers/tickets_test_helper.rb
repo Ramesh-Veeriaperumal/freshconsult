@@ -14,6 +14,7 @@ module TicketsTestHelper
   include FreshfoneSpecHelper
   include ForumHelper
   include AttachmentsTestHelper
+  include Helpdesk::Email::Constants
 
   # Patterns
   def deleted_ticket_pattern(expected_output = {}, ticket)
@@ -142,6 +143,7 @@ module TicketsTestHelper
       type:  expected_output[:ticket_type] || ticket.ticket_type,
       to_emails: expected_output[:to_emails] || ticket.to_emails,
       product_id:  expected_output[:product_id] || ticket.product_id,
+      email_failure_count: ticket.failure_count,
       attachments: Array,
       tags:  expected_output[:tags] || ticket.tag_names,
       custom_fields:  expected_custom_field || ticket_custom_field,
@@ -237,9 +239,9 @@ module TicketsTestHelper
       due_by: 14.days.since.iso8601, frDueBy: 1.day.since.iso8601, group_id: Group.find(1).id }
   end
 
-  def custom_note_params(ticket, _source, private_note = false)
+  def custom_note_params(ticket, _source, private_note = false, reply_source = nil)
     sample_params = {
-      source: ticket.source,
+      source: reply_source || ticket.source,
       ticket_id: ticket.id,
       body: Faker::Lorem.paragraph,
       user_id: @agent.id
@@ -330,6 +332,42 @@ module TicketsTestHelper
     new_ticket = @account.tickets.reload.find_by_display_id(ticket_id)
     assert new_ticket.attachments.map(&:id) == attachment_ids
     assert new_ticket.cloud_files.present?
+  end
+
+  def failed_emails_note_pattern(ticket_activity_data)
+    ticket_activity_data.ticket_data.each do |tkt_data|
+      email_failures = JSON.parse(tkt_data.email_failures)
+      email_failures = email_failures.reduce Hash.new, :merge
+      to_emails = @note.to_emails
+      cc_emails = @note.cc_emails
+      @to_list = []
+      @cc_list = []
+      email_failures.each do |email,error|
+        failed_email = {"email" => email,"type" => FAILURE_CATEGORY[error.to_i]}
+        @to_list.push(failed_email) if to_emails.include?(email)
+        @cc_list.push(failed_email) if cc_emails.include?(email)
+      end
+    end
+    result = {to_list: @to_list, cc_list: @cc_list}
+    result
+  end
+
+  def failed_emails_ticket_pattern(ticket_activity_data)
+    ticket_activity_data.ticket_data.each do |tkt_data|
+      email_failures = JSON.parse(tkt_data.email_failures)
+      email_failures = email_failures.reduce Hash.new, :merge
+      to_emails = @ticket.requester.email
+      cc_emails = @ticket.cc_email[:cc_emails]
+      @to_list = []
+      @cc_list = []
+      email_failures.each do |email,error|
+        failed_email = {"email" => email,"type" => FAILURE_CATEGORY[error.to_i]}
+        @to_list.push(failed_email) if to_emails.include?(email)
+        @cc_list.push(failed_email) if cc_emails.include?(email)
+      end
+    end
+    result = {to_list: @to_list, cc_list: @cc_list}
+    result
   end
 
   def private_api_ticket_index_pattern(survey = false, requester = false, company = false, order_by = 'created_at', order_type = 'desc', all_tickets = false)
@@ -459,7 +497,8 @@ module TicketsTestHelper
         fr_due_by: item.frDueBy.try(:utc),
         is_escalated: item.isescalated,
         created_at: item.created_at.try(:utc),
-        updated_at: item.updated_at.try(:utc)
+        updated_at: item.updated_at.try(:utc),
+        email_failure_count: item.schema_less_ticket.failure_count
       }
       response_hash[:deleted] = item.deleted if item.deleted
       response_hash

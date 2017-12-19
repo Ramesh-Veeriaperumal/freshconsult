@@ -66,7 +66,7 @@ module Reports::TimesheetReportsHelper
           if( content.blank? || content.match(/^No +/) )
             content = "-"
           end
-          html_content = content_tag(:td,h(content),:class => item)
+          html_content = content_tag(:td,h(HTMLEntities.new.decode(content)),:class => item)
         end
       end
       entry += html_content

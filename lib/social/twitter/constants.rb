@@ -57,4 +57,8 @@ module Social::Twitter::Constants
   
   FOLLOWERS_FETCH_COUNT = 2
 
+  SMART_FILTER_RULE_TYPE = 7
+
+  SMART_FILTER_ON = "1"
+
 end

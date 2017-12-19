@@ -90,13 +90,13 @@ module Reports
 
     def on_success(status, args = {})
       args.symbolize_keys!
+      options = args[:options].symbolize_keys
       if args[:merge_required]
-        options = args[:options].symbolize_keys
         run_on_account_scope(options[:account_id], options[:user_id]) do 
           merge_batch_files_and_email(args[:headers], options)
         end
       end
-      update_scheduled_task_progress(args) if args[:report_type].to_sym == :timespent && args[:scheduled_task_id]
+      update_scheduled_task_progress(options) if options[:report_type].to_sym == :timespent && options[:scheduled_task_id]
     end
 
     private

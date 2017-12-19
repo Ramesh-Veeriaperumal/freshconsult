@@ -48,7 +48,7 @@
 	<div class="collab-msg-info <%= is_annotation_invalid ? 'invalid-ann-info-show': '' %>">
 		<span class="collab-ann-info"> <%= invalid_annotation_text %> </span>
 		<% if (!!sender_name) { %>
-			<span class="name"> <%= sender_name %> </span>
+			<span class="name ellipsis"> <%= sender_name %> </span>
 		<% } %>
 		<span class="timestamp-cover"> <%= time_stamp_text %> </span>
 	</div>

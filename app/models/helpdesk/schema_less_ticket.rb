@@ -1,7 +1,8 @@
 class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	
 	include BusinessHoursCalculation
-	
+	include Helpdesk::EmailFailureMethods
+
 	COUNT_COLUMNS_FOR_REPORTS = ["agent_reassigned", "group_reassigned", "reopened", 
                                   "private_note", "public_note", "agent_reply", "customer_reply"]
 	
@@ -22,7 +23,8 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
     :text_tc02        =>    :reports_hash,
     :boolean_tc04     =>    :sla_response_reminded,
     :boolean_tc05     =>    :sla_resolution_reminded,
-    :text_tc03        =>    :dirty_attributes
+    :text_tc03        =>    :dirty_attributes,
+    :text_tc04        =>    :tkt_email_failures
   }
 
   COLUMN_TO_ATTRIBUTE_MAPPING.keys.each do |key|
@@ -65,6 +67,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :sds_spam, :int_tc05
 
 	alias_attribute :sentiment, :int_tc04
+  alias_attribute :tkt_email_failures, :text_tc04
 
 	# Attributes used in Freshservice
 	alias_attribute :department_id, :long_tc10
@@ -73,6 +76,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	serialize :text_tc01, Hash
 	serialize :text_tc02, Hash
 	serialize :text_tc03, Hash
+  serialize :text_tc04, Hash
 
 	def self.trashed_column
 		:boolean_tc02
@@ -223,4 +227,10 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
     schema_less_ticket_replica  	
   end
 
+  private
+
+  def email_failures
+    tkt_email_failures
+  end
+  
 end

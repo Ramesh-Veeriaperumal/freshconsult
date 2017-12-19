@@ -606,7 +606,7 @@ class AccountsController < ApplicationController
     end
 
     def set_additional_signup_params
-      params["signup"]["account_name"] =  @domain_generator.subdomain
+      params["signup"]["account_name"] =  @domain_generator.domain_name
       params["signup"]["account_domain"] =  @domain_generator.subdomain
       params["signup"]["contact_first_name"] = @domain_generator.email_name
       params["signup"]["contact_last_name"] = @domain_generator.email_name

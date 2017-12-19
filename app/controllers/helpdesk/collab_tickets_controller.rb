@@ -94,7 +94,7 @@ class Helpdesk::CollabTicketsController < ApplicationController
 
     def validate_collab_user
       if verify_permission? || !Account.current.group_collab_enabled?
-        redirect_to helpdesk_ticket_path(@ticket, :collab => params[:collab], :message => params[:message])
+        redirect_to helpdesk_ticket_path(@ticket, :collab => params[:collab], :message => params[:message], :follow => params[:follow])
       elsif !valid_token?
         flash[:notice] = t("flash.general.access_denied")
         pjax_safe_redirect_to_tickets

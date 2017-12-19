@@ -77,7 +77,7 @@ class User < ActiveRecord::Base
   end
 
   def set_falcon_ui_preference
-    new_pref = {:falcon_ui => (language == "en")}
+    new_pref = {:falcon_ui => get_all_members_in_a_redis_set(FALCON_ENABLED_LANGUAGES).include?(language)}
     self.merge_preferences = { :agent_preferences => new_pref }
   end
 

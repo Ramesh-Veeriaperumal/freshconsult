@@ -164,16 +164,7 @@ end
           <% if to_email_failures.present? || cc_email_failures.present? %>
             <%= render :partial => "/helpdesk/tickets/show/note_email_failure.html.erb", :locals => {:current_note => note, :to_email_failures => to_email_failures, :cc_email_failures => cc_email_failures} %>
           <% else %>
-            <% if note.failure_count.present? && note.failure_count > 0 %>
-               <span class="email_failure"><%= t('email_failure.note_display.title') %></span> - 
-               <a href ='/helpdesk/tickets/<%= note.notable.display_id %>/fetch_errored_email_details?note=<%= note.id %>' id="email_failure_information" title="<%= I18n.t('email_failure.note_display.title') %>" data-target="#email_failure" data-template-footer="false" rel="freshdialog"" data-width="560px">
-               <% if note.failure_count > 1 %>
-               	<%= note.failure_count %> <%= t('email_failure.note_display.failed_recipients') %>
-               <% else %>
-               	<%= note.failure_count %> <%= t('email_failure.note_display.failed_recipient') %>
-               <% end %>
-               </a>
-            <% end %>
+            <%= render :partial => "/helpdesk/tickets/show/email_failure_count.html.erb", :locals => {:item => note, :display_id => note.notable.display_id, :note_id => note.id} %>
           <% end %>
         </div>
       <% end %>

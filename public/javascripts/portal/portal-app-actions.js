@@ -198,6 +198,7 @@
 				$("body").delegate(".btn-quoted", "click.show.quoted_text", function(){
 					$(this).parent().find(".freshdesk_quote").toggle();
 				})
+				break;
 			case 'article_view':
 				var votingContainer = $("#voting-container");
 				if(!(votingContainer.data('user-id'))) {
@@ -212,13 +213,16 @@
 						$("#article-author").hide();
 					}
 				}
+				updateSeenArticlesCache();
 				highlight_code();
 				break;
 			case 'topic_view':
 				highlight_code();
 				$('.p-desc *').css('position', '');
+				break;
 			case 'portal_home':
 				hideEmptyCategory('#solutions-index-home .cs-s');
+				break;
 			case 'solution_home':
 				hideEmptyCategory('#solutions-home .cs-s');
 			break;
@@ -247,6 +251,22 @@
 					  });
 					}
 	    	 });
+	    }
+
+	    function updateSeenArticlesCache(){
+	    	var _seenArticlesArray = getFromSessionStorage('seenArticlesArray');
+	    	var _currentURLArray = window.location.href.split('/');
+	    	var _idFromURL = parseInt(_currentURLArray[_currentURLArray.length-1]).toString();
+				_seenArticlesArray = _seenArticlesArray || [];
+
+				// resetting the position if already in array.
+				if(_seenArticlesArray.indexOf(_idFromURL) >= 0){
+					var _indexOfId = _seenArticlesArray.indexOf(_idFromURL);
+					_seenArticlesArray.splice(_indexOfId, 1);			
+				}
+
+				_seenArticlesArray.push(_idFromURL);
+				storeToSessionStorage('seenArticlesArray', _seenArticlesArray.slice().splice(-50));
 	    }
 
   $(document).on("select2-selecting","#user_filter", function(e) {

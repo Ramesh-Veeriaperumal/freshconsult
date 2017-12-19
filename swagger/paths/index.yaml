@@ -58,6 +58,10 @@
   $ref: ./tickets/update_properties.yaml
 /tickets/export_csv:
   $ref: ./tickets/export_csv.yaml
+/tickets/{id}/failed_email_details:
+  $ref: ./tickets/failed_email_details.yaml
+/tickets/{id}/suppression_list_alert:
+  $ref: ./tickets/suppression_list_alert.yaml
 
 /tickets/{id}/activities:
   $ref: ./tickets/activities.yaml

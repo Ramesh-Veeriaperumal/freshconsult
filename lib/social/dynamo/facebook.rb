@@ -58,9 +58,11 @@ class Social::Dynamo::Facebook
   end
   
   def update_ticket_links_in_dynamo(feed_id, stream_id)
-    times = [Time.now.utc, Time.now.utc + 7.days]
+    table = "feeds"
+    retention_period = TABLES[table][:retention_period]
+    times = [Time.now.utc, Time.now.utc + retention_period]
     times.each do |time|
-      table_name = Social::DynamoHelper.select_table("feeds", time)
+      table_name = Social::DynamoHelper.select_table(table, time)
       feeds_helper.update_fd_links(table_name, feed_id, "#{Account.current.id}_#{stream_id}")
     end
   end

@@ -13,6 +13,7 @@ response_hash = {
   company_id: @item.company_id,
   status: @item.status,
   subject: @item.subject,
+  association_type: @item.association_type,
   to_emails: @item.schema_less_ticket.try(:to_emails),
   product_id: @item.schema_less_ticket.try(:product_id),
   id: @item.display_id,
@@ -43,6 +44,7 @@ stats_hash = @item.stats
 company_hash = @item.company
 conversations_hash = @item.conversations
 response_hash.merge!(deleted: @item.deleted) if @item.deleted
+response_hash.merge!(associated_tickets_list: @item.associates) if @item.associated_ticket?
 response_hash.merge!(requester: requester_hash) if requester_hash
 response_hash.merge!(stats: stats_hash) if stats_hash
 response_hash.merge!(company: company_hash) if company_hash

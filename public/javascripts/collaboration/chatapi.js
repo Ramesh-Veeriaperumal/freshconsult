@@ -11,6 +11,9 @@
     var DEFAULT_MEMBER_PRESENCE_POLL_IVAL = 60 * 1000; // 1m.
     var CONVO_ACCESS_SCOPE = "client";
 
+    // RTS Error Strings
+    const RTS_ERROR_ACTION_NOT_AUTHORIZED = "Action not authorized";
+
 
     var LOG_COLOR = "color: green; font-weight: 700;";
     var ERROR_LOG_COLOR = "color: red; font-weight: 700;";
@@ -22,13 +25,18 @@
 
     var CHAT_API_SERVER, RTS_SERVER, MESSAGE_PUBLISH_ROUTE, USER_MARK_ONLINE_ROUTE,
         USER_UPDATE_ROUTE, CONVERSATION_GET_ROUTE, ADD_MEMBER_ROUTE, REMOVE_MEMBER_ROUTE,
-        GET_PRESENCE_ROUTE, GET_NOTIFICATION_ROUTE, MARK_NOTIFICATION_ROUTE,
-        CONVERSATION_UPDATE_METADATA_ROUTE, USERS_GET_PAYLOAD_ROUTE, USERS_GET_ALL_ROUTE, CONVERSATION_MESSAGES_HISTORY_ROUTE, ATTACHMENTS_UPLOAD_ROUTE;
+        ADD_FOLLOWER_ROUTE, REMOVE_FOLLOWER_ROUTE, GET_PRESENCE_ROUTE, GET_NOTIFICATION_ROUTE,
+        MARK_NOTIFICATION_ROUTE, CONVERSATION_UPDATE_METADATA_ROUTE, USERS_GET_PAYLOAD_ROUTE,
+        USERS_GET_ALL_ROUTE, CONVERSATION_MESSAGES_HISTORY_ROUTE, ATTACHMENTS_UPLOAD_ROUTE,
+        CONVERSATION_GET_RTSAUTHTOKEN, USERS_GET, CONVERSATION_CREATE_ROUTE,
+        CONVERSATION_UPDATE_READ_MARKER, CONVERSATION_CLOSE_ROUTE, CONVERSATION_OWNER_SET_ROUTE,
+        CONVERSATION_OPEN_ROUTE, CONVERSATION_GET_ATTACHMENT_URL;
+
     /*
     *   Will be changing these to match this.
     *   https://docs.google.com/document/d/10tJTABwH-z8TbcsxbypDZJ4aaNr63BVue3kEUFLKfAw/edit#heading=h.t46w8c4hnhnh
     */
-    function setPaths() {        
+    function setPaths() {
         USER_MARK_ONLINE_ROUTE = CHAT_API_SERVER + "/users.markOnline";
         USER_UPDATE_ROUTE = CHAT_API_SERVER + "/users.createOrUpdate";
         GET_PRESENCE_ROUTE = CHAT_API_SERVER + "/users.getOnline";
@@ -37,20 +45,23 @@
         USERS_GET_ALL_ROUTE = CHAT_API_SERVER + "/users.getAll";
         USERS_GET = CHAT_API_SERVER + "/users.get";
         MARK_NOTIFICATION_ROUTE = CHAT_API_SERVER + "/users.notifications.markRead";
-        
+
         ATTACHMENTS_UPLOAD_ROUTE = CHAT_API_SERVER + "/conversations.attachments.upload";
         MESSAGE_PUBLISH_ROUTE = CHAT_API_SERVER + "/conversations.messages.publish";
         CONVERSATION_CREATE_ROUTE = CHAT_API_SERVER + "/conversations.create";
         CONVERSATION_GET_ROUTE = CHAT_API_SERVER + "/conversations.get";
         ADD_MEMBER_ROUTE = CHAT_API_SERVER + "/conversations.members.add";
+        ADD_FOLLOWER_ROUTE = CHAT_API_SERVER + "/conversations.followers.add";
         CONVERSATION_UPDATE_METADATA_ROUTE = CHAT_API_SERVER + "/conversations.updateMetadata";
         CONVERSATION_UPDATE_READ_MARKER = CHAT_API_SERVER + "/conversations.markLastReadMessage";
         REMOVE_MEMBER_ROUTE = CHAT_API_SERVER + "/conversations.members.remove";
+        REMOVE_FOLLOWER_ROUTE = CHAT_API_SERVER + "/conversations.followers.remove";
         CONVERSATION_CLOSE_ROUTE = CHAT_API_SERVER + "/conversations.close";
         CONVERSATION_OPEN_ROUTE = CHAT_API_SERVER + "/conversations.open";
         CONVERSATION_MESSAGES_HISTORY_ROUTE = CHAT_API_SERVER + "/conversations.messages.history";
         CONVERSATION_OWNER_SET_ROUTE = CHAT_API_SERVER + "/conversations.owner.set";
         CONVERSATION_GET_ATTACHMENT_URL = CHAT_API_SERVER + "/conversations.attachments.geturl";
+        CONVERSATION_GET_RTSAUTHTOKEN = CHAT_API_SERVER + "/conversations.rtsauthtoken.get";
     }
 
     /*
@@ -116,17 +127,7 @@
 
                     log("%c- Heartbeats set to send every "+ (response.UserHeartbeatPollTime || DEFAULT_HEARTBEAT_IVAL) + " mili-sec.", LOG_COLOR)
                     var heartbeat = setInterval(function() {
-                        // log(">> client: heartbeat sent to ChatAPI")
-                        collabHttpAjax({
-                            method: "POST",
-                            url: USER_MARK_ONLINE_ROUTE,
-                            data: {"uid": config.userId},
-                            success: function(response) {
-                                if(typeof response === "string") {response = JSON.parse(response);};
-                                self.onheartbeat(response);
-                                log("%c - User online updated.", LOG_COLOR, response);
-                            },
-                        }, config.clientId, config.authToken);
+                        self.markOnline(self.onheartbeat)
                     }, response.UserHeartbeatPollTime || DEFAULT_HEARTBEAT_IVAL);
 
                     if(typeof self.apiinited === "function") {
@@ -253,26 +254,30 @@
                 case "send":
                     log(">> client: send_message response: ", data);
                     // TODO (mayank): make your own unique_id and use them instead of id
-                    msg = JSON.parse(data.msg);
-                    msg.mid = String(data.id); /* quick fix */
-                    if(typeof msg.u_nch !== "undefined" && msg.u_nch === NOTIFICATION_CONVO_ID) {
-                        msg.nid = String(data.id); /* quick fix for notification use case */
-                        self.onnotify(msg);
-                    }
-                    else if (msg.m_type === MSG_TYPE_SERVER_MADD) {
-                        self.onmemberadd(msg);
-                    }
-                    else if (msg.m_type === MSG_TYPE_SERVER_MREMOVE) {
-                        self.onmemberremove(msg);
-                    }
-                    else if (msg.m_type === MSG_TYPE_SERVER_FADD) {
-                        self.onfolloweradd(msg);
-                    }
-                    else if (msg.m_type === MSG_TYPE_SERVER_FREMOVE) {
-                        self.onfollowerremove(msg);
-                    }
-                    else {
-                        self.onmessage(msg);
+                    if (typeof data.err === 'string' &&  data.err !== "")  {
+                        log("%c >> client: ERROR!! RTS broadcast to a message sending failure", ERROR_LOG_COLOR, data);
+                    } else {
+                        msg = JSON.parse(data.msg);
+                        msg.mid = String(data.id); /* quick fix */
+                        if(typeof msg.u_nch !== "undefined" && msg.u_nch === NOTIFICATION_CONVO_ID) {
+                            msg.nid = String(data.id); /* quick fix for notification use case */
+                            self.onnotify(msg);
+                        }
+                        else if (msg.m_type === MSG_TYPE_SERVER_MADD) {
+                            self.onmemberadd(msg);
+                        }
+                        else if (msg.m_type === MSG_TYPE_SERVER_MREMOVE) {
+                            self.onmemberremove(msg);
+                        }
+                        else if (msg.m_type === MSG_TYPE_SERVER_FADD) {
+                            self.onfolloweradd(msg);
+                        }
+                        else if (msg.m_type === MSG_TYPE_SERVER_FREMOVE) {
+                            self.onfollowerremove(msg);
+                        }
+                        else {
+                            self.onmessage(msg);
+                        }
                     }
                     break;
                 default:
@@ -312,8 +317,8 @@
     function collabHttpAjax(params, clientId, token, multipart) {
         params.beforeSend = function(xhr) {
             if(!multipart){
-                xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");    
-            }            
+                xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            }
             xhr.setRequestHeader("Authorization", token);
             xhr.setRequestHeader("ClientId", clientId);
         };
@@ -345,7 +350,7 @@
                 }
             };
             if(!!multipart) {
-                xhr.send(params.data);    
+                xhr.send(params.data);
             } else {
                 xhr.send(!!params.data ? stringify(params.data) : null);
             }
@@ -368,6 +373,7 @@
 
     function cbStatusForbidden(cb) {
         response = "";
+        // Passing isErr as true to indicate that we have to refresh convo token
         if(typeof cb === "function") {cb(response, true);}
     }
 
@@ -385,6 +391,23 @@
             var conversation = response.conversation;
             self.conversationsMap[conversation.co_id] = conversation;
             subscribeWithAuthGrant.call(self, conversation.co_ch, conversation.rts_token, function() {
+                log(">> client: conversation subscribed in RTS.");
+                if(typeof cb === "function") {cb(response);}
+            });
+        }
+    }
+
+    function conversationGetRtsTokenCb(response, cb){
+        var self = this;
+        if(!response) {
+            if(typeof cb === "function") {cb()};
+            return;
+        }
+        if(typeof response === "string") {response = JSON.parse(response);};
+        log(">> got conversation RTSAuthToken for user from ChatAPI: ", response);
+
+        if(!!response.rts_token && !!response.co_ch) {
+            subscribeWithAuthGrant.call(self, response.co_ch, response.rts_token, function() {
                 log(">> client: conversation subscribed in RTS.");
                 if(typeof cb === "function") {cb(response);}
             });
@@ -472,7 +495,7 @@
             "co_id" : conversationName,
             "co_ch" : conversation.co_ch,
             "rts_aid" : self.rtsAccountId,
-            "c_aid" : self.clientId, 
+            "c_aid" : self.clientId,
             "s_id": self.userId,
             "cid": self.clientAccountId,
             "metadata": stringify(msg.metadata),
@@ -489,8 +512,13 @@
                 "channelName" : conversation.co_ch,
                 "persist": typeof(msg.persist) === "boolean" ? msg.persist : true
             };
-            rts.publish(params, function(response, resp_str) {
-                cb(response);
+            rts.publish(params, function(errResponse, response) {
+                // In case of error response will be undefined and in case of success errResponse will be null
+                if(typeof errResponse === 'string' && errResponse === RTS_ERROR_ACTION_NOT_AUTHORIZED) {
+                    // passing isErr true to refresh tokens (convo token and RTSAuthtoken)
+                    if(typeof cb === "function") {cb(errResponse, true)}
+                }
+                if(typeof cb === "function") {cb(response);}
             });
         } else {
 
@@ -507,7 +535,7 @@
                 }
             }, self.clientId, getAuthToken(self.authToken, convo.token));
         }
-    }
+    };
 
     ChatApi.prototype.updateReadMarker = function(convoId, uid, msgId, cb){
         var self = this;
@@ -533,7 +561,7 @@
         var self = this;
 
         var conversationName = convo.co_id;
-        
+
         collabHttpAjax({
             method: "GET",
             url: CONVERSATION_GET_ROUTE + "?co_id=" + conversationName + "&count=true&uid=" + uid,
@@ -545,6 +573,24 @@
                 // expecting 204
                 var response = "";
                 conversationLoadCb.call(self, response, cb);
+            },
+        }, self.clientId, getAuthToken(self.authToken, convo.token));
+    };
+
+    ChatApi.prototype.getRtsAuthToken = function(convo, uid, cb) {
+        var self = this;
+        var conversationId = convo.co_id;
+
+        collabHttpAjax({
+            method: "GET",
+            url: CONVERSATION_GET_RTSAUTHTOKEN + "?co_id=" + conversationId + "&uid=" + uid,
+            success: function(response){
+                conversationGetRtsTokenCb.call(self, response, cb);
+            },
+            statusCode: {"403": function() {cbStatusForbidden(cb);}},
+            onerror: function(){
+                var response = "";
+                conversationGetRtsTokenCb.call(self, response, cb);
             },
         }, self.clientId, getAuthToken(self.authToken, convo.token));
     }
@@ -597,6 +643,54 @@
         }, self.clientId, getAuthToken(self.authToken, convo.token));
     }
 
+    ChatApi.prototype.addFollower = function(convo, memberId, cb) {
+        var self = this;
+
+        var conversation = self.conversationsMap[convo.co_id];
+        var data = {
+            "co_id": convo.co_id,
+            "uid": String(memberId),
+        }
+
+        log(">> Trying to add follower in conversation. ", data);
+
+        collabHttpAjax({
+            method: "POST",
+            url: ADD_FOLLOWER_ROUTE,
+            data: data,
+            statusCode: {"403": function() {cbStatusForbidden(cb);}},
+            success: function(response){
+                if(typeof response === "string") {response = JSON.parse(response);};
+                log(">> follower added in conversation.: ", response);
+                if(typeof cb === "function") {cb(response);}
+            }
+        }, self.clientId, getAuthToken(self.authToken, convo.token));
+    }
+
+    ChatApi.prototype.removeFollower = function(convo, memberId, cb) {
+        var self = this;
+
+        var data = {
+            "co_id": convo.co_id,
+            "uid": String(memberId)
+        }
+
+        log(">> Trying to remove follower in conversation. ", data);
+
+        collabHttpAjax({
+            method: "POST",
+            url: REMOVE_FOLLOWER_ROUTE,
+            data: data,
+            statusCode: {"403": function() {cbStatusForbidden(cb);}},
+            success: function(response){
+                if(typeof response === "string") {response = JSON.parse(response);};
+                log(">> follower removed from conversation.: ", response);
+                if(typeof cb === "function") {cb(response);}
+            }
+        }, self.clientId, getAuthToken(self.authToken, convo.token));
+    }
+
+
     ChatApi.prototype.getPresence = function(users, cb) {
         var self = this;
         collabHttpAjax({
@@ -627,6 +721,20 @@
         }, self.clientId, self.authToken);
     }
 
+    ChatApi.prototype.markOnline = function(cb) {
+        var self = this;
+        collabHttpAjax({
+            method: "POST",
+            url: USER_MARK_ONLINE_ROUTE,
+            data: {"uid": self.userId},
+            success: function(response) {
+                if(typeof response === "string") {response = JSON.parse(response);};
+                log(">> client: marked online: ", response);
+                if(typeof cb === "function") {cb(response);}
+            },
+        }, self.clientId, self.authToken);
+    }
+
     ChatApi.prototype.updateUser = function(userObj, cb) {
         var self = this;
         var userData = {
@@ -651,7 +759,7 @@
     ChatApi.prototype.markNotification = function(notiObj, cb) {
         var self = this;
         var notificationData = {
-            "uid": notiObj.uid, 
+            "uid": notiObj.uid,
             "nids": notiObj.nids
         };
         collabHttpAjax({
@@ -706,7 +814,7 @@
             "start": fetchMeta.start,
             "limit": fetchMeta.limit
         };
-        
+
         var co_id = "?co_id="+param.co_id; // required
         var start = "&start="+param.start; // required
         var limit = (!!param.limit)?("&limit="+param.limit):""; // optional
@@ -789,10 +897,10 @@
 
     ChatApi.prototype.refreshAttachmentUri = function(convo, cb){
         var self = this;
-        
+
         var fid = convo.fid;
         var co_id = convo.co_id;
-        
+
         collabHttpAjax({
             method: "GET",
             url: CONVERSATION_GET_ATTACHMENT_URL + "?fid=" + fid + "&co_id=" + co_id,
@@ -806,7 +914,7 @@
 
     ChatApi.prototype.getUserInfo = function(uid, cb){
         var self = this;
-        
+
         collabHttpAjax({
             method: "GET",
             url: USERS_GET + "?uid=" + uid,
