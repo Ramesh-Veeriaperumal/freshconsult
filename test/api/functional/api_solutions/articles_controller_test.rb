@@ -423,7 +423,7 @@ module ApiSolutions
     end
 
     def test_update_article_type
-      sample_article = get_article
+      sample_article = get_article_without_draft
       old_description = sample_article.description
       params_hash  = { type: 2 }
       put :update, construct_params({ id: sample_article.parent_id }, params_hash)

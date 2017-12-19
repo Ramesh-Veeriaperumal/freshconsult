@@ -42,6 +42,7 @@
   <% end %>
   <%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
   <%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
+  <%= hidden_field_tag "meta[seen_articles]" %>
   <%
     referrer = h(request.referrer)
   %>
@@ -231,6 +232,11 @@
         if (cc_emails_val && cc_emails_val.split(",").length >= 50) {
           alert('You can add upto 50 CC emails');
           return false;
+        }
+        if(getFromSessionStorage('seenArticlesArray') && getFromSessionStorage('seenArticlesArray').length > 0){
+          var _seenArticles = getFromSessionStorage('seenArticlesArray').slice().splice(-50); // only taking last 50 items
+          jQuery('#meta_seen_articles').val(JSON.stringify(_seenArticles));
+          removeFromSessionStorage('seenArticlesArray');
         }
         _form.find("button, a.btn").attr('disabled',true);
       }

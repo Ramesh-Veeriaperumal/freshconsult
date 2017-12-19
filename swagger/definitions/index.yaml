@@ -92,8 +92,6 @@
     $ref: ./request/contacts/contact_export.yaml
   company_export_input:
     $ref: ./request/companies/company_export.yaml
-  fields_map:
-    $ref: ./request/contacts/fields_map.yaml
   integrated_resource_create:
     $ref: ./request/integrated_resources/integrated_resource.yaml
   agent_input:
@@ -104,6 +102,8 @@
     $ref: ./request/onboarding/update_activation_email.yaml
   update_channels_input:
     $ref: ./request/onboarding/update_channels.yaml
+  suppression_list:
+    $ref: ./request/tickets/suppression_list.yaml
 
   # RESOURCE
   conversation_template:
@@ -219,8 +219,6 @@
     $ref: ./response/canned_response/folder_show.yaml
   todo_details:
     $ref: ./resource/todo.yaml
-  map_field_to_header:
-    $ref: './resource/extension/imports/map_field.yaml'
 
   # RESPONSE
   meta:
@@ -241,6 +239,8 @@
     $ref: ./response/tickets/watchers.yaml
   latest_note:
     $ref: './response/conversations/latest_note.yaml'
+  email_failures:
+    $ref: ./response/tickets/email_failures.yaml
   prime_association:
     $ref: ./response/tickets/prime_association.yaml
   associated_tickets:

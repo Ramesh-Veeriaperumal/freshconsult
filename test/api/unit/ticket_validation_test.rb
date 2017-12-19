@@ -27,6 +27,19 @@ class TicketValidationTest < ActionView::TestCase
     Account.unstub(:current)
   end
 
+  def test_placeholder_validation
+    Account.stubs(:current).returns(Account.first)
+    controller_params = { template_text: 'test' }
+    item = nil
+    ticket = TicketValidation.new(controller_params, item)
+    assert ticket.valid?(:parse_template)
+    ticket = TicketValidation.new({}, item)
+    refute ticket.valid?(:parse_template)
+    errors = ticket.errors.full_messages
+    assert errors.include?('Template text datatype_mismatch')
+    Account.unstub(:current)
+  end
+
   def test_email_validation
     Account.stubs(:current).returns(Account.first)
     controller_params = { 'email' => 'fggg,ss@fff.com',  ticket_fields: [], statuses: statuses  }

@@ -83,7 +83,7 @@ module Ember
       def fetch_ticket_using_workable_id(local_integratable_id)
         time_sheet = Account.current.time_sheets.find_by_id(local_integratable_id)
         return nil unless time_sheet
-        fetch_ticket_using_display_id(time_sheet.workable_id)
+        fetch_ticket_using_display_id(time_sheet.workable.display_id)
       end
 
       def verify_ticket_state(ticket)

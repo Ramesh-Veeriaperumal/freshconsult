@@ -86,12 +86,14 @@ namespace :scheduler do
     }
   }
 
+  #These production account ids should be moved to redis 
   PREMIUM_ACCOUNT_IDS_FB = {
       "development" => [1],
       "staging"     => [390], 
       "production"  => [79003, 309357, 39190, 19063, 86336, 34388, 126077, 220561, 166928, 254067, 381984, 470840, 558611, 398354, 753108, 767797]
   }
 
+  #These production account ids should be moved to redis 
   PREMIUM_ACCOUNT_IDS_TWT = {
     "development" => [1],
     "staging"     => [390], 
@@ -181,7 +183,7 @@ namespace :scheduler do
           account = fb_page.account
           next unless account
           account.make_current
-          next if (check_if_premium?(account, PREMIUM_ACCOUNT_IDS_FB) || !fb_page.valid_page?)
+          next if (!fb_page.valid_page? || check_if_premium_facebook_account?(account.id))
           class_constant.perform_async({:fb_page_id => fb_page.id}) 
         end
       end
@@ -202,7 +204,7 @@ namespace :scheduler do
           account = twitter_handle.account
           next unless account
           account.make_current
-          next if (check_if_premium?(account, PREMIUM_ACCOUNT_IDS_TWT) || !twitter_handle.capture_dm_as_ticket)
+          next if (!twitter_handle.capture_dm_as_ticket || check_if_premium_twitter_account?(account.id))
           class_constant.perform_async({:twt_handle_id => twitter_handle.id}) 
         end
       end
@@ -212,7 +214,7 @@ namespace :scheduler do
   end
   
   def enqueue_premium_twitter(delay = nil)
-    PREMIUM_ACCOUNT_IDS_TWT["#{Rails.env}"].each do |account_id|
+    premium_twitter_accounts.each do |account_id|
       if delay.nil?
         Social::PremiumTwitterWorker.perform_async({:account_id => account_id})
       else
@@ -222,7 +224,7 @@ namespace :scheduler do
   end
   
   def enqueue_premium_facebook(delay = nil)
-    PREMIUM_ACCOUNT_IDS_FB["#{Rails.env}"].each do |account_id|
+    premium_facebook_accounts.each do |account_id|
       if delay.nil?
         Social::PremiumFacebookWorker.perform_async({:account_id => account_id})
       else
@@ -231,8 +233,22 @@ namespace :scheduler do
     end
   end
   
-  def check_if_premium?(account, premium_accounts)
-    premium_accounts["#{Rails.env}"].include?(account.id)
+  def premium_twitter_accounts
+    account_ids_from_redis = get_all_members_in_a_redis_set(TWITTER_PREMIUM_ACCOUNTS)
+    account_ids_from_redis.count > 0 ? account_ids_from_redis : PREMIUM_ACCOUNT_IDS_TWT["#{Rails.env}"]  
+  end
+
+  def premium_facebook_accounts
+    account_ids_from_redis =  get_all_members_in_a_redis_set(FACEBOOK_PREMIUM_ACCOUNTS)
+    account_ids_from_redis.count > 0 ? account_ids_from_redis : PREMIUM_ACCOUNT_IDS_FB["#{Rails.env}"]  
+  end
+
+  def check_if_premium_twitter_account?(account_id)
+    ismember?(TWITTER_PREMIUM_ACCOUNTS, account_id) || PREMIUM_ACCOUNT_IDS_TWT["#{Rails.env}"].include?(account_id)
+  end
+
+  def check_if_premium_facebook_account?(account_id)
+    ismember?(FACEBOOK_PREMIUM_ACCOUNTS, account_id) || PREMIUM_ACCOUNT_IDS_FB["#{Rails.env}"].include?(account_id)
   end
 
   task :supervisor, [:type] => :environment do |t,args|
@@ -259,6 +275,9 @@ namespace :scheduler do
 
   desc 'Fetch facebook feeds and direct messages'
   task :facebook, [:type] => :environment do |t,args|
+    
+    include Redis::RedisKeys
+    include Redis::OthersRedis
     account_type = args.type || "paid"
     puts "Running #{account_type} facebook worker initiated at #{Time.zone.now}"
     if account_type == "paid"
@@ -272,6 +291,9 @@ namespace :scheduler do
   
   desc 'Fetch twitter direct messages'
   task :twitter, [:type] => :environment do |t,args|
+    
+    include Redis::RedisKeys
+    include Redis::OthersRedis
     account_type = args.type || "paid"
     puts "Running #{account_type} twitter worker initiated at #{Time.zone.now}"
     if account_type == "paid"

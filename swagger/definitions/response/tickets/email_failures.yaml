@@ -1,0 +1,23 @@
+type: object
+properties:
+    to_list:
+      type: object
+      description: List of To emails which have failed
+      properties:
+        email:
+          type: string
+          description: Failed email Id
+        type:
+          type: string
+          description: Type of email failure
+    cc_list:
+      type: object
+      description: List of Cc emails which have failed
+      properties:
+        email:
+          type: string
+          description: Failed email Id
+        type:
+          type: string
+          description: Type of email failure
+

@@ -1,0 +1,20 @@
+post:
+  tags: [ticket]
+  description: Sending the request to unblock recipient
+  parameters:
+    - $ref: '#/parameters/id'
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/suppression_list'
+  responses:
+    204:
+      description: Success
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    404:
+      description: Ticket not found
+

@@ -142,9 +142,9 @@
         :privilege                     =>   privilege?(:manage_account)
       },
       :import                          =>   {
-        :url                           =>   redis_key_exists?(ZENDESK_IMPORT_APP_KEY) ?
-                                            "/integrations/applications##{ZEN_APP_ID}":
-                                            "/admin/zen_import",
+        :url                           =>   redis_key_exists?(ZENDESK_IMPORT_APP_KEY) ? 
+                                              ( current_account.falcon_ui_enabled?(User.current) ?  "/integrations/applications##{ZEN_FALCON_APP_ID}" : "/integrations/applications##{ZEN_APP_ID}" ) 
+                                              : "/admin/zen_import",
         :privilege                     =>   privilege?(:manage_account)
       },
       :day_pass                        =>   {
@@ -204,6 +204,8 @@
   end
 
   ZEN_APP_ID = ZendeskAppConfig::APP_ID
+
+  ZEN_FALCON_APP_ID = ZendeskAppConfig::FALCON_APP_ID
 
   ######### Admin groups & Associated admin items Constant ########
 

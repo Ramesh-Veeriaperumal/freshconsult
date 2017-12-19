@@ -24,13 +24,12 @@ module EmailParser
             parsed_email = $1.downcase
 
             next if ignore_emails.include?(parsed_email)
-
             plain_emails.push parsed_email            
 
             if email.name.present?
               email_name = email.name
               email_name = email.name.prepend(name) and name="" if name.present?
-              emails.push "#{format_name(email_name)} <#{parsed_email}>".strip
+              emails.push "#{format_email_name(email_name)} <#{parsed_email}>".strip
             else
               emails.push parsed_email
             end
@@ -50,7 +49,7 @@ module EmailParser
           name.gsub!("<", "")
           name.gsub!(">", "")
           plain_emails.push email_address
-          emails.push "#{format_name(name)}  <#{email_address}>"
+          emails.push "#{format_email_name(name)}  <#{email_address}>"
           name = ""
         else
           name << "#{add} "
@@ -60,7 +59,7 @@ module EmailParser
     { :emails => emails.uniq, :plain_emails => plain_emails.uniq }
   end
     
-  def format_name(name)
+  def format_email_name(name)
     (name =~ SPECIAL_CHARACTERS_REGEX and name !~ /".+"/) ? "\"#{name}\"" : name
   end
 end

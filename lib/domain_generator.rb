@@ -43,6 +43,9 @@ class DomainGenerator
 			sample_account.run_domain_validations)
 	end
 
+	def domain_name
+		@domain_name ||= domain_prefix.capitalize
+	end
 
 	private
 
@@ -72,7 +75,8 @@ class DomainGenerator
 	end	
 
 	def generate_random_domain_name
-		current_domain_suggestion = "#{domain_prefix}#{random_digits}.#{HELPDESK_BASE_DOMAIN}"
+		suggestion_keyword = DOMAIN_SUGGESTIONS.sample
+		current_domain_suggestion = "#{domain_prefix}#{suggestion_keyword}#{random_digits}.#{HELPDESK_BASE_DOMAIN}"
 		return current_domain_suggestion if self.class.valid_domain?(current_domain_suggestion)
 	end
 

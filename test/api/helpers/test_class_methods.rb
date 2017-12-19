@@ -45,13 +45,22 @@ module TestClassMethods
   end
 
   def set_request_auth_headers(user = nil)
-    auth = ActionController::HttpAuthentication::Basic.encode_credentials((user || @agent).single_access_token, 'X')
-    @request.env['HTTP_AUTHORIZATION'] = auth
+    if $infra['PRIVATE_API']
+      UserSession.any_instance.stubs(:cookie_credentials).returns([(user || @agent).persistence_token, (user || @agent).id])
+    else
+      auth = ActionController::HttpAuthentication::Basic.encode_credentials((user || @agent).single_access_token, 'X')
+      @request.env['HTTP_AUTHORIZATION'] = auth
+    end
   end
 
   def set_request_headers
-    auth = ActionController::HttpAuthentication::Basic.encode_credentials(@agent.single_access_token, 'X')
-    @headers = { 'HTTP_AUTHORIZATION' => auth, 'HTTP_HOST' => 'localhost.freshpo.com' }
+    @headers ||= {}
+    if $infra['PRIVATE_API']
+      UserSession.any_instance.stubs(:cookie_credentials).returns([@agent.persistence_token, @agent.id])
+    else
+      auth = ActionController::HttpAuthentication::Basic.encode_credentials(@agent.single_access_token, 'X')
+      @headers = { 'HTTP_AUTHORIZATION' => auth, 'HTTP_HOST' => 'localhost.freshpo.com' }
+    end
     @write_headers = @headers.merge('CONTENT_TYPE' => 'application/json')
   end
 

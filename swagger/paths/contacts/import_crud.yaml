@@ -20,6 +20,8 @@ post:
   tags: [import]
   summary: Create import
   description: To schedule import of contacts/companies
+  consumes:
+    - multipart/form-data
   parameters:
     - name: type
       in: formData
@@ -33,9 +35,7 @@ post:
       type: file
     - name: fields
       in: formData
-      required: true
-      schema:
-        $ref: '#/definitions/fields_map'
+      type: string
   responses:
     200:
       description: Success

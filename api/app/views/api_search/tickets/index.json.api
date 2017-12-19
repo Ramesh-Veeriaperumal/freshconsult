@@ -1,5 +1,5 @@
 results = @items.map do |item|
-  response_hash = {
+  {
     cc_emails: item.cc_email.try(:[], :cc_emails),
     fwd_emails: item.cc_email.try(:[], :fwd_emails),
     reply_cc_emails: item.cc_email.try(:[], :reply_cc),
@@ -23,22 +23,11 @@ results = @items.map do |item|
     is_escalated: item.isescalated,
     description: item.ticket_body.description_html,
     description_text: item.ticket_body.description,
+    custom_fields: item.custom_fields,
     created_at: item.created_at.try(:utc),
     updated_at: item.updated_at.try(:utc)
   }
-  if item.custom_field.any?
-    custom_fields = {}
-    item.custom_field.each do |key, value|
-      custom_fields[@name_mapping[key]] = value.respond_to?(:utc) ? value.utc : value
-    end
-    response_hash.merge!(custom_fields: custom_fields)
-  else
-    response_hash.merge!(custom_fields: {})
-  end
-  response_hash
 end
 
-JSON.generate({
-    results: results,
-    total: @items.total_entries
-})
+JSON.generate(results: results,
+              total: @items.total_entries)

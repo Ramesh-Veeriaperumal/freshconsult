@@ -7,6 +7,7 @@
 //= require collaboration/lightmention
 
 //= require collaboration/templates/collaboration_message
+//= require collaboration/templates/collaboration_typing_message
 //= require collaboration/templates/avatar
 //= require collaboration/templates/collaborators_list_item
 //= require collaboration/collaboration_ui

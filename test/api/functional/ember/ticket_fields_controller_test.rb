@@ -1,9 +1,10 @@
 require_relative '../../test_helper'
+['solutions_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 
 module Ember
   class TicketFieldsControllerTest < ActionController::TestCase
     include TicketFieldsTestHelper
-
+    include SolutionsHelper
     def setup
       super
       before_all
@@ -45,5 +46,29 @@ module Ember
         assert_equal Helpdesk::Ticketfields::TicketStatus::DEFAULT_STATUSES.keys.include?( choice['value']), choice['default']
       end
     end
+    
+    def test_product_for_product_portal
+      pdt = Product.new(name: 'Product A')
+      pdt.save
+      portal_custom = create_portal(portal_url: 'support.test2.com' , product_id: pdt.id)
+      @request.host = portal_custom.portal_url
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      response = parse_response @response.body
+      product_choices = response.find { |x| x['type'] == 'default_product'}
+      assert_equal Account.current.products.count, product_choices['choices'].count 
+    end
+
+    def test_product_for_main_portal
+      pdt = Product.new(name: 'Product B')
+      pdt.save
+      portal_default = create_portal
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      response = parse_response @response.body
+      product_choices = response.find { |x| x['type'] == 'default_product'} 
+      assert_equal Account.current.products.count, product_choices['choices'].count
+    end
+  
   end
 end

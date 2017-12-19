@@ -22,7 +22,7 @@ class AccountDecorator < ApiDecorator
     ret_hash[:social_options] = social_options_hash if record.features?(:twitter) || record.basic_twitter_enabled?
     ret_hash
   end
-
+ 
   private
 
     def launch_party_features
@@ -43,6 +43,7 @@ class AccountDecorator < ApiDecorator
       {
         personalized_email_replies: record.features.personalized_email_replies?,
         compose_email_enabled: record.compose_email_enabled?,
+        restricted_compose_email_enabled: record.restricted_compose_enabled?,
         include_survey_manually: include_survey_manually?,
         show_on_boarding: record.account_onboarding_pending?
       }

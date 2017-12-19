@@ -15,7 +15,9 @@ class Social::Gnip::TwitterFeed
   alias :feed_id :tweet_id
 
   def initialize(tweet, queue)
+
     begin
+      @tweet_json = tweet
       @tweet_obj       = JSON.parse(tweet).symbolize_keys!
       @dynamo_helper   = Social::Dynamo::Twitter.new
       @queue  = queue
@@ -69,6 +71,41 @@ class Social::Gnip::TwitterFeed
     @tweet_obj
   end
 
+  def process_tweet_to_ticket(account, args, convert_args)
+    user = set_user if convert_args[:convert]     
+    if reply?
+      db_stream = args[:stream_id].gsub(TAG_PREFIX, "")
+      tweet = account.tweets.find(:all, :conditions => ["tweet_id = ? AND stream_id =?", @in_reply_to, db_stream]).first
+      unless tweet.blank?
+        ticket  = tweet.get_ticket
+        user = set_user unless user
+        if ticket
+          notable = add_as_note(@tweet_obj, @twitter_handle, :mention, ticket, user, convert_args) if @twitter_handle
+        else 
+          archive_ticket  = tweet.get_archive_ticket
+          notable = add_as_ticket(@tweet_obj, @twitter_handle, :mention, convert_args, archive_ticket, user) if convert_args[:convert] && archive_ticket
+        end
+      else
+        if convert_args[:convert]
+          tweet_requeued = requeue(@tweet_obj)
+          notable = add_as_ticket(@tweet_obj, @twitter_handle, :mention, convert_args, nil, user) if !tweet_requeued
+        end
+      end
+    else
+      notable = add_as_ticket(@tweet_obj, @twitter_handle, :mention, convert_args, nil, user) if convert_args[:convert]
+    end
+    if !tweet_requeued
+      dynamo_feed_attr = fd_info(notable, user)
+      dynamo_feed_attr.merge!(smart_filter_info(convert_args[:smart_filter_response]))
+      update_tweet_time_in_redis(@posted_time) #unless @queue.approximate_number_of_messages > MSG_COUNT_FOR_UPDATING_REDIS
+      update_dynamo(args, convert_args, dynamo_feed_attr, @tweet_obj)
+    end
+  end
+
+  def check_smart_filter(account, args)
+     convert_hash = apply_smart_filter(account, args)
+     process_tweet_to_ticket(account, args, convert_hash)
+  end
 
   private
 
@@ -76,42 +113,18 @@ class Social::Gnip::TwitterFeed
     select_shard_and_account(args[:account_id]) do |account|
       notable = nil
       tweet_requeued = false
-      convert_args = can_convert(account, args)
+      convert_args = apply_ticket_rules(account, args)
       convert_args[:convert] = false if self_tweeted?
-      user = set_user if convert_args[:convert]
-      
-      if reply?
-        db_stream = args[:stream_id].gsub(TAG_PREFIX, "")
-        tweet = account.tweets.find(:all, :conditions => ["tweet_id = ? AND stream_id =?", @in_reply_to, db_stream]).first
-        unless tweet.blank?
-          ticket  = tweet.get_ticket
-          user = set_user unless user
-          if ticket
-            notable = add_as_note(@tweet_obj, @twitter_handle, :mention, ticket, user, convert_args) if @twitter_handle
-          else 
-            archive_ticket  = tweet.get_archive_ticket
-            notable = add_as_ticket(@tweet_obj, @twitter_handle, :mention, convert_args, archive_ticket, user) if convert_args[:convert] && archive_ticket
-          end
-        else
-          if convert_args[:convert]
-            tweet_requeued = requeue(@tweet_obj)
-            notable = add_as_ticket(@tweet_obj, @twitter_handle, :mention, convert_args, nil, user) if !tweet_requeued
-          end
-        end
+      if convert_args[:check_smart_filter] && !self_tweeted?
+        Social::Gnip::SmartFilterTweetToTicketWorker.perform_async({:tweet => @tweet_json, :data => args}) 
       else
-        notable = add_as_ticket(@tweet_obj, @twitter_handle, :mention, convert_args, nil, user) if convert_args[:convert]
+        process_tweet_to_ticket(account, args, convert_args)
       end
-
-      if !tweet_requeued
-        dynamo_feed_attr = fd_info(notable, user)
-        update_tweet_time_in_redis(@posted_time) #unless @queue.approximate_number_of_messages > MSG_COUNT_FOR_UPDATING_REDIS
-        update_dynamo(args, convert_args, dynamo_feed_attr, @tweet_obj)
-      end
-
       User.reset_current_user
       Account.reset_current_account
     end
   end
+
 
   def reply?
     !@in_reply_to.blank?

@@ -281,6 +281,8 @@ class PartnerAdmin::AffiliatesController < ApplicationController
     end
 
     def activity_info(account_id)
+      shard = ShardMapping.fetch_by_account_id(account_id)
+      return {} if shard.pod_info != PodConfig['CURRENT_POD']
       Sharding.select_shard_of(account_id) do 
         Sharding.run_on_slave do
           account = Account.find_by_id(account_id)

@@ -1,11 +1,12 @@
 class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
 
   include Social::Twitter::Constants
+  include Social::SmartFilter
 
   before_filter { access_denied unless current_account.basic_twitter_enabled? }
   before_filter :add_stream_allowed?, :only => [:new, :create]
   before_filter :load_item, :only => [:edit, :update, :destroy]
-  before_filter :load_ticket_rules, :only => [:edit]
+  before_filter :load_ticket_rules, :load_smart_filter_rule, :only => [:edit]
   before_filter :validate_params, :only => [:create, :update]
   
 
@@ -59,6 +60,7 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
     update_twitter_stream if params[:twitter_stream] and @ticket_error_flash.nil?
     update_dm_rule(@twitter_handle) if params[:dm_rule] and @ticket_error_flash.nil?
     update_ticket_rules if params[:social_ticket_rule] and @ticket_error_flash.nil?    
+    update_smart_filter_rule if params[:smart_filter_rule] and @ticket_error_flash.nil? #check if smart filter is enables
 
     unless @ticket_error_flash.nil?
       flash[:notice] = @ticket_error_flash
@@ -69,7 +71,10 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
     end
   end
 
-
+  def smart_filter_feature_enabled?
+    Account.current.twitter_smart_filter_enabled?
+  end
+ 
   def destroy
     unless @twitter_stream.data[:kind] == TWITTER_STREAM_TYPE[:default]
       flash[:notice] = t('admin.social.flash.stream_deleted', :stream_name => @twitter_stream.name)
@@ -126,10 +131,15 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
   end
   
   def construct_handle_params
-    {
+    social_twitter_handle = {
       :product_id           => params[:social_twitter_handle][:product_id],
       :dm_thread_time       => params[:social_twitter_handle][:dm_thread_time]
     }
+    if smart_filter_feature_enabled? && update_smart_filter_setting? 
+      Social::SmartFilterInitWorker.perform_async({:smart_filter_init_params => smart_filter_init_params, :account_id => Account.current.id}) if @twitter_handle.smart_filter_enabled.nil?
+      social_twitter_handle.merge!({:smart_filter_enabled => params[:smart_filter_enabled]})
+    end
+    social_twitter_handle
   end
 
   def update_ticket_rules
@@ -163,10 +173,28 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
     end
     delete_rules(deleted_rules.compact) 
   end
+
+  def update_smart_filter_rule
+    rule = params[:smart_filter_rule]
+    if params[:smart_filter_enabled] == SMART_FILTER_ON
+      smart_rule_params = @twitter_stream.build_smart_rule(rule)
+      if rule[:ticket_rule_id].empty?
+        ticket_rule = @twitter_stream.ticket_rules.new(smart_rule_params)
+        ticket_rule.save
+      else
+        @twitter_stream.ticket_rules.find_by_id(rule[:ticket_rule_id]).update_attributes(smart_rule_params)
+      end  
+    else
+      delete_rules(rule[:ticket_rule_id])
+      #delete if rule exist
+    end    
+  end
+
   
   def delete_rules(deleted_rules)
     Social::TicketRule.delete_all ["id IN (?) AND account_id = ? AND stream_id =?", deleted_rules, current_account.id, @twitter_stream.id] unless deleted_rules.empty?
   end
+
 
   def gnip_data
    {
@@ -197,6 +225,10 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
     @ticket_rules = @twitter_stream.ticket_rules
   end
 
+  def load_smart_filter_rule
+    @smart_filter_rule = @twitter_stream.smart_filter_rule
+  end
+
   def construct_filter_data
     excluded_handles = {:exclude_twitter_handles => []}
     params[:twitter_stream][:filter].split(',').map{|f| excluded_handles[:exclude_twitter_handles] << f.gsub(/^@/,'')}
@@ -218,6 +250,16 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
     end
     product_id = product_id.blank? ? nil : product_id.to_i 
   end
-  
-end
 
+  def update_smart_filter_setting?
+    return false if @twitter_handle.smart_filter_enabled.nil? && 
+                    params[:smart_filter_enabled] != SMART_FILTER_ON 
+    true        
+  end
+
+   def smart_filter_init_params 
+    {
+      "account_id" => @twitter_handle.twitter_user_id
+    }.to_json
+  end
+end
