@@ -14,7 +14,7 @@ class ControllerLogSubscriber <  ActiveSupport::LogSubscriber
       controller_logger = custom_logger(log_file)
       controller_logger.info "#{log_format}"
     rescue Exception => e
-      NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Error occoured while capturing controller logs for #{path}"}})
+      NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Error occoured while capturing controller logs for #{payload[:path]}"}})
     end
   end
 
