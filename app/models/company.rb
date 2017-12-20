@@ -166,6 +166,7 @@ class Company < ActiveRecord::Base
     end
 
     define_method("#{attribute}=") do |value|
+      value = value.to_time if attribute == :datetime_cc01
       self.flexifield.send("#{attribute}=", value)
     end
   end
