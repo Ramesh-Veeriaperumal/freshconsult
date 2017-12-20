@@ -30,6 +30,9 @@ allOf:
         type: array
         items:
           type: string
+      email_failure_count:
+        type: integer
+        format: int64
       source:
         type: integer
         format: int64

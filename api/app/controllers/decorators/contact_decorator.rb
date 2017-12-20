@@ -3,7 +3,8 @@ class ContactDecorator < ApiDecorator
 
   delegate  :id, :active, :address, :company_name, :deleted, :description,
             :customer_id, :email, :job_title, :language, :mobile,
-            :name, :phone, :time_zone, :twitter_id, :avatar, :whitelisted, :unique_external_id, :fb_profile_id, to: :record
+            :name, :phone, :time_zone, :twitter_id, :fb_profile_id, :external_id,
+            :avatar, :whitelisted, :unique_external_id, :fb_profile_id, to: :record
   delegate :company_id, :client_manager, to: :default_company, allow_nil: true
   delegate :multiple_user_companies_enabled?, :unique_contact_identifier_enabled?, to: 'Account.current'
 
@@ -62,17 +63,30 @@ class ContactDecorator < ApiDecorator
     (User.current.privilege?(:view_contacts) || User.current.id == id) ? to_full_hash : to_restricted_hash
   end
 
+  def other_company_items
+    record.user_companies.preload(:company).map do |c|
+      company_hash(c) if c.company.present? && !c.default
+    end.compact
+  end
+
   def to_search_hash
-    {
+    response_hash = {
       id: id,
       name: name,
       email: email,
       phone: phone,
+      mobile: mobile,
       company_id: company_id,
       company_name: company_name,
       avatar: avatar_hash,
-      twitter_id: twitter_id
+      twitter_id: twitter_id,
+      facebook_id: fb_profile_id,
+      external_id: external_id,
+      unique_external_id: unique_external_id,
+      other_emails: other_emails
     }
+    response_hash[:other_companies] = other_company_items if multiple_user_companies_enabled?
+    response_hash
   end
 
   def restricted_requester_hash
@@ -137,9 +151,12 @@ class ContactDecorator < ApiDecorator
                                        created_at: created_at.try(:utc),
                                        updated_at: updated_at.try(:utc),
                                        facebook_id: fb_profile_id,
+                                       external_id: external_id,
+                                       unique_external_id: unique_external_id,
                                        blocked: record.blocked?,
                                        spam: record.spam?,
-                                       deleted: record.deleted)
+                                       deleted: record.deleted,
+                                       parent_id: record.parent_id)
       response_hash[:custom_fields] = custom_fields if custom_fields.present?
       response_hash.merge(company_info)
     end

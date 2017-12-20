@@ -3,7 +3,8 @@
     description: Updates the activation email address with the given email address.
     tags: [onboarding]
     parameters:
-      - in: body
+      - name: data
+        in: body
         description: New activation email
         schema:
           $ref: '#/definitions/onboarding_update_activation_email_input'

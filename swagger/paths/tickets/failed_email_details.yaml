@@ -1,0 +1,21 @@
+get:
+  tags: [ticket]
+  description: Retrieving the details of failed emails
+  parameters:
+    - $ref: '#/parameters/id'
+    - name: note_id
+      in: query
+      type: number
+      description: Note Id corresponding to the conversation of failed email
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/email_failures'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    404:
+      description: Ticket not found
+

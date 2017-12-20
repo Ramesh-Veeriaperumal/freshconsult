@@ -77,7 +77,7 @@ class FreshcallerProxyController < ApplicationController
   
   private
     def authenticated_agent_check
-      render :status => Rack::Utils::SYMBOL_TO_STATUS_CODE[:unauthorized] if current_user.blank? || !current_user.agent?
+      render :json => { error: "unauthorized" }, :status => Rack::Utils::SYMBOL_TO_STATUS_CODE[:unauthorized] if current_user.blank? || !current_user.agent?
     end
 
     def validate_params

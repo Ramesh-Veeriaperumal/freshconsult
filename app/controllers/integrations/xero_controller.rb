@@ -15,8 +15,8 @@
     session[:xero_request_secret] = request_token.secret  
     redirect_to request_token.authorize_url
     rescue Exception => e 
-      Rails.logger.error "Xero Exception #{e}"
-      NewRelic::Agent.notice_error(e,{:description => "Xero Exception"})
+      Rails.logger.error "Xero Exception #{e} : #{e.message} : #{e.backtrace}"
+      NewRelic::Agent.notice_error(e,{:description => "Xero Exception #{e} : #{e.message}"})
       flash[:notice] = t(:'flash.application.install.error') 
       redirect_to integrations_applications_path
   end
@@ -224,8 +224,8 @@
     invoice.save
     render :json => { :invoice_details => { "invoice_number" => invoice.invoice_number ,"invoice_id" => invoice.invoice_id } }
     rescue Exception => e       
-      Rails.logger.error "XeroController#create_invoices #{e}"
-      NewRelic::Agent.notice_error(e,{:description => "some Validation errors might have occured"})
+      Rails.logger.error "XeroController#create_invoices #{e} : #{e.message} : #{e.backtrace}"
+      NewRelic::Agent.notice_error(e,{:description => "Xero Exception #{e} - #{e.message}"})
       render :text => "A validation exception has occured"
   end
 

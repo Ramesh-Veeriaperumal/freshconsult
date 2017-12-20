@@ -93,6 +93,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_missed_call_params
+    User.current = @account.users.first
     set_auth_header
     call_id = Random.rand(1000)
     create_call(fc_call_id: call_id)
@@ -101,6 +102,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     call = ::Freshcaller::Call.last
     match_json(ticket_only_pattern(call))
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+    assert_equal User.current, nil
   end
 
   def test_update_with_voicemail_params
@@ -115,11 +117,15 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_convert_call_to_ticket_params
+    ::Freshcaller::Call.destroy_all
     set_auth_header
     call_id = Random.rand(1000)
-    create_call(fc_call_id: call_id)
-    put :update, construct_params(convert_call_params(call_id, 'completed'))
-    call = ::Freshcaller::Call.last
+    user = @account.technicians.first
+    create_call(fc_call_id: call_id, account_id: @account.id)
+    params = convert_call_params(call_id, 'completed').merge(agent_email: user.email)
+    put :update, construct_params(params)
+    call = ::Freshcaller::Call.where(fc_call_id: call_id).all.first
+    assert_equal user.id, call.notable.notable.responder_id
     match_json(ticket_with_note_pattern(call))
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
   end

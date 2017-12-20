@@ -2,7 +2,9 @@
   <%= render :partial => 'ticket_rule_form', :locals => { :ticket_rule => @twitter_stream.new_ticket_rule} %>
 <% else %>
   <% @ticket_rules.each_with_index do |ticket_rule| %>
-    <%= render :partial => 'ticket_rule_form', :locals => { :ticket_rule => ticket_rule}%>
+    <% if ticket_rule[:rule_type].nil? %>
+      <%= render :partial => 'ticket_rule_form', :locals => { :ticket_rule => ticket_rule}%>
+      <% end %>
   <% end %>
 <% end %>
 <a href="" id="add_new_rule" class="add-another"><%= font_icon "plus", :size=>"14" %><%= t('admin.social.ticket_rules.add') %></a>

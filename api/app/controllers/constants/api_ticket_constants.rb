@@ -14,6 +14,7 @@ module ApiTicketConstants
                      email phone twitter_id facebook_id requester_id name
                      responder_id internal_agent_id status subject type product_id company_id
                      skip_close_notification).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
+  PARSE_TEMPLATE_FIELDS = [:template_text].freeze
   BULK_REPLY_FIELDS = [reply: ([:body, :from_email, :attachment_ids] | AttachmentConstants::CLOUD_FILE_FIELDS)].freeze
   BULK_UPDATE_FIELDS = (UPDATE_FIELDS - ['attachments']).freeze
   EXECUTE_SCENARIO_FIELDS = BULK_EXECUTE_SCENARIO_FIELDS = %w(scenario_id).freeze

@@ -19,6 +19,7 @@ module Ember
     include SharedOwnershipTestHelper
     include TicketTemplateHelper
     include AwsTestHelper
+    include TicketActivitiesTestHelper
     include TicketTemplateHelper
 
     CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date).freeze
@@ -586,6 +587,81 @@ module Ember
       assert_response 201
     ensure
       Account.any_instance.unstub(:multiple_user_companies_enabled?)
+    end
+
+    def test_parse_template
+      t = create_ticket
+      params = {
+        id: t.display_id,
+        template_text: 'test # {{ticket.id}}',
+        version: 'private'
+      }
+      post :parse_template, construct_params(params, false)
+      assert_response 200
+      str = "test # #{t.display_id}"
+      match_json({ evaluated_text: str })
+    end
+
+    def test_parse_template_malformed
+      t = create_ticket
+      params = {
+        id: t.display_id,
+        template_text: 'test # {% if my_variable == blank %}',
+        version: 'private'
+      }
+      post :parse_template, construct_params(params, false)
+      assert_response 400
+      match_json([bad_request_error_pattern('template_text', :"is invalid")])
+    end
+
+    def test_parse_template_without_param
+      t = create_ticket
+      params = {
+        id: t.display_id,
+        version: 'private'
+      }
+      post :parse_template, construct_params(params, false)
+      assert_response 400
+    end
+
+    def test_parse_template_custom_field
+      ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
+      t = create_ticket(custom_field: { ticket_field.name => 'Sample Text' })
+      params = {
+        id: t.display_id,
+        template_text: 'test # {{ticket.id}} {{ticket.test_custom_text}}',
+        version: 'private'
+      }
+      post :parse_template, construct_params(params, false)
+      assert_response 200
+      str = "test # #{t.id} Sample Text"
+      match_json({ evaluated_text: str })
+    end
+
+    def test_parse_template_with_nested_placeholders
+      agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+      t = create_ticket({ responder_id: agent.id, requester_id: agent.id })
+      params = {
+        id: t.display_id,
+        template_text: 'test # {{ticket.requester.email}} {{ticket.agent.email}}',
+        version: 'private'
+      }
+      post :parse_template, construct_params(params, false)
+      assert_response 200
+      str = "test # #{t.requester.email} #{t.agent.email}"
+      match_json({ evaluated_text: str })
+    end
+
+    def test_parse_template_without_placeholders
+      t = create_ticket
+      params = {
+        id: t.display_id,
+        template_text: 'test #',
+        version: 'private'
+      }
+      post :parse_template, construct_params(params, false)
+      assert_response 200
+      match_json({ evaluated_text: 'test #' })
     end
 
     def test_create_with_section_fields_with_type_as_parent
@@ -2278,6 +2354,79 @@ module Ember
       match_json(ticket_show_pattern(ticket))
     ensure
       Account.current.add_feature(:collaboration)
+    end
+
+    def test_suppression_list_alert
+      ticket = create_ticket
+      drop_email = Faker::Internet.email
+      params_hash = { drop_email: drop_email }
+      @controller.stubs(:private_api?).returns(true)
+      post :suppression_list_alert, controller_params({ version: 'private', id: ticket.display_id, drop_email: drop_email})
+      assert_response 204
+      ensure
+        @controller.unstub(:private_api?)
+    end
+
+    def test_suppression_list_alert_without_params
+      @controller.stubs(:private_api?).returns(true)
+      post :suppression_list_alert, controller_params({ version: 'private', id: ticket.display_id })
+      assert_response 400
+      ensure
+        @controller.unstub(:private_api?)
+    end
+
+     def test_suppression_list_alert_with_invalid_ticket_id
+      ticket = create_ticket
+      @controller.stubs(:private_api?).returns(true)
+      post :suppression_list_alert, controller_params({ version: 'private', id: ticket.display_id+20 })
+      assert_response 404
+      ensure
+        @controller.unstub(:private_api?)
+    end
+
+    def test_failed_email_details_note
+      @ticket = create_ticket
+      @note = create_note(custom_note_params(@ticket, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[:email],true,0))
+      stub_data = email_failures_note_activity
+      @controller.stubs(:get_object_activities).returns(stub_data)
+      @controller.stubs(:private_api?).returns(true)
+      params_hash = { note_id: @note.id }
+      get :fetch_errored_email_details, controller_params({version: 'private', id: @ticket.display_id }, params_hash)
+      match_json(failed_emails_note_pattern(stub_data))
+      assert_response 200
+      ensure
+         @controller.unstub(:get_object_activities)
+         @controller.unstub(:private_api?)
+    end
+
+    def test_failed_email_details_ticket
+      @ticket = create_ticket
+      stub_data = email_failures_ticket_activity
+      @controller.stubs(:get_object_activities).returns(stub_data)
+      @controller.stubs(:private_api?).returns(true)
+      get :fetch_errored_email_details, controller_params({version: 'private', id: @ticket.display_id})
+      match_json(failed_emails_ticket_pattern(stub_data))
+      assert_response 200
+      ensure
+         @controller.unstub(:get_object_activities)
+         @controller.unstub(:private_api?)
+    end
+
+    def test_failed_email_details_with_invalid_ticket_id
+      ticket = create_ticket
+      get :fetch_errored_email_details, controller_params({version: 'private', id: ticket.display_id+20 })
+      assert_response 404
+    end
+
+    def test_failed_email_details_with_invalid_data
+      ticket = create_ticket
+      @controller.stubs(:private_api?).returns(true)
+      @controller.stubs(:get_object_activities).returns(false)
+      get :fetch_errored_email_details, controller_params({version: 'private', id: ticket.display_id })
+      assert_response 400
+      ensure
+         @controller.unstub(:get_object_activities)
+         @controller.unstub(:private_api?)
     end
 
     def test_create_child_with_template

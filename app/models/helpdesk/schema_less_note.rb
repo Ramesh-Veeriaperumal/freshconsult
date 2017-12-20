@@ -3,6 +3,7 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 	include RabbitMq::Publisher
 	# Including this because we are doing business hour calculation in rabbitmq for reports
 	include BusinessHoursCalculation
+	include Helpdesk::EmailFailureMethods
 
 	self.table_name =  "helpdesk_schema_less_notes"
 	self.primary_key = :id
@@ -28,22 +29,6 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 
 	attr_protected :note_id, :account_id
 	validate :cc_and_bcc_emails_count
-
-	def dynamodb_range_key
-		note_properties[:dynamodb_range_key]
-	end
-
-	def dynamodb_range_key=(value)
-		note_properties[:dynamodb_range_key] = value.to_i
-	end
-
-	def failure_count
-		note_properties[:failure_count]
-	end
-
-	def failure_count=(value)
-		note_properties[:failure_count] = value.to_i
-	end
 
 	def self.resp_time_column
 		:int_nc02
@@ -107,4 +92,11 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 		end
 		return true
 	end
+
+	private
+
+	def email_failures
+		note_properties
+	end
+	
 end

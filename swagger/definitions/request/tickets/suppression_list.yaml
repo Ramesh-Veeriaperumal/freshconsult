@@ -1,0 +1,8 @@
+type: object
+required:
+  - drop_email
+properties:
+  drop_email:
+    type: string
+    description: Email Id which has to be unblocked
+

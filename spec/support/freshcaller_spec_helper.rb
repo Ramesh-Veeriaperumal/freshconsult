@@ -37,6 +37,10 @@ module FreshcallerSpecHelper
     }
   end
 
+  def create_test_freshcaller_agent
+    Freshcaller::Agent.create(account_id: @account.id, agent_id: @agent.id, fc_enabled: true, fc_user_id: 1)
+  end
+
   def freshcaller_account_signup
     {
       :freshcaller_account_id => 1,
@@ -54,5 +58,13 @@ module FreshcallerSpecHelper
         :account_full_domain => "Domain already taken"
       }
     }
+  end
+
+  def freshcaller_account_linking
+    { user_emails: [Faker::Internet.email, Faker::Internet.email], freshcaller_account_id: 2, freshcaller_account_domain: Faker::Internet.url }
+  end
+
+  def freshcaller_account_linking_error
+    { error: 'Account Not found'}
   end
 end

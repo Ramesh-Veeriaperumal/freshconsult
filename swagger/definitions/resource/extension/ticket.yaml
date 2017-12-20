@@ -29,6 +29,9 @@ allOf:
         enum: [1,2,3,4]
       associated_tickets_count:
         type: integer
+      email_failure_count:
+        type: integer
+        format: int64
       description_text:
         type: string
       cloud_files:

@@ -114,7 +114,7 @@ api_error_messages:
   invalid_image_file: "Invalid file type(%{current_extension}). Please upload a jpg or png or gif or svg file"
   shorter_full_text: "Content of full text should be greater than that of body"
   invalid_full_text: "Content of full text is different from that of body"
-  query_format_invalid: "Given query is invalid, expected format \"keyword1:value  OPERATOR keyword3:'string' OPERATOR keyword4:>'yyyy-mm-dd'\". Space is mandatory between key/value pair and operator. Please check the paranthesis if there are any."
+  query_format_invalid: "Given query is invalid, expected format \"keyword:value  OPERATOR keyword:'string' OPERATOR keyword:>'yyyy-mm-dd' OPERATOR keyword:<integer\". Space is mandatory between key/value pair and operator. Please check the paranthesis if there are any."
   cannot_set_pending_since: "It cannot be set, when created_at and updated_at are not set or status is not pending"
   duplicate_companies: "One or more duplicate company_ids found"
   cant_add_primary_resource_to_others: "Cannot add %{resource} to %{attribute} since it is %{status}"
@@ -143,6 +143,7 @@ api_error_messages:
   # Dashboard activities
   either_since_id_or_before_id: "Specify since_id or before_id, not both"
   missing_contact_detail: "Please enter at least one contact detail"
+  unassociated_values: "Values unassociated with the given users found, %{invalid_values}"
   no_freshcaller_account: "No Freshcaller account exists"
   outbound_limit_exceeded: "You can send a maximum of 5 outbound emails a day per account during the trial period"
   recipient_limit_exceeded: "You cannot email more than five people at once when you're on trial"

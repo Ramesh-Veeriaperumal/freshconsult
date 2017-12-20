@@ -79,11 +79,17 @@ module Social::Util
   def fb_feed_info(fd_item, user, feed)
     koala_feed = feed.koala_feed
     attributes = fd_info(fd_item, user)
-    
+
     attributes.merge!({:type           => feed.type })    
     attributes.merge!({:parent_comment => koala_feed.parent[:id]}) if feed.instance_of?(Facebook::Core::ReplyToComment)
     attributes.merge!({:likes          => koala_feed.likes}) if koala_feed.instance_of?(Facebook::KoalaWrapper::Post)
     attributes
+  end
+
+  def smart_filter_info(num)
+    {
+      "smart_filter_response" => num
+    }
   end
 
   def fd_info(notable, user)

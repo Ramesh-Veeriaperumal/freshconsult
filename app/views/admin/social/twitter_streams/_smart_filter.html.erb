@@ -1,0 +1,6 @@
+<% if smart_filter_rule.blank? %>
+
+  <%= render :partial => 'smart_filter_form', :locals => { :ticket_rule => @twitter_stream.new_ticket_rule} %>
+<% else %>
+    <%= render :partial => 'smart_filter_form', :locals => { :ticket_rule => smart_filter_rule}%>
+<% end %>
