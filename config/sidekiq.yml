@@ -1,6 +1,7 @@
 defaults: &defaults
   host: localhost
   port: 6379
+  namespace: sidekiqbj
   keepalive: 10
 
 development:

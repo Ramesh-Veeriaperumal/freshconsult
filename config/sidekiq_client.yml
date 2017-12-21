@@ -3,7 +3,6 @@ defaults: &defaults
   :require: ./config/environment.rb
   :concurrency: 5
   :redis_pool_size: 5
-  :redis_namespace: sidekiqbj
   :logfile: ./log/sidekiq.log
   :timeout: 30
   :queues:
