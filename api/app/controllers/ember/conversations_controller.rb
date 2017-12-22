@@ -20,7 +20,7 @@ module Ember
     before_filter :link_tickets_enabled?, only: [:broadcast]
 
     SINGULAR_RESPONSE_FOR = %w(reply forward create update tweet facebook_reply reply_to_forward broadcast).freeze
-    SLAVE_ACTIONS = %w(ticket_conversations reply_template forward_template note_forward_template latest_note_forward_template reply_to_forward_template).freeze
+    SLAVE_ACTIONS = %w(ticket_conversations).freeze
 
     def ticket_conversations
       validate_filter_params
@@ -439,4 +439,5 @@ module Ember
 
       wrap_parameters(*wrap_params)
   end
+
 end

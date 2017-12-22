@@ -360,7 +360,7 @@ module Ember
       end
 
       def optimized_count(items)
-        if !default_filter? && current_account.count_es_enabled? && non_indexed_columns_query?
+        if !default_filter? && current_account.count_es_enabled?
           ::Search::Tickets::Docs.new(wf_query_hash).count(Helpdesk::Ticket)
         else
           items.count
@@ -369,10 +369,6 @@ module Ember
 
       def default_filter?
         !@delegator.ticket_filter.respond_to?(:id)
-      end
-
-      def non_indexed_columns_query?
-        (wf_query_hash.collect { |q| q['condition'] } - (TicketConstants::DB_INDEXED_QUERY_COLUMNS + %w(spam deleted))).count > 0
       end
 
       def sanitize_filter_params
@@ -519,3 +515,4 @@ module Ember
       wrap_parameters(*wrap_params)
   end
 end
+
