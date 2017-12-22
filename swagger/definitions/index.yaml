@@ -94,6 +94,8 @@
     $ref: ./request/companies/company_export.yaml
   integrated_resource_create:
     $ref: ./request/integrated_resources/integrated_resource.yaml
+  profile_input:
+    $ref: ./request/profiles/profile.yaml
   agent_input:
     $ref: ./request/agents/agent.yaml
   bulk_agent_input:
@@ -126,6 +128,8 @@
     $ref: ./resource/attachment.yaml
   agent:
     $ref: ./resource/agent.yaml
+  profile:
+    $ref: ./resource/profile.yaml
   sla_policy:
     $ref: ./resource/sla_policy.yaml
   draft:

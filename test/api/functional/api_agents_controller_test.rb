@@ -135,12 +135,6 @@ class ApiAgentsControllerTest < ActionController::TestCase
     assert_nil response.headers['Link']
   end
 
-  def test_me
-    get :me, controller_params
-    assert_response 200
-    match_json(agent_pattern_with_additional_details(@agent))
-  end
-
   # Agent email filter, passing an array to the email attribute
 
   def test_agent_filter_email_array

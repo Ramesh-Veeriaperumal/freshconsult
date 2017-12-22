@@ -913,79 +913,6 @@
         }
       }
     },
-    "/tickets/{id}/notify_collab": {
-      "post": {
-        "tags": [
-            "ticket"
-          ],
-        "summary": "Send collab notifications",
-        "description": "Send notifications for collab related activity.",
-        "parameters": [
-          {
-            "$ref": "#/parameters/id"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "type": "string",
-            "required": true
-          },
-          {
-            "name": "m_ts",
-            "in": "body",
-            "type": "string",
-            "required": true
-          },
-          {
-            "name": "m_type",
-            "in": "body",
-            "type": "string",
-            "required": true
-          },
-          {
-            "name": "metadata",
-            "in": "body",
-            "type": "string",
-            "required": true
-          },
-          {
-            "name": "mid",
-            "in": "body",
-            "type": "string",
-            "required": true
-          },
-          {
-            "name": "token",
-            "in": "body",
-            "type": "string",
-            "required": true
-          },
-          {
-            "name": "top_members",
-            "in": "body",
-            "type": "string",
-            "required": true
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Success"
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          },
-          "404": {
-            "description": "Ticket not found"
-          }
-        }
-      }
-    },
     "/tickets/{id}/draft": {
       "post": {
         "tags": [
@@ -3580,28 +3507,6 @@
         }
       }
     },
-    "/agents/me": {
-      "get": {
-        "tags": [
-          "agent"
-        ],
-        "summary": "Show me",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/agent"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          },
-          "404": {
-            "description": "Resource not found"
-          }
-        }
-      }
-    },
     "/agents/{id}/achievements": {
       "get": {
         "tags": [
@@ -3662,6 +3567,135 @@
             "schema": {
               "$ref": "#/definitions/bad_request_error"
             }
+          }
+        }
+      }
+    },
+    "/agents/{id}/assume_identity": {
+      "put": {
+        "tags": [
+          "agent"
+        ],
+        "summary": "Assume Identity",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "format": "int64",
+            "description": "User ID of the Agent",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/agents/revert_identity": {
+      "get": {
+        "tags": [
+          "agent"
+        ],
+        "summary": "Revert Identity",
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/agents/me": {
+      "get": {
+        "tags": [
+          "profile"
+        ],
+        "summary": "Show my profile",
+        "parameters": [
+          {
+            "name": "only",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/profile"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "profile"
+        ],
+        "summary": "Update my profile",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/profile_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/profile"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/agents/me/reset_api_key": {
+      "post": {
+        "tags": [
+          "profile"
+        ],
+        "summary": "Reset API Key",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/profile"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
           }
         }
       }
@@ -4970,6 +5004,9 @@
                       "items": {
                         "type": "integer"
                       }
+                    },
+                    "is_assumed_user": {
+                      "type": "boolean"
                     },
                     "next_level_id": {
                       "type": "object"
@@ -6519,6 +6556,26 @@
         }
       }
     },
+    "profile_input": {
+      "type": "object",
+      "properties": {
+        "time_zone": {
+          "type": "string"
+        },
+        "job_title": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string"
+        },
+        "signature": {
+          "type": "string"
+        },
+        "shortcuts_enabled": {
+          "type": "boolean"
+        }
+      }
+    },
     "agent_input": {
       "type": "object",
       "properties": {
@@ -7015,6 +7072,128 @@
         "updated_at": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "profile": {
+      "type": "object",
+      "properties": {
+        "agent": {
+          "type": "object",
+          "properties": {
+            "available": {
+              "type": "boolean"
+            },
+            "occasional": {
+              "type": "boolean"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "ticket_scope": {
+              "type": "string"
+            },
+            "signature": {
+              "type": "string"
+            },
+            "group_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "role_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "available_since": {
+              "type": "string"
+            },
+            "contact": {
+              "type": "object",
+              "properties": {
+                "active": {
+                  "type": "boolean"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "job_title": {
+                  "type": "string"
+                },
+                "language": {
+                  "type": "string"
+                },
+                "mobile": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "phone": {
+                  "type": "string"
+                },
+                "time_zone": {
+                  "type": "string"
+                },
+                "avatar": {
+                  "$ref": "#/definitions/avatar"
+                }
+              }
+            },
+            "created_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "updated_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "last_active_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "assumable_agents": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "preferences": {
+              "type": "object",
+              "properties": {
+                "shortcuts_enabled": {
+                  "type": "boolean"
+                },
+                "shortcuts_mapping": {
+                  "type": "array"
+                },
+                "notification_timestamp": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "show_onBoarding": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "api_key": {
+              "type": "string"
+            }
+          }
+        },
+        "meta": {
+          "type": "object",
+          "properties": {
+            "csrf_token": {
+              "type": "string"
+            },
+            "freshid_profile_url": {
+              "type": "string"
+            }
+          }
         }
       }
     },

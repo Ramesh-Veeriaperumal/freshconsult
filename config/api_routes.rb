@@ -80,12 +80,12 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :agents, controller: 'api_agents', only: [:index, :show, :update, :destroy] do
-      collection do
-        get :me
-      end
-    end
+    match 'agents/me' => 'api_profiles#show', :defaults => { format: 'json', id: 'me' }, via: :get
+    match 'agents/me' => 'api_profiles#update', :defaults => { format: 'json', id: 'me' }, via: :put
+    match 'agents/me/reset_api_key' => 'api_profiles#reset_api_key', :defaults => { format: 'json', id: 'me' }, via: :post
 
+    resources :agents, controller: 'api_agents', only: [:index, :show, :update, :destroy]
+    
     resources :surveys, only: [:index] do
       collection do
         get :satisfaction_ratings, to: 'satisfaction_ratings#index'
@@ -338,11 +338,12 @@ Helpkit::Application.routes.draw do
 
     resources :agents, controller: 'ember/agents', only: [:index, :show, :update], id: /\d+/ do
       collection do
-        get :me
         post :create_multiple
+        get :revert_identity
       end
       member do
         get :achievements
+        put :assume_identity
       end
     end
 

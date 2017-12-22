@@ -2,9 +2,10 @@ module Ember
   class AgentsController < ApiAgentsController
     include Helpdesk::DashboardHelper
     include AgentAvailabilityHelper
+    include AgentContactConcern
     include HelperConcern
 
-    decorate_views(decorate_object: [:show, :me, :achievements], decorate_objects: [:index, :create_multiple])
+    decorate_views(decorate_object: [:show, :achievements], decorate_objects: [:index, :create_multiple])
 
     def constants_class
       :AgentConstants.to_s.freeze

@@ -189,9 +189,18 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     match_json(agent_achievements_pattern(sample_agent))
   end
 
-  def test_me
-    get :me, controller_params(version: 'private')
-    assert_response 200
-    match_json(private_api_agent_pattern(@agent.agent))
+  def test_agent_assume_identity
+    user = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    add_privilege(User.current, :manage_users)
+    put :assume_identity, construct_params({ version: 'private', id: user.id }, {})
+    assert_response 204
+  end
+  
+  def test_revert_identity
+    user = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    add_privilege(User.current, :manage_users)
+    put :assume_identity, construct_params({ version: 'private', id: user.id }, {})
+    get :revert_identity, construct_params(version: 'private')
+    assert_response 204
   end
 end

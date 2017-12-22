@@ -1,8 +1,6 @@
 class ApiAgentsController < ApiApplicationController
-  SLAVE_ACTIONS = %w(index me achievements).freeze
-  def me
-    render "#{controller_path}/show"
-  end
+  skip_before_filter :check_privilege, only: :revert_identity
+  SLAVE_ACTIONS = %w(index achievements).freeze
 
   def update
     assign_protected
@@ -29,8 +27,8 @@ class ApiAgentsController < ApiApplicationController
     end
 
     def load_object
-      params[:id] = api_current_user.id if me?
-      @item = scoper.find_by_user_id(params[:id])
+      @item = api_current_user.id if me? || current_action?('revert_identity')
+      @item ||= scoper.find_by_user_id(params[:id])
       log_and_render_404 unless @item
     end
 
