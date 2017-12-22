@@ -44,13 +44,11 @@ module Helpdesk::TicketModelExtension
   DESCRIPTION_INDEX_DEFAULT = 3
 
   def self.default_export_fields_order
-    @default_export_fields ||= begin
-      exportable_fields = Helpdesk::TicketModelExtension.allowed_fields
-      fields = Hash[*exportable_fields.map { |i| [i[1], i[4]] }.flatten ]
-      fields["description"]   = DESCRIPTION_INDEX_DEFAULT
-      fields["product_name"]  = fields.keys.length+1
-      fields
-    end
+    exportable_fields = Helpdesk::TicketModelExtension.allowed_fields
+    fields = Hash[*exportable_fields.map { |i| [i[1], i[4]] }.flatten ]
+    fields["description"]   = DESCRIPTION_INDEX_DEFAULT
+    fields["product_name"]  = fields.keys.length+1
+    fields
   end
 
   def self.custom_export_fields_order account = Account.current
