@@ -37,6 +37,11 @@ module AuthenticationSystem
         false
       end
     end
+    
+    def delete_assume_user_keys
+      session.delete :assumed_user if session.has_key?(:assumed_user)
+      session.delete :original_user if session.has_key?(:original_user)
+    end
 
     def allowed_to_assume_with_api?(user)
       return false if !user.api_assumable?

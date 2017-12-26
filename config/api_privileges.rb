@@ -91,7 +91,7 @@ Authority::Authorization::PrivilegeList.build do
 
   manage_users do
     resource :"ember/contact", only: %i[make_agent assume_identity]
-    resource :"ember/agent", only: %i[show create_multiple]
+    resource :"ember/agent", only: %i[show create_multiple assume_identity]
   end
 
   delete_topic do

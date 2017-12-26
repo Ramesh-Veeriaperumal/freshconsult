@@ -1,0 +1,12 @@
+post:
+  tags: [profile]
+  summary: Reset API Key
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/profile'
+    404:
+      description: Resource not found
+    403:
+      description: Access denied

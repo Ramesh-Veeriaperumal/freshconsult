@@ -29,4 +29,8 @@ module Freshid::ControllerMethods
     account ||= current_account
     @freshid_enabled ||= account.freshid_enabled?
   end
+
+  def freshid_profile_url
+    Freshid::Config.profile_url(Freshid::Config.login_url(freshid_authorize_callback_url, freshid_logout_url))
+  end
 end
