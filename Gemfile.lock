@@ -64,6 +64,8 @@ GIT
   remote: git://github.com/freshdesk/rate-limiting.git
   revision: f43173165c95b5ba9f72a1298050d2b2431d7606
   tag: v1.1
+  revision: 5ae767dc1454d9b9669a381b7ca0674d3c813f59
+  tag: v1.2
   specs:
     rate-limiting (1.0.4)
       json
@@ -89,7 +91,7 @@ GIT
 
 GIT
   remote: git://github.com/freshdesk/semian.git
-  revision: b9efc464ba48a4e60fffa19f18cbdbfe9163a11e
+  revision: a0f7118894676312111476f10b8afdc1477d091c
   branch: fd_master
   specs:
     semian (0.7.1)
