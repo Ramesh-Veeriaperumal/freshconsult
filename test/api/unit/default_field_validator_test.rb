@@ -15,6 +15,7 @@ class DefaultFieldValidatorTest < ActionView::TestCase
                 required_fields: DefaultFieldValidatorTestHelper.required_fields,
                 field_validations: DefaultFieldValidatorTestHelper.default_field_validations
               }
+
     validates :attribute1, default_field: {
       required_fields: [],
       field_validations: {}
