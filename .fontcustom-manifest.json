@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "58162c745893d91f33eabc2de13cfa2c110249eb2c5579ebc1f4d138621510c9",
-    "current": "58162c745893d91f33eabc2de13cfa2c110249eb2c5579ebc1f4d138621510c9"
+    "previous": "ab56f50c38c192d0ce9ad2f3924cfef57f5d357b2ef77bb89f636cca1e394e75",
+    "current": "ab56f50c38c192d0ce9ad2f3924cfef57f5d357b2ef77bb89f636cca1e394e75"
   },
   "fonts": [
-    "public/assets/glyphs_58162c745893d91f33eabc2de13cfa2c.ttf",
-    "public/assets/glyphs_58162c745893d91f33eabc2de13cfa2c.svg",
-    "public/assets/glyphs_58162c745893d91f33eabc2de13cfa2c.woff",
-    "public/assets/glyphs_58162c745893d91f33eabc2de13cfa2c.eot"
+    "public/assets/glyphs_ab56f50c38c192d0ce9ad2f3924cfef5.ttf",
+    "public/assets/glyphs_ab56f50c38c192d0ce9ad2f3924cfef5.svg",
+    "public/assets/glyphs_ab56f50c38c192d0ce9ad2f3924cfef5.woff",
+    "public/assets/glyphs_ab56f50c38c192d0ce9ad2f3924cfef5.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -881,6 +881,14 @@
     "helpdesk-settings": {
       "codepoint": 61899,
       "source": "public/glyphs/vectors/helpdesk-settings.svg"
+    },
+    "helpdesk_new": {
+      "codepoint": 62142,
+      "source": "public/glyphs/vectors/helpdesk_new.svg"
+    },
+    "highlightmode": {
+      "codepoint": 62143,
+      "source": "public/glyphs/vectors/highlightmode.svg"
     },
     "horizontal-line": {
       "codepoint": 62026,

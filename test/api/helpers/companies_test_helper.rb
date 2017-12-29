@@ -45,6 +45,10 @@ module CompaniesTestHelper
     renewal_date.respond_to?(:utc) ? renewal_date.utc : renewal_date
   end
 
+  def index_company_pattern(expected_output = {}, company)
+    company_pattern(expected_output, company)
+  end
+
   def company_field_pattern(_expected_output = {}, company_field)
     company_field_json = company_field_response_pattern company_field
     company_field_json[:choices] = company_field.choices.map { |x| x[:value] } if company_field.field_type.to_s == 'custom_dropdown'

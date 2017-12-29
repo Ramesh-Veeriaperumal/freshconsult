@@ -6,7 +6,7 @@ class Social::Tweet < ActiveRecord::Base
   belongs_to :tweetable, :polymorphic => true
   belongs_to_account
   belongs_to :twitter_handle, :class_name => 'Social::TwitterHandle', :foreign_key => 'twitter_handle_id'
-
+  belongs_to :stream
   attr_protected :tweetable_id
 
   validates_presence_of   :tweet_id, :account_id, :twitter_handle_id
@@ -14,7 +14,7 @@ class Social::Tweet < ActiveRecord::Base
   
   after_destroy :remove_fd_link_in_dynamo
 
-  TWEET_LENGTH = 140
+  TWEET_LENGTH = 280
   DM_LENGTH    = 10000
  
 

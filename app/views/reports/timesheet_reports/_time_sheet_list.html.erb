@@ -98,7 +98,7 @@
               <%colspan = @headers.length-1%>
               <% master_header_hash = @master_column_header_hash %>
                 <% @headers.each do |header|
-                  concat content_tag :th, h(master_header_hash[header]), :class => header
+                  concat content_tag :th, master_header_hash[header].present? ? CGI::unescapeHTML(master_header_hash[header]) : '', :class => header
                  end %>
               </thead>
               <%= render :partial => "reports/timesheet_reports/time_sheet.html.erb", :object => @time_sheets ,:locals=>{:colspan=>colspan,:group_by=>grp_data,:times_spent => @group_count, :group_header => nil, :group_names => @group_names, :load_time => @load_time } %>

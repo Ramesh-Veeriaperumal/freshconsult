@@ -1,0 +1,62 @@
+<div class="page-header-sticky profile-edit-header" rel="sticky">
+<div class="sticky-header-wrapper">
+	<%= content_tag( :h3, "My Profile Settings", :class => "title strong itil-hide" ) %>
+</div>
+</div>
+<div class="profile-edit">
+	<div class="greyImage profile-leftcontent">
+		<div class="freshID-details">
+			<p class="strong title">Profile Details</p>
+			<ul>
+			<li><span class="control-label"><%= t("user.full_name") %> : </span><span class="strong"><%= @profile.user.name %></span></li>
+			<li><span class="control-label"><%= t("user.email") %> : </span><span class="strong"><%= @profile.user.email %></span></li>
+			<li><span class="control-label"><%= t("user.phone_no") %> #: </span><span class="strong"><%= @profile.user.phone %></span></li>
+			<li><span class="control-label"><%= t("user.mobile") %> #: </span><span class="strong"><%= @profile.user.mobile %></span></li>
+			</ul>
+		</div>
+		<% unless is_assumed_user? %>
+			<div class="separator"></div>
+			<div class="link-to-freshID">
+				<a target="_blank" href="<%= Freshid::Config.profile_url(Freshid::Config.login_url(freshid_authorize_callback_url, freshid_logout_url)) %>"><%= t("profile.freshid_profile_link") %></a>
+				<span class="info-data"><%= t("profile.freshid_profile_info") %></span>
+			</div>
+		<% end %>
+	</div>
+	<div class="profile-rightcontent">
+		<%= form_for @profile , :url => { :action=> "update", :controller => 'profiles'} , :html => { :multipart => true } do |f| %>
+			<%= f.error_messages %>
+			<%= render :partial => "form" %>
+			<div class="button-container">
+				<%= link_to t('cancel'), root_path, :class => "btn" %>
+		   		<%= f.submit t('save_changes'), { :class => "btn btn-primary" } %>
+				
+			</div>
+		<%end%>
+	</div>
+	<div class="sidebar profile-sidebar">
+		<% if current_account.verified? && current_user.agent? && !current_account.launched?(:hide_api_key) %>
+			<div class="sidepanel api-key-form">
+			<%= content_tag( :label, t("profile.api_key.title"), :class => "title strong" ) %>
+			<%= form_tag :action => :reset_api_key, :controller => 'profiles', :method => :put do |f| %>
+				<ul class="ui-form">
+					<label class="center" for="api_key"><%=@profile.user.single_access_token%></label>
+				</ul> 
+				<div class="button-container">
+						<%= submit_tag t("profile.api_key.reset"), :class => "btn", :confirm => t("profile.api_key.reset_warning") %>
+				</div>
+			<% end %>
+			</div>	
+			<% if @slack_url %>
+				<div class="slack_auth_cont clearfix">
+				<h4 class="title"><%= t('integrations.slack_v3.slack_prof_label') %></h4>
+				<p>
+				<%= t('integrations.slack_v3.slack_connect_desc') %>
+				</p>
+				<a class="btn pull-right" href= <%= @slack_url %>><%= @authorized.present? ? t('integrations.slack_v3.slack_reauth_btn') : t('integrations.slack_v3.slack_auth_btn')%></a>
+				</div>
+			<% end %>
+
+		<% end %>
+	</div>
+</div>
+

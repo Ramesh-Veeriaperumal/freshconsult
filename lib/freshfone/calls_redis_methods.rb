@@ -90,6 +90,12 @@ module Freshfone::CallsRedisMethods
       remove_key(key)    
   end
 
+  def batch_key_exists?(call_sid)
+    key = FRESHFONE_AGENTS_BATCH % { account_id: current_account.id, call_sid: call_sid }
+    Rails.logger.info "Exists Check :: Batch Key Name :: #{key}"
+    key_exists?(key)
+  end
+
   def set_browser_sid(child, parent) #Use mset and multi expire
     #additional 120 seconds is considering the minute rtt time it takes to create each call
     set_key browser_key(child), parent, (incoming_timeout + 120)

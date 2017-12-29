@@ -9,7 +9,8 @@ class SAAS::SubscriptionEventActions
                            :shared_ownership_toggle, :skill_based_round_robin, :ticket_activity_export,
                            :auto_ticket_export, :multiple_companies_toggle]
 
-  ADD_DATA_FEATURES_V2  = [:link_tickets_toggle, :parent_child_tickets_toggle, :tam_default_fields].freeze
+  ADD_DATA_FEATURES_V2  = [:link_tickets_toggle, :parent_child_tickets_toggle,
+                           :multiple_companies_toggle, :tam_default_fields].freeze
 
   DROP  = "drop"
   ADD   = "add"

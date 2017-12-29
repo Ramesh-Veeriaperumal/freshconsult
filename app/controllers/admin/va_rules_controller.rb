@@ -106,7 +106,7 @@ class Admin::VaRulesController < Admin::AdminController
     end
 
     def edit_data
-      filter_data = supervisor_rules_controller? ? @va_rule.filter_data : change_to_in_operator(@va_rule.filter_data)
+      filter_data = supervisor_multi_select_disabled? ? @va_rule.filter_data : change_to_in_operator(@va_rule.filter_data)
       @filter_input = ActiveSupport::JSON.encode filter_data
       super
     end
@@ -169,8 +169,10 @@ class Admin::VaRulesController < Admin::AdminController
       operator_types = OPERATOR_TYPES.clone
       
       if supervisor_rules_controller?
-        operator_types[:choicelist] = ["is", "is_not"]
-        operator_types[:object_id] = ["is", "is_not"]
+        unless current_account.launched?(:supervisor_multi_select)
+          operator_types[:choicelist] = ["is", "is_not"]
+          operator_types[:object_id] = ["is", "is_not"]
+        end
         operator_types[:number] = ["is", "is_not"]
         operator_types[:decimal] = ["is", "is_not"]
       end
@@ -205,7 +207,7 @@ class Admin::VaRulesController < Admin::AdminController
         { :name => "status", :value => t('ticket.status'), :domtype => dropdown_domtype, 
           :choices => Helpdesk::TicketStatus.status_names(current_account), :operatortype => "choicelist"},
         { :name => "source", :value => t('ticket.source'), :domtype => dropdown_domtype, 
-          :choices => TicketConstants.source_list.sort, :operatortype => "choicelist" },
+          :choices => source_choices.sort, :operatortype => "choicelist" },
         { :name => "product_id", :value => t('admin.products.product_label_msg'), :domtype => dropdown_domtype, 
           :choices => none_option+@products, :operatortype => "choicelist",
           :condition => multi_product_account? },
@@ -306,7 +308,8 @@ class Admin::VaRulesController < Admin::AdminController
 
     def add_custom_filters filter_hash
       nested_special_case = [['--', t('any_val.any_value')], ['', t('none')]]
-      cf = current_account.ticket_fields.custom_fields
+      cf = current_account.ticket_fields.custom_fields.preload(:flexifield_def_entry)
+      cf.select!{|field| field.flexifield_def_entry.flexifield_name.starts_with?('ff') } if supervisor_rules_controller?
       unless cf.blank?
         filter_hash.push({ :name => -1,
                            :value => "---------------------"
@@ -411,7 +414,18 @@ class Admin::VaRulesController < Admin::AdminController
     end
 
     def dropdown_domtype
-      supervisor_rules_controller? ? "dropdown" : "multiple_select"
+      supervisor_multi_select_disabled? ? 'dropdown' : 'multiple_select'
+    end
+
+    def supervisor_multi_select_disabled?
+      supervisor_rules_controller? && !current_account.launched?(:supervisor_multi_select)
+    end
+
+    def source_choices
+      # Since we don't enqueue the ticket in Dispatchr when the ticket is created through Outbound email, there is no need to show the option 'Outbound email' for 'Ticket Source' in the Dispatchr's Create/Edit page
+      va_rules_controller? ? 
+        TicketConstants.source_list.except(TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]) :
+                TicketConstants.source_list
     end
 
     def company_field_choices field_type

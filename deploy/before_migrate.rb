@@ -76,7 +76,9 @@ run "ln -nfs #{shared_path}/config/sidekiq_classification.yml #{node[:rel_path]}
 run "ln -nfs #{shared_path}/config/fdadmin_api_config.yml #{node[:rel_path]}/config/fdadmin_api_config.yml"
 run "ln -nfs #{shared_path}/config/hashed_data.yml #{node[:rel_path]}/config/hashed_data.yml"
 run "ln -nfs #{shared_path}/config/recaptcha_v2.yml #{node[:rel_path]}/config/recaptcha_v2.yml"
+run "ln -nfs #{shared_path}/config/freshid.yml #{node[:rel_path]}/config/freshid.yml"
 run "ln -nfs #{shared_path}/config/ner_api.yml #{node[:rel_path]}/config/ner_api.yml"
+run "ln -nfs #{shared_path}/config/smart_filter.yml #{node[:rel_path]}/config/smart_filter.yml"
 
 #supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"
@@ -88,6 +90,9 @@ run "ln -nfs #{shared_path}/config/search/supported_types.yml #{node[:rel_path]}
 run "ln -nfs #{shared_path}/config/search/esv2_config.yml #{node[:rel_path]}/config/search/esv2_config.yml"
 run "ln -nfs #{shared_path}/config/search/etl_queue.yml #{node[:rel_path]}/config/search/etl_queue.yml"
 run "ln -nfs #{shared_path}/config/search/dynamo_tables.yml #{node[:rel_path]}/config/search/dynamo_tables.yml"
+
+#Cert Files
+run "ln -nfs #{shared_path}/config/cert/freshid.pem #{node[:rel_path]}/config/cert/freshid.pem"
 
 # Xero Cert files start
 run "ln -nfs #{shared_path}/config/cert/integrations/xero/entrust-cert.pem #{node[:rel_path]}/config/cert/integrations/xero/entrust-cert.pem"

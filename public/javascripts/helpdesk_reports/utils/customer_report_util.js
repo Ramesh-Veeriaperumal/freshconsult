@@ -128,7 +128,7 @@ HelpdeskReports.ReportUtil.CustomerReport = (function () {
             _FD.core = HelpdeskReports.CoreUtil;    
             _FD.constants = jQuery.extend({}, HelpdeskReports.Constants.CustomerReport);
             _FD.bindEvents();
-            _FD.core.ATTACH_DEFAULT_FILTER = false;
+            _FD.core.ATTACH_DEFAULT_FILTER = true;
             _FD.setDefaultValues();
             _FD.recordAnalytics();
         }

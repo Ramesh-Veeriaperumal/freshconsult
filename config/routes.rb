@@ -1378,8 +1378,8 @@ Helpkit::Application.routes.draw do
     end
     namespace :freshcaller, :path => 'freshcaller' do
       resources :signup do 
-        member do 
-          get :index
+        collection do
+          post :link
         end
       end
     end
@@ -1490,6 +1490,8 @@ Helpkit::Application.routes.draw do
           get :edit_oauth_configs
           get :iframe_configs
           get :oauth_install
+          get :new_oauth_iparams
+          get :edit_oauth_iparams
         end
         scope ':extension_id' do
           post :install
@@ -3221,4 +3223,9 @@ Helpkit::Application.routes.draw do
       end
     end
   end
+
+  match '/freshid/authorize_callback', :controller => 'freshid', :action => 'authorize_callback', :method => :get
+  match '/freshid/event_callback', :controller => 'freshid', :action => 'event_callback', :method => :post
+  match '/freshid/logout', :controller => 'user_sessions', :action => 'freshid_destroy', :method => :get 
+
 end

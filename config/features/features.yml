@@ -87,7 +87,8 @@
       :freshcaller: 82
       :quick_reply: 83
       :falcon: 84
-      :tam_default_fields: 85
+      :denormalized_flexifields: 85
+      :tam_default_fields: 86
 :selectable_features:
       :branding: true
       :gamification_enable: false

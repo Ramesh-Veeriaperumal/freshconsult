@@ -6,7 +6,7 @@
           <div class="control-group">
             <%= form.label :first_name, t('user.first_name'), :class => "control-label required" %>
             <div class="controls">
-              <%= form.text_field :first_name, :class => "required special span6" %>
+              <%= form.text_field "first_name", :value => user_info('first_name'), :class => "required special span6" %>
             </div>
             <div class="clearfix"></div>
           </div>
@@ -15,7 +15,7 @@
           <div class="control-group">
             <%= form.label :last_name, t('user.last_name'), :class => "control-label required" %>
             <div class="controls">
-              <%= form.text_field :last_name, :class => "required special span6" %>
+              <%= form.text_field "last_name", :value => user_info('last_name'), :class => "required special span6" %>
             </div>
             <div class="clearfix"></div>
           </div>
@@ -32,7 +32,7 @@
           <div class="control-group">
             <%= form.label :company_name, t('user.company_name'), :class => "control-label required" %>
             <div class="controls">
-              <%= form.text_field "company_name", :value => current_account.name ||current_account.account_configuration.company_info[:name], :class => "required special span6 user_company_name_length" %>
+              <%= form.text_field "company_name", :value => company_name, :class => "required special span6 user_company_name_length" %>
             </div>
             <div class="clearfix"></div>
           </div>

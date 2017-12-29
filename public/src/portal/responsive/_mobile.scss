@@ -155,6 +155,11 @@
             @include box-shadow(none); 
         }
         .login-form, .alt-login-button{ width:auto; @include float(none); }
+        .freshid_login{
+            .alt-login-button{
+                @include min-height(auto);
+            }
+        }
         // Sprite
         // -----
         .page-stamp{ display: none; }   

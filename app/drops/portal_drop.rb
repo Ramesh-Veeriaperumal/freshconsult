@@ -51,6 +51,10 @@ class PortalDrop < BaseDrop
     @login_url ||= support_login_path(url_options)
   end
 
+  def freshid_login_url
+    @helpdesk_login_url ||= Freshid::Config.login_url(freshid_authorize_callback_url(url_options_with_protocol), freshid_logout_url(url_options_with_protocol))
+  end
+
   def topic_reply_url
     @topic_reply_url ||= begin
       if @context['topic'].present?
@@ -250,6 +254,10 @@ class PortalDrop < BaseDrop
     @url_options ||= { :host => source.host }    
   end
 
+  def url_options_with_protocol
+    @url_options_with_protocol ||= url_options.merge(protocol: source.url_protocol)
+  end
+
   def paid_account
     @paid_account ||= portal_account.subscription.paid_account?
   end
@@ -276,6 +284,10 @@ class PortalDrop < BaseDrop
   
   def personalized_articles?
     source.preferences[:personalized_articles]
+  end
+
+  def freshid_feature?
+    source.account.freshid_enabled?
   end
 
   include Solution::PortalCacheMethods

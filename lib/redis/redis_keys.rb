@@ -183,6 +183,9 @@ module Redis::RedisKeys
   GROUP_WIDGET_CACHE_GET =  "GROUP_WIDGET_CACHE_GET:%{account_id}"
   #Dashboard v2 caching keys ends
 
+  #Timestamp key for Redis AOF reference.
+  TIMESTAMP_REFERENCE = "TIMESTAMP_REFERENCE"
+
   PERSISTENT_RECENT_SEARCHES = "PERSISTENT_RECENT_SEARCHES:%{account_id}:%{user_id}"
   PERSISTENT_RECENT_TICKETS = "PERSISTENT_RECENT_TICKETS:%{account_id}:%{user_id}"
 
@@ -362,6 +365,8 @@ module Redis::RedisKeys
   HAPROXY_DOMAIN_BLACKLIST_KEY = "HAPROXY_DOMAIN_BLACKLIST_KEY"
   HAPROXY_IP_BLACKLIST_CHANNEL = "HAPROXY_IP_BLACKLIST_CHANNEL"
 
+  FACEBOOK_PREMIUM_ACCOUNTS = "FACEBOOK_PREMIUM_ACCOUNTS"
+  TWITTER_PREMIUM_ACCOUNTS = "TWITTER_PREMIUM_ACCOUNTS"
 
   #JWT api keys
   JWT_API_JTI = "JWT:%{account_id}:%{user_id}:%{jti}"
@@ -373,6 +378,8 @@ module Redis::RedisKeys
   # Key for enabling TAM company fields
   TAM_FIELDS_ENABLED = "TAM_FIELDS_ENABLED"
 
+
+  FRESHID_CLIENT_CREDS_TOKEN_KEY = 'FRESHID_CLIENT_CREDS_TOKEN'
 
 	def newrelic_begin_rescue
 		begin

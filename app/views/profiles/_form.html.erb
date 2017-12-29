@@ -1,9 +1,12 @@
 <%= javascript_tag do %>
+
   jQuery(document).ready(function(){
  invokeRedactor('<%= "user_binfo" %>','signature');
-    jQuery("#password_confirmation").rules("add", {
-	          equalTo: "#password"
-          });
+ 	<% unless freshid_enabled? %>
+	    jQuery("#password_confirmation").rules("add", {
+		    equalTo: "#password"
+	  	});
+	<% end %>
 
     // Code for inserting placeholders in agent signature
     var content = jQuery('label[for=agent_signature_html]').html();
@@ -90,18 +93,30 @@ jQuery('.email').on('keyup', function(){
 <%= fields_for "user", @profile do |usr| %>
     <%= error_messages_for :user %>
  	<ul class="ui-form">
+ 		<% unless freshid_enabled? %>
 		<li>
 			<%= label(:user, :name, t("user.full_name") ) %>
 				<%= text_field(:user, :name, :class => "text required", :value => user.name )  %>
 		</li>
-		<li>
+		<% end %>
+		<li <% if freshid_enabled? %> class="freshid_field" <% end %>>
 			<%= label(:user, :job_title, t("user.title")) %>
 			<%= text_field(:user, :job_title, :class => "text", :value => user.job_title ) %>
 		</li>
+		<% if freshid_enabled? %>
+		<li>
+			<div class="upload-avatar">
+				<%= render :partial => "/shared/profile_avatar", :locals => { :user => user } %>
+			</div>
+		</li>
+		<% end %>
+		<% unless freshid_enabled? %>
 		<li class="medium">
 			<%= label(:user, :email, t("user.email")) %>
 			<%= text_field(:user, :email, :class => "text required email disabled", :id => "email_primary" , :value => user.email , :disabled =>true) %>
 		</li>
+		<% end %>
+		<% unless freshid_enabled? %>
 		<li class="small">
 			<%= label(:user, :phone, t("user.phone_no")) %>
 			<div>
@@ -113,6 +128,7 @@ jQuery('.email').on('keyup', function(){
 				<%= text_field(:user, :mobile, :class => "text", :id => "phone_mobile" ,:value => user.mobile  ) %>
 			</div>
 		</li>
+		<% end %>
 
 		<% if current_user.customer?%>
 			<li class="small">
@@ -124,28 +140,29 @@ jQuery('.email').on('keyup', function(){
 				<%= text_field(:user, :company_name, :class => "text disabled", :id => "contact_customer", :disabled =>true ) %>
 			</li>
 		<%end%>
-
+		<% unless freshid_enabled? %>
 			<li>
 				<%= render :partial => "/shared/profileavatar", :locals => { :user => user, :type => "edit" } %>
 			</li>
+		<% end %>
 			<% if current_account.multi_timezone_enabled? %>
-			<li>
+			<li <% if freshid_enabled? %> class="freshid_field" <% end %>>
 				<%= label(:user , :time_zone, t("account.time_zone")) %>
 				<%= time_zone_select(:user, :time_zone, ActiveSupport::TimeZone.all, :default => user.time_zone) %>
 			</li>
 			<% end %>
 			<% if feature?(:multi_language) %>
         <% if current_account.falcon_ui_enabled?(current_user) %>
-          <li>
+          <li <% if freshid_enabled? %> class="freshid_field" <% end %>>
             <%= label(:user, :language, t('account.language')) %>
-  					<%= select(:user, :language, I18n.available_locales_with_name, {:selected => user.language.to_sym()} , {:disabled => true})%>
+            <%= select(:user, :language, mint_locales_with_separator, {:selected => user.language.to_sym()})%>
             <a href="javascript:toggleMessage()">
               <i class="info help-icon-language ficon-help-icon fsize-24" size="14"></i>
             </a>
             <%= render partial:'ui/falcon_languages_alert' %>
           </li>
         <% else %>
-  				<li>
+  				<li <% if freshid_enabled? %> class="freshid_field" <% end %>>
   					<%= label(:user, :language, t('account.language')) %>
   					<%= select(:user, :language, I18n.available_locales_with_name , {:selected => user.language.to_sym()})%>
   				</li>

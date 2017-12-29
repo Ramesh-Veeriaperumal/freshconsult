@@ -30,6 +30,7 @@
     - freshfone_node
     - freshfone_trial_worker
     - livechat_worker
+    - smart_filter_tweet_to_ticket
   :scheduled:
     - scheduled_reports
     - scheduled_reports_cleanup
@@ -79,6 +80,9 @@
     - product_feedback
     - freshcaller_migration_worker
     - ner_worker
+    - smart_filter_initialise
+    - smart_filter_feedback
+    - launch_party_actions
   :maintainence:
     - select_all_tickets
     - select_all_batcher
@@ -142,6 +146,8 @@
     - update_sentiment
     - update_notes_sentiment
     - github
+    - freshid_events
+    - freshid_account_details_update
   :free:
     - free_sla
     - free_supervisor

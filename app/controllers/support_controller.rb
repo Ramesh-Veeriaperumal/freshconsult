@@ -12,7 +12,7 @@ class SupportController < ApplicationController
       path = controller.controller_path
       path.include?("/solutions") || path.include?("/home") || path.include?("/topics") || path.include?("/discussions")
     }
-      
+
   include Redis::RedisKeys
   include Redis::PortalRedis
   include Portal::Helpers::SolutionsHelper
@@ -25,6 +25,7 @@ class SupportController < ApplicationController
     !controller_name.eql?('activations') &&
     !controller_name.eql?('search') &&
     !controller_name.eql?('login') &&
+    !controller_name.eql?('signups') &&
     !controller_name.eql?('feedback_widgets') &&
     (controller.action_name.eql?('robots') ? true : !controller.send(:current_user)) && 
     controller.send('flash').keys.blank?
@@ -33,7 +34,7 @@ class SupportController < ApplicationController
     cache_path = c.request.original_fullpath.gsub(/\?.*/, '')
     Digest::SHA1.hexdigest("#{c.send(:current_portal).cache_prefix}#{cache_path}#{params[:portal_type]}")
   }
-  
+ 
   def cache_enabled?
     !(get_portal_redis_key(PORTAL_CACHE_ENABLED) === "false")
   end
@@ -82,8 +83,7 @@ class SupportController < ApplicationController
               render :json => {:errors=>@errors}.as_json,:status=>:forbidden
              }
           end
-        end 
-
+        end
       end
     end
 

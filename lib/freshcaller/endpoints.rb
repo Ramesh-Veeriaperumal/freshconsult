@@ -13,5 +13,14 @@ module Freshcaller
     def freshcaller_admin_rules_url
       freshcaller_custom_redirect_url('/admin/rules')
     end
+
+    def freshcaller_link_url
+      "#{protocol}#{params[:url]}#{FreshcallerConfig['domain_suffix']}/link_account"
+    end
+
+    def protocol
+      Rails.env.development? ? 'http://' : 'https://'
+    end
+
   end
 end

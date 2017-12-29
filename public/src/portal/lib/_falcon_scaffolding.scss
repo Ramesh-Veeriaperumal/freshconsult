@@ -1,5 +1,11 @@
 // Body reset
 // ----------
+html,body{
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
 
 body {
   margin: 0;
@@ -9,7 +15,6 @@ body {
   color: $textColor;
   background-color: $bg_color;
   background-image: none;
-  
 }
 
 // Links

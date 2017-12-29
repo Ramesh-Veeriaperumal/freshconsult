@@ -77,7 +77,8 @@ class Social::Dynamo::Twitter
     }
 
     table = "feeds"
-    times = [posted_time, posted_time + 7.days]
+    retention_period = TABLES[table][:retention_period]
+    times = [posted_time, posted_time + retention_period]
     times.each do |time|
       table_name = Social::DynamoHelper.select_table(table, time)
       schema = TABLES[table][:schema]
@@ -96,8 +97,9 @@ class Social::Dynamo::Twitter
         :fd_user => fd_user
       }
       table = "feeds"
+      retention_period = TABLES[table][:retention_period]
       item_hash = feeds_helper.feeds_hash(stream_id, feed_id, "", 0, 0, fd_attributes, SOURCE[:twitter])
-      times = [Time.now, Time.now + 7.days]
+      times = [Time.now, Time.now + retention_period]
       times.each do |time|
         table_name = Social::DynamoHelper.select_table(table, time)
         Social::DynamoHelper.update(table_name, item_hash, TABLES[table][:schema])
@@ -112,7 +114,8 @@ class Social::Dynamo::Twitter
       "favorite" => { 
         :n => "#{favorite}"
       })
-    times = [Time.now, Time.now + 7.days]
+    retention_period = TABLES[table][:retention_period]
+    times = [Time.now, Time.now + retention_period]
     times.each do |time|
       table_name = Social::DynamoHelper.select_table(table, time)
       Social::DynamoHelper.update(table_name, item_hash, TABLES[table][:schema], ["favorite"])
@@ -122,7 +125,32 @@ class Social::Dynamo::Twitter
   def delete_fd_link(stream_id, feed_id)
     feeds_helper.delete_fd_link(stream_id, feed_id, SOURCE[:twitter])
   end
+
+  def fetch_feed_info_from_dynamo(args)
+    table = "feeds"
+    table_name = Social::DynamoHelper.select_table(table, Time.now)
+    schema = TABLES[table][:schema]
+    dynamo_hash_key = "#{args[:account_id]}_#{args[:stream_id]}"
+    Social::DynamoHelper.get_item(table_name, dynamo_hash_key, "#{args[:feed_id]}", schema, args[:attributes])[:item]
+  end
   
+  #Feedback should be given only once. Resetting smart_filter_response to SMART_FILTER_FEEDBACK_GIVEN so that further agent's actions don't trigger feedback.
+  def record_smart_filter_feedback_given_in_dynamo(args)
+    table = "feeds"
+    dynamo_hash_key = "#{args[:account_id]}_#{args[:stream_id]}"
+    item_hash = feeds_helper.feeds_hash(dynamo_hash_key, args[:feed_id], "", 0, 0, "", "Twitter")
+    item_hash.merge!(
+      "smart_filter_response" => { 
+        :n => SMART_FILTER_FEEDBACK_GIVEN.to_s
+      })
+    retention_period = TABLES[table][:retention_period]
+    times = [Time.now, Time.now + retention_period]
+    times.each do |time|
+      table_name = Social::DynamoHelper.select_table(table, time)
+      Social::DynamoHelper.update(table_name, item_hash, TABLES[table][:schema], ["smart_filter_response"])
+    end
+  end
+
   private
   def fetch_parent_data(table_name, hash, feed_obj)
     in_conversation = 0

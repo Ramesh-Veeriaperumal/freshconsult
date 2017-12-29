@@ -119,6 +119,7 @@
 .btn .caret {
   margin-top: 7px;
   @include margin-left(0);
+  color: $secondary_button_color;
 }
 .btn:hover .caret,
 .open.btn-group .caret {
@@ -142,4 +143,3 @@
   border-bottom: 5px solid $black;
   border-top: 0;
 }
-

@@ -64,6 +64,8 @@ GIT
   remote: git://github.com/freshdesk/rate-limiting.git
   revision: f43173165c95b5ba9f72a1298050d2b2431d7606
   tag: v1.1
+  revision: 5ae767dc1454d9b9669a381b7ca0674d3c813f59
+  tag: v1.2
   specs:
     rate-limiting (1.0.4)
       json
@@ -89,7 +91,7 @@ GIT
 
 GIT
   remote: git://github.com/freshdesk/semian.git
-  revision: fbf4042c3ca9fa4cd250b6e9f14636dacb162e03
+  revision: a0f7118894676312111476f10b8afdc1477d091c
   branch: fd_master
   specs:
     semian (0.7.1)
@@ -184,14 +186,6 @@ GIT
       mimemagic (>= 0.2, < 4.0.0)
 
 GIT
-  remote: git@github.com:freshdesk/batch_api.git
-  revision: e0e6711b6b2b66731f1106f2683f66904df21117
-  branch: fd-batch-api
-  specs:
-    batch_api (0.3.0)
-      middleware
-
-GIT
   remote: git@github.com:freshdesk/binarize.git
   revision: 025888cc314cd9ffa47a4ed14829940095bcb39b
   branch: not_a_model_column
@@ -228,10 +222,10 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/launch-party.git
-  revision: edbb362ebaf1c84e2745270435cf4a93bbeb3149
-  tag: v0.1.4
+  revision: 6d9aedd39a847c2c579a8baedbf5d36312ccf498
+  tag: v0.2
   specs:
-    launchparty (0.1.1)
+    launchparty (0.2)
       newrelic_rpm (>= 3.17.2.327)
       redis (>= 3)
       redis-namespace (>= 1)
@@ -294,7 +288,7 @@ PATH
 PATH
   remote: vendor/gems/custom_fields-0.1
   specs:
-    custom_fields (0.1)
+    custom_fields (0.1-x86_64-darwin-14)
       acts_as_list (= 0.1.4)
       rails (~> 3.2.18)
 
@@ -904,7 +898,6 @@ GEM
       railties (>= 3.0.0, < 5.1.0)
     metaclass (0.0.4)
     method_source (0.8.2)
-    middleware (0.1.0)
     mime-types (1.25.1)
     mimemagic (0.3.1)
     minitest (4.7.5)
@@ -926,7 +919,7 @@ GEM
       sixarm_ruby_unaccent (>= 1.1.1, < 2)
     mono_logger (1.1.0)
     msgpack (1.0.0)
-    multi_json (1.12.2)
+    multi_json (1.12.1)
     multi_test (0.1.2)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
@@ -967,7 +960,7 @@ GEM
     omniauth-oauth (1.1.0)
       oauth
       omniauth (~> 1.0)
-    omniauth-oauth2 (1.1.1)
+    omniauth-oauth2 (1.0.0)
       oauth2 (~> 0.5.0)
       omniauth (~> 1.0)
     omniauth-openid (1.0.1)
@@ -1192,13 +1185,12 @@ GEM
     spork (0.9.2)
     spreadsheet (0.6.8)
       ruby-ole (>= 1.0)
-    sprockets (2.2.3)
+    sprockets (2.2.2)
       hike (~> 1.2)
       multi_json (~> 1.0)
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
     static_model (1.0.4)
-    stopwords-filter (0.4.1)
     strong_parameters (0.2.3)
       actionpack (~> 3.0)
       activemodel (~> 3.0)
@@ -1247,9 +1239,9 @@ GEM
     typhoeus (1.1.0)
       ethon (>= 0.9.0)
     tzinfo (0.3.51)
-    uglifier (2.7.2)
+    uglifier (2.1.2)
       execjs (>= 0.3.0)
-      json (>= 1.8.0)
+      multi_json (~> 1.0, >= 1.0.2)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.2)
@@ -1300,7 +1292,6 @@ DEPENDENCIES
   autotest-rails (= 4.1.0)
   aws-sdk (~> 1.31.3)
   aws-sdk-resources (~> 2)
-  batch_api!
   better_errors (~> 1.1.0)
   binarize (= 0.1.1)!
   binding_of_caller
@@ -1407,7 +1398,7 @@ DEPENDENCIES
   omniauth-google-oauth2 (= 0.1.13)
   omniauth-mailchimp (= 1.0.3)
   omniauth-oauth (= 1.1.0)
-  omniauth-oauth2 (= 1.1.1)
+  omniauth-oauth2 (= 1.0)
   omniauth-openid (= 1.0.1)
   omniauth-quickbooks (= 0.0.2)
   omniauth-salesforce!
@@ -1475,11 +1466,10 @@ DEPENDENCIES
   soap4r-ruby1.9 (~> 2.0.5)
   spork (~> 0.9.0)
   spreadsheet (= 0.6.8)
-  sprockets (= 2.2.3)
+  sprockets (= 2.2.2)
   ssl_requirement!
   static_model (~> 1.0.4)
   statsd-ruby!
-  stopwords-filter (= 0.4.1)
   strong_parameters (= 0.2.3)
   susy (= 2.1.3)
   syck (= 1.0.5)
@@ -1497,7 +1487,7 @@ DEPENDENCIES
   twitter (~> 5.16.0)
   typhoeus
   tzinfo (~> 0.3.29)
-  uglifier (~> 2.7.2)
+  uglifier (~> 2.1.2)
   useragent (~> 0.16.3)
   webrick (= 1.3.1)
   white_list!

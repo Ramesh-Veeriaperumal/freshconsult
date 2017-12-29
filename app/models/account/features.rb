@@ -2,7 +2,7 @@ class Account < ActiveRecord::Base
 
   LP_FEATURES   = [:link_tickets, :select_all, :round_robin_capping, :suggest_tickets, :customer_sentiment_ui,
                    :dkim, :bulk_security, :scheduled_ticket_export, :ticket_contact_export,
-                   :email_failures, :disable_emails, :skip_one_hop, :falcon_portal_theme]
+                   :email_failures, :disable_emails, :skip_one_hop, :falcon_portal_theme, :freshid, :freshchat_integration, :smart_filter]
   DB_FEATURES   = [:shared_ownership, :custom_survey, :requester_widget, :archive_tickets, :sitemap]
   BITMAP_FEATURES = [
       :split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management,
@@ -13,7 +13,7 @@ class Account < ActiveRecord::Base
       :auto_refresh, :branding, :advanced_dkim, :basic_dkim, :shared_ownership_toggle, :unique_contact_identifier_toggle,
       :system_observer_events, :unique_contact_identifier, :ticket_activity_export, :caching, :private_inline, :collaboration,
       :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :user_notifications, :falcon,
-      :multiple_companies_toggle, :multiple_user_companies, :tam_default_fields
+      :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields, :tam_default_fields
     ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -82,6 +82,10 @@ class Account < ActiveRecord::Base
   def any_survey_feature_enabled_and_active?
     new_survey_enabled? ? active_custom_survey_from_cache.present? :
       features?(:surveys, :survey_links)
+  end
+
+  def link_tkts_or_parent_child_enabled?
+    link_tkts_enabled? || parent_child_tkts_enabled?
   end
 
   def survey_enabled?
@@ -159,6 +163,10 @@ class Account < ActiveRecord::Base
 
   def advanced_twitter?
     features? :twitter
+  end
+
+  def twitter_smart_filter_enabled?
+    advanced_twitter? && smart_filter_enabled? 
   end
 
   def on_new_plan?

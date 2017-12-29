@@ -4441,7 +4441,7 @@ ro:
     success_signin: "S-a asociat cu succes @%{twitter_screen_name} cu %{helpdesk}"
     user_exists: "Contul twitter este deja asociat cu un alt produs."
     not_authorized: "Nu ai permisiune de la Twitter"
-    not_valid: "Statusul este peste 140 caractere."
+    not_valid: "Statusul este peste 280 caractere."
     deleted: "Contul twitter @%{twitter_screen_name} a fost sters."
     sent: "Tweet-ul a fost trimis cu succes"
     error_sending: "Eroare la trimiterea tweet-ului! Twitter-ul ar putea fi instabil. Va rugam sa incercati din nou."
@@ -6524,7 +6524,7 @@ ro:
         requester: Requester
         already_converted: "This message is already converted to ticket"
         successfully_converted: "Ticket has been successfully created"
-        twitter_limit_exceed: "Your Tweet is over 140 characters. You'll have to be more clever."
+        twitter_limit_exceed: "Your Tweet is over 280 characters. You'll have to be more clever."
       note:
         human_name: note
       ticket:
