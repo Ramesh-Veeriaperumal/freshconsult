@@ -45,6 +45,7 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     assert_response 404
 
     Account.current.add_feature(:falcon)
+
     Account.current.reload
   end
 end
