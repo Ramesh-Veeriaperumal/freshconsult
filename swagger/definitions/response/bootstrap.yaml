@@ -158,3 +158,5 @@ properties:
         type: string
       autorefresh_url:
         type: string
+      freshid_url:
+        type: string
