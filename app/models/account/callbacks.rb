@@ -23,7 +23,7 @@ class Account < ActiveRecord::Base
   after_commit ->(obj) { obj.clear_cache }, on: :update
   after_commit ->(obj) { obj.clear_cache }, on: :destroy
   
-  after_commit :enable_searchv2, :enable_count_es, :enable_collab, :set_falcon_preferences, :set_email_service_provider, on: :create
+  after_commit :enable_searchv2, :enable_count_es, :enable_collab, :set_falcon_preferences, on: :create
   after_commit :disable_searchv2, :disable_count_es, on: :destroy
   after_commit :update_sendgrid, on: :create
   after_commit :remove_email_restrictions, on: :update , :if => :account_verification_changed?
@@ -33,8 +33,10 @@ class Account < ActiveRecord::Base
   after_commit :update_account_details_in_freshid, on: :update, :if => :update_freshid?
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
-  include RabbitMq::Publisher 
-  
+  include RabbitMq::Publisher
+
+  after_launchparty_change :trigger_feature_change_callbacks
+
   def downcase_full_domain
     self.full_domain.downcase!
   end
@@ -122,6 +124,15 @@ class Account < ActiveRecord::Base
     end
 
   private
+
+    # define your callback method in this format ->
+    # eg:  on launch  feature_name => falcon, method_name => def falcon_on_launch ; end
+    #      on rollback feature_name => falcon, method_name => def falcon_on_rollback ; end
+    def trigger_feature_change_callbacks(changes)
+      self.make_current
+      changes[:account_id] = self.id
+      LaunchPartyActionWorker.perform_async(changes)
+    end
 
     def sync_name_helpdesk_name
       self.name = self.helpdesk_name if helpdesk_name_changed?
@@ -369,7 +380,4 @@ class Account < ActiveRecord::Base
       ismember?(FALCON_ENABLED_LANGUAGES, self.language)
     end
 
-    def set_email_service_provider
-      EmailServiceProvider.perform_async
-    end
 end

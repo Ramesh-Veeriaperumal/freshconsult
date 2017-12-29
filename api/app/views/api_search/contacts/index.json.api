@@ -3,6 +3,7 @@ results = @items.map do |item|
     active: item.active,
     address: item.address,
     company_id: item.company_id,
+    custom_fields: item.custom_fields,
     description: item.description,
     email: item.email,
     id: item.id,
@@ -16,20 +17,9 @@ results = @items.map do |item|
     created_at: item.created_at.try(:utc),
     updated_at: item.updated_at.try(:utc)
   }
-  if item.custom_field.any?
-    custom_fields = {}
-    item.custom_field.each do |key, value|
-      custom_fields[@name_mapping[key]] = value.respond_to?(:utc) ? value.utc : value
-    end
-    response_hash.merge!(custom_fields: custom_fields)
-  else
-    response_hash.merge!(custom_fields: {})
-  end
-  response_hash.merge!(deleted: true) if item.deleted
+  response_hash[:deleted] = true if item.deleted
   response_hash
 end
 
-JSON.generate({
-  results: results,
-  total: @items.total_entries
-})
+JSON.generate(results: results,
+              total: @items.total_entries)

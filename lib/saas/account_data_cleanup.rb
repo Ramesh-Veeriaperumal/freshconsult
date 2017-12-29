@@ -50,6 +50,8 @@ def handle_basic_twitter_drop_data
     #we need to keep one twitter page. So removing everything except the oldest one.
     twitter_count = 0
     account.twitter_handles.order("created_at asc").find_each do |twitter|
+      twitter.smart_filter_enabled = 0 if twitter.smart_filter_enabled == true
+      twitter.save!
       next if twitter_count < 1
       twitter.destroy
       twitter_count+=1

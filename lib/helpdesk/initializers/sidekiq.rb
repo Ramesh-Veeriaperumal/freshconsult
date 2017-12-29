@@ -10,7 +10,6 @@ SIDEKIQ_CLASSIFICATION_MAPPING = SIDEKIQ_CLASSIFICATION[:classification].inject(
   t_h
 end
 
-$sidekiq_conn = Redis.new(:host => config["host"], :port => config["port"], :tcp_keepalive => config["keepalive"])
 $sidekiq_datastore = proc { Redis::Namespace.new(config["namespace"], :redis => $sidekiq_conn) }
 $sidekiq_redis_pool_size = sidekiq_config[:redis_pool_size] || sidekiq_config[:concurrency]
 $sidekiq_redis_timeout = sidekiq_config[:timeout]
@@ -61,7 +60,9 @@ Sidekiq.configure_client do |config|
       "Tickets::Schedule",
       "Tickets::Dump",
       "BlockAccount",
-      "Freshid::ProcessEvents"
+      "Freshid::ProcessEvents",
+      "Social::SmartFilterFeedbackWorker",
+      "Social::SmartFilterInitWorker"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "AccountCreation::PopulateSeedData",
@@ -144,7 +145,9 @@ Sidekiq.configure_server do |config|
       "Tickets::Schedule",
       "Tickets::Dump",
       "BlockAccount",
-      "Freshid::ProcessEvents"
+      "Freshid::ProcessEvents",
+      "Social::SmartFilterFeedbackWorker",
+      "Social::SmartFilterInitWorker"
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "AccountCreation::PopulateSeedData",
@@ -217,7 +220,9 @@ Sidekiq.configure_server do |config|
       "Tickets::Schedule",
       "Tickets::Dump",
       "BlockAccount",
-      "Freshid::ProcessEvents"
+      "Freshid::ProcessEvents",
+      "Social::SmartFilterFeedbackWorker",
+      "Social::SmartFilterInitWorker"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",

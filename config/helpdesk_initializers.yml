@@ -104,3 +104,5 @@ helpdesk:
     - threaded_init
     - ner_api_config
     - freshid
+    - smart_filter_config
+    - freshquery

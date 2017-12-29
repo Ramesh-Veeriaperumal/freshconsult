@@ -11,6 +11,7 @@ class Billing::AddSubscriptionToChargebee
       set_billing_site(subscription)
       subscription.billing.create_subscription(account)
       subscription.save #to update resp. currency amount
+      EmailServiceProvider.perform_async
       Subscription::AddAffiliateSubscription.perform(account)
     rescue Exception => e
       logger.info "#{e}"

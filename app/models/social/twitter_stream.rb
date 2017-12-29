@@ -4,12 +4,19 @@ class Social::TwitterStream < Social::Stream
   include Social::Constants
   include Social::Util
   include Redis::RedisKeys
+  include Social::SmartFilter
 
   concerned_with :callbacks
 
   belongs_to :twitter_handle,
     :foreign_key => :social_id,
     :class_name  => 'Social::TwitterHandle'
+
+  has_one :smart_filter_rule,
+    :class_name  => 'Social::TicketRule',
+    :foreign_key => :stream_id,
+    :dependent   => :destroy,
+    :conditions  => {:rule_type => SMART_FILTER_RULE_TYPE }
 
   validates_presence_of :includes
 
@@ -19,7 +26,7 @@ class Social::TwitterStream < Social::Stream
     }
     tkt_rules = self.ticket_rules
     tkt_rules.each do |rule|
-      if rule.apply(tweet_body)
+      if rule.rule_type.blank? and rule.apply(tweet_body)
         hash.merge!({
           :convert    => true,
           :group_id   => rule.action_data[:group_id],
@@ -29,6 +36,42 @@ class Social::TwitterStream < Social::Stream
       end
     end
     return hash
+  end
+
+  def check_smart_filter(tweet_body, tweet_id, twitter_user_id)
+    hash = {
+      :stream_id => self.id,
+      :tweet => true
+    }
+    if is_english?(tweet_body)
+      smart_filter_params = construct_smart_filter_params(tweet_body, tweet_id, twitter_user_id)
+      can_convert_to_ticket = smart_filter_query(smart_filter_params)
+      if can_convert_to_ticket == SMART_FILTER_DETECTED_AS_TICKET
+        rule = smart_filter_rule #FOR NOW. WE NEED TO CHANGE THIS
+        hash.merge!({
+           :convert    => true,
+           :smart_filter_response => SMART_FILTER_DETECTED_AS_TICKET,
+           :group_id   => rule.action_data[:group_id],
+           :product_id => rule.action_data[:product_id]
+        })
+      else 
+        hash.merge!({
+          :smart_filter_response => SMART_FILTER_DETECTED_AS_SPAM
+        })
+      end
+    end
+    hash
+  end
+
+  def construct_smart_filter_params(tweet_body, tweet_id, twitter_user_id)
+    {
+     :entity_id => tweet_id.to_s,
+     :account_id => twitter_user_id,
+     :text => tweet_body,
+     :screen_name => [],
+     :source => "twitter",
+     :lang => "en"
+    }.to_json
   end
 
   def populate_ticket_rule(group_id = nil, includes = [])
@@ -45,7 +88,7 @@ class Social::TwitterStream < Social::Stream
       })
   end
 
-   def new_ticket_rule
+  def new_ticket_rule
     @ticket_rule = self.ticket_rules.new
     @ticket_rule.action_data = {
       :product_id => nil,
@@ -55,6 +98,23 @@ class Social::TwitterStream < Social::Stream
       :includes => []
     }
     @ticket_rule
+  end
+
+  def build_smart_rule(rule)
+    group_id = rule[:group_id].to_i unless rule[:group_id].nil?
+    product_id = twitter_handle.product_id
+    rule_type = SMART_FILTER_RULE_TYPE
+    smart_rule_params = {
+      :rule_type => rule_type,
+        :filter_data => {
+          :includes => []
+        },
+        :action_data => {
+          :product_id => product_id,
+          :group_id   => group_id
+        }
+      }  
+    smart_rule_params      
   end
   
   def product_id
@@ -84,6 +144,10 @@ class Social::TwitterStream < Social::Stream
       end
       raise_threshold_alert(incr_value, hash_key) if ((incr_value > MAX_FEEDS_THRESHOLD) && (incr_value % 100 == 0))
     end
+  end
+
+  def should_check_smart_filter?(convert_hash)
+    !convert_hash[:convert] && Account.current.twitter_smart_filter_enabled? && self.default_stream? && self.twitter_handle.smart_filter_enabled?
   end
 
   private
@@ -126,5 +190,4 @@ class Social::TwitterStream < Social::Stream
     def stream_volume_redis_key
       STREAM_VOLUME % { :account_id => Account.current.id, :stream_id => self.id }
     end
-
 end

@@ -44,7 +44,7 @@ else
     master_node = node[:opsworks][:layers][:application][:instances].keys.sort.first  if node[:opsworks][:layers] && node[:opsworks][:layers][:application] && node[:opsworks][:layers][:application][:instances]
     asset_pipeline_host = node[:rails3][:asset_pipeline_host] if node[:rails3] && node[:rails3][:asset_pipeline_host]
     current_host = node[:opsworks][:instance][:hostname] 
-    if asset_pipeline_host && (node[:opsworks][:instance][:hostname] == asset_pipeline_host) && ::File.exists?("#{node[:rel_path]}/config/database.yml")
+    if asset_pipeline_host && (node[:opsworks][:instance][:hostname] == asset_pipeline_host) && !aws_config.exists?
       Chef::Log.info "inside master"
       if node[:custom_db_migrate]
         run "cd #{release_path} && RAILS_ENV=#{node[:opsworks][:environment]} bundle exec rake db:migrate"

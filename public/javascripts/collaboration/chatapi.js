@@ -22,7 +22,6 @@
     var MSG_TYPE_SERVER_MREMOVE = "3"; // Msg from Server, denotes removal of member
     var MSG_TYPE_SERVER_FADD = "5"; // Msg from Server, denotes addition of follower
     var MSG_TYPE_SERVER_FREMOVE = "6"; // Msg from Server, denotes removal of follower
-    var MSG_TYPE_TYPING = "typing"; // Non-persisting message to indicate typing
 
     var CHAT_API_SERVER, RTS_SERVER, MESSAGE_PUBLISH_ROUTE, USER_MARK_ONLINE_ROUTE,
         USER_UPDATE_ROUTE, CONVERSATION_GET_ROUTE, ADD_MEMBER_ROUTE, REMOVE_MEMBER_ROUTE,
@@ -128,17 +127,7 @@
 
                     log("%c- Heartbeats set to send every "+ (response.UserHeartbeatPollTime || DEFAULT_HEARTBEAT_IVAL) + " mili-sec.", LOG_COLOR)
                     var heartbeat = setInterval(function() {
-                        // log(">> client: heartbeat sent to ChatAPI")
-                        collabHttpAjax({
-                            method: "POST",
-                            url: USER_MARK_ONLINE_ROUTE,
-                            data: {"uid": config.userId},
-                            success: function(response) {
-                                if(typeof response === "string") {response = JSON.parse(response);};
-                                self.onheartbeat(response);
-                                log("%c - User online updated.", LOG_COLOR, response);
-                            },
-                        }, config.clientId, config.authToken);
+                        self.markOnline(self.onheartbeat)
                     }, response.UserHeartbeatPollTime || DEFAULT_HEARTBEAT_IVAL);
 
                     if(typeof self.apiinited === "function") {
@@ -729,6 +718,20 @@
                 log(">> client: notifications: ", response);
                 if(typeof cb === "function") {cb(response);}
             }
+        }, self.clientId, self.authToken);
+    }
+
+    ChatApi.prototype.markOnline = function(cb) {
+        var self = this;
+        collabHttpAjax({
+            method: "POST",
+            url: USER_MARK_ONLINE_ROUTE,
+            data: {"uid": self.userId},
+            success: function(response) {
+                if(typeof response === "string") {response = JSON.parse(response);};
+                log(">> client: marked online: ", response);
+                if(typeof cb === "function") {cb(response);}
+            },
         }, self.clientId, self.authToken);
     }
 

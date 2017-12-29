@@ -13,7 +13,7 @@ class HelpdeskReports::Formatter::Ticket::Insight
 
   def perform
     unresolved_old = nil
-    return {error: { code: 551,  message:I18n.t('helpdesk_reports.insights.sys_error')} } unless @data[nil].nil? # custom error code 551 to handle server errors
+    return {error: { code: 551,  message:I18n.t('helpdesk_reports.something_went_wrong_msg')} } unless @data[nil].nil? # custom error code 551 to handle server errors
     @data.inject({}) do | res, (index, value) |
       request      =  @args[index]
       @metric      = request[:metric]
