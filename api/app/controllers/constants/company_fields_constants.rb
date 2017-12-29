@@ -2,21 +2,21 @@ module CompanyFieldsConstants
 
 
   NEW_DEFAULT_FIELDS = [ :default_health_score, :default_account_tier,
-                        :default_renewal_date, :default_industry ]
+                        :default_renewal_date, :default_industry ].freeze
 
   DEFAULT_ACCOUNT_TIER_VALUES = 
     [
       { :value     => "Platinum" },
       { :value     => "Gold" },
       { :value     => "Silver" }
-    ]
+    ].freeze
 
   DEFAULT_HEALTH_SCORE_VALUES = 
     [
       { :value     => "At risk" },
       { :value     => "Pretty OK" },
       { :value     => "Happy" }
-    ]
+    ].freeze
 
   DEFAULT_INDUSTRY_VALUES = 
     [
@@ -79,7 +79,7 @@ module CompanyFieldsConstants
       { :value     => "Electric Utilities" },
       { :value     => "Utilities" },
       { :value     => "Other" }
-    ]
+    ].freeze
 
   TAM_FIELDS_DATA = {
     "account_tier_data" => DEFAULT_ACCOUNT_TIER_VALUES.each_with_index.map do |f, i|
@@ -109,5 +109,4 @@ module CompanyFieldsConstants
                             }
                           end
   }
-
 end

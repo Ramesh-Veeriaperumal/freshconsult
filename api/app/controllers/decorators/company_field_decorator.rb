@@ -7,14 +7,7 @@ class CompanyFieldDecorator < ApiDecorator
   end
 
   def company_field_choices
-    @choices ||= begin
-      case field_type.to_s
-      when 'default_health_score', 'default_account_tier', 'default_industry'
-        choices.map { |x| x[:value] }
-      when 'custom_dropdown'
-        choices.map { |x| x[:value] }
-      end
-    end
+    @choices ||= choices.map { |x| x[:value] }
   end
 
   def choice_list

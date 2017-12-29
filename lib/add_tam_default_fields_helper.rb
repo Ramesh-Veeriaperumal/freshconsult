@@ -34,7 +34,7 @@ module AddTamDefaultFieldsHelper
         field.save
       end
     rescue => e
-      Rails.logger.info("Something went wrong while adding the CSM default fields")
+      Rails.logger.info("Something went wrong while adding the TAM default fields")
       NewRelic::Agent.notice_error(e)
       raise e
     ensure

@@ -49,15 +49,18 @@ class CompanyForm < ActiveRecord::Base
   end
 
   def default_health_score_choices
-    default_drop_down_fields(Company::DEFAULT_DROPDOWN_FIELDS[0]).first.custom_field_choices.map { |t| t[:value] }
+    default_drop_down_fields(Company::DEFAULT_DROPDOWN_FIELD_MAPPINGS['health_score']).
+                first.custom_field_choices.map { |t| t[:value] }
   end
 
   def default_account_tier_choices
-    default_drop_down_fields(Company::DEFAULT_DROPDOWN_FIELDS[1]).first.custom_field_choices.map { |t| t[:value] }
+    default_drop_down_fields(Company::DEFAULT_DROPDOWN_FIELD_MAPPINGS['account_tier']).
+                first.custom_field_choices.map { |t| t[:value] }
   end
 
   def default_industry_choices
-    default_drop_down_fields(Company::DEFAULT_DROPDOWN_FIELDS[2]).first.custom_field_choices.map { |t| t[:value] }
+    default_drop_down_fields(Company::DEFAULT_DROPDOWN_FIELD_MAPPINGS['industry']).
+                first.custom_field_choices.map { |t| t[:value] }
   end
 
   def custom_checkbox_fields

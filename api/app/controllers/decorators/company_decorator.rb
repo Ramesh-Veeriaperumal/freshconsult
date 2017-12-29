@@ -19,6 +19,15 @@ class CompanyDecorator < ApiDecorator
     utc_format(record.renewal_date)
   end
 
+  def tam_fields
+    tam_fields_hash = {
+      health_score: record.health_score,
+      account_tier: record.account_tier,
+      industry:     record.industry,
+      renewal_date: record.renewal_date
+    }
+  end
+
   def utc_format(value)
     value.respond_to?(:utc) ? value.utc : value
   end

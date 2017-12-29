@@ -24,6 +24,12 @@ class Company < ActiveRecord::Base
   TAM_DEFAULT_FIELDS = [:default_health_score, :default_account_tier, :default_industry, :default_renewal_date]
 
 
+  DEFAULT_DROPDOWN_FIELD_MAPPINGS = {
+    'health_score' => :default_health_score,
+    'account_tier' => :default_account_tier,
+    'industry' => :default_industry
+  }
+
   TAM_DEFAULT_FIELD_MAPPINGS = {
     :string_cc01        =>    :health_score,
     :string_cc02        =>    :account_tier,
@@ -148,7 +154,7 @@ class Company < ActiveRecord::Base
   end
 
   def add_error_to_self field, error_label
-    self.errors.add( field.send(error_label), 
+    self.errors.add(field.send(error_label),
       I18n.t("#{self.class.to_s.downcase}.errors.default_dropdown"))
   end
 
