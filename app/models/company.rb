@@ -25,9 +25,9 @@ class Company < ActiveRecord::Base
 
 
   DEFAULT_DROPDOWN_FIELD_MAPPINGS = {
-    'health_score' => :default_health_score,
-    'account_tier' => :default_account_tier,
-    'industry' => :default_industry
+    :health_score => :default_health_score,
+    :account_tier => :default_account_tier,
+    :industry => :default_industry
   }
 
   TAM_DEFAULT_FIELD_MAPPINGS = {

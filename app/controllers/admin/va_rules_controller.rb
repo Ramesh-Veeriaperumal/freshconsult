@@ -389,15 +389,15 @@ class Admin::VaRulesController < Admin::AdminController
         { :name => "health_score", :value => t('company.health_score'),
           :domtype => dropdown_domtype, :operatortype => "choicelist",
           :choices => none_option +
-          company_field_choices(Company::DEFAULT_DROPDOWN_FIELD_MAPPINGS['health_score'])},
+          company_field_choices(Company::DEFAULT_DROPDOWN_FIELD_MAPPINGS[:health_score])},
         { :name => "account_tier", :value => t('company.account_tier'),
           :domtype => dropdown_domtype, :operatortype => "choicelist",
           :choices => none_option +
-          company_field_choices(Company::DEFAULT_DROPDOWN_FIELD_MAPPINGS['account_tier'])},
+          company_field_choices(Company::DEFAULT_DROPDOWN_FIELD_MAPPINGS[:account_tier])},
         { :name => "industry", :value => t('company.industry'),
           :domtype => dropdown_domtype, :operatortype => "choicelist",
           :choices => none_option +
-          company_field_choices(Company::DEFAULT_DROPDOWN_FIELD_MAPPINGS['industry'])},
+          company_field_choices(Company::DEFAULT_DROPDOWN_FIELD_MAPPINGS[:industry])},
         { :name => "renewal_date", :value => t('company.renewal_date'),
           :domtype => "date", :operatortype => "date"}
         )
