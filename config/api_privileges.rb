@@ -44,6 +44,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/leaderboard", only: [:agents]
     resource :"ember/product_feedback"
     resource :"ember/ticket_template", only: %i(show index)
+    resource :"ember/year_in_review", only: %i(index clear)
   end
 
   manage_account do
@@ -91,7 +92,7 @@ Authority::Authorization::PrivilegeList.build do
 
   manage_users do
     resource :"ember/contact", only: %i[make_agent assume_identity]
-    resource :"ember/agent", only: %i[show create_multiple]
+    resource :"ember/agent", only: %i[show create_multiple assume_identity]
   end
 
   delete_topic do
@@ -148,5 +149,6 @@ Authority::Authorization::PrivilegeList.build do
 
   view_reports do
     resource :"ember/dashboard", only: %i(unresolved_tickets_data ticket_trends ticket_metrics)
+    resource :"ember/year_in_review", only: [:share]
   end
 end

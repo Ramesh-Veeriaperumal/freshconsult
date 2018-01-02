@@ -19,7 +19,7 @@ gem "mysql2", "~> 0.3.0"
 
 gem "connection_pool"
 gem "clamav-client", "3.1.0", require: "clamav/client"
-gem "rate-limiting", :git =>"git://github.com/freshdesk/rate-limiting.git", :tag => 'v1.1'
+gem "rate-limiting", :git =>"git://github.com/freshdesk/rate-limiting.git", :tag => 'v1.2'
 gem 'fd_rate_limiter', :git => 'git@github.com:freshdesk/fd_rate_limiter.git', :branch => 'dynamic_rules'
 gem "white_list", :git =>"git://github.com/neubloc/white_list.git"
 gem "will_paginate", "3.0.6"
@@ -198,7 +198,7 @@ gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 gem 'freshdesk_features', :git => 'git@github.com:freshdesk/freshdesk-features.git', :branch => "freshdesk", :require => true
 gem 'launchparty', :git => 'git@github.com:freshdesk/launch-party.git', :tag => 'v0.2'
 gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branch => 'not_a_model_column'
-gem 'freshid', "1.0.0", :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :branch => "master", :require => true
+gem 'freshid', :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :tag => 'v1.0.1'
 
 gem 'net-http-persistent', '~> 2.9.4'
 

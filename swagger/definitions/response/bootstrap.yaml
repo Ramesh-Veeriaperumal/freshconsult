@@ -18,6 +18,8 @@ properties:
                 type: array
                 items:
                   type: integer
+              is_assumed_user:
+                type: boolean
               next_level_id:
                 type: object
               abilities:
@@ -155,4 +157,6 @@ properties:
       collision_url:
         type: string
       autorefresh_url:
+        type: string
+      freshid_url:
         type: string

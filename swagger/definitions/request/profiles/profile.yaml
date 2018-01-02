@@ -1,0 +1,12 @@
+type: object
+properties:
+  time_zone:
+    type: string
+  job_title:
+    type: string
+  language:
+    type: string
+  signature:
+    type: string
+  shortcuts_enabled:
+    type: boolean

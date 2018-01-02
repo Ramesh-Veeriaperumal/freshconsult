@@ -9,6 +9,11 @@ module AgentContactConcern
       render_errors(assume_identity: :not_allowed_to_assume)
     end
   end
+  
+  def revert_identity
+    delete_assume_user_keys
+    head 204
+  end
 
   def password_policy type
     policy = type==PasswordPolicy::USER_TYPE[:agent] ? 

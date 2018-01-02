@@ -28,13 +28,13 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
 
   def test_create_with_invalid_auth
     invalid_auth_header
-    post :create, construct_params(version: 'private', fc_call_id: Random.rand(100))
+    post :create, construct_params(version: 'private', fc_call_id: get_call_id)
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:unauthorized]
   end
 
   def test_update_with_invalid_auth
     invalid_auth_header
-    call_id = Random.rand(100)
+    call_id = get_call_id
     create_call(fc_call_id: call_id)
     put :update, construct_params(version: 'private', id: call_id, recording_status: 1)
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:unauthorized]
@@ -42,7 +42,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
 
   def test_create_with_valid_params_and_basic_auth
     set_basic_auth_header
-    post :create, construct_params(version: 'private', fc_call_id: Random.rand(100))
+    post :create, construct_params(version: 'private', fc_call_id: get_call_id)
     result = parse_response(@response.body)
     match_json(create_pattern(::Freshcaller::Call.last))
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
@@ -50,7 +50,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
 
   def test_update_recording_status_and_basic_auth
     set_basic_auth_header
-    call_id = Random.rand(1000)
+    call_id = get_call_id
     create_call(fc_call_id: call_id)
     put :update, construct_params(version: 'private', id: call_id, recording_status: 1)
     call = ::Freshcaller::Call.last
@@ -61,7 +61,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
 
   def test_create_with_valid_params
     set_auth_header
-    post :create, construct_params(version: 'private', fc_call_id: Random.rand(100))
+    post :create, construct_params(version: 'private', fc_call_id: get_call_id)
     result = parse_response(@response.body)
     match_json(create_pattern(::Freshcaller::Call.last))
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
@@ -69,7 +69,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
 
   def test_create_with_update_field
     set_auth_header
-    post :create, construct_params(version: 'private', fc_call_id: Random.rand(100), ticket_display_id: 1)
+    post :create, construct_params(version: 'private', fc_call_id: get_call_id, ticket_display_id: 1)
     match_json([bad_request_error_pattern('ticket_display_id', :invalid_field)])
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:bad_request]
   end
@@ -83,7 +83,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
 
   def test_update_recording_status
     set_auth_header
-    call_id = Random.rand(1000)
+    call_id = get_call_id
     create_call(fc_call_id: call_id)
     put :update, construct_params(version: 'private', id: call_id, recording_status: 1)
     call = ::Freshcaller::Call.last
@@ -95,7 +95,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
   def test_update_with_missed_call_params
     User.current = @account.users.first
     set_auth_header
-    call_id = Random.rand(1000)
+    call_id = get_call_id
     create_call(fc_call_id: call_id)
     put :update, construct_params(convert_incoming_call_params(call_id, 'no-answer'))
     result = parse_response(@response.body)
@@ -107,7 +107,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
 
   def test_update_with_voicemail_params
     set_auth_header
-    call_id = Random.rand(1000)
+    call_id = get_call_id
     create_call(fc_call_id: call_id)
     put :update, construct_params(convert_call_params(call_id, 'voicemail'))
     result = parse_response(@response.body)
@@ -119,7 +119,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
   def test_update_with_convert_call_to_ticket_params
     ::Freshcaller::Call.destroy_all
     set_auth_header
-    call_id = Random.rand(1000)
+    call_id = get_call_id
     user = @account.technicians.first
     create_call(fc_call_id: call_id, account_id: @account.id)
     params = convert_call_params(call_id, 'completed').merge(agent_email: user.email)
@@ -132,7 +132,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
 
   def test_update_with_convert_call_to_note_params
     set_auth_header
-    call_id = Random.rand(100)
+    call_id = get_call_id
     create_call(fc_call_id: call_id)
     put :update, construct_params(convert_call_to_note_params(call_id, 'completed'))
     call = ::Freshcaller::Call.last
@@ -142,7 +142,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
 
   def test_update_with_invalid_params
     set_auth_header
-    call_id = Random.rand(100)
+    call_id = get_call_id
     create_call(fc_call_id: call_id)
     put :update, construct_params(update_invalid_params(call_id))
     match_json([bad_request_error_pattern(:call_status, :not_included, list: 'voicemail,no-answer,completed'),
