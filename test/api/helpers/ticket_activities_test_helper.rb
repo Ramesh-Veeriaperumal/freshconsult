@@ -38,7 +38,7 @@ module TicketActivitiesTestHelper
    def email_failures_ticket_activity
     params = {}
     params[:members] = "{\"user_ids\":[\"#{@ticket.requester_id}\",\"#{@ticket.responder_id}\"],\"rule_ids\":[],\"status_ids\":[\"#{@ticket.status}\"],\"ticket_ids\":[]}"
-    params[:email_failures] = "[{\"#{@ticket.to_email.first}\":\"{rand(0..3)}\"}]"
+    params[:email_failures] = "[{\"#{@ticket.requester.email}\":\"{rand(0..3)}\"}]" 
     get_activity_data(params)
   end
 

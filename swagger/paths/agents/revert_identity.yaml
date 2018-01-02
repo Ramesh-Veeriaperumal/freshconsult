@@ -1,11 +1,9 @@
 get:
   tags: [agent]
-  summary: Show me
+  summary: Revert Identity
   responses:
-    200:
+    204:
       description: Success
-      schema:
-        $ref: '#/definitions/agent'
     404:
       description: Resource not found
     403:

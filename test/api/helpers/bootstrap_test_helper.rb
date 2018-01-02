@@ -19,6 +19,7 @@ module BootstrapTestHelper
       last_active_at: agent.last_active_at.try(:utc).try(:iso8601),
       abilities: agent.user.abilities,
       assumable_agents: agent.assumable_agents.map(&:id),
+      is_assumed_user: session.has_key?(:assumed_user),
       preferences: agent.preferences
     )
     if gamification_feature?(Account.current)
@@ -53,6 +54,7 @@ module BootstrapTestHelper
 
   def account_info_pattern(account)
     pattern = {
+      ref_id: account.id,
       full_domain: account.full_domain,
       helpdesk_name: account.helpdesk_name,
       name: account.name,
