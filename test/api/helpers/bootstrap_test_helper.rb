@@ -54,6 +54,7 @@ module BootstrapTestHelper
 
   def account_info_pattern(account)
     pattern = {
+      ref_id: account.id,
       full_domain: account.full_domain,
       helpdesk_name: account.helpdesk_name,
       name: account.name,

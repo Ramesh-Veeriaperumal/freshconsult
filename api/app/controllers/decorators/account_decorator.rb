@@ -2,6 +2,7 @@ class AccountDecorator < ApiDecorator
   include Social::Util
   def to_hash
     ret_hash = {
+      ref_id: record.id,
       full_domain: record.full_domain,
       helpdesk_name: record.helpdesk_name,
       name: record.name,
