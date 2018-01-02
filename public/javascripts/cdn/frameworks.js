@@ -66,3 +66,4 @@
 //= require app/realtime_dashboard_persist.js
 //= require frameworks/plugins/prism.js
 //= require frameworks/velocity.min.js
+//= require frameworks/plugins/video.js

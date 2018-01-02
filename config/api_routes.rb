@@ -144,6 +144,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
+
     resources :contact_fields, controller: 'api_contact_fields', only: [:index]
 
     resources :products, controller: 'api_products', only: [:index, :show]

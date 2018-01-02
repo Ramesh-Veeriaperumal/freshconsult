@@ -1,0 +1,53 @@
+<div class="year-in-review">
+	<div class="review-wrapper year-review-bg">
+		<div class="trophy-icon review-block common-icon-year-review"></div>
+
+		<div class="review-content review-block">
+		  <h4 class="review-title"> <%=t('helpdesk_reports.year_in_review.title')%> </h4>
+		  <p class="review-desc"> <%=t('helpdesk_reports.year_in_review.body', { user_name: current_user.first_name })%> </p>
+		</div>
+
+		<div class="watch-btn review-block text-center">
+		   <a  href="#year_in_video_model"
+          data-action="merge"
+          id="year-in-video"
+          class="btn btn-primary watch-video-btn"
+          data-width="1100"
+          rel="freshdialog"
+          data-template-footer="false"
+          data-target="#year_in_video_model"
+          >
+          <%=t('helpdesk_reports.year_in_review.watch_video')%>
+      </a>
+
+			<% if close_btn %>
+				<span class="close-btn tooltip" id="close-btn" data-original-title="<%=t('helpdesk_reports.year_in_review.dont_show')%>">
+					<i class="ficon-cross"></i>
+				</span>
+			<% end %>
+		</div>
+	</div>
+</div>	
+
+<div class="year-in-video-container hide" id="year_in_video_model">
+	<div class="video-player">
+		<video class="video-js" controls preload="none" id="year-in-review-video"  data-setup="{}">
+		<source src="<%= @url %>">
+		</video>
+	</div>
+	<% if (User.current.privilege?(:view_reports) && User.current.agent.all_ticket_permission) && !@shared %>
+		<div class="text-center p12">
+			<button class="btn tooltip" id="share-video" data-placement="right"
+			data-original-title="<%=t('helpdesk_reports.year_in_review.share_tooltip')%>"
+			data-sharing="<%= t('helpdesk_reports.year_in_review.sharing') %>"
+			data-shared="<%= t('helpdesk_reports.year_in_review.shared') %>">
+				<i id="share-icon" class="ficon-share"></i>
+				<span id="share-btn-text"> <%=t('helpdesk_reports.year_in_review.share')%> </span>
+			</button>
+		</div>
+	<% end %>
+</div>
+
+<script type="text/javascript">
+		App.YearInReview.init();
+</script>
