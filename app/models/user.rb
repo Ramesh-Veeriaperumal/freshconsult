@@ -1117,7 +1117,7 @@ class User < ActiveRecord::Base
       user_params[:phone] = freshid_user.phone if self.phone != freshid_user.phone
       user_params[:mobile] = freshid_user.mobile if self.mobile != freshid_user.mobile
       user_params[:active] = freshid_user.active? if self.active != freshid_user.active?
-      self.update_attributes!(new_user_params) if user_params.present?
+      self.update_attributes!(user_params) if user_params.present?
     rescue Exception => e
       Rails.logger.error "FRESHID Error updating user with FreshID attributes -- #{e.inspect}"
     end
