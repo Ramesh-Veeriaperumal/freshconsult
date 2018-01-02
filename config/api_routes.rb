@@ -380,6 +380,10 @@ Helpkit::Application.routes.draw do
     resources :agent_password_policy, controller: 'ember/agent_password_policies', 
                                         only: [:index]
 
+    get '/yearin_review', to: 'ember/year_in_review#index'
+    post '/yearin_review/share', to: 'ember/year_in_review#share'
+    post '/yearin_review/clear', to: 'ember/year_in_review#clear'
+    
     # Search routes
     post '/search/tickets/',      to: 'ember/search/tickets#results'
     post '/search/customers/',    to: 'ember/search/customers#results'
