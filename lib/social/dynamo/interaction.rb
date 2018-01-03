@@ -73,7 +73,8 @@ class Social::Dynamo::Interaction
   end
 
   def execute_on_table(time_range, &block)
-    [time_range, time_range + 7.days].each do |time|
+    retention_period = TABLES[TABLE][:retention_period]
+    [time_range, time_range + retention_period].each do |time|
       table_name = Social::DynamoHelper.select_table(TABLE, time)
       yield(table_name, time) if block_given?
     end

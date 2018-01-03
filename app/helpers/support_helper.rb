@@ -634,7 +634,7 @@ module SupportHelper
     %(  <a href="#portal-cookie-info" rel="freshdialog" data-lazy-load="true" class="cookie-link"
         data-width="450px" title="#{ I18n.t('portal.cookie.why_we_love_cookies') }" data-template-footer="">
         #{ I18n.t('portal.cookie.cookie_policy') }
-      </a> #{ cookie_law } ).html_safe
+      </a> #{ cookie_law } ).html_safe if Account.current.copy_right_enabled?
   end
 
   def link_to_privacy_policy portal

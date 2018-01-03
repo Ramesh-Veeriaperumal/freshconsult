@@ -98,7 +98,8 @@ class Social::Dynamo::Feed::Base
     table = "feeds"
     item_hash = feeds_hash(stream_id, feed_id, "", 0, 0, "", source)
     item_hash.merge!("fd_link" => {})
-    times = [Time.now, Time.now + 7.days]
+    retention_period = TABLES[table][:retention_period]
+    times = [Time.now, Time.now + retention_period]
     times.each do |time|
       table_name = Social::DynamoHelper.select_table(table, time)
       Social::DynamoHelper.update(table_name, item_hash, TABLES[table][:schema], [], ["fd_link"])
@@ -142,7 +143,8 @@ class Social::Dynamo::Feed::Base
   end
   
   def execute_on_table(time_range, &block)
-    [time_range, time_range + 7.days].each do |time|
+    retention_period = TABLES[TABLE][:retention_period]
+    [time_range, time_range + retention_period].each do |time|
       table_name = Social::DynamoHelper.select_table(TABLE, time)
       yield(table_name, time) if block_given?
     end

@@ -10,7 +10,7 @@ module Facebook
         threads.each do |thread|
           thread.symbolize_keys!
           msg_ids = thread[:messages]["data"].map { |msg| msg["id"]}
-          fb_msg = latest_message( thread[:id])
+          fb_msg = latest_message(thread[:id])
           previous_ticket = fb_msg.try(:postable)
 
           last_reply = unless previous_ticket.blank?
@@ -24,12 +24,6 @@ module Facebook
             add_as_note(thread, previous_ticket)
           else
             add_as_ticket(thread)
-          end
-
-          if fb_msg.present? && fb_msg.thread_key.nil?
-            @account.facebook_posts.where({:thread_id => thread[:id], :facebook_page_id => @fan_page.id, :thread_key => nil}).find_each do |fb_post| 
-              fb_post.update_attributes({:thread_key => thread[:thread_key]})
-            end
           end
         end
       end
@@ -58,7 +52,7 @@ module Facebook
               :account_id       =>  @account.id,
               :msg_type         =>  'dm',
               :thread_id        =>  thread_id,
-              :thread_key       =>  thread[:thread_key]
+              :thread_key       =>  thread[:id]
             }
           )
           body_html = html_content_from_message(message, @note)
@@ -109,7 +103,7 @@ module Facebook
             :account_id         =>  @account.id,
             :msg_type           =>  'dm',
             :thread_id          =>  thread[:id],
-            :thread_key         =>  thread[:thread_key]
+            :thread_key         =>  thread[:id]
           }
         )
         description_html = html_content_from_message(first_message_from_customer, @ticket)

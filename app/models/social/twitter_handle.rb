@@ -86,5 +86,5 @@ class Social::TwitterHandle < ActiveRecord::Base
     end
     return nil
   end
-
+  
 end

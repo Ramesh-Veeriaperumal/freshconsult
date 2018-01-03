@@ -1,6 +1,7 @@
 class FreshopsMailer < ActionMailer::Base
   default from: "admin@freshdesk.com"
   RECIPIENTS = "dev-ops@freshdesk.com"
+  CORE_ALIAS = "freshdesk-core-dev@freshdesk.com"
 
   def subscription_summary_csv(email_id,email_params,csv_file)
     headers = {
@@ -46,4 +47,19 @@ class FreshopsMailer < ActionMailer::Base
     mail(headers).deliver
   end
 
+  def send_redis_slowlog(csv)
+    headers = {
+      :to       => CORE_ALIAS,
+      :cc       => RECIPIENTS,
+      :subject  => "Redis Slowlog for last week",
+      :sent_on  => Time.now,
+      :body     => "Please find Redis Slowlog Queries for #{PodConfig['CURRENT_POD'].capitalize}"
+    }
+
+    attachments.inline['redis_slowlog.csv'] = {
+      mime_type: 'application/csv; charset=utf-8; header=present',
+      content: csv
+    }
+    mail(headers).deliver
+  end
 end

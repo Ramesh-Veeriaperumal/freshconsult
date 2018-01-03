@@ -18,7 +18,7 @@ HelpdeskReports.CoreUtil = {
         fetch_active_metric : '/fetch_active_metric'
     },
     reports_specific_disabled_filter:{
-        "customer_report":["agent_id","group_id","company_id"]
+        "customer_report":["company_id"]
     },
     global_disabled_filter: ["status","historic_status"],
     default_available_filter : [ "agent_id","group_id","atleast_once_in_agent_id","atleast_once_in_group_id","atleast_once_in_status","is_escalated" ],
