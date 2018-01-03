@@ -9192,14 +9192,14 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     "no": 'No'
     year_in_review:
       title: "Your Year in Review"
-      body: "%{user_name}, here’s a look back into the fantastic year your team has had in support. From all of us here at Freshworks, we hope you enjoy the video. #FreshdeskYearInReview"
+      body: "%{user_name}, here’s a look back at the fantastic year your team has had in Support. From all of us at Freshworks, we hope you enjoy the video. #FreshdeskYearInReview"
       watch_now: "Watch video"
       share: "Share with team"
       sharing: "Sharing..."
       shared: "Shared with team"
       dont_show: "Dont Show"
       watch_video: "Watch Video"
-      share_tooltip: "Not everyone can see this unless you share it."
+      share_tooltip: "This is visible to you as you have access to analytics. Share it with everyone on your team."
     qna:
       view_full_report: Dive into the data
       recently_asked_questions: RECENTLY ASKED QUESTIONS
