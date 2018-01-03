@@ -1,0 +1,8 @@
+defaults: &defaults
+  app_id: 3341494824
+
+development:
+  <<: *defaults
+
+staging:
+  <<: *defaults
