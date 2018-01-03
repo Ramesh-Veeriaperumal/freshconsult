@@ -358,6 +358,7 @@ module TicketsTestHelper
       email_failures = email_failures.reduce Hash.new, :merge
       to_emails = @ticket.requester.email
       cc_emails = @ticket.cc_email[:cc_emails]
+      to_emails = to_emails.to_a
       @to_list = []
       @cc_list = []
       email_failures.each do |email,error|

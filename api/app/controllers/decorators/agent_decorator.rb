@@ -4,6 +4,7 @@ class AgentDecorator < ApiDecorator
   def initialize(record, options)
     super(record)
     @group_mapping_ids = options[:group_mapping_ids]
+    @is_assumed_user = options[:is_assumed_user]
   end
 
   def to_hash
@@ -83,6 +84,7 @@ class AgentDecorator < ApiDecorator
       {
         last_active_at:       record.last_active_at.try(:utc),
         assumable_agents:     record.assumable_agents.map(&:id),
+        is_assumed_user:      @is_assumed_user,
         abilities:            record.user.abilities,
         preferences:          record.preferences
       }

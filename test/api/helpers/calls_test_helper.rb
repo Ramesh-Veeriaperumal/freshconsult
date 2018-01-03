@@ -80,4 +80,8 @@ module Freshcaller::CallsTestHelper
     ticket.save
     ticket
   end
+
+  def get_call_id
+    Random.rand(2..100000)
+  end
 end

@@ -193,13 +193,20 @@
   $ref: ./agents/list.yaml
 /agents/{id}:
   $ref: ./agents/crud.yaml
-/agents/me:
-  $ref: ./agents/me.yaml
 /agents/{id}/achievements:
   $ref: ./agents/achievements.yaml
 /agents/create_multiple:
   $ref: ./agents/create_multiple.yaml
+/agents/{id}/assume_identity:
+  $ref: ./agents/assume_identity.yaml
+/agents/revert_identity:
+  $ref: ./agents/revert_identity.yaml
 
+# Profiles
+/agents/me:
+  $ref: ./profiles/crud.yaml
+/agents/me/reset_api_key:
+  $ref: ./profiles/reset_api_key.yaml
 
 # Scenario Automations
 /scenario_automations:

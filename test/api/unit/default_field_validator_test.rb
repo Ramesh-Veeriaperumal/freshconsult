@@ -15,6 +15,7 @@ class DefaultFieldValidatorTest < ActionView::TestCase
                 required_fields: DefaultFieldValidatorTestHelper.required_fields,
                 field_validations: DefaultFieldValidatorTestHelper.default_field_validations
               }
+
     validates :attribute1, default_field: {
       required_fields: [],
       field_validations: {}
@@ -50,7 +51,7 @@ class DefaultFieldValidatorTest < ActionView::TestCase
 
   def test_values_valid
     params = { source: '2', status: '2', priority: '1', type: 'Lead', group_id: 1, responder_id: 1, product_id: 1, subject: Faker::Name.name, description: Faker::Lorem.paragraph,
-               email: Faker::Internet.email, phone: '123455', mobile: '12344', client_manager: true, company_id: 1, tags: [Faker::Name.name, Faker::Name.name], address: Faker::Lorem.paragraph,
+               email: Faker::Internet.email, phone: '123455', mobile: '12344', client_manager: true, company_id: 1, tags: [Faker::Name.name, Faker::Name.name], address: Faker::Lorem.characters(200),
                job_title: Faker::Name.name, twitter_id: Faker::Name.name, language: 'en', time_zone: 'Chennai', domains: [Faker::Internet.domain_word], note: Faker::Name.name }
     test = TestValidation.new(params, true)
     assert test.valid?
@@ -127,7 +128,7 @@ class DefaultFieldValidatorTest < ActionView::TestCase
     tags = [Faker::Lorem.characters(10) + ', Faker', Faker::Lorem.characters(10)]
     domains = [Faker::Internet.domain_word + ', Faker']
     params = {  source: '2', status: '2', priority: '1', type: 'Lead', group_id: 1, responder_id: 1, product_id: 1, subject: Faker::Name.name, description: Faker::Lorem.paragraph,
-                email: Faker::Internet.email, phone: '123455', mobile: '12344', client_manager: true, company_id: 1, tags: tags, address: Faker::Lorem.paragraph,
+                email: Faker::Internet.email, phone: '123455', mobile: '12344', client_manager: true, company_id: 1, tags: tags, address: Faker::Lorem.characters(200),
                 job_title: Faker::Name.name, twitter_id: Faker::Name.name, language: 'en', time_zone: 'Chennai', domains: domains, note: Faker::Name.name }
     test = TestValidation.new(params, true)
     refute test.valid?
@@ -138,8 +139,11 @@ class DefaultFieldValidatorTest < ActionView::TestCase
   end
 
   def test_validator_chaining_for_email
-    params = { source: '2', status: '2', priority: '1', type: 'Lead', group_id: 1, responder_id: 1, product_id: 1, subject: Faker::Name.name, description: Faker::Lorem.paragraph,
-               email: "#{Faker::Lorem.characters(300)}@#{Faker::Lorem.characters(20)}.com", phone: '123455', mobile: '12344', client_manager: true, company_id: 1, tags: [Faker::Name.name, Faker::Name.name], address: Faker::Lorem.paragraph,
+    params = { source: '2', status: '2', priority: '1', type: 'Lead', group_id: 1, responder_id: 1, product_id: 1, 
+               subject: Faker::Name.name, description: Faker::Lorem.paragraph,
+               email: "#{Faker::Lorem.characters(300)}@#{Faker::Lorem.characters(20)}.com", phone: '123455', mobile: '12344', 
+               client_manager: true, company_id: 1, tags: [Faker::Name.name, Faker::Name.name], 
+               address: Faker::Lorem.characters(200),
                job_title: Faker::Name.name, twitter_id: Faker::Name.name, language: 'en', time_zone: 'Chennai', domains: [Faker::Internet.domain_word], note: Faker::Name.name }
     test = TestValidation.new(params, true)
     refute test.valid?
@@ -150,7 +154,7 @@ class DefaultFieldValidatorTest < ActionView::TestCase
 
   def test_attribute_with_no_validation
     params = { attribute1: 'test', source: '2', status: '2', priority: '1', type: 'Lead', group_id: 1, responder_id: 1, product_id: 1, subject: Faker::Name.name, description: Faker::Lorem.paragraph,
-               email: Faker::Internet.email, phone: '123455', mobile: '12344', client_manager: true, company_id: 1, tags: [Faker::Name.name, Faker::Name.name], address: Faker::Lorem.paragraph,
+               email: Faker::Internet.email, phone: '123455', mobile: '12344', client_manager: true, company_id: 1, tags: [Faker::Name.name, Faker::Name.name], address: Faker::Lorem.characters(200),
                job_title: Faker::Name.name, twitter_id: Faker::Name.name, language: 'en', time_zone: 'Chennai', domains: [Faker::Internet.domain_word], note: Faker::Name.name }
     test = TestValidation.new(params, true)
     assert test.valid?

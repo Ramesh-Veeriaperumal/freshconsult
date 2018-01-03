@@ -26,6 +26,7 @@ module Ember
         }
         api_meta[:collision_url] = agentcollision_alb_socket_host if current_account.features?(:collision)
         api_meta[:autorefresh_url] = autorefresh_alb_socket_host if current_account.auto_refresh_enabled?
+        api_meta[:freshid_url] = Freshid::Constants::FRESHID_CACHE_IMAGE_URL if current_account.freshid_enabled?
         api_meta.merge(generate_livechat_token)
       end
   end
