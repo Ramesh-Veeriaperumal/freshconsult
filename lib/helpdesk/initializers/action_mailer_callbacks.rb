@@ -126,7 +126,7 @@ module ActionMailerCallbacks
         
     def read_smtp_settings(category_id)
       email_config = Thread.current[:email_config]
-      if ($redis_others.get("ROUTE_EMAILS_VIA_FD_SMTP_SERVICE") == "1" || email_config.account.launched?(:deliver_email_via_fd_relay_server))
+      if ($redis_others.get("ROUTE_EMAILS_VIA_FD_SMTP_SERVICE") == "1" ||  (!(email_config.nil?)  && email_config.account.launched?(:deliver_email_via_fd_relay_server)))
         Rails.logger.info "Email has been sent via FD SMTP Service"
         Helpdesk::EMAIL["category-fd_email_service".to_sym][Rails.env.to_sym]
       else
