@@ -20,7 +20,10 @@ module Freshcaller
             account_name: account.name,
             account_id: account.id,
             freshdesk_calls_url: "#{protocol}#{account.full_domain}/api/channel/freshcaller_calls",
-            app: 'Freshdesk'
+            app: 'Freshdesk',
+            client_ip: client_ip,
+            domain_url: "#{protocol}#{account.full_domain}",
+            access_token: account_admin.single_access_token
           }
         }
       }
@@ -96,6 +99,11 @@ module Freshcaller
     def subscription_period
       return 'annual' if ::Account.current.subscription.renewal_period == 12
       'monthly'
+    end
+
+    def client_ip
+      return account_admin.last_login_ip if account_admin.last_login_ip.present?
+      account_admin.current_login_ip
     end
   end
 end

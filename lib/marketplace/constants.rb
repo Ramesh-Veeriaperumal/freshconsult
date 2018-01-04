@@ -18,25 +18,27 @@ module Marketplace::Constants
     # Extension Type, Extension Type ID, versionable?
     [:plug,               1, true],    
     [:ni,                 4, false],
-    [:external_app,       5, '']
+    [:external_app,       5, ''],
+    [:custom_app,         6,  true]
   ]
 
   EXTENSION_TYPE = Hash[*EXTENSION_TYPES.map { |i| [i[0], i[1]] }.flatten]
   VERSIONABLE_EXTENSION = EXTENSION_TYPES.map { |i| i[1] if i[2] }
 
+  # TODO: custom type to removed
   APP_TYPES = [ 
     [:regular,               1],    
     [:custom,                2],
-    [:hidden,                3],
+    [:hidden,                3]
   ]
 
   APP_TYPE = Hash[*APP_TYPES.map { |i| [i[0], i[1]] }.flatten]
 
-  DEFAULT_EXTENSION_TYPES = "#{EXTENSION_TYPE[:plug]},#{EXTENSION_TYPE[:ni]},#{EXTENSION_TYPE[:external_app]}"
+  DEFAULT_EXTENSION_TYPES = "#{EXTENSION_TYPE[:plug]},#{EXTENSION_TYPE[:ni]},#{EXTENSION_TYPE[:external_app]}".freeze
 
-  INSTALLED_LIST_EXTENSION_TYPES = "#{EXTENSION_TYPE[:plug]},#{EXTENSION_TYPE[:ni]}"
+  INSTALLED_LIST_EXTENSION_TYPES = "#{EXTENSION_TYPE[:plug]},#{EXTENSION_TYPE[:ni]},#{EXTENSION_TYPE[:custom_app]}".freeze
 
-  INSTALLED_APP_TYPES_V2 = "#{EXTENSION_TYPE[:plug]}"
+  INSTALLED_APP_TYPES_V2 = "#{EXTENSION_TYPE[:plug]},#{EXTENSION_TYPE[:custom_app]}".freeze
 
   FORM_FIELD_TYPES = [
     [:text, 1],

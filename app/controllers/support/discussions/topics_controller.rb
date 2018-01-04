@@ -293,7 +293,10 @@ class Support::Discussions::TopicsController < SupportController
     end
 
     def cleared_captcha
-      current_account.features_included?(:forum_captcha_disable) || verify_recaptcha(:model => @topic, :message => t("captcha_verify_message"))
+      current_account.features_included?(:forum_captcha_disable) || 
+        verify_recaptcha(model: @topic,
+                         message: t('captcha_verify_message'),
+                         hostname: current_portal.method(:matches_host?))
     end
 
     def set_sort_by
