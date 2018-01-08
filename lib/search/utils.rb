@@ -143,6 +143,25 @@ class Search::Utils
     response: 3
   }
 
+  MQ_TEMPLATES_MAPPING = [
+    #[document name, account.features?(:feature_name), user privilege, klasses]
+    ['agentSpotlightTicket', nil, :manage_tickets, ['Helpdesk::Ticket', 'Helpdesk::ArchiveTicket']],
+    ['agentSpotlightSolution', nil, :view_solutions, ['Solution::Article']],
+    ['agentSpotlightTopic', 'forums', :view_forums, ['Topic']],
+    ['agentSpotlightCustomer', nil, :view_contacts, ['User', 'Company']]
+  ]
+
+  TEMPLATE_MAPPING_TO_FEATURES = Hash[*MQ_TEMPLATES_MAPPING.map { |i| [i[0], i[1]] }.flatten]
+
+  TEMPLATE_MAPPING_TO_PRIVILEGES = Hash[*MQ_TEMPLATES_MAPPING.map { |i| [i[0], i[2]] }.flatten]
+
+  TEMPLATE_TO_CLASS_MAPPING = Hash[*MQ_TEMPLATES_MAPPING.map { |i| [i[0].underscore.to_sym, i[3]] }.flatten(1)]
+
+  MQ_TEMPLATES = MQ_TEMPLATES_MAPPING.map(&:first)
+  MQ_CONTEXTS  = ['spotlight']
+  MQ_SPOTLIGHT_SEARCH_LIMIT = 3
+  MQ_MAX_LIMIT = 10   # Can increase when Search service increases the limit on their end
+
   # Load ActiveRecord objects
   #
   def self.load_records(es_results, model_and_assoc, args={})
@@ -212,6 +231,10 @@ class Search::Utils
     else
       Search::Utils::TEMPLATE_BY_CONTEXT[template_key]
     end
+  end
+
+  def self.context_mapping(context)
+    context.gsub('Exact','')
   end
   
   private

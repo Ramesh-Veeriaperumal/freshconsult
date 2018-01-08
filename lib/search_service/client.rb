@@ -11,6 +11,11 @@ module SearchService
       query_request.response
     end
 
+    def multi_query(payload = nil, uuid = nil, additional_log_info = {})
+      query_request = SearchService::Request.new(multi_query_path, :post, uuid, payload, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id, additional_log_info)
+      query_request.response
+    end
+
     def write_object(entity, version, parent_id, type, locale = nil)
       uuid = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
       payload = { payload: entity.to_esv2_json, version: version, parent_id: parent_id }
@@ -78,6 +83,11 @@ module SearchService
 
       def query_path
         path = SearchService::Constants::QUERY_PATH % { product_name: ES_V2_CONFIG[:product_name], account_id: @account_id }
+        "#{service_host}/#{path}"
+      end
+
+      def multi_query_path
+        path = SearchService::Constants::MULTI_QUERY_PATH % { product_name: ES_V2_CONFIG[:product_name], account_id: @account_id }
         "#{service_host}/#{path}"
       end
 
