@@ -3,6 +3,7 @@ class Admin::GettingStartedController < Admin::AdminController
   before_filter :set_session_state ,:fb_client
 
   helper Admin::GettingStartedHelper
+  include Admin::Social::FacebookAuthHelper
   
   VALID_COLOR_REGEX = /^#(?:[0-9a-fA-F]{3}){1,2}$/
 
@@ -50,14 +51,11 @@ class Admin::GettingStartedController < Admin::AdminController
     def valid_color_code(color)      
       (color =~ VALID_COLOR_REGEX) ? true : false
     end
-    
-    def fb_client   
-      callback_url = current_account.features?(:social_revamp) ? admin_social_facebook_streams_url : social_facebook_index_url
-      @fb_client   = Facebook::Oauth::FbClient.new(callback_url) 
-    end
-    
-    def set_session_state
-      session[:state] = Digest::MD5.hexdigest(Helpdesk::SECRET_3+ Time.now.to_f.to_s)
+
+    def fb_client
+      callback_url = "#{AppConfig['integrations_url'][Rails.env]}/facebook/page/callback"
+      redirect_account_url = current_account.features?(:social_revamp) ? admin_social_facebook_streams_url : social_facebook_index_url
+      @fb_client = make_fb_client(callback_url, redirect_account_url)
     end
 
 end
