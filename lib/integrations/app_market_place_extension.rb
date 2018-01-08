@@ -54,8 +54,9 @@ module Integrations
       ni_latest_result = mkt_obj.send(:ni_latest_details, app_name)
       return false if mkt_obj.send(:error_status?, ni_latest_result)
       params = ni_latest_result.body.symbolize_keys
-
-      extn_details = mkt_obj.send(:extension_details, params[:extension_id])
+      params.merge!({:type => ::Marketplace::Constants::EXTENSION_TYPE[:ni]})
+      
+      extn_details = mkt_obj.send(:extension_details, params[:extension_id], params[:type])
       return false if mkt_obj.send(:error_status?, extn_details)
       @extension = extn_details.body
 
@@ -63,7 +64,6 @@ module Integrations
 
       params.merge!({
         :configs => configs,
-        :type => ::Marketplace::Constants::EXTENSION_TYPE[:ni],
         :enabled => ::Marketplace::Constants::EXTENSION_STATUS[:enabled]
       }) if ['install', 'update'].include?(method)
 

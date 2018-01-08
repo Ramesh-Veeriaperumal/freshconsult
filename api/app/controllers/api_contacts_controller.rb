@@ -259,13 +259,13 @@ class ApiContactsController < ApiApplicationController
         }
       end
       ErrorHelper.rename_error_fields(
-        ContactConstants::FIELD_MAPPINGS.merge(@name_mapping), item
+        ContactConstants::FIELD_MAPPINGS.merge(error_options_mappings), item
       )
       @error_options
     end
 
     def error_options_mappings
-      @name_mapping.merge(ContactConstants::FIELD_MAPPINGS)
+      (custom_field_error_mappings || {}).merge(ContactConstants::FIELD_MAPPINGS)
     end
 
     def assign_protected

@@ -656,4 +656,8 @@ class ApiApplicationController < MetalApiController
     def request_host
       @request_host ||= request.host
     end
+
+    def custom_field_error_mappings
+      @custom_field_error_mapping ||= Hash[@name_mapping.map{|k,v| [k, "custom_fields.#{v}"]}] if @name_mapping.present?
+    end
 end
