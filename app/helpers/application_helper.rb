@@ -92,13 +92,13 @@ module ApplicationHelper
     query_string = preview? ? "#{Time.now.to_i}&preview=true" : "#{current_portal.template.updated_at.to_i}"
     "/support/#{stylesheet_name}?v=#{query_string}"
   end
-  
+
   def facebook_theme_url
     stylesheet_name = is_current_language_rtl? ? "theme_rtl.css" : "theme.css"
     query_string = preview? ? "#{Time.now.to_i}&preview=true" : "#{current_portal.template.updated_at.to_i}"
     "/facebook/#{stylesheet_name}?v=#{query_string}"
   end
-  
+
 
   def logo_url(portal = current_portal)
     MemcacheKeys.fetch(["v8","portal","logo",portal],7.days.to_i) do
@@ -191,7 +191,7 @@ module ApplicationHelper
       options.merge!({:"data-parallel-url" => "/helpdesk/tickets/filter_options", :"data-parallel-placeholder" => "#ticket-leftFilter"})
     end
     if tab_name.eql?(:reports) && ( request.fullpath.include?("reports/custom_survey") || request.fullpath.include?("reports/timesheet") || request.fullpath.include?("phone/summary_reports") || request.fullpath.include?("freshchat/summary_reports"))
-       options.delete(:"data-pjax") 
+       options.delete(:"data-pjax")
     end
     content_tag('li', link_to(strip_tags(title), url, options), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
   end
@@ -279,7 +279,7 @@ module ApplicationHelper
   def dropdown_menu(list, options = {})
     return if list.blank?
     output = ""
-    output << %(<ul class="dropdown-menu #{options['ul_class']}" role="menu" aria-labelledby="dropdownMenu">) 
+    output << %(<ul class="dropdown-menu #{options['ul_class']}" role="menu" aria-labelledby="dropdownMenu">)
 
     list.each do |item|
       unless item.blank?
@@ -324,14 +324,14 @@ module ApplicationHelper
   def placeholder_list(fields)
     ph_button_list = ""
     fields.each do |field|
-    	ph_button_list << content_tag(:li, 
-													content_tag(:div, 
-														(content_tag(:button, 
-															field[1], 
+    	ph_button_list << content_tag(:li,
+													content_tag(:div,
+														(content_tag(:button,
+															field[1],
 															:class => 'btn btn-flat tooltip',
 															:"data-placeholder" => field[0],
-															:title => field[2]) + nested_ph_menu(field[4])).html_safe, 
-													:class => 'btn-group').html_safe, 
+															:title => field[2]) + nested_ph_menu(field[4])).html_safe,
+													:class => 'btn-group').html_safe,
                         :class => 'ph-item', :id => "placeholder-btn-#{field[3]}")
     end
     content_tag(:ul, ph_button_list.html_safe, :class => 'ph-list').html_safe
@@ -342,8 +342,8 @@ module ApplicationHelper
 
     nested_menu = ""
     nested_data[:nested].each do |nested|
-	    nested_menu << content_tag(:li, 
-                        link_to(nested[1], '#', :class => 'ph-btn tooltip', :"data-placeholder" => nested[0]), 
+	    nested_menu << content_tag(:li,
+                        link_to(nested[1], '#', :class => 'ph-btn tooltip', :"data-placeholder" => nested[0]),
                         :id => "placeholder-btn-#{nested[3]}")
     end
     (link_to(content_tag(:span, "", :class => 'caret'), '#', :class => 'btn btn-flat dropdown-toggle', :"data-toggle" => 'dropdown') +
@@ -390,8 +390,8 @@ module ApplicationHelper
       tab(
         s[3] || t("header.tabs.#{s[1].to_s}") ,
         s[0] ,
-        active && :active, 
-        s[1] 
+        active && :active,
+        s[1]
       ).html_safe
     end
     navigation.to_s.html_safe
@@ -524,12 +524,12 @@ module ApplicationHelper
   end
 
   def merge_ticket_path(args_hash)
-    request.format == "application/json" ? args_hash['subject']+"(##{args_hash['ticket_id']})" : 
+    request.format == "application/json" ? args_hash['subject']+"(##{args_hash['ticket_id']})" :
                                           link_to(args_hash['subject']+"(##{args_hash['ticket_id']})", "#{helpdesk_ticket_path args_hash['ticket_id']}}")
   end
 
   def split_ticket_path(args_hash)
-    request.format == "application/json" ? args_hash['subject']+"(##{args_hash['ticket_id']})" : 
+    request.format == "application/json" ? args_hash['subject']+"(##{args_hash['ticket_id']})" :
                                            link_to(args_hash['subject']+"(##{args_hash['ticket_id']})", "#{helpdesk_ticket_path args_hash['ticket_id']}}")
   end
 
@@ -585,7 +585,7 @@ module ApplicationHelper
 
     #Shared ownership placeholders
     if current_account.shared_ownership_enabled?
-      place_holders[:tickets] += 
+      place_holders[:tickets] +=
         [['{{ticket.internal_group.name}}',      'Internal Group name',       "",         'ticket_group_name'],
         ['{{ticket.internal_agent.name}}',       'Internal Agent name',       "",         'ticket_agent_name'],
         ['{{ticket.internal_agent.email}}',      'Internal Agent email',      "",         'ticket_agent_email']]
@@ -606,7 +606,7 @@ module ApplicationHelper
       name = custom_field.name[0..custom_field.name.rindex('_')-1]
       place_holders[:ticket_fields] << ["{{ticket.#{name}}}", custom_field.label, "", "ticket_#{name}", { :nested => nested_vals }]
     }
-    
+
     # Contact Custom Field Placeholders
     current_account.contact_form.custom_contact_fields.each { |custom_field|
       name = custom_field.name[3..-1]
@@ -631,7 +631,7 @@ module ApplicationHelper
 
 
     # Ticket Public URL placeholder
-    place_holders[:tickets] << ['{{ticket.public_url}}', 'Public Ticket URL' , 
+    place_holders[:tickets] << ['{{ticket.public_url}}', 'Public Ticket URL' ,
                       'URL for accessing the tickets without login', 'ticket_public_url'
                       ] if current_account.features?(:public_ticket_url)
 
@@ -651,8 +651,8 @@ module ApplicationHelper
     if user.avatar
       img_url = avatar_cached_url(user, profile_size)
       img_tag_options = {
-          :onerror => "imgerror(this)", 
-          :alt => user.name, 
+          :onerror => "imgerror(this)",
+          :alt => user.name,
           :size_type => profile_size,
           :data => {
             :src => img_url,
@@ -663,8 +663,8 @@ module ApplicationHelper
       avatar_image_generator(img_tag_options, profile_size, profile_class)
     elsif is_user_social(user, profile_size).present?
         img_tag_options = {
-          :onerror => "imgerror(this)", 
-          :alt => user.name, 
+          :onerror => "imgerror(this)",
+          :alt => user.name,
           :size_type => profile_size,
           :data => {
             :src => is_user_social(user, profile_size),
@@ -681,7 +681,7 @@ module ApplicationHelper
 
   def avatar_image_generator(img_tag_options, profile_size, profile_class)
       ActionController::Base.helpers.content_tag(:div,
-          ActionController::Base.helpers.image_tag("/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options), 
+          ActionController::Base.helpers.image_tag("/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options),
           :class => "#{profile_class} image-lazy-load", :size_type => profile_size )
   end
 
@@ -690,7 +690,7 @@ module ApplicationHelper
       user.avatar ? user.avatar.expiring_url(profile_size,7.days.to_i) : is_user_social(user, profile_size)
     end
   end
-  
+
   def unknown_user_avatar( profile_size = :thumb, profile_class = "preview_pic", options = {} )
     img_tag_options = { :onerror => "imgerror(this)", :alt => t('user.profile_picture') }
     if options.include?(:width)
@@ -712,7 +712,7 @@ module ApplicationHelper
     if user.fb_profile_id
       profile_size = (profile_size == :medium) ? "large" : "square"
       facebook_avatar(user.fb_profile_id, profile_size)
-    else 
+    else
       false
     end
   end
@@ -736,8 +736,8 @@ module ApplicationHelper
     if user.avatar
       img_url = avatar_cached_url(user, profile_size)
       img_tag_options = {
-          :onerror => "imgerror(this)", 
-          :alt => user.name, 
+          :onerror => "imgerror(this)",
+          :alt => user.name,
           :size_type => profile_size,
           :data => {
             :src => img_url,
@@ -748,8 +748,8 @@ module ApplicationHelper
       senti_avatar_image_generator(img_tag_options, profile_size, profile_class, sentiment, options)
     elsif is_user_social(user, profile_size).present?
         img_tag_options = {
-          :onerror => "imgerror(this)", 
-          :alt => user.name, 
+          :onerror => "imgerror(this)",
+          :alt => user.name,
           :size_type => profile_size,
           :data => {
             :src => is_user_social(user, profile_size),
@@ -764,7 +764,7 @@ module ApplicationHelper
   end
 
   def senti_avatar_image_generator(img_tag_options, profile_size, profile_class, sentiment, options)
-      
+
       content_tag(:div, :class => "#{profile_class} image-lazy-load", :size_type => profile_size ) do
         image_tag("/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options)+
         get_senti_i_tag(sentiment, options)
@@ -772,7 +772,7 @@ module ApplicationHelper
   end
 
   def senti_avatar_generator( username, profile_size = :thumb, profile_class, opt, sentiment )
-    
+
     img_tag_options = { :onerror => "imgerror(this)", :alt => t('user.profile_picture'), :class => [profile_size, profile_class]}
     username = username.lstrip
     if username.present? && isalpha(username[0]).present?
@@ -825,9 +825,9 @@ module ApplicationHelper
       return "Happy"
     elsif sentiment == 2
       return "Very Happy"
-    else 
-      return "Neutral"   
-    end 
+    else
+      return "Neutral"
+    end
   end
 
   def senti_class_locator(sentiment)
@@ -840,15 +840,15 @@ module ApplicationHelper
       return "symbols-emo-happy-20"
     elsif sentiment == 2
       return "symbols-emo-veryHappy-20"
-    else 
-      return "symbols-emo-neutral-20"   
-    end  
+    else
+      return "symbols-emo-neutral-20"
+    end
   end
 
   def unique_code(username)
     images = Dir.glob(Rails.root+"public/images/avatar/background/1x/*.*")
     hash = 0
-    username.each_byte do |c|        
+    username.each_byte do |c|
       hash = c + ((hash << 5) - hash);
     end
     unique_code = hash % (images.length)
@@ -939,7 +939,7 @@ module ApplicationHelper
     unless options[:include_year]
       time_format = time_format.gsub(/,\s.\b[%Yy]\b/, "") if (date_time.year == Time.now.year)
     end
-    
+
     unless options[:include_weekday]
       time_format = time_format.gsub(/\A(%a|A),\s/, "")
     end
@@ -1092,8 +1092,8 @@ module ApplicationHelper
     field_label    += "#{add_requester_field}".html_safe if (dom_type == "requester" && !is_edit) #add_requester_field has been type converted to string to handle false conditions
     field_name      = (field_name.blank?) ? field.field_name.html_safe : field_name.html_safe
     object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }".html_safe
-    label = label_tag (pl_value_id ? object_name+"_"+field.field_name+"_"+pl_value_id : 
-                                     object_name+"_"+field.field_name), 
+    label = label_tag (pl_value_id ? object_name+"_"+field.field_name+"_"+pl_value_id :
+                                     object_name+"_"+field.field_name),
                       field_label.html_safe,
                       :class => ((field.field_type == "default_company"  && @ticket.new_record?) ? "company_field" : "")
     case dom_type
@@ -1125,15 +1125,15 @@ module ApplicationHelper
                                               {:include_blank => "...", :selected => field_value},
                                               {:class => element_class})
       when "nested_field" then
-        element = label + nested_field_tag(object_name, 
-                                            field_name, 
-                                            field, 
-                                            { :include_blank => "...", 
-                                              :selected => field_value, 
-                                              :pl_value_id => pl_value_id}, 
-                                            {:class => element_class}, 
-                                            field_value, 
-                                            in_portal, 
+        element = label + nested_field_tag(object_name,
+                                            field_name,
+                                            field,
+                                            { :include_blank => "...",
+                                              :selected => field_value,
+                                              :pl_value_id => pl_value_id},
+                                            {:class => element_class},
+                                            field_value,
+                                            in_portal,
                                             required)
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
@@ -1151,9 +1151,9 @@ module ApplicationHelper
             element = label + builder.text_area(field_name, :class => element_class, :value => field_value, :"data-wrap-font-family" => true )
         end
       when "date" then
-      element = label + content_tag(:div, construct_date_field(field_value, 
-                                                                 object_name, 
-                                                                 field_name, 
+      element = label + content_tag(:div, construct_date_field(field_value,
+                                                                 object_name,
+                                                                 field_name,
                                                                  element_class).html_safe,
                                             :class => "controls input-date-field")
     end
@@ -1165,15 +1165,15 @@ module ApplicationHelper
 
 def construct_new_ticket_element_for_google_gadget(form_builder,object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false, pl_value_id=nil)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
-    element_class   = " #{ (required && !object_name.eql?(:template_data)) ? 'required' : '' } #{ dom_type }" 
+    element_class   = " #{ (required && !object_name.eql?(:template_data)) ? 'required' : '' } #{ dom_type }"
     element_class  += " required_closure" if (field.required_for_closure && !field.required)
     element_class  += " section_field" if field.section_field?
     field_label    += '<span class="required_star">*</span>'.html_safe if required
     field_label    += "#{add_requester_field}".html_safe if (dom_type == "requester" && !is_edit) #add_requester_field has been type converted to string to handle false conditions
     field_name      = (field_name.blank?) ? field.field_name.html_safe : field_name.html_safe
     object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }".html_safe
-    label = label_tag (pl_value_id ? object_name+"_"+field.field_name+"_"+pl_value_id : 
-                                     object_name+"_"+field.field_name), 
+    label = label_tag (pl_value_id ? object_name+"_"+field.field_name+"_"+pl_value_id :
+                                     object_name+"_"+field.field_name),
                       field_label.html_safe,
                       :class => ((field.field_type == "default_company" && @ticket.new_record?) ? "company_field" : "")
     choices = field.choices
@@ -1214,7 +1214,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
         element = label + select(object_name, field_name,
                                               dropdown_choices,
                                               {:include_blank => "...", :selected => field_value},
-                                              {:class => element_class + " select2", 
+                                              {:class => element_class + " select2",
                                                :disabled => disabled,
                                                "data-domhelper-name" => "ticket-properties-" + field_name })
       when "hidden" then
@@ -1229,19 +1229,19 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
                                           ( check_box(object_name, field_name, check_box_html.merge!({:checked => field_value}) ) ) )
         element = content_tag(:div, (checkbox_element + label).html_safe, :class => "checkbox-wrapper")
       when "html_paragraph" then
-         element = label 
+         element = label
          redactor_wrapper = ""
         form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
             redactor_wrapper = builder.text_area(field_name, :class => element_class, :value => field_value, :"data-wrap-font-family" => true )
         end
             element += content_tag(:div, redactor_wrapper, :class => "redactor_wrapper")
       when "date" then
-        element = label + content_tag(:div, construct_date_field(field_value, 
-                                                                 object_name, 
-                                                                 field_name, 
+        element = label + content_tag(:div, construct_date_field(field_value,
+                                                                 object_name,
+                                                                 field_name,
                                                                  element_class).html_safe,
                                             :class => "controls input-date-field")
-        
+
     end
     element_class = (field.has_sections_feature? && (field.section_dropdown? || field.field_type == "default_source")) ? " dynamic_sections" : ""
     company_class = " hide" if field.field_type == "default_company" && (@ticket.new_record? || dropdown_choices.empty?)
@@ -1250,16 +1250,16 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
 
   def construct_new_ticket_element(form_builder,object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false, pl_value_id=nil)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
-    element_class   = " #{ (required && !object_name.eql?(:template_data)) ? 
-                      (field.field_type == "default_description" ? 'required_redactor' : 'required') : '' } #{ dom_type }" 
+    element_class   = " #{ (required && !object_name.eql?(:template_data)) ?
+                      (field.field_type == "default_description" ? 'required_redactor' : 'required') : '' } #{ dom_type }"
     element_class  += " required_closure" if (field.required_for_closure && !field.required)
     element_class  += " section_field" if field.section_field?
     field_label    += '<span class="required_star">*</span>'.html_safe if required
     field_label    += "#{add_requester_field}".html_safe if (dom_type == "requester" && !is_edit) #add_requester_field has been type converted to string to handle false conditions
     field_name      = (field_name.blank?) ? field.field_name.html_safe : field_name.html_safe
     object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }".html_safe
-    label = label_tag (pl_value_id ? object_name+"_"+field.field_name+"_"+pl_value_id : 
-                                     object_name+"_"+field.field_name), 
+    label = label_tag (pl_value_id ? object_name+"_"+field.field_name+"_"+pl_value_id :
+                                     object_name+"_"+field.field_name),
                       field_label.html_safe,
                       :class => ((field.field_type == "default_company" && @ticket.new_record?) ? "company_field" : "")
     choices = field.choices
@@ -1302,19 +1302,19 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
         element = label + select(object_name, field_name,
                                               dropdown_choices,
                                               {:include_blank => "...", :selected => field_value},
-                                              {:class => element_class + " select2", 
+                                              {:class => element_class + " select2",
                                                :disabled => disabled,
                                                "data-domhelper-name" => "ticket-properties-" + field_name })
       when "nested_field" then
-        element =  new_nested_field_tag(label, object_name, 
-                                            field_name, 
-                                            field, 
-                                            { :include_blank => "...", 
-                                              :selected => field_value, 
-                                              :pl_value_id => pl_value_id}, 
-                                            {:class => element_class + " select2"}, 
-                                            field_value, 
-                                            in_portal, 
+        element =  new_nested_field_tag(label, object_name,
+                                            field_name,
+                                            field,
+                                            { :include_blank => "...",
+                                              :selected => field_value,
+                                              :pl_value_id => pl_value_id},
+                                            {:class => element_class + " select2"},
+                                            field_value,
+                                            in_portal,
                                             required)
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
@@ -1328,7 +1328,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
                                           ( check_box(object_name, field_name, check_box_html.merge!({:checked => field_value}) ) ) )
         element = content_tag(:div, (checkbox_element + label).html_safe, :class => "checkbox-wrapper")
       when "html_paragraph" then
-        element = label 
+        element = label
         redactor_wrapper = ""
         element_class += " ta_insert_cr" if field.field_type == "default_description"
         editor_type = object_name.eql?("template_data") ? :template : :ticket
@@ -1337,16 +1337,16 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
           redactor_wrapper = builder.text_area(field_name, :class => element_class, :value => field_value, :"data-wrap-font-family" => true, :"editor-type" => editor_type, :id => id, :name => name)
         end
         redactor_wrapper += render(:partial => "/helpdesk/tickets/ticket_widget/new_ticket_attachment", :formats => [:html], :locals => {:object_name => object_name})
-        redactor_wrapper += content_tag(:div, render(:partial => "helpdesk/tickets/show/editor_insert_buttons", 
+        redactor_wrapper += content_tag(:div, render(:partial => "helpdesk/tickets/show/editor_insert_buttons",
                   :locals => {:cntid => 'tkt-cr'}), :class => "request_panel") if field.field_type == "default_description"
         element += content_tag(:div, redactor_wrapper, :class => "redactor_wrapper")
       when "date" then
-        element = label + content_tag(:div, construct_date_field(field_value, 
-                                                                 object_name, 
-                                                                 field_name, 
+        element = label + content_tag(:div, construct_date_field(field_value,
+                                                                 object_name,
+                                                                 field_name,
                                                                  element_class).html_safe,
                                             :class => "controls input-date-field")
-        
+
     end
     fd_class = "#{ dom_type } #{ field.field_type } field"
     fd_class += " dynamic_sections" if (field.has_sections_feature? && (field.section_dropdown? || field.field_type == "default_source"))
@@ -1371,8 +1371,8 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   def construct_date_field(field_value, object_name, field_name, element_class)
     date_format = AccountConstants::DATEFORMATS[Account.current.account_additional_settings.date_format]
     field_value = formatted_date(field_value) if !object_name.include?("template_data") and field_value.present?
-    text_field_tag("#{object_name}[#{field_name}]", field_value, 
-              {:class => "#{element_class} datepicker_popover", 
+    text_field_tag("#{object_name}[#{field_name}]", field_value,
+              {:class => "#{element_class} datepicker_popover",
                 :readonly => true,
                 :'data-show-image' => "true",
                 :'data-date-format' => AccountConstants::DATA_DATEFORMATS[date_format][:datepicker] })
@@ -1387,24 +1387,24 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
         if is_edit || required
           section_field_value = item.is_a?(Helpdesk::Ticket) ? item.send(section_tkt_field.field_name) :
             item.custom_field_value(section_tkt_field.field_name)
-          section_field_value = nested_ticket_field_value(item, 
+          section_field_value = nested_ticket_field_value(item,
                                   section_tkt_field) if section_tkt_field.field_type == "nested_field"
         elsif !params[:topic_id].blank?
           section_field_value = item[section_tkt_field.field_name]
         end
         field_label = (section_tkt_field.label).html_safe
-        section_elements += construct_ticket_element(f, :helpdesk_ticket, 
-                                                        section_tkt_field, 
+        section_elements += construct_ticket_element(f, :helpdesk_ticket,
+                                                        section_tkt_field,
                                                         field_label,
-                                                        section_tkt_field.dom_type, 
-                                                        section_tkt_field.required, 
-                                                        section_field_value, 
-                                                        "", 
-                                                        false, 
+                                                        section_tkt_field.dom_type,
+                                                        section_tkt_field.required,
+                                                        section_field_value,
+                                                        "",
+                                                        false,
                                                         is_edit,
                                                         picklist.id.to_s)
       end
-      section_container += text_area_tag "", content_tag(:ul, section_elements.html_safe.gsub("</textarea>", "&lt/textarea&gt"), 
+      section_container += text_area_tag "", content_tag(:ul, section_elements.html_safe.gsub("</textarea>", "&lt/textarea&gt"),
                                                                :class => "ticket_section"),
                                             :id => "picklist_section_#{picklist.id}",
                                             :disabled => true,
@@ -1422,29 +1422,29 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
         if is_edit || params[:template_form] || required
           section_field_value = if item.is_a?(Helpdesk::TicketTemplate)
             item.template_data[section_tkt_field.field_name]
-          elsif item.is_a?(Helpdesk::Ticket) 
+          elsif item.is_a?(Helpdesk::Ticket)
             item.send(section_tkt_field.field_name)
           else
             item.custom_field_value(section_tkt_field.field_name)
           end
-          section_field_value = nested_ticket_field_value(item, 
+          section_field_value = nested_ticket_field_value(item,
                                   section_tkt_field) if section_tkt_field.field_type == "nested_field"
         elsif !params[:topic_id].blank?
           section_field_value = item[section_tkt_field.field_name]
         end
         field_label = (section_tkt_field.label).html_safe
-        section_elements += construct_new_ticket_element(f, object_name, 
-                                                        section_tkt_field, 
+        section_elements += construct_new_ticket_element(f, object_name,
+                                                        section_tkt_field,
                                                         field_label,
-                                                        section_tkt_field.dom_type, 
-                                                        section_tkt_field.required, 
-                                                        section_field_value, 
-                                                        "", 
-                                                        false, 
+                                                        section_tkt_field.dom_type,
+                                                        section_tkt_field.required,
+                                                        section_field_value,
+                                                        "",
+                                                        false,
                                                         is_edit,
                                                         picklist.id.to_s)
       end
-      section_container += text_area_tag "", content_tag(:ul, section_elements.html_safe.gsub("</textarea>", "&lt/textarea&gt"), 
+      section_container += text_area_tag "", content_tag(:ul, section_elements.html_safe.gsub("</textarea>", "&lt/textarea&gt"),
                                                                :class => "ticket_section"),
                                             :id => "picklist_section_#{picklist.id}",
                                             :disabled => true,
@@ -1637,6 +1637,10 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     current_user.privilege?(:manage_account) && (current_account.subscription.free? || current_account.subscription.trial?)
   end
 
+  def attachment_size
+    Account.current.attachment_limit
+  end
+
   private
 
     def forums_visibility?
@@ -1662,7 +1666,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
         ['#', :social, false]
       end
     end
-    
+
     def can_view_social?
       current_account.basic_twitter_enabled? && privilege?(:manage_tickets)
     end
@@ -1718,7 +1722,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     end
     return
   end
-  
+
   def social_reauth_required
     fb_reauth = current_account.fb_reauth_check_from_cache
     twitter_reauth = current_account.twitter_reauth_check_from_cache
@@ -1805,7 +1809,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   def current_account_freshfone_names
       @current_account_freshfone_names ||= current_account_freshfone_numbers.map{ |n| [n.id, name = n.name.nil? ? "" : CGI.escapeHTML(n.name)] }
   end
-  
+
  def current_account_freshfone_details
     @current_account_freshfone_details ||= current_account_freshfone_numbers.map{|n| [n.name.blank? ? "#{n.number}" : "#{CGI.escapeHTML(n.name)} #{n.number}", n.id] }
  end
@@ -1834,7 +1838,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
 
   def freshfone_non_conference_class
     current_account.features?(:freshfone_conference) ? "" : "non-conference"
-  end  
+  end
 
  def call_direction_class(call)
 		if call.blocked?
@@ -1853,7 +1857,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
 
   def ilos_widget( entity_id, location)
     ilos_id = (location == "portal_ticket" || location == "portal_forum") ? "ilos-btn-portal" : "ilos-btn-agent"
-    ilos_widget_html =  
+    ilos_widget_html =
       %Q{<a class='btn btn-flat' href='#{integrations_ilos_popupbox_path}?ilos_entity_id=#{entity_id}&location=#{location}' title='#{t('integrations.ilos.messages.recording_details')}' id='#{ilos_id}' rel='freshdialog' data-target='#ilos-video-recorder' data-width='430' data-submit-label='#{t('integrations.ilos.messages.start_recording')}' data-close-label='#{t('integrations.ilos.messages.cancel_recording')}'><img id='ilos-image' src='/glyphs/vectors/ilos-icon.svg' alt='ilos'>#{t('integrations.ilos.messages.record_screen')}</a>}
 
     ilos_widget_html.html_safe
@@ -1910,21 +1914,21 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   def generate_breadcrumbs(params, form=nil, *opt)
     ""
   end
-  
+
   def load_manifest
-    ASSET_MANIFEST.replace({ 
-      :js => AssetLoader.js_assets, 
+    ASSET_MANIFEST.replace({
+      :js => AssetLoader.js_assets,
       # :css => AssetLoader.css_assets
       :css => {}
     })
   end
-  
+
   def asset_manifest(type = :js)
     return {} unless [:js, :css].include?(type)
     load_manifest if ASSET_MANIFEST.blank? and !Rails.env.development?
     Rails.env.development? ? AssetLoader.send("#{type}_assets") : ASSET_MANIFEST[type]
   end
-  
+
   def asset_host_url
     return "" if Rails.env.development? || Rails.env.test?
     ActionController::Base.asset_host.yield
@@ -1948,11 +1952,11 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   def fd_node_auth_params
     aes = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
     aes.encrypt
-    aes.key = Digest::SHA256.digest(FdNodeConfig["key"]) 
+    aes.key = Digest::SHA256.digest(FdNodeConfig["key"])
     aes.iv  = FdNodeConfig["iv"]
 
     account_data = {
-      :account_id => current_user.account_id, 
+      :account_id => current_user.account_id,
       :user_id    => current_user.id,
       :features => current_account.node_feature_list
     }.to_json
@@ -1973,10 +1977,10 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
         end
       end
     end
-    
+
     content_tag :ul, &list
   end
-  
+
   def fd_socket_host
     "#{request.protocol}#{FdNodeConfig["socket_host"]}"
   end
@@ -2004,7 +2008,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def show_onboarding?
-    user_trigger = !is_assumed_user? && current_user.login_count <= 2  && current_user.agent.onboarding_completed? 
+    user_trigger = !is_assumed_user? && current_user.login_count <= 2  && current_user.agent.onboarding_completed?
     (current_user.privilege?(:admin_tasks))  ?  user_trigger && current_account.subscription.trial?  :  user_trigger
   end
 
@@ -2039,7 +2043,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def falcon_enabled?
-    current_account && current_account.falcon_ui_enabled? && 
+    current_account && current_account.falcon_ui_enabled? &&
       current_user && current_user.is_falcon_pref?
   end
 

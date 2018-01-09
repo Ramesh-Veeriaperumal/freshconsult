@@ -71,5 +71,18 @@ module AccountConstants
   EHAWK_SPAM_GEOLOCATION_REGEX = /IP Distance Velocity 500/i
 
   DEFAULT_FORUM_POST_SPAM_REGEX = "(gmail|kindle|f.?a.?c.?e.?b.?o.?o.?k|apple|microsoft|google|aol |hotmail|mozilla|q.?u.?i.?c.?k.?b.?o.?o.?k.?s?|norton|netgear|bsnl|webroot|cann?on|hp.?printer|lexmark.?printer|avg.?antivirus|symantec|avast|mcafee|bitty.?browser|netscape|belkin|dlink|tp-link|buffalo.?router|deepnet.?explorer|cisco|hitachi|linksys|panda|bitdefender|bullguard|trend.?micro|avira|kaspersky|plenty.?of.?fish|pof |zoho|rogers |windstream|sbcglobal|verizon |icloud |roadrunner |thunderbird|sasktel |hewlett.?packard|bell.?canada|skype |webroot |dell ).*(s.?u.?p.?p.?o.?r.?t| p.?h.?o.?n.?e|n.?u.?m.?b.?e.?r|t.?o.?l.?l)"
-  
+
+  ATTACHMENT_LIMIT = {
+    :trial_or_sprout => 15,
+    :paid => 20
+  }
+   
+  def attachment_limit
+    @attachment_limit ||= begin
+      subscription.trial_or_sprout_plan? ? ATTACHMENT_LIMIT[:trial_or_sprout] : ATTACHMENT_LIMIT[:paid]
+    rescue => e
+      NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Error occurred while calculating attachment limit"}})
+      ATTACHMENT_LIMIT[:trial_or_sprout]
+    end
+  end 
 end
