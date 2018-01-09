@@ -2262,6 +2262,7 @@ en:
         manage_supervisor_rules: Manage Supervisor rules
         manage_scenario_automation_rules: Manage Scenario automation rules
         manage_email_settings: Manage Email Commands
+        manage_dashboard: Manage ticket list views
         manage_ticket_templates: Manage Ticket Templates
         admin_tasks: Play God with Super Admin controls
         manage_account: Include account management
