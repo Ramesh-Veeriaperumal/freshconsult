@@ -35,7 +35,7 @@
         });
 
         jQuery('body').on('click.email_error', '.email-failure-list-item .add_note_admin', function(e){
-            jQuery('#email_failure .modal-header .close').trigger('click');
+            jQuery('.email_failure_modal .modal-header .close').trigger('click');
             var email = jQuery(this).data('failed-email');
             jQuery("#TicketPseudoReply a[rel='note-button']").data('failed-email', email).trigger('click');
             jQuery('#cnt-note-body').data('redactor').insertOnCursorPosition('inserthtml', email);
@@ -45,7 +45,7 @@
         });
 
         jQuery('body').on('click.email_error', '.email-failure-list-item .can-make-calls', function(e){
-            jQuery('#email_failure .modal-header .close').trigger('click');
+            jQuery('.email_failure_modal .modal-header .close').trigger('click');
         });
 
         jQuery('body').on('click.email_error', '.email-failure-list-item .drop-from-suppression', function(e){

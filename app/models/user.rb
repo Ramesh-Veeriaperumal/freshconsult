@@ -22,6 +22,7 @@ class User < ActiveRecord::Base
   include Social::Ext::UserMethods
   include AccountConstants
   include PasswordPolicies::UserHelpers
+  include Redis::FreshidPasswordRedis
 
   concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq, :esv2_methods
   include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams
@@ -913,7 +914,6 @@ class User < ActiveRecord::Base
       self.cti_phone = nil
       agent.destroy
       destroy_freshid_user
-      deliver_password_reset_instructions!(nil) if account.freshid_enabled?
       freshfone_user.destroy if freshfone_user
       email_notification_agents.destroy_all
 
@@ -1097,7 +1097,27 @@ class User < ActiveRecord::Base
     if account.freshid_enabled? && freshid_authorization.present?
       Freshid::User.new({ uuid: freshid_authorization.uid, domain: account.full_domain }).destroy
       freshid_authorization.destroy
+      reset_agent_password
     end
+  end
+  
+  def valid_freshid_password?(incoming_password)
+    password_available = password_flag_exists?(email) || false
+    valid = password_available && valid_password?(incoming_password)
+    Rails.logger.info "FRESHID API auth :: Before FRESHID login :: a=#{account_id} u=#{id} password_available=#{password_available} valid=#{valid}"
+    unless valid
+      remove_password_flag(email, account_id)
+      valid = valid_freshid_login?(incoming_password)
+      Rails.logger.info "FRESHID API auth :: After FRESHID login :: a=#{account_id} u=#{id} valid=#{valid}"
+      update_with_fid_password(incoming_password) if valid
+    end
+    valid
+  end
+  
+  def reset_tokens!
+    reset_persistence_token!
+    reset_perishable_token!
+    remove_password_flag(email, account_id)
   end
 
   private
@@ -1110,6 +1130,19 @@ class User < ActiveRecord::Base
       !freshid_enabled_and_agent?
     end
     
+    def valid_freshid_login?(incoming_password)
+      freshid_login = Freshid::Login.new({ email: email, password: incoming_password })
+      freshid_login.authenticate_user
+      freshid_login.valid_credentials?
+    end
+    
+    def update_with_fid_password(fid_password)
+      self.password = fid_password
+      User.where(id: id).update_all(crypted_password: self.crypted_password, password_salt: self.password_salt)
+      self.reload
+      set_password_flag(email)
+    end
+    
     def update_user_with_freshid_attributes freshid_user
       user_params = {}
       freshid_full_name = [freshid_user.first_name, freshid_user.last_name].join(' ')
@@ -1117,7 +1150,7 @@ class User < ActiveRecord::Base
       user_params[:phone] = freshid_user.phone if self.phone != freshid_user.phone
       user_params[:mobile] = freshid_user.mobile if self.mobile != freshid_user.mobile
       user_params[:active] = freshid_user.active? if self.active != freshid_user.active?
-      self.update_attributes!(new_user_params) if user_params.present?
+      self.update_attributes!(user_params) if user_params.present?
     rescue Exception => e
       Rails.logger.error "FRESHID Error updating user with FreshID attributes -- #{e.inspect}"
     end

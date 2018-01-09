@@ -23,8 +23,10 @@ module Helpdesk::TicketActions
     # Once substantial amout of users have upgraded from these version, we need to remove 
     # 1. json format in create method in lib/support_ticket_controller_method.rb
     # 2. is_native_mobile? check in create method in lib/helpdesk/ticket_actions.rb
-    return false if need_captcha && !(current_user || is_native_mobile? ||verify_recaptcha(:model => @ticket, 
-                                                        :message => "Captcha verification failed, try again!"))
+    return false if need_captcha && !(current_user || is_native_mobile? || 
+                                      verify_recaptcha(model: @ticket,
+                                                       message: t('captcha_verify_message'),
+                                                       hostname: current_portal.method(:matches_host?)))
     build_ticket_attachments
     @ticket.skip_notification = skip_notifications
     @ticket.meta_data = params[:meta] if params[:meta]

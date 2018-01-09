@@ -36,6 +36,7 @@ module ActionMailerCallbacks
       else
         from_email = ""
       end 
+      category_id = nil
       email_config = Thread.current[:email_config]
       ip_pool = nil
       if (email_config && email_config.smtp_mailbox)
@@ -87,7 +88,7 @@ module ActionMailerCallbacks
         set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email, ip_pool)
       end
       @email_confg = nil
-      mail.header["X-FD-Email-Category"] = nil
+      mail.header["X-FD-Email-Category"] = category_id
     end
 
     def reset_smtp_settings(mail, use_mailgun = false)
@@ -100,7 +101,7 @@ module ActionMailerCallbacks
       end
       Rails.logger.debug "Fetched category : #{category_id} while email delivery"
       self.smtp_settings = read_smtp_settings(category_id)
-      mail.delivery_method(:smtp, read_smtp_settings(category_id))
+      mail.delivery_method(:smtp, read_smtp_settings(category_id))  
       return category_id
     end
 
@@ -109,6 +110,7 @@ module ActionMailerCallbacks
         Rails.logger.debug "Sending email via mailgun"
         message_id = encrypt_custom_variables(account_id, ticket_id, note_id, mail_type, from_email, category_id)
         mail.header['X-Mailgun-Variables'] = "{\"message_id\": \"#{message_id}\"}"
+        mail.header['X-Mailgun-Rewrite-Sender-Header'] = false
       else
         Rails.logger.debug "Sending email via sendgrid"
         subject = !mail.header[:subject].nil? ? mail.header[:subject].value : "No Subject"
@@ -123,10 +125,16 @@ module ActionMailerCallbacks
     end   
         
     def read_smtp_settings(category_id)
-      if (!category_id.nil?) && (!Helpdesk::EMAIL["category-#{category_id}".to_sym].nil?)
-        Helpdesk::EMAIL["category-#{category_id}".to_sym][Rails.env.to_sym]
-      else 
-        Helpdesk::EMAIL[:outgoing][Rails.env.to_sym]
+      email_config = Thread.current[:email_config]
+      if ($redis_others.get("ROUTE_EMAILS_VIA_FD_SMTP_SERVICE") == "1" ||  (!(email_config.nil?)  && email_config.account.launched?(:deliver_email_via_fd_relay_server)))
+        Rails.logger.info "Email has been sent via FD SMTP Service"
+        Helpdesk::EMAIL["category-fd_email_service".to_sym][Rails.env.to_sym]
+      else
+        if (!category_id.nil?) && (!Helpdesk::EMAIL["category-#{category_id}".to_sym].nil?)
+          Helpdesk::EMAIL["category-#{category_id}".to_sym][Rails.env.to_sym]
+        else 
+          Helpdesk::EMAIL[:outgoing][Rails.env.to_sym]
+        end
       end
     end
 

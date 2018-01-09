@@ -1,8 +1,7 @@
 module Freshid::CallbackMethodsExtensions
   def reset_tokens! user
     ###### Overridden ######
-    user.reset_persistence_token!
-    user.reset_perishable_token!
+    user.reset_tokens!
   end
 
   def fetch_user_by_uuid account, uuid

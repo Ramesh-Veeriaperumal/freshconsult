@@ -47,7 +47,7 @@ class Freshfone::Providers::Twilio
       @telephony.read_non_availability_message(r)
       if voicemail_active
         @telephony.read_voicemail_message(r, "default")
-        r.Record :action => quit_voicemail_url, :finishOnKey => '#', :maxLength => Freshfone::Call::VOICEMAIL_MAX_LENGTH
+        r.Record :action => quit_voicemail_url, :finishOnKey => '#', :maxLength => Freshfone::Call::VOICEMAIL_MAX_LENGTH, :timeout => Freshfone::Call::VOICEMAIL_MAX_LENGTH
       end
     end
   end
@@ -57,7 +57,7 @@ class Freshfone::Providers::Twilio
       @telephony.read_non_business_hours_message(r)
       if voicemail_active
         @telephony.read_voicemail_message(r, "default")
-        r.Record :action => quit_voicemail_url, :finishOnKey => '#', :maxLength => Freshfone::Call::VOICEMAIL_MAX_LENGTH
+        r.Record :action => quit_voicemail_url, :finishOnKey => '#', :maxLength => Freshfone::Call::VOICEMAIL_MAX_LENGTH, :timeout => Freshfone::Call::VOICEMAIL_MAX_LENGTH
       end
     end
   end
@@ -65,7 +65,7 @@ class Freshfone::Providers::Twilio
   def voicemail(type, max_length = Freshfone::Call::VOICEMAIL_MAX_LENGTH, quit_voicemail_url)
     twiml_response do |r|
       @telephony.read_voicemail_message(r, type)
-      r.Record :action => quit_voicemail_url, :finishOnKey => '#', :maxLength => max_length
+      r.Record :action => quit_voicemail_url, :finishOnKey => '#', :maxLength => max_length, :timeout => max_length
     end
   end
 

@@ -35,7 +35,7 @@ class Account < ActiveRecord::Base
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher
 
-  after_launchparty_change :trigger_feature_change_callbacks
+  after_launchparty_change :trigger_launchparty_feature_callbacks
 
   def downcase_full_domain
     self.full_domain.downcase!
@@ -128,10 +128,10 @@ class Account < ActiveRecord::Base
     # define your callback method in this format ->
     # eg:  on launch  feature_name => falcon, method_name => def falcon_on_launch ; end
     #      on rollback feature_name => falcon, method_name => def falcon_on_rollback ; end
-    def trigger_feature_change_callbacks(changes)
+    def trigger_launchparty_feature_callbacks(changes)
       self.make_current
-      changes[:account_id] = self.id
-      LaunchPartyActionWorker.perform_async(changes)
+      args = { :feature => changes, :account_id => self.id }
+      LaunchPartyActionWorker.perform_async(args)
     end
 
     def sync_name_helpdesk_name

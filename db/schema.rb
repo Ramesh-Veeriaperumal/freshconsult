@@ -1266,7 +1266,8 @@ ActiveRecord::Schema.define(:version => 20171208111955) do
     t.integer  "position"
   end
 
-  create_table "denormalized_flexifields", :force => true do |t|
+  create_table "denormalized_flexifields", :id => false, :force => true do |t|
+    t.integer  "id",                 :limit => 8,                                :null => false
     t.integer  "account_id",         :limit => 8
     t.integer  "flexifield_id",      :limit => 8
     t.text     "text_01"
@@ -1289,6 +1290,7 @@ ActiveRecord::Schema.define(:version => 20171208111955) do
     t.datetime "updated_at"
   end
   add_index "denormalized_flexifields", ["account_id", "flexifield_id"], :name => "index_denormalized_flexifields_on_account_id_and_flexifield_id"
+  execute "ALTER TABLE denormalized_flexifields ADD PRIMARY KEY (id,account_id)"
 
   create_table "flexifields", :id => false, :force => true do |t|
     t.integer  "id",                  :limit => 8,                                :null => false
