@@ -3,7 +3,7 @@ module ErrorConstants
     missing_field: %w(missing_field fill_a_mandatory_field),
     duplicate_value: ['has already been taken', 'already exists in the selected category', 'Email has already been taken', 'email_already_taken', 'already exists in the selected category.'],
     invalid_field: ['invalid_field'],
-    datatype_mismatch: %w(datatype_mismatch per_page_invalid array_datatype_mismatch),
+    datatype_mismatch: %w(datatype_mismatch per_page_invalid array_datatype_mismatch limit_invalid),
     invalid_size: ['invalid_size'],
     incompatible_field: ['incompatible_field'],
     inaccessible_field: ['inaccessible_field'],
