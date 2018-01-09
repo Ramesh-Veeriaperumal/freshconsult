@@ -45,6 +45,10 @@ module Social::Constants
     :delete => "DELETE"
   }
 
+  SMART_FILTER_CONTENT_TYPE = {
+    :twitter => "tw"
+  }
+
   TABLES = {
     "feeds" => {
       :name => "fd_social_feeds",
