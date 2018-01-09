@@ -81,7 +81,7 @@ run "ln -nfs #{shared_path}/config/ner_api.yml #{node[:rel_path]}/config/ner_api
 run "ln -nfs #{shared_path}/config/smart_filter.yml #{node[:rel_path]}/config/smart_filter.yml"
 run "ln -nfs #{shared_path}/config/heap_analytics.yml #{node[:rel_path]}/config/heap_analytics.yml"
 run "ln -nfs #{shared_path}/config/mailgun_out_going_email_mappings.yml #{node[:rel_path]}/config/mailgun_out_going_email_mappings.yml"
-
+run "ln -nfs #{shared_path}/config/bot.yml #{node[:rel_path]}/config/bot.yml"
 
 #supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"

@@ -152,7 +152,7 @@ class Dashboard::RedshiftResponseParser
       padding_by_source[row["source"]][row["h"]].merge!(row)
     end
     {   :source_workload => padding_by_source,
-        :source_id_name_mappings => ticket_source_names_by_key
+        source_id_name_mappings: TicketConstants.source_list
     }.merge(dump_time_hash)
   end
 
@@ -413,14 +413,6 @@ class Dashboard::RedshiftResponseParser
 
   def process_raw_data_to_integer raw_data
     raw_data.merge(raw_data) { |k, v| Integer(v) rescue v }
-  end
-
-  def ticket_source_names_by_key
-    names_by_keys = TicketConstants::SOURCE_NAMES_BY_KEY.keys.inject({}) do |hash, key|
-      hash[key] = I18n.t(TicketConstants::SOURCE_NAMES_BY_KEY[key])
-      hash
-    end
-    names_by_keys
   end
 
   def user_id_name_mapping ids

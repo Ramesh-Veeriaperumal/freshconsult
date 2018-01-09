@@ -264,6 +264,8 @@ en:
   facebook_user: Facebook User
   mobihelp: MobiHelp
   ecommerce: Ecommerce
+  bot : "Bot"
+  not_supported: "is not supported"
   logmein_source: LogMeIn Rescue
   working: Working
   attach: Attach

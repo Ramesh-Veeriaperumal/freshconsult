@@ -14,7 +14,7 @@ class Account < ActiveRecord::Base
       :auto_refresh, :branding, :advanced_dkim, :basic_dkim, :shared_ownership_toggle, :unique_contact_identifier_toggle,
       :system_observer_events, :unique_contact_identifier, :ticket_activity_export, :caching, :private_inline, :collaboration,
       :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :user_notifications, :falcon,
-      :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields
+      :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields, :support_bot
     ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [
