@@ -45,3 +45,4 @@
 //= require app/integrations/box/list_item
 //= require app/integrations/box/search_bar
 //= require app/integrations/box/paginate_files
+//= require app/year_in_review

@@ -63,7 +63,8 @@
       <% end %>
       <% if current_account.custom_apps_enabled? %>
       <%= render :partial => '/admin/marketplace/installed_custom_applications', :locals => { 
-                 :custom_applications => @custom_applications, :installed_custom_apps => @installed_custom_apps } %>
+                 :custom_applications => @custom_applications, :installed_custom_apps => @installed_custom_apps,
+                 :type =>  Marketplace::Constants::EXTENSION_TYPE[:custom_app]} %>
       <% end %>
     </div>
 

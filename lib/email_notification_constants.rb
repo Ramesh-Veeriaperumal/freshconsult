@@ -183,11 +183,8 @@ module EmailNotificationConstants
   }
 
 
-  POD_TYPES = {
-    1 => "poduseast1",
-    2 => "podeuwest1",
-    3 =>"podeucentral1"
-  }
+  EMAIL_SETTING_CONFIGS = (YAML::load_file(File.join(Rails.root, 'config', 'mailgun_out_going_email_mappings.yml')))[Rails.env]
+  POD_TYPES = EMAIL_SETTING_CONFIGS["pod_types"]
 
   SPAM_FILTERED_NOTIFICATIONS = [ REPLY, FORWARD]
 

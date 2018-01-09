@@ -106,3 +106,4 @@ helpdesk:
     - freshid
     - smart_filter_config
     - freshquery
+    - heap_analytics
