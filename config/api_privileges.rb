@@ -44,6 +44,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/leaderboard", only: [:agents]
     resource :"ember/product_feedback"
     resource :"ember/ticket_template", only: %i(show index)
+    resource :"ember/search/multiquery", only: [:search_results]
     resource :"ember/year_in_review", only: %i(index clear)
   end
 
@@ -79,6 +80,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/contact", only: %i[index show send_invite bulk_send_invite]
     resource :"ember/company", only: %i(index show activities)
     resource :"ember/search/customer", only: [:results]
+    resource :"ember/search/multiquery", only: [:search_results]
   end
 
   manage_contacts do
@@ -140,11 +142,13 @@ Authority::Authorization::PrivilegeList.build do
 
   view_forums do
     resource :"ember/search/topic", only: [:results]
+    resource :"ember/search/multiquery", only: [:search_results]
   end
 
   view_solutions do
     resource :"ember/search/solution", only: [:results]
     resource :"ember/solutions/article", only: [:index]
+    resource :"ember/search/multiquery", only: [:search_results]
   end
 
   view_reports do

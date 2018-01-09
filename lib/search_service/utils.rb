@@ -19,6 +19,17 @@ module SearchService
       }.to_json
     end
 
+    def self.construct_mq_payload(types, template_name, es_params, to_json = true)
+      payload = {
+        documents: types,
+        context: template_name,
+        params: es_params.except(:search_term, :account_id, :size, :from, :sort_by, :sort_direction),
+        sort_by: es_params[:sort_by],
+        sort_direction:  es_params[:sort_direction]
+      }
+      to_json ? payload.to_json : payload
+    end
+
     # locale will be set based on es_multilang_soln? feature check (Pinnacle sports account)
     # This may break in future when we rollout multilingul search for vrious locales and accounts
     def self.valid_locale(types, locale) 
