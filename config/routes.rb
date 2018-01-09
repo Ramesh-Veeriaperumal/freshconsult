@@ -242,6 +242,7 @@ Helpkit::Application.routes.draw do
   match '/auth/:provider/callback' => 'authorizations#create', :as => :callback
   match '/oauth2callback' => 'authorizations#create', :as => :calender, :provider => 'google_oauth2'
   match '/auth/failure' => 'authorizations#failure', :as => :failure
+  match "/facebook/page/callback" => 'facebook_redirect_auth#complete'
 
   resources :solutions_uploaded_images, :only => [:index, :create]  do
     collection do
@@ -3228,4 +3229,6 @@ Helpkit::Application.routes.draw do
   match '/freshid/event_callback', :controller => 'freshid', :action => 'event_callback', :method => :post
   match '/freshid/logout', :controller => 'user_sessions', :action => 'freshid_destroy', :method => :get 
 
+  post '/yearin_review/share', to: 'year_in_review#share'
+  post '/yearin_review/clear', to: 'year_in_review#clear'
 end

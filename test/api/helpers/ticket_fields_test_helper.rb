@@ -11,6 +11,7 @@ module TicketFieldsTestHelper
     else
       flexifield_mapping = type == 'text' ? 'ffs_13' : "ff_#{FIELD_MAPPING[type]}05"
     end
+    flexifield_mapping = type == 'text' ? unused_ffs_col : "ff_#{FIELD_MAPPING[type]}05"
     flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry,
                                              flexifield_def_id: @account.flexi_field_defs.find_by_module('Ticket').id,
                                              flexifield_alias: "#{name.downcase}_#{@account.id}",
@@ -324,4 +325,19 @@ module TicketFieldsTestHelper
     pattern.merge!(sections: section_pattern)
     pattern
   end
+end
+
+  private
+    def unused_ffs_col
+      ffs_col = ''
+      loop do
+        ffs_col = "ffs_#{Random.rand(13..20)}"
+        break unless ffs_col_taken? ffs_col
+      end
+      return ffs_col 
+    end
+
+    def ffs_col_taken?(ffs_col)
+      @account.flexifield_def_entries.select{|flexifield| flexifield['flexifield_name'] == ffs_col}.present?
+    end
 end

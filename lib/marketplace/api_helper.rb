@@ -31,13 +31,13 @@ module Marketplace::ApiHelper
     def installed_mkp_app_details
       supported_mkp_apps, unsupported_mkp_apps, supported_custom_apps, unsupported_custom_apps = [], [], [], []
       @installed_list.body.try(:each) do |installed_mkp_app|
-        extension_details = extension_details(installed_mkp_app['extension_id']).body
+        extension_details = extension_details(installed_mkp_app['extension_id'], installed_mkp_app['extension_type']).body
         unless hidden_app?(extension_details['app_type'])
           installed_extension_details = { :extension_details => extension_details }
                                           .merge({:installation_details => installed_mkp_app})
-          app_type = custom_app?(extension_details['app_type']) ? :custom : :mkp
+          extension_type = custom_app?(extension_details['app_type'], installed_mkp_app['extension_type']) ? :custom : :mkp
           (supported_apps?(extension_details, installed_mkp_app['version_id']) ? 
-            eval("supported_#{app_type}_apps") : eval("unsupported_#{app_type}_apps")) << installed_extension_details
+            eval("supported_#{extension_type}_apps") : eval("unsupported_#{extension_type}_apps")) << installed_extension_details
         end
       end
       { :installed_mkp_apps => {:supported_apps => supported_mkp_apps, :unsupported_apps => unsupported_mkp_apps},
@@ -45,13 +45,15 @@ module Marketplace::ApiHelper
     end
 
     def supported_apps?(extension, version_id)
-      (extension['type'] == Marketplace::Constants::EXTENSION_TYPE[:plug] && 
-       extension['platform_details'][platform_version].include?(version_id)) || 
+      ((extension['type'] == Marketplace::Constants::EXTENSION_TYPE[:plug] || custom_app?(extension['app_type'], extension['type'])) &&
+       extension['platform_details'][platform_version].include?(version_id)) ||
        extension['platform_details'][platform_version] == true
     end
 
-    def custom_app?(app_type)
-      app_type == Marketplace::Constants::APP_TYPE[:custom]
+    def custom_app?(app_type, extension_type)
+      # TODO: app_type should be removed after new ext type is added for custom app
+      app_type == Marketplace::Constants::APP_TYPE[:custom] || 
+      extension_type == Marketplace::Constants::EXTENSION_TYPE[:custom_app]
     end
 
     def hidden_app?(app_type)

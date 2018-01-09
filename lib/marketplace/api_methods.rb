@@ -75,7 +75,7 @@ module Marketplace::ApiMethods
       end
     end
 
-    def extension_details(extension_id = params[:extension_id])
+    def extension_details(extension_id = params[:extension_id], extension_type = params[:type])
       begin
         key = MemcacheKeys::EXTENSION_DETAILS % { 
           :extension_id => extension_id, :locale_id => curr_user_language, :platform_version => platform_version}
@@ -87,7 +87,9 @@ module Marketplace::ApiMethods
                             },
                             Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:extension_details] 
                           )
-        mkp_memcache_fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
+        cache_expiry = extension_type.to_i == EXTENSION_TYPE[:custom_app] ? MarketplaceConfig::CUSTOM_APPS_CACHE_INVD_TIME 
+          : MarketplaceConfig::CACHE_INVALIDATION_TIME
+        mkp_memcache_fetch(key, cache_expiry) do
           get_api(api_payload, MarketplaceConfig::GLOBAL_API_TIMEOUT)
         end
       rescue *FRESH_REQUEST_EXP => e
