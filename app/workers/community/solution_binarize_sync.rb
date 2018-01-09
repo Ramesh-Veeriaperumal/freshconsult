@@ -21,6 +21,7 @@ class Community::SolutionBinarizeSync < BaseWorker
         batch.each do |sm|
           sm.children.each do |solution_obj|
             sm.class::BINARIZE_COLUMNS.each do |col|
+              sm.send("#{col}=", 0)
               sm.compute_assign_binarize(col, solution_obj)
             end
           end
