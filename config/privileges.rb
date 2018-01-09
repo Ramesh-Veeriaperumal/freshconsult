@@ -291,7 +291,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/v2/spotlight", :only => [:forums]
     resource :"search/merge_topic", :only => [:index]
     resource :"search/v2/merge_topic", :only => [:search_topics]
-    resource :forums_uploaded_image, :only => [:create]
+    resource :forums_uploaded_image, :only => [:index, :create]
     resource :monitorship, :only => [:followers]
 
     # Used for API V2

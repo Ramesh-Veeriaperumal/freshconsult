@@ -251,8 +251,9 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  resources :forums_uploaded_images, :only => :create do
+  resources :forums_uploaded_images, :only => [:index, :create] do
     collection do
+      post :delete_file
       post :create_file
     end
   end
