@@ -335,7 +335,6 @@ module TicketFieldsTestHelper
     pattern[:sections] = section_pattern
     pattern
   end
-<<<<<<< HEAD
 
   # ticket export csv field_options
   def ticket_export_fields
@@ -349,7 +348,6 @@ module TicketFieldsTestHelper
     return name[0..(-Account.current.id.to_s.length - 2)] if type == :ticket
     name[3..-1]
   end
-end
 
   private
     def unused_ffs_col
