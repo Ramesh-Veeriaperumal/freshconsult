@@ -14,10 +14,10 @@ module SearchService
 
     attr_reader :total_entries, :records, :error
 
-    def records_with_ar(model_and_assoc, account_id, paginate_params)
+    def records_with_ar(model_and_assoc, account_id, paginate_params, search_results = @records)
       record_hash = {}
-      search_results = @records
-
+      total_entries = search_results['total'].to_i
+      
       (search_results['results'].presence || {}).group_by { |item| item['document'] }.each do |type, items|
         record_hash[type] = if items.empty?
                               []
@@ -44,5 +44,6 @@ module SearchService
 
       Search::V2::PaginationWrapper.new(result_set, paginate_params.merge(total_entries: total_entries))
     end
+
   end
 end

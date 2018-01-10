@@ -122,6 +122,7 @@ module Search::V2::AbstractController
 
         limit           = (params[:max_matches] || params[:limit] || params[:per_page]).to_i
         @size           = (limit.zero? or (limit > Search::Utils::MAX_PER_PAGE)) ? Search::Utils::MAX_PER_PAGE : limit
+        @mq_limit       = limit.zero? ? Search::Utils::MQ_SPOTLIGHT_SEARCH_LIMIT : limit
         @current_page   = (params[:page].to_i.zero? ? Search::Utils::DEFAULT_PAGE : params[:page].to_i)
         @offset         = @size * (@current_page - 1)
         @es_locale      = '' #=> Initialising as blank. Can override and use wherever needed.
