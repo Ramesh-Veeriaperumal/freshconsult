@@ -19,8 +19,8 @@ module Ember
     include SharedOwnershipTestHelper
     include TicketTemplateHelper
     include AwsTestHelper
-    include TicketActivitiesTestHelper
     include TicketTemplateHelper
+    include CustomFieldsTestHelper
 
     CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date).freeze
     CUSTOM_FIELDS_CHOICES = Faker::Lorem.words(5).uniq.freeze
@@ -403,6 +403,17 @@ module Ember
       assert_response 400
     end
 
+    def test_create_with_invalid_email_and_custom_field_email
+      create_custom_field('email', 'text')
+      params = { email: Faker::Name.name, status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph, custom_fields: { email: 0 } }
+      post :create, construct_params({ version: 'private' }, params)
+      match_json([
+        bad_request_error_pattern(:email, :invalid_format, accepted: 'valid email address'), 
+        bad_request_error_pattern(custom_field_error_label('email'), :datatype_mismatch, expected_data_type: 'String', given_data_type: 'Integer', prepend_msg: :input_received)
+      ])
+      assert_response 400
+    end
+
     def test_create_with_errors
       attachment_ids = []
       rand(2..10).times do
@@ -760,8 +771,8 @@ module Ember
       put :execute_scenario, construct_params({ version: 'private', id: t.display_id }, scenario_id: scenario.id)
       assert_response 400
       match_json([bad_request_error_pattern('group_id', :datatype_mismatch, expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received),
-                  bad_request_error_pattern(ticket_field1.label, :datatype_mismatch, expected_data_type: :String, given_data_type: 'Null', prepend_msg: :input_received),
-                  bad_request_error_pattern(ticket_field2.label, :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
+                  bad_request_error_pattern(custom_field_error_label(ticket_field1.label), :datatype_mismatch, expected_data_type: :String, given_data_type: 'Null', prepend_msg: :input_received),
+                  bad_request_error_pattern(custom_field_error_label(ticket_field2.label), :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
     ensure
       Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: false)
       [ticket_field1, ticket_field2].map { |x| x.update_attribute(:required_for_closure, false) }
@@ -1304,7 +1315,7 @@ module Ember
       params_hash = { status: 5 }
       put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 400
-      match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, expected_data_type: :String)])
+      match_json([bad_request_error_pattern(custom_field_error_label(ticket_field.label), :datatype_mismatch, expected_data_type: :String)])
     ensure
       ticket_field.update_attribute(:required_for_closure, false)
     end
@@ -1340,7 +1351,7 @@ module Ember
       params_hash = { status: 5 }
       put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 400
-      match_json([bad_request_error_pattern(ticket_field.label, :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
+      match_json([bad_request_error_pattern(custom_field_error_label(ticket_field.label), :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
     ensure
       ticket_field.update_attribute(:required_for_closure, false)
     end
@@ -1451,7 +1462,7 @@ module Ember
       params_hash = { status: 5 }
       put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 400
-      match_json([bad_request_error_pattern(ticket_field.label, :invalid_date, code: :missing_field, accepted: 'yyyy-mm-dd')])
+      match_json([bad_request_error_pattern(custom_field_error_label(ticket_field.label), :invalid_date, code: :missing_field, accepted: 'yyyy-mm-dd')])
     ensure
       ticket_field.update_attribute(:required_for_closure, false)
     end
@@ -1487,7 +1498,7 @@ module Ember
       params_hash = { status: 5 }
       put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 400
-      match_json([bad_request_error_pattern(ticket_field.label, :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
+      match_json([bad_request_error_pattern(custom_field_error_label(ticket_field.label), :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
     ensure
       ticket_field.update_attribute(:required_for_closure, false)
     end
