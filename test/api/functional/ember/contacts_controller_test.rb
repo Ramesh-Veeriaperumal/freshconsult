@@ -1056,18 +1056,5 @@ module Ember
       assert_equal User.current.id, sidekiq_jobs.first['args'][0]['user']
       Export::ContactWorker.jobs.clear
     end
-
-    def test_create_with_invalid_email_and_custom_field_email
-      create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'email', editable_in_signup: 'true'))
-      params = contact_params_hash.merge(custom_fields: { cf_email: 0 })
-      params[:email] = Faker::Name.name
-      post :create, construct_params({ version: 'private' }, params)
-      match_json([
-        bad_request_error_pattern(:email, :invalid_format, accepted: 'valid email address'), 
-        bad_request_error_pattern(custom_field_error_label('email'), :datatype_mismatch, expected_data_type: 'String', given_data_type: 'Integer', prepend_msg: :input_received)
-      ])
-      assert_response 400
-    end
-
   end
 end
