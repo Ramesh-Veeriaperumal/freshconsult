@@ -1059,7 +1059,7 @@ module Ember
 
     def test_create_with_invalid_email_and_custom_field_email
       create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'email', editable_in_signup: 'true'))
-      params = contact_params_hash.merge(custom_fields: { email: 0 })
+      params = contact_params_hash.merge(custom_fields: { cf_email: 0 })
       params[:email] = Faker::Name.name
       post :create, construct_params({ version: 'private' }, params)
       match_json([
