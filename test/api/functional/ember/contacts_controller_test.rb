@@ -1061,7 +1061,6 @@ module Ember
       create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'email', editable_in_signup: 'true'))
       params = contact_params_hash.merge(custom_fields: { email: 0 })
       params[:email] = Faker::Name.name
-      byebug
       post :create, construct_params({ version: 'private' }, params)
       match_json([
         bad_request_error_pattern(:email, :invalid_format, accepted: 'valid email address'), 
