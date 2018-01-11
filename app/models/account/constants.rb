@@ -185,7 +185,7 @@ class Account < ActiveRecord::Base
     :customer_sentiment => false, :countv2_template_write => false, :logout_logs => false, :gnip_2_0 => false, :froala_editor => false,
     :es_v2_splqueries => false, :suggest_tickets => false, :"Freshfone New Notifications" => false, :feedback_widget_captcha => false,
     :es_multilang_solutions => false, :requester_widget => false, :spam_blacklist_feature => false,
-    :custom_timesheet => false, :antivirus_service => false, :hide_api_key => false, :skip_ticket_threading => false, :new_sla_logic => false,
+    :custom_timesheet => false, :antivirus_service => false, :hide_api_key => false, :skip_ticket_threading => false,
     :multi_dynamic_sections => true, :dashboard_new_alias => false, :attachments_scope => false, :kbase_spam_whitelist => false, 
     :forum_post_spam_whitelist => false, :email_failures => false, :enable_qna => false, :enable_insights => false,
     :escape_liquid_attributes => true, :escape_liquid_for_reply => true, :escape_liquid_for_portal => true,
@@ -195,7 +195,8 @@ class Account < ActiveRecord::Base
     :sha1_enabled => false, :disable_archive => false, :sha256_enabled => false, :auto_ticket_export => false, :select_all => false, 
     :facebook_realtime => false, :"Freshfone Call Tracker" => false, :skip_one_hop => false, :ticket_contact_export => false, 
     :custom_apps => false, :timesheet => false, :api_jwt_auth => false, :disable_emails => false, :skip_portal_cname_chk => false,
-    :falcon_signup => false, :falcon_portal_theme => false, :email_actions => false, :ner => false, :disable_freshchat => false, :freshchat_integration => false
+    :falcon_signup => false, :falcon_portal_theme => false, :email_actions => false, :ner => false, :disable_freshchat => false, :freshchat_integration => false,
+    :facebook_page_redirect => false, :froala_editor_forums => false
   }
 
   BLOCK_GRACE_PERIOD = 90.days

@@ -5,7 +5,7 @@ module PerformTablePartition
                       "survey_handles","survey_results","survey_result_data","helpdesk_schema_less_tickets", 
                       "helpdesk_schema_less_notes","support_scores","helpdesk_dropboxes","helpdesk_external_notes",
                       "helpdesk_ticket_bodies","helpdesk_note_bodies","user_emails", 
-                      "freshfone_calls","archive_tickets","archive_notes","archive_ticket_associations","archive_note_associations","archive_childs"]
+                      "freshfone_calls","archive_tickets","archive_notes","archive_ticket_associations","archive_note_associations","archive_childs","denormalized_flexifields"]
   PARTITION_SIZE = 128
   
   PARTITION_COLUMN = "account_id"

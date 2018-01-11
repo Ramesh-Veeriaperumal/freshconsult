@@ -92,24 +92,6 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
 
   default_scope :order => "priority DESC"
 
-  def calculate_due_by_time_on_priority_change(created_time, calendar)
-    override_bhrs ? (created_time + resolution_time.seconds) : business_time(resolution_time, created_time, calendar)
-  end
-
-  def calculate_frDue_by_time_on_priority_change(created_time, calendar)
-    override_bhrs ? (created_time + response_time.seconds) : business_time(response_time, created_time, calendar)
-  end
-
-  def calculate_due_by_time_on_status_change(ticket,calendar)
-    override_bhrs ? on_status_change_override_bhrs(ticket, ticket.due_by) : 
-      on_status_change_bhrs(ticket, ticket.due_by,calendar)
-  end
-
-  def calculate_frDue_by_time_on_status_change(ticket,calendar)
-    override_bhrs ? on_status_change_override_bhrs(ticket, ticket.frDueBy) :
-      on_status_change_bhrs(ticket, ticket.frDueBy,calendar)
-  end
-
   def calculate_due_by(created_time, total_time_worked, calendar)
     Rails.logger.debug "SLA :::: Account id #{self.account_id} :: Calculating due by :: created_time :: #{created_time} resolution_time :: #{resolution_time} total_time_worked :: #{total_time_worked} calendar :: #{calendar.id} - #{calendar.name} override_bhrs :: #{override_bhrs}"
     calculate_due(created_time, resolution_time, total_time_worked, calendar)
@@ -139,31 +121,7 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
         business_minute.after(from_time)
       end
     end
-
-    def on_status_change_override_bhrs(ticket, due_by_type)
-      elapsed_time = Time.zone.now - ticket.ticket_states.sla_timer_stopped_at  
-      if due_by_type > ticket.ticket_states.sla_timer_stopped_at
-        due_by_type + elapsed_time 
-      else
-        due_by_type
-      end
-    end
-
-    def on_status_change_bhrs(ticket, due_by_type, calendar)
-      due_by_value = due_by_type.in_time_zone(Time.zone)
-      sla_timer = ticket.ticket_states.sla_timer_stopped_at.in_time_zone(Time.zone)
-      bhrs_during_elapsed_time =  sla_timer.business_time_until(
-        Time.zone.now,calendar)
-      Rails.logger.info "Acc id:: #{ticket.account_id}, Ticket id:: #{ticket.id}, Value:: #{due_by_value.inspect}, sla_timer:: #{sla_timer.inspect} Zone:: #{Time.zone.name}"
-      if due_by_value > sla_timer
-        business_minute = bhrs_during_elapsed_time.div(60).business_minute
-        business_minute.business_calendar_config = calendar
-        business_minute.after(due_by_value) 
-      else
-        due_by_value
-      end
-    end 
-
+    
     def set_account_id
       self.account_id = sla_policy.account_id
     end

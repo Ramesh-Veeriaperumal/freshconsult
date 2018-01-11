@@ -1,12 +1,13 @@
 Helpdesk = Helpdesk || {};
 (function($) {
+    var attachmentSize = Number(window.attachment_size) || 15;
     Helpdesk.MultipleFileUpload = {
         currentProgress: "",
         currentInputElement: "",
         onload_status: false,
         upload_status: [],
         reminder: true,
-        maxFileSize:15000000,
+        maxFileSize: attachmentSize * 1024 * 1024,
         dragCounter:0,
         init: function(count) {
             var _this = this;
@@ -32,7 +33,7 @@ Helpdesk = Helpdesk || {};
                     console.log('File Upload has been canceled');
                 }
             });
-            // on drag enter 
+            // on drag enter
               $("body").on("dragenter", function(e) {
                 _this.dragCounter++;
                 e.stopImmediatePropagation();
@@ -83,7 +84,7 @@ Helpdesk = Helpdesk || {};
             });
             // upload failed file size
             $("body").on("fileuploadprocessfail", "#fileupload-form-" + count, function(e, data) {
-                errorFile(data, 'Attachment failed - file > 15 MB', $(this).data('multifileCount'));
+                errorFile(data, 'Attachment failed - file > '+window.attachment_size+ ' MB', $(this).data('multifileCount'));
             });
             // error file function
             var errorFile = function(data, message, multifileCount) {
@@ -94,7 +95,7 @@ Helpdesk = Helpdesk || {};
                 $el.attr('title', message);
                 $el.children('i').removeClass('ficon-cross').addClass('ficon-notice');
                 $('#attach-limt-' + multifileCount).hide();
-                // checking for background process 
+                // checking for background process
                 if (_this.backgroundProcess['status_' + multifileCount]) {
                     _this.backgroundProcess.execute(0, multifileCount);
                 }
@@ -182,7 +183,7 @@ Helpdesk = Helpdesk || {};
                 }
                 // removing file from stack
                 _this.upload_status.pop();
-                // removing pjax 
+                // removing pjax
                 if (_this.upload_status.length == 0) {
                     _this.PjaxOff();
                 }
@@ -216,7 +217,7 @@ Helpdesk = Helpdesk || {};
                     }
                 }
             });
-            // remove 
+            // remove
             $('.multiple-filelist').on("click", ".file-remove", function(e) {
                 $(".twipsy").hide();
                 $('.tooltip-arrow').parent().hide();
@@ -227,7 +228,7 @@ Helpdesk = Helpdesk || {};
                 } else {
                     attachment_form_element.val(attachment_form_element.val().replace($(this).data('file-id'), ""));
                 }
-                // reducing total 
+                // reducing total
                 attachment_form_element.data('totalSize', attachment_form_element.data('totalSize') - $(this).data('fileSize'));
                 $.ajax({
                     url: window.location.origin + $(this).data('delete-url'),
@@ -253,7 +254,7 @@ Helpdesk = Helpdesk || {};
                 )
             );
 
-            // reset's and submit handling 
+            // reset's and submit handling
 
             var form = $("#fileupload-form-" + count).closest('form');
             $(form).on("reset", function(e) {
@@ -273,7 +274,7 @@ Helpdesk = Helpdesk || {};
                 if(App.namespace == "helpdesk/tickets/show") {
                     _this.addToRply.revertAll();
                     e.stopImmediatePropagation();
-                }   
+                }
             });
             // solutions draft fix
             var solutionActionButtons = '[data-target-btn="#save-as-draft-btn"],[data-target-btn="#article-publish-btn"]';
@@ -310,7 +311,7 @@ Helpdesk = Helpdesk || {};
                     if (typeof TICKET_DETAILS_DATA !== "undefined") {
                         var attachId = $(this).find('.fileupload-form').data('multifileCount');
                         if (_this.backgroundProcess["enabled_" + attachId]) {
-                            // checking form forward 
+                            // checking form forward
                             if ($(form).data('cntId') == "cnt-fwd") {
                                 if ($(".forward_email .multi_value_field .choice").length == 0) {
                                     return;
@@ -362,11 +363,11 @@ Helpdesk = Helpdesk || {};
                 _this.onload_status = true;
             }
         },
-        // file abort function 
+        // file abort function
         fileAbort: function() {
             var _this = this;
             _this.upload_status.pop();
-            // pajax off 
+            // pajax off
             if (_this.upload_status.length == 0) {
                 _this.PjaxOff();
             }
@@ -389,7 +390,7 @@ Helpdesk = Helpdesk || {};
                  }
             }
         },
-        // --------------------- Background proccess starts here ---- 
+        // --------------------- Background proccess starts here ----
         backgroundProcess: {
             pool: [],
             parent: this.Helpdesk,
@@ -454,7 +455,7 @@ Helpdesk = Helpdesk || {};
                         }
                         submitNewConversation(_this.pool[attachIndex].form, "", SubmitCallback);
                     } else {
-                        // submitting form  
+                        // submitting form
                         _this.xhr = $.ajax({
                             url: _this.pool[attachIndex].form.attr('action'),
                             type: "post",
@@ -495,7 +496,7 @@ Helpdesk = Helpdesk || {};
                 type: "attachment",
                 files: data,
                 softdelete:false,
-                template:false, 
+                template:false,
             }).appendTo(".multiple-filelist-" + count);
         },
         sol_article_cloud_attach: function(data,count){
@@ -506,7 +507,7 @@ Helpdesk = Helpdesk || {};
                 sol_cloud: true,
                 files: data,
                 softdelete:false,
-                template:false, 
+                template:false,
             }).appendTo(".multiple-filelist-" + count);
         },
         // --------------- PJAX configurations ------
@@ -742,7 +743,7 @@ Helpdesk = Helpdesk || {};
                 }
 
             });
-            // for abort background process 
+            // for abort background process
             $("body").on("click", "#bg-process-abort", function(e) {
                 e.preventDefault();
                 _this.backgroundProcess.abort();
@@ -759,7 +760,7 @@ Helpdesk = Helpdesk || {};
                     }
                 });
             });
-            // reminders 
+            // reminders
             $(window).on("pjax:beforeSend.attachment-reminder", function(event) {
                 if ($(".multiple-filelist .file").length !== 0 && _this.upload_status.length == 0 && $(".attach-block-ui:visible").length == 0) {
                     if(_this.reminder) {
@@ -780,9 +781,9 @@ Helpdesk = Helpdesk || {};
                     return "clear attachments ? ";
                 }
             }
-                
+
             });
-            
+
         },
 
         // ** global functions **
@@ -826,7 +827,7 @@ Helpdesk = Helpdesk || {};
         },
         // render existing files
         renderExistingFiles: function(attachments, cloudfile, count, template, nscname, softdelete, ticket_topic,extra_class) {
-           
+
             // for changing ticket templates nsc param
             if (typeof template == "undefined") {
                 template = false;
@@ -930,7 +931,7 @@ Helpdesk = Helpdesk || {};
             init: function() {
                 // initiating variables
                 this.parent = Helpdesk.MultipleFileUpload;
-                // 
+                //
                 var $body = $("body");
                 $body.on("click",".add-attachment-to-conv",function(e){
                     Helpdesk.MultipleFileUpload.addToRply.renderAttachments($(this));
@@ -941,12 +942,12 @@ Helpdesk = Helpdesk || {};
                 $body.on("mouseover",".helpdesk_note .inline-image,#ticket_original_request .inline-image",function() {
                     Helpdesk.MultipleFileUpload.addToRply.renderInlineAttachmentsTemplate($(this));
                 });
-                // event for inline images 
+                // event for inline images
                 $body.on("click",".inline-add-to-rply",function(e){
                     e.preventDefault();
                     Helpdesk.MultipleFileUpload.addToRply.renderInlineAttachments($(this));
                 });
-               
+
             },
             renderInlinePopover: function(ele) {
               var $el = $(ele);
@@ -998,7 +999,7 @@ Helpdesk = Helpdesk || {};
                 $(".existing-filelist.addedViaRply").remove();
             },
             renderAttachments: function($this) {
-             // if inline image popover 
+             // if inline image popover
                 if($this.data('fileType') == "inline") {
                     this.renderInlinePopover($this);
                     return true;
@@ -1028,7 +1029,7 @@ Helpdesk = Helpdesk || {};
                         var attachObjects = [];
                         attachObjects.push(data);
 
-                        // changing icon on the locations 
+                        // changing icon on the locations
                         $this.children('.ficon').removeClass('ficon-add').addClass('ficon-checkmark-thick');
                         $twipsy.hide();
                         $this.attr('data-original-title',_this.parent.message.attached);
@@ -1115,7 +1116,7 @@ Helpdesk = Helpdesk || {};
                  }
             }
         }
-    };  
+    };
 }(jQuery));
 
 //Ticket page sticky active handler

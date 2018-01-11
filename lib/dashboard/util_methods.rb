@@ -160,6 +160,6 @@ module Dashboard::UtilMethods
   end
 
   def ticket_source_ids
-    TicketConstants::SOURCE_NAMES_BY_KEY.keys
+    TicketConstants.source_list.keys
   end
 end
