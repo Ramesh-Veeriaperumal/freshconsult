@@ -2,6 +2,7 @@ shared_path = node[:opsworks] ? "/data/helpkit/shared" : config.shared_path
 node.override[:rel_path] = node[:opsworks] ? "#{release_path}" : "#{config.release_path}"
 puts ":::::::::::release path is ::: #{node[:rel_path]}"
 puts ":::::::shared path is #{shared_path}"
+run "ln -nfs #{shared_path}/config/announcements.yml  #{node[:rel_path]}/config/announcements.yml"
 run "ln -nfs #{shared_path}/config/database_cluster.yml  #{node[:rel_path]}/config/database.yml"
 run "ln -nfs #{shared_path}/config/elasticsearch.yml  #{node[:rel_path]}/config/elasticsearch.yml"
 run "ln -nfs #{shared_path}/config/redshift.yml  #{node[:rel_path]}/config/redshift.yml"

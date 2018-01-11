@@ -2022,6 +2022,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def inline_manual_people_tracing
+    bucket = current_account.account_additional_settings.additional_settings[:announcement_bucket].to_s
     {
       :uid      => current_user.id,
       :email    => current_user.email,
@@ -2030,7 +2031,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
       :created  => current_account.created_at.to_i,
       :updated  => current_user.last_login_at.to_i,
       :plan     => Subscription.fetch_by_account_id(current_account.id).subscription_plan_from_cache.display_name,
-      :roles    => (current_user.privilege?(:admin_tasks)) ? ['admin'] : ['agent']
+      :roles    => (current_user.privilege?(:admin_tasks)) ? ['admin', bucket] : ['agent', bucket]
     }
   end
 

@@ -80,6 +80,10 @@ class Solution::ArticleDrop < BaseDrop
     thumbs_down_support_solutions_article_path(source.id)
   end
 
+  def liked_by_last_four_users
+    source.voters.limit(4)
+  end
+
   # !PORTALCSS CHECK need to check with shan 
   # if we can keep excerpts for individual model objects
   def excerpt_title

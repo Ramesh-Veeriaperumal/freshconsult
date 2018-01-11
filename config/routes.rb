@@ -2575,6 +2575,9 @@ Helpkit::Application.routes.draw do
 
   filter :locale
 
+  match '/announcements' => 'announcements#index',via: :get
+  match '/announcements/account_login_url' => 'announcements#account_login_url',via: :get
+
   namespace :support do
     match 'home' => 'home#index', :as => :home
     match 'preview' => 'preview#index', :as => :preview

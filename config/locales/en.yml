@@ -11191,6 +11191,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     contact_us: "Contact Us"
     whats_new: "What's New"
     user_notifications_header: "Notifications"
+    announcements_notifications_header: "Announcements & Help"
     load_more: "Load More"
   user_notifications:
     header: "Notifications"
