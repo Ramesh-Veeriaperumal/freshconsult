@@ -415,7 +415,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   end
 
   def test_create_with_invalid_email_and_custom_field
-    field = { type: 'text', field_type: 'custom_text', label: 'note', required_for_agent: true }
+    field = { type: 'text', field_type: 'custom_text', label: 'note'}
     params = company_params(field)
     create_company_field params
     create_params = company_params_hash.merge(custom_fields: { note: 0 })
