@@ -206,6 +206,11 @@ class Portal < ActiveRecord::Base
                                 %{#{Account.current.id}})
   end
 
+  def matches_host?(hostname)
+    Rails.logger.debug("::::reCAPTCHA response::::: accountId => #{account.id}, current_url => #{host}, hostname => #{hostname}")
+    host == hostname
+  end
+
   private
 
     ### MULTILINGUAL SOLUTIONS - META READ HACK!! - shouldn't be necessary after we let users decide the language
@@ -370,7 +375,7 @@ class Portal < ActiveRecord::Base
       errors.add(:base, I18n.t('flash.portal.update.invalid_cname')) unless cname_validator.cname_mapping?
       errors.add(:base, I18n.t('flash.portal.update.invalid_hash_mapping')) unless cname_validator.txt_mapping?
     end
-    
+
     def domains_for_account
       valid_domains = [Account.current.full_domain]
       valid_domains << elb_dns_name if elb_dns_name.present?

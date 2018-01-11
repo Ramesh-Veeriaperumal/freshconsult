@@ -270,7 +270,9 @@ class ApiContactsController < ApiApplicationController
         }
       end
       mappings = field_mappings
-      ErrorHelper.rename_error_fields(mappings, item)
+      ErrorHelper.rename_error_fields(
+        ContactConstants::FIELD_MAPPINGS.merge(error_options_mappings), item
+      )
       @error_options
     end
 
@@ -279,7 +281,7 @@ class ApiContactsController < ApiApplicationController
     end
 
     def field_mappings
-      mappings = (@name_mapping || {}).merge(ContactConstants::FIELD_MAPPINGS)
+      mappings = (custom_field_error_mappings || {}).merge(ContactConstants::FIELD_MAPPINGS)
       mappings.merge!(company_name: :company_name) if (action_name.to_sym == :quick_create)
       mappings
     end

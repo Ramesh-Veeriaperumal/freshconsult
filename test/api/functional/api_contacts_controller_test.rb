@@ -1,6 +1,7 @@
 require_relative '../test_helper'
 class ApiContactsControllerTest < ActionController::TestCase
   include UsersTestHelper
+  include CustomFieldsTestHelper
 
   def setup
     super
@@ -316,8 +317,8 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email,
                                         custom_fields: { 'sample_url' => 'aaaa', 'sample_date' => '2015-09-09T08:00' })
     assert_response 400
-    match_json([bad_request_error_pattern('sample_date', :invalid_date, accepted: 'yyyy-mm-dd'),
-                bad_request_error_pattern('sample_url', :invalid_format, accepted: 'valid URL')])
+    match_json([bad_request_error_pattern(custom_field_error_label('sample_date'), :invalid_date, accepted: 'yyyy-mm-dd'),
+                bad_request_error_pattern(custom_field_error_label('sample_url'), :invalid_format, accepted: 'valid URL')])
   end
 
   def test_create_contact_without_required_custom_fields
@@ -327,7 +328,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email)
 
     assert_response 400
-    match_json([bad_request_error_pattern('code', :datatype_mismatch, code: :missing_field, expected_data_type: String)])
+    match_json([bad_request_error_pattern(custom_field_error_label('code'), :datatype_mismatch, code: :missing_field, expected_data_type: String)])
     ensure
       cf.update_attribute(:required_for_agent, false)
   end
@@ -344,8 +345,8 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         language: 'en',
                                         custom_fields: { 'check_me' => 'aaa', 'doj' => 2010 })
     assert_response 400
-    match_json([bad_request_error_pattern('check_me', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String),
-                bad_request_error_pattern('doj', :invalid_date, accepted: 'yyyy-mm-dd')])
+    match_json([bad_request_error_pattern(custom_field_error_label('check_me'), :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern(custom_field_error_label('doj'), :invalid_date, accepted: 'yyyy-mm-dd')])
   end
 
   def test_create_contact_with_invalid_dropdown_field
@@ -365,7 +366,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         language: 'en',
                                         custom_fields: { 'choose_me' => 'Choice 4' })
     assert_response 400
-    match_json([bad_request_error_pattern('choose_me', :not_included, list: 'Choice 1,Choice 2,Choice 3')])
+    match_json([bad_request_error_pattern(custom_field_error_label('choose_me'), :not_included, list: 'Choice 1,Choice 2,Choice 3')])
   end
 
   def test_create_length_invalid
@@ -1644,8 +1645,8 @@ class ApiContactsControllerTest < ActionController::TestCase
                                                             email: Faker::Internet.email,
                                                             custom_fields: { 'sample_url' => 'aaaa', 'sample_date' => '2015-09-09T08:00' })
     assert_response 400
-    match_json([bad_request_error_pattern('sample_date', :invalid_date, accepted: 'yyyy-mm-dd'),
-                bad_request_error_pattern('sample_url', :invalid_format, accepted: 'valid URL')])
+    match_json([bad_request_error_pattern(custom_field_error_label('sample_date'), :invalid_date, accepted: 'yyyy-mm-dd'),
+                bad_request_error_pattern(custom_field_error_label('sample_url'), :invalid_format, accepted: 'valid URL')])
   end
 
   def test_update_contact_without_required_custom_fields
@@ -1670,8 +1671,8 @@ class ApiContactsControllerTest < ActionController::TestCase
                                                           language: 'en',
                                                           custom_fields: { 'check_me' => 'aaa', 'doj' => 2010 })
     assert_response 400
-    match_json([bad_request_error_pattern('check_me', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String),
-                bad_request_error_pattern('doj', :invalid_date, accepted: 'yyyy-mm-dd')])
+    match_json([bad_request_error_pattern(custom_field_error_label('check_me'), :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern(custom_field_error_label('doj'), :invalid_date, accepted: 'yyyy-mm-dd')])
   end
 
   def test_update_contact_with_invalid_dropdown_field
@@ -1684,7 +1685,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                                            language: 'en',
                                                            custom_fields: { 'choose_me' => 'Choice 4' })
     assert_response 400
-    match_json([bad_request_error_pattern('choose_me', :not_included, list: 'Choice 1,Choice 2,Choice 3')])
+    match_json([bad_request_error_pattern(custom_field_error_label('choose_me'), :not_included, list: 'Choice 1,Choice 2,Choice 3')])
   end
 
   def test_create_contact_with_email_and_other_emails_of_another_contact

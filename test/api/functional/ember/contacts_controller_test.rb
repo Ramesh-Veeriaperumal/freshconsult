@@ -7,6 +7,7 @@ module Ember
     include ContactFieldsHelper
     include TicketsTestHelper
     include ArchiveTicketTestHelper
+    include CustomFieldsTestHelper
 
     BULK_CONTACT_CREATE_COUNT = 2
 

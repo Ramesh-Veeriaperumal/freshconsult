@@ -17,7 +17,7 @@ class Sanitize
                     'autostart', 'loop', 'playcount', 'volume', 'controls', 'controller', 'pluginurl', 'mastersound',
                     'startime', 'endtime', 'vspace', 'hspace', 'palette'
                     ],
-        'video' => ['src', 'width', 'height', 'crossorigin', 'poster', 'preload', 'autoplay', 'mediagroup', 'loop', 'muted', 'controls'],
+        'video' => ['src', 'width', 'height', 'crossorigin', 'poster', 'preload', 'autoplay', 'mediagroup', 'loop', 'muted', 'controls', 'playsinline'],
         'track' => ['kind', 'src', 'srclang', 'label', 'default'],
         'font' => HTML_RELAXED[:attributes]['font'] + ['size', 'face'],
         'td' => HTML_RELAXED[:attributes]['td'] + ['bgcolor'],

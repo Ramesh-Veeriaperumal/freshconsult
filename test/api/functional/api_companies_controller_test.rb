@@ -293,9 +293,9 @@ class ApiCompaniesControllerTest < ActionController::TestCase
                                                         'show_all_ticket' => Faker::Number.number(5) })
 
     assert_response 400
-    match_json([bad_request_error_pattern('agt_count', :datatype_mismatch, expected_data_type: 'Integer', prepend_msg: :input_received, given_data_type: String),
-                bad_request_error_pattern('date', :invalid_date, accepted: 'yyyy-mm-dd'),
-                bad_request_error_pattern('show_all_ticket', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
+    match_json([bad_request_error_pattern(custom_field_error_label('agt_count'), :datatype_mismatch, expected_data_type: 'Integer', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern(custom_field_error_label('date'), :invalid_date, accepted: 'yyyy-mm-dd'),
+                bad_request_error_pattern(custom_field_error_label('show_all_ticket'), :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
   end
 
   def test_create_company_with_invalid_custom_dropdown_field_values
@@ -305,7 +305,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
                                        custom_fields: { 'category' =>  Faker::Lorem.characters(10) })
 
     assert_response 400
-    match_json([bad_request_error_pattern('category', :not_included, list: dropdown_list.join(','))])
+    match_json([bad_request_error_pattern(custom_field_error_label('category'), :not_included, list: dropdown_list.join(','))])
   end
 
   def test_create_company_with_valid_custom_field_values
@@ -326,10 +326,10 @@ class ApiCompaniesControllerTest < ActionController::TestCase
                                                       custom_fields: { 'agt_count' => 'abc', 'date' => 'test_date',
                                                                        'show_all_ticket' => Faker::Number.number(5), 'file_url' =>  'test_url' })
     assert_response 400
-    match_json([bad_request_error_pattern('agt_count', :datatype_mismatch, expected_data_type: 'Integer', prepend_msg: :input_received, given_data_type: String),
-                bad_request_error_pattern('date', :invalid_date, accepted: 'yyyy-mm-dd'),
-                bad_request_error_pattern('show_all_ticket', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String),
-                bad_request_error_pattern('file_url', :invalid_format, accepted: 'valid URL')])
+    match_json([bad_request_error_pattern(custom_field_error_label('agt_count'), :datatype_mismatch, expected_data_type: 'Integer', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern(custom_field_error_label('date'), :invalid_date, accepted: 'yyyy-mm-dd'),
+                bad_request_error_pattern(custom_field_error_label('show_all_ticket'), :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern(custom_field_error_label('file_url'), :invalid_format, accepted: 'valid URL')])
   end
 
   def test_update_company_with_invalid_custom_dropdown_field_values
@@ -337,7 +337,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id: company.id }, custom_fields: { 'category' =>  Faker::Lorem.characters(10) })
     assert_response 400
-    match_json([bad_request_error_pattern('category', :not_included, list: dropdown_list.join(','))])
+    match_json([bad_request_error_pattern(custom_field_error_label('category'), :not_included, list: dropdown_list.join(','))])
   end
 
   def test_update_company_with_duplicate_name
@@ -374,7 +374,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     cf = CompanyField.find_by_label('required_linetext')
     cf.destroy
     assert_response 400
-    match_json([bad_request_error_pattern('required_linetext', :datatype_mismatch, code: :missing_field, expected_data_type: String)])
+    match_json([bad_request_error_pattern(custom_field_error_label('required_linetext'), :datatype_mismatch, code: :missing_field, expected_data_type: String)])
   end
 
   def test_update_array_fields_with_compacting_array

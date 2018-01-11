@@ -64,7 +64,6 @@
 	<%end%>
 	<% if @topic.new_record? && !current_account.features_included?(:forum_captcha_disable)%>
 		<div class="control-group"> 
-	    	<%= content_tag( :label, t('ticket.verify_human'), :class => "control-label" ) %>
 	    	<div class="controls recaptcha-control">
 	    		<%= recaptcha_tags :display => { :theme => "white" } %>
 	    	</div>

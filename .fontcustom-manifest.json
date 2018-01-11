@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "ab56f50c38c192d0ce9ad2f3924cfef57f5d357b2ef77bb89f636cca1e394e75",
-    "current": "ab56f50c38c192d0ce9ad2f3924cfef57f5d357b2ef77bb89f636cca1e394e75"
+    "previous": "0afbf871a912ebf906cf821321dd88deb83e710769520deb59a7b263b1ab2531",
+    "current": "0afbf871a912ebf906cf821321dd88deb83e710769520deb59a7b263b1ab2531"
   },
   "fonts": [
-    "public/assets/glyphs_ab56f50c38c192d0ce9ad2f3924cfef5.ttf",
-    "public/assets/glyphs_ab56f50c38c192d0ce9ad2f3924cfef5.svg",
-    "public/assets/glyphs_ab56f50c38c192d0ce9ad2f3924cfef5.woff",
-    "public/assets/glyphs_ab56f50c38c192d0ce9ad2f3924cfef5.eot"
+    "public/assets/glyphs_0afbf871a912ebf906cf821321dd88de.ttf",
+    "public/assets/glyphs_0afbf871a912ebf906cf821321dd88de.svg",
+    "public/assets/glyphs_0afbf871a912ebf906cf821321dd88de.woff",
+    "public/assets/glyphs_0afbf871a912ebf906cf821321dd88de.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -1381,6 +1381,10 @@
     "settings1": {
       "codepoint": 61912,
       "source": "public/glyphs/vectors/settings1.svg"
+    },
+    "share": {
+      "codepoint": 62146,
+      "source": "public/glyphs/vectors/share.svg"
     },
     "shared": {
       "codepoint": 61839,
