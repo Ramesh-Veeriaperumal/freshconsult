@@ -19,6 +19,7 @@ module Ember
     include SharedOwnershipTestHelper
     include TicketTemplateHelper
     include AwsTestHelper
+    include TicketActivitiesTestHelper
     include TicketTemplateHelper
     include CustomFieldsTestHelper
 
