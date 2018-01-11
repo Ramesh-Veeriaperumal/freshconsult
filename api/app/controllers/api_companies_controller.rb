@@ -37,7 +37,7 @@ class ApiCompaniesController < ApiApplicationController
       end
     end
 
-    def load_objects(filter = nil)
+    def load_objects
       # preload(:flexifield, :company_domains) will avoid n + 1 query to company field data & company domains
       super scoper.preload(:flexifield, :company_domains).order(:name)
     end

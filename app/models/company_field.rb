@@ -3,6 +3,7 @@ class CompanyField < ActiveRecord::Base
   self.table_name = 'company_fields'
 
   include DataVersioning::Model
+  include CompanyFieldsConstants
 
   serialize :field_options
 
@@ -11,14 +12,34 @@ class CompanyField < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => [:account_id, :company_form_id]
 
   DEFAULT_FIELD_PROPS = {
-    :default_name           => { type: 1, dom_type: :text, label: 'company.name' },
-    :default_description    => { type: 2, dom_type: :paragraph, label: 'description', dom_placeholder: 'company.info8' },
-    :default_note           => { type: 3, dom_type: :paragraph, label: 'company.notes', dom_placeholder: 'company.info5' },
-    :default_domains        => { type: 4, dom_type: :text, label: 'company.info2', dom_placeholder: 'company.info12', bottom_note: 'company.info13' },
-    :default_health_score   => { type: 5, dom_type: :dropdown_blank, label: 'company.health_score' },
-    :default_account_tier   => { type: 6, dom_type: :dropdown_blank, label: 'company.account_tier' },
-    :default_renewal_date   => { type: 7, dom_type: :date, label: 'company.renewal_date' },
-    :default_industry       => { type: 8, dom_type: :dropdown_blank, label: 'company.industry' }
+    :default_name           => { type: 1, dom_type: :text,
+                                 label: 'company.name'
+                               },
+    :default_description    => { type: 2, dom_type: :paragraph, 
+                                 label: 'description',
+                                 dom_placeholder: 'company.info8'
+                               },
+    :default_note           => { type: 3, dom_type: :paragraph,
+                                 label: 'company.notes',
+                                 dom_placeholder: 'company.info5'
+                               },
+    :default_domains        => { type: 4, dom_type: :text,
+                                 label: 'company.info2',
+                                 dom_placeholder: 'company.info12',
+                                 bottom_note: 'company.info13'
+                               },
+    :default_health_score   => { type: 5, dom_type: :dropdown_blank,
+                                 label: 'company.health_score'
+                               },
+    :default_account_tier   => { type: 6, dom_type: :dropdown_blank,
+                                 label: 'company.account_tier'
+                               },
+    :default_renewal_date   => { type: 7, dom_type: :date,
+                                 label: 'company.renewal_date'
+                               },
+    :default_industry       => { type: 8, dom_type: :dropdown_blank,
+                                 label: 'company.industry'
+                               }
   }
 
   CUSTOM_FIELDS_SUPPORTED = [ :custom_text, :custom_paragraph, :custom_checkbox, :custom_number,
@@ -50,51 +71,76 @@ class CompanyField < ActiveRecord::Base
     self.default_field? ? I18n.t("#{self.default_field_label}") : read_attribute(:label)
   end
 
+  def self.create_company_field(field_data, account)
+    field_name = field_data.delete(:name)
+    column_name = field_data.delete(:column_name)
+    deleted = field_data.delete(:deleted)
+    if FIELDS_WITH_CHOICES.include?(field_name)
+      field_data[:custom_field_choices_attributes] = TAM_FIELDS_DATA["#{field_name}_data"]
+    end
+    company_field = CompanyField.new(field_data)
+
+    # The following are attribute protected.
+    company_field.column_name = column_name
+    company_field.name = field_name
+    company_field.deleted = deleted
+    company_field.company_form_id = account.company_form.id
+    company_field.save
+  end
+
   def admin_choices
     case field_type
-      when :"custom_dropdown" then
-        custom_field_choices.collect { |choice| {:id => choice.id, :name => choice.value, :value => choice.value, 
-          :position => choice.position, :_destroy => choice._destroy} }
-      when :"custom_survey_radio" then
-        custom_field_choices.collect { |choice| {:id => choice.id, :name => choice.value, :value => choice.value, 
-          :face_value => choice.face_value, :position => choice.position, :_destroy => choice._destroy} }
-      when :"default_time_zone" then
-        self.class::TIME_ZONE_ADMIN_CHOICES 
-      when :"default_language" then
-        self.class::LANGUAGE_ADMIN_CHOICES
       when :default_account_tier then
-          custom_field_choices.collect { |choice| {:id => choice.id, :name => choice.value, :value => choice.value, 
-              :position => choice.position, :_destroy => choice._destroy} }
+          custom_field_choices.collect { |choice|
+            choice_key = TAM_FIELDS_EN_KEYS_MAPPING.key(choice.value)
+            {:id => choice.id,
+            :name => choice_key ? I18n.t(choice_key) : choice.value,
+            :value => choice_key ? I18n.t(choice_key) : choice.value,
+            :position => choice.position, :_destroy => choice._destroy} }
       when :default_industry then
-          custom_field_choices.collect { |choice| {:id => choice.id, :name => choice.value, :value => choice.value, 
-              :position => choice.position, :_destroy => choice._destroy} }
+          custom_field_choices.collect { |choice|
+            choice_key = TAM_FIELDS_EN_KEYS_MAPPING.key(choice.value)
+            { :id => choice.id,
+              :name => choice_key ? I18n.t(choice_key) : choice.value,
+              :value => choice_key ? I18n.t(choice_key) : choice.value,
+              :position => choice.position, :_destroy => choice._destroy}
+            }
       when :default_health_score then
-          custom_field_choices.collect { |choice| {:id => choice.id, :name => choice.value, :value => choice.value, 
-              :position => choice.position, :_destroy => choice._destroy} }
+          custom_field_choices.collect { |choice|
+            choice_key = TAM_FIELDS_EN_KEYS_MAPPING.key(choice.value)
+            { :id => choice.id,
+              :name => choice_key ? I18n.t(choice_key) : choice.value,
+              :value => choice_key ? I18n.t(choice_key) : choice.value,
+              :position => choice.position, :_destroy => choice._destroy}
+            }
       else
-           []
+          super
     end
   end
   alias_method :choices, :admin_choices
 
   def ui_choices
     case field_type
-      when :"custom_dropdown" then
-        @choices ||= custom_field_choices.collect { |c| [CGI.unescapeHTML(c.value), c.value.to_sym] }
-      when :"custom_survey_radio" then
-        @choices ||= custom_field_choices.collect { |c| [CGI.unescapeHTML(c.value), c.face_value.to_sym] }
-      when :'default_time_zone' then
-        self.class::TIME_ZONE_UI_CHOICES
-      when :'default_language' then
-        self.class::LANGUAGE_UI_CHOICES
       when :default_account_tier then
-        @choices ||= custom_field_choices.collect { |c| [CGI.unescapeHTML(c.value), c.value.to_sym] }
+        @choices ||= custom_field_choices.collect { |c|
+          choice_key = TAM_FIELDS_EN_KEYS_MAPPING.key(c.value)
+          [CGI.unescapeHTML(choice_key ? I18n.t(choice_key) : c.value),
+           (choice_key ? I18n.t(choice_key) : c.value).to_sym]
+        }
       when :default_industry then
-        @choices ||= custom_field_choices.collect { |c| [CGI.unescapeHTML(c.value), c.value.to_sym] }
+        @choices ||= custom_field_choices.collect { |c|
+          choice_key = TAM_FIELDS_EN_KEYS_MAPPING.key(c.value)
+          [CGI.unescapeHTML(choice_key ? I18n.t(choice_key) : c.value),
+           (choice_key ? I18n.t(choice_key) : c.value).to_sym]
+        }
       when :default_health_score then
-        @choices ||= custom_field_choices.collect { |c| [CGI.unescapeHTML(c.value), c.value.to_sym] }
+        @choices ||= custom_field_choices.collect { |c|
+          choice_key = TAM_FIELDS_EN_KEYS_MAPPING.key(c.value)
+          [CGI.unescapeHTML(choice_key ? I18n.t(choice_key) : c.value),
+           (choice_key ? I18n.t(choice_key) : c.value).to_sym]
+        }
       else
-        []
+        super
      end
   end
 end
