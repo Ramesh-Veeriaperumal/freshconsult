@@ -207,8 +207,9 @@ class Portal < ActiveRecord::Base
   end
 
   def matches_host?(hostname)
-    Rails.logger.debug("::::reCAPTCHA response::::: accountId => #{account.id}, current_url => #{host}, hostname => #{hostname}")
-    host == hostname
+    account_domains = domains_for_recaptcha
+    Rails.logger.debug("::::reCAPTCHA response::::: accountId => #{account.id}, domains => #{account_domains.inspect}, reCAPTCHA hostname => #{hostname}")
+    account_domains.include?(hostname.downcase) if hostname.present?
   end
 
   private
@@ -384,5 +385,11 @@ class Portal < ActiveRecord::Base
         valid_domains << account_main_portal.elb_dns_name if account_main_portal.elb_dns_name.present?
       end
       valid_domains.map { |d| d.chomp('.') }
+    end
+
+    def domains_for_recaptcha
+      valid_domains = [account.full_domain]
+      valid_domains << portal_url if portal_url.present?
+      valid_domains
     end
 end
