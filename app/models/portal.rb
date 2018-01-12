@@ -71,7 +71,7 @@ class Portal < ActiveRecord::Base
 
   concerned_with :solution_associations
 
-  APP_CACHE_VERSION = "FD76"
+  APP_CACHE_VERSION = "FD77"
 
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr
@@ -206,6 +206,11 @@ class Portal < ActiveRecord::Base
                                 %{#{Account.current.id}})
   end
 
+  def matches_host?(hostname)
+    Rails.logger.debug("::::reCAPTCHA response::::: accountId => #{account.id}, current_url => #{host}, hostname => #{hostname}")
+    host == hostname
+  end
+
   private
 
     ### MULTILINGUAL SOLUTIONS - META READ HACK!! - shouldn't be necessary after we let users decide the language
@@ -243,7 +248,8 @@ class Portal < ActiveRecord::Base
         elsif key == 'contact_info'
           preferences[key] = RailsFullSanitizer.sanitize(value)
         elsif key == 'logo_link' && preferences[key].present?
-          errors.add(:base, I18n.t('admin.products.portal.invalid_linkback_url')) unless value =~ AccountConstants::VALID_URL_REGEX
+          sanitized_value = RailsFullSanitizer.sanitize(value) #Prevent Xss
+          errors.add(:base, I18n.t('admin.products.portal.invalid_linkback_url')) unless sanitized_value == value && UriParser.valid_url?(value)
         end
       end
     end
@@ -369,7 +375,7 @@ class Portal < ActiveRecord::Base
       errors.add(:base, I18n.t('flash.portal.update.invalid_cname')) unless cname_validator.cname_mapping?
       errors.add(:base, I18n.t('flash.portal.update.invalid_hash_mapping')) unless cname_validator.txt_mapping?
     end
-    
+
     def domains_for_account
       valid_domains = [Account.current.full_domain]
       valid_domains << elb_dns_name if elb_dns_name.present?

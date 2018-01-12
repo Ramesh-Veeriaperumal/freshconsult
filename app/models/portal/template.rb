@@ -1,4 +1,4 @@
-class Portal::Template < ActiveRecord::Base    
+class Portal::Template < ActiveRecord::Base
 
 	self.table_name =  "portal_templates"
   self.primary_key = :id
@@ -10,7 +10,7 @@ class Portal::Template < ActiveRecord::Base
   belongs_to_account
   belongs_to :portal
   validate :validate_preferences
-  
+
   has_many :pages, :class_name => 'Portal::Page', :dependent => :destroy
 
   serialize :preferences, Hash
@@ -18,30 +18,30 @@ class Portal::Template < ActiveRecord::Base
   before_create :set_defaults
   after_commit :clear_memcache_cache
 
-  TEMPLATE_MAPPING = [ 
-    [:header,  "portal/header.portal"],    
+  TEMPLATE_MAPPING = [
+    [:header,  "portal/header.portal"],
     [:footer,  "portal/footer.portal"],
     [:layout,  "portal/layout.portal"],
     [:head,    "portal/head.portal"]
   ]
 
-  TEMPLATE_MAPPING_RAILS3 = [ 
-    [:header,  "portal/header", :portal],    
+  TEMPLATE_MAPPING_RAILS3 = [
+    [:header,  "portal/header", :portal],
     [:footer,  "portal/footer", :portal],
     [:layout,  "portal/layout", :portal],
     [:head,    "portal/head", :portal]
   ]
 
 
-  TEMPLATE_MAPPING_FALCON = [ 
-    [:header,  "portal/falcon_header.portal"],    
+  TEMPLATE_MAPPING_FALCON = [
+    [:header,  "portal/falcon_header.portal"],
     [:footer,  "portal/falcon_footer.portal"],
     [:layout,  "portal/falcon_layout.portal"],
     [:head,    "portal/head.portal"]
   ]
 
-  TEMPLATE_MAPPING_RAILS3_FALCON = [ 
-    [:header,  "portal/falcon_header", :portal],    
+  TEMPLATE_MAPPING_RAILS3_FALCON = [
+    [:header,  "portal/falcon_header", :portal],
     [:footer,  "portal/falcon_footer", :portal],
     [:layout,  "portal/falcon_layout", :portal],
     [:head,    "portal/head", :portal]
@@ -57,38 +57,38 @@ class Portal::Template < ActiveRecord::Base
   def default_preferences
     if Account.current and Account.current.falcon_support_portal_theme_enabled?
       {
-        :bg_color => "#f3f5f7", 
-        :header_color => "#ffffff", 
-        :help_center_color => "#f3f5f7", 
+        :bg_color => "#f3f5f7",
+        :header_color => "#ffffff",
+        :help_center_color => "#f3f5f7",
         :footer_color => "#183247",
-        :tab_color => "#ffffff", 
-        :tab_hover_color => "#ffffff",
-        :btn_background => "#ffffff", 
+        :tab_color => "#ffffff",
+        :tab_hover_color => "#02b875",
+        :btn_background => "#f3f5f7",
         :btn_primary_background => "#02b875",
-        :baseFont => "Source Sans Pro", 
+        :baseFont => "Source Sans Pro",
         :textColor => "#183247",
-        :headingsFont => "Poppins", 
+        :headingsFont => "Poppins",
         :headingsColor => "#183247",
-        :linkColor => "#183247", 
+        :linkColor => "#183247",
         :linkColorHover => "#2753d7",
-        :inputFocusRingColor => "#dadfe3",
+        :inputFocusRingColor => "#02B875",
         :nonResponsive => false
       }.merge(self.get_portal_pref)
     else
       {
-        :bg_color => "#ffffff", 
-        :header_color => "#4c4b4b", 
-        :help_center_color => "#f9f9f9", 
+        :bg_color => "#ffffff",
+        :header_color => "#4c4b4b",
+        :help_center_color => "#f9f9f9",
         :footer_color => "#777777",
-        :tab_color => "#006063", 
+        :tab_color => "#006063",
         :tab_hover_color => "#4c4b4b",
-        :btn_background => "#ffffff", 
+        :btn_background => "#ffffff",
         :btn_primary_background => "#6c6a6a",
-        :baseFont => "Helvetica Neue", 
+        :baseFont => "Helvetica Neue",
         :textColor => "#333333",
-        :headingsFont => "Source Sans Pro", 
+        :headingsFont => "Source Sans Pro",
         :headingsColor => "#333333",
-        :linkColor => "#049cdb", 
+        :linkColor => "#049cdb",
         :linkColorHover => "#036690",
         :inputFocusRingColor => "#f4af1a",
         :nonResponsive => false
@@ -104,9 +104,9 @@ class Portal::Template < ActiveRecord::Base
         pref = self.portal.preferences.presence || self.account.main_portal.preferences
       end
       # Selecting only bg_color, tab_color, header_color from the portals preferences
-      Hash[*[:bg_color, :tab_color, :header_color].map{ |a| [ a, pref[a] ] }.flatten]    
+      Hash[*[:bg_color, :tab_color, :header_color].map{ |a| [ a, pref[a] ] }.flatten]
   end
-  
+
   def reset_to_default
     self.pages.each(&:destroy)
     self.preferences = default_preferences
@@ -191,8 +191,8 @@ class Portal::Template < ActiveRecord::Base
 
   private
     def draft_key(label = "cosmetic")
-      PORTAL_PREVIEW % {:account_id => self.account_id, 
-                        :template_id => self.id, 
+      PORTAL_PREVIEW % {:account_id => self.account_id,
+                        :template_id => self.id,
                         :label => label,
                         :user_id => User.current.id }
     end

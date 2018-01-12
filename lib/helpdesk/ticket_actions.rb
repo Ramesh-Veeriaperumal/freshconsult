@@ -23,8 +23,10 @@ module Helpdesk::TicketActions
     # Once substantial amout of users have upgraded from these version, we need to remove 
     # 1. json format in create method in lib/support_ticket_controller_method.rb
     # 2. is_native_mobile? check in create method in lib/helpdesk/ticket_actions.rb
-    return false if need_captcha && !(current_user || is_native_mobile? ||verify_recaptcha(:model => @ticket, 
-                                                        :message => "Captcha verification failed, try again!"))
+    return false if need_captcha && !(current_user || is_native_mobile? || 
+                                      verify_recaptcha(model: @ticket,
+                                                       message: t('captcha_verify_message'),
+                                                       hostname: current_portal.method(:matches_host?)))
     build_ticket_attachments
     @ticket.skip_notification = skip_notifications
     @ticket.meta_data = params[:meta] if params[:meta]
@@ -306,7 +308,7 @@ module Helpdesk::TicketActions
           db_type = get_db_type(params)
           Sharding.send(db_type) do
             @ticket_filter.deserialize_from_params(params)
-            if current_account.count_es_enabled? and non_indexed_columns_query?
+            if current_account.count_es_enabled?
               total_entries = Search::Tickets::Docs.new(@ticket_filter.query_hash).count(Helpdesk::Ticket)
             else
               joins = @ticket_filter.get_joins(@ticket_filter.sql_conditions)
@@ -380,13 +382,6 @@ module Helpdesk::TicketActions
 
   def create_ticket_export_fields_list(list)
     set_tickets_redis_lpush(export_redis_key, list) if list.any?
-  end
-
-  def non_indexed_columns_query?
-    return false if params["data_hash"].blank?
-    query_hash = params["data_hash"].is_a?(String) ? JSON.parse(params["data_hash"]) : params["data_hash"]
-    query_conditions = query_hash.map{|x| x["condition"]}
-    (query_conditions - TicketConstants::DB_INDEXED_QUERY_COLUMNS).count > 0
   end
 
   def export_redis_key

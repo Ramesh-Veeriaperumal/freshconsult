@@ -22,6 +22,7 @@ class User < ActiveRecord::Base
   include Social::Ext::UserMethods
   include AccountConstants
   include PasswordPolicies::UserHelpers
+  include Redis::FreshidPasswordRedis
 
   concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq, :esv2_methods
   include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams
@@ -302,7 +303,8 @@ class User < ActiveRecord::Base
           joins: :user_companies,
           conditions: {
             user_companies:  {
-              company_id: contact_filter.company_id
+              company_id: contact_filter.company_id,
+              account_id: Account.current.id
             }
           }
         },
@@ -514,7 +516,10 @@ class User < ActiveRecord::Base
         user_skill["rank"] }.map { |user_skill| 
           user_skill["skill_id"] }
     end
+
     return false unless save_without_session_maintenance
+    create_freshid_user
+
     portal.make_current if portal
     if (!deleted and !email.blank? and send_activation)
       if self.language.nil?
@@ -571,6 +576,7 @@ class User < ActiveRecord::Base
     }
   }
 
+  #Used for importing google contacts
   def signup(portal=nil)
     return false unless save_without_session_maintenance
     deliver_activation_instructions!(portal,false) if (!deleted and self.email.present?)
@@ -599,7 +605,7 @@ class User < ActiveRecord::Base
   end
 
   def update_account_info_and_verify(user_params)
-    self.account.update_attributes!({:name => user_params[:company_name]})
+    self.account.update_attributes!({:name => user_params[:company_name]}) if user_params.key?(:company_name) 
     self.account.main_portal.update_attributes!({:name => user_params[:company_name]})
     self.account.account_configuration.update_contact_company_info!(user_params)
   end
@@ -907,6 +913,7 @@ class User < ActiveRecord::Base
       subscriptions.destroy_all
       self.cti_phone = nil
       agent.destroy
+      destroy_freshid_user
       freshfone_user.destroy if freshfone_user
       email_notification_agents.destroy_all
 
@@ -938,7 +945,10 @@ class User < ActiveRecord::Base
       expiry_period = self.user_policy ? FDPasswordPolicy::Constants::GRACE_PERIOD : FDPasswordPolicy::Constants::NEVER.to_i.days
       self.set_password_expiry({:password_expiry_date =>
           (Time.now.utc + expiry_period).to_s}, false)
-      save ? true : (raise ActiveRecord::Rollback)
+      reset_persistence_token
+      success = save
+      success ? create_freshid_user : (raise ActiveRecord::Rollback)
+      success
     end
   end
 
@@ -1073,7 +1083,77 @@ class User < ActiveRecord::Base
     !account.verified? && self.privilege?(:admin_tasks)
   end
 
+  def create_freshid_user
+    return unless freshid_enabled_and_agent?
+    freshid_user = Freshid::User.create({ first_name: name, email: email, phone: phone, mobile: mobile, domain: account.full_domain })
+    if freshid_user.present?
+      self.create_freshid_authorization(uid: freshid_user.uuid)
+      update_user_with_freshid_attributes freshid_user
+      freshid_user.active? ? deliver_agent_invitation! : deliver_activation_instructions!(nil, false)
+    end
+  end
+
+  def destroy_freshid_user
+    if account.freshid_enabled? && freshid_authorization.present?
+      Freshid::User.new({ uuid: freshid_authorization.uid, domain: account.full_domain }).destroy
+      freshid_authorization.destroy
+      reset_agent_password
+    end
+  end
+  
+  def valid_freshid_password?(incoming_password)
+    password_available = password_flag_exists?(email) || false
+    valid = password_available && valid_password?(incoming_password)
+    Rails.logger.info "FRESHID API auth :: Before FRESHID login :: a=#{account_id} u=#{id} password_available=#{password_available} valid=#{valid}"
+    unless valid
+      remove_password_flag(email, account_id)
+      valid = valid_freshid_login?(incoming_password)
+      Rails.logger.info "FRESHID API auth :: After FRESHID login :: a=#{account_id} u=#{id} valid=#{valid}"
+      update_with_fid_password(incoming_password) if valid
+    end
+    valid
+  end
+  
+  def reset_tokens!
+    reset_persistence_token!
+    reset_perishable_token!
+    remove_password_flag(email, account_id)
+  end
+
   private
+
+    def freshid_enabled_and_agent?
+      agent? && account.freshid_enabled?
+    end
+
+    def freshid_disabled_and_customer?
+      !freshid_enabled_and_agent?
+    end
+    
+    def valid_freshid_login?(incoming_password)
+      freshid_login = Freshid::Login.new({ email: email, password: incoming_password })
+      freshid_login.authenticate_user
+      freshid_login.valid_credentials?
+    end
+    
+    def update_with_fid_password(fid_password)
+      self.password = fid_password
+      User.where(id: id).update_all(crypted_password: self.crypted_password, password_salt: self.password_salt)
+      self.reload
+      set_password_flag(email)
+    end
+    
+    def update_user_with_freshid_attributes freshid_user
+      user_params = {}
+      freshid_full_name = [freshid_user.first_name, freshid_user.last_name].join(' ')
+      user_params[:name] = freshid_full_name if self.name != freshid_full_name
+      user_params[:phone] = freshid_user.phone if self.phone != freshid_user.phone
+      user_params[:mobile] = freshid_user.mobile if self.mobile != freshid_user.mobile
+      user_params[:active] = freshid_user.active? if self.active != freshid_user.active?
+      self.update_attributes!(user_params) if user_params.present?
+    rescue Exception => e
+      Rails.logger.error "FRESHID Error updating user with FreshID attributes -- #{e.inspect}"
+    end
 
     def name_part(part)
       part = parsed_name[part].blank? ? "particle" : part unless parsed_name.blank? and part == "family"

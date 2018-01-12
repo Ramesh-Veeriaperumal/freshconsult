@@ -82,6 +82,4 @@
 
 :global_exclude_filters:
   :customer_report:
-    - :agent_id
-    - :group_id
     - :company_id

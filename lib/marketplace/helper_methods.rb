@@ -1,5 +1,7 @@
 module Marketplace::HelperMethods
 
+  OAUTH_IPARAM_FEATURE = 'oauth_iparams'
+
   private
 
   def categories
@@ -35,7 +37,9 @@ module Marketplace::HelperMethods
   end
 
   def custom_app?
-    @extension['app_type'] == Marketplace::Constants::APP_TYPE[:custom]
+    # TODO: app_type should be removed after new ext type is added for custom app
+    @extension['app_type'] == Marketplace::Constants::APP_TYPE[:custom] || 
+    @extension['type'] == Marketplace::Constants::EXTENSION_TYPE[:custom_app]
   end
 
   def paid_app?
@@ -44,6 +48,11 @@ module Marketplace::HelperMethods
   
   def is_oauth_app?(extension)
     extension["features"].present? and extension['features'].include?('oauth')
+  end
+
+  def has_oauth_iparams?(extn=nil)
+    extension = extn || @extension
+    extension["features"].present? and extension['features'].include?(OAUTH_IPARAM_FEATURE)
   end
 
   def addon_details

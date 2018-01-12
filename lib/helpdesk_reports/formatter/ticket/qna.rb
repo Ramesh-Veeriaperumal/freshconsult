@@ -15,7 +15,7 @@ class HelpdeskReports::Formatter::Ticket::Qna
   end
 
   def perform
-    return {error: { code: 551,  message:I18n.t('helpdesk_reports.insights.sys_error') } } unless data["errors"].nil? # custom error code 551 to handle server errors
+    return {error: { code: 551,  message:I18n.t('helpdesk_reports.something_went_wrong_msg') } } unless data["errors"].nil? # custom error code 551 to handle server errors
     
     if is_specify_query?
       parse_specific_data

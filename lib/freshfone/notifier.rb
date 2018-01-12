@@ -21,6 +21,7 @@ class Freshfone::Notifier
 
   def notify_agents(current_call)
     load_freshfone_agents(current_call)
+    return initiate_voicemail(current_call) if self.pinged_agents.blank?
     notify_incoming_call(current_call) if browser_agents.any? || mobile_agents.any?
   end
 
@@ -153,7 +154,7 @@ class Freshfone::Notifier
       return Freshfone::NotificationWorker.perform_async(params, agent, "round_robin") if !new_notifications? || mobile_agent?(agent)
       jid = Freshfone::RealtimeNotifier.perform_async(params.merge(enqueued_at: Time.now), current_call.id, [agent[:id]], "round_robin")
       Rails.logger.info "Account ID : #{current_account.id} - Call ID : #{current_call.id} - initiate_round_robin : Sidekiq Job ID #{jid}"
-      current_call.meta.update_pinged_agent_ringing_at agent[:id]
+      current_call.meta.reload.update_pinged_agent_ringing_at agent[:id]
     end
   end
 
@@ -214,7 +215,9 @@ class Freshfone::Notifier
   private
     def load_freshfone_agents(current_call)
       if current_call.meta && current_call.meta.pinged_agents
-        self.pinged_agents  = current_call.meta.pinged_agents.map {|agent| agent}.compact
+        current_call.meta.update_attributes!(pinged_agents: validated_pinged_agents(current_call))
+        self.pinged_agents = current_call.meta.reload.pinged_agents
+        Rails.logger.info "Account :: #{current_account.id} :: Call :: #{current_call.id} :: Pinged Agents On conference wait :: #{pinged_agents.inspect}"
         self.browser_agents = pinged_agents.map { |agent| agent[:id] if agent[:device_type] == :browser }.compact
         self.mobile_agents  = pinged_agents.map { |agent| agent[:id] if agent[:device_type] == :mobile }.compact
       else # Safety case
@@ -260,5 +263,17 @@ class Freshfone::Notifier
     def transfer_params(current_call, source_agent)
       params.except!(:agent, :customer).merge!(call_id: current_call.id, 
         source_agent_id: source_agent, transfer: 'true')
+    end
+
+    def validated_pinged_agents(current_call)
+      loaded_pinged_agents = current_call.meta.pinged_agents.map { |agent| agent }.compact
+      Rails.logger.info "Account :: #{current_account.id} :: Call :: #{current_call.id} :: Pinged Agents Before Welcome Message :: #{loaded_pinged_agents.inspect}"
+      online_pinged_agents = current_account.freshfone_users.where(user_id: loaded_pinged_agents.map { |agent| agent[:id] }).online_agents.pluck(:user_id)
+      loaded_pinged_agents.select { |agent| online_pinged_agents.include?(agent[:id]) }
+    end
+
+    def initiate_voicemail(current_call)
+      freshfone_number = current_call.freshfone_number
+      @telephony.redirect_call(current_call.call_sid, redirect_caller_to_voicemail(freshfone_number.id))
     end
 end

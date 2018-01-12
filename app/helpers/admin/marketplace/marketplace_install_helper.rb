@@ -13,7 +13,7 @@ include FalconHelperMethods
                 data-method="put" data-url="#{install_url}"> #{install_btn_text} </a>)
     elsif @is_oauth_app
       _btn << link_to(install_btn_text, '#', 'data-url' => install_url, :id => 'oauth_link',
-              :class => "btn btn-default btn-primary install-app #{install_btn_class} oauth-app")
+              :class => "btn btn-default btn-primary install-app #{install_btn_class}")
       _btn << link_to(install_btn_text, '#', 'data-url' => oauth_settings_url,
               :class => "btn btn-default btn-primary install-app hide install-form-btn")
     else
@@ -62,14 +62,18 @@ include FalconHelperMethods
         )
     elsif @extension['name'] == Integrations::Constants::APP_NAMES[:slack_v2]
       if current_account.falcon_ui_enabled?(current_user)
-        on_click_url=falcon_redirect_check("/auth/slack?origin=id=#{current_account.id}%26portal_id=#{current_portal.id}%26user_id=#{current_user.id}")
+        on_click_url=falcon_redirect_check("/integrations/slack_v2/oauth")
       else
         on_click_url="parentNode.submit();"
       end
-      _btn << %(<form id="nativeapp-form" action="#{install_url}" method="post"> </form>)
+      _btn << %(<form id="nativeapp-form" action="#{install_url}" method="post" target="_top"> </form>)
       _btn << %(
         <a href="javascript:;" onclick="#{on_click_url}" class="install-app #{ni_install_btn_class}"><img alt="Add to Slack" src="https://platform.slack-edge.com/img/add_to_slack.png" style="padding-top: 10px;padding-left: 10px;width: 139px; height: 40px;"></a>
       )
+    
+    elsif @extension['name'] == Integrations::Constants::APP_NAMES[:google_calendar] && current_account.falcon_ui_enabled?(current_user)
+      _btn << link_to(install_btn_text, install_url, :method => :post, :target => '_top',
+              :class => "btn btn-default btn-primary install-app #{ni_install_btn_class}").html_safe
     else
       _btn << link_to(install_btn_text, install_url, :method => :post,
               :class => "btn btn-default btn-primary install-app #{ni_install_btn_class}").html_safe
@@ -92,7 +96,12 @@ include FalconHelperMethods
         "#{admin_marketplace_installed_extensions_reinstall_path(@extension['extension_id'])}?#{params_hash.to_query}"
       end
     elsif is_oauth_app?(@extension)
-      admin_marketplace_installed_extensions_oauth_install_path(@extension['extension_id'], @extension['version_id'])
+      if has_oauth_iparams?
+        admin_marketplace_installed_extensions_new_oauth_iparams_path(@extension['extension_id'], 
+          @extension['version_id']) + '?' + configs_url_params(true)
+      else
+        admin_marketplace_installed_extensions_oauth_install_path(@extension['extension_id'], @extension['version_id'])
+      end
     else
       url_params = configs_url_params
       admin_marketplace_installed_extensions_new_configs_path(@extension['extension_id'],
@@ -119,7 +128,7 @@ include FalconHelperMethods
         "install-iframe-settings"
       end
     elsif is_oauth_app?(@extension)
-      "install-oauth-btn"
+      has_oauth_iparams? ? "oauth-iparams-btn" : "install-oauth-btn"
     else
       "install-form-btn"
     end

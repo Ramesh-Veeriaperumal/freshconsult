@@ -8,6 +8,7 @@ class Support::SignupsController < SupportController
   before_filter :chk_for_logged_in_usr 
   before_filter :initialize_user
   skip_before_filter :verify_authenticity_token
+  before_filter :authenticate_with_freshid, only: :new, if: :freshid_enabled_and_not_logged_in?
   before_filter :set_validatable_custom_fields, :remove_noneditable_fields_in_params, :set_user_language,
                 :set_required_fields, :only => [:create]
   
@@ -18,7 +19,8 @@ class Support::SignupsController < SupportController
   end
   
   def create
-    if verify_recaptcha(:model => @user, :message => t("captcha_verify_message")) && @user.signup!(params, current_portal)
+    if verify_recaptcha(model: @user, message: t('captcha_verify_message'),
+                        hostname: current_portal.method(:matches_host?)) && @user.signup!(params, current_portal)
       e_notification = current_account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
       if e_notification.requester_notification?
         flash[:notice] = t(:'activation_link', :email => @user.email)

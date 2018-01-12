@@ -11,7 +11,10 @@ App.CollaborationModel = (function ($) {
         TYPE_RECEIVED: "received",
         MSG_TYPE_CLIENT: "1", // Msg from Client
         MSG_TYPE_SERVER_MADD: "2", // Msg from Server, denotes addition of member
-        MSG_TYPE_SERVER_MREMOVE: "3", // Msg from Server, denotes removal of member        
+        MSG_TYPE_SERVER_MREMOVE: "3", // Msg from Server, denotes removal of member
+        MSG_TYPE_CLIENT_ATTACHMENT: '4', // Attachment Msg from Client
+        MSG_TYPE_TYPING: 'typing', // not known to server
+        MSG_TYPE_READ_RECEIPT: 'read_receipt', // not known to server
         JUST_NOW_TEXT: "Now",
         LONG_AGO_TEXT: "Long ago",
         MAX_ONLINE_SEC: 60,
@@ -19,8 +22,10 @@ App.CollaborationModel = (function ($) {
         TIME_CHUNKS: [[60 * 60 * 24, "d"], [60 * 60, "h"], [60, "m"]],
         NOTIFICATION_POPUP_CARD_TEMPLATE: "collaboration/templates/notification_popup_card",
         DUMMY_USER: {name: "New user"},
-        ANNOTATION: {bg_color: "#b4ebdf", shadow_color: "#7ec7b7", border_color: "#96dbcc"}
-    };
+        ANNOTATION: {bg_color: "#b4ebdf", shadow_color: "#7ec7b7", border_color: "#96dbcc"},
+        NOTI_KEYS: ["hk_notify", "hk_group_notify", "reply"],
+        RESPONSE_ERROR_ACTION_NOT_AUTHORIZED: "Action not authorized" // Response Error String
+   };
 
     var _COLLAB_PVT = {
         ChatApi: {},
@@ -30,14 +35,16 @@ App.CollaborationModel = (function ($) {
                 Collab.features.replyToEnabled = response.features.enable_reply_to;
                 Collab.features.collabTourEnabled = response.features.show_collab_tour;
                 Collab.features.markReadEnabled = response.features.enable_mark_read;
+                Collab.features.followerEnabled = response.features.enable_follower;
+                Collab.features.readReceiptEnabled = response.features.enable_read_receipt;
             }
         },
         connectionInited : function() {
             Collab.MEMBER_PRESENCE_POLL_TIME = _COLLAB_PVT.ChatApi.memberPresencePollTime;
             // TODO(mayank): mergo updates DB with nil data
-            // This is supposed to update latest self_info; Avoiding this temporarily; 
+            // This is supposed to update latest self_info; Avoiding this temporarily;
             // _COLLAB_PVT.updateUser(Collab.currentUser.uid, Collab.currentUser.name, Collab.currentUser.email)
-            
+
             function uiIniter() {
                 Collab.initedWithData = true;
                 // call initUI if pending config found
@@ -75,6 +82,7 @@ App.CollaborationModel = (function ($) {
                     });
                 }
                 uiIniter();
+                _COLLAB_PVT.ChatApi.markOnline(_COLLAB_PVT.onHeartBeat);
             });
 
         },
@@ -86,21 +94,21 @@ App.CollaborationModel = (function ($) {
         },
         // TODO (mayank): This Call will be moved to Rails Backend
         updateUser: function(id, name, mail, cb) {
-            var userData = { 
+            var userData = {
               "uid": String(id),
               "info": {
                   "name": name,
                   "email": mail || name + "@freshdesk.com",
-              }   
-            };  
+              }
+            };
             _COLLAB_PVT.ChatApi.updateUser(userData, function(response) {
                 _COLLAB_PVT.updateLocalUserModel(response);
                 if(typeof cb === "function") {cb(response);}
-            }); 
+            });
         },
         updateLocalUserModel: function(response) {
             Collab.usersMap[response.uid] = jQuery.extend(Collab.usersMap[response.uid] || {}, {
-                "uid": response.uid, 
+                "uid": response.uid,
                 "name": response.info.name,
                 "lastActive": response.last_online_at ? Collab.parseUTCDateToLocal(response.last_online_at).getTime() : 0
             }, response.info || {});
@@ -111,10 +119,16 @@ App.CollaborationModel = (function ($) {
             var msg_for_current_convo = (!!Collab.currentConversation && msg.co_id === Collab.currentConversation.co_id);
 
             if(msg_for_current_convo && !sent_by_me) {
-                msg.incremental = true;
-                App.CollaborationUi.addMessageHtml(msg, CONST.TYPE_RECEIVED);
+                if(msg.m_type === CONST.MSG_TYPE_TYPING) {
+                    App.CollaborationUi.addTypingHtml(msg);
+                } else if(msg.m_type === CONST.MSG_TYPE_READ_RECEIPT) {
+                    App.CollaborationUi.updateReadReceipt(msg);
+                } else {
+                    msg.incremental = true;
+                    App.CollaborationUi.addMessageHtml(msg, CONST.TYPE_RECEIVED);
+                }
             }
-            if(sent_by_me) {
+            if (msg_for_current_convo && sent_by_me && msg.m_type !== CONST.MSG_TYPE_TYPING && msg.m_type !== CONST.MSG_TYPE_READ_RECEIPT) {
                 App.CollaborationUi.updateSentMessage(msg);
                 _COLLAB_PVT.updateConvoMeta(msg); /* stores metadata per convo */
             }
@@ -152,6 +166,32 @@ App.CollaborationModel = (function ($) {
                 App.CollaborationUi.removeCollaboratorsFromList(userIdToRemove);
             }
         },
+        onFollowerAdd: function(response) {
+            var currentConvo = Collab.conversationsMap[response.co_id];
+            var respBody = App.CollaborationUi.parseJson(response.body);
+            var followers = currentConvo.followers || {};
+            var followerToAdd = {
+                added_at: respBody.added_at
+            };
+            if (!followers[respBody.user_id]) {
+                followers[respBody.user_id] = followerToAdd;
+                currentConvo.followers = followers;
+            }
+            if(respBody.user_id === Collab.currentUser.uid) {
+              App.CollaborationUi.updateFollowConvoUi(true);
+            }
+        },
+        onFollowerRemove: function(response) {
+            var currentConvo = Collab.conversationsMap[response.co_id];
+            var userIdToRemove = App.CollaborationUi.parseJson(response.body).user_id;
+            var followers = currentConvo.followers;
+            if (followers && followers[userIdToRemove]) {
+                delete currentConvo.followers[userIdToRemove];
+            }
+            if(userIdToRemove === Collab.currentUser.uid) {
+              App.CollaborationUi.updateFollowConvoUi(false);
+            }
+        },
         onNotifyHandler: function(response) {
             Collab.notificationsMap[response.nid] = Collab.notificationsMap[response.nid] || [];
             Collab.notificationsMap[response.nid].push(response);
@@ -163,7 +203,7 @@ App.CollaborationModel = (function ($) {
             Collab.unreadNotiCount++;
 
             response.body = App.CollaborationUi.parseJson(response.body);
-            
+
             var notificationIsForOpenedCollab = (!!Collab.currentConversation && Collab.currentConversation.co_id === response.body.co_id);
             if(App.CollaborationUi.isCollabOpen() && notificationIsForOpenedCollab) {
                 Collab.markNotification([response.nid]);
@@ -197,10 +237,10 @@ App.CollaborationModel = (function ($) {
             if(!!annotationData) {
                 annotationData.messageId = msg.mid;
                 var meta_operations = [ {
-                        "operator": "add", 
-                        "property": "annotations", 
-                        "type": "string_set", 
-                        "value": [JSON.stringify(annotationData)]} 
+                        "operator": "add",
+                        "property": "annotations",
+                        "type": "string_set",
+                        "value": [JSON.stringify(annotationData)]}
                     ];
                 var metadata = {
                     "co_id": msg.co_id,
@@ -261,6 +301,24 @@ App.CollaborationModel = (function ($) {
                 ticket_payload.convo_token = data.convo_token;
                 $("#collab-ticket-payload").attr("data-ticket-payload", JSON.stringify(ticket_payload));
             }
+        },
+  
+        sendReadReceipt: function(msgId) {
+            var currentConvo = Collab.currentConversation;
+            if (!Collab.conversationsMap[currentConvo.co_id]) {
+                // Conversation doesn't exists or there is no message in msgBody
+                return;
+            }
+
+            var msg = {
+                "body": JSON.stringify({
+                    "mid": msgId
+                }),
+                "m_type": CONST.MSG_TYPE_READ_RECEIPT,
+                "ts": Date.now().toString(),
+                "persist": false
+            }
+            Collab.sendMessage(msg, currentConvo.co_id);
         }
     };
 
@@ -274,11 +332,14 @@ App.CollaborationModel = (function ($) {
         unreadNotiCount: 0,
         invalidAnnotationMessages: [],
         profileImages: {},
+        selectionInfo: {},
         features: {
             groupMentionsEnabled: false,
             replyToEnabled: false,
             collabTourEnabled: false,
-            markReadEnabled: false
+            markReadEnabled: false,
+            followerEnabled: false,
+            readReceiptEnabled: false
         },
 
         isOnline: function(userId) {
@@ -325,9 +386,10 @@ App.CollaborationModel = (function ($) {
                 "body": m.body,
                 "m_type": m.m_type,
                 "attachment_link": m.attachment_link,
-                "ts": m.ts
+                "ts": m.ts,
+                "persist": m.persist
             };
-            
+
             var convo = {
                 "co_id": co_id,
                 "token": Collab.currentConversation.token
@@ -335,9 +397,23 @@ App.CollaborationModel = (function ($) {
 
             _COLLAB_PVT.ChatApi.sendMessage(msg, convo, function(response, isErr) {
                     if(isErr) {
+                        // Refresh Convo Token
                         _COLLAB_PVT.refreshConvoToken(function() {
                             convo.token = Collab.currentConversation.token;
-                            _COLLAB_PVT.ChatApi.sendMessage(msg, convo, cb);
+                            if (typeof response === 'string' && response === CONST.RESPONSE_ERROR_ACTION_NOT_AUTHORIZED) {
+                                // This situation will arise only for created conversations after 24 hrs of inactivity and we have to refresh rtstoken
+                                var convoRTSTokenRefresh = {
+                                  'co_id': convo.co_id,
+                                  'token': convo.token
+                                };
+                                var myId = Collab.currentUser.uid;
+                                _COLLAB_PVT.ChatApi.getRtsAuthToken(convoRTSTokenRefresh, myId, function(response, isErr) {
+                                    // convo token is already refreshed so no need to refresh here again
+                                    _COLLAB_PVT.ChatApi.sendMessage(msg, convo, cb);
+                                })
+                            } else {
+                                _COLLAB_PVT.ChatApi.sendMessage(msg, convo, cb);
+                            }
                         });
                     } else {
                         if(typeof cb === "function") {cb(response);}
@@ -349,27 +425,79 @@ App.CollaborationModel = (function ($) {
             var current_user_id = Collab.currentUser.uid;
 
            _COLLAB_PVT.ChatApi.updateReadMarker(convo_id, current_user_id, msgId, cb);
+           if(Collab.features.readReceiptEnabled) {
+             _COLLAB_PVT.sendReadReceipt(msgId);
+           }
+        },
+        checkNotiKeys: function(msg) {
+            meta = JSON.parse(msg.metadata)
+            for(var i in CONST.NOTI_KEYS) {
+                if(meta.hasOwnProperty(CONST.NOTI_KEYS[i])){
+                    return true;
+                }
+            }
+            return false;
         },
         sendNotification: function(msg) {
             var ticket_id = Collab.currentConversation.co_id;
             if(!!ticket_id) {
                 var collab_access_token = App.CollaborationUi.getUrlParameter("token");
-                message_data = {
-                    mid: msg.mid,
-                    body: msg.body,
-                    metadata: msg.metadata
+                var currentConvo = Collab.conversationsMap[ticket_id];
+                var message_data = {
+                    mid: msg.mid
                 };
                 if(collab_access_token) {
                     message_data.token = collab_access_token;
                 }
-                var jsonData = JSON.stringify(message_data);
-                jQuery.ajax({
-                    url: '/helpdesk/tickets/collab/' + ticket_id + '/notify',
-                    type: 'POST',
-                    dataType: 'json',                  
-                    data: jsonData,
-                    contentType: 'application/json; charset=utf-8'
-                }); 
+                if (Collab.features.followerEnabled && Object.keys(currentConvo.followers).length !== 0) {
+                    var followers = currentConvo.followers;
+                    var followersInfo = [];
+                    for (var userId in followers) {
+                        if (followers.hasOwnProperty(userId)) {
+                            followersInfo.push({
+                                follower_id: userId
+                            });
+                        }
+                    }
+                    var members = currentConvo.members;
+                    var topMembersInfo = [];
+                    var topCount = 3;
+                    for (var memberId in members) {
+                        if (topCount === 0) {
+                            break;
+                        }
+                        if (members.hasOwnProperty(memberId)) {
+                            topMembersInfo.push({
+                                member_id: memberId
+                            });
+                            topCount--;
+                        }
+                    }
+                    if (msg.metadata) {
+                        message_data.metadata = App.CollaborationUi.parseJson(msg.metadata);
+                    }
+                    message_data.metadata = message_data.metadata || {};
+                    message_data.metadata.follower_notify = followersInfo;
+                    message_data.top_members = App.CollaborationUi.stringify(topMembersInfo);
+                    message_data.m_ts = Date.now().toString();
+                    message_data.m_type = msg.m_type;
+                    message_data.body = msg.m_type === CONST.MSG_TYPE_CLIENT_ATTACHMENT ? JSON.parse(msg.body).fn : msg.body;
+                } else if (msg.metadata && Collab.checkNotiKeys(msg)) {
+                    message_data.metadata = App.CollaborationUi.parseJson(msg.metadata);
+                    message_data.body = msg.body;
+                }
+
+                if (message_data.metadata) {
+                    message_data.metadata = App.CollaborationUi.stringify(message_data.metadata);
+                    var jsonData = App.CollaborationUi.stringify(message_data);
+                    jQuery.ajax({
+                        url: '/helpdesk/tickets/collab/' + ticket_id + '/notify',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: jsonData,
+                        contentType: 'application/json; charset=utf-8'
+                    });
+                }
             } else {
                 console.log("Sending notification failed!! Ticket ID not found!");
             }
@@ -393,14 +521,14 @@ App.CollaborationModel = (function ($) {
                 var convoMembers = convo.members;
                 for(var id in convoMembers) {
                     if(convoMembers.hasOwnProperty(id)) {
-                        collaborators.push(id);    
+                        collaborators.push(id);
                     }
                 }
 
                 _COLLAB_PVT.ChatApi.getPresence(collaborators, function(response) {
                     if(typeof response === "string") { response = App.CollaborationUi.parseJson(response); }
                     for (var i = response.length - 1; i >= 0 && !!response[i].uid && Collab.usersMap[response[i].uid]; i--) {
-                        Collab.usersMap[response[i].uid].lastActive = response[i].last_online_at ? 
+                        Collab.usersMap[response[i].uid].lastActive = response[i].last_online_at ?
                             Collab.parseUTCDateToLocal(response[i].last_online_at).getTime() : 0 ;
                         collaboratorsMap[response[i].uid] = response[i];
                     }
@@ -435,8 +563,47 @@ App.CollaborationModel = (function ($) {
             });
         },
         notify: function(userId, notifyBody, ticketId) {
-            _COLLAB_PVT.ChatApi.notifyUser(userId, notifyBody, ticketId)
+            _COLLAB_PVT.ChatApi.notifyUser(userId, notifyBody, ticketId);
         },
+
+        followConvo: function(follow) {
+            var convo = {
+                "co_id": Collab.currentConversation.co_id,
+                "token": Collab.currentConversation.token
+            }
+            var followCb = function(resp) {
+              _COLLAB_PVT.onFollowerAdd({co_id: convo.co_id, body: {user_id: Collab.currentUser.uid, added_at: new Date()}});
+            }
+            var unfollowCb =  function(resp) {
+              _COLLAB_PVT.onFollowerRemove({co_id: convo.co_id, body: {user_id: Collab.currentUser.uid}});
+            }
+            if(follow) {
+              _COLLAB_PVT.ChatApi.addFollower(convo, Collab.currentUser.uid, function(response, isErr) {
+
+                if(isErr) {
+                    _COLLAB_PVT.refreshConvoToken(function() {
+                        convo.token = Collab.currentConversation.token;
+                        _COLLAB_PVT.ChatApi.addFollower(convo, Collab.currentUser.uid, followCb)
+                    })
+                } else {
+                    followCb(response);
+                }
+              });
+            } else {
+              _COLLAB_PVT.ChatApi.removeFollower(convo, Collab.currentUser.uid, function(response, isErr) {
+                if(isErr) {
+                    _COLLAB_PVT.refreshConvoToken(function() {
+                        convo.token = Collab.currentConversation.token;
+                        _COLLAB_PVT.ChatApi.removeFollower(convo, Collab.currentUser.uid, unfollowCb)
+                    })
+                } else {
+                    unfollowCb(response);
+                }
+
+              });
+            }
+        },
+
         addMember: function(convoName, uid, cb) {
             var convo = {
                 "co_id": convoName,
@@ -513,7 +680,7 @@ App.CollaborationModel = (function ($) {
                 "token": Collab.currentConversation.token
             };
             Collab.invalidAnnotationMessages=[];
-            _COLLAB_PVT.ChatApi.loadConversation(convo, 
+            _COLLAB_PVT.ChatApi.loadConversation(convo,
                 Collab.currentUser.uid,
                 function(response, isErr) {
                     if(isErr) {
@@ -544,7 +711,7 @@ App.CollaborationModel = (function ($) {
                 cb();
             }
         },
-        
+
         markAnnotation: function() {
             return _COLLAB_PVT.Annotations.markAnnotation();
         },
@@ -580,9 +747,18 @@ App.CollaborationModel = (function ($) {
             }
         },
 
-        getSelectionInfo: function() {
+        getSelectionInfo: function () {
+            return Collab.selectionInfo;
+        },
+
+        setSelectionInfo: function() {
             var annotatorId = Collab.currentUser.uid;
-            return _COLLAB_PVT.Annotations.getSelectionInfo(annotatorId);
+            Collab.selectionInfo = _COLLAB_PVT.Annotations.getSelectionInfo(annotatorId);
+            return Collab.selectionInfo;
+        },
+
+        resetSelectionInfo: function () {
+            Collab.selectionInfo = {};
         },
 
         fetchMoreMessages: function(p, cb){
@@ -603,7 +779,7 @@ App.CollaborationModel = (function ($) {
                 }
             });
         },
-        
+
         uploadAttachment: function(fd, cb){
             var convo = {
                 "formData": fd,
@@ -669,12 +845,12 @@ App.CollaborationModel = (function ($) {
                 });
             }
         },
-        
+
         init: function() {
             var config = App.CollaborationUi.parseJson($("#collab-account-payload").data("accountPayload"));
             // TODO(aravind): Add all fields.
             Collab.currentUser = config.user;
-            
+
             _COLLAB_PVT.ChatApi = new ChatApi({
                 "clientId": config.client_id,
                 "clientAccountId": config.client_account_id,
@@ -691,6 +867,8 @@ App.CollaborationModel = (function ($) {
                 "onheartbeat": _COLLAB_PVT.onHeartBeat,
                 "onmemberadd": _COLLAB_PVT.onMemberAdd,
                 "onmemberremove": _COLLAB_PVT.onMemberRemove,
+                "onfolloweradd": _COLLAB_PVT.onFollowerAdd,
+                "onfollowerremove": _COLLAB_PVT.onFollowerRemove,
                 "onerror": _COLLAB_PVT.onErrorHandler,
                 "apiinited": _COLLAB_PVT.apiInited
             });

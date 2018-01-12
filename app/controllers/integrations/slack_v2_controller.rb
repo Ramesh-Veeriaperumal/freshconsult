@@ -150,6 +150,7 @@ class Integrations::SlackV2Controller < Admin::AdminController
   end
 
   def select_shard_slack(&block)
+    render :json => { :text => "#{t('integrations.slack_v2.message.invalid_request')}"}, :status => 401 and return unless valid_request?
     @account_id = account_id_from_team_id
     render :json => { :text => "#{t('integrations.slack_v2.message.not_installed')}"} and return unless @account_id
     Sharding.select_shard_of(@account_id) do 
@@ -157,6 +158,10 @@ class Integrations::SlackV2Controller < Admin::AdminController
       @current_portal = @current_account.main_portal_from_cache.make_current
       yield
     end
+  end
+
+  def valid_request?
+    params[:team_id] && params["token"] == Integrations::OAUTH_CONFIG_HASH["slack"]["slash_command_token"]
   end
 
     def load_app
@@ -258,7 +263,7 @@ class Integrations::SlackV2Controller < Admin::AdminController
     end
 
     def check_slash_token_v3
-      if params["token"] != Integrations::OAUTH_CONFIG_HASH["slack"]["slash_command_token"] || !@installed_app.configs_allow_slash_command
+      unless @installed_app.configs_allow_slash_command
         render :json => { :text => "#{t('integrations.slack_v3.disable_slash_command')}" } and return
       end
     end 

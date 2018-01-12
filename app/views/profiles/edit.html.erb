@@ -1,8 +1,11 @@
+<% if freshid_enabled? %>
+  <%= render :partial => "freshid_edit" %>
+<% else %>
 <%= content_tag( :h3, t("profile.edit"), :class => "title itil-hide" ) %>
 <%= form_for @profile , :url => { :action=> "update", :controller => 'profiles'} , :html => { :multipart => true } do |f| %>
-	<%= f.error_messages %>
-	<%= render :partial => "form" %>
-	<div class="button-container">
+  <%= f.error_messages %>
+  <%= render :partial => "form" %>
+  <div class="button-container">
     <%if  Account.current.verified? &&  User.current.active? %>
       <a href="#email-preview" class="email-preview" ><%= t("preview")%></a>
     <% end %>
@@ -21,36 +24,35 @@
         <%= render :partial => "change_password_form", :locals => { :f => f } %>
       <% end %>
     <% else %>
-      <%= form_tag :action => :change_password, :controller => 'profiles', :method => :put do |f| %>
-          <%= render :partial => "change_password_form", :locals => { :f => f } %>
-      <% end %>
+    <%= form_tag :action => :change_password, :controller => 'profiles', :method => :put do |f| %>
+        <%= render :partial => "change_password_form", :locals => { :f => f } %>
     <% end %>
-	</div>
-  <% end %>	
-  	<% if current_account.verified? && current_user.agent? && !current_account.launched?(:hide_api_key) %>
-	  <div class="sidepanel">
-		<%= content_tag( :h3, t("profile.api_key.title"), :class => "title" ) %>
-		<%= form_tag :action => :reset_api_key, :controller => 'profiles', :method => :put do |f| %>
-			<ul class="ui-form">
-				<label class="center" for="api_key"><%=@profile.user.single_access_token%></label>
-			</ul> 
-			<div class="button-container">
-  				<%= submit_tag t("profile.api_key.reset"), :class => "btn", :confirm => t("profile.api_key.reset_warning") %>
-			</div>
-		<% end %>
-	  </div>	
+  <% end %>
+</div>
+<% end %> 
+  <% if current_account.verified? && current_user.agent? && !current_account.launched?(:hide_api_key) %>
+    <div class="sidepanel">
+    <%= content_tag( :h3, t("profile.api_key.title"), :class => "title" ) %>
+    <%= form_tag :action => :reset_api_key, :controller => 'profiles', :method => :put do |f| %>
+      <ul class="ui-form">
+        <label class="center" for="api_key"><%=@profile.user.single_access_token%></label>
+      </ul> 
+      <div class="button-container">
+          <%= submit_tag t("profile.api_key.reset"), :class => "btn", :confirm => t("profile.api_key.reset_warning") %>
+      </div>
+    <% end %>
+    </div>  
     <% if @slack_url %>
-    <div class="slack_auth_cont clearfix">
+      <div class="slack_auth_cont clearfix">
       <h4 class="title"><%= t('integrations.slack_v3.slack_prof_label') %></h4>
       <p>
-        <%= t('integrations.slack_v3.slack_connect_desc') %>
+      <%= t('integrations.slack_v3.slack_connect_desc') %>
       </p>
       <a class="btn pull-right" onclick="<%= onclick_strategy(@slack_url) %>"><%= @authorized.present? ? t('integrations.slack_v3.slack_reauth_btn') : t('integrations.slack_v3.slack_auth_btn')%>
       </a>
     </div>
   <% end %>
-
-	<% end %>
+  <% end %>
 <% end%>
 
 <script type="text/javascript">
@@ -74,6 +76,7 @@ jQuery(document).ready(function() {
           jQuery(this).popover("hide");
       }); 
     }
-  }); 
+  });
 });
 </script>
+<% end %>

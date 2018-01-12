@@ -24,6 +24,7 @@ module ApplicationHelper
   include Redis::IntegrationsRedis
   include JsonEscape
   include FalconHelperMethods
+  include YearInReviewMethods
   
   require "twitter"
 
@@ -673,7 +674,8 @@ module ApplicationHelper
         }
       avatar_image_generator(img_tag_options, profile_size, profile_class)
     else
-        avatar_generator(user.name, profile_size, profile_class, options)
+      name = Account.current.freshid_enabled? && user.name.nil? ? "" : user.name
+      avatar_generator(name, profile_size, profile_class, options)
     end
   end
 
@@ -2039,5 +2041,9 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   def falcon_enabled?
     current_account && current_account.falcon_ui_enabled? && 
       current_user && current_user.is_falcon_pref?
+  end
+
+  def year_in_review_enabled?
+    Account.current.year_in_review_2017_enabled? && review_available?
   end
 end

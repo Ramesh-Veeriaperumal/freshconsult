@@ -6639,7 +6639,7 @@ it:
     success_signin: "@%{twitter_screen_name} è stato associato correttamente a %{helpdesk}."
     user_exists: "Profilo Twitter già associato a un altro prodotto."
     not_authorized: "Non sei autorizzato da twitter"
-    not_valid: "Lo stato supera i 140 caratteri."
+    not_valid: "Lo stato supera i 280 caratteri."
     deleted: "Il profilo Twitter @%{twitter_screen_name} è stato rimosso."
     sent: "Tweet inviato con successo"
     error_sending: "Errore nell'invio del tweet. Twitter potrebbe essere instabile. Riprova."

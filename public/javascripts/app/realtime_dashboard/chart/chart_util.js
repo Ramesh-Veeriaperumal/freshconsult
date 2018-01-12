@@ -72,6 +72,7 @@ function lineChart(opts){
                 }
             },
             line: {
+                linecap: 'square',
                 allowPointSelect : false,
                 cursor : 'pointer',
                 events: {

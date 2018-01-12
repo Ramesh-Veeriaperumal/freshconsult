@@ -55,11 +55,11 @@ class ApiCompaniesController < ApiApplicationController
     end
 
     def set_custom_errors(item = @item)
-      ErrorHelper.rename_error_fields(CompanyConstants::FIELD_MAPPINGS.merge(@name_mapping), item)
+      ErrorHelper.rename_error_fields(field_mappings, item)
     end
 
     def error_options_mappings
-      @name_mapping
+      field_mappings
     end
 
     def decorator_options
@@ -72,4 +72,9 @@ class ApiCompaniesController < ApiApplicationController
       custom_field = index? ? @items.first.try(:custom_field) : @item.custom_field
       custom_field.each_with_object({}) { |(name, value), hash| hash[name] = CustomFieldDecorator.display_name(name) } if custom_field
     end
+
+    def field_mappings
+      (custom_field_error_mappings || {}).merge(CompanyConstants::FIELD_MAPPINGS)
+    end
+
 end

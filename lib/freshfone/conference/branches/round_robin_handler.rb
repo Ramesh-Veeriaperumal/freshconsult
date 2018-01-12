@@ -4,6 +4,8 @@ module Freshfone::Conference::Branches::RoundRobinHandler
   
   def handle_round_robin_calls
     update_last_pinged_agent if current_call.user_id.blank?
+    return if current_call.conference_sid.blank?
+    return unless batch_key_exists?(get_call_sid)
     if round_robin_agents_pending?
       initiate_round_robin
     else

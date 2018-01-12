@@ -1,0 +1,18 @@
+defaults: &defaults
+  pod_types:
+      1: poduseast1
+      2: podeuwest1
+      3: podeucentral1
+      4: podapsoutheast2
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults

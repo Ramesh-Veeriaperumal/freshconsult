@@ -2232,6 +2232,10 @@ a.mobile_switchBtn {
 	    @include margin-left(20px);
 	}
 }
+.row-fluid .notify-divider:first-child {
+    border: none;
+    @include padding-left(0px);
+}
 
 .password-policy-section{
     .info-data{
@@ -4283,6 +4287,36 @@ $adm-bdr:#F0F0F0;
 		margin-top: 5px;
 		margin-left: 0;
 		font-size: 12px;
+	}
+	.smart-filter-wrapper{
+		background: #f8f8f8;
+		border: 1px solid #ddd;
+		@include border-radius(4px);
+		margin-bottom: 20px;
+		overflow: hidden;
+		min-height: 70px;
+
+		#smart_filter_button{
+			padding-top: 8px;
+			}
+
+		#smart_filter_head{
+			.label-bold{
+				font-weight: bold;
+				display: inline-block;
+			}
+		}
+
+		.control-group{
+				.select2-container{
+					@include margin-left(0);
+				}
+		}
+
+	}
+
+	#smart_filter_rules{
+		margin-left:113px;
 	}
 	.rules-wrapper{
 		background: #f1f1f1;

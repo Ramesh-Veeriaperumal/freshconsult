@@ -223,12 +223,14 @@
             <%= t('.password_policy_info3') %>
             <%= t('.password_policy_info4') if(@agent_policy.new_record? or @contact_policy.new_record?) %>
           </p>
-        <div class="row-fluid">   
-          <div class="span6 input-xlarge password-policy-container">
-            <div class="btn-bold pb5"><%= t('.for_agents') %></div>
-            <%= render :partial => "password_security",
-              :locals => { :user => "agent", :policy => @agent_policy  } %>
-          </div>
+        <div class="row-fluid"> 
+          <% unless freshid_enabled? %>
+            <div class="span6 input-xlarge password-policy-container">
+              <div class="btn-bold pb5"><%= t('.for_agents') %></div>
+              <%= render :partial => "password_security",
+                :locals => { :user => "agent", :policy => @agent_policy  } %>
+            </div>
+          <% end %>
           <div class="span6 notify-divider password-policy-container">
             <div class="btn-bold pb5"><%= t('.for_contacts') %></div>
             <%= render :partial => "password_security",

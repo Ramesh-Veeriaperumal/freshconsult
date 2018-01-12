@@ -31,15 +31,21 @@ module SearchService
       tenant_request.response
     end
 
-    def tenant_rollback
+    def tenant_suspend
+      uuid = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
+      tenant_request = SearchService::Request.new("#{tenant_path}/suspend", :put, uuid, {}.to_json, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id)
+      tenant_request.response
+    end
+
+    def tenant_destroy
       uuid = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
       tenant_request = SearchService::Request.new(tenant_path, :delete, uuid, {}.to_json, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id)
       tenant_request.response
     end
 
-    def activate
+    def tenant_reactivate
       uuid = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
-      tenant_request = SearchService::Request.new(tenant_path, :put, uuid, {}.to_json, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id)
+      tenant_request = SearchService::Request.new("#{tenant_path}/reactivate", :put, uuid, {}.to_json, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id)
       tenant_request.response
     end
 

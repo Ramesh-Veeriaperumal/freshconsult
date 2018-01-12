@@ -706,6 +706,7 @@ en:
       portal_home: "Portal home"
       user_signup: "New user signup"
       user_login: "Login page"
+      agent_login: "Agent Login page"
       forgot_password: "Forgot password"
       profile_edit: "User profile"
       search: "Search results"
@@ -730,6 +731,7 @@ en:
       password_reset: "Reset password"
       user_signup: "Signup for a new account"
       user_login: "Sign into"
+      helpdesk_login: "Sign into"
       forgot_password: "Forgot password"
       activation_form: "Activate your account"
       profile_edit: "Edit your profile"
@@ -905,6 +907,9 @@ en:
         dm_info: "Multiple messages with same person within this time interval will be merged into one ticket"
         include_helptext: "example: support, \"System down\", @insideapple"
         brief_desc: "Tweets will get converted to tickets automatically based on first matching rule"
+      smart_filter:
+        header: "Enable Smart Filters"
+        desc: "Automatically convert relevant tweets to tickets. Turn this on if you get a lot of noise on Twitter. Works on tweets in English." 
       facebook_streams:
         index:
           new_account: "New Account"
@@ -2089,7 +2094,7 @@ en:
         invalid_linkback_url: Please enter a valid linkback url.
         select_forum_category: Select a forum category...
         portal_rebranding: Portal rebranding
-        cname_configure_info: Create a CNAME DNS record in your DNS Zone file to point <strong>help.<b id="domain_info_name">yourcompany</b>.com</strong> to %{full_domain} and a TXT DNS record to point <strong>fdkey.help.<b id="domain_info_name">yourcompany</b>.com</strong> to %{verification_hash}. Your Webmaster or Server administrator should be able to help you set this up.
+        cname_configure: 1. Create a CNAME record in your DNS Zone file to point your <strong>&lt;custom-support-domain&gt;</strong> to <strong>%{full_domain}</strong> <br> 2. Create a TXT record to point <strong>fdkey.&lt;custom-support-domain&gt;</strong> to <strong>%{verification_hash}</strong> <br> Your Webmaster or Server administrator should be able to help you set this up. <a href=%{solution_link} target="_blank">Read more.</a>
         select_solution_category: Select a Solution Category...
         solution_categories_info: You can associate multiple solution categories to this product. All other solutions will not be shown to the customers, when viewing the solutions tab in this product portal.
         forum_categories_info: You can associate multiple forum categories to this product. All other forums will not be shown to the customers, when viewing the forums tab in this product portal.
@@ -2466,6 +2471,7 @@ en:
     follower:
       title: "Forum Followers"
       description: "Agents added as followers receives email alerts when a new topic is posted"
+  agent_invitation_email: Agent Invitation Email
   password_reset_email: Password Reset Email
   default_reply_template: Agent Reply Template
   default_forward_template: Agent Forward Template
@@ -2727,7 +2733,9 @@ en:
         failure: Ticket fields update failed.
         success: Ticket fields successfully updated.
       failure:
+        dropdown: You have exceeded the maximum limit for this type of field.
         string: You have exceeded the maximum limit for this type of field.
+        string_with_dn: You are not allowed to create more than 400 text fields.
         text: You are not allowed to create more than 10 paragraph fields.
         number: You are not allowed to create more than 20 number fields.
         decimal: You are not allowed to create more than 10 decimal fields.
@@ -3467,10 +3475,10 @@ en:
     edit_domain:
       title1: Thank you for choosing Freshdesk.
       title2: Please confirm your account details to get started.
-      url_label: Your Freshdesk URL (you can access your account from here) 
-      url_error1: Sorry, this URL is already taken. 
+      url_label: Your Freshdesk URL (you can access your account from here)
+      url_error1: Sorry, this URL is already taken.
       email_error: Please enter at least 3 characters.
-      email_label: Your Freshdesk Email (you can share this with your customers) 
+      email_label: Your Freshdesk Email (you can share this with your customers)
       email_info_text: You can change this or add your own later.
       submit_button_text: Take me to my account
       account_url_defaulted: Due to inactivity, we've defaulted to an auto-generated URL for your account. Redirecting you to your dashboard now...
@@ -4668,6 +4676,11 @@ en:
     login: Login
     login_portal: "Login to the support portal"
     login_details: "Enter the details below"
+    agent_login_info: "Are you an agent?"
+    customer_signin: "Sign in as customer?"
+    agent_signin: "SignIn here"
+    helpdesk_login_portal: "Welcome back Agent"
+    agent_login_details: "Enter the details below"
     login_options: "...or login using"
     reset_password: "Give us your email address and instructions to reset your password will be emailed to you."
     signup: Signup
@@ -5171,6 +5184,8 @@ en:
     confirm_password: Confirm password
     new_password: New password
     confirm_password_message: "Must be same as password"
+    freshid_profile_link: "Change your profile info or password"
+    freshid_profile_info: "You will be redirected to your freshworks account page"
     api_key:
       title: "Your API Key"
       reset: "Reset API Key"
@@ -5625,7 +5640,7 @@ en:
     success_signin: Successfully associated @%{twitter_screen_name} with %{helpdesk}.
     user_exists: Twitter account already associated with another product.
     not_authorized: You were not authorized by Twitter
-    not_valid: Status is over 140 characters.
+    not_valid: Status is over 280 characters.
     deleted: The twitter account @%{twitter_screen_name} has been removed.
     sent: Tweet successfully sent
     error_sending: Error sending the tweet! Twitter might be unstable. Please try again.
@@ -6067,7 +6082,6 @@ en:
     tag_condition: Tag
     internal_group: Internal Group
     internal_agent: Internal Agent
-    verify_human: To verify you are human, please type the given scrambled letters
     edit_btn: Edit
     requester: Requester
     app_info:
@@ -6380,6 +6394,17 @@ en:
   export_to_CSV: Export to CSV
   back_to_reports: "&larr; Back to reports"
   helpdesk:
+    login:
+      form:
+        email: "Email"
+        password: "Password"
+        remember: "Remember me on this computer"
+        login: "Login"
+        forgot: "Forgot your password?"
+        sign_in_using: "Sign In"
+        sign_in_using_google: "Sign in using your Google account"
+        help: "Help"
+        password_reminder: "Password field cannot be blank"
     collab: Discussion
     start_collab: Discuss
     add_requester: Add Requester
@@ -7165,6 +7190,7 @@ en:
       rating: "Rating"
       skill: "Skill"
       contact_id: "Contact Id"
+      association_type: "Association Type"
     call_history:
       info:
         success: We have started exporting your call records. It will be mailed to you once completed.
@@ -7401,7 +7427,8 @@ en:
     get_more_apps: Get More Apps
     confirm_data_lose: "Your data will be lost."
     confirm_uninstall_message: "Are you sure you want to uninstall the %{human_name}?"
-    reauthorize_oauth_app: "If your app stopped working please try reauthorizing it by clicking on reauthorize button"
+    reauthorize_oauth_app: "If your app has stopped working, try re-authorizing the app to access information from the third-party applications."
+    reauthorize_header: "Reauthorize the app"
     cancel: "Cancel"
     reauthorize: "Reauthorize"
     app: app
@@ -7498,9 +7525,10 @@ en:
     time_ago: "ago"
     share_app: "Share this app"
     policy_on_tp_apps: "Policy on third party apps"
-    third_party_app_policy: "You are downloading an App that has not been developed by Freshdesk. By downloading this App you understand that you are bound by the terms and privacy policies provided by its developer. For more details about such terms and privacy policies, please contact the developer or visit the developer's page."
+    third_party_apps_policy: "This App is owned, developed, operated and maintained by a third party and not Freshworks Inc. By downloading, integrating with and/or using this App you understand that you are bound by the terms and privacy policies of its developer, including on processing of your data. For more details about such terms and privacy policies, please contact the developer or visit the developer's page."
     policy_on_custom_apps: "Policy on custom apps"
     custom_app_policy: "\"Custom App\" is an application developed specifically for a Freshdesk customer and not listed in the App Gallery. Custom Apps may be developed by Freshdesk or any other developer who may or may not be registered with Freshdesk as a Developer. Please note that the Custom App is provided on an \"AS IS\" basis without any warranties of any kind to the fullest extent permitted by applicable law. Freshdesk expressly disclaims any and all conditions, representations, warranties or other terms, whether express or implied, including, but not limited to, any implied warranties of merchantability, title, fitness for a particular purpose, and non-infringement. By installing the Custom App, you understand and acknowledge that Freshdesk does not warrant that the Custom App will be uninterrupted, timely, secure, error-free or free from viruses or other malicious software. Freshdesk shall not be liable to you or any person claiming through you for any direct, indirect, incidental, special, punitive, or consequential damages for your use of the Custom Apps."
+    oauth_install_continue: "Continue"
   integrations:
     native_integrations: Native Integrations
     cti_app_title: CTI Integrations
@@ -8200,6 +8228,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         push_to_slack: "Push to Slack"
         no_agent: "No Agent"
         help_command: "1. /create_fd_ticket  - This command will use the last 200 chat messages to create a ticket on Freshdesk.\n 2. freshdeskbot - You will receive Freshdesk notification from this Bot."
+        invalid_request: "Invalid request. Team_id/Slash_token is not present/mismatch"
       subject:
         chat: "Chat Conversation with"
         default_chat: "Chat Conversation of"
@@ -9163,6 +9192,16 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     edit: Edit
     "yes": 'Yes'
     "no": 'No'
+    year_in_review:
+      title: "Your Year in Review"
+      body: "%{user_name}, here’s a look back at the fantastic year your team has had in Support. From all of us at Freshworks, we hope you enjoy the video. #FreshdeskYearInReview"
+      watch_now: "Watch video"
+      share: "Share with team"
+      sharing: "Sharing..."
+      shared: "Shared with team"
+      dont_show: "Dont Show"
+      watch_video: "Watch Video"
+      share_tooltip: "This is visible to you as you have access to analytics. Share it with everyone on your team."
     qna:
       view_full_report: Dive into the data
       recently_asked_questions: RECENTLY ASKED QUESTIONS
@@ -9889,19 +9928,36 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     admin:
       title_text: "Phone"
       manage_settings_text: "Manage settings in Freshcaller"
+      no_access_text: "You do not have acces to Freshcaller"
       sidebar_title: "Phone"
       sidebar_content: "Freshdesk’s phone channel is powered by Freshcaller. You can make/receive calls directly from Freshdesk, as well as record all your calls and convert calls and voicemails into tickets.<br/><br/> <b> Call center setup </b> <br/>You can purchase phone credits from your Freshcaller admin account. You can purchase phone numbers from <a href='https://support.freshcaller.com/support/solutions/articles/229257' target='_blank'>over 40 countries</a>, using your phone credits. You can purchase toll-free phone numbers in U.S, U.K, Canada, and Australia. You do not have to purchase any hardware or install any software. You only need a web browser and a working internet connection. <br/> <br/> <b>Call center capabilities </b> <br/> You can answer calls on your browser, forward calls to your mobile, or transfer calls to any agent, use IVRs to receive calls, monitor calls, barge when needed, set business hour rules, and much more.<br/> <br/> <a href='https://www.freshworks.com/freshcaller-cloud-pbx/call-center-features/' target='_blank'>Learn more</a> about Freshcaller - the integrated phone solution for Freshdesk."
       freshcaller_not_available: "Freshcaller is only available in the new UI. Please switch to the new UI to use Freshcaller."
       phone_not_available: "Phone channel is available only in the old UI. Please reach out to <a href='mailto:support@freshcaller.com'>support@freshcaller.com</a> to use phone in the new UI."
       freshcaller_signup_text: "Freshdesk provides an integrated phone channel through Freshcaller. Enable your phone channel by creating a new Freshcaller account with a 14-day free trial."
       freshcaller_subtext: "Buy numbers, setup call queues, IVRs, etc"
+      freshcaller_enable_subtext: "You can enable access from your Agent setting page."
       feature_request_content:
-        create_new_account: "Create new account" 
+        create_new_account: "Create new account"
         processing: "Creating your Freshcaller account"
         success: "Your freshcaller account has been created"
         domain_taken: "Looks like you already have a Freshcaller account. Please reach out to <a href='mailto:support@freshcaller.com'>support@freshcaller.com</a>  to link it to your helpdesk."
         error: "Looks like there was an issue creating your account. Please reach out to <a href='mailto:support@freshcaller.com'>support@freshcaller.com</a> to help you enable phone for your helpdesk."
-
+        spam_email: "Thank you for creating a Freshcaller account. Please reach out to <a href='mailto:support@freshcaller.com'>support@freshcaller.com</a> for any questions."
+      link_account_request_content: 
+        account_url: "Freshcaller Account URL"
+        email: "Email"
+        password: "Password"
+        continue: "Continue"
+        cancel: "Cancel"
+        freshcaller_domain: ".freshcaller.com"
+        settings_text: "Please enter Freshcaller account details to link it to your Freshdesk account"
+        connect_existing_account: "Connect Existing Account"
+        processing: "Linking your Freshcaller account"
+        link_errors:
+          validation_error: "This field is required"
+          authentication_error: "The email or password provided is not valid."
+          access_error: "You need to be an admin in both Freshcaller and Freshdesk to link your accounts."
+          api_error: "This Freshcaller account does not exist. Please provide a valid URL or create a new Freshcaller account."
   freshfone:
     recording_on_process: "The recording is being processed. <a href='#' target='_parent' id='checkfreshfoneaudio'>Check</a> again in a few minutes"
     not_enough_credit: "Not Enough Credit!"
@@ -11161,6 +11217,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     collab_group_mention_multi: "mentioned your group - %{group_name} in {{count}} messages on ticket %{object}"
     collab_reply: "replied to your message on ticket %{object}"
     collab_reply_multi: "replied to your message on ticket %{object}"
+    collab_follower: "1 new message on ticket %{object}"
+    collab_follower_many: "%{count} new messages on ticket %{object}"
     generic_notification: "%{title}"
     types:
       private_note_created: "Private Note Created"
@@ -11175,6 +11233,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       collab_first_mention: "Team Huddle"
       collab_reply: "Team Huddle"
       collab_reply_multi: "Team Huddle"
+      collab_follower: "Team Huddle"
+      collab_follower_many: "Team Huddle"
       ticket_assigned_to_group: "Ticket Assigned to Group"
       ticket_created: "New Ticket"
       generic_notification: "%{type}"
@@ -11349,7 +11409,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       invite_msg: We've upgraded to a modern experience which is fresher, faster and easier to use.<br/>Freshdesk Mint is crafted with love, just for you!
       post_script: "PS: You can switch back any time you like."
       try_new_look: TRY IT OUT
-      maybe_later: MAYBE LATER 
+      maybe_later: MAYBE LATER
   multifile_attachments:
     label: "Attach files"
     sending: "Sending..."
@@ -11376,6 +11436,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     help: What's this?
     feed_back_survery: Help us with some feedback?
   collaboration:
+    highlight_mode_on: "Highlight mode on"
+    highlight_mode_off: "Highlight mode off"
+    follow_discussion: "Follow this discussion"
     my_open_discussions: "My Active Huddles"
     notifications: "Notifications"
     no_notifications: "No new notifications"
@@ -11396,6 +11459,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     collab_motto: "Collaborate with your team to resolve issues faster"
     collab_motto_slogan1: "@mention a teammate to invite them."
     collab_motto_slogan2: "Highlight in the ticket and discuss."
+    collab_is_typing: "is typing"
     attach_file: "Attach file"
     remove_file: "Remove file"
     reply: "Reply"
@@ -11408,10 +11472,18 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       wrong_file_format: "Unsupported file format!"
       unexpected: "Something went wrong!"
       highlight_missing: "Highlight missing"
-      
+    info:
+      follow_flash: "Hey there!<br>You are now following this Team Huddle and will be notified of all new messages in-app and via email."
+      unfollow_flash: "See you later 'gator!<br>You will still be notified when a teammate mentions you and groups that you are a part of and when someone replies to your message."
+  
   default:
     ticket:
       email:
         subject: You lost my cat!
-        body: "<p>Dear Customer Relations,</p><br /><p>I recently flew Upper Class from Heathrow to JFK and whilst some bits were great, one bit in particular was really really bad. I flew with my cat* and you froze** it and it died*** which made me sad****.</p><br /><p>* I use the word 'cat' in the sense of 'suitcase'.\n<br />** I use the word 'froze' in the sense of 'lost'.\n<br />*** I use the word 'died' in the sense of 'didn't turn up for 2 days'.\n<br />**** I use the word 'sad' correctly.</p><br /><p>We all lose things. I once went for a pint with the late Keith Floyd and he lost an entire week. Another time I worked out an equation for cold fusion and gave it to my cat on a memory stick, which she lost. Keith Floyd, me, my cat, and you are all only human, so these things happen. What separates humans from super humans is the way they deal with these hiccups.</p><br /><p>I won't bore you with the details. The only question is how can we make it right?</p><br /><p>Yours ever,\n<br />James Dean</p><p><hr></p><p>P.S. This is a sample email that’s been converted into a ticket by Freshdesk. <a href='https://support.freshdesk.com/support/solutions/articles/37541-forward-and-convert-your-support-emails-to-tickets-in-freshdesk' target='_blank'>See how you can start converting emails</a> from customers into tickets in your helpdesk.</p>"
-        reply: "<p>Dear Mr James Dean (Like the Actor),</p><br /><p>Thank you for your email detailing your unfortunate events following the delay of your luggage. Please accept my sincerest apologies for this, and for the unexpected inconveniences caused as a result. I do hope that despite this, you had a pleasant trip.</p><br /><p>Thankfully, the following morning, it was me that you spoke to, and I advised you that your cat had been found and was on its way to you. On a serious note though James, I'm happy to give you a Tier Point. I hope you cherish it. Like it's Magic. I have also added the mileage and remaining tier points from your most recent flight with us, which means that you are now a Gold Member (not like the movie).</p><br /><p>Please once again accept my sincerest apologies. This experience is not typical of us, and I hope it has not discouraged you from travelling with us again, as it would certainly be a pleasure to welcome you back on board.</p><br /><p>Yours sincerely,\n<br />The Lady in Red\n<br />Baggage Services Advisor</p>"
+        body: "<p>Dear Customer Relations,</p><br /><p>I recently flew Upper Class from Heathrow to JFK and whilst some bits were great,one bit in particular was really really bad.I flew with my cat* and you froze** it and it died*** which made me sad****.</p><br /><p>* I use the word 'cat' in the sense of 'suitcase'.\n<br />** I use the word 'froze' in the sense of 'lost'.\n<br />*** I use the word 'died' in the sense of 'didn't turn up for 2 days'.\n<br />**** I use the word 'sad' correctly.</p><br /><p>We all lose things. I once went for a pint with the late Keith Floyd and he lost an entire week.Another time I worked out an equation for cold fusion and gave it to my cat on a memory stick,which she lost. Keith Floyd, me, my cat, and you are all only human, so these things happen.What separates humans from super humans is the way they deal with these hiccups.</p><br /><p>I won't bore you with the details. The only question is how can we make it right?</p><br /><p>Yours ever,\n<br />James Dean</p><p><hr></p><p>P.S. This is a sample email that’s been converted into a ticket by Freshdesk.<a onclick='%{onclick}' href='javascript:void(0)'> See how you can start converting email</a> from customers into tickets in your helpdesk.</p>"
+        reply: "<p>Dear Mr James Dean (Like the Actor),</p><br /><p>Thank you for your email detailing your unfortunate events following the delay of your luggage. Please accept my sincerest apologies for this, and for the unexpected inconveniences caused as a result. I do hope that despite this, you had a pleasant trip.</p><br /><p>Thankfully, the following morning, it was me that you spoke to,and I advised you that your cat hadbeen found and was on its way to you. On a serious note though James,I'm happy to give you a Tier Point. I hope you cherish it. Like it's Magic.I have also added the mileage and remaining tier points from your most recentflight with us, which means that you are now a Gold Member (not like the movie).</p><br /><p>Please once again accept my sincerest apologies. This experience is not typical of us, and I hope it has not discouraged you from travelling with us again, as it would certainlybe a pleasure to welcome you back on board.</p><br /><p>Yours sincerely,\n<br />The Lady in Red\n<br />Baggage Services Advisor</p>"
+        
+      feedback_widget:
+        subject: Tiger bread should be called giraffe bread
+        body: "<p>Dear Sainsbury,</p><br /><p>Why is tiger bread called tiger bread? It should be called giraffe bread.</p><br /><p>Love from Lily Robinson age 3½.\n<br /><p><hr></p><p>P.S. This is a sample message that has been sent to you from website page. <a href = https://support.freshdesk.com/support/solutions/articles/37690-getting-feedback-from-your-website-with-the-feedback-widget->See how you can add your own feedback widget</a> on your website or app</p>"
+        reply: "<p>Dear Lily,</p><br /><p>Thanks so much for your letter. I think renaming tiger bread to giraffe bread is a brilliant idea - it looks much more like the blotches on a giraffe than the stripes on a tiger, doesn't it?</p><br /><p>I really liked reading your letter so I thought I would send you a little present. I've included a £3 gift card with this email, if you ask your mum or dad to take you to Sainsbury's you could use it to buy some of your own tiger bread (and maybe if mum and dad say it’s OK, you can get some sweeties too!). Please tell an adult to wait 48 hours before using this card.</p><br /><p>I'm glad you wrote in to us and hope you like spending your gift card. See you in store soon.</p><br /><p>Yours sincerely,\n<br />Chris King (age 28 ⅓)\n<br />Customer Manager</p>"

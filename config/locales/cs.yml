@@ -3747,7 +3747,7 @@ cs:
     success_signin: "Účet @%{twitter_screen_name} úspěšně přiřazen k %{helpdesk}."
     user_exists: "Účet Twitter je již přiřazen jinému produktu."
     not_authorized: "Nejste ověřen Twitterem"
-    not_valid: "Stav překročil 140 znaků."
+    not_valid: "Stav překročil 280 znaků."
     deleted: "Účet Twitter @%{twitter_screen_name} byl odstraněn."
     sent: "Tweet zpráva byla úspěšně odeslána"
     error_sending: "Chyba při zaslání Tweet zprávy. Twitter bude asi nestabilní. Prosím, zkuste to později."

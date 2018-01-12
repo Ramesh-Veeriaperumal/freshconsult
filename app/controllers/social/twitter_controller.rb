@@ -45,14 +45,15 @@ class Social::TwitterController < Social::BaseController
     if has_permissions?(params[:search_type], params[:item][:stream_id])
       current_feed = create_fd_item_params
       @current_feed_id = current_feed[:feed_id]
-      fd_items = tweet_to_fd_item(current_feed, params[:search_type])
+      fd_items = tweet_to_fd_item(current_feed, params[:search_type])      
       fd_items.compact!
       @items_info = fd_items.inject([]) do |arr, item|
-                    arr << {:feed_id => item.tweet.tweet_id,
-                          :link => helpdesk_ticket_link(item),
-                          :user_in_db => db_user?(item)  }
-                    arr
-                end
+        new_ticket_feedback_to_smart_filter(item.id)
+        arr << {:feed_id => item.tweet.tweet_id,
+                :link => helpdesk_ticket_link(item),
+                :user_in_db => db_user?(item)  }
+        arr
+      end
       if fd_items.empty?
         flash.now[:notice] = t('twitter.tkt_err_save')
         mobile_response = MOBILE_TWITTER_RESPONSE_CODES[:tkt_err_save]
@@ -71,7 +72,8 @@ class Social::TwitterController < Social::BaseController
       }
     end
   end
-  
+
+ 
   def user_info
     @user, @interactions =  [{},{}]
     screen_name = params[:user][:screen_name].gsub("@","")
@@ -469,4 +471,10 @@ class Social::TwitterController < Social::BaseController
     item_screen_name = item.is_a?(Helpdesk::Ticket) ? item.requester.twitter_id : item.user.twitter_id
     !@all_screen_names.include?(item_screen_name)
   end
+
+  def new_ticket_feedback_to_smart_filter(ticket_id)
+    Social::SmartFilterFeedbackWorker.perform_async({ :ticket_id => ticket_id,
+      :type_of_feedback => SMART_FILTER_FEEDBACK_TYPE[:new_ticket], :account_id => Account.current.id}) 
+  end
+  
 end

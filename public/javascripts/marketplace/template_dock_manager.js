@@ -84,7 +84,8 @@ var TemplateDockManager   = Class.create({
                     .on("click.tmpl_events", ".cancel_btn" , this.cancelInstall.bindAsEventListener(this))
                     .on("click.tmpl_events", ".install-btn" , this.installApp.bindAsEventListener(this))
                     .on("click.tmpl_events", ".install-form-btn, .update" , this.updateApp.bindAsEventListener(this))
-                    .on("click.tmpl_events", ".oauth-app", this.installOAuthApp.bindAsEventListener(this))
+                    .on("click.tmpl_events", ".oauth-iparams-btn" , this.getOauthIparams.bindAsEventListener(this))
+                    .on("click.tmpl_events", ".install-oauth-btn", this.installOAuthApp.bindAsEventListener(this))
                     .on("click.tmpl_events", ".install-iframe-settings, .update-iframe-settings" , this.updateIframeApp.bindAsEventListener(this))
                     .on("click.tmpl_events", ".nativeapp" , this.installNativeApp.bindAsEventListener(this))
                     .on("submit.tmpl_events", "form#extension-search-form" , this.onSearch.bindAsEventListener(this))
@@ -253,6 +254,7 @@ var TemplateDockManager   = Class.create({
 
         that.appName = extensions.display_name;
         that.appType = extensions.app_type;
+        that.type = extensions.type;
         that.developedBy = extensions.account;
 
         if(!isSuggestion){
@@ -272,6 +274,26 @@ var TemplateDockManager   = Class.create({
         that.showErrorMsg(that.customMessages.no_connection);
       }
     });
+  },
+
+  getOauthIparams: function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var that = this;
+    var el = jQuery(e.currentTarget);
+    jQuery.ajax({
+      url: jQuery(el).attr("data-url"),
+      type: "GET",
+      beforeSend: function(){
+        that.showLoader();
+      },
+      success: function(extension) {
+        jQuery(that.extensionsWrapper).empty().append(JST["marketplace/marketplace_install"](extension));
+      },
+      error: function(jqXHR, exception) {
+        that.showErrorMsg(that.customMessages.no_connection);
+      }
+    })
   },
 
   manageShowMore: function(){
@@ -325,7 +347,15 @@ var TemplateDockManager   = Class.create({
   },
 
   installOAuthApp: function(e) {
-    var url = jQuery('.oauth-app').attr('data-url');
+    e.preventDefault();
+    e.stopPropagation();
+    var that = this;
+    var el = jQuery(e.currentTarget);
+
+    var url = jQuery('.install-oauth-btn').attr('data-url');
+    if (jQuery(el).attr("data-page") == "oauth_iparams") {
+      url += "?oauth_iparams=" + JSON.stringify(postConfigs());
+    }
     window.location = url;
   },
 
@@ -374,14 +404,15 @@ var TemplateDockManager   = Class.create({
         }
       });
     }else{
-      if (platform_version == '1.0'){
+      if (platformVersion == '1.0'){
         this.displayFormFieldError();
       }
     }
   },
 
   handleInstallSuccess: function() {
-    if(this.appType == app_details.get('custom_app_type')){
+    // TODO: custom app_type should be removed after new ext type is added for custom app
+    if((this.appType == app_details.get('custom_app_type')) || (this.type == app_details.get('custom_app_ext_type'))){
       jQuery(document).trigger({
         type: "installed_custom_app",
         app_name: this.appName,
@@ -402,7 +433,7 @@ var TemplateDockManager   = Class.create({
       parent.location.hash = "";
     }
     parent.location.reload();
-    clearInterval(that.progressInterval);
+    clearInterval(this.progressInterval);
   },
 
   handleInstallFailure: function(message) {
@@ -420,7 +451,7 @@ var TemplateDockManager   = Class.create({
     }
     progEl.siblings('.app-name').html(html);
     jQuery('.mkp-error-details').click(function() {
-      jQuery('.mkp-error-details').html('<p>'+ message +'<p>');
+      jQuery('.mkp-error-details').html('<p>'+ escapeHtml(message) +'<p>');
     });
   },
 

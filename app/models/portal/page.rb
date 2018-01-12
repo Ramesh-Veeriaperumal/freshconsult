@@ -60,8 +60,7 @@ class Portal::Page < ActiveRecord::Base
 
 		[:archive_ticket_list,        	102,  "support/archive_tickets/index.portal", "support_archive_tickets_path"],
 		[:archive_ticket_view,        	103,  "support/archive_tickets/show.portal", 
-			"support_archive_ticket_path", "archive_tickets"],
-		
+			"support_archive_ticket_path", "archive_tickets"]
 	]
 
 	# Manually organizing them as groups to avoid direct db save dependency

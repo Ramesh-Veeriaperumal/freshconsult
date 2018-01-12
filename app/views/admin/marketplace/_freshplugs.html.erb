@@ -63,7 +63,7 @@
     time_ago            : "<%= t('marketplace.time_ago') %>",
     share_app           : "<%= t('marketplace.share_app') %>",
     policy_on_tp_apps   : "<%= t('marketplace.policy_on_tp_apps') %>",
-    third_party_app_policy     : "<%= t('marketplace.third_party_app_policy') %>",
+    third_party_app_policy     : "<%= t('marketplace.third_party_apps_policy') %>",
     policy_on_custom_apps      : "<%= t('marketplace.policy_on_custom_apps') %>",
     custom_app_policy          : "<%= t('marketplace.custom_app_policy') %>",
     marketplace_no_custom_apps : "<%= t('marketplace.empty_custom_apps_msg_html', :dev_url => MarketplaceConfig::DEV_URL) %>",
@@ -80,7 +80,9 @@
     marketplace_all_apps       : "<%= t('marketplace.all_apps') %>",
     view_all                   : "<%= t('marketplace.view_all') %>",
     view_more                  : "<%= t('marketplace.view_more') %>",
-    paid_app                   : "<%= t('marketplace.paid_app') %>"          
+    paid_app                   : "<%= t('marketplace.paid_app') %>",
+    reauthorize_header         : "<%= t('marketplace.reauthorize_header') %>",
+    reauthorize_oauth_app      : "<%= t('marketplace.reauthorize_oauth_app') %>"     
   };
 
   window['translate'] = {}; 
@@ -89,7 +91,8 @@
   };
 
   app_details = {
-    custom_app_type        :   "<%= Marketplace::Constants::APP_TYPE[:custom] %>"
+    custom_app_type        :   "<%= Marketplace::Constants::APP_TYPE[:custom] %>",
+    custom_app_ext_type    :   "<%= Marketplace::Constants::EXTENSION_TYPE[:custom_app] %>"
   }
 
   app_details.get = function(field) {

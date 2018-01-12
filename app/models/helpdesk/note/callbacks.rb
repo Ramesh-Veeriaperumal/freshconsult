@@ -431,8 +431,8 @@ class Helpdesk::Note < ActiveRecord::Base
     # Trigger background job for NER API on creation of incoming notes
 
     def enqueue_for_NER
-      user_email = self.user.email
-      NERWorker.perform_async({:obj_id => self.id, :user_email => user_email, :obj_type => :notes, :text => self.body_html})
+      NERWorker.perform_async({:obj_id => self.id, :user_email => self.user.email, 
+        :obj_type => :notes, :text => self.body, :html => self.body_html}) if account.launched?(:ner)
     end
 end
 

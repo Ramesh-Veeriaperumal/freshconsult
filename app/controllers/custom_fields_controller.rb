@@ -4,19 +4,16 @@ class CustomFieldsController < Admin::AdminController
   include Cache::FragmentCache::Base
   include Helpdesk::CustomFields::CustomFieldMethods
   include Cache::Memcache::Helpdesk::Section
+  include FlexifieldConstants
+  include Helpdesk::Ticketfields::Validations
 
   before_filter :check_ticket_field_count, :only => [ :update ]
+  helper_method :denormalized_field?
 
-  MAX_ALLOWED_COUNT = { 
-    :string => 80,
-    :text => 10,
-    :number => 20,
-    :date => 10,
-    :boolean => 10,
-    :decimal => 10
-  }
   SECTION_ACTIONS = ["save", "delete"]
   SECTION_TYPE = ["existing", "new"]
+  TICKET_FIELD_ACTIONS = ['delete', 'edit', 'create']
+  FLEXIFIELD_PREFIXES = ['ffs', 'ff_text', 'ff_int', 'ff_date', 'ff_boolean', 'ff_decimal']
 
   def update #To Do - Sending proper status messages to UI.
 
@@ -31,11 +28,11 @@ class CustomFieldsController < Admin::AdminController
       end
     end
 
-    @field_data.each do |f_d|
-      f_d.symbolize_keys!
-
-      next if f_d[:action] == "create" && !current_account.custom_ticket_fields_enabled?
-      unless (action = f_d.delete(:action)).nil?
+    field_data_group_by_action = field_data.group_by { |f_d| f_d["action"] }
+    TICKET_FIELD_ACTIONS.each do |action|
+      next if action == "create" && !current_account.custom_ticket_fields_enabled?
+      field_data_group_by_action[action].each do |f_d|
+        f_d.symbolize_keys!
         # f_d.delete(:choices) unless("nested_field".eql?(f_d[:field_type]) || 
         #                             "custom_dropdown".eql?(f_d[:field_type]) || 
         #                             "default_ticket_type".eql?(f_d[:field_type]))
@@ -58,11 +55,11 @@ class CustomFieldsController < Admin::AdminController
 
     err_str = ""
     @invalid_fields.each do |tf|
-        tf.errors.each do |attr,msg|
-          if(!err_str.include? "#{tf.label} : #{msg}")
-            err_str << " #{tf.label} : #{msg} "
-          end  
+      tf.errors.each do |attr,msg|
+        if(!err_str.include? "#{tf.label} : #{msg}")
+          err_str << " #{tf.label} : #{msg} "
         end  
+      end  
     end
     clear_fragment_caches
     err_str = err_str.to_s.html_safe
@@ -130,6 +127,7 @@ class CustomFieldsController < Admin::AdminController
     def delete_field(field_details)
       f_to_del = scoper.find field_details[:id]
       f_to_del.destroy if f_to_del
+      Rails.logger.debug "A :: #{Account.current.id} TF :: #{f_to_del.id} TF name :: #{f_to_del.label} #{f_to_del.name} U :: #{User.current.id}"
     end
 
     def flash_message(err_str)
@@ -137,28 +135,6 @@ class CustomFieldsController < Admin::AdminController
         flash[:error] = err_str
       else
         flash[:notice] = t(:'flash.custom_fields.update.success')
-      end
-    end
-
-    def check_ticket_field_count
-      field_data_group = custom_field_data.group_by { |c_f_d| c_f_d["type"]}
-      field_data_count_by_type = {
-                                :string =>  calculate_string_fields_count(field_data_group),
-                                :text => field_data_group["paragraph"].length,
-                                :number => field_data_group["number"].length,
-                                :boolean => field_data_group["checkbox"].length,
-                                :decimal => field_data_group["decimal"].length,
-                                :date => field_data_group["date"].length
-                                }
-      error_str = ""
-      field_data_count_by_type.keys.each do |key|
-        if field_data_count_by_type[key] > MAX_ALLOWED_COUNT[key]
-          error_str << I18n.t("flash.custom_fields.failure.#{key}")
-        end
-      end
-      unless error_str.blank?
-        flash[:error] = error_str 
-        redirect_to :back and return
       end
     end
 
@@ -210,14 +186,20 @@ class CustomFieldsController < Admin::AdminController
       end
     end
 
-    def custom_field_data
-      @field_data = ActiveSupport::JSON.decode params[:jsonData]
-      @field_data.reject { |f_d| f_d["field_type"].include?("default_") }.compact
+    def field_data
+      @field_data ||= begin
+        ActiveSupport::JSON.decode(params[:jsonData]).compact
+      end
     end
 
-    def calculate_string_fields_count field_data_group
-      field_data_group["dropdown"].length + field_data_group["text"].length + 
-                (field_data_group["dropdown"] || []).map{|x| x["levels"]}.flatten.compact.length
+    def custom_field_data
+      custom_field_data ||= begin
+        field_data.reject { |f_d| f_d["field_type"].include?("default_") }
+      end
+    end
+
+    def denormalized_field? column_name
+      !(FLEXIFIELD_PREFIXES.any? { |col_prefix| column_name.to_s.include?(col_prefix) })
     end
 
     # Section related changes - start
@@ -340,4 +322,8 @@ class CustomFieldsController < Admin::AdminController
       end
     end
     # Section related changes - end
+
+    def denormalized_flexifields_enabled?
+      Account.current.denormalized_flexifields_enabled?
+    end
 end

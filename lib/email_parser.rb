@@ -15,7 +15,7 @@ module EmailParser
     addresses.each do |add|
       begin
         to_field = Mail::ToField.new
-        to_field.value =  add
+        to_field.value =  (Account.current && Account.current.launched?(:q_value_encode)) ? (encode_non_usascii_q_val(add, "UTF-8")) : add
         parsed_addresses = to_field.addrs
         parsed_addresses.each do |email| 
           address = email.address
@@ -24,13 +24,12 @@ module EmailParser
             parsed_email = $1.downcase
 
             next if ignore_emails.include?(parsed_email)
-
             plain_emails.push parsed_email            
 
             if email.name.present?
               email_name = email.name
               email_name = email.name.prepend(name) and name="" if name.present?
-              emails.push "#{format_name(email_name)} <#{parsed_email}>".strip
+              emails.push "#{format_email_name(email_name)} <#{parsed_email}>".strip
             else
               emails.push parsed_email
             end
@@ -50,7 +49,7 @@ module EmailParser
           name.gsub!("<", "")
           name.gsub!(">", "")
           plain_emails.push email_address
-          emails.push "#{format_name(name)}  <#{email_address}>"
+          emails.push "#{format_email_name(name)}  <#{email_address}>"
           name = ""
         else
           name << "#{add} "
@@ -60,7 +59,27 @@ module EmailParser
     { :emails => emails.uniq, :plain_emails => plain_emails.uniq }
   end
     
-  def format_name(name)
+  def format_email_name(name)
     (name =~ SPECIAL_CHARACTERS_REGEX and name !~ /".+"/) ? "\"#{name}\"" : name
   end
+
+def encode_non_usascii_q_val(address, charset)
+  return address if address.ascii_only? or charset.nil?
+  # Encode all strings embedded inside of quotes
+  address = address.gsub(/("[^"]*")/) { |s| Mail::Encodings.q_value_encode(unquote(s), charset) }
+  # Then loop through all remaining items and encode as needed
+  tokens = address.split(/\s/)
+  map_with_index(tokens) do |word, i|
+    if word.ascii_only?
+      word
+    else
+      previous_non_ascii = i>0 && tokens[i-1] && !tokens[i-1].ascii_only?
+      if previous_non_ascii
+        word = " #{word}"
+      end
+      Mail::Encodings.q_value_encode(word, charset)
+    end
+  end.join(' ')
+end
+
 end
