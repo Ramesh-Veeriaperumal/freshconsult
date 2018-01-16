@@ -1,7 +1,12 @@
 
 module Social::SmartFilter
+  
   include Social::Util
- 
+  
+  def smart_filter_accountID(type, account_id, unique_id)
+    "#{account_id}_#{SMART_FILTER_CONTENT_TYPE[type]}_#{unique_id}"
+  end
+  
   def is_english?(text)
     language, time_taken = Helpdesk::DetectUserLanguage.language_detect(text)
     if language.nil?

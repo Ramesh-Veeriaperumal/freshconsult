@@ -9,12 +9,14 @@ module Facebook
       include Facebook::Constants
       include Facebook::Oauth::Constants
       include Facebook::Exception::Handler
+      include Redis::OthersRedis
 
-      attr_accessor :fb_app_id, :call_back_url, :oauth
+      attr_accessor :fb_app_id, :call_back_url, :oauth,:account_url
 
       # call_back_url is the url where facebook would redirect back with code after it authorizes
-      def initialize(call_back_url, page_tab = false)
+      def initialize(call_back_url, page_tab = false,account_url = nil)
         @call_back_url = call_back_url
+        @account_url = account_url
         if page_tab
           @fb_app_id     = FacebookConfig::PAGE_TAB_APP_ID
           secret_key     = FacebookConfig::PAGE_TAB_SECRET_KEY
@@ -35,7 +37,7 @@ module Facebook
           permissions = Facebook::Oauth::Constants::PAGE_PERMISSIONS.join(',')
           url = Facebook::Oauth::Constants::FB_AUTH_DIALOG_URL
         end
-
+        set_others_redis_key(state, "#{@account_url}", 180) if @account_url
         "#{url}?client_id=#{self.fb_app_id}&redirect_uri=#{self.call_back_url}&state=#{state}&scope=#{permissions}"
       end
       

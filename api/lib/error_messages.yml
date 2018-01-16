@@ -98,3 +98,4 @@ api_error_messages:
   invalid_company_id: "There is no record matching the id %{company_id}"
   wrong_internal_agent: "Internal Agent does not belong to the specified Group"
   wrong_internal_group: "Internal group does not belong to the given status of the ticket"
+  invalid_bot: "There is no bot with the external id %{id}"

@@ -6,3 +6,6 @@ development:
 
 staging:
   <<: *defaults
+
+test:
+  <<: *defaults

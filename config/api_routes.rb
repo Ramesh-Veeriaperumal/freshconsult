@@ -206,6 +206,9 @@ Helpkit::Application.routes.draw do
 
   channel_routes = proc do
     resources :tickets, controller: 'channel/tickets', only: [:create]
+    scope '/bot' do
+      resources :tickets, controller: 'channel/bot/tickets', only: [:create]
+    end
   end
 
   match '/api/v2/_search/tickets' => 'tickets#search', :defaults => { format: 'json' }, :as => :tickets_search, via: :get

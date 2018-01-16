@@ -18,13 +18,7 @@ window.App = window.App || {};
     onVisit: function (data) {
       if (App.namespace === "solution/articles/new" || App.namespace === "solution/articles/create" || App.namespace === "solution/articles/edit") {
         $('#sticky_redactor_toolbar').removeClass('hide');
-
-        if($('#solution_article_description').data('newEditor')) {
-          invokeEditor('solution_article_description', 'solution');
-        } else {
-          invokeRedactor('solution_article_description', 'solution');
-        }
-
+        invokeEditor('solution_article_description', 'solution');
         var offset = jQuery('.article-edit-form .editor-body').position().top;
 
         if($('#sticky_redactor_toolbar .fr-toolbar').is(':visible')){

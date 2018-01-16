@@ -61,14 +61,24 @@ window.App.Discussions = window.App.Discussions || {};
 		},
 
 		openReplyForm: function () {
+			var $this = this;
 			$('#new-reply').addClass('replying');
-			setTimeout(function() { $('#post_body_html').setFocus(); }, 500)
 			$('.topic-reply').bringToView();
+			$this.invokeReplyEditor();
 		},
+
+		invokeReplyEditor: function() {
+			$('#sticky_redactor_toolbar').removeClass('hide');
+			if($('#reply_description').data('newEditor')) {
+        invokeEditor('reply_description', 'forum');
+      }
+      else {
+        invokeRedactor('reply_description', 'forum');
+      }
+    },
 
 		closeReplyForm: function () {
 			$('#new-reply').removeClass('replying');
-			$('#post_body_html').clearRichText();
 		},
 
 		bindChangeStamp: function () {
@@ -93,10 +103,13 @@ window.App.Discussions = window.App.Discussions || {};
 				var conv = $this.findPostElement(this);
 				conv.find('.post-content').hide();
 				conv.find('.attachment_wrapper.post-attachment.multifile').hide();
-				conv.find('.post-edit').show().trigger('afterShow');
-			});
+				conv.find('.post-edit').trigger('afterShow').show();
+				setTimeout(function () {
+					$this.invokeReplyEditor();
+				}, 1000);
+      });
 		},
-
+			
 		bindPostEditCancelLink: function () {
 			var $this = this;
 			$('body').on('click.topic_show', "[rel=post-edit-cancel]", function (ev) {

@@ -213,7 +213,7 @@ en:
   myself: "Myself"
   one_time_password_instructions: "Hello, Your one time password is %{otp}. Please note that this is valid only for 5 minutes and if you haven't requested, please contact the administrator."
   signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
-  attachment_help_info: "File size < 15 MB"
+  attachment_help_info: "File size < %{attachment_size} MB"
   feedbackwidget_offset_info: Choose widget position on your browser. The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
   no_twitter_handle: Please configure atleast one twitter account
   reset_my_password: Reset my password
@@ -264,6 +264,8 @@ en:
   facebook_user: Facebook User
   mobihelp: MobiHelp
   ecommerce: Ecommerce
+  bot : "Bot"
+  not_supported: "is not supported"
   logmein_source: LogMeIn Rescue
   working: Working
   attach: Attach
@@ -2262,6 +2264,7 @@ en:
         manage_supervisor_rules: Manage Supervisor rules
         manage_scenario_automation_rules: Manage Scenario automation rules
         manage_email_settings: Manage Email Commands
+        manage_dashboard: Manage ticket list views
         manage_ticket_templates: Manage Ticket Templates
         admin_tasks: Play God with Super Admin controls
         manage_account: Include account management
@@ -2733,7 +2736,9 @@ en:
         failure: Ticket fields update failed.
         success: Ticket fields successfully updated.
       failure:
+        dropdown: You have exceeded the maximum limit for this type of field.
         string: You have exceeded the maximum limit for this type of field.
+        string_with_dn: You are not allowed to create more than 400 text fields.
         text: You are not allowed to create more than 10 paragraph fields.
         number: You are not allowed to create more than 20 number fields.
         decimal: You are not allowed to create more than 10 decimal fields.
@@ -6951,7 +6956,7 @@ en:
         broadcast_note: "Broadcast message"
         not_added: Note has not been added!
         attachment_size:
-           exceed: Your attachments exceed 15 MB. Please make changes before you proceed.
+           exceeded: Your attachments exceed %{attachment_limit} MB. Please make changes before you proceed.
            not_added: (Not Added)
            not_added_greater: (> 15 mb Not Added)
            exceed_limit: Exceeds attachments size
@@ -11186,6 +11191,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     contact_us: "Contact Us"
     whats_new: "What's New"
     user_notifications_header: "Notifications"
+    announcements_notifications_header: "Announcements & Help"
     load_more: "Load More"
   user_notifications:
     header: "Notifications"

@@ -94,7 +94,9 @@ class Social::TicketRule < ActiveRecord::Base
         end
       end
       keywords << keys.join().split(" ")
-      keywords.flatten!.map!{|word| "\s#{word}\s"}
+      keywords.flatten!.map!{ |word| 
+        word.starts_with?(TWITTER_MENTION) ? "#{word}" : "\s#{word}\s" 
+      }
       keywords
     end
 end

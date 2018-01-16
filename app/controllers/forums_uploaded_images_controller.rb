@@ -1,11 +1,22 @@
 class ForumsUploadedImagesController < ApplicationController
 
-	include UploadedImagesControllerMethods
+  include UploadedImagesControllerMethods
 
-	skip_before_filter :check_privilege
+  skip_before_filter :check_privilege
 
-	private
-		def cname
-			"Forums Image"
-		end
+  def index
+    @images = current_account.attachments.gallery_images
+      # For Froala we need :thumb, :image, :title
+      render :json => @images.map { |i| { :thumb => i.content.url(:medium),
+                                          :url => i.content.url,
+                                          :image => i.content.url, # For froala
+                                          :title => i.content_file_name,
+                                          :attachment_id => i.id} }
+  end
+
+  private
+  
+  def cname
+    "Forums Image"
+  end
 end

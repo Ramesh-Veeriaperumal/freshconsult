@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20171208111955) do
+ActiveRecord::Schema.define(:version => 20171213132121) do
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -378,6 +378,39 @@ ActiveRecord::Schema.define(:version => 20171208111955) do
 
   add_index "authorizations", ["account_id", "user_id"], :name => "index_authorizations_on_account_id_and_user_id"
   add_index "authorizations", ["account_id", "uid", "provider"], :name => "index_authorizations_on_account_id_uid_and_provider"
+
+  create_table "bots", :force => true do |t|
+    t.string   "name"
+    t.text     "bot_avatar"
+    t.integer  "account_id",          :limit => 8, :null => false
+    t.integer  "portal_id",           :limit => 8, :null => false
+    t.integer  "product_id",          :limit => 8
+    t.text     "template_data"
+    t.boolean  "enable_in_portal"
+    t.integer  "last_updated_by",     :limit => 8, :null => false
+    t.string   "external_id",                      :null => false
+    t.text     "additional_settings"
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
+  end
+
+  add_index "bots", ["account_id"], :name => "index_bot_on_account_id"
+  add_index "bots", ["portal_id"], :name => "index_bot_on_portal_id"
+  add_index "bots", ["product_id"], :name => "index_bot_on_product_id"
+
+  create_table "bot_tickets", :force => true do |t|
+    t.integer  "ticket_id",       :limit => 8, :null => false
+    t.integer  "account_id",      :limit => 8, :null => false
+    t.integer  "bot_id",          :limit => 8, :null => false
+    t.string   "query_id"
+    t.string   "conversation_id"
+    t.datetime "created_at",                   :null => false
+    t.datetime "updated_at",                   :null => false
+  end
+
+  add_index "bot_tickets", ["account_id", "query_id"], :name => "index_bot_tickets_on_account_id_and_query_id"
+  add_index "bot_tickets", ["account_id", "ticket_id"], :name => "index_bot_tickets_on_account_id_and_ticket_id"
+  add_index "bot_tickets", ["account_id", "bot_id"], :name => "index_bot_tickets_on_account_id_and_bot_id"
 
   create_table "business_calendars", :force => true do |t|
     t.integer  "account_id",         :limit => 8
@@ -1266,7 +1299,8 @@ ActiveRecord::Schema.define(:version => 20171208111955) do
     t.integer  "position"
   end
 
-  create_table "denormalized_flexifields", :force => true do |t|
+  create_table "denormalized_flexifields", :id => false, :force => true do |t|
+    t.integer  "id",                 :limit => 8,                                :null => false
     t.integer  "account_id",         :limit => 8
     t.integer  "flexifield_id",      :limit => 8
     t.text     "text_01"
@@ -1289,6 +1323,7 @@ ActiveRecord::Schema.define(:version => 20171208111955) do
     t.datetime "updated_at"
   end
   add_index "denormalized_flexifields", ["account_id", "flexifield_id"], :name => "index_denormalized_flexifields_on_account_id_and_flexifield_id"
+  execute "ALTER TABLE denormalized_flexifields ADD PRIMARY KEY (id,account_id)"
 
   create_table "flexifields", :id => false, :force => true do |t|
     t.integer  "id",                  :limit => 8,                                :null => false
@@ -3739,6 +3774,9 @@ ActiveRecord::Schema.define(:version => 20171208111955) do
   add_index "survey_results", ["account_id", "survey_id"], :name => "nameindex_on_account_id_and_survey_id"
   add_index "survey_results", ["surveyable_id", "surveyable_type"], :name => "index_survey_results_on_surveyable_id_and_surveyable_type"
   add_index "survey_results", ["account_id", "created_at"], :name => "index_survey_results_on_account_id_and_created_at"
+  add_index "survey_results", ["account_id", "agent_id", "created_at", "rating"], :name => "index_survey_results_on_acc_agent_id_created_at_rating"
+  add_index "survey_results", ["account_id", "group_id", "created_at", "rating"], :name => "index_survey_results_on_acc_group_id_created_at_rating"
+
   execute "ALTER TABLE survey_results ADD PRIMARY KEY (id,account_id)"
 
   create_table "surveys", :force => true do |t|

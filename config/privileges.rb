@@ -147,6 +147,8 @@ Authority::Authorization::PrivilegeList.build do
     # So access to read the list of custom fields for an account through API should also be given at the same level of privilege as ticket create.
     resource :api_ticket_field, :only => [:index]
     resource :"api_freshfone/call_history", :only => [:export, :export_status]
+    resource :"announcement", :only => [:index, :account_login_url]
+
   end
 
   export_tickets do
@@ -291,7 +293,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/v2/spotlight", :only => [:forums]
     resource :"search/merge_topic", :only => [:index]
     resource :"search/v2/merge_topic", :only => [:search_topics]
-    resource :forums_uploaded_image, :only => [:create]
+    resource :forums_uploaded_image, :only => [:index, :create]
     resource :monitorship, :only => [:followers]
 
     # Used for API V2
