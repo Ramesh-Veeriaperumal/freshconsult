@@ -35,6 +35,7 @@ defaults: &defaults
     shard_25_2: 35000000000
     shard_25_3: 36000000000
     shard_26_1: 39000000000
+    shard_27_1: 40000000000
 
   podeuwest1:
     eu_shard_1: 7000000000
