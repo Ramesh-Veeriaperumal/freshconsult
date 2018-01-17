@@ -44,8 +44,12 @@ module Ember
     end
 
     def survey_info
+      return unless validate_query_params
+      assign_and_sanitize_params
       # ember needs an id to store it in model,so building the hash with id.
-      @widget_count = ::Dashboard::SurveyWidget.new.fetch_records
+      options = { group_id: params[:group_id] }
+      options[:is_agent] = dashboard_type.include?('agent')
+      @widget_count = ::Dashboard::SurveyWidget.new.fetch_records(options)
       csat_response = CSAT_FIELDS.deep_dup
       @widget_count[:results].each do |key, val|
         csat_response[key.downcase.to_sym][:value] = val

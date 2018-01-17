@@ -11,6 +11,7 @@ module Ember
       include PrivilegesHelper
       include CannedResponsesTestHelper
       include AwsTestHelper
+      include CustomFieldsTestHelper
 
       CUSTOM_FIELDS             = %w(number checkbox decimal text paragraph dropdown country state city date).freeze
       CUSTOM_FIELDS_CHOICES     = Faker::Lorem.words(5).uniq.freeze
@@ -128,8 +129,8 @@ module Ember
         invalid_tickets.each do |tkt|
           failures[tkt.display_id] = {
             'group_id' => [:datatype_mismatch, { expected_data_type: 'Positive Integer', given_data_type: 'Null', prepend_msg: :input_received }], 
-            ticket_field1.label => [:datatype_mismatch, { expected_data_type: :String, given_data_type: 'Null', prepend_msg: :input_received }],
-            ticket_field2.label => [:not_included, list: CUSTOM_FIELDS_CHOICES.join(',')]
+            custom_field_error_label(ticket_field1.label) => [:datatype_mismatch, { expected_data_type: :String, given_data_type: 'Null', prepend_msg: :input_received }],
+            custom_field_error_label(ticket_field2.label) => [:not_included, list: CUSTOM_FIELDS_CHOICES.join(',')]
           }
         end
         assert_response 202
@@ -705,7 +706,7 @@ module Ember
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
-        match_json([bad_request_error_pattern(ticket_field.label, :blank, code: :missing_field)])
+        match_json([bad_request_error_pattern(custom_field_error_label(ticket_field.label), :blank, code: :missing_field)])
       ensure
         ticket_field.update_attribute(:required, false)
       end
@@ -732,7 +733,7 @@ module Ember
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
-        match_json([bad_request_error_pattern(ticket_field.label, :blank, code: :missing_field)])
+        match_json([bad_request_error_pattern(custom_field_error_label(ticket_field.label), :blank, code: :missing_field)])
       ensure
         ticket_field.update_attribute(:required_for_closure, false)
       end
@@ -748,7 +749,7 @@ module Ember
         end
         assert_response 202
         failures = {}
-        ticket_ids.each { |id| failures[id] = { ticket_field.label => [:datatype_mismatch, { expected_data_type: :String, given_data_type: 'Null', prepend_msg: :input_received }] } }
+        ticket_ids.each { |id| failures[id] = { custom_field_error_label(ticket_field.label) => [:datatype_mismatch, { expected_data_type: :String, given_data_type: 'Null', prepend_msg: :input_received }] } }
         match_json(partial_success_response_pattern([], failures))
       ensure
         ticket_field.update_attribute(:required_for_closure, false)
@@ -762,7 +763,7 @@ module Ember
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
-        match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, expected_data_type: :String, given_data_type: 'Null', prepend_msg: :input_received)])
+        match_json([bad_request_error_pattern(custom_field_error_label(ticket_field.label), :datatype_mismatch, expected_data_type: :String, given_data_type: 'Null', prepend_msg: :input_received)])
       ensure
         ticket_field.update_attribute(:required_for_closure, false)
       end
@@ -789,7 +790,7 @@ module Ember
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
-        match_json([bad_request_error_pattern(ticket_field.label, :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
+        match_json([bad_request_error_pattern(custom_field_error_label(ticket_field.label), :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
       ensure
         ticket_field.update_attribute(:required, false)
       end
@@ -816,7 +817,7 @@ module Ember
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
-        match_json([bad_request_error_pattern(ticket_field.label, :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
+        match_json([bad_request_error_pattern(custom_field_error_label(ticket_field.label), :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
       ensure
         ticket_field.update_attribute(:required_for_closure, false)
       end
@@ -832,7 +833,7 @@ module Ember
         end
         assert_response 202
         failures = {}
-        ticket_ids.each { |id| failures[id] = { ticket_field.label => [:not_included, list: CUSTOM_FIELDS_CHOICES.join(',')] } }
+        ticket_ids.each { |id| failures[id] = { custom_field_error_label(ticket_field.label) => [:not_included, list: CUSTOM_FIELDS_CHOICES.join(',')] } }
         match_json(partial_success_response_pattern([], failures))
       ensure
         ticket_field.update_attribute(:required_for_closure, false)
@@ -849,7 +850,7 @@ module Ember
         end
         assert_response 202
         failures = {}
-        ticket_ids.each { |id| failures[id] = { ticket_field.label => [:not_included, list: CUSTOM_FIELDS_CHOICES.join(',')] } }
+        ticket_ids.each { |id| failures[id] = { custom_field_error_label(ticket_field.label) => [:not_included, list: CUSTOM_FIELDS_CHOICES.join(',')] } }
         match_json(partial_success_response_pattern([], failures))
       ensure
         ticket_field.update_attribute(:required_for_closure, false)
@@ -960,7 +961,7 @@ module Ember
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
-        match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, expected_data_type: :Integer, given_data_type: 'String', prepend_msg: :input_received)])
+        match_json([bad_request_error_pattern(custom_field_error_label(ticket_field.label), :datatype_mismatch, expected_data_type: :Integer, given_data_type: 'String', prepend_msg: :input_received)])
       ensure
         ticket_field.update_attribute(:required, false)
       end
@@ -987,7 +988,7 @@ module Ember
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
-        match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, expected_data_type: :Integer, given_data_type: 'String', prepend_msg: :input_received)])
+        match_json([bad_request_error_pattern(custom_field_error_label(ticket_field.label), :datatype_mismatch, expected_data_type: :Integer, given_data_type: 'String', prepend_msg: :input_received)])
       ensure
         ticket_field.update_attribute(:required_for_closure, false)
       end
@@ -1004,7 +1005,7 @@ module Ember
         assert_response 202
         failures = {}
         ticket_ids.each { |id| failures[id] = { ticket_field.label => [:invalid_date, { accepted: 'yyyy-mm-dd' }] } }
-        match_json(partial_success_response_pattern([], failures))
+        match_json(partial_success_and_customfield_response_pattern([], failures))
       ensure
         ticket_field.update_attribute(:required_for_closure, false)
       end
@@ -1017,7 +1018,7 @@ module Ember
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
-        match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, expected_data_type: :Integer, given_data_type: 'String', prepend_msg: :input_received)])
+        match_json([bad_request_error_pattern(custom_field_error_label(ticket_field.label), :datatype_mismatch, expected_data_type: :Integer, given_data_type: 'String', prepend_msg: :input_received)])
       ensure
         ticket_field.update_attribute(:required_for_closure, false)
       end
@@ -1044,7 +1045,7 @@ module Ember
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
-        match_json([bad_request_error_pattern(ticket_field.label, :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
+        match_json([bad_request_error_pattern(custom_field_error_label(ticket_field.label), :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
       ensure
         ticket_field.update_attribute(:required, false)
       end
@@ -1071,7 +1072,7 @@ module Ember
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
-        match_json([bad_request_error_pattern(ticket_field.label, :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
+        match_json([bad_request_error_pattern(custom_field_error_label(ticket_field.label), :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
       ensure
         ticket_field.update_attribute(:required_for_closure, false)
       end
@@ -1087,7 +1088,7 @@ module Ember
         end
         assert_response 202
         failures = {}
-        ticket_ids.each { |id| failures[id] = { ticket_field.label => [:not_included, list: CUSTOM_FIELDS_CHOICES.join(',')] } }
+        ticket_ids.each { |id| failures[id] = { custom_field_error_label(ticket_field.label) => [:not_included, list: CUSTOM_FIELDS_CHOICES.join(',')] } }
         match_json(partial_success_response_pattern([], failures))
       ensure
         ticket_field.update_attribute(:required_for_closure, false)
@@ -1101,7 +1102,7 @@ module Ember
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
-        match_json([bad_request_error_pattern(ticket_field.label, :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
+        match_json([bad_request_error_pattern(custom_field_error_label(ticket_field.label), :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
       ensure
         ticket_field.update_attribute(:required_for_closure, false)
       end
@@ -1159,7 +1160,7 @@ module Ember
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
-        match_json([bad_request_error_pattern(ticket_field.label, :datatype_mismatch, expected_data_type: :Integer, given_data_type: 'String', prepend_msg: :input_received)])
+        match_json([bad_request_error_pattern(custom_field_error_label(ticket_field.label), :datatype_mismatch, expected_data_type: :Integer, given_data_type: 'String', prepend_msg: :input_received)])
       end
 
       def test_bulk_update_with_non_required_custom_non_dropdown_field_with_incorrect_value_in_db
@@ -1214,7 +1215,7 @@ module Ember
         params_hash = { ids: ticket_ids, properties: properties_hash }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         assert_response 400
-        match_json([bad_request_error_pattern(ticket_field.label, :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
+        match_json([bad_request_error_pattern(custom_field_error_label(ticket_field.label), :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
       end
 
       def test_bulk_update_with_non_required_custom_dropdown_field_with_incorrect_value_in_db
@@ -1303,7 +1304,7 @@ module Ember
             section_field.label => [:datatype_mismatch, { expected_data_type: :String, given_data_type: 'Null', prepend_msg: :input_received }]
           }
         end
-        match_json(partial_success_response_pattern([], failures))
+        match_json(partial_success_and_customfield_response_pattern([], failures))
         assert_response 202
       ensure
         @account.section_fields.last.destroy
@@ -1340,7 +1341,7 @@ module Ember
             section_field.label => [:datatype_mismatch, { expected_data_type: :String, given_data_type: 'Null', prepend_msg: :input_received }]
           }
         end
-        match_json(partial_success_response_pattern([], failures))
+        match_json(partial_success_and_customfield_response_pattern([], failures))
         assert_response 202
       ensure
         @account.section_fields.last.destroy
@@ -1370,6 +1371,21 @@ module Ember
         match_json(partial_success_response_pattern(ticket_ids, {}))
         assert_response 202
       end
+    
+      private
+        def partial_success_and_customfield_response_pattern(succeeded_ids, failures = {})
+          {
+            succeeded: succeeded_ids,
+            failed: failures.map do |rec_id, errors|
+              {
+                id: rec_id,
+                errors: errors.map do |field, value|
+                  bad_request_error_pattern(custom_field_error_label(field), *value)
+                end
+              }
+              end
+          }
+        end
     end
   end
 end

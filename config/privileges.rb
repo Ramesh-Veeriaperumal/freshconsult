@@ -28,7 +28,7 @@ Authority::Authorization::PrivilegeList.build do
                                            :quick_assign, :canned_reponse, :full_paginate, :custom_view_save, :apply_template, :accessible_templates, :search_templates, :show_children,
                                            :filter_options, :filter_conditions, :activities, :status, :get_top_view, :recent_tickets, :old_tickets, :summary, :bulk_scenario,
                                            :execute_bulk_scenario, :activitiesv2, :activities_all, :link, :unlink, :ticket_association,
-                                           :bulk_child_tkt_create, :associated_tickets, :sentiment_feedback, :refresh_requester_widget, :fetch_errored_email_details,:suppression_list_alert, :bulk_fetch_ticket_fields]
+                                           :bulk_child_tkt_create, :associated_tickets, :sentiment_feedback, :refresh_requester_widget, :fetch_errored_email_details,:suppression_list_alert, :bulk_fetch_ticket_fields, :send_and_set_status]
     resource :"helpdesk/subscription"
     resource :"helpdesk/tag_use"
     resource :"helpdesk/tag"
@@ -140,6 +140,8 @@ Authority::Authorization::PrivilegeList.build do
 
     resource :"satisfaction_rating", :only => [:create, :survey_results]
 
+    resource :"year_in_review", :only => [:clear]
+
     # This privilege should only be used for API. This should have only read permission.
     # Agent who has access to ticket create will obviously know the custom field names.
     # So access to read the list of custom fields for an account through API should also be given at the same level of privilege as ticket create.
@@ -153,7 +155,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   reply_ticket do
-    resource :"helpdesk/ticket", :only => [:reply_to_conv, :send_and_set_status]
+    resource :"helpdesk/ticket", :only => [:reply_to_conv]
     resource :"helpdesk/conversation", :only => [:reply, :twitter, :facebook, :mobihelp, :traffic_cop, :ecommerce]
     resource :"social/twitter_handle", :only => [:send_tweet]
     # In bulk actions you can reply even if you do not have edit_ticket_properties
@@ -446,6 +448,7 @@ Authority::Authorization::PrivilegeList.build do
       resource :"api_product", :only => [:index]
       resource :"reports/scheduled_export"
       resource :export, :only => [:ticket_activities]
+      resource :"year_in_review", :only => [:share]
   end
 
   # NOTE: Resource(controller action) related to scheduling is not added here because save reports and scheduling reports use the same action

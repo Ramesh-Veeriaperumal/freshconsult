@@ -5,6 +5,8 @@ module Ember
     include ProductsHelper
     include DashboardTestHelper
     include DashboardRedshiftTestHelper
+    include TicketsTestHelper
+    include SurveysTestHelper
 
     # ticket_summaries
 
@@ -134,9 +136,23 @@ module Ember
     # satisfaction_survey
 
     def test_satisfaction_survey
+      User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :survey_info, controller_params(version: 'private')
       assert_response 200
-      match_json(survey_info_pattern)
+      match_json(survey_info_pattern(is_agent: false))
+      User.any_instance.stubs(:privilege?)
+    end
+
+    def test_satisfaction_survey_with_group_filter
+      group = create_group(@account)
+      ticket = create_ticket(group: group)
+      4.times do
+        create_survey_result(ticket, 3)
+      end
+      get :survey_info, controller_params(version: 'private', group_id: group.id)
+      assert_response 200
+      match_json(survey_info_pattern(group_id: group.id, is_agent: false))
     end
 
     def test_satisfaction_survey_without_access_to_dashboard

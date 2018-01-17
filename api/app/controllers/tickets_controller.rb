@@ -124,7 +124,7 @@ class TicketsController < ApiApplicationController
     end
 
     def set_custom_errors(item = @item)
-      ErrorHelper.rename_error_fields(ApiTicketConstants::FIELD_MAPPINGS.merge(@name_mapping || {}), item)
+      ErrorHelper.rename_error_fields(field_mappings, item)
     end
 
     def load_objects
@@ -318,7 +318,7 @@ class TicketsController < ApiApplicationController
     end
 
     def error_options_mappings
-      (@name_mapping || {}).merge(ApiTicketConstants::FIELD_MAPPINGS)
+      field_mappings
     end
 
     def valid_content_type?
@@ -363,6 +363,9 @@ class TicketsController < ApiApplicationController
       return (cc_emails.count >= get_trial_account_max_to_cc_threshold)
     end
 
+    def field_mappings
+      (custom_field_error_mappings || {}).merge(ApiTicketConstants::FIELD_MAPPINGS)
+    end
     # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.
     wrap_parameters(*wrap_params)
 end

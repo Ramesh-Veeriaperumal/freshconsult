@@ -37,7 +37,9 @@ module Marketplace::HelperMethods
   end
 
   def custom_app?
-    @extension['app_type'] == Marketplace::Constants::APP_TYPE[:custom]
+    # TODO: app_type should be removed after new ext type is added for custom app
+    @extension['app_type'] == Marketplace::Constants::APP_TYPE[:custom] || 
+    @extension['type'] == Marketplace::Constants::EXTENSION_TYPE[:custom_app]
   end
 
   def paid_app?

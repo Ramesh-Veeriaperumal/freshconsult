@@ -789,5 +789,9 @@ class ApiApplicationController < MetalApiController
 
     def on_slave?
       get_request? && self.class::SLAVE_ACTIONS.include?(action_name)
+    end 
+
+    def custom_field_error_mappings
+      @custom_field_error_mapping ||= Hash[@name_mapping.map{|k,v| [k, "custom_fields.#{v}"]}] if @name_mapping.present?
     end
 end
