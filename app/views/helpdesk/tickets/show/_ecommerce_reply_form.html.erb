@@ -31,7 +31,7 @@
       </li>
       <li class="inline-field field continous file_size_alert hide" id="file_size_alert_<%= cntid %>">
         <span class="alert-text"><%= t('helpdesk.tickets.show.reply_form.not_sent') %></span>
-        <%= t('helpdesk.tickets.note.attachment_size.exceed') %>
+        <%= t('helpdesk.tickets.note.attachment_size.exceeded', :attachment_limit => current_account.attachment_limit) %>
       </li>
       <li class="attachment-options-reply" id="attachment-options-reply">
           <% unless local_assigns[:no_attachments] %>

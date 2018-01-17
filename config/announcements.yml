@@ -1,0 +1,17 @@
+common: &common
+
+development:
+ account_url: localhost:3000
+ shared_secret: 
+
+staging:
+ account_url: 
+ shared_secret: 
+
+production:
+ account_url: 
+ shared_secret: 
+
+test:
+ account_url: localhost:3000
+ shared_secret: 

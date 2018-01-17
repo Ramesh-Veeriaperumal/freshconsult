@@ -1,9 +1,9 @@
-<% 
-   attach_id ||= "ticket" 
+<%
+   attach_id ||= "ticket"
    nsc_param = nsc_param || "helpdesk_ticket"
    original_attachments ||= {:regular => [], :cloud_files => []}
    max_attachment ||= nil
-   max_size ||= 15
+   max_size ||= attachment_size
    forward ||= false
    session[:multiple_list] ||= session[:multiple_list]=0
    note ||= false;
@@ -38,28 +38,28 @@
          </div>
          <!-- Attachement Names -->
          <div class="attachment-names pull-left pl20" data-note=<%=note%>>
-            <div class="attachment-limit" id="attach-limt-<%=session[:multiple_list]%>"> < 15 MB </div>
+            <div class="attachment-limit" id="attach-limt-<%=session[:multiple_list]%>"> < <%= attachment_size %> MB </div>
             <input type="hidden" name="attachments_list" data-forward=<%=forward%> data-total-size=0 value="" data-input-id="<%=session[:multiple_list]%>">
             <div class="existing-file-list" data-count=<%=session[:multiple_list]%>></div>
             <div class="multiple-filelist multiple-filelist-<%= session[:multiple_list] %>" data-filelist-count=<%=session[:multiple_list] %>>
             </div>
          </div>
       </div>
-      <% else %>      
+      <% else %>
       <div class="add_attachment" id="trigger_attachment">
          <div class="hidden_upload tooltip" title="<%= I18n.t('multifile_attachments.label')%>">
             <input id="fileupload-form-<%=session[:multiple_list]%>" class="fileupload-form" type="file" name="file"  data-url="/helpdesk/attachments/1/create_attachment" data-multifile-enabled=false data-multifile-count=<%=session[:multiple_list]%> data-placement="left" multiple />
          </div>
          <div class="attachment-icon pull-left text-center" title="Add files" data-icon-count=<%=session[:multiple_list] %>> <i class="ficon-attachment"></i></div>
          <div class="attachment-names pull-left pl20" data-note=<%=note%>>
-            <div class="attachment-limit" id="attach-limt-<%=session[:multiple_list]%>"> < 15 MB </div>
+            <div class="attachment-limit" id="attach-limt-<%=session[:multiple_list]%>"> < <%= attachment_size %> MB </div>
             <input type="hidden" name="attachments_list" data-forward=<%=forward%> data-total-size=0 value="" data-input-id="<%=session[:multiple_list]%>">
             <div class="existing-file-list" data-count=<%=session[:multiple_list]%>></div>
             <div class="multiple-filelist multiple-filelist-<%= session[:multiple_list] %>" data-filelist-count=<%=session[:multiple_list] %>>
             </div>
          </div>
       </div>
-      <% end %>    
+      <% end %>
    </div>
 </div>
 <% if(template) %>
@@ -68,8 +68,8 @@
 <!-- triggering existing forward files -->
 <% if original_attachments.present? %>
 <% if forward %>
-<script type="text/javascript"> 
-   <% original_attachments[:cloud_files].each do |cloud| 
+<script type="text/javascript">
+   <% original_attachments[:cloud_files].each do |cloud|
        cloud[:provider] = cloud.provider
     end %>
    Helpdesk.MultipleFileUpload.renderExistingFiles(<%= original_attachments[:regular].to_json.html_safe %>,<%= original_attachments[:cloud_files].to_json.html_safe %>,<%=session[:multiple_list]%>,"","",true);
@@ -107,7 +107,7 @@ jQuery("body").on("click.initial","#fileupload-form-<%=session[:multiple_list]%>
 });
 jQuery("#fileupload-form-<%=session[:multiple_list]%>").trigger("click");
 jQuery("body").off(".initial");
-// enabling background process 
+// enabling background process
 var ebool = true;
 // displaying while edit note
 <% if note %>

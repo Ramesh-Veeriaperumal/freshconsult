@@ -35,7 +35,7 @@
     {{if (!file_valid)}}
         <div class="item invalid_files">
             <div class="file-types-def">
-                <%= content_tag(:b, t('helpdesk.tickets.note.attachment_size.exceed'), 
+                <%= content_tag(:b, t('helpdesk.tickets.note.attachment_size.exceeded', :attachment_limit => current_account.attachment_limit), 
                                 :class => "alert-text", 
                                 :title => t('helpdesk.tickets.note.attachment_size.exceed_limit')) %>
             </div>

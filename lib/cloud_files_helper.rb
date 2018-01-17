@@ -60,7 +60,7 @@ module CloudFilesHelper
     # end
     selected_attachments = attachments.select{ |x| 
       existing_size = existing_size + x.content_file_size 
-      existing_size < 15.megabyte 
+      existing_size < Account.current.attachment_limit.megabyte
     }
     model.attachments = model.attachments + selected_attachments
   end

@@ -6,7 +6,7 @@ Helpdesk.Multifile = {
 
   MAX_ATTACHMENT: null,
 
-  MAX_SIZE: 15,
+  MAX_SIZE: window.attachment_size || 15,
 
   VALID_FILE_count: 0,
 
@@ -235,4 +235,3 @@ jQuery("document").ready(function() {
     }
   });
 });
-
