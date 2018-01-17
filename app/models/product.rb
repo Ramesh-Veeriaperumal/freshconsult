@@ -89,6 +89,7 @@ class Product < ActiveRecord::Base
       chat_widget.name = name
       chat_widget.save
     end
+  end
 
   def bot_info
     bot_product_info = if portal
