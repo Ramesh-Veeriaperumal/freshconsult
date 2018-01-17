@@ -37,8 +37,8 @@ module DashboardTestHelper
     @dashboard_type = Account.first.sla_management_enabled? ? type : "sprout_17_"+type 
   end
 
-  def survey_info_pattern
-    @widget_count = ::Dashboard::SurveyWidget.new.fetch_records
+  def survey_info_pattern(options = {})
+    @widget_count = ::Dashboard::SurveyWidget.new.fetch_records(options)
     result_array = CSAT_FIELDS.dup
     @widget_count[:results].each do |key, val|
       result_array[key.downcase.to_sym][:value] = val

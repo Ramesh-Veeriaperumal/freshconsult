@@ -18,7 +18,7 @@ module DashboardConcern
 
   def sanitize_parameters_type
     %i(product_id group_id responder_id status internal_group_id internal_agent_id).each do |key|
-      params[key] = params[key].collect(&:to_i) if params[key].present?
+      params[key] = params[key].is_a?(Array) ? params[key].collect(&:to_i) : params[key].to_i if params[key].present?
     end
     params[:group_by] = params[:group_by].to_s if params[:group_by].present?
   end

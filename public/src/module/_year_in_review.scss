@@ -1,0 +1,137 @@
+.year-in-review {
+  margin-left: -20px;
+  margin-right: -20px;
+  margin-bottom: -20px;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 20px;
+  color: #525252;
+
+  .review-wrapper {
+    position: relative;
+    background-color: #fff;
+    @include box-shadow( 0 1px 2px 0 rgba(0, 0, 0, 0.1));
+    border-radius: 4px;
+    padding: 0 10px;
+  }
+
+  .review-block {
+    display: table-cell;
+    padding: 20px;
+  }
+
+  .trophy-icon {
+    width: 8%;
+    border-radius: 4px;
+  }
+
+  .review-content {
+    width: 70%;
+
+    .review-title {
+      font-weight: 700;
+    }
+
+    .review-desc {
+      margin: 5px 0 0 0;
+    }
+  }
+
+  .watch-btn {
+    width: 22%;
+  }
+
+  .watch-btn {
+    border-radius: 4px;
+  }
+
+  .watch-video-btn {
+    position: relative;
+    top: 17px;
+    min-width: 85px;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 4px;
+    right: 14px;
+    padding: 5px;
+    cursor: pointer;
+    z-index: 2;
+  }
+}
+
+
+#year_in_video_model {
+  height: 80%;
+
+  .modal-header {
+    padding: 4px;
+  }
+
+  .modal-body {
+    max-height: 97%;
+    height: 100%;
+    text-align: center;
+    border: 0;
+  }
+
+  .year-in-video-container {
+    height: 100%;
+
+    .video-player {
+      height: 90%;
+
+      .plyr--video, .plyr__video-wrapper {
+        height: 100%;
+      }
+    }
+
+    #share-video {
+      min-width: 150px;
+    }
+
+    .video-js {
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+.admin-header {
+  .year-in-review {
+    margin-bottom: 0px;
+    padding-top: 0px;
+  }
+
+  .review-wrapper {
+    border: 1px solid #ebeef0;
+  }
+}
+
+.trophy-icon {
+  background-image: url('/images/misc/year-review-trophy.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.year-review-bg {
+  background-image: url('/images/misc/year-review-bg.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-position-x: right;
+}
+
+@media  only screen and (min-device-pixel-ratio: 2), 
+        only screen and (min-resolution: 192dpi) {
+  .trophy-icon {
+    background-image: url('/images/misc/2x/year-review-trophy.png');
+  }
+
+  .year-review-bg {
+    background-image: url('/images/misc/2x/year-review-bg.png');
+  }
+}

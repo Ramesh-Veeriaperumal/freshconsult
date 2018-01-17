@@ -9,6 +9,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   include ArchiveTicketTestHelper
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include CustomFieldsTestHelper
 
   BULK_CREATE_COMPANY_COUNT = 2
 
@@ -411,5 +412,19 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     post :export_csv, construct_params({version: 'private'}, params_hash)
     assert_response 204
     Resque.inline = false
+  end
+
+  def test_create_with_invalid_email_and_custom_field
+    field = { type: 'text', field_type: 'custom_text', label: 'note'}
+    params = company_params(field)
+    create_company_field params
+    create_params = company_params_hash.merge(custom_fields: { note: 0 })
+    create_params[:note] = 0.00
+    post :create, construct_params({ version: 'private' }, create_params)
+    match_json([
+      bad_request_error_pattern(:note, :datatype_mismatch, expected_data_type: 'String', given_data_type: 'Float', prepend_msg: :input_received), 
+      bad_request_error_pattern(custom_field_error_label('note'), :datatype_mismatch, expected_data_type: 'String', given_data_type: 'Integer', prepend_msg: :input_received)
+    ])
+    assert_response 400
   end
 end

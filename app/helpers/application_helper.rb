@@ -26,6 +26,8 @@ module ApplicationHelper
   include JsonEscape
   include Concerns::AppConfigurationConcern
   include FalconHelperMethods
+  include YearInReviewMethods
+  
   require "twitter"
 
   # Methods: get_app_config, is_application_installed?, get_app_details, installed_apps - moved to Concerns::AppConfigurationConcern
@@ -2007,5 +2009,9 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   def falcon_enabled?
     current_account && current_account.falcon_ui_enabled? && 
       current_user && current_user.is_falcon_pref?
+  end
+
+  def year_in_review_enabled?
+    Account.current.year_in_review_2017_enabled? && review_available?
   end
 end
