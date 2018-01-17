@@ -71,7 +71,7 @@ class Social::SmartFilterFeedbackWorker < BaseWorker
    def generate_feedback_request_body(type_of_feedback)
     {
       :entity_id => @ticket.tweet.tweet_id.to_s,
-      :account_id => @twitter_handle.twitter_user_id,
+      :account_id => smart_filter_accountID(:twitter, @account.id, @twitter_handle.twitter_user_id),
       :text => @ticket.subject,
       :screen_name => [],
       :source => "twitter",

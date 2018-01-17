@@ -1,0 +1,14 @@
+	<div class="iframe-container">
+	    <iframe scrolling="yes" frameborder="0" src="" class="iframe-content"></iframe>
+	</div>
+
+	<script type="text/javascript">
+	var iFrameURL = "https://<%= AnnouncementsController::ACCOUNT_URL %>/support/home?old=true&email=<%=@user_email%>&account_id=<%= current_account.id%>&articles_tag=<%=@announcement_bucket%>,<%=@role%>";
+	if ((window.location.href).split("#")[1] == null) {
+	    iFrameURL = iFrameURL + "&articleURL=" + " ";
+	}else{
+
+		 iFrameURL = "https://"+ window.location.host +"/announcements/account_url_login?redirect_to=https://<%= AnnouncementsController::ACCOUNT_URL%>/"+(window.location.href).split("#")[1]+"?old=true&email=<%=@user_email%>&account_id=<%= current_account.id%>&articles_tag=<%=@announcement_bucket%>,<%=@role%>" + "&articleURL=" + (window.location.href).split("#")[1];
+	}
+	jQuery(".iframe-content").attr("src", iFrameURL);
+	</script>

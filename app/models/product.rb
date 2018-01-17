@@ -26,6 +26,8 @@ class Product < ActiveRecord::Base
   has_many   :facebook_pages       , :class_name => 'Social::FacebookPage' , :dependent => :nullify
   has_many   :ecommerce_accounts   , :class_name => 'Ecommerce::Account', :dependent => :nullify
 
+  has_one    :bot, class_name: 'Bot', dependent: :destroy
+
   scope :trimmed, :select => [:'products.id', :'products.name']
 
   attr_protected :account_id
@@ -87,6 +89,16 @@ class Product < ActiveRecord::Base
       chat_widget.name = name
       chat_widget.save
     end
+
+  def bot_info
+    bot_product_info = if portal
+                         logo = portal.logo
+                         logo_url = logo.content.url if logo.present?
+                         bot_name, bot_id = [bot.name, bot.id] if bot
+                         { name: name, portal_enabled: true, portal_id: portal.id, portal_logo: logo_url, bot_name: bot_name, bot_id: bot_id }
+                       else
+                         { name: name, portal_enabled: false }
+                       end
   end
 
   private
