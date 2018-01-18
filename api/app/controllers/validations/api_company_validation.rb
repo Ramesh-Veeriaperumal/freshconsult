@@ -80,10 +80,10 @@ class ApiCompanyValidation < ApiValidation
   private
 
     def fill_tam_fields(item, request_params)
-      @health_score = item.health_score if !request_params.key?(:health_score)
-      @account_tier = item.account_tier if !request_params.key?(:account_tier)
-      @industry     = item.industry if !request_params.key?(:industry)
-      @renewal_date = item.renewal_date if !request_params.key?(:renewal_date)
+      @health_score = item.health_score unless request_params.key?(:health_score)
+      @account_tier = item.account_tier unless request_params.key?(:account_tier)
+      @industry     = item.industry unless request_params.key?(:industry)
+      @renewal_date = item.renewal_date unless request_params.key?(:renewal_date)
     end
 
     def tam_default_fields_enabled?
