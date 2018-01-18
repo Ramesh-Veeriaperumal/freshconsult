@@ -139,7 +139,7 @@ class TicketValidation < ApiValidation
   validates :attachments, required: true, if: -> { request_params.key? :attachments } # for attachments empty array scenario
   validates :attachments, data_type: { rules: Array, allow_nil: true }, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: false } }
   validates :attachments, file_size:  {
-    max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,
+    max: proc { |x| x.attachment_limit },
     base_size: proc { |x| ValidationHelper.attachment_size(x.item) }
   }
 

@@ -397,10 +397,11 @@ module Ember
     def test_create_with_invalid_attachment_size
       attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       params_hash = ticket_params_hash.merge(attachment_ids: [attachment_id])
-      Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(20_000_000)
+      invalid_attachment_size = @account.attachment_limit + 10
+      Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(invalid_attachment_size.megabytes)
       post :create, construct_params({ version: 'private' }, params_hash)
       Helpdesk::Attachment.any_instance.unstub(:content_file_size)
-      match_json([bad_request_error_pattern(:attachment_ids, :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
+      match_json([bad_request_error_pattern(:attachment_ids, :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{invalid_attachment_size} MB")])
       assert_response 400
     end
 

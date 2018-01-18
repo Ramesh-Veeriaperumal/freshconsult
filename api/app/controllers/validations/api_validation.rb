@@ -99,4 +99,8 @@ class ApiValidation
       errors[:"query_hash[#{index}]"] = messages.map { |m| "#{m.field}: #{m.message}" }.join(' & ')
     end
   end
+
+  def attachment_limit
+    @attachment_limit ||= (Account.current.attachment_limit_in_bytes)
+  end
 end

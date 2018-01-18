@@ -4,7 +4,8 @@ class AttachmentValidation < ApiValidation
   attr_accessor :user_id, :content, :inline, :inline_type, :attachable_id, :attachable_type
 
   validates :user_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false, ignore_string: :allow_string_param }
-  validates :content, required: true, data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: false }, file_size: { max: ApiConstants::ALLOWED_ATTACHMENT_SIZE }, on: :create
+  validates :content, required: true, data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: false }, 
+    file_size: { max: proc { |x| x.attachment_limit } }, on: :create
   validates :inline, data_type: { rules: 'Boolean', ignore_string: :allow_string_param }
   validates :user_id, custom_absence: { allow_nil: false, message: :cannot_set_user_id }, if: -> { inline? }
   validates :inline_type, custom_absence: { allow_nil: false, message: :cannot_set_inline_type }, unless: -> { inline? }

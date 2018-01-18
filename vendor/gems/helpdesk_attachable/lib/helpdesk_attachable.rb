@@ -46,7 +46,8 @@ module HelpdeskAttachable
         unless @total_attachment_size
           @total_attachment_size = (attachments || []).collect{ |a| a.content_file_size }.sum
         end
-        allowed_limit = options[:attachment_limit] || Account.current.attachment_limit.megabyte
+
+        allowed_limit = options[:attachment_limit] || Account.current.attachment_limit_in_bytes
         allowed_limit_human_size = number_to_human_size(allowed_limit)
         @total_attachment_size += args[:content].size
 

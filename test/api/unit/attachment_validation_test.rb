@@ -1,8 +1,22 @@
 require_relative '../unit_test_helper'
 
 class AttachmentValidationTest < ActionView::TestCase
+
+  PAID_PLANS = ["Blossom", "Garden", "Estate", "Forest"].freeze
+
   def self.fixture_path
     File.join(Rails.root, 'test/api/fixtures/')
+  end
+
+  def setup
+    account = Account.new
+    account.build_subscription
+    Account.stubs(:current).returns(account)
+  end
+
+  def tear_down
+    Account.unstub(:current)
+    super
   end
 
   def test_numericality
@@ -117,5 +131,56 @@ class AttachmentValidationTest < ActionView::TestCase
     assert errors.include?('Attachable datatype_mismatch')
     assert errors.include?('Attachable type not_included')
     DataTypeValidator.any_instance.unstub(:valid_type?)
+  end
+
+  def test_attachment_size_for_trial
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    assert_equal Account.current.attachment_limit, 15
+    assert_attachment_limit(19, 14)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+  end
+
+  def test_attachment_size_for_sprout
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    Subscription.any_instance.stubs(:subscription_plan_from_cache).returns(SubscriptionPlan.new(:name => "Sprout Jan 17"))
+    account = Account.current
+    account.subscription.state = "free"
+    account.subscription.subscription_plan = SubscriptionPlan.find_by_name("Sprout Jan 17")
+    account.instance_variable_set("@attachment_limit", nil)
+    assert_equal account.attachment_limit, 15
+    assert_attachment_limit(18, 13)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+    Subscription.any_instance.unstub(:subscription_plan_from_cache)
+  end
+
+  PAID_PLANS.each do |plan_name|
+    define_method "test_attachment_size_for_#{plan_name}" do 
+      DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+      Subscription.any_instance.stubs(:subscription_plan_from_cache).returns(SubscriptionPlan.new(:name => "#{plan_name} Jan 17"))
+      account = Account.current
+      account.subscription.state = "active"
+      account.instance_variable_set("@attachment_limit", nil)
+      assert_equal account.attachment_limit, 20
+      assert_attachment_limit(23, 19)
+      DataTypeValidator.any_instance.unstub(:valid_type?)
+      Subscription.any_instance.unstub(:subscription_plan_from_cache)
+    end
+  end
+
+  def assert_attachment_limit(refute_val, assert_val)
+    controller_params = { 'user_id' => 1, content: fixture_file_upload('files/attachment.txt', 'plain/text', :binary) }
+    FileSizeValidator.any_instance.stubs(:current_size).returns(refute_val.megabytes)
+    attachment_validation = AttachmentValidation.new(controller_params, nil)
+    refute attachment_validation.valid?(:create)
+    FileSizeValidator.any_instance.unstub(:current_size)
+    errors = attachment_validation.errors.full_messages
+    assert errors.include?('Content invalid_size')
+
+    controller_params = { 'user_id' => 1, content: fixture_file_upload('files/attachment.txt', 'plain/text', :binary) }
+    FileSizeValidator.any_instance.stubs(:current_size).returns(assert_val.megabytes)
+    attachment_validation = AttachmentValidation.new(controller_params, nil)
+    assert attachment_validation.valid?(:create)
+    FileSizeValidator.any_instance.unstub(:current_size)
+    Account.current.instance_variable_set("@attachment_limit", nil)
   end
 end

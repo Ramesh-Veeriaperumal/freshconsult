@@ -84,5 +84,9 @@ module AccountConstants
       NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Error occurred while calculating attachment limit"}})
       ATTACHMENT_LIMIT[:trial_or_sprout]
     end
+  end
+
+  def attachment_limit_in_bytes
+    @attachment_limit_in_bytes ||= attachment_limit.megabytes
   end 
 end

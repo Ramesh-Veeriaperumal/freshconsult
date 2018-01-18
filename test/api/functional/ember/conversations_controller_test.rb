@@ -119,10 +119,11 @@ module Ember
     def test_create_with_invalid_attachment_size
       attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       params_hash = create_note_params_hash.merge(attachment_ids: [attachment_id])
-      Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(20_000_000)
+      invalid_attachment_limit = @account.attachment_limit + 1
+      Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(invalid_attachment_limit.megabytes)
       post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       Helpdesk::Attachment.any_instance.unstub(:content_file_size)
-      match_json([bad_request_error_pattern(:attachment_ids, :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
+      match_json([bad_request_error_pattern(:attachment_ids, :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{invalid_attachment_limit} MB")])
       assert_response 400
     end
 
@@ -247,10 +248,12 @@ module Ember
     def test_reply_with_invalid_attachment_size
       attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       params_hash = reply_note_params_hash.merge(attachment_ids: [attachment_id])
-      Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(20_000_000)
+      invalid_attachment_limit = @account.attachment_limit + 3
+      Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(invalid_attachment_limit.megabytes)
       post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       Helpdesk::Attachment.any_instance.unstub(:content_file_size)
-      match_json([bad_request_error_pattern(:attachment_ids, :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
+      match_json([bad_request_error_pattern(:attachment_ids, :invalid_size,
+        max_size: "#{@account.attachment_limit} MB", current_size: "#{invalid_attachment_limit} MB")])
       assert_response 400
     end
 
@@ -578,14 +581,15 @@ module Ember
     end
 
     def test_forward_with_attachments_invalid_size
-      Rack::Test::UploadedFile.any_instance.stubs(:size).returns(20_000_000)
+      invalid_attachment_limit = @account.attachment_limit + 2
+      Rack::Test::UploadedFile.any_instance.stubs(:size).returns(invalid_attachment_limit.megabytes)
       file = fixture_file_upload('files/attachment.txt', 'text/plain', :binary)
       params = forward_note_params_hash.merge('attachments' => [file])
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
       post :forward, construct_params({ version: 'private', id: ticket.display_id }, params)
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 400
-      match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
+      match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{invalid_attachment_limit} MB")])
     end
 
     def test_forward_with_invalid_attachment_params_format
