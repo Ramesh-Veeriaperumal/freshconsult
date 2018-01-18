@@ -254,6 +254,7 @@ var TemplateDockManager   = Class.create({
 
         that.appName = extensions.display_name;
         that.appType = extensions.app_type;
+        that.type = extensions.type;
         that.developedBy = extensions.account;
 
         if(!isSuggestion){
@@ -403,14 +404,15 @@ var TemplateDockManager   = Class.create({
         }
       });
     }else{
-      if (platform_version == '1.0'){
+      if (platformVersion == '1.0'){
         this.displayFormFieldError();
       }
     }
   },
 
   handleInstallSuccess: function() {
-    if(this.appType == app_details.get('custom_app_type')){
+    // TODO: custom app_type should be removed after new ext type is added for custom app
+    if((this.appType == app_details.get('custom_app_type')) || (this.type == app_details.get('custom_app_ext_type'))){
       jQuery(document).trigger({
         type: "installed_custom_app",
         app_name: this.appName,

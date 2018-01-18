@@ -3234,4 +3234,6 @@ Helpkit::Application.routes.draw do
   match '/freshid/event_callback', :controller => 'freshid', :action => 'event_callback', :method => :post
   match '/freshid/logout', :controller => 'user_sessions', :action => 'freshid_destroy', :method => :get 
 
+  post '/yearin_review/share', to: 'year_in_review#share'
+  post '/yearin_review/clear', to: 'year_in_review#clear'
 end

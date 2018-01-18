@@ -2,6 +2,10 @@
 <div class="report-home report ">
   <div class="left-section <%= enable_qna? ? '' : 'active' %>">
   <div class="admin-header">
+    <% if year_in_review_enabled? %>
+      <%= render :partial => "/helpdesk/realtime_dashboard/year_in_review", :locals => { :close_btn => false } %>
+    <% end %>
+
     <div class="report-head report">
       <% if enable_qna? %>
         <div class="qna-search-bar">

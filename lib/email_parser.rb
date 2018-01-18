@@ -15,7 +15,7 @@ module EmailParser
     addresses.each do |add|
       begin
         to_field = Mail::ToField.new
-        to_field.value =  add
+        to_field.value =  (Account.current && Account.current.launched?(:q_value_encode)) ? (encode_non_usascii_q_val(add, "UTF-8")) : add
         parsed_addresses = to_field.addrs
         parsed_addresses.each do |email| 
           address = email.address
@@ -62,4 +62,24 @@ module EmailParser
   def format_email_name(name)
     (name =~ SPECIAL_CHARACTERS_REGEX and name !~ /".+"/) ? "\"#{name}\"" : name
   end
+
+def encode_non_usascii_q_val(address, charset)
+  return address if address.ascii_only? or charset.nil?
+  # Encode all strings embedded inside of quotes
+  address = address.gsub(/("[^"]*")/) { |s| Mail::Encodings.q_value_encode(unquote(s), charset) }
+  # Then loop through all remaining items and encode as needed
+  tokens = address.split(/\s/)
+  map_with_index(tokens) do |word, i|
+    if word.ascii_only?
+      word
+    else
+      previous_non_ascii = i>0 && tokens[i-1] && !tokens[i-1].ascii_only?
+      if previous_non_ascii
+        word = " #{word}"
+      end
+      Mail::Encodings.q_value_encode(word, charset)
+    end
+  end.join(' ')
+end
+
 end

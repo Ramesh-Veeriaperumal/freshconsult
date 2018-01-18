@@ -319,7 +319,22 @@ category-34:
     test:
       <<: *defaults
     staging:
-      <<: *defaults  
+      <<: *defaults 
+
+category-fd_email_service:
+    defaults: &defaults
+      address: smtp.
+      port: 8587
+      domain: smtp.freshpo.com
+      authentication: :plain
+      user_name: freshdesk_user
+      password: ktkom#*pltm2
+    development:
+      <<: *defaults
+    test:
+      <<: *defaults
+    staging:
+      <<: *defaults 
       
 processing_timeout: 600
 retry_count: 20

@@ -84,6 +84,8 @@ module ApiDashboardConstants
 
   SCORECARD_FIELDS = %w(group_ids product_ids).freeze
 
+  SURVEY_INFO_FIELDS = %w(group_id).freeze
+
   UNRESOLVED_COLUMN_KEY_MAPPING = {:group_id => "group_id", :responder_id => "responder_id", :status => "status", 
       :internal_group_id => "internal_group_id", :internal_agent_id => "internal_agent_id", :group_ids => "group_id",
       :product_id => "helpdesk_schema_less_tickets.product_id", :responder_ids => "responder_id", :status_ids => "status" }.freeze

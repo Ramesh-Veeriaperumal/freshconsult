@@ -64,10 +64,14 @@ module Helpdesk::ProcessByMessageId
 
     def parent_ticket from_email, account, email_config, is_archive = false
       all_keys = all_message_ids
+      Rails.logger.debug "List of message_ids : #{all_keys.join(", ")}"
       return nil if all_keys.blank?
       all_keys.each do |message_id|
         ticket = find_ticket_by_msg_id(account, message_id, email_config, is_archive)
-        return ticket if ticket.present?
+        if ticket.present?
+          Rails.logger.debug "Found ticket from message_id : #{message_id}. Ticket id : #{ticket.id}, display_id : #{ticket.display_id}"
+          return ticket 
+        end
       end
       nil
     end
@@ -79,6 +83,7 @@ module Helpdesk::ProcessByMessageId
       matched_ticket = nil
       related_ticket_info = get_ticket_info_from_redis(account, message_id)
       if related_ticket_info
+        Rails.logger.info "Parent ticket info form redis #{related_ticket_info}"
         ticket_id_list = $1 if related_ticket_info =~ /(.+?):/
 
         if ticket_id_list.present?

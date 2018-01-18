@@ -35,16 +35,19 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   def self.notify_by_email(notification_type, ticket, comment = nil, opts = {})
     internal_notification = opts[:internal_notification]
     e_notification = ticket.account.email_notifications.find_by_notification_type(notification_type)
-    if e_notification.agent_notification?
-      if (notification_type == EmailNotification::NEW_TICKET)
-        language_group_agent_notification(e_notification.agents, e_notification, ticket, comment)
-      else  
-        i_receips = internal_receips(e_notification, ticket, internal_notification)
-        agent = internal_notification ? ticket.internal_agent : ticket.responder
-        deliver_agent_notification(agent, i_receips, e_notification, ticket, comment, nil, opts)
-      end 
+    begin
+        if e_notification.agent_notification?
+          if (notification_type == EmailNotification::NEW_TICKET)
+            language_group_agent_notification(e_notification.agents, e_notification, ticket, comment)
+          else  
+            i_receips = internal_receips(e_notification, ticket, internal_notification)
+            agent = internal_notification ? ticket.internal_agent : ticket.responder
+            deliver_agent_notification(agent, i_receips, e_notification, ticket, comment, nil, opts)
+          end 
+        end
+    rescue => e
+      Rails.logger.info "Exception while trying to send agent notification , message :#{e.message} - #{e.backtrace}"
     end
-    
     if e_notification.requester_notification? and !ticket.out_of_office?
       requester_template = e_notification.get_requester_template(ticket.requester)
       requester_plain_template = e_notification.get_requester_plain_template(ticket.requester)
