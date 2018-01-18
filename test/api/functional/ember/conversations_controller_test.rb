@@ -1264,6 +1264,24 @@ module Ember
       Account.any_instance.unstub(:bcc_email)
     end
 
+    def test_agent_reply_template_with_xss_payload
+      remove_wrap_params
+      t = create_ticket(:subject => '<img src=x onerror=prompt("Subject");>')
+
+      notification_template = '<div>{{ticket.subject}}</div>'
+      agent_signature = '<div><p>Thanks</p><p>{{ticket.subject}}</p></div>'
+      Agent.any_instance.stubs(:signature_value).returns(agent_signature)
+      EmailNotification.any_instance.stubs(:get_reply_template).returns(notification_template)
+      get :reply_template, construct_params({ version: 'private', id: t.display_id }, false)
+      assert_response 200
+
+      match_json(reply_template_pattern(
+        template: "<div>#{h(t.subject)}</div>",
+        signature: "<div><p>Thanks</p><p>#{t.subject}</p></div>"))
+      Agent.any_instance.unstub(:signature_value)
+      EmailNotification.any_instance.unstub(:get_reply_template)
+    end
+
     def test_agent_forward_emplate_with_empty_template_and_empty_signature
       t = create_ticket
 
@@ -1328,6 +1346,23 @@ module Ember
       match_json(forward_template_pattern(template: "<div>#{t.display_id}</div>",
                                         signature: "<div><p>Thanks</p><p>#{t.subject}</p></div>"))
 
+      Agent.any_instance.unstub(:signature_value)
+      EmailNotification.any_instance.unstub(:get_forward_template)
+    end
+
+    def test_agent_forward_template_with_xss_payload
+      remove_wrap_params
+      t = create_ticket(:subject => '<img src=x onerror=prompt("Subject");>')
+
+      notification_template = '<div>{{ticket.subject}}</div>'
+
+      Agent.any_instance.stubs(:signature_value).returns('')
+      EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
+
+      get :forward_template, construct_params({ version: 'private', id: t.display_id }, false)
+      assert_response 200
+      match_json(forward_template_pattern(template: "<div>#{h(t.subject)}</div>",
+                                        signature: ''))
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_forward_template)
     end
