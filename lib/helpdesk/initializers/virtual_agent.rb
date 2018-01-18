@@ -8,14 +8,17 @@ module VAConfig
   #    return params 
   #  end
   
-  BUSINESS_RULE = 1
-  SCENARIO_AUTOMATION = 2
-  SUPERVISOR_RULE = 3
-  OBSERVER_RULE = 4
-  APP_BUSINESS_RULE = 11
-  INSTALLED_APP_BUSINESS_RULE = 12
-  API_WEBHOOK_RULE = 13
+  RULES = { dispatcher: 1, scenario_automation: 2, supervisor: 3, observer: 4, app_business_rule: 11, installed_app_business_rule: 12, api_webhook_rule: 13 }
 
+  BUSINESS_RULE = RULES[:dispatcher]
+  SCENARIO_AUTOMATION = RULES[:scenario_automation]
+  SUPERVISOR_RULE = RULES[:supervisor]
+  OBSERVER_RULE = RULES[:observer]
+  APP_BUSINESS_RULE = RULES[:app_business_rule]
+  INSTALLED_APP_BUSINESS_RULE = RULES[:installed_app_business_rule]
+  API_WEBHOOK_RULE = RULES[:api_webhook_rule]
+
+  RULES_BY_ID = RULES.invert
   # TODO-RAIL3:: Get these I18N based constants out of Initializers
   CREATED_DURING_VALUES = [
     [ :business_hours, "Business Hours", "business_hours"],
