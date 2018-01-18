@@ -65,7 +65,7 @@ class ApiCompanyValidation < ApiValidation
   def initialize(request_params, item)
     super(request_params, item)
     @domains = item.domains.to_s.split(',') if item && !request_params.key?(:domains)
-    fill_tam_fields(item, request_params)
+    fill_tam_fields(item, request_params) if item
     fill_custom_fields(request_params, item.custom_field) if item && item.custom_field.present?
   end
 
