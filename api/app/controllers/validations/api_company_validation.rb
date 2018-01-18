@@ -65,6 +65,7 @@ class ApiCompanyValidation < ApiValidation
   def initialize(request_params, item)
     super(request_params, item)
     @domains = item.domains.to_s.split(',') if item && !request_params.key?(:domains)
+    fill_tam_fields(item, request_params)
     fill_custom_fields(request_params, item.custom_field) if item && item.custom_field.present?
   end
 
@@ -77,6 +78,13 @@ class ApiCompanyValidation < ApiValidation
   end
 
   private
+
+    def fill_tam_fields(item, request_params)
+      @health_score = item.health_score if !request_params.key?(:health_score)
+      @account_tier = item.account_tier if !request_params.key?(:account_tier)
+      @industry     = item.industry if !request_params.key?(:industry)
+      @renewal_date = item.renewal_date if !request_params.key?(:renewal_date)
+    end
 
     def tam_default_fields_enabled?
       Account.current.tam_default_company_fields_enabled?
