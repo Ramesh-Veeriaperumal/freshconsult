@@ -88,31 +88,35 @@ class CompanyField < ActiveRecord::Base
     company_field.save
   end
 
+  def admin_choices_field_hash(choice)
+    choice_key = TAM_FIELDS_EN_KEYS_MAPPING.key(choice.value)
+    {:id => choice.id,
+     :name => choice_key ? I18n.t(choice_key) : choice.value,
+     :value => choice_key ? I18n.t(choice_key) : choice.value,
+     :position => choice.position,
+     :_destroy => choice._destroy}
+  end
+
+  def ui_choices_field_hash(choice)
+    choice_key = TAM_FIELDS_EN_KEYS_MAPPING.key(choice.value)
+    [CGI.unescapeHTML(choice_key ? I18n.t(choice_key) : choice.value),
+     (choice_key ? I18n.t(choice_key) : choice.value).to_sym]
+  end
+
   def admin_choices
     case field_type
       when :default_account_tier then
           custom_field_choices.collect { |choice|
-            choice_key = TAM_FIELDS_EN_KEYS_MAPPING.key(choice.value)
-            {:id => choice.id,
-            :name => choice_key ? I18n.t(choice_key) : choice.value,
-            :value => choice_key ? I18n.t(choice_key) : choice.value,
-            :position => choice.position, :_destroy => choice._destroy} }
+            admin_choices_field_hash(choice)
+          }
       when :default_industry then
           custom_field_choices.collect { |choice|
-            choice_key = TAM_FIELDS_EN_KEYS_MAPPING.key(choice.value)
-            { :id => choice.id,
-              :name => choice_key ? I18n.t(choice_key) : choice.value,
-              :value => choice_key ? I18n.t(choice_key) : choice.value,
-              :position => choice.position, :_destroy => choice._destroy}
-            }
+            admin_choices_field_hash(choice)
+          }
       when :default_health_score then
           custom_field_choices.collect { |choice|
-            choice_key = TAM_FIELDS_EN_KEYS_MAPPING.key(choice.value)
-            { :id => choice.id,
-              :name => choice_key ? I18n.t(choice_key) : choice.value,
-              :value => choice_key ? I18n.t(choice_key) : choice.value,
-              :position => choice.position, :_destroy => choice._destroy}
-            }
+            admin_choices_field_hash(choice)
+          }
       else
           super
     end
@@ -122,22 +126,16 @@ class CompanyField < ActiveRecord::Base
   def ui_choices
     case field_type
       when :default_account_tier then
-        @choices ||= custom_field_choices.collect { |c|
-          choice_key = TAM_FIELDS_EN_KEYS_MAPPING.key(c.value)
-          [CGI.unescapeHTML(choice_key ? I18n.t(choice_key) : c.value),
-           (choice_key ? I18n.t(choice_key) : c.value).to_sym]
+        @choices ||= custom_field_choices.collect { |choice|
+          ui_choices_field_hash(choice)
         }
       when :default_industry then
-        @choices ||= custom_field_choices.collect { |c|
-          choice_key = TAM_FIELDS_EN_KEYS_MAPPING.key(c.value)
-          [CGI.unescapeHTML(choice_key ? I18n.t(choice_key) : c.value),
-           (choice_key ? I18n.t(choice_key) : c.value).to_sym]
+        @choices ||= custom_field_choices.collect { |choice|
+          ui_choices_field_hash(choice)
         }
       when :default_health_score then
-        @choices ||= custom_field_choices.collect { |c|
-          choice_key = TAM_FIELDS_EN_KEYS_MAPPING.key(c.value)
-          [CGI.unescapeHTML(choice_key ? I18n.t(choice_key) : c.value),
-           (choice_key ? I18n.t(choice_key) : c.value).to_sym]
+        @choices ||= custom_field_choices.collect { |choice|
+          ui_choices_field_hash(choice)
         }
       else
         super

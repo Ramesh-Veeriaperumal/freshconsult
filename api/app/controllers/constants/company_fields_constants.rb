@@ -31,18 +31,6 @@ module CompanyFieldsConstants
                       "Renewable Electricity", "Electric Utilities",
                       "Utilities", "Other"]
 
-  DEFAULT_ACCOUNT_TIER_VALUES = ACCOUNT_TIER_CHOICES.collect { |choice| 
-                                  { :value  => choice }
-                                }.freeze
-
-  DEFAULT_HEALTH_SCORE_VALUES = HEALTH_SCORE_CHOICES.collect { |choice| 
-                                  { :value => choice }
-                                }.freeze
-
-  DEFAULT_INDUSTRY_VALUES = INDUSTRY_CHOICES.collect { |choice| 
-                              { :value => choice }
-                            }.freeze
-
   TAM_FIELDS_EN_KEYS_MAPPING = begin
     key_value_map = {}
     (ACCOUNT_TIER_CHOICES).each_with_index do |choice, index|
@@ -90,48 +78,37 @@ module CompanyFieldsConstants
 
   FIELDS_WITH_CHOICES = ['health_score', 'account_tier', 'industry']
 
-  TAM_FIELDS =
-    [
-      { :name               => "health_score", 
-        :label              => "Health score"},
 
-      { :name               => "account_tier", 
-        :label              => "Account tier" },
+  TAM_FIELDS = COMPANY_FIELDS[3..-1].map { |f| f.except(:position) }
 
-      { :name               => "renewal_date", 
-        :label              => "Renewal date" },
-
-      { :name               => "industry", 
-        :label              => "Industry" }
-    ]
 
   TAM_FIELDS_DATA = {
-    "account_tier_data" => DEFAULT_ACCOUNT_TIER_VALUES.each_with_index.map do |f, i|
+    "account_tier_data" => ACCOUNT_TIER_CHOICES.each_with_index.map do |value, i|
                              {
-                                :name               => f[:value],
-                                :value              => f[:value],
+                                :name               => value,
+                                :value              => value,
                                 :position           => i + 1,
                                 :_destroy            => 0
                              }
                            end,
 
-    "industry_data"    => DEFAULT_INDUSTRY_VALUES.each_with_index.map do |f, i|
+    "industry_data"    => HEALTH_SCORE_CHOICES.each_with_index.map do |value, i|
                             {
-                              :name               => f[:value],
-                              :value              => f[:value],
+                              :name               => value,
+                              :value              => value,
                               :position           => i + 1,
                               :_destroy            => 0
                             }
-                         end,
+                          end,
 
-    "health_score_data" => DEFAULT_HEALTH_SCORE_VALUES.each_with_index.map do |f, i|
+    "health_score_data" => INDUSTRY_CHOICES.each_with_index.map do |value, i|
                             {
-                              :name               => f[:value],
-                              :value              => f[:value],
+                              :name               => value,
+                              :value              => value,
                               :position           => i + 1,
                               :_destroy            => 0
                             }
-                          end
+                           end
   }
 
   def self.company_fields_data(account = nil, fields = COMPANY_FIELDS)

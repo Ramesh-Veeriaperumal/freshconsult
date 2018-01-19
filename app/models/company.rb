@@ -141,7 +141,8 @@ class Company < ActiveRecord::Base
       if respond_to?(validation_method, true)
         send(validation_method, field, error_label) if send(field.name).present?
       else
-        warn :"Validation Method #{validation_method} is not present for the #{field.field_type} - #{field.inspect}"
+        warn "Validation Method #{validation_method} is not present
+             for the #{field.field_type} - #{field.inspect}".squish
       end
     end
   end
