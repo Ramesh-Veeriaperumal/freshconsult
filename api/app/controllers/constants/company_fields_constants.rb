@@ -4,7 +4,7 @@ module CompanyFieldsConstants
   NEW_DEFAULT_FIELDS = [ :default_health_score, :default_account_tier,
                         :default_renewal_date, :default_industry ].freeze
   ACCOUNT_TIER_CHOICES = ["Basic", "Premium", "Enterprise"]
-  HEALTH_SCORE_CHOICES = ["At risk", "Doing okay" "Happy"]
+  HEALTH_SCORE_CHOICES = ["At risk", "Doing okay", "Happy"]
   INDUSTRY_CHOICES = ["Automotive", "Consumer Durables & Apparel",
                       "Diversified Consumer Services", "Hotels, Restaurants & Leisure",
                       "Consumer Goods", "Household Durables", "Leisure Products",
