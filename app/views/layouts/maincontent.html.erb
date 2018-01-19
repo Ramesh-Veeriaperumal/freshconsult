@@ -2,7 +2,10 @@
 <script type="text/javascript">
 	App.namespace = "<%= escape_javascript "#{params[:controller]}/#{params[:action]}" %>";
 </script>
-<% selected_tab = @selected_tab.to_s%>
+<% 
+	selected_tab = @selected_tab.to_s
+	is_ember_admin_flash = current_account.falcon_ui_enabled?(current_user) && params[:controller] == "admin/home" && params[:action] == "index"
+%>
 <div class="wrapper">
 	<div class="wrapper-shadow">
 		<title><%= h(page_title)%></title>
@@ -39,7 +42,13 @@
 				<% end %> 				
 				<div class="leftcontent" >
 					<%= show_announcements %>
-					<%= show_flash %>
+					<% if is_ember_admin_flash %>
+						<%= javascript_tag do %>
+							App.adminFlashes =  <%= ember_admin_flash.to_json.html_safe %>;
+						<% end %>
+					<% else %>
+						<%= show_flash %>
+					<% end %>
 					<div class="alert notice" id="noticeajax" style="display:none;"></div>
 					<%= yield :pagetop %>
 					<div class="pagearea" id="Pagearea">
