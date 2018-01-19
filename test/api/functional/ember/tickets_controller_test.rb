@@ -2373,28 +2373,28 @@ module Ember
       ticket = create_ticket
       drop_email = Faker::Internet.email
       params_hash = { drop_email: drop_email }
-      @controller.stubs(:private_api?).returns(true)
+      @controller.stubs(:private_email_failure?).returns(true)
       post :suppression_list_alert, controller_params({ version: 'private', id: ticket.display_id, drop_email: drop_email})
       assert_response 204
       ensure
-        @controller.unstub(:private_api?)
+        @controller.unstub(:private_email_failure?)
     end
 
     def test_suppression_list_alert_without_params
-      @controller.stubs(:private_api?).returns(true)
+      @controller.stubs(:private_email_failure?).returns(true)
       post :suppression_list_alert, controller_params({ version: 'private', id: ticket.display_id })
       assert_response 400
       ensure
-        @controller.unstub(:private_api?)
+        @controller.unstub(:private_email_failure?)
     end
 
      def test_suppression_list_alert_with_invalid_ticket_id
       ticket = create_ticket
-      @controller.stubs(:private_api?).returns(true)
+      @controller.stubs(:private_email_failure?).returns(true)
       post :suppression_list_alert, controller_params({ version: 'private', id: ticket.display_id+20 })
       assert_response 404
       ensure
-        @controller.unstub(:private_api?)
+        @controller.unstub(:private_email_failure?)
     end
 
     def test_failed_email_details_note
@@ -2402,27 +2402,27 @@ module Ember
       @note = create_note(custom_note_params(@ticket, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[:email],true,0))
       stub_data = email_failures_note_activity
       @controller.stubs(:get_object_activities).returns(stub_data)
-      @controller.stubs(:private_api?).returns(true)
+      @controller.stubs(:private_email_failure?).returns(true)
       params_hash = { note_id: @note.id }
       get :fetch_errored_email_details, controller_params({version: 'private', id: @ticket.display_id }, params_hash)
       match_json(failed_emails_note_pattern(stub_data))
       assert_response 200
       ensure
          @controller.unstub(:get_object_activities)
-         @controller.unstub(:private_api?)
+         @controller.unstub(:private_email_failure?)
     end
 
     def test_failed_email_details_ticket
       @ticket = create_ticket
       stub_data = email_failures_ticket_activity
       @controller.stubs(:get_object_activities).returns(stub_data)
-      @controller.stubs(:private_api?).returns(true)
+      @controller.stubs(:private_email_failure?).returns(true)
       get :fetch_errored_email_details, controller_params({version: 'private', id: @ticket.display_id})
       match_json(failed_emails_ticket_pattern(stub_data))
       assert_response 200
       ensure
          @controller.unstub(:get_object_activities)
-         @controller.unstub(:private_api?)
+         @controller.unstub(:private_email_failure?)
     end
 
     def test_failed_email_details_with_invalid_ticket_id
@@ -2433,13 +2433,13 @@ module Ember
 
     def test_failed_email_details_with_invalid_data
       ticket = create_ticket
-      @controller.stubs(:private_api?).returns(true)
+      @controller.stubs(:private_email_failure?).returns(true)
       @controller.stubs(:get_object_activities).returns(false)
       get :fetch_errored_email_details, controller_params({version: 'private', id: ticket.display_id })
       assert_response 400
       ensure
          @controller.unstub(:get_object_activities)
-         @controller.unstub(:private_api?)
+         @controller.unstub(:private_email_failure?)
     end
 
     def test_create_child_with_template

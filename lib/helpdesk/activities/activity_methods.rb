@@ -19,7 +19,7 @@ module Helpdesk::Activities
       object = params[:note_id].present? ? current_account.notes.where(id:params[:note_id]).first : @ticket
       response = get_object_activities object
       if response.error_message.present?
-        private_api? ? render_errors(res_hash) : (return res_hash)
+        private_email_failure? ? render_errors(res_hash) : (return res_hash)
       end
       email_failures = if response.ticket_data[0].present?
         JSON.parse(response.ticket_data[0].email_failures)
@@ -38,7 +38,7 @@ module Helpdesk::Activities
           "email" => email,
           "type"  => FAILURE_CATEGORY[error.to_i]
         }
-        item_obj.merge!("user"  => user_email.nil? ? "" : user_email) unless private_api?
+        item_obj.merge!("user"  => user_email.nil? ? "" : user_email) unless private_email_failure?
         @to_list.push(item_obj) if to_emails.include?(email)
         @cc_list.push(item_obj) if cc_emails.include?(email)
         regret_failure_count+=1 if !to_emails.include?(email) && !cc_emails.include?(email)
@@ -51,18 +51,18 @@ module Helpdesk::Activities
     rescue Exception => e
       Rails.logger.error e.backtrace.join("\n")
       Rails.logger.error e.message
-      private_api? ? render_errors(res_hash) : (return res_hash)
+      private_email_failure? ? render_errors(res_hash) : (return res_hash)
     ensure
-      render :partial => "fetch_errored_email_details", :locals => {:to_list => @to_list, :cc_list => @cc_list, :ticket_display_id => @ticket.display_id, :admin_emails => play_god_admin_emails} unless private_api?
+      render :partial => "fetch_errored_email_details", :locals => {:to_list => @to_list, :cc_list => @cc_list, :ticket_display_id => @ticket.display_id, :admin_emails => play_god_admin_emails} unless private_email_failure?
     end
 
     def suppression_list_alert
       dropped_address = params['drop_email']
       if dropped_address.present?
         Helpdesk::TicketNotifier.send_later(:suppression_list_alert, current_user, dropped_address, @item.display_id)
-        private_api? ? (head 204) : (render :json => { :message => "success"})
+        private_email_failure? ? (head 204) : (render :json => { :message => "success"})
       else
-        private_api? ? render_errors(DEFAULT_RET_HASH): (render :json => { :message => "failure" })
+        private_email_failure? ? render_errors(DEFAULT_RET_HASH): (render :json => { :message => "failure" })
       end
     end
 
@@ -190,7 +190,7 @@ module Helpdesk::Activities
       end
     end
 
-    def private_api?
+    def private_email_failure?
       params[:version] == "private" && current_user.preferences[:agent_preferences][:falcon_ui]
     end
 
