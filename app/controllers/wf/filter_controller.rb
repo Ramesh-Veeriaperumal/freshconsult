@@ -44,7 +44,7 @@ class Wf::FilterController < ApplicationController
     
   end
  
-  def chk_usr_permission 
+  def chk_usr_permission
      @wf_filter = current_account.ticket_filters.find_by_id(params[:id])
      if @wf_filter and @wf_filter.accessible.user_id != current_user.id and !privilege?(:manage_dashboard)
       flash[:notice] =  t(:'flash.general.access_denied')
