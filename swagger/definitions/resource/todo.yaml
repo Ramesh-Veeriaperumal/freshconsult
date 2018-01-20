@@ -9,6 +9,24 @@ allOf:
       ticket_id:
         type: integer
         format: int64
+      ticket_subject:
+        type: string
       user_id:
         type: integer
         format: int64
+      company_id:
+        type: integer
+        format: int64
+      company_name:
+        type: string
+      contact_id:
+        type: integer
+        format: int64
+      contact_name:
+        type: string
+      created_at:
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time

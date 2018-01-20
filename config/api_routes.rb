@@ -261,7 +261,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :todos, controller: 'ember/todos', except: [:new, :edit]
+    resources :todos, controller: 'ember/todos', except: [:new, :edit, :show]
     resources :installed_applications, controller: 'ember/installed_applications', only: [:index, :show]
     resources :integrated_resources, controller: 'ember/integrated_resources', except: [:new, :edit]
     resources :integrated_users, controller: 'ember/integrated_users', only: [:index, :show] do
