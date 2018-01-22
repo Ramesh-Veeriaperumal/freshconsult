@@ -9,11 +9,15 @@ class FileSizeValidator < ApiValidator
 
     def invalid?
       return unless value.respond_to?(:size)
-      !(options[:min].to_i <= current_size && options[:max] >= current_size)
+      !(options[:min].to_i <= current_size && max.to_i >= current_size)
+    end
+
+    def max
+      call_block(options[:max])
     end
 
     def custom_error_options
-      { current_size: number_to_human_size(current_size), max_size: number_to_human_size(options[:max]) }
+      { current_size: number_to_human_size(current_size), max_size: number_to_human_size(max) }
     end
 
     def allow_nil?(_validator_options)

@@ -1,12 +1,12 @@
 if(!window.Helpdesk) Helpdesk = {};
 
-Helpdesk.Multifile = {  
-    
+Helpdesk.Multifile = {
+
     FILE_LOCATION : /^.*[\\\/]/ ,
 
     MAX_ATTACHMENT : null,
- 
-    MAX_SIZE: 15 ,
+
+    MAX_SIZE: window.attachment_size || 15 ,
 
     VALID_FILE_count: 0 ,
 
@@ -18,8 +18,8 @@ Helpdesk.Multifile = {
         Helpdesk.Multifile.template = jQuery("#file-list-template").template();
     },
 
-    onFileSelected: function(input){ 
-        if(jQuery(input).css("display") != "none"){            
+    onFileSelected: function(input){
+        if(jQuery(input).css("display") != "none"){
            this.duplicateInput(input);
            if (!this.addFileToList(input)) {
                 jQuery(input).remove();
@@ -38,14 +38,14 @@ Helpdesk.Multifile = {
         jQuery(input).attr('name',jQuery(input).attr('nameWhenFilled'));
         jQuery(input).hide();
         this.removeEventHandler(input);
-        this.addEventHandler(i2); 
+        this.addEventHandler(i2);
         return i2;
     },
-    
-    changeUploadFile: function(e){ 
-        Helpdesk.Multifile.onFileSelected(e); 
+
+    changeUploadFile: function(e){
+        Helpdesk.Multifile.onFileSelected(e);
     },
-    
+
     addEventHandler: function(input){
         jQuery(input).addClass('original_input');
         jQuery(input).bind('change', function() {
@@ -77,7 +77,7 @@ Helpdesk.Multifile = {
             if (filesize < 1)
             {
                 filesize *=1024;
-                filesize = filesize.toFixed(2) + ' KB '; 
+                filesize = filesize.toFixed(2) + ' KB ';
             }
             else
             {
@@ -118,7 +118,7 @@ Helpdesk.Multifile = {
         if (jQuery(fileInput).attr('max_attachment') && jQuery(fileInput).attr('max_size') )
         {
             this.MAX_ATTACHMENT = jQuery(fileInput).attr('max_attachment');
-            this.MAX_SIZE = jQuery(fileInput).attr('max_size'); 
+            this.MAX_SIZE = jQuery(fileInput).attr('max_size');
             return !((filesize + totalfilesize) > this.MAX_SIZE) && this.checkFileType(fileInput) && this.VALID_FILE_count < this.MAX_ATTACHMENT;
 
         }
@@ -129,7 +129,7 @@ Helpdesk.Multifile = {
     },
 
     checkFileType: function(fileInput){
- 
+
         var supported_types = ["jpg", "jpeg", "gif", "png", "bmp", "tif"]
         var type = jQuery(fileInput).prop("files")[0].name.split('.').pop().toLowerCase();
         return supported_types.indexOf(type) > -1 ;
@@ -137,7 +137,7 @@ Helpdesk.Multifile = {
 
     findFileSize: function(oldInput){
         if(jQuery(oldInput)[0].files && jQuery(oldInput).attr('type') === 'file'){
-            return jQuery(oldInput)[0].files[0].size / (1024 * 1024);    
+            return jQuery(oldInput)[0].files[0].size / (1024 * 1024);
         }
         else{
             return 0;
@@ -161,13 +161,13 @@ Helpdesk.Multifile = {
         }catch(e){
             alert(e);
         }
-    },    
+    },
 
     updateCount: function(item) {
         var target = jQuery("#"+jQuery(item).attr('fileList'));
         var container = jQuery(item).attr('fileContainer');
         jQuery("#"+container + ' .a-count').text(target.children(':visible').length);
-    },    
+    },
 
     resetAll: function(form) {
 
@@ -185,7 +185,7 @@ Helpdesk.Multifile = {
 };
 
 jQuery("document").ready(function(){
-    jQuery("input[fileList]").livequery(function(){ 
+    jQuery("input[fileList]").livequery(function(){
                 var $input_file = jQuery(this)
                 Helpdesk.Multifile.load()
                 Helpdesk.Multifile.addEventHandler(this)

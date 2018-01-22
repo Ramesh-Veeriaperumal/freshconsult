@@ -44,6 +44,7 @@ window.App = window.App || {};
 				break;
 
 			case 'discussions/topics/new':
+			case 'discussions/topics/edit':
 				this.current_module = 'NewTopic';
 				break;
 			}

@@ -36,7 +36,7 @@
 	<%= stylesheet_link_tag_with_rtl :'cdn/froala_editor' %>
 
 	<% if current_account.falcon_ui_enabled?(current_user) %>
-	  <%= stylesheet_link_tag :'cdn/falcon' %>	
+	  <%= stylesheet_link_tag :'cdn/falcon' %>
 	<% end %>
 
 	<script type="text/javascript">
@@ -55,6 +55,7 @@
 	<script type="text/javascript">
 		window.current_account_id = "<%=current_account.id%>";
 		window.current_user_id = "<%= current_user.id %>";
+		window.attachment_size = "<%= attachment_size %>";
 	</script>
 	<% end %>
 
@@ -83,15 +84,15 @@
 
 	<% if chat_activated? %>
     <%= javascript_include_tag :'cdn/livechat_initializer' %>
-	<% end %> 
+	<% end %>
 
 
 	<%= javascript_include_tag :"cdn/lang/#{I18n.locale.to_s.downcase}" %>
 
-	
+
 	<!-- for i18n-js translations -->
   <%= javascript_include_tag :"cdn/i18n/#{I18n.locale.to_s}" %>
-	
+
 	<script type="text/javascript">
 		Fjax.pjax_parallel_request = null;
 		$LAB.setGlobalDefaults({
@@ -113,7 +114,7 @@
 	<% unless Rails.env.development? %>
 	<link href="<%= helpdesk_theme_url %>" media="screen" rel="stylesheet" type="text/css">
 	<% end %>
-	
+
 </head>
 
 <%if @debuging %>

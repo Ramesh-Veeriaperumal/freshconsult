@@ -67,8 +67,8 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
 
     def check_attachments
       return true if params[:helpdesk_note][:attachments].blank?
-      if total_attachment_size > 15.megabyte
-        flash[:notice] = t('helpdesk.tickets.note.attachment_size.exceed')
+      if total_attachment_size > current_account.attachment_limit.megabyte
+        flash[:notice] = t('helpdesk.tickets.note.attachment_size.exceeded', :attachment_limit => current_account.attachment_limit)
         return false
       end
       save_attachments

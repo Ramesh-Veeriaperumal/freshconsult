@@ -83,7 +83,9 @@ body { background: $background; }
 .header-notification-wrapper .product-notification-link:hover .ficon-help,
 .header-notification-wrapper .product-notification-link.active .ficon-help
 .header-notification-wrapper .user-notification-link:hover .ficon-notification,
-.header-notification-wrapper .user-notification-link.active .ficon-notification{
+.header-notification-wrapper .user-notification-link.active .ficon-notification,
+.announcements-notification-link:hover .ficon-help,
+.announcements-notification-link.active .ficon-help{
 	color: $header_ctxt_color;
 }
 .header-notification-wrapper{ 

@@ -3745,35 +3745,38 @@
           "todos"
         ],
         "summary": "List all",
-        "description": "Lists all todos",
+        "description": "Lists all todos of the current user.",
         "parameters": [
           {
-            "name": "ticket_id",
+            "name": "rememberable_id",
             "in": "query",
             "type": "integer",
             "format": "int64",
-            "description": "Ticket ID to filter todo of a ticket"
+            "description": "Ticket/contact/company ID to filter todo"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "type": "string",
+            "description": "Type of filter it must be a ticket/contact/company"
           }
         ],
         "responses": {
           "200": {
             "description": "Success",
             "schema": {
-              "allOf": [
-                {
-                  "properties": {
-                    "todos": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/definitions/todo_details"
-                      }
-                    },
-                    "meta": {
-                      "$ref": "#/definitions/meta"
-                    }
+              "type": "object",
+              "properties": {
+                "todos": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/todo_details"
                   }
+                },
+                "meta": {
+                  "$ref": "#/definitions/meta"
                 }
-              ]
+              }
             }
           },
           "400": {
@@ -3804,10 +3807,13 @@
                   "type": "string",
                   "description": "content of the todo"
                 },
-                "ticket_id": {
+                "rememberable_id": {
                   "type": "integer",
-                  "format": "int64",
-                  "description": "Ticket id, if its associated with a ticket."
+                  "description": "contact/company/ticket id assoicated to the todo"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Todo type must be any one this value (ticket/contact/company)"
                 }
               }
             }
@@ -3830,40 +3836,6 @@
       }
     },
     "/todos/{id}": {
-      "get": {
-        "summary": "Todo Details",
-        "description": "Details of a selected todo",
-        "tags": [
-          "todos"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "type": "integer",
-            "format": "int64",
-            "required": true,
-            "description": "ID of todo"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/todo_details"
-            }
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          },
-          "404": {
-            "description": "Canned response not found"
-          }
-        }
-      },
       "put": {
         "tags": [
           "todos"
@@ -3902,6 +3874,9 @@
             "schema": {
               "$ref": "#/definitions/bad_request_error"
             }
+          },
+          "403": {
+            "description": "Access denied"
           }
         }
       },
@@ -8443,9 +8418,34 @@
               "type": "integer",
               "format": "int64"
             },
+            "ticket_subject": {
+              "type": "string"
+            },
             "user_id": {
               "type": "integer",
               "format": "int64"
+            },
+            "company_id": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "company_name": {
+              "type": "string"
+            },
+            "contact_id": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "contact_name": {
+              "type": "string"
+            },
+            "created_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "updated_at": {
+              "type": "string",
+              "format": "date-time"
             }
           }
         }

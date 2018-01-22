@@ -1,9 +1,12 @@
 class ConfigDecorator < ApiDecorator 
   include Concerns::ApplicationViewConcern
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   def to_hash 
     ret_hash = {}
     ret_hash[:social] = social_config
+    ret_hash[:zendesk_app_id] = zendesk_app_id
     ret_hash
   end
 
@@ -34,6 +37,10 @@ class ConfigDecorator < ApiDecorator
       twitter_config[:twitter_reauth_required] = false
     end
     twitter_config
+  end
+
+  def zendesk_app_id
+    ZendeskAppConfig::FALCON_APP_ID if redis_key_exists?(ZENDESK_IMPORT_APP_KEY)
   end
 
 end

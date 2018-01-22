@@ -9,10 +9,21 @@ window.App.Discussions = window.App.Discussions || {};
     fullConversation: '',
 
     onVisit: function() {
+      if (App.namespace === "discussions/topics/new" || App.namespace === "discussions/topics/edit") {
+        $('#sticky_redactor_toolbar').removeClass('hide');
+        if($('#topic_forums_description').data('newEditor')) {
+          invokeEditor('topic_forums_description', 'forum');
+        }
+        else {
+          invokeRedactor('topic_forums_description', 'forum');
+        }
+      }
+      else {
+        this.confirmBeforeLeavingUnsavedContent();
+      }
       this.addListeners();
       this.setFirstEmail();
       this.formsave();
-      this.confirmBeforeLeavingUnsavedContent();
     },
 
     formsave: function(){

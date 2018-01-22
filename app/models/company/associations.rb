@@ -30,4 +30,7 @@ class Company < ActiveRecord::Base
 
   accepts_nested_attributes_for :avatar, :allow_destroy => true
 
+  has_many :reminders, class_name: 'Helpdesk::Reminder',
+    dependent: :destroy, foreign_key: 'company_id', inverse_of: :company  
+
 end

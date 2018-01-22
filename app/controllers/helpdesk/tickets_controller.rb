@@ -671,7 +671,7 @@ class Helpdesk::TicketsController < ApplicationController
           render :json => { :failure => true, :errors => edit_error }.to_json
         }
         format.json {
-          result = {:errors=>@item.errors.full_messages }
+          result = { err_msg: @item.errors.full_messages }
           render :json => result.to_json
         }
         format.json {

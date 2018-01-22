@@ -11,7 +11,7 @@ module HelpdeskAttachable
     MAILGUN_MAX_ATTACHMENT_SIZE = 20.megabyte
     FACEBOOK_ATTACHMENTS_SIZE   = 25.megabyte
 
-    def self.included(base) 
+    def self.included(base)
       base.extend ClassMethods
     end
 
@@ -34,25 +34,25 @@ module HelpdeskAttachable
         has_many :cloud_files,
           :as => :droppable,
           :class_name => 'Helpdesk::CloudFile',
-          :dependent => :destroy 
+          :dependent => :destroy
       end
 
     end
-    
+
     module InstanceMethods
       def validate_attachment_size(args, options = {})
         return unless args
 
         unless @total_attachment_size
-          @total_attachment_size = (attachments || []).collect{ |a| a.content_file_size }.sum 
+          @total_attachment_size = (attachments || []).collect{ |a| a.content_file_size }.sum
         end
 
-        allowed_limit = options[:attachment_limit] || MAX_ATTACHMENT_SIZE
+        allowed_limit = options[:attachment_limit] || Account.current.attachment_limit_in_bytes
         allowed_limit_human_size = number_to_human_size(allowed_limit)
         @total_attachment_size += args[:content].size
 
         if @total_attachment_size > allowed_limit
-          raise HelpdeskExceptions::AttachmentLimitException, "Attachment limit exceeded. We allow only #{allowed_limit_human_size}." 
+          raise HelpdeskExceptions::AttachmentLimitException, "Attachment limit exceeded. We allow only #{allowed_limit_human_size}."
         end
       end
     end

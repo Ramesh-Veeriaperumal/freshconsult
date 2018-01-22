@@ -51,6 +51,6 @@ class BaseDelegator < SimpleDelegator
     end
 
     def attachment_size
-      ApiConstants::ALLOWED_ATTACHMENT_SIZE
+      Account.current.attachment_limit_in_bytes
     end
 end

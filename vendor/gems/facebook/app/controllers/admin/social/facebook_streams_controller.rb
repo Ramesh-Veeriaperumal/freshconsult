@@ -3,6 +3,7 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
   include Facebook::Constants
   helper Admin::Social::UIHelper
   include Admin::Social::StreamsHelper
+  include Admin::Social::FacebookAuthHelper
   before_filter { access_denied unless current_account.basic_facebook_enabled? }
 
   before_filter :social_revamp_enabled?
@@ -73,21 +74,18 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
     Rails.logger.error("Error while adding facebook page :: #{e.inspect} :: #{e.backtrace}")
     flash[:error] = t('facebook.not_authorized')
   end
-  
+
   def fb_client
+    redirect_url = "#{AppConfig['integrations_url'][Rails.env]}/facebook/page/callback"
     if current_account.falcon_ui_enabled?(current_user)
-     falcon_uri =admin_social_facebook_streams_url.gsub("/admin/social/facebook_streams","/a/admin/social/facebook_streams")
-      @fb_client = Facebook::Oauth::FbClient.new(falcon_uri)
+      falcon_uri = admin_social_facebook_streams_url.gsub("/admin/social/facebook_streams", "/a/admin/social/facebook_streams")
+      @fb_client = make_fb_client(redirect_url, falcon_uri)
     else
-      @fb_client = Facebook::Oauth::FbClient.new(admin_social_facebook_streams_url)
+      @fb_client = make_fb_client(redirect_url, admin_social_facebook_streams_url)
     end
     @fb_client_tab = Facebook::Oauth::FbClient.new(fb_call_back_url(params[:action]), true)
   end
 
-  def set_session_state
-    session[:state] = Digest::MD5.hexdigest("#{Helpdesk::SECRET_3}#{Time.now.to_f}")
-  end
-  
   def enabled_facebook_pages
     page_hash = {}
     
