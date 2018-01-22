@@ -1,6 +1,9 @@
 require_relative '../test_helper'
 class ApiCompaniesControllerTest < ActionController::TestCase
   include CompaniesTestHelper
+  include Redis::RedisKeys
+  include Redis::OthersRedis
+
   def wrap_cname(params)
     { api_company: params }
   end
@@ -12,11 +15,13 @@ class ApiCompaniesControllerTest < ActionController::TestCase
       create_company_field params
     end
     clear_contact_field_cache
+    set_others_redis_key(TAM_FIELDS_ENABLED, true)
   end
 
   def teardown
     super
     destroy_custom_fields
+    remove_others_redis_key(TAM_FIELDS_ENABLED)
   end
 
   def domain_array
@@ -27,7 +32,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
                                        domains: domain_array, note: Faker::Lorem.characters(10))
     assert_response 201
-    match_json(company_pattern(Company.last))
+    match_json(public_api_company_pattern(Company.last))
   end
 
   def test_create_company_with_custom_fields
@@ -35,13 +40,13 @@ class ApiCompaniesControllerTest < ActionController::TestCase
                                        domains: domain_array, note: Faker::Lorem.characters(10),
                                        custom_fields: { 'linetext' => 'test123' })
     assert_response 201
-    match_json(company_pattern(Company.last))
+    match_json(public_api_company_pattern(Company.last))
   end
 
   def test_create_company_quick
     post :create, construct_params({}, name: Faker::Lorem.characters(10))
     assert_response 201
-    match_json(company_pattern(Company.last))
+    match_json(public_api_company_pattern(Company.last))
   end
 
   def test_create_company_without_name
@@ -103,7 +108,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     params_hash = { name: Faker::Lorem.characters(20) + white_space }
     post :create, construct_params({}, params_hash)
     assert_response 201
-    match_json(company_pattern(Company.last))
+    match_json(public_api_company_pattern(Company.last))
   end
 
   def test_create_invalid_domains
@@ -111,6 +116,33 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     post :create, construct_params({}, params_hash)
     match_json([bad_request_error_pattern(:domains, :'Enter valid domains')])
     assert_response 400
+  end
+
+  def test_create_company_with_invalid_tam_default_fields
+    post :create, construct_params({}, name: Faker::Lorem.characters(10),
+                                       description: Faker::Lorem.paragraph,
+                                       domains: domain_array,
+                                       note: Faker::Lorem.characters(10),
+                                       health_score: Faker::Lorem.characters(5),
+                                       account_tier: Faker::Lorem.characters(5))
+    match_json([bad_request_error_pattern('health_score', :not_included,
+                                          list: 'At risk,Pretty OK,Happy'),
+                bad_request_error_pattern('account_tier', :not_included,
+                                          list: 'Platinum,Gold,Silver')])
+    assert_response 400
+  end
+
+  def test_create_company_with_valid_data_for_tam_default_fields
+    post :create, construct_params({}, name: Faker::Lorem.characters(10),
+                                       description: Faker::Lorem.paragraph,
+                                       domains: domain_array,
+                                       note: Faker::Lorem.characters(10),
+                                       health_score: 'Happy',
+                                       account_tier: 'Gold',
+                                       industry: 'Media',
+                                       renewal_date: '2017-10-26')
+    assert_response 201
+    match_json(public_api_company_pattern(Company.last))
   end
 
   def test_update_invalid_domains
@@ -128,13 +160,13 @@ class ApiCompaniesControllerTest < ActionController::TestCase
                                                       note: Faker::Lorem.characters(5), domains: domain_array,
                                                       custom_fields: { 'linetext' => Faker::Lorem.characters(10) })
     assert_response 200
-    match_json(company_pattern({ name => name }, Company.find(company.id)))
+    match_json(public_api_company_pattern({ name => name }, Company.find(company.id)))
   end
 
   def test_update_company_with_nil_custom_field
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id: company.id }, custom_fields: {})
-    match_json(company_pattern({}, company.reload))
+    match_json(public_api_company_pattern({}, company.reload))
     assert_response 200
   end
 
@@ -201,7 +233,26 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     params_hash = { name: Faker::Lorem.characters(20) + white_space }
     put :update, construct_params({ id: company.id }, params_hash)
     assert_response 200
-    match_json(company_pattern(params_hash.each { |x, y| y.strip! if [:name].include?(x) }, company.reload))
+    match_json(public_api_company_pattern(params_hash.each { |x, y| y.strip! if [:name].include?(x) }, company.reload))
+  end
+
+  def test_update_company_with_invalid_tam_default_fields
+    company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
+    params_hash = {health_score: Faker::Lorem.characters(5), account_tier: Faker::Lorem.characters(5)}
+    put :update, construct_params({ id: company.id }, params_hash)
+    match_json([bad_request_error_pattern('health_score', :not_included,
+                                          list: 'At risk,Pretty OK,Happy'),
+                bad_request_error_pattern('account_tier', :not_included, list: 'Platinum,Gold,Silver')])
+    assert_response 400
+  end
+
+  def test_update_company_with_valid_data_for_tam_default_fields
+    company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
+    params_hash = { health_score: 'Happy', account_tier: 'Gold',
+                   industry: 'Media', renewal_date: '2017-10-26' }
+    put :update, construct_params({ id: company.id }, params_hash)
+    assert_response 200
+    match_json(public_api_company_pattern(company.reload))
   end
 
   def test_delete_company
@@ -216,7 +267,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     company = create_company
     get :show, construct_params(id: company.id)
     assert_response 200
-    match_json(company_pattern(Company.find(company.id)))
+    match_json(public_api_company_pattern(Company.find(company.id)))
   end
 
   def test_handle_show_request_for_missing_company
@@ -238,7 +289,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     get :index, controller_params
     pattern = []
     Account.current.companies.order(:name).all.each do |company|
-      pattern << company_pattern(Company.find(company.id))
+      pattern << public_api_company_pattern(Company.find(company.id))
     end
     assert_response 200
     match_json(pattern.ordered!)
@@ -276,7 +327,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
                                        domains: [], note: Faker::Lorem.characters(10))
     assert_response 201
-    match_json(company_pattern(Company.last))
+    match_json(public_api_company_pattern(Company.last))
   end
 
   def test_update_companies_with_invalid_domains_value
@@ -316,7 +367,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
 
     assert_response 201
     assert Company.last.custom_field['cf_show_all_ticket'] == false
-    match_json(company_pattern(Company.last))
+    match_json(public_api_company_pattern(Company.last))
   end
 
   def test_update_company_with_invalid_custom_fields
@@ -361,7 +412,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, domains: domain_array)
     put :update, construct_params({ id: company.id }, domains: [])
     assert_response 200
-    match_json(company_pattern(Company.find(company.id)))
+    match_json(public_api_company_pattern(Company.find(company.id)))
   end
 
   def test_create_company_without_required_custom_field
@@ -382,7 +433,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, domains: domain_array)
     put :update, construct_params({ id: company.id }, domains: [domain, '', '', nil])
     assert_response 200
-    match_json(company_pattern({ domains: [domain] }, company.reload))
+    match_json(public_api_company_pattern({ domains: [domain] }, company.reload))
   end
 
   def test_index_with_link_header
@@ -408,7 +459,11 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern('description', :datatype_mismatch, code: :missing_field, expected_data_type: String),
                 bad_request_error_pattern('domains', :datatype_mismatch, code: :missing_field, expected_data_type: Array),
-                bad_request_error_pattern('note', :datatype_mismatch, code: :missing_field, expected_data_type: String)])
+                bad_request_error_pattern('note', :datatype_mismatch, code: :missing_field, expected_data_type: String),
+                bad_request_error_pattern('health_score', :datatype_mismatch, code: :missing_field, expected_data_type: String),
+                bad_request_error_pattern('account_tier', :datatype_mismatch, code: :missing_field, expected_data_type: String),
+                bad_request_error_pattern('industry', :datatype_mismatch, code: :missing_field, expected_data_type: String),
+                bad_request_error_pattern('renewal_date', :invalid_date, code: :missing_field, accepted: 'yyyy-mm-dd')])
   ensure
     default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
   end
@@ -431,11 +486,19 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
     put :update, construct_params({ id: company.id },  domains: [],
                                                        description: nil,
-                                                       note: nil)
+                                                       note: nil,
+                                                       health_score: nil,
+                                                       account_tier: nil,
+                                                       industry: nil,
+                                                       renewal_date: nil)
     assert_response 400
     match_json([bad_request_error_pattern('note', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
                 bad_request_error_pattern('description', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
-                bad_request_error_pattern('domains', :blank)])
+                bad_request_error_pattern('domains', :blank),
+                bad_request_error_pattern('health_score', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
+                bad_request_error_pattern('account_tier', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
+                bad_request_error_pattern('industry', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
+                bad_request_error_pattern('renewal_date', :invalid_date, accepted: 'yyyy-mm-dd')])
   ensure
     default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
   end

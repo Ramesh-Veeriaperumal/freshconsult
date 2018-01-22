@@ -30,6 +30,7 @@ class Helpdesk::TicketsController < ApplicationController
   include ParserUtil
   include Redis::TicketsRedis
   include Helpdesk::SendAndSetHelper
+  include CompaniesHelperMethods
 
   ALLOWED_QUERY_PARAMS = ['collab', 'message', 'follow']
 
@@ -730,10 +731,13 @@ class Helpdesk::TicketsController < ApplicationController
     if @company && company_attributes
         @company.assign_attributes(company_attributes)
         set_company_validatable_custom_fields
+        set_validatable_default_fields
         company_save_success = @company.save
         check_domain_exists
         @filtered_contact_params[:customer_id] = @company.id if company_save_success && @requester.company.blank? && !@unassociated_company
-        flash[:notice] = (@company.errors) if !company_save_success && @existing_company.blank?
+        if !company_save_success && @existing_company.blank?
+          flash[:notice] = activerecord_error_list(@company.errors)
+        end
     end
     if company_save_success
       set_contact_validatable_custom_fields

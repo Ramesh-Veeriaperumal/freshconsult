@@ -57,6 +57,10 @@ Boringtown, Far Far Away 54321"
 ticket.company.description: "Acme Inc. is a global conglomerate and a manufacturer of every product imaginable, no matter how simple or extravagant. Their service is known to be second to none - with deliveries guaranteed and completed within seconds after order completion."
 ticket.company.note: One of our biggest buyers of boomerangs. Recently reported an issue related to boomerangs not returning to the owners as expected. Please handle with care.
 ticket.company.domains: "acme.com, acmecorp.com"
+ticket.company.health_score: "Happy"
+ticket.company.account_tier: "Platinum"
+ticket.company.industry: "Software"
+ticket.company.renewal_date: 12:00PM, September 17, 1949
 ticket.product_description: State of the art boomerangs that come in all sizes with a built-in Prodigal Child tracking chip
 comment.commenter.name: Charlie Black
 comment.body: Thank you for looking into this. We'd appreciate a quick resolution - our customers tell us they are tired of fetching the misdirected boomerangs.
