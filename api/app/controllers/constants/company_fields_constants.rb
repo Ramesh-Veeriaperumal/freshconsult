@@ -92,7 +92,7 @@ module CompanyFieldsConstants
                              }
                            end,
 
-    "industry_data"    => HEALTH_SCORE_CHOICES.each_with_index.map do |value, i|
+    "industry_data"    => INDUSTRY_CHOICES.each_with_index.map do |value, i|
                             {
                               :name               => value,
                               :value              => value,
@@ -101,7 +101,7 @@ module CompanyFieldsConstants
                             }
                           end,
 
-    "health_score_data" => INDUSTRY_CHOICES.each_with_index.map do |value, i|
+    "health_score_data" => HEALTH_SCORE_CHOICES.each_with_index.map do |value, i|
                             {
                               :name               => value,
                               :value              => value,
