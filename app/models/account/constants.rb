@@ -195,7 +195,8 @@ class Account < ActiveRecord::Base
     :sha1_enabled => false, :disable_archive => false, :sha256_enabled => false, :auto_ticket_export => false, :select_all => false, 
     :facebook_realtime => false, :"Freshfone Call Tracker" => false, :skip_one_hop => false, :ticket_contact_export => false, 
     :custom_apps => false, :timesheet => false, :api_jwt_auth => false, :disable_emails => false, :skip_portal_cname_chk => false,
-    :falcon_signup => false, :falcon_portal_theme => false, :image_annotation => false, :email_actions => false, :ner => false, :disable_freshchat => false, :freshchat_integration => false
+    :falcon_signup => false, :falcon_portal_theme => false, :image_annotation => false, :email_actions => false, :ner => false, :disable_freshchat => false, :freshchat_integration => false,
+    :facebook_page_redirect => false, :froala_editor_forums => false
   }
 
   BLOCK_GRACE_PERIOD = 90.days

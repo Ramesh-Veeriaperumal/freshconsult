@@ -119,10 +119,11 @@ module Ember
     def test_create_with_invalid_attachment_size
       attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       params_hash = create_note_params_hash.merge(attachment_ids: [attachment_id])
-      Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(20_000_000)
+      invalid_attachment_limit = @account.attachment_limit + 1
+      Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(invalid_attachment_limit.megabytes)
       post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       Helpdesk::Attachment.any_instance.unstub(:content_file_size)
-      match_json([bad_request_error_pattern(:attachment_ids, :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
+      match_json([bad_request_error_pattern(:attachment_ids, :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{invalid_attachment_limit} MB")])
       assert_response 400
     end
 
@@ -247,10 +248,12 @@ module Ember
     def test_reply_with_invalid_attachment_size
       attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       params_hash = reply_note_params_hash.merge(attachment_ids: [attachment_id])
-      Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(20_000_000)
+      invalid_attachment_limit = @account.attachment_limit + 3
+      Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(invalid_attachment_limit.megabytes)
       post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       Helpdesk::Attachment.any_instance.unstub(:content_file_size)
-      match_json([bad_request_error_pattern(:attachment_ids, :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
+      match_json([bad_request_error_pattern(:attachment_ids, :invalid_size,
+        max_size: "#{@account.attachment_limit} MB", current_size: "#{invalid_attachment_limit} MB")])
       assert_response 400
     end
 
@@ -578,14 +581,15 @@ module Ember
     end
 
     def test_forward_with_attachments_invalid_size
-      Rack::Test::UploadedFile.any_instance.stubs(:size).returns(20_000_000)
+      invalid_attachment_limit = @account.attachment_limit + 2
+      Rack::Test::UploadedFile.any_instance.stubs(:size).returns(invalid_attachment_limit.megabytes)
       file = fixture_file_upload('files/attachment.txt', 'text/plain', :binary)
       params = forward_note_params_hash.merge('attachments' => [file])
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
       post :forward, construct_params({ version: 'private', id: ticket.display_id }, params)
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 400
-      match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
+      match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{invalid_attachment_limit} MB")])
     end
 
     def test_forward_with_invalid_attachment_params_format
@@ -1264,6 +1268,24 @@ module Ember
       Account.any_instance.unstub(:bcc_email)
     end
 
+    def test_agent_reply_template_with_xss_payload
+      remove_wrap_params
+      t = create_ticket(:subject => '<img src=x onerror=prompt("Subject");>')
+
+      notification_template = '<div>{{ticket.subject}}</div>'
+      agent_signature = '<div><p>Thanks</p><p>{{ticket.subject}}</p></div>'
+      Agent.any_instance.stubs(:signature_value).returns(agent_signature)
+      EmailNotification.any_instance.stubs(:get_reply_template).returns(notification_template)
+      get :reply_template, construct_params({ version: 'private', id: t.display_id }, false)
+      assert_response 200
+
+      match_json(reply_template_pattern(
+        template: "<div>#{h(t.subject)}</div>",
+        signature: "<div><p>Thanks</p><p>#{t.subject}</p></div>"))
+      Agent.any_instance.unstub(:signature_value)
+      EmailNotification.any_instance.unstub(:get_reply_template)
+    end
+
     def test_agent_forward_emplate_with_empty_template_and_empty_signature
       t = create_ticket
 
@@ -1328,6 +1350,23 @@ module Ember
       match_json(forward_template_pattern(template: "<div>#{t.display_id}</div>",
                                         signature: "<div><p>Thanks</p><p>#{t.subject}</p></div>"))
 
+      Agent.any_instance.unstub(:signature_value)
+      EmailNotification.any_instance.unstub(:get_forward_template)
+    end
+
+    def test_agent_forward_template_with_xss_payload
+      remove_wrap_params
+      t = create_ticket(:subject => '<img src=x onerror=prompt("Subject");>')
+
+      notification_template = '<div>{{ticket.subject}}</div>'
+
+      Agent.any_instance.stubs(:signature_value).returns('')
+      EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
+
+      get :forward_template, construct_params({ version: 'private', id: t.display_id }, false)
+      assert_response 200
+      match_json(forward_template_pattern(template: "<div>#{h(t.subject)}</div>",
+                                        signature: ''))
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_forward_template)
     end

@@ -1,14 +1,14 @@
 <% return if @widget_form && !widget_option(:screenshot) && !widget_option(:attachFile) %>
-<% 
-  attach_id ||= "ticket" 
+<%
+  attach_id ||= "ticket"
   nsc_param = nsc_param || "helpdesk_ticket"
   original_attachments ||= {:regular => [], :cloud_files => []}
   max_attachment ||= nil
-  max_size ||= 15
+  max_size ||= attachment_size
 %>
 <div class="single_file">
 <div class="attach-wrapper row-fluid new-attach" id="attachment-type" data-multifile-enable="<%= current_account.launched?(:multifile_attachments) %>" data-location="portal">
-  <div class="<%= @widget_form ? 'span7 widget-multiple-list ' : '' %>attachments-list-wrap"> 
+  <div class="<%= @widget_form ? 'span7 widget-multiple-list ' : '' %>attachments-list-wrap">
     <div class="attachments-list-form" id="<%= attach_id %>-container">
       <% total_attachments = original_attachments[:regular].size + original_attachments[:cloud_files].size if original_attachments.present? %>
       <% if total_attachments.to_i > 0 %><div><b><span class="a-count"><%= total_attachments || 0 %></span> <%= t('attachments')%>: </b></div><% end %>
@@ -19,7 +19,7 @@
         <% if original_attachments.present? %>
           <% original_attachments[:regular].each do |attachment| %>
             <div class="item" rel="original_attachment" id="<%= dom_id(attachment) %>">
-                <a class="attachment-close"  href="javascript:void(0)" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" 
+                <a class="attachment-close"  href="javascript:void(0)" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments"
                   onclick="jQuery(this).parent().hide(); jQuery(this).next().prop('disabled', true);Helpdesk.Multifile.updateCount(this); return false;"></a>
               <input type="hidden" name="helpdesk_note[attachments][][resource]" value="<%=attachment.id%>" rel="original_attachment"/>
               <div class="attachment-type file-types-def">
@@ -31,7 +31,7 @@
           <% original_attachments[:cloud_files].each do |cloud_file| %>
             <div class="item" rel="original_attachment">
               <a class="attachment-close"  href="javascript:void(0)"
-                fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" 
+                fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments"
                 onclick="jQuery(this).parent().hide(); jQuery(this).next().prop('disabled', true); Helpdesk.Multifile.updateCount(this); return false;"></a>
               <input type="hidden" name="[cloud_file_attachments][]" value="<%={:link=>cloud_file.url,:name=>cloud_file.filename, :provider => cloud_file.provider, :original_attachment => true}.to_json %>" rel="original_attachment" />
               <div class="attachment-type file-types-def">
@@ -47,7 +47,7 @@
 
     <div class="clearfix"></div>
     <% if cloud_files_installed? and (@ticket.present? ? !@ticket.ecommerce? : true)  %>
-      <div class="dropdown dropup">        
+      <div class="dropdown dropup">
         <a class="dropdown-toggle attach-link" data-toggle="dropdown" href="#">
           <i class="wicon-paper-clip"></i><%=I18n.t('attach')%><b class="caret"></b>
         </a>
@@ -60,14 +60,14 @@
           <% if !@widget_form %>
               <%=  t('attach_file') %>
            <% end %>
-                <div class="attach-file attach-link-file" id="<%= attach_id %>-attach-container">  
-                  <input type="file" name="emptyfile" 
+                <div class="attach-file attach-link-file" id="<%= attach_id %>-attach-container">
+                  <input type="file" name="emptyfile"
                     id="<%=attach_id%>_file"
                     data-attach-id="<%=attach_id%>"
-                    nameWhenFilled="<%=nsc_param%>[attachments][][resource]" 
-                    fileContainer="<%=attach_id%>-container" 
+                    nameWhenFilled="<%=nsc_param%>[attachments][][resource]"
+                    fileContainer="<%=attach_id%>-container"
                     fileList="<%=attach_id%>-attachments"
-                    sendFocusTo="<%=attach_id%>-body" 
+                    sendFocusTo="<%=attach_id%>-body"
                     />
                 </div>
             </a>
@@ -75,9 +75,9 @@
           <% get_enabled_cloud_files_app.each do |c_f| %>
             <%= render :partial => "integrations/applications/#{c_f}", :formats => [:html], :locals => {:attach_id => attach_id} %>
           <% end %>
-        </ul>      
+        </ul>
       </div>
-    <% else %>      
+    <% else %>
       <div class="hidden_upload">
       <% if @widget_form && widget_option(:attachFile) %>
         <div class="add_attachment" ><a class="attach-link-wrap"><span>+</span> <%= t('attach_file') %></a></div>
@@ -85,26 +85,26 @@
       <% if !@widget_form %>
       <div class="add_attachment"><span>+</span> <%= t('attach_file') %></div>
       <% end %>
-        <input type="file" name="emptyfile" 
+        <input type="file" name="emptyfile"
                     id="<%=attach_id%>_file"
                     data-attach-id="<%=attach_id%>"
-                    nameWhenFilled="<%=nsc_param%>[attachments][][resource]" 
-                    fileContainer="<%=attach_id%>-container" 
+                    nameWhenFilled="<%=nsc_param%>[attachments][][resource]"
+                    fileContainer="<%=attach_id%>-container"
                     fileList="<%=attach_id%>-attachments"
-                    sendFocusTo="<%=attach_id%>-body" 
+                    sendFocusTo="<%=attach_id%>-body"
                     max_size="<%=max_size%>"
-                    max_attachment= "<%=max_attachment%>" 
+                    max_attachment= "<%=max_attachment%>"
                     >
       </div>
 
-    <% end %>    
+    <% end %>
 
   </div>
 
   <!-- screenshot-->
   <% if @widget_form && widget_option(:screenshot) %>
     <div class="span5 omega align-right <%= cloud_files_installed? ? 'screenshot-wrapper-20' : 'screenshot-wrapper-30' %>" >
-      
+
         <div class="screenshot-wrap controls">
           <div class="ie8plusonly">
             <div id="takescreen-btn">
@@ -128,8 +128,8 @@
      <%= render :partial => "/support/shared/multifile_template"  %>
 
 
-   
-    
+
+
     <script type="text/javascript">
       // Fix for Firefox/IE - To override :hover style persistance after click on input[type=file] element
       jQuery('div.attach-wrapper a[data-toggle="dropdown"]').bind('click', function(){
@@ -157,7 +157,7 @@
 
 
 </div>
-<%# 
+<%#
   The following is a template used by multifile.js to create rows in
   the attachments table.
  %>

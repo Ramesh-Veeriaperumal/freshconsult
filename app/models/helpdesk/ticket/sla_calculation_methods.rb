@@ -23,10 +23,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def update_dueby(ticket_status_changed=false)
-    elapsed = Benchmark.realtime { 
-      BusinessCalendar.execute(self) { set_sla_time(ticket_status_changed) }
-     }
-     Rails.logger.info "Time taken for sla calculation:: #{elapsed.inspect}"
+    BusinessCalendar.execute(self) { set_sla_time(ticket_status_changed) }
   end
 
   def set_sla_time(ticket_status_changed)

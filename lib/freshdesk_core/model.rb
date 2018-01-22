@@ -211,7 +211,9 @@ module FreshdeskCore::Model
                         "sync_accounts",
                         "sync_entity_mappings",
                         "parent_child_templates",
-                        "collab_settings"
+                        "collab_settings",
+                        "bots",
+                        "bot_tickets"
                     ]
 
   STATUS = {

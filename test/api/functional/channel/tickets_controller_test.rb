@@ -4,9 +4,9 @@ module Channel
   class TicketsControllerTest < ActionController::TestCase
     include TicketsTestHelper
 
-    CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date).freeze
+    CUSTOM_FIELDS = %w[number checkbox decimal text paragraph dropdown country state city date].freeze
 
-    VALIDATABLE_CUSTOM_FIELDS =  %w(number checkbox decimal text paragraph date).freeze
+    VALIDATABLE_CUSTOM_FIELDS =  %w[number checkbox decimal text paragraph date].freeze
 
     CUSTOM_FIELDS_VALUES_INVALID = { 'number' => '1.90', 'decimal' => 'dd', 'checkbox' => 'iu', 'text' => Faker::Lorem.characters(300), 'paragraph' => 12_345, 'date' => '31-13-09' }.freeze
 
@@ -30,14 +30,16 @@ module Channel
       @account.sections.map(&:destroy)
       return if @@before_all_run
       @account.ticket_fields.custom_fields.each(&:destroy)
-      Helpdesk::TicketStatus.find_by_status_id(2).update_column(:stop_sla_timer, false)
+      ticket_status = Helpdesk::TicketStatus.where(status_id: 2).first
+      ticket_status.stop_sla_timer = false
+      ticket_status.save
       @@ticket_fields = []
       @@custom_field_names = []
-      @@ticket_fields << create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
+      @@ticket_fields << create_dependent_custom_field(%w[test_custom_country test_custom_state test_custom_city])
       @@ticket_fields << create_custom_field_dropdown('test_custom_dropdown', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
       @@choices_custom_field_names = @@ticket_fields.map(&:name)
       CUSTOM_FIELDS.each do |custom_field|
-        next if %w(dropdown country state city).include?(custom_field)
+        next if %w[dropdown country state city].include?(custom_field)
         @@ticket_fields << create_custom_field("test_custom_#{custom_field}", custom_field)
         @@custom_field_names << @@ticket_fields.last.name
       end
@@ -56,9 +58,10 @@ module Channel
       description = Faker::Lorem.paragraph
       email = Faker::Internet.email
       tags = [Faker::Name.name, Faker::Name.name]
-      @create_group ||= create_group_with_agents(@account, agent_list: [@agent.id])
+      agent_id = @agent.id
+      @create_group ||= create_group_with_agents(@account, agent_list: [agent_id])
       params_hash = { email: email, cc_emails: cc_emails, description: description, subject: subject,
-                      priority: 2, status: 3, type: 'Problem', responder_id: @agent.id, source: 1, tags: tags,
+                      priority: 2, status: 2, type: 'Problem', responder_id: agent_id, source: 1, tags: tags,
                       due_by: 14.days.since.iso8601, fr_due_by: 1.day.since.iso8601, group_id: @create_group.id }
       params_hash
     end

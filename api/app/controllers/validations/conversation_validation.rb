@@ -24,7 +24,7 @@ class ConversationValidation < ApiValidation
 
   validates :attachments, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true } }
   validates :attachments, file_size: {
-    max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,
+    max: proc { |x| x.attachment_limit },
     base_size: proc { |x| ValidationHelper.attachment_size(x.item) }
   }
   validates :cloud_files, data_type: { rules: Array, allow_nil: false }

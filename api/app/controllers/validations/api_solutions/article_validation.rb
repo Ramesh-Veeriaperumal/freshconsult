@@ -43,7 +43,7 @@ class ApiSolutions::ArticleValidation < ApiValidation
     }
   }
   validates :attachments, file_size: {
-    max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,
+    max: proc { |x| x.attachment_limit },
     base_size: proc { |x| ValidationHelper.attachment_size(x.attachable) }
   }
 

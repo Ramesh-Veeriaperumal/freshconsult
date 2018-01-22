@@ -22,7 +22,6 @@ module ApiConstants
   # ValidationConstants
   EMAIL_REGEX = AccountConstants::EMAIL_REGEX
   EMAIL_VALIDATOR = AccountConstants::EMAIL_VALIDATOR
-  ALLOWED_ATTACHMENT_SIZE = 15 * 1024 * 1024
   LOAD_OBJECT_EXCEPT = [:create, :index, :route_not_found, :filtered_index, :search] +
                        TimeEntryConstants::LOAD_OBJECT_EXCEPT +
                        ConversationConstants::LOAD_OBJECT_EXCEPT +
