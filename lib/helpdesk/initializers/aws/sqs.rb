@@ -5,8 +5,10 @@ SQS = (sqs_config[Rails.env] || sqs_config).symbolize_keys
 begin
   #Global SQS client
   $sqs_client = AWS::SQS.new.client
-  
+
   $sqs_facebook =  AWS::SQS.new.queues.named(SQS[:facebook_realtime_queue])
+
+  $channel_framework_services =  AWS::SQS.new.queues.named(SQS[:channel_framework_services])
 
   $sqs_facebook_messages = AWS::SQS.new.queues.named(SQS[:fb_message_realtime_queue])
 

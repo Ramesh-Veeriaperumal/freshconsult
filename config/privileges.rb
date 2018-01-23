@@ -67,6 +67,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/slack_v2", :only => [:add_slack_agent]
     resource :"integrations/data_pipe"
     resource :"integrations/cloud_elements/crm", :only => [:fetch]
+    resource :"integrations/microsoft_team", :only => [:authorize_agent]
 
 
     # Used by API V2 Search
@@ -590,6 +591,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/dashboard", :only => [:index]
     resource :"integrations/marketplace_app"
     resource :"integrations/cloud_elements/crm", :only => [:instances, :edit, :update, :settings, :create]
+    resource :"integrations/microsoft_team", :only => [:oauth, :install]
 
     # Used by API V2
     resource :api_ticket_field, :only => [:index]

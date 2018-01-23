@@ -31,7 +31,8 @@
     - freshfone_trial_worker
     - livechat_worker
     - smart_filter_tweet_to_ticket
-
+    - channel_framework_command
+    
   :central_realtime:
     - central_publish
     - active_ticket_central_publish

@@ -84,6 +84,8 @@ run "ln -nfs #{shared_path}/config/heap_analytics.yml #{node[:rel_path]}/config/
 run "ln -nfs #{shared_path}/config/mailgun_out_going_email_mappings.yml #{node[:rel_path]}/config/mailgun_out_going_email_mappings.yml"
 run "ln -nfs #{shared_path}/config/bot.yml #{node[:rel_path]}/config/bot.yml"
 run "ln -nfs #{shared_path}/config/central.yml #{node[:rel_path]}/config/central.yml"
+run "ln -nfs #{shared_path}/config/kafka_collector.yml #{node[:rel_path]}/config/kafka_collector.yml"
+run "ln -nfs #{shared_path}/config/channel_framework.yml #{node[:rel_path]}/config/channel_framework.yml"
 #supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"
 run "ln -nfs #{shared_path}/config/sandbox.yml  #{node[:rel_path]}/config/sandbox.yml"
