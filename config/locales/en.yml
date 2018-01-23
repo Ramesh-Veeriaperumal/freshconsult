@@ -6232,6 +6232,7 @@ en:
     helpnote1: Tell us a little more about you and help us personalize your experience.
     helpnote2: Login to your account using %{email}
     helpnote3: Please confirm your details and set a password for your account
+    admin_consent: By clicking on "Activate and Log In", you agree to our <a target="_blank" href="https://www.freshworks.com/terms/"> Terms</a> and acknowledge having read our <a target="_blank" href="https://www.freshworks.com/privacy/">Privacy Policy</a>.
   enter_message: Enter your message here
   not_selected: Not Selected
   enter_billing_for_free: Please enter the credit card details before you choose the paid plan
