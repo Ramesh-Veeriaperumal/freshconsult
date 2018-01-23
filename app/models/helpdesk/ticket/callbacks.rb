@@ -46,6 +46,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_update :update_isescalated, :if => :check_due_by_change
   before_update :update_fr_escalated, :if => :check_frdue_by_change
 
+  before_destroy :save_deleted_ticket_info
+
   after_create :refresh_display_id, :create_meta_note, :update_content_ids
   after_create :set_parent_child_assn, :if => :child_ticket?
   after_save :check_child_tkt_status, :if => :child_ticket?
@@ -71,6 +73,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :spam_feedback_to_smart_filter, :on => :update, :if => :twitter_ticket_spammed?
 
   # Callbacks will be executed in the order in which they have been included. 
+
+  publishable
 
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher
@@ -821,5 +825,15 @@ private
     meta_data.each do |k,v|
       meta_data[k] = RailsFullSanitizer.sanitize v if v.is_a? String
     end
+  end
+
+  def save_deleted_ticket_info
+    @deleted_model_info = {
+      id: id,
+      display_id: display_id,
+      account_id: account_id
+    }
+    @deleted_model_info[:archive] = false
+    @deleted_model_info
   end
 end

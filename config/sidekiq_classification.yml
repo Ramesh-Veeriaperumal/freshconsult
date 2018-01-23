@@ -31,6 +31,11 @@
     - freshfone_trial_worker
     - livechat_worker
     - smart_filter_tweet_to_ticket
+
+  :central_realtime:
+    - central_publish
+    - active_ticket_central_publish
+
   :scheduled:
     - scheduled_reports
     - scheduled_reports_cleanup
@@ -155,6 +160,7 @@
     - free_dispatcher
     - free_account_jobs
     - contacts_sync_free
+    - free_ticket_central_publish
   :email:
     - mailbox_jobs
     - active_account_jobs
@@ -169,6 +175,7 @@
     - trial_facebook
     - trial_twitter
     - contacts_sync_trial
+    - trial_ticket_central_publish
   :spam:
     - email_notification_spam_queue
     - spam_data_migration

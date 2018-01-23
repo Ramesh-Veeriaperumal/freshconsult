@@ -24,7 +24,7 @@ class User < ActiveRecord::Base
   include PasswordPolicies::UserHelpers
   include Redis::FreshidPasswordRedis
 
-  concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq, :esv2_methods
+  concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq, :esv2_methods, :presenter
   include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams
 
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
