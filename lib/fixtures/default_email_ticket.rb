@@ -15,7 +15,7 @@ class Fixtures::DefaultEmailTicket < Fixtures::DefaultTicket
     end
 
     def created_at
-      account.created_at
+      account.created_at - 1.hour - 3.minute
     end
 
     def after_create

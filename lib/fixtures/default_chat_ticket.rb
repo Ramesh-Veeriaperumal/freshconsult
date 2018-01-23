@@ -35,7 +35,7 @@ class Fixtures::DefaultChatTicket < Fixtures::DefaultTicket
     end
 
     def created_at
-      account.created_at - 1.hour - 3.minute
+      account.created_at
     end
 
     #methods
