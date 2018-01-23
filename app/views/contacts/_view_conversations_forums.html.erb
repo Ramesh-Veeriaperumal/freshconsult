@@ -1,0 +1,13 @@
+<p class='muted'> <%= t("contacts.conversations.contact_forums") %> </p>
+<div class='timeline' id='timeline'>
+  <ul class='timeline-list'>
+    <% @user.recent_posts.each do |item| %>
+      <li class='timeline-item'>
+        <%= forum_activity(item) %>
+      </li>
+    <% end %>
+  </ul>
+</div>
+<% if @user.recent_posts.empty? %>
+  <p class='no-conv-msg'><%= t('contacts.conversations.no_conversations') %></p>
+<% end %>

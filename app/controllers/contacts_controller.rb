@@ -191,12 +191,29 @@ class ContactsController < ApplicationController
     Rails.logger.info "$$$$$$$$ -> #{@user.inspect}"
 
     respond_to do |format|
-      format.html { 
-        define_contact_properties
-      }
+      format.html { }
       format.xml  { render :xml => @user.to_xml} # bad request
       format.json { render :json => @user.as_json }
       format.any(:mobile,:nmobile) { render :json => @user.to_mob_json }
+    end
+  end
+
+  def view_conversations
+    @user = nil # reset the user object.
+    @user = current_account.all_users.find(params[:id])
+    types = ["all", "tickets", "forums", "archived_tickets"]
+    conversation_type = types.include?(params[:type]) ? params[:type] : types[0]
+
+    if conversation_type == types[0] || conversation_type == types[1]
+      define_contact_tickets
+    elsif conversation_type == types[3] && current_account.features_included?(:archive_tickets)
+      define_contact_archive_tickets
+    end
+
+    respond_to do |format|
+      format.html {
+        render :partial => "contacts/view_conversations_#{conversation_type}"
+      }
     end
   end
   
@@ -404,22 +421,28 @@ protected
                                 :error_label => :label }
     end
 
-    # TODO: FOR ARCHIVE NEED TO AJAXIFY
-    def define_contact_properties 
-      @merged_user = @user.parent unless @user.parent.nil?
-
+    def define_contact_tickets
       @total_user_tickets = current_account.tickets.permissible(current_user).
         requester_active(@user).visible.newest(11).find(:all, 
           :include => [:ticket_states,:ticket_status,:responder,:requester])
       @total_user_tickets_size = @total_user_tickets.length
       @user_tickets = @total_user_tickets.take(10)
+    end
 
+    def define_contact_archive_tickets
       if current_account.features_included?(:archive_tickets)
         @total_archive_user_tickets = current_account.archive_tickets.permissible(current_user).
           requester_active(@user).newest(11).find(:all, :include => [:responder,:requester])
         @total_archive_user_tickets_size = @total_archive_user_tickets.length
         @user_archive_tickets = @total_archive_user_tickets.take(10)
       end
+    end
+
+    # TODO: FOR ARCHIVE NEED TO AJAXIFY
+    def define_contact_properties
+      @merged_user = @user.parent unless @user.parent.nil?
+      define_contact_tickets
+      define_contact_archive_tickets
     end
 
     def get_formatted_message(exception)
