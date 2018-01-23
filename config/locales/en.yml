@@ -11490,3 +11490,22 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         subject: Vintage table lamp - Out of stock?
         body: "<p>Hello,</p><br /><p>I saw a vintage table lamp on your site last month and I’d bookmarked it to buy it later for a friend. I can’t seem to find it anymore though. Is it out of stock or do you not sell those anymore?</p><br /><p>Thanks,\n<br />Matt.</p><p><hr></p><p>P.S. This is a sample message that has been sent to you from website page. <a href = https://support.freshdesk.com/support/solutions/articles/37690-getting-feedback-from-your-website-with-the-feedback-widget target= _blank>See how you can add your own feedback widget</a> on your website or app</p>"
         reply: "<p>Hi Matt,</p><br /><p>Thanks for writing in!</p><br /><p>I’m sorry to say those vintage lamps are currently out of stock. I checked with our supplier though and they think it should be available by the end of next month. But if you’d rather not wait that long, I’d love to help you find something else to gift your friend. Let me know what their interests are and I’ll send across a list :)</p><br /><p>Cheers,\n<br />Janet\n<br />Saul’s Emporium Support</p>"
+      chat:
+        subject: Chat with Norman Jones on Missing order.
+        body_footer: "<hr><p>P.S. This is a sample chat conversation between a customer and a support agent. <a href = https://support.freshdesk.com/support/solutions/articles/194052-installing-live-chat-in-your-website-or-application target=_blank>See how you can setup your own chat widget</a> and start talking to customers in real time.</p>"
+        end_note: "Created via Chat. Conversation between <b>%{requester}</b> and <b>%{agent}</b>"
+        conversation:
+          requester:
+            :2 : "Hey there, I’m reaching out to report a missing order."
+            :4 : "Yes, one second..."
+            :5 : "Ok, got it. It’s 999-0345. It was supposed to be here this morning and I got an email confirming it’s out for delivery but it isn’t here yet"
+            :8 : "Oh alright. That clears things up"
+            :10: "Ok, that sounds good. Thanks for your help :)"
+
+          agent:
+            :1 : "Hello Norman, how can I help you today?"
+            :3 : "Oh, that doesn’t sound good! Could you please tell me the order number?"
+            :6 : "Alright, just give me one moment while I take a look at where your shipment is."
+            :7 : "It looks like the UPS delivery in your neighborhood is delayed today due to a fallen tree. I believe the city officials are already clearing out the road and the package should be there by 3 PM this afternoon."
+            :9 : "I’m sorry about the delay! Please do reach out to us again if the package hasn’t been delivered by the afternoon. I will convert this chat as a ticket, so you can let us know if there’s any further issues."
+            :11: "My pleasure, Norman. Have a great day!"

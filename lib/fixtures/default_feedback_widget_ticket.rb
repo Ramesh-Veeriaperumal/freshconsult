@@ -18,4 +18,8 @@ class Fixtures::DefaultFeedbackWidgetTicket < Fixtures::DefaultTicket
     def meta_data
       Helpdesk::DEFAULT_TICKET_PROPERTIES[:feedback_widget_ticket][:meta]
     end
+
+    def created_at
+      account.created_at - 1.hour
+    end
 end

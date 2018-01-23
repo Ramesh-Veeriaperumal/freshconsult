@@ -9,6 +9,7 @@ class Fixtures::DefaultTicket
     create_reply
     #Step 3 Hook for child classes to do some after create stuff
     after_create
+    ticket
   end
 
   private
@@ -27,9 +28,13 @@ class Fixtures::DefaultTicket
         s.ticket_body_attributes  = {:description => description, :description_html => description_html }
         s.disable_activities      = true
         s.meta_data   = meta_data
+        s.created_at  = created_at
+        s.updated_at  = updated_at
       end
+
       #Activity gets called at the end of commit transaction(Whole seed transaction.) Hence added here explicitly.
       ticket.create_activity(requester, "activities.tickets.new_ticket.long", {}, "activities.tickets.new_ticket.short")
+      ticket
     end
 
 
@@ -80,6 +85,10 @@ class Fixtures::DefaultTicket
 
     def source_name
       TicketConstants::SOURCE_NAMES_BY_KEY[source]
+    end
+
+    def updated_at
+      created_at
     end
 
     def create_reply

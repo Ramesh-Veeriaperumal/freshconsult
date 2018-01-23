@@ -89,6 +89,13 @@ DEFAULT_TICKET_PROPERTIES:
         meta:
             user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/62.0.3202.62
             referrer: https://sauls.freshdesk.com/en/support/home
+    chat_ticket:
+        email: norman.jones@freshdesk.com
+        name: Norman Jones
+        meta:
+            user_agent: Mozilla/5.0 (Windows 10.0.0; Win64; x64) Chrome/62.0.3202.62
+            referrer: /support/home
+            location: Mount Hope, Kansas, United States
 
 EMAIL: 
 

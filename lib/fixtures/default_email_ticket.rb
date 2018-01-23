@@ -2,7 +2,7 @@ class Fixtures::DefaultEmailTicket < Fixtures::DefaultTicket
 
   private
     def description_html
-      @description_html ||= I18n.t("default.ticket.#{source_name}.body", :onclick => "inline_manual_player.activateTopic(1777);")
+      @description_html ||= I18n.t("default.ticket.#{source_name}.body")
     end
 
     def source
@@ -12,6 +12,10 @@ class Fixtures::DefaultEmailTicket < Fixtures::DefaultTicket
     def type
       #REVISIT . Need to change this after ticket constants I18n dependencies are moved to class methods
       I18n.t('question')
+    end
+
+    def created_at
+      account.created_at
     end
 
     def after_create
