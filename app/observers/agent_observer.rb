@@ -66,7 +66,7 @@ class AgentObserver < ActiveRecord::Observer
       agent.groups.each do |group|
         group.send(action, agent.user_id) if group.round_robin_capping_enabled?
         
-        Rails.logger.debug "RR Success : #{action} : #{group.list_capping_range.inspect}
+        Rails.logger.debug "RR Success : #{action} : #{agent.user_id} : #{group.id} : #{group.round_robin_capping_enabled?} : #{group.list_capping_range.inspect}
                             #{group.list_unassigned_tickets_in_group.inspect}".squish
       end
 
