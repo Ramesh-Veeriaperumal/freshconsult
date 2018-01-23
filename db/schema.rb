@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20171213132121) do
+ActiveRecord::Schema.define(:version => 20180123071929) do
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -2143,8 +2143,15 @@ ActiveRecord::Schema.define(:version => 20171213132121) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "account_id", :limit => 8
+    t.integer  "contact_id",  :limit => 8
+    t.integer  "company_id",  :limit => 8
+    t.datetime "reminder_at"
   end
 
+  add_index "helpdesk_reminders", ["account_id", "company_id"], 
+    :name => "index_helpdesk_reminders_on_account_id_company_id"
+  add_index "helpdesk_reminders", ["account_id", "contact_id"], 
+    :name => "index_helpdesk_reminders_on_account_id_contact_id"
   add_index "helpdesk_reminders", ["ticket_id"], :name => "index_helpdesk_reminders_on_ticket_id"
   add_index "helpdesk_reminders", ["user_id"], :name => "index_helpdesk_reminders_on_user_id"
 
