@@ -59,12 +59,7 @@ window.App = window.App || {};
       $('#solution_article_title').focus();
       
       this.setFormValues();
-
-      if($('#solution_article_description').data('newEditor')) {
         invokeEditor('solution_article_description', 'solution');
-      } else {
-        invokeRedactor('solution_article_description', 'solution');
-      }
 
 
       this.toggleViews();

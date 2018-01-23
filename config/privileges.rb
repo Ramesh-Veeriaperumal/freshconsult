@@ -140,11 +140,15 @@ Authority::Authorization::PrivilegeList.build do
 
     resource :"satisfaction_rating", :only => [:create, :survey_results]
 
+    resource :"year_in_review", :only => [:clear]
+
     # This privilege should only be used for API. This should have only read permission.
     # Agent who has access to ticket create will obviously know the custom field names.
     # So access to read the list of custom fields for an account through API should also be given at the same level of privilege as ticket create.
     resource :api_ticket_field, :only => [:index]
     resource :"api_freshfone/call_history", :only => [:export, :export_status]
+    resource :"announcement", :only => [:index, :account_login_url]
+
   end
 
   export_tickets do
@@ -289,7 +293,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/v2/spotlight", :only => [:forums]
     resource :"search/merge_topic", :only => [:index]
     resource :"search/v2/merge_topic", :only => [:search_topics]
-    resource :forums_uploaded_image, :only => [:create]
+    resource :forums_uploaded_image, :only => [:index, :create]
     resource :monitorship, :only => [:followers]
 
     # Used for API V2
@@ -445,6 +449,7 @@ Authority::Authorization::PrivilegeList.build do
       resource :"helpdesk/dashboard", :only => [:unresolved_tickets, :unresolved_tickets_data]
       resource :"reports/scheduled_export"
       resource :export, :only => [:ticket_activities]
+      resource :"year_in_review", :only => [:share]
   end
 
   # NOTE: Resource(controller action) related to scheduling is not added here because save reports and scheduling reports use the same action

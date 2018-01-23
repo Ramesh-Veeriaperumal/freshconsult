@@ -213,7 +213,7 @@ en:
   myself: "Myself"
   one_time_password_instructions: "Hello, Your one time password is %{otp}. Please note that this is valid only for 5 minutes and if you haven't requested, please contact the administrator."
   signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
-  attachment_help_info: "File size < 15 MB"
+  attachment_help_info: "File size < %{attachment_size} MB"
   feedbackwidget_offset_info: Choose widget position on your browser. The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
   no_twitter_handle: Please configure atleast one twitter account
   reset_my_password: Reset my password
@@ -264,6 +264,8 @@ en:
   facebook_user: Facebook User
   mobihelp: MobiHelp
   ecommerce: Ecommerce
+  bot : "Bot"
+  not_supported: "is not supported"
   logmein_source: LogMeIn Rescue
   working: Working
   attach: Attach
@@ -2262,6 +2264,7 @@ en:
         manage_supervisor_rules: Manage Supervisor rules
         manage_scenario_automation_rules: Manage Scenario automation rules
         manage_email_settings: Manage Email Commands
+        manage_dashboard: Manage ticket list views
         manage_ticket_templates: Manage Ticket Templates
         admin_tasks: Play God with Super Admin controls
         manage_account: Include account management
@@ -2733,7 +2736,9 @@ en:
         failure: Ticket fields update failed.
         success: Ticket fields successfully updated.
       failure:
+        dropdown: You have exceeded the maximum limit for this type of field.
         string: You have exceeded the maximum limit for this type of field.
+        string_with_dn: You are not allowed to create more than 400 text fields.
         text: You are not allowed to create more than 10 paragraph fields.
         number: You are not allowed to create more than 20 number fields.
         decimal: You are not allowed to create more than 10 decimal fields.
@@ -6080,7 +6085,6 @@ en:
     tag_condition: Tag
     internal_group: Internal Group
     internal_agent: Internal Agent
-    verify_human: To verify you are human, please type the given scrambled letters
     edit_btn: Edit
     requester: Requester
     app_info:
@@ -6228,6 +6232,7 @@ en:
     helpnote1: Tell us a little more about you and help us personalize your experience.
     helpnote2: Login to your account using %{email}
     helpnote3: Please confirm your details and set a password for your account
+    admin_consent: By clicking on "Activate and Log In", you agree to our <a target="_blank" href="https://www.freshworks.com/terms/"> Terms</a> and acknowledge having read our <a target="_blank" href="https://www.freshworks.com/privacy/">Privacy Policy</a>.
   enter_message: Enter your message here
   not_selected: Not Selected
   enter_billing_for_free: Please enter the credit card details before you choose the paid plan
@@ -6952,7 +6957,7 @@ en:
         broadcast_note: "Broadcast message"
         not_added: Note has not been added!
         attachment_size:
-           exceed: Your attachments exceed 15 MB. Please make changes before you proceed.
+           exceeded: Your attachments exceed %{attachment_limit} MB. Please make changes before you proceed.
            not_added: (Not Added)
            not_added_greater: (> 15 mb Not Added)
            exceed_limit: Exceeds attachments size
@@ -7524,7 +7529,7 @@ en:
     time_ago: "ago"
     share_app: "Share this app"
     policy_on_tp_apps: "Policy on third party apps"
-    third_party_app_policy: "You are downloading an App that has not been developed by Freshdesk. By downloading this App you understand that you are bound by the terms and privacy policies provided by its developer. For more details about such terms and privacy policies, please contact the developer or visit the developer's page."
+    third_party_apps_policy: "This App is owned, developed, operated and maintained by a third party and not Freshworks Inc. By downloading, integrating with and/or using this App you understand that you are bound by the terms and privacy policies of its developer, including on processing of your data. For more details about such terms and privacy policies, please contact the developer or visit the developer's page."
     policy_on_custom_apps: "Policy on custom apps"
     custom_app_policy: "\"Custom App\" is an application developed specifically for a Freshdesk customer and not listed in the App Gallery. Custom Apps may be developed by Freshdesk or any other developer who may or may not be registered with Freshdesk as a Developer. Please note that the Custom App is provided on an \"AS IS\" basis without any warranties of any kind to the fullest extent permitted by applicable law. Freshdesk expressly disclaims any and all conditions, representations, warranties or other terms, whether express or implied, including, but not limited to, any implied warranties of merchantability, title, fitness for a particular purpose, and non-infringement. By installing the Custom App, you understand and acknowledge that Freshdesk does not warrant that the Custom App will be uninterrupted, timely, secure, error-free or free from viruses or other malicious software. Freshdesk shall not be liable to you or any person claiming through you for any direct, indirect, incidental, special, punitive, or consequential damages for your use of the Custom Apps."
     oauth_install_continue: "Continue"
@@ -9191,6 +9196,16 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     edit: Edit
     "yes": 'Yes'
     "no": 'No'
+    year_in_review:
+      title: "Your Year in Review"
+      body: "%{user_name}, here’s a look back into the fantastic year your team has had in support. From all of us here at Freshworks, we hope you enjoy the video. #FreshdeskYearInReview"
+      watch_now: "Watch video"
+      share: "Share with team"
+      sharing: "Sharing..."
+      shared: "Shared with team"
+      dont_show: "Dont Show"
+      watch_video: "Watch Video"
+      share_tooltip: "This is visible to you as you have access to analytics. Share it with everyone on your team."
     qna:
       view_full_report: Dive into the data
       recently_asked_questions: RECENTLY ASKED QUESTIONS
@@ -11177,6 +11192,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     contact_us: "Contact Us"
     whats_new: "What's New"
     user_notifications_header: "Notifications"
+    announcements_notifications_header: "Announcements & Help"
     load_more: "Load More"
   user_notifications:
     header: "Notifications"
@@ -11464,15 +11480,13 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     info:
       follow_flash: "Hey there!<br>You are now following this Team Huddle and will be notified of all new messages in-app and via email."
       unfollow_flash: "See you later 'gator!<br>You will still be notified when a teammate mentions you and groups that you are a part of and when someone replies to your message."
-
   default:
     ticket:
       email:
-        subject: You lost my cat!
-        body: "<p>Dear Customer Relations,</p><br /><p>I recently flew Upper Class from Heathrow to JFK and whilst some bits were great,one bit in particular was really really bad.I flew with my cat* and you froze** it and it died*** which made me sad****.</p><br /><p>* I use the word 'cat' in the sense of 'suitcase'.\n<br />** I use the word 'froze' in the sense of 'lost'.\n<br />*** I use the word 'died' in the sense of 'didn't turn up for 2 days'.\n<br />**** I use the word 'sad' correctly.</p><br /><p>We all lose things. I once went for a pint with the late Keith Floyd and he lost an entire week.Another time I worked out an equation for cold fusion and gave it to my cat on a memory stick,which she lost. Keith Floyd, me, my cat, and you are all only human, so these things happen.What separates humans from super humans is the way they deal with these hiccups.</p><br /><p>I won't bore you with the details. The only question is how can we make it right?</p><br /><p>Yours ever,\n<br />James Dean</p><p><hr></p><p>P.S. This is a sample email that’s been converted into a ticket by Freshdesk.<a onclick='%{onclick}' href='javascript:void(0)'> See how you can start converting email</a> from customers into tickets in your helpdesk.</p>"
-        reply: "<p>Dear Mr James Dean (Like the Actor),</p><br /><p>Thank you for your email detailing your unfortunate events following the delay of your luggage. Please accept my sincerest apologies for this, and for the unexpected inconveniences caused as a result. I do hope that despite this, you had a pleasant trip.</p><br /><p>Thankfully, the following morning, it was me that you spoke to,and I advised you that your cat hadbeen found and was on its way to you. On a serious note though James,I'm happy to give you a Tier Point. I hope you cherish it. Like it's Magic.I have also added the mileage and remaining tier points from your most recentflight with us, which means that you are now a Gold Member (not like the movie).</p><br /><p>Please once again accept my sincerest apologies. This experience is not typical of us, and I hope it has not discouraged you from travelling with us again, as it would certainlybe a pleasure to welcome you back on board.</p><br /><p>Yours sincerely,\n<br />The Lady in Red\n<br />Baggage Services Advisor</p>"
-        
+        subject: Mary Jane shoes - Shipping rates
+        body: "<p>Hello there,</p><br /><p>I’m looking to buy a pair of Mary Jane shoes and I noticed that you have a local store in Aldovia. Could you let me know if the Mary Jane shoes are available in Size 8? I can pick it up from there.</p><br /><p>Thanks,\n<br />Emily.</p>"
+        reply: "<p>Hey Emily,</p><br /><p>Thanks for writing to us!\n<br />I can confirm that our Aldovia store does have the Mary Jane shoes in size 8. I’ve asked them to block a pair for you. Feel free to pick them up anytime :)</p><br /><p>Cheers,\n<br />Rebecca.</p><br /><p><hr></p><p>P.S. This is a sample email that’s been converted into a ticket by Freshdesk. <a href = https://support.freshdesk.com/support/solutions/articles/37541-forward-and-convert-your-support-emails-to-tickets-in-freshdesk target= _blank>See how you can start converting email</a> from customers into tickets in your helpdesk.</p>"        
       feedback_widget:
-        subject: Tiger bread should be called giraffe bread
-        body: "<p>Dear Sainsbury,</p><br /><p>Why is tiger bread called tiger bread? It should be called giraffe bread.</p><br /><p>Love from Lily Robinson age 3½.\n<br /><p><hr></p><p>P.S. This is a sample message that has been sent to you from website page. <a href = https://support.freshdesk.com/support/solutions/articles/37690-getting-feedback-from-your-website-with-the-feedback-widget->See how you can add your own feedback widget</a> on your website or app</p>"
-        reply: "<p>Dear Lily,</p><br /><p>Thanks so much for your letter. I think renaming tiger bread to giraffe bread is a brilliant idea - it looks much more like the blotches on a giraffe than the stripes on a tiger, doesn't it?</p><br /><p>I really liked reading your letter so I thought I would send you a little present. I've included a £3 gift card with this email, if you ask your mum or dad to take you to Sainsbury's you could use it to buy some of your own tiger bread (and maybe if mum and dad say it’s OK, you can get some sweeties too!). Please tell an adult to wait 48 hours before using this card.</p><br /><p>I'm glad you wrote in to us and hope you like spending your gift card. See you in store soon.</p><br /><p>Yours sincerely,\n<br />Chris King (age 28 ⅓)\n<br />Customer Manager</p>"
+        subject: Vintage table lamp - Out of stock?
+        body: "<p>Hello,</p><br /><p>I saw a vintage table lamp on your site last month and I’d bookmarked it to buy it later for a friend. I can’t seem to find it anymore though. Is it out of stock or do you not sell those anymore?</p><br /><p>Thanks,\n<br />Matt.</p><p><hr></p><p>P.S. This is a sample message that has been sent to you from website page. <a href = https://support.freshdesk.com/support/solutions/articles/37690-getting-feedback-from-your-website-with-the-feedback-widget target= _blank>See how you can add your own feedback widget</a> on your website or app</p>"
+        reply: "<p>Hi Matt,</p><br /><p>Thanks for writing in!</p><br /><p>I’m sorry to say those vintage lamps are currently out of stock. I checked with our supplier though and they think it should be available by the end of next month. But if you’d rather not wait that long, I’d love to help you find something else to gift your friend. Let me know what their interests are and I’ll send across a list :)</p><br /><p>Cheers,\n<br />Janet\n<br />Saul’s Emporium Support</p>"

@@ -33,7 +33,10 @@ class Va::RuleHandler
 
   def matches(evaluate_on)
     if evaluate_on.respond_to?(condition.dispatcher_key)
-      evaluate_rule(evaluate_on.send(condition.dispatcher_key))
+      actual_val = evaluate_on.send(condition.dispatcher_key)
+      matched = evaluate_rule(actual_val)
+      Va::Logger::Automation.log "k=#{condition.dispatcher_key}::v=#{value}::o=#{condition.operator}::actual_val=#{actual_val}" unless matched
+      matched
     end
   end
   

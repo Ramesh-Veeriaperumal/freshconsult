@@ -503,7 +503,7 @@ body .fr-overlay {
 
 /* ============= Editor toolbar Styles ==================== */
 
-.solutions {
+.solutions{
    #sticky_redactor_toolbar {
     .redactor_toolbar, .fr-toolbar {
       background: none;
@@ -632,4 +632,25 @@ body .fr-overlay {
   .fr-element.fr-view {
     min-height: 320px;
   }
+
+  .editor-body{
+      .fr-box{
+        border: 0;
+
+        &.fr-fullscreen {
+          top: 35px;
+          padding: 0 20px;
+          background: #fff;
+        } 
+        .fr-element {
+          color: #333;
+          @include portal-text-formatting();
+          @include editor-text-formating();
+        }
+        .fr-toolbar {
+          background: #fff;
+          border: none;
+        }
+      }
+    }
 }

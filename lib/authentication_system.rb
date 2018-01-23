@@ -45,6 +45,7 @@ module AuthenticationSystem
 
     def current_user_session
       return @current_user_session if defined?(@current_user_session)
+      return if api_request? && current_account.freshid_enabled? && (freshid_authorized? == false)
       if is_native_mobile?
         handle_mobile_authentication(request,params)
       else
@@ -56,12 +57,9 @@ module AuthenticationSystem
     end
 
     def handle_mobile_authentication(request,params)
-      http_auth_header = request.headers['HTTP_AUTHORIZATION']
-      return if http_auth_header.nil?
-      basic_auth_match = /Basic (.*)/.match(http_auth_header)
-      if !basic_auth_match.blank? && basic_auth_match.length > 1
-        token_with_x = Base64.decode64(basic_auth_match[1])
-        token = token_with_x.split(":")[0] 
+      user_credentials = decode_auth_credentials
+      if user_credentials.present?
+        token = user_credentials[0] 
         payload = token.split(".")[1] 
         if payload.nil?
           params['k'] = token
@@ -104,13 +102,10 @@ module AuthenticationSystem
     
     def handle_api_key(request, params)
       if params['k'].blank?
-        if SUPPORTED_API_KEY_FORMATS.include?(params['format'])
+        if api_request?
           # Handling the api key authentication.
-          http_auth_header = request.headers['HTTP_AUTHORIZATION']
-          basic_auth_match = /Basic (.*)/.match(http_auth_header)
-          if !basic_auth_match.blank? && basic_auth_match.length > 1
-            api_key_with_x = Base64.decode64(basic_auth_match[1])
-            api_key_split = api_key_with_x.split(":")
+          api_key_split = decode_auth_credentials
+          if api_key_split.present?
             params['k'] = api_key_split[0]
             log_authentication_type(params['k'], params['format']) unless params['k'].blank?
             # Assume identity
@@ -128,8 +123,28 @@ module AuthenticationSystem
       end
     end
 
+    def api_request?
+      SUPPORTED_API_KEY_FORMATS.include?(params['format'])
+    end
+
+    def freshid_authorized?
+      api_key_split = decode_auth_credentials
+      return if api_key_split.nil?
+      return true if !api_key_split[0].include?('@') # Return if API Key auth
+      user = current_account.users.find_by_email(api_key_split[0])
+      return user.valid_freshid_password?(api_key_split[1]) if user.present?
+    end
+
+    def decode_auth_credentials
+      http_auth_header = request.headers['HTTP_AUTHORIZATION']
+      basic_auth_match = http_auth_header.present? ? /Basic (.*)/.match(http_auth_header) : nil
+      return nil if basic_auth_match.blank? || basic_auth_match.length <= 1
+      api_key_with_x = Base64.decode64(basic_auth_match[1])
+      return api_key_with_x.split(":")
+    end
+
     def handle_assume_identity_for_api(assume_agent_email)
-      if SUPPORTED_API_KEY_FORMATS.include?(params['format'])
+      if api_request?
         error_code = "unauthorized"
         unless @current_user_session.blank?
           assume_agent = current_account.user_emails.user_for_email(assume_agent_email)

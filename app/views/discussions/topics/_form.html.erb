@@ -56,15 +56,18 @@
 
 		<div class="controls flow-form">
         <div id="sticky_redactor_toolbar" class="hide sticky_editor_toolbar"></div>
-		    <%= form.text_area  :body_html, 'editor-type' => :forum, :height => "400px", 
-        	:class => "required_redactor", 
-        	:value => !@topic.posts.empty? ? @topic.posts.first.body_html : "",
-        	:id => :topic_forums_description,
-        	:data => {
-          	:"remove-cursor" => true,
-          	:"toolbar-external" => '#sticky_redactor_toolbar',
-          	:"new-editor" => current_account.launched?(:froala_editor_forums)
-        	} %>
+        <div class='editor-body'>
+		   		<%= form.text_area  :body_html, 'editor-type' => :forum, :height => "400px", 
+        		:class => "required_redactor", 
+        		:value => !@topic.posts.empty? ? @topic.posts.first.body_html : "",
+        		:id => :topic_forums_description,
+        		:data => {
+          		:"remove-cursor" => true,
+          		:"toolbar-external" => '#sticky_redactor_toolbar',
+          		:"new-editor" => current_account.launched?(:froala_editor_forums)
+        		} 
+        	%>
+        </div>
 
 				<% if (@topic.new_record? and @topic_ticket) 
 					regular_attachments =  @topic_ticket ? @topic_ticket.attachments : []

@@ -63,6 +63,8 @@ class ApiApplicationController < MetalApiController
 
   before_filter :validate_url_params, only: [:show]
 
+  NAMESPACED_CONTROLLER_REGEX = /pipe\/|channel\/|bot\//
+
   def index
     load_objects
   end
@@ -347,12 +349,12 @@ class ApiApplicationController < MetalApiController
     end
 
     # Using optional parameters for extensibility
-    def render_201_with_location(template_name: "#{controller_path.gsub(/pipe\/|channel\//, '')}/#{action_name}", location_url: "#{nscname}_url", item_id: @item.id)
+    def render_201_with_location(template_name: "#{controller_path.gsub(NAMESPACED_CONTROLLER_REGEX, '')}/#{action_name}", location_url: "#{nscname}_url", item_id: @item.id)
       render template_name, location: send(location_url, item_id), status: 201
     end
 
     def nscname # namespaced controller name
-      controller_path.gsub(/pipe\/|channel\//, '').gsub('/', '_').singularize
+      controller_path.gsub(NAMESPACED_CONTROLLER_REGEX, '').tr('/', '_').singularize
     end
 
     def set_custom_errors(_item = @item)
@@ -655,5 +657,9 @@ class ApiApplicationController < MetalApiController
 
     def request_host
       @request_host ||= request.host
+    end
+
+    def custom_field_error_mappings
+      @custom_field_error_mapping ||= Hash[@name_mapping.map{|k,v| [k, "custom_fields.#{v}"]}] if @name_mapping.present?
     end
 end

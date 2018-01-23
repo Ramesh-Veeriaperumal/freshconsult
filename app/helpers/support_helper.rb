@@ -352,7 +352,7 @@ module SupportHelper
   end
 
   def ticket_field_container form_builder,object_name, field, field_value = "", pl_value_id=nil, html_opts_hash = {}
-    html_opts_hash[:pre_fill_flag] ||= true 
+    html_opts_hash[:pre_fill_flag] = true if html_opts_hash[:pre_fill_flag].nil?
     case field.dom_type
       when "checkbox" then
         required = (field[:required_in_portal] && field[:editable_in_portal])
@@ -375,9 +375,9 @@ module SupportHelper
     required = (field[:required_in_portal] && field[:editable_in_portal])
     element_class = " #{required ? 'required' : '' } control-label #{field[:name]}-label #{"company_label" if field.field_type == "default_company" && @ticket.new_record?}"
     # adding :for attribute for requester(as email) element => to enable accessability
-    if field[:name] == "requester" 
+    if field[:name] == "requester"
       label_tag "#{object_name}_#{field[:name]}", field[:label_in_portal].html_safe, :class => element_class, :for => "#{object_name}_email"
-    else 
+    else
       label_tag "#{object_name}_#{field[:name]}", field[:label_in_portal].html_safe, :class => element_class
     end
   end
@@ -463,9 +463,9 @@ module SupportHelper
       if cache_options[:company_cache_condition]
         company_field = Account.current.ticket_fields.default_company_field.first
         cache_options[:company_container] = ticket_field_container(form_builder, :helpdesk_ticket, company_field, helpdesk_ticket_values(company_field,@params)).html_safe
-      end 
+      end
       requester_field = Account.current.ticket_fields.requester_field.first
-      cache_options[:cc_cache_condition] = current_user.present? && requester_field.portal_cc_field? && ( current_user.company.present? || requester_field.all_cc_in_portal? || current_user.contractor? ) 
+      cache_options[:cc_cache_condition] = current_user.present? && requester_field.portal_cc_field? && ( current_user.company.present? || requester_field.all_cc_in_portal? || current_user.contractor? )
       cache_options[:cc_container] = render_add_cc_field(requester_field, cache_options[:cc_cache_condition]).html_safe if cache_options[:cc_cache_condition]
     end
     cache_options
@@ -606,6 +606,7 @@ module SupportHelper
     output = []
     output << %( <script type="text/javascript"> )
     output << %(    var portal = #{portal_javascript_object}; )
+    output << %(    var attachment_size = #{attachment_size}; )
     output << %( </script> )
     output.join("").html_safe
   end
@@ -725,11 +726,11 @@ module SupportHelper
     output = []
     if comment.survey.present? and Account.current.new_survey_enabled?
       survey = comment.survey.to_liquid
-      output << %(<div class='survey_questions_wrap'>) 
+      output << %(<div class='survey_questions_wrap'>)
         output << custom_survey_default_question(survey)
       output << custom_survey_additional_questions(survey.additional_questions)
         output << %(</div>)
-      if comment.description_text.present? 
+      if comment.description_text.present?
             output << %(<div class="title muted"><b>#{ I18n.t('portal.tickets.comments') }</b></div>)
           end
     end
@@ -756,7 +757,7 @@ module SupportHelper
           output << %(<li>
                       <div class='ques-desc'> #{question_obj['question']} </div>
                       <div class='ques-ans'>
-                        
+
                         <span class='ticket-rating-label'>#{question_obj['rating_text']}</span>
                           <span class="survey-rating #{ question_obj['rating_class'] }"
                             data-class="#{ question_obj['rating_class'] }"></span>
@@ -877,7 +878,7 @@ module SupportHelper
   def language_list portal
     return "" if portal.language_list.blank?
     output = ""
-    output << %(<div class="banner-language-selector pull-right" data-tabs="tabs" 
+    output << %(<div class="banner-language-selector pull-right" data-tabs="tabs"
                 data-toggle='tooltip' data-placement="bottom" title="#{Language.current.name if Language.current.name.length > 10}">)
     output << %(<ul class="language-options" role="tablist">)
     output << %(<li class="dropdown">)

@@ -115,4 +115,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   has_many :linked_applications, :through => :integrated_resources,
            :source => :installed_application
+
+  has_one :bot_ticket, class_name: 'Bot::Ticket', dependent: :destroy
 end

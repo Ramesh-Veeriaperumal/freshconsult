@@ -11,7 +11,7 @@ class Fixtures::DefaultEmailTicket < Fixtures::DefaultTicket
 
     def type
       #REVISIT . Need to change this after ticket constants I18n dependencies are moved to class methods
-      I18n.t('incident')
+      I18n.t('question')
     end
 
     def after_create

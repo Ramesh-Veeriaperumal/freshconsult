@@ -45,13 +45,7 @@ class Helpdesk::QueueDispatcher
     
     def pass_through_biz_rules ticket
       Rails.logger.info "Queued dispatcher for the Account :: #{@current_account.id} ticket :: #{@ticket_id}"
-
-      if @current_account.launched?(:delayed_dispatchr_feature)
-        ticket.send_later(:delayed_rule_check, dispatcher_current_user, ticket.freshdesk_webhook?) 
-      else
-        # This queue includes dispatcher_rules, auto_reply, round_robin.
-        Helpdesk::Dispatcher.enqueue(ticket.id, dispatcher_current_user.try(:id), ticket.freshdesk_webhook?)
-      end
+      Helpdesk::Dispatcher.enqueue(ticket.id, dispatcher_current_user.try(:id), ticket.freshdesk_webhook?)
     end
 
     def dispatcher_current_user

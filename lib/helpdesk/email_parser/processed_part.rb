@@ -168,7 +168,7 @@ class Helpdesk::EmailParser::ProcessedPart
 
     	attachment.original_filename = filename
     	attachment.content_type = part.mime_type
-    	attachment.content_id = part.content_id if part.content_id
+    	attachment.content_id = part.content_id[1..-2] if part.content_id
     	self.attachments << attachment
     rescue => e
 	    raise_parse_error "Error while processing known attachment type part: #{e.message} - #{e.backtrace}"

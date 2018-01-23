@@ -206,7 +206,7 @@ var ManageAgents = ManageAgents || (function($){
 							titleTemplate+
 							'</div>',
 			targetId		: "#manage-agents",
-			title			: name ? name : I18n.t('admin.roles.new'),
+			title			: name ? escapeHtml(name) : I18n.t('admin.roles.new'),
 			width			: "400",
 			templateFooter 	: false,
 			showClose		: true,

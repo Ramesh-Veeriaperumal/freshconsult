@@ -46,9 +46,9 @@ class Va::Action
         return
       end
       @skip_record_action = only_reversible_actions
-      #Rails.logger.debug "INSIDE trigger of Va::Action with act_on : #{act_on.inspect} action_key : #{action_key} value: #{value}"
       @doer = doer
       @triggered_event = triggered_event
+      Va::Logger::Automation.log "action=#{action_key.inspect}, value=#{value.inspect}"
       return send(action_key, act_on) if respond_to?(action_key)
       if act_on.respond_to?("#{action_key}=")
         act_on.send("#{action_key}=", value)
@@ -64,9 +64,9 @@ class Va::Action
           return
         end
       end
-      Rails.logger.debug "Unsupported action key :: #{action_key}"
+      Va::Logger::Automation.log "Unsupported action=#{action_key}"
     rescue Exception => e
-      Rails.logger.debug "For Va::Action #{self} Exception #{e} rescued"
+      Va::Logger::Automation.log "Something is wrong in action=#{self.inspect}::Exception=#{e.message}::#{e.backtrace.join('\n')}"
     end
   end
   

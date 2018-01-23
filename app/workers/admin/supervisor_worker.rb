@@ -17,7 +17,7 @@ module Admin
             conditions = rule.filter_query
             next if conditions.empty?
             negate_conditions = [""]
-            negate_conditions = rule.negation_query(account_negatable_columns) if $redis_others.perform_redis_op("get", "SUPERVISOR_NEGATION")
+            negate_conditions = rule.negation_query(account_negatable_columns)
             logger.info "rule name::::::::::#{rule.name}"
             logger.info "conditions::::::: #{conditions.inspect}"
             logger.info "negate_conditions::::#{negate_conditions.inspect}"
@@ -40,8 +40,8 @@ module Admin
             end
             rule_end_time = Time.now.utc
             rule_total_time = (rule_end_time - rule_start_time )
-            log_format=logging_format(account,tickets.length,rule,rule_total_time)
-            custom_logger.info "#{log_format}" unless custom_logger.nil?  
+            log_format = logging_format(account, tickets, rule, rule_total_time, conditions, negate_conditions, joins)
+            custom_logger.info "#{log_format}" unless custom_logger.nil?
 
           rescue Exception => e
             logger.info e.backtrace.join("\n")
@@ -64,11 +64,14 @@ module Admin
     private
 
       def log_file
-        @log_file_path ||= "#{Rails.root}/log/supervisor.log"      
-      end 
-      
-      def logging_format(account,tickets_count,rule,rule_total_time)
-        "account_id=#{account.id}, account_name=#{account.name}, fullname=#{account.full_domain}, tickets=#{tickets_count}, time_taken=#{rule_total_time}, rule=#{rule.name}, host_name=#{Socket.gethostname} "      
-      end 
+        @log_file_path ||= "#{Rails.root}/log/supervisor.log"
+      end
+
+      def logging_format(account,tickets,rule,rule_total_time, conditions, negate_conditions, joins)
+        tickets_id = tickets.map { |ticket| ticket.display_id }
+        "account_id=#{account.id}, account_name=#{account.name}, fullname=#{account.full_domain}, tickets_count=#{tickets_id.length}, " \
+        "time_taken=#{rule_total_time}, rule_name=#{rule.name}, rule_id=#{rule.id}, host_name=#{Socket.gethostname}, " \
+        "conditions=#{conditions.inspect}, negate_conditons=#{negate_conditions.inspect}, joins=#{joins.inspect}, tickets=#{tickets_id.inspect}"
+      end
   end
 end

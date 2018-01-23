@@ -13,6 +13,8 @@
   <% extension_details = installed[:extension_details] %>
   <% installation_details = installed[:installation_details] %>
   <% is_ni_integration = extension_details['type'] == Marketplace::Constants::EXTENSION_TYPE[:ni] %>
+  <% is_custom_app = extension_details['type'] == Marketplace::Constants::EXTENSION_TYPE[:custom_app] %>
+
   <% url_params = installation_details['version_id'].present? ? { version_id: installation_details['version_id'] } : {} %>
   <li class="app-custom apps-wrapper apps installed-listing" id="ext-<%= is_ni_integration ? extension_details['name'] : installation_details['extension_id'] %>">
     <section class="fa-area clear">
@@ -26,7 +28,7 @@
         </div>
         <div class="desc-box pull-left">
           <div class="plug-data">
-            <a href="" data-url="<%= show_admin_marketplace_extensions_path(installation_details['extension_id']) %>?type=<%=Marketplace::Constants::DEFAULT_EXTENSION_TYPES %><%= unsupported_apps && !is_ni_integration ? '&unsupported=true' : '' %>" class="moreinfo-lnk plug-name show_btn">
+            <a href="" data-url="<%= show_admin_marketplace_extensions_path(installation_details['extension_id']) %>?type=<%=is_custom_app ? Marketplace::Constants::EXTENSION_TYPE[:custom_app] : Marketplace::Constants::DEFAULT_EXTENSION_TYPES %><%= unsupported_apps && !is_ni_integration ? '&unsupported=true' : '' %>" class="moreinfo-lnk plug-name show_btn">
               <%= extension_details['display_name'] %></a> 
             <div class="mkp-prog hide" id="delete_prog_<%= installation_details['installed_extension_id']%>">
               <div class="mkp-prog-spinner"></div>

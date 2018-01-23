@@ -79,7 +79,8 @@
             <input id="collab-attachment-input" class="collab-attachment-input" name="file" type="file">
             <%= font_icon "attachment", { :size => 14 , :class => "collab-attachment-icon collab-action-btn-icon", :id => "collab-attachment-icon"} %>
           </span>
-          <span class="collab-attachment-help-info">( <%= "#{t('attachment_help_info')}" %> )</span>
+          <span class="collab-attachment-help-info">( <%= "#{t('attachment_help_info', 
+            :attachment_size => 15)}" %> )</span>
         </div>
       </form>
     </div>
