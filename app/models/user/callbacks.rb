@@ -7,11 +7,16 @@ class User < ActiveRecord::Base
   before_create :set_company_name, :unless => :helpdesk_agent?
   before_create :decode_name
   before_create :populate_privileges, :if => :helpdesk_agent?
+  before_create :create_freshid_user, if: :freshid_enabled_and_agent?
 
   before_update :populate_privileges, :if => :roles_changed?
   before_update :destroy_user_roles, :delete_freshfone_user, :delete_user_authorizations, :if => :deleted?
 
   before_update :backup_user_changes, :clear_redis_for_agent
+
+  before_update :create_freshid_user, if: :converted_to_agent?
+  before_update :destroy_freshid_user, if: :converted_to_contact?
+  before_update :update_freshid_user, if: [:freshid_enabled_and_agent?, :email_changed?]
 
   after_update  :destroy_scheduled_ticket_exports, :if => :privileges_changed?
 
@@ -21,7 +26,7 @@ class User < ActiveRecord::Base
   before_save :set_language, :unless => :detect_language?
   before_save :set_contact_name, :update_user_related_changes
   before_save :set_customer_privilege, :set_contractor_privilege, :if => :customer?
-  before_save :restrict_domain, :reset_freshid_user, :if => :email_changed?
+  before_save :restrict_domain, :if => :email_changed?
   before_save :sanitize_contact_name, :backup_customer_id
   before_save :set_falcon_ui_preference, :if => :falcon_ui_applicable?
 
@@ -39,9 +44,28 @@ class User < ActiveRecord::Base
   after_commit :deactivate_monitorship, on: :update, :if => :blocked_deleted?
   after_commit :sync_to_export_service, on: :update, :if => [:agent?, :time_zone_updated?]
 
+  after_commit :send_activation_mail_on_create, on: :create, if: :freshid_enabled_and_agent?
+  after_commit :enqueue_activation_email, on: :update, if: [:freshid_enabled_and_agent?, :converted_to_agent_or_email_updated?]
+
+  after_rollback :remove_freshid_user, on: :create, if: :freshid_enabled_and_agent?
+  after_rollback :remove_freshid_user, on: :update, if: [:freshid_enabled_account?, :converted_to_agent?]
+
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher 
+
+  def update_freshid_user
+    destroy_freshid_user # Delete old email user from freshID
+    create_freshid_user # Create new email user in freshID
+  end
+
+  def send_activation_mail_on_create
+    enqueue_activation_email if @all_changes.nil? # new record saved successfully
+  end
+
+  def remove_freshid_user
+    Freshid::User.new({ uuid: freshid_authorization.uid, domain: account.full_domain }).destroy
+  end
 
   def blocked_deleted?
     (deleted_updated? && self.deleted) || (blocked_updated? && self.blocked)
@@ -135,13 +159,6 @@ class User < ActiveRecord::Base
   def set_contact_name 
     if self.name.blank? && email_obtained.present?
       self.name = name_from_email
-    end
-  end
-  
-  def reset_freshid_user
-    if Account.current.present? && Account.current.freshid_enabled?
-      self.name = name_from_email
-      self.phone = self.mobile = nil
     end
   end
   
