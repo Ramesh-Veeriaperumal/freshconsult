@@ -4681,7 +4681,7 @@ en:
     login_details: "Enter the details below"
     agent_login_info: "Are you an agent?"
     customer_signin: "Sign in as customer?"
-    agent_signin: "SignIn here"
+    agent_signin: "Login here"
     helpdesk_login_portal: "Welcome back Agent"
     agent_login_details: "Enter the details below"
     login_options: "...or login using"
