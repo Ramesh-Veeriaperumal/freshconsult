@@ -131,7 +131,7 @@ class Dashboard
   end
 
   def priority_list_from_cache
-    TicketConstants::PRIORITY_NAMES_BY_KEY
+    TicketConstants.priority_list
   end
 
   def ticket_type_list_from_cache

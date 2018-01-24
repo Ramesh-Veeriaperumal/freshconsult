@@ -5695,6 +5695,7 @@ en:
   observer_actions:
     skip_agent_assigned_email_notification: Skip Agent Assigned Email Notification
   ticket:
+    add_bulk_reply: Add Bulk Reply
     errors:
       required_field: cannot be blank.
       request_dropped: Some error occurred and your email was not sent. Please try again.
@@ -6436,6 +6437,7 @@ en:
       hours: Hours
       agent: Agent
       note: Note
+      close: Close
       billalblenonbillable: Billable/Non-Billable
       date: Date
       createdAt: "Created at"
@@ -6617,7 +6619,12 @@ en:
       ticket: Ticket Assignment
       ticket_summary: Ticket Summary
       filter_by: Filter by
-      all_groups: All
+      all: All
+      search: "Search"
+      standard: "Standard"
+      agent: "Agent Snapshot"
+      supervisor: "Supervisor Snapshot"
+      admin: "Admin Snapshot"
       unresolved: Unresolved
       open: Open
       on_hold: On Hold
@@ -9324,6 +9331,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         "on": "On"
         subject: Subject
         desc: Description
+        daily: Daily
+        weekly: Weekly
+        monthly: Monthly
       errors:
         emails_limit: You can add maximum %{num} emails
         invalid_email: Invalid emails
@@ -9497,6 +9507,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       tickets_with: tickets with
       avg_of_all: Avg of all
       tooltip:
+        avg_per: Average per
         avg_of_all: 'Avg of all %{day}'
         avg_tickets: 'Average tickets %{metric} : %{value}'
         tickets_with_agent_responses: '%{ticket_count} tickets with %{count} agent responses'
