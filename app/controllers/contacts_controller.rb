@@ -199,7 +199,6 @@ class ContactsController < ApplicationController
   end
 
   def view_conversations
-    @user = nil # reset the user object.
     @user = current_account.all_users.find(params[:id])
     types = ["all", "tickets", "forums", "archived_tickets"]
     conversation_type = types.include?(params[:type]) ? params[:type] : types[0]
