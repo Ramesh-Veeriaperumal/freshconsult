@@ -157,7 +157,7 @@
 					
 					if current_account.features_included?(:archive_tickets) 
 						list << [ :divider ]
-						list << [ t('contacts.conversations.archive_tickets'), '#conv_archive_tickets', false, {:id => 'conv_archive_tickets-tab', :'data-url' => view_conversations_contact_path(@user, :type => "achived_tickets"), :'data-hash-url' => false } ]
+						list << [ t('contacts.conversations.archive_tickets'), '#conv_archive_tickets', false, {:id => 'conv_archive_tickets-tab', :'data-url' => view_conversations_contact_path(@user, :type => "archived_tickets"), :'data-hash-url' => false } ]
 					end
 
 					options = {'data-toggle' => 'tab', 'class' => 'item', 'ul_class' => 'tick'} %>
