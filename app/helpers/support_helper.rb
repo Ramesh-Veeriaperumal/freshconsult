@@ -352,7 +352,7 @@ module SupportHelper
   end
 
   def ticket_field_container form_builder,object_name, field, field_value = "", pl_value_id=nil, html_opts_hash = {}
-    html_opts_hash[:pre_fill_flag] ||= true
+    html_opts_hash[:pre_fill_flag] = true if html_opts_hash[:pre_fill_flag].nil?
     case field.dom_type
       when "checkbox" then
         required = (field[:required_in_portal] && field[:editable_in_portal])

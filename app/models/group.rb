@@ -13,7 +13,7 @@ class Group < ActiveRecord::Base
 
   TICKET_ASSIGN_TYPE = {:default => 0, :round_robin => 1, :skill_based => 2} #move other constants after merge - hari
 
-  concerned_with :round_robin_methods, :skill_based_round_robin
+  concerned_with :round_robin_methods, :skill_based_round_robin, :presenter
   
   before_save :reset_toggle_availability, :create_model_changes
   before_destroy :backup_user_ids

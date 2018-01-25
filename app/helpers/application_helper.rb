@@ -157,6 +157,17 @@ module ApplicationHelper
     @show_flash = [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "alert #{type}") if flash[type] }.to_s.html_safe
   end
 
+  def ember_admin_flash
+    admin_flash = []
+
+    [[:notice, "success"], [:warning, "warning"], [:error, "danger"]].each {|flash_obj|
+      type = flash_obj[0]
+      admin_flash << { "type" => flash_obj[1], "message" => flash[type]} if flash[type]
+    }
+    
+    admin_flash
+  end
+
   def show_admin_flash
     [:notice, :warning, :error].collect {|type| content_tag('div', ("<a class='close' data-dismiss='alert'>×</a>" + flash[type]).html_safe, :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }.to_s.html_safe
   end

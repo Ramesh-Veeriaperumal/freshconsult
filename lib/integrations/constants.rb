@@ -46,7 +46,8 @@ module Integrations::Constants
     :office365 => "office365",
     :parent_child_tickets => "parent_child_tickets",
     :link_tickets => "link_tickets",
-    :shared_ownership => "shared_ownership"
+    :shared_ownership => "shared_ownership",
+    :microsoft_teams => "microsoft_teams"
   }
 
   DISPLAY_IN_PAGES = { 'ticket_show' => 2, 'contact_show' => 1, 'company_show' => 0, 'time_sheet_show' => 3, 'editor_show' => 4 }.freeze
@@ -112,7 +113,8 @@ module Integrations::Constants
     'outlook_contacts' => 'outlook_contacts',
     'salesforce_v2' => 'salesforce_v2',
     'facebook' => '',
-    'dynamics_v2' => 'dynamics_v2'
+    'dynamics_v2' => 'dynamics_v2',
+    'microsoft_teams' => 'microsoft_teams'
   }.freeze
 
   EXCLUDE_FROM_APP_CONFIGS_HASH = [:password, :auth_key, :api_key, :app_key, :oauth_token, :refresh_token, :element_token, :auth_token, :session_id, :secret, :cti_ctd_api].freeze
@@ -134,4 +136,9 @@ module Integrations::Constants
   }.freeze
 
   ATTACHMENT_APPS = [APP_NAMES[:dropbox],APP_NAMES[:box],APP_NAMES[:onedrive]].freeze
+
+  # Apps that have auth_url and need to set parent href in integrations page.
+  ONCLICK_STRATEGY_AUTH_APPS = %w(slack_v2 microsoft_teams).freeze
+
+  OAUTH_STRATEGIES_TO_SKIP = %w(github salesforce shopify slack infusionsoft google_oauth2 google_contacts google_gadget_oauth2 outlook_contacts salesforce_v2 microsoft_teams).freeze
 end

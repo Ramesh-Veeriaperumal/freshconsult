@@ -141,9 +141,12 @@
 								<%= render :partial => "/notification/user_notification" %>
 						</div>
 					<% end %>
-					 <% unless Rails.env.development? %>
+
+
+			 <% unless Rails.env.development? %>
 						<% if current_account.announcements_tab_enabled? %>
-							<a href="/announcements" id="announcements_notify_header" data-original-title="<%= t('notification.announcements_notifications_header') %>" data-placement="below" class="header-notification-wrapper tooltip announcements-notification-link">
+							<a href="/announcements" id="announcements_notify_header" data-original-title="<%= t('notification.explore_notifications_header') %>" data-placement="below" class="header-notification-wrapper tooltip announcements-notification-link">
+
 								<%= font_icon "help", { :size => 30 } %>
 							</a>
 	          			<% else %>
@@ -152,6 +155,7 @@
 					    	</div>
 						<% end %>	
 					<% end %>		    
+
 			    <% unless freshfone_trial? || freshfone_trial_expired? %>
 				    <div class="ff_presence_options hide" id="FreshfonePresenceOptions">
 				    	<div class="ff_available"> 
