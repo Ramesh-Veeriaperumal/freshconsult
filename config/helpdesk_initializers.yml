@@ -106,7 +106,6 @@ helpdesk:
     - freshid
     - freshquery
     - smart_filter_config
-    - freshquery
     - heap_analytics
     - bot
     - central
