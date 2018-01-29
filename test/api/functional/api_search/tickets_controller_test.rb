@@ -24,6 +24,8 @@ module ApiSearch
       end
       create_custom_field_dropdown('test_custom_dropdown', CHOICES)
       create_custom_field('priority', 'number', '06')
+      create_custom_field('order_number', 'number', '07')
+      create_custom_field('and_number', 'number', '08')
       create_custom_field('status', 'text', '14')
       construct_sections('type')
       clear_es(@account.id)
@@ -469,16 +471,17 @@ module ApiSearch
 
     # Null Checks
     def test_custom_dropdown_null
-      tickets = @account.tickets.select { |x| x.test_custom_dropdown_1.nil? }
-      get :index, controller_params(query: '"test_custom_dropdown: null"')
+      choice = CHOICES[rand(3)]
+      tickets = @account.tickets.select { |x| x.test_custom_dropdown_1.nil? || x.test_custom_dropdown_1 == choice }
+      get :index, controller_params(query: '"test_custom_dropdown: null or test_custom_dropdown: \''+ choice +'\'"')
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
     end
 
     def test_custom_number_null
-      tickets = @account.tickets.select { |x| x.test_custom_number_1.nil? }
-      get :index, controller_params(query: '"test_custom_number: null"')
+      tickets = @account.tickets.select { |x| x.test_custom_number_1.nil? || x.test_custom_number_1 == 1}
+      get :index, controller_params(query: '"test_custom_number: null or test_custom_number:1 "')
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -667,6 +670,27 @@ module ApiSearch
     def test_tickets_priority_status_valid_range
       tickets = @account.tickets.select { |x| [1, 2, 3].include?(x.priority) and [3,4,5,6].include?(x.status) }
       get :index, controller_params(query: '"(priority :> 1 and priority :< 3) and (status :> 3 and status :< 6)"')
+      assert_response 200
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
+      match_json(results: pattern, total: tickets.size)
+    end
+
+    # Space testing
+    def test_tickets_field_name_begin_with_or
+      get :index, controller_params(query: '"order_number:123"')
+      assert_response 200
+    end
+
+    def test_tickets_field_name_begin_with_and
+      get :index, controller_params(query: '"order_number:123"')
+      assert_response 200
+    end
+
+    def test_tickets_space_testing
+      d1 = 6.days.until.to_date.iso8601
+      d2 = 2.days.until.to_date.iso8601
+      tickets = @account.tickets.select { |x| [1, 2, 3, 4].include?(x.priority) and ( x.created_at.to_date.iso8601 >= d1 and x.created_at.to_date.iso8601 <= d2 ) }
+      get :index, controller_params(query: '"( priority :1 or priority  :2 or priority  : 3 or priority  :  4    ) and (created_at    :>  \'' + d1 + '\' and created_at :<  \'' + d2 + '\')"')
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
