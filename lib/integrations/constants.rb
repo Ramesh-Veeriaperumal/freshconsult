@@ -11,7 +11,7 @@ module Integrations::Constants
     :logmein => "logmein",
     :batchbook => "batchbook",
     :highrise => "highrise",
-    :mailchimp => "MailChimp",
+    :mailchimp => "mailchimp",
     :constantcontact => "ConstantContact",
     :icontact => "iContact",
     :campaignmonitor => "CampaignMonitor",
