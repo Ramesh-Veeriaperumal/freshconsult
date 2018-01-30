@@ -7,8 +7,8 @@ class Ember::EmailConfigsControllerTest < ActionController::TestCase
   end
 
   def test_index
-    maxCount = ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page]
-    10.times { create_email_config(active: 'false') }
+    maxCount = ApiConstants::EMAIL_CONFIG_PER_PAGE
+    20.times { create_email_config(active: 'false') }
     maxCount.times { create_email_config(active: 'true') }
     get :index, controller_params(version: 'private')
     assert_response 200
