@@ -149,7 +149,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :api_ticket_field, :only => [:index]
     resource :"api_freshfone/call_history", :only => [:export, :export_status]
     resource :"announcement", :only => [:index, :account_login_url]
-
+    resource :"email_preview"
   end
 
   export_tickets do
