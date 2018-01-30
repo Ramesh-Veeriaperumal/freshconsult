@@ -16,9 +16,14 @@ module Tickets
         account = Account.current
         User.current = account.users.find_by_id args[:current_user_id]
         @note = account.notes.find_by_id args[:id]
-        return if @note.blank?
+        Va::Logger::Automation.set_thread_variables(account.id, @note.try(:notable_id), args[:current_user_id])
+        if @note.blank?
+          Va::Logger::Automation.log "Observer not triggered, since the note is not present::Info=#{args.inspect}"
+          return
+        end
         @note.save_response_time if should_save_response_time?
       rescue => e
+        Va::Logger::Automation.log "Something is wrong in adding/deleting note::Info=#{args.inspect}::Exception=#{e.message}::#{e.backtrace.join('\n')}"
         puts e.inspect, args.inspect
         NewRelic::Agent.notice_error(e, {:args => args})
         raise
@@ -26,6 +31,7 @@ module Tickets
         return if @note.blank?
         inline = args[:send_and_set] ? true : false
         @note.trigger_observer(args[:model_changes], inline) unless args[:freshdesk_webhook]
+        Va::Logger::Automation.unset_thread_variables
       end
     end
 

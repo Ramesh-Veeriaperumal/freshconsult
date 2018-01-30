@@ -24,7 +24,7 @@ class User < ActiveRecord::Base
   include PasswordPolicies::UserHelpers
   include Redis::FreshidPasswordRedis
 
-  concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq, :esv2_methods
+  concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq, :esv2_methods, :presenter
   include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams
 
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
@@ -481,7 +481,7 @@ class User < ActiveRecord::Base
     end
   end
 
-  def signup!(params , portal=nil, send_activation=true)
+  def build_user_attributes(params)
     normalize_params(params[:user]) # hack to facilitate contact_fields & deprecate customer
     params[:user][:tag_names] = params[:user][:tags] unless params[:user].include?(:tag_names)
     self.name = params[:user][:name]
@@ -516,21 +516,25 @@ class User < ActiveRecord::Base
         user_skill["rank"] }.map { |user_skill| 
           user_skill["skill_id"] }
     end
+  end
 
+  def signup!(params, portal = nil, send_activation = true, build_user_attributes = true)
+    build_user_attributes(params) if build_user_attributes
     return false unless save_without_session_maintenance
-    create_freshid_user
-
-    portal.make_current if portal
-    if (!deleted and !email.blank? and send_activation)
-      if self.language.nil?
-        args = [ portal,false, params[:email_config]]
-        Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args),
-          nil, 5.minutes.from_now)
-      else
-        deliver_activation_instructions!(portal,false, params[:email_config])
-      end
-    end
+    enqueue_activation_email(params[:email_config], portal) if !deleted and !email.blank? and send_activation
     true
+  end
+
+  def enqueue_activation_email(email_config = nil, portal = nil)
+    portal.make_current if portal
+    if self.language.nil?
+      email_type = active_freshid_user? ? :deliver_agent_invitation! : :deliver_activation_instructions!
+      args = active_freshid_user? ? [portal] : [ portal, false, email_config]
+      Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, email_type, args),
+        nil, 5.minutes.from_now)
+    else
+      active_freshid_user? ? deliver_agent_invitation!(portal) : deliver_activation_instructions!(portal, false, email_config)
+    end
   end
 
   # Used by API V2
@@ -913,7 +917,7 @@ class User < ActiveRecord::Base
       subscriptions.destroy_all
       self.cti_phone = nil
       agent.destroy
-      destroy_freshid_user
+      deliver_password_reset_instructions!(nil) if freshid_enabled_account?
       freshfone_user.destroy if freshfone_user
       email_notification_agents.destroy_all
 
@@ -946,9 +950,7 @@ class User < ActiveRecord::Base
       self.set_password_expiry({:password_expiry_date =>
           (Time.now.utc + expiry_period).to_s}, false)
       reset_persistence_token
-      success = save
-      success ? create_freshid_user : (raise ActiveRecord::Rollback)
-      success
+      save ? true : (raise ActiveRecord::Rollback)
     end
   end
 
@@ -1085,22 +1087,22 @@ class User < ActiveRecord::Base
 
   def create_freshid_user
     return unless freshid_enabled_and_agent?
+    reset_freshid_user if email_changed?
     freshid_user = Freshid::User.create({ first_name: name, email: email, phone: phone, mobile: mobile, domain: account.full_domain })
     if freshid_user.present?
-      self.create_freshid_authorization(uid: freshid_user.uuid)
-      update_user_with_freshid_attributes freshid_user
-      freshid_user.active? ? deliver_agent_invitation! : deliver_activation_instructions!(nil, false)
+      self.build_freshid_authorization(uid: freshid_user.uuid)
+      assign_freshid_attributes_to_user freshid_user
     end
   end
 
   def destroy_freshid_user
-    if account.freshid_enabled? && freshid_authorization.present?
-      Freshid::User.new({ uuid: freshid_authorization.uid, domain: account.full_domain }).destroy
+    if freshid_enabled_account? && freshid_authorization.present?
+      remove_freshid_user
       freshid_authorization.destroy
-      reset_agent_password
+      self.password_salt = self.crypted_password = nil
     end
   end
-  
+
   def valid_freshid_password?(incoming_password)
     password_available = password_flag_exists?(email) || false
     valid = password_available && valid_password?(incoming_password)
@@ -1113,7 +1115,7 @@ class User < ActiveRecord::Base
     end
     valid
   end
-  
+
   def reset_tokens!
     reset_persistence_token!
     reset_perishable_token!
@@ -1122,37 +1124,46 @@ class User < ActiveRecord::Base
 
   private
 
+    def freshid_enabled_account?
+      account.freshid_enabled?
+    end
+
     def freshid_enabled_and_agent?
-      agent? && account.freshid_enabled?
+      agent? && freshid_enabled_account?
     end
 
     def freshid_disabled_and_customer?
       !freshid_enabled_and_agent?
     end
     
+    def active_freshid_user?
+      freshid_enabled_account? && active?
+    end
+
     def valid_freshid_login?(incoming_password)
       freshid_login = Freshid::Login.new({ email: email, password: incoming_password })
       freshid_login.authenticate_user
       freshid_login.valid_credentials?
     end
-    
+
     def update_with_fid_password(fid_password)
       self.password = fid_password
       User.where(id: id).update_all(crypted_password: self.crypted_password, password_salt: self.password_salt)
       self.reload
       set_password_flag(email)
     end
-    
-    def update_user_with_freshid_attributes freshid_user
-      user_params = {}
-      freshid_full_name = [freshid_user.first_name, freshid_user.last_name].join(' ')
-      user_params[:name] = freshid_full_name if self.name != freshid_full_name
-      user_params[:phone] = freshid_user.phone if self.phone != freshid_user.phone
-      user_params[:mobile] = freshid_user.mobile if self.mobile != freshid_user.mobile
-      user_params[:active] = freshid_user.active? if self.active != freshid_user.active?
-      self.update_attributes!(user_params) if user_params.present?
-    rescue Exception => e
-      Rails.logger.error "FRESHID Error updating user with FreshID attributes -- #{e.inspect}"
+
+    def assign_freshid_attributes_to_user freshid_user
+      self.name = [freshid_user.first_name, freshid_user.last_name].join(' ')
+      self.phone = freshid_user.phone
+      self.mobile = freshid_user.mobile
+      self.active = self.primary_email.verified = freshid_user.active?
+      self.password_salt = self.crypted_password = nil
+    end
+
+    def reset_freshid_user
+      self.name = name_from_email
+      self.phone = self.mobile = nil
     end
 
     def name_part(part)
@@ -1179,8 +1190,20 @@ class User < ActiveRecord::Base
       @all_changes.has_key?(:helpdesk_agent)
     end
 
+    def converted_to_agent?
+      helpdesk_agent_updated? and agent?
+    end
+
+    def converted_to_contact?
+      helpdesk_agent_updated? and !agent?
+    end
+
     def email_updated?
        @all_changes.has_key?(:email)
+    end
+    
+    def converted_to_agent_or_email_updated?
+      converted_to_agent? || email_updated?
     end
 
     def deleted_updated?

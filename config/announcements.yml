@@ -11,3 +11,7 @@ staging:
 production:
  account_url: 
  shared_secret: 
+
+testing:
+ account_url: 
+ shared_secret:   

@@ -5,13 +5,20 @@ module Va::Observer::Util
   include Redis::RedisKeys
   include Redis::OthersRedis  
 
+  def self.included(base)
+    base.class_eval do
+      after_save :set_automation_thread_variables
+    end
+  end
+
   def trigger_observer model_changes, inline = false, system_event = false
     @model_changes = model_changes.symbolize_keys unless model_changes.nil?
     @system_event = system_event
     if user_present?
       filter_observer_events(true, inline)
     else
-      Rails.logger.debug "@model_changes #{@model_changes.inspect}, User.current #{User.current}, survey_result? #{survey_result?}, system_event? #{system_event?}, zendesk_import? #{zendesk_import?}, freshdesk_webhook? #{freshdesk_webhook?}, sent_for_enrichment? #{sent_for_enrichment?}"
+      Va::Logger::Automation.log "user_present=false"
+      Va::Logger::Automation.log "@model_changes=#{@model_changes.inspect}, current_user_present=#{User.current.present?}, survey_result?=#{survey_result?}, system_event?=#{system_event?}, zendesk_import?=#{zendesk_import?}, freshdesk_webhook?=#{freshdesk_webhook?}, sent_for_enrichment?=#{sent_for_enrichment?}"
     end
   end
 
@@ -20,13 +27,15 @@ module Va::Observer::Util
     def user_present?
       observer_condition = @model_changes && (User.current || survey_result? || system_event?) &&
             !zendesk_import? && !freshdesk_webhook? && !sent_for_enrichment?
-      Rails.logger.debug "user_present? :: ID=#{self.id} - Class=#{self.class} :: Cond=#{observer_condition}"
       return observer_condition
     end
 
     def filter_observer_events(queue_events=true, inline=false)
       observer_changes = @model_changes.inject({}) do |filtered, (change_key, change_value)| 
                               filter_event filtered, change_key, change_value  end
+      Va::Logger::Automation.log "Triggered object=#{self.class}::id=#{self.id}"
+      Va::Logger::Automation.log "Observer changes not present::model_changes=#{@model_changes.inspect}" if observer_changes.blank?
+      Va::Logger::Automation.log "Skipping observer queue_events=true" if !queue_events
       return observer_changes unless queue_events
       if observer_changes.present?
         system_event? ? send_system_events(observer_changes) : send_events(observer_changes, inline)
@@ -54,10 +63,9 @@ module Va::Observer::Util
       observer_changes.merge! ticket_event observer_changes
       doer = User.current
       doer_id = (self.class == Helpdesk::Ticket) ? doer.id : self.send(FETCH_DOER_ID[self.class.name])
-      evaluate_on_id = self.send FETCH_EVALUATE_ON_ID[self.class.name]
       args = {
         :doer_id => doer_id,
-        :ticket_id => evaluate_on_id,
+        :ticket_id => fetch_ticket_id,
         :current_events => observer_changes,
         :enqueued_class => self.class.name
       }
@@ -67,10 +75,13 @@ module Va::Observer::Util
         args[:sbrr_state_attributes] = sbrr_state_attributes if Account.current.skill_based_round_robin_enabled?
       end
 
+      Va::Logger::Automation.log "Triggering Observer::Info=#{args.inspect}"
+
       if inline
         User.run_without_current_user { Tickets::ObserverWorker.new.perform(args) }
       elsif self.class == Helpdesk::Ticket and self.schedule_observer
         # skipping observer for send and set ticket operation & bulk ticket actions for skill
+        Va::Logger::Automation.log "Skipping observer schedule_observer=true"
         self.observer_args = args
       else
         Tickets::ObserverWorker.perform_async(args)
@@ -78,9 +89,8 @@ module Va::Observer::Util
     end
 
     def send_system_events observer_changes
-      evaluate_on_id = self.send FETCH_EVALUATE_ON_ID[self.class.name]
-      args = { :ticket_id => evaluate_on_id, :system_event => true, :current_events => observer_changes }
-
+      args = { ticket_id: fetch_ticket_id, system_event: true, current_events: observer_changes }
+      Va::Logger::Automation.log "Triggering Observer::Info=#{args.inspect}"
       Tickets::ObserverWorker.perform_async(args)
     end
 
@@ -100,6 +110,14 @@ module Va::Observer::Util
 
     def system_event?
       defined?(@system_event) ? @system_event : false
+    end
+
+    def fetch_ticket_id
+      @evaluate_on_id ||= self.send FETCH_EVALUATE_ON_ID[self.class.name]
+    end
+
+    def set_automation_thread_variables
+      Va::Logger::Automation.set_thread_variables(Account.current.id, fetch_ticket_id, User.current.try(:id))
     end
 
 end

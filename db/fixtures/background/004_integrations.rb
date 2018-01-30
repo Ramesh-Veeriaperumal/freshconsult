@@ -1152,4 +1152,18 @@ if Integrations::Application.count == 0
     }
     s.application_type = "shared_ownership"
   end
+
+  microsoft_teams =  Integrations::Application.seed(:name) do |s|
+    s.name = "microsoft_teams"
+    s.display_name = "integrations.microsoft_teams.label"
+    s.description = "integrations.microsoft_teams.desc"
+    s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
+    s.listing_order = 51
+    s.options = {:direct_install => true,
+                 :auth_url => "/integrations/teams/oauth",
+                 :after_create => {:method => "add_teams", :clazz => "IntegrationServices::Services::MicrosoftTeamsService"},
+                 :after_destroy => {:method => "remove_teams", :clazz => "IntegrationServices::Services::MicrosoftTeamsService"}
+                }
+    s.application_type = "microsoft_teams"
+  end
 end

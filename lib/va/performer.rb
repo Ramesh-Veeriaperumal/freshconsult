@@ -21,8 +21,9 @@ class Va::Performer
   end
 
   def matches? doer, ticket
-    Rails.logger.debug "performer_matches :: T=#{ticket.id} :: D=#{doer.try(:id)}"
+    Va::Logger::Automation.log "performer type=#{type}::AG=#{ticket.responder_id.inspect}::RQ=#{ticket.requester_id.inspect}"
     return false unless check_type doer, ticket
+    Va::Logger::Automation.log "Agent list in rule=#{members.inspect}"
     members.nil? ? true : (check_members doer, ticket)
   end
 
