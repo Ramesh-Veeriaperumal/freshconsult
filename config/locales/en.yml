@@ -8291,6 +8291,10 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       message:
         not_installed: "Looks like you have not installed the app in Freshdesk."
         action_queued: "Your request has been received and you shall get a notification on this channel once the ticket is created."
+    google_hangout_chat:
+      label: "Google Hangout Chat"
+      desc: "Receive notification for Freshdesk ticket and note updates."
+      success: "App installed successfully. Please click <a href='https://chat.google.com/add/botdm' target='_blank' >here</a> to start talking to the Freshdesk bot"
     highrise:
       label: "Highrise"
       helptext: "<h4>Highrise Integration</h4><p><br>Enter your domain and API key to display contact information from Highrise in Freshdesk. The widget will show up in the Contacts and Tickets pages once you are done. <br><br>The Name, Title, Company Name, Contact Address, Phone Number &amp; Mobile Number fields from Highrise CRM will be gathered and displayed.<br><br>Search through contacts on Highrise using the email address. Multiple search results will be displayed as a list.</p>"
