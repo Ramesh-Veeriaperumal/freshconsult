@@ -573,6 +573,7 @@ class ApiApplicationController < MetalApiController
       
       User.current = api_current_user
       Thread.current[:message_uuid] = request.try(:uuid).to_a
+      Rails.logger.info "Locale:: #{I18n.locale}, User:: #{User.current.try(:id)}, User lang:: #{User.current.try(:language)}, Account lang:: #{Account.current.language}"
     rescue ActiveRecord::RecordNotFound, ShardNotFound
       Rails.logger.error("API V2 request for invalid account. Host: #{request.host}")
       head 404
