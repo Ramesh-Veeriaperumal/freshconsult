@@ -23,4 +23,6 @@ class Company < ActiveRecord::Base
 
   accepts_nested_attributes_for :company_domains, :allow_destroy => true
 
+  delegate :string_cc01, :string_cc02, :string_cc03, :datetime_cc01, :to => :company_field_data
+
 end

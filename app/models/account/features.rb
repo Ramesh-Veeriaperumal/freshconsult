@@ -15,7 +15,7 @@ class Account < ActiveRecord::Base
       :auto_refresh, :branding, :advanced_dkim, :basic_dkim, :shared_ownership_toggle, :unique_contact_identifier_toggle,
       :system_observer_events, :unique_contact_identifier, :ticket_activity_export, :caching, :private_inline, :collaboration,
       :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :user_notifications, :falcon,
-      :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields, :support_bot
+      :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields, :support_bot, :tam_default_fields
     ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -225,5 +225,9 @@ class Account < ActiveRecord::Base
     hash_set = Hash[COMBINED_VERSION_ENTITY_KEYS.collect { |key| ["#{key}_LIST", Time.now.utc.to_i] }]
     set_others_redis_hash(version_key, hash_set)
     self.add_feature(:falcon)
+  end
+
+  def tam_default_company_fields_enabled?
+    Account.current.tam_default_fields_enabled? &&  redis_key_exists?(TAM_FIELDS_ENABLED)
   end
 end

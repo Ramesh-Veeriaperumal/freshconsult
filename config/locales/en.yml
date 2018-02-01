@@ -6215,6 +6215,10 @@ en:
     info12: "eg: mycompany1.com, mycompany2.com"
     add_company: "Add company information"
     load_company: "Loading company details"
+    health_score: "Health score"
+    account_tier: "Account tier"
+    renewal_date: "Renewal date"
+    industry: "Industry"
     errors:
       required_field: cannot be blank
       custom_text : is not valid
@@ -6222,6 +6226,7 @@ en:
       custom_phone_number : is not a valid phone number
       custom_url : is not a valid URL
       custom_date : is not a valid date
+      default_dropdown: should only contain one of the dropdown options
     requester_not_associated: "This company is no longer associated to this requester"
   import_zendesk_summary_info: Zendesk data has been successfully imported.
   one: 1 Hour
@@ -11514,6 +11519,75 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     info:
       follow_flash: "Hey there!<br>You are now following this Team Huddle and will be notified of all new messages in-app and via email."
       unfollow_flash: "See you later 'gator!<br>You will still be notified when a teammate mentions you and groups that you are a part of and when someone replies to your message."
+  tam_fields:
+    health_score:
+      default_choice0: "At risk"
+      default_choice1: "Doing okay"
+      default_choice2: "Happy"
+    account_tier:
+      default_choice0: "Basic"
+      default_choice1: "Premium"
+      default_choice2: "Enterprise"
+    industry:
+      default_choice0: "Automotive"
+      default_choice1: "Consumer Durables & Apparel"
+      default_choice2: "Diversified Consumer Services"
+      default_choice3: "Hotels, Restaurants & Leisure"
+      default_choice4: "Consumer Goods"
+      default_choice5: "Household Durables"
+      default_choice6: "Leisure Products"
+      default_choice7: "Textiles, Apparel & Luxury Goods"
+      default_choice8: "Education Services"
+      default_choice9: "Family Services"
+      default_choice10: "Specialized Consumer Services"
+      default_choice11: "Media"
+      default_choice12: "Distributors"
+      default_choice13: "Specialty Retail"
+      default_choice14: "Beverages"
+      default_choice15: "Food Products"
+      default_choice16: "Food & Staples Retailing"
+      default_choice17: "Personal Products"
+      default_choice18: "Tobacco"
+      default_choice19: "Gas Utilities"
+      default_choice20: "Banks"
+      default_choice21: "Capital Markets"
+      default_choice22: "Diversified Financial Services"
+      default_choice23: "Insurance"
+      default_choice24: "Real Estate"
+      default_choice25: "Health Care Equipment & Supplies"
+      default_choice26: "Health Care Providers & Services"
+      default_choice27: "Biotechnology"
+      default_choice28: "Pharmaceuticals"
+      default_choice29: "Professional Services"
+      default_choice30: "Aerospace & Defense"
+      default_choice31: "Air Freight & Logistics"
+      default_choice32: "Airlines"
+      default_choice33: "Commercial Services & Supplies"
+      default_choice34: "Construction & Engineering"
+      default_choice35: "Electrical Equipment"
+      default_choice36: "Industrial Conglomerates"
+      default_choice37: "Machinery"
+      default_choice38: "Marine"
+      default_choice39: "Road & Rail"
+      default_choice40: "Trading Companies & Distributors"
+      default_choice41: "Transportation"
+      default_choice42: "Internet Software & Services"
+      default_choice43: "IT Services"
+      default_choice44: "Software"
+      default_choice45: "Communications Equipment"
+      default_choice46: "Electronic Equipment, Instruments & Components"
+      default_choice47: "Technology Hardware, Storage & Peripherals"
+      default_choice48: "Building Materials"
+      default_choice49: "Chemicals"
+      default_choice50: "Containers & Packaging"
+      default_choice51: "Metals & Mining"
+      default_choice52: "Paper & Forest Products"
+      default_choice53: "Diversified Telecommunication Services"
+      default_choice54: "Wireless Telecommunication Services"
+      default_choice55: "Renewable Electricity"
+      default_choice56: "Electric Utilities"
+      default_choice57: "Utilities"
+      default_choice58: "Other"
   default:
     ticket:
       email:
