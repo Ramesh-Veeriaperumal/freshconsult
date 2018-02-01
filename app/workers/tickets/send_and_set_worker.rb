@@ -9,12 +9,16 @@ class Tickets::SendAndSetWorker < BaseWorker
 
   def perform args
     args.symbolize_keys!
+    args[:ticket_changes].try(:symbolize_keys!)
     @account = Account.current
+    Va::Logger::Automation.set_thread_variables(@account.id, args[:ticket_changes].try(:[], :ticket_id), args[:ticket_changes].try(:[], :doer_id))
+    Va::Logger::Automation.log "Send and Set Worker::Info=#{args.inspect} "
     fire_ticket_observer(args)
     fire_note_observer(args)
     fire_notifications
-    puts "Send and Set Observer run for Account id:: #{Account.current.id}, params: #{args} "
     raise SendSetObserverError if @errors.present?
+  ensure
+    Va::Logger::Automation.unset_thread_variables
   end
 
   def fire_ticket_observer(args) 
@@ -25,7 +29,7 @@ class Tickets::SendAndSetWorker < BaseWorker
     end
   rescue => e
     @errors = true
-    puts "Something is wrong in Send and Set Observer:fire_ticket_observer : Account id:: #{Account.current.id}, #{e.message}"
+    Va::Logger::Automation.log "Something is wrong in send and set as scenario::fire_ticket_observer::Info::#{args.inspect}::Exception=#{e.message}::#{e.backtrace.join('\n')}"
     NewRelic::Agent.notice_error(e, {:custom_params => {:args => args }})    
   end
 
@@ -33,7 +37,7 @@ class Tickets::SendAndSetWorker < BaseWorker
     Tickets::UpdateTicketStatesWorker.new.perform(args[:note_changes])
   rescue => e
     @errors = true
-    puts "Something is wrong in Send and Set Observer:fire_note_observer : Account id:: #{Account.current.id}, #{e.message}"
+    Va::Logger::Automation.log "Something is wrong in send and set as scenario::fire_note_observer::Info::#{args.inspect}::Exception=#{e.message}::#{e.backtrace.join('\n')}"
     NewRelic::Agent.notice_error(e, {:custom_params => {:args => args }})
   end
 
@@ -49,6 +53,7 @@ class Tickets::SendAndSetWorker < BaseWorker
     end
   rescue => e
     @errors = true
+    Va::Logger::Automation.log "Something is wrong in send and set as scenario::fire_notifications::Info::#{args.inspect}::Exception=#{e.message}::#{e.backtrace.join('\n')}"
     puts "Something is wrong in Send and Set Observer:fire_notifications : Account id:: #{Account.current.id}, #{e.message}"
     NewRelic::Agent.notice_error(e)
   end

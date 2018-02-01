@@ -37,7 +37,7 @@ development:
   scheduled_ticket_export_queue: scheduled_ticket_export_queue_dev 
   scheduled_user_export_queue: scheduled_user_export_queue_dev 
   scheduled_company_export_queue: scheduled_company_export_queue_dev
-
+  channel_framework_services: fd_cf_services_dev
 staging:
   twitter_realtime_queue: social_gnip_2_0_tweet_staging
   facebook_realtime_queue: social_fb_feed_staging

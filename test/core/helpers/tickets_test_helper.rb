@@ -31,7 +31,7 @@ module TicketsTestHelper
                     },
                     :display_ids => params[:display_ids] || "",
                     :assoc_parent_id => params[:assoc_parent_id] || "",
-                    :cc_emails => params[:cc_emails] || ""
+                    :cc_emails => params[:cc_emails] || []
                   }
   end
 

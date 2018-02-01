@@ -2051,7 +2051,7 @@ en:
       helpnote:
         title: Security Settings
         info1: <b>Allowing Single Sign On access </b><br>If your users already have login credentials with you, such as through Active Directory or your own web applications, you can allow them to login to your support portal with these credentials using Single Sign On (SSO). Learn more about SSO<a href="https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk"> here</a>.
-        info2: <b>Enabling SSL security </b><br>If you are not using a custom domain for your support portal, Freshdesk offers a default wildcard SSL certificate to accounts on the freshdesk.com domain. <b>SSL option for custom domains are only available on the Estate Plan.</b> You can <a href="https://support.freshdesk.com/support/tickets/new">request for a custom SSL certificate for your vanity support URL here</a>.
+        info2: <b>Enabling SSL security </b><br>If you are not using a custom domain for your support portal, Freshdesk offers a default wildcard SSL certificate to accounts on the freshdesk.com domain. <b>SSL option for custom domains are available from Blossom Plan.</b> You can <a href="https://support.freshdesk.com/support/tickets/new">request for a custom SSL certificate for your vanity support URL here</a>.
         trusted_ip: <b>Restricting access by IP address</b><br>You can restrict access to your support portal to IP addresses from your company or organization. You can add unlimited number of IP ranges that have access, as well as define whether you want to control access for customers as well, or only for your agents. <a href="https://support.freshdesk.com/support/solutions/articles/195168"> Learn more.</a>
         info4: <b>Password Policy</b><br>You can set up different password policies for agents and customers. The advanced settings allow you to configure custom password policies such as password expiry time and minimum password length. The changes you make will apply to new and existing agents and customers. Learn more about password policy <a href="https://support.freshdesk.com/support/solutions/articles/213865-password-policy"> here</a>.
       password_security:
@@ -4681,7 +4681,7 @@ en:
     login_details: "Enter the details below"
     agent_login_info: "Are you an agent?"
     customer_signin: "Sign in as customer?"
-    agent_signin: "SignIn here"
+    agent_signin: "Login here"
     helpdesk_login_portal: "Welcome back Agent"
     agent_login_details: "Enter the details below"
     login_options: "...or login using"
@@ -5695,6 +5695,7 @@ en:
   observer_actions:
     skip_agent_assigned_email_notification: Skip Agent Assigned Email Notification
   ticket:
+    add_bulk_reply: Add Bulk Reply
     errors:
       required_field: cannot be blank.
       request_dropped: Some error occurred and your email was not sent. Please try again.
@@ -6232,6 +6233,7 @@ en:
     helpnote1: Tell us a little more about you and help us personalize your experience.
     helpnote2: Login to your account using %{email}
     helpnote3: Please confirm your details and set a password for your account
+    admin_consent: By clicking on "Activate and Log In", you agree to our <a target="_blank" href="https://www.freshworks.com/terms/"> Terms</a> and acknowledge having read our <a target="_blank" href="https://www.freshworks.com/privacy/">Privacy Policy</a>.
   enter_message: Enter your message here
   not_selected: Not Selected
   enter_billing_for_free: Please enter the credit card details before you choose the paid plan
@@ -6435,6 +6437,7 @@ en:
       hours: Hours
       agent: Agent
       note: Note
+      close: Close
       billalblenonbillable: Billable/Non-Billable
       date: Date
       createdAt: "Created at"
@@ -6616,7 +6619,12 @@ en:
       ticket: Ticket Assignment
       ticket_summary: Ticket Summary
       filter_by: Filter by
-      all_groups: All
+      all: All
+      search: "Search"
+      standard: "Standard"
+      agent: "Agent Snapshot"
+      supervisor: "Supervisor Snapshot"
+      admin: "Admin Snapshot"
       unresolved: Unresolved
       open: Open
       on_hold: On Hold
@@ -8266,6 +8274,24 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       status_msg: "Ticket status changed to "
       chat: "Chat Conversation with"
       default_chat: "Chat Conversation of"
+    microsoft_teams:
+      label: "Microsoft Teams"
+      desc: "Receive notification for Freshdesk ticket and note updates."
+      teams_prof_label: "Connect to Microsoft Teams"
+      auth_btn: "Authorize"
+      reauth_btn: "Re-Authorize"
+      auth_being_processed: "Microsoft teams users auth information is being processed. Please wait.."
+      bot_user_not_connected: "User is not yet connected from the Microsoft teams end. Say Hi! to the freshdesk bot from teams."
+      fd_user_not_connected: "Press authorize teams to connect freshdesk with Microsoft Teams."
+      token_success: "Token successfully updated."
+      token_failure: "Error while updating the token."
+      token_failure_duplicate_tenant: "Error while updating the token. Tenant mismatch"
+      teams_connect_desc: "This connects your freshdesk account with Microsoft Teams."
+      push_to_teams: "Push to Teams"
+      authorize_in_fd: "You’ll need to authorize Teams from your Freshdesk profile settings before you can create tickets. Please find the instructions in this <a href='www.freshdesk.com'>solution article.</a>"
+      message:
+        not_installed: "Looks like you have not installed the app in Freshdesk."
+        action_queued: "Your request has been received and you shall get a notification on this channel once the ticket is created."
     highrise:
       label: "Highrise"
       helptext: "<h4>Highrise Integration</h4><p><br>Enter your domain and API key to display contact information from Highrise in Freshdesk. The widget will show up in the Contacts and Tickets pages once you are done. <br><br>The Name, Title, Company Name, Contact Address, Phone Number &amp; Mobile Number fields from Highrise CRM will be gathered and displayed.<br><br>Search through contacts on Highrise using the email address. Multiple search results will be displayed as a list.</p>"
@@ -9306,6 +9332,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         "on": "On"
         subject: Subject
         desc: Description
+        daily: Daily
+        weekly: Weekly
+        monthly: Monthly
       errors:
         emails_limit: You can add maximum %{num} emails
         invalid_email: Invalid emails
@@ -9479,6 +9508,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       tickets_with: tickets with
       avg_of_all: Avg of all
       tooltip:
+        avg_per: Average per
         avg_of_all: 'Avg of all %{day}'
         avg_tickets: 'Average tickets %{metric} : %{value}'
         tickets_with_agent_responses: '%{ticket_count} tickets with %{count} agent responses'
@@ -11193,6 +11223,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     whats_new: "What's New"
     user_notifications_header: "Notifications"
     announcements_notifications_header: "Announcements & Help"
+    explore_notifications_header: "Explore"
     load_more: "Load More"
   user_notifications:
     header: "Notifications"
@@ -11496,15 +11527,32 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     info:
       follow_flash: "Hey there!<br>You are now following this Team Huddle and will be notified of all new messages in-app and via email."
       unfollow_flash: "See you later 'gator!<br>You will still be notified when a teammate mentions you and groups that you are a part of and when someone replies to your message."
-  
   default:
     ticket:
       email:
-        subject: You lost my cat!
-        body: "<p>Dear Customer Relations,</p><br /><p>I recently flew Upper Class from Heathrow to JFK and whilst some bits were great,one bit in particular was really really bad.I flew with my cat* and you froze** it and it died*** which made me sad****.</p><br /><p>* I use the word 'cat' in the sense of 'suitcase'.\n<br />** I use the word 'froze' in the sense of 'lost'.\n<br />*** I use the word 'died' in the sense of 'didn't turn up for 2 days'.\n<br />**** I use the word 'sad' correctly.</p><br /><p>We all lose things. I once went for a pint with the late Keith Floyd and he lost an entire week.Another time I worked out an equation for cold fusion and gave it to my cat on a memory stick,which she lost. Keith Floyd, me, my cat, and you are all only human, so these things happen.What separates humans from super humans is the way they deal with these hiccups.</p><br /><p>I won't bore you with the details. The only question is how can we make it right?</p><br /><p>Yours ever,\n<br />James Dean</p><p><hr></p><p>P.S. This is a sample email that’s been converted into a ticket by Freshdesk.<a onclick='%{onclick}' href='javascript:void(0)'> See how you can start converting email</a> from customers into tickets in your helpdesk.</p>"
-        reply: "<p>Dear Mr James Dean (Like the Actor),</p><br /><p>Thank you for your email detailing your unfortunate events following the delay of your luggage. Please accept my sincerest apologies for this, and for the unexpected inconveniences caused as a result. I do hope that despite this, you had a pleasant trip.</p><br /><p>Thankfully, the following morning, it was me that you spoke to,and I advised you that your cat hadbeen found and was on its way to you. On a serious note though James,I'm happy to give you a Tier Point. I hope you cherish it. Like it's Magic.I have also added the mileage and remaining tier points from your most recentflight with us, which means that you are now a Gold Member (not like the movie).</p><br /><p>Please once again accept my sincerest apologies. This experience is not typical of us, and I hope it has not discouraged you from travelling with us again, as it would certainlybe a pleasure to welcome you back on board.</p><br /><p>Yours sincerely,\n<br />The Lady in Red\n<br />Baggage Services Advisor</p>"
-        
+        subject: Mary Jane shoes - Shipping rates
+        body: "<p>Hello there,</p><br /><p>I’m looking to buy a pair of Mary Jane shoes and I noticed that you have a local store in Aldovia. Could you let me know if the Mary Jane shoes are available in Size 8? I can pick it up from there.</p><br /><p>Thanks,\n<br />Emily.</p>"
+        reply: "<p>Hey Emily,</p><br /><p>Thanks for writing to us!\n<br />I can confirm that our Aldovia store does have the Mary Jane shoes in size 8. I’ve asked them to block a pair for you. Feel free to pick them up anytime :)</p><br /><p>Cheers,\n<br />Rebecca.</p><br /><p><hr></p><p>P.S. This is a sample email that’s been converted into a ticket by Freshdesk. <a href = https://support.freshdesk.com/support/solutions/articles/37541-forward-and-convert-your-support-emails-to-tickets-in-freshdesk target= _blank>See how you can start converting email</a> from customers into tickets in your helpdesk.</p>"        
       feedback_widget:
-        subject: Tiger bread should be called giraffe bread
-        body: "<p>Dear Sainsbury,</p><br /><p>Why is tiger bread called tiger bread? It should be called giraffe bread.</p><br /><p>Love from Lily Robinson age 3½.\n<br /><p><hr></p><p>P.S. This is a sample message that has been sent to you from website page. <a href = https://support.freshdesk.com/support/solutions/articles/37690-getting-feedback-from-your-website-with-the-feedback-widget->See how you can add your own feedback widget</a> on your website or app</p>"
-        reply: "<p>Dear Lily,</p><br /><p>Thanks so much for your letter. I think renaming tiger bread to giraffe bread is a brilliant idea - it looks much more like the blotches on a giraffe than the stripes on a tiger, doesn't it?</p><br /><p>I really liked reading your letter so I thought I would send you a little present. I've included a £3 gift card with this email, if you ask your mum or dad to take you to Sainsbury's you could use it to buy some of your own tiger bread (and maybe if mum and dad say it’s OK, you can get some sweeties too!). Please tell an adult to wait 48 hours before using this card.</p><br /><p>I'm glad you wrote in to us and hope you like spending your gift card. See you in store soon.</p><br /><p>Yours sincerely,\n<br />Chris King (age 28 ⅓)\n<br />Customer Manager</p>"
+        subject: Vintage table lamp - Out of stock?
+        body: "<p>Hello,</p><br /><p>I saw a vintage table lamp on your site last month and I’d bookmarked it to buy it later for a friend. I can’t seem to find it anymore though. Is it out of stock or do you not sell those anymore?</p><br /><p>Thanks,\n<br />Matt.</p><p><hr></p><p>P.S. This is a sample message that has been sent to you from website page. <a href = https://support.freshdesk.com/support/solutions/articles/37690-getting-feedback-from-your-website-with-the-feedback-widget target= _blank>See how you can add your own feedback widget</a> on your website or app</p>"
+        reply: "<p>Hi Matt,</p><br /><p>Thanks for writing in!</p><br /><p>I’m sorry to say those vintage lamps are currently out of stock. I checked with our supplier though and they think it should be available by the end of next month. But if you’d rather not wait that long, I’d love to help you find something else to gift your friend. Let me know what their interests are and I’ll send across a list :)</p><br /><p>Cheers,\n<br />Janet\n<br />Saul’s Emporium Support</p>"
+      chat:
+        subject: Chat with Norman Jones on Missing order.
+        body_footer: "<hr><p>P.S. This is a sample chat conversation between a customer and a support agent. <a href = https://support.freshdesk.com/support/solutions/articles/194052-installing-live-chat-in-your-website-or-application target=_blank>See how you can setup your own chat widget</a> and start talking to customers in real time.</p>"
+        end_note: "Created via Chat. Conversation between <b>%{requester}</b> and <b>%{agent}</b>"
+        conversation:
+          requester:
+            :2 : "Hey there, I’m reaching out to report a missing order."
+            :4 : "Yes, one second..."
+            :5 : "Ok, got it. It’s 999-0345. It was supposed to be here this morning and I got an email confirming it’s out for delivery but it isn’t here yet"
+            :8 : "Oh alright. That clears things up"
+            :10: "Ok, that sounds good. Thanks for your help :)"
+
+          agent:
+            :1 : "Hello Norman, how can I help you today?"
+            :3 : "Oh, that doesn’t sound good! Could you please tell me the order number?"
+            :6 : "Alright, just give me one moment while I take a look at where your shipment is."
+            :7 : "It looks like the UPS delivery in your neighborhood is delayed today due to a fallen tree. I believe the city officials are already clearing out the road and the package should be there by 3 PM this afternoon."
+            :9 : "I’m sorry about the delay! Please do reach out to us again if the package hasn’t been delivered by the afternoon. I will convert this chat as a ticket, so you can let us know if there’s any further issues."
+            :11: "My pleasure, Norman. Have a great day!"

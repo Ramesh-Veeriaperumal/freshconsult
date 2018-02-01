@@ -34,7 +34,6 @@ class UserEmail < ActiveRecord::Base
 
   # Drop all authorizations, if the email is changed
   after_update :drop_authorization, :if => [:email_changed?]
-  after_update :update_freshid_uuid, if: :email_changed?
   after_commit :send_activation_on_update, on: :update, if: :email_updated?
   after_update :verify_account, :if => [:verified_changed?]
 
@@ -93,11 +92,6 @@ class UserEmail < ActiveRecord::Base
 
   def esv2_fields_updated?
     email_updated?
-  end
-
-  def update_freshid_uuid
-    user.destroy_freshid_user # Delete old email user from fresh id
-    user.create_freshid_user  # Create new email user in fresh id
   end
 
   protected

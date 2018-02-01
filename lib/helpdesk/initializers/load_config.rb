@@ -51,3 +51,7 @@ FalconUiRouteMapping = YAML.load_file(File.join(Rails.root, 'config', 'route_map
 FalconUiReRouteMapping = YAML.load_file(File.join(Rails.root, 'config', 're_route_mapping.yml'))
 
 PartnerSubdomains =  AppConfig['partner_subdomain'].map { |k,v| v }.flatten
+
+KafkaCollectorConfig = YAML.load_file(File.join(Rails.root, 'config', 'kafka_collector.yml'))[Rails.env]
+
+ChannelFrameworkConfig = YAML.load_file(File.join(Rails.root, 'config', 'channel_framework.yml'))[Rails.env]

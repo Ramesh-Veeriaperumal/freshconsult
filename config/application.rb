@@ -182,14 +182,18 @@ module Helpkit
       OmniAuth.config.logger = Rails.logger
 
       oauth_keys = Integrations::OauthHelper::get_oauth_keys
-      oauth_keys.map { |oauth_provider, key_hash|
-        next if ['github', 'salesforce', 'shopify', 'slack', 'infusionsoft', 'google_oauth2', 'google_contacts', 'google_gadget_oauth2', 'outlook_contacts', 'salesforce_v2'].include?(oauth_provider)
-      if key_hash["options"].blank?
-        provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"]
-      else
-        provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"], key_hash["options"]
+      oauth_keys.map do |oauth_provider, key_hash|
+        next if Integrations::Constants::OAUTH_STRATEGIES_TO_SKIP.include?(oauth_provider)
+        begin
+          if key_hash['options'].blank?
+            provider oauth_provider, key_hash['consumer_token'], key_hash['consumer_secret']
+          else
+            provider oauth_provider, key_hash['consumer_token'], key_hash['consumer_secret'], key_hash['options']
+          end
+        rescue LoadError => e
+          puts "LoadError with the OAuth strategy, provider ~> #{oauth_provider}"
+        end
       end
-      }
 
       # OmniAuth.origin on failure callback; so get it via params
       # https://github.com/intridea/omniauth/issues/569

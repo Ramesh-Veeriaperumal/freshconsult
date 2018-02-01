@@ -9,19 +9,7 @@ module Helpdesk::DashboardHelper
     "data-loading-box"    => "#agents-list" 
   }
 
-  DEFAULT_DASHBOARDS_LABELS = {
-      :standard => 'Standard',
-      :agent => 'Agent Snapshot',
-      :supervisor => 'Supervisor Snapshot',
-      :admin => 'Admin Snapshot'
-  }
-
-  DEFAULT_DASHBOARDS = [
-        { :name => DEFAULT_DASHBOARDS_LABELS[:standard] , :param => 'standard'},
-        { :name => DEFAULT_DASHBOARDS_LABELS[:agent] , :param => 'agent'},
-        { :name => DEFAULT_DASHBOARDS_LABELS[:supervisor] , :param => 'supervisor'},
-        { :name => DEFAULT_DASHBOARDS_LABELS[:admin] , :param => 'admin'}
-      ]
+  DEFAULT_DASHBOARDS_LABELS = [:standard, :agent, :supervisor, :admin]
 
   SETUP_KEY_UTILS = {
     "new_account" => {},
@@ -228,20 +216,33 @@ module Helpdesk::DashboardHelper
   end
 
   def snapshot_menu
-    options = [DEFAULT_DASHBOARDS[0]]
+    options = [default_dashboard[0]]
     return options if !dashboardv2_available? || current_account.launched?(:es_down) #Show only Standard Dashboard if ES is down. This ideally shouldn't occur, fingers crossed.
     if current_user.privilege?(:admin_tasks)
-      options << DEFAULT_DASHBOARDS[3] if current_account.launched?(:admin_dashboard)
+      options << default_dashboard[3] if current_account.launched?(:admin_dashboard)
     elsif current_user.privilege?(:view_reports)
-      options << DEFAULT_DASHBOARDS[2] if current_account.launched?(:supervisor_dashboard)
+      options << default_dashboard[2] if current_account.launched?(:supervisor_dashboard)
     else
-      options << DEFAULT_DASHBOARDS[1] if current_account.launched?(:agent_dashboard)
+      options << default_dashboard[1] if current_account.launched?(:agent_dashboard)
     end
     options
   end
 
   def snapshot_label type
-    DEFAULT_DASHBOARDS_LABELS[type.to_sym]
+    translated_snapshot_label[type.to_sym]
+  end
+
+  def translated_snapshot_label
+    @translated_snapshot_label_cache ||= Hash[*DEFAULT_DASHBOARDS_LABELS.map { |i| [i, I18n.t("helpdesk.realtime_dashboard.#{i}")] }.flatten]
+  end
+
+  def default_dashboard
+    @default_dashboard_cache ||= DEFAULT_DASHBOARDS_LABELS.map do |d|
+      { 
+        name: translated_snapshot_label[d],
+        param: d.to_s
+      }
+    end
   end
 
   # Helper to determine whether to show Group Drop Down

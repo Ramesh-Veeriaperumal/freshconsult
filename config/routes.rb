@@ -237,7 +237,7 @@ Helpkit::Application.routes.draw do
   match '/packages/:package.:extension' => 'jammit#package', :as => :jammit, :constraints => { :extension => /.+/ }
   resources :authorizations
 
-  ["github","salesforce", "magento", "shopify", "slack", "infusionsoft", "google_calendar", "google_login", "google_marketplace_sso", "google_contacts", "google_gadget", "outlook_contacts", "salesforce_v2", "facebook"].each do |provider|
+  ["github","salesforce", "magento", "shopify", "slack", "infusionsoft", "google_calendar", "google_login", "google_marketplace_sso", "google_contacts", "google_gadget", "outlook_contacts", "salesforce_v2", "facebook", "microsoft_teams"].each do |provider|
     match "/auth/#{provider}/callback" => 'omniauth_callbacks#complete', :provider => provider
   end
 
@@ -823,6 +823,12 @@ Helpkit::Application.routes.draw do
       post :help
       post :create_ticket
       post :tkt_create_v3
+    end
+
+    namespace :microsoft_teams, :path => "teams" do
+      get :oauth
+      get :install
+      get :authorize_agent
     end
 
     resources :applications, :only => [:index, :show] do

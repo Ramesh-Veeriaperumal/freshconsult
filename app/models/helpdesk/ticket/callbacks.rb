@@ -46,12 +46,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_update :update_isescalated, :if => :check_due_by_change
   before_update :update_fr_escalated, :if => :check_frdue_by_change
 
+  before_destroy :save_deleted_ticket_info
+
   after_create :refresh_display_id, :create_meta_note, :update_content_ids
   after_create :set_parent_child_assn, :if => :child_ticket?
   after_save :check_child_tkt_status, :if => :child_ticket?
 
   after_commit :create_initial_activity, on: :create
-  after_commit :pass_thro_biz_rules, on: :create, :unless => :skip_dispatcher?
+  after_commit :trigger_dispatcher, on: :create, :unless => :skip_dispatcher?
   after_commit :send_outbound_email, :update_capping_on_create, :update_count_for_skill,on: :create, :if => :outbound_email?
 
   after_commit :trigger_observer_events, on: :update, :if => :execute_observer?
@@ -71,6 +73,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :spam_feedback_to_smart_filter, :on => :update, :if => :twitter_ticket_spammed?
 
   # Callbacks will be executed in the order in which they have been included. 
+
+  publishable
 
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher
@@ -278,11 +282,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def skip_dispatcher?
-    import_id || outbound_email? || !requester.valid_user? || Account.current.skip_dispatcher?
+    skip_dispatcher = import_id || outbound_email? || !requester.valid_user?
+    Va::Logger::Automation.log "Skipping dispatcher" if skip_dispatcher
+    skip_dispatcher
   end
 
-  def pass_thro_biz_rules
-    Helpdesk::Dispatcher.enqueue(self.id, (User.current.blank? ? nil : User.current.id), freshdesk_webhook?)
+  def trigger_dispatcher
+    Helpdesk::Dispatcher.enqueue(self.id, (User.current.blank? ? nil : User.current.id), freshdesk_webhook?) unless Account.current.skip_dispatcher?
   end
 
   #To be removed after dispatcher redis check removed
@@ -750,8 +756,10 @@ private
   end
 
   def execute_observer?
+    execute_observer = user_present? and !disable_observer_rule
     SBRR.log "Ticket ##{self.display_id} save done. Model_changes #{@model_changes.inspect}"
-    user_present? and !disable_observer_rule
+    Va::Logger::Automation.log "Skipping observer" unless execute_observer
+    execute_observer
   end
 
   def update_assoc_parent_tkt
@@ -821,5 +829,15 @@ private
     meta_data.each do |k,v|
       meta_data[k] = RailsFullSanitizer.sanitize v if v.is_a? String
     end
+  end
+
+  def save_deleted_ticket_info
+    @deleted_model_info = {
+      id: id,
+      display_id: display_id,
+      account_id: account_id
+    }
+    @deleted_model_info[:archive] = false
+    @deleted_model_info
   end
 end
