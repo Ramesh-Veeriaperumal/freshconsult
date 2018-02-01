@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "0afbf871a912ebf906cf821321dd88deb83e710769520deb59a7b263b1ab2531",
-    "current": "0afbf871a912ebf906cf821321dd88deb83e710769520deb59a7b263b1ab2531"
+    "previous": "fa2f8e7ddae4a809887bb8b713c7db17f9706388c8546b996de7f26a7ff3d46b",
+    "current": "fa2f8e7ddae4a809887bb8b713c7db17f9706388c8546b996de7f26a7ff3d46b"
   },
   "fonts": [
-    "public/assets/glyphs_0afbf871a912ebf906cf821321dd88de.ttf",
-    "public/assets/glyphs_0afbf871a912ebf906cf821321dd88de.svg",
-    "public/assets/glyphs_0afbf871a912ebf906cf821321dd88de.woff",
-    "public/assets/glyphs_0afbf871a912ebf906cf821321dd88de.eot"
+    "public/assets/glyphs_fa2f8e7ddae4a809887bb8b713c7db17.ttf",
+    "public/assets/glyphs_fa2f8e7ddae4a809887bb8b713c7db17.svg",
+    "public/assets/glyphs_fa2f8e7ddae4a809887bb8b713c7db17.woff",
+    "public/assets/glyphs_fa2f8e7ddae4a809887bb8b713c7db17.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -217,6 +217,10 @@
     "book-hollow": {
       "codepoint": 61914,
       "source": "public/glyphs/vectors/book-hollow.svg"
+    },
+    "bot": {
+      "codepoint": 62147,
+      "source": "public/glyphs/vectors/bot.svg"
     },
     "both-direction": {
       "codepoint": 62055,
