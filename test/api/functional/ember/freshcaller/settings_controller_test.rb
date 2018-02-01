@@ -48,6 +48,41 @@ class Ember::Freshcaller::SettingsControllerTest < ActionController::TestCase
     Account.current.revoke_feature(:freshcaller)
   end
 
+  def test_fetch_settings_with_freshcaller_and_widget_enabled_agent
+    Account.current.add_feature(:freshcaller)
+    Account.current.add_feature(:freshcaller_widget)
+    # @controller.stubs(:requires_feature).with(:freshcaller).returns(true)
+    create_freshcaller_account
+    create_freshcaller_enabled_agent
+    get :index, controller_params(version: 'private')
+    match_json(freshcaller_account_enabled: true, freshcaller_agent_enabled: true, freshcaller_widget_url: /\/widget\//, freshid_enabled: false, token: String)
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:ok]
+  ensure
+    delete_freshcaller_agent
+    Account.current.revoke_feature(:freshcaller)
+    Account.current.revoke_feature(:freshcaller_widget)
+    delete_freshcaller_account
+  end
+
+
+  def test_fetch_settings_with_freshcaller_and_widget_and_freshid_enabled_agent
+    Account.current.add_feature(:freshcaller)
+    Account.current.add_feature(:freshcaller_widget)
+    # @controller.stubs(:requires_feature).with(:freshcaller).returns(true)
+    @account.stubs(:freshid_enabled?).returns(:true)
+    create_freshcaller_account
+    create_freshcaller_enabled_agent
+    get :index, controller_params(version: 'private')
+    match_json(freshcaller_account_enabled: true, freshcaller_agent_enabled: true, freshcaller_widget_url: /\/widget\//, freshid_enabled: 'true', token: NilClass)
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:ok]
+  ensure
+    delete_freshcaller_agent
+    Account.current.revoke_feature(:freshcaller)
+    Account.current.revoke_feature(:freshcaller_widget)
+    delete_freshcaller_account
+    @account.unstub(:freshid_enabled?)
+  end
+
   def test_fetch_settings_with_freshcaller_disabled_agent
     Account.current.add_feature(:freshcaller)
     # @controller.stubs(:requires_feature).with(:freshcaller).returns(true)

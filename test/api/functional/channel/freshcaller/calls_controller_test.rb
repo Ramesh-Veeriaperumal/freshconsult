@@ -145,7 +145,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     call_id = get_call_id
     create_call(fc_call_id: call_id)
     put :update, construct_params(update_invalid_params(call_id))
-    match_json([bad_request_error_pattern(:call_status, :not_included, list: 'voicemail,no-answer,completed'),
+    match_json([bad_request_error_pattern(:call_status, :not_included, list: 'voicemail,no-answer,completed,in-progress'),
                 bad_request_error_pattern(:call_created_at, :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer),
                 bad_request_error_pattern(:customer_number, :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer),
                 bad_request_error_pattern(:agent_number, :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer),
@@ -166,7 +166,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
   private
 
     def set_auth_header
-      request.env['HTTP_AUTHORIZATION'] = "token=#{sign_payload({})}"
+      request.env['HTTP_AUTHORIZATION'] = "token=#{sign_payload({'account_id': '1', 'api_key': 'xxx' })}"
     end
 
     def invalid_auth_header
