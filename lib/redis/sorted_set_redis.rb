@@ -62,4 +62,56 @@ module Redis::SortedSetRedis
     newrelic_begin_rescue { $redis_others.perform_redis_op("zrevrange", key, start, count - 1, {:withscores => true}) }
   end
 
+  # piplined methods starts here
+  def piplined_redis_action
+    newrelic_begin_rescue do 
+      return $redis_others.pipelined do 
+          yield
+        end
+    end
+  end
+
+  def pipelined_size_of_sorted_set_redis(keys,category_list)
+    size_array = piplined_redis_action do 
+      category_list.each do |category|
+        $redis_others.perform_redis_op('zcard',keys[category])
+      end
+    end
+    process_piplined_result(size_array, category_list)
+  end
+
+  def pipelined_get_rank_from_sorted_set_redis(keys, member, category_list)
+    rank_array = piplined_redis_action do 
+      category_list.each do |category|
+        $redis_others.perform_redis_op("zrevrank", keys[category], member)
+      end
+    end
+    process_piplined_result(rank_array, category_list)
+  end
+
+  def pipelined_get_members_of_sorted_set_redis(keys, category_list, count, start)
+    members_array = piplined_redis_action do
+      category_list.each do |category|
+        $redis_others.perform_redis_op("zrevrange", keys[category], start[category], count[category] - 1, { :withscores => true })
+      end
+    end
+    process_piplined_result(members_array, category_list)
+  end
+
+  def pipelined_get_largest_member_of_sorted_set_redis(keys, category_list, count = 1, start = 0)
+    largest_member_array = piplined_redis_action do
+      category_list.each do |category|
+        $redis_others.perform_redis_op("zrevrange", keys[category], start, count - 1, { :withscores => true })
+      end
+    end
+    process_piplined_result(largest_member_array, category_list)
+  end
+
+  def process_piplined_result(result_array, category_list)
+    result_hash = {}
+    result_array.each_with_index do |result, index|
+      result_hash[category_list[index]] = result
+    end
+    result_hash
+  end
 end

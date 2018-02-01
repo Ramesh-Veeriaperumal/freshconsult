@@ -4692,6 +4692,21 @@
             "in": "query",
             "type": "string",
             "required": true
+          },
+          {
+            "name": "group_id",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "date_range",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "date_range_selected",
+            "in": "query",
+            "type": "string"
           }
         ],
         "responses": {
@@ -4699,6 +4714,40 @@
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/leaderboard_agents_lists"
+            }
+          },
+          "400": {
+            "description": "Bad request error"
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/dashboards/leaderboard_groups": {
+      "get": {
+        "tags": [
+          "leaderboard"
+        ],
+        "description": "Leaderboard information about groups",
+        "parameters": [
+          {
+            "name": "date_range",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "date_range_selected",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/leaderboard_groups_lists"
             }
           },
           "400": {
@@ -9578,6 +9627,43 @@
                   "type": "number"
                 },
                 "user_id": {
+                  "type": "number"
+                },
+                "avatar": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "leaderboard_groups_lists": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "rank_holders": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "rank": {
+                  "type": "number"
+                },
+                "score": {
+                  "type": "number"
+                },
+                "group_id": {
                   "type": "number"
                 },
                 "avatar": {

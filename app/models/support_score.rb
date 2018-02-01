@@ -107,14 +107,13 @@ class SupportScore < ActiveRecord::Base
   end
 
   def get_mini_list account, user, category, version = "v1"
-    search_time = Time.now.in_time_zone account.time_zone
+    search_time = Time.use_zone(account.time_zone){ Time.now }
     key = send("agents_leaderboard_key", category, search_time.month)
-
     # Find length of the list
     size = size_of_sorted_set_redis key
 
     if size == 0
-    	MemcacheKeys.fetch(key, 3600) { store_leaderboard_in_redis key, account, "agents", category, search_time }
+      MemcacheKeys.fetch(key, 3600) { store_leaderboard_in_redis key, account, "agents", category, search_time }
     	size = size_of_sorted_set_redis key
     	return nil if size == 0
     end
@@ -124,6 +123,42 @@ class SupportScore < ActiveRecord::Base
 
     leaderboard = get_mini_leaderboard rank, size, key, version
 
+  end
+
+  def get_mini_list_for_all_category account, user, category_list, version = "v1"
+    leaderboard_type = group_id.nil? ? 'agents' : 'group_agents'
+    search_time = Time.now.in_time_zone account.time_zone
+    redis_keys = get_leaderboard_redis_keys(category_list, leaderboard_type, search_time)
+    # Find length of the list
+    size = pipelined_size_of_sorted_set_redis redis_keys, category_list
+    # Checking empty categories in db to cross check redis
+    empty_category_in_redis = size.select { |category, count| count.zero? }
+    # compute leaderboard from db if redis is empty
+    populate_mini_list_from_db(empty_category_in_redis, redis_keys, size, leaderboard_type, search_time) if empty_category_in_redis.present?
+    # Using size to determine if leaderboard exists or not for that category
+    categories_with_leaderboard = category_list.reject { |category| size[category].zero? }
+    return [] if categories_with_leaderboard.blank?
+    rank = pipelined_get_rank_from_sorted_set_redis redis_keys, user.id, categories_with_leaderboard
+    # return nil if (rank.nil? && version == "v1")
+    get_mini_leaderboard_for_all_category rank, size, redis_keys, version, categories_with_leaderboard
+  end
+
+
+  def get_leaderboard_redis_keys(category_list, leaderboard_type, search_time)
+    redis_keys = {}
+    category_list.each do |category|
+      redis_keys[category] = send("#{leaderboard_type}_leaderboard_key", category, search_time.month)
+    end
+    redis_keys
+  end
+
+  def populate_mini_list_from_db(empty_category_in_redis, redis_keys, size, leaderboard_type, search_time)
+    empty_category_in_redis.keys.each do |category|
+      key = redis_keys[category]
+      MemcacheKeys.fetch(key, 3600) { store_leaderboard_in_redis key, account, leaderboard_type, category, search_time }
+      category_size = size_of_sorted_set_redis key
+      size[category] = category_size unless category_size.zero?
+    end
   end
 
   def get_mini_leaderboard rank, size, key, version
@@ -140,6 +175,40 @@ class SupportScore < ActiveRecord::Base
 		end
 		largest << others
 		return largest
+  end 
+
+  def get_mini_leaderboard_for_all_category(rank, size, redis_keys, version, category_list)
+    # Getting the rank holder for each category
+    largest = pipelined_get_largest_member_of_sorted_set_redis redis_keys, category_list
+    # getting other ranked users only if current user has a rank
+    user_ranked_category_list = category_list.reject { |category| rank[category].nil? }
+    return largest if user_ranked_category_list.blank?
+    start, stop = get_mini_leaderboard_range(rank, size, version, user_ranked_category_list)
+
+    others = pipelined_get_members_of_sorted_set_redis redis_keys, user_ranked_category_list, stop, start
+    user_ranked_category_list.each do |category|
+      others[category].each_with_index do |person, index|
+        person << start[category] + 1 + index
+      end
+      largest[category] << others[category]
+    end
+    largest
+  end
+
+  def get_mini_leaderboard_range(rank, size, version, category_list)
+    list_size, indent = mini_list_size(version.to_sym)
+    start = {}
+    stop = {}
+    category_list.each do |category|
+      category_rank = rank[category]
+      category_size = size[category]
+      category_start = category_rank - indent > 0 ? category_rank - indent : 1
+      category_stop = category_start + list_size > category_size ? category_size : category_start + list_size
+      category_start = category_stop == category_size ? (category_size - list_size > 0 ? category_size - list_size : 1) : category_start
+      start[category] = category_start
+      stop[category] = category_stop
+    end
+    return start, stop
   end 
 
   def agents_scoper account, start_time, end_time
