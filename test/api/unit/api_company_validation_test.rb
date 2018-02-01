@@ -64,7 +64,7 @@ class ApiCompanyValidationTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.new)
     Account.any_instance.stubs(:company_form).returns(CompanyForm.new)
     Account.any_instance.stubs(:tam_default_company_fields_enabled?).returns(false)
-    controller_params = { 'name' => 'test', 'health_score' => 'At risk', 'account_tier' => 'gold',
+    controller_params = { 'name' => 'test', 'health_score' => 'At risk', 'account_tier' => 'Premium',
                           'industry' => 'Media', 'renewal_date' => '2017-12-11' }
     company = ApiCompanyValidation.new(controller_params, nil)
     refute company.valid?
@@ -127,7 +127,7 @@ class ApiCompanyValidationTest < ActionView::TestCase
       default_required_company_field('account_tier'),
       default_required_company_field('industry'),
       default_required_company_field('renewal_date')])
-    controller_params = { 'name' => 'test', 'health_score' => 'At risk', 'account_tier' => 'gold',
+    controller_params = { 'name' => 'test', 'health_score' => 'At risk', 'account_tier' => 'Premium',
                           'industry' => 'Media', 'renewal_date' => '2017-12-11'}
     company = ApiCompanyValidation.new(controller_params, nil)
     assert company.valid?
