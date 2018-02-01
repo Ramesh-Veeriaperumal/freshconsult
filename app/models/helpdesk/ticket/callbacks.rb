@@ -219,8 +219,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def update_ticket_lifecycle
     @ticket_lifecycle = {}
-    return if ([:responder_id, :group_id, :status] & model_changes.keys).empty?
-    tkt_group = model_changes.has_key?(:group_id) ? Group.find_by_id(model_changes[:group_id][0]) : self.group
+    tkt_group = nil
+    return if ([:responder_id, :group_id, :status, :internal_group_id, :internal_agent_id] & model_changes.keys).empty?
+    tkt_group = (model_changes.has_key?(:internal_group_id) ? Group.find_by_id(model_changes[:internal_group_id][0]) : self.internal_group) if Account.current.shared_ownership_enabled?
+    tkt_group ||= model_changes.has_key?(:group_id) ? Group.find_by_id(model_changes[:group_id][0]) : self.group
+
     @ticket_lifecycle = schema_less_ticket.update_lifecycle_changes(time_zone_now, tkt_group, [RESOLVED,CLOSED].include?(status))
   end
 
