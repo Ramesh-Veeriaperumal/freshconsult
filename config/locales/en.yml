@@ -11406,7 +11406,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   n_companies: "%{count} companies"
   admin_onboarding:
     account_verification_message:
-      non_admin_message: "Your account hasn’t been activated yet. Please contact your administrator."
+      non_admin_message: "Your account hasn’t been activated yet. Please contact your account administrator."
       check_inbox_message: "Please check your inbox at <span class='email-wrapper'>%{admin_email}</span>  for your activation email."
       helpnote1: "Can't see it?"
       helpnote_or: "or"
