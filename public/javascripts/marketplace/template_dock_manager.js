@@ -1,5 +1,5 @@
 var TemplateDockManager   = Class.create({
-  initialize: function(extensionsEl, customMsgs, tabName) {
+  initialize: function(extensionsEl, customMsgs, tabName, platformVersion) {
     this.extensionsWrapper = extensionsEl;
     this.customMessages = customMsgs;
     this.progressInterval;
@@ -11,6 +11,7 @@ var TemplateDockManager   = Class.create({
     this.action;
     this.pollRetryLimit = 5;
     this.accApiPollInterval = customMsgs.accapi_poll_interval;
+    this.platformVersion = platformVersion;
 
     this.bindTemplateEvents();
     this.setupCarousel();
@@ -327,9 +328,9 @@ var TemplateDockManager   = Class.create({
     });
   },
 
-  isValidForm: function(platformVersion) {
+  isValidForm: function() {
     var isFormValid = true;
-    if (platformVersion == '2.0') {
+    if (this.platformVersion == '2.0') {
       isFormValid = ((typeof validate == 'function')) ? validate() : true;
     } else {
       jQuery(".installer-form input.fa-textip.required").each(function(index, value){
@@ -356,7 +357,16 @@ var TemplateDockManager   = Class.create({
     if (jQuery(el).attr("data-page") == "oauth_iparams") {
       url += "?oauth_iparams=" + JSON.stringify(postConfigs());
     }
-    window.location = url;
+    jQuery.ajax({
+      url: url,
+      type: "GET",
+      success: function(resp_body, statustext, resp){
+        that.platformVersion == '2.0' ? parent.location = resp_body.redirect_url : window.location = resp_body.redirect_url;
+      },
+      error: function(jqXHR, exception) {
+        that.showErrorMsg(that.customMessages.no_connection);        
+      }
+    });
   },
 
   //install button in install config page
@@ -365,14 +375,12 @@ var TemplateDockManager   = Class.create({
     e.stopPropagation();
     var that = this;
     var el = jQuery(e.currentTarget);
-
-    var platformVersion = jQuery(el).attr("data-platform-version")
-    var formData = (platformVersion == '2.0') ? 
+    var formData = (that.platformVersion == '2.0') ? 
       { configs: (typeof postConfigs == 'function') ? postConfigs() : '' } : 
       jQuery('#install-form').serialize()
   
     var isFormValid = true;
-    isFormValid = this.isValidForm(platformVersion);
+    isFormValid = this.isValidForm(that.platformVersion);
     var initialCount = 0;
 
     if(isFormValid == true){
@@ -404,7 +412,7 @@ var TemplateDockManager   = Class.create({
         }
       });
     }else{
-      if (platformVersion == '1.0'){
+      if (that.platformVersion == '1.0'){
         this.displayFormFieldError();
       }
     }
@@ -432,7 +440,7 @@ var TemplateDockManager   = Class.create({
     if (parent.location.hash && parent.location.hash.match('^#[0-9]')) {
       parent.location.hash = "";
     }
-    parent.location.reload();
+    window.location.reload();
     clearInterval(this.progressInterval);
   },
 
