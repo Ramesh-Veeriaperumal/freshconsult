@@ -40,12 +40,18 @@ class Channel::Freshcaller::CallsController < ApiApplicationController
 
     def handle_call_status_flows
       create_and_link_ticket if incoming_missed_call?
+      create_or_add_to_ticket if inprogress?
       create_ticket_add_note if voicemail? || completed? || outgoing_missed_call?
     end
 
     def create_and_link_ticket
       create_ticket
       @item.notable = @ticket
+    end
+
+    def create_or_add_to_ticket
+      return create_and_link_ticket if @ticket.blank?
+      create_and_link_note
     end
 
     def create_ticket_add_note
@@ -85,7 +91,7 @@ class Channel::Freshcaller::CallsController < ApiApplicationController
     end
 
     def load_call_attributes(delegator)
-      @ticket = delegator.ticket
+      @ticket = delegator.ticket || @item.ticket
       @agent = delegator.agent
       @contact = delegator.contact || load_contact_from_search || load_contact_from_number
     end
