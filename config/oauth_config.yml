@@ -123,6 +123,10 @@ defaults: &defaults
  salesforce_v2:
    consumer_token:  3MVG9y6x0357HledW5ceTn9ZT16SJfkv9A5rd60nQVZoY4em5Pnpfx5ghPc.Y8KfMefmzdKWgYNXc9jLYBnlz
    consumer_secret: 6487752873062448676
+ microsoft_teams:
+   consumer_token: f4db5703-88f5-4db1-ad18-ce960d35a7ef
+   consumer_secret: DdUBGab3Jqf38keGDKShsVU
+
 
 test:
  <<: *defaults
