@@ -352,6 +352,7 @@ Helpkit::Application.routes.draw do
     get 'solutions/articles', to: 'ember/solutions/articles#index'
 
     match '/dashboards/leaderboard_agents' => 'ember/leaderboard#agents', via: :get
+    match '/dashboards/leaderboard_groups' => 'ember/leaderboard#groups', via: :get
 
     resources :marketplace_apps, controller: 'ember/marketplace_apps', only: [:index]
 
