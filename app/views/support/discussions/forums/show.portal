@@ -1,13 +1,14 @@
-<section class="content rounded-6 min-height-on-desktop fc-forum-list" id="forum-{{ forum.id }}">
-	{% if forum.type_name != 'announcement' %}
+<section class="content rounded-6 min-height-on-desktop fc-forum-list {{forum.type_name}}" id="forum-{{ forum.id }}">
+
+	{% if forum.type_class != 'announcement' %}
 		<b class="pull-right">{{ portal | link_to_start_topic }}</b>
 	{% endif %}
 	<div class="breadcrumb">
 		<a href="{{ portal.discussions_home_url }}">{% translate portal_pages.groups.discussions %}</a>
 		<a href="{{ forum.forum_category.url }}">{{ forum.forum_category.name | h }}</a>
 	</div>	
-	<i class="page-stamp page-stamp-{{ forum.type_name }}">
-		<i class="icon-page-{{ forum.type_name }}"></i>
+	<i class="page-stamp page-stamp-{{ forum.type_class }}">
+		<i class="icon-page-{{ forum.type_class }}"></i>
 	</i>
 	<div class="list-lead">
 		{{ forum.name|h}} <span class="item-count">{{ forum.topics_count }}</span>

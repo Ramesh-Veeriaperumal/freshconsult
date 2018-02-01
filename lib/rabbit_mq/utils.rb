@@ -63,7 +63,7 @@ module RabbitMq::Utils
         end
       }
       message["routing_key"] = key
-      message["tenant"] = ChannelFrameworkConfig['tenant']
+      message["pod"] = ChannelFrameworkConfig['pod']
       send_message(uuid, exchange, message.to_json, key)
     end
   end
