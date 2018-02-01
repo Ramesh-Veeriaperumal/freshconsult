@@ -7,6 +7,7 @@ class SAAS::SubscriptionActions
     :round_robin_load_balancing]
 
   ADD_DATA_FEATURES   = [ :round_robin ]
+
   
   ONLY_BITMAP_FEATURES = (Account::ADVANCED_FEATURES_TOGGLE + [
     :shared_ownership_toggle, :skill_based_round_robin, :auto_ticket_export, :ticket_activity_export,
@@ -23,6 +24,7 @@ class SAAS::SubscriptionActions
 
     drop_feature_data(drop_data_features)
     add_feature_data(add_data_features)
+
     #for new pricing plan. we ll remove basic social and basic twitter if facebook or twitter feature isnt available after downgrade annd
     #add back when they upgrade.
     [:facebook, :twitter].each do |f|
