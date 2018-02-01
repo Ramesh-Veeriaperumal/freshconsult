@@ -1,0 +1,24 @@
+class Solution::Folder < ActiveRecord::Base
+  include RepresentationHelper
+
+  acts_as_api
+
+  api_accessible :central_publish do |f|
+    f.add proc { |x| x.parent_id }, as: :id
+    f.add :name
+    f.add :description
+    f.add :account_id
+    f.add proc { |x| x.parent.visibility }, as: :visibility
+    f.add proc { |x| x.parent.solution_category_meta_id }, as: :category_id
+    f.add proc { |x| x.utc_format([x.created_at, x.parent.created_at].max) }, as: :created_at
+    f.add proc { |x| x.utc_format([x.updated_at, x.parent.updated_at].max) }, as: :updated_at
+  end
+
+  def self.central_publish_enabled?
+    Account.current.solutions_central_publish_enabled?
+  end
+
+  def model_changes_for_central
+    self.previous_changes.merge(self.parent.previous_changes)
+  end
+end
