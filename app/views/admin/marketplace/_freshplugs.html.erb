@@ -38,8 +38,7 @@
                           suspended_plan_info: "<%= I18n.t('suspended_plan_info') %>",
                           accapi_poll_interval: "<%= MarketplaceConfig::ACCOUNT_API_POLL_INTERVAL %>"
                         }
-  var platformVersion = '<%= current_account.falcon_ui_enabled?(current_user) ? Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2] : Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v1] %>'
-  var templateDockManager = new TemplateDockManager(extensionsWrapper, customMessages, tabName, platformVersion);
+  var templateDockManager = new TemplateDockManager(extensionsWrapper, customMessages, tabName);
 
   tf_lang = {
     app_gallery         : "<%= t('marketplace.app_gallery') %>",

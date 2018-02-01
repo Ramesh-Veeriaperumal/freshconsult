@@ -152,7 +152,12 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
     redirect_url = "#{MarketplaceConfig::MKP_OAUTH_URL}/" + mkp_oauth_endpoint + "?callback=" + oauth_callback_url + reauth_param
     redirect_url = redirect_url + "&fdcode=" + CGI.escape(generate_md5_digest(redirect_url, MarketplaceConfig::API_AUTH_KEY))
     redirect_url += "&oauth_iparams=#{params[:oauth_iparams]}" if params[:oauth_iparams].present?
-    render :json => { :redirect_url => redirect_url }
+    if platform_version == Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2]
+      html_content = "<html><script>parent.location='" + redirect_url + "'</script></html>"
+      render :text => html_content, :content_type => :html  
+    else
+      redirect_to redirect_url
+    end
   end
 
   def update_params
@@ -245,9 +250,7 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
         else
           notice_message = t('marketplace.install_action.auth_error')
         end
-        redirect_url = platform_version == Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2] ?
-                        '/a/integrations/applications/' : '/integrations/applications/'
-        redirect_to(redirect_url, :flash => {:notice => notice_message}) and return
+        redirect_to('/integrations/applications', :flash => {:notice => notice_message}) and return
       end
     end
 

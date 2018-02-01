@@ -1,5 +1,5 @@
 var MarketplaceBrowser  = Class.create({
-	initialize: function(settingsLinks, customMsgs, platformVersion) {
+	initialize: function(settingsLinks, customMsgs ) {
     var self = this;
 		this.settingsLinks = settingsLinks;
     this.customMessages = customMsgs;
@@ -8,7 +8,6 @@ var MarketplaceBrowser  = Class.create({
     this.deletablePlug = {};
     this.pollRetryLimit = 5;
     this.accApiPollInterval = settingsLinks.accApiPollInterval;
-    this.platformVersion = platformVersion;
 
 		jQuery(document).on("click.nc_apps_evt", this.settingsLinks.browseBtn , this.openAppBrowser.bindAsEventListener(this))
         						.on("keyup.nc_apps_evt", this.onPageKeyup.bindAsEventListener(this)) //doubt
@@ -71,7 +70,8 @@ var MarketplaceBrowser  = Class.create({
   },
   onUpdateOAuth: function(e) {
     e.preventDefault();
-    this.handleOAuthInstall(jQuery('.update-oauth').attr('data-url'));
+    var url = jQuery('.update-oauth').attr('data-url');
+    window.location = url;
   },
   setupSelectedTabs: function(){
     var tabSelected = this.pageURL.split('#')[1];
@@ -165,23 +165,8 @@ var MarketplaceBrowser  = Class.create({
 	},
 
 	onReauthorizeConfirm: function(e) {
-    this.handleOAuthInstall(this.reauthorizePlug.url);
+		window.location = this.reauthorizePlug.url;
 	},
-
-  handleOAuthInstall: function(url) {
-    var that = this;
-    jQuery.ajax({
-      url: url,
-      type: "GET",
-      success: function(resp_body, statustext, resp){
-        that.platformVersion == '2.0' ? parent.location = resp_body.redirect_url : window.location = resp_body.redirect_url;
-      },
-      error: function(jqXHR, exception) {
-        jQuery("#noticeajax").html(that.customMessages.no_connection).show().addClass("alert-danger");
-        closeableFlash('#noticeajax');
-      }
-    });    
-  },
 
   onConfirmDelete: function(e) {
     var that = this;

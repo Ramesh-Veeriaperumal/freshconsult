@@ -41,14 +41,14 @@
     <ul class="tabs nav-tabs sleek-tab" id="myTab">
       <li class="active">
         <% if feature?(:marketplace) %>
-          <a href="#apps" class="apps-tab mkt-apps" data-toggle="tab"><%= t('marketplace.apps').html_safe %></a>
+          <a href="#apps" class="mkt-apps" data-toggle="tab"><%= t('marketplace.apps').html_safe %></a>
         <% else %>
-          <a href="#native-apps" class="apps-tab nat-apps" data-toggle="tab"><%= t('integrations.native_integrations') %></a>
+          <a href="#native-apps" class="nat-apps" data-toggle="tab"><%= t('integrations.native_integrations') %></a>
         <% end %>
       </li>
       <% if current_account.custom_apps_enabled? %>
       <li>
-        <a href="#custom_apps" class="apps-tab cla-plugs" data-toggle="tab"><%= t('marketplace.custom_apps') %></a>
+        <a href="#custom_apps" class="cla-plugs" data-toggle="tab"><%= t('marketplace.custom_apps') %></a>
       </li>
       <% end %>
     </ul>
@@ -97,8 +97,7 @@
                             no_connection: "<%= I18n.t('marketplace.no_connection') %>"
                           };
 
-    var platformVersion = '<%= current_account.falcon_ui_enabled?(current_user) ? Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2] : Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v1] %>'
-    var marketplaceBrowser = new MarketplaceBrowser(settingsLinks, customMessages, platformVersion);
+    var marketplaceBrowser = new MarketplaceBrowser(settingsLinks, customMessages);
 
     marketplaceBrowser.toggleAppsMessage(marketplaceBrowser.getAppsLength() > 0 );
     marketplaceBrowser.togglePlugsMessage(marketplaceBrowser.getFreshPlugsLength() > 0 );
@@ -109,11 +108,6 @@
 
     jQuery(document).ready(function(){
       jQuery(jQuery('#myTab > li.active > a').attr('href')).addClass('active');
-
-      if(platformVersion == '2.0' && window.location.hash && !parent.location.hash.length){
-        window.location.hash = '';
-      }
-
       var hash = window.location.hash,
           hash_value = window.location.hash.substring(1);
 
@@ -143,11 +137,6 @@
       ev.preventDefault();
       var target = jQuery(this).attr("data-confirm-content");
       jQuery("#toggle-confirm .modal-body").empty().append("<p>"+ target + "</p>");
-    });
-
-    jQuery(document).on("click", ".apps-tab", function(e) {
-      window.location.hash = jQuery(this).attr("href");
-      parent.location.hash = jQuery(this).attr("href");
     });
 
     jQuery(document).on('hide.bs.modal','#toggle-confirm', function () {
