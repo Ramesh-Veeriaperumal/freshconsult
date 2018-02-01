@@ -18,6 +18,10 @@ class Solution::Folder < ActiveRecord::Base
     Account.current.solutions_central_publish_enabled?
   end
 
+  def relationship_with_account
+    :solution_folders
+  end
+
   def model_changes_for_central
     self.previous_changes.merge(self.parent.previous_changes)
   end

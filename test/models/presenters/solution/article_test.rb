@@ -14,4 +14,10 @@ class ArticleTest < ActiveSupport::TestCase
     payload = article.central_publish_payload(:article_thumbs_up).to_json
     payload.must_match_json_expression(central_publish_article_votes_pattern(article))
   end
+
+  def test_ml_training_payload
+    article = add_new_article
+    payload = article.central_publish_payload(:ml_training).to_json
+    payload.must_match_json_expression(central_publish_article_pattern(article))
+  end
 end
