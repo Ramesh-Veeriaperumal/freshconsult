@@ -13,7 +13,7 @@ module Ember
 
       def per_page
         # Temporary hack to make sure more than 30 email configs are fetched
-        (params[:per_page] || ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page]).to_i
+        (params[:per_page] || ApiConstants::EMAIL_CONFIG_PER_PAGE).to_i
       end
   end
 end

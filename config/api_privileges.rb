@@ -20,7 +20,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/conversation", only: %i(create ticket_conversations full_text)
     resource :"ember/subscription"
     resource :"ember/ticket_field", only: [:index]
-    resource :"ember/todo"
+    resource :"ember/todo", only: [:index, :create, :update, :destroy]
     resource :"ember/twitter_handles", only: %i(index check_following)
     resource :"ember/marketplace_app", only: [:index]
 
@@ -79,6 +79,7 @@ Authority::Authorization::PrivilegeList.build do
   view_contacts do
     resource :"ember/contact", only: %i[index show send_invite bulk_send_invite]
     resource :"ember/company", only: %i(index show activities)
+    resource :"ember/contact/todo", only: [:index]
     resource :"ember/search/customer", only: [:results]
     resource :"ember/search/multiquery", only: [:search_results]
   end
@@ -90,6 +91,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/customer_import", only: [:index, :create]
     resource :"ember/search/autocomplete", only: [:companies]
     resource :"ember/tickets/requester", only: [:update]
+    resource :"ember/contact/todo", only: [:create, :update, :destroy]
   end
 
   manage_users do

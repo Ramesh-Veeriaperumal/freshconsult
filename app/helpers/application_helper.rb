@@ -162,6 +162,17 @@ module ApplicationHelper
     @show_flash = [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "alert #{type}") if flash[type] }.to_s.html_safe
   end
 
+  def ember_admin_flash
+    admin_flash = []
+
+    [[:notice, "success"], [:warning, "warning"], [:error, "danger"]].each {|flash_obj|
+      type = flash_obj[0]
+      admin_flash << { "type" => flash_obj[1], "message" => flash[type]} if flash[type]
+    }
+    
+    admin_flash
+  end
+
   def show_admin_flash
     [:notice, :warning, :error].collect {|type| content_tag('div', ("<a class='close' data-dismiss='alert'>×</a>" + flash[type]).html_safe, :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }.to_s.html_safe
   end
@@ -196,7 +207,7 @@ module ApplicationHelper
       options.merge!({:"data-parallel-url" => "/helpdesk/tickets/filter_options", :"data-parallel-placeholder" => "#ticket-leftFilter"})
     end
     if tab_name.eql?(:reports) && ( request.fullpath.include?("reports/custom_survey") || request.fullpath.include?("reports/timesheet") || request.fullpath.include?("phone/summary_reports") || request.fullpath.include?("freshchat/summary_reports"))
-       options.delete(:"data-pjax") 
+       options.delete(:"data-pjax")
     end
     content_tag('li', link_to(strip_tags(title), url, options), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
   end
@@ -590,7 +601,7 @@ module ApplicationHelper
 
     #Shared ownership placeholders
     if current_account.shared_ownership_enabled?
-      place_holders[:tickets] += 
+      place_holders[:tickets] +=
         [['{{ticket.internal_group.name}}',      'Internal Group name',       "",         'ticket_group_name'],
         ['{{ticket.internal_agent.name}}',       'Internal Agent name',       "",         'ticket_agent_name'],
         ['{{ticket.internal_agent.email}}',      'Internal Agent email',      "",         'ticket_agent_email']]
@@ -741,8 +752,8 @@ module ApplicationHelper
     if user.avatar
       img_url = avatar_cached_url(user, profile_size)
       img_tag_options = {
-          :onerror => "imgerror(this)", 
-          :alt => user.name, 
+          :onerror => "imgerror(this)",
+          :alt => user.name,
           :size_type => profile_size,
           :data => {
             :src => img_url,
@@ -753,8 +764,8 @@ module ApplicationHelper
       senti_avatar_image_generator(img_tag_options, profile_size, profile_class, sentiment, options)
     elsif is_user_social(user, profile_size).present?
         img_tag_options = {
-          :onerror => "imgerror(this)", 
-          :alt => user.name, 
+          :onerror => "imgerror(this)",
+          :alt => user.name,
           :size_type => profile_size,
           :data => {
             :src => is_user_social(user, profile_size),
@@ -769,7 +780,7 @@ module ApplicationHelper
   end
 
   def senti_avatar_image_generator(img_tag_options, profile_size, profile_class, sentiment, options)
-      
+
       content_tag(:div, :class => "#{profile_class} image-lazy-load", :size_type => profile_size ) do
         image_tag("/assets/misc/profile_blank_#{profile_size}.jpg", img_tag_options)+
         get_senti_i_tag(sentiment, options)
@@ -777,7 +788,7 @@ module ApplicationHelper
   end
 
   def senti_avatar_generator( username, profile_size = :thumb, profile_class, opt, sentiment )
-    
+
     img_tag_options = { :onerror => "imgerror(this)", :alt => t('user.profile_picture'), :class => [profile_size, profile_class]}
     username = username.lstrip
     if username.present? && isalpha(username[0]).present?
@@ -830,9 +841,9 @@ module ApplicationHelper
       return "Happy"
     elsif sentiment == 2
       return "Very Happy"
-    else 
-      return "Neutral"   
-    end 
+    else
+      return "Neutral"
+    end
   end
 
   def senti_class_locator(sentiment)
@@ -845,9 +856,9 @@ module ApplicationHelper
       return "symbols-emo-happy-20"
     elsif sentiment == 2
       return "symbols-emo-veryHappy-20"
-    else 
-      return "symbols-emo-neutral-20"   
-    end  
+    else
+      return "symbols-emo-neutral-20"
+    end
   end
 
   def unique_code(username)
@@ -930,6 +941,25 @@ module ApplicationHelper
     else
       activity_timestamp
     end
+  end
+
+  def formated_date(date_time, options={})
+    default_options = {
+      :format => :short_day_with_time,
+      :include_year => false,
+      :include_weekday => true,
+      :translate => true
+    }
+    options = default_options.merge(options)
+    time_format = (current_account.date_type(options[:format]) if current_account) || "%a, %-d %b, %Y at %l:%M %p"
+    unless options[:include_year]
+      time_format = time_format.gsub(/,\s.\b[%Yy]\b/, "") if (date_time.year == Time.now.year)
+    end
+
+    unless options[:include_weekday]
+      time_format = time_format.gsub(/\A(%a|A),\s/, "")
+    end
+    final_date = options[:translate] ? (I18n.l date_time , :format => time_format) : (date_time.strftime(time_format))
   end
 
   def date_range_val(start_date,end_date,additional_options={})
@@ -1133,15 +1163,15 @@ module ApplicationHelper
 
 def construct_new_ticket_element_for_google_gadget(form_builder,object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false, pl_value_id=nil)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
-    element_class   = " #{ (required && !object_name.eql?(:template_data)) ? 'required' : '' } #{ dom_type }" 
+    element_class   = " #{ (required && !object_name.eql?(:template_data)) ? 'required' : '' } #{ dom_type }"
     element_class  += " required_closure" if (field.required_for_closure && !field.required)
     element_class  += " section_field" if field.section_field?
     field_label    += '<span class="required_star">*</span>'.html_safe if required
     field_label    += "#{add_requester_field}".html_safe if (dom_type == "requester" && !is_edit) #add_requester_field has been type converted to string to handle false conditions
     field_name      = (field_name.blank?) ? field.field_name.html_safe : field_name.html_safe
     object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }".html_safe
-    label = label_tag (pl_value_id ? object_name+"_"+field.field_name+"_"+pl_value_id : 
-                                     object_name+"_"+field.field_name), 
+    label = label_tag (pl_value_id ? object_name+"_"+field.field_name+"_"+pl_value_id :
+                                     object_name+"_"+field.field_name),
                       field_label.html_safe,
                       :class => ((field.field_type == "default_company" && @ticket.new_record?) ? "company_field" : "")
     choices = field.choices
@@ -1182,7 +1212,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
         element = label + select(object_name, field_name,
                                               dropdown_choices,
                                               {:include_blank => "...", :selected => field_value},
-                                              {:class => element_class + " select2", 
+                                              {:class => element_class + " select2",
                                                :disabled => disabled,
                                                "data-domhelper-name" => "ticket-properties-" + field_name })
       when "hidden" then
@@ -1197,19 +1227,19 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
                                           ( check_box(object_name, field_name, check_box_html.merge!({:checked => field_value}) ) ) )
         element = content_tag(:div, (checkbox_element + label).html_safe, :class => "checkbox-wrapper")
       when "html_paragraph" then
-         element = label 
+         element = label
          redactor_wrapper = ""
         form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
             redactor_wrapper = builder.text_area(field_name, :class => element_class, :value => field_value, :"data-wrap-font-family" => true )
         end
             element += content_tag(:div, redactor_wrapper, :class => "redactor_wrapper")
       when "date" then
-        element = label + content_tag(:div, construct_date_field(field_value, 
-                                                                 object_name, 
-                                                                 field_name, 
+        element = label + content_tag(:div, construct_date_field(field_value,
+                                                                 object_name,
+                                                                 field_name,
                                                                  element_class).html_safe,
                                             :class => "controls input-date-field")
-        
+
     end
     element_class = (field.has_sections_feature? && (field.section_dropdown? || field.field_type == "default_source")) ? " dynamic_sections" : ""
     company_class = " hide" if field.field_type == "default_company" && (@ticket.new_record? || dropdown_choices.empty?)
@@ -1605,6 +1635,10 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     current_user.privilege?(:manage_account) && (current_account.subscription.free? || current_account.subscription.trial?)
   end
 
+  def attachment_size
+    Account.current.attachment_limit
+  end
+
   private
 
     def forums_visibility?
@@ -1916,11 +1950,11 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   def fd_node_auth_params
     aes = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
     aes.encrypt
-    aes.key = Digest::SHA256.digest(FdNodeConfig["key"]) 
+    aes.key = Digest::SHA256.digest(FdNodeConfig["key"])
     aes.iv  = FdNodeConfig["iv"]
 
     account_data = {
-      :account_id => current_user.account_id, 
+      :account_id => current_user.account_id,
       :user_id    => current_user.id,
       :features => current_account.node_feature_list
     }.to_json
@@ -1944,7 +1978,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
 
     content_tag :ul, &list
   end
-  
+
   def fd_socket_host
     "#{request.protocol}#{FdNodeConfig["socket_host"]}"
   end
@@ -1986,6 +2020,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def inline_manual_people_tracing
+    bucket = current_account.account_additional_settings.additional_settings[:announcement_bucket].to_s
     {
       :uid      => current_user.id,
       :email    => current_user.email,
@@ -1994,7 +2029,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
       :created  => current_account.created_at.to_i,
       :updated  => current_user.last_login_at.to_i,
       :plan     => Subscription.fetch_by_account_id(current_account.id).subscription_plan_from_cache.display_name,
-      :roles    => (current_user.privilege?(:admin_tasks)) ? ['admin'] : ['agent']
+      :roles    => (current_user.privilege?(:admin_tasks)) ? ['admin', bucket] : ['agent', bucket]
     }
   end
 
@@ -2007,7 +2042,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def falcon_enabled?
-    current_account && current_account.falcon_ui_enabled? && 
+    current_account && current_account.falcon_ui_enabled? &&
       current_user && current_user.is_falcon_pref?
   end
 

@@ -19,207 +19,127 @@ module Ember
       Helpdesk::Reminder
     end
 
-    def test_create_todo
-      ticket = create_ticket
-      todo = { body: 'Ticket todo 1', ticket_id: ticket.display_id }
-      post :create, construct_params(@api_params.merge(todo), false)
-      assert_response 200
-      match_json(todo_pattern(Helpdesk::Reminder.last))
-      match_json(todo_pattern(Helpdesk::Reminder.last, todo))
+    def get_contacts(count)
+      contacts = []
+      total_contacts = User.contacts.count
+      if total_contacts && total_contacts >= count
+        contacts = User.contacts.all(limit: count)
+      else
+        count.times { contacts.push(add_new_user(@account)) }
+      end
+      contacts
     end
 
-    def test_create_multiple_todo_in_ticket
-      ticket = create_ticket
-      @ticket = ticket
-      rand(2..5).times do
-        todo = { body: 'Ticket todo 1', ticket_id: ticket.display_id }
-        post :create, construct_params(@api_params.merge(todo), false)
-        assert_response 200
-        match_json(todo_pattern(Helpdesk::Reminder.last))
-        match_json(todo_pattern(Helpdesk::Reminder.last, todo))
-      end
+    def get_ticket
+      ticket = @account.tickets.last
+      ticket = create_ticket unless ticket
+      ticket
+    end
+
+    def test_create_ticket_todo
+      ticket = get_ticket
+      todo = { body: 'Ticket todo 1', rememberable_id: ticket.display_id, type: 'ticket' }
+      post :create, construct_params(@api_params.merge(todo), false)
+      assert_response 200
+      todo[:todo_id] = JSON.parse(response.body)["id"]
+      assert_not_nil /^\d+$/.match(todo[:todo_id].to_s), 
+        '"id" is either nil or not valid'
+      match_json(todo_pattern(todo.merge(ticket_subject: ticket.subject)))
     end
 
     def test_create_personal_todo
-      todo = { body: 'Personal todo' }
+      todo = { body: 'Ticket todo 1' }
       post :create, construct_params(@api_params.merge(todo), false)
       assert_response 200
-      match_json(todo_pattern(Helpdesk::Reminder.last))
-      match_json(todo_pattern(Helpdesk::Reminder.last, todo))
+      todo[:todo_id] = JSON.parse(response.body)["id"]
+      assert_not_nil /^\d+$/.match(todo[:todo_id].to_s), 
+        '"id" is either nil or not valid'
+      match_json(todo_pattern(todo))
+    end
+
+    def test_create_contact_todo
+      contact = User.contacts.last
+      contact = get_contacts(1)[0] unless contact
+      todo = { body: 'Contact todo 1', rememberable_id: contact.id, type: 'contact' }
+      post :create, construct_params(@api_params.merge(todo), false)
+      assert_response 200
+      todo[:todo_id] = JSON.parse(response.body)["id"]
+      assert_not_nil /^\d+$/.match(todo[:todo_id].to_s), 
+        '"id" is either nil or not valid'
+      match_json(todo_pattern(todo.merge(company_id: contact.customer_id, 
+                                          contact_name: contact.name)))
+    end
+
+    def test_create_company_todo
+      company = Company.last
+      company = create_company unless company
+      todo = { body: 'Commpany todo 1', rememberable_id: company.id, type: 'company' }
+      post :create, construct_params(@api_params.merge(todo), false)
+      assert_response 200
+      todo[:todo_id] = JSON.parse(response.body)["id"]
+      assert_not_nil /^\d+$/.match(todo[:todo_id].to_s), 
+        '"id" is either nil or not valid'
+      match_json(todo_pattern(todo.merge(company_name: company.name)))
     end
 
     def test_create_todo_additionalparam
-      post :create, construct_params(@api_params.merge(body: 'Test', addparam: 'cool'), false)
+      post :create, construct_params(@api_params.merge(body: 'Test', 
+        addparam: 'cool'), false)
       assert_response 400
       match_json(merge_invalid_field_pattern('addparam'))
     end
 
-    def test_create_todo_lengthytext
-      post :create, construct_params(@api_params.merge(body: 'Big body text Big body textBig body textBig body textBig body textBig body textBig body textBig body textBig body textBig body textBig body textBig body textBig body textBig body textBig body textBig body textBig body textBig body textBig body textBig body textBig body text '), false)
+    def test_to_respond_validation_error_on_creating_todo_content_greater_than_250
+      post :create, construct_params(@api_params.merge(body: 'Big body text Big 
+        body textBig body textBig body textBig body textBig body textBig body 
+        textBig body textBig body textBig body textBig body textBig body textBig
+        body teextBig body textBig body textBig body textBig body textBig body 
+        textBig body textBig body textBig body text '), false)
       assert_response 400
-      match_json(merge_invalid_value_pattern('body', 'Has 275 characters, it can have maximum of 120 characters'))
+      match_json(merge_invalid_value_pattern('body', 
+        'Has 311 characters, it can have maximum of 250 characters'))
     end
 
-    def test_create_todo_emptytext
+    def test_to_respond_validation_error_on_creating_todo_with_emptytext
       post :create, construct_params(@api_params.merge(body: ''), false)
       assert_response 400
-      match_json(merge_invalid_value_pattern('body', 'is too short (minimum is 1 characters)'))
+      match_json(merge_invalid_value_pattern('body', 
+        'is too short (minimum is 1 characters)'))
     end
 
-    def test_create_todo_without_body
-      ticket = create_ticket
-      post :create, construct_params(@api_params.merge(ticket_id: ticket.display_id), false)
+    def test_to_respond_validation_error_on_creating_todo_without_body
+      ticket = get_ticket
+      post :create, construct_params(@api_params.merge(
+        rememberable_id: ticket.display_id, type: 'ticket'), false)
       assert_response 400
-      match_json(merge_invalid_value_pattern('body', 'is too short (minimum is 1 characters)'))
+      match_json(merge_invalid_value_pattern('body', 
+        'is too short (minimum is 1 characters)'))
     end
 
-    def test_create_todo_nonexisting_ticketid
-      create_ticket # To make sure we have atleast one ticket
-      post :create, construct_params(@api_params.merge(body: 'Non existing Id', ticket_id: Helpdesk::Ticket.last.display_id + 10), false)
-      assert_response 404
-    end
-
-    def test_create_todo_string_ticketid
-      post :create, construct_params(@api_params.merge(body: 'String as ticket ID', ticket_id: 'gaass'), false)
-      assert_response 404
-    end
-
-    def test_create_without_ticket_access
-      ticket = create_ticket
-      User.any_instance.stubs(:has_ticket_permission?).returns(false)
-      todo = { body: 'Ticket todo', ticket_id: ticket.display_id }
+    def test_create_todo_nonexisting_ticket
+      ticket = get_ticket # To make sure we have atleast one ticket
+      display_id = ticket.display_id
+      ticket.delete
+      todo = { body: 'Commpany todo 1', rememberable_id: display_id, 
+        type: 'ticket' }
       post :create, construct_params(@api_params.merge(todo), false)
-      assert_response 403
-    ensure
-      User.any_instance.stubs(:has_ticket_permission?).returns(false)
-    end
-
-    def test_update_with_incorrect_params
-      ticket = create_ticket
-      reminder = get_new_reminder('Ticket todo for show', ticket.id)
-      put :update, construct_params(@api_params.merge(id: reminder.id), body: Faker::Lorem.sentence, completed: 'ABC')
-      assert_response 400
-      match_json([bad_request_error_pattern('completed', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
-    end
-
-    def test_update_todo
-      ticket = create_ticket
-      reminder = get_new_reminder('Ticket todo for show', ticket.id)
-      put :update, construct_params(@api_params.merge(id: reminder.id), body: Faker::Lorem.sentence, completed: true)
-      assert_response 200
-      reminder.reload
-      match_json(todo_pattern(reminder))
-      assert reminder.deleted
-
-      put :update, construct_params(@api_params.merge(id: reminder.id), completed: false)
-      assert_response 200
-      reminder.reload
-      match_json(todo_pattern(reminder))
-      assert !reminder.deleted
-    end
-
-    def test_update_without_ticket_access
-      ticket = create_ticket
-      reminder = get_new_reminder('Ticket todo for update', ticket.id)
-      User.any_instance.stubs(:has_ticket_permission?).returns(false)
-      put :update, construct_params(@api_params.merge(id: reminder.id), body: Faker::Lorem.sentence, completed: true)
-      assert_response 403
-    ensure
-      User.any_instance.unstub(:has_ticket_permission?)
-    end
-
-    def test_update_other_users_todo
-      new_agent = add_agent_to_account(@account, name: Faker::Name.name, active: 1, role: 1)
-      reminder = get_new_reminder('Todo for update', nil, new_agent.user.id)
-      put :update, construct_params(@api_params.merge(id: reminder.id), body: Faker::Lorem.sentence, completed: true)
-      assert_response 403
-    end
-
-    def test_show
-      ticket = create_ticket
-      reminder = get_new_reminder('Ticket todo for show', ticket.id)
-      remove_wrap_params
-      get :show, construct_params(@api_params, false).merge(id: reminder.id)
-      assert_response 200
-      match_json(todo_pattern(reminder))
-      assert_equal false, reminder.deleted # to check by default completed is false
-    end
-
-    def test_show_completed
-      ticket = create_ticket
-      reminder = get_new_reminder('Ticket todo for show', ticket.id)
-      reminder.toggle(:deleted)
-      reminder.save
-      remove_wrap_params
-      get :show, construct_params(@api_params, false).merge(id: reminder.id)
-      assert_response 200
-      match_json(todo_pattern(reminder))
-      assert_equal true, reminder.deleted # to additionally verify  its a  completed todo
-    end
-
-    def test_show_without_ticket_access
-      User.any_instance.stubs(:has_ticket_permission?).returns(false)
-      ticket = create_ticket
-      reminder = get_new_reminder('Ticket todo for show', ticket.id)
-      remove_wrap_params
-      get :show, construct_params(@api_params, false).merge(id: reminder.id)
-      assert_response 403
-    ensure
-      User.any_instance.unstub(:has_ticket_permission?)
-    end
-
-    def test_show_other_users_todo
-      new_agent = add_agent_to_account(@account, name: Faker::Name.name, active: 1, role: 1)
-      reminder = get_new_reminder('Todo for show', nil, new_agent.user.id)
-      remove_wrap_params
-      get :show, construct_params(@api_params, false).merge(id: reminder.id)
-      assert_response 403
-    end
-
-    def test_show_invalid_todo
-      get :show, construct_params(@api_params, false).merge(id: scoper.last.id + 10)
       assert_response 404
     end
 
-    def test_index
-      remove_wrap_params
-      get :index, construct_params(@api_params, false)
-      pattern = []
-      Helpdesk::Reminder.where(user_id: User.current.id).each do |reminder|
-        pattern << todo_pattern(reminder)
-      end
-      assert_response 200
-      match_json(pattern)
-    end
-
-    def test_index_with_ticket_id
-      remove_wrap_params
-      ticket = create_ticket
-      pattern = []
-      get_new_reminder('todo1', ticket.id)
-      get_new_reminder('todo2', ticket.id)
-      Helpdesk::Reminder.where(ticket_id: ticket.id).each do |reminder|
-        pattern << todo_pattern(reminder)
-      end
-      get :index, construct_params(@api_params, false).merge(ticket_id: ticket.display_id)
-      assert_response 200
-      match_json(pattern)
-    end
-
-    def test_index_with_invalid_ticket_id
-      remove_wrap_params
-      get :index, construct_params(@api_params, false).merge(ticket_id: Helpdesk::Ticket.last.display_id + 10)
+    def test_create_todo_nonexisting_contact
+      id = (contact = User.contacts.last) ? contact.id : 123  
+      contact.delete if contact
+      post :create, construct_params(@api_params.merge(body: 'Non existing Id', 
+        rememberable_id: id, type: 'contact'), false)
       assert_response 404
     end
 
-    def test_index_without_ticket_access
-      User.any_instance.stubs(:has_ticket_permission?).returns(false)
-      ticket = create_ticket
-      remove_wrap_params
-      get :index, construct_params(@api_params, false).merge(ticket_id: ticket.display_id)
-      assert_response 403
-    ensure
-      User.any_instance.unstub(:has_ticket_permission?)
+    def test_create_todo_nonexisting_company
+      id = (company = Company.last) ? company.id : 123  
+      company.delete if company
+      post :create, construct_params(@api_params.merge(body: 'Non existing Id', 
+        rememberable_id: id, type: 'company'), false)
+      assert_response 404
     end
 
     def test_delete
@@ -234,21 +154,124 @@ module Ember
       assert_response 404
     end
 
-    def test_delete_without_ticket_access
-      ticket = create_ticket
-      reminder = get_new_reminder('test delete', ticket.id)
+    def test_exception_on_list_all_ticket_todo_without_ticket_permission
       User.any_instance.stubs(:has_ticket_permission?).returns(false)
-      delete :destroy, construct_params(@api_params, false).merge(id: reminder.id)
+      todo = { rememberable_id: get_ticket.display_id, type: "ticket" }
+      get :index, construct_params(@api_params, false).merge(todo)
       assert_response 403
     ensure
       User.any_instance.unstub(:has_ticket_permission?)
     end
 
+    def test_exception_on_create_ticket_todo_without_ticket_permission
+      User.any_instance.stubs(:has_ticket_permission?).returns(false)
+      todo = { body: 'Sample todo data', rememberable_id: get_ticket.display_id, 
+        type: 'ticket' }
+      post :create, construct_params(@api_params, false).merge(todo)
+      assert_response 403
+    ensure
+      User.any_instance.unstub(:has_ticket_permission?)
+    end
+
+    def test_exception_on_delete_ticket_todo_without_ticket_permission
+      User.any_instance.stubs(:has_ticket_permission?).returns(false)
+      ticket = get_ticket
+      reminder = get_new_reminder('test delete', ticket.display_id)
+      todo = { id: reminder.id }
+      delete :destroy, construct_params(@api_params, false).merge(todo)
+      assert_response 403
+    ensure
+      User.any_instance.unstub(:has_ticket_permission?)
+    end
+
+    def test_exception_on_update_ticket_todo_without_ticket_permission
+      User.any_instance.stubs(:has_ticket_permission?).returns(false)
+      ticket = get_ticket
+      reminder = get_new_reminder('test delete', ticket.display_id)
+      put :update, construct_params({ version: 'private', id: reminder.id })
+      assert_response 403
+    ensure
+      User.any_instance.unstub(:has_ticket_permission?)
+    end
+
+    def test_update_to_personal_todo
+      reminder = get_new_reminder('test delete')
+      todo = { body: Faker::Lorem.characters(200) }
+      put :update, construct_params({ version: 'private', id: reminder.id }, todo)
+      assert_response 200
+      match_json(todo_pattern(todo.merge({ todo_id: reminder.id })))
+    end
+
+    def test_update_to_ticket_todo
+      ticket = get_ticket
+      reminder = get_new_reminder('test delete', ticket.display_id)
+      todo = { body: Faker::Lorem.characters(200), completed: true }
+      put :update, construct_params({ version: 'private', id: reminder.id }, todo)
+      assert_response 200
+      match_json(todo_pattern(todo.merge(todo_id: reminder.id, type: 'ticket', 
+        rememberable_id: ticket.display_id, ticket_subject: ticket.subject)))
+    end
+
+    def test_update_to_contact_todo
+      contact = User.contacts.last
+      contact = get_contacts(1)[0] unless contact
+      reminder = get_new_reminder('test delete', nil, contact.id, contact.customer_id)
+      todo = { body: Faker::Lorem.characters(200), completed: true }
+      put :update, construct_params({ version: 'private', id: reminder.id }, todo)
+      assert_response 200
+      match_json(todo_pattern(todo.merge(todo_id: reminder.id, type: 'contact', 
+        rememberable_id: contact.id, company_id: contact.customer_id, 
+        contact_name: contact.name)))
+    end
+
+    def test_update_to_company_todo
+      company = Company.last
+      company = create_company unless company
+      reminder = get_new_reminder('test delete', nil, nil, company.id)
+      todo = { body: Faker::Lorem.characters(200), completed: true }
+      put :update, construct_params({ version: 'private', id: reminder.id }, todo)
+      assert_response 200
+      match_json(todo_pattern(todo.merge(todo_id: reminder.id, type: 'company', 
+        rememberable_id: company.id, company_name: company.name)))
+    end
+
     def test_delete_other_users_todo
       new_agent = add_agent_to_account(@account, name: Faker::Name.name, active: 1, role: 1)
-      reminder = get_new_reminder('Todo for show', nil, new_agent.user.id)
+      reminder = get_new_reminder('Todo for show', nil, nil, nil, new_agent.user.id)
       delete :destroy, construct_params(@api_params, false).merge(id: reminder.id)
       assert_response 403
+    end
+
+    def test_index_with_invalid_type_param
+      get :index, controller_params({
+        version: 'private', 
+        type: Faker::Lorem.characters(8),
+        rememberable_id: 123
+      })
+      match_json(validation_error_response("type", 
+        "It should be one of these values: 'ticket,contact,company'",
+        "invalid_value"))
+      assert_response 400
+    end
+
+    def test_index_missing_id_field_exception
+      get :index, controller_params({
+        version: 'private', 
+        type: 'ticket'
+      })
+      match_json(validation_error_response("rememberable_id", 
+        "It should be a/an Integer",
+        "missing_field"))
+      assert_response 400
+    end
+
+    def validation_error_response(field, message, code)
+      { "description" => "Validation failed", 
+        "errors"      => [ {  "field"  => field,
+                              "message"=> message,
+                              "code"   => code
+                            } ]
+      }
     end
 
     # able to delete a todo

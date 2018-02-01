@@ -84,7 +84,8 @@ module BootstrapTestHelper
         agent_limit: account.subscription.agent_limit,
         state: account.subscription.state,
         subscription_plan: String,
-        trial_days: account.subscription.trial_days
+        trial_days: account.subscription.trial_days,
+        is_copy_right_enabled: account.copy_right_enabled?
       }
     end
     pattern

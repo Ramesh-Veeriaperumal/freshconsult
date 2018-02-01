@@ -147,6 +147,21 @@ module Ember
       match_json(ca_response_show_pattern_evaluated_content(@ca_response4.id, @@sample_ticket, @ca_response4.attachments_sharable))
     end
 
+    def test_show_with_xss_payload
+      ticket = create_ticket(:subject => '<img src=x onerror=prompt("Subject");>')
+      ca_response = create_response(
+        title: Faker::Lorem.sentence,
+        content_html: "<div>{{ticket.subject}}</div>",
+        visibility: ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]
+      )      
+      login_as(@agent)
+      get :show, controller_params(version: 'private', id: ca_response.id, ticket_id: ticket.display_id, include: 'evaluated_response')
+      assert_response 200
+      json_response = JSON.parse(response.body)
+      evaluated_response = json_response["evaluated_response"]
+      assert_equal evaluated_response, "<div>#{h(ticket.subject)}</div>"
+    end
+
     def test_show_with_empty_include
       ca_response2 = create_canned_response(@ca_folder_personal.id, ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me])
       login_as(@agent)

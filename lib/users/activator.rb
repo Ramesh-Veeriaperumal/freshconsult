@@ -61,7 +61,8 @@ module Users
       activation_url = generate_activation_url(portal)
       activation_params = { :email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
                                   'helpdesk_name' =>  account.helpdesk_name, 
-                                  'activation_url' => activation_url),
+                                  'activation_url' => activation_url,
+                                  'portal_name' => (!portal.name.blank?) ? portal.name : account.portal_name),
                             :subject => Liquid::Template.parse(subj_template).render(
                                   'portal_name' => (!portal.name.blank?) ? portal.name : account.portal_name) , 
                             :reply_email => reply_email,

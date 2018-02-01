@@ -257,9 +257,9 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
     true        
   end
 
-   def smart_filter_init_params 
+  def smart_filter_init_params 
     {
-      "account_id" => @twitter_handle.twitter_user_id
+      "account_id" => smart_filter_accountID(:twitter, current_account.id, @twitter_handle.twitter_user_id)
     }.to_json
   end
 end

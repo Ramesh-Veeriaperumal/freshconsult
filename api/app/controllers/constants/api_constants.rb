@@ -7,6 +7,8 @@ module ApiConstants
   }.freeze
   ORDER_TYPE = %w(asc desc).freeze
 
+  EMAIL_CONFIG_PER_PAGE = 200
+
   # https://github.com/mislav/will_paginate/blob/master/lib/will_paginate/page_number.rb
   PAGE_MAX = WillPaginate::PageNumber::BIGINT
 
@@ -22,7 +24,6 @@ module ApiConstants
   # ValidationConstants
   EMAIL_REGEX = AccountConstants::EMAIL_REGEX
   EMAIL_VALIDATOR = AccountConstants::EMAIL_VALIDATOR
-  ALLOWED_ATTACHMENT_SIZE = 15 * 1024 * 1024
   LOAD_OBJECT_EXCEPT = [:create, :index, :route_not_found, :filtered_index, :search] +
                        TimeEntryConstants::LOAD_OBJECT_EXCEPT +
                        ConversationConstants::LOAD_OBJECT_EXCEPT +

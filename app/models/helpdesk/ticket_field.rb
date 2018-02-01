@@ -114,7 +114,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
    
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id
-
+  validates_associated :flexifield_def_entry
   validates_presence_of :flexifield_def_entry, :if => :custom_field?
 
   before_create :populate_label

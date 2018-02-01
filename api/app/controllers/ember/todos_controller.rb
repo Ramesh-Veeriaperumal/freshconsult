@@ -2,18 +2,20 @@ module Ember
   class TodosController < ApiApplicationController
     include HelperConcern
     include TicketConcern
+    include TodoConstants
     decorate_views
-    SINGULAR_RESPONSE_FOR = %w(create update).freeze
+
+    before_filter :verify_rememberable, only: [:create, :index]
 
     def index
-      @items = params[:ticket_id] ? scoper.preload(:ticket) : paginate_items(scoper.preload(:ticket))
-      response.api_meta = { count: scoper.count }
+      @items = paginate_items(fetch_reminders.
+          with_resources(PRELOAD_RESOURCES_MAP[rememberable_type]))
+      response.api_meta = { count: fetch_reminders.count(:id) }
     end
 
     def create
-      return unless validate_body_params
-      @item.ticket_id = @ticket.id if @ticket
-      @item.user_id = (@user || api_current_user).id # can be only api_current_user.id
+      @item.user_id = api_current_user.id
+      @item.company_id = @rememberable.customer_id if rememberable_type == :contact
       if @item.save
         render '/ember/todos/show'
       else
@@ -22,7 +24,6 @@ module Ember
     end
 
     def update
-      return unless validate_body_params
       sanitize_update_params
       if @item.update_attributes(params[cname])
         render '/ember/todos/show'
@@ -41,45 +42,97 @@ module Ember
 
     private
 
+      def decorator_options
+        rememberable_type ? 
+          super({ "#{rememberable_type}": rememberable }) : super
+      end
+
+      def verify_rememberable
+        return head 404 if rememberable_type && rememberable.nil?
+      end
+
       def validate_filter_params
         params.permit(*fields_to_validate)
         @filter = TodoValidation.new(params, nil, true)
         render_errors(@filter.errors, @filter.error_options) unless @filter.valid?
       end
 
+      def validate_params
+        validate_body_params
+      end
+
       def sanitize_update_params
-        ParamsHelper.assign_and_clean_params(TodoConstants::PARAMS_MAPPINGS, params[cname])
+        ParamsHelper.assign_and_clean_params(TODO_PARAMS_MAPPINGS, params[cname])
       end
 
       def after_load_object
-        @ticket = @item.ticket if @item.ticket_id
-        if @ticket
-          verify_ticket_permission(api_current_user, @ticket)
-        else
-          verify_user_permission(api_current_user, @item)
-        end
+        verify_user_permission(api_current_user, @item) if rememberable_type.nil?
       end
 
       def check_privilege
         return false unless super # break if there is no enough privilege.
-        if (create? || index?) && params[:ticket_id]
-          @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
-          unless @ticket.present?
-            log_and_render_404
-            return false
-          end
-          verify_ticket_permission(api_current_user, @ticket)
+        if rememberable_type == :ticket && rememberable
+          return verify_ticket_permission(api_current_user, rememberable) 
         end
+        true
       end
 
       def constants_class
         :TodoConstants.to_s.freeze
       end
 
+      def fetch_reminders
+        if rememberable
+          @rememberable.send(REMINDERS[rememberable_type])
+        else
+          api_current_user.reminders
+        end
+      end
+
       def scoper
-        return Helpdesk::Reminder unless index? # to handle validationerrors for update & create
-        conditions = params[:ticket_id] ? { ticket_id: @ticket.id } : { user_id: (@user || api_current_user).id }
-        Helpdesk::Reminder.where(conditions).order('id DESC')
+        return @rememberable.send(REMINDERS[rememberable_type]) if rememberable
+        Helpdesk::Reminder
+      end
+
+      def rememberable
+        return @rememberable if @rememberable
+        if rememberable_type.present?
+          if reminder.present?
+            @rememberable = @reminder.send(rememberable_type)
+          elsif FIND_REMEMBERABLE[rememberable_type]
+            @rememberable = send(FIND_REMEMBERABLE[rememberable_type],
+                                  params[:rememberable_id])
+          end  
+        end
+      end
+
+      def find_ticket(display_id)
+        current_account.tickets.visible.find_by_display_id(display_id)
+      end
+
+      def find_user(id)
+        current_account.all_users.find_by_id(id)
+      end
+
+      def find_company(id)
+        current_account.companies.find_by_id(id)
+      end
+
+      def resource
+        @resource ||= TYPE_TO_RESOURCE_MAP[rememberable_type]
+      end
+
+      def rememberable_type
+        return @rememberable_type if @rememberable_type
+        @rememberable_type = reminder ? reminder.rememberable_type : 
+            params[:type].try(:to_sym)
+      end
+
+      def reminder
+        return @reminder if @reminder
+        if update? || destroy?
+          @reminder = Helpdesk::Reminder.find_by_id(params[:id])
+        end
       end
   end
 end

@@ -66,7 +66,7 @@ class Social::TwitterStream < Social::Stream
   def construct_smart_filter_params(tweet_body, tweet_id, twitter_user_id)
     {
      :entity_id => tweet_id.to_s,
-     :account_id => twitter_user_id,
+     :account_id => smart_filter_accountID(:twitter, Account.current.id, twitter_user_id),
      :text => tweet_body,
      :screen_name => [],
      :source => "twitter",

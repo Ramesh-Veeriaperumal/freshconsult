@@ -402,6 +402,7 @@ module Ember
       end
 
       def parse_liquid(liquid_content)
+        @ticket.escape_liquid_attributes = current_account.launched?(:escape_liquid_for_reply)
         Liquid::Template.parse(liquid_content).render(
           'ticket' => @ticket,
           'helpdesk_name' => Account.current.portal_name

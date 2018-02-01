@@ -9,9 +9,19 @@
 			} do |f| -%>
 
 	<div class="controls flow-form">
-		<%= f.rich_editor 	:body_html, 
-					:class => "required_redactor", :height => "150px", 
-					:index => @post.id, 'editor-type' => :forum  %>
+	  <div id="sticky_redactor_toolbar" class="hide sticky_editor_toolbar"></div>
+	  	<div class='editor-body'>
+				<%= f.text_area  :body_html, 'editor-type' => :forum, :height => "150px", 
+      		:class => "required_redactor", 
+      		:id => :reply_description,
+      		:data => {
+      			:index => @post.id,
+        		:"remove-cursor" => true,
+        		:"toolbar-external" => '#sticky_redactor_toolbar',
+        		:"new-editor" => current_account.launched?(:froala_editor_forums)
+      		} 
+    		%>
+    	</div>
 		<% if current_account.launched?(:multifile_attachments) %>
 			<%= render :partial=> "discussions/topics/multi_attachment_form", :locals => {
 									:attachments => {
@@ -36,10 +46,9 @@
 		<%= submit_tag(t("save"), :class => "btn btn-primary btn-small", 'data-id' => @post.id, :id => "save_button_#{@post.id}") %>
 	</div>
 <% end -%>
-<%= javascript_tag do %>
+ <%= javascript_tag do %>
 	(function($) {
-		$("#reset_button_" + <%= @post.id.to_s %>).data('html',
-							$('#post_' + <%= @post.id.to_s %> +'_body_html').val());
-		$('#post_<%= @post.id %>_body_html').getEditor().focus();
-	})(jQuery)
-<% end %>
+ 		$("#reset_button_" + <%= @post.id.to_s %>).data('html',
+			$('#post_' + <%= @post.id.to_s %> +'_body_html').val());
+ 	})(jQuery)
+ <% end %> 
