@@ -90,6 +90,7 @@
       :denormalized_flexifields: 85
       :support_bot: 86
       :freshcaller_widget: 87
+      :image_annotation: 88
 :selectable_features:
       :branding: true
       :gamification_enable: false
