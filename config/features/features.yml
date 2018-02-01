@@ -89,8 +89,9 @@
       :falcon: 84
       :denormalized_flexifields: 85
       :support_bot: 86
-      :image_annotation: 87
-      :tam_default_fields: 88
+      :freshcaller_widget: 87
+      :image_annotation: 88
+      :tam_default_fields: 89
 :selectable_features:
       :branding: true
       :gamification_enable: false
@@ -100,5 +101,6 @@
       :caching: false
       :private_inline: false
       :freshcaller: false
+      :freshcaller_widget: false
       :falcon: false
       :support_bot: false

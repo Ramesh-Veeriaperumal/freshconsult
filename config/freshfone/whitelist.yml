@@ -659,6 +659,9 @@ AE:
 GB:
   name: United Kingdom
   enabled: true
+JE:
+  name: Jersey
+  enabled: true
 US:
   name: United States
   enabled: true
