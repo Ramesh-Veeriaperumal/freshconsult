@@ -11,6 +11,7 @@ common: &common
   jwt_secret: 'fbaed9c2eb9811e7891d186590cc7ba7'
   jwe_secret: '0222bcd8eb9911e7891d186590cc7ba7'
   jwt_default_expiry: 30
+  widget_code_src: 'https://www.intfreshbots.com/assets/share/js/fbotsChat.js'
 
 development:
   <<: *common

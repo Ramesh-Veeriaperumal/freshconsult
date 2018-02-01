@@ -7,7 +7,7 @@ module ApplicationHelper
   include ActionView::Helpers::TextHelper
   include Gamification::GamificationUtil
   include ChatHelper
-
+  include BotHelper
   include AttachmentHelper
   include ConfirmDeleteHelper
   include RtlHelper

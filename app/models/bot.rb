@@ -1,5 +1,8 @@
 class Bot < ActiveRecord::Base
 
+  include Redis::OthersRedis
+  include Redis::RedisKeys
+
   self.primary_key = :id
 
   attr_accessible :name, :avatar, :portal_id, :template_data, :enable_in_portal
@@ -26,6 +29,14 @@ class Bot < ActiveRecord::Base
   serialize :avatar, Hash
   serialize :additional_settings, Hash
 
+
+  def render_widget_code?
+    enable_in_portal && (get_others_redis_key(status_redis_key).to_i == BotConstants::BOT_STATUS_HASH[:training_completed] || !redis_key_exists?(status_redis_key))
+  end
+
+  def status_redis_key
+    BOT_STATUS % { account_id: Account.current.id, portal_id: portal_id }
+  end
 
 
   def logo_url
