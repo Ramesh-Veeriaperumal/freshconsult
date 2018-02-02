@@ -7,7 +7,7 @@ module ApplicationHelper
   include ActionView::Helpers::TextHelper
   include Gamification::GamificationUtil
   include ChatHelper
-
+  include BotHelper
   include AttachmentHelper
   include ConfirmDeleteHelper
   include RtlHelper
@@ -624,6 +624,15 @@ module ApplicationHelper
       #date fields disabled till db fix
       place_holders[:requester] <<  ["{{ticket.requester.#{name}}}", "Requester #{custom_field.label}", "", "ticket_requester_#{name}"]
     }
+
+    # TAM company fields place holders
+    if current_account.tam_default_company_fields_enabled?
+      current_account.company_form.tam_default_fields.each { |field|
+        place_holders[:company] <<  ["{{ticket.company.#{field.name}}}",
+                                     "Company #{field.label}", "", 
+                                     "ticket_requester_company_#{field.name}"]
+      }
+    end
 
     # Company Custom Field Placeholders
     current_account.company_form.custom_company_fields.each { |custom_field|
@@ -2033,6 +2042,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def inline_manual_people_tracing
+    state  = current_account.subscription.state
     bucket = current_account.account_additional_settings.additional_settings[:announcement_bucket].to_s
     {
       :uid      => current_user.id,
@@ -2042,7 +2052,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
       :created  => current_account.created_at.to_i,
       :updated  => current_user.last_login_at.to_i,
       :plan     => Subscription.fetch_by_account_id(current_account.id).subscription_plan_from_cache.display_name,
-      :roles    => (current_user.privilege?(:admin_tasks)) ? ['admin', bucket] : ['agent', bucket]
+      :roles    => (current_user.privilege?(:admin_tasks)) ? ['admin', bucket, state] : ['agent', bucket, state]
     }
   end
 

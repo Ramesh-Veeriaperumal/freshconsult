@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20180123071929) do
+ActiveRecord::Schema.define(:version => 20171214095940) do
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -2826,6 +2826,7 @@ ActiveRecord::Schema.define(:version => 20180123071929) do
     t.integer "account_id",           :limit => 8
     t.integer "position"
     t.integer "solution_category_meta_id", :limit => 8
+    t.integer "bot_id"
   end
 
   add_index "portal_solution_categories", ["account_id", "portal_id"], :name => "index_portal_solution_categories_on_account_id_and_portal_id"

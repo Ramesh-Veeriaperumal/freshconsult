@@ -10,7 +10,7 @@ module ApiSearch
         builder[:es_models]     = ApiSearchConstants::COMPANY_ASSOCIATIONS
         builder[:query]         = params[:query]
       end
-      response = fq_builder.records
+      response = fq_builder.response
       if response.valid?
         @items = response.items
       else

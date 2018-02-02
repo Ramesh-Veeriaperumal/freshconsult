@@ -133,7 +133,7 @@
 					break;
 				case 'time_zone_dropdown':
 				case 'dropdown':
-				case 'dropdown_blank':  
+				case 'dropdown_blank':
 					dataItem.dom_type = 'dropdown_blank';
 					$(dataItem.admin_choices).each(function(ci, choice){
 						if(!choice['_destroy']) {
@@ -414,9 +414,10 @@
 		deletePostData: function(data) {
 			data.custom_field_choices_attributes = data.admin_choices;
 			delete data.admin_choices;
-			if(/^default/.test(data.field_type)) {
+			if(!tamDropdownFields.includes(data.field_type)
+						&& /^default/.test(data.field_type)) {
 				delete data.custom_field_choices_attributes;
-			}
+			 }
 			delete data.dom_type;
 			delete data.validate_using_regex;
 			delete data.disabled_customer_data;
@@ -469,8 +470,9 @@
 				else {
 					var self = this;
 					$.each(this.settings.fieldMap, function(key, value) {
+						fieldType = self.settings.currentData.get('field_type');
 						if(key == 'admin_choices') {
-							if (/^custom/.test(self.settings.currentData.get('field_type'))) {
+							if (/^custom/.test(fieldType) || tamDropdownFields.includes(fieldType)) {
 								self.settings.currentData.set(key, self.getAllChoices(self.dialogDOMMap[key]));
 							}
 						}
@@ -688,10 +690,13 @@
 		initializeDialogDomMap: function() {
 			var self = this;
 			$.each(this.settings.fieldMap, function(key, value) {
-				if(key == 'admin_choices') 
+				if(key == 'admin_choices'){
 					self.dialogDOMMap[key] = $(self.settings.dialogContainer+" div[name='"+ value[0] + "']");
+				}
 				else
+				{
 					self.dialogDOMMap[key] = $(self.settings.dialogContainer + " input[name='" + value[0] + "']");
+				}
 			});
 		},
 

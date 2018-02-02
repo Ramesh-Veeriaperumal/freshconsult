@@ -7,5 +7,10 @@ module Freshquery
       response.errors = errors
       response
     end
+
+    # replica of search/utils/exact_match? method
+    def self.exact_match?(search_term)
+    	search_term.present? and (search_term.start_with?('<','"') && search_term.end_with?('>', '"'))
+  	end
   end
 end

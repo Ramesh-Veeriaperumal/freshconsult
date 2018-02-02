@@ -188,7 +188,7 @@ class Account < ActiveRecord::Base
         # Temp for falcon signup
         # Enable falcon UI for helpdesk by default
         if falcon_ui_applicable?
-          [:falcon, :freshcaller].each do |feature_key|
+          [:falcon, :freshcaller, :freshcaller_widget].each do |feature_key|
             bitmap_value = self.set_feature(feature_key)
           end
         end

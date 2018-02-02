@@ -24,7 +24,7 @@ module ChannelIntegrations::Utils
         epoc_time: Time.now.to_i, # To create a new MD5 hash everytime(as others are constant).
         account_id: Account.current.id,
         domain: Account.current.full_url,
-        tenant: ChannelFrameworkConfig['tenant'],
+        pod: ChannelFrameworkConfig['pod'],
         region: ChannelFrameworkConfig['region']
       }
     end

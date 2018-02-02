@@ -5,6 +5,8 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   include Helpdesk::Ticketfields::TicketStatus
   include Cache::Memcache::Helpdesk::TicketStatus
   include Helpdesk::BulkActionMethods
+
+  ONLY_DOT_REGEX = /\A[.]+\z/
   
   self.table_name =  "helpdesk_ticket_statuses"
 
@@ -44,7 +46,12 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
 
   def self.translate_status_name(status, disp_col_name=nil)
     st_name = disp_col_name.nil? ? status.send(display_name) : status.send(disp_col_name)
-    DEFAULT_STATUSES.keys.include?(status.status_id) ? I18n.t("#{st_name.gsub(" ","_").downcase}", :default => "#{st_name}") : st_name
+    DEFAULT_STATUSES.keys.include?(status.status_id) && translatable?(st_name) ? I18n.t("#{st_name.gsub(" ","_").downcase}", :default => "#{st_name}") : st_name
+  end
+
+  def self.translatable?(st_name)
+    # Do not translate status name if it contains only dots.
+    !(st_name.include?('.') && st_name.match(ONLY_DOT_REGEX).present?)
   end
 
   def self.statuses_list(account)

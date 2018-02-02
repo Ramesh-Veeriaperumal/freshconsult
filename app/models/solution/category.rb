@@ -10,6 +10,12 @@ class Solution::Category < ActiveRecord::Base
   include Cache::Memcache::Mobihelp::Solution
   include Solution::Activities
 
+  concerned_with :presenter
+
+  publishable
+
+  before_destroy :save_deleted_category_info
+
   belongs_to_account
 
   belongs_to :solution_category_meta, 
@@ -78,6 +84,13 @@ class Solution::Category < ActiveRecord::Base
 
   def stripped_name(name = self.name)
     (name || "").downcase.strip
+  end
+
+  def save_deleted_category_info
+    @deleted_model_info = {
+      id: parent_id,
+      account_id: account_id
+    }  
   end
    
   private

@@ -12,6 +12,7 @@ class CompaniesController < ApplicationController
   before_filter :build_item, :only => [:quick, :new, :create, :create_company]
   before_filter :set_required_fields, :only => [:create_company, :update_company]
   before_filter :set_validatable_custom_fields, :only => [:create, :update, :create_company, :update_company]
+  before_filter :set_validatable_default_fields, only: [:create, :update, :create_company, :update_company]
   before_filter :set_native_mobile, :only => [:update]
 
   def index
@@ -159,9 +160,6 @@ class CompaniesController < ApplicationController
     def es_scoper(per_page)
       order_by = (params[:order_by] == "updated_at") ? :updated_at : :name
       order_type = (params[:order_type] == "desc") ? 'desc' : 'asc'
-      if params[:dynamics_company_name].present?
-        return { :company => current_account.companies.find_by_name(params[:dynamics_company_name]) }
-      end
       Company.es_filter(current_account.id,params[:letter], (params[:page] || 1),order_by, order_type, per_page, request.try(:uuid))
     end
 

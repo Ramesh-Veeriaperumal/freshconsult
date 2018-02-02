@@ -71,7 +71,7 @@ include FalconHelperMethods
         <a href="javascript:;" onclick="#{on_click_url}" class="install-app #{ni_install_btn_class}"><img alt="Add to Slack" src="https://platform.slack-edge.com/img/add_to_slack.png" style="padding-top: 10px;padding-left: 10px;width: 139px; height: 40px;"></a>
       )
     
-    elsif @extension['name'] == Integrations::Constants::APP_NAMES[:google_calendar] && current_account.falcon_ui_enabled?(current_user)
+    elsif [Integrations::Constants::APP_NAMES[:google_calendar],Integrations::Constants::APP_NAMES[:mailchimp]].include?(@extension['name']) && current_account.falcon_ui_enabled?(current_user)
       _btn << link_to(install_btn_text, install_url, :method => :post, :target => '_top',
               :class => "btn btn-default btn-primary install-app #{ni_install_btn_class}").html_safe
     else

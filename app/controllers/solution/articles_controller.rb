@@ -381,8 +381,14 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def bulk_update_folder
-      @articles = meta_scoper.where(:id => params[:items])
-      @articles.map { |a| a.update_attributes(:solution_folder_meta_id => params[:parent_id]) }
+      @articles = meta_scoper.where(:id => params[:items]).preload(:primary_article)
+      @articles.map do |a|
+        ActiveRecord::Base.transaction do
+          a.solution_folder_meta_id = params[:parent_id]
+          a.save
+          a.primary_article.save # Dummy save to trigger publishable callbacks
+        end
+      end
       @updated_items = params[:items].map(&:to_i) & @new_folder.solution_article_metum_ids
       @other_items = params[:items].map(&:to_i) - @updated_items
     end

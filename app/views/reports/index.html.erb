@@ -7,7 +7,7 @@
     <% end %>
 
     <div class="report-head report">
-      <% if enable_qna? %>
+      <% if feature?(:enterprise_reporting) %>
         <div class="qna-search-bar">
             <div class="search-field-holder">
                 <div class="selected-queries"></div>
@@ -116,7 +116,7 @@
                          </a>
                       </li>
                     <%end%>
-                    <% if enable_lifecycle_report? %>
+                    <% if feature?(:enterprise_reporting) %>
                       <li>
                           <a href="/reports/timespent" data-pjax="#body-container">
                                 <div class="img-outer"><i class="fsize-36 ficon-timespent"></i></div>
@@ -185,7 +185,7 @@
         </div>
   </div>
   </div> <!-- left section -->
-  <% if enable_insights? %>
+  <% if feature?(:enterprise_reporting) %>
     <div class="insights">
           <div class="insights-title">
               <div class="pull-left">
