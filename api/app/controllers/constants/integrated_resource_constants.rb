@@ -5,4 +5,5 @@ module IntegratedResourceConstants
   INTEGRATABLE_TYPES = %w(Helpdesk::TimeSheet Helpdesk::Ticket).freeze
   TICKET = 'Helpdesk::Ticket'.freeze
   TIMESHEET = 'Helpdesk::TimeSheet'.freeze
+  INTEGRATIONS_USING_DISPLAY_ID = [Integrations::Application::APP_NAMES[:google_calendar]].freeze
 end.freeze

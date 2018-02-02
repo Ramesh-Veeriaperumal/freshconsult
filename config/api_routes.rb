@@ -352,6 +352,7 @@ Helpkit::Application.routes.draw do
     get 'solutions/articles', to: 'ember/solutions/articles#index'
 
     match '/dashboards/leaderboard_agents' => 'ember/leaderboard#agents', via: :get
+    match '/dashboards/leaderboard_groups' => 'ember/leaderboard#groups', via: :get
 
     resources :marketplace_apps, controller: 'ember/marketplace_apps', only: [:index]
 
@@ -438,6 +439,9 @@ Helpkit::Application.routes.draw do
 
   channel_routes = proc do
     resources :freshcaller_calls, controller: 'channel/freshcaller/calls', only: %i[create update]
+    get '/freshcaller/contacts/:id/activities', to: 'channel/freshcaller/contacts#activities'
+    post '/freshcaller/search/customers/', to: 'channel/freshcaller/search/customers#results'
+    post '/freshcaller/search/tickets/', to: 'channel/freshcaller/search/tickets#results'
     resources :tickets, controller: 'channel/tickets', only: [:create]
     scope '/bot' do
       resources :tickets, controller: 'channel/bot/tickets', only: [:create]
