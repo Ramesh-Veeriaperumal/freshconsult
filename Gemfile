@@ -161,7 +161,7 @@ gem "lhm", :git => "git://github.com/freshdesk/large-hadron-migrator.git"
 gem "rinku", :git => "git://github.com/freshdesk/rinku.git"
 
 gem "namae", '0.8.4'
-gem 'ancestry', '1.3'
+gem 'ancestry', '3.0.1' # Overriden unscoped_where method in social/fb_post.rb, take this into consideration this while upgrading the gem
 gem 'rubytree'
 gem "telephone_number", '1.1.1'
 gem "useragent", "~> 0.16.3"

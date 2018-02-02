@@ -43,6 +43,28 @@ class Ember::IntegratedResourcesControllerTest < ActionController::TestCase
     match_json(integrated_resource_pattern(Integrations::IntegratedResource.find_by_id(integ_resource['id'])))
   end
 
+  def test_create_integrated_resource_for_application_which_uses_display_id
+    t1 = create_ticket
+    app = Integrations::Application.find_by_name('google_calendar')
+    gcal_app = Account.current.installed_applications.find_by_application_id(app.id)
+    gcal_app = create_application('google_calendar') if gcal_app.nil?
+    agent = add_test_agent(@account)
+    time_sheet = create_time_entry(billable: false, ticket_id: t1.display_id, agent_id: agent.id, executed_at: 19.days.ago.iso8601)
+    resource_params = {
+      application_id: app.id,
+      integrated_resource: {
+        remote_integratable_id: 'ROSH-100',
+        local_integratable_id: t1.id,
+        installed_application_id: gcal_app.id,
+        local_integratable_type: 'Helpdesk::Ticket'
+      }
+    }
+    post :create, construct_params(@api_params.merge(resource_params))
+    assert_response 200
+    integ_resource = JSON.parse(@response.body)
+    match_json(integrated_resource_pattern(Integrations::IntegratedResource.find_by_id(integ_resource['id'])))
+  end
+
   def test_show_integ_resource
     resource = Integrations::IntegratedResource.first
     get :show, construct_params(version: 'private', id: resource.id)
