@@ -10,8 +10,7 @@ module Ember
     def create
       return unless validate_body_params
       installed_application = current_account.installed_applications.find_by_id(params[:integrated_resource][:installed_application_id])
-      if params[:integrated_resource][:local_integratable_type] == ::IntegratedResourceConstants::TICKET && 
-        !google_calendar_app?(installed_application) # Temporary Hack for google calendar. Google calendar associates events with ticket's display ID and not the ID
+      if params[:integrated_resource][:local_integratable_type] == ::IntegratedResourceConstants::TICKET && !app_uses_display_id?(installed_application)
         ticket_id = params[:integrated_resource][:local_integratable_id]
         ticket = fetch_ticket_using_display_id(ticket_id)
         params[:integrated_resource][:local_integratable_id] = ticket.id
@@ -47,18 +46,13 @@ module Ember
           ticket = fetch_ticket_using_display_id(params[:local_integratable_id])
           if verify_ticket_state ticket
             installed_application = current_account.installed_applications.find_by_id(params[:installed_application_id])
-            local_integratable_lookup_column = google_calendar_app?(installed_application) ? "display_id" : "id" # Temporary Hack for google calendar. Google calendar associates events with ticket's display ID and not the ID
             @items = Integrations::IntegratedResource.where(account_id: current_account.id, 
-              installed_application_id: params[:installed_application_id], local_integratable_id: ticket.send(local_integratable_lookup_column))
+              installed_application_id: params[:installed_application_id],
+              local_integratable_id: ticket.send(local_integratable_lookup_column(installed_application)))
           end
         else
           @items = Integrations::IntegratedResource.where(installed_application_id: params[:installed_application_id], local_integratable_id: params[:local_integratable_id])
         end
-      end
-
-      def google_calendar_app?(installed_application)
-        return false unless installed_application
-        installed_application.application.name == Integrations::Application::APP_NAMES[:google_calendar]
       end
 
       def validate_filter_params
@@ -85,17 +79,22 @@ module Ember
         log_and_render_404 unless integ_resource
         local_integratable_type = integ_resource.local_integratable_type
         if local_integratable_type == ::IntegratedResourceConstants::TICKET
-          ticket = load_ticket_for_resource_destruction
-          verify_ticket_state ticket
+          verify_ticket_state load_ticket_for_resource_destruction
         end
       end
 
+      def app_uses_display_id?(installed_application)
+        # Some apps associate the integrated resource with the display ID and not the real ID.
+        return false unless installed_application
+        IntegratedResourceConstants::INTEGRATIONS_USING_DISPLAY_ID.include?(installed_application.application.name)
+      end
+
+      def local_integratable_lookup_column(installed_application)
+        (app_uses_display_id?(installed_application)) ? 'display_id' : 'id'
+      end
+
       def load_ticket_for_resource_destruction
-        if google_calendar_app?(@item.installed_application)
-          Account.current.tickets.find_by_display_id(@item.local_integratable_id)
-        else
-          Account.current.tickets.find_by_id(@item.local_integratable_id)
-        end
+        Account.current.tickets.where(local_integratable_lookup_column(@item.installed_application).to_sym => @item.local_integratable_id).first
       end
 
       def fetch_ticket_using_workable_id(local_integratable_id)
@@ -115,8 +114,7 @@ module Ember
       def validate_ticket_permission_for_create
         ticket = nil
         if params[:integrated_resource][:local_integratable_type] == ::IntegratedResourceConstants::TICKET
-          local_integratable_id = params[:integrated_resource][:local_integratable_id]
-          ticket = fetch_ticket_using_display_id(local_integratable_id)
+          ticket = fetch_ticket_using_display_id(params[:integrated_resource][:local_integratable_id])
         elsif params[:integrated_resource][:local_integratable_type] == ::IntegratedResourceConstants::TIMESHEET
           ticket = fetch_ticket_using_workable_id(params[:integrated_resource][:local_integratable_id])
         end
