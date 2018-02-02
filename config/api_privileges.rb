@@ -41,7 +41,7 @@ Authority::Authorization::PrivilegeList.build do
 
     resource :"ember/search/ticket", only: [:results]
     resource :"ember/search/autocomplete", only: %i(requesters agents companies tags)
-    resource :"ember/leaderboard", only: [:agents]
+    resource :"ember/leaderboard", only: [:agents, :groups]
     resource :"ember/product_feedback"
     resource :"ember/ticket_template", only: %i(show index)
     resource :"ember/search/multiquery", only: [:search_results]

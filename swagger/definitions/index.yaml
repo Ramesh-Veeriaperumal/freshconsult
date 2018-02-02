@@ -297,6 +297,8 @@
     $ref: './response/dashboard/ticket_metrics.yaml'
   leaderboard_agents_lists:
     $ref: './response/dashboard/leaderboard/agents.yaml'
+  leaderboard_groups_lists:
+    $ref: './response/dashboard/leaderboard/groups.yaml'
   requester:
     $ref: './response/tickets/requester.yaml'
 

@@ -58,7 +58,7 @@ module Freshcaller::CallsTestHelper
     {
       version: 'private',
       id: call_id,
-      call_status: 'in-progress',
+      call_status: 'cancelled',
       customer_number: 1_234_567,
       customer_location: 1,
       call_created_at: 1,

@@ -280,6 +280,8 @@
   $ref: ./dashboard/ticket_metrics.yaml
 /dashboards/leaderboard_agents:
   $ref: ./dashboard/leaderboard/agents.yaml
+/dashboards/leaderboard_groups:
+  $ref: ./dashboard/leaderboard/groups.yaml
 
 # Product Feedback
 /product_feedback/:
