@@ -73,7 +73,7 @@ RealtimeDashboard.Widgets.UnresolvedTickets.Agent = function(container,widget_na
 				self.core.Utils.renderTemplate(targetContainer,
 					'app/realtime_dashboard/template/unresolved_tickets_age_tmpl', spliced);
 			} else {
-				jQuery('.' + _fd.widget_name + '_widget #old_tickets_container').html("<div class='no_data_to_display text-center muted mt20'><i class='ficon-no-data fsize-72'></i><div class='mt10'>No Data to Display </div></div>");
+				jQuery('.' + _fd.widget_name + '_widget #old_tickets_container').html("<div class='no_data_to_display text-center muted mt20'><i class='ficon-no-data fsize-72'></i><div class='mt10'> " +I18n.t('no_date_to_display')+ " </div></div>");
 				jQuery('.' + _fd.widget_name + '_widget [rel=view_all_old_tickets]').hide();
 			}
 		},

@@ -49,10 +49,10 @@
                               
                               <td class = "tdSkill">
                               <% if((skill.users.count) > 1) %>
-                                      <%= link_to(h(skill.users.count) + " Agents", "javascript:void(0)", :class => "item_info tdSkill2_anchor", :data => { :skillid => (skill.id), :agentcount => (skill.users.count), :title => (skill.name) }) %>
+                                      <%= link_to(h(skill.users.count) +  " " + t('agents'), "javascript:void(0)", :class => "item_info tdSkill2_anchor", :data => { :skillid => (skill.id), :agentcount => (skill.users.count), :title => (skill.name) }) %>
                                       </td>
                               <% else %>
-                                    <%= link_to(h(skill.users.count) + " Agent", "javascript:void(0)", :class => "item_info tdSkill2_anchor", :data => { :skillid => (skill.id), :agentcount => (skill.users.count), :title => (skill.name) }) %>
+                                    <%= link_to(h(skill.users.count) + " " + t('Agent'), "javascript:void(0)", :class => "item_info tdSkill2_anchor", :data => { :skillid => (skill.id), :agentcount => (skill.users.count), :title => (skill.name) }) %>
                                     </td>
                               <% end %>
                               <td class = "tdSkill">

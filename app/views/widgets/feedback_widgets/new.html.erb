@@ -41,8 +41,8 @@
     :html => { :method => :post, :multipart => true, :class => "form form-widget", :id => "fd_feedback_widget" } do |f| %>
     <%#= f.error_messages %>
     <div class="errorExplanation hide" id="errorExplanation">
-      <h2>1 error prohibited this ticket from being saved</h2>
-      <p>There were problems with the following fields:</p>
+      <h2><%= t(".prohibited_error") %></h2>
+      <p><%= t(".problems_with_fields") %></p>
       <ul>
         <li id="feedback_widget_error"></li>
       </ul>

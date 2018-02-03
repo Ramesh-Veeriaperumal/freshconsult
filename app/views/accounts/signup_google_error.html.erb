@@ -1,9 +1,10 @@
 <div class="ui-form" id="signup-form">
 	<center>
 		<p class="big-text aligncenter">
-		You must click on <strong>"Allow access"</strong> in order to continue, as freshdesk will use your email address as your login id.</p>
+			<%= t("accounts.signup_google_error.allow_access_message").html_safe %>
+		</p>
 	</center>
 	<a href="http://www.google.com/enterprise/marketplace/viewListing?productListingId=9356+11308236248743392394"> 
-		&#x2190; Please click here to go back to Google app marketplace
+		&#x2190; <%= t("accounts.signup_google_error.go_back") %>
 	</a>
 </div>

@@ -111,19 +111,22 @@ var RLANG = {
 	underline: 'Underline (' + ctrlkeyname + 'U)',
 	anchor: 'Anchor',
 	link_new_tab: 'Open link in new tab',
-	removeFormat: 'Remove formatting (' + ctrlkeyname + '\\)',
+	removeformat: 'Remove formatting (' + ctrlkeyname + '\\)',
 	invalid_image_file: 'Error occurred while uploading',
 	confirm_remove_format_for_entire_content: 'Converting the entire content to plain text will remove formatting and inserted items. Are you sure you want to continue?',
 	codeEditor:'Code Snippet',
 	codeEditor_html:'Enter code snippet and select language',
 	label_lang: 'Language : ',
 	show_quoted_text: 'Show Quoted text',
-	inline_supported_images_label:'Supported image formats are JPG,PNG,GIF and TIFF'
+	supported_images:'Supported image formats are JPG,PNG,GIF and TIFF',
+	select_file_to_upload: 'Select a file to upload'
 };
+
 
 var DEFAULT_LANG = jQuery.extend({}, RLANG);
 
 var uploaded_img_placeholder = (typeof(FILLER_IMAGES) === "undefined") ? "/images/animated/image_upload_placeholder.gif" : FILLER_IMAGES.imageLoading;
+
 
 (function($){
 
@@ -171,7 +174,16 @@ var Redactor = function(element, options)
 		RLANG = RELANG[options.lang];
 	}
 
-	RLANG = $.extend(DEFAULT_LANG, RLANG ); //Defaulting to english for a few strings
+	// added manually to commonjs keys - which are not in ../langs/*
+	var NON_TRANSLATED_KEYS = (typeof I18n !== "undefined") ? {
+		link_new_tab: I18n.translate('common_js_translations.redactor.link_new_tab'),
+		supported_images: I18n.translate('common_js_translations.redactor.supported_images'),
+		select_file_to_upload: I18n.translate('common_js_translations.redactor.select_file_to_upload'),
+		underline: I18n.translate('common_js_translations.redactor.underline') + '(' + ctrlkeyname + 'U)',
+		confirm_remove_format_for_entire_content: I18n.translate('common_js_translations.redactor.confirm_remove_format_for_entire_content')
+	} : {};
+
+	RLANG = $.extend(DEFAULT_LANG, RLANG, NON_TRANSLATED_KEYS); //Defaulting to english for a few strings
 	var fc_lang = document.getElementsByTagName('html')[0].getAttribute('lang');
 	var fc_rtlLanguages = ['ar','he'];
 	var fc_rtlSuffix = (fc_rtlLanguages.indexOf(fc_lang) >= 0) ? 'rtl' : 'ltr';
@@ -325,7 +337,7 @@ var Redactor = function(element, options)
 				'<div id="redactor_tab1" class="redactor_tab">' +
 					'<div class="custom-file-upload">' +
 						'<div class="file-upload">' +
-							'<span class="file-upload-text">Select a file to upload</span>'+
+							'<span class="file-upload-text">'+ RLANG.select_file_to_upload + '</span>'+
 						'</div>' +
 						'<input type="file" id="redactor_file" name="image[uploaded_data]" accept="image/*" />' +
 					'</div>'+
@@ -334,7 +346,7 @@ var Redactor = function(element, options)
 					'<div id="redactor_image_box"></div>' +
 					'<div class="custom-file-upload">' +
 						'<div class="file-upload">' +
-							'<span class="file-upload-text">Select a file to upload</span>'+
+							'<span class="file-upload-text">'+ RLANG.select_file_to_upload + '</span>'+
 						'</div>' +
 						'<input type="file" id="redactor_file" name="image[uploaded_data]" accept="image/*" />' +
 					'</div>'+
@@ -344,7 +356,7 @@ var Redactor = function(element, options)
 				'<input name="redactor_file_link" id="redactor_file_link" class="redactor_input" placeholder="' + RLANG.image_web_link + '"  />' +
 			'</div>' +
 			'<div id="redactor_modal_footer">' +
-				'<span class="muted">' + RLANG.inline_supported_images_label + '</span>' +
+				'<span class="muted">' + RLANG.supported_images + '</span>' +
 				'<span class="redactor_btns_box">' +
 					'<input type="button" class="btn" name="' + RLANG.cancel + '" id="redactor_btn_modal_close" value="' + RLANG.cancel + '" />' +
 					'<input type="button" class="btn btn-primary" name="upload" id="redactor_upload_btn" value="' + RLANG.insert + '" />' +
@@ -483,7 +495,7 @@ var Redactor = function(element, options)
 			},
 			removeFormat:
 			{
-				title: RLANG.removeFormat,
+				title: RLANG.removeformat,
 				func: 'buildremoveFormat'
 			},
 			bold:
@@ -2663,7 +2675,7 @@ Redactor.prototype = {
 
 	},
 	buildButton: function(key, s)
-	{
+	{	
 		var button = $('<a href="javascript:void(null);" title="' + s.title + '" class="redactor_btn_' + key + '" tabindex="-1"><span class="hide">' + s.title + '</span></a>');
 
 		if (typeof s.func === 'undefined')

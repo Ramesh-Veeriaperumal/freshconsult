@@ -9,10 +9,10 @@
         <h3 class="header-lead"><span><%=@data_obj['comparison_field'][selected.to_sym]%></span></h3>
         <div>
           <div id="<%=selected%>_line_chart" style="width:600px" class="graph-container">
-            <div class="noinfo">No data to display!</div>
+            <div class="noinfo"><%= t("adv_reports.no_data_to_display_msg") %></div>
           </div>
           <div id="<%=selected%>_bar_chart" style="width:600px" class="graph-container">
-            <div class="noinfo">No data to display!</div>
+            <div class="noinfo"><%= t("adv_reports.no_data_to_display_msg") %></div>
           </div> 
         </div> 
       </div>

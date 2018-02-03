@@ -125,7 +125,7 @@ jQuery(document).ready(function(){
 		focusedOnSearch = true;
 		searchString = this.value.replace(/^\s+|\s+$/g, "");
 		$J("#SearchBar").addClass("active");
-		$J("#header_search").attr("placeholder", "Search");
+		$J("#header_search").attr("placeholder", I18n.t('common_js_translations.search'));
 		$J('#SearchBar').twipsy('hide');
 		NavSearchUtils.localRecentSearches = NavSearchUtils.getLocalRecentSearches(NavSearchUtils.localRecentSearchKey);
 		NavSearchUtils.localRecentTickets = NavSearchUtils.getLocalRecentTickets(NavSearchUtils.localRecentTicketKey);

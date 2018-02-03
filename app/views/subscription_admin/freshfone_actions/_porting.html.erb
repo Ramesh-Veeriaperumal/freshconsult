@@ -76,7 +76,7 @@
         set_error_message(message);
         return;
       }
-      $(this).val('Requesting....')
+      $(this).val("<%= t('requesting') %>")
               .addClass('disabled');
       $.ajax({
         type: "POST",

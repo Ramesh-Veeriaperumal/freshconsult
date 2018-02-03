@@ -3,9 +3,9 @@
 		<td class = "tooltip email-tip"
 		<%= "title='#{t('email_notifications.disabled_toggle')}'".html_safe if !(user_notification.can_turn_off_for_requester?) && current_account.verified? %>>
 			<% unless (user_notification.can_turn_off_for_requester?) && current_account.verified? %>
-				<input rel="toggle" type="checkbox" id="email" name="timer" data-checked-label="ON" data-unchecked-label="OFF" <%= (user_notification.requester_notification) ? "checked" : "" %> disabled >
+				<input rel="toggle" type="checkbox" id="email" name="timer" <%= (user_notification.requester_notification) ? "checked" : "" %> disabled >
 			<%else%> 	
-				<input rel="toggle" type="checkbox" id="email" name="timer" data-checked-label="ON" data-unchecked-label="OFF" <%= (user_notification.requester_notification) ? "checked" : "" %> data-type="email_notification[requester_notification]" data-url=<%=admin_email_notification_path(user_notification.id) %>  >
+				<input rel="toggle" type="checkbox" id="email" name="timer" <%= (user_notification.requester_notification) ? "checked" : "" %> data-type="email_notification[requester_notification]" data-url=<%=admin_email_notification_path(user_notification.id) %>  >
 			<%end%>	
 		</td>
 		<td>

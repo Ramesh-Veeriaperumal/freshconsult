@@ -8,10 +8,7 @@ window.App = window.App || {};
 	App.DashboardAgentStatus = {
 		bindToggle: function () {
 			var self=this;
-			$('.filter_item').itoggle({
-				checkedLabel: 'On',
-				uncheckedLabel: 'Off'
-			}).change(function() {
+			$('.filter_item').itoggle().change(function() {
 
 				var items = [];
 				var $el = $(this);

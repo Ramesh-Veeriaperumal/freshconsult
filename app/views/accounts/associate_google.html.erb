@@ -14,7 +14,7 @@ cancel_url = "https://www.google.com/a/cpanel/"+@google_domain
 			<input type="hidden" value="<%=@google_domain%>" name="account[google_domain]" id="account_google_domain" class="textfield" />		 				
 			<h3 class="title">Login to <span><%= @full_domain %></span></h3>
 			<div class="intro info-data">
-				Login with an account administrator's credentials to associate your Google Apps login to your Freshdesk account.
+				<%= t("accounts.associate_google.login_message") %>
 			</div>
 			<input type="hidden" value="<%=@full_domain%>" name="account[full_domain]" id="account_full_domain" class="text disabled" />
 			<ul>
@@ -28,7 +28,7 @@ cancel_url = "https://www.google.com/a/cpanel/"+@google_domain
 		  	</li>
 			</ul>
 			<p class="button-container">
-				<%= submit_tag  "Login & complete registration" , :class => "uiButton floatl" %>		
+				<%= submit_tag  t("accounts.associate_google.login_button") , :class => "uiButton floatl" %>		
 				<%= link_to t("cancel"), cancel_url , :class => "uiButton" %>
 			</p>
 		<% end %>	

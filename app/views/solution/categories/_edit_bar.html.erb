@@ -23,7 +23,7 @@
 				<div class="fd-menu" id="visible_to">
 					<div class="left-list">
 						<ul>
-							<% Solution::Folder::VISIBILITY_OPTIONS.each do |visibility| %>
+							<% Solution::Constants::translated_visibility_option.each do |visibility| %>
 								<li>
 									<%= link_to visibility[0], "", 
 															:class => "visibility-selector #{option_selector_name(visibility[0])}", 

@@ -31,7 +31,7 @@
 
         <div id="group_selector_block"  <% if @filtered_group && !@filtered_group.skill_based_round_robin_enabled? %>style="margin-top: 17px;"<% end %>>
             <span class="muted"><%= t('.groups') %>:</span> <span id="group_selector"><div id="filter_by_group">
-            <%if(@filtered_group)%> <%=  @filtered_group.name%> <%else%> Any <% end %> &nbsp;
+            <%if(@filtered_group)%> <%=  @filtered_group.name%> <%else%> <%= t('.any') %> <% end %> &nbsp;
             </div><span><%= font_icon "caret-down"%></span></span>
         </div>
     <% if(@is_admin)%>
@@ -104,7 +104,7 @@
                                       <% if(@is_admin) %>
                                               <%= link_to(t('.add_skills'), 'javascript:void(0);', :class => "manageSkills skillsModalLink", :data => { :userId => (user.id), :userName => (user.name), :skillCount => (user.skills.length) }) %>
                                       <% else %>
-                                               <p class="muted">No skills</p>
+                                               <p class="muted"><%= t("admin.user_skills.no_skills") %></p>
                                       <% end %>
                                       </div>
                                   <% else %>

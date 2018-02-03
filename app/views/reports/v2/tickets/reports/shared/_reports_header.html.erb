@@ -23,12 +23,12 @@
 		    <% if current_user.privilege?(:export_reports) %>
 				<span class="pull-right dividr"> | </span>
 			<% end %>
-		    <a class="pull-right old_report_link" href="/reports/classic/agent_summary" >View old report</a>
+		    <a class="pull-right old_report_link" href="/reports/classic/agent_summary" ><%= t("helpdesk_reports.view_old_report") %></a>
 		 <% elsif @report_type == :group_summary %>
 		    <% if current_user.privilege?(:export_reports) %>
 				<span class="pull-right dividr"> | </span>
 			<% end %> 
-		    <a class="pull-right old_report_link" href="/reports/classic/group_summary" >View old report</a>
+		    <a class="pull-right old_report_link" href="/reports/classic/group_summary" ><%= t("helpdesk_reports.view_old_report") %></a>
 		 <% end %>
 	<% end %>
 </div>
@@ -45,7 +45,7 @@
 							<div id="time-duration">
 								<span class="date-label"><%= t('helpdesk_reports.time_period') %> : </span>
 								<span class="date-value"></span>
-								<a id="sprout-datepicker">Change</a>
+								<a id="sprout-datepicker"><%= t("helpdesk_reports.change") %></a>
 							</div>
 						</div>
 		        	</div>

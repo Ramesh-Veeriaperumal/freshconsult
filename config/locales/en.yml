@@ -67,6 +67,59 @@ en:
   common_js_translations:
     new: new
     remove_quoted_text: "Remove quoted text"
+    no_matching_results: No Matching Results
+    searching_wait: "Searching... Please Wait."
+    loading_msg: "Loading more results..."
+    search: Search
+    select_file: Select a file to upload
+    primary_ticket: Primary ticket
+    mark_as_primary: Mark as primary
+    primary_topic: Primary topic
+    item:
+      singular: "item"
+      plural: "items"
+    tags:
+      singular: "tag"
+      plural: "tags"
+    cc_emails:
+      singular: "cc email"
+      plural: "cc emails"
+    user:
+      singular: "user"
+      plural: "users"
+    agents:
+      singular: "agent"
+      plural: "agents"
+    requester:
+      singular: "requester"
+      plural: "requesters"
+    customers:
+      singular: "customer"
+      plural: "customers"
+    no_matches_found: No matches found
+    select_language: select language
+    search: Search
+    redactor:
+      link_new_tab: 'Open link in new tab'
+      supported_images: 'Supported image formats are JPG,PNG,GIF and TIFF'
+      select_file_to_upload: Select a file to upload
+      underline: Underline
+      confirm_remove_format_for_entire_content: Converting the entire content to plain text will remove formatting and inserted items. Are you sure you want to continue?
+    update_plan: Update Plan
+    last_day: Last Day
+    enter_an_email: Enter an email
+    skills:
+      add_agent: "Add Agent"
+      no_agent_added: "No agent added"
+      no_skill_added: "No skill added"
+      agents: "Agents"
+    restore_notice:
+      singular: "%{type} was restored"
+      plural: "%{type} were restored"
+    delete_notice: 
+      singular: "%{type} was deleted"
+      plural: "%{type} were deleted"
+    others: "Others"
   validation:
     required: "This field is required."
     remote: "Please fix this field."
@@ -82,6 +135,50 @@ en:
     select_atleast_one: "Select at least one option."
     select2_minimum_limit: "Please type %{char_count} or more letters"
     select2_maximum_limit: "You can only select %{limit} %{container}"
+    maxlength: "Please enter no more than {0} characters."
+    minlength: "Please enter at least {0} characters."
+    rangelength: "Please enter a value between {0} and {1} characters long."
+    range: "Please enter a value between {0} and {1}."
+    max: "Please enter a value less than or equal to {0}."
+    min: "Please enter a value greater than or equal to {0}."
+    select_atleast_one: "Select at least one option."
+    select2_maximum_limit_jq: "You can only select {0} {1}"
+    facebook_limit_exceed: "Your Facebook reply was over 8000 characters. You'll have to be more clever."
+    messenger_limit_exceeded: "Oops! You have exceeded Messenger Platform's character limit. Please modify your response."
+    not_equal_to: "This element should not be equal to"
+    email_address_invalid: 'One or more email addresses are invalid.'
+    twitter_limit_exceed: "Oops! You have exceeded Twitter's character limit. You'll have to modify your response."
+    password_does_not_match: "The passwords don't match. Please try again."
+    valid_hours: "Please enter a valid hours."
+    reply_limit_exceed: "Your reply was over 2000 characters. You'll have to be more clever."
+    url_format: Invalid URL format
+    url_without_slash: "Please enter a valid URL without '/'"
+    link_back_url: "Please enter a valid linkback URL"
+    requester_validation: 'Please enter a valid requester details or <a href="#" id="add_requester_btn_proxy">add new requester.</a>'
+    agent_validation: Please enter valid agent details
+    email_or_phone: Please enter a Email or Phone Number
+    upload_mb_limit: "Upload exceeds the available 15MB limit"
+    invalid_image: "Invalid image format"
+    atleast_one_role: "At least one role is required for the agent"
+    invalid_time: 'Invalid time.'
+    remote_fail: Remote validation failed
+    trim_spaces: "Auto trim of leading & trailing whitespace"
+    hex_color_invalid: "Please enter a valid hex color value."
+    name_duplication: "The name already exists."
+    invalid_value: "Invalid value"
+    invalid_regex: "Invalid Regular Expression"
+    same_folder: "Cannot move to the same folder."
+    maxlength_255: "Please enter less than 255 characters"
+    decimal_digit_valid: "Value cannot have more than 2 decimal digits"
+    atleast_one_field: "Please fill at least {0} of these fields."
+    atleast_one_portal: 'Select atleast one portal.'
+    custom_header: "Please type custom header in the format -  header : value"
+    same_password: Should be same as Password
+    select2_no_match: No matching %{container} found
+    integration_no_match: "no matching data..."
+    time: Please enter a valid time
+    valid_contact: Please add a valid contact
+    field_invalid: "This field is invalid"
   confirm_delete_message: Are you sure you want to delete the %{human_name}?
   reload: Reload
   any: Any
@@ -133,6 +230,10 @@ en:
   plain_no: "No"
   plain_on: "On"
   plain_off: "Off"
+  or: or
+  in: in
+  out: out
+  issue: issue
   add_all: "Add all"
   unspam: "Unspam"
   unblock: "Whitelist"
@@ -156,6 +257,7 @@ en:
   status: "Status"
   sales: "Sales"
   preview: "Preview"
+  portal_preview_mode: Portal preview mode
   preview_message: "Preview Message"
   send_test_email: "Send Test Email"
   preview_message_info: "This preview uses sample content for placeholders to generate the message"
@@ -516,6 +618,7 @@ en:
   agent_deleted_message: This is a deleted agent
   cancel: Cancel
   confirm: Confirm
+  save_as: Save As
   downgrade_dialog_title: Sure you want to downgrade?
   yes_password_reset: "Yes"
   no_password_reset: "No"
@@ -532,6 +635,11 @@ en:
   create: Create
   feedbackwidget_custom_image_info: if you are using a custom image the color and text will be ignored.
   account_admin_updated: Account admin has been updated!
+  no_images_uploaded_yet: No Images Uploaded Yet.
+  falcon_languages_alert: We are working on supporting other languages in the Mint experience.
+  click_here: "<a href='javascript: switchToOld()'> Click here </a> to try other languages in old Freshdesk"
+  beta: Beta
+  via: via
   forums_order:
     overview: Overview
     recent: Recent
@@ -582,6 +690,8 @@ en:
         sign_in_using_google: Sign in using your Google account
         help: Help
     shared:
+      was_this_article_useful: Was this article useful?
+      related_files: Related Files
       attachment_form:
         feedback_widgets_screenshot: Take Screenshot
       survey_form:
@@ -689,6 +799,7 @@ en:
     js_forum_txt: $$questmode$$ $$questvalue$$ forum posts in a span of $$questtime$$ and matching these conditions.
     js_quest_txt: On successful completion of the quest you can unlock $$badgename$$ badge and $$questpoints$$ bonus points.
   none: None
+  dashed_none: -None-
   view_all: View All
   any_val:
     any: Any
@@ -815,6 +926,7 @@ en:
         note_info_2: "If we encounter an existing agent with different set of skills, we will disassociate existing set of skills and map the new set of skills present in the file"
         note_info_3: "Please note that only a maximum of 35 skills can be associated to an agent and 180 skills can be created per account"
     user_skills:
+      no_skills: No skills
       update:
         update_success: "Skills were successfully updated to the agents."
         update_error: "There were errors in saving skills of %{unsaved_user_count} users. Please reassign the skills and try saving again."
@@ -911,7 +1023,7 @@ en:
         brief_desc: "Tweets will get converted to tickets automatically based on first matching rule"
       smart_filter:
         header: "Enable Smart Filters"
-        desc: "Automatically convert relevant tweets to tickets. Turn this on if you get a lot of noise on Twitter. Works on tweets in English." 
+        desc: "Automatically convert relevant tweets to tickets. Turn this on if you get a lot of noise on Twitter. Works on tweets in English."
       facebook_streams:
         index:
           new_account: "New Account"
@@ -1161,6 +1273,11 @@ en:
         moderate_all_help: "Enable this feature if you want to be stringent on every post that gets created in your community."
         moderate_none: "Do not Moderate"
         moderate_none_help: "Enable this feature if you are sure that your community does not attract spammers."
+        reset_portal_changes: Reset portal changes
+        reset_for: This will reset edits for
+        last_published_version: to last published version
+        portal_was_published: Portal was published
+        will_reset_all: This will reset ALL portal customizations to default.
       helpnote:
         title: Setting up your portals
         tour: Help me configure my portal
@@ -1168,7 +1285,21 @@ en:
         info2: "You can also choose specific solution and forum categories to be listed in the main portal and other portals​.​"
         info3: "Additionally, you can rebrand the look and feel of your helpdesk by uploading your logo and favicon, giv​e​ your helpdesk a name, and customiz​e​ your portal colors."
         info4: "If you would like to set up user permissions and tweak forum moderation settings, click on the 'Settings' tab. Settings cannot be configured for each portal and will be common for all portals that have been created."
-
+        editor_shortcuts: Editor Shortcuts
+        preview_changes: Preview changes
+        editor_in_fullscreen: Editor in fullscreen
+        exit_fullscreen: Exit fullscreen
+        advanced_rebranding: Advanced rebranding & customization
+        basic_coloring_changes: Apart from the basic coloring changes you have made to your portal, you can also customize the look and feel of select aspects of the page to further match your brand.
+        stylize_color_and_font: You can stylize, color and set the font of almost every element in your support portal, put up your logo and customize your favicon. Just select the color from the color wheel corresponding to an element, or directly type in the hexadecimal color code into the text box.
+        preview_your_changes: Remember to preview your changes before publishing them live.
+        custom_stylesheets: Using Custom Stylesheets
+        can_override_existing_styles: You can use your own CSS to override existing styles in your customer portal. For example, you can provide your own style definitions for the header tabs, paragraphs and body of your portal.
+        enter_your_css: Enter your CSS in the text area to apply your custom styles to your support portal. If your CSS has any breaks or issues, the styled element may fallback to the corresponding default styles, so remember to preview your changes before publishing them to your portal.
+        level_customizations: Page level customizations
+        customize_the_layout: You can customize the layout of each page in your Freshdesk portal. You will need to design your layout using the Freshdesk Portal Placeholders and the Liquid templating framework.
+        layout_of_portal: The layout of the support portal is made up of (a) the Header, (b) the Footer and (c) the page layout. You can use your own HTML and add, remove or completely modify the content across each page in your portal, and add your own JavaScript interactions. Remember to preview your theme before publishing it for your customers.
+        check_out: Check out the <b> <a href='https://support.freshdesk.com/support/solutions/71599' target='_blank'>FreshThemes Guide </a> </b> to learn more about developing your own support portal theme.
     hotline:
       heading1: Mobihelp users meet hotline
       content1:
@@ -1222,6 +1353,7 @@ en:
           app_key: App Key
           app_secret: App Secret
           integration_details: Integration Details
+          initialization_code: Initialization code
           saving: Saving...
         index:
           title: Mobihelp Apps
@@ -1274,6 +1406,7 @@ en:
       ebay_note_not_added: "Note not added to eBay. Connection unstable."
       inactive: inactive
       active: active
+      ebay: eBay
       ebay_error:
         invalid_source: Invalid ticket source.
         invalid_reply: Reply not allowed for this ticket.
@@ -1734,6 +1867,7 @@ en:
         title: Day Pass
         info: A Day Pass is used up for each day an occasional agent logs in to your helpdesk. You can purchase Day Passes in multiples of 5 at a time, and even setup Freshdesk to automatically renew your Day Passes when they get used up.
       index:
+        change_agent: Change Agent
         no_credit_card: No credit card on file.
         payment_info: Enter payment information to add more day passes
         add_payment_info: Enter payment information
@@ -1804,6 +1938,7 @@ en:
         feedbackwidget_submit_title: "Send Feedback"
         feedbackwidget_form_submit_title: "Form Submit Button"
       popup_widget:
+        feedbackwidget_offset: "Offset:"
         feedbackwidget_button_type: Button type
         feedbackwidget_text_button: Text button
         feedbackwidget_image_button: Image button
@@ -2165,6 +2300,7 @@ en:
       assign_product: "Assign Product"
       product_label_msg: "Product"
     twitters:
+      stream_content: This stream will contain all your @ mentions
       index:
         new: Add Twitter account
         title: Twitter accounts
@@ -2184,6 +2320,7 @@ en:
         default_group : Default Group
     roles:
       title: Agent Roles
+      agent_can: Agent can
       agent_label: Agent
       agents_label: Agents
       no_agent_label: No Agent
@@ -2252,6 +2389,9 @@ en:
         view_contacts: View customers tab
         manage_contacts: Create or edit new contact or company
         delete_contact: Delete contact or company
+        export_tickets: Export Tickets
+        export_customers: Export Customer
+        export_reports: Export Reports
         reports: Reports
         view_reports: View reports tab
         admin: Admin
@@ -2271,8 +2411,10 @@ en:
         create_tags: 'Create new tags for tickets, contacts and articles'
         manage_tags: Manage tags
         general: General
+        manage_skills: Manage Skills
     home:
       index:
+        search_admin: Search admin settings
         group: Groups
         day_pass: Day Pass
         business-hours: Business Hours
@@ -2325,6 +2467,7 @@ en:
         mobihelp: Mobihelp
         customer-portal: Customer Portal
         portals: Portals
+        invalid_address: Invalid Address
       keywords:
         forum_moderation: "Forum Moderation"
         configure_support_email: "Configure support email"
@@ -3334,6 +3477,7 @@ en:
   username: Username
   reply: Reply
   is_not: Is not
+  not_in: Is not
   and: And
   during: during
   less_than: Less than
@@ -3355,6 +3499,41 @@ en:
   disable: Disable
   enable: Enable
   accounts:
+    associate_google:
+      login_message: Login with an account administrator's credentials to associate your Google Apps login to your Freshdesk account.
+      login_button: Login & complete registration
+    canceled_account: We're sorry to see you go, but your account has been canceled.
+    edit_domain:
+      getting_started: "Getting Started"
+    new:
+      create_an_account: Create an account
+      errors_encountered: "Errors encountered with your account information:"
+      enter_name_subdomain: " Enter the name of your business and the subdomain you'd like to use for your site."
+      company: Company
+      site_url: Site URL
+      administrator_account: Enter info for the administrator account
+      full_name: Full Name
+      confirmation: Confirmation
+      enter_payment_info: "Enter your payment info"
+      card_charge: "Your card will be charged "
+      discount_code: "Discount Code"
+    signup_google:
+      sign_up: "Sign up!"
+      link_existing_account: Link your existing Freshdesk account.
+      helpdesk_url: "Helpdesk URL"
+      sample_url: 'i.e for "http://apple.freshdesk.com" enter "apple"'
+      terms_of_service: "terms of Service"
+      privacy_policy: "privacy policy"
+      existing_account: "Existing Freshdesk account"
+      create_account: "Create a new Freshdesk account."
+      existing_url: "Your existing Freshdesk URL"
+    signup_google_error:
+      go_back: "Please click here to go back to Google app marketplace"
+      allow_access_message: You must click on <strong>Allow access</strong> in order to continue, as freshdesk will use your email address as your login id.
+    thank_you:
+      launch_support: Launching Twitter & Facebook support
+      account_created: "Account created"
+      account_created_login: Thank you for creating an account!  You can now log in to your account at
     helpcard:
       title: Rebranding your support portal
       tour: Help me rebrand my helpdesk
@@ -3640,6 +3819,7 @@ en:
   ticket_templates:
     title: "Ticket Templates"
     select_template: "Select a template"
+    search_templates: "Search templates"
     form_title: "Ticket/Email Form"
     helptext:
       info1: "Templates allow you to pre-fill new tickets and outgoing emails with a single click. You can save time spent on typing out the same content again and again, and quickly create tickets or send outbound emails."
@@ -3674,6 +3854,7 @@ en:
     child_creation: "Please wait while we create the tickets in the background. Refresh the page to view the child tickets."
     parent_not_accessible: "Oops! Looks like we are not able to access the ticket templates to create child tickets. "
     limit_exceeded: "Unable to apply the template as the number of child tickets would exceed the prescribed limit of %{limit}."
+    recent_templates: "Recent Templates"
     visibility:
       groups: Agents in group
       all_agents: All agents
@@ -4540,6 +4721,16 @@ en:
     phone: Phone
     facebook: Facebook
     twitter: Twitter
+    index:
+      new_contact: "new contact"
+    user_bar:
+      log_out: "Log out"
+      log_in: "Log in"
+      sign_up: "Sign up"
+    upgrade_your_account: "upgrade your account"
+    integrations:
+      email_marketing_container:
+      view_campaign_details: " View Campaign Details "
   between: Between
   profile_settings: Profile settings
   portal_key: Portal
@@ -4559,7 +4750,8 @@ en:
     edit: Edit SLA Policy
     select_policy: Select policy
     resolution_time: Resolution time
-    calendar_time: Calendar Hours
+    calendar: Calendar Hours
+    business: Business Hours
     helpcard:
       title: SLA Policy
       tour: Help me create a new SLA policy
@@ -5174,6 +5366,7 @@ en:
   free_plan_agents_v2: Unlimited agents
   free_plan_agents: for %{free_agents} agents
   current_plan_details: "%{plan_name}"
+  currency_label: "Currency :"
   free_plan_details: "%{plan_name} Plan with %{agent_limit} agents"
   add_more_free: "Adding more than %{free_agents} agents?"
   add_more_agents: "Add more agents at %{amount} per agent/month"
@@ -5309,6 +5502,7 @@ en:
   garden_brief: Multi Product Support
   estate_brief: Enterprise Level Support
   begin_subscription_confirm: Your credit card is going to be charged for the amount of %{cost}\nand your subscription will begin immediately. \n\nProceed now?
+  billing_selected_plan: "Selected Plan : "
   favicon: Favicon
   is_expiring_today: is expiring today
   feedbackwidget_help_para1: The feedback widget lets you embed a ticket form directly into your website or product. You can customize the look and feel, and placement of the widget on your website. Once done, copy-paste the generated embed code in your website or app, to start using the Feedback Widget.
@@ -5539,6 +5733,7 @@ en:
     info2: You must forward your support emails to your unique email address
     send_verification_email: Send activation
     unverified: Email un-verified
+    plain_unverified: "Unverified -"
     info13: Your support email address is
     info3: Freshdesk will fetch those emails and convert them as tickets
     inactive_info1: All your support emails are still unverified, you must verify at least one support email
@@ -5696,6 +5891,9 @@ en:
     skip_agent_assigned_email_notification: Skip Agent Assigned Email Notification
   ticket:
     add_bulk_reply: Add Bulk Reply
+    currently_replying: Currently replying
+    currently_viewing: Currently viewing
+    send_review_request: Send review request
     errors:
       required_field: cannot be blank.
       request_dropped: Some error occurred and your email was not sent. Please try again.
@@ -5746,6 +5944,9 @@ en:
     customer_replies: Customer Replies
     private_note: Private Note
     private_notes: Private Notes
+    broadcast_note: Broadcast Message
+    broadcast_notes: Broadcast Messages
+    properties_updated: Properties Updated
     ticket_updated: Ticket updated
     tickets_updated: Tickets updated
     reload_view: Reload View
@@ -5886,6 +6087,7 @@ en:
       search_for_tracker: "Search for tracker by"
       rlt_ticket_singular: "related ticket"
       rlt_ticket_plural: "related tickets"
+      associated_parent: "Associated Parent"
       create_tracker_sidebar_title: "What is a tracker?"
       create_tracker_sidebar_line1: "A <b>Tracker</b> is a master ticket that allows you to manage multiple tickets with the same context by linking them together."
       create_tracker_sidebar_line2: "Through a tracker, agents can broadcast messages to all related tickets and make sure updates are delivered to all the agents of the related tickets in a consistent manner."
@@ -5920,6 +6122,8 @@ en:
       add_child_btn_tooltip: "<div class='add-child-tooltip'>Helps agents resolve issues faster by dividing a ticket into sub-tickets that can be worked on independently.</div>"
       childticket_sidebar_title: "What is a child ticket?"
       childticket_sidebar: "A <b>child</b> ticket is a sub-ticket, created from a parent ticket. A child ticket is typically an action item that can be assigned to a different agent and worked on independently."
+      save_and_create_child: "Save and New Child"
+      child_listed_from: 'child listed from: '
     singular: Ticket
     due_by_time: Due by time
     delete_btn_title: Move this ticket to trash
@@ -6154,6 +6358,7 @@ en:
   archive_ticket:
     title: Archived tickets
     no_reply_msg: This ticket has been archived.
+    ticket_details: Ticket Details
   recent_activity: Recent Activity
   recent_activities: Recent Activities
   forgot_password: Forgot Password
@@ -6404,6 +6609,11 @@ en:
   export_to_CSV: Export to CSV
   back_to_reports: "&larr; Back to reports"
   helpdesk:
+    issue:
+      ago: ago
+      take_it: Take It
+    attachment:
+      drop_files_here: Drop files here
     login:
       form:
         email: "Email"
@@ -6431,6 +6641,7 @@ en:
       time_entry:
         toggle_timer_true: "Start timer"
         toggle_timer_false: "Stop timer"
+        saving_time_entry: Saving time entry...
       new:
         title: "New time entry"
         hours_format_tip: "Enter time in HH:MM or decimals (like 1:30 or 1.5 for an hour and 30 minutes). Leave this blank to start the auto-timer."
@@ -6536,6 +6747,8 @@ en:
         customers: Customers
         article: Article
         articles: Articles
+        rename_tag: Rename Tag
+        tag_name: Tag Name
       tag_count:
         remove_Tickets: Remove tag associated with tickets
         remove_Customers: Remove tag associated with customers
@@ -6589,6 +6802,11 @@ en:
       destroy: "%{tickets} will be deleted shortly. %{undo}"
 
     shared:
+      announcement_hide: "Hide this message"
+      view_in_detail: "View in detail"
+      do_not_link: "Do not link"
+      ok: "Ok"
+      update: "Update"
       addcc: "Add cc"
       cc_label: "Cc"
       requester_label: "Requester"
@@ -6681,7 +6899,36 @@ en:
         total_workoad: Total Tickets Workload
         performance_title: "%{subject}'s performance"
       this_month: This Month
+      active: active
+      critical_limits: Critical Limits
+      title: Title
+      supervisors: Supervisors
+      csat:
+        positive: Positive
+        neutral: Neutral
+        negative: Negative
+        surveys_sent: Surveys Sent
+        surveys_received: Surveys Received
+      gamification:
+        recent_badges: Recent Badges
+        helpdesk_quests: Available Quests
+        points_for: points For
+        congrats: Congrats!
     dashboard:
+      sales_manager:
+        account_manager: Account Manager
+        freshdesk: Freshdesk
+        how_is_it_going: Hi, How is it going?
+        trial_has_expired: Your trial has expired and you need to choose a plan to continue using your Freshdesk account. If you need more time to take a look around, let me know and I can get you a trial extension.
+        some_assistance: If you'd like some assistance in choosing the right plan, please
+        how_is_your_freshdesk_trial: How is your Freshdesk trial coming along? If you'd like to take a tour of the product, please
+        your_account_manager: I will be your account manager helping you with your evaluation.
+        please_reach_out: Please reach out to me if you have any questions.
+        schedule_a_call: schedule a call.
+        schedule_a_demo: schedule a personalized demo.
+        current_plan: "Current Plan:"
+        trial_expire_in: Your trial will expire in
+        your_trial_expired: Your trial expired.
       agent_availability: Agent Availability
       round_robin:
         ticket_assignment: Ticket Assignment
@@ -6753,6 +7000,17 @@ en:
       overlay_reply: " replied"
       overlay_note: " added a note"
       overlay_time: "%{time_in_words} ago, "
+      whats_new:
+        top_to_bottom: Top to bottom
+        top_to_bottom_des: The conversation thread is shown chronologically, with the last response at the bottom.
+        no_more_scroll: No more endless scroll
+        no_more_scroll_des: Long ticket conversation threads are collapsed to just show the most recent three replies.
+        send_and_do_anything: Send and Do Anything
+        send_and_do_anything_des: Why stop with just “Send and Resolve” when you can now update ticket statuses to pending, closed or just anything when you send!
+        stuff_where_you_need: Stuff where you need them
+        stuff_where_you_need_des: Insert Canned Responses and Suggested Solutions directly from reply area.
+        easier_better_faster: Easier, better, faster
+        easier_better_faster_des: Sticky ticket headers, sleeker agent collision warnings, and way faster page load time when you edit a ticket.
       friendly_status:
         customer_responded: "Customer Responded"
         overdue: "Overdue"
@@ -6956,6 +7214,7 @@ en:
         last_edited_info: "Last edited by: %{user_name} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         last_deleted_info: "Deleted by: %{user_name} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         edit_note: Edit Note
+        delete_this_note: Delete this note
         split_this_as_new_ticket: Split this as a new Ticket
         delete_note: "Remove this from the ticket conversation?"
         deleted_note: "Deleted"
@@ -7039,7 +7298,6 @@ en:
     ca_response:
       delete_confirm: Are you sure you want to delete this canned response?
   import_ticket_group: Tickets
-  or: or
   tickets_filter:
     title: "Filter Tickets"
     unsaved_view: "Untitled View"
@@ -7102,6 +7360,14 @@ en:
     events_empty: "Events can't be empty"
     conditions_empty: "Conditions can't be empty"
     actions_empty: "Actions can't be empty"
+    error_page:
+      back_to_home: "back to home"
+    invalid_domain:
+      there_is_no_helpdesk_here: "There is no helpdesk here!"
+      freshdesk: "Freshdesk"
+      may_be_this_is_still_fresh: " May be this is still fresh!  "
+      we_couldnt_find: " We couldn't find "
+      claim_it_now: "You can claim it now at"
   export_data:
     in_sla: Within SLA
     out_of_sla: SLA Violated
@@ -7232,6 +7498,7 @@ en:
   go_back_admin: Go back to Admin
   social:
     streams:
+      no_conversation: "Sorry no conversation"
       interactions: Interactions
       other_interactions: Other Interactions
       recent_searches: Your Recent Searches
@@ -7240,8 +7507,15 @@ en:
       custom_streams: Social Streams
       post_tweet : Post a tweet
       compose: Compose
+      search_btn: "Search"
       no_results: No recent posts in this stream.
       no_recent_searches: No recent searches
+      index:
+        retweets: Retweets
+        all: All
+        search_twitter: "Search twitter for updates "
+        no_activity_available: "No activity available"
+        click_activity: "Click on a stream to see activity"
       search:
         exclude_handles: Filter out tweets from these handles
         img_twitter: <i class="ficon-twitter fsize-18" size="18"></i>
@@ -7289,6 +7563,10 @@ en:
         contact_details: Contact Details
         flash_card_html: What's New in Social?
         flash_card_text: Understanding your Social tab
+        post: " Post "
+        tickets: "Tickets"
+        interactions: "Interactions"
+        follow_as: "Follow As..."
     welcome:
       title: Social Support
       turn_off: Turn OFF Social
@@ -7992,6 +8270,16 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       add_comment_in_github: "Add a comment in Github issue"
       add_private_note_in_fd: "Add a private note in Freshdesk."
       add_public_note_in_fd: "Add a public note in Freshdesk."
+      repositories: " Repositories "
+      checked: "checked"
+      map_freshdesk_ticket: " Map Freshdesk ticket types to GitHub issue labels"
+      allow_github_issues: " Allow GitHub issues to be assigned milestones"
+      status_sync: " Status Sync "
+      when_a_github_issue_is_closed: " When a GitHub issue is closed set Freshdesk ticket status to "
+      comment_sync: "Comment Sync"
+      add_a_comment_in_the_github: " Add a comment in the GitHub issue, when a response is added in Freshdesk"
+      turn_off: "OFF"
+      add_a_private_note: " Add a private note in the Freshdesk ticket, when a comment is added in GitHub"
     quickbooks:
       label: "QuickBooks"
       desc: "View customer details, invoices, and add time sheet entries to your QuickBooks Online account."
@@ -8105,6 +8393,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         version_info: "Version field lets you choose between <i>Batchbook Classic</i> and <i>Batchbook New</i>."
         widget_title: "Widget Title"
     surveymonkey:
+      belonging_to_group: " For tickets belonging to group "
+      use_this_survey: " Use this survey "
+      preview: " preview "
       enable_integration_text: "Click on the Enable button to connect with your Surveymonkey account and configure the integration."
       include_survey: "Include Survey"
       include_surveymonkey_link: "Include SurveyMonkey link"
@@ -8184,6 +8475,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         invalid_admin_url: "The Admin URL entered is invalid."
     fullcontact:
       label: "FullContact"
+      fullcontact_fields: " FullContact Fields "
+      freshdesk_fields: " Freshdesk Fields "
       desc: "Automate contact data enrichment for new contacts and update stale contact details on demand"
       helptext: "<h4>Companies Settings</h4><br/>The Company data is fetched from FullContact and updated in your Freshdesk if a company is created or when a company domain is updated in your helpdesk. You can fetch upto 6 fields from FullContact to update in Freshdesk.<br/><br/><h4>Contacts Settings</h4><br/>Contact data is fetched from FullContact and updated in your Freshdesk when a contact is created in your helpdesk. Existing Freshdesk data will not be overwritten. You can select a maximum of five social profiles.<br/><br/>To save the FullContact data, a default mapping is created in Freshdesk. For location and social profiles you will need to create new custom columns. The admin, if required, can change or delete mappings of a FullContact data element at any time."
       form:
@@ -8391,6 +8684,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         app_key: "Registered Application key for your domain"
         app_key_info: "Create an App in the dropbox and provide the app key here."
     box:
+      change: "Change"
       chooser_title: "Choose a file from Box..."
       label: "Box"
       desc: "Attach and Share your data/files from Box."
@@ -8521,6 +8815,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         login: "Login"
         email: "Email"
         password: "Password"
+      filter_options: "Filter Options"
     freshsales:
       label: "Freshsales"
       helptext: "<h4>Freshsales Integration Help</h4><p><br/> Once you enable this integration, your agents can access Freshsales contact information right inside the Freshdesk ticket & contact pages. <br /><br /> Please note that your agents can only view those fields that are configured by you in the settings page and the search function is based on the email address mapping."
@@ -8538,6 +8833,25 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         account: "Account Fields"
         deal: "Deal Fields"
         deal_settings: "Agents can create/link or unlink deals from the ticket"
+    applications:
+      contacts_sync:
+        outlook_contact_sync: " Outlook Contact Sync "
+        resolve_the_errors: "Please resolve the errors in the form before proceeding!!"
+      crm:
+        mapping:
+          sync: " Sync "
+          contact: "Contact"
+          company: "Company"
+          contact_fields: " Contact Fields "
+          account_fields: " Account Fields "
+          freshdesk_contact_fields: " Freshdesk Contact Fields "
+          freshdesk_company_fields: " Freshdesk Company Fields "
+    gmail_gadget:
+      minimize_the_gadget: "Minimize the Gadget"
+      maximize_the_gadget: "Click here to maximize the gadget"
+      ticket: "Ticket"
+      no_linked_account: "You have not yet linked this Gmail account with an agent in Freshdesk."
+      connect_fd: "Connect your Freshdesk"
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
@@ -8551,6 +8865,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         feedback_widgets_help_articles_v1: "or Browse articles"
         show_all_results: "Show all results"
         no_results: "No results for "
+        prohibited_error: "1 error prohibited this ticket from being saved"
+        problems_with_fields: "There were problems with the following fields:"
   reorder: "Reorder"
   reports:
       no_data: No data to display!
@@ -8575,6 +8891,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       customer_activity_title: "Activity Report"
       helpdesk_activity_title: "Helpdesk Activity Report"
       satisfaction_title: "Satisfaction Report"
+      discard_changes: Discard changes
+      others: "Others"
       freshfone:
         options:
           incoming: "Incoming"
@@ -8615,7 +8933,6 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         generate_summary: "Generate"
         filter_close: "Close"
         unanswered_count: "Unanswered"
-        others: "Others"
         external: "External Numbers"
         includes_transfer: "Includes transferred calls"
         no_agent: "- No Agent -"
@@ -8679,6 +8996,11 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         speed_champion: Speed Champion
         customer_champion: Customer Champion
         valuable_player: Most valuable Player
+        agent_highest_points: Agents with highest overall points
+        sample_name: Bruce Banner
+        agents_cs_highest: Agents with highest customer satisfaction survey points
+        agents_fastest_resolve: Agents who resolve tickets faster
+        show_more_count: Show %{count} more
       survey_reports:
         main:
             all: All
@@ -8834,6 +9156,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   latest_ticket: "new update"
   latest_tickets: "new updates"
   search:
+    searching: Searching
     view_all_tickets: "View all tickets"
     recent_searches: "Recent Searches"
     recently_viewed: "Recently Viewed"
@@ -8944,6 +9267,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   saved_draft: "Saved"
   saving_draft: "Saving..."
   saving: "Saving..."
+  requesting: "Requesting..."
+  updating: "Updating..."
   draft: "Draft"
   last_draft: "Your last draft"
   clear_draft_text: "Your saved draft will be discarded. Are you sure?"
@@ -9033,6 +9358,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     new_info: "This cannot be undone.<br />Merging will move all the tickets, notes and contact information from the secondary contacts into %{name}. Also, the secondary contacts will be deleted and cannot be restored. <br /><br />Click <b>Confirm and merge</b> to continue"
     invalid: "The E-Mail address provided is invalid"
     loading: "Preparing Merge <img src='/images/loading.gif'>"
+    search_placeholder: "Search contacts to merge"
     email_activated: "email id already activated"
     new_email_activation: "New email id has been activated"
     contact_updated: "Contact has been updated"
@@ -9144,6 +9470,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   Type: Type
   showing: Showing
   Email: "Email"
+  Call: Call
   Portal: "Portal"
   Phone: "Phone"
   Forum: "Forum"
@@ -9167,6 +9494,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     un_achieved: Un-Achieved
     back_to_dashboard:  "< Back to dashboard"
     quests: Quests
+    recent_visitors: Recent Visitors
   close_this_ticket: Close this ticket
   ticket_deleted: This ticket has been deleted
   reported_by: "Reported by "
@@ -9196,11 +9524,34 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     product: Product
     requesters: Requesters
   helpdesk_reports:
+    at_least_once_in_agent: "At least once in Agent"
+    at_least_once_in_group: "At least once in Group"
+    at_least_once_in_status: "At least once in Status"
+    billable: "Billable"
+    sla_violated: "SLA Violated"
+    resolved_tickets_split_by: "Total time spent by resolved tickets split by "
+    in_each_group: "in each group"
+    with_each_agent: "with each agent"
+    show: "Show:"
+    total_time: " Total time"
+    average_time: " Average time"
+    change: "Change"
+    jump_to_a_saved_report: "Jump to a Saved report"
+    at: "at"
+    view_classic_report: "View classic report"
+    filtered_by: "Filtered by:"
+    ticket_by_type: Tickets By Type
+    ticket_by_source: Tickets by source
+    ticket_by_priority: Tickets By Priority
+    received_backlog: Tickets Received vs Resolved vs Backlog
+    tickets_by_arrival: "Tickets by Time of Arrival"
+    customer_vs_agent: "Customer Interactions vs Agent Interactions"
     helpdesk_analysis : Helpdesk Analysis
     productivity : Productivity
     customer_happiness : Customer Happiness
     reports_in_action: Watch reports in action
     view_old_reports: View old reports
+    view_old_report: View old report
     old_reports: old reports
     view_new_reports: View new reports
     solution_article_text: How to read this report ?
@@ -9264,6 +9615,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       export_question: Want to build custom reports?
       schedule_an_export: Schedule an export
     insights:
+      customize_link: "Customize"
       todays_insights: Today's Insights
       customize: Customize Insights
       tooltip: Learn more about Insights
@@ -9276,6 +9628,15 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       sys_error: Oops! Our servers are not reachable right now...
       scope_error: No data to display...
       sys_error_help: (Check out our system <a target="_blank" href="http://updates.freshdesk.com/">status</a> for more information)
+      category:
+        threshold: Threshold
+        group: Group
+        product: Product
+      compare_agent_performance: "Compare Agent performance in Group"
+      compare_group: "Compare Group %{count}"
+      with_group: "with Group %{count}"
+      no_current_outliers: "No current outliers"
+      no_other_outliers: "No other outliers"
     filter_error_msg: '* You can select a maximum of 10 filters. (Each selected level of nested field counts as one filter)'
     no_data_to_display_msg: No data to display
     something_went_wrong_msg: 'Something went wrong, please try again'
@@ -9793,6 +10154,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
           api_info1: "The API will have the link to the latest export."
           api_info2: "The export will contain a log of all ticket related updates performed the previous day."
   adv_reports:
+    agent_comparison_report: Agents Comparison Report
+    group_comparison_report: Groups Comparison Report
+    jump_to_saved: Jump to a Saved report
     deprecated_message : "(View classic report link will no longer be available from Fri, 18 March 2016)"
     deprecated_header : "This report will no longer be available from Fri, 18 March 2016"
     at_a_glance: "At-a-glance"
@@ -9985,7 +10349,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         domain_taken: "Looks like you already have a Freshcaller account. Please reach out to <a href='mailto:support@freshcaller.com'>support@freshcaller.com</a>  to link it to your helpdesk."
         error: "Looks like there was an issue creating your account. Please reach out to <a href='mailto:support@freshcaller.com'>support@freshcaller.com</a> to help you enable phone for your helpdesk."
         spam_email: "Thank you for creating a Freshcaller account. Please reach out to <a href='mailto:support@freshcaller.com'>support@freshcaller.com</a> for any questions."
-      link_account_request_content: 
+      link_account_request_content:
         account_url: "Freshcaller Account URL"
         email: "Email"
         password: "Password"
@@ -10001,6 +10365,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
           access_error: "You need to be an admin in both Freshcaller and Freshdesk to link your accounts."
           api_error: "This Freshcaller account does not exist. Please provide a valid URL or create a new Freshcaller account."
   freshfone:
+    more_metrics_available_in_export: "More metrics available in export"
+    no_agent_call: No agents attended the call.
+    resume_customer_call: "Resume call with customer"
     recording_on_process: "The recording is being processed. <a href='#' target='_parent' id='checkfreshfoneaudio'>Check</a> again in a few minutes"
     not_enough_credit: "Not Enough Credit!"
     recharge: "Recharge"
@@ -10022,6 +10389,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       see_detailed_pricing: "View detailed pricing"
       followup: "worth phone credits"
       followup_text: "worth phone credits"
+      purchase_credits: "Purchase Credits"
     dialpad:
       not_valid_number: "Please enter a valid number"
       could_be_invalid_number: "Could be an invalid number."
@@ -10420,6 +10788,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         queue_position_enable: "ON"
         queue_position_disable: "OFF"
       numbers:
+        buy_phone_credits: Buy phone Credits
+        buy_phone_numbers: Buy phone Numbers
         sidebar_title: "Phone channel"
         sidebar_content: "Using the phone channel, you can make and receive calls through your browser, mobile phone or using the phone channel in Freshdesk’s mobile apps. It is tightly integrated with Freshdesk’s ticketing system. So you can keep track of phone calls by recording them and converting them into tickets whenever necessary. <br/><br/> <b>Setting up Phone</b></br>To start using phone, you will first need to enable it and purchase a support number. You can purchase local numbers from the <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a> and make or take calls from anywhere in the world. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b>Provide Complete Phone Support</b><br/>With our phone channel, you can<br/><ul><li>Start making and taking calls using your web browser or mobile phones</li><li>Create voicemails, forward calls, or transfer calls to any agent, anywhere</li><li>Monitor calls, barge when needed, add other agents into on-going calls, and more*</li></ul><br/><p>*Please reach <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> to enable advanced features for your account. These include call monitoring, call barging, call conferencing, call masking, and call lifetime metrics.</p><br/><p><a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Learn more about phone’s powerful capabilities and features</a><p>"
         sidebar_content_v2: "Using the phone channel, you can make and receive calls through your browser, mobile phone or using the phone channel in Freshdesk’s mobile apps. It is tightly integrated with Freshdesk’s ticketing system. So you can keep track of phone calls by recording them and converting them into tickets whenever necessary. <br/><br/> <b>Setting up Phone</b></br>To start using phone, you will first need to enable it and purchase a support number. You can purchase local numbers from the <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a> and make or take calls from anywhere in the world. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b>Provide Complete Phone Support</b><br/>With our phone channel, you can<br/><ul><li>Start making and taking calls using your web browser or mobile phones</li><li>Create voicemails, forward calls, or transfer calls to any agent, anywhere</li><li>Monitor calls, barge when needed, add other agents into on-going calls, and more*</li></ul><br/><p>*Please reach <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> to enable advanced features for your account. These include call monitoring, call barging, call conferencing, call masking, and call lifetime metrics.</p><br/>"
@@ -11014,6 +11384,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     reorder_list:
       visible: Visible only to
     topics:
+      answer: "Answer"
       helpnote:
         title: Driving discussions with topics
         para1: "You can let your users start new topics in your community and talk to each other about your product on business."
@@ -11454,6 +11825,26 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       post_script: "PS: You can switch back any time you like."
       try_new_look: TRY IT OUT
       maybe_later: MAYBE LATER
+  pts_plain: " pts"
+  cloud_log_mailer:
+    logger_email:
+      account: "Account: "
+      execution_id: "Execution Id"
+      reason: "Reason"
+      regards: "Regards,"
+      freshdesk_support: "Freshdesk Support."
+  anonymous:
+    requests:
+      new:
+        request_support: "Request Support"
+  profiles:
+    freshid_edit:
+      profile_details: "Profile Details"
+  posts:
+    edit:
+      edit_post: "Edit Post"
+  compose_email:
+    type_a_contact: "Type a contact"
   multifile_attachments:
     label: "Attach files"
     sending: "Sending..."
@@ -11466,6 +11857,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     reminder: "You have unsaved content in this page. Do you want to leave this page?"
     attach: "Add to response"
     attached: "Added to response"
+    remove: "Remove"
+    mb: " MB "
   ml:
     similat_tickets_found: Similar Tickets found
     no_suggestions: Oops! No suggestions.
@@ -11593,7 +11986,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       email:
         subject: Mary Jane shoes - Shipping rates
         body: "<p>Hello there,</p><br /><p>I’m looking to buy a pair of Mary Jane shoes and I noticed that you have a local store in Aldovia. Could you let me know if the Mary Jane shoes are available in Size 8? I can pick it up from there.</p><br /><p>Thanks,\n<br />Emily.</p>"
-        reply: "<p>Hey Emily,</p><br /><p>Thanks for writing to us!\n<br />I can confirm that our Aldovia store does have the Mary Jane shoes in size 8. I’ve asked them to block a pair for you. Feel free to pick them up anytime :)</p><br /><p>Cheers,\n<br />Rebecca.</p><br /><p><hr></p><p>P.S. This is a sample email that’s been converted into a ticket by Freshdesk. <a href = https://support.freshdesk.com/support/solutions/articles/37541-forward-and-convert-your-support-emails-to-tickets-in-freshdesk target= _blank>See how you can start converting email</a> from customers into tickets in your helpdesk.</p>"        
+        reply: "<p>Hey Emily,</p><br /><p>Thanks for writing to us!\n<br />I can confirm that our Aldovia store does have the Mary Jane shoes in size 8. I’ve asked them to block a pair for you. Feel free to pick them up anytime :)</p><br /><p>Cheers,\n<br />Rebecca.</p><br /><p><hr></p><p>P.S. This is a sample email that’s been converted into a ticket by Freshdesk. <a href = https://support.freshdesk.com/support/solutions/articles/37541-forward-and-convert-your-support-emails-to-tickets-in-freshdesk target= _blank>See how you can start converting email</a> from customers into tickets in your helpdesk.</p>"
       feedback_widget:
         subject: Vintage table lamp - Out of stock?
         body: "<p>Hello,</p><br /><p>I saw a vintage table lamp on your site last month and I’d bookmarked it to buy it later for a friend. I can’t seem to find it anymore though. Is it out of stock or do you not sell those anymore?</p><br /><p>Thanks,\n<br />Matt.</p><p><hr></p><p>P.S. This is a sample message that has been sent to you from website page. <a href = https://support.freshdesk.com/support/solutions/articles/37690-getting-feedback-from-your-website-with-the-feedback-widget target= _blank>See how you can add your own feedback widget</a> on your website or app</p>"
@@ -11617,3 +12010,50 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
             :7 : "It looks like the UPS delivery in your neighborhood is delayed today due to a fallen tree. I believe the city officials are already clearing out the road and the package should be there by 3 PM this afternoon."
             :9 : "I’m sorry about the delay! Please do reach out to us again if the package hasn’t been delivered by the afternoon. I will convert this chat as a ticket, so you can let us know if there’s any further issues."
             :11: "My pleasure, Norman. Have a great day!"
+  placeholder:
+    ticket_id: Ticket ID
+    ticket_subject: Subject
+    ticket_description: Description
+    ticket_url: Ticket URL
+    ticket_portal_url: Product specific ticket URL
+    ticket_due_by_time: Due by time
+    ticket_tags: Tags
+    ticket_latest_public_comment: Last public comment
+    ticket_latest_private_comment: Last private comment
+    ticket_group_name: Group name
+    ticket_agent_name: Agent name
+    ticket_agent_email: Agent email
+    ticket_status: Status
+    ticket_priority: Priority
+    ticket_source: Source
+    ticket_type: Ticket type
+    ticket_requester_name: Requester name
+    ticket_requester_firstname: Requester first name
+    ticket_requester_lastname: Requester last name
+    ticket_requester_email: Requester email
+    ticket_requester_phone: Contact Primary email
+    ticket_requester_address: Requester address
+    ticket_company_name: Company name
+    ticket_company_description: Company description
+    ticket_company_note: Company note
+    ticket_company_domains: Company domains
+    helpdesk_name: Helpdesk name
+    ticket_portal_name: Product portal name
+    ticket_product_description: Product description
+    ticket_satisfaction_survey: Satisfaction survey
+    ticket_suverymonkey_survey: Surveymonkey survey
+    ticket_group_name: Internal Group name
+    ticket_agent_name: Internal Agent name
+    ticket_agent_email: Internal Agent email
+    unique_external_id: Requester Unique External Id
+    triggered_event: 'Triggered Event'
+    tooltip:
+      ticket_url: Full URL path to ticket.
+      ticket_source: 'The source channel of the ticket.'
+      ticket_portal_url: 'Full URL path to ticket in product portal. Will be useful in multiple product/brand environments.'
+      ticket_portal_name: 'Product specific portal name in multiple product/brand environments.'
+      ticket_product_description: 'Product specific description in multiple product/brand environments.'
+      satisfaction_survey: 'Includes satisfaction survey.'
+      ticket_suverymonkey_survey: 'Includes text/link to survey in Surveymonkey'
+      triggered_event: 'Details about the event that triggered the rule'
+

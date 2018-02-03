@@ -3,7 +3,7 @@
 		<div class="number_purchase_info">
 			<%= t('freshfone.admin.purchase_credit_text') %>
 		</div>
-		<%= link_to "Buy phone Credits", subscription_url, :class => "btn btn-primary" %>
+		<%= link_to t("freshfone.admin.numbers.buy_phone_credits"), subscription_url, :class => "btn btn-primary" %>
 		<div class="ff_seperator"></div>
 		<div class='freshfone_video'>
 			<span class='title'><%= t('freshfone.admin.feature_request_content.video_title')%></span>
@@ -13,6 +13,6 @@
 		<div class="number_purchase_info">
 			<%= t('freshfone.admin.purchase_numbers_text') %>
 		</div>
-		<%= link_to "Buy phone Numbers", search_admin_freshfone_index_path, :class => "btn btn-primary" %>	
+		<%= link_to t("freshfone.admin.numbers.buy_phone_numbers"), search_admin_freshfone_index_path, :class => "btn btn-primary" %>	
 	<% end %>
 </div>

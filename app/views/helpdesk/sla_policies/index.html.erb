@@ -57,9 +57,9 @@
 <%= javascript_tag do %>
 	(function($){
 		$('.activate').itoggle({
-			checkedLabel: 'On',
-			uncheckedLabel: 'Off'
-		}).change(function() {
+      		checkedLabel: "<%= t('plain_on') %>",
+      		uncheckedLabel: "<%= t('plain_off') %>"
+    	}).change(function() {
 			$(this).parent().submit();	
 		});
 	})(jQuery)

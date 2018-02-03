@@ -48,48 +48,61 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
   ESCALATION_LEVELS_MAX = ESCALATION_LEVELS_OPTIONS.last
 
   ESCALATION_TIME = [
-    [ :immediately,    I18n.t('immediately'),  0 ], 
-    [ :half,    I18n.t('after_half'),  1800 ], 
-    [ :one,      I18n.t('after_one'),      3600 ], 
-    [ :two,      I18n.t('after_two'),      7200 ], 
-    [ :four,     I18n.t('after_four'),     14400 ], 
-    [ :eight,    I18n.t('after_eight'),     28800 ], 
-    [ :twelve,   I18n.t('after_twelve'),    43200 ], 
-    [ :day,      I18n.t('after_day'),      86400 ],
-    [ :twoday,   I18n.t('after_twoday'),     172800 ], 
-    [ :threeday, I18n.t('after_threeday'),     259200 ],
-    [ :oneweek, I18n.t('after_oneweek'),     604800 ],
-    [ :twoweek, I18n.t('after_twoweek'),     1209600 ],
-    [ :onemonth, I18n.t('after_onemonth'),   2592000 ]
+    [ :immediately,     0 ], 
+    [ :after_half,      1800 ], 
+    [ :after_one,       3600 ], 
+    [ :after_two,       7200 ], 
+    [ :after_four,      14400 ], 
+    [ :after_eight,     28800 ], 
+    [ :after_twelve,    43200 ], 
+    [ :after_day,       86400 ],
+    [ :after_twoday,    172800 ], 
+    [ :after_threeday,  259200 ],
+    [ :after_oneweek,   604800 ],
+    [ :after_twoweek,   1209600 ],
+    [ :after_onemonth,  2592000 ]
   ]
-
-  ESCALATION_TIME_OPTIONS = ESCALATION_TIME.map { |i| [i[1], i[2]] }
 
   PREMIUM_TIME = [ 
-    [I18n.t('premium_sla_times.after_five_minutes'),300], 
-    [I18n.t('premium_sla_times.after_ten_minutes'),600], 
-    [I18n.t('premium_sla_times.after_fifteen_minutes'), 900] 
+    [:after_five_minutes,     300], 
+    [:after_ten_minutes,      600], 
+    [:after_fifteen_minutes,  900] 
   ]
-  ESCALATION_PREMIUM_TIME_OPTIONS = (ESCALATION_TIME_OPTIONS + PREMIUM_TIME).sort{|a, b|
-                                                                      a[1] <=> b[1] } 
 
   ESCALATION_TYPES = [:resolution, :response]
   REMINDER_TYPES = [:reminder_response,:reminder_resolution]
 
   REMINDER_TIME = [
-    [ :eight, I18n.t('before_eight'),  -28800],
-    [ :four, I18n.t('before_four'),  -14400],
-    [ :two, I18n.t('before_two'),  -7200],
-    [ :one, I18n.t('before_one'),  -3600],
-    [ :half, I18n.t('before_half'),  -1800]
+    [ :eight, -28800],
+    [ :four,  -14400],
+    [ :two,   -7200],
+    [ :one,   -3600],
+    [ :half,  -1800]
   ]
 
-  REMINDER_TIME_OPTIONS = REMINDER_TIME.map { |i| [i[1], i[2]] }
+  # REMINDER_TIME_OPTIONS = REMINDER_TIME.map { |i| [i[1], i[2]] }
   SLA_WORKER_INTERVAL = 840 #Rake task interval (14 Minutes)
 
   CUSTOM_USERS = [
     [:assigned_agent, -1]
   ]
+
+  def self.premium_time
+    PREMIUM_TIME.map { |i| [I18n.t("premium_sla_times.#{i[0]}"), i[1]] }
+  end
+
+  def self.esclation_time_options
+    ESCALATION_TIME.map { |i| [I18n.t(i[0]), i[1]] }
+  end
+
+  def self.esclation_premium_time_options
+    (self.esclation_time_options + self.premium_time).sort{|a, b|
+                                                                      a[1] <=> b[1] }
+  end
+
+  def self.remainder_time_option
+    REMINDER_TIME.map { |i| [I18n.t("before_#{i[0]}"), i[1]] }
+  end
 
   API_OPTIONS = {
     :except => [:account_id]

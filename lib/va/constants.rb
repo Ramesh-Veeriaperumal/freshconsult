@@ -36,30 +36,30 @@ module Va
       "custom_date"         => "date"
     }
 
-    OPERATOR_LIST =  {
-      :is                =>  I18n.t('is'),
-      :is_not            =>  I18n.t('is_not'),
-      :contains          =>  I18n.t('contains'),
-      :does_not_contain  =>  I18n.t('does_not_contain'),
-      :starts_with       =>  I18n.t('starts_with'),
-      :ends_with         =>  I18n.t('ends_with'),
-      :between           =>  I18n.t('between'),
-      :between_range     =>  I18n.t('between_range'),
-      :selected          =>  I18n.t('selected'),
-      :not_selected      =>  I18n.t('not_selected'),
-      :less_than         =>  I18n.t('less_than'),
-      :greater_than      =>  I18n.t('greater_than'),
-      :during            =>  I18n.t('during'),
-      :in                =>  I18n.t('is'),
-      :not_in            =>  I18n.t('is_not'),
-      :and               =>  I18n.t('and')
-    }
+    OPERATOR_LIST =  [
+      :is,
+      :is_not,
+      :contains,
+      :does_not_contain,
+      :starts_with,
+      :ends_with,
+      :between,
+      :between_range,
+      :selected,
+      :not_selected,
+      :less_than,
+      :greater_than,
+      :during,
+      :in,
+      :not_in,
+      :and
+    ]
 
-    ALTERNATE_LABEL = {
-      :object_id_array => {:in     => I18n.t('admin.va_rules.label.object_id_array_in'),
-                      :and    => I18n.t('admin.va_rules.label.object_id_array_and'),
-                      :not_in => I18n.t('admin.va_rules.label.object_id_array_not_in')}
-    }
+    ALTERNATE_LABEL = [
+        [ :in, 'admin.va_rules.label.object_id_array_in' ],
+        [ :and, 'admin.va_rules.label.object_id_array_and' ],
+        [ :not_in, 'admin.va_rules.label.object_id_array_not_in' ]
+    ]
 
     NOT_OPERATORS = ['is_not', 'does_not_contain', 'not_selected', 'not_in']
     
@@ -79,5 +79,15 @@ module Va
         :not_equal_to => '<>', :like => 'LIKE', :not => 'NOT', :or => 'OR',
         :AND => 'AND'
     }
+
+    def va_alternate_label
+      va_alternate_label = {
+        :object_id_array => Hash[*ALTERNATE_LABEL.map { |i, j| [i, I18n.t(j)] }.flatten]
+      }
+    end
+
+    def va_operator_list
+      Hash[*OPERATOR_LIST.map { |i| [i, I18n.t(i)] }.flatten]
+    end
   end
 end

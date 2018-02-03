@@ -469,6 +469,9 @@ function multiSeriesColumn(opts) {
         series: opts['chartData'],
         legend: {
             enabled : opts['legend'] == true ? true : false, 
+            labelFormatter: function () {
+                return I18n.t("helpdesk_reports."+this.name); 
+            },
             borderWidth: 0,
             itemStyle: {
                 fontWeight: 'normal',

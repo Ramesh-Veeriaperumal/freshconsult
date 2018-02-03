@@ -19,7 +19,7 @@ admin_choice = current_account.account_managers.inject([]) { |choice, admin|
     :id => "account-details-form"} do |f| %>
         <div class="sidepanel">
           <div class="control-group">
-            <h3 class="lead">Send Invoices to</h3>
+            <h3 class="lead"><%= t("accounts.show.invoice_email_info") %></h3>
               <%= content_tag(:label, "#{t('.invoice_emails')}<span class='required_star'>*</span>".html_safe, :class => "control-label") %>
               <div class="controls">
                 <%= hidden_field_tag "invoice_email_field", added_invoice_emails, :class => "required invoice-emails" %>

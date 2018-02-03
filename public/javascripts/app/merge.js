@@ -34,9 +34,9 @@ window.App = window.App || {};
 
     makePrimary: function (entity) {
       jQuery('.merge-cont').removeClass('cont-primary');
-      jQuery('.merge-cont').children('.primary-marker').attr('title','Mark as primary');
+      jQuery('.merge-cont').children('.primary-marker').attr('title', I18n.translate('common_js_translations.mark_as_primary'));
       entity.addClass('cont-primary');
-      entity.children('.primary-marker').attr('title', 'Primary ticket');
+      entity.children('.primary-marker').attr('title', I18n.translate('common_js_translations.primary_ticket'));
       jQuery('#merge-warning').toggleClass('hide', this.ticketId(entity) === this.ticketId(App.Tickets.Merge_tickets.findOldestTicket()));
     },
 

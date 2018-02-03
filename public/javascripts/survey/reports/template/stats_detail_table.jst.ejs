@@ -17,7 +17,13 @@
 				for(var i=1;i<table.length;i++){
 			%>	
 			<tr class="<% if(table[i].name == "None") {%>exclude_none <%}%>">
-				<td><%=table[i].name%></td>
+				<td>
+					<% if(table[i].name == "None") { %>
+						<%= table[i].label_key %>
+					<% } else { %>
+						<%= table[i].name %>
+					<% } %>
+				</td>
 				<%
 				 	var groupInfo = table[i].choices;
 					for(var j=0;j<groupInfo.length;j++){				
