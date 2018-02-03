@@ -56,4 +56,5 @@ translations:
     , '*.ticket.private_note'
     , '*.ticket.broadcast_note'
     , '*.ticket.broadcast_notes'
+    , '*.ticket.properties_updated'
     ]
