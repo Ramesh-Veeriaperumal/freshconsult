@@ -3491,6 +3491,7 @@ de:
       priority: Priorität
       status: Status
       type: Typ
+      product: Produkt
       historic_status: "Alter Status"
       current_status: "Aktueller Status"
       current_status_lower: "aktueller Status"

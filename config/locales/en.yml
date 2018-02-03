@@ -9909,6 +9909,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       priority: priority
       status: status
       type: type
+      product: Product
       historic_status: Historic Status
       current_status: Current Status
       current_status_lower: current status

@@ -204,7 +204,7 @@ var setEvents = function (hashed_params,current_username,current_userid) {
           var agent_reply_div = "<div id='ar_agent_reply' class='count-label auto-refresh-show hide' data-text-one='"+ I18n.t('ticket.agent_reply') + "' data-text-other='"+ I18n.t('ticket.agent_replies') + "'></div>"
           var private_note_div = "<div id='ar_private_note' class='count-label auto-refresh-show hide' data-text-one='"+ I18n.t('ticket.private_note') + "' data-text-other='"+ I18n.t('ticket.private_notes') + "'></div>"
           var broadcast_note_div = "<div id='ar_broadcast_note' class='count-label auto-refresh-show hide' data-text-one='"+ I18n.t('ticket.broadcast_note') + "' data-text-other='"+ I18n.t('ticket.broadcast_notes') + "'></div>"
-          var properties_updated_div = "<div id='ar_tickets_updated' class='auto-refresh-show ar-properties hide'>" + I18n.t('ticket.broadcast_note') + "</div>"
+          var properties_updated_div = "<div id='ar_tickets_updated' class='auto-refresh-show ar-properties hide'>" + I18n.t('ticket.properties_updated') + "</div>"
           return customer_reply_div+agent_reply_div+private_note_div+properties_updated_div+broadcast_note_div;
         },
         template: '<div class="dbl_up arrow"></div><div class="hover_card ar-hover inner"><div class="content"><div></div></div></div>',
