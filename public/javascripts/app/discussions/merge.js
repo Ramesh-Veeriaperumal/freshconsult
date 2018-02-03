@@ -31,7 +31,7 @@ window.App.Discussions = window.App.Discussions || {};
 			var primary_topic = this.findOldestTopic();
   		primary_topic.parent().prepend(primary_topic);
   		primary_topic.addClass('cont-primary');
-  		primary_topic.find('.primary-marker').attr('title','Primary topic');
+  		primary_topic.find('.primary-marker').attr('title', I18n.translate('common_js_translations.primary_topic'));
 		},
 
 		bindMergeEvent: function (topic_id) {
@@ -59,8 +59,8 @@ window.App.Discussions = window.App.Discussions || {};
 			$('body').on('click.merge_topics', '.primary-marker', function(){
 				_this.markPrimary($(this).parents('.merge-cont'));
 				$('.twipsy').hide();
-				$('.primary-marker').attr('data-original-title','Mark as primary')
-				$(this).attr('data-original-title','Primary topic').trigger('mouseover')
+				$('.primary-marker').attr('data-original-title', I18n.translate('common_js_translations.mark_as_primary'));
+				$(this).attr('data-original-title', I18n.translate('common_js_translations.primary_topic')).trigger('mouseover')
 				_this.enableContinue();
 			});
 		},
@@ -142,7 +142,7 @@ window.App.Discussions = window.App.Discussions || {};
 					$(this).parent().addClass("clicked");
 					var element = $(".cont-primary").clone();
 					_this.appendToMergeList(element, $(this));
-					element.find('.primary-marker').attr('title','Mark as primary').addClass('tooltip');
+					element.find('.primary-marker').attr('title', I18n.translate('common_js_translations.mark_as_primary')).addClass('tooltip');
 					var replace_element = element.find('.item_info');
 					var title =  replace_element.attr('title');
 					var topic_id = element.find(".merge-topic").data("id")

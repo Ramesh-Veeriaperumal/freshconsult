@@ -45,7 +45,7 @@ var UnresolvedTickets = (function () {
 			});
 			// Filter transition
 			$supervisorDashboard.on('blur.unresolved', '.dataTables_filter input', function(){
-				jQuery(this).removeClass('widelength').attr('placeholder', "Search");
+				jQuery(this).removeClass('widelength').attr('placeholder', I18n.t('helpdesk.realtime_dashboard.search'));
 				jQuery(this).parent().removeClass('widelength');
 			});
 
@@ -438,7 +438,7 @@ var UnresolvedTickets = (function () {
 						"sPrevious": "<"
 					},
 					"sSearch": '<i class="ficon-search"></i>',
-					"sSearchPlaceholder": "Search"
+					"sSearchPlaceholder": I18n.t('helpdesk.realtime_dashboard.search')
                 },
                 "fnDrawCallback" : function(){
                 	_FD.tableDrawCallback(data.tickets_data.content.length);

@@ -96,7 +96,7 @@ class Solution::FolderMeta < ActiveRecord::Base
 	end
 
 	def visibility_type
-	  VISIBILITY_NAMES_BY_KEY[self.visibility]
+		translated_visibility_name_by_key[self.visibility]
 	end
 
   def customer_folders_attributes=(cust_attr)

@@ -228,7 +228,7 @@ RealtimeDashboard.CoreUtil = RealtimeDashboard.CoreUtil || {};
     		jQuery(container + ' .widget-content .sloading').remove();
     	},
     	appendNoData : function(container) {
-    		var mkup = "<div class='no_data_to_display text-center muted mt20'><i class='ficon-no-data fsize-72'></i><div class='mt10'>No Data to Display </div></div>";
+    		var mkup = "<div class='no_data_to_display text-center muted mt20'><i class='ficon-no-data fsize-72'></i><div class='mt10'>" + I18n.t('no_date_to_display') +" </div></div>";
     		if(jQuery('.' + container + ' .widget-content').length == 0) {
     			jQuery('.' + container + ' .widget-inner').html(mkup);
     		} else {

@@ -19,7 +19,7 @@
 		<% elsif note.outbound_email? %>
 			<span class="image email-reply tooltip" title='<%= t(".outbound_email") %>'></span>
 		<% elsif note.tweet? %>
-			<span class="image tweet-note tooltip" title='Tweet'></span>			
+			<span class="image tweet-note tooltip" title='<%= t("ticket.tweets") %>'></span>			
 		<% end %>
 	</div> 
     
@@ -60,4 +60,3 @@
 	</div>
 
 </div> 
-

@@ -13,8 +13,7 @@
 					<%=t('admin.surveys.new_layout.survey')%> 
 					<div class="pull-right">
 					   <input id="TogglesurveyActivate" type="checkbox" name="active"
-						class="pull-right pseudoCheckbox" rel="toggle"  data-checked-label='ON' 
-						data-unchecked-label='OFF'
+						class="pull-right pseudoCheckbox" rel="toggle"
 						<%if @layout_params[:active]%> checked="checked" <%end%> style="display: none;"
 						<% if @layout_params[:id] != "" %>
 						onchange="javascript:SurveyStatus.change(<%=@layout_params[:id]%>,this.checked);"

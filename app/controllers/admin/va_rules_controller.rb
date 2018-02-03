@@ -177,8 +177,8 @@ class Admin::VaRulesController < Admin::AdminController
         operator_types[:decimal] = ["is", "is_not"]
       end
       @op_types     = ActiveSupport::JSON.encode operator_types
-      @op_list      = ActiveSupport::JSON.encode OPERATOR_LIST
-      @op_label     = ActiveSupport::JSON.encode ALTERNATE_LABEL
+      @op_list      = ActiveSupport::JSON.encode va_operator_list
+      @op_label     = ActiveSupport::JSON.encode va_alternate_label
     end
 
     def add_ticket_fields filter_hash

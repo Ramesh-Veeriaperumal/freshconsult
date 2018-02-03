@@ -147,7 +147,7 @@ window.App.Admin.Skills = window.App.Admin.Skills || {};
       var titleTemplate = '';
       var params = {
         templateHeader: '<div class="modal-header">' +
-          '<p class="ellipsis modal-roles-header"><span>Agents</span> (<span id="agents-count">' + agentcount + '</span>)</p>' +
+          '<p class="ellipsis modal-roles-header"><span>'+ I18n.t('common_js_translations.skills.agents') +'</span> (<span id="agents-count">' + agentcount + '</span>)</p>' +
           titleTemplate +
           '</div>',
         targetId: '#manage-agents',
@@ -166,7 +166,7 @@ window.App.Admin.Skills = window.App.Admin.Skills || {};
       $('.addAgentHiddenInput').select2({
         minimumInputLength: 2,
         multiple: true,
-        placeholder: 'Add Agent',
+        placeholder: I18n.t('common_js_translations.skills.add_agent'),
         allowClear: true,
         ajax: {
           url: "/search/autocomplete/agents",
@@ -272,7 +272,7 @@ window.App.Admin.Skills = window.App.Admin.Skills || {};
 
 
     checkifNoAgents: function() {
-      var Template = "<div class='no-agent-info'>" + "No agent added" + "</div>";
+      var Template = "<div class='no-agent-info'>" + I18n.t('common_js_translations.skills.no_agent_added') + "</div>";
       var len = $('.agent-list-wrapper').children('.roles-agent-list').length;
       var $agentListWrapper = $('.agent-list-wrapper');
       if (len === 0) {

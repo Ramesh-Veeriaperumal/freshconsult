@@ -5,3 +5,4 @@
 //= require_tree ../froala_editor/plugins
 //= require_tree ../froala_editor/fd_plugins
 //= require froala_editor/editor_initializer
+//= require_tree ../froala_editor/languages

@@ -33,7 +33,7 @@
           <td>
             <div class="input-append">
               <input type="text" class="clip-data" value="<%= record.host_name.try(:chomp, '.') %>" readonly>
-              <button type="button" class="btn tooltip copy-clip" title="Copy to Clipboard">
+              <button type="button" class="btn tooltip copy-clip" title="<%= t("livechat.copy_to_clipboard") %>">
                 <i class="ficon-clone fsize-18"></i>
               </button>
             </div>
@@ -41,7 +41,7 @@
           <td>
             <div class="input-append">
               <input type="text" class="clip-data" value="<%=record.fd_cname.try(:chomp, '.')%>" readonly>
-              <button type="button" class="btn  tooltip copy-clip" title="Copy to Clipboard">
+              <button type="button" class="btn  tooltip copy-clip" title="<%= t("livechat.copy_to_clipboard") %>">
                 <i class="ficon-clone fsize-18"></i>
               </button>
             </div>

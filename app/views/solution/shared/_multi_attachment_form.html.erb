@@ -10,7 +10,7 @@
 <div class="solutionPanel">
 <div class="attach-wrapper" id="attachment-type">
  <div class="file_dropzone" id="file_dropzone_<%=session[:multiple_list]%>" style="display: none">
-    <h3 class="dropzone-text lead text-center pt20 mt10">Drop files here</h3>
+    <h3 class="dropzone-text lead text-center pt20 mt10"><%= t("helpdesk.attachment.drop_files_here") %></h3>
   </div>
   <div class="m0">
         <% if cloud_files_installed? and (@ticket.present? ? !@ticket.ecommerce? : true)  %>
@@ -36,7 +36,7 @@
 
              <!-- Attachement Names -->
           <div class="attachment-names pull-left pl20">
-            <div class="attachment-limit"  id="attach-limt-<%=session[:multiple_list]%>"> < <%= attachment_size %> MB </div>
+            <div class="attachment-limit"  id="attach-limt-<%=session[:multiple_list]%>"> < <%= attachment_size %><%= t("multifile_attachments.mb") %></div>
             <input type="hidden" name="attachments_list" data-forward=<%=forward%> data-total-size=0 value="" data-input-id="<%=session[:multiple_list]%>">
                   <div class="existing-file-list" data-count=<%=session[:multiple_list]%>></div>
                 <div class="multiple-filelist multiple-filelist-<%= session[:multiple_list] %>" data-filelist-count=<%=session[:multiple_list] %>>
@@ -52,7 +52,7 @@
           <div class="attachment-icon pull-left text-center" data-icon-count=<%=session[:multiple_list] %>> <i class="ficon-attachment"></i></div>
 
           <div class="attachment-names pull-left pl20">
-         <div class="attachment-limit"  id="attach-limt-<%=session[:multiple_list]%>" > < <%= attachment_size %> MB </div>
+         <div class="attachment-limit"  id="attach-limt-<%=session[:multiple_list]%>" > < <%= attachment_size %><%= t("multifile_attachments.mb") %></div>
             <input type="hidden" name="attachments_list" data-forward=<%=forward%> data-total-size=0 value="" data-input-id="<%=session[:multiple_list]%>">
                   <div class="existing-file-list" data-count=<%=session[:multiple_list]%>></div>
                 <div class="multiple-filelist multiple-filelist-<%= session[:multiple_list] %>" data-filelist-count=<%=session[:multiple_list] %>>

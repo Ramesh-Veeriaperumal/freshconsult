@@ -12,7 +12,7 @@
     <%end%>
       <div class="span6 single-line-bar">
         <h3 class="header-lead"><span><%=data['title']%></span></h3>
-        <div id="<%=key%>_bar_chart" class="graph-container"><div class="noinfo">No data to display!</div></div>
+        <div id="<%=key%>_bar_chart" class="graph-container"><div class="noinfo"><%= t("adv_reports.no_data_to_display_msg") %></div></div>
       </div>
     <%if counter % 2 != 0 || ((obj_array_size-1) == counter)%>
     </div>
@@ -23,9 +23,13 @@
     var <%=key%> = <%=data.to_json.html_safe%>;
     jQuery(document).ready(function() {
       var <%=key%>_barChart = new bar_chart(
-          {renderTo: '<%=key%>_bar_chart',chartData:<%=data[:chartData].to_json.html_safe%>,
-            xaxis_arr: <%=data[:xaxis_arr].to_json.html_safe%>,title:'<%=data[:title]%>',isPDF:true}
-        );
+        {
+          renderTo: '<%=key%>_bar_chart',chartData:<%=data[:chartData].to_json.html_safe%>,
+          xaxis_arr: <%=data[:xaxis_arr].to_json.html_safe%>,
+          title:'<%=data[:title]%>',
+          isPDF:true
+        }
+      );
       <%=key%>_barChart.barGraph();
     });
     </script>

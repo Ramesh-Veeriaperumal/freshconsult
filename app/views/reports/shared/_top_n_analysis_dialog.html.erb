@@ -4,7 +4,7 @@
 <div id="dialog-select">
   <%unless @report_filter_data.blank?%>
     <div class="row-fluid" style="padding-bottom:25px; border-bottom: 1px solid #ccc; margin-bottom: 25px;">
-      <label  class="title">Jump to a Saved report</label>
+      <label  class="title"><%= t("helpdesk_reports.jump_to_a_saved_report") %></label>
       <%= select_tag 'select_saved_report', options_for_select(@report_filter_data.map {|k, v| [raw(v[:name]),k.to_s]}), { :multiple => false, :class => "select2 filter_item span9",:size => 5,:placeholder => "Jump to a Saved report"}%>
     </div>
   <%end%>

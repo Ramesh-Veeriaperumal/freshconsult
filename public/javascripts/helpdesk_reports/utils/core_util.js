@@ -40,6 +40,7 @@ HelpdeskReports.CoreUtil = {
         custom_field: 120000
     },
     SHORTEN_LIMIT : 9999,
+    filter_options : ["At least once in Agent" , "At least once in Group" , "At least once in Status" , "SLA Violated"],
     getFilterDisplayData: function () {
         var _this = this;
         HelpdeskReports.locals.select_hash = [];
@@ -797,7 +798,7 @@ HelpdeskReports.CoreUtil = {
     getRemoteFilterConfig : function(condition,initFromSavedReportData,initData){
          var _this = this;
          var include_none = true;
-         var noneVal = "-None-" ;
+         var noneVal = I18n.t('dashed_none');
          var none_value = -1;
 
          var config = {

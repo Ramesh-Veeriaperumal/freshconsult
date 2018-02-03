@@ -2,13 +2,13 @@
 	<div class = 'm-survey-remove'><div class = 'add-remove-optn remove'>&#8722;</div></div>
 	<div class = 'survey-monkey-content'>
 		<div class = 'inner-row'>
-			<p> For tickets belonging to group </p>
+			<p><%= t("integrations.applications.surveymonkey.belonging_to_group") %></p>
 			<select id="" class="group_list required select2">
 			</select>
 		</div>
 		<div class = 'inner-row'>
 			<div>
-				<p> Use this survey </p>
+				<p><%= t("integrations.applications.surveymonkey.use_this_survey") %></p>
 				<div class="survey-list-wrapper sloading loading-small loading-left">
 					<select id="" class="survey_list select2 required">
 					</select>
@@ -18,7 +18,7 @@
 				<p> Survey Collector 
 				</p>
 				<div class="hide collector-list-wrapper">
-					<a href="#load_survey_link" rel="freshdialog" title="Preview" data-group="survey-monkey" class="preview-link" data-template-footer=""> preview </a>
+					<a href="#load_survey_link" rel="freshdialog" title="Preview" data-group="survey-monkey" class="preview-link" data-template-footer=""><%= t("integrations.applications.surveymonkey.preview") %></a>
 					<select id="" class="collector_list select2 required">
 					</select>
 				</div>

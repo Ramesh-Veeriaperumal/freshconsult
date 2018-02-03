@@ -41,7 +41,7 @@ var SurveyTable = {
         var header = [];
         (reportType == SurveyReportData.defaultAllValues.group) ? header.push(SurveyI18N.group)
                                                                 : header.push(SurveyI18N.agent);
-        var choice_none = {name: "None",choices: [],total: 0};
+        var choice_none = {name: "None", label_key: I18n.t('activities.none') ,choices: [],total: 0};
         for(var i=0;i<choices.length;i++){
             header.push(choices[i].value);
             choice_none.choices[i]=0;

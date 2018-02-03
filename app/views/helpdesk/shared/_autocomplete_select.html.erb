@@ -1,5 +1,4 @@
 <%
-
 max_limit ||= 3
 container ||= 'customers'
 name = container
@@ -106,11 +105,11 @@ jQuery(document).ready(function() {
     specialFormatting: true,
     formatResult: select2_results,
     formatSelection: select2_format,
-    formatNoMatches: function () { return "No matching <%=container.capitalize.singularize%> found"; },
+    formatNoMatches: function () { return I18n.t('validation.select2_no_match', { container : I18n.t('common_js_translations.' + '<%=container%>' + '.singular')}); },
     formatInputTooShort: function (input, min) { 
       return I18n.t('validation.select2_minimum_limit', {char_count : min - input.length}); },
     formatSelectionTooBig: function (limit) { 
-      return I18n.t('validation.select2_maximum_limit', {limit: limit, container : (limit== 1) ? "<%=container.capitalize.singularize %>" : "<%=container.capitalize.pluralize %>"}); },
+      return I18n.t('validation.select2_maximum_limit', {limit: limit, container : I18n.t('common_js_translations.' + '<%=container%>' + '.' + ((limit == 1) ? 'singular' : 'plural'))}); },
   });
 
   if("<%= bulk_action %>" !== "true") {

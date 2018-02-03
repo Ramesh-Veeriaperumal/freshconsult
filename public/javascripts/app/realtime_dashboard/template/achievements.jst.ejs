@@ -1,23 +1,31 @@
 <div class="row-fluid achievements-inner">
 
 	<div class="span4 mt10 text-center achievement-chart-wrap">
-		<div class="mb10"> <%= renderData.chartData.current_level_name %> </div>
+		<div class="mb10">
+			<% if(renderData.chartData.current_level_name != "") {%>
+				<%= I18n.t('gamification.levels.'+renderData.chartData.current_level_name.toLowerCase()) %> 
+			<% } %>
+		</div>
 		<div id="achievementsChart" class="mb5 pl5" style="width:90px;height:100px"></div>
 		<div class="achivement-text muted">
 
 			<% if(renderData.chartData.points == null || renderData.chartData.points == "") {%>
-				No Data
+				<%= I18n.t('no_date_to_display') %>
 			<% } else if(renderData.chartData.points_needed != 0) {%>
-				+ <%= renderData.chartData.points_needed %> points For <%= renderData.chartData.next_level_name %>
+				+ <%= renderData.chartData.points_needed %> 
+				<%= I18n.t('helpdesk.realtime_dashboard.gamification.points_for') %>
+				<%= I18n.t('gamification.levels.'+renderData.chartData.next_level_name.toLowerCase()) %>
 			<% } else { %>
-				Congrats!
+				<%= I18n.t('helpdesk.realtime_dashboard.gamification.congrats') %>
 			<% } %>
 
 		</div>
 	</div>
 
 	<div class="span8 pl10">
-		<p class="muted mt10"> Recent Badges </p>
+		<p class="muted mt10"> 
+			<%= I18n.t('helpdesk.realtime_dashboard.gamification.recent_badges') %> 
+		</p>
 		<div class="row-fluid mt20">
 			<% if(renderData.badges != "") {%>
 				<% jQuery.each(renderData.badges, function(index, obj) { %>
@@ -29,9 +37,13 @@
 				    </div>
 				<% }) %>
 			<%} else {%>
-				<div class="p20 muted"> No Badges achieved yet </div>
+				<div class="p20 muted"> 
+					<%= I18n.t('no_badge_achieved_label') %>
+				</div>
 			<%}%>
 		</div>
 	</div>
-	<a href="/helpdesk/quests" class="widget-more-link"> Available Quests </a>
+	<a href="/helpdesk/quests" class="widget-more-link"> 
+		<%= I18n.t('helpdesk.realtime_dashboard.gamification.helpdesk_quests') %>
+	</a>
 </div>

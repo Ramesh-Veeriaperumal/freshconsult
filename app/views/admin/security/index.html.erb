@@ -264,7 +264,10 @@
 
     $('.custom_ssl_form, input').keypress(function(event) { return event.keyCode != 13; });
 
-    $("#account_sso_enabled, #account_ssl_enabled, #account_whitelisted_ip_attributes_enabled").itoggle();
+    $("#account_sso_enabled, #account_ssl_enabled, #account_whitelisted_ip_attributes_enabled").itoggle({
+          checkedLabel: "<%= t('plain_on') %>",
+          uncheckedLabel: "<%= t('plain_off') %>"
+      });
 
     $("#account_sso_enabled").bind("change",function(e){
       $("#sso_enabled_content").slideToggle(this.checked);
