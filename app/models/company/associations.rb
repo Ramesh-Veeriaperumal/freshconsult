@@ -33,4 +33,6 @@ class Company < ActiveRecord::Base
   has_many :reminders, class_name: 'Helpdesk::Reminder',
     dependent: :destroy, foreign_key: 'company_id', inverse_of: :company  
 
+  delegate :string_cc01, :string_cc02, :string_cc03, :datetime_cc01, :to => :company_field_data
+
 end

@@ -2,7 +2,8 @@ class ApiCompaniesController < ApiApplicationController
   decorate_views
 
   def create
-    company_delegator = CompanyDelegator.new(@item, custom_fields: params[cname][:custom_field])
+    delegator_params = construct_delegator_params
+    company_delegator = CompanyDelegator.new(@item, delegator_params)
     if !company_delegator.valid?
       render_custom_errors(company_delegator, true)
     elsif @item.save
@@ -13,9 +14,9 @@ class ApiCompaniesController < ApiApplicationController
   end
 
   def update
-    custom_fields = params[cname].delete(:custom_field)
-    @item.assign_attributes(custom_field: custom_fields) # Temp hack
-    company_delegator = CompanyDelegator.new(@item, custom_fields: custom_fields)
+    delegator_params = construct_delegator_params
+    @item.assign_attributes(validatable_delegator_attributes)
+    company_delegator = CompanyDelegator.new(@item, delegator_params)
     if !company_delegator.valid?
       render_custom_errors(company_delegator, true)
     elsif !@item.update_attributes(params[cname])
@@ -30,12 +31,28 @@ class ApiCompaniesController < ApiApplicationController
       super (filter || scoper).preload(preload_options).order(:name)
     end
 
+    def validatable_delegator_attributes
+      params[cname].select do |key, value|
+        if CompanyConstants::VALIDATABLE_DELEGATOR_ATTRIBUTES.include?(key)
+          params[cname].delete(key)
+          true
+        end
+      end
+    end
+
     def preload_options
       [:flexifield, :company_domains]
     end
 
     def scoper
       current_account.companies
+    end
+
+    def construct_delegator_params
+      { 
+        custom_fields: params[cname][:custom_field],
+        default_fields: params[cname].except(:custom_field)
+      }
     end
 
     def validate_params
