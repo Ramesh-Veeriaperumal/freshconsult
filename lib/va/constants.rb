@@ -36,6 +36,11 @@ module Va
       "custom_date"         => "date"
     }
 
+    OVERRIDE_OPERATOR_LABEL = {
+      :in => 'is',
+      :not_in => 'is_not'
+    }.freeze
+
     OPERATOR_LIST =  [
       :is,
       :is_not,
@@ -53,7 +58,7 @@ module Va
       :in,
       :not_in,
       :and
-    ]
+    ].map { |i| [i, OVERRIDE_OPERATOR_LABEL[i] || i.to_s] }.freeze
 
     ALTERNATE_LABEL = [
         [ :in, 'admin.va_rules.label.object_id_array_in' ],
@@ -87,7 +92,7 @@ module Va
     end
 
     def va_operator_list
-      Hash[*OPERATOR_LIST.map { |i| [i, I18n.t(i)] }.flatten]
+      Hash[*OPERATOR_LIST.map { |i, j| [i, I18n.t(j)] }.flatten]
     end
   end
 end
