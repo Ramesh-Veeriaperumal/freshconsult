@@ -10,11 +10,7 @@ def self.company_fields_data
     { :name               => "name", 
       :label              => "Company Name",
       :required_for_agent => true,
-      :position           => 1 },
-
-    { :name               => "domains", 
-      :label              => "Domains",
-      :position           => 4 }
+      :position           => 1 }
   ]
 end
 
