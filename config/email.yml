@@ -341,4 +341,5 @@ retry_count: 20
 outgoing_spam_account: 1
 domain_validation_key: "abcd"
 auto_block_user: spamautoblock@freshworks.com
+activation_email_domain: smtp.freshpo.com
 

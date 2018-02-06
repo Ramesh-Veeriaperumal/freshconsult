@@ -1,5 +1,5 @@
 class EmailConfigNotifier < ActionMailer::Base
-  
+
   include EmailHelper
   helper EmailActionsHelper
   layout "email_font", :except => [:activation_instructions]
@@ -7,10 +7,9 @@ class EmailConfigNotifier < ActionMailer::Base
   def activation_instructions(email_config)
     headers = {
       :subject => "#{email_config.account.portal_name} email activation instructions",
-      :from    => email_config.account.default_friendly_email,
+      :from    => email_config.random_noreply_email,
       :to      => email_config.reply_email,
       :sent_on => Time.now,
-      "Reply-to" => "#{email_config.account.default_friendly_email}", 
       "Auto-Submitted" => "auto-generated", 
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
@@ -42,7 +41,7 @@ class EmailConfigNotifier < ActionMailer::Base
       part.html { render "test_email" }
     end.deliver
   end
-
+  
   # TODO-RAILS3 Can be removed oncewe fully migrate to rails3
   # Keep this include at end
   include MailerDeliverAlias 
