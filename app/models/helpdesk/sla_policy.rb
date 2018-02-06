@@ -80,7 +80,7 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
     [ :half,  -1800]
   ]
 
-  # REMINDER_TIME_OPTIONS = REMINDER_TIME.map { |i| [i[1], i[2]] }
+  REMINDER_TIME_OPTIONS = REMINDER_TIME.map { |i| [i[1], i[2]] }
   SLA_WORKER_INTERVAL = 840 #Rake task interval (14 Minutes)
 
   CUSTOM_USERS = [
