@@ -103,7 +103,7 @@ module Ember
       end
 
       def create_user_and_make_agent(item)
-        item.save_without_session_maintenance && item.enqueue_activation_email(params) && item.create_agent
+        item.signup!({}, nil, !current_account.freshid_enabled?, false) && item.create_agent
       end
 
       def agent_creation_error(item)
