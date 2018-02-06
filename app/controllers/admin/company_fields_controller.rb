@@ -39,6 +39,6 @@ class Admin::CompanyFieldsController < Admin::AdminController
     end
 
     def index_scoper
-      @index_scoper ||= current_account.company_form.company_fields_from_cache # ||= saves MemCache calls
+      @index_scoper ||= current_account.company_form.company_fields
     end
 end

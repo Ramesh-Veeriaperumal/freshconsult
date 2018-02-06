@@ -358,6 +358,7 @@ class Admin::VaRulesController < Admin::AdminController
         { :name => "domains", :value => t('company_domain'), :domtype => "text", 
           :operatortype => "choicelist" }
       ]
+      add_tam_company_fields filter_hash['company'] if current_account.tam_default_company_fields_enabled?
       add_customer_custom_fields filter_hash['company'], "company"
     end
 
@@ -381,6 +382,25 @@ class Admin::VaRulesController < Admin::AdminController
           })
         end
       end
+    end
+
+    def add_tam_company_fields filter_hash
+      filter_hash.push(
+        { :name => "health_score", :value => t('company.health_score'),
+          :domtype => dropdown_domtype, :operatortype => "choicelist",
+          :choices => none_option +
+          company_field_choices(Company::DEFAULT_DROPDOWN_FIELD_MAPPINGS[:health_score])},
+        { :name => "account_tier", :value => t('company.account_tier'),
+          :domtype => dropdown_domtype, :operatortype => "choicelist",
+          :choices => none_option +
+          company_field_choices(Company::DEFAULT_DROPDOWN_FIELD_MAPPINGS[:account_tier])},
+        { :name => "industry", :value => t('company.industry'),
+          :domtype => dropdown_domtype, :operatortype => "choicelist",
+          :choices => none_option +
+          company_field_choices(Company::DEFAULT_DROPDOWN_FIELD_MAPPINGS[:industry])},
+        { :name => "renewal_date", :value => t('company.renewal_date'),
+          :domtype => "date", :operatortype => "date"}
+        )
     end
 
     def hide_password_in_webhook
@@ -411,4 +431,8 @@ class Admin::VaRulesController < Admin::AdminController
                 TicketConstants.source_list
     end
 
+    def company_field_choices field_type
+      current_account.company_form.default_drop_down_fields(field_type.to_sym).
+        first.custom_field_choices.collect { |c| [c.value, c.value ] }
+    end
 end

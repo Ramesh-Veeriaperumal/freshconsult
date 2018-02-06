@@ -10,4 +10,9 @@ module CompaniesHelperMethods
                                 :error_label => :label }
    end
 
+   def set_validatable_default_fields
+      @company.validatable_default_fields = { :fields => current_account.company_form.default_company_fields, 
+                                          :error_label => :label }
+   end
+
 end

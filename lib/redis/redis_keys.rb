@@ -386,6 +386,9 @@ module Redis::RedisKeys
   FRESHID_CLIENT_CREDS_TOKEN_KEY = 'FRESHID_CLIENT_CREDS_TOKEN'.freeze
   FRESHID_USER_PW_AVAILABILITY = 'FRESHID_USER_PW_AVAILABILITY:%{account_id}:%{email}'.freeze
 
+  # Key for enabling TAM company fields
+  TAM_FIELDS_ENABLED = "TAM_FIELDS_ENABLED"
+
   def newrelic_begin_rescue
     begin
       yield

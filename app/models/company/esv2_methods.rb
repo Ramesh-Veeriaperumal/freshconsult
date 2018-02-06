@@ -15,13 +15,16 @@ class Company < ActiveRecord::Base
               only: [ :name, :account_id, :created_at, :updated_at, :note ],
               methods: [ :company_description ]
             }).merge(esv2_custom_attributes)
+              .merge(esv2_tam_attributes)
               .merge(domains: es_domains).to_json
   end
 
   # V2 columns to be observed for changes
   #
   def esv2_columns
-    @@esv2_columns ||= [:description, :domains, :name, :note].concat(esv2_company_field_data_columns)
+    @@esv2_columns ||= [:description, :domains, :name, :note,
+                        :string_cc01, :string_cc02, :string_cc03,
+                        :datetime_cc01].concat(esv2_company_field_data_columns)
   end
   
   # V2 custom field columns
@@ -36,6 +39,15 @@ class Company < ActiveRecord::Base
   #
   def esv2_custom_attributes
     flexifield.as_json(root: false, only: esv2_company_field_data_columns)
+  end
+
+  def esv2_tam_attributes
+    {
+      health_score: flexifield.string_cc01,
+      account_tier: flexifield.string_cc02,
+      industry: flexifield.string_cc03,
+      renewal_date: flexifield.datetime_cc01
+    }
   end
 
   # Replace with company-domains when it comes
