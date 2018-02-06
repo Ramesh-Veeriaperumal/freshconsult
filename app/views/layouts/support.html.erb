@@ -50,7 +50,11 @@
 		<% if portal_chat_enabled? %>
 			<%= render :partial => "layouts/shared/chat/chat" %>
 		<% end %>
-				
+
+		<% if portal_bot_enabled? %>
+			<%= render :partial => "layouts/shared/bot" %>
+		<% end %>
+
 	    <%= javascript_include_tag :'cdn/portal_bottom' %>
 		<%= javascript_include_tag :'cdn/redactor' %>
 		<%= javascript_include_tag :'cdn/freshfone_portal' %>	

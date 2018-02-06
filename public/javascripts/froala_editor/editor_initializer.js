@@ -71,7 +71,9 @@ function invokeEditor(element_id,type,attr) {
 			'authenticity_token': jQuery('[name="csrf-token"]').attr('content')
 		},
 		imageManagerLoadMethod: 'GET',
-		imageDefaultWidth: 0
+		imageDefaultWidth: 0,
+		// locale
+		language: I18n.locale
 	}
 	switch(type) {
 		case 'solution':
@@ -81,9 +83,8 @@ function invokeEditor(element_id,type,attr) {
 				imageUploadURL: '/solutions_uploaded_images',
 				imageManagerLoadURL: '/solutions_uploaded_images',
 				sanitizeType: "solution",
-				toolbarSticky: false,
+				toolbarSticky: false
 			}
-
 			jQuery(element_id).froalaEditor(jQuery.extend({}, froala_common_options, froala_solution_options))
 
 			case 'forum':

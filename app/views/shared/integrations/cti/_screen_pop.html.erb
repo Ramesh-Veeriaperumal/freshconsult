@@ -25,12 +25,12 @@
         <label> <%= t("integrations.screen_pop.widget.agent_phone_details") %></label>
         <select id="cti_phone_numbers" name="cti_phone_numbers" class="select2">
         </select>
-        <button class="btn btn-primary update-cti-phone"> Update </button>
+        <button class="btn btn-primary update-cti-phone"><%= t("helpdesk.shared.update") %></button>
       </div>
       <div id="phone_list_loading" class="loading-block loading-small loading-align"> </div>
       <div class="cti-phone-status hide" id="cti-phone-status">
         <label class="status"> <i class="ficon-checkmark-round-o cti-phone-tick"></i><%= t("integrations.screen_pop.widget.agent_phone_updated")%></label>
-        <button class="btn btn-primary status-btn"> Ok </button>
+        <button class="btn btn-primary status-btn"><%= t("helpdesk.shared.ok") %></button>
       </div>
     </div>
     <% if softfone_enabled? %>

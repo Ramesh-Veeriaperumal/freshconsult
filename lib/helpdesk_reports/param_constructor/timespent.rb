@@ -57,6 +57,7 @@ class HelpdeskReports::ParamConstructor::Timespent < HelpdeskReports::ParamConst
     @export_params[:model]  = 'TICKET_LIFECYCLE'
     @export_params[:metric] = 'LIFECYCLE_GROUPBY'
     @export_params[:export] = true
+    @export_params[:filter] = @export_params[:filter].map{|f_h| f_h.with_indifferent_access}
     @export_params[:export_type] = 'aggregate_export'
     @export_params[:group_by] = [options[:active_timespent_group_by]]
     params = {} 

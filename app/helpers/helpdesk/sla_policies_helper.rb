@@ -7,18 +7,18 @@ module Helpdesk::SlaPoliciesHelper
 	SECONDS_IN_MONTH = 2592000
 
   def response_time_options
-    return Helpdesk::SlaDetail::RESPONSETIME_OPTIONS if !current_account.premium?
-    Helpdesk::SlaDetail::PREMIUM_TIME_OPTIONS + Helpdesk::SlaDetail::RESPONSETIME_OPTIONS
+    return Helpdesk::SlaDetail::response_time_options if !current_account.premium?
+    Helpdesk::SlaDetail::premium_time_options + Helpdesk::SlaDetail::response_time_options
   end
 
   def resolution_time_options
-  	return Helpdesk::SlaDetail::RESOLUTIONTIME_OPTIONS if !current_account.premium?
-    Helpdesk::SlaDetail::PREMIUM_TIME_OPTIONS+ Helpdesk::SlaDetail::RESOLUTIONTIME_OPTIONS
+  	return Helpdesk::SlaDetail::resolution_time_option if !current_account.premium?
+    Helpdesk::SlaDetail::premium_time_options+ Helpdesk::SlaDetail::resolution_time_option
   end
 
   def escalation_time_options
-    (current_account.premium? ? Helpdesk::SlaPolicy::ESCALATION_PREMIUM_TIME_OPTIONS :
-    	Helpdesk::SlaPolicy::ESCALATION_TIME_OPTIONS)
+    (current_account.premium? ? Helpdesk::SlaPolicy::esclation_premium_time_options :
+    	Helpdesk::SlaPolicy::esclation_time_options)
   end
 
 	def groups
@@ -68,7 +68,7 @@ module Helpdesk::SlaPoliciesHelper
 	end
 
 	def reminder_time_options
-   		Helpdesk::SlaPolicy::REMINDER_TIME_OPTIONS
+   		Helpdesk::SlaPolicy::remainder_time_option
   	end
 
 	# ITIL Related Methods starts here

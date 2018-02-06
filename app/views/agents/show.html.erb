@@ -7,19 +7,19 @@
 			<% nxtlevel = @agent.next_level %>
 			<% unless nxtlevel.blank? %>
 				<% progress = ((@agent.points / nxtlevel.points) * 100).to_i %>
-			<% end %>	
+			<% end %>
 			<span class="bar" style="width: <%= progress%>%;"></span>
 			<p>
-				<span class="floatr"><strong><%= h @agent.points %></strong> pts</span>
+				<span class="floatr"><strong><%= h @agent.points %></strong><%= t("pts_plain") %></span>
 				<%= t('level_label') %> : <strong>
 		   			<%= h @agent.level.name %>
-				</strong> 
+				</strong>
 			</p>
 		</div>
 		<p class="info-text center" id="user-next-level">
 			<% unless nxtlevel.blank? %>
-				<%= t('next_level_info', 
-					:points =>  (nxtlevel.points - @agent.points), 
+				<%= t('next_level_info',
+					:points =>  (nxtlevel.points - @agent.points),
 					:name => nxtlevel.name ) %>
 			<% end %>
 		</p>
@@ -41,8 +41,8 @@
 			<p class="info-text left"><%= t('no_badge_achieved_label') %></p>
 		<% end %>
         <% if privilege?(:manage_users)%>
-			<%= link_to 'reset', { :action => :reset_score, :id => @agent.id } ,:method => 'put', :id => "agent_score_reset" , :class => "hide" %>		
-			<a href='#agent-gamification-reset' 
+			<%= link_to t("reset"), { :action => :reset_score, :id => @agent.id } ,:method => 'put', :id => "agent_score_reset" , :class => "hide" %>
+			<a href='#agent-gamification-reset'
 				id="scoreboard_start_over"
 				rel="freshdialog"
 				title="<%= t('agent.reset_score_title') %>"
@@ -50,13 +50,13 @@
 				data-width="400px"
 				data-close-on-submit="true"
 				data-close-label="<%= t('cancel') %>"
-				data-destroy-on-close="true"> 
+				data-destroy-on-close="true">
 				<%= t('agent.reset_scores') %>
 			</a>
 		<% end %>
 	</div>
 	<%end%>
-<%- end %> 
+<%- end %>
 <div class="contact-box clearfix">
 	  <% if privilege?(:manage_users) %>
 		<div class="action_buttons hide">
@@ -71,10 +71,10 @@
 						<a href="#agent-deletion-confirmation"
 							rel="freshdialog"
 							title="<%= t('agent.convert_to_contact')%>"
-							data-submit-label="Confirm"
+							data-submit-label="<%= t('confirm') %>"
 							data-width="400px"
 							data-close-on-submit="true"
-							data-close-label="Cancel"
+							data-close-label="<%= t('cancel') %>"
 							data-destroy-on-close="true">
 							<%= t('agent.info4') %>
 						</a>
@@ -96,17 +96,17 @@
 		</div>
 	  <% end %>
 
-		<%= user_avatar(@user, :medium, "profile_pic", {:width => "120px"}) %>	
+		<%= user_avatar(@user, :medium, "profile_pic", {:width => "120px"}) %>
 		<h3 class="title"><%= h(@user.display_name) %></h3>
 		<% unless @user.job_title.blank? %>
 		   <b><%= h @user.job_title %></b>
-		<% end %> 
+		<% end %>
 		<div class="user-info">
 			<%= content_tag(:h4, t('agent_info_title'), :class => "title") %>
-			<%= content_tag(:div, "#{content_tag(:span, t('user.email'))}  #{h(@user.email)}".html_safe) unless @user.email.blank? %> 
-			<%= content_tag(:div, "#{content_tag(:span, 
+			<%= content_tag(:div, "#{content_tag(:span, t('user.email'))}  #{h(@user.email)}".html_safe) unless @user.email.blank? %>
+			<%= content_tag(:div, "#{content_tag(:span,
 									t('user.phone_no'))}  #{can_make_phone_calls(@user)}".html_safe) if @user.phone.present? %>
-			<%= content_tag(:div, "#{content_tag(:span, t('user.mobile'))}  #{can_make_mobile_calls(@user)}".html_safe) if @user.mobile.present? %> 
+			<%= content_tag(:div, "#{content_tag(:span, t('user.mobile'))}  #{can_make_mobile_calls(@user)}".html_safe) if @user.mobile.present? %>
 			<%= content_tag(:div, "#{content_tag(:span, t('account.time_zone'))}  #{h(@user.time_zone)}".html_safe) %>
 		</div>
 		<% if ((@user.deleted || !@user.active?) && privilege?(:manage_users)) %>
@@ -115,16 +115,16 @@
 			<%= content_tag(:div, "#{ t('agent_emailnotverified') } #{ link_to( 'Send activation email', send_invite_activation_path(@user), :method => :put ) } ".html_safe ) if !@user.deleted && !@user.active? %>
 		</div>
 		<% end %>
-</div> 
+</div>
 <div class="contact-box-additional">
 	<%= render_agent_tickets%>
-</div>	 
+</div>
 <div id="agent-deletion-confirmation" class="hide">
 	<p class="margin-bottom"><br/><%= t('agent.convert_agent_confirmation')%></p>
 </div>
 <% if current_account.scoreboard_levels.present? %>
 	<div id="agent-gamification-reset" class="hide">
-		<p class="margin-bottom"><br/> 
+		<p class="margin-bottom"><br/>
 			<% reset_score_alert = (@user == current_user ? 'agent.reset_score_alert_you' : 'agent.reset_score_alert_them') %>
 			<%= t(reset_score_alert, :points => current_account.scoreboard_levels.least_points.first.points, :name => @user.name) %></p>
 	</div>

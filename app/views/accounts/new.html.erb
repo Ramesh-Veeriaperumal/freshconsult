@@ -1,12 +1,12 @@
 <% content_for :sidebar do -%>&nbsp;<%- end %>
-<h3 class="title">Create an account</h3> 
+<h3 class="title"><%= t("accounts.new.create_an_account") %></h3> 
 
 	<%= form_tag :action => 'create' do %>
   		<%= hidden_field_tag 'plan', params[:plan] %>
   		
 	  <% if @account.errors.any? %>
 	    <div class="errorExplanation">
-	      <h2>Errors encountered with your account information:</h2>
+	      <h2><%= t("accounts.new.errors_encountered") %></h2>
 	      <ul>
 	        <%= @account.errors.full_messages.map {|m| content_tag('li', m)} %>
 	      </ul>
@@ -14,31 +14,31 @@
 	  <% end %> 
 	<ul class="ui-form"> 
 	  <li>
-	  	<h4 class="title"> Enter the name of your business and the subdomain you'd like to use for your site.</h4>
+	  	<h4 class="title"><%= t("accounts.new.enter_name_subdomain") %></h4>
 	    <%= fields_for :account do |f| %>
-	      <label for="account_name">Company</label>
+	      <label for="account_name"><%= t("accounts.new.company") %></label>
 		  <%= f.text_field :name, :class => "required" %>
-	      <label for="account_domain">Site URL</label>
+	      <label for="account_domain"><%= t("accounts.new.site_url") %></label>
 		  <%= f.text_field :domain, :class => "very_small required" %>.<%= AppConfig['base_domain'][Rails.env] %>
 	    <% end %>
 	  </li> 
 	  <li>
-	  	<h4 class="title">Enter info for the administrator account</h4>  
+	  	<h4 class="title"><%= t("accounts.new.administrator_account") %></h4>  
 	    <%= fields_for :user do |f| %>
-	      <label for="user_name">Full Name</label>
+	      <label for="user_name"><%= t("accounts.new.full_name") %></label>
 		  <%= f.text_field :name, :class => "text" %>
-		  <label for="user_email">Email</label>
+		  <label for="user_email"><%= t("Email") %></label>
 	      <%= f.text_field :email, :class => "text email" %>
-	      <label for="user_password">Password</label>
+	      <label for="user_password"><%= t("password") %></label>
 	      <%= f.password_field :password, :class => "text password" %>
-	      <label for="user_password_confirmation">Confirmation</label>
+	      <label for="user_password_confirmation"><%= t("accounts.new.confirmation") %></label>
 	      <%= f.password_field :password_confirmation, :class => "text password_confirm" %>
 	    <% end %>
 	  </li>  
 	  
 	  <% if @account.needs_payment_info? %>
 	    <p>
-	      Enter your payment info
+	      <%= t("accounts.new.enter_payment_info") %>
 	    </p>
 	    
 	    <%= render :partial => "shared/credit_card_form" %>
@@ -47,7 +47,7 @@
 	  <!--br/>
 	  
 	  <fieldset>
-	    <label>Discount Code</label>
+	    <label><%= t("accounts.new.discount_code") %></label>
 	    <%= text_field_tag :discount, params[:discount] %>
 	  </fieldset -->
 	  
@@ -55,7 +55,7 @@
 	  
 	  <li>
 	    <%= content_tag(:p) do %>
-	      Your card will be charged <%= number_to_currency(@account.plan.setup_amount) + ' now and ' if  @account.plan.setup_amount? && !@account.plan.trial_period? %> <%= number_to_currency(@account.plan.amount) %> 
+	      <%= t("accounts.new.card_charge") %><%= number_to_currency(@account.plan.setup_amount) + ' now and ' if  @account.plan.setup_amount? && !@account.plan.trial_period? %> <%= number_to_currency(@account.plan.amount) %> 
 	      <%= @account.plan.renewal_period == 1 ? 'every month' : "every #{@account.plan.renewal_period} months" %>.
 	    <% end if @account.needs_payment_info? %>
 	

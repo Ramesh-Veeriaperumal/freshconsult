@@ -21,7 +21,9 @@
     <ul class="ui-form dont-validate">
       <li class="inline-field field clearField message">
           <%= render(:partial => 'helpdesk/tickets/show/editor_insert_buttons', :locals => { :id => id, :cntid => cntid}) %> 
-          <label class="ecom-from">From:</label> <span><%= @ticket.ebay_account.name if @ticket.ebay_account.present? %></span>
+          <label class="ecom-from">
+          <%= t("ticket.from") %></label> 
+          <span><%= @ticket.ebay_account.name if @ticket.ebay_account.present? %></span>
       </li>
       <li class="inline-field field clearField continous message">
         <%= f.fields_for :note_body, Helpdesk::NoteBody.new do |ff| %>

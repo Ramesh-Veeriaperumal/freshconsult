@@ -6,6 +6,6 @@
 		<% if privilege?(:delete_ticket) %>
 			<%= link_to t('delete'), @item, :method => :delete, :class => "btn" %>
 		<% end %>
-		<%= f.submit t('update'), :class => "btn btn-primary", :id => "helpdesk_ticket_submit" , :"data-loading-text" => "Updating..." %>   
-	</div> 
+		<%= f.submit t('update'), :class => "btn btn-primary", :id => "helpdesk_ticket_submit" , :"data-loading-text" => t('updating') %>   
+	</div>
 </div>

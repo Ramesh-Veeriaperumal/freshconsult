@@ -2,7 +2,7 @@
 {% assign forum_category = forum.forum_category %}
 
 <section class="content main rounded-6 min-height-on-desktop fc-topic-view">
-	{% if forum.type_name != 'announcement' %}
+	{% if forum.type_class != 'announcement' %}
 		<b class="pull-right">{{ portal | link_to_start_topic }}</b>
 	{% endif %}
 	<div class="breadcrumb">
@@ -13,8 +13,8 @@
 	
 	<section class="topic-header clearfix">
 		{{ topic | topic_labels }}
-		<b class="page-stamp page-stamp-{{ forum.type_name }}">
-			<i class="icon-page-{{ forum.type_name }}"></i>
+		<b class="page-stamp page-stamp-{{ forum.type_class }}">
+			<i class="icon-page-{{ forum.type_class }}"></i>
 		</b>
 		{{ topic | topic_icon }}
 		<h2 class="post-title heading">

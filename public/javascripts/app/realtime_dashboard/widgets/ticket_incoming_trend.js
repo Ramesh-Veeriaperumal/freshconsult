@@ -235,7 +235,7 @@ RealtimeDashboard.Widgets.TicketIncomingTrend = function(widget_name,container){
 		showTimeStamp : function() {
 			var self = this;
 			var date = new Date(_fd.resp.result.last_dump_time);
-			var str = 'as of ' + moment(date).format(self.core.time_format);
+			var str = I18n.t('helpdesk.realtime_dashboard.time_stamp', { time: moment(date).format(self.core.time_format) } )
 			_fd.formated_time = str;
 			jQuery('.' + _fd.widget_name + '_widget' +' [rel=timestamp]').html(str);
 		},

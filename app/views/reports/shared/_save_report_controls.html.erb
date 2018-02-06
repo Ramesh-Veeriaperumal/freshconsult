@@ -18,10 +18,10 @@
 		data-submit-label="<%=t('helpdesk_reports.saved_report.save')%>" 
 		data-close-label="<%=t('helpdesk_reports.saved_report.cancel')%>" 
 		>
-		<i class="ticket-view-saveas tooltip" data-placement="above" data-original-title="Save As" twipsy-content-set="true"></i>
+		<i class="ticket-view-saveas tooltip" data-placement="above" data-original-title="<%= t('save_as') %>" twipsy-content-set="true"></i>
 	</a>
 	<a href = "javascript:void(0)" class="vertical-alignment right-border hide" id="discard_filter" data-action="discard-changes">
-		<i class="ticket-view-cancel tooltip" data-placement="above" data-original-title="Discard changes" twipsy-content-set="true"></i>
+		<i class="ticket-view-cancel tooltip" data-placement="above" data-original-title="<%= t('reports.discard_changes') %>" twipsy-content-set="true"></i>
 	</a>
 	<!-- Edit -->
 	<a class="vertical-alignment left-border hide" 
@@ -37,7 +37,7 @@
 		data-destroy-on-close="true" 
 		id="edit-report" 
 	>
-		<i class="ficon-edit edit tooltip" data-placement="above" data-original-title="Edit" twipsy-content-set="true"></i>
+		<i class="ficon-edit edit tooltip" data-placement="above" data-original-title="<%= t('email_notifications.edit') %>" twipsy-content-set="true"></i>
 	</a>
 	<!-- Schedule -->
 	<% if enable_schedule_report? && current_user.privilege?(:export_reports)%>
@@ -65,11 +65,11 @@
 		data-backdrop="static" 
 		data-title="<%=t('helpdesk_reports.saved_report.delete_dialog_header')%>" 
 		data-show-close="true" 
-		data-submit-label="Confirm" 
-		data-close-label="Cancel" 
+		data-submit-label="<%= t('confirm') %>" 
+		data-close-label="<%= t('cancel') %>" 
 		data-width="400"
 		data-destroy-on-close="true"
 	>
-		<i class="ficon-trash-o trash tooltip" data-placement="above" data-original-title="Delete" twipsy-content-set="true"></i>
+		<i class="ficon-trash-o trash tooltip" data-placement="above" data-original-title="<%= t('delete') %>" twipsy-content-set="true"></i>
 	</a>	
 </div>

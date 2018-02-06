@@ -12,14 +12,14 @@ inputs = @installed_app.configs[:inputs]
   <div class = "cti-admin-container list-page clearfix">
     <div>
        <h3 class="title">
-         <%= check_box(:configs, 'call_note_private', :class => 'ml0',:checked => (inputs["call_note_private"] || '1').to_bool, "rel" => "toggle",  "data-checked-label" => "ON", "data-unchecked-label" => "OFF" )  %>
+         <%= check_box(:configs, 'call_note_private', :class => 'ml0',:checked => (inputs["call_note_private"] || '1').to_bool, "rel" => "toggle")  %>
          <%= t("integrations.cti_admin.save_agent_private_note") %>
        </h3>
     </div>
     <div class="seperator"></div>
     <div>
        <h3 class="title"> 
-         <%= check_box(:configs, 'softfone_enabled', :id => 'softfone_enabled', :checked => (inputs["softfone_enabled"] || '').to_bool, "rel" => "toggle",  "data-checked-label" => "ON", "data-unchecked-label" => "OFF" )  %>
+         <%= check_box(:configs, 'softfone_enabled', :id => 'softfone_enabled', :checked => (inputs["softfone_enabled"] || '').to_bool, "rel" => "toggle")  %>
          <%= t("integrations.cti_admin.iframe_toggle") %>
        </h3>
     </div>
@@ -50,7 +50,7 @@ inputs = @installed_app.configs[:inputs]
     <div class="seperator"></div>
     <div>
       <h3 class="title">
-        <%= check_box(:configs, 'click_to_dial', :id => 'click_to_dial', :checked => (inputs["click_to_dial"] || '0').to_bool, "rel" => "toggle",  "data-checked-label" => "ON", "data-unchecked-label" => "OFF" )  %>
+        <%= check_box(:configs, 'click_to_dial', :id => 'click_to_dial', :checked => (inputs["click_to_dial"] || '0').to_bool, "rel" => "toggle")  %>
        <%= t("integrations.cti_admin.ctd_toggle") %>
      </h3>
     </div>

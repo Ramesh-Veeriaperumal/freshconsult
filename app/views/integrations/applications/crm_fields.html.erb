@@ -42,7 +42,7 @@
           
     </div>
   </div>
-  <div id="no-display" class="alert notice error">Please resolve the errors in the form before proceeding!!</div>
+  <div id="no-display" class="alert notice error"><%= t("integrations.applications.contacts_sync.resolve_the_errors") %></div>
 
 <div class="button-container">
   <%= link_to t('back'), {:controller => '/integrations/applications', :action => 'index'}, :class => "btn" %>
@@ -81,7 +81,6 @@
             $("#no-display").slideUp();
           }, 3000);
         });
-
         return false;
       }
     });
@@ -93,7 +92,6 @@
       });
       $('#'+ label).val(values);
     }
-
     $("#ticket_sync_option_value").itoggle();
     var default_labels = <%= raw @element_config["default_labels"].to_json %>;
     var contact_default =  default_labels["contact"];
@@ -105,7 +103,6 @@
         $(element).next("a").remove();
       }
     });
-
     var account_default = default_labels["account"];
     $("#accounts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
     //setting the Name as default field(can't be removed.)
@@ -115,7 +112,6 @@
         $(element).next("a").remove();
       }
     });
-
     <%if @element_config["objects"].include? "lead"%>
       var lead_default = default_labels["lead"];
       $("#leads").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
@@ -127,7 +123,6 @@
         }
       });
     <%end%>
-
   // This event will turn the plus select icon to grey on reaching the maximum selection size
     $(".select2-fields").on('change',function(){
       var _this = $(this);
@@ -142,18 +137,15 @@
         }
       }
     });
-
     $(document).ready(function(){
       if(!$('#enable_sync').is(':checked')){
         change();
       }
       $('#enable_sync').prop('checked', "<%= @element_config['enable_sync'] %>");
     });
-
     change = function(){ 
       $('#field-wrap').toggleClass('field-disable'); 
     }
-
     $(document).on('click','.sync-radio-btn', function(){
       var clone_element = $(this).siblings('.sync-icon').children().clone();
       $('.center-icon').html(clone_element);
@@ -174,7 +166,6 @@
         }
       }
     });
-
     /*
         content for field mapping starts here.
     */
@@ -182,16 +173,13 @@
     var crmTypeValidator= <%= raw @element_config['element_validator'].to_json%>;
     var maximumSelectionSizeContact = 25;
     var customModule = "sync";
-
     $(function(){
       $('[rel="construct_contact_rules"]').constructRules({fdTypeValidator, crmTypeValidator, maximumSelectionSizeContact, customModule});
       $('[rel="construct_company_rules"]').constructRules({fdTypeValidator, crmTypeValidator, maximumSelectionSizeContact, customModule});
     });
-
     $('#company-mapping-btn, #contact-mapping-btn').on('click', function(){
       return validateFields();
     });
-
     $('#field-visibility-btn').on("click", function(e){
       if(!validateFields()){
         $("#no-display").slideDown(function() {
@@ -202,7 +190,6 @@
         return false;
       }
     });
-
     function validateFields(){
       var valid = true;
       checkErrors('construct_contact_rule');
@@ -213,13 +200,13 @@
           var _this = $(this);
           var FDContactSelected = _this.find('.dropdown_1 .select2-chosen').text();
           var SFContactSelected = _this.find('.dropdown_2 .select2-chosen').text();
-          if(FDContactSelected.toLowerCase() == "select" || FDContactSelected.toLowerCase() == "no matching data..."){
-            _this.find('[data-refer-key=fd_field]').after("<p class='error'>Field is required. </p>");
+          if(FDContactSelected.toLowerCase() == "select" || FDContactSelected.toLowerCase() == I18n.t('validation.integration_no_match')){
+            _this.find('[data-refer-key=fd_field]').after("<p class='error'>" + I18n.t('validation.required') + " </p>");
             valid = false;
             return false;
           } 
-          if(SFContactSelected.toLowerCase() == "select" || SFContactSelected.toLowerCase() == "no matching data..." ){
-            _this.find('[data-refer-key=sf_field]').after("<p class='error'>Field is required. </p>");
+          if(SFContactSelected.toLowerCase() == "select" || SFContactSelected.toLowerCase() == I18n.t('validation.integration_no_match') ){
+            _this.find('[data-refer-key=sf_field]').after("<p class='error'>" + I18n.t('validation.required') + " </p>");
             valid = false;
             return false;
           }
@@ -270,5 +257,4 @@
       });
     });
   })(jQuery);
-
 </script>

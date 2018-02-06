@@ -160,7 +160,7 @@ window.App = window.App || {};
           $("#plan_id").val(plan_id);
           if($this.current_active_plan_flag) {
             $("#billing-template .billing-cancel").show();
-            $("#billing-template .billing-submit").val("Update Plan");
+            $("#billing-template .billing-submit").val(I18n.t('common_js_translations.update_plan'));
             $("#billing-template .billing-submit").addClass('btn-primary');
             $("#billing-template .billing-submit").removeClass('btn-flat');
           } 

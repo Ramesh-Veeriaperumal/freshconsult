@@ -12,7 +12,7 @@
 <% if @subscription.trial? or @subscription.trial_expired? %>
 	<div class="well well-info"> 
 		<h4 class="sub-lead">
-				Selected Plan : 
+				<%= t("billing_selected_plan") %>
 				<%= t('current_plan_details', 
 						:plan_name => @subscription.subscription_plan.display_name, 
 						:agent_limit => @subscription.agent_limit).html_safe %>

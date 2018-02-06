@@ -30,10 +30,12 @@
 					<% end %>
 
 					
-					<a href="javascript:void(0)" id="assign-options-link" class="button">Assign To Agent</a>
+					<a href="javascript:void(0)" id="assign-options-link" class="button">
+					<%= t("ticket.assign_to_agent") %></a>
 					<div id="assign-options" class="assign-agent" style="display:none;">
-					    Assign to agent <%= select_tag 'responder_id', options_from_collection_for_select(current_account.technicians, :id, :name, current_user) %>
-					    <button id="assign-multiple-button" action="<%= assign_helpdesk_ticket_path('multiple') %>">Assign</button>
+					    <%= t("ticket.assign_to_agent") %>
+					    <%= select_tag 'responder_id', options_from_collection_for_select(current_account.technicians, :id, :name, current_user) %>
+					    <button id="assign-multiple-button" action="<%= assign_helpdesk_ticket_path('multiple') %>"><%= t("assign") %></button>
 					</div>
 				</th>	
 				<th>	
@@ -41,7 +43,7 @@
 						<a href="javascript:void(0)" class="sort_order">
 							<img src="<%= spacer_image_url %>" alt="Order by newest first" title="Order by newest first" onclick="jQuery(this).toggleClass('desending')" />
 						</a>
-					    Sort by 
+					    <%= t("ticket.sort_by") %>
 						<%= select_tag :sort, options_for_select(TicketsFilter.sort_fields_options, (params[:sort] || :due_by).to_sym) %> 
 					</form>
 				</th>

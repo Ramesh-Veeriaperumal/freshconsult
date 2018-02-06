@@ -14,7 +14,7 @@ var TicketTemplate = {
     this.templateSubmitCallback();
     // Event for clicking select template
     jQuery('body').on('click.ticket_template', '[data-action="select-template"]', function(e){
-      jQuery("#loading-box").find('span.loading-text').text("Applying template");
+      jQuery("#loading-box").find('span.loading-text').text(I18n.translate('ticket_templates.apply_template'));
       e.stopPropagation();
       jQuery("#filter-template").val("");
       jQuery("#template-wrapper").toggleClass('active');
@@ -231,7 +231,7 @@ var TicketTemplate = {
      }
      _this.requesterCompany.find('select').val(_this.requesterCompanyVal).trigger('change');
      jQuery("#helpdesk_ticket_status").trigger('change');
-     jQuery("#loading-box").find('span.loading-text').text("Template Applied");
+     jQuery("#loading-box").find('span.loading-text').text(I18n.translate('ticket_templates.apply_template'));
      setTimeout(function(){
        _this.hideLoader();
      }, 250);

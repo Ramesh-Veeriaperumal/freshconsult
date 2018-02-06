@@ -24,6 +24,9 @@
       </div>
   </td>
   <%= javascript_tag do %>
-    jQuery("#quest_toggle_<%= quest.id %>").itoggle()
+    jQuery("#quest_toggle_<%= quest.id %>").itoggle({
+      checkedLabel: "<%= t('plain_on') %>",
+      uncheckedLabel: "<%= t('plain_off') %>"
+    });
   <% end %>
 <% end %>

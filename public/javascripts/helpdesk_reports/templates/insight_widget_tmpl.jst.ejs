@@ -11,7 +11,7 @@
 </div>
 <% if (is_customize_screen) { %>
   <div class="empty-outliers <%= current_outlier_count == 0 ? '' : 'hide-section' %> ">
-    No current outliers
+    <%= I18n.t('helpdesk_reports.insights.no_current_outliers') %>
   </div>
 <% } %>
 <% jQuery.each(widgetIds, function( id, key ) {
@@ -104,33 +104,33 @@
                     <% if(is_edit_view) { %>
                         <% if (widgetType != "2") { %>
                             <div class="config-row">
-                                <div class="config-label">Threshold</div>
+                                <div class="config-label"><%= I18n.t('helpdesk_reports.insights.category.threshold') %></div>
                                 <div class="config-val"><%= threshold %>%</div>
                                 <div class="clear"></div>
                             </div>
                         <% } %>
                         <% if (widgetType == "1" || widgetType == "2") { %>
                             <div class="config-row">
-                                <div class="config-label">Group</div>
+                                <div class="config-label"><%= I18n.t('helpdesk_reports.insights.category.group') %></div>
                                 <div class="config-val"> <%= insightGroupsLabel && insightGroupsLabel.length != 0 ? insightGroupsLabel.join(",") : '-' %></div>
                                 <div class="clear"></div>
                             </div>
                         <% } %>
                         <% if (widgetType == "3") { %>
                             <div class="config-row">
-                                <div class="config-label">Group1</div>
+                                <div class="config-label"><%= I18n.t('helpdesk_reports.insights.category.group') %>1</div>
                                 <div class="config-val"><%= insightGroupsLabel[0] %></div>
                                 <div class="clear"></div>
                             </div>
                             <div class="config-row">
-                                <div class="config-label">Group2</div>
+                                <div class="config-label"><%= I18n.t('helpdesk_reports.insights.category.group') %>2</div>
                                 <div class="config-val"><%= insightGroupsLabel[1] %></div>
                                 <div class="clear"></div>
                             </div>
                         <% } %>
                         <% if (widgetType == "1") { %>
                             <div class="config-row">
-                                <div class="config-label">Product</div>
+                                <div class="config-label"><%= I18n.t('helpdesk_reports.insights.category.product') %></div>
                                 <div class="config-val"><%= insightProductsLabel && insightProductsLabel.length != 0 ? insightProductsLabel.join(",") : '-' %></div>
                                 <div class="clear"></div>
                             </div>
@@ -150,8 +150,8 @@
                       data-metric-type="<%= metricType %>" 
                       data-widget-type="<%= widgetType %>"
                       data-title="Customize Insights"
-                      data-submit-label="Save"
-                      data-close-label="Cancel"
+                      data-submit-label="<%= I18n.t('save') %>"
+                      data-close-label="<%= I18n.t('cancel') %>"
                       
                       >
                       Edit
@@ -164,15 +164,15 @@
                     <p class="sub-header"><%=display_text%></p>
                     <% if (widgetType == "1" || widgetType == "3") { %>
                         <div class="form">
-                            <div class="edit-label pull-left">Threshold (%)</div>
+                            <div class="edit-label pull-left"><%= I18n.t('helpdesk_reports.insights.category.threshold') %> (%)</div>
                             <input class="js-insightThreshold" type="number" min="0" max="99" value="<%= threshold %>">
-                            <p class="missing_field hide">This field is required</p>
-                            <p class="invalid_field hide">This field is invalid</p>
+                            <p class="missing_field hide"><%= I18n.t('validation.required') %></p>
+                            <p class="invalid_field hide"><%= I18n.t('validation.field_invalid') %></p>
                         </div>
                     <% } %>
                     <% if (widgetType == "1") { %>
                         <div class="form">
-                            <div class="edit-label pull-left">Group</div>
+                            <div class="edit-label pull-left"><%= I18n.t('helpdesk_reports.insights.category.group') %></div>
                             <select class="filter_item field-width js-insightGroups" name="groups">
                                 <option value="-1">...</option>
                                 <% for ( var groupsIndex = 0; groupsIndex < all_groups.length; groupsIndex++ ) {
@@ -182,7 +182,7 @@
                             </select>
                         </div>
                         <div class="form">
-                            <div class="edit-label pull-left">Product</div>
+                            <div class="edit-label pull-left"><%= I18n.t('helpdesk_reports.insights.category.product') %></div>
                             <select class="filter_item field-width js-insightProducts" name="products">
                                 <option value="-1">...</option>
                                 <% for ( var productsIndex = 0; productsIndex <	all_products.length; productsIndex++ ) {
@@ -193,7 +193,7 @@
                         </div>
                     <% } else if (widgetType == "2" ) { %>
                         <div class="form vcenter">
-                            <div class="edit-label pull-left">Compare Agent performance in Group </div>
+                            <div class="edit-label pull-left"><%= I18n.t('helpdesk_reports.insights.compare_agent_performance') %> </div>
                             <select class="filter_compare field-width js-insightGroups" name="groups">
                                 <% for ( var groupsIndex = 0; groupsIndex < all_groups.length; groupsIndex++ ) {
                                     var selected = data[key].groups_value.indexOf(all_groups[groupsIndex][0]) != -1 ? "selected" : "";%>
@@ -203,7 +203,7 @@
                         </div>
                     <% } else if (widgetType == "3") { %>
                         <div class="form vcenter bar-chart">
-                            <div class="edit-label pull-left">Compare Group 1 </div>
+                            <div class="edit-label pull-left"><%= I18n.t('helpdesk_reports.insights.compare_group', {count: 1}) %></div>
                             <select class="filter_compare field-width js-insightGroup1" name="groups">
                                 <% for ( var groupsIndex = 0; groupsIndex < all_groups.length; groupsIndex++ ) {
                                     var selected = data[key].groups_value[0] === all_groups[groupsIndex][0] ? "selected" : ""; %>
@@ -212,7 +212,7 @@
                             </select>
                         </div>
                         <div class="form pull-left vcenter bar-chart">
-                            <div class="edit-label pull-left">with Group 2 </div>
+                            <div class="edit-label pull-left"><%= I18n.t('helpdesk_reports.insights.with_group', {count: 2}) %></div>
                             <select class="filter_compare field-width js-insightGroup2" name="groups">
                                 <% for ( var groupsIndex = 0; groupsIndex < all_groups.length; groupsIndex++ ) {
                                     var selected = data[key].groups_value[1] === all_groups[groupsIndex][0] ? "selected" : ""; %>
@@ -231,7 +231,7 @@
 <% }); %>
 <% if (is_customize_screen) { %>
 <div class="insights-headline <%= is_customize_screen ? '' :'hide' %>">
-  <div><span>Others</span></div>
+  <div><span><%= I18n.t('common_js_translations.others') %></span></div>
 </div>
 <% jQuery.each(widgetIds, function( id, key ){
     if ( key != 'last_dump_time' ) {
@@ -307,33 +307,33 @@
                     <% if(is_edit_view) { %>
                         <% if (widgetType != "2") { %>
                             <div class="config-row">
-                                <div class="config-label">Threshold</div>
+                                <div class="config-label"><%= I18n.t('helpdesk_reports.insights.category.threshold') %></div>
                                 <div class="config-val"><%= threshold %>%</div>
                                 <div class="clear"></div>
                             </div>
                         <% } %>
                         <% if (widgetType == "1" || widgetType == "2") { %>
                             <div class="config-row">
-                                <div class="config-label">Group</div>
+                                <div class="config-label"><%= I18n.t('helpdesk_reports.insights.category.group') %></div>
                                 <div class="config-val"> <%= insightGroupsLabel && insightGroupsLabel.length != 0 ? insightGroupsLabel.join(",") : '-' %></div>
                                 <div class="clear"></div>
                             </div>
                         <% } %>
                         <% if (widgetType == "3") { %>
                             <div class="config-row">
-                                <div class="config-label">Group1</div>
+                                <div class="config-label"><%= I18n.t('helpdesk_reports.insights.category.group') %>1</div>
                                 <div class="config-val"> <%= insightGroupsLabel[0] %></div>
                                 <div class="clear"></div>
                             </div>
                             <div class="config-row">
-                                <div class="config-label">Group2</div>
+                                <div class="config-label"><%= I18n.t('helpdesk_reports.insights.category.group') %>2</div>
                                 <div class="config-val"> <%= insightGroupsLabel[1] %></div>
                                 <div class="clear"></div>
                             </div>
                         <% } %>
                         <% if (widgetType == "1") { %>
                             <div class="config-row">
-                                <div class="config-label">Product</div>
+                                <div class="config-label"><%= I18n.t('helpdesk_reports.insights.category.product') %></div>
                                 <div class="config-val"><%= insightProductsLabel && insightProductsLabel.length != 0 ? insightProductsLabel.join(",") : '-' %></div>
                                 <div class="clear"></div>
                             </div>
@@ -351,10 +351,10 @@
                     data-metric="<%= metric_name %>"
                     data-metric-type="<%= metricType %>" 
                     data-widget-type="<%= widgetType %>"
-                    data-submit-label="Save"
-                    data-close-label="Cancel"
-                    data-title="Customize Insights">
-                    Edit
+                    data-submit-label="<%= I18n.t('save') %>"
+                    data-close-label="<%= I18n.t('cancel') %>"
+                    data-title="<%= I18n.t('helpdesk_reports.insights.customize') %>">
+                    <%= I18n.t('edit') %>
                   </a>
                 <% } %>
                 <div class="clear"></div>
@@ -365,15 +365,15 @@
                     <p>&nbsp;</p>
                     <% if (widgetType == "1" || widgetType == "3") { %>
                         <div class="form threshold">
-                            <div class="edit-label pull-left">Threshold (%)</div>
+                            <div class="edit-label pull-left"><%= I18n.t('helpdesk_reports.insights.category.threshold') %> (%)</div>
                             <input class="js-insightThreshold pull-left" type="number" min="0" max="99" value="<%= threshold %>">
-                            <p class="missing_field hide">This field is required</p>
-                            <p class="invalid_field hide">This field is invalid</p>
+                            <p class="missing_field hide"><%= I18n.t('validation.required') %></p>
+                            <p class="invalid_field hide"><%= I18n.t('validation.field_invalid') %></p>
                         </div>
                     <% } %>
                     <% if (widgetType == "1") { %>
                         <div class="form">
-                            <div class="edit-label pull-left">Group</div>
+                            <div class="edit-label pull-left"><%= I18n.t('helpdesk_reports.insights.category.group') %></div>
                             <select class="filter_item field-width js-insightGroups" name="groups">
                                 <option value="-1">...</option>
                                 <% for ( var groupsIndex = 0; groupsIndex < all_groups.length; groupsIndex++ ) { %>
@@ -382,7 +382,7 @@
                             </select>
                         </div>
                         <div class="form">
-                            <div class="edit-label pull-left">Product</div>
+                            <div class="edit-label pull-left"><%= I18n.t('helpdesk_reports.insights.category.product') %></div>
                             <select class="filter_item field-width js-insightProducts" name="products">
                                 <option value="-1">...</option>
                                 <% for ( var productsIndex = 0; productsIndex <	all_products.length; productsIndex++ ) { %>
@@ -392,7 +392,7 @@
                         </div>
                     <% } else if (widgetType == "2" ) { %>
                         <div class="form vcenter">
-                            <div class="edit-label pull-left">Compare Agent performance in Group </div>
+                            <div class="edit-label pull-left"><%= I18n.t('helpdesk_reports.insights.compare_agent_performance') %></div>
                             <select class="filter_compare field-width js-insightGroups" name="groups">
                                 <% for ( var groupsIndex = 0; groupsIndex < all_groups.length; groupsIndex++ ) { %>
                                     <option value="<%= all_groups[groupsIndex][0] %>" ><%= all_groups[groupsIndex][1] %></option>
@@ -401,7 +401,7 @@
                         </div>
                     <% } else if (widgetType == "3") { %>
                         <div class="form vcenter bar-chart">
-                            <div class="edit-label pull-left">Compare Group 1 </div>
+                            <div class="edit-label pull-left"><%= I18n.t('helpdesk_reports.insights.compare_group', {count: 1}) %></div>
                             <select class="filter_compare field-width js-insightGroup1" name="groups">
                                 <% for ( var groupsIndex = 0; groupsIndex < all_groups.length; groupsIndex++ ) {
                                     var selected = data[key].groups_value[0] === all_groups[groupsIndex][0] ? "selected" : ""; %>
@@ -410,7 +410,7 @@
                             </select>
                         </div>
                         <div class="form vcenter bar-chart">
-                            <div class="edit-label pull-left">with Group 2 </div>
+                            <div class="edit-label pull-left"><%= I18n.t('helpdesk_reports.insights.with_group', {count: 2}) %></div>
                             <select class="filter_compare field-width js-insightGroup2" name="groups">
                                 <% for ( var groupsIndex = 0; groupsIndex < all_groups.length; groupsIndex++ ) {
                                     var selected = data[key].groups_value[1] === all_groups[groupsIndex][0] ? "selected" : ""; %>
@@ -427,7 +427,7 @@
 <% } %>
 <% if (is_customize_screen) { %>
   <div class="empty-outliers <%= current_outlier_count == widgetIds.length ? '' : 'hide-section' %>">
-    No other outliers
+    <%= I18n.t('helpdesk_reports.insights.no_other_outliers') %>
   </div>
 <% } %>
 

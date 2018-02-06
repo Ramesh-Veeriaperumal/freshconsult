@@ -11,7 +11,7 @@ module ApiSearch
         builder[:es_params]     = es_params
         builder[:query]         = params[:query]
       end
-      response = fq_builder.records
+      response = fq_builder.response
       if response.valid?
         @items = response.items
       else

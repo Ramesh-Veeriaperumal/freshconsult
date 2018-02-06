@@ -393,7 +393,7 @@
                 var select2_data = self.getValueWithType(hidden_input, type); 
                 var placeholder_value = "Select";
                 if(select2_data.length== 0){
-                    placeholder_value = "No Matching data..."
+                    placeholder_value = I18n.t('validation.integration_no_match')
                 }
                 $(hidden_input).select2({
                     data: select2_data,

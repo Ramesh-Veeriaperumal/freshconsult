@@ -106,3 +106,59 @@
 :lang(es){
 
 }
+
+// German notification preference, ticket details and solution page issue
+:lang(de){
+
+  #user_notify_header #user-notifications-popover header {
+    .show-user-notifications {
+      top: -9px;
+    }
+
+    .notification-preferences-title {
+      max-width: 136px;
+      overflow-wrap: break-word;
+      display: inline-block;
+    }
+  }
+
+  .conversation_thread {
+    .ui-form li.inline-field.notify_agent {
+      label {
+        width: 110px;
+      }
+
+      .email_container {
+        margin-left: 38px;
+      }
+    }
+  }
+
+  .ticket_details {
+    #related_tkts_view_freshdialog-content {
+      #Pages {
+        li {
+          .td-ticket-details {
+            .tkt_labels {
+              li label {
+                width: 62px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .solutions-widget {
+    .sidebar-list {
+      ul {
+        li {
+          .sidebar-list-item {
+            max-width: 228px;
+          }
+        }
+      }
+    }
+  }
+}

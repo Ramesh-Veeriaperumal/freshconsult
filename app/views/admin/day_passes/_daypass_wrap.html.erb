@@ -9,9 +9,9 @@
           <span class="muted"><%=t("admin.day_passes.index.filtered_by")%></span>
           <span class="pl10"><%=t("admin.day_passes.index.agent")%></span>
 
-          <span class="quick-action dynamic-menu" title="Change Agent" data-type="agent" data-options="#ticket_agents"
+          <span class="quick-action dynamic-menu" title="<%= t("admin.day_passes.index.change_agent") %>" data-type="agent" data-options="#ticket_agents"
           id="agent_filter">
-              <a href="javascript:void(0)" title="Change Agent" data-type="agent" data-options="#ticket_agents" class="result drop-right" data-agent-id= "<%=@selected_filter[:user_id]%>"
+              <a href="javascript:void(0)" title="<%= t("admin.day_passes.index.change_agent") %>" data-type="agent" data-options="#ticket_agents" class="result drop-right" data-agent-id= "<%=@selected_filter[:user_id]%>"
               data-agent-name="<%=h(@selected_filter[:user_name])%>"><b><%=@selected_filter[:user_name]%></b></a>
           </span>
 

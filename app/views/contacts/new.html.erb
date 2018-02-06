@@ -4,29 +4,29 @@
   	<%= t('contacts.helptext').html_safe %>
   </p>
 <% end %>
-<% if false %>	
-  <p> You have reached the maximum number of users you can have with your account level.  You can either delete some of your users or <a href="/account/plan">upgrade your account</a> to be able to create a new user. </p>	
+<% if false %>
+  <p> You have reached the maximum number of users you can have with your account level.  You can either delete some of your users or <a href="/account/plan"><%= t("contacts.upgrade_your_account") %></a> to be able to create a new user. </p>	
 <% else %>
-  
-  <%= form_for @user,:url => { :controller => "contacts", :action => "create_contact" }, 
-                     :html => { :multipart => true, 
-                                :rel => "validate", 
+
+  <%= form_for @user,:url => { :controller => "contacts", :action => "create_contact" },
+                     :html => { :multipart => true,
+                                :rel => "validate",
                                 :id => "user_form",
                                 :class => 'form-unsaved-changes-trigger form_for_contact'}  do |f| -%>
 
 
   	<div class='page-header-sticky' rel='sticky'>
 		<div class='sticky-header-wrapper'>
-			<h3 class='lead pull-left'> 
-				<%= t('contacts.new') %> 
+			<h3 class='lead pull-left'>
+				<%= t('contacts.new') %>
 			</h3>
 		<div class="pull-right">
 				<%= link_to t('cancel'), (@user.new_record? ? {:controller =>'contacts', :action => 'index'} : @user ), :class => "btn", :'data-pjax' => "#body-container" %>
-				<%= f.submit t('contacts.save'), :class => "btn btn-primary" , :id => "contact_submit"%> 
+				<%= f.submit t('contacts.save'), :class => "btn btn-primary" , :id => "contact_submit"%>
 			</div>
 		</div>
 	</div>
 		<br/>
 	    <%= render :partial => "form", :locals => { :f => f, :type => "new" } %>
-  <% end -%>	
+  <% end -%>
 <% end %>

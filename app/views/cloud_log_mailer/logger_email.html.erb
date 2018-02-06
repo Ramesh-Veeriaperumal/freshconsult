@@ -1,4 +1,4 @@
-Account: <%=@subdomain%>
+<%= t("cloud_log_mailer.logger_email.account") %><%=@subdomain%>
 <br/>
 <% if @size == Integrations::CloudElements::Constant::LOG_PAGE_SIZE %>
 <%= t('integrations.cloud_elements.mail.page_full', {:size => @size}).html_safe %>
@@ -19,8 +19,8 @@ Account: <%=@subdomain%>
   <table style="border-collapse: collapse; border: 1px solid black;">
     <tr>
       <th style="border: 1px solid black;">#</th>
-      <th style="border: 1px solid black;">Execution Id</th>
-      <th style="border: 1px solid black;">Reason</th>
+      <th style="border: 1px solid black;"><%= t("cloud_log_mailer.logger_email.execution_id") %></th>
+      <th style="border: 1px solid black;"><%= t("cloud_log_mailer.logger_email.reason") %></th>
     </tr>
     <%@failure_reasons.keys.each.with_index(1) do  |key, index| %>
     <tr>
@@ -33,6 +33,6 @@ Account: <%=@subdomain%>
   </table>
 <% end%>
 <br/>
-Regards,
+<%= t("cloud_log_mailer.logger_email.regards") %>
 <br/>
-Freshdesk Support.
+<%= t("cloud_log_mailer.logger_email.freshdesk_support") %>

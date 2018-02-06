@@ -44,6 +44,8 @@
       - :collaboration
       - :user_notifications
       - :quick_reply
+      - :tam_default_fields
+      - :image_annotation
     :inherits: 
       - :sprout_jan_17
     :exclude: []

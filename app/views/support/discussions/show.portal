@@ -12,7 +12,7 @@
 		<div class="cs-g-c">
 		{% for forum in category.forums %}
 			<section class="cs-g topic-list">
-				<div class="list-lead badge-{{ forum.type_name }}">
+				<div class="list-lead badge-{{ forum.type_class }}">
 					{{ forum | link_to_forum_with_count }}
 				</div>
 				{{ forum | topic_list:5 }}

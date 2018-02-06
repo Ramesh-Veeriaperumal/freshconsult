@@ -26,7 +26,7 @@
       <a class="show-user-notifications" href="javascript:;">
         <%= font_icon "arrow-left", { :size => 16 } %>
       </a>
-      <%= t('user_notifications.notification_preferences') %>
+      <span class="notification-preferences-title"><%= t('user_notifications.notification_preferences') %></span>
       <input rel="toggle" type="checkbox" id="mute_notification_sound" data-checked-label="<%= t('user_notifications.muted') %>" data-unchecked-label="<%= t('user_notifications.mute') %>"/>
     </header>
 

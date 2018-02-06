@@ -7,7 +7,7 @@ module ApplicationHelper
   include ActionView::Helpers::TextHelper
   include Gamification::GamificationUtil
   include ChatHelper
-
+  include BotHelper
   include AttachmentHelper
   include ConfirmDeleteHelper
   include RtlHelper
@@ -25,7 +25,7 @@ module ApplicationHelper
   include JsonEscape
   include FalconHelperMethods
   include YearInReviewMethods
-  
+
   require "twitter"
 
   ASSETIMAGE = { :help => "/assets/helpimages" }
@@ -164,7 +164,7 @@ module ApplicationHelper
       type = flash_obj[0]
       admin_flash << { "type" => flash_obj[1], "message" => flash[type]} if flash[type]
     }
-    
+
     admin_flash
   end
 
@@ -549,61 +549,61 @@ module ApplicationHelper
   end
   #Liquid ends here..
 
-  #Ticket place-holders, which will be used in email and comment contents.
+  #Ticket place-holders, which will be used in email and comment contents.t('placeholder.ticket_id')
   def ticket_placeholders #To do.. i18n
     place_holders = {
       :tickets => [
-                      ['{{ticket.id}}',           'Ticket ID' ,       '',        'ticket_id'],
-                      ['{{ticket.subject}}',          'Subject',          '',        'ticket_subject'],
-                      ['{{ticket.description}}',      'Description',        '',         'ticket_description'],
-                      ['{{ticket.url}}',          'Ticket URL' ,            'Full URL path to ticket.',         'ticket_url'],
-                      ['{{ticket.portal_url}}', 'Product specific ticket URL',  'Full URL path to ticket in product portal. Will be useful in multiple product/brand environments.',          'ticket_portal_url'],
-                      ['{{ticket.due_by_time}}',      'Due by time',        '',          'ticket_due_by_time'],
-                      ['{{ticket.tags}}',           'Tags',           '',         'ticket_tags'],
-                      ['{{ticket.latest_public_comment}}',  'Last public comment',  '',         'ticket_latest_public_comment'],
-                      ['{{ticket.latest_private_comment}}', 'Last private comment', '', 'ticket_latest_private_comment'],
-                      ['{{ticket.group.name}}',       'Group name',       '',          'ticket_group_name'],
-                      ['{{ticket.agent.name}}',       'Agent name',       '',        'ticket_agent_name'],
-                      ['{{ticket.agent.email}}',      'Agent email',        "",         'ticket_agent_email']
+                      ['{{ticket.id}}',               t('placeholder.ticket_id') ,       '',        'ticket_id'],
+                      ['{{ticket.subject}}',          t('placeholder.ticket_subject'),          '',        'ticket_subject'],
+                      ['{{ticket.description}}',      t('placeholder.ticket_description'),        '',         'ticket_description'],
+                      ['{{ticket.url}}',              t('placeholder.ticket_url') ,            t('placeholder.tooltip.ticket_url'),         'ticket_url'],
+                      ['{{ticket.portal_url}}',       t('placeholder.ticket_portal_url'),     t('placeholder.tooltip.ticket_portal_url'),          'ticket_portal_url'],
+                      ['{{ticket.due_by_time}}',      t('placeholder.ticket_due_by_time'),        '',          'ticket_due_by_time'],
+                      ['{{ticket.tags}}',             t('placeholder.ticket_tags'),           '',         'ticket_tags'],
+                      ['{{ticket.latest_public_comment}}',  t('placeholder.ticket_latest_public_comment'),  '',         'ticket_latest_public_comment'],
+                      ['{{ticket.latest_private_comment}}', t('placeholder.ticket_latest_private_comment'), '', 'ticket_latest_private_comment'],
+                      ['{{ticket.group.name}}',       t('placeholder.ticket_group_name'),       '',          'ticket_group_name'],
+                      ['{{ticket.agent.name}}',       t('placeholder.ticket_agent_name'),       '',        'ticket_agent_name'],
+                      ['{{ticket.agent.email}}',      t('placeholder.ticket_agent_email'),        "",         'ticket_agent_email']
                     ],
       :ticket_fields => [
-                      ['{{ticket.status}}',         'Status' ,          '',         'ticket_status'],
-                      ['{{ticket.priority}}',         'Priority',         '',        'ticket_priority'],
-                      ['{{ticket.source}}',         'Source',           'The source channel of the ticket.',        'ticket_source'],
-                      ['{{ticket.ticket_type}}',      'Ticket type',        '',         'ticket_type']
+                      ['{{ticket.status}}',         t('placeholder.ticket_status') ,          '',         'ticket_status'],
+                      ['{{ticket.priority}}',         t('placeholder.ticket_priority'),         '',        'ticket_priority'],
+                      ['{{ticket.source}}',         t('placeholder.ticket_source'),           t('placeholder.tooltip.ticket_source'),        'ticket_source'],
+                      ['{{ticket.ticket_type}}',      t('placeholder.ticket_type'),        '',         'ticket_type']
                     ],
       :requester => [
-                      ['{{ticket.requester.name}}',     'Requester name',       '',         'ticket_requester_name'],
-                      ['{{ticket.requester.firstname}}' , 'Requester first name', '',          'ticket_requester_firstname'],
-                      ['{{ticket.requester.lastname}}' , 'Requester last name', '',           'ticket_requester_lastname'],
-                      ['{{ticket.from_email}}',    'Requester email',      "",         'ticket_requester_email'],
-                      ['{{ticket.requester.phone}}', 'Requester phone number',   "",       'ticket_requester_phone'],
-                      # ['{{ticket.requester.email}}', 'Contact Primary email', "", 'contact_primary_email'],
-                      ['{{ticket.requester.address}}', 'Requester address',   "",       'ticket_requester_address']
+                      ['{{ticket.requester.name}}',     t('placeholder.ticket_requester_name'),       '',         'ticket_requester_name'],
+                      ['{{ticket.requester.firstname}}' , t('placeholder.ticket_requester_firstname'), '',          'ticket_requester_firstname'],
+                      ['{{ticket.requester.lastname}}' , t('placeholder.ticket_requester_lastname'), '',           'ticket_requester_lastname'],
+                      ['{{ticket.from_email}}',    t('placeholder.ticket_requester_email'),      "",         'ticket_requester_email'],
+                      ['{{ticket.requester.phone}}', t('placeholder.ticket_requester_phone'),   "",       'ticket_requester_phone'],
+                      # ['{{ticket.requester.email}}', t('placeholder.contact_primary_email'), "", 'contact_primary_email'],
+                      ['{{ticket.requester.address}}', t('placeholder.ticket_requester_address'),   "",       'ticket_requester_address']
                     ],
       :company => [
-                      ['{{ticket.company.name}}',     'Company name',       '',         'ticket_company_name'],
-                      ['{{ticket.company.description}}',     'Company description',       '',         'ticket_company_description'],
-                      ['{{ticket.company.note}}',     'Company note',       '',         'ticket_company_note'],
-                      ['{{ticket.company.domains}}',     'Company domains',       '',         'ticket_company_domains']
+                      ['{{ticket.company.name}}',     t('placeholder.ticket_company_name'),       '',         'ticket_company_name'],
+                      ['{{ticket.company.description}}',     t('placeholder.ticket_company_description'),       '',         'ticket_company_description'],
+                      ['{{ticket.company.note}}',     t('placeholder.ticket_company_note'),       '',         'ticket_company_note'],
+                      ['{{ticket.company.domains}}',     t('placeholder.ticket_company_domains'),       '',         'ticket_company_domains']
                     ],
       :helpdesk => [
-                      ['{{helpdesk_name}}', 'Helpdesk name', '',         'helpdesk_name'],
-                      ['{{ticket.portal_name}}', 'Product portal name', 'Product specific portal name in multiple product/brand environments.',        'ticket_portal_name'],
-                      ['{{ticket.product_description}}', 'Product description', 'Product specific description in multiple product/brand environments.',         'ticket_product_description']
+                      ['{{helpdesk_name}}', t('placeholder.helpdesk_name'), '',         'helpdesk_name'],
+                      ['{{ticket.portal_name}}', t('placeholder.ticket_portal_name'), t('placeholder.tooltip.ticket_portal_name'),        'ticket_portal_name'],
+                      ['{{ticket.product_description}}', t('placeholder.ticket_product_description'), t('placeholder.tooltip.ticket_product_description'),         'ticket_product_description']
                     ]
     }
 
     #Shared ownership placeholders
     if current_account.shared_ownership_enabled?
       place_holders[:tickets] +=
-        [['{{ticket.internal_group.name}}',      'Internal Group name',       "",         'ticket_group_name'],
-        ['{{ticket.internal_agent.name}}',       'Internal Agent name',       "",         'ticket_agent_name'],
-        ['{{ticket.internal_agent.email}}',      'Internal Agent email',      "",         'ticket_agent_email']]
+        [['{{ticket.internal_group.name}}',      t('placeholder.ticket_group_name'),       "",         'ticket_group_name'],
+        ['{{ticket.internal_agent.name}}',       t('placeholder.ticket_agent_name'),       "",         'ticket_agent_name'],
+        ['{{ticket.internal_agent.email}}',      t('placeholder.ticket_agent_email'),      "",         'ticket_agent_email']]
     end
 
     if current_account.unique_contact_identifier_enabled?
-      place_holders[:requester] += [['{{ticket.requester.unique_external_id}}', 'Requester Unique External Id',   "",       'unique_external_id']]
+      place_holders[:requester] += [['{{ticket.requester.unique_external_id}}',   t('placeholder.unique_external_id'), '',       'unique_external_id']]
     end
 
     # Custom Field Placeholders
@@ -625,6 +625,15 @@ module ApplicationHelper
       place_holders[:requester] <<  ["{{ticket.requester.#{name}}}", "Requester #{custom_field.label}", "", "ticket_requester_#{name}"]
     }
 
+    # TAM company fields place holders
+    if current_account.tam_default_company_fields_enabled?
+      current_account.company_form.tam_default_fields.each { |field|
+        place_holders[:company] <<  ["{{ticket.company.#{field.name}}}",
+                                     "Company #{field.label}", "", 
+                                     "ticket_requester_company_#{field.name}"]
+      }
+    end
+
     # Company Custom Field Placeholders
     current_account.company_form.custom_company_fields.each { |custom_field|
       name = custom_field.name[3..-1]
@@ -633,11 +642,11 @@ module ApplicationHelper
     }
 
     # Survey Placeholders
-    place_holders[:tickets] << ['{{ticket.satisfaction_survey}}', 'Satisfaction survey',
-                      'Includes satisfaction survey.', 'ticket_satisfaction_survey'
+    place_holders[:tickets] << ['{{ticket.satisfaction_survey}}', t('placeholder.ticket_satisfaction_survey'),
+                      t('placeholder.tooltip.satisfaction_survey'), 'ticket_satisfaction_survey'
                       ] if current_account.any_survey_feature_enabled_and_active? && params[:type] != 'reply_template'
-    place_holders[:tickets] << ['{{ticket.surveymonkey_survey}}', 'Surveymonkey survey',
-                      'Includes text/link to survey in Surveymonkey', 'ticket_suverymonkey_survey'
+    place_holders[:tickets] << ['{{ticket.surveymonkey_survey}}', t('placeholder.ticket_suverymonkey_survey'),
+                      t('placeholder.tooltip.ticket_suverymonkey_survey'), 'ticket_suverymonkey_survey'
                       ] if Integrations::SurveyMonkey.placeholder_allowed?
 
 
@@ -2033,6 +2042,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def inline_manual_people_tracing
+    state  = current_account.subscription.state
     bucket = current_account.account_additional_settings.additional_settings[:announcement_bucket].to_s
     {
       :uid      => current_user.id,
@@ -2042,7 +2052,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
       :created  => current_account.created_at.to_i,
       :updated  => current_user.last_login_at.to_i,
       :plan     => Subscription.fetch_by_account_id(current_account.id).subscription_plan_from_cache.display_name,
-      :roles    => (current_user.privilege?(:admin_tasks)) ? ['admin', bucket] : ['agent', bucket]
+      :roles    => (current_user.privilege?(:admin_tasks)) ? ['admin', bucket, state] : ['agent', bucket, state]
     }
   end
 

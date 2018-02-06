@@ -1,10 +1,10 @@
 <% content_for :title do %>
-  Request Support
+  <%= t("anonymous.requests.new.request_support") %>
 <% end %>
 
 <%= form_for @ticket, :url => anonymous_requests_path do |f| %>
   <%= f.error_messages %>
-  <%= f.label :email, "Your email" %>
+  <%= f.label :email, t("your_email") %>
   <%= f.text_field :email %>
   <%= render :partial => 'support/shared/request_form', :object => f %>
 <% end %>

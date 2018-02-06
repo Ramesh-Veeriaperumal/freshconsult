@@ -22,8 +22,7 @@
         <div class="fields hide">
           <label for="configs_instance_type"> <%=t('integrations.dynamicscrm.form.instance_type')%> <span class="required_star">*</span></label>
           <input aria-required="true" class=" required radio" id="configs_instance_type" name="configs[instance_type]" type="radio" value="<%= crm_instance_types["on_demand"]%>" checked = "checked"> On-Demand <br>
-<!--           <div class=""><input aria-required="true" class=" required radio" id="configs_instance_type" name="configs[instance_type]" type="radio" value="<%= crm_instance_types["on_premise"]%>"> On-Premise </div>
-          <div class="info-data"> <%=t('integrations.dynamicscrm.form.instance_info')%> </div> -->
+          -<!--           <div class=""><input aria-required="true" class=" required radio" id="configs_instance_type" name="configs[instance_type]" type="radio" value="<%= crm_instance_types["on_premise"]%>"> On-Premise </div> <div class="info-data"> <%=t('integrations.dynamicscrm.form.instance_info')%> </div> -->
           <span class="seperator"></span>
         </div>
 
@@ -122,26 +121,26 @@
       <%= submit_tag t('update'), :class => "btn btn-primary" %>
     </div>
 
-<script type="text/javascript">
-jQuery("input[name='configs[instance_type]'][value=<%= crm_instance_types["on_premise"]%>]").change(function(e){
-   jQuery("#configs_login_url").addClass("required").closest('.fields').show();
-   jQuery("#configs_region").addClass("required").closest('.fields').show();
-   jQuery("#configs_login_url").closest('.required_star').html('*');
-   jQuery("#configs_region").closest('.required_star').html('*');
-});
+    <script type="text/javascript">
+      jQuery("input[name='configs[instance_type]'][value=<%= crm_instance_types["on_premise"]%>]").change(function(e){
+         jQuery("#configs_login_url").addClass("required").closest('.fields').show();
+         jQuery("#configs_region").addClass("required").closest('.fields').show();
+         jQuery("#configs_login_url").closest('.required_star').html('*');
+         jQuery("#configs_region").closest('.required_star').html('*');
+      });
 
-jQuery("input[name='configs[instance_type]'][value=<%= crm_instance_types["on_demand"]%>]").change(function(e){
-    jQuery("#configs_login_url").removeClass("required").val("").closest('.fields').hide();
-    jQuery("#configs_region").removeClass("required").val("").closest('.fields').hide();
-    jQuery("#configs_login_url").closest('.required_star').html('');
-    jQuery("#configs_region").closest('.required_star').html('');
-});
+      jQuery("input[name='configs[instance_type]'][value=<%= crm_instance_types["on_demand"]%>]").change(function(e){
+        jQuery("#configs_login_url").removeClass("required").val("").closest('.fields').hide();
+        jQuery("#configs_region").removeClass("required").val("").closest('.fields').hide();
+        jQuery("#configs_login_url").closest('.required_star').html('');
+        jQuery("#configs_region").closest('.required_star').html('');
+      });
 
-jQuery(document).ready(function() {
-    <%if defined?(configs["instance_type"]) %>
-      var value = "<%= configs['instance_type'] %>";
-      jQuery("input[name='configs[instance_type]'][value=" + value + "]").prop('checked', true).change();
-    <%end%>
-});
-</script>
+      jQuery(document).ready(function() {
+          <%if defined?(configs["instance_type"]) %>
+            var value = "<%= configs['instance_type'] %>";
+            jQuery("input[name='configs[instance_type]'][value=" + value + "]").prop('checked', true).change();
+          <%end%>
+      });
+    </script>
   <%end%>

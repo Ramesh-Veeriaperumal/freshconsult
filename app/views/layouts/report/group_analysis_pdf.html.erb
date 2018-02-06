@@ -12,7 +12,7 @@
     <%end%>
       <div class="span6 single-line-bar">
         <h3 class="header-lead"><span><%=data['title']%></span></h3>
-        <div id="<%=key%>_bar_chart" class="graph-container"><div class="noinfo">No data to display!</div></div>
+        <div id="<%=key%>_bar_chart" class="graph-container"><div class="noinfo"><%= t("adv_reports.no_data_to_display_msg") %></div></div>
       </div>
     <%if counter % 2 != 0 || ((obj_array_size-1) == counter)%>
     </div>

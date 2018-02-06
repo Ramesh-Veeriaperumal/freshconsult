@@ -263,7 +263,7 @@ Helpkit.TimesheetUtil = {
     getRemoteFilterConfig : function(condition,initFromSavedReportData,initData){
          var _this = this;
          var include_none = true;
-         var noneVal = "-None-" ;
+         var noneVal = I18n.t('dashed_none');
          var none_value = -1;
 
          var config = {

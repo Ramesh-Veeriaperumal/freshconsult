@@ -56,7 +56,7 @@ window.App = window.App || {};
 
             var freshdialog_data = {
               targetId: '#email-preview',
-              title: "Message Preview",
+              title: I18n.t("automations.message_preview"),
               width: "800",
               templateFooter: false,
               destroyOnClose: true

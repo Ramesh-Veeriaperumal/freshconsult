@@ -104,8 +104,8 @@ helpdesk:
     - threaded_init
     - ner_api_config
     - freshid
-    - smart_filter_config
     - freshquery
+    - smart_filter_config
     - heap_analytics
     - bot
     - central
