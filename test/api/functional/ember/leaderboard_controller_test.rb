@@ -11,6 +11,7 @@ module Ember
     include Redis::RedisKeys
     include Redis::SortedSetRedis
     include ApiLeaderboardConstants
+    include LeaderboardTestHelper
 
     def setup
       super
@@ -39,7 +40,7 @@ module Ember
       @account.features.gamification.destroy
       @account.revoke_feature(:gamification)
       @account.reload
-      get :agents, construct_params(mini_list: true, version: 'private')
+      get :agents, controller_params(mini_list: true, version: 'private')
       assert_response 403
     ensure
       @account.features.gamification.create
@@ -51,7 +52,7 @@ module Ember
       redis_key = agents_leaderboard_key 'mvp'
       incr_score_of_sorted_set_redis(redis_key, @agent_1.id, 1000)
       incr_score_of_sorted_set_redis(redis_key, @agent_2.id, 5000)
-      get :agents, construct_params(mini_list: true, version: 'private')
+      get :agents, controller_params(mini_list: true, version: 'private')
       responses = ActiveSupport::JSON.decode(response.body)
       assert_response 200
       clear_redis_data
@@ -66,7 +67,7 @@ module Ember
         incr_score_of_sorted_set_redis(redis_key, @agent_2.id, 5000)
         incr_score_of_sorted_set_redis(redis_key, @agent_3.id, 15_000)
         incr_score_of_sorted_set_redis(redis_key, @current_user.id, 10_000)
-        get :agents, construct_params(mini_list: true, version: 'private')
+        get :agents, controller_params(mini_list: true, version: 'private')
         responses = ActiveSupport::JSON.decode(response.body)
         result = responses.find { |x| x['name'] == category }
         assert_response 200
@@ -84,7 +85,7 @@ module Ember
         incr_score_of_sorted_set_redis(redis_key, @agent_1.id, 1000)
         incr_score_of_sorted_set_redis(redis_key, @agent_2.id, 15_000)
         incr_score_of_sorted_set_redis(redis_key, @agent_3.id, 5000)
-        get :agents, construct_params(mini_list: true, version: 'private')
+        get :agents, controller_params(mini_list: true, version: 'private')
         responses = ActiveSupport::JSON.decode(response.body)
         result = responses.find { |x| x['name'] == category }
         assert_response 200
@@ -109,7 +110,7 @@ module Ember
         incr_score_of_sorted_set_redis(redis_key, @agent_2.id, score[category][1])
         incr_score_of_sorted_set_redis(redis_key, User.current.id, score[category][2])
       end
-      get :agents, construct_params(mini_list: true, version: 'private')
+      get :agents, controller_params(mini_list: true, version: 'private')
       responses = ActiveSupport::JSON.decode(response.body)
       responses.each do |r|
         type = r['name'].to_sym
@@ -120,42 +121,119 @@ module Ember
       clear_redis_data
     end
 
-    private
+    def test_group_based_mini_list_leaderboard
+      categories = CATEGORY_LIST.dup
+      categories.insert(1, :love)
 
-      def create_support_score(params = {})
-        new_ss = FactoryGirl.build(:support_score, user_id: params[:user_id],
-                                                   score_trigger: params[:score_trigger],
-                                                   group_id: params[:group_id] || nil,
-                                                   score: params[:score],
-                                                   scorable_id: params[:scorable_id],
-                                                   scorable_type: params[:scorable_type])
-        new_ss.save(validate: false)
-      end
+      create_group_agents
 
-      def leaderboard_list_pattern(type, user)
-        {
-          name: type,
-          user_id: user.id,
-          avatar: user.avatar ? user_avatar(user) : nil
-        }
-      end
+      odd_score = {}
+      even_score = {}
+      score = {}
 
-      def user_avatar(user)
-        thumb_url = user.avatar.attachment_url_for_api(true, :thumb)
-        AttachmentDecorator.new(user.avatar).to_hash.merge(thumb_url: thumb_url)
-      end
+      clear_redis_data
+      clear_group_agents_redis_data(@group_odd, @group_even)
 
-      def agents_leaderboard_key(category)
-        GAMIFICATION_AGENTS_LEADERBOARD % { account_id: @account.id, category: category, month: @current_month }
-      end
+      categories.each do |category|
+        # building group odd leaderboard in redis
+        redis_key = group_agents_leaderboard_key category.to_s, @group_odd
+        odd_score [category] = [Random.rand(1000), Random.rand(1000), Random.rand(1000)]
+        create_group_leaderboard(redis_key, category, [@agent_one.id, @agent_three.id, @agent_five.id], odd_score)
+        # building group even leaderboard in redis
+        redis_key = group_agents_leaderboard_key category.to_s, @group_even
+        even_score[category] = [Random.rand(1000), Random.rand(1000), Random.rand(1000)]
+        create_group_leaderboard(redis_key, category, [@agent_two.id, @agent_four.id, @agent_six.id], even_score)
 
-      def clear_redis_data
-        categories = CATEGORY_LIST.dup
-        categories.insert(1, :love)
-        categories.each do |category|
-          redis_key = agents_leaderboard_key category.to_s
-          $redis_others.perform_redis_op('del', redis_key)
-        end
+        # building account level leaderboard in redis
+        redis_key = agents_leaderboard_key category.to_s
+        create_account_leaderboard(redis_key, category, [@agent_one.id, @agent_three.id, @agent_five.id], odd_score)
+        create_account_leaderboard(redis_key, category, [@agent_two.id, @agent_four.id, @agent_six.id], even_score)
+        score[category] = even_score[category] + odd_score[category]
       end
+      assert_minilist_response score # account level leaderboard assertion
+      assert_minilist_response odd_score, @group_odd.id # group level leaderboard assertion
+      assert_minilist_response even_score, @group_even.id # group level leaderboard assertion
+
+      clear_redis_data
+      clear_group_agents_redis_data(@group_odd)
+      clear_group_agents_redis_data(@group_even)
+    end
+
+    def test_leader_board_agents
+      clear_redis_data
+      score_stub = Random.rand(1000)
+      key = "GAMIFICATION_AGENTS_LEADERBOARD:1:sharpshooter:#{@current_month}"
+      $redis_others.perform_redis_op('zadd', key, [score_stub, @agent_1.id])
+      get :agents, controller_params(version: 'private')
+      responses = ActiveSupport::JSON.decode(response.body)
+      assert_response 200
+      pattern = leaderboard_agent_pattern score_stub.to_f, @agent_1.id
+      assert_equal(responses, pattern)
+      clear_redis_data
+    end
+
+    def test_leaderboard_groups
+      @group_odd = create_group_with_agents(@account)
+      @group_even = create_group_with_agents(@account)
+      clear_groups_redis_data
+      score_stub = [@group_odd.id, @group_even.id].collect.with_index do |group_id, i|
+        [group_id, Random.rand((i * 100)..((i + 1) * 100))]
+      end
+      redis_add_group_score(score_stub)
+      get :groups, controller_params(version: 'private', date_range: 'current_month')
+      responses = ActiveSupport::JSON.decode(response.body)
+      assert_response 200
+      pattern = leaderboard_group_pattern score_stub
+      assert_equal(responses, pattern)
+      clear_redis_data
+    end
+
+    def test_leaderboard_groups_with_invalid_date_range
+      get :groups, controller_params(version: 'private', date_range: 'last_year')
+      responses = ActiveSupport::JSON.decode(response.body)
+      assert_response 400
+    end
+
+    def test_leaderboard_agents_with_filter_applied
+      create_group_agents
+      clear_group_agents_redis_data(@group_odd, @group_even)
+      score_stub_odd = @group_odd.agents.map(&:id).collect.with_index do |agent, i|
+        [agent, Random.rand((i * 100)..((i + 1) * 100))]
+      end
+      score_stub_even = @group_even.agents.map(&:id).collect.with_index do |agent, i|
+        [agent, Random.rand((i * 100)..((i + 1) * 100))]
+      end
+      redis_add_group_agents_score(score_stub_odd, @group_odd.id)
+      redis_add_group_agents_score(score_stub_even, @group_even.id, previous_month)
+
+      get :agents, controller_params(version: 'private', group_id: @group_odd.id, date_range: 'current_month')
+      responses = ActiveSupport::JSON.decode(response.body)
+      assert_response 200
+      pattern = leaderboard_group_agents_pattern score_stub_odd
+      assert_equal(responses, pattern)
+
+      get :agents, controller_params(version: 'private', group_id: @group_even.id, date_range: 'last_month')
+      responses = ActiveSupport::JSON.decode(response.body)
+      assert_response 200
+      pattern = leaderboard_group_agents_pattern score_stub_even
+      assert_equal(responses, pattern)
+
+      clear_group_agents_redis_data(@group_odd, @group_even)
+    end
+
+    def test_leaderboard_agents_with_invalid_date_range
+      get :agents, controller_params(version: 'private', date_range: 'current_year')
+      responses = ActiveSupport::JSON.decode(response.body)
+      assert_response 400
+    end
+    
+    def test_leaderboard_agents_with_invalid_group_selected
+      invalid_group = Account.current.groups.maximum(:id) + 9999
+      get :agents, controller_params(version: 'private', group_id: invalid_group)
+      responses = ActiveSupport::JSON.decode(response.body)
+      assert_response 200
+      pattern = empty_leaderboard_agent_pattern
+      assert_equal(responses, pattern)
+    end
   end
 end

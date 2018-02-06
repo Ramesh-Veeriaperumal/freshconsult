@@ -3,7 +3,7 @@ module CompaniesHelper
   include ContactsCompaniesHelper
 
   def company_fields
-    current_account.company_form.company_fields_from_cache
+    current_account.company_form.company_fields
   end
 
   def render_as_list form_builder, field

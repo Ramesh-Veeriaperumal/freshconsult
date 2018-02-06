@@ -78,27 +78,37 @@ class Social::FbPost < ActiveRecord::Base
     when reply_to_comment?
       FEED_TYPES["reply_to_comment"]
     end
-   end
+  end
    
-   def user
+  def user
     self.is_ticket? ? self.postable.requester : self.postable.user
-   end
-   
- private
-   def post_attributes_present?
-    !self.post_attributes.blank?
-   end
-   
-   def post_type
-    self.post_attributes[:post_type] if post_attributes_present?
-   end
-   
-   def original_fb_post_id
-    self.post_attributes[:original_post_id] if post_attributes_present?
-   end
-   
-   def by_visitor?
-    self.facebook_page.id != user.fb_profile_id
-   end
+  end
+  
+  private
+
+    def post_attributes_present?
+      !self.post_attributes.blank?
+    end
+
+    def post_type
+      self.post_attributes[:post_type] if post_attributes_present?
+    end
+
+    def original_fb_post_id
+      self.post_attributes[:original_post_id] if post_attributes_present?
+    end
+
+    def by_visitor?
+      self.facebook_page.id != user.fb_profile_id
+    end
+
+    # Gem method overriden, need to look at this when we upgrade the gem
+    # Gem method unscopes all default scopes(account_id scope in our case), because of which query takes long time ( > 4 secs)
+    # file path gems/ancestry-1.3.0/lib/ancestry/instance_methods.rb
+    def unscoped_where
+      yield self.ancestry_base_class
+    end
+
+    # End of gem methods
  
 end

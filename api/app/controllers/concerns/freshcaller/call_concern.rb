@@ -63,6 +63,10 @@ module Freshcaller::CallConcern
     @options[:call_status] == 'completed'
   end
 
+  def inprogress?
+    @options[:call_status] == 'in-progress'
+  end
+
   def ticket_title
     call_date = DateTime.parse(@options[:call_created_at]).in_time_zone(current_account.time_zone)
     return I18n.t("call.ticket.#{@options[:call_type]}_#{call_status_string}_title", customer: customer_title) if missed_call?

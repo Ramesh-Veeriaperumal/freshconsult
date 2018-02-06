@@ -8,7 +8,7 @@ module CompaniesTestHelper
     domains = company.domains.nil? ? nil : company.domains.split(',')
     expected_output[:ignore_created_at] ||= true
     expected_output[:ignore_updated_at] ||= true
-    {
+    company_hash = {
       id: Fixnum,
       name: expected_output[:name] || company.name,
       description: company.description,
@@ -19,6 +19,32 @@ module CompaniesTestHelper
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       avatar: expected_output[:avatar] || get_contact_avatar(company)
     }
+    company_hash
+  end
+
+  def public_api_company_pattern(expected_output = {}, company)
+    domains = company.domains.nil? ? nil : company.domains.split(',')
+    expected_output[:ignore_created_at] ||= true
+    expected_output[:ignore_updated_at] ||= true
+    company_hash = {
+      id: Fixnum,
+      name: expected_output[:name] || company.name,
+      description: company.description,
+      domains: expected_output[:domains] || domains,
+      note: company.note,
+      health_score: company.health_score,
+      account_tier: company.account_tier,
+      industry: company.industry,
+      renewal_date: format_renewal_date(company.renewal_date),
+      custom_fields: expected_output['custom_field'] || company.custom_field.map { |k, v| [CustomFieldDecorator.display_name(k), v] }.to_h,
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+    }
+    company_hash
+  end
+
+  def format_renewal_date renewal_date
+    renewal_date.respond_to?(:utc) ? renewal_date.utc : renewal_date
   end
 
   def get_contact_avatar(company)
@@ -176,6 +202,8 @@ module CompaniesTestHelper
 
   def choice_list(company_field)
     case company_field.field_type.to_s
+    when 'default_health_score', 'default_account_tier', 'default_industry'
+      company_field.choices.map { |x| { label: x[:name], value: x[:value] } }
     when 'custom_dropdown' # not_tested
       company_field.choices.map { |x| { id: x[:id], label: x[:value], value: x[:value] } }
     else

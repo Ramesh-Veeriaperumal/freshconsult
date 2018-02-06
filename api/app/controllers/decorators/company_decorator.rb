@@ -1,7 +1,9 @@
 class CompanyDecorator < ApiDecorator
   include Helpdesk::RequesterWidgetHelper
 
-  delegate :id, :name, :description, :note, :users, :avatar, to: :record
+  delegate :id, :name, :description, :note, :users, :avatar, :health_score,
+           :account_tier, :industry, to: :record
+  delegate :tam_default_company_fields_enabled?, to: 'Account.current'
 
   def initialize(record, options)
     super(record)
@@ -14,6 +16,23 @@ class CompanyDecorator < ApiDecorator
     custom_fields_hash = {}
     record.custom_field.each { |k, v| custom_fields_hash[@name_mapping[k]] = utc_format(v) } if @name_mapping.present?
     custom_fields_hash
+  end
+
+  def renewal_date
+    utc_format(record.renewal_date)
+  end
+
+  def tam_fields
+    tam_fields_hash = {
+      health_score: record.health_score,
+      account_tier: record.account_tier,
+      industry:     record.industry,
+      renewal_date: record.renewal_date
+    }
+  end
+
+  def utc_format(value)
+    value.respond_to?(:utc) ? value.utc : value
   end
 
   def domains

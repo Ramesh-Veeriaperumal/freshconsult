@@ -1,0 +1,19 @@
+get: 
+  tags: [leaderboard]
+  description: Leaderboard information about groups
+  parameters:
+    - name: date_range
+      in: query
+      type: string
+    - name: date_range_selected
+      in: query
+      type: string
+  responses: 
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/leaderboard_groups_lists'
+    403:
+      description: Access denied
+    400:
+      description: Bad request error

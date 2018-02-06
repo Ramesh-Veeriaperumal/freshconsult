@@ -69,7 +69,17 @@ module Freshcaller::JwtAuthentication
     auth_secret = request.headers['Authorization']
     auth_secret = auth_secret.match(TOKEN_REGEX) unless auth_secret.nil?
     auth_secret = auth_secret[1].strip if !auth_secret.nil? and auth_secret.length > 1
-    render_request_error :invalid_credentials, Rack::Utils::SYMBOL_TO_STATUS_CODE[:unauthorized] unless verify(auth_secret)
+    payload = verify(auth_secret)
+    if payload.blank? || payload['api_key'].blank?
+      render_request_error :invalid_credentials, Rack::Utils::SYMBOL_TO_STATUS_CODE[:unauthorized]
+    end
+    set_user(payload) if @load_current_user
+  end
+
+  def set_user(payload)
+    user = current_account.technicians.find_by_single_access_token(payload['api_key'])
+    return (@current_user = user) if user.present?
+    render_request_error :invalid_credentials, Rack::Utils::SYMBOL_TO_STATUS_CODE[:unauthorized]
   end
 
   def fallback_to_app_authentication

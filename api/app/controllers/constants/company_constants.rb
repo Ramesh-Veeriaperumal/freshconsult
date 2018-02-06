@@ -5,10 +5,13 @@ module CompanyConstants
 
   EXPORT_CSV_ARRAY_FIELDS = %w(default_fields custom_fields).freeze
   EXPORT_CSV_FIELDS = EXPORT_CSV_ARRAY_FIELDS
-  FIELDS = %w(name description note avatar_id avatar).freeze | ARRAY_FIELDS | HASH_FIELDS
+  FIELDS = %w(name description note avatar_id avatar health_score
+              account_tier renewal_date industry).freeze | ARRAY_FIELDS | HASH_FIELDS
   INDEX_FIELDS = %w(include letter).freeze
   ACTIVITIES_FIELDS = %w(type).freeze
   BULK_ACTION_METHODS = [:bulk_delete].freeze
+  DEFAULT_DROPDOWN_FIELDS = %i(health_score account_tier industry)
+  VALIDATABLE_DELEGATOR_ATTRIBUTES = %w(custom_field health_score account_tier industry).freeze
 
   AVATAR_EXT = %w(.jpg .jpeg .jpe .png).freeze
   AVATAR_CONTENT = {

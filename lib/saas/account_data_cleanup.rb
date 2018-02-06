@@ -5,6 +5,7 @@ class SAAS::AccountDataCleanup
   include Cache::Memcache::CompanyField
   include Cache::FragmentCache::Base
   include MemcacheKeys
+  include AddTamDefaultFieldsHelper
 
   attr_accessor :account, :features_to_process, :action
 
@@ -309,6 +310,10 @@ end
                                    :ticket_form_id => account.ticket_field_def.id)
       clear_fragment_caches
     end
+  end
+
+  def handle_tam_default_fields_add_data
+    populate_tam_fields_data
   end
 
   private

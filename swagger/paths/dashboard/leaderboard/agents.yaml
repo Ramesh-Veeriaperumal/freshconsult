@@ -6,6 +6,15 @@ get:
       in: query
       type: string
       required: true
+    - name: group_id
+      in: query
+      type: string
+    - name: date_range
+      in: query
+      type: string
+    - name: date_range_selected
+      in: query
+      type: string
   responses: 
     200:
       description: Success
