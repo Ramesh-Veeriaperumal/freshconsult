@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20180102020955) do
+ActiveRecord::Schema.define(:version => 20180123071929) do
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -4263,4 +4263,19 @@ ActiveRecord::Schema.define(:version => 20180102020955) do
     end
   add_index :qna_insights_reports , [:account_id, :user_id], :name => 'index_qna_insights_reports_on_account_id_and_user_id'
  
+  create_table :failed_central_feeds, :force => true do |t|
+    t.integer :account_id, limit: 8, null: false
+    t.integer :model_id, limit: 8, null: false
+    t.string  :uuid, limit: 255
+    t.string  :payload_type, limit: 255
+    t.text    :model_changes
+    t.text    :additional_info
+    t.string  :exception, limit: 255
+    t.timestamps null: false
+  end
+
+  add_index :failed_central_feeds, :uuid, :name => 'index_failed_central_feeds_on_uuid'
+  add_index :failed_central_feeds, :model_id, :name => 'index_failed_central_feeds_on_model_id'
+  add_index :failed_central_feeds, :account_id, :name => 'index_failed_central_feeds_on_account_id'
+  add_index :failed_central_feeds, :created_at, :name => 'index_failed_central_feeds_on_created_at'
 end

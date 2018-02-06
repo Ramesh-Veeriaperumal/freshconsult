@@ -1,0 +1,24 @@
+development:
+  service: ZmlnOnNhbXBsZQ==
+  kafka_collector_endpoint: https://central-staging.freshworksapi.com
+  path: /collector
+  method: post
+  timeout: 2
+production:
+  service: ZmlnOnNhbXBsZQ==
+  kafka_collector_endpoint: https://central-staging.freshworksapi.com
+  path: /collector
+  method: post
+  timeout: 2
+staging:
+  service: ZmlnOnNhbXBsZQ==
+  kafka_collector_endpoint: https://central-staging.freshworksapi.com
+  path: /collector
+  method: post
+  timeout: 2
+test:
+  auth_key: ZmlnOnNhbXBsZQ==
+  kafka_collector_endpoint: https://central-staging.freshworksapi.com
+  path: /collector
+  method: post
+  timeout: 2

@@ -11,8 +11,9 @@ class ShardMapping < ActiveRecord::Base
   has_many :facebook_pages, :class_name => 'Social::FacebookPageMapping', :dependent => :destroy, :foreign_key => :account_id
   has_one :google_domain,:class_name => 'GoogleDomain', :dependent => :destroy, :foreign_key => :account_id
 
-  after_update :clear_cache, :update_routes
+  after_update :update_routes
   after_destroy :clear_cache
+  after_commit :clear_cache
 
  def self.lookup_with_account_id(shard_key)
    shard =  fetch_by_account_id(shard_key) 

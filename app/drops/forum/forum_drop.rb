@@ -31,6 +31,10 @@ class Forum::ForumDrop < BaseDrop
     source.type_name.downcase
   end
 
+  def type_class
+    source.type_class.downcase
+  end
+
   def current_topic_filter
     @current_topic_filter ||= :recent
   end

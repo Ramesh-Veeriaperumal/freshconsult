@@ -80,16 +80,22 @@ AGENT:
 
 DEFAULT_TICKET_PROPERTIES:
     email_ticket:
-        email: james.dean@freshdesk.com
-        name: James Dean
+        email: emily.dean@freshdesk.com
+        name: Emily Dean
 
     feedback_widget_ticket:
-        email: lily.robinson@freshdesk.com
-        name: Lily Robinson
+        email: matt.rogers@freshdesk.com
+        name: Matt Rogers
         meta:
             user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/62.0.3202.62
-            referrer: http://www.sainsburys.co.uk/shop/gb/groceries/sainsburys-giraffe-bread-(tiger)-800g
-# end 
+            referrer: https://sauls.freshdesk.com/en/support/home
+    chat_ticket:
+        email: norman.jones@freshdesk.com
+        name: Norman Jones
+        meta:
+            user_agent: Mozilla/5.0 (Windows 10.0.0; Win64; x64) Chrome/62.0.3202.62
+            referrer: /support/home
+            location: Mount Hope, Kansas, United States
 
 EMAIL: 
 

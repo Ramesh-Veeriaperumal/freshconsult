@@ -108,3 +108,4 @@ helpdesk:
     - freshquery
     - heap_analytics
     - bot
+    - central

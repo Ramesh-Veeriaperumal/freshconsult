@@ -33,6 +33,50 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     pattern = {:succeeded => success_pattern.ordered, :failed => failure_pattern.ordered}
     match_json(pattern)
   end
+  
+  def test_multiple_agent_creation_with_freshid
+    @account.launch(:freshid)
+    valid_emails = [Faker::Internet.email, Faker::Internet.email]
+    freshid_users = {}
+    valid_emails.each { |email| freshid_users[email] = freshid_user }
+    Freshid::User.stubs(:create).returns(freshid_users[valid_emails[0]], freshid_users[valid_emails[1]])
+    User.any_instance.stubs(:deliver_agent_invitation!).returns(true)
+    post :create_multiple, construct_params(version: 'private', agents: create_multiple_emails(valid_emails))
+    assert_response 202
+    @account.reload
+
+    valid_emails.each do |email|
+      user = @account.users.find_by_email(email)
+      assert_present user.freshid_authorization
+      assert_equal user.freshid_authorization.uid, freshid_users[user.email].uuid
+    end
+
+    User.any_instance.unstub(:deliver_agent_invitation!)
+    Freshid::User.unstub(:create)
+    @account.rollback(:freshid)
+  end
+  
+  def test_multiple_agent_creation_with_existing_user_in_freshid
+    @account.launch(:freshid)
+    fid_user_params = { first_name: "Existing", last_name: "User", phone: "543210", mobile: "9876543210" }
+    existing_freshid_user = freshid_user(fid_user_params)
+    valid_email = Faker::Internet.email
+    agent_params = [{ email: valid_email }]
+    Freshid::User.stubs(:create).returns(existing_freshid_user)
+    User.any_instance.stubs(:deliver_agent_invitation!).returns(true)
+    post :create_multiple, construct_params(version: 'private', agents: agent_params)
+    assert_response 202
+    @account.reload
+  
+    user = @account.users.find_by_email(valid_email)
+    assert_equal user.name, "#{fid_user_params[:first_name]} #{fid_user_params[:last_name]}"
+    assert_equal user.phone, fid_user_params[:phone]
+    assert_equal user.mobile, fid_user_params[:mobile]
+  
+    User.any_instance.unstub(:deliver_agent_invitation!)
+    Freshid::User.unstub(:create)
+    @account.rollback(:freshid)
+  end
 
   def test_multiple_agent_creation_with_valid_email_and_role
     valid_email = Faker::Internet.email
