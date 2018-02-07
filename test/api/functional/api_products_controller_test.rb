@@ -30,9 +30,9 @@ class ApiProductsControllerTest < ActionController::TestCase
 
   def test_show_product_with_feature_disabled
     product = create_product
-    @account.class.any_instance.stubs(:features?).returns(false)
+    @account.class.any_instance.stubs(:has_feature?).returns(false)
     get :show, construct_params(id: product.id)
-    @account.class.any_instance.unstub(:features?)
+    @account.class.any_instance.unstub(:has_feature?)
     assert_response 403
   end
 

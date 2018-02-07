@@ -3,6 +3,7 @@ module ApiIntegrations
   class CtiControllerTest < ActionController::TestCase
     include NoteHelper
     include TicketHelper
+    include UsersHelper
     def wrap_cname(params)
       { api_cti: params }
     end
@@ -11,6 +12,7 @@ module ApiIntegrations
       super
       Integrations::InstalledApplication.any_instance.stubs(:marketplace_enabled?).returns(false)
       @account.add_features([:cti])
+      @account.add_feature(:unique_contact_identifier)
       application = Integrations::Application.find_by_name("cti")
       @installed_app = @account.installed_applications.build(:application => application)
       @installed_app.set_configs("softfone_enabled" => "0", "call_note_private" => "1", "click_to_dial" => "0")
@@ -21,13 +23,14 @@ module ApiIntegrations
       super
       @account.installed_applications.destroy_all
       @account.remove_feature(:cti)
+      @account.revoke_feature(:unique_contact_identifier)
       Integrations::InstalledApplication.unstub(:marketplace_enabled?)
     end
 
     def test_create_with_feature_disabled
       responder = add_test_agent(@account, role: Role.find_by_name('Agent').id)
       requester = add_new_user(@account)
-      @account.class.any_instance.stubs(:features?).returns(false)
+      Account.any_instance.stubs(:enabled_features_list).returns([])
       call_sid = "125437"
       call_url = "http://abc.abc.com/125437"
       call_info = {"custom_data" => "blah"}
@@ -40,6 +43,7 @@ module ApiIntegrations
                                      }, false)
 
       assert_response 403
+      Account.any_instance.unstub(:enabled_features_list)
     end
 
     def test_req_id_and_resp_id_create
@@ -127,8 +131,9 @@ module ApiIntegrations
     end
 
     def test_valid_requester_unique_external_id_create
+      @account.add_features([:cti])
       responder = add_test_agent(@account, role: Role.find_by_name('Agent').id)
-      requester = add_new_user(@account, unique_external_id: '12314453')
+      requester = add_new_user(@account, unique_external_id: 'asdfasdfasdfasdraz')
       call_sid = "125440"
       call_url = "http://abc.abc.com/125438"
       call_info = {"custom_data" => "blah"}
@@ -337,14 +342,15 @@ module ApiIntegrations
     end
 
     def test_valid_responder_unique_external_id_create
-      responder = add_test_agent(@account, role: Role.find_by_name('Agent').id, unique_external_id: "1412315143")
+      unique_external_id = Faker::Lorem.word
+      responder = add_test_agent(@account, role: Role.find_by_name('Agent').id, unique_external_id: unique_external_id)
       requester = add_new_user(@account)
       call_sid = "125440"
       call_url = "http://abc.abc.com/125438"
       call_info = {"custom_data" => "blah"}
       post :create, construct_params({
                                        :requester_id => requester.id,
-                                       :responder_unique_external_id => "1412315143",
+                                       :responder_unique_external_id => unique_external_id,
                                        :call_reference_id => call_sid,
                                        :call_url => call_url,
                                        :call_info => call_info,
@@ -619,7 +625,8 @@ module ApiIntegrations
     def test_index_with_feature_disabled
       responder = add_test_agent(@account, role: Role.find_by_name('Agent').id)
       requester = add_new_user_without_email(@account, :phone => "9145462663")
-      @account.class.any_instance.stubs(:features?).returns(false)
+      @account.remove_feature(:cti)
+      @account.reload
       cti_call = @account.cti_calls.create({
                                              :requester_id => requester.id,
                                              :responder_id => responder.id,
@@ -635,7 +642,7 @@ module ApiIntegrations
       cti_call.destroy
       responder.destroy
       requester.destroy
-      @account.class.any_instance.unstub(:features?)
+      @account.add_features([:cti])
     end
 
     def test_without_call_reference_id_index

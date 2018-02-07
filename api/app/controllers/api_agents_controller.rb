@@ -32,6 +32,10 @@ class ApiAgentsController < ApiApplicationController
       log_and_render_404 unless @item
     end
 
+    def remove_ignore_params
+      params[cname].except!(AgentConstants::IGNORE_PARAMS)
+    end
+
     def validate_params
       params[cname].permit(*AgentConstants::UPDATE_FIELDS)
       agent = AgentValidation.new(params[cname], @item, string_request_params?)

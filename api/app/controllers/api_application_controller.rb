@@ -61,6 +61,8 @@ class ApiApplicationController < MetalApiController
   # Used to check if update contains no parameters.
   before_filter :check_params, only: :update
 
+  before_filter :remove_ignore_params, only: [:create, :update], unless: :private_api?
+
   # Redefine below method in your controllers to check strong parameters and other validations that do not require a DB call.
   before_filter :validate_params, only: [:create, :update]
 
@@ -152,6 +154,10 @@ class ApiApplicationController < MetalApiController
 
     def response_info
       RequestStore.store[:extra_credits] = 0
+    end
+
+    def remove_ignore_params
+      
     end
 
     def render_500(e)

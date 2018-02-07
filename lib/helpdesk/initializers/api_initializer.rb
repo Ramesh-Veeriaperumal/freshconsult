@@ -132,11 +132,9 @@ if $infra['API_LAYER']
 
 end
 
-if $infra['PRIVATE_API']
-  module ActionDispatch
-    Response.class_eval do
-      attr_accessor :api_meta, :api_root_key
-    end
+module ActionDispatch
+  Response.class_eval do
+    attr_accessor :api_meta, :api_root_key
   end
 end
 

@@ -40,10 +40,11 @@ module ApiDiscussions
       end
 
       define_method("test_#{action}_requires_feature_disabled") do
-        @account.class.any_instance.stubs(:features?).returns(false).once
+        Account.any_instance.stubs(:enabled_features_list).returns([])
         send(methods[action], action, construct_params(id: fc.id))
         match_json(request_error_pattern(:require_feature, feature: 'Forums'))
         assert_response 403
+        Account.any_instance.unstub(:enabled_features_list)
       end
     end
 

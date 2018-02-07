@@ -78,6 +78,20 @@ module Ember
         user_unstub_ticket_permission
       end
 
+      def test_merge_with_primary_ticket_with_group_permission_only
+        primary_ticket = create_ticket
+        source_tickets_ids = create_n_tickets(BULK_TICKET_CREATE_COUNT)
+        @controller.stubs(:group_ticket_permission?).returns(true)
+        @controller.stubs(:assigned_ticket_permission?).returns(false)
+        User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets_ids)
+        put :merge, construct_params({ version: 'private' }, request_params)
+        assert_response 204
+        User.any_instance.unstub(:can_view_all_tickets?)
+        @controller.unstub(:group_ticket_permission?)
+        @controller.unstub(:assigned_ticket_permission?)
+      end
+
       def test_merge_with_secondary_tickets_without_permission
         primary_ticket = create_ticket
         source_tickets_ids = create_n_tickets(BULK_TICKET_CREATE_COUNT)

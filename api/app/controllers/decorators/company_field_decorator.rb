@@ -10,7 +10,13 @@ class CompanyFieldDecorator < ApiDecorator
   end
 
   def companies_custom_dropdown_choices
-    @choices ||= choices.map { |x| { id: x[:id], label: x[:value], value: x[:value] } }
+    @choices ||= begin
+      if private_api?
+        @choices ||= choices.map { |x| { id: x[:id], label: x[:value], value: x[:value] } }
+      else
+        @choices ||= choices.map { |x| x[:value] }
+      end
+    end
   end
 
   def company_field_choices

@@ -14,11 +14,20 @@ module BootstrapTestHelper
     }
   end
 
+  def account_pattern(account, portal)
+    {
+      account: account_info_pattern_simple(account),
+      portal: portal_pattern(portal),
+      config: config_pattern
+    }
+  end
+
   def agent_info_pattern(agent)
     ret_hash = private_api_agent_pattern({}, agent).merge(
       last_active_at: agent.last_active_at.try(:utc).try(:iso8601),
       abilities: agent.user.abilities,
       assumable_agents: agent.assumable_agents.map(&:id),
+      group_ids: agent.group_ids,
       is_assumed_user: session.has_key?(:assumed_user),
       preferences: agent.preferences
     )
@@ -52,7 +61,7 @@ module BootstrapTestHelper
     social_hash
   end
 
-  def account_info_pattern(account)
+  def account_info_pattern_simple(account)
     pattern = {
       ref_id: account.id,
       full_domain: account.full_domain,
@@ -70,8 +79,6 @@ module BootstrapTestHelper
         include_survey_manually: wildcard_matcher,
         show_on_boarding: account.account_onboarding_pending?
       },
-      agents: Array,
-      groups: Array,
       verified: account.verified?,
       created_at: account.created_at.try(:utc),
       ssl_enabled: account.ssl_enabled?
@@ -87,6 +94,45 @@ module BootstrapTestHelper
         trial_days: account.subscription.trial_days,
         is_copy_right_enabled: account.copy_right_enabled?
       }
+    end
+    pattern
+  end
+
+  def account_info_pattern(account)
+    account_info_pattern_simple(account).merge(
+      {
+        agents: Array,
+        groups: Array,
+      }
+    )
+  end
+
+  def agent_simple_pattern(agent)
+    {
+      id: agent.user_id,
+      contact: {
+        name: agent.user.name,
+        email: agent.user.email
+      },
+      group_ids: agent.group_ids
+    }
+  end
+
+  def group_simple_pattern(group)
+    {
+      id: group.id,
+      name: group.name,
+      agent_ids: group.agents.map(&:id)
+    }
+  end
+
+  def agent_group_pattern(account)
+    pattern = {'agents' => [], 'groups' => []}
+    account.agents.each do |agent|
+      pattern['agents'] << agent_simple_pattern(agent)
+    end
+    account.groups.each do |group|
+      pattern['groups'] << group_simple_pattern(group)
     end
     pattern
   end

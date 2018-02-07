@@ -41,9 +41,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def other_agent
-    Agent.where('user_id != ?', @agent.id).first.try(:user) || add_agent(@account,
-                                                                         name: Faker::Name.name, email: Faker::Internet.email, active: 1, role: 1,
-                                                                         agent: 1, role_ids: [@account.roles.find_by_name('Agent').id.to_s], ticket_permission: 1)
+    add_agent(@account, name: Faker::Name.name, email: Faker::Internet.email, active: 1, role: 1,
+              agent: 1, role_ids: [@account.roles.find_by_name('Agent').id.to_s], ticket_permission: 1)
   end
 
   def test_destroy
@@ -61,15 +60,16 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_destroy_without_feature
     ts_id = create_time_entry.id
-    @account.class.any_instance.stubs(:features?).returns(false).once
+    Account.any_instance.stubs(:enabled_features_list).returns([])
     delete :destroy, controller_params(id: ts_id)
     assert_response 403
     match_json(request_error_pattern(:require_feature, feature: 'Timesheets'))
+    Account.any_instance.unstub(:enabled_features_list)
   end
 
   def test_destroy_without_privilege
     ts_id = create_time_entry(agent_id: other_agent.id).id
-    User.any_instance.stubs(:privilege?).with(:edit_time_entries).returns(false).at_most_once
+    User.any_instance.stubs(:privilege?).with(:edit_time_entries).returns(false)
     delete :destroy, controller_params(id: ts_id)
     User.any_instance.unstub(:privilege?)
     assert_response 403
@@ -123,11 +123,11 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_index_without_feature
-    @account.class.any_instance.stubs(:features?).returns(false)
+    @account.class.any_instance.stubs(:has_feature?).returns(false)
     get :index, controller_params(billable: 0)
-    @account.class.any_instance.unstub(:features?)
     match_json(request_error_pattern(:require_feature, feature: 'Timesheets'))
     assert_response 403
+    @account.class.any_instance.unstub(:has_feature?)
   end
 
   def test_index
@@ -913,11 +913,11 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_update_without_feature
     ts = create_time_entry(timer_running: true)
-    @account.class.any_instance.stubs(:features?).returns(false).once
+    @account.class.any_instance.stubs(:has_feature?).returns(false)
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', note: 'test note', billable: true)
     match_json(request_error_pattern(:require_feature, feature: 'Timesheets'))
     assert_response 403
-    User.any_instance.unstub(:feature?)
+    @account.class.any_instance.unstub(:has_feature?)
   end
 
   def test_update_with_ticket_trashed
@@ -1283,7 +1283,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
       post :create, construct_params({ id: ticket.display_id }, { start_time: start_time,
                                                                   time_spent: ['03:00'] }.merge(params_hash))
       assert_response 400
-      match_json([bad_request_error_pattern('time_spent', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: Array)])
+      match_json([bad_request_error_pattern('time_spent', :datatype_mismatch, expected_data_type: 'Integer', prepend_msg: :input_received, given_data_type: Array)])
     end
   end
 

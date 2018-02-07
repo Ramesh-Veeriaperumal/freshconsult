@@ -195,6 +195,10 @@ class TicketsController < ApiApplicationController
       current_account.tickets
     end
 
+    def remove_ignore_params
+      params[cname].except!(ApiTicketConstants::IGNORE_PARAMS)
+    end
+
     def validate_url_params
       params.permit(*ApiTicketConstants::SHOW_FIELDS, *ApiConstants::DEFAULT_PARAMS)
       @include_validation = TicketIncludeValidation.new(params)

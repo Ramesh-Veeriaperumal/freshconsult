@@ -24,6 +24,24 @@ module ConversationsTestHelper
     }
   end
 
+  def v2_note_pattern(expected_output, note)
+    body_html = format_ticket_html(note, expected_output[:body]) if expected_output[:body]
+    {
+      body: body_html || note.body_html,
+      body_text: note.body,
+      id: Fixnum,
+      incoming: (expected_output[:incoming] || note.incoming).to_s.to_bool,
+      private: (expected_output[:private] || note.private).to_s.to_bool,
+      user_id: expected_output[:user_id] || note.user_id,
+      support_email: note.support_email,
+      ticket_id: expected_output[:ticket_id] || note.notable.display_id,
+      to_emails: expected_output[:notify_emails] || note.to_emails,
+      attachments: Array,
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+    }
+  end
+
   def private_note_pattern(expected_output, note)
     if expected_output[:from_email]
       email_config = @account.email_configs.where(reply_email: expected_output[:from_email]).first
@@ -73,6 +91,11 @@ module ConversationsTestHelper
     note_pattern(expected_output, note).merge(body: body)
   end
 
+  def v2_update_note_pattern(expected_output, note)
+    body = expected_output[:body] || note.body_html
+    v2_note_pattern(expected_output, note).merge(body: body)
+  end
+
   def private_update_note_pattern(expected_output, note)
     body = expected_output[:body] || note.body_html
     private_note_pattern(expected_output, note).merge(body: body)
@@ -103,6 +126,24 @@ module ConversationsTestHelper
       to_emails: note.to_emails,
       attachments: Array,
       broadcast_note: expected_output[:broadcast_note] || note.broadcast_note?,
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+    }
+  end
+
+  def v2_reply_note_pattern(expected_output, note)
+    body_html = format_ticket_html(note, expected_output[:body]) if expected_output[:body]
+    {
+      body: body_html || note.body_html,
+      body_text: note.body,
+      id: Fixnum,
+      user_id: expected_output[:user_id] || note.user_id,
+      from_email: note.from_email,
+      cc_emails: expected_output[:cc_emails] || note.cc_emails,
+      bcc_emails: expected_output[:bcc_emails] || note.bcc_emails,
+      ticket_id: expected_output[:ticket_id] || note.notable.display_id,
+      to_emails: note.to_emails,
+      attachments: Array,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }

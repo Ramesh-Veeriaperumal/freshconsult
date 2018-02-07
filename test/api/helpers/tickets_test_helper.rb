@@ -21,6 +21,10 @@ module TicketsTestHelper
     ticket_pattern(expected_output, ticket).merge(deleted: (expected_output[:deleted] || ticket.deleted).to_s.to_bool)
   end
 
+  def show_deleted_ticket_pattern(expected_output = {}, ticket)
+    show_ticket_pattern(expected_output, ticket).merge(deleted: (expected_output[:deleted] || ticket.deleted).to_s.to_bool)
+  end
+
   def index_ticket_pattern(ticket, exclude = [])
     ticket_pattern(ticket).except(*([:attachments, :conversations, :tags] - exclude))
   end
@@ -50,6 +54,15 @@ module TicketsTestHelper
     ticket_pattern(ticket).merge(conversations: notes_pattern.ordered!)
   end
 
+  def show_ticket_pattern_with_notes(ticket, limit = false)
+    notes_pattern = []
+    ticket.notes.visible.exclude_source('meta').order(:created_at).each do |n|
+      notes_pattern << index_note_pattern(n)
+    end
+    notes_pattern = notes_pattern.take(limit) if limit
+    show_ticket_pattern(ticket).merge(conversations: notes_pattern.ordered!)
+  end
+
   def ticket_pattern_with_association(ticket, limit = false, notes = true, requester = true, company = true, stats = true)
     result_pattern = ticket_pattern(ticket)
     if notes
@@ -68,9 +81,13 @@ module TicketsTestHelper
       result_pattern[:company] = ticket.company ? company_pattern(ticket.company) : {}
     end
     if stats
-      result_pattern[:stats] = ticket.ticket_states ? ticket_states_pattern(ticket.ticket_states) : {}
+      result_pattern[:stats] = ticket.ticket_states ? ticket_states_pattern(ticket.ticket_states, ticket.status) : {}
     end
     result_pattern
+  end
+
+  def show_ticket_pattern_with_association(ticket, limit = false, notes = true, requester = true, company = true, stats = true)
+    ticket_pattern_with_association(ticket, limit, notes, requester, company, stats).merge(association_type: ticket.association_type)
   end
 
   def requester_pattern(requester)
@@ -90,15 +107,15 @@ module TicketsTestHelper
     }
   end
 
-  def ticket_states_pattern(ticket_states)
+  def ticket_states_pattern(ticket_states, status=nil)
     {
-      closed_at: ticket_states.closed_at.try(:utc).try(:iso8601),
-      resolved_at: ticket_states.resolved_at.try(:utc).try(:iso8601),
+      closed_at: ticket_states.closed_at.try(:utc).try(:iso8601) || ([5].include?(status) ? ticket_states.updated_at.try(:utc).try(:iso8601) : nil),
+      resolved_at: ticket_states.resolved_at.try(:utc).try(:iso8601) || ([4,5].include?(status) ? ticket_states.updated_at.try(:utc).try(:iso8601) : nil),
       first_responded_at: ticket_states.first_response_time.try(:utc).try(:iso8601),
       agent_responded_at: ticket_states.agent_responded_at.try(:utc).try(:iso8601),
       requester_responded_at: ticket_states.requester_responded_at.try(:utc).try(:iso8601),
       status_updated_at: ticket_states.status_updated_at.try(:utc).try(:iso8601),
-      pending_since: ticket_states.pending_since.try(:utc).try(:iso8601),
+      pending_since: ticket_states.pending_since.try(:utc).try(:iso8601) || ([3].include?(status) ? ticket_states.updated_at.try(:utc).try(:iso8601) : nil),
       reopened_at: ticket_states.opened_at.try(:utc).try(:iso8601)
     }
   end
@@ -156,7 +173,16 @@ module TicketsTestHelper
       ticket_hash.merge!( :internal_group_id => expected_output[:internal_group_id] || ticket.internal_group_id,
                           :internal_agent_id => expected_output[:internal_agent_id] || ticket.internal_agent_id)
     end
-    ticket_hash
+
+    if @private_api
+      ticket_hash
+    else
+      ticket_hash.except(:associated_tickets_count, :association_type, :can_be_associated, :email_failure_count)
+    end
+  end
+
+  def show_ticket_pattern(expected_output = {}, ticket)
+    ticket_pattern(expected_output, ticket).merge(association_type: expected_output[:association_type] || ticket.association_type)
   end
 
   def create_ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
@@ -460,7 +486,7 @@ module TicketsTestHelper
       association_type: prime_association.association_type,
       status: prime_association.status,
       created_at: prime_association.created_at.try(:utc),
-      stats: ticket_states_pattern(prime_association.ticket_states),
+      stats: ticket_states_pattern(prime_association.ticket_states, prime_association.status),
       permission: User.current.has_ticket_permission?(prime_association)
     }
   end
@@ -489,7 +515,7 @@ module TicketsTestHelper
         company_id: item.company_id,
         status: item.status,
         permission: User.current.has_ticket_permission?(item),
-        stats: ticket_states_pattern(item.ticket_states),
+        stats: ticket_states_pattern(item.ticket_states, item.status),
         subject: item.subject,
         product_id: item.schema_less_ticket.try(:product_id),
         id: item.display_id,

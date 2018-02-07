@@ -22,6 +22,7 @@ class ConversationsController < ApiApplicationController
   end
 
   def reply
+    remove_ignore_params unless private_api?
     return unless validate_params
     sanitize_params
     build_object
@@ -139,6 +140,10 @@ class ConversationsController < ApiApplicationController
 
     def scoper
       current_account.notes
+    end
+
+    def remove_ignore_params
+      params[cname].except!(ConversationConstants::IGNORE_PARAMS)
     end
 
     def validate_params
