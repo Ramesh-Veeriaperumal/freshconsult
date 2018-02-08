@@ -119,7 +119,9 @@ class TicketsController < ApiApplicationController
     end
 
     def load_objects
+      Rails.logger.info ":::Loading objects started:::"
       super tickets_filter.preload(conditional_preload_options)
+      Rails.logger.info ":::Loading objects done:::"
     end
 
     def conditional_preload_options
@@ -128,6 +130,7 @@ class TicketsController < ApiApplicationController
         preload_options << (ApiTicketConstants::INCLUDE_PRELOAD_MAPPING[assoc] || assoc)
         increment_api_credit_by(2)
       end
+      Rails.logger.info ":::preloads: #{preload_options.inspect}"
       preload_options
     end
 
