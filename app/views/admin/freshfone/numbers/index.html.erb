@@ -41,8 +41,8 @@
 <script type="text/javascript">
 	(function($){
 		$('.toggle_freshfone').itoggle({
-			checkedLabel: 'Enabled',
-			uncheckedLabel: 'Disabled'
+			checkedLabel: "<%= t('enabled') %>",
+			uncheckedLabel: "<%= t('disabled') %>"
 		}).change(function() {
 			$(this).parent().submit();
 		});

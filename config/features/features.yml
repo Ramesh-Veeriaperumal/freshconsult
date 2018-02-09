@@ -101,6 +101,7 @@
       :caching: false
       :private_inline: false
       :freshcaller: false
+      :freshcaller_widget: false
       :falcon: false
       :support_bot: false
       :freshcaller_widget: false

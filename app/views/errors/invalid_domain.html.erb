@@ -5,17 +5,17 @@
 		<meta name="robots" content="noindex"/>
 		<meta name="robots" content="noarchive"/>
 		<link rel="stylesheet" href="/assets/page/404.css" type="text/css" media="screen, projection" />
-		<title>There is no helpdesk here!</title>
+		<title><%= t("errors.invalid_domain.there_is_no_helpdesk_here") %></title>
 	</head>
 	<body>
 		<div id="wrap" class="container">
 			<div class="wrapper">
 				<div class="wrapper-shadow">
 					<div class="no-helpdesk">
-						<img src="/assets/misc/freshdesklogo.png" alt="Freshdesk" width="204px" height="50px" />
-						<h2> We couldn't find <span id="domainname"></span></h2>
-						<p> May be this is still fresh!  </p> 
-						<p> You can claim it now at <%= link_to "#{AppConfig['app_website']}/signup","#{AppConfig['app_website']}/signup" %></p>
+						<img src="/assets/misc/freshdesklogo.png" alt="<%= t("errors.invalid_domain.freshdesk") %>" width="204px" height="50px" />
+						<h2> <%= t("errors.invalid_domain.we_couldnt_find") %> <span id="domainname"></span></h2>
+						<p><%= t("errors.invalid_domain.may_be_this_is_still_fresh") %></p> 
+						<p> <%= t("errors.invalid_domain.claim_it_now") %> <%= link_to "#{AppConfig['app_website']}/signup","#{AppConfig['app_website']}/signup" %></p>
 					</div>
 				</div>
 			</div>

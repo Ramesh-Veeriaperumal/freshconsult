@@ -10,7 +10,7 @@
 	    	<% snapshot_menu.each do |option| %>
 					<li class="widget-filter
 						<% if option[:param] == @type %>
-								active
+								<%= t("helpdesk.realtime_dashboard.active") %>
 						<% end %>
 					">
 			        <a href="/helpdesk/dashboard?view=<%= option[:param] %>" class="item" data-pjax="#body-container" ul_class="tick">
@@ -25,7 +25,7 @@
 	    <li class="dropdown loading-right loading-tiny" id="filter_by_group_dropdown">
 		    <h5 class="dropdown-toggle" data-toggle="dropdown">
 		        <span class="widget-filter">
-		        	<span class="muted">Group : </span>
+		        	<span class="muted"><%= t("Group") %> : </span>
 		        	<span id="group-filter-text"><%= t("helpdesk.realtime_dashboard.all") %></span>
 		        </span>
 		        	<span class="caret"></span>

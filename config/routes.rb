@@ -237,7 +237,7 @@ Helpkit::Application.routes.draw do
   match '/packages/:package.:extension' => 'jammit#package', :as => :jammit, :constraints => { :extension => /.+/ }
   resources :authorizations
 
-  ["github","salesforce", "magento", "shopify", "slack", "infusionsoft", "google_calendar", "google_login", "google_marketplace_sso", "google_contacts", "google_gadget", "outlook_contacts", "salesforce_v2", "facebook", "microsoft_teams"].each do |provider|
+  Integrations::Constants::INTEGRATION_ROUTES.each do |provider|
     match "/auth/#{provider}/callback" => 'omniauth_callbacks#complete', :provider => provider
   end
 
@@ -829,6 +829,11 @@ Helpkit::Application.routes.draw do
       get :oauth
       get :install
       get :authorize_agent
+    end
+
+    namespace :google_hangout_chat, :path => "google_hangout_chat" do
+      get :oauth
+      get :install
     end
 
     resources :applications, :only => [:index, :show] do

@@ -17,11 +17,11 @@
 		<div class='post-info mb5'>
 			<span class="label <%= new_topic_str %>"><%= t(".#{new_topic_str}.title") %></span>
 			<% if spam.spam? && params[:filter] != 'spam' %>
-			<span class="label spam">Spam</span>
+			<span class="label spam"><%= t("discussions.moderation.index.title") %></span>
 			<% end %>
 			<span>
 				<abbr data-livestamp='<%= spam.created_at.to_i %>'><%= formated_date(spam.created_at) %></abbr>,
-				In
+				<%= t("in") %>
 				<%= link_to spam.topic.forum.name,
 							category_forum_path(spam.topic.forum.forum_category_id, spam.topic.forum) %>
 			</span>

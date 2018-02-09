@@ -58,6 +58,12 @@ class ApiCompanyValidation < ApiValidation
                                  feature: :tam_default_fields } }, 
                             unless: :tam_default_fields_enabled?
 
+  validates :description, :domains, :note, :health_score,
+            :account_tier, :industry, :renewal_date,
+            default_field: {
+              required_fields: proc { |x| x.required_default_fields },
+              field_validations: DEFAULT_FIELD_VALIDATIONS
+            }
 
   # Shouldn't be clubbed as allow nil may have some impact on custom fields validator.
   validates :custom_fields, data_type: { rules: Hash }

@@ -1,3 +1,5 @@
+//= require i18n
+//= require i18n/translations
 //= require bootstrap/twipsy.js
 //= require pattern/spin.js
 //= require pattern/jquery.spin.js
@@ -35,8 +37,6 @@
 //= require app/merge.js
 //= require app/autosave.js
 //= require plugins/jquery.placeholder.js
-//= require i18n
-//= require i18n/translations
 //= require formdata.populate.js
 //= require message_preview.js
 //= require app/integrations/salesforce_v2/opportunity_create_form

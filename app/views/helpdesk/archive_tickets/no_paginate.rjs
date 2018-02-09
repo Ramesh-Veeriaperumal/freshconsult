@@ -5,7 +5,9 @@ current_page = 1 if current_page.blank? || current_page == 0
 options = {
 	:tickets_in_current_page => tickets_in_current_page,
 	:per_page => per_page,
-	:current_page => current_page
+	:current_page => current_page,
+	:previous_label => "&laquo; #{I18n.t('previous')}",
+	:next_label => "#{I18n.t('next')} &raquo;"
 }
 options = options.symbolize_keys.reverse_merge WillPaginate::ViewHelpers.pagination_options
 morethan_one_page = current_page > 1 || tickets_in_current_page == 30

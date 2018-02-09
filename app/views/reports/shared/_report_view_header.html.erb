@@ -16,7 +16,7 @@
           %>
           <div class="span7 report-user-details muted"> Note: This report shows data after <%= formated_date(Time.parse("April 1, 2013"),{:include_year => true})%><br/>
              <% if current_account.classic_reports_enabled? %>
-              <a href="<%=old_report_link%>">View classic report</a>
+              <a href="<%=old_report_link%>"><%= t("helpdesk_reports.view_classic_report") %></a>
              <% end %>
             </div>
         <%end
@@ -28,12 +28,12 @@
     <div class="report-filter span12" id="report-filter-details">
          <% unless defined?(is_pdf) %>
           <div class="vertical-alignment report-filter-slide-btn">
-              <a class="btn btn-primary" href="#report-filter-edit" data-parent="#report-page" id="sliding">Edit</a>
+              <a class="btn btn-primary" href="#report-filter-edit" data-parent="#report-page" id="sliding"><%= t("livechat.edit") %></a>
           </div>
         <%end%>
         <div class="filter-container">
           <ul class="inline" id="filter_container">
-            <li>Filtered by:</li>
+            <li><%= t("helpdesk_reports.filtered_by") %></li>
             <% if @filter_data %>
               <%@filter_data.each do |obj|%>
                 <li><%=obj["name"]%> : <strong><%=h(obj["value"])%></strong></li>

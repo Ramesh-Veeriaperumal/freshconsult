@@ -16,7 +16,7 @@
       <%= content_tag(:div, h("#{email_config.name}"), :class => "bold") unless email_config.name.blank?%>
       <div>
         <del><%= content_tag(:div, h("#{email_config.reply_email}"), :class => "reply_email wrap ellipsis") %></del>
-        <span class="alert-text">Unverified - </span>
+        <span class="alert-text"><%= t("email_configs.plain_unverified") %></span>
         <div class="verify-button">
           <%= link_to( t("email_configs.send_verification_email"), deliver_verification_admin_email_config_path(email_config), :class => 'btn btn-mini', :method => :put) unless email_config.active? %>
         </div>
@@ -26,12 +26,12 @@
 
   <td>
     <% unless email_config.smtp_mailbox %>
-      <div class="muted">Forwarded to: </div><%= content_tag :span, h(email_config.to_email), :class => "wrap ellipses" %>
+      <div class="muted"><%= t("forwarded_to") %> : </div><%= content_tag :span, h(email_config.to_email), :class => "wrap ellipses" %>
     <% else %>
       <%= content_tag :span, t('email_configs.using_custom_mailbox').html_safe, :class => "wrap ellipses" %>
     <% end %>
   </td>
-  <td><div class="muted">Group: </div><%= content_tag :span, h(email_config.group ? email_config.group.name : "-"), :class => "ellipses" %> </td>
+  <td><div class="muted"><%= t("Group") %> : </div><%= content_tag :span, h(email_config.group ? email_config.group.name : "-"), :class => "ellipses" %> </td>
 
    <td class="text-right">
     <%= link_to t('email_configs.edit'), edit_admin_email_config_path(email_config) , :class => 'btn btn-mini'%>

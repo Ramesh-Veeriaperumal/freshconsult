@@ -12,7 +12,7 @@
         <label for="ignore-handles"><%= t('social.streams.search.exclude_handles') %>  </label>
         <%= text_field_tag('ignore_handles', '', :class => "ignore-inputs select2", :id => "ignore-handles", :placeholder => t('admin.social.twitter_streams.handles_helptext'))%>
         <div class="frm-ctrl">
-          <button id="submitSearch" class="btn btn-primary pull-right"> Search </button>
+          <button id="submitSearch" class="btn btn-primary pull-right"><%= t("social.streams.search_btn") %></button>
         </div>
       </div>
     </div>

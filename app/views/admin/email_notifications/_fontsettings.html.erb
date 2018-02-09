@@ -3,7 +3,8 @@
 <div id="font_setting_partial" class="font-setting-wrapper">
 	<div class="pull-right mt10" id="font-show">
 		<span id="font-tab" class="show-font-title"><%= t('email_notifications.default_font')%><span id="font-name" rel="<%= font_family %>" style="font-family:<%= font_family %>"><%= font_family %></span> -
-			<a href="#"id="font-change" class="font-change"> Change  </a>
+			<a href="#"id="font-change" class="font-change">
+			<%= t("change") %></a>
 		</span>
 	</div>
 	<div class="hide pull-right font-edit" id="font-edit">
@@ -15,10 +16,10 @@
 		</span>
 
 		<span class="font-btn" id="font-btn">
-			<a href="#" class="vertical-alignment tooltip ml15" id="save-font" data-placement="below" data-original-title="Save" twipsy-content-set="true">
+			<a href="#" class="vertical-alignment tooltip ml15" id="save-font" data-placement="below" data-original-title="<%= t('save') %>" twipsy-content-set="true">
 				<%= font_icon "save", :size => 18 %> 
 			</a>
-			<a href="#" class="vertical-alignment tooltip ml15" id="font-cancel" data-placement="below" data-original-title="Cancel" twipsy-content-set="true">
+			<a href="#" class="vertical-alignment tooltip ml15" id="font-cancel" data-placement="below" data-original-title="<%= t('cancel') %>" twipsy-content-set="true">
 				<%= font_icon "cross", :size => 18 %> 
 			</a>
 		</span>

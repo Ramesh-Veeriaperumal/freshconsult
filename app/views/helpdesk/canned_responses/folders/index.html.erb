@@ -26,7 +26,8 @@
 						<% if privilege?(:manage_canned_responses) %>
 							<div class="dropdown">
 								<%= t('canned_folders.viewing') %>
-								<a class="dropdown-toggle" data-toggle="dropdown" id="CaLabel" href="#"><b class='ca_text'>loading...</b>
+								<a class="dropdown-toggle" data-toggle="dropdown" id="CaLabel" href="#">
+									<b class='ca_text'> <%= t('index_tooltip_loading_msg')%> </b>
 									<% if privilege?(:manage_canned_responses) %><b class="caret"></b><% end %>
 								</a>
 

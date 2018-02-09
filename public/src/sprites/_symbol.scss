@@ -134,6 +134,8 @@
 		&.source_10 { @include symbols-sprite(source-badge-outbound_email); }
 		// Ecommerce
 		&.source_11 { @include symbols-sprite(source-badge-ecommerce); }
+		// Bot
+		&.source_12 { @include symbols-sprite(source-badge-bot); }
 	}
 }
 

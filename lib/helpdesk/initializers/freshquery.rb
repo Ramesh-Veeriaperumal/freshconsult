@@ -1,10 +1,10 @@
 # Freshquery Initializer
 module Freshquery
   class FqTicketHelper
-    include Freshquery::ValidationHelper
+    include Singleton
 
     def status_ids
-      Account.current.ticket_status_values_from_cache.map(&:status_id)
+      proc { Account.current.ticket_status_values_from_cache.map(&:status_id) }
     end
 
     def ticket_types
@@ -41,7 +41,7 @@ module Freshquery
   end
 
   class FqContactHelper
-    include Freshquery::ValidationHelper
+    include Singleton
 
     def all_languages
       I18n.available_locales.map(&:to_s)
@@ -81,7 +81,7 @@ module Freshquery
   end
 
   class FqCompanyHelper
-    include Freshquery::ValidationHelper
+    include Singleton
 
     def custom_string_mappings
       proc { Account.current.company_form.custom_company_fields.map { |x| [CustomFieldDecorator.display_name(x.name), x.column_name] if x.field_type == :custom_text }.compact.to_h }

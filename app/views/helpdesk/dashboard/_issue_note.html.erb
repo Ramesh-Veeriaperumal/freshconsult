@@ -1,22 +1,25 @@
 <td class="status">
   <% if issue_note == issue_note.notable.notes.first && !issue_note.notable.owner %>
-    <div class="negative new">new</div>
+    <div class="negative new">
+    <%= t("common_js_translations.new") %></div>
   <% elsif issue_note.status? %>
-    <div class="negative status_label">status</div>
+    <div class="negative status_label"><%= t("Status") %></div>
   <% elsif issue_note.incoming %>
-      <div class="negative incoming_label">in</div>
+      <div class="negative incoming_label">
+      <%= t("in") %></div>
   <% elsif issue_note.private %>
-    <div class="negative note_label">note</div>
+    <div class="negative note_label"><%= t("note") %></div>
   <% else %>
-    <div class="negative outgoing_label">out</div>
+    <div class="negative outgoing_label"><%= t("out") %></div>
   <% end %>
-    <div class="negative parent_type_label">issue</div>
+    <div class="negative parent_type_label"><%= t("issue") %></div>
 </td>
 
 <td class="name">
     <h3>
       <%= link_to(h(issue_note.notable.title) + " (##{issue_note.notable.id})", issue_note.notable) %>
-      <span class="subtitle">(<%= distance_of_time_in_words_to_now(issue_note.created_at) %> ago)</span>
+      <span class="subtitle">(<%= distance_of_time_in_words_to_now(issue_note.created_at) %>
+      <%= t("helpdesk.issue.ago") %></span>
     </h3>
 
     <div class="note-body">
@@ -36,7 +39,8 @@
 
 <td class="assign">
     <% if issue_note == issue_note.notable.notes.first && (issue_note.notable.freshness == :new) %>
-      <button class="accept-button" action="<%= assign_helpdesk_ticket_path(issue_note.notable) %>">Take It</button> 
+      <button class="accept-button" action="<%= assign_helpdesk_ticket_path(issue_note.notable) %>">
+      <%= t("helpdesk.issue.take_it") %></button> 
     <% else %>
       <% if issue_note.notable.owner %>
         <span>Assigned to <%= issue_note.notable.owner.name %></span>

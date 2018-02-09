@@ -28,10 +28,10 @@
               <div class="field-mapping">
                 <ul class="nav nav-flat">
                   <li class="active">
-                    <a href="#company-mapping-tab"  id="company-mapping-btn" data-toggle="tab">Company</a>
+                    <a href="#company-mapping-tab"  id="company-mapping-btn" data-toggle="tab"><%= t("integrations.applications.crm.mapping.company") %></a>
                   </li>
                   <li>
-                    <a href="#contact-mapping-tab" id="contact-mapping-btn" data-toggle="tab">Contact</a>
+                    <a href="#contact-mapping-tab" id="contact-mapping-btn" data-toggle="tab"><%= t("integrations.applications.crm.mapping.contact") %></a>
                   </li>
                 </ul>
 
@@ -39,8 +39,8 @@
                   <div class="tab-pane active" id="company-mapping-tab">
                     <div class="contact-wrapper">
                       <div class="contact-tabel-head">
-                        <div class="contact-tabel-data field-1"> <span class="field-1-text"> FullContact Fields </span> </div>
-                        <div class="contact-tabel-data field-3"> <span> Freshdesk Fields </span> </div>
+                        <div class="contact-tabel-data field-1"> <span class="field-1-text"><%= t("integrations.applications.fullcontact.fullcontact_fields") %></span> </div>
+                        <div class="contact-tabel-data field-3"> <span><%= t("integrations.applications.fullcontact.freshdesk_fields") %></span> </div>
                       </div>
                       <div rel="construct_company_rules" id="construct_company_rule" class="rules_wrapper" data-render-template = '.construct_company' ></div>
                     </div>
@@ -49,8 +49,8 @@
                   <div class="tab-pane" id="contact-mapping-tab">
                     <div class="contact-wrapper">
                       <div class="contact-tabel-head">
-                        <div class="contact-tabel-data field-1"> <span class="field-1-text"> FullContact Fields </span> </div>
-                        <div class="contact-tabel-data field-3"> <span> Freshdesk Fields </span> </div>
+                        <div class="contact-tabel-data field-1"> <span class="field-1-text"><%= t("integrations.applications.fullcontact.fullcontact_fields", :default => " FullContact Fields ") %></span> </div>
+                        <div class="contact-tabel-data field-3"> <span><%= t("integrations.applications.fullcontact.freshdesk_fields", :default => " Freshdesk Fields ") %></span> </div>
                       </div>
                       <div rel="construct_contact_rules" id="construct_contact_rule" class="rules_wrapper" data-render-template = '.construct_contact' ></div>
                     </div>
@@ -103,14 +103,14 @@
     jQuery('#construct_contact_rule .rules_list_wrapper .list').not('.overlay').each(function(index, list){
       var FDContactSelected = jQuery(this).find('.dropdown_2 .select2-chosen').text();
       var FCContactSelected = jQuery(this).find('.dropdown_1 .select2-chosen').text();
-      if(FDContactSelected.toLowerCase() == "select" || FDContactSelected.toLowerCase() == "no matching data..."){
+      if(FDContactSelected.toLowerCase() == "select" || FDContactSelected.toLowerCase() == I18n.t('validation.integration_no_match')){
 
-        jQuery(this).find('[data-refer-key=fd_field]').after("<p class='error'>Field is required. </p>");
+        jQuery(this).find('[data-refer-key=fd_field]').after("<p class='error'>" + I18n.t('validation.required') + " </p>");
         valid = false;
         return false;
       } 
-      if(FCContactSelected.toLowerCase() == "select" || FCContactSelected.toLowerCase() == "no matching data..."){
-        jQuery(this).find('[data-refer-key=fc_field]').after("<p class='error'>Field is required. </p>");
+      if(FCContactSelected.toLowerCase() == "select" || FCContactSelected.toLowerCase() == I18n.t('validation.integration_no_match')){
+        jQuery(this).find('[data-refer-key=fc_field]').after("<p class='error'>" + I18n.t('validation.required') + " </p>");
         valid = false;
         return false;
       }
@@ -121,14 +121,14 @@
       jQuery('#construct_company_rule .rules_list_wrapper .list').not('.overlay').each(function(index, list){
         var FDCompanySelected = jQuery(this).find('.dropdown_2 .select2-chosen').text();
         var FCCompanySelected = jQuery(this).find('.dropdown_1 .select2-chosen').text();
-        if(FDCompanySelected.toLowerCase() == "select" || FDCompanySelected.toLowerCase() == "no matching data..."){
+        if(FDCompanySelected.toLowerCase() == "select" || FDCompanySelected.toLowerCase() == I18n.t('validation.integration_no_match')){
 
-          jQuery(this).find('[data-refer-key=fd_field]').after("<p class='error'>Field is required. </p>");
+          jQuery(this).find('[data-refer-key=fd_field]').after("<p class='error'>" + I18n.t('validation.required') + " </p>");
           valid = false;
           return false;
         } 
-        if(FCCompanySelected.toLowerCase() == "select" || FCCompanySelected.toLowerCase() == "no matching data..."){
-          jQuery(this).find('[data-refer-key=fc_field]').after("<p class='error'>Field is required. </p>");
+        if(FCCompanySelected.toLowerCase() == "select" || FCCompanySelected.toLowerCase() == I18n.t('validation.integration_no_match')){
+          jQuery(this).find('[data-refer-key=fc_field]').after("<p class='error'>" + I18n.t('validation.required') + " </p>");
           valid = false;
           return false;
         }

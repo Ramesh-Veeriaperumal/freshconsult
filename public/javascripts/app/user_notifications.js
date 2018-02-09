@@ -421,7 +421,7 @@ window.App = window.App || {};
         },
         renderNotifications: function(){
             if(this.allNotifications.length === 0){
-                $('.notifications-list').html("<a class='read no-notification-message'>No new notifications.</a>");
+                $('.notifications-list').html("<a class='read no-notification-message'>" + I18n.t('collaboration.no_notifications') + ".</a>");
             } else {
                 $('.notifications-list').html('');
                 var groupedNotifications = this.getGroupedNotifications();

@@ -124,7 +124,7 @@ RealtimeDashboard.Widgets.UnresolvedTickets.OtherRoles = function(container,widg
 			//Show only top four series and club rest into 'other' series
 			if(series.length > series_limit) {
 				spliced_series = series.slice(0,series_limit);
-				spliced_series.push('Others');
+				spliced_series.push('others');
 			} else {
 				spliced_series = series;
 			}
@@ -151,8 +151,8 @@ RealtimeDashboard.Widgets.UnresolvedTickets.OtherRoles = function(container,widg
 					sum += row.value;
 
 				});
-				if(temp['Others'] != undefined) {
-					temp['Others'].push(others_sum);	
+				if(temp['others'] != undefined) {
+					temp['others'].push(others_sum);	
 				}
 				if(max == 0 || max < sum){
 					max = sum;
@@ -162,6 +162,7 @@ RealtimeDashboard.Widgets.UnresolvedTickets.OtherRoles = function(container,widg
 			jQuery.each(chartData,function(i,el) {
 				 el['data'] = temp[el.name];
 				 el['locale_key'] = self.locale_key;
+				 if(el.name == 'others') { el['name'] = I18n.t('reports.others'); };
 			});
 			/* Graph opts */
 			var opts = {
@@ -239,7 +240,7 @@ RealtimeDashboard.Widgets.UnresolvedTickets.OtherRoles = function(container,widg
 		showTimeStamp : function() {
 			var self = this;
 			var date = new Date(_fd.resp.time_since);
-			var str = 'as of ' + moment(date).format(self.core.time_format);
+			var str = I18n.t('helpdesk.realtime_dashboard.time_stamp', { time: moment(date).format(self.core.time_format) } )
 			_fd.formated_time = str;
 			jQuery('.' + _fd.widget_name + '_widget' +' [rel=timestamp]').html(str);
 		},

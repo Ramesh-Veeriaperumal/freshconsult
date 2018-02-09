@@ -210,6 +210,7 @@ defaults: &defaults
     - [trial_ticket_central_publish]
     - [active_ticket_central_publish]
     - [channel_framework_command]
+    - [ml_solutions_training]
 
 development:
   <<: *defaults

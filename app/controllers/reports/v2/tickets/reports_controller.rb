@@ -7,6 +7,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   include HelpdeskReports::Helper::ScheduledReports
   include HelpdeskReports::Helper::QnaInsightsReports
   include Cache::Memcache::Reports::ReportsCache
+  include Helpdesk::TicketFilterMethods
 
   before_filter :check_account_state, :ensure_report_type_or_redirect,
                 :plan_constraints,                                      :except => [:download_file]              
@@ -343,8 +344,8 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   def has_scope?(report_type)
     if (report_type == :agent_summary && hide_agent_reporting?)
       return false
-    elsif plan_based_report?(report_type)
-      allowed_plan?(report_type)
+    # elsif plan_based_report?(report_type)
+    #   allowed_plan?(report_type)
     elsif enterprise_reporting?
       ENTERPRISE_REPORTS.include?(report_type)
     elsif current_account.advanced_reporting_enabled?
