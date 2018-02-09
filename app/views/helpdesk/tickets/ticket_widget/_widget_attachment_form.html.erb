@@ -14,7 +14,7 @@
 <div class="attachmentPanel">
 <div class="attach-wrapper" id="attachment-type">
    <div class="file_dropzone" id="file_dropzone_<%=session[:multiple_list]%>" style="display: none">
-      <h3 class="dropzone-text lead text-center pt20 mt10">Drop files here</h3>
+      <h3 class="dropzone-text lead text-center pt20 mt10"><%= t("helpdesk.attachment.drop_files_here") %></h3>
    </div>
    <div class="m0">
       <% if cloud_files_installed? and (@ticket.present? ? !@ticket.ecommerce? : true)  %>

@@ -89,6 +89,7 @@
     - smart_filter_initialise
     - smart_filter_feedback
     - launch_party_actions
+    - ml_solutions_training
   :maintainence:
     - select_all_tickets
     - select_all_batcher

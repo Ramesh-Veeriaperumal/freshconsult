@@ -185,7 +185,7 @@
     overflow: hidden;
 }
 
-.ficon-email-new, .ficon-outbound-email{
+.ficon-email-new, .ficon-outbound-email, .ficon-bot{
      &:before{
         position: relative;
         left: 6px;
@@ -426,6 +426,10 @@
 
 .ticket-page .c-ticket-row .sources-detailed-outbound_email{
     @extend .ficon-outbound-email;
+}
+
+.ticket-page .c-ticket-row .sources-detailed-bot{
+    @extend .ficon-bot;
 }
 
 .btn .mobile-icon-search{

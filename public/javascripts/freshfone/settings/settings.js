@@ -139,7 +139,7 @@ var FreshfoneMessage;
 		}
 	});
 
-  $(".call_mask_toggle").itoggle({checkedLabel: 'Yes', uncheckedLabel: 'No'}).change(function() {
+  $(".call_mask_toggle").itoggle({checkedLabel: i18n.t('plain_yes'), uncheckedLabel: i18n.t('plain_no')}).change(function() {
 			toggleCallerContainer($(this).prop('checked'));
 	
 	});

@@ -40,7 +40,7 @@ survey_list = <%=@surveys.to_json.html_safe%>;
 		    	<tr id="survey_<%=survey.id%>">
 					<td>	
 						<form action="" method="post">
-							<input type="checkbox" id="survey_active_<%=survey.id%>" rel="toggle" data-checked-label='ON' data-unchecked-label='OFF'
+							<input type="checkbox" id="survey_active_<%=survey.id%>" rel="toggle"
 							<%if(survey.active?)%>
 							checked="checked"
 							<%end%>

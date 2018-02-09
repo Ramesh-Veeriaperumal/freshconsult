@@ -77,7 +77,7 @@ class Admin::QuestsController < Admin::AdminController
       operator_types[:decimal] = ["is", "is_not"]
 
       @op_types         = ActiveSupport::JSON.encode operator_types
-      @op_list          = ActiveSupport::JSON.encode OPERATOR_LIST
+      @op_list          = ActiveSupport::JSON.encode va_operator_list
       @available_badges = available_badges
       
       filter_hash = {

@@ -6,7 +6,7 @@
       <div id="streams" class="tw-accs">
         <h5 class="title"><%= t('social.streams.social_accounts') %></h5>
           <ul>
-            <li><a href="#" id="unifiedStreams" class="active" tittle="All"><%= font_icon "all-streams", :size => 24 %><span>All</span></a></li>
+            <li><a href="#" id="unifiedStreams" class="active" title="<%= t('social.streams.index.all') %>"><%= font_icon "all-streams", :size => 24 %><span><%= t("social.streams.index.all") %></span></a></li>
             <% @streams.each do |stream| %>
               <li class="strmlst"><a href="#" class="image-lazy-load item_info" data-stream-id="<%= stream.id %>" title="<%= h(stream.name) %>">
                 <img src="/images/misc/profile_blank_thumb.jpg" data-src="<%= s3_twitter_avatar(stream.twitter_handle)%>" data-src-retina="<%= s3_twitter_avatar(stream.twitter_handle,'medium')%>"/>
@@ -38,20 +38,20 @@
       <!-- No Visible streams -->
       <% if @streams.empty? && @custom_streams.empty? %>
         <div class="scl-search-here">
-          Search twitter for updates 
+          <%= t("social.streams.index.search_twitter") %>
           <span class="image-lazy-load">
             <img src="/images/social/noresults-search.png" 
               data-src-retina="/images/social/noresults-search.png" alt />
           </span>
         </div>
-        <div class="info-highlight no-stream">No activity available</div>
+        <div class="info-highlight no-stream"><%= t("social.streams.index.no_activity_available") %></div>
       <% end %>
       <!-- / No Visible streams -->
 
 
       <!-- only custom Visible streams -->
       <% if @streams.empty? && !@custom_streams.empty? %>
-        <div class="info-highlight no-stream">Click on a stream to see activity</div>
+        <div class="info-highlight no-stream"><%= t("social.streams.index.click_activity") %></div>
       <% end %>
       <!-- /only custom Visible streams -->
 
@@ -68,7 +68,7 @@
       <div id="streamTemplate" class="tw-streams"> </div>
 
       <div style="display:none;text-align:center;" class="more_results" id="more_stream_feeds">
-        <button class="uiButton" id="show_more_feeds">Show more</button>
+        <button class="uiButton" id="show_more_feeds"><%= t("discussions.show_more") %></button>
       </div>
 
       <div id="no_old_results" class = 'info-highlight center' style="display:none">
@@ -141,7 +141,7 @@
             <a href="javascript:void(0);" class="floatl ph-icons" id="backtoconv-btn">
               <%= font_icon "arrow-left", :size => 24 %>
             </a>
-            <span id="default_rt_header"> <h3 class="ph span10">Retweets</h3> </span>
+            <span id="default_rt_header"> <h3 class="ph span10"><%= t("social.streams.index.retweets") %></h3> </span>
             <span id="changed_rt_header" style="display:none"> <h3 class="ph span10"></h3></span>
             <a href="javascript:void(0);" class="floatr ph-icons conv-closebtn">
               <%= font_icon "cross", :size => 24 %>

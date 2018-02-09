@@ -7,7 +7,7 @@ module ChannelIntegrations::Utils
     end
 
     def check_stack_info?(payload)
-      payload[:tenant] == ChannelFrameworkConfig['tenant']
+      payload[:pod] == ChannelFrameworkConfig['pod']
     end
 
     # payload_types can be helpkit_command and channel_framework_reply.

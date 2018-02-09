@@ -9,13 +9,17 @@ module Freshquery
     def query
       yield(@args)
       if @args.key?(:query)
+        # If we add search_term in future exact_match should be set based on a logic on search_term
+        # freshquery/utils/exact_match? method should be used
         @args[:exact_match] = false
+        Rails.logger.info "FQL query - #{@args[:query]}"
         response = Freshquery::Runner.instance.construct_es_query(@args[:types].first, @args[:query])
         if response.valid?
-          @args[:exact_match] = false
-          @args[:search_terms] = response.terms
+          @args[:search_terms] = response.terms.to_json
+          Rails.logger.info "FQL query terms - #{@args[:search_terms]}"
         else
           @error_response = response
+          Rails.logger.error "FQL query error - #{@error_response.errors.messages.to_json}"
         end
       end
       @args.key?(:es_params) ? @args[:es_params].merge!(default_es_params) : @args[:es_params] = default_es_params
@@ -23,13 +27,13 @@ module Freshquery
       self
     end
 
-    def records
+    def response
       if @error_response.blank?
         begin
           keys = [:account_id, :context, :exact_match, :es_models, :current_page, :offset, :types, :es_params]
-          @records = Freshquery::QueryHandler.new(args.slice(*keys)).query_results
+          @records = SearchService::QueryHandler.new(args.slice(*keys)).query_results
         rescue Exception => e
-          Rails.logger.error "Searchv2 exception - #{e.message} - #{e.backtrace.first}"
+          Rails.logger.error "Searchv2 exception - FQL - #{e.message} - #{e.backtrace.first}"
           NewRelic::Agent.notice_error(e)
           Freshquery::Utils.error_response(args[:es_params][:search_terms], :query, e.message)
         end
@@ -43,7 +47,7 @@ module Freshquery
 
     def default_es_params
       {}.tap do |es_params|
-        es_params[:search_terms] = @args.fetch(:search_terms, {}).to_json
+        es_params[:search_terms] = @args.fetch(:search_terms, {})
         es_params[:account_id] = @args[:account_id]
         es_params[:offset] = (@args.fetch(:current_page, Freshquery::Constants::DEFAULT_PAGE) - 1) * Freshquery::Constants::DEFAULT_PER_PAGE
         es_params[:size] = Freshquery::Constants::DEFAULT_PER_PAGE

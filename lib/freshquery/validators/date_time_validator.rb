@@ -41,7 +41,7 @@ module Freshquery
           parse_sec_hour_and_zone(get_time_and_zone) if time_info? # avoid extra call if only date is present
           return true
           rescue => e
-            Rails.logger.error("Freshquery parse time error value: #{value} Exception: #{e.class} Exception Message: #{e.message}")
+            Rails.logger.error("FQL parse time error value: #{value} Exception: #{e.class} Exception Message: #{e.message}")
             return false
         end
 

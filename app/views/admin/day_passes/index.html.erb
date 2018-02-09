@@ -35,7 +35,6 @@ day_pass_recharge_options = DayPassUsage::DAYPASS_QUANTITY.map do |x| ["#{x} #{t
                    </p>
                    <p>
                    <%= check_box_tag :day_pass_auto_recharge, 1, @day_pass_config.auto_recharge, :rel => "toggle",
-              "data-checked-label" => "ON", "data-unchecked-label" => "OFF",
               :onchange => remote_function( :url => toggle_auto_recharge_admin_day_pass_path(@day_pass_config), :complete => "auto_recharge_post_process(this);",
                :method => 'put') %> <span class = "ft-wt ml10"><%=t(".auto_recharge")%></span></p>
                   <div id="auto_rc">

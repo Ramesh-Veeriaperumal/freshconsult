@@ -1,8 +1,14 @@
 <% if @items.size == 1 and @items.first.respond_to?("name") and !@items.first.name.blank? %>
-	<%= "#{h(@items.first.name)} was deleted" %>
+	<%= t('common_js_translations.delete_notice.singular', :type => h(@items.first.name)) %>
 <% else %>
-	<% flash_name = (@cname == "cloud_file") ? "attachment" : @cname %>
-	<%= pluralize(@items.length, "#{ flash_name } was", "#{ flash_name.pluralize } were")%> deleted
+	<% 
+		flash_name = (@cname == "cloud_file") ? "attachment" : @cname
+		is_singular = (@items.length == 1)
+		flash_name = is_singular ? flash_name : flash_name.pluralize
+	%>
+	
+	<%= t("common_js_translations.delete_notice.#{ is_singular ? 'singular' : 'plural' }",
+			:type => "#{@items.length} #{flash_name}") %>
 <% end %>
 <% if @items.size == 1 %>
 	<% if @items.first.respond_to?("tracker_ticket?") and @items.first.tracker_ticket? %>
@@ -11,5 +17,5 @@
 		<%= t("ticket.link_tracker.related_delete_message") %>
 	<% end -%>
 <% end -%>
-<%= link_to('Undo', { :action => :restore, :ids => params[:ids] }, :method => :put, 
+<%= link_to(t('undo'), { :action => :restore, :ids => params[:ids] }, :method => :put, 
 	"data-keybinding" => shortcut('ticket_detail.undo') ) if @restorable %>

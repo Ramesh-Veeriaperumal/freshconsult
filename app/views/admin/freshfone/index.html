@@ -29,7 +29,7 @@
 
             <% unless freshfone_activation_requested? %>
               <a href="#" class="btn btn-primary btn-large freshfone_feature_request"
-              id="freshfone_feature_request" data-loading-text="Requesting..">
+              id="freshfone_feature_request" data-loading-text="<%= t('requesting') %>">
                 <%= t('freshfone.admin.feature_request_content.button_text')%>
               </a>
               <div class="small_note muted"> 

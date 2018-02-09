@@ -20,8 +20,8 @@
       </label>
       <div class="tab-pane span9 active" id="field-mapping-tab">
         <div class="sf-title-wrapper">
-          <label for="enble_sync"> Outlook Contact Sync </label>
-          <input type="checkbox" rel="toggle" name="enble_sync" id="enble_sync" data-checked-label="ON" data-unchecked-label="OFF" <% if @element_config['enble_sync'] == "on" %> checked=checked <% end %> onchange="change(this)">
+          <label for="enble_sync"><%= t("integrations.applications.contacts_sync.outlook_contact_sync") %></label>
+          <input type="checkbox" rel="toggle" name="enble_sync" id="enble_sync" <% if @element_config['enble_sync'] == "on" %> checked=checked <% end %> onchange="change(this)">
         </div>
         <div class="field-mapping">
           <div id="field-wrap"></div>
@@ -50,7 +50,7 @@
       </div>
     </div>
   </div>
-  <div id="no-display" class="alert notice error">Please resolve the errors in the form before proceeding!!</div>
+  <div id="no-display" class="alert notice error"><%= t("integrations.applications.contacts_sync.resolve_the_errors") %></div>
   <div class="button-container">
     <% if @action == 'install' %>
       <%= link_to t('back'), {:controller => '/integrations/applications', :action => 'index'}, :class => "btn pull-left" %>
@@ -115,12 +115,12 @@
       var FDContactSelected = jQuery(this).find('.dropdown_1 .select2-chosen').text();
       var OutlookContactSelected = jQuery(this).find('.dropdown_2 .select2-chosen').text();
       if(FDContactSelected.toLowerCase() == "select"){
-        jQuery(this).find('[data-refer-key=fd_field]').after("<p class='error'>Field is required. </p>");
+        jQuery(this).find('[data-refer-key=fd_field]').after("<p class='error'>" + I18n.t('validation.required') + " </p>");
         valid = false;
         return false;
       }
       if(OutlookContactSelected.toLowerCase() == "select" ){
-        jQuery(this).find('[data-refer-key=outlook_field]').after("<p class='error'>Field is required. </p>");
+        jQuery(this).find('[data-refer-key=outlook_field]').after("<p class='error'>" + I18n.t('validation.required') + " </p>");
         valid = false;
         return false;
       }

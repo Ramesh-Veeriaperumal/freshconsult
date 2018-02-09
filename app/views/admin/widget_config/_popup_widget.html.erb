@@ -47,7 +47,7 @@
         </select>
       </div>
       <div class="input-prepend span1">
-        <span class="add-on">Offset:</span>
+        <span class="add-on"><%= t("admin.widget_config.popup_widget.feedbackwidget_offset") %> </span>
         <input class="number" id="offset" name="offset" placeholder="<%=t('.feedbackwidget_offset_placeholder')%>" size="4" type="text" value="" style="padding-left: 6px;">
         <span class="add-on-outer"><%= t(".feedbackwidget_px") %></span>
       </div>
@@ -99,13 +99,13 @@
           <label class="control-label"><%= t(".feedbackwidget_screenshot") %></label>
           <div class="controls">
             <input data-set-query-string="true" id="screenshot" name="screenshot" rel='pseudo' type="hidden" value="" value=''/>
-            <input checked="checked" class="pseudoCheckbox" data-checked-label="Yes" data-unchecked-label="No" rel="toggle" type="checkbox" type="checkbox">
+            <input checked="checked" class="pseudoCheckbox" data-checked-label=<%= t('plain_yes') %> data-unchecked-label=<%= t('plain_no') %> rel="toggle" type="checkbox" type="checkbox">
           </div>
         </div>
         <div class="span6 widget_option">
           <label class="control-label"><%= t(".feedbackwidget_use_https") %></label>
           <div class="controls">
-            <input class="httpsHttp" data-checked-label="Yes" data-unchecked-label="No" id="httpsHttp" rel="toggle" type="checkbox" type="checkbox"/>
+            <input class="httpsHttp" data-checked-label=<%= t('plain_yes') %> data-unchecked-label=<%= t('plain_no') %> id="httpsHttp" rel="toggle" type="checkbox" type="checkbox"/>
           </div>
         </div>
       </div>
@@ -114,14 +114,14 @@
           <label class="control-label"><%= t(".feedbackwidget_attach_a_file") %></label>
           <div class="controls">
             <input data-set-query-string="true" data-skip-options='true' id="attachFile" name="attachFile" rel='pseudo' type="hidden" value="" value=''/>
-            <input checked="checked" class="pseudoCheckbox" data-checked-label="Yes" data-unchecked-label="No" rel="toggle" type="checkbox" type="checkbox">
+            <input checked="checked" class="pseudoCheckbox" data-checked-label=<%= t('plain_yes') %> data-unchecked-label=<%= t('plain_no') %> rel="toggle" type="checkbox" type="checkbox">
           </div>
         </div>
         <div class="span6 widget_option">
             <label class="control-label"><%= t(".feedbackwidget_use_captcha") %></label>
             <div class="controls">
               <input data-set-query-string="true" name="captcha" rel="pseudo" type="hidden" value=""/>
-              <input class="captchapseudoCheckbox" data-checked-label="Yes" data-unchecked-label="No" rel="toggle" type="checkbox" type="checkbox"/>
+              <input class="captchapseudoCheckbox" data-checked-label=<%= t('plain_yes') %> data-unchecked-label=<%= t('plain_no') %> rel="toggle" type="checkbox" type="checkbox"/>
             </div>
         </div>
       </div>
@@ -130,14 +130,14 @@
           <label class="control-label"><%= t(".feedbackwidget_search_area") %></label>
           <div class="controls">
             <input data-set-query-string="true" data-skip-options='true' id="searchArea" name="searchArea" rel='pseudo' type="hidden" value=''/>
-            <input checked="checked" class="pseudoCheckbox" data-checked-label="Yes" data-unchecked-label="No" rel="toggle" type="checkbox" type="checkbox">
+            <input checked="checked" class="pseudoCheckbox" data-checked-label=<%= t('plain_yes') %> data-unchecked-label=<%= t('plain_no') %> rel="toggle" type="checkbox" type="checkbox">
           </div>
         </div>
         <div class="span6 widget_option">
             <label class="control-label"><%= t(".feedbackwidget_mobile_view") %></label>
             <div class="controls">
               <input data-set-query-string="true" name="responsive" rel="pseudo" type="hidden" value=""/>
-              <input checked="checked" class="pseudoCheckbox" data-checked-label="Yes" data-unchecked-label="No" rel="toggle" type="checkbox" type="checkbox"/>
+              <input checked="checked" class="pseudoCheckbox" data-checked-label=<%= t('plain_yes') %> data-unchecked-label=<%= t('plain_no') %> rel="toggle" type="checkbox" type="checkbox"/>
             </div>
         </div>
       </div>

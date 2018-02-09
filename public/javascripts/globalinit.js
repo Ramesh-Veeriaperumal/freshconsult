@@ -563,3 +563,25 @@ child - class of child checkbox
     this.data('events')[event] = events;
   }
 })(jQuery);
+
+(function($){
+
+  $.extend($.fn.select2.defaults, {
+    formatNoMatches: function () { return I18n.t('common_js_translations.no_matches_found');; },
+    formatInputTooShort : function (input, min) {
+      return I18n.t('validation.select2_minimum_limit', {char_count : min - input.length});
+    },
+    formatSelectionTooBig: function (limit) { 
+      return I18n.t('validation.select2_maximum_limit', {limit: limit, container : I18n.t('common_js_translations.item.' + (limit == 1) ? "singular" : "plural")}); },
+    formatLoadMore: function (pageNumber) { return I18n.t('common_js_translations.loading_msg'); },
+    formatSearching: function () { return I18n.t('common_js_translations.searching_wait'); },
+  });
+
+  $(document).ready(function() {
+    $.extend($.fn.itoggle.defaults, {
+      checkedLabel: I18n.t('plain_on'),
+      uncheckedLabel: I18n.t('plain_off'),
+    });
+  });
+  
+})(jQuery);

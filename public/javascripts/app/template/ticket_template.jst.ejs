@@ -11,7 +11,7 @@
 
   <% if (data.recent_templates && data.recent_templates.length > 0) { %>
 		<% if (data.all_acc_templates.length !== 0) { %>
-    <div class="recent">Recent Templates</div>
+    <div class="recent"><%= I18n.t('ticket_templates.recent_templates') %></div>
 		<% } %>
     <% for (var i = 0; i < data.recent_templates.length; i++) { %>
       <% if (i === data.recent_templates.length - 1 ){%>

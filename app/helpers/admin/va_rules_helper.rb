@@ -1,6 +1,6 @@
 module Admin::VaRulesHelper
   def event_placeholders
-    {:events => [['{{triggered_event}}', 'Triggered Event', 'Details about the event that triggered the rule', 'triggered_event']]}
+    {:events => [['{{triggered_event}}', t('placeholder.triggered_event'), t('placeholder.tooltip.triggered_event'), 'triggered_event']]}
   end
 
   def va_rule_checkbox_options va_rule

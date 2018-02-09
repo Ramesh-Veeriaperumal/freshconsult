@@ -1,6 +1,6 @@
 <% unless @searched_articles.nil? or @searched_articles.empty? %>
 	<div class="article-list">
-		<div class="list-lead">Articles</div>
+		<div class="list-lead"><%= I18n.t("support.search.results.articles", :default => "Articles") %></div>
 		<ul>
 		<% @searched_articles.each do |article| %>
 			<li>
@@ -15,7 +15,7 @@
 
 <% unless @searched_topics.nil? or @searched_topics.empty? %>
 	<div class="topic-list">
-		<div class="list-lead">Topics</div>
+		<div class="list-lead"><%= I18n.t("support.search.results.topics", :default => "Topics") %></div>
 		<ul>
 		<% @searched_topics.each do |topic| %>
 			<li>

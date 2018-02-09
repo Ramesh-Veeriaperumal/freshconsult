@@ -98,7 +98,7 @@ var domain = '<%= current_account.full_url%>';
 					<textarea id="note_body" class="hs-textarea" placeholder='Type your note here...'></textarea>
 					<div id="toggle-note-visibility">
 				    	<%= form_for @ticket do |f| %>
-				      		<%= f.check_box(:private, :checked => true, :disabled => false, :class => 'tooltip', "rel" => "toggle",  "data-checked-label" => "No", "data-unchecked-label" => "Yes" )  %>
+				      		<%= f.check_box(:private, :checked => true, :disabled => false, :class => 'tooltip', "rel" => "toggle",  "data-checked-label" =>  t('plain_no'), "data-unchecked-label" => t('plain_yes') )  %>
 				    		<%= f.label :private, t("helpdesk.tickets.note.public_note_tip") %>
 							<button type="button" id="add_ticket_note" class='hs_btnCtaSml hs_btnTypeSubmit pull-right'><%= t("integrations.hootsuite.send")%></button>
 				      	<%end%>

@@ -801,7 +801,7 @@ Autocompleter.PanedSearch = Class.create({
     } else {
       this.active = false;
       this.hide();
-      this.choicesHolderList.update('<div class="list-noinfo">No Matching Results</div>');
+      this.choicesHolderList.update('<div class="list-noinfo">'+ I18n.t('common_js_translations.no_matching_results') + '</div>');
     }
   }
 });

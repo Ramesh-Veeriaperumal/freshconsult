@@ -149,7 +149,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :api_ticket_field, :only => [:index]
     resource :"api_freshfone/call_history", :only => [:export, :export_status]
     resource :"announcement", :only => [:index, :account_login_url]
-
+    resource :"email_preview"
   end
 
   export_tickets do
@@ -593,6 +593,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/marketplace_app"
     resource :"integrations/cloud_elements/crm", :only => [:instances, :edit, :update, :settings, :create]
     resource :"integrations/microsoft_team", :only => [:oauth, :install]
+    resource :"integrations/google_hangout_chat", :only => [:oauth, :install]
 
     # Used by API V2
     resource :api_ticket_field, :only => [:index]

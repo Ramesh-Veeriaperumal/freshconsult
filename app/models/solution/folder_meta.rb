@@ -96,7 +96,7 @@ class Solution::FolderMeta < ActiveRecord::Base
 	end
 
 	def visibility_type
-	  VISIBILITY_NAMES_BY_KEY[self.visibility]
+		translated_visibility_name_by_key[self.visibility]
 	end
 
   def customer_folders_attributes=(cust_attr)
@@ -109,9 +109,11 @@ class Solution::FolderMeta < ActiveRecord::Base
   end
 
 	def add_visibility(visibility, customer_ids, add_to_existing)
-    add_companies(customer_ids, add_to_existing) if visibility == Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:company_users]
-    self.visibility = visibility
-    save
+    ActiveRecord::Base.transaction do
+      self.visibility = visibility
+      save
+      primary_folder.save # Dummy save to trigger publishable callbacks
+    end
   end
 
   def has_company_visiblity?

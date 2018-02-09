@@ -77,15 +77,17 @@
   <div id="reset-dialog" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-      <h3 id="reset-dialog-header" class="heading title">Reset portal changes</h3>
+      <h3 id="reset-dialog-header" class="heading title"><%= t("admin.portal.settings.reset_portal_changes") %></h3>
     </div>
     <div class="modal-body reset-modal">
       <br />
       <div>
         <%= link_to t("portalcss.reset_to_last_published"), "", :method => :put, :id => "soft-reset-proxy", :class=>"btn" %>
         <p class="info-data">
-          This will reset edits for "<b id='reset-tab-type'></b>" to last published version <br />
-          Portal was published <%= @portal_template.updated_at %>
+          <%= t("admin.portal.settings.reset_for") %> "<b id='reset-tab-type'></b>" <%= t("admin.portal.settings.last_published_version") %> 
+          <br />
+
+          <%= t("admin.portal.settings.portal_was_published") %><%= @portal_template.updated_at %>
         </p>
       </div>
       <br />
@@ -93,12 +95,12 @@
         <%= link_to t("portalcss.reset_all_changes"), restore_default_admin_portal_template_path, 
           :confirm => t("portalcss.reset_all_confirm_message"), :class => "btn btn-danger", :method => :put %>
         <p class="text_red">
-          <b>Warning:</b> This will reset ALL portal customizations to default.
+          <b><%= t("warning") %>: </b> <%= t("admin.portal.settings.will_reset_all") %>
         </p>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+      <button class="btn" data-dismiss="modal" aria-hidden="true"><%= t("close") %></button>
     </div>
   </div>
 <% end %>
@@ -112,7 +114,7 @@
     var target = evnt.target;
     setTimeout(function(){
       try{
-        jQuery(jQuery(target).data("codeRefresh")).codemirror("refresh");
+       jQuery(jQuery(target).data("codeRefresh")).codemirror("refresh");
       }
       catch(e)
       {
@@ -147,14 +149,13 @@
                 // Resetting the submit buttons to its default state
                 jQuery($form).find(".form-buttons .btn").button("reset")
                 jQuery("#cm-fs-actions .btn").button("reset")
-
                 $btn.parent().find("#soft_reset_button").data("resetDisabled", false)
                 jQuery('#cm-fs-actions #soft_reset_button').attr("resetDisabled", false)
               },
               dataType: "script"
             })
           }else{
-            form.submit()
+            form.submit();
           }
           return false;
         }
@@ -194,53 +195,54 @@
 <% content_for :helpcard do %>
   
     <div class="help-chart mt0 shorcuts-info">
-      <h5 class="lead">Editor Shortcuts</h5>
+      <h5 class="lead"><%= t("admin.portal.helpnote.editor_shortcuts") %></h5>
       <span class="row-fluid">
-        <span class="span6 shortcut-key"><%= modifier("ctrl") %> <span>&#43;</span> <%= modifier("shift") %> <span>&#43;</span> s</span>
-        <span class="span6 description">Save changes</span>
+        <span class="span6 shortcut-key"><%= modifier("ctrl") %> <span>&#43;</span> <%= modifier("shift") %> <span>&#43;</span> s </span>
+        <span class="span6 description"><%= t("save_changes") %></span>
       </span>
       <span class="row-fluid">
-        <span class="span6 shortcut-key"><%= modifier("ctrl") %> <span>&#43;</span> <%= modifier("shift") %> <span>&#43;</span> p</span>
-        <span class="span6 description">Preview changes</span>
+       <span class="span6 shortcut-key"><%= modifier("ctrl") %> <span>&#43;</span> <%= modifier("shift") %> <span>&#43;</span> p</span>
+        <span class="span6 description"><%= t("admin.portal.helpnote.preview_changes") %></span>
       </span>
       <span class="row-fluid">
         <span class="span6 shortcut-key"><%= modifier("ctrl") %> <span>&#43;</span> <%= modifier("shift") %> <span>&#43;</span> f</span>
-        <span class="span6 description">Editor in fullscreen</span>
+        <span class="span6 description"><%= t("admin.portal.helpnote.editor_in_fullscreen") %></span>
       </span>
       <span class="row-fluid">
         <span class="span6 shortcut-key">Esc</span>
-        <span class="span6 description">Exit fullscreen</span>
+        <span class="span6 description"><%= t("admin.portal.helpnote.exit_fullscreen") %></span>
       </span>
     </div>
     
     <div id="preferences-tab-helpcard" rel="helpcard">
-      <h5 class="lead">Advanced rebranding & customization</h5>
+      <h5 class="lead"><%= t("admin.portal.helpnote.advanced_rebranding") %></h5>
       <p>
-        Apart from the basic coloring changes you have made to your portal, you can also customize the look and feel of select aspects of the page to further match your brand. 
+        <%= t("admin.portal.helpnote.basic_coloring_changes") %>
 
-        You can stylize, color and set the font of almost every element in your support portal, put up your logo and customize your favicon. Just select the color from the color wheel corresponding to an element, or directly type in the hexadecimal color code into the text box.
+        <%= t("admin.portal.helpnote.stylize_color_and_font") %>
 
-        Remember to preview your changes before publishing them live. 
+        <%= t("admin.portal.helpnote.preview_your_changes") %>
       </p>
     </div>
 
     <div id="custom_css-tab-helpcard" class="hide" rel="helpcard">
-      <h5 class="lead">Using Custom Stylesheets</h5>
+      <h5 class="lead"><%= t("admin.portal.helpnote.custom_stylesheets") %></h5>
       <p>
-        You can use your own CSS to override existing styles in your customer portal. For example, you can provide your own style definitions for the header tabs, paragraphs and body of your portal. 
+        <%= t("admin.portal.helpnote.can_override_existing_styles") %>
 
-        Enter your CSS in the text area to apply your custom styles to your support portal. If your CSS has any breaks or issues, the styled element may fallback to the corresponding default styles, so remember to preview your changes before publishing them to your portal.
+        <%= t("admin.portal.helpnote.enter_your_css") %>
       </p>
     </div>
 
     <div id="layout-tab-helpcard" class="hide" rel="helpcard">
-      <h5 class="lead">Page level customizations</h5>
+      <h5 class="lead"><%= t("admin.portal.helpnote.level_customizations") %></h5>
       <p>
-        You can customize the layout of each page in your Freshdesk portal. You will need to design your layout using the Freshdesk Portal Placeholders and the Liquid templating framework. 
+        <%= t("admin.portal.helpnote.customize_the_layout") %>
 
-        The layout of the support portal is made up of (a) the Header, (b) the Footer and (c) the page layout. You can use your own HTML and add, remove or completely modify the content across each page in your portal, and add your own JavaScript interactions. Remember to preview your theme before publishing it for your customers.
+        <%= t("admin.portal.helpnote.layout_of_portal") %>
 
-        Check out the <b><a href='https://support.freshdesk.com/support/solutions/71599' target='_blank'>FreshThemes Guide</a></b> to learn more about developing your own support portal theme. 
+        <%= t('admin.portal.helpnote.check_out').html_safe %>
+ 
       </p>
     </div>
 

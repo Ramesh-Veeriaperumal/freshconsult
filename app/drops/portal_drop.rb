@@ -51,10 +51,6 @@ class PortalDrop < BaseDrop
     @login_url ||= support_login_path(url_options)
   end
 
-  def freshid_login_url
-    @helpdesk_login_url ||= Freshid::Config.login_url(freshid_authorize_callback_url(url_options_with_protocol), freshid_logout_url(url_options_with_protocol))
-  end
-
   def topic_reply_url
     @topic_reply_url ||= begin
       if @context['topic'].present?

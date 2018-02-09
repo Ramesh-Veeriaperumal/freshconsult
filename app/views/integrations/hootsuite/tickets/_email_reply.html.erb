@@ -1,10 +1,10 @@
 <% bcc_email = bcc_drop_box_email %>
 <div class='from-to-wrapper'>
-	<span> To: </span>
+	<span> <%= t("helpdesk.tickets.show.reply_form.to") %> </span>
 	<span> <%= @ticket.requester.email %> </span>
 </div>
 <div class='from-to-wrapper'>
-	<span> From: </span>
+	<span> <%= t("helpdesk.tickets.show.forward_form.title") %> </span>
 	<span class='from-mail'> <%= @ticket.selected_reply_email %> </span>
 </div>
 <div class='mail-options'>

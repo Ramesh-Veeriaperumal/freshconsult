@@ -41,7 +41,7 @@
       <% end %>
       <% if !user_info_page && @interactions[:others].length > other_interactions_count %>
         <div style="text-align:center;" class="more_results more_interactions" id="more_interactions">
-          <button class="uiButton show_more_interactions" id="show_more_interactions" data-feed-id="<%= @feed_id%>">Show more</button>
+          <button class="uiButton show_more_interactions" id="show_more_interactions" data-feed-id="<%= @feed_id%>"><%= t("discussions.show_more") %></button>
         </div>
       <% end %>
     </div>

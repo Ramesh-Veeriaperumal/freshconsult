@@ -3,7 +3,11 @@ class Solution::Article < ActiveRecord::Base
   self.primary_key= :id
   self.table_name =  "solution_articles"
   belongs_to_account
-  concerned_with :associations, :body_methods, :esv2_methods
+  concerned_with :associations, :body_methods, :esv2_methods, :presenter
+
+  publishable
+
+  before_destroy :save_deleted_article_info
   
   include Juixe::Acts::Voteable
   include Search::ElasticSearchIndex
@@ -195,6 +199,10 @@ class Solution::Article < ActiveRecord::Base
       self.class.increment_counter(method, self.id)
       meta_class.increment_counter(method, self.parent_id)
       self.sqs_manual_publish #=> Publish to ES
+      if self.class.central_publish_enabled?
+        self.central_payload_type = "article_#{method}".to_sym
+        central_publish_action(method)
+      end
       queue_quest_job if (method == :thumbs_up && self.published?)
       return true
     end
@@ -268,6 +276,13 @@ class Solution::Article < ActiveRecord::Base
   def folder_id
     # To make Gamification work
     @folder_id ||= solution_article_meta.solution_folder_meta_id
+  end
+
+  def save_deleted_article_info
+    @deleted_model_info = {
+      id: parent_id,
+      account_id: account_id
+    }  
   end
 
   private

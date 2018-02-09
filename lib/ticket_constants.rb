@@ -73,11 +73,11 @@ module TicketConstants
   PRIORITY_COLOR_BY_KEY = Hash[*PRIORITIES.map { |i| [i[2], i[3]] }.flatten]
 
   TYPE = [
-    [ :how_to,    I18n.t('how_to'),          1 ],
-    [ :incident,  I18n.t('incident'),        2 ],
-    [ :problem,   I18n.t('problem'),         3 ],
-    [ :f_request, I18n.t('f_request'),       4 ],
-    [ :lead,      I18n.t('lead'),            5 ]
+    [ :how_to,    I18n.t('how_to'),          1, 'Question'],
+    [ :incident,  I18n.t('incident'),        2, 'Incident'],
+    [ :problem,   I18n.t('problem'),         3, 'Problem'],
+    [ :f_request, I18n.t('f_request'),       4, 'Feature Request'],
+    [ :lead,      I18n.t('lead'),            5, 'Lead']
   ]
 
   TYPE_OPTIONS = TYPE.map { |i| [i[1], i[2]] }
@@ -412,6 +412,10 @@ module TicketConstants
 
   def self.translate_association_type_name(association_type)
     I18n.t(TICKET_ASSOCIATION_TOKEN_BY_KEY[association_type])
+  end
+
+  def self.translate_ticket_types_from_cache
+    @ticket_types ||= Hash[*TYPE.map {|i| [i[3], i[3]] }.flatten]
   end
 
   def self.created_options

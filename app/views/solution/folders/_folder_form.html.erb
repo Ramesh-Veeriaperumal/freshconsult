@@ -69,7 +69,7 @@
   			</div>
 			<% else %>
 				<div class="row-fluid">
-		    	<%= f.select :visibility, Solution::Constants::VISIBILITY_OPTIONS, { :selected => @folder_meta && @folder_meta.visibility }, { :class => "select select2 input-large" } %>
+		    	<%= f.select :visibility, Solution::Constants::translated_visibility_option, { :selected => @folder_meta && @folder_meta.visibility }, { :class => "select select2 input-large" } %>
 	    	</div>
 	    	<div class="muted mt4">
 	    		<%= t('solutions.visibility.help_text') %>

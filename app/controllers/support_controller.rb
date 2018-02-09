@@ -184,8 +184,8 @@ class SupportController < ApplicationController
       partial = Portal::Page::PAGE_FILE_BY_TOKEN[ page_token ]
       dynamic_template = nil
       dynamic_template = page_data(page_token) if current_account.layout_customization_enabled?
-      _content = render_to_string :file => partial, :layout => false,
-                  :locals => { :dynamic_template => dynamic_template } if dynamic_template.nil? || !dynamic_template.blank?
+      _content = render_to_string file: partial, layout: false,
+                  locals: { dynamic_template: dynamic_template, request_domain: request.protocol+request.host } if dynamic_template.nil? || !dynamic_template.blank?
                   
                   
       @page_yield = @content_for_layout = _content

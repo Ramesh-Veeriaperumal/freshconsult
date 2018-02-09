@@ -159,7 +159,7 @@ module Admin::RolesHelper
      form +=  content_tag( :div, {:class => "row-fluid margin-bottom", :id => section[:id] }) do
         content_tag( :div, content_tag( :p, t('admin.roles.privilege.'+ section[:id]).html_safe, :class => "lead-sub"), :class => "span2") +
         content_tag( :div, :class => "span10 role-section") do
-          value = label(:agent, :signature_html, "<b>Agent can</b>".html_safe)
+          value = label(:agent, :signature_html, "<b>#{t('admin.roles.agent_can')}</b>".html_safe)
           if section[:children]
             if section[:children].last[:children] and section[:children].last[:children].last[:id] == "manage_account" and !current_user.privilege?(:manage_account)
               section[:children].last[:children].last.merge!(:class => "permanent_disable")
