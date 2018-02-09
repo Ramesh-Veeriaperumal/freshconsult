@@ -507,7 +507,7 @@ module Reports::TimesheetReport
     show_options(DEFAULT_COLUMNS_ORDER, DEFAULT_COLUMNS_KEYS_BY_TOKEN, DEFAULT_COLUMNS_OPTIONS)
     @show_options[:billable] = {:is_in=>:dropdown, :condition=>:billable, :name=>"Billable",
                                 :container=>"multi_select", :operator=>:is_in,
-                                :options=>[[0, "Non-Billable"], [1, "Billable"]],
+                                :options=>[[0, t('helpdesk.time_sheets.non_billable')], [1, t('helpdesk.time_sheets.billable')]],
                                 :value=>"", :field_type=>"default", :ff_name=>"default",
                                 :active=>false
                                 }

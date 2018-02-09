@@ -5,8 +5,12 @@
   custom_field:
     type: object
 
-  bootstrap:
-    $ref: ./response/bootstrap.yaml
+  bootstrap_agents_groups:
+    $ref: ./response/bootstrap/agents_groups.yaml
+  bootstrap_me:
+    $ref: ./response/bootstrap/me.yaml
+  bootstrap_account:
+    $ref: ./response/bootstrap/account.yaml
 
   # ERROR
   bulk_action_error:

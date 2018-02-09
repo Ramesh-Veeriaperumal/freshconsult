@@ -80,7 +80,7 @@ unpublished =  !original && !post.published
 				on <%= formated_date(post.created_at) %>
 
 				<% if !original and post.answer %>
-					<span class="label label-answered">Answer</span>
+					<span class="label label-answered"><%= t('discussions.topics.answer') %></span>
 				<% end %>
 			</div>
 		</div>
@@ -95,11 +95,11 @@ unpublished =  !original && !post.published
 		<% end %>
 			<div class="attachment_wrapper post-attachment <%= 'multifile' if current_account.launched?(:multifile_attachments) %>">
 				<ul class="attachment_list">
-				    <% post.attachments.each do |attached| %> 
+				    <% post.attachments.each do |attached| %>
 				    	<%= attachment_list(attached, privilege?(:edit_topic, post), "article",nil) %>
 				    <% end %>
-	 
-				    <% post.cloud_files.each do |cloud_file| %> 
+
+				    <% post.cloud_files.each do |cloud_file| %>
 						<%= attachment_list(cloud_file, privilege?(:edit_topic, post), "cloud_file",nil) %>
 						<% end %>
 				</ul>

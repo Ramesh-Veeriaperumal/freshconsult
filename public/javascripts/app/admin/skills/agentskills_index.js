@@ -378,7 +378,7 @@ window.App.Admin.AgentSkills = window.App.Admin.AgentSkills || {};
 
     checkifNoSkills: function() {
       var TOTAL_SKILLS_PER_AGENT = 35;
-      var Template = "<div class='no-agent-info'>" + "No skill added" + "</div>";
+      var Template = "<div class='no-agent-info'>" + I18n.t('common_js_translations.skills.no_skill_added') + "</div>";
       var $agentListWrapper = $(".agent-list-wrapper");
       var len = $agentListWrapper.children('.roles-agent-list').length;
       if (len === 0) {

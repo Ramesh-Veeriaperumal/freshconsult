@@ -24,7 +24,7 @@
 					</span>
 				</p>
 				<p>
-					at	
+					<%= t("at") %> 
 					<%= select_tag "due_by_hour",   options_for_select(%w{ 1 2 3 4 5 6 7 8 9 10 11 12 }, @ticket.due_by.strftime("%l").strip) %> :
 					<%= select_tag "due_by_minute", options_for_select(%w{ 00 15 30 45 }, @ticket.due_by.strftime("%M").strip) %>
 					<%= select_tag "due_by_am_pm",  options_for_select(%w{ AM PM }, @ticket.due_by.strftime("%p").strip) %>

@@ -30,7 +30,7 @@
                 <% end %>
                 <% if @user[:show_followers] and @visible_handles.any? and privilege?(:reply_ticket) %>
                   <div class="btn btn-twt-follow twt-follow">
-                    <span>Follow As...</span>
+                    <span><%= t("social.streams.twitter.follow_as") %></span>
                     <ul class="followers" id="followers"> </ul>
                   </div>
                 <% end %>
@@ -46,13 +46,13 @@
           <!-- First tab input and label -->
           <% if interactions_length > 0 %>
             <input id="t-1" name="tabbed-tabs" type="radio" checked="checked">
-            <label for="t-1" class="tabs">Interactions</label>
+            <label for="t-1" class="tabs"><%= t("social.streams.twitter.interactions") %></label>
           <% end %>
           <!-- Second tab input and label -->
           <% if tickets_length > 0 %>
             <input id="t-2" name="tabbed-tabs" type="radio" 
               <% if interactions_length == 0 %> checked="checked" <% end %> >
-            <label for="t-2" class="tabs">Tickets</label>
+            <label for="t-2" class="tabs"><%= t("social.streams.twitter.tickets") %></label>
           <% end %>
           
           <div class="tc">
@@ -67,10 +67,10 @@
 
 
 <!-- <div id="merge-box" class="bb-box">
-  <h4 class="title pane-title">Merge Contacts</h4>
-  <p>Found a matching contact?</p>
+  <h4 class="title pane-title"><%= Merge Contacts %></h4>
+  <p><%= Found a matching contact? %></p>
   <p>
-    <a href="#">Merge Contact</a> or <a href="#">Create a new contact</a>
+    <a href="#"><%= Merge Contact %></a> or <a href="#">Create a new contact</a>
   </p>
 </div> -->
   </div>

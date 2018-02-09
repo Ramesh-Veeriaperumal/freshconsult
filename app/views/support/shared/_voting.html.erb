@@ -1,17 +1,17 @@
-  
-	Was this article useful?  
-				<%= link_to 'Yes',  
-								   thumbs_up_support_article_path(article.id),
-								   :'data-update'=> "article_voting",
-								   :method => :put,
-								   :remote => true 
-						
-				%>
-				or
-					 <%= link_to 'No',  
-								 thumbs_down_support_article_path(article.id),
-								 :"data-update"=> "article_voting",
-								 :method => :put,
-								 :remote => true 
-				%>
- 
+
+<%= t("support.shared.was_this_article_useful") %>
+<%= link_to t("plain_yes"),  
+				   thumbs_up_support_article_path(article.id), :default => "thumbs_up_support_article_path(article.id),") %>
+				   :'data-update'=> "article_voting",
+				   :method => :put,
+				   :remote => true 
+		
+%>
+<%= t("or") %>
+	 <%= link_to t("plain_no"),  
+				 thumbs_down_support_article_path(article.id), :default => "thumbs_down_support_article_path(article.id),") %>
+				 :"data-update"=> "article_voting",
+				 :method => :put,
+				 :remote => true 
+%>
+

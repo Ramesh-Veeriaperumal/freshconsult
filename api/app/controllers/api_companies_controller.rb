@@ -4,6 +4,8 @@ class ApiCompaniesController < ApiApplicationController
   def create
     delegator_params = construct_delegator_params
     company_delegator = CompanyDelegator.new(@item, delegator_params)
+    given_avatar_id = delegator_params[:avatar_id]
+    @item.avatar = company_delegator.draft_attachments.first if given_avatar_id.present?
     if !company_delegator.valid?
       render_custom_errors(company_delegator, true)
     elsif @item.save
@@ -50,6 +52,7 @@ class ApiCompaniesController < ApiApplicationController
 
     def construct_delegator_params
       { 
+        avatar_id: params[cname][:avatar_id],
         custom_fields: params[cname][:custom_field],
         default_fields: params[cname].except(:custom_field)
       }

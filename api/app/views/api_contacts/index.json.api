@@ -14,6 +14,7 @@ JSON.generate(@items.map do |item|
     time_zone: item.time_zone,
     twitter_id: item.twitter_id,
     custom_fields: item.custom_fields,
+    facebook_id: item.fb_profile_id,
     created_at: item.created_at.try(:utc),
     updated_at: item.updated_at.try(:utc)
   }

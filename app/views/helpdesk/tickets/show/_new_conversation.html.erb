@@ -88,7 +88,7 @@
 				<a href="#"  rel="note-button" data-note-type="note" data-domhelper-name="note-button"><%= t('ticket.add_note') %></a>
 				<% if current_account.collaboration_enabled? %>
 					<span class="discuss-cta-separator">/</span>
-					<a href="javascript:void(0);" id="DiscussButton">Discuss</a>
+					<a href="javascript:void(0);" id="DiscussButton"><%= t('collaboration.discuss') %></a>
 				<% end %>
 				<% if privilege?(:reply_ticket) && current_account.link_tkts_enabled? && @ticket.tracker_ticket? && @ticket.related_tickets_count > 0 %>
 					/ <a href="#" id="BroadcastBtn"  rel="note-button" data-note-type="broadcast" data-domhelper-name="broadcast-button"><%= t('ticket.broadcast') %></a>

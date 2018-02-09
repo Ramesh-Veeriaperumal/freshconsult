@@ -25,7 +25,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
     get :index, controller_params
     assert_response 200
     agents = @account.all_agents.order('users.name')
-    pattern = agents.map { |agent| private_api_agent_pattern(agent) }
+    pattern = agents.map { |agent| agent_pattern(agent) }
     match_json(pattern.ordered)
   end
 
@@ -208,7 +208,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
     role_ids = Role.limit(2).pluck(:id)
     params = { time_zone: 'Chennai', language: 'en', ticket_scope: 2,
                role_ids: role_ids }
-    Account.any_instance.stubs(:features?).with(:multi_timezone).returns(false)
+    Account.any_instance.stubs(:has_feature?).with(:multi_timezone).returns(false)
     Account.any_instance.stubs(:features?).with(:multi_language).returns(false)
     put :update, construct_params({ id: @agent.id }, params)
     match_json([bad_request_error_pattern(:language, :require_feature_for_attribute, code: :inaccessible_field, attribute: 'language', feature: :multi_language),
@@ -218,6 +218,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
     assert_response 400
   ensure
     Account.any_instance.unstub(:features?)
+    Account.any_instance.unstub(:has_feature?)
   end
 
   def test_update_agent_with_length_invalid
@@ -343,7 +344,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
   def test_update_admin_with_admin_privilege
     agent = add_test_agent(@account, role: Role.find_by_name('Account Administrator').id)
     User.stubs(:current).returns(@agent)
-    @agent.stubs(:privilege?).with(:manage_account).returns(true)
+    @agent.stubs(:privilege?).returns(true)
     params = { signature: 'test' }
     put :update, construct_params({ id: agent.id }, params)
     updated_agent = User.find(agent.id)

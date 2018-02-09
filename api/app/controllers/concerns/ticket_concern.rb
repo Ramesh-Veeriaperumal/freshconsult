@@ -42,11 +42,15 @@ module TicketConcern
   private
 
     def ticket_permission?
-      ticket_id = params[:ticket_id] || params[:id]
+      ticket_id = params_ticket_id
       # Should allow to delete ticket based on agents ticket permission privileges.
       unless api_current_user.can_view_all_tickets? || group_ticket_permission?(ticket_id) || assigned_ticket_permission?(ticket_id)
         render_request_error :access_denied, 403
       end
+    end
+
+    def params_ticket_id
+      params[:ticket_id] || params[:id]
     end
 
     def group_ticket_permission?(ids)

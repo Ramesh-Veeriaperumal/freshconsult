@@ -32,7 +32,8 @@
               <%= extension_details['display_name'] %></a> 
             <div class="mkp-prog hide" id="delete_prog_<%= installation_details['installed_extension_id']%>">
               <div class="mkp-prog-spinner"></div>
-              <div class="mkp-prog-text">Please wait...</div>
+              <div class="mkp-prog-text">
+              <%= t("marketplace.installing_text") %></div>
             </div>
 
           <% unless unsupported_apps %>

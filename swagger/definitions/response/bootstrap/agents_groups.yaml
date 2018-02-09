@@ -1,0 +1,32 @@
+type: object
+properties:
+  data:
+    type: object
+    properties:
+      agents:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+            contacts:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+            group_ids:
+              type: array
+      groups:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            agent_ids:
+              type: array

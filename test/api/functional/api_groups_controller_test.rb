@@ -6,7 +6,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   end
 
   def test_create_group
-    post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
+    post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, auto_ticket_assign: true)
     assert_response 201
     match_json(group_pattern(Group.last))
   end
@@ -52,7 +52,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   end
 
   def test_create_group_with_valid_with_trailing_spaces
-    post :create, construct_params({}, name: Faker::Lorem.characters(20) + white_space)
+    post :create, construct_params({}, name: Faker::Lorem.characters(20) + white_space, auto_ticket_assign: true)
     assert_response 201
     match_json(group_pattern({}, Group.last))
   end
@@ -86,15 +86,14 @@ class ApiGroupsControllerTest < ActionController::TestCase
   end
 
   def test_show_with_invalid_boolean_value
-    group = create_group(@account)
-    group.update_column(:ticket_assign_type, 213)
+    group = create_group(@account, ticket_assign_type: 1)
     get :show, construct_params(id: group.id)
     assert_response 200
     match_json(group_pattern(Group.find(group.id)))
   end
 
   def test_show_group
-    group = create_group(@account)
+    group = create_group(@account, ticket_assign_type: 1)
     get :show, construct_params(id: group.id)
     assert_response 200
     match_json(group_pattern(Group.find(group.id)))
@@ -165,7 +164,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   end
 
   def test_update_group_valid_with_trailing_spaces
-    group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
+    group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph, ticket_assign_type: 1)
     put :update, construct_params({ id: group.id }, name: Faker::Lorem.characters(20) + white_space)
     assert_response 200
     match_json(group_pattern({}, group.reload))
@@ -178,7 +177,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   end
 
   def test_update_agents_of_group
-    group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
+    group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph, ticket_assign_type: 1)
     put :update, construct_params({ id: group.id }, agent_ids: [1])
     assert_response 200
     match_json(group_pattern({ agent_ids: [1] }, group.reload))
@@ -191,15 +190,15 @@ class ApiGroupsControllerTest < ActionController::TestCase
   end
 
   def test_delete_existing_agents_while_update
-    group = create_group_with_agents(@account, agent_ids: [1, 2, 3], name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
+    group = create_group_with_agents(@account, agent_ids: [1, 2, 3], name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph, ticket_assign_type: 1)
     put :update, construct_params({ id: group.id }, agent_ids: [1])
     assert_response 200
     match_json(group_pattern({ agent_ids: [1] }, group.reload))
   end
 
   def test_show_group_with_round_robin_disabled
-    group = create_group(@account)
-    @account.class.any_instance.stubs(:features?).returns(false)
+    group = create_group(@account, ticket_assign_type: 0)
+    Account.any_instance.stubs(:features?).with(:round_robin).returns(false)
     get :show, construct_params(id: group.id)
     @account.class.any_instance.unstub(:features?)
     assert_response 200
@@ -216,7 +215,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   end
 
   def test_destroy_all_agents_in_a_group
-    group = create_group_with_agents(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph, agent_ids: [1, 2, 3])
+    group = create_group_with_agents(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph, agent_ids: [1, 2, 3], ticket_assign_type: 1)
     put :update, construct_params({ id: group.id }, agent_ids: [])
     assert_response 200
     match_json(group_pattern({ agent_ids: nil }, group.reload))

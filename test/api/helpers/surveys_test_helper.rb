@@ -105,11 +105,6 @@ module SurveysTestHelper
     result
   end
 
-  def ticket
-    ticket = Helpdesk::Ticket.last || create_ticket(ticket_params_hash)
-    ticket
-  end
-
   def v1_survey_params
     { rating: 1,  feedback: Faker::Lorem.paragraph }
   end

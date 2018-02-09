@@ -3,7 +3,7 @@ module RabbitMq::Subscribers::Users::Export
   include RabbitMq::Constants
 
   def mq_export_valid(action, model)
-    Account.current.has_any_scheduled_ticket_export?
+    model == "user" && Account.current.has_any_scheduled_ticket_export?
   end
 
   def mq_export_subscriber_properties(action)

@@ -39,6 +39,16 @@ module Ember
       }
     end
 
+    def create_company(options = {})
+      company = @account.companies.find_by_name(options[:name])
+      return company if company
+      name = options[:name] || Faker::Name.name
+      company = FactoryGirl.build(:company, name: name)
+      company.account_id = @account.id
+      company.save!
+      company
+    end
+
     def create_n_users(count, account, params={})
       contact_ids = []
       count.times do
@@ -117,7 +127,7 @@ module Ember
     # Tests for Multiple User companies feature
 
     def test_create_contact_with_default_company
-      company_ids = Company.first(2).map(&:id)
+      company_ids = [create_company, create_company].map(&:id)
       @account.revoke_feature(:multiple_user_companies)
       @account.reload
       post :create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
@@ -136,11 +146,11 @@ module Ember
     end
 
     def test_update_contact_with_default_company
-      company_ids = Company.first(2).map(&:id)
+      company_ids = [create_company, create_company].map(&:id)
       @account.revoke_feature(:multiple_user_companies)
       @account.reload
       sample_user = add_new_user(@account)
-      company_ids = Company.first(2).map(&:id)
+      company_ids = [create_company, create_company].map(&:id)
       put :update, construct_params({ version: 'private', id: sample_user.id },
                                     company: {
                                       id: company_ids[0],
@@ -158,7 +168,7 @@ module Ember
     end
 
     def test_create_contact_with_other_companies
-      company_ids = Company.first(2).map(&:id)
+      company_ids = [create_company, create_company].map(&:id)
       post :create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
                                                              email: Faker::Internet.email,
                                                              company: {
@@ -180,7 +190,7 @@ module Ember
     end
 
     def test_create_contact_with_mandatory_company_field
-      company_ids = Company.first(2).map(&:id)
+      company_ids = [create_company, create_company].map(&:id)
       company_field = Account.current.contact_form.default_contact_fields.find { |cf| cf.name == "company_name" }
       company_field.update_attributes({:required_for_agent => true})
       post :create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
@@ -197,7 +207,7 @@ module Ember
     end
 
     def test_error_in_create_contact_with_mandatory_company
-      company_ids = Company.first(2).map(&:id)
+      company_ids = [create_company, create_company].map(&:id)
       company_field = Account.current.contact_form.default_contact_fields.find { |cf| cf.name == "company_name" }
       company_field.update_attributes({:required_for_agent => true})
       post :create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
@@ -239,11 +249,11 @@ module Ember
     end
 
     def test_error_in_create_contact_without_feature
-      company_ids = Company.first(2).map(&:id)
+      company_ids = [create_company, create_company].map(&:id)
       @account.revoke_feature(:multiple_user_companies)
       @account.reload
       sample_user = add_new_user(@account)
-      company_ids = Company.first(2).map(&:id)
+      company_ids = [create_company, create_company].map(&:id)
       put :update, construct_params({ version: 'private', id: sample_user.id },
                                     company: {
                                       id: company_ids[0],
@@ -266,7 +276,7 @@ module Ember
     end
 
     def test_error_in_create_contact_with_other_companies
-      company_ids = Company.first(2).map(&:id)
+      company_ids = [create_company, create_company].map(&:id)
       post :create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
                                                              email: Faker::Internet.email,
                                                              company: {
@@ -290,7 +300,7 @@ module Ember
     end
 
     def test_error_in_create_contact_with_other_companies_format
-      company_ids = Company.first(2).map(&:id)
+      company_ids = [create_company, create_company].map(&:id)
       post :create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
                                                              email: Faker::Internet.email,
                                                              company: {
@@ -310,7 +320,7 @@ module Ember
     end
 
     def test_error_in_create_contact_with_other_companies_duplicates
-      company_ids = Company.first(2).map(&:id)
+      company_ids = [create_company, create_company].map(&:id)
       post :create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
                                                              email: Faker::Internet.email,
                                                              company: {
@@ -332,7 +342,7 @@ module Ember
     end
 
     def test_create_contact_without_default_company
-      company_ids = Company.first(2).map(&:id)
+      company_ids = [create_company, create_company].map(&:id)
       post :create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
                                                              email: Faker::Internet.email,
                                                              other_companies: [
@@ -349,7 +359,7 @@ module Ember
 
     def test_update_contact_without_default_company
       sample_user = add_new_user(@account)
-      company_ids = Company.first(2).map(&:id)
+      company_ids = [create_company, create_company].map(&:id)
       put :update, construct_params({ version: 'private', id: sample_user.id },
                                     other_companies: [
                                       {
@@ -367,7 +377,7 @@ module Ember
 
     def test_update_contact_with_default_company_2
       sample_user = add_new_user(@account)
-      company_ids = Company.first(2).map(&:id)
+      company_ids = [create_company, create_company].map(&:id)
       put :update, construct_params({ version: 'private', id: sample_user.id },
                                     company: {
                                       id: company_ids[0],
@@ -420,7 +430,7 @@ module Ember
 
     def test_update_contact_with_default_company_and_client_manager
       sample_user = add_new_user(@account)
-      company_ids = Company.first(2).map(&:id)
+      company_ids = [create_company, create_company].map(&:id)
       put :update, construct_params({ version: 'private', id: sample_user.id },
                                     company: {
                                       id: company_ids[0],
@@ -443,7 +453,7 @@ module Ember
     end
 
     def test_create_and_update_contact_with_default_company_and_client_manager
-      company_ids = Company.first(2).map(&:id)
+      company_ids = [create_company, create_company].map(&:id)
       sample_user = create_contact_with_other_companies(@account, company_ids)
 
       put :update, construct_params({ version: 'private', id: sample_user.id },
@@ -468,7 +478,7 @@ module Ember
     end
 
     def test_update_contact_by_removing_companies
-      company_ids = Company.first(2).map(&:id)
+      company_ids = [create_company, create_company].map(&:id)
       sample_user = create_contact_with_other_companies(@account, company_ids)
 
       put :update, construct_params({ version: 'private', id: sample_user.id },
@@ -569,7 +579,7 @@ module Ember
     end
 
     def test_show_a_contact_with_other_companies
-      company_ids = Company.first(2).map(&:id)
+      company_ids = [create_company, create_company].map(&:id)
       sample_user = create_contact_with_other_companies(@account, company_ids)
       get :show, controller_params(version: 'private', id: sample_user.id)
       match_json(private_api_contact_pattern(sample_user.reload))
@@ -577,7 +587,7 @@ module Ember
     end
 
     def test_show_a_contact_with_include_company
-      company_ids = Company.first(2).map(&:id)
+      company_ids = [create_company, create_company].map(&:id)
       sample_user = create_contact_with_other_companies(@account, company_ids)
       get :show, controller_params(version: 'private', id: sample_user.id, include: 'company')
       match_json(private_api_contact_pattern({ include: 'company' }, true, sample_user.reload))

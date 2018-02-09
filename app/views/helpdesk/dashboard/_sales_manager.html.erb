@@ -10,32 +10,34 @@
 				<h3 class="title">
 					<%= @details[:display_name].html_safe %><br>
 				</h3>
-				<div>Account Manager</div>
-				<div>Freshdesk</div>
+				<div><%= t("helpdesk.dashboard.sales_manager.account_manager") %></div>
+				<div><%= t("helpdesk.dashboard.sales_manager.freshdesk") %></div>
 			</div>
 
 			<div class="span5 sp-details">
-					<p>Hi, How is it going?</p>
+					<p><%= t("helpdesk.dashboard.sales_manager.how_is_it_going") %></p>
 					<% if trial_days <= 0 %>
-						<p>Your trial has expired and you need to choose a plan to continue using your Freshdesk account. If you need more time to take a look around, let me know and I can get you a trial extension.</p>
+						<p><%= t("helpdesk.dashboard.sales_manager.trial_has_expired") %></p>
 					<% elsif trial_days <= 10 %>
 						<p>I noticed that your Freshdesk trial is about to expire soon.
-						If you'd like some assistance in choosing the right plan, please
+						<%= t("helpdesk.dashboard.sales_manager.some_assistance") %>
 							<b><a href="https://freshdesk.com/plan-chooser?utm_source=freshdeskapp"
-								onclick="window.open(this.href);return false;" target="_blank">schedule a call.</a>
+								onclick="window.open(this.href);return false;" target="_blank">
+								<%= t("helpdesk.dashboard.sales_manager.schedule_a_call") %></a>
 							</b>
 						</p>
 					<% elsif trial_days <= 20 %>
 						<p>
-							How is your Freshdesk trial coming along? If you'd like to take a tour of the product, please
+							<%= t("helpdesk.dashboard.sales_manager.how_is_your_freshdesk_trial") %>
 							<b><a href="https://freshdesk.com/demo-request?utm_source=freshdeskapp"
-								onclick="window.open(this.href);return false;" target="_blank">schedule a personalized demo.</a>
+								onclick="window.open(this.href);return false;" target="_blank">
+								<%= t("helpdesk.dashboard.sales_manager.schedule_a_demo") %></a>
 							</b>
 						</p>
 					<% else %>
 					  <p>
-							I will be your account manager helping you with your evaluation.
-							Please reach out to me if you have any questions.
+							<%= t("helpdesk.dashboard.sales_manager.your_account_manager") %>
+							<%= t("helpdesk.dashboard.sales_manager.please_reach_out") %>
 						</p>
 					<% end %>
 
@@ -56,7 +58,7 @@
 				<% if current_user.privilege?(:manage_account) %>
 		    		<div class="plan_and_expiry">
 							<div class="current-plan-name">
-								Current Plan: <b><%= current_account.subscription.subscription_plan.display_name %></b>
+								<%= t("helpdesk.dashboard.sales_manager.current_plan") %><b><%= current_account.subscription.subscription_plan.display_name %></b>
 							</div>
 					    <div class="select-plan trial-background mt10">
 					    	<%= link_to("Choose a Plan <b class='arrow-right'></b>".html_safe, subscription_url, :class => "") %>
@@ -67,9 +69,9 @@
 				<div class="plan_and_expiry <%= trial_days > 10 ? 'trial-alert-color' : 'trial-end-alert-color' %>">
 					<span class="expiry-details">
 						<% if trial_days > 0 %>
-	      					Your trial will expire in <%= trial_days %> days.
+	      					<%= t("helpdesk.dashboard.sales_manager.trial_expire_in") %><%= trial_days %> days.
 		    			<% else %>
-		      				Your trial expired.
+		      				<%= t("helpdesk.dashboard.sales_manager.your_trial_expired") %>
 		    			<% end %>
 		    			<% if trial_days < 4 %>
 		    				<%= render :partial => "/subscriptions/request_trial_extension" %>

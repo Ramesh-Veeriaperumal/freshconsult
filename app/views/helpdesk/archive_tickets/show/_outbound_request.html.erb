@@ -40,10 +40,10 @@
     </div>
     
     <div class="info"> 
-      <span><%= multiple_emails_container(@to_emails, "From: ") unless @ticket.cc_email_hash.blank? or @to_emails.blank?%></span>
-      <span>,<%= multiple_emails_container([@ticket.from_email], "To: ")%></span>
+      <span><%= multiple_emails_container(@to_emails, t("ticket.compose.from") + " ") unless @ticket.cc_email_hash.blank? or @to_emails.blank?%></span>
+      <span>,<%= multiple_emails_container([@ticket.from_email], t("ticket.compose.to") + " ")%></span>
 
-      <%= content_tag :div, multiple_emails_container(@ticket.cc_email_hash[:cc_emails], "Cc: ") unless @ticket.cc_email_hash.blank? %>
+      <%= content_tag :div, multiple_emails_container(@ticket.cc_email_hash[:cc_emails], t("ticket.compose.cc") + ': ') unless @ticket.cc_email_hash.blank? %>
         </div> 
   </div>
   <div rel="image-enlarge" id="ticket_original_request" class="request_mail">

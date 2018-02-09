@@ -2,14 +2,15 @@
  <div class="nba-sas sas-hidden">
          <div class="sas-hd" id="sas-hd"> 
           <div id = "sas-hd-result">
-            <span class="beta-tag sas-hidden">Beta</span>
+            <span class="beta-tag sas-hidden"><%= t("beta") %></span>
             <span class = "sas-cnt">8</span><%=t('ml.similat_tickets_found')%> 
             <!-- <a class="help" id="help" href="#"><span><%=t('ml.help')%></span></a> -->
             <a class="help tooltip" id="help" href="https://support.freshdesk.com/support/solutions/articles/224039-similar-tickets-suggester" target="_blank" data-placement="above" data-original-title="What's this?"><i class="ficon-help fsize-14" size="14"></i></a>
             <a class="toggle" id = "show" href="#"><span><%=t('ml.show')%></span><i class="ficon-caret-right"></i></a>
           </div>
           <div id = "sas-hd-no-result" class = "sas-hidden"><span class="sas-hd"><%=t('ml.no_suggestions')%></span></div>
-          <div id = "sas-hd-error" class = "sas-hidden"><a class = "reload" href="#"><span>Reload</span> <i class="ficon-refresh-source"></i></a> <span class="err-msg">
+          <div id = "sas-hd-error" class = "sas-hidden"><a class = "reload" href="#">
+          <span><%= t("reload") %></span> <i class="ficon-refresh-source"></i></a> <span class="err-msg">
           <%=t('ml.error')%></span></div> 
          </div>
         <div id="sas-pnl" class = "sas-hidden">
@@ -22,8 +23,8 @@
         	<div class="sas-nav">
             	<span></span>
               <div class="sas-hidden">
-               	<a id = "prv" class="prv dbl" href="#" title="Previous"><i class="ficon-arrow-left-2"></i></a>
-                <a id = "nxt" class="nxt dbl" href="#"  title="Next"><i class="ficon-arrow-right-2"></i></a>
+               	<a id = "prv" class="prv dbl" href="#" title="<%= t("previous") %>"><i class="ficon-arrow-left-2"></i></a>
+                <a id = "nxt" class="nxt dbl" href="#"  title="<%= t("next") %>"><i class="ficon-arrow-right-2"></i></a>
             </div>
           </div>
         	<div class="sas-fdbk"> <a id='sas_survey' target='_blank' href='https://freshdesk.typeform.com/to/QjdFnL'><%=t('ml.feed_back_survery')%></a></div>

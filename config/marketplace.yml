@@ -23,6 +23,7 @@ defaults: &defaults
   data_pipe_timeout: 7
   data_pipe_key: vyz8wvmoQGIGkCQPUP0431rUE4x8LtO2qIjeyMF1
   freshapps_js_url: "https://s3.amazonaws.com/static.freshcloud.io"
+  marketplace_configs_js: "configs_assets-1.0.1.min.js"
   account_api_poll_interval: 3000 ### In milliseconds
 
 development:

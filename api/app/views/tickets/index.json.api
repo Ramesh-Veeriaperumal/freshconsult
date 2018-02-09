@@ -1,3 +1,4 @@
+shared_ownership_enabled = Account.current.shared_ownership_enabled?
 JSON.generate(@items.map do |item|
   response_hash = {
     cc_emails: item.cc_email.try(:[], :cc_emails),
@@ -29,11 +30,11 @@ JSON.generate(@items.map do |item|
   }
   requester_hash = item.requester
   stats_hash = item.stats
-  company_hash = item.company
+  company_hash = item.company_hash
   response_hash.merge!(deleted: item.deleted) if item.deleted
   response_hash.merge!(requester: requester_hash) if requester_hash
   response_hash.merge!(stats: stats_hash) if stats_hash
   response_hash.merge!(company: company_hash) if company_hash
-  response_hash.merge!(internal_agent_id: item.internal_agent_id, internal_group_id: item.internal_group_id) if Account.current.shared_ownership_enabled?
+  response_hash.merge!(internal_agent_id: item.internal_agent_id, internal_group_id: item.internal_group_id) if shared_ownership_enabled
   response_hash
 end)

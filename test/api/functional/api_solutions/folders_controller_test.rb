@@ -169,7 +169,7 @@ module ApiSolutions
     end
 
     def test_create_folder_in_unavailable_category_id_without_mandatory_fields
-      post :create, construct_params({ id: 99999 }, {name: Faker::Name.name, description: Faker::Lorem.paragraph})
+      post :create, construct_params({ id: 99999 }, {name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1})
       assert_response :missing
     end
 

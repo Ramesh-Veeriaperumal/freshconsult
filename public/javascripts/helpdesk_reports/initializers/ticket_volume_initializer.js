@@ -295,7 +295,8 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
         displayLoadAnalysisAvg: function(type, trend){
             var trend_size = _.size(HelpdeskReports.locals.chart_hash['TOTAL_LOAD'][trend]);
             var msg = [];
-            msg.push("<span style='color:#666'>Average per " + this.TIME_TRENDS[trend] + " : </span>")
+            var time_trend = this.trend_title[trend]
+            msg.push("<span style='color:#666'>" + I18n.t('helpdesk_reports.chart_title.tooltip.avg_per') + " " + time_trend + " : </span>")
             var total_load = eval(_.values(HelpdeskReports.locals.chart_hash['TOTAL_LOAD'][trend]).join('+'))/trend_size;
             total_load = total_load.round();
             msg.push("<p class='analysis_tooltip'>" + I18n.t('helpdesk_reports.chart_title.tooltip.total_load') + " : " + '<span class="bold">' + total_load + ' ' + (total_load == 0 ? 'ticket' : I18n.t('helpdesk_reports.chart_title.tickets')) + "</span>");

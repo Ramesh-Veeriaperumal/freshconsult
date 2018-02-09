@@ -18,7 +18,7 @@
 			<% elsif note.outbound_email? %>
 				<span class="image email-reply tooltip" title='<%= t(".outbound_email") %>'></span>
 			<% elsif note.tweet? %>
-				<span class="image tweet-note tooltip" title='Tweet'></span>
+				<span class="image tweet-note tooltip" title='<%= t("activities.tweet") %>'></span>
 			<% elsif note.broadcast_note? %>
 				<span class="image note-private tooltip" title='<%= t(".broadcast_note") %>'></span>			
 			<% end %>
@@ -81,4 +81,3 @@
 												:id => notable_object.display_id, 
 												:note_id => note.id }) %>
 </div> 
-

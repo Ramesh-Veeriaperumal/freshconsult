@@ -55,8 +55,8 @@
           <%if !@offline_subscription and @invoice and is_new_sprout%>
               <div class ="mt10 muted">
                 <%= t("view_invoices") %>
-                <%=link_to "Latest", "","rel" => "freshdialog", "data-target" => "#invoice-modal-0", "data-destroy-on-close" => "true", "data-template-footer" => ""%> |
-                <%= link_to "All", subscription_invoices_path %>
+                <%=link_to t("marketplace.latest"), "","rel" => "freshdialog", "data-target" => "#invoice-modal-0", "data-destroy-on-close" => "true", "data-template-footer" => ""%> |
+                <%= link_to t("social.streams.index.all"), subscription_invoices_path %>
               </div>
           <%end%>
         </li>
@@ -76,8 +76,8 @@
           <%if !@offline_subscription and @invoice%>
             <li class ="mt10">
               <%= t("view_invoices") %>
-              <%=link_to "Latest", "","rel" => "freshdialog", "data-target" => "#invoice-modal-0", "data-destroy-on-close" => "true", "data-template-footer" => ""%> |
-              <%= link_to "All", subscription_invoices_path %>
+              <%=link_to t("marketplace.latest"), "","rel" => "freshdialog", "data-target" => "#invoice-modal-0", "data-destroy-on-close" => "true", "data-template-footer" => ""%> |
+              <%= link_to t("social.streams.index.all"), subscription_invoices_path %>
             </li>
           <%end%>
         </ul>

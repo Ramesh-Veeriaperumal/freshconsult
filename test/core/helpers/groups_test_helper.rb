@@ -6,7 +6,7 @@ module GroupsTestHelper
     group = FactoryGirl.build(:group,:name=> name)
     group.account_id = account.id
     group.ticket_assign_type  = options[:ticket_assign_type] if options[:ticket_assign_type]
-        group.toggle_availability = options[:toggle_availability] if options[:toggle_availability]
+    group.toggle_availability = options[:toggle_availability] if options[:toggle_availability]
     group.save!
     group
   end

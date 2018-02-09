@@ -6,6 +6,8 @@ module ConversationConstants
   UPDATE_ARRAY_FIELDS = %w(attachments attachment_ids).freeze
   TWEET_ARRAY_FIELDS = [].freeze
 
+  IGNORE_PARAMS = %w(full_text send_survey last_note_id).freeze | AttachmentConstants::CLOUD_FILE_FIELDS
+
   TICKET_CONVERSATIONS_FIELDS = %w(include order_type since_id).freeze
   SIDE_LOADING = %w(requester).freeze
 

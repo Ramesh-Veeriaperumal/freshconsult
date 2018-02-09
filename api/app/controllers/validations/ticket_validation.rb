@@ -42,7 +42,8 @@ class TicketValidation < ApiValidation
 
   validates :template_text, data_type: { rules: String, required: true }, on: :parse_template
 
-  validates :source, custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :allow_string_param, detect_type: true, allow_nil: true }, on: :create
+  validates :source, custom_inclusion: { in: proc { |x| x.sources }, ignore_string: :allow_string_param, detect_type: true, allow_nil: true }, on: :create
+  validates :source, custom_inclusion: { in: proc { |x| x.sources }, ignore_string: :allow_string_param, detect_type: true }, unless: :private_api?, on: :update
   validates :requester_id, :email_config_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }
 
   validates :company_id, custom_absence: {
@@ -262,6 +263,14 @@ class TicketValidation < ApiValidation
     [:create, :update].include?(validation_context)
   end
 
+  def sources
+    if Account.current.compose_email_enabled?
+      ApiTicketConstants::SOURCES | [TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]]
+    else
+      ApiTicketConstants::SOURCES
+    end
+  end
+
   def source_as_outbound_email?
     @outbound_email ||= (source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]) && Account.current.compose_email_enabled?
   end
@@ -287,6 +296,10 @@ class TicketValidation < ApiValidation
 
   def update_or_update_multiple?
     [:update, :bulk_update].include?(validation_context)
+  end
+
+  def update?
+    [:update].include?(validation_context)
   end
 
   def execute_scenario?

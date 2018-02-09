@@ -58,7 +58,6 @@ class ApiCompanyValidation < ApiValidation
                                  feature: :tam_default_fields } }, 
                             unless: :tam_default_fields_enabled?
 
-
   # Shouldn't be clubbed as allow nil may have some impact on custom fields validator.
   validates :custom_fields, data_type: { rules: Hash }
   validates :custom_fields, custom_field: { custom_fields: {

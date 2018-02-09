@@ -3,7 +3,7 @@
 		<div class="span6"><%= content_tag :h3, t(".new_title"),:class => "lead" %></div>
 		<% if current_user.privilege?(:view_reports) %>
 			<div class="span6">
-				<a href="/helpdesk/unresolved_tickets" data-pjax="#body-container" class="unresolved-ticket-link pull-right">Unresolved Tickets</a>
+				<a href="/helpdesk/unresolved_tickets" data-pjax="#body-container" class="unresolved-ticket-link pull-right"><%= I18n.t("helpdesk.dashboard.summary.unresolved_tickets", :default => "Unresolved Tickets") %></a>
 			</div>
 		<% end %>
 	</div>

@@ -65,7 +65,7 @@ class Helpdesk::DashboardController < ApplicationController
 
   def unresolved_tickets_data
     header_array = [I18n.t("unresolved_tickets.#{unresolved_ticket_headers[@group_by]}")]
-    header_array << [status_list_from_cache.values, "Total"]
+    header_array << [status_list_from_cache.values, I18n.t('total')]
     header_array.flatten!
     unresolved_hash = {:data => header_array, :content => fetch_unresolved_tickets }
 

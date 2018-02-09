@@ -16,7 +16,7 @@ module RabbitMq::Subscribers::Users::Iris
 
   def mq_iris_subscriber_properties(action)
     { 
-      :model_changes => iris_user_changes(action)
+      :model_changes => (self.is_a?(UserEmail) ? iris_user_email_changes : iris_user_changes(action))
     }
   end
 

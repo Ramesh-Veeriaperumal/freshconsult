@@ -17,7 +17,8 @@ if SH_ENABLED
         "Ryuken::FacebookRealtime",
         "Email::MailFetchWorker",
         "Email::EmailDeadLetterWorker",
-        "Email::FailedEmailFetchWorker"
+        "Email::FailedEmailFetchWorker",
+        "Ryuken::ChannelMessagePoller"
       ]
       
     end

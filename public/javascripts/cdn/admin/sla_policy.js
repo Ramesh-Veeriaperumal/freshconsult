@@ -1,10 +1,7 @@
 (function($) {
 	$(document).ready(function(){
 		var searchText;
-		$('[rel=sla_checkbox]').itoggle({
-			checkedLabel: 'On',
-			uncheckedLabel: 'Off'
-		});
+		$('[rel=sla_checkbox]').itoggle();
 
 		if(!is_default) {
 			lookupCompany = function(searchString, suggest) {

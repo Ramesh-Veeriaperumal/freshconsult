@@ -223,7 +223,7 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_status_priority_source_invalid
     Account.stubs(:current).returns(Account.first)
-    controller_params = { status: true, priority: true, source: '3', statuses: statuses, ticket_fields: [] }
+    controller_params = { status: true, priority: true, source: true, statuses: statuses, ticket_fields: [] }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)

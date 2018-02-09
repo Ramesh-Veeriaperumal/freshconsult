@@ -4,6 +4,8 @@ module ApiTicketConstants
   HASH_FIELDS = ['custom_fields'].freeze
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
 
+  IGNORE_PARAMS = %w(skip_close_notification parent_id parent_template_id child_template_ids related_ticket_ids).freeze | AttachmentConstants::CLOUD_FILE_FIELDS
+
   CREATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id internal_group_id priority
                      email phone twitter_id facebook_id requester_id name
                      responder_id internal_agent_id source status subject type product_id company_id
@@ -12,7 +14,7 @@ module ApiTicketConstants
   # removed source since update of ticket source should not be allowed. - Might break API v2
   UPDATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id internal_group_id priority
                      email phone twitter_id facebook_id requester_id name
-                     responder_id internal_agent_id status subject type product_id company_id
+                     responder_id internal_agent_id source status subject type product_id company_id
                      skip_close_notification).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   PARSE_TEMPLATE_FIELDS = [:template_text].freeze
   BULK_REPLY_FIELDS = [reply: ([:body, :from_email, :attachment_ids] | AttachmentConstants::CLOUD_FILE_FIELDS)].freeze

@@ -20,7 +20,7 @@ module Middleware
     end
 
     def check_asset_compilation 
-      @check = ASSETS_DIRECTORY_EXISTS ? :ok : (INFRA['PRIVATE_API'] ? :ok : nil) # Escape asset existence check for falcon apps
+      @check = ASSETS_DIRECTORY_EXISTS ? :ok : ((INFRA['PRIVATE_API'] || INFRA['API_LAYER']) ? :ok : nil) # Escape asset existence check for falcon apps
     end
   end
 end

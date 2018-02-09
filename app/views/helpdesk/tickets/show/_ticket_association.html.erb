@@ -3,7 +3,7 @@
   <div class="link_tracker_box related_box " id="link_tracker_box">
     <div class="row-fluid">
       <p class="related_ticket_label">
-        <small>Related ticket</small>
+        <small><%= t("ticket.link_tracker.rlt_ticket_plural") %></small>
         <a href="#unlink_from_tracker"
           data-action="unlink_from_tracker"
           id="unlink_asscociation"
@@ -104,7 +104,8 @@
       <% if ticket.child_tkts_count < 10 %>
         <span class="seperator"></span>
         <p class="tracker_label">
-          <a href="#" data-parent="tracker-label" data-placement = "bottomLeft" data-trigger="add_child" class="lnk_tkt_tracker_show_dropdown" id="add_child_tkt"  role="button" data-toggle="popover" data-dropdown="close" data-ticket-id="<%= ticket.display_id %>">Add Child </a>
+          <a href="#" data-parent="tracker-label" data-placement = "bottomLeft" data-trigger="add_child" class="lnk_tkt_tracker_show_dropdown" id="add_child_tkt"  role="button" data-toggle="popover" data-dropdown="close" data-ticket-id="<%= ticket.display_id %>">
+          <%= t("ticket.parent_child.add_child") %></a>
         </p>
       <% end %>
        <!-- view all related  modal -->
@@ -117,7 +118,7 @@
   <div class="link_tracker_box mb10 child_ticket_box" id="link_tracker_box">
     <div class="row-fluid">
       <span class="block mb5 parent">
-        Associated Parent
+        <%= t("ticket.link_tracker.associated_parent") %>
         <span class="pull-right show_parent">
           <%=h(assoc_parent_ticket.status_name.html_safe)%>
         </span>
@@ -180,4 +181,3 @@
      }
     }
 <% end %>
-
