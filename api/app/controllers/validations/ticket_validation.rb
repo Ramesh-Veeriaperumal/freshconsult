@@ -43,7 +43,7 @@ class TicketValidation < ApiValidation
   validates :template_text, data_type: { rules: String, required: true }, on: :parse_template
 
   validates :source, custom_inclusion: { in: proc { |x| x.sources }, ignore_string: :allow_string_param, detect_type: true, allow_nil: true }, on: :create
-  validates :source, custom_inclusion: { in: proc { |x| x.sources }, ignore_string: :allow_string_param, detect_type: true }, on: :update
+  validates :source, custom_inclusion: { in: proc { |x| x.sources }, ignore_string: :allow_string_param, detect_type: true }, unless: :private_api?, on: :update
   validates :requester_id, :email_config_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }
 
   validates :company_id, custom_absence: {
