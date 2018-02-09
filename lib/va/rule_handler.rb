@@ -42,7 +42,8 @@ class Va::RuleHandler
   
   def evaluate_rule(evaluate_on_value)
     #return evaluate_on_value.send(:casecmp, value)
-    return false if condition.operator.nil?
+    #making sure that condition.operator is not tampered, to prevent remote code execution security issue
+    return false if condition.operator.nil? || va_operator_list[condition.operator.to_sym].nil?
     send(condition.operator, evaluate_on_value)
   end
   
