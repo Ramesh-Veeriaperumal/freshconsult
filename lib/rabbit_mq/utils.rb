@@ -54,12 +54,16 @@ module RabbitMq::Utils
       RabbitMq::Keys.const_get("#{exchange.upcase}_SUBSCRIBERS").each { |f|
         begin
           valid = construct_message_for_subscriber(f, message, model, action)
-          key = generate_routing_key(key, valid)
         rescue => e
+          valid = false
+          Rails.logger.error e.backtrace.join("\n")
           Rails.logger.info "Publisher payload construct Error.. #{e.message}, #{message.to_json}"
+        ensure
+          key = generate_routing_key(key, valid)
         end
       }
       message["routing_key"] = key
+      message["pod"] = ChannelFrameworkConfig['pod']
       send_message(uuid, exchange, message.to_json, key)
     end
   end

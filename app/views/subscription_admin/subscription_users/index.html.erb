@@ -30,7 +30,7 @@
 		console.log(user_id);
 		var currentElement = jQuery('#admin_'+user_id);
 		var currentUrl = currentElement.data('url');
-		currentElement.text('Loading...');
+		currentElement.text("<%= t('index_tooltip_loading_msg')%>");
 		jQuery.ajax({
 			url: currentUrl,
 			type: "put",

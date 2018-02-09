@@ -3,6 +3,7 @@ class ProfilesController < ApplicationController
   include ModelControllerMethods  
   include UserHelperMethods  
   include FalconHelperMethods
+  include Integrations::ProfileHelper
    before_filter :require_user 
    before_filter :load_profile, :only => [:edit, :change_password]
    before_filter :set_profile, :filter_params, :only => [:update]
@@ -147,11 +148,45 @@ private
   end
 
   def check_apps
+    owners = ChannelIntegrations::Constants::OWNERS_LIST
+    redis_info = ChannelIntegrations::Constants::INTEGRATIONS_REDIS_INFO
+
     @installed_app = current_account.installed_applications.with_name(Integrations::Constants::APP_NAMES[:slack_v2]).first
     if @installed_app and @installed_app.configs_allow_slash_command
       @authorized = Integrations::UserCredential.where(:account_id => current_account.id, :installed_application_id => @installed_app.id,:user_id => current_user.id).first
       redirect_url =  "#{AppConfig['integrations_url'][Rails.env]}/auth/slack?origin=id%3D#{current_account.id}%26portal_id%3D#{current_portal.id}%26user_id%3D#{current_user.id}%26state_params%3Dagent&team=#{@installed_app.configs_team_id}"
       @slack_url =  redirect_url
+    end
+
+    @teams_app = get_installed_app(Integrations::Constants::APP_NAMES[:microsoft_teams])
+
+    if @teams_app
+      owner = owners[:microsoft_teams]
+      auth_waiting_key = get_channel_redis_key owner, redis_info[:auth_waiting_key]
+      teams_class_names = []
+      
+      general_keys = redis_info[:general_keys]
+      active_user_key =  get_channel_redis_key owner, general_keys[:active_users]
+      authorization_user_key = get_channel_redis_key owner, general_keys[:authorized_users]
+      is_teams_active = $redis_integrations.perform_redis_op("sismember", active_user_key, current_user.id)
+      is_fd_authorized = $redis_integrations.perform_redis_op("sismember", authorization_user_key, current_user.id)
+
+      teams_authorized = is_teams_active || is_fd_authorized
+      teams_class_names << 'btn-primary' if teams_authorized
+
+      auth_waiting = $redis_integrations.perform_redis_op('get', auth_waiting_key)
+      unless auth_waiting
+        flash[:notice] = is_fd_authorized ? t(:'integrations.microsoft_teams.bot_user_not_connected') : t(:'integrations.microsoft_teams.fd_user_not_connected') unless is_teams_active
+      else
+        teams_class_names << 'disabled'
+      end
+      
+      @teams_class_names = teams_class_names.join(" ")
+      @teams_authorized = teams_authorized
+      
+      origin_info = CGI.escape("id=#{current_account.id}&portal_id=#{current_portal.id}&user_id=#{current_user.id}&state_params=agent")
+      redirect_url =  "#{AppConfig['integrations_url'][Rails.env]}/auth/microsoft_teams?origin=#{origin_info}"
+      @teams_url =  redirect_url
     end
   end
 

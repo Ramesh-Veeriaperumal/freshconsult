@@ -42,6 +42,30 @@ class CompanyDelegator < BaseDelegator
     requester_update? ? company_form.custom_dropdown_widget_field_choices : company_form.custom_dropdown_field_choices
   end
 
+  def default_field_validations
+    {
+      health_score: { custom_inclusion: { in: proc { |x| x.valid_health_score_choices } } },
+      account_tier: { custom_inclusion: { in: proc { |x| x.valid_account_tier_choices } } },
+      industry: { custom_inclusion: { in: proc { |x| x.valid_industry_choices } } }
+    }
+  end
+
+  def required_default_fields
+    company_form.default_company_fields.select(&:required_for_agent)
+  end
+
+  def valid_health_score_choices
+    company_form.default_health_score_choices
+  end
+
+  def valid_account_tier_choices
+    company_form.default_account_tier_choices
+  end
+
+  def valid_industry_choices
+    company_form.default_industry_choices
+  end
+
   private
 
     def attachment_size

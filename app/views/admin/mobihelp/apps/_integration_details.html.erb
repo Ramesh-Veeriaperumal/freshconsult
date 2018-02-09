@@ -14,7 +14,7 @@
 </div>
 
 <div class="control-group">
-  <label class="control-label" >Initialization code</label>
+  <label class="control-label" ><%= t("admin.mobihelp.apps.form.initialization_code") %></label>
   <div class="controls code-view">
     <textarea id="mobiapp-Install" class="codetextarea mobihelpcode" readonly=true>
       <% if @app.platform ==  Mobihelp::App::PLATFORM_ID_BY_KEY[:android] %>

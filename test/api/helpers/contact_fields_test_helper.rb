@@ -18,21 +18,25 @@ module ContactFieldsTestHelper
       required_for_agents: expected_output[:required_for_agents] || contact_field.required_for_agent,
       required_for_customers: expected_output[:required_for_customers] || contact_field.required_in_portal,
       displayed_for_customers: expected_output[:displayed_for_customers] || contact_field.visible_in_portal,
-      #created_at: nil, #Will be fixed in next helpkit release
-      #updated_at: nil  #Will be fixed in next helpkit release
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
   end
 
   def contact_field_pattern(expected_output = {}, contact_field)
     result = contact_field_pattern_without_choices(expected_output, contact_field)
     unless contact_field.choices.blank?
-      result[:choices] = choice_list(contact_field)
+      if @private_api
+        result[:choices] = choice_list(contact_field)
+      else
+        result[:choices] = contact_field_choices(contact_field)
+      end
     end
     result
   end
 
   def private_contact_field_pattern(expected_output = {}, contact_field)
-    result = contact_field_pattern(expected_output, contact_field)
+    result = contact_field_pattern(expected_output, contact_field).except(:created_at, :updated_at)
     if contact_field.field_options.present? && contact_field.field_options.key?('widget_position')
       result[:widget_position] = contact_field.field_options['widget_position']
     end

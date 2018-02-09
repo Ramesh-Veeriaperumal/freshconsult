@@ -1,6 +1,7 @@
 require_relative '../test_helper'
 class ApiCompaniesControllerTest < ActionController::TestCase
   include CompaniesTestHelper
+  include CustomFieldsTestHelper
   include Redis::RedisKeys
   include Redis::OthersRedis
 

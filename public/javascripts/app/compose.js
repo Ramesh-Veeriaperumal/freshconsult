@@ -11,8 +11,10 @@ window.App.Tickets = window.App.Tickets || {};
 
     onVisit: function (data) {
       invokeRedactor('helpdesk_ticket_ticket_body_attributes_description_html', 'ticket');
-      jQuery.validator.messages.requester = "Please add a valid contact";
-      jQuery('#helpdesk_ticket_status').trigger("change");
+      $('#helpdesk_ticket_status').trigger("change");
+      $(document).on('ready', function() {
+        $.validator.messages.requester = I18n.t('validation.valid_contact');
+      });
 
       // NOTE - Moved all inline scripts in compose_email.html.erb to compose_email.js
       ComposeEmail.init();
@@ -20,7 +22,7 @@ window.App.Tickets = window.App.Tickets || {};
 		onLeave: function (data) {
       $('body').off('.compose');
       ComposeEmail.unbindEvents();
-      jQuery.validator.messages.requester = window.App.Tickets.Compose.original_requester_error_message;
+      $.validator.messages.requester = window.App.Tickets.Compose.original_requester_error_message;
 		}
 	};
 }(jQuery));

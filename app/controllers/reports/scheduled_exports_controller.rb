@@ -142,8 +142,8 @@ class Reports::ScheduledExportsController < ApplicationController
       operator_types = OPERATOR_TYPES.clone.keys.map{|k| [k, ['is']]}.to_h
 
       @op_types     = ActiveSupport::JSON.encode operator_types
-      @op_list      = ActiveSupport::JSON.encode OPERATOR_LIST
-      @op_label     = ActiveSupport::JSON.encode ALTERNATE_LABEL
+      @op_list      = ActiveSupport::JSON.encode va_operator_list
+      @op_label     = ActiveSupport::JSON.encode va_alternate_label
 
       @field_hash = {}
       @field_hash[:ticket]  = ticket_export_fields_without_customer || []

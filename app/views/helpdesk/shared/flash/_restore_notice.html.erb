@@ -1,5 +1,6 @@
 <% if @items.size == 1 and @items.first.respond_to?("name") and !@items.first.name.blank? %>
-	<%= "#{@items.first.name} was restored" %>
-<% else %>
-	<%= pluralize(@items.length, "#{ @cname } was", "#{ @cname.pluralize } were") %> restored
+	<%= t('common_js_translations.restore_notice.singular', :type => @items.first.name) %>
+<% else %>	
+	<%= t("common_js_translations.restore_notice.#{ (@items.length == 1) ? 'singular' : 'plural' }",
+			:type => "#{@items.length} #{@cname}") %>
 <% end %>

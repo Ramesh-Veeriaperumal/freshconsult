@@ -1,0 +1,24 @@
+<script type='text/javascript'>
+  (function(d, w, c) {
+    if (!d.getElementById("spd-busns-spt")) {
+      var n = d.getElementsByTagName('script')[0],
+      s = d.createElement('script');
+      var loaded = false;
+      s.id = "spd-busns-spt";
+      s.async = "async";
+      s.src = '<%= BOT_CONFIG[:widget_code_src] %>'
+      s.setAttribute("data-prdct-hash", "<%= BOT_CONFIG[:freshdesk_product_id] %>"); 
+      s.setAttribute("data-ext-client-id", "<%= current_bot.external_id %>");
+      s.setAttribute("data-env", "<%= 'int' unless Rails.env.production? %>");
+      if (c) {
+        s.onreadystatechange = s.onload = function() {
+          if (!loaded) {
+            c();
+          }
+          loaded = true;
+        };
+      }
+      n.parentNode.insertBefore(s, n);
+    }
+  })(document, window);
+</script>

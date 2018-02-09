@@ -24,3 +24,4 @@ aws:
   - <%= SQS[:email_dead_letter_queue] %>
   - <%= SQS[:scheduled_ticket_export_complete] %>
   - <%= SQS[:scheduled_export_payload_enricher_queue] %>
+  - <%= SQS[:channel_framework_services] %>

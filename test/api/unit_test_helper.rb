@@ -5,10 +5,15 @@ require File.expand_path('../../../test/api/helpers/simple_cov_setup', __FILE__)
 def load_environment(file_name)
   puts 'Switching ON API Layer'
   changed = change_api_layer(file_name, true)
+  private_changed = false
+  if $PROGRAM_NAME =~ /public_api_test_suite.rb/
+    private_changed = change_private_api_layer(file_name, false)
+  end
   require File.expand_path('../../../config/environment', __FILE__)
   ensure
     puts 'Switching OFF API Layer'
     change_api_layer(file_name, false) if changed
+    change_private_api_layer(file_name, true) if private_changed
 end
 
 def change_api_layer(file_name, new_value)
@@ -25,6 +30,19 @@ def change_api_layer(file_name, new_value)
     # To write changes to the file, use:
     File.open(file_name, 'w') { |file| file.puts new_contents }
     return true
+  end
+end
+
+def change_private_api_layer(file_name, new_value)
+  text = File.read(file_name)
+  pattern = new_value ? /PRIVATE_API: false/ : /PRIVATE_API: true/
+  if (new_value && text =~ /PRIVATE_API: true/) || (new_value.is_a?(FalseClass) && text =~ /PRIVATE_API: false/)
+    new_value ? puts('Private API Layer already switched ON') : puts('Private API Layer already switched OFF')
+    return true
+  else
+    new_contents = text.gsub(pattern, "PRIVATE_API: #{new_value}")
+    File.open(file_name, 'w') { |file| file.puts new_contents }
+    return false
   end
 end
 

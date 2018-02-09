@@ -12,4 +12,5 @@ module AgentConstants
   AGENT_CHANNELS = { ticket_assignment: 'ticket_assignment', chat: 'live_chat', phone: 'freshfone' }.freeze
   ALLOWED_ONLY_PARAMS = %w(available available_count).freeze
   FIELD_MAPPINGS = { :"user.primary_email.email" => :email, :"user.base" => :email }.freeze
+  IGNORE_PARAMS = %w(shortcuts_enabled ticket_assignment).freeze
 end.freeze

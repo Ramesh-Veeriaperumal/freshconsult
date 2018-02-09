@@ -13,6 +13,10 @@ module CompanyConstants
   DEFAULT_DROPDOWN_FIELDS = %i(health_score account_tier industry)
   VALIDATABLE_DELEGATOR_ATTRIBUTES = %w(custom_field health_score account_tier industry).freeze
 
+  FIELD_MAPPINGS = { :"company_domains.base" => :domains, :"company_domains.domain" => :domains }.freeze
+  DEFAULT_DROPDOWN_FIELDS = %i(health_score account_tier industry)
+  VALIDATABLE_DELEGATOR_ATTRIBUTES = %w(custom_field health_score account_tier industry).freeze
+
   AVATAR_EXT = %w(.jpg .jpeg .jpe .png).freeze
   AVATAR_CONTENT = {
     '.jpg' => 'image/jpeg',

@@ -13,7 +13,7 @@
     <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
     <%= f.hidden_field :private , :value => "0" %>
 
-    <%= f.submit "Send review request", :class => "btn btn-link" %>
+    <%= f.submit t("ticket.send_review_request"), :class => "btn btn-link" %>
 
   <% end %>
 </div>

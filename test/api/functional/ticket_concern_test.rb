@@ -96,9 +96,10 @@ class FakeControllerTest < ActionController::TestCase
     group.save
     status = create_custom_status
 
-    t = Helpdesk::Ticket.new(email: Faker::Internet.email, :status => status.status_id, internal_group_id: group.id, internal_agent_id: @agent.id)
+    t = Helpdesk::Ticket.new(email: Faker::Internet.email, :status => status.status_id)
     t.save
-
+    t.update_column(:internal_group_id, group.id)
+    t.update_column(:internal_agent_id, @agent.id)
     Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
 
     status.group_ids = [group.id]
@@ -152,16 +153,16 @@ class FakeControllerTest < ActionController::TestCase
     group.save
     status = create_custom_status
 
-    t = Helpdesk::Ticket.new(email: Faker::Internet.email, :status => status.status_id, internal_group_id: group.id)
+    t = Helpdesk::Ticket.new(email: Faker::Internet.email, :status => status.status_id)
     t.save
+    t.update_column(:internal_group_id, group.id)
 
     Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
 
     status.group_ids = [group.id]
     status.save
-
-    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
-    User.any_instance.stubs(:group_ticket_permission).returns(true).at_most_once
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+    User.any_instance.stubs(:group_ticket_permission).returns(true)
     Helpdesk::Ticket.any_instance.stubs(:responder_id).returns(nil)
     Helpdesk::Ticket.any_instance.stubs(:requester_id).returns(nil)
     actual = @controller.send(:verify_ticket_permission, @agent, t)

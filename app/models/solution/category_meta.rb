@@ -134,4 +134,10 @@ class Solution::CategoryMeta < ActiveRecord::Base
 			:visible_folders => visible_folders
 		}
 	end
+
+	def portal_ids=(ids)
+		@model_changes = { portal_ids: [self.portal_ids, ids.map(&:to_i)]}
+		super
+	end
+
 end

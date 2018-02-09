@@ -84,7 +84,7 @@
 		<% current_subscription = Subscription.find(current_account.subscription.id) %>
 		<% downgrade_confirm = ( (@subscription.subscription_plan_id < current_subscription.subscription_plan_id) or (current_subscription.classic? and @subscription.sprout?) ) ? true : false %>
 		<% submit_text = @subscription.state == 'trial' ? t('enter_payment') : @subscription.non_free_agents <= @subscription.free_agents ? t('activate_free_plan') : t('make_payment') %>
-		<input type="submit" class="btn btn-flat billing-cancel" value="Cancel"/>
+		<input type="submit" class="btn btn-flat billing-cancel" value="<%= t('cancel') %>" />
 		<%= submit_tag(submit_text, :class => "btn btn-flat billing-submit submit-disable", 
 					:id => "commit", :name => "commit", "data-loading-text" => t('please_wait')) %>
 					

@@ -1,5 +1,9 @@
-/bootstrap:
-  $ref: ./bootstrap.yaml
+/bootstrap/me:
+  $ref: ./bootstrap/me.yaml
+/bootstrap/account:
+  $ref: ./bootstrap/account.yaml
+/bootstrap/agents_groups:
+  $ref: ./bootstrap/agents_groups.yaml
 
 
 /tickets:

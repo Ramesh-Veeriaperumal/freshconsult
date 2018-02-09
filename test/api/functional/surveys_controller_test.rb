@@ -84,12 +84,12 @@ class SurveysControllerTest < ActionController::TestCase
   end
 
   def test_index_without_feature
-    Account.any_instance.stubs(:features?).returns(false).once
+    Account.any_instance.stubs(:enabled_features_list).returns([])
     get :index, controller_params
     assert_response 403
     match_json(request_error_pattern(:require_feature, feature: 'Surveys'))
   ensure
-    Account.any_instance.unstub(:features?)
+    Account.any_instance.unstub(:enabled_features_list)
   end
 
   def test_index_with_invalid_filter

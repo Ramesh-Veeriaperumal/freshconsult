@@ -35,6 +35,7 @@
   <%= javascript_tag do %>
     // Localizing ticket fields js elements
     customFields = <%= @fields_json.html_safe %>;
+    tamDropdownFields = <%= Company::DEFAULT_DROPDOWN_FIELDS.map do |x| x.to_s end.to_json.html_safe %>;
     tf_lang = {
       untitled:           '<%= t("ticket_fields.untitled") %>',
       firstChoice:       '<%= t("ticket_fields.first_choice") %>',

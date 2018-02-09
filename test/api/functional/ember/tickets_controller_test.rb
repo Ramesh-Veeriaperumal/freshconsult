@@ -1634,7 +1634,7 @@ module Ember
       t = create_ticket
       get :show, controller_params(version: 'private', id: t.display_id, include: 'requester')
       assert_response 200
-      match_json(ticket_show_pattern(ticket, nil, true))
+      match_json(ticket_show_pattern(t, nil, true))
     end
 
     def test_show_with_restricted_requester_info
@@ -1642,7 +1642,7 @@ module Ember
       remove_privilege(User.current, :view_contacts)
       get :show, controller_params(version: 'private', id: t.display_id, include: 'requester')
       assert_response 200
-      match_json(ticket_show_pattern(ticket, nil, true))
+      match_json(ticket_show_pattern(t, nil, true))
       add_privilege(User.current, :view_contacts)
     end
 
@@ -1650,7 +1650,7 @@ module Ember
       t = create_ticket(requester_id: add_test_agent(@account, role: Role.find_by_name('Agent').id).id)
       get :show, controller_params(version: 'private', id: t.display_id, include: 'requester')
       assert_response 200
-      match_json(ticket_show_pattern(ticket, nil, true))
+      match_json(ticket_show_pattern(t, nil, true))
     end
 
     def test_show_with_requester
@@ -1662,7 +1662,7 @@ module Ember
       t = create_ticket(requester_id: user.id)
       get :show, controller_params(version: 'private', id: t.display_id, include: 'requester')
       assert_response 200
-      match_json(ticket_show_pattern(ticket, nil, true))
+      match_json(ticket_show_pattern(t, nil, true))
       assert_equal user_tags.size, t.requester.tags.size
       tag_field.update_attributes(field_options: nil)
     end
@@ -1720,22 +1720,16 @@ module Ember
       assert_equal ({}), json['meta']
     end
 
-    def test_update_ticket_source
-      params_hash = update_ticket_params_hash.merge(source: 3)
-      put :update, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
-      assert_response 400
-      match_json([bad_request_error_pattern(:source, :invalid_field)])
-    end
-
     def test_update_closure_status_without_notification
-      t = ticket
+      t = create_ticket
       ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
       ticket_field.update_attribute(:required_for_closure, true)
       update_params = { custom_fields: { 'test_custom_text' => 'Hello' }, status: 5, skip_close_notification: true }
       params_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(update_params)
       put :update, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 200
-      match_json(ticket_show_pattern(t.reload))
+      t = Account.current.tickets.find_by_display_id(t.display_id)
+      match_json(ticket_show_pattern(t))
       assert_equal 5, t.status
     ensure
       ticket_field.update_attribute(:required_for_closure, false)
@@ -1941,7 +1935,7 @@ module Ember
 
     def test_update_with_company_id
       Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
-      t = ticket
+      t = create_ticket
       sample_requester = get_user_with_multiple_companies
       t.update_attributes(requester: sample_requester)
       company_id = sample_requester.user_companies.where(default: false).first.company.id
@@ -2381,11 +2375,14 @@ module Ember
     end
 
     def test_suppression_list_alert_without_params
+      ticket = create_ticket
+      @controller.stubs(:private_api?).returns(true)
       @controller.stubs(:private_email_failure?).returns(true)
       post :suppression_list_alert, controller_params({ version: 'private', id: ticket.display_id })
       assert_response 400
       ensure
         @controller.unstub(:private_email_failure?)
+        @controller.unstub(:private_api?)
     end
 
      def test_suppression_list_alert_with_invalid_ticket_id

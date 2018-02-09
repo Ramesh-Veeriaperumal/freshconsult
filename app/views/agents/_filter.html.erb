@@ -1,4 +1,4 @@
-<ul id="agentTab" class="tabs nav-tabs">  
+<ul id="agentTab" class="tabs nav-tabs">
   <%= agent_list_tabs %>
 </ul>
 <div class="row-fluid">
@@ -13,14 +13,14 @@
   <% end %>
   <% if (params[:state]!= "deleted" ) %>
     <div class="span8 pull-right sort_list" align="right">
-      <ul class="alpha_sort_list">    
+      <ul class="alpha_sort_list">
         <li class="first <%= 'active' if params[:letter].blank? %>">
-          <%= link_to 'All', :letter => '', :state => params[:state] || "active" %>
+          <%= link_to t("social.streams.index.all"), :letter => '', :state => params[:state] || "active" %>
         </li>
-        <% "A".upto("Z") do |l| -%>     
+        <% "A".upto("Z") do |l| -%>
          <li class="<%= 'active' if params[:letter] == l %>">
           <%= link_to l, :letter => l, :state => params[:state] || "active" %>
-         </li>  
+         </li>
         <% end %>
       </ul>
     </div>

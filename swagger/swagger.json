@@ -9,9 +9,9 @@
     "application/json"
   ],
   "paths": {
-    "/bootstrap": {
+    "/bootstrap/me": {
       "get": {
-        "summary": "API Bootstrap",
+        "summary": "Agent",
         "tags": [
           "Bootstrap"
         ],
@@ -19,7 +19,39 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/bootstrap"
+              "$ref": "#/definitions/bootstrap_me"
+            }
+          }
+        }
+      }
+    },
+    "/bootstrap/account": {
+      "get": {
+        "summary": "Account",
+        "tags": [
+          "Bootstrap"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/bootstrap_account"
+            }
+          }
+        }
+      }
+    },
+    "/bootstrap/agents_groups": {
+      "get": {
+        "summary": "Agent list and Group List",
+        "tags": [
+          "Bootstrap"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successsss",
+            "schema": {
+              "$ref": "#/definitions/bootstrap_agents_groups"
             }
           }
         }
@@ -5000,78 +5032,158 @@
     "custom_field": {
       "type": "object"
     },
-    "bootstrap": {
+    "bootstrap_agents_groups": {
       "type": "object",
       "properties": {
         "data": {
           "type": "object",
           "properties": {
-            "agent": {
-              "allOf": [
-                {
-                  "$ref": "#/definitions/agent"
+            "agents": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "contacts": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "group_ids": {
+                    "type": "array"
+                  }
+                }
+              }
+            },
+            "groups": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "agent_ids": {
+                    "type": "array"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "bootstrap_me": {
+      "type": "object",
+      "properties": {
+        "agent": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/agent"
+            },
+            {
+              "properties": {
+                "last_active_at": {
+                  "type": "string",
+                  "format": "date-time"
                 },
-                {
+                "points": {
+                  "type": "integer"
+                },
+                "scoreboard_level_id": {
+                  "type": "integer"
+                },
+                "assumable_agents": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "is_assumed_user": {
+                  "type": "boolean"
+                },
+                "next_level_id": {
+                  "type": "object"
+                },
+                "abilities": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "collision_user_hash": {
+                  "type": "string"
+                },
+                "autorefresh_user_hash": {
+                  "type": "string"
+                },
+                "preferences": {
+                  "type": "object",
                   "properties": {
-                    "last_active_at": {
+                    "shortcuts_enabled": {
+                      "type": "boolean"
+                    },
+                    "shortcuts_mapping": {
+                      "type": "array"
+                    },
+                    "notification_timestamp": {
                       "type": "string",
                       "format": "date-time"
                     },
-                    "points": {
-                      "type": "integer"
-                    },
-                    "scoreboard_level_id": {
-                      "type": "integer"
-                    },
-                    "assumable_agents": {
-                      "type": "array",
-                      "items": {
-                        "type": "integer"
-                      }
-                    },
-                    "is_assumed_user": {
+                    "show_onBoarding": {
                       "type": "boolean"
                     },
-                    "next_level_id": {
-                      "type": "object"
+                    "falcon_ui": {
+                      "type": "boolean"
                     },
-                    "abilities": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "collision_user_hash": {
+                    "freshchat_token": {
                       "type": "string"
-                    },
-                    "autorefresh_user_hash": {
-                      "type": "string"
-                    },
-                    "preferences": {
-                      "type": "object",
-                      "properties": {
-                        "shortcuts_enabled": {
-                          "type": "boolean"
-                        },
-                        "shortcuts_mapping": {
-                          "type": "array"
-                        },
-                        "notification_timestamp": {
-                          "type": "string",
-                          "format": "date-time"
-                        },
-                        "show_onBoarding": {
-                          "type": "boolean"
-                        },
-                        "freshchat_token": {
-                          "type": "string"
-                        }
-                      }
                     }
                   }
                 }
-              ]
+              }
+            }
+          ]
+        },
+        "meta": {
+          "type": "object",
+          "properties": {
+            "csrf_token": {
+              "type": "string"
             },
+            "collision_url": {
+              "type": "string"
+            },
+            "autorefresh_url": {
+              "type": "string"
+            },
+            "freshid_url": {
+              "type": "string"
+            },
+            "livechat_token": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "bootstrap_account": {
+      "type": "object",
+      "properties": {
+        "bootstrap": {
+          "type": "object",
+          "properties": {
             "account": {
               "type": "object",
               "properties": {
@@ -5134,6 +5246,9 @@
                     },
                     "subscription_plan": {
                       "type": "string"
+                    },
+                    "trial_days": {
+                      "type": "integer"
                     }
                   }
                 },
@@ -5154,22 +5269,11 @@
                     }
                   }
                 },
-                "agents": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "integer"
-                    },
-                    "name": {
-                      "type": "string"
-                    },
-                    "email": {
-                      "type": "string"
-                    },
-                    "group_ids": {
-                      "type": "array"
-                    }
-                  }
+                "ssl_enabled": {
+                  "type": "boolean"
+                },
+                "verified": {
+                  "type": "boolean"
                 },
                 "collaboration": {
                   "type": "object",
@@ -5191,23 +5295,63 @@
                     }
                   }
                 },
-                "groups": {
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "social_options": {
                   "type": "object",
                   "properties": {
-                    "id": {
-                      "type": "integer"
+                    "handles_associated": {
+                      "type": "boolean"
                     },
-                    "name": {
-                      "type": "string"
-                    },
-                    "agent_ids": {
-                      "type": "array"
+                    "social_enabled": {
+                      "type": "boolean"
                     }
+                  }
+                }
+              }
+            },
+            "portal": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "host": {
+                  "type": "string"
+                },
+                "default": {
+                  "type": "boolean"
+                },
+                "product_id": {
+                  "type": "integer"
+                },
+                "ssl_enabled": {
+                  "type": "boolean"
+                },
+                "solution_category_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
                   }
                 },
                 "created_at": {
                   "type": "string",
                   "format": "date-time"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "discussion_category_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
                 }
               }
             },
@@ -5232,23 +5376,6 @@
                   }
                 }
               }
-            }
-          }
-        },
-        "meta": {
-          "type": "object",
-          "properties": {
-            "csrf_token": {
-              "type": "string"
-            },
-            "collision_url": {
-              "type": "string"
-            },
-            "autorefresh_url": {
-              "type": "string"
-            },
-            "freshid_url": {
-              "type": "string"
             }
           }
         }

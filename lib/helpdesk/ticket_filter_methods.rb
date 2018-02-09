@@ -23,7 +23,7 @@ module Helpdesk::TicketFilterMethods
       end
       selected_item = selected_from_default.blank? ?
                       (default_views.first) :
-                      (selected_from_default.map { |i| { :id => i[0], :name => i[1], :default  =>  true} }.first)
+                      (selected_from_default.map { |i| { :id => i[0], :name => I18n.t("helpdesk.tickets.views.#{i[0]}"), :default  =>  true} }.first)
     end
 
     top_view_html = drop_down_views(top_views_array, selected_item, "leftViewMenu", (selected.blank? or params[:unsaved_view])).to_s 

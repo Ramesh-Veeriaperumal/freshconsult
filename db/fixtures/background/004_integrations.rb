@@ -1152,4 +1152,32 @@ if Integrations::Application.count == 0
     }
     s.application_type = "shared_ownership"
   end
+
+  microsoft_teams =  Integrations::Application.seed(:name) do |s|
+    s.name = "microsoft_teams"
+    s.display_name = "integrations.microsoft_teams.label"
+    s.description = "integrations.microsoft_teams.desc"
+    s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
+    s.listing_order = 51
+    s.options = {:direct_install => true,
+                 :auth_url => "/integrations/teams/oauth",
+                 :after_create => {:method => "add_teams", :clazz => "IntegrationServices::Services::MicrosoftTeamsService"},
+                 :after_destroy => {:method => "remove_teams", :clazz => "IntegrationServices::Services::MicrosoftTeamsService"}
+                }
+    s.application_type = "microsoft_teams"
+  end
+
+  google_hangout_chat =  Integrations::Application.seed(:name) do |s|
+    s.name = 'google_hangout_chat'
+    s.display_name = 'integrations.google_hangout_chat.label'
+    s.description = 'integrations.google_hangout_chat.desc'
+    s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
+    s.listing_order = 52
+    s.options = {:direct_install => true,
+                 :auth_url => "/integrations/google_hangout_chat/oauth",
+                 :after_create => {:method => 'add_chat', :clazz => 'IntegrationServices::Services::GoogleHangoutChatService'},
+                 :after_destroy => {:method => 'remove_chat', :clazz => 'IntegrationServices::Services::GoogleHangoutChatService'}
+    }
+    s.application_type = 'google_hangout_chat'
+  end
 end

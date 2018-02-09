@@ -85,10 +85,10 @@ class TicketFilterValidation < FilterValidation
   def validate_include
     @include_array = include.split(',').map!(&:strip)
     feature_based_include_array = @include_array & TicketFilterConstants::FEATURES_KEYS_BY_SIDE_LOAD_KEY.keys
-    if @include_array.blank? || (@include_array - ApiTicketConstants::SIDE_LOADING).present?
+    if @include_array.blank? || (@include_array - allowed_side_load_params).present?
       errors[:include] << :not_included
-      (self.error_options ||= {}).merge!(include: { list: ApiTicketConstants::SIDE_LOADING.join(', ') })
-    elsif feature_based_include_array.present?
+      (self.error_options ||= {}).merge!(include: { list: allowed_side_load_params.join(', ') })
+    elsif feature_based_include_array.present? && private_api?
       accessible_side_loadings = TicketsFilter.accessible_filters(feature_based_include_array, TicketFilterConstants::FEATURES_KEYS_BY_SIDE_LOAD_KEY)
       unauthorised_side_loadings = feature_based_include_array - accessible_side_loadings
       if unauthorised_side_loadings.present?
@@ -96,6 +96,10 @@ class TicketFilterValidation < FilterValidation
         (self.error_options ||= {}).merge!(include: { feature: TicketFilterConstants::FEATURES_NAMES_BY_SIDE_LOAD_KEY[unauthorised_side_loadings.first] })
       end
     end
+  end
+
+  def allowed_side_load_params
+    private_api? ? ApiTicketConstants::SIDE_LOADING : (ApiTicketConstants::SIDE_LOADING - ['survey'])
   end
 
   def query_hash_or_filter_presence

@@ -1,15 +1,15 @@
 <div id="timespent_container" class="timespent_container">
 	<div class="context_info">
 		<div class="group_by">
-			Total time spent by resolved tickets split by 
+			<%= t("helpdesk_reports.resolved_tickets_split_by") %>
 			<select name="group_by" class='select2 dropdown'>
 			</select>
-			<span rel="suffix">in each group</span>
+			<span rel="suffix"><%= t("helpdesk_reports.in_each_group") %></span>
 		</div>
 		<div class="controls">
-			Show:
-			<input type="radio" name="type" id="total_hours" value="total" checked/><label for="total_hours"> Total time</label>
-			<input type="radio" name="type" id="average" value="average" /><label for="average"> Average time</label>
+			<%= t("helpdesk_reports.show") %>
+			<input type="radio" name="type" id="total_hours" value="total" checked/><label for="total_hours"><%= t("helpdesk_reports.total_time") %></label>
+			<input type="radio" name="type" id="average" value="average" /><label for="average"><%= t("helpdesk_reports.average_time") %></label>
 		</div>
 		<div class="clear"></div>
 	</div>

@@ -20,7 +20,7 @@
 <%= content_tag(:div, 
 		content_tag(:div, 
 			header_content.html_safe +
-			text_field_tag(:admin_search, "", :class => "as-input", :placeholder => "Search admin settings") + 
+			text_field_tag(:admin_search, "", :class => "as-input", :placeholder => t('admin.home.index.search_admin')) + 
 			text_field_tag(:admin_search_hint, "", :class => "as-hint", :disabled => true) + 
 			link_to("&times;".html_safe, "#", :class => "as-clear") +
 			content_tag(:div, "", :id => "suggestions-container", :class => "as-suggestions-container"),

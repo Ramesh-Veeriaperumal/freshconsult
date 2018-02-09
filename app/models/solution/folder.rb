@@ -5,7 +5,11 @@ class Solution::Folder < ActiveRecord::Base
   include Cache::Memcache::Mobihelp::Solution
   include Solution::Activities
 
-  concerned_with :associations
+  concerned_with :associations, :presenter
+
+  publishable
+
+  before_destroy :save_deleted_folder_info
 
   validates_presence_of :name
   validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id], :if => "!solution_folder_meta.new_record?"
@@ -94,6 +98,13 @@ class Solution::Folder < ActiveRecord::Base
 
   def to_param
     parent_id
+  end
+
+  def save_deleted_folder_info
+    @deleted_model_info = {
+      id: parent_id,
+      account_id: account_id
+    }  
   end
 
   private

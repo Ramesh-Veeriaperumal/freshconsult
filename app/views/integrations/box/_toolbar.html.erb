@@ -10,7 +10,7 @@
   <div id="box-settings-popover" data-container-class="box-settings-popover">
     <%= "<b>#{user_credential.auth_info['email'] if user_credential}</b>".html_safe %><br>
     <span id='box-change-account-link' onclick='performOAuth()'>
-      <%= link_to "Change", '#' %>
+      <%= link_to t("integrations.applications.box.change"), '#' %>
     </span>
   </div>
 </div>

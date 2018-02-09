@@ -72,7 +72,7 @@ module Users
     end
     
     def deliver_agent_invitation!(portal=nil)
-      portal ||= account.main_portal
+      portal = Portal.current || account.main_portal_from_cache
       reply_email = portal.main_portal ? account.default_friendly_email : portal.friendly_email 
       email_config = portal.main_portal ? account.primary_email_config : portal.primary_email_config
       
@@ -147,7 +147,7 @@ module Users
     def generate_activation_url(portal)
       url = ""
       if agent? && Account.current.freshid_enabled?
-        redirect_url = support_login_url({ host: account.full_domain, protocol: account.url_protocol })
+        redirect_url = support_login_url({ host: host(portal), protocol: url_protocol })
         url = Freshid::User.generate_activation_url(redirect_url, self.freshid_authorization.uid) if self.freshid_authorization.present?
         Rails.logger.error "FRESH ID Activation url is empty :: uid = #{self.id}, auth = #{self.freshid_authorization.inspect}" if url.blank?
       else

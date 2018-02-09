@@ -5,7 +5,9 @@ no_of_pages = (@ticket_count.to_f/per_page).ceil
 options = {
 	:per_page => per_page,
 	:current_page => current_page,
-	:total_pages => no_of_pages
+	:total_pages => no_of_pages,
+	:previous_label => "&laquo; #{I18n.t('previous')}",
+	:next_label => "#{I18n.t('next')} &raquo;"
 }
 options = options.symbolize_keys.reverse_merge WillPaginate::ViewHelpers.pagination_options
 if no_of_pages > 1

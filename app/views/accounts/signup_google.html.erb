@@ -75,10 +75,10 @@ cancel_url = "https://www.google.com/a/cpanel/"+@account.google_domain
 
 	<div class="ui-form" id="signup-form">
 	<h3 class="title">
-		Sign up!
+		<%= t("accounts.signup_google.sign_up") %>
 	</h3>
 	<div class="intro info-data">
-		Create a new Freshdesk account or <a href="javascript:associate_existing_domain()">Link your existing Freshdesk account.</a>
+		Create a new Freshdesk account or <a href="javascript:associate_existing_domain()"><%= t("accounts.signup_google.link_existing_account") %></a>
 	</div>	
 		<%= form_for @account, :url => {:action=> :create_account_google} , :html => { :method => "put", :id => "google_sign_up_form" } do |f| %>
 			<%= render partial: '/shared/error_messages', collection: @account.errors.full_messages %>
@@ -97,28 +97,28 @@ cancel_url = "https://www.google.com/a/cpanel/"+@account.google_domain
 			
 		  <ul>
 				<li>
-					<label for="account_name">Company Name</label>
+					<label for="account_name"><%= t("google_signup.signup_google.company_name") %></label>
 					<input type="text" size="24" name="account[name]" id="account_name" class="text required" value="<%=@account.name%>">
 				</li>
 				<li>
-					<label for="account_sub_domain">Helpdesk URL</label>
-					<div class="info-data">i.e for "http://apple.freshdesk.com" enter "apple"</div>
-					<input type="text" value="<%=@account.domain%>" size="24" name="account[domain]" id="account_domain" class="text very_small required"><strong class="big-text">.freshdesk.com</strong>
+					<label for="account_sub_domain"><%= t("google_signup.signup_google.helpdesk_url") %></label>
+					<div class="info-data"><%= t("accounts.signup_google.sample_url") %></div>
+					<input type="text" value="<%=@account.domain%>" size="24" name="account[domain]" id="account_domain" class="text very_small required"><strong class="big-text"><%= t("google_signup.signup_google.freshdesk_dot_com") %></strong>
 				</li>
 				<li>
-					<label for="user_email">Phone no.</label>
+					<label for="user_email"><%= t("google_signup.signup_google.phone_no") %></label>
 			      	<input type="text" size="24" name="user[phone]" id="user_phone" class="text" value="<%=@user.phone%>">
 				</li>
 				<li class="button-container">
-					<%= submit_tag "Create my account", :class => "uiButton floatl" %>					
+					<%= submit_tag t("google_signup.signup_google.create_my_account"), :class => "uiButton floatl" %>					
 					<%= link_to t("cancel"), cancel_url , :class => "uiButton" %>
 				</li>
 			  <li>
 			  		<span class="seperator"></span>
 						<div class="help_text">
-								By clicking <strong>Create my account</strong> you agree to the 
-								<a href="http://freshdesk.com/terms.html" target="_blank">terms of Service</a> and 
-								<a href="http://freshdesk.com/privacy.html" target="_blank">privacy policy</a>
+								By clicking <strong><%= t("google_signup.signup_google.create_my_account") %></strong> you agree to the 
+								<a href="http://freshdesk.com/terms.html" target="_blank"><%= t("accounts.signup_google.terms_of_service") %></a> and 
+								<a href="http://freshdesk.com/privacy.html" target="_blank"><%= t("accounts.signup_google.privacy_policy") %></a>
 						</div>
 			  </li>
 			</ul>	  
@@ -126,9 +126,9 @@ cancel_url = "https://www.google.com/a/cpanel/"+@account.google_domain
 	</div>
 	
 	<div class="ui-form" id="change-sub-domain" style="display:none;"> 
-		<h3 class="title">Existing Freshdesk account</h3>
+		<h3 class="title"><%= t("accounts.signup_google.existing_account") %></h3>
 		<div class="intro info-data">
-			 Link your existing Freshdesk account or <a href="javascript:new_account()">Create a new Freshdesk account.</a>
+			 Link your existing Freshdesk account or <a href="javascript:new_account()"><%= t("accounts.signup_google.create_account") %></a>
 		</div>
 		 <%= form_for @account, :url => {:action=> :associate_google_account} , :html => { :method => "put" } do |f| %>
 			<%= render partial: '/shared/error_messages', collection: @account.errors.full_messages %>
@@ -139,13 +139,13 @@ cancel_url = "https://www.google.com/a/cpanel/"+@account.google_domain
 				<input type="hidden" value="<%=@account.google_domain%>" name="account[google_domain]" id="account_google_domain" class="textfield" />
 				<ul>
 					<li>
-						<label for="account_sub_domain">Your existing Freshdesk URL</label>
-						<div class="info-data">i.e for "http://apple.freshdesk.com" enter "apple"</div>
+						<label for="account_sub_domain"><%= t("accounts.signup_google.existing_url") %></label>
+						<div class="info-data"><%= t("accounts.signup_google.sample_url") %></div>
 						<input type="text"  size="24" name="account[sub_domain]" id="account_sub_domain" class="text very_small required">
-						<strong class="big-text">.freshdesk.com</strong>
+						<strong class="big-text"><%= t("google_signup.signup_google.freshdesk_dot_com") %></strong>
 					</li>				
 					<li class="button-container">
-						<%= submit_tag "Submit", :class => "uiButton floatl" %>
+						<%= submit_tag t("google_signup.signup_google.submit"), :class => "uiButton floatl" %>
 						<%= link_to t("cancel"), cancel_url , :class => "uiButton" %>
 					</li>
 				</ul>

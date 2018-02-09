@@ -1,6 +1,10 @@
 class AccountDecorator < ApiDecorator
   include Social::Util
   def to_hash
+    simple_hash.merge(agents_groups_hash)
+  end
+
+  def simple_hash
     ret_hash = {
       ref_id: record.id,
       full_domain: record.full_domain,
@@ -10,12 +14,10 @@ class AccountDecorator < ApiDecorator
       date_format: record.account_additional_settings.date_format,
       language: record.language,
       features: record.enabled_features_list,
-      launched: launch_party_features,
+      launched: record.all_launched_features,
       subscription: subscription_hash,
       settings: settings_hash,
       ssl_enabled: record.ssl_enabled?,
-      agents: agents_hash,
-      groups: groups_hash,
       verified: record.verified?,
       created_at: record.created_at.try(:utc)
     }
@@ -23,11 +25,25 @@ class AccountDecorator < ApiDecorator
     ret_hash[:social_options] = social_options_hash if record.features?(:twitter) || record.basic_twitter_enabled?
     ret_hash
   end
- 
+
+  def agents_groups_hash
+    {
+      agents: agents_hash,
+      groups: groups_hash
+    }
+  end
+
   private
 
-    def launch_party_features
-      LaunchParty.new.launched_for(record)
+    def date_format
+      date_format = Account::DATEFORMATS[record.account_additional_settings.date_format]
+      Account::DATA_DATEFORMATS[date_format]
+    end
+
+    def features_list
+      ((record.features.map(&:to_sym) - Account::BITMAP_FEATURES) + record.features_list).uniq
+      # Negating Bitmap features from the DB features,
+      # so as to not cause false positives when DB write is turned OFF for that feature.
     end
 
     def subscription_hash

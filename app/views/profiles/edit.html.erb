@@ -52,6 +52,15 @@
       </a>
     </div>
   <% end %>
+    <% if @teams_url %>
+      <div class="slack_auth_cont clearfix">
+        <h4 class="title"><%= t('integrations.microsoft_teams.teams_prof_label') %></h4>
+        <p>
+          <%= t('integrations.microsoft_teams.teams_connect_desc') %>
+        </p>
+        <a class="btn pull-right <%= @teams_class_names%>" onclick="<%= onclick_strategy(@teams_url) %>"><%= @teams_authorized ? t('integrations.microsoft_teams.reauth_btn') : t('integrations.microsoft_teams.auth_btn')%></a>
+      </div>
+    <% end %>
   <% end %>
 <% end%>
 

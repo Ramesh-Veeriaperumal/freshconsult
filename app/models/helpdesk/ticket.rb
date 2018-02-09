@@ -44,7 +44,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   serialize :cc_email
 
-  concerned_with :associations, :validations, :callbacks, :riak, :s3, :mysql,
+  concerned_with :associations, :validations, :presenter, :callbacks, :riak, :s3, :mysql,
                  :attributes, :rabbitmq, :permissions, :esv2_methods, :count_es_methods,
                  :round_robin_methods, :association_methods, :skill_based_round_robin,
                  :sla_calculation_methods

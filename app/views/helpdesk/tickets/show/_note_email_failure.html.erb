@@ -3,7 +3,9 @@
     <% unless to_email_failures.nil? %>
       <% to_email_failures.each_with_index do |(email, error), index| %>
         <div class="email-failure-list-item">
-          <div class="to-emails <%= index != 0 ? 'hide' : "" %>"> To: </div>
+          <div class="to-emails <%= index != 0 ? 'hide' : "" %>">
+            <%= t("helpdesk.tickets.show.reply_form.to") %>
+          </div>
           <div class="error-details">
             <div class="errored-email">
               <%= email %>:
@@ -24,7 +26,9 @@
     <% unless cc_email_failures.nil? %>
       <% cc_email_failures.each_with_index do |(email, error),index| %>
         <div class="email-failure-list-item">
-          <div class="to-emails <%= index != 0 ? 'hide' : "" %>"> Cc: </div>
+          <div class="to-emails <%= index != 0 ? 'hide' : "" %>">
+          <%= t("helpdesk.tickets.show.reply_form.cc") %>
+          </div>
           <div class="error-details">
             <div class="errored-email">
               <%= email %>:

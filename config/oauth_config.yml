@@ -86,6 +86,12 @@ development:
  salesforce_v2:
    consumer_token:  3MVG9y6x0357HledW5ceTn9ZT16SJfkv9A5rd60nQVZoY4em5Pnpfx5ghPc.Y8KfMefmzdKWgYNXc9jLYBnlz
    consumer_secret: 6487752873062448676
+ microsoft_teams:
+   consumer_token: f4db5703-88f5-4db1-ad18-ce960d35a7ef
+   consumer_secret: DdUBGab3Jqf38keGDKShsVU
+ google_hangout_chat:
+   consumer_token: 339129576090-t5laj8ambvi4266e0h3u5rfjc65hr67t.apps.googleusercontent.com
+   consumer_secret: Cmc8UF5d4uZO5a3bX1-uwC-9
 
 defaults: &defaults
  salesforce:
@@ -120,6 +126,12 @@ defaults: &defaults
  salesforce_v2:
    consumer_token:  3MVG9y6x0357HledW5ceTn9ZT16SJfkv9A5rd60nQVZoY4em5Pnpfx5ghPc.Y8KfMefmzdKWgYNXc9jLYBnlz
    consumer_secret: 6487752873062448676
+ microsoft_teams:
+   consumer_token: f4db5703-88f5-4db1-ad18-ce960d35a7ef
+   consumer_secret: DdUBGab3Jqf38keGDKShsVU
+ google_hangout_chat:
+   consumer_token: 339129576090-t5laj8ambvi4266e0h3u5rfjc65hr67t.apps.googleusercontent.com
+   consumer_secret: Cmc8UF5d4uZO5a3bX1-uwC-9
 
 test:
  <<: *defaults

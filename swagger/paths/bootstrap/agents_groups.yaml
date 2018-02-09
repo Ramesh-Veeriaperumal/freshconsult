@@ -1,0 +1,8 @@
+get:
+  summary: Agent list and Group List
+  tags: [Bootstrap]
+  responses:
+    200:
+      description: Successsss
+      schema:
+        $ref: '#/definitions/bootstrap_agents_groups'

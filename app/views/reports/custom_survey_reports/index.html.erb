@@ -121,13 +121,13 @@
 			  	<li>
 			  		<span><%=t('reports.survey_reports.main.group')%> : </span>
 			  	
-			  		<%= select_tag :survey_report_group_list , options_for_select(@groups.collect{ |g| [g[:name], g[:id]]}.insert(0,["All","g"])) , :onchange => "SurveyGroup.change(this)", :class => 'select2 group-select' %>
+			  		<%= select_tag :survey_report_group_list , options_for_select(@groups.collect{ |g| [g[:name], g[:id]]}.insert(0,[t("topic.filter_0"),"g"])) , :onchange => "SurveyGroup.change(this)", :class => 'select2 group-select' %>
 			  	</li>
 			  	<% if !@hide_agent_reporting %>
 			  	<li>
 			  		<span><%=t('reports.survey_reports.main.agent')%> : </span>
 			  	
-			  		<%= select_tag :survey_report_agent_list , options_for_select(@agents.collect{ |a| [a[:name],a[:id]]}.insert(0,["All","a"])) , :onchange => "SurveyAgent.change(this)", :class => 'select2' %>
+			  		<%= select_tag :survey_report_agent_list , options_for_select(@agents.collect{ |a| [a[:name],a[:id]]}.insert(0,[t("topic.filter_0"),"a"])) , :onchange => "SurveyAgent.change(this)", :class => 'select2' %>
 			  	</li>
 			  	<% end %>
 		  	</ul>

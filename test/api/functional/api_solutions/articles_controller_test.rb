@@ -2,6 +2,7 @@ require_relative '../../test_helper'
 module ApiSolutions
   class ArticlesControllerTest < ActionController::TestCase
     include SolutionsTestHelper
+    include AttachmentsTestHelper
 
     def setup
       super
@@ -585,7 +586,8 @@ module ApiSolutions
     end
 
     def test_create_with_invalid_attachment_size
-      Rack::Test::UploadedFile.any_instance.stubs(:size).returns(20_000_000)
+      invalid_attachment_limit = @account.attachment_limit + 2
+      Rack::Test::UploadedFile.any_instance.stubs(:size).returns(invalid_attachment_limit.megabytes)
       file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
       folder_meta = get_folder_meta
       title = Faker::Name.name
@@ -596,7 +598,7 @@ module ApiSolutions
       post :create, construct_params({ id: folder_meta.id }, params)
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 400
-      match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
+      match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{invalid_attachment_limit} MB")])
     end
 
     def test_update_with_attachment
@@ -616,19 +618,23 @@ module ApiSolutions
     end
 
     def test_update_with_invalid_attachment_size
-      file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
-      sample_article = get_article
+      attachment = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id)
+      invalid_attachment_limit = @account.attachment_limit + 2
+      Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(invalid_attachment_limit.megabytes)
+      Helpdesk::Attachment.any_instance.stubs(:size).returns(invalid_attachment_limit.megabytes)
+      sample_article = get_article_without_draft
       paragraph = Faker::Lorem.paragraph
       params_hash  = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: @agent.id }
-      params = params_hash.merge('attachments' => [file])
+      params = params_hash.merge('attachments' => [attachment])
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-      attachments = [mock('attachment')]
-      attachments.stubs(:sum).returns(20_000_000)
-      Solution::Article.any_instance.stubs(:attachments).returns(attachments)
+      Solution::Article.any_instance.stubs(:attachments).returns([attachment])
       put :update, construct_params({ id: sample_article.parent_id }, params)
       DataTypeValidator.any_instance.unstub(:valid_type?)
+      Helpdesk::Attachment.any_instance.unstub(:content_file_size)
+      Helpdesk::Attachment.any_instance.unstub(:size)
+      Solution::Article.any_instance.unstub(:attachments)
       assert_response 400
-      match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
+      match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{2 * invalid_attachment_limit} MB")])
     end
 
     def test_update_with_invalid_attachment_params_format

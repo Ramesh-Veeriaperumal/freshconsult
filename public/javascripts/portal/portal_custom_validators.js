@@ -8,9 +8,9 @@ var validation_messages = validation_messages || '';
 var requiredMessage=validation_messages ? validation_messages.required : "This field is required."; 
 $.validator.addMethod("required_redactor", function(value, element, param) {
   if ($(element).data('redactor')){
-  	return $(element).data('redactor').isNotEmpty();	
+    return $(element).data('redactor').isNotEmpty();  
   }else{
-  	return ($(element).val() != "");
+    return ($(element).val() != "");
   }
 }, requiredMessage);
 $.validator.addClassRules("required_redactor", { required_redactor : true });
@@ -42,11 +42,11 @@ $.validator.addMethod("select_atleast_one", function(value,element,options){
 $.validator.addClassRules("select_atleast_one", { select_atleast_one: ['.select_atleast_one'] });
 
 $('body').on("change", "[data-select-one]", function(){
-	var _form = this.form,
+  var _form = this.form,
       _validator = jQuery(_form).data("validator"),
       _textarea = jQuery(this).parent().find(".select_atleast_one");
 
-	_validator.element(_textarea);
+  _validator.element(_textarea);
 });
 
 $.validator.addMethod("two_decimal",function(value, element) {

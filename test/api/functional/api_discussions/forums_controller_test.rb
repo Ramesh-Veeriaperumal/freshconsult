@@ -124,9 +124,9 @@ module ApiDiscussions
       fc = fc_obj
       forum = f_obj
       customer = company
-      put :update, construct_params({ id: forum.id }, forum_visibility: 4, company_ids: [customer.id, 67, 78])
+      put :update, construct_params({ id: forum.id }, forum_visibility: 4, company_ids: [customer.id, 123456, 123457])
       assert_response 400
-      match_json([bad_request_error_pattern('company_ids', :invalid_list, list: '67, 78')])
+      match_json([bad_request_error_pattern('company_ids', :invalid_list, list: '123456, 123457')])
     end
 
     def test_update_with_customer_id
@@ -253,9 +253,9 @@ module ApiDiscussions
       fc = fc_obj
       customer = company
       post :create, construct_params({ id: fc.id }, description: 'desc', forum_visibility: 4, forum_type: 1,
-                                                    name: 'customer test', company_ids: [customer.id, 67, 78])
+                                                    name: 'customer test', company_ids: [customer.id, 123456, 123457])
       assert_response 400
-      match_json([bad_request_error_pattern('company_ids', :invalid_list, list: '67, 78')])
+      match_json([bad_request_error_pattern('company_ids', :invalid_list, list: '123456, 123457')])
     end
 
     def test_create_with_customer_id

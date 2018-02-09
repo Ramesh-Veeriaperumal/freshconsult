@@ -25,7 +25,7 @@ status_sync_opts = [
 		</div>
 	  </label>
 	  <div id="github-settings" class="fields">
-		<h5> Repositories </h5>
+		<h5><%= t("integrations.applications.github_settings.repositories") %></h5>
         <div id="repositories" style="min-width:200px">
 		  <%= select_tag "configs[repositories]",
 		  options_for_select(@repositories, @selected_repositories), { :multiple => true, :class => 'required select2-fields int-select', :id => 'configs-repositories', "data-disable-field" =>  "", "multiple" => "multiple", "data-placeholder" => "Select Repositories", :rel => "select-choice"} %>
@@ -33,21 +33,21 @@ status_sync_opts = [
         <span class="seperator"></span>
 
         <div id = 'github_issue_type_settings'>
-          <%= check_box(:configs, 'map_type_to_label', :checked => (inputs["map_type_to_label"] || '').to_bool) %>
-          <label for="configs_map_type_to_label"> Map Freshdesk ticket types to GitHub issue labels</label>
+          <%= check_box(:configs, 'map_type_to_label', t("integrations.applications.github_settings.checked") => (inputs["map_type_to_label"] || '').to_bool) %>
+          <label for="configs_map_type_to_label"><%= t("integrations.applications.github_settings.map_freshdesk_ticket") %></label>
           <br/>
           <%= check_box(:configs, 'can_set_milestone', :checked => (inputs["can_set_milestone"] || '').to_bool) %>
-          <label for="configs_can_set_milestone"> Allow GitHub issues to be assigned milestones</label>
+          <label for="configs_can_set_milestone"><%= t("integrations.applications.github_settings.allow_github_issues") %></label>
           <span class="seperator"></span>
-          <h5> Status Sync </h5>
-          <label> When a GitHub issue is closed set Freshdesk ticket status to </label>
+          <h5><%= t("integrations.applications.github_settings.status_sync") %></h5>
+          <label><%= t("integrations.applications.github_settings.when_a_github_issue_is_closed") %></label>
           <%= select(:configs, 'github_status_sync', status_sync_opts, { :selected => inputs['github_status_sync'] }) %>
           <span class="seperator"></span>
-          <h5>Comment Sync</h5>
-          <label> Add a comment in the GitHub issue, when a response is added in Freshdesk</label>
-          <%= check_box(:configs, 'freshdesk_comment_sync', :checked => (inputs["freshdesk_comment_sync"] || '').to_bool, "rel" => "toggle",  "data-checked-label" => "ON", "data-unchecked-label" => "OFF" )  %>
-          <label> Add a private note in the Freshdesk ticket, when a comment is added in GitHub</label>
-          <%= check_box(:configs, 'github_comment_sync', :checked => (inputs["github_comment_sync"] || '').to_bool, "rel" => "toggle",  "data-checked-label" => "ON", "data-unchecked-label" => "OFF" )  %>
+          <h5><%= t("integrations.applications.github_settings.comment_sync") %></h5>
+          <label><%= t("integrations.applications.github_settings.add_a_comment_in_the_github") %></label>
+          <%= check_box(:configs, 'freshdesk_comment_sync', :checked => (inputs["freshdesk_comment_sync"] || '').to_bool, "rel" => "toggle")  %>
+          <label><%= t("integrations.applications.github_settings.add_a_private_note") %></label>
+          <%= check_box(:configs, 'github_comment_sync', :checked => (inputs["github_comment_sync"] || '').to_bool, "rel" => "toggle")  %>
           <%# select(:configs, 'github_comment_sync', github_comment_sync_opts, { :selected => inputs['github_comment_sync'] } (inputs["freshdesk_comment_sync"] || '').to_bool) %>
         </div>
 	</li>

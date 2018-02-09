@@ -13,14 +13,18 @@
   <td class="name">
       <h3>
         <%= link_to(h(issue.title) + " (##{issue.id})", issue) %>
-        <span class="subtitle">(<%= distance_of_time_in_words_to_now(issue.updated_at) %> ago)</span>
+        <span class="subtitle">(<%= distance_of_time_in_words_to_now(issue.updated_at) %>
+          <%= t("helpdesk.issue.ago") %>
+        </span>
       </h3>
       <%= h(truncate(issue.description, :length => 200)) %>
   </td>
 
   <td class="assign">
       <% if issue.freshness == :new %>
-        <button class="accept-button" action="<%= assign_helpdesk_issue_url(issue) %>">Take It</button> 
+        <button class="accept-button" action="<%= assign_helpdesk_issue_url(issue) %>">
+          <%= t("helpdesk.issue.take_it") %>
+        </button> 
       <% else %>
         <span>Assigned to <%= issue.owner.name %></span>
       <% end %>
