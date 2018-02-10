@@ -10,10 +10,15 @@ if Rails.env.test?
   Aws.config[:stub_responses] = true
 end
 
+################################ AWS SDK v1 config ################################
+
 dev_params = (Rails.env.development? || Rails.env.test?) ? {
   sqs_endpoint: 'localhost',
-  sqs_port: 4568
+  sqs_port: 4576,
+  s3_force_path_style: true,
+  ssl_verify_peer: false
 } : {}
+
 AWS.config({
   access_key_id: S3_CONFIG[:access_key_id],
   secret_access_key: S3_CONFIG[:secret_access_key],
@@ -21,14 +26,22 @@ AWS.config({
   s3_signature_version: :v4
 }.merge(dev_params))
 
+################################ AWS SDK v2 config ################################
+
+s3_dev_params = (Rails.env.development? || Rails.env.test?) ? {
+  endpoint: 'https://localhost:4572',  
+  force_path_style: true,
+  ssl_verify_peer: false
+} : {}
+
 Aws.config.update(region: S3_CONFIG[:region])
 
-$s3_client = Aws::S3::Client.new(
+$s3_client = Aws::S3::Client.new({
   region: S3_CONFIG[:region],
   access_key_id: S3_CONFIG[:access_key_id],
   secret_access_key: S3_CONFIG[:secret_access_key],
   signature_version: 'v4'
-)
+}.merge(s3_dev_params))
 
 $sqs_euc = AWS::SQS.new(
   access_key_id: S3_CONFIG[:access_key_id_euc],

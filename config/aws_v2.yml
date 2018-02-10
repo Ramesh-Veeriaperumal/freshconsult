@@ -1,19 +1,31 @@
 --- 
 :development: 
   :dynamo: 
-    :endpoint: http://localhost:4569
+    :endpoint: https://localhost:4569
     :access_key_id: dummy
     :secret_access_key: dummy
   :sqs: 
-    :endpoint: http://localhost:4568
+    :endpoint: https://localhost:4576
     :access_key_id: dummy
     :secret_access_key: dummy
+    :ssl_verify_peer: false
+  :s3:
+    :endpoint: https://localhost:4572
+    :access_key_id: dummy
+    :secret_access_key: dummy
+    :ssl_verify_peer: false
 :test:
   :dynamo: 
-    :endpoint: http://localhost:4569
+    :endpoint: https://localhost:4569
     :access_key_id: dummy
     :secret_access_key: dummy
   :sqs: 
-    :endpoint: http://localhost:4568
+    :endpoint: https://localhost:4576
     :access_key_id: dummy
     :secret_access_key: dummy
+    :ssl_verify_peer: false
+  :s3:
+    :endpoint: https://localhost:4572
+    :access_key_id: dummy
+    :secret_access_key: dummy
+    :ssl_verify_peer: false

@@ -318,27 +318,6 @@ module Ember
       end
 
       def test_bulk_link_to_deleted_tracker
-        test_bulk_link_for_tracker_with(deleted: true)
-      end
-
-      def test_bulk_link_for_tracker_with(attribute = { spam: true })
-        enable_adv_ticketing([:link_tickets]) do
-          tracker    = create_tracker_ticket
-          tracker_id = tracker.display_id
-          tracker.update_attributes(attribute)
-          ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
-          Sidekiq::Testing.inline! do
-            put :bulk_link, construct_params({ version: 'private', ids: ticket_ids, tracker_id: tracker_id }, false)
-          end
-          assert_response 400
-          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
-          tickets.each do |ticket|
-            assert !ticket.related_ticket?
-          end
-        end
-      end
-
-      def test_bulk_link_to_deleted_tracker
         enable_adv_ticketing([:link_tickets]) do
           tracker    = create_tracker_ticket
           tracker_id = tracker.display_id

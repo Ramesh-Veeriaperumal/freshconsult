@@ -1,0 +1,12 @@
+#!/bin/bash
+for service in redis32 mysql56 memcached14 localaws
+do 
+    docker start $service
+done
+docker container list
+echo "
+Hang in there. Setting up localstack
+
+" 
+bundle exec rake localstack:create 
+
