@@ -2,6 +2,8 @@ class Va::Handlers::NestedField < Va::RuleHandler
 
   def match_nested_rules(evaluate_on)
     to_ret = false
+    #making sure that condition.operator is not tampered, to prevent remote code execution security issue
+    return to_ret if condition.operator.nil? || va_operator_list[condition.operator.to_sym].nil?
     if evaluate_on.respond_to?(condition.key)
       #return evaluate_on.send(filter.key).send(operator_fn(@operator), @values)
       to_ret = send(condition.operator, evaluate_on.send(condition.key), value)
