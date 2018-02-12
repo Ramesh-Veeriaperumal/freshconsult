@@ -8,5 +8,5 @@
     <div class="caller-company ellipsis"><%=link_to(h(requester.company.name), company_path(requester.company), :class => "item_info", :'data-pjax' => "#body-container" )%></div>
   <% end %>
   <%= requester_namecard_render(requester).html_safe %>
-  <a class="cti-caller-more-details-toggle condensed hide" href="#">more</a>
+  <a class="cti-caller-more-details-toggle condensed hide" href="#"> t("more") </a>
 </div>

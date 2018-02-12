@@ -39,6 +39,9 @@ module UsersTestHelper
                                     :delta => 1,
                                     :language => "en",
                                     :role_ids => options[:role_ids] || ["#{role_id}"])
+    if options[:unique_external_id]
+      new_user.unique_external_id = options[:unique_external_id]
+    end
     new_user.agent = new_agent
     new_user.privileges = options[:privileges] || account.roles.find_by_id(role_id).privileges
     v = new_user.save!
@@ -77,6 +80,9 @@ module UsersTestHelper
                                   language: 'en',
                                   active: options[:active] || false,
                                   tags: build_tags(options[:tags]))
+    if options[:unique_external_id]
+      new_user.unique_external_id = options[:unique_external_id]
+    end
     new_user.custom_field = options[:custom_fields] if options.key?(:custom_fields)
     new_user.save
     new_user.reload

@@ -116,6 +116,10 @@ class CustomersController < ApplicationController # Will be Deprecated. Use Comp
     def es_scoper(per_page)
       order_by = (params[:order_by] == "updated_at") ? :updated_at : :name
       order_type = (params[:order_type] == "desc") ? 'desc' : 'asc'
+      if params[:crm_company_name].present?
+        company = current_account.companies.find_by_name(params[:crm_company_name])
+        return company.present? ? [company] : []
+      end
       Customer.es_filter(current_account.id,params[:letter],(params[:page] || 1),order_by, order_type, per_page, request.try(:uuid))
     end
 

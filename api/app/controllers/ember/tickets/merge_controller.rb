@@ -35,6 +35,10 @@ module Ember
           (params[cname].present? && params.require(cname).permit(*ApiTicketConstants::MERGE_PARAMS)) || {}
         end
 
+        def params_ticket_id
+          params[:primary_id]
+        end
+
         def load_source_tickets
           @source_tickets = scoper.where(display_id: params[cname][:ticket_ids])
         end

@@ -38,6 +38,8 @@ module UsersTestHelper
                             contact.user_emails.where(primary_role: false).map(&:email)
     result[:other_companies] = expected_output[:other_companies] ||
                                get_other_companies(contact) if Account.current.multiple_user_companies_enabled?
+
+    result[:unique_external_id] = expected_output[:unique_external_id] || contact.unique_external_id if Account.current.unique_contact_identifier_enabled?
     result[:deleted] = true if contact.deleted
     result
   end
@@ -148,7 +150,7 @@ module UsersTestHelper
   end
 
   def index_contact_pattern_with_unique_external_id(contact)
-    keys = [:avatar, :tags, :other_emails, :deleted]
+    keys = [:avatar, :tags, :other_emails, :deleted, :view_all_tickets, :other_companies]
     keys -= [:deleted] if contact.deleted
     unique_external_id_contact_pattern(contact).except(*keys)
   end

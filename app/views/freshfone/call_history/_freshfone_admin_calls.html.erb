@@ -22,7 +22,7 @@
 	<div class="row-fluid">
 			<div class="call-history-left-filter slide-filter" id="call-history-edit">
 				<span data-dismiss="slider" class="muted pull-right filter-close">×</span> 
-				<div class="lead">Filter</div>
+				<div class="lead"><%= t("livechat.filter") %></div>
 				<%= render :partial => 'call_history_sub_header' %>
 			</div>
 			<div class="call-history-page slide-content" id="call-history-page">
@@ -59,14 +59,14 @@
 				  </span>
 		        </span>
 		        <% if current_account.features?(:freshfone_call_metrics) %>
-		        	<p class='export_help_text pull-right'>More metrics available in export</p>
+		        	<p class='export_help_text pull-right'><%= t("freshfone.more_metrics_available_in_export") %></p>
 		       	<% end %>
 		        <!-- Call History Export End -->
 							<!-- report style end-->
 						</div>
 						<div class="filter-subheader">
 							<div class="vertical-alignment" >
-								<a class="btn btn-primary call-history-metrics" href="#call-history-edit" data-parent="#call-history-page" id="sliding">Edit</a>
+								<a class="btn btn-primary call-history-metrics" href="#call-history-edit" data-parent="#call-history-page" id="sliding"><%= t("livechat.edit") %></a>
 							</div>
 							<div class="filter-container">
 								<ul class='inline' id="filterdetails"></ul>	

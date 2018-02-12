@@ -29,8 +29,10 @@ module UsersHelper
                                     :user_role => options[:role],
                                     :delta => 1,
                                     :language => "en",
-                                    :role_ids => options[:role_ids],
-                                    :unique_external_id => options[:unique_external_id])
+                                    :role_ids => options[:role_ids])
+    if options[:unique_external_id]
+      new_user.unique_external_id = options[:unique_external_id]
+    end
     new_user.agent = new_agent
     new_user.privileges = options[:privileges] || account.roles.find_by_id(options[:role_ids].first).privileges
     v = new_user.save!
@@ -57,8 +59,10 @@ module UsersHelper
                                     :active => options.key?(:active) ? options[:active] : 1,
                                     :company_id => options[:customer_id] || nil,
                                     :language => "en",
-                                    :tag_names => options[:tags],
-                                    :unique_external_id => options[:unique_external_id])
+                                    :tag_names => options[:tags])
+    if options[:unique_external_id]
+      new_user.unique_external_id = options[:unique_external_id]
+    end
     new_user.custom_field = options[:custom_fields] if options.key?(:custom_fields)
     new_user.avatar = options[:avatar] if options[:avatar]
     new_user.save!

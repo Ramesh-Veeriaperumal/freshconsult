@@ -6,16 +6,15 @@
     <div class='phone'>
       <div class='ficon-ff-phone fsize-18 ff-icon'></div>
     </div>
-    <b class='transfer_failed_msg'>No agents attended the call.</b>
+    <b class='transfer_failed_msg'><%= t("freshfone.no_agent_call") %></b>
     <% if current_account.features?(:freshfone_conference) %>
-      <a class='btn btn-success call-reconnect' id='transfer_reconnect'>Resume call with customer</a>
+      <a class='btn btn-success call-reconnect' id='transfer_reconnect'><%= t("freshfone.resume_customer_call") %></a>
     <%end%>
   </div>
 
   <!-- Menu -->
   <div class="transfer-call-header">
-    <div type="button" id='transfer-icon-menu' class="<%='btn btn-default dropdown-toggle' unless freshfone_trial_states?%>
-      transfer-dropdown-button"
+    <div type="button" id='transfer-icon-menu' class="<%='btn btn-default dropdown-toggle ' unless freshfone_trial_states?%>transfer-dropdown-button"
     <%unless freshfone_trial_states? %> 
       data-toggle="dropdown"
     <%end%>

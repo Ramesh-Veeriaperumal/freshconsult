@@ -5,7 +5,7 @@
   </div>
 
   <% unless article.attachments.empty? %>
-    <h5>Related Files</h5>
+    <h5><%= t("support.shared.related_files") %></h5>
     <ul class="attachments">
       <% for a in article.attachments %>
         <li>

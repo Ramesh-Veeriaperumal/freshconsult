@@ -1,7 +1,7 @@
 <div data-gs-x="<%= x %>" data-gs-y="<%= y %>" data-gs-width="<%= width %>" data-gs-height="<%= height %>" class="grid-stack-item widget">
 	<div class="grid-stack-item-content widget-inner content">
 			<div class="metric-head">
-					<div class="widget-metric-title pull-left">Unresolved</div>
+					<div class="widget-metric-title pull-left"><%= t("helpdesk.realtime_dashboard.unresolved") %></div>
 					<div class="controls pull-right">
 						<i class="ficon-pencil icons tooltip fsize-16" data-placement="above" data-original-title="Edit" twipsy-content-set="true"
 						href="#widget-unresolved-edit" 
@@ -28,20 +28,20 @@
 			<div class="widget-edit">
 			      <div class="form">
 			      	 <div class="form-row">
-			            <label>Title</label>
+			            <label><%= t("helpdesk.realtime_dashboard.title") %></label>
 			            <div class="field">
 			               <input class="title" type="text" />
 			            </div>
 			         </div>
 			         <div class="form-row">
-				         <div class="message">Critical Limits</div>
+				         <div class="message"><%= t("helpdesk.realtime_dashboard.critical_limits") %></div>
 				     </div>
 			         <div class="form-row">
-			         		<label class="text-right">Agents</label>
+			         		<label class="text-right"><%= t("agents") %></label>
             				<div class="field">
             					<input type="text">
             				</div>
-            				<label class="text-right">Supervisors</label>
+            				<label class="text-right"><%= t("helpdesk.realtime_dashboard.supervisors") %></label>
             				<div class="field">
             					<input type="text">
             				</div>

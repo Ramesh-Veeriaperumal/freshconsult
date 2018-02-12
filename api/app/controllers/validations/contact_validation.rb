@@ -72,11 +72,28 @@ class ContactValidation < ApiValidation
     other_companies && !other_companies.empty? && company_id.nil? && errors[:company_id].blank?
   }
 
-  validates :other_companies, data_type: { rules: Array }, array: {
-    data_type: { rules: Hash },
-    allow_nil: true,
-    hash: -> { other_companies_format }
-  }
+  validates :other_companies,
+              data_type: { rules: Array },
+              array: {
+                data_type: { rules: Hash },
+                allow_nil: true,
+                hash: {
+                  company_id: {
+                    custom_numericality: {
+                      ignore_string: :allow_string_param,
+                      greater_than: 0,
+                      only_integer: true,
+                      required: true
+                    }
+                  },
+                  view_all_tickets: {
+                    data_type: {
+                      rules: 'Boolean',
+                      ignore_string: :allow_string_param
+                    }
+                  }
+                }
+  }, unless: -> { private_api? }
 
   validates :other_companies, custom_length: {
     maximum: ContactConstants::MAX_OTHER_COMPANIES_COUNT,
@@ -137,25 +154,6 @@ class ContactValidation < ApiValidation
     else
       contact_form.default_contact_fields.select(&:required_for_agent)
     end
-  end
-
-  def other_companies_format
-    {
-      company_id: {
-        custom_numericality: {
-          ignore_string: :allow_string_param,
-          greater_than: 0,
-          only_integer: true,
-          required: true
-        }
-      },
-      view_all_tickets: {
-        data_type: {
-          rules: 'Boolean',
-          ignore_string: :allow_string_param
-        }
-      }
-    }
   end
 
   def view_all_tickets_present?

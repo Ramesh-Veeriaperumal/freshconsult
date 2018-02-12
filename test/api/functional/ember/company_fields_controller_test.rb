@@ -6,6 +6,10 @@ module Ember
       { company_field: params }
     end
 
+    def initial_setup
+      @private_api = true
+    end
+
     def test_index_without_privilege
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false).at_most_once
       get :index, controller_params(version: 'private')

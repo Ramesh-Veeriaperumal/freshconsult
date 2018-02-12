@@ -41,7 +41,7 @@ response_hash = {
 }
 requester_hash = @item.requester
 stats_hash = @item.stats
-company_hash = @item.company
+company_hash = @item.company_hash
 conversations_hash = @item.conversations
 response_hash.merge!(deleted: @item.deleted) if @item.deleted
 response_hash.merge!(associated_tickets_list: @item.associates) if @item.associated_ticket?

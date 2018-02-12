@@ -8,7 +8,7 @@
 
 		    <!--metrics-->
 		    <div class="row-fluid  report-summary">
-		      <h3 class="header-lead"><span>Summary </span></h3>
+		      <h3 class="header-lead"><span><%= t("helpdesk_reports.summary") %></span></h3>
 		      <div class="row-fluid report-summary-wrapper">
 		        <div class="report-summary-header">
 		          <ul class="inline">
@@ -119,35 +119,35 @@
 		      </div>
 		    </div>
 		    <div class="row-fluid">
-		      <h3 class="header-lead"><span>Ticket by source</span></h3>
-		      <div id="source_freshdesk_single_stacked_bar_chart" class="single-stacked-bar span12" style="height:150px;"><div class="noinfo-bar">No data to display!</div></div>
+		      <h3 class="header-lead"><span><%= t("helpdesk_reports.ticket_by_source") %></span></h3>
+		      <div id="source_freshdesk_single_stacked_bar_chart" class="single-stacked-bar span12" style="height:150px;"><div class="noinfo-bar"><%= t("adv_reports.no_data_to_display_msg") %></div></div>
 		    </div> 
 		    <div class="row-fluid">
 		      <div class="span6">
-		        <h3 class="header-lead"><span>Tickets By  Type</span></h3>
-		        <div id="ticket_type_freshdesk_chart" class="chart-container"><div class="noinfo">No data to display!</div></div>
+		        <h3 class="header-lead"><span><%= t("helpdesk_reports.ticket_by_type") %></span></h3>
+		        <div id="ticket_type_freshdesk_chart" class="chart-container"><div class="noinfo"><%= t("adv_reports.no_data_to_display_msg") %></div></div>
 		      </div> 
 		      <div class="span6">
-		        <h3 class="header-lead"><span>Tickets By  Priority</span></h3>
-		        <div id="priority_freshdesk_chart" class="chart-container"><div class="noinfo">No data to display!</div></div>
+		        <h3 class="header-lead"><span><%= t("helpdesk_reports.ticket_by_priority") %></span></h3>
+		        <div id="priority_freshdesk_chart" class="chart-container"><div class="noinfo"><%= t("adv_reports.no_data_to_display_msg") %></div></div>
 		      </div>
 
 		      <% @activity_data_hash.fetch('custom_fields').each do |label,pie_chart| %>
 		      <div class="span6">
 		        <h3 id="<%=label%>_title" class="header-lead"><span><%= t('reports.pie_chart_title_prefix') %>&nbsp;</span></h3>
 		        <div id="<%=label%>_freshdesk_chart" class="chart-container">
-		          <div class="noinfo">No data to display!</div>
+		          <div class="noinfo"><%= t("adv_reports.no_data_to_display_msg") %></div>
 		        </div>
 		      </div>
 		      <script type="text/javascript">
 		        jQuery(document).ready(function() {
 		          <%unless pie_chart.empty?%>
-		          var ticketByType<%=label%> = new pieChart({renderTo:'<%=label%>_freshdesk_chart'
+		          var ticketByType<%=label%> = new pare_to_chart({renderTo:'<%=label%>_freshdesk_chart'
 		                                                      ,chartData:<%=pie_chart.to_json.html_safe%>
 		                                                      ,isPDF:true});
 		          ticketByType<%=label%>.pieChartGraph();
 		          <%end%>
-		          jQuery('#<%=label%>_title').html("<span>"+jQuery('#<%=label%>_title').text()+ custom_fields['<%=label%>']+"</span>");
+				  jQuery('#<%=label%>_title').html("<span>"+jQuery('#<%=label%>_title').text()+ custom_fields['<%=label%>']+"</span>");
 		        });
 		        </script>
 		      <%end%>
@@ -167,7 +167,7 @@
 		    <script type="text/javascript">
 		      jQuery(document).ready(function() {
 		      <%unless pare_to_chart[:chartData].empty?%>
-		        var ticketByType<%=label%> = new pare_to_chart({renderTo:'<%=label%>_freshdesk_chart'
+		       var ticketByType<%=label%> = new pare_to_chart({renderTo:'<%=label%>_freshdesk_chart'
 		                                                    ,chartData:<%=pare_to_chart[:chartData].to_json.html_safe%>
 		                                                    ,xaxis_arr:<%=pare_to_chart[:xaxis_arr].to_json.html_safe%>
 		                                                    ,column_width:<%=pare_to_chart[:column_width].to_json.html_safe%>

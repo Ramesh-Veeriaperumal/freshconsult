@@ -2,6 +2,7 @@ require_relative '../test_helper'
 
 class ConversationsControllerTest < ActionController::TestCase
   include ConversationsTestHelper
+  include AttachmentsTestHelper
   def wrap_cname(params)
     { conversation: params }
   end
@@ -66,16 +67,16 @@ class ConversationsControllerTest < ActionController::TestCase
     params_hash = create_note_params_hash
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 201
-    match_json(note_pattern(params_hash, Helpdesk::Note.last))
-    match_json(note_pattern({}, Helpdesk::Note.last))
+    match_json(v2_note_pattern(params_hash, Helpdesk::Note.last))
+    match_json(v2_note_pattern({}, Helpdesk::Note.last))
   end
 
   def test_create_public_note
     params_hash = create_note_params_hash.merge(private: false)
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 201
-    match_json(note_pattern(params_hash, Helpdesk::Note.last))
-    match_json(note_pattern({}, Helpdesk::Note.last))
+    match_json(v2_note_pattern(params_hash, Helpdesk::Note.last))
+    match_json(v2_note_pattern({}, Helpdesk::Note.last))
   end
 
   # Note content having the protocol 'notes://' will also be auto-linked like 'http://'
@@ -103,8 +104,8 @@ class ConversationsControllerTest < ActionController::TestCase
     params_hash = create_note_params_hash.merge(user_id: user.id)
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 201
-    match_json(note_pattern(params_hash, Helpdesk::Note.last))
-    match_json(note_pattern({}, Helpdesk::Note.last))
+    match_json(v2_note_pattern(params_hash, Helpdesk::Note.last))
+    match_json(v2_note_pattern({}, Helpdesk::Note.last))
   end
 
   def test_create_with_user_id_invalid_privilege
@@ -178,8 +179,8 @@ class ConversationsControllerTest < ActionController::TestCase
     params_hash = create_note_params_hash
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 201
-    match_json(note_pattern(params_hash, Helpdesk::Note.last))
-    match_json(note_pattern({}, Helpdesk::Note.last))
+    match_json(v2_note_pattern(params_hash, Helpdesk::Note.last))
+    match_json(v2_note_pattern({}, Helpdesk::Note.last))
     result = parse_response(@response.body)
     assert_equal true, response.headers.include?('Location')
     assert_equal "http://#{@request.host}/api/v2/conversations/#{result['id']}", response.headers['Location']
@@ -194,8 +195,8 @@ class ConversationsControllerTest < ActionController::TestCase
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 201
     response_params = params.except(:attachments)
-    match_json(note_pattern(params, Helpdesk::Note.last))
-    match_json(note_pattern({}, Helpdesk::Note.last))
+    match_json(v2_note_pattern(params, Helpdesk::Note.last))
+    match_json(v2_note_pattern({}, Helpdesk::Note.last))
     assert Helpdesk::Note.last.attachments.count == 2
   end
 
@@ -207,14 +208,15 @@ class ConversationsControllerTest < ActionController::TestCase
   end
 
   def test_attachment_invalid_size_create
-    Rack::Test::UploadedFile.any_instance.stubs(:size).returns(20_000_000)
+    invalid_attachment_limit = @account.attachment_limit + 2
+    Rack::Test::UploadedFile.any_instance.stubs(:size).returns(invalid_attachment_limit.megabytes)
     file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
     params = create_note_params_hash.merge('attachments' => [file])
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     post :create, construct_params({ id: ticket.display_id }, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
+    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{invalid_attachment_limit} MB")])
   end
 
   def test_create_without_privilege
@@ -271,8 +273,8 @@ class ConversationsControllerTest < ActionController::TestCase
     params_hash = reply_note_params_hash
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 201
-    match_json(reply_note_pattern(params_hash, Helpdesk::Note.last))
-    match_json(reply_note_pattern({}, Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern(params_hash, Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
   end
 
   def test_reply_without_kbase_email
@@ -280,8 +282,8 @@ class ConversationsControllerTest < ActionController::TestCase
     article_count = Solution::Article.count
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 201
-    match_json(reply_note_pattern(params_hash, Helpdesk::Note.last))
-    match_json(reply_note_pattern({}, Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern(params_hash, Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
     assert article_count == Solution::Article.count
   end
 
@@ -292,8 +294,8 @@ class ConversationsControllerTest < ActionController::TestCase
     params_hash = reply_note_params_hash.merge(cc_emails: [@account.kbase_email])
     post :reply, construct_params({ id: parent_ticket.display_id }, params_hash)
     assert_response 201
-    match_json(reply_note_pattern(params_hash.merge(cc_emails: nil), Helpdesk::Note.last))
-    match_json(reply_note_pattern({}, Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern(params_hash.merge(cc_emails: nil), Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
     assert (article_count + 1) == Solution::Article.count
     assert Solution::Article.last.title == parent_ticket.subject
     assert Solution::Article.last.description == Helpdesk::Note.last.body_html
@@ -307,8 +309,8 @@ class ConversationsControllerTest < ActionController::TestCase
     params_hash = reply_note_params_hash.merge(bcc_emails: [@account.kbase_email])
     post :reply, construct_params({ id: parent_ticket.display_id }, params_hash)
     assert_response 201
-    match_json(reply_note_pattern(params_hash.merge(bcc_emails: nil), Helpdesk::Note.last))
-    match_json(reply_note_pattern({}, Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern(params_hash.merge(bcc_emails: nil), Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
     assert (article_count + 1) == Solution::Article.count
     assert Solution::Article.last.title == parent_ticket.subject
     assert Solution::Article.last.description == Helpdesk::Note.last.body_html
@@ -324,8 +326,8 @@ class ConversationsControllerTest < ActionController::TestCase
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     User.any_instance.unstub(:privilege?)
     assert_response 201
-    match_json(reply_note_pattern(params_hash.merge(cc_emails: nil), Helpdesk::Note.last))
-    match_json(reply_note_pattern({}, Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern(params_hash.merge(cc_emails: nil), Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
     assert article_count == Solution::Article.count
   end
 
@@ -338,8 +340,8 @@ class ConversationsControllerTest < ActionController::TestCase
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     User.any_instance.unstub(:privilege?)
     assert_response 201
-    match_json(reply_note_pattern(params_hash.merge(bcc_emails: nil), Helpdesk::Note.last))
-    match_json(reply_note_pattern({}, Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern(params_hash.merge(bcc_emails: nil), Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
     assert article_count == Solution::Article.count
   end
 
@@ -349,8 +351,8 @@ class ConversationsControllerTest < ActionController::TestCase
     params_hash = reply_note_params_hash.merge(cc_emails: [@account.kbase_email])
     post :reply, construct_params({ id: t.display_id }, params_hash)
     assert_response 201
-    match_json(reply_note_pattern(params_hash.merge(cc_emails: nil), Helpdesk::Note.last))
-    match_json(reply_note_pattern({}, Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern(params_hash.merge(cc_emails: nil), Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
     assert (article_count + 1) == Solution::Article.count
     refute Solution::Article.last.title == ticket.subject
     assert Solution::Article.last.title == "Ticket:#{t.display_id} subject is too short to be an article title"
@@ -362,8 +364,8 @@ class ConversationsControllerTest < ActionController::TestCase
     params_hash = reply_note_params_hash.merge(user_id: user.id)
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 201
-    match_json(reply_note_pattern(params_hash, Helpdesk::Note.last))
-    match_json(reply_note_pattern({}, Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern(params_hash, Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
   end
 
   def test_reply_with_user_id_invalid_privilege
@@ -427,8 +429,8 @@ class ConversationsControllerTest < ActionController::TestCase
     assert_response 201
     note = Helpdesk::Note.last
     assert_equal email_config.id, note.email_config_id
-    match_json(reply_note_pattern(params_hash, note))
-    match_json(reply_note_pattern({}, note))
+    match_json(v2_reply_note_pattern(params_hash, note))
+    match_json(v2_reply_note_pattern({}, note))
   end
 
   def test_reply_with_only_body
@@ -436,8 +438,8 @@ class ConversationsControllerTest < ActionController::TestCase
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 201
     note = Helpdesk::Note.last
-    match_json(reply_note_pattern(params_hash, note))
-    match_json(reply_note_pattern({}, note))
+    match_json(v2_reply_note_pattern(params_hash, note))
+    match_json(v2_reply_note_pattern({}, note))
   end
 
   def test_reply_inactive_email_config
@@ -461,8 +463,8 @@ class ConversationsControllerTest < ActionController::TestCase
     params_hash = reply_note_params_hash
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 201
-    match_json(reply_note_pattern(params_hash, Helpdesk::Note.last))
-    match_json(reply_note_pattern({}, Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern(params_hash, Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
     result = parse_response(@response.body)
     assert_equal true, response.headers.include?('Location')
     assert_equal "http://#{@request.host}/api/v2/conversations/#{result['id']}", response.headers['Location']
@@ -477,20 +479,21 @@ class ConversationsControllerTest < ActionController::TestCase
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 201
     response_params = params.except(:attachments)
-    match_json(reply_note_pattern(params, Helpdesk::Note.last))
-    match_json(reply_note_pattern({}, Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern(params, Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
     assert Helpdesk::Note.last.attachments.count == 2
   end
 
   def test_attachments_invalid_size_reply
-    Rack::Test::UploadedFile.any_instance.stubs(:size).returns(20_000_000)
+    invalid_attachment_limit = @account.attachment_limit + 2
+    Rack::Test::UploadedFile.any_instance.stubs(:size).returns(invalid_attachment_limit.megabytes)
     file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
     params = reply_note_params_hash.merge('attachments' => [file])
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     post :reply, construct_params({ id: ticket.display_id }, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
+    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{invalid_attachment_limit} MB")])
   end
 
   def test_reply_with_invalid_attachment_params_format
@@ -534,8 +537,8 @@ class ConversationsControllerTest < ActionController::TestCase
     n = note
     put :update, construct_params({ id: n.id }, params)
     assert_response 200
-    match_json(update_note_pattern(params, Helpdesk::Note.find(n.id)))
-    match_json(update_note_pattern({}, Helpdesk::Note.find(n.id)))
+    match_json(v2_update_note_pattern(params, Helpdesk::Note.find(n.id)))
+    match_json(v2_update_note_pattern({}, Helpdesk::Note.find(n.id)))
   end
 
   def test_update_deleted
@@ -572,23 +575,27 @@ class ConversationsControllerTest < ActionController::TestCase
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 200
     response_params = params.except(:attachments)
-    match_json(update_note_pattern(params, n.reload))
-    match_json(update_note_pattern({}, n.reload))
+    match_json(v2_update_note_pattern(params, n.reload))
+    match_json(v2_update_note_pattern({}, n.reload))
     assert n.attachments.count == 2
   end
 
   def test_attachments_invalid_size_update
     n = note
-    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
-    params = update_note_params_hash.merge('attachments' => [file])
+    attachment = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id)
+    invalid_attachment_limit = @account.attachment_limit + 2
+    Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(invalid_attachment_limit.megabytes)
+    Helpdesk::Attachment.any_instance.stubs(:size).returns(invalid_attachment_limit.megabytes)
+    params = update_note_params_hash.merge('attachments' => [attachment])
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-    attachments = [mock('attachment')]
-    attachments.stubs(:sum).returns(20_000_000)
-    Helpdesk::Note.any_instance.stubs(:attachments).returns(attachments)
+    Helpdesk::Note.any_instance.stubs(:attachments).returns([attachment])
     put :update, construct_params({ id: n.id }, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
+    Helpdesk::Attachment.any_instance.unstub(:content_file_size)
+    Helpdesk::Attachment.any_instance.unstub(:size)
+    Helpdesk::Note.any_instance.unstub(:attachments)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
+    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{2 * invalid_attachment_limit} MB")])
   end
 
   def test_update_with_invalid_attachment_params_format
@@ -617,8 +624,8 @@ class ConversationsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: n.id }, params)
     User.any_instance.unstub(:privilege?)
     assert_response 200
-    match_json(update_note_pattern(params, n.reload))
-    match_json(update_note_pattern({}, n.reload))
+    match_json(v2_update_note_pattern(params, n.reload))
+    match_json(v2_update_note_pattern({}, n.reload))
   end
 
   def test_update_reply
@@ -663,8 +670,8 @@ class ConversationsControllerTest < ActionController::TestCase
     assert_response 200
     latest_note = Helpdesk::Note.find(n.id)
     assert latest_note.private
-    match_json(update_note_pattern(params, latest_note))
-    match_json(update_note_pattern({}, latest_note))
+    match_json(v2_update_note_pattern(params, latest_note))
+    match_json(v2_update_note_pattern({}, latest_note))
   end
 
   def test_destroy
@@ -865,8 +872,8 @@ class ConversationsControllerTest < ActionController::TestCase
   def test_reply_with_nil_array_fields
     params_hash = reply_note_params_hash.merge(cc_emails: [], bcc_emails: [], attachments: [])
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
-    match_json(reply_note_pattern(params_hash, Helpdesk::Note.last))
-    match_json(reply_note_pattern({}, Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern(params_hash, Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
     assert_response 201
   end
 
@@ -882,7 +889,7 @@ class ConversationsControllerTest < ActionController::TestCase
   def test_create_datatype_nil_array_fields
     params_hash = { notify_emails: [], attachments: [], body: Faker::Lorem.paragraph }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
-    match_json(note_pattern({}, Helpdesk::Note.last))
+    match_json(v2_note_pattern({}, Helpdesk::Note.last))
     assert_response 201
   end
 

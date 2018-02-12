@@ -205,6 +205,12 @@ defaults: &defaults
     - [smart_filter_initialise]
     - [smart_filter_tweet_to_ticket]
     - [launch_party_actions]
+    - [central_publish]
+    - [free_ticket_central_publish]
+    - [trial_ticket_central_publish]
+    - [active_ticket_central_publish]
+    - [channel_framework_command]
+    - [ml_solutions_training]
 
 development:
   <<: *defaults

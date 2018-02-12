@@ -42,6 +42,7 @@ class Group < ActiveRecord::Base
       MAX_CAPPING_RETRY.times do
         user_id, old_score = pick_next_agent(ticket_id)
         if user_id.present?  
+          #Need to revisit this
           new_score = generate_new_score(old_score + 1)
           result    = update_agent_capping_with_lock(user_id, new_score)
 
@@ -74,7 +75,7 @@ class Group < ActiveRecord::Base
     watch_round_robin_redis(agent_key)
     old_score = get_round_robin_redis(agent_key).to_i
 
-    Rails.logger.debug "RR pick_next_agent : #{user_id} #{old_score} #{self.capping_limit}"
+    Rails.logger.debug "RR pick_next_agent : #{user_id} #{old_score} #{user_score.inspect} #{self.capping_limit}"
 
     [user_id, old_score] if old_score < self.capping_limit
   end

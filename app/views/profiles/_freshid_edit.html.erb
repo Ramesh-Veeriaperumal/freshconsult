@@ -6,7 +6,7 @@
 <div class="profile-edit">
 	<div class="greyImage profile-leftcontent">
 		<div class="freshID-details">
-			<p class="strong title">Profile Details</p>
+			<p class="strong title"><%= t("profiles.freshid_edit.profile_details") %></p>
 			<ul>
 			<li><span class="control-label"><%= t("user.full_name") %> : </span><span class="strong"><%= @profile.user.name %></span></li>
 			<li><span class="control-label"><%= t("user.email") %> : </span><span class="strong"><%= @profile.user.email %></span></li>
@@ -59,4 +59,3 @@
 		<% end %>
 	</div>
 </div>
-

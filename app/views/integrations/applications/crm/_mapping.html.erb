@@ -1,18 +1,18 @@
 <div class="sf-title-wrapper switch-right" >
-  <label for="enable_sync"> <%= @element_config["element_name"].capitalize%> Sync </label> 
-  <input type="checkbox" rel="toggle" name="enable_sync" id="enable_sync" data-checked-label="ON" data-unchecked-label="OFF" <% if @element_config['enable_sync'] == "on" %> checked=checked <% end %> onChange=change();>
+  <label for="enable_sync"> <%= @element_config["element_name"].capitalize%><%= t("integrations.applications.crm.mapping.sync") %></label> 
+  <input type="checkbox" rel="toggle" name="enable_sync" id="enable_sync" <% if @element_config['enable_sync'] == "on" %> checked=checked <% end %> onChange=change();>
 </div>
 <div class="field-mapping">
   <div id="field-wrap"></div>
     <!-- To Know Which End is the source of truth, Either CRM or Freshdesk, Source of Truth Can overwrite Account ID's on the Slave
-          End and also can write when there is collision.-->
+          End and also can write when there is collision. -->
     <div class="row-fluid pad-bottom" id="master-setting-list">
       <div class="closable-widget triangle-down"></div>
       <div class="radio-btn-title setting-description"> <%=t("integrations.cloud_elements.form.source_of_truth")%> </div>
       <div class="master-block-container pad-left">
         <div class="radio-btn blocks">
           <input type="radio" class="master-radio-btn" id="master_type_1" name="master_type" value="FD">  
-          <label for="master_type_1"> Freshdesk </label>   
+          <label for="master_type_1"> <%= t("errors.invalid_domain.freshdesk") %> </label>   
         </div>
         &nbsp; &nbsp;
         <div class="radio-btn blocks">
@@ -64,10 +64,10 @@
     <div id="to-close">
       <ul class="nav nav-flat pad-left">
         <li class="active">
-          <a href="#contact-mapping-tab" id="contact-mapping-btn"data-toggle="tab">Contact</a>
+          <a href="#contact-mapping-tab" id="contact-mapping-btn"data-toggle="tab"><%= t("integrations.applications.crm.mapping.contact") %></a>
         </li>
         <li>
-          <a href="#company-mapping-tab" id="company-mapping-btn" data-toggle="tab">Company</a>
+          <a href="#company-mapping-tab" id="company-mapping-btn" data-toggle="tab"><%= t("tickets_filter.company") %></a>
         </li>        
       </ul>
 
@@ -75,11 +75,11 @@
         <div class="tab-pane active" id="contact-mapping-tab">
           <div class="contact-wrapper">
             <div class="contact-tabel-head">
-              <div class="contact-tabel-data field-1"> <span class="field-1-text"> Freshdesk Contact Fields </span> </div>
+              <div class="contact-tabel-data field-1"> <span class="field-1-text"><%= t("integrations.applications.crm.mapping.freshdesk_contact_fields") %></span> </div>
               <div class="contact-tabel-data field-2"> 
                 <a class="center-icon"><%= font_icon "both-direction", { :size => 20 } %></a>
               </div>
-              <div class="contact-tabel-data field-3"> <span> <%= @element_config["element_name"].capitalize%> Contact Fields </span> </div>
+              <div class="contact-tabel-data field-3"> <span> <%= @element_config["element_name"].capitalize%><%= t("integrations.applications.crm.mapping.contact_fields") %></span> </div>
             </div>
             <div rel="construct_contact_rules" id="construct_contact_rule" class="rules_wrapper" data-render-template = '.construct_contact' ></div>
           </div>
@@ -87,11 +87,11 @@
         <div class="tab-pane" id="company-mapping-tab">
           <div class="contact-wrapper">
             <div class="contact-tabel-head">
-              <div class="contact-tabel-data field-1"> <span class="field-1-text"> Freshdesk Company Fields </span> </div>
+              <div class="contact-tabel-data field-1"> <span class="field-1-text"><%= t("integrations.applications.crm.mapping.freshdesk_company_fields") %></span> </div>
               <div class="contact-tabel-data field-2">
                 <a class="center-icon"><%= font_icon "both-direction", { :size => 20 } %></a>
               </div>
-              <div class="contact-tabel-data field-3"> <span> <%= @element_config["element_name"].capitalize%> Account Fields </span> </div>
+              <div class="contact-tabel-data field-3"> <span> <%= @element_config["element_name"].capitalize%><%= t("integrations.applications.crm.mapping.account_fields") %></span> </div>
             </div>
             <div rel="construct_company_rules" id="construct_company_rule" class="rules_wrapper" data-render-template = '.construct_company' ></div>
           </div>

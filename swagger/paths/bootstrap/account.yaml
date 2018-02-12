@@ -1,0 +1,8 @@
+get:
+  summary: Account
+  tags: [Bootstrap]
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/bootstrap_account'

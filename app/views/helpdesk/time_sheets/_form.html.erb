@@ -2,7 +2,7 @@
 	<%= ticket_tasks_field(form, agent_list, type) %>
 	<dt><%= form.label :hhmm, t('.hours')%> </dt>
 	<dd class="hours">
-		<%= form.text_field(:hhmm, { 
+		<%= form.text_field(:hhmm, {
 				:size => 6, :class => "auto hhmm_time_duration", :autocomplete => "off", :placeholder => "HH:MM"
 				} ) %>
 		<label class="billing_hours floatr">
@@ -12,10 +12,10 @@
 		<div class="tip"><%= t('.hours_format_tip') %> </div>
 	</dd>
 
-	<dt><%= form.label :executed_at, 'On'%> </dt> 
+	<dt><%= form.label :executed_at, t('plain_on')%> </dt>
 	<dd> <% datepicker_id = type == :new ? "executed_at_new" : "executed_at_#{dom_id(edit)}" %>
-		<%= form.text_field :executed_at, 
-						:value => formated_date((type == :new ? Time.zone.now : edit.executed_at), {:format => :short_day_separated, :include_year => true,:translate => false}), 
+		<%= form.text_field :executed_at,
+						:value => formated_date((type == :new ? Time.zone.now : edit.executed_at), {:format => :short_day_separated, :include_year => true,:translate => false}),
 						:size => 10, :readonly => "readonly" , :class => "auto executed_at datepicker", :id => datepicker_id %>
 	</dd>
 
@@ -41,7 +41,7 @@
 	      event: 'focus'
 	    }
 	  });
-	
+
 	jQuery('#new_timeentry [data-submit=modal]').attr('data-start-text', '<%= t(".start_timer") %>');
 	jQuery('#new_timeentry [data-submit=modal]').button('start');
 	jQuery('.modal.in .hhmm_time_duration').keyup(function(ev) {

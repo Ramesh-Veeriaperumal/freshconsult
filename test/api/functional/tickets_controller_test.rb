@@ -6,6 +6,7 @@ Sidekiq::Testing.fake!
 class TicketsControllerTest < ActionController::TestCase
   include TicketsTestHelper
   include CustomFieldsTestHelper
+  include AttachmentsTestHelper
 
   CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
 
@@ -111,7 +112,7 @@ class TicketsControllerTest < ActionController::TestCase
 
 
   def fetch_email_config
-    EmailConfig.first || create_email_config
+    @account.email_configs.where('active = true').first || create_email_config
   end
 
   def ticket
@@ -166,26 +167,6 @@ class TicketsControllerTest < ActionController::TestCase
     sections
   end
 
-  def test_search_with_feature_enabled
-    warn "Elastic Search is not enabled. It might cause this test \"test_search_with_feature_enabled\" to fail." unless ES_ENABLED
-    @account.launch :es_count_writes
-    @account.launch :list_page_new_cluster
-    params = ticket_params_hash.except(:description).merge(custom_field: {})
-    CUSTOM_FIELDS.each do |custom_field|
-      params[:custom_field]["test_custom_#{custom_field}_#{@account.id}"] = CUSTOM_FIELDS_VALUES[custom_field]
-    end
-    Sidekiq::Testing.inline! do
-      t = create_ticket(params)
-    end
-    @account.launch :api_search_beta
-    get :search, controller_params(:status => '2,3', 'test_custom_text' => params[:custom_field]["test_custom_text_#{@account.id}"])
-    assert_response 200
-    results = parse_response(@response.body)
-    assert_equal true, response.headers.include?('X-Search-Results-Count')
-    results.each do |r|
-      assert_equal params[:custom_field]["test_custom_text_#{@account.id}"], r['custom_fields']['test_custom_text']
-    end
-  end
 
   def test_search_with_feature_enabled_and_invalid_params
     @account.launch :es_count_writes
@@ -230,7 +211,6 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({}, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
     match_json(ticket_pattern(params, Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     result = parse_response(@response.body)
@@ -247,7 +227,6 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({}, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
     match_json(ticket_pattern(params, Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     result = parse_response(@response.body)
@@ -368,21 +347,23 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_inclusion_invalid
+    sources_list = @account.compose_email_enabled? ? '1,2,3,7,8,9,10' : '1,2,3,7,8,9'
     params = ticket_params_hash.merge(requester_id: requester.id, priority: 90, status: 56, type: 'jk', source: '89')
     post :create, construct_params({}, params)
     match_json([bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7'),
                 bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request'),
-                bad_request_error_pattern('source', :not_included, list: '1,2,3,7,8,9')])
+                bad_request_error_pattern('source', :not_included, list: sources_list)])
     assert_response 400
   end
 
   def test_create_inclusion_invalid_datatype
+    sources_list = @account.compose_email_enabled? ? '1,2,3,7,8,9,10' : '1,2,3,7,8,9'
     params = ticket_params_hash.merge(requester_id: requester.id, priority: '1', status: '2', source: '9')
     post :create, construct_params({}, params)
     match_json([bad_request_error_pattern('priority', :not_included, code: :datatype_mismatch, list: '1,2,3,4', prepend_msg: :input_received, given_data_type: String),
                 bad_request_error_pattern('status', :not_included, code: :datatype_mismatch, list: '2,3,4,5,6,7', prepend_msg: :input_received, given_data_type: String),
-                bad_request_error_pattern('source', :not_included, code: :datatype_mismatch, list: '1,2,3,7,8,9', prepend_msg: :input_received, given_data_type: String)])
+                bad_request_error_pattern('source', :not_included, code: :datatype_mismatch, list: sources_list, prepend_msg: :input_received, given_data_type: String)])
     assert_response 400
   end
 
@@ -808,27 +789,32 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_attachment_invalid_size_create
-    Rack::Test::UploadedFile.any_instance.stubs(:size).returns(20_000_000)
+    invalid_attachment_limit = @account.attachment_limit + 2
+    Rack::Test::UploadedFile.any_instance.stubs(:size).returns(invalid_attachment_limit.megabytes)
     file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
     params = ticket_params_hash.merge('attachments' => [file])
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     post :create, construct_params({}, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
+    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{invalid_attachment_limit} MB")])
   end
 
   def test_attachment_invalid_size_update
-    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
-    params = update_ticket_params_hash.merge('attachments' => [file])
+    attachment = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id)
+    invalid_attachment_limit = @account.attachment_limit + 2
+    Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(invalid_attachment_limit.megabytes)
+    Helpdesk::Attachment.any_instance.stubs(:size).returns(invalid_attachment_limit.megabytes)
+    params = update_ticket_params_hash.merge('attachments' => [attachment])
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-    attachments = [mock('attachment')]
-    attachments.stubs(:sum).returns(20_000_000)
-    Helpdesk::Ticket.any_instance.stubs(:attachments).returns(attachments)
+    Helpdesk::Ticket.any_instance.stubs(:attachments).returns([attachment])
     put :update, construct_params({ id: Helpdesk::Ticket.first.id }, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
+    Helpdesk::Attachment.any_instance.unstub(:content_file_size)
+    Helpdesk::Attachment.any_instance.unstub(:size)
+    Helpdesk::Ticket.any_instance.unstub(:attachments)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
+    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{2 * invalid_attachment_limit} MB")])
   end
 
   def test_create_with_nested_custom_fields_with_invalid_first_children_valid
@@ -1045,7 +1031,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
     pattern = []
     VALIDATABLE_CUSTOM_FIELDS.each do |custom_field|
-      pattern << bad_request_error_pattern(custom_fields_error_label("test_custom_#{custom_field}"), *(ERROR_PARAMS[custom_field]))
+      pattern << bad_request_error_pattern(custom_field_error_label("test_custom_#{custom_field}"), *(ERROR_PARAMS[custom_field]))
     end
     match_json(pattern)
   end
@@ -1060,7 +1046,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
     pattern = []
     VALIDATABLE_CUSTOM_FIELDS.each do |custom_field|
-      pattern << bad_request_error_pattern("test_custom_#{custom_field}",  *(ERROR_PARAMS[custom_field]))
+      pattern << bad_request_error_pattern(custom_field_error_label("test_custom_#{custom_field}"),  *(ERROR_PARAMS[custom_field]))
     end
     match_json(pattern)
   end
@@ -1073,7 +1059,7 @@ class TicketsControllerTest < ActionController::TestCase
     Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required_for_closure: false)
     pattern = []
     (VALIDATABLE_CUSTOM_FIELDS - ['checkbox']).each do |custom_field|
-      pattern << bad_request_error_pattern("test_custom_#{custom_field}", *(ERROR_REQUIRED_PARAMS[custom_field]))
+      pattern << bad_request_error_pattern(custom_field_error_label("test_custom_#{custom_field}"), *(ERROR_REQUIRED_PARAMS[custom_field]))
     end
     match_json(pattern)
     assert_response 400
@@ -1087,7 +1073,7 @@ class TicketsControllerTest < ActionController::TestCase
     Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required_for_closure: false)
     pattern = []
     (VALIDATABLE_CUSTOM_FIELDS - ['checkbox']).each do |custom_field|
-      pattern << bad_request_error_pattern("test_custom_#{custom_field}", *(ERROR_REQUIRED_PARAMS[custom_field]))
+      pattern << bad_request_error_pattern(custom_field_error_label("test_custom_#{custom_field}"), *(ERROR_REQUIRED_PARAMS[custom_field]))
     end
     match_json(pattern)
     assert_response 400
@@ -1102,7 +1088,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
     pattern = []
     (VALIDATABLE_CUSTOM_FIELDS - ['checkbox']).each do |custom_field|
-      pattern << bad_request_error_pattern("test_custom_#{custom_field}", *(ERROR_REQUIRED_PARAMS[custom_field]))
+      pattern << bad_request_error_pattern(custom_field_error_label("test_custom_#{custom_field}"), *(ERROR_REQUIRED_PARAMS[custom_field]))
     end
     match_json(pattern)
   end
@@ -1118,7 +1104,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
     pattern = []
     (VALIDATABLE_CUSTOM_FIELDS).each do |custom_field|
-      pattern << bad_request_error_pattern("test_custom_#{custom_field}", *(ERROR_REQUIRED_PARAMS[custom_field]))
+      pattern << bad_request_error_pattern(custom_field_error_label("test_custom_#{custom_field}"), *(ERROR_REQUIRED_PARAMS[custom_field]))
     end
     match_json(pattern)
   end
@@ -1146,7 +1132,7 @@ class TicketsControllerTest < ActionController::TestCase
     Helpdesk::TicketField.where(name: [@@choices_custom_field_names]).update_all(required_for_closure: false)
     pattern = []
     ['dropdown', 'country'].each do |custom_field|
-      pattern << bad_request_error_pattern("test_custom_#{custom_field}", *(ERROR_CHOICES_REQUIRED_PARAMS[custom_field]))
+      pattern << bad_request_error_pattern(custom_field_error_label("test_custom_#{custom_field}"), *(ERROR_CHOICES_REQUIRED_PARAMS[custom_field]))
     end
     match_json(pattern)
     assert_response 400
@@ -1160,7 +1146,7 @@ class TicketsControllerTest < ActionController::TestCase
     Helpdesk::TicketField.where(name: [@@choices_custom_field_names]).update_all(required_for_closure: false)
     pattern = []
     ['dropdown', 'country'].each do |custom_field|
-      pattern << bad_request_error_pattern("test_custom_#{custom_field}", *(ERROR_CHOICES_REQUIRED_PARAMS[custom_field]))
+      pattern << bad_request_error_pattern(custom_field_error_label("test_custom_#{custom_field}"), *(ERROR_CHOICES_REQUIRED_PARAMS[custom_field]))
     end
     match_json(pattern)
     assert_response 400
@@ -1175,7 +1161,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
     pattern = []
     ['dropdown', 'country'].each do |custom_field|
-      pattern << bad_request_error_pattern("test_custom_#{custom_field}", *(ERROR_CHOICES_REQUIRED_PARAMS[custom_field]))
+      pattern << bad_request_error_pattern(custom_field_error_label("test_custom_#{custom_field}"), *(ERROR_CHOICES_REQUIRED_PARAMS[custom_field]))
     end
     match_json(pattern)
   end
@@ -1213,7 +1199,6 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     t.schema_less_ticket.update_column(:product_id, nil)
     put :update, construct_params({ id: t.display_id }, params_hash)
-    params_hash[:custom_fields]['test_custom_date'] = params_hash[:custom_fields]['test_custom_date'].to_time.iso8601
     match_json(update_ticket_pattern(params_hash, t.reload))
     match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
@@ -1392,8 +1377,8 @@ class TicketsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('email_config_id', :absent_in_db, resource: :email_config, attribute: :email_config_id),
                 bad_request_error_pattern('requester_id', :user_blocked),
                 bad_request_error_pattern('product_id', :absent_in_db, resource: :product, attribute: :product_id),
-                bad_request_error_pattern('test_custom_country', :not_included, list: 'Australia,USA'),
-                bad_request_error_pattern('test_custom_dropdown', :not_included, list:  'Get Smart,Pursuit of Happiness,Armaggedon')])
+                bad_request_error_pattern(custom_field_error_label('test_custom_country'), :not_included, list: 'Australia,USA'),
+                bad_request_error_pattern(custom_field_error_label('test_custom_dropdown'), :not_included, list:  'Get Smart,Pursuit of Happiness,Armaggedon')])
   end
 
   def test_update_inconsistency_already_in_model
@@ -1982,7 +1967,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = update_ticket_params_hash.merge(custom_fields: { 'test_custom_country' => 'uyiyiuy', 'test_custom_state' => 'Queensland', 'test_custom_city' => 'Brisbane' })
     put :update, construct_params({ id: t.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_country', :not_included, list: 'Australia,USA')])
+    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_country'), :not_included, list: 'Australia,USA')])
   end
 
   def test_update_with_nested_custom_fields_with_invalid_first_children_invalid
@@ -1990,7 +1975,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = update_ticket_params_hash.merge(custom_fields: { 'test_custom_country' => 'uyiyiuy', 'test_custom_state' => 'ss', 'test_custom_city' => 'ss' })
     put :update, construct_params({ id: t.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_country', :not_included, list: 'Australia,USA')])
+    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_country'), :not_included, list: 'Australia,USA')])
   end
 
   def test_update_with_nested_custom_fields_with_valid_first_invalid_second_valid_third
@@ -1998,7 +1983,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = update_ticket_params_hash.merge(custom_fields: { 'test_custom_country' => 'Australia', 'test_custom_state' => 'hjhj', 'test_custom_city' => 'Brisbane' })
     put :update, construct_params({ id: t.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_state', :not_included, list: 'New South Wales,Queensland')])
+    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_state'), :not_included, list: 'New South Wales,Queensland')])
   end
 
   def test_update_with_nested_custom_fields_with_valid_first_invalid_second_without_third
@@ -2006,7 +1991,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = update_ticket_params_hash.merge(custom_fields: { 'test_custom_country' => 'Australia', 'test_custom_state' => 'hjhj' })
     put :update, construct_params({ id: t.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_state', :not_included, list: 'New South Wales,Queensland')])
+    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_state'), :not_included, list: 'New South Wales,Queensland')])
   end
 
   def test_update_with_nested_custom_fields_with_valid_first_invalid_second_without_third_invalid_third
@@ -2014,7 +1999,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = update_ticket_params_hash.merge(custom_fields: { 'test_custom_country' => 'Australia', 'test_custom_state' => 'hjhj', 'test_custom_city' => 'sfs' })
     put :update, construct_params({ id: t.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_state', :not_included, list: 'New South Wales,Queensland')])
+    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_state'), :not_included, list: 'New South Wales,Queensland')])
   end
 
   def test_update_with_nested_custom_fields_with_valid_first_valid_second_invalid_third
@@ -2022,7 +2007,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = update_ticket_params_hash.merge(custom_fields: { 'test_custom_country' => 'Australia', 'test_custom_state' => 'Queensland', 'test_custom_city' => 'ddd' })
     put :update, construct_params({ id: t.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_city', :not_included, list: 'Brisbane')])
+    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_city'), :not_included, list: 'Brisbane')])
   end
 
   def test_update_with_nested_custom_fields_with_valid_first_valid_second_invalid_other_third
@@ -2030,7 +2015,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = update_ticket_params_hash.merge(custom_fields: { 'test_custom_country' => 'Australia', 'test_custom_state' => 'Queensland', 'test_custom_city' => 'Sydney' })
     put :update, construct_params({ id: t.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_city', :not_included, list: 'Brisbane')])
+    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_city'), :not_included, list: 'Brisbane')])
   end
 
   def test_update_with_nested_custom_fields_without_first_with_second_and_third
@@ -2072,7 +2057,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = update_ticket_params_hash.merge(custom_fields: { 'test_custom_country' => 'Australia', 'test_custom_city' => 'Brisbane' })
     put :update, construct_params({ id: t.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_state', :conditional_not_blank, child: 'test_custom_city')])
+    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_state'), :conditional_not_blank, child: 'test_custom_city')])
   end
 
   def test_update_with_nested_custom_fields_required_without_second_level
@@ -2083,7 +2068,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params)
     ticket_field.update_attribute(:required, false)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_state', :not_included, code: :missing_field, list: 'New South Wales,Queensland')])
+    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_state'), :not_included, code: :missing_field, list: 'New South Wales,Queensland')])
   end
 
   def test_update_with_nested_custom_fields_required_without_third_level
@@ -2094,7 +2079,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params)
     ticket_field.update_attribute(:required, false)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_city', :not_included, code: :missing_field, list: 'Brisbane')])
+    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_city'), :not_included, code: :missing_field, list: 'Brisbane')])
   end
 
   def test_update_with_nested_custom_fields_required_for_closure_without_second_level
@@ -2105,7 +2090,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params)
     ticket_field.update_attribute(:required_for_closure, false)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_state', :not_included, code: :missing_field, list: 'New South Wales,Queensland')])
+    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_state'), :not_included, code: :missing_field, list: 'New South Wales,Queensland')])
   end
 
   def test_update_with_nested_custom_fields_required_for_closure_without_third_level
@@ -2116,7 +2101,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params)
     ticket_field.update_attribute(:required_for_closure, false)
     assert_response 400
-    match_json([bad_request_error_pattern('test_custom_city', :not_included, code: :missing_field, list: 'Brisbane')])
+    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_city'), :not_included, code: :missing_field, list: 'Brisbane')])
   end
 
   def test_destroy
@@ -2132,7 +2117,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_update_verify_permission_invalid_permission
-    User.any_instance.stubs(:has_ticket_permission?).with(ticket).returns(false).at_most_once
+    User.any_instance.stubs(:has_ticket_permission?).with(ticket).returns(false)
     put :update, construct_params({ id: ticket.display_id }, update_ticket_params_hash)
     User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
@@ -2140,7 +2125,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_update_verify_permission_ticket_trashed
-    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true).at_most_once
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
     put :update, construct_params({ id: ticket.display_id }, update_ticket_params_hash)
     Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
     assert_response 403
@@ -2148,9 +2133,9 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_delete_has_ticket_permission_invalid
-    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
-    User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
-    User.any_instance.stubs(:assigned_ticket_permission).returns(false).at_most_once
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+    User.any_instance.stubs(:group_ticket_permission).returns(false)
+    User.any_instance.stubs(:assigned_ticket_permission).returns(false)
     delete :destroy, construct_params(id: Helpdesk::Ticket.first.display_id)
     User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
     assert_response 403
@@ -2159,19 +2144,19 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_delete_has_ticket_permission_valid
     t = create_ticket(ticket_params_hash)
-    User.any_instance.stubs(:can_view_all_tickets?).returns(true).at_most_once
-    User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
-    User.any_instance.stubs(:assigned_ticket_permission).returns(false).at_most_once
+    User.any_instance.stubs(:can_view_all_tickets?).returns(true)
+    User.any_instance.stubs(:group_ticket_permission).returns(false)
+    User.any_instance.stubs(:assigned_ticket_permission).returns(false)
     delete :destroy, construct_params(id: t.display_id)
     User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
     assert_response 204
   end
 
   def test_delete_group_ticket_permission_invalid
-    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
-    User.any_instance.stubs(:group_ticket_permission).returns(true).at_most_once
-    User.any_instance.stubs(:assigned_ticket_permission).returns(false).at_most_once
-    Helpdesk::Ticket.stubs(:group_tickets_permission).returns([]).at_most_once
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+    User.any_instance.stubs(:group_ticket_permission).returns(true)
+    User.any_instance.stubs(:assigned_ticket_permission).returns(false)
+    Helpdesk::Ticket.stubs(:group_tickets_permission).returns([])
     delete :destroy, construct_params(id: Helpdesk::Ticket.first.display_id)
     User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
     Helpdesk::Ticket.unstub(:group_tickets_permission)
@@ -2180,10 +2165,10 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_delete_assigned_ticket_invalid_permission
-    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
-    User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
-    User.any_instance.stubs(:assigned_ticket_permission).returns(true).at_most_once
-    Helpdesk::Ticket.stubs(:assigned_tickets_permission).returns([]).at_most_once
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+    User.any_instance.stubs(:group_ticket_permission).returns(false)
+    User.any_instance.stubs(:assigned_ticket_permission).returns(true)
+    Helpdesk::Ticket.stubs(:assigned_tickets_permission).returns([])
     delete :destroy, construct_params(id: ticket.display_id)
     User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
     Helpdesk::Ticket.unstub(:assigned_tickets_permission)
@@ -2192,9 +2177,9 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_delete_group_ticket_permission_valid
-    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
-    User.any_instance.stubs(:group_ticket_permission).returns(true).at_most_once
-    User.any_instance.stubs(:assigned_ticket_permission).returns(false).at_most_once
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+    User.any_instance.stubs(:group_ticket_permission).returns(true)
+    User.any_instance.stubs(:assigned_ticket_permission).returns(false)
     group = create_group_with_agents(@account, agent_list: [@agent.id])
     t = create_ticket(ticket_params_hash.merge(group_id: group.id))
     delete :destroy, construct_params(id: t.display_id)
@@ -2203,9 +2188,9 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_delete_group_ticket_permission_internal_agent_valid
-    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
-    User.any_instance.stubs(:group_ticket_permission).returns(true).at_most_once
-    User.any_instance.stubs(:assigned_ticket_permission).returns(false).at_most_once
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+    User.any_instance.stubs(:group_ticket_permission).returns(true)
+    User.any_instance.stubs(:assigned_ticket_permission).returns(false)
     group = create_group_with_agents(@account, agent_list: [@agent.id])
     t = create_ticket(ticket_params_hash.merge(internal_group_id: group.id))
     Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
@@ -2216,9 +2201,9 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_delete_assigned_ticket_permission_valid
-    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
-    User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
-    User.any_instance.stubs(:assigned_ticket_permission).returns(true).at_most_once
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+    User.any_instance.stubs(:group_ticket_permission).returns(false)
+    User.any_instance.stubs(:assigned_ticket_permission).returns(true)
     t = create_ticket(ticket_params_hash)
     Helpdesk::Ticket.any_instance.stubs(:responder_id).returns(@agent.id)
     delete :destroy, construct_params(id: t.display_id)
@@ -2228,9 +2213,9 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_delete_assigned_ticket_permission_internal_agent_valid
-    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
-    User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
-    User.any_instance.stubs(:assigned_ticket_permission).returns(true).at_most_once
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+    User.any_instance.stubs(:group_ticket_permission).returns(false)
+    User.any_instance.stubs(:assigned_ticket_permission).returns(true)
     t = create_ticket(ticket_params_hash)
     Helpdesk::Ticket.any_instance.stubs(:internal_agent_id).returns(@agent.id)
     Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
@@ -2254,7 +2239,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_restore_without_privilege
-    User.any_instance.stubs(:privilege?).with(:delete_ticket).returns(false).at_most_once
+    User.any_instance.stubs(:privilege?).with(:delete_ticket).returns(false)
     put :restore, construct_params(id: Helpdesk::Ticket.first.display_id)
     User.any_instance.unstub(:privilege?)
     assert_response 403
@@ -2296,7 +2281,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_show_without_permission
-    User.any_instance.stubs(:has_ticket_permission?).returns(false).at_most_once
+    User.any_instance.stubs(:has_ticket_permission?).returns(false)
     get :show, controller_params(id: Helpdesk::Ticket.first.display_id)
     User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
@@ -2331,21 +2316,21 @@ class TicketsControllerTest < ActionController::TestCase
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id)
     assert_response 200
-    match_json(ticket_pattern({}, ticket))
+    match_json(show_ticket_pattern({}, ticket))
   end
 
   def test_show_with_conversations
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id, include: 'conversations')
     assert_response 200
-    match_json(ticket_pattern_with_notes(ticket))
+    match_json(show_ticket_pattern_with_notes(ticket))
   end
 
   def test_show_with_requester
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id, include: 'requester')
     assert_response 200
-    match_json(ticket_pattern_with_association(ticket, false, false, true, false, false))
+    match_json(show_ticket_pattern_with_association(ticket, false, false, true, false, false))
   end
 
   def test_show_with_company
@@ -2355,25 +2340,29 @@ class TicketsControllerTest < ActionController::TestCase
     t.update_column(:owner_id, company.id)
     get :show, controller_params(id: ticket.display_id, include: 'company')
     assert_response 200
-    match_json(ticket_pattern_with_association(ticket, false, false, false, true, false))
+    match_json(show_ticket_pattern_with_association(ticket, false, false, false, true, false))
   end
 
   def test_show_with_stats
     t = ticket
-    t.update_column(:deleted, false)
-    t.update_ticket_attributes(status: 4)
-    get :show, controller_params(id: ticket.display_id, include: 'stats')
+    t.deleted = false
+    t.status = 5
+    t.save!
+
+    get :show, controller_params(id: t.display_id, include: 'stats')
     assert_response 200
-    match_json(ticket_pattern_with_association(ticket, false, false, false, false, true))
+    match_json(show_ticket_pattern_with_association(t, false, false, false, false, true))
   end
 
   def test_show_with_all_associations
-    show_ticket = ticket
-    show_ticket.update_column(:deleted, false)
-    show_ticket.update_ticket_attributes(status: 5)
-    get :show, controller_params(id: show_ticket.display_id, include: 'conversations,requester,company,stats')
+    t = ticket
+    t.deleted = false
+    t.status = 5
+    t.save!
+    t.reload
+    get :show, controller_params(id: t.display_id, include: 'conversations,requester,company,stats')
     assert_response 200
-    match_json(ticket_pattern_with_association(show_ticket))
+    match_json(show_ticket_pattern_with_association(t))
   end
 
   def test_show_with_empty_include
@@ -2408,7 +2397,7 @@ class TicketsControllerTest < ActionController::TestCase
     ticket.update_column(:deleted, true)
     get :show, controller_params(id: ticket.display_id)
     assert_response 200
-    match_json(deleted_ticket_pattern({}, ticket))
+    match_json(show_deleted_ticket_pattern({}, ticket))
     ticket.update_column(:deleted, false)
   end
 
@@ -2434,17 +2423,10 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_index_with_invalid_sort_params
-    get :index, controller_params(order_type: 'test', order_by: 'priority')
+    get :index, controller_params(order_type: 'test', order_by: 'test')
     assert_response 400
     pattern = [bad_request_error_pattern('order_type', :not_included, list: 'asc,desc')]
-    pattern << bad_request_error_pattern('order_by', :not_included, list: 'due_by,created_at,updated_at,status')
-    match_json(pattern)
-
-    Account.any_instance.stubs(:sla_management_enabled?).returns(false)
-    get :index, controller_params(order_type: 'test', order_by: 'priority')
-    assert_response 400
-    pattern = [bad_request_error_pattern('order_type', :not_included, list: 'asc,desc')]
-    pattern << bad_request_error_pattern('order_by', :not_included, list: 'created_at,updated_at,status')
+    pattern << bad_request_error_pattern('order_by', :not_included, list: 'due_by,created_at,updated_at,priority,status')
     match_json(pattern)
   ensure
     Account.any_instance.unstub(:sla_management_enabled?)
@@ -2455,7 +2437,7 @@ class TicketsControllerTest < ActionController::TestCase
     get :index, controller_params(order_type: 'test', order_by: 'due_by')
     assert_response 400
     pattern = [bad_request_error_pattern('order_type', :not_included, list: 'asc,desc')]
-    pattern << bad_request_error_pattern('order_by', :not_included, list: 'created_at,updated_at,status')
+    pattern << bad_request_error_pattern('order_by', :not_included, list: 'created_at,updated_at,priority,status')
     match_json(pattern)
   ensure
     Account.any_instance.unstub(:sla_management_enabled?)
@@ -2629,7 +2611,10 @@ class TicketsControllerTest < ActionController::TestCase
   def test_index_with_company
     company = create_company
     user = User.first
-    sidekiq_inline { user.update_attributes(company_id: company.id) }
+    sidekiq_inline {
+      user.company_id = company.id
+      user.save!
+    }
     get :index, controller_params(company_id: "#{company.id}")
     assert_response 200
 
@@ -2763,6 +2748,8 @@ class TicketsControllerTest < ActionController::TestCase
     response = parse_response @response.body
     tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0)
                             .created_in(Helpdesk::Ticket.created_in_last_month)
+                            .order('created_at DESC')
+                            .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
     assert_equal tkts.count, response.size
     pattern = tkts.map do |tkt|
       index_ticket_pattern_with_associations(tkt, true, false, false)
@@ -2776,6 +2763,8 @@ class TicketsControllerTest < ActionController::TestCase
     response = parse_response @response.body
     tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0)
                             .created_in(Helpdesk::Ticket.created_in_last_month)
+                            .order('created_at DESC')
+                            .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
     assert_equal tkts.count, response.size
     pattern = tkts.map do |tkt|
       index_ticket_pattern_with_associations(tkt, false, true, false)
@@ -2787,8 +2776,10 @@ class TicketsControllerTest < ActionController::TestCase
     get :index, controller_params(include: 'company')
     assert_response 200
     response = parse_response @response.body
-    tkts =  Helpdesk::Ticket.where(['deleted = 0 AND spam = 0 AND owner_id IS NOT NULL'])
+    tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0)
                             .created_in(Helpdesk::Ticket.created_in_last_month)
+                            .order('created_at DESC')
+                            .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
     assert_equal tkts.count, response.size
     pattern = tkts.map do |tkt|
       index_ticket_pattern_with_associations(tkt, false, false, true)
@@ -2828,7 +2819,7 @@ class TicketsControllerTest < ActionController::TestCase
     stub_const(ConversationConstants, 'MAX_INCLUDE', 3) do
       get :show, controller_params(id: ticket.display_id, include: 'conversations')
     end
-    match_json(ticket_pattern_with_notes(ticket, 3))
+    match_json(show_ticket_pattern_with_notes(ticket, 3))
     assert_response 200
     response = parse_response @response.body
     assert_equal 3, response['conversations'].size
@@ -2839,7 +2830,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     t.update_column(:spam, true)
     get :show, controller_params(id: t.display_id)
-    match_json(ticket_pattern({}, ticket))
+    match_json(show_ticket_pattern({}, ticket))
     assert_response 200
     t.update_column(:spam, false)
   end
@@ -3018,7 +3009,6 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
     assert_response 403
     match_json(request_error_pattern(:require_feature, feature: 'compose_email'.titleize))
   ensure
@@ -3031,7 +3021,6 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
     assert_response 400
     match_json([bad_request_error_pattern('source',  :invalid_field),
                 bad_request_error_pattern('product_id',  :invalid_field),
@@ -3051,7 +3040,6 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
     match_json(ticket_pattern(params, Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     result = parse_response(@response.body)
@@ -3097,7 +3085,6 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
     match_json(ticket_pattern(params.merge(status: 5), Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     result = parse_response(@response.body)
@@ -3114,7 +3101,6 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
     match_json(ticket_pattern(params, Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     result = parse_response(@response.body)
@@ -3131,7 +3117,6 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
     assert_response 400
     match_json([bad_request_error_pattern('fr_due_by',  :cannot_set_due_by_fields, code: :incompatible_field)])
   end
@@ -3143,7 +3128,6 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
     assert_response 400
     match_json([bad_request_error_pattern('due_by',  :cannot_set_due_by_fields, code: :incompatible_field)])
   end
@@ -3154,7 +3138,6 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
     assert_response 400
     match_json([bad_request_error_pattern('email_config_id',  :field_validation_for_outbound, code: :missing_field),
                 bad_request_error_pattern('subject',  :field_validation_for_outbound, code: :missing_field),
@@ -3167,22 +3150,20 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
     assert_response 400
     match_json([bad_request_error_pattern('email_config_id',  :absent_in_db, resource: :email_config, attribute: :email_config_id)])
   end
 
   def test_compose_email_with_group_ticket_permission_valid
     Account.any_instance.stubs(:restricted_compose_enabled?).returns(:true)
-    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
-    User.any_instance.stubs(:group_ticket_permission).returns(true).at_most_once
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+    User.any_instance.stubs(:group_ticket_permission).returns(true)
     email_config = create_email_config(group_id: ticket_params_hash[:group_id])
     params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(custom_fields: {}, email_config_id: email_config.id)
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
     match_json(ticket_pattern(params, Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
   ensure
@@ -3193,15 +3174,14 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_compose_email_with_group_ticket_permission_invalid
     Account.any_instance.stubs(:restricted_compose_enabled?).returns(:true)
-    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
-    User.any_instance.stubs(:group_ticket_permission).returns(true).at_most_once
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+    User.any_instance.stubs(:group_ticket_permission).returns(true)
     email_config = create_email_config(group_id: create_group(@account).id)
     params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(custom_fields: {}, email_config_id: email_config.id)
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
     assert_response 400
     match_json([bad_request_error_pattern('email_config_id',  :inaccessible_value, resource: :email_config, attribute: :email_config_id)])
   ensure
@@ -3212,16 +3192,15 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_compose_email_with_assign_ticket_permission_valid
     Account.any_instance.stubs(:restricted_compose_enabled?).returns(:true)
-    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
-    User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
-    User.any_instance.stubs(:assigned_ticket_permission).returns(true).at_most_once
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+    User.any_instance.stubs(:group_ticket_permission).returns(false)
+    User.any_instance.stubs(:assigned_ticket_permission).returns(true)
     email_config = create_email_config
     params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(custom_fields: {}, email_config_id: email_config.id)
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
     match_json(ticket_pattern(params, Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
   ensure
@@ -3233,16 +3212,15 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_compose_email_with_assign_ticket_permission_invalid
     Account.any_instance.stubs(:restricted_compose_enabled?).returns(:true)
-    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
-    User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
-    User.any_instance.stubs(:assigned_ticket_permission).returns(true).at_most_once
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+    User.any_instance.stubs(:group_ticket_permission).returns(false)
+    User.any_instance.stubs(:assigned_ticket_permission).returns(true)
     email_config = create_email_config(group_id: create_group(@account).id)
     params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(custom_fields: {}, email_config_id: email_config.id)
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
-    params[:custom_fields]['test_custom_date'] = params[:custom_fields]['test_custom_date'].to_time.iso8601
     assert_response 400
     match_json([bad_request_error_pattern('email_config_id',  :inaccessible_value, resource: :email_config, attribute: :email_config_id)])
   ensure
@@ -3461,7 +3439,7 @@ class TicketsControllerTest < ActionController::TestCase
     end
     t = ticket
     put :update, construct_params({ id: t.display_id }, params)
-    match_json([bad_request_error_pattern('test_custom_date', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Feature Request'), bad_request_error_pattern('test_custom_number', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Feature Request')])
+    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_date'), :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Feature Request'), bad_request_error_pattern(custom_field_error_label('test_custom_number'), :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Feature Request')])
   ensure
     @account.ticket_fields.custom_fields.each do |x|
       x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
@@ -3476,7 +3454,7 @@ class TicketsControllerTest < ActionController::TestCase
     end
     t = ticket
     put :update, construct_params({ id: t.display_id }, params)
-    match_json([bad_request_error_pattern('test_custom_dropdown', :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Feature Request')])
+    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_dropdown'), :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Feature Request')])
   ensure
     @account.ticket_fields.custom_fields.each do |x|
       x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
@@ -3528,7 +3506,7 @@ class TicketsControllerTest < ActionController::TestCase
     Helpdesk::TicketField.where(name: "test_custom_paragraph_#{@account.id}").update_all(required_for_closure: false)
     pattern = []
     ['paragraph'].each do |custom_field|
-      pattern << bad_request_error_pattern("test_custom_#{custom_field}", *(ERROR_REQUIRED_PARAMS[custom_field]))
+      pattern << bad_request_error_pattern(custom_field_error_label("test_custom_#{custom_field}"), *(ERROR_REQUIRED_PARAMS[custom_field]))
     end
     match_json(pattern)
     assert_response 400
@@ -3547,7 +3525,7 @@ class TicketsControllerTest < ActionController::TestCase
     Helpdesk::TicketField.where(name: "test_custom_dropdown_#{@account.id}").update_all(required_for_closure: false)
     pattern = []
     ['dropdown'].each do |custom_field|
-      pattern << bad_request_error_pattern("test_custom_#{custom_field}", *(ERROR_CHOICES_REQUIRED_PARAMS[custom_field]))
+      pattern << bad_request_error_pattern(custom_field_error_label("test_custom_#{custom_field}"), *(ERROR_CHOICES_REQUIRED_PARAMS[custom_field]))
     end
     match_json(pattern)
     assert_response 400

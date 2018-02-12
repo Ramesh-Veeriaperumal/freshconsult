@@ -202,6 +202,21 @@ GIT
       activerecord (>= 3)
 
 GIT
+  remote: git@github.com:freshdesk/central-publisher.git
+  revision: 71a71a4f7b1a68e795889d70c874181d7abde143
+  tag: v1.0.0
+  specs:
+    central-publisher (0.0.1)
+      active_record_shards (~> 3.2.0)
+      faraday (= 0.9)
+      faraday_middleware (~> 0.10.0)
+      newrelic_rpm (~> 3.17.2.327)
+      rails (~> 3.2.22.3)
+      redis (= 3.3.1)
+      sidekiq (~> 3.4.1)
+      uuidtools
+
+GIT
   remote: git@github.com:freshdesk/fd_rate_limiter.git
   revision: 94ebd47857e65ed3de0c4e1fd8b81d5666aabde1
   branch: dynamic_rules
@@ -487,6 +502,10 @@ GEM
     activesupport (3.2.22.3)
       i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
+    acts_as_api (1.0.1)
+      activemodel (>= 3.0.0)
+      activesupport (>= 3.0.0)
+      rack (>= 1.1.0)
     acts_as_list (0.1.4)
     addressable (2.4.0)
     amq-protocol (2.0.1)
@@ -1332,6 +1351,7 @@ DEPENDENCIES
   active_record_query_trace
   active_record_shards (~> 3.2.0)
   activemerchant!
+  acts_as_api (= 1.0.1)
   acts_as_list (= 0.1.4)
   acts_as_voteable!
   add_pod_support!
@@ -1355,6 +1375,7 @@ DEPENDENCIES
   bunny (= 1.7.0)
   business_time!
   carmen!
+  central-publisher!
   chargebee (~> 1.5.1)
   charlock_holmes (= 0.7.3)
   clamav-client (= 3.1.0)

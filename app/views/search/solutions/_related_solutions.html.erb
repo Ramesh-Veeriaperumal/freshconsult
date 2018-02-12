@@ -6,7 +6,8 @@
   		:id => "language-select",
   		:"data-initial-language" => Language.for_user(@ticket.requester).id
   	}) if Account.current.multilingual? %>
-      <input class="text search_text_box" name="solution[search]" id="solution_search" placeholder="Search solutions">
+      <input class="text search_text_box" name="solution[search]" id="solution_search" 
+      placeholder="<%= t('search_solutions')%>" >
   	  <span class="searchicon"></span>
   </form>
   <div class="dialog-well links" id="all_suggestions">

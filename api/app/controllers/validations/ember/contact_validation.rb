@@ -3,6 +3,12 @@ class Ember::ContactValidation < ContactValidation
 
   alias_attribute :company, :company_name
 
+  validates :other_companies, data_type: { rules: Array }, array: {
+    data_type: { rules: Hash },
+    allow_nil: true,
+    hash: -> { other_companies_format }
+  }
+
   def initialize(request_params, item, allow_string_param = false)
     super(request_params, item, allow_string_param)
     company_hash_validation = {

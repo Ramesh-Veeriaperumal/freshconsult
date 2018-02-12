@@ -82,7 +82,9 @@
                         <div class="footer">
                             <span class="limit-error message hide pull-left"> <%=t('helpdesk.time_sheets.max_columns')%></span>
                             <span class="archive-error message hide pull-left"> <%=t('helpdesk.time_sheets.archive_tickets_column_error')%></span>
-                            <button data-action="submit-column-selection" class="pull-right btn btn-cancel">Generate</button>
+                            <button data-action="submit-column-selection" class="pull-right btn btn-cancel">
+                              <%= t('reports.generate_button') %>
+                            </button>
                         </div>
                     </div>
                 </span>

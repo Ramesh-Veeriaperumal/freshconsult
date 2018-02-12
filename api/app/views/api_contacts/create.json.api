@@ -17,6 +17,7 @@ response_hash = {
   custom_fields: @item.custom_fields,
   tags: @item.tags,
   other_emails: @item.other_emails,
+  facebook_id: @item.fb_profile_id,
   created_at: @item.created_at.try(:utc),
   updated_at: @item.updated_at.try(:utc)
 }

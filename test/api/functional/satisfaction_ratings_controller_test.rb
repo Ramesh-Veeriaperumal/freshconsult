@@ -26,6 +26,10 @@ class SatisfactionRatingsControllerTest < ActionController::TestCase
     { satisfaction_rating: params }
   end
 
+  def ticket
+    create_ticket
+  end
+
   def test_create_custom_survey
     post :create, construct_params({ id: ticket.display_id }, ratings: { 'default_question' => 103 })
     assert_response 201
@@ -145,17 +149,17 @@ class SatisfactionRatingsControllerTest < ActionController::TestCase
   end
 
   def test_view_with_features_disabled
-    @account.class.any_instance.stubs(:features?).returns(false)
+    Account.any_instance.stubs(:enabled_features_list).returns([])
     get :index, controller_params
-    @account.class.any_instance.unstub(:features?)
     assert_response 403
     match_json(request_error_pattern(:require_feature, feature: 'surveys'.titleize))
+    Account.any_instance.unstub(:enabled_features_list)
   end
 
   def test_create_without_manage_tickets_privilege
-    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false).at_most_once
-    post :create, construct_params({ id: ticket.display_id }, rating: 103)
-    User.any_instance.unstub(:privilege?)
+    t = ticket
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false)
+    post :create, construct_params({ id: t.display_id }, ratings: 103)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
     ensure
@@ -164,7 +168,7 @@ class SatisfactionRatingsControllerTest < ActionController::TestCase
 
   def test_create_without_ticket_privilege
     User.any_instance.stubs(:has_ticket_permission?).returns(false)
-    post :create, construct_params({ id: ticket.display_id }, rating: 103)
+    post :create, construct_params({ id: ticket.display_id }, ratings: 103)
     User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
@@ -199,7 +203,7 @@ class SatisfactionRatingsControllerTest < ActionController::TestCase
 
   def test_create_satisfaction_rating_without_active_survey
     deactivate_survey
-    post :create, construct_params({ id: ticket.display_id }, rating: 103)
+    post :create, construct_params({ id: ticket.display_id }, ratings: 103)
     activate_survey
     assert_response 403
     match_json(request_error_pattern(:action_restricted, action: 'create', reason: 'no survey is enabled'))
@@ -222,7 +226,7 @@ class SatisfactionRatingsControllerTest < ActionController::TestCase
   def test_create_classic_survey_with_survey_link_disabled
     stub_custom_survey false
     deactivate_survey
-    post :create, construct_params({ id: ticket.display_id }, rating: 103)
+    post :create, construct_params({ id: ticket.display_id }, ratings: 103)
     activate_survey
     unstub_custom_survey
     assert_response 403
@@ -230,11 +234,11 @@ class SatisfactionRatingsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_features_disabled
-    @account.class.any_instance.stubs(:features?).returns(false)
-    post :create, construct_params({ id: ticket.display_id }, rating: 103)
-    @account.class.any_instance.unstub(:features?)
+    Account.any_instance.stubs(:enabled_features_list).returns([])
+    post :create, construct_params({ id: ticket.display_id }, ratings: 103)
     assert_response 403
     match_json(request_error_pattern(:require_feature, feature: 'surveys,survey_links'.titleize))
+    Account.any_instance.unstub(:enabled_features_list)
   end
 
   def test_view_with_survey_deactivated

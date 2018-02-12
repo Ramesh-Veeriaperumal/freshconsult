@@ -9,6 +9,25 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     match_json(index_pattern(@agent.agent, Account.current, Account.current.portals.first))
   end
 
+  def test_me
+    get :me, controller_params(version: 'private')
+    assert_response 200
+    match_json(agent_info_pattern(@agent.agent))
+  end
+
+  def test_account
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+  end
+
+  def test_agents_groups
+    get :agents_groups, controller_params(version: 'private')
+    assert_response 200
+
+    match_json(agent_group_pattern(Account.current))
+  end
+
   def test_collision_autorefresh_freshid_keys
     Account.current.features.collision.create
     Account.current.add_feature(:auto_refresh)
@@ -19,6 +38,7 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     assert_not_nil response.api_meta[:collision_url]
     assert_not_nil response.api_meta[:autorefresh_url]
     assert_not_nil response.api_meta[:freshid_url]
+    assert_not_nil response.api_meta[:freshid_profile_url]
     assert_not_nil agent_info['autorefresh_user_hash']
     assert_not_nil agent_info['collision_user_hash']
 
@@ -31,6 +51,7 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     assert_nil response.api_meta[:collision_url]
     assert_nil response.api_meta[:autorefresh_url]
     assert_nil response.api_meta[:freshid_url]
+    assert_nil response.api_meta[:freshid_profile_url]
     assert_nil agent_info['autorefresh_user_hash']
     assert_nil agent_info['collision_user_hash']
   end

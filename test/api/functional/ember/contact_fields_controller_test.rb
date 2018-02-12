@@ -14,6 +14,7 @@ module Ember
     @@initial_setup_run = false
 
     def initial_setup
+      @private_api = true
       return if @@initial_setup_run
       @account.add_feature(:multiple_user_companies)
       @account.reload

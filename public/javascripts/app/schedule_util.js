@@ -104,7 +104,7 @@ Helpkit.ScheduleUtil = {
             }
             el.append(jQuery('<option>', {
                 value: 31,
-                text: 'Last Day'
+                text: I18n.t('common_js_translations.last_day')
             }));  
         },
         ordinal_suffix_of : function(i) {

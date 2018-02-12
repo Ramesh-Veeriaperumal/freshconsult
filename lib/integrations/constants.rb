@@ -11,7 +11,7 @@ module Integrations::Constants
     :logmein => "logmein",
     :batchbook => "batchbook",
     :highrise => "highrise",
-    :mailchimp => "MailChimp",
+    :mailchimp => "mailchimp",
     :constantcontact => "ConstantContact",
     :icontact => "iContact",
     :campaignmonitor => "CampaignMonitor",
@@ -46,12 +46,18 @@ module Integrations::Constants
     :office365 => "office365",
     :parent_child_tickets => "parent_child_tickets",
     :link_tickets => "link_tickets",
-    :shared_ownership => "shared_ownership"
+    :shared_ownership => "shared_ownership",
+    :microsoft_teams => "microsoft_teams",
+    :google_hangout_chat => "google_hangout_chat"
   }
 
   DISPLAY_IN_PAGES = { 'ticket_show' => 2, 'contact_show' => 1, 'company_show' => 0, 'time_sheet_show' => 3, 'editor_show' => 4 }.freeze
 
   CRM_APPS= [:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm, :quickbooks, :freshbooks, :infusionsoft, :freshsales, :salesforce_v2, :dynamics_v2]
+
+  SERVICE_APPS = %w(github slack_v2 salesforce_v2 dynamics_v2 microsoft_teams google_hangout_chat).freeze
+
+  INTEGRATION_ROUTES = %w(github salesforce magento shopify slack infusionsoft google_calendar google_login google_marketplace_sso google_contacts google_gadget outlook_contacts salesforce_v2 facebook microsoft_teams google_hangout_chat).freeze
 
   APP_CATEGORY_ID_TO_NAME = {
     10 => :custom,
@@ -84,7 +90,7 @@ module Integrations::Constants
 
   FRESHPLUG = 'freshplug'
 
-  NON_EDITABLE_APPS = ["mailchimp", "constantcontact", "nimble", "google_calendar", "shopify", "box", "onedrive"]
+  NON_EDITABLE_APPS = ["mailchimp", "constantcontact", "nimble", "google_calendar", "shopify", "box", "onedrive", "microsoft_teams", "google_hangout_chat"]
 
   CONTACTS_SYNC_APPS = [APP_NAMES[:outlook_contacts]]
 
@@ -111,7 +117,9 @@ module Integrations::Constants
     'outlook_contacts' => 'outlook_contacts',
     'salesforce_v2' => 'salesforce_v2',
     'facebook' => '',
-    'dynamics_v2' => 'dynamics_v2'
+    'dynamics_v2' => 'dynamics_v2',
+    'microsoft_teams' => 'microsoft_teams',
+    'google_hangout_chat' => 'google_hangout_chat'
   }.freeze
 
   EXCLUDE_FROM_APP_CONFIGS_HASH = [:password, :auth_key, :api_key, :app_key, :oauth_token, :refresh_token, :element_token, :auth_token, :session_id, :secret, :cti_ctd_api].freeze
@@ -133,4 +141,9 @@ module Integrations::Constants
   }.freeze
 
   ATTACHMENT_APPS = [APP_NAMES[:dropbox],APP_NAMES[:box],APP_NAMES[:onedrive]].freeze
+
+  # Apps that have auth_url and need to set parent href in integrations page.
+  ONCLICK_STRATEGY_AUTH_APPS = %w(slack_v2 microsoft_teams google_hangout_chat).freeze
+
+  OAUTH_STRATEGIES_TO_SKIP = %w(github salesforce shopify slack infusionsoft google_oauth2 google_contacts google_gadget_oauth2 outlook_contacts salesforce_v2 microsoft_teams google_hangout_chat).freeze
 end

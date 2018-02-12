@@ -283,9 +283,9 @@ rules_filter = function(_name, filter_data, parentDom, options){
 
         if(setting.is_requester && parentDom=='#filterDOM'){
           jQuery.data(r_dom, "inner").append('<div class="btn-group condn-group-selection">'
-                              + '<a href="#" class="ficon-ticket btn active tooltip" data-criteria="ticket" title="Ticket Fields"></a>'
-                              + '<a href="#" class="ficon-user btn tooltip" data-criteria="requester" title="Contact Fields"></a>'
-                              + '<a href="#" class="ficon-company btn tooltip" data-criteria="company" title="Company Fields"></a>'
+                              + '<a href="#" class="ficon-ticket btn active tooltip" data-criteria="ticket" title=' + I18n.t("ticket_field.helpcard.title1") + ' ></a>'
+                              + '<a href="#" class="ficon-user btn tooltip" data-criteria="requester" title=' + I18n.t("admin.contact_fields.index.title") + ' ></a>'
+                              + '<a href="#" class="ficon-company btn tooltip" data-criteria="company" title=' + I18n.t("admin.company_fields.index.title") + ' ></a>'
                             + '</div>'
                             + '<input type="hidden" name="evaluate_on" value="ticket" />');
         }

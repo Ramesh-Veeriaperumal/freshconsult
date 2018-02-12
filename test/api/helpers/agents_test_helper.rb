@@ -224,5 +224,10 @@ module AgentsTestHelper
       message: message % params_hash
     }
   end
+  
+  def freshid_user(freshid_user_params = {})
+    freshid_user_params.merge!({uuid: SecureRandom.uuid, status: "ACTIVATED"})
+    Freshid::User.new(freshid_user_params)
+  end
 
 end

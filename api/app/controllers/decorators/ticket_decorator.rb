@@ -99,10 +99,22 @@ class TicketDecorator < ApiDecorator
   end
 
   def company_hash
+    private_api? ? private_company_hash : company_hash_v2
+  end
+
+  def private_company_hash
     if @sideload_options.include?('company')
       company = record.company
       return unless company
       CompanyDecorator.new(company, name_mapping: @company_name_mapping).company_hash
+    end
+  end
+
+  def company_hash_v2
+    if @sideload_options.include?('company')
+      company = record.company
+      return {} unless company
+      { id: company.id, name: company.name }
     end
   end
 

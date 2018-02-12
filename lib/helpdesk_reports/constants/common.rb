@@ -17,7 +17,7 @@ module HelpdeskReports::Constants::Common
 
   DEFAULT_REPORTS     = [ :agent_summary, :group_summary ]
   ADVANCED_REPORTS    = DEFAULT_REPORTS + [ :glance  ]
-  ENTERPRISE_REPORTS  = ADVANCED_REPORTS + [ :ticket_volume, :performance_distribution, :customer_report, :qna, :insights] 
+  ENTERPRISE_REPORTS  = ADVANCED_REPORTS + [ :ticket_volume, :performance_distribution, :customer_report, :timespent, :qna, :insights] 
 
   REPORT_ENUM_TO_TYPE  = REPORT_TYPE_TO_ENUM.invert.freeze
 

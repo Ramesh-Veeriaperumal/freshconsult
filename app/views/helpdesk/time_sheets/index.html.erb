@@ -1,6 +1,6 @@
 <div class="new_timer">
 	<a  class="btn btn-flat" id="triggerAddTime" href="<%= new_helpdesk_ticket_time_sheet_path(@ticket) %>" title="<%= t('ticket.add_time') %>" 
-		rel="freshdialog" data-target="#new_timeentry" data-width="480"
+		rel="freshdialog" data-target="#new_timeentry" data-width="480" data-close-label="<%= t('helpdesk.time_sheets.close') %>"
 		 data-submit-label="<%= t('save')%>" data-submit-loading="<%= t('saving')%>"
 		 ><%= t('ticket.add_time') %></a>
 </div>

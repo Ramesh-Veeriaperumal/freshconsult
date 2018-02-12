@@ -12,16 +12,17 @@ class Forum < ActiveRecord::Base
   belongs_to_account
 
   TYPES = [
-    [ :howto,    "forum.types.howto",    1 ],
-    [ :ideas,    "forum.types.ideas",    2 ],
-    [ :problem,  "forum.types.problem",  3 ],
-    [ :announce, "forum.types.announce", 4 ]
+    [ :howto,    "forum.types.howto",    1,    "Questions"],
+    [ :ideas,    "forum.types.ideas",    2,    "Ideas" ],
+    [ :problem,  "forum.types.problem",    3,    "Problems" ],
+    [ :announce, "forum.types.announce",    4,    "Announcement" ],
   ]
 
   TYPE_OPTIONS = TYPES.map { |i| [i[1], i[2]] }
   TYPE_NAMES_BY_KEY = Hash[*TYPES.map { |i| [i[2], i[1]] }.flatten]
   TYPE_KEYS_BY_TOKEN = Hash[*TYPES.map { |i| [i[0], i[2]] }.flatten]
   TYPE_SYMBOL_BY_KEY = Hash[*TYPES.map { |i| [i[2], i[0]] }.flatten]
+  CLASS_NAME_BY_TYPE = Hash[*TYPES.map { |i| [i[2], i[3]] }.flatten]
 
   VISIBILITY = [
     [ :anyone ,      "forum.visibility.all",       1 ],
@@ -211,6 +212,10 @@ class Forum < ActiveRecord::Base
 
   def type_name
     I18n.t(TYPE_NAMES_BY_KEY[forum_type])
+  end
+
+  def type_class
+    CLASS_NAME_BY_TYPE[forum_type]
   end
 
   def type_symbol

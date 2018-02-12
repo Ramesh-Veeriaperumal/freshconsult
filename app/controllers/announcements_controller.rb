@@ -12,7 +12,9 @@ class AnnouncementsController < ApplicationController
 
   def index
     @announcement_bucket = current_account.account_additional_settings.additional_settings[:announcement_bucket]
+    @state  = current_account.subscription.state
     @role = current_user.privilege?(:admin_tasks) ? :'admin' : :'agent'
+    @plan_name = current_account.plan_name
   end
 
   private 

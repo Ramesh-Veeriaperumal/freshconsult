@@ -103,4 +103,10 @@ class ApiValidation
   def attachment_limit
     @attachment_limit ||= (Account.current.attachment_limit_in_bytes)
   end
+
+  private
+
+    def private_api?
+      $infra['PRIVATE_API']
+    end
 end

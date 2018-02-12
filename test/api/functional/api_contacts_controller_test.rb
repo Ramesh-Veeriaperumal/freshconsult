@@ -54,6 +54,20 @@ class ApiContactsControllerTest < ActionController::TestCase
     company
   end
 
+  def create_company(options = {})
+    company = @account.companies.find_by_name(options[:name])
+    return company if company
+    name = options[:name] || Faker::Name.name
+    company = FactoryGirl.build(:company, name: name)
+    company.account_id = @account.id
+    company.save!
+    company
+  end
+
+  def get_user
+    @account.all_contacts.where(deleted: false, blocked: false).first
+  end
+
   # Show User
   def test_show_a_contact
     sample_user = add_new_user(@account)
@@ -165,7 +179,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_create_contact_with_language_and_timezone_without_feature
     comp = get_company
-    Account.any_instance.stubs(:features?).with(:multi_timezone).returns(false)
+    Account.any_instance.stubs(:multi_timezone_enabled?).returns(false)
     Account.any_instance.stubs(:features?).with(:multi_language).returns(false)
     Account.any_instance.stubs(:features?).with(:multiple_user_companies).returns(false)
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
@@ -178,6 +192,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('time_zone', :require_feature_for_attribute, code: :inaccessible_field, attribute: 'time_zone', feature: :multi_timezone)])
     assert_response 400
   ensure
+    Account.any_instance.unstub(:multi_timezone_enabled?)
     Account.any_instance.unstub(:features?)
   end
 
@@ -618,7 +633,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_update_contact_with_language_and_timezone_without_feature
     sample_user = add_new_user(@account)
-    Account.any_instance.stubs(:features?).with(:multi_timezone).returns(false)
+    Account.any_instance.stubs(:multi_timezone_enabled?).returns(false)
     Account.any_instance.stubs(:features?).with(:multi_language).returns(false)
     Account.any_instance.stubs(:features?).with(:multiple_user_companies).returns(false)
     put :update, construct_params({ id: sample_user.id },
@@ -628,6 +643,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('time_zone', :require_feature_for_attribute, code: :inaccessible_field, attribute: 'time_zone', feature: :multi_timezone)])
     assert_response 400
   ensure
+    Account.any_instance.unstub(:multi_timezone_enabled?)
     Account.any_instance.unstub(:features?)
   end
 
@@ -1656,7 +1672,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                                     email: Faker::Internet.email)
 
     assert_response 400
-    match_json([bad_request_error_pattern('requiredfield', :datatype_mismatch, code: :missing_field, expected_data_type: String)])
+    match_json([bad_request_error_pattern(custom_field_error_label('requiredfield'), :datatype_mismatch, code: :missing_field, expected_data_type: String)])
     ensure
       cf_sample_field.update_attribute(:required_for_agent, false)
   end
@@ -1793,7 +1809,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   # Other Companies test
 
   def test_create_contact_with_other_companies
-    company_ids = Company.first(2).map(&:id)
+    company_ids = [create_company, create_company].map(&:id)
     post :create, construct_params({},  name: Faker::Lorem.characters(10),
                                         email: Faker::Internet.email,
                                         company_id: company_ids[0],
@@ -1848,7 +1864,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_other_companies_with_duplication
-    company_ids = Company.first(2).map(&:id)
+    company_ids = [create_company, create_company].map(&:id)
     other_companies = []
     2.times do
       other_companies << { company_id: company_ids[1], view_all_tickets: true }
@@ -1950,7 +1966,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_update_contact_with_company_and_other_companies
     sample_user = get_user_with_default_company
     sample_user.update_attributes({:deleted => false, :blocked => false})
-    company_ids = Company.first(2).map(&:id)
+    company_ids = [create_company, create_company].map(&:id)
     other_companies = [{company_id: company_ids[1], view_all_tickets: false}]
     put :update, construct_params({ id: sample_user.id },
       company_id: company_ids[0], view_all_tickets: true,
@@ -1981,7 +1997,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_update_contact_with_default_and_other_companies_with_new_set
     sample_user = get_user_with_multiple_companies
     sample_user.update_attributes({:deleted => false, :blocked => false})
-    company_ids = Company.first(2).map(&:id)
+    company_ids = [create_company, create_company].map(&:id)
     other_companies = [{company_id: company_ids[1], view_all_tickets: true}]
     put :update, construct_params({ id: sample_user.id },
       company_id: company_ids[0], view_all_tickets: true,
@@ -1997,7 +2013,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_update_contact_with_new_other_companies
     sample_user = get_user_with_default_company
-    company_ids = Company.first(2).map(&:id) - sample_user.company_ids
+    company_ids = [create_company, create_company].map(&:id) - sample_user.company_ids
     put :update, construct_params({ id: sample_user.id },
       other_companies: [{company_id: company_ids[0], view_all_tickets: false}]
     )
@@ -2057,7 +2073,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     allowed_features = Account.first.features.where(
       ' type not in (?) ',['MultipleUserCompaniesFeature']
       )
-    Account.any_instance.stubs(:features).returns(allowed_features)
+    Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(false)
     sample_user = get_user_with_default_company
     other_companies = [{company_id: Company.last.id, view_all_tickets: true}]
     put :update, construct_params({ id: sample_user.id },
@@ -2072,14 +2088,14 @@ class ApiContactsControllerTest < ActionController::TestCase
         attribute: "other_companies" })]
     )
   ensure
-    Account.any_instance.unstub(:features)
+    Account.any_instance.unstub(:multiple_user_companies_enabled?)
   end
 
   def test_create_contact_with_other_companies_without_multiple_user_companies_feature
     allowed_features = Account.first.features.where(
       ' type not in (?) ',['MultipleUserCompaniesFeature']
     )
-    Account.any_instance.stubs(:features).returns(allowed_features)
+    Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(false)
     post :create, construct_params({},  name: Faker::Lorem.characters(10),
                                         email: Faker::Internet.email,
                                         company_id: Company.first.id,
@@ -2095,11 +2111,11 @@ class ApiContactsControllerTest < ActionController::TestCase
         attribute: "other_companies" })]
     )
   ensure
-    Account.any_instance.unstub(:features)
+    Account.any_instance.unstub(:multiple_user_companies_enabled?)
   end
 
   def test_create_contact_with_other_companies_invalid_company_id
-    company_ids = Company.first(2).map(&:id)
+    company_ids = [create_company, create_company].map(&:id)
     post :create, construct_params({},  name: Faker::Lorem.characters(10),
                                         email: Faker::Internet.email,
                                         company_id: company_ids[0],
@@ -2118,7 +2134,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_create_contact_with_other_companies_company_id_nil
-    company_ids = Company.first(2).map(&:id)
+    company_ids = [create_company, create_company].map(&:id)
     post :create, construct_params({},  name: Faker::Lorem.characters(10),
                                         email: Faker::Internet.email,
                                         company_id: company_ids[0],
@@ -2134,7 +2150,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_create_contact_with_other_companies_invalid_view_all_tickets
-    company_ids = Company.first(2).map(&:id)
+    company_ids = [create_company, create_company].map(&:id)
     post :create, construct_params({},  name: Faker::Lorem.characters(10),
                                         email: Faker::Internet.email,
                                         company_id: company_ids[0],
@@ -2150,7 +2166,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_create_contact_with_company_id_string
-    company_ids = Company.first(2).map(&:id)
+    company_ids = [create_company, create_company].map(&:id)
     post :create, construct_params({},  name: Faker::Lorem.characters(10),
                                         email: Faker::Internet.email,
                                         company_id: company_ids[0],
@@ -2167,7 +2183,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
 
   def test_create_contact_with_company_id_boolean
-    company_ids = Company.first(2).map(&:id)
+    company_ids = [create_company, create_company].map(&:id)
     post :create, construct_params({},  name: Faker::Lorem.characters(10),
                                         email: Faker::Internet.email,
                                         company_id: company_ids[0],
@@ -2185,7 +2201,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_create_contact_with_company_id_and_client_manager_string
-    company_ids = Company.first(2).map(&:id)
+    company_ids = [create_company, create_company].map(&:id)
     post :create, construct_params({},  name: Faker::Lorem.characters(10),
                                         email: Faker::Internet.email,
                                         company_id: company_ids[0],
@@ -2201,7 +2217,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_create_contact_with_company_id_nil
-    company_ids = Company.first(2).map(&:id)
+    company_ids = [create_company, create_company].map(&:id)
     post :create, construct_params({},  name: Faker::Lorem.characters(10),
                                         email: Faker::Internet.email,
                                         company_id: company_ids[0],
@@ -2217,7 +2233,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_create_contact_with_client_manager_nil
-    company_ids = Company.first(2).map(&:id)
+    company_ids = [create_company, create_company].map(&:id)
     post :create, construct_params({},  name: Faker::Lorem.characters(10),
                                         email: Faker::Internet.email,
                                         company_id: company_ids[0],
@@ -2236,14 +2252,14 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_create_contact_with_client_manager_integer
-    company_ids = Company.first(2).map(&:id)
+    company_ids = [create_company, create_company].map(&:id)
     post :create, construct_params({},  name: Faker::Lorem.characters(10),
                                         email: Faker::Internet.email,
                                         company_id: company_ids[0],
                                         view_all_tickets: true,
                                         other_companies: [
                                             { company_id: company_ids[1],
-                                              view_all_tickets: nil
+                                              view_all_tickets: 23
                                             }
                                           ])
     assert_response 400
@@ -2254,14 +2270,14 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_create_contact_with_client_manager_string
-    company_ids = Company.first(2).map(&:id)
+    company_ids = [create_company, create_company].map(&:id)
     post :create, construct_params({},  name: Faker::Lorem.characters(10),
                                         email: Faker::Internet.email,
                                         company_id: company_ids[0],
                                         view_all_tickets: true,
                                         other_companies: [
                                             { company_id: company_ids[1],
-                                              view_all_tickets: nil
+                                              view_all_tickets: 'test'
                                             }
                                           ])
     assert_response 400
@@ -2320,7 +2336,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     @account.add_feature(:unique_contact_identifier)
     post :create, construct_params({},  unique_external_id: Faker::Lorem.characters(10), name: Faker::Lorem.characters(10))
     assert_response 201
-    match_json(deleted_unique_external_id_contact_pattern(User.last))
+    match_json(deleted_contact_pattern(User.last))
   ensure
     @account.revoke_feature(:unique_contact_identifier)
   end
@@ -2349,7 +2365,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     params = { unique_external_id: Faker::Lorem.characters(20) + white_space, name: Faker::Lorem.characters(20) + white_space}
     post :create, construct_params({}, params)
 
-    match_json(deleted_unique_external_id_contact_pattern(User.last))
+    match_json(deleted_contact_pattern(User.last))
     assert_response 201
   ensure
     @account.revoke_feature(:unique_contact_identifier)
@@ -2414,11 +2430,14 @@ class ApiContactsControllerTest < ActionController::TestCase
     email = Faker::Internet.email
     unique_external_id =  Faker::Lorem.characters(40)
     comp = get_company
-    # @account.all_contacts.update_all(customer_id: nil)
-    @account.all_contacts.first.update_column(:customer_id, comp.id)
-    @account.all_contacts.first.user_emails.create(email: email)
-    @account.all_contacts.last.update_column(:customer_id, comp.id)
-    @account.all_contacts.last.update_column(:unique_external_id, unique_external_id)
+    last_contact = @account.all_contacts.last
+    first_contact = @account.all_contacts.first
+    first_contact.company_id = comp.id
+    first_contact.save!
+    first_contact.user_emails.create(email: email)
+    last_contact.company_id = comp.id
+    last_contact.unique_external_id = unique_external_id
+    last_contact.save!
     get :index, controller_params(company_id: "#{comp.id}", unique_external_id: unique_external_id)
     assert_response 200
     response = parse_response @response.body
@@ -2472,7 +2491,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert sample_user.reload.tag_names.split(', ').sort == tags.sort
     assert sample_user.reload.custom_field['cf_city'] == 'Chennai'
     assert sample_user.reload.unique_external_id == unique_external_id
-    match_json(deleted_unique_external_id_contact_pattern(sample_user.reload))
+    match_json(deleted_contact_pattern(sample_user.reload))
     assert_response 200
   ensure
     sample_user.update_column(:unique_external_id, nil)
@@ -2486,7 +2505,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user.update_attribute(:unique_external_id, nil)
     params = { name: Faker::Lorem.characters(20) + white_space, unique_external_id: unique_external_id + white_space }
     put :update, construct_params({ id: sample_user.id }, params)
-    match_json(deleted_unique_external_id_contact_pattern(sample_user.reload))
+    match_json(deleted_contact_pattern(sample_user.reload))
     assert_response 200
   ensure
     sample_user.update_column(:unique_external_id, nil)

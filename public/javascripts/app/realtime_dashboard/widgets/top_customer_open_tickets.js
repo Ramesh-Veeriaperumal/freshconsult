@@ -25,7 +25,7 @@ RealtimeDashboard.Widgets.OpenTickets.Customers = function(container,widget_name
 				if(_fd.resp.customers && _fd.resp.customers.length > 0){
 					self.constructList('.open_tickets_by_customer_list',true);
 				} else {
-					jQuery('.open_tickets_by_customer_list').html("<div class='no_data_to_display text-center muted mt20'><i class='ficon-no-data fsize-72'></i><div class='mt10'>No Data to Display </div></div>");
+					jQuery('.open_tickets_by_customer_list').html("<div class='no_data_to_display text-center muted mt20'><i class='ficon-no-data fsize-72'></i><div class='mt10'> " + I18n.t('no_date_to_display') +" </div></div>");
 					jQuery('[rel=view_all_open_tickets_by_customer]').hide();
 				}
 			},
@@ -60,7 +60,7 @@ RealtimeDashboard.Widgets.OpenTickets.Customers = function(container,widget_name
 			showTimeStamp : function() {
 				var self = this;
 				var date = new Date(_fd.resp.last_dump_time);
-				var str = 'as of ' + moment(date).format(self.core.time_format);
+				var str = I18n.t('helpdesk.realtime_dashboard.time_stamp', { time: moment(date).format(self.core.time_format) } )
 				_fd.formated_time = str;
 				jQuery('.' + _fd.widget_name + '_widget' +' [rel=timestamp]').html(str);
 			},

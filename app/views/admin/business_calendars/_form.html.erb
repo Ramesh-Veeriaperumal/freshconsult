@@ -48,7 +48,7 @@
 						<% display_week = (@business_calendar.business_hour_data[:fullweek] == false) ? 'block':'none' %>
 						<ul class="unstyled working-days row-fluid" id="DAYS_LIST" style="display:<%=display_week%>" >
 							<% weekdays = @business_calendar.business_hour_data[:weekdays] %>
-							<% weekday_human_list = [ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" ] %>
+							<% weekday_human_list = BusinessCalenderConstants::weekday_human_list %>
 							<% weekday_human_list.each_with_index do |days, days_index| %>
 							<% cal_index = ( days_index+1 != 7 ) ? (days_index+1) : 0 %>
 							<li class="timerange row-fluid" data-day-number = "<%= cal_index.to_s %>">

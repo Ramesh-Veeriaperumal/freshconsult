@@ -16,6 +16,8 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    match '_search/tickets' => 'tickets#search', as: :tickets_search, via: :get
+
     resources :conversations, except: [:new, :edit, :show, :index, :create]
 
     resources :ticket_fields, controller: :api_ticket_fields, only: [:index]
@@ -172,7 +174,15 @@ Helpkit::Application.routes.draw do
     resources :ticket_fields, controller: 'ember/ticket_fields', only: [:index, :update]
     resources :groups, controller: 'ember/groups', only: [:index, :show]
     resources :email_configs, controller: 'ember/email_configs', only: [:index, :show]
-    resources :bootstrap, controller: 'ember/bootstrap', only: :index
+
+    resources :bootstrap, controller: 'ember/bootstrap', only: :index do
+      collection do
+        get :agents_groups, to: 'ember/bootstrap#agents_groups'
+        get :me, to: 'ember/bootstrap#me'
+        get :account, to: 'ember/bootstrap#account'
+      end
+    end
+
     resources :chatsetting, controller: 'ember/livechat_setting', only: :index
     resources 'freshcaller_desktop_notification_settings', path: 'freshcaller/settings', controller: 'ember/freshcaller/settings', only: [:index] do
       collection do
@@ -447,8 +457,6 @@ Helpkit::Application.routes.draw do
       resources :tickets, controller: 'channel/bot/tickets', only: [:create]
     end
   end
-
-  match '/api/v2/_search/tickets' => 'tickets#search', :defaults => { format: 'json' }, :as => :tickets_search, via: :get
 
   scope '/api', defaults: { version: 'v2', format: 'json' }, constraints: { format: /(json|$^)/ } do
     scope '/v2', &api_routes # "/api/v2/.."
