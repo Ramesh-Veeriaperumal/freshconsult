@@ -6,12 +6,12 @@ namespace :db do
       puts 'Creating tables...'
       Rake::Task["db:schema:load"].invoke
   #    Rake::Task["db:migrate"].invoke
-      Rake::Task["db:create_reporting_tables"].invoke unless Rails.env.production?
+      #Rake::Task["db:create_reporting_tables"].invoke unless Rails.env.production?
       
       Rake::Task["db:create_trigger"].invoke #To do.. Need to make sure the db account has super privs.
       Rake::Task["db:perform_table_partition"].invoke
 
-      create_es_indices
+      #create_es_indices
       
       puts 'Loading data...'
       ENV["FIXTURE_PATH"] = "db/fixtures/global"

@@ -1,0 +1,11 @@
+#!/bin/bash
+DIR=`dirname "${BASH_SOURCE[0]}"`
+echo "Creating docker images"
+for service in redis32 mysql56 memcached14 localaws
+do 
+  docker-compose -f docker/service.yml create $service
+done
+${DIR}/docker_for_mac_fsync_fix.sh
+docker restart mysql56
+bundle exec rake db:create
+bundle exec rake db:bootstrap

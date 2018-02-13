@@ -2113,7 +2113,9 @@ module Ember
       enable_adv_ticketing([:parent_child_tickets]) do
         parent = create_ticket_with_attachments
         params = ticket_params_hash.merge(parent_id: parent.display_id, attachment_ids: parent.attachments.map(&:id))
-        post :create, construct_params({ version: 'private' }, params)
+        stub_attachment_to_io do
+          post :create, construct_params({ version: 'private' }, params)
+        end
         child = Account.current.tickets.last
         match_json(ticket_show_pattern(child))
         assert child.attachments.count == parent.attachments.count
@@ -2155,7 +2157,9 @@ module Ember
         child_attachment_ids = []
         child_attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
         params = ticket_params_hash.merge(parent_id: parent.display_id, attachment_ids: child_attachment_ids)
-        post :create, construct_params({ version: 'private' }, params)
+        stub_attachment_to_io do
+          post :create, construct_params({ version: 'private' }, params)  
+        end
         child = Account.current.tickets.last
         match_json(ticket_show_pattern(child))
         assert child.attachments.count == 1

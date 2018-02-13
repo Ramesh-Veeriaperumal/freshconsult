@@ -13,7 +13,7 @@ Dir[File.join(Rails.root, 'app', 'jobs', '*.rb')].each { |file| require file }
 config = YAML::load_file(File.join(Rails.root, 'config', 'redis.yml'))[Rails.env]
 
 if config
-	Resque.redis = Redis.new(:host => config["host"], :port => config["port"])
+  Resque.redis = Redis.new(:host => config["host"], :port => config["port"])
   Resque.redis.namespace = config["namespace"]
 end
 

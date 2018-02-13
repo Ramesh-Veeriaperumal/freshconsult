@@ -1,0 +1,46 @@
+#TODO : https://docs.docker.com/docker-for-mac/osxfs-caching/#semantics
+
+version: '3.0'
+
+volumes:
+  rubyGems:
+    external: true   
+
+services:
+  helpkit:
+    build: .
+    container_name: helpkit
+    command: ./docker/docker-start.sh #reference based on where we are running the docker-compose command from
+    volumes:
+      - ../:/data/helpkit/current #relative to the location of this file
+      - rubyGems:/gems
+      - ~/.ssh:/root/.ssh
+    ports:
+      - "3000:3000"
+      #- "22:22"
+    expose:
+      - "3306" #mysql
+      - "6379" #redis
+      - "11211" #memcache
+      - "4569" #dynamoDB
+      - "4572" #S3
+      - "4576" #SQS
+    environment:
+        - BUNDLE_PATH=/gems/2_2
+        - HELPKIT_DATABASE_HOST=mysql56
+        - HELPKIT_REDIS_HOST=redis32
+        - HELPKIT_MEMCACHED_HOST=memcached14:11211
+        - RAILS_ENV=development   
+    external_links:
+      - mysql56
+      - redis32
+      - memcached14
+      - localaws
+    network_mode: "bridge"
+
+    # Keep the stdin open, so we can attach to our app container's process and do things such as
+    # byebug, etc:
+    stdin_open: true
+
+    # Enable sending signals (CTRL+C, CTRL+P + CTRL+Q) into the container:
+    tty: true

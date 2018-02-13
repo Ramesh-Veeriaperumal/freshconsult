@@ -23,7 +23,7 @@ module TimeEntriesTestHelper
 
   # Helpers
   def create_time_entry(options = {})
-    ticket_id = create_ticket.id if options[:ticket_id].blank?
+    ticket_id = create_ticket.display_id if options[:ticket_id].blank?
     time_entry = FactoryGirl.build(:time_sheet, user_id: options[:agent_id] || @agent.id,
                                                 workable_id: options[:ticket_id] || ticket_id,
                                                 account_id: @account.id,
