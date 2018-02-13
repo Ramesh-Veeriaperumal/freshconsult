@@ -10,7 +10,7 @@ Services:
     - They can be started using docker-compose also. Refer "docker/service.yml" for the settings.
 		```
         $ docker-compose -f docker/service.yml up -d redis32
-        $ docker-compose -f docker/service.yml up -d mysql56
+        $ docker-compose -f docker/service.yml up -d mysql57
         $ docker-compose -f docker/service.yml up -d memcached14 # -d starts the service as a daemon  
         ```
 

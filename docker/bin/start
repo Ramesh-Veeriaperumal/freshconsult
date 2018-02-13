@@ -1,5 +1,5 @@
 #!/bin/bash
-for service in redis32 mysql56 memcached14 localaws
+for service in redis32 mysql57 memcached14 localaws084
 do 
     docker start $service
 done

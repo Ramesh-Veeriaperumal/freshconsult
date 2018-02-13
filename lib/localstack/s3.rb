@@ -6,7 +6,7 @@ module Localstack
         buckets   = s3_config[Rails.env].keys - s3_config["common"].keys
 
         buckets.each do |bucket|
-          puts "Creating #{bucket} #{s3_config[Rails.env][bucket]}"
+          puts "Creating S3 bucket : #{bucket} #{s3_config[Rails.env][bucket]}"
           $s3_client.create_bucket({
             acl: "private", 
             bucket: s3_config[Rails.env][bucket], #{s3_config[Rails.env]['s3_host_name']}
