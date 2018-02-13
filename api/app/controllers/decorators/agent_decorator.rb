@@ -14,6 +14,7 @@ class AgentDecorator < ApiDecorator
   def agent_hash
     {
       available: record.available,
+      show_rr_toggle: record.toggle_availability?,
       occasional: record.occasional,
       id: record.user_id,
       ticket_scope: record.ticket_permission,
