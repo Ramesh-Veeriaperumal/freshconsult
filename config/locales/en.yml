@@ -225,6 +225,17 @@ en:
       add_note_to_admin : "Notify admin of blocked address"
       hide_details: "Hide details"
       show_details: "Show details"
+  bot_training_completed:
+    email:
+      subject: "Bot Training Completed! I can help your customers find answers now."
+      user: "Hey %{user_name}!"
+      info1: "Just your friendly support bot checking in! I wanted to let you know that I’ve been trained by learning all the support articles you wanted me to go through. So now, I can help your customers find answers for questions from the following categories:"
+      info2: "You can make me appear on any of your pages by simply adding the embed code to your websites."
+      widget_code: "Get the embed code"
+      widget_code_plain_text: "Here is the embed code for the bot:"
+      info3: "Let's start supporting!"
+      bot_name: "%{bot_name},"
+      signature: "The Freshdesk's Bot"
   reorder_rules: Reorder Active Rules
   plain_yes: "Yes"
   plain_no: "No"
