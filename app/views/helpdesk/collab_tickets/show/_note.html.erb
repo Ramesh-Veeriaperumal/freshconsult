@@ -101,6 +101,7 @@ end
               :ticket_info => ticket_info, :notedetails => notedetails ,:question_values => question_values} %>
       <% end %>
       <%= freshfone_audio_dom(note) if current_account.features?(:freshfone) %>
+      <%= freshcaller_audio_dom(note) if current_account.has_feature?(:freshcaller) %>
 
       <div id="note_attachments_container_<%= note.id%>">
         <% if note.all_attachments.present? or note.cloud_files.present? %>

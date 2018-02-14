@@ -1557,6 +1557,19 @@ ActiveRecord::Schema.define(:version => 20171214095940) do
 
   add_index "freshcaller_accounts", ["account_id"], :name => "index_freshcaller_accounts_on_account_id"
 
+  create_table "freshcaller_calls", :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "fc_call_id",       :limit => 8, :null => false
+    t.integer  "recording_status", :limit => 1
+    t.integer  "notable_id",       :limit => 8
+    t.string   "notable_type"
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
+  end
+
+  add_index "freshcaller_calls", ["account_id", "fc_call_id"], :name => "index_freshcaller_calls_on_account_id_and_fc_call_id"
+  add_index "freshcaller_calls", ["fc_call_id"], :name => "fc_call_id", :unique => true
+
   create_table "freshfone_accounts", :force => true do |t|
     t.integer  "account_id",              :limit => 8
     t.string   "friendly_name"

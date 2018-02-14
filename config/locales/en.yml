@@ -10365,6 +10365,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
           authentication_error: "The email or password provided is not valid."
           access_error: "You need to be an admin in both Freshcaller and Freshdesk to link your accounts."
           api_error: "This Freshcaller account does not exist. Please provide a valid URL or create a new Freshcaller account."
+    ticket:
+      recording:
+        play: 'Play'
   freshfone:
     more_metrics_available_in_export: "More metrics available in export"
     no_agent_call: No agents attended the call.
