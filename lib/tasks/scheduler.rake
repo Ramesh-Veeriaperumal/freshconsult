@@ -121,7 +121,7 @@ namespace :scheduler do
     queue_length = Sidekiq::Queue.new(queue_name).size
     puts "#{queue_name} queue length is #{queue_length}"
     #queue_length === 0 and !Rails.env.staging?
-    if queue_length < 1 and !Rails.env.staging?
+    if queue_length < 1
       true
     else
       subject = "Scheduler skipped for #{queue_name} at #{Time.now.utc.to_s} in #{Rails.env}"
