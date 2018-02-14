@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20171214095940) do
+ActiveRecord::Schema.define(:version => 20180205101318) do
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -381,7 +381,6 @@ ActiveRecord::Schema.define(:version => 20171214095940) do
 
   create_table "bots", :force => true do |t|
     t.string   "name"
-    t.text     "bot_avatar"
     t.integer  "account_id",          :limit => 8, :null => false
     t.integer  "portal_id",           :limit => 8, :null => false
     t.integer  "product_id",          :limit => 8
