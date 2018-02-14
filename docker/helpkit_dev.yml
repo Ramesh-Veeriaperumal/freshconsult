@@ -1,0 +1,42 @@
+version: '3'
+
+volumes:
+  # gem-volume:
+  #   driver: local #Another option - https://www.healthcareblocks.com/blog/persistent-ruby-gems-docker-container
+  # ssh-agent:
+  #   external: true 
+  rubyGems:
+    external: true 
+
+services:
+  helpkit:
+    build: .
+    container_name: helpkit
+    command: ./docker/docker-start.sh #reference based on where we are running the docker-compose command from
+    volumes:
+      - ../:/data/helpkit/current #relative to the location of this file
+      #- gem-volume:/gems
+      - rubyGems:/gems
+      # - ssh-agent:/ssh-agent #https://github.com/docker/for-mac/issues/410
+      - ~/.ssh:/root/.ssh
+    ports:
+      - "3000:3000"
+    expose:
+      - "3306"
+      - "6379"
+    environment:
+        - BUNDLE_PATH=/gems/2_2
+        - HELPKIT_DATABASE_HOST=mysql56
+        - HELPKIT_REDIS_HOST=redis32
+        #- SSH_AUTH_SOCK=/ssh-agent/ssh-agent.sock     
+        - RAILS_ENV=development   
+    external_links:
+      - mysql56
+      - redis32
+    network_mode: "bridge"
+    # Keep the stdin open, so we can attach to our app container's process and do things such as
+    # byebug, etc:
+    stdin_open: true
+
+    # Enable sending signals (CTRL+C, CTRL+P + CTRL+Q) into the container:
+    tty: true

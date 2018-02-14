@@ -1131,6 +1131,8 @@ Helpkit::Application.routes.draw do
       :controller => 'http_request_proxy', :action => 'fetch', :as => :http_proxy
   match '/freshcaller_proxy',
        :controller => 'freshcaller_proxy', :action => 'fetch', :as => :freshcaller_proxy, :via => :post
+  match '/freshcaller_proxy/recording_url',
+       :controller => 'freshcaller_proxy', :action => 'recording_url', :as => :freshcaller_proxy, :via => :get
   match '/mkp/data-pipe.:format', :controller => 'integrations/data_pipe', :action => 'router', :method => :post, :as => :data_pipe
 
   constraints RouteConstraints::Freshcaller.new do

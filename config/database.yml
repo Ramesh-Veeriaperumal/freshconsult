@@ -78,6 +78,7 @@ test:
   adapter: mysql2
   encoding: utf8
   database: helpkit_test_rails3
+  host: 127.0.0.1
   username: root
   password:
   reconnect: true

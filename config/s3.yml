@@ -2,6 +2,7 @@ common: &common
   access_key_id: dummy
   secret_access_key: dummy
   AWS_CALLING_FORMAT: SUBDOMAIN
+  s3_host_name: localhost:4572
   region: 'us-east-1'
   access_key_id_euc: access_key_id_euc
   secret_access_key_euc: secret_access_key_euc
