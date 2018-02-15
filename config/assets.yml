@@ -50,6 +50,7 @@ stylesheets:
   :freshfone_admin  => [ "freshfone/admin"],
   :freshfone_message_select  => [ "freshfone/message_select"],
   :freshfone_recording_playback  => [ "freshfone/record_playback"],
+  :freshcaller_widget => ["freshcaller/widget"],
   :livechat_admin  => [ "chat/admin","chat/visitor"],
   :livechat_mini_dashboard  => [ "chat/mini-dashboard"],
   :ui_daterangepicker => ["ui.daterangepicker"],
@@ -343,6 +344,12 @@ javascripts:
 
   freshfone:
     - public/javascripts/freshfone.js
+
+  freshcaller_widget:
+    - public/javascripts/freshcaller/widget.js
+
+  freshcaller_signup:
+    - public/javascripts/freshcaller/signup.js
 
   freshfone_client:
     - public/javascripts/freshfone/list.js

@@ -63,17 +63,16 @@ class Admin::FreshfoneController < Admin::AdminController
 	private
 
     def render_freshcaller
-      return unless current_account.falcon_ui_enabled?
       return if old_ui? && old_account?
       return render 'admin/freshcaller/signup/signup_error', 
         :locals => { 
           :error => t('freshcaller.admin.phone_not_available').html_safe 
         } if new_ui_old_account_phone_channel?
-      return render :freshcaller_signup , locals: { :old_ui => old_ui? } 
-    end 
+      render :freshcaller_signup
+    end
 
     def freshcaller_enabled_account?
-      current_account.has_feature?(:freshcaller) 
+      current_account.has_feature?(:freshcaller)
     end
 
     def old_account? 
@@ -89,10 +88,10 @@ class Admin::FreshfoneController < Admin::AdminController
     end
 
     def new_ui_old_account_phone_channel?
-      new_ui? && old_account? && has_only_phone_account?
+      new_ui? && old_account? && only_phone_account?
     end
 
-    def has_only_phone_account?
+    def only_phone_account?
       current_account.freshfone_enabled? && current_account.freshcaller_account.blank?
     end
 	 
