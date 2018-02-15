@@ -113,5 +113,12 @@ class Flexifield < ActiveRecord::Base
     denormalized_flexifield.present? ? changes.merge!(denormalized_flexifield.changes_of_serialized_attributes) : changes
   end
 
+  def attributes_with_denormalized_flexifield
+    denormalized_attributes = denormalized_flexifield.present? ? denormalized_flexifield.attributes : {}
+    attributes_without_denormalized_flexifield.dup.reverse_merge(denormalized_attributes)
+  end
+
+  alias_method_chain :attributes, :denormalized_flexifield
+
 end
 
