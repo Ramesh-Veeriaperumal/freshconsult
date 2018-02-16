@@ -2,7 +2,7 @@ class Va::RuleHandler
   include Va::Constants
 
   attr_accessor :condition, :rule_hash, :value_key
-
+  
   def initialize(condition, rule_hash)
     @condition, @rule_hash = condition, rule_hash
   end
@@ -50,10 +50,4 @@ class Va::RuleHandler
   def filter_query
     send("filter_query_#{condition.operator}")
   end
-
-  def null_query(value = :null)
-    column_name = condition.db_column
-    value == :null ? NULL_QUERY % {db_column:column_name} : NOT_NULL_QUERY % {db_column:column_name}
-  end
-
 end
