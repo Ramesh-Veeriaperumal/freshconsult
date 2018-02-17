@@ -36,6 +36,9 @@ class Helpdesk::Attachment < ActiveRecord::Base
     :restricted_characters => /[&$+,\/:;=?@<>\[\]\{\}\|\\\^~%#]/,
     :styles => Proc.new  { |attachment| attachment.instance.attachment_sizes }
 
+  # TODO - please remove this. Refer https://github.com/thoughtbot/paperclip#security-validations
+  do_not_validate_attachment_file_type :content
+
    scope :gallery_images,
     {
       :conditions => ['description = ? and attachable_type = ?',
