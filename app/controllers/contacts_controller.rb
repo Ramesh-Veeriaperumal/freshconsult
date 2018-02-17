@@ -24,7 +24,7 @@ class ContactsController < ApplicationController
    before_filter :init_user_email, :only => :edit
    before_filter :load_companies, :only => :edit
    before_filter :check_parent, :only => :restore
-   before_filter :fetch_contacts, :only => [:index]
+   before_filter :validate_state_param, :fetch_contacts, :only => [:index]
    before_filter :set_native_mobile, :only => [:show, :index, :create, :destroy, :restore,:update]
    before_filter :set_required_fields, :only => [:create_contact, :update_contact]
    before_filter :set_validatable_custom_fields, :only => [:create, :update, :create_contact, :update_contact]
@@ -424,6 +424,11 @@ protected
 
     def get_formatted_message(exception)
       exception.message # TODO: Proper error reporting.
+    end
+
+    def validate_state_param
+      #whitelisting contacts filter param
+      render :nothing => true, :status => 400 if params[:state] && !User::USER_FILTER_TYPES.include?(params[:state])
     end
 
     def fetch_contacts
