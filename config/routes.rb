@@ -3226,6 +3226,12 @@ Helpkit::Application.routes.draw do
   end
   match '/livechat/visitor/:type', :controller => 'chats', :action => 'visitor', :method => :get
   match '/livechat/downloadexport/:token', :controller => 'chats', :action => 'download_export', :method => :get
+
+
+  post '/livechat/shortcodes', :controller => 'chats', :action => 'create_shortcode', :method => :post
+  delete '/livechat/shortcodes/:id', :controller => 'chats', :action => 'delete_shortcode', :method => :delete
+  put '/livechat/shortcodes/:id', :controller => 'chats', :action => 'update_shortcode', :method => :put
+  put '/livechat/agent/:id/update_availability', :controller => 'chats', :action => 'update_availability', :method => :put
   match '/livechat/*letter', :controller => 'chats', :action => 'index', :method => :get
 
   use_doorkeeper do
