@@ -15,7 +15,7 @@ class CRM::FreshsalesUtility
   SELECTOR_URL            = "/selector/%{entity_type}"
   
   CUSTOMER_STATUS         = { trial: 'Trial', suspended: 'Trial Expired', free: 'Free', 
-                              paid: 'Customer', deleted: 'Deleted', active: 'Active', 
+                              paid: 'Customer', active: 'Active', 
                               no_payment_suspended: 'Suspended', trial_extended: 'Trial Extended',
                               deleted: "Deleted" }
   

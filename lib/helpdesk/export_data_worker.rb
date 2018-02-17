@@ -1,6 +1,6 @@
 require "tempfile"
-require 'zip/zip'
-require 'zip/zipfilesystem'
+require 'zip'
+require 'zip/filesystem'
 require 'fileutils'
 
 class Helpdesk::ExportDataWorker < Struct.new(:params)
@@ -56,7 +56,7 @@ class Helpdesk::ExportDataWorker < Struct.new(:params)
 
   
   def zip_all_files(zip_file_path) 
-    Zip::ZipFile.open(zip_file_path, Zip::ZipFile::CREATE) do |zipfile|
+    Zip::File.open(zip_file_path, Zip::File::CREATE) do |zipfile|
       file_list = Dir.glob(@out_dir+"/*")
       file_list.each do |file|
         zipfile.add(File.basename(file),file)
