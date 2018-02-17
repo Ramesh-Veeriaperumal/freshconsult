@@ -67,6 +67,7 @@ gem "bullet", :group => [:development, :test, :staging]
 gem 'mail', '2.5.5'
 gem "i18n", "~> 0.6.0"
 gem "i18n-js", "3.0.0.rc11"
+gem "RedCloth", "4.3.2"
 gem "authlogic", "~> 3.4.2"
 gem "request_store", "~> 1.0"
 gem "httparty", "0.10.0"
