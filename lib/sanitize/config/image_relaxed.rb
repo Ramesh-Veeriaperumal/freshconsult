@@ -55,9 +55,6 @@ class Sanitize
         'pre'        => ['rel','code-brush'],
         'font'       => ['color']
       },
-      :css => {
-        :properties => ['margin-bottom', 'border-top-style', 'margin-top','padding-top', 'padding-bottom', 'border-left', 'border-right', 'border-bottom', 'border-top', 'display', 'font-weight', 'direction', 'background-size', 'line-height', 'clear', 'vertical-align', 'box-sizing', 'font-family', 'outline', 'color', 'font-size', 'margin', 'background-color', 'height', 'width', 'background', 'border', 'background-url', 'padding']
-      },
       :add_attributes => {
         'a' => {'rel' => 'noreferrer'}
       },
