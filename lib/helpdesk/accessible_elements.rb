@@ -42,7 +42,7 @@ module Helpdesk::AccessibleElements
       elements = accessible_from_es(ops[:model_hash][:name].constantize, enclose, default_visiblity, sort, nil,
         ops[:id_data], ops[:excluded_ids], ops[:assn_types])
     end
-    elements = accessible_elements(current_account.send(ops[:model_hash][:asstn]),
+    elements = accessible_elements(current_account.safe_send(ops[:model_hash][:asstn]),
       query_hash(ops[:model_hash][:model], ops[:model_hash][:table], ops[:query], [], db_limit)) if elements.nil?
     elements
   end
@@ -92,9 +92,9 @@ module Helpdesk::AccessibleElements
       method_name = "accessible_from_es"
       model_name = model_name.constantize
     end
-    results = send(method_name, model_name, enclose, visibility, sort, folder_id, id_data, excluded_ids)
+    results = safe_send(method_name, model_name, enclose, visibility, sort, folder_id, id_data, excluded_ids)
     return results if (!v2_read_enabled || results.blank? || sort.blank?)
-    sort_element = Search::V2::Count::AccessibleMethods::MULTI_MATCH_STRING_SEARCH[model_name].first    
+    sort_element = Search::V2::Count::AccessibleMethods::MULTI_MATCH_STRING_SEARCH[model_name].first
     results.sort! { |a,b| a.try(sort_element).to_s.downcase <=> b.try(sort_element).to_s.downcase }
   end
 end

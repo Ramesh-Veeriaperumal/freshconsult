@@ -58,7 +58,7 @@ class DomainGenerator
 	end
 
 	def domain_prefix
-		@domain_prefix ||= self.send("email_#{domain_prefix_type}")
+		@domain_prefix ||= self.safe_send("email_#{domain_prefix_type}")
 		@domain_prefix = @domain_prefix.downcase.gsub(/[^0-9a-z]/i, '')
 	end
 

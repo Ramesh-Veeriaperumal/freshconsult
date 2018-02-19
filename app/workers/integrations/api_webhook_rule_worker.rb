@@ -7,7 +7,7 @@ module Integrations
       begin
         account = Account.current
         args = args.deep_symbolize_keys
-        evaluate_on = account.send(args[:association].pluralize.to_sym).find args[:evaluate_on_id]
+        evaluate_on = account.safe_send(args[:association].pluralize.to_sym).find args[:evaluate_on_id]
         account.api_webhooks_rules_from_cache.each do |vr|
           is_a_match = vr.event_matches? args[:current_events], evaluate_on
           vr.pass_through evaluate_on, nil, nil if is_a_match

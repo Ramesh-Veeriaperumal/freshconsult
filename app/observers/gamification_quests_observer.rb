@@ -11,9 +11,9 @@ class GamificationQuestsObserver < ActiveRecord::Observer
 	TOPIC_UPDATE_ATTRIBUTES = ["forum_id", "user_votes"]
   
   def after_commit(model)
-    if model.send(:transaction_include_action?, :create)
+    if model.safe_send(:transaction_include_action?, :create)
       commit_on_create(model)
-    elsif model.send(:transaction_include_action?, :update)
+    elsif model.safe_send(:transaction_include_action?, :update)
       commit_on_update(model) 
     end
     true
@@ -32,7 +32,7 @@ class GamificationQuestsObserver < ActiveRecord::Observer
 	end
 
 	def process_quests(model)
-		send("process_#{model_name(model)}_quests", model)
+		safe_send("process_#{model_name(model)}_quests", model)
 		rollback_achieved_quests(model) if :"Helpdesk::Ticket".eql? model.class.name.to_sym
 		
 	end

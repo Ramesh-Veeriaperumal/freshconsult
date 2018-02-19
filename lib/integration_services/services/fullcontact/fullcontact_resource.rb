@@ -22,7 +22,7 @@ module IntegrationServices::Services
       
       def column_label type, name
         label = nil
-        send("#{type}_object").each do |field|
+        safe_send("#{type}_object").each do |field|
           label = field["label"] and break if field["name"].eql? name
         end
         label

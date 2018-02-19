@@ -41,10 +41,10 @@ class Helpdesk::Access < ActiveRecord::Base
   ACCESS_TYPES_KEYS.product(ACCESS_TYPES_KEYS).each do |types|
     define_method("update_#{types[0]}_access_type_to_#{types[1]}") do |new_ids|
       if types[1] == types[0]
-        send("update_#{types[0]}_accesses",new_ids)
+        safe_send("update_#{types[0]}_accesses",new_ids)
       else
-        send("remove_#{types[0]}_accesses",nil)
-        send("create_#{types[1]}_accesses",new_ids)
+        safe_send("remove_#{types[0]}_accesses",nil)
+        safe_send("create_#{types[1]}_accesses",new_ids)
       end
     end
   end
@@ -121,13 +121,13 @@ class Helpdesk::Access < ActiveRecord::Base
     end
 
     def shared_accessible_sql(type,user)
-      self.send(:construct_finder_sql,:select => "accessible_id, accessible_type, access_type, helpdesk_accesses.account_id",
+      self.safe_send(:construct_finder_sql,:select => "accessible_id, accessible_type, access_type, helpdesk_accesses.account_id",
         :joins => "#{group_accesses_join(type, user)} #{agent_groups_join}",
         :conditions => "#{type_conditions(type)} AND (#{user_conditions(user)[:global]} OR #{user_conditions(user)[:users_via_group]})")
     end
 
     def only_me_accessible_sql(type,user)
-      self.send(:construct_finder_sql,:select => "accessible_id, accessible_type, access_type, helpdesk_accesses.account_id",
+      self.safe_send(:construct_finder_sql,:select => "accessible_id, accessible_type, access_type, helpdesk_accesses.account_id",
         :joins => "#{user_accesses_join(type, user)}",
         :conditions => "#{type_conditions(type)} AND (#{user_conditions(user)[:users]})")
     end

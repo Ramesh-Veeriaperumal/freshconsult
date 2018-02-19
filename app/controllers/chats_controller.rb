@@ -153,7 +153,7 @@ class ChatsController < ApplicationController
     event = params[:eventType]
     content = params[:content]
     content = JSON.parse(params[:content], symbolize_names: true) if content.is_a?(String)
-    send(event, content)
+    safe_send(event, content)
   end
 
   def export 

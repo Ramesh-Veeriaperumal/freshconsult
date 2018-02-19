@@ -28,7 +28,7 @@ class LivechatWorker < BaseWorker
 		args["userId"]           = User.current.id unless User.current.nil?
 		args['siteId'] 					 = Account.current.chat_setting.site_id
 		args['appId'] 					 = ChatConfig['app_id']
-		send(worker_method_name, args)
+		safe_send(worker_method_name, args)
 	end
 
 	def get_token(params, worker_method_name)

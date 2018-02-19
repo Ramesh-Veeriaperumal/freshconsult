@@ -34,9 +34,9 @@ module Delayed
         account_id = $2
        end
        Sharding.select_shard_of(account_id) do
-        load(account).send(:make_current) if account
-        load(portal).send(:make_current) if portal
-        load(object).send(method, *args.map{|a| load(a)})
+        load(account).safe_send(:make_current) if account
+        load(portal).safe_send(:make_current) if portal
+        load(object).safe_send(method, *args.map{|a| load(a)})
         # $statsd.increment "email_counter.#{account_id}"
       end
       true

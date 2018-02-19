@@ -197,7 +197,7 @@ You can support it in your app by changing #open_id_authentication
       def assign_registration_attributes!(registration)
         model_to_registration_mapping.each do |model_attribute, registration_attribute|
           unless registration[registration_attribute].blank?
-            @current_user.send("#{model_attribute}=", registration[registration_attribute])
+            @current_user.safe_send("#{model_attribute}=", registration[registration_attribute])
           end
         end
       end

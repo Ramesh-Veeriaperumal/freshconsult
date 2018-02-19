@@ -68,10 +68,10 @@ class Integrations::InstalledApplication < ActiveRecord::Base
       self.configs = {} if self.configs.blank?
       self.configs[:inputs] = {} if self.configs[:inputs].blank?
       if matched[3] == "="
-        val = matched[1].blank? ? args[0] : self.send(matched[1], args[0])
+        val = matched[1].blank? ? args[0] : self.safe_send(matched[1], args[0])
         self.configs[:inputs][input_key] = val
       else
-        matched[1].blank? ? self.configs[:inputs][input_key] : self.send(matched[1], self.configs[:inputs][input_key])
+        matched[1].blank? ? self.configs[:inputs][input_key] : self.safe_send(matched[1], self.configs[:inputs][input_key])
       end
     end
   end

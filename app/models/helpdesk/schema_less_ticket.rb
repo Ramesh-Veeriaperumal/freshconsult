@@ -193,7 +193,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 		recalculated_count = Hash.new(0)
 		notes = self.ticket.notes.find(:all, :include => [:schema_less_note])
 		notes.each do |note|
-			category = note.send("reports_note_category")
+			category = note.safe_send("reports_note_category")
 			recalculated_count["#{category}"]+=1
 	  end
 	  self.reports_hash = {} unless self.reports_hash.is_a?(Hash)
@@ -212,7 +212,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
   def replicate_schema_less_ticket index, _changes = {}
     schema_less_ticket_replica = account.schema_less_tickets.new #dup creates problems
     attributes.each do |_attribute, value| #to work around protected attributes
-      schema_less_ticket_replica.send("#{_attribute}=", value)
+      schema_less_ticket_replica.safe_send("#{_attribute}=", value)
     end
     _changes ||= begin
       temp_changes = changes #calling changes builds a hash everytime
@@ -220,7 +220,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
     end
     _changes.each do |_attribute, change|
       if schema_less_ticket_replica.respond_to? _attribute
-        schema_less_ticket_replica.send("#{_attribute}=", change.send(index)) 
+        schema_less_ticket_replica.safe_send("#{_attribute}=", change.safe_send(index)) 
       end
     end
 

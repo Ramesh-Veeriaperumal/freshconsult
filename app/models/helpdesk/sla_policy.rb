@@ -235,7 +235,7 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
     end
 
     def escalate_to_agents(ticket, escalation, type, due_by)
-      notify_time_interval = escalation[:time].seconds.since(ticket.send(due_by))
+      notify_time_interval = escalation[:time].seconds.since(ticket.safe_send(due_by))
 
       if type == EmailNotification::RESPONSE_SLA_REMINDER || EmailNotification::RESOLUTION_SLA_REMINDER 
         return false if notify_time_interval <= ticket.created_at

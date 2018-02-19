@@ -30,7 +30,7 @@ module RabbitMq::Subscribers::Tickets::Count
     model_exchange  = RabbitMq::Constants::MODEL_TO_EXCHANGE_MAPPING[model_name]
     model_message   = RabbitMq::SqsMessage.skeleton_message(model_name, action, model_uuid, Account.current.try(:id) || self.account_id)
     
-    model_message["#{model_name}_properties"].deep_merge!(self.send("mq_count_#{model_name}_properties", action))
+    model_message["#{model_name}_properties"].deep_merge!(self.safe_send("mq_count_#{model_name}_properties", action))
     model_message["subscriber_properties"].merge!({ 'count' => self.mq_count_subscriber_properties(action) })
     
     RabbitMq::Utils.manual_publish_to_xchg(
@@ -40,7 +40,7 @@ module RabbitMq::Subscribers::Tickets::Count
 
   def mq_count_valid(action, model)
     if VALID_MODELS.include?(model) || (model == "ticket" and count_misc_changes?)
-      send("mq_count_#{model}_valid", action, model)
+      safe_send("mq_count_#{model}_valid", action, model)
     else
       false
     end

@@ -74,13 +74,13 @@
 	              value = column[:value]
 	              value = value.call(obj) if value.is_a?(Proc)
               else
-                value = obj.send(key) 
+                value = obj.safe_send(key) 
               end
               style << column[:style] if column[:style]
 
             else
               key = column
-              value = obj.send(key)
+              value = obj.safe_send(key)
             end
 
             style << "padding-left:10px;" if key == :checkbox

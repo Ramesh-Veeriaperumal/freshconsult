@@ -519,7 +519,7 @@ private
   end
 
   def check_occasional_agent_params
-    redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) if params[:state].to_s == "occasional" and !current_account.occasional_agent_enabled?
+    redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE) if params[:state].to_s == "occasional" and !current_account.occasional_agent_enabled?
   end
 
   def fetch_portal_url

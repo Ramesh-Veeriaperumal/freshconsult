@@ -102,7 +102,7 @@
 						<span class='delete_conditions'></span>
 						<label class='inline_text'><%= type[1] %></label>
 						<div class="condition_autocompleter">
-							<%= a.select type[0], options_for_select(self.send("#{type[0]}_list"), 
+							<%= a.select type[0], options_for_select(self.safe_send("#{type[0]}_list"), 
 								:selected => (conditions[type[0]] || {}) ), 
 								{}, {:multiple => true, :placeholder => t("sla_policy.#{type[0].to_s}_placeholder"),
 									   :class => 'select2-conditions'} %>

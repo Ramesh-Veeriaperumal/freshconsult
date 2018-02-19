@@ -43,7 +43,7 @@ class SsoController < ApplicationController
         end
       end
       flash[:notice] = t(:'flash.g_app.authentication_failed')
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+      redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE)
     end
   end
 

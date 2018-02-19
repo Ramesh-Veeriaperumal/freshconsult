@@ -63,7 +63,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       t.add proc { |x| x.cc_email.try(:[], key) }, as: key
     end
     DATETIME_FIELDS.each do |key|
-      t.add proc { |x| x.utc_format(x.send(key)) }, as: key
+      t.add proc { |x| x.utc_format(x.safe_send(key)) }, as: key
     end
   end
 
@@ -86,7 +86,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def custom_fields_hash
     custom_ticket_fields.inject([]) do |arr, field|
-      field_value = send(field.name)
+      field_value = safe_send(field.name)
       arr.push({
         ff_alias: field.flexifield_def_entry.flexifield_alias,
         ff_name: field.flexifield_def_entry.flexifield_name,

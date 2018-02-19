@@ -8,9 +8,9 @@
 			  <% items.each do |item| %>
 			  	<% disabled ||= nil %>
 			  	<%= content_tag :li, :item_id => item.id, 
-			  	:class => (disabled && item.respond_to?(disabled) && item.send(disabled) && "disabled") do %>
+			  	:class => (disabled && item.respond_to?(disabled) && item.safe_send(disabled) && "disabled") do %>
 			  		<span class="sort_handle"></span>
-			  		<%= h(item.send(title)).truncate(100) %> 
+			  		<%= h(item.safe_send(title)).truncate(100) %> 
 			  	<% end %>
 			  <% end %>
 		  </ul>

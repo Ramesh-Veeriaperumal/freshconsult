@@ -8,7 +8,7 @@ class Integrations::TimeSheetsSync
     applications.each do |app_key|
       installed_app = Account.current.installed_applications.with_name(app_key)
       next if installed_app.blank?  
-      Integrations::TimeSheetsSync.send(app_key, installed_app.first, time_entry, user) unless time_entry.blank?
+      Integrations::TimeSheetsSync.safe_send(app_key, installed_app.first, time_entry, user) unless time_entry.blank?
     end
   end
 

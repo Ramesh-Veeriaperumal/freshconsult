@@ -12,7 +12,7 @@ class SubscriptionPaymentObserver < ActiveRecord::Observer
   end
 
   def after_commit(payment)
-    if payment.send(:transaction_include_action?, :create) 
+    if payment.safe_send(:transaction_include_action?, :create) 
       add_to_crm(payment)
     end
     true

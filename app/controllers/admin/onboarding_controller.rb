@@ -55,7 +55,7 @@ class Admin::OnboardingController < Admin::AdminController
     def apply_account_channel_config
       enable_livechat_feature if @channel_config[:chat].present?
       # enable_phone_channel if @channel_config[:phone].present?
-      [:forums,:social].each { |channel| send("toggle_#{channel}_channel", @channel_config[channel]) }
+      [:forums,:social].each { |channel| safe_send("toggle_#{channel}_channel", @channel_config[channel]) }
     end
 
 end

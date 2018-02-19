@@ -5,9 +5,9 @@ class GamificationScoreObserver < ActiveRecord::Observer
 	include Gamification::GamificationUtil
   
   def after_commit(model)
-    if model.send(:transaction_include_action?, :create)
+    if model.safe_send(:transaction_include_action?, :create)
       commit_on_create(model)
-    elsif model.send(:transaction_include_action?, :update)
+    elsif model.safe_send(:transaction_include_action?, :update)
       commit_on_update(model)
     end
     true
@@ -17,7 +17,7 @@ class GamificationScoreObserver < ActiveRecord::Observer
   
 	def commit_on_create(model)
 		return unless gamification_feature?(model.account)
-		send("process_#{model_name(model)}_score",model)
+		safe_send("process_#{model_name(model)}_score",model)
 	end
 	
 	def commit_on_update(model)

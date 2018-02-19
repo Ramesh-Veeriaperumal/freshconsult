@@ -187,7 +187,7 @@ module Integrations::CloudElements::Crm::CrmUtil
     config_hash['master_type'] = params['master_type']
     config_hash['sync_frequency'] = params['sync_frequency']
     config_hash['app_name'] = element if @installed_app.configs_app_name.nil?
-    config_hash.merge!(send("#{element}_metadata_fields")) # To Built element specific Values.
+    config_hash.merge!(safe_send("#{element}_metadata_fields")) # To Built element specific Values.
     config_hash
   end
 

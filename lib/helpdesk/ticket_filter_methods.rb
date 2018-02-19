@@ -128,7 +128,7 @@ module Helpdesk::TicketFilterMethods
     control_links = ""
 
     order_of(view, default).each do |link_method|
-      control_links << send("#{link_method}_link", view)
+      control_links << safe_send("#{link_method}_link", view)
     end
     (content_tag :div, control_links.html_safe, :id => "view_manage_links").html_safe
   end

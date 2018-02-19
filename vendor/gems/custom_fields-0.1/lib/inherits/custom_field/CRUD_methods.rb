@@ -13,7 +13,7 @@ module Inherits
           if custom_field.errors.full_messages.empty? && custom_field.save # rails flushes errors before saving
             custom_field.insert_at(field_details[:position]) unless field_details[:position].blank?
           else
-            custom_field.send(:update_error, :create)
+            custom_field.safe_send(:update_error, :create)
           end
           
           return custom_field
@@ -21,7 +21,7 @@ module Inherits
 
         private
           def populate_meta_data custom_field, custom_form_id
-            custom_field.custom_form = custom_field.send(self::CUSTOM_FORM_METHOD, custom_form_id)
+            custom_field.custom_form = custom_field.safe_send(self::CUSTOM_FORM_METHOD, custom_form_id)
 
             similar_form_fields = custom_field.custom_form.all_fields.all(:conditions => 
                                     { :field_type => custom_field.similar_field_types })

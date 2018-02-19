@@ -62,7 +62,7 @@ module Va::Observer::Util
     def send_events observer_changes, inline = false
       observer_changes.merge! ticket_event observer_changes
       doer = User.current
-      doer_id = (self.class == Helpdesk::Ticket) ? doer.id : self.send(FETCH_DOER_ID[self.class.name])
+      doer_id = (self.class == Helpdesk::Ticket) ? doer.id : self.safe_send(FETCH_DOER_ID[self.class.name])
       args = {
         :doer_id => doer_id,
         :ticket_id => fetch_ticket_id,

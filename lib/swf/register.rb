@@ -63,7 +63,7 @@ module Swf
       
       ["workflow", "activity"].each do |object_name|
         define_method("#{object_name}_exists?") do |object|
-          object_list = $swf_client.send("list_#{object_name}_types", {
+          object_list = $swf_client.safe_send("list_#{object_name}_types", {
             domain: @domain,
             name: object[:name],
             registration_status: "REGISTERED" 

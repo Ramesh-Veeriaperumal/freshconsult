@@ -26,7 +26,7 @@ module Authority
       return nil unless @owned_by
       raise Exception if(scoper.nil? or !account.respond_to?(scoper))
       # TODO: Add support for scoping beyond account
-      account.send(scoper).send("find_by_#{attribute}", params[attribute])
+      account.safe_send(scoper).safe_send("find_by_#{attribute}", params[attribute])
     end
   end
 end

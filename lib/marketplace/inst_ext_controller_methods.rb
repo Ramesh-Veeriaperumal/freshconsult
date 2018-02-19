@@ -8,12 +8,12 @@ module Marketplace::InstExtControllerMethods
     iframe_params = {}
     IFRAME_USER_PERMIT_PARAMS.each do |key, value|
       if iframe_settings["params"].include?(key)
-        iframe_params[IFRAME_PERMIT_PARAMS[:user][value]] = current_user.send(value)
+        iframe_params[IFRAME_PERMIT_PARAMS[:user][value]] = current_user.safe_send(value)
       end
     end
     IFRAME_ACCOUNT_PERMIT_PARAMS.each do |key, value|
       if iframe_settings["params"].include?(key)
-        iframe_params[IFRAME_PERMIT_PARAMS[:account][value]] = current_account.send(value)
+        iframe_params[IFRAME_PERMIT_PARAMS[:account][value]] = current_account.safe_send(value)
       end 
     end
     iframe_params.merge!(iframe_default_params)

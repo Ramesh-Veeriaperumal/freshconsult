@@ -117,7 +117,7 @@ module Helpdesk::RequesterWidgetHelper
       if field_value(field, obj).present?
         html << "<div class='widget-more-content hide'>" if count == CONTACT_WIDGET_MAX_DISPLAY_COUNT
         count=count+1
-        value = obj.send(field.name)
+        value = obj.safe_send(field.name)
         value = format_field_value(field, value) || value
         html << "<div class='contact-append'>
           <span class='add-on field-label  #{ "long_text" if (field.label.length > MAX_LABEL_LENGTH) }'>
@@ -167,7 +167,7 @@ module Helpdesk::RequesterWidgetHelper
   private
 
     def field_value(field, object)
-      value = (object.present? && object.send(field.name).present?) ? object.send(field.name) : field.default_value
+      value = (object.present? && object.safe_send(field.name).present?) ? object.safe_send(field.name) : field.default_value
     end
 
     def object_name field

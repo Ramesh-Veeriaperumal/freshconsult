@@ -22,21 +22,21 @@ class DenormalizedFlexifield < ActiveRecord::Base
 
   SERIALIZED_COLUMN_MAPPING_BY_ATTRIBUTES.each do |attribute, db_column|
     define_method attribute do
-      send(db_column)[attribute]
+      safe_send(db_column)[attribute]
     end
 
     define_method "#{attribute}=" do |value|
       if value.present?
-        send(db_column)[attribute] = value
+        safe_send(db_column)[attribute] = value
       else
-        send(db_column).delete(attribute)
+        safe_send(db_column).delete(attribute)
       end
     end
   end
 
   def set_default_values #helps in changes calculation
     SERIALIZED_DB_COLUMNS.each do |db_column|
-      write_attribute(db_column, {}) if send(db_column).nil?
+      write_attribute(db_column, {}) if safe_send(db_column).nil?
     end
   end
 
@@ -50,7 +50,7 @@ class DenormalizedFlexifield < ActiveRecord::Base
     SERIALIZED_COLUMN_MAPPING_BY_DB_COLUMN.each do |db_column, attributes|
       attributes.each do |attribute|
         old_value = self.load_state[db_column][attribute]
-        new_value = self.send(attribute)
+        new_value = self.safe_send(attribute)
         @changes_of_serialized_attributes[attribute] = [old_value, new_value] if old_value != new_value
       end
     end
@@ -61,22 +61,22 @@ class DenormalizedFlexifield < ActiveRecord::Base
     SERIALIZED_COLUMN_SANITIZATION_METHODS.each do |methods, attributes|
       methods.each do |method_name|
         attributes.each do |attribute|
-          send(method_name, attribute)
+          safe_send(method_name, attribute)
         end
       end
     end
   end
 
   def trim_length_of_slt attribute
-    send "#{attribute}=", send(attribute).to_s[0..254] if send(attribute).present? #not adding a validation error to mimic SQL behaviour
+    send "#{attribute}=", safe_send(attribute).to_s[0..254] if safe_send(attribute).present? #not adding a validation error to mimic SQL behaviour
   end  
 
   # def convert_to_integer attribute
-  #   send("#{attribute}=", send(attribute).to_i) if send(attribute).present?
+  #   safe_send("#{attribute}=", safe_send(attribute).to_i) if safe_send(attribute).present?
   # end
 
   # def convert_to_decimal attribute
-  #   send("#{attribute}=", send(attribute).to_f) if send(attribute).present?
+  #   safe_send("#{attribute}=", safe_send(attribute).to_f) if safe_send(attribute).present?
   # end
 
 end

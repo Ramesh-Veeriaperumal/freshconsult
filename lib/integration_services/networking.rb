@@ -166,7 +166,7 @@ module IntegrationServices
       block = Proc.new if block_given?
 
       check_ssl do
-        http.send(method) do |req|
+        http.safe_send(method) do |req|
           req.url(verify_url(url))    if url
           req.headers.update(headers) if headers
           req.body = body             if body

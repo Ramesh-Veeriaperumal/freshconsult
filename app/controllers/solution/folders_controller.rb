@@ -41,7 +41,7 @@ class Solution::FoldersController < ApplicationController
   end
 
   def edit
-    @folder = @folder_meta.send(language_scoper)
+    @folder = @folder_meta.safe_send(language_scoper)
     @primary = @folder_meta.primary_folder
     @folder = current_account.solution_folders.new unless @folder
     @customer_id = @folder_meta.customer_folders.collect { |cf| cf.customer_id.to_s }
@@ -51,7 +51,7 @@ class Solution::FoldersController < ApplicationController
 
   def create
     @folder_meta = Solution::Builder.folder(params)
-    @folder = @folder_meta.send(language_scoper)
+    @folder = @folder_meta.safe_send(language_scoper)
     @category_meta = @folder_meta.solution_category_meta
    
     post_response(@folder_meta, @folder)
@@ -59,7 +59,7 @@ class Solution::FoldersController < ApplicationController
 
   def update
     @folder_meta = Solution::Builder.folder(params)
-    @folder = @folder_meta.send(language_scoper)
+    @folder = @folder_meta.safe_send(language_scoper)
     
     post_response(@folder_meta, @folder)
   end

@@ -20,7 +20,7 @@ class Public::TicketsController < ApplicationController
   def check_public_ticket_feature
     unless current_account.features_included?(:public_ticket_url)
       flash[:notice] = I18n.t(:'flash.general.access_denied')
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+      redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE)
     end
   end
 

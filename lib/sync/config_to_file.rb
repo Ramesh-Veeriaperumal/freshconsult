@@ -37,7 +37,7 @@ module Sync
     def dump_object_and_associations(path, base_object, config, associations)
       #puts "#{path} #{base_object.class} #{base_object.id} #{config} #{associations}"
       
-      objects = [*base_object.send(config)]
+      objects = [*base_object.safe_send(config)]
       objects.each do |object|
         dump_object(path, config, object)
         # puts "Object : #{objects.inspect} Association : #{associations.inspect}"
@@ -45,14 +45,14 @@ module Sync
           if association.is_a?(Hash)
             #recursion
             association.keys.each do |key|
-              if !object.send(key).blank?
+              if !object.safe_send(key).blank?
                 dump_object_and_associations("#{path}/#{config}/#{object.id}", object, key, association[key])
               end
             end
           else
             relations = [*association]
             relations.each do |relation|
-              relation_objects = [*object.send(relation)]
+              relation_objects = [*object.safe_send(relation)]
               relation_objects.each_with_index do |relation_obj, i|
                 dump_object("#{path}/#{config}/#{object.id}", relation, relation_obj, i+1)
               end
@@ -71,7 +71,7 @@ module Sync
         next if item == '.' or item == '..'
         
         #loop through individual rows
-        object              = base_object.class.reflections[association.to_sym].klass.new  #send(association).new
+        object              = base_object.class.reflections[association.to_sym].klass.new  #safe_send(association).new
         serialized_columns  = object.class.serialized_attributes.keys
         table_name          = object.class.table_name
 

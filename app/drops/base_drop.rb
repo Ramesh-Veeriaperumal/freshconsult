@@ -9,12 +9,12 @@ class BaseDrop < Liquid::Drop
   def initialize(source)
     @source = source
     @liquid = liquid_attributes.inject({}) do |h, k| 
-      h.update k.to_s => @source.send(k) if @source.respond_to?(k)
+      h.update k.to_s => @source.safe_send(k) if @source.respond_to?(k)
     end
   end
   
   def context=(current_context)
-    #current_context.registers[:controller].send(:cached_references) << @source if @source && current_context.registers[:controller]
+    #current_context.registers[:controller].safe_send(:cached_references) << @source if @source && current_context.registers[:controller]
     
     # @portal is set for every drop except PortalDrop, or you get into an infinite loop
     @portal = current_context['current_portal'].source.to_liquid if 

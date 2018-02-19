@@ -68,7 +68,7 @@ class Support::SignupsController < SupportController
 
     def chk_for_logged_in_usr
       if !preview? && logged_in?
-        redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+        redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE)
       end
     end
 

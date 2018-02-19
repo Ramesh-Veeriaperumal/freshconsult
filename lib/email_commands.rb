@@ -18,7 +18,7 @@ module EmailCommands
           begin
             cmd = cmd.downcase
             if respond_to?(cmd)
-              send(cmd,ticket,value,user, note)
+              safe_send(cmd,ticket,value,user, note)
             elsif !ticket.respond_to?(cmd)
               custom_field = ticket.account.ticket_fields_with_nested_fields.find_by_label(cmd)
               custom_ff_fields[custom_field.name.to_sym] = value if custom_field.present?

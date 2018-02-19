@@ -64,7 +64,7 @@ module IntegrationServices::Services
 
       def command_payload(command_name, payload = nil)
         schema = default_command_schema('microsoft-teams', command_name)
-        schema.merge!(send("#{command_name}_payload", payload))
+        schema.merge!(safe_send("#{command_name}_payload", payload))
       end
 
       def install_app_payload(_payload = nil)
