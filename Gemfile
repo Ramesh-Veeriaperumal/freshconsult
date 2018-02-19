@@ -129,7 +129,7 @@ gem 'faraday_middleware', '~> 0.10.0'
 gem "twitter", "~> 5.16.0"
 gem "gnip-rule", "1.0.0"
 gem "curb", "~> 0.8.5"
-gem "sanitize", "2.0.3"
+gem "sanitize", "4.5.0"
 gem "koala", "1.10.1"
 gem "spreadsheet", "0.6.8"
 
@@ -338,6 +338,7 @@ gem 'rugged'
 
 gem 'clearbit'
 
+gem 'nokogiri', '= 1.8.2'
 gem 'acts_as_api', '1.0.1'
 gem "uglifier",         "~> 2.7.2"
 gem "sprockets",        "2.2.3"

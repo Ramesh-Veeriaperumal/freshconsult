@@ -29,7 +29,7 @@ class Sanitize
         ol p pre q rp rt ruby s samp section summary small strike strong sub sup table tbody td
         tfoot th thead time tr tt u ul var wbr span source video
       ],
-      :remove_contents => [ 'style','title','script'],
+      :remove_contents => ['style','title','script'],
       :attributes => {
         :all         => ['dir', 'lang', 'title', 'style', 'id', 'align', 'class', 'rel'],
         'a'          => ['href','target','download'],
@@ -54,6 +54,9 @@ class Sanitize
         'video'      => ['src', 'width', 'height', 'crossorigin', 'poster', 'preload', 'autoplay', 'mediagroup', 'loop', 'muted', 'controls'],
         'pre'        => ['rel','code-brush'],
         'font'       => ['color']
+      },
+      :css => {
+        :properties => ['margin-bottom', 'border-top-style', 'margin-top','padding-top', 'padding-bottom', 'border-left', 'border-right', 'border-bottom', 'border-top', 'display', 'font-weight', 'direction', 'background-size', 'line-height', 'clear', 'vertical-align', 'box-sizing', 'font-family', 'outline', 'color', 'font-size', 'margin', 'background-color', 'height', 'width', 'background', 'border', 'background-url', 'padding']
       },
       :add_attributes => {
         'a' => {'rel' => 'noreferrer'}
