@@ -2072,4 +2072,15 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   def year_in_review_enabled?
     Account.current.year_in_review_2017_enabled? && review_available?
   end
+
+  def freshcaller_enabled_agent?
+    return if current_user.blank? || !current_user.agent?
+    agent = current_user.agent
+    freshcaller_agent = agent.freshcaller_agent if agent.present?
+
+    !falcon_enabled? &&
+      current_account.freshcaller_enabled? &&
+      current_account.has_feature?(:freshcaller_widget) &&
+      agent.present? && freshcaller_agent.present? && freshcaller_agent.fc_enabled?
+  end
 end

@@ -11,6 +11,7 @@ class Billing::ChargebeeWrapper
 		Rails.logger.debug ":::ChargeBee - Create Subscription - Params sent:::"
 		Rails.logger.debug data.inspect
 		ChargeBee::Subscription.create(data)
+		update_customer(Account.current.id, {})
 	end
 
 	def update_subscription(account_id, data)
@@ -68,6 +69,7 @@ class Billing::ChargebeeWrapper
 
 	#other
 	def update_customer(account_id, data)
+		data[:meta_data] = {:customer_key => Account.current.full_domain}.to_json # update for existing customers
 		ChargeBee::Customer.update(account_id, data)
 	end
 
