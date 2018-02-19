@@ -382,7 +382,7 @@ module SolutionHelper
 		parent_meta = instance_variable_get("@#{f}_meta")
 		if parent_meta && !options[:primary] && parent_meta.send("#{language.to_key}_available?")
 			op << "<div class='pt5 span12'>"
-			op << parent_meta.send("#{language.to_key}_#{f}").name
+			op << h(parent_meta.send("#{language.to_key}_#{f}").name)
 			op << "</div>"
 		else
       
