@@ -118,6 +118,7 @@ class Admin::Skill < ActiveRecord::Base
       end
       keys.flatten!
 
+      Rails.logger.debug "Deleting Skill queues #{keys.inspect}"
       del_round_robin_redis keys
     end
 
