@@ -110,3 +110,4 @@ helpdesk:
     - heap_analytics
     - bot
     - central
+    - sanitize_monkey_patch
