@@ -209,7 +209,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def activerecord_error_handler(e)
-      err = ActiveRecord::Base.connection.send(:translate_exception, e, e.message)
+      err = ActiveRecord::Base.connection.safe_send(:translate_exception, e, e.message)
       err.instance_variable_set :@original_exception, nil
       case err.class.to_s
       when 'ActiveRecord::RecordNotUnique'
@@ -795,7 +795,7 @@ class ApiApplicationController < MetalApiController
 
     def run_on_db
       db_type = current_account.master_queries? ? :run_on_master : :run_on_slave
-      Sharding.send(db_type) do
+      Sharding.safe_send(db_type) do
         yield
       end
     end

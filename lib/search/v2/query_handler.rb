@@ -67,7 +67,7 @@ module Search
         Rails.logger.error "Searchv2 mquery exception - #{e.message} - #{e.backtrace.first}"
         NewRelic::Agent.notice_error(e)
         @records = @templates.map do |context| 
-          {:context => context, :data => Search::Utils.send(:wrap_paginate, [], @current_page, @offset, 0)}
+          {:context => context, :data => Search::Utils.safe_send(:wrap_paginate, [], @current_page, @offset, 0)}
         end
       end
 

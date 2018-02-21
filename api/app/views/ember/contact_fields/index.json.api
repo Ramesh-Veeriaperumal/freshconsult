@@ -6,7 +6,7 @@ JSON.generate(@items.map do |contact_field|
   response_hash = {
     id: contact_field.id,
     name: contact_field.name,
-    label: contact_field.send('label'),
+    label: contact_field.safe_send('label'),
     position: contact_field.position,
     required_for_agents: contact_field.required_for_agent,
     type: contact_field.field_type,

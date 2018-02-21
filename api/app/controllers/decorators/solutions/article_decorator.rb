@@ -68,11 +68,11 @@ class Solutions::ArticleDecorator < ApiDecorator
   private
 
     def folder_name
-      record.solution_folder_meta.send("#{language_short_code}_folder").name
+      record.solution_folder_meta.safe_send("#{language_short_code}_folder").name
     end
 
     def category_name
-      record.solution_folder_meta.solution_category_meta.send("#{language_short_code}_category").name
+      record.solution_folder_meta.solution_category_meta.safe_send("#{language_short_code}_category").name
     end
 
     def language_short_code
