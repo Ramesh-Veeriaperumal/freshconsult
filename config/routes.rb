@@ -3232,6 +3232,10 @@ Helpkit::Application.routes.draw do
       put  :trigger
       get  :export
     end
+    #member do
+    #  #TODO - make this a match route below like for shortcodes
+    #  put :update_availability
+    #end
   end
   match '/livechat/visitor/:type', :controller => 'chats', :action => 'visitor', :method => :get
   match '/livechat/downloadexport/:token', :controller => 'chats', :action => 'download_export', :method => :get
@@ -3242,6 +3246,7 @@ Helpkit::Application.routes.draw do
   put '/livechat/shortcodes/:id', :controller => 'chats', :action => 'update_shortcode', :method => :put
   put '/livechat/agent/:id/update_availability', :controller => 'chats', :action => 'update_availability', :method => :put
   match '/livechat/*letter', :controller => 'chats', :action => 'index', :method => :get
+
 
   use_doorkeeper do
     skip_controllers :oauth_applications, :authorized_applications

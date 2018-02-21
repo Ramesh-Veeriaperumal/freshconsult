@@ -101,5 +101,4 @@ module Cache::Memcache::Dashboard::CacheData
       end
     end
   end
-
 end

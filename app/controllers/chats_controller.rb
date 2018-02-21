@@ -3,7 +3,7 @@ class ChatsController < ApplicationController
   include ApplicationHelper
   include ChatHelper
 
-  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [ :enable, :update_site, :toggle, :trigger]
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [ :enable, :toggle, :trigger]
   before_filter  :verify_chat_token, :only => [:trigger]
   around_filter  :select_account, :only => [:trigger]
   before_filter  :load_ticket, :only => [:add_note, :missed_chat]
@@ -122,6 +122,7 @@ class ChatsController < ApplicationController
 
   def enable
     status = enable_livechat_feature
+    #TODO  neil - fix this as well - status code needed
     render :json => { :status => status }
   end
 
@@ -134,6 +135,7 @@ class ChatsController < ApplicationController
       chat_setting.update_attributes({:enabled => params[:attributes][:active]})
       render :json => { :status => "success" }
     else
+      #TODO  neil - fix this as well - status code needed
       render :json => { :status => "error" }
     end
   end
@@ -145,11 +147,14 @@ class ChatsController < ApplicationController
     if response && response[:status] == 200
       render :json => { :status => "success" }
     else
+      #TODO  neil - fix this as well - status code needed
       render :json => { :status => "error" }
     end
   end
 
   def trigger
+    #TODO NxD - add check - only certain predefined events are allowed to pass thru,
+    #TODO contd - reject everything else
     event = params[:eventType]
     content = params[:content]
     content = JSON.parse(params[:content], symbolize_names: true) if content.is_a?(String)
@@ -171,6 +176,7 @@ class ChatsController < ApplicationController
     else
       status = "error"
     end
+    #TODO  neil - fix this as well - status code needed
     render :json => { :status => status}
   end
 
@@ -182,6 +188,7 @@ class ChatsController < ApplicationController
       url = result['url']
       redirect_to url
     else
+      #TODO  neil - fix this as well - status code needed
       render :json => { :status=> "error", :message => "Error while downloading export!"}
     end
   end
@@ -250,6 +257,7 @@ class ChatsController < ApplicationController
         Account.reset_current_account
       end 
     rescue => e
+      #TODO  neil - fix this as well - status code needed
       render :json => { :status=> "error", :message => "Something went wrong => "+e }
     end
   end
@@ -266,7 +274,11 @@ class ChatsController < ApplicationController
                 :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
                 :note_body_attributes => { :body_html => note }
             )
-    @note.save_note
+    if @note.save_note
+      return true
+    else
+      return false
+    end
   end
 
 
@@ -293,9 +305,12 @@ class ChatsController < ApplicationController
       note = add_style params[:messages]
     end
     status = create_note(@ticket.requester_id, note, current_account.id)
+    #TODO nxd missing save failure should be logged to new relic
+    #TODO  neil - fix this as well - status code needed
     render :json => { :ticket_id=> @note.notable.display_id , :status => status }
   end
 
+  # NOTE - this is triggered from livechat.
   def missed_chat params
     subject = t("livechat.offline_chat_subject", :visitor_name => params[:name],
                   :date => formated_date(Time.now(), {:format => :short_day_with_week, :include_year => true}))
@@ -322,7 +337,9 @@ class ChatsController < ApplicationController
     ticket_params[:group_id] = group.id if group
 
     @ticket = current_account.tickets.build(ticket_params)
+    #TODO - nxd - missing save failure should be logged to New relic.
     status = @ticket.save_ticket
+    #TODO  neil - fix this as well - status code needed - nxd
     render :json => { :external_id=> @ticket.display_id , :status => status }
   end
 

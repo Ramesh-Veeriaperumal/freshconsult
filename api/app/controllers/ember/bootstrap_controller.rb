@@ -26,7 +26,7 @@ module Ember
         return {} unless current_account.chat_setting
         {
           livechat_token: livechat_token(current_account.chat_setting.site_id,
-                                         current_user.id)
+                                         current_user.id, current_user.privilege?(:admin_tasks))
         }
       end
 

@@ -171,6 +171,7 @@ liveChat.admin_short_codes = (function(){
       },
 
       ajaxCall: function(params, callback, parent_elem, id){
+        console.log("ENTER shortcodes/main.js ajaxCall params:", JSON.stringify(params));
         parent_elem.length > 0 ? parent_elem.addClass("sloading") : "";
         var path = params.action.type === "GET" || params.action.type === "POST" ?
             params.action.url :
